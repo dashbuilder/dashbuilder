@@ -11,7 +11,7 @@
   <modules>
     <module>dashbuilder-bom</module>
     <module>dashbuilder-parent-with-dependencies</module>
-    <module>dashbuilder-kpi-viewer</module>
+    <module>dashbuilder-client</module>
     <module>dashbuilder-showcase</module>
   </modules>
 
