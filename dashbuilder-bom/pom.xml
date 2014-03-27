@@ -40,6 +40,13 @@
         <type>war</type>
       </dependency>
 
+      <!-- Dashbuilder Client -->
+      <dependency>
+        <groupId>org.dashbuilder</groupId>
+        <artifactId>dashbuilder-client-api</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+
       <!-- KPI Viewer component -->
       <dependency>
         <groupId>org.dashbuilder</groupId>
