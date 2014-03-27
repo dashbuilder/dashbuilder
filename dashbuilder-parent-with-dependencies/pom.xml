@@ -27,7 +27,7 @@
   <artifactId>dashbuilder-parent-with-dependencies</artifactId>
   <packaging>pom</packaging>
 
-  <name>Dashbuilder parent with dependencies</name>
+  <name>Dashbuilder Parent With Dependencies</name>
   <description>
     The parent with dependencies declares all dependency versions in dependencyManagement.
     All modules extend this parent, except for the boms (which are used here).
@@ -277,6 +277,19 @@
             <artifactId>slf4j-log4j12</artifactId>
           </exclusion>
         </exclusions>
+      </dependency>
+
+      <!-- Errai UI -->
+      <dependency>
+        <groupId>org.jboss.errai</groupId>
+        <artifactId>errai-ui</artifactId>
+        <version>${version.org.jboss.errai}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.jboss.errai</groupId>
+        <artifactId>errai-data-binding</artifactId>
+        <version>${version.org.jboss.errai}</version>
       </dependency>
 
       <!-- Weld Modules -->

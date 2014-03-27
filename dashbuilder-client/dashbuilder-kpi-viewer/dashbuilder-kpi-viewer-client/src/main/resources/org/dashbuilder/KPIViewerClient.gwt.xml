@@ -4,8 +4,6 @@
 <module>
   <inherits name="org.uberfire.UberfireClientAll"/>
 
-  <inherits name="org.dashbuilder.kpi.KPIViewerAPI"/>
-
-  <source path='client'/>
+  <inherits name="org.dashbuilder.KPIViewerAPI"/>
 
 </module>
