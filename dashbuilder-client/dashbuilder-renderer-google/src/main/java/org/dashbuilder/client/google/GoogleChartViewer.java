@@ -15,11 +15,67 @@
  */
 package org.dashbuilder.client.google;
 
+import java.util.List;
+
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.visualization.client.AbstractDataTable;
+import com.google.gwt.visualization.client.DataTable;
+import org.dashbuilder.client.dataset.ColumnType;
+import org.dashbuilder.client.dataset.DataColumn;
 import org.dashbuilder.client.displayer.DataDisplayerViewer;
+import org.dashbuilder.client.displayer.XAxis;
+import org.dashbuilder.client.displayer.YAxis;
 
 public abstract class GoogleChartViewer extends DataDisplayerViewer {
 
     public abstract Widget drawChart();
-    public abstract String getChartType();
+    public abstract String getPackage();
+
+    public AbstractDataTable createTables() {
+        DataTable data = DataTable.create();
+        data.addColumn(AbstractDataTable.ColumnType.STRING, "Task");
+        data.addColumn(AbstractDataTable.ColumnType.NUMBER, "Hours per Day");
+        data.addRows(2);
+        data.setValue(0, 0, "Work");
+        data.setValue(0, 1, 14);
+        data.setValue(1, 0, "Sleep");
+        data.setValue(1, 1, 10);
+        return data;
+    }
+
+    public AbstractDataTable createTable() {
+        DataTable data = DataTable.create();
+
+        // Add the xAxis column
+        XAxis xAxis = dataDisplayer.getXAxis();
+        DataColumn xAxisColumn = dataSet.getColumnById(xAxis.getColumnId());
+        List xAxisValues = xAxisColumn.getValues();
+        data.addRows(xAxisValues.size());
+        data.addColumn(getColumnType(xAxisColumn), xAxisColumn.getName());
+        for (int i = 0; i < xAxisValues.size(); i++) {
+            data.setValue(i, 0, xAxisValues.get(i).toString());
+        }
+
+        // Add the range columns
+        List<YAxis> yAxes = dataDisplayer.getYAxes();
+        for (int i = 0; i < yAxes.size(); i++) {
+            YAxis yAxis = yAxes.get(i);
+            DataColumn yAxisColumn = dataSet.getColumnById(yAxis.getColumnId());
+            List yAxisValues = yAxisColumn.getValues();
+            data.addColumn(AbstractDataTable.ColumnType.NUMBER, yAxisColumn.getName());
+            for (int j = 0; j < yAxisValues.size(); j++) {
+                data.setValue(j, i+1, Double.parseDouble(yAxisValues.get(j).toString()));
+            }
+        }
+        return data;
+    }
+
+    public AbstractDataTable.ColumnType getColumnType(DataColumn dataColumn) {
+        ColumnType type = dataColumn.getColumnType();
+        if (ColumnType.LABEL.equals(type)) return AbstractDataTable.ColumnType.STRING;
+        if (ColumnType.NUMBER.equals(type)) return AbstractDataTable.ColumnType.NUMBER;
+        if (ColumnType.DATE.equals(type)) return AbstractDataTable.ColumnType.DATETIME;
+        return AbstractDataTable.ColumnType.STRING;
+    }
 }

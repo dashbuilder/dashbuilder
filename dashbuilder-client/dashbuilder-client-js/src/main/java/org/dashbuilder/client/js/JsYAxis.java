@@ -21,7 +21,7 @@ import org.dashbuilder.client.displayer.YAxis;
 /**
  * {"columnId:", "amount", "displayName": "Total expenses amount"}
  */
-public class JsYAxis extends JavaScriptObject implements YAxis {
+public class JsYAxis extends JavaScriptObject {
 
     // Overlay types always have protected, zero-arg constructors
     protected JsYAxis() {}

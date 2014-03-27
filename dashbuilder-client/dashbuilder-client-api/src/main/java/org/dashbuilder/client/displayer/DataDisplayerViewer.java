@@ -16,10 +16,20 @@
 package org.dashbuilder.client.displayer;
 
 import com.google.gwt.user.client.ui.Composite;
+import org.dashbuilder.client.dataset.DataSet;
 
 public class DataDisplayerViewer extends Composite {
 
-    private DataDisplayer dataDisplayer;
+    protected DataSet dataSet;
+    protected DataDisplayer dataDisplayer;
+
+    public DataSet getDataSet() {
+        return dataSet;
+    }
+
+    public void setDataSet(DataSet dataSet) {
+        this.dataSet = dataSet;
+    }
 
     public DataDisplayer getDataDisplayer() {
         return dataDisplayer;

@@ -13,10 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbuilder.client.kpi;
+package org.dashbuilder.client.kpi.impl;
 
 import org.dashbuilder.client.dataset.DataSet;
 import org.dashbuilder.client.displayer.DataDisplayer;
+import org.dashbuilder.client.kpi.KPI;
 import org.jboss.errai.common.client.api.annotations.Portable;
 
 public class KPIImpl implements KPI {

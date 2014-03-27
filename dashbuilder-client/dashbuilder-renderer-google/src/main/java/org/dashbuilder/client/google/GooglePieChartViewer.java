@@ -42,15 +42,7 @@ public class GooglePieChartViewer extends GoogleChartViewer {
     FlowPanel panel = new FlowPanel();
 
     @Override
-    public Widget drawChart() {
-        PieChart pie = new PieChart(createTable(), createOptions());
-        pie.addSelectHandler(createSelectHandler(pie));
-        panel.add(pie);
-        return pie;
-    }
-
-    @Override
-    public String getChartType() {
+    public String getPackage() {
         return PieChart.PACKAGE;
     }
 
@@ -61,12 +53,20 @@ public class GooglePieChartViewer extends GoogleChartViewer {
         googleRenderer.registerChart(this);
     }
 
+    @Override
+    public Widget drawChart() {
+        PieChart pie = new PieChart(createTable(), createOptions());
+        pie.addSelectHandler(createSelectHandler(pie));
+        panel.add(pie);
+        return pie;
+    }
+
     private Options createOptions() {
         Options options = Options.create();
+        options.setTitle(dataDisplayer.getTitle());
         options.setWidth(400);
         options.setHeight(240);
         options.set3D(true);
-        options.setTitle("My Daily Activities");
         return options;
     }
 
@@ -107,17 +107,5 @@ public class GooglePieChartViewer extends GoogleChartViewer {
                 Window.alert(message);
             }
         };
-    }
-
-    private AbstractDataTable createTable() {
-        DataTable data = DataTable.create();
-        data.addColumn(ColumnType.STRING, "Task");
-        data.addColumn(ColumnType.NUMBER, "Hours per Day");
-        data.addRows(2);
-        data.setValue(0, 0, "Work");
-        data.setValue(0, 1, 14);
-        data.setValue(1, 0, "Sleep");
-        data.setValue(1, 1, 10);
-        return data;
     }
 }

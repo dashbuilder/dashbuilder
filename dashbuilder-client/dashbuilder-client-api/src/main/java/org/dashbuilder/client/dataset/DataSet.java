@@ -23,4 +23,22 @@ public interface DataSet {
      * The dataset columns
      */
     List<DataColumn> getColumns();
+
+    /**
+     * Get a column by its id.
+     */
+    DataColumn getColumnById(String id);
+
+    /**
+     * Get the number of rows in the dataset.
+     */
+    int getRowCount();
+
+    /**
+     * Get the value at a given cell.
+     * @param row The cell row (the first row is 0).
+     * @param column The cell column (the first column is 0).
+     */
+    Object getValueAt(int row, int column);
+
 }

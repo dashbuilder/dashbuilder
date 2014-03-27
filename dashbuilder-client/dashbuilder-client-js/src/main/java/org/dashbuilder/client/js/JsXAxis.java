@@ -27,7 +27,7 @@ import org.dashbuilder.client.displayer.XAxis;
 /**
  * {"columnId:", "department", "displayName": "Department"}
  */
-public class JsXAxis extends JavaScriptObject implements XAxis {
+public class JsXAxis extends JavaScriptObject {
 
     // Overlay types always have protected, zero-arg constructors
     protected JsXAxis() {}

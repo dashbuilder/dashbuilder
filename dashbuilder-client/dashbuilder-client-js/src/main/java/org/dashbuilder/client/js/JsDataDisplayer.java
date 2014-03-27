@@ -33,7 +33,7 @@ import org.dashbuilder.client.displayer.YAxis;
  *     "yAxes": [{"columnId:", "amount", "displayName": "Total amount"}]
  * }
  */
-public class JsDataDisplayer extends JavaScriptObject implements DataDisplayer {
+public class JsDataDisplayer extends JavaScriptObject {
 
     // Overlay types always have protected, zero-arg constructors
     protected JsDataDisplayer() {}
@@ -54,20 +54,11 @@ public class JsDataDisplayer extends JavaScriptObject implements DataDisplayer {
         return this.renderer;
     }-*/;
 
-    public final native XAxis getXAxis() /*-{
+    public final native JsXAxis getJsXAxis() /*-{
         return this.xAxis;
     }-*/;
 
     public final native JsArray<JsYAxis> getJsYAxes() /*-{
         return this.yAxes;
     }-*/;
-
-    public final List<YAxis> getYAxes() {
-        List<YAxis> results = new ArrayList<YAxis>();
-        JsArray<JsYAxis> array = getJsYAxes();
-        for (int i = 0; i < array.length(); i++) {
-            results.add(array.get(i));
-        }
-        return results;
-    }
 }

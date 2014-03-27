@@ -13,14 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbuilder.client.dataset;
+package org.dashbuilder.client.displayer.impl;
 
-public enum ColumnType {
-    DATE,
-    NUMBER,
-    LABEL;
+import org.dashbuilder.client.displayer.XAxis;
+import org.jboss.errai.common.client.api.annotations.Portable;
 
-    public static ColumnType getByName(String name) {
-        return valueOf(name.toUpperCase());
+@Portable
+public class XAxisImpl implements XAxis {
+
+    protected String columnId;
+    protected String displayName;
+
+    public String getColumnId() {
+        return columnId;
+    }
+
+    public void setColumnId(String columnId) {
+        this.columnId = columnId;
+    }
+
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
     }
 }

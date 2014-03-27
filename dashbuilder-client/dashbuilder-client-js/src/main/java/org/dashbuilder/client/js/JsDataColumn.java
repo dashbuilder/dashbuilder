@@ -20,6 +20,8 @@ import java.util.ArrayList;
 
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArray;
+import com.google.gwt.core.client.JsArrayNumber;
+import com.google.gwt.core.client.JsArrayString;
 import org.dashbuilder.client.dataset.ColumnType;
 import org.dashbuilder.client.dataset.DataColumn;
 
@@ -31,7 +33,7 @@ import org.dashbuilder.client.dataset.DataColumn;
  *          "values": {"10300.45", "9000.00", "3022.44", "22223.56"}
  *      }
  */
-public class JsDataColumn extends JavaScriptObject implements DataColumn {
+public class JsDataColumn extends JavaScriptObject {
 
     // Overlay types always have protected, zero-arg constructors
     protected JsDataColumn() {}
@@ -44,24 +46,16 @@ public class JsDataColumn extends JavaScriptObject implements DataColumn {
         return this.name;
     }-*/;
 
-    private final native String getType() /*-{
+    public final native String getType() /*-{
         return this.type;
     }-*/;
 
-    private final native JsArray getJSValues() /*-{
-        return this.columns;
+    public final native JsArrayString getJsStrings() /*-{
+        return this.values;
     }-*/;
 
-    public final List getValues() {
-        List  results = new ArrayList();
-        JsArray array = getJSValues();
-        for (int i = 0; i < array.length(); i++) {
-            results.add(array.get(i));
-        }
-        return results;
-    }
+    public final native JsArrayNumber getJsNumbers() /*-{
+        return this.values;
+    }-*/;
 
-    public final ColumnType getColumnType() {
-        return ColumnType.valueOf(getType());
-    }
 }

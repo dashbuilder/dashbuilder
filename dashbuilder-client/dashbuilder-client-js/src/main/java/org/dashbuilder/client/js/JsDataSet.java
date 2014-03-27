@@ -41,7 +41,7 @@ import org.dashbuilder.client.dataset.DataSet;
  *  ]
  * }
  */
-public class JsDataSet extends JavaScriptObject implements DataSet {
+public class JsDataSet extends JavaScriptObject {
 
     // Overlay types always have protected, zero-arg constructors
     protected JsDataSet() {}
@@ -50,16 +50,7 @@ public class JsDataSet extends JavaScriptObject implements DataSet {
         return eval('(' + jsonString + ')');
     }-*/;
 
-    private final native JsArray<JsDataColumn> getJSColumns() /*-{
+    public final native JsArray<JsDataColumn> getJsColumns() /*-{
         return this.columns;
     }-*/;
-
-    public final List<DataColumn> getColumns() {
-        List<DataColumn> results = new ArrayList<DataColumn>();
-        JsArray<JsDataColumn> array = getJSColumns();
-        for (int i = 0; i < array.length(); i++) {
-            results.add(array.get(i));
-        }
-        return results;
-    }
 }

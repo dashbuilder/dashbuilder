@@ -15,13 +15,15 @@
  */
 package org.dashbuilder.client.google;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Set;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
 
+import com.google.gwt.core.client.JsArrayString;
 import com.google.gwt.visualization.client.VisualizationUtils;
-import com.google.gwt.visualization.client.visualizations.PieChart;
 import org.uberfire.client.workbench.events.ApplicationReadyEvent;
 import org.uberfire.client.workbench.events.PerspectiveChange;
 
@@ -29,6 +31,7 @@ import org.uberfire.client.workbench.events.PerspectiveChange;
 public class GoogleRenderer {
 
     private List<GoogleChartViewer> chartViewerList = new ArrayList<GoogleChartViewer>();
+    private Set<String> chartPackages = new HashSet<String>();
 
     // Listen to UF events in order to render charts at the proper time.
 
@@ -44,6 +47,7 @@ public class GoogleRenderer {
 
     public void registerChart(GoogleChartViewer viewer) {
         chartViewerList.add(viewer);
+        chartPackages.add(viewer.getPackage());
     }
 
     public void renderCharts() {
@@ -59,6 +63,10 @@ public class GoogleRenderer {
         };
 
         // Load the visualization api, passing the onLoadCallback to be called when loading is done.
-        VisualizationUtils.loadVisualizationApi(onLoadCallback, PieChart.PACKAGE);
+        JsArrayString packageArray = JsArrayString.createArray().cast();
+        for (String chartPackage : chartPackages) {
+            packageArray.push(chartPackage);
+        }
+        VisualizationUtils.loadVisualizationApi("1", onLoadCallback, packageArray);
     }
 }

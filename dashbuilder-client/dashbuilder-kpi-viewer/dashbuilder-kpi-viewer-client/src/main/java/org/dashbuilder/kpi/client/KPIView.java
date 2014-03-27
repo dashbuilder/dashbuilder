@@ -35,6 +35,8 @@ public class KPIView extends Composite implements KPIPresenter.View {
         try {
             DataDisplayer displayer = kpi.getDataDisplayer();
             DataDisplayerViewer viewer = viewerLocator.lookupViewer(displayer);
+            viewer.setDataSet(kpi.getDataSet());
+            viewer.setDataDisplayer(kpi.getDataDisplayer());
             container.add(viewer);
         } catch (Exception e) {
             Label messageLabel = new Label(e.getMessage());

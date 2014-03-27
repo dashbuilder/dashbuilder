@@ -45,18 +45,17 @@ public class KPIPresenter {
     /** The KPI widget */
     @Inject private View view;
 
-    /*@OnStartup*/
-    @PostConstruct
-    public void onStartup(/* final PlaceRequest placeRequest */) {
-        //String kpiUid = placeRequest.getParameter( "kpi", "sample1" );
-        /*this.kpi = kpiLocator.getKPI(kpiUid);*/
-        this.kpi = kpiLocator.getKPI("sample1");
+    @OnStartup
+    public void onStartup( final PlaceRequest placeRequest) {
+        String kpiUid = placeRequest.getParameter( "kpi", "sample0" );
+        this.kpi = kpiLocator.getKPI(kpiUid);
+
         view.init(kpi);
     }
 
     @WorkbenchPartTitle
     public String getTitle() {
-        return "KPI";
+        return kpi.getDataDisplayer().getTitle();
     }
 
     @WorkbenchPartView
