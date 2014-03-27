@@ -4,6 +4,7 @@
 <module>
   <inherits name="org.uberfire.UberfireClientAll"/>
 
-  <inherits name="org.dashbuilder.kpi.KPIViewerClient"/>
+  <inherits name="org.dashbuilder.GoogleRendererClient"/>
+  <inherits name="org.dashbuilder.KPIViewerClient"/>
 
 </module>

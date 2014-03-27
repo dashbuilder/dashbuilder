@@ -12,7 +12,7 @@
   <artifactId>dashbuilder-distribution-wars</artifactId>
   <packaging>pom</packaging>
 
-  <name>Dashbuilder distribution wars</name>
+  <name>Dashbuilder Distribution WARs</name>
   <description>
     This module builds the download wars for different application servers.
   </description>
