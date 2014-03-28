@@ -31,14 +31,14 @@ public class MainPerspective {
     }
 
     public PerspectiveDefinition buildPerspective() {
-        final PerspectiveDefinition p = new PerspectiveDefinitionImpl( PanelType.ROOT_TAB);
-        p.setTransient( true );
-        p.setName( "MainPerspective" );
+        perspective = new PerspectiveDefinitionImpl( PanelType.ROOT_TAB);
+        perspective.setTransient(true);
+        perspective.setName("MainPerspective");
 
         //p.getRoot().addPart( new PartDefinitionImpl( new DefaultPlaceRequest( "HelloWorldScreen" ) ) );
-        p.getRoot().addPart( new PartDefinitionImpl( new DefaultPlaceRequest( "KPIPresenter" ).addParameter("kpi", "sample0") ) );
-        p.getRoot().addPart( new PartDefinitionImpl( new DefaultPlaceRequest( "KPIPresenter" ).addParameter("kpi", "sample1") ) );
+        perspective.getRoot().addPart( new PartDefinitionImpl( new DefaultPlaceRequest( "KPIPresenter" ).addParameter("kpi", "sample0") ) );
+        perspective.getRoot().addPart( new PartDefinitionImpl( new DefaultPlaceRequest( "KPIPresenter" ).addParameter("kpi", "sample1") ) );
 
-        return p;
+        return perspective;
     }
 }

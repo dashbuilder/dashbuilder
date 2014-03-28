@@ -76,19 +76,21 @@ public class ShowcaseEntryPoint {
         final PerspectiveActivity defaultPerspective = getDefaultPerspectiveActivity();
 
         final Menus menus =
-                newTopLevelMenu( "Home" )
-                        .respondsWith( new Command() {
-                            @Override
-                            public void execute() {
-                                if ( defaultPerspective != null ) {
-                                    placeManager.goTo( new DefaultPlaceRequest( defaultPerspective.getIdentifier() ) );
-                                } else {
-                                    Window.alert( "Default perspective not found." );
-                                }
-                            }
-                        } )
-                        .endMenu()
-                        .build();
+                newTopLevelMenu( "Home" ).respondsWith( new Command() {
+                    public void execute() {
+                        if ( defaultPerspective != null ) {
+                            placeManager.goTo( new DefaultPlaceRequest( defaultPerspective.getIdentifier() ) );
+                        } else {
+                            Window.alert( "Default perspective not found." );
+                        }
+                    }
+                }).endMenu().
+                newTopLevelMenu( "Dashboard" ).respondsWith( new Command() {
+                    public void execute() {
+                        placeManager.goTo( new DefaultPlaceRequest( "Dashboard" ) );
+                    }
+                }).endMenu().
+                build();
 
         menubar.addMenus( menus );
     }
