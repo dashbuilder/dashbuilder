@@ -75,7 +75,7 @@ public class KPILocator {
         " }",
         "{\n" +
         "     \"title\": \"Sales rate by country\",\n" +
-        "     \"type\": \"piechart\",\n" +
+        "     \"type\": \"barchart\",\n" +
         "     \"renderer\": \"google\",\n" +
         "     \"xAxis\": {\"columnId\": \"country\", \"displayName\": \"Country\"},\n" +
         "     \"yAxes\": [{\"columnId\": \"salesrate\", \"displayName\": \"Sales rate\"}]\n" +
