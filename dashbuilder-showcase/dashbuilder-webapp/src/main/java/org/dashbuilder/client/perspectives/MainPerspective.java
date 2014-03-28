@@ -1,5 +1,6 @@
 package org.dashbuilder.client.perspectives;
 
+import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 
 import org.uberfire.client.annotations.Perspective;
@@ -17,9 +18,20 @@ import org.uberfire.workbench.model.impl.PerspectiveDefinitionImpl;
 @WorkbenchPerspective(identifier = "MainPerspective", isDefault = true)
 public class MainPerspective {
 
+    private PerspectiveDefinition perspective;
+
+    @PostConstruct
+    public void init() {
+        buildPerspective();
+    }
+
     @Perspective
+    public PerspectiveDefinition getPerspective() {
+        return this.perspective;
+    }
+
     public PerspectiveDefinition buildPerspective() {
-        final PerspectiveDefinition p = new PerspectiveDefinitionImpl( PanelType.ROOT_LIST );
+        final PerspectiveDefinition p = new PerspectiveDefinitionImpl( PanelType.ROOT_TAB);
         p.setTransient( true );
         p.setName( "MainPerspective" );
 

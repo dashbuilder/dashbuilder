@@ -104,7 +104,7 @@ public class GooglePieChartViewer extends GoogleChartViewer {
                         message += "  Other visualizations support column selections as well.";
                     }
                 }
-                Window.alert(message);
+                //Window.alert(message);
             }
         };
     }

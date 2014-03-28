@@ -32,18 +32,6 @@ public abstract class GoogleChartViewer extends DataDisplayerViewer {
     public abstract Widget drawChart();
     public abstract String getPackage();
 
-    public AbstractDataTable createTables() {
-        DataTable data = DataTable.create();
-        data.addColumn(AbstractDataTable.ColumnType.STRING, "Task");
-        data.addColumn(AbstractDataTable.ColumnType.NUMBER, "Hours per Day");
-        data.addRows(2);
-        data.setValue(0, 0, "Work");
-        data.setValue(0, 1, 14);
-        data.setValue(1, 0, "Sleep");
-        data.setValue(1, 1, 10);
-        return data;
-    }
-
     public AbstractDataTable createTable() {
         DataTable data = DataTable.create();
 
