@@ -32,18 +32,24 @@
         Each module should declare it's direct dependencies and possibly overwrite scope/optional.
         Always declare the sources jar too and optionally the test-jar.
       -->
-      <!-- Showcase WebApp -->
+
+      <!-- Dashbuilder API -->
       <dependency>
         <groupId>org.dashbuilder</groupId>
-        <artifactId>dashbuilder-webapp</artifactId>
+        <artifactId>dashbuilder-api</artifactId>
         <version>${project.version}</version>
-        <type>war</type>
       </dependency>
 
-      <!-- Dashbuilder Client -->
+      <!-- Dashbuilder UI -->
       <dependency>
         <groupId>org.dashbuilder</groupId>
-        <artifactId>dashbuilder-client-api</artifactId>
+        <artifactId>dashbuilder-ui-common</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.dashbuilder</groupId>
+        <artifactId>dashbuilder-renderer-google</artifactId>
         <version>${project.version}</version>
       </dependency>
 
@@ -66,6 +72,13 @@
         <version>${project.version}</version>
       </dependency>
 
+      <!-- Showcase WebApp -->
+      <dependency>
+        <groupId>org.dashbuilder</groupId>
+        <artifactId>dashbuilder-webapp</artifactId>
+        <version>${project.version}</version>
+        <type>war</type>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 

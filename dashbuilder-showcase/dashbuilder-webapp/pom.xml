@@ -18,27 +18,30 @@
 
 
   <dependencies>
+    <!-- Dashbuilder API -->
+    <dependency>
+      <groupId>org.dashbuilder</groupId>
+      <artifactId>dashbuilder-api</artifactId>
+    </dependency>
+
     <!-- Dashbuilder client -->
     <dependency>
       <groupId>org.dashbuilder</groupId>
-      <artifactId>dashbuilder-client-api</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.dashbuilder</groupId>
-      <artifactId>dashbuilder-client-js</artifactId>
-      <version>${project.version}</version>
+      <artifactId>dashbuilder-ui-common</artifactId>
     </dependency>
 
     <!-- Google lib -->
     <dependency>
       <groupId>org.dashbuilder</groupId>
       <artifactId>dashbuilder-renderer-google</artifactId>
-      <version>${project.version}</version>
     </dependency>
 
     <!-- KPI Viewer -->
+    <dependency>
+      <groupId>org.dashbuilder</groupId>
+      <artifactId>dashbuilder-kpi-viewer-api</artifactId>
+    </dependency>
+
     <dependency>
       <groupId>org.dashbuilder</groupId>
       <artifactId>dashbuilder-kpi-viewer-backend</artifactId>
