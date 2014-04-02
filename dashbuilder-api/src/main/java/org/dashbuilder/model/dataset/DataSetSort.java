@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2014 JBoss Inc
+ * Copyright (C) 2012 JBoss Inc
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,15 +15,9 @@
  */
 package org.dashbuilder.model.dataset;
 
-import org.jboss.errai.common.client.api.annotations.Portable;
+/**
+ * A filter over a data set
+ */
+public class DataSetSort implements DataSetOperation {
 
-@Portable
-public enum ColumnType {
-    DATE,
-    NUMBER,
-    LABEL;
-
-    public static ColumnType getByName(String name) {
-        return valueOf(name.toUpperCase());
-    }
 }

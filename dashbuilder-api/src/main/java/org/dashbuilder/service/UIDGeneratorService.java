@@ -13,17 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbuilder.model.dataset;
+package org.dashbuilder.service;
 
-import org.jboss.errai.common.client.api.annotations.Portable;
+import org.dashbuilder.model.dataset.DataSet;
+import org.dashbuilder.model.dataset.DataSetMetadata;
+import org.dashbuilder.model.dataset.DataSetOperation;
+import org.jboss.errai.bus.server.annotations.Remote;
 
-@Portable
-public enum ColumnType {
-    DATE,
-    NUMBER,
-    LABEL;
+/**
+ * Interface for generating UIDs
+ */
+@Remote
+public interface UIDGeneratorService {
 
-    public static ColumnType getByName(String name) {
-        return valueOf(name.toUpperCase());
-    }
+
 }

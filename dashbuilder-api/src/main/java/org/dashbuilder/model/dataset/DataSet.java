@@ -20,6 +20,17 @@ import java.util.List;
 public interface DataSet {
 
     /**
+     * The unique dataset identifier.
+     */
+    String getUID();
+
+    /**
+     * The data set this one derives from.
+     * @return null if this data set is root.
+     */
+    DataSet getParent();
+
+    /**
      * The dataset columns
      */
     List<DataColumn> getColumns();
@@ -28,6 +39,11 @@ public interface DataSet {
      * Get a column by its id.
      */
     DataColumn getColumnById(String id);
+
+    /**
+     * Add a brand new column.
+     */
+    DataSet addColumn(String name, ColumnType type);
 
     /**
      * Get the number of rows in the dataset.
@@ -40,5 +56,12 @@ public interface DataSet {
      * @param column The cell column (the first column is 0).
      */
     Object getValueAt(int row, int column);
+
+    /**
+     * Set the value at a given cell.
+     * @param row The cell row (the first row is 0).
+     * @param column The cell column (the first column is 0).
+     */
+    DataSet setValueAt(int row, int column, Object value);
 
 }

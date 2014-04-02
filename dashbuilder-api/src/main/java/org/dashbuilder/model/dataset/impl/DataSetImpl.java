@@ -17,6 +17,7 @@ package org.dashbuilder.model.dataset.impl;
 
 import java.util.List;
 
+import org.dashbuilder.model.dataset.ColumnType;
 import org.dashbuilder.model.dataset.DataColumn;
 import org.dashbuilder.model.dataset.DataSet;
 import org.jboss.errai.common.client.api.annotations.Portable;
@@ -24,7 +25,17 @@ import org.jboss.errai.common.client.api.annotations.Portable;
 @Portable
 public class DataSetImpl implements DataSet {
 
+    protected String uid;
+    protected DataSetImpl parent;
     protected List<DataColumn> columns;
+
+    public String getUID() {
+        return uid;
+    }
+
+    public DataSet getParent() {
+        return parent;
+    }
 
     public List<DataColumn> getColumns() {
         return columns;
@@ -39,6 +50,14 @@ public class DataSetImpl implements DataSet {
             if (column.getId().equals(id)) return column;
         }
         return null;
+    }
+
+    public DataSet addColumn(String name, ColumnType type) {
+        DataColumnImpl c = new DataColumnImpl();
+        c.setName(name);
+        c.setColumnType(type);
+        columns.add(c);
+        return this;
     }
 
     public boolean isEmpty() {
@@ -59,5 +78,17 @@ public class DataSetImpl implements DataSet {
 
         DataColumn columnObj = columns.get(column);
         return columnObj.getValues().get(row);
+    }
+
+    public DataSet setValueAt(int row, int column, Object value) {
+        if (columns == null || columns.isEmpty()) return null;
+        if (column >= columns.size()) return null;
+        DataColumn columnObj = columns.get(column);
+        List l = columnObj.getValues();
+        if (row > l.size()) return null;
+        if (row == l.size()) l.add(value);
+        l.set(row, value);
+        return this;
+
     }
 }
