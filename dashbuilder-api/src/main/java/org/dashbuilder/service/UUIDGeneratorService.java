@@ -21,10 +21,14 @@ import org.dashbuilder.model.dataset.DataSetOperation;
 import org.jboss.errai.bus.server.annotations.Remote;
 
 /**
- * Interface for generating UUIDs
+ * Service for obtaining UUIDs
  */
 @Remote
 public interface UUIDGeneratorService {
 
-
+    /**
+     * Generates a brand new UUID in base-64 and without characters forbidden in URLs (plus sign, equal, slash and ampersand)
+     * @return A 22 character length, base-64 and URL-safe string.
+     */
+    String newUUID();
 }

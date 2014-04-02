@@ -20,24 +20,34 @@ import java.util.UUID;
 import javax.enterprise.context.ApplicationScoped;
 
 import org.apache.commons.codec.binary.Base64;
-import org.dashbuilder.service.UUIDGeneratorService;
 
 /**
  * UUIDs generator tool
  */
 @ApplicationScoped
-public class UUIDGenerator implements UUIDGeneratorService {
+public class UUIDGenerator {
 
+    /**
+     * Creates a brand new UUID
+     * @return A 36 character length string
+     */
     public String newUuid() {
         UUID uuid = UUID.randomUUID();
         return uuid.toString();
     }
 
+    /**
+     * Creates a brand new UUID in base-64 and without characters forbidden in URLs (plus sign, equal, slash and ampersand)
+     * @return A 22 character length, base-64 and URL-safe string
+     */
     public String newUuidBase64() {
         String uuidStr = newUuid();
         return uuidToBase64(uuidStr);
     }
 
+    /**
+     * Converts an un-encoded 36 character UUID to a base-64 and URL-safe string.
+     */
     public String uuidToBase64(String str) {
         Base64 base64 = new Base64();
         UUID uuid = UUID.fromString(str);
@@ -47,6 +57,9 @@ public class UUIDGenerator implements UUIDGeneratorService {
         return base64.encodeBase64URLSafeString(bb.array());
     }
 
+    /**
+     * Converts back a base-64 and URL-safe string to its original 36 character representation.
+     */
     public String uuidFromBase64(String str) {
         Base64 base64 = new Base64();
         byte[] bytes = base64.decodeBase64(str);

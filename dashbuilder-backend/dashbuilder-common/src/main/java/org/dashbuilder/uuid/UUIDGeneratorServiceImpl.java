@@ -15,14 +15,21 @@
  */
 package org.dashbuilder.uuid;
 
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+
 import org.dashbuilder.service.UUIDGeneratorService;
 import org.jboss.errai.bus.server.annotations.Service;
 
-/**
- * Interface for generating UIDs
- */
 @Service
+@ApplicationScoped
 public class UUIDGeneratorServiceImpl implements UUIDGeneratorService {
 
+    @Inject
+    protected UUIDGenerator uuidGenerator;
 
+    public String newUUID() {
+        String uuid = uuidGenerator.newUuidBase64();
+        return uuid;
+    }
 }
