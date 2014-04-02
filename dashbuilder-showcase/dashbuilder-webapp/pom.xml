@@ -24,6 +24,17 @@
       <artifactId>dashbuilder-api</artifactId>
     </dependency>
 
+    <!-- Dashbuilder Backend -->
+    <dependency>
+      <groupId>org.dashbuilder</groupId>
+      <artifactId>dashbuilder-common</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.dashbuilder</groupId>
+      <artifactId>dashbuilder-provider-core</artifactId>
+    </dependency>
+
     <!-- Dashbuilder client -->
     <dependency>
       <groupId>org.dashbuilder</groupId>

@@ -40,6 +40,19 @@
         <version>${project.version}</version>
       </dependency>
 
+      <!-- Dashbuilder Backend -->
+      <dependency>
+        <groupId>org.dashbuilder</groupId>
+        <artifactId>dashbuilder-common</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.dashbuilder</groupId>
+        <artifactId>dashbuilder-provider-core</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+
       <!-- Dashbuilder UI -->
       <dependency>
         <groupId>org.dashbuilder</groupId>
