@@ -16,6 +16,7 @@
 package org.dashbuilder.model.dataset.impl;
 
 import java.util.List;
+import java.util.ArrayList;
 
 import org.dashbuilder.model.dataset.ColumnType;
 import org.dashbuilder.model.dataset.DataColumn;
@@ -24,10 +25,10 @@ import org.jboss.errai.common.client.api.annotations.Portable;
 @Portable
 public class DataColumnImpl implements DataColumn {
 
-    protected String id;
-    protected String name;
-    protected ColumnType columnType;
-    protected List values;
+    protected String id = null;
+    protected String name = null;
+    protected ColumnType columnType = ColumnType.LABEL;
+    protected List values = new ArrayList();
 
     public String getId() {
         return id;

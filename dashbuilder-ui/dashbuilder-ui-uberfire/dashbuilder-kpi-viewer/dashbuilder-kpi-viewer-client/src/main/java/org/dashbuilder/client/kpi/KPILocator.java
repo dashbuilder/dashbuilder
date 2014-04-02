@@ -94,7 +94,7 @@ public class KPILocator {
 
             // Create the KPI
             KPIImpl kpi = new KPIImpl();
-            kpi.setUID("sample" + i);
+            kpi.setUUID("sample" + i);
             kpi.setDataSet(dataSet);
             kpi.setDataDisplayer(displayer);
             kpiList.add(kpi);
@@ -103,7 +103,7 @@ public class KPILocator {
 
     public KPI getKPI(String uid) {
         for (KPI kpi : kpiList) {
-            if (kpi.getUID().equals(uid)) return kpi;
+            if (kpi.getUUID().equals(uid)) return kpi;
         }
         // Return the first sample by default.
         return kpiList.get(0);

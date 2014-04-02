@@ -28,7 +28,7 @@ public interface DataSetMetadata {
     String getUID();
 
     /**
-     * Return the uid of the data set this one is derived from.
+     * Return the uuid of the data set this one is derived from.
      * @return null if this data set has no parent.
      */
     String getParentUID();

@@ -24,28 +24,28 @@ public interface DataSetManager {
     /**
      * Create a brand new data set instance.
      */
-    DataSet createDataSet();
+    DataSet createDataSet(String uuid);
 
     /**
      * Get the current data set for the given provider.
      * The data set returned might vary depending whether there are active filters applied on the provider or not.
      */
-    DataSet getDataSet(String uid) throws Exception;
+    DataSet getDataSet(String uuid) throws Exception;
 
     /**
      * Registers the specified DataSet instance.
      */
-    void registerDataSet(String uid, DataSet dataSet) throws Exception;
+    void registerDataSet(DataSet dataSet);
 
     /**
      * Discard any active filter and ensure the most up to date data is loaded and returned.
      */
-    DataSet refreshDataSet(String uid) throws Exception;
+    DataSet refreshDataSet(String uuid) throws Exception;
 
     /**
      * Apply a filter on the specified data set.
      *
      * @param ops The list of operations to apply to the specified data set.
      */
-    DataSet transformDataSet(String uid, DataSetOperation... ops) throws Exception;
+    DataSet transformDataSet(String uuid, DataSetOperation... ops) throws Exception;
 }

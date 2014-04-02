@@ -16,6 +16,7 @@
 package org.dashbuilder.model.dataset.impl;
 
 import java.util.List;
+import java.util.ArrayList;
 
 import org.dashbuilder.model.dataset.ColumnType;
 import org.dashbuilder.model.dataset.DataColumn;
@@ -25,12 +26,16 @@ import org.jboss.errai.common.client.api.annotations.Portable;
 @Portable
 public class DataSetImpl implements DataSet {
 
-    protected String uid;
-    protected DataSetImpl parent;
-    protected List<DataColumn> columns;
+    protected String uuid = null;
+    protected DataSetImpl parent = null;
+    protected List<DataColumn> columns = new ArrayList<DataColumn>();
 
-    public String getUID() {
-        return uid;
+    public String getUUID() {
+        return uuid;
+    }
+
+    public void setUUID(String uuid) {
+        this.uuid = uuid;
     }
 
     public DataSet getParent() {

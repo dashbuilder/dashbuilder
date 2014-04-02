@@ -13,44 +13,46 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbuilder.dataset;
+package org.dashbuilder.client.dataset;
 
-import java.util.HashMap;
-import java.util.Map;
+import javax.inject.Inject;
 
 import org.dashbuilder.model.dataset.DataSet;
 import org.dashbuilder.model.dataset.DataSetManager;
+import org.dashbuilder.model.dataset.DataSetMetadata;
 import org.dashbuilder.model.dataset.DataSetOperation;
-import org.dashbuilder.model.dataset.impl.DataSetImpl;
+import org.dashbuilder.service.DataSetService;
+import org.jboss.errai.common.client.api.Caller;
+import org.jboss.errai.common.client.api.RemoteCallback;
 
-public class DataSetManagerImpl implements DataSetManager {
+public class ClientDataSetManager implements DataSetManager {
 
-    protected Map<String,DataSet> dataSetCache = new HashMap<String, DataSet>();
+    @Inject
+    Caller<DataSetService> dataSetService;
 
     public DataSet createDataSet(String uuid) {
-        DataSetImpl dataSet = new DataSetImpl();
-        dataSet.setUUID(uuid);
+        ClientDataSet dataSet = new ClientDataSet();
         return dataSet;
     }
 
     public DataSet getDataSet(String uuid) throws Exception {
-        DataSet dataSet = dataSetCache.get(uuid);
-        if (dataSet == null) throw new Exception("DataSet not found for UUID: " + uuid);
-
-        return dataSet;
+        dataSetService.call(
+                new RemoteCallback<DataSetMetadata>() {
+                    public void callback(DataSetMetadata result) {
+                    }
+                });
+        return null;
     }
 
     public void registerDataSet(DataSet dataSet) {
-        if (dataSet != null && dataSet.getUUID() != null) {
-            dataSetCache.put(dataSet.getUUID(), dataSet);
-        }
+        //To change body of implemented methods use File | Settings | File Templates.
     }
 
     public DataSet refreshDataSet(String uuid) throws Exception {
-        return null;
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
     public DataSet transformDataSet(String uuid, DataSetOperation... ops) throws Exception {
-        return null;
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 }

@@ -20,7 +20,7 @@ import org.dashbuilder.model.displayer.DataDisplayer;
 
 public interface KPI {
 
-    String getUID();
+    String getUUID();
     DataDisplayer getDataDisplayer();
     DataSet getDataSet();
 }

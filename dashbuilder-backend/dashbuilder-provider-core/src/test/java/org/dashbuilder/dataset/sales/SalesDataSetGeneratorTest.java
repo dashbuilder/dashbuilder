@@ -13,10 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbuilder.uuid;
+package org.dashbuilder.dataset.sales;
 
+import java.util.Calendar;
 import javax.inject.Inject;
 
+import org.dashbuilder.model.dataset.DataSet;
 import org.dashbuilder.test.ShrinkWrapHelper;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -24,13 +26,11 @@ import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
 import static org.fest.assertions.api.Assertions.*;
 
-/**
- * UUIDs generator tool test
- */
 @RunWith(Arquillian.class)
-public class UUIDGeneratorTest {
+public class SalesDataSetGeneratorTest {
 
     @Deployment
     public static Archive<?> createTestArchive()  {
@@ -39,29 +39,15 @@ public class UUIDGeneratorTest {
     }
 
     @Inject
-    private UUIDGenerator uuidGenerator;
+    private SalesDataSetGenerator dataSetGenerator;
 
     @Test
-    public void testUUIDLength() {
-        String uuid = uuidGenerator.newUuidBase64();
-        assertThat(uuid.length()).isEqualTo(22);
-    }
-
-    @Test
-    public void testURLSafe() {
-        String uuid = uuidGenerator.newUuidBase64();
-        assertThat(uuid.contains("\u003d")).isFalse();
-        assertThat(uuid.contains("\u002f")).isFalse();
-        assertThat(uuid.contains("\u002b")).isFalse();
-        assertThat(uuid.contains("\u0026")).isFalse();
-    }
-
-    @Test
-    public void testDecoding() {
-        String uuid = uuidGenerator.newUuid();
-        String base64 = uuidGenerator.uuidToBase64(uuid);
-        String back = uuidGenerator.uuidFromBase64(base64);
-        assertThat(back).isEqualTo(uuid);
+    public void generateDataSet() {
+        int perMonth = 30;
+        int startYear = Calendar.getInstance().get(Calendar.YEAR) - 2;
+        int endYear = Calendar.getInstance().get(Calendar.YEAR) + 2;
+        DataSet dataSet = dataSetGenerator.generateDataSet("test", dataSetGenerator.randomOpportunities(perMonth, startYear, endYear));
+        assertThat(dataSet.getRowCount()).isGreaterThan(0);
     }
 
 }

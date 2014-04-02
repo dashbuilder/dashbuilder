@@ -22,7 +22,7 @@ public interface DataSet {
     /**
      * The unique dataset identifier.
      */
-    String getUID();
+    String getUUID();
 
     /**
      * The data set this one derives from.

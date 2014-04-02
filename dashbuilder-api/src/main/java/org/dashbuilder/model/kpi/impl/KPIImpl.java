@@ -21,16 +21,16 @@ import org.dashbuilder.model.kpi.KPI;
 
 public class KPIImpl implements KPI {
 
-    protected String UID;
+    protected String UUID;
     protected DataDisplayer dataDisplayer;
     protected DataSet dataSet;
 
-    public String getUID() {
-        return UID;
+    public String getUUID() {
+        return UUID;
     }
 
-    public void setUID(String UID) {
-        this.UID = UID;
+    public void setUUID(String UUID) {
+        this.UUID = UUID;
     }
 
     public DataSet getDataSet() {
