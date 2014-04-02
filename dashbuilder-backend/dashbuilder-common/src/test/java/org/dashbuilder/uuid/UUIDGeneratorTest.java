@@ -15,11 +15,8 @@
  */
 package org.dashbuilder.uuid;
 
-import java.util.UUID;
-import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
-import org.dashbuilder.service.UIDGeneratorService;
 import org.dashbuilder.test.ShrinkWrapHelper;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -44,10 +41,28 @@ public class UUIDGeneratorTest {
     @Inject
     private UUIDGenerator uuidGenerator;
 
-
     @Test
     public void testUUIDLength() {
-        String uuid = uuidGenerator.generateUUID();
-        assertThat(uuid).isNotNull();
+        String uuid = uuidGenerator.newUuidBase64();
+        assertThat(uuid.length()).isEqualTo(22);
     }
+
+    @Test
+    public void testURLSafe() {
+        String uuid = uuidGenerator.newUuidBase64();
+        assertThat(uuid.contains("\u003d")).isFalse();
+        assertThat(uuid.contains("\u002f")).isFalse();
+        assertThat(uuid.contains("\u002b")).isFalse();
+        assertThat(uuid.contains("\u0026")).isFalse();
+    }
+
+    @Test
+    public void testDecoding() {
+        String uuid = uuidGenerator.newUuid();
+        String base64 = uuidGenerator.uuidToBase64(uuid);
+        String back = uuidGenerator.uuidFromBase64(base64);
+        assertThat(back).isEqualTo(uuid);
+    }
+
 }
+

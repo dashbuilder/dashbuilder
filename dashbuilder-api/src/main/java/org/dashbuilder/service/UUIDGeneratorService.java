@@ -21,10 +21,10 @@ import org.dashbuilder.model.dataset.DataSetOperation;
 import org.jboss.errai.bus.server.annotations.Remote;
 
 /**
- * Interface for generating UIDs
+ * Interface for generating UUIDs
  */
 @Remote
-public interface UIDGeneratorService {
+public interface UUIDGeneratorService {
 
 
 }

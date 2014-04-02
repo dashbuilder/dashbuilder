@@ -49,6 +49,14 @@
 
       <dependency>
         <groupId>org.dashbuilder</groupId>
+        <artifactId>dashboard-common</artifactId>
+        <version>${project.version}</version>
+        <type>test-jar</type>
+        <scope>test</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>org.dashbuilder</groupId>
         <artifactId>dashbuilder-provider-core</artifactId>
         <version>${project.version}</version>
       </dependency>

@@ -15,22 +15,43 @@
  */
 package org.dashbuilder.uuid;
 
+import java.nio.ByteBuffer;
 import java.util.UUID;
-import javax.crypto.KeyGenerator;
 import javax.enterprise.context.ApplicationScoped;
 
-import org.apache.commons.codec.binary.StringUtils;
-import org.dashbuilder.service.UIDGeneratorService;
-import org.jboss.errai.bus.server.annotations.Service;
+import org.apache.commons.codec.binary.Base64;
+import org.dashbuilder.service.UUIDGeneratorService;
 
 /**
  * UUIDs generator tool
  */
 @ApplicationScoped
-public class UUIDGenerator implements UIDGeneratorService {
+public class UUIDGenerator implements UUIDGeneratorService {
 
-     public String generateUUID() {
-         UUID uuid = UUID.randomUUID();
-         return uuid.toString();
-     }
+    public String newUuid() {
+        UUID uuid = UUID.randomUUID();
+        return uuid.toString();
+    }
+
+    public String newUuidBase64() {
+        String uuidStr = newUuid();
+        return uuidToBase64(uuidStr);
+    }
+
+    public String uuidToBase64(String str) {
+        Base64 base64 = new Base64();
+        UUID uuid = UUID.fromString(str);
+        ByteBuffer bb = ByteBuffer.wrap(new byte[16]);
+        bb.putLong(uuid.getMostSignificantBits());
+        bb.putLong(uuid.getLeastSignificantBits());
+        return base64.encodeBase64URLSafeString(bb.array());
+    }
+
+    public String uuidFromBase64(String str) {
+        Base64 base64 = new Base64();
+        byte[] bytes = base64.decodeBase64(str);
+        ByteBuffer bb = ByteBuffer.wrap(bytes);
+        UUID uuid = new UUID(bb.getLong(), bb.getLong());
+        return uuid.toString();
+    }
 }

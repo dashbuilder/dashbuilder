@@ -15,15 +15,14 @@
  */
 package org.dashbuilder.uuid;
 
-import org.dashbuilder.service.UIDGeneratorService;
-import org.jboss.errai.bus.server.annotations.Remote;
+import org.dashbuilder.service.UUIDGeneratorService;
 import org.jboss.errai.bus.server.annotations.Service;
 
 /**
  * Interface for generating UIDs
  */
 @Service
-public class UUIDGeneratorServiceImpl implements UIDGeneratorService {
+public class UUIDGeneratorServiceImpl implements UUIDGeneratorService {
 
 
 }
