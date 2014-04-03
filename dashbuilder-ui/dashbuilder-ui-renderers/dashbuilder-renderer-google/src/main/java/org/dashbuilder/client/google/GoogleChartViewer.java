@@ -32,7 +32,32 @@ public abstract class GoogleChartViewer extends DataDisplayerViewer {
     public abstract Widget drawChart();
     public abstract String getPackage();
 
-    public abstract void onApiReady();
+    protected boolean isApiReady = false;
+    protected boolean isDataReady = false;
+
+    public boolean isDataReady() {
+        return isDataReady;
+    }
+
+    public boolean isApiReady() {
+        return isApiReady;
+    }
+
+    public boolean isDisplayReady() {
+        return isApiReady && isDataReady;
+    }
+
+    public void onDataReady() {
+        isDataReady = true;
+        if (isDisplayReady()) drawChart();
+    }
+
+    public void onApiReady() {
+        isApiReady = true;
+        if (isDisplayReady()) {
+            drawChart();
+        }
+    }
 
     public AbstractDataTable createTable() {
         DataTable data = DataTable.create();

@@ -36,32 +36,6 @@ public class GoogleBarChartViewer extends GoogleChartViewer {
     private GoogleRenderer googleRenderer;
 
     FlowPanel panel = new FlowPanel();
-    protected boolean isApiReady = false;
-    protected boolean isDataReady = false;
-
-    public boolean isDataReady() {
-        return isDataReady;
-    }
-
-    public boolean isApiReady() {
-        return isApiReady;
-    }
-
-    public boolean isDisplayReady() {
-        return isApiReady && isDataReady;
-    }
-
-    public void onDataReady() {
-        isDataReady = true;
-        if (isDisplayReady()) drawChart();
-    }
-
-    public void onApiReady() {
-        isApiReady = true;
-        if (isDisplayReady()) {
-            drawChart();
-        }
-    }
 
     @Override
     public String getPackage() {
