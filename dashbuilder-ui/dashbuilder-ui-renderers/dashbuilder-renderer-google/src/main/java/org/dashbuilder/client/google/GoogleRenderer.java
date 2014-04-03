@@ -55,7 +55,7 @@ public class GoogleRenderer {
         Runnable onLoadCallback = new Runnable() {
             public void run() {
                 for (GoogleChartViewer viewer : chartViewerList) {
-                    viewer.drawChart();
+                    viewer.onApiReady();
                 }
                 chartViewerList.clear();
             }

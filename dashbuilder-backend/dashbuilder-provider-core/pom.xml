@@ -65,6 +65,11 @@
       <artifactId>dashbuilder-api</artifactId>
     </dependency>
 
+    <dependency>
+      <groupId>org.dashbuilder</groupId>
+      <artifactId>dashbuilder-common</artifactId>
+    </dependency>
+
     <!-- Unit testing -->
 
     <dependency>

@@ -32,6 +32,8 @@ public abstract class GoogleChartViewer extends DataDisplayerViewer {
     public abstract Widget drawChart();
     public abstract String getPackage();
 
+    public abstract void onApiReady();
+
     public AbstractDataTable createTable() {
         DataTable data = DataTable.create();
 

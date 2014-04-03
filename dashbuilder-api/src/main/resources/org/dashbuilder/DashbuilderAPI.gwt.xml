@@ -22,5 +22,6 @@
 
   <source path='model'/>
   <source path='service'/>
+  <source path='event'/>
 
 </module>

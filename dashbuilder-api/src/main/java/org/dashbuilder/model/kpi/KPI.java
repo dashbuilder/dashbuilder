@@ -15,6 +15,7 @@
  */
 package org.dashbuilder.model.kpi;
 
+import org.dashbuilder.model.dataset.DataLookup;
 import org.dashbuilder.model.dataset.DataSet;
 import org.dashbuilder.model.displayer.DataDisplayer;
 
@@ -22,5 +23,5 @@ public interface KPI {
 
     String getUUID();
     DataDisplayer getDataDisplayer();
-    DataSet getDataSet();
+    DataLookup getDataLookup();
 }

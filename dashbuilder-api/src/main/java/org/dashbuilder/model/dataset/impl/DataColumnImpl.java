@@ -31,6 +31,9 @@ public class DataColumnImpl implements DataColumn {
     protected List values = new ArrayList();
 
     public String getId() {
+        if (id == null) {
+            id = name.toLowerCase();
+        }
         return id;
     }
 

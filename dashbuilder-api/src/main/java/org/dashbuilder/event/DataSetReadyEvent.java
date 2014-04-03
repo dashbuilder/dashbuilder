@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2014 JBoss Inc
+ * Copyright (C) 2012 JBoss Inc
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,23 +13,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbuilder.service;
+package org.dashbuilder.event;
 
 import org.dashbuilder.model.dataset.DataLookup;
 import org.dashbuilder.model.dataset.DataSet;
-import org.dashbuilder.model.dataset.DataSetMetadata;
-import org.dashbuilder.model.dataset.DataSetOperation;
-import org.jboss.errai.bus.server.annotations.Remote;
+import org.jboss.errai.common.client.api.annotations.Portable;
 
 /**
- * Interface for requesting access to data sets stored in the backend.
+ * Event fired when a data set is ready for usage.
  */
-@Remote
-public interface DataSetService {
+@Portable
+public class DataSetReadyEvent {
 
-    DataSetMetadata getDataSetMetadata(String uid);
-    DataSetMetadata refreshDataSet(String uid);
-    DataSetMetadata transformDataSet(String uid, DataSetOperation... ops);
+    protected DataLookup request;
+    protected DataSet dataSet;
 
-    DataSet lookupDataSet(DataLookup lookup);
+    public DataSetReadyEvent() {
+    }
+
+    public DataSetReadyEvent(DataLookup request, DataSet dataSet) {
+        this();
+        this.request = request;
+        this.dataSet = dataSet;
+    }
+
+    public DataLookup getRequest() {
+        return request;
+    }
+
+    public DataSet getDataSet() {
+        return dataSet;
+    }
 }

@@ -15,20 +15,25 @@
  */
 package org.dashbuilder.client.dataset;
 
+import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
+import org.dashbuilder.event.DataSetReadyEvent;
+import org.dashbuilder.model.dataset.DataLookup;
 import org.dashbuilder.model.dataset.DataSet;
-import org.dashbuilder.model.dataset.DataSetManager;
 import org.dashbuilder.model.dataset.DataSetMetadata;
-import org.dashbuilder.model.dataset.DataSetOperation;
 import org.dashbuilder.service.DataSetService;
 import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.common.client.api.RemoteCallback;
 
-public class ClientDataSetManager implements DataSetManager {
+public class ClientDataSetManager {
 
     @Inject
-    Caller<DataSetService> dataSetService;
+    private Caller<DataSetService> dataSetService;
+
+    @Inject
+    private Event<DataSetReadyEvent> dataSetReadyEvent;
+
 
     public DataSet createDataSet(String uuid) {
         ClientDataSet dataSet = new ClientDataSet();
@@ -39,8 +44,9 @@ public class ClientDataSetManager implements DataSetManager {
         dataSetService.call(
                 new RemoteCallback<DataSetMetadata>() {
                     public void callback(DataSetMetadata result) {
+
                     }
-                });
+                }).getDataSetMetadata(uuid);
         return null;
     }
 
@@ -52,7 +58,13 @@ public class ClientDataSetManager implements DataSetManager {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
-    public DataSet transformDataSet(String uuid, DataSetOperation... ops) throws Exception {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    public void lookupDataSet(final DataLookup request) {
+        dataSetService.call(
+            new RemoteCallback<DataSet>() {
+                public void callback(DataSet result) {
+                    DataSetReadyEvent event = new DataSetReadyEvent(request, result);
+                    dataSetReadyEvent.fire(event);
+                }
+            }).lookupDataSet(request);
     }
 }

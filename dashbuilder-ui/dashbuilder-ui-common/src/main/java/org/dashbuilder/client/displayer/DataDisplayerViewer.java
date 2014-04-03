@@ -19,7 +19,7 @@ import com.google.gwt.user.client.ui.Composite;
 import org.dashbuilder.model.dataset.DataSet;
 import org.dashbuilder.model.displayer.DataDisplayer;
 
-public class DataDisplayerViewer extends Composite {
+public abstract class DataDisplayerViewer extends Composite {
 
     protected DataSet dataSet;
     protected DataDisplayer dataDisplayer;
@@ -39,4 +39,9 @@ public class DataDisplayerViewer extends Composite {
     public void setDataDisplayer(DataDisplayer dataDisplayer) {
         this.dataDisplayer = dataDisplayer;
     }
+
+    /**
+     * Invoked when the data set has been fetched and it's ready for display.
+     */
+    public abstract void onDataReady();
 }

@@ -20,6 +20,8 @@ import javax.inject.Inject;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
+import org.dashbuilder.model.dataset.DataLookup;
+import org.dashbuilder.model.dataset.DataSet;
 import org.dashbuilder.model.displayer.DataDisplayer;
 import org.dashbuilder.model.kpi.KPI;
 import org.dashbuilder.client.displayer.DataDisplayerViewer;
@@ -30,18 +32,32 @@ public class KPIView extends Composite implements KPIPresenter.View {
     @Inject
     protected DataDisplayerViewerLocator viewerLocator;
 
+    protected FlowPanel container = new FlowPanel();
+    protected Label label = new Label();
+    protected DataDisplayerViewer viewer;
+
     public void init(KPI kpi) {
-        FlowPanel container = new FlowPanel();
         try {
             DataDisplayer displayer = kpi.getDataDisplayer();
-            DataDisplayerViewer viewer = viewerLocator.lookupViewer(displayer);
-            viewer.setDataSet(kpi.getDataSet());
+            viewer = viewerLocator.lookupViewer(displayer);
             viewer.setDataDisplayer(kpi.getDataDisplayer());
-            container.add(viewer);
         } catch (Exception e) {
-            Label messageLabel = new Label(e.getMessage());
-            container.add(messageLabel);
+            label.setText(e.getMessage());
         }
+        container.add(label);
         initWidget(container);
+    }
+
+    public void onDataLookup(DataLookup lookup) {
+        label.setText("Loading data ...");
+        container.add(label);
+    }
+
+    public void onDataReady(DataSet dataSet) {
+        container.remove(label);
+        container.add(viewer);
+
+        viewer.setDataSet(dataSet);
+        viewer.onDataReady();
     }
 }

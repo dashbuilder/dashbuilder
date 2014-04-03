@@ -16,9 +16,14 @@
 package org.dashbuilder.client.kpi;
 
 import javax.enterprise.context.Dependent;
+import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
 import com.google.gwt.user.client.ui.IsWidget;
+import org.dashbuilder.client.dataset.ClientDataSetManager;
+import org.dashbuilder.event.DataSetReadyEvent;
+import org.dashbuilder.model.dataset.DataLookup;
+import org.dashbuilder.model.dataset.DataSet;
 import org.dashbuilder.model.kpi.KPI;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
 import org.uberfire.client.annotations.WorkbenchPartView;
@@ -33,6 +38,8 @@ public class KPIPresenter {
     public interface View extends IsWidget {
 
         void init(KPI kpi);
+        void onDataLookup(DataLookup request);
+        void onDataReady(DataSet dataSet);
     }
 
     /** The KPI to display */
@@ -41,15 +48,36 @@ public class KPIPresenter {
     /** The KPI locator */
     @Inject private KPILocator kpiLocator;
 
+    /** The data set manager */
+    @Inject private ClientDataSetManager dataSetManager;
+
     /** The KPI widget */
     @Inject private View view;
 
     @OnStartup
     public void onStartup( final PlaceRequest placeRequest) {
+        // Locate the KPI specified as a parameter.
         String kpiUid = placeRequest.getParameter( "kpi", "sample0" );
         this.kpi = kpiLocator.getKPI(kpiUid);
-
         view.init(kpi);
+
+        // Issue a data set lookup request
+        DataLookup dt = kpi.getDataLookup();
+        dataSetManager.lookupDataSet(dt);
+
+        // Put the view on data lookup mode.
+        view.onDataLookup(dt);
+    }
+
+    /**
+     * Called when the data set has been fetched.
+     */
+    public void onDataReady(@Observes DataSetReadyEvent event) {
+        String uuidLookup = kpi.getDataLookup().getDataSetUUID();
+        String uuidFetched = event.getDataSet().getUUID();
+        if (uuidLookup.equals(uuidFetched)) {
+            view.onDataReady(event.getDataSet());
+        }
     }
 
     @WorkbenchPartTitle

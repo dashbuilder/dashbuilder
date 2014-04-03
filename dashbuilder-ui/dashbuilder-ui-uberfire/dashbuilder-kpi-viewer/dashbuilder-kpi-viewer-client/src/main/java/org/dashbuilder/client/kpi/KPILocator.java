@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 
+import org.dashbuilder.model.dataset.DataLookup;
 import org.dashbuilder.model.dataset.DataSet;
 import org.dashbuilder.model.displayer.DataDisplayer;
 import org.dashbuilder.client.js.JsDataDisplayer;
@@ -77,25 +78,23 @@ public class KPILocator {
         "     \"title\": \"Sales rate by country\",\n" +
         "     \"type\": \"barchart\",\n" +
         "     \"renderer\": \"google\",\n" +
-        "     \"xAxis\": {\"columnId\": \"country\", \"displayName\": \"Country\"},\n" +
-        "     \"yAxes\": [{\"columnId\": \"salesrate\", \"displayName\": \"Sales rate\"}]\n" +
+        "     \"xAxis\": {\"columnId\": \"department\", \"displayName\": \"Country\"},\n" +
+        "     \"yAxes\": [{\"columnId\": \"amount\", \"displayName\": \"Sales rate\"}]\n" +
         " }"};
 
     private List<KPI> kpiList = new ArrayList<KPI>();
 
     @PostConstruct
     public void init() {
-        for (int i = 0; i < SAMPLE_DATASETS.length; i++) {
+        for (int i = 0; i < SAMPLE_DISPLAYERS.length; i++) {
             // Parse the JSON
-            JsDataSet jsDataSet = JsDataSet.fromJson(SAMPLE_DATASETS[i]);
             JsDataDisplayer jsDisplayer = JsDataDisplayer.fromJson(SAMPLE_DISPLAYERS[i]);
-            DataSet dataSet = JsObjectHelper.createDataSet(jsDataSet);
             DataDisplayer displayer = JsObjectHelper.createDataDisplayer(jsDisplayer);
 
             // Create the KPI
             KPIImpl kpi = new KPIImpl();
             kpi.setUUID("sample" + i);
-            kpi.setDataSet(dataSet);
+            kpi.setDataLookup(new DataLookup("sample" + i));
             kpi.setDataDisplayer(displayer);
             kpiList.add(kpi);
         }
