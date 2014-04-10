@@ -15,21 +15,53 @@
  */
 package org.dashbuilder.model.dataset.group;
 
+import org.dashbuilder.model.dataset.ColumnType;
 import org.jboss.errai.common.client.api.annotations.Portable;
 
 /**
  * The strategy defines how to split a collection of values in a set of intervals.
  */
 @Portable
-public class DomainStrategy {
+public enum DomainStrategy {
 
-    protected DomainType domainType;
+    /**
+     * The intervals are fixed of an specific size and they don't depend on the underlying data.
+     */
+    FIXED,
 
-    public DomainType getDomainType() {
-        return domainType;
+    /**
+     * The intervals depends on the underlying data plus some additional criteria such as
+     * the minimum interval size or the maximum number of intervals allowed.
+     */
+    DYNAMIC,
+
+    /**
+     * Same as FIXED but additionally each interval data is split into multiple series.
+     */
+    MULTIPLE,
+
+    /**
+     * The intervals are defined in a custom matter and are not bound to any specific generation algorithm.
+     */
+    CUSTOM;
+
+    /**
+     * Check if this strategy can be used with the specified column type.
+     */
+    public boolean isColumnTypeSupported(ColumnType ct) {
+        switch (this) {
+            case DYNAMIC:
+            case CUSTOM:
+                return true;
+
+            case FIXED:
+            case MULTIPLE:
+                return ct.equals(ColumnType.DATE) || ct.equals(ColumnType.NUMBER);
+        }
+        return false;
     }
 
-    public void setDomainType(DomainType domainType) {
-        this.domainType = domainType;
+    public static DomainStrategy getByName(String strategy) {
+        return valueOf(strategy.toUpperCase());
     }
 }

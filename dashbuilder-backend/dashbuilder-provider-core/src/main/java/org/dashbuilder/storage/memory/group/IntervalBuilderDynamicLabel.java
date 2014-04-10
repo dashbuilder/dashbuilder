@@ -18,15 +18,18 @@ package org.dashbuilder.storage.memory.group;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.enterprise.context.ApplicationScoped;
+
 import org.dashbuilder.model.dataset.DataColumn;
-import org.dashbuilder.model.dataset.group.DomainStrategy;
+import org.dashbuilder.model.dataset.group.Domain;
 
 /**
- * Interval builder for label type columns which generates one interval per label.
+ * Interval builder for label columns which generates one interval per label.
  */
-public class FixedLabelBuilder implements IntervalBuilder {
+@ApplicationScoped
+public class IntervalBuilderDynamicLabel implements IntervalBuilder {
 
-    public List<Interval> build(DataColumn column, DomainStrategy strategy) {
+    public List<Interval> build(DataColumn column, Domain domain) {
         List<Interval> result = new ArrayList<Interval>();
         indexValues(result, column.getValues());
         return result;
@@ -36,6 +39,7 @@ public class FixedLabelBuilder implements IntervalBuilder {
         for (int row = 0; row < values.size(); row++) {
             Object value = values.get(row);
             Interval interval = getInterval(result, value);
+            // TODO: create a composite interval when the maxIntervals are reached.
             if (interval == null) result.add(interval = new Interval(value == null ? null : value.toString()));
             interval.rows.add(row);
         }

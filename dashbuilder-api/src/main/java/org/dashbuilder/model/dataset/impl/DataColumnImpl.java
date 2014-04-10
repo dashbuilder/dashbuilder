@@ -25,6 +25,7 @@ import org.jboss.errai.common.client.api.annotations.Portable;
 @Portable
 public class DataColumnImpl implements DataColumn {
 
+    protected DataSetImpl dataSet = null;
     protected String id = null;
     protected String name = null;
     protected ColumnType columnType = ColumnType.LABEL;
@@ -38,6 +39,14 @@ public class DataColumnImpl implements DataColumn {
         this.name = name;
         this.columnType = columnType;
         this.values = values;
+    }
+
+    public DataSetImpl getDataSet() {
+        return dataSet;
+    }
+
+    public void setDataSet(DataSetImpl dataSet) {
+        this.dataSet = dataSet;
     }
 
     public String getId() {

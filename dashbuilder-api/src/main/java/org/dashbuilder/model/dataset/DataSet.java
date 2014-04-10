@@ -78,5 +78,4 @@ public interface DataSet {
      * @param column The cell column (the first column is 0).
      */
     DataSet setValueAt(int row, int column, Object value);
-
 }

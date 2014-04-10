@@ -77,6 +77,7 @@ public class DataSetImpl implements DataSet {
 
     public DataColumn addColumn(String id, String name, ColumnType type, List values) {
         DataColumnImpl c = new DataColumnImpl();
+        c.setDataSet(this);
         c.setId(id);
         c.setName(name);
         c.setColumnType(type);
@@ -114,6 +115,5 @@ public class DataSetImpl implements DataSet {
         if (row == l.size()) l.add(value);
         l.set(row, value);
         return this;
-
     }
 }

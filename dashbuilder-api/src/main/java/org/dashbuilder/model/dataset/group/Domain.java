@@ -23,15 +23,24 @@ import org.jboss.errai.common.client.api.annotations.Portable;
 @Portable
 public class Domain {
 
-    protected String columnId;
-    protected DomainStrategy domainStrategy;
+    protected String columnId = null;
+    protected DomainStrategy strategy = DomainStrategy.DYNAMIC;
+    protected int maxIntervals = 15;
+    protected String intervalSize = null;
 
     public Domain() {
     }
 
     public Domain(String columnId, DomainStrategy strategy) {
         this.columnId = columnId;
-        this.domainStrategy = strategy;
+        this.strategy = strategy;
+    }
+
+    public Domain(String columnId, DomainStrategy strategy, int maxIntervals, String intervalSize) {
+        this.columnId = columnId;
+        this.strategy = strategy;
+        this.maxIntervals = maxIntervals;
+        this.intervalSize = intervalSize;
     }
 
     public String getColumnId() {
@@ -42,11 +51,27 @@ public class Domain {
         this.columnId = columnId;
     }
 
-    public DomainStrategy getDomainStrategy() {
-        return domainStrategy;
+    public DomainStrategy getStrategy() {
+        return strategy;
     }
 
-    public void setDomainStrategy(DomainStrategy domainStrategy) {
-        this.domainStrategy = domainStrategy;
+    public void setStrategy(DomainStrategy strategy) {
+        this.strategy = strategy;
+    }
+
+    public int getMaxIntervals() {
+        return maxIntervals;
+    }
+
+    public void setMaxIntervals(int maxIntervals) {
+        this.maxIntervals = maxIntervals;
+    }
+
+    public String getIntervalSize() {
+        return intervalSize;
+    }
+
+    public void setIntervalSize(String intervalSize) {
+        this.intervalSize = intervalSize;
     }
 }

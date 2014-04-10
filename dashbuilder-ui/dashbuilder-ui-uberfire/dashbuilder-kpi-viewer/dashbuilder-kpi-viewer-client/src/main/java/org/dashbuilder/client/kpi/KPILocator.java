@@ -21,11 +21,7 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 
 import org.dashbuilder.model.dataset.DataSetLookup;
-import org.dashbuilder.model.dataset.group.Domain;
-import org.dashbuilder.model.dataset.group.DomainStrategy;
-import org.dashbuilder.model.dataset.group.DomainType;
-import org.dashbuilder.model.dataset.group.Range;
-import org.dashbuilder.model.dataset.group.DataSetGroup;
+import org.dashbuilder.model.dataset.DataSetLookupBuilder;
 import org.dashbuilder.model.displayer.DataDisplayer;
 import org.dashbuilder.client.js.JsDataDisplayer;
 import org.dashbuilder.client.js.JsObjectHelper;
@@ -111,22 +107,18 @@ private List<KPI> kpiList = new ArrayList<KPI>();
             kpiList.add(kpi);
         }
 
-        DomainStrategy strategy = new DomainStrategy();
-        strategy.setDomainType(DomainType.FIXED);
-
-        DataSetGroup group = new DataSetGroup();
-        Domain domain = new Domain("pipeline", strategy);
-        Range range = new Range("amount", "total", "Total amount", "sum");
-        group.addDomains(domain);
-        group.addRanges(range);
-        DataSetLookup lookup = new DataSetLookup("dataset-sales-opportunities", group);
+        DataSetLookup lookup = new DataSetLookupBuilder()
+                .uuid("dataset-sales-opportunities")
+                .domain("pipeline", "dynamic")
+                .range("amount", "total", "Total amount", "sum")
+                .build();
 
         JsDataDisplayer jsDisplayer = JsDataDisplayer.fromJson(DISPLAYER1);
         DataDisplayer displayer = JsObjectHelper.createDataDisplayer(jsDisplayer);
 
         // Create the KPI
         KPIImpl kpi = new KPIImpl();
-        kpi.setUUID("test-group");
+        kpi.setUUID("test-group-by-label");
         kpi.setDataSetLookup(lookup);
         kpi.setDataDisplayer(displayer);
         kpiList.add(kpi);

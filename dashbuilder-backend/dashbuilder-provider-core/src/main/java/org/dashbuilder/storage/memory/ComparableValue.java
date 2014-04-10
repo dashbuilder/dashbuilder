@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012 JBoss Inc
+ * Copyright (C) 2014 JBoss Inc
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,16 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbuilder.model.dataset.group;
+package org.dashbuilder.storage.memory;
 
 /**
- * The strategy interface defines how to split a collection of values in a set of intervals.
+ * A place holder for comparable values
  */
-public class FixedIntervalStrategy extends DomainStrategy {
+public class ComparableValue {
 
-    public FixedIntervalStrategy() {
-        setDomainType(DomainType.FIXED);
+    Comparable value;
+    int row;
+
+    public ComparableValue(Comparable value, int row) {
+        this.value = value;
+        this.row = row;
     }
 
+    public Comparable getValue() {
+        return value;
+    }
 
+    public int getRow() {
+        return row;
+    }
 }

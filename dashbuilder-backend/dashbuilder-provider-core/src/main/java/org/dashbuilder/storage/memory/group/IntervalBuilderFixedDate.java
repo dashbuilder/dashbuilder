@@ -13,18 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbuilder.model.dataset;
+package org.dashbuilder.storage.memory.group;
 
 import java.util.List;
+import java.util.ArrayList;
+import javax.enterprise.context.ApplicationScoped;
+
+import org.dashbuilder.model.dataset.DataColumn;
+import org.dashbuilder.model.dataset.group.Domain;
 
 /**
- * A data set is a matrix of values composed by a fixed number of columns.
+ * Interval builder for date columns which generates a fixed number of interval for a given the time period.
  */
-public interface DataColumn {
+@ApplicationScoped
+public class IntervalBuilderFixedDate implements IntervalBuilder {
 
-    DataSet getDataSet();
-    String getId();
-    String getName();
-    ColumnType getColumnType();
-    List getValues();
+    public List<Interval> build(DataColumn column, Domain domain) {
+        List<Interval> results = new ArrayList<Interval>();
+        return results;
+    }
 }

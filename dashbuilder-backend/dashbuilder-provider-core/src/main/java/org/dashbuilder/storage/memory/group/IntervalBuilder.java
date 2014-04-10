@@ -18,10 +18,11 @@ package org.dashbuilder.storage.memory.group;
 import java.util.List;
 
 import org.dashbuilder.model.dataset.DataColumn;
+import org.dashbuilder.model.dataset.group.Domain;
 import org.dashbuilder.model.dataset.group.DomainStrategy;
 
 public interface IntervalBuilder {
 
-    List<Interval> build(DataColumn column, DomainStrategy strategy);
+    List<Interval> build(DataColumn column, Domain domain);
 
 }

@@ -20,25 +20,27 @@ import javax.inject.Inject;
 
 import org.dashbuilder.model.dataset.ColumnType;
 import org.dashbuilder.model.dataset.DataColumn;
+import org.dashbuilder.model.dataset.group.Domain;
 import org.dashbuilder.model.dataset.group.DomainStrategy;
-import org.dashbuilder.model.dataset.group.DomainType;
 
 @ApplicationScoped
 public class IntervalBuilderLocator {
 
-    @Inject FixedLabelBuilder fixedLabelBuilder;
+    @Inject IntervalBuilderDynamicLabel intervalBuilderDynamicLabel;
+    @Inject IntervalBuilderDynamicDate intervalBuilderDynamicDate;
 
-    public IntervalBuilder lookup(DataColumn column, DomainStrategy strategy) {
+    public IntervalBuilder lookup(DataColumn column, Domain domain) {
+        DomainStrategy strategy = domain.getStrategy();
         ColumnType columnType = column.getColumnType();
-        DomainType domainType = strategy.getDomainType();
         if (ColumnType.LABEL.equals(columnType)) {
-            if (DomainType.FIXED.equals(domainType)) return fixedLabelBuilder;
-            if (DomainType.ADAPTATIVE.equals(domainType)) return fixedLabelBuilder;
-            if (DomainType.MULTIPLE.equals(domainType)) return fixedLabelBuilder;
-            if (DomainType.CUSTOM.equals(domainType)) return fixedLabelBuilder;
+            if (DomainStrategy.FIXED.equals(strategy)) return intervalBuilderDynamicLabel;
+            if (DomainStrategy.DYNAMIC.equals(strategy)) return intervalBuilderDynamicLabel;
+            if (DomainStrategy.MULTIPLE.equals(strategy)) return intervalBuilderDynamicLabel;
+            if (DomainStrategy.CUSTOM.equals(strategy)) return intervalBuilderDynamicLabel;
         }
         if (ColumnType.DATE.equals(columnType)) {
             // TODO
+            return intervalBuilderDynamicDate;
         }
         if (ColumnType.NUMBER.equals(columnType)) {
             // TODO
