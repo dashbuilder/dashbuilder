@@ -20,7 +20,7 @@ import javax.inject.Inject;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
-import org.dashbuilder.model.dataset.DataLookup;
+import org.dashbuilder.model.dataset.DataSetLookup;
 import org.dashbuilder.model.dataset.DataSet;
 import org.dashbuilder.model.displayer.DataDisplayer;
 import org.dashbuilder.model.kpi.KPI;
@@ -48,7 +48,7 @@ public class KPIView extends Composite implements KPIPresenter.View {
         initWidget(container);
     }
 
-    public void onDataLookup(DataLookup lookup) {
+    public void onDataLookup(DataSetLookup lookup) {
         label.setText("Loading data ...");
         container.add(label);
     }

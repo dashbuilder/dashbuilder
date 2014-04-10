@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012 JBoss Inc
+ * Copyright (C) 2014 JBoss Inc
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,11 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbuilder.model.dataset;
+package org.dashbuilder.storage.spi;
+
+import org.dashbuilder.model.dataset.DataSet;
+import org.dashbuilder.model.dataset.DataSetOp;
 
 /**
- * An operation over a data set
+ *  Provides data set storage services.
  */
-public interface DataSetOperation {
+public interface DataSetStorage {
 
+    void put(DataSet source) throws Exception;
+    void remove(String uuid) throws Exception;
+    DataSet get(String uuid) throws Exception;
+    DataSet apply(String uuid, DataSetOp op) throws Exception;
 }

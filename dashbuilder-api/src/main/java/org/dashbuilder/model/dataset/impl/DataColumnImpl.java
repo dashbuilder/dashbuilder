@@ -30,6 +30,16 @@ public class DataColumnImpl implements DataColumn {
     protected ColumnType columnType = ColumnType.LABEL;
     protected List values = new ArrayList();
 
+    public DataColumnImpl() {
+    }
+
+    public DataColumnImpl(String id, String name, ColumnType columnType, List values) {
+        this.id = id;
+        this.name = name;
+        this.columnType = columnType;
+        this.values = values;
+    }
+
     public String getId() {
         if (id == null) {
             id = name.toLowerCase();

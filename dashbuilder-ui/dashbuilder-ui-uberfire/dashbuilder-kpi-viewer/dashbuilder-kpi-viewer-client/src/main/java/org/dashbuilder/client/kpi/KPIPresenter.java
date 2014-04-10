@@ -22,7 +22,7 @@ import javax.inject.Inject;
 import com.google.gwt.user.client.ui.IsWidget;
 import org.dashbuilder.client.dataset.ClientDataSetManager;
 import org.dashbuilder.event.DataSetReadyEvent;
-import org.dashbuilder.model.dataset.DataLookup;
+import org.dashbuilder.model.dataset.DataSetLookup;
 import org.dashbuilder.model.dataset.DataSet;
 import org.dashbuilder.model.kpi.KPI;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
@@ -38,7 +38,7 @@ public class KPIPresenter {
     public interface View extends IsWidget {
 
         void init(KPI kpi);
-        void onDataLookup(DataLookup request);
+        void onDataLookup(DataSetLookup request);
         void onDataReady(DataSet dataSet);
     }
 
@@ -62,7 +62,7 @@ public class KPIPresenter {
         view.init(kpi);
 
         // Issue a data set lookup request
-        DataLookup dt = kpi.getDataLookup();
+        DataSetLookup dt = kpi.getDataSetLookup();
         dataSetManager.lookupDataSet(dt);
 
         // Put the view on data lookup mode.
@@ -73,8 +73,8 @@ public class KPIPresenter {
      * Called when the data set has been fetched.
      */
     public void onDataReady(@Observes DataSetReadyEvent event) {
-        String uuidLookup = kpi.getDataLookup().getDataSetUUID();
-        String uuidFetched = event.getDataSet().getUUID();
+        String uuidLookup = kpi.getDataSetLookup().getDataSetUUID();
+        String uuidFetched = event.getDataSetLookup().getDataSetUUID();
         if (uuidLookup.equals(uuidFetched)) {
             view.onDataReady(event.getDataSet());
         }

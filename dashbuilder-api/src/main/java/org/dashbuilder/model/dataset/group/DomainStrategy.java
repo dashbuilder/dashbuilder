@@ -13,11 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbuilder.model.dataset;
+package org.dashbuilder.model.dataset.group;
+
+import org.jboss.errai.common.client.api.annotations.Portable;
 
 /**
- * A filter over a data set
+ * The strategy defines how to split a collection of values in a set of intervals.
  */
-public class DataSetFilter implements DataSetOperation {
+@Portable
+public class DomainStrategy {
 
+    protected DomainType domainType;
+
+    public DomainType getDomainType() {
+        return domainType;
+    }
+
+    public void setDomainType(DomainType domainType) {
+        this.domainType = domainType;
+    }
 }

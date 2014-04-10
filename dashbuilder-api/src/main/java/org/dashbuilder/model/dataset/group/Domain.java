@@ -13,35 +13,40 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbuilder.event;
+package org.dashbuilder.model.dataset.group;
 
-import org.dashbuilder.model.dataset.DataSetLookup;
-import org.dashbuilder.model.dataset.DataSet;
 import org.jboss.errai.common.client.api.annotations.Portable;
 
 /**
- * Event fired when a data set is ready for usage.
+ * A data domain definition.
  */
 @Portable
-public class DataSetReadyEvent {
+public class Domain {
 
-    protected DataSetLookup dataSetLookup;
-    protected DataSet dataSet;
+    protected String columnId;
+    protected DomainStrategy domainStrategy;
 
-    public DataSetReadyEvent() {
+    public Domain() {
     }
 
-    public DataSetReadyEvent(DataSetLookup dataSetLookup, DataSet dataSet) {
-        this();
-        this.dataSetLookup = dataSetLookup;
-        this.dataSet = dataSet;
+    public Domain(String columnId, DomainStrategy strategy) {
+        this.columnId = columnId;
+        this.domainStrategy = strategy;
     }
 
-    public DataSetLookup getDataSetLookup() {
-        return dataSetLookup;
+    public String getColumnId() {
+        return columnId;
     }
 
-    public DataSet getDataSet() {
-        return dataSet;
+    public void setColumnId(String columnId) {
+        this.columnId = columnId;
+    }
+
+    public DomainStrategy getDomainStrategy() {
+        return domainStrategy;
+    }
+
+    public void setDomainStrategy(DomainStrategy domainStrategy) {
+        this.domainStrategy = domainStrategy;
     }
 }

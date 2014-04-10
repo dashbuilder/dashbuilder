@@ -21,20 +21,37 @@ import java.util.ArrayList;
 import org.jboss.errai.common.client.api.annotations.Portable;
 
 /**
- * A data set look up
+ * A data set look up request.
  */
 @Portable
-public class DataLookup {
+public class DataSetLookup {
 
+    /**
+     * The UUID of the data set to retrieve.
+     */
     protected String dataSetUUID = null;
-    protected List<DataSetOperation> operationList = new ArrayList<DataSetOperation>();
 
-    public DataLookup() {
+    /**
+     * The starting row offset of the target data set.
+     */
+    protected int rowOffset = 0;
+
+    /**
+     * The number of rows to get.
+     */
+    protected int numberOfRows = 0;
+
+    /**
+     * The list of operations to apply on the target data set as part of the lookup operation.
+     */
+    protected List<DataSetOp> operationList = new ArrayList<DataSetOp>();
+
+    public DataSetLookup() {
     }
 
-    public DataLookup(String dataSetUUID, DataSetOperation... ops) {
+    public DataSetLookup(String dataSetUUID, DataSetOp... ops) {
         this.dataSetUUID = dataSetUUID;
-        for (DataSetOperation op : ops) {
+        for (DataSetOp op : ops) {
             operationList.add(op);
         }
     }
@@ -43,11 +60,11 @@ public class DataLookup {
         return dataSetUUID;
     }
 
-    public List<DataSetOperation> getOperationList() {
+    public List<DataSetOp> getOperationList() {
         return operationList;
     }
 
-    public DataLookup addOperation(DataSetOperation op) {
+    public DataSetLookup addOperation(DataSetOp op) {
         operationList.add(op);
         return this;
     }

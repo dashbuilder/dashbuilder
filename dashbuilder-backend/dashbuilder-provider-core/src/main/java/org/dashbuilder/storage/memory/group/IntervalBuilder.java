@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012 JBoss Inc
+ * Copyright (C) 2014 JBoss Inc
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,11 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbuilder.model.dataset;
+package org.dashbuilder.storage.memory.group;
 
-/**
- * A filter over a data set
- */
-public class DataSetSort implements DataSetOperation {
+import java.util.List;
+
+import org.dashbuilder.model.dataset.DataColumn;
+import org.dashbuilder.model.dataset.group.DomainStrategy;
+
+public interface IntervalBuilder {
+
+    List<Interval> build(DataColumn column, DomainStrategy strategy);
 
 }

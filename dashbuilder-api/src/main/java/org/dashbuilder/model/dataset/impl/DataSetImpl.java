@@ -27,7 +27,7 @@ import org.jboss.errai.common.client.api.annotations.Portable;
 public class DataSetImpl implements DataSet {
 
     protected String uuid = null;
-    protected DataSetImpl parent = null;
+    protected String  parent = null;
     protected List<DataColumn> columns = new ArrayList<DataColumn>();
 
     public String getUUID() {
@@ -38,8 +38,12 @@ public class DataSetImpl implements DataSet {
         this.uuid = uuid;
     }
 
-    public DataSet getParent() {
+    public String getParent() {
         return parent;
+    }
+
+    public void setParent(String parent) {
+        this.parent = parent;
     }
 
     public List<DataColumn> getColumns() {
@@ -57,12 +61,28 @@ public class DataSetImpl implements DataSet {
         return null;
     }
 
-    public DataSet addColumn(String name, ColumnType type) {
+    public DataColumn getColumnByIndex(int index) {
+        if (columns == null || columns.isEmpty()) return null;
+        if (index >= columns.size()) return null;
+        return columns.get(index);
+    }
+
+    public DataColumn addColumn(String id, ColumnType type) {
+        return addColumn(id, id, type, null);
+    }
+
+    public DataColumn addColumn(String id, String name, ColumnType type) {
+        return addColumn(id, name, type, null);
+    }
+
+    public DataColumn addColumn(String id, String name, ColumnType type, List values) {
         DataColumnImpl c = new DataColumnImpl();
+        c.setId(id);
         c.setName(name);
         c.setColumnType(type);
+        if (values != null) c.setValues(values);
         columns.add(c);
-        return this;
+        return c;
     }
 
     public boolean isEmpty() {

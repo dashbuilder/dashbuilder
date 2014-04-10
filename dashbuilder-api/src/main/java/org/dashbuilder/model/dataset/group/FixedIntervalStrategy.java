@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2014 JBoss Inc
+ * Copyright (C) 2012 JBoss Inc
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,19 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbuilder.service;
-
-import org.dashbuilder.model.dataset.DataSetLookup;
-import org.dashbuilder.model.dataset.DataSet;
-import org.dashbuilder.model.dataset.DataSetMetadata;
-import org.dashbuilder.model.dataset.DataSetOp;
-import org.jboss.errai.bus.server.annotations.Remote;
+package org.dashbuilder.model.dataset.group;
 
 /**
- * Interface for requesting access to data sets stored in the backend.
+ * The strategy interface defines how to split a collection of values in a set of intervals.
  */
-@Remote
-public interface DataSetService {
+public class FixedIntervalStrategy extends DomainStrategy {
 
-    DataSet lookupDataSet(DataSetLookup lookup);
+    public FixedIntervalStrategy() {
+        setDomainType(DomainType.FIXED);
+    }
+
+
 }

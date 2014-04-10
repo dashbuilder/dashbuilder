@@ -20,15 +20,25 @@ import java.util.List;
 public interface DataSet {
 
     /**
-     * The unique dataset identifier.
+     * The unique data set identifier.
      */
     String getUUID();
 
     /**
-     * The data set this one derives from.
+     * Set an unique identifier to this data set.
+     */
+    void setUUID(String uuid);
+
+    /**
+     * The UUID of the data set this one derives from.
      * @return null if this data set is root.
      */
-    DataSet getParent();
+    String getParent();
+
+    /**
+     * Set the UUID of the data set this one derives from.
+     */
+    void setParent(String uuid);
 
     /**
      * The dataset columns
@@ -41,9 +51,14 @@ public interface DataSet {
     DataColumn getColumnById(String id);
 
     /**
+     * Get a column by its index (starting at 0).
+     */
+    DataColumn getColumnByIndex(int index);
+
+    /**
      * Add a brand new column.
      */
-    DataSet addColumn(String name, ColumnType type);
+    DataColumn addColumn(String id, String name, ColumnType type);
 
     /**
      * Get the number of rows in the dataset.

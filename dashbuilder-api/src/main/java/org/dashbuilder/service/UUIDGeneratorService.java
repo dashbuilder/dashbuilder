@@ -15,9 +15,6 @@
  */
 package org.dashbuilder.service;
 
-import org.dashbuilder.model.dataset.DataSet;
-import org.dashbuilder.model.dataset.DataSetMetadata;
-import org.dashbuilder.model.dataset.DataSetOperation;
 import org.jboss.errai.bus.server.annotations.Remote;
 
 /**
@@ -27,8 +24,8 @@ import org.jboss.errai.bus.server.annotations.Remote;
 public interface UUIDGeneratorService {
 
     /**
-     * Generates a brand new UUID in base-64 and without characters forbidden in URLs (plus sign, equal, slash and ampersand)
-     * @return A 22 character length, base-64 and URL-safe string.
+     * Generates a brand new UUID in base-64 and with no forbidden URL characters. i.e: plus sign, equal, slash and ampersand.
+     * @return A 22 character length, base-64, URL-safe string.
      */
     String newUUID();
 }

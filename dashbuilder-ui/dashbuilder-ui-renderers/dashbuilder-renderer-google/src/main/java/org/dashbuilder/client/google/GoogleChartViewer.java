@@ -17,6 +17,7 @@ package org.dashbuilder.client.google;
 
 import java.util.List;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.visualization.client.AbstractDataTable;
@@ -65,6 +66,10 @@ public abstract class GoogleChartViewer extends DataDisplayerViewer {
         // Add the xAxis column
         XAxis xAxis = dataDisplayer.getXAxis();
         DataColumn xAxisColumn = dataSet.getColumnById(xAxis.getColumnId());
+        if (xAxisColumn == null) {
+            GWT.log("Domain column not found in the data set: " + xAxis.getColumnId());
+        }
+
         List xAxisValues = xAxisColumn.getValues();
         data.addRows(xAxisValues.size());
         data.addColumn(getColumnType(xAxisColumn), xAxisColumn.getName());
@@ -77,6 +82,10 @@ public abstract class GoogleChartViewer extends DataDisplayerViewer {
         for (int i = 0; i < yAxes.size(); i++) {
             YAxis yAxis = yAxes.get(i);
             DataColumn yAxisColumn = dataSet.getColumnById(yAxis.getColumnId());
+            if (yAxisColumn == null) {
+                GWT.log("Range column not found in the data set: " + xAxis.getColumnId());
+            }
+
             List yAxisValues = yAxisColumn.getValues();
             data.addColumn(AbstractDataTable.ColumnType.NUMBER, yAxisColumn.getName());
             for (int j = 0; j < yAxisValues.size(); j++) {

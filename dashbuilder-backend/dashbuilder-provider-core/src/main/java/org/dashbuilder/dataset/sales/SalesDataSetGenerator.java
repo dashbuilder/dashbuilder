@@ -17,6 +17,7 @@ import javax.inject.Inject;
 import org.dashbuilder.model.dataset.ColumnType;
 import org.dashbuilder.model.dataset.DataSet;
 import org.dashbuilder.model.dataset.DataSetManager;
+import org.slf4j.Logger;
 import org.uberfire.commons.services.cdi.Startup;
 
 /**
@@ -26,54 +27,61 @@ import org.uberfire.commons.services.cdi.Startup;
 @ApplicationScoped
 public class SalesDataSetGenerator {
 
+    public static final String UUID = "dataset-sales-opportunities";
+
+    @Inject
+    protected Logger log;
+
     @Inject
     protected DataSetManager dataSetManager;
 
-    protected String dataSetUUID = "sales-opportunities-dataset";
     protected int opportunitiesPerMonth = 30;
     protected int startYear = Calendar.getInstance().get(Calendar.YEAR) - 2;
     protected int endYear = Calendar.getInstance().get(Calendar.YEAR) + 2;
 
     @PostConstruct
     private void generateDataSet() {
-        List<Opportunity> opportunities = randomOpportunities(opportunitiesPerMonth, startYear, endYear);
-        DataSet dataSet = generateDataSet(dataSetUUID, opportunities);
-        dataSetManager.registerDataSet(dataSet);
+        try {
+            List<Opportunity> opportunities = randomOpportunities(opportunitiesPerMonth, startYear, endYear);
+            DataSet dataSet = generateDataSet(UUID, opportunities);
+            dataSetManager.registerDataSet(dataSet);
+        } catch (Exception e) {
+            log.error("SalesDataSetGenerator failed.", e);
+        }
     }
 
     public DataSet generateDataSet(String uuid, List<Opportunity> opportunities) {
         DataSet dataSet = dataSetManager.createDataSet(uuid);
 
-        dataSet.addColumn("Amount", ColumnType.NUMBER);
-        dataSet.addColumn("Creation date", ColumnType.DATE);
-        dataSet.addColumn("Closing date", ColumnType.DATE);
-        dataSet.addColumn("Pipeline", ColumnType.LABEL);
-        dataSet.addColumn("Status", ColumnType.LABEL);
-        dataSet.addColumn("Customer", ColumnType.LABEL);
-        dataSet.addColumn("Country", ColumnType.LABEL);
-        dataSet.addColumn("Product", ColumnType.LABEL);
-        dataSet.addColumn("Sales person", ColumnType.LABEL);
-        dataSet.addColumn("Probability", ColumnType.LABEL);
-        dataSet.addColumn("Source", ColumnType.LABEL);
-        dataSet.addColumn("Expected amount", ColumnType.NUMBER);
-        dataSet.addColumn("Color", ColumnType.LABEL);
+        dataSet.addColumn("amount", "Amount", ColumnType.NUMBER);
+        dataSet.addColumn("creationDate", "Creation date", ColumnType.DATE);
+        dataSet.addColumn("closingDate", "Closing date", ColumnType.DATE);
+        dataSet.addColumn("pipeline", "Pipeline", ColumnType.LABEL);
+        dataSet.addColumn("status", "Status", ColumnType.LABEL);
+        dataSet.addColumn("customer", "Customer", ColumnType.LABEL);
+        dataSet.addColumn("country", "Country", ColumnType.LABEL);
+        dataSet.addColumn("product", "Product", ColumnType.LABEL);
+        dataSet.addColumn("salesPerson", "Sales person", ColumnType.LABEL);
+        dataSet.addColumn("probability", "Probability", ColumnType.LABEL);
+        dataSet.addColumn("source", "Source", ColumnType.LABEL);
+        dataSet.addColumn("expectedAmount", "Expected amount", ColumnType.NUMBER);
+        dataSet.addColumn("color", "Color", ColumnType.LABEL);
 
         for (int i = 0; i < opportunities.size(); i++) {
             Opportunity opp = opportunities.get(i);
             dataSet.setValueAt(i, 0, opp.amount);
-            dataSet.setValueAt(i, 1, opp.amount);
-            dataSet.setValueAt(i, 2, opp.creationDate);
-            dataSet.setValueAt(i, 3, opp.closingDate);
-            dataSet.setValueAt(i, 4, opp.pipeline);
-            dataSet.setValueAt(i, 5, opp.status);
-            dataSet.setValueAt(i, 6, opp.customer);
-            dataSet.setValueAt(i, 7, opp.country);
-            dataSet.setValueAt(i, 8, opp.product);
-            dataSet.setValueAt(i, 9, opp.salesPerson);
-            dataSet.setValueAt(i, 10, opp.probability);
+            dataSet.setValueAt(i, 1, opp.creationDate);
+            dataSet.setValueAt(i, 2, opp.closingDate);
+            dataSet.setValueAt(i, 3, opp.pipeline);
+            dataSet.setValueAt(i, 4, opp.status);
+            dataSet.setValueAt(i, 5, opp.customer);
+            dataSet.setValueAt(i, 6, opp.country);
+            dataSet.setValueAt(i, 7, opp.product);
+            dataSet.setValueAt(i, 8, opp.salesPerson);
+            dataSet.setValueAt(i, 9, opp.probability);
             dataSet.setValueAt(i, 10, opp.source);
-            dataSet.setValueAt(i, 10, opp.expectedAmount);
-            dataSet.setValueAt(i, 10, opp.color);
+            dataSet.setValueAt(i, 11, opp.expectedAmount);
+            dataSet.setValueAt(i, 12, opp.color);
         }
         return dataSet;
     }

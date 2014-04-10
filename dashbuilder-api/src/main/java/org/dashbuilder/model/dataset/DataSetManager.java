@@ -15,7 +15,6 @@
  */
 package org.dashbuilder.model.dataset;
 
-
 /**
  * Main interface for accessing data sets.
  */
@@ -27,25 +26,22 @@ public interface DataSetManager {
     DataSet createDataSet(String uuid);
 
     /**
-     * Get the current data set for the given provider.
-     * The data set returned might vary depending whether there are active filters applied on the provider or not.
+     * Retrieve (load if required) a data set.
      */
     DataSet getDataSet(String uuid) throws Exception;
 
     /**
-     * Registers the specified DataSet instance.
+     * Registers the specified data set instance.
      */
-    void registerDataSet(DataSet dataSet);
+    void registerDataSet(DataSet dataSet) throws Exception;
 
     /**
-     * Discard any active filter and ensure the most up to date data is loaded and returned.
+     * Discard any active operation and ensure the most up to date data is loaded and returned.
      */
     DataSet refreshDataSet(String uuid) throws Exception;
 
     /**
-     * Apply a filter on the specified data set.
-     *
-     * @param ops The list of operations to apply to the specified data set.
+     * Load a data set and apply several operations (filter, sort, group, ...) on it.
      */
-    DataSet transformDataSet(String uuid, DataSetOperation... ops) throws Exception;
+    DataSet lookupDataSet(DataSetLookup lookup) throws Exception;
 }

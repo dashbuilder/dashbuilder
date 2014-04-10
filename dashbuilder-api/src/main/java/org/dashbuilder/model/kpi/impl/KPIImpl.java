@@ -15,8 +15,7 @@
  */
 package org.dashbuilder.model.kpi.impl;
 
-import org.dashbuilder.model.dataset.DataLookup;
-import org.dashbuilder.model.dataset.DataSet;
+import org.dashbuilder.model.dataset.DataSetLookup;
 import org.dashbuilder.model.displayer.DataDisplayer;
 import org.dashbuilder.model.kpi.KPI;
 
@@ -24,7 +23,7 @@ public class KPIImpl implements KPI {
 
     protected String UUID;
     protected DataDisplayer dataDisplayer;
-    protected DataLookup dataLookup;
+    protected DataSetLookup dataSetLookup;
 
     public String getUUID() {
         return UUID;
@@ -34,12 +33,12 @@ public class KPIImpl implements KPI {
         this.UUID = UUID;
     }
 
-    public DataLookup getDataLookup() {
-        return dataLookup;
+    public DataSetLookup getDataSetLookup() {
+        return dataSetLookup;
     }
 
-    public void setDataLookup(DataLookup dataLookup) {
-        this.dataLookup = dataLookup;
+    public void setDataSetLookup(DataSetLookup dataSetLookup) {
+        this.dataSetLookup = dataSetLookup;
     }
 
     public DataDisplayer getDataDisplayer() {

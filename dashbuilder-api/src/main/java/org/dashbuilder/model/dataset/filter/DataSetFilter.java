@@ -13,11 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbuilder.model.dataset;
+package org.dashbuilder.model.dataset.filter;
+
+import org.dashbuilder.model.dataset.DataSetOp;
 
 /**
- * A filter over a data set
+ * A data set filter definition.
  */
-public class DataSetGroup implements DataSetOperation {
+public class DataSetFilter implements DataSetOp {
 
+    public boolean equals(Object other) {
+        // TODO
+        return false;
+    }
 }

@@ -20,11 +20,14 @@ import java.util.ArrayList;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 
-import org.dashbuilder.model.dataset.DataLookup;
-import org.dashbuilder.model.dataset.DataSet;
+import org.dashbuilder.model.dataset.DataSetLookup;
+import org.dashbuilder.model.dataset.group.Domain;
+import org.dashbuilder.model.dataset.group.DomainStrategy;
+import org.dashbuilder.model.dataset.group.DomainType;
+import org.dashbuilder.model.dataset.group.Range;
+import org.dashbuilder.model.dataset.group.DataSetGroup;
 import org.dashbuilder.model.displayer.DataDisplayer;
 import org.dashbuilder.client.js.JsDataDisplayer;
-import org.dashbuilder.client.js.JsDataSet;
 import org.dashbuilder.client.js.JsObjectHelper;
 import org.dashbuilder.model.kpi.*;
 import org.dashbuilder.model.kpi.impl.KPIImpl;
@@ -82,7 +85,16 @@ public class KPILocator {
         "     \"yAxes\": [{\"columnId\": \"amount\", \"displayName\": \"Sales rate\"}]\n" +
         " }"};
 
-    private List<KPI> kpiList = new ArrayList<KPI>();
+    public static final String DISPLAYER1 =
+            "{\n" +
+            "     \"title\": \"Oppportunities amount per stage\",\n" +
+            "     \"type\": \"piechart\",\n" +
+            "     \"renderer\": \"google\",\n" +
+            "     \"xAxis\": {\"columnId\": \"pipeline\", \"displayName\": \"Pipeline\"},\n" +
+            "     \"yAxes\": [{\"columnId\": \"total\", \"displayName\": \"Total amount\"}]\n" +
+            " }";
+
+private List<KPI> kpiList = new ArrayList<KPI>();
 
     @PostConstruct
     public void init() {
@@ -94,10 +106,30 @@ public class KPILocator {
             // Create the KPI
             KPIImpl kpi = new KPIImpl();
             kpi.setUUID("sample" + i);
-            kpi.setDataLookup(new DataLookup("sample" + i));
+            kpi.setDataSetLookup(new DataSetLookup("test-sample"));
             kpi.setDataDisplayer(displayer);
             kpiList.add(kpi);
         }
+
+        DomainStrategy strategy = new DomainStrategy();
+        strategy.setDomainType(DomainType.FIXED);
+
+        DataSetGroup group = new DataSetGroup();
+        Domain domain = new Domain("pipeline", strategy);
+        Range range = new Range("amount", "total", "Total amount", "sum");
+        group.addDomains(domain);
+        group.addRanges(range);
+        DataSetLookup lookup = new DataSetLookup("dataset-sales-opportunities", group);
+
+        JsDataDisplayer jsDisplayer = JsDataDisplayer.fromJson(DISPLAYER1);
+        DataDisplayer displayer = JsObjectHelper.createDataDisplayer(jsDisplayer);
+
+        // Create the KPI
+        KPIImpl kpi = new KPIImpl();
+        kpi.setUUID("test-group");
+        kpi.setDataSetLookup(lookup);
+        kpi.setDataDisplayer(displayer);
+        kpiList.add(kpi);
     }
 
     public KPI getKPI(String uid) {
