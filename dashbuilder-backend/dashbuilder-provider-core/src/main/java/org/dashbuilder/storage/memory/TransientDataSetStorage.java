@@ -54,27 +54,6 @@ import org.uberfire.commons.services.cdi.Startup;
 @Startup
 public class TransientDataSetStorage implements DataSetStorage {
 
-    @PostConstruct
-    private void init() {
-        DataSetImpl dataSet = new DataSetImpl();
-        dataSet.setUUID("test-sample");
-        dataSet.addColumn("department", ColumnType.LABEL);
-        dataSet.addColumn("amount", ColumnType.NUMBER);
-        dataSet.setValueAt(0, 0, "Engineering");
-        dataSet.setValueAt(1, 0, "Services");
-        dataSet.setValueAt(2, 0, "HR");
-        dataSet.setValueAt(3, 0, "Administration");
-        dataSet.setValueAt(0, 1, 13423);
-        dataSet.setValueAt(1, 1, 8984.45);
-        dataSet.setValueAt(2, 1, 3434.44);
-        dataSet.setValueAt(3, 1, 10034.4);
-        try {
-            put(dataSet);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
     /**
      * Flag indicating whether to save the data sets obtained on apply operations.
      */
@@ -166,9 +145,9 @@ public class TransientDataSetStorage implements DataSetStorage {
 
             // Build the grouped data set header.
             DataSetImpl dataSet = new DataSetImpl();
-            dataSet.addColumn(domainId, domainColumn.getName(), ColumnType.LABEL);
+            dataSet.addColumn(domainId, ColumnType.LABEL);
             for (Range range : op.getRangeList()) {
-                dataSet.addColumn(range.getColumnId(), range.getColumnName(), ColumnType.NUMBER);
+                dataSet.addColumn(range.getColumnId(), ColumnType.NUMBER);
             }
             // Add the scalar calculations to the result.
             for (int i=0; i<intervals.size(); i++) {

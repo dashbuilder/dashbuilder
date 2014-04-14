@@ -61,8 +61,8 @@ public class DataSetGroupTest {
         DataSet result = dataSetManager.lookupDataSet(new DataSetLookupBuilder()
                 .uuid(EXPENSE_REPORTS)
                 .domain("department")
-                .range("id", "occurrences", "Number of expenses", "count")
-                .range("amount", "totalAmount", "Total amount", "sum")
+                .range("id", "occurrences", "count")
+                .range("amount", "totalAmount", "sum")
                 .build());
 
         printDataSet(result);
@@ -80,8 +80,8 @@ public class DataSetGroupTest {
         DataSet result = dataSetManager.lookupDataSet(new DataSetLookupBuilder()
                 .uuid(EXPENSE_REPORTS)
                 .domain("date", "dynamic", 10, "year")
-                .range("id", "occurrences", "Number of expenses", "count")
-                .range("amount", "totalAmount", "Total amount", "sum")
+                .range("id", "occurrences", "count")
+                .range("amount", "totalAmount", "sum")
                 .build());
 
         printDataSet(result);

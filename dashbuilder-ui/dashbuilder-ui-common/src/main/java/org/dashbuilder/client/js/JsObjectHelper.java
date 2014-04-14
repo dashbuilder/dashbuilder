@@ -44,7 +44,6 @@ public class JsObjectHelper {
     public static DataColumn createDataColumn(JsDataColumn jsDataColumn) {
         DataColumnImpl dataColumn = new DataColumnImpl();
         dataColumn.setId(jsDataColumn.getId());
-        dataColumn.setName(jsDataColumn.getName());
         dataColumn.setColumnType(ColumnType.getByName(jsDataColumn.getType()));
         if (dataColumn.getColumnType().equals(ColumnType.NUMBER)) {
             dataColumn.setValues(createListNumber(jsDataColumn.getJsNumbers()));

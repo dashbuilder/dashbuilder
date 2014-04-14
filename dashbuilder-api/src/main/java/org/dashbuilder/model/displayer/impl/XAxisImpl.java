@@ -24,6 +24,14 @@ public class XAxisImpl implements XAxis {
     protected String columnId;
     protected String displayName;
 
+    public XAxisImpl() {
+    }
+
+    public XAxisImpl(String columnId, String displayName) {
+        this.columnId = columnId;
+        this.displayName = displayName;
+    }
+
     public String getColumnId() {
         return columnId;
     }

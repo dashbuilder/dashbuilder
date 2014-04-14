@@ -68,4 +68,23 @@ public class DataSetLookup {
         operationList.add(op);
         return this;
     }
+
+    public boolean equals(Object obj) {
+        try {
+            DataSetLookup other = (DataSetLookup) obj;
+            if (dataSetUUID == null || other.dataSetUUID == null) return false;
+            if (!dataSetUUID.equals(other.dataSetUUID)) return false;
+            if (rowOffset != other.rowOffset) return false;
+            if (numberOfRows != other.numberOfRows) return false;
+            if (operationList.size() != other.operationList.size()) return false;
+            for (int i = 0; i < operationList.size(); i++) {
+                DataSetOp op = operationList.get(i);
+                DataSetOp otherOp = other.operationList.get(i);
+                if (!op.equals(otherOp)) return false;
+            }
+            return true;
+        } catch (ClassCastException e) {
+            return false;
+        }
+    }
 }

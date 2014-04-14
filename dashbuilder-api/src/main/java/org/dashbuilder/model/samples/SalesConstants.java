@@ -13,17 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbuilder.model.dataset;
+package org.dashbuilder.model.samples;
 
-import java.util.List;
+public interface SalesConstants {
 
-/**
- * A data set is a matrix of values composed by a fixed number of columns.
- */
-public interface DataColumn {
-
-    DataSet getDataSet();
-    String getId();
-    ColumnType getColumnType();
-    List getValues();
+    String UUID = "dataset-sales-opportunities";
+    String AMOUNT = "amount";
+    String CREATION_DATE = "creationDate";
+    String CLOSING_DATE = "closingDate";
+    String PIPELINE = "pipeline";
+    String STATUS = "status";
+    String CUSTOMER = "customer";
+    String COUNTRY = "country";
+    String PRODUCT = "product";
+    String SALES_PERSON = "salesPerson";
+    String PROBABILITY = "probability";
+    String SOURCE = "source";
+    String EXPECTED_AMOUNT = "expectedAmount";
+    String COLOR = "color";
 }

@@ -2,7 +2,11 @@ package org.dashbuilder.client.perspectives;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 
+import org.dashbuilder.client.kpi.KPILocator;
+import org.dashbuilder.client.kpi.SalesDashboardKPIs;
+import org.dashbuilder.model.kpi.KPI;
 import org.uberfire.client.annotations.Perspective;
 import org.uberfire.client.annotations.WorkbenchPerspective;
 import org.uberfire.mvp.impl.DefaultPlaceRequest;
@@ -20,6 +24,8 @@ public class MainPerspective {
 
     private PerspectiveDefinition perspective;
 
+    @Inject SalesDashboardKPIs salesDashboardKPIs;
+
     @PostConstruct
     public void init() {
         buildPerspective();
@@ -36,10 +42,9 @@ public class MainPerspective {
         perspective.setName("MainPerspective");
 
         //p.getRoot().addPart( new PartDefinitionImpl( new DefaultPlaceRequest( "HelloWorldScreen" ) ) );
-        perspective.getRoot().addPart( new PartDefinitionImpl( new DefaultPlaceRequest( "KPIPresenter" ).addParameter("kpi", "sample0") ) );
-        perspective.getRoot().addPart( new PartDefinitionImpl( new DefaultPlaceRequest( "KPIPresenter" ).addParameter("kpi", "sample1") ) );
-        perspective.getRoot().addPart( new PartDefinitionImpl( new DefaultPlaceRequest( "KPIPresenter" ).addParameter("kpi", "test-group") ) );
-
+        for (KPI kpi : salesDashboardKPIs.getAllKPIs()) {
+            perspective.getRoot().addPart( new PartDefinitionImpl( new DefaultPlaceRequest( "KPIPresenter" ).addParameter("kpi", kpi.getUUID()) ) );
+        }
         return perspective;
     }
 }

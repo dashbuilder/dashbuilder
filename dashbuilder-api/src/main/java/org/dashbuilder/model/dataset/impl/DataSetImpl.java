@@ -68,18 +68,13 @@ public class DataSetImpl implements DataSet {
     }
 
     public DataColumn addColumn(String id, ColumnType type) {
-        return addColumn(id, id, type, null);
+        return addColumn(id, type, null);
     }
 
-    public DataColumn addColumn(String id, String name, ColumnType type) {
-        return addColumn(id, name, type, null);
-    }
-
-    public DataColumn addColumn(String id, String name, ColumnType type, List values) {
+    public DataColumn addColumn(String id, ColumnType type, List values) {
         DataColumnImpl c = new DataColumnImpl();
         c.setDataSet(this);
         c.setId(id);
-        c.setName(name);
         c.setColumnType(type);
         if (values != null) c.setValues(values);
         columns.add(c);

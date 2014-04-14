@@ -50,8 +50,24 @@ public class DataSetGroup implements DataSetOp {
         return rangeList;
     }
 
-    public boolean equals(Object other) {
-        // TODO
-        return false;
+    public boolean equals(Object obj) {
+        try {
+            DataSetGroup other = (DataSetGroup) obj;
+            if (domainList.size() != other.domainList.size()) return false;
+            if (rangeList.size() != other.rangeList.size()) return false;
+            for (int i = 0; i < domainList.size(); i++) {
+                Domain el = domainList.get(i);
+                Domain otherEl = other.domainList.get(i);
+                if (!el.equals(otherEl)) return false;
+            }
+            for (int i = 0; i < rangeList.size(); i++) {
+                Range el = rangeList.get(i);
+                Range  otherEl = other.rangeList.get(i);
+                if (!el.equals(otherEl)) return false;
+            }
+            return true;
+        } catch (ClassCastException e) {
+            return false;
+        }
     }
 }

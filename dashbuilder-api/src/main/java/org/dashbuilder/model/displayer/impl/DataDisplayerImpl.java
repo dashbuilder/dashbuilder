@@ -16,6 +16,7 @@
 package org.dashbuilder.model.displayer.impl;
 
 import java.util.List;
+import java.util.ArrayList;
 
 import org.dashbuilder.model.displayer.DataDisplayer;
 import org.dashbuilder.model.displayer.XAxis;
@@ -29,7 +30,7 @@ public class DataDisplayerImpl implements DataDisplayer {
     protected String type;
     protected String renderer;
     protected XAxis xAxis;
-    protected List<YAxis> yAxisList;
+    protected List<YAxis> yAxisList = new ArrayList<YAxis>();
 
     public String getTitle() {
         return title;

@@ -72,7 +72,7 @@ public abstract class GoogleChartViewer extends DataDisplayerViewer {
 
         List xAxisValues = xAxisColumn.getValues();
         data.addRows(xAxisValues.size());
-        data.addColumn(getColumnType(xAxisColumn), xAxisColumn.getName());
+        data.addColumn(getColumnType(xAxisColumn), xAxis.getDisplayName());
         for (int i = 0; i < xAxisValues.size(); i++) {
             data.setValue(i, 0, xAxisValues.get(i).toString());
         }
@@ -87,9 +87,12 @@ public abstract class GoogleChartViewer extends DataDisplayerViewer {
             }
 
             List yAxisValues = yAxisColumn.getValues();
-            data.addColumn(AbstractDataTable.ColumnType.NUMBER, yAxisColumn.getName());
+            data.addColumn(AbstractDataTable.ColumnType.NUMBER, yAxis.getDisplayName());
             for (int j = 0; j < yAxisValues.size(); j++) {
-                data.setValue(j, i+1, Double.parseDouble(yAxisValues.get(j).toString()));
+                // TODO: format decimal number
+                double value = ((Double) yAxisValues.get(j)).doubleValue();
+                data.setValue(j, i+1, value);
+                //GWT.log("Row="+j+" Col="+(i+1)+" Val="+value);
             }
         }
         return data;

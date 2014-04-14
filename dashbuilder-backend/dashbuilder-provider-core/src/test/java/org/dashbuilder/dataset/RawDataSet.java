@@ -76,7 +76,7 @@ public class RawDataSet implements Serializable {
     public DataSet toDataSet() throws ParseException {
         DataSetImpl dataSet = new DataSetImpl();
         for (int i = 0; i < columnIds.length; i++) {
-            dataSet.addColumn(columnIds[i], columnIds[i], getColumnType(types[i]));
+            dataSet.addColumn(columnIds[i], getColumnType(types[i]));
             for (int j = 0; j < data.length; j++) {
                 String[] row = data[j];
                 Object value = parseValue(row[i], types[i]);

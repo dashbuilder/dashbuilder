@@ -24,6 +24,14 @@ public class YAxisImpl implements YAxis {
     protected String columnId;
     protected String displayName;
 
+    public YAxisImpl() {
+    }
+
+    public YAxisImpl(String columnId, String displayName) {
+        this.columnId = columnId;
+        this.displayName = displayName;
+    }
+
     public String getColumnId() {
         return columnId;
     }

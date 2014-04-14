@@ -57,8 +57,10 @@ public class KPIPresenter {
     @OnStartup
     public void onStartup( final PlaceRequest placeRequest) {
         // Locate the KPI specified as a parameter.
-        String kpiUid = placeRequest.getParameter( "kpi", "sample0" );
+        String kpiUid = placeRequest.getParameter( "kpi", "" );
         this.kpi = kpiLocator.getKPI(kpiUid);
+        if (kpi == null) throw new IllegalArgumentException("KPI not found.");
+
         view.init(kpi);
 
         // Issue a data set lookup request
@@ -73,9 +75,7 @@ public class KPIPresenter {
      * Called when the data set has been fetched.
      */
     public void onDataReady(@Observes DataSetReadyEvent event) {
-        String uuidLookup = kpi.getDataSetLookup().getDataSetUUID();
-        String uuidFetched = event.getDataSetLookup().getDataSetUUID();
-        if (uuidLookup.equals(uuidFetched)) {
+        if (kpi.getDataSetLookup().equals(event.getDataSetLookup())) {
             view.onDataReady(event.getDataSet());
         }
     }

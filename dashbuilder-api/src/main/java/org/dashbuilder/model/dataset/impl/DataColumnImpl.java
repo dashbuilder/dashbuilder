@@ -27,16 +27,14 @@ public class DataColumnImpl implements DataColumn {
 
     protected DataSetImpl dataSet = null;
     protected String id = null;
-    protected String name = null;
     protected ColumnType columnType = ColumnType.LABEL;
     protected List values = new ArrayList();
 
     public DataColumnImpl() {
     }
 
-    public DataColumnImpl(String id, String name, ColumnType columnType, List values) {
+    public DataColumnImpl(String id, ColumnType columnType, List values) {
         this.id = id;
-        this.name = name;
         this.columnType = columnType;
         this.values = values;
     }
@@ -50,22 +48,11 @@ public class DataColumnImpl implements DataColumn {
     }
 
     public String getId() {
-        if (id == null) {
-            id = name.toLowerCase();
-        }
         return id;
     }
 
     public void setId(String id) {
         this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public ColumnType getColumnType() {

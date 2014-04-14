@@ -41,7 +41,7 @@ public enum DomainStrategy {
     MULTIPLE,
 
     /**
-     * The intervals are defined in a custom matter and are not bound to any specific generation algorithm.
+     * The intervals are defined in a custom manner and are not bound to any specific generation algorithm.
      */
     CUSTOM;
 

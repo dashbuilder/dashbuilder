@@ -28,16 +28,14 @@ public class Range {
 
     protected String sourceId;
     protected String columnId;
-    protected String columnName;
     protected String functionCode;
 
     public Range() {
     }
 
-    public Range(String sourceId, String columnId, String columnName, String functionCode) {
+    public Range(String sourceId, String columnId, String functionCode) {
         this.sourceId = sourceId;
         this.columnId = columnId;
-        this.columnName = columnName;
         this.functionCode = functionCode;
     }
 
@@ -57,19 +55,23 @@ public class Range {
         this.columnId = columnId;
     }
 
-    public String getColumnName() {
-        return columnName;
-    }
-
-    public void setColumnName(String columnName) {
-        this.columnName = columnName;
-    }
-
     public String getFunctionCode() {
         return functionCode;
     }
 
     public void setFunctionCode(String functionCode) {
         this.functionCode = functionCode;
+    }
+
+    public boolean equals(Object obj) {
+        try {
+            Range other = (Range) obj;
+            if (sourceId != null && !sourceId.equals(other.sourceId)) return false;
+            if (columnId != null && !columnId.equals(other.columnId)) return false;
+            if (functionCode != null && !functionCode.equals(other.functionCode)) return false;
+            return true;
+        } catch (ClassCastException e) {
+            return false;
+        }
     }
 }

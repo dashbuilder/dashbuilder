@@ -74,4 +74,17 @@ public class Domain {
     public void setIntervalSize(String intervalSize) {
         this.intervalSize = intervalSize;
     }
+
+    public boolean equals(Object obj) {
+        try {
+            Domain other = (Domain) obj;
+            if (columnId != null && !columnId.equals(other.columnId)) return false;
+            if (strategy != null && !strategy.equals(other.strategy)) return false;
+            if (intervalSize != null && !intervalSize.equals(other.intervalSize)) return false;
+            if (maxIntervals != other.maxIntervals) return false;
+            return true;
+        } catch (ClassCastException e) {
+            return false;
+        }
+    }
 }

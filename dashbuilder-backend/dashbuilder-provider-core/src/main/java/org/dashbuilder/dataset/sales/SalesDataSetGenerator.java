@@ -1,3 +1,18 @@
+/**
+ * Copyright (C) 2014 JBoss Inc
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.dashbuilder.dataset.sales;
 
 import java.text.DateFormat;
@@ -17,8 +32,11 @@ import javax.inject.Inject;
 import org.dashbuilder.model.dataset.ColumnType;
 import org.dashbuilder.model.dataset.DataSet;
 import org.dashbuilder.model.dataset.DataSetManager;
+import org.dashbuilder.model.samples.SalesConstants;
 import org.slf4j.Logger;
 import org.uberfire.commons.services.cdi.Startup;
+
+import static org.dashbuilder.model.samples.SalesConstants.*;
 
 /**
  * Generates a random data set containing sales opportunity records.
@@ -26,8 +44,6 @@ import org.uberfire.commons.services.cdi.Startup;
 @Startup
 @ApplicationScoped
 public class SalesDataSetGenerator {
-
-    public static final String UUID = "dataset-sales-opportunities";
 
     @Inject
     protected Logger log;
@@ -43,7 +59,7 @@ public class SalesDataSetGenerator {
     private void generateDataSet() {
         try {
             List<Opportunity> opportunities = randomOpportunities(opportunitiesPerMonth, startYear, endYear);
-            DataSet dataSet = generateDataSet(UUID, opportunities);
+            DataSet dataSet = generateDataSet(SalesConstants.UUID, opportunities);
             dataSetManager.registerDataSet(dataSet);
         } catch (Exception e) {
             log.error("SalesDataSetGenerator failed.", e);
@@ -53,19 +69,19 @@ public class SalesDataSetGenerator {
     public DataSet generateDataSet(String uuid, List<Opportunity> opportunities) {
         DataSet dataSet = dataSetManager.createDataSet(uuid);
 
-        dataSet.addColumn("amount", "Amount", ColumnType.NUMBER);
-        dataSet.addColumn("creationDate", "Creation date", ColumnType.DATE);
-        dataSet.addColumn("closingDate", "Closing date", ColumnType.DATE);
-        dataSet.addColumn("pipeline", "Pipeline", ColumnType.LABEL);
-        dataSet.addColumn("status", "Status", ColumnType.LABEL);
-        dataSet.addColumn("customer", "Customer", ColumnType.LABEL);
-        dataSet.addColumn("country", "Country", ColumnType.LABEL);
-        dataSet.addColumn("product", "Product", ColumnType.LABEL);
-        dataSet.addColumn("salesPerson", "Sales person", ColumnType.LABEL);
-        dataSet.addColumn("probability", "Probability", ColumnType.LABEL);
-        dataSet.addColumn("source", "Source", ColumnType.LABEL);
-        dataSet.addColumn("expectedAmount", "Expected amount", ColumnType.NUMBER);
-        dataSet.addColumn("color", "Color", ColumnType.LABEL);
+        dataSet.addColumn(AMOUNT, ColumnType.NUMBER);
+        dataSet.addColumn(CREATION_DATE, ColumnType.DATE);
+        dataSet.addColumn(CLOSING_DATE, ColumnType.DATE);
+        dataSet.addColumn(PIPELINE, ColumnType.LABEL);
+        dataSet.addColumn(STATUS, ColumnType.LABEL);
+        dataSet.addColumn(CUSTOMER, ColumnType.LABEL);
+        dataSet.addColumn(COUNTRY, ColumnType.LABEL);
+        dataSet.addColumn(PRODUCT, ColumnType.LABEL);
+        dataSet.addColumn(SALES_PERSON, ColumnType.LABEL);
+        dataSet.addColumn(PROBABILITY, ColumnType.LABEL);
+        dataSet.addColumn(SOURCE, ColumnType.LABEL);
+        dataSet.addColumn(EXPECTED_AMOUNT, ColumnType.NUMBER);
+        dataSet.addColumn(COLOR, ColumnType.LABEL);
 
         for (int i = 0; i < opportunities.size(); i++) {
             Opportunity opp = opportunities.get(i);

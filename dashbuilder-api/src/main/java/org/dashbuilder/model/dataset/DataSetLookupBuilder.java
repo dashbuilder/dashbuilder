@@ -84,13 +84,17 @@ public class DataSetLookupBuilder {
         return this;
     }
 
-    public DataSetLookupBuilder range(String fromId, String columnId, String columnName, String function) {
+    public DataSetLookupBuilder range(String columnId, String function) {
+        return range(columnId, columnId, function);
+    }
+
+    public DataSetLookupBuilder range(String columnId, String newColumnId, String function) {
         DataSetOp op = getCurrentOp();
         if (op == null || !(op instanceof DataSetGroup)) {
             dataSetLookup.addOperation(new DataSetGroup());
         }
         DataSetGroup gOp = (DataSetGroup) getCurrentOp();
-        gOp.addRanges(new Range(fromId, columnId, columnName, function));
+        gOp.addRanges(new Range(columnId, newColumnId, function));
         return this;
     }
 

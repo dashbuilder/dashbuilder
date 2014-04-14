@@ -25,27 +25,37 @@ public class KPIImpl implements KPI {
     protected DataDisplayer dataDisplayer;
     protected DataSetLookup dataSetLookup;
 
+    public KPIImpl() {
+    }
+
+    public KPIImpl(String UUID) {
+        this.UUID = UUID;
+    }
+
     public String getUUID() {
         return UUID;
     }
 
-    public void setUUID(String UUID) {
+    public KPIImpl setUUID(String UUID) {
         this.UUID = UUID;
+        return this;
     }
 
     public DataSetLookup getDataSetLookup() {
         return dataSetLookup;
     }
 
-    public void setDataSetLookup(DataSetLookup dataSetLookup) {
+    public KPIImpl setDataSetLookup(DataSetLookup dataSetLookup) {
         this.dataSetLookup = dataSetLookup;
+        return this;
     }
 
     public DataDisplayer getDataDisplayer() {
         return dataDisplayer;
     }
 
-    public void setDataDisplayer(DataDisplayer dataDisplayer) {
+    public KPIImpl setDataDisplayer(DataDisplayer dataDisplayer) {
         this.dataDisplayer = dataDisplayer;
+        return this;
     }
 }
