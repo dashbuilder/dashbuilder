@@ -15,9 +15,6 @@
  */
 package org.dashbuilder.model.dataset.group;
 
-import java.util.List;
-
-import org.dashbuilder.model.dataset.DataSetOp;
 import org.jboss.errai.common.client.api.annotations.Portable;
 
 /**
@@ -28,15 +25,15 @@ public class Range {
 
     protected String sourceId;
     protected String columnId;
-    protected String functionCode;
+    protected ScalarFunctionType function;
 
     public Range() {
     }
 
-    public Range(String sourceId, String columnId, String functionCode) {
+    public Range(String sourceId, String columnId, ScalarFunctionType function) {
         this.sourceId = sourceId;
         this.columnId = columnId;
-        this.functionCode = functionCode;
+        this.function = function;
     }
 
     public String getSourceId() {
@@ -55,12 +52,12 @@ public class Range {
         this.columnId = columnId;
     }
 
-    public String getFunctionCode() {
-        return functionCode;
+    public ScalarFunctionType getFunction() {
+        return function;
     }
 
-    public void setFunctionCode(String functionCode) {
-        this.functionCode = functionCode;
+    public void setFunctionCode(ScalarFunctionType function) {
+        this.function = function;
     }
 
     public boolean equals(Object obj) {
@@ -68,7 +65,7 @@ public class Range {
             Range other = (Range) obj;
             if (sourceId != null && !sourceId.equals(other.sourceId)) return false;
             if (columnId != null && !columnId.equals(other.columnId)) return false;
-            if (functionCode != null && !functionCode.equals(other.functionCode)) return false;
+            if (function != null && !function.equals(other.function)) return false;
             return true;
         } catch (ClassCastException e) {
             return false;

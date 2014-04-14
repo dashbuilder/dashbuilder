@@ -13,20 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbuilder.function;
+package org.dashbuilder.model.dataset.group;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Locale;
+import org.jboss.errai.common.client.api.annotations.Portable;
 
 /**
- * Interface used to get the scalar value of a given collection.
- * <p>Scalar functions are used to calculate the scalar
- * values of the intervals belonging to a given data set domain property.
+ * List of available scalar functions used in data set group operations.
  */
-public interface ScalarFunction {
+@Portable
+public enum ScalarFunctionType {
+    COUNT,
+    DISTICNT,
+    AVERAGE,
+    SUM,
+    MIN,
+    MAX;
 
-    String getCode();
-    double scalar(List values);
-    double scalar(List values, List<Integer> rows);
+    public static ScalarFunctionType getByName(String str) {
+        return valueOf(str.toUpperCase());
+    }
 }

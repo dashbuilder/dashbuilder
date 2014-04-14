@@ -24,6 +24,7 @@ import org.dashbuilder.DataProviderServices;
 import org.dashbuilder.function.ScalarFunction;
 import org.dashbuilder.function.ScalarFunctionManager;
 import org.dashbuilder.model.dataset.DataColumn;
+import org.dashbuilder.model.dataset.group.ScalarFunctionType;
 
 /**
  * An interval represent a grouped subset of a data column values.
@@ -43,7 +44,7 @@ public class Interval {
     /**
      * A cache containing all the calculations done within this interval.
      */
-    public Map<String, Map<String, Double>> scalars = new HashMap<String, Map<String, Double>>();
+    public Map<String, Map<ScalarFunctionType, Double>> scalars = new HashMap<String, Map<ScalarFunctionType, Double>>();
 
     public Interval(String name) {
         this.name = name;
@@ -59,21 +60,21 @@ public class Interval {
         return name.hashCode();
     }
 
-    public Double calculateScalar(DataColumn rangeColumn, String functionCode) {
+    public Double calculateScalar(DataColumn rangeColumn, ScalarFunctionType type) {
         // Look into the cache first.
         String columnId = rangeColumn.getId();
-        Map<String,Double> columnScalars = scalars.get(columnId);
-        if (columnScalars == null) scalars.put(columnId, columnScalars = new HashMap<String, Double>());
-        Double scalar = columnScalars.get(functionCode);
+        Map<ScalarFunctionType,Double> columnScalars = scalars.get(columnId);
+        if (columnScalars == null) scalars.put(columnId, columnScalars = new HashMap<ScalarFunctionType,Double>());
+        Double scalar = columnScalars.get(type);
         if (scalar != null) return scalar;
 
         // Do the scalar calculations.
         ScalarFunctionManager scalarFunctionManager = DataProviderServices.getScalarFunctionManager();
-        ScalarFunction function = scalarFunctionManager.getScalarFunctionByCode(functionCode);
+        ScalarFunction function = scalarFunctionManager.getScalarFunctionByCode(type.toString().toLowerCase());
         scalar = function.scalar(rangeColumn.getValues(), rows);
 
         // Save the result into the cache and return.
-        columnScalars.put(functionCode, scalar);
+        columnScalars.put(type, scalar);
         return scalar;
 
     }

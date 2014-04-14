@@ -26,10 +26,6 @@ public abstract class AbstractFunction implements ScalarFunction {
         precission = -1;
     }
 
-    public boolean isTypeSupported(Class type) {
-        return true;
-    }
-
     public double round(double value, int precission) {
         if (precission < 0) return value;
         double result = value * Math.pow(10, precission);

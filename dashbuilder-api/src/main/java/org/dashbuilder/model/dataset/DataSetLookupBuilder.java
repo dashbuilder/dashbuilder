@@ -16,11 +16,11 @@
 package org.dashbuilder.model.dataset;
 
 import java.util.List;
-import java.util.ArrayList;
 
 import org.dashbuilder.model.dataset.group.DataSetGroup;
 import org.dashbuilder.model.dataset.group.Domain;
 import org.dashbuilder.model.dataset.group.DomainStrategy;
+import org.dashbuilder.model.dataset.group.ScalarFunctionType;
 import org.dashbuilder.model.dataset.group.Range;
 import org.dashbuilder.model.dataset.sort.DataSetSort;
 import org.jboss.errai.common.client.api.annotations.Portable;
@@ -70,36 +70,48 @@ public class DataSetLookupBuilder {
     }
 
     public DataSetLookupBuilder domain(String columnId) {
-        return domain(columnId, DomainStrategy.DYNAMIC);
+        return domain(columnId, columnId, DomainStrategy.DYNAMIC);
     }
 
-    public DataSetLookupBuilder domain(String columnId, String strategy) {
-        return domain(columnId, DomainStrategy.getByName(strategy));
+    public DataSetLookupBuilder domain(String columnId, String newColumnId) {
+        return domain(columnId, newColumnId, DomainStrategy.DYNAMIC);
     }
 
     public DataSetLookupBuilder domain(String columnId, DomainStrategy strategy) {
-        return domain(columnId, strategy, 15, null);
+        return domain(columnId, columnId, strategy, 15, null);
     }
 
     public DataSetLookupBuilder domain(String columnId, String strategy, int maxIntervals, String intervalSize) {
-        return domain(columnId, DomainStrategy.getByName(strategy), maxIntervals, intervalSize);
+        return domain(columnId, columnId, DomainStrategy.getByName(strategy), maxIntervals, intervalSize);
     }
 
-    public DataSetLookupBuilder domain(String columnId, DomainStrategy strategy, int maxIntervals, String intervalSize) {
+    public DataSetLookupBuilder domain(String columnId, String newColumnId, String strategy) {
+        return domain(columnId, newColumnId, DomainStrategy.getByName(strategy));
+    }
+
+    public DataSetLookupBuilder domain(String columnId, String newColumnId, DomainStrategy strategy) {
+        return domain(columnId, newColumnId, strategy, 15, null);
+    }
+
+    public DataSetLookupBuilder domain(String columnId, String newColumnId, String strategy, int maxIntervals, String intervalSize) {
+        return domain(columnId, newColumnId, DomainStrategy.getByName(strategy), maxIntervals, intervalSize);
+    }
+
+    public DataSetLookupBuilder domain(String columnId, String newColumnId, DomainStrategy strategy, int maxIntervals, String intervalSize) {
         DataSetOp op = getCurrentOp();
         if (op == null || !(op instanceof DataSetGroup)) {
             dataSetLookup.addOperation(new DataSetGroup());
         }
         DataSetGroup gOp = (DataSetGroup) getCurrentOp();
-        gOp.addDomains(new Domain(columnId, strategy, maxIntervals, intervalSize));
+        gOp.addDomains(new Domain(columnId, newColumnId, strategy, maxIntervals, intervalSize));
         return this;
     }
 
-    public DataSetLookupBuilder range(String columnId, String function) {
+    public DataSetLookupBuilder range(String columnId, ScalarFunctionType function) {
         return range(columnId, columnId, function);
     }
 
-    public DataSetLookupBuilder range(String columnId, String newColumnId, String function) {
+    public DataSetLookupBuilder range(String columnId, String newColumnId, ScalarFunctionType function) {
         DataSetOp op = getCurrentOp();
         if (op == null || !(op instanceof DataSetGroup)) {
             dataSetLookup.addOperation(new DataSetGroup());

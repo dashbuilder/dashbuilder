@@ -23,6 +23,7 @@ import org.jboss.errai.common.client.api.annotations.Portable;
 @Portable
 public class Domain {
 
+    protected String sourceId = null;
     protected String columnId = null;
     protected DomainStrategy strategy = DomainStrategy.DYNAMIC;
     protected int maxIntervals = 15;
@@ -31,16 +32,26 @@ public class Domain {
     public Domain() {
     }
 
-    public Domain(String columnId, DomainStrategy strategy) {
-        this.columnId = columnId;
+    public Domain(String columnId, String newColumnId, DomainStrategy strategy) {
+        this.sourceId = columnId;
+        this.columnId = newColumnId;
         this.strategy = strategy;
     }
 
-    public Domain(String columnId, DomainStrategy strategy, int maxIntervals, String intervalSize) {
-        this.columnId = columnId;
+    public Domain(String columnId, String newColumnId, DomainStrategy strategy, int maxIntervals, String intervalSize) {
+        this.sourceId = columnId;
+        this.columnId = newColumnId;
         this.strategy = strategy;
         this.maxIntervals = maxIntervals;
         this.intervalSize = intervalSize;
+    }
+
+    public String getSourceId() {
+        return sourceId;
+    }
+
+    public void setSourceId(String sourceId) {
+        this.sourceId = sourceId;
     }
 
     public String getColumnId() {

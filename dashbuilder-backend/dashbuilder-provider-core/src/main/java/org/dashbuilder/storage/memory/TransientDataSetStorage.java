@@ -135,7 +135,7 @@ public class TransientDataSetStorage implements DataSetStorage {
      */
     public CacheEntry group(CacheEntry source, DataSetGroup op) throws Exception {
         for (Domain domain : op.getDomainList()) {
-            String domainId = domain.getColumnId();
+            String domainId = domain.getSourceId();
             DataColumn domainColumn = source.dataSet.getColumnById(domainId);
 
             // Build the group intervals by applying the domain strategy specified
@@ -145,7 +145,7 @@ public class TransientDataSetStorage implements DataSetStorage {
 
             // Build the grouped data set header.
             DataSetImpl dataSet = new DataSetImpl();
-            dataSet.addColumn(domainId, ColumnType.LABEL);
+            dataSet.addColumn(domain.getColumnId(), ColumnType.LABEL);
             for (Range range : op.getRangeList()) {
                 dataSet.addColumn(range.getColumnId(), ColumnType.NUMBER);
             }
@@ -157,7 +157,7 @@ public class TransientDataSetStorage implements DataSetStorage {
                 for (int j=0; j<ranges.size(); j++) {
                     Range range = ranges.get(j);
                     DataColumn rangeColumn = source.dataSet.getColumnById(range.getSourceId());
-                    Double scalar = interval.calculateScalar(rangeColumn, range.getFunctionCode());
+                    Double scalar = interval.calculateScalar(rangeColumn, range.getFunction());
                     dataSet.setValueAt(i, j + 1, scalar);
                 }
             }

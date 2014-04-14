@@ -20,6 +20,7 @@ import javax.inject.Inject;
 import org.dashbuilder.model.dataset.DataSet;
 import org.dashbuilder.model.dataset.DataSetLookupBuilder;
 import org.dashbuilder.model.dataset.DataSetManager;
+import org.dashbuilder.model.dataset.group.DomainStrategy;
 import org.dashbuilder.test.ShrinkWrapHelper;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -30,6 +31,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import static org.dashbuilder.dataset.Assertions.*;
+import static org.dashbuilder.model.dataset.group.ScalarFunctionType.*;
 
 @RunWith(Arquillian.class)
 public class DataSetGroupTest {
@@ -60,9 +62,9 @@ public class DataSetGroupTest {
     public void testGroupByLabelDynamic() throws Exception {
         DataSet result = dataSetManager.lookupDataSet(new DataSetLookupBuilder()
                 .uuid(EXPENSE_REPORTS)
-                .domain("department")
-                .range("id", "occurrences", "count")
-                .range("amount", "totalAmount", "sum")
+                .domain("department", "Department")
+                .range("id", "Occurrences", COUNT)
+                .range("amount", "totalAmount", SUM)
                 .build());
 
         printDataSet(result);
@@ -79,9 +81,9 @@ public class DataSetGroupTest {
     public void testGroupByDateDynamic() throws Exception {
         DataSet result = dataSetManager.lookupDataSet(new DataSetLookupBuilder()
                 .uuid(EXPENSE_REPORTS)
-                .domain("date", "dynamic", 10, "year")
-                .range("id", "occurrences", "count")
-                .range("amount", "totalAmount", "sum")
+                .domain("date", "Period", DomainStrategy.DYNAMIC, 10, "year")
+                .range("id", "Occurrences", COUNT)
+                .range("amount", "totalAmount", SUM)
                 .build());
 
         printDataSet(result);

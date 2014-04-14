@@ -30,6 +30,7 @@ import org.dashbuilder.model.kpi.impl.KPIImpl;
 import static org.dashbuilder.model.samples.SalesConstants.*;
 import static org.dashbuilder.model.displayer.DataDisplayerType.*;
 import static org.dashbuilder.model.displayer.DataDisplayerRenderer.*;
+import static org.dashbuilder.model.dataset.group.ScalarFunctionType.*;
 
 /**
  * A set of KPI definitions related to the Sales Dashboard Sample.
@@ -65,7 +66,7 @@ public class SalesDashboardKPIs {
         .setDataSetLookup(new DataSetLookupBuilder()
                 .uuid(UUID)
                 .domain(PIPELINE)
-                .range(AMOUNT, "occurrences", "count")
+                .range(AMOUNT, "occurrences", COUNT)
                 .build())
         .setDataDisplayer(new DataDisplayerBuilder()
                 .title("Pipeline status")
@@ -79,7 +80,7 @@ public class SalesDashboardKPIs {
         .setDataSetLookup(new DataSetLookupBuilder()
                 .uuid(UUID)
                 .domain(CLOSING_DATE, "dynamic", 24, "month")
-                .range(EXPECTED_AMOUNT, "sum")
+                .range(EXPECTED_AMOUNT, SUM)
                 .build())
         .setDataDisplayer(new DataDisplayerBuilder()
                 .title("Expected Pipeline")
@@ -93,7 +94,7 @@ public class SalesDashboardKPIs {
         .setDataSetLookup(new DataSetLookupBuilder()
                 .uuid(UUID)
                 .domain(STATUS)
-                .range(AMOUNT, "sum")
+                .range(AMOUNT, SUM)
                 .build())
         .setDataDisplayer(new DataDisplayerBuilder()
                 .title("By Status")
@@ -107,7 +108,7 @@ public class SalesDashboardKPIs {
         .setDataSetLookup(new DataSetLookupBuilder()
                 .uuid(UUID)
                 .domain(SALES_PERSON)
-                .range(AMOUNT, "sum")
+                .range(AMOUNT, SUM)
                 .build())
         .setDataDisplayer(new DataDisplayerBuilder()
                 .title("By Sales Person")
@@ -121,7 +122,7 @@ public class SalesDashboardKPIs {
         .setDataSetLookup(new DataSetLookupBuilder()
                 .uuid(UUID)
                 .domain(PRODUCT)
-                .range(AMOUNT, "sum")
+                .range(AMOUNT, SUM)
                 .build())
         .setDataDisplayer(new DataDisplayerBuilder()
                 .title("By Product")
@@ -135,7 +136,7 @@ public class SalesDashboardKPIs {
         .setDataSetLookup(new DataSetLookupBuilder()
                 .uuid(UUID)
                 .domain(COUNTRY)
-                .range(AMOUNT, "sum")
+                .range(AMOUNT, SUM)
                 .build())
         .setDataDisplayer(new DataDisplayerBuilder()
                 .title("By Country")
@@ -149,7 +150,7 @@ public class SalesDashboardKPIs {
         .setDataSetLookup(new DataSetLookupBuilder()
                 .uuid(UUID)
                 .domain(PROBABILITY)
-                .range(AMOUNT, "sum")
+                .range(AMOUNT, SUM)
                 .build())
         .setDataDisplayer(new DataDisplayerBuilder()
                 .title("By Probability")
@@ -162,16 +163,16 @@ public class SalesDashboardKPIs {
     public static final KPIImpl OPPS_COUNTRY_SUMMARY = new KPIImpl("opps-country-summary")
             .setDataSetLookup(new DataSetLookupBuilder()
                     .uuid(UUID)
-                    .domain(COUNTRY)
-                    .range(AMOUNT, "count")
-                    .range(AMOUNT, "min")
-                    .range(AMOUNT, "average")
-                    .range(AMOUNT, "max")
-                    .range(AMOUNT, "sum")
+                    .domain(COUNTRY, "Country")
+                    .range(AMOUNT, "#Opps", COUNT)
+                    .range(AMOUNT, "Min.", MIN)
+                    .range(AMOUNT, "Max.", MAX)
+                    .range(AMOUNT, "Average", AVERAGE)
+                    .range(AMOUNT, "Total", SUM)
                     .build())
             .setDataDisplayer(new DataDisplayerBuilder()
                     .title("Country Summary")
-                    .type("table")
+                    .type(TABLE)
                     .renderer(GOOGLE)
                     .build());
 
@@ -183,7 +184,7 @@ public class SalesDashboardKPIs {
                     .build())
             .setDataDisplayer(new DataDisplayerBuilder()
                     .title("List of Opportunities")
-                    .type("table")
+                    .type(TABLE)
                     .renderer(GOOGLE)
                     .build());
 

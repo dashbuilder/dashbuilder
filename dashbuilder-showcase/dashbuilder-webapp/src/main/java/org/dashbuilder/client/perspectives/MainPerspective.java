@@ -39,7 +39,7 @@ public class MainPerspective {
         perspective.setTransient(true);
         perspective.setName("MainPerspective");
         perspective.getRoot().addPart( new PartDefinitionImpl( new DefaultPlaceRequest( "HomeScreen" ) ) );
-        perspective.getRoot().addPart( new PartDefinitionImpl( new DefaultPlaceRequest( "KPIScreen" ).addParameter("kpi", "opps-by-status") ) );
+        //perspective.getRoot().addPart( new PartDefinitionImpl( new DefaultPlaceRequest( "KPIScreen" ).addParameter("kpi", "opps-country-summary") ) );
         return perspective;
     }
 }
