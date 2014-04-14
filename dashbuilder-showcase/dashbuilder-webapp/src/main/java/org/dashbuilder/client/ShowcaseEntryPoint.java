@@ -43,7 +43,7 @@ import org.uberfire.workbench.model.menu.Menus;
 import static org.uberfire.workbench.model.menu.MenuFactory.*;
 
 /**
- * GWT's Entry-point for Template showcase
+ * GWT's Entry-point for the Dashbuilder showcase
  */
 @EntryPoint
 public class ShowcaseEntryPoint {
