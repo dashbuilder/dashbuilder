@@ -90,6 +90,11 @@ public class ShowcaseEntryPoint {
                         placeManager.goTo( new DefaultPlaceRequest( "Sales Dashboard" ) );
                     }
                 }).endMenu().
+                newTopLevelMenu( "Sales Reports" ).respondsWith( new Command() {
+                    public void execute() {
+                        placeManager.goTo( new DefaultPlaceRequest( "Sales Reports" ) );
+                    }
+                }).endMenu().
                 build();
 
         menubar.addMenus( menus );

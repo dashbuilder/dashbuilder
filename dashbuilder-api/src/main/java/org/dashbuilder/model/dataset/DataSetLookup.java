@@ -39,7 +39,7 @@ public class DataSetLookup {
     /**
      * The number of rows to get.
      */
-    protected int numberOfRows = 0;
+    protected int numberOfRows = 100;
 
     /**
      * The list of operations to apply on the target data set as part of the lookup operation.
@@ -47,6 +47,22 @@ public class DataSetLookup {
     protected List<DataSetOp> operationList = new ArrayList<DataSetOp>();
 
     public DataSetLookup() {
+    }
+
+    public int getRowOffset() {
+        return rowOffset;
+    }
+
+    public void setRowOffset(int rowOffset) {
+        this.rowOffset = rowOffset;
+    }
+
+    public int getNumberOfRows() {
+        return numberOfRows;
+    }
+
+    public void setNumberOfRows(int numberOfRows) {
+        this.numberOfRows = numberOfRows;
     }
 
     public DataSetLookup(String dataSetUUID, DataSetOp... ops) {

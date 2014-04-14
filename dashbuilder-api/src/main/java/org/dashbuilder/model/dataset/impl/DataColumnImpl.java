@@ -33,7 +33,7 @@ public class DataColumnImpl implements DataColumn {
     public DataColumnImpl() {
     }
 
-    public DataColumnImpl(String id, ColumnType columnType, List values) {
+    public DataColumnImpl(String id, ColumnType columnType) {
         this.id = id;
         this.columnType = columnType;
         this.values = values;

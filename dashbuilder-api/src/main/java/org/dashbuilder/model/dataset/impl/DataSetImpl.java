@@ -111,4 +111,35 @@ public class DataSetImpl implements DataSet {
         l.set(row, value);
         return this;
     }
+
+    public DataSet trim(int offset, int rows) {
+        if (offset < 0) throw new IllegalArgumentException("Offset can't be negative: " + offset);
+        if (offset >= getRowCount()) throw new IllegalArgumentException("Offset can't be greater than the number of rows: " + offset);
+
+        if (offset == 0 && (rows <= 0 || rows >= this.getRowCount())) {
+            return this;
+        }
+
+        DataSetImpl other = cloneEmpty();
+        for (int i=0; i<columns.size(); i++) {
+            DataColumn column = columns.get(i);
+            DataColumn colOther = other.columns.get(i);
+            List values = column.getValues();
+            List valOther = colOther.getValues();
+            for (int j=offset; j<values.size() && j<rows; j++) {
+                Object value = values.get(j);
+                valOther.add(value);
+            }
+        }
+        return other;
+    }
+
+    public DataSetImpl cloneEmpty() {
+        DataSetImpl other = new DataSetImpl();
+        for (int i=0; i<columns.size(); i++) {
+            DataColumn column = columns.get(i);
+            other.addColumn(column.getId(), column.getColumnType());
+        }
+        return other;
+    }
 }

@@ -32,28 +32,15 @@ import com.google.gwt.visualization.client.visualizations.BarChart.Options;
 @Named("google_barchart_viewer")
 public class GoogleBarChartViewer extends GoogleXAxisChartViewer {
 
-    @Inject
-    private GoogleRenderer googleRenderer;
-
-    FlowPanel panel = new FlowPanel();
-
     @Override
     public String getPackage() {
         return BarChart.PACKAGE;
     }
 
-    @PostConstruct
-    public void init() {
-        initWidget(panel);
-
-        googleRenderer.registerChart(this);
-    }
-
     @Override
-    public Widget drawChart() {
+    public Widget createChart() {
         BarChart chart = new BarChart(createTable(), createOptions());
         chart.addSelectHandler(createSelectHandler(chart));
-        panel.add(chart);
         return chart;
     }
 

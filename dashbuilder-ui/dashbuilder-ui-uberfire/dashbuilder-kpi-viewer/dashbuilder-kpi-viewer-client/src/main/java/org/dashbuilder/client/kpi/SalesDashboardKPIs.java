@@ -50,6 +50,8 @@ public class SalesDashboardKPIs {
         kpiList.add(SalesDashboardKPIs.OPPS_BY_PRODUCT);
         kpiList.add(SalesDashboardKPIs.OPPS_BY_SALESMAN);
         kpiList.add(SalesDashboardKPIs.OPPS_BY_STATUS);
+        kpiList.add(SalesDashboardKPIs.OPPS_COUNTRY_SUMMARY);
+        kpiList.add(SalesDashboardKPIs.OPPS_ALL);
         for (KPI kpi : kpiList) {
             kpiLocator.addKPI(kpi);
         }
@@ -156,4 +158,33 @@ public class SalesDashboardKPIs {
                 .x(PROBABILITY, "Probability")
                 .y(AMOUNT, "Total amount")
                 .build());
+
+    public static final KPIImpl OPPS_COUNTRY_SUMMARY = new KPIImpl("opps-country-summary")
+            .setDataSetLookup(new DataSetLookupBuilder()
+                    .uuid(UUID)
+                    .domain(COUNTRY)
+                    .range(AMOUNT, "count")
+                    .range(AMOUNT, "min")
+                    .range(AMOUNT, "average")
+                    .range(AMOUNT, "max")
+                    .range(AMOUNT, "sum")
+                    .build())
+            .setDataDisplayer(new DataDisplayerBuilder()
+                    .title("Country Summary")
+                    .type("table")
+                    .renderer(GOOGLE)
+                    .build());
+
+    public static final KPIImpl OPPS_ALL = new KPIImpl("opps-allopps-listing")
+            .setDataSetLookup(new DataSetLookupBuilder()
+                    .uuid(UUID)
+                    .rowOffset(0)
+                    .rowNumber(100)
+                    .build())
+            .setDataDisplayer(new DataDisplayerBuilder()
+                    .title("List of Opportunities")
+                    .type("table")
+                    .renderer(GOOGLE)
+                    .build());
+
 }

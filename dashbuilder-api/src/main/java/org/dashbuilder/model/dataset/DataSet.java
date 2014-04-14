@@ -78,4 +78,12 @@ public interface DataSet {
      * @param column The cell column (the first column is 0).
      */
     DataSet setValueAt(int row, int column, Object value);
+
+    /**
+     * Returns a data set containing only the specified row sub set.
+     * @param offset The position where the row sub set starts.
+     * @param rows The number of rows to get.
+     * @return A trimmed data set.
+     */
+    DataSet trim(int offset, int rows);
 }

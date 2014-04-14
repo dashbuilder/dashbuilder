@@ -5,23 +5,23 @@ $registerPerspective({
     view: {
         parts: [
             {
-                place: "KPIPresenter",
+                place: "KPIScreen",
                 parameters: {"kpi": "opps-by-status", "token" : "4"}
             },
             {
-                place: "KPIPresenter",
+                place: "KPIScreen",
                 parameters: {"kpi": "opps-by-salesman", "token" : "6"}
             },
             {
-                place: "KPIPresenter",
+                place: "KPIScreen",
                 parameters: {"kpi": "opps-by-product", "token" : "7"}
             },
             {
-                place: "KPIPresenter",
+                place: "KPIScreen",
                 parameters: {"kpi": "opps-by-country", "token" : "5"}
             },
             {
-                place: "KPIPresenter",
+                place: "KPIScreen",
                 parameters: {"kpi": "opps-by-prob", "token" : "0"}
             }
         ],
@@ -32,18 +32,18 @@ $registerPerspective({
                 panel_type: "simple",
                 parts: [
                     {
-                        place: "KPIPresenter",
+                        place: "KPIScreen",
                         parameters: {"kpi": "opps-expected-pipeline", "token" : "2"}
                     }
                 ],
                 panels: [
                     {
-                        height: 500,
+                        height: 400,
                         position: "east",
                         panel_type: "simple",
                         parts: [
                             {
-                                place: "KPIPresenter",
+                                place: "KPIScreen",
                                 parameters: {"kpi": "opps-by-pipeline", "token" : "3"}
                             }
                         ]

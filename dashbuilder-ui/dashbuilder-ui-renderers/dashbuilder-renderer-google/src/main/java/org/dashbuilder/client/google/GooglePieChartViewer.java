@@ -36,28 +36,15 @@ import com.google.gwt.visualization.client.visualizations.PieChart.Options;
 @Named("google_piechart_viewer")
 public class GooglePieChartViewer extends GoogleXAxisChartViewer {
 
-    @Inject
-    private GoogleRenderer googleRenderer;
-
-    FlowPanel panel = new FlowPanel();
-
     @Override
     public String getPackage() {
         return PieChart.PACKAGE;
     }
 
-    @PostConstruct
-    public void init() {
-        initWidget(panel);
-
-        googleRenderer.registerChart(this);
-    }
-
     @Override
-    public Widget drawChart() {
+    public Widget createChart() {
         PieChart pie = new PieChart(createTable(), createOptions());
         pie.addSelectHandler(createSelectHandler(pie));
-        panel.add(pie);
         return pie;
     }
 

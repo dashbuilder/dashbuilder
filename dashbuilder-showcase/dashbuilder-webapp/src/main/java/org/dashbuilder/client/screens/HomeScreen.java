@@ -9,16 +9,16 @@ import org.uberfire.client.annotations.WorkbenchPartView;
 import org.uberfire.client.annotations.WorkbenchScreen;
 
 @Dependent
-@WorkbenchScreen(identifier = "HelloWorldScreen")
-public class HelloWorldScreen {
+@WorkbenchScreen(identifier = "HomeScreen")
+public class HomeScreen {
 
-    private static final String ORIGINAL_TEXT = "Hello Dashbuilder!";
+    private static final String ORIGINAL_TEXT = "Welcome to Dashbuilder!";
 
     private Label label = new Label( ORIGINAL_TEXT );
 
     @WorkbenchPartTitle
     public String getTitle() {
-        return "Greetings";
+        return "Home";
     }
 
     @WorkbenchPartView

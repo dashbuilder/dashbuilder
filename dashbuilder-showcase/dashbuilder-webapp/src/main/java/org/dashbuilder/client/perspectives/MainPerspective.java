@@ -24,8 +24,6 @@ public class MainPerspective {
 
     private PerspectiveDefinition perspective;
 
-    @Inject SalesDashboardKPIs salesDashboardKPIs;
-
     @PostConstruct
     public void init() {
         buildPerspective();
@@ -40,11 +38,8 @@ public class MainPerspective {
         perspective = new PerspectiveDefinitionImpl( PanelType.ROOT_TAB);
         perspective.setTransient(true);
         perspective.setName("MainPerspective");
-
-        //p.getRoot().addPart( new PartDefinitionImpl( new DefaultPlaceRequest( "HelloWorldScreen" ) ) );
-        for (KPI kpi : salesDashboardKPIs.getAllKPIs()) {
-            perspective.getRoot().addPart( new PartDefinitionImpl( new DefaultPlaceRequest( "KPIPresenter" ).addParameter("kpi", kpi.getUUID()) ) );
-        }
+        perspective.getRoot().addPart( new PartDefinitionImpl( new DefaultPlaceRequest( "HomeScreen" ) ) );
+        perspective.getRoot().addPart( new PartDefinitionImpl( new DefaultPlaceRequest( "KPIScreen" ).addParameter("kpi", "opps-by-status") ) );
         return perspective;
     }
 }

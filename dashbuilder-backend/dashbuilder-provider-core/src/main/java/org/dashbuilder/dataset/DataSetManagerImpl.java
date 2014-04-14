@@ -19,6 +19,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
+import org.dashbuilder.model.dataset.DataColumn;
 import org.dashbuilder.storage.spi.DataSetStorage;
 import org.dashbuilder.model.dataset.DataSet;
 import org.dashbuilder.model.dataset.DataSetLookup;
@@ -76,7 +77,8 @@ public class DataSetManagerImpl implements DataSetManager {
         for (DataSetOp op : lookup.getOperationList()) {
             result = dataSetStorage.apply(uuid, op);
         }
-        // Return the transformed data set.
+        // Trim the data set as requested.
+        result = result.trim(lookup.getRowOffset(), lookup.getNumberOfRows());
         return result;
     }
 

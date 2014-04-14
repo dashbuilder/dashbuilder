@@ -15,27 +15,28 @@
  */
 package org.dashbuilder.client.google;
 
-import java.util.List;
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.visualization.client.AbstractDataTable;
-import com.google.gwt.visualization.client.DataTable;
 import org.dashbuilder.model.dataset.ColumnType;
 import org.dashbuilder.model.dataset.DataColumn;
-import org.dashbuilder.model.displayer.XAxis;
-import org.dashbuilder.model.displayer.XAxisChart;
-import org.dashbuilder.model.displayer.YAxis;
 import org.dashbuilder.client.displayer.DataDisplayerViewer;
 
 public abstract class GoogleChartViewer extends DataDisplayerViewer {
 
-    public abstract Widget drawChart();
-    public abstract String getPackage();
-
+    @Inject protected GoogleRenderer googleRenderer;
     protected boolean isApiReady = false;
     protected boolean isDataReady = false;
+    protected FlowPanel panel = new FlowPanel();
+
+    @PostConstruct
+    public void init() {
+        initWidget(panel);
+        googleRenderer.registerChart(this);
+    }
 
     public boolean isDataReady() {
         return isDataReady;
@@ -51,7 +52,9 @@ public abstract class GoogleChartViewer extends DataDisplayerViewer {
 
     public void onDataReady() {
         isDataReady = true;
-        if (isDisplayReady()) drawChart();
+        if (isDisplayReady()) {
+            drawChart();
+        }
     }
 
     public void onApiReady() {
@@ -60,6 +63,14 @@ public abstract class GoogleChartViewer extends DataDisplayerViewer {
             drawChart();
         }
     }
+
+    public void drawChart() {
+        Widget w = createChart();
+        panel.add(w);
+    }
+
+    public abstract Widget createChart();
+    public abstract String getPackage();
 
     public AbstractDataTable.ColumnType getColumnType(DataColumn dataColumn) {
         ColumnType type = dataColumn.getColumnType();

@@ -15,50 +15,81 @@
  */
 package org.dashbuilder.client.google;
 
+import java.util.Date;
+import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import com.google.gwt.core.client.JsArray;
-import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.visualization.client.AbstractDataTable;
+import com.google.gwt.visualization.client.DataTable;
 import com.google.gwt.visualization.client.Selection;
 import com.google.gwt.visualization.client.events.SelectHandler;
-import com.google.gwt.visualization.client.visualizations.AreaChart;
-import com.google.gwt.visualization.client.visualizations.AreaChart.Options;
+import com.google.gwt.visualization.client.visualizations.Table;
+import com.google.gwt.visualization.client.visualizations.Table.Options;
+import org.dashbuilder.model.dataset.ColumnType;
+import org.dashbuilder.model.dataset.DataColumn;
 
 @Dependent
-@Named("google_areachart_viewer")
-public class GoogleAreaChartViewer extends GoogleXAxisChartViewer {
+@Named("google_table_viewer")
+public class GoogleTableViewer extends GoogleChartViewer {
 
     @Override
     public String getPackage() {
-        return AreaChart.PACKAGE;
+        return Table.PACKAGE;
     }
 
     @Override
     public Widget createChart() {
-        AreaChart chart = new AreaChart(createTable(), createOptions());
-        chart.addSelectHandler(createSelectHandler(chart));
-        return chart;
+        Table w = new Table(createTable(), createOptions());
+        w.addSelectHandler(createSelectHandler(w));
+        return w;
+    }
+
+    public AbstractDataTable createTable() {
+        DataTable data = DataTable.create();
+        data.addRows(dataSet.getRowCount());
+
+        List<DataColumn> columns = dataSet.getColumns();
+        for (int i = 0; i < columns.size(); i++) {
+            DataColumn column = columns.get(i);
+            List values = column.getValues();
+            ColumnType type = column.getColumnType();
+            data.addColumn(getColumnType(column), column.getId());
+            for (int j = 0; j < values.size(); j++) {
+
+                if (ColumnType.DATE.equals(type)) {
+                    data.setValue(j, i, (Date) values.get(j));
+                }
+                else if (ColumnType.NUMBER.equals(type)) {
+                    // TODO: format decimal number
+                    data.setValue(j, i, (Double) values.get(j));
+                }
+                else {
+                    data.setValue(j, i, values.get(j).toString());
+                }
+            }
+        }
+        return data;
     }
 
     private Options createOptions() {
         Options options = Options.create();
-        options.setTitle(dataDisplayer.getTitle());
-        options.setWidth(600);
-        options.setHeight(300);
+        options.setPageSize(10);
+        options.setShowRowNumber(true);
         return options;
     }
 
-    private SelectHandler createSelectHandler(final AreaChart chart) {
+    private SelectHandler createSelectHandler(final Table w) {
         return new SelectHandler() {
             public void onSelect(SelectEvent event) {
                 String message = "";
 
                 // May be multiple selections.
-                JsArray<Selection> selections = chart.getSelections();
+                JsArray<Selection> selections = w.getSelections();
 
                 for (int i = 0; i < selections.length(); i++) {
                     // add a new line for each selection
@@ -82,7 +113,7 @@ public class GoogleAreaChartViewer extends GoogleXAxisChartViewer {
                         message += "row " + row + " selected";
                     } else {
                         // unreachable
-                        message += "Chart selections should be either row selections or cell selections.";
+                        message += "Selections should be either row selections or cell selections.";
                         message += "  Other visualizations support column selections as well.";
                     }
                 }

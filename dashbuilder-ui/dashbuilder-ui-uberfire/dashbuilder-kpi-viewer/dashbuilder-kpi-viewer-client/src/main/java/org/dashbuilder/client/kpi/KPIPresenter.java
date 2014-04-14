@@ -31,7 +31,7 @@ import org.uberfire.client.annotations.WorkbenchScreen;
 import org.uberfire.lifecycle.OnStartup;
 import org.uberfire.mvp.PlaceRequest;
 
-@WorkbenchScreen(identifier = "KPIPresenter")
+@WorkbenchScreen(identifier = "KPIScreen")
 @Dependent
 public class KPIPresenter {
 

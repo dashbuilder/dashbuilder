@@ -58,6 +58,17 @@ public class DataSetLookupBuilder {
         return this;
     }
 
+    public DataSetLookupBuilder rowOffset(int offset) {
+        if (offset < 0) throw new IllegalArgumentException("Offset can't be negative: " + offset);
+        dataSetLookup.rowOffset = offset;
+        return this;
+    }
+
+    public DataSetLookupBuilder rowNumber(int rows) {
+        dataSetLookup.numberOfRows = rows;
+        return this;
+    }
+
     public DataSetLookupBuilder domain(String columnId) {
         return domain(columnId, DomainStrategy.DYNAMIC);
     }

@@ -32,28 +32,15 @@ import com.google.gwt.visualization.client.visualizations.LineChart;
 @Named("google_linechart_viewer")
 public class GoogleLineChartViewer extends GoogleXAxisChartViewer {
 
-    @Inject
-    private GoogleRenderer googleRenderer;
-
-    FlowPanel panel = new FlowPanel();
-
     @Override
     public String getPackage() {
         return LineChart.PACKAGE;
     }
 
-    @PostConstruct
-    public void init() {
-        initWidget(panel);
-
-        googleRenderer.registerChart(this);
-    }
-
     @Override
-    public Widget drawChart() {
+    public Widget createChart() {
         LineChart chart = new LineChart(createTable(), createOptions());
         chart.addSelectHandler(createSelectHandler(chart));
-        panel.add(chart);
         return chart;
     }
 
