@@ -18,19 +18,23 @@ package org.dashbuilder.model.displayer.impl;
 import java.util.List;
 import java.util.ArrayList;
 
+import org.dashbuilder.model.displayer.Chart;
 import org.dashbuilder.model.displayer.DataDisplayer;
+import org.dashbuilder.model.displayer.DataDisplayerRenderer;
+import org.dashbuilder.model.displayer.DataDisplayerType;
 import org.dashbuilder.model.displayer.XAxis;
+import org.dashbuilder.model.displayer.XAxisChart;
 import org.dashbuilder.model.displayer.YAxis;
 import org.jboss.errai.common.client.api.annotations.Portable;
 
 @Portable
-public class DataDisplayerImpl implements DataDisplayer {
+public class DataDisplayerImpl implements DataDisplayer, Chart, XAxisChart {
+
+    // DataDisplayer interface
 
     protected String title;
-    protected String type;
-    protected String renderer;
-    protected XAxis xAxis;
-    protected List<YAxis> yAxisList = new ArrayList<YAxis>();
+    protected DataDisplayerType type;
+    protected DataDisplayerRenderer renderer;
 
     public String getTitle() {
         return title;
@@ -40,21 +44,47 @@ public class DataDisplayerImpl implements DataDisplayer {
         this.title = title;
     }
 
-    public String getType() {
+    public DataDisplayerType getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(DataDisplayerType type) {
         this.type = type;
     }
 
-    public String getRenderer() {
+    public DataDisplayerRenderer getRenderer() {
         return renderer;
     }
 
-    public void setRenderer(String renderer) {
+    public void setRenderer(DataDisplayerRenderer renderer) {
         this.renderer = renderer;
     }
+
+    // Chart interface
+
+    protected int width;
+    protected int height;
+
+    public int getWidth() {
+        return width;
+    }
+
+    public void setWidth(int width) {
+        this.width = width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public void setHeight(int height) {
+        this.height = height;
+    }
+
+    // XAxisChart interface
+
+    protected XAxis xAxis;
+    protected List<YAxis> yAxisList = new ArrayList<YAxis>();
 
     public XAxis getXAxis() {
         return xAxis;

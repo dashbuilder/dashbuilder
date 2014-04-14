@@ -28,6 +28,8 @@ import org.dashbuilder.model.kpi.KPI;
 import org.dashbuilder.model.kpi.impl.KPIImpl;
 
 import static org.dashbuilder.model.samples.SalesConstants.*;
+import static org.dashbuilder.model.displayer.DataDisplayerType.*;
+import static org.dashbuilder.model.displayer.DataDisplayerRenderer.*;
 
 /**
  * A set of KPI definitions related to the Sales Dashboard Sample.
@@ -65,8 +67,8 @@ public class SalesDashboardKPIs {
                 .build())
         .setDataDisplayer(new DataDisplayerBuilder()
                 .title("Pipeline status")
-                .type("piechart")
-                .renderer("google")
+                .type(PIECHART)
+                .renderer(GOOGLE)
                 .x(PIPELINE, "Pipeline")
                 .y("occurrences", "Number of opps")
                 .build());
@@ -79,8 +81,8 @@ public class SalesDashboardKPIs {
                 .build())
         .setDataDisplayer(new DataDisplayerBuilder()
                 .title("Expected Pipeline")
-                .type("barchart")
-                .renderer("google")
+                .type(AREACHART)
+                .renderer(GOOGLE)
                 .x(CLOSING_DATE, "Closing date")
                 .y(EXPECTED_AMOUNT, "Expected amount")
                 .build());
@@ -93,8 +95,8 @@ public class SalesDashboardKPIs {
                 .build())
         .setDataDisplayer(new DataDisplayerBuilder()
                 .title("By Status")
-                .type("piechart")
-                .renderer("google")
+                .type(PIECHART)
+                .renderer(GOOGLE)
                 .x(STATUS, "Status")
                 .y(AMOUNT, "Total amount")
                 .build());
@@ -107,8 +109,8 @@ public class SalesDashboardKPIs {
                 .build())
         .setDataDisplayer(new DataDisplayerBuilder()
                 .title("By Sales Person")
-                .type("piechart")
-                .renderer("google")
+                .type(PIECHART)
+                .renderer(GOOGLE)
                 .x(SALES_PERSON, "Sales person")
                 .y(AMOUNT, "Total amount")
                 .build());
@@ -122,7 +124,7 @@ public class SalesDashboardKPIs {
         .setDataDisplayer(new DataDisplayerBuilder()
                 .title("By Product")
                 .type("barchart")
-                .renderer("google")
+                .renderer(GOOGLE)
                 .x(PRODUCT, "Product")
                 .y(AMOUNT, "Total amount")
                 .build());
@@ -136,7 +138,7 @@ public class SalesDashboardKPIs {
         .setDataDisplayer(new DataDisplayerBuilder()
                 .title("By Country")
                 .type("barchart")
-                .renderer("google")
+                .renderer(GOOGLE)
                 .x(COUNTRY, "Country")
                 .y(AMOUNT, "Total amount")
                 .build());
@@ -149,8 +151,8 @@ public class SalesDashboardKPIs {
                 .build())
         .setDataDisplayer(new DataDisplayerBuilder()
                 .title("By Probability")
-                .type("barchart")
-                .renderer("google")
+                .type(BARCHART)
+                .renderer(GOOGLE)
                 .x(PROBABILITY, "Probability")
                 .y(AMOUNT, "Total amount")
                 .build());

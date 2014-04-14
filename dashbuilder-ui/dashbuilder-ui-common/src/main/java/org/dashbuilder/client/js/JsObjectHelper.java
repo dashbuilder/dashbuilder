@@ -27,6 +27,8 @@ import org.dashbuilder.model.dataset.DataSet;
 import org.dashbuilder.model.dataset.impl.DataColumnImpl;
 import org.dashbuilder.model.dataset.impl.DataSetImpl;
 import org.dashbuilder.model.displayer.DataDisplayer;
+import org.dashbuilder.model.displayer.DataDisplayerRenderer;
+import org.dashbuilder.model.displayer.DataDisplayerType;
 import org.dashbuilder.model.displayer.XAxis;
 import org.dashbuilder.model.displayer.YAxis;
 import org.dashbuilder.model.displayer.impl.DataDisplayerImpl;
@@ -67,8 +69,8 @@ public class JsObjectHelper {
     public static DataDisplayer createDataDisplayer(JsDataDisplayer jsDataDisplayer) {
         DataDisplayerImpl displayer = new DataDisplayerImpl();
         displayer.setTitle(jsDataDisplayer.getTitle());
-        displayer.setRenderer(jsDataDisplayer.getRenderer());
-        displayer.setType(jsDataDisplayer.getType());
+        displayer.setRenderer(DataDisplayerRenderer.getByName(jsDataDisplayer.getRenderer()));
+        displayer.setType(DataDisplayerType.getByName(jsDataDisplayer.getType()));
         displayer.setXAxis(createXAxis(jsDataDisplayer.getJsXAxis()));
         displayer.setYAxes(createYAxes(jsDataDisplayer.getJsYAxes()));
         return displayer;

@@ -15,38 +15,8 @@
  */
 package org.dashbuilder.model.displayer;
 
+public interface Chart {
 
-public interface DataDisplayer {
-
-    String getTitle();
-    DataDisplayerType getType();
-    DataDisplayerRenderer getRenderer();
-/*
-    String getForegroundColor();
-    String getBackgroundColor();
     int getWidth();
     int getHeight();
-    String getGraphicAlign();
-    boolean isLegendVisible();
-    boolean isRoundToIntegerEnabled();
-    boolean isTitleVisible();
-    String getLegendAnchor();
-
-    // Sort criteria must belong to data set retrieval settings
-    int getSortCriteria();
-    int getSortOrder();
-
-    int getNumberOfRowsPerPage();
-
-    */
-/** The display angle for the X-axis labels. *//*
-
-    int getXAxisLabelsAngle();
-
-    */
-/** Display area below line *//*
-
-    boolean isAreaVisible();
-
-*/
 }

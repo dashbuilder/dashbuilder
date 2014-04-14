@@ -30,7 +30,7 @@ import com.google.gwt.visualization.client.visualizations.BarChart.Options;
 
 @Dependent
 @Named("google_barchart_viewer")
-public class GoogleBarChartViewer extends GoogleChartViewer {
+public class GoogleBarChartViewer extends GoogleXAxisChartViewer {
 
     @Inject
     private GoogleRenderer googleRenderer;
@@ -96,7 +96,7 @@ public class GoogleBarChartViewer extends GoogleChartViewer {
                         message += "row " + row + " selected";
                     } else {
                         // unreachable
-                        message += "Pie chart selections should be either row selections or cell selections.";
+                        message += "Chart selections should be either row selections or cell selections.";
                         message += "  Other visualizations support column selections as well.";
                     }
                 }

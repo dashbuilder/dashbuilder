@@ -55,12 +55,22 @@ public class DataDisplayerBuilder {
         return this;
     }
 
-    public DataDisplayerBuilder type(String type) {
+    public DataDisplayerBuilder type(DataDisplayerType type) {
         dataDisplayer.setType(type);
         return this;
     }
 
+    public DataDisplayerBuilder type(String type) {
+        dataDisplayer.setType(DataDisplayerType.getByName(type));
+        return this;
+    }
+
     public DataDisplayerBuilder renderer(String renderer) {
+        dataDisplayer.setRenderer(DataDisplayerRenderer.getByName(renderer));
+        return this;
+    }
+
+    public DataDisplayerBuilder renderer(DataDisplayerRenderer renderer) {
         dataDisplayer.setRenderer(renderer);
         return this;
     }

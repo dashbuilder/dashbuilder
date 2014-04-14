@@ -35,8 +35,8 @@ public class DataDisplayerViewerLocator {
      * Get the viewer component for the specified data displayer.
      */
     public DataDisplayerViewer lookupViewer(DataDisplayer target) throws Exception {
-        String type = target.getType();
-        String lib = target.getRenderer();
+        String type = target.getType().toString().toLowerCase();
+        String lib = target.getRenderer().toString().toLowerCase();
         String beanName = lib + "_" + type + "_viewer";
 
         Collection<IOCBeanDef> beans = beanManager.lookupBeans(beanName);

@@ -21,20 +21,16 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import com.google.gwt.core.client.JsArray;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.visualization.client.AbstractDataTable;
-import com.google.gwt.visualization.client.DataTable;
 import com.google.gwt.visualization.client.Selection;
-import com.google.gwt.visualization.client.AbstractDataTable.ColumnType;
 import com.google.gwt.visualization.client.events.SelectHandler;
-import com.google.gwt.visualization.client.visualizations.PieChart;
-import com.google.gwt.visualization.client.visualizations.PieChart.Options;
+import com.google.gwt.visualization.client.visualizations.AreaChart;
+import com.google.gwt.visualization.client.visualizations.AreaChart.Options;
 
 @Dependent
-@Named("google_piechart_viewer")
-public class GooglePieChartViewer extends GoogleXAxisChartViewer {
+@Named("google_areachart_viewer")
+public class GoogleAreaChartViewer extends GoogleXAxisChartViewer {
 
     @Inject
     private GoogleRenderer googleRenderer;
@@ -43,7 +39,7 @@ public class GooglePieChartViewer extends GoogleXAxisChartViewer {
 
     @Override
     public String getPackage() {
-        return PieChart.PACKAGE;
+        return AreaChart.PACKAGE;
     }
 
     @PostConstruct
@@ -55,23 +51,21 @@ public class GooglePieChartViewer extends GoogleXAxisChartViewer {
 
     @Override
     public Widget drawChart() {
-        PieChart pie = new PieChart(createTable(), createOptions());
-        pie.addSelectHandler(createSelectHandler(pie));
-        panel.add(pie);
-        return pie;
+        AreaChart chart = new AreaChart(createTable(), createOptions());
+        chart.addSelectHandler(createSelectHandler(chart));
+        panel.add(chart);
+        return chart;
     }
 
     private Options createOptions() {
         Options options = Options.create();
         options.setTitle(dataDisplayer.getTitle());
-        options.set3D(true);
         options.setWidth(600);
         options.setHeight(300);
-        options.set3D(true);
         return options;
     }
 
-    private SelectHandler createSelectHandler(final PieChart chart) {
+    private SelectHandler createSelectHandler(final AreaChart chart) {
         return new SelectHandler() {
             public void onSelect(SelectEvent event) {
                 String message = "";
@@ -101,7 +95,7 @@ public class GooglePieChartViewer extends GoogleXAxisChartViewer {
                         message += "row " + row + " selected";
                     } else {
                         // unreachable
-                        message += "Pie chart selections should be either row selections or cell selections.";
+                        message += "Chart selections should be either row selections or cell selections.";
                         message += "  Other visualizations support column selections as well.";
                     }
                 }

@@ -25,6 +25,7 @@ import com.google.gwt.visualization.client.DataTable;
 import org.dashbuilder.model.dataset.ColumnType;
 import org.dashbuilder.model.dataset.DataColumn;
 import org.dashbuilder.model.displayer.XAxis;
+import org.dashbuilder.model.displayer.XAxisChart;
 import org.dashbuilder.model.displayer.YAxis;
 import org.dashbuilder.client.displayer.DataDisplayerViewer;
 
@@ -58,44 +59,6 @@ public abstract class GoogleChartViewer extends DataDisplayerViewer {
         if (isDisplayReady()) {
             drawChart();
         }
-    }
-
-    public AbstractDataTable createTable() {
-        DataTable data = DataTable.create();
-
-        // Add the xAxis column
-        XAxis xAxis = dataDisplayer.getXAxis();
-        DataColumn xAxisColumn = dataSet.getColumnById(xAxis.getColumnId());
-        if (xAxisColumn == null) {
-            GWT.log("Domain column not found in the data set: " + xAxis.getColumnId());
-        }
-
-        List xAxisValues = xAxisColumn.getValues();
-        data.addRows(xAxisValues.size());
-        data.addColumn(getColumnType(xAxisColumn), xAxis.getDisplayName());
-        for (int i = 0; i < xAxisValues.size(); i++) {
-            data.setValue(i, 0, xAxisValues.get(i).toString());
-        }
-
-        // Add the range columns
-        List<YAxis> yAxes = dataDisplayer.getYAxes();
-        for (int i = 0; i < yAxes.size(); i++) {
-            YAxis yAxis = yAxes.get(i);
-            DataColumn yAxisColumn = dataSet.getColumnById(yAxis.getColumnId());
-            if (yAxisColumn == null) {
-                GWT.log("Range column not found in the data set: " + xAxis.getColumnId());
-            }
-
-            List yAxisValues = yAxisColumn.getValues();
-            data.addColumn(AbstractDataTable.ColumnType.NUMBER, yAxis.getDisplayName());
-            for (int j = 0; j < yAxisValues.size(); j++) {
-                // TODO: format decimal number
-                double value = ((Double) yAxisValues.get(j)).doubleValue();
-                data.setValue(j, i+1, value);
-                //GWT.log("Row="+j+" Col="+(i+1)+" Val="+value);
-            }
-        }
-        return data;
     }
 
     public AbstractDataTable.ColumnType getColumnType(DataColumn dataColumn) {
