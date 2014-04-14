@@ -85,9 +85,9 @@ public class ShowcaseEntryPoint {
                         }
                     }
                 }).endMenu().
-                newTopLevelMenu( "Dashboard" ).respondsWith( new Command() {
+                newTopLevelMenu( "Sales Dashboard" ).respondsWith( new Command() {
                     public void execute() {
-                        placeManager.goTo( new DefaultPlaceRequest( "Dashboard" ) );
+                        placeManager.goTo( new DefaultPlaceRequest( "Sales Dashboard" ) );
                     }
                 }).endMenu().
                 build();

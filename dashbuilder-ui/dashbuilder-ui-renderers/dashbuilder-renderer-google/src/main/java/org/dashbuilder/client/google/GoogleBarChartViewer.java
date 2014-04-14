@@ -60,8 +60,8 @@ public class GoogleBarChartViewer extends GoogleChartViewer {
     private Options createOptions() {
         Options options = Options.create();
         options.setTitle(dataDisplayer.getTitle());
-        options.setWidth(400);
-        options.setHeight(240);
+        options.setWidth(600);
+        options.setHeight(300);
         options.set3D(true);
         return options;
     }

@@ -1,79 +1,52 @@
 $registerPerspective({
-    id: "Dashboard",
+    id: "Sales Dashboard",
     roles: [ "admins", "users" ],
     panel_type: "root_tab",
     view: {
         parts: [
             {
                 place: "KPIPresenter",
-                parameters: {"kpi": "sample0", "token" : "3"}
+                parameters: {"kpi": "opps-by-status", "token" : "4"}
+            },
+            {
+                place: "KPIPresenter",
+                parameters: {"kpi": "opps-by-salesman", "token" : "6"}
+            },
+            {
+                place: "KPIPresenter",
+                parameters: {"kpi": "opps-by-product", "token" : "7"}
+            },
+            {
+                place: "KPIPresenter",
+                parameters: {"kpi": "opps-by-country", "token" : "5"}
+            },
+            {
+                place: "KPIPresenter",
+                parameters: {"kpi": "opps-by-prob", "token" : "0"}
             }
         ],
         panels: [
             {
-                width: 370,
-                height: 340,
+                height: 500,
                 position: "north",
-                panel_type: "static",
+                panel_type: "simple",
                 parts: [
                     {
                         place: "KPIPresenter",
-                        parameters: {"kpi": "sample1", "token" : "2"}
-                    }
-                ]
-            },
-            {
-                width: 570,
-                height: 340,
-                position: "south",
-                panel_type: "multi_tab",
-                parts: [
-                    {
-                        place: "KPIPresenter",
-                        parameters: {"kpi": "sample1", "token" : "4"}
-                    },
-                    {
-                        place: "KPIPresenter",
-                        parameters: {"kpi": "sample0", "token" : "6"}
+                        parameters: {"kpi": "opps-expected-pipeline", "token" : "2"}
                     }
                 ],
                 panels: [
                     {
-                        width: 370,
-                        height: 340,
-                        position: "north",
-                        panel_type: "static",
+                        height: 500,
+                        position: "east",
+                        panel_type: "simple",
                         parts: [
                             {
                                 place: "KPIPresenter",
-                                parameters: {"kpi": "sample1", "token" : "7"}
+                                parameters: {"kpi": "opps-by-pipeline", "token" : "3"}
                             }
                         ]
-                    }
-                ]
-
-            },
-            {
-                width: 520,
-                height: 340,
-                position: "east",
-                panel_type: "simple_dnd",
-                parts: [
-                    {
-                        place: "KPIPresenter",
-                        parameters: {"kpi": "sample0", "token" : "5"}
-                    }
-                ]
-            },
-            {
-                width: 700,
-                min_width: 330,
-                position: "west",
-                panel_type: "simple_dnd",
-                parts: [
-                    {
-                        place: "KPIPresenter",
-                        parameters: {"kpi": "sample1", "token" : "0"}
                     }
                 ]
             }

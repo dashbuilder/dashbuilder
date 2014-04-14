@@ -57,7 +57,7 @@ public class SalesDashboardKPIs {
         return kpiList;
     }
 
-    public static final KPIImpl OPPS_BY_EMPLOYEE = new KPIImpl("opps-by-employee")
+    public static final KPIImpl OPPS_BY_EMPLOYEE = new KPIImpl("opps-by-pipeline")
         .setDataSetLookup(new DataSetLookupBuilder()
                 .uuid(UUID)
                 .domain(PIPELINE)
