@@ -36,6 +36,7 @@ import org.dashbuilder.model.dataset.impl.DataSetImpl;
 import org.dashbuilder.storage.memory.group.Interval;
 import org.dashbuilder.storage.memory.group.IntervalBuilder;
 import org.dashbuilder.storage.memory.group.IntervalBuilderLocator;
+import org.dashbuilder.storage.memory.group.IntervalList;
 import org.dashbuilder.storage.spi.DataSetStorage;
 import org.dashbuilder.model.dataset.DataSet;
 import org.dashbuilder.model.dataset.filter.DataSetFilter;
@@ -67,10 +68,10 @@ public class TransientDataSetStorage implements DataSetStorage {
     /**
      * The in-memory data set cache.
      */
-    protected Map<String,CacheEntry> dataSetCache = new HashMap<String, CacheEntry>();
+    protected Map<String,DataSetHolder> dataSetCache = new HashMap<String, DataSetHolder>();
 
     public void put(DataSet source) throws Exception {
-        CacheEntry entry = new CacheEntry(source);
+        DataSetHolder entry = new DataSetHolder(source);
         dataSetCache.put(source.getUUID(), entry);
     }
 
@@ -78,23 +79,23 @@ public class TransientDataSetStorage implements DataSetStorage {
     }
 
     public DataSet get(String uuid) throws Exception {
-        CacheEntry entry = dataSetCache.get(uuid);
+        DataSetHolder entry = dataSetCache.get(uuid);
         if (entry == null) return null;
         return entry.dataSet;
     }
 
     public DataSet apply(String uuid, DataSetOp op) throws Exception {
-        CacheEntry holder = dataSetCache.get(uuid);
+        DataSetHolder holder = dataSetCache.get(uuid);
         if (holder == null) throw new Exception("Data set not found: " + uuid);
 
         // Check the cache first
-        CacheEntry opHolder = holder.getChildByOp(op);
+        DataSetHolder opHolder = holder.getChildByOp(op);
         if (opHolder != null) {
             return opHolder.dataSet;
         }
 
         // Apply the operation
-        CacheEntry result;
+        DataSetHolder result;
         if (op instanceof DataSetFilter) result = filter(holder, (DataSetFilter) op);
         else if (op instanceof DataSetGroup) result = group(holder, (DataSetGroup) op);
         else if (op instanceof DataSetSort) result = sort(holder, (DataSetSort) op);
@@ -111,7 +112,7 @@ public class TransientDataSetStorage implements DataSetStorage {
         return result.dataSet;
     }
 
-    public CacheEntry filter(CacheEntry dataSet, DataSetFilter op) throws Exception {
+    public DataSetHolder filter(DataSetHolder dataSet, DataSetFilter op) throws Exception {
         return null;
     }
 
@@ -131,17 +132,20 @@ public class TransientDataSetStorage implements DataSetStorage {
 
          => Interval class is a cache of rows ref + scalar calculations
      */
-    public CacheEntry group(CacheEntry source, DataSetGroup op) throws Exception {
+    public DataSetHolder group(DataSetHolder source, DataSetGroup op) throws Exception {
         for (Domain domain : op.getDomainList()) {
 
             // Get the domain intervals. Look into the cache first.
-            List<Interval> intervals = source.getDomainIntervals(domain);
+            IntervalList intervals = source.getIntervalList(domain);
             if (intervals == null) {
                 // Build the group intervals by applying the domain strategy specified
                 DataColumn domainColumn = source.dataSet.getColumnById(domain.getSourceId());
                 IntervalBuilder intervalBuilder = intervalBuilderLocator.lookup(domainColumn, domain);
                 if (intervalBuilder == null) throw new Exception("Interval generator not supported.");
                 intervals = intervalBuilder.build(domainColumn, domain);
+
+                // Keep the group intervals for reusing purposes
+                source.setIntervalList(domain, intervals);
             }
 
             // Build the grouped data set header.
@@ -162,16 +166,14 @@ public class TransientDataSetStorage implements DataSetStorage {
                     dataSet.setValueAt(i, j + 1, scalar);
                 }
             }
-            // Keep the group intervals for reusing purposes
-            source.setDomainIntervals(domain, intervals);
 
             // Return the results.
-            return new CacheEntry(source, dataSet, op);
+            return new DataSetHolder(source, dataSet, op);
         }
         return null;
     }
 
-    public CacheEntry sort(CacheEntry source, DataSetSort op) throws Exception {
+    public DataSetHolder sort(DataSetHolder source, DataSetSort op) throws Exception {
         return null;
     }
 
@@ -182,9 +184,9 @@ public class TransientDataSetStorage implements DataSetStorage {
     public SortedList<ComparableValue> sortColumn(DataColumn column) {
         // Look into the cache first
         String dsUuid = column.getDataSet().getUUID();
-        CacheEntry cacheEntry = dataSetCache.get(dsUuid);
-        if (cacheEntry != null) {
-            SortedList<ComparableValue> result = cacheEntry.getSortedList(column);
+        DataSetHolder dataSetHolder = dataSetCache.get(dsUuid);
+        if (dataSetHolder != null) {
+            SortedList<ComparableValue> result = dataSetHolder.getSortedList(column);
             if (result != null) return result;
         }
 
@@ -223,8 +225,8 @@ public class TransientDataSetStorage implements DataSetStorage {
             result.add(new ComparableValue(null, row));
         }
         // Keep the sort results for reusing purposes
-        if (cacheEntry != null) {
-            cacheEntry.setSortedList(column, result);
+        if (dataSetHolder != null) {
+            dataSetHolder.setSortedList(column, result);
         }
         return result;
     }
@@ -232,19 +234,19 @@ public class TransientDataSetStorage implements DataSetStorage {
     /**
      * A data set cache entry holder
      */
-    private class CacheEntry {
+    private class DataSetHolder {
 
         DataSet dataSet;
         DataSetOp op;
-        List<CacheEntry> children = new ArrayList<CacheEntry>();
-        Map<String, List<Interval>> domainIntervals = new HashMap<String, List<Interval>>();
+        List<DataSetHolder> children = new ArrayList<DataSetHolder>();
+        Map<String, IntervalList> domainIntervals = new HashMap<String, IntervalList>();
         Map<String, SortedList<ComparableValue>> sortedLists = new HashMap<String, SortedList<ComparableValue>>();
 
-        CacheEntry(DataSet dataSet) {
+        DataSetHolder(DataSet dataSet) {
             this(null, dataSet, null);
         }
 
-        CacheEntry(CacheEntry parent, DataSet dataSet, DataSetOp op) {
+        DataSetHolder(DataSetHolder parent, DataSet dataSet, DataSetOp op) {
             this.dataSet = dataSet;
             this.op = op;
             if (parent != null) {
@@ -252,12 +254,12 @@ public class TransientDataSetStorage implements DataSetStorage {
             }
         }
 
-        public void setDomainIntervals(Domain domain, List<Interval> intervals) {
+        public void setIntervalList(Domain domain, IntervalList intervals) {
             String key = getDomainKey(domain);
             domainIntervals.put(key, intervals);
         }
 
-        public List<Interval> getDomainIntervals(Domain domain) {
+        public IntervalList getIntervalList(Domain domain) {
             String key = getDomainKey(domain);
             return domainIntervals.get(key);
         }
@@ -270,8 +272,8 @@ public class TransientDataSetStorage implements DataSetStorage {
             return sortedLists.get(column.getId());
         }
 
-        public CacheEntry getChildByOp(DataSetOp op) {
-            for (CacheEntry child : children) {
+        public DataSetHolder getChildByOp(DataSetOp op) {
+            for (DataSetHolder child : children) {
                 if (op.equals(child.op)) {
                     return child;
                 }

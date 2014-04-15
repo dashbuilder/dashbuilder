@@ -27,7 +27,7 @@ import org.dashbuilder.model.dataset.DataColumn;
 import org.dashbuilder.model.dataset.group.ScalarFunctionType;
 
 /**
- * An interval represent a grouped subset of a data column values.
+ * An interval represent a grouped subset of a data values.
  */
 public class Interval {
 
@@ -45,6 +45,9 @@ public class Interval {
      * A cache containing all the calculations done within this interval.
      */
     public Map<String, Map<ScalarFunctionType, Double>> scalars = new HashMap<String, Map<ScalarFunctionType, Double>>();
+
+    public Interval() {
+    }
 
     public Interval(String name) {
         this.name = name;
@@ -76,6 +79,5 @@ public class Interval {
         // Save the result into the cache and return.
         columnScalars.put(type, scalar);
         return scalar;
-
     }
 }

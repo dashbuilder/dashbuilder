@@ -15,6 +15,8 @@
  */
 package org.dashbuilder.model.dataset.group;
 
+import org.dashbuilder.model.date.DayOfWeek;
+import org.dashbuilder.model.date.Month;
 import org.jboss.errai.common.client.api.annotations.Portable;
 
 /**
@@ -28,6 +30,9 @@ public class Domain {
     protected DomainStrategy strategy = DomainStrategy.DYNAMIC;
     protected int maxIntervals = 15;
     protected String intervalSize = null;
+    protected boolean ascendingOrder = false;
+    protected Month firstMonthOfYear = Month.JANUARY;
+    protected DayOfWeek firstDayOfWeek = DayOfWeek.MONDAY;
 
     public Domain() {
     }
@@ -84,6 +89,30 @@ public class Domain {
 
     public void setIntervalSize(String intervalSize) {
         this.intervalSize = intervalSize;
+    }
+
+    public boolean isAscendingOrder() {
+        return ascendingOrder;
+    }
+
+    public void setAscendingOrder(boolean ascending) {
+        this.ascendingOrder = ascending;
+    }
+
+    public Month getFirstMonthOfYear() {
+        return firstMonthOfYear;
+    }
+
+    public void setFirstMonthOfYear(Month firstMonthOfYear) {
+        this.firstMonthOfYear = firstMonthOfYear;
+    }
+
+    public DayOfWeek getFirstDayOfWeek() {
+        return firstDayOfWeek;
+    }
+
+    public void setFirstDayOfWeek(DayOfWeek firstDayOfWeek) {
+        this.firstDayOfWeek = firstDayOfWeek;
     }
 
     public boolean equals(Object obj) {

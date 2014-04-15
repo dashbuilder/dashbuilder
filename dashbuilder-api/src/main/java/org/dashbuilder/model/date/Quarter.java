@@ -13,16 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbuilder.storage.memory.group;
+package org.dashbuilder.model.date;
 
-import java.util.List;
+import org.jboss.errai.common.client.api.annotations.Portable;
 
-import org.dashbuilder.model.dataset.DataColumn;
-import org.dashbuilder.model.dataset.group.Domain;
-import org.dashbuilder.model.dataset.group.DomainStrategy;
+@Portable
+public enum Quarter {
+    Q1,
+    Q2,
+    Q3,
+    Q4;
 
-public interface IntervalBuilder {
+    private static Quarter[] _array = values();
 
-    IntervalList build(DataColumn column, Domain domain);
+    public int getIndex() {
+        for (int i = 0; i < _array.length; i++) {
+            Quarter q = _array[i];
+            if (this.equals(q)) return i;
+        }
+        return -1;
+    }
 
+    public static Quarter getByName(String name) {
+        return valueOf(name.toUpperCase());
+    }
+
+    public static Quarter getByIndex(int index) {
+        return _array[index];
+    }
 }

@@ -20,6 +20,7 @@ import javax.inject.Inject;
 import org.dashbuilder.model.dataset.DataSet;
 import org.dashbuilder.model.dataset.DataSetLookupBuilder;
 import org.dashbuilder.model.dataset.DataSetManager;
+import org.dashbuilder.model.dataset.group.DateIntervalType;
 import org.dashbuilder.model.dataset.group.DomainStrategy;
 import org.dashbuilder.test.ShrinkWrapHelper;
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -32,6 +33,7 @@ import org.junit.runner.RunWith;
 
 import static org.dashbuilder.dataset.Assertions.*;
 import static org.dashbuilder.model.dataset.group.ScalarFunctionType.*;
+import static org.dashbuilder.model.dataset.group.DateIntervalType.*;
 
 @RunWith(Arquillian.class)
 public class DataSetGroupTest {
@@ -92,6 +94,32 @@ public class DataSetGroupTest {
                 {"2013", "11.00", "5,252.96"},
                 {"2014", "11.00", "4,015.48"},
                 {"2015", "15.00", "7,336.69"}
+        }, 0);
+    }
+
+    @Test
+    public void testGroupByDateFixed() throws Exception {
+        DataSet result = dataSetManager.lookupDataSet(new DataSetLookupBuilder()
+                .uuid(EXPENSE_REPORTS)
+                .domain("date", "Period").fixed(MONTH, true)
+                .range("id", "Occurrences", COUNT)
+                .range("amount", "totalAmount", SUM)
+                .build());
+
+        printDataSet(result);
+        assertDataSetValues(result, dataSetFormatter, new String[][]{
+                {"JANUARY", "3.00", "2,324.20"},
+                {"FEBRUARY", "6.00", "2,885.57"},
+                {"MARCH", "5.00", "1,012.55"},
+                {"APRIL", "3.00", "1,061.06"},
+                {"MAY", "5.00", "2,503.34"},
+                {"JUNE", "9.00", "4,113.87"},
+                {"JULY", "4.00", "2,354.04"},
+                {"AUGUST", "2.00", "452.25"},
+                {"SEPTEMBER", "3.00", "693.35"},
+                {"OCTOBER", "3.00", "1,366.40"},
+                {"NOVEMBER", "3.00", "1,443.75"},
+                {"DECEMBER", "4.00", "2,520.88"}
         }, 0);
     }
 

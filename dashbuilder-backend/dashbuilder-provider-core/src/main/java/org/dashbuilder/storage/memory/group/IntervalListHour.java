@@ -15,14 +15,22 @@
  */
 package org.dashbuilder.storage.memory.group;
 
-import java.util.List;
+import java.util.Date;
 
-import org.dashbuilder.model.dataset.DataColumn;
 import org.dashbuilder.model.dataset.group.Domain;
-import org.dashbuilder.model.dataset.group.DomainStrategy;
 
-public interface IntervalBuilder {
+/**
+ * List of the 24-hor intervals present in a day.
+ */
+public class IntervalListHour extends IntervalListSecond {
 
-    IntervalList build(DataColumn column, Domain domain);
+    public IntervalListHour(Domain domain) {
+        super(domain, 24);
+    }
 
+    public Interval locateInterval(Object value) {
+        Date d = (Date) value;
+        int sec = d.getHours();
+        return intervalMap.get(sec);
+    }
 }

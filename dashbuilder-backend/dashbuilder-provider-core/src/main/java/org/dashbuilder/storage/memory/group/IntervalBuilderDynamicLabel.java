@@ -15,7 +15,6 @@
  */
 package org.dashbuilder.storage.memory.group;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -29,28 +28,35 @@ import org.dashbuilder.model.dataset.group.Domain;
 @ApplicationScoped
 public class IntervalBuilderDynamicLabel implements IntervalBuilder {
 
-    public List<Interval> build(DataColumn column, Domain domain) {
-        List<Interval> result = new ArrayList<Interval>();
-        indexValues(result, column.getValues());
-        return result;
+    public IntervalList build(DataColumn column, Domain domain) {
+        IntervalListLabel result = new IntervalListLabel(domain);
+        List values = column.getValues();
+        return result.indexValues(values);
     }
 
-    public synchronized void indexValues(List<Interval> result, List values) {
-        for (int row = 0; row < values.size(); row++) {
-            Object value = values.get(row);
-            Interval interval = getInterval(result, value);
-            // TODO: create a composite interval when the maxIntervals are reached.
-            if (interval == null) result.add(interval = new Interval(value == null ? null : value.toString()));
-            interval.rows.add(row);
+    private class IntervalListLabel extends IntervalList {
+
+        private IntervalListLabel(Domain domain) {
+            super(domain);
         }
-    }
 
-    public synchronized Interval getInterval(List<Interval> result, Object value) {
-        for (Interval interval : result) {
-            if (interval.name == value || (interval.name != null && interval.name.equals(value))) {
-                return interval;
+        public Interval indexValue(Object value, int row) {
+            Interval interval = locateInterval(value);
+            if (interval == null) {
+                // TODO: create a composite interval when the maxIntervals are reached.
+                this.add(interval = new Interval(value == null ? null : value.toString()));
             }
+            interval.rows.add(row);
+            return interval;
         }
-        return null;
+
+        public Interval locateInterval(Object value) {
+            for (Interval interval : this) {
+                if (interval.name == value || (interval.name != null && interval.name.equals(value))) {
+                    return interval;
+                }
+            }
+            return null;
+        }
     }
 }

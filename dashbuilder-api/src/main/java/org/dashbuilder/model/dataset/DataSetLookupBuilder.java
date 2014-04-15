@@ -18,6 +18,7 @@ package org.dashbuilder.model.dataset;
 import java.util.List;
 
 import org.dashbuilder.model.dataset.group.DataSetGroup;
+import org.dashbuilder.model.dataset.group.DateIntervalType;
 import org.dashbuilder.model.dataset.group.Domain;
 import org.dashbuilder.model.dataset.group.DomainStrategy;
 import org.dashbuilder.model.dataset.group.ScalarFunctionType;
@@ -104,6 +105,24 @@ public class DataSetLookupBuilder {
         }
         DataSetGroup gOp = (DataSetGroup) getCurrentOp();
         gOp.addDomains(new Domain(columnId, newColumnId, strategy, maxIntervals, intervalSize));
+        return this;
+    }
+
+    public DataSetLookupBuilder fixed(DateIntervalType type) {
+        return fixed(type, true);
+    }
+
+    public DataSetLookupBuilder fixed(DateIntervalType type, boolean ascending) {
+        DataSetGroup gOp = (DataSetGroup) getCurrentOp();
+        List<Domain> domainList = gOp.getDomainList();
+        if (gOp == null || domainList.isEmpty()) {
+            throw new RuntimeException("A domain must be configured first.");
+        }
+
+        Domain domain = domainList.get(domainList.size()-1);
+        domain.setStrategy(DomainStrategy.FIXED);
+        domain.setIntervalSize(type.toString());
+        domain.setAscendingOrder(ascending);
         return this;
     }
 

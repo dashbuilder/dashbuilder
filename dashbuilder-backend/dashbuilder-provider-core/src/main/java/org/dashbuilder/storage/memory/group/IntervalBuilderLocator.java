@@ -28,6 +28,7 @@ public class IntervalBuilderLocator {
 
     @Inject IntervalBuilderDynamicLabel intervalBuilderDynamicLabel;
     @Inject IntervalBuilderDynamicDate intervalBuilderDynamicDate;
+    @Inject IntervalBuilderFixedDate intervalBuilderFixedDate;
 
     public IntervalBuilder lookup(DataColumn column, Domain domain) {
         DomainStrategy strategy = domain.getStrategy();
@@ -39,7 +40,10 @@ public class IntervalBuilderLocator {
             if (DomainStrategy.CUSTOM.equals(strategy)) return intervalBuilderDynamicLabel;
         }
         if (ColumnType.DATE.equals(columnType)) {
-            // TODO
+            if (DomainStrategy.FIXED.equals(strategy)) return intervalBuilderFixedDate;
+            if (DomainStrategy.DYNAMIC.equals(strategy)) return intervalBuilderDynamicDate;
+            if (DomainStrategy.MULTIPLE.equals(strategy)) return intervalBuilderFixedDate;
+            if (DomainStrategy.CUSTOM.equals(strategy)) return intervalBuilderDynamicDate;
             return intervalBuilderDynamicDate;
         }
         if (ColumnType.NUMBER.equals(columnType)) {

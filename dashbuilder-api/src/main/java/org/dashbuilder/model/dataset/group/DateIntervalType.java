@@ -15,9 +15,8 @@
  */
 package org.dashbuilder.model.dataset.group;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Locale;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.jboss.errai.common.client.api.annotations.Portable;
 
@@ -26,6 +25,9 @@ import org.jboss.errai.common.client.api.annotations.Portable;
  */
 @Portable
 public enum DateIntervalType {
+    MILLISECOND,
+    HUNDRETH,
+    TENTH,
     SECOND,
     MINUTE,
     HOUR,
@@ -39,35 +41,65 @@ public enum DateIntervalType {
     CENTURY,
     MILLENIUM;
 
+    private static final Map<DateIntervalType,Long> DURATION_IN_MILLIS = new HashMap<DateIntervalType, Long>();
+    static {
+        long milli = 1;
+        DURATION_IN_MILLIS.put(MILLISECOND, milli);
+
+        long hundreth = 10;
+        DURATION_IN_MILLIS.put(HUNDRETH, hundreth);
+
+        long tenth = 100;
+        DURATION_IN_MILLIS.put(TENTH, tenth);
+
+        long second = 1000;
+        DURATION_IN_MILLIS.put(SECOND, second);
+
+        long minute = second*60;
+        DURATION_IN_MILLIS.put(MINUTE, minute);
+
+        long hour = minute*60;
+        DURATION_IN_MILLIS.put(HOUR, hour);
+
+        long day = hour*24;
+        DURATION_IN_MILLIS.put(DAY, day);
+        DURATION_IN_MILLIS.put(DAY_OF_WEEK, day);
+
+        long week = day*7;
+        DURATION_IN_MILLIS.put(WEEK, week);
+
+        long month = day*31;
+        DURATION_IN_MILLIS.put(MONTH, month);
+
+        long quarter = month*4;
+        DURATION_IN_MILLIS.put(QUARTER, quarter);
+
+        long year = month*12;
+        DURATION_IN_MILLIS.put(YEAR, year);
+
+        long decade = year*10;
+        DURATION_IN_MILLIS.put(DECADE, decade);
+
+        long century = year*100;
+        DURATION_IN_MILLIS.put(CENTURY, century);
+
+        long millenium = year*1000;
+        DURATION_IN_MILLIS.put(MILLENIUM, millenium);
+    }
+
     public static DateIntervalType getByName(String interval) {
+        if (interval == null || interval.length() == 0) return null;
         return valueOf(interval.toUpperCase());
     }
 
     public static int compare(DateIntervalType interval1, DateIntervalType interval2) {
-        long d1 = getDurationInSeconds(interval1);
-        long d2 = getDurationInSeconds(interval2);
+        long d1 = getDurationInMillis(interval1);
+        long d2 = getDurationInMillis(interval2);
         return Long.valueOf(d1).compareTo(d2);
     }
 
-    public static long getDurationInSeconds(String interval) {
-        return getDurationInSeconds(getByName(interval));
-    }
-
-    public static long getDurationInSeconds(DateIntervalType type) {
-        switch (type) {
-            case SECOND: return 1;
-            case MINUTE: return getDurationInSeconds(SECOND)*60;
-            case HOUR: return getDurationInSeconds(MINUTE)*60;
-            case DAY: return getDurationInSeconds(HOUR)*24;
-            case DAY_OF_WEEK: return getDurationInSeconds(DAY);
-            case WEEK: return getDurationInSeconds(DAY)*7;
-            case MONTH: return getDurationInSeconds(DAY)*31;
-            case QUARTER: return getDurationInSeconds(MONTH)*4;
-            case YEAR: return getDurationInSeconds(MONTH)*12;
-            case DECADE: return getDurationInSeconds(YEAR)*10;
-            case CENTURY: return getDurationInSeconds(YEAR)*100;
-            case MILLENIUM: return getDurationInSeconds(YEAR)*1000;
-            default: return 0;
-        }
+    public static long getDurationInMillis(DateIntervalType type) {
+        if (!DURATION_IN_MILLIS.containsKey(type)) return 0;
+        return DURATION_IN_MILLIS.get(type);
     }
 }
