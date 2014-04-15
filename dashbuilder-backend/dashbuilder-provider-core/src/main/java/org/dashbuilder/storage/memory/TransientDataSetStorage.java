@@ -17,14 +17,12 @@ package org.dashbuilder.storage.memory;
 
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
 
-import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
@@ -135,13 +133,16 @@ public class TransientDataSetStorage implements DataSetStorage {
      */
     public CacheEntry group(CacheEntry source, DataSetGroup op) throws Exception {
         for (Domain domain : op.getDomainList()) {
-            String domainId = domain.getSourceId();
-            DataColumn domainColumn = source.dataSet.getColumnById(domainId);
 
-            // Build the group intervals by applying the domain strategy specified
-            IntervalBuilder intervalBuilder = intervalBuilderLocator.lookup(domainColumn, domain);
-            if (intervalBuilder == null) throw new Exception("Interval generator not supported yet.");
-            List<Interval> intervals = intervalBuilder.build(domainColumn, domain);
+            // Get the domain intervals. Look into the cache first.
+            List<Interval> intervals = source.getDomainIntervals(domain);
+            if (intervals == null) {
+                // Build the group intervals by applying the domain strategy specified
+                DataColumn domainColumn = source.dataSet.getColumnById(domain.getSourceId());
+                IntervalBuilder intervalBuilder = intervalBuilderLocator.lookup(domainColumn, domain);
+                if (intervalBuilder == null) throw new Exception("Interval generator not supported.");
+                intervals = intervalBuilder.build(domainColumn, domain);
+            }
 
             // Build the grouped data set header.
             DataSetImpl dataSet = new DataSetImpl();
@@ -161,7 +162,11 @@ public class TransientDataSetStorage implements DataSetStorage {
                     dataSet.setValueAt(i, j + 1, scalar);
                 }
             }
-            return new CacheEntry(source, dataSet, op, intervals);
+            // Keep the group intervals for reusing purposes
+            source.setDomainIntervals(domain, intervals);
+
+            // Return the results.
+            return new CacheEntry(source, dataSet, op);
         }
         return null;
     }
@@ -232,7 +237,7 @@ public class TransientDataSetStorage implements DataSetStorage {
         DataSet dataSet;
         DataSetOp op;
         List<CacheEntry> children = new ArrayList<CacheEntry>();
-        List<Interval> intervals = null;
+        Map<String, List<Interval>> domainIntervals = new HashMap<String, List<Interval>>();
         Map<String, SortedList<ComparableValue>> sortedLists = new HashMap<String, SortedList<ComparableValue>>();
 
         CacheEntry(DataSet dataSet) {
@@ -240,16 +245,21 @@ public class TransientDataSetStorage implements DataSetStorage {
         }
 
         CacheEntry(CacheEntry parent, DataSet dataSet, DataSetOp op) {
-            this(null, dataSet, null, null);
-        }
-
-        CacheEntry(CacheEntry parent, DataSet dataSet, DataSetOp op, List<Interval> intervals) {
             this.dataSet = dataSet;
             this.op = op;
-            this.intervals = intervals;
             if (parent != null) {
                 parent.children.add(this);
             }
+        }
+
+        public void setDomainIntervals(Domain domain, List<Interval> intervals) {
+            String key = getDomainKey(domain);
+            domainIntervals.put(key, intervals);
+        }
+
+        public List<Interval> getDomainIntervals(Domain domain) {
+            String key = getDomainKey(domain);
+            return domainIntervals.get(key);
         }
 
         public void setSortedList(DataColumn column, SortedList<ComparableValue> l) {
@@ -267,6 +277,13 @@ public class TransientDataSetStorage implements DataSetStorage {
                 }
             }
             return null;
+        }
+
+        public String getDomainKey(Domain domain) {
+            return domain.getSourceId() + "_" +
+                    domain.getStrategy().toString() + "_" +
+                    domain.getIntervalSize() + "_" +
+                    domain.getMaxIntervals();
         }
     }
 }

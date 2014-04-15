@@ -41,7 +41,7 @@ public class DataSetManagerImpl implements DataSetManager {
 
     public DataSet getDataSet(String uuid) throws Exception {
         DataSet result = dataSetStorage.get(uuid);
-        if (result == null) result = loadDataSet(uuid);
+        if (result == null) result = fetchDataSet(uuid);
         if (result == null) throw new Exception("Data set not found: " + uuid);
         return result;
     }
@@ -53,16 +53,20 @@ public class DataSetManagerImpl implements DataSetManager {
     }
 
     public DataSet refreshDataSet(String uuid) throws Exception {
+        DataSet ds = fetchDataSet(uuid);
+        if (ds == null) return dataSetStorage.get(uuid);
+
         dataSetStorage.remove(uuid);
-        return loadDataSet(uuid);
+        dataSetStorage.put(ds);
+        return ds;
     }
 
-    public DataSet loadDataSet(String uuid) throws Exception {
+    public DataSet fetchDataSet(String uuid) throws Exception {
         DataSet result = dataSetStorage.get(uuid);
         if (result != null) return result;
 
-        // Load the data set from an external provider.
-        //return dataProviderManager.loadDataSet(uuid);
+        // Get the data set from an external provider.
+        //return dataProviderManager.fetchDataSet(uuid);
         return null;
     }
 
@@ -81,5 +85,4 @@ public class DataSetManagerImpl implements DataSetManager {
         result = result.trim(lookup.getRowOffset(), lookup.getNumberOfRows());
         return result;
     }
-
 }

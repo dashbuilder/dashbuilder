@@ -89,6 +89,7 @@ public class Domain {
     public boolean equals(Object obj) {
         try {
             Domain other = (Domain) obj;
+            if (sourceId != null && !sourceId.equals(other.sourceId)) return false;
             if (columnId != null && !columnId.equals(other.columnId)) return false;
             if (strategy != null && !strategy.equals(other.strategy)) return false;
             if (intervalSize != null && !intervalSize.equals(other.intervalSize)) return false;
