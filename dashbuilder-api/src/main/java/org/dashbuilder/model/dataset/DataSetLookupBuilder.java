@@ -24,6 +24,8 @@ import org.dashbuilder.model.dataset.group.DomainStrategy;
 import org.dashbuilder.model.dataset.group.ScalarFunctionType;
 import org.dashbuilder.model.dataset.group.Range;
 import org.dashbuilder.model.dataset.sort.DataSetSort;
+import org.dashbuilder.model.date.DayOfWeek;
+import org.dashbuilder.model.date.Month;
 import org.jboss.errai.common.client.api.annotations.Portable;
 
 /**
@@ -123,6 +125,40 @@ public class DataSetLookupBuilder {
         domain.setStrategy(DomainStrategy.FIXED);
         domain.setIntervalSize(type.toString());
         domain.setAscendingOrder(ascending);
+        return this;
+    }
+
+    public DataSetLookupBuilder firstDayOfWeek(DayOfWeek dayOfWeek) {
+        DataSetGroup gOp = (DataSetGroup) getCurrentOp();
+        List<Domain> domainList = gOp.getDomainList();
+        if (gOp == null || domainList.isEmpty()) {
+            throw new RuntimeException("A domain must is required.");
+        }
+        Domain domain = domainList.get(domainList.size() - 1);
+        if (!DomainStrategy.FIXED.equals(domain.getStrategy())) {
+            throw new RuntimeException("A fixed domain is required.");
+        }
+        if (!DateIntervalType.DAY_OF_WEEK.equals(DateIntervalType.getByName(domain.getIntervalSize()))) {
+            throw new RuntimeException("A DAY_OF_WEEK fixed date domain is required.");
+        }
+        domain.setFirstDayOfWeek(dayOfWeek);
+        return this;
+    }
+
+    public DataSetLookupBuilder firstMonthOfYear(Month month) {
+        DataSetGroup gOp = (DataSetGroup) getCurrentOp();
+        List<Domain> domainList = gOp.getDomainList();
+        if (gOp == null || domainList.isEmpty()) {
+            throw new RuntimeException("A domain must is required.");
+        }
+        Domain domain = domainList.get(domainList.size() - 1);
+        if (!DomainStrategy.FIXED.equals(domain.getStrategy())) {
+            throw new RuntimeException("A fixed domain is required.");
+        }
+        if (!DateIntervalType.DAY_OF_WEEK.equals(DateIntervalType.getByName(domain.getIntervalSize()))) {
+            throw new RuntimeException("A MONTH fixed date domain is required.");
+        }
+        domain.setFirstMonthOfYear(month);
         return this;
     }
 
