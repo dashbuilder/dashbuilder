@@ -22,6 +22,7 @@ import org.dashbuilder.model.dataset.DataSetLookupBuilder;
 import org.dashbuilder.model.dataset.DataSetManager;
 import org.dashbuilder.model.dataset.group.DomainStrategy;
 import org.dashbuilder.model.date.DayOfWeek;
+import org.dashbuilder.model.date.Month;
 import org.dashbuilder.test.ShrinkWrapHelper;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -34,6 +35,7 @@ import org.junit.runner.RunWith;
 import static org.dashbuilder.dataset.Assertions.*;
 import static org.dashbuilder.model.dataset.group.ScalarFunctionType.*;
 import static org.dashbuilder.model.dataset.group.DateIntervalType.*;
+import static org.fest.assertions.api.Assertions.*;
 
 @RunWith(Arquillian.class)
 public class DataSetGroupTest {
@@ -150,6 +152,40 @@ public class DataSetGroupTest {
     }
 
     @Test
+    public void testFirstDayOfWeekOk() throws Exception {
+        new DataSetLookupBuilder()
+                .domain("date").fixed(DAY_OF_WEEK).firstDayOfWeek(DayOfWeek.MONDAY);
+    }
+
+    @Test
+    public void testFirstDayOfWeekNok() throws Exception {
+        try {
+            new DataSetLookupBuilder()
+                    .domain("date").fixed(QUARTER).firstDayOfWeek(DayOfWeek.MONDAY);
+            fail("firstDayOfWeek required a DAY_OF_WEEK fixed domain.");
+        } catch (Exception e) {
+            // Expected.
+        }
+    }
+
+    @Test
+    public void testFirstDayOfMonthOk() throws Exception {
+        new DataSetLookupBuilder()
+                .domain("date").fixed(MONTH).firstMonthOfYear(Month.APRIL);
+    }
+
+    @Test
+    public void testFirstDayOfMonthNok() throws Exception {
+        try {
+            new DataSetLookupBuilder()
+                    .domain("date").fixed(QUARTER).firstMonthOfYear(Month.APRIL);
+            fail("firstDayOfWeek required a DAY_OF_WEEK fixed domain.");
+        } catch (Exception e) {
+            // Expected.
+        }
+    }
+
+    @Test
     public void testGroupByWeek() throws Exception {
         DataSet result = dataSetManager.lookupDataSet(new DataSetLookupBuilder()
                 .uuid(EXPENSE_REPORTS)
@@ -168,6 +204,20 @@ public class DataSetGroupTest {
                 {"SATURDAY", "5.00", "2,012.05"},
                 {"SUNDAY", "8.00", "3,865.18"}
         }, 0);
+    }
+
+    @Test
+    public void testGroupByQuarter() throws Exception {
+        DataSet result = dataSetManager.lookupDataSet(new DataSetLookupBuilder()
+                .uuid(EXPENSE_REPORTS)
+                .domain("date", "Period").fixed(QUARTER)
+                .range("id", "Occurrences", COUNT)
+                .range("amount", "totalAmount", SUM)
+                .build());
+
+        printDataSet(result);
+        /*assertDataSetValues(result, dataSetFormatter, new String[][]{
+        }, 0);*/
     }
 
     private void printDataSet(DataSet dataSet) {

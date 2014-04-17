@@ -155,7 +155,7 @@ public class DataSetLookupBuilder {
         if (!DomainStrategy.FIXED.equals(domain.getStrategy())) {
             throw new RuntimeException("A fixed domain is required.");
         }
-        if (!DateIntervalType.DAY_OF_WEEK.equals(DateIntervalType.getByName(domain.getIntervalSize()))) {
+        if (!DateIntervalType.MONTH.equals(DateIntervalType.getByName(domain.getIntervalSize()))) {
             throw new RuntimeException("A MONTH fixed date domain is required.");
         }
         domain.setFirstMonthOfYear(month);
