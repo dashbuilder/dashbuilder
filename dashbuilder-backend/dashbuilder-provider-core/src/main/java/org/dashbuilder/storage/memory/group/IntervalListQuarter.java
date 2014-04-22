@@ -15,6 +15,10 @@
  */
 package org.dashbuilder.storage.memory.group;
 
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.dashbuilder.model.dataset.group.Domain;
 import org.dashbuilder.model.date.Month;
 import org.dashbuilder.model.date.Quarter;
@@ -22,10 +26,13 @@ import org.dashbuilder.model.date.Quarter;
 /**
  * List of the 4-quarter intervals present in a year.
  */
-public class IntervalListQuarter extends IntervalListMonth {
+public class IntervalListQuarter extends IntervalList {
+
+    protected Map<Integer,Interval> intervalMap;
 
     public IntervalListQuarter(Domain domain) {
         super(domain);
+        intervalMap = new HashMap<Integer, Interval>();
 
         Month firstMonth = domain.getFirstMonthOfYear();
         int monthIndex = firstMonth.getIndex();
@@ -40,5 +47,10 @@ public class IntervalListQuarter extends IntervalListMonth {
                 monthIndex = Month.nextIndex(monthIndex);
             }
         }
+    }
+
+    public Interval locateInterval(Object value) {
+        Date d = (Date) value;
+        return intervalMap.get(d.getMonth());
     }
 }

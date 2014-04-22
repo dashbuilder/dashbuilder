@@ -194,7 +194,7 @@ public class DataSetGroupTest {
                 .range("amount", "totalAmount", SUM)
                 .build());
 
-        ////printDataSet(result);
+        //printDataSet(result);
         assertDataSetValues(result, dataSetFormatter, new String[][]{
                 {"MONDAY", "10.00", "3,904.17"},
                 {"TUESDAY", "8.00", "4,525.69"},
@@ -216,8 +216,12 @@ public class DataSetGroupTest {
                 .build());
 
         printDataSet(result);
-        /*assertDataSetValues(result, dataSetFormatter, new String[][]{
-        }, 0);*/
+        assertDataSetValues(result, dataSetFormatter, new String[][]{
+                {"Q1", "14.00", "6,222.32"},
+                {"Q2", "17.00", "7,678.27"},
+                {"Q3", "9.00", "3,499.64"},
+                {"Q4", "10.00", "5,331.03"}
+        }, 0);
     }
 
     private void printDataSet(DataSet dataSet) {
