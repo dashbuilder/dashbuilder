@@ -26,7 +26,7 @@ public interface DataSetOpStats {
     int getNumberOfOps();
 
     /**
-     * Number of times the data set op has been reused.
+     * Number of data set operations reused from previous executions.
      */
     int getReuseHits();
 

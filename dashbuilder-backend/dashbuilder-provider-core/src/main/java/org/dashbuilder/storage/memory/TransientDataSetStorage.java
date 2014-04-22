@@ -68,6 +68,9 @@ public class TransientDataSetStorage implements DataSetStorage {
     @Inject
     protected IntervalBuilderLocator intervalBuilderLocator;
 
+    @Inject
+    protected SizeEstimator sizeEstimator;
+
     /**
      * The in-memory data set cache.
      */
@@ -339,6 +342,28 @@ public class TransientDataSetStorage implements DataSetStorage {
 
         public DataSetOpStats getOpStats(DataSetOpType type) {
             return opStats.get(type);
+        }
+
+        public int sizeOf() {
+            int nrows = dataSet.getRowCount();
+            if (nrows == 0) return 0;
+
+            List<DataColumn> columns = dataSet.getColumns();
+            int ncells = nrows * columns.size();
+            int result = ncells * 4;
+            for (int i = 0; i < columns.size(); i++) {
+                Object firstRowValue = dataSet.getValueAt(0, i);
+                if (firstRowValue instanceof String) {
+                    for (int j = 0; j < nrows; j++) {
+                        String stringValue = (String) dataSet.getValueAt(j, i);
+                        result += sizeEstimator.sizeOfString(stringValue);
+                    }
+                } else {
+                    int singleValueSize = sizeEstimator.sizeOf(firstRowValue);
+                    result += nrows * singleValueSize;
+                }
+            }
+            return result;
         }
     }
 

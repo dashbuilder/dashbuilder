@@ -26,12 +26,18 @@ public interface DataSetStats {
     long getBuildTime();
 
     /**
-     * Number of times the data set has been reused.
+     * Number of times the data set has been reused from an existing build.
      */
     int getReuseHits();
 
     /**
-     * Operation summary stats.
+     * Summary stats for a given data set operation type.
      */
     DataSetOpStats getOpStats(DataSetOpType type);
+
+    /**
+     * Return the estimated memory (in bytes) this data set is consuming.
+     * @return The number of bytes
+     */
+    int sizeOf();
 }

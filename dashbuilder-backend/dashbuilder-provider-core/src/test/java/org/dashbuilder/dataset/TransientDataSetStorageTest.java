@@ -23,6 +23,7 @@ import org.dashbuilder.model.dataset.DataSetOp;
 import org.dashbuilder.model.dataset.DataSetOpStats;
 import org.dashbuilder.model.dataset.DataSetOpType;
 import org.dashbuilder.model.dataset.DataSetStats;
+import org.dashbuilder.storage.memory.SizeEstimator;
 import org.dashbuilder.storage.memory.TransientDataSetStorage;
 import org.dashbuilder.test.ShrinkWrapHelper;
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -87,6 +88,7 @@ public class TransientDataSetStorageTest {
         DataSetStats stats = storage.stats(EXPENSE_REPORTS);
         System.out.println("Build time=" + stats.getBuildTime());
         System.out.println("Reuse hits=" + stats.getReuseHits());
+        System.out.println("Size=" + SizeEstimator.formatSize(stats.sizeOf()));
         assertThat(stats.getReuseHits()).isEqualTo(20);
 
         // Data set group op is performed only two times, the rest are reuse hits
