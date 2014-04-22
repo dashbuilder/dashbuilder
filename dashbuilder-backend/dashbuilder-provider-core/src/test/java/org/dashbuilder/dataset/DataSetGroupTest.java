@@ -215,7 +215,7 @@ public class DataSetGroupTest {
                 .range("amount", "totalAmount", SUM)
                 .build());
 
-        printDataSet(result);
+        //printDataSet(result);
         assertDataSetValues(result, dataSetFormatter, new String[][]{
                 {"Q1", "14.00", "6,222.32"},
                 {"Q2", "17.00", "7,678.27"},

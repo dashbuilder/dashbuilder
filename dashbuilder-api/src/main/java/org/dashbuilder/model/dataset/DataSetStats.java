@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012 JBoss Inc
+ * Copyright (C) 2014 JBoss Inc
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,22 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbuilder.model.dataset.filter;
-
-import org.dashbuilder.model.dataset.DataSetOp;
-import org.dashbuilder.model.dataset.DataSetOpType;
+package org.dashbuilder.model.dataset;
 
 /**
- * A data set filter definition.
+ * Data set performance stats.
  */
-public class DataSetFilter implements DataSetOp {
+public interface DataSetStats {
 
-    public DataSetOpType getType() {
-        return DataSetOpType.FILTER;
-    }
+    /**
+     * Time required to "build" (load, create, filter, ...) the data set.
+     */
+    long getBuildTime();
 
-    public boolean equals(Object other) {
-        // TODO
-        return false;
-    }
+    /**
+     * Number of times the data set has been reused.
+     */
+    int getReuseHits();
+
+    /**
+     * Operation summary stats.
+     */
+    DataSetOpStats getOpStats(DataSetOpType type);
 }

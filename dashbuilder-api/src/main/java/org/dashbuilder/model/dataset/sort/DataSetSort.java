@@ -16,11 +16,16 @@
 package org.dashbuilder.model.dataset.sort;
 
 import org.dashbuilder.model.dataset.DataSetOp;
+import org.dashbuilder.model.dataset.DataSetOpType;
 
 /**
  * A data set sort definition
  */
 public class DataSetSort implements DataSetOp {
+
+    public DataSetOpType getType() {
+        return DataSetOpType.SORT;
+    }
 
     public boolean equals(Object other) {
         // TODO

@@ -30,6 +30,9 @@ import org.dashbuilder.comparator.ComparatorUtils;
 import org.dashbuilder.config.Config;
 import org.dashbuilder.model.dataset.ColumnType;
 import org.dashbuilder.model.dataset.DataColumn;
+import org.dashbuilder.model.dataset.DataSetOpStats;
+import org.dashbuilder.model.dataset.DataSetOpType;
+import org.dashbuilder.model.dataset.DataSetStats;
 import org.dashbuilder.model.dataset.group.Domain;
 import org.dashbuilder.model.dataset.group.Range;
 import org.dashbuilder.model.dataset.impl.DataSetImpl;
@@ -75,18 +78,24 @@ public class TransientDataSetStorage implements DataSetStorage {
         dataSetCache.put(source.getUUID(), entry);
     }
 
-    public void remove(String uuid) throws Exception {
+    public DataSet get(String uuid) throws Exception {
+        DataSetHolder holder = dataSetCache.get(uuid);
+        if (holder == null) return null;
+        holder.reuseHits++;
+        return holder.dataSet;
     }
 
-    public DataSet get(String uuid) throws Exception {
-        DataSetHolder entry = dataSetCache.get(uuid);
-        if (entry == null) return null;
-        return entry.dataSet;
+    public DataSetStats stats(String uuid) throws Exception {
+        return dataSetCache.get(uuid);
+    }
+
+    public void remove(String uuid) throws Exception {
     }
 
     public DataSet apply(String uuid, DataSetOp op) throws Exception {
         DataSetHolder holder = dataSetCache.get(uuid);
         if (holder == null) throw new Exception("Data set not found: " + uuid);
+        holder.reuseHits++;
 
         // Check the cache first
         DataSetHolder opHolder = holder.getChildByOp(op);
@@ -96,9 +105,9 @@ public class TransientDataSetStorage implements DataSetStorage {
 
         // Apply the operation
         DataSetHolder result;
-        if (op instanceof DataSetFilter) result = filter(holder, (DataSetFilter) op);
-        else if (op instanceof DataSetGroup) result = group(holder, (DataSetGroup) op);
-        else if (op instanceof DataSetSort) result = sort(holder, (DataSetSort) op);
+        if (DataSetOpType.FILTER.equals(op.getType())) result = filter(holder, (DataSetFilter) op);
+        else if (DataSetOpType.GROUP.equals(op.getType())) result = group(holder, (DataSetGroup) op);
+        else if (DataSetOpType.SORT.equals(op.getType())) result = sort(holder, (DataSetSort) op);
         else throw new IllegalArgumentException("Unsupported operation: " + op.getClass().getName());
 
         // Link the result with the source data set.
@@ -133,19 +142,22 @@ public class TransientDataSetStorage implements DataSetStorage {
          => Interval class is a cache of rows ref + scalar calculations
      */
     public DataSetHolder group(DataSetHolder source, DataSetGroup op) throws Exception {
+        long _beginGroup = System.currentTimeMillis();
         for (Domain domain : op.getDomainList()) {
 
             // Get the domain intervals. Look into the cache first.
             IntervalList intervals = source.getIntervalList(domain);
             if (intervals == null) {
                 // Build the group intervals by applying the domain strategy specified
+                long _beginIntervals = System.currentTimeMillis();
                 DataColumn domainColumn = source.dataSet.getColumnById(domain.getSourceId());
                 IntervalBuilder intervalBuilder = intervalBuilderLocator.lookup(domainColumn, domain);
                 if (intervalBuilder == null) throw new Exception("Interval generator not supported.");
                 intervals = intervalBuilder.build(domainColumn, domain);
+                long _timeIntervals = System.currentTimeMillis() - _beginIntervals;
 
                 // Keep the group intervals for reusing purposes
-                source.setIntervalList(domain, intervals);
+                source.setIntervalList(domain, intervals, _timeIntervals);
             }
 
             // Build the grouped data set header.
@@ -168,7 +180,8 @@ public class TransientDataSetStorage implements DataSetStorage {
             }
 
             // Return the results.
-            return new DataSetHolder(source, dataSet, op);
+            long _timeGroup = System.currentTimeMillis() - _beginGroup;
+            return new DataSetHolder(source, dataSet, op, _timeGroup);
         }
         return null;
     }
@@ -190,6 +203,7 @@ public class TransientDataSetStorage implements DataSetStorage {
             if (result != null) return result;
         }
 
+        long _beginSort = System.currentTimeMillis();
         int row = 0;
         int nulls = 0;
         SortedList<ComparableValue> result = new SortedList<ComparableValue>();
@@ -226,7 +240,8 @@ public class TransientDataSetStorage implements DataSetStorage {
         }
         // Keep the sort results for reusing purposes
         if (dataSetHolder != null) {
-            dataSetHolder.setSortedList(column, result);
+            long _timeSort = System.currentTimeMillis() - _beginSort;
+            dataSetHolder.setSortedList(column, result, _timeSort);
         }
         return result;
     }
@@ -234,47 +249,71 @@ public class TransientDataSetStorage implements DataSetStorage {
     /**
      * A data set cache entry holder
      */
-    private class DataSetHolder {
+    private class DataSetHolder implements DataSetStats {
 
         DataSet dataSet;
         DataSetOp op;
+
+        long buildTime = 0;
+        int reuseHits = 0;
+
         List<DataSetHolder> children = new ArrayList<DataSetHolder>();
-        Map<String, IntervalList> domainIntervals = new HashMap<String, IntervalList>();
-        Map<String, SortedList<ComparableValue>> sortedLists = new HashMap<String, SortedList<ComparableValue>>();
+        Map<String, IntervalListHolder> intervalLists = new HashMap<String, IntervalListHolder>();
+        Map<String, SortedListHolder> sortedLists = new HashMap<String, SortedListHolder>();
+        Map<DataSetOpType, TransientDataSetOpStats> opStats = new HashMap<DataSetOpType, TransientDataSetOpStats>();
 
         DataSetHolder(DataSet dataSet) {
-            this(null, dataSet, null);
+            this(null, dataSet, null, 0);
         }
 
-        DataSetHolder(DataSetHolder parent, DataSet dataSet, DataSetOp op) {
+        DataSetHolder(DataSetHolder parent, DataSet dataSet, DataSetOp op, long buildTime) {
             this.dataSet = dataSet;
             this.op = op;
+            this.opStats.put(DataSetOpType.GROUP, new TransientDataSetOpStats());
+            this.opStats.put(DataSetOpType.FILTER, new TransientDataSetOpStats());
+            this.opStats.put(DataSetOpType.SORT, new TransientDataSetOpStats());
+            this.buildTime = buildTime;
             if (parent != null) {
-                parent.children.add(this);
+                parent.addChild(this);
             }
         }
 
-        public void setIntervalList(Domain domain, IntervalList intervals) {
+        public void setIntervalList(Domain domain, IntervalList intervals, long buildTime) {
             String key = getDomainKey(domain);
-            domainIntervals.put(key, intervals);
+            IntervalListHolder holder = new IntervalListHolder(intervals, buildTime);
+            intervalLists.put(key, holder);
         }
 
         public IntervalList getIntervalList(Domain domain) {
             String key = getDomainKey(domain);
-            return domainIntervals.get(key);
+            IntervalListHolder holder = intervalLists.get(key);
+            if (holder == null) return null;
+            holder.reuseHits++;
+            return holder.intervalList;
         }
 
-        public void setSortedList(DataColumn column, SortedList<ComparableValue> l) {
-            sortedLists.put(column.getId(), l);
+        public void setSortedList(DataColumn column, SortedList<ComparableValue> l, long buildTime) {
+            SortedListHolder holder = new SortedListHolder(l, buildTime);
+            sortedLists.put(column.getId(), holder);
         }
 
         public SortedList<ComparableValue> getSortedList(DataColumn column) {
-            return sortedLists.get(column.getId());
+            SortedListHolder holder = sortedLists.get(column.getId());
+            if (holder == null) return null;
+            holder.reuseHits++;
+            return holder.sortedList;
+        }
+
+        public void addChild(DataSetHolder child) {
+            children.add(child);
+            opStats.get(child.op.getType()).update(child);
         }
 
         public DataSetHolder getChildByOp(DataSetOp op) {
             for (DataSetHolder child : children) {
                 if (op.equals(child.op)) {
+                    child.reuseHits++;
+                    opStats.get(child.op.getType()).reuseHits++;
                     return child;
                 }
             }
@@ -286,6 +325,101 @@ public class TransientDataSetStorage implements DataSetStorage {
                     domain.getStrategy().toString() + "_" +
                     domain.getIntervalSize() + "_" +
                     domain.getMaxIntervals();
+        }
+
+        // DataSetStats interface
+
+        public long getBuildTime() {
+            return buildTime;
+        }
+
+        public int getReuseHits() {
+            return reuseHits;
+        }
+
+        public DataSetOpStats getOpStats(DataSetOpType type) {
+            return opStats.get(type);
+        }
+    }
+
+    private class TransientDataSetOpStats implements DataSetOpStats {
+
+        int numberOfOps = 0;
+        int reuseHits = 0;
+        long averageTime = 0;
+        DataSetHolder longestOp = null;
+        DataSetHolder shortestOp = null;
+
+        public void update(DataSetHolder op) {
+            averageTime = (averageTime*numberOfOps + op.buildTime) / ++numberOfOps;
+            if (longestOp == null || op.buildTime > longestOp.buildTime) longestOp = op;
+            if (shortestOp == null || op.buildTime <= shortestOp.buildTime) shortestOp = op;
+        }
+
+        public int getNumberOfOps() {
+            return numberOfOps;
+        }
+
+        public int getReuseHits() {
+            return reuseHits;
+        }
+
+        public long getAverageTime() {
+            return averageTime;
+        }
+
+        public long getLongestTime() {
+            if (longestOp == null) return 0;
+            return longestOp.buildTime;
+        }
+
+        public long getShortestTime() {
+            if (shortestOp == null) return 0;
+            return shortestOp.buildTime;
+        }
+
+        public DataSetOp getLongestOp() {
+            if (longestOp == null) return null;
+            return longestOp.op;
+        }
+
+        public DataSetOp getShortestOp() {
+            if (shortestOp == null) return null;
+            return shortestOp.op;
+        }
+
+        public String toString() {
+            StringBuilder str = new StringBuilder();
+            str.append("Hit=").append(reuseHits).append(" ");
+            str.append("Run=").append(numberOfOps).append(" ");
+            str.append("Min=").append(getShortestTime()).append(" ms ");
+            str.append("Max=").append(getLongestTime()).append(" ms ");
+            str.append("Avg=").append(getAverageTime()).append(" ms");
+            return str.toString();
+        }
+    }
+
+    private class IntervalListHolder {
+
+        IntervalList intervalList;
+        long buildTime = 0;
+        int reuseHits = 0;
+
+        private IntervalListHolder(IntervalList intervalList, long time) {
+            this.intervalList = intervalList;
+            this.buildTime = time;
+        }
+    }
+
+    private class SortedListHolder {
+
+        SortedList<ComparableValue> sortedList;
+        long buildTime = 0;
+        int reuseHits = 0;
+
+        private SortedListHolder(SortedList<ComparableValue> sortedList, long time) {
+            this.sortedList = sortedList;
+            this.buildTime = time;
         }
     }
 }

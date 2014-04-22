@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.ArrayList;
 
 import org.dashbuilder.model.dataset.DataSetOp;
+import org.dashbuilder.model.dataset.DataSetOpType;
 import org.jboss.errai.common.client.api.annotations.Portable;
 
 /**
@@ -29,6 +30,10 @@ public class DataSetGroup implements DataSetOp {
 
     protected List<Domain> domainList = new ArrayList<Domain>();
     protected List<Range> rangeList = new ArrayList<Range>();
+
+    public DataSetOpType getType() {
+        return DataSetOpType.GROUP;
+    }
 
     public void addDomains(Domain... domains) {
         for (Domain domain : domains) {

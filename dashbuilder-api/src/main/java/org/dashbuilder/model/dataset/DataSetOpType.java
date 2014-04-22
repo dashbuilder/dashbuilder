@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012 JBoss Inc
+ * Copyright (C) 2014 JBoss Inc
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,22 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbuilder.model.dataset.filter;
-
-import org.dashbuilder.model.dataset.DataSetOp;
-import org.dashbuilder.model.dataset.DataSetOpType;
+package org.dashbuilder.model.dataset;
 
 /**
- * A data set filter definition.
+ * Data set operation types.
  */
-public class DataSetFilter implements DataSetOp {
-
-    public DataSetOpType getType() {
-        return DataSetOpType.FILTER;
-    }
-
-    public boolean equals(Object other) {
-        // TODO
-        return false;
-    }
+public enum DataSetOpType {
+    GROUP,
+    FILTER,
+    SORT
 }
