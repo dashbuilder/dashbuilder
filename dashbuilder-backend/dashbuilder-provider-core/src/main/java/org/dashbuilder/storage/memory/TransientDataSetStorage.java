@@ -89,7 +89,9 @@ public class TransientDataSetStorage implements DataSetStorage {
     }
 
     public DataSetStats stats(String uuid) throws Exception {
-        return dataSetCache.get(uuid);
+        DataSetHolder holder = dataSetCache.get(uuid);
+        if (holder == null) throw new Exception("Data set not found: " + uuid);
+        return new TransientDataSetStats(holder, sizeEstimator);
     }
 
     public void remove(String uuid) throws Exception {
@@ -156,6 +158,7 @@ public class TransientDataSetStorage implements DataSetStorage {
                 DataColumn domainColumn = source.dataSet.getColumnById(domain.getSourceId());
                 IntervalBuilder intervalBuilder = intervalBuilderLocator.lookup(domainColumn, domain);
                 if (intervalBuilder == null) throw new Exception("Interval generator not supported.");
+
                 intervals = intervalBuilder.build(domainColumn, domain);
                 long _timeIntervals = System.currentTimeMillis() - _beginIntervals;
 
@@ -247,204 +250,5 @@ public class TransientDataSetStorage implements DataSetStorage {
             dataSetHolder.setSortedList(column, result, _timeSort);
         }
         return result;
-    }
-
-    /**
-     * A data set cache entry holder
-     */
-    private class DataSetHolder implements DataSetStats {
-
-        DataSet dataSet;
-        DataSetOp op;
-
-        long buildTime = 0;
-        int reuseHits = 0;
-
-        List<DataSetHolder> children = new ArrayList<DataSetHolder>();
-        Map<String, IntervalListHolder> intervalLists = new HashMap<String, IntervalListHolder>();
-        Map<String, SortedListHolder> sortedLists = new HashMap<String, SortedListHolder>();
-        Map<DataSetOpType, TransientDataSetOpStats> opStats = new HashMap<DataSetOpType, TransientDataSetOpStats>();
-
-        DataSetHolder(DataSet dataSet) {
-            this(null, dataSet, null, 0);
-        }
-
-        DataSetHolder(DataSetHolder parent, DataSet dataSet, DataSetOp op, long buildTime) {
-            this.dataSet = dataSet;
-            this.op = op;
-            this.opStats.put(DataSetOpType.GROUP, new TransientDataSetOpStats());
-            this.opStats.put(DataSetOpType.FILTER, new TransientDataSetOpStats());
-            this.opStats.put(DataSetOpType.SORT, new TransientDataSetOpStats());
-            this.buildTime = buildTime;
-            if (parent != null) {
-                parent.addChild(this);
-            }
-        }
-
-        public void setIntervalList(Domain domain, IntervalList intervals, long buildTime) {
-            String key = getDomainKey(domain);
-            IntervalListHolder holder = new IntervalListHolder(intervals, buildTime);
-            intervalLists.put(key, holder);
-        }
-
-        public IntervalList getIntervalList(Domain domain) {
-            String key = getDomainKey(domain);
-            IntervalListHolder holder = intervalLists.get(key);
-            if (holder == null) return null;
-            holder.reuseHits++;
-            return holder.intervalList;
-        }
-
-        public void setSortedList(DataColumn column, SortedList<ComparableValue> l, long buildTime) {
-            SortedListHolder holder = new SortedListHolder(l, buildTime);
-            sortedLists.put(column.getId(), holder);
-        }
-
-        public SortedList<ComparableValue> getSortedList(DataColumn column) {
-            SortedListHolder holder = sortedLists.get(column.getId());
-            if (holder == null) return null;
-            holder.reuseHits++;
-            return holder.sortedList;
-        }
-
-        public void addChild(DataSetHolder child) {
-            children.add(child);
-            opStats.get(child.op.getType()).update(child);
-        }
-
-        public DataSetHolder getChildByOp(DataSetOp op) {
-            for (DataSetHolder child : children) {
-                if (op.equals(child.op)) {
-                    child.reuseHits++;
-                    opStats.get(child.op.getType()).reuseHits++;
-                    return child;
-                }
-            }
-            return null;
-        }
-
-        public String getDomainKey(Domain domain) {
-            return domain.getSourceId() + "_" +
-                    domain.getStrategy().toString() + "_" +
-                    domain.getIntervalSize() + "_" +
-                    domain.getMaxIntervals();
-        }
-
-        // DataSetStats interface
-
-        public long getBuildTime() {
-            return buildTime;
-        }
-
-        public int getReuseHits() {
-            return reuseHits;
-        }
-
-        public DataSetOpStats getOpStats(DataSetOpType type) {
-            return opStats.get(type);
-        }
-
-        public int sizeOf() {
-            int nrows = dataSet.getRowCount();
-            if (nrows == 0) return 0;
-
-            List<DataColumn> columns = dataSet.getColumns();
-            int ncells = nrows * columns.size();
-            int result = ncells * 4;
-            for (int i = 0; i < columns.size(); i++) {
-                Object firstRowValue = dataSet.getValueAt(0, i);
-                if (firstRowValue instanceof String) {
-                    for (int j = 0; j < nrows; j++) {
-                        String stringValue = (String) dataSet.getValueAt(j, i);
-                        result += sizeEstimator.sizeOfString(stringValue);
-                    }
-                } else {
-                    int singleValueSize = sizeEstimator.sizeOf(firstRowValue);
-                    result += nrows * singleValueSize;
-                }
-            }
-            return result;
-        }
-    }
-
-    private class TransientDataSetOpStats implements DataSetOpStats {
-
-        int numberOfOps = 0;
-        int reuseHits = 0;
-        long averageTime = 0;
-        DataSetHolder longestOp = null;
-        DataSetHolder shortestOp = null;
-
-        public void update(DataSetHolder op) {
-            averageTime = (averageTime*numberOfOps + op.buildTime) / ++numberOfOps;
-            if (longestOp == null || op.buildTime > longestOp.buildTime) longestOp = op;
-            if (shortestOp == null || op.buildTime <= shortestOp.buildTime) shortestOp = op;
-        }
-
-        public int getNumberOfOps() {
-            return numberOfOps;
-        }
-
-        public int getReuseHits() {
-            return reuseHits;
-        }
-
-        public long getAverageTime() {
-            return averageTime;
-        }
-
-        public long getLongestTime() {
-            if (longestOp == null) return 0;
-            return longestOp.buildTime;
-        }
-
-        public long getShortestTime() {
-            if (shortestOp == null) return 0;
-            return shortestOp.buildTime;
-        }
-
-        public DataSetOp getLongestOp() {
-            if (longestOp == null) return null;
-            return longestOp.op;
-        }
-
-        public DataSetOp getShortestOp() {
-            if (shortestOp == null) return null;
-            return shortestOp.op;
-        }
-
-        public String toString() {
-            StringBuilder str = new StringBuilder();
-            str.append("Hit=").append(reuseHits).append(" ");
-            str.append("Run=").append(numberOfOps).append(" ");
-            str.append("Min=").append(getShortestTime()).append(" ms ");
-            str.append("Max=").append(getLongestTime()).append(" ms ");
-            str.append("Avg=").append(getAverageTime()).append(" ms");
-            return str.toString();
-        }
-    }
-
-    private class IntervalListHolder {
-
-        IntervalList intervalList;
-        long buildTime = 0;
-        int reuseHits = 0;
-
-        private IntervalListHolder(IntervalList intervalList, long time) {
-            this.intervalList = intervalList;
-            this.buildTime = time;
-        }
-    }
-
-    private class SortedListHolder {
-
-        SortedList<ComparableValue> sortedList;
-        long buildTime = 0;
-        int reuseHits = 0;
-
-        private SortedListHolder(SortedList<ComparableValue> sortedList, long time) {
-            this.sortedList = sortedList;
-            this.buildTime = time;
-        }
     }
 }
