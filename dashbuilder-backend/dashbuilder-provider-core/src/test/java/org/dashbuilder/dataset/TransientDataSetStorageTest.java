@@ -99,7 +99,7 @@ public class TransientDataSetStorageTest {
         long groupTime = groupOps*groupStats.getAverageTime();
         assertThat(groupOps).isEqualTo(2);
         assertThat(groupHits).isEqualTo(18);
-        assertThat(groupTime).isLessThan(time);
+        assertThat(groupTime).isLessThanOrEqualTo(time);
 
     }
 }
