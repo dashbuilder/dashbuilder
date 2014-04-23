@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2014 JBoss Inc
+ * Copyright (C) 2012 JBoss Inc
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,14 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbuilder.model.kpi;
+package org.dashbuilder.model.dataset;
 
-import org.dashbuilder.model.dataset.DataSetRef;
-import org.dashbuilder.model.displayer.DataDisplayer;
+/**
+ * A data set reference. It can be a local ref, a remote ref, a lookup request plus some additional transformations, etc.
+ * The main aim of this interface is to hide the details about how data sets are referenced and obtained by clients.
+ */
+public interface DataSetRef {
 
-public interface KPI {
-
-    String getUUID();
-    DataDisplayer getDataDisplayer();
-    DataSetRef getDataSetRef();
 }

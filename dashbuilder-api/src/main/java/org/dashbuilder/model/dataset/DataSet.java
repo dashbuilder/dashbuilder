@@ -58,7 +58,7 @@ public interface DataSet {
     /**
      * Add a brand new column.
      */
-    DataColumn addColumn(String id, ColumnType type);
+    DataSet addColumn(String id, ColumnType type);
 
     /**
      * Get the number of rows in the dataset.

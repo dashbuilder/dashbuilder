@@ -2,11 +2,7 @@ package org.dashbuilder.client.perspectives;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
 
-import org.dashbuilder.client.kpi.KPILocator;
-import org.dashbuilder.client.kpi.SalesDashboardKPIs;
-import org.dashbuilder.model.kpi.KPI;
 import org.uberfire.client.annotations.Perspective;
 import org.uberfire.client.annotations.WorkbenchPerspective;
 import org.uberfire.mvp.impl.DefaultPlaceRequest;
@@ -38,7 +34,7 @@ public class MainPerspective {
         perspective = new PerspectiveDefinitionImpl( PanelType.ROOT_TAB);
         perspective.setTransient(true);
         perspective.setName("MainPerspective");
-        perspective.getRoot().addPart( new PartDefinitionImpl( new DefaultPlaceRequest( "HomeScreen" ) ) );
+        perspective.getRoot().addPart(new PartDefinitionImpl(new DefaultPlaceRequest("HomeScreen")));
         perspective.getRoot().addPart( new PartDefinitionImpl( new DefaultPlaceRequest( "StaticChartScreen" ) ) );
         //perspective.getRoot().addPart( new PartDefinitionImpl( new DefaultPlaceRequest( "KPIScreen" ).addParameter("kpi", "opps-country-summary") ) );
         return perspective;

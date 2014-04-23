@@ -24,7 +24,7 @@ import org.jboss.errai.common.client.api.annotations.Portable;
  * A data set look up request.
  */
 @Portable
-public class DataSetLookup {
+public class DataSetLookup implements DataSetRef {
 
     /**
      * The UUID of the data set to retrieve.

@@ -15,15 +15,15 @@
  */
 package org.dashbuilder.model.kpi.impl;
 
-import org.dashbuilder.model.dataset.DataSetLookup;
+import org.dashbuilder.model.dataset.DataSetRef;
 import org.dashbuilder.model.displayer.DataDisplayer;
 import org.dashbuilder.model.kpi.KPI;
 
 public class KPIImpl implements KPI {
 
     protected String UUID;
+    protected DataSetRef dataSetRef;
     protected DataDisplayer dataDisplayer;
-    protected DataSetLookup dataSetLookup;
 
     public KPIImpl() {
     }
@@ -41,12 +41,12 @@ public class KPIImpl implements KPI {
         return this;
     }
 
-    public DataSetLookup getDataSetLookup() {
-        return dataSetLookup;
+    public DataSetRef getDataSetRef() {
+        return dataSetRef;
     }
 
-    public KPIImpl setDataSetLookup(DataSetLookup dataSetLookup) {
-        this.dataSetLookup = dataSetLookup;
+    public KPIImpl setDataSetRef(DataSetRef dataSetRef) {
+        this.dataSetRef = dataSetRef;
         return this;
     }
 

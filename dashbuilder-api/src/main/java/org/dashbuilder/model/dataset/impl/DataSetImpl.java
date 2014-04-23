@@ -21,10 +21,11 @@ import java.util.ArrayList;
 import org.dashbuilder.model.dataset.ColumnType;
 import org.dashbuilder.model.dataset.DataColumn;
 import org.dashbuilder.model.dataset.DataSet;
+import org.dashbuilder.model.dataset.DataSetRef;
 import org.jboss.errai.common.client.api.annotations.Portable;
 
 @Portable
-public class DataSetImpl implements DataSet {
+public class DataSetImpl implements DataSet, DataSetRef {
 
     protected String uuid = null;
     protected String  parent = null;
@@ -67,18 +68,18 @@ public class DataSetImpl implements DataSet {
         return columns.get(index);
     }
 
-    public DataColumn addColumn(String id, ColumnType type) {
+    public DataSet addColumn(String id, ColumnType type) {
         return addColumn(id, type, null);
     }
 
-    public DataColumn addColumn(String id, ColumnType type, List values) {
+    public DataSet addColumn(String id, ColumnType type, List values) {
         DataColumnImpl c = new DataColumnImpl();
         c.setDataSet(this);
         c.setId(id);
         c.setColumnType(type);
         if (values != null) c.setValues(values);
         columns.add(c);
-        return c;
+        return this;
     }
 
     public boolean isEmpty() {

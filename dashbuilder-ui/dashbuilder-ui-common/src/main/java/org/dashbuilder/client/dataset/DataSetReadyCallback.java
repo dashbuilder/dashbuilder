@@ -13,14 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbuilder.model.kpi;
+package org.dashbuilder.client.dataset;
 
-import org.dashbuilder.model.dataset.DataSetRef;
-import org.dashbuilder.model.displayer.DataDisplayer;
+import org.dashbuilder.model.dataset.DataSet;
 
-public interface KPI {
+/**
+ * DataSet retrieval callback
+ */
+public interface DataSetReadyCallback {
 
-    String getUUID();
-    DataDisplayer getDataDisplayer();
-    DataSetRef getDataSetRef();
+    void callback(DataSet dataSet);
+
 }

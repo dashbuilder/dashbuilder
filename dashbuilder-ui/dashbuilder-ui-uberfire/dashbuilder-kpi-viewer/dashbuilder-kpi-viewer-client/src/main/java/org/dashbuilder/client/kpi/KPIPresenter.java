@@ -21,8 +21,7 @@ import javax.inject.Inject;
 
 import com.google.gwt.user.client.ui.IsWidget;
 import org.dashbuilder.client.dataset.ClientDataSetManager;
-import org.dashbuilder.event.DataSetReadyEvent;
-import org.dashbuilder.model.dataset.DataSetLookup;
+import org.dashbuilder.client.dataset.DataSetReadyCallback;
 import org.dashbuilder.model.dataset.DataSet;
 import org.dashbuilder.model.kpi.KPI;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
@@ -38,15 +37,14 @@ public class KPIPresenter {
     public interface View extends IsWidget {
 
         void init(KPI kpi);
-        void onDataLookup(DataSetLookup request);
         void onDataReady(DataSet dataSet);
     }
 
     /** The KPI to display */
     private KPI kpi;
 
-    /** The KPI locator */
-    @Inject private KPILocator kpiLocator;
+    /** The KPI manager */
+    @Inject private ClientKPIManager kpiManager;
 
     /** The data set manager */
     @Inject private ClientDataSetManager dataSetManager;
@@ -57,27 +55,19 @@ public class KPIPresenter {
     @OnStartup
     public void onStartup( final PlaceRequest placeRequest) {
         // Locate the KPI specified as a parameter.
-        String kpiUid = placeRequest.getParameter( "kpi", "" );
-        this.kpi = kpiLocator.getKPI(kpiUid);
+        String kpiUid = placeRequest.getParameter("kpi", "");
+        this.kpi = kpiManager.getKPI(kpiUid);
         if (kpi == null) throw new IllegalArgumentException("KPI not found.");
 
+        // Init the view.
         view.init(kpi);
 
-        // Issue a data set lookup request
-        DataSetLookup dt = kpi.getDataSetLookup();
-        dataSetManager.lookupDataSet(dt);
-
-        // Put the view on data lookup mode.
-        view.onDataLookup(dt);
-    }
-
-    /**
-     * Called when the data set has been fetched.
-     */
-    public void onDataReady(@Observes DataSetReadyEvent event) {
-        if (kpi.getDataSetLookup().equals(event.getDataSetLookup())) {
-            view.onDataReady(event.getDataSet());
-        }
+        // Look up the data set
+        dataSetManager.processRef(kpi.getDataSetRef(), new DataSetReadyCallback() {
+            public void callback(DataSet dataSet) {
+                view.onDataReady(dataSet);
+            }
+        });
     }
 
     @WorkbenchPartTitle

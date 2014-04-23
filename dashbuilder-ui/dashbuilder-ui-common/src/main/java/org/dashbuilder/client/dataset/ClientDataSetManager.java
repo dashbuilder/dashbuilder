@@ -15,38 +15,50 @@
  */
 package org.dashbuilder.client.dataset;
 
-import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
-import org.dashbuilder.event.DataSetReadyEvent;
 import org.dashbuilder.model.dataset.DataSetLookup;
 import org.dashbuilder.model.dataset.DataSet;
-import org.dashbuilder.model.dataset.DataSetMetadata;
 import org.dashbuilder.model.dataset.impl.DataSetImpl;
+import org.dashbuilder.model.dataset.DataSetRef;
 import org.dashbuilder.service.DataSetService;
 import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.common.client.api.RemoteCallback;
 
+/**
+ * Main client interface for dealing with data sets.
+ */
 public class ClientDataSetManager {
 
     @Inject
     private Caller<DataSetService> dataSetService;
 
-    @Inject
-    private Event<DataSetReadyEvent> dataSetReadyEvent;
-
     public DataSet createDataSet() {
         return new DataSetImpl();
     }
 
-    public void lookupDataSet(final DataSetLookup request) {
+    /**
+     * Get the target data set instance by processing the specified data set reference.
+     * @param ref The data set reference.
+     */
+    public void processRef(DataSetRef ref, DataSetReadyCallback listener) {
+        if (ref instanceof DataSet) {
+            listener.callback((DataSet) ref);
+        }
+        if (ref instanceof DataSetLookup) {
+            lookupDataSet((DataSetLookup) ref, listener);
+        }
+    }
+
+    /**
+     * Request the server to process the specified data set lookup request
+     * @param request The data set lookup request
+     */
+    public void lookupDataSet(final DataSetLookup request, final DataSetReadyCallback listener) {
         dataSetService.call(
             new RemoteCallback<DataSet>() {
                 public void callback(DataSet result) {
-                    if (result != null && !result.getColumns().isEmpty()) {
-                        DataSetReadyEvent event = new DataSetReadyEvent(request, result);
-                        dataSetReadyEvent.fire(event);
-                    }
+                    listener.callback(result);
                 }
             }).lookupDataSet(request);
     }

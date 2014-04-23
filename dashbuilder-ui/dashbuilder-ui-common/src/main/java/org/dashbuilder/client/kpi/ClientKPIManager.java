@@ -19,11 +19,18 @@ import java.util.List;
 import java.util.ArrayList;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 
+import org.dashbuilder.client.dataset.ClientDataSetManager;
+import org.dashbuilder.model.dataset.DataSet;
+import org.dashbuilder.model.dataset.DataSetLookup;
+import org.dashbuilder.model.dataset.DataSetRef;
+import org.dashbuilder.model.displayer.DataDisplayer;
 import org.dashbuilder.model.kpi.*;
+import org.dashbuilder.model.kpi.impl.KPIImpl;
 
 @ApplicationScoped
-public class KPILocator {
+public class ClientKPIManager {
 
     private List<KPI> kpiList = new ArrayList<KPI>();
 
@@ -31,8 +38,16 @@ public class KPILocator {
         return kpiList;
     }
 
-    public void addKPI(KPI kpi) {
+    public KPI createKPI(String uuid, DataSetRef dataSetRef, DataDisplayer dataDisplayer) {
+        KPIImpl kpi = new KPIImpl(uuid);
+        kpi.setDataSetRef(dataSetRef);
+        kpi.setDataDisplayer(dataDisplayer);
+        return kpi;
+    }
+
+    public KPI addKPI(KPI kpi) {
         kpiList.add(kpi);
+        return kpi;
     }
 
     public KPI getKPI(String uid) {

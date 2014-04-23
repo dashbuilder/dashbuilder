@@ -80,12 +80,12 @@ public class StaticChartScreen extends Composite {
     }
 
     public DataSet createDataSet() {
-        DataSet dataSet = dataSetManager.createDataSet();
-        dataSet.addColumn("month", ColumnType.LABEL);
-        dataSet.addColumn("2012", ColumnType.NUMBER);
-        dataSet.addColumn("2013", ColumnType.NUMBER);
-        dataSet.addColumn("2014", ColumnType.NUMBER);
-        dataSet.setValues(SALES_PER_YEAR);
+        DataSet dataSet = dataSetManager.createDataSet()
+            .addColumn("month", ColumnType.LABEL)
+            .addColumn("2012", ColumnType.NUMBER)
+            .addColumn("2013", ColumnType.NUMBER)
+            .addColumn("2014", ColumnType.NUMBER)
+            .setValues(SALES_PER_YEAR);
         return dataSet;
     }
 
