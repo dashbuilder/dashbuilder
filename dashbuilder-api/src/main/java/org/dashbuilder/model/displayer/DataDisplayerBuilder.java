@@ -86,6 +86,9 @@ public class DataDisplayerBuilder {
     }
 
     public DataDisplayer build() {
+        if (dataDisplayer.getRenderer() == null) {
+            dataDisplayer.setRenderer(DataDisplayerRenderer.DEFAULT);
+        }
         return dataDisplayer;
     }
 }

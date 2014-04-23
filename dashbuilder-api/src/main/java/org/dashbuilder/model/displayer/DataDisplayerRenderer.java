@@ -22,7 +22,11 @@ public enum DataDisplayerRenderer {
      */
     GOOGLE;
 
+    public static final DataDisplayerRenderer DEFAULT = GOOGLE;
+
     public static DataDisplayerRenderer getByName(String str) {
         return valueOf(str.toUpperCase());
     }
+
+
 }
