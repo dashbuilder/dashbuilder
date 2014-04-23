@@ -22,6 +22,7 @@ import org.dashbuilder.event.DataSetReadyEvent;
 import org.dashbuilder.model.dataset.DataSetLookup;
 import org.dashbuilder.model.dataset.DataSet;
 import org.dashbuilder.model.dataset.DataSetMetadata;
+import org.dashbuilder.model.dataset.impl.DataSetImpl;
 import org.dashbuilder.service.DataSetService;
 import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.common.client.api.RemoteCallback;
@@ -33,6 +34,10 @@ public class ClientDataSetManager {
 
     @Inject
     private Event<DataSetReadyEvent> dataSetReadyEvent;
+
+    public DataSet createDataSet() {
+        return new DataSetImpl();
+    }
 
     public void lookupDataSet(final DataSetLookup request) {
         dataSetService.call(

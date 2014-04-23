@@ -56,8 +56,6 @@ public class KPIView extends Composite implements KPIPresenter.View {
     public void onDataReady(DataSet dataSet) {
         container.remove(label);
         container.add(viewer);
-
         viewer.setDataSet(dataSet);
-        viewer.onDataReady();
     }
 }

@@ -112,6 +112,27 @@ public class DataSetImpl implements DataSet {
         return this;
     }
 
+    public DataSet setValuesAt(int row, Object... values) {
+        if (columns == null || columns.isEmpty()) return null;
+        for (int i = 0; i < values.length; i++) {
+            Object value = values[i];
+            setValueAt(row, i, value);
+        }
+        return this;
+    }
+
+    public DataSet setValues(Object[][] values) {
+        if (columns == null || columns.isEmpty()) return null;
+        for (int i = 0; i < values.length; i++) {
+            Object[] row = values[i];
+            for (int j = 0; j < row.length; j++) {
+                Object value = row[j];
+                setValueAt(i, j, value);
+            }
+        }
+        return this;
+    }
+
     public DataSet trim(int offset, int rows) {
         if (offset < 0) throw new IllegalArgumentException("Offset can't be negative: " + offset);
         if (offset >= getRowCount()) throw new IllegalArgumentException("Offset can't be greater than the number of rows: " + offset);

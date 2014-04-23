@@ -24,12 +24,13 @@ import com.google.gwt.visualization.client.AbstractDataTable;
 import org.dashbuilder.model.dataset.ColumnType;
 import org.dashbuilder.model.dataset.DataColumn;
 import org.dashbuilder.client.displayer.DataDisplayerViewer;
+import org.dashbuilder.model.dataset.DataSet;
+import org.dashbuilder.model.displayer.DataDisplayer;
 
 public abstract class GoogleChartViewer extends DataDisplayerViewer {
 
     @Inject protected GoogleRenderer googleRenderer;
     protected boolean isApiReady = false;
-    protected boolean isDataReady = false;
     protected FlowPanel panel = new FlowPanel();
 
     @PostConstruct
@@ -38,20 +39,19 @@ public abstract class GoogleChartViewer extends DataDisplayerViewer {
         googleRenderer.registerChart(this);
     }
 
-    public boolean isDataReady() {
-        return isDataReady;
-    }
-
-    public boolean isApiReady() {
-        return isApiReady;
-    }
-
     public boolean isDisplayReady() {
-        return isApiReady && isDataReady;
+        return isApiReady && dataSet != null && dataDisplayer != null;
     }
 
-    public void onDataReady() {
-        isDataReady = true;
+    public void setDataSet(DataSet dataSet) {
+        super.setDataSet(dataSet);
+        if (isDisplayReady()) {
+            drawChart();
+        }
+    }
+
+    public void setDataDisplayer(DataDisplayer dataDisplayer) {
+        super.setDataDisplayer(dataDisplayer);
         if (isDisplayReady()) {
             drawChart();
         }

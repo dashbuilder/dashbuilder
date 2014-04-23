@@ -39,9 +39,4 @@ public abstract class DataDisplayerViewer extends Composite {
     public void setDataDisplayer(DataDisplayer dataDisplayer) {
         this.dataDisplayer = dataDisplayer;
     }
-
-    /**
-     * Invoked when the data set has been fetched and it's ready for display.
-     */
-    public abstract void onDataReady();
 }

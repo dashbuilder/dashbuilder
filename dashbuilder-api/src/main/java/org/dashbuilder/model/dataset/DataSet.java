@@ -80,6 +80,18 @@ public interface DataSet {
     DataSet setValueAt(int row, int column, Object value);
 
     /**
+     * Set all the values for a given row.
+     * @param row The cell row (the first row is 0).
+     */
+    DataSet setValuesAt(int row, Object... values);
+
+    /**
+     * Set all the values in the given array.
+     * @param values A 2-dim array containing an array of rows where each row is an array of values.
+     */
+    DataSet setValues(Object[][] values);
+
+    /**
      * Returns a data set containing only the specified row sub set.
      * @param offset The position where the row sub set starts.
      * @param rows The number of rows to get.
