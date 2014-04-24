@@ -84,8 +84,28 @@ public class DataSetLookupBuilder {
         return domain(columnId, columnId, strategy, 15, null);
     }
 
+    public DataSetLookupBuilder domain(String columnId, int maxIntervals, DateIntervalType type) {
+        return domain(columnId, maxIntervals, type.toString());
+    }
+
+    public DataSetLookupBuilder domain(String columnId, int maxIntervals, String intervalSize) {
+        return domain(columnId, columnId, DomainStrategy.DYNAMIC, maxIntervals, intervalSize);
+    }
+
     public DataSetLookupBuilder domain(String columnId, String strategy, int maxIntervals, String intervalSize) {
         return domain(columnId, columnId, DomainStrategy.getByName(strategy), maxIntervals, intervalSize);
+    }
+
+    public DataSetLookupBuilder domain(String columnId, DomainStrategy strategy, String intervalSize) {
+        return domain(columnId, columnId, strategy, 0, intervalSize);
+    }
+
+    public DataSetLookupBuilder domain(String columnId, DomainStrategy strategy, DateIntervalType type) {
+        return domain(columnId, columnId, strategy, 0, type.toString());
+    }
+
+    public DataSetLookupBuilder domain(String columnId, DomainStrategy strategy, int maxIntervals, String intervalSize) {
+        return domain(columnId, columnId, strategy, maxIntervals, intervalSize);
     }
 
     public DataSetLookupBuilder domain(String columnId, String newColumnId, String strategy) {

@@ -29,6 +29,8 @@ import org.dashbuilder.model.kpi.KPI;
 import static org.dashbuilder.model.samples.SalesConstants.*;
 import static org.dashbuilder.model.displayer.DataDisplayerType.*;
 import static org.dashbuilder.model.dataset.group.ScalarFunctionType.*;
+import static org.dashbuilder.model.dataset.group.DomainStrategy.*;
+import static org.dashbuilder.model.dataset.group.DateIntervalType.*;
 
 /**
  * A set of KPI definitions built on top of the the Sales Opportunities data set.
@@ -38,6 +40,7 @@ public class SalesOppsKPIsGenerator {
 
     public static final String OPPS_BY_EMPLOYEE = "opps-by-pipeline";
     public static final String OPPS_EXPECTED_PIPELINE = "opps-expected-pipeline";
+    public static final String OPPS_SALES_PER_YEAR = "opps-sales-per-year";
     public static final String OPPS_BY_STATUS = "opps-by-status";
     public static final String OPPS_BY_SALESMAN = "opps-by-salesman";
     public static final String OPPS_BY_PRODUCT = "opps-by-product";
@@ -70,7 +73,7 @@ public class SalesOppsKPIsGenerator {
                 OPPS_EXPECTED_PIPELINE,
                 new DataSetLookupBuilder()
                         .uuid(UUID)
-                        .domain(CLOSING_DATE, "dynamic", 24, "month")
+                        .domain(CLOSING_DATE, 24, MONTH)
                         .range(EXPECTED_AMOUNT, SUM)
                         .build(),
                 new DataDisplayerBuilder()
@@ -79,6 +82,21 @@ public class SalesOppsKPIsGenerator {
                         .x(CLOSING_DATE, "Closing date")
                         .y(EXPECTED_AMOUNT, "Expected amount")
                         .build()));
+
+        /* TODO: MULTIPLE strategy
+        kpiList.add(kpiManager.createKPI(
+                OPPS_SALES_PER_YEAR,
+                new DataSetLookupBuilder()
+                        .uuid(UUID)
+                        .domain(CREATION_DATE, FIXED, MONTH)
+                        .range(AMOUNT, SUM)
+                        .build(),
+                new DataDisplayerBuilder()
+                        .title("Sales per year")
+                        .type(LINECHART)
+                        .x(CREATION_DATE, "Opportunity date")
+                        .y(AMOUNT, "Total amount")
+                        .build()));*/
 
         kpiList.add(kpiManager.createKPI(
                 OPPS_BY_STATUS,

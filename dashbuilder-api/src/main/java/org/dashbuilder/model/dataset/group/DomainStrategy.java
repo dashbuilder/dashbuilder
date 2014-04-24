@@ -36,7 +36,7 @@ public enum DomainStrategy {
     DYNAMIC,
 
     /**
-     * Same as FIXED but additionally each interval data is split into multiple series.
+     * Same as FIXED but each interval data is split into multiple series.
      */
     MULTIPLE,
 
