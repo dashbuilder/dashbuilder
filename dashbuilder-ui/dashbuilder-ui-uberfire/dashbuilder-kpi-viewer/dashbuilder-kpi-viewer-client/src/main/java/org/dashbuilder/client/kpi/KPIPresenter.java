@@ -16,13 +16,9 @@
 package org.dashbuilder.client.kpi;
 
 import javax.enterprise.context.Dependent;
-import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
 import com.google.gwt.user.client.ui.IsWidget;
-import org.dashbuilder.client.dataset.ClientDataSetManager;
-import org.dashbuilder.client.dataset.DataSetReadyCallback;
-import org.dashbuilder.model.dataset.DataSet;
 import org.dashbuilder.model.kpi.KPI;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
 import org.uberfire.client.annotations.WorkbenchPartView;
@@ -34,23 +30,14 @@ import org.uberfire.mvp.PlaceRequest;
 @Dependent
 public class KPIPresenter {
 
-    public interface View extends IsWidget {
-
-        void init(KPI kpi);
-        void onDataReady(DataSet dataSet);
-    }
-
     /** The KPI to display */
     private KPI kpi;
 
     /** The KPI manager */
     @Inject private ClientKPIManager kpiManager;
 
-    /** The data set manager */
-    @Inject private ClientDataSetManager dataSetManager;
-
     /** The KPI widget */
-    @Inject private View view;
+    @Inject private KPIViewer kpiViewer;
 
     @OnStartup
     public void onStartup( final PlaceRequest placeRequest) {
@@ -60,14 +47,7 @@ public class KPIPresenter {
         if (kpi == null) throw new IllegalArgumentException("KPI not found.");
 
         // Init the view.
-        view.init(kpi);
-
-        // Look up the data set
-        dataSetManager.processRef(kpi.getDataSetRef(), new DataSetReadyCallback() {
-            public void callback(DataSet dataSet) {
-                view.onDataReady(dataSet);
-            }
-        });
+        kpiViewer.draw(kpi);
     }
 
     @WorkbenchPartTitle
@@ -77,6 +57,6 @@ public class KPIPresenter {
 
     @WorkbenchPartView
     public IsWidget getView() {
-        return view;
+        return kpiViewer;
     }
 }

@@ -17,7 +17,7 @@ package org.dashbuilder.model.dataset;
 
 import java.util.List;
 
-public interface DataSet {
+public interface DataSet extends DataSetRef {
 
     /**
      * The unique data set identifier.

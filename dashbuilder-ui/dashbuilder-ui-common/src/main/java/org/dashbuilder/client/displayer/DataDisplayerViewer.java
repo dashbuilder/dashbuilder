@@ -39,4 +39,6 @@ public abstract class DataDisplayerViewer extends Composite {
     public void setDataDisplayer(DataDisplayer dataDisplayer) {
         this.dataDisplayer = dataDisplayer;
     }
+
+    public abstract void draw();
 }

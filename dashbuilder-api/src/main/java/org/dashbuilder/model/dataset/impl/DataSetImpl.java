@@ -25,7 +25,7 @@ import org.dashbuilder.model.dataset.DataSetRef;
 import org.jboss.errai.common.client.api.annotations.Portable;
 
 @Portable
-public class DataSetImpl implements DataSet, DataSetRef {
+public class DataSetImpl implements DataSet {
 
     protected String uuid = null;
     protected String  parent = null;

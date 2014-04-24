@@ -15,21 +15,20 @@
  */
 package org.dashbuilder.client.screens;
 
-import javax.enterprise.context.Dependent;
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
-import com.github.gwtbootstrap.client.ui.Label;
-import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.IsWidget;
 import org.dashbuilder.client.dataset.ClientDataSetManager;
-import org.dashbuilder.client.displayer.DataDisplayerViewer;
-import org.dashbuilder.client.displayer.DataDisplayerViewerLocator;
+import org.dashbuilder.client.kpi.ClientKPIManager;
+import org.dashbuilder.client.kpi.KPIViewer;
 import org.dashbuilder.model.dataset.ColumnType;
 import org.dashbuilder.model.dataset.DataSet;
+import org.dashbuilder.model.dataset.DataSetRef;
 import org.dashbuilder.model.date.Month;
 import org.dashbuilder.model.displayer.DataDisplayer;
 import org.dashbuilder.model.displayer.DataDisplayerBuilder;
+import org.dashbuilder.model.kpi.KPI;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
 import org.uberfire.client.annotations.WorkbenchPartView;
 import org.uberfire.client.annotations.WorkbenchScreen;
@@ -37,9 +36,9 @@ import org.uberfire.lifecycle.OnStartup;
 
 import static org.dashbuilder.model.displayer.DataDisplayerType.LINECHART;
 
-@Dependent
+@ApplicationScoped
 @WorkbenchScreen(identifier = "StaticChartScreen")
-public class StaticChartScreen extends Composite {
+public class StaticChartScreen {
 
     public static final Object[][] SALES_PER_YEAR = new Object[][] {
             new Object[] {Month.JANUARY, 1000d, 2000d, 3000d},
@@ -56,36 +55,20 @@ public class StaticChartScreen extends Composite {
             new Object[] {Month.DECEMBER, 1100d, 2100d, 4200d}
     };
 
-    @Inject
-    protected ClientDataSetManager dataSetManager;
-
-    @Inject
-    protected DataDisplayerViewerLocator viewerLocator;
-
-    @OnStartup
-    public void init() {
-        FlowPanel container = new FlowPanel();
-        try {
-            DataSet dataSet = createDataSet();
-            DataDisplayer displayer = createDisplayer();
-            DataDisplayerViewer viewer = viewerLocator.lookupViewer(displayer);
-            viewer.setDataSet(dataSet);
-            viewer.setDataDisplayer(displayer);
-            container.add(viewer);
-        } catch (Exception e) {
-            Label label = new Label(e.getMessage());
-            container.add(label);
-        }
-        initWidget(container);
+    public KPI createKPI() {
+        return kpiManager.createKPI(
+                "static_chart_sample",
+                createDataSet(),
+                createDisplayer());
     }
 
-    public DataSet createDataSet() {
+    public DataSetRef createDataSet() {
         DataSet dataSet = dataSetManager.createDataSet()
-            .addColumn("month", ColumnType.LABEL)
-            .addColumn("2012", ColumnType.NUMBER)
-            .addColumn("2013", ColumnType.NUMBER)
-            .addColumn("2014", ColumnType.NUMBER)
-            .setValues(SALES_PER_YEAR);
+                .addColumn("month", ColumnType.LABEL)
+                .addColumn("2012", ColumnType.NUMBER)
+                .addColumn("2013", ColumnType.NUMBER)
+                .addColumn("2014", ColumnType.NUMBER)
+                .setValues(SALES_PER_YEAR);
         return dataSet;
     }
 
@@ -100,6 +83,21 @@ public class StaticChartScreen extends Composite {
                 .build();
     }
 
+    @Inject
+    ClientKPIManager kpiManager;
+
+    @Inject
+    ClientDataSetManager dataSetManager;
+
+    @Inject
+    KPIViewer kpiViewer;
+
+    @OnStartup
+    public void init() {
+        KPI kpi = createKPI();
+        kpiViewer.draw(kpi);
+    }
+
     @WorkbenchPartTitle
     public String getTitle() {
         return "Static Chart";
@@ -107,6 +105,6 @@ public class StaticChartScreen extends Composite {
 
     @WorkbenchPartView
     public IsWidget getView() {
-        return this;
+        return kpiViewer;
     }
 }

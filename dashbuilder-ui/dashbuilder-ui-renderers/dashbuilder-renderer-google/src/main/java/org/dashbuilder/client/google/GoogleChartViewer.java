@@ -24,12 +24,11 @@ import com.google.gwt.visualization.client.AbstractDataTable;
 import org.dashbuilder.model.dataset.ColumnType;
 import org.dashbuilder.model.dataset.DataColumn;
 import org.dashbuilder.client.displayer.DataDisplayerViewer;
-import org.dashbuilder.model.dataset.DataSet;
-import org.dashbuilder.model.displayer.DataDisplayer;
 
 public abstract class GoogleChartViewer extends DataDisplayerViewer {
 
     @Inject protected GoogleRenderer googleRenderer;
+    protected boolean isDrawn = false;
     protected boolean isApiReady = false;
     protected FlowPanel panel = new FlowPanel();
 
@@ -39,34 +38,24 @@ public abstract class GoogleChartViewer extends DataDisplayerViewer {
         googleRenderer.registerChart(this);
     }
 
-    public boolean isDisplayReady() {
-        return isApiReady && dataSet != null && dataDisplayer != null;
-    }
-
-    public void setDataSet(DataSet dataSet) {
-        super.setDataSet(dataSet);
-        if (isDisplayReady()) {
-            drawChart();
-        }
-    }
-
-    public void setDataDisplayer(DataDisplayer dataDisplayer) {
-        super.setDataDisplayer(dataDisplayer);
-        if (isDisplayReady()) {
-            drawChart();
-        }
-    }
-
     public void onApiReady() {
         isApiReady = true;
-        if (isDisplayReady()) {
-            drawChart();
+        if (dataSet != null && dataDisplayer != null) {
+            draw();
         }
     }
 
-    public void drawChart() {
-        Widget w = createChart();
-        panel.add(w);
+    public void draw() {
+        if (!isDrawn && isApiReady) {
+
+            if (dataSet == null) throw new IllegalStateException("DataSet property not set");
+            if (dataDisplayer== null) throw new IllegalStateException("DataDisplayer property not set");
+
+            Widget w = createChart();
+            panel.clear();
+            panel.add(w);
+            isDrawn = true;
+        }
     }
 
     public abstract Widget createChart();

@@ -30,8 +30,6 @@ import org.uberfire.client.workbench.events.PerspectiveChange;
 @ApplicationScoped
 public class GoogleRenderer {
 
-    public static final String GOOGLE = "google";
-
     private List<GoogleChartViewer> chartViewerList = new ArrayList<GoogleChartViewer>();
     private Set<String> chartPackages = new HashSet<String>();
 
