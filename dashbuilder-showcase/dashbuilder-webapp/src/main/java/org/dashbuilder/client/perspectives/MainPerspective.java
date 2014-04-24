@@ -34,7 +34,8 @@ public class MainPerspective {
         perspective = new PerspectiveDefinitionImpl( PanelType.ROOT_TAB);
         perspective.setTransient(true);
         perspective.setName("MainPerspective");
-        perspective.getRoot().addPart(new PartDefinitionImpl(new DefaultPlaceRequest("HomeScreen")));
+        //perspective.getRoot().addPart(new PartDefinitionImpl(new DefaultPlaceRequest("HomeScreen")));
+        perspective.getRoot().addPart( new PartDefinitionImpl( new DefaultPlaceRequest( "GalleryScreen" ) ) );
         perspective.getRoot().addPart( new PartDefinitionImpl( new DefaultPlaceRequest( "StaticChartScreen" ) ) );
         //perspective.getRoot().addPart( new PartDefinitionImpl( new DefaultPlaceRequest( "KPIScreen" ).addParameter("kpi", "opps-country-summary") ) );
         return perspective;
