@@ -75,9 +75,17 @@ public class DataDisplayerBuilder {
         return this;
     }
 
+    public DataDisplayerBuilder x(String displayName) {
+        return x(null, displayName);
+    }
+
     public DataDisplayerBuilder x(String columnId, String displayName) {
         dataDisplayer.setXAxis(new XAxisImpl(columnId, displayName));
         return this;
+    }
+
+    public DataDisplayerBuilder y(String displayName) {
+        return y(null, displayName);
     }
 
     public DataDisplayerBuilder y(String columnId, String displayName) {

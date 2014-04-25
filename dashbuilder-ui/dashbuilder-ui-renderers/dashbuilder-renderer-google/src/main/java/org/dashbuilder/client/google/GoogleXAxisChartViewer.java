@@ -35,8 +35,11 @@ public abstract class GoogleXAxisChartViewer extends GoogleChartViewer {
         XAxisChart xAxisChart = (XAxisChart) dataDisplayer;
 
         // Add the xAxis column
+        int columnIndex = 0;
         XAxis xAxis = xAxisChart.getXAxis();
-        DataColumn xAxisColumn = dataSet.getColumnById(xAxis.getColumnId());
+        DataColumn xAxisColumn = null;
+        if (xAxis.getColumnId() != null) xAxisColumn = dataSet.getColumnById(xAxis.getColumnId());
+        else xAxisColumn = dataSet.getColumnByIndex(columnIndex++);
         if (xAxisColumn == null) {
             GWT.log("Domain column not found in the data set: " + xAxis.getColumnId());
         }
@@ -52,7 +55,9 @@ public abstract class GoogleXAxisChartViewer extends GoogleChartViewer {
         List<YAxis> yAxes = xAxisChart.getYAxes();
         for (int i = 0; i < yAxes.size(); i++) {
             YAxis yAxis = yAxes.get(i);
-            DataColumn yAxisColumn = dataSet.getColumnById(yAxis.getColumnId());
+            DataColumn yAxisColumn = null;
+            if (yAxis.getColumnId() != null) yAxisColumn = dataSet.getColumnById(yAxis.getColumnId());
+            else yAxisColumn = dataSet.getColumnByIndex(columnIndex++);
             if (yAxisColumn == null) {
                 GWT.log("Range column not found in the data set: " + xAxis.getColumnId());
             }
