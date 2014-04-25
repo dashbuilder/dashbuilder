@@ -15,12 +15,15 @@
  */
 package org.dashbuilder.model.displayer;
 
+import java.util.List;
 
 public interface DataDisplayer {
 
     String getTitle();
     DataDisplayerType getType();
     DataDisplayerRenderer getRenderer();
+    List<DataDisplayerColumn> getColumnList();
+
 /*
     String getForegroundColor();
     String getBackgroundColor();

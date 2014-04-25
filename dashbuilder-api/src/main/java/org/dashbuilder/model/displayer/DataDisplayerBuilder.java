@@ -15,18 +15,8 @@
  */
 package org.dashbuilder.model.displayer;
 
-import java.util.List;
-
-import org.dashbuilder.model.dataset.DataSetLookup;
-import org.dashbuilder.model.dataset.DataSetOp;
-import org.dashbuilder.model.dataset.group.DataSetGroup;
-import org.dashbuilder.model.dataset.group.Domain;
-import org.dashbuilder.model.dataset.group.DomainStrategy;
-import org.dashbuilder.model.dataset.group.Range;
-import org.dashbuilder.model.dataset.sort.DataSetSort;
+import org.dashbuilder.model.displayer.impl.DataDisplayerColumnImpl;
 import org.dashbuilder.model.displayer.impl.DataDisplayerImpl;
-import org.dashbuilder.model.displayer.impl.XAxisImpl;
-import org.dashbuilder.model.displayer.impl.YAxisImpl;
 import org.jboss.errai.common.client.api.annotations.Portable;
 
 /**
@@ -75,21 +65,12 @@ public class DataDisplayerBuilder {
         return this;
     }
 
-    public DataDisplayerBuilder x(String displayName) {
-        return x(null, displayName);
+    public DataDisplayerBuilder column(String displayName) {
+        return column(null, displayName);
     }
 
-    public DataDisplayerBuilder x(String columnId, String displayName) {
-        dataDisplayer.setXAxis(new XAxisImpl(columnId, displayName));
-        return this;
-    }
-
-    public DataDisplayerBuilder y(String displayName) {
-        return y(null, displayName);
-    }
-
-    public DataDisplayerBuilder y(String columnId, String displayName) {
-        dataDisplayer.getYAxes().add(new YAxisImpl(columnId, displayName));
+    public DataDisplayerBuilder column(String columnId, String displayName) {
+        dataDisplayer.getColumnList().add(new DataDisplayerColumnImpl(columnId, displayName));
         return this;
     }
 

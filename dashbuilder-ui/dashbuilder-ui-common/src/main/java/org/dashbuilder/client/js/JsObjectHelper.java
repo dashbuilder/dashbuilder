@@ -29,11 +29,7 @@ import org.dashbuilder.model.dataset.impl.DataSetImpl;
 import org.dashbuilder.model.displayer.DataDisplayer;
 import org.dashbuilder.model.displayer.DataDisplayerRenderer;
 import org.dashbuilder.model.displayer.DataDisplayerType;
-import org.dashbuilder.model.displayer.XAxis;
-import org.dashbuilder.model.displayer.YAxis;
 import org.dashbuilder.model.displayer.impl.DataDisplayerImpl;
-import org.dashbuilder.model.displayer.impl.XAxisImpl;
-import org.dashbuilder.model.displayer.impl.YAxisImpl;
 
 public class JsObjectHelper {
 
@@ -71,11 +67,12 @@ public class JsObjectHelper {
         displayer.setTitle(jsDataDisplayer.getTitle());
         displayer.setRenderer(DataDisplayerRenderer.getByName(jsDataDisplayer.getRenderer()));
         displayer.setType(DataDisplayerType.getByName(jsDataDisplayer.getType()));
-        displayer.setXAxis(createXAxis(jsDataDisplayer.getJsXAxis()));
-        displayer.setYAxes(createYAxes(jsDataDisplayer.getJsYAxes()));
+        //displayer.setXAxis(createXAxis(jsDataDisplayer.getJsXAxis()));
+        //displayer.setYAxes(createYAxes(jsDataDisplayer.getJsYAxes()));
         return displayer;
     }
 
+/*
     public static XAxis createXAxis(JsXAxis obj) {
         XAxisImpl result = new XAxisImpl();
         result.setColumnId(obj.getColumnId());
@@ -97,7 +94,7 @@ public class JsObjectHelper {
         }
         return results;
     }
-
+*/
     public static List createListNumber(JsArrayNumber array) {
         List  results = new ArrayList();
         for (int i = 0; i < array.length(); i++) {

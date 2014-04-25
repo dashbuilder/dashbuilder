@@ -15,23 +15,15 @@
  */
 package org.dashbuilder.client.google;
 
-import java.util.Date;
-import java.util.List;
-import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
-import javax.inject.Inject;
 import javax.inject.Named;
 
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.visualization.client.AbstractDataTable;
-import com.google.gwt.visualization.client.DataTable;
 import com.google.gwt.visualization.client.Selection;
 import com.google.gwt.visualization.client.events.SelectHandler;
 import com.google.gwt.visualization.client.visualizations.Table;
 import com.google.gwt.visualization.client.visualizations.Table.Options;
-import org.dashbuilder.model.dataset.ColumnType;
-import org.dashbuilder.model.dataset.DataColumn;
 
 @Dependent
 @Named("google_table_viewer")
@@ -47,33 +39,6 @@ public class GoogleTableViewer extends GoogleChartViewer {
         Table w = new Table(createTable(), createOptions());
         w.addSelectHandler(createSelectHandler(w));
         return w;
-    }
-
-    public AbstractDataTable createTable() {
-        DataTable data = DataTable.create();
-        data.addRows(dataSet.getRowCount());
-
-        List<DataColumn> columns = dataSet.getColumns();
-        for (int i = 0; i < columns.size(); i++) {
-            DataColumn column = columns.get(i);
-            List values = column.getValues();
-            ColumnType type = column.getColumnType();
-            data.addColumn(getColumnType(column), column.getId());
-            for (int j = 0; j < values.size(); j++) {
-
-                if (ColumnType.DATE.equals(type)) {
-                    data.setValue(j, i, (Date) values.get(j));
-                }
-                else if (ColumnType.NUMBER.equals(type)) {
-                    // TODO: format decimal number
-                    data.setValue(j, i, (Double) values.get(j));
-                }
-                else {
-                    data.setValue(j, i, values.get(j).toString());
-                }
-            }
-        }
-        return data;
     }
 
     private Options createOptions() {

@@ -17,60 +17,16 @@ package org.dashbuilder.client.google;
 
 import java.util.List;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.visualization.client.AbstractDataTable;
-import com.google.gwt.visualization.client.DataTable;
-import org.dashbuilder.client.displayer.DataDisplayerViewer;
-import org.dashbuilder.model.dataset.ColumnType;
-import org.dashbuilder.model.dataset.DataColumn;
-import org.dashbuilder.model.displayer.XAxis;
-import org.dashbuilder.model.displayer.XAxisChart;
-import org.dashbuilder.model.displayer.YAxis;
+import org.dashbuilder.model.displayer.DataDisplayerColumn;
 
 public abstract class GoogleXAxisChartViewer extends GoogleChartViewer {
 
     public AbstractDataTable createTable() {
-        DataTable data = DataTable.create();
-        XAxisChart xAxisChart = (XAxisChart) dataDisplayer;
-
-        // Add the xAxis column
-        int columnIndex = 0;
-        XAxis xAxis = xAxisChart.getXAxis();
-        DataColumn xAxisColumn = null;
-        if (xAxis.getColumnId() != null) xAxisColumn = dataSet.getColumnById(xAxis.getColumnId());
-        else xAxisColumn = dataSet.getColumnByIndex(columnIndex++);
-        if (xAxisColumn == null) {
-            GWT.log("Domain column not found in the data set: " + xAxis.getColumnId());
+        List<DataDisplayerColumn> displayerColumns = dataDisplayer.getColumnList();
+        if (displayerColumns.size() == 1) {
+            throw new IllegalArgumentException("XAxis charts require to specify at least 2 columns. The X axis plus one ore more columns for the Y axis.");
         }
-
-        List xAxisValues = xAxisColumn.getValues();
-        data.addRows(xAxisValues.size());
-        data.addColumn(getColumnType(xAxisColumn), xAxis.getDisplayName());
-        for (int i = 0; i < xAxisValues.size(); i++) {
-            data.setValue(i, 0, xAxisValues.get(i).toString());
-        }
-
-        // Add the range columns
-        List<YAxis> yAxes = xAxisChart.getYAxes();
-        for (int i = 0; i < yAxes.size(); i++) {
-            YAxis yAxis = yAxes.get(i);
-            DataColumn yAxisColumn = null;
-            if (yAxis.getColumnId() != null) yAxisColumn = dataSet.getColumnById(yAxis.getColumnId());
-            else yAxisColumn = dataSet.getColumnByIndex(columnIndex++);
-            if (yAxisColumn == null) {
-                GWT.log("Range column not found in the data set: " + xAxis.getColumnId());
-            }
-
-            List yAxisValues = yAxisColumn.getValues();
-            data.addColumn(AbstractDataTable.ColumnType.NUMBER, yAxis.getDisplayName());
-            for (int j = 0; j < yAxisValues.size(); j++) {
-                // TODO: format decimal number
-                double value = ((Double) yAxisValues.get(j)).doubleValue();
-                data.setValue(j, i+1, value);
-                //GWT.log("Row="+j+" Col="+(i+1)+" Val="+value);
-            }
-        }
-        return data;
+        return super.createTable();
     }
 }

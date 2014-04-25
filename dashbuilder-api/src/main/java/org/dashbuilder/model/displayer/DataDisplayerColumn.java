@@ -15,18 +15,8 @@
  */
 package org.dashbuilder.model.displayer;
 
-public interface YAxis {
+public interface DataDisplayerColumn {
 
     String getColumnId();
     String getDisplayName();
-/*
-    String getValuePattern();
-    String getNumericMinInterval();
-    String getNumericMaxInterval();
-    String getNumericMinValue();
-    String getNumericMaxValue();
-
-    // Scalar funciton must belong to the data set retrievla settings
-    String getScalarFunction();
-*/
 }

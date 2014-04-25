@@ -20,21 +20,20 @@ import java.util.ArrayList;
 
 import org.dashbuilder.model.displayer.Chart;
 import org.dashbuilder.model.displayer.DataDisplayer;
+import org.dashbuilder.model.displayer.DataDisplayerColumn;
 import org.dashbuilder.model.displayer.DataDisplayerRenderer;
 import org.dashbuilder.model.displayer.DataDisplayerType;
-import org.dashbuilder.model.displayer.XAxis;
-import org.dashbuilder.model.displayer.XAxisChart;
-import org.dashbuilder.model.displayer.YAxis;
 import org.jboss.errai.common.client.api.annotations.Portable;
 
 @Portable
-public class DataDisplayerImpl implements DataDisplayer, Chart, XAxisChart {
+public class DataDisplayerImpl implements DataDisplayer, Chart {
 
     // DataDisplayer interface
 
     protected String title;
     protected DataDisplayerType type;
     protected DataDisplayerRenderer renderer;
+    protected List<DataDisplayerColumn> columnList = new ArrayList<DataDisplayerColumn>();
 
     public String getTitle() {
         return title;
@@ -60,6 +59,14 @@ public class DataDisplayerImpl implements DataDisplayer, Chart, XAxisChart {
         this.renderer = renderer;
     }
 
+    public List<DataDisplayerColumn> getColumnList() {
+        return columnList;
+    }
+
+    public void setColumnList(List<DataDisplayerColumn> columnList) {
+        this.columnList = columnList;
+    }
+
     // Chart interface
 
     protected int width;
@@ -79,26 +86,5 @@ public class DataDisplayerImpl implements DataDisplayer, Chart, XAxisChart {
 
     public void setHeight(int height) {
         this.height = height;
-    }
-
-    // XAxisChart interface
-
-    protected XAxis xAxis;
-    protected List<YAxis> yAxisList = new ArrayList<YAxis>();
-
-    public XAxis getXAxis() {
-        return xAxis;
-    }
-
-    public void setXAxis(XAxis xAxis) {
-        this.xAxis = xAxis;
-    }
-
-    public List<YAxis> getYAxes() {
-        return yAxisList;
-    }
-
-    public void setYAxes(List<YAxis> yAxisList) {
-        this.yAxisList = yAxisList;
     }
 }

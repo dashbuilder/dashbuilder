@@ -15,19 +15,19 @@
  */
 package org.dashbuilder.model.displayer.impl;
 
-import org.dashbuilder.model.displayer.YAxis;
+import org.dashbuilder.model.displayer.DataDisplayerColumn;
 import org.jboss.errai.common.client.api.annotations.Portable;
 
 @Portable
-public class YAxisImpl implements YAxis {
+public class DataDisplayerColumnImpl implements DataDisplayerColumn {
 
     protected String columnId;
     protected String displayName;
 
-    public YAxisImpl() {
+    public DataDisplayerColumnImpl() {
     }
 
-    public YAxisImpl(String columnId, String displayName) {
+    public DataDisplayerColumnImpl(String columnId, String displayName) {
         this.columnId = columnId;
         this.displayName = displayName;
     }
