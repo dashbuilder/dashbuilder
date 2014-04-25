@@ -25,6 +25,7 @@ import javax.inject.Inject;
 import org.dashbuilder.client.kpi.ClientKPIManager;
 import org.dashbuilder.client.samples.sales.SalesOppsData;
 import org.dashbuilder.client.samples.sales.SalesOppsDisplayers;
+import org.dashbuilder.model.displayer.DataDisplayerBuilder;
 import org.dashbuilder.model.kpi.KPI;
 
 import static org.dashbuilder.model.displayer.DataDisplayerType.*;
@@ -46,6 +47,7 @@ public class GalleryTree {
         initLineChartCategory();
         initAreaChartCategory();
         initTableReportCategory();
+        initMapChartCategory();
     }
 
     private void initBarChartCategory() {
@@ -82,6 +84,19 @@ public class GalleryTree {
 
         GalleryNodeList nodeList = new GalleryNodeList("Area Chart");
         nodeList.add(new GalleryNodeKPI("Simple", kpi));
+        mainNodes.add(nodeList);
+    }
+
+    private void initMapChartCategory() {
+        KPI kpi1 = kpiManager.createKPI(SalesOppsData.byCountry(), new DataDisplayerBuilder()
+                .title("By Country")
+                .type(MAP).width(700).height(500)
+                .column("Country")
+                .column("Total amount")
+                .build());
+
+        GalleryNodeList nodeList = new GalleryNodeList("Map");
+        nodeList.add(new GalleryNodeKPI("GeoMap", kpi1));
         mainNodes.add(nodeList);
     }
 
