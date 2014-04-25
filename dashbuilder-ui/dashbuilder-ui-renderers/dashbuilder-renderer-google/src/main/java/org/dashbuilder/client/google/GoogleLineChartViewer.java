@@ -24,6 +24,7 @@ import com.google.gwt.visualization.client.Selection;
 import com.google.gwt.visualization.client.events.SelectHandler;
 import com.google.gwt.visualization.client.visualizations.LineChart.Options;
 import com.google.gwt.visualization.client.visualizations.LineChart;
+import org.dashbuilder.model.displayer.Chart;
 
 @Dependent
 @Named("google_linechart_viewer")
@@ -44,8 +45,11 @@ public class GoogleLineChartViewer extends GoogleXAxisChartViewer {
     private Options createOptions() {
         Options options = Options.create();
         options.setTitle(dataDisplayer.getTitle());
-        options.setWidth(600);
-        options.setHeight(300);
+        if (dataDisplayer instanceof Chart) {
+            Chart chart = (Chart) dataDisplayer;
+            options.setWidth(chart.getWidth());
+            options.setHeight(chart.getHeight());
+        }
         return options;
     }
 

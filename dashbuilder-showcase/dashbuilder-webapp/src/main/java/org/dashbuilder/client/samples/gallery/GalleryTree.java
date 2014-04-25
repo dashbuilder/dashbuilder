@@ -49,10 +49,12 @@ public class GalleryTree {
     }
 
     private void initBarChartCategory() {
-        KPI kpi = kpiManager.createKPI(SalesOppsData.byProduct(), SalesOppsDisplayers.byProduct(BARCHART));
+        KPI kpi1 = kpiManager.createKPI(SalesOppsData.byProduct(), SalesOppsDisplayers.byProduct(BARCHART));
+        KPI kpi2 = kpiManager.createKPI(SalesOppsData.countrySummary(), SalesOppsDisplayers.byCountryMinMaxAvg(BARCHART, 700, 600));
 
         GalleryNodeList nodeList = new GalleryNodeList("Bar Chart");
-        nodeList.add(new GalleryNodeKPI("Simple", kpi));
+        nodeList.add(new GalleryNodeKPI("Simple", kpi1));
+        nodeList.add(new GalleryNodeKPI("Multiple", kpi2));
         mainNodes.add(nodeList);
     }
 
@@ -66,7 +68,7 @@ public class GalleryTree {
 
     private void initLineChartCategory() {
         KPI kpi1 = kpiManager.createKPI(GalleryData.salesPerYear(), GalleryDisplayers.salesPerYear(LINECHART));
-        KPI kpi2 = kpiManager.createKPI(SalesOppsData.countrySummary(), SalesOppsDisplayers.byCountryMinMaxAvg(LINECHART));
+        KPI kpi2 = kpiManager.createKPI(SalesOppsData.countrySummary(), SalesOppsDisplayers.byCountryMinMaxAvg(LINECHART, 700, 400));
 
         GalleryNodeList nodeList = new GalleryNodeList("Line Chart");
         nodeList.add(new GalleryNodeKPI("Multiple (static)", kpi1));

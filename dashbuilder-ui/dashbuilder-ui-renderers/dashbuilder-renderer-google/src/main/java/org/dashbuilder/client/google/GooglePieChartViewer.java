@@ -24,6 +24,7 @@ import com.google.gwt.visualization.client.Selection;
 import com.google.gwt.visualization.client.events.SelectHandler;
 import com.google.gwt.visualization.client.visualizations.PieChart;
 import com.google.gwt.visualization.client.visualizations.PieChart.Options;
+import org.dashbuilder.model.displayer.Chart;
 
 @Dependent
 @Named("google_piechart_viewer")
@@ -45,9 +46,11 @@ public class GooglePieChartViewer extends GoogleXAxisChartViewer {
         Options options = Options.create();
         options.setTitle(dataDisplayer.getTitle());
         options.set3D(true);
-        options.setWidth(600);
-        options.setHeight(300);
-        options.set3D(true);
+        if (dataDisplayer instanceof Chart) {
+            Chart chart = (Chart) dataDisplayer;
+            options.setWidth(chart.getWidth());
+            options.setHeight(chart.getHeight());
+        }
         return options;
     }
 

@@ -50,6 +50,16 @@ public class DataDisplayerBuilder {
         return this;
     }
 
+    public DataDisplayerBuilder width(int width) {
+        dataDisplayer.setWidth(width);
+        return this;
+    }
+
+    public DataDisplayerBuilder height(int height) {
+        dataDisplayer.setHeight(height);
+        return this;
+    }
+
     public DataDisplayerBuilder type(String type) {
         dataDisplayer.setType(DataDisplayerType.getByName(type));
         return this;

@@ -81,9 +81,13 @@ public class SalesOppsDisplayers {
     }
 
     public static DataDisplayer byCountryMinMaxAvg(DataDisplayerType type) {
+        return byCountryMinMaxAvg(type, 600, 400);
+    }
+
+    public static DataDisplayer byCountryMinMaxAvg(DataDisplayerType type, int width, int height) {
         return new DataDisplayerBuilder()
                 .title("By Country (min/max/avg)")
-                .type(type)
+                .type(type).width(width).height(height)
                 .column("Country")
                 .column("Min", "Min")
                 .column("Max", "Max")

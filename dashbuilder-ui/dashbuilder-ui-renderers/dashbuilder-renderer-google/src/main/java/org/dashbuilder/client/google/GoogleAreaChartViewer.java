@@ -24,6 +24,7 @@ import com.google.gwt.visualization.client.Selection;
 import com.google.gwt.visualization.client.events.SelectHandler;
 import com.google.gwt.visualization.client.visualizations.AreaChart;
 import com.google.gwt.visualization.client.visualizations.AreaChart.Options;
+import org.dashbuilder.model.displayer.Chart;
 
 @Dependent
 @Named("google_areachart_viewer")
@@ -44,8 +45,11 @@ public class GoogleAreaChartViewer extends GoogleXAxisChartViewer {
     private Options createOptions() {
         Options options = Options.create();
         options.setTitle(dataDisplayer.getTitle());
-        options.setWidth(600);
-        options.setHeight(300);
+        if (dataDisplayer instanceof Chart) {
+            Chart chart = (Chart) dataDisplayer;
+            options.setWidth(chart.getWidth());
+            options.setHeight(chart.getHeight());
+        }
         return options;
     }
 

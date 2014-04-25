@@ -69,8 +69,8 @@ public class DataDisplayerImpl implements DataDisplayer, Chart {
 
     // Chart interface
 
-    protected int width;
-    protected int height;
+    protected int width = 600;
+    protected int height = 300;
 
     public int getWidth() {
         return width;
