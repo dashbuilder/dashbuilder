@@ -15,8 +15,10 @@
  */
 package org.dashbuilder.client;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
@@ -38,6 +40,8 @@ import org.uberfire.client.workbench.events.ApplicationReadyEvent;
 import org.uberfire.client.workbench.widgets.menu.WorkbenchMenuBar;
 import org.uberfire.mvp.Command;
 import org.uberfire.mvp.impl.DefaultPlaceRequest;
+import org.uberfire.workbench.model.menu.MenuFactory;
+import org.uberfire.workbench.model.menu.MenuItem;
 import org.uberfire.workbench.model.menu.Menus;
 
 import static org.uberfire.workbench.model.menu.MenuFactory.*;
@@ -76,28 +80,37 @@ public class ShowcaseEntryPoint {
         final PerspectiveActivity defaultPerspective = getDefaultPerspectiveActivity();
 
         final Menus menus =
-                newTopLevelMenu( "Home" ).respondsWith( new Command() {
+                newTopLevelMenu("Gallery").respondsWith(new Command() {
                     public void execute() {
-                        if ( defaultPerspective != null ) {
-                            placeManager.goTo( new DefaultPlaceRequest( defaultPerspective.getIdentifier() ) );
+                        if (defaultPerspective != null) {
+                            placeManager.goTo(new DefaultPlaceRequest(defaultPerspective.getIdentifier()));
                         } else {
-                            Window.alert( "Default perspective not found." );
+                            Window.alert("Default perspective not found.");
                         }
                     }
                 }).endMenu().
-                newTopLevelMenu( "Sales Dashboard" ).respondsWith( new Command() {
-                    public void execute() {
-                        placeManager.goTo( new DefaultPlaceRequest( "Sales Dashboard" ) );
-                    }
-                }).endMenu().
-                newTopLevelMenu( "Sales Reports" ).respondsWith( new Command() {
-                    public void execute() {
-                        placeManager.goTo( new DefaultPlaceRequest( "Sales Reports" ) );
-                    }
-                }).endMenu().
+                newTopLevelMenu("Dashboards").withItems(getSampleDashboardMenuItems()).endMenu().
                 build();
 
         menubar.addMenus( menus );
+    }
+
+    private List<? extends MenuItem> getSampleDashboardMenuItems() {
+        final List<MenuItem> result = new ArrayList<MenuItem>( 1 );
+
+        result.add(MenuFactory.newSimpleItem("Sales Dashboard").respondsWith(new Command() {
+            public void execute() {
+                placeManager.goTo( new DefaultPlaceRequest( "Sales Dashboard" ) );
+            }
+        }).endMenu().build().getItems().get(0));
+
+        result.add(MenuFactory.newSimpleItem("Table reports").respondsWith(new Command() {
+            public void execute() {
+                placeManager.goTo( new DefaultPlaceRequest( "Sales Reports" ) );
+            }
+        }).endMenu().build().getItems().get(0));
+
+        return result;
     }
 
     private PerspectiveActivity getDefaultPerspectiveActivity() {

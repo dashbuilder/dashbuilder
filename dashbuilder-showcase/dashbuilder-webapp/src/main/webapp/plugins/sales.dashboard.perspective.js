@@ -1,5 +1,6 @@
 $registerPerspective({
     id: "Sales Dashboard",
+    is_serializable: "true",
     roles: [ "admins", "users" ],
     panel_type: "root_tab",
     view: {
@@ -23,6 +24,10 @@ $registerPerspective({
             {
                 place: "KPIScreen",
                 parameters: {"kpi": "opps-by-prob", "token" : "0"}
+            },
+            {
+                place: "KPIScreen",
+                parameters: {"kpi": "opps-country-summary", "token" : "8"}
             }
         ],
         panels: [

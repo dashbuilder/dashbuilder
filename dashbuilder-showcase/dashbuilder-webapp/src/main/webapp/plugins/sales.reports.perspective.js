@@ -1,5 +1,6 @@
 $registerPerspective({
     id: "Sales Reports",
+    is_serializable: "true",
     roles: [ "admins", "users" ],
     panel_type: "root_tab",
     view: {
