@@ -23,7 +23,7 @@ public class RawDataSetSamples {
         new String[] {"id", "city", "department", "employee", "date", "amount"},
         new Class[] {Integer.class, String.class, String.class, String.class, Date.class, Double.class}, new String[][] {
         {"1","Barcelona","Engineering","Roxie Foraker","12/11/15 12:00","120.35"},
-        {"2","Barcelona","Engineering","Roxie Foraker","12/1/15 12:00","1,100.1"},
+        {"2","Barcelona","Engineering","Roxie Foraker","12/1/15 12:00","1100.1"},
         {"3","Barcelona","Engineering","Roxie Foraker","11/1/15 12:00","900.1"},
         {"4","Barcelona","Services","Jamie Gilbeau","10/12/15 12:00","340.34"},
         {"5","Barcelona","Services","Jamie Gilbeau","09/15/15 12:00","300"},
@@ -36,7 +36,7 @@ public class RawDataSetSamples {
         {"12","Madrid","Sales","Nita Marling","03/2/15 12:00","344.9"},
         {"13","Brno","Support","Darryl Innes","02/9/15 12:00","567.89"},
         {"14","Brno","Support","Darryl Innes","01/13/15 12:00","400.4"},
-        {"15","Brno","Support","Darryl Innes","01/11/15 12:00","1,001.9"},
+        {"15","Brno","Support","Darryl Innes","01/11/15 12:00","1001.9"},
         {"16","Brno","Engineering","Julio Burdge","11/2/14 12:00","200.2"},
         {"17","Brno","Engineering","Julio Burdge","09/1/14 12:00","159.01"},
         {"18","Brno","Engineering","Julio Burdge","08/22/14 12:00","300"},

@@ -68,16 +68,19 @@ public class DataSetGroupTest {
                 .uuid(EXPENSE_REPORTS)
                 .domain("department", "Department")
                 .range("id", "Occurrences", COUNT)
-                .range("amount", "totalAmount", SUM)
+                .range("amount", "min", MIN)
+                .range("amount", "max", MAX)
+                .range("amount", "average", AVERAGE)
+                .range("amount", "total", SUM)
                 .build());
 
         //printDataSet(result);
         assertDataSetValues(result, dataSetFormatter, new String[][] {
-                {"Engineering", "19.00", "7,650.16"},
-                {"Services", "5.00", "2,504.50"},
-                {"Sales", "8.00", "3,213.53"},
-                {"Support", "7.00", "3,345.60"},
-                {"Management", "11.00", "6,017.47"}
+                {"Engineering", "19.00", "1.10", "1,100.10", "402.64", "7,650.16"},
+                {"Services", "5.00", "152.25", "911.11", "500.90", "2,504.50"},
+                {"Sales", "8.00", "75.75", "995.30", "401.69", "3,213.53"},
+                {"Support", "7.00", "300.01", "1,001.90", "477.94", "3,345.60"},
+                {"Management", "11.00", "43.03", "992.20", "547.04", "6,017.47"}
         }, 0);
     }
 

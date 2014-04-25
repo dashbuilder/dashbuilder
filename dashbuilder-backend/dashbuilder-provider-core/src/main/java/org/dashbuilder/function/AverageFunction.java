@@ -44,7 +44,7 @@ public class AverageFunction extends SumFunction {
 
     public double scalar(List values, List<Integer> rows) {
         if (values == null || values.isEmpty()) return 0;
-        double average = super.scalar(values, rows) / values.size();
+        double average = super.scalar(values, rows) / rows.size();
         double ret = round(average, precission);
         return ret;
     }
