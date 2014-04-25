@@ -15,7 +15,9 @@
  */
 package org.dashbuilder.client.gallery;
 
+import java.util.List;
 import javax.annotation.PostConstruct;
+import javax.inject.Inject;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.SelectionEvent;
@@ -24,12 +26,20 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HasTreeItems;
+import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import org.dashbuilder.client.displayer.DataDisplayerViewer;
-import org.dashbuilder.model.displayer.DataDisplayerType;
+import org.dashbuilder.client.google.GoogleRenderer;
+import org.dashbuilder.client.kpi.KPIViewer;
+import org.dashbuilder.client.samples.gallery.GalleryNode;
+import org.dashbuilder.client.samples.gallery.GalleryNodeKPI;
+import org.dashbuilder.client.samples.gallery.GalleryTree;
+import org.dashbuilder.model.kpi.KPI;
 
 public class GalleryViewImpl extends Composite implements GalleryPresenter.GalleryView {
 
@@ -39,6 +49,15 @@ public class GalleryViewImpl extends Composite implements GalleryPresenter.Galle
     private static GalleryViewBinder uiBinder = GWT.create(GalleryViewBinder.class);
 
     GalleryPresenter presenter;
+
+    @Inject
+    GoogleRenderer googleRenderer;
+
+    @Inject
+    GalleryTree galleryTree;
+
+    @Inject
+    KPIViewer kpiViewer;
 
     @UiField
     SimplePanel navigationPanel = new SimplePanel();
@@ -57,40 +76,46 @@ public class GalleryViewImpl extends Composite implements GalleryPresenter.Galle
     @PostConstruct
     private void initUI() {
         Tree navTree = initNavigationTree();
+        navigationPanel.setWidth("250px");
         navigationPanel.add(navTree);
     }
 
     private Tree initNavigationTree() {
-        Tree tree = new Tree();
+        Tree navTree = new Tree();
 
-        DataDisplayerType[] types = DataDisplayerType.values();
-        for (int i = 0; i < types.length; i++) {
-            DataDisplayerType type = types[i];
-            TreeItem ti = new TreeItem();
-            ti.setText(type.name());
-            ti.addTextItem("Basic");
-            tree.addItem(ti);
-        }
+        List<GalleryNode> mainNodes = galleryTree.getMainNodes();
+        populateNavigationTree(mainNodes, navTree);
 
-        tree.addSelectionHandler(new SelectionHandler<TreeItem>() {
+        navTree.addSelectionHandler(new SelectionHandler<TreeItem>() {
             public void onSelection(SelectionEvent<TreeItem> event) {
                 TreeItem ti = event.getSelectedItem();
-                TreeItem parent = ti.getParentItem();
-                if (parent != null) {
-                    //Window.alert(ti.getText());
-                    DataDisplayerType displayerType = DataDisplayerType.getByName(parent.getText());
-                    menuOptionClicked(displayerType, ti);
+                if (ti.getUserObject() instanceof GalleryNodeKPI) {
+                    GalleryNodeKPI node = (GalleryNodeKPI) ti.getUserObject();
+                    treeItemClicked(ti, node.getKpi());
                 }
             }
         });
-        return tree;
+        return navTree;
     }
 
-    private void menuOptionClicked(DataDisplayerType displayerType, TreeItem ti) {
+    private void populateNavigationTree(List<GalleryNode> nodes, HasTreeItems items) {
+        for (GalleryNode node: nodes) {
+            TreeItem ti = new TreeItem();
+            ti.setText(node.getName());
+            ti.setUserObject(node);
+            items.addItem(ti);
+            populateNavigationTree(node.getChildren(), ti);
+        }
+    }
+
+    private void treeItemClicked(TreeItem ti, KPI kpi) {
         try {
-            DataDisplayerViewer dataDisplayerViewer = presenter.getDataDisplayerSample(displayerType);
             detailsPanel.clear();
-            detailsPanel.add(dataDisplayerViewer);
+            detailsPanel.add(kpiViewer);
+            kpiViewer.draw(kpi);
+
+            // TODO: Find a way to make Google fullfill draw requests properly without the presence of an UF perspective change event
+            googleRenderer.renderCharts();
         } catch (Exception e) {
             Window.alert(e.getMessage());
         }

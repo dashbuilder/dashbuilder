@@ -47,14 +47,8 @@ public class GalleryPresenter {
 
     }
 
-    @Inject private GalleryView view;
-
     @Inject
-    protected DataDisplayerViewerLocator viewerLocator;
-
-    @OnStartup
-    public void onStartup( final PlaceRequest placeRequest) {
-    }
+    GalleryView view;
 
     @WorkbenchPartTitle
     public String getTitle() {
@@ -65,56 +59,4 @@ public class GalleryPresenter {
     public UberView<GalleryPresenter> getView() {
         return view;
     }
-
-    public DataDisplayerViewer getDataDisplayerSample(DataDisplayerType displayerType) throws Exception {
-        DataSet dataSet = createDataSet();
-        DataDisplayer displayer = createDisplayer();
-        DataDisplayerViewer viewer = viewerLocator.lookupViewer(displayer);
-        viewer.setDataSet(dataSet);
-        viewer.setDataDisplayer(displayer);
-        return viewer;
-    }
-
-    // Mocked stuff
-
-    public static final Object[][] SALES_PER_YEAR = new Object[][] {
-            new Object[] {Month.JANUARY, 1000d, 2000d, 3000d},
-            new Object[] {Month.FEBRUARY, 1400d, 2300d, 2000d},
-            new Object[] {Month.MARCH, 1300d, 2000d, 1400d},
-            new Object[] {Month.APRIL, 900d, 2100d, 1500d},
-            new Object[] {Month.MAY, 1300d, 2300d, 1600d},
-            new Object[] {Month.JUNE, 1010d, 2000d, 1500d},
-            new Object[] {Month.JULY, 1050d, 2400d, 3000d},
-            new Object[] {Month.AUGUST, 2300d, 2000d, 3200d},
-            new Object[] {Month.SEPTEMBER, 1900d, 2700d, 3000d},
-            new Object[] {Month.OCTOBER, 1200d, 2200d, 3100d},
-            new Object[] {Month.NOVEMBER, 1400d, 2100d, 3100d},
-            new Object[] {Month.DECEMBER, 1100d, 2100d, 4200d}
-    };
-
-    @Inject
-    protected ClientDataSetManager dataSetManager;
-
-
-    public DataSet createDataSet() {
-        DataSet dataSet = dataSetManager.createDataSet()
-                .addColumn("month", ColumnType.LABEL)
-                .addColumn("2012", ColumnType.NUMBER)
-                .addColumn("2013", ColumnType.NUMBER)
-                .addColumn("2014", ColumnType.NUMBER)
-                .setValues(SALES_PER_YEAR);
-        return dataSet;
-    }
-
-    public DataDisplayer createDisplayer() {
-        return new DataDisplayerBuilder()
-                .title("Sales Evolution Per Year")
-                .type(DataDisplayerType.LINECHART)
-                .x("month", "Pipeline")
-                .y("2012", "Sales in 2012")
-                .y("2013", "Sales in 2013")
-                .y("2014", "Sales in 2014")
-                .build();
-    }
-
 }

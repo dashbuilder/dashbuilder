@@ -38,6 +38,13 @@ public class ClientKPIManager {
         return kpiList;
     }
 
+    public KPI createKPI(DataSetRef dataSetRef, DataDisplayer dataDisplayer) {
+        KPIImpl kpi = new KPIImpl();
+        kpi.setDataSetRef(dataSetRef);
+        kpi.setDataDisplayer(dataDisplayer);
+        return kpi;
+    }
+
     public KPI createKPI(String uuid, DataSetRef dataSetRef, DataDisplayer dataDisplayer) {
         KPIImpl kpi = new KPIImpl(uuid);
         kpi.setDataSetRef(dataSetRef);
