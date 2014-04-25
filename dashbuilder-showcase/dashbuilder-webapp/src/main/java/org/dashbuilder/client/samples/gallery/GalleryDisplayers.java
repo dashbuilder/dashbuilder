@@ -17,17 +17,18 @@ package org.dashbuilder.client.samples.gallery;
 
 import org.dashbuilder.model.displayer.DataDisplayer;
 import org.dashbuilder.model.displayer.DataDisplayerBuilder;
-
-import static org.dashbuilder.model.displayer.DataDisplayerType.*;
+import org.dashbuilder.model.displayer.DataDisplayerType;
 
 public class GalleryDisplayers {
 
-    public static final DataDisplayer MLINE_CHART_SALES_PER_YEAR = new DataDisplayerBuilder()
+    public static DataDisplayer salesPerYear(DataDisplayerType type) {
+        return new DataDisplayerBuilder()
                 .title("Sales Evolution Per Year")
-                .type(LINECHART)
-                .x("Month")
-                .y("Sales in 2012")
-                .y("Sales in 2013")
-                .y("Sales in 2014")
+                .type(type)
+                .column("Month")
+                .column("Sales in 2012")
+                .column("Sales in 2013")
+                .column("Sales in 2014")
                 .build();
+    }
 }

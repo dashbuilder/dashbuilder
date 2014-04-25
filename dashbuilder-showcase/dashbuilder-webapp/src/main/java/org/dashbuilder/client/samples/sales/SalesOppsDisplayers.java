@@ -17,66 +17,100 @@ package org.dashbuilder.client.samples.sales;
 
 import org.dashbuilder.model.displayer.DataDisplayer;
 import org.dashbuilder.model.displayer.DataDisplayerBuilder;
+import org.dashbuilder.model.displayer.DataDisplayerType;
 
 import static org.dashbuilder.model.displayer.DataDisplayerType.*;
-import static org.dashbuilder.model.samples.SalesConstants.*;
 
 /**
  * A set of data displayer definitions built on top of the the Sales Opportunities sample data set.
  */
 public class SalesOppsDisplayers {
 
-    public static final DataDisplayer PIE_CHART_PIPELINE_STATUS = new DataDisplayerBuilder()
-            .title("Pipeline status")
-            .type(PIECHART)
-            .x("Pipeline")
-            .y("Number of opps")
-            .build();
+    public static DataDisplayer pipelineStatus(DataDisplayerType type) {
+        return new DataDisplayerBuilder()
+                .title("Pipeline status")
+                .type(type)
+                .column("Pipeline")
+                .column("Number of opps")
+                .build();
+    }
 
-    public static final DataDisplayer AREA_CHART_EXPECTED_PIPELINE = new DataDisplayerBuilder()
+    public static DataDisplayer expectedPipeline(DataDisplayerType type)  {
+        return new DataDisplayerBuilder()
             .title("Expected Pipeline")
-            .type(AREACHART)
-            .x("Closing date")
-            .y("Expected amount")
+            .type(type)
+            .column("Closing date")
+            .column("Expected amount")
             .build();
+    }
 
-    public static final DataDisplayer PIE_CHART_BY_STATUS = new DataDisplayerBuilder()
-            .title("By Status")
-            .type(PIECHART)
-            .x("Status")
-            .y("Total amount")
-            .build();
+    public static DataDisplayer byStatus(DataDisplayerType type) {
+        return new DataDisplayerBuilder()
+                .title("By Status")
+                .type(type)
+                .column("Status")
+                .column("Total amount")
+                .build();
+    }
 
-    public static final DataDisplayer PIE_CHART_BY_SALES_PERSON = new DataDisplayerBuilder()
-            .title("By Sales Person")
-            .type(PIECHART)
-            .x("Sales person")
-            .y("Total amount")
-            .build();
+    public static DataDisplayer bySalesPerson(DataDisplayerType type) {
+        return new DataDisplayerBuilder()
+                .title("By Sales Person")
+                .type(type)
+                .column("Sales person")
+                .column("Total amount")
+                .build();
+    }
 
-    public static final DataDisplayer BAR_CHART_BY_PRODUCT = new DataDisplayerBuilder()
-            .title("By Product")
-            .type("barchart")
-            .x("Product")
-            .y("Total amount")
-            .build();
+    public static DataDisplayer byProduct(DataDisplayerType type) {
+        return new DataDisplayerBuilder()
+                .title("By Product")
+                .type(type)
+                .column("Product")
+                .column("Total amount")
+                .build();
+    }
 
-    public static final DataDisplayer BAR_CHART_BY_COUNTRY = new DataDisplayerBuilder()
-            .title("By Country")
-            .type("barchart")
-            .x("Country")
-            .y("Total amount")
-            .build();
+    public static DataDisplayer byCountry(DataDisplayerType type) {
+        return new DataDisplayerBuilder()
+                .title("By Country")
+                .type(type)
+                .column("Country")
+                .column("Total amount")
+                .build();
+    }
 
-    public static final DataDisplayer BAR_CHART_BY_PROBABILITY = new DataDisplayerBuilder()
-            .title("By Probability")
-            .type(BARCHART)
-            .x("Probability")
-            .y("Total amount")
-            .build();
+    public static DataDisplayer byCountryMinMaxAvg(DataDisplayerType type) {
+        return new DataDisplayerBuilder()
+                .title("By Country (min/max/avg)")
+                .type(type)
+                .column("Country")
+                .column("Min", "Min")
+                .column("Max", "Max")
+                .column("Average", "Avg")
+                .build();
+    }
 
-    public static final DataDisplayer TABLE_COUNTRY_SUMMARY = new DataDisplayerBuilder()
-            .title("Country Summary")
-            .type(TABLE)
-            .build();
+    public static DataDisplayer byProbability(DataDisplayerType type) {
+        return new DataDisplayerBuilder()
+                .title("By Probability")
+                .type(type)
+                .column("Probability")
+                .column("Total amount")
+                .build();
+    }
+
+    public static DataDisplayer countrySummaryTable() {
+        return new DataDisplayerBuilder()
+                .title("Country Summary")
+                .type(TABLE)
+                .build();
+    }
+
+    public static DataDisplayer opportunitiesListing() {
+        return new DataDisplayerBuilder()
+                .title("List of Opportunities")
+                .type(TABLE)
+                .build();
+    }
 }

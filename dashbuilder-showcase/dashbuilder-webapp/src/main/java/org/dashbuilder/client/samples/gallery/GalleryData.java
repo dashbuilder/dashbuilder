@@ -23,7 +23,8 @@ import org.dashbuilder.model.date.Month;
 
 public class GalleryData {
 
-    public static final DataSetRef SALES_PER_YEAR = new DataSetImpl()
+    public static DataSetRef salesPerYear() {
+        return new DataSetImpl()
         .addColumn("month", ColumnType.LABEL)
         .addColumn("2012", ColumnType.NUMBER)
         .addColumn("2013", ColumnType.NUMBER)
@@ -41,4 +42,5 @@ public class GalleryData {
                 new Object[] {Month.OCTOBER, 1200d, 2200d, 3100d},
                 new Object[] {Month.NOVEMBER, 1400d, 2100d, 3100d},
                 new Object[] {Month.DECEMBER, 1100d, 2100d, 4200d}});
+    }
 }

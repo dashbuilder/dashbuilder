@@ -45,8 +45,8 @@ public class StaticChartScreen {
     public KPI createKPI() {
         return kpiManager.createKPI(
                 "static_chart_sample",
-                GalleryData.SALES_PER_YEAR,
-                GalleryDisplayers.MLINE_CHART_SALES_PER_YEAR);
+                GalleryData.salesPerYear(),
+                GalleryDisplayers.salesPerYear(LINECHART));
     }
 
     @Inject

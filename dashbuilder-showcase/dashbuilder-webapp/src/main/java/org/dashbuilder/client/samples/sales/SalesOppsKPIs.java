@@ -23,11 +23,8 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import org.dashbuilder.client.kpi.ClientKPIManager;
-import org.dashbuilder.model.dataset.DataSetLookupBuilder;
-import org.dashbuilder.model.displayer.DataDisplayerBuilder;
 import org.dashbuilder.model.kpi.KPI;
 
-import static org.dashbuilder.model.samples.SalesConstants.*;
 import static org.dashbuilder.model.displayer.DataDisplayerType.*;
 import static org.dashbuilder.client.samples.sales.SalesOppsDisplayers.*;
 import static org.dashbuilder.client.samples.sales.SalesOppsData.*;
@@ -55,24 +52,15 @@ public class SalesOppsKPIs {
 
     @PostConstruct
     public void init() {
-        kpiList.add(kpiManager.createKPI(OPPS_BY_EMPLOYEE, BY_EMPLOYEE, PIE_CHART_PIPELINE_STATUS));
-        kpiList.add(kpiManager.createKPI(OPPS_EXPECTED_PIPELINE, EXPECTED_PIPELINE, AREA_CHART_EXPECTED_PIPELINE));
-        kpiList.add(kpiManager.createKPI(OPPS_BY_STATUS, BY_STATUS, PIE_CHART_BY_STATUS));
-        kpiList.add(kpiManager.createKPI(OPPS_BY_SALESMAN, BY_SALESMAN, PIE_CHART_BY_SALES_PERSON));
-        kpiList.add(kpiManager.createKPI(OPPS_BY_PRODUCT, BY_PRODUCT, BAR_CHART_BY_PRODUCT));
-        kpiList.add(kpiManager.createKPI(OPPS_BY_COUNTRY, BY_COUNTRY, BAR_CHART_BY_COUNTRY));
-        kpiList.add(kpiManager.createKPI(OPPS_BY_PROBABILITY, BY_PROBABILITY, BAR_CHART_BY_PROBABILITY));
-        kpiList.add(kpiManager.createKPI(OPPS_COUNTRY_SUMMARY, COUNTRY_SUMMARY, TABLE_COUNTRY_SUMMARY));
-        kpiList.add(kpiManager.createKPI(OPPS_ALL,
-                new DataSetLookupBuilder()
-                        .uuid(UUID)
-                        .rowOffset(0)
-                        .rowNumber(100)
-                        .build(),
-                new DataDisplayerBuilder()
-                        .title("List of Opportunities")
-                        .type(TABLE)
-                        .build()));
+        kpiList.add(kpiManager.createKPI(OPPS_BY_EMPLOYEE, byEmployee(), pipelineStatus(PIECHART)));
+        kpiList.add(kpiManager.createKPI(OPPS_EXPECTED_PIPELINE, expectedPipeline(), expectedPipeline(AREACHART)));
+        kpiList.add(kpiManager.createKPI(OPPS_BY_STATUS, byStatus(), byStatus(PIECHART)));
+        kpiList.add(kpiManager.createKPI(OPPS_BY_SALESMAN, bySalesman(), bySalesPerson(PIECHART)));
+        kpiList.add(kpiManager.createKPI(OPPS_BY_PRODUCT, byProduct(), byProduct(BARCHART)));
+        kpiList.add(kpiManager.createKPI(OPPS_BY_COUNTRY, byCountry(), byCountry(BARCHART)));
+        kpiList.add(kpiManager.createKPI(OPPS_BY_PROBABILITY, byProbability(), byProbability(BARCHART)));
+        kpiList.add(kpiManager.createKPI(OPPS_COUNTRY_SUMMARY, countrySummary(), countrySummaryTable()));
+        kpiList.add(kpiManager.createKPI(OPPS_ALL, listOfOpportunities(0, 20), opportunitiesListing()));
 
         for (KPI kpi : kpiList) {
             kpiManager.addKPI(kpi);

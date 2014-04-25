@@ -28,55 +28,79 @@ import static org.dashbuilder.model.samples.SalesConstants.*;
  */
 public class SalesOppsData {
 
-    public static final DataSetRef BY_EMPLOYEE = new DataSetLookupBuilder()
+    public static DataSetRef byEmployee() {
+        return new DataSetLookupBuilder()
             .uuid(UUID)
             .domain(PIPELINE)
             .range(AMOUNT, "occurrences", COUNT)
             .build();
+    }
 
-    public static final DataSetRef BY_COUNTRY = new DataSetLookupBuilder()
+    public static DataSetRef byCountry() {
+        return new DataSetLookupBuilder()
             .uuid(UUID)
             .domain(COUNTRY)
             .range(AMOUNT, SUM)
             .build();
+    }
 
-    public static final DataSetRef EXPECTED_PIPELINE = new DataSetLookupBuilder()
-            .uuid(UUID)
-            .domain(CLOSING_DATE, 24, MONTH)
-            .range(EXPECTED_AMOUNT, SUM)
-            .build();
+    public static DataSetRef expectedPipeline() {
+        return new DataSetLookupBuilder()
+                .uuid(UUID)
+                .domain(CLOSING_DATE, 24, MONTH)
+                .range(EXPECTED_AMOUNT, SUM)
+                .build();
+    }
 
-    public static final DataSetRef BY_PROBABILITY = new DataSetLookupBuilder()
-            .uuid(UUID)
-            .domain(PROBABILITY)
-            .range(AMOUNT, SUM)
-            .build();
+    public static DataSetRef byProbability() {
+        return new DataSetLookupBuilder()
+                .uuid(UUID)
+                .domain(PROBABILITY)
+                .range(AMOUNT, SUM)
+                .build();
+    }
 
-    public static final DataSetRef COUNTRY_SUMMARY = new DataSetLookupBuilder()
-            .uuid(UUID)
-            .domain(COUNTRY, "Country")
-            .range(AMOUNT, "#Opps", COUNT)
-            .range(AMOUNT, "Min.", MIN)
-            .range(AMOUNT, "Max.", MAX)
-            .range(AMOUNT, "Average", AVERAGE)
-            .range(AMOUNT, "Total", SUM)
-            .build();
+    public static DataSetRef byStatus() {
+        return new DataSetLookupBuilder()
+                .uuid(UUID)
+                .domain(STATUS)
+                .range(AMOUNT, SUM)
+                .build();
+    }
 
-    public static final DataSetRef BY_STATUS = new DataSetLookupBuilder()
-            .uuid(UUID)
-            .domain(STATUS)
-            .range(AMOUNT, SUM)
-            .build();
+    public static DataSetRef bySalesman() {
+        return new DataSetLookupBuilder()
+                .uuid(UUID)
+                .domain(SALES_PERSON)
+                .range(AMOUNT, SUM)
+                .build();
+    }
 
-    public static final DataSetRef BY_SALESMAN = new DataSetLookupBuilder()
-            .uuid(UUID)
-            .domain(SALES_PERSON)
-            .range(AMOUNT, SUM)
-            .build();
-
-    public static final DataSetRef BY_PRODUCT = new DataSetLookupBuilder()
+    public static DataSetRef byProduct() {
+        return new DataSetLookupBuilder()
             .uuid(UUID)
             .domain(PRODUCT)
             .range(AMOUNT, SUM)
             .build();
+    }
+
+    public static DataSetRef countrySummary() {
+        return new DataSetLookupBuilder()
+                .uuid(UUID)
+                .domain(COUNTRY, "Country")
+                .range(AMOUNT, "#Opps", COUNT)
+                .range(AMOUNT, "Min", MIN)
+                .range(AMOUNT, "Max", MAX)
+                .range(AMOUNT, "Average", AVERAGE)
+                .range(AMOUNT, "Total", SUM)
+                .build();
+    }
+
+    public static DataSetRef listOfOpportunities(int offset, int rows) {
+        return new DataSetLookupBuilder()
+                .uuid(UUID)
+                .rowOffset(offset)
+                .rowNumber(rows)
+                .build();
+    }
 }
