@@ -19,21 +19,19 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
-import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
-import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.DecoratorPanel;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasTreeItems;
-import com.google.gwt.user.client.ui.HasVerticalAlignment;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.client.google.GoogleRenderer;
 import org.dashbuilder.client.kpi.KPIViewer;
 import org.dashbuilder.client.samples.gallery.GalleryNode;
@@ -42,11 +40,6 @@ import org.dashbuilder.client.samples.gallery.GalleryTree;
 import org.dashbuilder.model.kpi.KPI;
 
 public class GalleryViewImpl extends Composite implements GalleryPresenter.GalleryView {
-
-    interface GalleryViewBinder extends UiBinder<Widget, GalleryViewImpl> {
-    }
-
-    private static GalleryViewBinder uiBinder = GWT.create(GalleryViewBinder.class);
 
     GalleryPresenter presenter;
 
@@ -59,15 +52,9 @@ public class GalleryViewImpl extends Composite implements GalleryPresenter.Galle
     @Inject
     KPIViewer kpiViewer;
 
-    @UiField
-    SimplePanel navigationPanel = new SimplePanel();
-
-    @UiField
-    SimplePanel detailsPanel = new SimplePanel();
-
-    public GalleryViewImpl() {
-        initWidget( uiBinder.createAndBindUi(this));
-    }
+    private final HorizontalPanel mainPanel = new HorizontalPanel();
+    private final VerticalPanel leftPanel = new VerticalPanel();
+    private final SimplePanel rightPanel = new SimplePanel();
 
     public void init(GalleryPresenter presenter) {
         this.presenter = presenter;
@@ -75,9 +62,25 @@ public class GalleryViewImpl extends Composite implements GalleryPresenter.Galle
 
     @PostConstruct
     private void initUI() {
-        Tree navTree = initNavigationTree();
-        navigationPanel.setWidth("250px");
-        navigationPanel.add(navTree);
+        initWidget(mainPanel);
+
+        Tree leftTree = initNavigationTree();
+        leftTree.setWidth("200px");
+        Style leftStyle = leftPanel.getElement().getStyle();
+        leftStyle.setPropertyPx("margin", 5);
+        leftPanel.add(leftTree);
+        mainPanel.add(leftPanel);
+
+        DecoratorPanel decorator = new DecoratorPanel();
+        Style decoratorStyle = decorator.getElement().getStyle();
+        decoratorStyle.setPropertyPx("marginLeft", 15);
+        Style rightStyle = rightPanel.getElement().getStyle();
+        rightStyle.setPropertyPx("margin", 5);
+        decorator.add(rightPanel);
+        mainPanel.add(decorator);
+
+        // Greetings
+        rightPanel.add(new HTML("Dashbuilder Displayer Gallery"));
     }
 
     private Tree initNavigationTree() {
@@ -110,8 +113,8 @@ public class GalleryViewImpl extends Composite implements GalleryPresenter.Galle
 
     private void treeItemClicked(TreeItem ti, KPI kpi) {
         try {
-            detailsPanel.clear();
-            detailsPanel.add(kpiViewer);
+            rightPanel.clear();
+            rightPanel.add(kpiViewer);
             kpiViewer.draw(kpi);
 
             // TODO: Find a way to make Google fullfill draw requests properly without the presence of an UF perspective change event
