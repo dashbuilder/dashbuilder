@@ -59,7 +59,7 @@ public class SalesDataSetGenerator {
     private void generateDataSet() {
         try {
             List<Opportunity> opportunities = randomOpportunities(opportunitiesPerMonth, startYear, endYear);
-            DataSet dataSet = generateDataSet(SalesConstants.UUID, opportunities);
+            DataSet dataSet = generateDataSet(SalesConstants.SALES_OPPS, opportunities);
             dataSetManager.registerDataSet(dataSet);
         } catch (Exception e) {
             log.error("SalesDataSetGenerator failed.", e);

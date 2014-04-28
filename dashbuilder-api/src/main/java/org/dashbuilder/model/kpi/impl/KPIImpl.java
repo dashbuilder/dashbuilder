@@ -18,7 +18,9 @@ package org.dashbuilder.model.kpi.impl;
 import org.dashbuilder.model.dataset.DataSetRef;
 import org.dashbuilder.model.displayer.DataDisplayer;
 import org.dashbuilder.model.kpi.KPI;
+import org.jboss.errai.common.client.api.annotations.Portable;
 
+@Portable
 public class KPIImpl implements KPI {
 
     protected String UUID;

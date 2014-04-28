@@ -30,7 +30,7 @@ public class SalesOppsData {
 
     public static DataSetRef byEmployee() {
         return new DataSetLookupBuilder()
-            .uuid(UUID)
+            .uuid(SALES_OPPS)
             .domain(PIPELINE)
             .range(AMOUNT, "occurrences", COUNT)
             .build();
@@ -38,7 +38,7 @@ public class SalesOppsData {
 
     public static DataSetRef byCountry() {
         return new DataSetLookupBuilder()
-            .uuid(UUID)
+            .uuid(SALES_OPPS)
             .domain(COUNTRY)
             .range(AMOUNT, SUM)
             .build();
@@ -46,7 +46,7 @@ public class SalesOppsData {
 
     public static DataSetRef expectedPipeline() {
         return new DataSetLookupBuilder()
-                .uuid(UUID)
+                .uuid(SALES_OPPS)
                 .domain(CLOSING_DATE, 24, MONTH)
                 .range(EXPECTED_AMOUNT, SUM)
                 .build();
@@ -54,7 +54,7 @@ public class SalesOppsData {
 
     public static DataSetRef byProbability() {
         return new DataSetLookupBuilder()
-                .uuid(UUID)
+                .uuid(SALES_OPPS)
                 .domain(PROBABILITY)
                 .range(AMOUNT, SUM)
                 .build();
@@ -62,7 +62,7 @@ public class SalesOppsData {
 
     public static DataSetRef byStatus() {
         return new DataSetLookupBuilder()
-                .uuid(UUID)
+                .uuid(SALES_OPPS)
                 .domain(STATUS)
                 .range(AMOUNT, SUM)
                 .build();
@@ -70,7 +70,7 @@ public class SalesOppsData {
 
     public static DataSetRef bySalesman() {
         return new DataSetLookupBuilder()
-                .uuid(UUID)
+                .uuid(SALES_OPPS)
                 .domain(SALES_PERSON)
                 .range(AMOUNT, SUM)
                 .build();
@@ -78,7 +78,7 @@ public class SalesOppsData {
 
     public static DataSetRef byProduct() {
         return new DataSetLookupBuilder()
-            .uuid(UUID)
+            .uuid(SALES_OPPS)
             .domain(PRODUCT)
             .range(AMOUNT, SUM)
             .build();
@@ -86,7 +86,7 @@ public class SalesOppsData {
 
     public static DataSetRef countrySummary() {
         return new DataSetLookupBuilder()
-                .uuid(UUID)
+                .uuid(SALES_OPPS)
                 .domain(COUNTRY, "Country")
                 .range(AMOUNT, "#Opps", COUNT)
                 .range(AMOUNT, "Min", MIN)
@@ -98,7 +98,7 @@ public class SalesOppsData {
 
     public static DataSetRef listOfOpportunities(int offset, int rows) {
         return new DataSetLookupBuilder()
-                .uuid(UUID)
+                .uuid(SALES_OPPS)
                 .rowOffset(offset)
                 .rowNumber(rows)
                 .build();

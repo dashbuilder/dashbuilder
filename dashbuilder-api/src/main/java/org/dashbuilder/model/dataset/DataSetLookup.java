@@ -49,6 +49,10 @@ public class DataSetLookup implements DataSetRef {
     public DataSetLookup() {
     }
 
+    public void setDataSetUUID(String dataSetUUID) {
+        this.dataSetUUID = dataSetUUID;
+    }
+
     public int getRowOffset() {
         return rowOffset;
     }

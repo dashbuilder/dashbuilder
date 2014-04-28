@@ -27,8 +27,12 @@ import org.dashbuilder.client.samples.sales.SalesOppsData;
 import org.dashbuilder.client.samples.sales.SalesOppsDisplayers;
 import org.dashbuilder.model.displayer.DataDisplayerBuilder;
 import org.dashbuilder.model.kpi.KPI;
+import org.dashbuilder.model.kpi.KPIBuilder;
 
+import static org.dashbuilder.model.dataset.group.DateIntervalType.MONTH;
+import static org.dashbuilder.model.dataset.group.ScalarFunctionType.*;
 import static org.dashbuilder.model.displayer.DataDisplayerType.*;
+import static org.dashbuilder.model.samples.SalesConstants.*;
 
 /**
  * The Gallery tree.
@@ -51,63 +55,137 @@ public class GalleryTree {
     }
 
     private void initBarChartCategory() {
-        KPI kpi1 = kpiManager.createKPI(SalesOppsData.byProduct(), SalesOppsDisplayers.byProduct(BARCHART));
-        KPI kpi2 = kpiManager.createKPI(SalesOppsData.countrySummary(), SalesOppsDisplayers.byCountryMinMaxAvg(BARCHART, 700, 600));
-
         GalleryNodeList nodeList = new GalleryNodeList("Bar Chart");
-        nodeList.add(new GalleryNodeKPI("Simple", kpi1));
-        nodeList.add(new GalleryNodeKPI("Multiple", kpi2));
         mainNodes.add(nodeList);
+
+        nodeList.add(new GalleryNodeKPI("Simple", new KPIBuilder()
+                .dataset(SALES_OPPS)
+                .domain(PRODUCT)
+                .range(AMOUNT, SUM)
+                .title("By Product")
+                .type(BARCHART)
+                .column("Product")
+                .column("Total amount")
+                .build()));
+
+        nodeList.add(new GalleryNodeKPI("Multiple", new KPIBuilder()
+                .dataset(SALES_OPPS)
+                .domain(COUNTRY, "Country")
+                .range(AMOUNT, "#Opps", COUNT)
+                .range(AMOUNT, "Min", MIN)
+                .range(AMOUNT, "Max", MAX)
+                .range(AMOUNT, "Average", AVERAGE)
+                .range(AMOUNT, "Total", SUM)
+                .title("By Country (min/max/avg)")
+                .type(BARCHART).width(700).height(600)
+                .column("Country")
+                .column("Min", "Min")
+                .column("Max", "Max")
+                .column("Average", "Avg")
+                .build()));
     }
 
     private void initPieChartCategory() {
-        KPI kpi = kpiManager.createKPI(SalesOppsData.byStatus(), SalesOppsDisplayers.byStatus(PIECHART));
-
         GalleryNodeList nodeList = new GalleryNodeList("Pie Chart");
-        nodeList.add(new GalleryNodeKPI("Simple", kpi));
         mainNodes.add(nodeList);
+
+        nodeList.add(new GalleryNodeKPI("Simple", new KPIBuilder()
+                .dataset(SALES_OPPS)
+                .domain(STATUS)
+                .range(AMOUNT, SUM)
+                .title("By Status")
+                .type(PIECHART)
+                .column("Status")
+                .column("Total amount")
+                .build()));
     }
 
     private void initLineChartCategory() {
-        KPI kpi1 = kpiManager.createKPI(GalleryData.salesPerYear(), GalleryDisplayers.salesPerYear(LINECHART));
-        KPI kpi2 = kpiManager.createKPI(SalesOppsData.countrySummary(), SalesOppsDisplayers.byCountryMinMaxAvg(LINECHART, 700, 400));
-
         GalleryNodeList nodeList = new GalleryNodeList("Line Chart");
-        nodeList.add(new GalleryNodeKPI("Multiple (static)", kpi1));
-        nodeList.add(new GalleryNodeKPI("Multiple (label)", kpi2));
-        //nodeList.add(new GalleryNodeKPI("Multiple (date)", kpi3));
         mainNodes.add(nodeList);
+
+        nodeList.add(new GalleryNodeKPI("Multiple", new KPIBuilder()
+                .dataset(SALES_OPPS)
+                .domain(COUNTRY, "Country")
+                .range(AMOUNT, "#Opps", COUNT)
+                .range(AMOUNT, "Min", MIN)
+                .range(AMOUNT, "Max", MAX)
+                .range(AMOUNT, "Average", AVERAGE)
+                .range(AMOUNT, "Total", SUM)
+                .title("By Country (min/max/avg)")
+                .type(LINECHART).width(700).height(400)
+                .column("Country")
+                .column("Min", "Min")
+                .column("Max", "Max")
+                .column("Average", "Avg")
+                .build()));
+
+        nodeList.add(new GalleryNodeKPI("Multiple (static)", new KPIBuilder()
+                .dataset(GalleryData.salesPerYear())
+                .title("Sales Evolution Per Year")
+                .type(LINECHART)
+                .column("Month")
+                .column("Sales in 2012")
+                .column("Sales in 2013")
+                .column("Sales in 2014")
+                .build()));
+
+        // nodeList.add(new GalleryNodeKPI("Multiple (date)", ...));
     }
 
     private void initAreaChartCategory() {
-        KPI kpi = kpiManager.createKPI(SalesOppsData.expectedPipeline(), SalesOppsDisplayers.expectedPipeline(AREACHART));
-
         GalleryNodeList nodeList = new GalleryNodeList("Area Chart");
-        nodeList.add(new GalleryNodeKPI("Simple", kpi));
         mainNodes.add(nodeList);
+
+        nodeList.add(new GalleryNodeKPI("Simple", new KPIBuilder()
+                .dataset(SALES_OPPS)
+                .domain(CLOSING_DATE, 24, MONTH)
+                .range(EXPECTED_AMOUNT, SUM)
+                .title("Expected Pipeline")
+                .type(AREACHART)
+                .column("Closing date")
+                .column("Expected amount")
+                .build()));
     }
 
     private void initMapChartCategory() {
-        KPI kpi1 = kpiManager.createKPI(SalesOppsData.byCountry(), new DataDisplayerBuilder()
+        GalleryNodeList nodeList = new GalleryNodeList("Map");
+        mainNodes.add(nodeList);
+
+        nodeList.add(new GalleryNodeKPI("GeoMap", new KPIBuilder()
+                .dataset(SALES_OPPS)
+                .domain(COUNTRY)
+                .range(AMOUNT, SUM)
                 .title("By Country")
                 .type(MAP).width(700).height(500)
                 .column("Country")
                 .column("Total amount")
-                .build());
-
-        GalleryNodeList nodeList = new GalleryNodeList("Map");
-        nodeList.add(new GalleryNodeKPI("GeoMap", kpi1));
-        mainNodes.add(nodeList);
+                .build()));
     }
 
     private void initTableReportCategory() {
-        KPI kpi1 = kpiManager.createKPI(SalesOppsData.listOfOpportunities(0, 20), SalesOppsDisplayers.opportunitiesListing());
-        KPI kpi2 = kpiManager.createKPI(SalesOppsData.countrySummary(), SalesOppsDisplayers.countrySummaryTable());
-
         GalleryNodeList nodeList = new GalleryNodeList("Table report");
-        nodeList.add(new GalleryNodeKPI("Basic", kpi1));
-        nodeList.add(new GalleryNodeKPI("Grouped", kpi2));
         mainNodes.add(nodeList);
+
+        nodeList.add(new GalleryNodeKPI("Basic", new KPIBuilder()
+                .dataset(SALES_OPPS)
+                .rowOffset(0)
+                .rowNumber(20)
+                .title("List of Opportunities")
+                .type(TABLE)
+                .build()));
+
+        nodeList.add(new GalleryNodeKPI("Grouped", new KPIBuilder()
+                .dataset(SALES_OPPS)
+                .domain(COUNTRY, "Country")
+                .range(AMOUNT, "#Opps", COUNT)
+                .range(AMOUNT, "Min", MIN)
+                .range(AMOUNT, "Max", MAX)
+                .range(AMOUNT, "Average", AVERAGE)
+                .range(AMOUNT, "Total", SUM)
+                .title("Country Summary")
+                .type(TABLE)
+                .build()));
     }
 
     public List<GalleryNode> getMainNodes() {

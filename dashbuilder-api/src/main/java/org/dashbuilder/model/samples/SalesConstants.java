@@ -17,7 +17,7 @@ package org.dashbuilder.model.samples;
 
 public interface SalesConstants {
 
-    String UUID = "dataset-sales-opportunities";
+    String SALES_OPPS = "dataset-sales-opportunities";
     String AMOUNT = "amount";
     String CREATION_DATE = "creationDate";
     String CLOSING_DATE = "closingDate";
