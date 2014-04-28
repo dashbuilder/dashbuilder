@@ -16,7 +16,6 @@
 package org.dashbuilder.client.js;
 
 import com.google.gwt.core.client.JavaScriptObject;
-import org.dashbuilder.model.displayer.YAxis;
 
 /**
  * {"columnId:", "amount", "displayName": "Total expenses amount"}

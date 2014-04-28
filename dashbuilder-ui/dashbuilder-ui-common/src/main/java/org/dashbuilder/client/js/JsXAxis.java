@@ -15,14 +15,7 @@
  */
 package org.dashbuilder.client.js;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.google.gwt.core.client.JavaScriptObject;
-import com.google.gwt.core.client.JsArray;
-import org.dashbuilder.model.dataset.ColumnType;
-import org.dashbuilder.model.dataset.DataColumn;
-import org.dashbuilder.model.displayer.XAxis;
 
 /**
  * {"columnId:", "department", "displayName": "Department"}
