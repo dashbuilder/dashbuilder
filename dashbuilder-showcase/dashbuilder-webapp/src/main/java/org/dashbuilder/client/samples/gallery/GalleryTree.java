@@ -24,7 +24,7 @@ import javax.inject.Inject;
 
 import org.dashbuilder.client.kpi.ClientKPIManager;
 import org.dashbuilder.model.dataset.ColumnType;
-import org.dashbuilder.model.dataset.impl.DataSetImpl;
+import org.dashbuilder.model.dataset.DataSetBuilder;
 import org.dashbuilder.model.kpi.KPIBuilder;
 
 import static org.dashbuilder.model.date.Month.*;
@@ -132,29 +132,29 @@ public class GalleryTree {
         nodeList.add(new GalleryNodeKPI("Multiple (static)",
                 new KPIBuilder()
                 .title("Sales Evolution Per Year")
-                .dataset(new DataSetImpl()
-                        .addColumn("month", ColumnType.LABEL)
-                        .addColumn("2012", ColumnType.NUMBER)
-                        .addColumn("2013", ColumnType.NUMBER)
-                        .addColumn("2014", ColumnType.NUMBER)
-                        .setValues(new Object[][]{
-                                {JANUARY, 1000d, 2000d, 3000d},
-                                {FEBRUARY, 1400d, 2300d, 2000d},
-                                {MARCH, 1300d, 2000d, 1400d},
-                                {APRIL, 900d, 2100d, 1500d},
-                                {MAY, 1300d, 2300d, 1600d},
-                                {JUNE, 1010d, 2000d, 1500d},
-                                {JULY, 1050d, 2400d, 3000d},
-                                {AUGUST, 2300d, 2000d, 3200d},
-                                {SEPTEMBER, 1900d, 2700d, 3000d},
-                                {OCTOBER, 1200d, 2200d, 3100d},
-                                {NOVEMBER, 1400d, 2100d, 3100d},
-                                {DECEMBER, 1100d, 2100d, 4200d}}))
                 .type(LINECHART)
                 .column("Month")
-                .column("Sales in 2012")
-                .column("Sales in 2013")
                 .column("Sales in 2014")
+                .column("Sales in 2015")
+                .column("Sales in 2016")
+                .dataset(new DataSetBuilder()
+                        .column("month", ColumnType.LABEL)
+                        .column("2014", ColumnType.NUMBER)
+                        .column("2015", ColumnType.NUMBER)
+                        .column("2016", ColumnType.NUMBER)
+                        .row(JANUARY, 1000d, 2000d, 3000d)
+                        .row(FEBRUARY, 1400d, 2300d, 2000d)
+                        .row(MARCH, 1300d, 2000d, 1400d)
+                        .row(APRIL, 900d, 2100d, 1500d)
+                        .row(MAY, 1300d, 2300d, 1600d)
+                        .row(JUNE, 1010d, 2000d, 1500d)
+                        .row(JULY, 1050d, 2400d, 3000d)
+                        .row(AUGUST, 2300d, 2000d, 3200d)
+                        .row(SEPTEMBER, 1900d, 2700d, 3000d)
+                        .row(OCTOBER, 1200d, 2200d, 3100d)
+                        .row(NOVEMBER, 1400d, 2100d, 3100d)
+                        .row(DECEMBER, 1100d, 2100d, 4200d)
+                        .build())
                 .build()
         ));
 
