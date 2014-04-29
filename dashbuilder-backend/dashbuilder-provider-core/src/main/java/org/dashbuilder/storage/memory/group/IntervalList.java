@@ -18,18 +18,18 @@ package org.dashbuilder.storage.memory.group;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.dashbuilder.model.dataset.group.Domain;
+import org.dashbuilder.model.dataset.group.GroupColumn;
 
 /**
  * An list containing the intervals derived from an specific domain configuration.
  */
 public abstract class IntervalList extends ArrayList<Interval> {
 
-    protected Domain domain;
+    protected GroupColumn groupColumn;
 
-    public IntervalList(Domain domain) {
+    public IntervalList(GroupColumn groupColumn) {
         super();
-        this.domain = domain;
+        this.groupColumn = groupColumn;
     }
 
     /**

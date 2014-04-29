@@ -20,8 +20,8 @@ import javax.inject.Inject;
 
 import org.dashbuilder.model.dataset.ColumnType;
 import org.dashbuilder.model.dataset.DataColumn;
-import org.dashbuilder.model.dataset.group.Domain;
-import org.dashbuilder.model.dataset.group.DomainStrategy;
+import org.dashbuilder.model.dataset.group.GroupColumn;
+import org.dashbuilder.model.dataset.group.GroupStrategy;
 
 @ApplicationScoped
 public class IntervalBuilderLocator {
@@ -30,20 +30,20 @@ public class IntervalBuilderLocator {
     @Inject IntervalBuilderDynamicDate intervalBuilderDynamicDate;
     @Inject IntervalBuilderFixedDate intervalBuilderFixedDate;
 
-    public IntervalBuilder lookup(DataColumn column, Domain domain) {
-        DomainStrategy strategy = domain.getStrategy();
+    public IntervalBuilder lookup(DataColumn column, GroupColumn groupColumn) {
+        GroupStrategy strategy = groupColumn.getStrategy();
         ColumnType columnType = column.getColumnType();
         if (ColumnType.LABEL.equals(columnType)) {
-            if (DomainStrategy.FIXED.equals(strategy)) return intervalBuilderDynamicLabel;
-            if (DomainStrategy.DYNAMIC.equals(strategy)) return intervalBuilderDynamicLabel;
-            if (DomainStrategy.MULTIPLE.equals(strategy)) return intervalBuilderDynamicLabel;
-            if (DomainStrategy.CUSTOM.equals(strategy)) return intervalBuilderDynamicLabel;
+            if (GroupStrategy.FIXED.equals(strategy)) return intervalBuilderDynamicLabel;
+            if (GroupStrategy.DYNAMIC.equals(strategy)) return intervalBuilderDynamicLabel;
+            if (GroupStrategy.MULTIPLE.equals(strategy)) return intervalBuilderDynamicLabel;
+            if (GroupStrategy.CUSTOM.equals(strategy)) return intervalBuilderDynamicLabel;
         }
         if (ColumnType.DATE.equals(columnType)) {
-            if (DomainStrategy.FIXED.equals(strategy)) return intervalBuilderFixedDate;
-            if (DomainStrategy.DYNAMIC.equals(strategy)) return intervalBuilderDynamicDate;
-            if (DomainStrategy.MULTIPLE.equals(strategy)) return intervalBuilderFixedDate;
-            if (DomainStrategy.CUSTOM.equals(strategy)) return intervalBuilderDynamicDate;
+            if (GroupStrategy.FIXED.equals(strategy)) return intervalBuilderFixedDate;
+            if (GroupStrategy.DYNAMIC.equals(strategy)) return intervalBuilderDynamicDate;
+            if (GroupStrategy.MULTIPLE.equals(strategy)) return intervalBuilderFixedDate;
+            if (GroupStrategy.CUSTOM.equals(strategy)) return intervalBuilderDynamicDate;
             return intervalBuilderDynamicDate;
         }
         if (ColumnType.NUMBER.equals(columnType)) {

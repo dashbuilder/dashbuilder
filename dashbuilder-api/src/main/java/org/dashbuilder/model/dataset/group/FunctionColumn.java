@@ -21,16 +21,16 @@ import org.jboss.errai.common.client.api.annotations.Portable;
  * A data range definition.
  */
 @Portable
-public class Range {
+public class FunctionColumn {
 
     protected String sourceId;
     protected String columnId;
     protected ScalarFunctionType function;
 
-    public Range() {
+    public FunctionColumn() {
     }
 
-    public Range(String sourceId, String columnId, ScalarFunctionType function) {
+    public FunctionColumn(String sourceId, String columnId, ScalarFunctionType function) {
         this.sourceId = sourceId;
         this.columnId = columnId;
         this.function = function;
@@ -62,7 +62,7 @@ public class Range {
 
     public boolean equals(Object obj) {
         try {
-            Range other = (Range) obj;
+            FunctionColumn other = (FunctionColumn) obj;
             if (sourceId != null && !sourceId.equals(other.sourceId)) return false;
             if (columnId != null && !columnId.equals(other.columnId)) return false;
             if (function != null && !function.equals(other.function)) return false;

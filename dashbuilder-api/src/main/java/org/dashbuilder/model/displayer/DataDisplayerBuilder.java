@@ -27,8 +27,8 @@ import org.jboss.errai.common.client.api.annotations.Portable;
      .title("Opportunities by Pipeline")
      .type("piechart")
      .renderer("google")
-     .domain("pipeline", "Pipeline")
-     .range("count", "Number of opportunities")
+     .group("pipeline", "Pipeline")
+     .function("count", "Number of opportunities")
      .build();
  </pre>
  */

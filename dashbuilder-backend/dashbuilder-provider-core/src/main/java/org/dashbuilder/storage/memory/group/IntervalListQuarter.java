@@ -19,7 +19,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.dashbuilder.model.dataset.group.Domain;
+import org.dashbuilder.model.dataset.group.GroupColumn;
 import org.dashbuilder.model.date.Month;
 import org.dashbuilder.model.date.Quarter;
 
@@ -30,11 +30,11 @@ public class IntervalListQuarter extends IntervalList {
 
     protected Map<Integer,Interval> intervalMap;
 
-    public IntervalListQuarter(Domain domain) {
-        super(domain);
+    public IntervalListQuarter(GroupColumn groupColumn) {
+        super(groupColumn);
         intervalMap = new HashMap<Integer, Interval>();
 
-        Month firstMonth = domain.getFirstMonthOfYear();
+        Month firstMonth = groupColumn.getFirstMonthOfYear();
         int monthIndex = firstMonth.getIndex();
 
         for (int i = 0; i < 4; i++) {

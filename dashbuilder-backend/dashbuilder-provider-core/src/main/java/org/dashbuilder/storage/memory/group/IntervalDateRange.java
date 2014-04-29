@@ -17,22 +17,10 @@ package org.dashbuilder.storage.memory.group;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
-import org.dashbuilder.DataProviderServices;
-import org.dashbuilder.function.ScalarFunction;
-import org.dashbuilder.function.ScalarFunctionManager;
-import org.dashbuilder.model.dataset.DataColumn;
 import org.dashbuilder.model.dataset.group.DateIntervalType;
-import org.dashbuilder.model.dataset.group.Domain;
-import org.dashbuilder.model.dataset.group.ScalarFunctionType;
 
 import static org.dashbuilder.model.dataset.group.DateIntervalType.*;
 

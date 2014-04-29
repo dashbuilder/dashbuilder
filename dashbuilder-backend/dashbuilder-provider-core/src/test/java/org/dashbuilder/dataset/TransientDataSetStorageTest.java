@@ -64,15 +64,15 @@ public class TransientDataSetStorageTest {
         // Create & apply two different group operations over the same data set
         DataSetOp groupByDept1 = new DataSetLookupBuilder()
                 .uuid(EXPENSE_REPORTS)
-                .domain("department", "Department")
-                .range("id", "Occurrences", COUNT)
-                .range("amount", "totalAmount", SUM)
+                .group("department", "Department")
+                .function("id", "Occurrences", COUNT)
+                .function("amount", "totalAmount", SUM)
                 .build().getOperationList().get(0);
 
         DataSetOp groupByDept2 = new DataSetLookupBuilder()
                 .uuid(EXPENSE_REPORTS)
-                .domain("department", "Department")
-                .range("amount", "average", AVERAGE)
+                .group("department", "Department")
+                .function("amount", "average", AVERAGE)
                 .build().getOperationList().get(0);
 
         // Measure the time elapsed

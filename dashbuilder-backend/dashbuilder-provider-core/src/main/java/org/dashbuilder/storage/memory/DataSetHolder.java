@@ -24,7 +24,7 @@ import org.dashbuilder.model.dataset.DataColumn;
 import org.dashbuilder.model.dataset.DataSet;
 import org.dashbuilder.model.dataset.DataSetOp;
 import org.dashbuilder.model.dataset.DataSetOpType;
-import org.dashbuilder.model.dataset.group.Domain;
+import org.dashbuilder.model.dataset.group.GroupColumn;
 import org.dashbuilder.storage.memory.group.IntervalList;
 
 /**
@@ -59,14 +59,14 @@ public class DataSetHolder {
         }
     }
 
-    public void setIntervalList(Domain domain, IntervalList intervals, long buildTime) {
-        String key = getDomainKey(domain);
+    public void setIntervalList(GroupColumn groupColumn, IntervalList intervals, long buildTime) {
+        String key = getDomainKey(groupColumn);
         IntervalListHolder holder = new IntervalListHolder(intervals, buildTime);
         intervalLists.put(key, holder);
     }
 
-    public IntervalList getIntervalList(Domain domain) {
-        String key = getDomainKey(domain);
+    public IntervalList getIntervalList(GroupColumn groupColumn) {
+        String key = getDomainKey(groupColumn);
         IntervalListHolder holder = intervalLists.get(key);
         if (holder == null) return null;
         holder.reuseHits++;
@@ -101,11 +101,11 @@ public class DataSetHolder {
         return null;
     }
 
-    public String getDomainKey(Domain domain) {
-        return domain.getSourceId() + "_" +
-                domain.getStrategy().toString() + "_" +
-                domain.getIntervalSize() + "_" +
-                domain.getMaxIntervals();
+    public String getDomainKey(GroupColumn groupColumn) {
+        return groupColumn.getSourceId() + "_" +
+                groupColumn.getStrategy().toString() + "_" +
+                groupColumn.getIntervalSize() + "_" +
+                groupColumn.getMaxIntervals();
     }
 }
 

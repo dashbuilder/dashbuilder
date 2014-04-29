@@ -22,7 +22,7 @@ import org.jboss.errai.common.client.api.annotations.Portable;
  * The strategy defines how to split a collection of values in a set of intervals.
  */
 @Portable
-public enum DomainStrategy {
+public enum GroupStrategy {
 
     /**
      * The intervals are fixed of an specific size and they don't depend on the underlying data.
@@ -61,7 +61,7 @@ public enum DomainStrategy {
         return false;
     }
 
-    public static DomainStrategy getByName(String strategy) {
+    public static GroupStrategy getByName(String strategy) {
         return valueOf(strategy.toUpperCase());
     }
 }

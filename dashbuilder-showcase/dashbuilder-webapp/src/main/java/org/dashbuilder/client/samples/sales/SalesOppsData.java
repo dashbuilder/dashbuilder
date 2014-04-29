@@ -31,68 +31,68 @@ public class SalesOppsData {
     public static DataSetRef byEmployee() {
         return new DataSetLookupBuilder()
             .uuid(SALES_OPPS)
-            .domain(PIPELINE)
-            .range(AMOUNT, "occurrences", COUNT)
+            .group(PIPELINE)
+            .function(AMOUNT, "occurrences", COUNT)
             .build();
     }
 
     public static DataSetRef byCountry() {
         return new DataSetLookupBuilder()
             .uuid(SALES_OPPS)
-            .domain(COUNTRY)
-            .range(AMOUNT, SUM)
+            .group(COUNTRY)
+            .function(AMOUNT, SUM)
             .build();
     }
 
     public static DataSetRef expectedPipeline() {
         return new DataSetLookupBuilder()
                 .uuid(SALES_OPPS)
-                .domain(CLOSING_DATE, 24, MONTH)
-                .range(EXPECTED_AMOUNT, SUM)
+                .group(CLOSING_DATE, 24, MONTH)
+                .function(EXPECTED_AMOUNT, SUM)
                 .build();
     }
 
     public static DataSetRef byProbability() {
         return new DataSetLookupBuilder()
                 .uuid(SALES_OPPS)
-                .domain(PROBABILITY)
-                .range(AMOUNT, SUM)
+                .group(PROBABILITY)
+                .function(AMOUNT, SUM)
                 .build();
     }
 
     public static DataSetRef byStatus() {
         return new DataSetLookupBuilder()
                 .uuid(SALES_OPPS)
-                .domain(STATUS)
-                .range(AMOUNT, SUM)
+                .group(STATUS)
+                .function(AMOUNT, SUM)
                 .build();
     }
 
     public static DataSetRef bySalesman() {
         return new DataSetLookupBuilder()
                 .uuid(SALES_OPPS)
-                .domain(SALES_PERSON)
-                .range(AMOUNT, SUM)
+                .group(SALES_PERSON)
+                .function(AMOUNT, SUM)
                 .build();
     }
 
     public static DataSetRef byProduct() {
         return new DataSetLookupBuilder()
             .uuid(SALES_OPPS)
-            .domain(PRODUCT)
-            .range(AMOUNT, SUM)
+            .group(PRODUCT)
+            .function(AMOUNT, SUM)
             .build();
     }
 
     public static DataSetRef countrySummary() {
         return new DataSetLookupBuilder()
                 .uuid(SALES_OPPS)
-                .domain(COUNTRY, "Country")
-                .range(AMOUNT, "#Opps", COUNT)
-                .range(AMOUNT, "Min", MIN)
-                .range(AMOUNT, "Max", MAX)
-                .range(AMOUNT, "Average", AVERAGE)
-                .range(AMOUNT, "Total", SUM)
+                .group(COUNTRY, "Country")
+                .function(AMOUNT, "#Opps", COUNT)
+                .function(AMOUNT, "Min", MIN)
+                .function(AMOUNT, "Max", MAX)
+                .function(AMOUNT, "Average", AVERAGE)
+                .function(AMOUNT, "Total", SUM)
                 .build();
     }
 

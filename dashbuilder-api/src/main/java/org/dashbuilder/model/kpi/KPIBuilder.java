@@ -18,7 +18,7 @@ package org.dashbuilder.model.kpi;
 import org.dashbuilder.model.dataset.DataSetLookupBuilder;
 import org.dashbuilder.model.dataset.DataSetRef;
 import org.dashbuilder.model.dataset.group.DateIntervalType;
-import org.dashbuilder.model.dataset.group.DomainStrategy;
+import org.dashbuilder.model.dataset.group.GroupStrategy;
 import org.dashbuilder.model.dataset.group.ScalarFunctionType;
 import org.dashbuilder.model.date.DayOfWeek;
 import org.dashbuilder.model.date.Month;
@@ -35,8 +35,8 @@ import org.jboss.errai.common.client.api.annotations.Portable;
  * <pre>
  KPI kpi = new KPIBuilder()
  .dataset("target-dataset-uuid")
- .domain("product")
- .range("amount", ScalarFunctionType.SUM)
+ .group("product")
+ .function("amount", ScalarFunctionType.SUM)
  .title("By Product")
  .type(DataDisplayerType.BARCHART)
  .column("Product")
@@ -96,33 +96,36 @@ public class KPIBuilder {
         return this;
     }
 
-    public KPIBuilder domain(String columnId) {
-        lookupBuilder.domain(columnId);
+    public KPIBuilder group(String columnId) {
+        lookupBuilder.group(columnId);
         return this;
     }
 
-    public KPIBuilder domain(String columnId, String newColumnId) {
-        lookupBuilder.domain(columnId, newColumnId);
+    /**
+     * Set the column we want the target data set to be grouped for.
+     */
+    public KPIBuilder group(String columnId, String newColumnId) {
+        lookupBuilder.group(columnId, newColumnId);
         return this;
     }
 
-    public KPIBuilder domain(String columnId, int maxIntervals, DateIntervalType type) {
-        lookupBuilder.domain(columnId, maxIntervals, type);
+    public KPIBuilder group(String columnId, int maxIntervals, DateIntervalType type) {
+        lookupBuilder.group(columnId, maxIntervals, type);
         return this;
     }
 
-    public KPIBuilder domain(String columnId, int maxIntervals, String intervalSize) {
-        lookupBuilder.domain(columnId, maxIntervals, intervalSize);
+    public KPIBuilder group(String columnId, int maxIntervals, String intervalSize) {
+        lookupBuilder.group(columnId, maxIntervals, intervalSize);
         return this;
     }
 
-    public KPIBuilder domain(String columnId, String newColumnId, DomainStrategy strategy) {
-        lookupBuilder.domain(columnId, newColumnId, strategy);
+    public KPIBuilder group(String columnId, String newColumnId, GroupStrategy strategy) {
+        lookupBuilder.group(columnId, newColumnId, strategy);
         return this;
     }
 
-    public KPIBuilder domain(String columnId, String newColumnId, DomainStrategy strategy, int maxIntervals, String intervalSize) {
-        lookupBuilder.domain(columnId, newColumnId, strategy, maxIntervals, intervalSize);
+    public KPIBuilder group(String columnId, String newColumnId, GroupStrategy strategy, int maxIntervals, String intervalSize) {
+        lookupBuilder.group(columnId, newColumnId, strategy, maxIntervals, intervalSize);
         return this;
     }
 
@@ -136,23 +139,23 @@ public class KPIBuilder {
         return this;
     }
 
-    public KPIBuilder firstDayOfWeek(DayOfWeek dayOfWeek) {
-        lookupBuilder.firstDayOfWeek(dayOfWeek);
+    public KPIBuilder firstDay(DayOfWeek dayOfWeek) {
+        lookupBuilder.firstDay(dayOfWeek);
         return this;
     }
 
-    public KPIBuilder firstMonthOfYear(Month month) {
-        lookupBuilder.firstMonthOfYear(month);
+    public KPIBuilder firstMonth(Month month) {
+        lookupBuilder.firstMonth(month);
         return this;
     }
 
-    public KPIBuilder range(String columnId, ScalarFunctionType function) {
-        lookupBuilder.range(columnId, function);
+    public KPIBuilder function(String columnId, ScalarFunctionType function) {
+        lookupBuilder.function(columnId, function);
         return this;
     }
 
-    public KPIBuilder range(String columnId, String newColumnId, ScalarFunctionType function) {
-        lookupBuilder.range(columnId, newColumnId, function);
+    public KPIBuilder function(String columnId, String newColumnId, ScalarFunctionType function) {
+        lookupBuilder.function(columnId, newColumnId, function);
         return this;
     }
 

@@ -15,14 +15,9 @@
  */
 package org.dashbuilder.storage.memory.group;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.List;
-import java.util.Locale;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -30,7 +25,7 @@ import javax.inject.Inject;
 import org.apache.commons.lang.StringUtils;
 import org.dashbuilder.model.dataset.DataColumn;
 import org.dashbuilder.model.dataset.group.DateIntervalType;
-import org.dashbuilder.model.dataset.group.Domain;
+import org.dashbuilder.model.dataset.group.GroupColumn;
 import org.dashbuilder.storage.memory.ComparableValue;
 import org.dashbuilder.storage.memory.SortedList;
 import org.dashbuilder.storage.memory.TransientDataSetStorage;
@@ -45,9 +40,9 @@ public class IntervalBuilderDynamicDate implements IntervalBuilder {
 
     @Inject TransientDataSetStorage dataSetStorage;
 
-    public IntervalList build(DataColumn column, Domain domain) {
+    public IntervalList build(DataColumn column, GroupColumn groupColumn) {
         // Sort the target dates.
-        IntervalListDate results = new IntervalListDate(domain);
+        IntervalListDate results = new IntervalListDate(groupColumn);
         SortedList<ComparableValue> values = dataSetStorage.sortColumn(column);
         if (values.isEmpty()) return results;
 
@@ -64,7 +59,7 @@ public class IntervalBuilderDynamicDate implements IntervalBuilder {
         }
 
         // Calculate the interval type to be used according to the constraints set.
-        int maxIntervals = domain.getMaxIntervals();
+        int maxIntervals = groupColumn.getMaxIntervals();
         if (maxIntervals < 1) maxIntervals = 15;
         DateIntervalType intervalType = YEAR;
         long millis = (maxDate.getTime() - minDate.getTime());
@@ -78,8 +73,8 @@ public class IntervalBuilderDynamicDate implements IntervalBuilder {
 
         // Ensure the interval mode obtained is always greater or equals than the preferred interval size.
         DateIntervalType intervalSize = null;
-        if (!StringUtils.isBlank(domain.getIntervalSize())) {
-            intervalSize = getByName(domain.getIntervalSize());
+        if (!StringUtils.isBlank(groupColumn.getIntervalSize())) {
+            intervalSize = getByName(groupColumn.getIntervalSize());
         }
         if (intervalSize != null && compare(intervalType, intervalSize) == -1) {
             intervalType = intervalSize;
@@ -175,8 +170,8 @@ public class IntervalBuilderDynamicDate implements IntervalBuilder {
 
     private class IntervalListDate extends IntervalList {
 
-        private IntervalListDate(Domain domain) {
-            super(domain);
+        private IntervalListDate(GroupColumn groupColumn) {
+            super(groupColumn);
         }
 
         public Interval locateInterval(Object value) {

@@ -15,15 +15,13 @@
  */
 package org.dashbuilder.storage.memory.group;
 
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 import javax.enterprise.context.ApplicationScoped;
 
 import org.apache.commons.lang.StringUtils;
 import org.dashbuilder.model.dataset.DataColumn;
 import org.dashbuilder.model.dataset.group.DateIntervalType;
-import org.dashbuilder.model.dataset.group.Domain;
+import org.dashbuilder.model.dataset.group.GroupColumn;
 
 import static org.dashbuilder.model.dataset.group.DateIntervalType.*;
 
@@ -39,11 +37,11 @@ public class IntervalBuilderFixedDate implements IntervalBuilder {
             QUARTER, MONTH, DAY_OF_WEEK, HOUR, MINUTE, SECOND};
 
 
-    public IntervalList build(DataColumn column, Domain domain) {
-        IntervalList intervalList = createIntervalList(domain);
+    public IntervalList build(DataColumn column, GroupColumn groupColumn) {
+        IntervalList intervalList = createIntervalList(groupColumn);
 
         // Reverse intervals if requested
-        boolean asc = domain.isAscendingOrder();
+        boolean asc = groupColumn.isAscendingOrder();
         if (!asc) Collections.reverse(intervalList);
 
         // Index the values
@@ -51,27 +49,27 @@ public class IntervalBuilderFixedDate implements IntervalBuilder {
         return intervalList;
     }
 
-    public IntervalList createIntervalList(Domain domain) {
-        DateIntervalType type = DateIntervalType.getByName(domain.getIntervalSize());
+    public IntervalList createIntervalList(GroupColumn groupColumn) {
+        DateIntervalType type = DateIntervalType.getByName(groupColumn.getIntervalSize());
         if (QUARTER.equals(type)) {
-            return new IntervalListQuarter(domain);
+            return new IntervalListQuarter(groupColumn);
         }
         if (MONTH.equals(type)) {
-            return new IntervalListMonth(domain);
+            return new IntervalListMonth(groupColumn);
         }
         if (DAY_OF_WEEK.equals(type)) {
-            return new IntervalListDayOfWeek(domain);
+            return new IntervalListDayOfWeek(groupColumn);
         }
         if (HOUR.equals(type)) {
-            return new IntervalListHour(domain);
+            return new IntervalListHour(groupColumn);
         }
         if (MINUTE.equals(type)) {
-            return new IntervalListMinute(domain);
+            return new IntervalListMinute(groupColumn);
         }
         if (SECOND.equals(type)) {
-            return new IntervalListSecond(domain);
+            return new IntervalListSecond(groupColumn);
         }
-        throw new IllegalArgumentException("Interval size '" + domain.getIntervalSize() + "' not supported for " +
+        throw new IllegalArgumentException("Interval size '" + groupColumn.getIntervalSize() + "' not supported for " +
                 "fixed date intervals. The only supported sizes are: " + StringUtils.join(FIXED_INTERVALS_SUPPORTED, ","));
     }
 }

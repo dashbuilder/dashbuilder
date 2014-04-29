@@ -20,7 +20,7 @@ import javax.inject.Inject;
 import org.dashbuilder.model.dataset.DataSet;
 import org.dashbuilder.model.dataset.DataSetLookupBuilder;
 import org.dashbuilder.model.dataset.DataSetManager;
-import org.dashbuilder.model.dataset.group.DomainStrategy;
+import org.dashbuilder.model.dataset.group.GroupStrategy;
 import org.dashbuilder.model.date.DayOfWeek;
 import org.dashbuilder.model.date.Month;
 import org.dashbuilder.test.ShrinkWrapHelper;
@@ -66,12 +66,12 @@ public class DataSetGroupTest {
     public void testGroupByLabelDynamic() throws Exception {
         DataSet result = dataSetManager.lookupDataSet(new DataSetLookupBuilder()
                 .uuid(EXPENSE_REPORTS)
-                .domain("department", "Department")
-                .range("id", "Occurrences", COUNT)
-                .range("amount", "min", MIN)
-                .range("amount", "max", MAX)
-                .range("amount", "average", AVERAGE)
-                .range("amount", "total", SUM)
+                .group("department", "Department")
+                .function("id", "Occurrences", COUNT)
+                .function("amount", "min", MIN)
+                .function("amount", "max", MAX)
+                .function("amount", "average", AVERAGE)
+                .function("amount", "total", SUM)
                 .build());
 
         //printDataSet(result);
@@ -88,9 +88,9 @@ public class DataSetGroupTest {
     public void testGroupByDateDynamic() throws Exception {
         DataSet result = dataSetManager.lookupDataSet(new DataSetLookupBuilder()
                 .uuid(EXPENSE_REPORTS)
-                .domain("date", "Period", DomainStrategy.DYNAMIC, 10, "year")
-                .range("id", "Occurrences", COUNT)
-                .range("amount", "totalAmount", SUM)
+                .group("date", "Period", GroupStrategy.DYNAMIC, 10, "year")
+                .function("id", "Occurrences", COUNT)
+                .function("amount", "totalAmount", SUM)
                 .build());
 
         //printDataSet(result);
@@ -106,9 +106,9 @@ public class DataSetGroupTest {
     public void testGroupByYear() throws Exception {
         DataSet result = dataSetManager.lookupDataSet(new DataSetLookupBuilder()
                 .uuid(EXPENSE_REPORTS)
-                .domain("date", "Period").fixed(MONTH, true)
-                .range("id", "Occurrences", COUNT)
-                .range("amount", "totalAmount", SUM)
+                .group("date", "Period").fixed(MONTH, true)
+                .function("id", "Occurrences", COUNT)
+                .function("amount", "totalAmount", SUM)
                 .build());
 
         //printDataSet(result);
@@ -132,9 +132,9 @@ public class DataSetGroupTest {
     public void testGroupByYearReverse() throws Exception {
         DataSet result = dataSetManager.lookupDataSet(new DataSetLookupBuilder()
                 .uuid(EXPENSE_REPORTS)
-                .domain("date", "Period").fixed(MONTH, false)
-                .range("id", "Occurrences", COUNT)
-                .range("amount", "totalAmount", SUM)
+                .group("date", "Period").fixed(MONTH, false)
+                .function("id", "Occurrences", COUNT)
+                .function("amount", "totalAmount", SUM)
                 .build());
 
         //printDataSet(result);
@@ -157,14 +157,14 @@ public class DataSetGroupTest {
     @Test
     public void testFirstDayOfWeekOk() throws Exception {
         new DataSetLookupBuilder()
-                .domain("date").fixed(DAY_OF_WEEK).firstDayOfWeek(DayOfWeek.MONDAY);
+                .group("date").fixed(DAY_OF_WEEK).firstDay(DayOfWeek.MONDAY);
     }
 
     @Test
     public void testFirstDayOfWeekNok() throws Exception {
         try {
             new DataSetLookupBuilder()
-                    .domain("date").fixed(QUARTER).firstDayOfWeek(DayOfWeek.MONDAY);
+                    .group("date").fixed(QUARTER).firstDay(DayOfWeek.MONDAY);
             fail("firstDayOfWeek required a DAY_OF_WEEK fixed domain.");
         } catch (Exception e) {
             // Expected.
@@ -174,14 +174,14 @@ public class DataSetGroupTest {
     @Test
     public void testFirstDayOfMonthOk() throws Exception {
         new DataSetLookupBuilder()
-                .domain("date").fixed(MONTH).firstMonthOfYear(Month.APRIL);
+                .group("date").fixed(MONTH).firstMonth(Month.APRIL);
     }
 
     @Test
     public void testFirstDayOfMonthNok() throws Exception {
         try {
             new DataSetLookupBuilder()
-                    .domain("date").fixed(QUARTER).firstMonthOfYear(Month.APRIL);
+                    .group("date").fixed(QUARTER).firstMonth(Month.APRIL);
             fail("firstDayOfWeek required a DAY_OF_WEEK fixed domain.");
         } catch (Exception e) {
             // Expected.
@@ -192,9 +192,9 @@ public class DataSetGroupTest {
     public void testGroupByWeek() throws Exception {
         DataSet result = dataSetManager.lookupDataSet(new DataSetLookupBuilder()
                 .uuid(EXPENSE_REPORTS)
-                .domain("date", "Period").fixed(DAY_OF_WEEK).firstDayOfWeek(DayOfWeek.MONDAY)
-                .range("id", "Occurrences", COUNT)
-                .range("amount", "totalAmount", SUM)
+                .group("date", "Period").fixed(DAY_OF_WEEK).firstDay(DayOfWeek.MONDAY)
+                .function("id", "Occurrences", COUNT)
+                .function("amount", "totalAmount", SUM)
                 .build());
 
         //printDataSet(result);
@@ -213,9 +213,9 @@ public class DataSetGroupTest {
     public void testGroupByQuarter() throws Exception {
         DataSet result = dataSetManager.lookupDataSet(new DataSetLookupBuilder()
                 .uuid(EXPENSE_REPORTS)
-                .domain("date", "Period").fixed(QUARTER)
-                .range("id", "Occurrences", COUNT)
-                .range("amount", "totalAmount", SUM)
+                .group("date", "Period").fixed(QUARTER)
+                .function("id", "Occurrences", COUNT)
+                .function("amount", "totalAmount", SUM)
                 .build());
 
         //printDataSet(result);

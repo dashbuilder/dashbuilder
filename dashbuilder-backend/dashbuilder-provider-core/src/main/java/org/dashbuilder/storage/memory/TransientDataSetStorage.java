@@ -20,7 +20,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.ArrayList;
 import java.util.Map;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -30,11 +29,10 @@ import org.dashbuilder.comparator.ComparatorUtils;
 import org.dashbuilder.config.Config;
 import org.dashbuilder.model.dataset.ColumnType;
 import org.dashbuilder.model.dataset.DataColumn;
-import org.dashbuilder.model.dataset.DataSetOpStats;
 import org.dashbuilder.model.dataset.DataSetOpType;
 import org.dashbuilder.model.dataset.DataSetStats;
-import org.dashbuilder.model.dataset.group.Domain;
-import org.dashbuilder.model.dataset.group.Range;
+import org.dashbuilder.model.dataset.group.GroupColumn;
+import org.dashbuilder.model.dataset.group.FunctionColumn;
 import org.dashbuilder.model.dataset.impl.DataSetImpl;
 import org.dashbuilder.storage.memory.group.Interval;
 import org.dashbuilder.storage.memory.group.IntervalBuilder;
@@ -148,39 +146,39 @@ public class TransientDataSetStorage implements DataSetStorage {
      */
     public DataSetHolder group(DataSetHolder source, DataSetGroup op) throws Exception {
         long _beginGroup = System.currentTimeMillis();
-        for (Domain domain : op.getDomainList()) {
+        for (GroupColumn groupColumn : op.getGroupColumns()) {
 
             // Get the domain intervals. Look into the cache first.
-            IntervalList intervals = source.getIntervalList(domain);
+            IntervalList intervals = source.getIntervalList(groupColumn);
             if (intervals == null) {
                 // Build the group intervals by applying the domain strategy specified
                 long _beginIntervals = System.currentTimeMillis();
-                DataColumn domainColumn = source.dataSet.getColumnById(domain.getSourceId());
-                IntervalBuilder intervalBuilder = intervalBuilderLocator.lookup(domainColumn, domain);
+                DataColumn domainColumn = source.dataSet.getColumnById(groupColumn.getSourceId());
+                IntervalBuilder intervalBuilder = intervalBuilderLocator.lookup(domainColumn, groupColumn);
                 if (intervalBuilder == null) throw new Exception("Interval generator not supported.");
 
-                intervals = intervalBuilder.build(domainColumn, domain);
+                intervals = intervalBuilder.build(domainColumn, groupColumn);
                 long _timeIntervals = System.currentTimeMillis() - _beginIntervals;
 
                 // Keep the group intervals for reusing purposes
-                source.setIntervalList(domain, intervals, _timeIntervals);
+                source.setIntervalList(groupColumn, intervals, _timeIntervals);
             }
 
             // Build the grouped data set header.
             DataSetImpl dataSet = new DataSetImpl();
-            dataSet.addColumn(domain.getColumnId(), ColumnType.LABEL);
-            for (Range range : op.getRangeList()) {
-                dataSet.addColumn(range.getColumnId(), ColumnType.NUMBER);
+            dataSet.addColumn(groupColumn.getColumnId(), ColumnType.LABEL);
+            for (FunctionColumn functionColumn : op.getFunctionColumns()) {
+                dataSet.addColumn(functionColumn.getColumnId(), ColumnType.NUMBER);
             }
             // Add the scalar calculations to the result.
             for (int i=0; i<intervals.size(); i++) {
                 Interval interval = intervals.get(i);
                 dataSet.setValueAt(i, 0, interval.name);
-                List<Range> ranges = op.getRangeList();
-                for (int j=0; j<ranges.size(); j++) {
-                    Range range = ranges.get(j);
-                    DataColumn rangeColumn = source.dataSet.getColumnById(range.getSourceId());
-                    Double scalar = interval.calculateScalar(rangeColumn, range.getFunction());
+                List<FunctionColumn> functionColumns = op.getFunctionColumns();
+                for (int j=0; j< functionColumns.size(); j++) {
+                    FunctionColumn functionColumn = functionColumns.get(j);
+                    DataColumn rangeColumn = source.dataSet.getColumnById(functionColumn.getSourceId());
+                    Double scalar = interval.calculateScalar(rangeColumn, functionColumn.getFunction());
                     dataSet.setValueAt(i, j + 1, scalar);
                 }
             }

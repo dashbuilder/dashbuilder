@@ -28,46 +28,46 @@ import org.jboss.errai.common.client.api.annotations.Portable;
 @Portable
 public class DataSetGroup implements DataSetOp {
 
-    protected List<Domain> domainList = new ArrayList<Domain>();
-    protected List<Range> rangeList = new ArrayList<Range>();
+    protected List<GroupColumn> groupColumnList = new ArrayList<GroupColumn>();
+    protected List<FunctionColumn> functionColumnList = new ArrayList<FunctionColumn>();
 
     public DataSetOpType getType() {
         return DataSetOpType.GROUP;
     }
 
-    public void addDomains(Domain... domains) {
-        for (Domain domain : domains) {
-            domainList.add(domain);
+    public void addGroupColumn(GroupColumn... groupColumns) {
+        for (GroupColumn groupColumn : groupColumns) {
+            groupColumnList.add(groupColumn);
         }
     }
 
-    public void addRanges(Range... ranges) {
-        for (Range range : ranges) {
-            rangeList.add(range);
+    public void addFunctionColumn(FunctionColumn... functionColumns) {
+        for (FunctionColumn functionColumn : functionColumns) {
+            functionColumnList.add(functionColumn);
         }
     }
 
-    public List<Domain> getDomainList() {
-        return domainList;
+    public List<GroupColumn> getGroupColumns() {
+        return groupColumnList;
     }
 
-    public List<Range> getRangeList() {
-        return rangeList;
+    public List<FunctionColumn> getFunctionColumns() {
+        return functionColumnList;
     }
 
     public boolean equals(Object obj) {
         try {
             DataSetGroup other = (DataSetGroup) obj;
-            if (domainList.size() != other.domainList.size()) return false;
-            if (rangeList.size() != other.rangeList.size()) return false;
-            for (int i = 0; i < domainList.size(); i++) {
-                Domain el = domainList.get(i);
-                Domain otherEl = other.domainList.get(i);
+            if (groupColumnList.size() != other.groupColumnList.size()) return false;
+            if (functionColumnList.size() != other.functionColumnList.size()) return false;
+            for (int i = 0; i < groupColumnList.size(); i++) {
+                GroupColumn el = groupColumnList.get(i);
+                GroupColumn otherEl = other.groupColumnList.get(i);
                 if (!el.equals(otherEl)) return false;
             }
-            for (int i = 0; i < rangeList.size(); i++) {
-                Range el = rangeList.get(i);
-                Range  otherEl = other.rangeList.get(i);
+            for (int i = 0; i < functionColumnList.size(); i++) {
+                FunctionColumn el = functionColumnList.get(i);
+                FunctionColumn otherEl = other.functionColumnList.get(i);
                 if (!el.equals(otherEl)) return false;
             }
             return true;

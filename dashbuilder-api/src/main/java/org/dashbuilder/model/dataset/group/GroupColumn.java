@@ -23,27 +23,27 @@ import org.jboss.errai.common.client.api.annotations.Portable;
  * A data domain definition.
  */
 @Portable
-public class Domain {
+public class GroupColumn {
 
     protected String sourceId = null;
     protected String columnId = null;
-    protected DomainStrategy strategy = DomainStrategy.DYNAMIC;
+    protected GroupStrategy strategy = GroupStrategy.DYNAMIC;
     protected int maxIntervals = 15;
     protected String intervalSize = null;
     protected boolean ascendingOrder = false;
     protected Month firstMonthOfYear = Month.JANUARY;
     protected DayOfWeek firstDayOfWeek = DayOfWeek.MONDAY;
 
-    public Domain() {
+    public GroupColumn() {
     }
 
-    public Domain(String columnId, String newColumnId, DomainStrategy strategy) {
+    public GroupColumn(String columnId, String newColumnId, GroupStrategy strategy) {
         this.sourceId = columnId;
         this.columnId = newColumnId;
         this.strategy = strategy;
     }
 
-    public Domain(String columnId, String newColumnId, DomainStrategy strategy, int maxIntervals, String intervalSize) {
+    public GroupColumn(String columnId, String newColumnId, GroupStrategy strategy, int maxIntervals, String intervalSize) {
         this.sourceId = columnId;
         this.columnId = newColumnId;
         this.strategy = strategy;
@@ -67,11 +67,11 @@ public class Domain {
         this.columnId = columnId;
     }
 
-    public DomainStrategy getStrategy() {
+    public GroupStrategy getStrategy() {
         return strategy;
     }
 
-    public void setStrategy(DomainStrategy strategy) {
+    public void setStrategy(GroupStrategy strategy) {
         this.strategy = strategy;
     }
 
@@ -117,7 +117,7 @@ public class Domain {
 
     public boolean equals(Object obj) {
         try {
-            Domain other = (Domain) obj;
+            GroupColumn other = (GroupColumn) obj;
             if (sourceId != null && !sourceId.equals(other.sourceId)) return false;
             if (columnId != null && !columnId.equals(other.columnId)) return false;
             if (strategy != null && !strategy.equals(other.strategy)) return false;

@@ -15,14 +15,11 @@
  */
 package org.dashbuilder.storage.memory.group;
 
-import java.util.List;
-
 import org.dashbuilder.model.dataset.DataColumn;
-import org.dashbuilder.model.dataset.group.Domain;
-import org.dashbuilder.model.dataset.group.DomainStrategy;
+import org.dashbuilder.model.dataset.group.GroupColumn;
 
 public interface IntervalBuilder {
 
-    IntervalList build(DataColumn column, Domain domain);
+    IntervalList build(DataColumn column, GroupColumn groupColumn);
 
 }

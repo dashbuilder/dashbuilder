@@ -15,12 +15,11 @@
  */
 package org.dashbuilder.storage.memory.group;
 
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.dashbuilder.model.dataset.group.Domain;
+import org.dashbuilder.model.dataset.group.GroupColumn;
 import org.dashbuilder.model.date.DayOfWeek;
 
 /**
@@ -30,11 +29,11 @@ public class IntervalListDayOfWeek extends IntervalList {
 
     protected Map<Integer,Interval> intervalMap;
 
-    public IntervalListDayOfWeek(Domain domain) {
-        super(domain);
+    public IntervalListDayOfWeek(GroupColumn groupColumn) {
+        super(groupColumn);
         intervalMap = new HashMap<Integer, Interval>();
 
-        DayOfWeek firstDay = domain.getFirstDayOfWeek();
+        DayOfWeek firstDay = groupColumn.getFirstDayOfWeek();
         int index = firstDay.getIndex();
         DayOfWeek[] array = DayOfWeek.getAll();
 
