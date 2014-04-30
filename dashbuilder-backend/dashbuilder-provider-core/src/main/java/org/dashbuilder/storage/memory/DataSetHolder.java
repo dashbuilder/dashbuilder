@@ -20,11 +20,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.dashbuilder.DataProviderServices;
+import org.dashbuilder.function.ScalarFunction;
+import org.dashbuilder.function.ScalarFunctionManager;
 import org.dashbuilder.model.dataset.DataColumn;
 import org.dashbuilder.model.dataset.DataSet;
 import org.dashbuilder.model.dataset.DataSetOp;
 import org.dashbuilder.model.dataset.DataSetOpType;
 import org.dashbuilder.model.dataset.group.GroupColumn;
+import org.dashbuilder.model.dataset.group.ScalarFunctionType;
 import org.dashbuilder.storage.memory.group.IntervalList;
 
 /**
@@ -42,6 +46,7 @@ public class DataSetHolder {
     Map<String, IntervalListHolder> intervalLists = new HashMap<String, IntervalListHolder>();
     Map<String, SortedListHolder> sortedLists = new HashMap<String, SortedListHolder>();
     Map<DataSetOpType, TransientDataSetOpStats> opStats = new HashMap<DataSetOpType, TransientDataSetOpStats>();
+    Map<String, Map<ScalarFunctionType, Double>> scalars = new HashMap<String, Map<ScalarFunctionType, Double>>();
 
     DataSetHolder(DataSet dataSet) {
         this(null, dataSet, null, 0);
@@ -99,6 +104,24 @@ public class DataSetHolder {
             }
         }
         return null;
+    }
+
+    public Double applyFunction(DataColumn dataColumn, ScalarFunctionType type) {
+        // Look into the cache first.
+        String columnId = dataColumn.getId();
+        Map<ScalarFunctionType,Double> columnScalars = scalars.get(columnId);
+        if (columnScalars == null) scalars.put(columnId, columnScalars = new HashMap<ScalarFunctionType,Double>());
+        Double scalar = columnScalars.get(type);
+        if (scalar != null) return scalar;
+
+        // Do the scalar calculations.
+        ScalarFunctionManager scalarFunctionManager = DataProviderServices.getScalarFunctionManager();
+        ScalarFunction function = scalarFunctionManager.getScalarFunctionByCode(type.toString().toLowerCase());
+        scalar = function.scalar(dataColumn.getValues());
+
+        // Save the result into the cache and return.
+        columnScalars.put(type, scalar);
+        return scalar;
     }
 
     public String getDomainKey(GroupColumn groupColumn) {

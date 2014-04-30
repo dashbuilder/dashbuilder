@@ -63,6 +63,22 @@ public class DataSetGroupTest {
     }
 
     @Test
+    public void testDataSetFunctions() throws Exception {
+        DataSet result = dataSetManager.lookupDataSet(new DataSetLookupBuilder()
+                .uuid(EXPENSE_REPORTS)
+                .function("id", COUNT)
+                .function("amount", MIN)
+                .function("amount", MAX)
+                .function("amount", AVERAGE)
+                .function("amount", SUM)
+                .build());
+
+        assertDataSetValues(result, dataSetFormatter, new String[][] {
+                {"50.00", "1.10", "1,100.10", "454.63", "22,731.26"}
+        }, 0);
+    }
+
+    @Test
     public void testGroupByLabelDynamic() throws Exception {
         DataSet result = dataSetManager.lookupDataSet(new DataSetLookupBuilder()
                 .uuid(EXPENSE_REPORTS)

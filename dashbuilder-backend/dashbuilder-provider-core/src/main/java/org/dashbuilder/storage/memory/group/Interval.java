@@ -63,9 +63,9 @@ public class Interval {
         return name.hashCode();
     }
 
-    public Double calculateScalar(DataColumn rangeColumn, ScalarFunctionType type) {
+    public Double applyFunction(DataColumn dataColumn, ScalarFunctionType type) {
         // Look into the cache first.
-        String columnId = rangeColumn.getId();
+        String columnId = dataColumn.getId();
         Map<ScalarFunctionType,Double> columnScalars = scalars.get(columnId);
         if (columnScalars == null) scalars.put(columnId, columnScalars = new HashMap<ScalarFunctionType,Double>());
         Double scalar = columnScalars.get(type);
@@ -74,7 +74,7 @@ public class Interval {
         // Do the scalar calculations.
         ScalarFunctionManager scalarFunctionManager = DataProviderServices.getScalarFunctionManager();
         ScalarFunction function = scalarFunctionManager.getScalarFunctionByCode(type.toString().toLowerCase());
-        scalar = function.scalar(rangeColumn.getValues(), rows);
+        scalar = function.scalar(dataColumn.getValues(), rows);
 
         // Save the result into the cache and return.
         columnScalars.put(type, scalar);

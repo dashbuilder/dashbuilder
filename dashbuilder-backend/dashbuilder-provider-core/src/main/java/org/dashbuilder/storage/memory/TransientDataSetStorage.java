@@ -146,6 +146,9 @@ public class TransientDataSetStorage implements DataSetStorage {
      */
     public DataSetHolder group(DataSetHolder source, DataSetGroup op) throws Exception {
         long _beginGroup = System.currentTimeMillis();
+
+        // Group by the specified columns.
+        List<FunctionColumn> functionColumns = op.getFunctionColumns();
         for (GroupColumn groupColumn : op.getGroupColumns()) {
 
             // Get the domain intervals. Look into the cache first.
@@ -174,20 +177,30 @@ public class TransientDataSetStorage implements DataSetStorage {
             for (int i=0; i<intervals.size(); i++) {
                 Interval interval = intervals.get(i);
                 dataSet.setValueAt(i, 0, interval.name);
-                List<FunctionColumn> functionColumns = op.getFunctionColumns();
                 for (int j=0; j< functionColumns.size(); j++) {
                     FunctionColumn functionColumn = functionColumns.get(j);
-                    DataColumn rangeColumn = source.dataSet.getColumnById(functionColumn.getSourceId());
-                    Double scalar = interval.calculateScalar(rangeColumn, functionColumn.getFunction());
+                    DataColumn dataColumn = source.dataSet.getColumnById(functionColumn.getSourceId());
+                    Double scalar = interval.applyFunction(dataColumn, functionColumn.getFunction());
                     dataSet.setValueAt(i, j + 1, scalar);
                 }
             }
-
             // Return the results.
             long _timeGroup = System.currentTimeMillis() - _beginGroup;
             return new DataSetHolder(source, dataSet, op, _timeGroup);
         }
-        return null;
+        // No real group requested. Only function calculations on the data set.
+        DataSetImpl dataSet = new DataSetImpl();
+        for (int i=0; i< functionColumns.size(); i++) {
+            FunctionColumn functionColumn = functionColumns.get(i);
+            dataSet.addColumn(functionColumn.getColumnId(), ColumnType.NUMBER);
+            DataColumn dataColumn = source.dataSet.getColumnById(functionColumn.getSourceId());
+            Double scalar = source.applyFunction(dataColumn, functionColumn.getFunction());
+            dataSet.setValueAt(0, i, scalar);
+        }
+
+        // Return the results.
+        long _timeGroup = System.currentTimeMillis() - _beginGroup;
+        return new DataSetHolder(source, dataSet, op, _timeGroup);
     }
 
     public DataSetHolder sort(DataSetHolder source, DataSetSort op) throws Exception {
