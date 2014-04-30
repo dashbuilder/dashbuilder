@@ -186,6 +186,54 @@ public class DataSetLookupBuilder {
         return this;
     }
 
+    public DataSetLookupBuilder distinct(String columnId) {
+        return function(columnId, columnId, ScalarFunctionType.DISTICNT);
+    }
+
+    public DataSetLookupBuilder distinct(String columnId, String newColumnId) {
+        return function(columnId, newColumnId, ScalarFunctionType.DISTICNT);
+    }
+
+    public DataSetLookupBuilder count(String columnId) {
+        return function(columnId, columnId, ScalarFunctionType.SUM);
+    }
+
+    public DataSetLookupBuilder count(String columnId, String newColumnId) {
+        return function(columnId, newColumnId, ScalarFunctionType.SUM);
+    }
+
+    public DataSetLookupBuilder min(String columnId) {
+        return function(columnId, columnId, ScalarFunctionType.SUM);
+    }
+
+    public DataSetLookupBuilder min(String columnId, String newColumnId) {
+        return function(columnId, newColumnId, ScalarFunctionType.SUM);
+    }
+
+    public DataSetLookupBuilder max(String columnId) {
+        return function(columnId, columnId, ScalarFunctionType.SUM);
+    }
+
+    public DataSetLookupBuilder max(String columnId, String newColumnId) {
+        return function(columnId, newColumnId, ScalarFunctionType.SUM);
+    }
+
+    public DataSetLookupBuilder avg(String columnId) {
+        return function(columnId, columnId, ScalarFunctionType.SUM);
+    }
+
+    public DataSetLookupBuilder avg(String columnId, String newColumnId) {
+        return function(columnId, newColumnId, ScalarFunctionType.SUM);
+    }
+
+    public DataSetLookupBuilder sum(String columnId) {
+        return function(columnId, columnId, ScalarFunctionType.SUM);
+    }
+
+    public DataSetLookupBuilder sum(String columnId, String newColumnId) {
+        return function(columnId, newColumnId, ScalarFunctionType.SUM);
+    }
+
     public DataSetLookupBuilder function(String columnId, ScalarFunctionType function) {
         return function(columnId, columnId, function);
     }

@@ -19,12 +19,15 @@ import javax.enterprise.context.Dependent;
 import javax.inject.Named;
 
 import com.google.gwt.core.client.JsArray;
+import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.visualization.client.Selection;
 import com.google.gwt.visualization.client.events.SelectHandler;
 import com.google.gwt.visualization.client.visualizations.BarChart;
-import com.google.gwt.visualization.client.visualizations.BarChart.Options;
-import org.dashbuilder.model.displayer.Chart;
+import com.google.gwt.visualization.client.visualizations.ColumnChart;
+import org.dashbuilder.model.displayer.AbstractChartDisplayer;
+import org.dashbuilder.model.displayer.BarChartDisplayer;
 
 @Dependent
 @Named("google_barchart_viewer")
@@ -37,59 +40,41 @@ public class GoogleBarChartViewer extends GoogleXAxisChartViewer {
 
     @Override
     public Widget createChart() {
-        BarChart chart = new BarChart(createTable(), createOptions());
-        chart.addSelectHandler(createSelectHandler(chart));
-        return chart;
+        BarChartDisplayer barDisplayer = (BarChartDisplayer) dataDisplayer;
+        Widget chart = null;
+
+        if (barDisplayer.isHorizontal()) {
+            chart = new BarChart(createTable(), createBarOptions());
+        } else {
+            chart = new ColumnChart(createTable(), createColumnOptions());
+        }
+
+        HTML titleHtml = new HTML();
+        if (barDisplayer.isTitleVisible()) {
+            titleHtml.setText(dataDisplayer.getTitle());
+        }
+
+        VerticalPanel verticalPanel = new VerticalPanel();
+        verticalPanel.add(titleHtml);
+        verticalPanel.add(chart);
+        return verticalPanel;
     }
 
-    private Options createOptions() {
-        Options options = Options.create();
-        options.setTitle(dataDisplayer.getTitle());
-        if (dataDisplayer instanceof Chart) {
-            Chart chart = (Chart) dataDisplayer;
-            options.setWidth(chart.getWidth());
-            options.setHeight(chart.getHeight());
-        }
-        options.set3D(true);
+    private BarChart.Options createBarOptions() {
+        BarChart.Options options = BarChart.Options.create();
+        BarChartDisplayer chart = (BarChartDisplayer) dataDisplayer;
+        options.setWidth(chart.getWidth());
+        options.setHeight(chart.getHeight());
+        options.set3D(chart.is3d());
         return options;
     }
 
-    private SelectHandler createSelectHandler(final BarChart chart) {
-        return new SelectHandler() {
-            public void onSelect(SelectEvent event) {
-                String message = "";
-
-                // May be multiple selections.
-                JsArray<Selection> selections = chart.getSelections();
-
-                for (int i = 0; i < selections.length(); i++) {
-                    // add a new line for each selection
-                    message += i == 0 ? "" : "\n";
-
-                    Selection selection = selections.get(i);
-
-                    if (selection.isCell()) {
-                        // isCell() returns true if a cell has been selected.
-
-                        // getRow() returns the row number of the selected cell.
-                        int row = selection.getRow();
-                        // getColumn() returns the column number of the selected cell.
-                        int column = selection.getColumn();
-                        message += "cell " + row + ":" + column + " selected";
-                    } else if (selection.isRow()) {
-                        // isRow() returns true if an entire row has been selected.
-
-                        // getRow() returns the row number of the selected row.
-                        int row = selection.getRow();
-                        message += "row " + row + " selected";
-                    } else {
-                        // unreachable
-                        message += "Chart selections should be either row selections or cell selections.";
-                        message += "  Other visualizations support column selections as well.";
-                    }
-                }
-                //Window.alert(message);
-            }
-        };
+    private ColumnChart.Options createColumnOptions() {
+        ColumnChart.Options options = ColumnChart.Options.create();
+        BarChartDisplayer chart = (BarChartDisplayer) dataDisplayer;
+        options.setWidth(chart.getWidth());
+        options.setHeight(chart.getHeight());
+        options.set3D(chart.is3d());
+        return options;
     }
 }

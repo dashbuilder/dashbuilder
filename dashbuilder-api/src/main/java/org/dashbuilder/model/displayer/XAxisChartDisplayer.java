@@ -15,8 +15,9 @@
  */
 package org.dashbuilder.model.displayer;
 
-public interface Chart {
+import org.jboss.errai.common.client.api.annotations.Portable;
 
-    int getWidth();
-    int getHeight();
+@Portable
+public class XAxisChartDisplayer extends AbstractChartDisplayer {
+
 }

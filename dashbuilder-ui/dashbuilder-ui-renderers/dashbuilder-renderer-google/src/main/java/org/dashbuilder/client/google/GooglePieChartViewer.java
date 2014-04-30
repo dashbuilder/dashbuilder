@@ -19,12 +19,14 @@ import javax.enterprise.context.Dependent;
 import javax.inject.Named;
 
 import com.google.gwt.core.client.JsArray;
+import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.visualization.client.Selection;
 import com.google.gwt.visualization.client.events.SelectHandler;
 import com.google.gwt.visualization.client.visualizations.PieChart;
 import com.google.gwt.visualization.client.visualizations.PieChart.Options;
-import org.dashbuilder.model.displayer.Chart;
+import org.dashbuilder.model.displayer.AbstractChartDisplayer;
 
 @Dependent
 @Named("google_piechart_viewer")
@@ -37,17 +39,26 @@ public class GooglePieChartViewer extends GoogleXAxisChartViewer {
 
     @Override
     public Widget createChart() {
-        PieChart pie = new PieChart(createTable(), createOptions());
-        pie.addSelectHandler(createSelectHandler(pie));
-        return pie;
+        PieChart chart = new PieChart(createTable(), createOptions());
+        chart.addSelectHandler(createSelectHandler(chart));
+        HTML titleHtml = new HTML();
+        if (dataDisplayer instanceof AbstractChartDisplayer) {
+            if (((AbstractChartDisplayer) dataDisplayer).isTitleVisible()) {
+                titleHtml.setText(dataDisplayer.getTitle());
+            }
+        }
+
+        VerticalPanel verticalPanel = new VerticalPanel();
+        verticalPanel.add(titleHtml);
+        verticalPanel.add(chart);
+        return verticalPanel;
     }
 
     private Options createOptions() {
         Options options = Options.create();
-        options.setTitle(dataDisplayer.getTitle());
         options.set3D(true);
-        if (dataDisplayer instanceof Chart) {
-            Chart chart = (Chart) dataDisplayer;
+        if (dataDisplayer instanceof AbstractChartDisplayer) {
+            AbstractChartDisplayer chart = (AbstractChartDisplayer) dataDisplayer;
             options.setWidth(chart.getWidth());
             options.setHeight(chart.getHeight());
         }

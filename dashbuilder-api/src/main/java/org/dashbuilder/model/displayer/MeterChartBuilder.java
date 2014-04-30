@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2014 JBoss Inc
+ * Copyright (C) 2012 JBoss Inc
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,10 +15,18 @@
  */
 package org.dashbuilder.model.displayer;
 
-public interface MeterChart {
+public class MeterChartBuilder extends AbstractChartBuilder<MeterChartBuilder> {
 
-    long getMeterStart();
-    long getMeterWarning();
-    long getMeterCritical();
-    long getMeterEnd();
+    protected AbstractDataDisplayer createDisplayer() {
+        return new MeterChartDisplayer();
+    }
+
+    public MeterChartBuilder meter(long start, long warning, long critical, long end) {
+        MeterChartDisplayer meterDisplayer = (MeterChartDisplayer) dataDisplayer;
+        meterDisplayer.setMeterStart(start);
+        meterDisplayer.setMeterWarning(warning);
+        meterDisplayer.setMeterCritical(critical);
+        meterDisplayer.setMeterEnd(end);
+        return this;
+    }
 }

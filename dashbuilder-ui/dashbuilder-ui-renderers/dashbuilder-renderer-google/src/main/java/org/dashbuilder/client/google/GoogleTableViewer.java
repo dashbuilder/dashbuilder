@@ -19,11 +19,14 @@ import javax.enterprise.context.Dependent;
 import javax.inject.Named;
 
 import com.google.gwt.core.client.JsArray;
+import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.visualization.client.Selection;
 import com.google.gwt.visualization.client.events.SelectHandler;
 import com.google.gwt.visualization.client.visualizations.Table;
 import com.google.gwt.visualization.client.visualizations.Table.Options;
+import org.dashbuilder.model.displayer.AbstractChartDisplayer;
 
 @Dependent
 @Named("google_table_viewer")
@@ -36,9 +39,19 @@ public class GoogleTableViewer extends GoogleChartViewer {
 
     @Override
     public Widget createChart() {
-        Table w = new Table(createTable(), createOptions());
-        w.addSelectHandler(createSelectHandler(w));
-        return w;
+        Table table = new Table(createTable(), createOptions());
+        table.addSelectHandler(createSelectHandler(table));
+        HTML titleHtml = new HTML();
+        if (dataDisplayer instanceof AbstractChartDisplayer) {
+            if (((AbstractChartDisplayer) dataDisplayer).isTitleVisible()) {
+                titleHtml.setText(dataDisplayer.getTitle());
+            }
+        }
+
+        VerticalPanel verticalPanel = new VerticalPanel();
+        verticalPanel.add(titleHtml);
+        verticalPanel.add(table);
+        return verticalPanel;
     }
 
     private Options createOptions() {

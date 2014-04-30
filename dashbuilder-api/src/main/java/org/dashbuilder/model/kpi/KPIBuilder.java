@@ -30,43 +30,31 @@ import org.dashbuilder.model.kpi.impl.KPIImpl;
 import org.jboss.errai.common.client.api.annotations.Portable;
 
 /**
- * It allows for the building of KPI instances in a friendly manner.
- *
- * <pre>
- KPI kpi = new KPIBuilder()
- .dataset("target-dataset-uuid")
- .group("product")
- .function("amount", ScalarFunctionType.SUM)
- .title("By Product")
- .type(DataDisplayerType.BARCHART)
- .column("Product")
- .column("Total amount")
- .build();
- </pre>
-
+ * Base class for building KPI instances in a friendly manner.
  */
-@Portable
-public class KPIBuilder {
+public abstract class KPIBuilder<T extends KPIBuilder<?>> {
 
     protected DataSetLookupBuilder lookupBuilder = new DataSetLookupBuilder();
-    protected DataDisplayerBuilder displayerBuilder = new DataDisplayerBuilder();
+    protected DataDisplayerBuilder displayerBuilder = createDisplayerBuilder();
     protected DataDisplayer dataDisplayer;
     protected DataSetRef dataSetRef;
     protected KPIImpl kpi = new KPIImpl();
 
-    public KPIBuilder uuid(String uuid) {
+    protected abstract DataDisplayerBuilder createDisplayerBuilder();
+
+    public T uuid(String uuid) {
         kpi.setUUID(uuid);
-        return this;
+        return (T) this;
     }
 
-    public KPIBuilder dataset(DataSetRef dataSetRef) {
+    public T dataset(DataSetRef dataSetRef) {
         this.dataSetRef = dataSetRef;
-        return this;
+        return (T) this;
     }
 
-    public KPIBuilder displayer(DataDisplayer dataDisplayer) {
+    public T displayer(DataDisplayer dataDisplayer) {
         this.dataDisplayer = dataDisplayer;
-        return this;
+        return (T) this;
     }
 
     public KPI build() {
@@ -81,143 +69,176 @@ public class KPIBuilder {
 
     // DataSetLookup section
 
-    public KPIBuilder dataset(String uuid) {
+    public T dataset(String uuid) {
         lookupBuilder.uuid(uuid);
-        return this;
+        return (T) this;
     }
 
-    public KPIBuilder rowOffset(int offset) {
+    public T rowOffset(int offset) {
         lookupBuilder.rowOffset(offset);
-        return this;
+        return (T) this;
     }
 
-    public KPIBuilder rowNumber(int rows) {
+    public T rowNumber(int rows) {
         lookupBuilder.rowNumber(rows);
-        return this;
+        return (T) this;
     }
 
-    public KPIBuilder group(String columnId) {
+    public T group(String columnId) {
         lookupBuilder.group(columnId);
-        return this;
+        return (T) this;
     }
 
     /**
      * Set the column we want the target data set to be grouped for.
      */
-    public KPIBuilder group(String columnId, String newColumnId) {
+    public T group(String columnId, String newColumnId) {
         lookupBuilder.group(columnId, newColumnId);
-        return this;
+        return (T) this;
     }
 
-    public KPIBuilder group(String columnId, DateIntervalType type) {
+    public T group(String columnId, DateIntervalType type) {
         lookupBuilder.group(columnId, type);
-        return this;
+        return (T) this;
     }
 
-    public KPIBuilder group(String columnId, int maxIntervals, DateIntervalType type) {
+    public T group(String columnId, int maxIntervals, DateIntervalType type) {
         lookupBuilder.group(columnId, maxIntervals, type);
-        return this;
+        return (T) this;
     }
 
-    public KPIBuilder group(String columnId, int maxIntervals, String intervalSize) {
+    public T group(String columnId, int maxIntervals, String intervalSize) {
         lookupBuilder.group(columnId, maxIntervals, intervalSize);
-        return this;
+        return (T) this;
     }
 
-    public KPIBuilder group(String columnId, String newColumnId, GroupStrategy strategy) {
+    public T group(String columnId, String newColumnId, GroupStrategy strategy) {
         lookupBuilder.group(columnId, newColumnId, strategy);
-        return this;
+        return (T) this;
     }
 
-    public KPIBuilder group(String columnId, String newColumnId, GroupStrategy strategy, int maxIntervals, String intervalSize) {
+    public T group(String columnId, String newColumnId, GroupStrategy strategy, int maxIntervals, String intervalSize) {
         lookupBuilder.group(columnId, newColumnId, strategy, maxIntervals, intervalSize);
-        return this;
+        return (T) this;
     }
 
-    public KPIBuilder fixed(DateIntervalType type) {
+    public T fixed(DateIntervalType type) {
         lookupBuilder.fixed(type);
-        return this;
+        return (T) this;
     }
 
-    public KPIBuilder fixed(DateIntervalType type, boolean ascending) {
+    public T fixed(DateIntervalType type, boolean ascending) {
         lookupBuilder.fixed(type, ascending);
-        return this;
+        return (T) this;
     }
 
-    public KPIBuilder firstDay(DayOfWeek dayOfWeek) {
+    public T firstDay(DayOfWeek dayOfWeek) {
         lookupBuilder.firstDay(dayOfWeek);
-        return this;
+        return (T) this;
     }
 
-    public KPIBuilder firstMonth(Month month) {
+    public T firstMonth(Month month) {
         lookupBuilder.firstMonth(month);
-        return this;
+        return (T) this;
     }
 
-    public KPIBuilder function(String columnId, ScalarFunctionType function) {
+    public T distinct(String columnId) {
+        return function(columnId, columnId, ScalarFunctionType.DISTICNT);
+    }
+
+    public T distinct(String columnId, String newColumnId) {
+        return function(columnId, newColumnId, ScalarFunctionType.DISTICNT);
+    }
+
+    public T count(String columnId) {
+        return function(columnId, columnId, ScalarFunctionType.COUNT);
+    }
+
+    public T count(String columnId, String newColumnId) {
+        return function(columnId, newColumnId, ScalarFunctionType.COUNT);
+    }
+
+    public T min(String columnId) {
+        return function(columnId, columnId, ScalarFunctionType.MIN);
+    }
+
+    public T min(String columnId, String newColumnId) {
+        return function(columnId, newColumnId, ScalarFunctionType.MIN);
+    }
+
+    public T max(String columnId) {
+        return function(columnId, columnId, ScalarFunctionType.MAX);
+    }
+
+    public T max(String columnId, String newColumnId) {
+        return function(columnId, newColumnId, ScalarFunctionType.MAX);
+    }
+
+    public T avg(String columnId) {
+        return function(columnId, columnId, ScalarFunctionType.AVERAGE);
+    }
+
+    public T avg(String columnId, String newColumnId) {
+        return function(columnId, newColumnId, ScalarFunctionType.AVERAGE);
+    }
+
+    public T sum(String columnId) {
+        return function(columnId, columnId, ScalarFunctionType.SUM);
+    }
+
+    public T sum(String columnId, String newColumnId) {
+        return function(columnId, newColumnId, ScalarFunctionType.SUM);
+    }
+
+    public T function(String columnId, ScalarFunctionType function) {
         lookupBuilder.function(columnId, function);
-        return this;
+        return (T) this;
     }
 
-    public KPIBuilder function(String columnId, String newColumnId, ScalarFunctionType function) {
+    public T function(String columnId, String newColumnId, ScalarFunctionType function) {
         lookupBuilder.function(columnId, newColumnId, function);
-        return this;
+        return (T) this;
     }
 
-    public KPIBuilder sort(String columnId, String order) {
+    public T sort(String columnId, String order) {
         lookupBuilder.sort(columnId, order);
-        return this;
+        return (T) this;
     }
 
     // DataDisplayer section
 
-    public KPIBuilder title(String title) {
+    public T title(String title) {
         displayerBuilder.title(title);
-        return this;
+        return (T) this;
     }
 
-    public KPIBuilder type(DataDisplayerType type) {
+    public T type(DataDisplayerType type) {
         displayerBuilder.type(type);
-        return this;        
+        return (T) this;        
     }
 
-    public KPIBuilder width(int width) {
-        displayerBuilder.width(width);
-        return this;
-    }
-
-    public KPIBuilder height(int height) {
-        displayerBuilder.height(height);
-        return this;
-    }
-
-    public KPIBuilder type(String type) {
+    public T type(String type) {
         displayerBuilder.type(type);
-        return this;
+        return (T) this;
     }
 
-    public KPIBuilder renderer(String renderer) {
+    public T renderer(String renderer) {
         displayerBuilder.renderer(renderer);
-        return this;
+        return (T) this;
     }
 
-    public KPIBuilder renderer(DataDisplayerRenderer renderer) {
+    public T renderer(DataDisplayerRenderer renderer) {
         displayerBuilder.renderer(renderer);
-        return this;
+        return (T) this;
     }
 
-    public KPIBuilder column(String displayName) {
+    public T column(String displayName) {
         displayerBuilder.column(displayName);
-        return this;
+        return (T) this;
     }
 
-    public KPIBuilder column(String columnId, String displayName) {
+    public T column(String columnId, String displayName) {
         displayerBuilder.column(columnId, displayName);
-        return this;
-    }
-
-    public KPIBuilder meter(long start, long warning, long critical, long end) {
-        displayerBuilder.meter(start, warning, critical, end);
-        return this;
+        return (T) this;
     }
 }

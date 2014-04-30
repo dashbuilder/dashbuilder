@@ -19,12 +19,14 @@ import javax.enterprise.context.Dependent;
 import javax.inject.Named;
 
 import com.google.gwt.core.client.JsArray;
+import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.visualization.client.Selection;
 import com.google.gwt.visualization.client.events.SelectHandler;
 import com.google.gwt.visualization.client.visualizations.GeoMap.Options;
 import com.google.gwt.visualization.client.visualizations.GeoMap;
-import org.dashbuilder.model.displayer.Chart;
+import org.dashbuilder.model.displayer.AbstractChartDisplayer;
 
 @Dependent
 @Named("google_map_viewer")
@@ -39,13 +41,23 @@ public class GoogleMapViewer extends GoogleXAxisChartViewer {
     public Widget createChart() {
         GeoMap chart = new GeoMap(createTable(), createOptions());
         chart.addSelectHandler(createSelectHandler(chart));
-        return chart;
+        HTML titleHtml = new HTML();
+        if (dataDisplayer instanceof AbstractChartDisplayer) {
+            if (((AbstractChartDisplayer) dataDisplayer).isTitleVisible()) {
+                titleHtml.setText(dataDisplayer.getTitle());
+            }
+        }
+
+        VerticalPanel verticalPanel = new VerticalPanel();
+        verticalPanel.add(titleHtml);
+        verticalPanel.add(chart);
+        return verticalPanel;
     }
 
     private Options createOptions() {
         Options options = Options.create();
-        if (dataDisplayer instanceof Chart) {
-            Chart chart = (Chart) dataDisplayer;
+        if (dataDisplayer instanceof AbstractChartDisplayer) {
+            AbstractChartDisplayer chart = (AbstractChartDisplayer) dataDisplayer;
             options.setWidth(chart.getWidth());
             options.setHeight(chart.getHeight());
         }

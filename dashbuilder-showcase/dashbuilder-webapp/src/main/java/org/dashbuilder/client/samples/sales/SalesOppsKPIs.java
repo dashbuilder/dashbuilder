@@ -23,11 +23,14 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import org.dashbuilder.client.kpi.ClientKPIManager;
+import org.dashbuilder.model.dataset.group.DateIntervalType;
+import org.dashbuilder.model.kpi.AreaChartKPIBuilder;
+import org.dashbuilder.model.kpi.BarChartKPIBuilder;
 import org.dashbuilder.model.kpi.KPI;
+import org.dashbuilder.model.kpi.PieChartKPIBuilder;
+import org.dashbuilder.model.kpi.TableKPIBuilder;
 
-import static org.dashbuilder.model.displayer.DataDisplayerType.*;
-import static org.dashbuilder.client.samples.sales.SalesOppsDisplayers.*;
-import static org.dashbuilder.client.samples.sales.SalesOppsData.*;
+import static org.dashbuilder.model.samples.SalesConstants.*;
 
 /**
  * A set of KPI definitions built on top of the the Sales Opportunities sample data set.
@@ -52,15 +55,101 @@ public class SalesOppsKPIs {
 
     @PostConstruct
     public void init() {
-        kpiList.add(kpiManager.createKPI(OPPS_BY_EMPLOYEE, byEmployee(), pipelineStatus(PIECHART)));
-        kpiList.add(kpiManager.createKPI(OPPS_EXPECTED_PIPELINE, expectedPipeline(), expectedPipeline(AREACHART)));
-        kpiList.add(kpiManager.createKPI(OPPS_BY_STATUS, byStatus(), byStatus(PIECHART)));
-        kpiList.add(kpiManager.createKPI(OPPS_BY_SALESMAN, bySalesman(), bySalesPerson(PIECHART)));
-        kpiList.add(kpiManager.createKPI(OPPS_BY_PRODUCT, byProduct(), byProduct(BARCHART)));
-        kpiList.add(kpiManager.createKPI(OPPS_BY_COUNTRY, byCountry(), byCountry(BARCHART)));
-        kpiList.add(kpiManager.createKPI(OPPS_BY_PROBABILITY, byProbability(), byProbability(BARCHART)));
-        kpiList.add(kpiManager.createKPI(OPPS_COUNTRY_SUMMARY, countrySummary(), countrySummaryTable()));
-        kpiList.add(kpiManager.createKPI(OPPS_ALL, listOfOpportunities(0, 20), opportunitiesListing()));
+
+        kpiList.add(new AreaChartKPIBuilder()
+                .uuid(OPPS_BY_EMPLOYEE)
+                .dataset(SALES_OPPS)
+                .group(PIPELINE)
+                .count(AMOUNT, "occurrences")
+                .title("Pipeline status")
+                .column("Pipeline")
+                .column("Number of opps")
+                .build());
+
+        kpiList.add(new AreaChartKPIBuilder()
+                .uuid(OPPS_EXPECTED_PIPELINE)
+                .dataset(SALES_OPPS)
+                .group(CLOSING_DATE, 24, DateIntervalType.MONTH)
+                .sum(EXPECTED_AMOUNT)
+                .title("Expected Pipeline")
+                .column("Closing date")
+                .column("Expected amount")
+                .build());
+
+        kpiList.add(new PieChartKPIBuilder()
+                    .uuid(OPPS_BY_STATUS)
+                    .dataset(SALES_OPPS)
+                    .group(STATUS)
+                    .sum(AMOUNT)
+                    .title("By Status")
+                    .column("Status")
+                    .column("Total amount")
+                    .build());
+
+        kpiList.add(new PieChartKPIBuilder()
+                    .uuid(OPPS_BY_SALESMAN)
+                    .dataset(SALES_OPPS)
+                    .group(SALES_PERSON)
+                    .sum(AMOUNT)
+                    .title("By Sales Person")
+                    .column("Sales person")
+                    .column("Total amount")
+                    .build());
+
+        kpiList.add(new BarChartKPIBuilder()
+                    .uuid(OPPS_BY_PRODUCT)
+                    .dataset(SALES_OPPS)
+                    .group(PRODUCT)
+                    .sum(AMOUNT)
+                    .title("By Product")
+                    .column("Product")
+                    .column("Total amount")
+                    .vertical()
+                    .build());
+
+        kpiList.add(new BarChartKPIBuilder()
+                    .uuid(OPPS_BY_COUNTRY)
+                    .dataset(SALES_OPPS)
+                    .group(COUNTRY)
+                    .sum(AMOUNT)
+                    .title("By Country")
+                    .vertical()
+                    .column("Country")
+                    .column("Total amount")
+                    .build());
+
+        kpiList.add(new BarChartKPIBuilder()
+                    .uuid(OPPS_BY_PROBABILITY)
+                    .dataset(SALES_OPPS)
+                    .group(PROBABILITY)
+                    .sum(AMOUNT)
+                    .title("By Probability")
+                    .column("Probability")
+                    .column("Total amount")
+                    .vertical()
+                    .build());
+
+        kpiList.add(new TableKPIBuilder()
+                    .uuid(OPPS_COUNTRY_SUMMARY)
+                    .dataset(SALES_OPPS)
+                    .group(COUNTRY, "Country")
+                    .count(AMOUNT, "#Opps")
+                    .min(AMOUNT, "Min")
+                    .max(AMOUNT, "Max")
+                    .avg(AMOUNT, "Average")
+                    .sum(AMOUNT, "Total")
+                    .group(PROBABILITY)
+                    .sum(AMOUNT)
+                    .title("Country Summary")
+                    .build());
+
+        kpiList.add(new TableKPIBuilder()
+                    .uuid(OPPS_ALL)
+                    .dataset(SALES_OPPS)
+                    .rowOffset(0)
+                    .rowNumber(20)
+                    .title("List of Opportunities")
+                    .build());
 
         for (KPI kpi : kpiList) {
             kpiManager.addKPI(kpi);

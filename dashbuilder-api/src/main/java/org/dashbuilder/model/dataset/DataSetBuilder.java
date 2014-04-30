@@ -48,6 +48,21 @@ public class DataSetBuilder {
 
     protected DataSetImpl dataSet = new DataSetImpl();
 
+    public DataSetBuilder label(String columnId) {
+        dataSet.addColumn(columnId, ColumnType.LABEL);
+        return this;
+    }
+
+    public DataSetBuilder number(String columnId) {
+        dataSet.addColumn(columnId, ColumnType.NUMBER);
+        return this;
+    }
+
+    public DataSetBuilder date(String columnId) {
+        dataSet.addColumn(columnId, ColumnType.DATE);
+        return this;
+    }
+
     public DataSetBuilder column(String columnId, ColumnType type) {
         dataSet.addColumn(columnId, type);
         return this;

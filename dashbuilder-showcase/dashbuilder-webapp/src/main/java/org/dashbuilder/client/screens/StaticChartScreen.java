@@ -26,6 +26,7 @@ import org.dashbuilder.model.dataset.ColumnType;
 import org.dashbuilder.model.dataset.DataSetBuilder;
 import org.dashbuilder.model.kpi.KPI;
 import org.dashbuilder.model.kpi.KPIBuilder;
+import org.dashbuilder.model.kpi.LineChartKPIBuilder;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
 import org.uberfire.client.annotations.WorkbenchPartView;
 import org.uberfire.client.annotations.WorkbenchScreen;
@@ -39,19 +40,18 @@ import static org.dashbuilder.model.displayer.DataDisplayerType.LINECHART;
 public class StaticChartScreen {
 
     public KPI createKPI() {
-        return new KPIBuilder()
+        return new LineChartKPIBuilder()
             .uuid("static_chart_sample")
             .title("Sales Evolution Per Year")
-            .type(LINECHART)
             .column("Month")
             .column("Sales in 2013")
             .column("Sales in 2014")
             .column("Sales in 2015")
             .dataset(new DataSetBuilder()
-                .column("month", ColumnType.LABEL)
-                .column("2012", ColumnType.NUMBER)
-                .column("2013", ColumnType.NUMBER)
-                .column("2014", ColumnType.NUMBER)
+                .label("month")
+                .number("2012")
+                .number("2013")
+                .number("2014")
                 .row(JANUARY, 1000d, 2000d, 3000d)
                 .row(FEBRUARY, 1400d, 2300d, 2000d)
                 .row(MARCH, 1300d, 2000d, 1400d)

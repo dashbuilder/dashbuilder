@@ -20,8 +20,11 @@ import java.util.List;
 public interface DataDisplayer {
 
     String getTitle();
+    void setTitle(String title);
     DataDisplayerType getType();
+    void setType(DataDisplayerType type);
     DataDisplayerRenderer getRenderer();
+    void setRenderer(DataDisplayerRenderer renderer);
     List<DataDisplayerColumn> getColumnList();
 
 /*

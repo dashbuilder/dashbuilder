@@ -23,8 +23,8 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.visualization.client.visualizations.Gauge;
 import com.google.gwt.visualization.client.visualizations.Gauge.Options;
-import org.dashbuilder.model.displayer.Chart;
-import org.dashbuilder.model.displayer.MeterChart;
+import org.dashbuilder.model.displayer.AbstractChartDisplayer;
+import org.dashbuilder.model.displayer.MeterChartDisplayer;
 
 @Dependent
 @Named("google_meterchart_viewer")
@@ -37,8 +37,13 @@ public class GoogleMeterChartViewer extends GoogleChartViewer {
 
     @Override
     public Widget createChart() {
-        HTML titleHtml = new HTML(dataDisplayer.getTitle());
         Gauge chart = new Gauge(createTable(), createOptions());
+        HTML titleHtml = new HTML();
+        if (dataDisplayer instanceof AbstractChartDisplayer) {
+            if (((AbstractChartDisplayer) dataDisplayer).isTitleVisible()) {
+                titleHtml.setText(dataDisplayer.getTitle());
+            }
+        }
 
         VerticalPanel verticalPanel = new VerticalPanel();
         verticalPanel.add(titleHtml);
@@ -48,14 +53,14 @@ public class GoogleMeterChartViewer extends GoogleChartViewer {
 
     private Options createOptions() {
         Options options = Options.create();
-        if (dataDisplayer instanceof Chart) {
-            Chart chart = (Chart) dataDisplayer;
+        if (dataDisplayer instanceof AbstractChartDisplayer) {
+            AbstractChartDisplayer chart = (AbstractChartDisplayer) dataDisplayer;
             options.setWidth(chart.getWidth());
             options.setHeight(chart.getHeight());
             options.setSize(chart.getWidth(), chart.getHeight());
         }
-        if (dataDisplayer instanceof MeterChart) {
-            MeterChart mc = (MeterChart) dataDisplayer;
+        if (dataDisplayer instanceof MeterChartDisplayer) {
+            MeterChartDisplayer mc = (MeterChartDisplayer) dataDisplayer;
             options.setGaugeRange((int) mc.getMeterStart(), (int) mc.getMeterEnd());
             options.setGreenRange((int) mc.getMeterStart(), (int) mc.getMeterWarning());
             options.setYellowRange((int) mc.getMeterWarning(), (int) mc.getMeterCritical());

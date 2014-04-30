@@ -16,86 +16,55 @@
 package org.dashbuilder.model.displayer;
 
 import org.dashbuilder.model.displayer.impl.DataDisplayerColumnImpl;
-import org.dashbuilder.model.displayer.impl.DataDisplayerImpl;
 import org.jboss.errai.common.client.api.annotations.Portable;
 
 /**
- * It allows for the building of DataSetLookup instances in a friendly manner.
- *
- * <pre>
-    DataDisplayer displayer = new DataDisplayerBuilder()
-     .title("Opportunities by Pipeline")
-     .type("piechart")
-     .renderer("google")
-     .group("pipeline", "Pipeline")
-     .function("count", "Number of opportunities")
-     .build();
- </pre>
+ * Base class for DataDisplayerBuilder implementations.
  */
-@Portable
-public class DataDisplayerBuilder {
+public abstract class DataDisplayerBuilder<T extends DataDisplayerBuilder<?>> {
 
-    private DataDisplayerImpl dataDisplayer = new DataDisplayerImpl();
+    protected DataDisplayer dataDisplayer = createDisplayer();
 
-    public DataDisplayerBuilder() {
-    }
+    protected abstract DataDisplayer createDisplayer();
 
-    public DataDisplayerBuilder title(String title) {
+    public T title(String title) {
         dataDisplayer.setTitle(title);
-        return this;
+        return (T) this;
     }
 
-    public DataDisplayerBuilder type(DataDisplayerType type) {
+    public T type(DataDisplayerType type) {
         dataDisplayer.setType(type);
-        return this;
+        return (T) this;
     }
 
-    public DataDisplayerBuilder width(int width) {
-        dataDisplayer.setWidth(width);
-        return this;
-    }
-
-    public DataDisplayerBuilder height(int height) {
-        dataDisplayer.setHeight(height);
-        return this;
-    }
-
-    public DataDisplayerBuilder type(String type) {
+    public T type(String type) {
         dataDisplayer.setType(DataDisplayerType.getByName(type));
-        return this;
+        return (T) this;
     }
 
-    public DataDisplayerBuilder renderer(String renderer) {
+    public T renderer(String renderer) {
         dataDisplayer.setRenderer(DataDisplayerRenderer.getByName(renderer));
-        return this;
+        return (T) this;
     }
 
-    public DataDisplayerBuilder renderer(DataDisplayerRenderer renderer) {
+    public T renderer(DataDisplayerRenderer renderer) {
         dataDisplayer.setRenderer(renderer);
-        return this;
+        return (T) this;
     }
 
-    public DataDisplayerBuilder column(String displayName) {
+    public T column(String displayName) {
         return column(null, displayName);
     }
 
-    public DataDisplayerBuilder column(String columnId, String displayName) {
+    public T column(String columnId, String displayName) {
         dataDisplayer.getColumnList().add(new DataDisplayerColumnImpl(columnId, displayName));
-        return this;
-    }
-
-    public DataDisplayerBuilder meter(long start, long warning, long critical, long end) {
-        dataDisplayer.setMeterStart(start);
-        dataDisplayer.setMeterWarning(warning);
-        dataDisplayer.setMeterCritical(critical);
-        dataDisplayer.setMeterEnd(end);
-        return this;
+        return (T) this;
     }
 
     public DataDisplayer build() {
         if (dataDisplayer.getRenderer() == null) {
             dataDisplayer.setRenderer(DataDisplayerRenderer.DEFAULT);
         }
-        return dataDisplayer;
+        return (DataDisplayer) dataDisplayer;
     }
 }
