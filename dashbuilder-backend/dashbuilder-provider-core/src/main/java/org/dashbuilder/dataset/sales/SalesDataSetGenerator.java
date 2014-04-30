@@ -51,9 +51,9 @@ public class SalesDataSetGenerator {
     @Inject
     protected DataSetManager dataSetManager;
 
-    protected int opportunitiesPerMonth = 30;
-    protected int startYear = Calendar.getInstance().get(Calendar.YEAR) - 2;
-    protected int endYear = Calendar.getInstance().get(Calendar.YEAR) + 2;
+    protected int opportunitiesPerMonth = 5;
+    protected int startYear = Calendar.getInstance().get(Calendar.YEAR) - 1;
+    protected int endYear = Calendar.getInstance().get(Calendar.YEAR) + 3;
 
     @PostConstruct
     private void generateDataSet() {
@@ -129,10 +129,6 @@ public class SalesDataSetGenerator {
     private static double MIN_AMOUNT = 8000;
 
     private static double AVG_CLOSING_DAYS = 90;
-
-    private static String CSV_SEPARATOR = ";";
-
-    private static int START_ID_VALUES = 10000;
 
     private NumberFormat numberFormat = DecimalFormat.getInstance(Locale.US);
 

@@ -81,7 +81,11 @@ public class DataSetLookupBuilder {
     }
 
     public DataSetLookupBuilder group(String columnId, GroupStrategy strategy) {
-        return group(columnId, columnId, strategy, 15, null);
+        return group(columnId, columnId, strategy, -1, null);
+    }
+
+    public DataSetLookupBuilder group(String columnId, DateIntervalType type) {
+        return group(columnId, -1, type.toString());
     }
 
     public DataSetLookupBuilder group(String columnId, int maxIntervals, DateIntervalType type) {

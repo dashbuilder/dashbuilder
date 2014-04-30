@@ -84,6 +84,14 @@ public class DataDisplayerBuilder {
         return this;
     }
 
+    public DataDisplayerBuilder meter(long start, long warning, long critical, long end) {
+        dataDisplayer.setMeterStart(start);
+        dataDisplayer.setMeterWarning(warning);
+        dataDisplayer.setMeterCritical(critical);
+        dataDisplayer.setMeterEnd(end);
+        return this;
+    }
+
     public DataDisplayer build() {
         if (dataDisplayer.getRenderer() == null) {
             dataDisplayer.setRenderer(DataDisplayerRenderer.DEFAULT);

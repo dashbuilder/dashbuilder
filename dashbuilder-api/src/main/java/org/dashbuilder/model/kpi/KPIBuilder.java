@@ -109,6 +109,11 @@ public class KPIBuilder {
         return this;
     }
 
+    public KPIBuilder group(String columnId, DateIntervalType type) {
+        lookupBuilder.group(columnId, type);
+        return this;
+    }
+
     public KPIBuilder group(String columnId, int maxIntervals, DateIntervalType type) {
         lookupBuilder.group(columnId, maxIntervals, type);
         return this;
@@ -208,6 +213,11 @@ public class KPIBuilder {
 
     public KPIBuilder column(String columnId, String displayName) {
         displayerBuilder.column(columnId, displayName);
+        return this;
+    }
+
+    public KPIBuilder meter(long start, long warning, long critical, long end) {
+        displayerBuilder.meter(start, warning, critical, end);
         return this;
     }
 }

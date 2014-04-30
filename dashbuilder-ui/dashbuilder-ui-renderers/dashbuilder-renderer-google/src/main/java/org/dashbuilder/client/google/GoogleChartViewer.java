@@ -21,6 +21,7 @@ import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.visualization.client.AbstractDataTable;
@@ -36,6 +37,7 @@ public abstract class GoogleChartViewer extends DataDisplayerViewer {
     protected boolean isDrawn = false;
     protected boolean isApiReady = false;
     protected FlowPanel panel = new FlowPanel();
+    protected NumberFormat numberFormat = NumberFormat.getFormat("#0.00");
 
     @PostConstruct
     public void init() {
@@ -126,8 +128,8 @@ public abstract class GoogleChartViewer extends DataDisplayerViewer {
             gTable.setValue(row, column, (Date) value);
         }
         else if (ColumnType.NUMBER.equals(type)) {
-            // TODO: format decimal number
-            gTable.setValue(row, column, ((Double) value).doubleValue());
+            String valueStr = numberFormat.format((Number) value);
+            gTable.setValue(row, column, Double.parseDouble(valueStr));
         }
         else {
             gTable.setValue(row, column, value.toString());

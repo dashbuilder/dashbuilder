@@ -23,10 +23,11 @@ import org.dashbuilder.model.displayer.DataDisplayer;
 import org.dashbuilder.model.displayer.DataDisplayerColumn;
 import org.dashbuilder.model.displayer.DataDisplayerRenderer;
 import org.dashbuilder.model.displayer.DataDisplayerType;
+import org.dashbuilder.model.displayer.MeterChart;
 import org.jboss.errai.common.client.api.annotations.Portable;
 
 @Portable
-public class DataDisplayerImpl implements DataDisplayer, Chart {
+public class DataDisplayerImpl implements DataDisplayer, Chart, MeterChart {
 
     // DataDisplayer interface
 
@@ -34,6 +35,10 @@ public class DataDisplayerImpl implements DataDisplayer, Chart {
     protected DataDisplayerType type;
     protected DataDisplayerRenderer renderer;
     protected List<DataDisplayerColumn> columnList = new ArrayList<DataDisplayerColumn>();
+    protected long meterStart;
+    protected long meterWarning;
+    protected long meterCritical;
+    protected long meterEnd;
 
     public String getTitle() {
         return title;
@@ -86,5 +91,39 @@ public class DataDisplayerImpl implements DataDisplayer, Chart {
 
     public void setHeight(int height) {
         this.height = height;
+    }
+
+    // MeterChart interface
+
+    public long getMeterStart() {
+        return meterStart;
+    }
+
+    public void setMeterStart(long meterStart) {
+        this.meterStart = meterStart;
+    }
+
+    public long getMeterWarning() {
+        return meterWarning;
+    }
+
+    public void setMeterWarning(long meterWarning) {
+        this.meterWarning = meterWarning;
+    }
+
+    public long getMeterCritical() {
+        return meterCritical;
+    }
+
+    public void setMeterCritical(long meterCritical) {
+        this.meterCritical = meterCritical;
+    }
+
+    public long getMeterEnd() {
+        return meterEnd;
+    }
+
+    public void setMeterEnd(long meterEnd) {
+        this.meterEnd = meterEnd;
     }
 }

@@ -27,8 +27,8 @@ import org.dashbuilder.model.dataset.ColumnType;
 import org.dashbuilder.model.dataset.DataSetBuilder;
 import org.dashbuilder.model.kpi.KPIBuilder;
 
+import static org.dashbuilder.model.dataset.group.DateIntervalType.*;
 import static org.dashbuilder.model.date.Month.*;
-import static org.dashbuilder.model.dataset.group.DateIntervalType.MONTH;
 import static org.dashbuilder.model.dataset.group.ScalarFunctionType.*;
 import static org.dashbuilder.model.displayer.DataDisplayerType.*;
 import static org.dashbuilder.model.samples.SalesConstants.*;
@@ -54,6 +54,7 @@ public class GalleryTree {
         initLineChartCategory();
         initAreaChartCategory();
         initTableReportCategory();
+        initMeterChartCategory();
         initMapChartCategory();
     }
 
@@ -187,6 +188,54 @@ public class GalleryTree {
                 .column("Expected amount per month")
                 .build()
         ));
+    }
+
+    private void initMeterChartCategory() {
+        GalleryNodeList nodeList = new GalleryNodeList("Meter Chart");
+        mainNodes.add(nodeList);
+
+        nodeList.add(new GalleryNodeKPI("Single",
+                new KPIBuilder()
+                .title("Sales goal")
+                .dataset(SALES_OPPS)
+                .function(AMOUNT, "Total amount", SUM)
+                .type(METERCHART).width(100).height(200)
+                .meter(0, 5000000, 8000000, 10000000)
+                .column("Total amount")
+                .build()
+        ));
+        nodeList.add(new GalleryNodeKPI("Multiple",
+                new KPIBuilder()
+                .title("Expected amount per year")
+                .dataset(SALES_OPPS)
+                .group(CREATION_DATE, YEAR)
+                .function(AMOUNT, SUM)
+                .type(METERCHART).width(400).height(200)
+                .meter(0, 1000000, 3000000, 5000000)
+                .column("Year")
+                .column("Amount")
+                .build()
+        ));
+        nodeList.add(new GalleryNodeKPI("Multiple (static)",
+                new KPIBuilder()
+                .title("Heart rate")
+                .type(METERCHART).width(500).height(200)
+                .meter(30, 160, 190, 220)
+                .column("Person")
+                .column("Heart rate")
+                .dataset(new DataSetBuilder()
+                        .column("person", ColumnType.LABEL)
+                        .column("heartRate", ColumnType.NUMBER)
+                        .row("David", 52)
+                        .row("Roger", 120)
+                        .row("Mark", 74)
+                        .row("Michael", 78)
+                        .row("Kris", 74)
+                        .build())
+                .build()
+        ));
+
+        // nodeList.add(new GalleryNodeKPI("Multiple (date)", ...));
     }
 
     private void initMapChartCategory() {
