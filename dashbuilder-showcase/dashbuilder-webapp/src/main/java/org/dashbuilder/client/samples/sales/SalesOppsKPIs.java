@@ -56,7 +56,7 @@ public class SalesOppsKPIs {
     @PostConstruct
     public void init() {
 
-        kpiList.add(new AreaChartKPIBuilder()
+        kpiList.add(new PieChartKPIBuilder()
                 .uuid(OPPS_BY_EMPLOYEE)
                 .dataset(SALES_OPPS)
                 .group(PIPELINE)
