@@ -27,6 +27,7 @@ import com.google.gwt.visualization.client.events.SelectHandler;
 import com.google.gwt.visualization.client.visualizations.Table;
 import com.google.gwt.visualization.client.visualizations.Table.Options;
 import org.dashbuilder.model.displayer.AbstractChartDisplayer;
+import org.dashbuilder.model.displayer.TableDisplayer;
 
 @Dependent
 @Named("google_table_viewer")
@@ -41,11 +42,10 @@ public class GoogleTableViewer extends GoogleChartViewer {
     public Widget createChart() {
         Table table = new Table(createTable(), createOptions());
         table.addSelectHandler(createSelectHandler(table));
+
         HTML titleHtml = new HTML();
-        if (dataDisplayer instanceof AbstractChartDisplayer) {
-            if (((AbstractChartDisplayer) dataDisplayer).isTitleVisible()) {
-                titleHtml.setText(dataDisplayer.getTitle());
-            }
+        if (dataDisplayer.isTitleVisible()) {
+            titleHtml.setText(dataDisplayer.getTitle());
         }
 
         VerticalPanel verticalPanel = new VerticalPanel();

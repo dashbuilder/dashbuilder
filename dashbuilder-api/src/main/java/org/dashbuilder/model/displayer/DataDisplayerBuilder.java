@@ -32,6 +32,11 @@ public abstract class DataDisplayerBuilder<T extends DataDisplayerBuilder<?>> {
         return (T) this;
     }
 
+    public T titleVisible(boolean visible) {
+        dataDisplayer.setTitleVisible(visible);
+        return (T) this;
+    }
+
     public T type(DataDisplayerType type) {
         dataDisplayer.setType(type);
         return (T) this;

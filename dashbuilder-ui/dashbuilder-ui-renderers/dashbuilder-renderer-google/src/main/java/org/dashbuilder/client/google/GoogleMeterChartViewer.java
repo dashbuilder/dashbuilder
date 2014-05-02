@@ -38,11 +38,10 @@ public class GoogleMeterChartViewer extends GoogleChartViewer {
     @Override
     public Widget createChart() {
         Gauge chart = new Gauge(createTable(), createOptions());
+
         HTML titleHtml = new HTML();
-        if (dataDisplayer instanceof AbstractChartDisplayer) {
-            if (((AbstractChartDisplayer) dataDisplayer).isTitleVisible()) {
-                titleHtml.setText(dataDisplayer.getTitle());
-            }
+        if (dataDisplayer.isTitleVisible()) {
+            titleHtml.setText(dataDisplayer.getTitle());
         }
 
         VerticalPanel verticalPanel = new VerticalPanel();

@@ -27,6 +27,7 @@ import com.google.gwt.visualization.client.events.SelectHandler;
 import com.google.gwt.visualization.client.visualizations.LineChart.Options;
 import com.google.gwt.visualization.client.visualizations.LineChart;
 import org.dashbuilder.model.displayer.AbstractChartDisplayer;
+import org.dashbuilder.model.displayer.XAxisChartDisplayer;
 
 @Dependent
 @Named("google_linechart_viewer")
@@ -41,11 +42,10 @@ public class GoogleLineChartViewer extends GoogleXAxisChartViewer {
     public Widget createChart() {
         LineChart chart = new LineChart(createTable(), createOptions());
         chart.addSelectHandler(createSelectHandler(chart));
+
         HTML titleHtml = new HTML();
-        if (dataDisplayer instanceof AbstractChartDisplayer) {
-            if (((AbstractChartDisplayer) dataDisplayer).isTitleVisible()) {
-                titleHtml.setText(dataDisplayer.getTitle());
-            }
+        if (dataDisplayer.isTitleVisible()) {
+            titleHtml.setText(dataDisplayer.getTitle());
         }
 
         VerticalPanel verticalPanel = new VerticalPanel();

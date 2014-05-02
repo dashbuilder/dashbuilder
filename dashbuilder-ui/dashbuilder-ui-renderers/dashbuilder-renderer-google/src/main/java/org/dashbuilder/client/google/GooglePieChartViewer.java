@@ -41,11 +41,10 @@ public class GooglePieChartViewer extends GoogleXAxisChartViewer {
     public Widget createChart() {
         PieChart chart = new PieChart(createTable(), createOptions());
         chart.addSelectHandler(createSelectHandler(chart));
+
         HTML titleHtml = new HTML();
-        if (dataDisplayer instanceof AbstractChartDisplayer) {
-            if (((AbstractChartDisplayer) dataDisplayer).isTitleVisible()) {
-                titleHtml.setText(dataDisplayer.getTitle());
-            }
+        if (dataDisplayer.isTitleVisible()) {
+            titleHtml.setText(dataDisplayer.getTitle());
         }
 
         VerticalPanel verticalPanel = new VerticalPanel();

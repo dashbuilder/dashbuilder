@@ -21,6 +21,8 @@ public interface DataDisplayer {
 
     String getTitle();
     void setTitle(String title);
+    boolean isTitleVisible();
+    void setTitleVisible(boolean visible);
     DataDisplayerType getType();
     void setType(DataDisplayerType type);
     DataDisplayerRenderer getRenderer();

@@ -62,6 +62,7 @@ public class SalesOppsKPIs {
                 .group(PIPELINE)
                 .count(AMOUNT, "occurrences")
                 .title("Pipeline status")
+                .titleVisible(false)
                 .column("Pipeline")
                 .column("Number of opps")
                 .build());
@@ -72,6 +73,7 @@ public class SalesOppsKPIs {
                 .group(CLOSING_DATE, 24, DateIntervalType.MONTH)
                 .sum(EXPECTED_AMOUNT)
                 .title("Expected Pipeline")
+                .titleVisible(false)
                 .column("Closing date")
                 .column("Expected amount")
                 .build());
@@ -82,6 +84,7 @@ public class SalesOppsKPIs {
                     .group(STATUS)
                     .sum(AMOUNT)
                     .title("By Status")
+                    .titleVisible(false)
                     .column("Status")
                     .column("Total amount")
                     .build());
@@ -92,6 +95,7 @@ public class SalesOppsKPIs {
                     .group(SALES_PERSON)
                     .sum(AMOUNT)
                     .title("By Sales Person")
+                    .titleVisible(false)
                     .column("Sales person")
                     .column("Total amount")
                     .build());
@@ -102,6 +106,7 @@ public class SalesOppsKPIs {
                     .group(PRODUCT)
                     .sum(AMOUNT)
                     .title("By Product")
+                    .titleVisible(false)
                     .column("Product")
                     .column("Total amount")
                     .vertical()
@@ -113,6 +118,7 @@ public class SalesOppsKPIs {
                     .group(COUNTRY)
                     .sum(AMOUNT)
                     .title("By Country")
+                    .titleVisible(false)
                     .vertical()
                     .column("Country")
                     .column("Total amount")
@@ -124,6 +130,7 @@ public class SalesOppsKPIs {
                     .group(PROBABILITY)
                     .sum(AMOUNT)
                     .title("By Probability")
+                    .titleVisible(false)
                     .column("Probability")
                     .column("Total amount")
                     .vertical()
@@ -141,6 +148,7 @@ public class SalesOppsKPIs {
                     .group(PROBABILITY)
                     .sum(AMOUNT)
                     .title("Country Summary")
+                    .titleVisible(false)
                     .build());
 
         kpiList.add(new TableKPIBuilder()
@@ -149,6 +157,7 @@ public class SalesOppsKPIs {
                     .rowOffset(0)
                     .rowNumber(20)
                     .title("List of Opportunities")
+                    .titleVisible(false)
                     .build());
 
         for (KPI kpi : kpiList) {

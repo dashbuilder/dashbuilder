@@ -27,6 +27,7 @@ import com.google.gwt.visualization.client.events.SelectHandler;
 import com.google.gwt.visualization.client.visualizations.GeoMap.Options;
 import com.google.gwt.visualization.client.visualizations.GeoMap;
 import org.dashbuilder.model.displayer.AbstractChartDisplayer;
+import org.dashbuilder.model.displayer.MapChartDisplayer;
 
 @Dependent
 @Named("google_map_viewer")
@@ -41,11 +42,10 @@ public class GoogleMapViewer extends GoogleXAxisChartViewer {
     public Widget createChart() {
         GeoMap chart = new GeoMap(createTable(), createOptions());
         chart.addSelectHandler(createSelectHandler(chart));
+
         HTML titleHtml = new HTML();
-        if (dataDisplayer instanceof AbstractChartDisplayer) {
-            if (((AbstractChartDisplayer) dataDisplayer).isTitleVisible()) {
-                titleHtml.setText(dataDisplayer.getTitle());
-            }
+        if (dataDisplayer.isTitleVisible()) {
+            titleHtml.setText(dataDisplayer.getTitle());
         }
 
         VerticalPanel verticalPanel = new VerticalPanel();

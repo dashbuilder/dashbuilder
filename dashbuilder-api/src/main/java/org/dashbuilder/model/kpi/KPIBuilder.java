@@ -27,7 +27,6 @@ import org.dashbuilder.model.displayer.DataDisplayerBuilder;
 import org.dashbuilder.model.displayer.DataDisplayerRenderer;
 import org.dashbuilder.model.displayer.DataDisplayerType;
 import org.dashbuilder.model.kpi.impl.KPIImpl;
-import org.jboss.errai.common.client.api.annotations.Portable;
 
 /**
  * Base class for building KPI instances in a friendly manner.
@@ -209,6 +208,11 @@ public abstract class KPIBuilder<T extends KPIBuilder<?>> {
 
     public T title(String title) {
         displayerBuilder.title(title);
+        return (T) this;
+    }
+
+    public T titleVisible(boolean visible) {
+        displayerBuilder.titleVisible(visible);
         return (T) this;
     }
 
