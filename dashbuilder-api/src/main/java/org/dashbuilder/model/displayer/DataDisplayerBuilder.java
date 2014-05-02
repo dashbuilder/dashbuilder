@@ -70,6 +70,6 @@ public abstract class DataDisplayerBuilder<T extends DataDisplayerBuilder<?>> {
         if (dataDisplayer.getRenderer() == null) {
             dataDisplayer.setRenderer(DataDisplayerRenderer.DEFAULT);
         }
-        return (DataDisplayer) dataDisplayer;
+        return dataDisplayer;
     }
 }

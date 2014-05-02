@@ -17,7 +17,7 @@ package org.dashbuilder.model.displayer;
 
 public class MeterChartBuilder extends AbstractChartBuilder<MeterChartBuilder> {
 
-    protected AbstractDataDisplayer createDisplayer() {
+    protected DataDisplayer createDisplayer() {
         return new MeterChartDisplayer();
     }
 

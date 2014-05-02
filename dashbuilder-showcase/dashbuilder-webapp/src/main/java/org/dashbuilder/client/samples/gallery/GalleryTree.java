@@ -83,14 +83,14 @@ public class GalleryTree {
         ));
         nodeList.add(new GalleryNodeKPI("Vertical (3D)",
                 new BarChartKPIBuilder()
-                        .dataset(SALES_OPPS)
-                        .group(PRODUCT)
-                        .sum(AMOUNT)
-                        .title("By Product")
-                        .column("Product")
-                        .column("Total amount")
-                        .vertical().set3d(true)
-                        .build()
+                .dataset(SALES_OPPS)
+                .group(PRODUCT)
+                .sum(AMOUNT)
+                .title("By Product")
+                .column("Product")
+                .column("Total amount")
+                .vertical().set3d(true)
+                .build()
         ));
         nodeList.add(new GalleryNodeKPI("Multiple",
                 new BarChartKPIBuilder()
@@ -237,7 +237,7 @@ public class GalleryTree {
                 .dataset(SALES_OPPS)
                 .group(CREATION_DATE, YEAR)
                 .sum(AMOUNT)
-                .width(400).height(200)
+                .width(500).height(200)
                 .meter(0, 1000000, 3000000, 5000000)
                 .column("Year")
                 .column("Amount")

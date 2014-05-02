@@ -17,7 +17,7 @@ package org.dashbuilder.model.displayer;
 
 public class BarChartBuilder extends AbstractChartBuilder<BarChartBuilder> {
 
-    protected AbstractDataDisplayer createDisplayer() {
+    protected DataDisplayer createDisplayer() {
         return new BarChartDisplayer();
     }
 
