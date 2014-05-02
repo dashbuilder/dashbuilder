@@ -18,19 +18,19 @@ package org.dashbuilder.model.dataset.group;
 import org.jboss.errai.common.client.api.annotations.Portable;
 
 /**
- * A data range definition.
+ * A function definition.
  */
 @Portable
-public class FunctionColumn {
+public class GroupFunction {
 
     protected String sourceId;
     protected String columnId;
     protected ScalarFunctionType function;
 
-    public FunctionColumn() {
+    public GroupFunction() {
     }
 
-    public FunctionColumn(String sourceId, String columnId, ScalarFunctionType function) {
+    public GroupFunction(String sourceId, String columnId, ScalarFunctionType function) {
         this.sourceId = sourceId;
         this.columnId = columnId;
         this.function = function;
@@ -62,7 +62,7 @@ public class FunctionColumn {
 
     public boolean equals(Object obj) {
         try {
-            FunctionColumn other = (FunctionColumn) obj;
+            GroupFunction other = (GroupFunction) obj;
             if (sourceId != null && !sourceId.equals(other.sourceId)) return false;
             if (columnId != null && !columnId.equals(other.columnId)) return false;
             if (function != null && !function.equals(other.function)) return false;

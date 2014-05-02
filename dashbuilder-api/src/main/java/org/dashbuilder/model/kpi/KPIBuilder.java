@@ -142,60 +142,57 @@ public abstract class KPIBuilder<T extends KPIBuilder<?>> {
     }
 
     public T distinct(String columnId) {
-        return function(columnId, columnId, ScalarFunctionType.DISTICNT);
-    }
-
-    public T distinct(String columnId, String newColumnId) {
-        return function(columnId, newColumnId, ScalarFunctionType.DISTICNT);
-    }
-
-    public T count(String columnId) {
-        return function(columnId, columnId, ScalarFunctionType.COUNT);
-    }
-
-    public T count(String columnId, String newColumnId) {
-        return function(columnId, newColumnId, ScalarFunctionType.COUNT);
-    }
-
-    public T min(String columnId) {
-        return function(columnId, columnId, ScalarFunctionType.MIN);
-    }
-
-    public T min(String columnId, String newColumnId) {
-        return function(columnId, newColumnId, ScalarFunctionType.MIN);
-    }
-
-    public T max(String columnId) {
-        return function(columnId, columnId, ScalarFunctionType.MAX);
-    }
-
-    public T max(String columnId, String newColumnId) {
-        return function(columnId, newColumnId, ScalarFunctionType.MAX);
-    }
-
-    public T avg(String columnId) {
-        return function(columnId, columnId, ScalarFunctionType.AVERAGE);
-    }
-
-    public T avg(String columnId, String newColumnId) {
-        return function(columnId, newColumnId, ScalarFunctionType.AVERAGE);
-    }
-
-    public T sum(String columnId) {
-        return function(columnId, columnId, ScalarFunctionType.SUM);
-    }
-
-    public T sum(String columnId, String newColumnId) {
-        return function(columnId, newColumnId, ScalarFunctionType.SUM);
-    }
-
-    public T function(String columnId, ScalarFunctionType function) {
-        lookupBuilder.function(columnId, function);
+        lookupBuilder.distinct(columnId);
         return (T) this;
     }
 
-    public T function(String columnId, String newColumnId, ScalarFunctionType function) {
-        lookupBuilder.function(columnId, newColumnId, function);
+    public T distinct(String columnId, String newColumnId) {
+        lookupBuilder.distinct(columnId, newColumnId);
+        return (T) this;
+    }
+
+    public T count(String newColumnId) {
+        lookupBuilder.count(newColumnId);
+        return (T) this;
+    }
+
+    public T min(String columnId) {
+        lookupBuilder.min(columnId);
+        return (T) this;
+    }
+
+    public T min(String columnId, String newColumnId) {
+        lookupBuilder.min(columnId, newColumnId);
+        return (T) this;
+    }
+
+    public T max(String columnId) {
+        lookupBuilder.max(columnId);
+        return (T) this;
+    }
+
+    public T max(String columnId, String newColumnId) {
+        lookupBuilder.max(columnId, newColumnId);
+        return (T) this;
+    }
+
+    public T avg(String columnId) {
+        lookupBuilder.avg(columnId);
+        return (T) this;
+    }
+
+    public T avg(String columnId, String newColumnId) {
+        lookupBuilder.avg(columnId, newColumnId);
+        return (T) this;
+    }
+
+    public T sum(String columnId) {
+        lookupBuilder.sum(columnId);
+        return (T) this;
+    }
+
+    public T sum(String columnId, String newColumnId) {
+        lookupBuilder.sum(columnId, newColumnId);
         return (T) this;
     }
 

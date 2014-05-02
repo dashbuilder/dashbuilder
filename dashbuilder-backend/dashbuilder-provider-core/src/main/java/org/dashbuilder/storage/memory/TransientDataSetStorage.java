@@ -32,7 +32,7 @@ import org.dashbuilder.model.dataset.DataColumn;
 import org.dashbuilder.model.dataset.DataSetOpType;
 import org.dashbuilder.model.dataset.DataSetStats;
 import org.dashbuilder.model.dataset.group.GroupColumn;
-import org.dashbuilder.model.dataset.group.FunctionColumn;
+import org.dashbuilder.model.dataset.group.GroupFunction;
 import org.dashbuilder.model.dataset.impl.DataSetImpl;
 import org.dashbuilder.storage.memory.group.Interval;
 import org.dashbuilder.storage.memory.group.IntervalBuilder;
@@ -148,7 +148,7 @@ public class TransientDataSetStorage implements DataSetStorage {
         long _beginGroup = System.currentTimeMillis();
 
         // Group by the specified columns.
-        List<FunctionColumn> functionColumns = op.getFunctionColumns();
+        List<GroupFunction> groupFunctions = op.getGroupFunctions();
         for (GroupColumn groupColumn : op.getGroupColumns()) {
 
             // Get the domain intervals. Look into the cache first.
@@ -170,17 +170,19 @@ public class TransientDataSetStorage implements DataSetStorage {
             // Build the grouped data set header.
             DataSetImpl dataSet = new DataSetImpl();
             dataSet.addColumn(groupColumn.getColumnId(), ColumnType.LABEL);
-            for (FunctionColumn functionColumn : op.getFunctionColumns()) {
-                dataSet.addColumn(functionColumn.getColumnId(), ColumnType.NUMBER);
+            for (GroupFunction groupFunction : op.getGroupFunctions()) {
+                dataSet.addColumn(groupFunction.getColumnId(), ColumnType.NUMBER);
             }
             // Add the scalar calculations to the result.
             for (int i=0; i<intervals.size(); i++) {
                 Interval interval = intervals.get(i);
                 dataSet.setValueAt(i, 0, interval.name);
-                for (int j=0; j< functionColumns.size(); j++) {
-                    FunctionColumn functionColumn = functionColumns.get(j);
-                    DataColumn dataColumn = source.dataSet.getColumnById(functionColumn.getSourceId());
-                    Double scalar = interval.applyFunction(dataColumn, functionColumn.getFunction());
+                for (int j=0; j< groupFunctions.size(); j++) {
+                    GroupFunction groupFunction = groupFunctions.get(j);
+                    DataColumn dataColumn = source.dataSet.getColumnById(groupFunction.getSourceId());
+                    if (dataColumn == null) dataColumn = source.dataSet.getColumnByIndex(0);
+
+                    Double scalar = interval.applyFunction(dataColumn, groupFunction.getFunction());
                     dataSet.setValueAt(i, j + 1, scalar);
                 }
             }
@@ -190,11 +192,13 @@ public class TransientDataSetStorage implements DataSetStorage {
         }
         // No real group requested. Only function calculations on the data set.
         DataSetImpl dataSet = new DataSetImpl();
-        for (int i=0; i< functionColumns.size(); i++) {
-            FunctionColumn functionColumn = functionColumns.get(i);
-            dataSet.addColumn(functionColumn.getColumnId(), ColumnType.NUMBER);
-            DataColumn dataColumn = source.dataSet.getColumnById(functionColumn.getSourceId());
-            Double scalar = source.applyFunction(dataColumn, functionColumn.getFunction());
+        for (int i=0; i< groupFunctions.size(); i++) {
+            GroupFunction groupFunction = groupFunctions.get(i);
+            dataSet.addColumn(groupFunction.getColumnId(), ColumnType.NUMBER);
+            DataColumn dataColumn = source.dataSet.getColumnById(groupFunction.getSourceId());
+            if (dataColumn == null) dataColumn = source.dataSet.getColumnByIndex(0);
+
+            Double scalar = source.applyFunction(dataColumn, groupFunction.getFunction());
             dataSet.setValueAt(0, i, scalar);
         }
 

@@ -66,11 +66,11 @@ public class DataSetGroupTest {
     public void testDataSetFunctions() throws Exception {
         DataSet result = dataSetManager.lookupDataSet(new DataSetLookupBuilder()
                 .uuid(EXPENSE_REPORTS)
-                .function("id", COUNT)
-                .function("amount", MIN)
-                .function("amount", MAX)
-                .function("amount", AVERAGE)
-                .function("amount", SUM)
+                .count("#items")
+                .min("amount")
+                .max("amount")
+                .avg("amount")
+                .sum("amount")
                 .build());
 
         assertDataSetValues(result, dataSetFormatter, new String[][] {
@@ -83,11 +83,11 @@ public class DataSetGroupTest {
         DataSet result = dataSetManager.lookupDataSet(new DataSetLookupBuilder()
                 .uuid(EXPENSE_REPORTS)
                 .group("department", "Department")
-                .function("id", "Occurrences", COUNT)
-                .function("amount", "min", MIN)
-                .function("amount", "max", MAX)
-                .function("amount", "average", AVERAGE)
-                .function("amount", "total", SUM)
+                .count("Occurrences")
+                .min("amount", "min")
+                .max("amount", "max")
+                .avg("amount", "average")
+                .sum("amount", "total")
                 .build());
 
         //printDataSet(result);
@@ -105,8 +105,8 @@ public class DataSetGroupTest {
         DataSet result = dataSetManager.lookupDataSet(new DataSetLookupBuilder()
                 .uuid(EXPENSE_REPORTS)
                 .group("date", "Period", GroupStrategy.DYNAMIC, 10, "year")
-                .function("id", "Occurrences", COUNT)
-                .function("amount", "totalAmount", SUM)
+                .count("Occurrences")
+                .sum("amount", "totalAmount")
                 .build());
 
         //printDataSet(result);
@@ -123,8 +123,8 @@ public class DataSetGroupTest {
         DataSet result = dataSetManager.lookupDataSet(new DataSetLookupBuilder()
                 .uuid(EXPENSE_REPORTS)
                 .group("date", "Period").fixed(MONTH, true)
-                .function("id", "Occurrences", COUNT)
-                .function("amount", "totalAmount", SUM)
+                .count("Occurrences")
+                .sum("amount", "totalAmount")
                 .build());
 
         //printDataSet(result);
@@ -149,8 +149,8 @@ public class DataSetGroupTest {
         DataSet result = dataSetManager.lookupDataSet(new DataSetLookupBuilder()
                 .uuid(EXPENSE_REPORTS)
                 .group("date", "Period").fixed(MONTH, false)
-                .function("id", "Occurrences", COUNT)
-                .function("amount", "totalAmount", SUM)
+                .count("Occurrences")
+                .sum("amount", "totalAmount")
                 .build());
 
         //printDataSet(result);
@@ -209,8 +209,8 @@ public class DataSetGroupTest {
         DataSet result = dataSetManager.lookupDataSet(new DataSetLookupBuilder()
                 .uuid(EXPENSE_REPORTS)
                 .group("date", "Period").fixed(DAY_OF_WEEK).firstDay(DayOfWeek.MONDAY)
-                .function("id", "Occurrences", COUNT)
-                .function("amount", "totalAmount", SUM)
+                .count("Occurrences")
+                .sum("amount", "totalAmount")
                 .build());
 
         //printDataSet(result);
@@ -230,8 +230,8 @@ public class DataSetGroupTest {
         DataSet result = dataSetManager.lookupDataSet(new DataSetLookupBuilder()
                 .uuid(EXPENSE_REPORTS)
                 .group("date", "Period").fixed(QUARTER)
-                .function("id", "Occurrences", COUNT)
-                .function("amount", "totalAmount", SUM)
+                .count("Occurrences")
+                .sum("amount", "totalAmount")
                 .build());
 
         //printDataSet(result);

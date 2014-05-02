@@ -65,14 +65,14 @@ public class TransientDataSetStorageTest {
         DataSetOp groupByDept1 = new DataSetLookupBuilder()
                 .uuid(EXPENSE_REPORTS)
                 .group("department", "Department")
-                .function("id", "Occurrences", COUNT)
-                .function("amount", "totalAmount", SUM)
+                .count("Occurrences")
+                .sum("amount", "totalAmount")
                 .build().getOperationList().get(0);
 
         DataSetOp groupByDept2 = new DataSetLookupBuilder()
                 .uuid(EXPENSE_REPORTS)
                 .group("department", "Department")
-                .function("amount", "average", AVERAGE)
+                .avg("amount", "average")
                 .build().getOperationList().get(0);
 
         // Measure the time elapsed

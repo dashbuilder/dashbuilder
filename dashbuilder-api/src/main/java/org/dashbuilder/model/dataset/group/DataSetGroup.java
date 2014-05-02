@@ -29,7 +29,7 @@ import org.jboss.errai.common.client.api.annotations.Portable;
 public class DataSetGroup implements DataSetOp {
 
     protected List<GroupColumn> groupColumnList = new ArrayList<GroupColumn>();
-    protected List<FunctionColumn> functionColumnList = new ArrayList<FunctionColumn>();
+    protected List<GroupFunction> groupFunctionList = new ArrayList<GroupFunction>();
 
     public DataSetOpType getType() {
         return DataSetOpType.GROUP;
@@ -41,9 +41,9 @@ public class DataSetGroup implements DataSetOp {
         }
     }
 
-    public void addFunctionColumn(FunctionColumn... functionColumns) {
-        for (FunctionColumn functionColumn : functionColumns) {
-            functionColumnList.add(functionColumn);
+    public void addGroupFunction(GroupFunction... groupFunctions) {
+        for (GroupFunction groupFunction : groupFunctions) {
+            groupFunctionList.add(groupFunction);
         }
     }
 
@@ -51,23 +51,23 @@ public class DataSetGroup implements DataSetOp {
         return groupColumnList;
     }
 
-    public List<FunctionColumn> getFunctionColumns() {
-        return functionColumnList;
+    public List<GroupFunction> getGroupFunctions() {
+        return groupFunctionList;
     }
 
     public boolean equals(Object obj) {
         try {
             DataSetGroup other = (DataSetGroup) obj;
             if (groupColumnList.size() != other.groupColumnList.size()) return false;
-            if (functionColumnList.size() != other.functionColumnList.size()) return false;
+            if (groupFunctionList.size() != other.groupFunctionList.size()) return false;
             for (int i = 0; i < groupColumnList.size(); i++) {
                 GroupColumn el = groupColumnList.get(i);
                 GroupColumn otherEl = other.groupColumnList.get(i);
                 if (!el.equals(otherEl)) return false;
             }
-            for (int i = 0; i < functionColumnList.size(); i++) {
-                FunctionColumn el = functionColumnList.get(i);
-                FunctionColumn otherEl = other.functionColumnList.get(i);
+            for (int i = 0; i < groupFunctionList.size(); i++) {
+                GroupFunction el = groupFunctionList.get(i);
+                GroupFunction otherEl = other.groupFunctionList.get(i);
                 if (!el.equals(otherEl)) return false;
             }
             return true;

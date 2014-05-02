@@ -22,7 +22,7 @@ import org.dashbuilder.model.dataset.group.DateIntervalType;
 import org.dashbuilder.model.dataset.group.GroupColumn;
 import org.dashbuilder.model.dataset.group.GroupStrategy;
 import org.dashbuilder.model.dataset.group.ScalarFunctionType;
-import org.dashbuilder.model.dataset.group.FunctionColumn;
+import org.dashbuilder.model.dataset.group.GroupFunction;
 import org.dashbuilder.model.dataset.sort.DataSetSort;
 import org.dashbuilder.model.date.DayOfWeek;
 import org.dashbuilder.model.date.Month;
@@ -194,36 +194,32 @@ public class DataSetLookupBuilder {
         return function(columnId, newColumnId, ScalarFunctionType.DISTICNT);
     }
 
-    public DataSetLookupBuilder count(String columnId) {
-        return function(columnId, columnId, ScalarFunctionType.SUM);
-    }
-
-    public DataSetLookupBuilder count(String columnId, String newColumnId) {
-        return function(columnId, newColumnId, ScalarFunctionType.SUM);
+    public DataSetLookupBuilder count(String newColumnId) {
+        return function(null, newColumnId, ScalarFunctionType.COUNT);
     }
 
     public DataSetLookupBuilder min(String columnId) {
-        return function(columnId, columnId, ScalarFunctionType.SUM);
+        return function(columnId, columnId, ScalarFunctionType.MIN);
     }
 
     public DataSetLookupBuilder min(String columnId, String newColumnId) {
-        return function(columnId, newColumnId, ScalarFunctionType.SUM);
+        return function(columnId, newColumnId, ScalarFunctionType.MIN);
     }
 
     public DataSetLookupBuilder max(String columnId) {
-        return function(columnId, columnId, ScalarFunctionType.SUM);
+        return function(columnId, columnId, ScalarFunctionType.MAX);
     }
 
     public DataSetLookupBuilder max(String columnId, String newColumnId) {
-        return function(columnId, newColumnId, ScalarFunctionType.SUM);
+        return function(columnId, newColumnId, ScalarFunctionType.MAX);
     }
 
     public DataSetLookupBuilder avg(String columnId) {
-        return function(columnId, columnId, ScalarFunctionType.SUM);
+        return function(columnId, columnId, ScalarFunctionType.AVERAGE);
     }
 
     public DataSetLookupBuilder avg(String columnId, String newColumnId) {
-        return function(columnId, newColumnId, ScalarFunctionType.SUM);
+        return function(columnId, newColumnId, ScalarFunctionType.AVERAGE);
     }
 
     public DataSetLookupBuilder sum(String columnId) {
@@ -234,17 +230,13 @@ public class DataSetLookupBuilder {
         return function(columnId, newColumnId, ScalarFunctionType.SUM);
     }
 
-    public DataSetLookupBuilder function(String columnId, ScalarFunctionType function) {
-        return function(columnId, columnId, function);
-    }
-
-    public DataSetLookupBuilder function(String columnId, String newColumnId, ScalarFunctionType function) {
+    protected DataSetLookupBuilder function(String columnId, String newColumnId, ScalarFunctionType function) {
         DataSetOp op = getCurrentOp();
         if (op == null || !(op instanceof DataSetGroup)) {
             dataSetLookup.addOperation(new DataSetGroup());
         }
         DataSetGroup gOp = (DataSetGroup) getCurrentOp();
-        gOp.addFunctionColumn(new FunctionColumn(columnId, newColumnId, function));
+        gOp.addGroupFunction(new GroupFunction(columnId, newColumnId, function));
         return this;
     }
 
