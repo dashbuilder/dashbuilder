@@ -18,7 +18,7 @@ package org.dashbuilder.dataset;
 import javax.inject.Inject;
 
 import org.dashbuilder.model.dataset.DataSet;
-import org.dashbuilder.model.dataset.DataSetLookupBuilder;
+import org.dashbuilder.model.dataset.DataSetFactory;
 import org.dashbuilder.model.dataset.DataSetManager;
 import org.dashbuilder.model.dataset.group.GroupStrategy;
 import org.dashbuilder.model.date.DayOfWeek;
@@ -33,7 +33,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import static org.dashbuilder.dataset.Assertions.*;
-import static org.dashbuilder.model.dataset.group.ScalarFunctionType.*;
 import static org.dashbuilder.model.dataset.group.DateIntervalType.*;
 import static org.fest.assertions.api.Assertions.*;
 
@@ -64,14 +63,15 @@ public class DataSetGroupTest {
 
     @Test
     public void testDataSetFunctions() throws Exception {
-        DataSet result = dataSetManager.lookupDataSet(new DataSetLookupBuilder()
+        DataSet result = dataSetManager.lookupDataSet(
+                DataSetFactory.newLookup()
                 .uuid(EXPENSE_REPORTS)
                 .count("#items")
                 .min("amount")
                 .max("amount")
                 .avg("amount")
                 .sum("amount")
-                .build());
+                .buildLookup());
 
         assertDataSetValues(result, dataSetFormatter, new String[][] {
                 {"50.00", "1.10", "1,100.10", "454.63", "22,731.26"}
@@ -80,7 +80,8 @@ public class DataSetGroupTest {
 
     @Test
     public void testGroupByLabelDynamic() throws Exception {
-        DataSet result = dataSetManager.lookupDataSet(new DataSetLookupBuilder()
+        DataSet result = dataSetManager.lookupDataSet(
+                DataSetFactory.newLookup()
                 .uuid(EXPENSE_REPORTS)
                 .group("department", "Department")
                 .count("Occurrences")
@@ -88,7 +89,7 @@ public class DataSetGroupTest {
                 .max("amount", "max")
                 .avg("amount", "average")
                 .sum("amount", "total")
-                .build());
+                .buildLookup());
 
         //printDataSet(result);
         assertDataSetValues(result, dataSetFormatter, new String[][] {
@@ -102,12 +103,13 @@ public class DataSetGroupTest {
 
     @Test
     public void testGroupByDateDynamic() throws Exception {
-        DataSet result = dataSetManager.lookupDataSet(new DataSetLookupBuilder()
+        DataSet result = dataSetManager.lookupDataSet(
+                DataSetFactory.newLookup()
                 .uuid(EXPENSE_REPORTS)
                 .group("date", "Period", GroupStrategy.DYNAMIC, 10, "year")
                 .count("Occurrences")
                 .sum("amount", "totalAmount")
-                .build());
+                .buildLookup());
 
         //printDataSet(result);
         assertDataSetValues(result, dataSetFormatter, new String[][]{
@@ -120,12 +122,13 @@ public class DataSetGroupTest {
 
     @Test
     public void testGroupByYear() throws Exception {
-        DataSet result = dataSetManager.lookupDataSet(new DataSetLookupBuilder()
+        DataSet result = dataSetManager.lookupDataSet(
+                DataSetFactory.newLookup()
                 .uuid(EXPENSE_REPORTS)
                 .group("date", "Period").fixed(MONTH, true)
                 .count("Occurrences")
                 .sum("amount", "totalAmount")
-                .build());
+                .buildLookup());
 
         //printDataSet(result);
         assertDataSetValues(result, dataSetFormatter, new String[][]{
@@ -146,12 +149,13 @@ public class DataSetGroupTest {
 
     @Test
     public void testGroupByYearReverse() throws Exception {
-        DataSet result = dataSetManager.lookupDataSet(new DataSetLookupBuilder()
+        DataSet result = dataSetManager.lookupDataSet(
+                DataSetFactory.newLookup()
                 .uuid(EXPENSE_REPORTS)
                 .group("date", "Period").fixed(MONTH, false)
                 .count("Occurrences")
                 .sum("amount", "totalAmount")
-                .build());
+                .buildLookup());
 
         //printDataSet(result);
         assertDataSetValues(result, dataSetFormatter, new String[][]{
@@ -172,15 +176,19 @@ public class DataSetGroupTest {
 
     @Test
     public void testFirstDayOfWeekOk() throws Exception {
-        new DataSetLookupBuilder()
-                .group("date").fixed(DAY_OF_WEEK).firstDay(DayOfWeek.MONDAY);
+        DataSetFactory.newLookup()
+            .group("date")
+            .fixed(DAY_OF_WEEK)
+            .firstDay(DayOfWeek.MONDAY);
     }
 
     @Test
     public void testFirstDayOfWeekNok() throws Exception {
         try {
-            new DataSetLookupBuilder()
-                    .group("date").fixed(QUARTER).firstDay(DayOfWeek.MONDAY);
+            DataSetFactory.newLookup()
+                .group("date")
+                .fixed(QUARTER)
+                .firstDay(DayOfWeek.MONDAY);
             fail("firstDayOfWeek required a DAY_OF_WEEK fixed domain.");
         } catch (Exception e) {
             // Expected.
@@ -189,15 +197,19 @@ public class DataSetGroupTest {
 
     @Test
     public void testFirstDayOfMonthOk() throws Exception {
-        new DataSetLookupBuilder()
-                .group("date").fixed(MONTH).firstMonth(Month.APRIL);
+        DataSetFactory.newLookup()
+            .group("date")
+            .fixed(MONTH)
+            .firstMonth(Month.APRIL);
     }
 
     @Test
     public void testFirstDayOfMonthNok() throws Exception {
         try {
-            new DataSetLookupBuilder()
-                    .group("date").fixed(QUARTER).firstMonth(Month.APRIL);
+            DataSetFactory.newLookup()
+                .group("date")
+                .fixed(QUARTER)
+                .firstMonth(Month.APRIL);
             fail("firstDayOfWeek required a DAY_OF_WEEK fixed domain.");
         } catch (Exception e) {
             // Expected.
@@ -206,12 +218,13 @@ public class DataSetGroupTest {
 
     @Test
     public void testGroupByWeek() throws Exception {
-        DataSet result = dataSetManager.lookupDataSet(new DataSetLookupBuilder()
+        DataSet result = dataSetManager.lookupDataSet(
+                DataSetFactory.newLookup()
                 .uuid(EXPENSE_REPORTS)
                 .group("date", "Period").fixed(DAY_OF_WEEK).firstDay(DayOfWeek.MONDAY)
                 .count("Occurrences")
                 .sum("amount", "totalAmount")
-                .build());
+                .buildLookup());
 
         //printDataSet(result);
         assertDataSetValues(result, dataSetFormatter, new String[][]{
@@ -227,12 +240,13 @@ public class DataSetGroupTest {
 
     @Test
     public void testGroupByQuarter() throws Exception {
-        DataSet result = dataSetManager.lookupDataSet(new DataSetLookupBuilder()
+        DataSet result = dataSetManager.lookupDataSet(
+                DataSetFactory.newLookup()
                 .uuid(EXPENSE_REPORTS)
                 .group("date", "Period").fixed(QUARTER)
                 .count("Occurrences")
                 .sum("amount", "totalAmount")
-                .build());
+                .buildLookup());
 
         //printDataSet(result);
         assertDataSetValues(result, dataSetFormatter, new String[][]{

@@ -40,44 +40,38 @@ import org.jboss.errai.common.client.api.annotations.Portable;
  .row(OCTOBER, 1200d, 2200d, 3100d)
  .row(NOVEMBER, 1400d, 2100d, 3100d)
  .row(DECEMBER, 1100d, 2100d, 4200d)
- .build()
+ .buildDataSet()
  </pre>
  */
-@Portable
-public class DataSetBuilder {
+public interface DataSetBuilder {
 
-    protected DataSetImpl dataSet = new DataSetImpl();
+    /**
+     * Add an empty column of type label.
+     */
+    DataSetBuilder label(String columnId);
 
-    public DataSetBuilder label(String columnId) {
-        dataSet.addColumn(columnId, ColumnType.LABEL);
-        return this;
-    }
+    /**
+     * Add an empty column of numeric type.
+     */
+    DataSetBuilder number(String columnId);
 
-    public DataSetBuilder number(String columnId) {
-        dataSet.addColumn(columnId, ColumnType.NUMBER);
-        return this;
-    }
+    /**
+     * Add an empty column of type date.
+     */
+    DataSetBuilder date(String columnId);
 
-    public DataSetBuilder date(String columnId) {
-        dataSet.addColumn(columnId, ColumnType.DATE);
-        return this;
-    }
+    /**
+     * Add an empty column of the specified type.
+     */
+    DataSetBuilder column(String columnId, ColumnType type);
 
-    public DataSetBuilder column(String columnId, ColumnType type) {
-        dataSet.addColumn(columnId, type);
-        return this;
-    }
+    /**
+     * Add a row with the given values at the end of the data set.
+     */
+    DataSetBuilder row(Object... values);
 
-    public DataSetBuilder row(Object... values) {
-        for (int i = 0; i < values.length; i++) {
-            Object value = values[i];
-            DataColumn column = dataSet.getColumnByIndex(i);
-            column.getValues().add(value);
-        }
-        return this;
-    }
-
-    public DataSet build() {
-        return dataSet;
-    }
+    /**
+     * Build and get the resulting DataSet instance.
+     */
+    DataSet buildDataSet();
 }

@@ -15,18 +15,7 @@
  */
 package org.dashbuilder.model.displayer;
 
-public class MeterChartBuilder extends AbstractChartBuilder<MeterChartBuilder> {
+public interface MeterChartBuilder<T extends MeterChartBuilder> extends ChartBuilder<T> {
 
-    protected DataDisplayer createDisplayer() {
-        return new MeterChartDisplayer();
-    }
-
-    public MeterChartBuilder meter(long start, long warning, long critical, long end) {
-        MeterChartDisplayer meterDisplayer = (MeterChartDisplayer) dataDisplayer;
-        meterDisplayer.setMeterStart(start);
-        meterDisplayer.setMeterWarning(warning);
-        meterDisplayer.setMeterCritical(critical);
-        meterDisplayer.setMeterEnd(end);
-        return this;
-    }
+    T meter(long start, long warning, long critical, long end);
 }

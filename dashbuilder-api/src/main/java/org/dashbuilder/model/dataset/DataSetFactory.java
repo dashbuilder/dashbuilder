@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012 JBoss Inc
+ * Copyright (C) 2014 JBoss Inc
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,17 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbuilder.model.displayer;
+package org.dashbuilder.model.dataset;
 
-public abstract class AbstractChartBuilder<T extends AbstractChartBuilder<?>> extends DataDisplayerBuilder<T> {
+import org.dashbuilder.model.dataset.impl.DataSetBuilderImpl;
+import org.dashbuilder.model.dataset.impl.DataSetLookupBuilderImpl;
 
-    public T width(int width) {
-        ((AbstractChartDisplayer) dataDisplayer).setWidth(width);
-        return (T) this;
+/**
+ * Factory class for building DataSet instances.
+ */
+public final class DataSetFactory {
+
+    public static DataSetBuilder newDataSet() {
+        return new DataSetBuilderImpl();
     }
 
-    public T height(int height) {
-        ((AbstractChartDisplayer) dataDisplayer).setHeight(height);
-        return (T) this;
+    public static DataSetLookupBuilder newLookup() {
+        return new DataSetLookupBuilderImpl();
     }
 }

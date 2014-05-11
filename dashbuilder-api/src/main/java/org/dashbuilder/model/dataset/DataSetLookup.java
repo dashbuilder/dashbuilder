@@ -58,6 +58,7 @@ public class DataSetLookup implements DataSetRef {
     }
 
     public void setRowOffset(int rowOffset) {
+        if (rowOffset < 0) throw new IllegalArgumentException("Offset can't be negative: " + rowOffset);
         this.rowOffset = rowOffset;
     }
 

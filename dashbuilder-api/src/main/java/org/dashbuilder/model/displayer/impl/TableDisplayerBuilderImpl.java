@@ -13,23 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbuilder.model.displayer;
+package org.dashbuilder.model.displayer.impl;
 
-/**
- * A displayer builder for bar charts
- *
- * <pre>
- DisplayerFactory.newBarChartDisplayer()
- .title("By Product")
- .column("Product")
- .column("Total amount")
- .horizontal()
- .buildDisplayer()
- </pre>
- */
-public interface BarChartBuilder<T extends BarChartBuilder> extends ChartBuilder<T> {
+import org.dashbuilder.model.displayer.DataDisplayer;
+import org.dashbuilder.model.displayer.TableDisplayer;
+import org.jboss.errai.common.client.api.annotations.Portable;
 
-    T set3d(boolean b);
-    T horizontal();
-    T vertical();
+@Portable
+public class TableDisplayerBuilderImpl extends AbstractDisplayerBuilder {
+
+    public DataDisplayer createDisplayer() {
+        return new TableDisplayer();
+    }
 }

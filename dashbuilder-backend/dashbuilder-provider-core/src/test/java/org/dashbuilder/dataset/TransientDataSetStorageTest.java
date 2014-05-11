@@ -18,7 +18,7 @@ package org.dashbuilder.dataset;
 import javax.inject.Inject;
 
 import org.dashbuilder.model.dataset.DataSet;
-import org.dashbuilder.model.dataset.DataSetLookupBuilder;
+import org.dashbuilder.model.dataset.DataSetFactory;
 import org.dashbuilder.model.dataset.DataSetOp;
 import org.dashbuilder.model.dataset.DataSetOpStats;
 import org.dashbuilder.model.dataset.DataSetOpType;
@@ -35,8 +35,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import static org.fest.assertions.api.Assertions.*;
-
-import static org.dashbuilder.model.dataset.group.ScalarFunctionType.*;
 
 @RunWith(Arquillian.class)
 public class TransientDataSetStorageTest {
@@ -62,18 +60,18 @@ public class TransientDataSetStorageTest {
     @Test
     public void testGroupOpsPerformance() throws Exception {
         // Create & apply two different group operations over the same data set
-        DataSetOp groupByDept1 = new DataSetLookupBuilder()
+        DataSetOp groupByDept1 = DataSetFactory.newLookup()
                 .uuid(EXPENSE_REPORTS)
                 .group("department", "Department")
                 .count("Occurrences")
                 .sum("amount", "totalAmount")
-                .build().getOperationList().get(0);
+                .buildLookup().getOperationList().get(0);
 
-        DataSetOp groupByDept2 = new DataSetLookupBuilder()
+        DataSetOp groupByDept2 = DataSetFactory.newLookup()
                 .uuid(EXPENSE_REPORTS)
                 .group("department", "Department")
                 .avg("amount", "average")
-                .build().getOperationList().get(0);
+                .buildLookup().getOperationList().get(0);
 
         // Measure the time elapsed
         long begin = System.currentTimeMillis();

@@ -13,14 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbuilder.model.displayer;
+package org.dashbuilder.model.displayer.impl;
 
+import org.dashbuilder.model.displayer.DataDisplayer;
+import org.dashbuilder.model.displayer.XAxisChartDisplayer;
 import org.jboss.errai.common.client.api.annotations.Portable;
 
 @Portable
-public class MapChartBuilder extends AbstractChartBuilder<MapChartBuilder> {
+public class XAxisChartBuilderImpl extends AbstractChartBuilder {
 
     public DataDisplayer createDisplayer() {
-        return new MapChartDisplayer();
+        return new XAxisChartDisplayer();
     }
 }

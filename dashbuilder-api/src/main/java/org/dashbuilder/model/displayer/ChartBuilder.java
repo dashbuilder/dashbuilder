@@ -15,12 +15,9 @@
  */
 package org.dashbuilder.model.displayer;
 
-import org.jboss.errai.common.client.api.annotations.Portable;
 
-@Portable
-public class TableDisplayerBuilder extends DataDisplayerBuilder<TableDisplayerBuilder> {
+public interface ChartBuilder<T extends ChartBuilder> extends DataDisplayerBuilder<T> {
 
-    public DataDisplayer createDisplayer() {
-        return new TableDisplayer();
-    }
+    T width(int width);
+    T height(int height);
 }

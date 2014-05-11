@@ -13,15 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbuilder.model.displayer;
+package org.dashbuilder.model.displayer.impl;
 
-import org.dashbuilder.model.displayer.impl.DataDisplayerColumnImpl;
-import org.jboss.errai.common.client.api.annotations.Portable;
+import org.dashbuilder.model.displayer.AbstractChartDisplayer;
+import org.dashbuilder.model.displayer.ChartBuilder;
 
-@Portable
-public class XAxisChartBuilder extends AbstractChartBuilder<XAxisChartBuilder> {
+public abstract class AbstractChartBuilder<T extends AbstractChartBuilder> extends AbstractDisplayerBuilder implements ChartBuilder {
 
-    public DataDisplayer createDisplayer() {
-        return new XAxisChartDisplayer();
+    public T width(int width) {
+        ((AbstractChartDisplayer) dataDisplayer).setWidth(width);
+        return (T) this;
+    }
+
+    public T height(int height) {
+        ((AbstractChartDisplayer) dataDisplayer).setHeight(height);
+        return (T) this;
     }
 }

@@ -22,32 +22,29 @@ import com.google.gwt.user.client.ui.IsWidget;
 import org.dashbuilder.client.dataset.ClientDataSetManager;
 import org.dashbuilder.client.kpi.ClientKPIManager;
 import org.dashbuilder.client.kpi.KPIViewer;
-import org.dashbuilder.model.dataset.ColumnType;
-import org.dashbuilder.model.dataset.DataSetBuilder;
+import org.dashbuilder.model.dataset.DataSetFactory;
 import org.dashbuilder.model.kpi.KPI;
-import org.dashbuilder.model.kpi.KPIBuilder;
-import org.dashbuilder.model.kpi.LineChartKPIBuilder;
+import org.dashbuilder.model.kpi.KPIFactory;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
 import org.uberfire.client.annotations.WorkbenchPartView;
 import org.uberfire.client.annotations.WorkbenchScreen;
 import org.uberfire.lifecycle.OnStartup;
 
 import static org.dashbuilder.model.date.Month.*;
-import static org.dashbuilder.model.displayer.DataDisplayerType.LINECHART;
 
 @ApplicationScoped
 @WorkbenchScreen(identifier = "StaticChartScreen")
 public class StaticChartScreen {
 
     public KPI createKPI() {
-        return new LineChartKPIBuilder()
+        return KPIFactory.newLineChartKPI()
             .uuid("static_chart_sample")
             .title("Sales Evolution Per Year")
             .column("Month")
             .column("Sales in 2013")
             .column("Sales in 2014")
             .column("Sales in 2015")
-            .dataset(new DataSetBuilder()
+            .dataset(DataSetFactory.newDataSet()
                 .label("month")
                 .number("2012")
                 .number("2013")
@@ -64,8 +61,8 @@ public class StaticChartScreen {
                 .row(OCTOBER, 1200d, 2200d, 3100d)
                 .row(NOVEMBER, 1400d, 2100d, 3100d)
                 .row(DECEMBER, 1100d, 2100d, 4200d)
-                .build())
-            .build();
+                .buildDataSet())
+            .buildKPI();
     }
 
     @Inject

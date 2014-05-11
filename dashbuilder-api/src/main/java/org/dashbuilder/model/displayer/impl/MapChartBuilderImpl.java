@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2014 JBoss Inc
+ * Copyright (C) 2012 JBoss Inc
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,22 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbuilder.model.kpi;
+package org.dashbuilder.model.displayer.impl;
 
-import org.dashbuilder.model.displayer.AbstractChartBuilder;
+import org.dashbuilder.model.displayer.DataDisplayer;
+import org.dashbuilder.model.displayer.MapChartDisplayer;
+import org.jboss.errai.common.client.api.annotations.Portable;
 
-/**
- * Base KPI builder for charts.
- */
-public abstract class AbstractChartKPIBuilder<T extends AbstractChartKPIBuilder<?>> extends KPIBuilder<T> {
+@Portable
+public class MapChartBuilderImpl extends AbstractChartBuilder {
 
-    public T width(int width) {
-        ((AbstractChartBuilder) displayerBuilder).width(width);
-        return (T) this;
-    }
-
-    public T height(int height) {
-        ((AbstractChartBuilder) displayerBuilder).height(height);
-        return (T) this;
+    public DataDisplayer createDisplayer() {
+        return new MapChartDisplayer();
     }
 }

@@ -24,11 +24,8 @@ import javax.inject.Inject;
 
 import org.dashbuilder.client.kpi.ClientKPIManager;
 import org.dashbuilder.model.dataset.group.DateIntervalType;
-import org.dashbuilder.model.kpi.AreaChartKPIBuilder;
-import org.dashbuilder.model.kpi.BarChartKPIBuilder;
 import org.dashbuilder.model.kpi.KPI;
-import org.dashbuilder.model.kpi.PieChartKPIBuilder;
-import org.dashbuilder.model.kpi.TableKPIBuilder;
+import org.dashbuilder.model.kpi.KPIFactory;
 
 import static org.dashbuilder.model.samples.SalesConstants.*;
 
@@ -56,7 +53,7 @@ public class SalesOppsKPIs {
     @PostConstruct
     public void init() {
 
-        kpiList.add(new PieChartKPIBuilder()
+        kpiList.add(KPIFactory.newPieChartKPI()
                 .uuid(OPPS_BY_EMPLOYEE)
                 .dataset(SALES_OPPS)
                 .group(PIPELINE)
@@ -65,9 +62,9 @@ public class SalesOppsKPIs {
                 .titleVisible(false)
                 .column("Pipeline")
                 .column("Number of opps")
-                .build());
+                .buildKPI());
 
-        kpiList.add(new AreaChartKPIBuilder()
+        kpiList.add(KPIFactory.newAreaChartKPI()
                 .uuid(OPPS_EXPECTED_PIPELINE)
                 .dataset(SALES_OPPS)
                 .group(CLOSING_DATE, 24, DateIntervalType.MONTH)
@@ -76,9 +73,9 @@ public class SalesOppsKPIs {
                 .titleVisible(false)
                 .column("Closing date")
                 .column("Expected amount")
-                .build());
+                .buildKPI());
 
-        kpiList.add(new PieChartKPIBuilder()
+        kpiList.add(KPIFactory.newPieChartKPI()
                     .uuid(OPPS_BY_STATUS)
                     .dataset(SALES_OPPS)
                     .group(STATUS)
@@ -87,9 +84,9 @@ public class SalesOppsKPIs {
                     .titleVisible(false)
                     .column("Status")
                     .column("Total amount")
-                    .build());
+                    .buildKPI());
 
-        kpiList.add(new PieChartKPIBuilder()
+        kpiList.add(KPIFactory.newPieChartKPI()
                     .uuid(OPPS_BY_SALESMAN)
                     .dataset(SALES_OPPS)
                     .group(SALES_PERSON)
@@ -98,9 +95,9 @@ public class SalesOppsKPIs {
                     .titleVisible(false)
                     .column("Sales person")
                     .column("Total amount")
-                    .build());
+                    .buildKPI());
 
-        kpiList.add(new BarChartKPIBuilder()
+        kpiList.add(KPIFactory.newBarChartKPI()
                     .uuid(OPPS_BY_PRODUCT)
                     .dataset(SALES_OPPS)
                     .group(PRODUCT)
@@ -110,9 +107,9 @@ public class SalesOppsKPIs {
                     .column("Product")
                     .column("Total amount")
                     .vertical()
-                    .build());
+                    .buildKPI());
 
-        kpiList.add(new BarChartKPIBuilder()
+        kpiList.add(KPIFactory.newBarChartKPI()
                     .uuid(OPPS_BY_COUNTRY)
                     .dataset(SALES_OPPS)
                     .group(COUNTRY)
@@ -122,9 +119,9 @@ public class SalesOppsKPIs {
                     .vertical()
                     .column("Country")
                     .column("Total amount")
-                    .build());
+                    .buildKPI());
 
-        kpiList.add(new BarChartKPIBuilder()
+        kpiList.add(KPIFactory.newBarChartKPI()
                     .uuid(OPPS_BY_PROBABILITY)
                     .dataset(SALES_OPPS)
                     .group(PROBABILITY)
@@ -134,9 +131,9 @@ public class SalesOppsKPIs {
                     .column("Probability")
                     .column("Total amount")
                     .vertical()
-                    .build());
+                    .buildKPI());
 
-        kpiList.add(new TableKPIBuilder()
+        kpiList.add(KPIFactory.newTableKPI()
                     .uuid(OPPS_COUNTRY_SUMMARY)
                     .dataset(SALES_OPPS)
                     .group(COUNTRY, "Country")
@@ -149,16 +146,16 @@ public class SalesOppsKPIs {
                     .sum(AMOUNT)
                     .title("Country Summary")
                     .titleVisible(false)
-                    .build());
+                    .buildKPI());
 
-        kpiList.add(new TableKPIBuilder()
+        kpiList.add(KPIFactory.newTableKPI()
                     .uuid(OPPS_ALL)
                     .dataset(SALES_OPPS)
                     .rowOffset(0)
                     .rowNumber(20)
                     .title("List of Opportunities")
                     .titleVisible(false)
-                    .build());
+                    .buildKPI());
 
         for (KPI kpi : kpiList) {
             kpiManager.addKPI(kpi);
