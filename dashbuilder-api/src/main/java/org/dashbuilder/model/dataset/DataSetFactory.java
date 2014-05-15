@@ -16,6 +16,7 @@
 package org.dashbuilder.model.dataset;
 
 import org.dashbuilder.model.dataset.impl.DataSetBuilderImpl;
+import org.dashbuilder.model.dataset.impl.DataSetImpl;
 import org.dashbuilder.model.dataset.impl.DataSetLookupBuilderImpl;
 
 /**
@@ -23,7 +24,11 @@ import org.dashbuilder.model.dataset.impl.DataSetLookupBuilderImpl;
  */
 public final class DataSetFactory {
 
-    public static DataSetBuilder newDataSet() {
+    public static DataSet newDataSet() {
+        return new DataSetImpl();
+    }
+
+    public static DataSetBuilder newBuilder() {
         return new DataSetBuilderImpl();
     }
 
