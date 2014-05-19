@@ -27,6 +27,8 @@ import org.dashbuilder.model.dataset.group.GroupFunction;
 import org.dashbuilder.model.dataset.group.GroupStrategy;
 import org.dashbuilder.model.dataset.group.ScalarFunctionType;
 import org.dashbuilder.model.dataset.sort.DataSetSort;
+import org.dashbuilder.model.dataset.sort.SortColumn;
+import org.dashbuilder.model.dataset.sort.SortOrder;
 import org.dashbuilder.model.date.DayOfWeek;
 import org.dashbuilder.model.date.Month;
 import org.jboss.errai.common.client.api.annotations.Portable;
@@ -118,7 +120,7 @@ public class DataSetLookupBuilderImpl implements DataSetLookupBuilder {
             dataSetLookup.addOperation(new DataSetGroup());
         }
         DataSetGroup gOp = (DataSetGroup) getCurrentOp();
-        gOp.addGroupColumn(new GroupColumn(columnId, newColumnId, strategy, maxIntervals, intervalSize));
+        gOp.setGroupColumn(new GroupColumn(columnId, newColumnId, strategy, maxIntervals, intervalSize));
         return this;
     }
 
@@ -128,12 +130,11 @@ public class DataSetLookupBuilderImpl implements DataSetLookupBuilder {
 
     public DataSetLookupBuilder fixed(DateIntervalType type, boolean ascending) {
         DataSetGroup gOp = (DataSetGroup) getCurrentOp();
-        List<GroupColumn> groupColumnList = gOp.getGroupColumns();
-        if (gOp == null || groupColumnList.isEmpty()) {
-            throw new RuntimeException("A domain must be configured first.");
+        if (gOp == null || gOp.getGroupColumn() == null) {
+            throw new RuntimeException("group() must be called first.");
         }
 
-        GroupColumn groupColumn = groupColumnList.get(groupColumnList.size()-1);
+        GroupColumn groupColumn = gOp.getGroupColumn();
         groupColumn.setStrategy(GroupStrategy.FIXED);
         groupColumn.setIntervalSize(type.toString());
         groupColumn.setAscendingOrder(ascending);
@@ -142,16 +143,16 @@ public class DataSetLookupBuilderImpl implements DataSetLookupBuilder {
 
     public DataSetLookupBuilder firstDay(DayOfWeek dayOfWeek) {
         DataSetGroup gOp = (DataSetGroup) getCurrentOp();
-        List<GroupColumn> groupColumnList = gOp.getGroupColumns();
-        if (gOp == null || groupColumnList.isEmpty()) {
-            throw new RuntimeException("A domain must is required.");
+        if (gOp == null || gOp.getGroupColumn() == null) {
+            throw new RuntimeException("group() must be called first.");
         }
-        GroupColumn groupColumn = groupColumnList.get(groupColumnList.size() - 1);
+
+        GroupColumn groupColumn = gOp.getGroupColumn();
         if (!GroupStrategy.FIXED.equals(groupColumn.getStrategy())) {
-            throw new RuntimeException("A fixed domain is required.");
+            throw new RuntimeException("A fixed group is required.");
         }
         if (!DateIntervalType.DAY_OF_WEEK.equals(DateIntervalType.getByName(groupColumn.getIntervalSize()))) {
-            throw new RuntimeException("A DAY_OF_WEEK fixed date domain is required.");
+            throw new RuntimeException("A fixed DAY_OF_WEEK date group is required.");
         }
         groupColumn.setFirstDayOfWeek(dayOfWeek);
         return this;
@@ -159,16 +160,16 @@ public class DataSetLookupBuilderImpl implements DataSetLookupBuilder {
 
     public DataSetLookupBuilder firstMonth(Month month) {
         DataSetGroup gOp = (DataSetGroup) getCurrentOp();
-        List<GroupColumn> groupColumnList = gOp.getGroupColumns();
-        if (gOp == null || groupColumnList.isEmpty()) {
-            throw new RuntimeException("A domain must is required.");
+        if (gOp == null || gOp.getGroupColumn() == null) {
+            throw new RuntimeException("group() must be called first.");
         }
-        GroupColumn groupColumn = groupColumnList.get(groupColumnList.size() - 1);
+
+        GroupColumn groupColumn = gOp.getGroupColumn();
         if (!GroupStrategy.FIXED.equals(groupColumn.getStrategy())) {
-            throw new RuntimeException("A fixed domain is required.");
+            throw new RuntimeException("A fixed group is required.");
         }
         if (!DateIntervalType.MONTH.equals(DateIntervalType.getByName(groupColumn.getIntervalSize()))) {
-            throw new RuntimeException("A MONTH fixed date domain is required.");
+            throw new RuntimeException("A fixed MONTH date group is required.");
         }
         groupColumn.setFirstMonthOfYear(month);
         return this;
@@ -229,11 +230,16 @@ public class DataSetLookupBuilderImpl implements DataSetLookupBuilder {
     }
 
     public DataSetLookupBuilder sort(String columnId, String order) {
+        return sort(columnId, SortOrder.getByName(order));
+    }
+
+    public DataSetLookupBuilder sort(String columnId, SortOrder order) {
         DataSetOp op = getCurrentOp();
         if (op == null || !(op instanceof DataSetSort)) {
             dataSetLookup.addOperation(new DataSetSort());
         }
         DataSetSort sOp = (DataSetSort) getCurrentOp();
+        sOp.addSortColumn(new SortColumn(columnId, order));
         return this;
     }
 

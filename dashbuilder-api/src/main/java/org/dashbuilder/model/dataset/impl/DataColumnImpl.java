@@ -36,7 +36,6 @@ public class DataColumnImpl implements DataColumn {
     public DataColumnImpl(String id, ColumnType columnType) {
         this.id = id;
         this.columnType = columnType;
-        this.values = values;
     }
 
     public DataSetImpl getDataSet() {

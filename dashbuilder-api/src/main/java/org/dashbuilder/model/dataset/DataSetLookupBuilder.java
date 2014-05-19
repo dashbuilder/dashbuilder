@@ -17,6 +17,7 @@ package org.dashbuilder.model.dataset;
 
 import org.dashbuilder.model.dataset.group.DateIntervalType;
 import org.dashbuilder.model.dataset.group.GroupStrategy;
+import org.dashbuilder.model.dataset.sort.SortOrder;
 import org.dashbuilder.model.date.DayOfWeek;
 import org.dashbuilder.model.date.Month;
 
@@ -73,6 +74,7 @@ public interface DataSetLookupBuilder<T extends DataSetLookupBuilder> {
     T sum(String columnId, String newColumnId);
 
     T sort(String columnId, String order);
+    T sort(String columnId, SortOrder order);
 
     DataSetLookup buildLookup();
 }

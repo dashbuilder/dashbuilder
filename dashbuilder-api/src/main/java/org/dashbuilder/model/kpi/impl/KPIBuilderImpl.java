@@ -21,6 +21,7 @@ import org.dashbuilder.model.dataset.DataSetRef;
 import org.dashbuilder.model.dataset.group.DateIntervalType;
 import org.dashbuilder.model.dataset.group.GroupStrategy;
 import org.dashbuilder.model.dataset.impl.DataSetLookupBuilderImpl;
+import org.dashbuilder.model.dataset.sort.SortOrder;
 import org.dashbuilder.model.date.DayOfWeek;
 import org.dashbuilder.model.date.Month;
 import org.dashbuilder.model.displayer.BarChartBuilder;
@@ -258,6 +259,11 @@ public class KPIBuilderImpl implements KPIBuilder {
     }
 
     public KPIBuilder sort(String columnId, String order) {
+        lookupBuilder.sort(columnId, order);
+        return  this;
+    }
+
+    public KPIBuilder sort(String columnId, SortOrder order) {
         lookupBuilder.sort(columnId, order);
         return  this;
     }

@@ -28,7 +28,6 @@ import org.jboss.errai.common.client.api.annotations.Portable;
 public class DataSetImpl implements DataSet {
 
     protected String uuid = null;
-    protected String  parent = null;
     protected List<DataColumn> columns = new ArrayList<DataColumn>();
 
     public String getUUID() {
@@ -37,14 +36,6 @@ public class DataSetImpl implements DataSet {
 
     public void setUUID(String uuid) {
         this.uuid = uuid;
-    }
-
-    public String getParent() {
-        return parent;
-    }
-
-    public void setParent(String parent) {
-        this.parent = parent;
     }
 
     public List<DataColumn> getColumns() {
@@ -103,11 +94,19 @@ public class DataSetImpl implements DataSet {
     }
 
     public DataSet setValueAt(int row, int column, Object value) {
-        if (columns == null || columns.isEmpty()) return null;
-        if (column >= columns.size()) return null;
+        if (columns == null || columns.isEmpty()) {
+            throw new IllegalArgumentException("The data set has no columns.");
+        }
+        if (column >= columns.size()) {
+            throw new IllegalArgumentException("The column index " + column + " is out of bounds: " + (columns.size()-1));
+        }
+
         DataColumn columnObj = columns.get(column);
         List l = columnObj.getValues();
-        if (row > l.size()) return null;
+        if (row > l.size()) {
+            throw new IllegalArgumentException("The row index " + row + " is out of bounds: " + (l.size()-1));
+        }
+
         if (row == l.size()) l.add(value);
         l.set(row, value);
         return this;
@@ -135,9 +134,12 @@ public class DataSetImpl implements DataSet {
     }
 
     public DataSet trim(int offset, int rows) {
-        if (offset < 0) throw new IllegalArgumentException("Offset can't be negative: " + offset);
-        if (offset >= getRowCount()) throw new IllegalArgumentException("Offset can't be greater than the number of rows: " + offset);
-
+        if (offset < 0) {
+            throw new IllegalArgumentException("Offset can't be negative: " + offset);
+        }
+        if (offset >= getRowCount()) {
+            throw new IllegalArgumentException("Offset can't be greater than the number of rows: " + offset);
+        }
         if (offset == 0 && (rows <= 0 || rows >= this.getRowCount())) {
             return this;
         }

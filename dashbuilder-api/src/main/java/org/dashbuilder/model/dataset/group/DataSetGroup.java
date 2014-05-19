@@ -28,17 +28,15 @@ import org.jboss.errai.common.client.api.annotations.Portable;
 @Portable
 public class DataSetGroup implements DataSetOp {
 
-    protected List<GroupColumn> groupColumnList = new ArrayList<GroupColumn>();
+    protected GroupColumn groupColumn = null;
     protected List<GroupFunction> groupFunctionList = new ArrayList<GroupFunction>();
 
     public DataSetOpType getType() {
         return DataSetOpType.GROUP;
     }
 
-    public void addGroupColumn(GroupColumn... groupColumns) {
-        for (GroupColumn groupColumn : groupColumns) {
-            groupColumnList.add(groupColumn);
-        }
+    public void setGroupColumn(GroupColumn groupColumn) {
+        this.groupColumn = groupColumn;
     }
 
     public void addGroupFunction(GroupFunction... groupFunctions) {
@@ -47,8 +45,8 @@ public class DataSetGroup implements DataSetOp {
         }
     }
 
-    public List<GroupColumn> getGroupColumns() {
-        return groupColumnList;
+    public GroupColumn getGroupColumn() {
+        return groupColumn;
     }
 
     public List<GroupFunction> getGroupFunctions() {
@@ -58,13 +56,8 @@ public class DataSetGroup implements DataSetOp {
     public boolean equals(Object obj) {
         try {
             DataSetGroup other = (DataSetGroup) obj;
-            if (groupColumnList.size() != other.groupColumnList.size()) return false;
+            if (groupColumn != null && !groupColumn.equals(other.groupColumn)) return false;
             if (groupFunctionList.size() != other.groupFunctionList.size()) return false;
-            for (int i = 0; i < groupColumnList.size(); i++) {
-                GroupColumn el = groupColumnList.get(i);
-                GroupColumn otherEl = other.groupColumnList.get(i);
-                if (!el.equals(otherEl)) return false;
-            }
             for (int i = 0; i < groupFunctionList.size(); i++) {
                 GroupFunction el = groupFunctionList.get(i);
                 GroupFunction otherEl = other.groupFunctionList.get(i);

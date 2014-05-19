@@ -30,17 +30,6 @@ public interface DataSet extends DataSetRef {
     void setUUID(String uuid);
 
     /**
-     * The UUID of the data set this one derives from.
-     * @return null if this data set is root.
-     */
-    String getParent();
-
-    /**
-     * Set the UUID of the data set this one derives from.
-     */
-    void setParent(String uuid);
-
-    /**
      * The dataset columns
      */
     List<DataColumn> getColumns();

@@ -15,74 +15,89 @@
  */
 package org.dashbuilder.dataset;
 
+import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
-import org.dashbuilder.model.dataset.DataColumn;
-import org.dashbuilder.storage.spi.DataSetStorage;
+import org.dashbuilder.dataset.engine.DataSetOpEngine;
+import org.dashbuilder.dataset.engine.DataSetOpResults;
+import org.dashbuilder.dataset.index.DataSetIndex;
+import org.dashbuilder.dataset.index.spi.DataSetIndexRegistry;
 import org.dashbuilder.model.dataset.DataSet;
+import org.dashbuilder.model.dataset.DataSetFactory;
 import org.dashbuilder.model.dataset.DataSetLookup;
 import org.dashbuilder.model.dataset.DataSetManager;
-import org.dashbuilder.model.dataset.DataSetOp;
-import org.dashbuilder.model.dataset.impl.DataSetImpl;
 
 @ApplicationScoped
 public class DataSetManagerImpl implements DataSetManager {
 
-    @Inject
-    protected DataSetStorage dataSetStorage;
+    @Inject protected DataSetServices dataSetServices;
+    protected DataSetOpEngine dataSetOpEngine;
+    protected DataSetIndexRegistry dataSetIndexRegistry;
+
+    @PostConstruct
+    private void init() {
+        dataSetOpEngine = dataSetServices.getDataSetOpEngine();
+        dataSetIndexRegistry = dataSetServices.getDataSetIndexRegistry();
+    }
 
     public DataSet createDataSet(String uuid) {
-        DataSetImpl dataSet = new DataSetImpl();
+        DataSet dataSet = DataSetFactory.newDataSet();
         dataSet.setUUID(uuid);
         return dataSet;
     }
 
     public DataSet getDataSet(String uuid) throws Exception {
-        DataSet result = dataSetStorage.get(uuid);
-        if (result == null) result = fetchDataSet(uuid);
-        if (result == null) throw new Exception("Data set not found: " + uuid);
-        return result;
+        return fetchDataSet(uuid).getDataSet();
     }
 
     public void registerDataSet(DataSet dataSet) throws Exception {
-        if (dataSet != null && dataSet.getUUID() != null) {
-            dataSetStorage.put(dataSet);
+        if (dataSet != null) {
+            dataSetIndexRegistry.put(dataSet);
         }
     }
 
     public DataSet refreshDataSet(String uuid) throws Exception {
-        DataSet ds = fetchDataSet(uuid);
-        if (ds == null) return dataSetStorage.get(uuid);
-
-        dataSetStorage.remove(uuid);
-        dataSetStorage.put(ds);
-        return ds;
-    }
-
-    public DataSet fetchDataSet(String uuid) throws Exception {
-        DataSet result = dataSetStorage.get(uuid);
-        if (result != null) return result;
-
-        // Get the data set from an external provider.
-        //return dataProviderManager.fetchDataSet(uuid);
-        return null;
+        dataSetIndexRegistry.remove(uuid);
+        return fetchDataSet(uuid).getDataSet();
     }
 
     public DataSet lookupDataSet(DataSetLookup lookup) throws Exception {
         String uuid = lookup.getDataSetUUID();
         if (StringUtils.isEmpty(uuid)) throw new IllegalArgumentException("Target data set UUID not specified.");
 
-        // Retrieve (load if required) the source data set
-        DataSet result = getDataSet(uuid);
+        // Get the target data set
+        DataSetIndex dataSetIndex = fetchDataSet(uuid);
 
         // Apply the list of operations specified.
-        for (DataSetOp op : lookup.getOperationList()) {
-            result = dataSetStorage.apply(uuid, op);
-        }
+        DataSetOpResults result = dataSetOpEngine.execute(dataSetIndex.getDataSet(), lookup.getOperationList());
+        DataSet dataSet = result.getDataSet();
+
         // Trim the data set as requested.
-        result = result.trim(lookup.getRowOffset(), lookup.getNumberOfRows());
-        return result;
+        dataSet = dataSet.trim(lookup.getRowOffset(), lookup.getNumberOfRows());
+        return dataSet;
+    }
+
+    // Internal stuff
+
+    protected DataSetIndex fetchDataSet(String uuid) throws Exception {
+        DataSetIndex index = dataSetIndexRegistry.get(uuid);
+        if (index != null) return index;
+
+        DataSetIndex result = loadDataSet(uuid);
+        if (result != null) return result;
+
+        throw new Exception("Data set not found: " + uuid);
+    }
+
+    protected DataSetIndex loadDataSet(String uuid) throws Exception {
+        /* TODO: Get the data set from an external provider.
+        DataProviderManager dataProviderManager = DataProviderServices.getDataProviderManager();
+        DataSet dataSet = dataProviderManager.fetchDataSet(uuid);
+        return dataSetIndexer.put(dataSet);
+        */
+
+        return null;
     }
 }
