@@ -44,6 +44,32 @@ public class DataSetSort implements DataSetOp {
         return sortColumnList;
     }
 
+    /**
+     * Clone this sort operation.
+     */
+    public DataSetSort cloneSortOp() {
+        DataSetSort newSortOp = new DataSetSort();
+        for (SortColumn sortColumn : getSortColumnList()) {
+            SortColumn newSortColumn = new SortColumn();
+            newSortColumn.setColumnId(sortColumn.getColumnId());
+            newSortColumn.setOrder(sortColumn.getOrder());
+            newSortOp.addSortColumn(newSortColumn);
+        }
+        return newSortOp;
+    }
+
+    /**
+     * Invert the sort order if this sort operation.
+     */
+    public DataSetSort invertOrder() {
+        for (SortColumn sortColumn : getSortColumnList()) {
+            SortOrder order = sortColumn.getOrder();
+            if (SortOrder.ASCENDING.equals(order)) sortColumn.setOrder(SortOrder.DESCENDING);
+            else if (SortOrder.DESCENDING.equals(order)) sortColumn.setOrder(SortOrder.ASCENDING);
+        }
+        return this;
+    }
+
     public boolean equals(Object obj) {
         try {
             DataSetSort other = (DataSetSort) obj;

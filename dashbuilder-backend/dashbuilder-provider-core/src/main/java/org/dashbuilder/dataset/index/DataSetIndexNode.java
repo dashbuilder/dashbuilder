@@ -16,6 +16,7 @@
 package org.dashbuilder.dataset.index;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -140,10 +141,22 @@ public abstract class DataSetIndexNode extends DataSetIndexElement {
 
     public DataSetSortIndex indexSort(DataSetSort sortOp, List<Integer> sortedRows, long buildTime) {
         if (sortIndexes == null) sortIndexes = new ArrayList<DataSetSortIndex>();
+
         DataSetSortIndex index = new DataSetSortIndex(sortOp, sortedRows);
         index.setParent(this);
         index.setBuildTime(buildTime);
         sortIndexes.add(index);
+
+        // Also create an index for the inverted sort.
+        long _beginTime = System.nanoTime();
+        DataSetSort invertedSortOp = sortOp.cloneSortOp().invertOrder();
+        List<Integer> invertedRows = new ArrayList<Integer>(sortedRows);
+        Collections.reverse(invertedRows);
+        DataSetSortIndex invertedIndex = new DataSetSortIndex(invertedSortOp, invertedRows);
+        invertedIndex.setParent(this);
+        invertedIndex.setBuildTime(System.nanoTime() - _beginTime);
+        sortIndexes.add(invertedIndex);
+
         return index;
     }
 
