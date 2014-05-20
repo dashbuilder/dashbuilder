@@ -19,6 +19,7 @@ import javax.inject.Inject;
 
 import org.dashbuilder.dataset.engine.DataSetOpEngine;
 import org.dashbuilder.dataset.index.DataSetIndex;
+import org.dashbuilder.dataset.index.spi.DataSetIndexRegistry;
 import org.dashbuilder.dataset.index.stats.DataSetIndexStats;
 import org.dashbuilder.dataset.index.stats.SizeEstimator;
 import org.dashbuilder.model.dataset.DataSet;
@@ -85,11 +86,13 @@ public class DataSetPerformanceTest {
 
     @Inject DataSetServices dataSetServices;
     DataSetManager dataSetManager;
+    DataSetIndexRegistry dataSetIndexRegistry;
     DataSet dataSet;
 
     @Before
     public void setUp() throws Exception {
         dataSetManager = dataSetServices.getDataSetManager();
+        dataSetIndexRegistry = dataSetServices.getDataSetIndexRegistry();
         dataSet = RawDataSetSamples.EXPENSE_REPORTS.toDataSet();
         dataSet.setUUID(EXPENSE_REPORTS);
         dataSetServices.getDataSetManager().registerDataSet(dataSet);
@@ -109,7 +112,7 @@ public class DataSetPerformanceTest {
         long time = System.nanoTime()-begin;
 
         // Check out the resulting stats
-        DataSetIndex dataSetIndex = dataSetServices.getDataSetIndexRegistry().get(EXPENSE_REPORTS);
+        DataSetIndex dataSetIndex = dataSetIndexRegistry.get(EXPENSE_REPORTS);
         DataSetIndexStats stats = dataSetIndex.getStats();
         System.out.println(stats.toString("\n"));
 
@@ -120,7 +123,7 @@ public class DataSetPerformanceTest {
         // The build time should be shorter than the overall lookup time.
         assertThat(stats.getBuildTime()).isLessThan(time);
 
-        // The reuse rate must be reflect the number of times the lookups are reused.
+        // The reuse rate must reflect the number of times the lookups are being reused.
         assertThat(stats.getReuseRate()).isGreaterThan(lookupTimes-1);
 
         // The index size must not be greater than the 20% of the dataset's size
@@ -140,7 +143,7 @@ public class DataSetPerformanceTest {
         long time = System.nanoTime()-begin;
 
         // Check out the resulting stats
-        DataSetIndex dataSetIndex = dataSetServices.getDataSetIndexRegistry().get(EXPENSE_REPORTS);
+        DataSetIndex dataSetIndex = dataSetIndexRegistry.get(EXPENSE_REPORTS);
         DataSetIndexStats stats = dataSetIndex.getStats();
         System.out.println(stats.toString("\n"));
 
@@ -150,8 +153,8 @@ public class DataSetPerformanceTest {
         // The build time should be shorter than the overall lookup time.
         assertThat(stats.getBuildTime()).isLessThan(time);
 
-        // The reuse rate must be reflect the number of times the lookups are reused.
-        assertThat(stats.getReuseRate()).isGreaterThanOrEqualTo(lookupTimes-1);
+        // The reuse rate must reflect the number of times the lookups are being reused.
+        assertThat(stats.getReuseRate()).isGreaterThanOrEqualTo(lookupTimes - 1);
 
         // The index size must not be greater than the 20% of the dataset's size
         assertThat(stats.getIndexSize()).isLessThan(stats.getDataSetSize()/5);
