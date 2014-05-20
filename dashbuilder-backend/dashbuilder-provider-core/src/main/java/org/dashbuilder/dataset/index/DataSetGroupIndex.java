@@ -47,8 +47,9 @@ public class DataSetGroupIndex extends DataSetIndexNode {
         return groupColumn;
     }
 
-    public void acceptVisit(DataSetIndexVisitor visitor) {
+    public void acceptVisitor(DataSetIndexVisitor visitor) {
         super.acceptVisitor(visitor);
+
         for (DataSetIntervalIndex index : intervalIndexes) {
             index.acceptVisitor(visitor);
         }

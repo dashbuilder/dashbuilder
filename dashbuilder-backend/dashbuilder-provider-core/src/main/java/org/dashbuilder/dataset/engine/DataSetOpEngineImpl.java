@@ -203,8 +203,7 @@ public class DataSetOpEngineImpl implements DataSetOpEngine {
             List<DataSetIntervalIndex> intervalIdxs = lastGroupIndex.getIntervalIndexes();
             for (int i=0; i<intervalIdxs.size(); i++) {
                 DataSetIntervalIndex intervalIdx = intervalIdxs.get(i);
-                Interval interval = intervalIdx.getInterval();
-                result.setValueAt(i, 0, interval.getName());
+                result.setValueAt(i, 0, intervalIdx.getName());
 
                 // Add the scalar calculations.
                 for (int j=0; j< groupFunctions.size(); j++) {
@@ -212,7 +211,7 @@ public class DataSetOpEngineImpl implements DataSetOpEngine {
                     DataColumn dataColumn = currentDataSet.getColumnById(groupFunction.getSourceId());
                     if (dataColumn == null) dataColumn = currentDataSet.getColumnByIndex(0);
 
-                    Double scalar = _calculateScalar(dataColumn, groupFunction.getFunction(), interval.getRows(), intervalIdx);
+                    Double scalar = _calculateScalar(dataColumn, groupFunction.getFunction(), intervalIdx.getRows(), intervalIdx);
                     result.setValueAt(i, j + 1, scalar);
                 }
             }

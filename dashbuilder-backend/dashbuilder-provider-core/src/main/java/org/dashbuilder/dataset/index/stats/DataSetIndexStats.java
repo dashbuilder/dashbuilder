@@ -42,6 +42,21 @@ public interface DataSetIndexStats {
     double getReuseRate();
 
     /**
+     * Total number of group operations over the data set
+     */
+    int getNumberOfGroupOps();
+
+    /**
+     * Total number of sort operations executed over the data set
+     */
+    int getNumberOfSortOps();
+
+    /**
+     * Total number of scalar function calculations executed over the data set
+     */
+    int getNumberOfScalarOps();
+
+    /**
      * An index reference to the element that takes more time to get instantiated.
      */
     DataSetIndexElement getLongestBuild();
@@ -72,5 +87,10 @@ public interface DataSetIndexStats {
      * @return The number of bytes
      */
     long getIndexSize();
-}
 
+    /**
+     * Prints a stats summary.
+     * @param sep The separator string to insert between every stat.
+     */
+    String toString(String sep);
+}

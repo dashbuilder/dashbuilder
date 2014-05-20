@@ -72,5 +72,13 @@ public abstract class DataSetIndexElement {
     public long getEstimatedSize() {
         return SizeEstimator.sizeOfLong + SizeEstimator.sizeOfInteger;
     }
+
+    public String toString() {
+        StringBuilder out = new StringBuilder();
+        out.append(this.getClass().getSimpleName()).append(" ");
+        out.append(SizeEstimator.formatSize(getEstimatedSize())).append(" ");
+        out.append((double) getBuildTime() / 1000000).append(" secs (").append(getReuseHits()).append(")");
+        return out.toString();
+    }
 }
 

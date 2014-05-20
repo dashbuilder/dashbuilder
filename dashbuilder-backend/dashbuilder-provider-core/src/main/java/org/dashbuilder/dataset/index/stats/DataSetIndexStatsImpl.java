@@ -17,9 +17,11 @@ package org.dashbuilder.dataset.index.stats;
 
 import java.util.List;
 
+import org.dashbuilder.dataset.index.DataSetGroupIndex;
 import org.dashbuilder.dataset.index.DataSetIndex;
 import org.dashbuilder.dataset.index.DataSetIndexElement;
-import org.dashbuilder.dataset.index.DataSetIndexNode;
+import org.dashbuilder.dataset.index.DataSetScalarIndex;
+import org.dashbuilder.dataset.index.DataSetSortIndex;
 import org.dashbuilder.dataset.index.visitor.DataSetIndexVisitor;
 import org.dashbuilder.model.dataset.DataColumn;
 import org.dashbuilder.model.dataset.DataSet;
@@ -30,9 +32,12 @@ import org.dashbuilder.model.dataset.DataSet;
 public class DataSetIndexStatsImpl implements DataSetIndexStats, DataSetIndexVisitor {
 
     private DataSetIndex index;
-    private transient long buildTime;
-    private transient long reuseTime;
-    private transient long indexSize;
+    private transient long buildTime = 0;
+    private transient long reuseTime = 0;
+    private transient long indexSize = 0;
+    private transient int numberOfGroupOps = 0;
+    private transient int numberOfSortOps = 0;
+    private transient int numberOfScalarOps = 0;
     private transient DataSetIndexElement longestBuild;
     private transient DataSetIndexElement shortestBuild;
     private transient DataSetIndexElement lessReused;
@@ -59,6 +64,16 @@ public class DataSetIndexStatsImpl implements DataSetIndexStats, DataSetIndexVis
         }
         if (mostReused == null || element.getReuseHits() > mostReused.getReuseHits()) {
             mostReused = element;
+        }
+
+        if (element instanceof DataSetGroupIndex) {
+            numberOfGroupOps++;
+        }
+        if (element instanceof DataSetSortIndex) {
+            numberOfSortOps++;
+        }
+        if (element instanceof DataSetScalarIndex) {
+            numberOfScalarOps++;
         }
     }
 
@@ -95,6 +110,18 @@ public class DataSetIndexStatsImpl implements DataSetIndexStats, DataSetIndexVis
         return indexSize;
     }
 
+    public int getNumberOfGroupOps() {
+        return numberOfGroupOps;
+    }
+
+    public int getNumberOfSortOps() {
+        return numberOfSortOps;
+    }
+
+    public int getNumberOfScalarOps() {
+        return numberOfScalarOps;
+    }
+
     public long getDataSetSize() {
         DataSet dataSet = index.getDataSet();
         int nrows = dataSet.getRowCount();
@@ -116,6 +143,23 @@ public class DataSetIndexStatsImpl implements DataSetIndexStats, DataSetIndexVis
             }
         }
         return result;
+    }
+
+    public String toString() {
+        return toString(" ");
+    }
+
+    public String toString(String sep) {
+        StringBuilder out = new StringBuilder();
+        out.append("Data set size=").append(SizeEstimator.formatSize(getDataSetSize())).append(sep);
+        out.append("Index size=").append(SizeEstimator.formatSize(getIndexSize())).append(sep);
+        out.append("Build time=").append(((double) getBuildTime() / 1000000)).append(" (secs)").append(sep);
+        out.append("Reuse time=").append(((double) getReuseTime() / 1000000)).append(" (secs)").append(sep);
+        out.append("Reuse rate=").append(getReuseRate()).append(sep);
+        out.append("#Group ops=").append(getNumberOfGroupOps()).append(sep);
+        out.append("#Sort ops=").append(getNumberOfSortOps()).append(sep);
+        out.append("#Scalar ops=").append(getNumberOfScalarOps()).append(sep);
+        return out.toString();
     }
 }
 
