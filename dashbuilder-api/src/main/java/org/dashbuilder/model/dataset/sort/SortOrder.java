@@ -23,6 +23,9 @@ public enum SortOrder {
     DESCENDING,
     UNSPECIFIED;
 
+    private static final String ASC = "asc";
+    private static final String DESC = "desc";
+
     public int asInt() {
         switch (this) {
             case ASCENDING: return 1;
@@ -32,6 +35,8 @@ public enum SortOrder {
     }
 
     public static SortOrder getByName(String strategy) {
+        if (ASC.equals(strategy)) return ASCENDING;
+        if (DESC.equals(strategy)) return DESCENDING;
         return valueOf(strategy.toUpperCase());
     }
 }
