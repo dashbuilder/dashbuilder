@@ -16,19 +16,44 @@ import org.uberfire.commons.services.cdi.Startup;
 @Startup
 public class DataSetServices {
 
+    protected static DataSetManager _static_dataSetManager = null;
+    protected static DataSetOpEngine _static_dataSetOpEngine = null;
+    protected static DataSetIndexRegistry _static_dataSetIndexRegistry = null;
+    protected static DataSetSortAlgorithm _static_dataSetSortAlgorithm = null;
+
+    public static void setDataSetManager(DataSetManager implementation) {
+        _static_dataSetManager = implementation;
+    }
+
+    public static void setDataSetOpEngine(DataSetOpEngine implementation) {
+        _static_dataSetOpEngine = implementation;
+    }
+
+    public static void setDataSetIndexRegistry(DataSetIndexRegistry implementation) {
+        _static_dataSetIndexRegistry = implementation;
+    }
+
+    public static void setDataSetSortAlgorithm(DataSetSortAlgorithm implementation) {
+        _static_dataSetSortAlgorithm = implementation;
+    }
+
     public DataSetManager getDataSetManager() {
+        if (_static_dataSetManager != null) return _static_dataSetManager;
         return dataSetManager;
     }
 
     public DataSetOpEngine getDataSetOpEngine() {
+        if (_static_dataSetOpEngine != null) return _static_dataSetOpEngine;
         return dataSetOpEngine;
     }
 
     public DataSetIndexRegistry getDataSetIndexRegistry() {
+        if (_static_dataSetIndexRegistry != null) return _static_dataSetIndexRegistry;
         return dataSetIndexRegistry;
     }
 
     public DataSetSortAlgorithm getDataSetSortAlgorithm() {
+        if (_static_dataSetSortAlgorithm != null) return _static_dataSetSortAlgorithm;
         return dataSetSortAlgorithm;
     }
 
