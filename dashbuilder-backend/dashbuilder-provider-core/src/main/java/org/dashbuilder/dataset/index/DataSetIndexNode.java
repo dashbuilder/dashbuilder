@@ -23,8 +23,8 @@ import java.util.Map;
 
 import org.dashbuilder.dataset.group.IntervalList;
 import org.dashbuilder.dataset.index.visitor.DataSetIndexVisitor;
+import org.dashbuilder.model.dataset.group.AggregateFunctionType;
 import org.dashbuilder.model.dataset.group.GroupColumn;
-import org.dashbuilder.model.dataset.group.ScalarFunctionType;
 import org.dashbuilder.model.dataset.sort.DataSetSort;
 
 /**
@@ -35,7 +35,7 @@ public abstract class DataSetIndexNode extends DataSetIndexElement {
     DataSetIndexNode parent = null;
     List<DataSetGroupIndex> groupIndexes = null;
     List<DataSetSortIndex> sortIndexes = null;
-    Map<String, Map<ScalarFunctionType, DataSetScalarIndex>> scalarIndexes = null;
+    Map<String, Map<AggregateFunctionType, DataSetFunctionIndex>> functionIndexes = null;
 
     public DataSetIndexNode() {
         this(null, 0);
@@ -67,39 +67,39 @@ public abstract class DataSetIndexNode extends DataSetIndexElement {
                 index.acceptVisitor(visitor);
             }
         }
-        if (scalarIndexes != null) {
-            for (Map<ScalarFunctionType, DataSetScalarIndex> indexMap : scalarIndexes.values()) {
-                for (DataSetScalarIndex index : indexMap.values()) {
+        if (functionIndexes != null) {
+            for (Map<AggregateFunctionType, DataSetFunctionIndex> indexMap : functionIndexes.values()) {
+                for (DataSetFunctionIndex index : indexMap.values()) {
                     index.acceptVisitor(visitor);
                 }
             }
         }
     }
 
-    // Scalar function indexes
+    // Aggregate function indexes
 
-    public DataSetScalarIndex indexScalar(String columnId, ScalarFunctionType type, Double value, long buildTime) {
-        if (scalarIndexes == null) scalarIndexes = new HashMap<String, Map<ScalarFunctionType, DataSetScalarIndex>>();
+    public DataSetFunctionIndex indexAggValue(String columnId, AggregateFunctionType type, Double value, long buildTime) {
+        if (functionIndexes == null) functionIndexes = new HashMap<String, Map<AggregateFunctionType, DataSetFunctionIndex>>();
 
-        Map<ScalarFunctionType,DataSetScalarIndex> columnScalars = scalarIndexes.get(columnId);
-        if (columnScalars == null) scalarIndexes.put(columnId, columnScalars = new HashMap<ScalarFunctionType,DataSetScalarIndex>());
+        Map<AggregateFunctionType,DataSetFunctionIndex> columnAggFunctions = functionIndexes.get(columnId);
+        if (columnAggFunctions == null) functionIndexes.put(columnId, columnAggFunctions = new HashMap<AggregateFunctionType,DataSetFunctionIndex>());
 
-        DataSetScalarIndex index = new DataSetScalarIndex(value, buildTime);
-        columnScalars.put(type, index);
+        DataSetFunctionIndex index = new DataSetFunctionIndex(value, buildTime);
+        columnAggFunctions.put(type, index);
         return index;
     }
 
-    public Double getScalar(String columnId, ScalarFunctionType type) {
-        if (scalarIndexes == null) return null;
+    public Double getAggValue(String columnId, AggregateFunctionType type) {
+        if (functionIndexes == null) return null;
 
-        Map<ScalarFunctionType,DataSetScalarIndex> columnScalars = scalarIndexes.get(columnId);
-        if (columnScalars == null) return null;
+        Map<AggregateFunctionType,DataSetFunctionIndex> columnAggFunctions = functionIndexes.get(columnId);
+        if (columnAggFunctions == null) return null;
 
-        DataSetScalarIndex indexScalar = columnScalars.get(type);
-        if (indexScalar == null) return null;
+        DataSetFunctionIndex functionIndex = columnAggFunctions.get(type);
+        if (functionIndex == null) return null;
 
-        indexScalar.reuseHit();
-        return indexScalar.getValue();
+        functionIndex.reuseHit();
+        return functionIndex.getValue();
     }
 
     // TODO: coordinate concurrent index modifications

@@ -17,17 +17,13 @@ package org.dashbuilder.dataset;
 
 import javax.inject.Inject;
 
-import org.dashbuilder.dataset.engine.DataSetOpEngine;
 import org.dashbuilder.dataset.index.DataSetIndex;
 import org.dashbuilder.dataset.index.spi.DataSetIndexRegistry;
 import org.dashbuilder.dataset.index.stats.DataSetIndexStats;
-import org.dashbuilder.dataset.index.stats.SizeEstimator;
 import org.dashbuilder.model.dataset.DataSet;
 import org.dashbuilder.model.dataset.DataSetFactory;
 import org.dashbuilder.model.dataset.DataSetLookup;
 import org.dashbuilder.model.dataset.DataSetManager;
-import org.dashbuilder.model.dataset.DataSetOp;
-import org.dashbuilder.model.dataset.sort.SortOrder;
 import org.dashbuilder.test.ShrinkWrapHelper;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -116,9 +112,9 @@ public class DataSetIndexTest {
         DataSetIndexStats stats = dataSetIndex.getStats();
         System.out.println(stats.toString("\n"));
 
-        // Assert the reuse of group operations and scalar calculations is working.
+        // Assert the reuse of group operations and aggregate calculations is working.
         assertThat(stats.getNumberOfGroupOps()).isEqualTo(1);
-        assertThat(stats.getNumberOfScalarOps()).isEqualTo(10);
+        assertThat(stats.getNumberOfAggFunctions()).isEqualTo(10);
 
         // The build time should be shorter than the overall lookup time.
         assertThat(stats.getBuildTime()).isLessThan(time);

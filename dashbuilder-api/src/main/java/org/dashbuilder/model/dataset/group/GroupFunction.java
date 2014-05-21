@@ -25,12 +25,12 @@ public class GroupFunction {
 
     protected String sourceId;
     protected String columnId;
-    protected ScalarFunctionType function;
+    protected AggregateFunctionType function;
 
     public GroupFunction() {
     }
 
-    public GroupFunction(String sourceId, String columnId, ScalarFunctionType function) {
+    public GroupFunction(String sourceId, String columnId, AggregateFunctionType function) {
         this.sourceId = sourceId;
         this.columnId = columnId;
         this.function = function;
@@ -52,11 +52,11 @@ public class GroupFunction {
         this.columnId = columnId;
     }
 
-    public ScalarFunctionType getFunction() {
+    public AggregateFunctionType getFunction() {
         return function;
     }
 
-    public void setFunctionCode(ScalarFunctionType function) {
+    public void setFunction(AggregateFunctionType function) {
         this.function = function;
     }
 

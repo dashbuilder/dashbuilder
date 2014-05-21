@@ -16,9 +16,9 @@
 package org.dashbuilder.dataset.function;
 
 /**
- * Base class for the implementation of scalar functions.
+ * Base class for the implementation of aggregate functions.
  */
-public abstract class AbstractFunction implements ScalarFunction {
+public abstract class AbstractFunction implements AggregateFunction {
 
     protected int precission;
 

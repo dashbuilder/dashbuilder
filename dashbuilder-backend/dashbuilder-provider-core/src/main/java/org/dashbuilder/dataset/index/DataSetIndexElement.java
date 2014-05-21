@@ -15,16 +15,8 @@
  */
 package org.dashbuilder.dataset.index;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.dashbuilder.dataset.group.IntervalList;
 import org.dashbuilder.dataset.index.stats.SizeEstimator;
 import org.dashbuilder.dataset.index.visitor.DataSetIndexVisitor;
-import org.dashbuilder.model.dataset.group.GroupColumn;
-import org.dashbuilder.model.dataset.group.ScalarFunctionType;
 
 /**
  * A DataSet index element

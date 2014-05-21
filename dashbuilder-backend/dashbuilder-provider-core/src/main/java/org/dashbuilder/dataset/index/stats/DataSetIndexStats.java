@@ -52,9 +52,9 @@ public interface DataSetIndexStats {
     int getNumberOfSortOps();
 
     /**
-     * Total number of scalar function calculations executed over the data set
+     * Total number of aggregate function calculations executed over the data set
      */
-    int getNumberOfScalarOps();
+    int getNumberOfAggFunctions();
 
     /**
      * An index reference to the element that takes more time to get instantiated.

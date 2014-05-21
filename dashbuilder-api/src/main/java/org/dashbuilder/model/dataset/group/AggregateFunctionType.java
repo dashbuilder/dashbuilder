@@ -13,28 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbuilder.dataset.function;
+package org.dashbuilder.model.dataset.group;
 
-import java.util.Collection;
+import org.jboss.errai.common.client.api.annotations.Portable;
 
 /**
- * Manager class that it keeps a registry of ScalarFunction instances.
+ * List of available aggregate functions used in data set group operations.
  */
-public interface ScalarFunctionManager {
+@Portable
+public enum AggregateFunctionType {
+    COUNT,
+    DISTICNT,
+    AVERAGE,
+    SUM,
+    MIN,
+    MAX;
 
-    /**
-     * Get all the scalar functions registered..
-     */
-    Collection<ScalarFunction> getAllScalarFunctions();
-
-    /**
-     * Get a scalar function by its code.
-     */
-    ScalarFunction getScalarFunctionByCode(String code);
-
-    /**
-     * Register a scalar function.
-     */
-    void registerScalarFunction(String code, ScalarFunction function);
+    public static AggregateFunctionType getByName(String str) {
+        return valueOf(str.toUpperCase());
+    }
 }
-

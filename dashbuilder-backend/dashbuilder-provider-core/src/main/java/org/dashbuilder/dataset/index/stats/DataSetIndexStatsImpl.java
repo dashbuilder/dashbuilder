@@ -17,10 +17,10 @@ package org.dashbuilder.dataset.index.stats;
 
 import java.util.List;
 
+import org.dashbuilder.dataset.index.DataSetFunctionIndex;
 import org.dashbuilder.dataset.index.DataSetGroupIndex;
 import org.dashbuilder.dataset.index.DataSetIndex;
 import org.dashbuilder.dataset.index.DataSetIndexElement;
-import org.dashbuilder.dataset.index.DataSetScalarIndex;
 import org.dashbuilder.dataset.index.DataSetSortIndex;
 import org.dashbuilder.dataset.index.visitor.DataSetIndexVisitor;
 import org.dashbuilder.model.dataset.DataColumn;
@@ -37,7 +37,7 @@ public class DataSetIndexStatsImpl implements DataSetIndexStats, DataSetIndexVis
     private transient long indexSize = 0;
     private transient int numberOfGroupOps = 0;
     private transient int numberOfSortOps = 0;
-    private transient int numberOfScalarOps = 0;
+    private transient int numberOfAggFunctions = 0;
     private transient DataSetIndexElement longestBuild;
     private transient DataSetIndexElement shortestBuild;
     private transient DataSetIndexElement lessReused;
@@ -72,8 +72,8 @@ public class DataSetIndexStatsImpl implements DataSetIndexStats, DataSetIndexVis
         if (element instanceof DataSetSortIndex) {
             numberOfSortOps++;
         }
-        if (element instanceof DataSetScalarIndex) {
-            numberOfScalarOps++;
+        if (element instanceof DataSetFunctionIndex) {
+            numberOfAggFunctions++;
         }
     }
 
@@ -118,8 +118,8 @@ public class DataSetIndexStatsImpl implements DataSetIndexStats, DataSetIndexVis
         return numberOfSortOps;
     }
 
-    public int getNumberOfScalarOps() {
-        return numberOfScalarOps;
+    public int getNumberOfAggFunctions() {
+        return numberOfAggFunctions;
     }
 
     public long getDataSetSize() {
@@ -158,7 +158,7 @@ public class DataSetIndexStatsImpl implements DataSetIndexStats, DataSetIndexVis
         out.append("Reuse rate=").append(getReuseRate()).append(sep);
         out.append("#Group ops=").append(getNumberOfGroupOps()).append(sep);
         out.append("#Sort ops=").append(getNumberOfSortOps()).append(sep);
-        out.append("#Scalar ops=").append(getNumberOfScalarOps()).append(sep);
+        out.append("#Aggregate ops=").append(getNumberOfAggFunctions()).append(sep);
         return out.toString();
     }
 }

@@ -15,16 +15,26 @@
  */
 package org.dashbuilder.dataset.function;
 
-import java.util.List;
+import java.util.Collection;
 
 /**
- * Interface used to get the scalar value of a given collection.
- * <p>Scalar functions are used to calculate the scalar
- * values of the intervals belonging to a given data set domain property.
+ * Manager class that it keeps a registry of AggregateFunction instances.
  */
-public interface ScalarFunction {
+public interface AggregateFunctionManager {
 
-    String getCode();
-    double scalar(List values);
-    double scalar(List values, List<Integer> rows);
+    /**
+     * Get all the aggregate functions registered.
+     */
+    Collection<AggregateFunction> getAllFunctions();
+
+    /**
+     * Get an aggregate function by its code.
+     */
+    AggregateFunction getFunctionByCode(String code);
+
+    /**
+     * Register an aggregate function.
+     */
+    void registerFunction(String code, AggregateFunction function);
 }
+

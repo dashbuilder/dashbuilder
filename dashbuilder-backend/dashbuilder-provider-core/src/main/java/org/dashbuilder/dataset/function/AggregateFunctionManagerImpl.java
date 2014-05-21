@@ -15,10 +15,8 @@
  */
 package org.dashbuilder.dataset.function;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
@@ -26,32 +24,32 @@ import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
 @ApplicationScoped
-public class ScalarFunctionManagerImpl implements ScalarFunctionManager {
+public class AggregateFunctionManagerImpl implements AggregateFunctionManager {
 
     /**
-     * The built-in scalar function registry.
+     * The built-in aggregate function registry.
      */
-    protected Map<String,ScalarFunction> scalarFunctionMap = new HashMap<String,ScalarFunction>();
+    protected Map<String,AggregateFunction> functionMap = new HashMap<String,AggregateFunction>();
 
     @Inject
-    protected Instance<ScalarFunction> _scalarFunctions;
+    protected Instance<AggregateFunction> _functionInstances;
 
     @PostConstruct
     protected void init() {
-        for (ScalarFunction sf: _scalarFunctions) {
-            scalarFunctionMap.put(sf.getCode(), sf);
+        for (AggregateFunction sf: _functionInstances) {
+            functionMap.put(sf.getCode(), sf);
         }
     }
 
-    public Collection<ScalarFunction> getAllScalarFunctions() {
-        return scalarFunctionMap.values();
+    public Collection<AggregateFunction> getAllFunctions() {
+        return functionMap.values();
     }
 
-    public ScalarFunction getScalarFunctionByCode(String code) {
-        return scalarFunctionMap.get(code);
+    public AggregateFunction getFunctionByCode(String code) {
+        return functionMap.get(code);
     }
 
-    public void registerScalarFunction(String code, ScalarFunction function) {
-        scalarFunctionMap.put(code, function);
+    public void registerFunction(String code, AggregateFunction function) {
+        functionMap.put(code, function);
     }
 }

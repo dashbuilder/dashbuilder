@@ -35,19 +35,19 @@ public class AverageFunction extends SumFunction {
         return CODE;
     }
 
-    public double scalar(List values) {
+    public double aggregate(List values) {
         if (values == null || values.isEmpty()) return 0;
-        double average = super.scalar(values) / values.size();
+        double average = super.aggregate(values) / values.size();
         double ret = round(average, precission);
         return ret;
     }
 
-    public double scalar(List values, List<Integer> rows) {
-        if (rows == null) return scalar(values);
+    public double aggregate(List values, List<Integer> rows) {
+        if (rows == null) return aggregate(values);
         if (rows.isEmpty()) return 0;
         if (values == null || values.isEmpty()) return 0;
 
-        double average = super.scalar(values, rows) / rows.size();
+        double average = super.aggregate(values, rows) / rows.size();
         double ret = round(average, precission);
         return ret;
     }

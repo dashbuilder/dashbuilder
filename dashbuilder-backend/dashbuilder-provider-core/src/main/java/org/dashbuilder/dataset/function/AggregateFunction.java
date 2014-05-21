@@ -13,23 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbuilder.model.dataset.group;
+package org.dashbuilder.dataset.function;
 
-import org.jboss.errai.common.client.api.annotations.Portable;
+import java.util.List;
 
 /**
- * List of available scalar functions used in data set group operations.
+ * Interface used to get the aggregate value of a given collection.
+ * <p>Aggregate functions are used to calculate the aggregate
+ * values of the intervals belonging to a given data set domain property.
  */
-@Portable
-public enum ScalarFunctionType {
-    COUNT,
-    DISTICNT,
-    AVERAGE,
-    SUM,
-    MIN,
-    MAX;
+public interface AggregateFunction {
 
-    public static ScalarFunctionType getByName(String str) {
-        return valueOf(str.toUpperCase());
-    }
+    String getCode();
+    double aggregate(List values);
+    double aggregate(List values, List<Integer> rows);
 }

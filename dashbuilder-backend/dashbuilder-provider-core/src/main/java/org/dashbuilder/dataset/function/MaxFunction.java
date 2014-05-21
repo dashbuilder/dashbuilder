@@ -36,7 +36,7 @@ public class MaxFunction extends AbstractFunction {
         return CODE;
     }
 
-    public double scalar(List values) {
+    public double aggregate(List values) {
         if (values == null || values.isEmpty()) return 0;
 
         // Get the max. value from the collection.
@@ -52,8 +52,8 @@ public class MaxFunction extends AbstractFunction {
         return ret;
     }
 
-    public double scalar(List values, List<Integer> rows) {
-        if (rows == null) return scalar(values);
+    public double aggregate(List values, List<Integer> rows) {
+        if (rows == null) return aggregate(values);
         if (rows.isEmpty()) return 0;
         if (values == null || values.isEmpty()) return 0;
 

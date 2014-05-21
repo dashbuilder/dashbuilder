@@ -18,13 +18,13 @@ package org.dashbuilder.dataset.index;
 import org.dashbuilder.dataset.index.stats.SizeEstimator;
 
 /**
- * An scalar value index
+ * An aggregate function value index
  */
-public class DataSetScalarIndex extends DataSetIndexElement {
+public class DataSetFunctionIndex extends DataSetIndexElement {
 
     Double value = null;
 
-    public DataSetScalarIndex(Double value, long buildTime) {
+    public DataSetFunctionIndex(Double value, long buildTime) {
         super(buildTime);
         this.value = value;
     }

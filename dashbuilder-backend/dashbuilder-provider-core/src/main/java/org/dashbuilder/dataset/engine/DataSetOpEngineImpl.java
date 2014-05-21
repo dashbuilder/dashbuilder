@@ -23,9 +23,8 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import org.dashbuilder.dataset.DataSetServices;
-import org.dashbuilder.dataset.function.ScalarFunction;
-import org.dashbuilder.dataset.function.ScalarFunctionManager;
-import org.dashbuilder.dataset.group.Interval;
+import org.dashbuilder.dataset.function.AggregateFunction;
+import org.dashbuilder.dataset.function.AggregateFunctionManager;
 import org.dashbuilder.dataset.group.IntervalBuilder;
 import org.dashbuilder.dataset.group.IntervalBuilderLocator;
 import org.dashbuilder.dataset.group.IntervalList;
@@ -42,10 +41,10 @@ import org.dashbuilder.model.dataset.DataSetFactory;
 import org.dashbuilder.model.dataset.DataSetOp;
 import org.dashbuilder.model.dataset.DataSetOpType;
 import org.dashbuilder.model.dataset.filter.DataSetFilter;
+import org.dashbuilder.model.dataset.group.AggregateFunctionType;
 import org.dashbuilder.model.dataset.group.DataSetGroup;
 import org.dashbuilder.model.dataset.group.GroupColumn;
 import org.dashbuilder.model.dataset.group.GroupFunction;
-import org.dashbuilder.model.dataset.group.ScalarFunctionType;
 import org.dashbuilder.model.dataset.impl.DataSetImpl;
 import org.dashbuilder.model.dataset.sort.SortedList;
 import org.dashbuilder.model.dataset.sort.DataSetSort;
@@ -56,7 +55,7 @@ import org.slf4j.Logger;
 public class DataSetOpEngineImpl implements DataSetOpEngine {
 
     @Inject Logger log;
-    @Inject ScalarFunctionManager scalarFunctionManager;
+    @Inject AggregateFunctionManager aggregateFunctionManager;
     @Inject IntervalBuilderLocator intervalBuilderLocator;
     @Inject DataSetServices dataSetServices;
 
@@ -199,20 +198,20 @@ public class DataSetOpEngineImpl implements DataSetOpEngine {
             for (GroupFunction groupFunction : op.getGroupFunctions()) {
                 result.addColumn(groupFunction.getColumnId(), ColumnType.NUMBER);
             }
-            // Add the scalar calculations to the result.
+            // Add the aggregate calculations to the result.
             List<DataSetIntervalIndex> intervalIdxs = lastGroupIndex.getIntervalIndexes();
             for (int i=0; i<intervalIdxs.size(); i++) {
                 DataSetIntervalIndex intervalIdx = intervalIdxs.get(i);
                 result.setValueAt(i, 0, intervalIdx.getName());
 
-                // Add the scalar calculations.
+                // Add the aggregate calculations.
                 for (int j=0; j< groupFunctions.size(); j++) {
                     GroupFunction groupFunction = groupFunctions.get(j);
                     DataColumn dataColumn = currentDataSet.getColumnById(groupFunction.getSourceId());
                     if (dataColumn == null) dataColumn = currentDataSet.getColumnByIndex(0);
 
-                    Double scalar = _calculateScalar(dataColumn, groupFunction.getFunction(), intervalIdx.getRows(), intervalIdx);
-                    result.setValueAt(i, j + 1, scalar);
+                    Double aggValue = _calculateFunction(dataColumn, groupFunction.getFunction(), intervalIdx.getRows(), intervalIdx);
+                    result.setValueAt(i, j + 1, aggValue);
                 }
             }
             return result;
@@ -228,29 +227,29 @@ public class DataSetOpEngineImpl implements DataSetOpEngine {
                 DataColumn dataColumn = currentDataSet.getColumnById(groupFunction.getSourceId());
                 if (dataColumn == null) dataColumn = currentDataSet.getColumnByIndex(0);
 
-                Double scalar = _calculateScalar(dataColumn, groupFunction.getFunction(), null, currentIndex);
-                result.setValueAt(0, i, scalar);
+                Double aggValue = _calculateFunction(dataColumn, groupFunction.getFunction(), null, currentIndex);
+                result.setValueAt(0, i, aggValue);
             }
             return result;
         }
 
-        private Double _calculateScalar(DataColumn column, ScalarFunctionType type, List<Integer> rows, DataSetIndexNode index) {
+        private Double _calculateFunction(DataColumn column, AggregateFunctionType type, List<Integer> rows, DataSetIndexNode index) {
             // Look into the index first
             if (index != null) {
-                Double sv = index.getScalar(column.getId(), type);
+                Double sv = index.getAggValue(column.getId(), type);
                 if (sv != null) return sv;
             }
-            // Do the scalar calculations.
+            // Do the aggregate calculations.
             long _beginTime = System.nanoTime();
-            ScalarFunction function = scalarFunctionManager.getScalarFunctionByCode(type.toString().toLowerCase());
-            double scalar = function.scalar(column.getValues(), rows);
+            AggregateFunction function = aggregateFunctionManager.getFunctionByCode(type.toString().toLowerCase());
+            double aggValue = function.aggregate(column.getValues(), rows);
             long _buildTime = System.nanoTime() - _beginTime;
 
             // Index the result
             if (index != null) {
-                index.indexScalar(column.getId(), type, scalar, _buildTime);
+                index.indexAggValue(column.getId(), type, aggValue, _buildTime);
             }
-            return scalar;
+            return aggValue;
         }
 
         // FILTER OPERATION

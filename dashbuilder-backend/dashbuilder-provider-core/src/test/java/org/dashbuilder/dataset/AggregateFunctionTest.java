@@ -19,13 +19,13 @@ import java.util.Arrays;
 import java.util.List;
 import javax.inject.Inject;
 
+import org.dashbuilder.dataset.function.AggregateFunction;
+import org.dashbuilder.dataset.function.AggregateFunctionManager;
 import org.dashbuilder.dataset.function.AverageFunction;
 import org.dashbuilder.dataset.function.CountFunction;
 import org.dashbuilder.dataset.function.DistinctFunction;
 import org.dashbuilder.dataset.function.MaxFunction;
 import org.dashbuilder.dataset.function.MinFunction;
-import org.dashbuilder.dataset.function.ScalarFunction;
-import org.dashbuilder.dataset.function.ScalarFunctionManager;
 import org.dashbuilder.dataset.function.SumFunction;
 import org.dashbuilder.test.ShrinkWrapHelper;
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -38,7 +38,7 @@ import org.junit.runner.RunWith;
 import static org.fest.assertions.api.Assertions.assertThat;
 
 @RunWith(Arquillian.class)
-public class ScalarFunctionsTest {
+public class AggregateFunctionTest {
 
     @Deployment
     public static Archive<?> createTestArchive()  {
@@ -47,50 +47,50 @@ public class ScalarFunctionsTest {
     }
 
     @Inject
-    ScalarFunctionManager scalarFunctionManager;
+    AggregateFunctionManager aggregateFunctionManager;
 
     List listOfNumbers = Arrays.asList(1, 2, 3, 4, 5);
     List listOfStrings = Arrays.asList("A", "B", "C", "A", "B");
 
     @Test
     public void testSumFunction() throws Exception {
-        ScalarFunction sf = scalarFunctionManager.getScalarFunctionByCode(SumFunction.CODE);
-        double result = sf.scalar(listOfNumbers);
+        AggregateFunction sf = aggregateFunctionManager.getFunctionByCode(SumFunction.CODE);
+        double result = sf.aggregate(listOfNumbers);
         assertThat(result).isEqualTo(15);
     }
 
     @Test
     public void testAvgFunction() throws Exception {
-        ScalarFunction sf = scalarFunctionManager.getScalarFunctionByCode(AverageFunction.CODE);
-        double result = sf.scalar(listOfNumbers);
+        AggregateFunction sf = aggregateFunctionManager.getFunctionByCode(AverageFunction.CODE);
+        double result = sf.aggregate(listOfNumbers);
         assertThat(result).isEqualTo(3);
     }
 
     @Test
     public void testMaxFunction() throws Exception {
-        ScalarFunction sf = scalarFunctionManager.getScalarFunctionByCode(MaxFunction.CODE);
-        double result = sf.scalar(listOfNumbers);
+        AggregateFunction sf = aggregateFunctionManager.getFunctionByCode(MaxFunction.CODE);
+        double result = sf.aggregate(listOfNumbers);
         assertThat(result).isEqualTo(5);
     }
 
     @Test
     public void testMinFunction() throws Exception {
-        ScalarFunction sf = scalarFunctionManager.getScalarFunctionByCode(MinFunction.CODE);
-        double result = sf.scalar(listOfNumbers);
+        AggregateFunction sf = aggregateFunctionManager.getFunctionByCode(MinFunction.CODE);
+        double result = sf.aggregate(listOfNumbers);
         assertThat(result).isEqualTo(1);
     }
 
     @Test
     public void testCountFunction() throws Exception {
-        ScalarFunction sf = scalarFunctionManager.getScalarFunctionByCode(CountFunction.CODE);
-        double result = sf.scalar(listOfStrings);
+        AggregateFunction sf = aggregateFunctionManager.getFunctionByCode(CountFunction.CODE);
+        double result = sf.aggregate(listOfStrings);
         assertThat(result).isEqualTo(5);
     }
 
     @Test
     public void testDistinctFunction() throws Exception {
-        ScalarFunction sf = scalarFunctionManager.getScalarFunctionByCode(DistinctFunction.CODE);
-        double result = sf.scalar(listOfStrings);
+        AggregateFunction sf = aggregateFunctionManager.getFunctionByCode(DistinctFunction.CODE);
+        double result = sf.aggregate(listOfStrings);
         assertThat(result).isEqualTo(3);
     }
 }
