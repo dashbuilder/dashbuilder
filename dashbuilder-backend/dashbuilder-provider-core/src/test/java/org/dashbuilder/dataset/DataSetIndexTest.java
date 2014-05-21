@@ -40,7 +40,7 @@ import org.junit.runner.RunWith;
 import static org.fest.assertions.api.Assertions.*;
 
 @RunWith(Arquillian.class)
-public class DataSetPerformanceTest {
+public class DataSetIndexTest {
 
     @Deployment
     public static Archive<?> createTestArchive()  {
@@ -95,7 +95,7 @@ public class DataSetPerformanceTest {
         dataSetIndexRegistry = dataSetServices.getDataSetIndexRegistry();
         dataSet = RawDataSetSamples.EXPENSE_REPORTS.toDataSet();
         dataSet.setUUID(EXPENSE_REPORTS);
-        dataSetServices.getDataSetManager().registerDataSet(dataSet);
+        dataSetManager.registerDataSet(dataSet);
     }
 
     @Test
