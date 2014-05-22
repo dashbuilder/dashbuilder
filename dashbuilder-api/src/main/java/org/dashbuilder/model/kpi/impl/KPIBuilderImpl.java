@@ -155,32 +155,39 @@ public class KPIBuilderImpl implements KPIBuilder {
         return  this;
     }
 
-    @Override public KPIBuilder group(String columnId, GroupStrategy strategy) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    public KPIBuilder group(String columnId, GroupStrategy strategy) {
+        lookupBuilder.group(columnId, strategy);
+        return this;
     }
 
-    @Override public KPIBuilder group(String columnId, String strategy, int maxIntervals, String intervalSize) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    public KPIBuilder group(String columnId, String strategy, int maxIntervals, String intervalSize) {
+        lookupBuilder.group(columnId, strategy, maxIntervals, intervalSize);
+        return this;
     }
 
-    @Override public KPIBuilder group(String columnId, GroupStrategy strategy, String intervalSize) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    public KPIBuilder group(String columnId, GroupStrategy strategy, String intervalSize) {
+        lookupBuilder.group(columnId, strategy, intervalSize);
+        return this;
     }
 
-    @Override public KPIBuilder group(String columnId, GroupStrategy strategy, DateIntervalType type) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    public KPIBuilder group(String columnId, GroupStrategy strategy, DateIntervalType intervalSize) {
+        lookupBuilder.group(columnId, strategy, intervalSize);
+        return this;
     }
 
-    @Override public KPIBuilder group(String columnId, GroupStrategy strategy, int maxIntervals, String intervalSize) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    public KPIBuilder group(String columnId, GroupStrategy strategy, int maxIntervals, String intervalSize) {
+        lookupBuilder.group(columnId, strategy, maxIntervals, intervalSize);
+        return this;
     }
 
-    @Override public KPIBuilder group(String columnId, String newColumnId, String strategy) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    public KPIBuilder group(String columnId, String newColumnId, String strategy) {
+        lookupBuilder.group(columnId, newColumnId, strategy);
+        return this;
     }
 
-    @Override public KPIBuilder group(String columnId, String newColumnId, String strategy, int maxIntervals, String intervalSize) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    public KPIBuilder group(String columnId, String newColumnId, String strategy, int maxIntervals, String intervalSize) {
+        lookupBuilder.group(columnId, newColumnId, strategy, maxIntervals, intervalSize);
+        return this;
     }
 
     public KPIBuilder fixed(DateIntervalType type) {

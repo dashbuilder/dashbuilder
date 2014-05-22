@@ -74,12 +74,12 @@ public class DataSetLookupBuilderImpl implements DataSetLookupBuilder {
         return group(columnId, columnId, strategy, -1, null);
     }
 
-    public DataSetLookupBuilder group(String columnId, DateIntervalType type) {
-        return group(columnId, -1, type.toString());
+    public DataSetLookupBuilder group(String columnId, DateIntervalType intervalSize) {
+        return group(columnId, -1, intervalSize.toString());
     }
 
-    public DataSetLookupBuilder group(String columnId, int maxIntervals, DateIntervalType type) {
-        return group(columnId, maxIntervals, type.toString());
+    public DataSetLookupBuilder group(String columnId, int maxIntervals, DateIntervalType intervalSize) {
+        return group(columnId, maxIntervals, intervalSize.toString());
     }
 
     public DataSetLookupBuilder group(String columnId, int maxIntervals, String intervalSize) {
@@ -94,8 +94,8 @@ public class DataSetLookupBuilderImpl implements DataSetLookupBuilder {
         return group(columnId, columnId, strategy, 0, intervalSize);
     }
 
-    public DataSetLookupBuilder group(String columnId, GroupStrategy strategy, DateIntervalType type) {
-        return group(columnId, columnId, strategy, 0, type.toString());
+    public DataSetLookupBuilder group(String columnId, GroupStrategy strategy, DateIntervalType intervalSize) {
+        return group(columnId, columnId, strategy, 0, intervalSize.toString());
     }
 
     public DataSetLookupBuilder group(String columnId, GroupStrategy strategy, int maxIntervals, String intervalSize) {

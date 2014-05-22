@@ -28,11 +28,11 @@ public final class DataSetFactory {
         return new DataSetImpl();
     }
 
-    public static DataSetBuilder newBuilder() {
+    public static DataSetBuilder newDSBuilder() {
         return new DataSetBuilderImpl();
     }
 
-    public static DataSetLookupBuilder newLookup() {
+    public static DataSetLookupBuilder newDSLookup() {
         return new DataSetLookupBuilderImpl();
     }
 }
