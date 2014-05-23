@@ -288,7 +288,7 @@ public class GalleryTree {
         nodeList.add(new GalleryNodeKPI("Filtered",
                 KPIFactory.newTableKPI()
                 .dataset(SALES_OPPS)
-                .filter(COUNTRY, AND(isEqualsTo("United States"), isEqualsTo("Brazil")))
+                .filter(COUNTRY, OR (isEqualsTo("United States"), isEqualsTo("Brazil")))
                 .rowOffset(0)
                 .rowNumber(20)
                 .title("Opportunities in USA & Brazil")
