@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012 JBoss Inc
+ * Copyright (C) 2014 JBoss Inc
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,13 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbuilder.model.dataset;
+package org.dashbuilder.model.dataset.filter;
+
+import org.jboss.errai.common.client.api.annotations.Portable;
 
 /**
- * An operation over a data set
+ * Type of logical operators
  */
-public interface DataSetOp {
+@Portable
+public enum LogicalOperatorType {
+    AND,
+    OR,
+    NOT;
 
-    DataSetOpType getType();
-
+    public static LogicalOperatorType getByName(String str) {
+        if (str == null || str.length() == 0) return null;
+        return valueOf(str.toUpperCase());
+    }
 }

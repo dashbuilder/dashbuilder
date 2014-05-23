@@ -18,6 +18,8 @@ package org.dashbuilder.model.kpi.impl;
 import org.dashbuilder.model.dataset.DataSetLookup;
 import org.dashbuilder.model.dataset.DataSetLookupBuilder;
 import org.dashbuilder.model.dataset.DataSetRef;
+import org.dashbuilder.model.dataset.filter.FilterColumn;
+import org.dashbuilder.model.dataset.filter.FilterFunction;
 import org.dashbuilder.model.dataset.group.DateIntervalType;
 import org.dashbuilder.model.dataset.group.GroupStrategy;
 import org.dashbuilder.model.dataset.impl.DataSetLookupBuilderImpl;
@@ -263,6 +265,15 @@ public class KPIBuilderImpl implements KPIBuilder {
     public KPIBuilder sum(String columnId, String newColumnId) {
         lookupBuilder.sum(columnId, newColumnId);
         return  this;
+    }
+
+    public KPIBuilder filter(FilterColumn... filters) {
+        return filter(null, filters);
+    }
+
+    public KPIBuilder filter(String columnId, FilterColumn... filters) {
+        lookupBuilder.filter(columnId, filters);
+        return this;
     }
 
     public KPIBuilder sort(String columnId, String order) {

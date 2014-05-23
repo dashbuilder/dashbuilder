@@ -54,8 +54,12 @@ public class DataSetImpl implements DataSet {
     }
 
     public DataColumn getColumnByIndex(int index) {
-        if (columns == null || columns.isEmpty()) return null;
-        if (index >= columns.size()) return null;
+        if (columns == null || columns.isEmpty()) {
+            throw new IllegalArgumentException("The data set is empty.");
+        }
+        if (index >= columns.size()) {
+            throw new IllegalArgumentException("The column index " + index + " is out of bounds: " + (columns.size()-1));
+        }
         return columns.get(index);
     }
 
@@ -84,24 +88,26 @@ public class DataSetImpl implements DataSet {
         return columns.get(0).getValues().size();
     }
 
-    public Object getValueAt(int row, int column) {
-        if (columns == null || columns.isEmpty()) return null;
-        if (column >= columns.size()) return null;
-        if (row >= getRowCount()) return null;
+    public Object getValueAt(int row, String columnId) {
+        DataColumn columnObj = getColumnById(columnId);
+        return getValueAt(row, columnObj);
+    }
 
-        DataColumn columnObj = columns.get(column);
-        return columnObj.getValues().get(row);
+    public Object getValueAt(int row, int column) {
+        DataColumn columnObj = getColumnByIndex(column);
+        return getValueAt(row, columnObj);
+    }
+
+    protected Object getValueAt(int row, DataColumn column) {
+        if (row >= getRowCount()) {
+            throw new IllegalArgumentException("The row index " + row + " is out of bounds: " + (getRowCount()-1));
+        }
+        return column.getValues().get(row);
     }
 
     public DataSet setValueAt(int row, int column, Object value) {
-        if (columns == null || columns.isEmpty()) {
-            throw new IllegalArgumentException("The data set has no columns.");
-        }
-        if (column >= columns.size()) {
-            throw new IllegalArgumentException("The column index " + column + " is out of bounds: " + (columns.size()-1));
-        }
+        DataColumn columnObj = getColumnByIndex(column);
 
-        DataColumn columnObj = columns.get(column);
         List l = columnObj.getValues();
         if (row > l.size()) {
             throw new IllegalArgumentException("The row index " + row + " is out of bounds: " + (l.size()-1));
@@ -137,17 +143,17 @@ public class DataSetImpl implements DataSet {
         if (offset < 0) {
             throw new IllegalArgumentException("Offset can't be negative: " + offset);
         }
-        if (offset >= getRowCount()) {
-            throw new IllegalArgumentException("Offset can't be greater than the number of rows: " + offset);
-        }
         if (offset == 0 && (rows <= 0 || rows >= this.getRowCount())) {
             return this;
         }
+        if (offset >= getRowCount()) {
+            throw new IllegalArgumentException("Offset can't be greater than the number of rows: " + offset);
+        }
 
-        DataSetImpl other = cloneEmpty();
+        DataSet other = cloneEmpty();
         for (int i=0; i<columns.size(); i++) {
             DataColumn column = columns.get(i);
-            DataColumn colOther = other.columns.get(i);
+            DataColumn colOther = other.getColumns().get(i);
             List values = column.getValues();
             List valOther = colOther.getValues();
             for (int j=offset; j<values.size() && j<rows; j++) {
@@ -158,7 +164,23 @@ public class DataSetImpl implements DataSet {
         return other;
     }
 
-    public DataSetImpl cloneEmpty() {
+    public DataSet trim(List<Integer> rows) {
+        DataSet other = cloneEmpty();
+        for (int i=0; i<columns.size(); i++) {
+            List values = columns.get(i).getValues();
+            List valOther = other.getColumns().get(i).getValues();
+            for (Integer row : rows) {
+                if (row >= values.size()) {
+                    throw new IllegalArgumentException("Row number is out of bounds: " + row);
+                }
+                Object value = values.get(row);
+                valOther.add(value);
+            }
+        }
+        return other;
+    }
+
+    public DataSet cloneEmpty() {
         DataSetImpl other = new DataSetImpl();
         for (int i=0; i<columns.size(); i++) {
             DataColumn column = columns.get(i);

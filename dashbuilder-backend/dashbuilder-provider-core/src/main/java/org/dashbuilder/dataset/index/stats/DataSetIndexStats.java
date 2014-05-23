@@ -47,6 +47,11 @@ public interface DataSetIndexStats {
     int getNumberOfGroupOps();
 
     /**
+     * Total number of filter operations executed over the data set
+     */
+    int getNumberOfFilterOps();
+
+    /**
      * Total number of sort operations executed over the data set
      */
     int getNumberOfSortOps();

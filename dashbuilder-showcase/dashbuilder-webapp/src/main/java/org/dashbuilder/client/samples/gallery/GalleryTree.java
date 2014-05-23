@@ -27,6 +27,7 @@ import org.dashbuilder.model.dataset.DataSetFactory;
 import org.dashbuilder.model.kpi.KPIFactory;
 
 import static org.dashbuilder.model.dataset.group.DateIntervalType.*;
+import static org.dashbuilder.model.dataset.filter.FilterFactory.*;
 import static org.dashbuilder.model.date.Month.*;
 import static org.dashbuilder.model.samples.SalesConstants.*;
 
@@ -156,7 +157,7 @@ public class GalleryTree {
                 .column("Sales in 2014")
                 .column("Sales in 2015")
                 .column("Sales in 2016")
-                .dataset(DataSetFactory.newBuilder()
+                .dataset(DataSetFactory.newDSBuilder()
                         .label("month")
                         .number("2014")
                         .number("2015")
@@ -240,7 +241,7 @@ public class GalleryTree {
                 .meter(30, 160, 190, 220)
                 .column("Person")
                 .column("Heart rate")
-                .dataset(DataSetFactory.newBuilder()
+                .dataset(DataSetFactory.newDSBuilder()
                         .label("person")
                         .number("heartRate")
                         .row("David", 52)
@@ -282,6 +283,15 @@ public class GalleryTree {
                 .rowOffset(0)
                 .rowNumber(20)
                 .title("List of Opportunities")
+                .buildKPI()
+        ));
+        nodeList.add(new GalleryNodeKPI("Filtered",
+                KPIFactory.newTableKPI()
+                .dataset(SALES_OPPS)
+                .filter(COUNTRY, AND(isEqualsTo("United States"), isEqualsTo("Brazil")))
+                .rowOffset(0)
+                .rowNumber(20)
+                .title("Opportunities in USA & Brazil")
                 .buildKPI()
         ));
         nodeList.add(new GalleryNodeKPI("Grouped",

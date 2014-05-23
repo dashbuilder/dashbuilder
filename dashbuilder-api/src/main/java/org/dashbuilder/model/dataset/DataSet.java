@@ -62,6 +62,13 @@ public interface DataSet extends DataSetRef {
     Object getValueAt(int row, int column);
 
     /**
+     * Get the value at a given cell.
+     * @param row The cell row (the first row is 0).
+     * @param columnId The cell column id.
+     */
+    Object getValueAt(int row, String columnId);
+
+    /**
      * Set the value at a given cell.
      * @param row The cell row (the first row is 0).
      * @param column The cell column (the first column is 0).
@@ -87,4 +94,16 @@ public interface DataSet extends DataSetRef {
      * @return A trimmed data set.
      */
     DataSet trim(int offset, int rows);
+
+    /**
+     * Returns a data set containing only the specified row sub set.
+     * @param rows The row ordinals to add to the resulting data set.
+     * @return A trimmed data set.
+     */
+    DataSet trim(List<Integer> rows);
+
+    /**
+     * Build a data set with the same structures as this but containing no data.
+     */
+    DataSet cloneEmpty();
 }

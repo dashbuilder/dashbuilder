@@ -23,6 +23,7 @@ import java.util.Map;
 
 import org.dashbuilder.dataset.group.IntervalList;
 import org.dashbuilder.dataset.index.visitor.DataSetIndexVisitor;
+import org.dashbuilder.model.dataset.filter.FilterColumn;
 import org.dashbuilder.model.dataset.group.AggregateFunctionType;
 import org.dashbuilder.model.dataset.group.GroupColumn;
 import org.dashbuilder.model.dataset.sort.DataSetSort;
@@ -35,6 +36,7 @@ public abstract class DataSetIndexNode extends DataSetIndexElement {
     DataSetIndexNode parent = null;
     List<DataSetGroupIndex> groupIndexes = null;
     List<DataSetSortIndex> sortIndexes = null;
+    List<DataSetFilterIndex> filterIndexes = null;
     Map<String, Map<AggregateFunctionType, DataSetFunctionIndex>> functionIndexes = null;
 
     public DataSetIndexNode() {
@@ -59,6 +61,11 @@ public abstract class DataSetIndexNode extends DataSetIndexElement {
 
         if (groupIndexes != null) {
             for (DataSetGroupIndex index : groupIndexes) {
+                index.acceptVisitor(visitor);
+            }
+        }
+        if (filterIndexes != null) {
+            for (DataSetFilterIndex index : filterIndexes) {
                 index.acceptVisitor(visitor);
             }
         }
@@ -136,6 +143,29 @@ public abstract class DataSetIndexNode extends DataSetIndexElement {
                 groupColumn.getMaxIntervals();
     }
 
+    // Filter indexes
+
+    public DataSetFilterIndex indexFilter(FilterColumn filter, List<Integer> rows, long buildTime) {
+        if (filterIndexes == null) filterIndexes = new ArrayList<DataSetFilterIndex>();
+
+        DataSetFilterIndex index = new DataSetFilterIndex(filter, rows);
+        index.setParent(this);
+        index.setBuildTime(buildTime);
+        filterIndexes.add(index);
+        return index;
+    }
+
+    public DataSetFilterIndex getFilterIndex(FilterColumn filter) {
+        if (filterIndexes == null) return null;
+
+        for (DataSetFilterIndex index: filterIndexes) {
+            if (filter.equals(index.getFilterColumn())) {
+                index.reuseHit();
+                return index;
+            }
+        }
+        return null;
+    }
 
     // Sort indexes
 

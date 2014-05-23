@@ -15,6 +15,8 @@
  */
 package org.dashbuilder.model.dataset;
 
+import org.dashbuilder.model.dataset.filter.FilterColumn;
+import org.dashbuilder.model.dataset.filter.FilterFunction;
 import org.dashbuilder.model.dataset.group.DateIntervalType;
 import org.dashbuilder.model.dataset.group.GroupStrategy;
 import org.dashbuilder.model.dataset.sort.SortOrder;
@@ -72,6 +74,9 @@ public interface DataSetLookupBuilder<T extends DataSetLookupBuilder> {
     T avg(String columnId, String newColumnId);
     T sum(String columnId);
     T sum(String columnId, String newColumnId);
+
+    T filter(FilterColumn... filter);
+    T filter(String columnId, FilterColumn... filter);
 
     T sort(String columnId, String order);
     T sort(String columnId, SortOrder order);

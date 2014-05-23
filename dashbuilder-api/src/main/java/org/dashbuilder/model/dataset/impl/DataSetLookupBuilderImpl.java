@@ -20,6 +20,9 @@ import java.util.List;
 import org.dashbuilder.model.dataset.DataSetLookup;
 import org.dashbuilder.model.dataset.DataSetLookupBuilder;
 import org.dashbuilder.model.dataset.DataSetOp;
+import org.dashbuilder.model.dataset.filter.DataSetFilter;
+import org.dashbuilder.model.dataset.filter.FilterColumn;
+import org.dashbuilder.model.dataset.filter.FilterFunction;
 import org.dashbuilder.model.dataset.group.AggregateFunctionType;
 import org.dashbuilder.model.dataset.group.DataSetGroup;
 import org.dashbuilder.model.dataset.group.DateIntervalType;
@@ -226,6 +229,23 @@ public class DataSetLookupBuilderImpl implements DataSetLookupBuilder {
         }
         DataSetGroup gOp = (DataSetGroup) getCurrentOp();
         gOp.addGroupFunction(new GroupFunction(columnId, newColumnId, function));
+        return this;
+    }
+
+    public DataSetLookupBuilder filter(FilterColumn... filters) {
+        return filter(null, filters);
+    }
+
+    public DataSetLookupBuilder filter(String columnId, FilterColumn... filters) {
+        DataSetOp op = getCurrentOp();
+        if (op == null || !(op instanceof DataSetFilter)) {
+            dataSetLookup.addOperation(new DataSetFilter());
+        }
+        DataSetFilter fOp = (DataSetFilter) getCurrentOp();
+        for (FilterColumn filter : filters) {
+            if (columnId != null) filter.setColumnId(columnId);
+            fOp.addFilterColumn(filter);
+        }
         return this;
     }
 

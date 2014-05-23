@@ -182,7 +182,7 @@ public class ComparatorUtils {
 
     /**
      * Compares two objects.
-     * Only Object satisfying the following nterfaces can be compared: Comparable, Boolean and Collection.
+     * Only Object satisfying the following interfaces can be compared: Comparable, Boolean and Collection.
      *
      * @param ordering: 1=ascending, -1=descending
      */

@@ -15,20 +15,47 @@
  */
 package org.dashbuilder.model.dataset.filter;
 
+import java.util.List;
+import java.util.ArrayList;
+
 import org.dashbuilder.model.dataset.DataSetOp;
 import org.dashbuilder.model.dataset.DataSetOpType;
+import org.jboss.errai.common.client.api.annotations.Portable;
 
 /**
  * A data set filter definition.
  */
+@Portable
 public class DataSetFilter implements DataSetOp {
+
+    protected List<FilterColumn> filterColumnList = new ArrayList<FilterColumn>();
 
     public DataSetOpType getType() {
         return DataSetOpType.FILTER;
     }
 
-    public boolean equals(Object other) {
-        // TODO
-        return false;
+    public void addFilterColumn(FilterColumn... filterColumns) {
+        for (FilterColumn filterColumn : filterColumns) {
+            filterColumnList.add(filterColumn);
+        }
+    }
+
+    public List<FilterColumn> getFilterColumnList() {
+        return filterColumnList;
+    }
+
+    public boolean equals(Object obj) {
+        try {
+            DataSetFilter other = (DataSetFilter) obj;
+            if (filterColumnList.size() != other.filterColumnList.size()) return false;
+            for (int i = 0; i < filterColumnList.size(); i++) {
+                FilterColumn el = filterColumnList.get(i);
+                FilterColumn otherEl = other.filterColumnList.get(i);
+                if (!el.equals(otherEl)) return false;
+            }
+            return true;
+        } catch (ClassCastException e) {
+            return false;
+        }
     }
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012 JBoss Inc
+ * Copyright (C) 2014 JBoss Inc
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,13 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbuilder.model.dataset;
+package org.dashbuilder.dataset.index;
+
+import java.util.List;
+
+import org.dashbuilder.model.dataset.filter.FilterColumn;
+import org.dashbuilder.model.dataset.sort.DataSetSort;
 
 /**
- * An operation over a data set
+ * An index for filtered data sets.
  */
-public interface DataSetOp {
+public class DataSetFilterIndex extends DataSetRowsIndex {
 
-    DataSetOpType getType();
+    private FilterColumn filterColumn;
 
+    public DataSetFilterIndex(FilterColumn filterColumn, List<Integer> rows) {
+        super(rows);
+        this.filterColumn = filterColumn;
+    }
+
+    public FilterColumn getFilterColumn() {
+        return filterColumn;
+    }
 }
+

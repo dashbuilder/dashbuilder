@@ -9,6 +9,7 @@ import org.dashbuilder.config.Config;
 import org.dashbuilder.dataset.engine.DataSetOpEngine;
 import org.dashbuilder.dataset.index.spi.DataSetIndexRegistry;
 import org.dashbuilder.model.dataset.DataSetManager;
+import org.dashbuilder.model.dataset.filter.DataSetFilterAlgorithm;
 import org.dashbuilder.model.dataset.sort.DataSetSortAlgorithm;
 import org.uberfire.commons.services.cdi.Startup;
 
@@ -19,6 +20,7 @@ public class DataSetServices {
     protected static DataSetManager _static_dataSetManager = null;
     protected static DataSetOpEngine _static_dataSetOpEngine = null;
     protected static DataSetIndexRegistry _static_dataSetIndexRegistry = null;
+    protected static DataSetFilterAlgorithm _static_dataSetFilterAlgorithm = null;
     protected static DataSetSortAlgorithm _static_dataSetSortAlgorithm = null;
 
     public static void setDataSetManager(DataSetManager implementation) {
@@ -31,6 +33,10 @@ public class DataSetServices {
 
     public static void setDataSetIndexRegistry(DataSetIndexRegistry implementation) {
         _static_dataSetIndexRegistry = implementation;
+    }
+
+    public static void setDataSetFilterAlgorithm(DataSetFilterAlgorithm implementation) {
+        _static_dataSetFilterAlgorithm = implementation;
     }
 
     public static void setDataSetSortAlgorithm(DataSetSortAlgorithm implementation) {
@@ -52,19 +58,30 @@ public class DataSetServices {
         return dataSetIndexRegistry;
     }
 
+    public DataSetFilterAlgorithm getDataSetFilterAlgorithm() {
+        if (_static_dataSetFilterAlgorithm != null) return _static_dataSetFilterAlgorithm;
+        return dataSetFilterAlgorithm;
+    }
+
     public DataSetSortAlgorithm getDataSetSortAlgorithm() {
         if (_static_dataSetSortAlgorithm != null) return _static_dataSetSortAlgorithm;
         return dataSetSortAlgorithm;
     }
 
     /**
-     * The DataSetStorage implementation used to persist data set indexes.
+     * The DataSetIndexRegistry implementation used to hold data set indexes.
      */
     @Inject @Config("org.dashbuilder.dataset.index.TransientDataSetIndexRegistry")
     protected String DATASET_INDEX_REGISTRY_CLASS;
 
     /**
-     * The SortAlgorithm implementation used to sort data sets.
+     * The DataSetFilterAlgorithm implementation used to filter data sets.
+     */
+    @Inject @Config("org.dashbuilder.dataset.filter.DefaultDataSetFilter")
+    protected String DATASET_FILTER_CLASS;
+
+    /**
+     * The DataSetSortAlgorithm implementation used to sort data sets.
      */
     @Inject @Config("org.dashbuilder.dataset.sort.CollectionsDataSetSort")
     protected String DATASET_SORT_CLASS;
@@ -80,6 +97,10 @@ public class DataSetServices {
     protected DataSetIndexRegistry dataSetIndexRegistry;
 
     @Inject
+    protected Instance<DataSetFilterAlgorithm> filterAlgorithmList;
+    protected DataSetFilterAlgorithm dataSetFilterAlgorithm;
+
+    @Inject
     protected Instance<DataSetSortAlgorithm> sortAlgorithmList;
     protected DataSetSortAlgorithm dataSetSortAlgorithm;
 
@@ -92,14 +113,23 @@ public class DataSetServices {
                 dataSetIndexRegistry = i;
             }
         }
-        if (dataSetIndexRegistry == null) {
-            throw new IllegalStateException("DATASET_INDEX_REGISTRY_CLASS not found: " + DATASET_INDEX_REGISTRY_CLASS);
+        for (DataSetFilterAlgorithm i : filterAlgorithmList) {
+            String c = i.getClass().getName();
+            if (c.contains(DATASET_FILTER_CLASS)) {
+                dataSetFilterAlgorithm = i;
+            }
         }
         for (DataSetSortAlgorithm i : sortAlgorithmList) {
             String c = i.getClass().getName();
             if (c.contains(DATASET_SORT_CLASS)) {
                 dataSetSortAlgorithm = i;
             }
+        }
+        if (dataSetIndexRegistry == null) {
+            throw new IllegalStateException("DATASET_INDEX_REGISTRY_CLASS not found: " + DATASET_INDEX_REGISTRY_CLASS);
+        }
+        if (dataSetFilterAlgorithm == null) {
+            throw new IllegalStateException("DATASET_FILTER_CLASS not found: " + DATASET_FILTER_CLASS);
         }
         if (dataSetSortAlgorithm == null) {
             throw new IllegalStateException("DATASET_SORT_CLASS not found: " + DATASET_SORT_CLASS);

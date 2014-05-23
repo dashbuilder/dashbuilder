@@ -13,13 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbuilder.model.dataset;
+package org.dashbuilder.model.dataset.filter;
 
 /**
- * An operation over a data set
+ * A filter function
  */
-public interface DataSetOp {
+public interface FilterFunction {
 
-    DataSetOpType getType();
-
+    /**
+     * Check the filter.
+     */
+    boolean pass();
 }

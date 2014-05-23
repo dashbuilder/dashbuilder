@@ -17,6 +17,7 @@ package org.dashbuilder.dataset.index.stats;
 
 import java.util.List;
 
+import org.dashbuilder.dataset.index.DataSetFilterIndex;
 import org.dashbuilder.dataset.index.DataSetFunctionIndex;
 import org.dashbuilder.dataset.index.DataSetGroupIndex;
 import org.dashbuilder.dataset.index.DataSetIndex;
@@ -36,6 +37,7 @@ public class DataSetIndexStatsImpl implements DataSetIndexStats, DataSetIndexVis
     private transient long reuseTime = 0;
     private transient long indexSize = 0;
     private transient int numberOfGroupOps = 0;
+    private transient int numberOfFilterOps = 0;
     private transient int numberOfSortOps = 0;
     private transient int numberOfAggFunctions = 0;
     private transient DataSetIndexElement longestBuild;
@@ -68,6 +70,9 @@ public class DataSetIndexStatsImpl implements DataSetIndexStats, DataSetIndexVis
 
         if (element instanceof DataSetGroupIndex) {
             numberOfGroupOps++;
+        }
+        if (element instanceof DataSetFilterIndex) {
+            numberOfFilterOps++;
         }
         if (element instanceof DataSetSortIndex) {
             numberOfSortOps++;
@@ -114,6 +119,10 @@ public class DataSetIndexStatsImpl implements DataSetIndexStats, DataSetIndexVis
         return numberOfGroupOps;
     }
 
+    public int getNumberOfFilterOps() {
+        return numberOfFilterOps;
+    }
+
     public int getNumberOfSortOps() {
         return numberOfSortOps;
     }
@@ -157,8 +166,9 @@ public class DataSetIndexStatsImpl implements DataSetIndexStats, DataSetIndexVis
         out.append("Reuse time=").append(((double) getReuseTime() / 1000000)).append(" (secs)").append(sep);
         out.append("Reuse rate=").append(getReuseRate()).append(sep);
         out.append("#Group ops=").append(getNumberOfGroupOps()).append(sep);
+        out.append("#Filter ops=").append(getNumberOfFilterOps()).append(sep);
         out.append("#Sort ops=").append(getNumberOfSortOps()).append(sep);
-        out.append("#Aggregate ops=").append(getNumberOfAggFunctions()).append(sep);
+        out.append("#Agg funcs=").append(getNumberOfAggFunctions()).append(sep);
         return out.toString();
     }
 }
