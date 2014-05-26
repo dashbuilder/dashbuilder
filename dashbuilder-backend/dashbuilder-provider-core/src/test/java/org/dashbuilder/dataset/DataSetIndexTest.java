@@ -34,6 +34,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import static org.fest.assertions.api.Assertions.*;
+import static org.dashbuilder.model.dataset.filter.FilterFactory.*;
 
 @RunWith(Arquillian.class)
 public class DataSetIndexTest {
@@ -62,6 +63,15 @@ public class DataSetIndexTest {
             .uuid(EXPENSE_REPORTS)
             .group("department", "Department")
             .avg("amount")
+            .buildLookup();
+
+    /**
+     * Filter by city & department
+     */
+    DataSetLookup filterByCityAndDept = DataSetFactory.newDSLookup()
+            .uuid(EXPENSE_REPORTS)
+            .filter("city", isEqualsTo("Barcelona"))
+            .filter("department", isEqualsTo("Engineering"))
             .buildLookup();
 
     /**
@@ -101,7 +111,6 @@ public class DataSetIndexTest {
         long begin = System.nanoTime();
         int lookupTimes = 1000;
         for (int i = 0; i < lookupTimes; i++) {
-            // Apply the two ops 10 times
             dataSetManager.lookupDataSet(groupByDeptAndCount);
             dataSetManager.lookupDataSet(groupByDeptAndSum);
         }
@@ -120,7 +129,35 @@ public class DataSetIndexTest {
         assertThat(stats.getBuildTime()).isLessThan(time);
 
         // The reuse rate must reflect the number of times the lookups are being reused.
-        assertThat(stats.getReuseRate()).isGreaterThan(lookupTimes-1);
+        assertThat(stats.getReuseRate()).isGreaterThanOrEqualTo(lookupTimes-1);
+
+        // The index size must not be greater than the 20% of the dataset's size
+        assertThat(stats.getIndexSize()).isLessThan(stats.getDataSetSize()/5);
+    }
+
+    @Test
+    public void testFilterPerformance() throws Exception {
+        // Apply a filter operation and measure the elapsed time.
+        long begin = System.nanoTime();
+        int lookupTimes = 1000;
+        for (int i = 0; i < lookupTimes; i++) {
+            dataSetManager.lookupDataSet(filterByCityAndDept);
+        }
+        long time = System.nanoTime()-begin;
+
+        // Check out the resulting stats
+        DataSetIndex dataSetIndex = dataSetIndexRegistry.get(EXPENSE_REPORTS);
+        DataSetIndexStats stats = dataSetIndex.getStats();
+        System.out.println(stats.toString("\n"));
+
+        // Assert reuse is working.
+        assertThat(stats.getNumberOfFilterOps()).isEqualTo(2);
+
+        // The build time should be shorter than the overall lookup time.
+        assertThat(stats.getBuildTime()).isLessThan(time);
+
+        // The reuse rate must reflect the number of times the lookups are being reused.
+        assertThat(stats.getReuseRate()).isGreaterThanOrEqualTo(lookupTimes-1);
 
         // The index size must not be greater than the 20% of the dataset's size
         assertThat(stats.getIndexSize()).isLessThan(stats.getDataSetSize()/5);
