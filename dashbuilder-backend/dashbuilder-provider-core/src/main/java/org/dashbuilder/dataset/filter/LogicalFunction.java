@@ -18,15 +18,15 @@ package org.dashbuilder.dataset.filter;
 import java.util.List;
 import java.util.ArrayList;
 
-import org.dashbuilder.model.dataset.filter.FilterLogicalExpr;
-import org.dashbuilder.model.dataset.filter.LogicalOperatorType;
+import org.dashbuilder.model.dataset.filter.LogicalExprFilter;
+import org.dashbuilder.model.dataset.filter.LogicalExprType;
 
 public class LogicalFunction extends DataSetFunction {
 
-    private FilterLogicalExpr logicalFunctionFilter;
+    private LogicalExprFilter logicalFunctionFilter;
     private List<DataSetFunction> functionTerms = new ArrayList<DataSetFunction>();
 
-    public LogicalFunction(DataSetContext ctx, FilterLogicalExpr filter) {
+    public LogicalFunction(DataSetFilterContext ctx, LogicalExprFilter filter) {
         super(ctx, filter);
         this.logicalFunctionFilter = filter;
     }
@@ -37,23 +37,23 @@ public class LogicalFunction extends DataSetFunction {
     }
 
     public boolean pass() {
-        LogicalOperatorType type = logicalFunctionFilter.getLogicalOperator();
+        LogicalExprType type = logicalFunctionFilter.getLogicalOperator();
 
-        if (LogicalOperatorType.NOT.equals(type)) {
+        if (LogicalExprType.NOT.equals(type)) {
             for (DataSetFunction term : functionTerms) {
                 boolean termOk = term.pass();
                 if (termOk) return false;
             }
             return true;
         }
-        if (LogicalOperatorType.AND.equals(type)) {
+        if (LogicalExprType.AND.equals(type)) {
             for (DataSetFunction term : functionTerms) {
                 boolean termOk = term.pass();
                 if (!termOk) return false;
             }
             return true;
         }
-        if (LogicalOperatorType.OR.equals(type)) {
+        if (LogicalExprType.OR.equals(type)) {
             for (DataSetFunction term : functionTerms) {
                 boolean termOk = term.pass();
                 if (termOk) return true;

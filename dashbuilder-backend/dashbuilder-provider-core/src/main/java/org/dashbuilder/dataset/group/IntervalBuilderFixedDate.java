@@ -21,7 +21,7 @@ import javax.enterprise.context.ApplicationScoped;
 import org.apache.commons.lang.StringUtils;
 import org.dashbuilder.model.dataset.DataColumn;
 import org.dashbuilder.model.dataset.group.DateIntervalType;
-import org.dashbuilder.model.dataset.group.GroupColumn;
+import org.dashbuilder.model.dataset.group.ColumnGroup;
 
 import static org.dashbuilder.model.dataset.group.DateIntervalType.*;
 
@@ -37,11 +37,11 @@ public class IntervalBuilderFixedDate implements IntervalBuilder {
             QUARTER, MONTH, DAY_OF_WEEK, HOUR, MINUTE, SECOND};
 
 
-    public IntervalList build(DataColumn column, GroupColumn groupColumn) {
-        IntervalList intervalList = createIntervalList(groupColumn);
+    public IntervalList build(DataColumn column, ColumnGroup columnGroup) {
+        IntervalList intervalList = createIntervalList(columnGroup);
 
         // Reverse intervals if requested
-        boolean asc = groupColumn.isAscendingOrder();
+        boolean asc = columnGroup.isAscendingOrder();
         if (!asc) Collections.reverse(intervalList);
 
         // Index the values
@@ -49,27 +49,27 @@ public class IntervalBuilderFixedDate implements IntervalBuilder {
         return intervalList;
     }
 
-    public IntervalList createIntervalList(GroupColumn groupColumn) {
-        DateIntervalType type = DateIntervalType.getByName(groupColumn.getIntervalSize());
+    public IntervalList createIntervalList(ColumnGroup columnGroup) {
+        DateIntervalType type = DateIntervalType.getByName(columnGroup.getIntervalSize());
         if (QUARTER.equals(type)) {
-            return new IntervalListQuarter(groupColumn);
+            return new IntervalListQuarter(columnGroup);
         }
         if (MONTH.equals(type)) {
-            return new IntervalListMonth(groupColumn);
+            return new IntervalListMonth(columnGroup);
         }
         if (DAY_OF_WEEK.equals(type)) {
-            return new IntervalListDayOfWeek(groupColumn);
+            return new IntervalListDayOfWeek(columnGroup);
         }
         if (HOUR.equals(type)) {
-            return new IntervalListHour(groupColumn);
+            return new IntervalListHour(columnGroup);
         }
         if (MINUTE.equals(type)) {
-            return new IntervalListMinute(groupColumn);
+            return new IntervalListMinute(columnGroup);
         }
         if (SECOND.equals(type)) {
-            return new IntervalListSecond(groupColumn);
+            return new IntervalListSecond(columnGroup);
         }
-        throw new IllegalArgumentException("Interval size '" + groupColumn.getIntervalSize() + "' not supported for " +
+        throw new IllegalArgumentException("Interval size '" + columnGroup.getIntervalSize() + "' not supported for " +
                 "fixed date intervals. The only supported sizes are: " + StringUtils.join(FIXED_INTERVALS_SUPPORTED, ","));
     }
 }

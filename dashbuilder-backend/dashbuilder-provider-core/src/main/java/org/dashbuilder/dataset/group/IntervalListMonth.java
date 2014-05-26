@@ -19,7 +19,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.dashbuilder.model.dataset.group.GroupColumn;
+import org.dashbuilder.model.dataset.group.ColumnGroup;
 import org.dashbuilder.model.date.Month;
 
 /**
@@ -29,11 +29,11 @@ public class IntervalListMonth extends IntervalList {
 
     protected Map<Integer,Interval> intervalMap;
 
-    public IntervalListMonth(GroupColumn groupColumn) {
-        super(groupColumn);
+    public IntervalListMonth(ColumnGroup columnGroup) {
+        super(columnGroup);
         intervalMap = new HashMap<Integer, Interval>();
 
-        Month firstMonth = groupColumn.getFirstMonthOfYear();
+        Month firstMonth = columnGroup.getFirstMonthOfYear();
         int monthIndex = firstMonth.getIndex();
         Month[] months = Month.getAll();
 

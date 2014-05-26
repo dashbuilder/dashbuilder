@@ -77,7 +77,7 @@ public class DataSetServices {
     /**
      * The DataSetFilterAlgorithm implementation used to filter data sets.
      */
-    @Inject @Config("org.dashbuilder.dataset.filter.DefaultDataSetFilter")
+    @Inject @Config("org.dashbuilder.dataset.filter.DefaultFilterAlgorithm")
     protected String DATASET_FILTER_CLASS;
 
     /**

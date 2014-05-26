@@ -28,15 +28,15 @@ import org.jboss.errai.common.client.api.annotations.Portable;
 @Portable
 public class DataSetGroup implements DataSetOp {
 
-    protected GroupColumn groupColumn = null;
+    protected ColumnGroup columnGroup = null;
     protected List<GroupFunction> groupFunctionList = new ArrayList<GroupFunction>();
 
     public DataSetOpType getType() {
         return DataSetOpType.GROUP;
     }
 
-    public void setGroupColumn(GroupColumn groupColumn) {
-        this.groupColumn = groupColumn;
+    public void setColumnGroup(ColumnGroup columnGroup) {
+        this.columnGroup = columnGroup;
     }
 
     public void addGroupFunction(GroupFunction... groupFunctions) {
@@ -45,8 +45,8 @@ public class DataSetGroup implements DataSetOp {
         }
     }
 
-    public GroupColumn getGroupColumn() {
-        return groupColumn;
+    public ColumnGroup getColumnGroup() {
+        return columnGroup;
     }
 
     public List<GroupFunction> getGroupFunctions() {
@@ -56,7 +56,7 @@ public class DataSetGroup implements DataSetOp {
     public boolean equals(Object obj) {
         try {
             DataSetGroup other = (DataSetGroup) obj;
-            if (groupColumn != null && !groupColumn.equals(other.groupColumn)) return false;
+            if (columnGroup != null && !columnGroup.equals(other.columnGroup)) return false;
             if (groupFunctionList.size() != other.groupFunctionList.size()) return false;
             for (int i = 0; i < groupFunctionList.size(); i++) {
                 GroupFunction el = groupFunctionList.get(i);

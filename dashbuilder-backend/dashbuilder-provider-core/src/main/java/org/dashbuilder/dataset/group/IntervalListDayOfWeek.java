@@ -19,7 +19,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.dashbuilder.model.dataset.group.GroupColumn;
+import org.dashbuilder.model.dataset.group.ColumnGroup;
 import org.dashbuilder.model.date.DayOfWeek;
 
 /**
@@ -29,11 +29,11 @@ public class IntervalListDayOfWeek extends IntervalList {
 
     protected Map<Integer,Interval> intervalMap;
 
-    public IntervalListDayOfWeek(GroupColumn groupColumn) {
-        super(groupColumn);
+    public IntervalListDayOfWeek(ColumnGroup columnGroup) {
+        super(columnGroup);
         intervalMap = new HashMap<Integer, Interval>();
 
-        DayOfWeek firstDay = groupColumn.getFirstDayOfWeek();
+        DayOfWeek firstDay = columnGroup.getFirstDayOfWeek();
         int index = firstDay.getIndex();
         DayOfWeek[] array = DayOfWeek.getAll();
 

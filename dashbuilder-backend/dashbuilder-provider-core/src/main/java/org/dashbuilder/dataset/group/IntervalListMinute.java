@@ -17,15 +17,15 @@ package org.dashbuilder.dataset.group;
 
 import java.util.Date;
 
-import org.dashbuilder.model.dataset.group.GroupColumn;
+import org.dashbuilder.model.dataset.group.ColumnGroup;
 
 /**
  * List of the 60-minute intervals present in a hour.
  */
 public class IntervalListMinute extends IntervalListSecond {
 
-    public IntervalListMinute(GroupColumn groupColumn) {
-        super(groupColumn);
+    public IntervalListMinute(ColumnGroup columnGroup) {
+        super(columnGroup);
     }
 
     public Interval locateInterval(Object value) {

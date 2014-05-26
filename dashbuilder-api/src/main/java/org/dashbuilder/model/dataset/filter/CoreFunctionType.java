@@ -21,7 +21,7 @@ import org.jboss.errai.common.client.api.annotations.Portable;
  * Type of core filter functions available
  */
 @Portable
-public enum FilterCoreFunctionType {
+public enum CoreFunctionType {
 
     IS_NULL,
     IS_NOT_NULL,
@@ -33,7 +33,7 @@ public enum FilterCoreFunctionType {
     IS_LOWER_OR_EQUALS_TO,
     IS_BETWEEN;
 
-    public static FilterCoreFunctionType getByName(String interval) {
+    public static CoreFunctionType getByName(String interval) {
         if (interval == null || interval.length() == 0) return null;
         return valueOf(interval.toUpperCase());
     }

@@ -22,113 +22,113 @@ public class FilterFactory {
 
     // Core filter functions
 
-    public static FilterColumn isNull() {
+    public static ColumnFilter isNull() {
         return isNull(null);
     }
 
-    public static FilterColumn isNull(String columnId) {
-        return new FilterCoreFunction(columnId, FilterCoreFunctionType.IS_NULL);
+    public static ColumnFilter isNull(String columnId) {
+        return new CoreFunctionFilter(columnId, CoreFunctionType.IS_NULL);
     }
 
-    public static FilterColumn isNotNull() {
+    public static ColumnFilter isNotNull() {
         return isNotNull(null);
     }
 
-    public static FilterColumn isNotNull(String columnId) {
-        return new FilterCoreFunction(columnId, FilterCoreFunctionType.IS_NOT_NULL);
+    public static ColumnFilter isNotNull(String columnId) {
+        return new CoreFunctionFilter(columnId, CoreFunctionType.IS_NOT_NULL);
     }
 
-    public static FilterColumn isEqualsTo(Comparable allowedValue) {
+    public static ColumnFilter isEqualsTo(Comparable allowedValue) {
         return isEqualsTo(null, allowedValue);
     }
 
-    public static FilterColumn isEqualsTo(String columnId, Comparable allowedValue) {
-        return new FilterCoreFunction(columnId, FilterCoreFunctionType.IS_EQUALS_TO, allowedValue);
+    public static ColumnFilter isEqualsTo(String columnId, Comparable allowedValue) {
+        return new CoreFunctionFilter(columnId, CoreFunctionType.IS_EQUALS_TO, allowedValue);
     }
 
-    public static FilterColumn isNotEqualsTo(Comparable allowedValue) {
+    public static ColumnFilter isNotEqualsTo(Comparable allowedValue) {
         return isNotEqualsTo(null, allowedValue);
     }
 
-    public static FilterColumn isNotEqualsTo(String columnId, Comparable allowedValue) {
-        return new FilterCoreFunction(columnId, FilterCoreFunctionType.IS_NOT_EQUALS_TO, allowedValue);
+    public static ColumnFilter isNotEqualsTo(String columnId, Comparable allowedValue) {
+        return new CoreFunctionFilter(columnId, CoreFunctionType.IS_NOT_EQUALS_TO, allowedValue);
     }
 
-    public static FilterColumn isLowerThan(Comparable ref) {
+    public static ColumnFilter isLowerThan(Comparable ref) {
         return isLowerThan(null, ref);
     }
 
-    public static FilterColumn isLowerThan(String columnId, Comparable ref) {
+    public static ColumnFilter isLowerThan(String columnId, Comparable ref) {
         if (ref instanceof Number) ref = ((Number) ref).doubleValue();
-        return new FilterCoreFunction(columnId, FilterCoreFunctionType.IS_LOWER_THAN, ref);
+        return new CoreFunctionFilter(columnId, CoreFunctionType.IS_LOWER_THAN, ref);
     }
 
-    public static FilterColumn isLowerOrEqualsTo(Comparable ref) {
+    public static ColumnFilter isLowerOrEqualsTo(Comparable ref) {
         return isLowerOrEqualsTo(null, ref);
     }
 
-    public static FilterColumn isLowerOrEqualsTo(String columnId, Comparable ref) {
+    public static ColumnFilter isLowerOrEqualsTo(String columnId, Comparable ref) {
         if (ref instanceof Number) ref = ((Number) ref).doubleValue();
-        return new FilterCoreFunction(columnId, FilterCoreFunctionType.IS_LOWER_OR_EQUALS_TO, ref);
+        return new CoreFunctionFilter(columnId, CoreFunctionType.IS_LOWER_OR_EQUALS_TO, ref);
     }
 
-    public static FilterColumn isGreaterThan(Comparable ref) {
+    public static ColumnFilter isGreaterThan(Comparable ref) {
         return isGreaterThan(null, ref);
     }
 
-    public static FilterColumn isGreaterThan(String columnId, Comparable ref) {
+    public static ColumnFilter isGreaterThan(String columnId, Comparable ref) {
         if (ref instanceof Number) ref = ((Number) ref).doubleValue();
-        return new FilterCoreFunction(columnId, FilterCoreFunctionType.IS_GREATER_THAN, ref);
+        return new CoreFunctionFilter(columnId, CoreFunctionType.IS_GREATER_THAN, ref);
     }
 
-    public static FilterColumn isGreaterOrEqualsTo(Comparable ref) {
+    public static ColumnFilter isGreaterOrEqualsTo(Comparable ref) {
         return isGreaterOrEqualsTo(null, ref);
     }
 
-    public static FilterColumn isGreaterOrEqualsTo(String columnId, Comparable ref) {
+    public static ColumnFilter isGreaterOrEqualsTo(String columnId, Comparable ref) {
         if (ref instanceof Number) ref = ((Number) ref).doubleValue();
-        return new FilterCoreFunction(columnId, FilterCoreFunctionType.IS_GREATER_OR_EQUALS_TO, ref);
+        return new CoreFunctionFilter(columnId, CoreFunctionType.IS_GREATER_OR_EQUALS_TO, ref);
     }
 
-    public static FilterColumn isBetween(Comparable low, Comparable high) {
+    public static ColumnFilter isBetween(Comparable low, Comparable high) {
         return isBetween(null, low, high);
     }
 
-    public static FilterColumn isBetween(String columnId, Comparable low, Comparable high) {
+    public static ColumnFilter isBetween(String columnId, Comparable low, Comparable high) {
         if (low instanceof Number) low = ((Number) low).doubleValue();
         if (high instanceof Number) high = ((Number) high).doubleValue();
-        return new FilterCoreFunction(columnId, FilterCoreFunctionType.IS_BETWEEN, low, high);
+        return new CoreFunctionFilter(columnId, CoreFunctionType.IS_BETWEEN, low, high);
     }
 
     // Boolean operators
 
-    public static FilterColumn AND(FilterColumn... filters) {
+    public static ColumnFilter AND(ColumnFilter... filters) {
         return AND(null, filters);
     }
 
-    public static FilterColumn AND(String columnId, FilterColumn... filters) {
-        return new FilterLogicalExpr(columnId, LogicalOperatorType.AND, filters);
+    public static ColumnFilter AND(String columnId, ColumnFilter... filters) {
+        return new LogicalExprFilter(columnId, LogicalExprType.AND, filters);
     }
 
-    public static FilterColumn OR(FilterColumn... filters) {
+    public static ColumnFilter OR(ColumnFilter... filters) {
         return OR(null, filters);
     }
 
-    public static FilterColumn OR(String columnId, FilterColumn... filters) {
-        return new FilterLogicalExpr(columnId, LogicalOperatorType.OR, filters);
+    public static ColumnFilter OR(String columnId, ColumnFilter... filters) {
+        return new LogicalExprFilter(columnId, LogicalExprType.OR, filters);
     }
 
-    public static FilterColumn NOT(FilterColumn... filters) {
+    public static ColumnFilter NOT(ColumnFilter... filters) {
         return NOT(null, filters);
     }
 
-    public static FilterColumn NOT(String columnId, FilterColumn... filters) {
-        return new FilterLogicalExpr(columnId, LogicalOperatorType.NOT, filters);
+    public static ColumnFilter NOT(String columnId, ColumnFilter... filters) {
+        return new LogicalExprFilter(columnId, LogicalExprType.NOT, filters);
     }
 
     // Custom filter
 
-    public static FilterColumn function(String columnId, FilterFunction function) {
-        return new FilterCustomFunction(columnId, function);
+    public static ColumnFilter function(String columnId, FilterFunction function) {
+        return new CustomFunctionFilter(columnId, function);
     }
 }

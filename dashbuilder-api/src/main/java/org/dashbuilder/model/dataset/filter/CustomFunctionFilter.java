@@ -15,19 +15,17 @@
  */
 package org.dashbuilder.model.dataset.filter;
 
-import org.jboss.errai.common.client.api.annotations.Portable;
-
 /**
  * A custom provided function filter definition
  */
-public class FilterCustomFunction extends FilterColumn {
+public class CustomFunctionFilter extends ColumnFilter {
 
     protected FilterFunction function = null;
 
-    public FilterCustomFunction() {
+    public CustomFunctionFilter() {
     }
 
-    public FilterCustomFunction(String columnId, FilterFunction function) {
+    public CustomFunctionFilter(String columnId, FilterFunction function) {
         super(columnId);
         this.function = function;
     }
@@ -42,7 +40,7 @@ public class FilterCustomFunction extends FilterColumn {
 
     public boolean equals(Object obj) {
         try {
-            FilterCustomFunction other = (FilterCustomFunction) obj;
+            CustomFunctionFilter other = (CustomFunctionFilter) obj;
             if (!super.equals(other)) return false;
             if (function != null && !function.getClass().equals(other.getClass())) return false;
             return true;

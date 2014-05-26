@@ -16,10 +16,10 @@
 package org.dashbuilder.dataset.group;
 
 import org.dashbuilder.model.dataset.DataColumn;
-import org.dashbuilder.model.dataset.group.GroupColumn;
+import org.dashbuilder.model.dataset.group.ColumnGroup;
 
 public interface IntervalBuilder {
 
-    IntervalList build(DataColumn column, GroupColumn groupColumn);
+    IntervalList build(DataColumn column, ColumnGroup columnGroup);
 
 }

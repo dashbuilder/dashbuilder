@@ -28,5 +28,5 @@ public interface DataSetSortAlgorithm {
      * Sort the specified data set according the sort criteria list specified.
      * @return A list of ordered row numbers reflecting the sort results.
      */
-    List<Integer> sort(DataSet dataSet, List<SortColumn> sortColumnList);
+    List<Integer> sort(DataSet dataSet, List<ColumnSort> columnSortList);
 }

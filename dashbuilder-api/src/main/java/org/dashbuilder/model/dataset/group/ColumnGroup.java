@@ -20,10 +20,10 @@ import org.dashbuilder.model.date.Month;
 import org.jboss.errai.common.client.api.annotations.Portable;
 
 /**
- * A data domain definition.
+ * A column group definition.
  */
 @Portable
-public class GroupColumn {
+public class ColumnGroup {
 
     protected String sourceId = null;
     protected String columnId = null;
@@ -34,16 +34,16 @@ public class GroupColumn {
     protected Month firstMonthOfYear = Month.JANUARY;
     protected DayOfWeek firstDayOfWeek = DayOfWeek.MONDAY;
 
-    public GroupColumn() {
+    public ColumnGroup() {
     }
 
-    public GroupColumn(String columnId, String newColumnId, GroupStrategy strategy) {
+    public ColumnGroup(String columnId, String newColumnId, GroupStrategy strategy) {
         this.sourceId = columnId;
         this.columnId = newColumnId;
         this.strategy = strategy;
     }
 
-    public GroupColumn(String columnId, String newColumnId, GroupStrategy strategy, int maxIntervals, String intervalSize) {
+    public ColumnGroup(String columnId, String newColumnId, GroupStrategy strategy, int maxIntervals, String intervalSize) {
         this.sourceId = columnId;
         this.columnId = newColumnId;
         this.strategy = strategy;
@@ -117,7 +117,7 @@ public class GroupColumn {
 
     public boolean equals(Object obj) {
         try {
-            GroupColumn other = (GroupColumn) obj;
+            ColumnGroup other = (ColumnGroup) obj;
             if (sourceId != null && !sourceId.equals(other.sourceId)) return false;
             if (columnId != null && !columnId.equals(other.columnId)) return false;
             if (strategy != null && !strategy.equals(other.strategy)) return false;

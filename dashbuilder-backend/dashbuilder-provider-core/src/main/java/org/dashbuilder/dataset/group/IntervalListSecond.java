@@ -19,7 +19,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.dashbuilder.model.dataset.group.GroupColumn;
+import org.dashbuilder.model.dataset.group.ColumnGroup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,12 +32,12 @@ public class IntervalListSecond extends IntervalList {
 
     protected Map<Integer,Interval> intervalMap;
 
-    public IntervalListSecond(GroupColumn groupColumn) {
-        this(groupColumn, 60);
+    public IntervalListSecond(ColumnGroup columnGroup) {
+        this(columnGroup, 60);
     }
 
-    public IntervalListSecond(GroupColumn groupColumn, int size) {
-        super(groupColumn);
+    public IntervalListSecond(ColumnGroup columnGroup, int size) {
+        super(columnGroup);
         intervalMap = new HashMap<Integer, Interval>();
 
         for (int i = 0; i < size; i++) {

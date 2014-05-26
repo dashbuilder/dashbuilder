@@ -15,19 +15,17 @@
  */
 package org.dashbuilder.model.dataset.filter;
 
-import org.jboss.errai.common.client.api.annotations.Portable;
-
 /**
  * Base class for defining a filter over a data set column.
  */
-public abstract class FilterColumn {
+public abstract class ColumnFilter {
 
     protected String columnId = null;
 
-    public FilterColumn() {
+    public ColumnFilter() {
     }
 
-    public FilterColumn(String columnId) {
+    public ColumnFilter(String columnId) {
         this.columnId = columnId;
     }
 
@@ -41,7 +39,7 @@ public abstract class FilterColumn {
 
     public boolean equals(Object obj) {
         try {
-            FilterColumn other = (FilterColumn) obj;
+            ColumnFilter other = (ColumnFilter) obj;
             if (columnId != null && !columnId.equals(other.columnId)) return false;
             return true;
         } catch (ClassCastException e) {

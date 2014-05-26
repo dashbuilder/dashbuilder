@@ -28,20 +28,20 @@ import org.jboss.errai.common.client.api.annotations.Portable;
 @Portable
 public class DataSetSort implements DataSetOp {
 
-    protected List<SortColumn> sortColumnList = new ArrayList<SortColumn>();
+    protected List<ColumnSort> columnSortList = new ArrayList<ColumnSort>();
 
     public DataSetOpType getType() {
         return DataSetOpType.SORT;
     }
 
-    public void addSortColumn(SortColumn... sortColumns) {
-        for (SortColumn sortColumn : sortColumns) {
-            sortColumnList.add(sortColumn);
+    public void addSortColumn(ColumnSort... columnSorts) {
+        for (ColumnSort columnSort : columnSorts) {
+            columnSortList.add(columnSort);
         }
     }
 
-    public List<SortColumn> getSortColumnList() {
-        return sortColumnList;
+    public List<ColumnSort> getColumnSortList() {
+        return columnSortList;
     }
 
     /**
@@ -49,11 +49,11 @@ public class DataSetSort implements DataSetOp {
      */
     public DataSetSort cloneSortOp() {
         DataSetSort newSortOp = new DataSetSort();
-        for (SortColumn sortColumn : getSortColumnList()) {
-            SortColumn newSortColumn = new SortColumn();
-            newSortColumn.setColumnId(sortColumn.getColumnId());
-            newSortColumn.setOrder(sortColumn.getOrder());
-            newSortOp.addSortColumn(newSortColumn);
+        for (ColumnSort columnSort : getColumnSortList()) {
+            ColumnSort newColumnSort = new ColumnSort();
+            newColumnSort.setColumnId(columnSort.getColumnId());
+            newColumnSort.setOrder(columnSort.getOrder());
+            newSortOp.addSortColumn(newColumnSort);
         }
         return newSortOp;
     }
@@ -62,10 +62,10 @@ public class DataSetSort implements DataSetOp {
      * Invert the sort order if this sort operation.
      */
     public DataSetSort invertOrder() {
-        for (SortColumn sortColumn : getSortColumnList()) {
-            SortOrder order = sortColumn.getOrder();
-            if (SortOrder.ASCENDING.equals(order)) sortColumn.setOrder(SortOrder.DESCENDING);
-            else if (SortOrder.DESCENDING.equals(order)) sortColumn.setOrder(SortOrder.ASCENDING);
+        for (ColumnSort columnSort : getColumnSortList()) {
+            SortOrder order = columnSort.getOrder();
+            if (SortOrder.ASCENDING.equals(order)) columnSort.setOrder(SortOrder.DESCENDING);
+            else if (SortOrder.DESCENDING.equals(order)) columnSort.setOrder(SortOrder.ASCENDING);
         }
         return this;
     }
@@ -73,10 +73,10 @@ public class DataSetSort implements DataSetOp {
     public boolean equals(Object obj) {
         try {
             DataSetSort other = (DataSetSort) obj;
-            if (sortColumnList.size() != other.sortColumnList.size()) return false;
-            for (int i = 0; i < sortColumnList.size(); i++) {
-                SortColumn el = sortColumnList.get(i);
-                SortColumn otherEl = other.sortColumnList.get(i);
+            if (columnSortList.size() != other.columnSortList.size()) return false;
+            for (int i = 0; i < columnSortList.size(); i++) {
+                ColumnSort el = columnSortList.get(i);
+                ColumnSort otherEl = other.columnSortList.get(i);
                 if (!el.equals(otherEl)) return false;
             }
             return true;

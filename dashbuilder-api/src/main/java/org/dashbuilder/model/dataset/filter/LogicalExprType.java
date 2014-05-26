@@ -21,12 +21,12 @@ import org.jboss.errai.common.client.api.annotations.Portable;
  * Type of logical operators
  */
 @Portable
-public enum LogicalOperatorType {
+public enum LogicalExprType {
     AND,
     OR,
     NOT;
 
-    public static LogicalOperatorType getByName(String str) {
+    public static LogicalExprType getByName(String str) {
         if (str == null || str.length() == 0) return null;
         return valueOf(str.toUpperCase());
     }

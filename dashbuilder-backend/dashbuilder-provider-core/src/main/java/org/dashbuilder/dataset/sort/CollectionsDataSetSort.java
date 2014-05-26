@@ -23,7 +23,7 @@ import javax.enterprise.context.ApplicationScoped;
 import org.dashbuilder.model.dataset.DataColumn;
 import org.dashbuilder.model.dataset.DataSet;
 import org.dashbuilder.model.dataset.sort.DataSetSortAlgorithm;
-import org.dashbuilder.model.dataset.sort.SortColumn;
+import org.dashbuilder.model.dataset.sort.ColumnSort;
 
 /**
  * A basic sort algorithm takes relies on the default <tt>Collections.sort()</tt> implementation.
@@ -32,12 +32,12 @@ import org.dashbuilder.model.dataset.sort.SortColumn;
 public class CollectionsDataSetSort implements DataSetSortAlgorithm {
 
 
-    public List<Integer> sort(DataSet dataSet, List<SortColumn> sortColumnList) {
+    public List<Integer> sort(DataSet dataSet, List<ColumnSort> columnSortList) {
         // Create the comparator.
         DataSetRowComparator comparator = new DataSetRowComparator();
-        for (SortColumn sortColumn : sortColumnList) {
-            DataColumn column = dataSet.getColumnById(sortColumn.getColumnId());
-            comparator.criteria(column, sortColumn.getOrder());
+        for (ColumnSort columnSort : columnSortList) {
+            DataColumn column = dataSet.getColumnById(columnSort.getColumnId());
+            comparator.criteria(column, columnSort.getOrder());
         }
         // Create the row number list to sort.
         List<Integer> rows = new ArrayList<Integer>();

@@ -15,24 +15,21 @@
  */
 package org.dashbuilder.model.dataset.sort;
 
-import org.dashbuilder.model.dataset.group.GroupStrategy;
-import org.dashbuilder.model.date.DayOfWeek;
-import org.dashbuilder.model.date.Month;
 import org.jboss.errai.common.client.api.annotations.Portable;
 
 /**
  * A column sort criteria
  */
 @Portable
-public class SortColumn {
+public class ColumnSort {
 
     protected String columnId = null;
     protected SortOrder order = SortOrder.UNSPECIFIED;
 
-    public SortColumn() {
+    public ColumnSort() {
     }
 
-    public SortColumn(String columnId, SortOrder order) {
+    public ColumnSort(String columnId, SortOrder order) {
         this.columnId = columnId;
         this.order = order;
     }
@@ -55,7 +52,7 @@ public class SortColumn {
 
     public boolean equals(Object obj) {
         try {
-            SortColumn other = (SortColumn) obj;
+            ColumnSort other = (ColumnSort) obj;
             if (columnId != null && !columnId.equals(other.columnId)) return false;
             if (order != null && !order.equals(other.order)) return false;
             return true;

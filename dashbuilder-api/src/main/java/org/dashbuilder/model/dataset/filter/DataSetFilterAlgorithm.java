@@ -28,9 +28,9 @@ public interface DataSetFilterAlgorithm {
      * Filter the specified data set according the filter criteria.
      *
      * @param dataSet The data set to filter
-     * @param rows The list of row ordinals to take filter. If null, all the data set rows will be considered.
-     * @param filterColumn The filter column criteria to apply.
+     * @param rows The list of row ordinals to filter. If null, all the data set rows will be considered.
+     * @param columnFilter The column filter to apply.
      * @return A list of ordinals containing only the rows that surpass the filter.
      */
-    List<Integer> filter(DataSet dataSet, List<Integer> rows, FilterColumn filterColumn);
+    List<Integer> filter(DataSet dataSet, List<Integer> rows, ColumnFilter columnFilter);
 }

@@ -17,23 +17,22 @@ package org.dashbuilder.dataset.index;
 
 import java.util.List;
 
-import org.dashbuilder.model.dataset.filter.FilterColumn;
-import org.dashbuilder.model.dataset.sort.DataSetSort;
+import org.dashbuilder.model.dataset.filter.ColumnFilter;
 
 /**
  * An index for filtered data sets.
  */
 public class DataSetFilterIndex extends DataSetRowsIndex {
 
-    private FilterColumn filterColumn;
+    private ColumnFilter columnFilter;
 
-    public DataSetFilterIndex(FilterColumn filterColumn, List<Integer> rows) {
+    public DataSetFilterIndex(ColumnFilter columnFilter, List<Integer> rows) {
         super(rows);
-        this.filterColumn = filterColumn;
+        this.columnFilter = columnFilter;
     }
 
-    public FilterColumn getFilterColumn() {
-        return filterColumn;
+    public ColumnFilter getColumnFilter() {
+        return columnFilter;
     }
 }
 

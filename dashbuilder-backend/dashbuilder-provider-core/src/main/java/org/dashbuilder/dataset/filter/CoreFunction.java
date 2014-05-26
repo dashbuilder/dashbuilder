@@ -15,14 +15,14 @@
  */
 package org.dashbuilder.dataset.filter;
 
-import org.dashbuilder.model.dataset.filter.FilterCoreFunction;
-import org.dashbuilder.model.dataset.filter.FilterCoreFunctionType;
+import org.dashbuilder.model.dataset.filter.CoreFunctionFilter;
+import org.dashbuilder.model.dataset.filter.CoreFunctionType;
 
 public class CoreFunction extends DataSetFunction {
 
-    private FilterCoreFunction coreFunctionFilter = null;
+    private CoreFunctionFilter coreFunctionFilter = null;
 
-    public CoreFunction(DataSetContext ctx, FilterCoreFunction coreFunctionFilter) {
+    public CoreFunction(DataSetFilterContext ctx, CoreFunctionFilter coreFunctionFilter) {
         super(ctx, coreFunctionFilter);
         this.coreFunctionFilter = coreFunctionFilter;
     }
@@ -36,33 +36,33 @@ public class CoreFunction extends DataSetFunction {
     }
 
     public boolean pass() {
-        FilterCoreFunctionType type = coreFunctionFilter.getType();
+        CoreFunctionType type = coreFunctionFilter.getType();
 
-        if (FilterCoreFunctionType.IS_NULL.equals(type)) {
+        if (CoreFunctionType.IS_NULL.equals(type)) {
             return isNull(getCurrentValue());
         }
-        if (FilterCoreFunctionType.IS_NOT_NULL.equals(type)) {
+        if (CoreFunctionType.IS_NOT_NULL.equals(type)) {
             return isNotNull(getCurrentValue());
         }
-        if (FilterCoreFunctionType.IS_EQUALS_TO.equals(type)) {
+        if (CoreFunctionType.IS_EQUALS_TO.equals(type)) {
             return isEqualsTo(getCurrentValue());
         }
-        if (FilterCoreFunctionType.IS_NOT_EQUALS_TO.equals(type)) {
+        if (CoreFunctionType.IS_NOT_EQUALS_TO.equals(type)) {
             return isNotEqualsTo(getCurrentValue());
         }
-        if (FilterCoreFunctionType.IS_LOWER_THAN.equals(type)) {
+        if (CoreFunctionType.IS_LOWER_THAN.equals(type)) {
             return isLowerThan(getCurrentValue());
         }
-        if (FilterCoreFunctionType.IS_LOWER_OR_EQUALS_TO.equals(type)) {
+        if (CoreFunctionType.IS_LOWER_OR_EQUALS_TO.equals(type)) {
             return isLowerThanOrEqualsTo(getCurrentValue());
         }
-        if (FilterCoreFunctionType.IS_GREATER_THAN.equals(type)) {
+        if (CoreFunctionType.IS_GREATER_THAN.equals(type)) {
             return isGreaterThan(getCurrentValue());
         }
-        if (FilterCoreFunctionType.IS_GREATER_OR_EQUALS_TO.equals(type)) {
+        if (CoreFunctionType.IS_GREATER_OR_EQUALS_TO.equals(type)) {
             return isGreaterThanOrEqualsTo(getCurrentValue());
         }
-        if (FilterCoreFunctionType.IS_BETWEEN.equals(type)) {
+        if (CoreFunctionType.IS_BETWEEN.equals(type)) {
             return isBetween(getCurrentValue());
         }
         throw new IllegalArgumentException("Core function type not supported: " + type);

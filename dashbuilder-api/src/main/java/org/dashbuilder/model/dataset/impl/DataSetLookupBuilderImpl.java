@@ -21,16 +21,15 @@ import org.dashbuilder.model.dataset.DataSetLookup;
 import org.dashbuilder.model.dataset.DataSetLookupBuilder;
 import org.dashbuilder.model.dataset.DataSetOp;
 import org.dashbuilder.model.dataset.filter.DataSetFilter;
-import org.dashbuilder.model.dataset.filter.FilterColumn;
-import org.dashbuilder.model.dataset.filter.FilterFunction;
+import org.dashbuilder.model.dataset.filter.ColumnFilter;
 import org.dashbuilder.model.dataset.group.AggregateFunctionType;
 import org.dashbuilder.model.dataset.group.DataSetGroup;
 import org.dashbuilder.model.dataset.group.DateIntervalType;
-import org.dashbuilder.model.dataset.group.GroupColumn;
+import org.dashbuilder.model.dataset.group.ColumnGroup;
 import org.dashbuilder.model.dataset.group.GroupFunction;
 import org.dashbuilder.model.dataset.group.GroupStrategy;
 import org.dashbuilder.model.dataset.sort.DataSetSort;
-import org.dashbuilder.model.dataset.sort.SortColumn;
+import org.dashbuilder.model.dataset.sort.ColumnSort;
 import org.dashbuilder.model.dataset.sort.SortOrder;
 import org.dashbuilder.model.date.DayOfWeek;
 import org.dashbuilder.model.date.Month;
@@ -123,7 +122,7 @@ public class DataSetLookupBuilderImpl implements DataSetLookupBuilder {
             dataSetLookup.addOperation(new DataSetGroup());
         }
         DataSetGroup gOp = (DataSetGroup) getCurrentOp();
-        gOp.setGroupColumn(new GroupColumn(columnId, newColumnId, strategy, maxIntervals, intervalSize));
+        gOp.setColumnGroup(new ColumnGroup(columnId, newColumnId, strategy, maxIntervals, intervalSize));
         return this;
     }
 
@@ -133,48 +132,48 @@ public class DataSetLookupBuilderImpl implements DataSetLookupBuilder {
 
     public DataSetLookupBuilder fixed(DateIntervalType type, boolean ascending) {
         DataSetGroup gOp = (DataSetGroup) getCurrentOp();
-        if (gOp == null || gOp.getGroupColumn() == null) {
+        if (gOp == null || gOp.getColumnGroup() == null) {
             throw new RuntimeException("group() must be called first.");
         }
 
-        GroupColumn groupColumn = gOp.getGroupColumn();
-        groupColumn.setStrategy(GroupStrategy.FIXED);
-        groupColumn.setIntervalSize(type.toString());
-        groupColumn.setAscendingOrder(ascending);
+        ColumnGroup columnGroup = gOp.getColumnGroup();
+        columnGroup.setStrategy(GroupStrategy.FIXED);
+        columnGroup.setIntervalSize(type.toString());
+        columnGroup.setAscendingOrder(ascending);
         return this;
     }
 
     public DataSetLookupBuilder firstDay(DayOfWeek dayOfWeek) {
         DataSetGroup gOp = (DataSetGroup) getCurrentOp();
-        if (gOp == null || gOp.getGroupColumn() == null) {
+        if (gOp == null || gOp.getColumnGroup() == null) {
             throw new RuntimeException("group() must be called first.");
         }
 
-        GroupColumn groupColumn = gOp.getGroupColumn();
-        if (!GroupStrategy.FIXED.equals(groupColumn.getStrategy())) {
+        ColumnGroup columnGroup = gOp.getColumnGroup();
+        if (!GroupStrategy.FIXED.equals(columnGroup.getStrategy())) {
             throw new RuntimeException("A fixed group is required.");
         }
-        if (!DateIntervalType.DAY_OF_WEEK.equals(DateIntervalType.getByName(groupColumn.getIntervalSize()))) {
+        if (!DateIntervalType.DAY_OF_WEEK.equals(DateIntervalType.getByName(columnGroup.getIntervalSize()))) {
             throw new RuntimeException("A fixed DAY_OF_WEEK date group is required.");
         }
-        groupColumn.setFirstDayOfWeek(dayOfWeek);
+        columnGroup.setFirstDayOfWeek(dayOfWeek);
         return this;
     }
 
     public DataSetLookupBuilder firstMonth(Month month) {
         DataSetGroup gOp = (DataSetGroup) getCurrentOp();
-        if (gOp == null || gOp.getGroupColumn() == null) {
+        if (gOp == null || gOp.getColumnGroup() == null) {
             throw new RuntimeException("group() must be called first.");
         }
 
-        GroupColumn groupColumn = gOp.getGroupColumn();
-        if (!GroupStrategy.FIXED.equals(groupColumn.getStrategy())) {
+        ColumnGroup columnGroup = gOp.getColumnGroup();
+        if (!GroupStrategy.FIXED.equals(columnGroup.getStrategy())) {
             throw new RuntimeException("A fixed group is required.");
         }
-        if (!DateIntervalType.MONTH.equals(DateIntervalType.getByName(groupColumn.getIntervalSize()))) {
+        if (!DateIntervalType.MONTH.equals(DateIntervalType.getByName(columnGroup.getIntervalSize()))) {
             throw new RuntimeException("A fixed MONTH date group is required.");
         }
-        groupColumn.setFirstMonthOfYear(month);
+        columnGroup.setFirstMonthOfYear(month);
         return this;
     }
 
@@ -232,17 +231,17 @@ public class DataSetLookupBuilderImpl implements DataSetLookupBuilder {
         return this;
     }
 
-    public DataSetLookupBuilder filter(FilterColumn... filters) {
+    public DataSetLookupBuilder filter(ColumnFilter... filters) {
         return filter(null, filters);
     }
 
-    public DataSetLookupBuilder filter(String columnId, FilterColumn... filters) {
+    public DataSetLookupBuilder filter(String columnId, ColumnFilter... filters) {
         DataSetOp op = getCurrentOp();
         if (op == null || !(op instanceof DataSetFilter)) {
             dataSetLookup.addOperation(new DataSetFilter());
         }
         DataSetFilter fOp = (DataSetFilter) getCurrentOp();
-        for (FilterColumn filter : filters) {
+        for (ColumnFilter filter : filters) {
             if (columnId != null) filter.setColumnId(columnId);
             fOp.addFilterColumn(filter);
         }
@@ -259,7 +258,7 @@ public class DataSetLookupBuilderImpl implements DataSetLookupBuilder {
             dataSetLookup.addOperation(new DataSetSort());
         }
         DataSetSort sOp = (DataSetSort) getCurrentOp();
-        sOp.addSortColumn(new SortColumn(columnId, order));
+        sOp.addSortColumn(new ColumnSort(columnId, order));
         return this;
     }
 

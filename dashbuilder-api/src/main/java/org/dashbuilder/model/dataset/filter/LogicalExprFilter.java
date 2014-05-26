@@ -24,15 +24,15 @@ import org.jboss.errai.common.client.api.annotations.Portable;
  * A logical expression based filter definition.
  */
 @Portable
-public class FilterLogicalExpr extends FilterColumn {
+public class LogicalExprFilter extends ColumnFilter {
 
-    protected LogicalOperatorType logicalOperator = LogicalOperatorType.AND;
-    protected List<FilterColumn> logicalTerms = new ArrayList<FilterColumn>();
+    protected LogicalExprType logicalOperator = LogicalExprType.AND;
+    protected List<ColumnFilter> logicalTerms = new ArrayList<ColumnFilter>();
 
-    public FilterLogicalExpr() {
+    public LogicalExprFilter() {
     }
 
-    public FilterLogicalExpr(String columnId, LogicalOperatorType operator, FilterColumn... terms) {
+    public LogicalExprFilter(String columnId, LogicalExprType operator, ColumnFilter... terms) {
         super(columnId);
         this.logicalOperator = operator;
         setLogicalTerms(terms);
@@ -43,7 +43,7 @@ public class FilterLogicalExpr extends FilterColumn {
         super.setColumnId(columnId);
 
         // Ensure children column refs are synced with its parent.
-        for (FilterColumn childFunction : logicalTerms) {
+        for (ColumnFilter childFunction : logicalTerms) {
             String childColumnId = childFunction.getColumnId();
             if (childColumnId == null || childColumnId.equals(oldColumnId)) {
                 childFunction.setColumnId(columnId);
@@ -51,23 +51,23 @@ public class FilterLogicalExpr extends FilterColumn {
         }
     }
 
-    public LogicalOperatorType getLogicalOperator() {
+    public LogicalExprType getLogicalOperator() {
         return logicalOperator;
     }
 
-    public void setLogicalOperator(LogicalOperatorType logicalOperator) {
+    public void setLogicalOperator(LogicalExprType logicalOperator) {
         this.logicalOperator = logicalOperator;
     }
 
-    public List<FilterColumn> getLogicalTerms() {
+    public List<ColumnFilter> getLogicalTerms() {
         return logicalTerms;
     }
 
-    public void setLogicalTerms(List<FilterColumn> logicalTerms) {
+    public void setLogicalTerms(List<ColumnFilter> logicalTerms) {
         this.logicalTerms = logicalTerms;
     }
 
-    public void addLogicalTerm(FilterColumn logicalTerm) {
+    public void addLogicalTerm(ColumnFilter logicalTerm) {
         // Functions with no column reference inherit the column from its parent
         String childColumnId = logicalTerm.getColumnId();
         if (childColumnId == null) {
@@ -76,21 +76,21 @@ public class FilterLogicalExpr extends FilterColumn {
         this.logicalTerms.add(logicalTerm);
     }
 
-    public void setLogicalTerms(FilterColumn... logicalTerms) {
+    public void setLogicalTerms(ColumnFilter... logicalTerms) {
         this.logicalTerms.clear();
-        for (FilterColumn term : logicalTerms) {
+        for (ColumnFilter term : logicalTerms) {
             addLogicalTerm(term);
         }
     }
 
     public boolean equals(Object obj) {
         try {
-            FilterLogicalExpr other = (FilterLogicalExpr) obj;
+            LogicalExprFilter other = (LogicalExprFilter) obj;
             if (!super.equals(other)) return false;
 
             if (logicalOperator != null && !logicalOperator.equals(other.logicalOperator)) return false;
             if (logicalTerms.size() != other.logicalTerms.size()) return false;
-            for (FilterColumn fc : logicalTerms) {
+            for (ColumnFilter fc : logicalTerms) {
                 if (!other.logicalTerms.contains(fc)) {
                     return false;
                 }

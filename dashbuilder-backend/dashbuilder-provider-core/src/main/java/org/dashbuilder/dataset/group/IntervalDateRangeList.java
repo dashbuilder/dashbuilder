@@ -15,19 +15,17 @@
  */
 package org.dashbuilder.dataset.group;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
-import org.dashbuilder.model.dataset.group.GroupColumn;
+import org.dashbuilder.model.dataset.group.ColumnGroup;
 
 /**
  * A list containing date range intervals.
  */
 public class IntervalDateRangeList extends IntervalList {
 
-    public IntervalDateRangeList(GroupColumn groupColumn) {
-        super(groupColumn);
+    public IntervalDateRangeList(ColumnGroup columnGroup) {
+        super(columnGroup);
     }
 
     public Interval locateInterval(Object value) {

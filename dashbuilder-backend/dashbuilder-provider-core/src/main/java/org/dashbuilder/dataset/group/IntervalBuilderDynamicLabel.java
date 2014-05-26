@@ -20,7 +20,7 @@ import java.util.List;
 import javax.enterprise.context.ApplicationScoped;
 
 import org.dashbuilder.model.dataset.DataColumn;
-import org.dashbuilder.model.dataset.group.GroupColumn;
+import org.dashbuilder.model.dataset.group.ColumnGroup;
 
 /**
  * Interval builder for label columns which generates one interval per label.
@@ -28,16 +28,16 @@ import org.dashbuilder.model.dataset.group.GroupColumn;
 @ApplicationScoped
 public class IntervalBuilderDynamicLabel implements IntervalBuilder {
 
-    public IntervalList build(DataColumn column, GroupColumn groupColumn) {
-        IntervalListLabel result = new IntervalListLabel(groupColumn);
+    public IntervalList build(DataColumn column, ColumnGroup columnGroup) {
+        IntervalListLabel result = new IntervalListLabel(columnGroup);
         List values = column.getValues();
         return result.indexValues(values);
     }
 
     private class IntervalListLabel extends IntervalList {
 
-        private IntervalListLabel(GroupColumn groupColumn) {
-            super(groupColumn);
+        private IntervalListLabel(ColumnGroup columnGroup) {
+            super(columnGroup);
         }
 
         public Interval indexValue(Object value, int row) {

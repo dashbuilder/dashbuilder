@@ -23,9 +23,11 @@ import java.util.Map;
 
 import org.dashbuilder.dataset.group.IntervalList;
 import org.dashbuilder.dataset.index.visitor.DataSetIndexVisitor;
-import org.dashbuilder.model.dataset.filter.FilterColumn;
+import org.dashbuilder.model.dataset.filter.ColumnFilter;
+import org.dashbuilder.model.dataset.filter.CoreFunctionFilter;
+import org.dashbuilder.model.dataset.filter.CoreFunctionType;
 import org.dashbuilder.model.dataset.group.AggregateFunctionType;
-import org.dashbuilder.model.dataset.group.GroupColumn;
+import org.dashbuilder.model.dataset.group.ColumnGroup;
 import org.dashbuilder.model.dataset.sort.DataSetSort;
 
 /**
@@ -113,21 +115,21 @@ public abstract class DataSetIndexNode extends DataSetIndexElement {
 
     // Group indexes
 
-    public DataSetGroupIndex indexGroup(GroupColumn groupColumn, IntervalList intervalList, long buildTime) {
+    public DataSetGroupIndex indexGroup(ColumnGroup columnGroup, IntervalList intervalList, long buildTime) {
         if (groupIndexes == null) groupIndexes = new ArrayList<DataSetGroupIndex>();
-        DataSetGroupIndex index = new DataSetGroupIndex(groupColumn, intervalList);
+        DataSetGroupIndex index = new DataSetGroupIndex(columnGroup, intervalList);
         index.setParent(this);
         index.setBuildTime(buildTime);
         groupIndexes.add(index);
         return index;
     }
 
-    public DataSetGroupIndex getGroupIndex(GroupColumn gc) {
+    public DataSetGroupIndex getGroupIndex(ColumnGroup gc) {
         if (groupIndexes == null) return null;
 
         String key = getGroupKey(gc);
         for (DataSetGroupIndex groupIndex : groupIndexes) {
-            GroupColumn c = groupIndex.groupColumn;
+            ColumnGroup c = groupIndex.columnGroup;
             if (key.equals(getGroupKey(c))) {
                 groupIndex.reuseHit();
                 return groupIndex;
@@ -136,16 +138,16 @@ public abstract class DataSetIndexNode extends DataSetIndexElement {
         return null;
     }
 
-    public String getGroupKey(GroupColumn groupColumn) {
-        return groupColumn.getSourceId() + "_" +
-                groupColumn.getStrategy().toString() + "_" +
-                groupColumn.getIntervalSize() + "_" +
-                groupColumn.getMaxIntervals();
+    public String getGroupKey(ColumnGroup columnGroup) {
+        return columnGroup.getSourceId() + "_" +
+                columnGroup.getStrategy().toString() + "_" +
+                columnGroup.getIntervalSize() + "_" +
+                columnGroup.getMaxIntervals();
     }
 
     // Filter indexes
 
-    public DataSetFilterIndex indexFilter(FilterColumn filter, List<Integer> rows, long buildTime) {
+    public DataSetFilterIndex indexFilter(ColumnFilter filter, List<Integer> rows, long buildTime) {
         if (filterIndexes == null) filterIndexes = new ArrayList<DataSetFilterIndex>();
 
         DataSetFilterIndex index = new DataSetFilterIndex(filter, rows);
@@ -155,11 +157,11 @@ public abstract class DataSetIndexNode extends DataSetIndexElement {
         return index;
     }
 
-    public DataSetFilterIndex getFilterIndex(FilterColumn filter) {
+    public DataSetFilterIndex getFilterIndex(ColumnFilter filter) {
         if (filterIndexes == null) return null;
 
         for (DataSetFilterIndex index: filterIndexes) {
-            if (filter.equals(index.getFilterColumn())) {
+            if (filter.equals(index.getColumnFilter())) {
                 index.reuseHit();
                 return index;
             }

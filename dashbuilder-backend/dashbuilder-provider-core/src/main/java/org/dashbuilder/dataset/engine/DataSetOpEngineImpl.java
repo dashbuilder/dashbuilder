@@ -43,11 +43,10 @@ import org.dashbuilder.model.dataset.DataSetOp;
 import org.dashbuilder.model.dataset.DataSetOpType;
 import org.dashbuilder.model.dataset.filter.DataSetFilter;
 import org.dashbuilder.model.dataset.filter.DataSetFilterAlgorithm;
-import org.dashbuilder.model.dataset.filter.FilterColumn;
-import org.dashbuilder.model.dataset.filter.FilterFunction;
+import org.dashbuilder.model.dataset.filter.ColumnFilter;
 import org.dashbuilder.model.dataset.group.AggregateFunctionType;
 import org.dashbuilder.model.dataset.group.DataSetGroup;
-import org.dashbuilder.model.dataset.group.GroupColumn;
+import org.dashbuilder.model.dataset.group.ColumnGroup;
 import org.dashbuilder.model.dataset.group.GroupFunction;
 import org.dashbuilder.model.dataset.impl.DataSetImpl;
 import org.dashbuilder.model.dataset.sort.SortedList;
@@ -169,9 +168,9 @@ public class DataSetOpEngineImpl implements DataSetOpEngine {
             }
 
             // Group by the specified column (if any).
-            GroupColumn groupColumn = op.getGroupColumn();
-            if (groupColumn != null) {
-                currentIndex = lastGroupIndex = _fetchGroupIndex(groupColumn);
+            ColumnGroup columnGroup = op.getColumnGroup();
+            if (columnGroup != null) {
+                currentIndex = lastGroupIndex = _fetchGroupIndex(columnGroup);
                 return _buildDataSet(op);
             }
 
@@ -179,37 +178,37 @@ public class DataSetOpEngineImpl implements DataSetOpEngine {
             return _buildDataSet(op.getGroupFunctions());
         }
 
-        private DataSetGroupIndex _fetchGroupIndex(GroupColumn groupColumn) {
-            DataColumn sourceColumn = currentDataSet.getColumnById(groupColumn.getSourceId());
-            IntervalBuilder intervalBuilder = intervalBuilderLocator.lookup(sourceColumn, groupColumn.getStrategy());
+        private DataSetGroupIndex _fetchGroupIndex(ColumnGroup columnGroup) {
+            DataColumn sourceColumn = currentDataSet.getColumnById(columnGroup.getSourceId());
+            IntervalBuilder intervalBuilder = intervalBuilderLocator.lookup(sourceColumn, columnGroup.getStrategy());
             if (intervalBuilder == null) throw new RuntimeException("Interval generator not supported.");
 
             // No index => Build required
             if (currentIndex == null) {
-                IntervalList intervalList = intervalBuilder.build(sourceColumn, groupColumn);
-                return new DataSetGroupIndex(groupColumn, intervalList);
+                IntervalList intervalList = intervalBuilder.build(sourceColumn, columnGroup);
+                return new DataSetGroupIndex(columnGroup, intervalList);
             }
             // Index match => Reuse it
-            DataSetGroupIndex groupIndex = currentIndex.getGroupIndex(groupColumn);
+            DataSetGroupIndex groupIndex = currentIndex.getGroupIndex(columnGroup);
             if (groupIndex != null) {
                 return groupIndex;
             }
             // No index match => Build required
             long _beginTime = System.nanoTime();
-            IntervalList intervalList = intervalBuilder.build(sourceColumn, groupColumn);
+            IntervalList intervalList = intervalBuilder.build(sourceColumn, columnGroup);
             long _buildTime = System.nanoTime() - _beginTime;
 
             // Index before return.
-            return currentIndex.indexGroup(groupColumn, intervalList, _buildTime);
+            return currentIndex.indexGroup(columnGroup, intervalList, _buildTime);
         }
 
         private DataSet _buildDataSet(DataSetGroup op) {
-            GroupColumn groupColumn = op.getGroupColumn();
+            ColumnGroup columnGroup = op.getColumnGroup();
             List<GroupFunction> groupFunctions = op.getGroupFunctions();
 
             // Data set header.
             DataSet result = DataSetFactory.newDataSet();
-            result.addColumn(groupColumn.getColumnId(), ColumnType.LABEL);
+            result.addColumn(columnGroup.getColumnId(), ColumnType.LABEL);
             for (GroupFunction groupFunction : op.getGroupFunctions()) {
                 result.addColumn(groupFunction.getColumnId(), ColumnType.NUMBER);
             }
@@ -276,7 +275,7 @@ public class DataSetOpEngineImpl implements DataSetOpEngine {
             }
             // Process the filter requests.
             List<Integer> rows = null;
-            for (FilterColumn filter : op.getFilterColumnList()) {
+            for (ColumnFilter filter : op.getColumnFilterList()) {
                 DataSetFilterIndex filterIndex = _fetchFilterIndex(filter, rows);
                 currentIndex = lastFilterIndex = filterIndex;
                 rows = lastFilterIndex.getRows();
@@ -286,9 +285,9 @@ public class DataSetOpEngineImpl implements DataSetOpEngine {
             return currentDataSet;
         }
 
-        protected DataSetFilterIndex _fetchFilterIndex(FilterColumn filter, List<Integer> targetRows) {
+        protected DataSetFilterIndex _fetchFilterIndex(ColumnFilter filter, List<Integer> targetRows) {
 
-            // No index => Sort required
+            // No index => Filter required
             if (currentIndex == null) {
                 DataSetFilterAlgorithm filterAlgorithm = dataSetServices.getDataSetFilterAlgorithm();
                 List<Integer> rows = filterAlgorithm.filter(currentDataSet, targetRows, filter);
@@ -299,7 +298,7 @@ public class DataSetOpEngineImpl implements DataSetOpEngine {
             if (index != null) {
                 return index;
             }
-            // No index match => Build required
+            // No index match => Filter required
             long _beginTime = System.nanoTime();
             DataSetFilterAlgorithm filterAlgorithm = dataSetServices.getDataSetFilterAlgorithm();
             List<Integer> rows = filterAlgorithm.filter(currentDataSet, targetRows, filter);
@@ -335,7 +334,7 @@ public class DataSetOpEngineImpl implements DataSetOpEngine {
             // No index => Sort required
             if (currentIndex == null) {
                 DataSetSortAlgorithm sortAlgorithm = dataSetServices.getDataSetSortAlgorithm();
-                List<Integer> orderedRows = sortAlgorithm.sort(currentDataSet, op.getSortColumnList());
+                List<Integer> orderedRows = sortAlgorithm.sort(currentDataSet, op.getColumnSortList());
                 return new DataSetSortIndex(op, orderedRows);
             }
             // Index match => Reuse it
@@ -343,10 +342,10 @@ public class DataSetOpEngineImpl implements DataSetOpEngine {
             if (sortIndex != null) {
                 return sortIndex;
             }
-            // No index match => Build required
+            // No index match => Sort required
             long _beginTime = System.nanoTime();
             DataSetSortAlgorithm sortAlgorithm = dataSetServices.getDataSetSortAlgorithm();
-            List<Integer> orderedRows = sortAlgorithm.sort(currentDataSet, op.getSortColumnList());
+            List<Integer> orderedRows = sortAlgorithm.sort(currentDataSet, op.getColumnSortList());
             long _buildTime = System.nanoTime() - _beginTime;
 
             // Index before return.

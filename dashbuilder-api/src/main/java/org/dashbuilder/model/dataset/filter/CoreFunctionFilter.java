@@ -21,28 +21,28 @@ import java.util.List;
 import org.jboss.errai.common.client.api.annotations.Portable;
 
 /**
- * A single function filter definition
+ * A core filter function definition
  */
 @Portable
-public class FilterCoreFunction extends FilterColumn {
+public class CoreFunctionFilter extends ColumnFilter {
 
-    protected FilterCoreFunctionType type = null;
+    protected CoreFunctionType type = null;
     protected List<Comparable> parameters = new ArrayList();
 
-    public FilterCoreFunction() {
+    public CoreFunctionFilter() {
     }
 
-    public FilterCoreFunction(String columnId, FilterCoreFunctionType type, Comparable... parameters) {
+    public CoreFunctionFilter(String columnId, CoreFunctionType type, Comparable... parameters) {
         super(columnId);
         this.type = type;
         this.setParameters(parameters);
     }
 
-    public FilterCoreFunctionType getType() {
+    public CoreFunctionType getType() {
         return type;
     }
 
-    public void setType(FilterCoreFunctionType type) {
+    public void setType(CoreFunctionType type) {
         this.type = type;
     }
 
@@ -63,40 +63,40 @@ public class FilterCoreFunction extends FilterColumn {
 
     public String toString() {
         StringBuilder out = new StringBuilder();
-        if (FilterCoreFunctionType.IS_BETWEEN.equals(type)) {
+        if (CoreFunctionType.IS_BETWEEN.equals(type)) {
             out.append(columnId).append(" between (");
             appendParameters(out);
             out.append(")");
         }
-        else if (FilterCoreFunctionType.IS_GREATER_THAN.equals(type)) {
+        else if (CoreFunctionType.IS_GREATER_THAN.equals(type)) {
             out.append(columnId).append(" > ");
             appendParameters(out);
         }
-        else if (FilterCoreFunctionType.IS_GREATER_OR_EQUALS_TO.equals(type)) {
+        else if (CoreFunctionType.IS_GREATER_OR_EQUALS_TO.equals(type)) {
             out.append(columnId).append(" >= ");
             appendParameters(out);
         }
-        else if (FilterCoreFunctionType.IS_LOWER_THAN.equals(type)) {
+        else if (CoreFunctionType.IS_LOWER_THAN.equals(type)) {
             out.append(columnId).append(" < ");
             appendParameters(out);
         }
-        else if (FilterCoreFunctionType.IS_LOWER_OR_EQUALS_TO.equals(type)) {
+        else if (CoreFunctionType.IS_LOWER_OR_EQUALS_TO.equals(type)) {
             out.append(columnId).append(" <= ");
             appendParameters(out);
         }
-        else if (FilterCoreFunctionType.IS_EQUALS_TO.equals(type)) {
+        else if (CoreFunctionType.IS_EQUALS_TO.equals(type)) {
             out.append(columnId).append(" = ");
             appendParameters(out);
         }
-        else if (FilterCoreFunctionType.IS_NOT_EQUALS_TO.equals(type)) {
+        else if (CoreFunctionType.IS_NOT_EQUALS_TO.equals(type)) {
             out.append(columnId).append(" != ");
             appendParameters(out);
         }
-        else if (FilterCoreFunctionType.IS_NULL.equals(type)) {
+        else if (CoreFunctionType.IS_NULL.equals(type)) {
             out.append(columnId).append(" is_null ");
             appendParameters(out);
         }
-        else if (FilterCoreFunctionType.IS_NOT_NULL.equals(type)) {
+        else if (CoreFunctionType.IS_NOT_NULL.equals(type)) {
             out.append(columnId).append(" is_not_null ");
             appendParameters(out);
         }
@@ -112,7 +112,7 @@ public class FilterCoreFunction extends FilterColumn {
     }
     public boolean equals(Object obj) {
         try {
-            FilterCoreFunction other = (FilterCoreFunction) obj;
+            CoreFunctionFilter other = (CoreFunctionFilter) obj;
             if (!super.equals(other)) return false;
 
             if (type != null && !type.equals(other.type)) return false;

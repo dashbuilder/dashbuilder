@@ -20,18 +20,17 @@ import java.util.List;
 import javax.enterprise.context.ApplicationScoped;
 
 import org.dashbuilder.model.dataset.DataSet;
-import org.dashbuilder.model.dataset.filter.FilterCoreFunctionType;
+import org.dashbuilder.model.dataset.filter.CoreFunctionFilter;
+import org.dashbuilder.model.dataset.filter.CustomFunctionFilter;
 import org.dashbuilder.model.dataset.filter.DataSetFilterAlgorithm;
-import org.dashbuilder.model.dataset.filter.FilterColumn;
-import org.dashbuilder.model.dataset.filter.FilterCoreFunction;
-import org.dashbuilder.model.dataset.filter.FilterCustomFunction;
-import org.dashbuilder.model.dataset.filter.FilterLogicalExpr;
+import org.dashbuilder.model.dataset.filter.ColumnFilter;
+import org.dashbuilder.model.dataset.filter.LogicalExprFilter;
 
 /**
  * Default data set filter algorithm.
  */
 @ApplicationScoped
-public class DefaultDataSetFilter implements DataSetFilterAlgorithm {
+public class DefaultFilterAlgorithm implements DataSetFilterAlgorithm {
 
     /*
 
@@ -75,18 +74,18 @@ public class DefaultDataSetFilter implements DataSetFilterAlgorithm {
      .filter(COUNTRY, isEqualsTo("Spain"))
 
      */
-    public List<Integer> filter(DataSet dataSet, List<Integer> targetRows, FilterColumn filterColumn) {
+    public List<Integer> filter(DataSet dataSet, List<Integer> targetRows, ColumnFilter columnFilter) {
 
         // Build the data set filter function.
-        DataSetContext dataSetContext = new DataSetContext(dataSet);
-        DataSetFunction filterFunction = buildFunction(dataSetContext, filterColumn);
+        DataSetFilterContext dataSetFilterContext = new DataSetFilterContext(dataSet);
+        DataSetFunction filterFunction = buildFunction(dataSetFilterContext, columnFilter);
 
         List<Integer> result = new ArrayList<Integer>();
 
         // Apply the filter function to the whole data set.
         if (targetRows == null) {
             for (int i = 0; i < dataSet.getRowCount(); i++) {
-                dataSetContext.setCurrentRow(i);
+                dataSetFilterContext.setCurrentRow(i);
                 if (filterFunction.pass()) {
                     result.add(i);
                 }
@@ -95,7 +94,7 @@ public class DefaultDataSetFilter implements DataSetFilterAlgorithm {
         // Filter only the target rows specified.
         else {
             for (Integer targetRow : targetRows) {
-                dataSetContext.setCurrentRow(targetRow);
+                dataSetFilterContext.setCurrentRow(targetRow);
                 if (filterFunction.pass()) {
                     result.add(targetRow);
                 }
@@ -104,29 +103,29 @@ public class DefaultDataSetFilter implements DataSetFilterAlgorithm {
         return result;
     }
 
-    public DataSetFunction buildFunction(DataSetContext dataSetContext, FilterColumn filterColumn) {
+    public DataSetFunction buildFunction(DataSetFilterContext filterContext, ColumnFilter columnFilter) {
 
         // Logical expression filter
-        if (filterColumn instanceof FilterLogicalExpr) {
-            FilterLogicalExpr filter = (FilterLogicalExpr) filterColumn;
-            LogicalFunction logicalFunction = new LogicalFunction(dataSetContext, filter);
+        if (columnFilter instanceof LogicalExprFilter) {
+            LogicalExprFilter filter = (LogicalExprFilter) columnFilter;
+            LogicalFunction logicalFunction = new LogicalFunction(filterContext, filter);
 
-            for (FilterColumn filterTerm : filter.getLogicalTerms()) {
-                DataSetFunction term = buildFunction(dataSetContext, filterTerm);
+            for (ColumnFilter filterTerm : filter.getLogicalTerms()) {
+                DataSetFunction term = buildFunction(filterContext, filterTerm);
                 logicalFunction.addFunctionTerm(term);
             }
             return logicalFunction;
         }
         // Core function filter
-        if (filterColumn instanceof FilterCoreFunction) {
-            FilterCoreFunction filter = (FilterCoreFunction) filterColumn;
-            return new CoreFunction(dataSetContext, filter);
+        if (columnFilter instanceof CoreFunctionFilter) {
+            CoreFunctionFilter filter = (CoreFunctionFilter) columnFilter;
+            return new CoreFunction(filterContext, filter);
         }
         // TODO: Custom function filter
-        if (filterColumn instanceof FilterCustomFunction) {
-            FilterCustomFunction filter = (FilterCustomFunction) filterColumn;
+        if (columnFilter instanceof CustomFunctionFilter) {
+            CustomFunctionFilter filter = (CustomFunctionFilter) columnFilter;
         }
 
-        throw new IllegalArgumentException("Filter type not supported: " + filterColumn.getClass().getName());
+        throw new IllegalArgumentException("Filter type not supported: " + columnFilter.getClass().getName());
     }
 }

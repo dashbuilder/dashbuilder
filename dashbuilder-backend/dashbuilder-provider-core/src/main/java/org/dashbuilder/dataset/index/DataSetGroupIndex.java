@@ -21,19 +21,19 @@ import java.util.List;
 import org.dashbuilder.dataset.group.Interval;
 import org.dashbuilder.dataset.group.IntervalList;
 import org.dashbuilder.dataset.index.visitor.DataSetIndexVisitor;
-import org.dashbuilder.model.dataset.group.GroupColumn;
+import org.dashbuilder.model.dataset.group.ColumnGroup;
 
 /**
  * A DataSet index
  */
 public class DataSetGroupIndex extends DataSetIndexNode {
 
-    GroupColumn groupColumn;
+    ColumnGroup columnGroup;
     List<DataSetIntervalIndex> intervalIndexes = new ArrayList<DataSetIntervalIndex>();
 
-    public DataSetGroupIndex(GroupColumn groupColumn, IntervalList intervalList) {
+    public DataSetGroupIndex(ColumnGroup columnGroup, IntervalList intervalList) {
         super();
-        this.groupColumn = groupColumn;
+        this.columnGroup = columnGroup;
         for (Interval interval : intervalList) {
             intervalIndexes.add(new DataSetIntervalIndex(this, interval));
         }
@@ -43,8 +43,8 @@ public class DataSetGroupIndex extends DataSetIndexNode {
         return intervalIndexes;
     }
 
-    public GroupColumn getGroupColumn() {
-        return groupColumn;
+    public ColumnGroup getColumnGroup() {
+        return columnGroup;
     }
 
     public void acceptVisitor(DataSetIndexVisitor visitor) {

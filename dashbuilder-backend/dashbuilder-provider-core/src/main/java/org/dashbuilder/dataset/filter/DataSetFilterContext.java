@@ -15,23 +15,20 @@
  */
 package org.dashbuilder.dataset.filter;
 
-import org.dashbuilder.model.dataset.DataColumn;
 import org.dashbuilder.model.dataset.DataSet;
-import org.dashbuilder.model.dataset.filter.FilterColumn;
-import org.dashbuilder.model.dataset.filter.FilterFunction;
 
 /**
- * A data set function
+ * A data set context
  */
-public class DataSetContext {
+public class DataSetFilterContext {
 
     private DataSet dataSet;
     private int currentRow = 0;
 
-    public DataSetContext() {
+    public DataSetFilterContext() {
     }
 
-    public DataSetContext(DataSet dataSet) {
+    public DataSetFilterContext(DataSet dataSet) {
         this.dataSet = dataSet;
     }
 

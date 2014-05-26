@@ -15,33 +15,31 @@
  */
 package org.dashbuilder.dataset.filter;
 
-import java.util.List;
-
 import org.dashbuilder.model.dataset.DataColumn;
-import org.dashbuilder.model.dataset.filter.FilterColumn;
+import org.dashbuilder.model.dataset.filter.ColumnFilter;
 
 /**
  * A data set function
  */
 public abstract class DataSetFunction {
 
-    protected DataSetContext context;
+    protected DataSetFilterContext context;
     protected String columnId;
     protected DataColumn dataColumn;
 
     public DataSetFunction() {
     }
 
-    public DataSetFunction(DataSetContext ctx, FilterColumn filter) {
+    public DataSetFunction(DataSetFilterContext ctx, ColumnFilter filter) {
         this.context = ctx;
         this.columnId = filter.getColumnId();
     }
 
-    public DataSetContext getContext() {
+    public DataSetFilterContext getContext() {
         return context;
     }
 
-    public void setContext(DataSetContext context) {
+    public void setContext(DataSetFilterContext context) {
         this.context = context;
     }
 

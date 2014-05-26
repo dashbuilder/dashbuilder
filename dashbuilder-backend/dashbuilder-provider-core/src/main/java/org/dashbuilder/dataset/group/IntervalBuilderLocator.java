@@ -20,7 +20,6 @@ import javax.inject.Inject;
 
 import org.dashbuilder.model.dataset.ColumnType;
 import org.dashbuilder.model.dataset.DataColumn;
-import org.dashbuilder.model.dataset.group.GroupColumn;
 import org.dashbuilder.model.dataset.group.GroupStrategy;
 
 @ApplicationScoped

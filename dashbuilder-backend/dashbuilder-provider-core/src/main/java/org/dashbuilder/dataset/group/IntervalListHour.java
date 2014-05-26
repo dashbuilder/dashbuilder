@@ -17,15 +17,15 @@ package org.dashbuilder.dataset.group;
 
 import java.util.Date;
 
-import org.dashbuilder.model.dataset.group.GroupColumn;
+import org.dashbuilder.model.dataset.group.ColumnGroup;
 
 /**
  * List of the 24-hor intervals present in a day.
  */
 public class IntervalListHour extends IntervalListSecond {
 
-    public IntervalListHour(GroupColumn groupColumn) {
-        super(groupColumn, 24);
+    public IntervalListHour(ColumnGroup columnGroup) {
+        super(columnGroup, 24);
     }
 
     public Interval locateInterval(Object value) {
