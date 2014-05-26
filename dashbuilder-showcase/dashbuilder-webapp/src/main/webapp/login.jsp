@@ -142,7 +142,7 @@
 
 <div id="login-wrapper" class="png_bg">
   <div id="login-top">
-    <img src="<%=request.getContextPath()%>/org.dashbuilder.DashbuilderShowcase/images/dashbuilder_logo.png" alt="Logo" title="Powered By Dashbuilder"/>
+    <img src="<%=request.getContextPath()%>/org.dashbuilder.DashbuilderShowcase/images/dashbuilder-logo.png" alt="Logo" title="Powered By Dashbuilder"/>
   </div>
 
   <div id="login-content">
