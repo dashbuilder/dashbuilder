@@ -30,6 +30,8 @@ public class DataSetGroup implements DataSetOp {
 
     protected ColumnGroup columnGroup = null;
     protected List<GroupFunction> groupFunctionList = new ArrayList<GroupFunction>();
+    protected List<String> selectedIntervalNames = new ArrayList<String>();
+    protected NestedGroupType nestedGroupType = null;
 
     public DataSetOpType getType() {
         return DataSetOpType.GROUP;
@@ -53,15 +55,38 @@ public class DataSetGroup implements DataSetOp {
         return groupFunctionList;
     }
 
+    public NestedGroupType getNestedGroupType() {
+        return nestedGroupType;
+    }
+
+    public void setNestedGroupType(NestedGroupType nestedGroupType) {
+        this.nestedGroupType = nestedGroupType;
+    }
+
+    public void addSelectedIntervalNames(String... names) {
+        for (String name : names) {
+            selectedIntervalNames.add(name);
+        }
+    }
+
+    public List<String> getSelectedIntervalNames() {
+        return selectedIntervalNames;
+    }
+
     public boolean equals(Object obj) {
         try {
             DataSetGroup other = (DataSetGroup) obj;
             if (columnGroup != null && !columnGroup.equals(other.columnGroup)) return false;
             if (groupFunctionList.size() != other.groupFunctionList.size()) return false;
+            if (selectedIntervalNames.size() != other.selectedIntervalNames.size()) return false;
+
             for (int i = 0; i < groupFunctionList.size(); i++) {
                 GroupFunction el = groupFunctionList.get(i);
-                GroupFunction otherEl = other.groupFunctionList.get(i);
-                if (!el.equals(otherEl)) return false;
+                if (!other.groupFunctionList.contains(el)) return false;
+            }
+            for (int i = 0; i < selectedIntervalNames.size(); i++) {
+                String el = selectedIntervalNames.get(i);
+                if (!other.selectedIntervalNames.contains(el)) return false;
             }
             return true;
         } catch (ClassCastException e) {

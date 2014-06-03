@@ -21,7 +21,6 @@ import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
 import org.dashbuilder.dataset.engine.DataSetOpEngine;
-import org.dashbuilder.dataset.engine.DataSetOpResults;
 import org.dashbuilder.dataset.index.DataSetIndex;
 import org.dashbuilder.dataset.index.spi.DataSetIndexRegistry;
 import org.dashbuilder.model.dataset.DataSet;
@@ -71,8 +70,7 @@ public class DataSetManagerImpl implements DataSetManager {
         DataSetIndex dataSetIndex = fetchDataSet(uuid);
 
         // Apply the list of operations specified.
-        DataSetOpResults result = dataSetOpEngine.execute(dataSetIndex.getDataSet(), lookup.getOperationList());
-        DataSet dataSet = result.getDataSet();
+        DataSet dataSet = dataSetOpEngine.execute(dataSetIndex.getDataSet(), lookup.getOperationList());
 
         // Trim the data set as requested.
         dataSet = dataSet.trim(lookup.getRowOffset(), lookup.getNumberOfRows());

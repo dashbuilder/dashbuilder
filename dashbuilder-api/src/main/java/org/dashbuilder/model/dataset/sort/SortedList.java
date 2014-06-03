@@ -34,8 +34,8 @@ public class SortedList extends AbstractList {
     }
 
     public SortedList(List realList, List<Integer> rows) {
-        if (rows.size() != realList.size()) {
-            throw new IllegalArgumentException("The number of rows (" + rows.size() + ") does not match the list (" + realList.size() + ").");
+        if (rows.size() > realList.size()) {
+            throw new IllegalArgumentException("The number of rows (" + rows.size() + ") can be greater than the real list (" + realList.size() + ").");
         }
         this.realList = realList;
         this.rows = rows;
@@ -55,6 +55,6 @@ public class SortedList extends AbstractList {
 
     @Override
     public int size() {
-        return realList.size();
+        return rows.size();
     }
 }

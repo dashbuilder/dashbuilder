@@ -32,6 +32,6 @@ public interface DataSetOpEngine {
      * @param opList The list of operations.
      * @return A brand new data set reflecting all the operations.
      */
-    DataSetOpResults execute(DataSet dataSet, List<DataSetOp> opList);
-    DataSetOpResults execute(DataSet dataSet, DataSetOp... opList);
+    DataSet execute(DataSet dataSet, List<DataSetOp> opList);
+    DataSet execute(DataSet dataSet, DataSetOp... opList);
 }

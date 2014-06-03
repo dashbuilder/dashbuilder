@@ -161,6 +161,11 @@ public class KPIBuilderImpl implements KPIBuilder {
         return this;
     }
 
+    public KPIBuilder group(String columnId, String strategy, int maxIntervals, DateIntervalType intervalSize) {
+        lookupBuilder.group(columnId, strategy, maxIntervals, intervalSize);
+        return this;
+    }
+
     public KPIBuilder group(String columnId, String strategy, int maxIntervals, String intervalSize) {
         lookupBuilder.group(columnId, strategy, maxIntervals, intervalSize);
         return this;
@@ -188,6 +193,16 @@ public class KPIBuilderImpl implements KPIBuilder {
 
     public KPIBuilder group(String columnId, String newColumnId, String strategy, int maxIntervals, String intervalSize) {
         lookupBuilder.group(columnId, newColumnId, strategy, maxIntervals, intervalSize);
+        return this;
+    }
+
+    public KPIBuilder group(String columnId, String newColumnId, GroupStrategy strategy, int maxIntervals, DateIntervalType intervalSize) {
+        lookupBuilder.group(columnId, newColumnId, strategy, maxIntervals, intervalSize);
+        return this;
+    }
+
+    public KPIBuilder select(String... intervalNames) {
+        lookupBuilder.select(intervalNames);
         return this;
     }
 

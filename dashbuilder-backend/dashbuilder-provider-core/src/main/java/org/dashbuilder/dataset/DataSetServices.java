@@ -9,8 +9,8 @@ import org.dashbuilder.config.Config;
 import org.dashbuilder.dataset.engine.DataSetOpEngine;
 import org.dashbuilder.dataset.index.spi.DataSetIndexRegistry;
 import org.dashbuilder.model.dataset.DataSetManager;
-import org.dashbuilder.model.dataset.filter.DataSetFilterAlgorithm;
-import org.dashbuilder.model.dataset.sort.DataSetSortAlgorithm;
+import org.dashbuilder.dataset.filter.DataSetFilterAlgorithm;
+import org.dashbuilder.dataset.sort.DataSetSortAlgorithm;
 import org.uberfire.commons.services.cdi.Startup;
 
 @ApplicationScoped

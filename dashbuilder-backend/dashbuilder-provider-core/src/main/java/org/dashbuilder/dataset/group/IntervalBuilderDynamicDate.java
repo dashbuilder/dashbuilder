@@ -21,19 +21,16 @@ import java.util.GregorianCalendar;
 import java.util.List;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
-import org.dashbuilder.dataset.engine.DataSetOpEngine;
-import org.dashbuilder.dataset.DataSetServices;
-import org.dashbuilder.dataset.engine.DataSetOpResults;
-import org.dashbuilder.model.dataset.DataColumn;
+import org.dashbuilder.dataset.engine.DataSetHandler;
 import org.dashbuilder.model.dataset.DataSet;
 import org.dashbuilder.model.dataset.group.DateIntervalType;
 import org.dashbuilder.model.dataset.group.ColumnGroup;
 import org.dashbuilder.model.dataset.sort.DataSetSort;
 import org.dashbuilder.model.dataset.sort.ColumnSort;
 import org.dashbuilder.model.dataset.sort.SortOrder;
+import org.dashbuilder.model.dataset.sort.SortedList;
 
 import static org.dashbuilder.model.dataset.group.DateIntervalType.*;
 
@@ -43,31 +40,27 @@ import static org.dashbuilder.model.dataset.group.DateIntervalType.*;
 @ApplicationScoped
 public class IntervalBuilderDynamicDate implements IntervalBuilder {
 
-    @Inject DataSetServices dataSetServices;
-
-    public IntervalList build(DataColumn column, ColumnGroup columnGroup) {
+    public IntervalList build(DataSetHandler handler, ColumnGroup columnGroup) {
         IntervalDateRangeList results = new IntervalDateRangeList(columnGroup);
-
-        // Sort the column dates.
-        DataSetOpEngine dataSetOpEngine = dataSetServices.getDataSetOpEngine();
-        DataSetSort sortOp = new DataSetSort();
-        sortOp.addSortColumn(new ColumnSort(column.getId(), SortOrder.ASCENDING));
-
-        DataSetOpResults result = dataSetOpEngine.execute(column.getDataSet(), sortOp);
-        DataSet sortedDataSet = result.getDataSet();
-        List<Integer> sortedRows = result.getLastSortIndex().getRows();
-
-        List values = sortedDataSet.getColumnById(column.getId()).getValues();
+        DataSet dataSet = handler.getDataSet();
+        List values = dataSet.getColumnById(columnGroup.getSourceId()).getValues();
         if (values.isEmpty()) return results;
 
+        // Sort the column dates.
+        DataSetSort sortOp = new DataSetSort();
+        sortOp.addSortColumn(new ColumnSort(columnGroup.getSourceId(), SortOrder.ASCENDING));
+        DataSetHandler sortResults = handler.sort(sortOp);
+        List<Integer> sortedRows = sortResults.getRows();
+        SortedList sortedValues = new SortedList(values, sortedRows);
+
         // Get the lower & upper limits.
-        Date minDate = (Date) values.get(0);
-        Date maxDate = (Date) values.get(values.size()-1);
+        Date minDate = (Date) sortedValues.get(0);
+        Date maxDate = (Date) sortedValues.get(sortedValues.size()-1);
 
         // If min/max are equals then create a single interval.
         if (minDate.compareTo(maxDate) == 0) {
             IntervalDateRange interval = new IntervalDateRange(DAY, minDate, maxDate);
-            for (int row = 0; row < values.size(); row++) interval.rows.add(row);
+            for (int row = 0; row < sortedValues.size(); row++) interval.rows.add(row);
             results.add(interval);
             return results;
         }
@@ -165,10 +158,10 @@ public class IntervalBuilderDynamicDate implements IntervalBuilder {
             // Add the target rows to the interval.
             boolean stop = false;
             while (!stop) {
-                if (index >= values.size()) {
+                if (index >= sortedValues.size()) {
                     stop = true;
                 } else {
-                    Date dateValue = (Date) values.get(index);
+                    Date dateValue = (Date) sortedValues.get(index);
                     Integer row = sortedRows.get(index);
                     if (dateValue.before(intervalMaxDate)){
                         interval.rows.add(row);

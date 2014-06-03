@@ -15,34 +15,31 @@
  */
 package org.dashbuilder.dataset.index;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import org.dashbuilder.dataset.index.stats.SizeEstimator;
-
 /**
- * A DataSet index node holding a row sub set.
+ * A set of interval indexes
  */
-public class DataSetRowsIndex extends DataSetIndexNode {
+public class DataSetIntervalSetIndex extends DataSetIntervalIndex {
 
-    List<Integer> rows = null;
+    List<DataSetIntervalIndex> intervalIndexList = new ArrayList<DataSetIntervalIndex>();
 
-    DataSetRowsIndex(DataSetIndexNode parent, List<Integer> rows) {
-        super(parent, 0);
-        this.rows = rows;
+    DataSetIntervalSetIndex(DataSetGroupIndex parent, String intervalName) {
+        super(parent, intervalName);
     }
 
-    DataSetRowsIndex(List<Integer> rows) {
-        this(null, rows);
+    public List<DataSetIntervalIndex> getIntervalIndexes() {
+        return intervalIndexList;
     }
 
     public List<Integer> getRows() {
-        return rows;
-    }
-
-    public long getEstimatedSize() {
-        long result = super.getEstimatedSize();
-        if (rows != null) {
-            result += rows.size() * SizeEstimator.sizeOfInteger;
+        if (intervalIndexList == null || intervalIndexList.isEmpty()) {
+            return null;
+        }
+        AggregatedList<Integer> result = new AggregatedList<Integer>();
+        for (DataSetIntervalIndex intervalIndex : intervalIndexList) {
+            result.addSubList(intervalIndex.getRows());
         }
         return result;
     }

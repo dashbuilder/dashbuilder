@@ -21,11 +21,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.dashbuilder.dataset.group.IntervalList;
+import org.dashbuilder.dataset.index.stats.SizeEstimator;
 import org.dashbuilder.dataset.index.visitor.DataSetIndexVisitor;
 import org.dashbuilder.model.dataset.filter.ColumnFilter;
-import org.dashbuilder.model.dataset.filter.CoreFunctionFilter;
-import org.dashbuilder.model.dataset.filter.CoreFunctionType;
 import org.dashbuilder.model.dataset.group.AggregateFunctionType;
 import org.dashbuilder.model.dataset.group.ColumnGroup;
 import org.dashbuilder.model.dataset.sort.DataSetSort;
@@ -36,18 +34,20 @@ import org.dashbuilder.model.dataset.sort.DataSetSort;
 public abstract class DataSetIndexNode extends DataSetIndexElement {
 
     DataSetIndexNode parent = null;
+    List<Integer> rows = null;
     List<DataSetGroupIndex> groupIndexes = null;
     List<DataSetSortIndex> sortIndexes = null;
     List<DataSetFilterIndex> filterIndexes = null;
     Map<String, Map<AggregateFunctionType, DataSetFunctionIndex>> functionIndexes = null;
 
     public DataSetIndexNode() {
-        this(null, 0);
+        this(null, null, 0);
     }
 
-    public DataSetIndexNode(DataSetIndexNode parent, long buildTime) {
+    public DataSetIndexNode(DataSetIndexNode parent, List<Integer> rows, long buildTime) {
         super(buildTime);
         this.parent = parent;
+        this.rows = rows;
     }
 
     public DataSetIndexNode getParent() {
@@ -56,6 +56,18 @@ public abstract class DataSetIndexNode extends DataSetIndexElement {
 
     public void setParent(DataSetIndexNode parent) {
         this.parent = parent;
+    }
+
+    public List<Integer> getRows() {
+        return rows;
+    }
+
+    public long getEstimatedSize() {
+        long result = super.getEstimatedSize();
+        if (rows != null) {
+            result += rows.size() * SizeEstimator.sizeOfInteger;
+        }
+        return result;
     }
 
     public void acceptVisitor(DataSetIndexVisitor visitor) {
@@ -115,9 +127,8 @@ public abstract class DataSetIndexNode extends DataSetIndexElement {
 
     // Group indexes
 
-    public DataSetGroupIndex indexGroup(ColumnGroup columnGroup, IntervalList intervalList, long buildTime) {
+    public DataSetGroupIndex indexGroup(DataSetGroupIndex index) {
         if (groupIndexes == null) groupIndexes = new ArrayList<DataSetGroupIndex>();
-        DataSetGroupIndex index = new DataSetGroupIndex(columnGroup, intervalList);
         index.setParent(this);
         index.setBuildTime(buildTime);
         groupIndexes.add(index);

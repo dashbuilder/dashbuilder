@@ -13,12 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbuilder.dataset.group;
+package org.dashbuilder.dataset.sort;
+
+import java.util.List;
 
 import org.dashbuilder.dataset.engine.DataSetHandler;
-import org.dashbuilder.model.dataset.group.ColumnGroup;
+import org.dashbuilder.model.dataset.sort.ColumnSort;
 
-public interface IntervalBuilder {
+/**
+ * Data set sort algorithm interface.
+ */
+public interface DataSetSortAlgorithm {
 
-    IntervalList build(DataSetHandler ctx, ColumnGroup columnGroup);
+    /**
+     * Sort the specified data set according the sort criteria list specified.
+     * @param ctx The data set context to filter
+     * @return A list of ordered row numbers reflecting the sort results.
+     */
+    List<Integer> sort(DataSetHandler ctx, List<ColumnSort> columnSortList);
 }

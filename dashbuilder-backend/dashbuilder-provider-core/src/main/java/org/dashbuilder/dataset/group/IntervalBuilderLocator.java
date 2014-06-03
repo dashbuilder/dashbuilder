@@ -29,8 +29,7 @@ public class IntervalBuilderLocator {
     @Inject IntervalBuilderDynamicDate intervalBuilderDynamicDate;
     @Inject IntervalBuilderFixedDate intervalBuilderFixedDate;
 
-    public IntervalBuilder lookup(DataColumn column, GroupStrategy strategy) {
-        ColumnType columnType = column.getColumnType();
+    public IntervalBuilder lookup(ColumnType columnType, GroupStrategy strategy) {
         if (ColumnType.LABEL.equals(columnType)) {
             if (GroupStrategy.FIXED.equals(strategy)) return intervalBuilderDynamicLabel;
             if (GroupStrategy.DYNAMIC.equals(strategy)) return intervalBuilderDynamicLabel;

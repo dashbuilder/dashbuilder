@@ -22,12 +22,12 @@ import org.dashbuilder.model.dataset.filter.ColumnFilter;
 /**
  * An index for filtered data sets.
  */
-public class DataSetFilterIndex extends DataSetRowsIndex {
+public class DataSetFilterIndex extends DataSetIndexNode {
 
     private ColumnFilter columnFilter;
 
     public DataSetFilterIndex(ColumnFilter columnFilter, List<Integer> rows) {
-        super(rows);
+        super(null, rows, 0);
         this.columnFilter = columnFilter;
     }
 

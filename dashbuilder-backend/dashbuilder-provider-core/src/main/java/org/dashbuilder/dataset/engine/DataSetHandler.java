@@ -15,22 +15,17 @@
  */
 package org.dashbuilder.dataset.engine;
 
-import org.dashbuilder.dataset.index.DataSetGroupIndex;
-import org.dashbuilder.dataset.index.DataSetIndex;
-import org.dashbuilder.dataset.index.DataSetIndexNode;
-import org.dashbuilder.dataset.index.DataSetSortIndex;
-import org.dashbuilder.model.dataset.DataSet;
+import org.dashbuilder.model.dataset.filter.DataSetFilter;
 import org.dashbuilder.model.dataset.group.DataSetGroup;
 import org.dashbuilder.model.dataset.sort.DataSetSort;
 
-public interface DataSetOpResults {
+/**
+ * Interface addressed to execute single operations over a data set.
+ */
+public interface DataSetHandler extends DataSetRowSet {
 
-    DataSet getDataSet();
-    DataSetIndexNode getIndex();
+    DataSetHandler group(DataSetGroup op);
+    DataSetHandler filter(DataSetFilter op);
+    DataSetHandler sort(DataSetSort op);
 
-    DataSetGroup getLastGroupOp();
-    DataSetGroupIndex getLastGroupIndex();
-
-    DataSetSort getLastSortOp();
-    DataSetSortIndex getLastSortIndex();
 }

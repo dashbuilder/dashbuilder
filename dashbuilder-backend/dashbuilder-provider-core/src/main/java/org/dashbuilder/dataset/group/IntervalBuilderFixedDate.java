@@ -16,10 +16,11 @@
 package org.dashbuilder.dataset.group;
 
 import java.util.Collections;
+import java.util.List;
 import javax.enterprise.context.ApplicationScoped;
 
 import org.apache.commons.lang.StringUtils;
-import org.dashbuilder.model.dataset.DataColumn;
+import org.dashbuilder.dataset.engine.DataSetHandler;
 import org.dashbuilder.model.dataset.group.DateIntervalType;
 import org.dashbuilder.model.dataset.group.ColumnGroup;
 
@@ -37,7 +38,7 @@ public class IntervalBuilderFixedDate implements IntervalBuilder {
             QUARTER, MONTH, DAY_OF_WEEK, HOUR, MINUTE, SECOND};
 
 
-    public IntervalList build(DataColumn column, ColumnGroup columnGroup) {
+    public IntervalList build(DataSetHandler ctx, ColumnGroup columnGroup) {
         IntervalList intervalList = createIntervalList(columnGroup);
 
         // Reverse intervals if requested
@@ -45,7 +46,10 @@ public class IntervalBuilderFixedDate implements IntervalBuilder {
         if (!asc) Collections.reverse(intervalList);
 
         // Index the values
-        intervalList.indexValues(column.getValues());
+        String columnId = columnGroup.getSourceId();
+        List values = ctx.getDataSet().getColumnById(columnId).getValues();
+        List<Integer> rows = ctx.getRows();
+        intervalList.indexValues(values, rows);
         return intervalList;
     }
 

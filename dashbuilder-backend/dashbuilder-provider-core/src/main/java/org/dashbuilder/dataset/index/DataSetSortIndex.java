@@ -24,12 +24,12 @@ import org.dashbuilder.model.dataset.sort.DataSetSort;
 /**
  * An index for source data sets.
  */
-public class DataSetSortIndex extends DataSetRowsIndex {
+public class DataSetSortIndex extends DataSetIndexNode {
 
     private DataSetSort sortOp;
 
     public DataSetSortIndex(DataSetSort sortOp, List<Integer> sortedRows) {
-        super(sortedRows);
+        super(null, sortedRows, 0);
         this.sortOp = sortOp;
     }
 

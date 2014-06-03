@@ -15,19 +15,31 @@
  */
 package org.dashbuilder.dataset.index;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.dashbuilder.dataset.group.Interval;
 import org.dashbuilder.dataset.index.stats.SizeEstimator;
 
 /**
  * An interval index
  */
-public class DataSetIntervalIndex extends DataSetRowsIndex {
+public class DataSetIntervalIndex extends DataSetIndexNode implements DataSetIntervalIndexHolder {
 
     String intervalName = null;
 
+    DataSetIntervalIndex(DataSetGroupIndex parent, String intervalName) {
+        super(parent, null, 0);
+        this.intervalName = intervalName;
+    }
+
     DataSetIntervalIndex(DataSetGroupIndex parent, Interval interval) {
-        super(parent, interval.getRows());
+        super(parent, interval.getRows(), 0);
         this.intervalName = interval.getName();
+    }
+
+    public List<DataSetIntervalIndex> getIntervalIndexes() {
+        return Arrays.asList(this);
     }
 
     public String getName() {

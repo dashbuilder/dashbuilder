@@ -19,10 +19,10 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.enterprise.context.ApplicationScoped;
 
+import org.dashbuilder.dataset.engine.DataSetHandler;
 import org.dashbuilder.model.dataset.DataSet;
 import org.dashbuilder.model.dataset.filter.CoreFunctionFilter;
 import org.dashbuilder.model.dataset.filter.CustomFunctionFilter;
-import org.dashbuilder.model.dataset.filter.DataSetFilterAlgorithm;
 import org.dashbuilder.model.dataset.filter.ColumnFilter;
 import org.dashbuilder.model.dataset.filter.LogicalExprFilter;
 
@@ -74,16 +74,17 @@ public class DefaultFilterAlgorithm implements DataSetFilterAlgorithm {
      .filter(COUNTRY, isEqualsTo("Spain"))
 
      */
-    public List<Integer> filter(DataSet dataSet, List<Integer> targetRows, ColumnFilter columnFilter) {
+    public List<Integer> filter(DataSetHandler ctx, ColumnFilter columnFilter) {
 
         // Build the data set filter function.
+        DataSet dataSet = ctx.getDataSet();
         DataSetFilterContext dataSetFilterContext = new DataSetFilterContext(dataSet);
         DataSetFunction filterFunction = buildFunction(dataSetFilterContext, columnFilter);
 
         List<Integer> result = new ArrayList<Integer>();
 
         // Apply the filter function to the whole data set.
-        if (targetRows == null) {
+        if (ctx == null || ctx.getRows() == null) {
             for (int i = 0; i < dataSet.getRowCount(); i++) {
                 dataSetFilterContext.setCurrentRow(i);
                 if (filterFunction.pass()) {
@@ -93,7 +94,7 @@ public class DefaultFilterAlgorithm implements DataSetFilterAlgorithm {
         }
         // Filter only the target rows specified.
         else {
-            for (Integer targetRow : targetRows) {
+            for (Integer targetRow : ctx.getRows()) {
                 dataSetFilterContext.setCurrentRow(targetRow);
                 if (filterFunction.pass()) {
                     result.add(targetRow);

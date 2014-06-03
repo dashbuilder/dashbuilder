@@ -13,12 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbuilder.dataset.group;
+package org.dashbuilder.dataset.index;
 
-import org.dashbuilder.dataset.engine.DataSetHandler;
-import org.dashbuilder.model.dataset.group.ColumnGroup;
+import java.util.Collection;
+import java.util.List;
 
-public interface IntervalBuilder {
+/**
+ * Classes implementing this interface hold a list of interval indexes.
+ */
+public interface DataSetIntervalIndexHolder {
 
-    IntervalList build(DataSetHandler ctx, ColumnGroup columnGroup);
+    List<DataSetIntervalIndex> getIntervalIndexes();
 }
+

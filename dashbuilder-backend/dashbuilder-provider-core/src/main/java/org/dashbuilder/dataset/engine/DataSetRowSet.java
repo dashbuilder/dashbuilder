@@ -13,20 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbuilder.model.dataset.sort;
+package org.dashbuilder.dataset.engine;
 
 import java.util.List;
 
+import org.dashbuilder.dataset.index.DataSetIndexNode;
 import org.dashbuilder.model.dataset.DataSet;
+import org.dashbuilder.model.dataset.filter.DataSetFilter;
+import org.dashbuilder.model.dataset.group.DataSetGroup;
+import org.dashbuilder.model.dataset.sort.DataSetSort;
 
 /**
- * Data set sort algorithm interface.
+ * It provides access to a data set row subset.
  */
-public interface DataSetSortAlgorithm {
+public interface DataSetRowSet {
 
-    /**
-     * Sort the specified data set according the sort criteria list specified.
-     * @return A list of ordered row numbers reflecting the sort results.
-     */
-    List<Integer> sort(DataSet dataSet, List<ColumnSort> columnSortList);
+    DataSet getDataSet();
+    List<Integer> getRows();
+
 }

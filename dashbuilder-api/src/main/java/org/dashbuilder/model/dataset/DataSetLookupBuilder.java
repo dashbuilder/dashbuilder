@@ -48,6 +48,7 @@ public interface DataSetLookupBuilder<T extends DataSetLookupBuilder> {
     T group(String columnId, DateIntervalType intervalSize);
     T group(String columnId, int maxIntervals, DateIntervalType intervalSize);
     T group(String columnId, int maxIntervals, String intervalSize);
+    T group(String columnId, String strategy, int maxIntervals, DateIntervalType intervalSize);
     T group(String columnId, String strategy, int maxIntervals, String intervalSize);
     T group(String columnId, GroupStrategy strategy, String intervalSize);
     T group(String columnId, GroupStrategy strategy, DateIntervalType intervalSize);
@@ -56,6 +57,7 @@ public interface DataSetLookupBuilder<T extends DataSetLookupBuilder> {
     T group(String columnId, String newColumnId, GroupStrategy strategy);
     T group(String columnId, String newColumnId, String strategy, int maxIntervals, String intervalSize);
     T group(String columnId, String newColumnId, GroupStrategy strategy, int maxIntervals, String intervalSize);
+    T group(String columnId, String newColumnId, GroupStrategy strategy, int maxIntervals, DateIntervalType intervalSize);
 
     T fixed(DateIntervalType type);
     T fixed(DateIntervalType type, boolean ascending);
@@ -73,6 +75,8 @@ public interface DataSetLookupBuilder<T extends DataSetLookupBuilder> {
     T avg(String columnId, String newColumnId);
     T sum(String columnId);
     T sum(String columnId, String newColumnId);
+
+    T select(String... intervalNames);
 
     T filter(ColumnFilter... filter);
     T filter(String columnId, ColumnFilter... filter);

@@ -19,7 +19,7 @@ import java.util.List;
 
 import javax.enterprise.context.ApplicationScoped;
 
-import org.dashbuilder.model.dataset.DataColumn;
+import org.dashbuilder.dataset.engine.DataSetHandler;
 import org.dashbuilder.model.dataset.group.ColumnGroup;
 
 /**
@@ -28,10 +28,12 @@ import org.dashbuilder.model.dataset.group.ColumnGroup;
 @ApplicationScoped
 public class IntervalBuilderDynamicLabel implements IntervalBuilder {
 
-    public IntervalList build(DataColumn column, ColumnGroup columnGroup) {
+    public IntervalList build(DataSetHandler ctx, ColumnGroup columnGroup) {
         IntervalListLabel result = new IntervalListLabel(columnGroup);
-        List values = column.getValues();
-        return result.indexValues(values);
+        String columnId = columnGroup.getSourceId();
+        List values = ctx.getDataSet().getColumnById(columnId).getValues();
+        List<Integer> rows = ctx.getRows();
+        return result.indexValues(values, rows);
     }
 
     private class IntervalListLabel extends IntervalList {

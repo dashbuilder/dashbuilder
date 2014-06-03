@@ -20,9 +20,9 @@ import java.util.Collections;
 import java.util.List;
 import javax.enterprise.context.ApplicationScoped;
 
+import org.dashbuilder.dataset.engine.DataSetHandler;
 import org.dashbuilder.model.dataset.DataColumn;
 import org.dashbuilder.model.dataset.DataSet;
-import org.dashbuilder.model.dataset.sort.DataSetSortAlgorithm;
 import org.dashbuilder.model.dataset.sort.ColumnSort;
 
 /**
@@ -32,17 +32,25 @@ import org.dashbuilder.model.dataset.sort.ColumnSort;
 public class CollectionsDataSetSort implements DataSetSortAlgorithm {
 
 
-    public List<Integer> sort(DataSet dataSet, List<ColumnSort> columnSortList) {
+    public List<Integer> sort(DataSetHandler ctx, List<ColumnSort> columnSortList) {
+        DataSet dataSet = ctx.getDataSet();
+
         // Create the comparator.
         DataSetRowComparator comparator = new DataSetRowComparator();
         for (ColumnSort columnSort : columnSortList) {
             DataColumn column = dataSet.getColumnById(columnSort.getColumnId());
+            if (column == null) throw new IllegalArgumentException("Column not found in data set: " + columnSort.getColumnId());
+
             comparator.criteria(column, columnSort.getOrder());
         }
         // Create the row number list to sort.
         List<Integer> rows = new ArrayList<Integer>();
-        for (int i=0; i<dataSet.getRowCount(); i++) {
-            rows.add(i);
+        if (ctx != null && ctx.getRows() != null) {
+            rows.addAll(ctx.getRows());
+        } else {
+            for (int i=0; i<dataSet.getRowCount(); i++) {
+                rows.add(i);
+            }
         }
         // Sort the row numbers.
         Collections.sort(rows, comparator);

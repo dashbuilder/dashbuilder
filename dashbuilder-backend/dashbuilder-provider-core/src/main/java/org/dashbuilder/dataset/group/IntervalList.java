@@ -39,11 +39,17 @@ public abstract class IntervalList extends ArrayList<Interval> {
     /**
      * Creates and classify the list of specified values into intervals.
      */
-
-    public IntervalList indexValues(List values) {
-        for (int row = 0; row < values.size(); row++) {
-            Object value = values.get(row);
-            indexValue(value, row);
+    public IntervalList indexValues(List values, List<Integer> rows) {
+        if (rows == null) {
+            for (int row = 0; row < values.size(); row++) {
+                Object value = values.get(row);
+                indexValue(value, row);
+            }
+        } else {
+            for (Integer row : rows) {
+                Object value = values.get(row);
+                indexValue(value, row);
+            }
         }
         return this;
     }

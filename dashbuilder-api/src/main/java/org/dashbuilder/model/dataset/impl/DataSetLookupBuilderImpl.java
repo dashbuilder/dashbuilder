@@ -73,7 +73,7 @@ public class DataSetLookupBuilderImpl implements DataSetLookupBuilder {
     }
 
     public DataSetLookupBuilder group(String columnId, GroupStrategy strategy) {
-        return group(columnId, columnId, strategy, -1, null);
+        return group(columnId, columnId, strategy, -1, (String) null);
     }
 
     public DataSetLookupBuilder group(String columnId, DateIntervalType intervalSize) {
@@ -86,6 +86,10 @@ public class DataSetLookupBuilderImpl implements DataSetLookupBuilder {
 
     public DataSetLookupBuilder group(String columnId, int maxIntervals, String intervalSize) {
         return group(columnId, columnId, GroupStrategy.DYNAMIC, maxIntervals, intervalSize);
+    }
+
+    public DataSetLookupBuilder group(String columnId, String strategy, int maxIntervals, DateIntervalType intervalSize) {
+        return group(columnId, columnId, GroupStrategy.getByName(strategy), maxIntervals, intervalSize.toString());
     }
 
     public DataSetLookupBuilder group(String columnId, String strategy, int maxIntervals, String intervalSize) {
@@ -109,20 +113,21 @@ public class DataSetLookupBuilderImpl implements DataSetLookupBuilder {
     }
 
     public DataSetLookupBuilder group(String columnId, String newColumnId, GroupStrategy strategy) {
-        return group(columnId, newColumnId, strategy, 15, null);
+        return group(columnId, newColumnId, strategy, 15, (String) null);
     }
 
     public DataSetLookupBuilder group(String columnId, String newColumnId, String strategy, int maxIntervals, String intervalSize) {
         return group(columnId, newColumnId, GroupStrategy.getByName(strategy), maxIntervals, intervalSize);
     }
 
+    public DataSetLookupBuilder group(String columnId, String newColumnId, GroupStrategy strategy, int maxIntervals, DateIntervalType intervalSize) {
+        return group(columnId, newColumnId, strategy, maxIntervals, intervalSize.toString());
+    }
+
     public DataSetLookupBuilder group(String columnId, String newColumnId, GroupStrategy strategy, int maxIntervals, String intervalSize) {
-        DataSetOp op = getCurrentOp();
-        if (op == null || !(op instanceof DataSetGroup)) {
-            dataSetLookup.addOperation(new DataSetGroup());
-        }
-        DataSetGroup gOp = (DataSetGroup) getCurrentOp();
+        DataSetGroup gOp = new DataSetGroup();
         gOp.setColumnGroup(new ColumnGroup(columnId, newColumnId, strategy, maxIntervals, intervalSize));
+        dataSetLookup.addOperation(gOp);
         return this;
     }
 
@@ -228,6 +233,16 @@ public class DataSetLookupBuilderImpl implements DataSetLookupBuilder {
         }
         DataSetGroup gOp = (DataSetGroup) getCurrentOp();
         gOp.addGroupFunction(new GroupFunction(columnId, newColumnId, function));
+        return this;
+    }
+
+    public DataSetLookupBuilder select(String... intervalNames) {
+        DataSetOp op = getCurrentOp();
+        if (op == null || !(op instanceof DataSetGroup)) {
+            dataSetLookup.addOperation(new DataSetGroup());
+        }
+        DataSetGroup gOp = (DataSetGroup) getCurrentOp();
+        gOp.addSelectedIntervalNames(intervalNames);
         return this;
     }
 
