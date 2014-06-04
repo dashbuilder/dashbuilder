@@ -15,92 +15,56 @@
  */
 package org.dashbuilder.model.dataset.impl;
 
-import java.util.Date;
 import java.util.List;
+import java.util.ArrayList;
 
 import org.dashbuilder.model.dataset.ColumnType;
+import org.dashbuilder.model.dataset.DataColumn;
 import org.dashbuilder.model.dataset.DataSetMetadata;
+import org.jboss.errai.common.client.api.annotations.Portable;
 
-/**
- * Set of metadata related with the
- */
+@Portable
 public class DataSetMetadataImpl implements DataSetMetadata {
 
     protected String uid;
-    protected String parentUid;
     protected int numberOfRows;
     protected int numberOfColumns;
-    protected List<String> columnNames;
-    protected List<ColumnType> columnTypes;
-    protected long estimatedSize;
-    protected Date updateDate;
+    protected List<String> columnIds = new ArrayList<String>();
+    protected List<ColumnType> columnTypes = new ArrayList<ColumnType>();
+    protected int estimatedSize;
+
+    public DataSetMetadataImpl() {
+    }
+
+    public DataSetMetadataImpl(DataSetImpl dataSet) {
+        this.uid = dataSet.uuid;
+        this.numberOfRows = dataSet.getRowCount();
+        this.estimatedSize = (int) dataSet.getEstimatedSize() / 1000;
+        this.numberOfColumns = dataSet.getColumns().size();
+        for (DataColumn column : dataSet.getColumns()) {
+            columnIds.add(column.getId());
+            columnTypes.add(column.getColumnType());
+        }
+    }
 
     public String getUID() {
         return uid;
-    }
-
-    public void setUID(String uid) {
-        this.uid = uid;
-    }
-
-    public String getParentUID() {
-        return parentUid;
-    }
-
-    public void setParentUID(String parentUid) {
-        this.parentUid = parentUid;
     }
 
     public int getNumberOfRows() {
         return numberOfRows;
     }
 
-    public void setNumberOfRows(int numberOfRows) {
-        this.numberOfRows = numberOfRows;
-    }
-
     public int getNumberOfColumns() {
         return numberOfColumns;
     }
 
-    public void setNumberOfColumns(int numberOfColumns) {
-        this.numberOfColumns = numberOfColumns;
-    }
-
-    public List<String> getColumnNames() {
-        return columnNames;
-    }
-
-    public void setColumnNames(List<String> columnNames) {
-        this.columnNames = columnNames;
-    }
-
-    public List<ColumnType> getColumnTypes() {
-        return columnTypes;
-    }
-
-    public void setColumnTypes(List<ColumnType> columnTypes) {
-        this.columnTypes = columnTypes;
-    }
-
-    public long getEstimatedSize() {
+    public int getEstimatedSize() {
         return estimatedSize;
     }
 
-    public void setEstimatedSize(long estimatedSize) {
-        this.estimatedSize = estimatedSize;
-    }
-
-    public Date getUpdateDate() {
-        return updateDate;
-    }
-
-    public void setUpdateDate(Date updateDate) {
-        this.updateDate = updateDate;
-    }
-
-    public String getColumnName(int columnIndex) {
-        return columnNames.get(columnIndex);
+    public String getColumnId(int columnIndex) {
+        return columnIds.get(columnIndex);
     }
 
     public ColumnType getColumnType(int columnIndex) {

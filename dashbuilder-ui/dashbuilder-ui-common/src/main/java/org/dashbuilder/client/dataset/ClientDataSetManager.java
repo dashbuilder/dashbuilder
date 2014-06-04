@@ -19,6 +19,7 @@ import javax.inject.Inject;
 
 import org.dashbuilder.model.dataset.DataSetLookup;
 import org.dashbuilder.model.dataset.DataSet;
+import org.dashbuilder.model.dataset.DataSetMetadata;
 import org.dashbuilder.model.dataset.impl.DataSetImpl;
 import org.dashbuilder.model.dataset.DataSetRef;
 import org.dashbuilder.service.DataSetService;
@@ -48,6 +49,19 @@ public class ClientDataSetManager {
         if (ref instanceof DataSetLookup) {
             lookupDataSet((DataSetLookup) ref, listener);
         }
+    }
+
+    /**
+     * Request the server to fetch the metadata instance for the specified data set.
+     * @param uid The UID of the data set.
+     */
+    public void fetchMetadata(final String uid, final DataSetMetadataCallback listener) {
+        dataSetService.call(
+            new RemoteCallback<DataSetMetadata>() {
+                public void callback(DataSetMetadata result) {
+                    listener.callback(result);
+                }
+            }).fetchMetadata(uid);
     }
 
     /**

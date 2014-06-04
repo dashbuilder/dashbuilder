@@ -119,6 +119,7 @@ public class DataSetIndexTest {
         // Check out the resulting stats
         DataSetIndex dataSetIndex = dataSetIndexRegistry.get(EXPENSE_REPORTS);
         DataSetIndexStats stats = dataSetIndex.getStats();
+        DataSet dataSet = dataSetIndex.getDataSet();
         System.out.println(stats.toString("\n"));
 
         // Assert the reuse of group operations and aggregate calculations is working.
@@ -132,7 +133,7 @@ public class DataSetIndexTest {
         assertThat(stats.getReuseRate()).isGreaterThanOrEqualTo(lookupTimes-1);
 
         // The index size must not be greater than the 20% of the dataset's size
-        assertThat(stats.getIndexSize()).isLessThan(stats.getDataSetSize()/5);
+        assertThat(stats.getIndexSize()).isLessThan(dataSet.getEstimatedSize()/5);
     }
 
     @Test
@@ -148,6 +149,8 @@ public class DataSetIndexTest {
         // Check out the resulting stats
         DataSetIndex dataSetIndex = dataSetIndexRegistry.get(EXPENSE_REPORTS);
         DataSetIndexStats stats = dataSetIndex.getStats();
+        DataSet dataSet = dataSetIndex.getDataSet();
+
         System.out.println(stats.toString("\n"));
 
         // Assert reuse is working.
@@ -160,7 +163,7 @@ public class DataSetIndexTest {
         assertThat(stats.getReuseRate()).isGreaterThanOrEqualTo(lookupTimes-1);
 
         // The index size must not be greater than the 20% of the dataset's size
-        assertThat(stats.getIndexSize()).isLessThan(stats.getDataSetSize()/5);
+        assertThat(stats.getIndexSize()).isLessThan(dataSet.getEstimatedSize()/5);
     }
 
     @Test
@@ -178,6 +181,8 @@ public class DataSetIndexTest {
         // Check out the resulting stats
         DataSetIndex dataSetIndex = dataSetIndexRegistry.get(EXPENSE_REPORTS);
         DataSetIndexStats stats = dataSetIndex.getStats();
+        DataSet dataSet = dataSetIndex.getDataSet();
+
         System.out.println(stats.toString("\n"));
 
         // Assert the reuse of sort operations is working.
@@ -190,6 +195,6 @@ public class DataSetIndexTest {
         assertThat(stats.getReuseRate()).isGreaterThanOrEqualTo(lookupTimes - 1);
 
         // The index size must not be greater than the 20% of the dataset's size
-        assertThat(stats.getIndexSize()).isLessThan(stats.getDataSetSize()/5);
+        assertThat(stats.getIndexSize()).isLessThan(dataSet.getEstimatedSize()/5);
     }
 }

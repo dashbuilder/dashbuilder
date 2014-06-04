@@ -15,7 +15,8 @@
  */
 package org.dashbuilder.dataset.index;
 
-import org.dashbuilder.dataset.index.stats.SizeEstimator;
+import org.dashbuilder.dataset.index.stats.MemSizeFormatter;
+import org.dashbuilder.model.dataset.impl.MemSizeEstimator;
 import org.dashbuilder.dataset.index.visitor.DataSetIndexVisitor;
 
 /**
@@ -62,13 +63,13 @@ public abstract class DataSetIndexElement {
     }
 
     public long getEstimatedSize() {
-        return SizeEstimator.sizeOfLong + SizeEstimator.sizeOfInteger;
+        return MemSizeEstimator.sizeOfLong + MemSizeEstimator.sizeOfInteger;
     }
 
     public String toString() {
         StringBuilder out = new StringBuilder();
         out.append(this.getClass().getSimpleName()).append(" ");
-        out.append(SizeEstimator.formatSize(getEstimatedSize())).append(" ");
+        out.append(MemSizeFormatter.formatSize(getEstimatedSize())).append(" ");
         out.append((double) getBuildTime() / 1000000).append(" secs (").append(getReuseHits()).append(")");
         return out.toString();
     }

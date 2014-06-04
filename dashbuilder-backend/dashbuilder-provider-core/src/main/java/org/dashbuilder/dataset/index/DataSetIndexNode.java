@@ -21,7 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.dashbuilder.dataset.index.stats.SizeEstimator;
+import org.dashbuilder.model.dataset.impl.MemSizeEstimator;
 import org.dashbuilder.dataset.index.visitor.DataSetIndexVisitor;
 import org.dashbuilder.model.dataset.filter.ColumnFilter;
 import org.dashbuilder.model.dataset.group.AggregateFunctionType;
@@ -65,7 +65,7 @@ public abstract class DataSetIndexNode extends DataSetIndexElement {
     public long getEstimatedSize() {
         long result = super.getEstimatedSize();
         if (rows != null) {
-            result += rows.size() * SizeEstimator.sizeOfInteger;
+            result += rows.size() * MemSizeEstimator.sizeOfInteger;
         }
         return result;
     }

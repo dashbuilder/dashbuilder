@@ -15,7 +15,7 @@
  */
 package org.dashbuilder.dataset.index;
 
-import org.dashbuilder.dataset.index.stats.SizeEstimator;
+import org.dashbuilder.model.dataset.impl.MemSizeEstimator;
 
 /**
  * An aggregate function value index
@@ -40,7 +40,7 @@ public class DataSetFunctionIndex extends DataSetIndexElement {
     public long getEstimatedSize() {
         long result = super.getEstimatedSize();
         if (value != null) {
-            result += SizeEstimator.sizeOfDouble;
+            result += MemSizeEstimator.sizeOfDouble;
         }
         return result;
     }

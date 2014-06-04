@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import org.dashbuilder.model.dataset.ColumnType;
 import org.dashbuilder.model.dataset.DataColumn;
 import org.dashbuilder.model.dataset.DataSet;
-import org.dashbuilder.model.dataset.DataSetRef;
+import org.dashbuilder.model.dataset.DataSetMetadata;
 import org.jboss.errai.common.client.api.annotations.Portable;
 
 @Portable
@@ -29,6 +29,10 @@ public class DataSetImpl implements DataSet {
 
     protected String uuid = null;
     protected List<DataColumn> columns = new ArrayList<DataColumn>();
+
+    public DataSetMetadata getMetadata() {
+        return new DataSetMetadataImpl(this);
+    }
 
     public String getUUID() {
         return uuid;
@@ -187,5 +191,27 @@ public class DataSetImpl implements DataSet {
             other.addColumn(column.getId(), column.getColumnType());
         }
         return other;
+    }
+
+    public long getEstimatedSize() {
+        int nrows = getRowCount();
+        if (nrows == 0) return 0;
+
+        List<DataColumn> columns = getColumns();
+        int ncells = nrows * columns.size();
+        int result = ncells * 4;
+        for (int i = 0; i < columns.size(); i++) {
+            Object firstRowValue = getValueAt(0, i);
+            if (firstRowValue instanceof String) {
+                for (int j = 0; j < nrows; j++) {
+                    String stringValue = (String) getValueAt(j, i);
+                    result += MemSizeEstimator.sizeOfString(stringValue);
+                }
+            } else {
+                int singleValueSize = MemSizeEstimator.sizeOf(firstRowValue);
+                result += nrows * singleValueSize;
+            }
+        }
+        return result;
     }
 }

@@ -20,6 +20,11 @@ import java.util.List;
 public interface DataSet extends DataSetRef {
 
     /**
+     * The metadata
+     */
+    DataSetMetadata getMetadata();
+
+    /**
      * The unique data set identifier.
      */
     String getUUID();
@@ -103,7 +108,13 @@ public interface DataSet extends DataSetRef {
     DataSet trim(List<Integer> rows);
 
     /**
-     * Build a data set with the same structures as this but containing no data.
+     * Build a data set with the same structure as this but containing no data.
      */
     DataSet cloneEmpty();
+
+    /**
+     * Return the estimated memory (in bytes) the data set is consuming.
+     * @return The number of bytes
+     */
+    long getEstimatedSize();
 }

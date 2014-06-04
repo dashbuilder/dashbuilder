@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbuilder.dataset.index.stats;
+package org.dashbuilder.model.dataset.impl;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
@@ -23,7 +23,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-public class SizeEstimator {
+public class MemSizeEstimator {
 
     public static int sizeOfDate = 20;
     public static int sizeOfTimestamp = 24;
@@ -62,19 +62,5 @@ public class SizeEstimator {
         if (s == null) return 0;
 
         return 40 + s.length()*2;
-    }
-
-    public static final String SIZE_UNITS[] = new String[] {"bytes", "Kb", "Mb", "Gb", "Tb", "Pb"};
-
-    public static String formatSize(long bytes) {
-        for (int exp=SIZE_UNITS.length-1; exp>=0; exp--) {
-            String sizeUnit = SIZE_UNITS[exp];
-            double size = bytes / Math.pow(1024, exp);
-            if (((long) size) > 0) {
-                NumberFormat df = DecimalFormat.getInstance();
-                return df.format(size) + " " + sizeUnit;
-            }
-        }
-        return bytes + " bytes";
     }
 }

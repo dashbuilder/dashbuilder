@@ -19,7 +19,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.dashbuilder.dataset.group.Interval;
-import org.dashbuilder.dataset.index.stats.SizeEstimator;
+import org.dashbuilder.model.dataset.impl.MemSizeEstimator;
 
 /**
  * An interval index
@@ -49,7 +49,7 @@ public class DataSetIntervalIndex extends DataSetIndexNode implements DataSetInt
     public long getEstimatedSize() {
         long result = super.getEstimatedSize();
         if (intervalName != null) {
-            result += SizeEstimator.sizeOfString(intervalName);
+            result += MemSizeEstimator.sizeOfString(intervalName);
         }
         return result;
     }

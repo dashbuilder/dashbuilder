@@ -34,11 +34,21 @@ public class DataSetServiceImpl implements DataSetService {
     @Inject Logger log;
     @Inject DataSetManager dataSetManager;
 
+    public DataSetMetadata fetchMetadata(String uid) {
+        try {
+            DataSet dataSet = dataSetManager.getDataSet(uid);
+            return dataSet.getMetadata();
+        } catch (Exception e) {
+            log.error("Data set fetch failed. UID=" + uid, e);
+            return null;
+        }
+    }
+
     public DataSet lookupDataSet(DataSetLookup lookup) {
         try {
             return dataSetManager.lookupDataSet(lookup);
         } catch (Exception e) {
-            log.error("Data set lookup failed.", e);
+            log.error("Data set lookup failed. UID= " + lookup.getDataSetUUID(), e);
             return null;
         }
     }

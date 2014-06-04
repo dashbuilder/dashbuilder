@@ -28,12 +28,6 @@ public interface DataSetMetadata {
     String getUID();
 
     /**
-     * Return the uuid of the data set this one is derived from.
-     * @return null if this data set has no parent.
-     */
-    String getParentUID();
-
-    /**
      * Get the number of rows.
      */
     int getNumberOfRows();
@@ -44,10 +38,10 @@ public interface DataSetMetadata {
     int getNumberOfColumns();
 
     /**
-     * Get the name of the specified column.
+     * Get the identifier of the specified column.
      * @param columnIndex The column index (starting at 0).
      */
-    String getColumnName(int columnIndex);
+    String getColumnId(int columnIndex);
 
     /**
      * Get the type of the specified column.
@@ -56,12 +50,7 @@ public interface DataSetMetadata {
     ColumnType getColumnType(int columnIndex);
 
     /**
-     * Get the estimated size in bytes.
+     * Get the estimated size in kilobytes.
      */
-    long getEstimatedSize();
-
-    /**
-     * Get the latest update date.
-     */
-    Date getUpdateDate();
+    int getEstimatedSize();
 }

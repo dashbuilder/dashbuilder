@@ -82,12 +82,6 @@ public interface DataSetIndexStats {
     DataSetIndexElement getMostReused();
 
     /**
-     * Return the estimated memory (in bytes) the data set is consuming.
-     * @return The number of bytes
-     */
-    long getDataSetSize();
-
-    /**
      * Return the estimated memory (in bytes) the data set index is consuming.
      * @return The number of bytes
      */

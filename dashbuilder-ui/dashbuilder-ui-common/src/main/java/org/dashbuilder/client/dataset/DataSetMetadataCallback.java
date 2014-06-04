@@ -13,20 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbuilder.service;
+package org.dashbuilder.client.dataset;
 
-import org.dashbuilder.model.dataset.DataSetLookup;
-import org.dashbuilder.model.dataset.DataSet;
 import org.dashbuilder.model.dataset.DataSetMetadata;
-import org.dashbuilder.model.dataset.DataSetOp;
-import org.jboss.errai.bus.server.annotations.Remote;
 
 /**
- * Interface for requesting access to data sets stored in the backend.
+ * DataSetMetadata retrieval callback
  */
-@Remote
-public interface DataSetService {
+public interface DataSetMetadataCallback {
 
-    DataSetMetadata fetchMetadata(String uid);
-    DataSet lookupDataSet(DataSetLookup lookup);
+    void callback(DataSetMetadata metatada);
+
 }

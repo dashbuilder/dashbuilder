@@ -15,8 +15,6 @@
  */
 package org.dashbuilder.dataset.index.stats;
 
-import java.util.List;
-
 import org.dashbuilder.dataset.index.DataSetFilterIndex;
 import org.dashbuilder.dataset.index.DataSetFunctionIndex;
 import org.dashbuilder.dataset.index.DataSetGroupIndex;
@@ -24,8 +22,6 @@ import org.dashbuilder.dataset.index.DataSetIndex;
 import org.dashbuilder.dataset.index.DataSetIndexElement;
 import org.dashbuilder.dataset.index.DataSetSortIndex;
 import org.dashbuilder.dataset.index.visitor.DataSetIndexVisitor;
-import org.dashbuilder.model.dataset.DataColumn;
-import org.dashbuilder.model.dataset.DataSet;
 
 /**
  * A DataSetIndex stats
@@ -131,37 +127,13 @@ public class DataSetIndexStatsImpl implements DataSetIndexStats, DataSetIndexVis
         return numberOfAggFunctions;
     }
 
-    public long getDataSetSize() {
-        DataSet dataSet = index.getDataSet();
-        int nrows = dataSet.getRowCount();
-        if (nrows == 0) return 0;
-
-        List<DataColumn> columns = dataSet.getColumns();
-        int ncells = nrows * columns.size();
-        int result = ncells * 4;
-        for (int i = 0; i < columns.size(); i++) {
-            Object firstRowValue = dataSet.getValueAt(0, i);
-            if (firstRowValue instanceof String) {
-                for (int j = 0; j < nrows; j++) {
-                    String stringValue = (String) dataSet.getValueAt(j, i);
-                    result += SizeEstimator.sizeOfString(stringValue);
-                }
-            } else {
-                int singleValueSize = SizeEstimator.sizeOf(firstRowValue);
-                result += nrows * singleValueSize;
-            }
-        }
-        return result;
-    }
-
     public String toString() {
         return toString(" ");
     }
 
     public String toString(String sep) {
         StringBuilder out = new StringBuilder();
-        out.append("Data set size=").append(SizeEstimator.formatSize(getDataSetSize())).append(sep);
-        out.append("Index size=").append(SizeEstimator.formatSize(getIndexSize())).append(sep);
+        out.append("Index size=").append(MemSizeFormatter.formatSize(getIndexSize())).append(sep);
         out.append("Build time=").append(((double) getBuildTime() / 1000000)).append(" (secs)").append(sep);
         out.append("Reuse time=").append(((double) getReuseTime() / 1000000)).append(" (secs)").append(sep);
         out.append("Reuse rate=").append(getReuseRate()).append(sep);
