@@ -70,6 +70,14 @@ public class DataSetSort implements DataSetOp {
         return this;
     }
 
+    public DataSetOp cloneInstance() {
+        DataSetSort clone = new DataSetSort();
+        for (ColumnSort columnSort : columnSortList) {
+            clone.columnSortList.add(columnSort.cloneInstance());
+        }
+        return clone;
+    }
+
     public boolean equals(Object obj) {
         try {
             DataSetSort other = (DataSetSort) obj;

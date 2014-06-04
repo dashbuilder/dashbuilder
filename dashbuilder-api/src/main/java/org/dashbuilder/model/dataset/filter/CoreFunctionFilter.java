@@ -110,6 +110,15 @@ public class CoreFunctionFilter extends ColumnFilter {
         }
         return out;
     }
+
+    public ColumnFilter cloneInstance() {
+        CoreFunctionFilter clone = new CoreFunctionFilter();
+        clone.columnId = columnId;
+        clone.type = type;
+        clone.parameters.addAll(parameters);
+        return clone;
+    }
+
     public boolean equals(Object obj) {
         try {
             CoreFunctionFilter other = (CoreFunctionFilter) obj;

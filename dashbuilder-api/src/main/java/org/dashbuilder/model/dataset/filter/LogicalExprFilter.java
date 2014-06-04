@@ -83,6 +83,16 @@ public class LogicalExprFilter extends ColumnFilter {
         }
     }
 
+    public ColumnFilter cloneInstance() {
+        LogicalExprFilter clone = new LogicalExprFilter();
+        clone.columnId = columnId;
+        clone.logicalOperator = logicalOperator;
+        for (ColumnFilter term : logicalTerms) {
+            clone.logicalTerms.add(term.cloneInstance());
+        }
+        return clone;
+    }
+
     public boolean equals(Object obj) {
         try {
             LogicalExprFilter other = (LogicalExprFilter) obj;

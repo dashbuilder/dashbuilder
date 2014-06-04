@@ -21,5 +21,5 @@ package org.dashbuilder.model.dataset;
 public interface DataSetOp {
 
     DataSetOpType getType();
-
+    DataSetOp cloneInstance();
 }

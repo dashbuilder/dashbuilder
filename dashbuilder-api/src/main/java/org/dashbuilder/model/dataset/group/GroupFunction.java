@@ -60,6 +60,14 @@ public class GroupFunction {
         this.function = function;
     }
 
+    public GroupFunction cloneInstance() {
+        GroupFunction clone = new GroupFunction();
+        clone.sourceId = sourceId;
+        clone.columnId = columnId;
+        clone.function = function;
+        return clone;
+    }
+
     public boolean equals(Object obj) {
         try {
             GroupFunction other = (GroupFunction) obj;

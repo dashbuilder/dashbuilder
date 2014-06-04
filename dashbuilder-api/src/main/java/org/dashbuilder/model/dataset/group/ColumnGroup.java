@@ -115,6 +115,19 @@ public class ColumnGroup {
         this.firstDayOfWeek = firstDayOfWeek;
     }
 
+    public ColumnGroup cloneInstance() {
+        ColumnGroup clone = new ColumnGroup();
+        clone.columnId = columnId;
+        clone.sourceId = sourceId;
+        clone.strategy = strategy;
+        clone.maxIntervals = maxIntervals;
+        clone.intervalSize = intervalSize;
+        clone.ascendingOrder = ascendingOrder;
+        clone.firstDayOfWeek = firstDayOfWeek;
+        clone.firstMonthOfYear = firstMonthOfYear;
+        return clone;
+    }
+
     public boolean equals(Object obj) {
         try {
             ColumnGroup other = (ColumnGroup) obj;

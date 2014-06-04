@@ -50,6 +50,13 @@ public class ColumnSort {
         this.order = order;
     }
 
+    public ColumnSort cloneInstance() {
+        ColumnSort clone = new ColumnSort();
+        clone.columnId = columnId;
+        clone.order = order;
+        return clone;
+    }
+
     public boolean equals(Object obj) {
         try {
             ColumnSort other = (ColumnSort) obj;

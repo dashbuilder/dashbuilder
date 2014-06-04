@@ -90,6 +90,17 @@ public class DataSetLookup implements DataSetRef {
         return this;
     }
 
+    public DataSetLookup cloneInstance() {
+        DataSetLookup clone = new DataSetLookup();
+        clone.setDataSetUUID(dataSetUUID);
+        clone.setRowOffset(rowOffset);
+        clone.setNumberOfRows(numberOfRows);
+        for (DataSetOp dataSetOp : operationList) {
+            clone.operationList.add(dataSetOp.cloneInstance());
+        }
+        return clone;
+    }
+
     public boolean equals(Object obj) {
         try {
             DataSetLookup other = (DataSetLookup) obj;

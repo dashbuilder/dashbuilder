@@ -37,6 +37,8 @@ public abstract class ColumnFilter {
         this.columnId = columnId;
     }
 
+    public abstract ColumnFilter cloneInstance();
+
     public boolean equals(Object obj) {
         try {
             ColumnFilter other = (ColumnFilter) obj;

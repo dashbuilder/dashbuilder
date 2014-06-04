@@ -38,6 +38,13 @@ public class CustomFunctionFilter extends ColumnFilter {
         this.function = function;
     }
 
+    public ColumnFilter cloneInstance() {
+        CustomFunctionFilter clone = new CustomFunctionFilter();
+        clone.columnId = columnId;
+        clone.function = function;
+        return clone;
+    }
+
     public boolean equals(Object obj) {
         try {
             CustomFunctionFilter other = (CustomFunctionFilter) obj;
