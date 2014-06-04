@@ -15,13 +15,17 @@
  */
 package org.dashbuilder.client.displayer;
 
+import java.util.Collection;
+
 import com.google.gwt.user.client.ui.Composite;
 import org.dashbuilder.model.dataset.DataSet;
+import org.dashbuilder.model.dataset.sort.SortOrder;
 import org.dashbuilder.model.displayer.DataDisplayer;
 
 public abstract class DataDisplayerViewer extends Composite {
 
     protected DataSet dataSet;
+    protected DataSetHandler dataSetHandler;
     protected DataDisplayer dataDisplayer;
 
     public DataSet getDataSet() {
@@ -30,6 +34,7 @@ public abstract class DataDisplayerViewer extends Composite {
 
     public void setDataSet(DataSet dataSet) {
         this.dataSet = dataSet;
+        this.dataSetHandler = new DataSetStaticHandler(dataSet);
     }
 
     public DataDisplayer getDataDisplayer() {
@@ -40,5 +45,32 @@ public abstract class DataDisplayerViewer extends Composite {
         this.dataDisplayer = dataDisplayer;
     }
 
+    public DataSetHandler getDataSetHandler() {
+        return dataSetHandler;
+    }
+
+    public void setDataSetHandler(DataSetHandler dataSetHandler) {
+        this.dataSetHandler = dataSetHandler;
+    }
+
+    public void dataSetSort(String columnId, SortOrder order) {
+        dataSetHandler.sortDataSet(columnId, order);
+        redraw();
+    }
+
+    public void dataSetSelectIntervals(String columnId, Collection<String> intervalNames) {
+        dataSetHandler.selectIntervals(columnId, intervalNames);
+        redraw();
+    }
+
+    /**
+     * Draw the chart
+     */
     public abstract void draw();
+
+    /**
+     * Same as draw but does not necessary implies to repaint everything again.
+     * It's just a matter of update & display the latest data set changes.
+     */
+    public abstract void redraw();
 }

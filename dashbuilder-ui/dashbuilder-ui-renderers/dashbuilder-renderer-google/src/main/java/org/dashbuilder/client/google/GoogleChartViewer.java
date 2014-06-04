@@ -23,20 +23,28 @@ import javax.inject.Inject;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.visualization.client.AbstractDataTable;
 import com.google.gwt.visualization.client.DataTable;
+import org.dashbuilder.client.dataset.DataSetReadyCallback;
 import org.dashbuilder.model.dataset.ColumnType;
 import org.dashbuilder.model.dataset.DataColumn;
 import org.dashbuilder.client.displayer.DataDisplayerViewer;
+import org.dashbuilder.model.dataset.DataSet;
 import org.dashbuilder.model.displayer.DataDisplayerColumn;
 
 public abstract class GoogleChartViewer extends DataDisplayerViewer {
 
     @Inject protected GoogleRenderer googleRenderer;
-    protected boolean isDrawn = false;
-    protected boolean isApiReady = false;
+
+    protected boolean drawn = false;
+    protected boolean ready = false;
+    protected DataTable googleTable = null;
+
     protected FlowPanel panel = new FlowPanel();
+    protected Label label = new Label();
+
     protected NumberFormat numberFormat = NumberFormat.getFormat("#0.00");
 
     @PostConstruct
@@ -45,38 +53,70 @@ public abstract class GoogleChartViewer extends DataDisplayerViewer {
         googleRenderer.registerChart(this);
     }
 
-    public void onApiReady() {
-        isApiReady = true;
-        if (dataSet != null && dataDisplayer != null) {
-            draw();
-        }
+    /**
+     * Invoked by the GoogleRenderer when the chart is ready for display.
+     */
+    public void ready() {
+        ready = true;
+        draw();
     }
 
     public void draw() {
-        if (!isDrawn && isApiReady) {
+        if (!drawn && ready) {
+            drawn = true;
 
-            if (dataSet == null) throw new IllegalStateException("DataSet property not set");
-            if (dataDisplayer== null) throw new IllegalStateException("DataDisplayer property not set");
+            if (dataDisplayer == null) {
+                displayMessage("ERROR: DataDisplayer property not set");
+            }
+            else if (dataSetHandler == null) {
+                displayMessage("ERROR: DataSetHandler property not set");
+            }
+            else {
+                try {
+                    displayMessage("Initializing '" + dataDisplayer.getTitle() + "'...");
+                    dataSetHandler.lookupDataSet(new DataSetReadyCallback() {
+                        public void callback(DataSet result) {
+                            dataSet = result;
 
-            Widget w = createChart();
-            panel.clear();
-            panel.add(w);
-            isDrawn = true;
+                            Widget w = createChart();
+                            panel.clear();
+                            panel.add(w);
+                        }
+                    });
+                } catch (Exception e) {
+                    displayMessage("ERROR: " + e.getMessage());
+                }
+            }
         }
+    }
+
+    public void redraw() {
+        if (!drawn) {
+            throw new IllegalStateException("draw() must be invoked first!");
+        }
+        // By now, it behaves exactly as draw()
+        drawn = false;
+        draw();
+    }
+
+    protected void displayMessage(String msg) {
+        panel.clear();
+        panel.add(label);
+        label.setText(msg);
     }
 
     public abstract Widget createChart();
     public abstract String getPackage();
 
-    public AbstractDataTable createTable() {
+    public DataTable createTable() {
         List<DataDisplayerColumn> displayerColumns = dataDisplayer.getColumnList();
         if (displayerColumns.isEmpty()) {
-            return createTableFromDataSet();
+            return googleTable = createTableFromDataSet();
         }
-        return createTableFromDisplayer();
+        return googleTable = createTableFromDisplayer();
     }
 
-    public AbstractDataTable createTableFromDataSet() {
+    public DataTable createTableFromDataSet() {
         DataTable gTable = DataTable.create();
         gTable.addRows(dataSet.getRowCount());
 
@@ -85,7 +125,7 @@ public abstract class GoogleChartViewer extends DataDisplayerViewer {
             DataColumn dataColumn = columns.get(i);
             List columnValues = dataColumn.getValues();
             ColumnType columnType = dataColumn.getColumnType();
-            gTable.addColumn(getColumnType(dataColumn), dataColumn.getId());
+            gTable.addColumn(getColumnType(dataColumn), dataColumn.getId(), dataColumn.getId());
             for (int j = 0; j < columnValues.size(); j++) {
                 Object value = columnValues.get(j);
                 setTableValue(gTable, columnType, value, j, i);
@@ -94,7 +134,7 @@ public abstract class GoogleChartViewer extends DataDisplayerViewer {
         return gTable;
     }
 
-    public AbstractDataTable createTableFromDisplayer() {
+    public DataTable createTableFromDisplayer() {
 
         DataTable gTable = DataTable.create();
         gTable.addRows(dataSet.getRowCount());
@@ -112,13 +152,17 @@ public abstract class GoogleChartViewer extends DataDisplayerViewer {
 
             ColumnType columnType = dataColumn.getColumnType();
             List columnValues = dataColumn.getValues();
-            gTable.addColumn(getColumnType(dataColumn), displayerColumn.getDisplayName());
+            gTable.addColumn(getColumnType(dataColumn), displayerColumn.getDisplayName(), dataColumn.getId());
             for (int j = 0; j < columnValues.size(); j++) {
                 Object value = columnValues.get(j);
                 setTableValue(gTable, columnType, value, j, i);
             }
         }
         return gTable;
+    }
+
+    public String getValueString(int row, int column) {
+        return googleTable.getValueString(row, column);
     }
 
     public void setTableValue(DataTable gTable, ColumnType type, Object value, int row, int column) {

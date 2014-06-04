@@ -18,12 +18,9 @@ package org.dashbuilder.client.google;
 import javax.enterprise.context.Dependent;
 import javax.inject.Named;
 
-import com.google.gwt.core.client.JsArray;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.visualization.client.Selection;
-import com.google.gwt.visualization.client.events.SelectHandler;
 import com.google.gwt.visualization.client.visualizations.PieChart;
 import com.google.gwt.visualization.client.visualizations.PieChart.Options;
 import org.dashbuilder.model.displayer.AbstractChartDisplayer;
@@ -62,44 +59,5 @@ public class GooglePieChartViewer extends GoogleXAxisChartViewer {
             options.setHeight(chart.getHeight());
         }
         return options;
-    }
-
-    private SelectHandler createSelectHandler(final PieChart chart) {
-        return new SelectHandler() {
-            public void onSelect(SelectEvent event) {
-                String message = "";
-
-                // May be multiple selections.
-                JsArray<Selection> selections = chart.getSelections();
-
-                for (int i = 0; i < selections.length(); i++) {
-                    // add a new line for each selection
-                    message += i == 0 ? "" : "\n";
-
-                    Selection selection = selections.get(i);
-
-                    if (selection.isCell()) {
-                        // isCell() returns true if a cell has been selected.
-
-                        // getRow() returns the row number of the selected cell.
-                        int row = selection.getRow();
-                        // getColumn() returns the column number of the selected cell.
-                        int column = selection.getColumn();
-                        message += "cell " + row + ":" + column + " selected";
-                    } else if (selection.isRow()) {
-                        // isRow() returns true if an entire row has been selected.
-
-                        // getRow() returns the row number of the selected row.
-                        int row = selection.getRow();
-                        message += "row " + row + " selected";
-                    } else {
-                        // unreachable
-                        message += "Pie chart selections should be either row selections or cell selections.";
-                        message += "  Other visualizations support column selections as well.";
-                    }
-                }
-                //Window.alert(message);
-            }
-        };
     }
 }

@@ -22,46 +22,44 @@ import javax.inject.Inject;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimplePanel;
-import org.dashbuilder.client.dataset.ClientDataSetManager;
-import org.dashbuilder.client.dataset.DataSetReadyCallback;
 import org.dashbuilder.client.displayer.DataDisplayerViewer;
 import org.dashbuilder.client.displayer.DataDisplayerViewerLocator;
-import org.dashbuilder.model.dataset.DataSet;
+import org.dashbuilder.client.displayer.DataSetHandler;
+import org.dashbuilder.client.displayer.DataSetHandlerLocator;
+import org.dashbuilder.model.dataset.DataSetRef;
 import org.dashbuilder.model.displayer.DataDisplayer;
 import org.dashbuilder.model.kpi.KPI;
 
 @Dependent
 public class KPIViewer extends Composite {
 
-    @Inject ClientDataSetManager dataSetManager;
-
     @Inject DataDisplayerViewerLocator viewerLocator;
+    @Inject DataSetHandlerLocator handlerLocator;
 
     SimplePanel container = new SimplePanel();
     Label label = new Label();
 
     @PostConstruct
     private void init() {
-        displayMessage("Loading data ...");
         initWidget(container);
     }
 
     public void draw(KPI kpi) {
         try {
+            // Locate the low level UI components
             DataDisplayer displayer = kpi.getDataDisplayer();
-            displayMessage("Loading '" + displayer.getTitle() + "'...");
-            final DataDisplayerViewer viewer = viewerLocator.lookupViewer(displayer);
+            DataSetRef dataSetRef = kpi.getDataSetRef();
+            DataDisplayerViewer viewer = viewerLocator.lookupViewer(displayer);
+            DataSetHandler handler = handlerLocator.lookupHandler(dataSetRef);
 
-            // Look up the data set
-            dataSetManager.processRef(kpi.getDataSetRef(), new DataSetReadyCallback() {
-                public void callback(DataSet dataSet) {
-                    container.clear();
-                    container.add(viewer);
-                    viewer.setDataSet(dataSet);
-                    viewer.draw();
-                }
-            });
+            // Init the DataDisplayerViewer
+            viewer.setDataDisplayer(displayer);
+            viewer.setDataSetHandler(handler);
 
+            // Draw
+            container.clear();
+            container.add(viewer);
+            viewer.draw();
         } catch (Exception e) {
             displayMessage(e.getMessage());
         }

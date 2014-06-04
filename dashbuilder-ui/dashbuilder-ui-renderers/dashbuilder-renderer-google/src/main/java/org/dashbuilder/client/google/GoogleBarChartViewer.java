@@ -41,12 +41,17 @@ public class GoogleBarChartViewer extends GoogleXAxisChartViewer {
     @Override
     public Widget createChart() {
         BarChartDisplayer barDisplayer = (BarChartDisplayer) dataDisplayer;
+
         Widget chart = null;
 
         if (barDisplayer.isHorizontal()) {
-            chart = new BarChart(createTable(), createBarOptions());
+            BarChart bchart = new BarChart(createTable(), createBarOptions());
+            bchart.addSelectHandler(createSelectHandler(bchart));
+            chart = bchart;
         } else {
-            chart = new ColumnChart(createTable(), createColumnOptions());
+            ColumnChart cchart = new ColumnChart(createTable(), createColumnOptions());
+            cchart.addSelectHandler(createSelectHandler(cchart));
+            chart = cchart;
         }
 
         HTML titleHtml = new HTML();
