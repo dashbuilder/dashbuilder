@@ -28,6 +28,7 @@ import org.dashbuilder.model.kpi.KPIFactory;
 
 import static org.dashbuilder.model.dataset.group.DateIntervalType.*;
 import static org.dashbuilder.model.dataset.filter.FilterFactory.*;
+import static org.dashbuilder.model.dataset.sort.SortOrder.*;
 import static org.dashbuilder.model.date.Month.*;
 import static org.dashbuilder.model.samples.SalesConstants.*;
 
@@ -288,10 +289,11 @@ public class GalleryTree {
         nodeList.add(new GalleryNodeKPI("Filtered",
                 KPIFactory.newTableKPI()
                 .dataset(SALES_OPPS)
-                .filter(COUNTRY, OR (isEqualsTo("United States"), isEqualsTo("Brazil")))
-                .rowOffset(0)
-                .rowNumber(20)
+                .filter(COUNTRY, OR(isEqualsTo("United States"), isEqualsTo("Brazil")))
                 .title("Opportunities in USA & Brazil")
+                .tablePageSize(20)
+                .tableOrderEnabled(true)
+                .tableOrderDefault(AMOUNT, DESCENDING)
                 .buildKPI()
         ));
         nodeList.add(new GalleryNodeKPI("Grouped",

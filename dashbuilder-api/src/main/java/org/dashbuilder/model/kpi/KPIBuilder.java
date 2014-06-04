@@ -20,6 +20,7 @@ import org.dashbuilder.model.dataset.DataSetRef;
 import org.dashbuilder.model.displayer.MeterChartBuilder;
 import org.dashbuilder.model.displayer.BarChartBuilder;
 import org.dashbuilder.model.displayer.DataDisplayer;
+import org.dashbuilder.model.displayer.TableDisplayerBuilder;
 
 /**
  * Builder interface for building KPI instances in a friendly manner.
@@ -27,6 +28,7 @@ import org.dashbuilder.model.displayer.DataDisplayer;
 public interface KPIBuilder extends
         DataSetLookupBuilder<KPIBuilder>,
         BarChartBuilder<KPIBuilder>,
+        TableDisplayerBuilder<KPIBuilder>,
         MeterChartBuilder<KPIBuilder> {
 
     /**

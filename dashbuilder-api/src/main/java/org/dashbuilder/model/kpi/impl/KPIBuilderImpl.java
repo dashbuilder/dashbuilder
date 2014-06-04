@@ -32,7 +32,9 @@ import org.dashbuilder.model.displayer.DisplayerFactory;
 import org.dashbuilder.model.displayer.DataDisplayerRenderer;
 import org.dashbuilder.model.displayer.DataDisplayerType;
 import org.dashbuilder.model.displayer.MeterChartBuilder;
+import org.dashbuilder.model.displayer.TableDisplayerBuilder;
 import org.dashbuilder.model.displayer.impl.AbstractChartBuilder;
+import org.dashbuilder.model.displayer.impl.TableDisplayerBuilderImpl;
 import org.dashbuilder.model.kpi.KPI;
 import org.dashbuilder.model.kpi.KPIBuilder;
 
@@ -375,6 +377,28 @@ public class KPIBuilderImpl implements KPIBuilder {
 
     public KPIBuilder meter(long start, long warning, long critical, long end) {
         ((MeterChartBuilder) displayerBuilder).meter(start, warning, critical, end);
+        return  this;
+    }
+
+    // TableDisplayerBuilder
+
+    public KPIBuilder tablePageSize(int pageSize) {
+        ((TableDisplayerBuilder) displayerBuilder).tablePageSize(pageSize);
+        return  this;
+    }
+
+    public KPIBuilder tableOrderEnabled(boolean enabled) {
+        ((TableDisplayerBuilder) displayerBuilder).tableOrderEnabled(enabled);
+        return  this;
+    }
+
+    public KPIBuilder tableOrderDefault(String columnId, SortOrder order) {
+        ((TableDisplayerBuilder) displayerBuilder).tableOrderDefault(columnId, order);
+        return  this;
+    }
+
+    public KPIBuilder tableOrderDefault(String columnId, String order) {
+        ((TableDisplayerBuilder) displayerBuilder).tableOrderDefault(columnId, order);
         return  this;
     }
 }

@@ -15,14 +15,39 @@
  */
 package org.dashbuilder.model.displayer.impl;
 
+import org.dashbuilder.model.dataset.sort.SortOrder;
 import org.dashbuilder.model.displayer.DataDisplayer;
 import org.dashbuilder.model.displayer.TableDisplayer;
+import org.dashbuilder.model.displayer.TableDisplayerBuilder;
 import org.jboss.errai.common.client.api.annotations.Portable;
 
 @Portable
-public class TableDisplayerBuilderImpl extends AbstractDisplayerBuilder {
+public class TableDisplayerBuilderImpl extends AbstractDisplayerBuilder implements TableDisplayerBuilder {
 
     public DataDisplayer createDisplayer() {
         return new TableDisplayer();
+    }
+
+    public TableDisplayerBuilder tablePageSize(int pageSize) {
+        TableDisplayer d = (TableDisplayer) dataDisplayer;
+        d.setPageSize(pageSize);
+        return this;
+    }
+
+    public TableDisplayerBuilder tableOrderEnabled(boolean enabled) {
+        TableDisplayer d = (TableDisplayer) dataDisplayer;
+        d.setSortEnabled(enabled);
+        return this;
+    }
+
+    public TableDisplayerBuilder tableOrderDefault(String columnId, SortOrder order) {
+        TableDisplayer d = (TableDisplayer) dataDisplayer;
+        d.setDefaultSortColumnId(columnId);
+        d.setDefaultSortOrder(order);
+        return this;
+    }
+
+    public TableDisplayerBuilder tableOrderDefault(String columnId, String order) {
+        return tableOrderDefault(columnId, SortOrder.getByName(order));
     }
 }

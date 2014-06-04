@@ -17,6 +17,7 @@ package org.dashbuilder.model.displayer;
 
 import org.dashbuilder.model.displayer.impl.BarChartBuilderImpl;
 import org.dashbuilder.model.displayer.impl.MeterChartBuilderImpl;
+import org.dashbuilder.model.displayer.impl.TableDisplayerBuilderImpl;
 import org.dashbuilder.model.displayer.impl.XAxisChartBuilderImpl;
 
 /**
@@ -44,8 +45,8 @@ public final class DisplayerFactory {
         return new XAxisChartBuilderImpl();
     }
 
-    public static ChartBuilder newTableDisplayer() {
-        return new XAxisChartBuilderImpl();
+    public static TableDisplayerBuilder newTableDisplayer() {
+        return new TableDisplayerBuilderImpl();
     }
 
     public static ChartBuilder newMeterChartDisplayer() {

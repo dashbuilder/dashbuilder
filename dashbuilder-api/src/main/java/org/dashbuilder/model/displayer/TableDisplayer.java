@@ -15,9 +15,46 @@
  */
 package org.dashbuilder.model.displayer;
 
+import org.dashbuilder.model.dataset.sort.SortOrder;
 import org.jboss.errai.common.client.api.annotations.Portable;
 
 @Portable
 public class TableDisplayer extends AbstractDataDisplayer {
 
+    protected int pageSize = 20;
+    protected boolean sortEnabled = true;
+    protected String defaultSortColumnId = null;
+    protected SortOrder defaultSortOrder = SortOrder.ASCENDING;
+
+    public int getPageSize() {
+        return pageSize;
+    }
+
+    public void setPageSize(int pageSize) {
+        this.pageSize = pageSize;
+    }
+
+    public boolean isSortEnabled() {
+        return sortEnabled;
+    }
+
+    public void setSortEnabled(boolean sortEnabled) {
+        this.sortEnabled = sortEnabled;
+    }
+
+    public String getDefaultSortColumnId() {
+        return defaultSortColumnId;
+    }
+
+    public void setDefaultSortColumnId(String defaultSortColumnId) {
+        this.defaultSortColumnId = defaultSortColumnId;
+    }
+
+    public SortOrder getDefaultSortOrder() {
+        return defaultSortOrder;
+    }
+
+    public void setDefaultSortOrder(SortOrder defaultSortOrder) {
+        this.defaultSortOrder = defaultSortOrder;
+    }
 }
