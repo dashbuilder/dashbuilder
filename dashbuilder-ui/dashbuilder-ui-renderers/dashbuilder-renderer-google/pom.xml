@@ -57,7 +57,6 @@
     <dependency>
       <groupId>com.google.gwt.google-apis</groupId>
       <artifactId>gwt-visualization</artifactId>
-      <version>1.0.2</version>
     </dependency>
 
     <dependency>
@@ -68,13 +67,11 @@
     <dependency>
       <groupId>org.dashbuilder</groupId>
       <artifactId>dashbuilder-api</artifactId>
-      <version>${project.version}</version>
     </dependency>
 
     <dependency>
       <groupId>org.dashbuilder</groupId>
       <artifactId>dashbuilder-ui-common</artifactId>
-      <version>${project.version}</version>
     </dependency>
 
   </dependencies>

@@ -49,10 +49,10 @@
 
       <dependency>
         <groupId>org.dashbuilder</groupId>
-        <artifactId>dashboard-common</artifactId>
+        <artifactId>dashbuilder-common</artifactId>
         <version>${project.version}</version>
         <type>test-jar</type>
-        <scope>test</scope>
+        <!-- <scope>test</scope> -->
       </dependency>
 
       <dependency>
