@@ -23,6 +23,9 @@ import org.dashbuilder.client.dataset.DataSetReadyCallback;
 import org.dashbuilder.model.dataset.DataSet;
 import org.dashbuilder.model.dataset.DataSetLookup;
 import org.dashbuilder.model.dataset.DataSetMetadata;
+import org.dashbuilder.model.dataset.DataSetOpType;
+import org.dashbuilder.model.dataset.sort.ColumnSort;
+import org.dashbuilder.model.dataset.sort.DataSetSort;
 import org.dashbuilder.model.dataset.sort.SortOrder;
 
 public class DataSetLookupHandler implements DataSetHandler {
@@ -77,6 +80,10 @@ public class DataSetLookupHandler implements DataSetHandler {
     }
 
     public DataSetHandler sortDataSet(String columnId, SortOrder order) {
+        lookupExt.removeOperations(DataSetOpType.SORT);
+        DataSetSort sortOp = new DataSetSort();
+        sortOp.addSortColumn(new ColumnSort(columnId, order));
+        lookupExt.addOperation(sortOp);
         return this;
     }
 

@@ -15,6 +15,7 @@
  */
 package org.dashbuilder.model.dataset;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -83,6 +84,19 @@ public class DataSetLookup implements DataSetRef {
 
     public List<DataSetOp> getOperationList() {
         return operationList;
+    }
+
+    public int removeOperations(DataSetOpType type) {
+        int removed = 0;
+        Iterator<DataSetOp> it = operationList.iterator();
+        while (it.hasNext()) {
+            DataSetOp op = it.next();
+            if (op.getType().equals(type)) {
+                it.remove();
+                removed++;
+            }
+        }
+        return removed;
     }
 
     public DataSetLookup addOperation(DataSetOp op) {

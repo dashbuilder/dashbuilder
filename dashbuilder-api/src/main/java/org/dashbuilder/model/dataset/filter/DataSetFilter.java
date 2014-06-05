@@ -44,7 +44,7 @@ public class DataSetFilter implements DataSetOp {
         return columnFilterList;
     }
 
-    public DataSetOp cloneInstance() {
+    public DataSetFilter cloneInstance() {
         DataSetFilter clone = new DataSetFilter();
         for (ColumnFilter columnFilter : columnFilterList) {
             clone.columnFilterList.add(columnFilter.cloneInstance());

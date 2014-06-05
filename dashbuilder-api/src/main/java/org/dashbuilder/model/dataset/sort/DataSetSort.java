@@ -45,20 +45,6 @@ public class DataSetSort implements DataSetOp {
     }
 
     /**
-     * Clone this sort operation.
-     */
-    public DataSetSort cloneSortOp() {
-        DataSetSort newSortOp = new DataSetSort();
-        for (ColumnSort columnSort : getColumnSortList()) {
-            ColumnSort newColumnSort = new ColumnSort();
-            newColumnSort.setColumnId(columnSort.getColumnId());
-            newColumnSort.setOrder(columnSort.getOrder());
-            newSortOp.addSortColumn(newColumnSort);
-        }
-        return newSortOp;
-    }
-
-    /**
      * Invert the sort order if this sort operation.
      */
     public DataSetSort invertOrder() {
@@ -70,10 +56,13 @@ public class DataSetSort implements DataSetOp {
         return this;
     }
 
-    public DataSetOp cloneInstance() {
+    /**
+     * Clone this sort operation.
+     */
+    public DataSetSort cloneInstance() {
         DataSetSort clone = new DataSetSort();
         for (ColumnSort columnSort : columnSortList) {
-            clone.columnSortList.add(columnSort.cloneInstance());
+            clone.addSortColumn(columnSort.cloneInstance());
         }
         return clone;
     }

@@ -192,7 +192,7 @@ public abstract class DataSetIndexNode extends DataSetIndexElement {
 
         // Also create an index for the inverted sort.
         long _beginTime = System.nanoTime();
-        DataSetSort invertedSortOp = sortOp.cloneSortOp().invertOrder();
+        DataSetSort invertedSortOp = sortOp.cloneInstance().invertOrder();
         List<Integer> invertedRows = new ArrayList<Integer>(sortedRows);
         Collections.reverse(invertedRows);
         DataSetSortIndex invertedIndex = new DataSetSortIndex(invertedSortOp, invertedRows);
