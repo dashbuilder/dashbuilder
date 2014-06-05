@@ -17,6 +17,7 @@ package org.dashbuilder.client.displayer;
 
 import java.util.Collection;
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
 import org.dashbuilder.model.displayer.DataDisplayer;
@@ -31,20 +32,26 @@ public class DataDisplayerViewerLocator {
 
     @Inject SyncBeanManager beanManager;
 
+    public DataDisplayerRenderer getRenderer(String renderer) throws Exception {
+        if (renderer == null) renderer = "google";
+        String beanName = renderer + "_renderer";
+
+        Collection<IOCBeanDef> beans = beanManager.lookupBeans(beanName);
+        if (beans == null || beans.isEmpty()) throw new Exception(renderer + " renderer not found.");
+        if (beans.size() > 1) throw new Exception("Multiple renderer implementations found for: " + renderer);
+
+        IOCBeanDef beanDef = beans.iterator().next();
+        return (DataDisplayerRenderer) beanDef.getInstance();
+    }
+
     /**
      * Get the viewer component for the specified data displayer.
      */
     public DataDisplayerViewer lookupViewer(DataDisplayer target) throws Exception {
-        String type = target.getType().toString().toLowerCase();
-        String lib = target.getRenderer().toString().toLowerCase();
-        String beanName = lib + "_" + type + "_viewer";
+        DataDisplayerRenderer renderer = getRenderer(target.getRenderer());
+        DataDisplayerViewer viewer = renderer.lookupViewer(target);
+        if (viewer == null) throw new Exception(target.getType() + " displayer not supported in " + target.getRenderer() + " renderer.");
 
-        Collection<IOCBeanDef> beans = beanManager.lookupBeans(beanName);
-        if (beans == null || beans.isEmpty()) throw new Exception("No data displayer viewer implementations found for: " + beanName);
-        if (beans.size() > 1) throw new Exception("Multiple displayer viewer implementations found for: " + beanName);
-
-        IOCBeanDef beanDef = beans.iterator().next();
-        DataDisplayerViewer viewer = (DataDisplayerViewer) beanDef.getInstance();
         viewer.setDataDisplayer(target);
         return viewer;
     }

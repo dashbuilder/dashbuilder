@@ -13,20 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbuilder.model.displayer;
+package org.dashbuilder.model.displayer.impl;
 
-/**
- *
- */
-public interface DataDisplayerBuilder<T extends DataDisplayerBuilder> {
+public abstract class AbstractXAxisChartBuilder <T extends AbstractXAxisChartBuilder> extends AbstractChartBuilder<T> {
 
-    T title(String title);
-    T titleVisible(boolean visible);
-    T type(DataDisplayerType type);
-    T type(String type);
-    T renderer(String renderer);
-    T column(String displayName);
-    T column(String columnId, String displayName);
-
-    DataDisplayer buildDisplayer();
 }

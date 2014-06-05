@@ -13,20 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbuilder.model.displayer;
+package org.dashbuilder.client.displayer;
 
-public enum DataDisplayerRenderer {
+import org.dashbuilder.model.displayer.DataDisplayer;
 
-    /**
-     * Google's GWT Visualization API based renderer.
-     */
-    GOOGLE;
+public interface DataDisplayerRenderer {
 
-    public static final DataDisplayerRenderer DEFAULT = GOOGLE;
-
-    public static DataDisplayerRenderer getByName(String str) {
-        return valueOf(str.toUpperCase());
-    }
-
-
+    String getUUID();
+    DataDisplayerViewer lookupViewer(DataDisplayer displayer);
 }

@@ -17,7 +17,6 @@ package org.dashbuilder.model.displayer.impl;
 
 import org.dashbuilder.model.displayer.DataDisplayer;
 import org.dashbuilder.model.displayer.DataDisplayerBuilder;
-import org.dashbuilder.model.displayer.DataDisplayerRenderer;
 import org.dashbuilder.model.displayer.DataDisplayerType;
 
 /**
@@ -50,11 +49,6 @@ public abstract class AbstractDisplayerBuilder<T extends DataDisplayerBuilder> i
     }
 
     public T renderer(String renderer) {
-        dataDisplayer.setRenderer(DataDisplayerRenderer.getByName(renderer));
-        return (T) this;
-    }
-
-    public T renderer(DataDisplayerRenderer renderer) {
         dataDisplayer.setRenderer(renderer);
         return (T) this;
     }
@@ -69,9 +63,6 @@ public abstract class AbstractDisplayerBuilder<T extends DataDisplayerBuilder> i
     }
 
     public DataDisplayer buildDisplayer() {
-        if (dataDisplayer.getRenderer() == null) {
-            dataDisplayer.setRenderer(DataDisplayerRenderer.DEFAULT);
-        }
         return dataDisplayer;
     }
 }

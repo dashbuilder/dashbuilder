@@ -25,8 +25,8 @@ public interface DataDisplayer {
     void setTitleVisible(boolean visible);
     DataDisplayerType getType();
     void setType(DataDisplayerType type);
-    DataDisplayerRenderer getRenderer();
-    void setRenderer(DataDisplayerRenderer renderer);
+    String getRenderer();
+    void setRenderer(String renderer);
     List<DataDisplayerColumn> getColumnList();
 
 /*

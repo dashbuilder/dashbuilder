@@ -16,17 +16,15 @@
 package org.dashbuilder.model.displayer;
 
 /**
+ * A displayer builder for map charts
  *
+ * <pre>
+ DisplayerFactory.newMapChartDisplayer()
+ .title("By Country")
+ .column("Country")
+ .column("Total amount")
+ </pre>
  */
-public interface DataDisplayerBuilder<T extends DataDisplayerBuilder> {
+public interface MapChartBuilder<T extends MapChartBuilder> extends ChartBuilder<T> {
 
-    T title(String title);
-    T titleVisible(boolean visible);
-    T type(DataDisplayerType type);
-    T type(String type);
-    T renderer(String renderer);
-    T column(String displayName);
-    T column(String columnId, String displayName);
-
-    DataDisplayer buildDisplayer();
 }

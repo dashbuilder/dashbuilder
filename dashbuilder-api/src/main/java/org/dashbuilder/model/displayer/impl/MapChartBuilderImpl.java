@@ -16,13 +16,12 @@
 package org.dashbuilder.model.displayer.impl;
 
 import org.dashbuilder.model.displayer.DataDisplayer;
+import org.dashbuilder.model.displayer.MapChartBuilder;
 import org.dashbuilder.model.displayer.MapChartDisplayer;
-import org.jboss.errai.common.client.api.annotations.Portable;
 
-@Portable
-public class MapChartBuilderImpl extends AbstractChartBuilder {
+public class MapChartBuilderImpl extends AbstractXAxisChartBuilder<MapChartBuilderImpl> implements MapChartBuilder {
 
-    public DataDisplayer createDisplayer() {
+    protected DataDisplayer createDisplayer() {
         return new MapChartDisplayer();
     }
 }

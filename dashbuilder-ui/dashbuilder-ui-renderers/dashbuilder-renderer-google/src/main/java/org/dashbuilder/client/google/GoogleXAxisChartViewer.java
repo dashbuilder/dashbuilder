@@ -25,8 +25,9 @@ import com.google.gwt.visualization.client.Selectable;
 import com.google.gwt.visualization.client.Selection;
 import com.google.gwt.visualization.client.events.SelectHandler;
 import org.dashbuilder.model.displayer.DataDisplayerColumn;
+import org.dashbuilder.model.displayer.XAxisChartDisplayer;
 
-public abstract class GoogleXAxisChartViewer extends GoogleChartViewer {
+public abstract class GoogleXAxisChartViewer<T extends XAxisChartDisplayer> extends GoogleDisplayerViewer<T> {
 
     protected Set<String> intervalsSelected = new HashSet<String>();
 
@@ -48,7 +49,8 @@ public abstract class GoogleXAxisChartViewer extends GoogleChartViewer {
                     String intervalSelected = getValueString(row, 0);
                     intervalsSelected.add(intervalSelected);
 
-                    dataSetSelectIntervals(googleTable.getColumnId(0), intervalsSelected);
+                    dataSetHandler.selectIntervals(googleTable.getColumnId(0), intervalsSelected);
+                    redraw();
                 }
             }
         };

@@ -15,23 +15,19 @@
  */
 package org.dashbuilder.client.google;
 
-import javax.enterprise.context.Dependent;
-import javax.inject.Named;
-
-import com.google.gwt.core.client.JsArray;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.visualization.client.Selection;
-import com.google.gwt.visualization.client.events.SelectHandler;
 import com.google.gwt.visualization.client.visualizations.Table;
 import com.google.gwt.visualization.client.visualizations.Table.Options;
-import org.dashbuilder.model.displayer.AbstractChartDisplayer;
 import org.dashbuilder.model.displayer.TableDisplayer;
 
-@Dependent
-@Named("google_table_viewer")
-public class GoogleTableViewer extends GoogleChartViewer {
+public class GoogleTableViewer extends GoogleDisplayerViewer<TableDisplayer> {
+
+    protected int pageSize = 20;
+    protected int currentPage = 1;
+    protected int numberOfRows = 0;
+    protected int numberOfPages = 1;
 
     @Override
     public String getPackage() {
@@ -40,8 +36,12 @@ public class GoogleTableViewer extends GoogleChartViewer {
 
     @Override
     public Widget createChart() {
+        pageSize = dataDisplayer.getPageSize();
+        numberOfRows = dataSetHandler.getDataSetMetadata().getNumberOfRows();
+        numberOfPages = ((numberOfRows-1) / pageSize) + 1;
+        if (currentPage > numberOfPages) currentPage = 1;
+
         Table table = new Table(createTable(), createOptions());
-        table.addSelectHandler(createSelectHandler(table));
 
         HTML titleHtml = new HTML();
         if (dataDisplayer.isTitleVisible()) {
@@ -56,47 +56,23 @@ public class GoogleTableViewer extends GoogleChartViewer {
 
     private Options createOptions() {
         Options options = Options.create();
-        options.setPageSize(10);
+        options.setPageSize(dataDisplayer.getPageSize());
         options.setShowRowNumber(true);
         return options;
     }
 
-    private SelectHandler createSelectHandler(final Table w) {
-        return new SelectHandler() {
-            public void onSelect(SelectEvent event) {
-                String message = "";
+    @Override
+    public void draw() {
+        // Draw only the data subset corresponding to the current page.
+        int pageSize = dataDisplayer.getPageSize();
+        int offset = (currentPage - 1) * pageSize;
+        dataSetHandler.trimDataSet(offset, pageSize);
 
-                // May be multiple selections.
-                JsArray<Selection> selections = w.getSelections();
+        super.draw();
+    }
 
-                for (int i = 0; i < selections.length(); i++) {
-                    // add a new line for each selection
-                    message += i == 0 ? "" : "\n";
-
-                    Selection selection = selections.get(i);
-
-                    if (selection.isCell()) {
-                        // isCell() returns true if a cell has been selected.
-
-                        // getRow() returns the row number of the selected cell.
-                        int row = selection.getRow();
-                        // getColumn() returns the column number of the selected cell.
-                        int column = selection.getColumn();
-                        message += "cell " + row + ":" + column + " selected";
-                    } else if (selection.isRow()) {
-                        // isRow() returns true if an entire row has been selected.
-
-                        // getRow() returns the row number of the selected row.
-                        int row = selection.getRow();
-                        message += "row " + row + " selected";
-                    } else {
-                        // unreachable
-                        message += "Selections should be either row selections or cell selections.";
-                        message += "  Other visualizations support column selections as well.";
-                    }
-                }
-                //Window.alert(message);
-            }
-        };
+    private void gotoNextPage() {
+        currentPage++;
+        this.draw();
     }
 }

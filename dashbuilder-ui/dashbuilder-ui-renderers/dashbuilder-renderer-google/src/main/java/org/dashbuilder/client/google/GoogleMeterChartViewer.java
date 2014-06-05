@@ -15,20 +15,14 @@
  */
 package org.dashbuilder.client.google;
 
-import javax.enterprise.context.Dependent;
-import javax.inject.Named;
-
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.visualization.client.visualizations.Gauge;
 import com.google.gwt.visualization.client.visualizations.Gauge.Options;
-import org.dashbuilder.model.displayer.AbstractChartDisplayer;
 import org.dashbuilder.model.displayer.MeterChartDisplayer;
 
-@Dependent
-@Named("google_meterchart_viewer")
-public class GoogleMeterChartViewer extends GoogleChartViewer {
+public class GoogleMeterChartViewer extends GoogleDisplayerViewer<MeterChartDisplayer> {
 
     @Override
     public String getPackage() {
@@ -52,19 +46,13 @@ public class GoogleMeterChartViewer extends GoogleChartViewer {
 
     private Options createOptions() {
         Options options = Options.create();
-        if (dataDisplayer instanceof AbstractChartDisplayer) {
-            AbstractChartDisplayer chart = (AbstractChartDisplayer) dataDisplayer;
-            options.setWidth(chart.getWidth());
-            options.setHeight(chart.getHeight());
-            options.setSize(chart.getWidth(), chart.getHeight());
-        }
-        if (dataDisplayer instanceof MeterChartDisplayer) {
-            MeterChartDisplayer mc = (MeterChartDisplayer) dataDisplayer;
-            options.setGaugeRange((int) mc.getMeterStart(), (int) mc.getMeterEnd());
-            options.setGreenRange((int) mc.getMeterStart(), (int) mc.getMeterWarning());
-            options.setYellowRange((int) mc.getMeterWarning(), (int) mc.getMeterCritical());
-            options.setRedRange((int) mc.getMeterCritical(), (int) mc.getMeterEnd());
-        }
+        options.setWidth(dataDisplayer.getWidth());
+        options.setHeight(dataDisplayer.getHeight());
+        options.setSize(dataDisplayer.getWidth(), dataDisplayer.getHeight());
+        options.setGaugeRange((int) dataDisplayer.getMeterStart(), (int) dataDisplayer.getMeterEnd());
+        options.setGreenRange((int) dataDisplayer.getMeterStart(), (int) dataDisplayer.getMeterWarning());
+        options.setYellowRange((int) dataDisplayer.getMeterWarning(), (int) dataDisplayer.getMeterCritical());
+        options.setRedRange((int) dataDisplayer.getMeterCritical(), (int) dataDisplayer.getMeterEnd());
         return options;
     }
 }

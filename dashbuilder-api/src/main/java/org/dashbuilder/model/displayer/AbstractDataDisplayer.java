@@ -22,8 +22,8 @@ public abstract class AbstractDataDisplayer implements DataDisplayer {
 
     protected String title;
     protected boolean titleVisible = true;
+    protected String renderer;
     protected DataDisplayerType type;
-    protected DataDisplayerRenderer renderer;
     protected List<DataDisplayerColumn> columnList = new ArrayList<DataDisplayerColumn>();
 
     public String getTitle() {
@@ -50,11 +50,11 @@ public abstract class AbstractDataDisplayer implements DataDisplayer {
         this.type = type;
     }
 
-    public DataDisplayerRenderer getRenderer() {
+    public String getRenderer() {
         return renderer;
     }
 
-    public void setRenderer(DataDisplayerRenderer renderer) {
+    public void setRenderer(String renderer) {
         this.renderer = renderer;
     }
 

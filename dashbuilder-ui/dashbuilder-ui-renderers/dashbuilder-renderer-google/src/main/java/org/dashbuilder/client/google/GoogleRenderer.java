@@ -21,17 +21,32 @@ import java.util.ArrayList;
 import java.util.Set;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
+import javax.inject.Named;
 
 import com.google.gwt.core.client.JsArrayString;
 import com.google.gwt.visualization.client.VisualizationUtils;
+import org.dashbuilder.client.displayer.DataDisplayerRenderer;
+import org.dashbuilder.client.displayer.DataDisplayerViewer;
+import org.dashbuilder.model.displayer.DataDisplayer;
+import org.dashbuilder.model.displayer.DataDisplayerType;
 import org.uberfire.client.workbench.events.ApplicationReadyEvent;
 import org.uberfire.client.workbench.events.PerspectiveChange;
 
+/**
+ * Google's GWT Visualization API based renderer.
+ */
 @ApplicationScoped
-public class GoogleRenderer {
+@Named("google_renderer")
+public class GoogleRenderer implements DataDisplayerRenderer {
 
-    private List<GoogleChartViewer> chartViewerList = new ArrayList<GoogleChartViewer>();
-    private Set<String> chartPackages = new HashSet<String>();
+    private List<GoogleDisplayerViewer> viewerList = new ArrayList<GoogleDisplayerViewer>();
+    private Set<String> packageList = new HashSet<String>();
+
+    public static final String UUID = "google";
+
+    public String getUUID() {
+        return UUID;
+    }
 
     // Listen to UF events in order to render charts at the proper time.
 
@@ -45,28 +60,43 @@ public class GoogleRenderer {
 
     // Register and draw charts using the asynchronous Google API
 
-    public void registerChart(GoogleChartViewer viewer) {
-        chartViewerList.add(viewer);
-        chartPackages.add(viewer.getPackage());
+    public DataDisplayerViewer lookupViewer(DataDisplayer displayer) {
+        DataDisplayerType type = displayer.getType();
+        if (DataDisplayerType.BARCHART.equals(type)) return registerViewer(new GoogleBarChartViewer());
+        if (DataDisplayerType.PIECHART.equals(type)) return registerViewer(new GooglePieChartViewer());
+        if (DataDisplayerType.AREACHART.equals(type)) return registerViewer(new GoogleAreaChartViewer());
+        if (DataDisplayerType.LINECHART.equals(type)) return registerViewer(new GoogleLineChartViewer());
+        if (DataDisplayerType.METERCHART.equals(type)) return registerViewer(new GoogleMeterChartViewer());
+        if (DataDisplayerType.TABLE.equals(type)) return registerViewer(new GoogleTableViewer());
+        if (DataDisplayerType.MAP.equals(type)) return registerViewer(new GoogleMapViewer());
+
+        return null;
+    }
+
+    public GoogleDisplayerViewer registerViewer(GoogleDisplayerViewer viewer) {
+        viewerList.add(viewer);
+        packageList.add(viewer.getPackage());
+        return viewer;
     }
 
     public void renderCharts() {
         // Create a callback to be called when the visualization API has been loaded.
         Runnable onLoadCallback = new Runnable() {
             public void run() {
-                for (GoogleChartViewer viewer : chartViewerList) {
+                for (GoogleDisplayerViewer viewer : viewerList) {
                     viewer.ready();
                 }
-                chartViewerList.clear();
+                viewerList.clear();
             }
 
         };
 
         // Load the visualization api, passing the onLoadCallback to be called when loading is done.
         JsArrayString packageArray = JsArrayString.createArray().cast();
-        for (String chartPackage : chartPackages) {
-            packageArray.push(chartPackage);
+        for (String pkg : packageList) {
+            packageArray.push(pkg);
         }
         VisualizationUtils.loadVisualizationApi("1", onLoadCallback, packageArray);
     }
+
 }

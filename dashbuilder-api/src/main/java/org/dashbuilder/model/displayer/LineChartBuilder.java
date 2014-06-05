@@ -13,16 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbuilder.model.displayer.impl;
+package org.dashbuilder.model.displayer;
 
-import org.dashbuilder.model.displayer.DataDisplayer;
-import org.dashbuilder.model.displayer.XAxisChartDisplayer;
-import org.jboss.errai.common.client.api.annotations.Portable;
+/**
+ * A displayer builder for line charts
+ *
+ * <pre>
+ DisplayerFactory.newLineChartDisplayer()
+ .title("By Product")
+ .column("Product")
+ .column("Total amount")
+ </pre>
+ */
+public interface LineChartBuilder<T extends LineChartBuilder> extends ChartBuilder<T> {
 
-@Portable
-public class XAxisChartBuilderImpl extends AbstractChartBuilder {
-
-    public DataDisplayer createDisplayer() {
-        return new XAxisChartDisplayer();
-    }
 }

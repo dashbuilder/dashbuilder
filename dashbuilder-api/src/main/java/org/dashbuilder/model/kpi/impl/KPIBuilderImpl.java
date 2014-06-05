@@ -29,12 +29,10 @@ import org.dashbuilder.model.displayer.BarChartBuilder;
 import org.dashbuilder.model.displayer.DataDisplayer;
 import org.dashbuilder.model.displayer.DataDisplayerBuilder;
 import org.dashbuilder.model.displayer.DisplayerFactory;
-import org.dashbuilder.model.displayer.DataDisplayerRenderer;
 import org.dashbuilder.model.displayer.DataDisplayerType;
 import org.dashbuilder.model.displayer.MeterChartBuilder;
 import org.dashbuilder.model.displayer.TableDisplayerBuilder;
 import org.dashbuilder.model.displayer.impl.AbstractChartBuilder;
-import org.dashbuilder.model.displayer.impl.TableDisplayerBuilderImpl;
 import org.dashbuilder.model.kpi.KPI;
 import org.dashbuilder.model.kpi.KPIBuilder;
 
@@ -325,11 +323,6 @@ public class KPIBuilderImpl implements KPIBuilder {
     }
 
     public KPIBuilder renderer(String renderer) {
-        displayerBuilder.renderer(renderer);
-        return  this;
-    }
-
-    public KPIBuilder renderer(DataDisplayerRenderer renderer) {
         displayerBuilder.renderer(renderer);
         return  this;
     }

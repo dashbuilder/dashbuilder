@@ -15,22 +15,14 @@
  */
 package org.dashbuilder.client.google;
 
-import javax.enterprise.context.Dependent;
-import javax.inject.Named;
-
-import com.google.gwt.core.client.JsArray;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.visualization.client.Selection;
-import com.google.gwt.visualization.client.events.SelectHandler;
 import com.google.gwt.visualization.client.visualizations.AreaChart;
 import com.google.gwt.visualization.client.visualizations.AreaChart.Options;
-import org.dashbuilder.model.displayer.AbstractChartDisplayer;
+import org.dashbuilder.model.displayer.AreaChartDisplayer;
 
-@Dependent
-@Named("google_areachart_viewer")
-public class GoogleAreaChartViewer extends GoogleXAxisChartViewer {
+public class GoogleAreaChartViewer extends GoogleXAxisChartViewer<AreaChartDisplayer> {
 
     @Override
     public String getPackage() {
@@ -42,10 +34,8 @@ public class GoogleAreaChartViewer extends GoogleXAxisChartViewer {
         AreaChart chart = new AreaChart(createTable(), createOptions());
         chart.addSelectHandler(createSelectHandler(chart));
         HTML titleHtml = new HTML();
-        if (dataDisplayer instanceof AbstractChartDisplayer) {
-            if (((AbstractChartDisplayer) dataDisplayer).isTitleVisible()) {
-                titleHtml.setText(dataDisplayer.getTitle());
-            }
+        if (dataDisplayer.isTitleVisible()) {
+            titleHtml.setText(dataDisplayer.getTitle());
         }
 
         VerticalPanel verticalPanel = new VerticalPanel();
@@ -56,11 +46,8 @@ public class GoogleAreaChartViewer extends GoogleXAxisChartViewer {
 
     private Options createOptions() {
         Options options = Options.create();
-        if (dataDisplayer instanceof AbstractChartDisplayer) {
-            AbstractChartDisplayer chart = (AbstractChartDisplayer) dataDisplayer;
-            options.setWidth(chart.getWidth());
-            options.setHeight(chart.getHeight());
-        }
+        options.setWidth(dataDisplayer.getWidth());
+        options.setHeight(dataDisplayer.getHeight());
         return options;
     }
 }

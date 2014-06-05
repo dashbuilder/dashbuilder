@@ -16,17 +16,15 @@
 package org.dashbuilder.model.displayer;
 
 /**
+ * A displayer builder for area charts
  *
+ * <pre>
+ DisplayerFactory.newAreaChartDisplayer()
+ .title("By Product")
+ .column("Product")
+ .column("Total amount")
+ </pre>
  */
-public interface DataDisplayerBuilder<T extends DataDisplayerBuilder> {
+public interface AreaChartBuilder<T extends AreaChartBuilder> extends ChartBuilder<T> {
 
-    T title(String title);
-    T titleVisible(boolean visible);
-    T type(DataDisplayerType type);
-    T type(String type);
-    T renderer(String renderer);
-    T column(String displayName);
-    T column(String columnId, String displayName);
-
-    DataDisplayer buildDisplayer();
 }

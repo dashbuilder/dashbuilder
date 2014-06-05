@@ -18,15 +18,16 @@ package org.dashbuilder.client.displayer;
 import java.util.Collection;
 
 import com.google.gwt.user.client.ui.Composite;
+import org.dashbuilder.client.dataset.DataSetReadyCallback;
 import org.dashbuilder.model.dataset.DataSet;
 import org.dashbuilder.model.dataset.sort.SortOrder;
 import org.dashbuilder.model.displayer.DataDisplayer;
 
-public abstract class DataDisplayerViewer extends Composite {
+public abstract class DataDisplayerViewer<T extends DataDisplayer> extends Composite {
 
     protected DataSet dataSet;
     protected DataSetHandler dataSetHandler;
-    protected DataDisplayer dataDisplayer;
+    protected T dataDisplayer;
 
     public DataSet getDataSet() {
         return dataSet;
@@ -37,11 +38,11 @@ public abstract class DataDisplayerViewer extends Composite {
         this.dataSetHandler = new DataSetStaticHandler(dataSet);
     }
 
-    public DataDisplayer getDataDisplayer() {
+    public T getDataDisplayer() {
         return dataDisplayer;
     }
 
-    public void setDataDisplayer(DataDisplayer dataDisplayer) {
+    public void setDataDisplayer(T dataDisplayer) {
         this.dataDisplayer = dataDisplayer;
     }
 
@@ -51,16 +52,6 @@ public abstract class DataDisplayerViewer extends Composite {
 
     public void setDataSetHandler(DataSetHandler dataSetHandler) {
         this.dataSetHandler = dataSetHandler;
-    }
-
-    public void dataSetSort(String columnId, SortOrder order) {
-        dataSetHandler.sortDataSet(columnId, order);
-        redraw();
-    }
-
-    public void dataSetSelectIntervals(String columnId, Collection<String> intervalNames) {
-        dataSetHandler.selectIntervals(columnId, intervalNames);
-        redraw();
     }
 
     /**

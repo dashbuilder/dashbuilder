@@ -32,11 +32,10 @@ import org.dashbuilder.model.dataset.ColumnType;
 import org.dashbuilder.model.dataset.DataColumn;
 import org.dashbuilder.client.displayer.DataDisplayerViewer;
 import org.dashbuilder.model.dataset.DataSet;
+import org.dashbuilder.model.displayer.DataDisplayer;
 import org.dashbuilder.model.displayer.DataDisplayerColumn;
 
-public abstract class GoogleChartViewer extends DataDisplayerViewer {
-
-    @Inject protected GoogleRenderer googleRenderer;
+public abstract class GoogleDisplayerViewer<T extends DataDisplayer> extends DataDisplayerViewer<T> {
 
     protected boolean drawn = false;
     protected boolean ready = false;
@@ -47,10 +46,8 @@ public abstract class GoogleChartViewer extends DataDisplayerViewer {
 
     protected NumberFormat numberFormat = NumberFormat.getFormat("#0.00");
 
-    @PostConstruct
-    public void init() {
+    public GoogleDisplayerViewer() {
         initWidget(panel);
-        googleRenderer.registerChart(this);
     }
 
     /**
@@ -77,7 +74,6 @@ public abstract class GoogleChartViewer extends DataDisplayerViewer {
                     dataSetHandler.lookupDataSet(new DataSetReadyCallback() {
                         public void callback(DataSet result) {
                             dataSet = result;
-
                             Widget w = createChart();
                             panel.clear();
                             panel.add(w);

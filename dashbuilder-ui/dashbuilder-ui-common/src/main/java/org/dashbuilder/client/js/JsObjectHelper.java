@@ -26,9 +26,6 @@ import org.dashbuilder.model.dataset.DataColumn;
 import org.dashbuilder.model.dataset.DataSet;
 import org.dashbuilder.model.dataset.impl.DataColumnImpl;
 import org.dashbuilder.model.dataset.impl.DataSetImpl;
-import org.dashbuilder.model.displayer.DataDisplayer;
-import org.dashbuilder.model.displayer.DataDisplayerRenderer;
-import org.dashbuilder.model.displayer.DataDisplayerType;
 
 public class JsObjectHelper {
 

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012 JBoss Inc
+ * Copyright (C) 2014 JBoss Inc
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,18 +15,9 @@
  */
 package org.dashbuilder.model.displayer;
 
-/**
- *
- */
-public interface DataDisplayerBuilder<T extends DataDisplayerBuilder> {
+import org.jboss.errai.common.client.api.annotations.Portable;
 
-    T title(String title);
-    T titleVisible(boolean visible);
-    T type(DataDisplayerType type);
-    T type(String type);
-    T renderer(String renderer);
-    T column(String displayName);
-    T column(String columnId, String displayName);
+@Portable
+public class PieChartDisplayer extends XAxisChartDisplayer {
 
-    DataDisplayer buildDisplayer();
 }

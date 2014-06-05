@@ -15,23 +15,14 @@
  */
 package org.dashbuilder.client.google;
 
-import javax.enterprise.context.Dependent;
-import javax.inject.Named;
-
-import com.google.gwt.core.client.JsArray;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.visualization.client.Selection;
-import com.google.gwt.visualization.client.events.SelectHandler;
 import com.google.gwt.visualization.client.visualizations.BarChart;
 import com.google.gwt.visualization.client.visualizations.ColumnChart;
-import org.dashbuilder.model.displayer.AbstractChartDisplayer;
 import org.dashbuilder.model.displayer.BarChartDisplayer;
 
-@Dependent
-@Named("google_barchart_viewer")
-public class GoogleBarChartViewer extends GoogleXAxisChartViewer {
+public class GoogleBarChartViewer extends GoogleXAxisChartViewer<BarChartDisplayer> {
 
     @Override
     public String getPackage() {
@@ -40,11 +31,10 @@ public class GoogleBarChartViewer extends GoogleXAxisChartViewer {
 
     @Override
     public Widget createChart() {
-        BarChartDisplayer barDisplayer = (BarChartDisplayer) dataDisplayer;
 
         Widget chart = null;
 
-        if (barDisplayer.isHorizontal()) {
+        if (dataDisplayer.isHorizontal()) {
             BarChart bchart = new BarChart(createTable(), createBarOptions());
             bchart.addSelectHandler(createSelectHandler(bchart));
             chart = bchart;
@@ -55,7 +45,7 @@ public class GoogleBarChartViewer extends GoogleXAxisChartViewer {
         }
 
         HTML titleHtml = new HTML();
-        if (barDisplayer.isTitleVisible()) {
+        if (dataDisplayer.isTitleVisible()) {
             titleHtml.setText(dataDisplayer.getTitle());
         }
 
@@ -67,19 +57,17 @@ public class GoogleBarChartViewer extends GoogleXAxisChartViewer {
 
     private BarChart.Options createBarOptions() {
         BarChart.Options options = BarChart.Options.create();
-        BarChartDisplayer chart = (BarChartDisplayer) dataDisplayer;
-        options.setWidth(chart.getWidth());
-        options.setHeight(chart.getHeight());
-        options.set3D(chart.is3d());
+        options.setWidth(dataDisplayer.getWidth());
+        options.setHeight(dataDisplayer.getHeight());
+        options.set3D(dataDisplayer.is3d());
         return options;
     }
 
     private ColumnChart.Options createColumnOptions() {
         ColumnChart.Options options = ColumnChart.Options.create();
-        BarChartDisplayer chart = (BarChartDisplayer) dataDisplayer;
-        options.setWidth(chart.getWidth());
-        options.setHeight(chart.getHeight());
-        options.set3D(chart.is3d());
+        options.setWidth(dataDisplayer.getWidth());
+        options.setHeight(dataDisplayer.getHeight());
+        options.set3D(dataDisplayer.is3d());
         return options;
     }
 }

@@ -15,13 +15,17 @@
  */
 package org.dashbuilder.model.displayer;
 
+import org.dashbuilder.model.displayer.impl.AbstractXAxisChartBuilder;
+import org.dashbuilder.model.displayer.impl.AreaChartBuilderImpl;
 import org.dashbuilder.model.displayer.impl.BarChartBuilderImpl;
+import org.dashbuilder.model.displayer.impl.LineChartBuilderImpl;
+import org.dashbuilder.model.displayer.impl.MapChartBuilderImpl;
 import org.dashbuilder.model.displayer.impl.MeterChartBuilderImpl;
+import org.dashbuilder.model.displayer.impl.PieChartBuilderImpl;
 import org.dashbuilder.model.displayer.impl.TableDisplayerBuilderImpl;
-import org.dashbuilder.model.displayer.impl.XAxisChartBuilderImpl;
 
 /**
- * Factory class for building DataDisplayer instances.
+ * Factory class for creating  DataDisplayerBuilder instances.
  */
 public final class DisplayerFactory {
 
@@ -30,19 +34,19 @@ public final class DisplayerFactory {
     }
 
     public static ChartBuilder newPieChartDisplayer() {
-        return new XAxisChartBuilderImpl();
+        return new PieChartBuilderImpl();
     }
 
     public static ChartBuilder newAreaChartDisplayer() {
-        return new XAxisChartBuilderImpl();
+        return new AreaChartBuilderImpl();
     }
 
     public static ChartBuilder newLineChartDisplayer() {
-        return new XAxisChartBuilderImpl();
+        return new LineChartBuilderImpl();
     }
 
     public static ChartBuilder newMapChartDisplayer() {
-        return new XAxisChartBuilderImpl();
+        return new MapChartBuilderImpl();
     }
 
     public static TableDisplayerBuilder newTableDisplayer() {
