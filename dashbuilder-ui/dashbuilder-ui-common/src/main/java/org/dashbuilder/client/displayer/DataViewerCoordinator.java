@@ -22,9 +22,9 @@ import java.util.List;
 import org.dashbuilder.model.dataset.sort.SortOrder;
 
 /**
- * The coordinator class holds a list of DataViewer. The coordinator makes sure that the data shared among
- * all the viewers is properly synced. This means every time a data display modification request comes from any
- * of the viewer components the remain viewers are updated to reflect the changes.
+ * The coordinator class holds a list of DataViewer instances and it makes sure that the data shared among
+ * all of them is properly synced. This means every time a data display modification request comes from any
+ * of the viewer components the rest are updated to reflect those changes.
  */
 public class DataViewerCoordinator implements DataViewerListener {
 
@@ -33,7 +33,6 @@ public class DataViewerCoordinator implements DataViewerListener {
     public void addViewer(DataViewer viewer) {
         viewerList.add(viewer);
         viewer.addListener(this);
-
     }
 
     public void onIntervalsSelected(DataViewer viewer, String columnId, Collection<String> intervalNames) {
