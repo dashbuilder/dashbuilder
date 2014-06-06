@@ -160,7 +160,7 @@ public class DataSetImpl implements DataSet {
             DataColumn colOther = other.getColumns().get(i);
             List values = column.getValues();
             List valOther = colOther.getValues();
-            for (int j=offset; j<values.size() && j<rows; j++) {
+            for (int j=offset; j<values.size() && j<( offset+rows ); j++) {
                 Object value = values.get(j);
                 valOther.add(value);
             }
