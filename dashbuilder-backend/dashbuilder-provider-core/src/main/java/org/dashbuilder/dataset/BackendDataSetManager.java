@@ -27,9 +27,21 @@ import org.dashbuilder.model.dataset.DataSet;
 import org.dashbuilder.model.dataset.DataSetFactory;
 import org.dashbuilder.model.dataset.DataSetLookup;
 import org.dashbuilder.model.dataset.DataSetManager;
+import org.dashbuilder.model.dataset.DataSetMetadata;
+import org.jboss.errai.bus.server.annotations.Service;
 
+/**
+ * Backend implementation of the DataSetManager interface. It's been designed with several goals in mind:
+ * <ul>
+ *     <li>To provide a highly reusable data set cache.</li>
+ *     <li>To index almost every operation performed over a data set.</li>
+ *     <li>Multiple clients requesting the same data set operations will benefit from the indexing/caching services provided.</li>
+ * </ul>
+
+ */
 @ApplicationScoped
-public class DataSetManagerImpl implements DataSetManager {
+@Service
+public class BackendDataSetManager implements DataSetManager {
 
     @Inject protected DataSetServices dataSetServices;
     protected DataSetOpEngine dataSetOpEngine;
@@ -48,10 +60,20 @@ public class DataSetManagerImpl implements DataSetManager {
     }
 
     public DataSet getDataSet(String uuid) throws Exception {
-        return fetchDataSet(uuid).getDataSet();
+        DataSetIndex index = fetchDataSet(uuid);
+        if (index == null) return null;
+
+        return index.getDataSet();
     }
 
-    public void registerDataSet(DataSet dataSet) throws Exception {
+    public DataSetMetadata getDataSetMetadata(String uuid) throws Exception {
+        DataSet dataSet = getDataSet(uuid);
+        if (dataSet == null) return null;
+
+        return dataSet.getMetadata();
+    }
+
+    public void registerDataSet(DataSet dataSet) {
         if (dataSet != null) {
             dataSetIndexRegistry.put(dataSet);
         }
@@ -59,7 +81,10 @@ public class DataSetManagerImpl implements DataSetManager {
 
     public DataSet refreshDataSet(String uuid) throws Exception {
         dataSetIndexRegistry.remove(uuid);
-        return fetchDataSet(uuid).getDataSet();
+        DataSetIndex index = fetchDataSet(uuid);
+        if (index == null) return null;
+
+        return index.getDataSet();
     }
 
     public DataSet lookupDataSet(DataSetLookup lookup) throws Exception {
@@ -68,6 +93,7 @@ public class DataSetManagerImpl implements DataSetManager {
 
         // Get the target data set
         DataSetIndex dataSetIndex = fetchDataSet(uuid);
+        if (dataSetIndex == null) return null;
         DataSet dataSet = dataSetIndex.getDataSet();
 
         // Apply the list of operations specified (if any).
@@ -86,10 +112,7 @@ public class DataSetManagerImpl implements DataSetManager {
         DataSetIndex index = dataSetIndexRegistry.get(uuid);
         if (index != null) return index;
 
-        DataSetIndex result = loadDataSet(uuid);
-        if (result != null) return result;
-
-        throw new Exception("Data set not found: " + uuid);
+        return loadDataSet(uuid);
     }
 
     protected DataSetIndex loadDataSet(String uuid) throws Exception {

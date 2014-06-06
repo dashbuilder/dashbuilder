@@ -32,13 +32,13 @@ public class DataDisplayerViewerLocator {
 
     @Inject SyncBeanManager beanManager;
 
-    public DataDisplayerRenderer getRenderer(String renderer) throws Exception {
+    public DataDisplayerRenderer getRenderer(String renderer) {
         if (renderer == null) renderer = "google";
         String beanName = renderer + "_renderer";
 
         Collection<IOCBeanDef> beans = beanManager.lookupBeans(beanName);
-        if (beans == null || beans.isEmpty()) throw new Exception(renderer + " renderer not found.");
-        if (beans.size() > 1) throw new Exception("Multiple renderer implementations found for: " + renderer);
+        if (beans == null || beans.isEmpty()) throw new RuntimeException(renderer + " renderer not found.");
+        if (beans.size() > 1) throw new RuntimeException("Multiple renderer implementations found for: " + renderer);
 
         IOCBeanDef beanDef = beans.iterator().next();
         return (DataDisplayerRenderer) beanDef.getInstance();
@@ -47,10 +47,10 @@ public class DataDisplayerViewerLocator {
     /**
      * Get the viewer component for the specified data displayer.
      */
-    public DataDisplayerViewer lookupViewer(DataDisplayer target) throws Exception {
+    public DataDisplayerViewer lookupViewer(DataDisplayer target) {
         DataDisplayerRenderer renderer = getRenderer(target.getRenderer());
         DataDisplayerViewer viewer = renderer.lookupViewer(target);
-        if (viewer == null) throw new Exception(target.getType() + " displayer not supported in " + target.getRenderer() + " renderer.");
+        if (viewer == null) throw new RuntimeException(target.getType() + " displayer not supported in " + target.getRenderer() + " renderer.");
 
         viewer.setDataDisplayer(target);
         return viewer;

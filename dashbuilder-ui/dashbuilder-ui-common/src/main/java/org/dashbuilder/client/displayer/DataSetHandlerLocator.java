@@ -19,6 +19,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import org.dashbuilder.client.dataset.ClientDataSetManager;
+import org.dashbuilder.client.dataset.DataSetManagerProxy;
 import org.dashbuilder.model.dataset.DataSet;
 import org.dashbuilder.model.dataset.DataSetLookup;
 import org.dashbuilder.model.dataset.DataSetRef;
@@ -29,17 +30,21 @@ import org.dashbuilder.model.dataset.DataSetRef;
 @ApplicationScoped
 public class DataSetHandlerLocator {
 
-    @Inject ClientDataSetManager dataSetManager;
+    @Inject DataSetManagerProxy dataSetManagerProxy;
+    @Inject ClientDataSetManager clientDataSetManager;
 
     /**
      * Get the operation handler component for the specified data set reference.
      */
-    public DataSetHandler lookupHandler(DataSetRef ref) throws Exception {
+    public DataSetHandler lookupHandler(DataSetRef ref) {
         if (ref instanceof DataSet) {
-            return new DataSetStaticHandler((DataSet) ref);
+            DataSet dataSet = (DataSet) ref;
+            clientDataSetManager.registerDataSet(dataSet);
+            DataSetLookup lookup = new DataSetLookup(dataSet.getUUID());
+            return new DataSetHandlerImpl(dataSetManagerProxy, lookup);
         }
         if (ref instanceof DataSetLookup) {
-            return new DataSetLookupHandler(dataSetManager, (DataSetLookup) ref);
+            return new DataSetHandlerImpl(dataSetManagerProxy, (DataSetLookup) ref);
         }
         throw new IllegalArgumentException("DataSetRef implementation not supported: " + ref.getClass().getName());
     }

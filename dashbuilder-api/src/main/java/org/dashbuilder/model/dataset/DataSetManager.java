@@ -15,33 +15,39 @@
  */
 package org.dashbuilder.model.dataset;
 
+import org.jboss.errai.bus.server.annotations.Remote;
+
 /**
- * Main interface for accessing data sets.
+ * Main interface for handling data sets.
  */
+@Remote
 public interface DataSetManager {
 
     /**
      * Create a brand new data set instance.
+     * @param uuid The UUID to assign to the new data set.
      */
     DataSet createDataSet(String uuid);
 
     /**
      * Retrieve (load if required) a data set.
+     * @param uuid The UUID of the data set.
      */
     DataSet getDataSet(String uuid) throws Exception;
 
     /**
+     * Fetch the metadata instance for the specified data set.
+     * @param uuid The UUID of the data set.
+     */
+    DataSetMetadata getDataSetMetadata(String uuid) throws Exception;
+
+    /**
      * Registers the specified data set instance.
      */
-    void registerDataSet(DataSet dataSet) throws Exception;
+    void registerDataSet(DataSet dataSet);
 
     /**
-     * Discard any active operation and ensure the most up to date data is loaded and returned.
-     */
-    DataSet refreshDataSet(String uuid) throws Exception;
-
-    /**
-     * Load a data set and apply several operations (filter, sort, group, ...) on it.
+     * Load a data set and apply several operations (filter, sort, group, ...) on top of it.
      */
     DataSet lookupDataSet(DataSetLookup lookup) throws Exception;
 }

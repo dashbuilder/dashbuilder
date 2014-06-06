@@ -17,7 +17,7 @@ package org.dashbuilder.client.displayer;
 
 import java.util.Collection;
 
-import org.dashbuilder.client.dataset.ClientDataSetManager;
+import org.dashbuilder.client.dataset.DataSetManagerProxy;
 import org.dashbuilder.client.dataset.DataSetMetadataCallback;
 import org.dashbuilder.client.dataset.DataSetReadyCallback;
 import org.dashbuilder.model.dataset.DataSet;
@@ -30,29 +30,33 @@ import org.dashbuilder.model.dataset.sort.ColumnSort;
 import org.dashbuilder.model.dataset.sort.DataSetSort;
 import org.dashbuilder.model.dataset.sort.SortOrder;
 
-public class DataSetLookupHandler implements DataSetHandler {
+public class DataSetHandlerImpl implements DataSetHandler {
 
-    protected ClientDataSetManager dataSetManager;
+    protected DataSetManagerProxy dataSetManagerProxy;
     protected DataSetMetadata dataSetMetadata;
     protected DataSetLookup lookupBase;
     protected DataSetLookup lookupExt;
 
-    public DataSetLookupHandler(ClientDataSetManager dataSetManager, DataSetLookup lookup) {
-        this.dataSetManager = dataSetManager;
+    public DataSetHandlerImpl(DataSetManagerProxy dataSetManagerProxy, DataSetLookup lookup) {
+        this.dataSetManagerProxy = dataSetManagerProxy;
         this.lookupBase = lookup;
         this.lookupExt = lookup.cloneInstance();
 
-        // Fetch the data set metadata
-        dataSetManager.fetchMetadata(lookupBase.getDataSetUUID(), new DataSetMetadataCallback() {
-            public void callback(DataSetMetadata metadata) {
-                dataSetMetadata = metadata;
-            }
-        });
+        try {
+            // Fetch the data set metadata
+            dataSetManagerProxy.fetchMetadata(lookupBase.getDataSetUUID(), new DataSetMetadataCallback() {
+                public void callback(DataSetMetadata metadata) {
+                    dataSetMetadata = metadata;
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
-    public DataSetHandler lookupDataSet(final DataSetReadyCallback callback) {
+    public DataSetHandler lookupDataSet(final DataSetReadyCallback callback) throws Exception {
         // Lookup the data set
-        dataSetManager.lookupDataSet(lookupExt, new DataSetReadyCallback() {
+        dataSetManagerProxy.lookupDataSet(lookupExt, new DataSetReadyCallback() {
             public void callback(DataSet result) {
                 callback.callback(result);
             }

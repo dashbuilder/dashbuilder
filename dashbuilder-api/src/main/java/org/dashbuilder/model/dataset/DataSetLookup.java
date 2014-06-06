@@ -90,7 +90,7 @@ public class DataSetLookup implements DataSetRef {
         List<T> result = new ArrayList<T>();
         for (DataSetOp op : operationList) {
             if (op.getClass().equals(type)) {
-                result.add(type.cast(op));
+                result.add((T) op);
             }
         }
         return result;

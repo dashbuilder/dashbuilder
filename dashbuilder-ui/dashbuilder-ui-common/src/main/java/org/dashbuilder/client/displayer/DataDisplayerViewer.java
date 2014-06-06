@@ -16,7 +16,6 @@
 package org.dashbuilder.client.displayer;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import com.google.gwt.user.client.ui.Composite;
@@ -32,15 +31,6 @@ public abstract class DataDisplayerViewer<T extends DataDisplayer> extends Compo
     protected DataSetHandler dataSetHandler;
     protected T dataDisplayer;
     protected List<DataDisplayerViewerListener> listenerList = new ArrayList<DataDisplayerViewerListener>();
-
-    public DataSet getDataSet() {
-        return dataSet;
-    }
-
-    public void setDataSet(DataSet dataSet) {
-        this.dataSet = dataSet;
-        this.dataSetHandler = new DataSetStaticHandler(dataSet);
-    }
 
     public T getDataDisplayer() {
         return dataDisplayer;

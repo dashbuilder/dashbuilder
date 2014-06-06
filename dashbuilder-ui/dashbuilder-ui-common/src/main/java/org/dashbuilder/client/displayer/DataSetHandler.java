@@ -77,5 +77,5 @@ public interface DataSetHandler {
      * Get the data set reflecting all the data set operation currently set within this handler.
      * @param callback The callback interface that is invoked right after the data is available.
      */
-    DataSetHandler lookupDataSet(DataSetReadyCallback callback);
+    DataSetHandler lookupDataSet(DataSetReadyCallback callback) throws Exception;
 }

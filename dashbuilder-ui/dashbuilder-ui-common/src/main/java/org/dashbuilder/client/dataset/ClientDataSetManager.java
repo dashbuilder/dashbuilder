@@ -15,65 +15,66 @@
  */
 package org.dashbuilder.client.dataset;
 
-import javax.inject.Inject;
+import java.util.HashMap;
+import java.util.Map;
 
+import javax.enterprise.context.ApplicationScoped;
+
+import org.dashbuilder.model.dataset.DataSetFactory;
 import org.dashbuilder.model.dataset.DataSetLookup;
 import org.dashbuilder.model.dataset.DataSet;
+import org.dashbuilder.model.dataset.DataSetManager;
 import org.dashbuilder.model.dataset.DataSetMetadata;
-import org.dashbuilder.model.dataset.impl.DataSetImpl;
-import org.dashbuilder.model.dataset.DataSetRef;
-import org.dashbuilder.service.DataSetService;
-import org.jboss.errai.common.client.api.Caller;
-import org.jboss.errai.common.client.api.RemoteCallback;
 
 /**
- * Main client interface for dealing with data sets.
+ * Client implementation of a DataSetManager. It hold as map of data sets in memory.
+ * It is designed to manipulate not quite big data sets. For big data sets the backend implementation is better,
  */
-public class ClientDataSetManager {
+@ApplicationScoped
+public class ClientDataSetManager implements DataSetManager {
 
-    @Inject
-    private Caller<DataSetService> dataSetService;
+    private Map<String,DataSet> dataSetMap = new HashMap<String,DataSet>();
 
-    public DataSet createDataSet() {
-        return new DataSetImpl();
+    public DataSet createDataSet(String uuid) {
+        DataSet dataSet = DataSetFactory.newDataSet();
+        dataSet.setUUID(uuid);
+        return dataSet;
     }
 
-    /**
-     * Get the target data set instance by processing the specified data set reference.
-     * @param ref The data set reference.
-     */
-    public void processRef(DataSetRef ref, DataSetReadyCallback listener) {
-        if (ref instanceof DataSet) {
-            listener.callback((DataSet) ref);
+    public DataSet getDataSet(String uuid) throws Exception {
+        if (!dataSetMap.containsKey(uuid)) return null;
+        return dataSetMap.get(uuid);
+    }
+
+    public void registerDataSet(DataSet dataSet) {
+        if (dataSet != null) {
+            String uuid = dataSet.getUUID();
+            if (uuid == null || uuid.trim().length() == 0) {
+                uuid = "dataset_" + dataSet.hashCode();
+                dataSet.setUUID(uuid);
+            }
+            dataSetMap.put(dataSet.getUUID(), dataSet);
         }
-        if (ref instanceof DataSetLookup) {
-            lookupDataSet((DataSetLookup) ref, listener);
+    }
+
+    public DataSetMetadata getDataSetMetadata(String uuid) throws Exception {
+        DataSet dataSet = getDataSet(uuid);
+        if (dataSet == null) return null;
+
+        return dataSet.getMetadata();
+    }
+
+    public DataSet lookupDataSet(DataSetLookup lookup) throws Exception {
+        DataSet dataSet = getDataSet(lookup.getDataSetUUID());
+        if (dataSet == null) return null;
+
+        // Apply the list of operations specified (if any).
+        if (!lookup.getOperationList().isEmpty()) {
+            // TODO: Share the backend DataSetOpEngine
         }
-    }
 
-    /**
-     * Request the server to fetch the metadata instance for the specified data set.
-     * @param uid The UID of the data set.
-     */
-    public void fetchMetadata(final String uid, final DataSetMetadataCallback listener) {
-        dataSetService.call(
-            new RemoteCallback<DataSetMetadata>() {
-                public void callback(DataSetMetadata result) {
-                    listener.callback(result);
-                }
-            }).fetchMetadata(uid);
-    }
-
-    /**
-     * Request the server to process the specified data set lookup request
-     * @param request The data set lookup request
-     */
-    public void lookupDataSet(final DataSetLookup request, final DataSetReadyCallback listener) {
-        dataSetService.call(
-            new RemoteCallback<DataSet>() {
-                public void callback(DataSet result) {
-                    listener.callback(result);
-                }
-            }).lookupDataSet(request);
+        // Trim the data set as requested.
+        dataSet = dataSet.trim(lookup.getRowOffset(), lookup.getNumberOfRows());
+        return dataSet;
     }
 }
