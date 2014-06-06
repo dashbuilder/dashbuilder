@@ -22,7 +22,7 @@ import com.google.gwt.visualization.client.visualizations.Gauge;
 import com.google.gwt.visualization.client.visualizations.Gauge.Options;
 import org.dashbuilder.model.displayer.MeterChartDisplayer;
 
-public class GoogleMeterChartViewer extends GoogleDisplayerViewer<MeterChartDisplayer> {
+public class GoogleMeterChartViewer extends GoogleViewer<MeterChartDisplayer> {
 
     @Override
     public String getPackage() {

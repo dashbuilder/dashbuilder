@@ -20,15 +20,15 @@ import java.util.Collection;
 import org.dashbuilder.model.dataset.sort.SortOrder;
 
 /**
- * Interface addressed to capture events coming from a DataDisplayerViewer instance.
+ * Interface addressed to capture events coming from a DataViewer instance.
  */
-public interface DataDisplayerViewerListener {
+public interface DataViewerListener {
 
-    void onIntervalsSelected(DataDisplayerViewer viewer, String columnId, Collection<String> intervalNames);
+    void onIntervalsSelected(DataViewer viewer, String columnId, Collection<String> intervalNames);
 
-    void onColumnSorted(DataDisplayerViewer viewer, String columnId, SortOrder order);
+    void onColumnSorted(DataViewer viewer, String columnId, SortOrder order);
 
-    void onColumnFiltered(DataDisplayerViewer viewer, String columnId, Collection<Comparable> allowedValues);
+    void onColumnFiltered(DataViewer viewer, String columnId, Collection<Comparable> allowedValues);
 
-    void onColumnFiltered(DataDisplayerViewer viewer, String columnId, Comparable lowValue, Comparable highValue);
+    void onColumnFiltered(DataViewer viewer, String columnId, Comparable lowValue, Comparable highValue);
 }

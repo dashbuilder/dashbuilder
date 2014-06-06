@@ -17,8 +17,8 @@ package org.dashbuilder.client.displayer;
 
 import org.dashbuilder.model.displayer.DataDisplayer;
 
-public interface DataDisplayerRenderer {
+public interface RendererLibrary {
 
     String getUUID();
-    DataDisplayerViewer lookupViewer(DataDisplayer displayer);
+    DataViewer lookupViewer(DataDisplayer displayer);
 }

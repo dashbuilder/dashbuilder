@@ -22,8 +22,8 @@ import javax.inject.Inject;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimplePanel;
-import org.dashbuilder.client.displayer.DataDisplayerViewer;
-import org.dashbuilder.client.displayer.DataDisplayerViewerLocator;
+import org.dashbuilder.client.displayer.DataViewer;
+import org.dashbuilder.client.displayer.DataViewerLocator;
 import org.dashbuilder.client.displayer.DataSetHandler;
 import org.dashbuilder.client.displayer.DataSetHandlerLocator;
 import org.dashbuilder.model.dataset.DataSetRef;
@@ -33,25 +33,25 @@ import org.dashbuilder.model.kpi.KPI;
 @Dependent
 public class KPIViewer extends Composite {
 
-    @Inject DataDisplayerViewerLocator viewerLocator;
+    @Inject DataViewerLocator viewerLocator;
     @Inject DataSetHandlerLocator handlerLocator;
 
     SimplePanel container = new SimplePanel();
     Label label = new Label();
-    DataDisplayerViewer dataDisplayerViewer;
-    DataSetHandler dataSetHandler;
+    DataViewer dataViewer;
+    DataSetHandler dataHandler;
 
     @PostConstruct
     private void init() {
         initWidget(container);
     }
 
-    public DataDisplayerViewer getDataDisplayerViewer() {
-        return dataDisplayerViewer;
+    public DataViewer getDataViewer() {
+        return dataViewer;
     }
 
-    public DataSetHandler getDataSetHandler() {
-        return dataSetHandler;
+    public DataSetHandler getDataHandler() {
+        return dataHandler;
     }
 
     public void draw(KPI kpi) {
@@ -59,17 +59,17 @@ public class KPIViewer extends Composite {
             // Locate the low level UI components
             DataDisplayer dataDisplayer = kpi.getDataDisplayer();
             DataSetRef dataSetRef = kpi.getDataSetRef();
-            dataDisplayerViewer = viewerLocator.lookupViewer(dataDisplayer);
-            dataSetHandler = handlerLocator.lookupHandler(dataSetRef);
+            dataViewer = viewerLocator.lookupViewer(dataDisplayer);
+            dataHandler = handlerLocator.lookupHandler(dataSetRef);
 
-            // Init the DataDisplayerViewer
-            dataDisplayerViewer.setDataDisplayer(dataDisplayer);
-            dataDisplayerViewer.setDataSetHandler(dataSetHandler);
+            // Init the DataViewer
+            dataViewer.setDataDisplayer(dataDisplayer);
+            dataViewer.setDataSetHandler(dataHandler);
 
             // Draw
             container.clear();
-            container.add(dataDisplayerViewer);
-            dataDisplayerViewer.draw();
+            container.add(dataViewer);
+            dataViewer.draw();
         } catch (Exception e) {
             displayMessage(e.getMessage());
         }

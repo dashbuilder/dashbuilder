@@ -17,7 +17,6 @@ package org.dashbuilder.client.displayer;
 
 import java.util.Collection;
 import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
 import org.dashbuilder.model.displayer.DataDisplayer;
@@ -25,14 +24,14 @@ import org.jboss.errai.ioc.client.container.IOCBeanDef;
 import org.jboss.errai.ioc.client.container.SyncBeanManager;
 
 /**
- * The locator service for DataDisplayerViewer implementations.
+ * The locator service for DataViewer implementations.
  */
 @ApplicationScoped
-public class DataDisplayerViewerLocator {
+public class DataViewerLocator {
 
     @Inject SyncBeanManager beanManager;
 
-    public DataDisplayerRenderer getRenderer(String renderer) {
+    public RendererLibrary lookupRenderer(String renderer) {
         if (renderer == null) renderer = "google";
         String beanName = renderer + "_renderer";
 
@@ -41,15 +40,15 @@ public class DataDisplayerViewerLocator {
         if (beans.size() > 1) throw new RuntimeException("Multiple renderer implementations found for: " + renderer);
 
         IOCBeanDef beanDef = beans.iterator().next();
-        return (DataDisplayerRenderer) beanDef.getInstance();
+        return (RendererLibrary) beanDef.getInstance();
     }
 
     /**
      * Get the viewer component for the specified data displayer.
      */
-    public DataDisplayerViewer lookupViewer(DataDisplayer target) {
-        DataDisplayerRenderer renderer = getRenderer(target.getRenderer());
-        DataDisplayerViewer viewer = renderer.lookupViewer(target);
+    public DataViewer lookupViewer(DataDisplayer target) {
+        RendererLibrary renderer = lookupRenderer(target.getRenderer());
+        DataViewer viewer = renderer.lookupViewer(target);
         if (viewer == null) throw new RuntimeException(target.getType() + " displayer not supported in " + target.getRenderer() + " renderer.");
 
         viewer.setDataDisplayer(target);

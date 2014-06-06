@@ -27,15 +27,16 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.visualization.client.AbstractDataTable;
 import com.google.gwt.visualization.client.DataTable;
 import org.dashbuilder.client.dataset.DataSetReadyCallback;
+import org.dashbuilder.client.displayer.AbstractDataViewer;
+import org.dashbuilder.client.displayer.DataViewer;
 import org.dashbuilder.model.dataset.ColumnType;
 import org.dashbuilder.model.dataset.DataColumn;
-import org.dashbuilder.client.displayer.DataDisplayerViewer;
 import org.dashbuilder.model.dataset.DataSet;
 import org.dashbuilder.model.dataset.sort.SortOrder;
 import org.dashbuilder.model.displayer.DataDisplayer;
 import org.dashbuilder.model.displayer.DataDisplayerColumn;
 
-public abstract class GoogleDisplayerViewer<T extends DataDisplayer> extends DataDisplayerViewer<T> {
+public abstract class GoogleViewer<T extends DataDisplayer> extends AbstractDataViewer<T> {
 
     protected boolean drawn = false;
     protected boolean ready = false;
@@ -43,7 +44,7 @@ public abstract class GoogleDisplayerViewer<T extends DataDisplayer> extends Dat
     protected FlowPanel panel = new FlowPanel();
     protected Label label = new Label();
 
-    public GoogleDisplayerViewer() {
+    public GoogleViewer() {
         initWidget(panel);
     }
 
@@ -120,20 +121,20 @@ public abstract class GoogleDisplayerViewer<T extends DataDisplayer> extends Dat
 
     // Events received from other viewers
 
-    public void onIntervalsSelected(DataDisplayerViewer viewer, String columnId, Collection<String> intervalNames) {
+    public void onIntervalsSelected(DataViewer viewer, String columnId, Collection<String> intervalNames) {
         dataSetHandler.selectIntervals(columnId, intervalNames);
         redraw();
     }
 
-    public void onColumnSorted(DataDisplayerViewer viewer, String columnId, SortOrder order) {
+    public void onColumnSorted(DataViewer viewer, String columnId, SortOrder order) {
     }
 
-    public void onColumnFiltered(DataDisplayerViewer viewer, String columnId, Collection<Comparable> allowedValues) {
+    public void onColumnFiltered(DataViewer viewer, String columnId, Collection<Comparable> allowedValues) {
         dataSetHandler.filterDataSet(columnId, allowedValues);
         redraw();
     }
 
-    public void onColumnFiltered(DataDisplayerViewer viewer, String columnId, Comparable lowValue, Comparable highValue) {
+    public void onColumnFiltered(DataViewer viewer, String columnId, Comparable lowValue, Comparable highValue) {
         dataSetHandler.filterDataSet(columnId, lowValue, highValue);
         redraw();
     }

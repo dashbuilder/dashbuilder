@@ -39,7 +39,7 @@ public class DataSetManagerProxy {
     private ClientDataSetManager clientDataSetManager;
 
     @Inject
-    // TODO: pass the reference from the backend activation module instead of having it hard-coded.
+    // TODO: set the reference from the backend module instead of having it hard-coded.
     private Caller<DataSetManager> remoteDataSetManager;
 
     /**
@@ -71,7 +71,7 @@ public class DataSetManagerProxy {
      * if the data set can't be found.
      */
     public void lookupDataSet(final DataSetLookup request, final DataSetReadyCallback listener) throws Exception {
-        // TODO: move to client storage from backend those small enough data sets?
+        // TODO: move from backend to client storage those small enough data sets.
 
         if (clientDataSetManager.getDataSet(request.getDataSetUUID()) != null) {
             DataSet dataSet = clientDataSetManager.lookupDataSet(request);

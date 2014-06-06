@@ -22,7 +22,7 @@ import com.google.gwt.visualization.client.visualizations.Table;
 import com.google.gwt.visualization.client.visualizations.Table.Options;
 import org.dashbuilder.model.displayer.TableDisplayer;
 
-public class GoogleTableViewer extends GoogleDisplayerViewer<TableDisplayer> {
+public class GoogleTableViewer extends GoogleViewer<TableDisplayer> {
 
     protected int pageSize = 20;
     protected int currentPage = 1;

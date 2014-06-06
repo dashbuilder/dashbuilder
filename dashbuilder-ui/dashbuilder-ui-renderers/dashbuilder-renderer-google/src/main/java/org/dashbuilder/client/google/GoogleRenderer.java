@@ -25,8 +25,8 @@ import javax.inject.Named;
 
 import com.google.gwt.core.client.JsArrayString;
 import com.google.gwt.visualization.client.VisualizationUtils;
-import org.dashbuilder.client.displayer.DataDisplayerRenderer;
-import org.dashbuilder.client.displayer.DataDisplayerViewer;
+import org.dashbuilder.client.displayer.RendererLibrary;
+import org.dashbuilder.client.displayer.DataViewer;
 import org.dashbuilder.model.displayer.DataDisplayer;
 import org.dashbuilder.model.displayer.DataDisplayerType;
 import org.uberfire.client.workbench.events.ApplicationReadyEvent;
@@ -37,9 +37,9 @@ import org.uberfire.client.workbench.events.PerspectiveChange;
  */
 @ApplicationScoped
 @Named("google_renderer")
-public class GoogleRenderer implements DataDisplayerRenderer {
+public class GoogleRenderer implements RendererLibrary {
 
-    private List<GoogleDisplayerViewer> viewerList = new ArrayList<GoogleDisplayerViewer>();
+    private List<GoogleViewer> viewerList = new ArrayList<GoogleViewer>();
     private Set<String> packageList = new HashSet<String>();
 
     public static final String UUID = "google";
@@ -60,7 +60,7 @@ public class GoogleRenderer implements DataDisplayerRenderer {
 
     // Register and draw charts using the asynchronous Google API
 
-    public DataDisplayerViewer lookupViewer(DataDisplayer displayer) {
+    public DataViewer lookupViewer(DataDisplayer displayer) {
         DataDisplayerType type = displayer.getType();
         if (DataDisplayerType.BARCHART.equals(type)) return registerViewer(new GoogleBarChartViewer());
         if (DataDisplayerType.PIECHART.equals(type)) return registerViewer(new GooglePieChartViewer());
@@ -73,7 +73,7 @@ public class GoogleRenderer implements DataDisplayerRenderer {
         return null;
     }
 
-    public GoogleDisplayerViewer registerViewer(GoogleDisplayerViewer viewer) {
+    public GoogleViewer registerViewer(GoogleViewer viewer) {
         viewerList.add(viewer);
         packageList.add(viewer.getPackage());
         return viewer;
@@ -83,7 +83,7 @@ public class GoogleRenderer implements DataDisplayerRenderer {
         // Create a callback to be called when the visualization API has been loaded.
         Runnable onLoadCallback = new Runnable() {
             public void run() {
-                for (GoogleDisplayerViewer viewer : viewerList) {
+                for (GoogleViewer viewer : viewerList) {
                     viewer.ready();
                 }
                 viewerList.clear();

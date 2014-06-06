@@ -16,28 +16,12 @@
 package org.dashbuilder.client.gallery;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
-import com.google.gwt.user.client.ui.IsWidget;
-import org.dashbuilder.client.dataset.ClientDataSetManager;
-import org.dashbuilder.client.dataset.DataSetReadyCallback;
-import org.dashbuilder.client.displayer.DataDisplayerViewer;
-import org.dashbuilder.client.displayer.DataDisplayerViewerLocator;
-import org.dashbuilder.client.kpi.ClientKPIManager;
-import org.dashbuilder.model.dataset.ColumnType;
-import org.dashbuilder.model.dataset.DataSet;
-import org.dashbuilder.model.date.Month;
-import org.dashbuilder.model.displayer.DataDisplayer;
-import org.dashbuilder.model.displayer.DataDisplayerBuilder;
-import org.dashbuilder.model.displayer.DataDisplayerType;
-import org.dashbuilder.model.kpi.KPI;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
 import org.uberfire.client.annotations.WorkbenchPartView;
 import org.uberfire.client.annotations.WorkbenchScreen;
 import org.uberfire.client.mvp.UberView;
-import org.uberfire.lifecycle.OnStartup;
-import org.uberfire.mvp.PlaceRequest;
 
 @WorkbenchScreen(identifier = "GalleryScreen")
 @ApplicationScoped

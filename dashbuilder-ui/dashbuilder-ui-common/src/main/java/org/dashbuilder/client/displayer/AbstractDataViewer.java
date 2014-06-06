@@ -23,14 +23,19 @@ import org.dashbuilder.model.dataset.DataSet;
 import org.dashbuilder.model.displayer.DataDisplayer;
 
 /**
- * A DataDisplayer viewer takes care of drawing a DataDisplayer instance.
+ * Base class for implementing custom viewers.
+ * <p>Any derived class must implement:
+ * <ul>
+ *     <li>The draw() & redraw() methods.</li>
+ *     <li>The capture of events coming from the DataViewerListener interface.</li>
+ * </ul>
  */
-public abstract class DataDisplayerViewer<T extends DataDisplayer> extends Composite implements DataDisplayerViewerListener {
+public abstract class AbstractDataViewer<T extends DataDisplayer> extends Composite implements DataViewer<T> {
 
     protected DataSet dataSet;
     protected DataSetHandler dataSetHandler;
     protected T dataDisplayer;
-    protected List<DataDisplayerViewerListener> listenerList = new ArrayList<DataDisplayerViewerListener>();
+    protected List<DataViewerListener> listenerList = new ArrayList<DataViewerListener>();
 
     public T getDataDisplayer() {
         return dataDisplayer;
@@ -48,18 +53,31 @@ public abstract class DataDisplayerViewer<T extends DataDisplayer> extends Compo
         this.dataSetHandler = dataSetHandler;
     }
 
-    public void addListener(DataDisplayerViewerListener listener) {
+    public void addListener(DataViewerListener listener) {
         listenerList.add(listener);
     }
 
-    /**
-     * Draw the chart
-     */
-    public abstract void draw();
+    // DATA SET HANDLING LOGIC
 
     /**
-     * Same as draw but does not necessary implies to repaint everything again.
-     * It's just a matter of update & display the latest data set changes.
+     * This method is only applicable for displayers based on grouped data sets.
+     *
+     * @param columnId The name of the pivot column.
+     * @param intervalNames The name of the group intervals selected.
      */
-    public abstract void redraw();
+    public void selectGroupIntervals(String columnId, List<String> intervalNames) {
+/*
+        DataSetGroup groupOp = dataSetHandler.getGroupOperation(columnId);
+        if (groupOp != null && groupOp.getColumnGroup() != null) {
+            DataSetGroup _groupSelect = groupOp.cloneInstance();
+            _groupSelect.setSelectedIntervalNames(intervalNames);
+            _groupSelect.getGroupFunctions().clear();
+
+            // Also notify to those interested parties the intervals selection event.
+            for (DataViewerListener listener : listenerList) {
+                listener.onOperationEnabled(this, _groupSelect);
+            }
+        }
+*/
+    }
 }

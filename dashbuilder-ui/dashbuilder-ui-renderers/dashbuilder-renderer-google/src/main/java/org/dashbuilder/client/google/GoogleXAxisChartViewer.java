@@ -15,29 +15,20 @@
  */
 package org.dashbuilder.client.google;
 
-import java.util.Collection;
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.visualization.client.DataTable;
 import com.google.gwt.visualization.client.Selectable;
 import com.google.gwt.visualization.client.Selection;
 import com.google.gwt.visualization.client.events.SelectHandler;
-import org.dashbuilder.client.displayer.DataDisplayerViewerListener;
 import org.dashbuilder.model.displayer.DataDisplayerColumn;
 import org.dashbuilder.model.displayer.XAxisChartDisplayer;
 
-public abstract class GoogleXAxisChartViewer<T extends XAxisChartDisplayer> extends GoogleDisplayerViewer<T> {
+public abstract class GoogleXAxisChartViewer<T extends XAxisChartDisplayer> extends GoogleViewer<T> {
 
-    protected Set<String> intervalsSelected = new HashSet<String>();
-
-    public void selectIntervals(String columnId, Collection<String> intervalNames) {
-        for (DataDisplayerViewerListener listener : listenerList) {
-            listener.onIntervalsSelected(this, columnId, intervalNames);
-        }
-    }
+    protected List<String> intervalsSelected = new ArrayList<String>();
 
     public DataTable createTable() {
         List<DataDisplayerColumn> displayerColumns = dataDisplayer.getColumnList();
@@ -54,10 +45,12 @@ public abstract class GoogleXAxisChartViewer<T extends XAxisChartDisplayer> exte
                 for (int i = 0; i < selections.length(); i++) {
                     Selection selection = selections.get(i);
                     int row = selection.getRow();
-                    String intervalSelected = getValueString(row, 0);
-                    intervalsSelected.add(intervalSelected);
 
-                    selectIntervals(googleTable.getColumnId(0), intervalsSelected);
+                    String intervalSelected = getValueString(row, 0);
+                    if (!intervalSelected.contains(intervalSelected)) {
+                        intervalsSelected.add(intervalSelected);
+                        selectGroupIntervals(googleTable.getColumnId(0), intervalsSelected);
+                    }
                 }
             }
         };

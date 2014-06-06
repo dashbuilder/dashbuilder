@@ -73,6 +73,10 @@ public class DataSetGroup implements DataSetOp {
         return selectedIntervalNames;
     }
 
+    public void setSelectedIntervalNames(List<String> names) {
+        selectedIntervalNames = names;
+    }
+
     public DataSetGroup cloneInstance() {
         DataSetGroup clone = new DataSetGroup();
         clone.nestedGroupType = nestedGroupType;
