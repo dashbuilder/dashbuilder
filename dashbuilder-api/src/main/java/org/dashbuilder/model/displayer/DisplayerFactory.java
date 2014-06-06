@@ -33,19 +33,19 @@ public final class DisplayerFactory {
         return new BarChartBuilderImpl();
     }
 
-    public static ChartBuilder newPieChartDisplayer() {
+    public static PieChartBuilder newPieChartDisplayer() {
         return new PieChartBuilderImpl();
     }
 
-    public static ChartBuilder newAreaChartDisplayer() {
+    public static AreaChartBuilder newAreaChartDisplayer() {
         return new AreaChartBuilderImpl();
     }
 
-    public static ChartBuilder newLineChartDisplayer() {
+    public static LineChartBuilder newLineChartDisplayer() {
         return new LineChartBuilderImpl();
     }
 
-    public static ChartBuilder newMapChartDisplayer() {
+    public static MapChartBuilder newMapChartDisplayer() {
         return new MapChartBuilderImpl();
     }
 
@@ -53,7 +53,7 @@ public final class DisplayerFactory {
         return new TableDisplayerBuilderImpl();
     }
 
-    public static ChartBuilder newMeterChartDisplayer() {
+    public static MeterChartBuilder newMeterChartDisplayer() {
         return new MeterChartBuilderImpl();
     }
 
