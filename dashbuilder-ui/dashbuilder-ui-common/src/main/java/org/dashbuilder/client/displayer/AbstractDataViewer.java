@@ -20,6 +20,7 @@ import java.util.List;
 
 import com.google.gwt.user.client.ui.Composite;
 import org.dashbuilder.model.dataset.DataSet;
+import org.dashbuilder.model.dataset.group.DataSetGroup;
 import org.dashbuilder.model.displayer.DataDisplayer;
 
 /**
@@ -57,7 +58,21 @@ public abstract class AbstractDataViewer<T extends DataDisplayer> extends Compos
         listenerList.add(listener);
     }
 
-    // DATA SET HANDLING LOGIC
+    // CAPTURE EVENTS RECEIVED FROM OTHER VIEWERS
+
+    public void onGroupIntervalsSelected(DataViewer viewer, DataSetGroup groupOp) {
+        if (dataSetHandler.addGroupOperation(groupOp)) {
+            redraw();
+        }
+    }
+
+    public void onGroupIntervalsReset(DataViewer viewer, DataSetGroup groupOp) {
+        if (dataSetHandler.removeGroupOperation(groupOp)) {
+            redraw();
+        }
+    }
+
+    // INTERNAL DATA SET HANDLING METHODS
 
     /**
      * This method is only applicable for displayers based on grouped data sets.
@@ -66,7 +81,7 @@ public abstract class AbstractDataViewer<T extends DataDisplayer> extends Compos
      * @param intervalNames The name of the group intervals selected.
      */
     public void selectGroupIntervals(String columnId, List<String> intervalNames) {
-/*
+
         DataSetGroup groupOp = dataSetHandler.getGroupOperation(columnId);
         if (groupOp != null && groupOp.getColumnGroup() != null) {
             DataSetGroup _groupSelect = groupOp.cloneInstance();
@@ -75,9 +90,23 @@ public abstract class AbstractDataViewer<T extends DataDisplayer> extends Compos
 
             // Also notify to those interested parties the intervals selection event.
             for (DataViewerListener listener : listenerList) {
-                listener.onOperationEnabled(this, _groupSelect);
+                listener.onGroupIntervalsSelected(this, _groupSelect);
             }
         }
-*/
+    }
+
+    /**
+     * This method is only applicable for displayers based on grouped data sets.
+     *
+     * @param columnId The name of the pivot column.
+     */
+    public void resetGroupIntervals(String columnId) {
+
+        DataSetGroup groupOp = dataSetHandler.getGroupOperation(columnId);
+        if (groupOp != null && groupOp.getColumnGroup() != null) {
+            for (DataViewerListener listener : listenerList) {
+                listener.onGroupIntervalsReset(this, groupOp);
+            }
+        }
     }
 }

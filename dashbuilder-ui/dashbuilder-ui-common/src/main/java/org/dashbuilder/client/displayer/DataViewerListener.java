@@ -17,6 +17,8 @@ package org.dashbuilder.client.displayer;
 
 import java.util.Collection;
 
+import org.dashbuilder.model.dataset.DataSetOp;
+import org.dashbuilder.model.dataset.group.DataSetGroup;
 import org.dashbuilder.model.dataset.sort.SortOrder;
 
 /**
@@ -24,11 +26,6 @@ import org.dashbuilder.model.dataset.sort.SortOrder;
  */
 public interface DataViewerListener {
 
-    void onIntervalsSelected(DataViewer viewer, String columnId, Collection<String> intervalNames);
-
-    void onColumnSorted(DataViewer viewer, String columnId, SortOrder order);
-
-    void onColumnFiltered(DataViewer viewer, String columnId, Collection<Comparable> allowedValues);
-
-    void onColumnFiltered(DataViewer viewer, String columnId, Comparable lowValue, Comparable highValue);
+    void onGroupIntervalsSelected(DataViewer viewer, DataSetGroup groupOp);
+    void onGroupIntervalsReset(DataViewer viewer, DataSetGroup groupOp);
 }

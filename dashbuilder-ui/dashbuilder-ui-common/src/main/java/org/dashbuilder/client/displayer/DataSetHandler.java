@@ -15,67 +15,73 @@
  */
 package org.dashbuilder.client.displayer;
 
-import java.util.Collection;
-
 import org.dashbuilder.client.dataset.DataSetReadyCallback;
-import org.dashbuilder.model.dataset.DataSetLookupBuilder;
+import org.dashbuilder.model.dataset.DataSetLookup;
 import org.dashbuilder.model.dataset.DataSetMetadata;
-import org.dashbuilder.model.dataset.sort.SortOrder;
+import org.dashbuilder.model.dataset.group.DataSetGroup;
 
 /**
- * Interface addressed to manipulate a data set instance.
+ * Interface addressed to issue lookup requests over a data set instance.
  */
 public interface DataSetHandler {
 
     /**
-     * Get the data set metadata.
+     * Get the data set lookup instance used to retrieve the base data set.
      */
-    DataSetMetadata getDataSetMetadata();
+    DataSetLookup getBaseDataSetLookup();
 
     /**
-     * Set a set of intervals being displayed we want the data to be filtered.
-     * @param columnId The column which interval values are to be selected.
-     * @param intervalNames The names of the intervals to select.
+     * Get the data set lookup instance used in the last call to lookupDataSet.
      */
-    DataSetHandler selectIntervals(String columnId, Collection<String> intervalNames);
+    DataSetLookup getCurrentDataSetLookup();
 
     /**
-     * Filter the underlying data set by the given column.
-     * @param columnId The column which values are to be filtered.
-     * @param allowedValues The set of values the filter operation must satisfy.
+     * Get the metadata of the base data set.
      */
-    DataSetHandler filterDataSet(String columnId, Collection<Comparable> allowedValues);
+    DataSetMetadata getBaseDataSetMetadata();
 
     /**
-     * Filter the underlying data set by the given column.
-     * @param columnId The column which values are to be filtered.
-     * @param lowValue The filtered data set values must be lower than this.
-     * @param highValue The filtered data set values must be greater than this.
+     * Retrieves any group operation present in the current data set lookup for the target column specified.
+     * @param columnId The column id. to look for. It can be either the column used to group the data set or
+     * the column id. assigned int the grouped data set result.
+     *
+     * @return The group operation that matches the given column id. Or null if no operation is found.
      */
-    DataSetHandler filterDataSet(String columnId, Comparable lowValue, Comparable highValue);
+    DataSetGroup getGroupOperation(String columnId);
 
     /**
-     * Sort the underlying data set by the given column.
-     * @param columnId The column which values are to be sort.
-     * @param order The sort ordering to apply.
+     * Adds a group operation to the current data set lookup instance.
+     *
+     * @param op The operation to add.
+     * @return false, if a group operation is already defined for the target group column - true, otherwise.
      */
-    DataSetHandler sortDataSet(String columnId, SortOrder order);
+    boolean addGroupOperation(DataSetGroup op);
 
     /**
-     * Forces the data set to contain only the specified row sub set.
+     * Removes the specified group operation from the current data set lookup instance.
+     *
+     * @param op The operation to remove.
+     * @return false, if no group operations are not defined for the target group column - true, otherwise.
+     */
+    boolean removeGroupOperation(DataSetGroup op);
+
+    /**
+     * Forces the next data set lookup request to retrieve only the specified row sub set.
+     *
      * @param offset The position where the row sub set starts.
      * @param rows The number of rows to get.
      */
-    DataSetHandler trimDataSet(int offset, int rows);
+    void limitDataSetRows(int offset, int rows);
 
     /**
-     * Clear all the operations set.
+     * Restore the current data set lookup instance to its base status.
      */
-    DataSetHandler resetAllOperations();
+    void resetAllOperations();
 
     /**
-     * Get the data set reflecting all the data set operation currently set within this handler.
+     * Executes the current data set lookup request configured within this handler.
+     *
      * @param callback The callback interface that is invoked right after the data is available.
      */
-    DataSetHandler lookupDataSet(DataSetReadyCallback callback) throws Exception;
+    void lookupDataSet(DataSetReadyCallback callback) throws Exception;
 }

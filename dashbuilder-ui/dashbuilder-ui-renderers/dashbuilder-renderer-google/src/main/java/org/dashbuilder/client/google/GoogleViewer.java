@@ -119,26 +119,6 @@ public abstract class GoogleViewer<T extends DataDisplayer> extends AbstractData
         label.setText(msg);
     }
 
-    // Events received from other viewers
-
-    public void onIntervalsSelected(DataViewer viewer, String columnId, Collection<String> intervalNames) {
-        dataSetHandler.selectIntervals(columnId, intervalNames);
-        redraw();
-    }
-
-    public void onColumnSorted(DataViewer viewer, String columnId, SortOrder order) {
-    }
-
-    public void onColumnFiltered(DataViewer viewer, String columnId, Collection<Comparable> allowedValues) {
-        dataSetHandler.filterDataSet(columnId, allowedValues);
-        redraw();
-    }
-
-    public void onColumnFiltered(DataViewer viewer, String columnId, Comparable lowValue, Comparable highValue) {
-        dataSetHandler.filterDataSet(columnId, lowValue, highValue);
-        redraw();
-    }
-
     // Google DataTable manipulation methods
 
     protected DataTable googleTable = null;

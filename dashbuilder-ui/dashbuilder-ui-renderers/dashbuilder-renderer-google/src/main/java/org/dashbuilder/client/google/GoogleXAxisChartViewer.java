@@ -28,7 +28,7 @@ import org.dashbuilder.model.displayer.XAxisChartDisplayer;
 
 public abstract class GoogleXAxisChartViewer<T extends XAxisChartDisplayer> extends GoogleViewer<T> {
 
-    protected List<String> intervalsSelected = new ArrayList<String>();
+    protected List<String> intervalSelectedList = new ArrayList<String>();
 
     public DataTable createTable() {
         List<DataDisplayerColumn> displayerColumns = dataDisplayer.getColumnList();
@@ -47,9 +47,16 @@ public abstract class GoogleXAxisChartViewer<T extends XAxisChartDisplayer> exte
                     int row = selection.getRow();
 
                     String intervalSelected = getValueString(row, 0);
-                    if (!intervalSelected.contains(intervalSelected)) {
-                        intervalsSelected.add(intervalSelected);
-                        selectGroupIntervals(googleTable.getColumnId(0), intervalsSelected);
+                    if (!intervalSelectedList.contains(intervalSelected)) {
+                        intervalSelectedList.add(intervalSelected);
+                        selectGroupIntervals(googleTable.getColumnId(0), intervalSelectedList);
+                    } else {
+                        intervalSelectedList.remove(intervalSelected);
+                        if (!intervalSelectedList.isEmpty()) {
+                            selectGroupIntervals(googleTable.getColumnId(0), intervalSelectedList);
+                        } else {
+                            resetGroupIntervals(googleTable.getColumnId(0));
+                        }
                     }
                 }
             }

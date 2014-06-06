@@ -45,7 +45,7 @@ public class GoogleTableViewer extends GoogleViewer<TableDisplayer> {
     @Override
     public Widget createChart() {
         pageSize = dataDisplayer.getPageSize();
-        numberOfRows = dataSetHandler.getDataSetMetadata().getNumberOfRows();
+        numberOfRows = dataSetHandler.getBaseDataSetMetadata().getNumberOfRows();
         numberOfPages = ((numberOfRows - 1) / pageSize) + 1;
         if (currentPage > numberOfPages) {
             currentPage = 1;
@@ -79,7 +79,7 @@ public class GoogleTableViewer extends GoogleViewer<TableDisplayer> {
         // Draw only the data subset corresponding to the current page.
         int pageSize = dataDisplayer.getPageSize();
         int offset = (currentPage - 1) * pageSize;
-        dataSetHandler.trimDataSet(offset, pageSize);
+        dataSetHandler.limitDataSetRows(offset, pageSize);
 
         super.draw();
     }

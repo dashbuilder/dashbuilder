@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.dashbuilder.model.dataset.group.DataSetGroup;
 import org.dashbuilder.model.dataset.sort.SortOrder;
 
 /**
@@ -35,31 +36,17 @@ public class DataViewerCoordinator implements DataViewerListener {
         viewer.addListener(this);
     }
 
-    public void onIntervalsSelected(DataViewer viewer, String columnId, Collection<String> intervalNames) {
+    public void onGroupIntervalsSelected(DataViewer viewer, DataSetGroup groupOp) {
         for (DataViewer other : viewerList) {
             if (other == viewer) continue;
-            viewer.onIntervalsSelected(viewer, columnId, intervalNames);
+            other.onGroupIntervalsSelected(viewer, groupOp);
         }
     }
 
-    public void onColumnSorted(DataViewer viewer, String columnId, SortOrder order) {
+    public void onGroupIntervalsReset(DataViewer viewer, DataSetGroup groupOp) {
         for (DataViewer other : viewerList) {
             if (other == viewer) continue;
-            viewer.onColumnSorted(viewer, columnId, order);
-        }
-    }
-
-    public void onColumnFiltered(DataViewer viewer, String columnId, Collection<Comparable> allowedValues) {
-        for (DataViewer other : viewerList) {
-            if (other == viewer) continue;
-            viewer.onColumnFiltered(viewer, columnId, allowedValues);
-        }
-    }
-
-    public void onColumnFiltered(DataViewer viewer, String columnId, Comparable lowValue, Comparable highValue) {
-        for (DataViewer other : viewerList) {
-            if (other == viewer) continue;
-            viewer.onColumnFiltered(viewer, columnId, lowValue, highValue);
+            other.onGroupIntervalsReset(viewer, groupOp);
         }
     }
 }

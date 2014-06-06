@@ -15,7 +15,7 @@
  */
 package org.dashbuilder.client.displayer;
 
-import java.util.Collection;
+import java.util.Iterator;
 
 import org.dashbuilder.client.dataset.DataSetManagerProxy;
 import org.dashbuilder.client.dataset.DataSetMetadataCallback;
@@ -23,28 +23,25 @@ import org.dashbuilder.client.dataset.DataSetReadyCallback;
 import org.dashbuilder.model.dataset.DataSet;
 import org.dashbuilder.model.dataset.DataSetLookup;
 import org.dashbuilder.model.dataset.DataSetMetadata;
-import org.dashbuilder.model.dataset.DataSetOpType;
+import org.dashbuilder.model.dataset.DataSetOp;
 import org.dashbuilder.model.dataset.group.ColumnGroup;
 import org.dashbuilder.model.dataset.group.DataSetGroup;
-import org.dashbuilder.model.dataset.sort.ColumnSort;
-import org.dashbuilder.model.dataset.sort.DataSetSort;
-import org.dashbuilder.model.dataset.sort.SortOrder;
 
 public class DataSetHandlerImpl implements DataSetHandler {
 
     protected DataSetManagerProxy dataSetManagerProxy;
     protected DataSetMetadata dataSetMetadata;
     protected DataSetLookup lookupBase;
-    protected DataSetLookup lookupExt;
+    protected DataSetLookup lookupCurrent;
 
     public DataSetHandlerImpl(DataSetManagerProxy dataSetManagerProxy, DataSetLookup lookup) {
         this.dataSetManagerProxy = dataSetManagerProxy;
         this.lookupBase = lookup;
-        this.lookupExt = lookup.cloneInstance();
+        this.lookupCurrent = lookup.cloneInstance();
 
         try {
             // Fetch the data set metadata
-            dataSetManagerProxy.fetchMetadata(lookupBase.getDataSetUUID(), new DataSetMetadataCallback() {
+            dataSetManagerProxy.fetchMetadata(lookupBase, new DataSetMetadataCallback() {
                 public void callback(DataSetMetadata metadata) {
                     dataSetMetadata = metadata;
                 }
@@ -54,58 +51,71 @@ public class DataSetHandlerImpl implements DataSetHandler {
         }
     }
 
-    public DataSetHandler lookupDataSet(final DataSetReadyCallback callback) throws Exception {
-        // Lookup the data set
-        dataSetManagerProxy.lookupDataSet(lookupExt, new DataSetReadyCallback() {
+    public DataSetLookup getBaseDataSetLookup() {
+        return lookupBase;
+    }
+
+    public DataSetLookup getCurrentDataSetLookup() {
+        return lookupCurrent;
+    }
+
+    public DataSetMetadata getBaseDataSetMetadata() {
+        return dataSetMetadata;
+    }
+
+    public void resetAllOperations() {
+        this.lookupCurrent = lookupBase.cloneInstance();
+    }
+
+    public void limitDataSetRows(int offset, int rows) {
+        lookupCurrent.setRowOffset(offset);
+        lookupCurrent.setNumberOfRows(rows);
+    }
+
+    public DataSetGroup getGroupOperation(String columnId) {
+        for (DataSetGroup op : lookupCurrent.getOperationList(DataSetGroup.class)) {
+            if (op.getColumnGroup() == null) continue;
+
+            if (op.getColumnGroup().getColumnId().equals(columnId)) {
+                return op;
+            }
+            if (op.getColumnGroup().getSourceId().equals(columnId)) {
+                return op;
+            }
+        }
+        return null;
+    }
+
+    public boolean addGroupOperation(DataSetGroup op) {
+        ColumnGroup cg = op.getColumnGroup();
+        if (cg == null) {
+            throw new RuntimeException("Group ops requires to specify a pivot column.");
+        }
+        if (getGroupOperation(cg.getSourceId()) == null) {
+            lookupCurrent.addOperation(0, op);
+            return true;
+        }
+        return false;
+    }
+
+    public boolean removeGroupOperation(DataSetGroup op) {
+        boolean removed = false;
+        Iterator<DataSetGroup> it = lookupCurrent.getOperationList(DataSetGroup.class).iterator();
+        while (it.hasNext()) {
+            DataSetOp next = it.next();
+            if (next.equals(op)) {
+                it.remove();
+                removed = true;
+            }
+        }
+        return removed;
+    }
+
+    public void lookupDataSet(final DataSetReadyCallback callback) throws Exception {
+        dataSetManagerProxy.lookupDataSet(lookupCurrent, new DataSetReadyCallback() {
             public void callback(DataSet result) {
                 callback.callback(result);
             }
         });
-        return this;
-    }
-
-    public DataSetMetadata getDataSetMetadata() {
-        return dataSetMetadata;
-    }
-
-    public DataSetHandler resetAllOperations() {
-        this.lookupExt = lookupBase.cloneInstance();
-        return this;
-    }
-
-    public DataSetHandler selectIntervals(String columnId, Collection<String> intervalNames) {
-        return this;
-    }
-
-    public DataSetHandler filterDataSet(String columnId, Collection<Comparable> allowedValues) {
-        return this;
-    }
-
-    public DataSetHandler filterDataSet(String columnId, Comparable lowValue, Comparable highValue) {
-        return this;
-    }
-
-    public DataSetHandler sortDataSet(String columnId, SortOrder order) {
-        lookupExt.removeOperations(DataSetOpType.SORT);
-        DataSetSort sortOp = new DataSetSort();
-        sortOp.addSortColumn(new ColumnSort(columnId, order));
-        lookupExt.addOperation(sortOp);
-        return this;
-    }
-
-    public DataSetHandler trimDataSet(int offset, int rows) {
-        lookupExt.setRowOffset(offset);
-        lookupExt.setNumberOfRows(rows);
-        return this;
-    }
-
-    public String getSourceColumnId(String columnId) {
-        for (DataSetGroup op : lookupExt.getOperationList(DataSetGroup.class)) {
-            ColumnGroup cg = op.getColumnGroup();
-            if (columnId.equals(cg.getColumnId())) {
-                return cg.getSourceId();
-            }
-        }
-        return columnId;
     }
 }
