@@ -68,9 +68,12 @@ public class DataSetManagerImpl implements DataSetManager {
 
         // Get the target data set
         DataSetIndex dataSetIndex = fetchDataSet(uuid);
+        DataSet dataSet = dataSetIndex.getDataSet();
 
-        // Apply the list of operations specified.
-        DataSet dataSet = dataSetOpEngine.execute(dataSetIndex.getDataSet(), lookup.getOperationList());
+        // Apply the list of operations specified (if any).
+        if (!lookup.getOperationList().isEmpty()) {
+            dataSet = dataSetOpEngine.execute(dataSetIndex.getDataSet(), lookup.getOperationList());
+        }
 
         // Trim the data set as requested.
         dataSet = dataSet.trim(lookup.getRowOffset(), lookup.getNumberOfRows());
