@@ -15,6 +15,7 @@
  */
 package org.dashbuilder.client.google;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -24,12 +25,19 @@ import com.google.gwt.visualization.client.DataTable;
 import com.google.gwt.visualization.client.Selectable;
 import com.google.gwt.visualization.client.Selection;
 import com.google.gwt.visualization.client.events.SelectHandler;
+import org.dashbuilder.client.displayer.DataDisplayerViewerListener;
 import org.dashbuilder.model.displayer.DataDisplayerColumn;
 import org.dashbuilder.model.displayer.XAxisChartDisplayer;
 
 public abstract class GoogleXAxisChartViewer<T extends XAxisChartDisplayer> extends GoogleDisplayerViewer<T> {
 
     protected Set<String> intervalsSelected = new HashSet<String>();
+
+    public void selectIntervals(String columnId, Collection<String> intervalNames) {
+        for (DataDisplayerViewerListener listener : listenerList) {
+            listener.onIntervalsSelected(this, columnId, intervalNames);
+        }
+    }
 
     public DataTable createTable() {
         List<DataDisplayerColumn> displayerColumns = dataDisplayer.getColumnList();
@@ -49,8 +57,7 @@ public abstract class GoogleXAxisChartViewer<T extends XAxisChartDisplayer> exte
                     String intervalSelected = getValueString(row, 0);
                     intervalsSelected.add(intervalSelected);
 
-                    dataSetHandler.selectIntervals(googleTable.getColumnId(0), intervalsSelected);
-                    redraw();
+                    selectIntervals(googleTable.getColumnId(0), intervalsSelected);
                 }
             }
         };

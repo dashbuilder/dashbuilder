@@ -38,28 +38,38 @@ public class KPIViewer extends Composite {
 
     SimplePanel container = new SimplePanel();
     Label label = new Label();
+    DataDisplayerViewer dataDisplayerViewer;
+    DataSetHandler dataSetHandler;
 
     @PostConstruct
     private void init() {
         initWidget(container);
     }
 
+    public DataDisplayerViewer getDataDisplayerViewer() {
+        return dataDisplayerViewer;
+    }
+
+    public DataSetHandler getDataSetHandler() {
+        return dataSetHandler;
+    }
+
     public void draw(KPI kpi) {
         try {
             // Locate the low level UI components
-            DataDisplayer displayer = kpi.getDataDisplayer();
+            DataDisplayer dataDisplayer = kpi.getDataDisplayer();
             DataSetRef dataSetRef = kpi.getDataSetRef();
-            DataDisplayerViewer viewer = viewerLocator.lookupViewer(displayer);
-            DataSetHandler handler = handlerLocator.lookupHandler(dataSetRef);
+            dataDisplayerViewer = viewerLocator.lookupViewer(dataDisplayer);
+            dataSetHandler = handlerLocator.lookupHandler(dataSetRef);
 
             // Init the DataDisplayerViewer
-            viewer.setDataDisplayer(displayer);
-            viewer.setDataSetHandler(handler);
+            dataDisplayerViewer.setDataDisplayer(dataDisplayer);
+            dataDisplayerViewer.setDataSetHandler(dataSetHandler);
 
             // Draw
             container.clear();
-            container.add(viewer);
-            viewer.draw();
+            container.add(dataDisplayerViewer);
+            dataDisplayerViewer.draw();
         } catch (Exception e) {
             displayMessage(e.getMessage());
         }

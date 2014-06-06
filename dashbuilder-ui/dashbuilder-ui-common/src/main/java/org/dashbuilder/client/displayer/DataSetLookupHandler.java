@@ -24,6 +24,8 @@ import org.dashbuilder.model.dataset.DataSet;
 import org.dashbuilder.model.dataset.DataSetLookup;
 import org.dashbuilder.model.dataset.DataSetMetadata;
 import org.dashbuilder.model.dataset.DataSetOpType;
+import org.dashbuilder.model.dataset.group.ColumnGroup;
+import org.dashbuilder.model.dataset.group.DataSetGroup;
 import org.dashbuilder.model.dataset.sort.ColumnSort;
 import org.dashbuilder.model.dataset.sort.DataSetSort;
 import org.dashbuilder.model.dataset.sort.SortOrder;
@@ -71,7 +73,7 @@ public class DataSetLookupHandler implements DataSetHandler {
         return this;
     }
 
-    public DataSetHandler filterDataSet(String columnId, Comparable... allowedValues) {
+    public DataSetHandler filterDataSet(String columnId, Collection<Comparable> allowedValues) {
         return this;
     }
 
@@ -91,5 +93,15 @@ public class DataSetLookupHandler implements DataSetHandler {
         lookupExt.setRowOffset(offset);
         lookupExt.setNumberOfRows(rows);
         return this;
+    }
+
+    public String getSourceColumnId(String columnId) {
+        for (DataSetGroup op : lookupExt.getOperationList(DataSetGroup.class)) {
+            ColumnGroup cg = op.getColumnGroup();
+            if (columnId.equals(cg.getColumnId())) {
+                return cg.getSourceId();
+            }
+        }
+        return columnId;
     }
 }

@@ -15,10 +15,9 @@
  */
 package org.dashbuilder.client.google;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.i18n.client.NumberFormat;
@@ -32,6 +31,7 @@ import org.dashbuilder.model.dataset.ColumnType;
 import org.dashbuilder.model.dataset.DataColumn;
 import org.dashbuilder.client.displayer.DataDisplayerViewer;
 import org.dashbuilder.model.dataset.DataSet;
+import org.dashbuilder.model.dataset.sort.SortOrder;
 import org.dashbuilder.model.displayer.DataDisplayer;
 import org.dashbuilder.model.displayer.DataDisplayerColumn;
 
@@ -39,12 +39,9 @@ public abstract class GoogleDisplayerViewer<T extends DataDisplayer> extends Dat
 
     protected boolean drawn = false;
     protected boolean ready = false;
-    protected DataTable googleTable = null;
 
     protected FlowPanel panel = new FlowPanel();
     protected Label label = new Label();
-
-    protected NumberFormat numberFormat = NumberFormat.getFormat("#0.00");
 
     public GoogleDisplayerViewer() {
         initWidget(panel);
@@ -58,6 +55,10 @@ public abstract class GoogleDisplayerViewer<T extends DataDisplayer> extends Dat
         draw();
     }
 
+    /**
+     * Draw the displayer by getting first the underlying data set.
+     * Ensure the displayer is also ready for display, which means the Google Visualization API has been loaded.
+     */
     public void draw() {
         if (!drawn && ready) {
             drawn = true;
@@ -86,23 +87,61 @@ public abstract class GoogleDisplayerViewer<T extends DataDisplayer> extends Dat
         }
     }
 
+    /**
+     * By default, it behaves exactly as draw(). A concrete viewer implementation could decide to provide a more
+     * appealing implementation by providing some kind of chart animation.
+     */
     public void redraw() {
         if (!drawn) {
             throw new IllegalStateException("draw() must be invoked first!");
         }
-        // By now, it behaves exactly as draw()
         drawn = false;
         draw();
     }
 
-    protected void displayMessage(String msg) {
+    /**
+     * Create the Google Visualization widget this viewer uses for display.
+     */
+    public abstract Widget createChart();
+
+    /**
+     * Get the Google Visualization package this viewer requires.
+     */
+    public abstract String getPackage();
+
+    /**
+     * Clear the current display and show a notification message.
+     */
+    public void displayMessage(String msg) {
         panel.clear();
         panel.add(label);
         label.setText(msg);
     }
 
-    public abstract Widget createChart();
-    public abstract String getPackage();
+    // Events received from other viewers
+
+    public void onIntervalsSelected(DataDisplayerViewer viewer, String columnId, Collection<String> intervalNames) {
+        dataSetHandler.selectIntervals(columnId, intervalNames);
+        redraw();
+    }
+
+    public void onColumnSorted(DataDisplayerViewer viewer, String columnId, SortOrder order) {
+    }
+
+    public void onColumnFiltered(DataDisplayerViewer viewer, String columnId, Collection<Comparable> allowedValues) {
+        dataSetHandler.filterDataSet(columnId, allowedValues);
+        redraw();
+    }
+
+    public void onColumnFiltered(DataDisplayerViewer viewer, String columnId, Comparable lowValue, Comparable highValue) {
+        dataSetHandler.filterDataSet(columnId, lowValue, highValue);
+        redraw();
+    }
+
+    // Google DataTable manipulation methods
+
+    protected DataTable googleTable = null;
+    protected NumberFormat numberFormat = NumberFormat.getFormat("#0.00");
 
     public DataTable createTable() {
         List<DataDisplayerColumn> displayerColumns = dataDisplayer.getColumnList();
@@ -131,7 +170,6 @@ public abstract class GoogleDisplayerViewer<T extends DataDisplayer> extends Dat
     }
 
     public DataTable createTableFromDisplayer() {
-
         DataTable gTable = DataTable.create();
         gTable.addRows(dataSet.getRowCount());
         int columnIndex = 0;

@@ -39,6 +39,9 @@ public class KPIPresenter {
     /** The KPI widget */
     @Inject private KPIViewer kpiViewer;
 
+    /** The dashboard context */
+    @Inject private DashboardContext dashboardContext;
+
     @OnStartup
     public void onStartup( final PlaceRequest placeRequest) {
         // Locate the KPI specified as a parameter.
@@ -46,8 +49,11 @@ public class KPIPresenter {
         this.kpi = kpiManager.getKPI(kpiUid);
         if (kpi == null) throw new IllegalArgumentException("KPI not found.");
 
-        // Init the view.
+        // Draw the KPI.
         kpiViewer.draw(kpi);
+
+        // Add the KPI to the current dashboard context
+        dashboardContext.addKPIViewer(kpiViewer);
     }
 
     @WorkbenchPartTitle

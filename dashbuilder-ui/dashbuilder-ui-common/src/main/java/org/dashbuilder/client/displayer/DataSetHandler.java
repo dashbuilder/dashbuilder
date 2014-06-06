@@ -18,6 +18,7 @@ package org.dashbuilder.client.displayer;
 import java.util.Collection;
 
 import org.dashbuilder.client.dataset.DataSetReadyCallback;
+import org.dashbuilder.model.dataset.DataSetLookupBuilder;
 import org.dashbuilder.model.dataset.DataSetMetadata;
 import org.dashbuilder.model.dataset.sort.SortOrder;
 
@@ -43,7 +44,7 @@ public interface DataSetHandler {
      * @param columnId The column which values are to be filtered.
      * @param allowedValues The set of values the filter operation must satisfy.
      */
-    DataSetHandler filterDataSet(String columnId, Comparable... allowedValues);
+    DataSetHandler filterDataSet(String columnId, Collection<Comparable> allowedValues);
 
     /**
      * Filter the underlying data set by the given column.

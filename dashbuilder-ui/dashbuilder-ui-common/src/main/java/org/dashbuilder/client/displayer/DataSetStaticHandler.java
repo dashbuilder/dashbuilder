@@ -37,19 +37,23 @@ public class DataSetStaticHandler implements DataSetHandler {
     }
 
     public DataSetHandler selectIntervals(String columnId, Collection<String> intervalNames) {
-        throw new RuntimeException("NOT SUPPORTED YET");
+        // NOT SUPPORTED YET
+        return this;
     }
 
-    public DataSetHandler filterDataSet(String columnId, Comparable... allowedValues) {
-        throw new RuntimeException("NOT SUPPORTED YET");
+    public DataSetHandler filterDataSet(String columnId, Collection<Comparable> allowedValues) {
+        // NOT SUPPORTED YET
+        return this;
     }
 
     public DataSetHandler filterDataSet(String columnId, Comparable lowValue, Comparable highValue) {
-        throw new RuntimeException("NOT SUPPORTED YET");
+        // NOT SUPPORTED YET
+        return this;
     }
 
     public DataSetHandler sortDataSet(String columnId, SortOrder order) {
-        throw new RuntimeException("NOT SUPPORTED YET");
+        // NOT SUPPORTED YET
+        return this;
     }
 
     public DataSetHandler trimDataSet(int offset, int rows) {

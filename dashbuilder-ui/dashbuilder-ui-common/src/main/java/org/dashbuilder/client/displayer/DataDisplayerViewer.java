@@ -15,19 +15,23 @@
  */
 package org.dashbuilder.client.displayer;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import com.google.gwt.user.client.ui.Composite;
-import org.dashbuilder.client.dataset.DataSetReadyCallback;
 import org.dashbuilder.model.dataset.DataSet;
-import org.dashbuilder.model.dataset.sort.SortOrder;
 import org.dashbuilder.model.displayer.DataDisplayer;
 
-public abstract class DataDisplayerViewer<T extends DataDisplayer> extends Composite {
+/**
+ * A DataDisplayer viewer takes care of drawing a DataDisplayer instance.
+ */
+public abstract class DataDisplayerViewer<T extends DataDisplayer> extends Composite implements DataDisplayerViewerListener {
 
     protected DataSet dataSet;
     protected DataSetHandler dataSetHandler;
     protected T dataDisplayer;
+    protected List<DataDisplayerViewerListener> listenerList = new ArrayList<DataDisplayerViewerListener>();
 
     public DataSet getDataSet() {
         return dataSet;
@@ -52,6 +56,10 @@ public abstract class DataDisplayerViewer<T extends DataDisplayer> extends Compo
 
     public void setDataSetHandler(DataSetHandler dataSetHandler) {
         this.dataSetHandler = dataSetHandler;
+    }
+
+    public void addListener(DataDisplayerViewerListener listener) {
+        listenerList.add(listener);
     }
 
     /**

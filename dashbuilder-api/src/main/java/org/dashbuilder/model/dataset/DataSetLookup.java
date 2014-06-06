@@ -86,6 +86,16 @@ public class DataSetLookup implements DataSetRef {
         return operationList;
     }
 
+    public <T extends DataSetOp> List<T> getOperationList(Class<T> type) {
+        List<T> result = new ArrayList<T>();
+        for (DataSetOp op : operationList) {
+            if (op.getClass().equals(type)) {
+                result.add(type.cast(op));
+            }
+        }
+        return result;
+    }
+
     public int removeOperations(DataSetOpType type) {
         int removed = 0;
         Iterator<DataSetOp> it = operationList.iterator();
