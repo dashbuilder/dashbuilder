@@ -77,4 +77,11 @@ public class ClientDataSetManager implements DataSetManager {
         dataSet = dataSet.trim(lookup.getRowOffset(), lookup.getNumberOfRows());
         return dataSet;
     }
+
+    public DataSetMetadata lookupDataSetMetadata(DataSetLookup lookup) throws Exception {
+        DataSet dataSet = lookupDataSet(lookup);
+        if (dataSet == null) return null;
+
+        return dataSet.getMetadata();
+    }
 }

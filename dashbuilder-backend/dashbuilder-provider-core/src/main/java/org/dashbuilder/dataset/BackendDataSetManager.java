@@ -106,6 +106,13 @@ public class BackendDataSetManager implements DataSetManager {
         return dataSet;
     }
 
+    public DataSetMetadata lookupDataSetMetadata(DataSetLookup lookup) throws Exception {
+        DataSet dataSet = lookupDataSet(lookup);
+        if (dataSet == null) return null;
+
+        return dataSet.getMetadata();
+    }
+
     // Internal stuff
 
     protected DataSetIndex fetchDataSet(String uuid) throws Exception {

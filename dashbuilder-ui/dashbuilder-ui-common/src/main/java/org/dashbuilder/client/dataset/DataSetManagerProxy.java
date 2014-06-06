@@ -44,12 +44,12 @@ public class DataSetManagerProxy {
 
     /**
      * Fetch the metadata instance for the specified data set.
-     * @param uuid The UUID of the data set.
+     * @param request The data set lookup request
      * @throws Exception If the data set can't be found.
      */
-    public void fetchMetadata(final String uuid, final DataSetMetadataCallback listener) throws Exception {
+    public void fetchMetadata(final DataSetLookup request, final DataSetMetadataCallback listener) throws Exception {
 
-        DataSetMetadata metadata = clientDataSetManager.getDataSetMetadata(uuid);
+        DataSetMetadata metadata = clientDataSetManager.lookupDataSetMetadata(request);
         if (metadata != null) {
             listener.callback(metadata);
         } else {
@@ -60,7 +60,7 @@ public class DataSetManagerProxy {
                                 listener.callback(result);
                             }
                         }
-                    }).getDataSetMetadata(uuid);
+                    }).lookupDataSetMetadata(request);
         }
     }
 

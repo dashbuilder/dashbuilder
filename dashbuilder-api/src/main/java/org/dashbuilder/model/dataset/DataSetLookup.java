@@ -40,7 +40,7 @@ public class DataSetLookup implements DataSetRef {
     /**
      * The number of rows to get.
      */
-    protected int numberOfRows = 100;
+    protected int numberOfRows = -1;
 
     /**
      * The list of operations to apply on the target data set as part of the lookup operation.
@@ -107,6 +107,11 @@ public class DataSetLookup implements DataSetRef {
             }
         }
         return removed;
+    }
+
+    public DataSetLookup addOperation(int pos, DataSetOp op) {
+        operationList.add(pos, op);
+        return this;
     }
 
     public DataSetLookup addOperation(DataSetOp op) {

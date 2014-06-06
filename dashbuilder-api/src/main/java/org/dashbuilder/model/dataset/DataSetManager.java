@@ -50,4 +50,10 @@ public interface DataSetManager {
      * Load a data set and apply several operations (filter, sort, group, ...) on top of it.
      */
     DataSet lookupDataSet(DataSetLookup lookup) throws Exception;
+
+    /**
+     * Same as lookupDataSet but only retrieves a preview of the resulting data set.
+     * @return A DataSetMetadata instance containing general information about the data set.
+     */
+    DataSetMetadata lookupDataSetMetadata(DataSetLookup lookup) throws Exception;
 }

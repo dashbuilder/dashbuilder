@@ -281,9 +281,10 @@ public class GalleryTree {
         nodeList.add(new GalleryNodeKPI("Basic",
                 KPIFactory.newTableKPI()
                 .dataset(SALES_OPPS)
-                .rowOffset(0)
-                .rowNumber(20)
                 .title("List of Opportunities")
+                .tablePageSize(20)
+                .tableOrderEnabled(true)
+                .tableOrderDefault(AMOUNT, DESCENDING)
                 .buildKPI()
         ));
         nodeList.add(new GalleryNodeKPI("Filtered",
@@ -306,6 +307,9 @@ public class GalleryTree {
                 .avg(AMOUNT, "Average")
                 .sum(AMOUNT, "Total")
                 .title("Country Summary")
+                .tablePageSize(20)
+                .tableOrderEnabled(true)
+                .tableOrderDefault("Country", DESCENDING)
                 .buildKPI()
         ));
     }
