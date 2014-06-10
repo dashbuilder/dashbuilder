@@ -184,7 +184,8 @@ public class GoogleTableViewer extends GoogleViewer<TableDisplayer> {
         sb = new StringBuilder();
         if ( showTotalRowsHint ) {
             sb.append( "Rows " );
-            sb.append( ( ( currentPage - 1 ) * pageSize) + 1 ).append("-").append( currentPage * pageSize );
+            int currentRowsShown = currentPage * pageSize > numberOfRows ? numberOfRows : currentPage * pageSize;
+            sb.append( ( ( currentPage - 1 ) * pageSize) + 1 ).append("-").append( currentRowsShown );
             sb.append( " of ").append( numberOfRows );
             totalRows = new Label( sb.toString() );
         }
