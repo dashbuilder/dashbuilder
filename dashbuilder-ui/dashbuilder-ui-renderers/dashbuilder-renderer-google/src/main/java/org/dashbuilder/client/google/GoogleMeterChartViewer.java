@@ -41,6 +41,7 @@ public class GoogleMeterChartViewer extends GoogleViewer<MeterChartDisplayer> {
         VerticalPanel verticalPanel = new VerticalPanel();
         verticalPanel.add(titleHtml);
         verticalPanel.add(chart);
+        googleViewer = chart;
         return verticalPanel;
     }
 

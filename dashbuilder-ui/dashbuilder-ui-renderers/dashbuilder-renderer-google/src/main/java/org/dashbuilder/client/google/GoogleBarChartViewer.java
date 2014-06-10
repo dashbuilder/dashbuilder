@@ -38,10 +38,12 @@ public class GoogleBarChartViewer extends GoogleXAxisChartViewer<BarChartDisplay
             BarChart bchart = new BarChart(createTable(), createBarOptions());
             bchart.addSelectHandler(createSelectHandler(bchart));
             chart = bchart;
+            googleViewer = bchart;
         } else {
             ColumnChart cchart = new ColumnChart(createTable(), createColumnOptions());
             cchart.addSelectHandler(createSelectHandler(cchart));
             chart = cchart;
+            googleViewer = cchart;
         }
 
         HTML titleHtml = new HTML();
@@ -60,6 +62,8 @@ public class GoogleBarChartViewer extends GoogleXAxisChartViewer<BarChartDisplay
         options.setWidth(dataDisplayer.getWidth());
         options.setHeight(dataDisplayer.getHeight());
         options.set3D(dataDisplayer.is3d());
+        options.setColors(createColorArray(googleTable));
+        googleOptions = options;
         return options;
     }
 
@@ -68,6 +72,8 @@ public class GoogleBarChartViewer extends GoogleXAxisChartViewer<BarChartDisplay
         options.setWidth(dataDisplayer.getWidth());
         options.setHeight(dataDisplayer.getHeight());
         options.set3D(dataDisplayer.is3d());
+        options.setColors(createColorArray(googleTable));
+        googleOptions = options;
         return options;
     }
 }

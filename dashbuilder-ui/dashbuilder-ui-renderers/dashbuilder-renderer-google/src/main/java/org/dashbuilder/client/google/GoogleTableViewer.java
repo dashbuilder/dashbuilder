@@ -36,6 +36,7 @@ public class GoogleTableViewer extends GoogleViewer<TableDisplayer> {
     protected int numberOfPages = 1;
 
     final private PagerInterval pagerInterval = new PagerInterval();
+    HorizontalPanel pagerPanel = new HorizontalPanel();
 
     @Override
     public String getPackage() {
@@ -63,7 +64,9 @@ public class GoogleTableViewer extends GoogleViewer<TableDisplayer> {
         VerticalPanel verticalPanel = new VerticalPanel();
         verticalPanel.add(titleHtml);
         verticalPanel.add(table);
-        verticalPanel.add(createTablePager());
+        verticalPanel.add(pagerPanel);
+        createTablePager();
+        googleViewer = table;
         return verticalPanel;
     }
 
@@ -76,12 +79,22 @@ public class GoogleTableViewer extends GoogleViewer<TableDisplayer> {
 
     @Override
     public void draw() {
+        this.setPageLimits();
+        super.draw();
+    }
+
+    @Override
+    public void redraw() {
+        this.setPageLimits();
+        this.createTablePager();
+        super.redraw();
+    }
+
+    private void setPageLimits() {
         // Draw only the data subset corresponding to the current page.
         int pageSize = dataDisplayer.getPageSize();
         int offset = (currentPage - 1) * pageSize;
         dataSetHandler.limitDataSetRows(offset, pageSize);
-
-        super.draw();
     }
 
     private void gotoPage(int pageNumber) {
@@ -90,9 +103,8 @@ public class GoogleTableViewer extends GoogleViewer<TableDisplayer> {
         this.redraw();
     }
 
-    private Widget createTablePager() {
-
-        HorizontalPanel pagerPanel = new HorizontalPanel();
+    private void createTablePager() {
+        pagerPanel.clear();
         pagerPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 
         Pagination pagination = new Pagination();
@@ -177,7 +189,6 @@ public class GoogleTableViewer extends GoogleViewer<TableDisplayer> {
         pagerPanel.add(rightPageTooltip);
         pagerPanel.add(new HTML("&nbsp;&nbsp;"));
         pagerPanel.add(lastPageTooltip);
-        return pagerPanel;
     }
 
     private class PagerInterval {

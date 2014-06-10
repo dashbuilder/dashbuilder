@@ -36,7 +36,6 @@ import org.dashbuilder.model.displayer.DataDisplayer;
  */
 public abstract class AbstractDataViewer<T extends DataDisplayer> extends Composite implements DataViewer<T> {
 
-    protected DataSet dataSet;
     protected DataSetHandler dataSetHandler;
     protected T dataDisplayer;
     protected List<DataViewerListener> listenerList = new ArrayList<DataViewerListener>();
@@ -64,15 +63,13 @@ public abstract class AbstractDataViewer<T extends DataDisplayer> extends Compos
     // CAPTURE EVENTS RECEIVED FROM OTHER VIEWERS
 
     public void onGroupIntervalsSelected(DataViewer viewer, DataSetGroup groupOp) {
-        if (dataSetHandler.addGroupOperation(groupOp)) {
-            redraw();
-        }
+        dataSetHandler.addGroupOperation(groupOp);
+        redraw();
     }
 
     public void onGroupIntervalsReset(DataViewer viewer, DataSetGroup groupOp) {
-        if (dataSetHandler.removeGroupOperation(groupOp)) {
-            redraw();
-        }
+        dataSetHandler.removeFirstGroupOperation(groupOp.getColumnGroup());
+        redraw();
     }
 
     // INTERNAL DATA SET HANDLING METHODS

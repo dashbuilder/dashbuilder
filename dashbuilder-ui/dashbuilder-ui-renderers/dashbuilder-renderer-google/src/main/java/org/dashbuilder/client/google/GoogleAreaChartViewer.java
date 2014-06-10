@@ -41,6 +41,7 @@ public class GoogleAreaChartViewer extends GoogleXAxisChartViewer<AreaChartDispl
         VerticalPanel verticalPanel = new VerticalPanel();
         verticalPanel.add(titleHtml);
         verticalPanel.add(chart);
+        googleViewer = chart;
         return verticalPanel;
     }
 

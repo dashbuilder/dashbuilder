@@ -42,6 +42,7 @@ public class GooglePieChartViewer extends GoogleXAxisChartViewer<PieChartDisplay
         VerticalPanel verticalPanel = new VerticalPanel();
         verticalPanel.add(titleHtml);
         verticalPanel.add(chart);
+        googleViewer = chart;
         return verticalPanel;
     }
 
@@ -50,6 +51,8 @@ public class GooglePieChartViewer extends GoogleXAxisChartViewer<PieChartDisplay
         options.set3D(true);
         options.setWidth(dataDisplayer.getWidth());
         options.setHeight(dataDisplayer.getHeight());
+        options.setColors(createColorArray(googleTable));
+        googleOptions = options;
         return options;
     }
 }

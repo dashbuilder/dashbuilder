@@ -25,14 +25,14 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.visualization.client.AbstractDataTable;
+import com.google.gwt.visualization.client.CommonOptions;
 import com.google.gwt.visualization.client.DataTable;
+import com.google.gwt.visualization.client.visualizations.Visualization;
 import org.dashbuilder.client.dataset.DataSetReadyCallback;
 import org.dashbuilder.client.displayer.AbstractDataViewer;
-import org.dashbuilder.client.displayer.DataViewer;
 import org.dashbuilder.model.dataset.ColumnType;
 import org.dashbuilder.model.dataset.DataColumn;
 import org.dashbuilder.model.dataset.DataSet;
-import org.dashbuilder.model.dataset.sort.SortOrder;
 import org.dashbuilder.model.displayer.DataDisplayer;
 import org.dashbuilder.model.displayer.DataDisplayerColumn;
 
@@ -43,6 +43,11 @@ public abstract class GoogleViewer<T extends DataDisplayer> extends AbstractData
 
     protected FlowPanel panel = new FlowPanel();
     protected Label label = new Label();
+
+    protected DataSet dataSet;
+    protected Visualization googleViewer = null;
+    protected CommonOptions googleOptions = null;
+    protected DataTable googleTable = null;
 
     public GoogleViewer() {
         initWidget(panel);
@@ -89,15 +94,19 @@ public abstract class GoogleViewer<T extends DataDisplayer> extends AbstractData
     }
 
     /**
-     * By default, it behaves exactly as draw(). A concrete viewer implementation could decide to provide a more
-     * appealing implementation by providing some kind of chart animation.
+     * Just reload the data set and make the current google Viewer to redraw.
      */
     public void redraw() {
-        if (!drawn) {
-            throw new IllegalStateException("draw() must be invoked first!");
+        try {
+            dataSetHandler.lookupDataSet(new DataSetReadyCallback() {
+                public void callback(DataSet result) {
+                    dataSet = result;
+                    googleViewer.draw(createTable(), googleOptions);
+                }
+            });
+        } catch (Exception e) {
+            displayMessage("ERROR: " + e.getMessage());
         }
-        drawn = false;
-        draw();
     }
 
     /**
@@ -121,7 +130,6 @@ public abstract class GoogleViewer<T extends DataDisplayer> extends AbstractData
 
     // Google DataTable manipulation methods
 
-    protected DataTable googleTable = null;
     protected NumberFormat numberFormat = NumberFormat.getFormat("#0.00");
 
     public DataTable createTable() {

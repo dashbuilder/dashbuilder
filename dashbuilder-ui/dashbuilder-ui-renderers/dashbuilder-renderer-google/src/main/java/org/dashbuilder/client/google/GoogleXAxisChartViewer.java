@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gwt.core.client.JsArray;
+import com.google.gwt.core.client.JsArrayString;
 import com.google.gwt.visualization.client.DataTable;
 import com.google.gwt.visualization.client.Selectable;
 import com.google.gwt.visualization.client.Selection;
@@ -28,6 +29,11 @@ import org.dashbuilder.model.displayer.XAxisChartDisplayer;
 
 public abstract class GoogleXAxisChartViewer<T extends XAxisChartDisplayer> extends GoogleViewer<T> {
 
+    public static final String[] COLOR_ARRAY = new String[] {"aqua", "blue", "brown", "coral", "fuchsia", "gold",
+            "green", "lime", "magenta", "orange", "pink", "red", "silver", "yellow"};
+
+    public static final String COLOR_NOT_SELECTED = "grey";
+
     protected List<String> intervalSelectedList = new ArrayList<String>();
 
     public DataTable createTable() {
@@ -36,6 +42,20 @@ public abstract class GoogleXAxisChartViewer<T extends XAxisChartDisplayer> exte
             throw new IllegalArgumentException("XAxis charts require to specify at least 2 columns. The X axis plus one ore more columns for the Y axis.");
         }
         return super.createTable();
+    }
+
+    public JsArrayString createColorArray(DataTable table) {
+        JsArrayString colorArray = JsArrayString.createArray().cast();
+        for (int i = 0, j = 0; i < table.getNumberOfRows(); i++, j++) {
+            if (j >= COLOR_ARRAY.length) j = 0;
+            String intervalSelected = getValueString(i, 0);
+            if (!intervalSelectedList.isEmpty() && !intervalSelectedList.contains(intervalSelected)) {
+                colorArray.set(j, COLOR_NOT_SELECTED);
+            } else {
+                colorArray.set(j, COLOR_ARRAY[j]);
+            }
+        }
+        return colorArray;
     }
 
     public SelectHandler createSelectHandler(final Selectable selectable) {
@@ -59,6 +79,9 @@ public abstract class GoogleXAxisChartViewer<T extends XAxisChartDisplayer> exte
                         }
                     }
                 }
+                // Redraw the char in order to reflect the current selection
+                googleOptions.setColors(createColorArray(googleTable));
+                redraw();
             }
         };
     }

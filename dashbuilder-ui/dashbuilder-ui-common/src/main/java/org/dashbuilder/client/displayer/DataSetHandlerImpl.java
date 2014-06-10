@@ -26,6 +26,7 @@ import org.dashbuilder.model.dataset.DataSet;
 import org.dashbuilder.model.dataset.DataSetLookup;
 import org.dashbuilder.model.dataset.DataSetMetadata;
 import org.dashbuilder.model.dataset.DataSetOp;
+import org.dashbuilder.model.dataset.DataSetOpType;
 import org.dashbuilder.model.dataset.group.ColumnGroup;
 import org.dashbuilder.model.dataset.group.DataSetGroup;
 import org.dashbuilder.model.dataset.sort.DataSetSort;
@@ -94,17 +95,17 @@ public class DataSetHandlerImpl implements DataSetHandler {
         return false;
     }
 
-    public boolean removeGroupOperation(DataSetGroup op) {
-        boolean removed = false;
-        Iterator<DataSetGroup> it = lookupCurrent.getOperationList(DataSetGroup.class).iterator();
-        while (it.hasNext()) {
-            DataSetOp next = it.next();
-            if (next.equals(op)) {
-                it.remove();
-                removed = true;
+    public boolean removeFirstGroupOperation(ColumnGroup columnGroup) {
+        for (DataSetGroup next : lookupCurrent.getOperationList(DataSetGroup.class)) {
+            ColumnGroup cg = next.getColumnGroup();
+            if (cg == null) continue;
+
+            if (cg.equals(columnGroup)) {
+                lookupCurrent.getOperationList().remove(next);
+                return true;
             }
         }
-        return removed;
+        return false;
     }
 
     public void setSortOperation(DataSetSort op) {
@@ -113,13 +114,8 @@ public class DataSetHandlerImpl implements DataSetHandler {
     }
 
     public boolean cleaSortOperations() {
-        boolean removed = false;
-        Iterator<DataSetSort> it = lookupCurrent.getOperationList(DataSetSort.class).iterator();
-        while (it.hasNext()) {
-            it.remove();
-            removed = true;
-        }
-        return removed;
+        int n = lookupCurrent.removeOperations(DataSetOpType.SORT);
+        return n > 0;
     }
 
     public void lookupDataSet(final DataSetReadyCallback callback) throws Exception {

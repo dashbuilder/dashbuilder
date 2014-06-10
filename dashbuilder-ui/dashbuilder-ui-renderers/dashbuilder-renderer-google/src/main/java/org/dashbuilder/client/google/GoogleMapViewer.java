@@ -42,6 +42,7 @@ public class GoogleMapViewer extends GoogleXAxisChartViewer<MapChartDisplayer> {
         VerticalPanel verticalPanel = new VerticalPanel();
         verticalPanel.add(titleHtml);
         verticalPanel.add(chart);
+        googleViewer = chart;
         return verticalPanel;
     }
 

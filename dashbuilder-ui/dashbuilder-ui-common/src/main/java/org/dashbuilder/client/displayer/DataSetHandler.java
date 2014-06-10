@@ -17,6 +17,7 @@ package org.dashbuilder.client.displayer;
 
 import org.dashbuilder.client.dataset.DataSetReadyCallback;
 import org.dashbuilder.model.dataset.DataSetMetadata;
+import org.dashbuilder.model.dataset.group.ColumnGroup;
 import org.dashbuilder.model.dataset.group.DataSetGroup;
 import org.dashbuilder.model.dataset.sort.DataSetSort;
 
@@ -48,12 +49,12 @@ public interface DataSetHandler {
     boolean addGroupOperation(DataSetGroup op);
 
     /**
-     * Removes the specified group operation from the current data set lookup instance.
+     * Removes the first group operation defined that matches the specified column.
      *
-     * @param op The operation to remove.
-     * @return false, if no group operations are not defined for the target group column - true, otherwise.
+     * @param columnGroup The column group to look for.
+     * @return false, if no group operations for the specified column are found - true, otherwise.
      */
-    boolean removeGroupOperation(DataSetGroup op);
+    boolean removeFirstGroupOperation(ColumnGroup columnGroup);
 
     /**
      * Set the sort operation for the current data set lookup instance.
