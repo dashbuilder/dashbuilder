@@ -45,7 +45,7 @@ public class GoogleTableViewer extends GoogleViewer<TableDisplayer> {
     @Override
     public Widget createChart() {
         pageSize = dataDisplayer.getPageSize();
-        numberOfRows = dataSetHandler.getBaseDataSetMetadata().getNumberOfRows();
+        numberOfRows = dataSetHandler.getDataSetMetadata().getNumberOfRows();
         numberOfPages = ((numberOfRows - 1) / pageSize) + 1;
         if (currentPage > numberOfPages) {
             currentPage = 1;

@@ -15,7 +15,9 @@
  */
 package org.dashbuilder.client.displayer;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import org.dashbuilder.client.dataset.DataSetManagerProxy;
 import org.dashbuilder.client.dataset.DataSetMetadataCallback;
@@ -26,6 +28,7 @@ import org.dashbuilder.model.dataset.DataSetMetadata;
 import org.dashbuilder.model.dataset.DataSetOp;
 import org.dashbuilder.model.dataset.group.ColumnGroup;
 import org.dashbuilder.model.dataset.group.DataSetGroup;
+import org.dashbuilder.model.dataset.sort.DataSetSort;
 
 public class DataSetHandlerImpl implements DataSetHandler {
 
@@ -33,6 +36,7 @@ public class DataSetHandlerImpl implements DataSetHandler {
     protected DataSetMetadata dataSetMetadata;
     protected DataSetLookup lookupBase;
     protected DataSetLookup lookupCurrent;
+    protected List<DataSetOp> addedOpList = new ArrayList<DataSetOp>();
 
     public DataSetHandlerImpl(DataSetManagerProxy dataSetManagerProxy, DataSetLookup lookup) {
         this.dataSetManagerProxy = dataSetManagerProxy;
@@ -51,15 +55,7 @@ public class DataSetHandlerImpl implements DataSetHandler {
         }
     }
 
-    public DataSetLookup getBaseDataSetLookup() {
-        return lookupBase;
-    }
-
-    public DataSetLookup getCurrentDataSetLookup() {
-        return lookupCurrent;
-    }
-
-    public DataSetMetadata getBaseDataSetMetadata() {
+    public DataSetMetadata getDataSetMetadata() {
         return dataSetMetadata;
     }
 
@@ -107,6 +103,21 @@ public class DataSetHandlerImpl implements DataSetHandler {
                 it.remove();
                 removed = true;
             }
+        }
+        return removed;
+    }
+
+    public void setSortOperation(DataSetSort op) {
+        cleaSortOperations();
+        lookupCurrent.addOperation(op);
+    }
+
+    public boolean cleaSortOperations() {
+        boolean removed = false;
+        Iterator<DataSetSort> it = lookupCurrent.getOperationList(DataSetSort.class).iterator();
+        while (it.hasNext()) {
+            it.remove();
+            removed = true;
         }
         return removed;
     }

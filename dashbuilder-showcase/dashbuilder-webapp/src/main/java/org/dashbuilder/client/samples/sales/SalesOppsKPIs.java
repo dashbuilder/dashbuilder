@@ -27,6 +27,7 @@ import org.dashbuilder.model.dataset.group.DateIntervalType;
 import org.dashbuilder.model.kpi.KPI;
 import org.dashbuilder.model.kpi.KPIFactory;
 
+import static org.dashbuilder.model.dataset.sort.SortOrder.*;
 import static org.dashbuilder.model.samples.SalesConstants.*;
 
 /**
@@ -150,15 +151,17 @@ public class SalesOppsKPIs {
                 .column("avg", "AVERAGE")
                 .column("min", "MIN")
                 .column("max", "MAX")
+                .tablePageSize(20)
                 .buildKPI());
 
         kpiList.add(KPIFactory.newTableKPI()
                 .uuid(OPPS_ALL)
                 .dataset(SALES_OPPS)
-                .rowOffset(0)
-                .rowNumber(20)
                 .title("List of Opportunities")
                 .titleVisible(false)
+                .tablePageSize(20)
+                .tableOrderEnabled(true)
+                .tableOrderDefault(AMOUNT, DESCENDING)
                 .buildKPI());
 
         for (KPI kpi : kpiList) {

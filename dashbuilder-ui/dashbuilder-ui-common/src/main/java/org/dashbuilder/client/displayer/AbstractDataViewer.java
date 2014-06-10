@@ -21,6 +21,9 @@ import java.util.List;
 import com.google.gwt.user.client.ui.Composite;
 import org.dashbuilder.model.dataset.DataSet;
 import org.dashbuilder.model.dataset.group.DataSetGroup;
+import org.dashbuilder.model.dataset.sort.ColumnSort;
+import org.dashbuilder.model.dataset.sort.DataSetSort;
+import org.dashbuilder.model.dataset.sort.SortOrder;
 import org.dashbuilder.model.displayer.DataDisplayer;
 
 /**
@@ -108,5 +111,17 @@ public abstract class AbstractDataViewer<T extends DataDisplayer> extends Compos
                 listener.onGroupIntervalsReset(this, groupOp);
             }
         }
+    }
+
+    /**
+     * Set the sort order operation to apply to the data set.
+     *
+     * @param columnId The name of the column to sort.
+     * @param sortOrder The sort order.
+     */
+    public void setSortOrder(String columnId, SortOrder sortOrder) {
+        DataSetSort sortOp = new DataSetSort();
+        sortOp.addSortColumn(new ColumnSort(columnId, sortOrder));
+        dataSetHandler.setSortOperation(sortOp);
     }
 }

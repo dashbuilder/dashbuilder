@@ -16,9 +16,9 @@
 package org.dashbuilder.client.displayer;
 
 import org.dashbuilder.client.dataset.DataSetReadyCallback;
-import org.dashbuilder.model.dataset.DataSetLookup;
 import org.dashbuilder.model.dataset.DataSetMetadata;
 import org.dashbuilder.model.dataset.group.DataSetGroup;
+import org.dashbuilder.model.dataset.sort.DataSetSort;
 
 /**
  * Interface addressed to issue lookup requests over a data set instance.
@@ -26,19 +26,9 @@ import org.dashbuilder.model.dataset.group.DataSetGroup;
 public interface DataSetHandler {
 
     /**
-     * Get the data set lookup instance used to retrieve the base data set.
+     * Get the metadata of the data set.
      */
-    DataSetLookup getBaseDataSetLookup();
-
-    /**
-     * Get the data set lookup instance used in the last call to lookupDataSet.
-     */
-    DataSetLookup getCurrentDataSetLookup();
-
-    /**
-     * Get the metadata of the base data set.
-     */
-    DataSetMetadata getBaseDataSetMetadata();
+    DataSetMetadata getDataSetMetadata();
 
     /**
      * Retrieves any group operation present in the current data set lookup for the target column specified.
@@ -64,6 +54,13 @@ public interface DataSetHandler {
      * @return false, if no group operations are not defined for the target group column - true, otherwise.
      */
     boolean removeGroupOperation(DataSetGroup op);
+
+    /**
+     * Set the sort operation for the current data set lookup instance.
+     *
+     * @param op The operation to set.
+     */
+    void setSortOperation(DataSetSort op);
 
     /**
      * Forces the next data set lookup request to retrieve only the specified row sub set.
