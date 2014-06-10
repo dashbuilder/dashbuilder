@@ -191,11 +191,11 @@ public class GoogleTableViewer extends GoogleViewer<TableDisplayer> {
 
         pagerPanel.add( firstPageTooltip );
         pagerPanel.add( new SpacerWidget() );
-        pagerPanel.add( leftPageTooltip );
+        if (currentPage != 1) pagerPanel.add( leftPageTooltip );
         pagerPanel.add( new SpacerWidget() );
         pagerPanel.add( pagination );
         pagerPanel.add( new SpacerWidget() );
-        pagerPanel.add( rightPageTooltip );
+        if ( currentPage != numberOfPages) pagerPanel.add( rightPageTooltip );
         pagerPanel.add( new SpacerWidget() );
         pagerPanel.add( lastPageTooltip );
 
