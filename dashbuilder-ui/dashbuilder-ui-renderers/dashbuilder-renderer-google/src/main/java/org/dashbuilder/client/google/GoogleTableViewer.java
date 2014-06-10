@@ -16,6 +16,7 @@
 package org.dashbuilder.client.google;
 
 import com.github.gwtbootstrap.client.ui.*;
+import com.github.gwtbootstrap.client.ui.Label;
 import com.github.gwtbootstrap.client.ui.constants.IconSize;
 import com.github.gwtbootstrap.client.ui.constants.IconType;
 import com.github.gwtbootstrap.client.ui.resources.Bootstrap;
@@ -34,6 +35,9 @@ public class GoogleTableViewer extends GoogleViewer<TableDisplayer> {
     protected int currentPage = 1;
     protected int numberOfRows = 0;
     protected int numberOfPages = 1;
+
+    protected boolean showTotalRowsHint = true;
+    protected boolean showTotalPagesHint = true;
 
     final private PagerInterval pagerInterval = new PagerInterval();
 
@@ -67,13 +71,6 @@ public class GoogleTableViewer extends GoogleViewer<TableDisplayer> {
         return verticalPanel;
     }
 
-    private Options createOptions() {
-        Options options = Options.create();
-        options.setPageSize(dataDisplayer.getPageSize());
-        options.setShowRowNumber(false);
-        return options;
-    }
-
     @Override
     public void draw() {
         // Draw only the data subset corresponding to the current page.
@@ -84,13 +81,15 @@ public class GoogleTableViewer extends GoogleViewer<TableDisplayer> {
         super.draw();
     }
 
-    private void gotoPage(int pageNumber) {
-        pagerInterval.setCurrentPage(pageNumber);
-        currentPage = pageNumber;
-        this.redraw();
+    public void setShowTotalPagesHint(boolean showTotalPagesHint) {
+        this.showTotalPagesHint = showTotalPagesHint;
     }
 
-    private Widget createTablePager() {
+    public void setShowTotalRowsHint(boolean showTotalRowsHint) {
+        this.showTotalRowsHint = showTotalRowsHint;
+    }
+
+    protected Widget createTablePager() {
 
         HorizontalPanel pagerPanel = new HorizontalPanel();
         pagerPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
@@ -168,22 +167,61 @@ public class GoogleTableViewer extends GoogleViewer<TableDisplayer> {
         Tooltip lastPageTooltip = new Tooltip("Go to last page");
         lastPageTooltip.add(lastPageIcon);
 
-        pagerPanel.add(firstPageTooltip);
-        pagerPanel.add(new HTML("&nbsp;&nbsp;"));
-        pagerPanel.add(leftPageTooltip);
-        pagerPanel.add(new HTML("&nbsp;&nbsp;"));
-        pagerPanel.add(pagination);
-        pagerPanel.add(new HTML("&nbsp;&nbsp;"));
-        pagerPanel.add(rightPageTooltip);
-        pagerPanel.add(new HTML("&nbsp;&nbsp;"));
-        pagerPanel.add(lastPageTooltip);
+        Label totalPages = null;
+        StringBuilder sb = new StringBuilder();
+        if ( showTotalPagesHint ) {
+            sb.append( "Pages " );
+            sb.append( pagerInterval.getLeftMostPageNumber() ).append("-").append( pagerInterval.getRightMostPageNumber() );
+            sb.append( " of ").append( pagerInterval.getNumberOfPages() );
+            totalPages = new Label( sb.toString() );
+        }
+        Label totalRows = null;
+        sb = new StringBuilder();
+        if ( showTotalRowsHint ) {
+            sb.append( "Rows " );
+            sb.append( ( ( currentPage - 1 ) * pageSize) + 1 ).append("-").append( currentPage * pageSize );
+            sb.append( " of ").append( numberOfRows );
+            totalRows = new Label( sb.toString() );
+        }
+
+        pagerPanel.add( firstPageTooltip );
+        pagerPanel.add( new SpacerWidget() );
+        pagerPanel.add( leftPageTooltip );
+        pagerPanel.add( new SpacerWidget() );
+        pagerPanel.add( pagination );
+        pagerPanel.add( new SpacerWidget() );
+        pagerPanel.add( rightPageTooltip );
+        pagerPanel.add( new SpacerWidget() );
+        pagerPanel.add( lastPageTooltip );
+
+        boolean both = showTotalPagesHint && showTotalRowsHint;
+        if ( showTotalPagesHint || showTotalRowsHint ) {
+            pagerPanel.add( new SpacerWidget() );
+            pagerPanel.add( new SpacerWidget() );
+            if ( totalPages != null ) pagerPanel.add( totalPages );
+            if ( both ) pagerPanel.add( new SpacerWidget() );
+            if ( totalRows != null ) pagerPanel.add( totalRows );
+        }
         return pagerPanel;
+    }
+
+    private void gotoPage(int pageNumber) {
+        pagerInterval.setCurrentPage(pageNumber);
+        currentPage = pageNumber;
+        this.redraw();
+    }
+
+    private Options createOptions() {
+        Options options = Options.create();
+        options.setPageSize(dataDisplayer.getPageSize());
+        options.setShowRowNumber(false);
+        return options;
     }
 
     private class PagerInterval {
 
-        // Amount of pages to be shown in the pager, default 10
         private int numberOfPages;
+        // Amount of pages to be shown in the pager, default 10
         private int pageIntervalSize = 10;
         private int pageIntervalShift = 5;
         private int leftMostPageNumber;
@@ -215,6 +253,10 @@ public class GoogleTableViewer extends GoogleViewer<TableDisplayer> {
             return rightMostPageNumber;
         }
 
+        private int getNumberOfPages() {
+            return numberOfPages;
+        }
+
         private void setPageIntervalSize(int pageIntervalSize) {
             this.pageIntervalSize = pageIntervalSize;
             calculateInterval();
@@ -241,6 +283,12 @@ public class GoogleTableViewer extends GoogleViewer<TableDisplayer> {
                     rightMostPageNumber = leftMostPageNumber + pageIntervalSize - 1;
                 }
             }
+        }
+    }
+
+    private class SpacerWidget extends HTML {
+        private SpacerWidget() {
+            super("&nbsp;&nbsp;");
         }
     }
 }
