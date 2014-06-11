@@ -106,6 +106,14 @@ public class BackendDataSetManager implements DataSetManager {
         return dataSet;
     }
 
+    public DataSet[] lookupDataSets(DataSetLookup[] lookup) throws Exception {
+        DataSet[] result = new DataSet[lookup.length];
+        for (int i = 0; i < lookup.length; i++) {
+            result[i] = lookupDataSet(lookup[i]);
+        }
+        return result;
+    }
+
     public DataSetMetadata lookupDataSetMetadata(DataSetLookup lookup) throws Exception {
         DataSet dataSet = lookupDataSet(lookup);
         if (dataSet == null) return null;

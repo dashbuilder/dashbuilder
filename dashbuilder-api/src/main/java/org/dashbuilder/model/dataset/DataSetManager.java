@@ -52,6 +52,11 @@ public interface DataSetManager {
     DataSet lookupDataSet(DataSetLookup lookup) throws Exception;
 
     /**
+     * Process multiple data set lookup request in a single shot.
+     */
+    DataSet[] lookupDataSets(DataSetLookup[] lookup) throws Exception;
+
+    /**
      * Same as lookupDataSet but only retrieves a preview of the resulting data set.
      * @return A DataSetMetadata instance containing general information about the data set.
      */
