@@ -16,7 +16,7 @@
 
   <modules>
     <module>dashbuilder-webapp</module>
-    <!--<module>dashbuilder-distribution-wars</module>-->
+    <module>dashbuilder-distribution-wars</module>
   </modules>
 
   <build>

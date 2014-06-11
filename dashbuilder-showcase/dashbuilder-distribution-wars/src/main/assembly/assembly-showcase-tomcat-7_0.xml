@@ -24,11 +24,17 @@
       <unpack>true</unpack>
       <unpackOptions>
         <excludes>
+          <exclude>META-INF/context.xml</exclude>
           <exclude>WEB-INF/jetty-env.xml</exclude>
           <exclude>WEB-INF/web.xml</exclude>
+          <exclude>WEB-INF/beans.xml</exclude>
+          <exclude>WEB-INF/classes/META-INF/persistence.xml</exclude>
+          <exclude>WEB-INF/classes/META-INF/services/javax.enterprise.inject.spi.Extension</exclude>
 
           <!-- Client Component -->
           <exclude>WEB-INF/lib/dashbuilder-kpi-viewer-client-*.jar</exclude>
+          <exclude>WEB-INF/lib/dashbuilder-renderer-google-*.jar</exclude>
+          <exclude>WEB-INF/lib/dashbuilder-ui-common-*.jar</exclude>
 
           <!-- UF Client Related -->
           <exclude>WEB-INF/lib/uberfire-js-*.jar</exclude>
@@ -39,8 +45,8 @@
           <exclude>WEB-INF/lib/uberfire-workbench-*.jar</exclude>
           <exclude>WEB-INF/lib/uberfire-widgets-commons-*.jar</exclude>
 
+
           <!-- GWT Client Related -->
-          <exclude>WEB-INF/lib/gwt-bootstrap-*.jar</exclude>
           <exclude>WEB-INF/lib/gwt-user-*.jar</exclude>
           <exclude>WEB-INF/lib/guava-gwt-*.jar</exclude>
           <exclude>WEB-INF/lib/gwt-dnd-*.jar</exclude>
@@ -48,17 +54,37 @@
 
           <exclude>WEB-INF/lib/*-sources.jar</exclude>
           <exclude>WEB-INF/lib/el-api-*.jar</exclude>
+          <exclude>WEB-INF/lib/jboss-el-api_*.jar</exclude>
           <exclude>WEB-INF/lib/xml-apis-*.jar</exclude>
 
           <!-- Errai -->
           <exclude>WEB-INF/lib/errai-codegen-gwt-*.jar</exclude>
           <exclude>WEB-INF/lib/errai-cdi-jetty-*.jar</exclude>
           <exclude>WEB-INF/lib/errai-jboss-as-support-*.jar</exclude>
+          <exclude>WEB-INF/lib/netty-4.0.0.*.errai.*.jar</exclude>
 
           <!-- Jetty -->
           <exclude>WEB-INF/lib/jetty-*.jar</exclude>
+          <!-- mail.jar is needed by tomcat-->
+          <!--exclude>WEB-INF/lib/mail-*.jar</exclude-->
           <exclude>WEB-INF/lib/geronimo-spec-jta-*.jar</exclude>
           <exclude>WEB-INF/lib/servlet-api-*.jar</exclude>
+          <exclude>WEB-INF/lib/jboss-servlet-api_*.jar</exclude>
+          <exclude>WEB-INF/lib/jsp-api-*.jar</exclude>
+          <exclude>WEB-INF/lib/jboss-jsp-api_*.jar</exclude>
+
+          <exclude>WEB-INF/lib/jboss-servlet-*.jar</exclude>
+          <exclude>WEB-INF/lib/jboss-transaction-*.jar</exclude>
+          <exclude>WEB-INF/lib/btm-*.jar</exclude>
+          <exclude>WEB-INF/lib/jta-*.jar</exclude>
+
+          <!-- Form Modeler client related -->
+          <exclude>WEB-INF/lib/jbpm-form-modeler-editor-client-*.jar</exclude>
+          <exclude>WEB-INF/lib/jbpm-form-modeler-renderer-client-*.jar</exclude>
+          <exclude>WEB-INF/lib/jbpm-form-modeler-app-*.jar</exclude>
+
+          <!-- Errai -->
+          <exclude>WEB-INF/lib/errai-jaxrs-client-*.jar</exclude>
         </excludes>
       </unpackOptions>
       <useStrictFiltering>true</useStrictFiltering>
