@@ -25,8 +25,11 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.*;
+import com.google.gwt.visualization.client.DataTable;
+import com.google.gwt.visualization.client.events.SortHandler;
 import com.google.gwt.visualization.client.visualizations.Table;
 import com.google.gwt.visualization.client.visualizations.Table.Options;
+import org.dashbuilder.model.dataset.sort.SortOrder;
 import org.dashbuilder.model.displayer.TableDisplayer;
 
 public class GoogleTableViewer extends GoogleViewer<TableDisplayer> {
@@ -39,8 +42,9 @@ public class GoogleTableViewer extends GoogleViewer<TableDisplayer> {
     protected boolean showTotalRowsHint = true;
     protected boolean showTotalPagesHint = true;
 
-    final private PagerInterval pagerInterval = new PagerInterval();
     HorizontalPanel pagerPanel = new HorizontalPanel();
+    private SortInfo sortInfo = new SortInfo();
+    final private PagerInterval pagerInterval = new PagerInterval();
 
     @Override
     public String getPackage() {
@@ -58,7 +62,15 @@ public class GoogleTableViewer extends GoogleViewer<TableDisplayer> {
 
         pagerInterval.setNumberOfPages(numberOfPages);
 
-        Table table = new Table(createTable(), createOptions());
+        final DataTable dataTable = createTable();
+        Table table = new Table( dataTable, createOptions() );
+        table.addSortHandler( new SortHandler() {
+            @Override public void onSort( SortEvent sortEvent ) {
+                String columnId = dataTable.getColumnId(sortEvent.getColumn());
+                setSortOrder(columnId, sortInfo.getSortOrder( columnId ));
+                redraw();
+            }
+        } );
 
         HTML titleHtml = new HTML();
         if (dataDisplayer.isTitleVisible()) {
@@ -225,6 +237,7 @@ public class GoogleTableViewer extends GoogleViewer<TableDisplayer> {
 
     private Options createOptions() {
         Options options = Options.create();
+        options.setSort( Options.Policy.EVENT );
         options.setPageSize(dataDisplayer.getPageSize());
         options.setShowRowNumber(false);
         return options;
@@ -301,6 +314,26 @@ public class GoogleTableViewer extends GoogleViewer<TableDisplayer> {
     private class SpacerWidget extends HTML {
         private SpacerWidget() {
             super("&nbsp;&nbsp;");
+        }
+    }
+
+    private static class SortInfo {
+        private String columnId;
+        private SortOrder sortOrder;
+        private SortInfo() {}
+        private SortOrder getSortOrder( String columnId ) {
+            if ( this.columnId == null || !this.columnId.equalsIgnoreCase( columnId ) ) {
+                this.columnId = columnId;
+                this.sortOrder = SortOrder.ASCENDING;
+            } else {    //columnId != null && columnId == columnId) --> 'invert' order
+                switch (this.sortOrder) {
+                    case UNSPECIFIED: this.sortOrder = SortOrder.ASCENDING; break;
+                    case ASCENDING: this.sortOrder = SortOrder.DESCENDING; break;
+                    case DESCENDING: this.sortOrder = SortOrder.ASCENDING; break;
+                    default: this.sortOrder = SortOrder.ASCENDING;
+                }
+            }
+            return sortOrder;
         }
     }
 }
