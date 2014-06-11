@@ -202,15 +202,15 @@ public class GoogleTableViewer extends GoogleViewer<TableDisplayer> {
             totalRows = new Label( sb.toString() );
         }
 
-        if ( numberOfPages > 1 ) pagerPanel.add( firstPageTooltip );
+        if ( numberOfPages > 1 && currentPage != 1 ) pagerPanel.add( firstPageTooltip );
         pagerPanel.add( new SpacerWidget() );
-        if (currentPage != 1) pagerPanel.add( leftPageTooltip );
+        if ( currentPage != 1 ) pagerPanel.add( leftPageTooltip );
         pagerPanel.add( new SpacerWidget() );
         if ( numberOfPages > 1 ) pagerPanel.add( pagination );
         pagerPanel.add( new SpacerWidget() );
-        if ( currentPage != numberOfPages) pagerPanel.add( rightPageTooltip );
+        if ( currentPage != numberOfPages ) pagerPanel.add( rightPageTooltip );
         pagerPanel.add( new SpacerWidget() );
-        if ( numberOfPages > 1 ) pagerPanel.add( lastPageTooltip );
+        if ( numberOfPages > 1 && currentPage != numberOfPages ) pagerPanel.add( lastPageTooltip );
 
         boolean both = showTotalPagesHint && showTotalRowsHint;
         if ( showTotalPagesHint || showTotalRowsHint ) {
