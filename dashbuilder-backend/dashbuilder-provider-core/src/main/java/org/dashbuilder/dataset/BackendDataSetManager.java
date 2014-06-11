@@ -15,14 +15,12 @@
  */
 package org.dashbuilder.dataset;
 
-import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
-import org.dashbuilder.dataset.engine.DataSetOpEngine;
+import org.dashbuilder.dataset.engine.impl.BackendDataSetOpEngine;
 import org.dashbuilder.dataset.index.DataSetIndex;
-import org.dashbuilder.dataset.index.spi.DataSetIndexRegistry;
 import org.dashbuilder.model.dataset.DataSet;
 import org.dashbuilder.model.dataset.DataSetFactory;
 import org.dashbuilder.model.dataset.DataSetLookup;
@@ -37,21 +35,13 @@ import org.jboss.errai.bus.server.annotations.Service;
  *     <li>To index almost every operation performed over a data set.</li>
  *     <li>Multiple clients requesting the same data set operations will benefit from the indexing/caching services provided.</li>
  * </ul>
-
  */
 @ApplicationScoped
 @Service
 public class BackendDataSetManager implements DataSetManager {
 
-    @Inject protected DataSetServices dataSetServices;
-    protected DataSetOpEngine dataSetOpEngine;
-    protected DataSetIndexRegistry dataSetIndexRegistry;
-
-    @PostConstruct
-    private void init() {
-        dataSetOpEngine = dataSetServices.getDataSetOpEngine();
-        dataSetIndexRegistry = dataSetServices.getDataSetIndexRegistry();
-    }
+    @Inject
+    protected BackendDataSetOpEngine dataSetOpEngine;
 
     public DataSet createDataSet(String uuid) {
         DataSet dataSet = DataSetFactory.newDataSet();
@@ -75,12 +65,12 @@ public class BackendDataSetManager implements DataSetManager {
 
     public void registerDataSet(DataSet dataSet) {
         if (dataSet != null) {
-            dataSetIndexRegistry.put(dataSet);
+            dataSetOpEngine.getIndexRegistry().put(dataSet);
         }
     }
 
     public DataSet refreshDataSet(String uuid) throws Exception {
-        dataSetIndexRegistry.remove(uuid);
+        dataSetOpEngine.getIndexRegistry().remove(uuid);
         DataSetIndex index = fetchDataSet(uuid);
         if (index == null) return null;
 
@@ -124,7 +114,7 @@ public class BackendDataSetManager implements DataSetManager {
     // Internal stuff
 
     protected DataSetIndex fetchDataSet(String uuid) throws Exception {
-        DataSetIndex index = dataSetIndexRegistry.get(uuid);
+        DataSetIndex index = dataSetOpEngine.getIndexRegistry().get(uuid);
         if (index != null) return index;
 
         return loadDataSet(uuid);

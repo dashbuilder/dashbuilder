@@ -17,13 +17,12 @@ package org.dashbuilder.dataset;
 
 import javax.inject.Inject;
 
+import org.dashbuilder.dataset.engine.impl.BackendDataSetOpEngine;
 import org.dashbuilder.dataset.index.DataSetIndex;
-import org.dashbuilder.dataset.index.spi.DataSetIndexRegistry;
 import org.dashbuilder.dataset.index.stats.DataSetIndexStats;
 import org.dashbuilder.model.dataset.DataSet;
 import org.dashbuilder.model.dataset.DataSetFactory;
 import org.dashbuilder.model.dataset.DataSetLookup;
-import org.dashbuilder.model.dataset.DataSetManager;
 import org.dashbuilder.test.ShrinkWrapHelper;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -90,18 +89,14 @@ public class DataSetIndexTest {
             .sort("amount", "desc")
             .buildLookup();
 
-    @Inject DataSetServices dataSetServices;
-    DataSetManager dataSetManager;
-    DataSetIndexRegistry dataSetIndexRegistry;
+    @Inject BackendDataSetOpEngine dataSetOpEngine;
     DataSet dataSet;
 
     @Before
     public void setUp() throws Exception {
-        dataSetManager = dataSetServices.getDataSetManager();
-        dataSetIndexRegistry = dataSetServices.getDataSetIndexRegistry();
         dataSet = RawDataSetSamples.EXPENSE_REPORTS.toDataSet();
         dataSet.setUUID(EXPENSE_REPORTS);
-        dataSetManager.registerDataSet(dataSet);
+        dataSetOpEngine.getIndexRegistry().put(dataSet);
     }
 
     @Test
@@ -111,13 +106,13 @@ public class DataSetIndexTest {
         long begin = System.nanoTime();
         int lookupTimes = 1000;
         for (int i = 0; i < lookupTimes; i++) {
-            dataSetManager.lookupDataSet(groupByDeptAndCount);
-            dataSetManager.lookupDataSet(groupByDeptAndSum);
+            dataSetOpEngine.execute(dataSet, groupByDeptAndCount.getOperationList());
+            dataSetOpEngine.execute(dataSet, groupByDeptAndSum.getOperationList());
         }
         long time = System.nanoTime()-begin;
 
         // Check out the resulting stats
-        DataSetIndex dataSetIndex = dataSetIndexRegistry.get(EXPENSE_REPORTS);
+        DataSetIndex dataSetIndex = dataSetOpEngine.getIndexRegistry().get(EXPENSE_REPORTS);
         DataSetIndexStats stats = dataSetIndex.getStats();
         DataSet dataSet = dataSetIndex.getDataSet();
         System.out.println(stats.toString("\n"));
@@ -142,12 +137,12 @@ public class DataSetIndexTest {
         long begin = System.nanoTime();
         int lookupTimes = 1000;
         for (int i = 0; i < lookupTimes; i++) {
-            dataSetManager.lookupDataSet(filterByCityAndDept);
+            dataSetOpEngine.execute(dataSet, filterByCityAndDept.getOperationList());
         }
         long time = System.nanoTime()-begin;
 
         // Check out the resulting stats
-        DataSetIndex dataSetIndex = dataSetIndexRegistry.get(EXPENSE_REPORTS);
+        DataSetIndex dataSetIndex = dataSetOpEngine.getIndexRegistry().get(EXPENSE_REPORTS);
         DataSetIndexStats stats = dataSetIndex.getStats();
         DataSet dataSet = dataSetIndex.getDataSet();
 
@@ -173,13 +168,13 @@ public class DataSetIndexTest {
         long begin = System.nanoTime();
         int lookupTimes = 1000;
         for (int i = 0; i < lookupTimes; i++) {
-            dataSetManager.lookupDataSet(sortByAmountAsc);
-            dataSetManager.lookupDataSet(sortByAmountDesc);
+            dataSetOpEngine.execute(dataSet, sortByAmountAsc.getOperationList());
+            dataSetOpEngine.execute(dataSet, sortByAmountDesc.getOperationList());
         }
         long time = System.nanoTime()-begin;
 
         // Check out the resulting stats
-        DataSetIndex dataSetIndex = dataSetIndexRegistry.get(EXPENSE_REPORTS);
+        DataSetIndex dataSetIndex = dataSetOpEngine.getIndexRegistry().get(EXPENSE_REPORTS);
         DataSetIndexStats stats = dataSetIndex.getStats();
         DataSet dataSet = dataSetIndex.getDataSet();
 

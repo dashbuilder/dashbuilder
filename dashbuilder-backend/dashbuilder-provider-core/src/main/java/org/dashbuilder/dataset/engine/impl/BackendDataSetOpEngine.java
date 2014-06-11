@@ -15,16 +15,13 @@
  */
 package org.dashbuilder.dataset.engine.impl;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Map;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
-import org.dashbuilder.dataset.DataSetServices;
 import org.dashbuilder.dataset.engine.DataSetHandler;
 import org.dashbuilder.dataset.engine.DataSetRowSet;
 import org.dashbuilder.dataset.engine.DataSetOpEngine;
@@ -63,12 +60,34 @@ import org.dashbuilder.dataset.sort.DataSetSortAlgorithm;
 import org.slf4j.Logger;
 
 @ApplicationScoped
-public class DataSetOpEngineImpl implements DataSetOpEngine {
+public class BackendDataSetOpEngine implements DataSetOpEngine {
 
-    @Inject Logger log;
-    @Inject AggregateFunctionManager aggregateFunctionManager;
-    @Inject IntervalBuilderLocator intervalBuilderLocator;
-    @Inject DataSetServices dataSetServices;
+    @Inject protected Logger log;
+    @Inject protected AggregateFunctionManager aggregateFunctionManager;
+    @Inject protected IntervalBuilderLocator intervalBuilderLocator;
+    @Inject protected DataSetIndexRegistry indexRegistry;
+    @Inject protected DataSetSortAlgorithm sortAlgorithm;
+    @Inject protected DataSetFilterAlgorithm filterAlgorithm;
+
+    public AggregateFunctionManager getAggregateFunctionManager() {
+        return aggregateFunctionManager;
+    }
+
+    public IntervalBuilderLocator getIntervalBuilderLocator() {
+        return intervalBuilderLocator;
+    }
+
+    public DataSetIndexRegistry getIndexRegistry() {
+        return indexRegistry;
+    }
+
+    public DataSetSortAlgorithm getSortAlgorithm() {
+        return sortAlgorithm;
+    }
+
+    public DataSetFilterAlgorithm getFilterAlgorithm() {
+        return filterAlgorithm;
+    }
 
     public DataSet execute(DataSet dataSet, DataSetOp... ops) {
         List<DataSetOp> opList = new ArrayList<DataSetOp>();
@@ -77,8 +96,6 @@ public class DataSetOpEngineImpl implements DataSetOpEngine {
     }
 
     public DataSet execute(DataSet dataSet, List<DataSetOp> opList) {
-        DataSetIndexRegistry indexRegistry = dataSetServices.getDataSetIndexRegistry();
-
         DataSetOpListProcessor processor = new DataSetOpListProcessor();
         processor.setDataSetIndex(indexRegistry.get(dataSet.getUUID()));
         processor.setOperationList(opList);
@@ -327,7 +344,6 @@ public class DataSetOpEngineImpl implements DataSetOpEngine {
 
                 // No index => Filter required
                 if (context.index == null) {
-                    DataSetFilterAlgorithm filterAlgorithm = dataSetServices.getDataSetFilterAlgorithm();
                     List<Integer> rows = filterAlgorithm.filter(new InternalHandler(context), filter);
                     context.index(op, new DataSetFilterIndex(filter, rows));
                     continue;
@@ -340,7 +356,6 @@ public class DataSetOpEngineImpl implements DataSetOpEngine {
                 }
                 // No index match => Filter required
                 long _beginTime = System.nanoTime();
-                DataSetFilterAlgorithm filterAlgorithm = dataSetServices.getDataSetFilterAlgorithm();
                 List<Integer> rows = filterAlgorithm.filter(new InternalHandler(context), filter);
                 long _buildTime = System.nanoTime() - _beginTime;
 
@@ -367,7 +382,6 @@ public class DataSetOpEngineImpl implements DataSetOpEngine {
 
             // No index => Sort required
             if (context.index == null) {
-                DataSetSortAlgorithm sortAlgorithm = dataSetServices.getDataSetSortAlgorithm();
                 List<Integer> orderedRows = sortAlgorithm.sort(new InternalHandler(context), op.getColumnSortList());
                 context.index(op, new DataSetSortIndex(op, orderedRows));
                 return;
@@ -381,7 +395,6 @@ public class DataSetOpEngineImpl implements DataSetOpEngine {
             }
             // No index match => Sort required
             long _beginTime = System.nanoTime();
-            DataSetSortAlgorithm sortAlgorithm = dataSetServices.getDataSetSortAlgorithm();
             List<Integer> orderedRows = sortAlgorithm.sort(new InternalHandler(context), op.getColumnSortList());
             long _buildTime = System.nanoTime() - _beginTime;
 

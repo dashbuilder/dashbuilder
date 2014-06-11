@@ -17,8 +17,6 @@ package org.dashbuilder.dataset.index;
 
 import java.util.List;
 
-import org.dashbuilder.dataset.DataSetServices;
-import org.dashbuilder.model.dataset.DataSet;
 import org.dashbuilder.model.dataset.sort.DataSetSort;
 
 /**
