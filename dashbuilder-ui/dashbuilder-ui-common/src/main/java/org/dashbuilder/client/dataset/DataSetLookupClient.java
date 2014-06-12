@@ -52,7 +52,7 @@ public class DataSetLookupClient {
      * Fetch the metadata instance for the specified data set.
      *
      * @param request The data set lookup request
-     * @throws Exception If the data set can't be found.
+     * @throws Exception It there is an unexpected error trying to execute the lookup request.
      */
     public void fetchMetadata(final DataSetLookup request, final DataSetMetadataCallback listener) throws Exception {
 
@@ -64,9 +64,8 @@ public class DataSetLookupClient {
             dataSetLookupService.call(
                 new RemoteCallback<DataSetMetadata>() {
                 public void callback(DataSetMetadata result) {
-                    if (result != null) {
-                        listener.callback(result);
-                    }
+                    if (result == null) listener.notFound();
+                    else listener.callback(result);
                 }}).lookupDataSetMetadata(request);
         }
         else {
@@ -78,8 +77,7 @@ public class DataSetLookupClient {
      * Process the specified data set lookup request.
      *
      * @param request The data set lookup request
-     * @throws Exception It there is an unexpected error trying to execute the lookup request or
-     * if the data set can't be found.
+     * @throws Exception It there is an unexpected error trying to execute the lookup request.
      */
     public void lookupDataSet(final DataSetLookup request, final DataSetReadyCallback listener) throws Exception {
 

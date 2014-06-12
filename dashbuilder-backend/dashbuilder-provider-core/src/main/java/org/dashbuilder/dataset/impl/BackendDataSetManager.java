@@ -47,14 +47,14 @@ public class BackendDataSetManager implements DataSetManager {
         return dataSet;
     }
 
-    public DataSet getDataSet(String uuid) throws Exception {
+    public DataSet getDataSet(String uuid) {
         DataSetIndex index = fetchDataSet(uuid);
         if (index == null) return null;
 
         return index.getDataSet();
     }
 
-    public DataSetMetadata getDataSetMetadata(String uuid) throws Exception {
+    public DataSetMetadata getDataSetMetadata(String uuid) {
         DataSet dataSet = getDataSet(uuid);
         if (dataSet == null) return null;
 
@@ -67,7 +67,7 @@ public class BackendDataSetManager implements DataSetManager {
         }
     }
 
-    public DataSet refreshDataSet(String uuid) throws Exception {
+    public DataSet refreshDataSet(String uuid) {
         dataSetOpEngine.getIndexRegistry().remove(uuid);
         DataSetIndex index = fetchDataSet(uuid);
         if (index == null) return null;
@@ -75,9 +75,9 @@ public class BackendDataSetManager implements DataSetManager {
         return index.getDataSet();
     }
 
-    public DataSet lookupDataSet(DataSetLookup lookup) throws Exception {
+    public DataSet lookupDataSet(DataSetLookup lookup) {
         String uuid = lookup.getDataSetUUID();
-        if (StringUtils.isEmpty(uuid)) throw new IllegalArgumentException("Target data set UUID not specified.");
+        if (StringUtils.isEmpty(uuid)) return null;
 
         // Get the target data set
         DataSetIndex dataSetIndex = fetchDataSet(uuid);
@@ -94,7 +94,7 @@ public class BackendDataSetManager implements DataSetManager {
         return dataSet;
     }
 
-    public DataSet[] lookupDataSets(DataSetLookup[] lookup) throws Exception {
+    public DataSet[] lookupDataSets(DataSetLookup[] lookup) {
         DataSet[] result = new DataSet[lookup.length];
         for (int i = 0; i < lookup.length; i++) {
             result[i] = lookupDataSet(lookup[i]);
@@ -102,7 +102,7 @@ public class BackendDataSetManager implements DataSetManager {
         return result;
     }
 
-    public DataSetMetadata lookupDataSetMetadata(DataSetLookup lookup) throws Exception {
+    public DataSetMetadata lookupDataSetMetadata(DataSetLookup lookup) {
         DataSet dataSet = lookupDataSet(lookup);
         if (dataSet == null) return null;
 
@@ -111,14 +111,14 @@ public class BackendDataSetManager implements DataSetManager {
 
     // Internal stuff
 
-    protected DataSetIndex fetchDataSet(String uuid) throws Exception {
+    protected DataSetIndex fetchDataSet(String uuid) {
         DataSetIndex index = dataSetOpEngine.getIndexRegistry().get(uuid);
         if (index != null) return index;
 
         return loadDataSet(uuid);
     }
 
-    protected DataSetIndex loadDataSet(String uuid) throws Exception {
+    protected DataSetIndex loadDataSet(String uuid) {
         /* TODO: Get the data set from an external provider.
         DataProviderManager dataProviderManager = DataProviderServices.getDataProviderManager();
         DataSet dataSet = dataProviderManager.fetchDataSet(uuid);

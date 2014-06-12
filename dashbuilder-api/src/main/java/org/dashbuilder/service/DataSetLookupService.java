@@ -27,12 +27,15 @@ import org.jboss.errai.bus.server.annotations.Remote;
 public interface DataSetLookupService {
 
     /**
-     * Apply a sequence of operations (filter, sort, group, ...) on a remote and get the resulting data set.
+     * Apply a sequence of operations (filter, sort, group, ...) on a remote data set.
+     *
+     * @return A brand new data set with all the calculations applied.
      */
     DataSet lookupDataSet(DataSetLookup lookup) throws Exception;
 
     /**
      * Same as lookupDataSet but only retrieves the metadata of the resulting data set.
+     *
      * @return A DataSetMetadata instance containing general information about the data set.
      */
     DataSetMetadata lookupDataSetMetadata(DataSetLookup lookup) throws Exception;

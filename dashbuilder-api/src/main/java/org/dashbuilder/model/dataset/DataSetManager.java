@@ -29,14 +29,16 @@ public interface DataSetManager {
     /**
      * Retrieve (load if required) a data set.
      * @param uuid The UUID of the data set.
+     * @return null, if the data set can be retrieved.
      */
-    DataSet getDataSet(String uuid) throws Exception;
+    DataSet getDataSet(String uuid);
 
     /**
      * Fetch the metadata instance for the specified data set.
      * @param uuid The UUID of the data set.
+     * @return null, if the data set can be retrieved.
      */
-    DataSetMetadata getDataSetMetadata(String uuid) throws Exception;
+    DataSetMetadata getDataSetMetadata(String uuid);
 
     /**
      * Registers the specified data set instance.
@@ -45,17 +47,18 @@ public interface DataSetManager {
 
     /**
      * Load a data set and apply several operations (filter, sort, group, ...) on top of it.
+     * @return null, if the data set can be retrieved.
      */
-    DataSet lookupDataSet(DataSetLookup lookup) throws Exception;
+    DataSet lookupDataSet(DataSetLookup lookup);
 
     /**
      * Process multiple data set lookup request in a single shot.
      */
-    DataSet[] lookupDataSets(DataSetLookup[] lookup) throws Exception;
+    DataSet[] lookupDataSets(DataSetLookup[] lookup);
 
     /**
      * Same as lookupDataSet but only retrieves the metadata of the resulting data set.
-     * @return A DataSetMetadata instance containing general information about the data set.
+     * @return A DataSetMetadata instance containing general information about the data set or null, if the data set can be retrieved.
      */
-    DataSetMetadata lookupDataSetMetadata(DataSetLookup lookup) throws Exception;
+    DataSetMetadata lookupDataSetMetadata(DataSetLookup lookup);
 }

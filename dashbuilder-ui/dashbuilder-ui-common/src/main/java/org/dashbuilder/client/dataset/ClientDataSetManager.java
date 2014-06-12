@@ -41,7 +41,7 @@ public class ClientDataSetManager implements DataSetManager {
         return dataSet;
     }
 
-    public DataSet getDataSet(String uuid) throws Exception {
+    public DataSet getDataSet(String uuid) {
         if (!dataSetMap.containsKey(uuid)) return null;
         return dataSetMap.get(uuid);
     }
@@ -57,14 +57,14 @@ public class ClientDataSetManager implements DataSetManager {
         }
     }
 
-    public DataSetMetadata getDataSetMetadata(String uuid) throws Exception {
+    public DataSetMetadata getDataSetMetadata(String uuid) {
         DataSet dataSet = getDataSet(uuid);
         if (dataSet == null) return null;
 
         return dataSet.getMetadata();
     }
 
-    public DataSet lookupDataSet(DataSetLookup lookup) throws Exception {
+    public DataSet lookupDataSet(DataSetLookup lookup) {
         DataSet dataSet = getDataSet(lookup.getDataSetUUID());
         if (dataSet == null) return null;
 
@@ -78,7 +78,7 @@ public class ClientDataSetManager implements DataSetManager {
         return dataSet;
     }
 
-    public DataSet[] lookupDataSets(DataSetLookup[] lookup) throws Exception {
+    public DataSet[] lookupDataSets(DataSetLookup[] lookup) {
         DataSet[] result = new DataSet[lookup.length];
         for (int i = 0; i < lookup.length; i++) {
             result[i] = lookupDataSet(lookup[i]);
@@ -86,7 +86,7 @@ public class ClientDataSetManager implements DataSetManager {
         return result;
     }
 
-    public DataSetMetadata lookupDataSetMetadata(DataSetLookup lookup) throws Exception {
+    public DataSetMetadata lookupDataSetMetadata(DataSetLookup lookup) {
         DataSet dataSet = lookupDataSet(lookup);
         if (dataSet == null) return null;
 
