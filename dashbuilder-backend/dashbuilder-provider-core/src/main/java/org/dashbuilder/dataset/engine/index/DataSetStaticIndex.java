@@ -13,18 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbuilder.dataset.engine;
+package org.dashbuilder.dataset.engine.index;
 
-import java.util.List;
-
+import org.dashbuilder.dataset.engine.index.stats.DataSetIndexStats;
+import org.dashbuilder.dataset.engine.index.stats.DataSetIndexStatsImpl;
 import org.dashbuilder.model.dataset.DataSet;
 
 /**
- * It provides access to a data set row subset.
+ * An index for static data sets.
  */
-public interface DataSetRowSet {
+public class DataSetStaticIndex extends DataSetIndex {
 
-    DataSet getDataSet();
-    List<Integer> getRows();
+    private DataSet dataSet;
 
+    public DataSetStaticIndex(DataSet dataSet) {
+        super();
+        this.dataSet = dataSet;
+    }
+
+    public DataSet getDataSet() {
+        return dataSet;
+    }
+
+    public DataSetIndexStats getStats() {
+        return new DataSetIndexStatsImpl(this);
+    }
 }
+

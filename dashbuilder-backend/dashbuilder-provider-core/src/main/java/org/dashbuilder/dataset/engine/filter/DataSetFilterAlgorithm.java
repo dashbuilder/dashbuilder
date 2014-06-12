@@ -13,18 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbuilder.dataset.engine;
+package org.dashbuilder.dataset.engine.filter;
 
 import java.util.List;
 
-import org.dashbuilder.model.dataset.DataSet;
+import org.dashbuilder.dataset.engine.DataSetHandler;
+import org.dashbuilder.model.dataset.filter.ColumnFilter;
 
 /**
- * It provides access to a data set row subset.
+ * Data set filter algorithm interface.
  */
-public interface DataSetRowSet {
+public interface DataSetFilterAlgorithm {
 
-    DataSet getDataSet();
-    List<Integer> getRows();
-
+    /**
+     * Filter the specified data set according the filter criteria.
+     *
+     * @param ctx The data set context to filter
+     * @param columnFilter The column filter to apply.
+     * @return A list of ordinals containing only the rows that surpass the filter.
+     */
+    List<Integer> filter(DataSetHandler ctx, ColumnFilter columnFilter);
 }

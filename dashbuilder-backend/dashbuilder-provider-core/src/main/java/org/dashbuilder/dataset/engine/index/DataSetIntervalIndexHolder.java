@@ -13,18 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbuilder.dataset.engine;
+package org.dashbuilder.dataset.engine.index;
 
 import java.util.List;
 
-import org.dashbuilder.model.dataset.DataSet;
-
 /**
- * It provides access to a data set row subset.
+ * Classes implementing this interface hold a list of interval indexes.
  */
-public interface DataSetRowSet {
+public interface DataSetIntervalIndexHolder {
 
-    DataSet getDataSet();
-    List<Integer> getRows();
-
+    List<DataSetIntervalIndex> getIntervalIndexes();
 }
+

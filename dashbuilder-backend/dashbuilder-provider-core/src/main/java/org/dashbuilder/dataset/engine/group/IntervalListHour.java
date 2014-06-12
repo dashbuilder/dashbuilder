@@ -13,18 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbuilder.dataset.engine;
+package org.dashbuilder.dataset.engine.group;
 
-import java.util.List;
+import java.util.Date;
 
-import org.dashbuilder.model.dataset.DataSet;
+import org.dashbuilder.model.dataset.group.ColumnGroup;
 
 /**
- * It provides access to a data set row subset.
+ * List of the 24-hor intervals present in a day.
  */
-public interface DataSetRowSet {
+public class IntervalListHour extends IntervalListSecond {
 
-    DataSet getDataSet();
-    List<Integer> getRows();
+    public IntervalListHour(ColumnGroup columnGroup) {
+        super(columnGroup, 24);
+    }
 
+    public Interval locateInterval(Object value) {
+        Date d = (Date) value;
+        int sec = d.getHours();
+        return intervalMap.get(sec);
+    }
 }

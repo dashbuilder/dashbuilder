@@ -18,6 +18,7 @@ package org.dashbuilder.dataset.sales;
 import java.util.Calendar;
 import javax.inject.Inject;
 
+import org.dashbuilder.dataset.samples.SalesDataSetGenerator;
 import org.dashbuilder.model.dataset.DataSet;
 import org.dashbuilder.test.ShrinkWrapHelper;
 import org.jboss.arquillian.container.test.api.Deployment;

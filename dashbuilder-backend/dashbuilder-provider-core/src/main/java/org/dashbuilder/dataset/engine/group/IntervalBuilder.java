@@ -13,18 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbuilder.dataset.engine;
+package org.dashbuilder.dataset.engine.group;
 
-import java.util.List;
+import org.dashbuilder.dataset.engine.DataSetHandler;
+import org.dashbuilder.model.dataset.group.ColumnGroup;
 
-import org.dashbuilder.model.dataset.DataSet;
+public interface IntervalBuilder {
 
-/**
- * It provides access to a data set row subset.
- */
-public interface DataSetRowSet {
-
-    DataSet getDataSet();
-    List<Integer> getRows();
-
+    IntervalList build(DataSetHandler ctx, ColumnGroup columnGroup);
 }

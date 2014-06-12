@@ -13,18 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbuilder.dataset.engine;
+package org.dashbuilder.dataset.engine.index;
 
 import java.util.List;
 
-import org.dashbuilder.model.dataset.DataSet;
+import org.dashbuilder.model.dataset.filter.ColumnFilter;
 
 /**
- * It provides access to a data set row subset.
+ * An index for filtered data sets.
  */
-public interface DataSetRowSet {
+public class DataSetFilterIndex extends DataSetIndexNode {
 
-    DataSet getDataSet();
-    List<Integer> getRows();
+    private ColumnFilter columnFilter;
 
+    public DataSetFilterIndex(ColumnFilter columnFilter, List<Integer> rows) {
+        super(null, rows, 0);
+        this.columnFilter = columnFilter;
+    }
+
+    public ColumnFilter getColumnFilter() {
+        return columnFilter;
+    }
 }
+

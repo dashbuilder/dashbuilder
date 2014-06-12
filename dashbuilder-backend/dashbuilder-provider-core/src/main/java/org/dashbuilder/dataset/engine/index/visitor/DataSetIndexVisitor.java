@@ -13,18 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbuilder.dataset.engine;
+package org.dashbuilder.dataset.engine.index.visitor;
 
-import java.util.List;
-
-import org.dashbuilder.model.dataset.DataSet;
+import org.dashbuilder.dataset.engine.index.DataSetIndexElement;
 
 /**
- * It provides access to a data set row subset.
+ * A DataSetIndex visitor
  */
-public interface DataSetRowSet {
+public interface DataSetIndexVisitor {
 
-    DataSet getDataSet();
-    List<Integer> getRows();
-
+    void visit(DataSetIndexElement element);
 }
+

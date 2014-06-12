@@ -21,9 +21,6 @@ import org.dashbuilder.model.dataset.DataSet;
 import org.dashbuilder.model.dataset.DataSetFactory;
 import org.dashbuilder.model.dataset.DataSetManager;
 import org.dashbuilder.model.dataset.filter.FilterFactory;
-import org.dashbuilder.model.dataset.group.GroupStrategy;
-import org.dashbuilder.model.date.DayOfWeek;
-import org.dashbuilder.model.date.Month;
 import org.dashbuilder.test.ShrinkWrapHelper;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -34,7 +31,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import static org.dashbuilder.dataset.Assertions.*;
-import static org.dashbuilder.model.dataset.group.DateIntervalType.*;
 import static org.fest.assertions.api.Assertions.*;
 
 @RunWith(Arquillian.class)

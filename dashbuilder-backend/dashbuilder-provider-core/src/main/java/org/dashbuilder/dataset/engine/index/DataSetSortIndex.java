@@ -13,18 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbuilder.dataset.engine;
+package org.dashbuilder.dataset.engine.index;
 
 import java.util.List;
 
-import org.dashbuilder.model.dataset.DataSet;
+import org.dashbuilder.model.dataset.sort.DataSetSort;
 
 /**
- * It provides access to a data set row subset.
+ * An index for source data sets.
  */
-public interface DataSetRowSet {
+public class DataSetSortIndex extends DataSetIndexNode {
 
-    DataSet getDataSet();
-    List<Integer> getRows();
+    private DataSetSort sortOp;
 
+    public DataSetSortIndex(DataSetSort sortOp, List<Integer> sortedRows) {
+        super(null, sortedRows, 0);
+        this.sortOp = sortOp;
+    }
+
+    public DataSetSort getSortOp() {
+        return sortOp;
+    }
 }
+

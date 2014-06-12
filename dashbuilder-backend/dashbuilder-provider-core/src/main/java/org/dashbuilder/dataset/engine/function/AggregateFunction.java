@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2014 JBoss Inc
+ * Copyright (C) 2012 JBoss Inc
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,18 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbuilder.dataset.engine;
+package org.dashbuilder.dataset.engine.function;
 
 import java.util.List;
 
-import org.dashbuilder.model.dataset.DataSet;
-
 /**
- * It provides access to a data set row subset.
+ * Interface used to get the aggregate value of a given collection.
+ * <p>Aggregate functions are used to calculate the aggregate
+ * values of the intervals belonging to a given data set domain property.
  */
-public interface DataSetRowSet {
+public interface AggregateFunction {
 
-    DataSet getDataSet();
-    List<Integer> getRows();
-
+    String getCode();
+    double aggregate(List values);
+    double aggregate(List values, List<Integer> rows);
 }

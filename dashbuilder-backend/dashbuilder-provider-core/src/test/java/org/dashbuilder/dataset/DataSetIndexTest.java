@@ -17,9 +17,9 @@ package org.dashbuilder.dataset;
 
 import javax.inject.Inject;
 
-import org.dashbuilder.dataset.engine.impl.BackendDataSetOpEngine;
-import org.dashbuilder.dataset.index.DataSetIndex;
-import org.dashbuilder.dataset.index.stats.DataSetIndexStats;
+import org.dashbuilder.dataset.engine.BackendDataSetOpEngine;
+import org.dashbuilder.dataset.engine.index.DataSetIndex;
+import org.dashbuilder.dataset.engine.index.stats.DataSetIndexStats;
 import org.dashbuilder.model.dataset.DataSet;
 import org.dashbuilder.model.dataset.DataSetFactory;
 import org.dashbuilder.model.dataset.DataSetLookup;
