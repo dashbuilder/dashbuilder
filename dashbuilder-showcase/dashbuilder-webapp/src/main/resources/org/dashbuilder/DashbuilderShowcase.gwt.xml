@@ -7,6 +7,8 @@
 
   <inherits name="org.dashbuilder.GoogleRendererClient"/>
 
+  <inherits name="org.dashbuilder.UFTableRendererClient"/>
+
   <inherits name="org.dashbuilder.KPIViewerClient"/>
 
 </module>

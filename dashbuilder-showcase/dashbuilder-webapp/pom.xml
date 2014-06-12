@@ -47,6 +47,12 @@
       <artifactId>dashbuilder-renderer-google</artifactId>
     </dependency>
 
+    <!-- UF paged table -->
+    <dependency>
+      <groupId>org.dashbuilder</groupId>
+      <artifactId>dashbuilder-renderer-uftable</artifactId>
+    </dependency>
+
     <!-- KPI Viewer -->
     <dependency>
       <groupId>org.dashbuilder</groupId>
@@ -191,6 +197,7 @@
             <compileSourcesArtifact>org.dashbuilder:dashbuilder-api</compileSourcesArtifact>
             <compileSourcesArtifact>org.dashbuilder:dashbuilder-ui-common</compileSourcesArtifact>
             <compileSourcesArtifact>org.dashbuilder:dashbuilder-renderer-google</compileSourcesArtifact>
+            <compileSourcesArtifact>org.dashbuilder:dashbuilder-renderer-uftable</compileSourcesArtifact>
             <compileSourcesArtifact>org.dashbuilder:dashbuilder-kpi-viewer-api</compileSourcesArtifact>
             <compileSourcesArtifact>org.dashbuilder:dashbuilder-kpi-viewer-client</compileSourcesArtifact>
 

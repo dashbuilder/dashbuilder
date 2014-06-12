@@ -46,6 +46,7 @@
           <!-- Dashbuilder client related -->
           <exclude>WEB-INF/lib/dashbuilder-kpi-viewer-client-*.jar</exclude>
           <exclude>WEB-INF/lib/dashbuilder-renderer-google-*.jar</exclude>
+          <exclude>WEB-INF/lib/dashbuilder-renderer-uftable-*.jar</exclude>
           <exclude>WEB-INF/lib/dashbuilder-ui-common-*.jar</exclude>
 
           <!-- UF Client Related -->

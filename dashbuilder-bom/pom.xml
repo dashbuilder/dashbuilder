@@ -74,6 +74,12 @@
         <version>${project.version}</version>
       </dependency>
 
+      <dependency>
+        <groupId>org.dashbuilder</groupId>
+        <artifactId>dashbuilder-renderer-uftable</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+
       <!-- KPI Viewer component -->
       <dependency>
         <groupId>org.dashbuilder</groupId>
