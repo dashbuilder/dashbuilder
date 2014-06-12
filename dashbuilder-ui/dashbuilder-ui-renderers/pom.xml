@@ -26,7 +26,7 @@
   <artifactId>dashbuilder-ui-renderers</artifactId>
   <packaging>pom</packaging>
 
-  <name>Dashbuilder UI Renderers</name>
+  <name>Dashbuilder Data Displayer Renderers</name>
 
   <modules>
     <module>dashbuilder-renderer-google</module>
