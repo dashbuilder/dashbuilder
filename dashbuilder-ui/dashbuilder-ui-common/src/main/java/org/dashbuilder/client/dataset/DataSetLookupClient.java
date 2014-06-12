@@ -15,16 +15,13 @@
  */
 package org.dashbuilder.client.dataset;
 
-import java.util.ArrayList;
-import java.util.List;
-import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import org.dashbuilder.model.dataset.DataSet;
 import org.dashbuilder.model.dataset.DataSetLookup;
-import org.dashbuilder.model.dataset.DataSetManager;
 import org.dashbuilder.model.dataset.DataSetMetadata;
+import org.dashbuilder.service.DataSetLookupService;
 import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.common.client.api.RemoteCallback;
 
@@ -33,17 +30,27 @@ import org.jboss.errai.common.client.api.RemoteCallback;
  * It hides to client widgets where the data sets are stored and how they are fetched and processed.
  */
 @ApplicationScoped
-public class DataSetManagerProxy {
+public class DataSetLookupClient {
 
     @Inject
     private ClientDataSetManager clientDataSetManager;
 
-    @Inject
-    // TODO: set the reference from the backend module instead of having it hard-coded.
-    private Caller<DataSetManager> remoteDataSetManager;
+    /**
+     * The service caller used to lookup data sets from the backend.
+     */
+    private Caller<DataSetLookupService> dataSetLookupService = null;
+
+    /**
+     * The DataSetLookupService instance is disabled by default.
+     * Those client modules interested in activate the data set backend should set an instance.
+     */
+    public void setLookupService(Caller<DataSetLookupService> dataSetLookupService) {
+        this.dataSetLookupService = dataSetLookupService;
+    }
 
     /**
      * Fetch the metadata instance for the specified data set.
+     *
      * @param request The data set lookup request
      * @throws Exception If the data set can't be found.
      */
@@ -52,39 +59,45 @@ public class DataSetManagerProxy {
         DataSetMetadata metadata = clientDataSetManager.lookupDataSetMetadata(request);
         if (metadata != null) {
             listener.callback(metadata);
-        } else {
-            remoteDataSetManager.call(
-                    new RemoteCallback<DataSetMetadata>() {
-                        public void callback(DataSetMetadata result) {
-                            if (result != null) {
-                                listener.callback(result);
-                            }
-                        }
-                    }).lookupDataSetMetadata(request);
+        }
+        else if (dataSetLookupService != null) {
+            dataSetLookupService.call(
+                new RemoteCallback<DataSetMetadata>() {
+                public void callback(DataSetMetadata result) {
+                    if (result != null) {
+                        listener.callback(result);
+                    }
+                }}).lookupDataSetMetadata(request);
+        }
+        else {
+            listener.notFound();
         }
     }
 
     /**
      * Process the specified data set lookup request.
+     *
      * @param request The data set lookup request
      * @throws Exception It there is an unexpected error trying to execute the lookup request or
      * if the data set can't be found.
      */
     public void lookupDataSet(final DataSetLookup request, final DataSetReadyCallback listener) throws Exception {
-        // TODO: move from backend to client storage those small enough data sets.
 
         if (clientDataSetManager.getDataSet(request.getDataSetUUID()) != null) {
             DataSet dataSet = clientDataSetManager.lookupDataSet(request);
             listener.callback(dataSet);
-        } else {
-            remoteDataSetManager.call(
-                    new RemoteCallback<DataSet>() {
-                        public void callback(DataSet result) {
-                            if (result != null) {
-                                listener.callback(result);
-                            }
-                        }
-                    }).lookupDataSet(request);
+        }
+        else if (dataSetLookupService != null) {
+            // TODO: move from backend to client small data sets?
+            dataSetLookupService.call(
+                new RemoteCallback<DataSet>() {
+                public void callback(DataSet result) {
+                    if (result == null) listener.notFound();
+                    else listener.callback(result);
+                }}).lookupDataSet(request);
+        }
+        else {
+            listener.notFound();
         }
     }
 }

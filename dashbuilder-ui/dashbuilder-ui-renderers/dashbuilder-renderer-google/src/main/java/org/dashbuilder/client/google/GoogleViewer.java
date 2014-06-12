@@ -85,6 +85,9 @@ public abstract class GoogleViewer<T extends DataDisplayer> extends AbstractData
                             panel.clear();
                             panel.add(w);
                         }
+                        public void notFound() {
+                            displayMessage("ERROR: Data set not found.");
+                        }
                     });
                 } catch (Exception e) {
                     displayMessage("ERROR: " + e.getMessage());
@@ -102,6 +105,9 @@ public abstract class GoogleViewer<T extends DataDisplayer> extends AbstractData
                 public void callback(DataSet result) {
                     dataSet = result;
                     googleViewer.draw(createTable(), googleOptions);
+                }
+                public void notFound() {
+                    displayMessage("ERROR: Data set not found.");
                 }
             });
         } catch (Exception e) {

@@ -28,8 +28,11 @@ import org.uberfire.client.workbench.events.PerspectiveChange;
  * issued by any KPIViewer on the dashboard.</p>
  */
 @ApplicationScoped
-public class DashboardContext {
+public class KPICoordinator {
 
+    /**
+     * A DataViewer coordinator for all the KPIViewer instances placed on the same perspective.
+     */
     private DataViewerCoordinator coordinator;
 
     @PostConstruct

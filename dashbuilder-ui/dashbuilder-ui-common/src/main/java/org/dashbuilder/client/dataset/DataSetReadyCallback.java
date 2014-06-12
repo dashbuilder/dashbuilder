@@ -23,5 +23,6 @@ import org.dashbuilder.model.dataset.DataSet;
 public interface DataSetReadyCallback {
 
     void callback(DataSet dataSet);
+    void notFound();
 
 }

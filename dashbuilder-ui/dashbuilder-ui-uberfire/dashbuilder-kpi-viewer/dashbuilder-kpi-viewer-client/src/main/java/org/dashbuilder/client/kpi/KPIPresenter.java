@@ -40,7 +40,7 @@ public class KPIPresenter {
     @Inject private KPIViewer kpiViewer;
 
     /** The dashboard context */
-    @Inject private DashboardContext dashboardContext;
+    @Inject private KPICoordinator kpiCoordinator;
 
     @OnStartup
     public void onStartup( final PlaceRequest placeRequest) {
@@ -52,8 +52,8 @@ public class KPIPresenter {
         // Draw the KPI.
         kpiViewer.draw(kpi);
 
-        // Add the KPI to the current dashboard context
-        dashboardContext.addKPIViewer(kpiViewer);
+        // Register the KPIViewer into the coordinator.
+        kpiCoordinator.addKPIViewer(kpiViewer);
     }
 
     @WorkbenchPartTitle

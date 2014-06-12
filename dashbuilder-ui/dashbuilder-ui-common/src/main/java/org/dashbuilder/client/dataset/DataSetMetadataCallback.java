@@ -23,5 +23,6 @@ import org.dashbuilder.model.dataset.DataSetMetadata;
 public interface DataSetMetadataCallback {
 
     void callback(DataSetMetadata metatada);
+    void notFound();
 
 }

@@ -15,12 +15,9 @@
  */
 package org.dashbuilder.model.dataset;
 
-import org.jboss.errai.bus.server.annotations.Remote;
-
 /**
  * Main interface for handling data sets.
  */
-@Remote
 public interface DataSetManager {
 
     /**
@@ -57,7 +54,7 @@ public interface DataSetManager {
     DataSet[] lookupDataSets(DataSetLookup[] lookup) throws Exception;
 
     /**
-     * Same as lookupDataSet but only retrieves a preview of the resulting data set.
+     * Same as lookupDataSet but only retrieves the metadata of the resulting data set.
      * @return A DataSetMetadata instance containing general information about the data set.
      */
     DataSetMetadata lookupDataSetMetadata(DataSetLookup lookup) throws Exception;

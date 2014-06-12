@@ -15,17 +15,11 @@
  */
 package org.dashbuilder.client.displayer;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
-import org.dashbuilder.client.dataset.DataSetManagerProxy;
+import org.dashbuilder.client.dataset.DataSetLookupClient;
 import org.dashbuilder.client.dataset.DataSetMetadataCallback;
 import org.dashbuilder.client.dataset.DataSetReadyCallback;
-import org.dashbuilder.model.dataset.DataSet;
 import org.dashbuilder.model.dataset.DataSetLookup;
 import org.dashbuilder.model.dataset.DataSetMetadata;
-import org.dashbuilder.model.dataset.DataSetOp;
 import org.dashbuilder.model.dataset.DataSetOpType;
 import org.dashbuilder.model.dataset.group.ColumnGroup;
 import org.dashbuilder.model.dataset.group.DataSetGroup;
@@ -33,22 +27,24 @@ import org.dashbuilder.model.dataset.sort.DataSetSort;
 
 public class DataSetHandlerImpl implements DataSetHandler {
 
-    protected DataSetManagerProxy dataSetManagerProxy;
+    protected DataSetLookupClient dataSetLookupClient;
     protected DataSetMetadata dataSetMetadata;
     protected DataSetLookup lookupBase;
     protected DataSetLookup lookupCurrent;
-    protected List<DataSetOp> addedOpList = new ArrayList<DataSetOp>();
 
-    public DataSetHandlerImpl(DataSetManagerProxy dataSetManagerProxy, DataSetLookup lookup) {
-        this.dataSetManagerProxy = dataSetManagerProxy;
+    public DataSetHandlerImpl(DataSetLookupClient dataSetLookupClient, DataSetLookup lookup) {
+        this.dataSetLookupClient = dataSetLookupClient;
         this.lookupBase = lookup;
         this.lookupCurrent = lookup.cloneInstance();
 
         try {
             // Fetch the data set metadata
-            dataSetManagerProxy.fetchMetadata(lookupBase, new DataSetMetadataCallback() {
+            dataSetLookupClient.fetchMetadata(lookupBase, new DataSetMetadataCallback() {
                 public void callback(DataSetMetadata metadata) {
                     dataSetMetadata = metadata;
+                }
+                public void notFound() {
+                    throw new RuntimeException("DataSet not found. UUID=" + lookupBase.getDataSetUUID());
                 }
             });
         } catch (Exception e) {
@@ -118,11 +114,7 @@ public class DataSetHandlerImpl implements DataSetHandler {
         return n > 0;
     }
 
-    public void lookupDataSet(final DataSetReadyCallback callback) throws Exception {
-        dataSetManagerProxy.lookupDataSet(lookupCurrent, new DataSetReadyCallback() {
-            public void callback(DataSet result) {
-                callback.callback(result);
-            }
-        });
+    public void lookupDataSet(DataSetReadyCallback callback) throws Exception {
+        dataSetLookupClient.lookupDataSet(lookupCurrent, callback);
     }
 }
