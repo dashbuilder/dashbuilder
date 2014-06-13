@@ -19,7 +19,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 
+import org.dashbuilder.client.dataset.engine.ClientDataSetOpEngine;
+import org.dashbuilder.client.dataset.engine.index.DataSetIndex;
+import org.dashbuilder.client.util.StringUtils;
 import org.dashbuilder.model.dataset.DataSetFactory;
 import org.dashbuilder.model.dataset.DataSetLookup;
 import org.dashbuilder.model.dataset.DataSet;
@@ -33,7 +37,7 @@ import org.dashbuilder.model.dataset.DataSetMetadata;
 @ApplicationScoped
 public class ClientDataSetManager implements DataSetManager {
 
-    private Map<String,DataSet> dataSetMap = new HashMap<String,DataSet>();
+    @Inject ClientDataSetOpEngine dataSetOpEngine;
 
     public DataSet createDataSet(String uuid) {
         DataSet dataSet = DataSetFactory.newDataSet();
@@ -42,18 +46,15 @@ public class ClientDataSetManager implements DataSetManager {
     }
 
     public DataSet getDataSet(String uuid) {
-        if (!dataSetMap.containsKey(uuid)) return null;
-        return dataSetMap.get(uuid);
+        DataSetIndex index = dataSetOpEngine.getIndexRegistry().get(uuid);
+        if (index == null) return null;
+
+        return index.getDataSet();
     }
 
     public void registerDataSet(DataSet dataSet) {
         if (dataSet != null) {
-            String uuid = dataSet.getUUID();
-            if (uuid == null || uuid.trim().length() == 0) {
-                uuid = "dataset_" + dataSet.hashCode();
-                dataSet.setUUID(uuid);
-            }
-            dataSetMap.put(dataSet.getUUID(), dataSet);
+            dataSetOpEngine.getIndexRegistry().put(dataSet);
         }
     }
 
@@ -65,12 +66,17 @@ public class ClientDataSetManager implements DataSetManager {
     }
 
     public DataSet lookupDataSet(DataSetLookup lookup) {
-        DataSet dataSet = getDataSet(lookup.getDataSetUUID());
-        if (dataSet == null) return null;
+        String uuid = lookup.getDataSetUUID();
+        if (StringUtils.isEmpty(uuid)) return null;
+
+        // Get the target data set
+        DataSetIndex dataSetIndex = dataSetOpEngine.getIndexRegistry().get(uuid);
+        if (dataSetIndex == null) return null;
+        DataSet dataSet = dataSetIndex.getDataSet();
 
         // Apply the list of operations specified (if any).
         if (!lookup.getOperationList().isEmpty()) {
-            // TODO: Share the backend DataSetOpEngine
+            dataSet = dataSetOpEngine.execute(dataSetIndex.getDataSet(), lookup.getOperationList());
         }
 
         // Trim the data set as requested.
