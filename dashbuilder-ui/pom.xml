@@ -30,8 +30,9 @@
   <name>Dashbuilder UI</name>
 
   <modules>
-    <module>dashbuilder-ui-common</module>
+    <module>dashbuilder-commons-client</module>
+    <module>dashbuilder-data-viewer-client</module>
+    <module>dashbuilder-kpi-viewer-client</module>
     <module>dashbuilder-ui-renderers</module>
-    <module>dashbuilder-ui-uberfire</module>
   </modules>
 </project>

@@ -61,10 +61,22 @@
         <version>${project.version}</version>
       </dependency>
 
-      <!-- Dashbuilder UI -->
+      <!-- Dashbuilder Client -->
       <dependency>
         <groupId>org.dashbuilder</groupId>
-        <artifactId>dashbuilder-ui-common</artifactId>
+        <artifactId>dashbuilder-commons-client</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.dashbuilder</groupId>
+        <artifactId>dashbuilder-data-viewer-client</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.dashbuilder</groupId>
+        <artifactId>dashbuilder-kpi-viewer-client</artifactId>
         <version>${project.version}</version>
       </dependency>
 
@@ -77,25 +89,6 @@
       <dependency>
         <groupId>org.dashbuilder</groupId>
         <artifactId>dashbuilder-renderer-uftable</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-
-      <!-- KPI Viewer component -->
-      <dependency>
-        <groupId>org.dashbuilder</groupId>
-        <artifactId>dashbuilder-kpi-viewer-api</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.dashbuilder</groupId>
-        <artifactId>dashbuilder-kpi-viewer-backend</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.dashbuilder</groupId>
-        <artifactId>dashbuilder-kpi-viewer-client</artifactId>
         <version>${project.version}</version>
       </dependency>
 

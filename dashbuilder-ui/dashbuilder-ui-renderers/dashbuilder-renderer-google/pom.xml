@@ -71,7 +71,12 @@
 
     <dependency>
       <groupId>org.dashbuilder</groupId>
-      <artifactId>dashbuilder-ui-common</artifactId>
+      <artifactId>dashbuilder-commons-client</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.dashbuilder</groupId>
+      <artifactId>dashbuilder-data-viewer-client</artifactId>
     </dependency>
 
   </dependencies>

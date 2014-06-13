@@ -31,11 +31,12 @@
           <exclude>WEB-INF/classes/META-INF/persistence.xml</exclude>
           <exclude>WEB-INF/classes/META-INF/services/javax.enterprise.inject.spi.Extension</exclude>
 
-          <!-- Client Component -->
+          <!-- Dashbuilder client related -->
+          <exclude>WEB-INF/lib/dashbuilder-commons-client-*.jar</exclude>
+          <exclude>WEB-INF/lib/dashbuilder-data-viewer-client-*.jar</exclude>
           <exclude>WEB-INF/lib/dashbuilder-kpi-viewer-client-*.jar</exclude>
           <exclude>WEB-INF/lib/dashbuilder-renderer-google-*.jar</exclude>
           <exclude>WEB-INF/lib/dashbuilder-renderer-uftable-*.jar</exclude>
-          <exclude>WEB-INF/lib/dashbuilder-ui-common-*.jar</exclude>
 
           <!-- UF Client Related -->
           <exclude>WEB-INF/lib/uberfire-js-*.jar</exclude>

@@ -38,7 +38,17 @@
     <!-- Dashbuilder client -->
     <dependency>
       <groupId>org.dashbuilder</groupId>
-      <artifactId>dashbuilder-ui-common</artifactId>
+      <artifactId>dashbuilder-commons-client</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.dashbuilder</groupId>
+      <artifactId>dashbuilder-data-viewer-client</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.dashbuilder</groupId>
+      <artifactId>dashbuilder-kpi-viewer-client</artifactId>
     </dependency>
 
     <!-- Google lib -->
@@ -51,22 +61,6 @@
     <dependency>
       <groupId>org.dashbuilder</groupId>
       <artifactId>dashbuilder-renderer-uftable</artifactId>
-    </dependency>
-
-    <!-- KPI Viewer -->
-    <dependency>
-      <groupId>org.dashbuilder</groupId>
-      <artifactId>dashbuilder-kpi-viewer-api</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.dashbuilder</groupId>
-      <artifactId>dashbuilder-kpi-viewer-backend</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.dashbuilder</groupId>
-      <artifactId>dashbuilder-kpi-viewer-client</artifactId>
     </dependency>
 
     <!-- UberFire -->
@@ -195,11 +189,11 @@
 
             <!-- Dashbuilder -->
             <compileSourcesArtifact>org.dashbuilder:dashbuilder-api</compileSourcesArtifact>
-            <compileSourcesArtifact>org.dashbuilder:dashbuilder-ui-common</compileSourcesArtifact>
+            <compileSourcesArtifact>org.dashbuilder:dashbuilder-commons-client</compileSourcesArtifact>
+            <compileSourcesArtifact>org.dashbuilder:dashbuilder-data-viewer-client</compileSourcesArtifact>
+            <compileSourcesArtifact>org.dashbuilder:dashbuilder-kpi-viewer-client</compileSourcesArtifact>
             <compileSourcesArtifact>org.dashbuilder:dashbuilder-renderer-google</compileSourcesArtifact>
             <compileSourcesArtifact>org.dashbuilder:dashbuilder-renderer-uftable</compileSourcesArtifact>
-            <compileSourcesArtifact>org.dashbuilder:dashbuilder-kpi-viewer-api</compileSourcesArtifact>
-            <compileSourcesArtifact>org.dashbuilder:dashbuilder-kpi-viewer-client</compileSourcesArtifact>
 
           </compileSourcesArtifacts>
           <runTarget>org.dashbuilder.DashbuilderShowcase/Dashbuilder.html</runTarget>
