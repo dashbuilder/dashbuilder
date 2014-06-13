@@ -149,7 +149,7 @@ public class DataSetGroupIndex extends DataSetIndexNode implements DataSetInterv
             intervalIndexList.add(intervalIdx);
         } else {
             if (existing instanceof DataSetIntervalSetIndex) {
-                existing.getIntervalIndexes().add(existing);
+                existing.getIntervalIndexes().add(intervalIdx);
             }
             else if (existing != intervalIdx){
                 int i = indexOfIntervalIndex(existing);

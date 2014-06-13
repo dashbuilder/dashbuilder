@@ -138,7 +138,8 @@ public class DataSetLookupClient {
                         _lookupDataSet(l, new DataSetReadyCallback() {
                             public void callback(DataSet dataSet) {
                                 clientDataSetManager.registerDataSet(dataSet);
-                                listener.callback(dataSet);
+                                DataSet result = clientDataSetManager.lookupDataSet(request);
+                                listener.callback(result);
                             }
                             public void notFound() {
                                 listener.notFound();

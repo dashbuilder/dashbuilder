@@ -21,6 +21,7 @@ import org.dashbuilder.model.dataset.DataSet;
 import org.dashbuilder.model.dataset.DataSetFactory;
 import org.dashbuilder.model.dataset.DataSetManager;
 import org.dashbuilder.model.dataset.filter.FilterFactory;
+import org.dashbuilder.model.dataset.group.DateIntervalType;
 import org.dashbuilder.test.ShrinkWrapHelper;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -119,6 +120,35 @@ public class DataSetNestedGroupTest {
                 {"London", "3.00", "333.45", "868.45", "535.40", "1,606.20"}
         }, 0);
     }
+
+    @Test
+    public void testThreeNestedLevels() throws Exception {
+        DataSet result = dataSetManager.lookupDataSet(
+                DataSetFactory.newDSLookup()
+                        .uuid(EXPENSE_REPORTS)
+                        .group("department").select("Services", "Engineering")
+                        .group("city").select("Madrid", "Barcelona")
+                        .group("date").fixed(DateIntervalType.MONTH)
+                        .sum("amount", "total")
+                        .buildLookup());
+
+        //printDataSet(result);
+        assertDataSetValues(result, dataSetFormatter, new String[][] {
+                {"JANUARY", "0.00"},
+                {"FEBRUARY", "0.00"},
+                {"MARCH", "0.00"},
+                {"APRIL", "0.00"},
+                {"MAY", "0.00"},
+                {"JUNE", "911.11"},
+                {"JULY", "800.80"},
+                {"AUGUST", "152.25"},
+                {"SEPTEMBER", "300.00"},
+                {"OCTOBER", "340.34"},
+                {"NOVEMBER", "900.10"},
+                {"DECEMBER", "1,220.45"}
+        }, 0);
+    }
+
 
     private void printDataSet(DataSet dataSet) {
         System.out.print(dataSetFormatter.formatDataSet(dataSet, "{", "}", ",\n", "\"", "\"", ", ") + "\n\n");

@@ -62,7 +62,7 @@ public class IntervalDateRange extends Interval {
             if (d.getMonth() < 3) return "Q1 " + format.format(d);
             if (d.getMonth() < 6) return "Q2 " + format.format(d);
             if (d.getMonth() < 9) return "Q3 " + format.format(d);
-            return "Q4" + format.format(d);
+            return "Q4 " + format.format(d);
         }
         if (MONTH.equals(intervalType)) {
             DateTimeFormat format  = DateTimeFormat.getFormat("MMMM yyyy");
