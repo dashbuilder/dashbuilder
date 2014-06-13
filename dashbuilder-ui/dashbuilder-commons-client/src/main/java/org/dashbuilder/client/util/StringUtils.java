@@ -15,6 +15,7 @@
  */
 package org.dashbuilder.client.util;
 
+
 public class StringUtils {
 
 }
