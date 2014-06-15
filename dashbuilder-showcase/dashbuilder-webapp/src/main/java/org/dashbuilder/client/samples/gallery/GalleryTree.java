@@ -229,7 +229,7 @@ public class GalleryTree {
                 .dataset(SALES_OPPS)
                 .group(CREATION_DATE, YEAR)
                 .sum(AMOUNT)
-                .width(500).height(200)
+                .width(600).height(200)
                 .meter(0, 1000000, 3000000, 5000000)
                 .column("Year")
                 .column("Amount")

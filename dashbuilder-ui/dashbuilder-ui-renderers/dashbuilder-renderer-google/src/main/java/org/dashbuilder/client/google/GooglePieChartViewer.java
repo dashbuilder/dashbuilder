@@ -30,7 +30,7 @@ public class GooglePieChartViewer extends GoogleXAxisChartViewer<PieChartDisplay
     }
 
     @Override
-    public Widget createChart() {
+    public Widget createVisualization() {
         PieChart chart = new PieChart(createTable(), createOptions());
         chart.addSelectHandler(createSelectHandler(chart));
 

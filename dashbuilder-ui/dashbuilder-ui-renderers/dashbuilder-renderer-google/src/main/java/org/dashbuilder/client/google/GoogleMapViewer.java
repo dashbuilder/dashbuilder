@@ -30,7 +30,7 @@ public class GoogleMapViewer extends GoogleXAxisChartViewer<MapChartDisplayer> {
     }
 
     @Override
-    public Widget createChart() {
+    public Widget createVisualization() {
         GeoMap chart = new GeoMap(createTable(), createOptions());
         chart.addSelectHandler(createSelectHandler(chart));
 

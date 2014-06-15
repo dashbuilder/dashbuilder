@@ -30,7 +30,7 @@ public class GoogleAreaChartViewer extends GoogleXAxisChartViewer<AreaChartDispl
     }
 
     @Override
-    public Widget createChart() {
+    public Widget createVisualization() {
         AreaChart chart = new AreaChart(createTable(), createOptions());
         chart.addSelectHandler(createSelectHandler(chart));
         HTML titleHtml = new HTML();

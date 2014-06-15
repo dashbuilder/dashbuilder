@@ -30,7 +30,7 @@ public class GoogleBarChartViewer extends GoogleXAxisChartViewer<BarChartDisplay
     }
 
     @Override
-    public Widget createChart() {
+    public Widget createVisualization() {
 
         Widget chart = null;
 

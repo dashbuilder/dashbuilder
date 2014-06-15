@@ -15,7 +15,6 @@
  */
 package org.dashbuilder.client.google;
 
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -78,10 +77,11 @@ public abstract class GoogleViewer<T extends DataDisplayer> extends AbstractData
             else {
                 try {
                     displayMessage("Initializing '" + dataDisplayer.getTitle() + "'...");
+                    beforeDataSetLookup();
                     dataSetHandler.lookupDataSet(new DataSetReadyCallback() {
                         public void callback(DataSet result) {
                             dataSet = result;
-                            Widget w = createChart();
+                            Widget w = createVisualization();
                             panel.clear();
                             panel.add(w);
                         }
@@ -97,28 +97,46 @@ public abstract class GoogleViewer<T extends DataDisplayer> extends AbstractData
     }
 
     /**
-     * Just reload the data set and make the current google Viewer to redraw.
+     * Just reload the data set and make the current Google Viewer to redraw.
      */
     public void redraw() {
-        try {
-            dataSetHandler.lookupDataSet(new DataSetReadyCallback() {
-                public void callback(DataSet result) {
-                    dataSet = result;
-                    googleViewer.draw(createTable(), googleOptions);
-                }
-                public void notFound() {
-                    displayMessage("ERROR: Data set not found.");
-                }
-            });
-        } catch (Exception e) {
-            displayMessage("ERROR: " + e.getMessage());
+        if (!drawn) {
+            draw();
+        } else {
+            try {
+                beforeDataSetLookup();
+                dataSetHandler.lookupDataSet(new DataSetReadyCallback() {
+                    public void callback(DataSet result) {
+                        dataSet = result;
+                        updateVisualization();
+                    }
+                    public void notFound() {
+                        displayMessage("ERROR: Data set not found.");
+                    }
+                });
+            } catch (Exception e) {
+                displayMessage("ERROR: " + e.getMessage());
+            }
         }
     }
 
     /**
-     * Create the Google Visualization widget this viewer uses for display.
+     * Call back method invoked just before the data set lookup is executed.
      */
-    public abstract Widget createChart();
+    protected void beforeDataSetLookup() {
+    }
+
+    /**
+     * Create the widget used by concrete Google viewer implementation.
+     */
+    protected abstract Widget createVisualization();
+
+    /**
+     * Update the widget used by concrete Google viewer implementation.
+     */
+    protected void updateVisualization() {
+        googleViewer.draw(createTable(), googleOptions);
+    }
 
     /**
      * Get the Google Visualization package this viewer requires.

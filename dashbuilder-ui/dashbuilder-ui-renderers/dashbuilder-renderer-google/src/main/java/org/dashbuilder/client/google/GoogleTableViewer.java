@@ -52,7 +52,7 @@ public class GoogleTableViewer extends GoogleViewer<TableDisplayer> {
     }
 
     @Override
-    public Widget createChart() {
+    public Widget createVisualization() {
         pageSize = dataDisplayer.getPageSize();
         numberOfRows = dataSetHandler.getDataSetMetadata().getNumberOfRows();
         numberOfPages = ((numberOfRows - 1) / pageSize) + 1;
@@ -87,16 +87,17 @@ public class GoogleTableViewer extends GoogleViewer<TableDisplayer> {
     }
 
     @Override
-    public void draw() {
+    protected void beforeDataSetLookup() {
         this.setPageLimits();
-        super.draw();
     }
 
     @Override
-    public void redraw() {
-        this.setPageLimits();
+    protected void updateVisualization() {
         this.createTablePager();
-        super.redraw();
+        // TODO: check why is null
+        if (googleViewer != null) {
+            googleViewer.draw(createTable(), googleOptions);
+        }
     }
 
     public void setShowTotalPagesHint(boolean showTotalPagesHint) {

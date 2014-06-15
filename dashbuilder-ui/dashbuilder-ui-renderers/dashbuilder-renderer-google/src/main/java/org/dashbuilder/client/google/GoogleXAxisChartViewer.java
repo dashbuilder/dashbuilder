@@ -69,7 +69,12 @@ public abstract class GoogleXAxisChartViewer<T extends XAxisChartDisplayer> exte
                     String intervalSelected = getValueString(row, 0);
                     if (!intervalSelectedList.contains(intervalSelected)) {
                         intervalSelectedList.add(intervalSelected);
-                        selectGroupIntervals(googleTable.getColumnId(0), intervalSelectedList);
+                        if (intervalSelectedList.size() < dataSet.getRowCount()) {
+                            selectGroupIntervals(googleTable.getColumnId(0), intervalSelectedList);
+                        } else {
+                            intervalSelectedList.clear();
+                            resetGroupIntervals(googleTable.getColumnId(0));
+                        }
                     } else {
                         intervalSelectedList.remove(intervalSelected);
                         if (!intervalSelectedList.isEmpty()) {
@@ -81,7 +86,7 @@ public abstract class GoogleXAxisChartViewer<T extends XAxisChartDisplayer> exte
                 }
                 // Redraw the char in order to reflect the current selection
                 googleOptions.setColors(createColorArray(googleTable));
-                redraw();
+                updateVisualization();
             }
         };
     }

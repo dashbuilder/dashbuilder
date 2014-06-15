@@ -32,7 +32,7 @@ public class GoogleLineChartViewer extends GoogleXAxisChartViewer<LineChartDispl
     }
 
     @Override
-    public Widget createChart() {
+    public Widget createVisualization() {
         LineChart chart = new LineChart(createTable(), createOptions());
         chart.addSelectHandler(createSelectHandler(chart));
 

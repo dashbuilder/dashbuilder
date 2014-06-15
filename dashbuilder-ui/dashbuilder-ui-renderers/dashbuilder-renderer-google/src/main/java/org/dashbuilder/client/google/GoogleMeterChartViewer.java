@@ -30,7 +30,7 @@ public class GoogleMeterChartViewer extends GoogleViewer<MeterChartDisplayer> {
     }
 
     @Override
-    public Widget createChart() {
+    public Widget createVisualization() {
         Gauge chart = new Gauge(createTable(), createOptions());
 
         HTML titleHtml = new HTML();
