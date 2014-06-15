@@ -36,7 +36,7 @@ import org.uberfire.client.workbench.events.PerspectiveChange;
  * Google's GWT Visualization API based renderer.
  */
 @ApplicationScoped
-@Named("google_renderer")
+@Named(GoogleRenderer.UUID + "_renderer")
 public class GoogleRenderer implements RendererLibrary {
 
     private List<GoogleViewer> viewerList = new ArrayList<GoogleViewer>();
