@@ -18,6 +18,7 @@ package org.dashbuilder.client.dataset;
 import java.util.HashMap;
 import java.util.Map;
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
 import org.dashbuilder.model.dataset.DataSet;
@@ -26,6 +27,9 @@ import org.dashbuilder.model.dataset.DataSetMetadata;
 import org.dashbuilder.service.DataSetLookupService;
 import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.common.client.api.RemoteCallback;
+import org.uberfire.workbench.events.NotificationEvent;
+
+import static org.uberfire.workbench.events.NotificationEvent.NotificationType.*;
 
 /**
  * Proxy interface to the list of available DataSetManager implementations.
@@ -36,6 +40,9 @@ public class DataSetLookupClient {
 
     @Inject
     private ClientDataSetManager clientDataSetManager;
+
+    @Inject
+    private Event<NotificationEvent> notification;
 
     /**
      * The service caller used to lookup data sets from the backend.
@@ -55,7 +62,7 @@ public class DataSetLookupClient {
     /**
      * Maximum size (in kbytes) a data set may have in order to be pushed to clients.
      */
-    private int pushRemoteDataSetMaxSize = 100;
+    private int pushRemoteDataSetMaxSize = 1024;
 
     public boolean isPushRemoteDataSetEnabled() {
         return pushRemoteDataSetEnabled;
@@ -125,22 +132,28 @@ public class DataSetLookupClient {
             DataSet dataSet = clientDataSetManager.lookupDataSet(request);
             listener.callback(dataSet);
         }
-        // If the data set is not in client, then look up remotely (if the remote access is available).
+        // If the data set is not in client, then look up remotely (only if the remote access is available).
         else if (dataSetLookupService != null) {
 
             // First of all, get the target data set estimated size.
-            fetchMetadata(request, new DataSetMetadataCallback() {
+            final DataSetLookup lookupSourceDataSet = new DataSetLookup(request.getDataSetUUID());
+            fetchMetadata(lookupSourceDataSet, new DataSetMetadataCallback() {
                 public void callback(DataSetMetadata metatada) {
 
                     // Push the data set to the client if push is enabled and its size is smaller than expected.
                     if (pushRemoteDataSetEnabled && metatada.getEstimatedSize() < pushRemoteDataSetMaxSize) {
-                        DataSetLookup l = new DataSetLookup(request.getDataSetUUID());
-                        _lookupDataSet(l, new DataSetReadyCallback() {
+
+                        notification.fire(new NotificationEvent("Loading " + metatada.getEstimatedSize() + " Kb data set from server...", INFO));
+
+                        _lookupDataSet(lookupSourceDataSet, new DataSetReadyCallback() {
                             public void callback(DataSet dataSet) {
+                                notification.fire(new NotificationEvent("Data set successfully loaded.", SUCCESS));
+
                                 clientDataSetManager.registerDataSet(dataSet);
                                 DataSet result = clientDataSetManager.lookupDataSet(request);
                                 listener.callback(result);
                             }
+
                             public void notFound() {
                                 listener.notFound();
                             }
