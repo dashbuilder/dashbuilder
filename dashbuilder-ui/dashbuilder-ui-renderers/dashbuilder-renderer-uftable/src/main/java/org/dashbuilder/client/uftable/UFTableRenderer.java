@@ -1,10 +1,19 @@
 package org.dashbuilder.client.uftable;
 
+import java.util.UUID;
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Named;
+
 import org.dashbuilder.client.displayer.DataViewer;
 import org.dashbuilder.client.displayer.RendererLibrary;
 import org.dashbuilder.model.displayer.DataDisplayer;
 import org.dashbuilder.model.displayer.DataDisplayerType;
 
+/**
+ * Table renderer based on the Uberfire's core PagedTable widget.
+ */
+@ApplicationScoped
+@Named(UFTableRenderer.UUID + "_renderer")
 public class UFTableRenderer implements RendererLibrary {
 
     public static final String UUID = "uftable";
