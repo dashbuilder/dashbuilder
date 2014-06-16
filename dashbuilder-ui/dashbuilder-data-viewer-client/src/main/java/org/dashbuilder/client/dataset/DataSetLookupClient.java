@@ -16,6 +16,8 @@
 package org.dashbuilder.client.dataset;
 
 import java.util.HashMap;
+import java.util.List;
+import java.util.ArrayList;
 import java.util.Map;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
@@ -63,6 +65,11 @@ public class DataSetLookupClient {
      * Maximum size (in kbytes) a data set may have in order to be pushed to clients.
      */
     private int pushRemoteDataSetMaxSize = 1024;
+
+    /**
+     * It holds a set of data set push requests in progress.
+     */
+    private Map<String,DataSetPushHandler> pushRequestMap = new HashMap<String,DataSetPushHandler>();
 
     public boolean isPushRemoteDataSetEnabled() {
         return pushRemoteDataSetEnabled;
@@ -140,24 +147,21 @@ public class DataSetLookupClient {
             fetchMetadata(lookupSourceDataSet, new DataSetMetadataCallback() {
                 public void callback(DataSetMetadata metatada) {
 
-                    // Push the data set to the client if push is enabled and its size is smaller than expected.
+                    // Push smalls data sets to client.
                     if (pushRemoteDataSetEnabled && metatada.getEstimatedSize() < pushRemoteDataSetMaxSize) {
 
-                        notification.fire(new NotificationEvent("Loading " + metatada.getEstimatedSize() + " Kb data set from server...", INFO));
+                        // Check if a push is already in progress.
+                        // (This is necessary in order to avoid repeating multiple push requests over the same data set).
+                        DataSetPushHandler pushHandler = pushRequestMap.get(request.getDataSetUUID());
+                        if (pushHandler == null) {
+                            // Create a push handler.
+                            pushHandler = new DataSetPushHandler(metatada);
 
-                        _lookupDataSet(lookupSourceDataSet, new DataSetReadyCallback() {
-                            public void callback(DataSet dataSet) {
-                                notification.fire(new NotificationEvent("Data set successfully loaded.", SUCCESS));
-
-                                clientDataSetManager.registerDataSet(dataSet);
-                                DataSet result = clientDataSetManager.lookupDataSet(request);
-                                listener.callback(result);
-                            }
-
-                            public void notFound() {
-                                listener.notFound();
-                            }
-                        });
+                            // Send the lookup request to the server...
+                            _lookupDataSet(lookupSourceDataSet, pushHandler);
+                        }
+                        // Register the lookup request into the current handler.
+                        pushHandler.registerLookup(request, listener);
                     }
                     // Lookup the remote data set otherwise.
                     else {
@@ -186,6 +190,55 @@ public class DataSetLookupClient {
                     }}).lookupDataSet(request);
         } catch (Exception e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    private class DataSetPushHandler implements DataSetReadyCallback {
+
+        private DataSetMetadata dataSetMetadata = null;
+        private List<DataSetLookupListenerPair> listenerList = new ArrayList<DataSetLookupListenerPair>();
+
+        private DataSetPushHandler(DataSetMetadata metadata) {
+            this.dataSetMetadata = metadata;
+
+            pushRequestMap.put(dataSetMetadata.getUUID(), this);
+            notification.fire(new NotificationEvent("Loading " + metadata.getEstimatedSize() + " Kb data set from server...", INFO));
+        }
+
+        public void registerLookup(DataSetLookup lookup, DataSetReadyCallback listener) {
+            listenerList.add(new DataSetLookupListenerPair(lookup, listener));
+        }
+
+        public void callback(DataSet dataSet) {
+            pushRequestMap.remove(dataSetMetadata.getUUID());
+
+            clientDataSetManager.registerDataSet(dataSet);
+            notification.fire(new NotificationEvent("Data set successfully loaded.", SUCCESS));
+
+            for (DataSetLookupListenerPair pair : listenerList) {
+                DataSet result = clientDataSetManager.lookupDataSet(pair.lookup);
+                pair.listener.callback(result);
+            }
+        }
+
+        public void notFound() {
+            pushRequestMap.remove(dataSetMetadata.getUUID());
+
+            notification.fire(new NotificationEvent("Data set NOT found in server.", ERROR));
+            for (DataSetLookupListenerPair pair : listenerList) {
+                pair.listener.notFound();
+            }
+        }
+    }
+
+    private class DataSetLookupListenerPair {
+
+        DataSetLookup lookup;
+        DataSetReadyCallback listener;
+
+        private DataSetLookupListenerPair(DataSetLookup lookup, DataSetReadyCallback listener) {
+            this.lookup = lookup;
+            this.listener = listener;
         }
     }
 }

@@ -25,7 +25,7 @@ public interface DataSetMetadata {
     /**
      * The unique identifier for this data set.
      */
-    String getUID();
+    String getUUID();
 
     /**
      * Get the number of rows.

@@ -26,7 +26,7 @@ import org.jboss.errai.common.client.api.annotations.Portable;
 @Portable
 public class DataSetMetadataImpl implements DataSetMetadata {
 
-    protected String uid;
+    protected String uuid;
     protected int numberOfRows;
     protected int numberOfColumns;
     protected List<String> columnIds = new ArrayList<String>();
@@ -37,7 +37,7 @@ public class DataSetMetadataImpl implements DataSetMetadata {
     }
 
     public DataSetMetadataImpl(DataSetImpl dataSet) {
-        this.uid = dataSet.uuid;
+        this.uuid = dataSet.uuid;
         this.numberOfRows = dataSet.getRowCount();
         this.estimatedSize = (int) dataSet.getEstimatedSize() / 1000;
         this.numberOfColumns = dataSet.getColumns().size();
@@ -47,8 +47,8 @@ public class DataSetMetadataImpl implements DataSetMetadata {
         }
     }
 
-    public String getUID() {
-        return uid;
+    public String getUUID() {
+        return uuid;
     }
 
     public int getNumberOfRows() {
