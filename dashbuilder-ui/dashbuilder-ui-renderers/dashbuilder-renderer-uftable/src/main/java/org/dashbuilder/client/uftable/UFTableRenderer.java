@@ -1,6 +1,5 @@
 package org.dashbuilder.client.uftable;
 
-import java.util.UUID;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Named;
 
