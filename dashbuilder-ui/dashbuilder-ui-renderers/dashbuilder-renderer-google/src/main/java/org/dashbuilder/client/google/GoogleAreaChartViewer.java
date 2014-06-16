@@ -16,6 +16,8 @@
 package org.dashbuilder.client.google;
 
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.Panel;
+import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.googlecode.gwt.charts.client.ChartPackage;
@@ -28,6 +30,7 @@ import org.dashbuilder.model.displayer.AreaChartDisplayer;
 public class GoogleAreaChartViewer extends GoogleXAxisChartViewer<AreaChartDisplayer> {
 
     protected AreaChart chart;
+    protected Panel filterPanel;
 
     @Override
     public ChartPackage getPackage() {
@@ -47,23 +50,27 @@ public class GoogleAreaChartViewer extends GoogleXAxisChartViewer<AreaChartDispl
 
         VerticalPanel verticalPanel = new VerticalPanel();
         verticalPanel.add(titleHtml);
+        verticalPanel.add(filterPanel = new SimplePanel());
         verticalPanel.add(chart);
         return verticalPanel;
     }
 
     protected void updateVisualization() {
+        filterPanel.clear();
+        Widget filterReset = createCurrentSelectionWidget();
+        if (filterReset != null) filterPanel.add(filterReset);
+
         chart.draw(createTable(), createOptions());
     }
 
     private AreaChartOptions createOptions() {
         Animation anim = Animation.create();
-        anim.setDuration(500);
+        anim.setDuration(700);
         anim.setEasing(AnimationEasing.IN_AND_OUT);
 
         AreaChartOptions options = AreaChartOptions.create();
         options.setWidth(dataDisplayer.getWidth());
         options.setHeight(dataDisplayer.getHeight());
-        options.setColors(createColorArray(googleTable));
         options.setAnimation(anim);
         return options;
     }

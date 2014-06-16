@@ -18,7 +18,13 @@ package org.dashbuilder.client.google;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.github.gwtbootstrap.client.ui.Label;
 import com.google.gwt.core.client.JsArray;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.ui.Anchor;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Widget;
 import com.googlecode.gwt.charts.client.DataTable;
 import com.googlecode.gwt.charts.client.Selection;
 import com.googlecode.gwt.charts.client.corechart.CoreChartWidget;
@@ -110,5 +116,26 @@ public abstract class GoogleXAxisChartViewer<T extends XAxisChartDisplayer> exte
                 resetGroupIntervals(googleTable.getColumnId(0));
             }
         }
+    }
+
+    protected Widget createCurrentSelectionWidget() {
+        if (!intervalSelectedList.isEmpty()) {
+            HorizontalPanel panel = new HorizontalPanel();
+            panel.getElement().setAttribute("cellpadding", "2");
+            for (String interval : intervalSelectedList) {
+                panel.add(new Label(interval));
+            }
+            Anchor anchor = new Anchor("reset");
+            panel.add(anchor);
+            anchor.addClickHandler(new ClickHandler() {
+                public void onClick(ClickEvent event) {
+                    intervalSelectedList.clear();
+                    resetGroupIntervals(googleTable.getColumnId(0));
+                    updateVisualization();
+                }
+            });
+            return panel;
+        }
+        return null;
     }
 }

@@ -16,6 +16,8 @@
 package org.dashbuilder.client.google;
 
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.Panel;
+import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.googlecode.gwt.charts.client.ChartPackage;
@@ -26,6 +28,7 @@ import org.dashbuilder.model.displayer.PieChartDisplayer;
 public class GooglePieChartViewer extends GoogleXAxisChartViewer<PieChartDisplayer> {
 
     private PieChart chart;
+    protected Panel filterPanel;
 
     @Override
     public ChartPackage getPackage() {
@@ -45,11 +48,16 @@ public class GooglePieChartViewer extends GoogleXAxisChartViewer<PieChartDisplay
 
         VerticalPanel verticalPanel = new VerticalPanel();
         verticalPanel.add(titleHtml);
+        verticalPanel.add(filterPanel = new SimplePanel());
         verticalPanel.add(chart);
         return verticalPanel;
     }
 
     protected void updateVisualization() {
+        filterPanel.clear();
+        Widget filterReset = createCurrentSelectionWidget();
+        if (filterReset != null) filterPanel.add(filterReset);
+
         chart.draw(createTable(), createOptions());
     }
 
