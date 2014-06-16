@@ -18,21 +18,28 @@ package org.dashbuilder.client.google;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.visualization.client.visualizations.AreaChart;
-import com.google.gwt.visualization.client.visualizations.AreaChart.Options;
+import com.googlecode.gwt.charts.client.ChartPackage;
+import com.googlecode.gwt.charts.client.corechart.AreaChart;
+import com.googlecode.gwt.charts.client.corechart.AreaChartOptions;
+import com.googlecode.gwt.charts.client.options.Animation;
+import com.googlecode.gwt.charts.client.options.AnimationEasing;
 import org.dashbuilder.model.displayer.AreaChartDisplayer;
 
 public class GoogleAreaChartViewer extends GoogleXAxisChartViewer<AreaChartDisplayer> {
 
+    protected AreaChart chart;
+
     @Override
-    public String getPackage() {
-        return AreaChart.PACKAGE;
+    public ChartPackage getPackage() {
+        return ChartPackage.CORECHART;
     }
 
     @Override
-    public Widget createVisualization() {
-        AreaChart chart = new AreaChart(createTable(), createOptions());
+    protected Widget createVisualization() {
+        chart = new AreaChart();
         chart.addSelectHandler(createSelectHandler(chart));
+        chart.draw(createTable(), createOptions());
+
         HTML titleHtml = new HTML();
         if (dataDisplayer.isTitleVisible()) {
             titleHtml.setText(dataDisplayer.getTitle());
@@ -41,14 +48,23 @@ public class GoogleAreaChartViewer extends GoogleXAxisChartViewer<AreaChartDispl
         VerticalPanel verticalPanel = new VerticalPanel();
         verticalPanel.add(titleHtml);
         verticalPanel.add(chart);
-        googleViewer = chart;
         return verticalPanel;
     }
 
-    private Options createOptions() {
-        Options options = Options.create();
+    protected void updateVisualization() {
+        chart.draw(createTable(), createOptions());
+    }
+
+    private AreaChartOptions createOptions() {
+        Animation anim = Animation.create();
+        anim.setDuration(500);
+        anim.setEasing(AnimationEasing.IN_AND_OUT);
+
+        AreaChartOptions options = AreaChartOptions.create();
         options.setWidth(dataDisplayer.getWidth());
         options.setHeight(dataDisplayer.getHeight());
+        options.setColors(createColorArray(googleTable));
+        options.setAnimation(anim);
         return options;
     }
 }

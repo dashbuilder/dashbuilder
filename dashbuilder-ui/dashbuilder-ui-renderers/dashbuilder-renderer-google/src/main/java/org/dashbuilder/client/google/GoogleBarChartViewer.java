@@ -18,33 +18,36 @@ package org.dashbuilder.client.google;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.visualization.client.visualizations.BarChart;
-import com.google.gwt.visualization.client.visualizations.ColumnChart;
+import com.googlecode.gwt.charts.client.ChartPackage;
+import com.googlecode.gwt.charts.client.corechart.BarChart;
+import com.googlecode.gwt.charts.client.corechart.BarChartOptions;
+import com.googlecode.gwt.charts.client.corechart.ColumnChart;
+import com.googlecode.gwt.charts.client.corechart.ColumnChartOptions;
+import com.googlecode.gwt.charts.client.corechart.CoreChartWidget;
+import com.googlecode.gwt.charts.client.options.Animation;
+import com.googlecode.gwt.charts.client.options.AnimationEasing;
+import com.googlecode.gwt.charts.client.options.Bar;
+import com.googlecode.gwt.charts.client.options.CoreOptions;
 import org.dashbuilder.model.displayer.BarChartDisplayer;
 
 public class GoogleBarChartViewer extends GoogleXAxisChartViewer<BarChartDisplayer> {
 
+    protected CoreChartWidget chart;
+
     @Override
-    public String getPackage() {
-        return BarChart.PACKAGE;
+    public ChartPackage getPackage() {
+        return ChartPackage.CORECHART;
     }
 
     @Override
     public Widget createVisualization() {
 
-        Widget chart = null;
+        if (dataDisplayer.isHorizontal()) chart = new BarChart();
+        else chart = new ColumnChart();
 
-        if (dataDisplayer.isHorizontal()) {
-            BarChart bchart = new BarChart(createTable(), createBarOptions());
-            bchart.addSelectHandler(createSelectHandler(bchart));
-            chart = bchart;
-            googleViewer = bchart;
-        } else {
-            ColumnChart cchart = new ColumnChart(createTable(), createColumnOptions());
-            cchart.addSelectHandler(createSelectHandler(cchart));
-            chart = cchart;
-            googleViewer = cchart;
-        }
+        chart.addSelectHandler(createSelectHandler(chart));
+        chart.draw(createTable(), createOptions());
+
 
         HTML titleHtml = new HTML();
         if (dataDisplayer.isTitleVisible()) {
@@ -57,23 +60,31 @@ public class GoogleBarChartViewer extends GoogleXAxisChartViewer<BarChartDisplay
         return verticalPanel;
     }
 
-    private BarChart.Options createBarOptions() {
-        BarChart.Options options = BarChart.Options.create();
-        options.setWidth(dataDisplayer.getWidth());
-        options.setHeight(dataDisplayer.getHeight());
-        options.set3D(dataDisplayer.is3d());
-        options.setColors(createColorArray(googleTable));
-        googleOptions = options;
-        return options;
+
+    protected void updateVisualization() {
+        chart.draw(createTable(), createOptions());
     }
 
-    private ColumnChart.Options createColumnOptions() {
-        ColumnChart.Options options = ColumnChart.Options.create();
-        options.setWidth(dataDisplayer.getWidth());
-        options.setHeight(dataDisplayer.getHeight());
-        options.set3D(dataDisplayer.is3d());
-        options.setColors(createColorArray(googleTable));
-        googleOptions = options;
-        return options;
+    private CoreOptions createOptions() {
+        Animation anim = Animation.create();
+        anim.setDuration(500);
+        anim.setEasing(AnimationEasing.IN_AND_OUT);
+
+        if (dataDisplayer.isHorizontal()) {
+            BarChartOptions options = BarChartOptions.create();
+            options.setWidth(dataDisplayer.getWidth());
+            options.setHeight(dataDisplayer.getHeight());
+            options.setColors(createColorArray(googleTable));
+            options.setAnimation(anim);
+            return options;
+        }
+        else {
+            ColumnChartOptions options = ColumnChartOptions.create();
+            options.setWidth(dataDisplayer.getWidth());
+            options.setHeight(dataDisplayer.getHeight());
+            options.setColors(createColorArray(googleTable));
+            options.setAnimation(anim);
+            return options;
+        }
     }
 }

@@ -18,23 +18,27 @@ package org.dashbuilder.client.google;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.visualization.client.visualizations.LineChart.Options;
-import com.google.gwt.visualization.client.visualizations.LineChart;
-import org.dashbuilder.model.displayer.AbstractChartDisplayer;
+import com.googlecode.gwt.charts.client.ChartPackage;
+import com.googlecode.gwt.charts.client.corechart.LineChart;
+import com.googlecode.gwt.charts.client.corechart.LineChartOptions;
+import com.googlecode.gwt.charts.client.options.Animation;
+import com.googlecode.gwt.charts.client.options.AnimationEasing;
 import org.dashbuilder.model.displayer.LineChartDisplayer;
-import org.dashbuilder.model.displayer.XAxisChartDisplayer;
 
 public class GoogleLineChartViewer extends GoogleXAxisChartViewer<LineChartDisplayer> {
 
+    private LineChart chart;
+
     @Override
-    public String getPackage() {
-        return LineChart.PACKAGE;
+    public ChartPackage getPackage() {
+        return ChartPackage.CORECHART;
     }
 
     @Override
     public Widget createVisualization() {
-        LineChart chart = new LineChart(createTable(), createOptions());
+        chart = new LineChart();
         chart.addSelectHandler(createSelectHandler(chart));
+        chart.draw(createTable(), createOptions());
 
         HTML titleHtml = new HTML();
         if (dataDisplayer.isTitleVisible()) {
@@ -44,14 +48,22 @@ public class GoogleLineChartViewer extends GoogleXAxisChartViewer<LineChartDispl
         VerticalPanel verticalPanel = new VerticalPanel();
         verticalPanel.add(titleHtml);
         verticalPanel.add(chart);
-        googleViewer = chart;
         return verticalPanel;
     }
 
-    private Options createOptions() {
-        Options options = Options.create();
+    protected void updateVisualization() {
+        chart.draw(createTable(), createOptions());
+    }
+
+    private LineChartOptions createOptions() {
+        Animation anim = Animation.create();
+        anim.setDuration(100);
+        anim.setEasing(AnimationEasing.IN_AND_OUT);
+
+        LineChartOptions options = LineChartOptions.create();
         options.setWidth(dataDisplayer.getWidth());
         options.setHeight(dataDisplayer.getHeight());
+        options.setAnimation(anim);
         return options;
     }
 }

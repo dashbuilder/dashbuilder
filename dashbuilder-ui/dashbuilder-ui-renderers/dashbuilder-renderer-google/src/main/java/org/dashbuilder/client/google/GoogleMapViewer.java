@@ -18,21 +18,25 @@ package org.dashbuilder.client.google;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.visualization.client.visualizations.GeoMap.Options;
-import com.google.gwt.visualization.client.visualizations.GeoMap;
+import com.googlecode.gwt.charts.client.ChartPackage;
+import com.googlecode.gwt.charts.client.geochart.GeoChart;
+import com.googlecode.gwt.charts.client.geochart.GeoChartOptions;
 import org.dashbuilder.model.displayer.MapChartDisplayer;
 
 public class GoogleMapViewer extends GoogleXAxisChartViewer<MapChartDisplayer> {
 
+    private GeoChart chart;
+
     @Override
-    public String getPackage() {
-        return GeoMap.PACKAGE;
+    public ChartPackage getPackage() {
+        return ChartPackage.GEOCHART;
     }
 
     @Override
     public Widget createVisualization() {
-        GeoMap chart = new GeoMap(createTable(), createOptions());
+        chart = new GeoChart();
         chart.addSelectHandler(createSelectHandler(chart));
+        chart.draw(createTable(), createOptions());
 
         HTML titleHtml = new HTML();
         if (dataDisplayer.isTitleVisible()) {
@@ -42,15 +46,17 @@ public class GoogleMapViewer extends GoogleXAxisChartViewer<MapChartDisplayer> {
         VerticalPanel verticalPanel = new VerticalPanel();
         verticalPanel.add(titleHtml);
         verticalPanel.add(chart);
-        googleViewer = chart;
         return verticalPanel;
     }
 
-    private Options createOptions() {
-        Options options = Options.create();
+    protected void updateVisualization() {
+        chart.draw(createTable(), createOptions());
+    }
+
+    private GeoChartOptions createOptions() {
+        GeoChartOptions options = GeoChartOptions.create();
         options.setWidth(dataDisplayer.getWidth());
         options.setHeight(dataDisplayer.getHeight());
-        options.setShowLegend(true);
         return options;
     }
 }

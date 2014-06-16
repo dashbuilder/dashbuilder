@@ -18,21 +18,25 @@ package org.dashbuilder.client.google;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.visualization.client.visualizations.PieChart;
-import com.google.gwt.visualization.client.visualizations.PieChart.Options;
+import com.googlecode.gwt.charts.client.ChartPackage;
+import com.googlecode.gwt.charts.client.corechart.PieChart;
+import com.googlecode.gwt.charts.client.corechart.PieChartOptions;
 import org.dashbuilder.model.displayer.PieChartDisplayer;
 
 public class GooglePieChartViewer extends GoogleXAxisChartViewer<PieChartDisplayer> {
 
+    private PieChart chart;
+
     @Override
-    public String getPackage() {
-        return PieChart.PACKAGE;
+    public ChartPackage getPackage() {
+        return ChartPackage.CORECHART;
     }
 
     @Override
     public Widget createVisualization() {
-        PieChart chart = new PieChart(createTable(), createOptions());
+        chart = new PieChart();
         chart.addSelectHandler(createSelectHandler(chart));
+        chart.draw(createTable(), createOptions());
 
         HTML titleHtml = new HTML();
         if (dataDisplayer.isTitleVisible()) {
@@ -42,17 +46,19 @@ public class GooglePieChartViewer extends GoogleXAxisChartViewer<PieChartDisplay
         VerticalPanel verticalPanel = new VerticalPanel();
         verticalPanel.add(titleHtml);
         verticalPanel.add(chart);
-        googleViewer = chart;
         return verticalPanel;
     }
 
-    private Options createOptions() {
-        Options options = Options.create();
-        options.set3D(true);
+    protected void updateVisualization() {
+        chart.draw(createTable(), createOptions());
+    }
+
+    private PieChartOptions createOptions() {
+        PieChartOptions options = PieChartOptions.create();
         options.setWidth(dataDisplayer.getWidth());
         options.setHeight(dataDisplayer.getHeight());
         options.setColors(createColorArray(googleTable));
-        googleOptions = options;
+        options.setIs3D(true);
         return options;
     }
 }

@@ -25,10 +25,13 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.*;
-import com.google.gwt.visualization.client.DataTable;
-import com.google.gwt.visualization.client.events.SortHandler;
-import com.google.gwt.visualization.client.visualizations.Table;
-import com.google.gwt.visualization.client.visualizations.Table.Options;
+import com.googlecode.gwt.charts.client.ChartPackage;
+import com.googlecode.gwt.charts.client.DataTable;
+import com.googlecode.gwt.charts.client.event.SortEvent;
+import com.googlecode.gwt.charts.client.event.SortHandler;
+import com.googlecode.gwt.charts.client.options.TableSort;
+import com.googlecode.gwt.charts.client.table.Table;
+import com.googlecode.gwt.charts.client.table.TableOptions;
 import org.dashbuilder.model.dataset.sort.SortOrder;
 import org.dashbuilder.model.displayer.TableDisplayer;
 
@@ -42,13 +45,27 @@ public class GoogleTableViewer extends GoogleViewer<TableDisplayer> {
     protected boolean showTotalRowsHint = true;
     protected boolean showTotalPagesHint = true;
 
-    HorizontalPanel pagerPanel = new HorizontalPanel();
+    private Table table;
+    private HorizontalPanel pagerPanel = new HorizontalPanel();
     private SortInfo sortInfo = new SortInfo();
     final private PagerInterval pagerInterval = new PagerInterval();
 
+    public void setShowTotalPagesHint(boolean showTotalPagesHint) {
+        this.showTotalPagesHint = showTotalPagesHint;
+    }
+
+    public void setShowTotalRowsHint(boolean showTotalRowsHint) {
+        this.showTotalRowsHint = showTotalRowsHint;
+    }
+
     @Override
-    public String getPackage() {
-        return Table.PACKAGE;
+    public ChartPackage getPackage() {
+        return ChartPackage.TABLE;
+    }
+
+    @Override
+    protected void beforeDataSetLookup() {
+        this.setPageLimits();
     }
 
     @Override
@@ -63,7 +80,7 @@ public class GoogleTableViewer extends GoogleViewer<TableDisplayer> {
         pagerInterval.setNumberOfPages(numberOfPages);
 
         final DataTable dataTable = createTable();
-        Table table = new Table( dataTable, createOptions() );
+        table = new Table();
         table.addSortHandler( new SortHandler() {
             @Override public void onSort( SortEvent sortEvent ) {
                 String columnId = dataTable.getColumnId(sortEvent.getColumn());
@@ -72,6 +89,7 @@ public class GoogleTableViewer extends GoogleViewer<TableDisplayer> {
             }
         } );
 
+        table.draw(dataTable, createOptions());
         HTML titleHtml = new HTML();
         if (dataDisplayer.isTitleVisible()) {
             titleHtml.setText(dataDisplayer.getTitle());
@@ -82,30 +100,34 @@ public class GoogleTableViewer extends GoogleViewer<TableDisplayer> {
         verticalPanel.add(table);
         verticalPanel.add(pagerPanel);
         createTablePager();
-        googleViewer = table;
         return verticalPanel;
-    }
-
-    @Override
-    protected void beforeDataSetLookup() {
-        this.setPageLimits();
     }
 
     @Override
     protected void updateVisualization() {
         this.createTablePager();
-        // TODO: check why is null
-        if (googleViewer != null) {
-            googleViewer.draw(createTable(), googleOptions);
-        }
+        table.draw(createTable(), createOptions());
     }
 
-    public void setShowTotalPagesHint(boolean showTotalPagesHint) {
-        this.showTotalPagesHint = showTotalPagesHint;
+    private void setPageLimits() {
+        // Draw only the data subset corresponding to the current page.
+        int pageSize = dataDisplayer.getPageSize();
+        int offset = (currentPage - 1) * pageSize;
+        dataSetHandler.limitDataSetRows(offset, pageSize);
     }
 
-    public void setShowTotalRowsHint(boolean showTotalRowsHint) {
-        this.showTotalRowsHint = showTotalRowsHint;
+    private void gotoPage(int pageNumber) {
+        pagerInterval.setCurrentPage(pageNumber);
+        currentPage = pageNumber;
+        super.redraw();
+    }
+
+    private TableOptions createOptions() {
+        TableOptions options = TableOptions.create();
+        options.setSort(TableSort.EVENT);
+        options.setPageSize(dataDisplayer.getPageSize());
+        options.setShowRowNumber(false);
+        return options;
     }
 
     protected void createTablePager() {
@@ -221,27 +243,6 @@ public class GoogleTableViewer extends GoogleViewer<TableDisplayer> {
             if ( both ) pagerPanel.add( new SpacerWidget() );
             if ( totalRows != null ) pagerPanel.add( totalRows );
         }
-    }
-
-    private void setPageLimits() {
-        // Draw only the data subset corresponding to the current page.
-        int pageSize = dataDisplayer.getPageSize();
-        int offset = (currentPage - 1) * pageSize;
-        dataSetHandler.limitDataSetRows(offset, pageSize);
-    }
-
-    private void gotoPage(int pageNumber) {
-        pagerInterval.setCurrentPage(pageNumber);
-        currentPage = pageNumber;
-        this.redraw();
-    }
-
-    private Options createOptions() {
-        Options options = Options.create();
-        options.setSort( Options.Policy.EVENT );
-        options.setPageSize(dataDisplayer.getPageSize());
-        options.setShowRowNumber(false);
-        return options;
     }
 
     private class PagerInterval {

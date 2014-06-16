@@ -24,7 +24,8 @@ import javax.enterprise.event.Observes;
 import javax.inject.Named;
 
 import com.google.gwt.core.client.JsArrayString;
-import com.google.gwt.visualization.client.VisualizationUtils;
+import com.googlecode.gwt.charts.client.ChartLoader;
+import com.googlecode.gwt.charts.client.ChartPackage;
 import org.dashbuilder.client.displayer.RendererLibrary;
 import org.dashbuilder.client.displayer.DataViewer;
 import org.dashbuilder.model.displayer.DataDisplayer;
@@ -40,7 +41,7 @@ import org.uberfire.client.workbench.events.PerspectiveChange;
 public class GoogleRenderer implements RendererLibrary {
 
     private List<GoogleViewer> viewerList = new ArrayList<GoogleViewer>();
-    private Set<String> packageList = new HashSet<String>();
+    private Set<ChartPackage> packageList = new HashSet<ChartPackage>();
 
     public static final String UUID = "google";
 
@@ -80,23 +81,24 @@ public class GoogleRenderer implements RendererLibrary {
     }
 
     public void renderCharts() {
-        // Create a callback to be called when the visualization API has been loaded.
-        Runnable onLoadCallback = new Runnable() {
+        // Get the Google packages to load.
+        ChartPackage[] packageArray = new ChartPackage[packageList.size()];
+        int i = 0;
+        for (ChartPackage pkg : packageList) {
+            packageArray[i++] = pkg;
+        }
+        // Load the visualization API
+        ChartLoader chartLoader = new ChartLoader(packageArray);
+        chartLoader.loadApi(new Runnable() {
+
+            // Called when the visualization API has been loaded.
             public void run() {
                 for (GoogleViewer viewer : viewerList) {
                     viewer.ready();
                 }
                 viewerList.clear();
             }
-
-        };
-
-        // Load the visualization api, passing the onLoadCallback to be called when loading is done.
-        JsArrayString packageArray = JsArrayString.createArray().cast();
-        for (String pkg : packageList) {
-            packageArray.push(pkg);
-        }
-        VisualizationUtils.loadVisualizationApi("1", onLoadCallback, packageArray);
+        });
     }
 
 }

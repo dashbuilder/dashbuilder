@@ -18,20 +18,26 @@ package org.dashbuilder.client.google;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.visualization.client.visualizations.Gauge;
-import com.google.gwt.visualization.client.visualizations.Gauge.Options;
+import com.googlecode.gwt.charts.client.ChartPackage;
+import com.googlecode.gwt.charts.client.gauge.Gauge;
+import com.googlecode.gwt.charts.client.gauge.GaugeOptions;
+import com.googlecode.gwt.charts.client.options.Animation;
+import com.googlecode.gwt.charts.client.options.AnimationEasing;
 import org.dashbuilder.model.displayer.MeterChartDisplayer;
 
 public class GoogleMeterChartViewer extends GoogleViewer<MeterChartDisplayer> {
 
+    private Gauge chart;
+
     @Override
-    public String getPackage() {
-        return Gauge.PACKAGE;
+    public ChartPackage getPackage() {
+        return ChartPackage.GAUGE;
     }
 
     @Override
     public Widget createVisualization() {
-        Gauge chart = new Gauge(createTable(), createOptions());
+        chart = new Gauge();
+        chart.draw(createTable(), createOptions());
 
         HTML titleHtml = new HTML();
         if (dataDisplayer.isTitleVisible()) {
@@ -41,19 +47,30 @@ public class GoogleMeterChartViewer extends GoogleViewer<MeterChartDisplayer> {
         VerticalPanel verticalPanel = new VerticalPanel();
         verticalPanel.add(titleHtml);
         verticalPanel.add(chart);
-        googleViewer = chart;
         return verticalPanel;
     }
 
-    private Options createOptions() {
-        Options options = Options.create();
+    protected void updateVisualization() {
+        chart.draw(createTable(), createOptions());
+    }
+
+    private GaugeOptions createOptions() {
+        Animation anim = Animation.create();
+        anim.setDuration(500);
+        anim.setEasing(AnimationEasing.IN_AND_OUT);
+
+        GaugeOptions options = GaugeOptions.create();
         options.setWidth(dataDisplayer.getWidth());
         options.setHeight(dataDisplayer.getHeight());
-        options.setSize(dataDisplayer.getWidth(), dataDisplayer.getHeight());
-        options.setGaugeRange((int) dataDisplayer.getMeterStart(), (int) dataDisplayer.getMeterEnd());
-        options.setGreenRange((int) dataDisplayer.getMeterStart(), (int) dataDisplayer.getMeterWarning());
-        options.setYellowRange((int) dataDisplayer.getMeterWarning(), (int) dataDisplayer.getMeterCritical());
-        options.setRedRange((int) dataDisplayer.getMeterCritical(), (int) dataDisplayer.getMeterEnd());
+        options.setMin(dataDisplayer.getMeterStart());
+        options.setMax(dataDisplayer.getMeterEnd());
+        options.setGreenFrom(dataDisplayer.getMeterStart());
+        options.setGreenTo(dataDisplayer.getMeterWarning());
+        options.setYellowFrom(dataDisplayer.getMeterWarning());
+        options.setYellowTo(dataDisplayer.getMeterCritical());
+        options.setRedFrom(dataDisplayer.getMeterCritical());
+        options.setRedTo(dataDisplayer.getMeterEnd());
+        options.setAnimation(anim);
         return options;
     }
 }

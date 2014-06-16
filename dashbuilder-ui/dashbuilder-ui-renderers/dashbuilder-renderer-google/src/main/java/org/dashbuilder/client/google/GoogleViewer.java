@@ -23,10 +23,10 @@ import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.visualization.client.AbstractDataTable;
-import com.google.gwt.visualization.client.CommonOptions;
-import com.google.gwt.visualization.client.DataTable;
-import com.google.gwt.visualization.client.visualizations.Visualization;
+import com.googlecode.gwt.charts.client.ChartPackage;
+import com.googlecode.gwt.charts.client.ChartWidget;
+import com.googlecode.gwt.charts.client.DataTable;
+import com.googlecode.gwt.charts.client.options.CoreOptions;
 import org.dashbuilder.client.dataset.DataSetReadyCallback;
 import org.dashbuilder.client.displayer.AbstractDataViewer;
 import org.dashbuilder.model.dataset.ColumnType;
@@ -44,8 +44,6 @@ public abstract class GoogleViewer<T extends DataDisplayer> extends AbstractData
     protected Label label = new Label();
 
     protected DataSet dataSet;
-    protected Visualization googleViewer = null;
-    protected CommonOptions googleOptions = null;
     protected DataTable googleTable = null;
 
     public GoogleViewer() {
@@ -121,10 +119,9 @@ public abstract class GoogleViewer<T extends DataDisplayer> extends AbstractData
     }
 
     /**
-     * Call back method invoked just before the data set lookup is executed.
+     * Get the Google Visualization package this viewer requires.
      */
-    protected void beforeDataSetLookup() {
-    }
+    protected abstract ChartPackage getPackage();
 
     /**
      * Create the widget used by concrete Google viewer implementation.
@@ -134,14 +131,13 @@ public abstract class GoogleViewer<T extends DataDisplayer> extends AbstractData
     /**
      * Update the widget used by concrete Google viewer implementation.
      */
-    protected void updateVisualization() {
-        googleViewer.draw(createTable(), googleOptions);
-    }
+    protected abstract void updateVisualization();
 
     /**
-     * Get the Google Visualization package this viewer requires.
+     * Call back method invoked just before the data set lookup is executed.
      */
-    public abstract String getPackage();
+    protected void beforeDataSetLookup() {
+    }
 
     /**
      * Clear the current display and show a notification message.
@@ -159,21 +155,25 @@ public abstract class GoogleViewer<T extends DataDisplayer> extends AbstractData
     public DataTable createTable() {
         List<DataDisplayerColumn> displayerColumns = dataDisplayer.getColumnList();
         if (displayerColumns.isEmpty()) {
-            return googleTable = createTableFromDataSet();
+            return googleTable = createTableFromDataSet(googleTable);
         }
-        return googleTable = createTableFromDisplayer();
+        return googleTable = createTableFromDisplayer(googleTable);
     }
 
-    public DataTable createTableFromDataSet() {
-        DataTable gTable = DataTable.create();
-        gTable.addRows(dataSet.getRowCount());
+    protected DataTable createTableFromDataSet(DataTable table) {
+        DataTable gTable = table;
+        if (table == null) gTable = DataTable.create();
+        else table.removeRows(0, dataSet.getRowCount());
 
+        gTable.addRows(dataSet.getRowCount());
         List<DataColumn> columns = dataSet.getColumns();
         for (int i = 0; i < columns.size(); i++) {
             DataColumn dataColumn = columns.get(i);
             List columnValues = dataColumn.getValues();
             ColumnType columnType = dataColumn.getColumnType();
-            gTable.addColumn(getColumnType(dataColumn), dataColumn.getId(), dataColumn.getId());
+            if (table == null) {
+                gTable.addColumn(getColumnType(dataColumn), dataColumn.getId(), dataColumn.getId());
+            }
             for (int j = 0; j < columnValues.size(); j++) {
                 Object value = columnValues.get(j);
                 setTableValue(gTable, columnType, value, j, i);
@@ -182,8 +182,11 @@ public abstract class GoogleViewer<T extends DataDisplayer> extends AbstractData
         return gTable;
     }
 
-    public DataTable createTableFromDisplayer() {
-        DataTable gTable = DataTable.create();
+    public DataTable createTableFromDisplayer(DataTable table) {
+        DataTable gTable = table;
+        if (table == null) gTable = DataTable.create();
+        else table.removeRows(0, dataSet.getRowCount());
+
         gTable.addRows(dataSet.getRowCount());
         int columnIndex = 0;
 
@@ -199,7 +202,9 @@ public abstract class GoogleViewer<T extends DataDisplayer> extends AbstractData
 
             ColumnType columnType = dataColumn.getColumnType();
             List columnValues = dataColumn.getValues();
-            gTable.addColumn(getColumnType(dataColumn), displayerColumn.getDisplayName(), dataColumn.getId());
+            if (table == null) {
+                gTable.addColumn(getColumnType(dataColumn), displayerColumn.getDisplayName(), dataColumn.getId());
+            }
             for (int j = 0; j < columnValues.size(); j++) {
                 Object value = columnValues.get(j);
                 setTableValue(gTable, columnType, value, j, i);
@@ -227,11 +232,11 @@ public abstract class GoogleViewer<T extends DataDisplayer> extends AbstractData
         }
     }
 
-    public AbstractDataTable.ColumnType getColumnType(DataColumn dataColumn) {
+    public com.googlecode.gwt.charts.client.ColumnType getColumnType(DataColumn dataColumn) {
         ColumnType type = dataColumn.getColumnType();
-        if (ColumnType.LABEL.equals(type)) return AbstractDataTable.ColumnType.STRING;
-        if (ColumnType.NUMBER.equals(type)) return AbstractDataTable.ColumnType.NUMBER;
-        if (ColumnType.DATE.equals(type)) return AbstractDataTable.ColumnType.DATETIME;
-        return AbstractDataTable.ColumnType.STRING;
+        if (ColumnType.LABEL.equals(type)) return com.googlecode.gwt.charts.client.ColumnType.STRING;
+        if (ColumnType.NUMBER.equals(type)) return com.googlecode.gwt.charts.client.ColumnType.NUMBER;
+        if (ColumnType.DATE.equals(type)) return com.googlecode.gwt.charts.client.ColumnType.DATETIME;
+        return com.googlecode.gwt.charts.client.ColumnType.STRING;
     }
 }

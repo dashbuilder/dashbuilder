@@ -5,7 +5,7 @@
   <inherits name="org.dashbuilder.ClientCommons"/>
   <inherits name="org.dashbuilder.DataViewerClient"/>
 
-  <inherits name='com.google.gwt.visualization.Visualization'/>
+  <inherits name="com.googlecode.gwt.charts.Charts"/>
 
   <inherits name="org.uberfire.UberfireClientAll"/>
 
