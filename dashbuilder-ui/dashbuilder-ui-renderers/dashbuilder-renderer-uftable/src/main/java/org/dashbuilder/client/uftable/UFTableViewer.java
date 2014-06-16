@@ -25,9 +25,9 @@ import org.uberfire.client.tables.PagedTable;
 public class UFTableViewer extends AbstractDataViewer<org.dashbuilder.model.displayer.TableDisplayer> {
 
     protected int pageSize = 20;
-    protected int currentPage = 1;
     protected int numberOfRows = 0;
-    protected int numberOfPages = 1;
+    protected int dataSetLowerLimit = 0;
+    protected int dataSetUpperLimit = 0;
 
     protected boolean drawn = false;
 
@@ -36,7 +36,7 @@ public class UFTableViewer extends AbstractDataViewer<org.dashbuilder.model.disp
 
     protected DataSet dataSet;
 
-    private UFTableDataProvider dataProvider = new UFTableDataProvider();
+    protected UFTableDataProvider dataProvider = new UFTableDataProvider(this);
 
     public UFTableViewer() {
         initWidget(panel);
@@ -48,24 +48,26 @@ public class UFTableViewer extends AbstractDataViewer<org.dashbuilder.model.disp
 
             if (dataDisplayer == null) {
                 displayMessage("ERROR: DataDisplayer property not set");
-            }
-            else if (dataSetHandler == null) {
+            } else if (dataSetHandler == null) {
                 displayMessage("ERROR: DataSetHandler property not set");
-            }
-            else {
+            } else {
                 try {
                     displayMessage("Initializing '" + dataDisplayer.getTitle() + "'...");
-                    dataSetHandler.lookupDataSet(new DataSetReadyCallback() {
-                        public void callback(DataSet result) {
-                            dataSet = result;
-                            Widget w = createWidget();
-                            panel.clear();
-                            panel.add(w);
-                        }
-                        public void notFound() {
-                            displayMessage("ERROR: Data set not found.");
-                        }
-                    });
+                    lookupDataSet(
+                            0,
+                            pageSize,
+                            new DataSetReadyCallback() {
+                                public void callback(DataSet result) {
+                                    Widget w = createWidget();
+                                    panel.clear();
+                                    panel.add(w);
+                                }
+
+                                public void notFound() {
+                                    displayMessage("ERROR: Data set not found.");
+                                }
+                            }
+                    );
                 } catch (Exception e) {
                     displayMessage("ERROR: " + e.getMessage());
                 }
@@ -77,6 +79,7 @@ public class UFTableViewer extends AbstractDataViewer<org.dashbuilder.model.disp
      * Just reload the data set and make the current google Viewer to redraw.
      */
     public void redraw() {
+        return;
     }
 
     /**
@@ -88,55 +91,55 @@ public class UFTableViewer extends AbstractDataViewer<org.dashbuilder.model.disp
         label.setText(msg);
     }
 
-    public PagedTable createUFTable() {
-        PagedTable ufPagedTable = new PagedTable( pageSize );
-        ufPagedTable.setRowCount( dataSetHandler.getDataSetMetadata().getNumberOfRows(), true );
-        ufPagedTable.setHeight( Window.getClientHeight() - this.getAbsoluteTop() + "px");
-        ufPagedTable.setWidth( Window.getClientWidth() - (this.getAbsoluteLeft() + this.getOffsetWidth() ) + "px" );
+    protected PagedTable createUFTable() {
+        PagedTable ufPagedTable = new PagedTable(pageSize);
+        ufPagedTable.setRowCount(numberOfRows, true);
+        ufPagedTable.setHeight(Window.getClientHeight() - this.getAbsoluteTop() + "px");
+        ufPagedTable.setWidth(Window.getClientWidth() - (this.getAbsoluteLeft() + this.getOffsetWidth()) + "px");
         ufPagedTable.setEmptyTableCaption("No data available");
 
         List<DataColumn> columns = dataSet.getColumns();
         for (int i = 0; i < columns.size(); i++) {
-            final _Integer colNum = new _Integer( i );
+            final _Integer colNum = new _Integer(i);
             DataColumn dataColumn = columns.get(i);
             ColumnType columnType = dataColumn.getColumnType();
 
-            switch ( columnType ) {
+            switch (columnType) {
                 case LABEL:
                     ufPagedTable.addColumn(
-                            new Column<UFTableRow, String>( new TextCell() ) {
+                            new Column<UFTableRow, String>(new TextCell()) {
                                 @Override
                                 public String getValue(UFTableRow row) {
-                                    Object value = dataSet.getValueAt( row.getRowNumber(), colNum.getColNum() );
+                                    Object value = dataSet.getValueAt(row.getRowNumber(), colNum.getColNum());
                                     return value.toString();
                                 }
                             },
-                            dataColumn.getId() );
+                            dataColumn.getId());
                     break;
 
                 case NUMBER:
                     ufPagedTable.addColumn(
-                            new Column<UFTableRow, Number>( new NumberCell() ) {
+                            new Column<UFTableRow, Number>(new NumberCell()) {
                                 @Override
                                 public Number getValue(UFTableRow row) {
-                                    return (Number) dataSet.getValueAt( row.getRowNumber(), colNum.getColNum() );
+                                    return (Number) dataSet.getValueAt(row.getRowNumber(), colNum.getColNum());
                                 }
                             },
-                            dataColumn.getId() );
+                            dataColumn.getId());
                     break;
 
                 case DATE:
                     ufPagedTable.addColumn(
-                            new Column<UFTableRow, Date>( new DateCell() ) {
+                            new Column<UFTableRow, Date>(new DateCell()) {
                                 @Override
                                 public Date getValue(UFTableRow row) {
-                                    return (Date) dataSet.getValueAt( row.getRowNumber(), colNum.getColNum() );
+                                    return (Date) dataSet.getValueAt(row.getRowNumber(), colNum.getColNum());
                                 }
                             },
-                            dataColumn.getId() );
+                            dataColumn.getId());
                     break;
 
-                default:;
+                default:
             }
         }
         return ufPagedTable;
@@ -145,13 +148,9 @@ public class UFTableViewer extends AbstractDataViewer<org.dashbuilder.model.disp
     protected Widget createWidget() {
         pageSize = dataDisplayer.getPageSize();
         numberOfRows = dataSetHandler.getDataSetMetadata().getNumberOfRows();
-        numberOfPages = ((numberOfRows - 1) / pageSize) + 1;
-        if (currentPage > numberOfPages) {
-            currentPage = 1;
-        }
 
         PagedTable<UFTableRow> table = createUFTable();
-        dataProvider.addDataDisplay( table );
+        dataProvider.addDataDisplay(table);
 
         HTML titleHtml = new HTML();
         if (dataDisplayer.isTitleVisible()) {
@@ -160,13 +159,44 @@ public class UFTableViewer extends AbstractDataViewer<org.dashbuilder.model.disp
 
         VerticalPanel verticalPanel = new VerticalPanel();
         verticalPanel.add(titleHtml);
-        verticalPanel.add( table );
+        verticalPanel.add(table);
         return verticalPanel;
+    }
+
+    protected void lookupDataSet(int lowerLimit, int upperLimit, final DataSetReadyCallback callback) {
+        // Avoid double lookup at the time of widget creation
+        if (dataSetLowerLimit != lowerLimit || dataSetUpperLimit != upperLimit) {
+            this.dataSetLowerLimit = lowerLimit;
+            this.dataSetUpperLimit = upperLimit;
+            dataSetHandler.limitDataSetRows(lowerLimit, upperLimit);
+            try {
+                dataSetHandler.lookupDataSet(
+                        // 'local' callback to set the new dataSet to the viewer
+                        new DataSetReadyCallback() {
+                            @Override
+                            public void callback(DataSet dataSet) {
+                                UFTableViewer.this.dataSet = dataSet;
+                                callback.callback(dataSet);
+                            }
+
+                            @Override
+                            public void notFound() {
+                                callback.notFound();
+                            }
+                        }
+                );
+            } catch (Exception e) {
+                displayMessage("ERROR: " + e.getMessage());
+            }
+        } else {
+            // If it was already looked up just return the dataSet
+            callback.callback(dataSet);
+        }
     }
 
     private final class _Integer {
         private int colNum;
-        private _Integer( int colNum ) {
+        private _Integer(int colNum) {
             this.colNum = colNum;
         }
         private int getColNum() {
