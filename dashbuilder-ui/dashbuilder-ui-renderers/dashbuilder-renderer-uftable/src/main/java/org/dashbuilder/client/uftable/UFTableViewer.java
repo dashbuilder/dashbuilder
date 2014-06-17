@@ -6,6 +6,8 @@ import java.util.List;
 import com.google.gwt.cell.client.DateCell;
 import com.google.gwt.cell.client.NumberCell;
 import com.google.gwt.cell.client.TextCell;
+import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -119,7 +121,7 @@ public class UFTableViewer extends AbstractDataViewer<org.dashbuilder.model.disp
 
                 case NUMBER:
                     ufPagedTable.addColumn(
-                            new Column<UFTableRow, Number>(new NumberCell()) {
+                            new Column<UFTableRow, Number>(new NumberCell(NumberFormat.getFormat("#.###"))) {
                                 @Override
                                 public Number getValue(UFTableRow row) {
                                     return (Number) dataSet.getValueAt(row.getRowNumber(), colNum.getColNum());
@@ -130,7 +132,7 @@ public class UFTableViewer extends AbstractDataViewer<org.dashbuilder.model.disp
 
                 case DATE:
                     ufPagedTable.addColumn(
-                            new Column<UFTableRow, Date>(new DateCell()) {
+                            new Column<UFTableRow, Date>(new DateCell(DateTimeFormat.getFormat(DateTimeFormat.PredefinedFormat.DATE_TIME_MEDIUM))) {
                                 @Override
                                 public Date getValue(UFTableRow row) {
                                     return (Date) dataSet.getValueAt(row.getRowNumber(), colNum.getColNum());
