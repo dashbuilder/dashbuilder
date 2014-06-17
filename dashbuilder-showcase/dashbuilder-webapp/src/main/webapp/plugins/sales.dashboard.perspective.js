@@ -23,10 +23,6 @@ $registerPerspective({
             },
             {
                 place: "KPIScreen",
-                parameters: {"kpi": "opps-by-prob", "token" : "0"}
-            },
-            {
-                place: "KPIScreen",
                 parameters: {"kpi": "opps-country-summary", "token" : "8"}
             }
         ],

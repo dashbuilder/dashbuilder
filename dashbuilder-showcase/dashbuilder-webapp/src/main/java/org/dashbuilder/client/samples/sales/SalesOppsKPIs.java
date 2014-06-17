@@ -43,7 +43,6 @@ public class SalesOppsKPIs {
     public static final String OPPS_BY_SALESMAN = "opps-by-salesman";
     public static final String OPPS_BY_PRODUCT = "opps-by-product";
     public static final String OPPS_BY_COUNTRY = "opps-by-country";
-    public static final String OPPS_BY_PROBABILITY = "opps-by-prob";
     public static final String OPPS_COUNTRY_SUMMARY = "opps-country-summary";
     public static final String OPPS_ALL = "opps-allopps-listing";
 
@@ -127,19 +126,6 @@ public class SalesOppsKPIs {
                 .column("Total amount")
                 .horizontal()
                 .buildKPI());
-
-        /*kpiList.add(KPIFactory.newBarChartKPI()
-                .uuid(OPPS_BY_PROBABILITY)
-                .dataset(SALES_OPPS)
-                .group(PROBABILITY)
-                .sum(AMOUNT)
-                .title("By Probability")
-                .titleVisible(false)
-                .margins(10, 50, 100, 100)
-                .column("Probability")
-                .column("Total amount")
-                .horizontal()
-                .buildKPI());*/
 
         kpiList.add(KPIFactory.newTableKPI()
                 .uuid(OPPS_COUNTRY_SUMMARY)
