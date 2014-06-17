@@ -29,4 +29,12 @@ public abstract class AbstractChartBuilder<T extends AbstractChartBuilder> exten
         ((AbstractChartDisplayer) dataDisplayer).setHeight(height);
         return (T) this;
     }
+
+    public T margins(int top, int bottom, int left, int right) {
+        ((AbstractChartDisplayer) dataDisplayer).setMarginTop(top);
+        ((AbstractChartDisplayer) dataDisplayer).setMarginBottom(bottom);
+        ((AbstractChartDisplayer) dataDisplayer).setMarginLeft(left);
+        ((AbstractChartDisplayer) dataDisplayer).setMarginRight(right);
+        return (T) this;
+    }
 }

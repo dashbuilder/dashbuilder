@@ -22,6 +22,10 @@ public class AbstractChartDisplayer extends AbstractDataDisplayer {
 
     protected int width = 600;
     protected int height = 300;
+    protected int marginTop = 20;
+    protected int marginBottom = 50;
+    protected int marginLeft = 80;
+    protected int marginRight = 80;
 
     public int getWidth() {
         return width;
@@ -37,5 +41,37 @@ public class AbstractChartDisplayer extends AbstractDataDisplayer {
 
     public void setHeight(int height) {
         this.height = height;
+    }
+
+    public int getMarginTop() {
+        return marginTop;
+    }
+
+    public void setMarginTop(int marginTop) {
+        this.marginTop = marginTop;
+    }
+
+    public int getMarginBottom() {
+        return marginBottom;
+    }
+
+    public void setMarginBottom(int marginBottom) {
+        this.marginBottom = marginBottom;
+    }
+
+    public int getMarginLeft() {
+        return marginLeft;
+    }
+
+    public void setMarginLeft(int marginLeft) {
+        this.marginLeft = marginLeft;
+    }
+
+    public int getMarginRight() {
+        return marginRight;
+    }
+
+    public void setMarginRight(int marginRight) {
+        this.marginRight = marginRight;
     }
 }

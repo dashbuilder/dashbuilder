@@ -67,6 +67,7 @@ public class GoogleRenderer implements RendererLibrary {
         if (DataDisplayerType.PIECHART.equals(type)) return registerViewer(new GooglePieChartViewer());
         if (DataDisplayerType.AREACHART.equals(type)) return registerViewer(new GoogleAreaChartViewer());
         if (DataDisplayerType.LINECHART.equals(type)) return registerViewer(new GoogleLineChartViewer());
+        if (DataDisplayerType.BUBBLECHART.equals(type)) return registerViewer(new GoogleBubbleChartViewer());
         if (DataDisplayerType.METERCHART.equals(type)) return registerViewer(new GoogleMeterChartViewer());
         if (DataDisplayerType.TABLE.equals(type)) return registerViewer(new GoogleTableViewer());
         if (DataDisplayerType.MAP.equals(type)) return registerViewer(new GoogleMapViewer());

@@ -351,6 +351,11 @@ public class KPIBuilderImpl implements KPIBuilder {
         return  this;
     }
 
+    public KPIBuilder margins(int top, int bottom, int left, int right) {
+        ((AbstractChartBuilder) displayerBuilder).margins(top, bottom, left, right);
+        return this;
+    }
+
     // BarChartBuilder
 
     public KPIBuilder set3d(boolean d) {

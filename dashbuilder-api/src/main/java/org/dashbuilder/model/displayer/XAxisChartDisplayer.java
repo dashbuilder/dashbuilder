@@ -15,8 +15,6 @@
  */
 package org.dashbuilder.model.displayer;
 
-import org.jboss.errai.common.client.api.annotations.Portable;
-
 public abstract class XAxisChartDisplayer extends AbstractChartDisplayer {
 
 }

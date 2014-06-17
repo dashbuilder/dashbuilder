@@ -61,6 +61,7 @@ public class SalesOppsKPIs {
                 .count("occurrences")
                 .title("Pipeline status")
                 .titleVisible(false)
+                .margins(10, 10, 10, 10)
                 .column("Pipeline")
                 .column("Number of opps")
                 .buildKPI());
@@ -72,6 +73,7 @@ public class SalesOppsKPIs {
                 .sum(EXPECTED_AMOUNT)
                 .title("Expected Pipeline")
                 .titleVisible(false)
+                .margins(20, 50, 100, 100)
                 .column("Closing date")
                 .column("Expected amount")
                 .buildKPI());
@@ -83,6 +85,7 @@ public class SalesOppsKPIs {
                 .sum(AMOUNT)
                 .title("By Status")
                 .titleVisible(false)
+                .margins(10, 10, 10, 10)
                 .column("Status")
                 .column("Total amount")
                 .buildKPI());
@@ -94,6 +97,7 @@ public class SalesOppsKPIs {
                 .sum(AMOUNT)
                 .title("By Sales Person")
                 .titleVisible(false)
+                .margins(10, 10, 10, 10)
                 .column("Sales person")
                 .column("Total amount")
                 .buildKPI());
@@ -105,9 +109,10 @@ public class SalesOppsKPIs {
                 .sum(AMOUNT)
                 .title("By Product")
                 .titleVisible(false)
+                .margins(10, 50, 100, 100)
                 .column("Product")
                 .column("Total amount")
-                .vertical()
+                .horizontal()
                 .buildKPI());
 
         kpiList.add(KPIFactory.newBarChartKPI()
@@ -117,22 +122,24 @@ public class SalesOppsKPIs {
                 .sum(AMOUNT)
                 .title("By Country")
                 .titleVisible(false)
-                .vertical()
+                .margins(10, 80, 100, 100)
                 .column("Country")
                 .column("Total amount")
+                .horizontal()
                 .buildKPI());
 
-        kpiList.add(KPIFactory.newBarChartKPI()
+        /*kpiList.add(KPIFactory.newBarChartKPI()
                 .uuid(OPPS_BY_PROBABILITY)
                 .dataset(SALES_OPPS)
                 .group(PROBABILITY)
                 .sum(AMOUNT)
                 .title("By Probability")
                 .titleVisible(false)
+                .margins(10, 50, 100, 100)
                 .column("Probability")
                 .column("Total amount")
-                .vertical()
-                .buildKPI());
+                .horizontal()
+                .buildKPI());*/
 
         kpiList.add(KPIFactory.newTableKPI()
                 .uuid(OPPS_COUNTRY_SUMMARY)

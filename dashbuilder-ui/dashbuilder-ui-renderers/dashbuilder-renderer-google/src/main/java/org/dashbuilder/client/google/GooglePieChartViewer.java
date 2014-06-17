@@ -23,6 +23,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.googlecode.gwt.charts.client.ChartPackage;
 import com.googlecode.gwt.charts.client.corechart.PieChart;
 import com.googlecode.gwt.charts.client.corechart.PieChartOptions;
+import com.googlecode.gwt.charts.client.options.ChartArea;
 import org.dashbuilder.model.displayer.PieChartDisplayer;
 
 public class GooglePieChartViewer extends GoogleXAxisChartViewer<PieChartDisplayer> {
@@ -65,8 +66,9 @@ public class GooglePieChartViewer extends GoogleXAxisChartViewer<PieChartDisplay
         PieChartOptions options = PieChartOptions.create();
         options.setWidth(dataDisplayer.getWidth());
         options.setHeight(dataDisplayer.getHeight());
-        options.setColors(createColorArray(googleTable));
         options.setIs3D(true);
+        options.setColors(createColorArray(googleTable));
+        options.setChartArea(createChartArea());
         return options;
     }
 }

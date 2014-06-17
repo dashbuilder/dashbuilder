@@ -20,4 +20,5 @@ public interface ChartBuilder<T extends ChartBuilder> extends DataDisplayerBuild
 
     T width(int width);
     T height(int height);
+    T margins(int top, int bottom, int left, int right);
 }

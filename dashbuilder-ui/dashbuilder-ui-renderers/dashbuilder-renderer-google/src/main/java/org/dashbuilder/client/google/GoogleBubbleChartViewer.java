@@ -26,6 +26,8 @@ import com.googlecode.gwt.charts.client.corechart.BubbleChartOptions;
 import com.googlecode.gwt.charts.client.options.Animation;
 import com.googlecode.gwt.charts.client.options.AnimationEasing;
 import com.googlecode.gwt.charts.client.options.ChartArea;
+import com.googlecode.gwt.charts.client.options.HAxis;
+import com.googlecode.gwt.charts.client.options.VAxis;
 import org.dashbuilder.model.displayer.BubbleChartDisplayer;
 
 public class GoogleBubbleChartViewer extends GoogleXAxisChartViewer<BubbleChartDisplayer> {
@@ -69,18 +71,13 @@ public class GoogleBubbleChartViewer extends GoogleXAxisChartViewer<BubbleChartD
         anim.setDuration(700);
         anim.setEasing(AnimationEasing.IN);
 
-        ChartArea chartArea = ChartArea.create();
-        chartArea.setLeft(0);
-        chartArea.setTop(0);
-        chartArea.setWidth("100%");
-        chartArea.setHeight("100%");
-
         BubbleChartOptions options = BubbleChartOptions.create();
         options.setWidth(dataDisplayer.getWidth());
         options.setHeight(dataDisplayer.getHeight());
-        options.setChartArea(chartArea);
+        options.setHAxis(HAxis.create(googleTable.getColumnLabel(1)));
+        options.setVAxis(VAxis.create(googleTable.getColumnLabel(2)));
+        options.setChartArea(createChartArea());
         options.setAnimation(anim);
-
         return options;
     }
 }
