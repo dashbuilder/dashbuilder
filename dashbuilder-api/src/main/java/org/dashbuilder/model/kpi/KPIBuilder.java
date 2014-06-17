@@ -18,6 +18,7 @@ package org.dashbuilder.model.kpi;
 import org.dashbuilder.model.dataset.DataSetLookupBuilder;
 import org.dashbuilder.model.dataset.DataSetRef;
 import org.dashbuilder.model.displayer.AreaChartBuilder;
+import org.dashbuilder.model.displayer.BubbleChartBuilder;
 import org.dashbuilder.model.displayer.LineChartBuilder;
 import org.dashbuilder.model.displayer.MapChartBuilder;
 import org.dashbuilder.model.displayer.MeterChartBuilder;
@@ -35,6 +36,7 @@ public interface KPIBuilder extends
         BarChartBuilder<KPIBuilder>,
         AreaChartBuilder<KPIBuilder>,
         LineChartBuilder<KPIBuilder>,
+        BubbleChartBuilder<KPIBuilder>,
         MapChartBuilder<KPIBuilder>,
         TableDisplayerBuilder<KPIBuilder>,
         MeterChartBuilder<KPIBuilder> {

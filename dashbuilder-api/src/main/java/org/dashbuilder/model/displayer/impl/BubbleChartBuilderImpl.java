@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2014 JBoss Inc
+ * Copyright (C) 2012 JBoss Inc
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,19 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbuilder.model.displayer;
+package org.dashbuilder.model.displayer.impl;
 
-public enum DataDisplayerType {
-    BARCHART,
-    PIECHART,
-    AREACHART,
-    LINECHART,
-    BUBBLECHART,
-    METERCHART,
-    TABLE,
-    MAP;
+import org.dashbuilder.model.displayer.BubbleChartBuilder;
+import org.dashbuilder.model.displayer.BubbleChartDisplayer;
+import org.dashbuilder.model.displayer.DataDisplayer;
 
-    public static DataDisplayerType getByName(String str) {
-        return valueOf(str.toUpperCase());
+public class BubbleChartBuilderImpl extends AbstractChartBuilder<BubbleChartBuilderImpl> implements BubbleChartBuilder {
+
+    protected DataDisplayer createDisplayer() {
+        return new BubbleChartDisplayer();
     }
 }

@@ -89,6 +89,7 @@ public class ShowcaseEntryPoint {
         dataViewerLocator.setDefaultRenderer(DataDisplayerType.PIECHART, GoogleRenderer.UUID);
         dataViewerLocator.setDefaultRenderer(DataDisplayerType.AREACHART, GoogleRenderer.UUID);
         dataViewerLocator.setDefaultRenderer(DataDisplayerType.LINECHART, GoogleRenderer.UUID);
+        dataViewerLocator.setDefaultRenderer(DataDisplayerType.BUBBLECHART, GoogleRenderer.UUID);
         dataViewerLocator.setDefaultRenderer(DataDisplayerType.METERCHART, GoogleRenderer.UUID);
         dataViewerLocator.setDefaultRenderer(DataDisplayerType.MAP, GoogleRenderer.UUID);
         dataViewerLocator.setDefaultRenderer(DataDisplayerType.TABLE, GoogleRenderer.UUID);

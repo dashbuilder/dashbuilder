@@ -52,6 +52,7 @@ public class GalleryTree {
         initPieChartCategory();
         initLineChartCategory();
         initAreaChartCategory();
+        initBubbleChartCategory();
         initTableReportCategory();
         initMeterChartCategory();
         initMapChartCategory();
@@ -205,6 +206,29 @@ public class GalleryTree {
                 .title("Pipeline (best month)")
                 .column("Closing date")
                 .column("Expected amount per month")
+                .buildKPI()
+        ));
+    }
+
+    private void initBubbleChartCategory() {
+        GalleryNodeList nodeList = new GalleryNodeList("Bubble Chart");
+        mainNodes.add(nodeList);
+
+        nodeList.add(new GalleryNodeKPI("Basic",
+                KPIFactory.newBubbleChartKPI()
+                .dataset(SALES_OPPS)
+                .group(COUNTRY)
+                .count("opps")
+                .avg(PROBABILITY)
+                .sum(EXPECTED_AMOUNT)
+                .title("Opportunities distribution by Country ")
+                .width(700)
+                .height(600)
+                .column(COUNTRY, "Country")
+                .column("opps", "Number of opportunities")
+                .column(PROBABILITY, "Average probability")
+                .column(COUNTRY, "Country")
+                .column(EXPECTED_AMOUNT, "Expected amount")
                 .buildKPI()
         ));
     }

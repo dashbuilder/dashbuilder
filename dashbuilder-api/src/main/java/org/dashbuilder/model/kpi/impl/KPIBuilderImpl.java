@@ -56,6 +56,8 @@ public class KPIBuilderImpl implements KPIBuilder {
             displayerBuilder = DisplayerFactory.newLineChartDisplayer();
         } else if (DataDisplayerType.AREACHART.equals(type)) {
             displayerBuilder = DisplayerFactory.newAreaChartDisplayer();
+        } else if (DataDisplayerType.BUBBLECHART.equals(type)) {
+            displayerBuilder = DisplayerFactory.newBubbleChartDisplayer();
         } else if (DataDisplayerType.METERCHART.equals(type)) {
             displayerBuilder = DisplayerFactory.newMeterChartDisplayer();
         } else if (DataDisplayerType.MAP.equals(type)) {

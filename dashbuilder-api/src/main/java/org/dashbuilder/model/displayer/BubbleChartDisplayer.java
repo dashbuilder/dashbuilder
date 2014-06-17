@@ -15,17 +15,9 @@
  */
 package org.dashbuilder.model.displayer;
 
-public enum DataDisplayerType {
-    BARCHART,
-    PIECHART,
-    AREACHART,
-    LINECHART,
-    BUBBLECHART,
-    METERCHART,
-    TABLE,
-    MAP;
+import org.jboss.errai.common.client.api.annotations.Portable;
 
-    public static DataDisplayerType getByName(String str) {
-        return valueOf(str.toUpperCase());
-    }
+@Portable
+public class BubbleChartDisplayer extends XAxisChartDisplayer {
+
 }

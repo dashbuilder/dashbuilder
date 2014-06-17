@@ -39,6 +39,10 @@ public final class KPIFactory {
         return new KPIBuilderImpl(DataDisplayerType.AREACHART);
     }
 
+    public static KPIBuilder newBubbleChartKPI() {
+        return new KPIBuilderImpl(DataDisplayerType.BUBBLECHART);
+    }
+
     public static KPIBuilder newMapChartKPI() {
         return new KPIBuilderImpl(DataDisplayerType.MAP);
     }

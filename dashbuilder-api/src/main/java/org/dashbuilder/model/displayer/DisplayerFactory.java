@@ -15,9 +15,9 @@
  */
 package org.dashbuilder.model.displayer;
 
-import org.dashbuilder.model.displayer.impl.AbstractXAxisChartBuilder;
 import org.dashbuilder.model.displayer.impl.AreaChartBuilderImpl;
 import org.dashbuilder.model.displayer.impl.BarChartBuilderImpl;
+import org.dashbuilder.model.displayer.impl.BubbleChartBuilderImpl;
 import org.dashbuilder.model.displayer.impl.LineChartBuilderImpl;
 import org.dashbuilder.model.displayer.impl.MapChartBuilderImpl;
 import org.dashbuilder.model.displayer.impl.MeterChartBuilderImpl;
@@ -43,6 +43,10 @@ public final class DisplayerFactory {
 
     public static LineChartBuilder newLineChartDisplayer() {
         return new LineChartBuilderImpl();
+    }
+
+    public static BubbleChartBuilder newBubbleChartDisplayer() {
+        return new BubbleChartBuilderImpl();
     }
 
     public static MapChartBuilder newMapChartDisplayer() {
