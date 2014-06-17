@@ -9,6 +9,7 @@ import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.user.cellview.client.Column;
+import com.google.gwt.user.cellview.client.ColumnSortEvent;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
@@ -22,6 +23,7 @@ import org.dashbuilder.model.dataset.ColumnType;
 import org.dashbuilder.model.dataset.DataColumn;
 import org.dashbuilder.model.dataset.DataSet;
 
+import org.dashbuilder.model.dataset.sort.SortOrder;
 import org.uberfire.client.tables.PagedTable;
 
 public class UFTableViewer extends AbstractDataViewer<org.dashbuilder.model.displayer.TableDisplayer> {
@@ -94,7 +96,26 @@ public class UFTableViewer extends AbstractDataViewer<org.dashbuilder.model.disp
     }
 
     protected PagedTable createUFTable() {
-        PagedTable ufPagedTable = new PagedTable(pageSize);
+
+        final ExtPT ufPagedTable = new ExtPT(pageSize);
+        ColumnSortEvent.AsyncHandler sortHandler = new ColumnSortEvent.AsyncHandler( ufPagedTable ) {
+            @Override public void onColumnSort( ColumnSortEvent event ) {
+                setSortOrder( event.getColumn().getDataStoreName(), event.isSortAscending() ? SortOrder.ASCENDING : SortOrder.DESCENDING );
+                lookupDataSet( new DataSetReadyCallback() {
+                    @Override public void callback( DataSet dataSet ) {
+                        ufPagedTable.redraw();
+                    }
+
+                    @Override public void notFound() {
+                        displayMessage("ERROR in data lookup.");
+                    }
+                });
+            }
+        };
+        ufPagedTable.setColumnSortHandler( sortHandler );
+
+
+//        PagedTable ufPagedTable = new PagedTable(pageSize, sortHandler);ufPagedTable.get
         ufPagedTable.setRowCount(numberOfRows, true);
         ufPagedTable.setHeight(Window.getClientHeight() - this.getAbsoluteTop() + "px");
         ufPagedTable.setWidth(Window.getClientWidth() - (this.getAbsoluteLeft() + this.getOffsetWidth()) + "px");
@@ -108,37 +129,41 @@ public class UFTableViewer extends AbstractDataViewer<org.dashbuilder.model.disp
 
             switch (columnType) {
                 case LABEL:
-                    ufPagedTable.addColumn(
+                    Column labelColumn =
                             new Column<UFTableRow, String>(new TextCell()) {
                                 @Override
                                 public String getValue(UFTableRow row) {
                                     Object value = dataSet.getValueAt(row.getRowNumber(), colNum.getColNum());
                                     return value.toString();
                                 }
-                            },
-                            dataColumn.getId());
+                            };
+
+                    labelColumn.setSortable( true );
+                    ufPagedTable.addColumn( labelColumn, dataColumn.getId());
                     break;
 
                 case NUMBER:
-                    ufPagedTable.addColumn(
+                    Column numberColumn =
                             new Column<UFTableRow, Number>(new NumberCell(NumberFormat.getFormat("#.###"))) {
                                 @Override
                                 public Number getValue(UFTableRow row) {
                                     return (Number) dataSet.getValueAt(row.getRowNumber(), colNum.getColNum());
                                 }
-                            },
-                            dataColumn.getId());
+                            };
+                    numberColumn.setSortable( true );
+                    ufPagedTable.addColumn( numberColumn, dataColumn.getId());
                     break;
 
                 case DATE:
-                    ufPagedTable.addColumn(
+                    Column dateColumn =
                             new Column<UFTableRow, Date>(new DateCell(DateTimeFormat.getFormat(DateTimeFormat.PredefinedFormat.DATE_TIME_MEDIUM))) {
                                 @Override
                                 public Date getValue(UFTableRow row) {
                                     return (Date) dataSet.getValueAt(row.getRowNumber(), colNum.getColNum());
                                 }
-                            },
-                            dataColumn.getId());
+                            };
+                    dateColumn.setSortable( true );
+                    ufPagedTable.addColumn( dateColumn, dataColumn.getId());
                     break;
 
                 default:
@@ -171,28 +196,42 @@ public class UFTableViewer extends AbstractDataViewer<org.dashbuilder.model.disp
             this.dataSetLowerLimit = lowerLimit;
             this.dataSetUpperLimit = upperLimit;
             dataSetHandler.limitDataSetRows(lowerLimit, upperLimit);
-            try {
-                dataSetHandler.lookupDataSet(
-                        // 'local' callback to set the new dataSet to the viewer
-                        new DataSetReadyCallback() {
-                            @Override
-                            public void callback(DataSet dataSet) {
-                                UFTableViewer.this.dataSet = dataSet;
-                                callback.callback(dataSet);
-                            }
-
-                            @Override
-                            public void notFound() {
-                                callback.notFound();
-                            }
-                        }
-                );
-            } catch (Exception e) {
-                displayMessage("ERROR: " + e.getMessage());
-            }
+            lookupDataSet( callback );
         } else {
             // If it was already looked up just return the dataSet
             callback.callback(dataSet);
+        }
+    }
+
+    private void lookupDataSet( final DataSetReadyCallback callback ) {
+        try {
+            dataSetHandler.lookupDataSet(
+                    // 'local' callback to set the new dataSet to the viewer
+                    new DataSetReadyCallback() {
+                        @Override
+                        public void callback(DataSet dataSet) {
+                            UFTableViewer.this.dataSet = dataSet;
+                            callback.callback(dataSet);
+                        }
+
+                        @Override
+                        public void notFound() {
+                            callback.notFound();
+                        }
+                    }
+            );
+        } catch (Exception e) {
+            displayMessage("ERROR: " + e.getMessage());
+        }
+    }
+
+    // TODO workaround, to be removed
+    private final class ExtPT extends PagedTable {
+        private ExtPT( int pageSize ) {
+            super( pageSize );
+        }
+        private void setColumnSortHandler( ColumnSortEvent.AsyncHandler handler ) {
+            dataGrid.addColumnSortHandler( handler );
         }
     }
 
