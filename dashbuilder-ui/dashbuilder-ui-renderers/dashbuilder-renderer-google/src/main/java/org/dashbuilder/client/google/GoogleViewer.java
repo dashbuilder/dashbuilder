@@ -24,9 +24,7 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 import com.googlecode.gwt.charts.client.ChartPackage;
-import com.googlecode.gwt.charts.client.ChartWidget;
 import com.googlecode.gwt.charts.client.DataTable;
-import com.googlecode.gwt.charts.client.options.CoreOptions;
 import org.dashbuilder.client.dataset.DataSetReadyCallback;
 import org.dashbuilder.client.displayer.AbstractDataViewer;
 import org.dashbuilder.model.dataset.ColumnType;
@@ -163,7 +161,7 @@ public abstract class GoogleViewer<T extends DataDisplayer> extends AbstractData
     protected DataTable createTableFromDataSet(DataTable table) {
         DataTable gTable = table;
         if (table == null) gTable = DataTable.create();
-        else table.removeRows(0, dataSet.getRowCount());
+        else table.removeRows(0, table.getNumberOfRows());
 
         gTable.addRows(dataSet.getRowCount());
         List<DataColumn> columns = dataSet.getColumns();
