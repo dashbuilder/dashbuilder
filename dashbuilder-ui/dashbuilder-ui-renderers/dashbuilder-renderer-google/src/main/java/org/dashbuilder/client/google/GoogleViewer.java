@@ -185,7 +185,7 @@ public abstract class GoogleViewer<T extends DataDisplayer> extends AbstractData
     public DataTable createTableFromDisplayer(DataTable table) {
         DataTable gTable = table;
         if (table == null) gTable = DataTable.create();
-        else table.removeRows(0, dataSet.getRowCount());
+        else table.removeRows(0, table.getNumberOfRows());
 
         gTable.addRows(dataSet.getRowCount());
         int columnIndex = 0;
