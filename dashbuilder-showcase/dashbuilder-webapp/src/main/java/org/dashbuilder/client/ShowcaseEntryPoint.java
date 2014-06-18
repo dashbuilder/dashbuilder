@@ -28,9 +28,6 @@ import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.RootPanel;
-import org.dashbuilder.client.displayer.DataViewerLocator;
-import org.dashbuilder.client.google.GoogleRenderer;
-import org.dashbuilder.model.displayer.DataDisplayerType;
 import org.jboss.errai.bus.client.api.ClientMessageBus;
 import org.jboss.errai.ioc.client.api.EntryPoint;
 import org.jboss.errai.ioc.client.container.IOCBeanDef;
@@ -71,28 +68,18 @@ public class ShowcaseEntryPoint {
     private ClientMessageBus bus;
 
     @Inject
-    private DataViewerLocator dataViewerLocator;
+    private DashbuilderInitializer dashbuilderInitializer;
 
     @PostConstruct
     public void startApp() {
-        UberFirePreferences.setProperty( "org.uberfire.client.workbench.clone.ou.mandatory.disable", true );
+        UberFirePreferences.setProperty("org.uberfire.client.workbench.clone.ou.mandatory.disable", true);
         //todo {porcelli} context button navigator style is broken, disabling for now
-        UberFirePreferences.setProperty( "org.uberfire.client.workbench.widgets.listbar.context.disable", true );
+        UberFirePreferences.setProperty("org.uberfire.client.workbench.widgets.listbar.context.disable", true);
 
-        setDefaultRendererLibs();
+        // Init the Dashbuilder subsystem
+        dashbuilderInitializer.init();
 
         hideLoadingPopup();
-    }
-
-    private void setDefaultRendererLibs() {
-        dataViewerLocator.setDefaultRenderer(DataDisplayerType.BARCHART, GoogleRenderer.UUID);
-        dataViewerLocator.setDefaultRenderer(DataDisplayerType.PIECHART, GoogleRenderer.UUID);
-        dataViewerLocator.setDefaultRenderer(DataDisplayerType.AREACHART, GoogleRenderer.UUID);
-        dataViewerLocator.setDefaultRenderer(DataDisplayerType.LINECHART, GoogleRenderer.UUID);
-        dataViewerLocator.setDefaultRenderer(DataDisplayerType.BUBBLECHART, GoogleRenderer.UUID);
-        dataViewerLocator.setDefaultRenderer(DataDisplayerType.METERCHART, GoogleRenderer.UUID);
-        dataViewerLocator.setDefaultRenderer(DataDisplayerType.MAP, GoogleRenderer.UUID);
-        dataViewerLocator.setDefaultRenderer(DataDisplayerType.TABLE, GoogleRenderer.UUID);
     }
 
     private void setupMenu( @Observes final ApplicationReadyEvent event ) {
