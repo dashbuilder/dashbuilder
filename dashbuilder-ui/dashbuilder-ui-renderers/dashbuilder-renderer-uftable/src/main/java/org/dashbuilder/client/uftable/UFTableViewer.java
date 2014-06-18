@@ -57,6 +57,7 @@ public class UFTableViewer extends AbstractDataViewer<org.dashbuilder.model.disp
             } else {
                 try {
                     displayMessage("Initializing '" + dataDisplayer.getTitle() + "'...");
+
                     lookupDataSet(
                             0,
                             pageSize,
@@ -83,7 +84,6 @@ public class UFTableViewer extends AbstractDataViewer<org.dashbuilder.model.disp
      * Just reload the data set and make the current google Viewer to redraw.
      */
     public void redraw() {
-        return;
     }
 
     /**
@@ -92,30 +92,75 @@ public class UFTableViewer extends AbstractDataViewer<org.dashbuilder.model.disp
     public void displayMessage(String msg) {
         panel.clear();
         panel.add(label);
-        label.setText(msg);
+        label.setText( msg );
     }
 
-    protected PagedTable createUFTable() {
+    protected Widget createWidget() {
+        pageSize = dataDisplayer.getPageSize();
+        numberOfRows = dataSetHandler.getDataSetMetadata().getNumberOfRows();
 
-        final ExtPT ufPagedTable = new ExtPT(pageSize);
+        final PagedTable<UFTableRow> table = createUFTable();
+
+        String defaultSortColumn = dataDisplayer.getDefaultSortColumnId();
+
+        // TODO get the table to show the order icon programatically
+        if ( defaultSortColumn != null && !"".equals( defaultSortColumn ) ) {
+            lookupDataSet(
+                    defaultSortColumn,
+                    dataDisplayer.getDefaultSortOrder(),
+                    new DataSetReadyCallback() {
+                        @Override public void callback( DataSet dataSet ) {
+                            table.redraw();
+                        }
+
+                        @Override public void notFound() {
+                            displayMessage("ERROR in data lookup.");
+                        }
+                    }
+            );
+        }
+
+        dataProvider.addDataDisplay(table);
+
+        HTML titleHtml = new HTML();
+        if (dataDisplayer.isTitleVisible()) {
+            titleHtml.setText(dataDisplayer.getTitle());
+        }
+
+        VerticalPanel verticalPanel = new VerticalPanel();
+        verticalPanel.add(titleHtml);
+        verticalPanel.add(table);
+        return verticalPanel;
+    }
+
+    protected PagedTable<UFTableRow> createUFTable() {
+
+        final ExtPT<UFTableRow> ufPagedTable = new ExtPT<UFTableRow>(pageSize);
         ColumnSortEvent.AsyncHandler sortHandler = new ColumnSortEvent.AsyncHandler( ufPagedTable ) {
-            @Override public void onColumnSort( ColumnSortEvent event ) {
-                setSortOrder( event.getColumn().getDataStoreName(), event.isSortAscending() ? SortOrder.ASCENDING : SortOrder.DESCENDING );
-                lookupDataSet( new DataSetReadyCallback() {
-                    @Override public void callback( DataSet dataSet ) {
-                        ufPagedTable.redraw();
-                    }
 
-                    @Override public void notFound() {
-                        displayMessage("ERROR in data lookup.");
-                    }
-                });
+            @Override
+            public void onColumnSort( ColumnSortEvent event ) {
+                    lookupDataSet(
+                            event.getColumn().getDataStoreName(),
+                            event.isSortAscending() ? SortOrder.ASCENDING : SortOrder.DESCENDING,
+                            new DataSetReadyCallback() {
+                                @Override
+                                public void callback( DataSet dataSet ) {
+                                    ufPagedTable.redraw();
+                                }
+
+                                @Override
+                                public void notFound() {
+                                    displayMessage("ERROR in data lookup.");
+                                }
+                            }
+                    );
             }
+
         };
+
         ufPagedTable.setColumnSortHandler( sortHandler );
 
-
-//        PagedTable ufPagedTable = new PagedTable(pageSize, sortHandler);ufPagedTable.get
         ufPagedTable.setRowCount(numberOfRows, true);
         int height = 38 * pageSize;
         ufPagedTable.setHeight( ( height > ( Window.getClientHeight() - this.getAbsoluteTop() ) ? ( Window.getClientHeight() - this.getAbsoluteTop() ) : height ) + "px");
@@ -173,38 +218,32 @@ public class UFTableViewer extends AbstractDataViewer<org.dashbuilder.model.disp
         return ufPagedTable;
     }
 
-    protected Widget createWidget() {
-        pageSize = dataDisplayer.getPageSize();
-        numberOfRows = dataSetHandler.getDataSetMetadata().getNumberOfRows();
-
-        PagedTable<UFTableRow> table = createUFTable();
-        dataProvider.addDataDisplay(table);
-
-        HTML titleHtml = new HTML();
-        if (dataDisplayer.isTitleVisible()) {
-            titleHtml.setText(dataDisplayer.getTitle());
-        }
-
-        VerticalPanel verticalPanel = new VerticalPanel();
-        verticalPanel.add(titleHtml);
-        verticalPanel.add(table);
-        return verticalPanel;
+    protected void lookupDataSet( String columnId, SortOrder sortOrder, DataSetReadyCallback callback ) {
+        doLookupDataSet( null, null, columnId, sortOrder, callback );
     }
 
-    protected void lookupDataSet(int lowerLimit, int upperLimit, final DataSetReadyCallback callback) {
+    protected void lookupDataSet( int lowerLimit, int upperLimit, final DataSetReadyCallback callback ) {
         // Avoid double lookup at the time of widget creation
         if (dataSetLowerLimit != lowerLimit || dataSetUpperLimit != upperLimit) {
             this.dataSetLowerLimit = lowerLimit;
             this.dataSetUpperLimit = upperLimit;
-            dataSetHandler.limitDataSetRows(lowerLimit, upperLimit);
-            lookupDataSet( callback );
+            doLookupDataSet( lowerLimit, upperLimit, null, null, callback );
         } else {
             // If it was already looked up just return the dataSet
             callback.callback(dataSet);
         }
     }
 
-    private void lookupDataSet( final DataSetReadyCallback callback ) {
+    private void doLookupDataSet( Integer lowerLimit, Integer upperLimit, String columnId, SortOrder sortOrder, final DataSetReadyCallback callback ) {
+
+        if ( lowerLimit != null && upperLimit != null ) {
+            dataSetHandler.limitDataSetRows(lowerLimit, upperLimit);
+        }
+
+        if ( columnId != null && !"".equals( columnId ) ) {
+            setSortOrder( columnId, sortOrder );
+        }
+
         try {
             dataSetHandler.lookupDataSet(
                     // 'local' callback to set the new dataSet to the viewer
@@ -227,7 +266,7 @@ public class UFTableViewer extends AbstractDataViewer<org.dashbuilder.model.disp
     }
 
     // TODO workaround, to be removed
-    private final class ExtPT extends PagedTable {
+    private final class ExtPT<T> extends PagedTable<T> {
         private ExtPT( int pageSize ) {
             super( pageSize );
         }
