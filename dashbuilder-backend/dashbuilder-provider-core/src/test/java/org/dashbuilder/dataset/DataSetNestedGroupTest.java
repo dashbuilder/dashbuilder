@@ -63,7 +63,7 @@ public class DataSetNestedGroupTest {
       TODO: public void testMultipleYearSplit() throws Exception {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDSLookup()
-                .uuid(EXPENSE_REPORTS)
+                .dataset(EXPENSE_REPORTS)
                 .group("date").fixed(MONTH)
                 .sum("total")
                 .group("date", YEAR)
@@ -85,7 +85,7 @@ public class DataSetNestedGroupTest {
     public void testGroupSelectionFilter() throws Exception {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDSLookup()
-                        .uuid(EXPENSE_REPORTS)
+                        .dataset(EXPENSE_REPORTS)
                         .filter("amount", FilterFactory.isGreaterThan(500))
                         .group("department").select("Engineering")
                         .group("city").select("Westford")
@@ -100,7 +100,7 @@ public class DataSetNestedGroupTest {
     public void testInnerGroupFiltered() throws Exception {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDSLookup()
-                .uuid(EXPENSE_REPORTS)
+                .dataset(EXPENSE_REPORTS)
                 .group("department", "Department").select("Services", "Engineering")
                 .group("city", "City")
                 .count("Occurrences")
@@ -125,7 +125,7 @@ public class DataSetNestedGroupTest {
     public void testThreeNestedLevels() throws Exception {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDSLookup()
-                        .uuid(EXPENSE_REPORTS)
+                        .dataset(EXPENSE_REPORTS)
                         .group("department").select("Services", "Engineering")
                         .group("city").select("Madrid", "Barcelona")
                         .group("date").fixed(DateIntervalType.MONTH)

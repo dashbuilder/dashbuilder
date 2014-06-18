@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbuilder.client.samples.gallery;
+package org.dashbuilder.client.gallery;
 
 import java.util.Collections;
 import java.util.List;

@@ -47,14 +47,8 @@ public interface KPIBuilder extends
     KPIBuilder uuid(String uuid);
 
     /**
-     * The UUID reference to the source data set.
-     */
-    KPIBuilder dataset(String uuid);
-
-    /**
      * A direct reference to the source data set.
      */
-
     KPIBuilder dataset(DataSetRef dataSetRef);
 
     /**

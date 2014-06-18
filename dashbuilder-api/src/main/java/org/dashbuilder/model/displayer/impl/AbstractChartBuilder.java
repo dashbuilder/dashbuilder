@@ -18,7 +18,7 @@ package org.dashbuilder.model.displayer.impl;
 import org.dashbuilder.model.displayer.AbstractChartDisplayer;
 import org.dashbuilder.model.displayer.ChartBuilder;
 
-public abstract class AbstractChartBuilder<T extends AbstractChartBuilder> extends AbstractDisplayerBuilder implements ChartBuilder {
+public abstract class AbstractChartBuilder<T extends ChartBuilder> extends AbstractDisplayerBuilder<T> implements ChartBuilder<T> {
 
     public T width(int width) {
         ((AbstractChartDisplayer) dataDisplayer).setWidth(width);

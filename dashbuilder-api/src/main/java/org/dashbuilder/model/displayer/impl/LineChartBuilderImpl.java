@@ -19,7 +19,7 @@ import org.dashbuilder.model.displayer.DataDisplayer;
 import org.dashbuilder.model.displayer.LineChartBuilder;
 import org.dashbuilder.model.displayer.LineChartDisplayer;
 
-public class LineChartBuilderImpl extends AbstractXAxisChartBuilder<LineChartBuilderImpl> implements LineChartBuilder {
+public class LineChartBuilderImpl extends AbstractXAxisChartBuilder<LineChartBuilderImpl> implements LineChartBuilder<LineChartBuilderImpl> {
 
     protected DataDisplayer createDisplayer() {
         return new LineChartDisplayer();

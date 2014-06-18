@@ -49,7 +49,7 @@ public class DataSetLookupBuilderImpl implements DataSetLookupBuilder {
         return dataSetOps.get(dataSetOps.size()-1);
     }
 
-    public DataSetLookupBuilder uuid(String uuid) {
+    public DataSetLookupBuilder dataset(String uuid) {
         dataSetLookup.setDataSetUUID(uuid);
         return this;
     }

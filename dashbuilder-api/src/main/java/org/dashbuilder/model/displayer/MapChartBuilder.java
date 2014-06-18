@@ -25,6 +25,6 @@ package org.dashbuilder.model.displayer;
  .column("Total amount")
  </pre>
  */
-public interface MapChartBuilder<T extends MapChartBuilder> extends ChartBuilder<T> {
+public interface MapChartBuilder<T extends MapChartBuilder> extends XAxisChartBuilder<T> {
 
 }

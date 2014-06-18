@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbuilder.client.samples.gallery;
+package org.dashbuilder.client.gallery;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +23,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import org.dashbuilder.client.kpi.ClientKPIManager;
+import org.dashbuilder.client.uftable.UFTableRenderer;
 import org.dashbuilder.model.dataset.DataSetFactory;
 import org.dashbuilder.model.kpi.KPIFactory;
 
@@ -64,46 +65,46 @@ public class GalleryTree {
 
         nodeList.add(new GalleryNodeKPI("Horizontal",
                 KPIFactory.newBarChartKPI()
-                .dataset(SALES_OPPS)
-                .group(PRODUCT)
-                .sum(AMOUNT)
-                .title("By Product")
-                .column("Product")
-                .column("Total amount")
-                .horizontal()
-                .margins(10, 30, 120, 120)
-                .buildKPI()
+                        .dataset(SALES_OPPS)
+                        .group(PRODUCT)
+                        .sum(AMOUNT)
+                        .title("By Product")
+                        .column("Product")
+                        .column("Total amount")
+                        .horizontal()
+                        .margins(10, 30, 120, 120)
+                        .buildKPI()
         ));
         nodeList.add(new GalleryNodeKPI("Vertical (3D)",
                 KPIFactory.newBarChartKPI()
-                .dataset(SALES_OPPS)
-                .group(PRODUCT)
-                .sum(AMOUNT)
-                .title("By Product")
-                .column("Product")
-                .column("Total amount")
-                .vertical().set3d(true)
-                .margins(10, 80, 120, 120)
-                .buildKPI()
+                        .dataset(SALES_OPPS)
+                        .group(PRODUCT)
+                        .sum(AMOUNT)
+                        .title("By Product")
+                        .column("Product")
+                        .column("Total amount")
+                        .vertical().set3d(true)
+                        .margins(10, 80, 120, 120)
+                        .buildKPI()
         ));
         nodeList.add(new GalleryNodeKPI("Multiple",
                 KPIFactory.newBarChartKPI()
-                .dataset(SALES_OPPS)
-                .group(COUNTRY, "Country")
-                .count("#Opps")
-                .min(AMOUNT, "Min")
-                .max(AMOUNT, "Max")
-                .avg(AMOUNT, "Average")
-                .sum(AMOUNT, "Total")
-                .title("By Country (min/max/avg)")
-                .width(700).height(600)
-                .margins(10, 50, 120, 100)
-                .column("Country")
-                .column("Min", "Min")
-                .column("Max", "Max")
-                .column("Average", "Avg")
-                .horizontal()
-                .buildKPI()
+                        .dataset(SALES_OPPS)
+                        .group(COUNTRY, "Country")
+                        .count("#Opps")
+                        .min(AMOUNT, "Min")
+                        .max(AMOUNT, "Max")
+                        .avg(AMOUNT, "Average")
+                        .sum(AMOUNT, "Total")
+                        .title("By Country (min/max/avg)")
+                        .width(700).height(600)
+                        .margins(10, 50, 120, 100)
+                        .column("Country")
+                        .column("Min", "Min")
+                        .column("Max", "Max")
+                        .column("Average", "Avg")
+                        .horizontal()
+                        .buildKPI()
         ));
     }
 
@@ -314,6 +315,7 @@ public class GalleryTree {
                 KPIFactory.newTableKPI()
                 .dataset(SALES_OPPS)
                 .title("List of Opportunities")
+                .renderer(UFTableRenderer.UUID)
                 .tablePageSize(20)
                 .tableOrderEnabled(true)
                 .tableOrderDefault(AMOUNT, DESCENDING)
@@ -324,6 +326,7 @@ public class GalleryTree {
                 .dataset(SALES_OPPS)
                 .filter(COUNTRY, OR(isEqualsTo("United States"), isEqualsTo("Brazil")))
                 .title("Opportunities in USA & Brazil")
+                .renderer(UFTableRenderer.UUID)
                 .tablePageSize(20)
                 .tableOrderEnabled(true)
                 .tableOrderDefault(AMOUNT, DESCENDING)
@@ -339,7 +342,8 @@ public class GalleryTree {
                 .avg(AMOUNT, "Average")
                 .sum(AMOUNT, "Total")
                 .title("Country Summary")
-                .tablePageSize(20)
+                .renderer(UFTableRenderer.UUID)
+                .tablePageSize(10)
                 .tableOrderEnabled(true)
                 .tableOrderDefault("Country", DESCENDING)
                 .buildKPI()

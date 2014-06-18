@@ -19,7 +19,7 @@ import org.dashbuilder.model.displayer.DataDisplayer;
 import org.dashbuilder.model.displayer.MapChartBuilder;
 import org.dashbuilder.model.displayer.MapChartDisplayer;
 
-public class MapChartBuilderImpl extends AbstractXAxisChartBuilder<MapChartBuilderImpl> implements MapChartBuilder {
+public class MapChartBuilderImpl extends AbstractXAxisChartBuilder<MapChartBuilderImpl> implements MapChartBuilder<MapChartBuilderImpl> {
 
     protected DataDisplayer createDisplayer() {
         return new MapChartDisplayer();

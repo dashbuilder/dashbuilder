@@ -19,7 +19,7 @@ import org.dashbuilder.model.displayer.BubbleChartBuilder;
 import org.dashbuilder.model.displayer.BubbleChartDisplayer;
 import org.dashbuilder.model.displayer.DataDisplayer;
 
-public class BubbleChartBuilderImpl extends AbstractChartBuilder<BubbleChartBuilderImpl> implements BubbleChartBuilder {
+public class BubbleChartBuilderImpl extends AbstractChartBuilder<BubbleChartBuilderImpl> implements BubbleChartBuilder<BubbleChartBuilderImpl> {
 
     protected DataDisplayer createDisplayer() {
         return new BubbleChartDisplayer();

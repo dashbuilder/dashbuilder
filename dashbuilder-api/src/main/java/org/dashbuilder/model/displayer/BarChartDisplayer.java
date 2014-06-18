@@ -23,6 +23,11 @@ public class BarChartDisplayer extends XAxisChartDisplayer {
     protected boolean threeDimension;
     protected boolean horizontal;
 
+    @Override
+    public DataDisplayerType getType() {
+        return DataDisplayerType.BARCHART;
+    }
+
     public boolean is3d() {
         return threeDimension;
     }

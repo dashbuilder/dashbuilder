@@ -15,13 +15,24 @@
  */
 package org.dashbuilder.model.kpi;
 
+import org.dashbuilder.model.dataset.DataSetRef;
+import org.dashbuilder.model.displayer.DataDisplayer;
 import org.dashbuilder.model.displayer.DataDisplayerType;
 import org.dashbuilder.model.kpi.impl.KPIBuilderImpl;
+import org.dashbuilder.model.kpi.impl.KPIImpl;
 
 /**
  * Factory class for building KPI instances in a friendly manner.
  */
 public final class KPIFactory {
+
+    public static KPI newKPI(String uuid, DataSetRef dataRef, DataDisplayer displayer) {
+        KPIImpl kpi = new KPIImpl();
+        kpi.setUUID(uuid);
+        kpi.setDataSetRef(dataRef);
+        kpi.setDataDisplayer(displayer);
+        return kpi;
+    }
 
     public static KPIBuilder newBarChartKPI() {
         return new KPIBuilderImpl(DataDisplayerType.BARCHART);

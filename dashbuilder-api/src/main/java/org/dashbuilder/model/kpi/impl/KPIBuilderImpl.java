@@ -67,7 +67,6 @@ public class KPIBuilderImpl implements KPIBuilder {
         } else {
             throw new IllegalStateException("Missing data displayer type: " + type);
         }
-        displayerBuilder.type(type);
     }
 
     public KPIBuilder uuid(String uuid) {
@@ -81,7 +80,7 @@ public class KPIBuilderImpl implements KPIBuilder {
     }
 
     public KPIBuilder dataset(String uuid) {
-        lookupBuilder.uuid(uuid);
+        lookupBuilder.dataset(uuid);
         return this;
     }
 
@@ -311,16 +310,6 @@ public class KPIBuilderImpl implements KPIBuilder {
 
     public KPIBuilder titleVisible(boolean visible) {
         displayerBuilder.titleVisible(visible);
-        return  this;
-    }
-
-    public KPIBuilder type(DataDisplayerType type) {
-        displayerBuilder.type(type);
-        return  this;        
-    }
-
-    public KPIBuilder type(String type) {
-        displayerBuilder.type(type);
         return  this;
     }
 

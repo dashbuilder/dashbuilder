@@ -19,7 +19,7 @@ import org.dashbuilder.model.displayer.AreaChartBuilder;
 import org.dashbuilder.model.displayer.AreaChartDisplayer;
 import org.dashbuilder.model.displayer.DataDisplayer;
 
-public class AreaChartBuilderImpl extends AbstractXAxisChartBuilder<AreaChartBuilderImpl> implements AreaChartBuilder {
+public class AreaChartBuilderImpl extends AbstractXAxisChartBuilder<AreaChartBuilderImpl> implements AreaChartBuilder<AreaChartBuilderImpl> {
 
     protected DataDisplayer createDisplayer() {
         return new AreaChartDisplayer();

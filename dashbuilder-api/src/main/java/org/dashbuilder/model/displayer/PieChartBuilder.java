@@ -25,6 +25,6 @@ package org.dashbuilder.model.displayer;
  .column("Total amount")
  </pre>
  */
-public interface PieChartBuilder<T extends PieChartBuilder> extends ChartBuilder<T> {
+public interface PieChartBuilder<T extends PieChartBuilder> extends XAxisChartBuilder<T> {
 
 }

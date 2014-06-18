@@ -27,7 +27,7 @@ import org.dashbuilder.model.date.Month;
  *
  * <pre>
      DataSetFactory.newLookupBuilder()
-     .uuid("target-dataset-uuid")
+     .dataset("target-dataset-uuid")
      .group("department")
      .count("id", "occurrences")
      .sum("amount", "totalAmount")
@@ -38,7 +38,11 @@ import org.dashbuilder.model.date.Month;
  */
 public interface DataSetLookupBuilder<T extends DataSetLookupBuilder> {
 
-    T uuid(String uuid);
+    /**
+     * The UUID reference to the source data set.
+     */
+    T dataset(String uuid);
+
     T rowOffset(int offset);
     T rowNumber(int rows);
 

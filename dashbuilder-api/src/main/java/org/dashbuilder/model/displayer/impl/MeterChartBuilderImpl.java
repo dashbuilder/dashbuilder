@@ -20,13 +20,13 @@ import org.dashbuilder.model.displayer.DataDisplayer;
 import org.dashbuilder.model.displayer.MeterChartBuilder;
 import org.dashbuilder.model.displayer.MeterChartDisplayer;
 
-public class MeterChartBuilderImpl extends AbstractChartBuilder<BarChartBuilderImpl> implements MeterChartBuilder {
+public class MeterChartBuilderImpl extends AbstractChartBuilder<MeterChartBuilderImpl> implements MeterChartBuilder<MeterChartBuilderImpl> {
 
     protected DataDisplayer createDisplayer() {
         return new MeterChartDisplayer();
     }
 
-    public MeterChartBuilder meter(long start, long warning, long critical, long end) {
+    public MeterChartBuilderImpl meter(long start, long warning, long critical, long end) {
         MeterChartDisplayer meterDisplayer = (MeterChartDisplayer) dataDisplayer;
         meterDisplayer.setMeterStart(start);
         meterDisplayer.setMeterWarning(warning);

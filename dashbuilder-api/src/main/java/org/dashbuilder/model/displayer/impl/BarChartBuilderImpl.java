@@ -19,7 +19,7 @@ import org.dashbuilder.model.displayer.BarChartBuilder;
 import org.dashbuilder.model.displayer.BarChartDisplayer;
 import org.dashbuilder.model.displayer.DataDisplayer;
 
-public class BarChartBuilderImpl extends AbstractXAxisChartBuilder<BarChartBuilderImpl> implements BarChartBuilder {
+public class BarChartBuilderImpl extends AbstractXAxisChartBuilder<BarChartBuilderImpl> implements BarChartBuilder<BarChartBuilderImpl> {
 
     protected DataDisplayer createDisplayer() {
         return new BarChartDisplayer();

@@ -19,7 +19,7 @@ import org.dashbuilder.model.displayer.DataDisplayer;
 import org.dashbuilder.model.displayer.PieChartBuilder;
 import org.dashbuilder.model.displayer.PieChartDisplayer;
 
-public class PieChartBuilderImpl extends AbstractXAxisChartBuilder<PieChartBuilderImpl> implements PieChartBuilder {
+public class PieChartBuilderImpl extends AbstractXAxisChartBuilder<PieChartBuilderImpl> implements PieChartBuilder<PieChartBuilderImpl> {
 
     protected DataDisplayer createDisplayer() {
         return new PieChartDisplayer();

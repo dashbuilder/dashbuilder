@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012 JBoss Inc
+ * Copyright (C) 2014 JBoss Inc
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,8 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbuilder.model.displayer;
+package org.dashbuilder.client.gallery;
 
-public interface BubbleChartBuilder<T extends BubbleChartBuilder> extends XAxisChartBuilder<T> {
+import java.util.List;
 
+/**
+ * Common interface for all gallery nodes.
+ */
+public interface GalleryNode  {
+
+    String getName();
+    List<GalleryNode> getChildren();
 }

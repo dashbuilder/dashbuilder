@@ -15,6 +15,8 @@
  */
 package org.dashbuilder.model.displayer.impl;
 
-public abstract class AbstractXAxisChartBuilder <T extends AbstractXAxisChartBuilder> extends AbstractChartBuilder<T> {
+import org.dashbuilder.model.displayer.XAxisChartBuilder;
+
+public abstract class AbstractXAxisChartBuilder <T extends XAxisChartBuilder> extends AbstractChartBuilder<T> {
 
 }

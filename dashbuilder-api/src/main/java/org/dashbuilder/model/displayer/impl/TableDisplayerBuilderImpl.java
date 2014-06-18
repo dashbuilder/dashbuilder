@@ -22,32 +22,32 @@ import org.dashbuilder.model.displayer.TableDisplayerBuilder;
 import org.jboss.errai.common.client.api.annotations.Portable;
 
 @Portable
-public class TableDisplayerBuilderImpl extends AbstractDisplayerBuilder implements TableDisplayerBuilder {
+public class TableDisplayerBuilderImpl extends AbstractDisplayerBuilder<TableDisplayerBuilderImpl> implements TableDisplayerBuilder<TableDisplayerBuilderImpl> {
 
     public DataDisplayer createDisplayer() {
         return new TableDisplayer();
     }
 
-    public TableDisplayerBuilder tablePageSize(int pageSize) {
+    public TableDisplayerBuilderImpl tablePageSize(int pageSize) {
         TableDisplayer d = (TableDisplayer) dataDisplayer;
         d.setPageSize(pageSize);
         return this;
     }
 
-    public TableDisplayerBuilder tableOrderEnabled(boolean enabled) {
+    public TableDisplayerBuilderImpl tableOrderEnabled(boolean enabled) {
         TableDisplayer d = (TableDisplayer) dataDisplayer;
         d.setSortEnabled(enabled);
         return this;
     }
 
-    public TableDisplayerBuilder tableOrderDefault(String columnId, SortOrder order) {
+    public TableDisplayerBuilderImpl tableOrderDefault(String columnId, SortOrder order) {
         TableDisplayer d = (TableDisplayer) dataDisplayer;
         d.setDefaultSortColumnId(columnId);
         d.setDefaultSortOrder(order);
         return this;
     }
 
-    public TableDisplayerBuilder tableOrderDefault(String columnId, String order) {
+    public TableDisplayerBuilderImpl tableOrderDefault(String columnId, String order) {
         return tableOrderDefault(columnId, SortOrder.getByName(order));
     }
 }

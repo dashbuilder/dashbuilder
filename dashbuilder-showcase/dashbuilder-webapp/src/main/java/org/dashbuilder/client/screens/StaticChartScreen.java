@@ -38,7 +38,7 @@ public class StaticChartScreen {
 
     public KPI createKPI() {
         return KPIFactory.newLineChartKPI()
-            .uuid("static_chart_sample")
+            .dataset("static_chart_sample")
             .title("Sales Evolution Per Year")
             .column("Month")
             .column("Sales in 2013")

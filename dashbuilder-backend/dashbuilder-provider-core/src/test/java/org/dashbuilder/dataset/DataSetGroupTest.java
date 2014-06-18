@@ -65,7 +65,7 @@ public class DataSetGroupTest {
     public void testDataSetFunctions() throws Exception {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDSLookup()
-                .uuid(EXPENSE_REPORTS)
+                .dataset(EXPENSE_REPORTS)
                 .count("#items")
                 .min("amount")
                 .max("amount")
@@ -82,7 +82,7 @@ public class DataSetGroupTest {
     public void testGroupByLabelDynamic() throws Exception {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDSLookup()
-                .uuid(EXPENSE_REPORTS)
+                .dataset(EXPENSE_REPORTS)
                 .group("department", "Department")
                 .count("Occurrences")
                 .min("amount", "min")
@@ -105,7 +105,7 @@ public class DataSetGroupTest {
     public void testGroupByDateDynamic() throws Exception {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDSLookup()
-                .uuid(EXPENSE_REPORTS)
+                .dataset(EXPENSE_REPORTS)
                 .group("date", "Period", GroupStrategy.DYNAMIC, 10, "year")
                 .count("Occurrences")
                 .sum("amount", "totalAmount")
@@ -124,7 +124,7 @@ public class DataSetGroupTest {
     public void testGroupByYear() throws Exception {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDSLookup()
-                .uuid(EXPENSE_REPORTS)
+                .dataset(EXPENSE_REPORTS)
                 .group("date", "Period").fixed(MONTH, true)
                 .count("Occurrences")
                 .sum("amount", "totalAmount")
@@ -151,7 +151,7 @@ public class DataSetGroupTest {
     public void testGroupByYearReverse() throws Exception {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDSLookup()
-                .uuid(EXPENSE_REPORTS)
+                .dataset(EXPENSE_REPORTS)
                 .group("date", "Period").fixed(MONTH, false)
                 .count("Occurrences")
                 .sum("amount", "totalAmount")
@@ -220,7 +220,7 @@ public class DataSetGroupTest {
     public void testGroupByWeek() throws Exception {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDSLookup()
-                .uuid(EXPENSE_REPORTS)
+                .dataset(EXPENSE_REPORTS)
                 .group("date", "Period").fixed(DAY_OF_WEEK).firstDay(DayOfWeek.MONDAY)
                 .count("Occurrences")
                 .sum("amount", "totalAmount")
@@ -242,7 +242,7 @@ public class DataSetGroupTest {
     public void testGroupByQuarter() throws Exception {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDSLookup()
-                .uuid(EXPENSE_REPORTS)
+                .dataset(EXPENSE_REPORTS)
                 .group("date", "Period").fixed(QUARTER)
                 .count("Occurrences")
                 .sum("amount", "totalAmount")

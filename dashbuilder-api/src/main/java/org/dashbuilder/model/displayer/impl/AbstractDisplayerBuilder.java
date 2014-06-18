@@ -22,7 +22,7 @@ import org.dashbuilder.model.displayer.DataDisplayerType;
 /**
  * Base class for DataDisplayerBuilder implementations.
  */
-public abstract class AbstractDisplayerBuilder<T extends DataDisplayerBuilder> implements DataDisplayerBuilder {
+public abstract class AbstractDisplayerBuilder<T extends DataDisplayerBuilder> implements DataDisplayerBuilder<T> {
 
     protected DataDisplayer dataDisplayer = createDisplayer();
 
@@ -35,16 +35,6 @@ public abstract class AbstractDisplayerBuilder<T extends DataDisplayerBuilder> i
 
     public T titleVisible(boolean visible) {
         dataDisplayer.setTitleVisible(visible);
-        return (T) this;
-    }
-
-    public T type(DataDisplayerType type) {
-        dataDisplayer.setType(type);
-        return (T) this;
-    }
-
-    public T type(String type) {
-        dataDisplayer.setType(DataDisplayerType.getByName(type));
         return (T) this;
     }
 

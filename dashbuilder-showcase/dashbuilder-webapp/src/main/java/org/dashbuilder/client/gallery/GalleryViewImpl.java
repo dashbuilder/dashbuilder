@@ -34,9 +34,6 @@ import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import org.dashbuilder.client.google.GoogleRenderer;
 import org.dashbuilder.client.kpi.KPIViewer;
-import org.dashbuilder.client.samples.gallery.GalleryNode;
-import org.dashbuilder.client.samples.gallery.GalleryNodeKPI;
-import org.dashbuilder.client.samples.gallery.GalleryTree;
 import org.dashbuilder.model.kpi.KPI;
 
 public class GalleryViewImpl extends Composite implements GalleryPresenter.GalleryView {

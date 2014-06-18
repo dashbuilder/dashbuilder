@@ -25,6 +25,11 @@ public class MeterChartDisplayer extends AbstractChartDisplayer {
     protected long meterCritical;
     protected long meterEnd;
 
+    @Override
+    public DataDisplayerType getType() {
+        return DataDisplayerType.METERCHART;
+    }
+
     public long getMeterStart() {
         return meterStart;
     }

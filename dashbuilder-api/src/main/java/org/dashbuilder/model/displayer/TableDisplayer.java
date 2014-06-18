@@ -26,6 +26,11 @@ public class TableDisplayer extends AbstractDataDisplayer {
     protected String defaultSortColumnId = null;
     protected SortOrder defaultSortOrder = SortOrder.ASCENDING;
 
+    @Override
+    public DataDisplayerType getType() {
+        return DataDisplayerType.TABLE;
+    }
+
     public int getPageSize() {
         return pageSize;
     }

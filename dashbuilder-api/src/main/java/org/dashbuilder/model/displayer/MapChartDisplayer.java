@@ -20,4 +20,8 @@ import org.jboss.errai.common.client.api.annotations.Portable;
 @Portable
 public class MapChartDisplayer extends XAxisChartDisplayer {
 
+    @Override
+    public DataDisplayerType getType() {
+        return DataDisplayerType.MAP;
+    }
 }

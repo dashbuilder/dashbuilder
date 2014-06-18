@@ -27,7 +27,7 @@ package org.dashbuilder.model.displayer;
  .buildDisplayer()
  </pre>
  */
-public interface BarChartBuilder<T extends BarChartBuilder> extends ChartBuilder<T> {
+public interface BarChartBuilder<T extends BarChartBuilder> extends XAxisChartBuilder<T> {
 
     T set3d(boolean b);
     T horizontal();

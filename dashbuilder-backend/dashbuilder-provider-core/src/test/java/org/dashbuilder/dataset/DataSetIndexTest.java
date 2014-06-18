@@ -50,7 +50,7 @@ public class DataSetIndexTest {
      * Group by department and count occurrences
      */
     DataSetLookup groupByDeptAndCount = DataSetFactory.newDSLookup()
-            .uuid(EXPENSE_REPORTS)
+            .dataset(EXPENSE_REPORTS)
             .group("department", "Department")
             .count("occurrences")
             .buildLookup();
@@ -59,7 +59,7 @@ public class DataSetIndexTest {
      * Group by department and sum the amount
      */
     DataSetLookup groupByDeptAndSum = DataSetFactory.newDSLookup()
-            .uuid(EXPENSE_REPORTS)
+            .dataset(EXPENSE_REPORTS)
             .group("department", "Department")
             .avg("amount")
             .buildLookup();
@@ -68,7 +68,7 @@ public class DataSetIndexTest {
      * Filter by city & department
      */
     DataSetLookup filterByCityAndDept = DataSetFactory.newDSLookup()
-            .uuid(EXPENSE_REPORTS)
+            .dataset(EXPENSE_REPORTS)
             .filter("city", isEqualsTo("Barcelona"))
             .filter("department", isEqualsTo("Engineering"))
             .buildLookup();
@@ -77,7 +77,7 @@ public class DataSetIndexTest {
      * Sort by amount in ascending order
      */
     DataSetLookup sortByAmountAsc = DataSetFactory.newDSLookup()
-            .uuid(EXPENSE_REPORTS)
+            .dataset(EXPENSE_REPORTS)
             .sort("amount", "asc")
             .buildLookup();
 
@@ -85,7 +85,7 @@ public class DataSetIndexTest {
      * Sort by amount in descending order
      */
     DataSetLookup sortByAmountDesc = DataSetFactory.newDSLookup()
-            .uuid(EXPENSE_REPORTS)
+            .dataset(EXPENSE_REPORTS)
             .sort("amount", "desc")
             .buildLookup();
 
