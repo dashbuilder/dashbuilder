@@ -84,7 +84,7 @@ public class GoogleTableViewer extends GoogleViewer<TableDisplayer> {
         table.addSortHandler( new SortHandler() {
             @Override public void onSort( SortEvent sortEvent ) {
                 String columnId = dataTable.getColumnId(sortEvent.getColumn());
-                setSortOrder(columnId, sortInfo.getSortOrder( columnId ));
+                sortApply(columnId, sortInfo.getSortOrder(columnId));
                 redraw();
             }
         } );

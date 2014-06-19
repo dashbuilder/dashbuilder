@@ -82,7 +82,7 @@ public abstract class AbstractDataViewer<T extends DataDisplayer> extends Compos
     /**
      * Get the set of columns being filtered.
      */
-    protected Set<String> getFilterColumns() {
+    protected Set<String> filterColumns() {
         return columnSelectionMap.keySet();
     }
 
@@ -92,7 +92,7 @@ public abstract class AbstractDataViewer<T extends DataDisplayer> extends Compos
      * @param columnId The column identifier-
      * @return A list of distinct values currently selected.
      */
-    protected List<String> getFilterValues(String columnId) {
+    protected List<String> filterValues(String columnId) {
         return columnSelectionMap.get(columnId);
     }
 
@@ -103,27 +103,27 @@ public abstract class AbstractDataViewer<T extends DataDisplayer> extends Compos
      * @param valueSelected The value to add/remove from the current filter.
      * @param numberOfRows The total number of available column values.
      */
-    protected void updateColumnFilter(String columnId, String valueSelected, int numberOfRows) {
+    protected void filterUpdate(String columnId, String valueSelected, int numberOfRows) {
         List<String> selectedValues = columnSelectionMap.get(columnId);
         if (selectedValues == null) {
             selectedValues = new ArrayList<String>();
             selectedValues.add(valueSelected);
             columnSelectionMap.put(columnId, selectedValues);
-            applyColumnFilter(columnId, selectedValues);
+            filterApply(columnId, selectedValues);
         }
         else if (selectedValues.contains(valueSelected)) {
             selectedValues.remove(valueSelected);
             if (!selectedValues.isEmpty()) {
-                applyColumnFilter(columnId, selectedValues);
+                filterApply(columnId, selectedValues);
             } else {
-                resetColumnFilter(columnId);
+                filterReset(columnId);
             }
         } else {
             if (selectedValues.size() < numberOfRows) {
                 selectedValues.add(valueSelected);
-                applyColumnFilter(columnId, selectedValues);
+                filterApply(columnId, selectedValues);
             } else {
-                resetColumnFilter(columnId);
+                filterReset(columnId);
             }
         }
     }
@@ -134,7 +134,7 @@ public abstract class AbstractDataViewer<T extends DataDisplayer> extends Compos
      * @param columnId The name of the column to filter.
      * @param values A list of values to filter for.
      */
-    protected void applyColumnFilter(String columnId, List<String> values) {
+    protected void filterApply(String columnId, List<String> values) {
 
         // For string column filters, create and notify a group interval selection operation.
         DataSetGroup groupOp = dataSetHandler.getGroupOperation(columnId);
@@ -160,7 +160,7 @@ public abstract class AbstractDataViewer<T extends DataDisplayer> extends Compos
      *
      * @param columnId The name of the column to reset.
      */
-    protected void resetColumnFilter(String columnId) {
+    protected void filterReset(String columnId) {
         columnSelectionMap.remove(columnId);
         DataSetGroup groupOp = dataSetHandler.getGroupOperation(columnId);
         if (groupOp != null && groupOp.getColumnGroup() != null) {
@@ -178,7 +178,7 @@ public abstract class AbstractDataViewer<T extends DataDisplayer> extends Compos
      * @param columnId The name of the column to sort.
      * @param sortOrder The sort order.
      */
-    protected void setSortOrder(String columnId, SortOrder sortOrder) {
+    protected void sortApply(String columnId, SortOrder sortOrder) {
         DataSetSort sortOp = new DataSetSort();
         sortOp.addSortColumn(new ColumnSort(columnId, sortOrder));
         dataSetHandler.setSortOperation(sortOp);

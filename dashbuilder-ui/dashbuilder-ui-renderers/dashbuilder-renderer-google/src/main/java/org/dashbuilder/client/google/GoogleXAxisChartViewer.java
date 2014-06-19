@@ -54,7 +54,7 @@ public abstract class GoogleXAxisChartViewer<T extends XAxisChartDisplayer> exte
         for (int i = 0, j = 0; i < table.getNumberOfRows(); i++, j++) {
             if (j >= COLOR_ARRAY.length) j = 0;
             String intervalSelected = getValueString(i, 0);
-            List<String> selectedIntervals = getFilterValues(googleTable.getColumnId(0));
+            List<String> selectedIntervals = filterValues(googleTable.getColumnId(0));
             if (selectedIntervals != null && !selectedIntervals.isEmpty() && !selectedIntervals.contains(intervalSelected)) {
                 colorArray[j] = COLOR_NOT_SELECTED;
             } else {
@@ -73,7 +73,7 @@ public abstract class GoogleXAxisChartViewer<T extends XAxisChartDisplayer> exte
                     int row = selection.getRow();
 
                     String intervalSelected = getValueString(row, 0);
-                    updateColumnFilter(googleTable.getColumnId(0), intervalSelected, googleTable.getNumberOfRows());
+                    filterUpdate(googleTable.getColumnId(0), intervalSelected, googleTable.getNumberOfRows());
                 }
                 // Redraw the char in order to reflect the current selection
                 updateVisualization();
@@ -90,7 +90,7 @@ public abstract class GoogleXAxisChartViewer<T extends XAxisChartDisplayer> exte
                     int row = selection.getRow();
 
                     String intervalSelected = getValueString(row, 0);
-                    updateColumnFilter(googleTable.getColumnId(0), intervalSelected, googleTable.getNumberOfRows());
+                    filterUpdate(googleTable.getColumnId(0), intervalSelected, googleTable.getNumberOfRows());
                 }
                 // Redraw the char in order to reflect the current selection
                 updateVisualization();
@@ -99,7 +99,7 @@ public abstract class GoogleXAxisChartViewer<T extends XAxisChartDisplayer> exte
     }
 
     protected Widget createCurrentSelectionWidget() {
-        List<String> selectedValues = getFilterValues(googleTable.getColumnId(0));
+        List<String> selectedValues = filterValues(googleTable.getColumnId(0));
         if (selectedValues != null && !selectedValues.isEmpty()) {
             HorizontalPanel panel = new HorizontalPanel();
             panel.getElement().setAttribute("cellpadding", "2");
@@ -110,7 +110,7 @@ public abstract class GoogleXAxisChartViewer<T extends XAxisChartDisplayer> exte
             panel.add(anchor);
             anchor.addClickHandler(new ClickHandler() {
                 public void onClick(ClickEvent event) {
-                    resetColumnFilter(googleTable.getColumnId(0));
+                    filterReset(googleTable.getColumnId(0));
                     updateVisualization();
                 }
             });
