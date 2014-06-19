@@ -119,7 +119,7 @@ public abstract class AbstractDataViewer<T extends DataDisplayer> extends Compos
                 filterReset(columnId);
             }
         } else {
-            if (selectedValues.size() < numberOfRows) {
+            if (numberOfRows > 0 && selectedValues.size() < numberOfRows) {
                 selectedValues.add(valueSelected);
                 filterApply(columnId, selectedValues);
             } else {
