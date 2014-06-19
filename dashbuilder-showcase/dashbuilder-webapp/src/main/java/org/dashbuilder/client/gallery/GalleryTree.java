@@ -31,7 +31,7 @@ import static org.dashbuilder.model.dataset.group.DateIntervalType.*;
 import static org.dashbuilder.model.dataset.filter.FilterFactory.*;
 import static org.dashbuilder.model.dataset.sort.SortOrder.*;
 import static org.dashbuilder.model.date.Month.*;
-import static org.dashbuilder.model.samples.SalesConstants.*;
+import static org.dashbuilder.client.dashboards.sales.SalesConstants.*;
 
 /**
  * The Gallery tree.
@@ -315,7 +315,6 @@ public class GalleryTree {
                 KPIFactory.newTableKPI()
                 .dataset(SALES_OPPS)
                 .title("List of Opportunities")
-                .renderer(UFTableRenderer.UUID)
                 .tablePageSize(20)
                 .tableOrderEnabled(true)
                 .tableOrderDefault(AMOUNT, DESCENDING)
@@ -326,7 +325,6 @@ public class GalleryTree {
                 .dataset(SALES_OPPS)
                 .filter(COUNTRY, OR(isEqualsTo("United States"), isEqualsTo("Brazil")))
                 .title("Opportunities in USA & Brazil")
-                .renderer(UFTableRenderer.UUID)
                 .tablePageSize(20)
                 .tableOrderEnabled(true)
                 .tableOrderDefault(AMOUNT, DESCENDING)
@@ -342,7 +340,6 @@ public class GalleryTree {
                 .avg(AMOUNT, "Average")
                 .sum(AMOUNT, "Total")
                 .title("Country Summary")
-                .renderer(UFTableRenderer.UUID)
                 .tablePageSize(10)
                 .tableOrderEnabled(true)
                 .tableOrderDefault("Country", DESCENDING)

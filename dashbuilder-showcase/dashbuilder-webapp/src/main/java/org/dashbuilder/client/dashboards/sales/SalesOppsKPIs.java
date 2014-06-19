@@ -23,19 +23,14 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import org.dashbuilder.client.kpi.ClientKPIManager;
-import org.dashbuilder.model.dataset.DataSetFactory;
-import org.dashbuilder.model.dataset.DataSetRef;
-import org.dashbuilder.model.dataset.group.DateIntervalType;
-import org.dashbuilder.model.displayer.DataDisplayer;
-import org.dashbuilder.model.displayer.DisplayerFactory;
 import org.dashbuilder.model.kpi.KPI;
 import org.dashbuilder.model.kpi.KPIFactory;
 
-import static org.dashbuilder.model.dataset.sort.SortOrder.*;
-import static org.dashbuilder.model.samples.SalesConstants.*;
+import static org.dashbuilder.client.dashboards.sales.SalesOppsData.*;
+import static org.dashbuilder.client.dashboards.sales.SalesOppsDisplayers.*;
 
 /**
- * A set of KPI definitions built on top of the the Sales Opportunities sample data set.
+ * A set of KPI definitions built on top of the the Sales Opportunities data set.
  */
 @ApplicationScoped
 public class SalesOppsKPIs {
@@ -53,120 +48,6 @@ public class SalesOppsKPIs {
     private List<KPI> kpiList = new ArrayList<KPI>();
 
     @Inject ClientKPIManager kpiManager;
-
-    public static final DataSetRef DATA_ALL_OPPS = DataSetFactory.newDSLookup()
-            .dataset(SALES_OPPS)
-            .buildLookup();
-
-    public static final DataSetRef GROUP_PIPELINE = DataSetFactory.newDSLookup()
-            .dataset(SALES_OPPS)
-            .group(PIPELINE)
-            .count("occurrences")
-            .buildLookup();
-
-    public static final DataSetRef GROUP_STATUS = DataSetFactory.newDSLookup()
-            .dataset(SALES_OPPS)
-            .group(STATUS)
-            .sum(AMOUNT)
-            .buildLookup();
-
-    public static final DataSetRef GROUP_CLOSING_DATE = DataSetFactory.newDSLookup()
-            .dataset(SALES_OPPS)
-            .group(CLOSING_DATE, 24, DateIntervalType.MONTH)
-            .sum(EXPECTED_AMOUNT)
-            .buildLookup();
-
-    public static final DataSetRef GROUP_SALES_PERSON = DataSetFactory.newDSLookup()
-            .dataset(SALES_OPPS)
-            .group(SALES_PERSON)
-            .sum(AMOUNT)
-            .buildLookup();
-
-    public static final DataSetRef GROUP_PRODUCT = DataSetFactory.newDSLookup()
-            .dataset(SALES_OPPS)
-            .group(PRODUCT)
-            .sum(AMOUNT)
-            .buildLookup();
-
-    public static final DataSetRef GROUP_COUNTRY = DataSetFactory.newDSLookup()
-            .dataset(SALES_OPPS)
-            .group(COUNTRY)
-            .count("opps")
-            .min(AMOUNT, "min")
-            .max(AMOUNT, "max")
-            .avg(AMOUNT, "avg")
-            .sum(AMOUNT, "total")
-            .buildLookup();
-
-    public static final DataDisplayer PIE_PIPELINE = DisplayerFactory.newPieChart()
-            .title("Pipeline status")
-            .titleVisible(false)
-            .margins(10, 10, 10, 10)
-            .column("Pipeline")
-            .column("Number of opps")
-            .buildDisplayer();
-
-    public static final DataDisplayer PIE_STATUS = DisplayerFactory.newPieChart()
-            .title("By Status")
-            .titleVisible(false)
-            .margins(10, 10, 10, 10)
-            .column("Status")
-            .column("Total amount")
-            .buildDisplayer();
-
-    public static final DataDisplayer PIE_SALES_PERSON = DisplayerFactory.newPieChart()
-            .title("By Sales Person")
-            .titleVisible(false)
-            .margins(10, 10, 10, 10)
-            .column("Sales person")
-            .column("Total amount")
-            .buildDisplayer();
-
-    public static final DataDisplayer AREA_EXPECTED_AMOUNT = DisplayerFactory.newAreaChart()
-            .title("Expected Amount")
-            .titleVisible(false)
-            .margins(20, 50, 100, 100)
-            .column("Closing date")
-            .column("Expected amount")
-            .buildDisplayer();
-
-    public static final DataDisplayer HBAR_PRODUCT = DisplayerFactory.newBarChart()
-            .title("By Product")
-            .titleVisible(false)
-            .margins(10, 50, 100, 100)
-            .column("Product")
-            .column("Total amount")
-            .horizontal()
-            .buildDisplayer();
-
-    public static final DataDisplayer HBAR_COUNTRY = DisplayerFactory.newBarChart()
-            .title("By Country")
-            .titleVisible(false)
-            .margins(10, 80, 100, 100)
-            .column(COUNTRY, "Country")
-            .column("total", "Total amount")
-            .horizontal()
-            .buildDisplayer();
-
-    public static final DataDisplayer TABLE_COUNTRY = DisplayerFactory.newTable()
-            .title("Country Summary")
-            .titleVisible(false)
-            .column("country", "COUNTRY")
-            .column("total", "TOTAL")
-            .column("opps", "NUMBER")
-            .column("avg", "AVERAGE")
-            .column("min", "MIN")
-            .column("max", "MAX")
-            .tablePageSize(20)
-            .buildDisplayer();
-
-    public static final DataDisplayer TABLE_ALL = DisplayerFactory.newTable()
-            .title("List of Opportunities")
-            .titleVisible(false)
-            .tablePageSize(20)
-            .tableOrderEnabled(true)
-            .tableOrderDefault(AMOUNT, DESCENDING)
-            .buildDisplayer();
 
     @PostConstruct
     public void init() {

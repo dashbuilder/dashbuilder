@@ -15,14 +15,19 @@
  */
 package org.dashbuilder.client;
 
+import java.util.Date;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
+import org.dashbuilder.client.dashboards.sales.SalesDataSetGenerator;
 import org.dashbuilder.client.dataset.DataSetLookupClient;
 import org.dashbuilder.client.displayer.DataViewerLocator;
 import org.dashbuilder.client.google.GoogleRenderer;
+import org.dashbuilder.model.dataset.DataSet;
+import org.dashbuilder.model.dataset.DataSetManager;
 import org.dashbuilder.model.displayer.DataDisplayerType;
+import org.dashbuilder.client.dashboards.sales.SalesConstants;
 import org.dashbuilder.service.DataSetLookupService;
 import org.jboss.errai.common.client.api.Caller;
 
@@ -32,9 +37,12 @@ import org.jboss.errai.common.client.api.Caller;
 @ApplicationScoped
 public class DashbuilderInitializer {
 
+    @Inject DataSetManager dataSetManager;
     @Inject DataViewerLocator dataViewerLocator;
     @Inject DataSetLookupClient dataSetLookupClient;
     @Inject Caller<DataSetLookupService> dataSetLookupService;
+
+    @Inject SalesDataSetGenerator salesDataSetGenerator;
 
     @PostConstruct
     public void init() {
@@ -51,5 +59,10 @@ public class DashbuilderInitializer {
         dataViewerLocator.setDefaultRenderer(DataDisplayerType.METERCHART, GoogleRenderer.UUID);
         dataViewerLocator.setDefaultRenderer(DataDisplayerType.MAP, GoogleRenderer.UUID);
         dataViewerLocator.setDefaultRenderer(DataDisplayerType.TABLE, GoogleRenderer.UUID);
+
+        // Generate the data set to be used by the Showcase KPI Gallery and by the Sales sample dashboards.
+        Date currentDate = new Date();
+        DataSet salesDataSet = salesDataSetGenerator.generateDataSet(SalesConstants.SALES_OPPS, 5, currentDate.getYear()-1, currentDate.getYear()+3);
+        dataSetManager.registerDataSet(salesDataSet);
     }
 }

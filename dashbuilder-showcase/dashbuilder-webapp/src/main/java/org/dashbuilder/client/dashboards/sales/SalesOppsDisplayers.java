@@ -1,0 +1,98 @@
+/**
+ * Copyright (C) 2014 JBoss Inc
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.dashbuilder.client.dashboards.sales;
+
+import org.dashbuilder.model.displayer.DataDisplayer;
+import org.dashbuilder.model.displayer.DisplayerFactory;
+
+import static org.dashbuilder.client.dashboards.sales.SalesConstants.*;
+import static org.dashbuilder.model.dataset.sort.SortOrder.*;
+
+/**
+ * A set of displayer definitions for the Sales Dashboard
+ */
+public class SalesOppsDisplayers {
+
+    public static final DataDisplayer PIE_PIPELINE = DisplayerFactory.newPieChart()
+            .title("Pipeline status")
+            .titleVisible(false)
+            .margins(10, 10, 10, 10)
+            .column("Pipeline")
+            .column("Number of opps")
+            .buildDisplayer();
+
+    public static final DataDisplayer PIE_STATUS = DisplayerFactory.newPieChart()
+            .title("By Status")
+            .titleVisible(false)
+            .margins(10, 10, 10, 10)
+            .column("Status")
+            .column("Total amount")
+            .buildDisplayer();
+
+    public static final DataDisplayer PIE_SALES_PERSON = DisplayerFactory.newPieChart()
+            .title("By Sales Person")
+            .titleVisible(false)
+            .margins(10, 10, 10, 10)
+            .column("Sales person")
+            .column("Total amount")
+            .buildDisplayer();
+
+    public static final DataDisplayer AREA_EXPECTED_AMOUNT = DisplayerFactory.newAreaChart()
+            .title("Expected Amount")
+            .titleVisible(false)
+            .margins(20, 50, 100, 100)
+            .column("Closing date")
+            .column("Expected amount")
+            .buildDisplayer();
+
+    public static final DataDisplayer HBAR_PRODUCT = DisplayerFactory.newBarChart()
+            .title("By Product")
+            .titleVisible(false)
+            .margins(10, 50, 100, 100)
+            .column("Product")
+            .column("Total amount")
+            .horizontal()
+            .buildDisplayer();
+
+    public static final DataDisplayer HBAR_COUNTRY = DisplayerFactory.newBarChart()
+            .title("By Country")
+            .titleVisible(false)
+            .margins(10, 80, 100, 100)
+            .column(COUNTRY, "Country")
+            .column("total", "Total amount")
+            .horizontal()
+            .buildDisplayer();
+
+    public static final DataDisplayer TABLE_COUNTRY = DisplayerFactory.newTable()
+            .title("Country Summary")
+            .titleVisible(false)
+            .column("country", "COUNTRY")
+            .column("total", "TOTAL")
+            .column("opps", "NUMBER")
+            .column("avg", "AVERAGE")
+            .column("min", "MIN")
+            .column("max", "MAX")
+            .tablePageSize(20)
+            .buildDisplayer();
+
+    public static final DataDisplayer TABLE_ALL = DisplayerFactory.newTable()
+            .title("List of Opportunities")
+            .titleVisible(false)
+            .tablePageSize(20)
+            .tableOrderEnabled(true)
+            .tableOrderDefault(AMOUNT, DESCENDING)
+            .buildDisplayer();
+}
