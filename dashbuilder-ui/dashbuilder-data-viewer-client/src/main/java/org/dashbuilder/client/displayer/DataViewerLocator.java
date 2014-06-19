@@ -22,8 +22,10 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
+import org.dashbuilder.model.dataset.DataSetRef;
 import org.dashbuilder.model.displayer.DataDisplayer;
 import org.dashbuilder.model.displayer.DataDisplayerType;
+import org.jboss.errai.ioc.client.container.IOC;
 import org.jboss.errai.ioc.client.container.IOCBeanDef;
 import org.jboss.errai.ioc.client.container.SyncBeanManager;
 
@@ -33,7 +35,14 @@ import org.jboss.errai.ioc.client.container.SyncBeanManager;
 @ApplicationScoped
 public class DataViewerLocator {
 
+    public static DataViewerLocator get() {
+        Collection<IOCBeanDef<DataViewerLocator>> beans = IOC.getBeanManager().lookupBeans(DataViewerLocator.class);
+        IOCBeanDef<DataViewerLocator> beanDef = beans.iterator().next();
+        return beanDef.getInstance();
+    }
+
     @Inject SyncBeanManager beanManager;
+    @Inject DataSetHandlerLocator handlerLocator;
 
     private Map<DataDisplayerType,String> defaultRenderers = new HashMap<DataDisplayerType,String>();
 
@@ -66,7 +75,7 @@ public class DataViewerLocator {
     }
 
     /**
-     * Get the viewer component for the specified data displayer.
+     * Get the viewer component for the specified data displayer (with no data set attached).
      */
     public DataViewer lookupViewer(DataDisplayer target) {
         RendererLibrary renderer = lookupRenderer(target);
@@ -74,6 +83,16 @@ public class DataViewerLocator {
         if (viewer == null) throw new RuntimeException(target.getType() + " displayer not supported in " + target.getRenderer() + " renderer.");
 
         viewer.setDataDisplayer(target);
+        return viewer;
+    }
+
+    /**
+     * Get the viewer component for the specified data displayer and attach it to the specified data set ref.
+     */
+    public DataViewer lookupViewer(DataDisplayer target, DataSetRef dataSetRef) {
+        DataViewer viewer = lookupViewer(target);
+        DataSetHandler handler = handlerLocator.lookupHandler(dataSetRef);
+        viewer.setDataSetHandler(handler);
         return viewer;
     }
 }

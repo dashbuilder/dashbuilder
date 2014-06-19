@@ -15,8 +15,7 @@
  */
 package org.dashbuilder.client.dataset;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Collection;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -29,6 +28,8 @@ import org.dashbuilder.model.dataset.DataSetLookup;
 import org.dashbuilder.model.dataset.DataSet;
 import org.dashbuilder.model.dataset.DataSetManager;
 import org.dashbuilder.model.dataset.DataSetMetadata;
+import org.jboss.errai.ioc.client.container.IOC;
+import org.jboss.errai.ioc.client.container.IOCBeanDef;
 
 /**
  * Client implementation of a DataSetManager. It hold as map of data sets in memory.
@@ -36,6 +37,12 @@ import org.dashbuilder.model.dataset.DataSetMetadata;
  */
 @ApplicationScoped
 public class ClientDataSetManager implements DataSetManager {
+
+    public static ClientDataSetManager get() {
+        Collection<IOCBeanDef<ClientDataSetManager>> beans = IOC.getBeanManager().lookupBeans(ClientDataSetManager.class);
+        IOCBeanDef<ClientDataSetManager> beanDef = beans.iterator().next();
+        return beanDef.getInstance();
+    }
 
     @Inject ClientDataSetOpEngine dataSetOpEngine;
 

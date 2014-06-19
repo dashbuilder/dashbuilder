@@ -15,6 +15,7 @@
  */
 package org.dashbuilder.client.displayer;
 
+import java.util.Collection;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
@@ -23,12 +24,20 @@ import org.dashbuilder.client.dataset.DataSetLookupClient;
 import org.dashbuilder.model.dataset.DataSet;
 import org.dashbuilder.model.dataset.DataSetLookup;
 import org.dashbuilder.model.dataset.DataSetRef;
+import org.jboss.errai.ioc.client.container.IOC;
+import org.jboss.errai.ioc.client.container.IOCBeanDef;
 
 /**
  * The locator service for DataSetHandler implementations.
  */
 @ApplicationScoped
 public class DataSetHandlerLocator {
+
+    public static DataSetHandlerLocator get() {
+        Collection<IOCBeanDef<DataSetHandlerLocator>> beans = IOC.getBeanManager().lookupBeans(DataSetHandlerLocator.class);
+        IOCBeanDef<DataSetHandlerLocator> beanDef = beans.iterator().next();
+        return beanDef.getInstance();
+    }
 
     @Inject DataSetLookupClient dataSetLookupClient;
     @Inject ClientDataSetManager clientDataSetManager;

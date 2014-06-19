@@ -33,13 +33,9 @@ import org.dashbuilder.model.kpi.KPI;
 @Dependent
 public class KPIViewer extends Composite {
 
-    @Inject DataViewerLocator viewerLocator;
-    @Inject DataSetHandlerLocator handlerLocator;
-
     SimplePanel container = new SimplePanel();
     Label label = new Label();
     DataViewer dataViewer;
-    DataSetHandler dataHandler;
 
     @PostConstruct
     private void init() {
@@ -50,21 +46,12 @@ public class KPIViewer extends Composite {
         return dataViewer;
     }
 
-    public DataSetHandler getDataHandler() {
-        return dataHandler;
-    }
-
     public void draw(KPI kpi) {
         try {
-            // Locate the low level UI components
+            // Locate the DataViewer widget to display the KPI
             DataDisplayer dataDisplayer = kpi.getDataDisplayer();
             DataSetRef dataSetRef = kpi.getDataSetRef();
-            dataViewer = viewerLocator.lookupViewer(dataDisplayer);
-            dataHandler = handlerLocator.lookupHandler(dataSetRef);
-
-            // Init the DataViewer
-            dataViewer.setDataDisplayer(dataDisplayer);
-            dataViewer.setDataSetHandler(dataHandler);
+            dataViewer = DataViewerLocator.get().lookupViewer(dataDisplayer, dataSetRef);
 
             // Draw
             container.clear();
