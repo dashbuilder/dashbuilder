@@ -98,7 +98,7 @@ public class SalesOppsKPIs {
             .sum(AMOUNT, "total")
             .buildLookup();
 
-    public static final DataDisplayer PIE_PIPELINE = DisplayerFactory.newPieChartDisplayer()
+    public static final DataDisplayer PIE_PIPELINE = DisplayerFactory.newPieChart()
             .title("Pipeline status")
             .titleVisible(false)
             .margins(10, 10, 10, 10)
@@ -106,7 +106,7 @@ public class SalesOppsKPIs {
             .column("Number of opps")
             .buildDisplayer();
 
-    public static final DataDisplayer PIE_STATUS = DisplayerFactory.newPieChartDisplayer()
+    public static final DataDisplayer PIE_STATUS = DisplayerFactory.newPieChart()
             .title("By Status")
             .titleVisible(false)
             .margins(10, 10, 10, 10)
@@ -114,7 +114,7 @@ public class SalesOppsKPIs {
             .column("Total amount")
             .buildDisplayer();
 
-    public static final DataDisplayer PIE_SALES_PERSON = DisplayerFactory.newPieChartDisplayer()
+    public static final DataDisplayer PIE_SALES_PERSON = DisplayerFactory.newPieChart()
             .title("By Sales Person")
             .titleVisible(false)
             .margins(10, 10, 10, 10)
@@ -122,7 +122,7 @@ public class SalesOppsKPIs {
             .column("Total amount")
             .buildDisplayer();
 
-    public static final DataDisplayer AREA_EXPECTED_AMOUNT = DisplayerFactory.newAreaChartDisplayer()
+    public static final DataDisplayer AREA_EXPECTED_AMOUNT = DisplayerFactory.newAreaChart()
             .title("Expected Amount")
             .titleVisible(false)
             .margins(20, 50, 100, 100)
@@ -130,7 +130,7 @@ public class SalesOppsKPIs {
             .column("Expected amount")
             .buildDisplayer();
 
-    public static final DataDisplayer HBAR_PRODUCT = DisplayerFactory.newBarChartDisplayer()
+    public static final DataDisplayer HBAR_PRODUCT = DisplayerFactory.newBarChart()
             .title("By Product")
             .titleVisible(false)
             .margins(10, 50, 100, 100)
@@ -139,7 +139,7 @@ public class SalesOppsKPIs {
             .horizontal()
             .buildDisplayer();
 
-    public static final DataDisplayer HBAR_COUNTRY = DisplayerFactory.newBarChartDisplayer()
+    public static final DataDisplayer HBAR_COUNTRY = DisplayerFactory.newBarChart()
             .title("By Country")
             .titleVisible(false)
             .margins(10, 80, 100, 100)
@@ -148,7 +148,7 @@ public class SalesOppsKPIs {
             .horizontal()
             .buildDisplayer();
 
-    public static final DataDisplayer TABLE_COUNTRY = DisplayerFactory.newTableDisplayer()
+    public static final DataDisplayer TABLE_COUNTRY = DisplayerFactory.newTable()
             .title("Country Summary")
             .titleVisible(false)
             .column("country", "COUNTRY")
@@ -160,7 +160,7 @@ public class SalesOppsKPIs {
             .tablePageSize(20)
             .buildDisplayer();
 
-    public static final DataDisplayer TABLE_ALL = DisplayerFactory.newTableDisplayer()
+    public static final DataDisplayer TABLE_ALL = DisplayerFactory.newTable()
             .title("List of Opportunities")
             .titleVisible(false)
             .tablePageSize(20)

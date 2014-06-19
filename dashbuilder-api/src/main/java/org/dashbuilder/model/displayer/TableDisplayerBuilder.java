@@ -21,7 +21,7 @@ import org.dashbuilder.model.dataset.sort.SortOrder;
  * A displayer builder for tables
  *
  * <pre>
- DisplayerFactory.newTableDisplayer()
+ DisplayerFactory.newTable()
  .title("List of Opportunities")
  .tablePageSize(20)
  .tableOrderEnabled(true)

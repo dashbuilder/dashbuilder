@@ -19,7 +19,7 @@ package org.dashbuilder.model.displayer;
  * A displayer builder for pie charts
  *
  * <pre>
- DisplayerFactory.newPieChartDisplayer()
+ DisplayerFactory.newPieChart()
  .title("By Product")
  .column("Product")
  .column("Total amount")

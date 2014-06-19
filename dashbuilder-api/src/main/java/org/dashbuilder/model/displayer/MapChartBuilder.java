@@ -19,7 +19,7 @@ package org.dashbuilder.model.displayer;
  * A displayer builder for map charts
  *
  * <pre>
- DisplayerFactory.newMapChartDisplayer()
+ DisplayerFactory.newMapChart()
  .title("By Country")
  .column("Country")
  .column("Total amount")

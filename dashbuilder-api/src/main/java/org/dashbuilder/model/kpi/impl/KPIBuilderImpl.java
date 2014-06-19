@@ -49,21 +49,21 @@ public class KPIBuilderImpl implements KPIBuilder {
 
     public KPIBuilderImpl(DataDisplayerType type) {
         if (DataDisplayerType.BARCHART.equals(type)) {
-            displayerBuilder = DisplayerFactory.newBarChartDisplayer();
+            displayerBuilder = DisplayerFactory.newBarChart();
         } else if (DataDisplayerType.PIECHART.equals(type)) {
-            displayerBuilder = DisplayerFactory.newPieChartDisplayer();
+            displayerBuilder = DisplayerFactory.newPieChart();
         } else if (DataDisplayerType.LINECHART.equals(type)) {
-            displayerBuilder = DisplayerFactory.newLineChartDisplayer();
+            displayerBuilder = DisplayerFactory.newLineChart();
         } else if (DataDisplayerType.AREACHART.equals(type)) {
-            displayerBuilder = DisplayerFactory.newAreaChartDisplayer();
+            displayerBuilder = DisplayerFactory.newAreaChart();
         } else if (DataDisplayerType.BUBBLECHART.equals(type)) {
-            displayerBuilder = DisplayerFactory.newBubbleChartDisplayer();
+            displayerBuilder = DisplayerFactory.newBubbleChart();
         } else if (DataDisplayerType.METERCHART.equals(type)) {
-            displayerBuilder = DisplayerFactory.newMeterChartDisplayer();
+            displayerBuilder = DisplayerFactory.newMeterChart();
         } else if (DataDisplayerType.MAP.equals(type)) {
-            displayerBuilder = DisplayerFactory.newMapChartDisplayer();
+            displayerBuilder = DisplayerFactory.newMapChart();
         } else if (DataDisplayerType.TABLE.equals(type)) {
-            displayerBuilder = DisplayerFactory.newTableDisplayer();
+            displayerBuilder = DisplayerFactory.newTable();
         } else {
             throw new IllegalStateException("Missing data displayer type: " + type);
         }

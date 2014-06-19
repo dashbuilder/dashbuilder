@@ -19,7 +19,7 @@ package org.dashbuilder.model.displayer;
  * A displayer builder for line charts
  *
  * <pre>
- DisplayerFactory.newLineChartDisplayer()
+ DisplayerFactory.newLineChart()
  .title("By Product")
  .column("Product")
  .column("Total amount")

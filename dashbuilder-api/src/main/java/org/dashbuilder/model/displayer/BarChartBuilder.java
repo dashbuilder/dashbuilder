@@ -19,7 +19,7 @@ package org.dashbuilder.model.displayer;
  * A displayer builder for bar charts
  *
  * <pre>
- DisplayerFactory.newBarChartDisplayer()
+ DisplayerFactory.newBarChart()
  .title("By Product")
  .column("Product")
  .column("Total amount")

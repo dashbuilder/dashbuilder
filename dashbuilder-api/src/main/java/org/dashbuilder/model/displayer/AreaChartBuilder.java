@@ -19,7 +19,7 @@ package org.dashbuilder.model.displayer;
  * A displayer builder for area charts
  *
  * <pre>
- DisplayerFactory.newAreaChartDisplayer()
+ DisplayerFactory.newAreaChart()
  .title("By Product")
  .column("Product")
  .column("Total amount")

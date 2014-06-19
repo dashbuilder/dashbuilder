@@ -29,35 +29,35 @@ import org.dashbuilder.model.displayer.impl.TableDisplayerBuilderImpl;
  */
 public final class DisplayerFactory {
 
-    public static BarChartBuilder<BarChartBuilderImpl> newBarChartDisplayer() {
+    public static BarChartBuilder<BarChartBuilderImpl> newBarChart() {
         return new BarChartBuilderImpl();
     }
 
-    public static PieChartBuilder<PieChartBuilderImpl> newPieChartDisplayer() {
+    public static PieChartBuilder<PieChartBuilderImpl> newPieChart() {
         return new PieChartBuilderImpl();
     }
 
-    public static AreaChartBuilder<AreaChartBuilderImpl> newAreaChartDisplayer() {
+    public static AreaChartBuilder<AreaChartBuilderImpl> newAreaChart() {
         return new AreaChartBuilderImpl();
     }
 
-    public static LineChartBuilder<LineChartBuilderImpl> newLineChartDisplayer() {
+    public static LineChartBuilder<LineChartBuilderImpl> newLineChart() {
         return new LineChartBuilderImpl();
     }
 
-    public static BubbleChartBuilder<BubbleChartBuilderImpl> newBubbleChartDisplayer() {
+    public static BubbleChartBuilder<BubbleChartBuilderImpl> newBubbleChart() {
         return new BubbleChartBuilderImpl();
     }
 
-    public static MapChartBuilder<MapChartBuilderImpl> newMapChartDisplayer() {
+    public static MapChartBuilder<MapChartBuilderImpl> newMapChart() {
         return new MapChartBuilderImpl();
     }
 
-    public static TableDisplayerBuilder<TableDisplayerBuilderImpl> newTableDisplayer() {
+    public static TableDisplayerBuilder<TableDisplayerBuilderImpl> newTable() {
         return new TableDisplayerBuilderImpl();
     }
 
-    public static MeterChartBuilder<MeterChartBuilderImpl> newMeterChartDisplayer() {
+    public static MeterChartBuilder<MeterChartBuilderImpl> newMeterChart() {
         return new MeterChartBuilderImpl();
     }
 
