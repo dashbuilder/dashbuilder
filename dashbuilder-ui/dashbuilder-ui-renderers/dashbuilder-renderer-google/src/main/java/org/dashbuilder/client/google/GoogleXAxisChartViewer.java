@@ -15,7 +15,6 @@
  */
 package org.dashbuilder.client.google;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.github.gwtbootstrap.client.ui.Label;
@@ -42,8 +41,6 @@ public abstract class GoogleXAxisChartViewer<T extends XAxisChartDisplayer> exte
 
     public static final String COLOR_NOT_SELECTED = "grey";
 
-    protected List<String> intervalSelectedList = new ArrayList<String>();
-
     public DataTable createTable() {
         List<DataDisplayerColumn> displayerColumns = dataDisplayer.getColumnList();
         if (displayerColumns.size() == 1) {
@@ -57,7 +54,8 @@ public abstract class GoogleXAxisChartViewer<T extends XAxisChartDisplayer> exte
         for (int i = 0, j = 0; i < table.getNumberOfRows(); i++, j++) {
             if (j >= COLOR_ARRAY.length) j = 0;
             String intervalSelected = getValueString(i, 0);
-            if (!intervalSelectedList.isEmpty() && !intervalSelectedList.contains(intervalSelected)) {
+            List<String> selectedIntervals = getFilterValues(googleTable.getColumnId(0));
+            if (selectedIntervals != null && !selectedIntervals.isEmpty() && !selectedIntervals.contains(intervalSelected)) {
                 colorArray[j] = COLOR_NOT_SELECTED;
             } else {
                 colorArray[j] = COLOR_ARRAY[j];
@@ -75,7 +73,7 @@ public abstract class GoogleXAxisChartViewer<T extends XAxisChartDisplayer> exte
                     int row = selection.getRow();
 
                     String intervalSelected = getValueString(row, 0);
-                    updateSelection(intervalSelected);
+                    updateColumnFilter(googleTable.getColumnId(0), intervalSelected, googleTable.getNumberOfRows());
                 }
                 // Redraw the char in order to reflect the current selection
                 updateVisualization();
@@ -92,7 +90,7 @@ public abstract class GoogleXAxisChartViewer<T extends XAxisChartDisplayer> exte
                     int row = selection.getRow();
 
                     String intervalSelected = getValueString(row, 0);
-                    updateSelection(intervalSelected);
+                    updateColumnFilter(googleTable.getColumnId(0), intervalSelected, googleTable.getNumberOfRows());
                 }
                 // Redraw the char in order to reflect the current selection
                 updateVisualization();
@@ -100,38 +98,19 @@ public abstract class GoogleXAxisChartViewer<T extends XAxisChartDisplayer> exte
         };
     }
 
-    protected void updateSelection(String intervalSelected) {
-        if (!intervalSelectedList.contains(intervalSelected)) {
-            intervalSelectedList.add(intervalSelected);
-            if (intervalSelectedList.size() < dataSet.getRowCount()) {
-                selectGroupIntervals(googleTable.getColumnId(0), intervalSelectedList);
-            } else {
-                intervalSelectedList.clear();
-                resetGroupIntervals(googleTable.getColumnId(0));
-            }
-        } else {
-            intervalSelectedList.remove(intervalSelected);
-            if (!intervalSelectedList.isEmpty()) {
-                selectGroupIntervals(googleTable.getColumnId(0), intervalSelectedList);
-            } else {
-                resetGroupIntervals(googleTable.getColumnId(0));
-            }
-        }
-    }
-
     protected Widget createCurrentSelectionWidget() {
-        if (!intervalSelectedList.isEmpty()) {
+        List<String> selectedValues = getFilterValues(googleTable.getColumnId(0));
+        if (selectedValues != null && !selectedValues.isEmpty()) {
             HorizontalPanel panel = new HorizontalPanel();
             panel.getElement().setAttribute("cellpadding", "2");
-            for (String interval : intervalSelectedList) {
+            for (String interval : selectedValues) {
                 panel.add(new Label(interval));
             }
             Anchor anchor = new Anchor("reset");
             panel.add(anchor);
             anchor.addClickHandler(new ClickHandler() {
                 public void onClick(ClickEvent event) {
-                    intervalSelectedList.clear();
-                    resetGroupIntervals(googleTable.getColumnId(0));
+                    resetColumnFilter(googleTable.getColumnId(0));
                     updateVisualization();
                 }
             });

@@ -16,11 +16,15 @@
 package org.dashbuilder.client.displayer;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import com.google.gwt.user.client.ui.Composite;
-import org.dashbuilder.model.dataset.DataSet;
+import org.dashbuilder.model.dataset.group.ColumnGroup;
 import org.dashbuilder.model.dataset.group.DataSetGroup;
+import org.dashbuilder.model.dataset.group.GroupStrategy;
 import org.dashbuilder.model.dataset.sort.ColumnSort;
 import org.dashbuilder.model.dataset.sort.DataSetSort;
 import org.dashbuilder.model.dataset.sort.SortOrder;
@@ -39,6 +43,7 @@ public abstract class AbstractDataViewer<T extends DataDisplayer> extends Compos
     protected DataSetHandler dataSetHandler;
     protected T dataDisplayer;
     protected List<DataViewerListener> listenerList = new ArrayList<DataViewerListener>();
+    protected Map<String,List<String>> columnSelectionMap = new HashMap<String,List<String>>();
 
     public T getDataDisplayer() {
         return dataDisplayer;
@@ -72,36 +77,91 @@ public abstract class AbstractDataViewer<T extends DataDisplayer> extends Compos
         redraw();
     }
 
-    // INTERNAL DATA SET HANDLING METHODS
+    // DATA COLUMN VALUES SELECTION, FILTER & NOTIFICATION
 
     /**
-     * This method is only applicable for displayers based on grouped data sets.
-     *
-     * @param columnId The name of the pivot column.
-     * @param intervalNames The name of the group intervals selected.
+     * Get the set of columns being filtered.
      */
-    public void selectGroupIntervals(String columnId, List<String> intervalNames) {
+    protected Set<String> getFilterColumns() {
+        return columnSelectionMap.keySet();
+    }
 
-        DataSetGroup groupOp = dataSetHandler.getGroupOperation(columnId);
-        if (groupOp != null && groupOp.getColumnGroup() != null) {
-            DataSetGroup _groupSelect = groupOp.cloneInstance();
-            _groupSelect.setSelectedIntervalNames(intervalNames);
-            _groupSelect.getGroupFunctions().clear();
+    /**
+     * Get the current filter values for the given data set column.
+     *
+     * @param columnId The column identifier-
+     * @return A list of distinct values currently selected.
+     */
+    protected List<String> getFilterValues(String columnId) {
+        return columnSelectionMap.get(columnId);
+    }
 
-            // Also notify to those interested parties the intervals selection event.
-            for (DataViewerListener listener : listenerList) {
-                listener.onGroupIntervalsSelected(this, _groupSelect);
+    /**
+     * Updates the current filter values for the given data set column.
+     *
+     * @param columnId The column to filter for.
+     * @param valueSelected The value to add/remove from the current filter.
+     * @param numberOfRows The total number of available column values.
+     */
+    protected void updateColumnFilter(String columnId, String valueSelected, int numberOfRows) {
+        List<String> selectedValues = columnSelectionMap.get(columnId);
+        if (selectedValues == null) {
+            selectedValues = new ArrayList<String>();
+            selectedValues.add(valueSelected);
+            columnSelectionMap.put(columnId, selectedValues);
+            applyColumnFilter(columnId, selectedValues);
+        }
+        else if (selectedValues.contains(valueSelected)) {
+            selectedValues.remove(valueSelected);
+            if (!selectedValues.isEmpty()) {
+                applyColumnFilter(columnId, selectedValues);
+            } else {
+                resetColumnFilter(columnId);
+            }
+        } else {
+            if (selectedValues.size() < numberOfRows) {
+                selectedValues.add(valueSelected);
+                applyColumnFilter(columnId, selectedValues);
+            } else {
+                resetColumnFilter(columnId);
             }
         }
     }
 
     /**
-     * This method is only applicable for displayers based on grouped data sets.
+     * Filter the values of the given column.
      *
-     * @param columnId The name of the pivot column.
+     * @param columnId The name of the column to filter.
+     * @param values A list of values to filter for.
      */
-    public void resetGroupIntervals(String columnId) {
+    protected void applyColumnFilter(String columnId, List<String> values) {
 
+        // For string column filters, create and notify a group interval selection operation.
+        DataSetGroup groupOp = dataSetHandler.getGroupOperation(columnId);
+        DataSetGroup _groupSelect = null;
+        if (groupOp != null && groupOp.getColumnGroup() != null) {
+            _groupSelect = groupOp.cloneInstance();
+            _groupSelect.setSelectedIntervalNames(values);
+            _groupSelect.getGroupFunctions().clear();
+
+        } else {
+            _groupSelect = new DataSetGroup();
+            _groupSelect.setSelectedIntervalNames(values);
+            _groupSelect.setColumnGroup(new ColumnGroup(columnId, columnId, GroupStrategy.DYNAMIC));
+        }
+        // Notify to those interested parties the intervals selection event.
+        for (DataViewerListener listener : listenerList) {
+            listener.onGroupIntervalsSelected(this, _groupSelect);
+        }
+    }
+
+    /**
+     * Clear any filter on the given column.
+     *
+     * @param columnId The name of the column to reset.
+     */
+    protected void resetColumnFilter(String columnId) {
+        columnSelectionMap.remove(columnId);
         DataSetGroup groupOp = dataSetHandler.getGroupOperation(columnId);
         if (groupOp != null && groupOp.getColumnGroup() != null) {
             for (DataViewerListener listener : listenerList) {
@@ -110,13 +170,15 @@ public abstract class AbstractDataViewer<T extends DataDisplayer> extends Compos
         }
     }
 
+    // DATA COLUMN SORT
+
     /**
      * Set the sort order operation to apply to the data set.
      *
      * @param columnId The name of the column to sort.
      * @param sortOrder The sort order.
      */
-    public void setSortOrder(String columnId, SortOrder sortOrder) {
+    protected void setSortOrder(String columnId, SortOrder sortOrder) {
         DataSetSort sortOp = new DataSetSort();
         sortOp.addSortColumn(new ColumnSort(columnId, sortOrder));
         dataSetHandler.setSortOperation(sortOp);
