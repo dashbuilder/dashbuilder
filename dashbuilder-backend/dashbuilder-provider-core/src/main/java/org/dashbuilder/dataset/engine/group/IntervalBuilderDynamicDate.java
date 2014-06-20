@@ -31,6 +31,7 @@ import org.dashbuilder.model.dataset.sort.DataSetSort;
 import org.dashbuilder.model.dataset.sort.ColumnSort;
 import org.dashbuilder.model.dataset.sort.SortOrder;
 import org.dashbuilder.model.dataset.sort.SortedList;
+import org.dashbuilder.model.date.Quarter;
 
 import static org.dashbuilder.model.dataset.group.DateIntervalType.*;
 
@@ -92,22 +93,48 @@ public class IntervalBuilderDynamicDate implements IntervalBuilder {
         gc.setLenient(false);
         gc.setTime(minDate);
         if (YEAR.equals(intervalType)) {
-            gc.add(Calendar.MONTH, gc.get(Calendar.MONTH) * -1);
+            gc.set(Calendar.MONTH, 0);
+            gc.set(Calendar.DAY_OF_MONTH, 1);
+            gc.set(Calendar.HOUR, 0);
+            gc.set(Calendar.MINUTE, 0);
+            gc.set(Calendar.SECOND, 0);
+            gc.set(Calendar.MILLISECOND, 0);
+        }
+        if (QUARTER.equals(intervalType)) {
+            int currentMonth = gc.get(Calendar.MONTH);
+            int firstMonthYear = columnGroup.getFirstMonthOfYear().getIndex();
+            int rest = Quarter.getPositionInQuarter(firstMonthYear, currentMonth);
+            gc.add(Calendar.MONTH, rest * -1);
+            gc.set(Calendar.DAY_OF_MONTH, 1);
+            gc.set(Calendar.HOUR, 0);
+            gc.set(Calendar.MINUTE, 0);
+            gc.set(Calendar.SECOND, 0);
+            gc.set(Calendar.MILLISECOND, 0);
         }
         if (MONTH.equals(intervalType)) {
-            gc.add(Calendar.DAY_OF_MONTH, (gc.get(Calendar.DAY_OF_MONTH) - 1) * -1);
+            gc.set(Calendar.DAY_OF_MONTH, 1);
+            gc.set(Calendar.HOUR, 0);
+            gc.set(Calendar.MINUTE, 0);
+            gc.set(Calendar.SECOND, 0);
+            gc.set(Calendar.MILLISECOND, 0);
         }
         if (DAY.equals(intervalType) || DAY_OF_WEEK.equals(intervalType)) {
-            gc.add(Calendar.HOUR, gc.get(Calendar.HOUR_OF_DAY) * -1);
+            gc.set(Calendar.HOUR, 0);
+            gc.set(Calendar.MINUTE, 0);
+            gc.set(Calendar.SECOND, 0);
+            gc.set(Calendar.MILLISECOND, 0);
         }
         if (HOUR.equals(intervalType)) {
-            gc.add(Calendar.MINUTE, gc.get(Calendar.MINUTE) * -1);
+            gc.set(Calendar.MINUTE, 0);
+            gc.set(Calendar.SECOND, 0);
+            gc.set(Calendar.MILLISECOND, 0);
         }
         if (MINUTE.equals(intervalType)) {
-            gc.add(Calendar.SECOND, gc.get(Calendar.SECOND) * -1);
+            gc.set(Calendar.SECOND, 0);
+            gc.set(Calendar.MILLISECOND, 0);
         }
         if (SECOND.equals(intervalType)) {
-            gc.add(Calendar.MILLISECOND, gc.get(Calendar.MILLISECOND) * -1);
+            gc.set(Calendar.MILLISECOND, 0);
         }
 
         // Create the intervals according to the min/max dates.

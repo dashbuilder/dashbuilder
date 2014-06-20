@@ -27,6 +27,7 @@ import org.dashbuilder.model.dataset.sort.ColumnSort;
 import org.dashbuilder.model.dataset.sort.DataSetSort;
 import org.dashbuilder.model.dataset.sort.SortOrder;
 import org.dashbuilder.model.dataset.sort.SortedList;
+import org.dashbuilder.model.date.Quarter;
 
 import static org.dashbuilder.model.dataset.group.DateIntervalType.*;
 
@@ -88,15 +89,35 @@ public class IntervalBuilderDynamicDate implements IntervalBuilder {
         Date intervalMinDate = new Date(minDate.getTime());
         if (YEAR.equals(intervalType)) {
             intervalMinDate.setMonth(0);
+            intervalMinDate.setDate(1);
+            intervalMinDate.setHours(0);
+            intervalMinDate.setMinutes(0);
+            intervalMinDate.setSeconds(0);
+        }
+        if (QUARTER.equals(intervalType)) {
+            int currentMonth = intervalMinDate.getMonth();
+            int firstMonthYear = columnGroup.getFirstMonthOfYear().getIndex();
+            int rest = Quarter.getPositionInQuarter(firstMonthYear, currentMonth);
+            intervalMinDate.setMonth(currentMonth - rest);
+            intervalMinDate.setDate(1);
+            intervalMinDate.setHours(0);
+            intervalMinDate.setMinutes(0);
+            intervalMinDate.setSeconds(0);
         }
         if (MONTH.equals(intervalType)) {
             intervalMinDate.setDate(1);
+            intervalMinDate.setHours(0);
+            intervalMinDate.setMinutes(0);
+            intervalMinDate.setSeconds(0);
         }
         if (DAY.equals(intervalType) || DAY_OF_WEEK.equals(intervalType)) {
             intervalMinDate.setHours(0);
+            intervalMinDate.setMinutes(0);
+            intervalMinDate.setSeconds(0);
         }
         if (HOUR.equals(intervalType)) {
             intervalMinDate.setMinutes(0);
+            intervalMinDate.setSeconds(0);
         }
         if (MINUTE.equals(intervalType)) {
             intervalMinDate.setSeconds(0);

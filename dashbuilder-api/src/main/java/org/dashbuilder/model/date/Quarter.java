@@ -41,4 +41,44 @@ public enum Quarter {
     public static Quarter getByIndex(int index) {
         return _array[index];
     }
+
+    /**
+     * Given a month (from 0 to 11) it calculates the first month of its quarter.
+     *
+     * @param firstMonthOfYear The first month of the year considered the first month of the first quarter.
+     * @param targetMonth The month we want to evaluate to which quarter belongs.
+     * @return The first month of the target quarter for the given month.
+     */
+    public static int getQuarterFirstMonth(int firstMonthOfYear, int targetMonth) {
+        int quarter = firstMonthOfYear;
+        int index = quarter;
+
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 3; j++) {
+                if (index == targetMonth) return quarter;
+                index = Month.nextIndex(index);
+            }
+            quarter = index;
+        }
+        throw new RuntimeException("Month not found.");
+    }
+
+    /**
+     * Given a month (from 0 to 11) it calculates the ordinal within the quarter it belongs.
+     *
+     * @param firstMonthOfYear The first month of the year considered the first month of the first quarter.
+     * @param targetMonth The month we want to evaluate.
+     * @return The position (from 0 to 2 ) of the target within the quarter.
+     */
+    public static int getPositionInQuarter(int firstMonthOfYear, int targetMonth) {
+        int index = firstMonthOfYear;
+
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 3; j++) {
+                if (index == targetMonth) return j;
+                index = Month.nextIndex(index);
+            }
+        }
+        throw new RuntimeException("Month not found.");
+    }
 }
