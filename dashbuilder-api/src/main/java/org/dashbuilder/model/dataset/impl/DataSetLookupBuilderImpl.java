@@ -108,6 +108,10 @@ public class DataSetLookupBuilderImpl implements DataSetLookupBuilder {
         return group(columnId, columnId, strategy, maxIntervals, intervalSize);
     }
 
+    public DataSetLookupBuilder group(String columnId, String newColumnId, DateIntervalType intervalSize) {
+        return group(columnId, newColumnId, GroupStrategy.DYNAMIC, 0, intervalSize);
+    }
+
     public DataSetLookupBuilder group(String columnId, String newColumnId, String strategy) {
         return group(columnId, newColumnId, GroupStrategy.getByName(strategy));
     }

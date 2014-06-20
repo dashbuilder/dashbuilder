@@ -147,6 +147,11 @@ public class KPIBuilderImpl implements KPIBuilder {
         return  this;
     }
 
+    public KPIBuilder group(String columnId, String newColumnId, DateIntervalType intervalSize) {
+        lookupBuilder.group(columnId, newColumnId, intervalSize);
+        return  this;
+    }
+
     public KPIBuilder group(String columnId, String newColumnId, GroupStrategy strategy) {
         lookupBuilder.group(columnId, newColumnId, strategy);
         return  this;

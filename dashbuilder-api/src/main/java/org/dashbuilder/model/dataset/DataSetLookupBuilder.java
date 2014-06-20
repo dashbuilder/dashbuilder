@@ -47,7 +47,6 @@ public interface DataSetLookupBuilder<T extends DataSetLookupBuilder> {
     T rowNumber(int rows);
 
     T group(String columnId);
-    T group(String columnId, String newColumnId);
     T group(String columnId, GroupStrategy strategy);
     T group(String columnId, DateIntervalType intervalSize);
     T group(String columnId, int maxIntervals, DateIntervalType intervalSize);
@@ -57,6 +56,8 @@ public interface DataSetLookupBuilder<T extends DataSetLookupBuilder> {
     T group(String columnId, GroupStrategy strategy, String intervalSize);
     T group(String columnId, GroupStrategy strategy, DateIntervalType intervalSize);
     T group(String columnId, GroupStrategy strategy, int maxIntervals, String intervalSize);
+    T group(String columnId, String newColumnId);
+    T group(String columnId, String newColumnId, DateIntervalType intervalSize);
     T group(String columnId, String newColumnId, String strategy);
     T group(String columnId, String newColumnId, GroupStrategy strategy);
     T group(String columnId, String newColumnId, String strategy, int maxIntervals, String intervalSize);
