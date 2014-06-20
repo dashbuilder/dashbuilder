@@ -207,11 +207,11 @@ public class UFTableViewer extends AbstractDataViewer<org.dashbuilder.model.disp
 
         ufPagedTable.addColumnSortHandler( sortHandler );
 
-//        PagedTable ufPagedTable = new PagedTable(pageSize, sortHandler);ufPagedTable.get
         ufPagedTable.setRowCount( numberOfRows, true );
         int height = 38 * pageSize;
         ufPagedTable.setHeight( ( height > ( Window.getClientHeight() - this.getAbsoluteTop() ) ? ( Window.getClientHeight() - this.getAbsoluteTop() ) : height ) + "px" );
-        ufPagedTable.setWidth( Window.getClientWidth() - ( this.getAbsoluteLeft() + this.getOffsetWidth() ) + "px" );
+        int left = this.getAbsoluteLeft() + this.getOffsetWidth();
+        ufPagedTable.setWidth( Window.getClientWidth() * ( left == 0 ? 0.8 : 1 )  + "px" );
         ufPagedTable.setEmptyTableCaption( "No data available" );
 
         List<DataColumn> columns = dataSet.getColumns();
