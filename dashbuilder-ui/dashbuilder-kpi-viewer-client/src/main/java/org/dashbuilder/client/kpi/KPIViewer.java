@@ -15,51 +15,58 @@
  */
 package org.dashbuilder.client.kpi;
 
-import javax.annotation.PostConstruct;
-import javax.enterprise.context.Dependent;
-import javax.inject.Inject;
-
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimplePanel;
 import org.dashbuilder.client.displayer.DataViewer;
-import org.dashbuilder.client.displayer.DataViewerLocator;
-import org.dashbuilder.client.displayer.DataSetHandler;
-import org.dashbuilder.client.displayer.DataSetHandlerLocator;
+import org.dashbuilder.client.displayer.DataViewerHelper;
 import org.dashbuilder.model.dataset.DataSetRef;
 import org.dashbuilder.model.displayer.DataDisplayer;
 import org.dashbuilder.model.kpi.KPI;
 
-@Dependent
 public class KPIViewer extends Composite {
 
-    SimplePanel container = new SimplePanel();
-    Label label = new Label();
-    DataViewer dataViewer;
+    protected SimplePanel container = new SimplePanel();
+    protected Label label = new Label();
+    protected DataViewer dataViewer;
+    protected KPI kpi;
 
-    @PostConstruct
-    private void init() {
+    public KPIViewer() {
         initWidget(container);
+    }
+
+    public KPIViewer(KPI kpi) {
+        this();
+        setKpi(kpi);
+    }
+
+    public KPI getKpi() {
+        return kpi;
+    }
+
+    public void setKpi(KPI kpi) {
+        this.kpi = kpi;
+
+        // Locate the DataViewer widget to display the KPI
+        DataDisplayer dataDisplayer = kpi.getDataDisplayer();
+        DataSetRef dataSetRef = kpi.getDataSetRef();
+        dataViewer = DataViewerHelper.lookup(dataSetRef, dataDisplayer);
     }
 
     public DataViewer getDataViewer() {
         return dataViewer;
     }
 
-    public void draw(KPI kpi) {
+    public KPIViewer draw() {
         try {
-            // Locate the DataViewer widget to display the KPI
-            DataDisplayer dataDisplayer = kpi.getDataDisplayer();
-            DataSetRef dataSetRef = kpi.getDataSetRef();
-            dataViewer = DataViewerLocator.get().lookupViewer(dataDisplayer, dataSetRef);
-
-            // Draw
             container.clear();
             container.add(dataViewer);
-            dataViewer.draw();
+
+            DataViewerHelper.draw(dataViewer);
         } catch (Exception e) {
             displayMessage(e.getMessage());
         }
+        return this;
     }
 
     private void displayMessage(String msg) {

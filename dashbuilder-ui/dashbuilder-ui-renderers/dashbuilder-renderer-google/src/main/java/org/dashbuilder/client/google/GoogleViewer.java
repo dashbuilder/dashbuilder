@@ -36,8 +36,6 @@ import org.dashbuilder.model.displayer.DataDisplayerColumn;
 public abstract class GoogleViewer<T extends DataDisplayer> extends AbstractDataViewer<T> {
 
     protected boolean drawn = false;
-    protected boolean ready = false;
-
     protected FlowPanel panel = new FlowPanel();
     protected Label label = new Label();
 
@@ -49,19 +47,11 @@ public abstract class GoogleViewer<T extends DataDisplayer> extends AbstractData
     }
 
     /**
-     * Invoked by the GoogleRenderer when the chart is ready for display.
-     */
-    public void ready() {
-        ready = true;
-        draw();
-    }
-
-    /**
      * Draw the displayer by getting first the underlying data set.
      * Ensure the displayer is also ready for display, which means the Google Visualization API has been loaded.
      */
     public void draw() {
-        if (!drawn && ready) {
+        if (!drawn) {
             drawn = true;
 
             if (dataDisplayer == null) {

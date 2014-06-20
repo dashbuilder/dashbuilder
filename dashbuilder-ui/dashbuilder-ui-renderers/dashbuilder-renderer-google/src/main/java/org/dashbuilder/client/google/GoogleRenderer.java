@@ -17,31 +17,23 @@ package org.dashbuilder.client.google;
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.ArrayList;
 import java.util.Set;
 import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.event.Observes;
 import javax.inject.Named;
 
-import com.google.gwt.core.client.JsArrayString;
 import com.googlecode.gwt.charts.client.ChartLoader;
 import com.googlecode.gwt.charts.client.ChartPackage;
-import org.dashbuilder.client.displayer.RendererLibrary;
+import org.dashbuilder.client.displayer.AbstractRendererLibrary;
 import org.dashbuilder.client.displayer.DataViewer;
 import org.dashbuilder.model.displayer.DataDisplayer;
 import org.dashbuilder.model.displayer.DataDisplayerType;
-import org.uberfire.client.workbench.events.ApplicationReadyEvent;
-import org.uberfire.client.workbench.events.PerspectiveChange;
 
 /**
- * Google's GWT Visualization API based renderer.
+ * Google's Visualization API based renderer.
  */
 @ApplicationScoped
 @Named(GoogleRenderer.UUID + "_renderer")
-public class GoogleRenderer implements RendererLibrary {
-
-    private List<GoogleViewer> viewerList = new ArrayList<GoogleViewer>();
-    private Set<ChartPackage> packageList = new HashSet<ChartPackage>();
+public class GoogleRenderer extends AbstractRendererLibrary {
 
     public static final String UUID = "google";
 
@@ -49,40 +41,35 @@ public class GoogleRenderer implements RendererLibrary {
         return UUID;
     }
 
-    // Listen to UF events in order to render charts at the proper time.
-
-    private void onAppReady(@Observes final ApplicationReadyEvent event) {
-        renderCharts();
-    }
-
-    private void onPerspectiveChanged(@Observes final PerspectiveChange event) {
-        renderCharts();
-    }
-
-    // Register and draw charts using the asynchronous Google API
-
     public DataViewer lookupViewer(DataDisplayer displayer) {
         DataDisplayerType type = displayer.getType();
-        if (DataDisplayerType.BARCHART.equals(type)) return registerViewer(new GoogleBarChartViewer());
-        if (DataDisplayerType.PIECHART.equals(type)) return registerViewer(new GooglePieChartViewer());
-        if (DataDisplayerType.AREACHART.equals(type)) return registerViewer(new GoogleAreaChartViewer());
-        if (DataDisplayerType.LINECHART.equals(type)) return registerViewer(new GoogleLineChartViewer());
-        if (DataDisplayerType.BUBBLECHART.equals(type)) return registerViewer(new GoogleBubbleChartViewer());
-        if (DataDisplayerType.METERCHART.equals(type)) return registerViewer(new GoogleMeterChartViewer());
-        if (DataDisplayerType.TABLE.equals(type)) return registerViewer(new GoogleTableViewer());
-        if (DataDisplayerType.MAP.equals(type)) return registerViewer(new GoogleMapViewer());
+        if (DataDisplayerType.BARCHART.equals(type)) return new GoogleBarChartViewer();
+        if (DataDisplayerType.PIECHART.equals(type)) return new GooglePieChartViewer();
+        if (DataDisplayerType.AREACHART.equals(type)) return new GoogleAreaChartViewer();
+        if (DataDisplayerType.LINECHART.equals(type)) return new GoogleLineChartViewer();
+        if (DataDisplayerType.BUBBLECHART.equals(type)) return new GoogleBubbleChartViewer();
+        if (DataDisplayerType.METERCHART.equals(type)) return new GoogleMeterChartViewer();
+        if (DataDisplayerType.TABLE.equals(type)) return new GoogleTableViewer();
+        if (DataDisplayerType.MAP.equals(type)) return new GoogleMapViewer();
 
         return null;
     }
 
-    public GoogleViewer registerViewer(GoogleViewer viewer) {
-        viewerList.add(viewer);
-        packageList.add(viewer.getPackage());
-        return viewer;
-    }
-
-    public void renderCharts() {
-        // Get the Google packages to load.
+    /**
+     *  In Google the renderer mechanism is asynchronous.
+     */
+    public void draw(final List<DataViewer> viewerList) {
+        // Get the modules to load.
+        Set<ChartPackage> packageList = new HashSet<ChartPackage>();
+        for (DataViewer viewer : viewerList) {
+            try {
+                GoogleViewer googleViewer = (GoogleViewer) viewer;
+                packageList.add(googleViewer.getPackage());
+            } catch (ClassCastException e) {
+                // Just ignore non Google viewers.
+            }
+        }
+        // Create an array of packages.
         ChartPackage[] packageArray = new ChartPackage[packageList.size()];
         int i = 0;
         for (ChartPackage pkg : packageList) {
@@ -94,12 +81,8 @@ public class GoogleRenderer implements RendererLibrary {
 
             // Called when the visualization API has been loaded.
             public void run() {
-                for (GoogleViewer viewer : viewerList) {
-                    viewer.ready();
-                }
-                viewerList.clear();
+                GoogleRenderer.super.draw(viewerList);
             }
         });
     }
-
 }

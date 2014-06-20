@@ -17,12 +17,20 @@ package org.dashbuilder.client.displayer;
 
 import java.util.List;
 
-import org.dashbuilder.model.displayer.DataDisplayer;
+/**
+ * Base class for implementing custom renderer libraries.
+ */
+public abstract class AbstractRendererLibrary implements RendererLibrary {
 
-public interface RendererLibrary {
+    public void draw(List<DataViewer> viewerList) {
+        for (DataViewer dataViewer : viewerList) {
+            dataViewer.draw();
+        }
+    }
 
-    String getUUID();
-    DataViewer lookupViewer(DataDisplayer displayer);
-    void draw(List<DataViewer> viewerList);
-    void redraw(List<DataViewer> viewerList);
+    public void redraw(List<DataViewer> viewerList) {
+        for (DataViewer dataViewer : viewerList) {
+            dataViewer.redraw();
+        }
+    }
 }

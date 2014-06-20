@@ -3,6 +3,7 @@ package org.dashbuilder.client.uftable;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Named;
 
+import org.dashbuilder.client.displayer.AbstractRendererLibrary;
 import org.dashbuilder.client.displayer.DataViewer;
 import org.dashbuilder.client.displayer.RendererLibrary;
 import org.dashbuilder.model.displayer.DataDisplayer;
@@ -13,7 +14,7 @@ import org.dashbuilder.model.displayer.DataDisplayerType;
  */
 @ApplicationScoped
 @Named(UFTableRenderer.UUID + "_renderer")
-public class UFTableRenderer implements RendererLibrary {
+public class UFTableRenderer extends AbstractRendererLibrary {
 
     public static final String UUID = "uftable";
 

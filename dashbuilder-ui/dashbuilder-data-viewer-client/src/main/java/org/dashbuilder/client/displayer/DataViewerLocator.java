@@ -18,7 +18,6 @@ package org.dashbuilder.client.displayer;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
@@ -44,41 +43,11 @@ public class DataViewerLocator {
     @Inject SyncBeanManager beanManager;
     @Inject DataSetHandlerLocator handlerLocator;
 
-    private Map<DataDisplayerType,String> defaultRenderers = new HashMap<DataDisplayerType,String>();
-
-    public void setDefaultRenderer(DataDisplayerType displayerType, String rendererName) {
-        defaultRenderers.put(displayerType, rendererName);
-    }
-
-    public String getDefaultRenderer(DataDisplayerType displayerType) {
-        return defaultRenderers.get(displayerType);
-    }
-
-    public RendererLibrary lookupRenderer(DataDisplayer target) {
-        // Get the renderer specified for the displayer.
-        String renderer = target.getRenderer();
-
-        // If none then get the default renderer specified.
-        if (renderer == null) renderer = getDefaultRenderer(target.getType());
-
-        // If still none then take the google renderer as the default.
-        if (renderer == null) renderer = "google";
-
-        // Lookup the renderer library.
-        String beanName = renderer + "_renderer";
-        Collection<IOCBeanDef> beans = beanManager.lookupBeans(beanName);
-        if (beans == null || beans.isEmpty()) throw new RuntimeException(renderer + " renderer not found.");
-        if (beans.size() > 1) throw new RuntimeException("Multiple renderer implementations found for: " + renderer);
-
-        IOCBeanDef beanDef = beans.iterator().next();
-        return (RendererLibrary) beanDef.getInstance();
-    }
-
     /**
      * Get the viewer component for the specified data displayer (with no data set attached).
      */
     public DataViewer lookupViewer(DataDisplayer target) {
-        RendererLibrary renderer = lookupRenderer(target);
+        RendererLibrary renderer = RendererLibLocator.get().lookupRenderer(target);
         DataViewer viewer = renderer.lookupViewer(target);
         if (viewer == null) throw new RuntimeException(target.getType() + " displayer not supported in " + target.getRenderer() + " renderer.");
 
@@ -89,7 +58,7 @@ public class DataViewerLocator {
     /**
      * Get the viewer component for the specified data displayer and attach it to the specified data set ref.
      */
-    public DataViewer lookupViewer(DataDisplayer target, DataSetRef dataSetRef) {
+    public DataViewer lookupViewer(DataSetRef dataSetRef, DataDisplayer target) {
         DataViewer viewer = lookupViewer(target);
         DataSetHandler handler = handlerLocator.lookupHandler(dataSetRef);
         viewer.setDataSetHandler(handler);

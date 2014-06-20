@@ -27,11 +27,13 @@ public interface DataViewer<T extends DataDisplayer> extends DataViewerListener,
      * The data displayer to draw.
      */
     void setDataDisplayer(T dataDisplayer);
+    T getDataDisplayer();
 
     /**
      * The handler used to fetch and manipulate the data set.
      */
     void setDataSetHandler(DataSetHandler dataSetHandler);
+    DataSetHandler getDataSetHandler();
 
     /**
      * Add a listener interested in receive events generated within this viewer component.

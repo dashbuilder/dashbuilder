@@ -20,14 +20,14 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
-import org.dashbuilder.client.dashboards.sales.SalesDataSetGenerator;
+import org.dashbuilder.client.displayer.RendererLibLocator;
+import org.dashbuilder.client.sales.SalesDataSetGenerator;
 import org.dashbuilder.client.dataset.DataSetLookupClient;
-import org.dashbuilder.client.displayer.DataViewerLocator;
 import org.dashbuilder.client.google.GoogleRenderer;
 import org.dashbuilder.model.dataset.DataSet;
 import org.dashbuilder.model.dataset.DataSetManager;
 import org.dashbuilder.model.displayer.DataDisplayerType;
-import org.dashbuilder.client.dashboards.sales.SalesConstants;
+import org.dashbuilder.client.sales.SalesConstants;
 import org.dashbuilder.service.DataSetLookupService;
 import org.jboss.errai.common.client.api.Caller;
 
@@ -38,7 +38,7 @@ import org.jboss.errai.common.client.api.Caller;
 public class DashbuilderInitializer {
 
     @Inject DataSetManager dataSetManager;
-    @Inject DataViewerLocator dataViewerLocator;
+    @Inject RendererLibLocator rendererLibLocator;
     @Inject DataSetLookupClient dataSetLookupClient;
     @Inject Caller<DataSetLookupService> dataSetLookupService;
 
@@ -51,16 +51,16 @@ public class DashbuilderInitializer {
         dataSetLookupClient.setLookupService(dataSetLookupService);
 
         // Set the default renderer lib for each displayer type.
-        dataViewerLocator.setDefaultRenderer(DataDisplayerType.BARCHART, GoogleRenderer.UUID);
-        dataViewerLocator.setDefaultRenderer(DataDisplayerType.PIECHART, GoogleRenderer.UUID);
-        dataViewerLocator.setDefaultRenderer(DataDisplayerType.AREACHART, GoogleRenderer.UUID);
-        dataViewerLocator.setDefaultRenderer(DataDisplayerType.LINECHART, GoogleRenderer.UUID);
-        dataViewerLocator.setDefaultRenderer(DataDisplayerType.BUBBLECHART, GoogleRenderer.UUID);
-        dataViewerLocator.setDefaultRenderer(DataDisplayerType.METERCHART, GoogleRenderer.UUID);
-        dataViewerLocator.setDefaultRenderer(DataDisplayerType.MAP, GoogleRenderer.UUID);
-        dataViewerLocator.setDefaultRenderer(DataDisplayerType.TABLE, GoogleRenderer.UUID);
+        rendererLibLocator.setDefaultRenderer(DataDisplayerType.BARCHART, GoogleRenderer.UUID);
+        rendererLibLocator.setDefaultRenderer(DataDisplayerType.PIECHART, GoogleRenderer.UUID);
+        rendererLibLocator.setDefaultRenderer(DataDisplayerType.AREACHART, GoogleRenderer.UUID);
+        rendererLibLocator.setDefaultRenderer(DataDisplayerType.LINECHART, GoogleRenderer.UUID);
+        rendererLibLocator.setDefaultRenderer(DataDisplayerType.BUBBLECHART, GoogleRenderer.UUID);
+        rendererLibLocator.setDefaultRenderer(DataDisplayerType.METERCHART, GoogleRenderer.UUID);
+        rendererLibLocator.setDefaultRenderer(DataDisplayerType.MAP, GoogleRenderer.UUID);
+        rendererLibLocator.setDefaultRenderer(DataDisplayerType.TABLE, GoogleRenderer.UUID);
 
-        // Generate the data set to be used by the Showcase KPI Gallery and by the Sales sample dashboards.
+        // Generate the data set to be used by the Showcase Gallery and by the Sales sample dashboards.
         Date currentDate = new Date();
         DataSet salesDataSet = salesDataSetGenerator.generateDataSet(SalesConstants.SALES_OPPS, 5, currentDate.getYear()-1, currentDate.getYear()+3);
         dataSetManager.registerDataSet(salesDataSet);

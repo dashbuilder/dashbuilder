@@ -65,19 +65,13 @@ public class StaticChartScreen {
             .buildKPI();
     }
 
-    @Inject
-    ClientKPIManager kpiManager;
-
-    @Inject
-    ClientDataSetManager dataSetManager;
-
-    @Inject
     KPIViewer kpiViewer;
 
     @OnStartup
     public void init() {
         KPI kpi = createKPI();
-        kpiViewer.draw(kpi);
+        KPIViewer kpiViewer = new KPIViewer(kpi);
+        kpiViewer.draw();
     }
 
     @WorkbenchPartTitle

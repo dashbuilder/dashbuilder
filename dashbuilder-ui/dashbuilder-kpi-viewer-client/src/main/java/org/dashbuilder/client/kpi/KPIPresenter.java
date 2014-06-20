@@ -50,7 +50,8 @@ public class KPIPresenter {
         if (kpi == null) throw new IllegalArgumentException("KPI not found.");
 
         // Draw the KPI.
-        kpiViewer.draw(kpi);
+        kpiViewer.setKpi(kpi);
+        kpiViewer.draw();
 
         // Register the KPIViewer into the coordinator.
         kpiCoordinator.addKPIViewer(kpiViewer);
