@@ -113,6 +113,8 @@ public class UFTableViewer extends AbstractDataViewer<org.dashbuilder.model.disp
             @Override
             public void callback( DataSet dataSet ) {
                 UFTableViewer.this.dataSet = dataSet;
+                numberOfRows = dataSet.getRowCountNonTrimmed();
+                table.setRowCount( numberOfRows, true );
                 table.redraw();
             }
 
