@@ -67,6 +67,7 @@ public abstract class GoogleViewer<T extends DataDisplayer> extends AbstractData
                     dataSetHandler.lookupDataSet(new DataSetReadyCallback() {
                         public void callback(DataSet result) {
                             dataSet = result;
+                            afterDataSetLookup(result);
                             Widget w = createVisualization();
                             panel.clear();
                             panel.add(w);
@@ -94,6 +95,7 @@ public abstract class GoogleViewer<T extends DataDisplayer> extends AbstractData
                 dataSetHandler.lookupDataSet(new DataSetReadyCallback() {
                     public void callback(DataSet result) {
                         dataSet = result;
+                        afterDataSetLookup(result);
                         updateVisualization();
                     }
                     public void notFound() {
@@ -125,6 +127,12 @@ public abstract class GoogleViewer<T extends DataDisplayer> extends AbstractData
      * Call back method invoked just before the data set lookup is executed.
      */
     protected void beforeDataSetLookup() {
+    }
+
+    /**
+     * Call back method invoked just after the data set lookup is executed.
+     */
+    protected void afterDataSetLookup(DataSet dataSet) {
     }
 
     /**

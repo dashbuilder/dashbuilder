@@ -32,6 +32,7 @@ import com.googlecode.gwt.charts.client.event.SortHandler;
 import com.googlecode.gwt.charts.client.options.TableSort;
 import com.googlecode.gwt.charts.client.table.Table;
 import com.googlecode.gwt.charts.client.table.TableOptions;
+import org.dashbuilder.model.dataset.DataSet;
 import org.dashbuilder.model.dataset.sort.SortOrder;
 import org.dashbuilder.model.displayer.TableDisplayer;
 
@@ -69,16 +70,18 @@ public class GoogleTableViewer extends GoogleViewer<TableDisplayer> {
     }
 
     @Override
-    public Widget createVisualization() {
+    protected void afterDataSetLookup(DataSet dataSet) {
         pageSize = dataDisplayer.getPageSize();
-        numberOfRows = dataSetHandler.getDataSetMetadata().getNumberOfRows();
+        numberOfRows = dataSet.getRowCountNonTrimmed();
         numberOfPages = ((numberOfRows - 1) / pageSize) + 1;
         if (currentPage > numberOfPages) {
             currentPage = 1;
         }
-
         pagerInterval.setNumberOfPages(numberOfPages);
+    }
 
+    @Override
+    public Widget createVisualization() {
         final DataTable dataTable = createTable();
         table = new Table();
         table.addSortHandler( new SortHandler() {

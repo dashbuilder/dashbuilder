@@ -29,6 +29,7 @@ public class DataSetImpl implements DataSet {
 
     protected String uuid = null;
     protected List<DataColumn> columns = new ArrayList<DataColumn>();
+    protected int rowCountNonTrimmed = -1;
 
     public DataSetMetadata getMetadata() {
         return new DataSetMetadataImpl(this);
@@ -92,6 +93,11 @@ public class DataSetImpl implements DataSet {
         return columns.get(0).getValues().size();
     }
 
+    public int getRowCountNonTrimmed() {
+        if (rowCountNonTrimmed == -1) return getRowCount();
+        return rowCountNonTrimmed;
+    }
+
     public Object getValueAt(int row, String columnId) {
         DataColumn columnObj = getColumnById(columnId);
         return getValueAt(row, columnObj);
@@ -148,13 +154,15 @@ public class DataSetImpl implements DataSet {
             throw new IllegalArgumentException("Offset can't be negative: " + offset);
         }
         if (offset == 0 && (rows <= 0 || rows >= this.getRowCount())) {
+            this.rowCountNonTrimmed = -1;
             return this;
         }
         if (offset >= getRowCount()) {
             throw new IllegalArgumentException("Offset can't be greater than the number of rows: " + offset);
         }
 
-        DataSet other = cloneEmpty();
+        DataSetImpl other = cloneEmpty();
+        other.rowCountNonTrimmed = getRowCount();
         for (int i=0; i<columns.size(); i++) {
             DataColumn column = columns.get(i);
             DataColumn colOther = other.getColumns().get(i);
@@ -169,7 +177,8 @@ public class DataSetImpl implements DataSet {
     }
 
     public DataSet trim(List<Integer> rows) {
-        DataSet other = cloneEmpty();
+        DataSetImpl other = cloneEmpty();
+        other.rowCountNonTrimmed = getRowCount();
         for (int i=0; i<columns.size(); i++) {
             List values = columns.get(i).getValues();
             List valOther = other.getColumns().get(i).getValues();
@@ -184,7 +193,7 @@ public class DataSetImpl implements DataSet {
         return other;
     }
 
-    public DataSet cloneEmpty() {
+    public DataSetImpl cloneEmpty() {
         DataSetImpl other = new DataSetImpl();
         for (int i=0; i<columns.size(); i++) {
             DataColumn column = columns.get(i);

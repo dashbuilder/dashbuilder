@@ -108,6 +108,12 @@ public interface DataSet extends DataSetRef {
     DataSet trim(List<Integer> rows);
 
     /**
+     * If this data set is teh result of a trim operation on a data set this method will return
+     * the total number of rows existing before trim.
+     */
+    int getRowCountNonTrimmed();
+
+    /**
      * Build a data set with the same structure as this but containing no data.
      */
     DataSet cloneEmpty();
