@@ -22,7 +22,6 @@ import javax.inject.Inject;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DecoratorPanel;
 import com.google.gwt.user.client.ui.HTML;
@@ -32,22 +31,14 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import org.dashbuilder.client.google.GoogleRenderer;
-import org.dashbuilder.client.kpi.KPIViewer;
-import org.dashbuilder.model.kpi.KPI;
+import com.google.gwt.user.client.ui.Widget;
 
 public class GalleryViewImpl extends Composite implements GalleryPresenter.GalleryView {
 
     GalleryPresenter presenter;
 
     @Inject
-    GoogleRenderer googleRenderer;
-
-    @Inject
     GalleryTree galleryTree;
-
-    @Inject
-    KPIViewer kpiViewer;
 
     private final HorizontalPanel mainPanel = new HorizontalPanel();
     private final VerticalPanel leftPanel = new VerticalPanel();
@@ -77,7 +68,7 @@ public class GalleryViewImpl extends Composite implements GalleryPresenter.Galle
         mainPanel.add(decorator);
 
         // Greetings
-        rightPanel.add(new HTML("Dashbuilder Displayer Gallery"));
+        rightPanel.add(new HTML("Dashbuilder Gallery"));
     }
 
     private Tree initNavigationTree() {
@@ -89,16 +80,15 @@ public class GalleryViewImpl extends Composite implements GalleryPresenter.Galle
         navTree.addSelectionHandler(new SelectionHandler<TreeItem>() {
             public void onSelection(SelectionEvent<TreeItem> event) {
                 TreeItem ti = event.getSelectedItem();
-                if (ti.getUserObject() instanceof GalleryNodeKPI) {
-                    GalleryNodeKPI node = (GalleryNodeKPI) ti.getUserObject();
-                    treeItemClicked(ti, node.getKpi());
-                }
+                GalleryNode node = (GalleryNode) ti.getUserObject();
+                treeItemClicked(ti, node);
             }
         });
         return navTree;
     }
 
     private void populateNavigationTree(List<GalleryNode> nodes, HasTreeItems items) {
+        if (nodes == null) return;
         for (GalleryNode node: nodes) {
             TreeItem ti = new TreeItem();
             ti.setText(node.getName());
@@ -108,16 +98,11 @@ public class GalleryViewImpl extends Composite implements GalleryPresenter.Galle
         }
     }
 
-    private void treeItemClicked(TreeItem ti, KPI kpi) {
-        try {
+    private void treeItemClicked(TreeItem ti, GalleryNode node) {
+        Widget w = node.getWidget();
+        if (w != null) {
             rightPanel.clear();
-            rightPanel.add(kpiViewer);
-            kpiViewer.draw(kpi);
-
-            // TODO: Find a way to make Google fullfill draw requests properly without the presence of an UF perspective change event
-            googleRenderer.renderCharts();
-        } catch (Exception e) {
-            Window.alert(e.getMessage());
+            rightPanel.add(w);
         }
     }
 }

@@ -17,11 +17,32 @@ package org.dashbuilder.client.gallery;
 
 import java.util.List;
 
-/**
- * Common interface for all gallery nodes.
- */
-public interface GalleryNode  {
+import com.google.gwt.user.client.ui.Widget;
 
-    String getName();
-    List<GalleryNode> getChildren();
+/**
+ * Base class for all gallery nodes.
+ */
+public abstract class GalleryNode  {
+
+    protected String name = null;
+    protected List<GalleryNode> children = null;
+    protected Widget widget = null;
+
+    public GalleryNode(String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public List<GalleryNode> getChildren() {
+        return children;
+    }
+
+    public Widget getWidget() {
+        return createWidget();
+    }
+
+    protected abstract Widget createWidget();
 }

@@ -22,8 +22,10 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
+import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.client.kpi.ClientKPIManager;
-import org.dashbuilder.client.uftable.UFTableRenderer;
+import org.dashbuilder.client.sales.widgets.SalesExpectedByDate;
+import org.dashbuilder.client.sales.widgets.SalesDistributionByCountry;
 import org.dashbuilder.model.dataset.DataSetFactory;
 import org.dashbuilder.model.kpi.KPIFactory;
 
@@ -31,7 +33,7 @@ import static org.dashbuilder.model.dataset.group.DateIntervalType.*;
 import static org.dashbuilder.model.dataset.filter.FilterFactory.*;
 import static org.dashbuilder.model.dataset.sort.SortOrder.*;
 import static org.dashbuilder.model.date.Month.*;
-import static org.dashbuilder.client.dashboards.sales.SalesConstants.*;
+import static org.dashbuilder.client.sales.SalesConstants.*;
 
 /**
  * The Gallery tree.
@@ -57,6 +59,7 @@ public class GalleryTree {
         initTableReportCategory();
         initMeterChartCategory();
         initMapChartCategory();
+        initDashboardCategory();
     }
 
     private void initBarChartCategory() {
@@ -132,7 +135,7 @@ public class GalleryTree {
         nodeList.add(new GalleryNodeKPI("Basic",
                 KPIFactory.newLineChartKPI()
                 .dataset(SALES_OPPS)
-                .group(CLOSING_DATE,12, MONTH)
+                .group(CLOSING_DATE, 12, MONTH)
                 .sum(AMOUNT)
                 .title("Sales opportunities evolution")
                 .margins(20, 50, 100, 120)
@@ -345,5 +348,22 @@ public class GalleryTree {
                 .tableOrderDefault("Country", DESCENDING)
                 .buildKPI()
         ));
+
+    }
+
+    private void initDashboardCategory() {
+        GalleryNodeList nodeList = new GalleryNodeList("Dashboards");
+        mainNodes.add(nodeList);
+
+        nodeList.add(new GalleryNode("Sales pipeline") {
+            public Widget createWidget() {
+                return new SalesExpectedByDate();
+            }
+        });
+        nodeList.add(new GalleryNode("Sales per country") {
+            public Widget createWidget() {
+                return new SalesDistributionByCountry();
+            }
+        });
     }
 }

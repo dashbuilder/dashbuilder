@@ -13,27 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbuilder.client.gallery;
+package org.dashbuilder.client.sales.screens;
 
-import java.util.ArrayList;
+import com.google.gwt.user.client.ui.Composite;
 
-import com.google.gwt.user.client.ui.Widget;
+public class SalesDashboardViewImpl extends Composite implements SalesDashboardPresenter.SalesDashboardView {
 
-/**
- * A list of gallery nodes.
- */
-public class GalleryNodeList extends GalleryNode {
+    SalesDashboardPresenter presenter;
 
-    public GalleryNodeList(String name) {
-        super(name);
-    }
-
-    public void add(GalleryNode node) {
-        if (children == null) children = new ArrayList<GalleryNode>();
-        children.add(node);
-    }
-
-    protected Widget createWidget() {
-        return null;
+    public void init(SalesDashboardPresenter presenter) {
+        this.presenter = presenter;
     }
 }

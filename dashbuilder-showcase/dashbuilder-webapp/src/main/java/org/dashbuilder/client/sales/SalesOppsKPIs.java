@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbuilder.client.dashboards.sales;
+package org.dashbuilder.client.sales;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,8 +26,8 @@ import org.dashbuilder.client.kpi.ClientKPIManager;
 import org.dashbuilder.model.kpi.KPI;
 import org.dashbuilder.model.kpi.KPIFactory;
 
-import static org.dashbuilder.client.dashboards.sales.SalesOppsData.*;
-import static org.dashbuilder.client.dashboards.sales.SalesOppsDisplayers.*;
+import static org.dashbuilder.client.sales.SalesOppsData.*;
+import static org.dashbuilder.client.sales.SalesOppsDisplayers.*;
 
 /**
  * A set of KPI definitions built on top of the the Sales Opportunities data set.

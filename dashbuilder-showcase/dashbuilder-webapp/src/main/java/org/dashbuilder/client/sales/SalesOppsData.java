@@ -13,13 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbuilder.client.dashboards.sales;
+package org.dashbuilder.client.sales;
 
 import org.dashbuilder.model.dataset.DataSetFactory;
 import org.dashbuilder.model.dataset.DataSetRef;
 import org.dashbuilder.model.dataset.group.DateIntervalType;
+import org.dashbuilder.model.date.DayOfWeek;
 
-import static org.dashbuilder.client.dashboards.sales.SalesConstants.*;
+import static org.dashbuilder.client.sales.SalesConstants.*;
 
 /**
  * The set of DataSetRef defined on top of the Sales Opportunities data set.

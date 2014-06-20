@@ -1,0 +1,20 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+             xmlns:g="urn:import:com.google.gwt.user.client.ui"
+             xmlns:my="urn:import:org.dashbuilder.client.displayer">
+
+  <g:VerticalPanel>
+    <g:HorizontalPanel>
+      <my:DataViewer ui:field="areaChartByDate"/>
+    </g:HorizontalPanel>
+    <g:HorizontalPanel>
+      <my:DataViewer ui:field="pieChartQuarters"/>
+      <my:DataViewer ui:field="barChartDayOfWeek"/>
+      <my:DataViewer ui:field="pieChartByPipeline"/>
+    </g:HorizontalPanel>
+    <g:HorizontalPanel>
+      <my:DataViewer ui:field="tableAll"/>
+    </g:HorizontalPanel>
+  </g:VerticalPanel>
+
+</ui:UiBinder>

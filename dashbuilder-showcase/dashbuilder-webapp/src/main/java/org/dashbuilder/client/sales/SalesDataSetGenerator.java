@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbuilder.client.dashboards.sales;
+package org.dashbuilder.client.sales;
 
 import java.util.Date;
 import java.util.List;
@@ -27,7 +27,7 @@ import org.dashbuilder.model.dataset.ColumnType;
 import org.dashbuilder.model.dataset.DataSet;
 import org.dashbuilder.model.dataset.DataSetManager;
 
-import static org.dashbuilder.client.dashboards.sales.SalesConstants.*;
+import static org.dashbuilder.client.sales.SalesConstants.*;
 
 /**
  * Generates a random data set containing sales opportunity records.

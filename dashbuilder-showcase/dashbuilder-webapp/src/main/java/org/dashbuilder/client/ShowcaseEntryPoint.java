@@ -86,7 +86,7 @@ public class ShowcaseEntryPoint {
         final PerspectiveActivity defaultPerspective = getDefaultPerspectiveActivity();
 
         final Menus menus =
-                newTopLevelMenu("KPI Gallery").respondsWith(new Command() {
+                newTopLevelMenu("Gallery").respondsWith(new Command() {
                     public void execute() {
                         if (defaultPerspective != null) {
                             placeManager.goTo(new DefaultPlaceRequest(defaultPerspective.getIdentifier()));

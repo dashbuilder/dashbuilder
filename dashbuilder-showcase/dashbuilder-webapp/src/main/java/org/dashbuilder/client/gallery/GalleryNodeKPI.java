@@ -18,27 +18,20 @@ package org.dashbuilder.client.gallery;
 import java.util.Collections;
 import java.util.List;
 
+import com.google.gwt.user.client.ui.Widget;
+import org.dashbuilder.client.kpi.KPIViewer;
 import org.dashbuilder.model.kpi.KPI;
 
 /**
  * A KPI gallery node.
  */
-public class GalleryNodeKPI implements GalleryNode {
+public class GalleryNodeKPI extends GalleryNode {
 
-    protected String name;
     protected KPI kpi;
 
     public GalleryNodeKPI(String name, KPI kpi) {
-        this.name = name;
+        super(name);
         this.kpi = kpi;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public KPI getKpi() {
@@ -49,7 +42,9 @@ public class GalleryNodeKPI implements GalleryNode {
         this.kpi = kpi;
     }
 
-    public List<GalleryNode> getChildren() {
-        return Collections.emptyList();
+    protected Widget createWidget() {
+        KPIViewer viewer = new KPIViewer(kpi);
+        viewer.draw();
+        return viewer;
     }
 }

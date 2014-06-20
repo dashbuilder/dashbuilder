@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbuilder.client.dashboards.sales;
+package org.dashbuilder.client.sales;
 
 import org.dashbuilder.model.displayer.DataDisplayer;
 import org.dashbuilder.model.displayer.DisplayerFactory;
 
-import static org.dashbuilder.client.dashboards.sales.SalesConstants.*;
+import static org.dashbuilder.client.sales.SalesConstants.*;
 import static org.dashbuilder.model.dataset.sort.SortOrder.*;
 
 /**
