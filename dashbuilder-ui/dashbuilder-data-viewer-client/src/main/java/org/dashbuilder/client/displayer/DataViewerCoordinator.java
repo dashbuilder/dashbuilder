@@ -30,32 +30,30 @@ import org.dashbuilder.model.dataset.group.DataSetGroup;
 public class DataViewerCoordinator {
 
     protected List<DataViewer> viewerList = new ArrayList<DataViewer>();
-    protected Map<String,List<DataViewer>> rendererMap = new HashMap<String,List<DataViewer>>();
+    protected Map<RendererLibrary,List<DataViewer>> rendererMap = new HashMap<RendererLibrary,List<DataViewer>>();
     protected DataViewerListener viewerListener = new CoordinatorListener();
 
     public void addViewer(DataViewer viewer) {
         viewerList.add(viewer);
         viewer.addListener(viewerListener);
 
-        String renderer = viewer.getDataDisplayer().getRenderer();
+        RendererLibrary renderer = RendererLibLocator.get().lookupRenderer(viewer.getDataDisplayer());
         List<DataViewer> rendererGroup = rendererMap.get(renderer);
         if (rendererGroup == null) rendererMap.put(renderer, rendererGroup = new ArrayList<DataViewer>());
         rendererGroup.add(viewer);
     }
 
     public void drawAll() {
-        for (String renderer : rendererMap.keySet()) {
+        for (RendererLibrary renderer : rendererMap.keySet()) {
             List<DataViewer> rendererGroup = rendererMap.get(renderer);
-            RendererLibrary renderLib = RendererLibLocator.get().lookupRenderer(renderer);
-            renderLib.draw(rendererGroup);
+            renderer.draw(rendererGroup);
         }
     }
 
     public void redrawAll() {
-        for (String renderer : rendererMap.keySet()) {
+        for (RendererLibrary renderer : rendererMap.keySet()) {
             List<DataViewer> rendererGroup = rendererMap.get(renderer);
-            RendererLibrary renderLib = RendererLibLocator.get().lookupRenderer(renderer);
-            renderLib.redraw(rendererGroup);
+            renderer.redraw(rendererGroup);
         }
     }
 
