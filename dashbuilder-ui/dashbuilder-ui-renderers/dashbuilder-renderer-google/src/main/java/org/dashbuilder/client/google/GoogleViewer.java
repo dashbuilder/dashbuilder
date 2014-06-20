@@ -185,7 +185,7 @@ public abstract class GoogleViewer<T extends DataDisplayer> extends AbstractData
             if (displayerColumn.getColumnId() != null) dataColumn = dataSet.getColumnById(displayerColumn.getColumnId());
             else dataColumn = dataSet.getColumnByIndex(columnIndex++);
             if (dataColumn == null) {
-                GWT.log("Displayer column not found in the data set: " + displayerColumn.getDisplayName());
+                throw new RuntimeException("Displayer column not found in the data set: " + displayerColumn.getDisplayName());
             }
 
             ColumnType columnType = dataColumn.getColumnType();
