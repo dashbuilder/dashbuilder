@@ -54,6 +54,8 @@ public class UFTableViewer extends AbstractDataViewer<org.dashbuilder.model.disp
     protected int numberOfRows = 0;
     protected int dataSetLowerLimit = 0;
     protected int dataSetUpperLimit = 0;
+    protected String lastOrderedColumn;
+    protected SortOrder lastSortOrder;
 
     protected boolean drawn = false;
 
@@ -107,7 +109,18 @@ public class UFTableViewer extends AbstractDataViewer<org.dashbuilder.model.disp
      * Just reload the data set and make the current google Viewer to redraw.
      */
     public void redraw() {
-        table.redraw();
+        doLookupDataSet( 0, pageSize, lastOrderedColumn, lastSortOrder, new DataSetReadyCallback() {
+            @Override
+            public void callback( DataSet dataSet ) {
+                UFTableViewer.this.dataSet = dataSet;
+                table.redraw();
+            }
+
+            @Override
+            public void notFound() {
+                displayMessage( "ERROR: Data set not found." );
+            }
+        } );
     }
 
     /**
@@ -125,7 +138,7 @@ public class UFTableViewer extends AbstractDataViewer<org.dashbuilder.model.disp
 
         final PagedTable<UFTableRow> table = createUFTable();
 
-        String defaultSortColumn = dataDisplayer.getDefaultSortColumnId();
+        final String defaultSortColumn = dataDisplayer.getDefaultSortColumnId();
 
         // TODO get the table to show the order icon programatically
         if ( defaultSortColumn != null && !"".equals( defaultSortColumn ) ) {
@@ -135,6 +148,8 @@ public class UFTableViewer extends AbstractDataViewer<org.dashbuilder.model.disp
                     new DataSetReadyCallback() {
                         @Override
                         public void callback( DataSet dataSet ) {
+                            lastOrderedColumn = defaultSortColumn;
+                            lastSortOrder = dataDisplayer.getDefaultSortOrder();
                             table.redraw();
                         }
 
@@ -167,12 +182,16 @@ public class UFTableViewer extends AbstractDataViewer<org.dashbuilder.model.disp
 
             @Override
             public void onColumnSort( ColumnSortEvent event ) {
+                final String columnId = event.getColumn().getDataStoreName();
+                final SortOrder order = event.isSortAscending() ? SortOrder.ASCENDING : SortOrder.DESCENDING;
                 lookupDataSet(
-                        event.getColumn().getDataStoreName(),
-                        event.isSortAscending() ? SortOrder.ASCENDING : SortOrder.DESCENDING,
+                        columnId,
+                        order,
                         new DataSetReadyCallback() {
                             @Override
                             public void callback( DataSet dataSet ) {
+                                lastOrderedColumn = columnId;
+                                lastSortOrder = order;
                                 ufPagedTable.redraw();
                             }
 
@@ -269,7 +288,7 @@ public class UFTableViewer extends AbstractDataViewer<org.dashbuilder.model.disp
 
     private void doLookupDataSet( Integer lowerLimit, Integer upperLimit, String columnId, SortOrder sortOrder, final DataSetReadyCallback callback ) {
 
-        if ( lowerLimit != null && upperLimit != null ) {
+        if ( lowerLimit != null && upperLimit != null && lowerLimit < upperLimit ) {
             dataSetHandler.limitDataSetRows( lowerLimit, upperLimit );
         }
 
