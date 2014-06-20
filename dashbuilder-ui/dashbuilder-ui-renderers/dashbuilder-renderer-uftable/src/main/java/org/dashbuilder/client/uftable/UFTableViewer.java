@@ -162,7 +162,7 @@ public class UFTableViewer extends AbstractDataViewer<org.dashbuilder.model.disp
 
     protected PagedTable<UFTableRow> createUFTable() {
 
-        final ExtPT<UFTableRow> ufPagedTable = new ExtPT<UFTableRow>( pageSize );
+        final PagedTable<UFTableRow> ufPagedTable = new PagedTable<UFTableRow>( pageSize );
         ColumnSortEvent.AsyncHandler sortHandler = new ColumnSortEvent.AsyncHandler( ufPagedTable ) {
 
             @Override
@@ -186,7 +186,7 @@ public class UFTableViewer extends AbstractDataViewer<org.dashbuilder.model.disp
 
         };
 
-        ufPagedTable.setColumnSortHandler( sortHandler );
+        ufPagedTable.addColumnSortHandler( sortHandler );
 
 //        PagedTable ufPagedTable = new PagedTable(pageSize, sortHandler);ufPagedTable.get
         ufPagedTable.setRowCount( numberOfRows, true );
@@ -385,18 +385,6 @@ public class UFTableViewer extends AbstractDataViewer<org.dashbuilder.model.disp
         private Style.Unit parseBorderWidthUnit( String former ) {
             String unit = former.replaceAll( "[0-9 ]", "" ).toUpperCase();
             return Style.Unit.valueOf( "".equals( unit ) ? "PX" : unit );
-        }
-    }
-
-    // TODO workaround, to be removed
-    private final class ExtPT<T> extends PagedTable<T> {
-
-        private ExtPT( int pageSize ) {
-            super( pageSize );
-        }
-
-        private void setColumnSortHandler( ColumnSortEvent.AsyncHandler handler ) {
-            dataGrid.addColumnSortHandler( handler );
         }
     }
 
