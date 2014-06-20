@@ -44,6 +44,9 @@ public class SalesExpectedByDate extends Composite {
     DataViewer areaChartByDate;
 
     @UiField(provided = true)
+    DataViewer pieChartYears;
+
+    @UiField(provided = true)
     DataViewer pieChartQuarters;
 
     @UiField(provided = true)
@@ -62,15 +65,26 @@ public class SalesExpectedByDate extends Composite {
 
         areaChartByDate = viewerLocator.lookupViewer(DataSetFactory.newDSLookup()
                 .dataset(SALES_OPPS)
-                .group(CREATION_DATE, 20, MONTH)
+                .group(CREATION_DATE, 80, MONTH)
                 .sum(EXPECTED_AMOUNT)
                 .buildLookup(), DisplayerFactory.newAreaChart()
                 .title("Expected pipeline")
                 .titleVisible(true)
-                .width(900).height(250)
+                .width(1000).height(250)
                 .margins(10, 100, 100, 100)
                 .column("Creation date")
                 .column("Amount")
+                .buildDisplayer());
+
+        pieChartYears = viewerLocator.lookupViewer(DataSetFactory.newDSLookup()
+                .dataset(SALES_OPPS)
+                .group(CREATION_DATE, YEAR)
+                .count("occurrences")
+                .buildLookup(), DisplayerFactory.newPieChart()
+                .title("Years")
+                .titleVisible(true)
+                .width(250).height(200)
+                .margins(10, 10, 10, 10)
                 .buildDisplayer());
 
         pieChartQuarters = viewerLocator.lookupViewer(DataSetFactory.newDSLookup()
@@ -80,7 +94,7 @@ public class SalesExpectedByDate extends Composite {
                 .buildLookup(), DisplayerFactory.newPieChart()
                 .title("Quarters")
                 .titleVisible(true)
-                .width(300).height(200)
+                .width(250).height(200)
                 .margins(10, 10, 10, 10)
                 .buildDisplayer());
 
@@ -91,7 +105,7 @@ public class SalesExpectedByDate extends Composite {
                 .buildLookup(), DisplayerFactory.newBarChart()
                 .title("Day of week")
                 .titleVisible(true)
-                .width(300).height(200)
+                .width(250).height(200)
                 .margins(10, 50, 50, 10)
                 .horizontal()
                 .buildDisplayer());
@@ -104,7 +118,7 @@ public class SalesExpectedByDate extends Composite {
                 .buildLookup(), DisplayerFactory.newPieChart()
                 .title("Pipeline")
                 .titleVisible(true)
-                .width(300).height(200)
+                .width(250).height(200)
                 .margins(10, 10, 10, 10)
                 .column("Pipeline")
                 .column("Number of opps")
@@ -132,6 +146,7 @@ public class SalesExpectedByDate extends Composite {
         // Make that charts interact among them
         DataViewerCoordinator viewerCoordinator = new DataViewerCoordinator();
         viewerCoordinator.addViewer(areaChartByDate);
+        viewerCoordinator.addViewer(pieChartYears);
         viewerCoordinator.addViewer(pieChartQuarters);
         viewerCoordinator.addViewer(barChartDayOfWeek);
         viewerCoordinator.addViewer(pieChartByPipeline);

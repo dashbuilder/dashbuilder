@@ -8,9 +8,10 @@
       <my:DataViewer ui:field="areaChartByDate"/>
     </g:HorizontalPanel>
     <g:HorizontalPanel>
+      <my:DataViewer ui:field="pieChartByPipeline"/>
+      <my:DataViewer ui:field="pieChartYears"/>
       <my:DataViewer ui:field="pieChartQuarters"/>
       <my:DataViewer ui:field="barChartDayOfWeek"/>
-      <my:DataViewer ui:field="pieChartByPipeline"/>
     </g:HorizontalPanel>
     <g:HorizontalPanel>
       <my:DataViewer ui:field="tableAll"/>
