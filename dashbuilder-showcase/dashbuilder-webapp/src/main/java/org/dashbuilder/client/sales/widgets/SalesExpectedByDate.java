@@ -106,7 +106,7 @@ public class SalesExpectedByDate extends Composite {
                 .title("Day of week")
                 .titleVisible(true)
                 .width(250).height(200)
-                .margins(10, 50, 50, 10)
+                .margins(10, 50, 80, 10)
                 .horizontal()
                 .buildDisplayer());
 
