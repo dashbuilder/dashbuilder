@@ -26,6 +26,7 @@ import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.client.kpi.ClientKPIManager;
 import org.dashbuilder.client.sales.widgets.SalesExpectedByDate;
 import org.dashbuilder.client.sales.widgets.SalesDistributionByCountry;
+import org.dashbuilder.client.sales.widgets.SalesTableReports;
 import org.dashbuilder.model.dataset.DataSetFactory;
 import org.dashbuilder.model.kpi.KPIFactory;
 
@@ -363,6 +364,11 @@ public class GalleryTree {
         nodeList.add(new GalleryNode("Sales per country") {
             public Widget createWidget() {
                 return new SalesDistributionByCountry();
+            }
+        });
+        nodeList.add(new GalleryNode("Sales reports") {
+            public Widget createWidget() {
+                return new SalesTableReports();
             }
         });
     }
