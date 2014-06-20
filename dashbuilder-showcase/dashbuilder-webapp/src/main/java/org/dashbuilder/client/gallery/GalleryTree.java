@@ -322,6 +322,16 @@ public class GalleryTree {
                 .tablePageSize(20)
                 .tableOrderEnabled(true)
                 .tableOrderDefault(AMOUNT, DESCENDING)
+                .column(COUNTRY, "Country")
+                .column(CUSTOMER, "Customer")
+                .column(PRODUCT, "Product")
+                .column(SALES_PERSON, "Salesman")
+                .column(STATUS, "Status")
+                .column(SOURCE, "Source")
+                .column(CREATION_DATE, "Creation")
+                .column(EXPECTED_AMOUNT, "Expected")
+                .column(CLOSING_DATE, "Closing")
+                .column(AMOUNT, "Amount")
                 .buildKPI()
         ));
         nodeList.add(new GalleryNodeKPI("Filtered",
@@ -332,6 +342,14 @@ public class GalleryTree {
                 .tablePageSize(20)
                 .tableOrderEnabled(true)
                 .tableOrderDefault(AMOUNT, DESCENDING)
+                .column(CUSTOMER, "Customer")
+                .column(PRODUCT, "Product")
+                .column(STATUS, "Status")
+                .column(SOURCE, "Source")
+                .column(CREATION_DATE, "Creation")
+                .column(EXPECTED_AMOUNT, "Expected")
+                .column(CLOSING_DATE, "Closing")
+                .column(AMOUNT, "Amount")
                 .buildKPI()
         ));
         nodeList.add(new GalleryNodeKPI("Grouped",

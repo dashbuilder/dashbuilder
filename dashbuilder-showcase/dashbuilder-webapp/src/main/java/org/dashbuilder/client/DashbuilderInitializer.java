@@ -62,7 +62,7 @@ public class DashbuilderInitializer {
 
         // Generate the data set to be used by the Showcase Gallery and by the Sales sample dashboards.
         Date currentDate = new Date();
-        DataSet salesDataSet = salesDataSetGenerator.generateDataSet(SalesConstants.SALES_OPPS, 5, currentDate.getYear()-1, currentDate.getYear()+3);
+        DataSet salesDataSet = salesDataSetGenerator.generateDataSet(SalesConstants.SALES_OPPS, 30, currentDate.getYear()-1, currentDate.getYear()+3);
         dataSetManager.registerDataSet(salesDataSet);
     }
 }

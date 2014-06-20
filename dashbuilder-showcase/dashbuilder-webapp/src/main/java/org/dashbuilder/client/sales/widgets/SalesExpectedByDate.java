@@ -67,10 +67,10 @@ public class SalesExpectedByDate extends Composite {
                 .buildLookup(), DisplayerFactory.newAreaChart()
                 .title("Expected pipeline")
                 .titleVisible(true)
-                .width(900).height(200)
-                .margins(10, 80, 100, 100)
+                .width(900).height(250)
+                .margins(10, 100, 100, 100)
                 .column("Creation date")
-                .column("Expected amount")
+                .column("Amount")
                 .buildDisplayer());
 
         pieChartQuarters = viewerLocator.lookupViewer(DataSetFactory.newDSLookup()
