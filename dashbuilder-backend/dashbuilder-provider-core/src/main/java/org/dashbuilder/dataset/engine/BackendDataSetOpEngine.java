@@ -468,7 +468,7 @@ public class BackendDataSetOpEngine implements DataSetOpEngine {
                     DataColumn dataColumn = dataSet.getColumnById(groupFunction.getSourceId());
                     if (dataColumn == null) dataColumn = dataSet.getColumnByIndex(0);
 
-                    Double aggValue = _calculateFunction(dataColumn, groupFunction.getFunction(), intervalIdx.getRows(), intervalIdx);
+                    Double aggValue = _calculateFunction(dataColumn, groupFunction.getFunction(), intervalIdx);
                     result.setValueAt(i, j + 1, aggValue);
                 }
             }
@@ -488,13 +488,13 @@ public class BackendDataSetOpEngine implements DataSetOpEngine {
                 DataColumn dataColumn = dataSet.getColumnById(groupFunction.getSourceId());
                 if (dataColumn == null) dataColumn = dataSet.getColumnByIndex(0);
 
-                Double aggValue = _calculateFunction(dataColumn, groupFunction.getFunction(), null, index);
+                Double aggValue = _calculateFunction(dataColumn, groupFunction.getFunction(), index);
                 result.setValueAt(0, i, aggValue);
             }
             return result;
         }
 
-        private Double _calculateFunction(DataColumn column, AggregateFunctionType type, List<Integer> rows, DataSetIndexNode index) {
+        private Double _calculateFunction(DataColumn column, AggregateFunctionType type, DataSetIndexNode index) {
             // Look into the index first
             if (index != null) {
                 Double sv = index.getAggValue(column.getId(), type);
@@ -503,7 +503,7 @@ public class BackendDataSetOpEngine implements DataSetOpEngine {
             // Do the aggregate calculations.
             long _beginTime = System.nanoTime();
             AggregateFunction function = aggregateFunctionManager.getFunctionByCode(type.toString().toLowerCase());
-            double aggValue = function.aggregate(column.getValues(), rows);
+            double aggValue = function.aggregate(column.getValues(), index.getRows());
             long _buildTime = System.nanoTime() - _beginTime;
 
             // Index the result
