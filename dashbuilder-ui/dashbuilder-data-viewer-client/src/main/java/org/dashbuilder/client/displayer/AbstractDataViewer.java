@@ -120,10 +120,10 @@ public abstract class AbstractDataViewer<T extends DataDisplayer> extends Compos
             }
         } else {
             selectedValues.add(valueSelected);
-            if (numberOfRows > 0 && selectedValues.size() < numberOfRows) {
-                filterApply(columnId, selectedValues);
-            } else {
+            if (numberOfRows > 0 && selectedValues.size() >= numberOfRows) {
                 filterReset(columnId);
+            } else {
+                filterApply(columnId, selectedValues);
             }
         }
     }
