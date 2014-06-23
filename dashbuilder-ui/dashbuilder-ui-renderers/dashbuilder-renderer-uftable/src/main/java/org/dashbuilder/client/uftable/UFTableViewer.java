@@ -52,7 +52,7 @@ public class UFTableViewer extends AbstractDataViewer<org.dashbuilder.model.disp
     private Map< String, List<KeyValue<String, Integer>> > columnCellSelections =
             new HashMap< String, List<KeyValue<String, Integer>> >(5);
 
-    protected int pageSize = 20;
+    protected int pageSize = 10;
     protected int numberOfRows = 0;
     protected int dataSetLowerLimit = 0;
     protected int dataSetUpperLimit = 0;
@@ -85,21 +85,37 @@ public class UFTableViewer extends AbstractDataViewer<org.dashbuilder.model.disp
                 try {
                     displayMessage( "Initializing '" + dataDisplayer.getTitle() + "'..." );
 
-                    lookupDataSet(
-                            0,
-                            pageSize,
+                    dataSetLowerLimit = 0;
+                    dataSetUpperLimit = pageSize;
+
+                    DataSetReadyCallback callback =
                             new DataSetReadyCallback() {
-                                public void callback( DataSet result ) {
+                                @Override
+                                public void callback( DataSet dataSet ) {
                                     Widget w = createWidget();
                                     panel.clear();
                                     panel.add( w );
                                 }
 
+                                @Override
                                 public void notFound() {
                                     displayMessage( "ERROR: Data set not found." );
                                 }
-                            }
-                    );
+                            };
+
+                    final String defaultSortColumn = dataDisplayer.getDefaultSortColumnId();
+                    if ( defaultSortColumn != null && !"".equals( defaultSortColumn ) ) {
+                        lastOrderedColumn = defaultSortColumn;
+                        lastSortOrder = dataDisplayer.getDefaultSortOrder();
+                        doLookupDataSet(
+                                dataSetLowerLimit,
+                                dataSetUpperLimit,
+                                defaultSortColumn,
+                                dataDisplayer.getDefaultSortOrder(),
+                                callback );
+                    } else {
+                        lookupDataSet( dataSetLowerLimit, dataSetUpperLimit, callback );
+                    }
                 } catch ( Exception e ) {
                     displayMessage( "ERROR: " + e.getMessage() );
                 }
@@ -140,32 +156,7 @@ public class UFTableViewer extends AbstractDataViewer<org.dashbuilder.model.disp
         pageSize = dataDisplayer.getPageSize();
         numberOfRows = dataSet.getRowCountNonTrimmed();
 
-        final PagedTable<UFTableRow> table = createUFTable();
-
-        final String defaultSortColumn = dataDisplayer.getDefaultSortColumnId();
-
-        // TODO get the table to show the order icon programatically
-        if ( defaultSortColumn != null && !"".equals( defaultSortColumn ) ) {
-            lookupDataSet(
-                    defaultSortColumn,
-                    dataDisplayer.getDefaultSortOrder(),
-                    new DataSetReadyCallback() {
-                        @Override
-                        public void callback( DataSet dataSet ) {
-                            lastOrderedColumn = defaultSortColumn;
-                            lastSortOrder = dataDisplayer.getDefaultSortOrder();
-                            table.redraw();
-                        }
-
-                        @Override
-                        public void notFound() {
-                            displayMessage( "ERROR in data lookup." );
-                        }
-                    }
-            );
-        }
-
-        this.table = table;
+        this.table = createUFTable();
         dataProvider.addDataDisplay( table );
 
         HTML titleHtml = new HTML();
