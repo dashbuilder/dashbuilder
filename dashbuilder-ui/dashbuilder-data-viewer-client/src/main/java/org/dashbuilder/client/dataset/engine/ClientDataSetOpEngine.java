@@ -401,6 +401,10 @@ public class ClientDataSetOpEngine implements DataSetOpEngine {
         // DATASET BUILD
 
         public DataSet buildDataSet(InternalContext context) {
+            if (context.index == null) {
+                // If no index exists then just return the data set from context
+                return context.dataSet;
+            }
             DataSet result = _buildDataSet(context);
             context.dataSet = result;
             context.index = null;
