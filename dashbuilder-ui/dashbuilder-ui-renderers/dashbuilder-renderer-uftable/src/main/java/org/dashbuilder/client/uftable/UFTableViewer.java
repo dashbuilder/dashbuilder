@@ -299,6 +299,10 @@ public class UFTableViewer extends AbstractDataViewer<org.dashbuilder.model.disp
         return column;
     }
 
+    int getNumberOfRows() {
+        return numberOfRows;
+    }
+
     protected void lookupDataSet( String columnId, SortOrder sortOrder, DataSetReadyCallback callback ) {
         doLookupDataSet( null, null, columnId, sortOrder, callback );
     }

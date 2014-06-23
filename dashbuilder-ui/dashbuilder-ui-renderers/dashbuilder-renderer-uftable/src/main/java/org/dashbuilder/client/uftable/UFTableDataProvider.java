@@ -21,7 +21,9 @@ public class UFTableDataProvider extends AsyncDataProvider<UFTableRow> {
     @Override
     protected void onRangeChanged(final HasData<UFTableRow> display) {
         int start = ( ( PagedTable ) display ).getPageStart();
-        int pageSize = ( ( PagedTable ) display ).getPageSize();
+        int numberOfRows = viewer.getNumberOfRows();
+        int _pageSize = ( ( PagedTable ) display ).getPageSize();
+        int pageSize = numberOfRows <= _pageSize ? numberOfRows : _pageSize;
         // Only reload the row list if the page size were to change, because we're limiting the dataSet's number of rows
         // programatically, so its internal indexes will always range from 0 -> pageSize -1
         if ( pageSize != rows.size() ) {
