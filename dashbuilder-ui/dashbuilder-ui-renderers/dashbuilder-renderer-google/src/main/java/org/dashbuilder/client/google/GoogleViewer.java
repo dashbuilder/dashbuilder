@@ -18,13 +18,16 @@ package org.dashbuilder.client.google;
 import java.util.Date;
 import java.util.List;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 import com.googlecode.gwt.charts.client.ChartPackage;
 import com.googlecode.gwt.charts.client.DataTable;
+import com.googlecode.gwt.charts.client.format.DateFormat;
+import com.googlecode.gwt.charts.client.format.DateFormatOptions;
+import com.googlecode.gwt.charts.client.format.NumberFormat;
+import com.googlecode.gwt.charts.client.format.NumberFormatOptions;
+import com.googlecode.gwt.charts.client.options.FormatType;
 import org.dashbuilder.client.dataset.DataSetReadyCallback;
 import org.dashbuilder.client.displayer.AbstractDataViewer;
 import org.dashbuilder.model.dataset.ColumnType;
@@ -146,30 +149,44 @@ public abstract class GoogleViewer<T extends DataDisplayer> extends AbstractData
 
     // Google DataTable manipulation methods
 
-    protected NumberFormat numberFormat = NumberFormat.getFormat("#0.00");
-
     public DataTable createTable() {
         List<DataDisplayerColumn> displayerColumns = dataDisplayer.getColumnList();
         if (displayerColumns.isEmpty()) {
-            return googleTable = createTableFromDataSet(googleTable);
+            return googleTable = formatTable(createTableFromDataSet());
         }
-        return googleTable = createTableFromDisplayer(googleTable);
+        return googleTable = formatTable(createTableFromDisplayer());
     }
 
-    protected DataTable createTableFromDataSet(DataTable table) {
-        DataTable gTable = table;
-        if (table == null) gTable = DataTable.create();
-        else table.removeRows(0, table.getNumberOfRows());
+    protected DataTable formatTable(DataTable gTable) {
+        DateFormatOptions dateFormatOptions = DateFormatOptions.create();
+        dateFormatOptions.setFormatType(FormatType.MEDIUM);
+        DateFormat dateFormat = DateFormat.create(dateFormatOptions);
 
+        NumberFormatOptions numberFormatOptions = NumberFormatOptions.create();
+        numberFormatOptions.setPattern("#,###.##");
+        NumberFormat numberFormat = NumberFormat.create(numberFormatOptions);
+
+        for (int i = 0; i < gTable.getNumberOfColumns(); i++) {
+            com.googlecode.gwt.charts.client.ColumnType type = gTable.getColumnType(i);
+            if (com.googlecode.gwt.charts.client.ColumnType.DATE.equals(type)) {
+                dateFormat.format(gTable, i);
+            }
+            else if (com.googlecode.gwt.charts.client.ColumnType.NUMBER.equals(type)) {
+                numberFormat.format(gTable, i);
+            }
+        }
+        return gTable;
+    }
+
+    protected DataTable createTableFromDataSet() {
+        DataTable gTable = DataTable.create();
         gTable.addRows(dataSet.getRowCount());
         List<DataColumn> columns = dataSet.getColumns();
         for (int i = 0; i < columns.size(); i++) {
             DataColumn dataColumn = columns.get(i);
             List columnValues = dataColumn.getValues();
             ColumnType columnType = dataColumn.getColumnType();
-            if (table == null) {
-                gTable.addColumn(getColumnType(dataColumn), dataColumn.getId(), dataColumn.getId());
-            }
+            gTable.addColumn(getColumnType(dataColumn), dataColumn.getId(), dataColumn.getId());
             for (int j = 0; j < columnValues.size(); j++) {
                 Object value = columnValues.get(j);
                 setTableValue(gTable, columnType, value, j, i);
@@ -178,11 +195,8 @@ public abstract class GoogleViewer<T extends DataDisplayer> extends AbstractData
         return gTable;
     }
 
-    public DataTable createTableFromDisplayer(DataTable table) {
-        DataTable gTable = table;
-        if (table == null) gTable = DataTable.create();
-        else table.removeRows(0, table.getNumberOfRows());
-
+    public DataTable createTableFromDisplayer() {
+        DataTable gTable = DataTable.create();
         gTable.addRows(dataSet.getRowCount());
         int columnIndex = 0;
 
@@ -198,9 +212,7 @@ public abstract class GoogleViewer<T extends DataDisplayer> extends AbstractData
 
             ColumnType columnType = dataColumn.getColumnType();
             List columnValues = dataColumn.getValues();
-            if (table == null) {
-                gTable.addColumn(getColumnType(dataColumn), displayerColumn.getDisplayName(), dataColumn.getId());
-            }
+            gTable.addColumn(getColumnType(dataColumn), displayerColumn.getDisplayName(), dataColumn.getId());
             for (int j = 0; j < columnValues.size(); j++) {
                 Object value = columnValues.get(j);
                 setTableValue(gTable, columnType, value, j, i);
@@ -213,9 +225,9 @@ public abstract class GoogleViewer<T extends DataDisplayer> extends AbstractData
         return googleTable.getValueString(row, column);
     }
 
-    public void setTableValue(DataTable gTable, ColumnType type, Object value, int row, int column) {
-        //GWT.log("Row="+j+" Col="+i+" Val="+value);
+    protected com.google.gwt.i18n.client.NumberFormat numberFormat = com.google.gwt.i18n.client.NumberFormat.getFormat("#0.00");
 
+    public void setTableValue(DataTable gTable, ColumnType type, Object value, int row, int column) {
         if (ColumnType.DATE.equals(type)) {
             gTable.setValue(row, column, (Date) value);
         }
@@ -232,7 +244,7 @@ public abstract class GoogleViewer<T extends DataDisplayer> extends AbstractData
         ColumnType type = dataColumn.getColumnType();
         if (ColumnType.LABEL.equals(type)) return com.googlecode.gwt.charts.client.ColumnType.STRING;
         if (ColumnType.NUMBER.equals(type)) return com.googlecode.gwt.charts.client.ColumnType.NUMBER;
-        if (ColumnType.DATE.equals(type)) return com.googlecode.gwt.charts.client.ColumnType.DATETIME;
+        if (ColumnType.DATE.equals(type)) return com.googlecode.gwt.charts.client.ColumnType.DATE;
         return com.googlecode.gwt.charts.client.ColumnType.STRING;
     }
 }
