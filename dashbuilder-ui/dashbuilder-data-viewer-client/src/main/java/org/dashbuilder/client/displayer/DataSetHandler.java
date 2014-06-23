@@ -27,11 +27,6 @@ import org.dashbuilder.model.dataset.sort.DataSetSort;
 public interface DataSetHandler {
 
     /**
-     * Get the metadata of the data set.
-     */
-    DataSetMetadata getDataSetMetadata();
-
-    /**
      * Retrieves any group operation present in the current data set lookup for the target column specified.
      * @param columnId The column id. to look for. It can be either the column used to group the data set or
      * the column id. assigned int the grouped data set result.

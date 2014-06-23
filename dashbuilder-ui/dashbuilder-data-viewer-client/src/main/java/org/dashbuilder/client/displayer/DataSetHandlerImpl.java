@@ -28,7 +28,6 @@ import org.dashbuilder.model.dataset.sort.DataSetSort;
 public class DataSetHandlerImpl implements DataSetHandler {
 
     protected DataSetLookupClient dataSetLookupClient;
-    protected DataSetMetadata dataSetMetadata;
     protected DataSetLookup lookupBase;
     protected DataSetLookup lookupCurrent;
 
@@ -36,24 +35,6 @@ public class DataSetHandlerImpl implements DataSetHandler {
         this.dataSetLookupClient = dataSetLookupClient;
         this.lookupBase = lookup;
         this.lookupCurrent = lookup.cloneInstance();
-
-        try {
-            // Fetch the data set metadata
-            dataSetLookupClient.fetchMetadata(lookupBase, new DataSetMetadataCallback() {
-                public void callback(DataSetMetadata metadata) {
-                    dataSetMetadata = metadata;
-                }
-                public void notFound() {
-                    throw new RuntimeException("DataSet not found. UUID=" + lookupBase.getDataSetUUID());
-                }
-            });
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public DataSetMetadata getDataSetMetadata() {
-        return dataSetMetadata;
     }
 
     public void resetAllOperations() {
