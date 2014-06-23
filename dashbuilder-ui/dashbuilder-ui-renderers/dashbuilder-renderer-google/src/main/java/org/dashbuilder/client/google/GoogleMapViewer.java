@@ -16,6 +16,8 @@
 package org.dashbuilder.client.google;
 
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.Panel;
+import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.googlecode.gwt.charts.client.ChartPackage;
@@ -26,6 +28,7 @@ import org.dashbuilder.model.displayer.MapChartDisplayer;
 public class GoogleMapViewer extends GoogleXAxisChartViewer<MapChartDisplayer> {
 
     private GeoChart chart;
+    protected Panel filterPanel;
 
     @Override
     public ChartPackage getPackage() {
@@ -45,11 +48,16 @@ public class GoogleMapViewer extends GoogleXAxisChartViewer<MapChartDisplayer> {
 
         VerticalPanel verticalPanel = new VerticalPanel();
         verticalPanel.add(titleHtml);
+        verticalPanel.add(filterPanel = new SimplePanel());
         verticalPanel.add(chart);
         return verticalPanel;
     }
 
     protected void updateVisualization() {
+        filterPanel.clear();
+        Widget filterReset = createCurrentSelectionWidget();
+        if (filterReset != null) filterPanel.add(filterReset);
+
         chart.draw(createTable(), createOptions());
     }
 
