@@ -66,7 +66,7 @@ public class DataSetHandlerImpl implements DataSetHandler {
             throw new RuntimeException("Group ops requires to specify a pivot column.");
         }
         for (DataSetGroup next : lookupCurrent.getOperationList(DataSetGroup.class)) {
-            if (cg.equals(next.getColumnGroup())) {
+            if (next.getColumnGroup() != null && cg.equals(next.getColumnGroup())) {
                 next.setSelectedIntervalNames(op.getSelectedIntervalNames());
                 return true;
             }

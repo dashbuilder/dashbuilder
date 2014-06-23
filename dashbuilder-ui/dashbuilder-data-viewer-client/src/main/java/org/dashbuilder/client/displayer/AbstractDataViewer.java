@@ -149,7 +149,7 @@ public abstract class AbstractDataViewer<T extends DataDisplayer> extends Compos
             _groupSelect.setSelectedIntervalNames(values);
             _groupSelect.setColumnGroup(new ColumnGroup(columnId, columnId, GroupStrategy.DYNAMIC));
         }
-        // Notify to those interested parties the intervals selection event.
+        // Notify to those interested parties the selection event.
         for (DataViewerListener listener : listenerList) {
             listener.onGroupIntervalsSelected(this, _groupSelect);
         }
@@ -163,10 +163,13 @@ public abstract class AbstractDataViewer<T extends DataDisplayer> extends Compos
     protected void filterReset(String columnId) {
         columnSelectionMap.remove(columnId);
         DataSetGroup groupOp = dataSetHandler.getGroupOperation(columnId);
-        if (groupOp != null && groupOp.getColumnGroup() != null) {
-            for (DataViewerListener listener : listenerList) {
-                listener.onGroupIntervalsReset(this, groupOp);
-            }
+        if (groupOp == null || groupOp.getColumnGroup() == null) {
+            groupOp = new DataSetGroup();
+            groupOp .setColumnGroup(new ColumnGroup(columnId, columnId, GroupStrategy.DYNAMIC));
+        }
+        // Notify to those interested parties the reset event.
+        for (DataViewerListener listener : listenerList) {
+            listener.onGroupIntervalsReset(this, groupOp);
         }
     }
 
