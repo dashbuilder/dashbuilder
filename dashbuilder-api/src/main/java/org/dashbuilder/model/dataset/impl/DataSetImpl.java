@@ -68,6 +68,17 @@ public class DataSetImpl implements DataSet {
         return columns.get(index);
     }
 
+    @Override
+    public int getColumnIndex( DataColumn dataColumn ) {
+        if (dataColumn == null || "".equals( dataColumn.getId() ) ) {
+            throw new IllegalArgumentException("Wrong column specified.");
+        }
+        for (int i = 0; i < columns.size(); i++) {
+            if ( dataColumn.getId().equalsIgnoreCase( columns.get( i ).getId() ) ) return i;
+        }
+        throw new IllegalArgumentException( "The column with id " + dataColumn.getId() + " does not exist." );
+    }
+
     public DataSet addColumn(String id, ColumnType type) {
         return addColumn(id, type, null);
     }

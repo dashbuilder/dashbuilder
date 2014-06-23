@@ -12,6 +12,7 @@ import com.google.gwt.cell.client.DateCell;
 import com.google.gwt.cell.client.NumberCell;
 import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.cell.client.ValueUpdater;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.dom.client.Style;
@@ -33,6 +34,7 @@ import org.dashbuilder.model.dataset.DataColumn;
 import org.dashbuilder.model.dataset.DataSet;
 
 import org.dashbuilder.model.dataset.sort.SortOrder;
+import org.dashbuilder.model.displayer.DataDisplayerColumn;
 import org.uberfire.client.tables.PagedTable;
 
 import static com.google.gwt.dom.client.BrowserEvents.CLICK;
@@ -216,60 +218,94 @@ public class UFTableViewer extends AbstractDataViewer<org.dashbuilder.model.disp
         ufPagedTable.setWidth( Window.getClientWidth() * ( left == 0 ? 0.8 : 1 )  + "px" );
         ufPagedTable.setEmptyTableCaption( "No data available" );
 
-        List<DataColumn> columns = dataSet.getColumns();
-        for ( int i = 0; i < columns.size(); i++ ) {
-            final _Integer colNum = new _Integer( i );
-            DataColumn dataColumn = columns.get( i );
-            ColumnType columnType = dataColumn.getColumnType();
-            String columnId = dataColumn.getId();
-
-            switch ( columnType ) {
-                case LABEL:
-                    // Initialize the column selections map
-                    columnCellSelections.put( columnId, new ArrayList<KeyValue<String, Integer>>(5) );
-
-                    Column labelColumn =
-                            new Column<UFTableRow, String>(
-                                    new SelectableTextCell( columnId ) ) {
-                                        @Override
-                                        public String getValue( UFTableRow row ) {
-                                            Object value = dataSet.getValueAt( row.getRowNumber(), colNum.getColNum() );
-                                            return value.toString();
-                                        }
-                                    };
-
-                    labelColumn.setSortable( true );
-                    ufPagedTable.addColumn( labelColumn, columnId );
-                    break;
-
-                case NUMBER:
-                    Column numberColumn =
-                            new Column<UFTableRow, Number>( new NumberCell( NumberFormat.getFormat( "#.###" ) ) ) {
-                                @Override
-                                public Number getValue( UFTableRow row ) {
-                                    return ( Number ) dataSet.getValueAt( row.getRowNumber(), colNum.getColNum() );
-                                }
-                            };
-                    numberColumn.setSortable( true );
-                    ufPagedTable.addColumn( numberColumn, columnId );
-                    break;
-
-                case DATE:
-                    Column dateColumn =
-                            new Column<UFTableRow, Date>( new DateCell( DateTimeFormat.getFormat( DateTimeFormat.PredefinedFormat.DATE_TIME_MEDIUM ) ) ) {
-                                @Override
-                                public Date getValue( UFTableRow row ) {
-                                    return ( Date ) dataSet.getValueAt( row.getRowNumber(), colNum.getColNum() );
-                                }
-                            };
-                    dateColumn.setSortable( true );
-                    ufPagedTable.addColumn( dateColumn, columnId );
-                    break;
-
-                default:
-            }
+        List<DataDisplayerColumn> displayerColumns = dataDisplayer.getColumnList();
+        if ( !displayerColumns.isEmpty() ) {
+            createTableColumnsFromDisplayer( ufPagedTable, displayerColumns );
+        } else {
+            createTableColumnsFromDataSet( ufPagedTable, dataSet.getColumns() );
         }
         return ufPagedTable;
+    }
+
+    private void createTableColumnsFromDataSet( PagedTable<UFTableRow> table, List<DataColumn> dataColumns ) {
+        for ( int i = 0; i < dataColumns.size(); i++ ) {
+            DataColumn dataColumn = dataColumns.get( i );
+            String columnId = dataColumn.getId();
+
+            Column<UFTableRow, ?> column = createColumn( dataColumn.getColumnType(), columnId, i );
+            if ( column != null ) {
+                column.setSortable( true );
+                table.addColumn( column, columnId );
+            }
+        }
+    }
+
+    private void createTableColumnsFromDisplayer( PagedTable<UFTableRow> table, List<DataDisplayerColumn> dataDisplayerColumns ) {
+        int columnIndex = 0;
+        for ( int i = 0; i < dataDisplayerColumns.size(); i++ ) {
+            DataDisplayerColumn displayerColumn = dataDisplayerColumns.get( i );
+            DataColumn dataColumn;
+            if (displayerColumn.getColumnId() != null) dataColumn = dataSet.getColumnById( displayerColumn.getColumnId() );
+            else dataColumn = dataSet.getColumnByIndex( columnIndex++ );
+
+            if (dataColumn == null) {
+                String msg = "Displayer column not found in the data set: " + displayerColumn.getDisplayName();
+                GWT.log( msg );
+                throw new RuntimeException( msg );
+            }
+
+            String columnId = dataColumn.getId();
+            int colIndex = dataSet.getColumnIndex( dataColumn );
+            Column<UFTableRow, ?> column = createColumn( dataColumn.getColumnType(), columnId, colIndex );
+            if ( column != null ) {
+                column.setSortable( true );
+                table.addColumn( column, columnId );
+            }
+        }
+    }
+
+    private Column<UFTableRow, ?> createColumn( ColumnType columnType, String columnId, int columnNumber ) {
+
+        final _Integer colNum = new _Integer( columnNumber );
+        Column<UFTableRow, ?> column = null;
+        switch ( columnType ) {
+            case LABEL:
+                // Initialize the column selections map
+                columnCellSelections.put( columnId, new ArrayList<KeyValue<String, Integer>>( 5 ) );
+
+                column = new Column<UFTableRow, String>(
+                                new SelectableTextCell( columnId ) ) {
+                                    @Override
+                                    public String getValue( UFTableRow row ) {
+                                        Object value = dataSet.getValueAt( row.getRowNumber(), colNum.getColNum() );
+                                        return value.toString();
+                                    }
+                                };
+                break;
+
+            case NUMBER:
+                column = new Column<UFTableRow, Number>(
+                                new NumberCell( NumberFormat.getFormat( "#.###" ) ) ) {
+                                    @Override
+                                    public Number getValue( UFTableRow row ) {
+                                        return ( Number ) dataSet.getValueAt( row.getRowNumber(), colNum.getColNum() );
+                                    }
+                                };
+                break;
+
+            case DATE:
+                column = new Column<UFTableRow, Date>(
+                                new DateCell( DateTimeFormat.getFormat( DateTimeFormat.PredefinedFormat.DATE_TIME_MEDIUM ) ) ) {
+                                    @Override
+                                    public Date getValue( UFTableRow row ) {
+                                        return ( Date ) dataSet.getValueAt( row.getRowNumber(), colNum.getColNum() );
+                                    }
+                                };
+                break;
+
+            default:
+        }
+        return column;
     }
 
     protected void lookupDataSet( String columnId, SortOrder sortOrder, DataSetReadyCallback callback ) {

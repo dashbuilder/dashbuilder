@@ -50,6 +50,11 @@ public interface DataSet extends DataSetRef {
     DataColumn getColumnByIndex(int index);
 
     /**
+     * Get a column's internal DataSet index.
+     */
+    int getColumnIndex(DataColumn dataColumn);
+
+    /**
      * Add a brand new column.
      */
     DataSet addColumn(String id, ColumnType type);
