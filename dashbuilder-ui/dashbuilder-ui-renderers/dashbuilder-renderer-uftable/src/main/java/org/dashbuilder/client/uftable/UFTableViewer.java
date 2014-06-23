@@ -136,7 +136,7 @@ public class UFTableViewer extends AbstractDataViewer<org.dashbuilder.model.disp
 
     protected Widget createWidget() {
         pageSize = dataDisplayer.getPageSize();
-        numberOfRows = dataSetHandler.getDataSetMetadata().getNumberOfRows();
+        numberOfRows = dataSet.getRowCountNonTrimmed();
 
         final PagedTable<UFTableRow> table = createUFTable();
 
