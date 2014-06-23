@@ -44,12 +44,12 @@ public interface DataSetHandler {
     boolean addGroupOperation(DataSetGroup op);
 
     /**
-     * Removes the first group operation defined that matches the specified column.
+     * Removes a group operation from the current data set lookup instance.
      *
-     * @param columnGroup The column group to look for.
+     * @param op The operation to remove.
      * @return false, if no group operations for the specified column are found - true, otherwise.
      */
-    boolean removeFirstGroupOperation(ColumnGroup columnGroup);
+    boolean removeGroupOperation(DataSetGroup op);
 
     /**
      * Set the sort operation for the current data set lookup instance.

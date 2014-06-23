@@ -15,11 +15,11 @@
  */
 package org.dashbuilder.client.displayer;
 
+import java.util.List;
+
 import org.dashbuilder.client.dataset.DataSetLookupClient;
-import org.dashbuilder.client.dataset.DataSetMetadataCallback;
 import org.dashbuilder.client.dataset.DataSetReadyCallback;
 import org.dashbuilder.model.dataset.DataSetLookup;
-import org.dashbuilder.model.dataset.DataSetMetadata;
 import org.dashbuilder.model.dataset.DataSetOpType;
 import org.dashbuilder.model.dataset.group.ColumnGroup;
 import org.dashbuilder.model.dataset.group.DataSetGroup;
@@ -47,7 +47,7 @@ public class DataSetHandlerImpl implements DataSetHandler {
     }
 
     public DataSetGroup getGroupOperation(String columnId) {
-        for (DataSetGroup op : lookupCurrent.getOperationList(DataSetGroup.class)) {
+        for (DataSetGroup op : lookupBase.getOperationList(DataSetGroup.class)) {
             if (op.getColumnGroup() == null) continue;
 
             if (op.getColumnGroup().getColumnId().equals(columnId)) {
@@ -65,20 +65,33 @@ public class DataSetHandlerImpl implements DataSetHandler {
         if (cg == null) {
             throw new RuntimeException("Group ops requires to specify a pivot column.");
         }
-        if (getGroupOperation(cg.getSourceId()) == null) {
-            lookupCurrent.addOperation(0, op);
-            return true;
+        for (DataSetGroup next : lookupCurrent.getOperationList(DataSetGroup.class)) {
+            if (cg.equals(next.getColumnGroup())) {
+                next.setSelectedIntervalNames(op.getSelectedIntervalNames());
+                return true;
+            }
+        }
+        lookupCurrent.addOperation(0, op);
+        return true;
+    }
+
+    protected boolean belongsToBase(DataSetGroup op) {
+        for (DataSetGroup baseGroupOp : lookupBase.getOperationList(DataSetGroup.class)) {
+            if (baseGroupOp.getColumnGroup() != null && baseGroupOp.getColumnGroup().equals(op.getColumnGroup())) {
+                return true;
+            }
         }
         return false;
     }
 
-    public boolean removeFirstGroupOperation(ColumnGroup columnGroup) {
+    public boolean removeGroupOperation(DataSetGroup op) {
         for (DataSetGroup next : lookupCurrent.getOperationList(DataSetGroup.class)) {
             ColumnGroup cg = next.getColumnGroup();
             if (cg == null) continue;
 
-            if (cg.equals(columnGroup)) {
-                lookupCurrent.getOperationList().remove(next);
+            if (cg.equals(op.getColumnGroup())) {
+                if (belongsToBase(next)) next.getSelectedIntervalNames().clear();
+                else lookupCurrent.getOperationList().remove(next);
                 return true;
             }
         }

@@ -73,7 +73,7 @@ public abstract class AbstractDataViewer<T extends DataDisplayer> extends Compos
     }
 
     public void onGroupIntervalsReset(DataViewer viewer, DataSetGroup groupOp) {
-        dataSetHandler.removeFirstGroupOperation(groupOp.getColumnGroup());
+        dataSetHandler.removeGroupOperation(groupOp);
         redraw();
     }
 

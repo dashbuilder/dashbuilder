@@ -168,7 +168,7 @@ public class BackendDataSetOpEngine implements DataSetOpEngine {
                         calculations = true;
                     } else {
                         group(gOp, context);
-                        if (gOp.getSelectedIntervalNames().isEmpty()) {
+                        if (!gOp.getGroupFunctions().isEmpty()) {
                             // If the op is not an interval selection then group.
                             group = true;
                             build = false;
@@ -422,7 +422,7 @@ public class BackendDataSetOpEngine implements DataSetOpEngine {
                 if (columnGroup == null) {
                     return _buildDataSet(context, gOp.getGroupFunctions());
                 } else {
-                    if (!gOp.getSelectedIntervalNames().isEmpty()) {
+                    if (!gOp.getSelectedIntervalNames().isEmpty() && gOp.getGroupFunctions().isEmpty()) {
                         return dataSet.trim(index.getRows());
                     } else {
                         return _buildDataSet(context, gOp);
