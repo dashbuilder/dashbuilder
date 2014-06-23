@@ -115,7 +115,7 @@ public class SalesDataSetGenerator {
                     opportunity.product = randomValue(DIC_PRODUCT);
                     opportunity.salesPerson = randomValue(DIC_SALES_PERSON);
                     opportunity.probability = Random.nextDouble() * 100.0;
-                    opportunity.expectedAmount = opportunity.amount * opportunity.probability;
+                    opportunity.expectedAmount = opportunity.amount * (1 + (Random.nextDouble() * ((month*i)%10)/10));
                     opportunity.source = randomValue(DIC_SOURCE);
                     if (opportunity.probability < 25) opportunity.color = "RED";
                     else if (opportunity.probability < 50) opportunity.color = "GREY";

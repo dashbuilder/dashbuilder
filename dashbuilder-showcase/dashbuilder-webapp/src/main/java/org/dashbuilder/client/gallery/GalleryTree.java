@@ -26,6 +26,7 @@ import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.client.kpi.ClientKPIManager;
 import org.dashbuilder.client.sales.widgets.SalesExpectedByDate;
 import org.dashbuilder.client.sales.widgets.SalesDistributionByCountry;
+import org.dashbuilder.client.sales.widgets.SalesGoals;
 import org.dashbuilder.client.sales.widgets.SalesTableReports;
 import org.dashbuilder.model.dataset.DataSetFactory;
 import org.dashbuilder.model.kpi.KPIFactory;
@@ -374,6 +375,11 @@ public class GalleryTree {
         GalleryNodeList nodeList = new GalleryNodeList("Dashboards");
         mainNodes.add(nodeList);
 
+        nodeList.add(new GalleryNode("Sales goal") {
+            public Widget createWidget() {
+                return new SalesGoals();
+            }
+        });
         nodeList.add(new GalleryNode("Sales pipeline") {
             public Widget createWidget() {
                 return new SalesExpectedByDate();
