@@ -36,6 +36,12 @@ public interface DataViewer<T extends DataDisplayer> extends DataViewerListener,
     DataSetHandler getDataSetHandler();
 
     /**
+     * Turn on/off the selection capabilities.
+     */
+    void setSelectionEnabled(boolean selectionEnabled);
+    boolean isSelectionEnabled();
+
+    /**
      * Add a listener interested in receive events generated within this viewer component.
      */
     void addListener(DataViewerListener listener);

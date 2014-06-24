@@ -67,6 +67,8 @@ public abstract class GoogleXAxisChartViewer<T extends XAxisChartDisplayer> exte
     public SelectHandler createSelectHandler(final CoreChartWidget selectable) {
         return new SelectHandler() {
             public void onSelect(SelectEvent event) {
+                if (!isSelectionEnabled()) return;
+
                 JsArray<Selection> selections = selectable.getSelection();
                 for (int i = 0; i < selections.length(); i++) {
                     Selection selection = selections.get(i);
@@ -84,6 +86,8 @@ public abstract class GoogleXAxisChartViewer<T extends XAxisChartDisplayer> exte
     public SelectHandler createSelectHandler(final GeoChart selectable) {
         return new SelectHandler() {
             public void onSelect(SelectEvent event) {
+                if (!isSelectionEnabled()) return;
+
                 JsArray<Selection> selections = selectable.getSelection();
                 for (int i = 0; i < selections.length(); i++) {
                     Selection selection = selections.get(i);
@@ -99,24 +103,25 @@ public abstract class GoogleXAxisChartViewer<T extends XAxisChartDisplayer> exte
     }
 
     protected Widget createCurrentSelectionWidget() {
+        if (!isSelectionEnabled()) return null;
+
         List<String> selectedValues = filterValues(googleTable.getColumnId(0));
-        if (selectedValues != null && !selectedValues.isEmpty()) {
-            HorizontalPanel panel = new HorizontalPanel();
-            panel.getElement().setAttribute("cellpadding", "2");
-            for (String interval : selectedValues) {
-                panel.add(new Label(interval));
-            }
-            Anchor anchor = new Anchor("reset");
-            panel.add(anchor);
-            anchor.addClickHandler(new ClickHandler() {
-                public void onClick(ClickEvent event) {
-                    filterReset(googleTable.getColumnId(0));
-                    updateVisualization();
-                }
-            });
-            return panel;
+        if (selectedValues == null || selectedValues.isEmpty()) return null;
+
+        HorizontalPanel panel = new HorizontalPanel();
+        panel.getElement().setAttribute("cellpadding", "2");
+        for (String interval : selectedValues) {
+            panel.add(new Label(interval));
         }
-        return null;
+        Anchor anchor = new Anchor("reset");
+        panel.add(anchor);
+        anchor.addClickHandler(new ClickHandler() {
+            public void onClick(ClickEvent event) {
+                filterReset(googleTable.getColumnId(0));
+                updateVisualization();
+            }
+        });
+        return panel;
     }
 
     protected ChartArea createChartArea() {

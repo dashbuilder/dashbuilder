@@ -44,6 +44,7 @@ public abstract class AbstractDataViewer<T extends DataDisplayer> extends Compos
     protected T dataDisplayer;
     protected List<DataViewerListener> listenerList = new ArrayList<DataViewerListener>();
     protected Map<String,List<String>> columnSelectionMap = new HashMap<String,List<String>>();
+    protected boolean selectionEnabled = true;
 
     public T getDataDisplayer() {
         return dataDisplayer;
@@ -63,6 +64,14 @@ public abstract class AbstractDataViewer<T extends DataDisplayer> extends Compos
 
     public void addListener(DataViewerListener listener) {
         listenerList.add(listener);
+    }
+
+    public boolean isSelectionEnabled() {
+        return selectionEnabled;
+    }
+
+    public void setSelectionEnabled(boolean selectionEnabled) {
+        this.selectionEnabled = selectionEnabled;
     }
 
     // CAPTURE EVENTS RECEIVED FROM OTHER VIEWERS
@@ -104,6 +113,8 @@ public abstract class AbstractDataViewer<T extends DataDisplayer> extends Compos
      * @param numberOfRows The total number of available column values.
      */
     protected void filterUpdate(String columnId, String valueSelected, int numberOfRows) {
+        if (!isSelectionEnabled()) return;
+
         List<String> selectedValues = columnSelectionMap.get(columnId);
         if (selectedValues == null) {
             selectedValues = new ArrayList<String>();
@@ -135,6 +146,7 @@ public abstract class AbstractDataViewer<T extends DataDisplayer> extends Compos
      * @param values A list of values to filter for.
      */
     protected void filterApply(String columnId, List<String> values) {
+        if (!isSelectionEnabled()) return;
 
         // For string column filters, create and notify a group interval selection operation.
         DataSetGroup groupOp = dataSetHandler.getGroupOperation(columnId);
@@ -161,6 +173,8 @@ public abstract class AbstractDataViewer<T extends DataDisplayer> extends Compos
      * @param columnId The name of the column to reset.
      */
     protected void filterReset(String columnId) {
+        if (!isSelectionEnabled()) return;
+
         columnSelectionMap.remove(columnId);
         DataSetGroup groupOp = dataSetHandler.getGroupOperation(columnId);
         if (groupOp == null || groupOp.getColumnGroup() == null) {
