@@ -56,9 +56,9 @@ public abstract class GoogleXAxisChartViewer<T extends XAxisChartDisplayer> exte
             String intervalSelected = getValueString(i, 0);
             List<String> selectedIntervals = filterValues(googleTable.getColumnId(0));
             if (selectedIntervals != null && !selectedIntervals.isEmpty() && !selectedIntervals.contains(intervalSelected)) {
-                colorArray[j] = COLOR_NOT_SELECTED;
+                colorArray[i] = COLOR_NOT_SELECTED;
             } else {
-                colorArray[j] = COLOR_ARRAY[j];
+                colorArray[i] = COLOR_ARRAY[j];
             }
         }
         return colorArray;
