@@ -245,12 +245,13 @@ public class UFTableViewer extends AbstractDataViewer<org.dashbuilder.model.disp
                 throw new RuntimeException( msg );
             }
 
+            String caption = displayerColumn.getDisplayName();
             String columnId = dataColumn.getId();
             int colIndex = dataSet.getColumnIndex( dataColumn );
             Column<UFTableRow, ?> column = createColumn( dataColumn.getColumnType(), columnId, colIndex );
             if ( column != null ) {
                 column.setSortable( true );
-                table.addColumn( column, columnId );
+                table.addColumn( column, caption != null && !"".equals( caption ) ? caption : columnId );
             }
         }
     }
