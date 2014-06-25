@@ -379,6 +379,8 @@ public class UFTableViewer extends AbstractDataViewer<org.dashbuilder.model.disp
         @Override
         public void onBrowserEvent( Context context, Element parent, String value, NativeEvent event, ValueUpdater<String> valueUpdater ) {
 
+            if ( !isSelectionEnabled() ) return;
+
             KeyValue<String, Integer> selectedCell = new KeyValue<String, Integer>( value, context.getIndex() );
 
             // In this column no cell has been selected so far
