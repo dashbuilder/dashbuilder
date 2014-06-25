@@ -32,7 +32,9 @@ import com.googlecode.gwt.charts.client.event.SortHandler;
 import com.googlecode.gwt.charts.client.options.TableSort;
 import com.googlecode.gwt.charts.client.table.Table;
 import com.googlecode.gwt.charts.client.table.TableOptions;
+import org.dashbuilder.client.displayer.DataViewer;
 import org.dashbuilder.model.dataset.DataSet;
+import org.dashbuilder.model.dataset.group.DataSetGroup;
 import org.dashbuilder.model.dataset.sort.SortOrder;
 import org.dashbuilder.model.displayer.TableDisplayer;
 
@@ -42,6 +44,7 @@ public class GoogleTableViewer extends GoogleViewer<TableDisplayer> {
     protected int currentPage = 1;
     protected int numberOfRows = 0;
     protected int numberOfPages = 1;
+    protected int pageSelectorSize = 10;
 
     protected boolean showTotalRowsHint = true;
     protected boolean showTotalPagesHint = true;
@@ -49,7 +52,6 @@ public class GoogleTableViewer extends GoogleViewer<TableDisplayer> {
     private Table table;
     private HorizontalPanel pagerPanel = new HorizontalPanel();
     private SortInfo sortInfo = new SortInfo();
-    final private PagerInterval pagerInterval = new PagerInterval();
 
     public void setShowTotalPagesHint(boolean showTotalPagesHint) {
         this.showTotalPagesHint = showTotalPagesHint;
@@ -66,7 +68,10 @@ public class GoogleTableViewer extends GoogleViewer<TableDisplayer> {
 
     @Override
     protected void beforeDataSetLookup() {
-        this.setPageLimits();
+        // Draw only the data subset corresponding to the current page.
+        int pageSize = dataDisplayer.getPageSize();
+        int offset = (currentPage - 1) * pageSize;
+        dataSetHandler.limitDataSetRows(offset, pageSize);
     }
 
     @Override
@@ -77,7 +82,20 @@ public class GoogleTableViewer extends GoogleViewer<TableDisplayer> {
         if (currentPage > numberOfPages) {
             currentPage = 1;
         }
-        pagerInterval.setNumberOfPages(numberOfPages);
+    }
+
+    @Override
+    public void onGroupIntervalsSelected(DataViewer viewer, DataSetGroup groupOp) {
+        // Reset the current navigation status on filter requests from external viewers.
+        currentPage = 1;
+        super.onGroupIntervalsSelected(viewer, groupOp);
+    }
+
+    @Override
+    public void onGroupIntervalsReset(DataViewer viewer, DataSetGroup groupOp) {
+        // Reset the current navigation status on filter requests from external viewers.
+        currentPage = 1;
+        super.onGroupIntervalsReset(viewer, groupOp);
     }
 
     @Override
@@ -112,27 +130,32 @@ public class GoogleTableViewer extends GoogleViewer<TableDisplayer> {
         table.draw(createTable(), createOptions());
     }
 
-    private void setPageLimits() {
-        // Draw only the data subset corresponding to the current page.
-        int pageSize = dataDisplayer.getPageSize();
-        int offset = (currentPage - 1) * pageSize;
-        dataSetHandler.limitDataSetRows(offset, pageSize);
-    }
-
-    private void gotoPage(int pageNumber) {
-        if (pageNumber != currentPage && pageNumber > 0 && pageNumber < numberOfPages + 1) {
-            pagerInterval.setCurrentPage(pageNumber);
-            currentPage = pageNumber;
-            super.redraw();
-        }
-    }
-
     private TableOptions createOptions() {
         TableOptions options = TableOptions.create();
         options.setSort(TableSort.EVENT);
         options.setPageSize(dataDisplayer.getPageSize());
         options.setShowRowNumber(false);
         return options;
+    }
+
+
+    private void gotoPage(int pageNumber) {
+        if (pageNumber != currentPage && pageNumber > 0 && pageNumber < numberOfPages + 1) {
+            currentPage = pageNumber;
+            super.redraw();
+        }
+    }
+
+    protected int getLeftMostPageNumber() {
+        int page = currentPage - pageSelectorSize/2;
+        if (page < 1) return 1;
+        return page;
+    }
+
+    protected int getRightMostPageNumber() {
+        int page = getLeftMostPageNumber() + pageSelectorSize - 1;
+        if (page > numberOfPages) return numberOfPages;
+        return page;
     }
 
     protected void createTablePager() {
@@ -143,7 +166,7 @@ public class GoogleTableViewer extends GoogleViewer<TableDisplayer> {
         pagination.setSize(Pagination.PaginationSize.NORMAL);
         pagination.setAlignment(Bootstrap.Pagination.LEFT.toString());
 
-        for (int i = pagerInterval.getLeftMostPageNumber(); i <= pagerInterval.getRightMostPageNumber(); i++) {
+        for (int i = getLeftMostPageNumber(); i <= getRightMostPageNumber(); i++) {
             NavLink pageLink = new NavLink(Integer.toString(i));
             final Integer _currentPage = Integer.valueOf(i);
             if (currentPage != i) {
@@ -216,8 +239,8 @@ public class GoogleTableViewer extends GoogleViewer<TableDisplayer> {
         StringBuilder sb = new StringBuilder();
         if ( showTotalPagesHint ) {
             sb.append( "Pages " );
-            sb.append( pagerInterval.getLeftMostPageNumber() ).append("-").append( pagerInterval.getRightMostPageNumber() );
-            sb.append( " of ").append( pagerInterval.getNumberOfPages() );
+            sb.append( getLeftMostPageNumber() ).append("-").append( getRightMostPageNumber() );
+            sb.append( " of ").append( numberOfPages );
             totalPages = new Label( sb.toString() );
         }
         Label totalRows = null;
@@ -249,74 +272,6 @@ public class GoogleTableViewer extends GoogleViewer<TableDisplayer> {
             if ( totalPages != null && numberOfPages > 1 ) pagerPanel.add( totalPages );
             if ( both ) pagerPanel.add( new SpacerWidget() );
             if ( totalRows != null ) pagerPanel.add( totalRows );
-        }
-    }
-
-    private class PagerInterval {
-
-        private int numberOfPages;
-        // Amount of pages to be shown in the pager, default 10
-        private int pageIntervalSize = 10;
-        private int pageIntervalShift = 5;
-        private int leftMostPageNumber;
-        private int rightMostPageNumber;
-        private int currentPage = 1;
-
-        private PagerInterval() {
-            leftMostPageNumber = 1;
-            rightMostPageNumber = leftMostPageNumber + pageIntervalSize - 1;
-        }
-
-        private void setNumberOfPages(int numberOfPages) {
-            this.numberOfPages = numberOfPages;
-            calculateInterval();
-        }
-
-        private void setCurrentPage(int currentPage) {
-            if (currentPage <= numberOfPages) {
-                this.currentPage = currentPage;
-                calculateInterval();
-            }
-        }
-
-        private int getLeftMostPageNumber() {
-            return leftMostPageNumber;
-        }
-
-        private int getRightMostPageNumber() {
-            return rightMostPageNumber;
-        }
-
-        private int getNumberOfPages() {
-            return numberOfPages;
-        }
-
-        private void setPageIntervalSize(int pageIntervalSize) {
-            this.pageIntervalSize = pageIntervalSize;
-            calculateInterval();
-        }
-
-        private void setPageIntervalShift(int pageIntervalShift) {
-            this.pageIntervalShift = pageIntervalShift;
-            calculateInterval();
-        }
-
-        private void calculateInterval() {
-            if (numberOfPages <= pageIntervalSize) {
-                leftMostPageNumber = 1;
-                rightMostPageNumber = numberOfPages;
-            } else {
-                int _right = currentPage + pageIntervalShift;
-                int _left = currentPage - pageIntervalShift + 1;
-
-                if (_right > rightMostPageNumber) {
-                    rightMostPageNumber = _right > numberOfPages ? numberOfPages : _right;
-                    leftMostPageNumber = rightMostPageNumber - pageIntervalSize + 1;
-                } else if (_left < leftMostPageNumber) {
-                    leftMostPageNumber = _left < 1 ? 1 : _left;
-                    rightMostPageNumber = leftMostPageNumber + pageIntervalSize - 1;
-                }
-            }
         }
     }
 
