@@ -71,7 +71,7 @@ public class SalesExpectedByDate extends Composite {
                 .title("Expected pipeline")
                 .titleVisible(true)
                 .width(1000).height(250)
-                .margins(10, 100, 100, 100)
+                .margins(10, 80, 100, 100)
                 .column("Creation date")
                 .column("Amount")
                 .buildDisplayer());
@@ -84,7 +84,7 @@ public class SalesExpectedByDate extends Composite {
                 .title("Year")
                 .titleVisible(true)
                 .width(250).height(200)
-                .margins(10, 10, 10, 10)
+                .margins(0, 0, 0, 0)
                 .buildDisplayer());
 
         pieChartQuarters = viewerLocator.lookupViewer(DataSetFactory.newDSLookup()
@@ -95,7 +95,7 @@ public class SalesExpectedByDate extends Composite {
                 .title("Quarter")
                 .titleVisible(true)
                 .width(250).height(200)
-                .margins(10, 10, 10, 10)
+                .margins(0, 0, 0, 0)
                 .buildDisplayer());
 
         barChartDayOfWeek = viewerLocator.lookupViewer(DataSetFactory.newDSLookup()
@@ -106,7 +106,7 @@ public class SalesExpectedByDate extends Composite {
                 .title("Day of week")
                 .titleVisible(true)
                 .width(250).height(200)
-                .margins(10, 50, 80, 10)
+                .margins(0, 20, 80, 0)
                 .horizontal()
                 .buildDisplayer());
 
@@ -119,7 +119,7 @@ public class SalesExpectedByDate extends Composite {
                 .title("Pipeline")
                 .titleVisible(true)
                 .width(250).height(200)
-                .margins(10, 10, 10, 10)
+                .margins(0, 0, 0, 0)
                 .column("Pipeline")
                 .column("Number of opps")
                 .buildDisplayer());
@@ -129,7 +129,7 @@ public class SalesExpectedByDate extends Composite {
                 .buildLookup(), DisplayerFactory.newTable()
                 .title("List of Opportunities")
                 .titleVisible(true)
-                .tablePageSize(10)
+                .tablePageSize(8)
                 .tableOrderEnabled(true)
                 .tableOrderDefault(AMOUNT, DESCENDING)
                 .column(COUNTRY, "Country")

@@ -76,7 +76,6 @@ public class SalesTableReports extends Composite {
                 .column(EXPECTED_AMOUNT, "Expected")
                 .column(CLOSING_DATE, "Closing")
                 .column(AMOUNT, "Amount")
-                .renderer("uftable")
                 .buildDisplayer());
 
         tableByCountry = viewerLocator.lookupViewer(DataSetFactory.newDSLookup()

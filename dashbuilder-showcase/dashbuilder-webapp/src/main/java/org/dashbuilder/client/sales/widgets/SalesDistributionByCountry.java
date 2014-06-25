@@ -60,7 +60,7 @@ public class SalesDistributionByCountry extends Composite {
                 .sum(EXPECTED_AMOUNT)
                 .buildLookup(), DisplayerFactory.newBubbleChart()
                 .title("Opportunities distribution by Country ")
-                .width(500).height(400)
+                .width(500).height(350)
                 .margins(20, 50, 50, 0)
                 .column(COUNTRY, "Country")
                 .column("opps", "Number of opportunities")
@@ -76,9 +76,10 @@ public class SalesDistributionByCountry extends Composite {
                 .sum(EXPECTED_AMOUNT)
                 .buildLookup(), DisplayerFactory.newMapChart()
                 .title("By Country")
-                .width(500).height(400)
+                .width(500).height(350)
                 .margins(10, 10, 10, 10)
                 .column("Country")
+                .column("Number of opportunities")
                 .column("Total amount")
                 .buildDisplayer());
 
