@@ -48,9 +48,8 @@ public class UFTableViewer extends AbstractDataViewer<org.dashbuilder.model.disp
 
     private int colorIndex = 0;
     private Map<String, String> columnColorMap = new HashMap<String, String>( 5 );
-
-    private Map< String, List<KeyValue<String, Integer>> > columnCellSelections =
-            new HashMap< String, List<KeyValue<String, Integer>> >(5);
+    private Map< String, List<KeyValue<String, Integer>> > columnCellSelections = new HashMap< String, List<KeyValue<String, Integer>> >(5);
+    private Map< String, String > columnCaptionIds = new HashMap< String, String >(5);
 
     protected int pageSize = 10;
     protected int numberOfRows = 0;
@@ -173,11 +172,30 @@ public class UFTableViewer extends AbstractDataViewer<org.dashbuilder.model.disp
     protected PagedTable<UFTableRow> createUFTable() {
 
         final PagedTable<UFTableRow> ufPagedTable = new PagedTable<UFTableRow>( pageSize );
-        ColumnSortEvent.AsyncHandler sortHandler = new ColumnSortEvent.AsyncHandler( ufPagedTable ) {
 
+        ufPagedTable.setRowCount( numberOfRows, true );
+        int height = 38 * pageSize;
+        ufPagedTable.setHeight( ( height > ( Window.getClientHeight() - this.getAbsoluteTop() ) ? ( Window.getClientHeight() - this.getAbsoluteTop() ) : height ) + "px" );
+        int left = this.getAbsoluteLeft() + this.getOffsetWidth();
+        ufPagedTable.setWidth( Window.getClientWidth() * ( left == 0 ? 0.8 : 1 )  + "px" );
+        ufPagedTable.setEmptyTableCaption( "No data available" );
+
+        List<DataDisplayerColumn> displayerColumns = dataDisplayer.getColumnList();
+        if ( !displayerColumns.isEmpty() ) {
+            createTableColumnsFromDisplayer( ufPagedTable, displayerColumns );
+        } else {
+            createTableColumnsFromDataSet( ufPagedTable, dataSet.getColumns() );
+        }
+
+        ColumnSortEvent.AsyncHandler sortHandler = new ColumnSortEvent.AsyncHandler( ufPagedTable ) {
             @Override
             public void onColumnSort( ColumnSortEvent event ) {
-                final String columnId = event.getColumn().getDataStoreName();
+                // Get the column Id, in case the table is being drawn from a displayer configuration, the identifier will
+                // have to be recovered from the columnCaptionIds correspondence Map
+                String sortEventColumnName = event.getColumn().getDataStoreName();
+                String _columnId = columnCaptionIds.get( sortEventColumnName );
+                final String columnId = _columnId != null ? _columnId : sortEventColumnName;
+
                 final SortOrder order = event.isSortAscending() ? SortOrder.ASCENDING : SortOrder.DESCENDING;
                 lookupDataSet(
                         columnId,
@@ -202,19 +220,6 @@ public class UFTableViewer extends AbstractDataViewer<org.dashbuilder.model.disp
 
         ufPagedTable.addColumnSortHandler( sortHandler );
 
-        ufPagedTable.setRowCount( numberOfRows, true );
-        int height = 38 * pageSize;
-        ufPagedTable.setHeight( ( height > ( Window.getClientHeight() - this.getAbsoluteTop() ) ? ( Window.getClientHeight() - this.getAbsoluteTop() ) : height ) + "px" );
-        int left = this.getAbsoluteLeft() + this.getOffsetWidth();
-        ufPagedTable.setWidth( Window.getClientWidth() * ( left == 0 ? 0.8 : 1 )  + "px" );
-        ufPagedTable.setEmptyTableCaption( "No data available" );
-
-        List<DataDisplayerColumn> displayerColumns = dataDisplayer.getColumnList();
-        if ( !displayerColumns.isEmpty() ) {
-            createTableColumnsFromDisplayer( ufPagedTable, displayerColumns );
-        } else {
-            createTableColumnsFromDataSet( ufPagedTable, dataSet.getColumns() );
-        }
         return ufPagedTable;
     }
 
@@ -245,13 +250,21 @@ public class UFTableViewer extends AbstractDataViewer<org.dashbuilder.model.disp
                 throw new RuntimeException( msg );
             }
 
-            String caption = displayerColumn.getDisplayName();
             String columnId = dataColumn.getId();
+            String displayName = displayerColumn.getDisplayName();
+            String caption = null;
+            if ( displayName != null && !"".equals( displayName ) ) {
+                caption = displayName;
+                columnCaptionIds.put( displayName, columnId );
+            } else {
+                caption = columnId;
+            }
+
             int colIndex = dataSet.getColumnIndex( dataColumn );
             Column<UFTableRow, ?> column = createColumn( dataColumn.getColumnType(), columnId, colIndex );
             if ( column != null ) {
                 column.setSortable( true );
-                table.addColumn( column, caption != null && !"".equals( caption ) ? caption : columnId );
+                table.addColumn( column, caption );
             }
         }
     }
