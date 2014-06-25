@@ -69,10 +69,10 @@ public class DataViewerCoordinator {
             }
         }
 
-        public void onGroupIntervalsReset(DataViewer viewer, DataSetGroup groupOp) {
+        public void onGroupIntervalsReset(DataViewer viewer, List<DataSetGroup> groupOps) {
             for (DataViewer other : viewerList) {
                 if (other == viewer) continue;
-                other.onGroupIntervalsReset(viewer, groupOp);
+                other.onGroupIntervalsReset(viewer, groupOps);
             }
         }
     }

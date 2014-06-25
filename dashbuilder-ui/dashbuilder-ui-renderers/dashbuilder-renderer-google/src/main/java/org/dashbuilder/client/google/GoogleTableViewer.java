@@ -15,6 +15,8 @@
  */
 package org.dashbuilder.client.google;
 
+import java.util.List;
+
 import com.github.gwtbootstrap.client.ui.*;
 import com.github.gwtbootstrap.client.ui.Label;
 import com.github.gwtbootstrap.client.ui.constants.IconSize;
@@ -92,10 +94,10 @@ public class GoogleTableViewer extends GoogleViewer<TableDisplayer> {
     }
 
     @Override
-    public void onGroupIntervalsReset(DataViewer viewer, DataSetGroup groupOp) {
+    public void onGroupIntervalsReset(DataViewer viewer, List<DataSetGroup> groupOps) {
         // Reset the current navigation status on filter requests from external viewers.
         currentPage = 1;
-        super.onGroupIntervalsReset(viewer, groupOp);
+        super.onGroupIntervalsReset(viewer, groupOps);
     }
 
     @Override

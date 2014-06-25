@@ -16,6 +16,7 @@
 package org.dashbuilder.client.displayer;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -81,8 +82,10 @@ public abstract class AbstractDataViewer<T extends DataDisplayer> extends Compos
         redraw();
     }
 
-    public void onGroupIntervalsReset(DataViewer viewer, DataSetGroup groupOp) {
-        dataSetHandler.removeGroupOperation(groupOp);
+    public void onGroupIntervalsReset(DataViewer viewer, List<DataSetGroup> groupOps) {
+        for (DataSetGroup groupOp : groupOps) {
+            dataSetHandler.removeGroupOperation(groupOp);
+        }
         redraw();
     }
 
@@ -183,7 +186,31 @@ public abstract class AbstractDataViewer<T extends DataDisplayer> extends Compos
         }
         // Notify to those interested parties the reset event.
         for (DataViewerListener listener : listenerList) {
-            listener.onGroupIntervalsReset(this, groupOp);
+            listener.onGroupIntervalsReset(this, Arrays.asList(groupOp));
+        }
+    }
+
+    /**
+     * Clear any filter.
+     */
+    protected void filterReset() {
+        if (!isSelectionEnabled()) return;
+
+        List<DataSetGroup> groupOpList = new ArrayList<DataSetGroup>();
+        for (String columnId : columnSelectionMap.keySet()) {
+            DataSetGroup groupOp = dataSetHandler.getGroupOperation(columnId);
+            if (groupOp == null || groupOp.getColumnGroup() == null) {
+                groupOp = new DataSetGroup();
+                groupOp .setColumnGroup(new ColumnGroup(columnId, columnId, GroupStrategy.DYNAMIC));
+            }
+            groupOpList.add(groupOp);
+
+        }
+        columnSelectionMap.clear();
+
+        // Notify to those interested parties the reset event.
+        for (DataViewerListener listener : listenerList) {
+            listener.onGroupIntervalsReset(this, groupOpList);
         }
     }
 
