@@ -1,6 +1,5 @@
 package org.dashbuilder.client.uftable;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -15,14 +14,17 @@ import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
-import com.google.gwt.dom.client.Style;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.ColumnSortEvent;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -41,15 +43,9 @@ import static com.google.gwt.dom.client.BrowserEvents.CLICK;
 
 public class UFTableViewer extends AbstractDataViewer<org.dashbuilder.model.displayer.TableDisplayer> {
 
-    private static  final String[] COLOR_ARRAY = new String[] {
-            "red", "blue", "yellow", "green", "orange", "brown", "magenta", "lime", "gold",
-            "indigo", "pink", "purple", "aqua", "salmon", "coral", "fuchsia", "silver"
-    };
-
-    private int colorIndex = 0;
-    private Map<String, String> columnColorMap = new HashMap<String, String>( 5 );
-    private Map< String, List<KeyValue<String, Integer>> > columnCellSelections = new HashMap< String, List<KeyValue<String, Integer>> >(5);
     private Map< String, String > columnCaptionIds = new HashMap< String, String >(5);
+
+    private Widget currentSelectionWidget = null;
 
     protected int pageSize = 10;
     protected int numberOfRows = 0;
@@ -132,6 +128,7 @@ public class UFTableViewer extends AbstractDataViewer<org.dashbuilder.model.disp
                 UFTableViewer.this.dataSet = dataSet;
                 numberOfRows = dataSet.getRowCountNonTrimmed();
                 table.setRowCount( numberOfRows, true );
+                setColumnSelectionWidget();
                 table.redraw();
             }
 
@@ -275,9 +272,6 @@ public class UFTableViewer extends AbstractDataViewer<org.dashbuilder.model.disp
         Column<UFTableRow, ?> column = null;
         switch ( columnType ) {
             case LABEL:
-                // Initialize the column selections map
-                columnCellSelections.put( columnId, new ArrayList<KeyValue<String, Integer>>( 5 ) );
-
                 column = new Column<UFTableRow, String>(
                                 new SelectableTextCell( columnId ) ) {
                                     @Override
@@ -315,6 +309,35 @@ public class UFTableViewer extends AbstractDataViewer<org.dashbuilder.model.disp
 
     int getNumberOfRows() {
         return numberOfRows;
+    }
+
+    protected Widget createCurrentSelectionWidget() {
+        if (!isSelectionEnabled()) return null;
+
+        Set<String> columnFilters = filterColumns();
+
+        if ( columnFilters.isEmpty() ) return null;
+
+        HorizontalPanel panel = new HorizontalPanel();
+        panel.getElement().setAttribute("cellpadding", "2");
+
+        for ( String columnId : columnFilters ) {
+            List<String> selectedValues = filterValues( columnId );
+            for (String interval : selectedValues) {
+                panel.add(new com.github.gwtbootstrap.client.ui.Label(interval));
+            }
+        }
+
+        Anchor anchor = new Anchor("reset");
+        panel.add(anchor);
+        anchor.addClickHandler(new ClickHandler() {
+            public void onClick(ClickEvent event) {
+                filterReset();
+                setColumnSelectionWidget();
+                table.redraw();
+            }
+        });
+        return panel;
     }
 
     protected void lookupDataSet( String columnId, SortOrder sortOrder, DataSetReadyCallback callback ) {
@@ -364,22 +387,18 @@ public class UFTableViewer extends AbstractDataViewer<org.dashbuilder.model.disp
         }
     }
 
-    private String getColumnSelectedColor( String columnId ) {
-        String columnColor = columnColorMap.get(columnId);
-        if ( columnColor == null ) {
-            columnColorMap.put( columnId, columnColor = COLOR_ARRAY[ colorIndex++ % COLOR_ARRAY.length ] );
-        }
-        return columnColor;
+    private void setColumnSelectionWidget() {
+        if ( currentSelectionWidget != null ) table.getToolbar().remove( currentSelectionWidget );
+        currentSelectionWidget = createCurrentSelectionWidget();
+        if ( currentSelectionWidget != null ) table.getToolbar().add( currentSelectionWidget );
     }
 
     private class SelectableTextCell extends TextCell {
 
         private String columnId;
-        private String filterColor;
 
         private SelectableTextCell( String columnId ) {
             this.columnId = columnId;
-            this.filterColor = getColumnSelectedColor( columnId );
         }
 
         @Override
@@ -394,65 +413,8 @@ public class UFTableViewer extends AbstractDataViewer<org.dashbuilder.model.disp
 
             if ( !isSelectionEnabled() ) return;
 
-            KeyValue<String, Integer> selectedCell = new KeyValue<String, Integer>( value, context.getIndex() );
-
-            // In this column no cell has been selected so far
-            List<KeyValue<String, Integer>> selectedCells = columnCellSelections.get( columnId );
-            if ( selectedCells.size() == 0 ) {
-                markSelected( parent.getParentElement() );
-                selectedCells.add( selectedCell );
-
-                filterUpdate( columnId, value, -1 );
-
-            // Some value already selected in same column
-            } else {
-                // Same cell (i.e. same value, and same row) clicked --> remove styles and remove from filter
-                if ( selectedCells.contains( selectedCell ) ) {
-                    unMarkSelected( parent.getParentElement() );
-                    selectedCells.remove( selectedCell );
-
-                    filterUpdate( columnId, value, -1 );
-
-                // Different cell clicked
-                } else {
-                    int i = 0;
-                    boolean sameValueSelected = false;
-                    while (!sameValueSelected && i < selectedCells.size() ) {
-                        if ( selectedCell.getKey().equalsIgnoreCase( selectedCells.get( i++ ).getKey() ) ) sameValueSelected = true;
-                    }
-                    // Different cell, and with different value in the same column
-                    if ( !sameValueSelected ) {
-                        markSelected( parent.getParentElement() );
-                        selectedCells.add( selectedCell );
-
-                        filterUpdate( columnId, value, -1 );
-                    } // else (i.e. different cell but with same value) do nothing
-                }
-            }
-        }
-
-        private void markSelected( Element element ) {
-            Style style = element.getStyle();
-            style.setBorderWidth( 1, Style.Unit.PX );
-            style.setBorderStyle( Style.BorderStyle.SOLID );
-            style.setBorderColor( filterColor );
-        }
-
-        private void unMarkSelected( Element element ) {
-            Style style = element.getStyle();
-            style.clearBorderWidth();
-            style.clearBorderStyle();
-            style.clearBorderColor();
-        }
-
-        private double parseBorderWidth( String former ) {
-            String size = former.replaceAll( "[a-z %]", "" );
-            return Double.parseDouble( "".equals( size ) ? "0" : size );
-        }
-
-        private Style.Unit parseBorderWidthUnit( String former ) {
-            String unit = former.replaceAll( "[0-9 ]", "" ).toUpperCase();
-            return Style.Unit.valueOf( "".equals( unit ) ? "PX" : unit );
+            filterUpdate( columnId, value, -1 );
+            setColumnSelectionWidget();
         }
     }
 
@@ -466,52 +428,6 @@ public class UFTableViewer extends AbstractDataViewer<org.dashbuilder.model.disp
 
         private int getColNum() {
             return colNum;
-        }
-    }
-
-    private final class KeyValue<K, V> {
-        private K key;
-        private V value;
-
-        private KeyValue( K key, V value ) {
-            this.key = key;
-            this.value = value;
-        }
-
-        public K getKey() {
-            return key;
-        }
-
-        public V getValue() {
-            return value;
-        }
-
-        @Override
-        public boolean equals( Object o ) {
-            if ( this == o ) {
-                return true;
-            }
-            if ( o == null || getClass() != o.getClass() ) {
-                return false;
-            }
-
-            KeyValue keyValue = ( KeyValue ) o;
-
-            if ( key != null ? !key.equals( keyValue.key ) : keyValue.key != null ) {
-                return false;
-            }
-            if ( value != null ? !value.equals( keyValue.value ) : keyValue.value != null ) {
-                return false;
-            }
-
-            return true;
-        }
-
-        @Override
-        public int hashCode() {
-            int result = key != null ? key.hashCode() : 0;
-            result = 31 * result + ( value != null ? value.hashCode() : 0 );
-            return result;
         }
     }
 }
