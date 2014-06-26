@@ -37,7 +37,6 @@ import org.dashbuilder.client.dataset.engine.index.DataSetIntervalSetIndex;
 import org.dashbuilder.client.dataset.engine.index.DataSetSortIndex;
 import org.dashbuilder.client.dataset.engine.index.spi.DataSetIndexRegistry;
 import org.dashbuilder.client.dataset.engine.sort.DataSetSortAlgorithm;
-import org.dashbuilder.client.util.StringUtils;
 import org.dashbuilder.model.dataset.ColumnType;
 import org.dashbuilder.model.dataset.DataColumn;
 import org.dashbuilder.model.dataset.DataSet;
@@ -309,7 +308,12 @@ public class ClientDataSetOpEngine implements DataSetOpEngine {
 
                 // Create a brand new selection index.
                 List<DataSetIntervalIndex> intervalIdxs = groupIndex.getIntervalIndexes(intervalNames);
-                if (intervalIdxs.isEmpty()) throw new IllegalStateException("Intervals not found: " + StringUtils.join(intervalNames, ","));
+                if (intervalIdxs.isEmpty()) {
+                    intervalIdxs = new ArrayList<DataSetIntervalIndex>();
+                    for (String name : intervalNames) {
+                        intervalIdxs.add(new DataSetIntervalIndex(groupIndex, name, new ArrayList<Integer>()));
+                    }
+                }
 
                 //if (intervalIdxs.size() == 1) return intervalIdxs.get(0);
                 return groupIndex.indexSelection(intervalNames, intervalIdxs);
@@ -372,6 +376,8 @@ public class ClientDataSetOpEngine implements DataSetOpEngine {
         }
 
         protected void sort(DataSetSort op, InternalContext context) {
+            checkSortOp(context.dataSet, op);
+
             if (context.dataSet.getRowCount() < 2) {
                 return;
             }

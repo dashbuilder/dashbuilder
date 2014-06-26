@@ -21,10 +21,6 @@ import java.util.ArrayList;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
-import org.apache.commons.lang.StringUtils;
-import org.dashbuilder.dataset.engine.DataSetHandler;
-import org.dashbuilder.dataset.engine.DataSetRowSet;
-import org.dashbuilder.dataset.engine.DataSetOpEngine;
 import org.dashbuilder.dataset.engine.function.AggregateFunction;
 import org.dashbuilder.dataset.engine.function.AggregateFunctionManager;
 import org.dashbuilder.dataset.engine.group.IntervalBuilder;
@@ -313,7 +309,12 @@ public class BackendDataSetOpEngine implements DataSetOpEngine {
 
                 // Create a brand new selection index.
                 List<DataSetIntervalIndex> intervalIdxs = groupIndex.getIntervalIndexes(intervalNames);
-                if (intervalIdxs.isEmpty()) throw new IllegalStateException("Intervals not found: " + StringUtils.join(intervalNames, ","));
+                if (intervalIdxs.isEmpty()) {
+                    intervalIdxs = new ArrayList<DataSetIntervalIndex>();
+                    for (String name : intervalNames) {
+                        intervalIdxs.add(new DataSetIntervalIndex(groupIndex, name, new ArrayList<Integer>()));
+                    }
+                }
 
                 //if (intervalIdxs.size() == 1) return intervalIdxs.get(0);
                 return groupIndex.indexSelection(intervalNames, intervalIdxs);
@@ -376,6 +377,8 @@ public class BackendDataSetOpEngine implements DataSetOpEngine {
         }
 
         protected void sort(DataSetSort op, InternalContext context) {
+            checkSortOp(context.dataSet, op);
+
             if (context.dataSet.getRowCount() < 2) {
                 return;
             }

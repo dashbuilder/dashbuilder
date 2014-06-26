@@ -122,6 +122,35 @@ public class DataSetNestedGroupTest {
     }
 
     @Test
+    public void testNoResultsSelection() throws Exception {
+        DataSet result = dataSetManager.lookupDataSet(
+                DataSetFactory.newDSLookup()
+                        .dataset(EXPENSE_REPORTS)
+                        .group("employee").select("Jerri Preble")
+                        .group("department").select("Engineering")
+                        .group("city").select("Westford")
+                        .group("date").fixed(DateIntervalType.MONTH)
+                        .sum("amount", "total")
+                        .buildLookup());
+
+        //printDataSet(result);
+        assertDataSetValues(result, dataSetFormatter, new String[][] {
+                {"JANUARY", "0.00"},
+                {"FEBRUARY", "0.00"},
+                {"MARCH", "0.00"},
+                {"APRIL", "0.00"},
+                {"MAY", "0.00"},
+                {"JUNE", "0.00"},
+                {"JULY", "0.00"},
+                {"AUGUST", "0.00"},
+                {"SEPTEMBER", "0.00"},
+                {"OCTOBER", "0.00"},
+                {"NOVEMBER", "0.00"},
+                {"DECEMBER", "0.00"}
+        }, 0);
+    }
+
+    @Test
     public void testThreeNestedLevels() throws Exception {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDSLookup()

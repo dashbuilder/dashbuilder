@@ -28,6 +28,11 @@ public class DataSetIntervalIndex extends DataSetIndexNode implements DataSetInt
 
     String intervalName = null;
 
+    public DataSetIntervalIndex(DataSetGroupIndex parent, String intervalName, List<Integer> rows) {
+        super(parent, rows, 0);
+        this.intervalName = intervalName;
+    }
+
     DataSetIntervalIndex(DataSetGroupIndex parent, String intervalName) {
         super(parent, null, 0);
         this.intervalName = intervalName;

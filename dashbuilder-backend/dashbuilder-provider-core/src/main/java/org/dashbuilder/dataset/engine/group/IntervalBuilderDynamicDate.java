@@ -45,16 +45,21 @@ public class IntervalBuilderDynamicDate implements IntervalBuilder {
         IntervalDateRangeList results = new IntervalDateRangeList(columnGroup);
         DataSet dataSet = handler.getDataSet();
         List values = dataSet.getColumnById(columnGroup.getSourceId()).getValues();
-        if (values.isEmpty()) return results;
+        if (values.isEmpty()) {
+            return results;
+        }
 
         // Sort the column dates.
         DataSetSort sortOp = new DataSetSort();
         sortOp.addSortColumn(new ColumnSort(columnGroup.getSourceId(), SortOrder.ASCENDING));
         DataSetHandler sortResults = handler.sort(sortOp);
         List<Integer> sortedRows = sortResults.getRows();
-        SortedList sortedValues = new SortedList(values, sortedRows);
+        if (sortedRows == null || sortedRows.isEmpty()) {
+            return results;
+        }
 
         // Get the lower & upper limits.
+        SortedList sortedValues = new SortedList(values, sortedRows);
         Date minDate = (Date) sortedValues.get(0);
         Date maxDate = (Date) sortedValues.get(sortedValues.size()-1);
 
