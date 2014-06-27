@@ -22,9 +22,11 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.client.displayer.DataViewer;
 import org.dashbuilder.client.displayer.DataViewerCoordinator;
+import org.dashbuilder.client.displayer.DataViewerHelper;
 import org.dashbuilder.client.displayer.DataViewerLocator;
 import org.dashbuilder.model.dataset.DataSetFactory;
 import org.dashbuilder.model.displayer.DisplayerFactory;
+import org.dashbuilder.model.kpi.KPIFactory;
 
 import static org.dashbuilder.client.sales.SalesConstants.*;
 import static org.dashbuilder.model.dataset.group.DateIntervalType.*;
@@ -58,12 +60,13 @@ public class SalesGoals extends Composite {
     public SalesGoals() {
 
         // Create the chart definitions
-        DataViewerLocator viewerLocator = DataViewerLocator.get();
 
-        meterChartAmount = viewerLocator.lookupViewer(DataSetFactory.newDSLookup()
+        meterChartAmount = DataViewerHelper.lookup(
+                DataSetFactory.newDSLookup()
                 .dataset(SALES_OPPS)
                 .sum(AMOUNT)
-                .buildLookup(), DisplayerFactory.newMeterChart()
+                .buildLookup(),
+                DisplayerFactory.newMeterChart()
                 .title("Sales goal")
                 .titleVisible(true)
                 .width(250).height(250)
@@ -71,12 +74,14 @@ public class SalesGoals extends Composite {
                 .column("Total amount")
                 .buildDisplayer());
 
-        lineChartByDate = viewerLocator.lookupViewer(DataSetFactory.newDSLookup()
+        lineChartByDate = DataViewerHelper.lookup(
+                DataSetFactory.newDSLookup()
                 .dataset(SALES_OPPS)
                 .group(CLOSING_DATE, 80, MONTH)
                 .sum(AMOUNT)
                 .sum(EXPECTED_AMOUNT)
-                .buildLookup(), DisplayerFactory.newLineChart()
+                .buildLookup(),
+                DisplayerFactory.newLineChart()
                 .title("Expected pipeline")
                 .titleVisible(true)
                 .width(1000).height(250)
@@ -86,12 +91,14 @@ public class SalesGoals extends Composite {
                 .column("Expected amount")
                 .buildDisplayer());
 
-        barChartByProduct = viewerLocator.lookupViewer(DataSetFactory.newDSLookup()
+        barChartByProduct = DataViewerHelper.lookup(
+                DataSetFactory.newDSLookup()
                 .dataset(SALES_OPPS)
                 .group(PRODUCT)
                 .sum(AMOUNT)
                 .sum(EXPECTED_AMOUNT)
-                .buildLookup(), DisplayerFactory.newBarChart()
+                .buildLookup(),
+                DisplayerFactory.newBarChart()
                 .title("By product")
                 .titleVisible(true)
                 .column("Product")
@@ -102,12 +109,14 @@ public class SalesGoals extends Composite {
                 .vertical()
                 .buildDisplayer());
 
-        barChartByEmployee = viewerLocator.lookupViewer(DataSetFactory.newDSLookup()
+        barChartByEmployee = DataViewerHelper.lookup(
+                DataSetFactory.newDSLookup()
                 .dataset(SALES_OPPS)
                 .group(SALES_PERSON)
                 .sum(AMOUNT)
                 .sort(AMOUNT, DESCENDING)
-                .buildLookup(), DisplayerFactory.newBarChart()
+                .buildLookup(),
+                DisplayerFactory.newBarChart()
                 .title("By employee")
                 .titleVisible(true)
                 .column("Employee")
@@ -117,13 +126,15 @@ public class SalesGoals extends Composite {
                 .vertical()
                 .buildDisplayer());
 
-        bubbleByCountry = viewerLocator.lookupViewer(DataSetFactory.newDSLookup()
+        bubbleByCountry = DataViewerHelper.lookup(
+                DataSetFactory.newDSLookup()
                 .dataset(SALES_OPPS)
                 .group(COUNTRY)
                 .count("opps")
                 .avg(PROBABILITY)
                 .sum(EXPECTED_AMOUNT)
-                .buildLookup(), DisplayerFactory.newBubbleChart()
+                .buildLookup(),
+                DisplayerFactory.newBubbleChart()
                 .title("Opportunities distribution by Country ")
                 .width(600).height(300)
                 .margins(20, 50, 50, 0)

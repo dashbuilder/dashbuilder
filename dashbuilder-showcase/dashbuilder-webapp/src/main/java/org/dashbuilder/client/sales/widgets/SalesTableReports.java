@@ -22,6 +22,7 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.client.displayer.DataViewer;
 import org.dashbuilder.client.displayer.DataViewerCoordinator;
+import org.dashbuilder.client.displayer.DataViewerHelper;
 import org.dashbuilder.client.displayer.DataViewerLocator;
 import org.dashbuilder.model.dataset.DataSetFactory;
 import org.dashbuilder.model.dataset.group.DateIntervalType;
@@ -57,11 +58,12 @@ public class SalesTableReports extends Composite {
     public SalesTableReports() {
 
         // Create the chart definitions
-        DataViewerLocator viewerLocator = DataViewerLocator.get();
 
-        tableAll = viewerLocator.lookupViewer(DataSetFactory.newDSLookup()
+        tableAll = DataViewerHelper.lookup(
+                DataSetFactory.newDSLookup()
                 .dataset(SALES_OPPS)
-                .buildLookup(), DisplayerFactory.newTable()
+                .buildLookup(),
+                DisplayerFactory.newTable()
                 .title("List of Opportunities")
                 .titleVisible(true)
                 .tablePageSize(10)
@@ -78,7 +80,8 @@ public class SalesTableReports extends Composite {
                 .column(AMOUNT, "Amount")
                 .buildDisplayer());
 
-        tableByCountry = viewerLocator.lookupViewer(DataSetFactory.newDSLookup()
+        tableByCountry = DataViewerHelper.lookup(
+                DataSetFactory.newDSLookup()
                 .dataset(SALES_OPPS)
                 .group(COUNTRY, "Country")
                 .count("#Opps")
@@ -86,7 +89,8 @@ public class SalesTableReports extends Composite {
                 .max(AMOUNT, "Max")
                 .avg(AMOUNT, "Average")
                 .sum(AMOUNT, "Total")
-                .buildLookup(), DisplayerFactory.newTable()
+                .buildLookup(),
+                DisplayerFactory.newTable()
                 .title("Country summary")
                 .titleVisible(false)
                 .tablePageSize(10)
@@ -94,7 +98,8 @@ public class SalesTableReports extends Composite {
                 .tableOrderDefault("Total", DESCENDING)
                 .buildDisplayer());
 
-        tableByProduct = viewerLocator.lookupViewer(DataSetFactory.newDSLookup()
+        tableByProduct = DataViewerHelper.lookup(
+                DataSetFactory.newDSLookup()
                 .dataset(SALES_OPPS)
                 .group(PRODUCT, "Product")
                 .count("#Opps")
@@ -102,7 +107,8 @@ public class SalesTableReports extends Composite {
                 .max(AMOUNT, "Max")
                 .avg(AMOUNT, "Average")
                 .sum(AMOUNT, "Total")
-                .buildLookup(), DisplayerFactory.newTable()
+                .buildLookup(),
+                DisplayerFactory.newTable()
                 .title("Product summary")
                 .titleVisible(false)
                 .tablePageSize(10)
@@ -110,7 +116,8 @@ public class SalesTableReports extends Composite {
                 .tableOrderDefault("Total", DESCENDING)
                 .buildDisplayer());
 
-        tableBySalesman = viewerLocator.lookupViewer(DataSetFactory.newDSLookup()
+        tableBySalesman = DataViewerHelper.lookup(
+                DataSetFactory.newDSLookup()
                 .dataset(SALES_OPPS)
                 .group(SALES_PERSON, "Sales person")
                 .count("#Opps")
@@ -118,7 +125,8 @@ public class SalesTableReports extends Composite {
                 .max(AMOUNT, "Max")
                 .avg(AMOUNT, "Average")
                 .sum(AMOUNT, "Total")
-                .buildLookup(), DisplayerFactory.newTable()
+                .buildLookup(),
+                DisplayerFactory.newTable()
                 .title("Sales by person")
                 .titleVisible(false)
                 .tablePageSize(10)
@@ -126,7 +134,8 @@ public class SalesTableReports extends Composite {
                 .tableOrderDefault("Total", DESCENDING)
                 .buildDisplayer());
 
-        tableByYear = viewerLocator.lookupViewer(DataSetFactory.newDSLookup()
+        tableByYear = DataViewerHelper.lookup(
+                DataSetFactory.newDSLookup()
                 .dataset(SALES_OPPS)
                 .group(CREATION_DATE, "Creation date", DateIntervalType.YEAR)
                 .count("#Opps")
@@ -134,7 +143,8 @@ public class SalesTableReports extends Composite {
                 .max(AMOUNT, "Max")
                 .avg(AMOUNT, "Average")
                 .sum(AMOUNT, "Total")
-                .buildLookup(), DisplayerFactory.newTable()
+                .buildLookup(),
+                DisplayerFactory.newTable()
                 .title("Year summary")
                 .titleVisible(false)
                 .tablePageSize(10)

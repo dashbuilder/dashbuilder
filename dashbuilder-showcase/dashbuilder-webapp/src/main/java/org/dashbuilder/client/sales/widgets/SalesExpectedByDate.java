@@ -22,6 +22,7 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.client.displayer.DataViewer;
 import org.dashbuilder.client.displayer.DataViewerCoordinator;
+import org.dashbuilder.client.displayer.DataViewerHelper;
 import org.dashbuilder.client.displayer.DataViewerLocator;
 import org.dashbuilder.model.dataset.DataSetFactory;
 import org.dashbuilder.model.displayer.DisplayerFactory;
@@ -61,13 +62,14 @@ public class SalesExpectedByDate extends Composite {
     public SalesExpectedByDate() {
 
         // Create the chart definitions
-        DataViewerLocator viewerLocator = DataViewerLocator.get();
 
-        areaChartByDate = viewerLocator.lookupViewer(DataSetFactory.newDSLookup()
+        areaChartByDate = DataViewerHelper.lookup(
+                DataSetFactory.newDSLookup()
                 .dataset(SALES_OPPS)
                 .group(CREATION_DATE, 80, MONTH)
                 .sum(EXPECTED_AMOUNT)
-                .buildLookup(), DisplayerFactory.newAreaChart()
+                .buildLookup(),
+                DisplayerFactory.newAreaChart()
                 .title("Expected pipeline")
                 .titleVisible(true)
                 .width(1000).height(250)
@@ -76,33 +78,39 @@ public class SalesExpectedByDate extends Composite {
                 .column("Amount")
                 .buildDisplayer());
 
-        pieChartYears = viewerLocator.lookupViewer(DataSetFactory.newDSLookup()
+        pieChartYears = DataViewerHelper.lookup(
+                DataSetFactory.newDSLookup()
                 .dataset(SALES_OPPS)
                 .group(CREATION_DATE, YEAR)
                 .count("occurrences")
-                .buildLookup(), DisplayerFactory.newPieChart()
+                .buildLookup(),
+                DisplayerFactory.newPieChart()
                 .title("Year")
                 .titleVisible(true)
                 .width(250).height(200)
                 .margins(0, 0, 0, 0)
                 .buildDisplayer());
 
-        pieChartQuarters = viewerLocator.lookupViewer(DataSetFactory.newDSLookup()
+        pieChartQuarters = DataViewerHelper.lookup(
+                DataSetFactory.newDSLookup()
                 .dataset(SALES_OPPS)
                 .group(CREATION_DATE).fixed(QUARTER)
                 .count("occurrences")
-                .buildLookup(), DisplayerFactory.newPieChart()
+                .buildLookup(),
+                DisplayerFactory.newPieChart()
                 .title("Quarter")
                 .titleVisible(true)
                 .width(250).height(200)
                 .margins(0, 0, 0, 0)
                 .buildDisplayer());
 
-        barChartDayOfWeek = viewerLocator.lookupViewer(DataSetFactory.newDSLookup()
+        barChartDayOfWeek = DataViewerHelper.lookup(
+                DataSetFactory.newDSLookup()
                 .dataset(SALES_OPPS)
                 .group(CREATION_DATE).fixed(DAY_OF_WEEK).firstDay(SUNDAY)
                 .count("occurrences")
-                .buildLookup(), DisplayerFactory.newBarChart()
+                .buildLookup(),
+                DisplayerFactory.newBarChart()
                 .title("Day of week")
                 .titleVisible(true)
                 .width(250).height(200)
@@ -111,11 +119,13 @@ public class SalesExpectedByDate extends Composite {
                 .buildDisplayer());
 
 
-        pieChartByPipeline = viewerLocator.lookupViewer(DataSetFactory.newDSLookup()
+        pieChartByPipeline = DataViewerHelper.lookup(
+                DataSetFactory.newDSLookup()
                 .dataset(SALES_OPPS)
                 .group(PIPELINE)
                 .count("occurrences")
-                .buildLookup(), DisplayerFactory.newPieChart()
+                .buildLookup(),
+                DisplayerFactory.newPieChart()
                 .title("Pipeline")
                 .titleVisible(true)
                 .width(250).height(200)
@@ -124,9 +134,11 @@ public class SalesExpectedByDate extends Composite {
                 .column("Number of opps")
                 .buildDisplayer());
 
-        tableAll = viewerLocator.lookupViewer(DataSetFactory.newDSLookup()
+        tableAll = DataViewerHelper.lookup(
+                DataSetFactory.newDSLookup()
                 .dataset(SALES_OPPS)
-                .buildLookup(), DisplayerFactory.newTable()
+                .buildLookup(),
+                DisplayerFactory.newTable()
                 .title("List of Opportunities")
                 .titleVisible(true)
                 .tablePageSize(8)

@@ -22,6 +22,7 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.client.displayer.DataViewer;
 import org.dashbuilder.client.displayer.DataViewerCoordinator;
+import org.dashbuilder.client.displayer.DataViewerHelper;
 import org.dashbuilder.client.displayer.DataViewerLocator;
 import org.dashbuilder.model.dataset.DataSetFactory;
 import org.dashbuilder.model.displayer.DisplayerFactory;
@@ -50,15 +51,16 @@ public class SalesDistributionByCountry extends Composite {
     public SalesDistributionByCountry() {
 
         // Create the chart definitions
-        DataViewerLocator viewerLocator = DataViewerLocator.get();
 
-        bubbleByCountry = viewerLocator.lookupViewer(DataSetFactory.newDSLookup()
+        bubbleByCountry = DataViewerHelper.lookup(
+                DataSetFactory.newDSLookup()
                 .dataset(SALES_OPPS)
                 .group(COUNTRY)
                 .count("opps")
                 .avg(PROBABILITY)
                 .sum(EXPECTED_AMOUNT)
-                .buildLookup(), DisplayerFactory.newBubbleChart()
+                .buildLookup(),
+                DisplayerFactory.newBubbleChart()
                 .title("Opportunities distribution by Country ")
                 .width(500).height(350)
                 .margins(20, 50, 50, 0)
@@ -69,12 +71,14 @@ public class SalesDistributionByCountry extends Composite {
                 .column(EXPECTED_AMOUNT, "Expected amount")
                 .buildDisplayer());
 
-        mapByCountry = viewerLocator.lookupViewer(DataSetFactory.newDSLookup()
+        mapByCountry = DataViewerHelper.lookup(
+                DataSetFactory.newDSLookup()
                 .dataset(SALES_OPPS)
                 .group(COUNTRY)
                 .count("opps")
                 .sum(EXPECTED_AMOUNT)
-                .buildLookup(), DisplayerFactory.newMapChart()
+                .buildLookup(),
+                DisplayerFactory.newMapChart()
                 .title("By Country")
                 .width(500).height(350)
                 .margins(10, 10, 10, 10)
@@ -83,9 +87,11 @@ public class SalesDistributionByCountry extends Composite {
                 .column("Total amount")
                 .buildDisplayer());
 
-        tableAll = viewerLocator.lookupViewer(DataSetFactory.newDSLookup()
+        tableAll = DataViewerHelper.lookup(
+                DataSetFactory.newDSLookup()
                 .dataset(SALES_OPPS)
-                .buildLookup(), DisplayerFactory.newTable()
+                .buildLookup(),
+                DisplayerFactory.newTable()
                 .title("List of Opportunities")
                 .titleVisible(true)
                 .tablePageSize(10)
