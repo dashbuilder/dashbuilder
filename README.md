@@ -1,7 +1,7 @@
 Dashbuilder
 ===========
 
-Dashbuilder remake (based on Uberfire)
+Dashboard composition tooling based on the Uberfire framework
  
 Steps to build & run
 ---------------------------
@@ -19,6 +19,10 @@ Run the app
 
     cd dashbuilder-showcase/dashbuilder-webapp
     mvn gwt:run
+
+Login
+
+    admin / admin
 
 
 (Git client, Maven 3.x and Java 1.6+ are required)
