@@ -19,11 +19,11 @@ package org.dashbuilder.model.displayer;
  * A displayer builder for area charts
  *
  * <pre>
- DisplayerFactory.newAreaChart()
- .title("By Product")
- .column("Product")
- .column("Total amount")
- </pre>
+ *   DisplayerFactory.newAreaChart()
+ *   .title("By Product")
+ *   .column("Product")
+ *   .column("Total amount")
+ * </pre>
  */
 public interface AreaChartBuilder<T extends AreaChartBuilder> extends XAxisChartBuilder<T> {
 

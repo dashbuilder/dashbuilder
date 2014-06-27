@@ -22,8 +22,29 @@ import java.util.List;
  */
 public interface DataColumn {
 
+    /**
+     *
+     * @return
+     * @see org.dashbuilder.model.dataset.DataSet
+     */
     DataSet getDataSet();
+
+    /**
+     * TODO
+     * @return
+     */
     String getId();
+
+    /**
+     * TODO
+     * @return
+     * @see org.dashbuilder.model.dataset.ColumnType
+     */
     ColumnType getColumnType();
+
+    /**
+     * TODO
+     * @return
+     */
     List getValues();
 }

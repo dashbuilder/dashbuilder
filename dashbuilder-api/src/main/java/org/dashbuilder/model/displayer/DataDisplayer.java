@@ -17,15 +17,57 @@ package org.dashbuilder.model.displayer;
 
 import java.util.List;
 
+/**
+ * The top level interface for a data displayer. A DataDisplayer contains the information necessary to visualize data
+ * in a specific way.
+ */
 public interface DataDisplayer {
 
+    /**
+     * @return The caption that will be given to the specific data visualization.
+     */
     String getTitle();
+
+    /**
+     * Set the caption that will be given to the specific data visualization.
+     * @param title The caption.
+     */
     void setTitle(String title);
+
+    /**
+     * @return True if the caption will be visible, false if not.
+     */
     boolean isTitleVisible();
+
+    /**
+     * Set whether the caption should be visible or not.
+     * @param visible True if the caption is to be visible, false if not.
+     */
     void setTitleVisible(boolean visible);
+
+    /**
+     * @return The type of this DataDisplayer.
+     * @see org.dashbuilder.model.displayer.DataDisplayerType
+     */
     DataDisplayerType getType();
+
+    /**
+     * @return The identifier of the renderer for this displayer
+     */
     String getRenderer();
+
+    /**
+     * Set the renderer that will be used for visualizing this DataDisplayer.
+     * @param renderer The identifier of the renderer.
+     */
     void setRenderer(String renderer);
+
+    /**
+     * @return A List of DataDisplayerColumns that were configured for this DataDisplayer,
+     * or an empty list if none were configured. In the latter case, The DataSet will be introspected in order to
+     * visualize the data it contains.
+     * @see org.dashbuilder.model.displayer.DataDisplayerColumn
+     */
     List<DataDisplayerColumn> getColumnList();
 
 /*

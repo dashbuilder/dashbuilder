@@ -20,6 +20,10 @@ package org.dashbuilder.model.dataset;
  */
 public interface DataSetOp {
 
+    /**
+     * TODO
+     * @return
+     */
     DataSetOpType getType();
 
     /**

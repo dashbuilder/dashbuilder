@@ -15,8 +15,6 @@
  */
 package org.dashbuilder.model.dataset;
 
-import java.util.Date;
-
 /**
  * Metadata associated with a data set instance
  */

@@ -15,10 +15,6 @@
  */
 package org.dashbuilder.model.dataset;
 
-import org.dashbuilder.model.dataset.impl.DataSetImpl;
-import org.dashbuilder.model.displayer.DataDisplayer;
-import org.jboss.errai.common.client.api.annotations.Portable;
-
 /**
  * It allows for the building of DataSet instances in a friendly manner.
  *

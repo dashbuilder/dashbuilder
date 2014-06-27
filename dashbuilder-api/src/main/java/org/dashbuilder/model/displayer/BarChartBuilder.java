@@ -19,17 +19,31 @@ package org.dashbuilder.model.displayer;
  * A displayer builder for bar charts
  *
  * <pre>
- DisplayerFactory.newBarChart()
- .title("By Product")
- .column("Product")
- .column("Total amount")
- .horizontal()
- .buildDisplayer()
- </pre>
+ *   DisplayerFactory.newBarChart()
+ *   .title("By Product")
+ *   .column("Product")
+ *   .column("Total amount")
+ *   .horizontal()
+ *   .buildDisplayer()
+ * </pre>
  */
 public interface BarChartBuilder<T extends BarChartBuilder> extends XAxisChartBuilder<T> {
 
+    /**
+     * @param b True if the bars of this bar chart are to be shown in 3D, false if they are to be shown flat.
+     * @return The DataDisplayerBuilder instance that is being used to configure a Bar chart data displayer.
+     */
     T set3d(boolean b);
+
+    /**
+     * Set the bar orientation to horizontal.
+     * @return The DataDisplayerBuilder instance that is being used to configure a Bar chart data displayer.
+     */
     T horizontal();
+
+    /**
+     * Set the bar orientation to vertical.
+     * @return The DataDisplayerBuilder instance that is being used to configure a Bar chart data displayer.
+     */
     T vertical();
 }

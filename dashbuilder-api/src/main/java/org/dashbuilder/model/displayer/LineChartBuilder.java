@@ -19,11 +19,11 @@ package org.dashbuilder.model.displayer;
  * A displayer builder for line charts
  *
  * <pre>
- DisplayerFactory.newLineChart()
- .title("By Product")
- .column("Product")
- .column("Total amount")
- </pre>
+ *   DisplayerFactory.newLineChart()
+ *   .title("By Product")
+ *   .column("Product")
+ *   .column("Total amount")
+ * </pre>
  */
 public interface LineChartBuilder<T extends LineChartBuilder> extends XAxisChartBuilder<T> {
 

@@ -19,11 +19,11 @@ package org.dashbuilder.model.displayer;
  * A displayer builder for pie charts
  *
  * <pre>
- DisplayerFactory.newPieChart()
- .title("By Product")
- .column("Product")
- .column("Total amount")
- </pre>
+ *   DisplayerFactory.newPieChart()
+ *   .title("By Product")
+ *   .column("Product")
+ *   .column("Total amount")
+ * </pre>
  */
 public interface PieChartBuilder<T extends PieChartBuilder> extends XAxisChartBuilder<T> {
 

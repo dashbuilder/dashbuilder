@@ -19,11 +19,11 @@ package org.dashbuilder.model.displayer;
  * A displayer builder for map charts
  *
  * <pre>
- DisplayerFactory.newMapChart()
- .title("By Country")
- .column("Country")
- .column("Total amount")
- </pre>
+ *   DisplayerFactory.newMapChart()
+ *   .title("By Country")
+ *   .column("Country")
+ *   .column("Total amount")
+ * </pre>
  */
 public interface MapChartBuilder<T extends MapChartBuilder> extends XAxisChartBuilder<T> {
 

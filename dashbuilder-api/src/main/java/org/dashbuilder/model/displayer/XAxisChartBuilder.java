@@ -15,6 +15,9 @@
  */
 package org.dashbuilder.model.displayer;
 
+/**
+ * A common base interface for al charts that are axis-based.
+ */
 public interface XAxisChartBuilder<T extends XAxisChartBuilder> extends ChartBuilder<T> {
 
 }

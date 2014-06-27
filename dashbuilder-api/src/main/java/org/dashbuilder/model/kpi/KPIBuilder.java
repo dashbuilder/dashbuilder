@@ -29,6 +29,16 @@ import org.dashbuilder.model.displayer.TableDisplayerBuilder;
 
 /**
  * Builder interface for building KPI instances in a friendly manner.
+ *
+ * @see org.dashbuilder.model.dataset.DataSetLookupBuilder
+ * @see org.dashbuilder.model.displayer.PieChartBuilder
+ * @see org.dashbuilder.model.displayer.BarChartBuilder
+ * @see org.dashbuilder.model.displayer.AreaChartBuilder
+ * @see org.dashbuilder.model.displayer.LineChartBuilder
+ * @see org.dashbuilder.model.displayer.BarChartBuilder
+ * @see org.dashbuilder.model.displayer.MapChartBuilder
+ * @see org.dashbuilder.model.displayer.TableDisplayerBuilder
+ * @see org.dashbuilder.model.displayer.MapChartBuilder
  */
 public interface KPIBuilder extends
         DataSetLookupBuilder<KPIBuilder>,
@@ -42,22 +52,36 @@ public interface KPIBuilder extends
         MeterChartBuilder<KPIBuilder> {
 
     /**
-     * The UUID of the KPI
+     * Set the KPI's UUID.
+     *
+     * @param uuid The UUID of the KPI that is being assembled.
+     * @return The KPIBuilder instance that this method was invoked upon.
      */
     KPIBuilder uuid(String uuid);
 
     /**
-     * A direct reference to the source data set.
+     * Set a direct reference to the source data set that will be used by the KPI that is being assembled.
+     *
+     * @param dataSetRef The reference to the DataSet.
+     * @return The KPIBuilder instance that this method was invoked upon.
+     * @see org.dashbuilder.model.dataset.DataSetRef
      */
     KPIBuilder dataset(DataSetRef dataSetRef);
 
     /**
-     * A direct reference to the data displayer.
+     * Set a direct reference to the data displayer set that will be used by the KPI that is being assembled.
+     *
+     * @param dataDisplayer The reference to the DataDisplayer.
+     * @return The KPIBuilder instance that this method was invoked upon.
+     * @see org.dashbuilder.model.displayer.DataDisplayer
      */
     KPIBuilder displayer(DataDisplayer dataDisplayer);
 
     /**
-     * Build and get the KPI instance.
+     * Build and return the KPI instance.
+     *
+     * @return The KPI instance that was built according to the provided configuration.
+     * @see org.dashbuilder.model.kpi.KPI
      */
     KPI buildKPI();
 

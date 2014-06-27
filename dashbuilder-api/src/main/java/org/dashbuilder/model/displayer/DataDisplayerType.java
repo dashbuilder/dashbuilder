@@ -15,14 +15,49 @@
  */
 package org.dashbuilder.model.displayer;
 
+/**
+ * An enumeration for the different types of DataDisplayer.
+ */
 public enum DataDisplayerType {
+
+    /**
+     * A Bar Chart DataDisplayer.
+     */
     BARCHART,
+
+    /**
+     * A Pie Chart DataDisplayer.
+     */
     PIECHART,
+
+    /**
+     * An Area Chart DataDisplayer.
+     */
     AREACHART,
+
+    /**
+     * A Line Chart DataDisplayer.
+     */
     LINECHART,
+
+    /**
+     * A Bubble Chart DataDisplayer.
+     */
     BUBBLECHART,
+
+    /**
+     * A Meter Chart DataDisplayer.
+     */
     METERCHART,
+
+    /**
+     * A Table DataDisplayer.
+     */
     TABLE,
+
+    /**
+     * A Map DataDisplayer.
+     */
     MAP;
 
     public static DataDisplayerType getByName(String str) {

@@ -18,9 +18,36 @@ package org.dashbuilder.model.kpi;
 import org.dashbuilder.model.dataset.DataSetRef;
 import org.dashbuilder.model.displayer.DataDisplayer;
 
+/**
+ * The interface representing a Key Performance indicator. A KPI is the junction between a source of data (a DataSet)
+ * and a specific way of visualizing those data (a DataDisplayer).
+ *
+ * @see org.dashbuilder.model.dataset.DataSet
+ * @see org.dashbuilder.model.displayer.DataDisplayer
+ */
 public interface KPI {
 
+    /**
+     * Returns the UUID for this KPI.
+     *
+     * @return The UUID for this KPI.
+     */
     String getUUID();
+
+    /**
+     * Returns the DataDisplayer associated to this KPI.
+     *
+     * @return The DataDisplayer associated to this KPI.
+     * @see org.dashbuilder.model.displayer.DataDisplayer
+     */
     DataDisplayer getDataDisplayer();
+
+    /**
+     * Returns the DataSetRef associated to this KPI.
+     *
+     * @return The DataSetRef associated to this KPI.
+     * @see org.dashbuilder.model.dataset.DataSetRef
+     * @see org.dashbuilder.model.dataset.DataSet
+     */
     DataSetRef getDataSetRef();
 }

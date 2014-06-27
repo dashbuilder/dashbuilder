@@ -15,7 +15,29 @@
  */
 package org.dashbuilder.model.displayer;
 
+/**
+ * A displayer builder for meter charts
+ *
+ * <pre>
+ *   DisplayerFactory.newMeterChart()
+ *   .title("Sales goal")
+ *   .titleVisible(true)
+ *   .width(250).height(250)
+ *   .meter(0, 15000000, 25000000, 35000000)
+ *   .column("Total amount")
+ *   .buildDisplayer());
+ * </pre>
+ */
 public interface MeterChartBuilder<T extends MeterChartBuilder> extends ChartBuilder<T> {
 
+    /**
+     * Set specific the configuration parameters for this meter chart.
+     * @param start The start of the meter scale
+     * @param warning The warning level, any value above this level will be shown in orange on the meter chart.
+     * Values below this level are shown in green.
+     * @param critical The critical level, any value above this level will be shown in red on the meter chart.
+     * @param end The end of the meter scale.
+     * @return The DataDisplayerBuilder instance that is being used to configure a Meter data displayer.
+     */
     T meter(long start, long warning, long critical, long end);
 }

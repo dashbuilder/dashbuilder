@@ -15,6 +15,22 @@
  */
 package org.dashbuilder.model.displayer;
 
+/**
+ * A displayer builder for bubble charts.
+ *
+ * <pre>
+ *   DisplayerFactory.newBubbleChart()
+ *   .title("Opportunities distribution by Country ")
+ *   .width(500).height(350)
+ *   .margins(20, 50, 50, 0)
+ *   .column(COUNTRY, "Country")
+ *   .column("opps", "Number of opportunities")
+ *   .column(PROBABILITY, "Average probability")
+ *   .column(COUNTRY, "Country")
+ *   .column(EXPECTED_AMOUNT, "Expected amount")
+ *   .buildDisplayer());
+ * </pre>
+ */
 public interface BubbleChartBuilder<T extends BubbleChartBuilder> extends XAxisChartBuilder<T> {
 
 }

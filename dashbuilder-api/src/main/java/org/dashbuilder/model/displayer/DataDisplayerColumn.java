@@ -15,8 +15,18 @@
  */
 package org.dashbuilder.model.displayer;
 
+/**
+ * This interface represents a configuration for a DataSet column, for a specific DataDisplayer.
+ */
 public interface DataDisplayerColumn {
 
+    /**
+     * @return An identifier for this DataDisplayer's column configuration.
+     */
     String getColumnId();
+
+    /**
+     * @return The display name for this DataDisplayer's column configuration.
+     */
     String getDisplayName();
 }
