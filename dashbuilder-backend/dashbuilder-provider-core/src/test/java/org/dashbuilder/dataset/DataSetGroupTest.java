@@ -297,7 +297,7 @@ public class DataSetGroupTest {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDSLookup()
                 .dataset(EXPENSE_REPORTS)
-                .group("date", "Period").fixed(QUARTER)
+                .group("date", "Period").fixed(QUARTER).asc()
                 .count("Occurrences")
                 .sum("amount", "totalAmount")
                 .buildLookup());
