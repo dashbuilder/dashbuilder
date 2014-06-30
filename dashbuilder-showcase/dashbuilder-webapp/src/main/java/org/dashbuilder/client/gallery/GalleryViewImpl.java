@@ -53,7 +53,7 @@ public class GalleryViewImpl extends Composite implements GalleryPresenter.Galle
         initWidget(mainPanel);
 
         Tree leftTree = initNavigationTree();
-        leftTree.setWidth("200px");
+        leftTree.setWidth("150px");
         Style leftStyle = leftPanel.getElement().getStyle();
         leftStyle.setPropertyPx("margin", 5);
         leftPanel.add(leftTree);

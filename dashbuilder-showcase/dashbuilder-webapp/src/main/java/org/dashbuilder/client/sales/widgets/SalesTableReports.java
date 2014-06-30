@@ -66,7 +66,7 @@ public class SalesTableReports extends Composite {
                 DisplayerFactory.newTable()
                 .title("List of Opportunities")
                 .titleVisible(true)
-                .tablePageSize(10)
+                .tablePageSize(8)
                 .tableOrderEnabled(true)
                 .tableOrderDefault(AMOUNT, DESCENDING)
                 .column(COUNTRY, "Country")
@@ -93,7 +93,7 @@ public class SalesTableReports extends Composite {
                 DisplayerFactory.newTable()
                 .title("Country summary")
                 .titleVisible(false)
-                .tablePageSize(10)
+                .tablePageSize(8)
                 .tableOrderEnabled(true)
                 .tableOrderDefault("Total", DESCENDING)
                 .buildDisplayer());
@@ -111,7 +111,7 @@ public class SalesTableReports extends Composite {
                 DisplayerFactory.newTable()
                 .title("Product summary")
                 .titleVisible(false)
-                .tablePageSize(10)
+                .tablePageSize(8)
                 .tableOrderEnabled(true)
                 .tableOrderDefault("Total", DESCENDING)
                 .buildDisplayer());
@@ -129,7 +129,7 @@ public class SalesTableReports extends Composite {
                 DisplayerFactory.newTable()
                 .title("Sales by person")
                 .titleVisible(false)
-                .tablePageSize(10)
+                .tablePageSize(8)
                 .tableOrderEnabled(true)
                 .tableOrderDefault("Total", DESCENDING)
                 .buildDisplayer());
@@ -147,7 +147,7 @@ public class SalesTableReports extends Composite {
                 DisplayerFactory.newTable()
                 .title("Year summary")
                 .titleVisible(false)
-                .tablePageSize(10)
+                .tablePageSize(8)
                 .tableOrderEnabled(true)
                 .tableOrderDefault("Total", DESCENDING)
                 .buildDisplayer());

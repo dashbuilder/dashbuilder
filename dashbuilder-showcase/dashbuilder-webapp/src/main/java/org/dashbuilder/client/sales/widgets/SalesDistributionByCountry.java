@@ -62,7 +62,7 @@ public class SalesDistributionByCountry extends Composite {
                 .buildLookup(),
                 DisplayerFactory.newBubbleChart()
                 .title("Opportunities distribution by Country ")
-                .width(500).height(350)
+                .width(450).height(300)
                 .margins(20, 50, 50, 0)
                 .column(COUNTRY, "Country")
                 .column("opps", "Number of opportunities")
@@ -80,7 +80,7 @@ public class SalesDistributionByCountry extends Composite {
                 .buildLookup(),
                 DisplayerFactory.newMapChart()
                 .title("By Country")
-                .width(500).height(350)
+                .width(450).height(290)
                 .margins(10, 10, 10, 10)
                 .column("Country")
                 .column("Number of opportunities")
@@ -94,7 +94,7 @@ public class SalesDistributionByCountry extends Composite {
                 DisplayerFactory.newTable()
                 .title("List of Opportunities")
                 .titleVisible(true)
-                .tablePageSize(10)
+                .tablePageSize(8)
                 .tableOrderEnabled(true)
                 .tableOrderDefault(AMOUNT, DESCENDING)
                 .column(COUNTRY, "Country")

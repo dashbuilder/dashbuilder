@@ -69,7 +69,7 @@ public class SalesGoals extends Composite {
                 DisplayerFactory.newMeterChart()
                 .title("Sales goal")
                 .titleVisible(true)
-                .width(250).height(250)
+                .width(200).height(200)
                 .meter(0, 15000000, 25000000, 35000000)
                 .column("Total amount")
                 .buildDisplayer());
@@ -84,8 +84,8 @@ public class SalesGoals extends Composite {
                 DisplayerFactory.newLineChart()
                 .title("Expected pipeline")
                 .titleVisible(true)
-                .width(1000).height(250)
-                .margins(10, 100, 100, 120)
+                .width(800).height(200)
+                .margins(10, 80, 80, 100)
                 .column("Closing date")
                 .column("Total amount")
                 .column("Expected amount")
@@ -104,7 +104,7 @@ public class SalesGoals extends Composite {
                 .column("Product")
                 .column("Amount")
                 .column("Expected")
-                .width(450).height(200)
+                .width(400).height(150)
                 .margins(10, 80, 80, 10)
                 .vertical()
                 .buildDisplayer());
@@ -121,7 +121,7 @@ public class SalesGoals extends Composite {
                 .titleVisible(true)
                 .column("Employee")
                 .column("Amount")
-                .width(450).height(200)
+                .width(400).height(150)
                 .margins(10, 80, 80, 10)
                 .vertical()
                 .buildDisplayer());
@@ -136,8 +136,8 @@ public class SalesGoals extends Composite {
                 .buildLookup(),
                 DisplayerFactory.newBubbleChart()
                 .title("Opportunities distribution by Country ")
-                .width(600).height(300)
-                .margins(20, 50, 50, 0)
+                .width(550).height(250)
+                .margins(10, 30, 50, 0)
                 .column(COUNTRY, "Country")
                 .column("opps", "Number of opportunities")
                 .column(PROBABILITY, "Average probability")

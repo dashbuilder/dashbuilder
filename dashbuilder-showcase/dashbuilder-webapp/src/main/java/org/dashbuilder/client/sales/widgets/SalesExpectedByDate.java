@@ -72,8 +72,8 @@ public class SalesExpectedByDate extends Composite {
                 DisplayerFactory.newAreaChart()
                 .title("Expected pipeline")
                 .titleVisible(true)
-                .width(1000).height(250)
-                .margins(10, 80, 100, 100)
+                .width(850).height(200)
+                .margins(10, 80, 80, 100)
                 .column("Creation date")
                 .column("Amount")
                 .buildDisplayer());
@@ -87,7 +87,7 @@ public class SalesExpectedByDate extends Composite {
                 DisplayerFactory.newPieChart()
                 .title("Year")
                 .titleVisible(true)
-                .width(250).height(200)
+                .width(200).height(150)
                 .margins(0, 0, 0, 0)
                 .buildDisplayer());
 
@@ -100,7 +100,7 @@ public class SalesExpectedByDate extends Composite {
                 DisplayerFactory.newPieChart()
                 .title("Quarter")
                 .titleVisible(true)
-                .width(250).height(200)
+                .width(200).height(150)
                 .margins(0, 0, 0, 0)
                 .buildDisplayer());
 
@@ -113,7 +113,7 @@ public class SalesExpectedByDate extends Composite {
                 DisplayerFactory.newBarChart()
                 .title("Day of week")
                 .titleVisible(true)
-                .width(250).height(200)
+                .width(200).height(150)
                 .margins(0, 20, 80, 0)
                 .horizontal()
                 .buildDisplayer());
@@ -128,7 +128,7 @@ public class SalesExpectedByDate extends Composite {
                 DisplayerFactory.newPieChart()
                 .title("Pipeline")
                 .titleVisible(true)
-                .width(250).height(200)
+                .width(200).height(150)
                 .margins(0, 0, 0, 0)
                 .column("Pipeline")
                 .column("Number of opps")
@@ -141,7 +141,7 @@ public class SalesExpectedByDate extends Composite {
                 DisplayerFactory.newTable()
                 .title("List of Opportunities")
                 .titleVisible(true)
-                .tablePageSize(8)
+                .tablePageSize(5)
                 .tableOrderEnabled(true)
                 .tableOrderDefault(AMOUNT, DESCENDING)
                 .column(COUNTRY, "Country")
