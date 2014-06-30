@@ -17,10 +17,25 @@ package org.dashbuilder.model.dataset;
 
 import org.jboss.errai.common.client.api.annotations.Portable;
 
+/**
+ * An enumeration for the different types of DataColumn.
+ */
 @Portable
 public enum ColumnType {
+
+    /**
+     * A Date type column.
+     */
     DATE,
+
+    /**
+     * A Number type column.
+     */
     NUMBER,
+
+    /**
+     * A Label type column.
+     */
     LABEL;
 
     public static ColumnType getByName(String name) {

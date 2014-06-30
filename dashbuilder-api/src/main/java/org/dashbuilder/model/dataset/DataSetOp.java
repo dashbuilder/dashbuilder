@@ -21,8 +21,8 @@ package org.dashbuilder.model.dataset;
 public interface DataSetOp {
 
     /**
-     * TODO
-     * @return
+     * @return The type of this DataSet operation.
+     * @see org.dashbuilder.model.dataset.DataSetOpType
      */
     DataSetOpType getType();
 

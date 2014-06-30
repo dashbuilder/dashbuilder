@@ -23,28 +23,24 @@ import java.util.List;
 public interface DataColumn {
 
     /**
-     *
-     * @return
+     * @return The DataSet instance associated to this this DataColumn.
      * @see org.dashbuilder.model.dataset.DataSet
      */
     DataSet getDataSet();
 
     /**
-     * TODO
-     * @return
+     * @return The identifier of this DataColumn
      */
     String getId();
 
     /**
-     * TODO
-     * @return
+     * @return The column's type.
      * @see org.dashbuilder.model.dataset.ColumnType
      */
     ColumnType getColumnType();
 
     /**
-     * TODO
-     * @return
+     * @return A List of the values for this DataColumn.
      */
     List getValues();
 }

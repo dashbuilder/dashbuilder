@@ -60,14 +60,14 @@ public interface DataSetLookupBuilder<T extends DataSetLookupBuilder> {
 
     /**
      * Group the data set by one of the columns
-     * @param columnId The column identifier
+     * @param columnId The column identifier of the column to be grouped
      * @return The DataSetLookupBuilder instance that is being used to configure a DataSetLookup request.
      */
     T group(String columnId);
 
     /**
      * Group the data set by one of the columns, specifying the grouping strategy to use.
-     * @param columnId The column identifier
+     * @param columnId The column identifier of the column to be grouped
      * @param strategy The grouping strategy to use.
      * @return The DataSetLookupBuilder instance that is being used to configure a DataSetLookup request.
      * @see org.dashbuilder.model.dataset.group.GroupStrategy
@@ -75,18 +75,34 @@ public interface DataSetLookupBuilder<T extends DataSetLookupBuilder> {
     T group(String columnId, GroupStrategy strategy);
 
     /**
-     * TODO
-     * @param columnId
-     * @param intervalSize
+     * Group the data set by one of the columns, of type ColumnType.Date, specifying the size of the date interval
+     * by which the column should be grouped. By default the DYNAMIC GroupStrategy will be applied.
+     * @see org.dashbuilder.model.dataset.group.GroupStrategy
+     * @param columnId The column identifier of the column to be grouped
+     * @param intervalSize The size of the date interval
+     * @see org.dashbuilder.model.dataset.group.DateIntervalType
      * @return The DataSetLookupBuilder instance that is being used to configure a DataSetLookup request.
      */
     T group(String columnId, DateIntervalType intervalSize);
 
     /**
-     * TODO
-     * @param columnId
-     * @param maxIntervals
-     * @param intervalSize
+     * Group the data set by one of the columns, of type ColumnType.Date, specifying the size of the date interval
+     * by which the column should be grouped. By default the DYNAMIC GroupStrategy will be applied.
+     * @see org.dashbuilder.model.dataset.group.GroupStrategy
+     * @param columnId The column identifier of the column to be grouped.
+     * @param maxIntervals The maximum number of date intervals that should appear on the graph. The DYNAMIC GroupStrategy
+     * implies that if after grouping more intervals are generated than the specified amount, a 'greater' DateIntervalType
+     * will be applied.
+     * For example:
+     * <pre>
+     *   DataSetFactory.newDSLookup()
+     *   .dataset(SALES_OPPS)
+     *   .group(CLOSING_DATE, 80, MONTH)
+     * </pre>
+     * will group the data set by its closing date column, in monthly intervals, up to a maximum 80 months. If this
+     * dataset's time-span exceeds this number of months, then the next bigger DateIntervalType (i.e. QUARTER) will be applied.
+     * @param intervalSize The size of the date interval.
+     * @see org.dashbuilder.model.dataset.group.DateIntervalType
      * @return The DataSetLookupBuilder instance that is being used to configure a DataSetLookup request.
      */
     T group(String columnId, int maxIntervals, DateIntervalType intervalSize);
@@ -130,10 +146,14 @@ public interface DataSetLookupBuilder<T extends DataSetLookupBuilder> {
     T group(String columnId, GroupStrategy strategy, String intervalSize);
 
     /**
-     * TODO
-     * @param columnId
-     * @param strategy
-     * @param intervalSize
+     * Group the data set by one of the columns, of type ColumnType.Date, specifying the size of the date interval
+     * by which the column should be grouped, as well as the GroupStrategy that should be applied.
+     * @see org.dashbuilder.model.dataset.group.GroupStrategy
+     * @param columnId The column identifier of the column to be grouped.
+     * @param strategy The GroupStrategy to be applied.
+     * @see org.dashbuilder.model.dataset.group.GroupStrategy
+     * @param intervalSize The size of the date interval.
+     * @see org.dashbuilder.model.dataset.group.DateIntervalType
      * @return The DataSetLookupBuilder instance that is being used to configure a DataSetLookup request.
      */
     T group(String columnId, GroupStrategy strategy, DateIntervalType intervalSize);
@@ -157,10 +177,14 @@ public interface DataSetLookupBuilder<T extends DataSetLookupBuilder> {
     T group(String columnId, String newColumnId);
 
     /**
-     * TODO
-     * @param columnId
-     * @param newColumnId
-     * @param intervalSize
+     * Group the data set by one of the columns, of type ColumnType.Date, specifying the size of the date interval
+     * by which the column should be grouped. The resulting group will be given the new column identifier.
+     * By default the DYNAMIC GroupStrategy will be applied.
+     * @see org.dashbuilder.model.dataset.group.GroupStrategy
+     * @param columnId The column identifier of the column to be grouped.
+     * @param newColumnId The identifier for the group column
+     * @param intervalSize The size of the date interval.
+     * @see org.dashbuilder.model.dataset.group.DateIntervalType
      * @return The DataSetLookupBuilder instance that is being used to configure a DataSetLookup request.
      */
     T group(String columnId, String newColumnId, DateIntervalType intervalSize);
@@ -180,7 +204,7 @@ public interface DataSetLookupBuilder<T extends DataSetLookupBuilder> {
      * Group the data set by one of the columns, applying the indicated grouping strategy. The resulting group
      * will be given the new column identifier.
      * @param columnId The column identifier
-     * @param newColumnId The identifier for the group column
+     * @param newColumnId The identifier for the group column.
      * @param strategy The grouping strategy to use, as a String.
      * @return The DataSetLookupBuilder instance that is being used to configure a DataSetLookup request.
      * @see org.dashbuilder.model.dataset.group.GroupStrategy
@@ -210,12 +234,17 @@ public interface DataSetLookupBuilder<T extends DataSetLookupBuilder> {
     T group(String columnId, String newColumnId, GroupStrategy strategy, int maxIntervals, String intervalSize);
 
     /**
-     * TODO
-     * @param columnId
-     * @param newColumnId
-     * @param strategy
-     * @param maxIntervals
-     * @param intervalSize
+     * Group the data set by one of the columns, of type ColumnType.Date, specifying the grouping strategy, the size of
+     * the date interval by which the column should be grouped, as well as the maximum of intervals that can appear on the
+     * graph.
+     * The resulting group will be given the new column identifier.
+     * @param columnId The column identifier of the column to be grouped.
+     * @param newColumnId The identifier for the group column.
+     * @param strategy The GroupStrategy to be applied.
+     * @see org.dashbuilder.model.dataset.group.GroupStrategy
+     * @param maxIntervals The maximum number of date intervals that should appear on the graph.
+     * @param intervalSize The size of the date interval.
+     * @see org.dashbuilder.model.dataset.group.DateIntervalType
      * @return The DataSetLookupBuilder instance that is being used to configure a DataSetLookup request.
      */
     T group(String columnId, String newColumnId, GroupStrategy strategy, int maxIntervals, DateIntervalType intervalSize);
