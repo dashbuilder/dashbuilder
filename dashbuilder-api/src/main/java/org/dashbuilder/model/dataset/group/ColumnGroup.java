@@ -31,8 +31,8 @@ public class ColumnGroup {
     protected int maxIntervals = 15;
     protected String intervalSize = null;
     protected boolean ascendingOrder = false;
-    protected Month firstMonthOfYear = Month.JANUARY;
-    protected DayOfWeek firstDayOfWeek = DayOfWeek.MONDAY;
+    protected Month firstMonthOfYear;
+    protected DayOfWeek firstDayOfWeek;
 
     public ColumnGroup() {
     }
@@ -100,7 +100,7 @@ public class ColumnGroup {
     }
 
     public Month getFirstMonthOfYear() {
-        return firstMonthOfYear;
+        return firstMonthOfYear == null ? (isAscendingOrder() ? Month.JANUARY : Month.DECEMBER) : firstMonthOfYear;
     }
 
     public void setFirstMonthOfYear(Month firstMonthOfYear) {
@@ -108,7 +108,7 @@ public class ColumnGroup {
     }
 
     public DayOfWeek getFirstDayOfWeek() {
-        return firstDayOfWeek;
+        return firstDayOfWeek == null ? (isAscendingOrder() ? DayOfWeek.MONDAY : DayOfWeek.SUNDAY) : firstDayOfWeek;
     }
 
     public void setFirstDayOfWeek(DayOfWeek firstDayOfWeek) {

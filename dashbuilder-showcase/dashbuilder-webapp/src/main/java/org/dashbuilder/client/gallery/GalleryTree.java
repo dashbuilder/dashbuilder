@@ -213,7 +213,7 @@ public class GalleryTree {
                 KPIFactory.newAreaChartKPI()
                 .dataset(SALES_OPPS)
                 .group(CLOSING_DATE)
-                .fixed(MONTH).firstMonth(JANUARY)
+                .fixed(MONTH).firstMonth(JANUARY).asc()
                 .sum(EXPECTED_AMOUNT)
                 .title("Pipeline (best month)")
                 .margins(20, 80, 100, 100)

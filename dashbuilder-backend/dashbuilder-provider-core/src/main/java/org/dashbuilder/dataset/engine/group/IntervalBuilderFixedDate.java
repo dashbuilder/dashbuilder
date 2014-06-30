@@ -43,7 +43,10 @@ public class IntervalBuilderFixedDate implements IntervalBuilder {
 
         // Reverse intervals if requested
         boolean asc = columnGroup.isAscendingOrder();
-        if (!asc) Collections.reverse(intervalList);
+        if (!asc) {
+            Collections.reverse(intervalList);
+            intervalList.add( 0, intervalList.remove( intervalList.size() - 1));
+        }
 
         // Index the values
         String columnId = columnGroup.getSourceId();

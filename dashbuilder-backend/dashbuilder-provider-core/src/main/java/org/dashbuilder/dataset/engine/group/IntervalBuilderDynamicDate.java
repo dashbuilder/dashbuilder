@@ -16,6 +16,7 @@
 package org.dashbuilder.dataset.engine.group;
 
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -204,6 +205,11 @@ public class IntervalBuilderDynamicDate implements IntervalBuilder {
                 }
             }
         }
+
+        // Reverse intervals if requested
+        boolean asc = columnGroup.isAscendingOrder();
+        if (!asc) Collections.reverse( results );
+
         return results;
     }
 }

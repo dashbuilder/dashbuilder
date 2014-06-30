@@ -269,6 +269,10 @@ public interface DataSetLookupBuilder<T extends DataSetLookupBuilder> {
      */
     T group(String columnId, String newColumnId, GroupStrategy strategy, int maxIntervals, DateIntervalType intervalSize);
 
+    T asc();
+
+    T desc();
+
     /**
      * Apply a fixed grouping strategy by the specified date interval, on a previously date-grouped data set.
      *
@@ -287,14 +291,6 @@ public interface DataSetLookupBuilder<T extends DataSetLookupBuilder> {
      * @return The DataSetLookupBuilder instance that is being used to configure a DataSetLookup request.
      */
     T fixed(DateIntervalType type);
-
-    /**
-     * TODO
-     * @param type
-     * @param ascending
-     * @return The DataSetLookupBuilder instance that is being used to configure a DataSetLookup request.
-     */
-    T fixed(DateIntervalType type, boolean ascending);
 
     /**
      * TODO

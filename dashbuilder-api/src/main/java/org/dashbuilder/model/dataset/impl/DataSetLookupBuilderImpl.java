@@ -136,19 +136,36 @@ public class DataSetLookupBuilderImpl implements DataSetLookupBuilder {
     }
 
     public DataSetLookupBuilder fixed(DateIntervalType type) {
-        return fixed(type, true);
-    }
-
-    public DataSetLookupBuilder fixed(DateIntervalType type, boolean ascending) {
         DataSetGroup gOp = (DataSetGroup) getCurrentOp();
         if (gOp == null || gOp.getColumnGroup() == null) {
             throw new RuntimeException("group() must be called first.");
         }
 
         ColumnGroup columnGroup = gOp.getColumnGroup();
-        columnGroup.setStrategy(GroupStrategy.FIXED);
-        columnGroup.setIntervalSize(type.toString());
-        columnGroup.setAscendingOrder(ascending);
+        columnGroup.setStrategy( GroupStrategy.FIXED );
+        columnGroup.setIntervalSize( type.toString() );
+        return this;
+    }
+
+    public DataSetLookupBuilder asc() {
+        DataSetGroup gOp = (DataSetGroup) getCurrentOp();
+        if (gOp == null || gOp.getColumnGroup() == null) {
+            throw new RuntimeException("group() must be called first.");
+        }
+
+        ColumnGroup columnGroup = gOp.getColumnGroup();
+        columnGroup.setAscendingOrder( true );
+        return this;
+    }
+
+    public DataSetLookupBuilder desc() {
+        DataSetGroup gOp = (DataSetGroup) getCurrentOp();
+        if (gOp == null || gOp.getColumnGroup() == null) {
+            throw new RuntimeException("group() must be called first.");
+        }
+
+        ColumnGroup columnGroup = gOp.getColumnGroup();
+        columnGroup.setAscendingOrder( false );
         return this;
     }
 

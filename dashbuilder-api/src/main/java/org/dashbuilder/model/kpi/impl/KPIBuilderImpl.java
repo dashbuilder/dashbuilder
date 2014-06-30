@@ -212,13 +212,18 @@ public class KPIBuilderImpl implements KPIBuilder {
         return this;
     }
 
-    public KPIBuilder fixed(DateIntervalType type) {
-        lookupBuilder.fixed(type);
-        return  this;
+    public KPIBuilder asc() {
+        lookupBuilder.asc();
+        return this;
     }
 
-    public KPIBuilder fixed(DateIntervalType type, boolean ascending) {
-        lookupBuilder.fixed(type, ascending);
+    public KPIBuilder desc() {
+        lookupBuilder.desc();
+        return this;
+    }
+
+    public KPIBuilder fixed(DateIntervalType type) {
+        lookupBuilder.fixed(type);
         return  this;
     }
 

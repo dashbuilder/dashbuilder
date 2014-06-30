@@ -15,6 +15,7 @@
  */
 package org.dashbuilder.client.dataset.engine.group;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import javax.enterprise.context.ApplicationScoped;
@@ -191,6 +192,11 @@ public class IntervalBuilderDynamicDate implements IntervalBuilder {
             // Move to the next interval.
             intervalMinDate = intervalMaxDate;
         }
+
+        // Reverse intervals if requested
+        boolean asc = columnGroup.isAscendingOrder();
+        if (!asc) Collections.reverse( results );
+
         return results;
     }
 }

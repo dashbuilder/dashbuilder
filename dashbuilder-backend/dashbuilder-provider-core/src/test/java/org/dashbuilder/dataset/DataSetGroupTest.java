@@ -106,7 +106,7 @@ public class DataSetGroupTest {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDSLookup()
                 .dataset(EXPENSE_REPORTS)
-                .group("date", "Period", GroupStrategy.DYNAMIC, 10, "year")
+                .group("date", "Period", GroupStrategy.DYNAMIC, 10, "year").asc()
                 .count("Occurrences")
                 .sum("amount", "totalAmount")
                 .buildLookup());
@@ -121,11 +121,11 @@ public class DataSetGroupTest {
     }
 
     @Test
-    public void testGroupByYear() throws Exception {
+    public void testGroupByMonth() throws Exception {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDSLookup()
                 .dataset(EXPENSE_REPORTS)
-                .group("date", "Period").fixed(MONTH, true)
+                .group("date", "Period").fixed(MONTH).asc()
                 .count("Occurrences")
                 .sum("amount", "totalAmount")
                 .buildLookup());
@@ -148,14 +148,41 @@ public class DataSetGroupTest {
     }
 
     @Test
-    public void testGroupByYearReverse() throws Exception {
+    public void testGroupByMonthFirstMonth() throws Exception {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDSLookup()
-                .dataset(EXPENSE_REPORTS)
-                .group("date", "Period").fixed(MONTH, false)
-                .count("Occurrences")
-                .sum("amount", "totalAmount")
-                .buildLookup());
+                        .dataset(EXPENSE_REPORTS)
+                        .group("date", "Period").fixed(MONTH).asc().firstMonth( Month.NOVEMBER )
+                        .count("Occurrences")
+                        .sum("amount", "totalAmount")
+                        .buildLookup());
+
+        //printDataSet(result);
+        assertDataSetValues(result, dataSetFormatter, new String[][]{
+                {"NOVEMBER", "3.00", "1,443.75"},
+                {"DECEMBER", "4.00", "2,520.88"},
+                {"JANUARY", "3.00", "2,324.20"},
+                {"FEBRUARY", "6.00", "2,885.57"},
+                {"MARCH", "5.00", "1,012.55"},
+                {"APRIL", "3.00", "1,061.06"},
+                {"MAY", "5.00", "2,503.34"},
+                {"JUNE", "9.00", "4,113.87"},
+                {"JULY", "4.00", "2,354.04"},
+                {"AUGUST", "2.00", "452.25"},
+                {"SEPTEMBER", "3.00", "693.35"},
+                {"OCTOBER", "3.00", "1,366.40"}
+        }, 0);
+    }
+
+    @Test
+    public void testGroupByMonthReverse() throws Exception {
+        DataSet result = dataSetManager.lookupDataSet(
+                DataSetFactory.newDSLookup()
+                        .dataset(EXPENSE_REPORTS)
+                        .group("date", "Period").fixed(MONTH)
+                        .count("Occurrences")
+                        .sum("amount", "totalAmount")
+                        .buildLookup());
 
         //printDataSet(result);
         assertDataSetValues(result, dataSetFormatter, new String[][]{
@@ -171,6 +198,33 @@ public class DataSetGroupTest {
                 {"MARCH", "5.00", "1,012.55"},
                 {"FEBRUARY", "6.00", "2,885.57"},
                 {"JANUARY", "3.00", "2,324.20"}
+        }, 0);
+    }
+
+    @Test
+    public void testGroupByMonthFirstMonthReverse() throws Exception {
+        DataSet result = dataSetManager.lookupDataSet(
+                DataSetFactory.newDSLookup()
+                .dataset(EXPENSE_REPORTS)
+                .group("date", "Period").fixed(MONTH).desc().firstMonth( Month.MARCH )
+                .count("Occurrences")
+                .sum("amount", "totalAmount")
+                .buildLookup());
+
+        //printDataSet(result);
+        assertDataSetValues(result, dataSetFormatter, new String[][]{
+                {"MARCH", "5.00", "1,012.55"},
+                {"FEBRUARY", "6.00", "2,885.57"},
+                {"JANUARY", "3.00", "2,324.20"},
+                {"DECEMBER", "4.00", "2,520.88"},
+                {"NOVEMBER", "3.00", "1,443.75"},
+                {"OCTOBER", "3.00", "1,366.40"},
+                {"SEPTEMBER", "3.00", "693.35"},
+                {"AUGUST", "2.00", "452.25"},
+                {"JULY", "4.00", "2,354.04"},
+                {"JUNE", "9.00", "4,113.87"},
+                {"MAY", "5.00", "2,503.34"},
+                {"APRIL", "3.00", "1,061.06"}
         }, 0);
     }
 
@@ -221,7 +275,7 @@ public class DataSetGroupTest {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDSLookup()
                 .dataset(EXPENSE_REPORTS)
-                .group("date", "Period").fixed(DAY_OF_WEEK).firstDay(DayOfWeek.MONDAY)
+                .group("date", "Period").fixed(DAY_OF_WEEK).firstDay(DayOfWeek.MONDAY).asc()
                 .count("Occurrences")
                 .sum("amount", "totalAmount")
                 .buildLookup());
