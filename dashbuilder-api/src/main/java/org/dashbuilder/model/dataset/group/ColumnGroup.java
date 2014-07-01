@@ -30,7 +30,7 @@ public class ColumnGroup {
     protected GroupStrategy strategy = GroupStrategy.DYNAMIC;
     protected int maxIntervals = 15;
     protected String intervalSize = null;
-    protected boolean ascendingOrder = false;
+    protected boolean ascendingOrder = true;
     protected Month firstMonthOfYear;
     protected DayOfWeek firstDayOfWeek;
 

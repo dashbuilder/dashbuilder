@@ -106,7 +106,7 @@ public class DataSetGroupTest {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDSLookup()
                 .dataset(EXPENSE_REPORTS)
-                .group("date", "Period", GroupStrategy.DYNAMIC, 10, "year").asc()
+                .group("date", "Period", GroupStrategy.DYNAMIC, 10, "year")
                 .count("Occurrences")
                 .sum("amount", "totalAmount")
                 .buildLookup());
@@ -125,7 +125,7 @@ public class DataSetGroupTest {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDSLookup()
                 .dataset(EXPENSE_REPORTS)
-                .group("date", "Period").fixed(MONTH).asc()
+                .group("date", "Period").fixed(MONTH)
                 .count("Occurrences")
                 .sum("amount", "totalAmount")
                 .buildLookup());
@@ -152,7 +152,7 @@ public class DataSetGroupTest {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDSLookup()
                         .dataset(EXPENSE_REPORTS)
-                        .group("date", "Period").fixed(MONTH).asc().firstMonth( Month.NOVEMBER )
+                        .group("date", "Period").fixed(MONTH).firstMonth( Month.NOVEMBER )
                         .count("Occurrences")
                         .sum("amount", "totalAmount")
                         .buildLookup());
@@ -179,7 +179,7 @@ public class DataSetGroupTest {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDSLookup()
                         .dataset(EXPENSE_REPORTS)
-                        .group("date", "Period").fixed(MONTH)
+                        .group("date", "Period").fixed(MONTH).desc()
                         .count("Occurrences")
                         .sum("amount", "totalAmount")
                         .buildLookup());
@@ -275,7 +275,7 @@ public class DataSetGroupTest {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDSLookup()
                 .dataset(EXPENSE_REPORTS)
-                .group("date", "Period").fixed(DAY_OF_WEEK).firstDay(DayOfWeek.MONDAY).asc()
+                .group("date", "Period").fixed(DAY_OF_WEEK).firstDay(DayOfWeek.MONDAY)
                 .count("Occurrences")
                 .sum("amount", "totalAmount")
                 .buildLookup());
@@ -297,7 +297,7 @@ public class DataSetGroupTest {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDSLookup()
                 .dataset(EXPENSE_REPORTS)
-                .group("date", "Period").fixed(QUARTER).asc()
+                .group("date", "Period").fixed(QUARTER)
                 .count("Occurrences")
                 .sum("amount", "totalAmount")
                 .buildLookup());
