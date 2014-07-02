@@ -23,10 +23,10 @@
     <version>6.2.0-SNAPSHOT</version>
   </parent>
 
-  <artifactId>dashbuilder-provider-core</artifactId>
+  <artifactId>dashbuilder-dataset-core</artifactId>
   <packaging>jar</packaging>
 
-  <name>Dashbuilder Data Provider Core</name>
+  <name>Dashbuilder Dataset Core</name>
 
   <dependencies>
 

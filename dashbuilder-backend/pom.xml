@@ -16,7 +16,7 @@
 
   <modules>
     <module>dashbuilder-common</module>
-    <module>dashbuilder-provider-core</module>
+    <module>dashbuilder-dataset-core</module>
   </modules>
 
   <dependencies>
