@@ -29,7 +29,7 @@ import com.googlecode.gwt.charts.client.corechart.CoreChartWidget;
 import com.googlecode.gwt.charts.client.options.Animation;
 import com.googlecode.gwt.charts.client.options.AnimationEasing;
 import com.googlecode.gwt.charts.client.options.CoreOptions;
-import org.dashbuilder.model.displayer.BarChartDisplayer;
+import org.dashbuilder.displayer.BarChartDisplayer;
 
 public class GoogleBarChartViewer extends GoogleXAxisChartViewer<BarChartDisplayer> {
 

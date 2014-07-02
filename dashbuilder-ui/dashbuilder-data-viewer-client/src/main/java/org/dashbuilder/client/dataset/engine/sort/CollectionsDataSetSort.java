@@ -21,9 +21,9 @@ import java.util.List;
 import javax.enterprise.context.ApplicationScoped;
 
 import org.dashbuilder.client.dataset.engine.DataSetHandler;
-import org.dashbuilder.model.dataset.DataColumn;
-import org.dashbuilder.model.dataset.DataSet;
-import org.dashbuilder.model.dataset.sort.ColumnSort;
+import org.dashbuilder.dataset.DataColumn;
+import org.dashbuilder.dataset.DataSet;
+import org.dashbuilder.dataset.sort.ColumnSort;
 
 /**
  * A basic sort algorithm takes relies on the default <tt>Collections.sort()</tt> implementation.

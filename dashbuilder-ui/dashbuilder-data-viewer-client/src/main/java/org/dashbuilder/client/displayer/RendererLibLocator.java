@@ -21,8 +21,8 @@ import java.util.Map;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
-import org.dashbuilder.model.displayer.DataDisplayer;
-import org.dashbuilder.model.displayer.DataDisplayerType;
+import org.dashbuilder.displayer.DataDisplayer;
+import org.dashbuilder.displayer.DataDisplayerType;
 import org.jboss.errai.ioc.client.container.IOC;
 import org.jboss.errai.ioc.client.container.IOCBeanDef;
 import org.jboss.errai.ioc.client.container.SyncBeanManager;

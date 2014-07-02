@@ -23,8 +23,8 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import org.dashbuilder.client.kpi.ClientKPIManager;
-import org.dashbuilder.model.kpi.KPI;
-import org.dashbuilder.model.kpi.KPIFactory;
+import org.dashbuilder.kpi.KPI;
+import org.dashbuilder.kpi.KPIFactory;
 
 import static org.dashbuilder.client.sales.SalesOppsData.*;
 import static org.dashbuilder.client.sales.SalesOppsDisplayers.*;

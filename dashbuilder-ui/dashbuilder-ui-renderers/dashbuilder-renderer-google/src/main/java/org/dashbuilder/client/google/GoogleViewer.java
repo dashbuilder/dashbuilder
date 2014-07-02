@@ -30,11 +30,11 @@ import com.googlecode.gwt.charts.client.format.NumberFormatOptions;
 import com.googlecode.gwt.charts.client.options.FormatType;
 import org.dashbuilder.client.dataset.DataSetReadyCallback;
 import org.dashbuilder.client.displayer.AbstractDataViewer;
-import org.dashbuilder.model.dataset.ColumnType;
-import org.dashbuilder.model.dataset.DataColumn;
-import org.dashbuilder.model.dataset.DataSet;
-import org.dashbuilder.model.displayer.DataDisplayer;
-import org.dashbuilder.model.displayer.DataDisplayerColumn;
+import org.dashbuilder.dataset.ColumnType;
+import org.dashbuilder.dataset.DataColumn;
+import org.dashbuilder.dataset.DataSet;
+import org.dashbuilder.displayer.DataDisplayer;
+import org.dashbuilder.displayer.DataDisplayerColumn;
 
 public abstract class GoogleViewer<T extends DataDisplayer> extends AbstractDataViewer<T> {
 

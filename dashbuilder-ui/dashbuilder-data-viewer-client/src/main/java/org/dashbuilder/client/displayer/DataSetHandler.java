@@ -16,10 +16,8 @@
 package org.dashbuilder.client.displayer;
 
 import org.dashbuilder.client.dataset.DataSetReadyCallback;
-import org.dashbuilder.model.dataset.DataSetMetadata;
-import org.dashbuilder.model.dataset.group.ColumnGroup;
-import org.dashbuilder.model.dataset.group.DataSetGroup;
-import org.dashbuilder.model.dataset.sort.DataSetSort;
+import org.dashbuilder.dataset.group.DataSetGroup;
+import org.dashbuilder.dataset.sort.DataSetSort;
 
 /**
  * Interface addressed to issue lookup requests over a data set instance.

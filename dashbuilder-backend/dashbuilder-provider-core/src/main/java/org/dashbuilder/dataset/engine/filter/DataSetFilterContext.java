@@ -15,7 +15,7 @@
  */
 package org.dashbuilder.dataset.engine.filter;
 
-import org.dashbuilder.model.dataset.DataSet;
+import org.dashbuilder.dataset.DataSet;
 
 /**
  * A data set context

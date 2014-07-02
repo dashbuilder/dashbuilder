@@ -18,7 +18,7 @@ package org.dashbuilder.dataset.engine.filter;
 import java.util.List;
 
 import org.dashbuilder.dataset.engine.DataSetHandler;
-import org.dashbuilder.model.dataset.filter.ColumnFilter;
+import org.dashbuilder.dataset.filter.ColumnFilter;
 
 /**
  * Data set filter algorithm interface.

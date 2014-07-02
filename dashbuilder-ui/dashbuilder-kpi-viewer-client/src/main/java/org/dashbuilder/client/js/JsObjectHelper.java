@@ -21,11 +21,11 @@ import java.util.List;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.core.client.JsArrayNumber;
 import com.google.gwt.core.client.JsArrayString;
-import org.dashbuilder.model.dataset.ColumnType;
-import org.dashbuilder.model.dataset.DataColumn;
-import org.dashbuilder.model.dataset.DataSet;
-import org.dashbuilder.model.dataset.impl.DataColumnImpl;
-import org.dashbuilder.model.dataset.impl.DataSetImpl;
+import org.dashbuilder.dataset.ColumnType;
+import org.dashbuilder.dataset.DataColumn;
+import org.dashbuilder.dataset.DataSet;
+import org.dashbuilder.dataset.impl.DataColumnImpl;
+import org.dashbuilder.dataset.impl.DataSetImpl;
 
 public class JsObjectHelper {
 

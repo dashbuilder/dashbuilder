@@ -18,10 +18,10 @@ package org.dashbuilder.dataset.impl;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
-import org.dashbuilder.model.dataset.DataSetManager;
-import org.dashbuilder.model.dataset.DataSet;
-import org.dashbuilder.model.dataset.DataSetLookup;
-import org.dashbuilder.model.dataset.DataSetMetadata;
+import org.dashbuilder.dataset.DataSetManager;
+import org.dashbuilder.dataset.DataSet;
+import org.dashbuilder.dataset.DataSetLookup;
+import org.dashbuilder.dataset.DataSetMetadata;
 import org.dashbuilder.service.DataSetLookupService;
 import org.jboss.errai.bus.server.annotations.Service;
 

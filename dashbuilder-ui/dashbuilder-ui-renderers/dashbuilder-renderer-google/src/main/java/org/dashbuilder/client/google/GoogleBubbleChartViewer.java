@@ -25,10 +25,9 @@ import com.googlecode.gwt.charts.client.corechart.BubbleChart;
 import com.googlecode.gwt.charts.client.corechart.BubbleChartOptions;
 import com.googlecode.gwt.charts.client.options.Animation;
 import com.googlecode.gwt.charts.client.options.AnimationEasing;
-import com.googlecode.gwt.charts.client.options.ChartArea;
 import com.googlecode.gwt.charts.client.options.HAxis;
 import com.googlecode.gwt.charts.client.options.VAxis;
-import org.dashbuilder.model.displayer.BubbleChartDisplayer;
+import org.dashbuilder.displayer.BubbleChartDisplayer;
 
 public class GoogleBubbleChartViewer extends GoogleXAxisChartViewer<BubbleChartDisplayer> {
 

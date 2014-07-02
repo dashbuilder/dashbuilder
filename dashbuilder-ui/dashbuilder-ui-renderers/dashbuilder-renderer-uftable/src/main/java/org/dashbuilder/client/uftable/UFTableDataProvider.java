@@ -21,7 +21,7 @@ import java.util.List;
 import com.google.gwt.view.client.AsyncDataProvider;
 import com.google.gwt.view.client.HasData;
 import org.dashbuilder.client.dataset.DataSetReadyCallback;
-import org.dashbuilder.model.dataset.DataSet;
+import org.dashbuilder.dataset.DataSet;
 import org.kie.uberfire.client.tables.PagedTable;
 
 public class UFTableDataProvider extends AsyncDataProvider<UFTableRow> {

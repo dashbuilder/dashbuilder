@@ -28,13 +28,13 @@ import org.dashbuilder.client.sales.widgets.SalesExpectedByDate;
 import org.dashbuilder.client.sales.widgets.SalesDistributionByCountry;
 import org.dashbuilder.client.sales.widgets.SalesGoals;
 import org.dashbuilder.client.sales.widgets.SalesTableReports;
-import org.dashbuilder.model.dataset.DataSetFactory;
-import org.dashbuilder.model.kpi.KPIFactory;
+import org.dashbuilder.dataset.DataSetFactory;
+import org.dashbuilder.kpi.KPIFactory;
 
-import static org.dashbuilder.model.dataset.group.DateIntervalType.*;
-import static org.dashbuilder.model.dataset.filter.FilterFactory.*;
-import static org.dashbuilder.model.dataset.sort.SortOrder.*;
-import static org.dashbuilder.model.date.Month.*;
+import static org.dashbuilder.dataset.group.DateIntervalType.*;
+import static org.dashbuilder.dataset.filter.FilterFactory.*;
+import static org.dashbuilder.dataset.sort.SortOrder.*;
+import static org.dashbuilder.dataset.date.Month.*;
 import static org.dashbuilder.client.sales.SalesConstants.*;
 
 /**

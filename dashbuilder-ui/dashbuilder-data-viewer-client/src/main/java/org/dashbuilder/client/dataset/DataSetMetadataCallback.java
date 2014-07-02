@@ -15,7 +15,7 @@
  */
 package org.dashbuilder.client.dataset;
 
-import org.dashbuilder.model.dataset.DataSetMetadata;
+import org.dashbuilder.dataset.DataSetMetadata;
 
 /**
  * DataSetMetadata retrieval callback

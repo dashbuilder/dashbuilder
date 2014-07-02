@@ -25,7 +25,7 @@ import com.googlecode.gwt.charts.client.corechart.LineChart;
 import com.googlecode.gwt.charts.client.corechart.LineChartOptions;
 import com.googlecode.gwt.charts.client.options.Animation;
 import com.googlecode.gwt.charts.client.options.AnimationEasing;
-import org.dashbuilder.model.displayer.LineChartDisplayer;
+import org.dashbuilder.displayer.LineChartDisplayer;
 
 public class GoogleLineChartViewer extends GoogleXAxisChartViewer<LineChartDisplayer> {
 

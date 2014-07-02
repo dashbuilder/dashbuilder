@@ -23,8 +23,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.googlecode.gwt.charts.client.ChartPackage;
 import com.googlecode.gwt.charts.client.corechart.PieChart;
 import com.googlecode.gwt.charts.client.corechart.PieChartOptions;
-import com.googlecode.gwt.charts.client.options.ChartArea;
-import org.dashbuilder.model.displayer.PieChartDisplayer;
+import org.dashbuilder.displayer.PieChartDisplayer;
 
 public class GooglePieChartViewer extends GoogleXAxisChartViewer<PieChartDisplayer> {
 

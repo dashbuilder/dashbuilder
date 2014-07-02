@@ -21,10 +21,10 @@ import javax.enterprise.context.ApplicationScoped;
 
 import org.dashbuilder.client.dataset.engine.DataSetHandler;
 import org.dashbuilder.client.util.StringUtils;
-import org.dashbuilder.model.dataset.group.ColumnGroup;
-import org.dashbuilder.model.dataset.group.DateIntervalType;
+import org.dashbuilder.dataset.group.ColumnGroup;
+import org.dashbuilder.dataset.group.DateIntervalType;
 
-import static org.dashbuilder.model.dataset.group.DateIntervalType.*;
+import static org.dashbuilder.dataset.group.DateIntervalType.*;
 
 /**
  * Interval builder for date columns which generates a fixed number of intervals for a given interval size.

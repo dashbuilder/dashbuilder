@@ -20,7 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.google.gwt.core.client.GWT;
-import org.dashbuilder.model.dataset.group.ColumnGroup;
+import org.dashbuilder.dataset.group.ColumnGroup;
 
 /**
  * List of the 60-second intervals present in a minute.

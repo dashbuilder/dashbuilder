@@ -15,8 +15,8 @@
  */
 package org.dashbuilder.dataset.engine.filter;
 
-import org.dashbuilder.model.dataset.DataColumn;
-import org.dashbuilder.model.dataset.filter.ColumnFilter;
+import org.dashbuilder.dataset.DataColumn;
+import org.dashbuilder.dataset.filter.ColumnFilter;
 
 /**
  * A data set function

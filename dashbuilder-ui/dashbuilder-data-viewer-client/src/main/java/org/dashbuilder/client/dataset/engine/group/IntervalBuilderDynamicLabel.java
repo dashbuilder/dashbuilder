@@ -19,7 +19,7 @@ import java.util.List;
 import javax.enterprise.context.ApplicationScoped;
 
 import org.dashbuilder.client.dataset.engine.DataSetHandler;
-import org.dashbuilder.model.dataset.group.ColumnGroup;
+import org.dashbuilder.dataset.group.ColumnGroup;
 
 /**
  * Interval builder for label columns which generates one interval per label.

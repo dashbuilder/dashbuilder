@@ -23,11 +23,11 @@ import java.util.Map;
 
 import com.google.gwt.core.client.Duration;
 import org.dashbuilder.client.dataset.engine.index.visitor.DataSetIndexVisitor;
-import org.dashbuilder.model.dataset.filter.ColumnFilter;
-import org.dashbuilder.model.dataset.group.AggregateFunctionType;
-import org.dashbuilder.model.dataset.group.ColumnGroup;
-import org.dashbuilder.model.dataset.impl.MemSizeEstimator;
-import org.dashbuilder.model.dataset.sort.DataSetSort;
+import org.dashbuilder.dataset.filter.ColumnFilter;
+import org.dashbuilder.dataset.group.AggregateFunctionType;
+import org.dashbuilder.dataset.group.ColumnGroup;
+import org.dashbuilder.dataset.impl.MemSizeEstimator;
+import org.dashbuilder.dataset.sort.DataSetSort;
 
 /**
  * A DataSet index node

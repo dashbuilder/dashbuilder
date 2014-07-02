@@ -23,9 +23,9 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
-import org.dashbuilder.model.dataset.DataSet;
-import org.dashbuilder.model.dataset.DataSetLookup;
-import org.dashbuilder.model.dataset.DataSetMetadata;
+import org.dashbuilder.dataset.DataSet;
+import org.dashbuilder.dataset.DataSetLookup;
+import org.dashbuilder.dataset.DataSetMetadata;
 import org.dashbuilder.service.DataSetLookupService;
 import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.common.client.api.RemoteCallback;

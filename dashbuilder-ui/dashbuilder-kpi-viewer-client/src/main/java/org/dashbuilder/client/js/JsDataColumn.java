@@ -15,15 +15,9 @@
  */
 package org.dashbuilder.client.js;
 
-import java.util.List;
-import java.util.ArrayList;
-
 import com.google.gwt.core.client.JavaScriptObject;
-import com.google.gwt.core.client.JsArray;
 import com.google.gwt.core.client.JsArrayNumber;
 import com.google.gwt.core.client.JsArrayString;
-import org.dashbuilder.model.dataset.ColumnType;
-import org.dashbuilder.model.dataset.DataColumn;
 
 /**
  *      {

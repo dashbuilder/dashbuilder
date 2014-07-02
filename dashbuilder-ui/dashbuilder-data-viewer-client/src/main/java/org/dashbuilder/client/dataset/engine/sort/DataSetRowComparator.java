@@ -20,8 +20,8 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.dashbuilder.client.util.ComparatorUtils;
-import org.dashbuilder.model.dataset.DataColumn;
-import org.dashbuilder.model.dataset.sort.SortOrder;
+import org.dashbuilder.dataset.DataColumn;
+import org.dashbuilder.dataset.sort.SortOrder;
 
 /**
  * A comparator of data set rows.

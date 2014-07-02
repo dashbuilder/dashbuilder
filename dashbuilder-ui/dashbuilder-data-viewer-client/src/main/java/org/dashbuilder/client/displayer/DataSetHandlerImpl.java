@@ -15,15 +15,13 @@
  */
 package org.dashbuilder.client.displayer;
 
-import java.util.List;
-
 import org.dashbuilder.client.dataset.DataSetLookupClient;
 import org.dashbuilder.client.dataset.DataSetReadyCallback;
-import org.dashbuilder.model.dataset.DataSetLookup;
-import org.dashbuilder.model.dataset.DataSetOpType;
-import org.dashbuilder.model.dataset.group.ColumnGroup;
-import org.dashbuilder.model.dataset.group.DataSetGroup;
-import org.dashbuilder.model.dataset.sort.DataSetSort;
+import org.dashbuilder.dataset.DataSetLookup;
+import org.dashbuilder.dataset.DataSetOpType;
+import org.dashbuilder.dataset.group.ColumnGroup;
+import org.dashbuilder.dataset.group.DataSetGroup;
+import org.dashbuilder.dataset.sort.DataSetSort;
 
 public class DataSetHandlerImpl implements DataSetHandler {
 

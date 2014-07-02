@@ -15,8 +15,8 @@
  */
 package org.dashbuilder.client.dataset.engine.filter;
 
-import org.dashbuilder.model.dataset.filter.CoreFunctionFilter;
-import org.dashbuilder.model.dataset.filter.CoreFunctionType;
+import org.dashbuilder.dataset.filter.CoreFunctionFilter;
+import org.dashbuilder.dataset.filter.CoreFunctionType;
 
 public class CoreFunction extends DataSetFunction {
 

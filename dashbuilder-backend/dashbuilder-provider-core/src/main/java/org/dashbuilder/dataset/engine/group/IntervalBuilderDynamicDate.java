@@ -25,16 +25,16 @@ import javax.enterprise.context.ApplicationScoped;
 
 import org.apache.commons.lang.StringUtils;
 import org.dashbuilder.dataset.engine.DataSetHandler;
-import org.dashbuilder.model.dataset.DataSet;
-import org.dashbuilder.model.dataset.group.DateIntervalType;
-import org.dashbuilder.model.dataset.group.ColumnGroup;
-import org.dashbuilder.model.dataset.sort.DataSetSort;
-import org.dashbuilder.model.dataset.sort.ColumnSort;
-import org.dashbuilder.model.dataset.sort.SortOrder;
-import org.dashbuilder.model.dataset.sort.SortedList;
-import org.dashbuilder.model.date.Quarter;
+import org.dashbuilder.dataset.DataSet;
+import org.dashbuilder.dataset.group.DateIntervalType;
+import org.dashbuilder.dataset.group.ColumnGroup;
+import org.dashbuilder.dataset.sort.DataSetSort;
+import org.dashbuilder.dataset.sort.ColumnSort;
+import org.dashbuilder.dataset.sort.SortOrder;
+import org.dashbuilder.dataset.sort.SortedList;
+import org.dashbuilder.dataset.date.Quarter;
 
-import static org.dashbuilder.model.dataset.group.DateIntervalType.*;
+import static org.dashbuilder.dataset.group.DateIntervalType.*;
 
 /**
  * Interval builder for date columns which generates intervals depending on the underlying data available.

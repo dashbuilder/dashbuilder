@@ -25,8 +25,8 @@ import com.googlecode.gwt.charts.client.ChartLoader;
 import com.googlecode.gwt.charts.client.ChartPackage;
 import org.dashbuilder.client.displayer.AbstractRendererLibrary;
 import org.dashbuilder.client.displayer.DataViewer;
-import org.dashbuilder.model.displayer.DataDisplayer;
-import org.dashbuilder.model.displayer.DataDisplayerType;
+import org.dashbuilder.displayer.DataDisplayer;
+import org.dashbuilder.displayer.DataDisplayerType;
 
 /**
  * Google's Visualization API based renderer.

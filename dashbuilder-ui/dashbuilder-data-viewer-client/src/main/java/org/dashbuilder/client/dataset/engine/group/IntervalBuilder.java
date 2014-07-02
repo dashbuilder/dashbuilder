@@ -16,7 +16,7 @@
 package org.dashbuilder.client.dataset.engine.group;
 
 import org.dashbuilder.client.dataset.engine.DataSetHandler;
-import org.dashbuilder.model.dataset.group.ColumnGroup;
+import org.dashbuilder.dataset.group.ColumnGroup;
 
 public interface IntervalBuilder {
 

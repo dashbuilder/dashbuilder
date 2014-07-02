@@ -18,8 +18,8 @@ package org.dashbuilder.client.dataset.engine.group;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
-import org.dashbuilder.model.dataset.ColumnType;
-import org.dashbuilder.model.dataset.group.GroupStrategy;
+import org.dashbuilder.dataset.ColumnType;
+import org.dashbuilder.dataset.group.GroupStrategy;
 
 @ApplicationScoped
 public class IntervalBuilderLocator {

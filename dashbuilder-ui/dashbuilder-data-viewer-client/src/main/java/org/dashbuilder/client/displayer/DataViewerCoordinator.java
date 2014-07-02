@@ -20,7 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.dashbuilder.model.dataset.group.DataSetGroup;
+import org.dashbuilder.dataset.group.DataSetGroup;
 
 /**
  * The coordinator class holds a list of DataViewer instances and it makes sure that the data shared among

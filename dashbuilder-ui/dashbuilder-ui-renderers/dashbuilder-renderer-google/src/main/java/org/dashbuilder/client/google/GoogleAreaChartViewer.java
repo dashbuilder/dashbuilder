@@ -25,7 +25,7 @@ import com.googlecode.gwt.charts.client.corechart.AreaChart;
 import com.googlecode.gwt.charts.client.corechart.AreaChartOptions;
 import com.googlecode.gwt.charts.client.options.Animation;
 import com.googlecode.gwt.charts.client.options.AnimationEasing;
-import org.dashbuilder.model.displayer.AreaChartDisplayer;
+import org.dashbuilder.displayer.AreaChartDisplayer;
 
 public class GoogleAreaChartViewer extends GoogleXAxisChartViewer<AreaChartDisplayer> {
 

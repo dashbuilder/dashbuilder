@@ -46,17 +46,17 @@ import com.google.gwt.user.client.ui.Widget;
 
 import org.dashbuilder.client.dataset.DataSetReadyCallback;
 import org.dashbuilder.client.displayer.AbstractDataViewer;
-import org.dashbuilder.model.dataset.ColumnType;
-import org.dashbuilder.model.dataset.DataColumn;
-import org.dashbuilder.model.dataset.DataSet;
+import org.dashbuilder.dataset.ColumnType;
+import org.dashbuilder.dataset.DataColumn;
+import org.dashbuilder.dataset.DataSet;
 
-import org.dashbuilder.model.dataset.sort.SortOrder;
-import org.dashbuilder.model.displayer.DataDisplayerColumn;
+import org.dashbuilder.dataset.sort.SortOrder;
+import org.dashbuilder.displayer.DataDisplayerColumn;
 import org.kie.uberfire.client.tables.PagedTable;
 
 import static com.google.gwt.dom.client.BrowserEvents.CLICK;
 
-public class UFTableViewer extends AbstractDataViewer<org.dashbuilder.model.displayer.TableDisplayer> {
+public class UFTableViewer extends AbstractDataViewer<org.dashbuilder.displayer.TableDisplayer> {
 
     private Map< String, String > columnCaptionIds = new HashMap< String, String >(5);
 

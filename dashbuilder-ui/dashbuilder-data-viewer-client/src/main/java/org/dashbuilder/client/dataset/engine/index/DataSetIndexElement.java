@@ -17,7 +17,7 @@ package org.dashbuilder.client.dataset.engine.index;
 
 import org.dashbuilder.client.dataset.engine.index.stats.MemSizeFormatter;
 import org.dashbuilder.client.dataset.engine.index.visitor.DataSetIndexVisitor;
-import org.dashbuilder.model.dataset.impl.MemSizeEstimator;
+import org.dashbuilder.dataset.impl.MemSizeEstimator;
 
 /**
  * A DataSet index element

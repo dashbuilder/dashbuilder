@@ -17,7 +17,7 @@ package org.dashbuilder.dataset.engine.index;
 
 import java.util.List;
 
-import org.dashbuilder.model.dataset.filter.ColumnFilter;
+import org.dashbuilder.dataset.filter.ColumnFilter;
 
 /**
  * An index for filtered data sets.

@@ -17,7 +17,7 @@ package org.dashbuilder.dataset.engine.group;
 
 import java.util.Date;
 
-import org.dashbuilder.model.dataset.group.ColumnGroup;
+import org.dashbuilder.dataset.group.ColumnGroup;
 
 /**
  * A list containing date range intervals.

@@ -18,7 +18,7 @@ package org.dashbuilder.client.dataset.engine.group;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.dashbuilder.model.dataset.group.ColumnGroup;
+import org.dashbuilder.dataset.group.ColumnGroup;
 
 /**
  * An list containing the intervals derived from an specific domain configuration.

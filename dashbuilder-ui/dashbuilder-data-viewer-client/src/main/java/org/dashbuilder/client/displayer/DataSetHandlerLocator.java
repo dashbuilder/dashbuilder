@@ -21,9 +21,9 @@ import javax.inject.Inject;
 
 import org.dashbuilder.client.dataset.ClientDataSetManager;
 import org.dashbuilder.client.dataset.DataSetLookupClient;
-import org.dashbuilder.model.dataset.DataSet;
-import org.dashbuilder.model.dataset.DataSetLookup;
-import org.dashbuilder.model.dataset.DataSetRef;
+import org.dashbuilder.dataset.DataSet;
+import org.dashbuilder.dataset.DataSetLookup;
+import org.dashbuilder.dataset.DataSetRef;
 import org.jboss.errai.ioc.client.container.IOC;
 import org.jboss.errai.ioc.client.container.IOCBeanDef;
 

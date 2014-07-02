@@ -15,8 +15,8 @@
  */
 package org.dashbuilder.client.displayer;
 
-import org.dashbuilder.model.dataset.DataSetRef;
-import org.dashbuilder.model.displayer.DataDisplayer;
+import org.dashbuilder.dataset.DataSetRef;
+import org.dashbuilder.displayer.DataDisplayer;
 
 /**
  * Helper methods for dealing with DataViewer instances.

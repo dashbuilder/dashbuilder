@@ -18,7 +18,7 @@ package org.dashbuilder.dataset.engine.sort;
 import java.util.List;
 
 import org.dashbuilder.dataset.engine.DataSetHandler;
-import org.dashbuilder.model.dataset.sort.ColumnSort;
+import org.dashbuilder.dataset.sort.ColumnSort;
 
 /**
  * Data set sort algorithm interface.

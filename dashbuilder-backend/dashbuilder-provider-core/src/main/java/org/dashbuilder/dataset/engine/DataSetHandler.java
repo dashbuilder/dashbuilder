@@ -15,9 +15,9 @@
  */
 package org.dashbuilder.dataset.engine;
 
-import org.dashbuilder.model.dataset.filter.DataSetFilter;
-import org.dashbuilder.model.dataset.group.DataSetGroup;
-import org.dashbuilder.model.dataset.sort.DataSetSort;
+import org.dashbuilder.dataset.filter.DataSetFilter;
+import org.dashbuilder.dataset.group.DataSetGroup;
+import org.dashbuilder.dataset.sort.DataSetSort;
 
 /**
  * Interface addressed to execute single operations over a data set.

@@ -16,7 +16,7 @@
 package org.dashbuilder.dataset.engine.index;
 
 import org.dashbuilder.dataset.engine.index.stats.DataSetIndexStats;
-import org.dashbuilder.model.dataset.DataSet;
+import org.dashbuilder.dataset.DataSet;
 
 /**
  * A DataSet index

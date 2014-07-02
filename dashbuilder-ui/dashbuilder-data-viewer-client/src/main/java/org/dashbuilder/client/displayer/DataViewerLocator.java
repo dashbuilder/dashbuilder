@@ -16,14 +16,11 @@
 package org.dashbuilder.client.displayer;
 
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
-import org.dashbuilder.model.dataset.DataSetRef;
-import org.dashbuilder.model.displayer.DataDisplayer;
-import org.dashbuilder.model.displayer.DataDisplayerType;
+import org.dashbuilder.dataset.DataSetRef;
+import org.dashbuilder.displayer.DataDisplayer;
 import org.jboss.errai.ioc.client.container.IOC;
 import org.jboss.errai.ioc.client.container.IOCBeanDef;
 import org.jboss.errai.ioc.client.container.SyncBeanManager;

@@ -22,9 +22,9 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 import javax.enterprise.context.ApplicationScoped;
 
-import org.dashbuilder.model.dataset.ColumnType;
-import org.dashbuilder.model.dataset.DataColumn;
-import org.dashbuilder.model.dataset.DataSet;
+import org.dashbuilder.dataset.ColumnType;
+import org.dashbuilder.dataset.DataColumn;
+import org.dashbuilder.dataset.DataSet;
 
 public class DataSetFormatter {
 

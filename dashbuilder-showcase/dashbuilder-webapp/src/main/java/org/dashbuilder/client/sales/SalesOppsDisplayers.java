@@ -15,11 +15,11 @@
  */
 package org.dashbuilder.client.sales;
 
-import org.dashbuilder.model.displayer.DataDisplayer;
-import org.dashbuilder.model.displayer.DisplayerFactory;
+import org.dashbuilder.displayer.DataDisplayer;
+import org.dashbuilder.displayer.DisplayerFactory;
 
 import static org.dashbuilder.client.sales.SalesConstants.*;
-import static org.dashbuilder.model.dataset.sort.SortOrder.*;
+import static org.dashbuilder.dataset.sort.SortOrder.*;
 
 /**
  * A set of displayer definitions for the Sales Dashboard

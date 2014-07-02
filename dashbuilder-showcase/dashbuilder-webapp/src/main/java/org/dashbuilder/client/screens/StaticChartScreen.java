@@ -16,21 +16,18 @@
 package org.dashbuilder.client.screens;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
 
 import com.google.gwt.user.client.ui.IsWidget;
-import org.dashbuilder.client.dataset.ClientDataSetManager;
-import org.dashbuilder.client.kpi.ClientKPIManager;
 import org.dashbuilder.client.kpi.KPIViewer;
-import org.dashbuilder.model.dataset.DataSetFactory;
-import org.dashbuilder.model.kpi.KPI;
-import org.dashbuilder.model.kpi.KPIFactory;
+import org.dashbuilder.dataset.DataSetFactory;
+import org.dashbuilder.kpi.KPI;
+import org.dashbuilder.kpi.KPIFactory;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
 import org.uberfire.client.annotations.WorkbenchPartView;
 import org.uberfire.client.annotations.WorkbenchScreen;
 import org.uberfire.lifecycle.OnStartup;
 
-import static org.dashbuilder.model.date.Month.*;
+import static org.dashbuilder.dataset.date.Month.*;
 
 @ApplicationScoped
 @WorkbenchScreen(identifier = "StaticChartScreen")

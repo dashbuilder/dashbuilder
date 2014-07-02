@@ -31,8 +31,8 @@ import com.googlecode.gwt.charts.client.event.SelectEvent;
 import com.googlecode.gwt.charts.client.event.SelectHandler;
 import com.googlecode.gwt.charts.client.geochart.GeoChart;
 import com.googlecode.gwt.charts.client.options.ChartArea;
-import org.dashbuilder.model.displayer.DataDisplayerColumn;
-import org.dashbuilder.model.displayer.XAxisChartDisplayer;
+import org.dashbuilder.displayer.DataDisplayerColumn;
+import org.dashbuilder.displayer.XAxisChartDisplayer;
 
 public abstract class GoogleXAxisChartViewer<T extends XAxisChartDisplayer> extends GoogleViewer<T> {
 

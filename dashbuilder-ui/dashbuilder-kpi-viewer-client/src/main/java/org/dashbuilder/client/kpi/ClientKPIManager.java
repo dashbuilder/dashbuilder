@@ -17,17 +17,12 @@ package org.dashbuilder.client.kpi;
 
 import java.util.List;
 import java.util.ArrayList;
-import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
 
-import org.dashbuilder.client.dataset.ClientDataSetManager;
-import org.dashbuilder.model.dataset.DataSet;
-import org.dashbuilder.model.dataset.DataSetLookup;
-import org.dashbuilder.model.dataset.DataSetRef;
-import org.dashbuilder.model.displayer.DataDisplayer;
-import org.dashbuilder.model.kpi.*;
-import org.dashbuilder.model.kpi.impl.KPIImpl;
+import org.dashbuilder.dataset.DataSetRef;
+import org.dashbuilder.displayer.DataDisplayer;
+import org.dashbuilder.kpi.*;
+import org.dashbuilder.kpi.impl.KPIImpl;
 
 @ApplicationScoped
 public class ClientKPIManager {

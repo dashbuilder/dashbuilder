@@ -23,9 +23,9 @@ import javax.inject.Inject;
 
 import com.google.gwt.user.client.Random;
 import com.google.gwt.user.datepicker.client.CalendarUtil;
-import org.dashbuilder.model.dataset.ColumnType;
-import org.dashbuilder.model.dataset.DataSet;
-import org.dashbuilder.model.dataset.DataSetManager;
+import org.dashbuilder.dataset.ColumnType;
+import org.dashbuilder.dataset.DataSet;
+import org.dashbuilder.dataset.DataSetManager;
 
 import static org.dashbuilder.client.sales.SalesConstants.*;
 

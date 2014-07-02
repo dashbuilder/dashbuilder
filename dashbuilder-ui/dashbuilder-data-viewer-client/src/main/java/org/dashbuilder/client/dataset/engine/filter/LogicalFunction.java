@@ -18,8 +18,8 @@ package org.dashbuilder.client.dataset.engine.filter;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.dashbuilder.model.dataset.filter.LogicalExprFilter;
-import org.dashbuilder.model.dataset.filter.LogicalExprType;
+import org.dashbuilder.dataset.filter.LogicalExprFilter;
+import org.dashbuilder.dataset.filter.LogicalExprType;
 
 public class LogicalFunction extends DataSetFunction {
 

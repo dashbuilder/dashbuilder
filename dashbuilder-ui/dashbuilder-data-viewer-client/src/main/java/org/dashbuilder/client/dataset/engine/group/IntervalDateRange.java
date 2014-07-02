@@ -18,9 +18,9 @@ package org.dashbuilder.client.dataset.engine.group;
 import java.util.Date;
 
 import com.google.gwt.i18n.client.DateTimeFormat;
-import org.dashbuilder.model.dataset.group.DateIntervalType;
+import org.dashbuilder.dataset.group.DateIntervalType;
 
-import static org.dashbuilder.model.dataset.group.DateIntervalType.*;
+import static org.dashbuilder.dataset.group.DateIntervalType.*;
 
 /**
  * A date interval holding dates belonging to a given range.

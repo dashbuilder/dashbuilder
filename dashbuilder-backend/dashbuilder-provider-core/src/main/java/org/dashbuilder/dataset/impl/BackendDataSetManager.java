@@ -19,13 +19,13 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
-import org.dashbuilder.model.dataset.DataSetManager;
+import org.dashbuilder.dataset.DataSetManager;
 import org.dashbuilder.dataset.engine.BackendDataSetOpEngine;
 import org.dashbuilder.dataset.engine.index.DataSetIndex;
-import org.dashbuilder.model.dataset.DataSet;
-import org.dashbuilder.model.dataset.DataSetFactory;
-import org.dashbuilder.model.dataset.DataSetLookup;
-import org.dashbuilder.model.dataset.DataSetMetadata;
+import org.dashbuilder.dataset.DataSet;
+import org.dashbuilder.dataset.DataSetFactory;
+import org.dashbuilder.dataset.DataSetLookup;
+import org.dashbuilder.dataset.DataSetMetadata;
 
 /**
  * Backend implementation of the DataSetManager interface. It's been designed with several goals in mind:

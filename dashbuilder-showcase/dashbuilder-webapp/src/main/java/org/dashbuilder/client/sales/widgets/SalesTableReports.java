@@ -23,13 +23,12 @@ import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.client.displayer.DataViewer;
 import org.dashbuilder.client.displayer.DataViewerCoordinator;
 import org.dashbuilder.client.displayer.DataViewerHelper;
-import org.dashbuilder.client.displayer.DataViewerLocator;
-import org.dashbuilder.model.dataset.DataSetFactory;
-import org.dashbuilder.model.dataset.group.DateIntervalType;
-import org.dashbuilder.model.displayer.DisplayerFactory;
+import org.dashbuilder.dataset.DataSetFactory;
+import org.dashbuilder.dataset.group.DateIntervalType;
+import org.dashbuilder.displayer.DisplayerFactory;
 
 import static org.dashbuilder.client.sales.SalesConstants.*;
-import static org.dashbuilder.model.dataset.sort.SortOrder.*;
+import static org.dashbuilder.dataset.sort.SortOrder.*;
 
 /**
  * A composite widget that represents an entire dashboard sample composed using an UI binder template.

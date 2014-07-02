@@ -19,7 +19,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.dashbuilder.dataset.engine.group.Interval;
-import org.dashbuilder.model.dataset.impl.MemSizeEstimator;
+import org.dashbuilder.dataset.impl.MemSizeEstimator;
 
 /**
  * An interval index

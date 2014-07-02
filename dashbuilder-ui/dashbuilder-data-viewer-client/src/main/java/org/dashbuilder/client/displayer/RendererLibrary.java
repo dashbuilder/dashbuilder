@@ -17,7 +17,7 @@ package org.dashbuilder.client.displayer;
 
 import java.util.List;
 
-import org.dashbuilder.model.displayer.DataDisplayer;
+import org.dashbuilder.displayer.DataDisplayer;
 
 public interface RendererLibrary {
 

@@ -19,8 +19,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.dashbuilder.model.dataset.group.ColumnGroup;
-import org.dashbuilder.model.date.DayOfWeek;
+import org.dashbuilder.dataset.group.ColumnGroup;
+import org.dashbuilder.dataset.date.DayOfWeek;
 
 /**
  * List of the 7-days intervals present in a week.

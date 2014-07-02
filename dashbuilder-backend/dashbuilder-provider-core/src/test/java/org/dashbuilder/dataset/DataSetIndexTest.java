@@ -20,9 +20,9 @@ import javax.inject.Inject;
 import org.dashbuilder.dataset.engine.BackendDataSetOpEngine;
 import org.dashbuilder.dataset.engine.index.DataSetIndex;
 import org.dashbuilder.dataset.engine.index.stats.DataSetIndexStats;
-import org.dashbuilder.model.dataset.DataSet;
-import org.dashbuilder.model.dataset.DataSetFactory;
-import org.dashbuilder.model.dataset.DataSetLookup;
+import org.dashbuilder.dataset.DataSet;
+import org.dashbuilder.dataset.DataSetFactory;
+import org.dashbuilder.dataset.DataSetLookup;
 import org.dashbuilder.test.ShrinkWrapHelper;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -33,7 +33,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import static org.fest.assertions.api.Assertions.*;
-import static org.dashbuilder.model.dataset.filter.FilterFactory.*;
+import static org.dashbuilder.dataset.filter.FilterFactory.*;
 
 @RunWith(Arquillian.class)
 public class DataSetIndexTest {

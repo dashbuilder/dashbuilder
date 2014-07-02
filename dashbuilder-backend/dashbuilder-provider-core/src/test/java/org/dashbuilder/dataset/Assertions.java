@@ -15,8 +15,8 @@
  */
 package org.dashbuilder.dataset;
 
-import org.dashbuilder.model.dataset.DataColumn;
-import org.dashbuilder.model.dataset.DataSet;
+import org.dashbuilder.dataset.DataColumn;
+import org.dashbuilder.dataset.DataSet;
 
 import static org.fest.assertions.api.Assertions.*;
 

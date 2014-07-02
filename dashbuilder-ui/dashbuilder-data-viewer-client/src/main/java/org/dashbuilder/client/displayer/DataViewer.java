@@ -16,7 +16,7 @@
 package org.dashbuilder.client.displayer;
 
 import com.google.gwt.user.client.ui.IsWidget;
-import org.dashbuilder.model.displayer.DataDisplayer;
+import org.dashbuilder.displayer.DataDisplayer;
 
 /**
  * A DataViewer takes care of drawing a DataDisplayer instance.

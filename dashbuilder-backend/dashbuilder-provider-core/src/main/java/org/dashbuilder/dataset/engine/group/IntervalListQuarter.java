@@ -19,9 +19,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.dashbuilder.model.dataset.group.ColumnGroup;
-import org.dashbuilder.model.date.Month;
-import org.dashbuilder.model.date.Quarter;
+import org.dashbuilder.dataset.group.ColumnGroup;
+import org.dashbuilder.dataset.date.Month;
+import org.dashbuilder.dataset.date.Quarter;
 
 /**
  * List of the 4-quarter intervals present in a year.

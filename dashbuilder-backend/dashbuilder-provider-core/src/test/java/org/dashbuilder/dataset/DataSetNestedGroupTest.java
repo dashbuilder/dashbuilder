@@ -17,11 +17,11 @@ package org.dashbuilder.dataset;
 
 import javax.inject.Inject;
 
-import org.dashbuilder.model.dataset.DataSet;
-import org.dashbuilder.model.dataset.DataSetFactory;
-import org.dashbuilder.model.dataset.DataSetManager;
-import org.dashbuilder.model.dataset.filter.FilterFactory;
-import org.dashbuilder.model.dataset.group.DateIntervalType;
+import org.dashbuilder.dataset.DataSet;
+import org.dashbuilder.dataset.DataSetFactory;
+import org.dashbuilder.dataset.DataSetManager;
+import org.dashbuilder.dataset.filter.FilterFactory;
+import org.dashbuilder.dataset.group.DateIntervalType;
 import org.dashbuilder.test.ShrinkWrapHelper;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;

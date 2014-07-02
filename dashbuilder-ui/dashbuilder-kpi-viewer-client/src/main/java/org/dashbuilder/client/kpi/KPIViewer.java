@@ -20,9 +20,9 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimplePanel;
 import org.dashbuilder.client.displayer.DataViewer;
 import org.dashbuilder.client.displayer.DataViewerHelper;
-import org.dashbuilder.model.dataset.DataSetRef;
-import org.dashbuilder.model.displayer.DataDisplayer;
-import org.dashbuilder.model.kpi.KPI;
+import org.dashbuilder.dataset.DataSetRef;
+import org.dashbuilder.displayer.DataDisplayer;
+import org.dashbuilder.kpi.KPI;
 
 public class KPIViewer extends Composite {
 

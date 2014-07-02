@@ -15,7 +15,7 @@
  */
 package org.dashbuilder.dataset.engine.index;
 
-import org.dashbuilder.model.dataset.impl.MemSizeEstimator;
+import org.dashbuilder.dataset.impl.MemSizeEstimator;
 
 /**
  * An aggregate function value index

@@ -17,9 +17,7 @@ package org.dashbuilder.client.displayer;
 
 import java.util.List;
 
-import org.dashbuilder.model.dataset.DataSetOp;
-import org.dashbuilder.model.dataset.group.DataSetGroup;
-import org.dashbuilder.model.dataset.sort.SortOrder;
+import org.dashbuilder.dataset.group.DataSetGroup;
 
 /**
  * Interface addressed to capture events coming from a DataViewer instance.

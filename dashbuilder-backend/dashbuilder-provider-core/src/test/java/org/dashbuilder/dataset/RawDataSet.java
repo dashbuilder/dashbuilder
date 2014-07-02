@@ -16,18 +16,14 @@
 package org.dashbuilder.dataset;
 
 import java.io.Serializable;
-import java.text.DateFormat;
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import org.dashbuilder.model.dataset.ColumnType;
-import org.dashbuilder.model.dataset.DataSet;
-import org.dashbuilder.model.dataset.impl.DataSetImpl;
+import org.dashbuilder.dataset.ColumnType;
+import org.dashbuilder.dataset.DataSet;
+import org.dashbuilder.dataset.impl.DataSetImpl;
 
 public class RawDataSet implements Serializable {
 

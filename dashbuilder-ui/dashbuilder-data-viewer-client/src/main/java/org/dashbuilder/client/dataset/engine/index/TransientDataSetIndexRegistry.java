@@ -20,8 +20,7 @@ import java.util.Map;
 import javax.enterprise.context.ApplicationScoped;
 
 import org.dashbuilder.client.dataset.engine.index.spi.DataSetIndexRegistry;
-import org.dashbuilder.client.util.StringUtils;
-import org.dashbuilder.model.dataset.DataSet;
+import org.dashbuilder.dataset.DataSet;
 
 @ApplicationScoped
 public class TransientDataSetIndexRegistry implements DataSetIndexRegistry {

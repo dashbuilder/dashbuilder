@@ -15,12 +15,9 @@
  */
 package org.dashbuilder.client.gallery;
 
-import java.util.Collections;
-import java.util.List;
-
 import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.client.kpi.KPIViewer;
-import org.dashbuilder.model.kpi.KPI;
+import org.dashbuilder.kpi.KPI;
 
 /**
  * A KPI gallery node.

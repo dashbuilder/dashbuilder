@@ -21,8 +21,8 @@ import javax.inject.Named;
 import org.dashbuilder.client.displayer.AbstractRendererLibrary;
 import org.dashbuilder.client.displayer.DataViewer;
 import org.dashbuilder.client.displayer.RendererLibrary;
-import org.dashbuilder.model.displayer.DataDisplayer;
-import org.dashbuilder.model.displayer.DataDisplayerType;
+import org.dashbuilder.displayer.DataDisplayer;
+import org.dashbuilder.displayer.DataDisplayerType;
 
 /**
  * Table renderer based on the Uberfire's core PagedTable widget.

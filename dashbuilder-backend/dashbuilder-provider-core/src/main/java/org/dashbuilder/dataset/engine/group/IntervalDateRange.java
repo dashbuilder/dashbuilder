@@ -20,9 +20,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-import org.dashbuilder.model.dataset.group.DateIntervalType;
+import org.dashbuilder.dataset.group.DateIntervalType;
 
-import static org.dashbuilder.model.dataset.group.DateIntervalType.*;
+import static org.dashbuilder.dataset.group.DateIntervalType.*;
 
 /**
  * A date interval holding dates belonging to a given range.

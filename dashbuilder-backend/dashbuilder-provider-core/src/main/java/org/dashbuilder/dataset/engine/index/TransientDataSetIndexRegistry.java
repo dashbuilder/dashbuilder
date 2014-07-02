@@ -22,7 +22,7 @@ import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
 import org.dashbuilder.dataset.engine.index.spi.DataSetIndexRegistry;
-import org.dashbuilder.model.dataset.DataSet;
+import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.uuid.UUIDGenerator;
 
 @ApplicationScoped

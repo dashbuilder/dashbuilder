@@ -19,9 +19,9 @@ import java.util.Calendar;
 import java.util.Date;
 import javax.inject.Inject;
 
-import org.dashbuilder.model.dataset.DataSet;
-import org.dashbuilder.model.dataset.DataSetFactory;
-import org.dashbuilder.model.dataset.DataSetManager;
+import org.dashbuilder.dataset.DataSet;
+import org.dashbuilder.dataset.DataSetFactory;
+import org.dashbuilder.dataset.DataSetManager;
 import org.dashbuilder.test.ShrinkWrapHelper;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -32,7 +32,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import static org.dashbuilder.dataset.Assertions.*;
-import static org.dashbuilder.model.dataset.filter.FilterFactory.*;
+import static org.dashbuilder.dataset.filter.FilterFactory.*;
 import static org.fest.assertions.api.Assertions.assertThat;
 
 @RunWith(Arquillian.class)

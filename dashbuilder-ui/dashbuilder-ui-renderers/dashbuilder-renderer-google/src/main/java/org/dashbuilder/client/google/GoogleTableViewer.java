@@ -35,10 +35,10 @@ import com.googlecode.gwt.charts.client.options.TableSort;
 import com.googlecode.gwt.charts.client.table.Table;
 import com.googlecode.gwt.charts.client.table.TableOptions;
 import org.dashbuilder.client.displayer.DataViewer;
-import org.dashbuilder.model.dataset.DataSet;
-import org.dashbuilder.model.dataset.group.DataSetGroup;
-import org.dashbuilder.model.dataset.sort.SortOrder;
-import org.dashbuilder.model.displayer.TableDisplayer;
+import org.dashbuilder.dataset.DataSet;
+import org.dashbuilder.dataset.group.DataSetGroup;
+import org.dashbuilder.dataset.sort.SortOrder;
+import org.dashbuilder.displayer.TableDisplayer;
 
 public class GoogleTableViewer extends GoogleViewer<TableDisplayer> {
 

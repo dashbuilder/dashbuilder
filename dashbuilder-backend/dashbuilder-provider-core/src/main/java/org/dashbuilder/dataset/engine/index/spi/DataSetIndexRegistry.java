@@ -16,7 +16,7 @@
 package org.dashbuilder.dataset.engine.index.spi;
 
 import org.dashbuilder.dataset.engine.index.DataSetIndex;
-import org.dashbuilder.model.dataset.DataSet;
+import org.dashbuilder.dataset.DataSet;
 
 /**
  * Maintains a registry of data set indexes

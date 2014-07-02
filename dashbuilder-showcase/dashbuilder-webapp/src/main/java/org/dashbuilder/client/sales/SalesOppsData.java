@@ -15,10 +15,9 @@
  */
 package org.dashbuilder.client.sales;
 
-import org.dashbuilder.model.dataset.DataSetFactory;
-import org.dashbuilder.model.dataset.DataSetRef;
-import org.dashbuilder.model.dataset.group.DateIntervalType;
-import org.dashbuilder.model.date.DayOfWeek;
+import org.dashbuilder.dataset.DataSetFactory;
+import org.dashbuilder.dataset.DataSetRef;
+import org.dashbuilder.dataset.group.DateIntervalType;
 
 import static org.dashbuilder.client.sales.SalesConstants.*;
 

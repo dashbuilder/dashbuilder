@@ -17,7 +17,7 @@ package org.dashbuilder.client.dataset.engine;
 
 import java.util.List;
 
-import org.dashbuilder.model.dataset.DataSet;
+import org.dashbuilder.dataset.DataSet;
 
 /**
  * It provides access to a data set row subset.

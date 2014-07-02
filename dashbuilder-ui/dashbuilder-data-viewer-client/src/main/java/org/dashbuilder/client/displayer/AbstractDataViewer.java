@@ -23,13 +23,13 @@ import java.util.Map;
 import java.util.Set;
 
 import com.google.gwt.user.client.ui.Composite;
-import org.dashbuilder.model.dataset.group.ColumnGroup;
-import org.dashbuilder.model.dataset.group.DataSetGroup;
-import org.dashbuilder.model.dataset.group.GroupStrategy;
-import org.dashbuilder.model.dataset.sort.ColumnSort;
-import org.dashbuilder.model.dataset.sort.DataSetSort;
-import org.dashbuilder.model.dataset.sort.SortOrder;
-import org.dashbuilder.model.displayer.DataDisplayer;
+import org.dashbuilder.dataset.group.ColumnGroup;
+import org.dashbuilder.dataset.group.DataSetGroup;
+import org.dashbuilder.dataset.group.GroupStrategy;
+import org.dashbuilder.dataset.sort.ColumnSort;
+import org.dashbuilder.dataset.sort.DataSetSort;
+import org.dashbuilder.dataset.sort.SortOrder;
+import org.dashbuilder.displayer.DataDisplayer;
 
 /**
  * Base class for implementing custom viewers.

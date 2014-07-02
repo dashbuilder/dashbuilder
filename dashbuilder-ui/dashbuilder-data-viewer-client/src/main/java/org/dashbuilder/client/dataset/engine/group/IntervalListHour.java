@@ -17,7 +17,7 @@ package org.dashbuilder.client.dataset.engine.group;
 
 import java.util.Date;
 
-import org.dashbuilder.model.dataset.group.ColumnGroup;
+import org.dashbuilder.dataset.group.ColumnGroup;
 
 /**
  * List of the 24-hor intervals present in a day.

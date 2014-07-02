@@ -23,13 +23,12 @@ import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.client.displayer.DataViewer;
 import org.dashbuilder.client.displayer.DataViewerCoordinator;
 import org.dashbuilder.client.displayer.DataViewerHelper;
-import org.dashbuilder.client.displayer.DataViewerLocator;
-import org.dashbuilder.model.dataset.DataSetFactory;
-import org.dashbuilder.model.displayer.DisplayerFactory;
+import org.dashbuilder.dataset.DataSetFactory;
+import org.dashbuilder.displayer.DisplayerFactory;
 
-import static org.dashbuilder.model.dataset.group.DateIntervalType.*;
-import static org.dashbuilder.model.dataset.sort.SortOrder.DESCENDING;
-import static org.dashbuilder.model.date.DayOfWeek.*;
+import static org.dashbuilder.dataset.group.DateIntervalType.*;
+import static org.dashbuilder.dataset.sort.SortOrder.DESCENDING;
+import static org.dashbuilder.dataset.date.DayOfWeek.*;
 import static org.dashbuilder.client.sales.SalesConstants.*;
 
 /**

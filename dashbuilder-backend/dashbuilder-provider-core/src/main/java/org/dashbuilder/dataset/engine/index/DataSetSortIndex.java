@@ -17,7 +17,7 @@ package org.dashbuilder.dataset.engine.index;
 
 import java.util.List;
 
-import org.dashbuilder.model.dataset.sort.DataSetSort;
+import org.dashbuilder.dataset.sort.DataSetSort;
 
 /**
  * An index for source data sets.

@@ -22,7 +22,7 @@ import java.util.List;
 import org.dashbuilder.client.dataset.engine.group.Interval;
 import org.dashbuilder.client.dataset.engine.group.IntervalList;
 import org.dashbuilder.client.dataset.engine.index.visitor.DataSetIndexVisitor;
-import org.dashbuilder.model.dataset.group.ColumnGroup;
+import org.dashbuilder.dataset.group.ColumnGroup;
 
 /**
  * A DataSet group operation index

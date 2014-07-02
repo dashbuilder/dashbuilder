@@ -20,11 +20,11 @@ import java.util.List;
 import javax.enterprise.context.ApplicationScoped;
 
 import org.dashbuilder.client.dataset.engine.DataSetHandler;
-import org.dashbuilder.model.dataset.DataSet;
-import org.dashbuilder.model.dataset.filter.ColumnFilter;
-import org.dashbuilder.model.dataset.filter.CoreFunctionFilter;
-import org.dashbuilder.model.dataset.filter.CustomFunctionFilter;
-import org.dashbuilder.model.dataset.filter.LogicalExprFilter;
+import org.dashbuilder.dataset.DataSet;
+import org.dashbuilder.dataset.filter.ColumnFilter;
+import org.dashbuilder.dataset.filter.CoreFunctionFilter;
+import org.dashbuilder.dataset.filter.CustomFunctionFilter;
+import org.dashbuilder.dataset.filter.LogicalExprFilter;
 
 /**
  * Default data set filter algorithm.

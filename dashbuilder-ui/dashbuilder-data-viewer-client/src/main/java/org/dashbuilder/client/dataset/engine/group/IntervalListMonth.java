@@ -19,8 +19,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.dashbuilder.model.dataset.group.ColumnGroup;
-import org.dashbuilder.model.date.Month;
+import org.dashbuilder.dataset.group.ColumnGroup;
+import org.dashbuilder.dataset.date.Month;
 
 /**
  * List of the 12-months intervals present in a year.
