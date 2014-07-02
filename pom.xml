@@ -17,7 +17,7 @@
   <modules>
     <module>dashbuilder-bom</module>
     <module>dashbuilder-parent-with-dependencies</module>
-    <module>dashbuilder-api</module>
+    <module>dashbuilder-shared</module>
     <module>dashbuilder-backend</module>
     <module>dashbuilder-ui</module>
     <module>dashbuilder-showcase</module>

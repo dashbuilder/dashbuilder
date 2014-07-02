@@ -18,10 +18,18 @@
 
 
   <dependencies>
-    <!-- Dashbuilder API -->
+    <!-- Dashbuilder APIs -->
     <dependency>
       <groupId>org.dashbuilder</groupId>
-      <artifactId>dashbuilder-api</artifactId>
+      <artifactId>dashbuilder-dataset-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.dashbuilder</groupId>
+      <artifactId>dashbuilder-displayer-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.dashbuilder</groupId>
+      <artifactId>dashbuilder-kpi-api</artifactId>
     </dependency>
 
     <!-- Dashbuilder Backend -->
@@ -32,7 +40,7 @@
 
     <dependency>
       <groupId>org.dashbuilder</groupId>
-      <artifactId>dashbuilder-provider-core</artifactId>
+      <artifactId>dashbuilder-dataset-core</artifactId>
     </dependency>
 
     <!-- Dashbuilder client -->
@@ -188,7 +196,9 @@
           <compileSourcesArtifacts>
 
             <!-- Dashbuilder -->
-            <compileSourcesArtifact>org.dashbuilder:dashbuilder-api</compileSourcesArtifact>
+            <compileSourcesArtifact>org.dashbuilder:dashbuilder-dataset-api</compileSourcesArtifact>
+            <compileSourcesArtifact>org.dashbuilder:dashbuilder-displayer-api</compileSourcesArtifact>
+            <compileSourcesArtifact>org.dashbuilder:dashbuilder-kpi-api</compileSourcesArtifact>
             <compileSourcesArtifact>org.dashbuilder:dashbuilder-commons-client</compileSourcesArtifact>
             <compileSourcesArtifact>org.dashbuilder:dashbuilder-data-viewer-client</compileSourcesArtifact>
             <compileSourcesArtifact>org.dashbuilder:dashbuilder-kpi-viewer-client</compileSourcesArtifact>

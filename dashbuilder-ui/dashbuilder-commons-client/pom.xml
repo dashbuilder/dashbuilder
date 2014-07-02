@@ -49,11 +49,6 @@
       <scope>provided</scope>
     </dependency>
 
-    <dependency>
-      <groupId>org.dashbuilder</groupId>
-      <artifactId>dashbuilder-api</artifactId>
-    </dependency>
-
   </dependencies>
 
   <build>

@@ -22,7 +22,4 @@
 
   <inherits name="org.jboss.errai.bus.ErraiBus"/>
 
-  <inherits name="org.dashbuilder.DashbuilderAPI"/>
-
-
 </module>

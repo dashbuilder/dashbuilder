@@ -19,21 +19,14 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.dashbuilder</groupId>
-    <artifactId>dashbuilder-parent-with-dependencies</artifactId>
+    <artifactId>dashbuilder-shared</artifactId>
     <version>6.2.0-SNAPSHOT</version>
-    <relativePath>../dashbuilder-parent-with-dependencies/pom.xml</relativePath>
   </parent>
 
-  <artifactId>dashbuilder-ui</artifactId>
-  <packaging>pom</packaging>
+  <artifactId>dashbuilder-dataset-api</artifactId>
+  <packaging>jar</packaging>
 
-  <name>Dashbuilder UI</name>
-
-  <modules>
-    <module>dashbuilder-commons-client</module>
-    <module>dashbuilder-data-viewer-client</module>
-    <module>dashbuilder-kpi-viewer-client</module>
-    <module>dashbuilder-ui-renderers</module>
-  </modules>
+  <name>Dashbuilder Dataset API</name>
+  <description>Dashbuilder Dataset API shared between client and server.</description>
 
 </project>

@@ -19,42 +19,22 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.dashbuilder</groupId>
-    <artifactId>dashbuilder-parent-with-dependencies</artifactId>
+    <artifactId>dashbuilder-shared</artifactId>
     <version>6.2.0-SNAPSHOT</version>
-    <relativePath>../dashbuilder-parent-with-dependencies/pom.xml</relativePath>
   </parent>
 
-  <artifactId>dashbuilder-api</artifactId>
+  <artifactId>dashbuilder-displayer-api</artifactId>
   <packaging>jar</packaging>
 
-  <name>Dashbuilder API</name>
-  <description>Dashbuilder API shared between client and server.</description>
+  <name>Dashbuilder Displayer API</name>
+  <description>Dashbuilder Displayer API shared between client and server.</description>
 
   <dependencies>
 
     <dependency>
-      <groupId>org.jboss.errai</groupId>
-      <artifactId>errai-bus</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.jboss.errai</groupId>
-      <artifactId>errai-common</artifactId>
+      <groupId>org.dashbuilder</groupId>
+      <artifactId>dashbuilder-dataset-api</artifactId>
     </dependency>
 
   </dependencies>
-
-  <build>
-    <resources>
-      <!-- Include src/main/java in order not to break the Eclipse GWT plug-in -->
-      <resource>
-        <directory>src/main/java</directory>
-      </resource>
-      <!-- Include module descriptors from src/main/resources in order not to break the Intellij GWT plug-in -->
-      <resource>
-        <directory>src/main/resources</directory>
-      </resource>
-    </resources>
-  </build>
-
 </project>
