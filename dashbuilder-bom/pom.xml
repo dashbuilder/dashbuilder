@@ -76,19 +76,25 @@
       <!-- Dashbuilder Client -->
       <dependency>
         <groupId>org.dashbuilder</groupId>
-        <artifactId>dashbuilder-commons-client</artifactId>
+        <artifactId>dashbuilder-common-client</artifactId>
         <version>${project.version}</version>
       </dependency>
 
       <dependency>
         <groupId>org.dashbuilder</groupId>
-        <artifactId>dashbuilder-data-viewer-client</artifactId>
+        <artifactId>dashbuilder-dataset-client</artifactId>
         <version>${project.version}</version>
       </dependency>
 
       <dependency>
         <groupId>org.dashbuilder</groupId>
-        <artifactId>dashbuilder-kpi-viewer-client</artifactId>
+        <artifactId>dashbuilder-displayer-client</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.dashbuilder</groupId>
+        <artifactId>dashbuilder-kpi-client</artifactId>
         <version>${project.version}</version>
       </dependency>
 

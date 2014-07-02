@@ -9,6 +9,6 @@
 
   <inherits name="org.dashbuilder.UFTableRendererClient"/>
 
-  <inherits name="org.dashbuilder.KPIViewerClient"/>
+  <inherits name="org.dashbuilder.KpiClient"/>
 
 </module>
