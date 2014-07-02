@@ -50,6 +50,10 @@ public class DashbuilderInitializer {
         // not only to the ClientDataSetManager but also to the remote DataSetLookupService.
         dataSetLookupClient.setLookupService(dataSetLookupService);
 
+        // Enable the ability to push and handle on client data sets greater than 1 Mb
+        dataSetLookupClient.setPushRemoteDataSetEnabled(true);
+        dataSetLookupClient.setPushRemoteDataSetMaxSize(1024);
+
         // Set the default renderer lib for each displayer type.
         rendererLibLocator.setDefaultRenderer(DataDisplayerType.BARCHART, GoogleRenderer.UUID);
         rendererLibLocator.setDefaultRenderer(DataDisplayerType.PIECHART, GoogleRenderer.UUID);

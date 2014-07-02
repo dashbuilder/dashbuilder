@@ -75,6 +75,9 @@ public class DataSetLookupClient {
         return pushRemoteDataSetEnabled;
     }
 
+    /**
+     * Enable/disable the ability to push remote data sets from server.
+     */
     public void setPushRemoteDataSetEnabled(boolean pushRemoteDataSetEnabled) {
         this.pushRemoteDataSetEnabled = pushRemoteDataSetEnabled;
     }
@@ -83,6 +86,9 @@ public class DataSetLookupClient {
         return pushRemoteDataSetMaxSize;
     }
 
+    /**
+     * Set the maximum size (in kbytes) a data set may have in order to be pushed to clients.
+     */
     public void setPushRemoteDataSetMaxSize(int pushRemoteDataSetMaxSize) {
         this.pushRemoteDataSetMaxSize = pushRemoteDataSetMaxSize;
     }
