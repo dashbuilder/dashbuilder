@@ -8,7 +8,7 @@ Steps to build & run
  
 Clone the project
 
-    git clone git@github.com:dgutierr/dashbuilder.git
+    git clone git@github.com:dashbuilder/dashbuilder.git
     
 Build the project
 

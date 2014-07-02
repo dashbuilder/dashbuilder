@@ -20,6 +20,4 @@
 <module>
   <inherits name='com.google.gwt.user.User'/>
 
-  <inherits name="org.jboss.errai.bus.ErraiBus"/>
-
 </module>
