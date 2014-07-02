@@ -52,7 +52,7 @@ import org.dashbuilder.model.dataset.DataSet;
 
 import org.dashbuilder.model.dataset.sort.SortOrder;
 import org.dashbuilder.model.displayer.DataDisplayerColumn;
-import org.uberfire.client.tables.PagedTable;
+import org.kie.uberfire.client.tables.PagedTable;
 
 import static com.google.gwt.dom.client.BrowserEvents.CLICK;
 

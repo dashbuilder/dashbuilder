@@ -7,6 +7,8 @@
 
   <inherits name="org.uberfire.UberfireClientAll"/>
 
+  <inherits name="org.kie.uberfire.KIEUberfireWidgetsCommons"/>
+
   <source path='client'/>
 
 </module>

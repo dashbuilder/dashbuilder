@@ -96,6 +96,13 @@
         <scope>import</scope>
       </dependency>
 
+      <!-- KIE Extensions -->
+      <dependency>
+        <groupId>org.kie.uberfire</groupId>
+        <artifactId>kie-uberfire-widgets-commons</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+
       <!-- Errai -->
       <dependency>
         <groupId>org.jboss.errai</groupId>
