@@ -247,7 +247,10 @@ public class GoogleTableViewer extends GoogleViewer<TableDisplayer> {
         }
         Label totalRows = null;
         sb = new StringBuilder();
-        if ( showTotalRowsHint ) {
+        if ( numberOfRows == 0) {
+            sb.append( "No data" );
+            totalRows = new Label( sb.toString() );
+        } else if ( showTotalRowsHint ) {
             sb.append( "Rows " );
             int currentRowsShown = currentPage * pageSize > numberOfRows ? numberOfRows : currentPage * pageSize;
             sb.append( ( ( currentPage - 1 ) * pageSize) + 1 ).append("-").append( currentRowsShown );
