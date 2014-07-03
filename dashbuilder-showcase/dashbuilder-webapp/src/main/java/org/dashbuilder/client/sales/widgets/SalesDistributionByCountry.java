@@ -68,6 +68,7 @@ public class SalesDistributionByCountry extends Composite {
                 .column(PROBABILITY, "Average probability")
                 .column(COUNTRY, "Country")
                 .column(EXPECTED_AMOUNT, "Expected amount")
+                .filterOn(false, true, true)
                 .buildDisplayer());
 
         mapByCountry = DataViewerHelper.lookup(
@@ -84,6 +85,7 @@ public class SalesDistributionByCountry extends Composite {
                 .column("Country")
                 .column("Number of opportunities")
                 .column("Total amount")
+                .filterOn(false, true, true)
                 .buildDisplayer());
 
         tableAll = DataViewerHelper.lookup(
@@ -105,6 +107,7 @@ public class SalesDistributionByCountry extends Composite {
                 .column(EXPECTED_AMOUNT, "Expected")
                 .column(CLOSING_DATE, "Closing")
                 .column(AMOUNT, "Amount")
+                .filterOn(false, true, true)
                 .buildDisplayer());
 
         // Make that charts interact among them

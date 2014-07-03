@@ -75,6 +75,7 @@ public class SalesExpectedByDate extends Composite {
                 .margins(10, 80, 80, 100)
                 .column("Creation date")
                 .column("Amount")
+                .filterOn(false, true, true)
                 .buildDisplayer());
 
         pieChartYears = DataViewerHelper.lookup(
@@ -88,6 +89,7 @@ public class SalesExpectedByDate extends Composite {
                 .titleVisible(true)
                 .width(200).height(150)
                 .margins(0, 0, 0, 0)
+                .filterOn(false, true, false)
                 .buildDisplayer());
 
         pieChartQuarters = DataViewerHelper.lookup(
@@ -101,6 +103,7 @@ public class SalesExpectedByDate extends Composite {
                 .titleVisible(true)
                 .width(200).height(150)
                 .margins(0, 0, 0, 0)
+                .filterOn(false, true, false)
                 .buildDisplayer());
 
         barChartDayOfWeek = DataViewerHelper.lookup(
@@ -115,6 +118,7 @@ public class SalesExpectedByDate extends Composite {
                 .width(200).height(150)
                 .margins(0, 20, 80, 0)
                 .horizontal()
+                .filterOn(false, true, true)
                 .buildDisplayer());
 
 
@@ -131,6 +135,7 @@ public class SalesExpectedByDate extends Composite {
                 .margins(0, 0, 0, 0)
                 .column("Pipeline")
                 .column("Number of opps")
+                .filterOn(false, true, true)
                 .buildDisplayer());
 
         tableAll = DataViewerHelper.lookup(
@@ -152,6 +157,7 @@ public class SalesExpectedByDate extends Composite {
                 .column(EXPECTED_AMOUNT, "Expected")
                 .column(CREATION_DATE, "Creation")
                 .column(CLOSING_DATE, "Closing")
+                .filterOn(false, true, true)
                 .buildDisplayer());
 
         // Make that charts interact among them

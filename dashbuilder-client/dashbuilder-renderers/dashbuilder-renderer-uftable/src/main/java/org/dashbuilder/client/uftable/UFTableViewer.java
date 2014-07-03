@@ -327,7 +327,7 @@ public class UFTableViewer extends AbstractDataViewer<org.dashbuilder.displayer.
     }
 
     protected Widget createCurrentSelectionWidget() {
-        if (!isSelectionEnabled()) return null;
+        if (!dataDisplayer.isFilterEnabled()) return null;
 
         Set<String> columnFilters = filterColumns();
 
@@ -426,9 +426,9 @@ public class UFTableViewer extends AbstractDataViewer<org.dashbuilder.displayer.
         @Override
         public void onBrowserEvent( Context context, Element parent, String value, NativeEvent event, ValueUpdater<String> valueUpdater ) {
 
-            if ( !isSelectionEnabled() ) return;
+            if ( !dataDisplayer.isFilterEnabled() ) return;
 
-            filterUpdate( columnId, value, -1 );
+            filterUpdate( columnId, value );
             setColumnSelectionWidget();
         }
     }

@@ -72,6 +72,29 @@ public interface DataDisplayerBuilder<T> {
     T column(String columnId, String displayName);
 
     /**
+     * Enable the ability to select/filter values (or range of values) within the data displayer.
+     *
+     * <p> Usually, in a dashboard there exists a unique coordinator which takes cares of propagate all the data
+     * selection events among the other displayers. If enabled then there exists also the ability to configure how to
+     * interact with other displayers in the same dashboard.</p>
+
+     * @param applySelf If true then any filter request issued within the data displayer will be applied to the own displayer.
+     * @param notifyOthers If true then any filter request issued within the data displayer will be propagated to other interested displayers.
+     * @param receiveFromOthers If true then the data displayer will listen for filter requests coming from other displayers.
+     *
+     * @return The DataDisplayerBuilder instance that is being used to configure a DataDisplayer.
+     */
+    T filterOn(boolean applySelf, boolean notifyOthers, boolean receiveFromOthers);
+
+    /**
+     * Disable the ability to select/filter values (or range of values) within the data displayer.
+     *
+     * @see DataDisplayerBuilder#filterOn DataDisplayerBuilder's filterOn method.
+     * @return The DataDisplayerBuilder instance that is being used to configure a DataDisplayer.
+     */
+    T filterOff();
+
+    /**
      * @return The DataDisplayer instance that has been configured.
      * @see org.dashbuilder.displayer.DataDisplayer
      */

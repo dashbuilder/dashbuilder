@@ -45,7 +45,6 @@ public abstract class AbstractDataViewer<T extends DataDisplayer> extends Compos
     protected T dataDisplayer;
     protected List<DataViewerListener> listenerList = new ArrayList<DataViewerListener>();
     protected Map<String,List<String>> columnSelectionMap = new HashMap<String,List<String>>();
-    protected boolean selectionEnabled = true;
 
     public T getDataDisplayer() {
         return dataDisplayer;
@@ -67,26 +66,22 @@ public abstract class AbstractDataViewer<T extends DataDisplayer> extends Compos
         listenerList.add(listener);
     }
 
-    public boolean isSelectionEnabled() {
-        return selectionEnabled;
-    }
-
-    public void setSelectionEnabled(boolean selectionEnabled) {
-        this.selectionEnabled = selectionEnabled;
-    }
-
     // CAPTURE EVENTS RECEIVED FROM OTHER VIEWERS
 
     public void onGroupIntervalsSelected(DataViewer viewer, DataSetGroup groupOp) {
-        dataSetHandler.addGroupOperation(groupOp);
-        redraw();
+        if (dataDisplayer.isFilterListeningEnabled()) {
+            dataSetHandler.addGroupOperation(groupOp);
+            redraw();
+        }
     }
 
     public void onGroupIntervalsReset(DataViewer viewer, List<DataSetGroup> groupOps) {
-        for (DataSetGroup groupOp : groupOps) {
-            dataSetHandler.removeGroupOperation(groupOp);
+        if (dataDisplayer.isFilterListeningEnabled()) {
+            for (DataSetGroup groupOp : groupOps) {
+                dataSetHandler.removeGroupOperation(groupOp);
+            }
+            redraw();
         }
-        redraw();
     }
 
     // DATA COLUMN VALUES SELECTION, FILTER & NOTIFICATION
@@ -113,10 +108,20 @@ public abstract class AbstractDataViewer<T extends DataDisplayer> extends Compos
      *
      * @param columnId The column to filter for.
      * @param valueSelected The value to add/remove from the current filter.
-     * @param numberOfRows The total number of available column values.
      */
-    protected void filterUpdate(String columnId, String valueSelected, int numberOfRows) {
-        if (!isSelectionEnabled()) return;
+    protected void filterUpdate(String columnId, String valueSelected) {
+        filterUpdate(columnId, valueSelected, null);
+    }
+
+    /**
+     * Updates the current filter values for the given data set column.
+     *
+     * @param columnId The column to filter for.
+     * @param valueSelected The value to add/remove from the current filter.
+     * @param maxSelections The number of different selectable values available.
+     */
+    protected void filterUpdate(String columnId, String valueSelected, Integer maxSelections) {
+        if (!dataDisplayer.isFilterEnabled()) return;
 
         List<String> selectedValues = columnSelectionMap.get(columnId);
         if (selectedValues == null) {
@@ -134,7 +139,7 @@ public abstract class AbstractDataViewer<T extends DataDisplayer> extends Compos
             }
         } else {
             selectedValues.add(valueSelected);
-            if (numberOfRows > 0 && selectedValues.size() >= numberOfRows) {
+            if (maxSelections != null && maxSelections > 0 && selectedValues.size() >= maxSelections) {
                 filterReset(columnId);
             } else {
                 filterApply(columnId, selectedValues);
@@ -149,7 +154,7 @@ public abstract class AbstractDataViewer<T extends DataDisplayer> extends Compos
      * @param values A list of values to filter for.
      */
     protected void filterApply(String columnId, List<String> values) {
-        if (!isSelectionEnabled()) return;
+        if (!dataDisplayer.isFilterEnabled()) return;
 
         // For string column filters, create and notify a group interval selection operation.
         DataSetGroup groupOp = dataSetHandler.getGroupOperation(columnId);
@@ -165,8 +170,15 @@ public abstract class AbstractDataViewer<T extends DataDisplayer> extends Compos
             _groupSelect.setColumnGroup(new ColumnGroup(columnId, columnId, GroupStrategy.DYNAMIC));
         }
         // Notify to those interested parties the selection event.
-        for (DataViewerListener listener : listenerList) {
-            listener.onGroupIntervalsSelected(this, _groupSelect);
+        if (dataDisplayer.isFilterNotificationEnabled()) {
+            for (DataViewerListener listener : listenerList) {
+                listener.onGroupIntervalsSelected(this, _groupSelect);
+            }
+        }
+        // Apply the selection to this viewer
+        if (dataDisplayer.isFilterSelfApplyEnabled()) {
+            dataSetHandler.addGroupOperation(_groupSelect);
+            redraw();
         }
     }
 
@@ -176,7 +188,7 @@ public abstract class AbstractDataViewer<T extends DataDisplayer> extends Compos
      * @param columnId The name of the column to reset.
      */
     protected void filterReset(String columnId) {
-        if (!isSelectionEnabled()) return;
+        if (!dataDisplayer.isFilterEnabled()) return;
 
         columnSelectionMap.remove(columnId);
         DataSetGroup groupOp = dataSetHandler.getGroupOperation(columnId);
@@ -185,8 +197,15 @@ public abstract class AbstractDataViewer<T extends DataDisplayer> extends Compos
             groupOp .setColumnGroup(new ColumnGroup(columnId, columnId, GroupStrategy.DYNAMIC));
         }
         // Notify to those interested parties the reset event.
-        for (DataViewerListener listener : listenerList) {
-            listener.onGroupIntervalsReset(this, Arrays.asList(groupOp));
+        if (dataDisplayer.isFilterNotificationEnabled()) {
+            for (DataViewerListener listener : listenerList) {
+                listener.onGroupIntervalsReset(this, Arrays.asList(groupOp));
+            }
+        }
+        // Apply the selection to this viewer
+        if (dataDisplayer.isFilterSelfApplyEnabled()) {
+            dataSetHandler.removeGroupOperation(groupOp);
+            redraw();
         }
     }
 
@@ -194,7 +213,7 @@ public abstract class AbstractDataViewer<T extends DataDisplayer> extends Compos
      * Clear any filter.
      */
     protected void filterReset() {
-        if (!isSelectionEnabled()) return;
+        if (!dataDisplayer.isFilterEnabled()) return;
 
         List<DataSetGroup> groupOpList = new ArrayList<DataSetGroup>();
         for (String columnId : columnSelectionMap.keySet()) {
@@ -209,8 +228,17 @@ public abstract class AbstractDataViewer<T extends DataDisplayer> extends Compos
         columnSelectionMap.clear();
 
         // Notify to those interested parties the reset event.
-        for (DataViewerListener listener : listenerList) {
-            listener.onGroupIntervalsReset(this, groupOpList);
+        if (dataDisplayer.isFilterNotificationEnabled()) {
+            for (DataViewerListener listener : listenerList) {
+                listener.onGroupIntervalsReset(this, groupOpList);
+            }
+        }
+        // Apply the selection to this viewer
+        if (dataDisplayer.isFilterSelfApplyEnabled()) {
+            for (DataSetGroup groupOp : groupOpList) {
+                dataSetHandler.removeGroupOperation(groupOp);
+            }
+            redraw();
         }
     }
 

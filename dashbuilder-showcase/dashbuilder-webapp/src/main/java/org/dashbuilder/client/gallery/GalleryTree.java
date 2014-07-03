@@ -368,7 +368,27 @@ public class GalleryTree {
                 .tableOrderDefault("Country", DESCENDING)
                 .buildKPI()
         ));
-
+        nodeList.add(new GalleryNodeKPI("UF table (drill-down)",
+                KPIFactory.newTableKPI()
+                .dataset(SALES_OPPS)
+                .title("List of Opportunities")
+                .tablePageSize(20)
+                .tableOrderEnabled(true)
+                .tableOrderDefault(AMOUNT, DESCENDING)
+                .column(COUNTRY, "Country")
+                .column(CUSTOMER, "Customer")
+                .column(PRODUCT, "Product")
+                .column(SALES_PERSON, "Salesman")
+                .column(STATUS, "Status")
+                .column(SOURCE, "Source")
+                .column(CREATION_DATE, "Creation")
+                .column(EXPECTED_AMOUNT, "Expected")
+                .column(CLOSING_DATE, "Closing")
+                .column(AMOUNT, "Amount")
+                .filterOn(true, false, false)
+                .renderer("uftable")
+                .buildKPI()
+        ));
     }
 
     private void initDashboardCategory() {

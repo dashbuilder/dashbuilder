@@ -69,6 +69,7 @@ public class SalesGoals extends Composite {
                 .width(200).height(200)
                 .meter(0, 15000000, 25000000, 35000000)
                 .column("Total amount")
+                .filterOn(false, true, true)
                 .buildDisplayer());
 
         lineChartByDate = DataViewerHelper.lookup(
@@ -86,6 +87,7 @@ public class SalesGoals extends Composite {
                 .column("Closing date")
                 .column("Total amount")
                 .column("Expected amount")
+                .filterOn(false, true, true)
                 .buildDisplayer());
 
         barChartByProduct = DataViewerHelper.lookup(
@@ -104,6 +106,7 @@ public class SalesGoals extends Composite {
                 .width(400).height(150)
                 .margins(10, 80, 80, 10)
                 .vertical()
+                .filterOn(false, true, true)
                 .buildDisplayer());
 
         barChartByEmployee = DataViewerHelper.lookup(
@@ -121,6 +124,7 @@ public class SalesGoals extends Composite {
                 .width(400).height(150)
                 .margins(10, 80, 80, 10)
                 .vertical()
+                .filterOn(false, true, true)
                 .buildDisplayer());
 
         bubbleByCountry = DataViewerHelper.lookup(
@@ -140,6 +144,7 @@ public class SalesGoals extends Composite {
                 .column(PROBABILITY, "Average probability")
                 .column(COUNTRY, "Country")
                 .column(EXPECTED_AMOUNT, "Expected amount")
+                .filterOn(false, true, true)
                 .buildDisplayer());
 
         // Make that charts interact among them

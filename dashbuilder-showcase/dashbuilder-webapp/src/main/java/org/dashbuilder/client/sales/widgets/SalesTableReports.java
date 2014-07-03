@@ -77,6 +77,7 @@ public class SalesTableReports extends Composite {
                 .column(EXPECTED_AMOUNT, "Expected")
                 .column(CLOSING_DATE, "Closing")
                 .column(AMOUNT, "Amount")
+                .filterOn(false, true, true)
                 .buildDisplayer());
 
         tableByCountry = DataViewerHelper.lookup(
@@ -95,6 +96,7 @@ public class SalesTableReports extends Composite {
                 .tablePageSize(8)
                 .tableOrderEnabled(true)
                 .tableOrderDefault("Total", DESCENDING)
+                .filterOn(false, true, true)
                 .buildDisplayer());
 
         tableByProduct = DataViewerHelper.lookup(
@@ -113,6 +115,7 @@ public class SalesTableReports extends Composite {
                 .tablePageSize(8)
                 .tableOrderEnabled(true)
                 .tableOrderDefault("Total", DESCENDING)
+                .filterOn(false, true, true)
                 .buildDisplayer());
 
         tableBySalesman = DataViewerHelper.lookup(
@@ -131,6 +134,7 @@ public class SalesTableReports extends Composite {
                 .tablePageSize(8)
                 .tableOrderEnabled(true)
                 .tableOrderDefault("Total", DESCENDING)
+                .filterOn(false, true, true)
                 .buildDisplayer());
 
         tableByYear = DataViewerHelper.lookup(
@@ -149,6 +153,7 @@ public class SalesTableReports extends Composite {
                 .tablePageSize(8)
                 .tableOrderEnabled(true)
                 .tableOrderDefault("Total", DESCENDING)
+                .filterOn(false, true, true)
                 .buildDisplayer());
 
         // Make that charts interact among them

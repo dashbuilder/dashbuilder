@@ -70,32 +70,44 @@ public interface DataDisplayer {
      */
     List<DataDisplayerColumn> getColumnList();
 
-/*
-    String getForegroundColor();
-    String getBackgroundColor();
-    int getWidth();
-    int getHeight();
-    String getGraphicAlign();
-    boolean isLegendVisible();
-    boolean isRoundToIntegerEnabled();
-    boolean isTitleVisible();
-    String getLegendAnchor();
+    /**
+     * Check if the ability to select & filter values (or range of values) is enabled for this displayer.
+     */
+    boolean isFilterEnabled();
 
-    // Sort criteria must belong to data set retrieval settings
-    int getSortCriteria();
-    int getSortOrder();
+    /**
+     * Switch on/off the ability to generate filter requests within this displayer.
+     */
+    void setFilterEnabled(boolean selectionEnabled);
 
-    int getNumberOfRowsPerPage();
+    /**
+     * Check whether the displayer is sensitive to filter requests made on the displayer itself.
+     */
+    boolean isFilterSelfApplyEnabled();
 
-    */
-/** The display angle for the X-axis labels. *//*
+    /**
+     * Switch on/off applying filters on the displayer itself.
+     */
+    void setFilterSelfApplyEnabled(boolean selectionSelfApplyEnabled);
 
-    int getXAxisLabelsAngle();
+    /**
+     * Check if the displayer notifies any filter made on it to other displayers. Usually, in a dashboard there
+     * exists a unique coordinator which takes cares of propagate all the filter events among the other displayers.
+     */
+    boolean isFilterNotificationEnabled();
 
-    */
-/** Display area below line *//*
+    /**
+     * Switch on/off the filter event notification to other displayers.
+     */
+    void setFilterNotificationEnabled(boolean selectionNotificationEnabled);
 
-    boolean isAreaVisible();
+    /**
+     * Check if this displayer listen to filter events coming from other displayers.
+     */
+    boolean isFilterListeningEnabled();
 
-*/
+    /**
+     * Switch on/off the ability to listen to filter events coming from other displayers.
+     */
+    void setFilterListeningEnabled(boolean selectionListeningEnabled);
 }

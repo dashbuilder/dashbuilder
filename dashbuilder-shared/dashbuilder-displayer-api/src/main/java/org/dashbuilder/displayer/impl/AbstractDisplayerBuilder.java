@@ -51,6 +51,19 @@ public abstract class AbstractDisplayerBuilder<T extends DataDisplayerBuilder> i
         return (T) this;
     }
 
+    public T filterOn(boolean applySelf, boolean notifyOthers, boolean receiveFromOthers) {
+        dataDisplayer.setFilterEnabled(true);
+        dataDisplayer.setFilterSelfApplyEnabled(applySelf);
+        dataDisplayer.setFilterNotificationEnabled(notifyOthers);
+        dataDisplayer.setFilterListeningEnabled(receiveFromOthers);
+        return (T) this;
+    }
+
+    public T filterOff() {
+        dataDisplayer.setFilterEnabled(false);
+        return (T) this;
+    }
+
     public DataDisplayer buildDisplayer() {
         return dataDisplayer;
     }

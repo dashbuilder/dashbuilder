@@ -25,6 +25,11 @@ public abstract class AbstractDataDisplayer implements DataDisplayer {
     protected String renderer;
     protected List<DataDisplayerColumn> columnList = new ArrayList<DataDisplayerColumn>();
 
+    protected boolean filterEnabled = false;
+    protected boolean filterSelfApplyEnabled = false;
+    protected boolean filterNotificationEnabled = false;
+    protected boolean filterListeningEnabled = false;
+
     public String getTitle() {
         return title;
     }
@@ -55,5 +60,37 @@ public abstract class AbstractDataDisplayer implements DataDisplayer {
 
     public void setColumnList(List<DataDisplayerColumn> columnList) {
         this.columnList = columnList;
+    }
+
+    public boolean isFilterEnabled() {
+        return filterEnabled;
+    }
+
+    public void setFilterEnabled(boolean filterEnabled) {
+        this.filterEnabled = filterEnabled;
+    }
+
+    public boolean isFilterSelfApplyEnabled() {
+        return filterSelfApplyEnabled;
+    }
+
+    public void setFilterSelfApplyEnabled(boolean filterSelfApplyEnabled) {
+        this.filterSelfApplyEnabled = filterSelfApplyEnabled;
+    }
+
+    public boolean isFilterNotificationEnabled() {
+        return filterNotificationEnabled;
+    }
+
+    public void setFilterNotificationEnabled(boolean filterNotificationEnabled) {
+        this.filterNotificationEnabled = filterNotificationEnabled;
+    }
+
+    public boolean isFilterListeningEnabled() {
+        return filterListeningEnabled;
+    }
+
+    public void setFilterListeningEnabled(boolean filterListeningEnabled) {
+        this.filterListeningEnabled = filterListeningEnabled;
     }
 }

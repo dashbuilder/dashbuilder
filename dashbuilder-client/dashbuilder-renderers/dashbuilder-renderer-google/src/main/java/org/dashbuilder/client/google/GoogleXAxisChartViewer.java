@@ -67,7 +67,7 @@ public abstract class GoogleXAxisChartViewer<T extends XAxisChartDisplayer> exte
     public SelectHandler createSelectHandler(final CoreChartWidget selectable) {
         return new SelectHandler() {
             public void onSelect(SelectEvent event) {
-                if (!isSelectionEnabled()) return;
+                if (!dataDisplayer.isFilterEnabled()) return;
 
                 JsArray<Selection> selections = selectable.getSelection();
                 for (int i = 0; i < selections.length(); i++) {
@@ -86,7 +86,7 @@ public abstract class GoogleXAxisChartViewer<T extends XAxisChartDisplayer> exte
     public SelectHandler createSelectHandler(final GeoChart selectable) {
         return new SelectHandler() {
             public void onSelect(SelectEvent event) {
-                if (!isSelectionEnabled()) return;
+                if (!dataDisplayer.isFilterEnabled()) return;
 
                 JsArray<Selection> selections = selectable.getSelection();
                 for (int i = 0; i < selections.length(); i++) {
@@ -103,7 +103,7 @@ public abstract class GoogleXAxisChartViewer<T extends XAxisChartDisplayer> exte
     }
 
     protected Widget createCurrentSelectionWidget() {
-        if (!isSelectionEnabled()) return null;
+        if (!dataDisplayer.isFilterEnabled()) return null;
 
         List<String> selectedValues = filterValues(googleTable.getColumnId(0));
         if (selectedValues == null || selectedValues.isEmpty()) return null;
