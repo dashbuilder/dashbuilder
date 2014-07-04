@@ -4,6 +4,4 @@
 <module>
   <inherits name="org.dashbuilder.DisplayerClient"/>
 
-  <inherits name="com.googlecode.gwt.charts.Charts"/>
-
 </module>
