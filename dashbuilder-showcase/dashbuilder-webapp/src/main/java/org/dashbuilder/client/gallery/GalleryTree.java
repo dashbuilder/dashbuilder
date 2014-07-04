@@ -23,7 +23,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import com.google.gwt.user.client.ui.Widget;
-import org.dashbuilder.client.kpi.ClientKPIManager;
+import org.dashbuilder.kpi.client.ClientKPIManager;
 import org.dashbuilder.client.sales.widgets.SalesExpectedByDate;
 import org.dashbuilder.client.sales.widgets.SalesDistributionByCountry;
 import org.dashbuilder.client.sales.widgets.SalesGoals;

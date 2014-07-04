@@ -19,7 +19,7 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
-import org.dashbuilder.client.displayer.DataViewerCoordinator;
+import org.dashbuilder.displayer.client.DataViewerCoordinator;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
 import org.uberfire.client.annotations.WorkbenchPartView;
 import org.uberfire.client.annotations.WorkbenchScreen;

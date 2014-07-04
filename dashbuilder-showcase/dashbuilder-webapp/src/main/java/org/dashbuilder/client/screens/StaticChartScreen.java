@@ -18,7 +18,7 @@ package org.dashbuilder.client.screens;
 import javax.enterprise.context.ApplicationScoped;
 
 import com.google.gwt.user.client.ui.IsWidget;
-import org.dashbuilder.client.kpi.KPIViewer;
+import org.dashbuilder.kpi.client.KPIViewer;
 import org.dashbuilder.dataset.DataSetFactory;
 import org.dashbuilder.kpi.KPI;
 import org.dashbuilder.kpi.KPIFactory;

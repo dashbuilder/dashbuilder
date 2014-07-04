@@ -22,7 +22,7 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
-import org.dashbuilder.client.kpi.ClientKPIManager;
+import org.dashbuilder.kpi.client.ClientKPIManager;
 import org.dashbuilder.kpi.KPI;
 import org.dashbuilder.kpi.KPIFactory;
 

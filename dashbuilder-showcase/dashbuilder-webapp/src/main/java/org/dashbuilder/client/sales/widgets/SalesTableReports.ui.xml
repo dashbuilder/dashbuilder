@@ -2,7 +2,7 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
              xmlns:g="urn:import:com.google.gwt.user.client.ui"
              xmlns:b="urn:import:com.github.gwtbootstrap.client.ui"
-             xmlns:my="urn:import:org.dashbuilder.client.displayer">
+             xmlns:my="urn:import:org.dashbuilder.displayer.client">
 
   <g:VerticalPanel spacing="10">
     <g:HorizontalPanel spacing="10">

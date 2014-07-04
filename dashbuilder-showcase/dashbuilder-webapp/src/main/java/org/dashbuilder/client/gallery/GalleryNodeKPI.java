@@ -16,7 +16,7 @@
 package org.dashbuilder.client.gallery;
 
 import com.google.gwt.user.client.ui.Widget;
-import org.dashbuilder.client.kpi.KPIViewer;
+import org.dashbuilder.kpi.client.KPIViewer;
 import org.dashbuilder.kpi.KPI;
 
 /**

@@ -23,4 +23,6 @@
   <inherits name="org.dashbuilder.CommonClient"/>
   <inherits name="org.dashbuilder.DatasetAPI"/>
 
+  <source path='dataset'/>
+
 </module>

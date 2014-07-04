@@ -22,7 +22,7 @@ import org.dashbuilder.dataset.DataSetManager;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetLookup;
 import org.dashbuilder.dataset.DataSetMetadata;
-import org.dashbuilder.service.DataSetLookupService;
+import org.dashbuilder.dataset.DataSetLookupService;
 import org.jboss.errai.bus.server.annotations.Service;
 
 /**

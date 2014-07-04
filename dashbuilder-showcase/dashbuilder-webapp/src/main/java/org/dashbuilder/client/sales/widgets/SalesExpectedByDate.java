@@ -20,9 +20,9 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
-import org.dashbuilder.client.displayer.DataViewer;
-import org.dashbuilder.client.displayer.DataViewerCoordinator;
-import org.dashbuilder.client.displayer.DataViewerHelper;
+import org.dashbuilder.displayer.client.DataViewer;
+import org.dashbuilder.displayer.client.DataViewerCoordinator;
+import org.dashbuilder.displayer.client.DataViewerHelper;
 import org.dashbuilder.dataset.DataSetFactory;
 import org.dashbuilder.displayer.DisplayerFactory;
 

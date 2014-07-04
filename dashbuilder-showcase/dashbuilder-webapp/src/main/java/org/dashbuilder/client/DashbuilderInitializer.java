@@ -20,15 +20,15 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
-import org.dashbuilder.client.displayer.RendererLibLocator;
+import org.dashbuilder.displayer.client.RendererLibLocator;
 import org.dashbuilder.client.sales.SalesDataSetGenerator;
-import org.dashbuilder.client.dataset.DataSetLookupClient;
-import org.dashbuilder.client.google.GoogleRenderer;
+import org.dashbuilder.dataset.client.DataSetLookupClient;
+import org.dashbuilder.renderer.google.client.GoogleRenderer;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetManager;
 import org.dashbuilder.displayer.DataDisplayerType;
 import org.dashbuilder.client.sales.SalesConstants;
-import org.dashbuilder.service.DataSetLookupService;
+import org.dashbuilder.dataset.DataSetLookupService;
 import org.jboss.errai.common.client.api.Caller;
 
 /**

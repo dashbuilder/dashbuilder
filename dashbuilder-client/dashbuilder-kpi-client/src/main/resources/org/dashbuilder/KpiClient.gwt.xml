@@ -8,4 +8,6 @@
 
   <inherits name="org.dashbuilder.KpiAPI"/>
 
+  <source path='kpi'/>
+
 </module>

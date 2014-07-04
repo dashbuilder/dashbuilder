@@ -32,7 +32,6 @@ import org.jboss.errai.bus.client.api.ClientMessageBus;
 import org.jboss.errai.ioc.client.api.EntryPoint;
 import org.jboss.errai.ioc.client.container.IOCBeanDef;
 import org.jboss.errai.ioc.client.container.SyncBeanManager;
-import org.uberfire.client.UberFirePreferences;
 import org.uberfire.client.mvp.ActivityManager;
 import org.uberfire.client.mvp.PerspectiveActivity;
 import org.uberfire.client.mvp.PlaceManager;
@@ -72,10 +71,6 @@ public class ShowcaseEntryPoint {
 
     @PostConstruct
     public void startApp() {
-        UberFirePreferences.setProperty("org.uberfire.client.workbench.clone.ou.mandatory.disable", true);
-        //todo {porcelli} context button navigator style is broken, disabling for now
-        UberFirePreferences.setProperty("org.uberfire.client.workbench.widgets.listbar.context.disable", true);
-
         // Init the Dashbuilder subsystem
         dashbuilderInitializer.init();
 

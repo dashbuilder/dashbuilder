@@ -23,4 +23,5 @@
   <inherits name="org.dashbuilder.DatasetClient"/>
   <inherits name="org.dashbuilder.DisplayerAPI"/>
 
+  <source path='displayer'/>
 </module>
