@@ -39,6 +39,7 @@ import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.group.DataSetGroup;
 import org.dashbuilder.dataset.sort.SortOrder;
 import org.dashbuilder.displayer.TableDisplayer;
+import org.dashbuilder.renderer.google.client.resources.i18n.GoogleViewerConstants;
 
 public class GoogleTableViewer extends GoogleViewer<TableDisplayer> {
 
@@ -195,7 +196,7 @@ public class GoogleTableViewer extends GoogleViewer<TableDisplayer> {
                 gotoPage(currentPage - 1);
             }
         }, ClickEvent.getType());
-        Tooltip leftPageTooltip = new Tooltip("Go to previous page");
+        Tooltip leftPageTooltip = new Tooltip( GoogleViewerConstants.INSTANCE.googleTableViewer_gotoPreviousPage() );
         leftPageTooltip.add(leftPageIcon);
 
         Icon rightPageIcon = new Icon(IconType.ANGLE_RIGHT);
@@ -208,7 +209,7 @@ public class GoogleTableViewer extends GoogleViewer<TableDisplayer> {
                 gotoPage(currentPage + 1);
             }
         }, ClickEvent.getType());
-        Tooltip rightPageTooltip = new Tooltip("Go to next page");
+        Tooltip rightPageTooltip = new Tooltip( GoogleViewerConstants.INSTANCE.googleTableViewer_gotoNextPage() );
         rightPageTooltip.add(rightPageIcon);
 
         Icon firstPageIcon = new Icon(IconType.DOUBLE_ANGLE_LEFT);
@@ -221,7 +222,7 @@ public class GoogleTableViewer extends GoogleViewer<TableDisplayer> {
                 gotoPage(1);
             }
         }, ClickEvent.getType());
-        Tooltip firstPageTooltip = new Tooltip("Go to first page");
+        Tooltip firstPageTooltip = new Tooltip( GoogleViewerConstants.INSTANCE.googleTableViewer_gotoFirstPage() );
         firstPageTooltip.add(firstPageIcon);
 
         Icon lastPageIcon = new Icon(IconType.DOUBLE_ANGLE_RIGHT);
@@ -234,28 +235,29 @@ public class GoogleTableViewer extends GoogleViewer<TableDisplayer> {
                 gotoPage(numberOfPages);
             }
         }, ClickEvent.getType());
-        Tooltip lastPageTooltip = new Tooltip("Go to last page");
+        Tooltip lastPageTooltip = new Tooltip( GoogleViewerConstants.INSTANCE.googleTableViewer_gotoLastPage() );
         lastPageTooltip.add(lastPageIcon);
 
         Label totalPages = null;
-        StringBuilder sb = new StringBuilder();
         if ( showTotalPagesHint ) {
-            sb.append( "Pages " );
-            sb.append( getLeftMostPageNumber() ).append("-").append( getRightMostPageNumber() );
-            sb.append( " of ").append( numberOfPages );
-            totalPages = new Label( sb.toString() );
+            totalPages = new Label(
+                                    GoogleViewerConstants.INSTANCE.googleTableViewer_pages(
+                                        Integer.toString( getLeftMostPageNumber() ),
+                                        Integer.toString( getRightMostPageNumber() ),
+                                        Integer.toString( numberOfPages ) )
+                                  );
         }
         Label totalRows = null;
-        sb = new StringBuilder();
         if ( numberOfRows == 0) {
-            sb.append( "No data" );
-            totalRows = new Label( sb.toString() );
+            totalRows = new Label( GoogleViewerConstants.INSTANCE.googleTableViewer_noData() );
         } else if ( showTotalRowsHint ) {
-            sb.append( "Rows " );
             int currentRowsShown = currentPage * pageSize > numberOfRows ? numberOfRows : currentPage * pageSize;
-            sb.append( ( ( currentPage - 1 ) * pageSize) + 1 ).append("-").append( currentRowsShown );
-            sb.append( " of ").append( numberOfRows );
-            totalRows = new Label( sb.toString() );
+            totalRows = new Label(
+                                    GoogleViewerConstants.INSTANCE.googleTableViewer_rows(
+                                        Integer.toString( ( ( currentPage - 1 ) * pageSize) + 1 ),
+                                        Integer.toString( currentRowsShown ),
+                                        Integer.toString( numberOfRows ) )
+                                 );
         }
 
         if ( numberOfPages > 1) {

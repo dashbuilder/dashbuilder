@@ -55,6 +55,7 @@ import org.dashbuilder.dataset.DataSet;
 
 import org.dashbuilder.dataset.sort.SortOrder;
 import org.dashbuilder.displayer.DataDisplayerColumn;
+import org.dashbuilder.renderer.uftable.client.resources.i18n.UFTableConstants;
 import org.kie.uberfire.client.tables.PagedTable;
 
 import static com.google.gwt.dom.client.BrowserEvents.CLICK;
@@ -93,7 +94,7 @@ public class UFTableViewer extends AbstractDataViewer<org.dashbuilder.displayer.
                 displayMessage( "ERROR: DataSetHandler property not set" );
             } else {
                 try {
-                    displayMessage( "Initializing '" + dataDisplayer.getTitle() + "'..." );
+                    displayMessage( UFTableConstants.INSTANCE.ufTableViewer_initializing() + " '" + dataDisplayer.getTitle() + "'..." );
                     lookupDataSet(0, new DataSetReadyCallback() {
 
                         public void callback( DataSet dataSet ) {
@@ -204,7 +205,7 @@ public class UFTableViewer extends AbstractDataViewer<org.dashbuilder.displayer.
         ufPagedTable.setHeight( ( height > ( Window.getClientHeight() - this.getAbsoluteTop() ) ? ( Window.getClientHeight() - this.getAbsoluteTop() ) : height ) + "px" );
         int left = this.getAbsoluteLeft() + this.getOffsetWidth();
         ufPagedTable.setWidth( Window.getClientWidth() * ( left == 0 ? 0.8 : 1 )  + "px" );
-        ufPagedTable.setEmptyTableCaption( "No data available" );
+        ufPagedTable.setEmptyTableCaption( UFTableConstants.INSTANCE.ufTableViewer_noDataAvailable() );
 
         List<DataDisplayerColumn> displayerColumns = dataDisplayer.getColumnList();
         if ( !displayerColumns.isEmpty() ) {

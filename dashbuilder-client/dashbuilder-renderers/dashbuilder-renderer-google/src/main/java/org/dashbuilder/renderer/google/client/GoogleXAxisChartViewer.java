@@ -33,6 +33,7 @@ import com.googlecode.gwt.charts.client.geochart.GeoChart;
 import com.googlecode.gwt.charts.client.options.ChartArea;
 import org.dashbuilder.displayer.DataDisplayerColumn;
 import org.dashbuilder.displayer.XAxisChartDisplayer;
+import org.dashbuilder.renderer.google.client.resources.i18n.GoogleViewerConstants;
 
 public abstract class GoogleXAxisChartViewer<T extends XAxisChartDisplayer> extends GoogleViewer<T> {
 
@@ -113,7 +114,7 @@ public abstract class GoogleXAxisChartViewer<T extends XAxisChartDisplayer> exte
         for (String interval : selectedValues) {
             panel.add(new Label(interval));
         }
-        Anchor anchor = new Anchor("reset");
+        Anchor anchor = new Anchor( GoogleViewerConstants.INSTANCE.googleViewer_resetAnchor() );
         panel.add(anchor);
         anchor.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {

@@ -27,6 +27,7 @@ import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetLookup;
 import org.dashbuilder.dataset.DataSetMetadata;
 import org.dashbuilder.dataset.DataSetLookupService;
+import org.dashbuilder.dataset.client.resources.i18n.DataSetConstants;
 import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.common.client.api.RemoteCallback;
 import org.uberfire.workbench.events.NotificationEvent;
@@ -208,7 +209,9 @@ public class DataSetLookupClient {
             this.dataSetMetadata = metadata;
 
             pushRequestMap.put(dataSetMetadata.getUUID(), this);
-            notification.fire(new NotificationEvent("Loading " + metadata.getEstimatedSize() + " Kb data set from server...", INFO));
+            notification.fire(
+                    new NotificationEvent( DataSetConstants.INSTANCE.dsLookupClient_loadingFromServer( Integer.toString( metadata.getEstimatedSize() ) ), INFO)
+            );
         }
 
         public void registerLookup(DataSetLookup lookup, DataSetReadyCallback listener) {
@@ -219,7 +222,7 @@ public class DataSetLookupClient {
             pushRequestMap.remove(dataSetMetadata.getUUID());
 
             clientDataSetManager.registerDataSet(dataSet);
-            notification.fire(new NotificationEvent("Data set successfully loaded.", SUCCESS));
+            notification.fire(new NotificationEvent( DataSetConstants.INSTANCE.dsLookupClient_successfullyLoaded(), SUCCESS));
 
             for (DataSetLookupListenerPair pair : listenerList) {
                 DataSet result = clientDataSetManager.lookupDataSet(pair.lookup);
@@ -230,7 +233,7 @@ public class DataSetLookupClient {
         public void notFound() {
             pushRequestMap.remove(dataSetMetadata.getUUID());
 
-            notification.fire(new NotificationEvent("Data set NOT found in server.", ERROR));
+            notification.fire(new NotificationEvent(DataSetConstants.INSTANCE.dsLookupClient_dsNotFoundInServer(), ERROR));
             for (DataSetLookupListenerPair pair : listenerList) {
                 pair.listener.notFound();
             }
