@@ -15,6 +15,11 @@
  */
 package org.dashbuilder.client.gallery;
 
+import com.google.gwt.user.client.ui.SimplePanel;
+import org.dashbuilder.displayer.client.DisplayerEditorListener;
+import org.dashbuilder.displayer.client.DisplayerEditorLocator;
+import org.dashbuilder.displayer.client.DisplayerEditor;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.kpi.client.KPIViewer;
 import org.dashbuilder.kpi.KPI;
@@ -25,10 +30,17 @@ import org.dashbuilder.kpi.KPI;
 public class GalleryNodeKPI extends GalleryNode {
 
     protected KPI kpi;
+    protected boolean editEnabled = false;
 
     public GalleryNodeKPI(String name, KPI kpi) {
         super(name);
         this.kpi = kpi;
+    }
+
+    public GalleryNodeKPI(String name, boolean editEnabled, KPI kpi) {
+        super(name);
+        this.kpi = kpi;
+        this.editEnabled = editEnabled;
     }
 
     public KPI getKpi() {
@@ -39,9 +51,38 @@ public class GalleryNodeKPI extends GalleryNode {
         this.kpi = kpi;
     }
 
+    public boolean isEditEnabled() {
+        return editEnabled;
+    }
+
+    public void setEditEnabled(boolean editEnabled) {
+        this.editEnabled = editEnabled;
+    }
+
     protected Widget createWidget() {
-        KPIViewer viewer = new KPIViewer(kpi);
-        viewer.draw();
-        return viewer;
+        if (!isEditEnabled()) {
+            return new KPIViewer(kpi).draw();
+        }
+
+        DisplayerEditor editor = DisplayerEditorLocator.get().lookupEditor(kpi.getDataDisplayer());
+
+        SimplePanel editorPanel = new SimplePanel();
+        editorPanel.setWidth("200px");
+        editorPanel.add(editor);
+
+        final SimplePanel viewerPanel = new SimplePanel();
+        viewerPanel.add(new KPIViewer(kpi).draw());
+
+        editor.setListener(new DisplayerEditorListener() {
+            public void onDisplayerChanged(DisplayerEditor editor) {
+                viewerPanel.clear();
+                viewerPanel.add(new KPIViewer(kpi).draw());
+            }
+        });
+
+        HorizontalPanel panel = new HorizontalPanel();
+        panel.add(editorPanel);
+        panel.add(viewerPanel);
+        return panel;
     }
 }

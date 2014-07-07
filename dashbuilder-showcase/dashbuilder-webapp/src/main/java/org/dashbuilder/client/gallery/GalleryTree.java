@@ -117,7 +117,7 @@ public class GalleryTree {
         GalleryNodeList nodeList = new GalleryNodeList("Pie Chart");
         mainNodes.add(nodeList);
 
-        nodeList.add(new GalleryNodeKPI("Basic",
+        nodeList.add(new GalleryNodeKPI("Basic", true,
                 KPIFactory.newPieChartKPI()
                 .dataset(SALES_OPPS)
                 .group(STATUS)

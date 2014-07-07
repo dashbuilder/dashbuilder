@@ -69,6 +69,18 @@ public class KPIViewer extends Composite {
         return this;
     }
 
+    public KPIViewer redraw() {
+        try {
+            container.clear();
+            container.add(dataViewer);
+
+            DataViewerHelper.redraw(dataViewer);
+        } catch (Exception e) {
+            displayMessage(e.getMessage());
+        }
+        return this;
+    }
+
     private void displayMessage(String msg) {
         container.clear();
         container.add(label);

@@ -48,6 +48,7 @@
           <exclude>WEB-INF/lib/dashbuilder-dataset-client-*.jar</exclude>
           <exclude>WEB-INF/lib/dashbuilder-displayer-client-*.jar</exclude>
           <exclude>WEB-INF/lib/dashbuilder-kpi-client-*.jar</exclude>
+          <exclude>WEB-INF/lib/dashbuilder-displayer-editor-*.jar</exclude>
           <exclude>WEB-INF/lib/dashbuilder-renderer-google-*.jar</exclude>
           <exclude>WEB-INF/lib/dashbuilder-renderer-uftable-*.jar</exclude>
 
