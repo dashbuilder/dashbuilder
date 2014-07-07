@@ -20,6 +20,8 @@
 <module>
   <inherits name='com.google.gwt.user.User'/>
 
+  <inherits name='org.jboss.errai.ioc.Container'/>
+
   <inherits name="org.dashbuilder.DatasetClient"/>
   <inherits name="org.dashbuilder.DisplayerAPI"/>
 

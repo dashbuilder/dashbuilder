@@ -43,4 +43,15 @@ public class DataViewerHelper {
         }
         coordinator.drawAll();
     }
+
+    /**
+     * Issues a redraw request for the given DataViewer instances.
+     */
+    public static void redraw(DataViewer... dataViewers) {
+        DataViewerCoordinator coordinator = new DataViewerCoordinator();
+        for (DataViewer dataViewer : dataViewers) {
+            coordinator.addViewer(dataViewer);
+        }
+        coordinator.redrawAll();
+    }
 }

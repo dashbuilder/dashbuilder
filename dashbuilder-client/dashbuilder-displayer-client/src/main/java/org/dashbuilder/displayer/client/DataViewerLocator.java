@@ -37,7 +37,6 @@ public class DataViewerLocator {
         return beanDef.getInstance();
     }
 
-    @Inject SyncBeanManager beanManager;
     @Inject DataSetHandlerLocator handlerLocator;
 
     /**
