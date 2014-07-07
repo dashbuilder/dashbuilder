@@ -55,7 +55,7 @@ public abstract class AbstractDisplayerEditor<T extends DataDisplayer> extends C
         this.listener = listener;
     }
 
-    protected void notityChanges() {
+    protected void notifyChanges() {
         listener.onDisplayerChanged(this);
     }
 }

@@ -49,6 +49,6 @@ public class PieChartEditor extends AbstractDisplayerEditor<PieChartDisplayer> {
     @UiHandler("showTitleCheckbox")
     void handleShowTitleCheckboxClick(ClickEvent e) {
         dataDisplayer.setTitleVisible(!dataDisplayer.isTitleVisible());
-        notityChanges();
+        notifyChanges();
     }
 }
