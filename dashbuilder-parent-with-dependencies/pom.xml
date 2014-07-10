@@ -1,19 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-  ~ Copyright 2012 JBoss Inc
-  ~
-  ~ Licensed under the Apache License, Version 2.0 (the "License");
-  ~ you may not use this file except in compliance with the License.
-  ~ You may obtain a copy of the License at
-  ~
-  ~       http://www.apache.org/licenses/LICENSE-2.0
-  ~
-  ~ Unless required by applicable law or agreed to in writing, software
-  ~ distributed under the License is distributed on an "AS IS" BASIS,
-  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  ~ See the License for the specific language governing permissions and
-  ~ limitations under the License.
-  -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
@@ -21,7 +6,7 @@
   <parent>
     <groupId>org.dashbuilder</groupId>
     <artifactId>dashbuilder-parent-metadata</artifactId>
-    <version>6.2.0-SNAPSHOT</version>
+    <version>0.1.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>dashbuilder-parent-with-dependencies</artifactId>
@@ -33,21 +18,17 @@
     All modules extend this parent, except for the boms (which are used here).
   </description>
 
-  <!-- IMPORTANT: Do not declare any build configuration here! Declare it in dashbuilder-parent-metadata. -->
-  <build>
-    <pluginManagement>
-      <plugins>
-        <plugin>
-          <groupId>org.codehaus.mojo</groupId>
-          <artifactId>gwt-maven-plugin</artifactId>
-          <version>${version.com.google.gwt}</version>
-        </plugin>
-      </plugins>
-    </pluginManagement>
-  </build>
+  <properties>
+    <version.org.jboss.integration-platform>6.0.0.CR10</version.org.jboss.integration-platform>
+    <version.org.uberfire>0.4.2-SNAPSHOT</version.org.uberfire>
+    <version.org.kie>6.2.0-SNAPSHOT</version.org.kie>
+    <version.org.mortbay.jetty>6.1.25</version.org.mortbay.jetty>
+  </properties>
 
   <dependencyManagement>
     <dependencies>
+
+      <!-- Dashbuilder -->
       <dependency>
         <groupId>org.dashbuilder</groupId>
         <artifactId>dashbuilder-bom</artifactId>
@@ -56,35 +37,13 @@
         <scope>import</scope>
       </dependency>
 
-      <!-- Runtime / Container dependencies -->
+      <!-- Integration Platform -->
       <dependency>
-        <groupId>org.slf4j</groupId>
-        <artifactId>slf4j-api</artifactId>
-        <version>${version.org.slf4j}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.slf4j</groupId>
-        <artifactId>slf4j-ext</artifactId>
-        <version>${version.org.slf4j}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>ch.qos.logback</groupId>
-        <artifactId>logback-core</artifactId>
-        <version>${version.ch.qos.logback}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>ch.qos.logback</groupId>
-        <artifactId>logback-classic</artifactId>
-        <version>${version.ch.qos.logback}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>commons-lang</groupId>
-        <artifactId>commons-lang</artifactId>
-        <version>${version.commons-lang}</version>
+        <groupId>org.jboss.integration-platform</groupId>
+        <artifactId>jboss-integration-platform-bom</artifactId>
+        <type>pom</type>
+        <version>${version.org.jboss.integration-platform}</version>
+        <scope>import</scope>
       </dependency>
 
       <!-- UberFire -->
@@ -96,174 +55,11 @@
         <scope>import</scope>
       </dependency>
 
-      <!-- KIE Extensions -->
+      <!-- KIE -->
       <dependency>
         <groupId>org.kie.uberfire</groupId>
         <artifactId>kie-uberfire-widgets-commons</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-
-      <!-- Errai -->
-      <dependency>
-        <groupId>org.jboss.errai</groupId>
-        <artifactId>errai-jboss-as-support</artifactId>
-        <version>${version.org.jboss.errai}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.jboss.errai</groupId>
-        <artifactId>errai-marshalling</artifactId>
-        <version>${version.org.jboss.errai}</version>
-        <exclusions>
-          <exclusion>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-          </exclusion>
-        </exclusions>
-      </dependency>
-
-      <dependency>
-        <groupId>org.jboss.errai</groupId>
-        <artifactId>errai-bus</artifactId>
-        <version>${version.org.jboss.errai}</version>
-        <exclusions>
-          <exclusion>
-            <groupId>javax.inject</groupId>
-            <artifactId>javax.inject</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>javax.annotation</groupId>
-            <artifactId>jsr250-api</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-          </exclusion>
-        </exclusions>
-      </dependency>
-      <dependency>
-        <groupId>org.jboss.errai</groupId>
-        <artifactId>errai-ioc</artifactId>
-        <version>${version.org.jboss.errai}</version>
-        <exclusions>
-          <exclusion>
-            <groupId>javax.inject</groupId>
-            <artifactId>javax.inject</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>javax.annotation</groupId>
-            <artifactId>jsr250-api</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-          </exclusion>
-        </exclusions>
-      </dependency>
-      <dependency>
-        <groupId>org.jboss.errai</groupId>
-        <artifactId>errai-common</artifactId>
-        <version>${version.org.jboss.errai}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.mvel</groupId>
-        <artifactId>mvel2</artifactId>
-        <version>${version.org.mvel}</version>
-      </dependency>
-
-      <!-- CDI Integration Modules -->
-      <dependency>
-        <groupId>org.jboss.errai</groupId>
-        <artifactId>errai-cdi-client</artifactId>
-        <version>${version.org.jboss.errai}</version>
-        <exclusions>
-          <exclusion>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-          </exclusion>
-        </exclusions>
-      </dependency>
-
-      <dependency>
-        <groupId>org.jboss.errai</groupId>
-        <artifactId>errai-javax-enterprise</artifactId>
-        <version>${version.org.jboss.errai}</version>
-        <exclusions>
-          <exclusion>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-          </exclusion>
-        </exclusions>
-      </dependency>
-
-      <dependency>
-        <groupId>org.jboss.errai</groupId>
-        <artifactId>errai-weld-integration</artifactId>
-        <version>${version.org.jboss.errai}</version>
-        <exclusions>
-          <exclusion>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-jdk14</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-simple</artifactId>
-          </exclusion>
-        </exclusions>
-      </dependency>
-
-      <dependency>
-        <groupId>org.jboss.errai</groupId>
-        <artifactId>errai-cdi-jetty</artifactId>
-        <version>${version.org.jboss.errai}</version>
-        <exclusions>
-          <exclusion>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-          </exclusion>
-        </exclusions>
-      </dependency>
-
-      <!-- Errai UI -->
-      <dependency>
-        <groupId>org.jboss.errai</groupId>
-        <artifactId>errai-ui</artifactId>
-        <version>${version.org.jboss.errai}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.jboss.errai</groupId>
-        <artifactId>errai-data-binding</artifactId>
-        <version>${version.org.jboss.errai}</version>
-      </dependency>
-
-      <!-- Weld Modules -->
-      <dependency>
-        <groupId>org.jboss.weld</groupId>
-        <artifactId>weld-spi</artifactId>
-        <version>${version.org.jboss.weld.weld-api}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.jboss.weld</groupId>
-        <artifactId>weld-core</artifactId>
-        <version>${version.org.jboss.weld.weld}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.jboss.weld.se</groupId>
-        <artifactId>weld-se-core</artifactId>
-        <version>${version.org.jboss.weld.weld}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.jboss.weld.servlet</groupId>
-        <artifactId>weld-servlet-core</artifactId>
-        <version>${version.org.jboss.weld.weld}</version>
+        <version>${version.org.kie}</version>
       </dependency>
 
       <!-- CDI Development Utils -->
@@ -287,111 +83,7 @@
         <version>${version.org.mortbay.jetty}</version>
       </dependency>
 
-
-      <dependency>
-        <groupId>javax.enterprise</groupId>
-        <artifactId>cdi-api</artifactId>
-        <version>${version.javax.enterprise.cdi}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>javax.servlet</groupId>
-        <artifactId>javax.servlet-api</artifactId>
-        <version>${version.javax.servlet.servlet-api}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>javax.servlet</groupId>
-        <artifactId>jsp-api</artifactId>
-        <version>${version.javax.servlet.jsp-api}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>junit</groupId>
-        <artifactId>junit</artifactId>
-        <version>${version.junit}</version>
-      </dependency>
-
-      <!-- Bootstrap -->
-      <dependency>
-        <groupId>com.github.gwtbootstrap</groupId>
-        <artifactId>gwt-bootstrap</artifactId>
-        <version>${version.com.github.gwtbootstrap}</version>
-      </dependency>
-
-      <!-- GWT and GWT Extensions -->
-      <dependency>
-        <groupId>com.google.gwt</groupId>
-        <artifactId>gwt-user</artifactId>
-        <version>${version.com.google.gwt}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>com.google.gwt.gwtmockito</groupId>
-        <artifactId>gwtmockito</artifactId>
-        <version>${version.com.google.gwt.gwtmockito}</version>
-        <scope>test</scope>
-      </dependency>
-
-      <!-- Unit testing -->
-      <dependency>
-        <groupId>org.jboss.arquillian.junit</groupId>
-        <artifactId>arquillian-junit-container</artifactId>
-        <version>${version.org.jboss.arquillian}</version>
-        <scope>test</scope>
-      </dependency>
-
-      <dependency>
-        <groupId>org.jboss.arquillian.container</groupId>
-        <artifactId>arquillian-weld-se-embedded-1.1</artifactId>
-        <version>${version.org.jboss.arquillian.container.weld}</version>
-        <scope>test</scope>
-      </dependency>
-
-      <dependency>
-        <groupId>org.jboss.shrinkwrap.resolver</groupId>
-        <artifactId>shrinkwrap-resolver-depchain</artifactId>
-        <version>${version.org.jboss.shrinkwrap.resolver}</version>
-        <type>pom</type>
-        <scope>test</scope>
-      </dependency>
-
-      <dependency>
-        <groupId>org.slf4j</groupId>
-        <artifactId>slf4j-simple</artifactId>
-        <version>${version.org.slf4j}</version>
-        <scope>test</scope>
-      </dependency>
-
     </dependencies>
   </dependencyManagement>
 
-  <dependencies>
-    <dependency>
-      <groupId>javax.inject</groupId>
-      <artifactId>javax.inject</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.mockito</groupId>
-      <artifactId>mockito-all</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.easytesting</groupId>
-      <artifactId>fest-assert-core</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <!-- this is a workaround due a bug introduced by maven-compiler-plugin v3 related to log4j dependency -->
-    <dependency>
-      <groupId>log4j</groupId>
-      <artifactId>log4j</artifactId>
-      <scope>provided</scope>
-    </dependency>
-
-  </dependencies>
 </project>
