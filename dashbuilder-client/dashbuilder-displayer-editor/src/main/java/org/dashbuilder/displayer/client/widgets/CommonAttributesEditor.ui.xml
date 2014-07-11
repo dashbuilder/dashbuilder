@@ -1,0 +1,67 @@
+<!--
+  Copyright (C) 2014 JBoss Inc
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+             xmlns:b="urn:import:com.github.gwtbootstrap.client.ui"
+             xmlns:gwt="urn:import:com.google.gwt.user.client.ui">
+
+  <ui:with field="i18n" type="org.dashbuilder.displayer.client.resources.i18n.DisplayerEditorConstants"/>
+
+  <gwt:HTMLPanel>
+
+    <table cellpadding="4">
+
+      <tr>
+        <td style="white-space: nowrap; vertical-align: middle;">
+          <gwt:Label text="{i18n.common_showTitle}"/>
+        </td>
+        <td style="padding-left: 4px; vertical-align: middle;">
+          <b:CheckBox ui:field="showTitleCheckbox" checked="true"/>
+        </td>
+      </tr>
+
+      <tr>
+        <td style="white-space: nowrap; vertical-align: middle;">
+          <gwt:Label text="{i18n.common_title}"/>
+        </td>
+        <td style="padding-left: 4px; vertical-align: middle;">
+          <b:TextBox ui:field="titleTextBox" placeholder="{i18n.common_title_placeholder}"/>
+        </td>
+      </tr>
+
+      <tr>
+        <td style="white-space: nowrap; vertical-align: middle;">
+          <gwt:Label text="{i18n.common_renderer}"/>
+        </td>
+        <td style="padding-left: 4px; vertical-align: middle;">
+          <b:ListBox ui:field="rendererListBox"/>
+        </td>
+      </tr>
+
+      <tr>
+        <td style="white-space: nowrap; vertical-align: middle;">
+          <gwt:Label text="{i18n.common_columns}"/>
+        </td>
+        <td style="padding-left: 4px; vertical-align: middle;">
+          <b:TextBox ui:field="columnsTextBox" placeholder="{i18n.common_columns_placeholder}"/>
+        </td>
+      </tr>
+
+    </table>
+
+  </gwt:HTMLPanel>
+
+</ui:UiBinder>

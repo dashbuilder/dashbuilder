@@ -19,13 +19,12 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Named;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.ui.CheckBox;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.displayer.PieChartDisplayer;
+import org.dashbuilder.displayer.client.widgets.CommonAttributesEditor;
 
 /**
  * Pie chart editor.
@@ -38,17 +37,29 @@ public class PieChartEditor extends AbstractDisplayerEditor<PieChartDisplayer> {
     private static final EditorBinder uiBinder = GWT.create(EditorBinder.class);
 
     @UiField
-    CheckBox showTitleCheckbox;
+    HorizontalPanel commonAttributesPanel;
+
+    private CommonAttributesEditor commonAttributesEditor;
 
     public PieChartEditor() {
 
         // Init the editor from the UI Binder template
         initWidget(uiBinder.createAndBindUi(this));
+
+        // TODO This nested widget setup really requires an MVP oriented approach
+        commonAttributesEditor = new CommonAttributesEditor();
+        commonAttributesPanel.add( commonAttributesEditor );
     }
 
-    @UiHandler("showTitleCheckbox")
-    void handleShowTitleCheckboxClick(ClickEvent e) {
-        dataDisplayer.setTitleVisible(!dataDisplayer.isTitleVisible());
-        notifyChanges();
+    @Override
+    public void setDataDisplayer( PieChartDisplayer dataDisplayer ) {
+        super.setDataDisplayer( dataDisplayer );
+        commonAttributesEditor.setDataDisplayer( dataDisplayer );
+    }
+
+    @Override
+    public void setListener( DisplayerEditorListener listener ) {
+        super.setListener( listener );
+        commonAttributesEditor.setListener( listener );
     }
 }

@@ -3,10 +3,7 @@
              xmlns:g="urn:import:com.google.gwt.user.client.ui">
 
   <g:VerticalPanel>
-    <g:HorizontalPanel>
-      <g:Label>Show title </g:Label>
-      <g:CheckBox ui:field="showTitleCheckbox"/>
-    </g:HorizontalPanel>
+    <g:HorizontalPanel ui:field="commonAttributesPanel" />
   </g:VerticalPanel>
 
 </ui:UiBinder>
