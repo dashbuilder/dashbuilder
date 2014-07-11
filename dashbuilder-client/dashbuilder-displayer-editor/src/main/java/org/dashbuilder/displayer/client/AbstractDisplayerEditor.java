@@ -15,20 +15,7 @@
  */
 package org.dashbuilder.displayer.client;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import com.google.gwt.user.client.ui.Composite;
-import org.dashbuilder.dataset.group.ColumnGroup;
-import org.dashbuilder.dataset.group.DataSetGroup;
-import org.dashbuilder.dataset.group.GroupStrategy;
-import org.dashbuilder.dataset.sort.ColumnSort;
-import org.dashbuilder.dataset.sort.DataSetSort;
-import org.dashbuilder.dataset.sort.SortOrder;
 import org.dashbuilder.displayer.DataDisplayer;
 
 /**

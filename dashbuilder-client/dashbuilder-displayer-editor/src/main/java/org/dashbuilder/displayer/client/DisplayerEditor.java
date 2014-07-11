@@ -24,13 +24,13 @@ import org.dashbuilder.displayer.DataDisplayer;
 public interface DisplayerEditor<T extends DataDisplayer> extends IsWidget {
 
     /**
-     * The data displayer to edit.
+     * The data displayer to be edited.
      */
     void setDataDisplayer(T dataDisplayer);
     T getDataDisplayer();
 
     /**
-     * Add a listener interested in receive events generated within this component.
+     * Add a listener interested in receiving events generated within this component.
      */
     void setListener(DisplayerEditorListener listener);
 }

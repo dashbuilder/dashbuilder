@@ -64,7 +64,7 @@ public interface DataDisplayer {
 
     /**
      * @return A List of DataDisplayerColumns that were configured for this DataDisplayer,
-     * or an empty list if none were configured. In the latter case, The DataSet will be introspected in order to
+     * or an empty list if none were configured. In the latter case, the DataSet will be introspected in order to
      * visualize the data it contains.
      * @see org.dashbuilder.displayer.DataDisplayerColumn
      */
