@@ -15,26 +15,26 @@
  */
 package org.dashbuilder.displayer.impl;
 
-import org.dashbuilder.displayer.AbstractChartDisplayer;
 import org.dashbuilder.displayer.ChartBuilder;
+import org.dashbuilder.displayer.ChartDisplayer;
 
 public abstract class AbstractChartBuilder<T extends ChartBuilder> extends AbstractDisplayerBuilder<T> implements ChartBuilder<T> {
 
     public T width(int width) {
-        ((AbstractChartDisplayer) dataDisplayer).setWidth(width);
+        ((ChartDisplayer ) dataDisplayer).setWidth(width);
         return (T) this;
     }
 
     public T height(int height) {
-        ((AbstractChartDisplayer) dataDisplayer).setHeight(height);
+        ((ChartDisplayer ) dataDisplayer).setHeight(height);
         return (T) this;
     }
 
     public T margins(int top, int bottom, int left, int right) {
-        ((AbstractChartDisplayer) dataDisplayer).setMarginTop(top);
-        ((AbstractChartDisplayer) dataDisplayer).setMarginBottom(bottom);
-        ((AbstractChartDisplayer) dataDisplayer).setMarginLeft(left);
-        ((AbstractChartDisplayer) dataDisplayer).setMarginRight(right);
+        ((ChartDisplayer ) dataDisplayer).setMarginTop(top);
+        ((ChartDisplayer ) dataDisplayer).setMarginBottom(bottom);
+        ((ChartDisplayer ) dataDisplayer).setMarginLeft(left);
+        ((ChartDisplayer ) dataDisplayer).setMarginRight(right);
         return (T) this;
     }
 }

@@ -18,60 +18,72 @@ package org.dashbuilder.displayer;
 /**
  * Base class for chart displayers.
  */
-public abstract class AbstractChartDisplayer extends AbstractDataDisplayer {
+public abstract class AbstractChartDisplayer extends AbstractDataDisplayer implements ChartDisplayer {
 
-    protected int width = 600;
-    protected int height = 300;
-    protected int marginTop = 20;
-    protected int marginBottom = 50;
-    protected int marginLeft = 80;
-    protected int marginRight = 80;
+    protected int width = DEFAULT_WIDTH;
+    protected int height = DEFAULT_HEIGHT;
+    protected int marginTop = DEFAULT_MARGINTOP;
+    protected int marginBottom = DEFAULT_MARGINBOTTOM;
+    protected int marginLeft = DEFAULT_MARGINLEFT;
+    protected int marginRight = DEFAULT_MARGINRIGHT;
 
+    @Override
     public int getWidth() {
         return width;
     }
 
-    public void setWidth(int width) {
+    @Override
+    public void setWidth( int width ) {
         this.width = width;
     }
 
+    @Override
     public int getHeight() {
         return height;
     }
 
-    public void setHeight(int height) {
+    @Override
+    public void setHeight( int height ) {
         this.height = height;
     }
 
+    @Override
     public int getMarginTop() {
         return marginTop;
     }
 
-    public void setMarginTop(int marginTop) {
+    @Override
+    public void setMarginTop( int marginTop ) {
         this.marginTop = marginTop;
     }
 
+    @Override
     public int getMarginBottom() {
         return marginBottom;
     }
 
-    public void setMarginBottom(int marginBottom) {
+    @Override
+    public void setMarginBottom( int marginBottom ) {
         this.marginBottom = marginBottom;
     }
 
+    @Override
     public int getMarginLeft() {
         return marginLeft;
     }
 
-    public void setMarginLeft(int marginLeft) {
+    @Override
+    public void setMarginLeft( int marginLeft ) {
         this.marginLeft = marginLeft;
     }
 
+    @Override
     public int getMarginRight() {
         return marginRight;
     }
 
-    public void setMarginRight(int marginRight) {
+    @Override
+    public void setMarginRight( int marginRight ) {
         this.marginRight = marginRight;
     }
 }
