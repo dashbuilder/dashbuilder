@@ -31,4 +31,15 @@ public interface DisplayerEditorConstants extends Messages {
 
     String common_columns_placeholder();
 
+    String chart_width();
+
+    String chart_height();
+
+    String chart_topMargin();
+
+    String chart_bottomMargin();
+
+    String chart_leftMargin();
+
+    String chart_rightMargin();
 }

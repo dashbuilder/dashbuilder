@@ -26,37 +26,55 @@
 
       <tr>
         <td style="white-space: nowrap; vertical-align: middle; width: 150px;">
-          <gwt:Label text="{i18n.common_showTitle}"/>
+          <gwt:Label text="{i18n.chart_width}"/>
         </td>
         <td style="padding-left: 4px; vertical-align: middle;">
-          <b:CheckBox ui:field="showTitleCheckbox" checked="true"/>
+          <b:IntegerBox ui:field="chartWidth" alignment="RIGHT"/>
         </td>
       </tr>
 
       <tr>
         <td style="white-space: nowrap; vertical-align: middle;">
-          <gwt:Label text="{i18n.common_title}"/>
+          <gwt:Label text="{i18n.chart_height}"/>
         </td>
         <td style="padding-left: 4px; vertical-align: middle;">
-          <b:TextBox ui:field="titleTextBox" placeholder="{i18n.common_title_placeholder}"/>
+          <b:IntegerBox ui:field="chartHeight" alignment="RIGHT"/>
         </td>
       </tr>
 
       <tr>
         <td style="white-space: nowrap; vertical-align: middle;">
-          <gwt:Label text="{i18n.common_renderer}"/>
+          <gwt:Label text="{i18n.chart_topMargin}"/>
         </td>
         <td style="padding-left: 4px; vertical-align: middle;">
-          <b:ListBox ui:field="rendererListBox"/>
+          <b:IntegerBox ui:field="chartTopMargin" alignment="RIGHT"/>
         </td>
       </tr>
 
       <tr>
         <td style="white-space: nowrap; vertical-align: middle;">
-          <gwt:Label text="{i18n.common_columns}"/>
+          <gwt:Label text="{i18n.chart_bottomMargin}"/>
         </td>
         <td style="padding-left: 4px; vertical-align: middle;">
-          <b:TextBox ui:field="columnsTextBox" placeholder="{i18n.common_columns_placeholder}"/>
+          <b:IntegerBox ui:field="chartBottomMargin" alignment="RIGHT"/>
+        </td>
+      </tr>
+
+      <tr>
+        <td style="white-space: nowrap; vertical-align: middle;">
+          <gwt:Label text="{i18n.chart_leftMargin}"/>
+        </td>
+        <td style="padding-left: 4px; vertical-align: middle;">
+          <b:IntegerBox ui:field="chartLeftMargin" alignment="RIGHT"/>
+        </td>
+      </tr>
+
+      <tr>
+        <td style="white-space: nowrap; vertical-align: middle;">
+          <gwt:Label text="{i18n.chart_rightMargin}"/>
+        </td>
+        <td style="padding-left: 4px; vertical-align: middle;">
+          <b:IntegerBox ui:field="chartRightMargin" alignment="RIGHT"/>
         </td>
       </tr>
 

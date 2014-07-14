@@ -25,13 +25,15 @@ import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.common.client.StringUtils;
 import org.dashbuilder.displayer.DataDisplayerColumn;
 import org.dashbuilder.displayer.PieChartDisplayer;
+import org.dashbuilder.displayer.client.widgets.ChartAttributesEditor;
 import org.dashbuilder.displayer.client.widgets.CommonAttributesEditor;
 import org.dashbuilder.displayer.impl.DataDisplayerColumnImpl;
+
+import static org.dashbuilder.displayer.ChartDisplayer.*;
 
 /**
  * Pie chart editor.
@@ -44,17 +46,15 @@ public class PieChartEditor extends AbstractDisplayerEditor<PieChartDisplayer> {
     private static final EditorBinder uiBinder = GWT.create(EditorBinder.class);
 
     @UiField
-    HorizontalPanel commonAttributesPanel;
+    CommonAttributesEditor commonAttributesEditor;
 
-    private CommonAttributesEditor commonAttributesEditor;
+    @UiField
+    ChartAttributesEditor chartAttributesEditor;
 
     public PieChartEditor() {
 
         // Init the editor from the UI Binder template
         initWidget(uiBinder.createAndBindUi(this));
-
-        // TODO This nested widget setup really requires an MVP oriented approach
-        commonAttributesEditor = new CommonAttributesEditor();
 
         commonAttributesEditor.addShowTitleChangeHandler( new ValueChangeHandler<Boolean>() {
             @Override
@@ -84,7 +84,65 @@ public class PieChartEditor extends AbstractDisplayerEditor<PieChartDisplayer> {
             }
         } );
 
-        commonAttributesPanel.add( commonAttributesEditor );
+        chartAttributesEditor.addChartWidthChangeHandler( new ValueChangeHandler<Integer>() {
+            @Override
+            public void onValueChange( ValueChangeEvent<Integer> event ) {
+                int width = DEFAULT_WIDTH;
+                if ( event.getValue() != null ) width = event.getValue();
+                dataDisplayer.setWidth( width );
+                notifyChanges();
+            }
+        } );
+
+        chartAttributesEditor.addChartHeightChangeHandler( new ValueChangeHandler<Integer>() {
+            @Override
+            public void onValueChange( ValueChangeEvent<Integer> event ) {
+                int height = DEFAULT_HEIGHT;
+                if ( event.getValue() != null ) height = event.getValue();
+                dataDisplayer.setHeight( height );
+                notifyChanges();
+            }
+        } );
+
+        chartAttributesEditor.addChartTopMarginChangeHandler( new ValueChangeHandler<Integer>() {
+            @Override
+            public void onValueChange( ValueChangeEvent<Integer> event ) {
+                int topMargin = DEFAULT_MARGINTOP;
+                if ( event.getValue() != null ) topMargin = event.getValue();
+                dataDisplayer.setMarginTop( topMargin );
+                notifyChanges();
+            }
+        } );
+
+        chartAttributesEditor.addChartBottomMarginChangeHandler( new ValueChangeHandler<Integer>() {
+            @Override
+            public void onValueChange( ValueChangeEvent<Integer> event ) {
+                int bottomMargin = DEFAULT_MARGINBOTTOM;
+                if ( event.getValue() != null ) bottomMargin = event.getValue();
+                dataDisplayer.setMarginBottom( bottomMargin );
+                notifyChanges();
+            }
+        } );
+
+        chartAttributesEditor.addChartLeftMarginChangeHandler( new ValueChangeHandler<Integer>() {
+            @Override
+            public void onValueChange( ValueChangeEvent<Integer> event ) {
+                int leftMargin = DEFAULT_MARGINLEFT;
+                if ( event.getValue() != null ) leftMargin = event.getValue();
+                dataDisplayer.setMarginLeft( leftMargin );
+                notifyChanges();
+            }
+        } );
+
+        chartAttributesEditor.addChartRightMarginChangeHandler( new ValueChangeHandler<Integer>() {
+            @Override
+            public void onValueChange( ValueChangeEvent<Integer> event ) {
+                int rightMargin = DEFAULT_MARGINRIGHT;
+                if ( event.getValue() != null ) rightMargin = event.getValue();
+                dataDisplayer.setMarginRight( rightMargin );
+                notifyChanges();
+            }
+        } );
     }
 
     @Override
@@ -93,6 +151,13 @@ public class PieChartEditor extends AbstractDisplayerEditor<PieChartDisplayer> {
         commonAttributesEditor.setIsTitleVisible( dataDisplayer.isTitleVisible() );
         commonAttributesEditor.setTitle( dataDisplayer.getTitle() );
         commonAttributesEditor.setColumns( formatColumns( dataDisplayer.getColumnList() ) );
+
+        chartAttributesEditor.setChartWidth( dataDisplayer.getWidth() );
+        chartAttributesEditor.setChartHeight( dataDisplayer.getHeight() );
+        chartAttributesEditor.setChartTopMargin( dataDisplayer.getMarginTop() );
+        chartAttributesEditor.setChartBottomMargin( dataDisplayer.getMarginBottom() );
+        chartAttributesEditor.setChartLeftMargin( dataDisplayer.getMarginLeft() );
+        chartAttributesEditor.setChartRightMargin( dataDisplayer.getMarginRight() );
     }
 
     private List<DataDisplayerColumn> parseColumns( String columns ) {
