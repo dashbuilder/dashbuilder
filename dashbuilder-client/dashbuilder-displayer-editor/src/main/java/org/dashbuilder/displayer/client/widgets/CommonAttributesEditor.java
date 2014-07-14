@@ -29,8 +29,8 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class CommonAttributesEditor extends Composite {
 
-    interface CommonEditorAttributesUIBinder extends UiBinder<Widget, CommonAttributesEditor> {}
-    private static final CommonEditorAttributesUIBinder uiBinder = GWT.create( CommonEditorAttributesUIBinder.class );
+    interface CommonAttributesEditorUIBinder extends UiBinder<Widget, CommonAttributesEditor> {}
+    private static final CommonAttributesEditorUIBinder uiBinder = GWT.create( CommonAttributesEditorUIBinder.class );
 
     @UiField
     CheckBox showTitleCheckbox;
