@@ -42,4 +42,12 @@ public interface DisplayerEditorConstants extends Messages {
     String chart_leftMargin();
 
     String chart_rightMargin();
+
+    String xaxis_showLabels();
+
+    String xaxis_angle();
+
+    String xaxis_title();
+
+    String xaxis_title_placeholder();
 }

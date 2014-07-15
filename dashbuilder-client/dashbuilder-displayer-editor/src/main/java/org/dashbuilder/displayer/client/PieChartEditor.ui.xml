@@ -36,6 +36,11 @@
               <db:ChartAttributesEditor ui:field="chartAttributesEditor"/>
             </td>
           </tr>
+          <tr>
+            <td style="white-space: nowrap; vertical-align: top;">
+              <db:XAxisChartAttributesEditor ui:field="xaxisChartAttributesEditor"/>
+            </td>
+          </tr>
         </table>
       </div>
 

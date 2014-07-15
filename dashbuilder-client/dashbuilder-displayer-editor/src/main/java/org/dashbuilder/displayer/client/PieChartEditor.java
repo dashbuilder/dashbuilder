@@ -31,9 +31,10 @@ import org.dashbuilder.displayer.DataDisplayerColumn;
 import org.dashbuilder.displayer.PieChartDisplayer;
 import org.dashbuilder.displayer.client.widgets.ChartAttributesEditor;
 import org.dashbuilder.displayer.client.widgets.CommonAttributesEditor;
+import org.dashbuilder.displayer.client.widgets.XAxisChartAttributesEditor;
 import org.dashbuilder.displayer.impl.DataDisplayerColumnImpl;
 
-import static org.dashbuilder.displayer.ChartDisplayer.*;
+import static org.dashbuilder.displayer.XAxisChartDisplayer.*;
 
 /**
  * Pie chart editor.
@@ -50,6 +51,9 @@ public class PieChartEditor extends AbstractDisplayerEditor<PieChartDisplayer> {
 
     @UiField
     ChartAttributesEditor chartAttributesEditor;
+
+    @UiField
+    XAxisChartAttributesEditor xaxisChartAttributesEditor;
 
     public PieChartEditor() {
 
@@ -143,6 +147,35 @@ public class PieChartEditor extends AbstractDisplayerEditor<PieChartDisplayer> {
                 notifyChanges();
             }
         } );
+
+        xaxisChartAttributesEditor.addXAxisShowLabelsChangeHandler( new ValueChangeHandler<Boolean>() {
+            @Override
+            public void onValueChange( ValueChangeEvent<Boolean> event ) {
+                dataDisplayer.setXAxisShowLabels( event.getValue() );
+                notifyChanges();
+            }
+        } );
+
+        xaxisChartAttributesEditor.addXAxisAngleChangeHandler( new ValueChangeHandler<Integer>() {
+            @Override
+            public void onValueChange( ValueChangeEvent<Integer> event ) {
+                int angle = DEFAULT_XAXIS_LABELS_ANGLE;
+                if (event.getValue() != null ) angle = event.getValue();
+                dataDisplayer.setXAxisLabelsAngle( angle );
+                notifyChanges();
+            }
+        } );
+
+        xaxisChartAttributesEditor.addXAxisTitleChangeHandler( new ValueChangeHandler<String>() {
+            @Override
+            public void onValueChange( ValueChangeEvent<String> event ) {
+                String title = event.getValue();
+                if ( title != null ) {
+                    dataDisplayer.setXAxisTitle( title );
+                    notifyChanges();
+                }
+            }
+        } );
     }
 
     @Override
@@ -158,6 +191,10 @@ public class PieChartEditor extends AbstractDisplayerEditor<PieChartDisplayer> {
         chartAttributesEditor.setChartBottomMargin( dataDisplayer.getMarginBottom() );
         chartAttributesEditor.setChartLeftMargin( dataDisplayer.getMarginLeft() );
         chartAttributesEditor.setChartRightMargin( dataDisplayer.getMarginRight() );
+
+        xaxisChartAttributesEditor.setXaxisShowLabels( dataDisplayer.isXAxisShowLabels() );
+        xaxisChartAttributesEditor.setXaxisLabelsAngle( dataDisplayer.getXAxisLabelsAngle() );
+        xaxisChartAttributesEditor.setXaxisTitle( dataDisplayer.getXAxisTitle() );
     }
 
     private List<DataDisplayerColumn> parseColumns( String columns ) {
