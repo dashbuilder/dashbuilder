@@ -18,7 +18,7 @@ package org.dashbuilder.displayer;
 import org.jboss.errai.common.client.api.annotations.Portable;
 
 @Portable
-public class MapChartDisplayer extends XAxisChartDisplayer {
+public class MapChartDisplayer extends AbstractXAxisChartDisplayer {
 
     @Override
     public DataDisplayerType getType() {

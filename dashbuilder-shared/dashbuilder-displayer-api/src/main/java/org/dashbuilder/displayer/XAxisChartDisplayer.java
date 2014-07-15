@@ -15,6 +15,20 @@
  */
 package org.dashbuilder.displayer;
 
-public abstract class XAxisChartDisplayer extends AbstractChartDisplayer {
+public interface XAxisChartDisplayer extends ChartDisplayer {
 
+    public static boolean DEFAULT_XAXIS_SHOW_LABELS = true;
+    public static int DEFAULT_XAXIS_LABELS_ANGLE = 0;
+
+    boolean isXAxisShowLabels();
+
+    void setXAxisShowLabels( boolean showXAxisLabels );
+
+    int getXAxisLabelsAngle();
+
+    void setXAxisLabelsAngle( int angle );
+
+    String getXAxisTitle();
+
+    void setXAxisTitle( String title );
 }

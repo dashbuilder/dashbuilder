@@ -31,11 +31,11 @@ import com.googlecode.gwt.charts.client.event.SelectEvent;
 import com.googlecode.gwt.charts.client.event.SelectHandler;
 import com.googlecode.gwt.charts.client.geochart.GeoChart;
 import com.googlecode.gwt.charts.client.options.ChartArea;
+import org.dashbuilder.displayer.AbstractXAxisChartDisplayer;
 import org.dashbuilder.displayer.DataDisplayerColumn;
-import org.dashbuilder.displayer.XAxisChartDisplayer;
 import org.dashbuilder.renderer.google.client.resources.i18n.GoogleViewerConstants;
 
-public abstract class GoogleXAxisChartViewer<T extends XAxisChartDisplayer> extends GoogleViewer<T> {
+public abstract class GoogleXAxisChartViewer<T extends AbstractXAxisChartDisplayer> extends GoogleViewer<T> {
 
     public static final String[] COLOR_ARRAY = new String[] {"aqua", "red", "orange", "brown", "coral", "blue", "fuchsia", "gold",
             "green", "lime", "magenta", "pink", "silver", "yellow"};

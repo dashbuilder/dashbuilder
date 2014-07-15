@@ -18,7 +18,7 @@ package org.dashbuilder.displayer;
 import org.jboss.errai.common.client.api.annotations.Portable;
 
 @Portable
-public class BarChartDisplayer extends XAxisChartDisplayer {
+public class BarChartDisplayer extends AbstractXAxisChartDisplayer {
 
     protected boolean threeDimension;
     protected boolean horizontal;
