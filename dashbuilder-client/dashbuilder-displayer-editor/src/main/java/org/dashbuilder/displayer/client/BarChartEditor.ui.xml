@@ -15,16 +15,29 @@
 -->
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+             xmlns:b="urn:import:com.github.gwtbootstrap.client.ui"
              xmlns:db="urn:import:org.dashbuilder.displayer.client"
              xmlns:g="urn:import:com.google.gwt.user.client.ui">
 
   <g:HTMLPanel>
 
-    <div class="well">
+      <div class="well">
 
-      <db:XAxisChartEditorBase ui:field="xAxisChartEditorBase" />
+        <db:XAxisChartEditorBase ui:field="xAxisChartEditorBase" />
 
-    </div>
+        <!-- TODO complete -->
+
+        <table cellpadding="4">
+          <tr>
+            <td style="white-space: nowrap; vertical-align: middle; width: 150px;">
+              <g:Label text="TEST"/>
+            </td>
+            <td style="padding-left: 4px; vertical-align: middle;">
+              <b:CheckBox ui:field="testCheckbox" checked="true"/>
+            </td>
+          </tr>
+        </table>
+      </div>
 
   </g:HTMLPanel>
 

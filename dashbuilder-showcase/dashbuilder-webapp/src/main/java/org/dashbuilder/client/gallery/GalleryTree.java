@@ -68,7 +68,7 @@ public class GalleryTree {
         GalleryNodeList nodeList = new GalleryNodeList("Bar Chart");
         mainNodes.add(nodeList);
 
-        nodeList.add(new GalleryNodeKPI("Horizontal",
+        nodeList.add(new GalleryNodeKPI("Horizontal", true,
                 KPIFactory.newBarChartKPI()
                         .dataset(SALES_OPPS)
                         .group(PRODUCT)
@@ -80,7 +80,7 @@ public class GalleryTree {
                         .margins(10, 30, 120, 120)
                         .buildKPI()
         ));
-        nodeList.add(new GalleryNodeKPI("Vertical (3D)",
+        nodeList.add(new GalleryNodeKPI("Vertical (3D)", true,
                 KPIFactory.newBarChartKPI()
                         .dataset(SALES_OPPS)
                         .group(PRODUCT)
@@ -92,7 +92,7 @@ public class GalleryTree {
                         .margins(10, 80, 120, 120)
                         .buildKPI()
         ));
-        nodeList.add(new GalleryNodeKPI("Multiple",
+        nodeList.add(new GalleryNodeKPI("Multiple", true,
                 KPIFactory.newBarChartKPI()
                         .dataset(SALES_OPPS)
                         .group(COUNTRY, "Country")
@@ -134,7 +134,7 @@ public class GalleryTree {
         GalleryNodeList nodeList = new GalleryNodeList("Line Chart");
         mainNodes.add(nodeList);
 
-        nodeList.add(new GalleryNodeKPI("Basic",
+        nodeList.add(new GalleryNodeKPI("Basic", true,
                 KPIFactory.newLineChartKPI()
                 .dataset(SALES_OPPS)
                 .group(CLOSING_DATE, 12, MONTH)
@@ -145,7 +145,7 @@ public class GalleryTree {
                 .column("Total amount")
                 .buildKPI()
         ));
-        nodeList.add(new GalleryNodeKPI("Multiple",
+        nodeList.add(new GalleryNodeKPI("Multiple", true,
                 KPIFactory.newLineChartKPI()
                 .dataset(SALES_OPPS)
                 .group(COUNTRY, "Country")
@@ -162,7 +162,7 @@ public class GalleryTree {
                 .column("Average", "Avg")
                 .buildKPI()
         ));
-        nodeList.add(new GalleryNodeKPI("Multiple (static)",
+        nodeList.add(new GalleryNodeKPI("Multiple (static)", true,
                 KPIFactory.newLineChartKPI()
                 .title("Sales Evolution Per Year")
                 .margins(20, 80, 50, 120)
@@ -198,7 +198,7 @@ public class GalleryTree {
         GalleryNodeList nodeList = new GalleryNodeList("Area Chart");
         mainNodes.add(nodeList);
 
-        nodeList.add(new GalleryNodeKPI("Basic",
+        nodeList.add(new GalleryNodeKPI("Basic", true,
                 KPIFactory.newAreaChartKPI()
                 .dataset(SALES_OPPS)
                 .group(CLOSING_DATE, 24, MONTH)
@@ -209,7 +209,7 @@ public class GalleryTree {
                 .column("Expected amount")
                 .buildKPI()
         ));
-        nodeList.add(new GalleryNodeKPI("Fixed (per month)",
+        nodeList.add(new GalleryNodeKPI("Fixed (per month)", true,
                 KPIFactory.newAreaChartKPI()
                 .dataset(SALES_OPPS)
                 .group(CLOSING_DATE)
@@ -227,7 +227,7 @@ public class GalleryTree {
         GalleryNodeList nodeList = new GalleryNodeList("Bubble Chart");
         mainNodes.add(nodeList);
 
-        nodeList.add(new GalleryNodeKPI("Basic",
+        nodeList.add(new GalleryNodeKPI("Basic", true,
                 KPIFactory.newBubbleChartKPI()
                 .dataset(SALES_OPPS)
                 .group(COUNTRY)
@@ -298,7 +298,7 @@ public class GalleryTree {
         GalleryNodeList nodeList = new GalleryNodeList("Map");
         mainNodes.add(nodeList);
 
-        nodeList.add(new GalleryNodeKPI("GeoMap",
+        nodeList.add(new GalleryNodeKPI("GeoMap", true,
                 KPIFactory.newMapChartKPI()
                 .dataset(SALES_OPPS)
                 .group(COUNTRY)

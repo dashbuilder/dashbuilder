@@ -25,19 +25,19 @@ import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.displayer.XAxisChartDisplayer;
 
 /**
- * Pie chart editor.
+ * Area chart editor.
  */
 @ApplicationScoped
-@Named("piechart_editor")
-public class PieChartEditor extends AbstractDisplayerEditor<XAxisChartDisplayer> {
+@Named("areachart_editor")
+public class AreaChartEditor extends AbstractDisplayerEditor<XAxisChartDisplayer> {
 
-    interface EditorBinder extends UiBinder<Widget, PieChartEditor>{}
-    private static final EditorBinder uiBinder = GWT.create(EditorBinder.class);
+    interface EditorBinder extends UiBinder<Widget, AreaChartEditor> {}
+    private static final EditorBinder uiBinder = GWT.create( EditorBinder.class );
 
     @UiField( provided = true )
     XAxisChartEditorBase xAxisChartEditorBase;
 
-    public PieChartEditor() {
+    public AreaChartEditor() {
         xAxisChartEditorBase = new XAxisChartEditorBase();
 
         // Init the editor from the UI Binder template
