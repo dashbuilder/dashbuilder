@@ -20,7 +20,10 @@ import java.util.List;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Named;
 
+import com.github.gwtbootstrap.client.ui.ListBox;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -29,6 +32,7 @@ import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.common.client.StringUtils;
 import org.dashbuilder.displayer.DataDisplayerColumn;
 import org.dashbuilder.displayer.PieChartDisplayer;
+import org.dashbuilder.displayer.Position;
 import org.dashbuilder.displayer.client.widgets.ChartAttributesEditor;
 import org.dashbuilder.displayer.client.widgets.CommonAttributesEditor;
 import org.dashbuilder.displayer.client.widgets.XAxisChartAttributesEditor;
@@ -148,6 +152,24 @@ public class PieChartEditor extends AbstractDisplayerEditor<PieChartDisplayer> {
             }
         } );
 
+        chartAttributesEditor.addShowLegendChangeHandler( new ValueChangeHandler<Boolean>() {
+            @Override
+            public void onValueChange( ValueChangeEvent<Boolean> event ) {
+                dataDisplayer.setLegendShow( event.getValue() );
+                notifyChanges();
+            }
+        } );
+
+        chartAttributesEditor.addLegendPositionChangeHandler( new ChangeHandler() {
+            @Override
+            public void onChange( ChangeEvent event ) {
+                // TODO try to uncouple the changehandler implementation from the underlying widget, in this case the listbox
+                String selectedPosition = ( ( ListBox ) event.getSource() ).getValue();
+                dataDisplayer.setLegendPosition( Position.valueOf( selectedPosition ) );
+                notifyChanges();
+            }
+        } );
+
         xaxisChartAttributesEditor.addXAxisShowLabelsChangeHandler( new ValueChangeHandler<Boolean>() {
             @Override
             public void onValueChange( ValueChangeEvent<Boolean> event ) {
@@ -191,6 +213,8 @@ public class PieChartEditor extends AbstractDisplayerEditor<PieChartDisplayer> {
         chartAttributesEditor.setChartBottomMargin( dataDisplayer.getMarginBottom() );
         chartAttributesEditor.setChartLeftMargin( dataDisplayer.getMarginLeft() );
         chartAttributesEditor.setChartRightMargin( dataDisplayer.getMarginRight() );
+        chartAttributesEditor.setChartShowLegend( dataDisplayer.isLegendShow() );
+        chartAttributesEditor.setChartLegendPosition( dataDisplayer.getLegendPosition() );
 
         xaxisChartAttributesEditor.setXaxisShowLabels( dataDisplayer.isXAxisShowLabels() );
         xaxisChartAttributesEditor.setXaxisLabelsAngle( dataDisplayer.getXAxisLabelsAngle() );

@@ -43,6 +43,10 @@ public interface DisplayerEditorConstants extends Messages {
 
     String chart_rightMargin();
 
+    String chart_legendShow();
+
+    String chart_legendPosition();
+
     String xaxis_showLabels();
 
     String xaxis_angle();

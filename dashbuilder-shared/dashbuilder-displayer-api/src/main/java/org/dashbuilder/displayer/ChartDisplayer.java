@@ -26,6 +26,8 @@ public interface ChartDisplayer extends DataDisplayer {
     public static int DEFAULT_MARGINBOTTOM = 50;
     public static int DEFAULT_MARGINLEFT = 80;
     public static int DEFAULT_MARGINRIGHT = 80;
+    public static boolean DEFAULT_LEGEND_SHOW = true;
+    public static Position DEFAULT_LEGEND_POSITION = Position.RIGHT;
 
     int getWidth();
 
@@ -50,4 +52,12 @@ public interface ChartDisplayer extends DataDisplayer {
     int getMarginRight();
 
     void setMarginRight( int marginRight );
+
+    boolean isLegendShow();
+
+    void setLegendShow( boolean showLegend );
+
+    Position getLegendPosition();
+
+    void setLegendPosition( Position position );
 }

@@ -26,6 +26,8 @@ public abstract class AbstractChartDisplayer extends AbstractDataDisplayer imple
     protected int marginBottom = DEFAULT_MARGINBOTTOM;
     protected int marginLeft = DEFAULT_MARGINLEFT;
     protected int marginRight = DEFAULT_MARGINRIGHT;
+    protected boolean showLegend = DEFAULT_LEGEND_SHOW;
+    protected Position legendPosition = DEFAULT_LEGEND_POSITION;
 
     @Override
     public int getWidth() {
@@ -85,5 +87,25 @@ public abstract class AbstractChartDisplayer extends AbstractDataDisplayer imple
     @Override
     public void setMarginRight( int marginRight ) {
         this.marginRight = marginRight;
+    }
+
+    @Override
+    public boolean isLegendShow() {
+        return showLegend;
+    }
+
+    @Override
+    public void setLegendShow( boolean showLegend ) {
+        this.showLegend = showLegend;
+    }
+
+    @Override
+    public Position getLegendPosition() {
+        return legendPosition;
+    }
+
+    @Override
+    public void setLegendPosition( Position position ) {
+        this.legendPosition = position;
     }
 }

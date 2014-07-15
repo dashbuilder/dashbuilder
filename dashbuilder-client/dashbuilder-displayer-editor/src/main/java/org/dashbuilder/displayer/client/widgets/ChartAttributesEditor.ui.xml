@@ -78,6 +78,24 @@
         </td>
       </tr>
 
+      <tr>
+        <td style="white-space: nowrap; vertical-align: middle; width: 150px;">
+          <gwt:Label text="{i18n.chart_legendShow}"/>
+        </td>
+        <td style="padding-left: 4px; vertical-align: middle;">
+          <b:CheckBox ui:field="chartShowLegendCheckBox" checked="true"/>
+        </td>
+      </tr>
+
+      <tr>
+        <td style="white-space: nowrap; vertical-align: middle;">
+          <gwt:Label text="{i18n.chart_legendPosition}"/>
+        </td>
+        <td style="padding-left: 4px; vertical-align: middle;">
+          <b:ListBox ui:field="chartLegendPositionListBox"/>
+        </td>
+      </tr>
+
     </table>
 
   </gwt:HTMLPanel>

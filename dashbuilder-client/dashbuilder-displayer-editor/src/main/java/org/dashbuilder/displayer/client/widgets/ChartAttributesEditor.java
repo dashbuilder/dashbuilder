@@ -15,13 +15,18 @@
  */
 package org.dashbuilder.displayer.client.widgets;
 
+import com.github.gwtbootstrap.client.ui.CheckBox;
 import com.github.gwtbootstrap.client.ui.IntegerBox;
+import com.github.gwtbootstrap.client.ui.ListBox;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
+import org.dashbuilder.common.client.resources.i18n.CommonConstants;
+import org.dashbuilder.displayer.Position;
 
 public class ChartAttributesEditor extends Composite {
 
@@ -46,9 +51,16 @@ public class ChartAttributesEditor extends Composite {
     @UiField
     IntegerBox chartRightMarginIntegerBox;
 
+    @UiField
+    CheckBox chartShowLegendCheckBox;
+
+    @UiField
+    ListBox chartLegendPositionListBox;
+
     public ChartAttributesEditor() {
         // Init the editor from the UI Binder template
         initWidget( uiBinder.createAndBindUi( this ) );
+        initPositionList();
     }
 
     public void addChartWidthChangeHandler( ValueChangeHandler<Integer> valueChangeHandler ) {
@@ -75,6 +87,14 @@ public class ChartAttributesEditor extends Composite {
         chartRightMarginIntegerBox.addValueChangeHandler( valueChangeHandler );
     }
 
+    public void addShowLegendChangeHandler( ValueChangeHandler<Boolean> valueChangeHandler ) {
+        chartShowLegendCheckBox.addValueChangeHandler( valueChangeHandler );
+    }
+
+    public void addLegendPositionChangeHandler( ChangeHandler changeHandler ) {
+        chartLegendPositionListBox.addChangeHandler( changeHandler );
+    }
+
     public void setChartWidth( int _chartWidth ) {
         chartWidthIntegerBox.setValue( _chartWidth );
     }
@@ -97,5 +117,22 @@ public class ChartAttributesEditor extends Composite {
 
     public void setChartRightMargin( int _chartRightMargin ) {
         chartRightMarginIntegerBox.setValue( _chartRightMargin );
+    }
+
+    public void setChartShowLegend( boolean showLegend ) {
+        chartShowLegendCheckBox.setValue( showLegend );
+    }
+
+    public void setChartLegendPosition( Position legendPosition ) {
+        chartLegendPositionListBox.setSelectedValue( legendPosition.toString() );
+    }
+
+    protected void initPositionList() {
+        chartLegendPositionListBox.clear();
+        for ( Position position : Position.values()) {
+            String positionKey = position.toString();
+            String positionLabel = CommonConstants.INSTANCE.getString( positionKey );
+            chartLegendPositionListBox.addItem( positionLabel, positionKey );
+        }
     }
 }
