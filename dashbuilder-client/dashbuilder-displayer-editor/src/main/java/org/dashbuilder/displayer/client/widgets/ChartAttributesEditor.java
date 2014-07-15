@@ -29,22 +29,22 @@ public class ChartAttributesEditor extends Composite {
     private static final ChartAttributesEditorUIBinder uiBinder = GWT.create( ChartAttributesEditorUIBinder.class );
 
     @UiField
-    IntegerBox chartWidth;
+    IntegerBox chartWidthIntegerBox;
 
     @UiField
-    IntegerBox chartHeight;
+    IntegerBox chartHeightIntegerBox;
 
     @UiField
-    IntegerBox chartTopMargin;
+    IntegerBox chartTopMarginIntegerBox;
 
     @UiField
-    IntegerBox chartBottomMargin;
+    IntegerBox chartBottomMarginIntegerBox;
 
     @UiField
-    IntegerBox chartLeftMargin;
+    IntegerBox chartLeftMarginIntegerBox;
 
     @UiField
-    IntegerBox chartRightMargin;
+    IntegerBox chartRightMarginIntegerBox;
 
     public ChartAttributesEditor() {
         // Init the editor from the UI Binder template
@@ -52,50 +52,50 @@ public class ChartAttributesEditor extends Composite {
     }
 
     public void addChartWidthChangeHandler( ValueChangeHandler<Integer> valueChangeHandler ) {
-        chartWidth.addValueChangeHandler( valueChangeHandler );
+        chartWidthIntegerBox.addValueChangeHandler( valueChangeHandler );
     }
 
     public void addChartHeightChangeHandler( ValueChangeHandler<Integer> valueChangeHandler ) {
-        chartHeight.addValueChangeHandler( valueChangeHandler );
+        chartHeightIntegerBox.addValueChangeHandler( valueChangeHandler );
     }
 
     public void addChartTopMarginChangeHandler( ValueChangeHandler<Integer> valueChangeHandler ) {
-        chartTopMargin.addValueChangeHandler( valueChangeHandler );
+        chartTopMarginIntegerBox.addValueChangeHandler( valueChangeHandler );
     }
 
     public void addChartBottomMarginChangeHandler( ValueChangeHandler<Integer> valueChangeHandler ) {
-        chartBottomMargin.addValueChangeHandler( valueChangeHandler );
+        chartBottomMarginIntegerBox.addValueChangeHandler( valueChangeHandler );
     }
 
     public void addChartLeftMarginChangeHandler( ValueChangeHandler<Integer> valueChangeHandler ) {
-        chartLeftMargin.addValueChangeHandler( valueChangeHandler );
+        chartLeftMarginIntegerBox.addValueChangeHandler( valueChangeHandler );
     }
 
     public void addChartRightMarginChangeHandler( ValueChangeHandler<Integer> valueChangeHandler ) {
-        chartRightMargin.addValueChangeHandler( valueChangeHandler );
+        chartRightMarginIntegerBox.addValueChangeHandler( valueChangeHandler );
     }
 
     public void setChartWidth( int _chartWidth ) {
-        chartWidth.setValue( _chartWidth );
+        chartWidthIntegerBox.setValue( _chartWidth );
     }
 
     public void setChartHeight( int _chartHeight ) {
-        chartHeight.setValue( _chartHeight );
+        chartHeightIntegerBox.setValue( _chartHeight );
     }
 
     public void setChartTopMargin( int _chartTopMargin ) {
-        chartTopMargin.setValue( _chartTopMargin );
+        chartTopMarginIntegerBox.setValue( _chartTopMargin );
     }
 
     public void setChartBottomMargin( int _chartBottomMargin ) {
-        chartBottomMargin.setValue( _chartBottomMargin );
+        chartBottomMarginIntegerBox.setValue( _chartBottomMargin );
     }
 
     public void setChartLeftMargin( int _chartLeftMargin ) {
-        chartLeftMargin.setValue( _chartLeftMargin );
+        chartLeftMarginIntegerBox.setValue( _chartLeftMargin );
     }
 
     public void setChartRightMargin( int _chartRightMargin ) {
-        chartRightMargin.setValue( _chartRightMargin );
+        chartRightMarginIntegerBox.setValue( _chartRightMargin );
     }
 }

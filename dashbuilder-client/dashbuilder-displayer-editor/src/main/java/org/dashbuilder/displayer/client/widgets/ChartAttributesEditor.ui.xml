@@ -29,7 +29,7 @@
           <gwt:Label text="{i18n.chart_width}"/>
         </td>
         <td style="padding-left: 4px; vertical-align: middle;">
-          <b:IntegerBox ui:field="chartWidth" alignment="RIGHT"/>
+          <b:IntegerBox ui:field="chartWidthIntegerBox" alignment="RIGHT"/>
         </td>
       </tr>
 
@@ -38,7 +38,7 @@
           <gwt:Label text="{i18n.chart_height}"/>
         </td>
         <td style="padding-left: 4px; vertical-align: middle;">
-          <b:IntegerBox ui:field="chartHeight" alignment="RIGHT"/>
+          <b:IntegerBox ui:field="chartHeightIntegerBox" alignment="RIGHT"/>
         </td>
       </tr>
 
@@ -47,7 +47,7 @@
           <gwt:Label text="{i18n.chart_topMargin}"/>
         </td>
         <td style="padding-left: 4px; vertical-align: middle;">
-          <b:IntegerBox ui:field="chartTopMargin" alignment="RIGHT"/>
+          <b:IntegerBox ui:field="chartTopMarginIntegerBox" alignment="RIGHT"/>
         </td>
       </tr>
 
@@ -56,7 +56,7 @@
           <gwt:Label text="{i18n.chart_bottomMargin}"/>
         </td>
         <td style="padding-left: 4px; vertical-align: middle;">
-          <b:IntegerBox ui:field="chartBottomMargin" alignment="RIGHT"/>
+          <b:IntegerBox ui:field="chartBottomMarginIntegerBox" alignment="RIGHT"/>
         </td>
       </tr>
 
@@ -65,7 +65,7 @@
           <gwt:Label text="{i18n.chart_leftMargin}"/>
         </td>
         <td style="padding-left: 4px; vertical-align: middle;">
-          <b:IntegerBox ui:field="chartLeftMargin" alignment="RIGHT"/>
+          <b:IntegerBox ui:field="chartLeftMarginIntegerBox" alignment="RIGHT"/>
         </td>
       </tr>
 
@@ -74,7 +74,7 @@
           <gwt:Label text="{i18n.chart_rightMargin}"/>
         </td>
         <td style="padding-left: 4px; vertical-align: middle;">
-          <b:IntegerBox ui:field="chartRightMargin" alignment="RIGHT"/>
+          <b:IntegerBox ui:field="chartRightMarginIntegerBox" alignment="RIGHT"/>
         </td>
       </tr>
 
