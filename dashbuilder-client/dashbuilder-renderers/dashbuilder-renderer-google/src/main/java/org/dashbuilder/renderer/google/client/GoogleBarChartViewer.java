@@ -81,6 +81,7 @@ public class GoogleBarChartViewer extends GoogleXAxisChartViewer<BarChartDisplay
             BarChartOptions options = BarChartOptions.create();
             options.setWidth(dataDisplayer.getWidth());
             options.setHeight(dataDisplayer.getHeight());
+            options.setLegend( createChartLegend( dataDisplayer ) );
             options.setAnimation(anim);
             options.setChartArea(createChartArea());
             return options;
@@ -89,6 +90,7 @@ public class GoogleBarChartViewer extends GoogleXAxisChartViewer<BarChartDisplay
             ColumnChartOptions options = ColumnChartOptions.create();
             options.setWidth(dataDisplayer.getWidth());
             options.setHeight(dataDisplayer.getHeight());
+            options.setLegend( createChartLegend( dataDisplayer ) );
             options.setAnimation(anim);
             // TODO: options.set3D(dataDisplayer.is3d());
             options.setChartArea(createChartArea());

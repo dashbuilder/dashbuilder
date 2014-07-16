@@ -71,6 +71,7 @@ public class GoogleLineChartViewer extends GoogleXAxisChartViewer<LineChartDispl
         LineChartOptions options = LineChartOptions.create();
         options.setWidth(dataDisplayer.getWidth());
         options.setHeight(dataDisplayer.getHeight());
+        options.setLegend( createChartLegend( dataDisplayer ) );
         options.setAnimation(anim);
         options.setChartArea(createChartArea());
         return options;

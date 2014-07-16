@@ -35,7 +35,7 @@ import org.dashbuilder.displayer.AbstractXAxisChartDisplayer;
 import org.dashbuilder.displayer.DataDisplayerColumn;
 import org.dashbuilder.renderer.google.client.resources.i18n.GoogleViewerConstants;
 
-public abstract class GoogleXAxisChartViewer<T extends AbstractXAxisChartDisplayer> extends GoogleViewer<T> {
+public abstract class GoogleXAxisChartViewer<T extends AbstractXAxisChartDisplayer> extends AbstractGoogleChartViewer<T> {
 
     public static final String[] COLOR_ARRAY = new String[] {"aqua", "red", "orange", "brown", "coral", "blue", "fuchsia", "gold",
             "green", "lime", "magenta", "pink", "silver", "yellow"};

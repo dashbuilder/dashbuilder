@@ -66,6 +66,7 @@ public class GooglePieChartViewer extends GoogleXAxisChartViewer<PieChartDisplay
         options.setWidth(dataDisplayer.getWidth());
         options.setHeight(dataDisplayer.getHeight());
         options.setIs3D(true);
+        options.setLegend( createChartLegend( dataDisplayer ) );
         options.setColors(createColorArray(googleTable));
         options.setChartArea(createChartArea());
         return options;

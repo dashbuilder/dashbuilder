@@ -76,6 +76,7 @@ public class GoogleBubbleChartViewer extends GoogleXAxisChartViewer<BubbleChartD
         options.setHAxis(HAxis.create(googleTable.getColumnLabel(1)));
         options.setVAxis(VAxis.create(googleTable.getColumnLabel(2)));
         options.setChartArea(createChartArea());
+        options.setLegend( createChartLegend( dataDisplayer ) );
         options.setAnimation(anim);
         String[] colors = createColorArray(googleTable);
         if (colors.length > 0) options.setColors(colors);

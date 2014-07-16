@@ -71,6 +71,7 @@ public class GoogleAreaChartViewer extends GoogleXAxisChartViewer<AreaChartDispl
         AreaChartOptions options = AreaChartOptions.create();
         options.setWidth(dataDisplayer.getWidth());
         options.setHeight(dataDisplayer.getHeight());
+        options.setLegend( createChartLegend( dataDisplayer ) );
         options.setAnimation(anim);
         options.setChartArea(createChartArea());
         return options;
