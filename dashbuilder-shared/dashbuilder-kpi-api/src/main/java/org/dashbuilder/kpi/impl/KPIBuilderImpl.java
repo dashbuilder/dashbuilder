@@ -25,14 +25,14 @@ import org.dashbuilder.dataset.impl.DataSetLookupBuilderImpl;
 import org.dashbuilder.dataset.sort.SortOrder;
 import org.dashbuilder.dataset.date.DayOfWeek;
 import org.dashbuilder.dataset.date.Month;
-import org.dashbuilder.displayer.BarChartBuilder;
+import org.dashbuilder.displayer.BarChartSettingsBuilder;
 import org.dashbuilder.displayer.DisplayerSettings;
-import org.dashbuilder.displayer.DataDisplayerBuilder;
+import org.dashbuilder.displayer.DisplayerSettingsBuilder;
 import org.dashbuilder.displayer.DisplayerFactory;
 import org.dashbuilder.displayer.DisplayerType;
-import org.dashbuilder.displayer.MeterChartBuilder;
-import org.dashbuilder.displayer.TableDisplayerBuilder;
-import org.dashbuilder.displayer.impl.AbstractChartBuilder;
+import org.dashbuilder.displayer.MeterChartSettingsBuilder;
+import org.dashbuilder.displayer.TableDisplayerSettingsBuilder;
+import org.dashbuilder.displayer.impl.AbstractChartSettingsBuilder;
 import org.dashbuilder.kpi.KPI;
 import org.dashbuilder.kpi.KPIBuilder;
 
@@ -42,28 +42,28 @@ import org.dashbuilder.kpi.KPIBuilder;
 public class KPIBuilderImpl implements KPIBuilder {
 
     protected DataSetLookupBuilder lookupBuilder = new DataSetLookupBuilderImpl();
-    protected DataDisplayerBuilder displayerBuilder = null;
+    protected DisplayerSettingsBuilder displayerSettingsBuilder = null;
     protected DisplayerSettings displayerSettings;
     protected DataSetRef dataSetRef;
     protected KPIImpl kpi = new KPIImpl();
 
     public KPIBuilderImpl(DisplayerType displayerType) {
         if ( DisplayerType.BARCHART.equals(displayerType)) {
-            displayerBuilder = DisplayerFactory.newBarChart();
+            displayerSettingsBuilder = DisplayerFactory.newBarChart();
         } else if ( DisplayerType.PIECHART.equals(displayerType)) {
-            displayerBuilder = DisplayerFactory.newPieChart();
+            displayerSettingsBuilder = DisplayerFactory.newPieChart();
         } else if ( DisplayerType.LINECHART.equals(displayerType)) {
-            displayerBuilder = DisplayerFactory.newLineChart();
+            displayerSettingsBuilder = DisplayerFactory.newLineChart();
         } else if ( DisplayerType.AREACHART.equals(displayerType)) {
-            displayerBuilder = DisplayerFactory.newAreaChart();
+            displayerSettingsBuilder = DisplayerFactory.newAreaChart();
         } else if ( DisplayerType.BUBBLECHART.equals(displayerType)) {
-            displayerBuilder = DisplayerFactory.newBubbleChart();
+            displayerSettingsBuilder = DisplayerFactory.newBubbleChart();
         } else if ( DisplayerType.METERCHART.equals(displayerType)) {
-            displayerBuilder = DisplayerFactory.newMeterChart();
+            displayerSettingsBuilder = DisplayerFactory.newMeterChart();
         } else if ( DisplayerType.MAP.equals(displayerType)) {
-            displayerBuilder = DisplayerFactory.newMapChart();
+            displayerSettingsBuilder = DisplayerFactory.newMapChart();
         } else if ( DisplayerType.TABLE.equals(displayerType)) {
-            displayerBuilder = DisplayerFactory.newTable();
+            displayerSettingsBuilder = DisplayerFactory.newTable();
         } else {
             throw new IllegalStateException("Missing displayer type: " + displayerType);
         }
@@ -93,8 +93,8 @@ public class KPIBuilderImpl implements KPIBuilder {
         return lookupBuilder.buildLookup();
     }
 
-    public DisplayerSettings buildDisplayer() {
-        return displayerBuilder.buildDisplayer();
+    public DisplayerSettings buildDisplayerSettings() {
+        return displayerSettingsBuilder.buildDisplayerSettings();
     }
 
     public KPI buildKPI() {
@@ -102,7 +102,7 @@ public class KPIBuilderImpl implements KPIBuilder {
         else kpi.setDataSetRef(buildLookup());
 
         if ( displayerSettings != null) kpi.setDisplayerSettings( displayerSettings );
-        else kpi.setDisplayerSettings( buildDisplayer() );
+        else kpi.setDisplayerSettings( buildDisplayerSettings() );
 
         return kpi;
     }
@@ -314,100 +314,100 @@ public class KPIBuilderImpl implements KPIBuilder {
     // DisplayerSettings section
 
     public KPIBuilder title(String title) {
-        displayerBuilder.title(title);
+        displayerSettingsBuilder.title(title);
         return this;
     }
 
     public KPIBuilder titleVisible(boolean visible) {
-        displayerBuilder.titleVisible(visible);
+        displayerSettingsBuilder.titleVisible(visible);
         return this;
     }
 
     public KPIBuilder renderer(String renderer) {
-        displayerBuilder.renderer(renderer);
+        displayerSettingsBuilder.renderer(renderer);
         return this;
     }
 
     public KPIBuilder column(String displayName) {
-        displayerBuilder.column(displayName);
+        displayerSettingsBuilder.column(displayName);
         return this;
     }
 
     public KPIBuilder column(String columnId, String displayName) {
-        displayerBuilder.column(columnId, displayName);
+        displayerSettingsBuilder.column(columnId, displayName);
         return this;
     }
 
     public KPIBuilder filterOn(boolean applySelf, boolean notifyOthers, boolean receiveFromOthers) {
-        displayerBuilder.filterOn(applySelf, notifyOthers, receiveFromOthers);
+        displayerSettingsBuilder.filterOn(applySelf, notifyOthers, receiveFromOthers);
         return this;
     }
 
     public KPIBuilder filterOff() {
-        displayerBuilder.filterOff();
+        displayerSettingsBuilder.filterOff();
         return this;
     }
 
-    // Generic ChartBuilder
+    // Generic ChartSettingsBuilder
 
     public KPIBuilder width(int width) {
-        ((AbstractChartBuilder) displayerBuilder).width(width);
+        ((AbstractChartSettingsBuilder ) displayerSettingsBuilder).width(width);
         return this;
     }
 
     public KPIBuilder height(int height) {
-        ((AbstractChartBuilder) displayerBuilder).height(height);
+        ((AbstractChartSettingsBuilder ) displayerSettingsBuilder).height(height);
         return this;
     }
 
     public KPIBuilder margins(int top, int bottom, int left, int right) {
-        ((AbstractChartBuilder) displayerBuilder).margins(top, bottom, left, right);
+        ((AbstractChartSettingsBuilder ) displayerSettingsBuilder).margins(top, bottom, left, right);
         return this;
     }
 
-    // BarChartBuilder
+    // BarChartSettingsBuilder
 
     public KPIBuilder set3d(boolean d) {
-        ((BarChartBuilder) displayerBuilder).set3d(d);
+        ((BarChartSettingsBuilder ) displayerSettingsBuilder).set3d(d);
         return this;
     }
 
     public KPIBuilder vertical() {
-        ((BarChartBuilder) displayerBuilder).vertical();
+        ((BarChartSettingsBuilder ) displayerSettingsBuilder).vertical();
         return this;
     }
 
     public KPIBuilder horizontal() {
-        ((BarChartBuilder) displayerBuilder).horizontal();
+        ((BarChartSettingsBuilder ) displayerSettingsBuilder).horizontal();
         return this;
     }
 
-    // MeterChartBuilder
+    // MeterChartSettingsBuilder
 
     public KPIBuilder meter(long start, long warning, long critical, long end) {
-        ((MeterChartBuilder) displayerBuilder).meter(start, warning, critical, end);
+        ((MeterChartSettingsBuilder ) displayerSettingsBuilder).meter(start, warning, critical, end);
         return this;
     }
 
-    // TableDisplayerBuilder
+    // TableDisplayerSettingsBuilder
 
     public KPIBuilder tablePageSize(int pageSize) {
-        ((TableDisplayerBuilder) displayerBuilder).tablePageSize(pageSize);
+        ((TableDisplayerSettingsBuilder ) displayerSettingsBuilder).tablePageSize(pageSize);
         return this;
     }
 
     public KPIBuilder tableOrderEnabled(boolean enabled) {
-        ((TableDisplayerBuilder) displayerBuilder).tableOrderEnabled(enabled);
+        ((TableDisplayerSettingsBuilder ) displayerSettingsBuilder).tableOrderEnabled(enabled);
         return this;
     }
 
     public KPIBuilder tableOrderDefault(String columnId, SortOrder order) {
-        ((TableDisplayerBuilder) displayerBuilder).tableOrderDefault(columnId, order);
+        ((TableDisplayerSettingsBuilder ) displayerSettingsBuilder).tableOrderDefault(columnId, order);
         return this;
     }
 
     public KPIBuilder tableOrderDefault(String columnId, String order) {
-        ((TableDisplayerBuilder) displayerBuilder).tableOrderDefault(columnId, order);
+        ((TableDisplayerSettingsBuilder ) displayerSettingsBuilder).tableOrderDefault(columnId, order);
         return this;
     }
 }

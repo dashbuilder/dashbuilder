@@ -16,12 +16,12 @@
 package org.dashbuilder.displayer.impl;
 
 import org.dashbuilder.displayer.DisplayerSettings;
-import org.dashbuilder.displayer.MapChartBuilder;
-import org.dashbuilder.displayer.MapChartDisplayerSettings;
+import org.dashbuilder.displayer.PieChartSettingsBuilder;
+import org.dashbuilder.displayer.PieChartDisplayerSettings;
 
-public class MapChartBuilderImpl extends AbstractXAxisChartBuilder<MapChartBuilderImpl> implements MapChartBuilder<MapChartBuilderImpl> {
+public class PieChartSettingsBuilderImpl extends AbstractXAxisChartSettingsBuilder<PieChartSettingsBuilderImpl> implements PieChartSettingsBuilder<PieChartSettingsBuilderImpl> {
 
     protected DisplayerSettings createDisplayerSettings() {
-        return new MapChartDisplayerSettings();
+        return new PieChartDisplayerSettings();
     }
 }

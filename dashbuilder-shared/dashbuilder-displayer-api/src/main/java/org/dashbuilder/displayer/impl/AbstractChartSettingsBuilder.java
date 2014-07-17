@@ -15,10 +15,10 @@
  */
 package org.dashbuilder.displayer.impl;
 
-import org.dashbuilder.displayer.ChartBuilder;
+import org.dashbuilder.displayer.ChartSettingsBuilder;
 import org.dashbuilder.displayer.ChartDisplayerSettings;
 
-public abstract class AbstractChartBuilder<T extends ChartBuilder> extends AbstractDisplayerBuilder<T> implements ChartBuilder<T> {
+public abstract class AbstractChartSettingsBuilder<T extends ChartSettingsBuilder> extends AbstractDisplayerSettingsBuilder<T> implements ChartSettingsBuilder<T> {
 
     public T width(int width) {
         ((ChartDisplayerSettings ) displayerSettings ).setWidth(width);

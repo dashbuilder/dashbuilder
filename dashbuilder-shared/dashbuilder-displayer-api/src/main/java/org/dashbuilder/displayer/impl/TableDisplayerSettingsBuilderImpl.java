@@ -18,36 +18,36 @@ package org.dashbuilder.displayer.impl;
 import org.dashbuilder.dataset.sort.SortOrder;
 import org.dashbuilder.displayer.DisplayerSettings;
 import org.dashbuilder.displayer.TableDisplayerSettings;
-import org.dashbuilder.displayer.TableDisplayerBuilder;
+import org.dashbuilder.displayer.TableDisplayerSettingsBuilder;
 import org.jboss.errai.common.client.api.annotations.Portable;
 
 @Portable
-public class TableDisplayerBuilderImpl extends AbstractDisplayerBuilder<TableDisplayerBuilderImpl> implements TableDisplayerBuilder<TableDisplayerBuilderImpl> {
+public class TableDisplayerSettingsBuilderImpl extends AbstractDisplayerSettingsBuilder<TableDisplayerSettingsBuilderImpl> implements TableDisplayerSettingsBuilder<TableDisplayerSettingsBuilderImpl> {
 
     public DisplayerSettings createDisplayerSettings() {
         return new TableDisplayerSettings();
     }
 
-    public TableDisplayerBuilderImpl tablePageSize(int pageSize) {
+    public TableDisplayerSettingsBuilderImpl tablePageSize(int pageSize) {
         TableDisplayerSettings d = (TableDisplayerSettings ) displayerSettings;
         d.setPageSize(pageSize);
         return this;
     }
 
-    public TableDisplayerBuilderImpl tableOrderEnabled(boolean enabled) {
+    public TableDisplayerSettingsBuilderImpl tableOrderEnabled(boolean enabled) {
         TableDisplayerSettings d = (TableDisplayerSettings ) displayerSettings;
         d.setSortEnabled(enabled);
         return this;
     }
 
-    public TableDisplayerBuilderImpl tableOrderDefault(String columnId, SortOrder order) {
+    public TableDisplayerSettingsBuilderImpl tableOrderDefault(String columnId, SortOrder order) {
         TableDisplayerSettings d = (TableDisplayerSettings ) displayerSettings;
         d.setDefaultSortColumnId(columnId);
         d.setDefaultSortOrder(order);
         return this;
     }
 
-    public TableDisplayerBuilderImpl tableOrderDefault(String columnId, String order) {
+    public TableDisplayerSettingsBuilderImpl tableOrderDefault(String columnId, String order) {
         return tableOrderDefault(columnId, SortOrder.getByName(order));
     }
 }

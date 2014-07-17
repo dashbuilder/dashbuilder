@@ -69,7 +69,7 @@ public class SalesDistributionByCountry extends Composite {
                 .column(COUNTRY, "Country")
                 .column(EXPECTED_AMOUNT, "Expected amount")
                 .filterOn(false, true, true)
-                .buildDisplayer());
+                .buildDisplayerSettings());
 
         mapByCountry = DataViewerHelper.lookup(
                 DataSetFactory.newDSLookup()
@@ -86,7 +86,7 @@ public class SalesDistributionByCountry extends Composite {
                 .column("Number of opportunities")
                 .column("Total amount")
                 .filterOn(false, true, true)
-                .buildDisplayer());
+                .buildDisplayerSettings());
 
         tableAll = DataViewerHelper.lookup(
                 DataSetFactory.newDSLookup()
@@ -108,7 +108,7 @@ public class SalesDistributionByCountry extends Composite {
                 .column(CLOSING_DATE, "Closing")
                 .column(AMOUNT, "Amount")
                 .filterOn(false, true, true)
-                .buildDisplayer());
+                .buildDisplayerSettings());
 
         // Make that charts interact among them
         DataViewerCoordinator viewerCoordinator = new DataViewerCoordinator();

@@ -15,13 +15,13 @@
  */
 package org.dashbuilder.displayer.impl;
 
-import org.dashbuilder.displayer.AreaChartBuilder;
-import org.dashbuilder.displayer.AreaChartDisplayerSettings;
 import org.dashbuilder.displayer.DisplayerSettings;
+import org.dashbuilder.displayer.LineChartSettingsBuilder;
+import org.dashbuilder.displayer.LineChartDisplayerSettings;
 
-public class AreaChartBuilderImpl extends AbstractXAxisChartBuilder<AreaChartBuilderImpl> implements AreaChartBuilder<AreaChartBuilderImpl> {
+public class LineChartSettingsBuilderImpl extends AbstractXAxisChartSettingsBuilder<LineChartSettingsBuilderImpl> implements LineChartSettingsBuilder<LineChartSettingsBuilderImpl> {
 
     protected DisplayerSettings createDisplayerSettings() {
-        return new AreaChartDisplayerSettings();
+        return new LineChartDisplayerSettings();
     }
 }

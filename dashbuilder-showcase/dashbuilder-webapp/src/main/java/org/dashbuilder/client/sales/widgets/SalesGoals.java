@@ -70,7 +70,7 @@ public class SalesGoals extends Composite {
                 .meter(0, 15000000, 25000000, 35000000)
                 .column("Total amount")
                 .filterOn(false, true, true)
-                .buildDisplayer());
+                .buildDisplayerSettings());
 
         lineChartByDate = DataViewerHelper.lookup(
                 DataSetFactory.newDSLookup()
@@ -88,7 +88,7 @@ public class SalesGoals extends Composite {
                 .column("Total amount")
                 .column("Expected amount")
                 .filterOn(false, true, true)
-                .buildDisplayer());
+                .buildDisplayerSettings());
 
         barChartByProduct = DataViewerHelper.lookup(
                 DataSetFactory.newDSLookup()
@@ -107,7 +107,7 @@ public class SalesGoals extends Composite {
                 .margins(10, 80, 80, 10)
                 .vertical()
                 .filterOn(false, true, true)
-                .buildDisplayer());
+                .buildDisplayerSettings());
 
         barChartByEmployee = DataViewerHelper.lookup(
                 DataSetFactory.newDSLookup()
@@ -125,7 +125,7 @@ public class SalesGoals extends Composite {
                 .margins(10, 80, 80, 10)
                 .vertical()
                 .filterOn(false, true, true)
-                .buildDisplayer());
+                .buildDisplayerSettings());
 
         bubbleByCountry = DataViewerHelper.lookup(
                 DataSetFactory.newDSLookup()
@@ -145,7 +145,7 @@ public class SalesGoals extends Composite {
                 .column(COUNTRY, "Country")
                 .column(EXPECTED_AMOUNT, "Expected amount")
                 .filterOn(false, true, true)
-                .buildDisplayer());
+                .buildDisplayerSettings());
 
         // Make that charts interact among them
         DataViewerCoordinator viewerCoordinator = new DataViewerCoordinator();

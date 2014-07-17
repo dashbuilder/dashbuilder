@@ -15,50 +15,50 @@
  */
 package org.dashbuilder.displayer;
 
-import org.dashbuilder.displayer.impl.AreaChartBuilderImpl;
-import org.dashbuilder.displayer.impl.BarChartBuilderImpl;
-import org.dashbuilder.displayer.impl.BubbleChartBuilderImpl;
-import org.dashbuilder.displayer.impl.LineChartBuilderImpl;
-import org.dashbuilder.displayer.impl.MapChartBuilderImpl;
-import org.dashbuilder.displayer.impl.MeterChartBuilderImpl;
-import org.dashbuilder.displayer.impl.PieChartBuilderImpl;
-import org.dashbuilder.displayer.impl.TableDisplayerBuilderImpl;
+import org.dashbuilder.displayer.impl.AreaChartSettingsBuilderImpl;
+import org.dashbuilder.displayer.impl.BarChartSettingsBuilderImpl;
+import org.dashbuilder.displayer.impl.BubbleChartSettingsBuilderImpl;
+import org.dashbuilder.displayer.impl.LineChartSettingsBuilderImpl;
+import org.dashbuilder.displayer.impl.MapChartSettingsBuilderImpl;
+import org.dashbuilder.displayer.impl.MeterChartSettingsBuilderImpl;
+import org.dashbuilder.displayer.impl.PieChartSettingsBuilderImpl;
+import org.dashbuilder.displayer.impl.TableDisplayerSettingsBuilderImpl;
 
 /**
- * Factory class for creating  DataDisplayerBuilder instances.
+ * Factory class for creating  DisplayerSettingsBuilder instances.
  */
 public final class DisplayerFactory {
 
-    public static BarChartBuilder<BarChartBuilderImpl> newBarChart() {
-        return new BarChartBuilderImpl();
+    public static BarChartSettingsBuilder<BarChartSettingsBuilderImpl> newBarChart() {
+        return new BarChartSettingsBuilderImpl();
     }
 
-    public static PieChartBuilder<PieChartBuilderImpl> newPieChart() {
-        return new PieChartBuilderImpl();
+    public static PieChartSettingsBuilder<PieChartSettingsBuilderImpl> newPieChart() {
+        return new PieChartSettingsBuilderImpl();
     }
 
-    public static AreaChartBuilder<AreaChartBuilderImpl> newAreaChart() {
-        return new AreaChartBuilderImpl();
+    public static AreaChartSettingsBuilder<AreaChartSettingsBuilderImpl> newAreaChart() {
+        return new AreaChartSettingsBuilderImpl();
     }
 
-    public static LineChartBuilder<LineChartBuilderImpl> newLineChart() {
-        return new LineChartBuilderImpl();
+    public static LineChartSettingsBuilder<LineChartSettingsBuilderImpl> newLineChart() {
+        return new LineChartSettingsBuilderImpl();
     }
 
-    public static BubbleChartBuilder<BubbleChartBuilderImpl> newBubbleChart() {
-        return new BubbleChartBuilderImpl();
+    public static BubbleChartSettingsBuilder<BubbleChartSettingsBuilderImpl> newBubbleChart() {
+        return new BubbleChartSettingsBuilderImpl();
     }
 
-    public static MapChartBuilder<MapChartBuilderImpl> newMapChart() {
-        return new MapChartBuilderImpl();
+    public static MapChartSettingsBuilder<MapChartSettingsBuilderImpl> newMapChart() {
+        return new MapChartSettingsBuilderImpl();
     }
 
-    public static TableDisplayerBuilder<TableDisplayerBuilderImpl> newTable() {
-        return new TableDisplayerBuilderImpl();
+    public static TableDisplayerSettingsBuilder<TableDisplayerSettingsBuilderImpl> newTable() {
+        return new TableDisplayerSettingsBuilderImpl();
     }
 
-    public static MeterChartBuilder<MeterChartBuilderImpl> newMeterChart() {
-        return new MeterChartBuilderImpl();
+    public static MeterChartSettingsBuilder<MeterChartSettingsBuilderImpl> newMeterChart() {
+        return new MeterChartSettingsBuilderImpl();
     }
 
 }

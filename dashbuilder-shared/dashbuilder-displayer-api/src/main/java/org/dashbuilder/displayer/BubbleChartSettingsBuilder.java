@@ -16,15 +16,21 @@
 package org.dashbuilder.displayer;
 
 /**
- * A displayer builder for area charts
+ * A displayer builder for bubble charts.
  *
  * <pre>
- *   DisplayerFactory.newAreaChart()
- *   .title("By Product")
- *   .column("Product")
- *   .column("Total amount")
+ *   DisplayerFactory.newBubbleChart()
+ *   .title("Opportunities distribution by Country ")
+ *   .width(500).height(350)
+ *   .margins(20, 50, 50, 0)
+ *   .column(COUNTRY, "Country")
+ *   .column("opps", "Number of opportunities")
+ *   .column(PROBABILITY, "Average probability")
+ *   .column(COUNTRY, "Country")
+ *   .column(EXPECTED_AMOUNT, "Expected amount")
+ *   .buildDisplayerSettings());
  * </pre>
  */
-public interface AreaChartBuilder<T extends AreaChartBuilder> extends XAxisChartBuilder<T> {
+public interface BubbleChartSettingsBuilder<T extends BubbleChartSettingsBuilder> extends XAxisChartSettingsBuilder<T> {
 
 }

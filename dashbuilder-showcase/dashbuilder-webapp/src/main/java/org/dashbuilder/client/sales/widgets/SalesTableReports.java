@@ -78,7 +78,7 @@ public class SalesTableReports extends Composite {
                 .column(CLOSING_DATE, "Closing")
                 .column(AMOUNT, "Amount")
                 .filterOn(false, true, true)
-                .buildDisplayer());
+                .buildDisplayerSettings());
 
         tableByCountry = DataViewerHelper.lookup(
                 DataSetFactory.newDSLookup()
@@ -97,7 +97,7 @@ public class SalesTableReports extends Composite {
                 .tableOrderEnabled(true)
                 .tableOrderDefault("Total", DESCENDING)
                 .filterOn(false, true, true)
-                .buildDisplayer());
+                .buildDisplayerSettings());
 
         tableByProduct = DataViewerHelper.lookup(
                 DataSetFactory.newDSLookup()
@@ -116,7 +116,7 @@ public class SalesTableReports extends Composite {
                 .tableOrderEnabled(true)
                 .tableOrderDefault("Total", DESCENDING)
                 .filterOn(false, true, true)
-                .buildDisplayer());
+                .buildDisplayerSettings());
 
         tableBySalesman = DataViewerHelper.lookup(
                 DataSetFactory.newDSLookup()
@@ -135,7 +135,7 @@ public class SalesTableReports extends Composite {
                 .tableOrderEnabled(true)
                 .tableOrderDefault("Total", DESCENDING)
                 .filterOn(false, true, true)
-                .buildDisplayer());
+                .buildDisplayerSettings());
 
         tableByYear = DataViewerHelper.lookup(
                 DataSetFactory.newDSLookup()
@@ -154,7 +154,7 @@ public class SalesTableReports extends Composite {
                 .tableOrderEnabled(true)
                 .tableOrderDefault("Total", DESCENDING)
                 .filterOn(false, true, true)
-                .buildDisplayer());
+                .buildDisplayerSettings());
 
         // Make that charts interact among them
         DataViewerCoordinator viewerCoordinator = new DataViewerCoordinator();

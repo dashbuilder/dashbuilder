@@ -16,16 +16,16 @@
 package org.dashbuilder.displayer.impl;
 
 import org.dashbuilder.displayer.DisplayerSettings;
-import org.dashbuilder.displayer.MeterChartBuilder;
+import org.dashbuilder.displayer.MeterChartSettingsBuilder;
 import org.dashbuilder.displayer.MeterChartDisplayerSettings;
 
-public class MeterChartBuilderImpl extends AbstractChartBuilder<MeterChartBuilderImpl> implements MeterChartBuilder<MeterChartBuilderImpl> {
+public class MeterChartSettingsBuilderImpl extends AbstractChartSettingsBuilder<MeterChartSettingsBuilderImpl> implements MeterChartSettingsBuilder<MeterChartSettingsBuilderImpl> {
 
     protected DisplayerSettings createDisplayerSettings() {
         return new MeterChartDisplayerSettings();
     }
 
-    public MeterChartBuilderImpl meter(long start, long warning, long critical, long end) {
+    public MeterChartSettingsBuilderImpl meter(long start, long warning, long critical, long end) {
         MeterChartDisplayerSettings meterDisplayerSettings = (MeterChartDisplayerSettings ) displayerSettings;
         meterDisplayerSettings.setMeterStart(start);
         meterDisplayerSettings.setMeterWarning(warning);

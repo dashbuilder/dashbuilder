@@ -26,22 +26,22 @@ import org.dashbuilder.dataset.sort.SortOrder;
  *   .tablePageSize(20)
  *   .tableOrderEnabled(true)
  *   .tableOrderDefault("amount", "desc")
- *   .buildDisplayer()
+ *   .buildDisplayerSettings()
  * </pre>
  */
-public interface TableDisplayerBuilder<T extends TableDisplayerBuilder> extends DataDisplayerBuilder<T> {
+public interface TableDisplayerSettingsBuilder<T extends TableDisplayerSettingsBuilder> extends DisplayerSettingsBuilder<T> {
 
     /**
      * Sets the page size (i.e. the number of rows per page) for this table displayer.
      * @param pageSize The page size.
-     * @return The DataDisplayerBuilder instance that is being used to configure a Table data displayer.
+     * @return The DisplayerSettingsBuilder instance that is being used to configure a Table data displayer.
      */
     T tablePageSize(int pageSize);
 
     /**
      * If true, it enables the table columns to be ordered.
      * @param enabled True to enable, false to disable.
-     * @return The DataDisplayerBuilder instance that is being used to configure a Table data displayer.
+     * @return The DisplayerSettingsBuilder instance that is being used to configure a Table data displayer.
      */
     T tableOrderEnabled(boolean enabled);
 
@@ -49,7 +49,7 @@ public interface TableDisplayerBuilder<T extends TableDisplayerBuilder> extends 
      * Set the default ordering column.
      * @param columnId The identifier of the column by which the table should by default be ordered.
      * @param order The sort order to apply on the specified column.
-     * @return The DataDisplayerBuilder instance that is being used to configure a Table data displayer.
+     * @return The DisplayerSettingsBuilder instance that is being used to configure a Table data displayer.
      * @see org.dashbuilder.dataset.sort.SortOrder
      */
     T tableOrderDefault(String columnId, SortOrder order);
@@ -58,7 +58,7 @@ public interface TableDisplayerBuilder<T extends TableDisplayerBuilder> extends 
      * Set the default ordering column.
      * @param columnId The identifier of the column by which the table should by default be ordered.
      * @param order The sort order to apply on the specified column, as a String (accepted values are "asc" and "desc".
-     * @return The DataDisplayerBuilder instance that is being used to configure a Table data displayer.
+     * @return The DisplayerSettingsBuilder instance that is being used to configure a Table data displayer.
      */
     T tableOrderDefault(String columnId, String order);
 }

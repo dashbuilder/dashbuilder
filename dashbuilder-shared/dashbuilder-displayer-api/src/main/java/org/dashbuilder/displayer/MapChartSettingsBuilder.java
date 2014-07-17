@@ -13,15 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbuilder.displayer.impl;
+package org.dashbuilder.displayer;
 
-import org.dashbuilder.displayer.DisplayerSettings;
-import org.dashbuilder.displayer.PieChartBuilder;
-import org.dashbuilder.displayer.PieChartDisplayerSettings;
+/**
+ * A displayer builder for map charts
+ *
+ * <pre>
+ *   DisplayerFactory.newMapChart()
+ *   .title("By Country")
+ *   .column("Country")
+ *   .column("Total amount")
+ * </pre>
+ */
+public interface MapChartSettingsBuilder<T extends MapChartSettingsBuilder> extends XAxisChartSettingsBuilder<T> {
 
-public class PieChartBuilderImpl extends AbstractXAxisChartBuilder<PieChartBuilderImpl> implements PieChartBuilder<PieChartBuilderImpl> {
-
-    protected DisplayerSettings createDisplayerSettings() {
-        return new PieChartDisplayerSettings();
-    }
 }

@@ -24,26 +24,26 @@ package org.dashbuilder.displayer;
  *   .column("Product")
  *   .column("Total amount")
  *   .horizontal()
- *   .buildDisplayer()
+ *   .buildDisplayerSettings()
  * </pre>
  */
-public interface BarChartBuilder<T extends BarChartBuilder> extends XAxisChartBuilder<T> {
+public interface BarChartSettingsBuilder<T extends BarChartSettingsBuilder> extends XAxisChartSettingsBuilder<T> {
 
     /**
      * @param b True if the bars of this bar chart are to be shown in 3D, false if they are to be shown flat.
-     * @return The DataDisplayerBuilder instance that is being used to configure a Bar chart data displayer.
+     * @return The DisplayerSettingsBuilder instance that is being used to configure a Bar chart data displayer.
      */
     T set3d(boolean b);
 
     /**
      * Set the bar orientation to horizontal.
-     * @return The DataDisplayerBuilder instance that is being used to configure a Bar chart data displayer.
+     * @return The DisplayerSettingsBuilder instance that is being used to configure a Bar chart data displayer.
      */
     T horizontal();
 
     /**
      * Set the bar orientation to vertical.
-     * @return The DataDisplayerBuilder instance that is being used to configure a Bar chart data displayer.
+     * @return The DisplayerSettingsBuilder instance that is being used to configure a Bar chart data displayer.
      */
     T vertical();
 }

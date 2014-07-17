@@ -17,39 +17,39 @@ package org.dashbuilder.kpi;
 
 import org.dashbuilder.dataset.DataSetLookupBuilder;
 import org.dashbuilder.dataset.DataSetRef;
-import org.dashbuilder.displayer.AreaChartBuilder;
-import org.dashbuilder.displayer.BubbleChartBuilder;
+import org.dashbuilder.displayer.AreaChartSettingsBuilder;
+import org.dashbuilder.displayer.BarChartSettingsBuilder;
+import org.dashbuilder.displayer.BubbleChartSettingsBuilder;
 import org.dashbuilder.displayer.DisplayerSettings;
-import org.dashbuilder.displayer.LineChartBuilder;
-import org.dashbuilder.displayer.MapChartBuilder;
-import org.dashbuilder.displayer.MeterChartBuilder;
-import org.dashbuilder.displayer.BarChartBuilder;
-import org.dashbuilder.displayer.PieChartBuilder;
-import org.dashbuilder.displayer.TableDisplayerBuilder;
+import org.dashbuilder.displayer.LineChartSettingsBuilder;
+import org.dashbuilder.displayer.MapChartSettingsBuilder;
+import org.dashbuilder.displayer.MeterChartSettingsBuilder;
+import org.dashbuilder.displayer.PieChartSettingsBuilder;
+import org.dashbuilder.displayer.TableDisplayerSettingsBuilder;
 
 /**
  * Builder interface for building KPI instances in a friendly manner.
  *
  * @see org.dashbuilder.dataset.DataSetLookupBuilder
- * @see org.dashbuilder.displayer.PieChartBuilder
- * @see org.dashbuilder.displayer.BarChartBuilder
- * @see org.dashbuilder.displayer.AreaChartBuilder
- * @see org.dashbuilder.displayer.LineChartBuilder
- * @see org.dashbuilder.displayer.BarChartBuilder
- * @see org.dashbuilder.displayer.MapChartBuilder
- * @see org.dashbuilder.displayer.TableDisplayerBuilder
- * @see org.dashbuilder.displayer.MapChartBuilder
+ * @see PieChartSettingsBuilder
+ * @see BarChartSettingsBuilder
+ * @see AreaChartSettingsBuilder
+ * @see LineChartSettingsBuilder
+ * @see BarChartSettingsBuilder
+ * @see MapChartSettingsBuilder
+ * @see TableDisplayerSettingsBuilder
+ * @see MapChartSettingsBuilder
  */
 public interface KPIBuilder extends
         DataSetLookupBuilder<KPIBuilder>,
-        PieChartBuilder<KPIBuilder>,
-        BarChartBuilder<KPIBuilder>,
-        AreaChartBuilder<KPIBuilder>,
-        LineChartBuilder<KPIBuilder>,
-        BubbleChartBuilder<KPIBuilder>,
-        MapChartBuilder<KPIBuilder>,
-        TableDisplayerBuilder<KPIBuilder>,
-        MeterChartBuilder<KPIBuilder> {
+        PieChartSettingsBuilder<KPIBuilder>,
+        BarChartSettingsBuilder<KPIBuilder>,
+        AreaChartSettingsBuilder<KPIBuilder>,
+        LineChartSettingsBuilder<KPIBuilder>,
+        BubbleChartSettingsBuilder<KPIBuilder>,
+        MapChartSettingsBuilder<KPIBuilder>,
+        TableDisplayerSettingsBuilder<KPIBuilder>,
+        MeterChartSettingsBuilder<KPIBuilder> {
 
     /**
      * Set the KPI's UUID.

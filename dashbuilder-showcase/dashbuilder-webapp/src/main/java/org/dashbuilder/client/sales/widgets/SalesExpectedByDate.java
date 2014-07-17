@@ -76,7 +76,7 @@ public class SalesExpectedByDate extends Composite {
                 .column("Creation date")
                 .column("Amount")
                 .filterOn(false, true, true)
-                .buildDisplayer());
+                .buildDisplayerSettings());
 
         pieChartYears = DataViewerHelper.lookup(
                 DataSetFactory.newDSLookup()
@@ -90,7 +90,7 @@ public class SalesExpectedByDate extends Composite {
                 .width(200).height(150)
                 .margins(0, 0, 0, 0)
                 .filterOn(false, true, false)
-                .buildDisplayer());
+                .buildDisplayerSettings());
 
         pieChartQuarters = DataViewerHelper.lookup(
                 DataSetFactory.newDSLookup()
@@ -104,7 +104,7 @@ public class SalesExpectedByDate extends Composite {
                 .width(200).height(150)
                 .margins(0, 0, 0, 0)
                 .filterOn(false, true, false)
-                .buildDisplayer());
+                .buildDisplayerSettings());
 
         barChartDayOfWeek = DataViewerHelper.lookup(
                 DataSetFactory.newDSLookup()
@@ -119,7 +119,7 @@ public class SalesExpectedByDate extends Composite {
                 .margins(0, 20, 80, 0)
                 .horizontal()
                 .filterOn(false, true, true)
-                .buildDisplayer());
+                .buildDisplayerSettings());
 
 
         pieChartByPipeline = DataViewerHelper.lookup(
@@ -136,7 +136,7 @@ public class SalesExpectedByDate extends Composite {
                 .column("Pipeline")
                 .column("Number of opps")
                 .filterOn(false, true, true)
-                .buildDisplayer());
+                .buildDisplayerSettings());
 
         tableAll = DataViewerHelper.lookup(
                 DataSetFactory.newDSLookup()
@@ -158,7 +158,7 @@ public class SalesExpectedByDate extends Composite {
                 .column(CREATION_DATE, "Creation")
                 .column(CLOSING_DATE, "Closing")
                 .filterOn(false, true, true)
-                .buildDisplayer());
+                .buildDisplayerSettings());
 
         // Make that charts interact among them
         DataViewerCoordinator viewerCoordinator = new DataViewerCoordinator();

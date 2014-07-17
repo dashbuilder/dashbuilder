@@ -16,12 +16,12 @@
 package org.dashbuilder.displayer.impl;
 
 import org.dashbuilder.displayer.DisplayerSettings;
-import org.dashbuilder.displayer.DataDisplayerBuilder;
+import org.dashbuilder.displayer.DisplayerSettingsBuilder;
 
 /**
- * Base class for DataDisplayerBuilder implementations.
+ * Base class for DisplayerSettingsBuilder implementations.
  */
-public abstract class AbstractDisplayerBuilder<T extends DataDisplayerBuilder> implements DataDisplayerBuilder<T> {
+public abstract class AbstractDisplayerSettingsBuilder<T extends DisplayerSettingsBuilder> implements DisplayerSettingsBuilder<T> {
 
     protected DisplayerSettings displayerSettings = createDisplayerSettings();
 
@@ -64,7 +64,7 @@ public abstract class AbstractDisplayerBuilder<T extends DataDisplayerBuilder> i
         return (T) this;
     }
 
-    public DisplayerSettings buildDisplayer() {
+    public DisplayerSettings buildDisplayerSettings() {
         return displayerSettings;
     }
 }

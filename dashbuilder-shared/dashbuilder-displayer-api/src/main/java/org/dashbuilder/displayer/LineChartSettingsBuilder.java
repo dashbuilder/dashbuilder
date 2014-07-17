@@ -16,15 +16,15 @@
 package org.dashbuilder.displayer;
 
 /**
- * A displayer builder for map charts
+ * A displayer builder for line charts
  *
  * <pre>
- *   DisplayerFactory.newMapChart()
- *   .title("By Country")
- *   .column("Country")
+ *   DisplayerFactory.newLineChart()
+ *   .title("By Product")
+ *   .column("Product")
  *   .column("Total amount")
  * </pre>
  */
-public interface MapChartBuilder<T extends MapChartBuilder> extends XAxisChartBuilder<T> {
+public interface LineChartSettingsBuilder<T extends LineChartSettingsBuilder> extends XAxisChartSettingsBuilder<T> {
 
 }

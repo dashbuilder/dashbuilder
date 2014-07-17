@@ -13,10 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbuilder.displayer.impl;
+package org.dashbuilder.displayer;
 
-import org.dashbuilder.displayer.XAxisChartBuilder;
-
-public abstract class AbstractXAxisChartBuilder <T extends XAxisChartBuilder> extends AbstractChartBuilder<T> {
+/**
+ * A common base interface for al charts that are axis-based.
+ */
+public interface XAxisChartSettingsBuilder<T extends XAxisChartSettingsBuilder> extends ChartSettingsBuilder<T> {
 
 }

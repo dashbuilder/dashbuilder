@@ -13,15 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbuilder.displayer.impl;
+package org.dashbuilder.displayer;
 
-import org.dashbuilder.displayer.BubbleChartBuilder;
-import org.dashbuilder.displayer.BubbleChartDisplayerSettings;
-import org.dashbuilder.displayer.DisplayerSettings;
+/**
+ * A displayer builder for pie charts
+ *
+ * <pre>
+ *   DisplayerFactory.newPieChart()
+ *   .title("By Product")
+ *   .column("Product")
+ *   .column("Total amount")
+ * </pre>
+ */
+public interface PieChartSettingsBuilder<T extends PieChartSettingsBuilder> extends XAxisChartSettingsBuilder<T> {
 
-public class BubbleChartBuilderImpl extends AbstractChartBuilder<BubbleChartBuilderImpl> implements BubbleChartBuilder<BubbleChartBuilderImpl> {
-
-    protected DisplayerSettings createDisplayerSettings() {
-        return new BubbleChartDisplayerSettings();
-    }
 }

@@ -32,7 +32,7 @@ public class SalesOppsDisplayers {
             .margins(10, 10, 10, 10)
             .column("Pipeline")
             .column("Number of opps")
-            .buildDisplayer();
+            .buildDisplayerSettings();
 
     public static final DisplayerSettings PIE_STATUS = DisplayerFactory.newPieChart()
             .title("By Status")
@@ -40,7 +40,7 @@ public class SalesOppsDisplayers {
             .margins(10, 10, 10, 10)
             .column("Status")
             .column("Total amount")
-            .buildDisplayer();
+            .buildDisplayerSettings();
 
     public static final DisplayerSettings PIE_SALES_PERSON = DisplayerFactory.newPieChart()
             .title("By Sales Person")
@@ -48,7 +48,7 @@ public class SalesOppsDisplayers {
             .margins(10, 10, 10, 10)
             .column("Sales person")
             .column("Total amount")
-            .buildDisplayer();
+            .buildDisplayerSettings();
 
     public static final DisplayerSettings AREA_EXPECTED_AMOUNT = DisplayerFactory.newAreaChart()
             .title("Expected Amount")
@@ -56,7 +56,7 @@ public class SalesOppsDisplayers {
             .margins(20, 50, 100, 100)
             .column("Closing date")
             .column("Expected amount")
-            .buildDisplayer();
+            .buildDisplayerSettings();
 
     public static final DisplayerSettings HBAR_PRODUCT = DisplayerFactory.newBarChart()
             .title("By Product")
@@ -65,7 +65,7 @@ public class SalesOppsDisplayers {
             .column("Product")
             .column("Total amount")
             .horizontal()
-            .buildDisplayer();
+            .buildDisplayerSettings();
 
     public static final DisplayerSettings HBAR_COUNTRY = DisplayerFactory.newBarChart()
             .title("By Country")
@@ -74,7 +74,7 @@ public class SalesOppsDisplayers {
             .column(COUNTRY, "Country")
             .column("total", "Total amount")
             .horizontal()
-            .buildDisplayer();
+            .buildDisplayerSettings();
 
     public static final DisplayerSettings TABLE_COUNTRY = DisplayerFactory.newTable()
             .title("Country Summary")
@@ -86,7 +86,7 @@ public class SalesOppsDisplayers {
             .column("min", "MIN")
             .column("max", "MAX")
             .tablePageSize(20)
-            .buildDisplayer();
+            .buildDisplayerSettings();
 
     public static final DisplayerSettings TABLE_ALL = DisplayerFactory.newTable()
             .title("List of Opportunities")
@@ -94,5 +94,5 @@ public class SalesOppsDisplayers {
             .tablePageSize(20)
             .tableOrderEnabled(true)
             .tableOrderDefault(AMOUNT, DESCENDING)
-            .buildDisplayer();
+            .buildDisplayerSettings();
 }

@@ -16,12 +16,12 @@
 package org.dashbuilder.displayer.impl;
 
 import org.dashbuilder.displayer.DisplayerSettings;
-import org.dashbuilder.displayer.LineChartBuilder;
-import org.dashbuilder.displayer.LineChartDisplayerSettings;
+import org.dashbuilder.displayer.MapChartSettingsBuilder;
+import org.dashbuilder.displayer.MapChartDisplayerSettings;
 
-public class LineChartBuilderImpl extends AbstractXAxisChartBuilder<LineChartBuilderImpl> implements LineChartBuilder<LineChartBuilderImpl> {
+public class MapChartSettingsBuilderImpl extends AbstractXAxisChartSettingsBuilder<MapChartSettingsBuilderImpl> implements MapChartSettingsBuilder<MapChartSettingsBuilderImpl> {
 
     protected DisplayerSettings createDisplayerSettings() {
-        return new LineChartDisplayerSettings();
+        return new MapChartDisplayerSettings();
     }
 }

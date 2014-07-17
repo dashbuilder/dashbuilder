@@ -16,15 +16,15 @@
 package org.dashbuilder.displayer;
 
 /**
- * A displayer builder for pie charts
+ * A displayer builder for area charts
  *
  * <pre>
- *   DisplayerFactory.newPieChart()
+ *   DisplayerFactory.newAreaChart()
  *   .title("By Product")
  *   .column("Product")
  *   .column("Total amount")
  * </pre>
  */
-public interface PieChartBuilder<T extends PieChartBuilder> extends XAxisChartBuilder<T> {
+public interface AreaChartSettingsBuilder<T extends AreaChartSettingsBuilder> extends XAxisChartSettingsBuilder<T> {
 
 }

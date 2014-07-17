@@ -13,24 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbuilder.displayer;
+package org.dashbuilder.displayer.impl;
 
-/**
- * A displayer builder for bubble charts.
- *
- * <pre>
- *   DisplayerFactory.newBubbleChart()
- *   .title("Opportunities distribution by Country ")
- *   .width(500).height(350)
- *   .margins(20, 50, 50, 0)
- *   .column(COUNTRY, "Country")
- *   .column("opps", "Number of opportunities")
- *   .column(PROBABILITY, "Average probability")
- *   .column(COUNTRY, "Country")
- *   .column(EXPECTED_AMOUNT, "Expected amount")
- *   .buildDisplayer());
- * </pre>
- */
-public interface BubbleChartBuilder<T extends BubbleChartBuilder> extends XAxisChartBuilder<T> {
+import org.dashbuilder.displayer.AreaChartSettingsBuilder;
+import org.dashbuilder.displayer.AreaChartDisplayerSettings;
+import org.dashbuilder.displayer.DisplayerSettings;
 
+public class AreaChartSettingsBuilderImpl extends AbstractXAxisChartSettingsBuilder<AreaChartSettingsBuilderImpl> implements AreaChartSettingsBuilder<AreaChartSettingsBuilderImpl> {
+
+    protected DisplayerSettings createDisplayerSettings() {
+        return new AreaChartDisplayerSettings();
+    }
 }

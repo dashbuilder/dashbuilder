@@ -13,18 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbuilder.displayer;
+package org.dashbuilder.displayer.impl;
 
-/**
- * A displayer builder for line charts
- *
- * <pre>
- *   DisplayerFactory.newLineChart()
- *   .title("By Product")
- *   .column("Product")
- *   .column("Total amount")
- * </pre>
- */
-public interface LineChartBuilder<T extends LineChartBuilder> extends XAxisChartBuilder<T> {
+import org.dashbuilder.displayer.BubbleChartSettingsBuilder;
+import org.dashbuilder.displayer.BubbleChartDisplayerSettings;
+import org.dashbuilder.displayer.DisplayerSettings;
 
+public class BubbleChartSettingsBuilderImpl extends AbstractChartSettingsBuilder<BubbleChartSettingsBuilderImpl> implements BubbleChartSettingsBuilder<BubbleChartSettingsBuilderImpl> {
+
+    protected DisplayerSettings createDisplayerSettings() {
+        return new BubbleChartDisplayerSettings();
+    }
 }
