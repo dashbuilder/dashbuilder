@@ -21,7 +21,7 @@ import org.dashbuilder.displayer.LineChartDisplayerSettings;
 
 public class LineChartBuilderImpl extends AbstractXAxisChartBuilder<LineChartBuilderImpl> implements LineChartBuilder<LineChartBuilderImpl> {
 
-    protected DisplayerSettings createDisplayer() {
+    protected DisplayerSettings createDisplayerSettings() {
         return new LineChartDisplayerSettings();
     }
 }

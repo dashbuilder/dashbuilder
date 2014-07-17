@@ -21,7 +21,7 @@ import org.dashbuilder.displayer.MapChartDisplayerSettings;
 
 public class MapChartBuilderImpl extends AbstractXAxisChartBuilder<MapChartBuilderImpl> implements MapChartBuilder<MapChartBuilderImpl> {
 
-    protected DisplayerSettings createDisplayer() {
+    protected DisplayerSettings createDisplayerSettings() {
         return new MapChartDisplayerSettings();
     }
 }

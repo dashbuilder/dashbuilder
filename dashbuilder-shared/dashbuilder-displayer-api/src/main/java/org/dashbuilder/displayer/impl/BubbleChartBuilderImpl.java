@@ -21,7 +21,7 @@ import org.dashbuilder.displayer.DisplayerSettings;
 
 public class BubbleChartBuilderImpl extends AbstractChartBuilder<BubbleChartBuilderImpl> implements BubbleChartBuilder<BubbleChartBuilderImpl> {
 
-    protected DisplayerSettings createDisplayer() {
+    protected DisplayerSettings createDisplayerSettings() {
         return new BubbleChartDisplayerSettings();
     }
 }

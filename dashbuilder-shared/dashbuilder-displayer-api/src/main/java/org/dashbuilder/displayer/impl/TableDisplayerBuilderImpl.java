@@ -24,7 +24,7 @@ import org.jboss.errai.common.client.api.annotations.Portable;
 @Portable
 public class TableDisplayerBuilderImpl extends AbstractDisplayerBuilder<TableDisplayerBuilderImpl> implements TableDisplayerBuilder<TableDisplayerBuilderImpl> {
 
-    public DisplayerSettings createDisplayer() {
+    public DisplayerSettings createDisplayerSettings() {
         return new TableDisplayerSettings();
     }
 

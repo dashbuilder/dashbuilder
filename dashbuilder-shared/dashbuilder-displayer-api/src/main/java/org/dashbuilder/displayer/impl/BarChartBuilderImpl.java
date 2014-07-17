@@ -21,7 +21,7 @@ import org.dashbuilder.displayer.DisplayerSettings;
 
 public class BarChartBuilderImpl extends AbstractXAxisChartBuilder<BarChartBuilderImpl> implements BarChartBuilder<BarChartBuilderImpl> {
 
-    protected DisplayerSettings createDisplayer() {
+    protected DisplayerSettings createDisplayerSettings() {
         return new BarChartDisplayerSettings();
     }
 

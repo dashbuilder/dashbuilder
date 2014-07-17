@@ -23,9 +23,9 @@ import org.dashbuilder.displayer.DataDisplayerBuilder;
  */
 public abstract class AbstractDisplayerBuilder<T extends DataDisplayerBuilder> implements DataDisplayerBuilder<T> {
 
-    protected DisplayerSettings displayerSettings = createDisplayer();
+    protected DisplayerSettings displayerSettings = createDisplayerSettings();
 
-    protected abstract DisplayerSettings createDisplayer();
+    protected abstract DisplayerSettings createDisplayerSettings();
 
     public T title(String title) {
         displayerSettings.setTitle(title);

@@ -21,7 +21,7 @@ import org.dashbuilder.displayer.DisplayerSettings;
 
 public class AreaChartBuilderImpl extends AbstractXAxisChartBuilder<AreaChartBuilderImpl> implements AreaChartBuilder<AreaChartBuilderImpl> {
 
-    protected DisplayerSettings createDisplayer() {
+    protected DisplayerSettings createDisplayerSettings() {
         return new AreaChartDisplayerSettings();
     }
 }

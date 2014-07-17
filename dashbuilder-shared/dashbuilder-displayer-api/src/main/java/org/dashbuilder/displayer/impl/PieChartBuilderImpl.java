@@ -21,7 +21,7 @@ import org.dashbuilder.displayer.PieChartDisplayerSettings;
 
 public class PieChartBuilderImpl extends AbstractXAxisChartBuilder<PieChartBuilderImpl> implements PieChartBuilder<PieChartBuilderImpl> {
 
-    protected DisplayerSettings createDisplayer() {
+    protected DisplayerSettings createDisplayerSettings() {
         return new PieChartDisplayerSettings();
     }
 }
