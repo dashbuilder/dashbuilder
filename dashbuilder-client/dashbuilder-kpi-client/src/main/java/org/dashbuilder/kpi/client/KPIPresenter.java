@@ -59,7 +59,7 @@ public class KPIPresenter {
 
     @WorkbenchPartTitle
     public String getTitle() {
-        return kpi.getDataDisplayer().getTitle();
+        return kpi.getDisplayerSettings().getTitle();
     }
 
     @WorkbenchPartView

@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import javax.enterprise.context.ApplicationScoped;
 
 import org.dashbuilder.dataset.DataSetRef;
-import org.dashbuilder.displayer.DataDisplayer;
+import org.dashbuilder.displayer.DisplayerSettings;
 import org.dashbuilder.kpi.*;
 import org.dashbuilder.kpi.impl.KPIImpl;
 
@@ -33,17 +33,17 @@ public class ClientKPIManager {
         return kpiList;
     }
 
-    public KPI createKPI(DataSetRef dataSetRef, DataDisplayer dataDisplayer) {
+    public KPI createKPI(DataSetRef dataSetRef, DisplayerSettings displayerSettings ) {
         KPIImpl kpi = new KPIImpl();
         kpi.setDataSetRef(dataSetRef);
-        kpi.setDataDisplayer(dataDisplayer);
+        kpi.setDisplayerSettings( displayerSettings );
         return kpi;
     }
 
-    public KPI createKPI(String uuid, DataSetRef dataSetRef, DataDisplayer dataDisplayer) {
+    public KPI createKPI(String uuid, DataSetRef dataSetRef, DisplayerSettings displayerSettings ) {
         KPIImpl kpi = new KPIImpl(uuid);
         kpi.setDataSetRef(dataSetRef);
-        kpi.setDataDisplayer(dataDisplayer);
+        kpi.setDisplayerSettings( displayerSettings );
         return kpi;
     }
 

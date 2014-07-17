@@ -23,9 +23,9 @@ import com.googlecode.gwt.charts.client.gauge.Gauge;
 import com.googlecode.gwt.charts.client.gauge.GaugeOptions;
 import com.googlecode.gwt.charts.client.options.Animation;
 import com.googlecode.gwt.charts.client.options.AnimationEasing;
-import org.dashbuilder.displayer.MeterChartDisplayer;
+import org.dashbuilder.displayer.MeterChartDisplayerSettings;
 
-public class GoogleMeterChartViewer extends GoogleViewer<MeterChartDisplayer> {
+public class GoogleMeterChartViewer extends GoogleViewer<MeterChartDisplayerSettings> {
 
     private Gauge chart;
 

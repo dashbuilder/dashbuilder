@@ -15,18 +15,18 @@
  */
 package org.dashbuilder.displayer.impl;
 
-import org.dashbuilder.displayer.DataDisplayer;
+import org.dashbuilder.displayer.DisplayerSettings;
 import org.dashbuilder.displayer.MeterChartBuilder;
-import org.dashbuilder.displayer.MeterChartDisplayer;
+import org.dashbuilder.displayer.MeterChartDisplayerSettings;
 
 public class MeterChartBuilderImpl extends AbstractChartBuilder<MeterChartBuilderImpl> implements MeterChartBuilder<MeterChartBuilderImpl> {
 
-    protected DataDisplayer createDisplayer() {
-        return new MeterChartDisplayer();
+    protected DisplayerSettings createDisplayer() {
+        return new MeterChartDisplayerSettings();
     }
 
     public MeterChartBuilderImpl meter(long start, long warning, long critical, long end) {
-        MeterChartDisplayer meterDisplayer = (MeterChartDisplayer) dataDisplayer;
+        MeterChartDisplayerSettings meterDisplayer = (MeterChartDisplayerSettings ) displayerSettings;
         meterDisplayer.setMeterStart(start);
         meterDisplayer.setMeterWarning(warning);
         meterDisplayer.setMeterCritical(critical);

@@ -16,12 +16,12 @@
 package org.dashbuilder.displayer.client;
 
 import com.google.gwt.user.client.ui.IsWidget;
-import org.dashbuilder.displayer.DataDisplayer;
+import org.dashbuilder.displayer.DisplayerSettings;
 
 /**
- * A DataViewer takes care of drawing a DataDisplayer instance.
+ * A DataViewer takes care of drawing a DisplayerSettings instance.
  */
-public interface DataViewer<T extends DataDisplayer> extends DataViewerListener, IsWidget {
+public interface DataViewer<T extends DisplayerSettings> extends DataViewerListener, IsWidget {
 
     /**
      * The data displayer to draw.

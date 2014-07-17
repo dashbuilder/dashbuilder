@@ -15,13 +15,13 @@
  */
 package org.dashbuilder.displayer.impl;
 
-import org.dashbuilder.displayer.DataDisplayer;
+import org.dashbuilder.displayer.DisplayerSettings;
 import org.dashbuilder.displayer.MapChartBuilder;
-import org.dashbuilder.displayer.MapChartDisplayer;
+import org.dashbuilder.displayer.MapChartDisplayerSettings;
 
 public class MapChartBuilderImpl extends AbstractXAxisChartBuilder<MapChartBuilderImpl> implements MapChartBuilder<MapChartBuilderImpl> {
 
-    protected DataDisplayer createDisplayer() {
-        return new MapChartDisplayer();
+    protected DisplayerSettings createDisplayer() {
+        return new MapChartDisplayerSettings();
     }
 }

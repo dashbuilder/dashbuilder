@@ -16,12 +16,12 @@
 package org.dashbuilder.displayer.impl;
 
 import org.dashbuilder.displayer.BubbleChartBuilder;
-import org.dashbuilder.displayer.BubbleChartDisplayer;
-import org.dashbuilder.displayer.DataDisplayer;
+import org.dashbuilder.displayer.BubbleChartDisplayerSettings;
+import org.dashbuilder.displayer.DisplayerSettings;
 
 public class BubbleChartBuilderImpl extends AbstractChartBuilder<BubbleChartBuilderImpl> implements BubbleChartBuilder<BubbleChartBuilderImpl> {
 
-    protected DataDisplayer createDisplayer() {
-        return new BubbleChartDisplayer();
+    protected DisplayerSettings createDisplayer() {
+        return new BubbleChartDisplayerSettings();
     }
 }

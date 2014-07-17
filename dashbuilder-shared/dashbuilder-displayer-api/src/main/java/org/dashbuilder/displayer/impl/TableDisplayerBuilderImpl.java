@@ -16,32 +16,32 @@
 package org.dashbuilder.displayer.impl;
 
 import org.dashbuilder.dataset.sort.SortOrder;
-import org.dashbuilder.displayer.DataDisplayer;
-import org.dashbuilder.displayer.TableDisplayer;
+import org.dashbuilder.displayer.DisplayerSettings;
+import org.dashbuilder.displayer.TableDisplayerSettings;
 import org.dashbuilder.displayer.TableDisplayerBuilder;
 import org.jboss.errai.common.client.api.annotations.Portable;
 
 @Portable
 public class TableDisplayerBuilderImpl extends AbstractDisplayerBuilder<TableDisplayerBuilderImpl> implements TableDisplayerBuilder<TableDisplayerBuilderImpl> {
 
-    public DataDisplayer createDisplayer() {
-        return new TableDisplayer();
+    public DisplayerSettings createDisplayer() {
+        return new TableDisplayerSettings();
     }
 
     public TableDisplayerBuilderImpl tablePageSize(int pageSize) {
-        TableDisplayer d = (TableDisplayer) dataDisplayer;
+        TableDisplayerSettings d = (TableDisplayerSettings ) displayerSettings;
         d.setPageSize(pageSize);
         return this;
     }
 
     public TableDisplayerBuilderImpl tableOrderEnabled(boolean enabled) {
-        TableDisplayer d = (TableDisplayer) dataDisplayer;
+        TableDisplayerSettings d = (TableDisplayerSettings ) displayerSettings;
         d.setSortEnabled(enabled);
         return this;
     }
 
     public TableDisplayerBuilderImpl tableOrderDefault(String columnId, SortOrder order) {
-        TableDisplayer d = (TableDisplayer) dataDisplayer;
+        TableDisplayerSettings d = (TableDisplayerSettings ) displayerSettings;
         d.setDefaultSortColumnId(columnId);
         d.setDefaultSortOrder(order);
         return this;

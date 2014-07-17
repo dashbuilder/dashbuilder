@@ -16,7 +16,7 @@
 package org.dashbuilder.kpi.impl;
 
 import org.dashbuilder.dataset.DataSetRef;
-import org.dashbuilder.displayer.DataDisplayer;
+import org.dashbuilder.displayer.DisplayerSettings;
 import org.dashbuilder.kpi.KPI;
 import org.jboss.errai.common.client.api.annotations.Portable;
 
@@ -25,7 +25,7 @@ public class KPIImpl implements KPI {
 
     protected String UUID;
     protected DataSetRef dataSetRef;
-    protected DataDisplayer dataDisplayer;
+    protected DisplayerSettings displayerSettings;
 
     public KPIImpl() {
     }
@@ -52,12 +52,12 @@ public class KPIImpl implements KPI {
         return this;
     }
 
-    public DataDisplayer getDataDisplayer() {
-        return dataDisplayer;
+    public DisplayerSettings getDisplayerSettings() {
+        return displayerSettings;
     }
 
-    public KPIImpl setDataDisplayer(DataDisplayer dataDisplayer) {
-        this.dataDisplayer = dataDisplayer;
+    public KPIImpl setDisplayerSettings(DisplayerSettings displayerSettings ) {
+        this.displayerSettings = displayerSettings;
         return this;
     }
 }

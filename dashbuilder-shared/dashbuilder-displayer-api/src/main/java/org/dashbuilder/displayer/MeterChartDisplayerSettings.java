@@ -18,7 +18,7 @@ package org.dashbuilder.displayer;
 import org.jboss.errai.common.client.api.annotations.Portable;
 
 @Portable
-public class MeterChartDisplayer extends AbstractChartDisplayer {
+public class MeterChartDisplayerSettings extends AbstractChartDisplayerSettings {
 
     protected long meterStart;
     protected long meterWarning;

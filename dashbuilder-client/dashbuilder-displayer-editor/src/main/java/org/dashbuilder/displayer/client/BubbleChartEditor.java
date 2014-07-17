@@ -22,14 +22,14 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Widget;
-import org.dashbuilder.displayer.XAxisChartDisplayer;
+import org.dashbuilder.displayer.XAxisChartDisplayerSettings;
 
 /**
  * Bubble chart editor.
  */
 @ApplicationScoped
 @Named("bubblechart_editor")
-public class BubbleChartEditor extends AbstractDisplayerEditor<XAxisChartDisplayer> {
+public class BubbleChartEditor extends AbstractDisplayerEditor<XAxisChartDisplayerSettings> {
 
     interface EditorBinder extends UiBinder<Widget, BubbleChartEditor> {}
     private static final EditorBinder uiBinder = GWT.create( EditorBinder.class );
@@ -45,7 +45,7 @@ public class BubbleChartEditor extends AbstractDisplayerEditor<XAxisChartDisplay
     }
 
     @Override
-    public void setDataDisplayer( XAxisChartDisplayer dataDisplayer ) {
+    public void setDataDisplayer( XAxisChartDisplayerSettings dataDisplayer ) {
         super.setDataDisplayer( dataDisplayer );
         xAxisChartEditorBase.setDataDisplayer( dataDisplayer );
     }

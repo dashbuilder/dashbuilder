@@ -34,14 +34,14 @@ import com.googlecode.gwt.charts.client.event.SortHandler;
 import com.googlecode.gwt.charts.client.options.TableSort;
 import com.googlecode.gwt.charts.client.table.Table;
 import com.googlecode.gwt.charts.client.table.TableOptions;
+import org.dashbuilder.displayer.TableDisplayerSettings;
 import org.dashbuilder.displayer.client.DataViewer;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.group.DataSetGroup;
 import org.dashbuilder.dataset.sort.SortOrder;
-import org.dashbuilder.displayer.TableDisplayer;
 import org.dashbuilder.renderer.google.client.resources.i18n.GoogleViewerConstants;
 
-public class GoogleTableViewer extends GoogleViewer<TableDisplayer> {
+public class GoogleTableViewer extends GoogleViewer<TableDisplayerSettings> {
 
     protected int pageSize = 20;
     protected int currentPage = 1;

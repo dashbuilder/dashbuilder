@@ -21,7 +21,7 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import org.dashbuilder.displayer.client.DataViewer;
 import org.dashbuilder.displayer.client.DataViewerHelper;
 import org.dashbuilder.dataset.DataSetRef;
-import org.dashbuilder.displayer.DataDisplayer;
+import org.dashbuilder.displayer.DisplayerSettings;
 import org.dashbuilder.kpi.KPI;
 
 public class KPIViewer extends Composite {
@@ -48,9 +48,9 @@ public class KPIViewer extends Composite {
         this.kpi = kpi;
 
         // Locate the DataViewer widget to display the KPI
-        DataDisplayer dataDisplayer = kpi.getDataDisplayer();
+        DisplayerSettings displayerSettings = kpi.getDisplayerSettings();
         DataSetRef dataSetRef = kpi.getDataSetRef();
-        dataViewer = DataViewerHelper.lookup(dataSetRef, dataDisplayer);
+        dataViewer = DataViewerHelper.lookup(dataSetRef, displayerSettings );
     }
 
     public DataViewer getDataViewer() {

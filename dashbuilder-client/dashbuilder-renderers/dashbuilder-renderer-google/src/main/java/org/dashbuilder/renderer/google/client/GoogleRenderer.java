@@ -25,7 +25,7 @@ import com.googlecode.gwt.charts.client.ChartLoader;
 import com.googlecode.gwt.charts.client.ChartPackage;
 import org.dashbuilder.displayer.client.AbstractRendererLibrary;
 import org.dashbuilder.displayer.client.DataViewer;
-import org.dashbuilder.displayer.DataDisplayer;
+import org.dashbuilder.displayer.DisplayerSettings;
 import org.dashbuilder.displayer.DataDisplayerType;
 
 /**
@@ -41,8 +41,8 @@ public class GoogleRenderer extends AbstractRendererLibrary {
         return UUID;
     }
 
-    public DataViewer lookupViewer(DataDisplayer displayer) {
-        DataDisplayerType type = displayer.getType();
+    public DataViewer lookupViewer(DisplayerSettings displayerSettings) {
+        DataDisplayerType type = displayerSettings.getType();
         if (DataDisplayerType.BARCHART.equals(type)) return new GoogleBarChartViewer();
         if (DataDisplayerType.PIECHART.equals(type)) return new GooglePieChartViewer();
         if (DataDisplayerType.AREACHART.equals(type)) return new GoogleAreaChartViewer();

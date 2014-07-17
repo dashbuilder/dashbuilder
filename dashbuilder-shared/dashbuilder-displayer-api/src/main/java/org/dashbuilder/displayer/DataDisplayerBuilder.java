@@ -16,7 +16,7 @@
 package org.dashbuilder.displayer;
 
 /**
- * A DataSetDisplayerBuilder allows for the assembly of a DataDisplayer instance in a friendly manner.
+ * A DataSetDisplayerBuilder allows for the assembly of a DisplayerSettings instance in a friendly manner.
  *
  * <pre>
  *   DisplayerFactory.newBarChart()
@@ -29,28 +29,28 @@ package org.dashbuilder.displayer;
  *   .buildDisplayer();
  * </pre>
  *
- * @see org.dashbuilder.displayer.DataDisplayer
+ * @see DisplayerSettings
  */
 public interface DataDisplayerBuilder<T> {
 
     /**
      * Sets the caption that will be shown for this particular visualization of the data.
      * @param title The caption to be shown
-     * @return The DataDisplayerBuilder instance that is being used to configure a DataDisplayer.
+     * @return The DataDisplayerBuilder instance that is being used to configure a DisplayerSettings.
      */
     T title(String title);
 
     /**
      * Set whether the caption should be visible or not.
      * @param visible True if the caption is to be visible, false if not.
-     * @return The DataDisplayerBuilder instance that is being used to configure a DataDisplayer.
+     * @return The DataDisplayerBuilder instance that is being used to configure a DisplayerSettings.
      */
     T titleVisible(boolean visible);
 
     /**
-     * Set the renderer that will be used for visualizing this DataDisplayer.
+     * Set the renderer that will be used for visualizing this DisplayerSettings.
      * @param renderer The identifier of the renderer.
-     * @return The DataDisplayerBuilder instance that is being used to configure a DataDisplayer.
+     * @return The DataDisplayerBuilder instance that is being used to configure a DisplayerSettings.
      */
     T renderer(String renderer);
 
@@ -58,7 +58,7 @@ public interface DataDisplayerBuilder<T> {
      * Set a data set column header caption. If no column identifier is specified, each successive call to this
      * method will set the specified caption to the next occurring column of the data set.
      * @param displayName The header caption to be set to a column.
-     * @return The DataDisplayerBuilder instance that is being used to configure a DataDisplayer.
+     * @return The DataDisplayerBuilder instance that is being used to configure a DisplayerSettings.
      */
     T column(String displayName);
 
@@ -67,7 +67,7 @@ public interface DataDisplayerBuilder<T> {
      * method will set the specified caption to the next occurring column of the data set.
      * @param columnId The identifier within the data set of the column this caption should be set to.
      * @param displayName The header caption to be set to the column specified by the identifier.
-     * @return The DataDisplayerBuilder instance that is being used to configure a DataDisplayer.
+     * @return The DataDisplayerBuilder instance that is being used to configure a DisplayerSettings.
      */
     T column(String columnId, String displayName);
 
@@ -82,7 +82,7 @@ public interface DataDisplayerBuilder<T> {
      * @param notifyOthers If true then any filter request issued within the data displayer will be propagated to other interested displayers.
      * @param receiveFromOthers If true then the data displayer will listen for filter requests coming from other displayers.
      *
-     * @return The DataDisplayerBuilder instance that is being used to configure a DataDisplayer.
+     * @return The DataDisplayerBuilder instance that is being used to configure a DisplayerSettings.
      */
     T filterOn(boolean applySelf, boolean notifyOthers, boolean receiveFromOthers);
 
@@ -90,13 +90,13 @@ public interface DataDisplayerBuilder<T> {
      * Disable the ability to select/filter values (or range of values) within the data displayer.
      *
      * @see DataDisplayerBuilder#filterOn DataDisplayerBuilder's filterOn method.
-     * @return The DataDisplayerBuilder instance that is being used to configure a DataDisplayer.
+     * @return The DataDisplayerBuilder instance that is being used to configure a DisplayerSettings.
      */
     T filterOff();
 
     /**
-     * @return The DataDisplayer instance that has been configured.
-     * @see org.dashbuilder.displayer.DataDisplayer
+     * @return The DisplayerSettings instance that has been configured.
+     * @see DisplayerSettings
      */
-    DataDisplayer buildDisplayer();
+    DisplayerSettings buildDisplayer();
 }

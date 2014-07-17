@@ -29,9 +29,9 @@ import com.googlecode.gwt.charts.client.corechart.CoreChartWidget;
 import com.googlecode.gwt.charts.client.options.Animation;
 import com.googlecode.gwt.charts.client.options.AnimationEasing;
 import com.googlecode.gwt.charts.client.options.CoreOptions;
-import org.dashbuilder.displayer.BarChartDisplayer;
+import org.dashbuilder.displayer.BarChartDisplayerSettings;
 
-public class GoogleBarChartViewer extends GoogleXAxisChartViewer<BarChartDisplayer> {
+public class GoogleBarChartViewer extends GoogleXAxisChartViewer<BarChartDisplayerSettings> {
 
     protected CoreChartWidget chart;
     protected Panel filterPanel;
@@ -92,7 +92,7 @@ public class GoogleBarChartViewer extends GoogleXAxisChartViewer<BarChartDisplay
             options.setHeight(dataDisplayer.getHeight());
             options.setLegend( createChartLegend( dataDisplayer ) );
             options.setAnimation(anim);
-            // TODO: options.set3D(dataDisplayer.is3d());
+            // TODO: options.set3D(displayerSettings.is3d());
             options.setChartArea(createChartArea());
             return options;
         }

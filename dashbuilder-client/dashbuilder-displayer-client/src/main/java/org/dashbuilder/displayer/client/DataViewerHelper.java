@@ -16,7 +16,7 @@
 package org.dashbuilder.displayer.client;
 
 import org.dashbuilder.dataset.DataSetRef;
-import org.dashbuilder.displayer.DataDisplayer;
+import org.dashbuilder.displayer.DisplayerSettings;
 
 /**
  * Helper methods for dealing with DataViewer instances.
@@ -27,10 +27,10 @@ public class DataViewerHelper {
      * Get a DataViewer instance for displaying the specified data set with the given display configuration.
      *
      * @param dataSetRef A reference to the data set.
-     * @param dataDisplayer The given display configuration.
+     * @param displayerSettings The given display configuration.
      */
-    public static DataViewer lookup(DataSetRef dataSetRef, DataDisplayer dataDisplayer) {
-        return DataViewerLocator.get().lookupViewer(dataSetRef, dataDisplayer);
+    public static DataViewer lookup(DataSetRef dataSetRef, DisplayerSettings displayerSettings ) {
+        return DataViewerLocator.get().lookupViewer(dataSetRef, displayerSettings );
     }
 
     /**

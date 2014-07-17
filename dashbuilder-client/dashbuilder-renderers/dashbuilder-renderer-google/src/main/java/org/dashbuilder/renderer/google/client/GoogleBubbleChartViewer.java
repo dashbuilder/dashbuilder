@@ -27,9 +27,9 @@ import com.googlecode.gwt.charts.client.options.Animation;
 import com.googlecode.gwt.charts.client.options.AnimationEasing;
 import com.googlecode.gwt.charts.client.options.HAxis;
 import com.googlecode.gwt.charts.client.options.VAxis;
-import org.dashbuilder.displayer.BubbleChartDisplayer;
+import org.dashbuilder.displayer.BubbleChartDisplayerSettings;
 
-public class GoogleBubbleChartViewer extends GoogleXAxisChartViewer<BubbleChartDisplayer> {
+public class GoogleBubbleChartViewer extends GoogleXAxisChartViewer<BubbleChartDisplayerSettings> {
 
     private BubbleChart chart;
     protected Panel filterPanel;

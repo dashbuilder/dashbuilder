@@ -15,7 +15,7 @@
  */
 package org.dashbuilder.displayer;
 
-public interface XAxisChartDisplayer extends ChartDisplayer {
+public interface XAxisChartDisplayerSettings extends ChartDisplayerSettings {
 
     public static boolean DEFAULT_XAXIS_SHOW_LABELS = true;
     public static int DEFAULT_XAXIS_LABELS_ANGLE = 0;

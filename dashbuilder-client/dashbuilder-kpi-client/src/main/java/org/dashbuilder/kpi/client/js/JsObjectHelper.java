@@ -58,8 +58,8 @@ public class JsObjectHelper {
         return results;
     }
 
-/*    public static DataDisplayer createDataDisplayer(JsDataDisplayer jsDataDisplayer) {
-        XAxisChartDisplayer = new XAxisChartDisplayer();
+/*    public static DisplayerSettings createDataDisplayer(JsDataDisplayer jsDataDisplayer) {
+        XAxisChartDisplayerSettings = new XAxisChartDisplayerSettings();
         displayer.setTitle(jsDataDisplayer.getTitle());
         displayer.setRenderer(DataDisplayerRenderer.getByName(jsDataDisplayer.getRenderer()));
         displayer.setType(DataDisplayerType.getByName(jsDataDisplayer.getType()));

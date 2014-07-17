@@ -26,7 +26,7 @@ import org.dashbuilder.dataset.sort.SortOrder;
 import org.dashbuilder.dataset.date.DayOfWeek;
 import org.dashbuilder.dataset.date.Month;
 import org.dashbuilder.displayer.BarChartBuilder;
-import org.dashbuilder.displayer.DataDisplayer;
+import org.dashbuilder.displayer.DisplayerSettings;
 import org.dashbuilder.displayer.DataDisplayerBuilder;
 import org.dashbuilder.displayer.DisplayerFactory;
 import org.dashbuilder.displayer.DataDisplayerType;
@@ -43,7 +43,7 @@ public class KPIBuilderImpl implements KPIBuilder {
 
     protected DataSetLookupBuilder lookupBuilder = new DataSetLookupBuilderImpl();
     protected DataDisplayerBuilder displayerBuilder = null;
-    protected DataDisplayer dataDisplayer;
+    protected DisplayerSettings displayerSettings;
     protected DataSetRef dataSetRef;
     protected KPIImpl kpi = new KPIImpl();
 
@@ -84,8 +84,8 @@ public class KPIBuilderImpl implements KPIBuilder {
         return this;
     }
 
-    public KPIBuilder displayer(DataDisplayer dataDisplayer) {
-        this.dataDisplayer = dataDisplayer;
+    public KPIBuilder displayer(DisplayerSettings displayerSettings ) {
+        this.displayerSettings = displayerSettings;
         return this;
     }
 
@@ -93,7 +93,7 @@ public class KPIBuilderImpl implements KPIBuilder {
         return lookupBuilder.buildLookup();
     }
 
-    public DataDisplayer buildDisplayer() {
+    public DisplayerSettings buildDisplayer() {
         return displayerBuilder.buildDisplayer();
     }
 
@@ -101,8 +101,8 @@ public class KPIBuilderImpl implements KPIBuilder {
         if (dataSetRef != null) kpi.setDataSetRef(dataSetRef);
         else kpi.setDataSetRef(buildLookup());
 
-        if (dataDisplayer != null) kpi.setDataDisplayer(dataDisplayer);
-        else kpi.setDataDisplayer(buildDisplayer());
+        if ( displayerSettings != null) kpi.setDisplayerSettings( displayerSettings );
+        else kpi.setDisplayerSettings( buildDisplayer() );
 
         return kpi;
     }
@@ -311,7 +311,7 @@ public class KPIBuilderImpl implements KPIBuilder {
         return this;
     }
 
-    // DataDisplayer section
+    // DisplayerSettings section
 
     public KPIBuilder title(String title) {
         displayerBuilder.title(title);

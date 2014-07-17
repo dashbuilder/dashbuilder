@@ -16,14 +16,14 @@
 package org.dashbuilder.kpi;
 
 import org.dashbuilder.dataset.DataSetRef;
-import org.dashbuilder.displayer.DataDisplayer;
+import org.dashbuilder.displayer.DisplayerSettings;
 
 /**
  * The interface representing a Key Performance indicator. A KPI is the junction between a source of data (a DataSet)
- * and a specific way of visualizing those data (a DataDisplayer).
+ * and a specific way of visualizing those data (a DisplayerSettings).
  *
  * @see org.dashbuilder.dataset.DataSet
- * @see org.dashbuilder.displayer.DataDisplayer
+ * @see DisplayerSettings
  */
 public interface KPI {
 
@@ -35,12 +35,12 @@ public interface KPI {
     String getUUID();
 
     /**
-     * Returns the DataDisplayer associated to this KPI.
+     * Returns the DisplayerSettings associated to this KPI.
      *
-     * @return The DataDisplayer associated to this KPI.
-     * @see org.dashbuilder.displayer.DataDisplayer
+     * @return The DisplayerSettings associated to this KPI.
+     * @see DisplayerSettings
      */
-    DataDisplayer getDataDisplayer();
+    DisplayerSettings getDisplayerSettings();
 
     /**
      * Returns the DataSetRef associated to this KPI.

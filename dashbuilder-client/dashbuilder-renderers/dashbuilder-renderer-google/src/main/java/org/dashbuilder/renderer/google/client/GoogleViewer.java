@@ -33,10 +33,10 @@ import org.dashbuilder.displayer.client.AbstractDataViewer;
 import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.dataset.DataSet;
-import org.dashbuilder.displayer.DataDisplayer;
+import org.dashbuilder.displayer.DisplayerSettings;
 import org.dashbuilder.displayer.DataDisplayerColumn;
 
-public abstract class GoogleViewer<T extends DataDisplayer> extends AbstractDataViewer<T> {
+public abstract class GoogleViewer<T extends DisplayerSettings> extends AbstractDataViewer<T> {
 
     protected boolean drawn = false;
     protected FlowPanel panel = new FlowPanel();
@@ -58,7 +58,7 @@ public abstract class GoogleViewer<T extends DataDisplayer> extends AbstractData
             drawn = true;
 
             if (dataDisplayer == null) {
-                displayMessage("ERROR: DataDisplayer property not set");
+                displayMessage("ERROR: DisplayerSettings property not set");
             }
             else if (dataSetHandler == null) {
                 displayMessage("ERROR: DataSetHandler property not set");

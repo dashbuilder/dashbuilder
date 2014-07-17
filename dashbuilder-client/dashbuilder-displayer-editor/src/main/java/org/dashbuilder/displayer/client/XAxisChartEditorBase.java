@@ -30,18 +30,18 @@ import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.common.client.StringUtils;
 import org.dashbuilder.displayer.DataDisplayerColumn;
 import org.dashbuilder.displayer.Position;
-import org.dashbuilder.displayer.XAxisChartDisplayer;
+import org.dashbuilder.displayer.XAxisChartDisplayerSettings;
 import org.dashbuilder.displayer.client.widgets.ChartAttributesEditor;
 import org.dashbuilder.displayer.client.widgets.CommonAttributesEditor;
 import org.dashbuilder.displayer.client.widgets.XAxisChartAttributesEditor;
 import org.dashbuilder.displayer.impl.DataDisplayerColumnImpl;
 
-import static org.dashbuilder.displayer.XAxisChartDisplayer.*;
+import static org.dashbuilder.displayer.XAxisChartDisplayerSettings.*;
 
 /**
  * Base editor for all x-axis based displayers.
  */
-public class XAxisChartEditorBase extends AbstractDisplayerEditor<XAxisChartDisplayer> {
+public class XAxisChartEditorBase extends AbstractDisplayerEditor<XAxisChartDisplayerSettings> {
 
     interface EditorBinder extends UiBinder<Widget, XAxisChartEditorBase>{}
     private static final EditorBinder uiBinder = GWT.create(EditorBinder.class);
@@ -197,7 +197,7 @@ public class XAxisChartEditorBase extends AbstractDisplayerEditor<XAxisChartDisp
     }
 
     @Override
-    public void setDataDisplayer( XAxisChartDisplayer dataDisplayer ) {
+    public void setDataDisplayer( XAxisChartDisplayerSettings dataDisplayer ) {
         super.setDataDisplayer( dataDisplayer );
         commonAttributesEditor.setIsTitleVisible( dataDisplayer.isTitleVisible() );
         commonAttributesEditor.setTitle( dataDisplayer.getTitle() );

@@ -29,7 +29,7 @@ import org.dashbuilder.dataset.group.GroupStrategy;
 import org.dashbuilder.dataset.sort.ColumnSort;
 import org.dashbuilder.dataset.sort.DataSetSort;
 import org.dashbuilder.dataset.sort.SortOrder;
-import org.dashbuilder.displayer.DataDisplayer;
+import org.dashbuilder.displayer.DisplayerSettings;
 
 /**
  * Base class for implementing custom viewers.
@@ -39,7 +39,7 @@ import org.dashbuilder.displayer.DataDisplayer;
  *     <li>The capture of events coming from the DataViewerListener interface.</li>
  * </ul>
  */
-public abstract class AbstractDataViewer<T extends DataDisplayer> extends Composite implements DataViewer<T> {
+public abstract class AbstractDataViewer<T extends DisplayerSettings> extends Composite implements DataViewer<T> {
 
     protected DataSetHandler dataSetHandler;
     protected T dataDisplayer;

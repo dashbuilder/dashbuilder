@@ -15,7 +15,7 @@
  */
 package org.dashbuilder.displayer.impl;
 
-import org.dashbuilder.displayer.DataDisplayer;
+import org.dashbuilder.displayer.DisplayerSettings;
 import org.dashbuilder.displayer.DataDisplayerBuilder;
 
 /**
@@ -23,22 +23,22 @@ import org.dashbuilder.displayer.DataDisplayerBuilder;
  */
 public abstract class AbstractDisplayerBuilder<T extends DataDisplayerBuilder> implements DataDisplayerBuilder<T> {
 
-    protected DataDisplayer dataDisplayer = createDisplayer();
+    protected DisplayerSettings displayerSettings = createDisplayer();
 
-    protected abstract DataDisplayer createDisplayer();
+    protected abstract DisplayerSettings createDisplayer();
 
     public T title(String title) {
-        dataDisplayer.setTitle(title);
+        displayerSettings.setTitle(title);
         return (T) this;
     }
 
     public T titleVisible(boolean visible) {
-        dataDisplayer.setTitleVisible(visible);
+        displayerSettings.setTitleVisible(visible);
         return (T) this;
     }
 
     public T renderer(String renderer) {
-        dataDisplayer.setRenderer(renderer);
+        displayerSettings.setRenderer(renderer);
         return (T) this;
     }
 
@@ -47,24 +47,24 @@ public abstract class AbstractDisplayerBuilder<T extends DataDisplayerBuilder> i
     }
 
     public T column(String columnId, String displayName) {
-        dataDisplayer.getColumnList().add(new DataDisplayerColumnImpl(columnId, displayName));
+        displayerSettings.getColumnList().add(new DataDisplayerColumnImpl(columnId, displayName));
         return (T) this;
     }
 
     public T filterOn(boolean applySelf, boolean notifyOthers, boolean receiveFromOthers) {
-        dataDisplayer.setFilterEnabled(true);
-        dataDisplayer.setFilterSelfApplyEnabled(applySelf);
-        dataDisplayer.setFilterNotificationEnabled(notifyOthers);
-        dataDisplayer.setFilterListeningEnabled(receiveFromOthers);
+        displayerSettings.setFilterEnabled(true);
+        displayerSettings.setFilterSelfApplyEnabled(applySelf);
+        displayerSettings.setFilterNotificationEnabled(notifyOthers);
+        displayerSettings.setFilterListeningEnabled(receiveFromOthers);
         return (T) this;
     }
 
     public T filterOff() {
-        dataDisplayer.setFilterEnabled(false);
+        displayerSettings.setFilterEnabled(false);
         return (T) this;
     }
 
-    public DataDisplayer buildDisplayer() {
-        return dataDisplayer;
+    public DisplayerSettings buildDisplayer() {
+        return displayerSettings;
     }
 }

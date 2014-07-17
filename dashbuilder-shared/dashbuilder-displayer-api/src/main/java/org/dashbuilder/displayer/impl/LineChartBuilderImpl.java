@@ -15,13 +15,13 @@
  */
 package org.dashbuilder.displayer.impl;
 
-import org.dashbuilder.displayer.DataDisplayer;
+import org.dashbuilder.displayer.DisplayerSettings;
 import org.dashbuilder.displayer.LineChartBuilder;
-import org.dashbuilder.displayer.LineChartDisplayer;
+import org.dashbuilder.displayer.LineChartDisplayerSettings;
 
 public class LineChartBuilderImpl extends AbstractXAxisChartBuilder<LineChartBuilderImpl> implements LineChartBuilder<LineChartBuilderImpl> {
 
-    protected DataDisplayer createDisplayer() {
-        return new LineChartDisplayer();
+    protected DisplayerSettings createDisplayer() {
+        return new LineChartDisplayerSettings();
     }
 }

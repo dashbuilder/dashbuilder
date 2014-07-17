@@ -17,12 +17,12 @@ package org.dashbuilder.displayer.client;
 
 import java.util.List;
 
-import org.dashbuilder.displayer.DataDisplayer;
+import org.dashbuilder.displayer.DisplayerSettings;
 
 public interface RendererLibrary {
 
     String getUUID();
-    DataViewer lookupViewer(DataDisplayer displayer);
+    DataViewer lookupViewer(DisplayerSettings displayer);
     void draw(List<DataViewer> viewerList);
     void redraw(List<DataViewer> viewerList);
 }

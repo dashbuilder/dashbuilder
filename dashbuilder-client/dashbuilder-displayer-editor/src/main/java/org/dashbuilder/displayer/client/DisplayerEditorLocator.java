@@ -19,7 +19,7 @@ import java.util.Collection;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
-import org.dashbuilder.displayer.DataDisplayer;
+import org.dashbuilder.displayer.DisplayerSettings;
 import org.jboss.errai.ioc.client.container.IOC;
 import org.jboss.errai.ioc.client.container.IOCBeanDef;
 import org.jboss.errai.ioc.client.container.SyncBeanManager;
@@ -41,7 +41,7 @@ public class DisplayerEditorLocator {
     /**
      * Get the editor component for the specified data displayer
      */
-    public <T extends DataDisplayer> DisplayerEditor<T> lookupEditor(T displayer) {
+    public <T extends DisplayerSettings> DisplayerEditor<T> lookupEditor(T displayer) {
 
         String displayerType = displayer.getType().toString().toLowerCase();
         String beanName =  displayerType + "_editor";

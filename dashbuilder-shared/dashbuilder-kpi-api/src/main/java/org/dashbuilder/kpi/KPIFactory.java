@@ -16,7 +16,7 @@
 package org.dashbuilder.kpi;
 
 import org.dashbuilder.dataset.DataSetRef;
-import org.dashbuilder.displayer.DataDisplayer;
+import org.dashbuilder.displayer.DisplayerSettings;
 import org.dashbuilder.displayer.DataDisplayerType;
 import org.dashbuilder.kpi.impl.KPIBuilderImpl;
 import org.dashbuilder.kpi.impl.KPIImpl;
@@ -26,11 +26,11 @@ import org.dashbuilder.kpi.impl.KPIImpl;
  */
 public final class KPIFactory {
 
-    public static KPI newKPI(String uuid, DataSetRef dataRef, DataDisplayer displayer) {
+    public static KPI newKPI(String uuid, DataSetRef dataRef, DisplayerSettings displayerSettings) {
         KPIImpl kpi = new KPIImpl();
         kpi.setUUID(uuid);
         kpi.setDataSetRef(dataRef);
-        kpi.setDataDisplayer(displayer);
+        kpi.setDisplayerSettings( displayerSettings );
         return kpi;
     }
 

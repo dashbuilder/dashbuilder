@@ -18,10 +18,10 @@ package org.dashbuilder.displayer;
 import org.jboss.errai.common.client.api.annotations.Portable;
 
 @Portable
-public class BubbleChartDisplayer extends AbstractXAxisChartDisplayer {
+public class AreaChartDisplayerSettings extends AbstractXAxisChartDisplayerSettings {
 
     @Override
     public DataDisplayerType getType() {
-        return DataDisplayerType.BUBBLECHART;
+        return DataDisplayerType.AREACHART;
     }
 }

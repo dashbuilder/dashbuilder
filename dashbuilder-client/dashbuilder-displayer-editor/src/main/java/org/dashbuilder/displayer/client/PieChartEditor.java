@@ -22,14 +22,14 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Widget;
-import org.dashbuilder.displayer.XAxisChartDisplayer;
+import org.dashbuilder.displayer.XAxisChartDisplayerSettings;
 
 /**
  * Pie chart editor.
  */
 @ApplicationScoped
 @Named("piechart_editor")
-public class PieChartEditor extends AbstractDisplayerEditor<XAxisChartDisplayer> {
+public class PieChartEditor extends AbstractDisplayerEditor<XAxisChartDisplayerSettings> {
 
     interface EditorBinder extends UiBinder<Widget, PieChartEditor>{}
     private static final EditorBinder uiBinder = GWT.create(EditorBinder.class);
@@ -45,7 +45,7 @@ public class PieChartEditor extends AbstractDisplayerEditor<XAxisChartDisplayer>
     }
 
     @Override
-    public void setDataDisplayer( XAxisChartDisplayer dataDisplayer ) {
+    public void setDataDisplayer( XAxisChartDisplayerSettings dataDisplayer ) {
         super.setDataDisplayer( dataDisplayer );
         xAxisChartEditorBase.setDataDisplayer( dataDisplayer );
     }

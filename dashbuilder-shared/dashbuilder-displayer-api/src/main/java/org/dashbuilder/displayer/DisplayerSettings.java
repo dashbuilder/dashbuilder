@@ -18,10 +18,10 @@ package org.dashbuilder.displayer;
 import java.util.List;
 
 /**
- * The top level interface for a data displayer. A DataDisplayer contains the information necessary to visualize data
+ * The top level interface for a data displayer. A DisplayerSettings contains the information necessary to visualize data
  * in a specific way.
  */
-public interface DataDisplayer {
+public interface DisplayerSettings {
 
     /**
      * @return The caption that will be given to the specific data visualization.
@@ -46,7 +46,7 @@ public interface DataDisplayer {
     void setTitleVisible(boolean visible);
 
     /**
-     * @return The type of this DataDisplayer.
+     * @return The type of this DisplayerSettings.
      * @see org.dashbuilder.displayer.DataDisplayerType
      */
     DataDisplayerType getType();
@@ -57,13 +57,13 @@ public interface DataDisplayer {
     String getRenderer();
 
     /**
-     * Set the renderer that will be used for visualizing this DataDisplayer.
+     * Set the renderer that will be used for visualizing this DisplayerSettings.
      * @param renderer The identifier of the renderer.
      */
     void setRenderer(String renderer);
 
     /**
-     * @return A List of DataDisplayerColumns that were configured for this DataDisplayer,
+     * @return A List of DataDisplayerColumns that were configured for this DisplayerSettings,
      * or an empty list if none were configured. In the latter case, the DataSet will be introspected in order to
      * visualize the data it contains.
      * @see org.dashbuilder.displayer.DataDisplayerColumn

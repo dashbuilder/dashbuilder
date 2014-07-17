@@ -25,9 +25,9 @@ import com.googlecode.gwt.charts.client.corechart.AreaChart;
 import com.googlecode.gwt.charts.client.corechart.AreaChartOptions;
 import com.googlecode.gwt.charts.client.options.Animation;
 import com.googlecode.gwt.charts.client.options.AnimationEasing;
-import org.dashbuilder.displayer.AreaChartDisplayer;
+import org.dashbuilder.displayer.AreaChartDisplayerSettings;
 
-public class GoogleAreaChartViewer extends GoogleXAxisChartViewer<AreaChartDisplayer> {
+public class GoogleAreaChartViewer extends GoogleXAxisChartViewer<AreaChartDisplayerSettings> {
 
     protected AreaChart chart;
     protected Panel filterPanel;

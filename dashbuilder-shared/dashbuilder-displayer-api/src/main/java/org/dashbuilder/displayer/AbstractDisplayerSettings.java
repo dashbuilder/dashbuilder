@@ -18,7 +18,7 @@ package org.dashbuilder.displayer;
 import java.util.List;
 import java.util.ArrayList;
 
-public abstract class AbstractDataDisplayer implements DataDisplayer {
+public abstract class AbstractDisplayerSettings implements DisplayerSettings {
 
     protected String title;
     protected boolean titleVisible = true;

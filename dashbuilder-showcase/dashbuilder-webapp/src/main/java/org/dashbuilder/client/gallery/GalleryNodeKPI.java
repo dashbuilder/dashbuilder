@@ -64,7 +64,7 @@ public class GalleryNodeKPI extends GalleryNode {
             return new KPIViewer(kpi).draw();
         }
 
-        DisplayerEditor editor = DisplayerEditorLocator.get().lookupEditor(kpi.getDataDisplayer());
+        DisplayerEditor editor = DisplayerEditorLocator.get().lookupEditor(kpi.getDisplayerSettings());
 
         SimplePanel editorPanel = new SimplePanel();
         editorPanel.setWidth("500px");

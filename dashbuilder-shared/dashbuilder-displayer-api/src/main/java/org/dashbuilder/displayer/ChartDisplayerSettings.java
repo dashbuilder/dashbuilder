@@ -18,7 +18,7 @@ package org.dashbuilder.displayer;
 /*
  * Interface for chart displayers
  */
-public interface ChartDisplayer extends DataDisplayer {
+public interface ChartDisplayerSettings extends DisplayerSettings {
 
     public static int DEFAULT_WIDTH = 600;
     public static int DEFAULT_HEIGHT = 300;

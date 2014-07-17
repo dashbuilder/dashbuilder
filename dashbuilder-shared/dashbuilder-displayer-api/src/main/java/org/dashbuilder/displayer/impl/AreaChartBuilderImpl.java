@@ -16,12 +16,12 @@
 package org.dashbuilder.displayer.impl;
 
 import org.dashbuilder.displayer.AreaChartBuilder;
-import org.dashbuilder.displayer.AreaChartDisplayer;
-import org.dashbuilder.displayer.DataDisplayer;
+import org.dashbuilder.displayer.AreaChartDisplayerSettings;
+import org.dashbuilder.displayer.DisplayerSettings;
 
 public class AreaChartBuilderImpl extends AbstractXAxisChartBuilder<AreaChartBuilderImpl> implements AreaChartBuilder<AreaChartBuilderImpl> {
 
-    protected DataDisplayer createDisplayer() {
-        return new AreaChartDisplayer();
+    protected DisplayerSettings createDisplayer() {
+        return new AreaChartDisplayerSettings();
     }
 }

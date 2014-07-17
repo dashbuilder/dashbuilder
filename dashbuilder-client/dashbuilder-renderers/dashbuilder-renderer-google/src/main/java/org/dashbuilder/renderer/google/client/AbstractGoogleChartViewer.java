@@ -18,23 +18,23 @@ package org.dashbuilder.renderer.google.client;
 import com.googlecode.gwt.charts.client.options.Legend;
 import com.googlecode.gwt.charts.client.options.LegendAlignment;
 import com.googlecode.gwt.charts.client.options.LegendPosition;
-import org.dashbuilder.displayer.ChartDisplayer;
+import org.dashbuilder.displayer.ChartDisplayerSettings;
 
 /**
- * Abstract base class for all viewers that support the basic ChartDisplayer configuration options
+ * Abstract base class for all viewers that support the basic ChartDisplayerSettings configuration options
  */
-public abstract class AbstractGoogleChartViewer<T extends ChartDisplayer> extends GoogleViewer<T> {
+public abstract class AbstractGoogleChartViewer<T extends ChartDisplayerSettings> extends GoogleViewer<T> {
 
-    protected Legend createChartLegend( ChartDisplayer displayer ) {
+    protected Legend createChartLegend( ChartDisplayerSettings chartDisplayerSettings ) {
         GoogleLegendWrapper legend = GoogleLegendWrapper.create();
-        legend.setLegendPosition( getLegendPosition( displayer ) );
+        legend.setLegendPosition( getLegendPosition( chartDisplayerSettings ) );
         legend.setAligment( LegendAlignment.CENTER );
         return legend;
     }
 
-    protected String getLegendPosition( ChartDisplayer displayer ) {
-        if ( !displayer.isLegendShow() ) return LegendPosition.NONE.toString().toLowerCase();
-        switch ( displayer.getLegendPosition() ) {
+    protected String getLegendPosition( ChartDisplayerSettings chartDisplayerSettings ) {
+        if ( !chartDisplayerSettings.isLegendShow() ) return LegendPosition.NONE.toString().toLowerCase();
+        switch ( chartDisplayerSettings.getLegendPosition() ) {
             case TOP: return LegendPosition.TOP.toString().toLowerCase();
             case BOTTOM: return LegendPosition.BOTTOM.toString().toLowerCase();
             case RIGHT: return LegendPosition.RIGHT.toString().toLowerCase();

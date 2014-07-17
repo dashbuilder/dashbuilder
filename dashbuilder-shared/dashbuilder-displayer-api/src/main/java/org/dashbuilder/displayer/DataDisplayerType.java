@@ -16,47 +16,47 @@
 package org.dashbuilder.displayer;
 
 /**
- * An enumeration for the different types of DataDisplayer.
+ * An enumeration for the different types of DisplayerSettings.
  */
 public enum DataDisplayerType {
 
     /**
-     * A Bar Chart DataDisplayer.
+     * Bar Chart DisplayerSettings.
      */
     BARCHART,
 
     /**
-     * A Pie Chart DataDisplayer.
+     * Pie Chart DisplayerSettings.
      */
     PIECHART,
 
     /**
-     * An Area Chart DataDisplayer.
+     * Area Chart DisplayerSettings.
      */
     AREACHART,
 
     /**
-     * A Line Chart DataDisplayer.
+     * Line Chart DisplayerSettings.
      */
     LINECHART,
 
     /**
-     * A Bubble Chart DataDisplayer.
+     * Bubble Chart DisplayerSettings.
      */
     BUBBLECHART,
 
     /**
-     * A Meter Chart DataDisplayer.
+     * Meter Chart DisplayerSettings.
      */
     METERCHART,
 
     /**
-     * A Table DataDisplayer.
+     * Table DisplayerSettings.
      */
     TABLE,
 
     /**
-     * A Map DataDisplayer.
+     * Map DisplayerSettings.
      */
     MAP;
 

@@ -20,10 +20,9 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import org.dashbuilder.dataset.DataSetRef;
-import org.dashbuilder.displayer.DataDisplayer;
+import org.dashbuilder.displayer.DisplayerSettings;
 import org.jboss.errai.ioc.client.container.IOC;
 import org.jboss.errai.ioc.client.container.IOCBeanDef;
-import org.jboss.errai.ioc.client.container.SyncBeanManager;
 
 /**
  * The locator service for DataViewer implementations.
@@ -42,7 +41,7 @@ public class DataViewerLocator {
     /**
      * Get the viewer component for the specified data displayer (with no data set attached).
      */
-    public DataViewer lookupViewer(DataDisplayer target) {
+    public DataViewer lookupViewer(DisplayerSettings target) {
         RendererLibrary renderer = RendererLibLocator.get().lookupRenderer(target);
         DataViewer viewer = renderer.lookupViewer(target);
         if (viewer == null) throw new RuntimeException(target.getType() + " displayer not supported in " + target.getRenderer() + " renderer.");
@@ -54,7 +53,7 @@ public class DataViewerLocator {
     /**
      * Get the viewer component for the specified data displayer and attach it to the specified data set ref.
      */
-    public DataViewer lookupViewer(DataSetRef dataSetRef, DataDisplayer target) {
+    public DataViewer lookupViewer(DataSetRef dataSetRef, DisplayerSettings target) {
         DataViewer viewer = lookupViewer(target);
         DataSetHandler handler = handlerLocator.lookupHandler(dataSetRef);
         viewer.setDataSetHandler(handler);

@@ -16,12 +16,12 @@
 package org.dashbuilder.displayer.client;
 
 import com.google.gwt.user.client.ui.IsWidget;
-import org.dashbuilder.displayer.DataDisplayer;
+import org.dashbuilder.displayer.DisplayerSettings;
 
 /**
- * A DisplayerEditor provides an UI for editing a DataDisplayer instance.
+ * A DisplayerEditor provides an UI for editing a DisplayerSettings instance.
  */
-public interface DisplayerEditor<T extends DataDisplayer> extends IsWidget {
+public interface DisplayerEditor<T extends DisplayerSettings> extends IsWidget {
 
     /**
      * The data displayer to be edited.

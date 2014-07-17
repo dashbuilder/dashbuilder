@@ -19,11 +19,11 @@ import org.dashbuilder.dataset.DataSetLookupBuilder;
 import org.dashbuilder.dataset.DataSetRef;
 import org.dashbuilder.displayer.AreaChartBuilder;
 import org.dashbuilder.displayer.BubbleChartBuilder;
+import org.dashbuilder.displayer.DisplayerSettings;
 import org.dashbuilder.displayer.LineChartBuilder;
 import org.dashbuilder.displayer.MapChartBuilder;
 import org.dashbuilder.displayer.MeterChartBuilder;
 import org.dashbuilder.displayer.BarChartBuilder;
-import org.dashbuilder.displayer.DataDisplayer;
 import org.dashbuilder.displayer.PieChartBuilder;
 import org.dashbuilder.displayer.TableDisplayerBuilder;
 
@@ -71,11 +71,11 @@ public interface KPIBuilder extends
     /**
      * Set a direct reference to the data displayer set that will be used by the KPI that is being assembled.
      *
-     * @param dataDisplayer The reference to the DataDisplayer.
+     * @param displayerSettings The reference to the DisplayerSettings.
      * @return The KPIBuilder instance that this method was invoked upon.
-     * @see org.dashbuilder.displayer.DataDisplayer
+     * @see DisplayerSettings
      */
-    KPIBuilder displayer(DataDisplayer dataDisplayer);
+    KPIBuilder displayer(DisplayerSettings displayerSettings );
 
     /**
      * Build and return the KPI instance.

@@ -16,12 +16,12 @@
 package org.dashbuilder.displayer.client;
 
 import com.google.gwt.user.client.ui.Composite;
-import org.dashbuilder.displayer.DataDisplayer;
+import org.dashbuilder.displayer.DisplayerSettings;
 
 /**
  * Base class for implementing data displayer editor widgets.
  */
-public abstract class AbstractDisplayerEditor<T extends DataDisplayer> extends Composite implements DisplayerEditor<T> {
+public abstract class AbstractDisplayerEditor<T extends DisplayerSettings> extends Composite implements DisplayerEditor<T> {
 
     protected T dataDisplayer;
     protected DisplayerEditorListener listener;

@@ -21,7 +21,7 @@ package org.dashbuilder.displayer.client;
 public interface DisplayerEditorListener {
 
     /**
-     * Invoked every time the DataDisplayer instance is modified by the editor.
+     * Invoked every time the DisplayerSettings instance is modified by the editor.
      *
      * @param editor The DisplayerEditor instance where the event comes from.
      */

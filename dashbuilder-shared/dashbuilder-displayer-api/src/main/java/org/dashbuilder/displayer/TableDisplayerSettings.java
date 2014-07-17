@@ -19,7 +19,7 @@ import org.dashbuilder.dataset.sort.SortOrder;
 import org.jboss.errai.common.client.api.annotations.Portable;
 
 @Portable
-public class TableDisplayer extends AbstractDataDisplayer {
+public class TableDisplayerSettings extends AbstractDisplayerSettings {
 
     protected int pageSize = 20;
     protected boolean sortEnabled = true;

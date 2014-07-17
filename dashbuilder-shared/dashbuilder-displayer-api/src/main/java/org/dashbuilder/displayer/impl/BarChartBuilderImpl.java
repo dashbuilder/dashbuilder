@@ -16,29 +16,29 @@
 package org.dashbuilder.displayer.impl;
 
 import org.dashbuilder.displayer.BarChartBuilder;
-import org.dashbuilder.displayer.BarChartDisplayer;
-import org.dashbuilder.displayer.DataDisplayer;
+import org.dashbuilder.displayer.BarChartDisplayerSettings;
+import org.dashbuilder.displayer.DisplayerSettings;
 
 public class BarChartBuilderImpl extends AbstractXAxisChartBuilder<BarChartBuilderImpl> implements BarChartBuilder<BarChartBuilderImpl> {
 
-    protected DataDisplayer createDisplayer() {
-        return new BarChartDisplayer();
+    protected DisplayerSettings createDisplayer() {
+        return new BarChartDisplayerSettings();
     }
 
     public BarChartBuilderImpl set3d(boolean b) {
-        BarChartDisplayer d = (BarChartDisplayer) dataDisplayer;
+        BarChartDisplayerSettings d = (BarChartDisplayerSettings ) displayerSettings;
         d.set3d(b);
         return this;
     }
 
     public BarChartBuilderImpl horizontal() {
-        BarChartDisplayer d = (BarChartDisplayer) dataDisplayer;
+        BarChartDisplayerSettings d = (BarChartDisplayerSettings ) displayerSettings;
         d.setHorizontal(true);
         return this;
     }
 
     public BarChartBuilderImpl vertical() {
-        BarChartDisplayer d = (BarChartDisplayer) dataDisplayer;
+        BarChartDisplayerSettings d = (BarChartDisplayerSettings ) displayerSettings;
         d.setHorizontal(false);
         return this;
     }

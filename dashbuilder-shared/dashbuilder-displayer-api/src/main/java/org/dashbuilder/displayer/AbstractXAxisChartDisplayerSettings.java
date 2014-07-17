@@ -18,7 +18,7 @@ package org.dashbuilder.displayer;
 /**
  * Base class for X-axis based chart displayers.
  */
-public abstract class AbstractXAxisChartDisplayer extends AbstractChartDisplayer implements XAxisChartDisplayer {
+public abstract class AbstractXAxisChartDisplayerSettings extends AbstractChartDisplayerSettings implements XAxisChartDisplayerSettings {
 
     protected boolean xAxisShowLabels = DEFAULT_XAXIS_SHOW_LABELS;
     protected int xAxisLabelsAngle = DEFAULT_XAXIS_LABELS_ANGLE;

@@ -21,7 +21,7 @@ import java.util.Map;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
-import org.dashbuilder.displayer.DataDisplayer;
+import org.dashbuilder.displayer.DisplayerSettings;
 import org.dashbuilder.displayer.DataDisplayerType;
 import org.jboss.errai.ioc.client.container.IOC;
 import org.jboss.errai.ioc.client.container.IOCBeanDef;
@@ -51,7 +51,7 @@ public class RendererLibLocator {
         return defaultRenderers.get(displayerType);
     }
 
-    public RendererLibrary lookupRenderer(DataDisplayer target) {
+    public RendererLibrary lookupRenderer(DisplayerSettings target) {
         // Get the renderer specified for the displayer.
         String renderer = target.getRenderer();
 

@@ -18,7 +18,7 @@ package org.dashbuilder.displayer;
 /**
  * Base class for chart displayers.
  */
-public abstract class AbstractChartDisplayer extends AbstractDataDisplayer implements ChartDisplayer {
+public abstract class AbstractChartDisplayerSettings extends AbstractDisplayerSettings implements ChartDisplayerSettings {
 
     protected int width = DEFAULT_WIDTH;
     protected int height = DEFAULT_HEIGHT;

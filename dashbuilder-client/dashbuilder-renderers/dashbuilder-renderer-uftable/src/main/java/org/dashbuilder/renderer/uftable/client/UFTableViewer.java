@@ -48,6 +48,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.AsyncDataProvider;
 import com.google.gwt.view.client.HasData;
 import org.dashbuilder.dataset.client.DataSetReadyCallback;
+import org.dashbuilder.displayer.TableDisplayerSettings;
 import org.dashbuilder.displayer.client.AbstractDataViewer;
 import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.DataColumn;
@@ -60,7 +61,7 @@ import org.kie.uberfire.client.tables.PagedTable;
 
 import static com.google.gwt.dom.client.BrowserEvents.CLICK;
 
-public class UFTableViewer extends AbstractDataViewer<org.dashbuilder.displayer.TableDisplayer> {
+public class UFTableViewer extends AbstractDataViewer<TableDisplayerSettings> {
 
     private Map< String, String > columnCaptionIds = new HashMap< String, String >(5);
 
@@ -89,7 +90,7 @@ public class UFTableViewer extends AbstractDataViewer<org.dashbuilder.displayer.
             drawn = true;
 
             if ( dataDisplayer == null ) {
-                displayMessage( "ERROR: DataDisplayer property not set" );
+                displayMessage( "ERROR: DisplayerSettings property not set" );
             } else if ( dataSetHandler == null ) {
                 displayMessage( "ERROR: DataSetHandler property not set" );
             } else {
