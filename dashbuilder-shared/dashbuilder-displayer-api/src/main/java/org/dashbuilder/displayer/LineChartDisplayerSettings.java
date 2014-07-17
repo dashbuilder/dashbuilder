@@ -21,7 +21,7 @@ import org.jboss.errai.common.client.api.annotations.Portable;
 public class LineChartDisplayerSettings extends AbstractXAxisChartDisplayerSettings {
 
     @Override
-    public DataDisplayerType getType() {
-        return DataDisplayerType.LINECHART;
+    public DisplayerType getType() {
+        return DisplayerType.LINECHART;
     }
 }

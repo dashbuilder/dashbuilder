@@ -24,8 +24,8 @@ public class BarChartDisplayerSettings extends AbstractXAxisChartDisplayerSettin
     protected boolean horizontal;
 
     @Override
-    public DataDisplayerType getType() {
-        return DataDisplayerType.BARCHART;
+    public DisplayerType getType() {
+        return DisplayerType.BARCHART;
     }
 
     public boolean is3d() {
