@@ -42,8 +42,8 @@ public class GoogleMapViewer extends GoogleXAxisChartViewer<MapChartDisplayerSet
         chart.draw(createTable(), createOptions());
 
         HTML titleHtml = new HTML();
-        if (dataDisplayer.isTitleVisible()) {
-            titleHtml.setText(dataDisplayer.getTitle());
+        if (displayerSettings.isTitleVisible()) {
+            titleHtml.setText(displayerSettings.getTitle());
         }
 
         VerticalPanel verticalPanel = new VerticalPanel();
@@ -63,8 +63,8 @@ public class GoogleMapViewer extends GoogleXAxisChartViewer<MapChartDisplayerSet
 
     private GeoChartOptions createOptions() {
         GeoChartOptions options = GeoChartOptions.create();
-        options.setWidth(dataDisplayer.getWidth());
-        options.setHeight(dataDisplayer.getHeight());
+        options.setWidth(displayerSettings.getWidth());
+        options.setHeight(displayerSettings.getHeight());
         return options;
     }
 }

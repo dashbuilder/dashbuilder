@@ -37,7 +37,7 @@ public class DataViewerCoordinator {
         viewerList.add(viewer);
         viewer.addListener(viewerListener);
 
-        RendererLibrary renderer = RendererLibLocator.get().lookupRenderer(viewer.getDataDisplayer());
+        RendererLibrary renderer = RendererLibLocator.get().lookupRenderer(viewer.getDisplayerSettings());
         List<DataViewer> rendererGroup = rendererMap.get(renderer);
         if (rendererGroup == null) rendererMap.put(renderer, rendererGroup = new ArrayList<DataViewer>());
         rendererGroup.add(viewer);

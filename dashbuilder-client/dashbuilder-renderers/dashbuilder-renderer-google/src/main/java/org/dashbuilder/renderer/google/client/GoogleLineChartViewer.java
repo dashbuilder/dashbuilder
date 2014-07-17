@@ -44,8 +44,8 @@ public class GoogleLineChartViewer extends GoogleXAxisChartViewer<LineChartDispl
         chart.draw(createTable(), createOptions());
 
         HTML titleHtml = new HTML();
-        if (dataDisplayer.isTitleVisible()) {
-            titleHtml.setText(dataDisplayer.getTitle());
+        if (displayerSettings.isTitleVisible()) {
+            titleHtml.setText(displayerSettings.getTitle());
         }
 
         VerticalPanel verticalPanel = new VerticalPanel();
@@ -69,9 +69,9 @@ public class GoogleLineChartViewer extends GoogleXAxisChartViewer<LineChartDispl
         anim.setEasing(AnimationEasing.IN_AND_OUT);
 
         LineChartOptions options = LineChartOptions.create();
-        options.setWidth(dataDisplayer.getWidth());
-        options.setHeight(dataDisplayer.getHeight());
-        options.setLegend( createChartLegend( dataDisplayer ) );
+        options.setWidth(displayerSettings.getWidth());
+        options.setHeight(displayerSettings.getHeight());
+        options.setLegend( createChartLegend( displayerSettings ) );
         options.setAnimation(anim);
         options.setChartArea(createChartArea());
         return options;

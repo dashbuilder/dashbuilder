@@ -72,14 +72,14 @@ public class GoogleTableViewer extends GoogleViewer<TableDisplayerSettings> {
     @Override
     protected void beforeDataSetLookup() {
         // Draw only the data subset corresponding to the current page.
-        int pageSize = dataDisplayer.getPageSize();
+        int pageSize = displayerSettings.getPageSize();
         int offset = (currentPage - 1) * pageSize;
         dataSetHandler.limitDataSetRows(offset, pageSize);
     }
 
     @Override
     protected void afterDataSetLookup(DataSet dataSet) {
-        pageSize = dataDisplayer.getPageSize();
+        pageSize = displayerSettings.getPageSize();
         numberOfRows = dataSet.getRowCountNonTrimmed();
         numberOfPages = ((numberOfRows - 1) / pageSize) + 1;
         if (currentPage > numberOfPages) {
@@ -115,8 +115,8 @@ public class GoogleTableViewer extends GoogleViewer<TableDisplayerSettings> {
 
         table.draw(dataTable, createOptions());
         HTML titleHtml = new HTML();
-        if (dataDisplayer.isTitleVisible()) {
-            titleHtml.setText(dataDisplayer.getTitle());
+        if (displayerSettings.isTitleVisible()) {
+            titleHtml.setText(displayerSettings.getTitle());
         }
 
         VerticalPanel verticalPanel = new VerticalPanel();
@@ -136,7 +136,7 @@ public class GoogleTableViewer extends GoogleViewer<TableDisplayerSettings> {
     private TableOptions createOptions() {
         TableOptions options = TableOptions.create();
         options.setSort(TableSort.EVENT);
-        options.setPageSize(dataDisplayer.getPageSize());
+        options.setPageSize(displayerSettings.getPageSize());
         options.setShowRowNumber(false);
         return options;
     }

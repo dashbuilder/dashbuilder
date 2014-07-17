@@ -46,8 +46,8 @@ public class GoogleBubbleChartViewer extends GoogleXAxisChartViewer<BubbleChartD
         chart.draw(createTable(), createOptions());
 
         HTML titleHtml = new HTML();
-        if (dataDisplayer.isTitleVisible()) {
-            titleHtml.setText(dataDisplayer.getTitle());
+        if (displayerSettings.isTitleVisible()) {
+            titleHtml.setText(displayerSettings.getTitle());
         }
 
         VerticalPanel verticalPanel = new VerticalPanel();
@@ -71,12 +71,12 @@ public class GoogleBubbleChartViewer extends GoogleXAxisChartViewer<BubbleChartD
         anim.setEasing(AnimationEasing.IN);
 
         BubbleChartOptions options = BubbleChartOptions.create();
-        options.setWidth(dataDisplayer.getWidth());
-        options.setHeight(dataDisplayer.getHeight());
+        options.setWidth(displayerSettings.getWidth());
+        options.setHeight(displayerSettings.getHeight());
         options.setHAxis(HAxis.create(googleTable.getColumnLabel(1)));
         options.setVAxis(VAxis.create(googleTable.getColumnLabel(2)));
         options.setChartArea(createChartArea());
-        options.setLegend( createChartLegend( dataDisplayer ) );
+        options.setLegend( createChartLegend( displayerSettings ) );
         options.setAnimation(anim);
         String[] colors = createColorArray(googleTable);
         if (colors.length > 0) options.setColors(colors);

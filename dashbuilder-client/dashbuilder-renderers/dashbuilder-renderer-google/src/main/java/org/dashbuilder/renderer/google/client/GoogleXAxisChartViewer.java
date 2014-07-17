@@ -43,7 +43,7 @@ public abstract class GoogleXAxisChartViewer<T extends AbstractXAxisChartDisplay
     public static final String COLOR_NOT_SELECTED = "grey";
 
     public DataTable createTable() {
-        List<DataDisplayerColumn> displayerColumns = dataDisplayer.getColumnList();
+        List<DataDisplayerColumn> displayerColumns = displayerSettings.getColumnList();
         if (displayerColumns.size() == 1) {
             throw new IllegalArgumentException("XAxis charts require to specify at least 2 columns. The X axis plus one ore more columns for the Y axis.");
         }
@@ -68,7 +68,7 @@ public abstract class GoogleXAxisChartViewer<T extends AbstractXAxisChartDisplay
     public SelectHandler createSelectHandler(final CoreChartWidget selectable) {
         return new SelectHandler() {
             public void onSelect(SelectEvent event) {
-                if (!dataDisplayer.isFilterEnabled()) return;
+                if (!displayerSettings.isFilterEnabled()) return;
 
                 JsArray<Selection> selections = selectable.getSelection();
                 for (int i = 0; i < selections.length(); i++) {
@@ -87,7 +87,7 @@ public abstract class GoogleXAxisChartViewer<T extends AbstractXAxisChartDisplay
     public SelectHandler createSelectHandler(final GeoChart selectable) {
         return new SelectHandler() {
             public void onSelect(SelectEvent event) {
-                if (!dataDisplayer.isFilterEnabled()) return;
+                if (!displayerSettings.isFilterEnabled()) return;
 
                 JsArray<Selection> selections = selectable.getSelection();
                 for (int i = 0; i < selections.length(); i++) {
@@ -104,7 +104,7 @@ public abstract class GoogleXAxisChartViewer<T extends AbstractXAxisChartDisplay
     }
 
     protected Widget createCurrentSelectionWidget() {
-        if (!dataDisplayer.isFilterEnabled()) return null;
+        if (!displayerSettings.isFilterEnabled()) return null;
 
         List<String> selectedValues = filterValues(googleTable.getColumnId(0));
         if (selectedValues == null || selectedValues.isEmpty()) return null;
@@ -126,12 +126,12 @@ public abstract class GoogleXAxisChartViewer<T extends AbstractXAxisChartDisplay
     }
 
     protected ChartArea createChartArea() {
-        int width = dataDisplayer.getWidth();
-        int height = dataDisplayer.getHeight();
-        int top = dataDisplayer.getMarginTop();
-        int bottom = dataDisplayer.getMarginBottom();
-        int left = dataDisplayer.getMarginLeft();
-        int right = dataDisplayer.getMarginRight();
+        int width = displayerSettings.getWidth();
+        int height = displayerSettings.getHeight();
+        int top = displayerSettings.getMarginTop();
+        int bottom = displayerSettings.getMarginBottom();
+        int left = displayerSettings.getMarginLeft();
+        int right = displayerSettings.getMarginRight();
 
         int chartWidth = width-right-left;
         int chartHeight = height-top-bottom;

@@ -57,7 +57,7 @@ public abstract class GoogleViewer<T extends DisplayerSettings> extends Abstract
         if (!drawn) {
             drawn = true;
 
-            if (dataDisplayer == null) {
+            if (displayerSettings == null) {
                 displayMessage("ERROR: DisplayerSettings property not set");
             }
             else if (dataSetHandler == null) {
@@ -65,7 +65,7 @@ public abstract class GoogleViewer<T extends DisplayerSettings> extends Abstract
             }
             else {
                 try {
-                    displayMessage("Initializing '" + dataDisplayer.getTitle() + "'...");
+                    displayMessage("Initializing '" + displayerSettings.getTitle() + "'...");
                     beforeDataSetLookup();
                     dataSetHandler.lookupDataSet(new DataSetReadyCallback() {
                         public void callback(DataSet result) {
@@ -150,7 +150,7 @@ public abstract class GoogleViewer<T extends DisplayerSettings> extends Abstract
     // Google DataTable manipulation methods
 
     public DataTable createTable() {
-        List<DataDisplayerColumn> displayerColumns = dataDisplayer.getColumnList();
+        List<DataDisplayerColumn> displayerColumns = displayerSettings.getColumnList();
         if (displayerColumns.isEmpty()) {
             return googleTable = formatTable(createTableFromDataSet());
         }
@@ -200,7 +200,7 @@ public abstract class GoogleViewer<T extends DisplayerSettings> extends Abstract
         gTable.addRows(dataSet.getRowCount());
         int columnIndex = 0;
 
-        List<DataDisplayerColumn> displayerColumns = dataDisplayer.getColumnList();
+        List<DataDisplayerColumn> displayerColumns = displayerSettings.getColumnList();
         for (int i = 0; i < displayerColumns.size(); i++) {
             DataDisplayerColumn displayerColumn = displayerColumns.get(i);
             DataColumn dataColumn = null;

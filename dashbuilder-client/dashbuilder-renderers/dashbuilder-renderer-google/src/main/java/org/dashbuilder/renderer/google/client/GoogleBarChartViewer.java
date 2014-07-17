@@ -44,7 +44,7 @@ public class GoogleBarChartViewer extends GoogleXAxisChartViewer<BarChartDisplay
     @Override
     public Widget createVisualization() {
 
-        if (dataDisplayer.isHorizontal()) chart = new BarChart();
+        if (displayerSettings.isHorizontal()) chart = new BarChart();
         else chart = new ColumnChart();
 
         chart.addSelectHandler(createSelectHandler(chart));
@@ -52,8 +52,8 @@ public class GoogleBarChartViewer extends GoogleXAxisChartViewer<BarChartDisplay
 
 
         HTML titleHtml = new HTML();
-        if (dataDisplayer.isTitleVisible()) {
-            titleHtml.setText(dataDisplayer.getTitle());
+        if (displayerSettings.isTitleVisible()) {
+            titleHtml.setText(displayerSettings.getTitle());
         }
 
         VerticalPanel verticalPanel = new VerticalPanel();
@@ -77,20 +77,20 @@ public class GoogleBarChartViewer extends GoogleXAxisChartViewer<BarChartDisplay
         anim.setDuration(700);
         anim.setEasing(AnimationEasing.IN_AND_OUT);
 
-        if (dataDisplayer.isHorizontal()) {
+        if (displayerSettings.isHorizontal()) {
             BarChartOptions options = BarChartOptions.create();
-            options.setWidth(dataDisplayer.getWidth());
-            options.setHeight(dataDisplayer.getHeight());
-            options.setLegend( createChartLegend( dataDisplayer ) );
+            options.setWidth(displayerSettings.getWidth());
+            options.setHeight(displayerSettings.getHeight());
+            options.setLegend( createChartLegend( displayerSettings ) );
             options.setAnimation(anim);
             options.setChartArea(createChartArea());
             return options;
         }
         else {
             ColumnChartOptions options = ColumnChartOptions.create();
-            options.setWidth(dataDisplayer.getWidth());
-            options.setHeight(dataDisplayer.getHeight());
-            options.setLegend( createChartLegend( dataDisplayer ) );
+            options.setWidth(displayerSettings.getWidth());
+            options.setHeight(displayerSettings.getHeight());
+            options.setLegend( createChartLegend( displayerSettings ) );
             options.setAnimation(anim);
             // TODO: options.set3D(displayerSettings.is3d());
             options.setChartArea(createChartArea());

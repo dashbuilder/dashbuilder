@@ -41,17 +41,17 @@ public class DisplayerEditorLocator {
     /**
      * Get the editor component for the specified data displayer
      */
-    public <T extends DisplayerSettings> DisplayerEditor<T> lookupEditor(T displayer) {
+    public <T extends DisplayerSettings> DisplayerEditor<T> lookupEditor(T displayerSettings) {
 
-        String displayerType = displayer.getType().toString().toLowerCase();
+        String displayerType = displayerSettings.getType().toString().toLowerCase();
         String beanName =  displayerType + "_editor";
         Collection<IOCBeanDef> beans = beanManager.lookupBeans(beanName);
-        if (beans == null || beans.isEmpty()) throw new RuntimeException(displayer.getType().toString().toLowerCase() + " editor not found.");
+        if (beans == null || beans.isEmpty()) throw new RuntimeException(displayerSettings.getType().toString().toLowerCase() + " editor not found.");
         if (beans.size() > 1) throw new RuntimeException("Multiple editor implementations found for: " + displayerType);
 
         IOCBeanDef beanDef = beans.iterator().next();
         DisplayerEditor<T> editor = (DisplayerEditor<T>) beanDef.getInstance();
-        editor.setDataDisplayer(displayer);
+        editor.setDisplayerSettings(displayerSettings);
         return editor;
     }
 }

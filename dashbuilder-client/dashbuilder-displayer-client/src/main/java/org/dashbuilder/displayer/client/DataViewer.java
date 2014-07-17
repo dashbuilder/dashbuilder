@@ -26,8 +26,8 @@ public interface DataViewer<T extends DisplayerSettings> extends DataViewerListe
     /**
      * The data displayer to draw.
      */
-    void setDataDisplayer(T dataDisplayer);
-    T getDataDisplayer();
+    void setDisplayerSettings(T displayerSettings);
+    T getDisplayerSettings();
 
     /**
      * The handler used to fetch and manipulate the data set.

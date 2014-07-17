@@ -45,9 +45,9 @@ public class LineChartEditor extends AbstractDisplayerEditor<XAxisChartDisplayer
     }
 
     @Override
-    public void setDataDisplayer( XAxisChartDisplayerSettings dataDisplayer ) {
-        super.setDataDisplayer( dataDisplayer );
-        xAxisChartEditorBase.setDataDisplayer( dataDisplayer );
+    public void setDisplayerSettings( XAxisChartDisplayerSettings displayerSettings ) {
+        super.setDisplayerSettings( displayerSettings );
+        xAxisChartEditorBase.setDisplayerSettings( displayerSettings );
     }
 
     @Override

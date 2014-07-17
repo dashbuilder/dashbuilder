@@ -40,8 +40,8 @@ public class GoogleMeterChartViewer extends GoogleViewer<MeterChartDisplayerSett
         chart.draw(createTable(), createOptions());
 
         HTML titleHtml = new HTML();
-        if (dataDisplayer.isTitleVisible()) {
-            titleHtml.setText(dataDisplayer.getTitle());
+        if (displayerSettings.isTitleVisible()) {
+            titleHtml.setText(displayerSettings.getTitle());
         }
 
         VerticalPanel verticalPanel = new VerticalPanel();
@@ -60,16 +60,16 @@ public class GoogleMeterChartViewer extends GoogleViewer<MeterChartDisplayerSett
         anim.setEasing(AnimationEasing.IN_AND_OUT);
 
         GaugeOptions options = GaugeOptions.create();
-        options.setWidth(dataDisplayer.getWidth());
-        options.setHeight(dataDisplayer.getHeight());
-        options.setMin(dataDisplayer.getMeterStart());
-        options.setMax(dataDisplayer.getMeterEnd());
-        options.setGreenFrom(dataDisplayer.getMeterStart());
-        options.setGreenTo(dataDisplayer.getMeterWarning());
-        options.setYellowFrom(dataDisplayer.getMeterWarning());
-        options.setYellowTo(dataDisplayer.getMeterCritical());
-        options.setRedFrom(dataDisplayer.getMeterCritical());
-        options.setRedTo(dataDisplayer.getMeterEnd());
+        options.setWidth(displayerSettings.getWidth());
+        options.setHeight(displayerSettings.getHeight());
+        options.setMin(displayerSettings.getMeterStart());
+        options.setMax(displayerSettings.getMeterEnd());
+        options.setGreenFrom(displayerSettings.getMeterStart());
+        options.setGreenTo(displayerSettings.getMeterWarning());
+        options.setYellowFrom(displayerSettings.getMeterWarning());
+        options.setYellowTo(displayerSettings.getMeterCritical());
+        options.setRedFrom(displayerSettings.getMeterCritical());
+        options.setRedTo(displayerSettings.getMeterEnd());
         options.setAnimation(anim);
         return options;
     }

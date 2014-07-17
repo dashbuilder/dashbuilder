@@ -46,7 +46,7 @@ public class DataViewerLocator {
         DataViewer viewer = renderer.lookupViewer(target);
         if (viewer == null) throw new RuntimeException(target.getType() + " displayer not supported in " + target.getRenderer() + " renderer.");
 
-        viewer.setDataDisplayer(target);
+        viewer.setDisplayerSettings( target );
         return viewer;
     }
 

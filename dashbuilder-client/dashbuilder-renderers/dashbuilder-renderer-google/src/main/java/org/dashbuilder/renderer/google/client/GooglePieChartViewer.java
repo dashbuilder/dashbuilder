@@ -42,8 +42,8 @@ public class GooglePieChartViewer extends GoogleXAxisChartViewer<PieChartDisplay
         chart.draw(createTable(), createOptions());
 
         HTML titleHtml = new HTML();
-        if (dataDisplayer.isTitleVisible()) {
-            titleHtml.setText(dataDisplayer.getTitle());
+        if (displayerSettings.isTitleVisible()) {
+            titleHtml.setText(displayerSettings.getTitle());
         }
 
         VerticalPanel verticalPanel = new VerticalPanel();
@@ -63,10 +63,10 @@ public class GooglePieChartViewer extends GoogleXAxisChartViewer<PieChartDisplay
 
     private PieChartOptions createOptions() {
         PieChartOptions options = PieChartOptions.create();
-        options.setWidth(dataDisplayer.getWidth());
-        options.setHeight(dataDisplayer.getHeight());
+        options.setWidth(displayerSettings.getWidth());
+        options.setHeight(displayerSettings.getHeight());
         options.setIs3D(true);
-        options.setLegend( createChartLegend( dataDisplayer ) );
+        options.setLegend( createChartLegend( displayerSettings ) );
         options.setColors(createColorArray(googleTable));
         options.setChartArea(createChartArea());
         return options;

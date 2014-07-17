@@ -89,13 +89,13 @@ public class UFTableViewer extends AbstractDataViewer<TableDisplayerSettings> {
         if ( !drawn ) {
             drawn = true;
 
-            if ( dataDisplayer == null ) {
+            if ( displayerSettings == null ) {
                 displayMessage( "ERROR: DisplayerSettings property not set" );
             } else if ( dataSetHandler == null ) {
                 displayMessage( "ERROR: DataSetHandler property not set" );
             } else {
                 try {
-                    displayMessage( UFTableConstants.INSTANCE.ufTableViewer_initializing() + " '" + dataDisplayer.getTitle() + "'..." );
+                    displayMessage( UFTableConstants.INSTANCE.ufTableViewer_initializing() + " '" + displayerSettings.getTitle() + "'..." );
                     lookupDataSet(0, new DataSetReadyCallback() {
 
                         public void callback( DataSet dataSet ) {
@@ -149,10 +149,10 @@ public class UFTableViewer extends AbstractDataViewer<TableDisplayerSettings> {
 
             // Get the sort settings
             if (lastOrderedColumn == null) {
-                String defaultSortColumn = dataDisplayer.getDefaultSortColumnId();
+                String defaultSortColumn = displayerSettings.getDefaultSortColumnId();
                 if (defaultSortColumn != null && !"".equals( defaultSortColumn)) {
                     lastOrderedColumn = defaultSortColumn;
-                    lastSortOrder = dataDisplayer.getDefaultSortOrder();
+                    lastSortOrder = displayerSettings.getDefaultSortOrder();
                 }
             }
             // Apply the sort order specified (if any)
@@ -160,7 +160,7 @@ public class UFTableViewer extends AbstractDataViewer<TableDisplayerSettings> {
                 sortApply(lastOrderedColumn, lastSortOrder);
             }
             // Lookup only the target rows
-            dataSetHandler.limitDataSetRows(offset, dataDisplayer.getPageSize());
+            dataSetHandler.limitDataSetRows(offset, displayerSettings.getPageSize());
 
             // Do the lookup
             dataSetHandler.lookupDataSet(
@@ -187,8 +187,8 @@ public class UFTableViewer extends AbstractDataViewer<TableDisplayerSettings> {
         ufTableProvider.addDataDisplay(ufTable);
 
         HTML titleHtml = new HTML();
-        if ( dataDisplayer.isTitleVisible() ) {
-            titleHtml.setText( dataDisplayer.getTitle() );
+        if ( displayerSettings.isTitleVisible() ) {
+            titleHtml.setText( displayerSettings.getTitle() );
         }
 
         VerticalPanel verticalPanel = new VerticalPanel();
@@ -199,16 +199,16 @@ public class UFTableViewer extends AbstractDataViewer<TableDisplayerSettings> {
 
     protected PagedTable<Integer> createUFTable() {
 
-        final PagedTable<Integer> ufPagedTable = new PagedTable<Integer>(dataDisplayer.getPageSize());
+        final PagedTable<Integer> ufPagedTable = new PagedTable<Integer>(displayerSettings.getPageSize());
 
         ufPagedTable.setRowCount( numberOfRows, true );
-        int height = 40 * dataDisplayer.getPageSize();
+        int height = 40 * displayerSettings.getPageSize();
         ufPagedTable.setHeight( ( height > ( Window.getClientHeight() - this.getAbsoluteTop() ) ? ( Window.getClientHeight() - this.getAbsoluteTop() ) : height ) + "px" );
         int left = this.getAbsoluteLeft() + this.getOffsetWidth();
         ufPagedTable.setWidth( Window.getClientWidth() * ( left == 0 ? 0.8 : 1 )  + "px" );
         ufPagedTable.setEmptyTableCaption( UFTableConstants.INSTANCE.ufTableViewer_noDataAvailable() );
 
-        List<DataDisplayerColumn> displayerColumns = dataDisplayer.getColumnList();
+        List<DataDisplayerColumn> displayerColumns = displayerSettings.getColumnList();
         if ( !displayerColumns.isEmpty() ) {
             createTableColumnsFromDisplayer( ufPagedTable, displayerColumns );
         } else {
@@ -306,7 +306,7 @@ public class UFTableViewer extends AbstractDataViewer<TableDisplayerSettings> {
     }
 
     protected Widget createCurrentSelectionWidget() {
-        if (!dataDisplayer.isFilterEnabled()) return null;
+        if (!displayerSettings.isFilterEnabled()) return null;
 
         Set<String> columnFilters = filterColumns();
 
@@ -357,7 +357,7 @@ public class UFTableViewer extends AbstractDataViewer<TableDisplayerSettings> {
         @Override
         public void onBrowserEvent( Context context, Element parent, String value, NativeEvent event, ValueUpdater<String> valueUpdater ) {
 
-            if ( !dataDisplayer.isFilterEnabled() ) return;
+            if ( !displayerSettings.isFilterEnabled() ) return;
 
             filterUpdate( columnId, value );
             redrawColumnSelectionWidget();

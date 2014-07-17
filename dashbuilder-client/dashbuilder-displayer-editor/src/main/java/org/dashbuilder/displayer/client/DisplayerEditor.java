@@ -26,8 +26,8 @@ public interface DisplayerEditor<T extends DisplayerSettings> extends IsWidget {
     /**
      * The data displayer to be edited.
      */
-    void setDataDisplayer(T dataDisplayer);
-    T getDataDisplayer();
+    void setDisplayerSettings(T displayerSettings);
+    T getDisplayerSettings();
 
     /**
      * Add a listener interested in receiving events generated within this component.

@@ -23,15 +23,15 @@ import org.dashbuilder.displayer.DisplayerSettings;
  */
 public abstract class AbstractDisplayerEditor<T extends DisplayerSettings> extends Composite implements DisplayerEditor<T> {
 
-    protected T dataDisplayer;
+    protected T displayerSettings;
     protected DisplayerEditorListener listener;
 
-    public T getDataDisplayer() {
-        return dataDisplayer;
+    public T getDisplayerSettings() {
+        return displayerSettings;
     }
 
-    public void setDataDisplayer(T dataDisplayer) {
-        this.dataDisplayer = dataDisplayer;
+    public void setDisplayerSettings(T displayerSettings) {
+        this.displayerSettings = displayerSettings;
     }
 
     public DisplayerEditorListener getListener() {

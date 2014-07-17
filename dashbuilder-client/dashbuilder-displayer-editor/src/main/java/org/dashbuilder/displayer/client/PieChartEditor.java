@@ -45,9 +45,9 @@ public class PieChartEditor extends AbstractDisplayerEditor<XAxisChartDisplayerS
     }
 
     @Override
-    public void setDataDisplayer( XAxisChartDisplayerSettings dataDisplayer ) {
-        super.setDataDisplayer( dataDisplayer );
-        xAxisChartEditorBase.setDataDisplayer( dataDisplayer );
+    public void setDisplayerSettings( XAxisChartDisplayerSettings displayerSettings ) {
+        super.setDisplayerSettings( displayerSettings );
+        xAxisChartEditorBase.setDisplayerSettings( displayerSettings );
     }
 
     @Override

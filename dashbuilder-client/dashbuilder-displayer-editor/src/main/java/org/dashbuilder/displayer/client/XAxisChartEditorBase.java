@@ -63,7 +63,7 @@ public class XAxisChartEditorBase extends AbstractDisplayerEditor<XAxisChartDisp
         commonAttributesEditor.addShowTitleChangeHandler( new ValueChangeHandler<Boolean>() {
             @Override
             public void onValueChange( ValueChangeEvent<Boolean> event ) {
-                dataDisplayer.setTitleVisible( event.getValue() );
+                displayerSettings.setTitleVisible( event.getValue() );
                 notifyChanges();
             }
         } );
@@ -73,7 +73,7 @@ public class XAxisChartEditorBase extends AbstractDisplayerEditor<XAxisChartDisp
             public void onValueChange( ValueChangeEvent<String> event ) {
                 String title = event.getValue();
                 if ( title != null ) {
-                    dataDisplayer.setTitle( title );
+                    displayerSettings.setTitle( title );
                     notifyChanges();
                 }
             }
@@ -82,8 +82,8 @@ public class XAxisChartEditorBase extends AbstractDisplayerEditor<XAxisChartDisp
         commonAttributesEditor.addColumnsChangeHandler( new ValueChangeHandler<String>() {
             @Override
             public void onValueChange( ValueChangeEvent<String> event ) {
-                dataDisplayer.getColumnList().clear();
-                dataDisplayer.getColumnList().addAll( parseColumns( event.getValue() ) );
+                displayerSettings.getColumnList().clear();
+                displayerSettings.getColumnList().addAll( parseColumns( event.getValue() ) );
                 notifyChanges();
             }
         } );
@@ -93,7 +93,7 @@ public class XAxisChartEditorBase extends AbstractDisplayerEditor<XAxisChartDisp
             public void onValueChange( ValueChangeEvent<Integer> event ) {
                 int width = DEFAULT_WIDTH;
                 if ( event.getValue() != null ) width = event.getValue();
-                dataDisplayer.setWidth( width );
+                displayerSettings.setWidth( width );
                 notifyChanges();
             }
         } );
@@ -103,7 +103,7 @@ public class XAxisChartEditorBase extends AbstractDisplayerEditor<XAxisChartDisp
             public void onValueChange( ValueChangeEvent<Integer> event ) {
                 int height = DEFAULT_HEIGHT;
                 if ( event.getValue() != null ) height = event.getValue();
-                dataDisplayer.setHeight( height );
+                displayerSettings.setHeight( height );
                 notifyChanges();
             }
         } );
@@ -113,7 +113,7 @@ public class XAxisChartEditorBase extends AbstractDisplayerEditor<XAxisChartDisp
             public void onValueChange( ValueChangeEvent<Integer> event ) {
                 int topMargin = DEFAULT_MARGINTOP;
                 if ( event.getValue() != null ) topMargin = event.getValue();
-                dataDisplayer.setMarginTop( topMargin );
+                displayerSettings.setMarginTop( topMargin );
                 notifyChanges();
             }
         } );
@@ -123,7 +123,7 @@ public class XAxisChartEditorBase extends AbstractDisplayerEditor<XAxisChartDisp
             public void onValueChange( ValueChangeEvent<Integer> event ) {
                 int bottomMargin = DEFAULT_MARGINBOTTOM;
                 if ( event.getValue() != null ) bottomMargin = event.getValue();
-                dataDisplayer.setMarginBottom( bottomMargin );
+                displayerSettings.setMarginBottom( bottomMargin );
                 notifyChanges();
             }
         } );
@@ -133,7 +133,7 @@ public class XAxisChartEditorBase extends AbstractDisplayerEditor<XAxisChartDisp
             public void onValueChange( ValueChangeEvent<Integer> event ) {
                 int leftMargin = DEFAULT_MARGINLEFT;
                 if ( event.getValue() != null ) leftMargin = event.getValue();
-                dataDisplayer.setMarginLeft( leftMargin );
+                displayerSettings.setMarginLeft( leftMargin );
                 notifyChanges();
             }
         } );
@@ -143,7 +143,7 @@ public class XAxisChartEditorBase extends AbstractDisplayerEditor<XAxisChartDisp
             public void onValueChange( ValueChangeEvent<Integer> event ) {
                 int rightMargin = DEFAULT_MARGINRIGHT;
                 if ( event.getValue() != null ) rightMargin = event.getValue();
-                dataDisplayer.setMarginRight( rightMargin );
+                displayerSettings.setMarginRight( rightMargin );
                 notifyChanges();
             }
         } );
@@ -151,7 +151,7 @@ public class XAxisChartEditorBase extends AbstractDisplayerEditor<XAxisChartDisp
         chartAttributesEditor.addShowLegendChangeHandler( new ValueChangeHandler<Boolean>() {
             @Override
             public void onValueChange( ValueChangeEvent<Boolean> event ) {
-                dataDisplayer.setLegendShow( event.getValue() );
+                displayerSettings.setLegendShow( event.getValue() );
                 notifyChanges();
             }
         } );
@@ -161,7 +161,7 @@ public class XAxisChartEditorBase extends AbstractDisplayerEditor<XAxisChartDisp
             public void onChange( ChangeEvent event ) {
                 // TODO try to uncouple the changehandler implementation from the underlying widget, in this case the listbox
                 String selectedPosition = ( ( ListBox ) event.getSource() ).getValue();
-                dataDisplayer.setLegendPosition( Position.valueOf( selectedPosition ) );
+                displayerSettings.setLegendPosition( Position.valueOf( selectedPosition ) );
                 notifyChanges();
             }
         } );
@@ -169,7 +169,7 @@ public class XAxisChartEditorBase extends AbstractDisplayerEditor<XAxisChartDisp
         xaxisChartAttributesEditor.addXAxisShowLabelsChangeHandler( new ValueChangeHandler<Boolean>() {
             @Override
             public void onValueChange( ValueChangeEvent<Boolean> event ) {
-                dataDisplayer.setXAxisShowLabels( event.getValue() );
+                displayerSettings.setXAxisShowLabels( event.getValue() );
                 notifyChanges();
             }
         } );
@@ -179,7 +179,7 @@ public class XAxisChartEditorBase extends AbstractDisplayerEditor<XAxisChartDisp
             public void onValueChange( ValueChangeEvent<Integer> event ) {
                 int angle = DEFAULT_XAXIS_LABELS_ANGLE;
                 if (event.getValue() != null ) angle = event.getValue();
-                dataDisplayer.setXAxisLabelsAngle( angle );
+                displayerSettings.setXAxisLabelsAngle( angle );
                 notifyChanges();
             }
         } );
@@ -189,7 +189,7 @@ public class XAxisChartEditorBase extends AbstractDisplayerEditor<XAxisChartDisp
             public void onValueChange( ValueChangeEvent<String> event ) {
                 String title = event.getValue();
                 if ( title != null ) {
-                    dataDisplayer.setXAxisTitle( title );
+                    displayerSettings.setXAxisTitle( title );
                     notifyChanges();
                 }
             }
@@ -197,24 +197,24 @@ public class XAxisChartEditorBase extends AbstractDisplayerEditor<XAxisChartDisp
     }
 
     @Override
-    public void setDataDisplayer( XAxisChartDisplayerSettings dataDisplayer ) {
-        super.setDataDisplayer( dataDisplayer );
-        commonAttributesEditor.setIsTitleVisible( dataDisplayer.isTitleVisible() );
-        commonAttributesEditor.setTitle( dataDisplayer.getTitle() );
-        commonAttributesEditor.setColumns( formatColumns( dataDisplayer.getColumnList() ) );
+    public void setDisplayerSettings( XAxisChartDisplayerSettings displayerSettings ) {
+        super.setDisplayerSettings( displayerSettings );
+        commonAttributesEditor.setIsTitleVisible( displayerSettings.isTitleVisible() );
+        commonAttributesEditor.setTitle( displayerSettings.getTitle() );
+        commonAttributesEditor.setColumns( formatColumns( displayerSettings.getColumnList() ) );
 
-        chartAttributesEditor.setChartWidth( dataDisplayer.getWidth() );
-        chartAttributesEditor.setChartHeight( dataDisplayer.getHeight() );
-        chartAttributesEditor.setChartTopMargin( dataDisplayer.getMarginTop() );
-        chartAttributesEditor.setChartBottomMargin( dataDisplayer.getMarginBottom() );
-        chartAttributesEditor.setChartLeftMargin( dataDisplayer.getMarginLeft() );
-        chartAttributesEditor.setChartRightMargin( dataDisplayer.getMarginRight() );
-        chartAttributesEditor.setChartShowLegend( dataDisplayer.isLegendShow() );
-        chartAttributesEditor.setChartLegendPosition( dataDisplayer.getLegendPosition() );
+        chartAttributesEditor.setChartWidth( displayerSettings.getWidth() );
+        chartAttributesEditor.setChartHeight( displayerSettings.getHeight() );
+        chartAttributesEditor.setChartTopMargin( displayerSettings.getMarginTop() );
+        chartAttributesEditor.setChartBottomMargin( displayerSettings.getMarginBottom() );
+        chartAttributesEditor.setChartLeftMargin( displayerSettings.getMarginLeft() );
+        chartAttributesEditor.setChartRightMargin( displayerSettings.getMarginRight() );
+        chartAttributesEditor.setChartShowLegend( displayerSettings.isLegendShow() );
+        chartAttributesEditor.setChartLegendPosition( displayerSettings.getLegendPosition() );
 
-        xaxisChartAttributesEditor.setXaxisShowLabels( dataDisplayer.isXAxisShowLabels() );
-        xaxisChartAttributesEditor.setXaxisLabelsAngle( dataDisplayer.getXAxisLabelsAngle() );
-        xaxisChartAttributesEditor.setXaxisTitle( dataDisplayer.getXAxisTitle() );
+        xaxisChartAttributesEditor.setXaxisShowLabels( displayerSettings.isXAxisShowLabels() );
+        xaxisChartAttributesEditor.setXaxisLabelsAngle( displayerSettings.getXAxisLabelsAngle() );
+        xaxisChartAttributesEditor.setXaxisTitle( displayerSettings.getXAxisTitle() );
     }
 
     private List<DataDisplayerColumn> parseColumns( String columns ) {
