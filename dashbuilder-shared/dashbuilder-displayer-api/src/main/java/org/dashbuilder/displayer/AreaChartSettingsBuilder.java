@@ -16,10 +16,10 @@
 package org.dashbuilder.displayer;
 
 /**
- * A displayer builder for area charts
+ * A displayer settings builder for area charts
  *
  * <pre>
- *   DisplayerFactory.newAreaChart()
+ *   DisplayerSettingsFactory.newAreaChartSettings()
  *   .title("By Product")
  *   .column("Product")
  *   .column("Total amount")

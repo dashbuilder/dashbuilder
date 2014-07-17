@@ -16,7 +16,7 @@
 package org.dashbuilder.client.sales;
 
 import org.dashbuilder.displayer.DisplayerSettings;
-import org.dashbuilder.displayer.DisplayerFactory;
+import org.dashbuilder.displayer.DisplayerSettingsFactory;
 
 import static org.dashbuilder.client.sales.SalesConstants.*;
 import static org.dashbuilder.dataset.sort.SortOrder.*;
@@ -26,7 +26,7 @@ import static org.dashbuilder.dataset.sort.SortOrder.*;
  */
 public class SalesOppsDisplayers {
 
-    public static final DisplayerSettings PIE_PIPELINE = DisplayerFactory.newPieChart()
+    public static final DisplayerSettings PIE_PIPELINE = DisplayerSettingsFactory.newPieChartSettings()
             .title("Pipeline status")
             .titleVisible(false)
             .margins(10, 10, 10, 10)
@@ -34,7 +34,7 @@ public class SalesOppsDisplayers {
             .column("Number of opps")
             .buildDisplayerSettings();
 
-    public static final DisplayerSettings PIE_STATUS = DisplayerFactory.newPieChart()
+    public static final DisplayerSettings PIE_STATUS = DisplayerSettingsFactory.newPieChartSettings()
             .title("By Status")
             .titleVisible(false)
             .margins(10, 10, 10, 10)
@@ -42,7 +42,7 @@ public class SalesOppsDisplayers {
             .column("Total amount")
             .buildDisplayerSettings();
 
-    public static final DisplayerSettings PIE_SALES_PERSON = DisplayerFactory.newPieChart()
+    public static final DisplayerSettings PIE_SALES_PERSON = DisplayerSettingsFactory.newPieChartSettings()
             .title("By Sales Person")
             .titleVisible(false)
             .margins(10, 10, 10, 10)
@@ -50,7 +50,7 @@ public class SalesOppsDisplayers {
             .column("Total amount")
             .buildDisplayerSettings();
 
-    public static final DisplayerSettings AREA_EXPECTED_AMOUNT = DisplayerFactory.newAreaChart()
+    public static final DisplayerSettings AREA_EXPECTED_AMOUNT = DisplayerSettingsFactory.newAreaChartSettings()
             .title("Expected Amount")
             .titleVisible(false)
             .margins(20, 50, 100, 100)
@@ -58,7 +58,7 @@ public class SalesOppsDisplayers {
             .column("Expected amount")
             .buildDisplayerSettings();
 
-    public static final DisplayerSettings HBAR_PRODUCT = DisplayerFactory.newBarChart()
+    public static final DisplayerSettings HBAR_PRODUCT = DisplayerSettingsFactory.newBarChartSettings()
             .title("By Product")
             .titleVisible(false)
             .margins(10, 50, 100, 100)
@@ -67,7 +67,7 @@ public class SalesOppsDisplayers {
             .horizontal()
             .buildDisplayerSettings();
 
-    public static final DisplayerSettings HBAR_COUNTRY = DisplayerFactory.newBarChart()
+    public static final DisplayerSettings HBAR_COUNTRY = DisplayerSettingsFactory.newBarChartSettings()
             .title("By Country")
             .titleVisible(false)
             .margins(10, 80, 100, 100)
@@ -76,7 +76,7 @@ public class SalesOppsDisplayers {
             .horizontal()
             .buildDisplayerSettings();
 
-    public static final DisplayerSettings TABLE_COUNTRY = DisplayerFactory.newTable()
+    public static final DisplayerSettings TABLE_COUNTRY = DisplayerSettingsFactory.newTableSettings()
             .title("Country Summary")
             .titleVisible(false)
             .column("country", "COUNTRY")
@@ -88,7 +88,7 @@ public class SalesOppsDisplayers {
             .tablePageSize(20)
             .buildDisplayerSettings();
 
-    public static final DisplayerSettings TABLE_ALL = DisplayerFactory.newTable()
+    public static final DisplayerSettings TABLE_ALL = DisplayerSettingsFactory.newTableSettings()
             .title("List of Opportunities")
             .titleVisible(false)
             .tablePageSize(20)

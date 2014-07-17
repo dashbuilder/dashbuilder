@@ -16,10 +16,10 @@
 package org.dashbuilder.displayer;
 
 /**
- * A displayer builder for bubble charts.
+ * A displayer settings builder for bubble charts.
  *
  * <pre>
- *   DisplayerFactory.newBubbleChart()
+ *   DisplayerSettingsFactory.newBubbleChartSettings()
  *   .title("Opportunities distribution by Country ")
  *   .width(500).height(350)
  *   .margins(20, 50, 50, 0)

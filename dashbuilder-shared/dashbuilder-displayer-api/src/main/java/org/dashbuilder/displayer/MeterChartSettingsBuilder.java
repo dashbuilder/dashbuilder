@@ -16,10 +16,10 @@
 package org.dashbuilder.displayer;
 
 /**
- * A displayer builder for meter charts
+ * A displayer settings builder for meter charts
  *
  * <pre>
- *   DisplayerFactory.newMeterChart()
+ *   DisplayerSettingsFactory.newMeterChartSettings()
  *   .title("Sales goal")
  *   .titleVisible(true)
  *   .width(250).height(250)

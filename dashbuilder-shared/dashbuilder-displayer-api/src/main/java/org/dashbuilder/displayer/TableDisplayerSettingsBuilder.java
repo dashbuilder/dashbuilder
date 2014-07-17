@@ -18,10 +18,10 @@ package org.dashbuilder.displayer;
 import org.dashbuilder.dataset.sort.SortOrder;
 
 /**
- * A displayer builder for tables
+ * A displayer settings builder for tables
  *
  * <pre>
- *   DisplayerFactory.newTable()
+ *   DisplayerSettingsFactory.newTableSettings()
  *   .title("List of Opportunities")
  *   .tablePageSize(20)
  *   .tableOrderEnabled(true)

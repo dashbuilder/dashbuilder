@@ -16,7 +16,7 @@
 package org.dashbuilder.displayer;
 
 /**
- * A displayer builder for the assembly of Chart based data displayer instances.
+ * A displayer settings builder for the assembly of Chart based data displayer instances.
  */
 public interface ChartSettingsBuilder<T extends ChartSettingsBuilder> extends DisplayerSettingsBuilder<T> {
 

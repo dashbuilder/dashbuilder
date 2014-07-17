@@ -27,37 +27,37 @@ import org.dashbuilder.displayer.impl.TableDisplayerSettingsBuilderImpl;
 /**
  * Factory class for creating  DisplayerSettingsBuilder instances.
  */
-public final class DisplayerFactory {
+public final class DisplayerSettingsFactory {
 
-    public static BarChartSettingsBuilder<BarChartSettingsBuilderImpl> newBarChart() {
+    public static BarChartSettingsBuilder<BarChartSettingsBuilderImpl> newBarChartSettings() {
         return new BarChartSettingsBuilderImpl();
     }
 
-    public static PieChartSettingsBuilder<PieChartSettingsBuilderImpl> newPieChart() {
+    public static PieChartSettingsBuilder<PieChartSettingsBuilderImpl> newPieChartSettings() {
         return new PieChartSettingsBuilderImpl();
     }
 
-    public static AreaChartSettingsBuilder<AreaChartSettingsBuilderImpl> newAreaChart() {
+    public static AreaChartSettingsBuilder<AreaChartSettingsBuilderImpl> newAreaChartSettings() {
         return new AreaChartSettingsBuilderImpl();
     }
 
-    public static LineChartSettingsBuilder<LineChartSettingsBuilderImpl> newLineChart() {
+    public static LineChartSettingsBuilder<LineChartSettingsBuilderImpl> newLineChartSettings() {
         return new LineChartSettingsBuilderImpl();
     }
 
-    public static BubbleChartSettingsBuilder<BubbleChartSettingsBuilderImpl> newBubbleChart() {
+    public static BubbleChartSettingsBuilder<BubbleChartSettingsBuilderImpl> newBubbleChartSettings() {
         return new BubbleChartSettingsBuilderImpl();
     }
 
-    public static MapChartSettingsBuilder<MapChartSettingsBuilderImpl> newMapChart() {
+    public static MapChartSettingsBuilder<MapChartSettingsBuilderImpl> newMapChartSettings() {
         return new MapChartSettingsBuilderImpl();
     }
 
-    public static TableDisplayerSettingsBuilder<TableDisplayerSettingsBuilderImpl> newTable() {
+    public static TableDisplayerSettingsBuilder<TableDisplayerSettingsBuilderImpl> newTableSettings() {
         return new TableDisplayerSettingsBuilderImpl();
     }
 
-    public static MeterChartSettingsBuilder<MeterChartSettingsBuilderImpl> newMeterChart() {
+    public static MeterChartSettingsBuilder<MeterChartSettingsBuilderImpl> newMeterChartSettings() {
         return new MeterChartSettingsBuilderImpl();
     }
 

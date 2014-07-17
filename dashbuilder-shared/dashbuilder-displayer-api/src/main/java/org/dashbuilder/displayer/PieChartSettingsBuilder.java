@@ -16,10 +16,10 @@
 package org.dashbuilder.displayer;
 
 /**
- * A displayer builder for pie charts
+ * A displayer settings builder for pie charts
  *
  * <pre>
- *   DisplayerFactory.newPieChart()
+ *   DisplayerSettingsFactory.newPieChartSettings()
  *   .title("By Product")
  *   .column("Product")
  *   .column("Total amount")

@@ -20,12 +20,12 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
+import org.dashbuilder.displayer.DisplayerSettingsFactory;
 import org.dashbuilder.displayer.client.DataViewer;
 import org.dashbuilder.displayer.client.DataViewerCoordinator;
 import org.dashbuilder.displayer.client.DataViewerHelper;
 import org.dashbuilder.dataset.DataSetFactory;
 import org.dashbuilder.dataset.group.DateIntervalType;
-import org.dashbuilder.displayer.DisplayerFactory;
 
 import static org.dashbuilder.client.sales.SalesConstants.*;
 import static org.dashbuilder.dataset.sort.SortOrder.*;
@@ -62,7 +62,7 @@ public class SalesTableReports extends Composite {
                 DataSetFactory.newDSLookup()
                 .dataset(SALES_OPPS)
                 .buildLookup(),
-                DisplayerFactory.newTable()
+                DisplayerSettingsFactory.newTableSettings()
                 .title("List of Opportunities")
                 .titleVisible(true)
                 .tablePageSize(8)
@@ -90,7 +90,7 @@ public class SalesTableReports extends Composite {
                 .avg(AMOUNT, "Average")
                 .sum(AMOUNT, "Total")
                 .buildLookup(),
-                DisplayerFactory.newTable()
+                DisplayerSettingsFactory.newTableSettings()
                 .title("Country summary")
                 .titleVisible(false)
                 .tablePageSize(8)
@@ -109,7 +109,7 @@ public class SalesTableReports extends Composite {
                 .avg(AMOUNT, "Average")
                 .sum(AMOUNT, "Total")
                 .buildLookup(),
-                DisplayerFactory.newTable()
+                DisplayerSettingsFactory.newTableSettings()
                 .title("Product summary")
                 .titleVisible(false)
                 .tablePageSize(8)
@@ -128,7 +128,7 @@ public class SalesTableReports extends Composite {
                 .avg(AMOUNT, "Average")
                 .sum(AMOUNT, "Total")
                 .buildLookup(),
-                DisplayerFactory.newTable()
+                DisplayerSettingsFactory.newTableSettings()
                 .title("Sales by person")
                 .titleVisible(false)
                 .tablePageSize(8)
@@ -147,7 +147,7 @@ public class SalesTableReports extends Composite {
                 .avg(AMOUNT, "Average")
                 .sum(AMOUNT, "Total")
                 .buildLookup(),
-                DisplayerFactory.newTable()
+                DisplayerSettingsFactory.newTableSettings()
                 .title("Year summary")
                 .titleVisible(false)
                 .tablePageSize(8)

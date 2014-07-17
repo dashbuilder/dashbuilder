@@ -20,11 +20,11 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
+import org.dashbuilder.displayer.DisplayerSettingsFactory;
 import org.dashbuilder.displayer.client.DataViewer;
 import org.dashbuilder.displayer.client.DataViewerCoordinator;
 import org.dashbuilder.displayer.client.DataViewerHelper;
 import org.dashbuilder.dataset.DataSetFactory;
-import org.dashbuilder.displayer.DisplayerFactory;
 
 import static org.dashbuilder.dataset.group.DateIntervalType.*;
 import static org.dashbuilder.dataset.sort.SortOrder.DESCENDING;
@@ -68,7 +68,7 @@ public class SalesExpectedByDate extends Composite {
                 .group(CREATION_DATE, 80, MONTH)
                 .sum(EXPECTED_AMOUNT)
                 .buildLookup(),
-                DisplayerFactory.newAreaChart()
+                DisplayerSettingsFactory.newAreaChartSettings()
                 .title("Expected pipeline")
                 .titleVisible(true)
                 .width(850).height(200)
@@ -84,7 +84,7 @@ public class SalesExpectedByDate extends Composite {
                 .group(CREATION_DATE, YEAR)
                 .count("occurrences")
                 .buildLookup(),
-                DisplayerFactory.newPieChart()
+                DisplayerSettingsFactory.newPieChartSettings()
                 .title("Year")
                 .titleVisible(true)
                 .width(200).height(150)
@@ -98,7 +98,7 @@ public class SalesExpectedByDate extends Composite {
                 .group(CREATION_DATE).fixed(QUARTER)
                 .count("occurrences")
                 .buildLookup(),
-                DisplayerFactory.newPieChart()
+                DisplayerSettingsFactory.newPieChartSettings()
                 .title("Quarter")
                 .titleVisible(true)
                 .width(200).height(150)
@@ -112,7 +112,7 @@ public class SalesExpectedByDate extends Composite {
                 .group(CREATION_DATE).fixed(DAY_OF_WEEK).firstDay(SUNDAY)
                 .count("occurrences")
                 .buildLookup(),
-                DisplayerFactory.newBarChart()
+                DisplayerSettingsFactory.newBarChartSettings()
                 .title("Day of week")
                 .titleVisible(true)
                 .width(200).height(150)
@@ -128,7 +128,7 @@ public class SalesExpectedByDate extends Composite {
                 .group(PIPELINE)
                 .count("occurrences")
                 .buildLookup(),
-                DisplayerFactory.newPieChart()
+                DisplayerSettingsFactory.newPieChartSettings()
                 .title("Pipeline")
                 .titleVisible(true)
                 .width(200).height(150)
@@ -142,7 +142,7 @@ public class SalesExpectedByDate extends Composite {
                 DataSetFactory.newDSLookup()
                 .dataset(SALES_OPPS)
                 .buildLookup(),
-                DisplayerFactory.newTable()
+                DisplayerSettingsFactory.newTableSettings()
                 .title("List of Opportunities")
                 .titleVisible(true)
                 .tablePageSize(5)

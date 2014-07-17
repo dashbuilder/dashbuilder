@@ -20,11 +20,11 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
+import org.dashbuilder.displayer.DisplayerSettingsFactory;
 import org.dashbuilder.displayer.client.DataViewer;
 import org.dashbuilder.displayer.client.DataViewerCoordinator;
 import org.dashbuilder.displayer.client.DataViewerHelper;
 import org.dashbuilder.dataset.DataSetFactory;
-import org.dashbuilder.displayer.DisplayerFactory;
 
 import static org.dashbuilder.client.sales.SalesConstants.*;
 import static org.dashbuilder.dataset.group.DateIntervalType.*;
@@ -63,7 +63,7 @@ public class SalesGoals extends Composite {
                 .dataset(SALES_OPPS)
                 .sum(AMOUNT)
                 .buildLookup(),
-                DisplayerFactory.newMeterChart()
+                DisplayerSettingsFactory.newMeterChartSettings()
                 .title("Sales goal")
                 .titleVisible(true)
                 .width(200).height(200)
@@ -79,7 +79,7 @@ public class SalesGoals extends Composite {
                 .sum(AMOUNT)
                 .sum(EXPECTED_AMOUNT)
                 .buildLookup(),
-                DisplayerFactory.newLineChart()
+                DisplayerSettingsFactory.newLineChartSettings()
                 .title("Expected pipeline")
                 .titleVisible(true)
                 .width(800).height(200)
@@ -97,7 +97,7 @@ public class SalesGoals extends Composite {
                 .sum(AMOUNT)
                 .sum(EXPECTED_AMOUNT)
                 .buildLookup(),
-                DisplayerFactory.newBarChart()
+                DisplayerSettingsFactory.newBarChartSettings()
                 .title("By product")
                 .titleVisible(true)
                 .column("Product")
@@ -116,7 +116,7 @@ public class SalesGoals extends Composite {
                 .sum(AMOUNT)
                 .sort(AMOUNT, DESCENDING)
                 .buildLookup(),
-                DisplayerFactory.newBarChart()
+                DisplayerSettingsFactory.newBarChartSettings()
                 .title("By employee")
                 .titleVisible(true)
                 .column("Employee")
@@ -135,7 +135,7 @@ public class SalesGoals extends Composite {
                 .avg(PROBABILITY)
                 .sum(EXPECTED_AMOUNT)
                 .buildLookup(),
-                DisplayerFactory.newBubbleChart()
+                DisplayerSettingsFactory.newBubbleChartSettings()
                 .title("Opportunities distribution by Country ")
                 .width(550).height(250)
                 .margins(10, 30, 50, 0)

@@ -16,10 +16,10 @@
 package org.dashbuilder.displayer;
 
 /**
- * A displayer builder for bar charts
+ * A displayer settings builder for bar charts
  *
  * <pre>
- *   DisplayerFactory.newBarChart()
+ *   DisplayerSettingsFactory.newBarChartSettings()
  *   .title("By Product")
  *   .column("Product")
  *   .column("Total amount")

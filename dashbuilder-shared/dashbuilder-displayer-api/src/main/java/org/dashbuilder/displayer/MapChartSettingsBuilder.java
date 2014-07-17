@@ -16,10 +16,10 @@
 package org.dashbuilder.displayer;
 
 /**
- * A displayer builder for map charts
+ * A displayer settings builder for map charts
  *
  * <pre>
- *   DisplayerFactory.newMapChart()
+ *   DisplayerSettingsFactory.newMapChartSettings()
  *   .title("By Country")
  *   .column("Country")
  *   .column("Total amount")

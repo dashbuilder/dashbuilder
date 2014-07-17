@@ -28,7 +28,7 @@ import org.dashbuilder.dataset.date.Month;
 import org.dashbuilder.displayer.BarChartSettingsBuilder;
 import org.dashbuilder.displayer.DisplayerSettings;
 import org.dashbuilder.displayer.DisplayerSettingsBuilder;
-import org.dashbuilder.displayer.DisplayerFactory;
+import org.dashbuilder.displayer.DisplayerSettingsFactory;
 import org.dashbuilder.displayer.DisplayerType;
 import org.dashbuilder.displayer.MeterChartSettingsBuilder;
 import org.dashbuilder.displayer.TableDisplayerSettingsBuilder;
@@ -49,21 +49,21 @@ public class KPIBuilderImpl implements KPIBuilder {
 
     public KPIBuilderImpl(DisplayerType displayerType) {
         if ( DisplayerType.BARCHART.equals(displayerType)) {
-            displayerSettingsBuilder = DisplayerFactory.newBarChart();
+            displayerSettingsBuilder = DisplayerSettingsFactory.newBarChartSettings();
         } else if ( DisplayerType.PIECHART.equals(displayerType)) {
-            displayerSettingsBuilder = DisplayerFactory.newPieChart();
+            displayerSettingsBuilder = DisplayerSettingsFactory.newPieChartSettings();
         } else if ( DisplayerType.LINECHART.equals(displayerType)) {
-            displayerSettingsBuilder = DisplayerFactory.newLineChart();
+            displayerSettingsBuilder = DisplayerSettingsFactory.newLineChartSettings();
         } else if ( DisplayerType.AREACHART.equals(displayerType)) {
-            displayerSettingsBuilder = DisplayerFactory.newAreaChart();
+            displayerSettingsBuilder = DisplayerSettingsFactory.newAreaChartSettings();
         } else if ( DisplayerType.BUBBLECHART.equals(displayerType)) {
-            displayerSettingsBuilder = DisplayerFactory.newBubbleChart();
+            displayerSettingsBuilder = DisplayerSettingsFactory.newBubbleChartSettings();
         } else if ( DisplayerType.METERCHART.equals(displayerType)) {
-            displayerSettingsBuilder = DisplayerFactory.newMeterChart();
+            displayerSettingsBuilder = DisplayerSettingsFactory.newMeterChartSettings();
         } else if ( DisplayerType.MAP.equals(displayerType)) {
-            displayerSettingsBuilder = DisplayerFactory.newMapChart();
+            displayerSettingsBuilder = DisplayerSettingsFactory.newMapChartSettings();
         } else if ( DisplayerType.TABLE.equals(displayerType)) {
-            displayerSettingsBuilder = DisplayerFactory.newTable();
+            displayerSettingsBuilder = DisplayerSettingsFactory.newTableSettings();
         } else {
             throw new IllegalStateException("Missing displayer type: " + displayerType);
         }

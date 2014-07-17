@@ -24,7 +24,7 @@ import org.dashbuilder.displayer.client.DataViewer;
 import org.dashbuilder.displayer.client.DataViewerCoordinator;
 import org.dashbuilder.displayer.client.DataViewerHelper;
 import org.dashbuilder.dataset.DataSetFactory;
-import org.dashbuilder.displayer.DisplayerFactory;
+import org.dashbuilder.displayer.DisplayerSettingsFactory;
 
 import static org.dashbuilder.client.sales.SalesConstants.*;
 import static org.dashbuilder.dataset.sort.SortOrder.*;
@@ -59,7 +59,7 @@ public class SalesDistributionByCountry extends Composite {
                 .avg(PROBABILITY)
                 .sum(EXPECTED_AMOUNT)
                 .buildLookup(),
-                DisplayerFactory.newBubbleChart()
+                DisplayerSettingsFactory.newBubbleChartSettings()
                 .title("Opportunities distribution by Country ")
                 .width(450).height(300)
                 .margins(20, 50, 50, 0)
@@ -78,7 +78,7 @@ public class SalesDistributionByCountry extends Composite {
                 .count("opps")
                 .sum(EXPECTED_AMOUNT)
                 .buildLookup(),
-                DisplayerFactory.newMapChart()
+                DisplayerSettingsFactory.newMapChartSettings()
                 .title("By Country")
                 .width(450).height(290)
                 .margins(10, 10, 10, 10)
@@ -92,7 +92,7 @@ public class SalesDistributionByCountry extends Composite {
                 DataSetFactory.newDSLookup()
                 .dataset(SALES_OPPS)
                 .buildLookup(),
-                DisplayerFactory.newTable()
+                DisplayerSettingsFactory.newTableSettings()
                 .title("List of Opportunities")
                 .titleVisible(true)
                 .tablePageSize(8)
