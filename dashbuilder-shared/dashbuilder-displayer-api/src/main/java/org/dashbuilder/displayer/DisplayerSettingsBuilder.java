@@ -19,7 +19,7 @@ package org.dashbuilder.displayer;
  * A DataSetDisplayerBuilder allows for the assembly of a DisplayerSettings instance in a friendly manner.
  *
  * <pre>
- *   DisplayerFactory.newBarChart()
+ *   DisplayerSettingsFactory.newBarChartSettings()
  *   .title("By Product")
  *   .titleVisible(false)
  *   .margins(10, 50, 100, 100)
