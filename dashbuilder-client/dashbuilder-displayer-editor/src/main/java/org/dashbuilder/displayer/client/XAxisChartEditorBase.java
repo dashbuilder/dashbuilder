@@ -28,13 +28,13 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.common.client.StringUtils;
-import org.dashbuilder.displayer.DataDisplayerColumn;
+import org.dashbuilder.displayer.DisplayerSettingsColumn;
 import org.dashbuilder.displayer.Position;
 import org.dashbuilder.displayer.XAxisChartDisplayerSettings;
 import org.dashbuilder.displayer.client.widgets.ChartAttributesEditor;
 import org.dashbuilder.displayer.client.widgets.CommonAttributesEditor;
 import org.dashbuilder.displayer.client.widgets.XAxisChartAttributesEditor;
-import org.dashbuilder.displayer.impl.DataDisplayerColumnImpl;
+import org.dashbuilder.displayer.impl.DisplayerSettingsColumnImpl;
 
 import static org.dashbuilder.displayer.XAxisChartDisplayerSettings.*;
 
@@ -217,35 +217,35 @@ public class XAxisChartEditorBase extends AbstractDisplayerEditor<XAxisChartDisp
         xaxisChartAttributesEditor.setXaxisTitle( displayerSettings.getXAxisTitle() );
     }
 
-    private List<DataDisplayerColumn> parseColumns( String columns ) {
+    private List<DisplayerSettingsColumn> parseColumns( String columns ) {
         if ( columns.length() > 0) {
             String[] sa = columns.split( "," );
-            List<DataDisplayerColumn> l = new ArrayList<DataDisplayerColumn>( sa.length );
+            List<DisplayerSettingsColumn> l = new ArrayList<DisplayerSettingsColumn>( sa.length );
             for ( int i = 0; i < sa.length; i++ ) {
-                DataDisplayerColumnImpl ddci = new DataDisplayerColumnImpl();
+                DisplayerSettingsColumnImpl dsci = new DisplayerSettingsColumnImpl();
                 String[] idAlias = sa[i].trim().split( ":" );
                 if ( idAlias.length == 2 ) {
                     if ( StringUtils.isBlank( idAlias[ 0 ] ) && StringUtils.isBlank( idAlias[1] ) )
                         throw new IllegalArgumentException( "You must specify at least a column alias." );
 
                     if ( !StringUtils.isBlank( idAlias[1] ) ) {
-                        ddci.setDisplayName( idAlias[ 1 ].trim() );
-                    } else ddci.setDisplayName( idAlias[0].trim() );
+                        dsci.setDisplayName( idAlias[ 1 ].trim() );
+                    } else dsci.setDisplayName( idAlias[0].trim() );
 
-                    if ( !StringUtils.isBlank( idAlias[0] ) ) ddci.setColumnId( idAlias[0].trim() );
+                    if ( !StringUtils.isBlank( idAlias[0] ) ) dsci.setColumnId( idAlias[0].trim() );
 
                 } else {
-                    if ( !StringUtils.isBlank( idAlias[0] ) ) ddci.setDisplayName( idAlias[0].trim() );
+                    if ( !StringUtils.isBlank( idAlias[0] ) ) dsci.setDisplayName( idAlias[0].trim() );
                     else throw new IllegalArgumentException( "You must specify at least a column alias." );
                 }
-                l.add( ddci );
+                l.add( dsci );
             }
             return l;
         }
-        return new ArrayList<DataDisplayerColumn>();
+        return new ArrayList<DisplayerSettingsColumn>();
     }
 
-    private String formatColumns( List<DataDisplayerColumn> columns ) {
+    private String formatColumns( List<DisplayerSettingsColumn> columns ) {
         StringBuilder sb = new StringBuilder( "" );
         if ( columns != null ) {
             for ( int i = 0; i < columns.size(); i++ ) {

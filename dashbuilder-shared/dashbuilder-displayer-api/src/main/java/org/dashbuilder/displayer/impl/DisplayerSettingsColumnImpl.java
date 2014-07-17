@@ -15,19 +15,19 @@
  */
 package org.dashbuilder.displayer.impl;
 
-import org.dashbuilder.displayer.DataDisplayerColumn;
+import org.dashbuilder.displayer.DisplayerSettingsColumn;
 import org.jboss.errai.common.client.api.annotations.Portable;
 
 @Portable
-public class DataDisplayerColumnImpl implements DataDisplayerColumn {
+public class DisplayerSettingsColumnImpl implements DisplayerSettingsColumn {
 
     protected String columnId;
     protected String displayName;
 
-    public DataDisplayerColumnImpl() {
+    public DisplayerSettingsColumnImpl() {
     }
 
-    public DataDisplayerColumnImpl(String columnId, String displayName) {
+    public DisplayerSettingsColumnImpl( String columnId, String displayName ) {
         this.columnId = columnId;
         this.displayName = displayName;
     }

@@ -29,12 +29,12 @@ import com.googlecode.gwt.charts.client.format.NumberFormat;
 import com.googlecode.gwt.charts.client.format.NumberFormatOptions;
 import com.googlecode.gwt.charts.client.options.FormatType;
 import org.dashbuilder.dataset.client.DataSetReadyCallback;
+import org.dashbuilder.displayer.DisplayerSettingsColumn;
 import org.dashbuilder.displayer.client.AbstractDataViewer;
 import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.displayer.DisplayerSettings;
-import org.dashbuilder.displayer.DataDisplayerColumn;
 
 public abstract class GoogleViewer<T extends DisplayerSettings> extends AbstractDataViewer<T> {
 
@@ -150,8 +150,8 @@ public abstract class GoogleViewer<T extends DisplayerSettings> extends Abstract
     // Google DataTable manipulation methods
 
     public DataTable createTable() {
-        List<DataDisplayerColumn> displayerColumns = displayerSettings.getColumnList();
-        if (displayerColumns.isEmpty()) {
+        List<DisplayerSettingsColumn> displayerSettingsColumns = displayerSettings.getColumnList();
+        if (displayerSettingsColumns.isEmpty()) {
             return googleTable = formatTable(createTableFromDataSet());
         }
         return googleTable = formatTable(createTableFromDisplayer());
@@ -200,19 +200,19 @@ public abstract class GoogleViewer<T extends DisplayerSettings> extends Abstract
         gTable.addRows(dataSet.getRowCount());
         int columnIndex = 0;
 
-        List<DataDisplayerColumn> displayerColumns = displayerSettings.getColumnList();
-        for (int i = 0; i < displayerColumns.size(); i++) {
-            DataDisplayerColumn displayerColumn = displayerColumns.get(i);
+        List<DisplayerSettingsColumn> displayerSettingsColumns = displayerSettings.getColumnList();
+        for (int i = 0; i < displayerSettingsColumns.size(); i++) {
+            DisplayerSettingsColumn displayerSettingsColumn = displayerSettingsColumns.get(i);
             DataColumn dataColumn = null;
-            if (displayerColumn.getColumnId() != null) dataColumn = dataSet.getColumnById(displayerColumn.getColumnId());
+            if (displayerSettingsColumn.getColumnId() != null) dataColumn = dataSet.getColumnById(displayerSettingsColumn.getColumnId());
             else dataColumn = dataSet.getColumnByIndex(columnIndex++);
             if (dataColumn == null) {
-                throw new RuntimeException("Displayer column not found in the data set: " + displayerColumn.getDisplayName());
+                throw new RuntimeException("Displayer column not found in the data set: " + displayerSettingsColumn.getDisplayName());
             }
 
             ColumnType columnType = dataColumn.getColumnType();
             List columnValues = dataColumn.getValues();
-            gTable.addColumn(getColumnType(dataColumn), displayerColumn.getDisplayName(), dataColumn.getId());
+            gTable.addColumn(getColumnType(dataColumn), displayerSettingsColumn.getDisplayName(), dataColumn.getId());
             for (int j = 0; j < columnValues.size(); j++) {
                 Object value = columnValues.get(j);
                 setTableValue(gTable, columnType, value, j, i);

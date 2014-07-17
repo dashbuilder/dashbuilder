@@ -32,7 +32,7 @@ import com.googlecode.gwt.charts.client.event.SelectHandler;
 import com.googlecode.gwt.charts.client.geochart.GeoChart;
 import com.googlecode.gwt.charts.client.options.ChartArea;
 import org.dashbuilder.displayer.AbstractXAxisChartDisplayerSettings;
-import org.dashbuilder.displayer.DataDisplayerColumn;
+import org.dashbuilder.displayer.DisplayerSettingsColumn;
 import org.dashbuilder.renderer.google.client.resources.i18n.GoogleViewerConstants;
 
 public abstract class GoogleXAxisChartViewer<T extends AbstractXAxisChartDisplayerSettings> extends AbstractGoogleChartViewer<T> {
@@ -43,8 +43,8 @@ public abstract class GoogleXAxisChartViewer<T extends AbstractXAxisChartDisplay
     public static final String COLOR_NOT_SELECTED = "grey";
 
     public DataTable createTable() {
-        List<DataDisplayerColumn> displayerColumns = displayerSettings.getColumnList();
-        if (displayerColumns.size() == 1) {
+        List<DisplayerSettingsColumn> displayerSettingsColumns = displayerSettings.getColumnList();
+        if (displayerSettingsColumns.size() == 1) {
             throw new IllegalArgumentException("XAxis charts require to specify at least 2 columns. The X axis plus one ore more columns for the Y axis.");
         }
         return super.createTable();

@@ -47,7 +47,7 @@ public abstract class AbstractDisplayerSettingsBuilder<T extends DisplayerSettin
     }
 
     public T column(String columnId, String displayName) {
-        displayerSettings.getColumnList().add(new DataDisplayerColumnImpl(columnId, displayName));
+        displayerSettings.getColumnList().add(new DisplayerSettingsColumnImpl(columnId, displayName));
         return (T) this;
     }
 

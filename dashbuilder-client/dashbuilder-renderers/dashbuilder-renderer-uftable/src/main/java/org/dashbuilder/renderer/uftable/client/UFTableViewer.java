@@ -48,6 +48,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.AsyncDataProvider;
 import com.google.gwt.view.client.HasData;
 import org.dashbuilder.dataset.client.DataSetReadyCallback;
+import org.dashbuilder.displayer.DisplayerSettingsColumn;
 import org.dashbuilder.displayer.TableDisplayerSettings;
 import org.dashbuilder.displayer.client.AbstractDataViewer;
 import org.dashbuilder.dataset.ColumnType;
@@ -55,7 +56,6 @@ import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.dataset.DataSet;
 
 import org.dashbuilder.dataset.sort.SortOrder;
-import org.dashbuilder.displayer.DataDisplayerColumn;
 import org.dashbuilder.renderer.uftable.client.resources.i18n.UFTableConstants;
 import org.kie.uberfire.client.tables.PagedTable;
 
@@ -208,9 +208,9 @@ public class UFTableViewer extends AbstractDataViewer<TableDisplayerSettings> {
         ufPagedTable.setWidth( Window.getClientWidth() * ( left == 0 ? 0.8 : 1 )  + "px" );
         ufPagedTable.setEmptyTableCaption( UFTableConstants.INSTANCE.ufTableViewer_noDataAvailable() );
 
-        List<DataDisplayerColumn> displayerColumns = displayerSettings.getColumnList();
-        if ( !displayerColumns.isEmpty() ) {
-            createTableColumnsFromDisplayer( ufPagedTable, displayerColumns );
+        List<DisplayerSettingsColumn> displayerSettingsColumns = displayerSettings.getColumnList();
+        if ( !displayerSettingsColumns.isEmpty() ) {
+            createTableColumnsFromDisplayer( ufPagedTable, displayerSettingsColumns );
         } else {
             createTableColumnsFromDataSet( ufPagedTable, dataSet.getColumns() );
         }
@@ -244,22 +244,22 @@ public class UFTableViewer extends AbstractDataViewer<TableDisplayerSettings> {
         }
     }
 
-    private void createTableColumnsFromDisplayer( PagedTable<Integer> table, List<DataDisplayerColumn> dataDisplayerColumns ) {
+    private void createTableColumnsFromDisplayer( PagedTable<Integer> table, List<DisplayerSettingsColumn> displayerSettingsColumns ) {
         int columnIndex = 0;
-        for ( int i = 0; i < dataDisplayerColumns.size(); i++ ) {
-            DataDisplayerColumn displayerColumn = dataDisplayerColumns.get( i );
+        for ( int i = 0; i < displayerSettingsColumns.size(); i++ ) {
+            DisplayerSettingsColumn displayerSettingsColumn = displayerSettingsColumns.get( i );
             DataColumn dataColumn;
-            if (displayerColumn.getColumnId() != null) dataColumn = dataSet.getColumnById( displayerColumn.getColumnId() );
+            if (displayerSettingsColumn.getColumnId() != null) dataColumn = dataSet.getColumnById( displayerSettingsColumn.getColumnId() );
             else dataColumn = dataSet.getColumnByIndex( columnIndex++ );
 
             if (dataColumn == null) {
-                String msg = "Displayer column not found in the data set: " + displayerColumn.getDisplayName();
+                String msg = "Displayer column not found in the data set: " + displayerSettingsColumn.getDisplayName();
                 GWT.log( msg );
                 throw new RuntimeException( msg );
             }
 
             String columnId = dataColumn.getId();
-            String displayName = displayerColumn.getDisplayName();
+            String displayName = displayerSettingsColumn.getDisplayName();
             String caption = null;
             if ( displayName != null && !"".equals( displayName ) ) {
                 caption = displayName;

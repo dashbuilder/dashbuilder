@@ -18,7 +18,7 @@ package org.dashbuilder.displayer;
 /**
  * This interface represents a configuration for a DataSet column, for a specific DisplayerSettings.
  */
-public interface DataDisplayerColumn {
+public interface DisplayerSettingsColumn {
 
     /**
      * @return An identifier for this DisplayerSettings's column configuration.

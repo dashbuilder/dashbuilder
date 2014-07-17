@@ -63,12 +63,12 @@ public interface DisplayerSettings {
     void setRenderer(String renderer);
 
     /**
-     * @return A List of DataDisplayerColumns that were configured for this DisplayerSettings,
+     * @return A List of DisplayerSettingsColumns that were configured for this DisplayerSettings,
      * or an empty list if none were configured. In the latter case, the DataSet will be introspected in order to
      * visualize the data it contains.
-     * @see org.dashbuilder.displayer.DataDisplayerColumn
+     * @see DisplayerSettingsColumn
      */
-    List<DataDisplayerColumn> getColumnList();
+    List<DisplayerSettingsColumn> getColumnList();
 
     /**
      * Check if the ability to select & filter values (or range of values) is enabled for this displayer.

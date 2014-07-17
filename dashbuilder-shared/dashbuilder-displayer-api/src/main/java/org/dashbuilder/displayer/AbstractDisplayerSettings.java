@@ -23,7 +23,7 @@ public abstract class AbstractDisplayerSettings implements DisplayerSettings {
     protected String title;
     protected boolean titleVisible = true;
     protected String renderer;
-    protected List<DataDisplayerColumn> columnList = new ArrayList<DataDisplayerColumn>();
+    protected List<DisplayerSettingsColumn> columnList = new ArrayList<DisplayerSettingsColumn>();
 
     protected boolean filterEnabled = false;
     protected boolean filterSelfApplyEnabled = false;
@@ -54,11 +54,11 @@ public abstract class AbstractDisplayerSettings implements DisplayerSettings {
         this.renderer = renderer;
     }
 
-    public List<DataDisplayerColumn> getColumnList() {
+    public List<DisplayerSettingsColumn> getColumnList() {
         return columnList;
     }
 
-    public void setColumnList(List<DataDisplayerColumn> columnList) {
+    public void setColumnList(List<DisplayerSettingsColumn> columnList) {
         this.columnList = columnList;
     }
 
