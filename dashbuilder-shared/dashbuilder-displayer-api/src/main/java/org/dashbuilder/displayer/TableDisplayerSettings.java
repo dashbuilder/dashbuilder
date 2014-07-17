@@ -27,8 +27,8 @@ public class TableDisplayerSettings extends AbstractDisplayerSettings {
     protected SortOrder defaultSortOrder = SortOrder.ASCENDING;
 
     @Override
-    public DataDisplayerType getType() {
-        return DataDisplayerType.TABLE;
+    public DisplayerType getType() {
+        return DisplayerType.TABLE;
     }
 
     public int getPageSize() {

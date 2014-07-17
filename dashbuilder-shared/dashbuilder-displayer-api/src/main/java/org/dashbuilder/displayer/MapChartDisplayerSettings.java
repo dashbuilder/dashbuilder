@@ -21,7 +21,7 @@ import org.jboss.errai.common.client.api.annotations.Portable;
 public class MapChartDisplayerSettings extends AbstractXAxisChartDisplayerSettings {
 
     @Override
-    public DataDisplayerType getType() {
-        return DataDisplayerType.MAP;
+    public DisplayerType getType() {
+        return DisplayerType.MAP;
     }
 }

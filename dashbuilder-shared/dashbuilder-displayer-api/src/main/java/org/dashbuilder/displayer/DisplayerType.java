@@ -18,7 +18,7 @@ package org.dashbuilder.displayer;
 /**
  * An enumeration for the different types of DisplayerSettings.
  */
-public enum DataDisplayerType {
+public enum DisplayerType {
 
     /**
      * Bar Chart DisplayerSettings.
@@ -60,7 +60,7 @@ public enum DataDisplayerType {
      */
     MAP;
 
-    public static DataDisplayerType getByName(String str) {
+    public static DisplayerType getByName(String str) {
         return valueOf(str.toUpperCase());
     }
 }

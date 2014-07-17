@@ -21,7 +21,7 @@ import org.jboss.errai.common.client.api.annotations.Portable;
 public class BubbleChartDisplayerSettings extends AbstractXAxisChartDisplayerSettings {
 
     @Override
-    public DataDisplayerType getType() {
-        return DataDisplayerType.BUBBLECHART;
+    public DisplayerType getType() {
+        return DisplayerType.BUBBLECHART;
     }
 }

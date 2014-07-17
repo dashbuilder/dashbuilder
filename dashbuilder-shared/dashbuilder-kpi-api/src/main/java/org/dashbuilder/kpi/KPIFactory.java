@@ -17,7 +17,7 @@ package org.dashbuilder.kpi;
 
 import org.dashbuilder.dataset.DataSetRef;
 import org.dashbuilder.displayer.DisplayerSettings;
-import org.dashbuilder.displayer.DataDisplayerType;
+import org.dashbuilder.displayer.DisplayerType;
 import org.dashbuilder.kpi.impl.KPIBuilderImpl;
 import org.dashbuilder.kpi.impl.KPIImpl;
 
@@ -35,35 +35,35 @@ public final class KPIFactory {
     }
 
     public static KPIBuilder newBarChartKPI() {
-        return new KPIBuilderImpl(DataDisplayerType.BARCHART);
+        return new KPIBuilderImpl( DisplayerType.BARCHART);
     }
 
     public static KPIBuilder newPieChartKPI() {
-        return new KPIBuilderImpl(DataDisplayerType.PIECHART);
+        return new KPIBuilderImpl( DisplayerType.PIECHART);
     }
 
     public static KPIBuilder newLineChartKPI() {
-        return new KPIBuilderImpl(DataDisplayerType.LINECHART);
+        return new KPIBuilderImpl( DisplayerType.LINECHART);
     }
 
     public static KPIBuilder newAreaChartKPI() {
-        return new KPIBuilderImpl(DataDisplayerType.AREACHART);
+        return new KPIBuilderImpl( DisplayerType.AREACHART);
     }
 
     public static KPIBuilder newBubbleChartKPI() {
-        return new KPIBuilderImpl(DataDisplayerType.BUBBLECHART);
+        return new KPIBuilderImpl( DisplayerType.BUBBLECHART);
     }
 
     public static KPIBuilder newMapChartKPI() {
-        return new KPIBuilderImpl(DataDisplayerType.MAP);
+        return new KPIBuilderImpl( DisplayerType.MAP);
     }
 
     public static KPIBuilder newTableKPI() {
-        return new KPIBuilderImpl(DataDisplayerType.TABLE);
+        return new KPIBuilderImpl( DisplayerType.TABLE);
     }
 
     public static KPIBuilder newMeterChartKPI() {
-        return new KPIBuilderImpl(DataDisplayerType.METERCHART);
+        return new KPIBuilderImpl( DisplayerType.METERCHART);
     }
 
 }

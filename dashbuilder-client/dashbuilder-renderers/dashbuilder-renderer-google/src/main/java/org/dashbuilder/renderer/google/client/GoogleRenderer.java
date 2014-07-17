@@ -23,10 +23,10 @@ import javax.inject.Named;
 
 import com.googlecode.gwt.charts.client.ChartLoader;
 import com.googlecode.gwt.charts.client.ChartPackage;
+import org.dashbuilder.displayer.DisplayerType;
 import org.dashbuilder.displayer.client.AbstractRendererLibrary;
 import org.dashbuilder.displayer.client.DataViewer;
 import org.dashbuilder.displayer.DisplayerSettings;
-import org.dashbuilder.displayer.DataDisplayerType;
 
 /**
  * Google's Visualization API based renderer.
@@ -42,15 +42,15 @@ public class GoogleRenderer extends AbstractRendererLibrary {
     }
 
     public DataViewer lookupViewer(DisplayerSettings displayerSettings) {
-        DataDisplayerType type = displayerSettings.getType();
-        if (DataDisplayerType.BARCHART.equals(type)) return new GoogleBarChartViewer();
-        if (DataDisplayerType.PIECHART.equals(type)) return new GooglePieChartViewer();
-        if (DataDisplayerType.AREACHART.equals(type)) return new GoogleAreaChartViewer();
-        if (DataDisplayerType.LINECHART.equals(type)) return new GoogleLineChartViewer();
-        if (DataDisplayerType.BUBBLECHART.equals(type)) return new GoogleBubbleChartViewer();
-        if (DataDisplayerType.METERCHART.equals(type)) return new GoogleMeterChartViewer();
-        if (DataDisplayerType.TABLE.equals(type)) return new GoogleTableViewer();
-        if (DataDisplayerType.MAP.equals(type)) return new GoogleMapViewer();
+        DisplayerType displayerType = displayerSettings.getType();
+        if ( DisplayerType.BARCHART.equals(displayerType)) return new GoogleBarChartViewer();
+        if ( DisplayerType.PIECHART.equals(displayerType)) return new GooglePieChartViewer();
+        if ( DisplayerType.AREACHART.equals(displayerType)) return new GoogleAreaChartViewer();
+        if ( DisplayerType.LINECHART.equals(displayerType)) return new GoogleLineChartViewer();
+        if ( DisplayerType.BUBBLECHART.equals(displayerType)) return new GoogleBubbleChartViewer();
+        if ( DisplayerType.METERCHART.equals(displayerType)) return new GoogleMeterChartViewer();
+        if ( DisplayerType.TABLE.equals(displayerType)) return new GoogleTableViewer();
+        if ( DisplayerType.MAP.equals(displayerType)) return new GoogleMapViewer();
 
         return null;
     }

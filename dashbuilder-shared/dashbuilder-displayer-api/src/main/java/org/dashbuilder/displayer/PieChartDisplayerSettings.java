@@ -21,7 +21,7 @@ import org.jboss.errai.common.client.api.annotations.Portable;
 public class PieChartDisplayerSettings extends AbstractXAxisChartDisplayerSettings {
 
     @Override
-    public DataDisplayerType getType() {
-        return DataDisplayerType.PIECHART;
+    public DisplayerType getType() {
+        return DisplayerType.PIECHART;
     }
 }

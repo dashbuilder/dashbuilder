@@ -26,8 +26,8 @@ public class MeterChartDisplayerSettings extends AbstractChartDisplayerSettings 
     protected long meterEnd;
 
     @Override
-    public DataDisplayerType getType() {
-        return DataDisplayerType.METERCHART;
+    public DisplayerType getType() {
+        return DisplayerType.METERCHART;
     }
 
     public long getMeterStart() {

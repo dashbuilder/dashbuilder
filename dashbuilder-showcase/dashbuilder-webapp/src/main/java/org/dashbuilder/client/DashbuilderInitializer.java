@@ -26,7 +26,7 @@ import org.dashbuilder.dataset.client.DataSetLookupClient;
 import org.dashbuilder.renderer.google.client.GoogleRenderer;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetManager;
-import org.dashbuilder.displayer.DataDisplayerType;
+import org.dashbuilder.displayer.DisplayerType;
 import org.dashbuilder.client.sales.SalesConstants;
 import org.dashbuilder.dataset.DataSetLookupService;
 import org.jboss.errai.common.client.api.Caller;
@@ -55,14 +55,14 @@ public class DashbuilderInitializer {
         dataSetLookupClient.setPushRemoteDataSetMaxSize(1024);
 
         // Set the default renderer lib for each displayer type.
-        rendererLibLocator.setDefaultRenderer(DataDisplayerType.BARCHART, GoogleRenderer.UUID);
-        rendererLibLocator.setDefaultRenderer(DataDisplayerType.PIECHART, GoogleRenderer.UUID);
-        rendererLibLocator.setDefaultRenderer(DataDisplayerType.AREACHART, GoogleRenderer.UUID);
-        rendererLibLocator.setDefaultRenderer(DataDisplayerType.LINECHART, GoogleRenderer.UUID);
-        rendererLibLocator.setDefaultRenderer(DataDisplayerType.BUBBLECHART, GoogleRenderer.UUID);
-        rendererLibLocator.setDefaultRenderer(DataDisplayerType.METERCHART, GoogleRenderer.UUID);
-        rendererLibLocator.setDefaultRenderer(DataDisplayerType.MAP, GoogleRenderer.UUID);
-        rendererLibLocator.setDefaultRenderer(DataDisplayerType.TABLE, GoogleRenderer.UUID);
+        rendererLibLocator.setDefaultRenderer( DisplayerType.BARCHART, GoogleRenderer.UUID);
+        rendererLibLocator.setDefaultRenderer( DisplayerType.PIECHART, GoogleRenderer.UUID);
+        rendererLibLocator.setDefaultRenderer( DisplayerType.AREACHART, GoogleRenderer.UUID);
+        rendererLibLocator.setDefaultRenderer( DisplayerType.LINECHART, GoogleRenderer.UUID);
+        rendererLibLocator.setDefaultRenderer( DisplayerType.BUBBLECHART, GoogleRenderer.UUID);
+        rendererLibLocator.setDefaultRenderer( DisplayerType.METERCHART, GoogleRenderer.UUID);
+        rendererLibLocator.setDefaultRenderer( DisplayerType.MAP, GoogleRenderer.UUID);
+        rendererLibLocator.setDefaultRenderer( DisplayerType.TABLE, GoogleRenderer.UUID);
 
         // Generate the data set to be used by the Showcase Gallery and by the Sales sample dashboards.
         Date currentDate = new Date();

@@ -22,7 +22,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import org.dashbuilder.displayer.DisplayerSettings;
-import org.dashbuilder.displayer.DataDisplayerType;
+import org.dashbuilder.displayer.DisplayerType;
 import org.jboss.errai.ioc.client.container.IOC;
 import org.jboss.errai.ioc.client.container.IOCBeanDef;
 import org.jboss.errai.ioc.client.container.SyncBeanManager;
@@ -41,13 +41,13 @@ public class RendererLibLocator {
 
     @Inject SyncBeanManager beanManager;
 
-    private Map<DataDisplayerType,String> defaultRenderers = new HashMap<DataDisplayerType,String>();
+    private Map<DisplayerType,String> defaultRenderers = new HashMap<DisplayerType,String>();
 
-    public void setDefaultRenderer(DataDisplayerType displayerType, String rendererName) {
+    public void setDefaultRenderer(DisplayerType displayerType, String rendererName) {
         defaultRenderers.put(displayerType, rendererName);
     }
 
-    public String getDefaultRenderer(DataDisplayerType displayerType) {
+    public String getDefaultRenderer(DisplayerType displayerType) {
         return defaultRenderers.get(displayerType);
     }
 

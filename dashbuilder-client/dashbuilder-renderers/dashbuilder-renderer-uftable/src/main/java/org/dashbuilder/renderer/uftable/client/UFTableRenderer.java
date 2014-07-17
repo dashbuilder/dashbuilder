@@ -18,10 +18,10 @@ package org.dashbuilder.renderer.uftable.client;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Named;
 
+import org.dashbuilder.displayer.DisplayerType;
 import org.dashbuilder.displayer.client.AbstractRendererLibrary;
 import org.dashbuilder.displayer.client.DataViewer;
 import org.dashbuilder.displayer.DisplayerSettings;
-import org.dashbuilder.displayer.DataDisplayerType;
 
 /**
  * Table renderer based on the Uberfire's core PagedTable widget.
@@ -37,8 +37,8 @@ public class UFTableRenderer extends AbstractRendererLibrary {
     }
 
     @Override public DataViewer lookupViewer(DisplayerSettings displayerSettings) {
-        DataDisplayerType type = displayerSettings.getType();
-        if (DataDisplayerType.TABLE.equals(type)) return new UFTableViewer();
+        DisplayerType type = displayerSettings.getType();
+        if ( DisplayerType.TABLE.equals(type)) return new UFTableViewer();
 
         return null;
     }

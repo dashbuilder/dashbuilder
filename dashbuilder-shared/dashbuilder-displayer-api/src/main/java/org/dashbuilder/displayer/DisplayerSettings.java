@@ -47,9 +47,9 @@ public interface DisplayerSettings {
 
     /**
      * @return The type of this DisplayerSettings.
-     * @see org.dashbuilder.displayer.DataDisplayerType
+     * @see DisplayerType
      */
-    DataDisplayerType getType();
+    DisplayerType getType();
 
     /**
      * @return The identifier of the renderer for this displayer
