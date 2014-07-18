@@ -19,7 +19,7 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
-import org.dashbuilder.displayer.client.DataViewerCoordinator;
+import org.dashbuilder.displayer.client.DisplayerCoordinator;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
 import org.uberfire.client.annotations.WorkbenchPartView;
 import org.uberfire.client.annotations.WorkbenchScreen;
@@ -36,7 +36,7 @@ public class SalesDashboardPresenter {
     @Inject
     SalesDashboardView view;
 
-    DataViewerCoordinator dataViewerCoordinator = new DataViewerCoordinator();
+    DisplayerCoordinator displayerCoordinator = new DisplayerCoordinator();
 
     @PostConstruct
     protected void init() {

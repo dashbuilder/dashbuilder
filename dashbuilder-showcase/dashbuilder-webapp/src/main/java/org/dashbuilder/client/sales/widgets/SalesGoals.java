@@ -22,7 +22,7 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.displayer.DisplayerSettingsFactory;
 import org.dashbuilder.displayer.client.Displayer;
-import org.dashbuilder.displayer.client.DataViewerCoordinator;
+import org.dashbuilder.displayer.client.DisplayerCoordinator;
 import org.dashbuilder.displayer.client.DataViewerHelper;
 import org.dashbuilder.dataset.DataSetFactory;
 
@@ -148,18 +148,18 @@ public class SalesGoals extends Composite {
                 .buildDisplayerSettings());
 
         // Make that charts interact among them
-        DataViewerCoordinator viewerCoordinator = new DataViewerCoordinator();
-        viewerCoordinator.addViewer(meterChartAmount);
-        viewerCoordinator.addViewer(lineChartByDate);
-        viewerCoordinator.addViewer(barChartByProduct);
-        viewerCoordinator.addViewer(barChartByEmployee);
-        viewerCoordinator.addViewer(bubbleByCountry);
+        DisplayerCoordinator displayerCoordinator = new DisplayerCoordinator();
+        displayerCoordinator.addDisplayer(meterChartAmount);
+        displayerCoordinator.addDisplayer(lineChartByDate);
+        displayerCoordinator.addDisplayer(barChartByProduct);
+        displayerCoordinator.addDisplayer(barChartByEmployee);
+        displayerCoordinator.addDisplayer(bubbleByCountry);
 
         // Init the dashboard from the UI Binder template
         initWidget(uiBinder.createAndBindUi(this));
 
         // Draw the charts
-        viewerCoordinator.drawAll();
+        displayerCoordinator.drawAll();
     }
 
 }

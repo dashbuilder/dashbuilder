@@ -27,13 +27,13 @@ import org.dashbuilder.dataset.group.DataSetGroup;
  * all of them is properly synced. This means every time a data display modification request comes from any
  * of the displayer components the rest are updated to reflect those changes.
  */
-public class DataViewerCoordinator {
+public class DisplayerCoordinator {
 
     protected List<Displayer> displayerList = new ArrayList<Displayer>();
     protected Map<RendererLibrary,List<Displayer>> rendererMap = new HashMap<RendererLibrary,List<Displayer>>();
     protected DisplayerListener displayerListener = new CoordinatorListener();
 
-    public void addViewer(Displayer displayer) {
+    public void addDisplayer(Displayer displayer) {
         displayerList.add(displayer);
         displayer.addListener(displayerListener);
 

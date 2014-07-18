@@ -30,16 +30,16 @@ public class DataViewerHelper {
      * @param displayerSettings The given display configuration.
      */
     public static Displayer lookup(DataSetRef dataSetRef, DisplayerSettings displayerSettings ) {
-        return DisplayerLocator.get().lookupDisplayer(dataSetRef, displayerSettings );
+        return DisplayerLocator.get().lookupDisplayer( dataSetRef, displayerSettings );
     }
 
     /**
      * Issues a draw request for the given Displayer instances.
      */
     public static void draw(Displayer... displayers ) {
-        DataViewerCoordinator coordinator = new DataViewerCoordinator();
+        DisplayerCoordinator coordinator = new DisplayerCoordinator();
         for (Displayer displayer : displayers ) {
-            coordinator.addViewer( displayer );
+            coordinator.addDisplayer( displayer );
         }
         coordinator.drawAll();
     }
@@ -48,9 +48,9 @@ public class DataViewerHelper {
      * Issues a redraw request for the given Displayer instances.
      */
     public static void redraw(Displayer... displayers ) {
-        DataViewerCoordinator coordinator = new DataViewerCoordinator();
+        DisplayerCoordinator coordinator = new DisplayerCoordinator();
         for (Displayer displayer : displayers ) {
-            coordinator.addViewer( displayer );
+            coordinator.addDisplayer( displayer );
         }
         coordinator.redrawAll();
     }

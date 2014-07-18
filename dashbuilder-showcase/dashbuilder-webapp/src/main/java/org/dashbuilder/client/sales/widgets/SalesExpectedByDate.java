@@ -22,7 +22,7 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.displayer.DisplayerSettingsFactory;
 import org.dashbuilder.displayer.client.Displayer;
-import org.dashbuilder.displayer.client.DataViewerCoordinator;
+import org.dashbuilder.displayer.client.DisplayerCoordinator;
 import org.dashbuilder.displayer.client.DataViewerHelper;
 import org.dashbuilder.dataset.DataSetFactory;
 
@@ -161,19 +161,19 @@ public class SalesExpectedByDate extends Composite {
                 .buildDisplayerSettings());
 
         // Make that charts interact among them
-        DataViewerCoordinator viewerCoordinator = new DataViewerCoordinator();
-        viewerCoordinator.addViewer(areaChartByDate);
-        viewerCoordinator.addViewer(pieChartYears);
-        viewerCoordinator.addViewer(pieChartQuarters);
-        viewerCoordinator.addViewer(barChartDayOfWeek);
-        viewerCoordinator.addViewer(pieChartByPipeline);
-        viewerCoordinator.addViewer(tableAll);
+        DisplayerCoordinator displayerCoordinator = new DisplayerCoordinator();
+        displayerCoordinator.addDisplayer(areaChartByDate);
+        displayerCoordinator.addDisplayer(pieChartYears);
+        displayerCoordinator.addDisplayer(pieChartQuarters);
+        displayerCoordinator.addDisplayer(barChartDayOfWeek);
+        displayerCoordinator.addDisplayer(pieChartByPipeline);
+        displayerCoordinator.addDisplayer(tableAll);
 
         // Init the dashboard from the UI Binder template
         initWidget(uiBinder.createAndBindUi(this));
 
         // Draw the charts
-        viewerCoordinator.drawAll();
+        displayerCoordinator.drawAll();
     }
 
 

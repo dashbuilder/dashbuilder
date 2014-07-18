@@ -19,7 +19,7 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
 
-import org.dashbuilder.displayer.client.DataViewerCoordinator;
+import org.dashbuilder.displayer.client.DisplayerCoordinator;
 import org.uberfire.client.workbench.events.PerspectiveChange;
 
 /**
@@ -33,18 +33,18 @@ public class KPICoordinator {
     /**
      * A Displayer coordinator for all the KPIViewer instances placed on the same perspective.
      */
-    private DataViewerCoordinator coordinator;
+    private DisplayerCoordinator coordinator;
 
     @PostConstruct
     public void init() {
-        coordinator = new DataViewerCoordinator();
+        coordinator = new DisplayerCoordinator();
     }
 
     /**
      * Add a KPIViewer instance to the dashboard context.
      */
     public void addKPIViewer(KPIViewer kpiViewer) {
-        coordinator.addViewer(kpiViewer.getDisplayer());
+        coordinator.addDisplayer(kpiViewer.getDisplayer());
     }
 
     /**
