@@ -25,7 +25,7 @@ import com.googlecode.gwt.charts.client.geochart.GeoChart;
 import com.googlecode.gwt.charts.client.geochart.GeoChartOptions;
 import org.dashbuilder.displayer.MapChartDisplayerSettings;
 
-public class GoogleMapViewer extends GoogleXAxisChartViewer<MapChartDisplayerSettings> {
+public class GoogleMapDisplayer extends GoogleXAxisChartDisplayer<MapChartDisplayerSettings> {
 
     private GeoChart chart;
     protected Panel filterPanel;

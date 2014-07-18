@@ -19,24 +19,24 @@ package org.dashbuilder.renderer.google.client.resources.i18n;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.i18n.client.Messages;
 
-public interface GoogleViewerConstants extends Messages {
+public interface GoogleDisplayerConstants extends Messages {
 
-    public static final GoogleViewerConstants INSTANCE = GWT.create( GoogleViewerConstants.class );
+    public static final GoogleDisplayerConstants INSTANCE = GWT.create( GoogleDisplayerConstants.class );
 
-    public String googleViewer_resetAnchor();
+    public String googleDisplayer_resetAnchor();
 
-    public String googleTableViewer_gotoFirstPage();
+    public String googleTableDisplayer_gotoFirstPage();
 
-    public String googleTableViewer_gotoPreviousPage();
+    public String googleTableDisplayer_gotoPreviousPage();
 
-    public String googleTableViewer_gotoNextPage();
+    public String googleTableDisplayer_gotoNextPage();
 
-    public String googleTableViewer_gotoLastPage();
+    public String googleTableDisplayer_gotoLastPage();
 
-    public String googleTableViewer_pages( String leftMostPageNumber, String rightMostPageNumber, String totalPages);
+    public String googleTableDisplayer_pages( String leftMostPageNumber, String rightMostPageNumber, String totalPages);
 
-    public String googleTableViewer_rows( String from, String to, String totalRows);
+    public String googleTableDisplayer_rows( String from, String to, String totalRows);
 
-    public String googleTableViewer_noData();
+    public String googleTableDisplayer_noData();
 
 }

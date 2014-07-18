@@ -21,19 +21,15 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.googlecode.gwt.charts.client.ChartPackage;
-import com.googlecode.gwt.charts.client.corechart.BarChart;
-import com.googlecode.gwt.charts.client.corechart.BarChartOptions;
-import com.googlecode.gwt.charts.client.corechart.ColumnChart;
-import com.googlecode.gwt.charts.client.corechart.ColumnChartOptions;
-import com.googlecode.gwt.charts.client.corechart.CoreChartWidget;
+import com.googlecode.gwt.charts.client.corechart.AreaChart;
+import com.googlecode.gwt.charts.client.corechart.AreaChartOptions;
 import com.googlecode.gwt.charts.client.options.Animation;
 import com.googlecode.gwt.charts.client.options.AnimationEasing;
-import com.googlecode.gwt.charts.client.options.CoreOptions;
-import org.dashbuilder.displayer.BarChartDisplayerSettings;
+import org.dashbuilder.displayer.AreaChartDisplayerSettings;
 
-public class GoogleBarChartViewer extends GoogleXAxisChartViewer<BarChartDisplayerSettings> {
+public class GoogleAreaChartDisplayer extends GoogleXAxisChartDisplayer<AreaChartDisplayerSettings> {
 
-    protected CoreChartWidget chart;
+    protected AreaChart chart;
     protected Panel filterPanel;
 
     @Override
@@ -42,14 +38,10 @@ public class GoogleBarChartViewer extends GoogleXAxisChartViewer<BarChartDisplay
     }
 
     @Override
-    public Widget createVisualization() {
-
-        if (displayerSettings.isHorizontal()) chart = new BarChart();
-        else chart = new ColumnChart();
-
+    protected Widget createVisualization() {
+        chart = new AreaChart();
         chart.addSelectHandler(createSelectHandler(chart));
         chart.draw(createTable(), createOptions());
-
 
         HTML titleHtml = new HTML();
         if (displayerSettings.isTitleVisible()) {
@@ -63,7 +55,6 @@ public class GoogleBarChartViewer extends GoogleXAxisChartViewer<BarChartDisplay
         return verticalPanel;
     }
 
-
     protected void updateVisualization() {
         filterPanel.clear();
         Widget filterReset = createCurrentSelectionWidget();
@@ -72,29 +63,17 @@ public class GoogleBarChartViewer extends GoogleXAxisChartViewer<BarChartDisplay
         chart.draw(createTable(), createOptions());
     }
 
-    private CoreOptions createOptions() {
+    private AreaChartOptions createOptions() {
         Animation anim = Animation.create();
         anim.setDuration(700);
         anim.setEasing(AnimationEasing.IN_AND_OUT);
 
-        if (displayerSettings.isHorizontal()) {
-            BarChartOptions options = BarChartOptions.create();
-            options.setWidth(displayerSettings.getWidth());
-            options.setHeight(displayerSettings.getHeight());
-            options.setLegend( createChartLegend( displayerSettings ) );
-            options.setAnimation(anim);
-            options.setChartArea(createChartArea());
-            return options;
-        }
-        else {
-            ColumnChartOptions options = ColumnChartOptions.create();
-            options.setWidth(displayerSettings.getWidth());
-            options.setHeight(displayerSettings.getHeight());
-            options.setLegend( createChartLegend( displayerSettings ) );
-            options.setAnimation(anim);
-            // TODO: options.set3D(displayerSettings.is3d());
-            options.setChartArea(createChartArea());
-            return options;
-        }
+        AreaChartOptions options = AreaChartOptions.create();
+        options.setWidth(displayerSettings.getWidth());
+        options.setHeight(displayerSettings.getHeight());
+        options.setLegend( createChartLegend( displayerSettings ) );
+        options.setAnimation(anim);
+        options.setChartArea(createChartArea());
+        return options;
     }
 }

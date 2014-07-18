@@ -21,15 +21,15 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.googlecode.gwt.charts.client.ChartPackage;
-import com.googlecode.gwt.charts.client.corechart.AreaChart;
-import com.googlecode.gwt.charts.client.corechart.AreaChartOptions;
+import com.googlecode.gwt.charts.client.corechart.LineChart;
+import com.googlecode.gwt.charts.client.corechart.LineChartOptions;
 import com.googlecode.gwt.charts.client.options.Animation;
 import com.googlecode.gwt.charts.client.options.AnimationEasing;
-import org.dashbuilder.displayer.AreaChartDisplayerSettings;
+import org.dashbuilder.displayer.LineChartDisplayerSettings;
 
-public class GoogleAreaChartViewer extends GoogleXAxisChartViewer<AreaChartDisplayerSettings> {
+public class GoogleLineChartDisplayer extends GoogleXAxisChartDisplayer<LineChartDisplayerSettings> {
 
-    protected AreaChart chart;
+    private LineChart chart;
     protected Panel filterPanel;
 
     @Override
@@ -38,8 +38,8 @@ public class GoogleAreaChartViewer extends GoogleXAxisChartViewer<AreaChartDispl
     }
 
     @Override
-    protected Widget createVisualization() {
-        chart = new AreaChart();
+    public Widget createVisualization() {
+        chart = new LineChart();
         chart.addSelectHandler(createSelectHandler(chart));
         chart.draw(createTable(), createOptions());
 
@@ -63,12 +63,12 @@ public class GoogleAreaChartViewer extends GoogleXAxisChartViewer<AreaChartDispl
         chart.draw(createTable(), createOptions());
     }
 
-    private AreaChartOptions createOptions() {
+    private LineChartOptions createOptions() {
         Animation anim = Animation.create();
         anim.setDuration(700);
         anim.setEasing(AnimationEasing.IN_AND_OUT);
 
-        AreaChartOptions options = AreaChartOptions.create();
+        LineChartOptions options = LineChartOptions.create();
         options.setWidth(displayerSettings.getWidth());
         options.setHeight(displayerSettings.getHeight());
         options.setLegend( createChartLegend( displayerSettings ) );

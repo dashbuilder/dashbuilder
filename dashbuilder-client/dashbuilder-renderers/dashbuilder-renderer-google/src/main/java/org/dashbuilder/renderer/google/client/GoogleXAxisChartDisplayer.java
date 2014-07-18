@@ -33,9 +33,9 @@ import com.googlecode.gwt.charts.client.geochart.GeoChart;
 import com.googlecode.gwt.charts.client.options.ChartArea;
 import org.dashbuilder.displayer.AbstractXAxisChartDisplayerSettings;
 import org.dashbuilder.displayer.DisplayerSettingsColumn;
-import org.dashbuilder.renderer.google.client.resources.i18n.GoogleViewerConstants;
+import org.dashbuilder.renderer.google.client.resources.i18n.GoogleDisplayerConstants;
 
-public abstract class GoogleXAxisChartViewer<T extends AbstractXAxisChartDisplayerSettings> extends AbstractGoogleChartViewer<T> {
+public abstract class GoogleXAxisChartDisplayer<T extends AbstractXAxisChartDisplayerSettings> extends AbstractGoogleChartDisplayer<T> {
 
     public static final String[] COLOR_ARRAY = new String[] {"aqua", "red", "orange", "brown", "coral", "blue", "fuchsia", "gold",
             "green", "lime", "magenta", "pink", "silver", "yellow"};
@@ -114,7 +114,7 @@ public abstract class GoogleXAxisChartViewer<T extends AbstractXAxisChartDisplay
         for (String interval : selectedValues) {
             panel.add(new Label(interval));
         }
-        Anchor anchor = new Anchor( GoogleViewerConstants.INSTANCE.googleViewer_resetAnchor() );
+        Anchor anchor = new Anchor( GoogleDisplayerConstants.INSTANCE.googleDisplayer_resetAnchor() );
         panel.add(anchor);
         anchor.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {

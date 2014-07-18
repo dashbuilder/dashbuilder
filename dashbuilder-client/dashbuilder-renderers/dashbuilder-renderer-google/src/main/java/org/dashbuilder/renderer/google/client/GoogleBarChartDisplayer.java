@@ -21,17 +21,19 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.googlecode.gwt.charts.client.ChartPackage;
-import com.googlecode.gwt.charts.client.corechart.BubbleChart;
-import com.googlecode.gwt.charts.client.corechart.BubbleChartOptions;
+import com.googlecode.gwt.charts.client.corechart.BarChart;
+import com.googlecode.gwt.charts.client.corechart.BarChartOptions;
+import com.googlecode.gwt.charts.client.corechart.ColumnChart;
+import com.googlecode.gwt.charts.client.corechart.ColumnChartOptions;
+import com.googlecode.gwt.charts.client.corechart.CoreChartWidget;
 import com.googlecode.gwt.charts.client.options.Animation;
 import com.googlecode.gwt.charts.client.options.AnimationEasing;
-import com.googlecode.gwt.charts.client.options.HAxis;
-import com.googlecode.gwt.charts.client.options.VAxis;
-import org.dashbuilder.displayer.BubbleChartDisplayerSettings;
+import com.googlecode.gwt.charts.client.options.CoreOptions;
+import org.dashbuilder.displayer.BarChartDisplayerSettings;
 
-public class GoogleBubbleChartViewer extends GoogleXAxisChartViewer<BubbleChartDisplayerSettings> {
+public class GoogleBarChartDisplayer extends GoogleXAxisChartDisplayer<BarChartDisplayerSettings> {
 
-    private BubbleChart chart;
+    protected CoreChartWidget chart;
     protected Panel filterPanel;
 
     @Override
@@ -41,9 +43,13 @@ public class GoogleBubbleChartViewer extends GoogleXAxisChartViewer<BubbleChartD
 
     @Override
     public Widget createVisualization() {
-        chart = new BubbleChart();
+
+        if (displayerSettings.isHorizontal()) chart = new BarChart();
+        else chart = new ColumnChart();
+
         chart.addSelectHandler(createSelectHandler(chart));
         chart.draw(createTable(), createOptions());
+
 
         HTML titleHtml = new HTML();
         if (displayerSettings.isTitleVisible()) {
@@ -57,6 +63,7 @@ public class GoogleBubbleChartViewer extends GoogleXAxisChartViewer<BubbleChartD
         return verticalPanel;
     }
 
+
     protected void updateVisualization() {
         filterPanel.clear();
         Widget filterReset = createCurrentSelectionWidget();
@@ -65,21 +72,29 @@ public class GoogleBubbleChartViewer extends GoogleXAxisChartViewer<BubbleChartD
         chart.draw(createTable(), createOptions());
     }
 
-    private BubbleChartOptions createOptions() {
+    private CoreOptions createOptions() {
         Animation anim = Animation.create();
         anim.setDuration(700);
-        anim.setEasing(AnimationEasing.IN);
+        anim.setEasing(AnimationEasing.IN_AND_OUT);
 
-        BubbleChartOptions options = BubbleChartOptions.create();
-        options.setWidth(displayerSettings.getWidth());
-        options.setHeight(displayerSettings.getHeight());
-        options.setHAxis(HAxis.create(googleTable.getColumnLabel(1)));
-        options.setVAxis(VAxis.create(googleTable.getColumnLabel(2)));
-        options.setChartArea(createChartArea());
-        options.setLegend( createChartLegend( displayerSettings ) );
-        options.setAnimation(anim);
-        String[] colors = createColorArray(googleTable);
-        if (colors.length > 0) options.setColors(colors);
-        return options;
+        if (displayerSettings.isHorizontal()) {
+            BarChartOptions options = BarChartOptions.create();
+            options.setWidth(displayerSettings.getWidth());
+            options.setHeight(displayerSettings.getHeight());
+            options.setLegend( createChartLegend( displayerSettings ) );
+            options.setAnimation(anim);
+            options.setChartArea(createChartArea());
+            return options;
+        }
+        else {
+            ColumnChartOptions options = ColumnChartOptions.create();
+            options.setWidth(displayerSettings.getWidth());
+            options.setHeight(displayerSettings.getHeight());
+            options.setLegend( createChartLegend( displayerSettings ) );
+            options.setAnimation(anim);
+            // TODO: options.set3D(displayerSettings.is3d());
+            options.setChartArea(createChartArea());
+            return options;
+        }
     }
 }

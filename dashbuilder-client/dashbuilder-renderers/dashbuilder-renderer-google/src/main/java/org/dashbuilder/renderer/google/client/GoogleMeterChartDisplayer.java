@@ -16,31 +16,27 @@
 package org.dashbuilder.renderer.google.client;
 
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.Panel;
-import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.googlecode.gwt.charts.client.ChartPackage;
-import com.googlecode.gwt.charts.client.corechart.LineChart;
-import com.googlecode.gwt.charts.client.corechart.LineChartOptions;
+import com.googlecode.gwt.charts.client.gauge.Gauge;
+import com.googlecode.gwt.charts.client.gauge.GaugeOptions;
 import com.googlecode.gwt.charts.client.options.Animation;
 import com.googlecode.gwt.charts.client.options.AnimationEasing;
-import org.dashbuilder.displayer.LineChartDisplayerSettings;
+import org.dashbuilder.displayer.MeterChartDisplayerSettings;
 
-public class GoogleLineChartViewer extends GoogleXAxisChartViewer<LineChartDisplayerSettings> {
+public class GoogleMeterChartDisplayer extends GoogleDisplayer<MeterChartDisplayerSettings> {
 
-    private LineChart chart;
-    protected Panel filterPanel;
+    private Gauge chart;
 
     @Override
     public ChartPackage getPackage() {
-        return ChartPackage.CORECHART;
+        return ChartPackage.GAUGE;
     }
 
     @Override
     public Widget createVisualization() {
-        chart = new LineChart();
-        chart.addSelectHandler(createSelectHandler(chart));
+        chart = new Gauge();
         chart.draw(createTable(), createOptions());
 
         HTML titleHtml = new HTML();
@@ -50,30 +46,31 @@ public class GoogleLineChartViewer extends GoogleXAxisChartViewer<LineChartDispl
 
         VerticalPanel verticalPanel = new VerticalPanel();
         verticalPanel.add(titleHtml);
-        verticalPanel.add(filterPanel = new SimplePanel());
         verticalPanel.add(chart);
         return verticalPanel;
     }
 
     protected void updateVisualization() {
-        filterPanel.clear();
-        Widget filterReset = createCurrentSelectionWidget();
-        if (filterReset != null) filterPanel.add(filterReset);
-
         chart.draw(createTable(), createOptions());
     }
 
-    private LineChartOptions createOptions() {
+    private GaugeOptions createOptions() {
         Animation anim = Animation.create();
-        anim.setDuration(700);
+        anim.setDuration(500);
         anim.setEasing(AnimationEasing.IN_AND_OUT);
 
-        LineChartOptions options = LineChartOptions.create();
+        GaugeOptions options = GaugeOptions.create();
         options.setWidth(displayerSettings.getWidth());
         options.setHeight(displayerSettings.getHeight());
-        options.setLegend( createChartLegend( displayerSettings ) );
+        options.setMin(displayerSettings.getMeterStart());
+        options.setMax(displayerSettings.getMeterEnd());
+        options.setGreenFrom(displayerSettings.getMeterStart());
+        options.setGreenTo(displayerSettings.getMeterWarning());
+        options.setYellowFrom(displayerSettings.getMeterWarning());
+        options.setYellowTo(displayerSettings.getMeterCritical());
+        options.setRedFrom(displayerSettings.getMeterCritical());
+        options.setRedTo(displayerSettings.getMeterEnd());
         options.setAnimation(anim);
-        options.setChartArea(createChartArea());
         return options;
     }
 }

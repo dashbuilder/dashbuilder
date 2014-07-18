@@ -36,7 +36,7 @@ import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.displayer.DisplayerSettings;
 
-public abstract class GoogleViewer<T extends DisplayerSettings> extends AbstractDisplayer<T> {
+public abstract class GoogleDisplayer<T extends DisplayerSettings> extends AbstractDisplayer<T> {
 
     protected boolean drawn = false;
     protected FlowPanel panel = new FlowPanel();
@@ -45,7 +45,7 @@ public abstract class GoogleViewer<T extends DisplayerSettings> extends Abstract
     protected DataSet dataSet;
     protected DataTable googleTable = null;
 
-    public GoogleViewer() {
+    public GoogleDisplayer() {
         initWidget(panel);
     }
 
@@ -87,7 +87,7 @@ public abstract class GoogleViewer<T extends DisplayerSettings> extends Abstract
     }
 
     /**
-     * Just reload the data set and make the current Google Viewer to redraw.
+     * Just reload the data set and make the current Google Displayer redraw.
      */
     public void redraw() {
         if (!drawn) {

@@ -39,9 +39,9 @@ import org.dashbuilder.displayer.client.Displayer;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.group.DataSetGroup;
 import org.dashbuilder.dataset.sort.SortOrder;
-import org.dashbuilder.renderer.google.client.resources.i18n.GoogleViewerConstants;
+import org.dashbuilder.renderer.google.client.resources.i18n.GoogleDisplayerConstants;
 
-public class GoogleTableViewer extends GoogleViewer<TableDisplayerSettings> {
+public class GoogleTableDisplayer extends GoogleDisplayer<TableDisplayerSettings> {
 
     protected int pageSize = 20;
     protected int currentPage = 1;
@@ -196,7 +196,7 @@ public class GoogleTableViewer extends GoogleViewer<TableDisplayerSettings> {
                 gotoPage(currentPage - 1);
             }
         }, ClickEvent.getType());
-        Tooltip leftPageTooltip = new Tooltip( GoogleViewerConstants.INSTANCE.googleTableViewer_gotoPreviousPage() );
+        Tooltip leftPageTooltip = new Tooltip( GoogleDisplayerConstants.INSTANCE.googleTableDisplayer_gotoPreviousPage() );
         leftPageTooltip.add(leftPageIcon);
 
         Icon rightPageIcon = new Icon(IconType.ANGLE_RIGHT);
@@ -209,7 +209,7 @@ public class GoogleTableViewer extends GoogleViewer<TableDisplayerSettings> {
                 gotoPage(currentPage + 1);
             }
         }, ClickEvent.getType());
-        Tooltip rightPageTooltip = new Tooltip( GoogleViewerConstants.INSTANCE.googleTableViewer_gotoNextPage() );
+        Tooltip rightPageTooltip = new Tooltip( GoogleDisplayerConstants.INSTANCE.googleTableDisplayer_gotoNextPage() );
         rightPageTooltip.add(rightPageIcon);
 
         Icon firstPageIcon = new Icon(IconType.DOUBLE_ANGLE_LEFT);
@@ -222,7 +222,7 @@ public class GoogleTableViewer extends GoogleViewer<TableDisplayerSettings> {
                 gotoPage(1);
             }
         }, ClickEvent.getType());
-        Tooltip firstPageTooltip = new Tooltip( GoogleViewerConstants.INSTANCE.googleTableViewer_gotoFirstPage() );
+        Tooltip firstPageTooltip = new Tooltip( GoogleDisplayerConstants.INSTANCE.googleTableDisplayer_gotoFirstPage() );
         firstPageTooltip.add(firstPageIcon);
 
         Icon lastPageIcon = new Icon(IconType.DOUBLE_ANGLE_RIGHT);
@@ -235,13 +235,13 @@ public class GoogleTableViewer extends GoogleViewer<TableDisplayerSettings> {
                 gotoPage(numberOfPages);
             }
         }, ClickEvent.getType());
-        Tooltip lastPageTooltip = new Tooltip( GoogleViewerConstants.INSTANCE.googleTableViewer_gotoLastPage() );
+        Tooltip lastPageTooltip = new Tooltip( GoogleDisplayerConstants.INSTANCE.googleTableDisplayer_gotoLastPage() );
         lastPageTooltip.add(lastPageIcon);
 
         Label totalPages = null;
         if ( showTotalPagesHint ) {
             totalPages = new Label(
-                                    GoogleViewerConstants.INSTANCE.googleTableViewer_pages(
+                                    GoogleDisplayerConstants.INSTANCE.googleTableDisplayer_pages(
                                         Integer.toString( getLeftMostPageNumber() ),
                                         Integer.toString( getRightMostPageNumber() ),
                                         Integer.toString( numberOfPages ) )
@@ -249,11 +249,11 @@ public class GoogleTableViewer extends GoogleViewer<TableDisplayerSettings> {
         }
         Label totalRows = null;
         if ( numberOfRows == 0) {
-            totalRows = new Label( GoogleViewerConstants.INSTANCE.googleTableViewer_noData() );
+            totalRows = new Label( GoogleDisplayerConstants.INSTANCE.googleTableDisplayer_noData() );
         } else if ( showTotalRowsHint ) {
             int currentRowsShown = currentPage * pageSize > numberOfRows ? numberOfRows : currentPage * pageSize;
             totalRows = new Label(
-                                    GoogleViewerConstants.INSTANCE.googleTableViewer_rows(
+                                    GoogleDisplayerConstants.INSTANCE.googleTableDisplayer_rows(
                                         Integer.toString( ( ( currentPage - 1 ) * pageSize) + 1 ),
                                         Integer.toString( currentRowsShown ),
                                         Integer.toString( numberOfRows ) )

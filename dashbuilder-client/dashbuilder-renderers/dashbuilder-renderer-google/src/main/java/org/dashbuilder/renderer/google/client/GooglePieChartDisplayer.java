@@ -25,7 +25,7 @@ import com.googlecode.gwt.charts.client.corechart.PieChart;
 import com.googlecode.gwt.charts.client.corechart.PieChartOptions;
 import org.dashbuilder.displayer.PieChartDisplayerSettings;
 
-public class GooglePieChartViewer extends GoogleXAxisChartViewer<PieChartDisplayerSettings> {
+public class GooglePieChartDisplayer extends GoogleXAxisChartDisplayer<PieChartDisplayerSettings> {
 
     private PieChart chart;
     protected Panel filterPanel;

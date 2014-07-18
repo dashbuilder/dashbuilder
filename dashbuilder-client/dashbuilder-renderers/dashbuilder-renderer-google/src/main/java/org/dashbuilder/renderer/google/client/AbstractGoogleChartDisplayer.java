@@ -23,7 +23,7 @@ import org.dashbuilder.displayer.ChartDisplayerSettings;
 /**
  * Abstract base class for all displayers that support the basic ChartDisplayerSettings configuration options
  */
-public abstract class AbstractGoogleChartViewer<T extends ChartDisplayerSettings> extends GoogleViewer<T> {
+public abstract class AbstractGoogleChartDisplayer<T extends ChartDisplayerSettings> extends GoogleDisplayer<T> {
 
     protected Legend createChartLegend( ChartDisplayerSettings chartDisplayerSettings ) {
         GoogleLegendWrapper legend = GoogleLegendWrapper.create();

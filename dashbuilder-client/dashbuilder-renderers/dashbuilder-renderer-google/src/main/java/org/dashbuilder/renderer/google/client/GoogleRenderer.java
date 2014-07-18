@@ -43,14 +43,14 @@ public class GoogleRenderer extends AbstractRendererLibrary {
 
     public Displayer lookupDisplayer(DisplayerSettings displayerSettings) {
         DisplayerType displayerType = displayerSettings.getType();
-        if ( DisplayerType.BARCHART.equals(displayerType)) return new GoogleBarChartViewer();
-        if ( DisplayerType.PIECHART.equals(displayerType)) return new GooglePieChartViewer();
-        if ( DisplayerType.AREACHART.equals(displayerType)) return new GoogleAreaChartViewer();
-        if ( DisplayerType.LINECHART.equals(displayerType)) return new GoogleLineChartViewer();
-        if ( DisplayerType.BUBBLECHART.equals(displayerType)) return new GoogleBubbleChartViewer();
-        if ( DisplayerType.METERCHART.equals(displayerType)) return new GoogleMeterChartViewer();
-        if ( DisplayerType.TABLE.equals(displayerType)) return new GoogleTableViewer();
-        if ( DisplayerType.MAP.equals(displayerType)) return new GoogleMapViewer();
+        if ( DisplayerType.BARCHART.equals(displayerType)) return new GoogleBarChartDisplayer();
+        if ( DisplayerType.PIECHART.equals(displayerType)) return new GooglePieChartDisplayer();
+        if ( DisplayerType.AREACHART.equals(displayerType)) return new GoogleAreaChartDisplayer();
+        if ( DisplayerType.LINECHART.equals(displayerType)) return new GoogleLineChartDisplayer();
+        if ( DisplayerType.BUBBLECHART.equals(displayerType)) return new GoogleBubbleChartDisplayer();
+        if ( DisplayerType.METERCHART.equals(displayerType)) return new GoogleMeterChartDisplayer();
+        if ( DisplayerType.TABLE.equals(displayerType)) return new GoogleTableDisplayer();
+        if ( DisplayerType.MAP.equals(displayerType)) return new GoogleMapDisplayer();
 
         return null;
     }
@@ -63,8 +63,8 @@ public class GoogleRenderer extends AbstractRendererLibrary {
         Set<ChartPackage> packageList = new HashSet<ChartPackage>();
         for (Displayer displayer : displayerList) {
             try {
-                GoogleViewer googleViewer = (GoogleViewer) displayer;
-                packageList.add(googleViewer.getPackage());
+                GoogleDisplayer googleDisplayer = (GoogleDisplayer ) displayer;
+                packageList.add( googleDisplayer.getPackage());
             } catch (ClassCastException e) {
                 // Just ignore non Google displayers.
             }
