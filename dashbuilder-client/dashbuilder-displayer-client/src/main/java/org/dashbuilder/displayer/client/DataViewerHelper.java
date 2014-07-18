@@ -30,7 +30,7 @@ public class DataViewerHelper {
      * @param displayerSettings The given display configuration.
      */
     public static Displayer lookup(DataSetRef dataSetRef, DisplayerSettings displayerSettings ) {
-        return DataViewerLocator.get().lookupViewer(dataSetRef, displayerSettings );
+        return DisplayerLocator.get().lookupDisplayer(dataSetRef, displayerSettings );
     }
 
     /**

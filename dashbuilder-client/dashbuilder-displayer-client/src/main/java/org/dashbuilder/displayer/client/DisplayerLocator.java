@@ -28,11 +28,11 @@ import org.jboss.errai.ioc.client.container.IOCBeanDef;
  * The locator service for Displayer implementations.
  */
 @ApplicationScoped
-public class DataViewerLocator {
+public class DisplayerLocator {
 
-    public static DataViewerLocator get() {
-        Collection<IOCBeanDef<DataViewerLocator>> beans = IOC.getBeanManager().lookupBeans(DataViewerLocator.class);
-        IOCBeanDef<DataViewerLocator> beanDef = beans.iterator().next();
+    public static DisplayerLocator get() {
+        Collection<IOCBeanDef<DisplayerLocator>> beans = IOC.getBeanManager().lookupBeans(DisplayerLocator.class);
+        IOCBeanDef<DisplayerLocator> beanDef = beans.iterator().next();
         return beanDef.getInstance();
     }
 
@@ -41,7 +41,7 @@ public class DataViewerLocator {
     /**
      * Get the displayer component for the specified data displayer (with no data set attached).
      */
-    public Displayer lookupViewer(DisplayerSettings target) {
+    public Displayer lookupDisplayer(DisplayerSettings target) {
         RendererLibrary renderer = RendererLibLocator.get().lookupRenderer(target);
         Displayer displayer = renderer.lookupDisplayer(target);
         if (displayer == null) throw new RuntimeException(target.getType() + " displayer not supported in " + target.getRenderer() + " renderer.");
@@ -53,8 +53,8 @@ public class DataViewerLocator {
     /**
      * Get the displayer component for the specified data displayer and attach it to the specified data set ref.
      */
-    public Displayer lookupViewer(DataSetRef dataSetRef, DisplayerSettings target) {
-        Displayer displayer = lookupViewer(target);
+    public Displayer lookupDisplayer(DataSetRef dataSetRef, DisplayerSettings target) {
+        Displayer displayer = lookupDisplayer(target);
         DataSetHandler handler = handlerLocator.lookupHandler(dataSetRef);
         displayer.setDataSetHandler(handler);
         return displayer;
