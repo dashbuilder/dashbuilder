@@ -25,7 +25,7 @@ import org.jboss.errai.ioc.client.container.IOC;
 import org.jboss.errai.ioc.client.container.IOCBeanDef;
 
 /**
- * The locator service for DataViewer implementations.
+ * The locator service for Displayer implementations.
  */
 @ApplicationScoped
 public class DataViewerLocator {
@@ -39,24 +39,24 @@ public class DataViewerLocator {
     @Inject DataSetHandlerLocator handlerLocator;
 
     /**
-     * Get the viewer component for the specified data displayer (with no data set attached).
+     * Get the displayer component for the specified data displayer (with no data set attached).
      */
-    public DataViewer lookupViewer(DisplayerSettings target) {
+    public Displayer lookupViewer(DisplayerSettings target) {
         RendererLibrary renderer = RendererLibLocator.get().lookupRenderer(target);
-        DataViewer viewer = renderer.lookupViewer(target);
-        if (viewer == null) throw new RuntimeException(target.getType() + " displayer not supported in " + target.getRenderer() + " renderer.");
+        Displayer displayer = renderer.lookupDisplayer(target);
+        if (displayer == null) throw new RuntimeException(target.getType() + " displayer not supported in " + target.getRenderer() + " renderer.");
 
-        viewer.setDisplayerSettings( target );
-        return viewer;
+        displayer.setDisplayerSettings( target );
+        return displayer;
     }
 
     /**
-     * Get the viewer component for the specified data displayer and attach it to the specified data set ref.
+     * Get the displayer component for the specified data displayer and attach it to the specified data set ref.
      */
-    public DataViewer lookupViewer(DataSetRef dataSetRef, DisplayerSettings target) {
-        DataViewer viewer = lookupViewer(target);
+    public Displayer lookupViewer(DataSetRef dataSetRef, DisplayerSettings target) {
+        Displayer displayer = lookupViewer(target);
         DataSetHandler handler = handlerLocator.lookupHandler(dataSetRef);
-        viewer.setDataSetHandler(handler);
-        return viewer;
+        displayer.setDataSetHandler(handler);
+        return displayer;
     }
 }

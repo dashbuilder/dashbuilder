@@ -20,7 +20,7 @@ import javax.inject.Named;
 
 import org.dashbuilder.displayer.DisplayerType;
 import org.dashbuilder.displayer.client.AbstractRendererLibrary;
-import org.dashbuilder.displayer.client.DataViewer;
+import org.dashbuilder.displayer.client.Displayer;
 import org.dashbuilder.displayer.DisplayerSettings;
 
 /**
@@ -32,11 +32,13 @@ public class UFTableRenderer extends AbstractRendererLibrary {
 
     public static final String UUID = "uftable";
 
-    @Override public String getUUID() {
+    @Override
+    public String getUUID() {
         return UUID;
     }
 
-    @Override public DataViewer lookupViewer(DisplayerSettings displayerSettings) {
+    @Override
+    public Displayer lookupDisplayer(DisplayerSettings displayerSettings) {
         DisplayerType type = displayerSettings.getType();
         if ( DisplayerType.TABLE.equals(type)) return new UFTableViewer();
 

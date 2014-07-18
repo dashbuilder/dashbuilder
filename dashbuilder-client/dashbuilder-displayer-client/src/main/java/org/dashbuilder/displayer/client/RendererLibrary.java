@@ -22,7 +22,7 @@ import org.dashbuilder.displayer.DisplayerSettings;
 public interface RendererLibrary {
 
     String getUUID();
-    DataViewer lookupViewer(DisplayerSettings displayer);
-    void draw(List<DataViewer> viewerList);
-    void redraw(List<DataViewer> viewerList);
+    Displayer lookupDisplayer(DisplayerSettings displayer);
+    void draw(List<Displayer> displayerList);
+    void redraw(List<Displayer> displayerList);
 }

@@ -18,7 +18,7 @@ package org.dashbuilder.kpi.client;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimplePanel;
-import org.dashbuilder.displayer.client.DataViewer;
+import org.dashbuilder.displayer.client.Displayer;
 import org.dashbuilder.displayer.client.DataViewerHelper;
 import org.dashbuilder.dataset.DataSetRef;
 import org.dashbuilder.displayer.DisplayerSettings;
@@ -28,7 +28,7 @@ public class KPIViewer extends Composite {
 
     protected SimplePanel container = new SimplePanel();
     protected Label label = new Label();
-    protected DataViewer dataViewer;
+    protected Displayer displayer;
     protected KPI kpi;
 
     public KPIViewer() {
@@ -47,22 +47,22 @@ public class KPIViewer extends Composite {
     public void setKpi(KPI kpi) {
         this.kpi = kpi;
 
-        // Locate the DataViewer widget to display the KPI
+        // Locate the Displayer widget to display the KPI
         DisplayerSettings displayerSettings = kpi.getDisplayerSettings();
         DataSetRef dataSetRef = kpi.getDataSetRef();
-        dataViewer = DataViewerHelper.lookup(dataSetRef, displayerSettings );
+        displayer = DataViewerHelper.lookup(dataSetRef, displayerSettings );
     }
 
-    public DataViewer getDataViewer() {
-        return dataViewer;
+    public Displayer getDisplayer() {
+        return displayer;
     }
 
     public KPIViewer draw() {
         try {
             container.clear();
-            container.add(dataViewer);
+            container.add( displayer );
 
-            DataViewerHelper.draw(dataViewer);
+            DataViewerHelper.draw( displayer );
         } catch (Exception e) {
             displayMessage(e.getMessage());
         }
@@ -72,9 +72,9 @@ public class KPIViewer extends Composite {
     public KPIViewer redraw() {
         try {
             container.clear();
-            container.add(dataViewer);
+            container.add( displayer );
 
-            DataViewerHelper.redraw(dataViewer);
+            DataViewerHelper.redraw( displayer );
         } catch (Exception e) {
             displayMessage(e.getMessage());
         }

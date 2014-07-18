@@ -30,13 +30,13 @@ import com.googlecode.gwt.charts.client.format.NumberFormatOptions;
 import com.googlecode.gwt.charts.client.options.FormatType;
 import org.dashbuilder.dataset.client.DataSetReadyCallback;
 import org.dashbuilder.displayer.DisplayerSettingsColumn;
-import org.dashbuilder.displayer.client.AbstractDataViewer;
+import org.dashbuilder.displayer.client.AbstractDisplayer;
 import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.displayer.DisplayerSettings;
 
-public abstract class GoogleViewer<T extends DisplayerSettings> extends AbstractDataViewer<T> {
+public abstract class GoogleViewer<T extends DisplayerSettings> extends AbstractDisplayer<T> {
 
     protected boolean drawn = false;
     protected FlowPanel panel = new FlowPanel();
@@ -112,17 +112,17 @@ public abstract class GoogleViewer<T extends DisplayerSettings> extends Abstract
     }
 
     /**
-     * Get the Google Visualization package this viewer requires.
+     * Get the Google Visualization package this displayer requires.
      */
     protected abstract ChartPackage getPackage();
 
     /**
-     * Create the widget used by concrete Google viewer implementation.
+     * Create the widget used by concrete Google displayer implementation.
      */
     protected abstract Widget createVisualization();
 
     /**
-     * Update the widget used by concrete Google viewer implementation.
+     * Update the widget used by concrete Google displayer implementation.
      */
     protected abstract void updateVisualization();
 

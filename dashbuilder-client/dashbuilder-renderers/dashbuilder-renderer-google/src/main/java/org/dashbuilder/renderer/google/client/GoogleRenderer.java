@@ -25,7 +25,7 @@ import com.googlecode.gwt.charts.client.ChartLoader;
 import com.googlecode.gwt.charts.client.ChartPackage;
 import org.dashbuilder.displayer.DisplayerType;
 import org.dashbuilder.displayer.client.AbstractRendererLibrary;
-import org.dashbuilder.displayer.client.DataViewer;
+import org.dashbuilder.displayer.client.Displayer;
 import org.dashbuilder.displayer.DisplayerSettings;
 
 /**
@@ -41,7 +41,7 @@ public class GoogleRenderer extends AbstractRendererLibrary {
         return UUID;
     }
 
-    public DataViewer lookupViewer(DisplayerSettings displayerSettings) {
+    public Displayer lookupDisplayer(DisplayerSettings displayerSettings) {
         DisplayerType displayerType = displayerSettings.getType();
         if ( DisplayerType.BARCHART.equals(displayerType)) return new GoogleBarChartViewer();
         if ( DisplayerType.PIECHART.equals(displayerType)) return new GooglePieChartViewer();
@@ -58,15 +58,15 @@ public class GoogleRenderer extends AbstractRendererLibrary {
     /**
      *  In Google the renderer mechanism is asynchronous.
      */
-    public void draw(final List<DataViewer> viewerList) {
+    public void draw(final List<Displayer> displayerList) {
         // Get the modules to load.
         Set<ChartPackage> packageList = new HashSet<ChartPackage>();
-        for (DataViewer viewer : viewerList) {
+        for (Displayer displayer : displayerList) {
             try {
-                GoogleViewer googleViewer = (GoogleViewer) viewer;
+                GoogleViewer googleViewer = (GoogleViewer) displayer;
                 packageList.add(googleViewer.getPackage());
             } catch (ClassCastException e) {
-                // Just ignore non Google viewers.
+                // Just ignore non Google displayers.
             }
         }
         // Create an array of packages.
@@ -81,7 +81,7 @@ public class GoogleRenderer extends AbstractRendererLibrary {
 
             // Called when the visualization API has been loaded.
             public void run() {
-                GoogleRenderer.super.draw(viewerList);
+                GoogleRenderer.super.draw(displayerList);
             }
         });
     }

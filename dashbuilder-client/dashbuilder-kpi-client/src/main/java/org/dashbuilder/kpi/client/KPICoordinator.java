@@ -31,7 +31,7 @@ import org.uberfire.client.workbench.events.PerspectiveChange;
 public class KPICoordinator {
 
     /**
-     * A DataViewer coordinator for all the KPIViewer instances placed on the same perspective.
+     * A Displayer coordinator for all the KPIViewer instances placed on the same perspective.
      */
     private DataViewerCoordinator coordinator;
 
@@ -44,7 +44,7 @@ public class KPICoordinator {
      * Add a KPIViewer instance to the dashboard context.
      */
     public void addKPIViewer(KPIViewer kpiViewer) {
-        coordinator.addViewer(kpiViewer.getDataViewer());
+        coordinator.addViewer(kpiViewer.getDisplayer());
     }
 
     /**

@@ -32,14 +32,14 @@ import org.dashbuilder.dataset.sort.SortOrder;
 import org.dashbuilder.displayer.DisplayerSettings;
 
 /**
- * Base class for implementing custom viewers.
+ * Base class for implementing custom displayers.
  * <p>Any derived class must implement:
  * <ul>
  *     <li>The draw() & redraw() methods.</li>
  *     <li>The capture of events coming from the DataViewerListener interface.</li>
  * </ul>
  */
-public abstract class AbstractDataViewer<T extends DisplayerSettings> extends Composite implements DataViewer<T> {
+public abstract class AbstractDisplayer<T extends DisplayerSettings> extends Composite implements Displayer<T> {
 
     protected DataSetHandler dataSetHandler;
     protected T displayerSettings;
@@ -68,14 +68,14 @@ public abstract class AbstractDataViewer<T extends DisplayerSettings> extends Co
 
     // CAPTURE EVENTS RECEIVED FROM OTHER VIEWERS
 
-    public void onGroupIntervalsSelected(DataViewer viewer, DataSetGroup groupOp) {
+    public void onGroupIntervalsSelected(Displayer displayer, DataSetGroup groupOp) {
         if (displayerSettings.isFilterListeningEnabled()) {
             dataSetHandler.addGroupOperation(groupOp);
             redraw();
         }
     }
 
-    public void onGroupIntervalsReset(DataViewer viewer, List<DataSetGroup> groupOps) {
+    public void onGroupIntervalsReset(Displayer displayer, List<DataSetGroup> groupOps) {
         if (displayerSettings.isFilterListeningEnabled()) {
             for (DataSetGroup groupOp : groupOps) {
                 dataSetHandler.removeGroupOperation(groupOp);
@@ -175,7 +175,7 @@ public abstract class AbstractDataViewer<T extends DisplayerSettings> extends Co
                 listener.onGroupIntervalsSelected(this, _groupSelect);
             }
         }
-        // Apply the selection to this viewer
+        // Apply the selection to this displayer
         if (displayerSettings.isFilterSelfApplyEnabled()) {
             dataSetHandler.addGroupOperation(_groupSelect);
             redraw();
@@ -202,7 +202,7 @@ public abstract class AbstractDataViewer<T extends DisplayerSettings> extends Co
                 listener.onGroupIntervalsReset(this, Arrays.asList(groupOp));
             }
         }
-        // Apply the selection to this viewer
+        // Apply the selection to this displayer
         if (displayerSettings.isFilterSelfApplyEnabled()) {
             dataSetHandler.removeGroupOperation(groupOp);
             redraw();
@@ -233,7 +233,7 @@ public abstract class AbstractDataViewer<T extends DisplayerSettings> extends Co
                 listener.onGroupIntervalsReset(this, groupOpList);
             }
         }
-        // Apply the selection to this viewer
+        // Apply the selection to this displayer
         if (displayerSettings.isFilterSelfApplyEnabled()) {
             for (DataSetGroup groupOp : groupOpList) {
                 dataSetHandler.removeGroupOperation(groupOp);

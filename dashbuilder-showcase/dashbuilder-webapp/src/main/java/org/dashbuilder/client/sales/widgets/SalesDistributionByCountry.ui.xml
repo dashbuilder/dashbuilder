@@ -5,11 +5,11 @@
 
   <g:VerticalPanel>
     <g:HorizontalPanel>
-      <my:DataViewer ui:field="bubbleByCountry"/>
-      <my:DataViewer ui:field="mapByCountry"/>
+      <my:Displayer ui:field="bubbleByCountry"/>
+      <my:Displayer ui:field="mapByCountry"/>
     </g:HorizontalPanel>
     <g:HorizontalPanel>
-      <my:DataViewer ui:field="tableAll"/>
+      <my:Displayer ui:field="tableAll"/>
     </g:HorizontalPanel>
   </g:VerticalPanel>
 

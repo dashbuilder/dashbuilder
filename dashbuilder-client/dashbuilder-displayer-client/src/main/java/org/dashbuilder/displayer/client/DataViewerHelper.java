@@ -19,38 +19,38 @@ import org.dashbuilder.dataset.DataSetRef;
 import org.dashbuilder.displayer.DisplayerSettings;
 
 /**
- * Helper methods for dealing with DataViewer instances.
+ * Helper methods for dealing with Displayer instances.
  */
 public class DataViewerHelper {
 
     /**
-     * Get a DataViewer instance for displaying the specified data set with the given display configuration.
+     * Get a Displayer instance for displaying the specified data set with the given display configuration.
      *
      * @param dataSetRef A reference to the data set.
      * @param displayerSettings The given display configuration.
      */
-    public static DataViewer lookup(DataSetRef dataSetRef, DisplayerSettings displayerSettings ) {
+    public static Displayer lookup(DataSetRef dataSetRef, DisplayerSettings displayerSettings ) {
         return DataViewerLocator.get().lookupViewer(dataSetRef, displayerSettings );
     }
 
     /**
-     * Issues a draw request for the given DataViewer instances.
+     * Issues a draw request for the given Displayer instances.
      */
-    public static void draw(DataViewer... dataViewers) {
+    public static void draw(Displayer... displayers ) {
         DataViewerCoordinator coordinator = new DataViewerCoordinator();
-        for (DataViewer dataViewer : dataViewers) {
-            coordinator.addViewer(dataViewer);
+        for (Displayer displayer : displayers ) {
+            coordinator.addViewer( displayer );
         }
         coordinator.drawAll();
     }
 
     /**
-     * Issues a redraw request for the given DataViewer instances.
+     * Issues a redraw request for the given Displayer instances.
      */
-    public static void redraw(DataViewer... dataViewers) {
+    public static void redraw(Displayer... displayers ) {
         DataViewerCoordinator coordinator = new DataViewerCoordinator();
-        for (DataViewer dataViewer : dataViewers) {
-            coordinator.addViewer(dataViewer);
+        for (Displayer displayer : displayers ) {
+            coordinator.addViewer( displayer );
         }
         coordinator.redrawAll();
     }

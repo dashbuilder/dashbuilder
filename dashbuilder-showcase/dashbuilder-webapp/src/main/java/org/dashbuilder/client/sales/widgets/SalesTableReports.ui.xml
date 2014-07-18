@@ -6,27 +6,27 @@
 
   <g:VerticalPanel spacing="10">
     <g:HorizontalPanel spacing="10">
-      <my:DataViewer ui:field="tableAll"/>
+      <my:Displayer ui:field="tableAll"/>
     </g:HorizontalPanel>
     <b:TabPanel>
       <b:Tab heading="By year" active="true">
         <g:FlowPanel>
-          <my:DataViewer ui:field="tableByYear"/>
+          <my:Displayer ui:field="tableByYear"/>
         </g:FlowPanel>
       </b:Tab>
       <b:Tab heading="By country">
         <g:FlowPanel>
-          <my:DataViewer ui:field="tableByCountry"/>
+          <my:Displayer ui:field="tableByCountry"/>
         </g:FlowPanel>
       </b:Tab>
       <b:Tab heading="By product">
         <g:FlowPanel>
-          <my:DataViewer ui:field="tableByProduct"/>
+          <my:Displayer ui:field="tableByProduct"/>
         </g:FlowPanel>
       </b:Tab>
       <b:Tab heading="By sales person">
         <g:FlowPanel>
-          <my:DataViewer ui:field="tableBySalesman"/>
+          <my:Displayer ui:field="tableBySalesman"/>
         </g:FlowPanel>
       </b:Tab>
     </b:TabPanel>

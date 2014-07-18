@@ -5,15 +5,15 @@
 
   <g:VerticalPanel>
     <g:HorizontalPanel>
-      <my:DataViewer ui:field="meterChartAmount"/>
-      <my:DataViewer ui:field="bubbleByCountry"/>
+      <my:Displayer ui:field="meterChartAmount"/>
+      <my:Displayer ui:field="bubbleByCountry"/>
     </g:HorizontalPanel>
     <g:HorizontalPanel>
-      <my:DataViewer ui:field="lineChartByDate"/>
+      <my:Displayer ui:field="lineChartByDate"/>
     </g:HorizontalPanel>
     <g:HorizontalPanel>
-      <my:DataViewer ui:field="barChartByProduct"/>
-      <my:DataViewer ui:field="barChartByEmployee"/>
+      <my:Displayer ui:field="barChartByProduct"/>
+      <my:Displayer ui:field="barChartByEmployee"/>
     </g:HorizontalPanel>
   </g:VerticalPanel>
 

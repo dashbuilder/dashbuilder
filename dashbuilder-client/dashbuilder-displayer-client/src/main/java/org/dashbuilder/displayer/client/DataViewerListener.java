@@ -20,23 +20,23 @@ import java.util.List;
 import org.dashbuilder.dataset.group.DataSetGroup;
 
 /**
- * Interface addressed to capture events coming from a DataViewer instance.
+ * Interface addressed to capture events coming from a Displayer instance.
  */
 public interface DataViewerListener {
 
     /**
-     * Invoked when a group interval selection filter request is executed on a given DataViewer instance.
+     * Invoked when a group interval selection filter request is executed on a given Displayer instance.
      *
-     * @param viewer The DataViewer instance where the interval selection event comes from.
+     * @param displayer The Displayer instance where the interval selection event comes from.
      * @param groupOp The group interval selection operation.
      */
-    void onGroupIntervalsSelected(DataViewer viewer, DataSetGroup groupOp);
+    void onGroupIntervalsSelected(Displayer displayer, DataSetGroup groupOp);
 
     /**
-     * Invoked when a group interval reset request is executed on a given DataViewer instance.
+     * Invoked when a group interval reset request is executed on a given Displayer instance.
      *
-     * @param viewer The DataViewer instance where the interval selection event comes from.
+     * @param displayer The Displayer instance where the interval selection event comes from.
      * @param groupOps The set of group interval selection operations reset.
      */
-    void onGroupIntervalsReset(DataViewer viewer, List<DataSetGroup> groupOps);
+    void onGroupIntervalsReset(Displayer displayer, List<DataSetGroup> groupOps);
 }

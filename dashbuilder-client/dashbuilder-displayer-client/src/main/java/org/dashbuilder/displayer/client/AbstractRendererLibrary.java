@@ -22,15 +22,15 @@ import java.util.List;
  */
 public abstract class AbstractRendererLibrary implements RendererLibrary {
 
-    public void draw(List<DataViewer> viewerList) {
-        for (DataViewer dataViewer : viewerList) {
-            dataViewer.draw();
+    public void draw(List<Displayer> displayerList) {
+        for (Displayer displayer : displayerList) {
+            displayer.draw();
         }
     }
 
-    public void redraw(List<DataViewer> viewerList) {
-        for (DataViewer dataViewer : viewerList) {
-            dataViewer.redraw();
+    public void redraw(List<Displayer> displayerList) {
+        for (Displayer displayer : displayerList) {
+            displayer.redraw();
         }
     }
 }

@@ -19,9 +19,9 @@ import com.google.gwt.user.client.ui.IsWidget;
 import org.dashbuilder.displayer.DisplayerSettings;
 
 /**
- * A DataViewer takes care of drawing a DisplayerSettings instance.
+ * A Displayer takes care of drawing a DisplayerSettings instance.
  */
-public interface DataViewer<T extends DisplayerSettings> extends DataViewerListener, IsWidget {
+public interface Displayer<T extends DisplayerSettings> extends DataViewerListener, IsWidget {
 
     /**
      * The data displayer to draw.
@@ -36,7 +36,7 @@ public interface DataViewer<T extends DisplayerSettings> extends DataViewerListe
     DataSetHandler getDataSetHandler();
 
     /**
-     * Add a listener interested in receive events generated within this viewer component.
+     * Add a listener interested in receive events generated within this displayer component.
      */
     void addListener(DataViewerListener listener);
 

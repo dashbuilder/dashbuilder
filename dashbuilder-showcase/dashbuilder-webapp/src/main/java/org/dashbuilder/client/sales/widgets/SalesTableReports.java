@@ -21,7 +21,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.displayer.DisplayerSettingsFactory;
-import org.dashbuilder.displayer.client.DataViewer;
+import org.dashbuilder.displayer.client.Displayer;
 import org.dashbuilder.displayer.client.DataViewerCoordinator;
 import org.dashbuilder.displayer.client.DataViewerHelper;
 import org.dashbuilder.dataset.DataSetFactory;
@@ -32,7 +32,7 @@ import static org.dashbuilder.dataset.sort.SortOrder.*;
 
 /**
  * A composite widget that represents an entire dashboard sample composed using an UI binder template.
- * <p>The dashboard itself is composed by a set of DataViewer instances.</p>
+ * <p>The dashboard itself is composed by a set of Displayer instances.</p>
  */
 public class SalesTableReports extends Composite {
 
@@ -40,19 +40,19 @@ public class SalesTableReports extends Composite {
     private static final SalesDashboardBinder uiBinder = GWT.create(SalesDashboardBinder.class);
 
     @UiField(provided = true)
-    DataViewer tableByProduct;
+    Displayer tableByProduct;
 
     @UiField(provided = true)
-    DataViewer tableBySalesman;
+    Displayer tableBySalesman;
 
     @UiField(provided = true)
-    DataViewer tableByCountry;
+    Displayer tableByCountry;
 
     @UiField(provided = true)
-    DataViewer tableByYear;
+    Displayer tableByYear;
 
     @UiField(provided = true)
-    DataViewer tableAll;
+    Displayer tableAll;
 
     public SalesTableReports() {
 

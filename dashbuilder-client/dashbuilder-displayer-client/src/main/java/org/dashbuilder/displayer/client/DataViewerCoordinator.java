@@ -23,56 +23,56 @@ import java.util.Map;
 import org.dashbuilder.dataset.group.DataSetGroup;
 
 /**
- * The coordinator class holds a list of DataViewer instances and it makes sure that the data shared among
+ * The coordinator class holds a list of Displayer instances and it makes sure that the data shared among
  * all of them is properly synced. This means every time a data display modification request comes from any
- * of the viewer components the rest are updated to reflect those changes.
+ * of the displayer components the rest are updated to reflect those changes.
  */
 public class DataViewerCoordinator {
 
-    protected List<DataViewer> viewerList = new ArrayList<DataViewer>();
-    protected Map<RendererLibrary,List<DataViewer>> rendererMap = new HashMap<RendererLibrary,List<DataViewer>>();
+    protected List<Displayer> displayerList = new ArrayList<Displayer>();
+    protected Map<RendererLibrary,List<Displayer>> rendererMap = new HashMap<RendererLibrary,List<Displayer>>();
     protected DataViewerListener viewerListener = new CoordinatorListener();
 
-    public void addViewer(DataViewer viewer) {
-        viewerList.add(viewer);
-        viewer.addListener(viewerListener);
+    public void addViewer(Displayer displayer) {
+        displayerList.add(displayer);
+        displayer.addListener(viewerListener);
 
-        RendererLibrary renderer = RendererLibLocator.get().lookupRenderer(viewer.getDisplayerSettings());
-        List<DataViewer> rendererGroup = rendererMap.get(renderer);
-        if (rendererGroup == null) rendererMap.put(renderer, rendererGroup = new ArrayList<DataViewer>());
-        rendererGroup.add(viewer);
+        RendererLibrary renderer = RendererLibLocator.get().lookupRenderer(displayer.getDisplayerSettings());
+        List<Displayer> rendererGroup = rendererMap.get(renderer);
+        if (rendererGroup == null) rendererMap.put(renderer, rendererGroup = new ArrayList<Displayer>());
+        rendererGroup.add(displayer);
     }
 
     public void drawAll() {
         for (RendererLibrary renderer : rendererMap.keySet()) {
-            List<DataViewer> rendererGroup = rendererMap.get(renderer);
+            List<Displayer> rendererGroup = rendererMap.get(renderer);
             renderer.draw(rendererGroup);
         }
     }
 
     public void redrawAll() {
         for (RendererLibrary renderer : rendererMap.keySet()) {
-            List<DataViewer> rendererGroup = rendererMap.get(renderer);
+            List<Displayer> rendererGroup = rendererMap.get(renderer);
             renderer.redraw(rendererGroup);
         }
     }
 
     /**
-     * Internal class that listens to events raised by any of the DataViewer instances handled by this coordinator.
+     * Internal class that listens to events raised by any of the Displayer instances handled by this coordinator.
      */
     private class CoordinatorListener implements DataViewerListener {
 
-        public void onGroupIntervalsSelected(DataViewer viewer, DataSetGroup groupOp) {
-            for (DataViewer other : viewerList) {
-                if (other == viewer) continue;
-                other.onGroupIntervalsSelected(viewer, groupOp);
+        public void onGroupIntervalsSelected(Displayer displayer, DataSetGroup groupOp) {
+            for (Displayer other : displayerList) {
+                if (other == displayer) continue;
+                other.onGroupIntervalsSelected(displayer, groupOp);
             }
         }
 
-        public void onGroupIntervalsReset(DataViewer viewer, List<DataSetGroup> groupOps) {
-            for (DataViewer other : viewerList) {
-                if (other == viewer) continue;
-                other.onGroupIntervalsReset(viewer, groupOps);
+        public void onGroupIntervalsReset(Displayer displayer, List<DataSetGroup> groupOps) {
+            for (Displayer other : displayerList) {
+                if (other == displayer) continue;
+                other.onGroupIntervalsReset(displayer, groupOps);
             }
         }
     }

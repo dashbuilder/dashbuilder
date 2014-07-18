@@ -5,16 +5,16 @@
 
   <g:VerticalPanel>
     <g:HorizontalPanel>
-      <my:DataViewer ui:field="areaChartByDate"/>
+      <my:Displayer ui:field="areaChartByDate"/>
     </g:HorizontalPanel>
     <g:HorizontalPanel>
-      <my:DataViewer ui:field="pieChartByPipeline"/>
-      <my:DataViewer ui:field="pieChartYears"/>
-      <my:DataViewer ui:field="pieChartQuarters"/>
-      <my:DataViewer ui:field="barChartDayOfWeek"/>
+      <my:Displayer ui:field="pieChartByPipeline"/>
+      <my:Displayer ui:field="pieChartYears"/>
+      <my:Displayer ui:field="pieChartQuarters"/>
+      <my:Displayer ui:field="barChartDayOfWeek"/>
     </g:HorizontalPanel>
     <g:HorizontalPanel>
-      <my:DataViewer ui:field="tableAll"/>
+      <my:Displayer ui:field="tableAll"/>
     </g:HorizontalPanel>
   </g:VerticalPanel>
 

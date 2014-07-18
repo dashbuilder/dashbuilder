@@ -50,7 +50,7 @@ import com.google.gwt.view.client.HasData;
 import org.dashbuilder.dataset.client.DataSetReadyCallback;
 import org.dashbuilder.displayer.DisplayerSettingsColumn;
 import org.dashbuilder.displayer.TableDisplayerSettings;
-import org.dashbuilder.displayer.client.AbstractDataViewer;
+import org.dashbuilder.displayer.client.AbstractDisplayer;
 import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.dataset.DataSet;
@@ -61,7 +61,7 @@ import org.kie.uberfire.client.tables.PagedTable;
 
 import static com.google.gwt.dom.client.BrowserEvents.CLICK;
 
-public class UFTableViewer extends AbstractDataViewer<TableDisplayerSettings> {
+public class UFTableViewer extends AbstractDisplayer<TableDisplayerSettings> {
 
     private Map< String, String > columnCaptionIds = new HashMap< String, String >(5);
 

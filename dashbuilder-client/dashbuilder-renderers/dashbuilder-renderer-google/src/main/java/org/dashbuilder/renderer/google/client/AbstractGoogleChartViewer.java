@@ -21,7 +21,7 @@ import com.googlecode.gwt.charts.client.options.LegendPosition;
 import org.dashbuilder.displayer.ChartDisplayerSettings;
 
 /**
- * Abstract base class for all viewers that support the basic ChartDisplayerSettings configuration options
+ * Abstract base class for all displayers that support the basic ChartDisplayerSettings configuration options
  */
 public abstract class AbstractGoogleChartViewer<T extends ChartDisplayerSettings> extends GoogleViewer<T> {
 

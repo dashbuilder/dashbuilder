@@ -35,7 +35,7 @@ import com.googlecode.gwt.charts.client.options.TableSort;
 import com.googlecode.gwt.charts.client.table.Table;
 import com.googlecode.gwt.charts.client.table.TableOptions;
 import org.dashbuilder.displayer.TableDisplayerSettings;
-import org.dashbuilder.displayer.client.DataViewer;
+import org.dashbuilder.displayer.client.Displayer;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.group.DataSetGroup;
 import org.dashbuilder.dataset.sort.SortOrder;
@@ -88,17 +88,17 @@ public class GoogleTableViewer extends GoogleViewer<TableDisplayerSettings> {
     }
 
     @Override
-    public void onGroupIntervalsSelected(DataViewer viewer, DataSetGroup groupOp) {
-        // Reset the current navigation status on filter requests from external viewers.
+    public void onGroupIntervalsSelected(Displayer displayer, DataSetGroup groupOp) {
+        // Reset the current navigation status on filter requests from external displayers.
         currentPage = 1;
-        super.onGroupIntervalsSelected(viewer, groupOp);
+        super.onGroupIntervalsSelected(displayer, groupOp);
     }
 
     @Override
-    public void onGroupIntervalsReset(DataViewer viewer, List<DataSetGroup> groupOps) {
-        // Reset the current navigation status on filter requests from external viewers.
+    public void onGroupIntervalsReset(Displayer displayer, List<DataSetGroup> groupOps) {
+        // Reset the current navigation status on filter requests from external displayers.
         currentPage = 1;
-        super.onGroupIntervalsReset(viewer, groupOps);
+        super.onGroupIntervalsReset(displayer, groupOps);
     }
 
     @Override
