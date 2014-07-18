@@ -51,7 +51,7 @@ public class AreaChartSettingsEditor extends AbstractDisplayerSettingsEditor<XAx
     }
 
     @Override
-    public void setListener( DisplayerEditorListener listener ) {
+    public void setListener( DisplayerSettingsEditorListener listener ) {
         super.setListener( listener );
         xAxisChartSettingsEditorBase.setListener( listener );
     }

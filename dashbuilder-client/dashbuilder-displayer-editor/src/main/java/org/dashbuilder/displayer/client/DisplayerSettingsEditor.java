@@ -32,5 +32,5 @@ public interface DisplayerSettingsEditor<T extends DisplayerSettings> extends Is
     /**
      * Add a listener interested in receiving events generated within this component.
      */
-    void setListener(DisplayerEditorListener listener);
+    void setListener(DisplayerSettingsEditorListener listener);
 }

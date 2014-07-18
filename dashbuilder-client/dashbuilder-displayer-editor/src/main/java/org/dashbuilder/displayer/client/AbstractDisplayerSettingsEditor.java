@@ -24,7 +24,7 @@ import org.dashbuilder.displayer.DisplayerSettings;
 public abstract class AbstractDisplayerSettingsEditor<T extends DisplayerSettings> extends Composite implements DisplayerSettingsEditor<T> {
 
     protected T displayerSettings;
-    protected DisplayerEditorListener listener;
+    protected DisplayerSettingsEditorListener listener;
 
     public T getDisplayerSettings() {
         return displayerSettings;
@@ -34,15 +34,15 @@ public abstract class AbstractDisplayerSettingsEditor<T extends DisplayerSetting
         this.displayerSettings = displayerSettings;
     }
 
-    public DisplayerEditorListener getListener() {
+    public DisplayerSettingsEditorListener getListener() {
         return listener;
     }
 
-    public void setListener(DisplayerEditorListener listener) {
+    public void setListener(DisplayerSettingsEditorListener listener) {
         this.listener = listener;
     }
 
     protected void notifyChanges() {
-        listener.onDisplayerChanged(this);
+        listener.onDisplayerSettingChanged(this);
     }
 }
