@@ -32,6 +32,6 @@
 
   <modules>
     <module>dashbuilder-renderer-google</module>
-    <module>dashbuilder-renderer-uftable</module>
+    <module>dashbuilder-renderer-table</module>
   </modules>
 </project>

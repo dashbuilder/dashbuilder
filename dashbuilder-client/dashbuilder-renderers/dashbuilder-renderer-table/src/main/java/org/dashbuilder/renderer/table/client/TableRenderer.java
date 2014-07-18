@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbuilder.renderer.uftable.client;
+package org.dashbuilder.renderer.table.client;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Named;
@@ -24,13 +24,13 @@ import org.dashbuilder.displayer.client.Displayer;
 import org.dashbuilder.displayer.DisplayerSettings;
 
 /**
- * Table renderer based on the Uberfire's core PagedTable widget.
+ * Table renderer based on the core PagedTable widget.
  */
 @ApplicationScoped
-@Named(UFTableRenderer.UUID + "_renderer")
-public class UFTableRenderer extends AbstractRendererLibrary {
+@Named(TableRenderer.UUID + "_renderer")
+public class TableRenderer extends AbstractRendererLibrary {
 
-    public static final String UUID = "uftable";
+    public static final String UUID = "table";
 
     @Override
     public String getUUID() {
@@ -40,7 +40,7 @@ public class UFTableRenderer extends AbstractRendererLibrary {
     @Override
     public Displayer lookupDisplayer(DisplayerSettings displayerSettings) {
         DisplayerType type = displayerSettings.getType();
-        if ( DisplayerType.TABLE.equals(type)) return new UFTableDisplayer();
+        if ( DisplayerType.TABLE.equals(type)) return new TableDisplayer();
 
         return null;
     }

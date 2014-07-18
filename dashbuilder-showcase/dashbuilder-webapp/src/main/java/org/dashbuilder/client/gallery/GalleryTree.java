@@ -368,7 +368,7 @@ public class GalleryTree {
                 .tableOrderDefault("Country", DESCENDING)
                 .buildKPI()
         ));
-        nodeList.add(new GalleryNodeKPI("UF table (drill-down)",
+        nodeList.add(new GalleryNodeKPI("Default table (drill-down)",
                 KPIFactory.newTableKPI()
                 .dataset(SALES_OPPS)
                 .title("List of Opportunities")
@@ -386,7 +386,7 @@ public class GalleryTree {
                 .column(CLOSING_DATE, "Closing")
                 .column(AMOUNT, "Amount")
                 .filterOn(true, false, false)
-                .renderer("uftable")
+                .renderer("table")
                 .buildKPI()
         ));
     }

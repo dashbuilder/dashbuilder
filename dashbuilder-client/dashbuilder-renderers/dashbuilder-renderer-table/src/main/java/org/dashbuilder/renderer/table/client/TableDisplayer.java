@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbuilder.renderer.uftable.client;
+package org.dashbuilder.renderer.table.client;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -56,12 +56,12 @@ import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.dataset.DataSet;
 
 import org.dashbuilder.dataset.sort.SortOrder;
-import org.dashbuilder.renderer.uftable.client.resources.i18n.UFTableConstants;
+import org.dashbuilder.renderer.table.client.resources.i18n.TableConstants;
 import org.kie.uberfire.client.tables.PagedTable;
 
 import static com.google.gwt.dom.client.BrowserEvents.CLICK;
 
-public class UFTableDisplayer extends AbstractDisplayer<TableDisplayerSettings> {
+public class TableDisplayer extends AbstractDisplayer<TableDisplayerSettings> {
 
     private Map< String, String > columnCaptionIds = new HashMap< String, String >(5);
 
@@ -78,10 +78,10 @@ public class UFTableDisplayer extends AbstractDisplayer<TableDisplayerSettings> 
 
     protected DataSet dataSet;
 
-    protected PagedTable<Integer> ufTable;
-    protected UFTableProvider ufTableProvider = new UFTableProvider();
+    protected PagedTable<Integer> table;
+    protected TableProvider tableProvider = new TableProvider();
 
-    public UFTableDisplayer() {
+    public TableDisplayer() {
         initWidget( panel );
     }
 
@@ -95,7 +95,7 @@ public class UFTableDisplayer extends AbstractDisplayer<TableDisplayerSettings> 
                 displayMessage( "ERROR: DataSetHandler property not set" );
             } else {
                 try {
-                    displayMessage( UFTableConstants.INSTANCE.ufTableDisplayer_initializing() + " '" + displayerSettings.getTitle() + "'..." );
+                    displayMessage( TableConstants.INSTANCE.tableDisplayer_initializing() + " '" + displayerSettings.getTitle() + "'..." );
                     lookupDataSet(0, new DataSetReadyCallback() {
 
                         public void callback( DataSet dataSet ) {
@@ -115,15 +115,15 @@ public class UFTableDisplayer extends AbstractDisplayer<TableDisplayerSettings> 
     }
 
     /**
-     * Just reload the data set and make the current UF Displayer redraw.
+     * Just reload the data set and make the current Displayer redraw.
      */
     public void redraw() {
         lookupDataSet(0, new DataSetReadyCallback() {
 
             public void callback( DataSet dataSet ) {
-                ufTableProvider.gotoFirstPage();
-                ufTable.setRowCount(numberOfRows, true);
-                ufTable.redraw();
+                tableProvider.gotoFirstPage();
+                table.setRowCount(numberOfRows, true);
+                table.redraw();
                 redrawColumnSelectionWidget();
             }
             public void notFound() {
@@ -167,7 +167,7 @@ public class UFTableDisplayer extends AbstractDisplayer<TableDisplayerSettings> 
                     new DataSetReadyCallback() {
 
                         public void callback( DataSet dataSet ) {
-                            UFTableDisplayer.this.dataSet = dataSet;
+                            TableDisplayer.this.dataSet = dataSet;
                             numberOfRows = dataSet.getRowCountNonTrimmed();
                             callback.callback( dataSet );
                         }
@@ -182,9 +182,9 @@ public class UFTableDisplayer extends AbstractDisplayer<TableDisplayerSettings> 
     }
 
     protected Widget createWidget() {
-        ufTable = createUFTable();
+        table = createTable();
 
-        ufTableProvider.addDataDisplay(ufTable);
+        tableProvider.addDataDisplay(table);
 
         HTML titleHtml = new HTML();
         if ( displayerSettings.isTitleVisible() ) {
@@ -193,29 +193,29 @@ public class UFTableDisplayer extends AbstractDisplayer<TableDisplayerSettings> 
 
         VerticalPanel verticalPanel = new VerticalPanel();
         verticalPanel.add( titleHtml );
-        verticalPanel.add(ufTable);
+        verticalPanel.add(table);
         return verticalPanel;
     }
 
-    protected PagedTable<Integer> createUFTable() {
+    protected PagedTable<Integer> createTable() {
 
-        final PagedTable<Integer> ufPagedTable = new PagedTable<Integer>(displayerSettings.getPageSize());
+        final PagedTable<Integer> pagedTable = new PagedTable<Integer>(displayerSettings.getPageSize());
 
-        ufPagedTable.setRowCount( numberOfRows, true );
+        pagedTable.setRowCount( numberOfRows, true );
         int height = 40 * displayerSettings.getPageSize();
-        ufPagedTable.setHeight( ( height > ( Window.getClientHeight() - this.getAbsoluteTop() ) ? ( Window.getClientHeight() - this.getAbsoluteTop() ) : height ) + "px" );
+        pagedTable.setHeight( ( height > ( Window.getClientHeight() - this.getAbsoluteTop() ) ? ( Window.getClientHeight() - this.getAbsoluteTop() ) : height ) + "px" );
         int left = this.getAbsoluteLeft() + this.getOffsetWidth();
-        ufPagedTable.setWidth( Window.getClientWidth() * ( left == 0 ? 0.8 : 1 )  + "px" );
-        ufPagedTable.setEmptyTableCaption( UFTableConstants.INSTANCE.ufTableDisplayer_noDataAvailable() );
+        pagedTable.setWidth( Window.getClientWidth() * ( left == 0 ? 0.8 : 1 )  + "px" );
+        pagedTable.setEmptyTableCaption( TableConstants.INSTANCE.tableDisplayer_noDataAvailable() );
 
         List<DisplayerSettingsColumn> displayerSettingsColumns = displayerSettings.getColumnList();
         if ( !displayerSettingsColumns.isEmpty() ) {
-            createTableColumnsFromDisplayerSettings( ufPagedTable, displayerSettingsColumns );
+            createTableColumnsFromDisplayerSettings( pagedTable, displayerSettingsColumns );
         } else {
-            createTableColumnsFromDataSet( ufPagedTable, dataSet.getColumns() );
+            createTableColumnsFromDataSet( pagedTable, dataSet.getColumns() );
         }
 
-        ufPagedTable.addColumnSortHandler(new ColumnSortEvent.AsyncHandler( ufPagedTable ) {
+        pagedTable.addColumnSortHandler(new ColumnSortEvent.AsyncHandler( pagedTable ) {
 
             public void onColumnSort( ColumnSortEvent event ) {
                 // Get the column Id, in case the table is being drawn from a displayer configuration, the identifier will
@@ -228,7 +228,7 @@ public class UFTableDisplayer extends AbstractDisplayer<TableDisplayerSettings> 
                 redraw();
             }
         });
-        return ufPagedTable;
+        return pagedTable;
     }
 
     private void createTableColumnsFromDataSet( PagedTable<Integer> table, List<DataColumn> dataColumns ) {
@@ -334,9 +334,9 @@ public class UFTableDisplayer extends AbstractDisplayer<TableDisplayerSettings> 
     }
 
     private void redrawColumnSelectionWidget() {
-        if ( currentSelectionWidget != null ) ufTable.getToolbar().remove( currentSelectionWidget );
+        if ( currentSelectionWidget != null ) table.getToolbar().remove( currentSelectionWidget );
         currentSelectionWidget = createCurrentSelectionWidget();
-        if ( currentSelectionWidget != null ) ufTable.getToolbar().add( currentSelectionWidget );
+        if ( currentSelectionWidget != null ) table.getToolbar().add( currentSelectionWidget );
     }
 
     private class SelectableTextCell extends TextCell {
@@ -365,9 +365,9 @@ public class UFTableDisplayer extends AbstractDisplayer<TableDisplayerSettings> 
     }
 
     /**
-     * UF table data provider
+     * Table data provider
      */
-    protected class UFTableProvider extends AsyncDataProvider<Integer> {
+    protected class TableProvider extends AsyncDataProvider<Integer> {
 
         protected int lastOffset = -1;
 
@@ -390,10 +390,10 @@ public class UFTableDisplayer extends AbstractDisplayer<TableDisplayerSettings> 
         public void gotoFirstPage() {
             // Avoid fetching the data set again
             lastOffset = 0;
-            ufTable.pager.setPage(0); // This calls internally to onRangeChanged() when the page changes
+            table.pager.setPage(0); // This calls internally to onRangeChanged() when the page changes
 
-            int start = ufTable.getPageStart();
-            final List<Integer> rows = getCurrentPageRows(ufTable);
+            int start = table.getPageStart();
+            final List<Integer> rows = getCurrentPageRows(table);
             updateRowData(start, rows);
         }
 

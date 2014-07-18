@@ -189,13 +189,13 @@
 
       <dependency>
         <groupId>org.dashbuilder</groupId>
-        <artifactId>dashbuilder-renderer-uftable</artifactId>
+        <artifactId>dashbuilder-renderer-table</artifactId>
         <version>${project.version}</version>
       </dependency>
 
       <dependency>
         <groupId>org.dashbuilder</groupId>
-        <artifactId>dashbuilder-renderer-uftable</artifactId>
+        <artifactId>dashbuilder-renderer-table</artifactId>
         <version>${project.version}</version>
         <classifier>sources</classifier>
       </dependency>

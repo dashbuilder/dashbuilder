@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package org.dashbuilder.renderer.uftable.client.resources.i18n;
+package org.dashbuilder.renderer.table.client.resources.i18n;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.i18n.client.Messages;
 
-public interface UFTableConstants extends Messages {
+public interface TableConstants extends Messages {
 
-    public static final UFTableConstants INSTANCE = GWT.create( UFTableConstants.class );
+    public static final TableConstants INSTANCE = GWT.create( TableConstants.class );
 
-    public String ufTableDisplayer_initializing();
+    public String tableDisplayer_initializing();
 
-    public String ufTableDisplayer_noDataAvailable();
+    public String tableDisplayer_noDataAvailable();
 
 }
