@@ -32,6 +32,7 @@ public class SalesOppsDisplayers {
             .margins(10, 10, 10, 10)
             .column("Pipeline")
             .column("Number of opps")
+            .filterOn(false, true, true)
             .buildDisplayerSettings();
 
     public static final DisplayerSettings PIE_STATUS = DisplayerSettingsFactory.newPieChartSettings()
@@ -40,6 +41,7 @@ public class SalesOppsDisplayers {
             .margins(10, 10, 10, 10)
             .column("Status")
             .column("Total amount")
+            .filterOn(false, true, true)
             .buildDisplayerSettings();
 
     public static final DisplayerSettings PIE_SALES_PERSON = DisplayerSettingsFactory.newPieChartSettings()
@@ -48,6 +50,7 @@ public class SalesOppsDisplayers {
             .margins(10, 10, 10, 10)
             .column("Sales person")
             .column("Total amount")
+            .filterOn(false, true, true)
             .buildDisplayerSettings();
 
     public static final DisplayerSettings AREA_EXPECTED_AMOUNT = DisplayerSettingsFactory.newAreaChartSettings()
@@ -56,6 +59,7 @@ public class SalesOppsDisplayers {
             .margins(20, 50, 100, 100)
             .column("Closing date")
             .column("Expected amount")
+            .filterOn(true, true, true)
             .buildDisplayerSettings();
 
     public static final DisplayerSettings HBAR_PRODUCT = DisplayerSettingsFactory.newBarChartSettings()
@@ -65,6 +69,7 @@ public class SalesOppsDisplayers {
             .column("Product")
             .column("Total amount")
             .horizontal()
+            .filterOn(false, true, true)
             .buildDisplayerSettings();
 
     public static final DisplayerSettings HBAR_COUNTRY = DisplayerSettingsFactory.newBarChartSettings()
@@ -74,6 +79,7 @@ public class SalesOppsDisplayers {
             .column(COUNTRY, "Country")
             .column("total", "Total amount")
             .horizontal()
+            .filterOn(false, true, true)
             .buildDisplayerSettings();
 
     public static final DisplayerSettings TABLE_COUNTRY = DisplayerSettingsFactory.newTableSettings()
@@ -86,6 +92,7 @@ public class SalesOppsDisplayers {
             .column("min", "MIN")
             .column("max", "MAX")
             .tablePageSize(20)
+            .filterOff(true)
             .buildDisplayerSettings();
 
     public static final DisplayerSettings TABLE_ALL = DisplayerSettingsFactory.newTableSettings()
@@ -94,5 +101,6 @@ public class SalesOppsDisplayers {
             .tablePageSize(20)
             .tableOrderEnabled(true)
             .tableOrderDefault(AMOUNT, DESCENDING)
+            .filterOn(true, true, true)
             .buildDisplayerSettings();
 }
