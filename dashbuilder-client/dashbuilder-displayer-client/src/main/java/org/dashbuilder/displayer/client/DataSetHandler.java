@@ -34,7 +34,7 @@ public interface DataSetHandler {
     DataSetGroup getGroupOperation(String columnId);
 
     /**
-     * Adds a group operation to the current data set lookup instance.
+     * Adds a group operation to the current data set lookup instance or updates it if already exists.
      *
      * @param op The operation to add.
      * @return false, if a group operation is already defined for the target group column - true, otherwise.

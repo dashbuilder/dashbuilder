@@ -128,6 +128,23 @@ public class GalleryTree {
                 .column("Total amount")
                 .buildKPI()
         ));
+
+        nodeList.add(new GalleryNodeKPI("Drill-down", true,
+                KPIFactory.newPieChartKPI()
+                .dataset(SALES_OPPS)
+                .group(PIPELINE)
+                .sum(AMOUNT)
+                .group(STATUS)
+                .sum(AMOUNT)
+                .group(SALES_PERSON)
+                .sum(AMOUNT)
+                .title("By Pipeline/Status/Sales person")
+                .margins(10, 10, 10, 10)
+                .column("Status")
+                .column("Total amount")
+                .filterOn(true, false, false)
+                .buildKPI()
+        ));
     }
 
     private void initLineChartCategory() {
@@ -220,6 +237,18 @@ public class GalleryTree {
                 .column("Closing date")
                 .column("Expected amount per month")
                 .buildKPI()
+        ));
+        nodeList.add(new GalleryNodeKPI("Drill-down", true,
+                KPIFactory.newAreaChartKPI()
+                        .dataset(SALES_OPPS)
+                        .group(CLOSING_DATE, 12, (String) null)
+                        .sum(EXPECTED_AMOUNT)
+                        .title("Expected Pipeline")
+                        .margins(20, 70, 100, 120)
+                        .column("Closing date")
+                        .column("Expected amount")
+                        .filterOn(true, false, false)
+                        .buildKPI()
         ));
     }
 

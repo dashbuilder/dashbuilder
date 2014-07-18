@@ -19,6 +19,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ArrayList;
 
+import org.dashbuilder.dataset.group.ColumnGroup;
+import org.dashbuilder.dataset.group.DataSetGroup;
 import org.jboss.errai.common.client.api.annotations.Portable;
 
 /**
@@ -117,6 +119,26 @@ public class DataSetLookup implements DataSetRef {
     public DataSetLookup addOperation(DataSetOp op) {
         operationList.add(op);
         return this;
+    }
+
+    public int getLastGroupOpIndex(String columnId, boolean onlySelections) {
+        int target = -1;
+        for (int i = 0; i < operationList.size(); i++) {
+            DataSetOp op = operationList.get(i);
+            if (DataSetOpType.GROUP.equals(op.getType())) {
+                DataSetGroup groupOp = (DataSetGroup) op;
+
+                ColumnGroup cg = groupOp.getColumnGroup();
+                if (cg != null && columnId != null && !cg.getColumnId().equals(columnId)) {
+                    continue;
+                }
+                if (onlySelections && groupOp.getSelectedIntervalNames().isEmpty()) {
+                    continue;
+                }
+                target= i;
+            }
+        }
+        return target;
     }
 
     public DataSetLookup cloneInstance() {

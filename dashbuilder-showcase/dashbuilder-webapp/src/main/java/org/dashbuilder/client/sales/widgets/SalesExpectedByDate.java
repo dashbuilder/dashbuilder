@@ -65,7 +65,7 @@ public class SalesExpectedByDate extends Composite {
         areaChartByDate = DisplayerHelper.lookupDisplayer(
                 DataSetFactory.newDSLookup()
                 .dataset(SALES_OPPS)
-                .group(CREATION_DATE, 80, MONTH)
+                .group(CREATION_DATE, 80, DAY)
                 .sum(EXPECTED_AMOUNT)
                 .buildLookup(),
                 DisplayerSettingsFactory.newAreaChartSettings()
@@ -75,7 +75,7 @@ public class SalesExpectedByDate extends Composite {
                 .margins(10, 80, 80, 100)
                 .column("Creation date")
                 .column("Amount")
-                .filterOn(false, true, true)
+                .filterOn(true, true, true)
                 .buildDisplayerSettings());
 
         pieChartYears = DisplayerHelper.lookupDisplayer(

@@ -16,6 +16,7 @@
 package org.dashbuilder.renderer.google.client;
 
 import java.util.List;
+import java.util.Set;
 
 import com.github.gwtbootstrap.client.ui.Label;
 import com.google.gwt.core.client.JsArray;
@@ -106,19 +107,24 @@ public abstract class GoogleXAxisChartDisplayer<T extends AbstractXAxisChartDisp
     protected Widget createCurrentSelectionWidget() {
         if (!displayerSettings.isFilterEnabled()) return null;
 
-        List<String> selectedValues = filterValues(googleTable.getColumnId(0));
-        if (selectedValues == null || selectedValues.isEmpty()) return null;
+        Set<String> columnFilters = filterColumns();
+        if (columnFilters.isEmpty()) return null;
 
         HorizontalPanel panel = new HorizontalPanel();
         panel.getElement().setAttribute("cellpadding", "2");
-        for (String interval : selectedValues) {
-            panel.add(new Label(interval));
+
+        for (String columnId : columnFilters) {
+            List<String> selectedValues = filterValues(columnId);
+            for (String interval : selectedValues) {
+                panel.add(new Label(interval));
+            }
         }
+
         Anchor anchor = new Anchor( GoogleDisplayerConstants.INSTANCE.googleDisplayer_resetAnchor() );
         panel.add(anchor);
         anchor.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
-                filterReset(googleTable.getColumnId(0));
+                filterReset();
                 updateVisualization();
             }
         });

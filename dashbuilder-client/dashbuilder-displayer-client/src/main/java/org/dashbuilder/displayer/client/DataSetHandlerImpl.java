@@ -63,13 +63,44 @@ public class DataSetHandlerImpl implements DataSetHandler {
         if (cg == null) {
             throw new RuntimeException("Group ops requires to specify a pivot column.");
         }
+        // If the operation is not an interval selection just add it.
+        if (op.getSelectedIntervalNames().isEmpty()) {
+            lookupCurrent.addOperation(0, op);
+            return true;
+        }
+
+        // Interval selection operations are a bit more complex
+        //
+
+        // Get the existing operation from the current lookup settings.
+        int found = 0; int last = 0;
+        DataSetGroup targetOp = null;
         for (DataSetGroup next : lookupCurrent.getOperationList(DataSetGroup.class)) {
             if (next.getColumnGroup() != null && cg.equals(next.getColumnGroup())) {
-                next.setSelectedIntervalNames(op.getSelectedIntervalNames());
-                return true;
+                targetOp = next;
+                found = last+1;
+            }
+            last++;
+        }
+
+        // For new operations just add it as a new interval selection operation.
+        if (targetOp == null) {
+            DataSetGroup clone = op.cloneInstance();
+            clone.getGroupFunctions().clear();
+            int index = lookupCurrent.getLastGroupOpIndex(null, true) + 1;
+            lookupCurrent.addOperation(index, clone);
+        }
+        // For existing operations, just set the interval selection.
+        else {
+            targetOp.setSelectedIntervalNames(op.getSelectedIntervalNames());
+
+            // If it was the last existing group operation then the group operation must be applied after the selection.
+            if (found == last && !lookupBase.getOperationList(DataSetGroup.class).isEmpty()) {
+                DataSetGroup clone = op.cloneInstance();
+                clone.getSelectedIntervalNames().clear();
+                lookupCurrent.addOperation(clone);
             }
         }
-        lookupCurrent.addOperation(0, op);
         return true;
     }
 

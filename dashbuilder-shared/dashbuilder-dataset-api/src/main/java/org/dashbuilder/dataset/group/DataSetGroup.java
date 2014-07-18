@@ -81,7 +81,8 @@ public class DataSetGroup implements DataSetOp {
         DataSetGroup clone = new DataSetGroup();
         clone.nestedGroupType = nestedGroupType;
         if (columnGroup != null) clone.columnGroup = columnGroup.cloneInstance();
-        clone.selectedIntervalNames.addAll(selectedIntervalNames);
+        clone.selectedIntervalNames = new ArrayList(selectedIntervalNames);
+        clone.groupFunctionList = new ArrayList();
         for (GroupFunction groupFunction : groupFunctionList) {
             clone.groupFunctionList.add(groupFunction.cloneInstance());
         }

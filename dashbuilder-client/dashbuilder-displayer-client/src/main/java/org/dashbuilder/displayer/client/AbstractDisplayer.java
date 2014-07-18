@@ -162,7 +162,6 @@ public abstract class AbstractDisplayer<T extends DisplayerSettings> extends Com
         if (groupOp != null && groupOp.getColumnGroup() != null) {
             _groupSelect = groupOp.cloneInstance();
             _groupSelect.setSelectedIntervalNames(values);
-            _groupSelect.getGroupFunctions().clear();
 
         } else {
             _groupSelect = new DataSetGroup();
@@ -175,7 +174,7 @@ public abstract class AbstractDisplayer<T extends DisplayerSettings> extends Com
                 listener.onGroupIntervalsSelected(this, _groupSelect);
             }
         }
-        // Apply the selection to this displayer
+        // Drill-down support
         if (displayerSettings.isFilterSelfApplyEnabled()) {
             dataSetHandler.addGroupOperation(_groupSelect);
             redraw();
@@ -235,9 +234,7 @@ public abstract class AbstractDisplayer<T extends DisplayerSettings> extends Com
         }
         // Apply the selection to this displayer
         if (displayerSettings.isFilterSelfApplyEnabled()) {
-            for (DataSetGroup groupOp : groupOpList) {
-                dataSetHandler.removeGroupOperation(groupOp);
-            }
+            dataSetHandler.resetAllOperations();
             redraw();
         }
     }
