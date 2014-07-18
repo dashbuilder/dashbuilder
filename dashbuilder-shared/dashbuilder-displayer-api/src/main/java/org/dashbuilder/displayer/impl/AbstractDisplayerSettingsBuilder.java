@@ -59,8 +59,9 @@ public abstract class AbstractDisplayerSettingsBuilder<T extends DisplayerSettin
         return (T) this;
     }
 
-    public T filterOff() {
+    public T filterOff(boolean receiveFromOthers) {
         displayerSettings.setFilterEnabled(false);
+        displayerSettings.setFilterListeningEnabled(true);
         return (T) this;
     }
 

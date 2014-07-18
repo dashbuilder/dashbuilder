@@ -343,8 +343,8 @@ public class KPIBuilderImpl implements KPIBuilder {
         return this;
     }
 
-    public KPIBuilder filterOff() {
-        displayerSettingsBuilder.filterOff();
+    public KPIBuilder filterOff(boolean receiveFromOthers) {
+        displayerSettingsBuilder.filterOff(receiveFromOthers);
         return this;
     }
 

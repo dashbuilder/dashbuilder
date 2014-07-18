@@ -89,10 +89,11 @@ public interface DisplayerSettingsBuilder<T> {
     /**
      * Disable the ability to select/filter values (or range of values) within the displayer.
      *
+     * @param receiveFromOthers If true then the data displayer will listen for filter requests coming from other displayers.
      * @see DisplayerSettingsBuilder#filterOn DisplayerSettingsBuilder's filterOn method.
      * @return The DisplayerSettingsBuilder instance that is being used to configure a DisplayerSettings.
      */
-    T filterOff();
+    T filterOff(boolean receiveFromOthers);
 
     /**
      * @return The DisplayerSettings instance that has been configured.
