@@ -27,7 +27,7 @@ public interface ChartDisplayerSettings extends DisplayerSettings {
     public static int DEFAULT_MARGINLEFT = 80;
     public static int DEFAULT_MARGINRIGHT = 80;
     public static boolean DEFAULT_LEGEND_SHOW = true;
-    public static Position DEFAULT_LEGEND_POSITION = Position.RIGHT;
+    public static Position DEFAULT_LEGEND_POSITION = Position.POSITION_RIGHT;
 
     int getWidth();
 

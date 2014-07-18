@@ -20,10 +20,10 @@ package org.dashbuilder.displayer;
  */
 public enum Position {
 
-    BOTTOM,
-    TOP,
-    LEFT,
-    RIGHT,
-    IN;
+    POSITION_BOTTOM,
+    POSITION_TOP,
+    POSITION_LEFT,
+    POSITION_RIGHT,
+    POSITION_IN;
 
 }

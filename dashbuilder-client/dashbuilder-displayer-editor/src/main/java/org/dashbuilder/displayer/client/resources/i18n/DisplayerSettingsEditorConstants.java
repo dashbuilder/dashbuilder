@@ -15,9 +15,27 @@
  */
 package org.dashbuilder.displayer.client.resources.i18n;
 
-import com.google.gwt.i18n.client.Messages;
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.i18n.client.ConstantsWithLookup;
 
-public interface DisplayerSettingsEditorConstants extends Messages {
+public interface DisplayerSettingsEditorConstants extends ConstantsWithLookup {
+
+    public static final DisplayerSettingsEditorConstants INSTANCE = GWT.create( DisplayerSettingsEditorConstants.class );
+
+    // Position enum literals
+
+    String POSITION_BOTTOM();
+
+    String POSITION_TOP();
+
+    String POSITION_LEFT();
+
+    String POSITION_RIGHT();
+
+    String POSITION_IN();
+
+
+    // Common settings editor literals
 
     String common_showTitle();
 

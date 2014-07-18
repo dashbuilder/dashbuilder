@@ -25,8 +25,8 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
-import org.dashbuilder.common.client.resources.i18n.CommonConstants;
 import org.dashbuilder.displayer.Position;
+import org.dashbuilder.displayer.client.resources.i18n.DisplayerSettingsEditorConstants;
 
 public class ChartAttributesEditor extends Composite {
 
@@ -131,7 +131,7 @@ public class ChartAttributesEditor extends Composite {
         chartLegendPositionListBox.clear();
         for ( Position position : Position.values()) {
             String positionKey = position.toString();
-            String positionLabel = CommonConstants.INSTANCE.getString( positionKey );
+            String positionLabel = DisplayerSettingsEditorConstants.INSTANCE.getString( positionKey );
             chartLegendPositionListBox.addItem( positionLabel, positionKey );
         }
     }
