@@ -22,7 +22,7 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.displayer.client.Displayer;
 import org.dashbuilder.displayer.client.DisplayerCoordinator;
-import org.dashbuilder.displayer.client.DataViewerHelper;
+import org.dashbuilder.displayer.client.DisplayerHelper;
 import org.dashbuilder.dataset.DataSetFactory;
 import org.dashbuilder.displayer.DisplayerSettingsFactory;
 
@@ -51,7 +51,7 @@ public class SalesDistributionByCountry extends Composite {
 
         // Create the chart definitions
 
-        bubbleByCountry = DataViewerHelper.lookup(
+        bubbleByCountry = DisplayerHelper.lookupDisplayer(
                 DataSetFactory.newDSLookup()
                 .dataset(SALES_OPPS)
                 .group(COUNTRY)
@@ -71,7 +71,7 @@ public class SalesDistributionByCountry extends Composite {
                 .filterOn(false, true, true)
                 .buildDisplayerSettings());
 
-        mapByCountry = DataViewerHelper.lookup(
+        mapByCountry = DisplayerHelper.lookupDisplayer(
                 DataSetFactory.newDSLookup()
                 .dataset(SALES_OPPS)
                 .group(COUNTRY)
@@ -88,7 +88,7 @@ public class SalesDistributionByCountry extends Composite {
                 .filterOn(false, true, true)
                 .buildDisplayerSettings());
 
-        tableAll = DataViewerHelper.lookup(
+        tableAll = DisplayerHelper.lookupDisplayer(
                 DataSetFactory.newDSLookup()
                 .dataset(SALES_OPPS)
                 .buildLookup(),

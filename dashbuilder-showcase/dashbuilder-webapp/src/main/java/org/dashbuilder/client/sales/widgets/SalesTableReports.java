@@ -23,7 +23,7 @@ import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.displayer.DisplayerSettingsFactory;
 import org.dashbuilder.displayer.client.Displayer;
 import org.dashbuilder.displayer.client.DisplayerCoordinator;
-import org.dashbuilder.displayer.client.DataViewerHelper;
+import org.dashbuilder.displayer.client.DisplayerHelper;
 import org.dashbuilder.dataset.DataSetFactory;
 import org.dashbuilder.dataset.group.DateIntervalType;
 
@@ -58,7 +58,7 @@ public class SalesTableReports extends Composite {
 
         // Create the chart definitions
 
-        tableAll = DataViewerHelper.lookup(
+        tableAll = DisplayerHelper.lookupDisplayer(
                 DataSetFactory.newDSLookup()
                 .dataset(SALES_OPPS)
                 .buildLookup(),
@@ -80,7 +80,7 @@ public class SalesTableReports extends Composite {
                 .filterOn(false, true, true)
                 .buildDisplayerSettings());
 
-        tableByCountry = DataViewerHelper.lookup(
+        tableByCountry = DisplayerHelper.lookupDisplayer(
                 DataSetFactory.newDSLookup()
                 .dataset(SALES_OPPS)
                 .group(COUNTRY, "Country")
@@ -99,7 +99,7 @@ public class SalesTableReports extends Composite {
                 .filterOn(false, true, true)
                 .buildDisplayerSettings());
 
-        tableByProduct = DataViewerHelper.lookup(
+        tableByProduct = DisplayerHelper.lookupDisplayer(
                 DataSetFactory.newDSLookup()
                 .dataset(SALES_OPPS)
                 .group(PRODUCT, "Product")
@@ -118,7 +118,7 @@ public class SalesTableReports extends Composite {
                 .filterOn(false, true, true)
                 .buildDisplayerSettings());
 
-        tableBySalesman = DataViewerHelper.lookup(
+        tableBySalesman = DisplayerHelper.lookupDisplayer(
                 DataSetFactory.newDSLookup()
                 .dataset(SALES_OPPS)
                 .group(SALES_PERSON, "Sales person")
@@ -137,7 +137,7 @@ public class SalesTableReports extends Composite {
                 .filterOn(false, true, true)
                 .buildDisplayerSettings());
 
-        tableByYear = DataViewerHelper.lookup(
+        tableByYear = DisplayerHelper.lookupDisplayer(
                 DataSetFactory.newDSLookup()
                 .dataset(SALES_OPPS)
                 .group(CREATION_DATE, "Creation date", DateIntervalType.YEAR)

@@ -19,7 +19,7 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimplePanel;
 import org.dashbuilder.displayer.client.Displayer;
-import org.dashbuilder.displayer.client.DataViewerHelper;
+import org.dashbuilder.displayer.client.DisplayerHelper;
 import org.dashbuilder.dataset.DataSetRef;
 import org.dashbuilder.displayer.DisplayerSettings;
 import org.dashbuilder.kpi.KPI;
@@ -50,7 +50,7 @@ public class KPIViewer extends Composite {
         // Locate the Displayer widget to display the KPI
         DisplayerSettings displayerSettings = kpi.getDisplayerSettings();
         DataSetRef dataSetRef = kpi.getDataSetRef();
-        displayer = DataViewerHelper.lookup(dataSetRef, displayerSettings );
+        displayer = DisplayerHelper.lookupDisplayer( dataSetRef, displayerSettings );
     }
 
     public Displayer getDisplayer() {
@@ -62,7 +62,7 @@ public class KPIViewer extends Composite {
             container.clear();
             container.add( displayer );
 
-            DataViewerHelper.draw( displayer );
+            DisplayerHelper.draw( displayer );
         } catch (Exception e) {
             displayMessage(e.getMessage());
         }
@@ -74,7 +74,7 @@ public class KPIViewer extends Composite {
             container.clear();
             container.add( displayer );
 
-            DataViewerHelper.redraw( displayer );
+            DisplayerHelper.redraw( displayer );
         } catch (Exception e) {
             displayMessage(e.getMessage());
         }

@@ -21,7 +21,7 @@ import org.dashbuilder.displayer.DisplayerSettings;
 /**
  * Helper methods for dealing with Displayer instances.
  */
-public class DataViewerHelper {
+public class DisplayerHelper {
 
     /**
      * Get a Displayer instance for displaying the specified data set with the given display configuration.
@@ -29,7 +29,7 @@ public class DataViewerHelper {
      * @param dataSetRef A reference to the data set.
      * @param displayerSettings The given display configuration.
      */
-    public static Displayer lookup(DataSetRef dataSetRef, DisplayerSettings displayerSettings ) {
+    public static Displayer lookupDisplayer(DataSetRef dataSetRef, DisplayerSettings displayerSettings ) {
         return DisplayerLocator.get().lookupDisplayer( dataSetRef, displayerSettings );
     }
 

@@ -23,7 +23,7 @@ import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.displayer.DisplayerSettingsFactory;
 import org.dashbuilder.displayer.client.Displayer;
 import org.dashbuilder.displayer.client.DisplayerCoordinator;
-import org.dashbuilder.displayer.client.DataViewerHelper;
+import org.dashbuilder.displayer.client.DisplayerHelper;
 import org.dashbuilder.dataset.DataSetFactory;
 
 import static org.dashbuilder.client.sales.SalesConstants.*;
@@ -58,7 +58,7 @@ public class SalesGoals extends Composite {
 
         // Create the chart definitions
 
-        meterChartAmount = DataViewerHelper.lookup(
+        meterChartAmount = DisplayerHelper.lookupDisplayer(
                 DataSetFactory.newDSLookup()
                 .dataset(SALES_OPPS)
                 .sum(AMOUNT)
@@ -72,7 +72,7 @@ public class SalesGoals extends Composite {
                 .filterOn(false, true, true)
                 .buildDisplayerSettings());
 
-        lineChartByDate = DataViewerHelper.lookup(
+        lineChartByDate = DisplayerHelper.lookupDisplayer(
                 DataSetFactory.newDSLookup()
                 .dataset(SALES_OPPS)
                 .group(CLOSING_DATE, 80, MONTH)
@@ -90,7 +90,7 @@ public class SalesGoals extends Composite {
                 .filterOn(false, true, true)
                 .buildDisplayerSettings());
 
-        barChartByProduct = DataViewerHelper.lookup(
+        barChartByProduct = DisplayerHelper.lookupDisplayer(
                 DataSetFactory.newDSLookup()
                 .dataset(SALES_OPPS)
                 .group(PRODUCT)
@@ -109,7 +109,7 @@ public class SalesGoals extends Composite {
                 .filterOn(false, true, true)
                 .buildDisplayerSettings());
 
-        barChartByEmployee = DataViewerHelper.lookup(
+        barChartByEmployee = DisplayerHelper.lookupDisplayer(
                 DataSetFactory.newDSLookup()
                 .dataset(SALES_OPPS)
                 .group(SALES_PERSON)
@@ -127,7 +127,7 @@ public class SalesGoals extends Composite {
                 .filterOn(false, true, true)
                 .buildDisplayerSettings());
 
-        bubbleByCountry = DataViewerHelper.lookup(
+        bubbleByCountry = DisplayerHelper.lookupDisplayer(
                 DataSetFactory.newDSLookup()
                 .dataset(SALES_OPPS)
                 .group(COUNTRY)

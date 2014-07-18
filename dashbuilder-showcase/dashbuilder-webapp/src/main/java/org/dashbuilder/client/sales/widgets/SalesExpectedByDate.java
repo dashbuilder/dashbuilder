@@ -23,7 +23,7 @@ import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.displayer.DisplayerSettingsFactory;
 import org.dashbuilder.displayer.client.Displayer;
 import org.dashbuilder.displayer.client.DisplayerCoordinator;
-import org.dashbuilder.displayer.client.DataViewerHelper;
+import org.dashbuilder.displayer.client.DisplayerHelper;
 import org.dashbuilder.dataset.DataSetFactory;
 
 import static org.dashbuilder.dataset.group.DateIntervalType.*;
@@ -62,7 +62,7 @@ public class SalesExpectedByDate extends Composite {
 
         // Create the chart definitions
 
-        areaChartByDate = DataViewerHelper.lookup(
+        areaChartByDate = DisplayerHelper.lookupDisplayer(
                 DataSetFactory.newDSLookup()
                 .dataset(SALES_OPPS)
                 .group(CREATION_DATE, 80, MONTH)
@@ -78,7 +78,7 @@ public class SalesExpectedByDate extends Composite {
                 .filterOn(false, true, true)
                 .buildDisplayerSettings());
 
-        pieChartYears = DataViewerHelper.lookup(
+        pieChartYears = DisplayerHelper.lookupDisplayer(
                 DataSetFactory.newDSLookup()
                 .dataset(SALES_OPPS)
                 .group(CREATION_DATE, YEAR)
@@ -92,7 +92,7 @@ public class SalesExpectedByDate extends Composite {
                 .filterOn(false, true, false)
                 .buildDisplayerSettings());
 
-        pieChartQuarters = DataViewerHelper.lookup(
+        pieChartQuarters = DisplayerHelper.lookupDisplayer(
                 DataSetFactory.newDSLookup()
                 .dataset(SALES_OPPS)
                 .group(CREATION_DATE).fixed(QUARTER)
@@ -106,7 +106,7 @@ public class SalesExpectedByDate extends Composite {
                 .filterOn(false, true, false)
                 .buildDisplayerSettings());
 
-        barChartDayOfWeek = DataViewerHelper.lookup(
+        barChartDayOfWeek = DisplayerHelper.lookupDisplayer(
                 DataSetFactory.newDSLookup()
                 .dataset(SALES_OPPS)
                 .group(CREATION_DATE).fixed(DAY_OF_WEEK).firstDay(SUNDAY)
@@ -122,7 +122,7 @@ public class SalesExpectedByDate extends Composite {
                 .buildDisplayerSettings());
 
 
-        pieChartByPipeline = DataViewerHelper.lookup(
+        pieChartByPipeline = DisplayerHelper.lookupDisplayer(
                 DataSetFactory.newDSLookup()
                 .dataset(SALES_OPPS)
                 .group(PIPELINE)
@@ -138,7 +138,7 @@ public class SalesExpectedByDate extends Composite {
                 .filterOn(false, true, true)
                 .buildDisplayerSettings());
 
-        tableAll = DataViewerHelper.lookup(
+        tableAll = DisplayerHelper.lookupDisplayer(
                 DataSetFactory.newDSLookup()
                 .dataset(SALES_OPPS)
                 .buildLookup(),
