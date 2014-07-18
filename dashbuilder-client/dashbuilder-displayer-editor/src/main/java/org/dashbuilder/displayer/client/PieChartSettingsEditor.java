@@ -25,20 +25,20 @@ import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.displayer.XAxisChartDisplayerSettings;
 
 /**
- * Area chart editor.
+ * Pie chart editor.
  */
 @ApplicationScoped
-@Named("areachart_editor")
-public class AreaChartEditor extends AbstractDisplayerEditor<XAxisChartDisplayerSettings> {
+@Named("piechart_editor")
+public class PieChartSettingsEditor extends AbstractDisplayerSettingsEditor<XAxisChartDisplayerSettings> {
 
-    interface EditorBinder extends UiBinder<Widget, AreaChartEditor> {}
-    private static final EditorBinder uiBinder = GWT.create( EditorBinder.class );
+    interface EditorBinder extends UiBinder<Widget, PieChartSettingsEditor>{}
+    private static final EditorBinder uiBinder = GWT.create(EditorBinder.class);
 
     @UiField( provided = true )
-    XAxisChartEditorBase xAxisChartEditorBase;
+    XAxisChartSettingsEditorBase xAxisChartSettingsEditorBase;
 
-    public AreaChartEditor() {
-        xAxisChartEditorBase = new XAxisChartEditorBase();
+    public PieChartSettingsEditor() {
+        xAxisChartSettingsEditorBase = new XAxisChartSettingsEditorBase();
 
         // Init the editor from the UI Binder template
         initWidget(uiBinder.createAndBindUi(this));
@@ -47,12 +47,12 @@ public class AreaChartEditor extends AbstractDisplayerEditor<XAxisChartDisplayer
     @Override
     public void setDisplayerSettings( XAxisChartDisplayerSettings displayerSettings ) {
         super.setDisplayerSettings( displayerSettings );
-        xAxisChartEditorBase.setDisplayerSettings( displayerSettings );
+        xAxisChartSettingsEditorBase.setDisplayerSettings( displayerSettings );
     }
 
     @Override
     public void setListener( DisplayerEditorListener listener ) {
         super.setListener( listener );
-        xAxisChartEditorBase.setListener( listener );
+        xAxisChartSettingsEditorBase.setListener( listener );
     }
 }

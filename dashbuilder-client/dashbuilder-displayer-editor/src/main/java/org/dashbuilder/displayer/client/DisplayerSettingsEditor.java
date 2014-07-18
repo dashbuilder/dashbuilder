@@ -19,9 +19,9 @@ import com.google.gwt.user.client.ui.IsWidget;
 import org.dashbuilder.displayer.DisplayerSettings;
 
 /**
- * A DisplayerEditor provides an UI for editing a DisplayerSettings instance.
+ * A DisplayerSettingsEditor provides an UI for editing a DisplayerSettings instance.
  */
-public interface DisplayerEditor<T extends DisplayerSettings> extends IsWidget {
+public interface DisplayerSettingsEditor<T extends DisplayerSettings> extends IsWidget {
 
     /**
      * The data displayer to be edited.

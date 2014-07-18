@@ -29,16 +29,16 @@ import org.dashbuilder.displayer.XAxisChartDisplayerSettings;
  */
 @ApplicationScoped
 @Named("map_editor")
-public class MapChartEditor extends AbstractDisplayerEditor<XAxisChartDisplayerSettings> {
+public class MapChartSettingsEditor extends AbstractDisplayerSettingsEditor<XAxisChartDisplayerSettings> {
 
-    interface EditorBinder extends UiBinder<Widget, MapChartEditor> {}
+    interface EditorBinder extends UiBinder<Widget, MapChartSettingsEditor> {}
     private static final EditorBinder uiBinder = GWT.create( EditorBinder.class );
 
     @UiField( provided = true )
-    XAxisChartEditorBase xAxisChartEditorBase;
+    XAxisChartSettingsEditorBase xAxisChartSettingsEditorBase;
 
-    public MapChartEditor() {
-        xAxisChartEditorBase = new XAxisChartEditorBase();
+    public MapChartSettingsEditor() {
+        xAxisChartSettingsEditorBase = new XAxisChartSettingsEditorBase();
 
         // Init the editor from the UI Binder template
         initWidget(uiBinder.createAndBindUi(this));
@@ -47,12 +47,12 @@ public class MapChartEditor extends AbstractDisplayerEditor<XAxisChartDisplayerS
     @Override
     public void setDisplayerSettings( XAxisChartDisplayerSettings displayerSettings ) {
         super.setDisplayerSettings( displayerSettings );
-        xAxisChartEditorBase.setDisplayerSettings( displayerSettings );
+        xAxisChartSettingsEditorBase.setDisplayerSettings( displayerSettings );
     }
 
     @Override
     public void setListener( DisplayerEditorListener listener ) {
         super.setListener( listener );
-        xAxisChartEditorBase.setListener( listener );
+        xAxisChartSettingsEditorBase.setListener( listener );
     }
 }

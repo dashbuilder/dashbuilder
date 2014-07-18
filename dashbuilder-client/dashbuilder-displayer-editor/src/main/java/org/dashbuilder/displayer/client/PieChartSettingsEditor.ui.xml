@@ -20,11 +20,11 @@
 
   <g:HTMLPanel>
 
-      <div class="well">
+    <div class="well">
 
-        <db:XAxisChartEditorBase ui:field="xAxisChartEditorBase" />
+      <db:XAxisChartSettingsEditorBase ui:field="xAxisChartSettingsEditorBase" />
 
-      </div>
+    </div>
 
   </g:HTMLPanel>
 

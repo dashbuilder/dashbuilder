@@ -41,9 +41,9 @@ import static org.dashbuilder.displayer.XAxisChartDisplayerSettings.*;
 /**
  * Base editor for all x-axis based displayers.
  */
-public class XAxisChartEditorBase extends AbstractDisplayerEditor<XAxisChartDisplayerSettings> {
+public class XAxisChartSettingsEditorBase extends AbstractDisplayerSettingsEditor<XAxisChartDisplayerSettings> {
 
-    interface EditorBinder extends UiBinder<Widget, XAxisChartEditorBase>{}
+    interface EditorBinder extends UiBinder<Widget, XAxisChartSettingsEditorBase>{}
     private static final EditorBinder uiBinder = GWT.create(EditorBinder.class);
 
     @UiField
@@ -55,7 +55,7 @@ public class XAxisChartEditorBase extends AbstractDisplayerEditor<XAxisChartDisp
     @UiField
     XAxisChartAttributesEditor xaxisChartAttributesEditor;
 
-    public XAxisChartEditorBase() {
+    public XAxisChartSettingsEditorBase() {
 
         // Init the editor from the UI Binder template
         initWidget(uiBinder.createAndBindUi(this));

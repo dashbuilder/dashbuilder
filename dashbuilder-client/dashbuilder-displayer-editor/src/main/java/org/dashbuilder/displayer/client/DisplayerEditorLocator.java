@@ -25,7 +25,7 @@ import org.jboss.errai.ioc.client.container.IOCBeanDef;
 import org.jboss.errai.ioc.client.container.SyncBeanManager;
 
 /**
- * The locator service for DisplayerEditor implementations.
+ * The locator service for DisplayerSettingsEditor implementations.
  */
 @ApplicationScoped
 public class DisplayerEditorLocator {
@@ -41,7 +41,7 @@ public class DisplayerEditorLocator {
     /**
      * Get the editor component for the specified data displayer
      */
-    public <T extends DisplayerSettings> DisplayerEditor<T> lookupEditor(T displayerSettings) {
+    public <T extends DisplayerSettings> DisplayerSettingsEditor<T> lookupEditor(T displayerSettings) {
 
         String displayerType = displayerSettings.getType().toString().toLowerCase();
         String beanName =  displayerType + "_editor";
@@ -50,7 +50,7 @@ public class DisplayerEditorLocator {
         if (beans.size() > 1) throw new RuntimeException("Multiple editor implementations found for: " + displayerType);
 
         IOCBeanDef beanDef = beans.iterator().next();
-        DisplayerEditor<T> editor = (DisplayerEditor<T>) beanDef.getInstance();
+        DisplayerSettingsEditor<T> editor = (DisplayerSettingsEditor<T> ) beanDef.getInstance();
         editor.setDisplayerSettings(displayerSettings);
         return editor;
     }

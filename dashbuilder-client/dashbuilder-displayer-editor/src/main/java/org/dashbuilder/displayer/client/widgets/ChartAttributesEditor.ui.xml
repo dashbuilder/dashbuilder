@@ -18,7 +18,7 @@
              xmlns:b="urn:import:com.github.gwtbootstrap.client.ui"
              xmlns:gwt="urn:import:com.google.gwt.user.client.ui">
 
-  <ui:with field="i18n" type="org.dashbuilder.displayer.client.resources.i18n.DisplayerEditorConstants"/>
+  <ui:with field="i18n" type="org.dashbuilder.displayer.client.resources.i18n.DisplayerSettingsEditorConstants"/>
 
   <gwt:HTMLPanel>
 

@@ -25,20 +25,20 @@ import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.displayer.XAxisChartDisplayerSettings;
 
 /**
- * Bubble chart editor.
+ * Bar chart editor.
  */
 @ApplicationScoped
-@Named("bubblechart_editor")
-public class BubbleChartEditor extends AbstractDisplayerEditor<XAxisChartDisplayerSettings> {
+@Named("barchart_editor")
+public class BarChartSettingsEditor extends AbstractDisplayerSettingsEditor<XAxisChartDisplayerSettings> {
 
-    interface EditorBinder extends UiBinder<Widget, BubbleChartEditor> {}
+    interface EditorBinder extends UiBinder<Widget, BarChartSettingsEditor> {}
     private static final EditorBinder uiBinder = GWT.create( EditorBinder.class );
 
     @UiField( provided = true )
-    XAxisChartEditorBase xAxisChartEditorBase;
+    XAxisChartSettingsEditorBase xAxisChartSettingsEditorBase;
 
-    public BubbleChartEditor() {
-        xAxisChartEditorBase = new XAxisChartEditorBase();
+    public BarChartSettingsEditor() {
+        xAxisChartSettingsEditorBase = new XAxisChartSettingsEditorBase();
 
         // Init the editor from the UI Binder template
         initWidget(uiBinder.createAndBindUi(this));
@@ -47,12 +47,12 @@ public class BubbleChartEditor extends AbstractDisplayerEditor<XAxisChartDisplay
     @Override
     public void setDisplayerSettings( XAxisChartDisplayerSettings displayerSettings ) {
         super.setDisplayerSettings( displayerSettings );
-        xAxisChartEditorBase.setDisplayerSettings( displayerSettings );
+        xAxisChartSettingsEditorBase.setDisplayerSettings( displayerSettings );
     }
 
     @Override
     public void setListener( DisplayerEditorListener listener ) {
         super.setListener( listener );
-        xAxisChartEditorBase.setListener( listener );
+        xAxisChartSettingsEditorBase.setListener( listener );
     }
 }

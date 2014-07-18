@@ -21,7 +21,7 @@ import org.dashbuilder.displayer.DisplayerSettings;
 /**
  * Base class for implementing data displayer editor widgets.
  */
-public abstract class AbstractDisplayerEditor<T extends DisplayerSettings> extends Composite implements DisplayerEditor<T> {
+public abstract class AbstractDisplayerSettingsEditor<T extends DisplayerSettings> extends Composite implements DisplayerSettingsEditor<T> {
 
     protected T displayerSettings;
     protected DisplayerEditorListener listener;

@@ -25,20 +25,20 @@ import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.displayer.XAxisChartDisplayerSettings;
 
 /**
- * Pie chart editor.
+ * Line chart editor.
  */
 @ApplicationScoped
-@Named("piechart_editor")
-public class PieChartEditor extends AbstractDisplayerEditor<XAxisChartDisplayerSettings> {
+@Named("linechart_editor")
+public class LineChartSettingsEditor extends AbstractDisplayerSettingsEditor<XAxisChartDisplayerSettings> {
 
-    interface EditorBinder extends UiBinder<Widget, PieChartEditor>{}
-    private static final EditorBinder uiBinder = GWT.create(EditorBinder.class);
+    interface EditorBinder extends UiBinder<Widget, LineChartSettingsEditor> {}
+    private static final EditorBinder uiBinder = GWT.create( EditorBinder.class );
 
     @UiField( provided = true )
-    XAxisChartEditorBase xAxisChartEditorBase;
+    XAxisChartSettingsEditorBase xAxisChartSettingsEditorBase;
 
-    public PieChartEditor() {
-        xAxisChartEditorBase = new XAxisChartEditorBase();
+    public LineChartSettingsEditor() {
+        xAxisChartSettingsEditorBase = new XAxisChartSettingsEditorBase();
 
         // Init the editor from the UI Binder template
         initWidget(uiBinder.createAndBindUi(this));
@@ -47,12 +47,12 @@ public class PieChartEditor extends AbstractDisplayerEditor<XAxisChartDisplayerS
     @Override
     public void setDisplayerSettings( XAxisChartDisplayerSettings displayerSettings ) {
         super.setDisplayerSettings( displayerSettings );
-        xAxisChartEditorBase.setDisplayerSettings( displayerSettings );
+        xAxisChartSettingsEditorBase.setDisplayerSettings( displayerSettings );
     }
 
     @Override
     public void setListener( DisplayerEditorListener listener ) {
         super.setListener( listener );
-        xAxisChartEditorBase.setListener( listener );
+        xAxisChartSettingsEditorBase.setListener( listener );
     }
 }

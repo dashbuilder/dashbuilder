@@ -17,7 +17,7 @@ package org.dashbuilder.displayer.client.resources.i18n;
 
 import com.google.gwt.i18n.client.Messages;
 
-public interface DisplayerEditorConstants extends Messages {
+public interface DisplayerSettingsEditorConstants extends Messages {
 
     String common_showTitle();
 

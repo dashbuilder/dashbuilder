@@ -22,7 +22,7 @@
 
       <div class="well">
 
-        <db:XAxisChartEditorBase ui:field="xAxisChartEditorBase" />
+        <db:XAxisChartSettingsEditorBase ui:field="xAxisChartSettingsEditorBase" />
 
       </div>
 
