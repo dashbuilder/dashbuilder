@@ -97,7 +97,7 @@ public class DataSetNestedGroupTest {
     }
 
     @Test
-    public void testInnerGroupFiltered() throws Exception {
+    public void testNestedGroupFromMultipleSelection() throws Exception {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDSLookup()
                 .dataset(EXPENSE_REPORTS)
@@ -118,6 +118,25 @@ public class DataSetNestedGroupTest {
                 {"Westford", "5.00", "1.10", "600.34", "265.29", "1,326.43"},
                 {"Raleigh", "4.00", "209.55", "401.40", "284.38", "1,137.53"},
                 {"London", "3.00", "333.45", "868.45", "535.40", "1,606.20"}
+        }, 0);
+    }
+
+    @Test
+    public void testNestedGroupRequiresSelection() throws Exception {
+        DataSet result = dataSetManager.lookupDataSet(
+                DataSetFactory.newDSLookup()
+                .dataset(EXPENSE_REPORTS)
+                .group("department", "Department")
+                .group("city", "city")
+                .buildLookup());
+
+        //printDataSet(result);
+        assertDataSetValues(result, dataSetFormatter, new String[][] {
+                {"Engineering"},
+                {"Services"},
+                {"Sales"},
+                {"Support"},
+                {"Management"}
         }, 0);
     }
 

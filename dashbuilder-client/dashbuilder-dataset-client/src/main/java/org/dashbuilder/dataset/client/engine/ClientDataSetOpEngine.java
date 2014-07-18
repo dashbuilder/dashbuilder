@@ -162,12 +162,12 @@ public class ClientDataSetOpEngine implements DataSetOpEngine {
                     if (columnGroup == null) {
                         // No real group requested. Only function calculations on the data set.
                         calculations = true;
+                        context.lastOperation = op;
                     } else {
-                        group(gOp, context);
-                        if (!gOp.getGroupFunctions().isEmpty()) {
-                            // If the op is not an interval selection then group.
+                        if (group(gOp, context)) {
                             group = true;
                             build = false;
+                            context.lastOperation = op;
                         }
                     }
                 }
@@ -178,6 +178,7 @@ public class ClientDataSetOpEngine implements DataSetOpEngine {
 
                     filter((DataSetFilter) op, context);
                     build = false;
+                    context.lastOperation = op;
                 }
                 else if (DataSetOpType.SORT.equals(op.getType())) {
                     if (calculations) throw new IllegalStateException("Sort not permitted after a function calculation operation.");
@@ -185,16 +186,18 @@ public class ClientDataSetOpEngine implements DataSetOpEngine {
 
                     if (group) {
                         buildDataSet(context);
+                        build = true;
                     }
 
                     sort = true;
                     sort((DataSetSort) op, context);
                     build = false;
+                    context.lastOperation = op;
                 }
                 else {
                     throw new IllegalArgumentException("Unsupported operation: " + op.getClass().getName());
                 }
-                context.lastOperation = op;
+
             }
             if (!build) {
                 buildDataSet(context);
@@ -213,14 +216,19 @@ public class ClientDataSetOpEngine implements DataSetOpEngine {
             }
         }
 
-        protected void group(DataSetGroup op, InternalContext context) {
+        protected boolean group(DataSetGroup op, InternalContext context) {
             checkGroupOp(context.dataSet, op);
 
             // Group by the specified column (if any).
             ColumnGroup columnGroup = op.getColumnGroup();
 
             // No real group requested. Only function calculations on the data set.
-            if (columnGroup == null) return;
+            if (columnGroup == null) return true;
+
+            // Nested groups are only supported on the presence of a parent group interval selection operation.
+            if (context.lastGroupOp != null && context.lastGroupOp.getSelectedIntervalNames().isEmpty()) {
+                return false;
+            }
 
             // Create a root or nested group.
             DataSetGroupIndex groupIndex = null;
@@ -232,6 +240,7 @@ public class ClientDataSetOpEngine implements DataSetOpEngine {
 
             // Index the group
             context.index(op, groupIndex);
+            return true;
         }
 
         protected DataSetGroupIndex singleGroup(DataSetGroup op, InternalContext context) {
