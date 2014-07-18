@@ -61,7 +61,7 @@ import org.kie.uberfire.client.tables.PagedTable;
 
 import static com.google.gwt.dom.client.BrowserEvents.CLICK;
 
-public class UFTableViewer extends AbstractDisplayer<TableDisplayerSettings> {
+public class UFTableDisplayer extends AbstractDisplayer<TableDisplayerSettings> {
 
     private Map< String, String > columnCaptionIds = new HashMap< String, String >(5);
 
@@ -81,7 +81,7 @@ public class UFTableViewer extends AbstractDisplayer<TableDisplayerSettings> {
     protected PagedTable<Integer> ufTable;
     protected UFTableProvider ufTableProvider = new UFTableProvider();
 
-    public UFTableViewer() {
+    public UFTableDisplayer() {
         initWidget( panel );
     }
 
@@ -95,7 +95,7 @@ public class UFTableViewer extends AbstractDisplayer<TableDisplayerSettings> {
                 displayMessage( "ERROR: DataSetHandler property not set" );
             } else {
                 try {
-                    displayMessage( UFTableConstants.INSTANCE.ufTableViewer_initializing() + " '" + displayerSettings.getTitle() + "'..." );
+                    displayMessage( UFTableConstants.INSTANCE.ufTableDisplayer_initializing() + " '" + displayerSettings.getTitle() + "'..." );
                     lookupDataSet(0, new DataSetReadyCallback() {
 
                         public void callback( DataSet dataSet ) {
@@ -115,7 +115,7 @@ public class UFTableViewer extends AbstractDisplayer<TableDisplayerSettings> {
     }
 
     /**
-     * Just reload the data set and make the current google Viewer to redraw.
+     * Just reload the data set and make the current UF Displayer redraw.
      */
     public void redraw() {
         lookupDataSet(0, new DataSetReadyCallback() {
@@ -167,7 +167,7 @@ public class UFTableViewer extends AbstractDisplayer<TableDisplayerSettings> {
                     new DataSetReadyCallback() {
 
                         public void callback( DataSet dataSet ) {
-                            UFTableViewer.this.dataSet = dataSet;
+                            UFTableDisplayer.this.dataSet = dataSet;
                             numberOfRows = dataSet.getRowCountNonTrimmed();
                             callback.callback( dataSet );
                         }
@@ -206,7 +206,7 @@ public class UFTableViewer extends AbstractDisplayer<TableDisplayerSettings> {
         ufPagedTable.setHeight( ( height > ( Window.getClientHeight() - this.getAbsoluteTop() ) ? ( Window.getClientHeight() - this.getAbsoluteTop() ) : height ) + "px" );
         int left = this.getAbsoluteLeft() + this.getOffsetWidth();
         ufPagedTable.setWidth( Window.getClientWidth() * ( left == 0 ? 0.8 : 1 )  + "px" );
-        ufPagedTable.setEmptyTableCaption( UFTableConstants.INSTANCE.ufTableViewer_noDataAvailable() );
+        ufPagedTable.setEmptyTableCaption( UFTableConstants.INSTANCE.ufTableDisplayer_noDataAvailable() );
 
         List<DisplayerSettingsColumn> displayerSettingsColumns = displayerSettings.getColumnList();
         if ( !displayerSettingsColumns.isEmpty() ) {

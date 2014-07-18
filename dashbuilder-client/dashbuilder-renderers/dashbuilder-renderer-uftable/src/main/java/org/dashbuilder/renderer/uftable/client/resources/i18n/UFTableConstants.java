@@ -23,8 +23,8 @@ public interface UFTableConstants extends Messages {
 
     public static final UFTableConstants INSTANCE = GWT.create( UFTableConstants.class );
 
-    public String ufTableViewer_initializing();
+    public String ufTableDisplayer_initializing();
 
-    public String ufTableViewer_noDataAvailable();
+    public String ufTableDisplayer_noDataAvailable();
 
 }

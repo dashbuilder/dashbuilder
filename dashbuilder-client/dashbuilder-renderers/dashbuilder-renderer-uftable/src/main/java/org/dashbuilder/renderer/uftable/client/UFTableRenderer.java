@@ -40,7 +40,7 @@ public class UFTableRenderer extends AbstractRendererLibrary {
     @Override
     public Displayer lookupDisplayer(DisplayerSettings displayerSettings) {
         DisplayerType type = displayerSettings.getType();
-        if ( DisplayerType.TABLE.equals(type)) return new UFTableViewer();
+        if ( DisplayerType.TABLE.equals(type)) return new UFTableDisplayer();
 
         return null;
     }
