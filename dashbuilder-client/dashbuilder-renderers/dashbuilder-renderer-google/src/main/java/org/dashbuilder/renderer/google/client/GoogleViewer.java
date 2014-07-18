@@ -154,7 +154,7 @@ public abstract class GoogleViewer<T extends DisplayerSettings> extends Abstract
         if (displayerSettingsColumns.isEmpty()) {
             return googleTable = formatTable(createTableFromDataSet());
         }
-        return googleTable = formatTable(createTableFromDisplayer());
+        return googleTable = formatTable(createTableFromDisplayerSettings());
     }
 
     protected DataTable formatTable(DataTable gTable) {
@@ -195,7 +195,7 @@ public abstract class GoogleViewer<T extends DisplayerSettings> extends Abstract
         return gTable;
     }
 
-    public DataTable createTableFromDisplayer() {
+    public DataTable createTableFromDisplayerSettings() {
         DataTable gTable = DataTable.create();
         gTable.addRows(dataSet.getRowCount());
         int columnIndex = 0;

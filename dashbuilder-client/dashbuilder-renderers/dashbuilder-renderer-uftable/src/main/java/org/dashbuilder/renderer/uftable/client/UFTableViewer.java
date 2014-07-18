@@ -210,7 +210,7 @@ public class UFTableViewer extends AbstractDataViewer<TableDisplayerSettings> {
 
         List<DisplayerSettingsColumn> displayerSettingsColumns = displayerSettings.getColumnList();
         if ( !displayerSettingsColumns.isEmpty() ) {
-            createTableColumnsFromDisplayer( ufPagedTable, displayerSettingsColumns );
+            createTableColumnsFromDisplayerSettings( ufPagedTable, displayerSettingsColumns );
         } else {
             createTableColumnsFromDataSet( ufPagedTable, dataSet.getColumns() );
         }
@@ -244,7 +244,7 @@ public class UFTableViewer extends AbstractDataViewer<TableDisplayerSettings> {
         }
     }
 
-    private void createTableColumnsFromDisplayer( PagedTable<Integer> table, List<DisplayerSettingsColumn> displayerSettingsColumns ) {
+    private void createTableColumnsFromDisplayerSettings( PagedTable<Integer> table, List<DisplayerSettingsColumn> displayerSettingsColumns ) {
         int columnIndex = 0;
         for ( int i = 0; i < displayerSettingsColumns.size(); i++ ) {
             DisplayerSettingsColumn displayerSettingsColumn = displayerSettingsColumns.get( i );
