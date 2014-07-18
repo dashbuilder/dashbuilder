@@ -22,7 +22,7 @@ import org.dashbuilder.dataset.group.DataSetGroup;
 /**
  * Interface addressed to capture events coming from a Displayer instance.
  */
-public interface DataViewerListener {
+public interface DisplayerListener {
 
     /**
      * Invoked when a group interval selection filter request is executed on a given Displayer instance.

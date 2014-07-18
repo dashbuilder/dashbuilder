@@ -36,14 +36,14 @@ import org.dashbuilder.displayer.DisplayerSettings;
  * <p>Any derived class must implement:
  * <ul>
  *     <li>The draw() & redraw() methods.</li>
- *     <li>The capture of events coming from the DataViewerListener interface.</li>
+ *     <li>The capture of events coming from the DisplayerListener interface.</li>
  * </ul>
  */
 public abstract class AbstractDisplayer<T extends DisplayerSettings> extends Composite implements Displayer<T> {
 
     protected DataSetHandler dataSetHandler;
     protected T displayerSettings;
-    protected List<DataViewerListener> listenerList = new ArrayList<DataViewerListener>();
+    protected List<DisplayerListener> listenerList = new ArrayList<DisplayerListener>();
     protected Map<String,List<String>> columnSelectionMap = new HashMap<String,List<String>>();
 
     public T getDisplayerSettings() {
@@ -62,11 +62,11 @@ public abstract class AbstractDisplayer<T extends DisplayerSettings> extends Com
         this.dataSetHandler = dataSetHandler;
     }
 
-    public void addListener(DataViewerListener listener) {
+    public void addListener(DisplayerListener listener) {
         listenerList.add(listener);
     }
 
-    // CAPTURE EVENTS RECEIVED FROM OTHER VIEWERS
+    // CAPTURE EVENTS RECEIVED FROM OTHER DISPLAYERS
 
     public void onGroupIntervalsSelected(Displayer displayer, DataSetGroup groupOp) {
         if (displayerSettings.isFilterListeningEnabled()) {
@@ -171,7 +171,7 @@ public abstract class AbstractDisplayer<T extends DisplayerSettings> extends Com
         }
         // Notify to those interested parties the selection event.
         if (displayerSettings.isFilterNotificationEnabled()) {
-            for (DataViewerListener listener : listenerList) {
+            for (DisplayerListener listener : listenerList) {
                 listener.onGroupIntervalsSelected(this, _groupSelect);
             }
         }
@@ -198,7 +198,7 @@ public abstract class AbstractDisplayer<T extends DisplayerSettings> extends Com
         }
         // Notify to those interested parties the reset event.
         if (displayerSettings.isFilterNotificationEnabled()) {
-            for (DataViewerListener listener : listenerList) {
+            for (DisplayerListener listener : listenerList) {
                 listener.onGroupIntervalsReset(this, Arrays.asList(groupOp));
             }
         }
@@ -229,7 +229,7 @@ public abstract class AbstractDisplayer<T extends DisplayerSettings> extends Com
 
         // Notify to those interested parties the reset event.
         if (displayerSettings.isFilterNotificationEnabled()) {
-            for (DataViewerListener listener : listenerList) {
+            for (DisplayerListener listener : listenerList) {
                 listener.onGroupIntervalsReset(this, groupOpList);
             }
         }

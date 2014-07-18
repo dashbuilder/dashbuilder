@@ -21,7 +21,7 @@ import org.dashbuilder.displayer.DisplayerSettings;
 /**
  * A Displayer takes care of drawing a DisplayerSettings instance.
  */
-public interface Displayer<T extends DisplayerSettings> extends DataViewerListener, IsWidget {
+public interface Displayer<T extends DisplayerSettings> extends DisplayerListener, IsWidget {
 
     /**
      * The data displayer to draw.
@@ -38,7 +38,7 @@ public interface Displayer<T extends DisplayerSettings> extends DataViewerListen
     /**
      * Add a listener interested in receive events generated within this displayer component.
      */
-    void addListener(DataViewerListener listener);
+    void addListener(DisplayerListener listener);
 
     /**
      * Draw the chart

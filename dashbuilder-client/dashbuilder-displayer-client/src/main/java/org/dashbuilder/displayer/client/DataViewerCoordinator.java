@@ -31,11 +31,11 @@ public class DataViewerCoordinator {
 
     protected List<Displayer> displayerList = new ArrayList<Displayer>();
     protected Map<RendererLibrary,List<Displayer>> rendererMap = new HashMap<RendererLibrary,List<Displayer>>();
-    protected DataViewerListener viewerListener = new CoordinatorListener();
+    protected DisplayerListener displayerListener = new CoordinatorListener();
 
     public void addViewer(Displayer displayer) {
         displayerList.add(displayer);
-        displayer.addListener(viewerListener);
+        displayer.addListener(displayerListener);
 
         RendererLibrary renderer = RendererLibLocator.get().lookupRenderer(displayer.getDisplayerSettings());
         List<Displayer> rendererGroup = rendererMap.get(renderer);
@@ -60,7 +60,7 @@ public class DataViewerCoordinator {
     /**
      * Internal class that listens to events raised by any of the Displayer instances handled by this coordinator.
      */
-    private class CoordinatorListener implements DataViewerListener {
+    private class CoordinatorListener implements DisplayerListener {
 
         public void onGroupIntervalsSelected(Displayer displayer, DataSetGroup groupOp) {
             for (Displayer other : displayerList) {
