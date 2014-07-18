@@ -28,11 +28,11 @@ import org.jboss.errai.ioc.client.container.SyncBeanManager;
  * The locator service for DisplayerSettingsEditor implementations.
  */
 @ApplicationScoped
-public class DisplayerEditorLocator {
+public class DisplayerSettingsEditorLocator {
 
-    public static DisplayerEditorLocator get() {
-        Collection<IOCBeanDef<DisplayerEditorLocator>> beans = IOC.getBeanManager().lookupBeans(DisplayerEditorLocator.class);
-        IOCBeanDef<DisplayerEditorLocator> beanDef = beans.iterator().next();
+    public static DisplayerSettingsEditorLocator get() {
+        Collection<IOCBeanDef<DisplayerSettingsEditorLocator>> beans = IOC.getBeanManager().lookupBeans(DisplayerSettingsEditorLocator.class);
+        IOCBeanDef<DisplayerSettingsEditorLocator> beanDef = beans.iterator().next();
         return beanDef.getInstance();
     }
 
@@ -41,17 +41,17 @@ public class DisplayerEditorLocator {
     /**
      * Get the editor component for the specified data displayer
      */
-    public <T extends DisplayerSettings> DisplayerSettingsEditor<T> lookupEditor(T displayerSettings) {
+    public <T extends DisplayerSettings> DisplayerSettingsEditor<T> lookupSettingsEditor(T displayerSettings) {
 
         String displayerType = displayerSettings.getType().toString().toLowerCase();
         String beanName =  displayerType + "_editor";
         Collection<IOCBeanDef> beans = beanManager.lookupBeans(beanName);
-        if (beans == null || beans.isEmpty()) throw new RuntimeException(displayerSettings.getType().toString().toLowerCase() + " editor not found.");
-        if (beans.size() > 1) throw new RuntimeException("Multiple editor implementations found for: " + displayerType);
+        if (beans == null || beans.isEmpty()) throw new RuntimeException(displayerSettings.getType().toString().toLowerCase() + " settings editor not found.");
+        if (beans.size() > 1) throw new RuntimeException("Multiple settings editors implementations found for: " + displayerType);
 
         IOCBeanDef beanDef = beans.iterator().next();
-        DisplayerSettingsEditor<T> editor = (DisplayerSettingsEditor<T> ) beanDef.getInstance();
-        editor.setDisplayerSettings(displayerSettings);
-        return editor;
+        DisplayerSettingsEditor<T> settingsEditor = (DisplayerSettingsEditor<T> ) beanDef.getInstance();
+        settingsEditor.setDisplayerSettings(displayerSettings);
+        return settingsEditor;
     }
 }

@@ -17,7 +17,7 @@ package org.dashbuilder.client.gallery;
 
 import com.google.gwt.user.client.ui.SimplePanel;
 import org.dashbuilder.displayer.client.DisplayerSettingsEditorListener;
-import org.dashbuilder.displayer.client.DisplayerEditorLocator;
+import org.dashbuilder.displayer.client.DisplayerSettingsEditorLocator;
 import org.dashbuilder.displayer.client.DisplayerSettingsEditor;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -64,16 +64,16 @@ public class GalleryNodeKPI extends GalleryNode {
             return new KPIViewer(kpi).draw();
         }
 
-        DisplayerSettingsEditor editor = DisplayerEditorLocator.get().lookupEditor(kpi.getDisplayerSettings());
+        DisplayerSettingsEditor settingsEditor = DisplayerSettingsEditorLocator.get().lookupSettingsEditor(kpi.getDisplayerSettings());
 
         SimplePanel editorPanel = new SimplePanel();
         editorPanel.setWidth("500px");
-        editorPanel.add(editor);
+        editorPanel.add(settingsEditor);
 
         final SimplePanel viewerPanel = new SimplePanel();
         viewerPanel.add(new KPIViewer( kpi ).draw());
 
-        editor.setListener(new DisplayerSettingsEditorListener() {
+        settingsEditor.setListener(new DisplayerSettingsEditorListener() {
             public void onDisplayerSettingChanged(DisplayerSettingsEditor editor) {
                 viewerPanel.clear();
                 viewerPanel.setWidget( new KPIViewer( kpi ).draw() );
