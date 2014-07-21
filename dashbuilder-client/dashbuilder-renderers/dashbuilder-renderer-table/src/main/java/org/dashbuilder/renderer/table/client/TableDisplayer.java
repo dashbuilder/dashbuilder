@@ -201,19 +201,21 @@ public class TableDisplayer extends AbstractDisplayer<TableDisplayerSettings> {
 
         final PagedTable<Integer> pagedTable = new PagedTable<Integer>(displayerSettings.getPageSize());
 
+        List<DisplayerSettingsColumn> displayerSettingsColumns = displayerSettings.getColumnList();
+        int nColumns = 0;
+        if ( !displayerSettingsColumns.isEmpty() ) {
+            createTableColumnsFromDisplayerSettings( pagedTable, displayerSettingsColumns );
+            nColumns = displayerSettingsColumns.size();
+        } else {
+            createTableColumnsFromDataSet( pagedTable, dataSet.getColumns() );
+            nColumns = dataSet.getColumns().size();
+        }
+
         pagedTable.setRowCount( numberOfRows, true );
         int height = 40 * displayerSettings.getPageSize();
         pagedTable.setHeight( ( height > ( Window.getClientHeight() - this.getAbsoluteTop() ) ? ( Window.getClientHeight() - this.getAbsoluteTop() ) : height ) + "px" );
-        int left = this.getAbsoluteLeft() + this.getOffsetWidth();
-        pagedTable.setWidth( Window.getClientWidth() * ( left == 0 ? 0.8 : 1 )  + "px" );
+        pagedTable.setWidth( nColumns * 100 + "px" );
         pagedTable.setEmptyTableCaption( TableConstants.INSTANCE.tableDisplayer_noDataAvailable() );
-
-        List<DisplayerSettingsColumn> displayerSettingsColumns = displayerSettings.getColumnList();
-        if ( !displayerSettingsColumns.isEmpty() ) {
-            createTableColumnsFromDisplayerSettings( pagedTable, displayerSettingsColumns );
-        } else {
-            createTableColumnsFromDataSet( pagedTable, dataSet.getColumns() );
-        }
 
         pagedTable.addColumnSortHandler(new ColumnSortEvent.AsyncHandler( pagedTable ) {
 
