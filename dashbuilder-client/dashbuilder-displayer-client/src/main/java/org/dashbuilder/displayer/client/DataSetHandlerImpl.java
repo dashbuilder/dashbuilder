@@ -89,19 +89,19 @@ public class DataSetHandlerImpl implements DataSetHandler {
             clone.getGroupFunctions().clear();
             int index = lookupCurrent.getLastGroupOpIndex(null, true) + 1;
             lookupCurrent.addOperation(index, clone);
+            return true;
         }
-        // For existing operations, just set the interval selection.
-        else {
-            targetOp.setSelectedIntervalNames(op.getSelectedIntervalNames());
 
-            // If it was the last existing group operation then the group operation must be applied after the selection.
-            if (found == last && !lookupBase.getOperationList(DataSetGroup.class).isEmpty()) {
-                DataSetGroup clone = op.cloneInstance();
-                clone.getSelectedIntervalNames().clear();
-                lookupCurrent.addOperation(clone);
-            }
+        // For existing operations, just set the interval selection.
+        targetOp.setSelectedIntervalNames(op.getSelectedIntervalNames());
+
+        // If it was the last existing group operation then the group operation must be applied after the selection.
+        if (found == last && !lookupBase.getOperationList(DataSetGroup.class).isEmpty()) {
+            DataSetGroup clone = op.cloneInstance();
+            clone.getSelectedIntervalNames().clear();
+            lookupCurrent.addOperation(clone);
         }
-        return true;
+        return false;
     }
 
     protected boolean belongsToBase(DataSetGroup op) {
