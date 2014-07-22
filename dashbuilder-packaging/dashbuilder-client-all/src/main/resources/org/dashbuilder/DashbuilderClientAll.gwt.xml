@@ -24,6 +24,7 @@
   <inherits name="org.dashbuilder.CommonClient"/>
 
   <inherits name="org.dashbuilder.DatasetAPI"/>
+  <inherits name="org.dashbuilder.DatasetShared"/>
   <inherits name="org.dashbuilder.DatasetClient"/>
 
   <inherits name="org.dashbuilder.DisplayerAPI"/>

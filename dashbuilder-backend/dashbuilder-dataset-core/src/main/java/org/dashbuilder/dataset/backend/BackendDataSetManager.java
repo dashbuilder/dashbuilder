@@ -13,38 +13,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbuilder.dataset.client;
-
-import java.util.Collection;
+package org.dashbuilder.dataset.backend;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
+import org.apache.commons.lang.StringUtils;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetFactory;
 import org.dashbuilder.dataset.DataSetLookup;
 import org.dashbuilder.dataset.DataSetManager;
 import org.dashbuilder.dataset.DataSetMetadata;
-import org.dashbuilder.common.client.StringUtils;
 import org.dashbuilder.dataset.engine.SharedDataSetOpEngine;
 import org.dashbuilder.dataset.engine.index.DataSetIndex;
-import org.jboss.errai.ioc.client.container.IOC;
-import org.jboss.errai.ioc.client.container.IOCBeanDef;
 
 /**
- * Client implementation of a DataSetManager. It hold as map of data sets in memory.
- * It is designed to manipulate not quite big data sets. For big data sets the backend implementation is better,
+ * Backend implementation of the DataSetManager interface. It's been designed with several goals in mind:
+ * <ul>
+ *     <li>To provide a highly reusable data set cache.</li>
+ *     <li>To index almost every operation performed over a data set.</li>
+ *     <li>Multiple clients requesting the same data set operations will benefit from the indexing/caching services provided.</li>
+ * </ul>
  */
 @ApplicationScoped
-public class ClientDataSetManager implements DataSetManager {
+public class BackendDataSetManager implements DataSetManager {
 
-    public static ClientDataSetManager get() {
-        Collection<IOCBeanDef<ClientDataSetManager>> beans = IOC.getBeanManager().lookupBeans(ClientDataSetManager.class);
-        IOCBeanDef<ClientDataSetManager> beanDef = beans.iterator().next();
-        return beanDef.getInstance();
-    }
-
-    @Inject SharedDataSetOpEngine dataSetOpEngine;
+    @Inject
+    protected SharedDataSetOpEngine dataSetOpEngine;
 
     public DataSet createDataSet(String uuid) {
         DataSet dataSet = DataSetFactory.newDataSet();
@@ -53,16 +48,10 @@ public class ClientDataSetManager implements DataSetManager {
     }
 
     public DataSet getDataSet(String uuid) {
-        DataSetIndex index = dataSetOpEngine.getIndexRegistry().get(uuid);
+        DataSetIndex index = fetchDataSet(uuid);
         if (index == null) return null;
 
         return index.getDataSet();
-    }
-
-    public void registerDataSet(DataSet dataSet) {
-        if (dataSet != null) {
-            dataSetOpEngine.getIndexRegistry().put(dataSet);
-        }
     }
 
     public DataSetMetadata getDataSetMetadata(String uuid) {
@@ -72,12 +61,26 @@ public class ClientDataSetManager implements DataSetManager {
         return dataSet.getMetadata();
     }
 
+    public void registerDataSet(DataSet dataSet) {
+        if (dataSet != null) {
+            dataSetOpEngine.getIndexRegistry().put(dataSet);
+        }
+    }
+
+    public DataSet refreshDataSet(String uuid) {
+        dataSetOpEngine.getIndexRegistry().remove(uuid);
+        DataSetIndex index = fetchDataSet(uuid);
+        if (index == null) return null;
+
+        return index.getDataSet();
+    }
+
     public DataSet lookupDataSet(DataSetLookup lookup) {
         String uuid = lookup.getDataSetUUID();
         if (StringUtils.isEmpty(uuid)) return null;
 
         // Get the target data set
-        DataSetIndex dataSetIndex = dataSetOpEngine.getIndexRegistry().get(uuid);
+        DataSetIndex dataSetIndex = fetchDataSet(uuid);
         if (dataSetIndex == null) return null;
         DataSet dataSet = dataSetIndex.getDataSet();
 
@@ -104,5 +107,24 @@ public class ClientDataSetManager implements DataSetManager {
         if (dataSet == null) return null;
 
         return dataSet.getMetadata();
+    }
+
+    // Internal stuff
+
+    protected DataSetIndex fetchDataSet(String uuid) {
+        DataSetIndex index = dataSetOpEngine.getIndexRegistry().get(uuid);
+        if (index != null) return index;
+
+        return loadDataSet(uuid);
+    }
+
+    protected DataSetIndex loadDataSet(String uuid) {
+        /* TODO: Get the data set from an external provider.
+        DataProviderManager dataProviderManager = DataProviderServices.getDataProviderManager();
+        DataSet dataSet = dataProviderManager.fetchDataSet(uuid);
+        return dataSetIndexer.put(dataSet);
+        */
+
+        return null;
     }
 }

@@ -17,12 +17,9 @@ package org.dashbuilder.dataset;
 
 import javax.inject.Inject;
 
-import org.dashbuilder.dataset.engine.BackendDataSetOpEngine;
+import org.dashbuilder.dataset.engine.SharedDataSetOpEngine;
 import org.dashbuilder.dataset.engine.index.DataSetIndex;
 import org.dashbuilder.dataset.engine.index.stats.DataSetIndexStats;
-import org.dashbuilder.dataset.DataSet;
-import org.dashbuilder.dataset.DataSetFactory;
-import org.dashbuilder.dataset.DataSetLookup;
 import org.dashbuilder.test.ShrinkWrapHelper;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -89,7 +86,7 @@ public class DataSetIndexTest {
             .sort("amount", "desc")
             .buildLookup();
 
-    @Inject BackendDataSetOpEngine dataSetOpEngine;
+    @Inject SharedDataSetOpEngine dataSetOpEngine;
     DataSet dataSet;
 
     @Before
