@@ -15,7 +15,6 @@
  */
 package org.dashbuilder.displayer.client;
 
-import org.dashbuilder.dataset.DataSetRef;
 import org.dashbuilder.displayer.DisplayerSettings;
 
 /**
@@ -26,11 +25,10 @@ public class DisplayerHelper {
     /**
      * Get a Displayer instance for displaying the specified data set with the given display configuration.
      *
-     * @param dataSetRef A reference to the data set.
      * @param displayerSettings The given display configuration.
      */
-    public static Displayer lookupDisplayer(DataSetRef dataSetRef, DisplayerSettings displayerSettings ) {
-        return DisplayerLocator.get().lookupDisplayer( dataSetRef, displayerSettings );
+    public static Displayer lookupDisplayer(DisplayerSettings displayerSettings ) {
+        return DisplayerLocator.get().lookupDisplayer(displayerSettings);
     }
 
     /**

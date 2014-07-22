@@ -24,7 +24,6 @@ import org.dashbuilder.displayer.DisplayerSettingsFactory;
 import org.dashbuilder.displayer.client.Displayer;
 import org.dashbuilder.displayer.client.DisplayerCoordinator;
 import org.dashbuilder.displayer.client.DisplayerHelper;
-import org.dashbuilder.dataset.DataSetFactory;
 
 import static org.dashbuilder.dataset.group.DateIntervalType.*;
 import static org.dashbuilder.dataset.sort.SortOrder.DESCENDING;
@@ -63,12 +62,10 @@ public class SalesExpectedByDate extends Composite {
         // Create the chart definitions
 
         areaChartByDate = DisplayerHelper.lookupDisplayer(
-                DataSetFactory.newDSLookup()
+                DisplayerSettingsFactory.newAreaChartSettings()
                 .dataset(SALES_OPPS)
                 .group(CREATION_DATE, 80, DAY)
                 .sum(EXPECTED_AMOUNT)
-                .buildLookup(),
-                DisplayerSettingsFactory.newAreaChartSettings()
                 .title("Expected pipeline")
                 .titleVisible(true)
                 .width(850).height(200)
@@ -76,59 +73,51 @@ public class SalesExpectedByDate extends Composite {
                 .column("Creation date")
                 .column("Amount")
                 .filterOn(true, true, true)
-                .buildDisplayerSettings());
+                .buildSettings());
 
         pieChartYears = DisplayerHelper.lookupDisplayer(
-                DataSetFactory.newDSLookup()
+                DisplayerSettingsFactory.newPieChartSettings()
                 .dataset(SALES_OPPS)
                 .group(CREATION_DATE, YEAR)
                 .count("occurrences")
-                .buildLookup(),
-                DisplayerSettingsFactory.newPieChartSettings()
                 .title("Year")
                 .titleVisible(true)
                 .width(200).height(150)
                 .margins(0, 0, 0, 0)
                 .filterOn(false, true, false)
-                .buildDisplayerSettings());
+                .buildSettings());
 
         pieChartQuarters = DisplayerHelper.lookupDisplayer(
-                DataSetFactory.newDSLookup()
+                DisplayerSettingsFactory.newPieChartSettings()
                 .dataset(SALES_OPPS)
                 .group(CREATION_DATE).fixed(QUARTER)
                 .count("occurrences")
-                .buildLookup(),
-                DisplayerSettingsFactory.newPieChartSettings()
                 .title("Quarter")
                 .titleVisible(true)
                 .width(200).height(150)
                 .margins(0, 0, 0, 0)
                 .filterOn(false, true, false)
-                .buildDisplayerSettings());
+                .buildSettings());
 
         barChartDayOfWeek = DisplayerHelper.lookupDisplayer(
-                DataSetFactory.newDSLookup()
+                DisplayerSettingsFactory.newBarChartSettings()
                 .dataset(SALES_OPPS)
                 .group(CREATION_DATE).fixed(DAY_OF_WEEK).firstDay(SUNDAY)
                 .count("occurrences")
-                .buildLookup(),
-                DisplayerSettingsFactory.newBarChartSettings()
                 .title("Day of week")
                 .titleVisible(true)
                 .width(200).height(150)
                 .margins(0, 20, 80, 0)
                 .horizontal()
                 .filterOn(false, true, true)
-                .buildDisplayerSettings());
+                .buildSettings());
 
 
         pieChartByPipeline = DisplayerHelper.lookupDisplayer(
-                DataSetFactory.newDSLookup()
+                DisplayerSettingsFactory.newPieChartSettings()
                 .dataset(SALES_OPPS)
                 .group(PIPELINE)
                 .count("occurrences")
-                .buildLookup(),
-                DisplayerSettingsFactory.newPieChartSettings()
                 .title("Pipeline")
                 .titleVisible(true)
                 .width(200).height(150)
@@ -136,13 +125,11 @@ public class SalesExpectedByDate extends Composite {
                 .column("Pipeline")
                 .column("Number of opps")
                 .filterOn(false, true, true)
-                .buildDisplayerSettings());
+                .buildSettings());
 
         tableAll = DisplayerHelper.lookupDisplayer(
-                DataSetFactory.newDSLookup()
-                .dataset(SALES_OPPS)
-                .buildLookup(),
                 DisplayerSettingsFactory.newTableSettings()
+                .dataset(SALES_OPPS)
                 .title("List of Opportunities")
                 .titleVisible(true)
                 .tablePageSize(5)
@@ -158,7 +145,7 @@ public class SalesExpectedByDate extends Composite {
                 .column(CREATION_DATE, "Creation")
                 .column(CLOSING_DATE, "Closing")
                 .filterOn(false, true, true)
-                .buildDisplayerSettings());
+                .buildSettings());
 
         // Make that charts interact among them
         DisplayerCoordinator displayerCoordinator = new DisplayerCoordinator();

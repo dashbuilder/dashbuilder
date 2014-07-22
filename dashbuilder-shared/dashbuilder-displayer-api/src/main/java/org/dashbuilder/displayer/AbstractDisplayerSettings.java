@@ -18,8 +18,14 @@ package org.dashbuilder.displayer;
 import java.util.List;
 import java.util.ArrayList;
 
+import org.dashbuilder.dataset.DataSet;
+import org.dashbuilder.dataset.DataSetLookup;
+
 public abstract class AbstractDisplayerSettings implements DisplayerSettings {
 
+    protected String UUID;
+    protected DataSet dataSet;
+    protected DataSetLookup dataSetLookup;
     protected String title;
     protected boolean titleVisible = true;
     protected String renderer;
@@ -29,6 +35,30 @@ public abstract class AbstractDisplayerSettings implements DisplayerSettings {
     protected boolean filterSelfApplyEnabled = false;
     protected boolean filterNotificationEnabled = false;
     protected boolean filterListeningEnabled = false;
+
+    public String getUUID() {
+        return UUID;
+    }
+
+    public void setUUID(String UUID) {
+        this.UUID = UUID;
+    }
+
+    public DataSet getDataSet() {
+        return dataSet;
+    }
+
+    public void setDataSet(DataSet dataSet) {
+        this.dataSet = dataSet;
+    }
+
+    public DataSetLookup getDataSetLookup() {
+        return dataSetLookup;
+    }
+
+    public void setDataSetLookup(DataSetLookup dataSetLookup) {
+        this.dataSetLookup = dataSetLookup;
+    }
 
     public String getTitle() {
         return title;

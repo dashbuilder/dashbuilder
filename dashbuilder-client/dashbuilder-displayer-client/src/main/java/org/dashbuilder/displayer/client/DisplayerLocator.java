@@ -19,7 +19,10 @@ import java.util.Collection;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
-import org.dashbuilder.dataset.DataSetRef;
+import org.dashbuilder.dataset.DataSet;
+import org.dashbuilder.dataset.DataSetLookup;
+import org.dashbuilder.dataset.client.ClientDataSetManager;
+import org.dashbuilder.dataset.client.DataSetLookupClient;
 import org.dashbuilder.displayer.DisplayerSettings;
 import org.jboss.errai.ioc.client.container.IOC;
 import org.jboss.errai.ioc.client.container.IOCBeanDef;
@@ -36,7 +39,8 @@ public class DisplayerLocator {
         return beanDef.getInstance();
     }
 
-    @Inject DataSetHandlerLocator handlerLocator;
+    @Inject ClientDataSetManager clientDataSetManager;
+    @Inject DataSetLookupClient dataSetLookupClient;
 
     /**
      * Get the displayer component for the specified data displayer (with no data set attached).
@@ -45,17 +49,17 @@ public class DisplayerLocator {
         RendererLibrary renderer = RendererLibLocator.get().lookupRenderer(target);
         Displayer displayer = renderer.lookupDisplayer(target);
         if (displayer == null) throw new RuntimeException(target.getType() + " displayer not supported in " + target.getRenderer() + " renderer.");
-
         displayer.setDisplayerSettings( target );
-        return displayer;
-    }
 
-    /**
-     * Get the displayer component for the specified data displayer and attach it to the specified data set ref.
-     */
-    public Displayer lookupDisplayer(DataSetRef dataSetRef, DisplayerSettings target) {
-        Displayer displayer = lookupDisplayer(target);
-        DataSetHandler handler = handlerLocator.lookupHandler(dataSetRef);
+        // Check if a DataSet has been set instead of a DataSetLookup.
+        DataSetLookup dataSetLookup = target.getDataSetLookup();
+        if (target.getDataSet() != null) {
+            DataSet dataSet = target.getDataSet();
+            clientDataSetManager.registerDataSet(dataSet);
+            dataSetLookup = new DataSetLookup(dataSet.getUUID());
+        }
+
+        DataSetHandler handler = new DataSetHandlerImpl(dataSetLookupClient, dataSetLookup);
         displayer.setDataSetHandler(handler);
         return displayer;
     }

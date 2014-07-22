@@ -13,57 +13,58 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbuilder.kpi.client;
+package org.dashbuilder.displayer.client;
 
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
 import com.google.gwt.user.client.ui.IsWidget;
-import org.dashbuilder.kpi.KPI;
+import org.dashbuilder.displayer.DisplayerSettings;
+import org.dashbuilder.displayer.client.DisplayerSettingsManager;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
 import org.uberfire.client.annotations.WorkbenchPartView;
 import org.uberfire.client.annotations.WorkbenchScreen;
 import org.uberfire.lifecycle.OnStartup;
 import org.uberfire.mvp.PlaceRequest;
 
-@WorkbenchScreen(identifier = "KPIScreen")
+@WorkbenchScreen(identifier = "DisplayerScreen")
 @Dependent
-public class KPIPresenter {
+public class DisplayerPresenter {
 
-    /** The KPI to display */
-    private KPI kpi;
+    /** The displayer settings */
+    private DisplayerSettings displayerSettings;
 
-    /** The KPI manager */
-    @Inject private ClientKPIManager kpiManager;
+    /** The setting manager */
+    @Inject private DisplayerSettingsManager displayerSettingsManager;
 
-    /** The KPI widget */
-    @Inject private KPIViewer kpiViewer;
+    /** The displayer view */
+    @Inject private DisplayerView displayerView;
 
     /** The dashboard context */
-    @Inject private KPICoordinator kpiCoordinator;
+    @Inject private DisplayerViewCoordinator displayerViewCoordinator;
 
     @OnStartup
     public void onStartup( final PlaceRequest placeRequest) {
-        // Locate the KPI specified as a parameter.
-        String kpiUid = placeRequest.getParameter("kpi", "");
-        this.kpi = kpiManager.getKPI(kpiUid);
-        if (kpi == null) throw new IllegalArgumentException("KPI not found.");
+        // Locate the UUID specified as a parameter.
+        String uuid = placeRequest.getParameter("uuid", "");
+        this.displayerSettings = displayerSettingsManager.getDisplayerSettings(uuid);
+        if (displayerSettings == null) throw new IllegalArgumentException("Displayer settings not found.");
 
         // Draw the KPI.
-        kpiViewer.setKpi(kpi);
-        kpiViewer.draw();
+        displayerView.setDisplayerSettings(displayerSettings);
+        displayerView.draw();
 
         // Register the KPIViewer into the coordinator.
-        kpiCoordinator.addKPIViewer(kpiViewer);
+        displayerViewCoordinator.addDisplayerView(displayerView);
     }
 
     @WorkbenchPartTitle
     public String getTitle() {
-        return kpi.getDisplayerSettings().getTitle();
+        return displayerSettings.getTitle();
     }
 
     @WorkbenchPartView
     public IsWidget getView() {
-        return kpiViewer;
+        return displayerView;
     }
 }

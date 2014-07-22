@@ -23,7 +23,6 @@ import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.displayer.client.Displayer;
 import org.dashbuilder.displayer.client.DisplayerCoordinator;
 import org.dashbuilder.displayer.client.DisplayerHelper;
-import org.dashbuilder.dataset.DataSetFactory;
 import org.dashbuilder.displayer.DisplayerSettingsFactory;
 
 import static org.dashbuilder.client.sales.SalesConstants.*;
@@ -52,14 +51,12 @@ public class SalesDistributionByCountry extends Composite {
         // Create the chart definitions
 
         bubbleByCountry = DisplayerHelper.lookupDisplayer(
-                DataSetFactory.newDSLookup()
+                DisplayerSettingsFactory.newBubbleChartSettings()
                 .dataset(SALES_OPPS)
                 .group(COUNTRY)
                 .count("opps")
                 .avg(PROBABILITY)
                 .sum(EXPECTED_AMOUNT)
-                .buildLookup(),
-                DisplayerSettingsFactory.newBubbleChartSettings()
                 .title("Opportunities distribution by Country ")
                 .width(450).height(300)
                 .margins(20, 50, 50, 0)
@@ -69,16 +66,14 @@ public class SalesDistributionByCountry extends Composite {
                 .column(COUNTRY, "Country")
                 .column(EXPECTED_AMOUNT, "Expected amount")
                 .filterOn(false, true, true)
-                .buildDisplayerSettings());
+                .buildSettings());
 
         mapByCountry = DisplayerHelper.lookupDisplayer(
-                DataSetFactory.newDSLookup()
+                DisplayerSettingsFactory.newMapChartSettings()
                 .dataset(SALES_OPPS)
                 .group(COUNTRY)
                 .count("opps")
                 .sum(EXPECTED_AMOUNT)
-                .buildLookup(),
-                DisplayerSettingsFactory.newMapChartSettings()
                 .title("By Country")
                 .width(450).height(290)
                 .margins(10, 10, 10, 10)
@@ -86,13 +81,11 @@ public class SalesDistributionByCountry extends Composite {
                 .column("Number of opportunities")
                 .column("Total amount")
                 .filterOn(false, true, true)
-                .buildDisplayerSettings());
+                .buildSettings());
 
         tableAll = DisplayerHelper.lookupDisplayer(
-                DataSetFactory.newDSLookup()
-                .dataset(SALES_OPPS)
-                .buildLookup(),
                 DisplayerSettingsFactory.newTableSettings()
+                .dataset(SALES_OPPS)
                 .title("List of Opportunities")
                 .titleVisible(true)
                 .tablePageSize(8)
@@ -108,7 +101,7 @@ public class SalesDistributionByCountry extends Composite {
                 .column(CLOSING_DATE, "Closing")
                 .column(AMOUNT, "Amount")
                 .filterOn(false, true, true)
-                .buildDisplayerSettings());
+                .buildSettings());
 
         // Make that charts interact among them
         DisplayerCoordinator displayerCoordinator = new DisplayerCoordinator();

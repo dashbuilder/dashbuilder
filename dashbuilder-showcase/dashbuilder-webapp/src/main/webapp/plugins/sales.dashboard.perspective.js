@@ -6,24 +6,24 @@ $registerPerspective({
     view: {
         parts: [
             {
-                place: "KPIScreen",
-                parameters: {"kpi": "opps-by-status", "token" : "4"}
+                place: "DisplayerScreen",
+                parameters: {"uuid": "opps-by-status", "token" : "4"}
             },
             {
-                place: "KPIScreen",
-                parameters: {"kpi": "opps-by-salesman", "token" : "6"}
+                place: "DisplayerScreen",
+                parameters: {"uuid": "opps-by-salesman", "token" : "6"}
             },
             {
-                place: "KPIScreen",
-                parameters: {"kpi": "opps-by-product", "token" : "7"}
+                place: "DisplayerScreen",
+                parameters: {"uuid": "opps-by-product", "token" : "7"}
             },
             {
-                place: "KPIScreen",
-                parameters: {"kpi": "opps-by-country", "token" : "5"}
+                place: "DisplayerScreen",
+                parameters: {"uuid": "opps-by-country", "token" : "5"}
             },
             {
-                place: "KPIScreen",
-                parameters: {"kpi": "opps-country-summary", "token" : "8"}
+                place: "DisplayerScreen",
+                parameters: {"uuid": "opps-country-summary", "token" : "8"}
             }
         ],
         panels: [
@@ -33,8 +33,8 @@ $registerPerspective({
                 panel_type: "simple",
                 parts: [
                     {
-                        place: "KPIScreen",
-                        parameters: {"kpi": "opps-expected-pipeline", "token" : "2"}
+                        place: "DisplayerScreen",
+                        parameters: {"uuid": "opps-expected-pipeline", "token" : "2"}
                     }
                 ],
                 panels: [
@@ -44,8 +44,8 @@ $registerPerspective({
                         panel_type: "simple",
                         parts: [
                             {
-                                place: "KPIScreen",
-                                parameters: {"kpi": "opps-by-pipeline", "token" : "3"}
+                                place: "DisplayerScreen",
+                                parameters: {"uuid": "opps-by-pipeline", "token" : "3"}
                             }
                         ]
                     }

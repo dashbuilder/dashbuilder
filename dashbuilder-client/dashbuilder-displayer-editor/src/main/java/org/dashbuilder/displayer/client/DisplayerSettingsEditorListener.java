@@ -25,5 +25,5 @@ public interface DisplayerSettingsEditorListener {
      *
      * @param editor The DisplayerSettingsEditor instance where the event comes from.
      */
-    void onDisplayerSettingChanged(DisplayerSettingsEditor editor);
+    void onDisplayerSettingsChanged(DisplayerSettingsEditor editor);
 }

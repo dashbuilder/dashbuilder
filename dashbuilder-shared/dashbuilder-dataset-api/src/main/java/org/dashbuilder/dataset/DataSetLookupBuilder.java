@@ -37,7 +37,7 @@ import org.dashbuilder.dataset.date.Month;
  * </pre>
  *
  */
-public interface DataSetLookupBuilder<T extends DataSetLookupBuilder> {
+public interface DataSetLookupBuilder<T> {
 
     /**
      * The UUID reference to the source data set.
@@ -95,7 +95,7 @@ public interface DataSetLookupBuilder<T extends DataSetLookupBuilder> {
      * will be applied.
      * For example:
      * <pre>
-     *   DataSetFactory.newDSLookup()
+     *   DataSetFactory.newDSLookupBuilder()
      *   .dataset(SALES_OPPS)
      *   .group(CLOSING_DATE, 80, MONTH)
      * </pre>
@@ -288,7 +288,7 @@ public interface DataSetLookupBuilder<T extends DataSetLookupBuilder> {
      *
      * Example:
      * <pre>
-     *   DataSetFactory.newDSLookup()
+     *   DataSetFactory.newDSLookupBuilder()
      *   .dataset(SALES_OPPS)
      *   .group(CLOSING_DATE)
      *   .fixed(MONTH).firstMonth(JANUARY)
@@ -416,7 +416,7 @@ public interface DataSetLookupBuilder<T extends DataSetLookupBuilder> {
      *
      * For example:
      * <pre>
-     *   DataSetFactory.newDSLookup()
+     *   DataSetFactory.newDSLookupBuilder()
      *   .dataset(EXPENSE_REPORTS)
      *   .group("department", "Department")
      *   .select("Services", "Engineering", "Support")
@@ -436,7 +436,7 @@ public interface DataSetLookupBuilder<T extends DataSetLookupBuilder> {
      *
      * For example:
      * <pre>
-     *   DataSetFactory.newDSLookup()
+     *   DataSetFactory.newDSLookupBuilder()
      *   .dataset(EXPENSE_REPORTS)
      *   .filter(AND(
      *               isEqualsTo("department", "Sales"),
@@ -463,7 +463,7 @@ public interface DataSetLookupBuilder<T extends DataSetLookupBuilder> {
      *
      * For example:
      * <pre>
-     *   DataSetFactory.newDSLookup()
+     *   DataSetFactory.newDSLookupBuilder()
      *   .dataset(EXPENSE_REPORTS)
      *   .filter("amount",
      *           AND(

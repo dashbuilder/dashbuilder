@@ -43,6 +43,6 @@ public abstract class AbstractDisplayerSettingsEditor<T extends DisplayerSetting
     }
 
     protected void notifyChanges() {
-        listener.onDisplayerSettingChanged(this);
+        listener.onDisplayerSettingsChanged(this);
     }
 }

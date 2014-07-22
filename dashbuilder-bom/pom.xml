@@ -60,19 +60,6 @@
         <classifier>sources</classifier>
       </dependency>
 
-      <dependency>
-        <groupId>org.dashbuilder</groupId>
-        <artifactId>dashbuilder-kpi-api</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.dashbuilder</groupId>
-        <artifactId>dashbuilder-kpi-api</artifactId>
-        <version>${project.version}</version>
-        <classifier>sources</classifier>
-      </dependency>
-
       <!-- Dashbuilder Shared -->
       <dependency>
         <groupId>org.dashbuilder</groupId>
@@ -164,13 +151,13 @@
 
       <dependency>
         <groupId>org.dashbuilder</groupId>
-        <artifactId>dashbuilder-kpi-client</artifactId>
+        <artifactId>dashbuilder-displayer-screen</artifactId>
         <version>${project.version}</version>
       </dependency>
 
       <dependency>
         <groupId>org.dashbuilder</groupId>
-        <artifactId>dashbuilder-kpi-client</artifactId>
+        <artifactId>dashbuilder-displayer-screen</artifactId>
         <version>${project.version}</version>
         <classifier>sources</classifier>
       </dependency>

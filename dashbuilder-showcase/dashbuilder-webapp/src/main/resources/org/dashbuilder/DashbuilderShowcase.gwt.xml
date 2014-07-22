@@ -5,7 +5,7 @@
   <inherits name="org.uberfire.UberfireClientAll"/>
   <inherits name="org.uberfire.UberfireNSWEManager" />
 
-  <inherits name="org.dashbuilder.KpiClient"/>
+  <inherits name="org.dashbuilder.DisplayerScreen"/>
   <inherits name="org.dashbuilder.DisplayerEditor"/>
   <inherits name="org.dashbuilder.renderer.GChartsRenderer"/>
   <inherits name="org.dashbuilder.renderer.TableRenderer"/>

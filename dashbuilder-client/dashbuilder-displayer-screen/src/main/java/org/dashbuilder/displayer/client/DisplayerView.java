@@ -13,51 +13,43 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbuilder.kpi.client;
+package org.dashbuilder.displayer.client;
 
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimplePanel;
-import org.dashbuilder.displayer.client.Displayer;
-import org.dashbuilder.displayer.client.DisplayerHelper;
-import org.dashbuilder.dataset.DataSetRef;
 import org.dashbuilder.displayer.DisplayerSettings;
-import org.dashbuilder.kpi.KPI;
 
-public class KPIViewer extends Composite {
+public class DisplayerView extends Composite {
 
+    protected DisplayerSettings displayerSettings;
     protected SimplePanel container = new SimplePanel();
     protected Label label = new Label();
     protected Displayer displayer;
-    protected KPI kpi;
 
-    public KPIViewer() {
+    public DisplayerView() {
         initWidget(container);
     }
 
-    public KPIViewer(KPI kpi) {
+    public DisplayerView(DisplayerSettings displayerSettings) {
         this();
-        setKpi(kpi);
+        setDisplayerSettings(displayerSettings);
     }
 
-    public KPI getKpi() {
-        return kpi;
+    public DisplayerSettings getDisplayerSettings() {
+        return displayerSettings;
     }
 
-    public void setKpi(KPI kpi) {
-        this.kpi = kpi;
-
-        // Locate the Displayer widget to display the KPI
-        DisplayerSettings displayerSettings = kpi.getDisplayerSettings();
-        DataSetRef dataSetRef = kpi.getDataSetRef();
-        displayer = DisplayerHelper.lookupDisplayer( dataSetRef, displayerSettings );
+    public void setDisplayerSettings(DisplayerSettings displayerSettings) {
+        this.displayerSettings = displayerSettings;
+        this. displayer = DisplayerHelper.lookupDisplayer(displayerSettings);
     }
 
     public Displayer getDisplayer() {
         return displayer;
     }
 
-    public KPIViewer draw() {
+    public DisplayerView draw() {
         try {
             container.clear();
             container.add( displayer );
@@ -69,7 +61,7 @@ public class KPIViewer extends Composite {
         return this;
     }
 
-    public KPIViewer redraw() {
+    public DisplayerView redraw() {
         try {
             container.clear();
             container.add( displayer );

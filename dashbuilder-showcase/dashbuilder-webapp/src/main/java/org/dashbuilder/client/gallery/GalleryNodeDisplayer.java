@@ -16,39 +16,39 @@
 package org.dashbuilder.client.gallery;
 
 import com.google.gwt.user.client.ui.SimplePanel;
+import org.dashbuilder.displayer.DisplayerSettings;
 import org.dashbuilder.displayer.client.DisplayerSettingsEditorListener;
 import org.dashbuilder.displayer.client.DisplayerSettingsEditorLocator;
 import org.dashbuilder.displayer.client.DisplayerSettingsEditor;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import org.dashbuilder.kpi.client.KPIViewer;
-import org.dashbuilder.kpi.KPI;
+import org.dashbuilder.displayer.client.DisplayerView;
 
 /**
  * A KPI gallery node.
  */
-public class GalleryNodeKPI extends GalleryNode {
+public class GalleryNodeDisplayer extends GalleryNode {
 
-    protected KPI kpi;
+    protected DisplayerSettings displayerSettings;
     protected boolean editEnabled = false;
 
-    public GalleryNodeKPI(String name, KPI kpi) {
+    public GalleryNodeDisplayer(String name, DisplayerSettings settings) {
         super(name);
-        this.kpi = kpi;
+        this.displayerSettings = settings;
     }
 
-    public GalleryNodeKPI(String name, boolean editEnabled, KPI kpi) {
+    public GalleryNodeDisplayer(String name, boolean editEnabled, DisplayerSettings settings) {
         super(name);
-        this.kpi = kpi;
+        this.displayerSettings = settings;
         this.editEnabled = editEnabled;
     }
 
-    public KPI getKpi() {
-        return kpi;
+    public DisplayerSettings getDisplayerSettings() {
+        return displayerSettings;
     }
 
-    public void setKpi(KPI kpi) {
-        this.kpi = kpi;
+    public void setDisplayerSettings(DisplayerSettings displayerSettings) {
+        this.displayerSettings = displayerSettings;
     }
 
     public boolean isEditEnabled() {
@@ -61,22 +61,22 @@ public class GalleryNodeKPI extends GalleryNode {
 
     protected Widget createWidget() {
         if (!isEditEnabled()) {
-            return new KPIViewer(kpi).draw();
+            return new DisplayerView(displayerSettings).draw();
         }
 
-        DisplayerSettingsEditor settingsEditor = DisplayerSettingsEditorLocator.get().lookupSettingsEditor(kpi.getDisplayerSettings());
+        DisplayerSettingsEditor settingsEditor = DisplayerSettingsEditorLocator.get().lookupSettingsEditor(displayerSettings);
 
         SimplePanel editorPanel = new SimplePanel();
         editorPanel.setWidth("500px");
         editorPanel.add(settingsEditor);
 
         final SimplePanel viewerPanel = new SimplePanel();
-        viewerPanel.add(new KPIViewer( kpi ).draw());
+        viewerPanel.add(new DisplayerView(displayerSettings).draw());
 
         settingsEditor.setListener(new DisplayerSettingsEditorListener() {
-            public void onDisplayerSettingChanged(DisplayerSettingsEditor editor) {
+            public void onDisplayerSettingsChanged(DisplayerSettingsEditor editor) {
                 viewerPanel.clear();
-                viewerPanel.setWidget( new KPIViewer( kpi ).draw() );
+                viewerPanel.setWidget(new DisplayerView(displayerSettings).draw());
             }
         });
 

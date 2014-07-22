@@ -28,7 +28,7 @@ package org.dashbuilder.displayer;
  *   .column(PROBABILITY, "Average probability")
  *   .column(COUNTRY, "Country")
  *   .column(EXPECTED_AMOUNT, "Expected amount")
- *   .buildDisplayerSettings());
+ *   .buildSettings());
  * </pre>
  */
 public interface BubbleChartSettingsBuilder<T extends BubbleChartSettingsBuilder> extends XAxisChartSettingsBuilder<T> {

@@ -32,7 +32,7 @@ public final class DataSetFactory {
         return new DataSetBuilderImpl();
     }
 
-    public static DataSetLookupBuilder newDSLookup() {
+    public static DataSetLookupBuilder<DataSetLookupBuilderImpl> newDSLookupBuilder() {
         return new DataSetLookupBuilderImpl();
     }
 }

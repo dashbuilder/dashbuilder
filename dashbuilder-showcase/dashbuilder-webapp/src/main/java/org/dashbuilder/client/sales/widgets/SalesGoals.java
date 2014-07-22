@@ -24,7 +24,6 @@ import org.dashbuilder.displayer.DisplayerSettingsFactory;
 import org.dashbuilder.displayer.client.Displayer;
 import org.dashbuilder.displayer.client.DisplayerCoordinator;
 import org.dashbuilder.displayer.client.DisplayerHelper;
-import org.dashbuilder.dataset.DataSetFactory;
 
 import static org.dashbuilder.client.sales.SalesConstants.*;
 import static org.dashbuilder.dataset.group.DateIntervalType.*;
@@ -59,27 +58,23 @@ public class SalesGoals extends Composite {
         // Create the chart definitions
 
         meterChartAmount = DisplayerHelper.lookupDisplayer(
-                DataSetFactory.newDSLookup()
+                DisplayerSettingsFactory.newMeterChartSettings()
                 .dataset(SALES_OPPS)
                 .sum(AMOUNT)
-                .buildLookup(),
-                DisplayerSettingsFactory.newMeterChartSettings()
                 .title("Sales goal")
                 .titleVisible(true)
                 .width(200).height(200)
                 .meter(0, 15000000, 25000000, 35000000)
                 .column("Total amount")
                 .filterOn(false, true, true)
-                .buildDisplayerSettings());
+                .buildSettings());
 
         lineChartByDate = DisplayerHelper.lookupDisplayer(
-                DataSetFactory.newDSLookup()
+                DisplayerSettingsFactory.newLineChartSettings()
                 .dataset(SALES_OPPS)
                 .group(CLOSING_DATE, 80, MONTH)
                 .sum(AMOUNT)
                 .sum(EXPECTED_AMOUNT)
-                .buildLookup(),
-                DisplayerSettingsFactory.newLineChartSettings()
                 .title("Expected pipeline")
                 .titleVisible(true)
                 .width(800).height(200)
@@ -88,16 +83,14 @@ public class SalesGoals extends Composite {
                 .column("Total amount")
                 .column("Expected amount")
                 .filterOn(false, true, true)
-                .buildDisplayerSettings());
+                .buildSettings());
 
         barChartByProduct = DisplayerHelper.lookupDisplayer(
-                DataSetFactory.newDSLookup()
+                DisplayerSettingsFactory.newBarChartSettings()
                 .dataset(SALES_OPPS)
                 .group(PRODUCT)
                 .sum(AMOUNT)
                 .sum(EXPECTED_AMOUNT)
-                .buildLookup(),
-                DisplayerSettingsFactory.newBarChartSettings()
                 .title("By product")
                 .titleVisible(true)
                 .column("Product")
@@ -107,16 +100,14 @@ public class SalesGoals extends Composite {
                 .margins(10, 80, 80, 10)
                 .vertical()
                 .filterOn(false, true, true)
-                .buildDisplayerSettings());
+                .buildSettings());
 
         barChartByEmployee = DisplayerHelper.lookupDisplayer(
-                DataSetFactory.newDSLookup()
+                DisplayerSettingsFactory.newBarChartSettings()
                 .dataset(SALES_OPPS)
                 .group(SALES_PERSON)
                 .sum(AMOUNT)
                 .sort(AMOUNT, DESCENDING)
-                .buildLookup(),
-                DisplayerSettingsFactory.newBarChartSettings()
                 .title("By employee")
                 .titleVisible(true)
                 .column("Employee")
@@ -125,17 +116,15 @@ public class SalesGoals extends Composite {
                 .margins(10, 80, 80, 10)
                 .vertical()
                 .filterOn(false, true, true)
-                .buildDisplayerSettings());
+                .buildSettings());
 
         bubbleByCountry = DisplayerHelper.lookupDisplayer(
-                DataSetFactory.newDSLookup()
+                DisplayerSettingsFactory.newBubbleChartSettings()
                 .dataset(SALES_OPPS)
                 .group(COUNTRY)
                 .count("opps")
                 .avg(PROBABILITY)
                 .sum(EXPECTED_AMOUNT)
-                .buildLookup(),
-                DisplayerSettingsFactory.newBubbleChartSettings()
                 .title("Opportunities distribution by Country ")
                 .width(550).height(250)
                 .margins(10, 30, 50, 0)
@@ -145,7 +134,7 @@ public class SalesGoals extends Composite {
                 .column(COUNTRY, "Country")
                 .column(EXPECTED_AMOUNT, "Expected amount")
                 .filterOn(false, true, true)
-                .buildDisplayerSettings());
+                .buildSettings());
 
         // Make that charts interact among them
         DisplayerCoordinator displayerCoordinator = new DisplayerCoordinator();

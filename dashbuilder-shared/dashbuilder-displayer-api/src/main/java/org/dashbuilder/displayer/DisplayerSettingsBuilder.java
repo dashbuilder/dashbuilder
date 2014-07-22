@@ -15,8 +15,11 @@
  */
 package org.dashbuilder.displayer;
 
+import org.dashbuilder.dataset.DataSet;
+import org.dashbuilder.dataset.DataSetLookupBuilder;
+
 /**
- * A DataSetDisplayerBuilder allows for the assembly of a DisplayerSettings instance in a friendly manner.
+ * A DisplayerSettingsBuilder allows for the assembly of a DisplayerSettings instance in a friendly manner.
  *
  * <pre>
  *   DisplayerSettingsFactory.newBarChartSettings()
@@ -26,12 +29,29 @@ package org.dashbuilder.displayer;
  *   .column("Product")
  *   .column("Total amount")
  *   .horizontal()
- *   .buildDisplayerSettings();
+ *   .buildSettings();
  * </pre>
  *
  * @see DisplayerSettings
  */
-public interface DisplayerSettingsBuilder<T> {
+public interface DisplayerSettingsBuilder<T> extends DataSetLookupBuilder<T> {
+
+    /**
+     * Set the DisplayerSettings' UUID.
+     *
+     * @param uuid The UUID of the DisplayerSettings that is being assembled.
+     * @return The DisplayerSettingsBuilder instance that is being used to configure a DisplayerSettings.
+     */
+    T uuid(String uuid);
+
+    /**
+     * Set a direct reference to the source data set that will be used by the Displayer that is being assembled.
+     * <p>When using this <i>dataset provided mode</i> the data set lookup operations set (if any): filter, group & sort  will not be taking into account).
+     *
+     * @return The DisplayerSettingsBuilder instance that is being used to configure a DisplayerSettings.
+     * @see org.dashbuilder.dataset.DataSet
+     */
+    T dataset(DataSet dataSet);
 
     /**
      * Sets the caption that will be shown for this particular visualization of the data.
@@ -99,5 +119,5 @@ public interface DisplayerSettingsBuilder<T> {
      * @return The DisplayerSettings instance that has been configured.
      * @see DisplayerSettings
      */
-    DisplayerSettings buildDisplayerSettings();
+    DisplayerSettings buildSettings();
 }

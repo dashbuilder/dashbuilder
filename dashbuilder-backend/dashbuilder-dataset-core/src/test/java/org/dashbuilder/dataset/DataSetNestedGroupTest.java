@@ -17,9 +17,6 @@ package org.dashbuilder.dataset;
 
 import javax.inject.Inject;
 
-import org.dashbuilder.dataset.DataSet;
-import org.dashbuilder.dataset.DataSetFactory;
-import org.dashbuilder.dataset.DataSetManager;
 import org.dashbuilder.dataset.filter.FilterFactory;
 import org.dashbuilder.dataset.group.DateIntervalType;
 import org.dashbuilder.test.ShrinkWrapHelper;
@@ -62,7 +59,7 @@ public class DataSetNestedGroupTest {
     /* @Test
       TODO: public void testMultipleYearSplit() throws Exception {
         DataSet result = dataSetManager.lookupDataSet(
-                DataSetFactory.newDSLookup()
+                DataSetFactory.newDSLookupBuilder()
                 .dataset(EXPENSE_REPORTS)
                 .group("date").fixed(MONTH)
                 .sum("total")
@@ -84,7 +81,7 @@ public class DataSetNestedGroupTest {
     @Test
     public void testGroupSelectionFilter() throws Exception {
         DataSet result = dataSetManager.lookupDataSet(
-                DataSetFactory.newDSLookup()
+                DataSetFactory.newDSLookupBuilder()
                         .dataset(EXPENSE_REPORTS)
                         .filter("amount", FilterFactory.isGreaterThan(500))
                         .group("department").select("Engineering")
@@ -99,7 +96,7 @@ public class DataSetNestedGroupTest {
     @Test
     public void testNestedGroupFromMultipleSelection() throws Exception {
         DataSet result = dataSetManager.lookupDataSet(
-                DataSetFactory.newDSLookup()
+                DataSetFactory.newDSLookupBuilder()
                 .dataset(EXPENSE_REPORTS)
                 .group("department", "Department").select("Services", "Engineering")
                 .group("city", "City")
@@ -124,7 +121,7 @@ public class DataSetNestedGroupTest {
     @Test
     public void testNestedGroupRequiresSelection() throws Exception {
         DataSet result = dataSetManager.lookupDataSet(
-                DataSetFactory.newDSLookup()
+                DataSetFactory.newDSLookupBuilder()
                 .dataset(EXPENSE_REPORTS)
                 .group("department", "Department")
                 .group("city", "city")
@@ -143,7 +140,7 @@ public class DataSetNestedGroupTest {
     @Test
     public void testNoResultsSelection() throws Exception {
         DataSet result = dataSetManager.lookupDataSet(
-                DataSetFactory.newDSLookup()
+                DataSetFactory.newDSLookupBuilder()
                         .dataset(EXPENSE_REPORTS)
                         .group("employee").select("Jerri Preble")
                         .group("department").select("Engineering")
@@ -172,7 +169,7 @@ public class DataSetNestedGroupTest {
     @Test
     public void testThreeNestedLevels() throws Exception {
         DataSet result = dataSetManager.lookupDataSet(
-                DataSetFactory.newDSLookup()
+                DataSetFactory.newDSLookupBuilder()
                         .dataset(EXPENSE_REPORTS)
                         .group("department").select("Services", "Engineering")
                         .group("city").select("Madrid", "Barcelona")

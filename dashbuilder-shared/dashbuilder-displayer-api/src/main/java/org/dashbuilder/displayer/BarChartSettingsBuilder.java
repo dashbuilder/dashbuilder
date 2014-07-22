@@ -24,7 +24,7 @@ package org.dashbuilder.displayer;
  *   .column("Product")
  *   .column("Total amount")
  *   .horizontal()
- *   .buildDisplayerSettings()
+ *   .buildSettings()
  * </pre>
  */
 public interface BarChartSettingsBuilder<T extends BarChartSettingsBuilder> extends XAxisChartSettingsBuilder<T> {

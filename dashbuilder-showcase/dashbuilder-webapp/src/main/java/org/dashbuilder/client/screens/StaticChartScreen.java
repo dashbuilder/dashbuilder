@@ -18,10 +18,10 @@ package org.dashbuilder.client.screens;
 import javax.enterprise.context.ApplicationScoped;
 
 import com.google.gwt.user.client.ui.IsWidget;
-import org.dashbuilder.kpi.client.KPIViewer;
 import org.dashbuilder.dataset.DataSetFactory;
-import org.dashbuilder.kpi.KPI;
-import org.dashbuilder.kpi.KPIFactory;
+import org.dashbuilder.displayer.DisplayerSettings;
+import org.dashbuilder.displayer.DisplayerSettingsFactory;
+import org.dashbuilder.displayer.client.DisplayerView;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
 import org.uberfire.client.annotations.WorkbenchPartView;
 import org.uberfire.client.annotations.WorkbenchScreen;
@@ -33,8 +33,8 @@ import static org.dashbuilder.dataset.date.Month.*;
 @WorkbenchScreen(identifier = "StaticChartScreen")
 public class StaticChartScreen {
 
-    public KPI createKPI() {
-        return KPIFactory.newLineChartKPI()
+    public static final DisplayerSettings displayerSettings =
+            DisplayerSettingsFactory.newLineChartSettings()
             .dataset("static_chart_sample")
             .title("Sales Evolution Per Year")
             .column("Month")
@@ -59,16 +59,14 @@ public class StaticChartScreen {
                 .row(NOVEMBER, 1400d, 2100d, 3100d)
                 .row(DECEMBER, 1100d, 2100d, 4200d)
                 .buildDataSet())
-            .buildKPI();
-    }
+            .buildSettings();
 
-    KPIViewer kpiViewer;
+    DisplayerView displayerView;
 
     @OnStartup
     public void init() {
-        KPI kpi = createKPI();
-        KPIViewer kpiViewer = new KPIViewer(kpi);
-        kpiViewer.draw();
+        DisplayerView displayerView = new DisplayerView(displayerSettings);
+        displayerView.draw();
     }
 
     @WorkbenchPartTitle
@@ -78,6 +76,6 @@ public class StaticChartScreen {
 
     @WorkbenchPartView
     public IsWidget getView() {
-        return kpiViewer;
+        return displayerView;
     }
 }

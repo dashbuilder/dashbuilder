@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbuilder.kpi.client;
+package org.dashbuilder.displayer.client;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
@@ -23,15 +23,15 @@ import org.dashbuilder.displayer.client.DisplayerCoordinator;
 import org.uberfire.client.workbench.events.PerspectiveChange;
 
 /**
- * It holds the set of KPIViewer instances being displayed on the current perspective.
+ * It holds the set of DisplayerView instances being displayed on the current perspective.
  * <p>It also makes sure those instances are properly synced to reflect the data set manipulation requests
- * issued by any KPIViewer on the dashboard.</p>
+ * issued by any DisplayerView on the dashboard.</p>
  */
 @ApplicationScoped
-public class KPICoordinator {
+public class DisplayerViewCoordinator {
 
     /**
-     * A Displayer coordinator for all the KPIViewer instances placed on the same perspective.
+     * A coordinator for all the DisplayerView instances placed on the same perspective.
      */
     private DisplayerCoordinator coordinator;
 
@@ -41,10 +41,10 @@ public class KPICoordinator {
     }
 
     /**
-     * Add a KPIViewer instance to the dashboard context.
+     * Add a DisplayerView instance to the dashboard context.
      */
-    public void addKPIViewer(KPIViewer kpiViewer) {
-        coordinator.addDisplayer(kpiViewer.getDisplayer());
+    public void addDisplayerView(DisplayerView displayerView) {
+        coordinator.addDisplayer(displayerView.getDisplayer());
     }
 
     /**

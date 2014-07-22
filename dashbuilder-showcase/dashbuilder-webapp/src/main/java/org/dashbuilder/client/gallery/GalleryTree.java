@@ -23,13 +23,13 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import com.google.gwt.user.client.ui.Widget;
-import org.dashbuilder.kpi.client.ClientKPIManager;
+import org.dashbuilder.displayer.DisplayerSettingsFactory;
+import org.dashbuilder.displayer.client.DisplayerSettingsManager;
 import org.dashbuilder.client.sales.widgets.SalesExpectedByDate;
 import org.dashbuilder.client.sales.widgets.SalesDistributionByCountry;
 import org.dashbuilder.client.sales.widgets.SalesGoals;
 import org.dashbuilder.client.sales.widgets.SalesTableReports;
 import org.dashbuilder.dataset.DataSetFactory;
-import org.dashbuilder.kpi.KPIFactory;
 
 import static org.dashbuilder.dataset.group.DateIntervalType.*;
 import static org.dashbuilder.dataset.filter.FilterFactory.*;
@@ -45,7 +45,7 @@ public class GalleryTree {
 
     private List<GalleryNode> mainNodes = new ArrayList<GalleryNode>();
 
-    @Inject ClientKPIManager kpiManager;
+    @Inject DisplayerSettingsManager settingsManager;
 
     public List<GalleryNode> getMainNodes() {
         return mainNodes;
@@ -68,8 +68,8 @@ public class GalleryTree {
         GalleryNodeList nodeList = new GalleryNodeList("Bar Chart");
         mainNodes.add(nodeList);
 
-        nodeList.add(new GalleryNodeKPI("Horizontal", true,
-                KPIFactory.newBarChartKPI()
+        nodeList.add(new GalleryNodeDisplayer("Horizontal", true,
+                DisplayerSettingsFactory.newBarChartSettings()
                         .dataset(SALES_OPPS)
                         .group(PRODUCT)
                         .sum(AMOUNT)
@@ -78,10 +78,10 @@ public class GalleryTree {
                         .column("Total amount")
                         .horizontal()
                         .margins(10, 30, 120, 120)
-                        .buildKPI()
+                        .buildSettings()
         ));
-        nodeList.add(new GalleryNodeKPI("Vertical (3D)", true,
-                KPIFactory.newBarChartKPI()
+        nodeList.add(new GalleryNodeDisplayer("Vertical (3D)", true,
+                DisplayerSettingsFactory.newBarChartSettings()
                         .dataset(SALES_OPPS)
                         .group(PRODUCT)
                         .sum(AMOUNT)
@@ -90,10 +90,10 @@ public class GalleryTree {
                         .column("Total amount")
                         .vertical().set3d(true)
                         .margins(10, 80, 120, 120)
-                        .buildKPI()
+                        .buildSettings()
         ));
-        nodeList.add(new GalleryNodeKPI("Multiple", true,
-                KPIFactory.newBarChartKPI()
+        nodeList.add(new GalleryNodeDisplayer("Multiple", true,
+                DisplayerSettingsFactory.newBarChartSettings()
                         .dataset(SALES_OPPS)
                         .group(COUNTRY, "Country")
                         .count("#Opps")
@@ -109,7 +109,7 @@ public class GalleryTree {
                         .column("Max", "Max")
                         .column("Average", "Avg")
                         .horizontal()
-                        .buildKPI()
+                        .buildSettings()
         ));
     }
 
@@ -117,8 +117,8 @@ public class GalleryTree {
         GalleryNodeList nodeList = new GalleryNodeList("Pie Chart");
         mainNodes.add(nodeList);
 
-        nodeList.add(new GalleryNodeKPI("Basic", true,
-                KPIFactory.newPieChartKPI()
+        nodeList.add(new GalleryNodeDisplayer("Basic", true,
+                DisplayerSettingsFactory.newPieChartSettings()
                 .dataset(SALES_OPPS)
                 .group(STATUS)
                 .sum(AMOUNT)
@@ -126,11 +126,11 @@ public class GalleryTree {
                 .margins(10, 10, 10, 10)
                 .column("Status")
                 .column("Total amount")
-                .buildKPI()
+                .buildSettings()
         ));
 
-        nodeList.add(new GalleryNodeKPI("Drill-down", true,
-                KPIFactory.newPieChartKPI()
+        nodeList.add(new GalleryNodeDisplayer("Drill-down", true,
+                DisplayerSettingsFactory.newPieChartSettings()
                 .dataset(SALES_OPPS)
                 .group(PIPELINE)
                 .sum(AMOUNT)
@@ -143,7 +143,7 @@ public class GalleryTree {
                 .column("Status")
                 .column("Total amount")
                 .filterOn(true, false, false)
-                .buildKPI()
+                .buildSettings()
         ));
     }
 
@@ -151,8 +151,8 @@ public class GalleryTree {
         GalleryNodeList nodeList = new GalleryNodeList("Line Chart");
         mainNodes.add(nodeList);
 
-        nodeList.add(new GalleryNodeKPI("Basic", true,
-                KPIFactory.newLineChartKPI()
+        nodeList.add(new GalleryNodeDisplayer("Basic", true,
+                DisplayerSettingsFactory.newLineChartSettings()
                 .dataset(SALES_OPPS)
                 .group(CLOSING_DATE, 12, MONTH)
                 .sum(AMOUNT)
@@ -160,10 +160,10 @@ public class GalleryTree {
                 .margins(20, 50, 100, 120)
                 .column("Closing date")
                 .column("Total amount")
-                .buildKPI()
+                .buildSettings()
         ));
-        nodeList.add(new GalleryNodeKPI("Multiple", true,
-                KPIFactory.newLineChartKPI()
+        nodeList.add(new GalleryNodeDisplayer("Multiple", true,
+                DisplayerSettingsFactory.newLineChartSettings()
                 .dataset(SALES_OPPS)
                 .group(COUNTRY, "Country")
                 .count("#Opps")
@@ -177,10 +177,10 @@ public class GalleryTree {
                 .column("Min", "Min")
                 .column("Max", "Max")
                 .column("Average", "Avg")
-                .buildKPI()
+                .buildSettings()
         ));
-        nodeList.add(new GalleryNodeKPI("Multiple (static)", true,
-                KPIFactory.newLineChartKPI()
+        nodeList.add(new GalleryNodeDisplayer("Multiple (static)", true,
+                DisplayerSettingsFactory.newLineChartSettings()
                 .title("Sales Evolution Per Year")
                 .margins(20, 80, 50, 120)
                 .column("Month")
@@ -205,7 +205,7 @@ public class GalleryTree {
                         .row(NOVEMBER, 1400d, 2100d, 3100d)
                         .row(DECEMBER, 1100d, 2100d, 4200d)
                         .buildDataSet())
-                .buildKPI()
+                .buildSettings()
         ));
 
         // nodeList.add(new GalleryNodeKPI("Multiple (date)", ...));
@@ -215,8 +215,8 @@ public class GalleryTree {
         GalleryNodeList nodeList = new GalleryNodeList("Area Chart");
         mainNodes.add(nodeList);
 
-        nodeList.add(new GalleryNodeKPI("Basic", true,
-                KPIFactory.newAreaChartKPI()
+        nodeList.add(new GalleryNodeDisplayer("Basic", true,
+                DisplayerSettingsFactory.newAreaChartSettings()
                 .dataset(SALES_OPPS)
                 .group(CLOSING_DATE, 24, MONTH)
                 .sum(EXPECTED_AMOUNT)
@@ -224,10 +224,10 @@ public class GalleryTree {
                 .margins(20, 50, 100, 120)
                 .column("Closing date")
                 .column("Expected amount")
-                .buildKPI()
+                .buildSettings()
         ));
-        nodeList.add(new GalleryNodeKPI("Fixed (per month)", true,
-                KPIFactory.newAreaChartKPI()
+        nodeList.add(new GalleryNodeDisplayer("Fixed (per month)", true,
+                DisplayerSettingsFactory.newAreaChartSettings()
                 .dataset(SALES_OPPS)
                 .group(CLOSING_DATE)
                 .fixed(MONTH).firstMonth(JANUARY).asc()
@@ -236,10 +236,10 @@ public class GalleryTree {
                 .margins(20, 80, 100, 100)
                 .column("Closing date")
                 .column("Expected amount per month")
-                .buildKPI()
+                .buildSettings()
         ));
-        nodeList.add(new GalleryNodeKPI("Drill-down", true,
-                KPIFactory.newAreaChartKPI()
+        nodeList.add(new GalleryNodeDisplayer("Drill-down", true,
+                DisplayerSettingsFactory.newAreaChartSettings()
                         .dataset(SALES_OPPS)
                         .group(CLOSING_DATE, 12, (String) null)
                         .sum(EXPECTED_AMOUNT)
@@ -248,7 +248,7 @@ public class GalleryTree {
                         .column("Closing date")
                         .column("Expected amount")
                         .filterOn(true, false, false)
-                        .buildKPI()
+                        .buildSettings()
         ));
     }
 
@@ -256,8 +256,8 @@ public class GalleryTree {
         GalleryNodeList nodeList = new GalleryNodeList("Bubble Chart");
         mainNodes.add(nodeList);
 
-        nodeList.add(new GalleryNodeKPI("Basic", true,
-                KPIFactory.newBubbleChartKPI()
+        nodeList.add(new GalleryNodeDisplayer("Basic", true,
+                DisplayerSettingsFactory.newBubbleChartSettings()
                 .dataset(SALES_OPPS)
                 .group(COUNTRY)
                 .count("opps")
@@ -271,7 +271,7 @@ public class GalleryTree {
                 .column(PROBABILITY, "Average probability")
                 .column(COUNTRY, "Country")
                 .column(EXPECTED_AMOUNT, "Expected amount")
-                .buildKPI()
+                .buildSettings()
         ));
     }
 
@@ -279,18 +279,18 @@ public class GalleryTree {
         GalleryNodeList nodeList = new GalleryNodeList("Meter Chart");
         mainNodes.add(nodeList);
 
-        nodeList.add(new GalleryNodeKPI("Basic",
-                KPIFactory.newMeterChartKPI()
+        nodeList.add(new GalleryNodeDisplayer("Basic",
+                DisplayerSettingsFactory.newMeterChartSettings()
                 .title("Sales goal")
                 .dataset(SALES_OPPS)
                 .sum(AMOUNT, "Total amount")
                 .width(100).height(200)
                 .meter(0, 5000000, 8000000, 10000000)
                 .column("Total amount")
-                .buildKPI()
+                .buildSettings()
         ));
-        nodeList.add(new GalleryNodeKPI("Multiple",
-                KPIFactory.newMeterChartKPI()
+        nodeList.add(new GalleryNodeDisplayer("Multiple",
+                DisplayerSettingsFactory.newMeterChartSettings()
                 .title("Expected amount per year")
                 .dataset(SALES_OPPS)
                 .group(CREATION_DATE, YEAR)
@@ -299,10 +299,10 @@ public class GalleryTree {
                 .meter(0, 1000000, 3000000, 5000000)
                 .column("Year")
                 .column("Amount")
-                .buildKPI()
+                .buildSettings()
         ));
-        nodeList.add(new GalleryNodeKPI("Multiple (static)",
-                KPIFactory.newMeterChartKPI()
+        nodeList.add(new GalleryNodeDisplayer("Multiple (static)",
+                DisplayerSettingsFactory.newMeterChartSettings()
                 .title("Heart rate")
                 .width(500).height(200)
                 .meter(30, 160, 190, 220)
@@ -317,7 +317,7 @@ public class GalleryTree {
                         .row("Michael", 78)
                         .row("Kris", 74)
                         .buildDataSet())
-                .buildKPI()
+                .buildSettings()
         ));
 
         // nodeList.add(new GalleryNodeKPI("Multiple (date)", ...));
@@ -327,8 +327,8 @@ public class GalleryTree {
         GalleryNodeList nodeList = new GalleryNodeList("Map");
         mainNodes.add(nodeList);
 
-        nodeList.add(new GalleryNodeKPI("GeoMap", true,
-                KPIFactory.newMapChartKPI()
+        nodeList.add(new GalleryNodeDisplayer("GeoMap", true,
+                DisplayerSettingsFactory.newMapChartSettings()
                 .dataset(SALES_OPPS)
                 .group(COUNTRY)
                 .sum(AMOUNT)
@@ -337,7 +337,7 @@ public class GalleryTree {
                 .margins(10, 10, 10, 10)
                 .column("Country")
                 .column("Total amount")
-                .buildKPI()
+                .buildSettings()
         ));
     }
 
@@ -345,11 +345,11 @@ public class GalleryTree {
         GalleryNodeList nodeList = new GalleryNodeList("Table report");
         mainNodes.add(nodeList);
 
-        nodeList.add(new GalleryNodeKPI("Basic",
-                KPIFactory.newTableKPI()
+        nodeList.add(new GalleryNodeDisplayer("Basic",
+                DisplayerSettingsFactory.newTableSettings()
                 .dataset(SALES_OPPS)
                 .title("List of Opportunities")
-                .tablePageSize(20)
+                .tablePageSize(10)
                 .tableOrderEnabled(true)
                 .tableOrderDefault(AMOUNT, DESCENDING)
                 .column(COUNTRY, "Country")
@@ -362,14 +362,14 @@ public class GalleryTree {
                 .column(EXPECTED_AMOUNT, "Expected")
                 .column(CLOSING_DATE, "Closing")
                 .column(AMOUNT, "Amount")
-                .buildKPI()
+                .buildSettings()
         ));
-        nodeList.add(new GalleryNodeKPI("Filtered",
-                KPIFactory.newTableKPI()
+        nodeList.add(new GalleryNodeDisplayer("Filtered",
+                DisplayerSettingsFactory.newTableSettings()
                 .dataset(SALES_OPPS)
                 .filter(COUNTRY, OR(isEqualsTo("United States"), isEqualsTo("Brazil")))
                 .title("Opportunities in USA & Brazil")
-                .tablePageSize(20)
+                .tablePageSize(10)
                 .tableOrderEnabled(true)
                 .tableOrderDefault(AMOUNT, DESCENDING)
                 .column(CUSTOMER, "Customer")
@@ -380,10 +380,10 @@ public class GalleryTree {
                 .column(EXPECTED_AMOUNT, "Expected")
                 .column(CLOSING_DATE, "Closing")
                 .column(AMOUNT, "Amount")
-                .buildKPI()
+                .buildSettings()
         ));
-        nodeList.add(new GalleryNodeKPI("Grouped",
-                KPIFactory.newTableKPI()
+        nodeList.add(new GalleryNodeDisplayer("Grouped",
+                DisplayerSettingsFactory.newTableSettings()
                 .dataset(SALES_OPPS)
                 .group(COUNTRY, "Country")
                 .count("#Opps")
@@ -395,13 +395,13 @@ public class GalleryTree {
                 .tablePageSize(10)
                 .tableOrderEnabled(true)
                 .tableOrderDefault("Country", DESCENDING)
-                .buildKPI()
+                .buildSettings()
         ));
-        nodeList.add(new GalleryNodeKPI("Default table (drill-down)",
-                KPIFactory.newTableKPI()
+        nodeList.add(new GalleryNodeDisplayer("Default (drill-down)",
+                DisplayerSettingsFactory.newTableSettings()
                 .dataset(SALES_OPPS)
                 .title("List of Opportunities")
-                .tablePageSize(20)
+                .tablePageSize(10)
                 .tableOrderEnabled(true)
                 .tableOrderDefault(AMOUNT, DESCENDING)
                 .column(COUNTRY, "Country")
@@ -416,7 +416,7 @@ public class GalleryTree {
                 .column(AMOUNT, "Amount")
                 .filterOn(true, false, false)
                 .renderer("table")
-                .buildKPI()
+                .buildSettings()
         ));
     }
 

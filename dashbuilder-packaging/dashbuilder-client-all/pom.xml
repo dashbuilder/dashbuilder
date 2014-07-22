@@ -53,7 +53,7 @@
 
     <dependency>
       <groupId>org.dashbuilder</groupId>
-      <artifactId>dashbuilder-kpi-client</artifactId>
+      <artifactId>dashbuilder-displayer-screen</artifactId>
     </dependency>
 
   </dependencies>

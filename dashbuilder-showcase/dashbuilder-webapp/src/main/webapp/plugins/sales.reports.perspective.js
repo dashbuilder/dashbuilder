@@ -6,12 +6,12 @@ $registerPerspective({
     view: {
         parts: [
             {
-                place: "KPIScreen",
-                parameters: {"kpi": "opps-country-summary", "token" : "4"}
+                place: "DisplayerScreen",
+                parameters: {"uuid": "opps-country-summary", "token" : "4"}
             },
             {
-                place: "KPIScreen",
-                parameters: {"kpi": "opps-allopps-listing", "token" : "6"}
+                place: "DisplayerScreen",
+                parameters: {"uuid": "opps-allopps-listing", "token" : "6"}
             }
         ]
     }

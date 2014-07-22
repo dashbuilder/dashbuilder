@@ -19,9 +19,6 @@ import java.util.Calendar;
 import java.util.Date;
 import javax.inject.Inject;
 
-import org.dashbuilder.dataset.DataSet;
-import org.dashbuilder.dataset.DataSetFactory;
-import org.dashbuilder.dataset.DataSetManager;
 import org.dashbuilder.test.ShrinkWrapHelper;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -63,7 +60,7 @@ public class DataSetFilterTest {
     @Test
     public void testFilterByString() throws Exception {
         DataSet result = dataSetManager.lookupDataSet(
-                DataSetFactory.newDSLookup()
+                DataSetFactory.newDSLookupBuilder()
                 .dataset(EXPENSE_REPORTS)
                 .filter("city", isEqualsTo("Barcelona"))
                 .buildLookup());
@@ -77,7 +74,7 @@ public class DataSetFilterTest {
     @Test
     public void testFilterByNumber() throws Exception {
         DataSet result = dataSetManager.lookupDataSet(
-                DataSetFactory.newDSLookup()
+                DataSetFactory.newDSLookupBuilder()
                 .dataset(EXPENSE_REPORTS)
                 .filter("amount", isBetween(100, 200))
                 .buildLookup());
@@ -98,7 +95,7 @@ public class DataSetFilterTest {
         Date date = c.getTime();
 
         DataSet result = dataSetManager.lookupDataSet(
-                DataSetFactory.newDSLookup()
+                DataSetFactory.newDSLookupBuilder()
                     .dataset(EXPENSE_REPORTS)
                     .filter("date", isGreaterThan(date))
                     .buildLookup());
@@ -114,7 +111,7 @@ public class DataSetFilterTest {
         Date date = c.getTime();
 
         DataSet result = dataSetManager.lookupDataSet(
-                DataSetFactory.newDSLookup()
+                DataSetFactory.newDSLookupBuilder()
                     .dataset(EXPENSE_REPORTS)
                     .filter("date", isGreaterThan(date))
                     .filter("amount", isLowerOrEqualsTo(120.35))
@@ -128,7 +125,7 @@ public class DataSetFilterTest {
 
         // The order of the filter criteria does not alter the result.
         result = dataSetManager.lookupDataSet(
-                DataSetFactory.newDSLookup()
+                DataSetFactory.newDSLookupBuilder()
                     .dataset(EXPENSE_REPORTS)
                     .filter("city", isNotEqualsTo("Barcelona"))
                     .filter("amount", isLowerOrEqualsTo(120.35))
@@ -145,7 +142,7 @@ public class DataSetFilterTest {
     public void testANDExpression() throws Exception {
 
         DataSet result = dataSetManager.lookupDataSet(
-                DataSetFactory.newDSLookup()
+                DataSetFactory.newDSLookupBuilder()
                         .dataset(EXPENSE_REPORTS)
                         .filter("amount", AND(isGreaterThan(100), isLowerThan(150)))
                         .buildLookup());
@@ -159,7 +156,7 @@ public class DataSetFilterTest {
     public void testNOTExpression() throws Exception {
 
         DataSet result = dataSetManager.lookupDataSet(
-                DataSetFactory.newDSLookup()
+                DataSetFactory.newDSLookupBuilder()
                         .dataset(EXPENSE_REPORTS)
                         .filter("amount", NOT(isGreaterThan(100)))
                         .buildLookup());
@@ -174,7 +171,7 @@ public class DataSetFilterTest {
     public void testORExpression() throws Exception {
 
         DataSet result = dataSetManager.lookupDataSet(
-                DataSetFactory.newDSLookup()
+                DataSetFactory.newDSLookupBuilder()
                         .dataset(EXPENSE_REPORTS)
                         .filter("amount", OR( NOT(isGreaterThan(100)), isGreaterThan(1000) ))
                         .buildLookup());
@@ -189,7 +186,7 @@ public class DataSetFilterTest {
     public void testCombinedExpression() throws Exception {
 
         DataSet result = dataSetManager.lookupDataSet(
-                DataSetFactory.newDSLookup()
+                DataSetFactory.newDSLookupBuilder()
                         .dataset(EXPENSE_REPORTS)
                         .filter("amount", AND(
                                 isEqualsTo("department", "Sales"),

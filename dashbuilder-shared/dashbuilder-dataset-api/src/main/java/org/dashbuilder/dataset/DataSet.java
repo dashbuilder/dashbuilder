@@ -17,7 +17,7 @@ package org.dashbuilder.dataset;
 
 import java.util.List;
 
-public interface DataSet extends DataSetRef {
+public interface DataSet {
 
     /**
      * The metadata

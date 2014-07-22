@@ -37,7 +37,7 @@ public class MainPerspective {
         //perspective.getRoot().addPart(new PartDefinitionImpl(new DefaultPlaceRequest("HomeScreen")));
         perspective.getRoot().addPart( new PartDefinitionImpl( new DefaultPlaceRequest( "GalleryScreen" ) ) );
         //perspective.getRoot().addPart( new PartDefinitionImpl( new DefaultPlaceRequest( "StaticChartScreen" ) ) );
-        //perspective.getRoot().addPart( new PartDefinitionImpl( new DefaultPlaceRequest( "KPIScreen" ).addParameter("kpi", "opps-country-summary") ) );
+        //perspective.getRoot().addPart( new PartDefinitionImpl( new DefaultPlaceRequest( "DisplayerScreen" ).addParameter("uuid", "opps-country-summary") ) );
         return perspective;
     }
 }

@@ -26,7 +26,7 @@ import org.dashbuilder.dataset.sort.SortOrder;
  *   .tablePageSize(20)
  *   .tableOrderEnabled(true)
  *   .tableOrderDefault("amount", "desc")
- *   .buildDisplayerSettings()
+ *   .buildSettings()
  * </pre>
  */
 public interface TableDisplayerSettingsBuilder<T extends TableDisplayerSettingsBuilder> extends DisplayerSettingsBuilder<T> {

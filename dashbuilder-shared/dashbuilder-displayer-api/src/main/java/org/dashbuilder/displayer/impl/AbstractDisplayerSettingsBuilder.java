@@ -15,17 +15,29 @@
  */
 package org.dashbuilder.displayer.impl;
 
+import org.dashbuilder.dataset.DataSet;
+import org.dashbuilder.dataset.impl.AbstractDataSetLookupBuilder;
 import org.dashbuilder.displayer.DisplayerSettings;
 import org.dashbuilder.displayer.DisplayerSettingsBuilder;
 
 /**
  * Base class for DisplayerSettingsBuilder implementations.
  */
-public abstract class AbstractDisplayerSettingsBuilder<T extends DisplayerSettingsBuilder> implements DisplayerSettingsBuilder<T> {
+public abstract class AbstractDisplayerSettingsBuilder<T> extends AbstractDataSetLookupBuilder<T> implements DisplayerSettingsBuilder<T> {
 
     protected DisplayerSettings displayerSettings = createDisplayerSettings();
 
     protected abstract DisplayerSettings createDisplayerSettings();
+
+    public T uuid(String uuid) {
+        displayerSettings.setUUID(uuid);
+        return (T) this;
+    }
+
+    public T dataset(DataSet dataSet) {
+        displayerSettings.setDataSet(dataSet);
+        return (T) this;
+    }
 
     public T title(String title) {
         displayerSettings.setTitle(title);
@@ -61,11 +73,12 @@ public abstract class AbstractDisplayerSettingsBuilder<T extends DisplayerSettin
 
     public T filterOff(boolean receiveFromOthers) {
         displayerSettings.setFilterEnabled(false);
-        displayerSettings.setFilterListeningEnabled(true);
+        displayerSettings.setFilterListeningEnabled(receiveFromOthers);
         return (T) this;
     }
 
-    public DisplayerSettings buildDisplayerSettings() {
+    public DisplayerSettings buildSettings() {
+        displayerSettings.setDataSetLookup(super.buildLookup());
         return displayerSettings;
     }
 }

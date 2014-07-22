@@ -9,11 +9,10 @@
     <version>0.1.0-SNAPSHOT</version>
   </parent>
 
-  <artifactId>dashbuilder-kpi-client</artifactId>
+  <artifactId>dashbuilder-displayer-screen</artifactId>
   <packaging>jar</packaging>
 
-  <name>Dashbuilder KPI Client</name>
-  <description>Dashbuilder KPI widgets and client related stuff</description>
+  <name>Dashbuilder Displayer Screen</name>
 
   <dependencies>
 
@@ -30,11 +29,6 @@
     <dependency>
       <groupId>org.dashbuilder</groupId>
       <artifactId>dashbuilder-displayer-api</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.dashbuilder</groupId>
-      <artifactId>dashbuilder-kpi-api</artifactId>
     </dependency>
 
     <dependency>

@@ -25,7 +25,7 @@ package org.dashbuilder.displayer;
  *   .width(250).height(250)
  *   .meter(0, 15000000, 25000000, 35000000)
  *   .column("Total amount")
- *   .buildDisplayerSettings());
+ *   .buildSettings());
  * </pre>
  */
 public interface MeterChartSettingsBuilder<T extends MeterChartSettingsBuilder> extends ChartSettingsBuilder<T> {

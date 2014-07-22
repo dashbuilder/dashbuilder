@@ -24,7 +24,6 @@ import org.dashbuilder.displayer.DisplayerSettingsFactory;
 import org.dashbuilder.displayer.client.Displayer;
 import org.dashbuilder.displayer.client.DisplayerCoordinator;
 import org.dashbuilder.displayer.client.DisplayerHelper;
-import org.dashbuilder.dataset.DataSetFactory;
 import org.dashbuilder.dataset.group.DateIntervalType;
 
 import static org.dashbuilder.client.sales.SalesConstants.*;
@@ -59,10 +58,8 @@ public class SalesTableReports extends Composite {
         // Create the chart definitions
 
         tableAll = DisplayerHelper.lookupDisplayer(
-                DataSetFactory.newDSLookup()
-                .dataset(SALES_OPPS)
-                .buildLookup(),
                 DisplayerSettingsFactory.newTableSettings()
+                .dataset(SALES_OPPS)
                 .title("List of Opportunities")
                 .titleVisible(true)
                 .tablePageSize(8)
@@ -78,10 +75,10 @@ public class SalesTableReports extends Composite {
                 .column(CLOSING_DATE, "Closing")
                 .column(AMOUNT, "Amount")
                 .filterOn(false, true, true)
-                .buildDisplayerSettings());
+                .buildSettings());
 
         tableByCountry = DisplayerHelper.lookupDisplayer(
-                DataSetFactory.newDSLookup()
+                DisplayerSettingsFactory.newTableSettings()
                 .dataset(SALES_OPPS)
                 .group(COUNTRY, "Country")
                 .count("#Opps")
@@ -89,18 +86,16 @@ public class SalesTableReports extends Composite {
                 .max(AMOUNT, "Max")
                 .avg(AMOUNT, "Average")
                 .sum(AMOUNT, "Total")
-                .buildLookup(),
-                DisplayerSettingsFactory.newTableSettings()
                 .title("Country summary")
                 .titleVisible(false)
                 .tablePageSize(8)
                 .tableOrderEnabled(true)
                 .tableOrderDefault("Total", DESCENDING)
                 .filterOn(false, true, true)
-                .buildDisplayerSettings());
+                .buildSettings());
 
         tableByProduct = DisplayerHelper.lookupDisplayer(
-                DataSetFactory.newDSLookup()
+                DisplayerSettingsFactory.newTableSettings()
                 .dataset(SALES_OPPS)
                 .group(PRODUCT, "Product")
                 .count("#Opps")
@@ -108,18 +103,16 @@ public class SalesTableReports extends Composite {
                 .max(AMOUNT, "Max")
                 .avg(AMOUNT, "Average")
                 .sum(AMOUNT, "Total")
-                .buildLookup(),
-                DisplayerSettingsFactory.newTableSettings()
                 .title("Product summary")
                 .titleVisible(false)
                 .tablePageSize(8)
                 .tableOrderEnabled(true)
                 .tableOrderDefault("Total", DESCENDING)
                 .filterOn(false, true, true)
-                .buildDisplayerSettings());
+                .buildSettings());
 
         tableBySalesman = DisplayerHelper.lookupDisplayer(
-                DataSetFactory.newDSLookup()
+                DisplayerSettingsFactory.newTableSettings()
                 .dataset(SALES_OPPS)
                 .group(SALES_PERSON, "Sales person")
                 .count("#Opps")
@@ -127,18 +120,16 @@ public class SalesTableReports extends Composite {
                 .max(AMOUNT, "Max")
                 .avg(AMOUNT, "Average")
                 .sum(AMOUNT, "Total")
-                .buildLookup(),
-                DisplayerSettingsFactory.newTableSettings()
                 .title("Sales by person")
                 .titleVisible(false)
                 .tablePageSize(8)
                 .tableOrderEnabled(true)
                 .tableOrderDefault("Total", DESCENDING)
                 .filterOn(false, true, true)
-                .buildDisplayerSettings());
+                .buildSettings());
 
         tableByYear = DisplayerHelper.lookupDisplayer(
-                DataSetFactory.newDSLookup()
+                DisplayerSettingsFactory.newTableSettings()
                 .dataset(SALES_OPPS)
                 .group(CREATION_DATE, "Creation date", DateIntervalType.YEAR)
                 .count("#Opps")
@@ -146,15 +137,13 @@ public class SalesTableReports extends Composite {
                 .max(AMOUNT, "Max")
                 .avg(AMOUNT, "Average")
                 .sum(AMOUNT, "Total")
-                .buildLookup(),
-                DisplayerSettingsFactory.newTableSettings()
                 .title("Year summary")
                 .titleVisible(false)
                 .tablePageSize(8)
                 .tableOrderEnabled(true)
                 .tableOrderDefault("Total", DESCENDING)
                 .filterOn(false, true, true)
-                .buildDisplayerSettings());
+                .buildSettings());
 
         // Make that charts interact among them
         DisplayerCoordinator displayerCoordinator = new DisplayerCoordinator();
