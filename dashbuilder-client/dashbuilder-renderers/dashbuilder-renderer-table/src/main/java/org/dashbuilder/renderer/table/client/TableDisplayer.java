@@ -336,9 +336,9 @@ public class TableDisplayer extends AbstractDisplayer<TableDisplayerSettings> {
     }
 
     private void redrawColumnSelectionWidget() {
-        if ( currentSelectionWidget != null ) table.getToolbar().remove( currentSelectionWidget );
+        if ( currentSelectionWidget != null ) table.getLeftToolbar().remove( currentSelectionWidget );
         currentSelectionWidget = createCurrentSelectionWidget();
-        if ( currentSelectionWidget != null ) table.getToolbar().add( currentSelectionWidget );
+        if ( currentSelectionWidget != null ) table.getLeftToolbar().add( currentSelectionWidget );
     }
 
     private class SelectableTextCell extends TextCell {
