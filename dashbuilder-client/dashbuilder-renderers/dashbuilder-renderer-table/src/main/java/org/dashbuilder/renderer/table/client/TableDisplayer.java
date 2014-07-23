@@ -212,7 +212,7 @@ public class TableDisplayer extends AbstractDisplayer<TableDisplayerSettings> {
         }
 
         pagedTable.setRowCount( numberOfRows, true );
-        int height = 40 * displayerSettings.getPageSize();
+        int height = 40 * displayerSettings.getPageSize() + 20;
         pagedTable.setHeight( ( height > ( Window.getClientHeight() - this.getAbsoluteTop() ) ? ( Window.getClientHeight() - this.getAbsoluteTop() ) : height ) + "px" );
 
         int tableWidth = displayerSettings.getTableWidth();

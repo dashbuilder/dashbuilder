@@ -101,6 +101,8 @@ public class SalesDistributionByCountry extends Composite {
                 .column(CLOSING_DATE, "Closing")
                 .column(AMOUNT, "Amount")
                 .filterOn(false, true, true)
+                .tableWidth(900)
+                .renderer("default")
                 .buildSettings());
 
         // Make that charts interact among them
