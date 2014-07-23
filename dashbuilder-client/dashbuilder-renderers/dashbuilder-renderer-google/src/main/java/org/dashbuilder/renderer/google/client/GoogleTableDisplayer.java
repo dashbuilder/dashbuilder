@@ -138,6 +138,7 @@ public class GoogleTableDisplayer extends GoogleDisplayer<TableDisplayerSettings
         options.setSort(TableSort.EVENT);
         options.setPageSize(displayerSettings.getPageSize());
         options.setShowRowNumber(false);
+        if ( displayerSettings.getTableWidth() != 0 ) options.setWidth( displayerSettings.getTableWidth() );
         return options;
     }
 
