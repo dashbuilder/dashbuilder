@@ -97,7 +97,7 @@ public class DataSetHandlerImpl implements DataSetHandler {
 
         // If it was the last existing group operation then the group operation must be applied after the selection.
         if (found == last && !lookupBase.getOperationList(DataSetGroup.class).isEmpty()) {
-            DataSetGroup clone = op.cloneInstance();
+            DataSetGroup clone = targetOp.cloneInstance();
             clone.getSelectedIntervalNames().clear();
             lookupCurrent.addOperation(clone);
         }
