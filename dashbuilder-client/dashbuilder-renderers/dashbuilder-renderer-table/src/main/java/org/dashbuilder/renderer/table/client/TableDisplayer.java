@@ -200,8 +200,8 @@ public class TableDisplayer extends AbstractDisplayer<TableDisplayerSettings> {
     protected PagedTable<Integer> createTable() {
 
         final PagedTable<Integer> pagedTable = new PagedTable<Integer>(displayerSettings.getPageSize());
-
         List<DisplayerSettingsColumn> displayerSettingsColumns = displayerSettings.getColumnList();
+
         int nColumns = 0;
         if ( !displayerSettingsColumns.isEmpty() ) {
             createTableColumnsFromDisplayerSettings( pagedTable, displayerSettingsColumns );
@@ -214,7 +214,10 @@ public class TableDisplayer extends AbstractDisplayer<TableDisplayerSettings> {
         pagedTable.setRowCount( numberOfRows, true );
         int height = 40 * displayerSettings.getPageSize();
         pagedTable.setHeight( ( height > ( Window.getClientHeight() - this.getAbsoluteTop() ) ? ( Window.getClientHeight() - this.getAbsoluteTop() ) : height ) + "px" );
-        pagedTable.setWidth( nColumns * 100 + "px" );
+
+        int tableWidth = displayerSettings.getTableWidth();
+        pagedTable.setWidth( tableWidth == 0 ? nColumns * 100 + "px" : tableWidth + "px");
+
         pagedTable.setEmptyTableCaption( TableConstants.INSTANCE.tableDisplayer_noDataAvailable() );
 
         pagedTable.addColumnSortHandler(new ColumnSortEvent.AsyncHandler( pagedTable ) {

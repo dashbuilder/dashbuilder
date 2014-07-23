@@ -50,4 +50,10 @@ public class TableDisplayerSettingsBuilderImpl extends AbstractDisplayerSettings
     public TableDisplayerSettingsBuilderImpl tableOrderDefault(String columnId, String order) {
         return tableOrderDefault(columnId, SortOrder.getByName(order));
     }
+
+    public TableDisplayerSettingsBuilderImpl tableWidth(int tableWidth) {
+        TableDisplayerSettings d = (TableDisplayerSettings ) displayerSettings;
+        d.setTableWidth( tableWidth );
+        return this;
+    }
 }

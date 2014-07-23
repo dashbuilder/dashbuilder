@@ -22,6 +22,7 @@ import org.jboss.errai.common.client.api.annotations.Portable;
 public class TableDisplayerSettings extends AbstractDisplayerSettings {
 
     protected int pageSize = 20;
+    protected int tableWidth = 0;
     protected boolean sortEnabled = true;
     protected String defaultSortColumnId = null;
     protected SortOrder defaultSortOrder = SortOrder.ASCENDING;
@@ -37,6 +38,14 @@ public class TableDisplayerSettings extends AbstractDisplayerSettings {
 
     public void setPageSize(int pageSize) {
         this.pageSize = pageSize;
+    }
+
+    public int getTableWidth() {
+        return tableWidth;
+    }
+
+    public void setTableWidth( int tableWidth ) {
+        this.tableWidth = tableWidth;
     }
 
     public boolean isSortEnabled() {
