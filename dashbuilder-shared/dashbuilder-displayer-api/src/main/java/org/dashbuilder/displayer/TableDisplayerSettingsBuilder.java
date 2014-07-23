@@ -61,4 +61,11 @@ public interface TableDisplayerSettingsBuilder<T extends TableDisplayerSettingsB
      * @return The DisplayerSettingsBuilder instance that is being used to configure a Table data displayer.
      */
     T tableOrderDefault(String columnId, String order);
+
+    /**
+     * Set the table total width.
+     * @param tableWidth The total table width, in pixels.
+     * @return The DisplayerSettingsBuilder instance that is being used to configure a Table data displayer.
+     */
+    T tableWidth(int tableWidth);
 }
