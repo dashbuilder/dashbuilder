@@ -84,6 +84,10 @@ public class DataSetLookup {
         return dataSetUUID;
     }
 
+    public <T extends DataSetOp> T getOperation(int index) {
+        return (T) operationList.get(index);
+    }
+
     public List<DataSetOp> getOperationList() {
         return operationList;
     }
@@ -121,9 +125,9 @@ public class DataSetLookup {
         return this;
     }
 
-    public int getLastGroupOpIndex(String columnId, boolean onlySelections) {
+    public int getLastGroupOpIndex(int fromIndex, String columnId, boolean onlySelections) {
         int target = -1;
-        for (int i = 0; i < operationList.size(); i++) {
+        for (int i = fromIndex; i < operationList.size(); i++) {
             DataSetOp op = operationList.get(i);
             if (DataSetOpType.GROUP.equals(op.getType())) {
                 DataSetGroup groupOp = (DataSetGroup) op;

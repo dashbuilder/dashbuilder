@@ -70,7 +70,7 @@ public abstract class AbstractDisplayer<T extends DisplayerSettings> extends Com
 
     public void onGroupIntervalsSelected(Displayer displayer, DataSetGroup groupOp) {
         if (displayerSettings.isFilterListeningEnabled()) {
-            dataSetHandler.addGroupOperation(groupOp);
+            dataSetHandler.filter(groupOp);
             redraw();
         }
     }
@@ -78,7 +78,7 @@ public abstract class AbstractDisplayer<T extends DisplayerSettings> extends Com
     public void onGroupIntervalsReset(Displayer displayer, List<DataSetGroup> groupOps) {
         if (displayerSettings.isFilterListeningEnabled()) {
             for (DataSetGroup groupOp : groupOps) {
-                dataSetHandler.removeGroupOperation(groupOp);
+                dataSetHandler.unfilter(groupOp);
             }
             redraw();
         }
@@ -176,7 +176,7 @@ public abstract class AbstractDisplayer<T extends DisplayerSettings> extends Com
         }
         // Drill-down support
         if (displayerSettings.isFilterSelfApplyEnabled()) {
-            dataSetHandler.addGroupOperation(_groupSelect);
+            dataSetHandler.drillDown(_groupSelect);
             redraw();
         }
     }
@@ -193,7 +193,7 @@ public abstract class AbstractDisplayer<T extends DisplayerSettings> extends Com
         DataSetGroup groupOp = dataSetHandler.getGroupOperation(columnId);
         if (groupOp == null || groupOp.getColumnGroup() == null) {
             groupOp = new DataSetGroup();
-            groupOp .setColumnGroup(new ColumnGroup(columnId, columnId, GroupStrategy.DYNAMIC));
+            groupOp.setColumnGroup(new ColumnGroup(columnId, columnId, GroupStrategy.DYNAMIC));
         }
         // Notify to those interested parties the reset event.
         if (displayerSettings.isFilterNotificationEnabled()) {
@@ -203,7 +203,7 @@ public abstract class AbstractDisplayer<T extends DisplayerSettings> extends Com
         }
         // Apply the selection to this displayer
         if (displayerSettings.isFilterSelfApplyEnabled()) {
-            dataSetHandler.removeGroupOperation(groupOp);
+            dataSetHandler.drillUp(groupOp);
             redraw();
         }
     }
@@ -219,7 +219,7 @@ public abstract class AbstractDisplayer<T extends DisplayerSettings> extends Com
             DataSetGroup groupOp = dataSetHandler.getGroupOperation(columnId);
             if (groupOp == null || groupOp.getColumnGroup() == null) {
                 groupOp = new DataSetGroup();
-                groupOp .setColumnGroup(new ColumnGroup(columnId, columnId, GroupStrategy.DYNAMIC));
+                groupOp.setColumnGroup(new ColumnGroup(columnId, columnId, GroupStrategy.DYNAMIC));
             }
             groupOpList.add(groupOp);
 
@@ -234,7 +234,9 @@ public abstract class AbstractDisplayer<T extends DisplayerSettings> extends Com
         }
         // Apply the selection to this displayer
         if (displayerSettings.isFilterSelfApplyEnabled()) {
-            dataSetHandler.resetAllOperations();
+            for (DataSetGroup groupOp : groupOpList) {
+                dataSetHandler.drillUp(groupOp);
+            }
             redraw();
         }
     }
@@ -250,6 +252,6 @@ public abstract class AbstractDisplayer<T extends DisplayerSettings> extends Com
     protected void sortApply(String columnId, SortOrder sortOrder) {
         DataSetSort sortOp = new DataSetSort();
         sortOp.addSortColumn(new ColumnSort(columnId, sortOrder));
-        dataSetHandler.setSortOperation(sortOp);
+        dataSetHandler.sort(sortOp);
     }
 }

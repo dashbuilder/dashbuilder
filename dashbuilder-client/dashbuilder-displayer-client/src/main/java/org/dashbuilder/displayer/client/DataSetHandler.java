@@ -25,7 +25,7 @@ import org.dashbuilder.dataset.sort.DataSetSort;
 public interface DataSetHandler {
 
     /**
-     * Retrieves any group operation (discarding any external filter) present in the current data set lookup for the target column specified.
+     * Retrieves any group operation present in the current data set lookup for the target column specified.
      * @param columnId The column id. to look for. It can be either the column used to group the data set or
      * the column id. assigned int the grouped data set result.
      *
@@ -34,27 +34,43 @@ public interface DataSetHandler {
     DataSetGroup getGroupOperation(String columnId);
 
     /**
-     * Adds a group operation to the current data set lookup instance or updates it if already exists.
+     * Forces the underlying data set to be updated according the group interval selection filter.
      *
-     * @param op The operation to add.
-     * @return false, if a group operation is already defined for the target group column - true, otherwise.
+     * @param op The group interval selection operation to apply <i>op.getSelectedIntervalNames()</i> MUST NOT BE EMPTY.
+     * @return false, if the target interval selection has already been applied - true, otherwise.
      */
-    boolean addGroupOperation(DataSetGroup op);
+    boolean filter(DataSetGroup op);
 
     /**
-     * Removes a group operation from the current data set lookup instance.
+     * Reverts the changes applied by a previous <i>filter</i> operation.
      *
      * @param op The operation to remove.
-     * @return false, if no group operations for the specified column are found - true, otherwise.
+     * @return false, if no filter has been applied for the target operation - true, otherwise.
      */
-    boolean removeGroupOperation(DataSetGroup op);
+    boolean unfilter(DataSetGroup op);
+
+    /**
+     * Applies the specified group interval selection operation over the existing group op.
+     *
+     * @param op The group interval selection operation to apply <i>op.getSelectedIntervalNames()</i> MUST NOT BE EMPTY.
+     * @return false, if drillDown is not applicable for the target operation - true, otherwise.
+     */
+    boolean drillDown(DataSetGroup op);
+
+    /**
+     * Reverts the changes applied by a previous <i>drillDown</i> operation.
+     *
+     * @param op The operation to remove.
+     * @return false, if no drillDown has been applied for the target operation - true, otherwise.
+     */
+    boolean drillUp(DataSetGroup op);
 
     /**
      * Set the sort operation for the current data set lookup instance.
      *
      * @param op The operation to set.
      */
-    void setSortOperation(DataSetSort op);
+    void sort(DataSetSort op);
 
     /**
      * Forces the next data set lookup request to retrieve only the specified row sub set.

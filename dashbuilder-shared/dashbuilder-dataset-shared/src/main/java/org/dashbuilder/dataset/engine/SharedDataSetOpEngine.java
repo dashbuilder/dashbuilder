@@ -151,7 +151,6 @@ public class SharedDataSetOpEngine implements DataSetOpEngine {
             boolean group = false;
             boolean calculations = false;
             boolean sort = false;
-            boolean build = false;
 
             for (int i=0; i<operationList.size(); i++) {
                 DataSetOp op = operationList.get(i);
@@ -168,8 +167,8 @@ public class SharedDataSetOpEngine implements DataSetOpEngine {
                         context.lastOperation = op;
                     } else {
                         if (group(gOp, context)) {
-                            group = true;
-                            build = false;
+                            // The group will be required if is not an interval selection
+                            group = context.lastGroupOp.getSelectedIntervalNames().isEmpty();
                             context.lastOperation = op;
                         }
                     }
@@ -180,7 +179,6 @@ public class SharedDataSetOpEngine implements DataSetOpEngine {
                     if (sort) throw new IllegalStateException("Sort operations must be applied ALWAYS AFTER FILTER.");
 
                     filter((DataSetFilter) op, context);
-                    build = false;
                     context.lastOperation = op;
                 }
                 else if (DataSetOpType.SORT.equals(op.getType())) {
@@ -189,22 +187,19 @@ public class SharedDataSetOpEngine implements DataSetOpEngine {
 
                     if (group) {
                         buildDataSet(context);
-                        build = true;
                     }
 
                     sort = true;
                     sort((DataSetSort) op, context);
-                    build = false;
                     context.lastOperation = op;
                 }
                 else {
                     throw new IllegalArgumentException("Unsupported operation: " + op.getClass().getName());
                 }
+            }
 
-            }
-            if (!build) {
-                buildDataSet(context);
-            }
+            // Build the resulting data set
+            buildDataSet(context);
         }
 
         // GROUP OPERATION

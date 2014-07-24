@@ -90,8 +90,11 @@ public class DataSetGroup implements DataSetOp {
     }
 
     public boolean equals(Object obj) {
+        if (obj == this) return true;
         try {
             DataSetGroup other = (DataSetGroup) obj;
+            if (columnGroup != null && other.columnGroup == null) return false;
+            if (columnGroup == null && other.columnGroup != null) return false;
             if (columnGroup != null && !columnGroup.equals(other.columnGroup)) return false;
             if (groupFunctionList.size() != other.groupFunctionList.size()) return false;
             if (selectedIntervalNames.size() != other.selectedIntervalNames.size()) return false;
@@ -108,5 +111,18 @@ public class DataSetGroup implements DataSetOp {
         } catch (ClassCastException e) {
             return false;
         }
+    }
+
+    public String toString() {
+        StringBuilder out = new StringBuilder();
+        if (columnGroup != null) out.append("group(").append(columnGroup).append(") ");
+        if (!selectedIntervalNames.isEmpty()) {
+            out.append("select(");
+            for (String intervalName : selectedIntervalNames) {
+                out.append(intervalName).append(" ");
+            }
+            out.append(")");
+        }
+        return out.toString();
     }
 }

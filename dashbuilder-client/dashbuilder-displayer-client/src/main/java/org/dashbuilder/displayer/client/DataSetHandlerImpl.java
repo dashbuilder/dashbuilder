@@ -15,12 +15,20 @@
  */
 package org.dashbuilder.displayer.client;
 
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Map;
+
+import org.dashbuilder.dataset.DataSetOp;
 import org.dashbuilder.dataset.client.DataSetLookupClient;
 import org.dashbuilder.dataset.client.DataSetReadyCallback;
 import org.dashbuilder.dataset.DataSetLookup;
 import org.dashbuilder.dataset.DataSetOpType;
 import org.dashbuilder.dataset.group.ColumnGroup;
 import org.dashbuilder.dataset.group.DataSetGroup;
+import org.dashbuilder.dataset.group.GroupFunction;
 import org.dashbuilder.dataset.sort.DataSetSort;
 
 public class DataSetHandlerImpl implements DataSetHandler {
@@ -45,99 +53,189 @@ public class DataSetHandlerImpl implements DataSetHandler {
     }
 
     public DataSetGroup getGroupOperation(String columnId) {
-        for (DataSetGroup op : lookupBase.getOperationList(DataSetGroup.class)) {
-            if (op.getColumnGroup() == null) continue;
-
-            if (op.getColumnGroup().getColumnId().equals(columnId)) {
-                return op;
-            }
-            if (op.getColumnGroup().getSourceId().equals(columnId)) {
-                return op;
-            }
-        }
-        return null;
+        int index = lookupCurrent.getLastGroupOpIndex(0, columnId, false);
+        if (index == -1) return null;
+        return lookupCurrent.getOperation(index);
     }
 
-    public boolean addGroupOperation(DataSetGroup op) {
+    public boolean filter(DataSetGroup op) {
         ColumnGroup cg = op.getColumnGroup();
-        if (cg == null) {
-            throw new RuntimeException("Group ops requires to specify a pivot column.");
-        }
-        // If the operation is not an interval selection just add it.
-        if (op.getSelectedIntervalNames().isEmpty()) {
-            lookupCurrent.addOperation(0, op);
-            return true;
-        }
+        if (cg == null) throw new RuntimeException("Group ops requires to specify a pivot column.");
+        if (op.getSelectedIntervalNames().isEmpty()) throw new RuntimeException("Group intervals not specified");
 
-        // Interval selection operations are a bit more complex
-        //
-
-        // Get the existing operation from the current lookup settings.
-        int found = 0; int last = 0;
-        DataSetGroup targetOp = null;
+        // Avoid duplicates
         for (DataSetGroup next : lookupCurrent.getOperationList(DataSetGroup.class)) {
-            if (next.getColumnGroup() != null && cg.equals(next.getColumnGroup())) {
-                targetOp = next;
-                found = last+1;
+            if (op.equals(next)) {
+                return false;
             }
-            last++;
         }
+        // The interval selection op. must be added after the latest selection.
+        DataSetGroup clone = op.cloneInstance();
+        clone.getGroupFunctions().clear();
+        _filter(0, clone, false);
+        return true;
+    }
 
-        // For new operations just add it as a new interval selection operation.
-        if (targetOp == null) {
+    public boolean drillDown(DataSetGroup op) {
+        ColumnGroup cg = op.getColumnGroup();
+        if (cg == null) throw new RuntimeException("Group ops requires to specify a pivot column.");
+        if (op.getSelectedIntervalNames().isEmpty()) throw new RuntimeException("Group intervals not specified");
+
+        // Avoid duplicates
+        for (DataSetGroup next : lookupCurrent.getOperationList(DataSetGroup.class)) {
+            if (op.equals(next)) {
+                return false;
+            }
+        }
+        // Get the latest group op. for the target column being selected.
+        int lastSelection = lookupCurrent.getLastGroupOpIndex(0, null, true) + 1;
+        int targetGroup = lookupCurrent.getLastGroupOpIndex(lastSelection, cg.getColumnId(), false);
+
+        // If the selection does not exists just add it.
+        if (targetGroup == -1) {
             DataSetGroup clone = op.cloneInstance();
             clone.getGroupFunctions().clear();
-            int index = lookupCurrent.getLastGroupOpIndex(null, true) + 1;
-            lookupCurrent.addOperation(index, clone);
+            _filter(lastSelection, clone, true);
             return true;
         }
-
-        // For existing operations, just set the interval selection.
-        targetOp.setSelectedIntervalNames(op.getSelectedIntervalNames());
-
-        // If it was the last existing group operation then the group operation must be applied after the selection.
-        if (found == last && !lookupBase.getOperationList(DataSetGroup.class).isEmpty()) {
+        // If there not exists a group op after the target then the target op must be propagated along the selection.
+        DataSetGroup targetOp = lookupCurrent.getOperation(targetGroup);
+        int latestGroup = lookupCurrent.getLastGroupOpIndex(targetGroup + 1, null, false);
+        if (latestGroup == -1) {
             DataSetGroup clone = targetOp.cloneInstance();
-            clone.getSelectedIntervalNames().clear();
-            lookupCurrent.addOperation(clone);
+            _filter(targetGroup + 1, clone, true);
         }
-        return false;
+        // Enable the selection
+        _select(targetOp, op.getSelectedIntervalNames());
+        return true;
     }
 
-    protected boolean belongsToBase(DataSetGroup op) {
-        for (DataSetGroup baseGroupOp : lookupBase.getOperationList(DataSetGroup.class)) {
-            if (baseGroupOp.getColumnGroup() != null && baseGroupOp.getColumnGroup().equals(op.getColumnGroup())) {
-                return true;
-            }
-        }
-        return false;
+    public boolean unfilter(DataSetGroup op) {
+        return _unfilter(op, false);
     }
 
-    public boolean removeGroupOperation(DataSetGroup op) {
-        for (DataSetGroup next : lookupCurrent.getOperationList(DataSetGroup.class)) {
-            ColumnGroup cg = next.getColumnGroup();
-            if (cg == null) continue;
-
-            if (cg.equals(op.getColumnGroup())) {
-                if (belongsToBase(next)) next.getSelectedIntervalNames().clear();
-                else lookupCurrent.getOperationList().remove(next);
-                return true;
-            }
-        }
-        return false;
+    public boolean drillUp(DataSetGroup op) {
+        return _unfilter(op, true);
     }
 
-    public void setSortOperation(DataSetSort op) {
-        cleaSortOperations();
+    public void sort(DataSetSort op) {
+        unsort();
         lookupCurrent.addOperation(op);
     }
 
-    public boolean cleaSortOperations() {
+    public boolean unsort() {
         int n = lookupCurrent.removeOperations(DataSetOpType.SORT);
         return n > 0;
     }
 
     public void lookupDataSet(DataSetReadyCallback callback) throws Exception {
         dataSetLookupClient.lookupDataSet(lookupCurrent, callback);
+    }
+
+
+    // Internal filter/drillDown implementation logic
+
+    protected Map<String,List<GroupOpFilter>> _groupOpsAdded = new HashMap<String,List<GroupOpFilter>>();
+    protected Map<String,List<GroupOpFilter>> _groupOpsSelected = new HashMap<String,List<GroupOpFilter>>();
+
+    protected void _filter(int index, DataSetGroup op, boolean drillDown) {
+
+        ColumnGroup cgroup = op.getColumnGroup();
+        String columnId = cgroup.getColumnId();
+        if (!_groupOpsAdded.containsKey(columnId)) _groupOpsAdded.put(columnId, new ArrayList<GroupOpFilter>());
+        List<GroupOpFilter> filterOps = _groupOpsAdded.get(columnId);
+
+        // When adding an external filter, look first if it exists an existing filter already.
+        if (!drillDown) {
+            for (GroupOpFilter filterOp : filterOps) {
+                if (!filterOp.drillDown && filterOp.groupOp.getColumnGroup().equals(cgroup)) {
+                    filterOp.groupOp.getSelectedIntervalNames().clear();
+                    filterOp.groupOp.getSelectedIntervalNames().addAll(op.getSelectedIntervalNames());
+                    return;
+                }
+            }
+        }
+        GroupOpFilter groupOpFilter = new GroupOpFilter(op, drillDown);
+        filterOps.add(groupOpFilter);
+        lookupCurrent.addOperation(index, op);
+    }
+
+    protected void _select(DataSetGroup op, List<String> names) {
+        GroupOpFilter groupOpFilter = new GroupOpFilter(op, true);
+
+        op.setSelectedIntervalNames(names);
+        op.getGroupFunctions().clear();
+
+        String columnId = op.getColumnGroup().getColumnId();
+        if (!_groupOpsSelected.containsKey(columnId)) {
+            _groupOpsSelected.put(columnId, new ArrayList<GroupOpFilter>());
+        }
+        _groupOpsSelected.get(columnId).add(groupOpFilter);
+    }
+
+    protected boolean _unfilter(DataSetGroup op, boolean drillDown) {
+        boolean opFound = false;
+        String columnId = op.getColumnGroup().getColumnId();
+
+        if (_groupOpsAdded.containsKey(columnId)) {
+
+            Iterator<GroupOpFilter> it1 = _groupOpsAdded.get(columnId).iterator();
+            while (it1.hasNext()) {
+                GroupOpFilter target = it1.next();
+
+                Iterator<DataSetOp> it2 = lookupCurrent.getOperationList().iterator();
+                while (it2.hasNext()) {
+                    DataSetOp next = it2.next();
+                    if (next == target.groupOp && target.drillDown == drillDown) {
+                        it1.remove();
+                        it2.remove();
+                        opFound = true;
+                    }
+                }
+            }
+        }
+
+        if (_groupOpsSelected.containsKey(columnId)) {
+
+            Iterator<GroupOpFilter> it1 = _groupOpsSelected.get(columnId).iterator();
+            while (it1.hasNext()) {
+                GroupOpFilter target = it1.next();
+
+                Iterator<DataSetGroup> it2 = lookupCurrent.getOperationList(DataSetGroup.class).iterator();
+                while (it2.hasNext()) {
+                    DataSetGroup next = it2.next();
+                    if (next == target.groupOp && target.drillDown == drillDown) {
+                        it1.remove();
+                        next.getSelectedIntervalNames().clear();
+                        next.getGroupFunctions().clear();
+                        next.getSelectedIntervalNames().addAll(target.intervalNames);
+                        next.getGroupFunctions().addAll(target.groupFunctions);
+                        opFound = true;
+                    }
+                }
+            }
+        }
+        return opFound;
+    }
+
+    protected static class GroupOpFilter {
+        DataSetGroup groupOp;
+        boolean drillDown = false;
+        List<GroupFunction> groupFunctions;
+        List<String> intervalNames;
+
+        private GroupOpFilter(DataSetGroup op, boolean drillDown) {
+            this.groupOp = op;
+            this.drillDown = drillDown;
+            this.groupFunctions = new ArrayList<GroupFunction>(op.getGroupFunctions());
+            this.intervalNames = new ArrayList<String>(op.getSelectedIntervalNames());
+        }
+
+        public String toString() {
+            StringBuilder out = new StringBuilder();
+            out.append("drillDown(").append(drillDown).append(") ");
+            if (groupOp != null) out.append("groupOp(").append(groupOp).append(")");
+            return out.toString();
+        }
     }
 }

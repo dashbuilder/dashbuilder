@@ -141,4 +141,13 @@ public class ColumnGroup {
             return false;
         }
     }
+
+    public String toString() {
+        StringBuilder out = new StringBuilder();
+        out.append("column=").append(columnId).append(" ");
+        out.append("strategy=").append(strategy).append(" ");
+        if (intervalSize != null) out.append("intervalSize=").append(intervalSize).append(" ");;
+        out.append("maxIntervals=").append(maxIntervals);
+        return out.toString();
+    }
 }
