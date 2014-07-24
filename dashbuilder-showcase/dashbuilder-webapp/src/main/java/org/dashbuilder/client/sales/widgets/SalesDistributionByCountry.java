@@ -24,6 +24,7 @@ import org.dashbuilder.displayer.client.Displayer;
 import org.dashbuilder.displayer.client.DisplayerCoordinator;
 import org.dashbuilder.displayer.client.DisplayerHelper;
 import org.dashbuilder.displayer.DisplayerSettingsFactory;
+import org.dashbuilder.renderer.table.client.TableRenderer;
 
 import static org.dashbuilder.client.sales.SalesConstants.*;
 import static org.dashbuilder.dataset.sort.SortOrder.*;
@@ -100,9 +101,9 @@ public class SalesDistributionByCountry extends Composite {
                 .column(EXPECTED_AMOUNT, "Expected")
                 .column(CLOSING_DATE, "Closing")
                 .column(AMOUNT, "Amount")
-                .filterOn(false, true, true)
+                .filterOn(true, true, true)
                 .tableWidth(900)
-                .renderer("default")
+                .renderer(TableRenderer.UUID)
                 .buildSettings());
 
         // Make that charts interact among them

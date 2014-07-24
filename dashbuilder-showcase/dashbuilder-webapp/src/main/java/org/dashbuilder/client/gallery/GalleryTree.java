@@ -30,6 +30,7 @@ import org.dashbuilder.client.sales.widgets.SalesDistributionByCountry;
 import org.dashbuilder.client.sales.widgets.SalesGoals;
 import org.dashbuilder.client.sales.widgets.SalesTableReports;
 import org.dashbuilder.dataset.DataSetFactory;
+import org.dashbuilder.renderer.table.client.TableRenderer;
 
 import static org.dashbuilder.dataset.group.DateIntervalType.*;
 import static org.dashbuilder.dataset.filter.FilterFactory.*;
@@ -415,7 +416,7 @@ public class GalleryTree {
                 .column(CLOSING_DATE, "Closing")
                 .column(AMOUNT, "Amount")
                 .filterOn(true, false, false)
-                .renderer("table")
+                .renderer(TableRenderer.UUID)
                 .buildSettings()
         ));
     }
