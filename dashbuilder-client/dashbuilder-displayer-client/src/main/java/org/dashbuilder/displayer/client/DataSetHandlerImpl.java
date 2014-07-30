@@ -33,12 +33,11 @@ import org.dashbuilder.dataset.sort.DataSetSort;
 
 public class DataSetHandlerImpl implements DataSetHandler {
 
-    protected DataSetLookupClient dataSetLookupClient;
+    protected DataSetLookupClient dataSetLookupClient = DataSetLookupClient.get();
     protected DataSetLookup lookupBase;
     protected DataSetLookup lookupCurrent;
 
-    public DataSetHandlerImpl(DataSetLookupClient dataSetLookupClient, DataSetLookup lookup) {
-        this.dataSetLookupClient = dataSetLookupClient;
+    public DataSetHandlerImpl(DataSetLookup lookup) {
         this.lookupBase = lookup;
         this.lookupCurrent = lookup.cloneInstance();
     }

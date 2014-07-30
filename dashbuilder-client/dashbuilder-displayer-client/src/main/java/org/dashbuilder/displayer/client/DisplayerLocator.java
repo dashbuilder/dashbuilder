@@ -40,7 +40,6 @@ public class DisplayerLocator {
     }
 
     @Inject ClientDataSetManager clientDataSetManager;
-    @Inject DataSetLookupClient dataSetLookupClient;
 
     /**
      * Get the displayer component for the specified data displayer (with no data set attached).
@@ -59,7 +58,7 @@ public class DisplayerLocator {
             dataSetLookup = new DataSetLookup(dataSet.getUUID());
         }
 
-        DataSetHandler handler = new DataSetHandlerImpl(dataSetLookupClient, dataSetLookup);
+        DataSetHandler handler = new DataSetHandlerImpl(dataSetLookup);
         displayer.setDataSetHandler(handler);
         return displayer;
     }
