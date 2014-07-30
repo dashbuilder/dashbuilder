@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbuilder.renderer.table.client;
+package org.dashbuilder.renderer.selector.client;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Named;
@@ -27,10 +27,10 @@ import org.dashbuilder.displayer.DisplayerSettings;
  * Table renderer based on the core PagedTable widget.
  */
 @ApplicationScoped
-@Named(TableRenderer.UUID + "_renderer")
-public class TableRenderer extends AbstractRendererLibrary {
+@Named(SelectorRenderer.UUID + "_renderer")
+public class SelectorRenderer extends AbstractRendererLibrary {
 
-    public static final String UUID = "table";
+    public static final String UUID = "selector";
 
     @Override
     public String getUUID() {
@@ -40,7 +40,7 @@ public class TableRenderer extends AbstractRendererLibrary {
     @Override
     public Displayer lookupDisplayer(DisplayerSettings displayerSettings) {
         DisplayerType type = displayerSettings.getType();
-        if ( DisplayerType.TABLE.equals(type)) return new TableDisplayer();
+        if (DisplayerType.SELECTOR.equals(type)) return new SelectorDisplayer();
 
         return null;
     }

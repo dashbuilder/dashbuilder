@@ -22,6 +22,7 @@ import org.dashbuilder.displayer.impl.LineChartSettingsBuilderImpl;
 import org.dashbuilder.displayer.impl.MapChartSettingsBuilderImpl;
 import org.dashbuilder.displayer.impl.MeterChartSettingsBuilderImpl;
 import org.dashbuilder.displayer.impl.PieChartSettingsBuilderImpl;
+import org.dashbuilder.displayer.impl.SelectorDisplayerSettingsBuilderImpl;
 import org.dashbuilder.displayer.impl.TableDisplayerSettingsBuilderImpl;
 
 /**
@@ -61,4 +62,7 @@ public final class DisplayerSettingsFactory {
         return new MeterChartSettingsBuilderImpl();
     }
 
+    public static SelectorDisplayerSettingsBuilder<SelectorDisplayerSettingsBuilderImpl> newSelectorSettings() {
+        return new SelectorDisplayerSettingsBuilderImpl();
+    }
 }

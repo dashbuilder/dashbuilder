@@ -16,56 +16,18 @@
 package org.dashbuilder.displayer;
 
 /**
- * An enumeration for the different types of displayers.
+ * A displayer settings builder for selectors
+ *
+ * <pre>
+ *   DisplayerSettingsFactory.newSelectorSettings()
+ *   .dataset("products")
+ *   .group("product")
+ *   .count("items")
+ *   .title("Product selector")
+ *   .column("Product")
+ *   .column("Number of items")
+ * </pre>
  */
-public enum DisplayerType {
+public interface SelectorDisplayerSettingsBuilder<T extends SelectorDisplayerSettingsBuilder> extends DisplayerSettingsBuilder<T> {
 
-    /**
-     * Bar Chart
-     */
-    BARCHART,
-
-    /**
-     * Pie Chart
-     */
-    PIECHART,
-
-    /**
-     * Area Chart
-     */
-    AREACHART,
-
-    /**
-     * Line Chart
-     */
-    LINECHART,
-
-    /**
-     * Bubble Chart
-     */
-    BUBBLECHART,
-
-    /**
-     * Meter Chart
-     */
-    METERCHART,
-
-    /**
-     * Table reports
-     */
-    TABLE,
-
-    /**
-     * Map
-     */
-    MAP,
-
-    /**
-     * Selector
-     */
-    SELECTOR;
-
-    public static DisplayerType getByName(String str) {
-        return valueOf(str.toUpperCase());
-    }
 }

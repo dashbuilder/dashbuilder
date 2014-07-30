@@ -5,6 +5,11 @@
 
   <g:VerticalPanel>
     <g:HorizontalPanel>
+      <g:VerticalPanel>
+        <my:Displayer ui:field="countrySelector"/>
+        <my:Displayer ui:field="salesmanSelector"/>
+        <my:Displayer ui:field="customerSelector"/>
+      </g:VerticalPanel>
       <my:Displayer ui:field="areaChartByDate"/>
     </g:HorizontalPanel>
     <g:HorizontalPanel>

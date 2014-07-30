@@ -26,9 +26,9 @@ import org.dashbuilder.displayer.client.DisplayerCoordinator;
 import org.dashbuilder.displayer.client.DisplayerHelper;
 
 import static org.dashbuilder.dataset.group.DateIntervalType.*;
-import static org.dashbuilder.dataset.sort.SortOrder.DESCENDING;
 import static org.dashbuilder.dataset.date.DayOfWeek.*;
 import static org.dashbuilder.client.sales.SalesConstants.*;
+import static org.dashbuilder.dataset.sort.SortOrder.*;
 
 /**
  * A composite widget that represents an entire dashboard sample composed using an UI binder template.
@@ -57,6 +57,15 @@ public class SalesExpectedByDate extends Composite {
     @UiField(provided = true)
     Displayer tableAll;
 
+    @UiField(provided = true)
+    Displayer countrySelector;
+
+    @UiField(provided = true)
+    Displayer customerSelector;
+
+    @UiField(provided = true)
+    Displayer salesmanSelector;
+
     public SalesExpectedByDate() {
 
         // Create the chart definitions
@@ -68,7 +77,7 @@ public class SalesExpectedByDate extends Composite {
                 .sum(EXPECTED_AMOUNT)
                 .title("Expected pipeline")
                 .titleVisible(true)
-                .width(850).height(200)
+                .width(600).height(200)
                 .margins(10, 80, 80, 100)
                 .column("Creation date")
                 .column("Amount")
@@ -147,7 +156,48 @@ public class SalesExpectedByDate extends Composite {
                 .filterOn(false, true, true)
                 .buildSettings());
 
-        // Make that charts interact among them
+        // Create the selectors
+
+        countrySelector = DisplayerHelper.lookupDisplayer(
+                DisplayerSettingsFactory.newSelectorSettings()
+                .dataset(SALES_OPPS)
+                .group(COUNTRY)
+                .count("#Opps")
+                .sum(AMOUNT)
+                .sort(COUNTRY, ASCENDING)
+                .column("Country")
+                .column("#Opps")
+                .column("Total")
+                .filterOn(false, true, true)
+                .buildSettings());
+
+        salesmanSelector = DisplayerHelper.lookupDisplayer(
+                DisplayerSettingsFactory.newSelectorSettings()
+                .dataset(SALES_OPPS)
+                .group(SALES_PERSON)
+                .count("#Opps")
+                .sum(AMOUNT)
+                .sort(SALES_PERSON, ASCENDING)
+                .column("Employee")
+                .column("#Opps")
+                .column("Total")
+                .filterOn(false, true, true)
+                .buildSettings());
+
+        customerSelector = DisplayerHelper.lookupDisplayer(
+                DisplayerSettingsFactory.newSelectorSettings()
+                .dataset(SALES_OPPS)
+                .group(CUSTOMER)
+                .count("#Opps")
+                .sum(AMOUNT)
+                .sort(CUSTOMER, ASCENDING)
+                .column("Customer")
+                .column("#Opps")
+                .column("Total")
+                .filterOn(false, true, true)
+                .buildSettings());
+
+        // Make the displayers interact among them
         DisplayerCoordinator displayerCoordinator = new DisplayerCoordinator();
         displayerCoordinator.addDisplayer(areaChartByDate);
         displayerCoordinator.addDisplayer(pieChartYears);
@@ -155,6 +205,9 @@ public class SalesExpectedByDate extends Composite {
         displayerCoordinator.addDisplayer(barChartDayOfWeek);
         displayerCoordinator.addDisplayer(pieChartByPipeline);
         displayerCoordinator.addDisplayer(tableAll);
+        displayerCoordinator.addDisplayer(countrySelector);
+        displayerCoordinator.addDisplayer(salesmanSelector);
+        displayerCoordinator.addDisplayer(customerSelector);
 
         // Init the dashboard from the UI Binder template
         initWidget(uiBinder.createAndBindUi(this));
@@ -162,6 +215,4 @@ public class SalesExpectedByDate extends Composite {
         // Draw the charts
         displayerCoordinator.drawAll();
     }
-
-
 }

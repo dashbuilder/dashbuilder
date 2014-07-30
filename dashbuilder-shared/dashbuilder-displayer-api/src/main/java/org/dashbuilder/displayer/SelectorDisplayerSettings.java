@@ -15,57 +15,13 @@
  */
 package org.dashbuilder.displayer;
 
-/**
- * An enumeration for the different types of displayers.
- */
-public enum DisplayerType {
+import org.jboss.errai.common.client.api.annotations.Portable;
 
-    /**
-     * Bar Chart
-     */
-    BARCHART,
+@Portable
+public class SelectorDisplayerSettings extends AbstractDisplayerSettings {
 
-    /**
-     * Pie Chart
-     */
-    PIECHART,
-
-    /**
-     * Area Chart
-     */
-    AREACHART,
-
-    /**
-     * Line Chart
-     */
-    LINECHART,
-
-    /**
-     * Bubble Chart
-     */
-    BUBBLECHART,
-
-    /**
-     * Meter Chart
-     */
-    METERCHART,
-
-    /**
-     * Table reports
-     */
-    TABLE,
-
-    /**
-     * Map
-     */
-    MAP,
-
-    /**
-     * Selector
-     */
-    SELECTOR;
-
-    public static DisplayerType getByName(String str) {
-        return valueOf(str.toUpperCase());
+    @Override
+    public DisplayerType getType() {
+        return DisplayerType.SELECTOR;
     }
 }

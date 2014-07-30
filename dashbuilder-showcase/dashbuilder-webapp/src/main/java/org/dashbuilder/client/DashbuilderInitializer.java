@@ -29,6 +29,7 @@ import org.dashbuilder.dataset.DataSetManager;
 import org.dashbuilder.displayer.DisplayerType;
 import org.dashbuilder.client.sales.SalesConstants;
 import org.dashbuilder.dataset.DataSetLookupService;
+import org.dashbuilder.renderer.selector.client.SelectorRenderer;
 import org.jboss.errai.common.client.api.Caller;
 
 /**
@@ -63,6 +64,7 @@ public class DashbuilderInitializer {
         rendererLibLocator.setDefaultRenderer( DisplayerType.METERCHART, GoogleRenderer.UUID);
         rendererLibLocator.setDefaultRenderer( DisplayerType.MAP, GoogleRenderer.UUID);
         rendererLibLocator.setDefaultRenderer( DisplayerType.TABLE, GoogleRenderer.UUID);
+        rendererLibLocator.setDefaultRenderer( DisplayerType.SELECTOR, SelectorRenderer.UUID);
 
         // Generate the data set to be used by the Showcase Gallery and by the Sales sample dashboards.
         Date currentDate = new Date();

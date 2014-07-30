@@ -31,4 +31,8 @@
   <inherits name="org.dashbuilder.DisplayerClient"/>
   <inherits name="org.dashbuilder.DisplayerScreen"/>
   <inherits name="org.dashbuilder.DisplayerEditor"/>
+
+  <inherits name="org.dashbuilder.renderer.TableRenderer"/>
+  <inherits name="org.dashbuilder.renderer.SelectorRenderer"/>
+
 </module>
