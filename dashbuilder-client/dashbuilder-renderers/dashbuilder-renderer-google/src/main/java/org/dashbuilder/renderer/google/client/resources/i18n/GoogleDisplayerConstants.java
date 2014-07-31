@@ -23,6 +23,8 @@ public interface GoogleDisplayerConstants extends Messages {
 
     public static final GoogleDisplayerConstants INSTANCE = GWT.create( GoogleDisplayerConstants.class );
 
+    public String googleDisplayer_initalizing();
+
     public String googleDisplayer_resetAnchor();
 
     public String googleTableDisplayer_gotoFirstPage();

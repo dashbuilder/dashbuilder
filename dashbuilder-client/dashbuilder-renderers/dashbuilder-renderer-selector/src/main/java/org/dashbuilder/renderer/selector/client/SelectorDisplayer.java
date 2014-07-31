@@ -26,6 +26,7 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Widget;
+import org.dashbuilder.common.client.StringUtils;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.client.DataSetReadyCallback;
 import org.dashbuilder.displayer.DisplayerSettingsColumn;
@@ -54,7 +55,10 @@ public class SelectorDisplayer extends AbstractDisplayer<SelectorDisplayerSettin
                 displayMessage( "ERROR: DataSetHandler property not set" );
             } else {
                 try {
-                    displayMessage(SelectorConstants.INSTANCE.selectorDisplayer_initializing() + " '" + displayerSettings.getTitle() + "'...");
+                    String initMsg = SelectorConstants.INSTANCE.selectorDisplayer_initializing();
+                    if (!StringUtils.isBlank(displayerSettings.getTitle())) initMsg += " '" + displayerSettings.getTitle() + "'";
+                    displayMessage(initMsg + " ...");
+
                     dataSetHandler.lookupDataSet(new DataSetReadyCallback() {
                         public void callback(DataSet result) {
                             dataSet = result;

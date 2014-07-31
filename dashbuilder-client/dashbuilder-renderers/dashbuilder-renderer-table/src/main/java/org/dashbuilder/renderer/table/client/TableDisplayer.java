@@ -47,6 +47,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.google.gwt.view.client.AsyncDataProvider;
 import com.google.gwt.view.client.HasData;
+import org.dashbuilder.common.client.StringUtils;
 import org.dashbuilder.dataset.client.DataSetReadyCallback;
 import org.dashbuilder.displayer.DisplayerSettingsColumn;
 import org.dashbuilder.displayer.TableDisplayerSettings;
@@ -95,7 +96,10 @@ public class TableDisplayer extends AbstractDisplayer<TableDisplayerSettings> {
                 displayMessage( "ERROR: DataSetHandler property not set" );
             } else {
                 try {
-                    displayMessage( TableConstants.INSTANCE.tableDisplayer_initializing() + " '" + displayerSettings.getTitle() + "'..." );
+                    String initMsg = TableConstants.INSTANCE.tableDisplayer_initializing();
+                    if (!StringUtils.isBlank(displayerSettings.getTitle())) initMsg += " '" + displayerSettings.getTitle() + "'";
+                    displayMessage(initMsg + " ...");
+
                     lookupDataSet(0, new DataSetReadyCallback() {
 
                         public void callback( DataSet dataSet ) {

@@ -28,6 +28,7 @@ import com.googlecode.gwt.charts.client.format.DateFormatOptions;
 import com.googlecode.gwt.charts.client.format.NumberFormat;
 import com.googlecode.gwt.charts.client.format.NumberFormatOptions;
 import com.googlecode.gwt.charts.client.options.FormatType;
+import org.dashbuilder.common.client.StringUtils;
 import org.dashbuilder.dataset.client.DataSetReadyCallback;
 import org.dashbuilder.displayer.DisplayerSettingsColumn;
 import org.dashbuilder.displayer.client.AbstractDisplayer;
@@ -35,6 +36,7 @@ import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.displayer.DisplayerSettings;
+import org.dashbuilder.renderer.google.client.resources.i18n.GoogleDisplayerConstants;
 
 public abstract class GoogleDisplayer<T extends DisplayerSettings> extends AbstractDisplayer<T> {
 
@@ -65,7 +67,10 @@ public abstract class GoogleDisplayer<T extends DisplayerSettings> extends Abstr
             }
             else {
                 try {
-                    displayMessage("Initializing '" + displayerSettings.getTitle() + "'...");
+                    String initMsg = GoogleDisplayerConstants.INSTANCE.googleDisplayer_initalizing();
+                    if (!StringUtils.isBlank(displayerSettings.getTitle())) initMsg += " '" + displayerSettings.getTitle() + "'";
+                    displayMessage(initMsg + " ...");
+
                     beforeDataSetLookup();
                     dataSetHandler.lookupDataSet(new DataSetReadyCallback() {
                         public void callback(DataSet result) {
