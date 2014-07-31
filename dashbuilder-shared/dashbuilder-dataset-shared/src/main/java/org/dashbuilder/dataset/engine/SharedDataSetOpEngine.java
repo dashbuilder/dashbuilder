@@ -22,8 +22,8 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import org.dashbuilder.dataset.DataSetOpEngine;
-import org.dashbuilder.dataset.engine.function.AggregateFunction;
-import org.dashbuilder.dataset.engine.function.AggregateFunctionManager;
+import org.dashbuilder.dataset.group.AggregateFunction;
+import org.dashbuilder.dataset.group.AggregateFunctionManager;
 import org.dashbuilder.dataset.engine.group.IntervalBuilder;
 import org.dashbuilder.dataset.engine.group.IntervalBuilderLocator;
 import org.dashbuilder.dataset.engine.group.IntervalList;

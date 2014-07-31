@@ -20,8 +20,9 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.Instance;
-import javax.inject.Inject;
+
+import org.dashbuilder.dataset.group.AggregateFunction;
+import org.dashbuilder.dataset.group.AggregateFunctionManager;
 
 @ApplicationScoped
 public class AggregateFunctionManagerImpl implements AggregateFunctionManager {

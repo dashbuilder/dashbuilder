@@ -15,6 +15,8 @@
  */
 package org.dashbuilder.dataset.engine.function;
 
+import org.dashbuilder.dataset.group.AggregateFunction;
+
 /**
  * Base class for the implementation of aggregate functions.
  */

@@ -13,18 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbuilder.dataset.engine.function;
+package org.dashbuilder.dataset.group;
 
-import java.util.List;
+import java.util.Collection;
 
 /**
- * Interface used to get the aggregate value of a given collection.
- * <p>Aggregate functions are used to calculate the aggregate
- * values of the intervals belonging to a given data set domain property.
+ * Manager class that it keeps a registry of AggregateFunction instances.
  */
-public interface AggregateFunction {
+public interface AggregateFunctionManager {
 
-    String getCode();
-    double aggregate(List values);
-    double aggregate(List values, List<Integer> rows);
+    /**
+     * Get all the aggregate functions registered.
+     */
+    Collection<AggregateFunction> getAllFunctions();
+
+    /**
+     * Get an aggregate function by its code.
+     */
+    AggregateFunction getFunctionByCode(String code);
+
+    /**
+     * Register an aggregate function.
+     */
+    void registerFunction(AggregateFunction function);
 }
+

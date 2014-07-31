@@ -19,8 +19,8 @@ import java.util.Arrays;
 import java.util.List;
 import javax.inject.Inject;
 
-import org.dashbuilder.dataset.engine.function.AggregateFunction;
-import org.dashbuilder.dataset.engine.function.AggregateFunctionManager;
+import org.dashbuilder.dataset.group.AggregateFunction;
+import org.dashbuilder.dataset.group.AggregateFunctionManager;
 import org.dashbuilder.dataset.engine.function.AverageFunction;
 import org.dashbuilder.dataset.engine.function.CountFunction;
 import org.dashbuilder.dataset.engine.function.DistinctFunction;
