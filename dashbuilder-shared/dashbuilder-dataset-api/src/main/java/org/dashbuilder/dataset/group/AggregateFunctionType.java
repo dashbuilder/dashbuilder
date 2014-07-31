@@ -23,7 +23,7 @@ import org.jboss.errai.common.client.api.annotations.Portable;
 @Portable
 public enum AggregateFunctionType {
     COUNT,
-    DISTICNT,
+    DISTINCT,
     AVERAGE,
     SUM,
     MIN,

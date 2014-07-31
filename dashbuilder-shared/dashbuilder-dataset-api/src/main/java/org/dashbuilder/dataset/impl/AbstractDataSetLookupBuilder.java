@@ -199,11 +199,11 @@ public abstract class AbstractDataSetLookupBuilder<T> implements DataSetLookupBu
     }
 
     public T distinct(String columnId) {
-        return function(columnId, columnId, AggregateFunctionType.DISTICNT);
+        return function(columnId, columnId, AggregateFunctionType.DISTINCT);
     }
 
     public T distinct(String columnId, String newColumnId) {
-        return function(columnId, newColumnId, AggregateFunctionType.DISTICNT);
+        return function(columnId, newColumnId, AggregateFunctionType.DISTINCT);
     }
 
     public T count(String newColumnId) {

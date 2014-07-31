@@ -68,10 +68,11 @@ public class DataSetGroupTest {
                 .max("amount")
                 .avg("amount")
                 .sum("amount")
+                .distinct("city")
                 .buildLookup());
 
         assertDataSetValues(result, dataSetFormatter, new String[][] {
-                {"50.00", "1.10", "1,100.10", "454.63", "22,731.26"}
+                {"50.00", "1.10", "1,100.10", "454.63", "22,731.26", "6.00"}
         }, 0);
     }
 
