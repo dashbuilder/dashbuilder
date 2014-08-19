@@ -25,6 +25,7 @@ public abstract class AbstractDisplayerSettingsEditor<T extends DisplayerSetting
 
     protected T displayerSettings;
     protected DisplayerSettingsEditorListener listener;
+    protected Displayer displayer;
 
     public T getDisplayerSettings() {
         return displayerSettings;
@@ -32,6 +33,12 @@ public abstract class AbstractDisplayerSettingsEditor<T extends DisplayerSetting
 
     public void setDisplayerSettings(T displayerSettings) {
         this.displayerSettings = displayerSettings;
+        this.displayer = DisplayerHelper.lookupDisplayer(displayerSettings);
+    }
+
+    @Override
+    public Displayer getDisplayer() {
+        return displayer;
     }
 
     public DisplayerSettingsEditorListener getListener() {

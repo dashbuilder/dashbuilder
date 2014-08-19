@@ -24,6 +24,11 @@ import org.dashbuilder.displayer.DisplayerSettings;
 public interface DisplayerSettingsEditor<T extends DisplayerSettings> extends IsWidget {
 
     /**
+     * The Displayer this displayer settings editor is editing
+     */
+    Displayer getDisplayer();
+
+    /**
      * The data displayer to be edited.
      */
     void setDisplayerSettings(T displayerSettings);
