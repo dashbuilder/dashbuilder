@@ -29,6 +29,7 @@ import org.dashbuilder.dataset.group.GroupStrategy;
 import org.dashbuilder.dataset.sort.ColumnSort;
 import org.dashbuilder.dataset.sort.DataSetSort;
 import org.dashbuilder.dataset.sort.SortOrder;
+import org.dashbuilder.displayer.DisplayerSettingType;
 import org.dashbuilder.displayer.DisplayerSettings;
 
 /**
@@ -64,6 +65,11 @@ public abstract class AbstractDisplayer<T extends DisplayerSettings> extends Com
 
     public void addListener(DisplayerListener listener) {
         listenerList.add(listener);
+    }
+
+    @Override
+    public boolean isDisplayerSettingSupported( DisplayerSettingType displayerSettingType ) {
+        return false;
     }
 
     // CAPTURE EVENTS RECEIVED FROM OTHER DISPLAYERS
