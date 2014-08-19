@@ -42,7 +42,7 @@ public class DisplayerView extends Composite {
 
     public void setDisplayerSettings(DisplayerSettings displayerSettings) {
         this.displayerSettings = displayerSettings;
-        this. displayer = DisplayerHelper.lookupDisplayer(displayerSettings);
+        this.displayer = DisplayerHelper.lookupDisplayer(displayerSettings);
     }
 
     public Displayer getDisplayer() {
