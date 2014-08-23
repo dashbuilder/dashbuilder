@@ -16,25 +16,24 @@
 package org.dashbuilder.displayer.impl;
 
 import org.dashbuilder.displayer.ChartSettingsBuilder;
-import org.dashbuilder.displayer.ChartDisplayerSettings;
 
 public abstract class AbstractChartSettingsBuilder<T extends ChartSettingsBuilder> extends AbstractDisplayerSettingsBuilder<T> implements ChartSettingsBuilder<T> {
 
     public T width(int width) {
-        ((ChartDisplayerSettings ) displayerSettings ).setWidth(width);
+        displayerSettings.setChartWidth( width );
         return (T) this;
     }
 
     public T height(int height) {
-        ((ChartDisplayerSettings ) displayerSettings ).setHeight(height);
+        displayerSettings.setChartHeight( height );
         return (T) this;
     }
 
     public T margins(int top, int bottom, int left, int right) {
-        ((ChartDisplayerSettings ) displayerSettings ).setMarginTop(top);
-        ((ChartDisplayerSettings ) displayerSettings ).setMarginBottom(bottom);
-        ((ChartDisplayerSettings ) displayerSettings ).setMarginLeft(left);
-        ((ChartDisplayerSettings ) displayerSettings ).setMarginRight(right);
+        displayerSettings.setChartMarginTop(top);
+        displayerSettings.setChartMarginBottom(bottom);
+        displayerSettings.setChartMarginLeft(left);
+        displayerSettings.setChartMarginRight(right);
         return (T) this;
     }
 }

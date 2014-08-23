@@ -23,9 +23,8 @@ import com.googlecode.gwt.charts.client.gauge.Gauge;
 import com.googlecode.gwt.charts.client.gauge.GaugeOptions;
 import com.googlecode.gwt.charts.client.options.Animation;
 import com.googlecode.gwt.charts.client.options.AnimationEasing;
-import org.dashbuilder.displayer.MeterChartDisplayerSettings;
 
-public class GoogleMeterChartDisplayer extends GoogleDisplayer<MeterChartDisplayerSettings> {
+public class GoogleMeterChartDisplayer extends GoogleDisplayer {
 
     private Gauge chart;
 
@@ -60,8 +59,8 @@ public class GoogleMeterChartDisplayer extends GoogleDisplayer<MeterChartDisplay
         anim.setEasing(AnimationEasing.IN_AND_OUT);
 
         GaugeOptions options = GaugeOptions.create();
-        options.setWidth(displayerSettings.getWidth());
-        options.setHeight(displayerSettings.getHeight());
+        options.setWidth(displayerSettings.getChartWidth());
+        options.setHeight(displayerSettings.getChartHeight());
         options.setMin(displayerSettings.getMeterStart());
         options.setMax(displayerSettings.getMeterEnd());
         options.setGreenFrom(displayerSettings.getMeterStart());

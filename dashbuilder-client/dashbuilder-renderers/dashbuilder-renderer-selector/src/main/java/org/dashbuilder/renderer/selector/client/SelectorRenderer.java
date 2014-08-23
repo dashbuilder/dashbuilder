@@ -18,10 +18,10 @@ package org.dashbuilder.renderer.selector.client;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Named;
 
+import org.dashbuilder.displayer.DisplayerSettings;
 import org.dashbuilder.displayer.DisplayerType;
 import org.dashbuilder.displayer.client.AbstractRendererLibrary;
 import org.dashbuilder.displayer.client.Displayer;
-import org.dashbuilder.displayer.DisplayerSettings;
 
 /**
  * Table renderer based on the core PagedTable widget.

@@ -30,11 +30,10 @@ import org.dashbuilder.common.client.StringUtils;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.client.DataSetReadyCallback;
 import org.dashbuilder.displayer.DisplayerSettingsColumn;
-import org.dashbuilder.displayer.SelectorDisplayerSettings;
 import org.dashbuilder.displayer.client.AbstractDisplayer;
 import org.dashbuilder.renderer.selector.client.resources.i18n.SelectorConstants;
 
-public class SelectorDisplayer extends AbstractDisplayer<SelectorDisplayerSettings> {
+public class SelectorDisplayer extends AbstractDisplayer {
 
     protected FlowPanel panel = new FlowPanel();
     ListBox listBox = null;

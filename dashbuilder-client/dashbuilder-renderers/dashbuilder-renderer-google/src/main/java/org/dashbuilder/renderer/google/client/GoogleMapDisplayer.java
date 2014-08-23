@@ -23,9 +23,8 @@ import com.google.gwt.user.client.ui.Widget;
 import com.googlecode.gwt.charts.client.ChartPackage;
 import com.googlecode.gwt.charts.client.geochart.GeoChart;
 import com.googlecode.gwt.charts.client.geochart.GeoChartOptions;
-import org.dashbuilder.displayer.MapChartDisplayerSettings;
 
-public class GoogleMapDisplayer extends GoogleXAxisChartDisplayer<MapChartDisplayerSettings> {
+public class GoogleMapDisplayer extends GoogleXAxisChartDisplayer {
 
     private GeoChart chart;
     protected Panel filterPanel;
@@ -63,8 +62,8 @@ public class GoogleMapDisplayer extends GoogleXAxisChartDisplayer<MapChartDispla
 
     private GeoChartOptions createOptions() {
         GeoChartOptions options = GeoChartOptions.create();
-        options.setWidth(displayerSettings.getWidth());
-        options.setHeight(displayerSettings.getHeight());
+        options.setWidth(displayerSettings.getChartWidth());
+        options.setHeight(displayerSettings.getChartHeight());
         return options;
     }
 }

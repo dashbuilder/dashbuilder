@@ -16,12 +16,12 @@
 package org.dashbuilder.displayer.impl;
 
 import org.dashbuilder.displayer.BubbleChartSettingsBuilder;
-import org.dashbuilder.displayer.BubbleChartDisplayerSettings;
 import org.dashbuilder.displayer.DisplayerSettings;
+import org.dashbuilder.displayer.DisplayerType;
 
 public class BubbleChartSettingsBuilderImpl extends AbstractChartSettingsBuilder<BubbleChartSettingsBuilderImpl> implements BubbleChartSettingsBuilder<BubbleChartSettingsBuilderImpl> {
 
     protected DisplayerSettings createDisplayerSettings() {
-        return new BubbleChartDisplayerSettings();
+        return new DisplayerSettings( DisplayerType.BUBBLECHART );
     }
 }

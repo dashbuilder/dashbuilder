@@ -64,6 +64,7 @@ public class GalleryNodeDisplayer extends GalleryNode {
             return new DisplayerView(displayerSettings).draw();
         }
 
+        // TODO encapsulate the editor in a DisplayerSettingsView, similar to the DisplayerView, for coherency ?
         DisplayerSettingsEditor settingsEditor = DisplayerSettingsEditorLocator.get().lookupSettingsEditor(displayerSettings);
 
         SimplePanel editorPanel = new SimplePanel();

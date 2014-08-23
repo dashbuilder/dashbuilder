@@ -16,30 +16,27 @@
 package org.dashbuilder.displayer.impl;
 
 import org.dashbuilder.displayer.BarChartSettingsBuilder;
-import org.dashbuilder.displayer.BarChartDisplayerSettings;
 import org.dashbuilder.displayer.DisplayerSettings;
+import org.dashbuilder.displayer.DisplayerType;
 
 public class BarChartSettingsBuilderImpl extends AbstractXAxisChartSettingsBuilder<BarChartSettingsBuilderImpl> implements BarChartSettingsBuilder<BarChartSettingsBuilderImpl> {
 
     protected DisplayerSettings createDisplayerSettings() {
-        return new BarChartDisplayerSettings();
+        return new DisplayerSettings( DisplayerType.BARCHART );
     }
 
-    public BarChartSettingsBuilderImpl set3d(boolean b) {
-        BarChartDisplayerSettings d = (BarChartDisplayerSettings ) displayerSettings;
-        d.set3d(b);
+    public BarChartSettingsBuilderImpl set3d( boolean b ) {
+        displayerSettings.setBarchartThreeDimension( b );
         return this;
     }
 
     public BarChartSettingsBuilderImpl horizontal() {
-        BarChartDisplayerSettings d = (BarChartDisplayerSettings ) displayerSettings;
-        d.setHorizontal(true);
+        displayerSettings.setBarchartHorizontal( true );
         return this;
     }
 
     public BarChartSettingsBuilderImpl vertical() {
-        BarChartDisplayerSettings d = (BarChartDisplayerSettings ) displayerSettings;
-        d.setHorizontal(false);
+        displayerSettings.setBarchartHorizontal( false );
         return this;
     }
 }

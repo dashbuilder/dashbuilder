@@ -21,7 +21,7 @@ import org.dashbuilder.displayer.DisplayerSettings;
 /**
  * A DisplayerSettingsEditor provides an UI for editing a DisplayerSettings instance.
  */
-public interface DisplayerSettingsEditor<T extends DisplayerSettings> extends IsWidget {
+public interface DisplayerSettingsEditor extends IsWidget {
 
     /**
      * The Displayer this displayer settings editor is editing
@@ -31,8 +31,8 @@ public interface DisplayerSettingsEditor<T extends DisplayerSettings> extends Is
     /**
      * The data displayer to be edited.
      */
-    void setDisplayerSettings(T displayerSettings);
-    T getDisplayerSettings();
+    void setDisplayerSettings(DisplayerSettings displayerSettings);
+    DisplayerSettings getDisplayerSettings();
 
     /**
      * Add a listener interested in receiving events generated within this component.

@@ -26,4 +26,7 @@ public enum Position {
     POSITION_RIGHT,
     POSITION_IN;
 
+    public static Position getByName(String str) {
+        return valueOf(str.toUpperCase());
+    }
 }

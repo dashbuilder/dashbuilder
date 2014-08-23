@@ -22,14 +22,15 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Widget;
-import org.dashbuilder.displayer.XAxisChartDisplayerSettings;
+import org.dashbuilder.displayer.DisplayerSettings;
 
 /**
  * Line chart editor.
  */
 @ApplicationScoped
 @Named("linechart_editor")
-public class LineChartSettingsEditor extends AbstractDisplayerSettingsEditor<XAxisChartDisplayerSettings> {
+// TODO drop this after completing the generic settings editor
+public class LineChartSettingsEditor extends AbstractDisplayerSettingsEditor {
 
     interface EditorBinder extends UiBinder<Widget, LineChartSettingsEditor> {}
     private static final EditorBinder uiBinder = GWT.create( EditorBinder.class );
@@ -45,7 +46,7 @@ public class LineChartSettingsEditor extends AbstractDisplayerSettingsEditor<XAx
     }
 
     @Override
-    public void setDisplayerSettings( XAxisChartDisplayerSettings displayerSettings ) {
+    public void setDisplayerSettings( DisplayerSettings displayerSettings ) {
         super.setDisplayerSettings( displayerSettings );
         xAxisChartSettingsEditorBase.setDisplayerSettings( displayerSettings );
     }

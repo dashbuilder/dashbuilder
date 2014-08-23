@@ -34,14 +34,13 @@ import com.googlecode.gwt.charts.client.event.SortHandler;
 import com.googlecode.gwt.charts.client.options.TableSort;
 import com.googlecode.gwt.charts.client.table.Table;
 import com.googlecode.gwt.charts.client.table.TableOptions;
-import org.dashbuilder.displayer.TableDisplayerSettings;
 import org.dashbuilder.displayer.client.Displayer;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.group.DataSetGroup;
 import org.dashbuilder.dataset.sort.SortOrder;
 import org.dashbuilder.renderer.google.client.resources.i18n.GoogleDisplayerConstants;
 
-public class GoogleTableDisplayer extends GoogleDisplayer<TableDisplayerSettings> {
+public class GoogleTableDisplayer extends GoogleDisplayer {
 
     protected int pageSize = 20;
     protected int currentPage = 1;
@@ -72,14 +71,14 @@ public class GoogleTableDisplayer extends GoogleDisplayer<TableDisplayerSettings
     @Override
     protected void beforeDataSetLookup() {
         // Draw only the data subset corresponding to the current page.
-        int pageSize = displayerSettings.getPageSize();
+        int pageSize = displayerSettings.getTablePageSize();
         int offset = (currentPage - 1) * pageSize;
         dataSetHandler.limitDataSetRows(offset, pageSize);
     }
 
     @Override
     protected void afterDataSetLookup(DataSet dataSet) {
-        pageSize = displayerSettings.getPageSize();
+        pageSize = displayerSettings.getTablePageSize();
         numberOfRows = dataSet.getRowCountNonTrimmed();
         numberOfPages = ((numberOfRows - 1) / pageSize) + 1;
         if (currentPage > numberOfPages) {
@@ -136,7 +135,7 @@ public class GoogleTableDisplayer extends GoogleDisplayer<TableDisplayerSettings
     private TableOptions createOptions() {
         TableOptions options = TableOptions.create();
         options.setSort(TableSort.EVENT);
-        options.setPageSize(displayerSettings.getPageSize());
+        options.setPageSize(displayerSettings.getTablePageSize());
         options.setShowRowNumber(false);
         if ( displayerSettings.getTableWidth() != 0 ) options.setWidth( displayerSettings.getTableWidth() );
         return options;

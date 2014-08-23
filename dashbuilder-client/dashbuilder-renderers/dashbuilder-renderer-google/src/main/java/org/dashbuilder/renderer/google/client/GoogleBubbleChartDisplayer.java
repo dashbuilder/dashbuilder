@@ -27,9 +27,8 @@ import com.googlecode.gwt.charts.client.options.Animation;
 import com.googlecode.gwt.charts.client.options.AnimationEasing;
 import com.googlecode.gwt.charts.client.options.HAxis;
 import com.googlecode.gwt.charts.client.options.VAxis;
-import org.dashbuilder.displayer.BubbleChartDisplayerSettings;
 
-public class GoogleBubbleChartDisplayer extends GoogleXAxisChartDisplayer<BubbleChartDisplayerSettings> {
+public class GoogleBubbleChartDisplayer extends GoogleXAxisChartDisplayer {
 
     private BubbleChart chart;
     protected Panel filterPanel;
@@ -71,8 +70,8 @@ public class GoogleBubbleChartDisplayer extends GoogleXAxisChartDisplayer<Bubble
         anim.setEasing(AnimationEasing.IN);
 
         BubbleChartOptions options = BubbleChartOptions.create();
-        options.setWidth(displayerSettings.getWidth());
-        options.setHeight(displayerSettings.getHeight());
+        options.setWidth(displayerSettings.getChartWidth());
+        options.setHeight(displayerSettings.getChartHeight());
         options.setHAxis(HAxis.create(googleTable.getColumnLabel(1)));
         options.setVAxis(VAxis.create(googleTable.getColumnLabel(2)));
         options.setChartArea(createChartArea());

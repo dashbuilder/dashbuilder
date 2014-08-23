@@ -50,7 +50,6 @@ import com.google.gwt.view.client.HasData;
 import org.dashbuilder.common.client.StringUtils;
 import org.dashbuilder.dataset.client.DataSetReadyCallback;
 import org.dashbuilder.displayer.DisplayerSettingsColumn;
-import org.dashbuilder.displayer.TableDisplayerSettings;
 import org.dashbuilder.displayer.client.AbstractDisplayer;
 import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.DataColumn;
@@ -62,7 +61,7 @@ import org.kie.uberfire.client.tables.PagedTable;
 
 import static com.google.gwt.dom.client.BrowserEvents.CLICK;
 
-public class TableDisplayer extends AbstractDisplayer<TableDisplayerSettings> {
+public class TableDisplayer extends AbstractDisplayer {
 
     private Map< String, String > columnCaptionIds = new HashMap< String, String >(5);
 
@@ -153,10 +152,10 @@ public class TableDisplayer extends AbstractDisplayer<TableDisplayerSettings> {
 
             // Get the sort settings
             if (lastOrderedColumn == null) {
-                String defaultSortColumn = displayerSettings.getDefaultSortColumnId();
+                String defaultSortColumn = displayerSettings.getTableDefaultSortColumnId();
                 if (defaultSortColumn != null && !"".equals( defaultSortColumn)) {
                     lastOrderedColumn = defaultSortColumn;
-                    lastSortOrder = displayerSettings.getDefaultSortOrder();
+                    lastSortOrder = displayerSettings.getTableDefaultSortOrder();
                 }
             }
             // Apply the sort order specified (if any)
@@ -164,7 +163,7 @@ public class TableDisplayer extends AbstractDisplayer<TableDisplayerSettings> {
                 sortApply(lastOrderedColumn, lastSortOrder);
             }
             // Lookup only the target rows
-            dataSetHandler.limitDataSetRows(offset, displayerSettings.getPageSize());
+            dataSetHandler.limitDataSetRows(offset, displayerSettings.getTablePageSize());
 
             // Do the lookup
             dataSetHandler.lookupDataSet(
@@ -203,7 +202,7 @@ public class TableDisplayer extends AbstractDisplayer<TableDisplayerSettings> {
 
     protected PagedTable<Integer> createTable() {
 
-        final PagedTable<Integer> pagedTable = new PagedTable<Integer>(displayerSettings.getPageSize());
+        final PagedTable<Integer> pagedTable = new PagedTable<Integer>(displayerSettings.getTablePageSize());
         List<DisplayerSettingsColumn> displayerSettingsColumns = displayerSettings.getColumnList();
 
         int nColumns = 0;
@@ -216,7 +215,7 @@ public class TableDisplayer extends AbstractDisplayer<TableDisplayerSettings> {
         }
 
         pagedTable.setRowCount( numberOfRows, true );
-        int height = 40 * displayerSettings.getPageSize() + 20;
+        int height = 40 * displayerSettings.getTablePageSize() + 20;
         pagedTable.setHeight( ( height > ( Window.getClientHeight() - this.getAbsoluteTop() ) ? ( Window.getClientHeight() - this.getAbsoluteTop() ) : height ) + "px" );
 
         int tableWidth = displayerSettings.getTableWidth();

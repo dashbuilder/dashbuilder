@@ -25,9 +25,8 @@ import com.googlecode.gwt.charts.client.corechart.AreaChart;
 import com.googlecode.gwt.charts.client.corechart.AreaChartOptions;
 import com.googlecode.gwt.charts.client.options.Animation;
 import com.googlecode.gwt.charts.client.options.AnimationEasing;
-import org.dashbuilder.displayer.AreaChartDisplayerSettings;
 
-public class GoogleAreaChartDisplayer extends GoogleXAxisChartDisplayer<AreaChartDisplayerSettings> {
+public class GoogleAreaChartDisplayer extends GoogleXAxisChartDisplayer {
 
     protected AreaChart chart;
     protected Panel filterPanel;
@@ -69,8 +68,8 @@ public class GoogleAreaChartDisplayer extends GoogleXAxisChartDisplayer<AreaChar
         anim.setEasing(AnimationEasing.IN_AND_OUT);
 
         AreaChartOptions options = AreaChartOptions.create();
-        options.setWidth(displayerSettings.getWidth());
-        options.setHeight(displayerSettings.getHeight());
+        options.setWidth(displayerSettings.getChartWidth());
+        options.setHeight(displayerSettings.getChartHeight());
         options.setLegend( createChartLegend( displayerSettings ) );
         options.setAnimation(anim);
         options.setChartArea(createChartArea());

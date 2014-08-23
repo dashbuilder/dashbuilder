@@ -41,7 +41,7 @@ public class DisplayerSettingsEditorLocator {
     /**
      * Get the editor component for the specified data displayer
      */
-    public <T extends DisplayerSettings> DisplayerSettingsEditor<T> lookupSettingsEditor(T displayerSettings) {
+    public DisplayerSettingsEditor lookupSettingsEditor(DisplayerSettings displayerSettings) {
 
         String displayerType = displayerSettings.getType().toString().toLowerCase();
         String beanName =  displayerType + "_editor";
@@ -50,7 +50,7 @@ public class DisplayerSettingsEditorLocator {
         if (beans.size() > 1) throw new RuntimeException("Multiple settings editors implementations found for: " + displayerType);
 
         IOCBeanDef beanDef = beans.iterator().next();
-        DisplayerSettingsEditor<T> settingsEditor = (DisplayerSettingsEditor<T> ) beanDef.getInstance();
+        DisplayerSettingsEditor settingsEditor = (DisplayerSettingsEditor ) beanDef.getInstance();
         settingsEditor.setDisplayerSettings(displayerSettings);
         return settingsEditor;
     }

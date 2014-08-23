@@ -16,19 +16,19 @@
 package org.dashbuilder.displayer.client;
 
 import com.google.gwt.user.client.ui.IsWidget;
-import org.dashbuilder.displayer.DisplayerSettingType;
+import org.dashbuilder.displayer.DisplayerSettingId;
 import org.dashbuilder.displayer.DisplayerSettings;
 
 /**
  * A Displayer takes care of drawing a DisplayerSettings instance.
  */
-public interface Displayer<T extends DisplayerSettings> extends DisplayerListener, IsWidget {
+public interface Displayer extends DisplayerListener, IsWidget {
 
     /**
      * The data displayer to draw.
      */
-    void setDisplayerSettings(T displayerSettings);
-    T getDisplayerSettings();
+    void setDisplayerSettings(DisplayerSettings displayerSettings);
+    DisplayerSettings getDisplayerSettings();
 
     /**
      * The handler used to fetch and manipulate the data set.
@@ -39,7 +39,7 @@ public interface Displayer<T extends DisplayerSettings> extends DisplayerListene
     /**
      * Define whether a certain type of Displayer Setting is supported by this Displayer.
      */
-    boolean isDisplayerSettingSupported(DisplayerSettingType displayerSettingType);
+    boolean isDisplayerSettingSupported(DisplayerSettingId displayerSettingId );
 
     /**
      * Add a listener interested in receive events generated within this displayer component.

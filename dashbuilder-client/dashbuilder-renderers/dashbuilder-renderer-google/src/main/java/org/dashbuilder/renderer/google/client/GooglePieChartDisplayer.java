@@ -23,9 +23,8 @@ import com.google.gwt.user.client.ui.Widget;
 import com.googlecode.gwt.charts.client.ChartPackage;
 import com.googlecode.gwt.charts.client.corechart.PieChart;
 import com.googlecode.gwt.charts.client.corechart.PieChartOptions;
-import org.dashbuilder.displayer.PieChartDisplayerSettings;
 
-public class GooglePieChartDisplayer extends GoogleXAxisChartDisplayer<PieChartDisplayerSettings> {
+public class GooglePieChartDisplayer extends GoogleXAxisChartDisplayer {
 
     private PieChart chart;
     protected Panel filterPanel;
@@ -63,8 +62,8 @@ public class GooglePieChartDisplayer extends GoogleXAxisChartDisplayer<PieChartD
 
     private PieChartOptions createOptions() {
         PieChartOptions options = PieChartOptions.create();
-        options.setWidth(displayerSettings.getWidth());
-        options.setHeight(displayerSettings.getHeight());
+        options.setWidth(displayerSettings.getChartWidth());
+        options.setHeight(displayerSettings.getChartHeight());
         options.setIs3D(true);
         options.setLegend( createChartLegend( displayerSettings ) );
         options.setColors(createColorArray(googleTable));

@@ -35,10 +35,9 @@ import org.dashbuilder.displayer.client.AbstractDisplayer;
 import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.dataset.DataSet;
-import org.dashbuilder.displayer.DisplayerSettings;
 import org.dashbuilder.renderer.google.client.resources.i18n.GoogleDisplayerConstants;
 
-public abstract class GoogleDisplayer<T extends DisplayerSettings> extends AbstractDisplayer<T> {
+public abstract class GoogleDisplayer extends AbstractDisplayer {
 
     protected boolean drawn = false;
     protected FlowPanel panel = new FlowPanel();

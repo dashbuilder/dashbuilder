@@ -20,7 +20,6 @@ import javax.inject.Inject;
 
 import com.google.gwt.user.client.ui.IsWidget;
 import org.dashbuilder.displayer.DisplayerSettings;
-import org.dashbuilder.displayer.client.DisplayerSettingsManager;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
 import org.uberfire.client.annotations.WorkbenchPartView;
 import org.uberfire.client.annotations.WorkbenchScreen;

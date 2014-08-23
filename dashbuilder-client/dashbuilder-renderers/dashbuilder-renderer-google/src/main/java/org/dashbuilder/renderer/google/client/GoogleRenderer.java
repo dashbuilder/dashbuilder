@@ -24,9 +24,9 @@ import javax.inject.Named;
 import com.googlecode.gwt.charts.client.ChartLoader;
 import com.googlecode.gwt.charts.client.ChartPackage;
 import org.dashbuilder.displayer.DisplayerType;
+import org.dashbuilder.displayer.DisplayerSettings;
 import org.dashbuilder.displayer.client.AbstractRendererLibrary;
 import org.dashbuilder.displayer.client.Displayer;
-import org.dashbuilder.displayer.DisplayerSettings;
 
 /**
  * Google's Visualization API based renderer.

@@ -15,146 +15,354 @@
  */
 package org.dashbuilder.displayer;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetLookup;
+import org.dashbuilder.dataset.sort.SortOrder;
+import org.jboss.errai.common.client.api.annotations.Portable;
 
-/**
- * The top level interface for a data displayer. A DisplayerSettings contains the information necessary to visualize data
- * in a specific way.
- */
-public interface DisplayerSettings {
+@Portable
+public class DisplayerSettings {
 
-    /**
-     * Returns the UUID of the displayer.
-     *
-     * @return The UUID for this displayer.
-     */
-    String getUUID();
+    private Map<DisplayerSettingId, String> settings = new HashMap<DisplayerSettingId, String>( 30 );
 
-    /**
-     * Set the UUID of the displayer.
-     *
-     * @return The UUID for this displayer.
-     */
-    void setUUID(String uuid);
+    private static final String _true = "true";
+    private static final String _false = "false";
 
-    /**
-     * Returns the lookup definition to be used for the retrieval of the data set instance.
-     * The displayer will always use the DataSetLookup set providing the DataSet instance is null.
-     *
-     * @see org.dashbuilder.dataset.DataSet
-     * @see org.dashbuilder.dataset.DataSetLookup
-     */
-    DataSetLookup getDataSetLookup();
+    protected String UUID;
+    protected DataSet dataSet;
+    protected DataSetLookup dataSetLookup;
+    protected List<DisplayerSettingsColumn> columnList = new ArrayList<DisplayerSettingsColumn>();
 
-    /**
-     * Set the data set lookup instance.
-     * (Make sure the DataSet instance is null otherwise such DataSet will be used).
-     */
-    void setDataSetLookup(DataSetLookup dataSetLookup);
+    public DisplayerSettings( DisplayerType displayerType ) {
+        this();
+        setType( displayerType );
+    }
 
-    /**
-     * Returns the data set instance attached to the displayer.
-     * If null then the displayer will use the DataSetLookup to retrieve the data to display.
-     *
-     * @see org.dashbuilder.dataset.DataSet
-     * @see org.dashbuilder.dataset.DataSetLookup
-     */
-    DataSet getDataSet();
+    public DisplayerSettings() {
+        settings.put( DisplayerSettingId.TITLE_VISIBLE, _true );
+        settings.put( DisplayerSettingId.FILTER_ENABLED, _false );
+        settings.put( DisplayerSettingId.FILTER_SELFAPPLY_ENABLED, _false );
+        settings.put( DisplayerSettingId.FILTER_NOTIFICATION_ENABLED, _false );
+        settings.put( DisplayerSettingId.FILTER_LISTENING_ENABLED, _false);
+        settings.put( DisplayerSettingId.CHART_WIDTH, "600" );
+        settings.put( DisplayerSettingId.CHART_HEIGHT, "300" );
+        settings.put( DisplayerSettingId.CHART_MARGIN_TOP, "20" );
+        settings.put( DisplayerSettingId.CHART_MARGIN_BOTTOM, "50" );
+        settings.put( DisplayerSettingId.CHART_MARGIN_LEFT, "80" );
+        settings.put( DisplayerSettingId.CHART_MARGIN_RIGHT, "80" );
+        settings.put( DisplayerSettingId.CHART_SHOWLEGEND, _true );
+        settings.put( DisplayerSettingId.CHART_LEGENDPOSITION, "POSITION_RIGHT" );
+        settings.put( DisplayerSettingId.TABLE_PAGESIZE, "20" );
+        settings.put( DisplayerSettingId.TABLE_WIDTH, "0" );
+        settings.put( DisplayerSettingId.TABLE_SORTENABLED, _true);
+        settings.put( DisplayerSettingId.TABLE_DEFAULTSORTORDER, "asc" );
+        settings.put( DisplayerSettingId.AXIS_SHOWLABELS, _true );
+        settings.put( DisplayerSettingId.AXIS_LABELSANGLE, "0" );
+        settings.put( DisplayerSettingId.BARCHART_THREEDIMENSION, _false );
+        settings.put( DisplayerSettingId.BARCHART_HORIZONTAL, _false );
+    }
 
-    /**
-     * Set the data set instance.
-     * (The current DataSetLookup set (if any) will not be taking into account).
-     */
-    void setDataSet(DataSet dataSet);
+    //    @Override
+    public String getUUID() {
+        return UUID;
+    }
 
-    /**
-     * @return The caption that will be given to the specific data visualization.
-     */
-    String getTitle();
+//    @Override
+    public void setUUID( String UUID ) {
+        this.UUID = UUID;
+    }
 
-    /**
-     * Set the caption that will be given to the specific data visualization.
-     * @param title The caption.
-     */
-    void setTitle(String title);
+//    @Override
+    public DataSet getDataSet() {
+        return dataSet;
+    }
 
-    /**
-     * @return True if the caption will be visible, false if not.
-     */
-    boolean isTitleVisible();
+//    @Override
+    public void setDataSet( DataSet dataSet ) {
+        this.dataSet = dataSet;
+    }
 
-    /**
-     * Set whether the caption should be visible or not.
-     * @param visible True if the caption is to be visible, false if not.
-     */
-    void setTitleVisible(boolean visible);
+//    @Override
+    public DataSetLookup getDataSetLookup() {
+        return dataSetLookup;
+    }
 
-    /**
-     * @return The type of this DisplayerSettings.
-     * @see DisplayerType
-     */
-    DisplayerType getType();
+//    @Override
+    public void setDataSetLookup( DataSetLookup dataSetLookup ) {
+        this.dataSetLookup = dataSetLookup;
+    }
 
-    /**
-     * @return The identifier of the renderer for this displayer
-     */
-    String getRenderer();
+//    @Override
+    public List<DisplayerSettingsColumn> getColumnList() {
+        return columnList;
+    }
 
-    /**
-     * Set the renderer that will be used for visualizing this DisplayerSettings.
-     * @param renderer The identifier of the renderer.
-     */
-    void setRenderer(String renderer);
+    // 'Generic' getter method
+    public String getDisplayerSetting( DisplayerSettingId displayerSettingId ) {
+        return settings.get( displayerSettingId );
+    }
 
-    /**
-     * @return A List of DisplayerSettingsColumns that were configured for this DisplayerSettings,
-     * or an empty list if none were configured. In the latter case, the DataSet will be introspected in order to
-     * visualize the data it contains.
-     * @see DisplayerSettingsColumn
-     */
-    List<DisplayerSettingsColumn> getColumnList();
+    // 'Generic' setter method
+    public void setDisplayerSetting( DisplayerSettingId displayerSettingId, String value ) {
+        settings.put( displayerSettingId, value );
+    }
 
-    /**
-     * Check if the ability to select & filter values (or range of values) is enabled for this displayer.
-     */
-    boolean isFilterEnabled();
+//    @Override
+    public DisplayerType getType() {
+        String strType = settings.get( DisplayerSettingId.TYPE );
+        return DisplayerType.getByName( strType );
+    }
 
-    /**
-     * Switch on/off the ability to generate filter requests within this displayer.
-     */
-    void setFilterEnabled(boolean selectionEnabled);
+    public void setType( DisplayerType displayerType ) {
+        settings.put( DisplayerSettingId.TYPE, displayerType.toString() );
+    }
 
-    /**
-     * Check whether the displayer is sensitive to filter requests made on the displayer itself.
-     */
-    boolean isFilterSelfApplyEnabled();
+    public String getRenderer() {
+        return settings.get( DisplayerSettingId.RENDERER );
+    }
 
-    /**
-     * Switch on/off applying filters on the displayer itself.
-     */
-    void setFilterSelfApplyEnabled(boolean selectionSelfApplyEnabled);
+    public void setRenderer( String renderer ) {
+        settings.put( DisplayerSettingId.RENDERER, renderer );
+    }
 
-    /**
-     * Check if the displayer notifies any filter made on it to other displayers. Usually, in a dashboard there
-     * exists a unique coordinator which takes cares of propagate all the filter events among the other displayers.
-     */
-    boolean isFilterNotificationEnabled();
+//    @Override
+    public String getTitle() {
+        return settings.get( DisplayerSettingId.TITLE );
+    }
 
-    /**
-     * Switch on/off the filter event notification to other displayers.
-     */
-    void setFilterNotificationEnabled(boolean selectionNotificationEnabled);
+//    @Override
+    public void setTitle( String title ) {
+        settings.put( DisplayerSettingId.TITLE, title );
+    }
 
-    /**
-     * Check if this displayer listen to filter events coming from other displayers.
-     */
-    boolean isFilterListeningEnabled();
+//    @Override
+    public boolean isTitleVisible() {
+        return Boolean.parseBoolean( settings.get( DisplayerSettingId.TITLE_VISIBLE ) );
+    }
 
-    /**
-     * Switch on/off the ability to listen to filter events coming from other displayers.
-     */
-    void setFilterListeningEnabled(boolean selectionListeningEnabled);
+//    @Override
+    public void setTitleVisible( boolean titleVisible ) {
+        settings.put( DisplayerSettingId.TITLE_VISIBLE, Boolean.toString( titleVisible ) );
+    }
+
+//    @Override
+    public boolean isFilterEnabled() {
+        return Boolean.parseBoolean( settings.get( DisplayerSettingId.FILTER_ENABLED ) );
+    }
+
+//    @Override
+    public void setFilterEnabled( boolean filterEnabled ) {
+        settings.put( DisplayerSettingId.FILTER_ENABLED, Boolean.toString( filterEnabled ) );
+    }
+
+//    @Override
+    public boolean isFilterSelfApplyEnabled() {
+        return Boolean.parseBoolean( settings.get( DisplayerSettingId.FILTER_SELFAPPLY_ENABLED ) );
+    }
+
+//    @Override
+    public void setFilterSelfApplyEnabled( boolean filterSelfApplyEnabled ) {
+        settings.put( DisplayerSettingId.FILTER_SELFAPPLY_ENABLED, Boolean.toString( filterSelfApplyEnabled ) );
+    }
+
+//    @Override
+    public boolean isFilterNotificationEnabled() {
+        return Boolean.parseBoolean( settings.get( DisplayerSettingId.FILTER_NOTIFICATION_ENABLED ) );
+    }
+
+//    @Override
+    public void setFilterNotificationEnabled( boolean filterNotificationEnabled ) {
+        settings.put( DisplayerSettingId.FILTER_NOTIFICATION_ENABLED, Boolean.toString( filterNotificationEnabled ) );
+    }
+
+//    @Override
+    public boolean isFilterListeningEnabled() {
+        return Boolean.parseBoolean( settings.get( DisplayerSettingId.FILTER_LISTENING_ENABLED ) );
+    }
+
+//    @Override
+    public void setFilterListeningEnabled( boolean filterListeningEnabled ) {
+        settings.put( DisplayerSettingId.FILTER_LISTENING_ENABLED, Boolean.toString( filterListeningEnabled ) );
+    }
+
+    public int getChartWidth() {
+        return Integer.parseInt( settings.get( DisplayerSettingId.CHART_WIDTH ), 10 );
+    }
+
+    public void setChartWidth( int chartWidth ) {
+        settings.put( DisplayerSettingId.CHART_WIDTH, Integer.toString( chartWidth ) );
+    }
+
+    public int getChartHeight() {
+        return Integer.parseInt( settings.get( DisplayerSettingId.CHART_HEIGHT ) , 10 );
+    }
+
+    public void setChartHeight( int chartHeight ) {
+        settings.put( DisplayerSettingId.CHART_HEIGHT, Integer.toString( chartHeight ) );
+    }
+
+    public int getChartMarginTop() {
+        return Integer.parseInt( settings.get( DisplayerSettingId.CHART_MARGIN_TOP ) , 10 );
+    }
+
+    public void setChartMarginTop( int chartMarginTop ) {
+        settings.put( DisplayerSettingId.CHART_MARGIN_TOP, Integer.toString( chartMarginTop ) );
+    }
+
+    public int getChartMarginBottom() {
+        return Integer.parseInt( settings.get( DisplayerSettingId.CHART_MARGIN_BOTTOM ) , 10 );
+    }
+
+    public void setChartMarginBottom( int chartMarginBottom ) {
+        settings.put( DisplayerSettingId.CHART_MARGIN_BOTTOM, Integer.toString( chartMarginBottom ) );
+    }
+
+    public int getChartMarginLeft() {
+        return Integer.parseInt( settings.get( DisplayerSettingId.CHART_MARGIN_LEFT ) , 10 );
+    }
+
+    public void setChartMarginLeft( int chartMarginLeft ) {
+        settings.put( DisplayerSettingId.CHART_MARGIN_LEFT, Integer.toString( chartMarginLeft ) );
+    }
+
+    public int getChartMarginRight() {
+        return Integer.parseInt( settings.get( DisplayerSettingId.CHART_MARGIN_RIGHT ) , 10 );
+    }
+
+    public void setChartMarginRight( int chartMarginRight ) {
+        settings.put( DisplayerSettingId.CHART_MARGIN_RIGHT, Integer.toString( chartMarginRight ) );
+    }
+
+    public boolean isChartShowLegend() {
+        return Boolean.parseBoolean( settings.get( DisplayerSettingId.CHART_SHOWLEGEND ) );
+    }
+
+    public void setChartShowLegend( boolean chartShowLegend ) {
+        settings.put( DisplayerSettingId.CHART_SHOWLEGEND, Boolean.toString( chartShowLegend ) );
+    }
+
+    public Position getChartLegendPosition() {
+        return Position.getByName( settings.get( DisplayerSettingId.CHART_LEGENDPOSITION ) );
+    }
+
+    public void setChartLegendPosition( Position chartLegendPosition ) {
+        settings.put( DisplayerSettingId.CHART_LEGENDPOSITION, chartLegendPosition.toString() );
+    }
+
+    public int getTablePageSize() {
+        return Integer.parseInt( settings.get( DisplayerSettingId.TABLE_PAGESIZE ) , 10 );
+    }
+
+    public void setTablePageSize( int tablePageSize ) {
+        settings.put( DisplayerSettingId.TABLE_PAGESIZE, Integer.toString( tablePageSize ) );
+    }
+
+    public int getTableWidth() {
+        return Integer.parseInt( settings.get( DisplayerSettingId.TABLE_WIDTH ) , 10 );
+    }
+
+    public void setTableWidth( int tableWidth ) {
+        settings.put( DisplayerSettingId.TABLE_WIDTH, Integer.toString( tableWidth ) );
+    }
+
+    public boolean isTableSortEnabled() {
+        return Boolean.parseBoolean( settings.get( DisplayerSettingId.TABLE_SORTENABLED ) );
+    }
+
+    public void setTableSortEnabled( boolean tableSortEnabled ) {
+        settings.put( DisplayerSettingId.TABLE_SORTENABLED, Boolean.toString( tableSortEnabled ) );
+    }
+
+    public String getTableDefaultSortColumnId() {
+        return settings.get( DisplayerSettingId.TABLE_DEFAULTSORTCOLUMNID );
+    }
+
+    public void setTableDefaultSortColumnId( String tableDefaultSortColumnId ) {
+        settings.put( DisplayerSettingId.TABLE_DEFAULTSORTCOLUMNID, tableDefaultSortColumnId );
+    }
+
+    public SortOrder getTableDefaultSortOrder() {
+        return SortOrder.getByName( settings.get( DisplayerSettingId.TABLE_DEFAULTSORTORDER ) );
+    }
+
+    public void setTableDefaultSortOrder( SortOrder tableDefaultSortOrder ) {
+        settings.put( DisplayerSettingId.TABLE_DEFAULTSORTORDER, tableDefaultSortOrder.toString() );
+    }
+
+    public boolean isAxisShowLabels() {
+        return Boolean.parseBoolean( settings.get( DisplayerSettingId.AXIS_SHOWLABELS ) );
+    }
+
+    public void setAxisShowLabels( boolean axisShowLabels ) {
+        settings.put( DisplayerSettingId.AXIS_SHOWLABELS, Boolean.toString( axisShowLabels ) );
+    }
+
+    public int getAxisLabelsAngle() {
+        return Integer.parseInt( settings.get( DisplayerSettingId.AXIS_LABELSANGLE ) , 10 );
+    }
+
+    public void setAxisLabelsAngle( int axisLabelsAngle ) {
+        settings.put( DisplayerSettingId.AXIS_LABELSANGLE, Integer.toString( axisLabelsAngle ) );
+    }
+
+    public String getAxisTitle() {
+        return settings.get( DisplayerSettingId.AXIS_TITLE );
+    }
+
+    public void setAxisTitle( String axisTitle ) {
+        settings.put( DisplayerSettingId.AXIS_TITLE, axisTitle );
+    }
+
+    public long getMeterStart() {
+        return Long.parseLong( settings.get( DisplayerSettingId.METER_START ), 10 );
+    }
+
+    public void setMeterStart( long meterStart ) {
+        settings.put( DisplayerSettingId.METER_START, Long.toString( meterStart ) );
+    }
+
+    public long getMeterWarning() {
+        return Long.parseLong( settings.get( DisplayerSettingId.METER_WARNING ) , 10 );
+    }
+
+    public void setMeterWarning( long meterWarning ) {
+        settings.put( DisplayerSettingId.METER_WARNING, Long.toString( meterWarning ) );
+    }
+
+    public long getMeterCritical() {
+        return Long.parseLong( settings.get( DisplayerSettingId.METER_CRITICAL ) , 10 );
+    }
+
+    public void setMeterCritical( long meterCritical ) {
+        settings.put( DisplayerSettingId.METER_CRITICAL, Long.toString( meterCritical ) );
+    }
+
+    public long getMeterEnd() {
+        return Long.parseLong( settings.get( DisplayerSettingId.METER_END ) , 10 );
+    }
+
+    public void setMeterEnd( long meterEnd ) {
+        settings.put( DisplayerSettingId.METER_END, Long.toString( meterEnd ) );
+    }
+
+    public boolean isBarchartThreeDimension() {
+        return Boolean.parseBoolean( settings.get( DisplayerSettingId.BARCHART_THREEDIMENSION ) );
+    }
+
+    public void setBarchartThreeDimension( boolean barchartThreeDimension ) {
+        settings.put( DisplayerSettingId.BARCHART_THREEDIMENSION, Boolean.toString( barchartThreeDimension ) );
+    }
+
+    public boolean isBarchartHorizontal() {
+        return Boolean.parseBoolean( settings.get( DisplayerSettingId.BARCHART_HORIZONTAL ) );
+    }
+
+    public void setBarchartHorizontal( boolean barchartHorizontal ) {
+        settings.put( DisplayerSettingId.BARCHART_HORIZONTAL, Boolean.toString( barchartHorizontal ) );
+    }
 }

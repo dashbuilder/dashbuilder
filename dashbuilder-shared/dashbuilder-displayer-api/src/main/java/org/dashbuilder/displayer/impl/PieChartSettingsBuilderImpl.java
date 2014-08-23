@@ -15,13 +15,13 @@
  */
 package org.dashbuilder.displayer.impl;
 
+import org.dashbuilder.displayer.DisplayerType;
 import org.dashbuilder.displayer.DisplayerSettings;
 import org.dashbuilder.displayer.PieChartSettingsBuilder;
-import org.dashbuilder.displayer.PieChartDisplayerSettings;
 
 public class PieChartSettingsBuilderImpl extends AbstractXAxisChartSettingsBuilder<PieChartSettingsBuilderImpl> implements PieChartSettingsBuilder<PieChartSettingsBuilderImpl> {
 
     protected DisplayerSettings createDisplayerSettings() {
-        return new PieChartDisplayerSettings();
+        return new DisplayerSettings( DisplayerType.PIECHART );
     }
 }

@@ -29,7 +29,7 @@ import org.dashbuilder.dataset.group.GroupStrategy;
 import org.dashbuilder.dataset.sort.ColumnSort;
 import org.dashbuilder.dataset.sort.DataSetSort;
 import org.dashbuilder.dataset.sort.SortOrder;
-import org.dashbuilder.displayer.DisplayerSettingType;
+import org.dashbuilder.displayer.DisplayerSettingId;
 import org.dashbuilder.displayer.DisplayerSettings;
 
 /**
@@ -40,18 +40,18 @@ import org.dashbuilder.displayer.DisplayerSettings;
  *     <li>The capture of events coming from the DisplayerListener interface.</li>
  * </ul>
  */
-public abstract class AbstractDisplayer<T extends DisplayerSettings> extends Composite implements Displayer<T> {
+public abstract class AbstractDisplayer extends Composite implements Displayer {
 
     protected DataSetHandler dataSetHandler;
-    protected T displayerSettings;
+    protected DisplayerSettings displayerSettings;
     protected List<DisplayerListener> listenerList = new ArrayList<DisplayerListener>();
     protected Map<String,List<String>> columnSelectionMap = new HashMap<String,List<String>>();
 
-    public T getDisplayerSettings() {
+    public DisplayerSettings getDisplayerSettings() {
         return displayerSettings;
     }
 
-    public void setDisplayerSettings(T displayerSettings) {
+    public void setDisplayerSettings(DisplayerSettings displayerSettings) {
         this.displayerSettings = displayerSettings;
     }
 
@@ -68,7 +68,7 @@ public abstract class AbstractDisplayer<T extends DisplayerSettings> extends Com
     }
 
     @Override
-    public boolean isDisplayerSettingSupported( DisplayerSettingType displayerSettingType ) {
+    public boolean isDisplayerSettingSupported( DisplayerSettingId displayerSettingId ) {
         return false;
     }
 

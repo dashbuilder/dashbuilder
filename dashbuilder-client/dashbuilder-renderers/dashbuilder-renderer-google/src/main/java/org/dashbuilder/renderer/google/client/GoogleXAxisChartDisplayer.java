@@ -32,11 +32,10 @@ import com.googlecode.gwt.charts.client.event.SelectEvent;
 import com.googlecode.gwt.charts.client.event.SelectHandler;
 import com.googlecode.gwt.charts.client.geochart.GeoChart;
 import com.googlecode.gwt.charts.client.options.ChartArea;
-import org.dashbuilder.displayer.AbstractXAxisChartDisplayerSettings;
 import org.dashbuilder.displayer.DisplayerSettingsColumn;
 import org.dashbuilder.renderer.google.client.resources.i18n.GoogleDisplayerConstants;
 
-public abstract class GoogleXAxisChartDisplayer<T extends AbstractXAxisChartDisplayerSettings> extends AbstractGoogleChartDisplayer<T> {
+public abstract class GoogleXAxisChartDisplayer extends AbstractGoogleChartDisplayer {
 
     public static final String[] COLOR_ARRAY = new String[] {"aqua", "red", "orange", "brown", "coral", "blue", "fuchsia", "gold",
             "green", "lime", "magenta", "pink", "silver", "yellow"};
@@ -132,12 +131,12 @@ public abstract class GoogleXAxisChartDisplayer<T extends AbstractXAxisChartDisp
     }
 
     protected ChartArea createChartArea() {
-        int width = displayerSettings.getWidth();
-        int height = displayerSettings.getHeight();
-        int top = displayerSettings.getMarginTop();
-        int bottom = displayerSettings.getMarginBottom();
-        int left = displayerSettings.getMarginLeft();
-        int right = displayerSettings.getMarginRight();
+        int width = displayerSettings.getChartWidth();
+        int height = displayerSettings.getChartHeight();
+        int top = displayerSettings.getChartMarginTop();
+        int bottom = displayerSettings.getChartMarginBottom();
+        int left = displayerSettings.getChartMarginLeft();
+        int right = displayerSettings.getChartMarginRight();
 
         int chartWidth = width-right-left;
         int chartHeight = height-top-bottom;

@@ -17,7 +17,7 @@ package org.dashbuilder.displayer.impl;
 
 import org.dashbuilder.dataset.sort.SortOrder;
 import org.dashbuilder.displayer.DisplayerSettings;
-import org.dashbuilder.displayer.TableDisplayerSettings;
+import org.dashbuilder.displayer.DisplayerType;
 import org.dashbuilder.displayer.TableDisplayerSettingsBuilder;
 import org.jboss.errai.common.client.api.annotations.Portable;
 
@@ -25,35 +25,31 @@ import org.jboss.errai.common.client.api.annotations.Portable;
 public class TableDisplayerSettingsBuilderImpl extends AbstractDisplayerSettingsBuilder<TableDisplayerSettingsBuilderImpl> implements TableDisplayerSettingsBuilder<TableDisplayerSettingsBuilderImpl> {
 
     public DisplayerSettings createDisplayerSettings() {
-        return new TableDisplayerSettings();
+        return new DisplayerSettings( DisplayerType.TABLE );
     }
 
-    public TableDisplayerSettingsBuilderImpl tablePageSize(int pageSize) {
-        TableDisplayerSettings d = (TableDisplayerSettings ) displayerSettings;
-        d.setPageSize(pageSize);
+    public TableDisplayerSettingsBuilderImpl tablePageSize( int pageSize ) {
+        displayerSettings.setTablePageSize( pageSize );
         return this;
     }
 
-    public TableDisplayerSettingsBuilderImpl tableOrderEnabled(boolean enabled) {
-        TableDisplayerSettings d = (TableDisplayerSettings ) displayerSettings;
-        d.setSortEnabled(enabled);
+    public TableDisplayerSettingsBuilderImpl tableOrderEnabled( boolean enabled ) {
+        displayerSettings.setTableSortEnabled( enabled );
         return this;
     }
 
-    public TableDisplayerSettingsBuilderImpl tableOrderDefault(String columnId, SortOrder order) {
-        TableDisplayerSettings d = (TableDisplayerSettings ) displayerSettings;
-        d.setDefaultSortColumnId(columnId);
-        d.setDefaultSortOrder(order);
+    public TableDisplayerSettingsBuilderImpl tableOrderDefault( String columnId, SortOrder order ) {
+        displayerSettings.setTableDefaultSortColumnId( columnId );
+        displayerSettings.setTableDefaultSortOrder( order );
         return this;
     }
 
-    public TableDisplayerSettingsBuilderImpl tableOrderDefault(String columnId, String order) {
+    public TableDisplayerSettingsBuilderImpl tableOrderDefault( String columnId, String order ) {
         return tableOrderDefault(columnId, SortOrder.getByName(order));
     }
 
-    public TableDisplayerSettingsBuilderImpl tableWidth(int tableWidth) {
-        TableDisplayerSettings d = (TableDisplayerSettings ) displayerSettings;
-        d.setTableWidth( tableWidth );
+    public TableDisplayerSettingsBuilderImpl tableWidth( int tableWidth ) {
+        displayerSettings.setTableWidth( tableWidth );
         return this;
     }
 }

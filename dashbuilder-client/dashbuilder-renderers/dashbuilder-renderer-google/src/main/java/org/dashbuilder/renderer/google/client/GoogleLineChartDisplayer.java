@@ -25,9 +25,8 @@ import com.googlecode.gwt.charts.client.corechart.LineChart;
 import com.googlecode.gwt.charts.client.corechart.LineChartOptions;
 import com.googlecode.gwt.charts.client.options.Animation;
 import com.googlecode.gwt.charts.client.options.AnimationEasing;
-import org.dashbuilder.displayer.LineChartDisplayerSettings;
 
-public class GoogleLineChartDisplayer extends GoogleXAxisChartDisplayer<LineChartDisplayerSettings> {
+public class GoogleLineChartDisplayer extends GoogleXAxisChartDisplayer {
 
     private LineChart chart;
     protected Panel filterPanel;
@@ -69,8 +68,8 @@ public class GoogleLineChartDisplayer extends GoogleXAxisChartDisplayer<LineChar
         anim.setEasing(AnimationEasing.IN_AND_OUT);
 
         LineChartOptions options = LineChartOptions.create();
-        options.setWidth(displayerSettings.getWidth());
-        options.setHeight(displayerSettings.getHeight());
+        options.setWidth(displayerSettings.getChartWidth());
+        options.setHeight(displayerSettings.getChartHeight());
         options.setLegend( createChartLegend( displayerSettings ) );
         options.setAnimation(anim);
         options.setChartArea(createChartArea());
