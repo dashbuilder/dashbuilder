@@ -26,7 +26,7 @@ public class BarChartSettingsBuilderImpl extends AbstractXAxisChartSettingsBuild
     }
 
     public BarChartSettingsBuilderImpl set3d( boolean b ) {
-        displayerSettings.setBarchartThreeDimension( b );
+        displayerSettings.setChart3D( b );
         return this;
     }
 

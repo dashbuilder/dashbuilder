@@ -280,17 +280,17 @@ public class GalleryTree {
         GalleryNodeList nodeList = new GalleryNodeList("Meter Chart");
         mainNodes.add(nodeList);
 
-        nodeList.add(new GalleryNodeDisplayer("Basic",
+        nodeList.add(new GalleryNodeDisplayer("Basic", true,
                 DisplayerSettingsFactory.newMeterChartSettings()
                 .title("Sales goal")
                 .dataset(SALES_OPPS)
                 .sum(AMOUNT, "Total amount")
-                .width(100).height(200)
+                .width(400).height(200)
                 .meter(0, 5000000, 8000000, 10000000)
                 .column("Total amount")
                 .buildSettings()
         ));
-        nodeList.add(new GalleryNodeDisplayer("Multiple",
+        nodeList.add(new GalleryNodeDisplayer("Multiple", true,
                 DisplayerSettingsFactory.newMeterChartSettings()
                 .title("Expected amount per year")
                 .dataset(SALES_OPPS)
@@ -302,7 +302,7 @@ public class GalleryTree {
                 .column("Amount")
                 .buildSettings()
         ));
-        nodeList.add(new GalleryNodeDisplayer("Multiple (static)",
+        nodeList.add(new GalleryNodeDisplayer("Multiple (static)", true,
                 DisplayerSettingsFactory.newMeterChartSettings()
                 .title("Heart rate")
                 .width(500).height(200)
@@ -346,7 +346,7 @@ public class GalleryTree {
         GalleryNodeList nodeList = new GalleryNodeList("Table report");
         mainNodes.add(nodeList);
 
-        nodeList.add(new GalleryNodeDisplayer("Basic",
+        nodeList.add(new GalleryNodeDisplayer("Basic", true,
                 DisplayerSettingsFactory.newTableSettings()
                 .dataset(SALES_OPPS)
                 .title("List of Opportunities")
@@ -365,7 +365,7 @@ public class GalleryTree {
                 .column(AMOUNT, "Amount")
                 .buildSettings()
         ));
-        nodeList.add(new GalleryNodeDisplayer("Filtered",
+        nodeList.add(new GalleryNodeDisplayer("Filtered", true,
                 DisplayerSettingsFactory.newTableSettings()
                 .dataset(SALES_OPPS)
                 .filter(COUNTRY, OR(isEqualsTo("United States"), isEqualsTo("Brazil")))
@@ -383,7 +383,7 @@ public class GalleryTree {
                 .column(AMOUNT, "Amount")
                 .buildSettings()
         ));
-        nodeList.add(new GalleryNodeDisplayer("Grouped",
+        nodeList.add(new GalleryNodeDisplayer("Grouped", true,
                 DisplayerSettingsFactory.newTableSettings()
                 .dataset(SALES_OPPS)
                 .group(COUNTRY, "Country")
@@ -398,7 +398,7 @@ public class GalleryTree {
                 .tableOrderDefault("Country", DESCENDING)
                 .buildSettings()
         ));
-        nodeList.add(new GalleryNodeDisplayer("Default (drill-down)",
+        nodeList.add(new GalleryNodeDisplayer("Default (drill-down)", true,
                 DisplayerSettingsFactory.newTableSettings()
                 .dataset(SALES_OPPS)
                 .title("List of Opportunities")

@@ -24,4 +24,9 @@ public class PieChartSettingsBuilderImpl extends AbstractXAxisChartSettingsBuild
     protected DisplayerSettings createDisplayerSettings() {
         return new DisplayerSettings( DisplayerType.PIECHART );
     }
+
+    public PieChartSettingsBuilderImpl set3d( boolean b ) {
+        displayerSettings.setChart3D( b );
+        return this;
+    }
 }

@@ -15,6 +15,9 @@
  */
 package org.dashbuilder.renderer.google.client;
 
+import java.util.Arrays;
+import java.util.List;
+
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.SimplePanel;
@@ -23,6 +26,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.googlecode.gwt.charts.client.ChartPackage;
 import com.googlecode.gwt.charts.client.geochart.GeoChart;
 import com.googlecode.gwt.charts.client.geochart.GeoChartOptions;
+import org.dashbuilder.displayer.DisplayerSettingId;
 
 public class GoogleMapDisplayer extends GoogleXAxisChartDisplayer {
 
@@ -52,6 +56,23 @@ public class GoogleMapDisplayer extends GoogleXAxisChartDisplayer {
         return verticalPanel;
     }
 
+    @Override
+    public List<DisplayerSettingId> getSupportedDisplayerAttributes() {
+        return Arrays.asList(
+                new DisplayerSettingId[]{
+                        DisplayerSettingId.TITLE_VISIBLE,
+                        DisplayerSettingId.TITLE,
+                        DisplayerSettingId.COLUMNS,
+                        DisplayerSettingId.CHART_WIDTH,
+                        DisplayerSettingId.CHART_HEIGHT,
+                        DisplayerSettingId.CHART_MARGIN_TOP,
+                        DisplayerSettingId.CHART_MARGIN_BOTTOM,
+                        DisplayerSettingId.CHART_MARGIN_LEFT,
+                        DisplayerSettingId.CHART_MARGIN_RIGHT
+                }
+        );
+    }
+
     protected void updateVisualization() {
         filterPanel.clear();
         Widget filterReset = createCurrentSelectionWidget();
@@ -64,6 +85,7 @@ public class GoogleMapDisplayer extends GoogleXAxisChartDisplayer {
         GeoChartOptions options = GeoChartOptions.create();
         options.setWidth(displayerSettings.getChartWidth());
         options.setHeight(displayerSettings.getChartHeight());
+        // TODO legend?
         return options;
     }
 }

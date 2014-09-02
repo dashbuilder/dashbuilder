@@ -32,6 +32,8 @@ import com.googlecode.gwt.charts.client.event.SelectEvent;
 import com.googlecode.gwt.charts.client.event.SelectHandler;
 import com.googlecode.gwt.charts.client.geochart.GeoChart;
 import com.googlecode.gwt.charts.client.options.ChartArea;
+import com.googlecode.gwt.charts.client.options.HAxis;
+import com.googlecode.gwt.charts.client.options.VAxis;
 import org.dashbuilder.displayer.DisplayerSettingsColumn;
 import org.dashbuilder.renderer.google.client.resources.i18n.GoogleDisplayerConstants;
 
@@ -144,9 +146,18 @@ public abstract class GoogleXAxisChartDisplayer extends AbstractGoogleChartDispl
         ChartArea chartArea = ChartArea.create();
         chartArea.setLeft(left);
         chartArea.setTop(top);
-        chartArea.setWidth(chartWidth);
-        chartArea.setHeight(chartHeight);
+        chartArea.setWidth( chartWidth );
+        chartArea.setHeight( chartHeight );
         return chartArea;
     }
 
+    protected HAxis createHAxis() {
+        HAxis hAxis = HAxis.create( displayerSettings.getXAxisTitle() );
+        hAxis.setSlantedText( false );
+        return hAxis;
+    }
+
+    protected VAxis createVAxis() {
+        return VAxis.create( displayerSettings.getYAxisTitle() );
+    }
 }

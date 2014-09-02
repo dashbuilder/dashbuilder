@@ -15,6 +15,7 @@
  */
 package org.dashbuilder.renderer.google.client;
 
+import java.util.Arrays;
 import java.util.List;
 
 import com.github.gwtbootstrap.client.ui.*;
@@ -34,6 +35,8 @@ import com.googlecode.gwt.charts.client.event.SortHandler;
 import com.googlecode.gwt.charts.client.options.TableSort;
 import com.googlecode.gwt.charts.client.table.Table;
 import com.googlecode.gwt.charts.client.table.TableOptions;
+import org.dashbuilder.common.client.SpacerWidget;
+import org.dashbuilder.displayer.DisplayerSettingId;
 import org.dashbuilder.displayer.client.Displayer;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.group.DataSetGroup;
@@ -61,6 +64,22 @@ public class GoogleTableDisplayer extends GoogleDisplayer {
 
     public void setShowTotalRowsHint(boolean showTotalRowsHint) {
         this.showTotalRowsHint = showTotalRowsHint;
+    }
+
+    @Override
+    public List<DisplayerSettingId> getSupportedDisplayerAttributes() {
+        return Arrays.asList(
+                new DisplayerSettingId[]{
+                        DisplayerSettingId.TITLE_VISIBLE,
+                        DisplayerSettingId.TITLE,
+                        DisplayerSettingId.COLUMNS,
+                        DisplayerSettingId.TABLE_PAGESIZE,
+                        DisplayerSettingId.TABLE_WIDTH,
+                        DisplayerSettingId.TABLE_SORTENABLED,
+                        DisplayerSettingId.TABLE_SORTCOLUMNID,
+                        DisplayerSettingId.TABLE_SORTORDER
+                }
+        );
     }
 
     @Override
@@ -135,6 +154,8 @@ public class GoogleTableDisplayer extends GoogleDisplayer {
     private TableOptions createOptions() {
         TableOptions options = TableOptions.create();
         options.setSort(TableSort.EVENT);
+        // TODO options.setSortColumn(  );
+        // TODO complete options.setSortAscending( SortOrder.ASCENDING.equals( displayerSettings.getTableDefaultSortOrder() ) );
         options.setPageSize(displayerSettings.getTablePageSize());
         options.setShowRowNumber(false);
         if ( displayerSettings.getTableWidth() != 0 ) options.setWidth( displayerSettings.getTableWidth() );
@@ -262,29 +283,23 @@ public class GoogleTableDisplayer extends GoogleDisplayer {
 
         if ( numberOfPages > 1) {
             pagerPanel.add( firstPageTooltip );
-            pagerPanel.add( new SpacerWidget() );
+            pagerPanel.add( SpacerWidget.DOUBLE );
             pagerPanel.add( leftPageTooltip );
-            pagerPanel.add( new SpacerWidget() );
+            pagerPanel.add( SpacerWidget.DOUBLE );
             pagerPanel.add( pagination );
-            pagerPanel.add( new SpacerWidget() );
+            pagerPanel.add( SpacerWidget.DOUBLE );
             pagerPanel.add( rightPageTooltip );
-            pagerPanel.add( new SpacerWidget() );
+            pagerPanel.add( SpacerWidget.DOUBLE );
             pagerPanel.add( lastPageTooltip );
         }
 
         boolean both = showTotalPagesHint && showTotalRowsHint;
         if ( showTotalPagesHint || showTotalRowsHint ) {
-            pagerPanel.add( new SpacerWidget() );
-            pagerPanel.add( new SpacerWidget() );
+            pagerPanel.add( SpacerWidget.DOUBLE );
+            pagerPanel.add( SpacerWidget.DOUBLE );
             if ( totalPages != null && numberOfPages > 1 ) pagerPanel.add( totalPages );
-            if ( both ) pagerPanel.add( new SpacerWidget() );
+            if ( both ) pagerPanel.add( SpacerWidget.DOUBLE );
             if ( totalRows != null ) pagerPanel.add( totalRows );
-        }
-    }
-
-    private class SpacerWidget extends HTML {
-        private SpacerWidget() {
-            super("&nbsp;&nbsp;");
         }
     }
 

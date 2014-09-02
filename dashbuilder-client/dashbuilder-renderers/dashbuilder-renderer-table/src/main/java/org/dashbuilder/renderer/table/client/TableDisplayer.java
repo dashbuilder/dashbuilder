@@ -16,6 +16,7 @@
 package org.dashbuilder.renderer.table.client;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -49,6 +50,7 @@ import com.google.gwt.view.client.AsyncDataProvider;
 import com.google.gwt.view.client.HasData;
 import org.dashbuilder.common.client.StringUtils;
 import org.dashbuilder.dataset.client.DataSetReadyCallback;
+import org.dashbuilder.displayer.DisplayerSettingId;
 import org.dashbuilder.displayer.DisplayerSettingsColumn;
 import org.dashbuilder.displayer.client.AbstractDisplayer;
 import org.dashbuilder.dataset.ColumnType;
@@ -133,6 +135,22 @@ public class TableDisplayer extends AbstractDisplayer {
                 displayMessage( "ERROR: Data set not found." );
             }
         } );
+    }
+
+    @Override
+    public List<DisplayerSettingId> getSupportedDisplayerAttributes() {
+        return Arrays.asList(
+                new DisplayerSettingId[]{
+                        DisplayerSettingId.TITLE_VISIBLE,
+                        DisplayerSettingId.TITLE,
+                        DisplayerSettingId.COLUMNS,
+                        DisplayerSettingId.TABLE_PAGESIZE,
+                        DisplayerSettingId.TABLE_WIDTH,
+                        DisplayerSettingId.TABLE_SORTENABLED,
+                        DisplayerSettingId.TABLE_SORTCOLUMNID,
+                        DisplayerSettingId.TABLE_SORTORDER
+                }
+        );
     }
 
     /**

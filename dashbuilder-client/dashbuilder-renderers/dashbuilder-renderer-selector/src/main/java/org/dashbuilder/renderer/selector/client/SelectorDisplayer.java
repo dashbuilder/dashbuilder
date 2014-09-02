@@ -15,6 +15,7 @@
  */
 package org.dashbuilder.renderer.selector.client;
 
+import java.util.Arrays;
 import java.util.List;
 
 import com.google.gwt.dom.client.NodeList;
@@ -29,6 +30,7 @@ import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.common.client.StringUtils;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.client.DataSetReadyCallback;
+import org.dashbuilder.displayer.DisplayerSettingId;
 import org.dashbuilder.displayer.DisplayerSettingsColumn;
 import org.dashbuilder.displayer.client.AbstractDisplayer;
 import org.dashbuilder.renderer.selector.client.resources.i18n.SelectorConstants;
@@ -94,6 +96,11 @@ public class SelectorDisplayer extends AbstractDisplayer {
                 displayMessage( "ERROR: " + e.getMessage() );
             }
         }
+    }
+
+    @Override
+    public List<DisplayerSettingId> getSupportedDisplayerAttributes() {
+        return Arrays.asList( new DisplayerSettingId[]{ } );
     }
 
     /**

@@ -41,6 +41,9 @@ public class DisplayerSettings {
     public DisplayerSettings( DisplayerType displayerType ) {
         this();
         setType( displayerType );
+        if ( DisplayerType.PIECHART.equals( displayerType ) ) {
+            settings.put( DisplayerSettingId.CHART_3D, _true );
+        }
     }
 
     public DisplayerSettings() {
@@ -60,10 +63,16 @@ public class DisplayerSettings {
         settings.put( DisplayerSettingId.TABLE_PAGESIZE, "20" );
         settings.put( DisplayerSettingId.TABLE_WIDTH, "0" );
         settings.put( DisplayerSettingId.TABLE_SORTENABLED, _true);
-        settings.put( DisplayerSettingId.TABLE_DEFAULTSORTORDER, "asc" );
-        settings.put( DisplayerSettingId.AXIS_SHOWLABELS, _true );
-        settings.put( DisplayerSettingId.AXIS_LABELSANGLE, "0" );
-        settings.put( DisplayerSettingId.BARCHART_THREEDIMENSION, _false );
+        settings.put( DisplayerSettingId.TABLE_SORTORDER, "asc" );
+        settings.put( DisplayerSettingId.XAXIS_SHOWLABELS, _false );
+        settings.put( DisplayerSettingId.XAXIS_LABELSANGLE, "0" );
+        settings.put( DisplayerSettingId.YAXIS_SHOWLABELS, _false );
+        settings.put( DisplayerSettingId.YAXIS_LABELSANGLE, "0" );
+        settings.put( DisplayerSettingId.METER_START, "0" );
+        settings.put( DisplayerSettingId.METER_WARNING, "0" );
+        settings.put( DisplayerSettingId.METER_CRITICAL, "0" );
+        settings.put( DisplayerSettingId.METER_END, "0" );
+        settings.put( DisplayerSettingId.CHART_3D, _false );
         settings.put( DisplayerSettingId.BARCHART_HORIZONTAL, _false );
     }
 
@@ -279,43 +288,67 @@ public class DisplayerSettings {
     }
 
     public String getTableDefaultSortColumnId() {
-        return settings.get( DisplayerSettingId.TABLE_DEFAULTSORTCOLUMNID );
+        return settings.get( DisplayerSettingId.TABLE_SORTCOLUMNID );
     }
 
     public void setTableDefaultSortColumnId( String tableDefaultSortColumnId ) {
-        settings.put( DisplayerSettingId.TABLE_DEFAULTSORTCOLUMNID, tableDefaultSortColumnId );
+        settings.put( DisplayerSettingId.TABLE_SORTCOLUMNID, tableDefaultSortColumnId );
     }
 
     public SortOrder getTableDefaultSortOrder() {
-        return SortOrder.getByName( settings.get( DisplayerSettingId.TABLE_DEFAULTSORTORDER ) );
+        return SortOrder.getByName( settings.get( DisplayerSettingId.TABLE_SORTORDER ) );
     }
 
     public void setTableDefaultSortOrder( SortOrder tableDefaultSortOrder ) {
-        settings.put( DisplayerSettingId.TABLE_DEFAULTSORTORDER, tableDefaultSortOrder.toString() );
+        settings.put( DisplayerSettingId.TABLE_SORTORDER, tableDefaultSortOrder.toString() );
     }
 
-    public boolean isAxisShowLabels() {
-        return Boolean.parseBoolean( settings.get( DisplayerSettingId.AXIS_SHOWLABELS ) );
+    public boolean isXAxisShowLabels() {
+        return Boolean.parseBoolean( settings.get( DisplayerSettingId.XAXIS_SHOWLABELS ) );
     }
 
-    public void setAxisShowLabels( boolean axisShowLabels ) {
-        settings.put( DisplayerSettingId.AXIS_SHOWLABELS, Boolean.toString( axisShowLabels ) );
+    public void setXAxisShowLabels( boolean axisShowLabels ) {
+        settings.put( DisplayerSettingId.XAXIS_SHOWLABELS, Boolean.toString( axisShowLabels ) );
     }
 
-    public int getAxisLabelsAngle() {
-        return Integer.parseInt( settings.get( DisplayerSettingId.AXIS_LABELSANGLE ) , 10 );
+    public int getXAxisLabelsAngle() {
+        return Integer.parseInt( settings.get( DisplayerSettingId.XAXIS_LABELSANGLE ) , 10 );
     }
 
-    public void setAxisLabelsAngle( int axisLabelsAngle ) {
-        settings.put( DisplayerSettingId.AXIS_LABELSANGLE, Integer.toString( axisLabelsAngle ) );
+    public void setXAxisLabelsAngle( int axisLabelsAngle ) {
+        settings.put( DisplayerSettingId.XAXIS_LABELSANGLE, Integer.toString( axisLabelsAngle ) );
     }
 
-    public String getAxisTitle() {
-        return settings.get( DisplayerSettingId.AXIS_TITLE );
+    public String getXAxisTitle() {
+        return settings.get( DisplayerSettingId.XAXIS_TITLE );
     }
 
-    public void setAxisTitle( String axisTitle ) {
-        settings.put( DisplayerSettingId.AXIS_TITLE, axisTitle );
+    public void setXAxisTitle( String axisTitle ) {
+        settings.put( DisplayerSettingId.XAXIS_TITLE, axisTitle );
+    }
+
+    public boolean isYAxisShowLabels() {
+        return Boolean.parseBoolean( settings.get( DisplayerSettingId.YAXIS_SHOWLABELS ) );
+    }
+
+    public void setYAxisShowLabels( boolean axisShowLabels ) {
+        settings.put( DisplayerSettingId.YAXIS_SHOWLABELS, Boolean.toString( axisShowLabels ) );
+    }
+
+    public int getYAxisLabelsAngle() {
+        return Integer.parseInt( settings.get( DisplayerSettingId.YAXIS_LABELSANGLE ) , 10 );
+    }
+
+    public void setYAxisLabelsAngle( int axisLabelsAngle ) {
+        settings.put( DisplayerSettingId.YAXIS_LABELSANGLE, Integer.toString( axisLabelsAngle ) );
+    }
+
+    public String getYAxisTitle() {
+        return settings.get( DisplayerSettingId.YAXIS_TITLE );
+    }
+
+    public void setYAxisTitle( String axisTitle ) {
+        settings.put( DisplayerSettingId.YAXIS_TITLE, axisTitle );
     }
 
     public long getMeterStart() {
@@ -350,12 +383,12 @@ public class DisplayerSettings {
         settings.put( DisplayerSettingId.METER_END, Long.toString( meterEnd ) );
     }
 
-    public boolean isBarchartThreeDimension() {
-        return Boolean.parseBoolean( settings.get( DisplayerSettingId.BARCHART_THREEDIMENSION ) );
+    public boolean isChart3D() {
+        return Boolean.parseBoolean( settings.get( DisplayerSettingId.CHART_3D ) );
     }
 
-    public void setBarchartThreeDimension( boolean barchartThreeDimension ) {
-        settings.put( DisplayerSettingId.BARCHART_THREEDIMENSION, Boolean.toString( barchartThreeDimension ) );
+    public void setChart3D( boolean barchartThreeDimension ) {
+        settings.put( DisplayerSettingId.CHART_3D, Boolean.toString( barchartThreeDimension ) );
     }
 
     public boolean isBarchartHorizontal() {

@@ -69,7 +69,7 @@ public abstract class AbstractDisplayer extends Composite implements Displayer {
 
     @Override
     public boolean isDisplayerSettingSupported( DisplayerSettingId displayerSettingId ) {
-        return false;
+        return getSupportedDisplayerAttributes() != null && getSupportedDisplayerAttributes().contains( displayerSettingId );
     }
 
     // CAPTURE EVENTS RECEIVED FROM OTHER DISPLAYERS

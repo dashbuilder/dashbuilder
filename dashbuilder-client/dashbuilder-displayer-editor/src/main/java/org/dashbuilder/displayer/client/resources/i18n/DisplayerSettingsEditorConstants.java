@@ -65,6 +65,24 @@ public interface DisplayerSettingsEditorConstants extends ConstantsWithLookup {
 
     String chart_legendPosition();
 
+    String chart_3d();
+
+    String table_pageSize();
+
+    String table_width();
+
+    String table_sortEnabled();
+
+    String table_sortColumn();
+
+    String table_sortColumn_placeholder();
+
+    String table_sortOrder();
+
+    String table_ascSortOrder();
+
+    String table_descSortOrder();
+
     String xaxis_showLabels();
 
     String xaxis_angle();
@@ -72,4 +90,26 @@ public interface DisplayerSettingsEditorConstants extends ConstantsWithLookup {
     String xaxis_title();
 
     String xaxis_title_placeholder();
+
+    String yaxis_showLabels();
+
+    String yaxis_angle();
+
+    String yaxis_title();
+
+    String yaxis_title_placeholder();
+
+    String meter_start();
+
+    String meter_warning();
+
+    String meter_critical();
+
+    String meter_end();
+
+    String barchart_orientation();
+
+    String barchart_horizontal();
+
+    String barchart_vertical();
 }

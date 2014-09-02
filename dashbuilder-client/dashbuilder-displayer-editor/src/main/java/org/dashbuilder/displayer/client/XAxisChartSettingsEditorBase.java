@@ -168,7 +168,7 @@ public class XAxisChartSettingsEditorBase extends AbstractDisplayerSettingsEdito
         xaxisChartAttributesEditor.addXAxisShowLabelsChangeHandler( new ValueChangeHandler<Boolean>() {
             @Override
             public void onValueChange( ValueChangeEvent<Boolean> event ) {
-                displayerSettings.setAxisShowLabels( event.getValue() );
+                displayerSettings.setXAxisShowLabels( event.getValue() );
                 notifyChanges();
             }
         } );
@@ -176,9 +176,9 @@ public class XAxisChartSettingsEditorBase extends AbstractDisplayerSettingsEdito
         xaxisChartAttributesEditor.addXAxisAngleChangeHandler( new ValueChangeHandler<Integer>() {
             @Override
             public void onValueChange( ValueChangeEvent<Integer> event ) {
-                int angle = displayerSettings.getAxisLabelsAngle();
+                int angle = displayerSettings.getXAxisLabelsAngle();
                 if (event.getValue() != null ) angle = event.getValue();
-                displayerSettings.setAxisLabelsAngle( angle );
+                displayerSettings.setXAxisLabelsAngle( angle );
                 notifyChanges();
             }
         } );
@@ -188,7 +188,7 @@ public class XAxisChartSettingsEditorBase extends AbstractDisplayerSettingsEdito
             public void onValueChange( ValueChangeEvent<String> event ) {
                 String title = event.getValue();
                 if ( title != null ) {
-                    displayerSettings.setAxisTitle( title );
+                    displayerSettings.setXAxisTitle( title );
                     notifyChanges();
                 }
             }
@@ -211,9 +211,9 @@ public class XAxisChartSettingsEditorBase extends AbstractDisplayerSettingsEdito
         chartAttributesEditor.setChartShowLegend( displayerSettings.isChartShowLegend() );
         chartAttributesEditor.setChartLegendPosition( displayerSettings.getChartLegendPosition() );
 
-        xaxisChartAttributesEditor.setXaxisShowLabels( displayerSettings.isAxisShowLabels() );
-        xaxisChartAttributesEditor.setXaxisLabelsAngle( displayerSettings.getAxisLabelsAngle() );
-        xaxisChartAttributesEditor.setXaxisTitle( displayerSettings.getAxisTitle() );
+        xaxisChartAttributesEditor.setXaxisShowLabels( displayerSettings.isXAxisShowLabels() );
+        xaxisChartAttributesEditor.setXaxisLabelsAngle( displayerSettings.getXAxisLabelsAngle() );
+        xaxisChartAttributesEditor.setXaxisTitle( displayerSettings.getXAxisTitle() );
     }
 
     private List<DisplayerSettingsColumn> parseColumns( String columns ) {

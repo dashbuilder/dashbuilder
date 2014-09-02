@@ -17,8 +17,8 @@ package org.dashbuilder.client.gallery;
 
 import com.google.gwt.user.client.ui.SimplePanel;
 import org.dashbuilder.displayer.DisplayerSettings;
+import org.dashbuilder.displayer.client.DisplayerSettingsEditorImpl;
 import org.dashbuilder.displayer.client.DisplayerSettingsEditorListener;
-import org.dashbuilder.displayer.client.DisplayerSettingsEditorLocator;
 import org.dashbuilder.displayer.client.DisplayerSettingsEditor;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -28,6 +28,8 @@ import org.dashbuilder.displayer.client.DisplayerView;
  * A KPI gallery node.
  */
 public class GalleryNodeDisplayer extends GalleryNode {
+
+    private DisplayerSettingsEditor displayerSettingsEditor = new DisplayerSettingsEditorImpl();
 
     protected DisplayerSettings displayerSettings;
     protected boolean editEnabled = false;
@@ -65,16 +67,16 @@ public class GalleryNodeDisplayer extends GalleryNode {
         }
 
         // TODO encapsulate the editor in a DisplayerSettingsView, similar to the DisplayerView, for coherency ?
-        DisplayerSettingsEditor settingsEditor = DisplayerSettingsEditorLocator.get().lookupSettingsEditor(displayerSettings);
+        displayerSettingsEditor.setDisplayerSettings( displayerSettings );
 
         SimplePanel editorPanel = new SimplePanel();
         editorPanel.setWidth("500px");
-        editorPanel.add(settingsEditor);
+        editorPanel.add(displayerSettingsEditor);
 
         final SimplePanel viewerPanel = new SimplePanel();
         viewerPanel.add(new DisplayerView(displayerSettings).draw());
 
-        settingsEditor.setListener(new DisplayerSettingsEditorListener() {
+        displayerSettingsEditor.setListener(new DisplayerSettingsEditorListener() {
             public void onDisplayerSettingsChanged(DisplayerSettingsEditor editor) {
                 viewerPanel.clear();
                 viewerPanel.setWidget(new DisplayerView(displayerSettings).draw());

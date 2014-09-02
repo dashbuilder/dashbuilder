@@ -4,6 +4,7 @@ public enum DisplayerSettingId {
 
     TYPE,
     RENDERER,
+    COLUMNS,
 
     TITLE,
     TITLE_VISIBLE,
@@ -12,7 +13,6 @@ public enum DisplayerSettingId {
     FILTER_NOTIFICATION_ENABLED,
     FILTER_LISTENING_ENABLED,
 
-    // (abstract)chartdisplayersettings
     CHART_WIDTH,
     CHART_HEIGHT,
     CHART_MARGIN_TOP,
@@ -21,29 +21,27 @@ public enum DisplayerSettingId {
     CHART_MARGIN_RIGHT,
     CHART_SHOWLEGEND,
     CHART_LEGENDPOSITION,
+    CHART_3D,
 
-    // tabledisplayersettings
     TABLE_PAGESIZE,
     TABLE_WIDTH,
     TABLE_SORTENABLED,
-    TABLE_DEFAULTSORTCOLUMNID,
-    TABLE_DEFAULTSORTORDER,
+    TABLE_SORTCOLUMNID,
+    TABLE_SORTORDER,
 
-    // displayersettings for selector-, area-, map-, pie-, line- : none to be added
+// TODO all the following are yet to be applied to their respective displayers
+    XAXIS_SHOWLABELS,
+    XAXIS_LABELSANGLE,
+    XAXIS_TITLE,
+    YAXIS_SHOWLABELS,
+    YAXIS_LABELSANGLE,
+    YAXIS_TITLE,
 
-    // abstractxaxisdisplayersettings
-    AXIS_SHOWLABELS,
-    AXIS_LABELSANGLE,
-    AXIS_TITLE,
-
-    //meterchartdisplayersettings
     METER_START,
     METER_WARNING,
     METER_CRITICAL,
     METER_END,
 
-    // barchartdisplayersettings
-    BARCHART_THREEDIMENSION,
     BARCHART_HORIZONTAL;
 
 }

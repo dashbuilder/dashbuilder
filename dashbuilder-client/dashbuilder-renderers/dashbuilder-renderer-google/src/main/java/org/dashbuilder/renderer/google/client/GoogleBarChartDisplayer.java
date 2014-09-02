@@ -15,6 +15,9 @@
  */
 package org.dashbuilder.renderer.google.client;
 
+import java.util.Arrays;
+import java.util.List;
+
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.SimplePanel;
@@ -29,6 +32,7 @@ import com.googlecode.gwt.charts.client.corechart.CoreChartWidget;
 import com.googlecode.gwt.charts.client.options.Animation;
 import com.googlecode.gwt.charts.client.options.AnimationEasing;
 import com.googlecode.gwt.charts.client.options.CoreOptions;
+import org.dashbuilder.displayer.DisplayerSettingId;
 
 public class GoogleBarChartDisplayer extends GoogleXAxisChartDisplayer {
 
@@ -62,6 +66,29 @@ public class GoogleBarChartDisplayer extends GoogleXAxisChartDisplayer {
         return verticalPanel;
     }
 
+    @Override
+    public List<DisplayerSettingId> getSupportedDisplayerAttributes() {
+        return Arrays.asList(
+                new DisplayerSettingId[]{
+                        DisplayerSettingId.TITLE_VISIBLE,
+                        DisplayerSettingId.TITLE,
+                        DisplayerSettingId.COLUMNS,
+                        DisplayerSettingId.CHART_WIDTH,
+                        DisplayerSettingId.CHART_HEIGHT,
+                        DisplayerSettingId.CHART_MARGIN_TOP,
+                        DisplayerSettingId.CHART_MARGIN_BOTTOM,
+                        DisplayerSettingId.CHART_MARGIN_LEFT,
+                        DisplayerSettingId.CHART_MARGIN_RIGHT,
+                        DisplayerSettingId.CHART_SHOWLEGEND,
+                        DisplayerSettingId.CHART_LEGENDPOSITION,
+                        DisplayerSettingId.XAXIS_SHOWLABELS,
+                        DisplayerSettingId.XAXIS_TITLE,
+                        DisplayerSettingId.YAXIS_SHOWLABELS,
+                        DisplayerSettingId.YAXIS_TITLE,
+                        DisplayerSettingId.BARCHART_HORIZONTAL
+                }
+        );
+    }
 
     protected void updateVisualization() {
         filterPanel.clear();
@@ -79,9 +106,11 @@ public class GoogleBarChartDisplayer extends GoogleXAxisChartDisplayer {
         if (displayerSettings.isBarchartHorizontal()) {
             BarChartOptions options = BarChartOptions.create();
             options.setWidth(displayerSettings.getChartWidth());
-            options.setHeight(displayerSettings.getChartHeight());
+            options.setHeight( displayerSettings.getChartHeight() );
             options.setLegend( createChartLegend( displayerSettings ) );
-            options.setAnimation(anim);
+            if ( displayerSettings.isXAxisShowLabels() ) options.setHAxis( createHAxis() );
+            if ( displayerSettings.isYAxisShowLabels() ) options.setVAxis( createVAxis() );
+            options.setAnimation( anim );
             options.setChartArea(createChartArea());
             return options;
         }
@@ -90,6 +119,8 @@ public class GoogleBarChartDisplayer extends GoogleXAxisChartDisplayer {
             options.setWidth(displayerSettings.getChartWidth());
             options.setHeight(displayerSettings.getChartHeight());
             options.setLegend( createChartLegend( displayerSettings ) );
+            if ( displayerSettings.isXAxisShowLabels() ) options.setHAxis( createHAxis() );
+            if ( displayerSettings.isYAxisShowLabels() ) options.setVAxis( createVAxis() );
             options.setAnimation(anim);
             // TODO: options.set3D(displayerSettings.is3d());
             options.setChartArea(createChartArea());

@@ -15,6 +15,9 @@
  */
 package org.dashbuilder.renderer.google.client;
 
+import java.util.Arrays;
+import java.util.List;
+
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.SimplePanel;
@@ -23,6 +26,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.googlecode.gwt.charts.client.ChartPackage;
 import com.googlecode.gwt.charts.client.corechart.PieChart;
 import com.googlecode.gwt.charts.client.corechart.PieChartOptions;
+import org.dashbuilder.displayer.DisplayerSettingId;
 
 public class GooglePieChartDisplayer extends GoogleXAxisChartDisplayer {
 
@@ -52,6 +56,26 @@ public class GooglePieChartDisplayer extends GoogleXAxisChartDisplayer {
         return verticalPanel;
     }
 
+    @Override
+    public List<DisplayerSettingId> getSupportedDisplayerAttributes() {
+        return Arrays.asList(
+                new DisplayerSettingId[]{
+                        DisplayerSettingId.TITLE_VISIBLE,
+                        DisplayerSettingId.TITLE,
+                        DisplayerSettingId.COLUMNS,
+                        DisplayerSettingId.CHART_WIDTH,
+                        DisplayerSettingId.CHART_HEIGHT,
+                        DisplayerSettingId.CHART_MARGIN_TOP,
+                        DisplayerSettingId.CHART_MARGIN_BOTTOM,
+                        DisplayerSettingId.CHART_MARGIN_LEFT,
+                        DisplayerSettingId.CHART_MARGIN_RIGHT,
+                        DisplayerSettingId.CHART_SHOWLEGEND,
+                        DisplayerSettingId.CHART_LEGENDPOSITION,
+                        DisplayerSettingId.CHART_3D
+               }
+        );
+    }
+
     protected void updateVisualization() {
         filterPanel.clear();
         Widget filterReset = createCurrentSelectionWidget();
@@ -64,7 +88,7 @@ public class GooglePieChartDisplayer extends GoogleXAxisChartDisplayer {
         PieChartOptions options = PieChartOptions.create();
         options.setWidth(displayerSettings.getChartWidth());
         options.setHeight(displayerSettings.getChartHeight());
-        options.setIs3D(true);
+        options.setIs3D(displayerSettings.isChart3D());
         options.setLegend( createChartLegend( displayerSettings ) );
         options.setColors(createColorArray(googleTable));
         options.setChartArea(createChartArea());

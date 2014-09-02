@@ -15,6 +15,9 @@
  */
 package org.dashbuilder.renderer.google.client;
 
+import java.util.Arrays;
+import java.util.List;
+
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -23,6 +26,7 @@ import com.googlecode.gwt.charts.client.gauge.Gauge;
 import com.googlecode.gwt.charts.client.gauge.GaugeOptions;
 import com.googlecode.gwt.charts.client.options.Animation;
 import com.googlecode.gwt.charts.client.options.AnimationEasing;
+import org.dashbuilder.displayer.DisplayerSettingId;
 
 public class GoogleMeterChartDisplayer extends GoogleDisplayer {
 
@@ -47,6 +51,27 @@ public class GoogleMeterChartDisplayer extends GoogleDisplayer {
         verticalPanel.add(titleHtml);
         verticalPanel.add(chart);
         return verticalPanel;
+    }
+
+    @Override
+    public List<DisplayerSettingId> getSupportedDisplayerAttributes() {
+        return Arrays.asList(
+                new DisplayerSettingId[]{
+                        DisplayerSettingId.TITLE_VISIBLE,
+                        DisplayerSettingId.TITLE,
+                        DisplayerSettingId.COLUMNS,
+                        DisplayerSettingId.CHART_WIDTH,
+                        DisplayerSettingId.CHART_HEIGHT,
+                        DisplayerSettingId.CHART_MARGIN_TOP,
+                        DisplayerSettingId.CHART_MARGIN_BOTTOM,
+                        DisplayerSettingId.CHART_MARGIN_LEFT,
+                        DisplayerSettingId.CHART_MARGIN_RIGHT,
+                        DisplayerSettingId.METER_START,
+                        DisplayerSettingId.METER_WARNING,
+                        DisplayerSettingId.METER_CRITICAL,
+                        DisplayerSettingId.METER_END
+                }
+        );
     }
 
     protected void updateVisualization() {
