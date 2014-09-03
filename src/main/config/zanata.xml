@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <config xmlns="http://zanata.org/namespace/config/">
   <url>https://translate.jboss.org/</url>
-  <project>dashbuilder</project>
-  <project-version>0.3.0</project-version>
+  <project>dashbuilderuf</project>
+  <project-version>0.2.0</project-version>
   <project-type>utf8properties</project-type>
 
   <locales>
