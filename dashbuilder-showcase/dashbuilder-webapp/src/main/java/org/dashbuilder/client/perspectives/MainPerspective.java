@@ -18,20 +18,9 @@ import org.uberfire.workbench.model.impl.PerspectiveDefinitionImpl;
 @WorkbenchPerspective(identifier = "MainPerspective", isDefault = true)
 public class MainPerspective {
 
-    private PerspectiveDefinition perspective;
-
-    @PostConstruct
-    public void init() {
-        buildPerspective();
-    }
-
     @Perspective
-    public PerspectiveDefinition getPerspective() {
-        return this.perspective;
-    }
-
     public PerspectiveDefinition buildPerspective() {
-        perspective = new PerspectiveDefinitionImpl( PanelType.ROOT_STATIC);
+        PerspectiveDefinition perspective = new PerspectiveDefinitionImpl( PanelType.ROOT_STATIC);
         perspective.setTransient(true);
         perspective.setName("MainPerspective");
         //perspective.getRoot().addPart(new PartDefinitionImpl(new DefaultPlaceRequest("HomeScreen")));
