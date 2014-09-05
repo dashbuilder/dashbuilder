@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.Set;
 
 import com.google.gwt.user.client.ui.Composite;
+import org.dashbuilder.common.client.StringUtils;
 import org.dashbuilder.dataset.group.ColumnGroup;
 import org.dashbuilder.dataset.group.DataSetGroup;
 import org.dashbuilder.dataset.group.GroupStrategy;
@@ -65,6 +66,20 @@ public abstract class AbstractDisplayer extends Composite implements Displayer {
 
     public void addListener(DisplayerListener listener) {
         listenerList.add(listener);
+    }
+
+    public String getDisplayerId() {
+        String id = displayerSettings.getUUID();
+        if (!StringUtils.isBlank(id)) {
+            return id;
+        }
+
+        id = displayerSettings.getTitle();
+        if (!StringUtils.isBlank(id)) {
+            int hash = id.hashCode();
+            return Integer.toString(hash < 0 ? hash*-1 : hash);
+        }
+        return null;
     }
 
     @Override
