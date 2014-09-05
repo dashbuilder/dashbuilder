@@ -78,6 +78,13 @@ public abstract class GoogleDisplayer extends AbstractDisplayer {
                             Widget w = createVisualization();
                             panel.clear();
                             panel.add(w);
+
+                            // Set the id of the container panel so that the displayer can be easily located
+                            // by testing tools for instance.
+                            String id = getDisplayerId();
+                            if (!StringUtils.isBlank(id)) {
+                                panel.getElement().setId(id);
+                            }
                         }
                         public void notFound() {
                             displayMessage("ERROR: Data set not found.");
