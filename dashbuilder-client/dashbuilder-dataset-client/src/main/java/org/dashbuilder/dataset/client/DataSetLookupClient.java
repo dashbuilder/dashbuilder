@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Map;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
+import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
 import org.dashbuilder.dataset.DataSet;
@@ -29,12 +30,15 @@ import org.dashbuilder.dataset.DataSetLookup;
 import org.dashbuilder.dataset.DataSetMetadata;
 import org.dashbuilder.dataset.DataSetLookupService;
 import org.dashbuilder.dataset.client.resources.i18n.DataSetConstants;
+import org.dashbuilder.dataset.events.DataSetBackendRegisteredEvent;
+import org.dashbuilder.dataset.events.DataSetModifiedEvent;
 import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.common.client.api.RemoteCallback;
 import org.jboss.errai.ioc.client.container.IOC;
 import org.jboss.errai.ioc.client.container.IOCBeanDef;
 import org.uberfire.workbench.events.NotificationEvent;
 
+import static org.uberfire.commons.validation.PortablePreconditions.checkNotNull;
 import static org.uberfire.workbench.events.NotificationEvent.NotificationType.*;
 
 /**
@@ -55,6 +59,9 @@ public class DataSetLookupClient {
 
     @Inject
     private Event<NotificationEvent> notification;
+
+    @Inject
+    private Event<DataSetModifiedEvent> dataSetModifiedEvent;
 
     /**
      * The service caller used to lookup data sets from the backend.
@@ -257,6 +264,21 @@ public class DataSetLookupClient {
         private DataSetLookupListenerPair(DataSetLookup lookup, DataSetReadyCallback listener) {
             this.lookup = lookup;
             this.listener = listener;
+        }
+    }
+
+    // Catch backend events
+
+    private void onDataSetRegistered(@Observes DataSetBackendRegisteredEvent event) {
+
+        // Remove stale data. This will force next lookup requests to push a refreshed data set.
+        checkNotNull("event", event);
+        String uuid = event.getDataSetMetadata().getUUID();
+        DataSet clientDataSet = clientDataSetManager.removeDataSet(uuid);
+
+        // If the data set existed on client then an out of date event is fired.
+        if (clientDataSet != null) {
+            dataSetModifiedEvent.fire(new DataSetModifiedEvent(clientDataSet.getMetadata()));
         }
     }
 }

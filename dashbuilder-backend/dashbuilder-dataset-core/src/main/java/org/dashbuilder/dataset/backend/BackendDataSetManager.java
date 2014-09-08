@@ -16,6 +16,7 @@
 package org.dashbuilder.dataset.backend;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
@@ -26,6 +27,8 @@ import org.dashbuilder.dataset.DataSetManager;
 import org.dashbuilder.dataset.DataSetMetadata;
 import org.dashbuilder.dataset.engine.SharedDataSetOpEngine;
 import org.dashbuilder.dataset.engine.index.DataSetIndex;
+import org.dashbuilder.dataset.events.DataSetBackendRegisteredEvent;
+import org.dashbuilder.dataset.events.DataSetBackendRemovedEvent;
 
 /**
  * Backend implementation of the DataSetManager interface. It's been designed with several goals in mind:
@@ -40,6 +43,12 @@ public class BackendDataSetManager implements DataSetManager {
 
     @Inject
     protected SharedDataSetOpEngine dataSetOpEngine;
+
+    @Inject
+    private Event<DataSetBackendRegisteredEvent> dataSetRegisteredEvent;
+
+    @Inject
+    private Event<DataSetBackendRemovedEvent> dataSetRemovedEvent;
 
     public DataSet createDataSet(String uuid) {
         DataSet dataSet = DataSetFactory.newDataSet();
@@ -64,7 +73,21 @@ public class BackendDataSetManager implements DataSetManager {
     public void registerDataSet(DataSet dataSet) {
         if (dataSet != null) {
             dataSetOpEngine.getIndexRegistry().put(dataSet);
+
+            // Fire an event
+            dataSetRegisteredEvent.fire(new DataSetBackendRegisteredEvent(dataSet.getMetadata()));
         }
+    }
+
+    public DataSet removeDataSet(String uuid) {
+        DataSetIndex index = dataSetOpEngine.getIndexRegistry().remove(uuid);
+        if (index == null) return null;
+
+        // Fire an event before return.
+        DataSet dataSet = index.getDataSet();
+        dataSetRemovedEvent.fire(new DataSetBackendRemovedEvent(dataSet.getMetadata()));
+        return dataSet;
+
     }
 
     public DataSet refreshDataSet(String uuid) {

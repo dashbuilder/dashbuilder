@@ -46,6 +46,13 @@ public interface DataSetManager {
     void registerDataSet(DataSet dataSet);
 
     /**
+     * Removes the specified data set instance.
+     * @param uuid The UUID of the data set.
+     * @return The data set removed. null - if the data set does not exists.
+     */
+    DataSet removeDataSet(String uuid);
+
+    /**
      * Load a data set and apply several operations (filter, sort, group, ...) on top of it.
      * @return null, if the data set can be retrieved.
      */
