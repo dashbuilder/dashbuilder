@@ -27,7 +27,7 @@ import org.dashbuilder.displayer.client.DisplayerHelper;
 
 import static org.dashbuilder.dataset.group.DateIntervalType.*;
 import static org.dashbuilder.dataset.date.DayOfWeek.*;
-import static org.dashbuilder.client.sales.SalesConstants.*;
+import static org.dashbuilder.shared.sales.SalesConstants.*;
 import static org.dashbuilder.dataset.sort.SortOrder.*;
 
 /**
@@ -65,6 +65,8 @@ public class SalesExpectedByDate extends Composite {
 
     @UiField(provided = true)
     Displayer salesmanSelector;
+
+    DisplayerCoordinator displayerCoordinator = new DisplayerCoordinator();
 
     public SalesExpectedByDate() {
 
@@ -160,16 +162,16 @@ public class SalesExpectedByDate extends Composite {
 
         countrySelector = DisplayerHelper.lookupDisplayer(
                 DisplayerSettingsFactory.newSelectorSettings()
-                .dataset(SALES_OPPS)
-                .group(COUNTRY)
-                .count("#Opps")
-                .sum(AMOUNT)
-                .sort(COUNTRY, ASCENDING)
-                .column("Country")
-                .column("#Opps")
-                .column("Total")
-                .filterOn(false, true, true)
-                .buildSettings());
+                        .dataset(SALES_OPPS)
+                        .group(COUNTRY)
+                        .count("#Opps")
+                        .sum(AMOUNT)
+                        .sort(COUNTRY, ASCENDING)
+                        .column("Country")
+                        .column("#Opps")
+                        .column("Total")
+                        .filterOn(false, true, true)
+                        .buildSettings());
 
         salesmanSelector = DisplayerHelper.lookupDisplayer(
                 DisplayerSettingsFactory.newSelectorSettings()
@@ -198,7 +200,6 @@ public class SalesExpectedByDate extends Composite {
                 .buildSettings());
 
         // Make the displayers interact among them
-        DisplayerCoordinator displayerCoordinator = new DisplayerCoordinator();
         displayerCoordinator.addDisplayer(areaChartByDate);
         displayerCoordinator.addDisplayer(pieChartYears);
         displayerCoordinator.addDisplayer(pieChartQuarters);
@@ -214,5 +215,9 @@ public class SalesExpectedByDate extends Composite {
 
         // Draw the charts
         displayerCoordinator.drawAll();
+    }
+
+    public void redrawAll() {
+        displayerCoordinator.redrawAll();
     }
 }

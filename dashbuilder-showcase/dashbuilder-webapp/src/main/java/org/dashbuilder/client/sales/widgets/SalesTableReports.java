@@ -26,7 +26,7 @@ import org.dashbuilder.displayer.client.DisplayerCoordinator;
 import org.dashbuilder.displayer.client.DisplayerHelper;
 import org.dashbuilder.dataset.group.DateIntervalType;
 
-import static org.dashbuilder.client.sales.SalesConstants.*;
+import static org.dashbuilder.shared.sales.SalesConstants.*;
 import static org.dashbuilder.dataset.sort.SortOrder.*;
 
 /**
@@ -52,6 +52,8 @@ public class SalesTableReports extends Composite {
 
     @UiField(provided = true)
     Displayer tableAll;
+
+    DisplayerCoordinator displayerCoordinator = new DisplayerCoordinator();
 
     public SalesTableReports() {
 
@@ -146,7 +148,6 @@ public class SalesTableReports extends Composite {
                 .buildSettings());
 
         // Make that charts interact among them
-        DisplayerCoordinator displayerCoordinator = new DisplayerCoordinator();
         displayerCoordinator.addDisplayer(tableByCountry);
         displayerCoordinator.addDisplayer(tableByProduct);
         displayerCoordinator.addDisplayer(tableBySalesman);
@@ -158,5 +159,9 @@ public class SalesTableReports extends Composite {
 
         // Draw the charts
         displayerCoordinator.drawAll();
+    }
+
+    public void redrawAll() {
+        displayerCoordinator.redrawAll();
     }
 }

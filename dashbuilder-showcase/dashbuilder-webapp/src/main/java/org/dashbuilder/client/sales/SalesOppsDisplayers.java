@@ -24,7 +24,7 @@ import org.dashbuilder.displayer.DisplayerSettings;
 import org.dashbuilder.displayer.DisplayerSettingsFactory;
 import org.dashbuilder.displayer.client.DisplayerSettingsManager;
 
-import static org.dashbuilder.client.sales.SalesConstants.*;
+import static org.dashbuilder.shared.sales.SalesConstants.*;
 import static org.dashbuilder.dataset.sort.SortOrder.*;
 
 /**

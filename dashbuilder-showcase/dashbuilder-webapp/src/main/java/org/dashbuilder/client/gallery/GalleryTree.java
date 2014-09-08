@@ -20,9 +20,12 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.event.Event;
+import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
 import com.google.gwt.user.client.ui.Widget;
+import org.dashbuilder.dataset.events.DataSetModifiedEvent;
 import org.dashbuilder.displayer.DisplayerSettingsFactory;
 import org.dashbuilder.displayer.client.DisplayerSettingsManager;
 import org.dashbuilder.client.sales.widgets.SalesExpectedByDate;
@@ -31,12 +34,15 @@ import org.dashbuilder.client.sales.widgets.SalesGoals;
 import org.dashbuilder.client.sales.widgets.SalesTableReports;
 import org.dashbuilder.dataset.DataSetFactory;
 import org.dashbuilder.renderer.table.client.TableRenderer;
+import org.uberfire.workbench.events.NotificationEvent;
 
 import static org.dashbuilder.dataset.group.DateIntervalType.*;
 import static org.dashbuilder.dataset.filter.FilterFactory.*;
 import static org.dashbuilder.dataset.sort.SortOrder.*;
 import static org.dashbuilder.dataset.date.Month.*;
-import static org.dashbuilder.client.sales.SalesConstants.*;
+import static org.dashbuilder.shared.sales.SalesConstants.*;
+import static org.uberfire.commons.validation.PortablePreconditions.checkNotNull;
+import static org.uberfire.workbench.events.NotificationEvent.NotificationType.*;
 
 /**
  * The Gallery tree.
@@ -46,7 +52,15 @@ public class GalleryTree {
 
     private List<GalleryNode> mainNodes = new ArrayList<GalleryNode>();
 
+    @Inject
+    private Event<NotificationEvent> workbenchNotification;
+
     @Inject DisplayerSettingsManager settingsManager;
+
+    private SalesGoals salesGoalsWidget;
+    private SalesExpectedByDate salesByDateWidget;
+    private SalesDistributionByCountry salesByCountryWidget;
+    private SalesTableReports salesReportsWidget;
 
     public List<GalleryNode> getMainNodes() {
         return mainNodes;
@@ -63,6 +77,19 @@ public class GalleryTree {
         initMeterChartCategory();
         initMapChartCategory();
         initDashboardCategory();
+    }
+
+    private void onSalesDataSetOutdated(@Observes DataSetModifiedEvent event) {
+        checkNotNull("event", event);
+
+        String targetUUID = event.getDataSetMetadata().getUUID();
+        if (SALES_OPPS.equals(targetUUID)) {
+            workbenchNotification.fire(new NotificationEvent("The sales data set has been modified. Refreshing the dashboard ...", INFO));
+            salesGoalsWidget.redrawAll();
+            salesByCountryWidget.redrawAll();
+            salesByDateWidget.redrawAll();
+            salesReportsWidget.redrawAll();
+        }
     }
 
     private void initBarChartCategory() {
@@ -427,22 +454,22 @@ public class GalleryTree {
 
         nodeList.add(new GalleryNode("Sales goal") {
             public Widget createWidget() {
-                return new SalesGoals();
+                return salesGoalsWidget = new SalesGoals();
             }
         });
         nodeList.add(new GalleryNode("Sales pipeline") {
             public Widget createWidget() {
-                return new SalesExpectedByDate();
+                return salesByDateWidget = new SalesExpectedByDate();
             }
         });
         nodeList.add(new GalleryNode("Sales per country") {
             public Widget createWidget() {
-                return new SalesDistributionByCountry();
+                return salesByCountryWidget = new SalesDistributionByCountry();
             }
         });
         nodeList.add(new GalleryNode("Sales reports") {
             public Widget createWidget() {
-                return new SalesTableReports();
+                return salesReportsWidget = new SalesTableReports();
             }
         });
     }

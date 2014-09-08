@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbuilder.client.sales;
+package org.dashbuilder.shared.sales;
 
 public interface SalesConstants {
 
