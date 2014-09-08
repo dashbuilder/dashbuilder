@@ -65,6 +65,12 @@ public class ClientDataSetManager implements DataSetManager {
         }
     }
 
+    public DataSet removeDataSet(String uuid) {
+        DataSet dataSet = getDataSet(uuid);
+        dataSetOpEngine.getIndexRegistry().remove(uuid);
+        return dataSet;
+    }
+
     public DataSetMetadata getDataSetMetadata(String uuid) {
         DataSet dataSet = getDataSet(uuid);
         if (dataSet == null) return null;
