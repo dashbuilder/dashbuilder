@@ -15,19 +15,15 @@
  */
 package org.dashbuilder.client;
 
-import java.util.Date;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import org.dashbuilder.displayer.client.RendererLibLocator;
-import org.dashbuilder.client.sales.SalesDataSetGenerator;
 import org.dashbuilder.dataset.client.DataSetLookupClient;
 import org.dashbuilder.renderer.google.client.GoogleRenderer;
-import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetManager;
 import org.dashbuilder.displayer.DisplayerType;
-import org.dashbuilder.client.sales.SalesConstants;
 import org.dashbuilder.dataset.DataSetLookupService;
 import org.dashbuilder.renderer.selector.client.SelectorRenderer;
 import org.jboss.errai.common.client.api.Caller;
@@ -43,8 +39,6 @@ public class DashbuilderInitializer {
     @Inject DataSetLookupClient dataSetLookupClient;
     @Inject Caller<DataSetLookupService> dataSetLookupService;
 
-    @Inject SalesDataSetGenerator salesDataSetGenerator;
-
     @PostConstruct
     public void init() {
         // Enable the data set lookup backend service so that the DataSetLookupClient is able to send requests
@@ -53,7 +47,7 @@ public class DashbuilderInitializer {
 
         // Enable the ability to push and handle on client data sets greater than 1 Mb
         dataSetLookupClient.setPushRemoteDataSetEnabled(true);
-        dataSetLookupClient.setPushRemoteDataSetMaxSize(1024);
+        dataSetLookupClient.setPushRemoteDataSetMaxSize(2024);
 
         // Set the default renderer lib for each displayer type.
         rendererLibLocator.setDefaultRenderer( DisplayerType.BARCHART, GoogleRenderer.UUID);
@@ -65,10 +59,5 @@ public class DashbuilderInitializer {
         rendererLibLocator.setDefaultRenderer( DisplayerType.MAP, GoogleRenderer.UUID);
         rendererLibLocator.setDefaultRenderer( DisplayerType.TABLE, GoogleRenderer.UUID);
         rendererLibLocator.setDefaultRenderer( DisplayerType.SELECTOR, SelectorRenderer.UUID);
-
-        // Generate the data set to be used by the Showcase Gallery and by the Sales sample dashboards.
-        Date currentDate = new Date();
-        DataSet salesDataSet = salesDataSetGenerator.generateDataSet(SalesConstants.SALES_OPPS, 30, currentDate.getYear()-1, currentDate.getYear()+3);
-        dataSetManager.registerDataSet(salesDataSet);
     }
 }

@@ -13,21 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbuilder.client.sales;
+package org.dashbuilder.backend;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Random;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
-import com.google.gwt.user.client.Random;
-import com.google.gwt.user.datepicker.client.CalendarUtil;
 import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetManager;
 
-import static org.dashbuilder.client.sales.SalesConstants.*;
+import static org.dashbuilder.shared.sales.SalesConstants.*;
 
 /**
  * Generates a random data set containing sales opportunity records.
@@ -65,6 +65,7 @@ public class SalesDataSetGenerator {
 
     private static double AVG_CLOSING_DAYS = 90;
 
+    private Random random = new Random(System.currentTimeMillis());
 
     public static class Opportunity {
         public String pipeline;
@@ -83,20 +84,24 @@ public class SalesDataSetGenerator {
     }
 
     private Date buildDate(int month, int year) {
-        int day = Random.nextInt() % 29; // No sales on 29, 30 and 31 ;-)
-        int hour = Random.nextInt() % 24;
-        int minute = Random.nextInt() % 60;
-        return new Date(year, month, day, hour, minute, 0);
+        Calendar c = Calendar.getInstance();
+        c.set(Calendar.DAY_OF_MONTH, random.nextInt(28)); // No sales on 29, 30 and 31 ;-)
+        c.set(Calendar.YEAR, year);
+        c.set(Calendar.MONTH, month - 1); // Some genius thought that the first month is 0
+        c.set(Calendar.HOUR_OF_DAY, random.nextInt(24));
+        c.set(Calendar.MINUTE, random.nextInt(60));
+        return c.getTime();
     }
 
     private Date addDates(Date d, int days) {
-        Date result = CalendarUtil.copyDate(d);
-        CalendarUtil.addDaysToDate(result, days);
-        return result;
+        Calendar c = Calendar.getInstance();
+        c.setTime(d);
+        c.add(Calendar.DAY_OF_MONTH, days);
+        return c.getTime();
     }
 
     private String randomValue(String[] dic) {
-        return dic[Random.nextInt(dic.length)];
+        return dic[random.nextInt(dic.length)];
     }
 
     public List<Opportunity> randomOpportunities(int opportunitiesPerMonth, int startYear, int endYear) {
@@ -105,17 +110,17 @@ public class SalesDataSetGenerator {
             for (int month = 0; month < 12; month++) {
                 for (int i = 0; i < opportunitiesPerMonth; i++) {
                     Opportunity opportunity = new Opportunity();
-                    opportunity.amount = MIN_AMOUNT + Random.nextDouble() * (MAX_AMOUNT - MIN_AMOUNT);
+                    opportunity.amount = MIN_AMOUNT + random.nextDouble() * (MAX_AMOUNT - MIN_AMOUNT);
                     opportunity.creationDate = buildDate(month, year);
-                    opportunity.closingDate = addDates(opportunity.creationDate, (int) (AVG_CLOSING_DAYS + Random.nextDouble() * AVG_CLOSING_DAYS * 0.5));
+                    opportunity.closingDate = addDates(opportunity.creationDate, (int) (AVG_CLOSING_DAYS + random.nextDouble() * AVG_CLOSING_DAYS * 0.5));
                     opportunity.pipeline = randomValue(DIC_PIPELINE);
                     opportunity.status = randomValue(DIC_STATUS);
                     opportunity.country = randomValue(DIC_COUNTRIES);
                     opportunity.customer = randomValue(DIC_CUSTOMER);
                     opportunity.product = randomValue(DIC_PRODUCT);
                     opportunity.salesPerson = randomValue(DIC_SALES_PERSON);
-                    opportunity.probability = Random.nextDouble() * 100.0;
-                    opportunity.expectedAmount = opportunity.amount * (1 + (Random.nextDouble() * ((month*i)%10)/10));
+                    opportunity.probability = random.nextDouble() * 100.0;
+                    opportunity.expectedAmount = opportunity.amount * (1 + (random.nextDouble() * ((month*i)%10)/10));
                     opportunity.source = randomValue(DIC_SOURCE);
                     if (opportunity.probability < 25) opportunity.color = "RED";
                     else if (opportunity.probability < 50) opportunity.color = "GREY";

@@ -15,19 +15,27 @@
  */
 package org.dashbuilder.client.sales.widgets;
 
+import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.event.Event;
+import javax.enterprise.event.Observes;
+import javax.inject.Inject;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
+import org.dashbuilder.dataset.events.DataSetModifiedEvent;
 import org.dashbuilder.displayer.DisplayerSettingsFactory;
 import org.dashbuilder.displayer.client.Displayer;
 import org.dashbuilder.displayer.client.DisplayerCoordinator;
 import org.dashbuilder.displayer.client.DisplayerHelper;
+import org.uberfire.workbench.events.NotificationEvent;
 
-import static org.dashbuilder.client.sales.SalesConstants.*;
+import static org.dashbuilder.shared.sales.SalesConstants.*;
 import static org.dashbuilder.dataset.group.DateIntervalType.*;
 import static org.dashbuilder.dataset.sort.SortOrder.*;
+import static org.uberfire.commons.validation.PortablePreconditions.checkNotNull;
 
 /**
  * A composite widget that represents an entire dashboard sample composed using an UI binder template.
@@ -52,6 +60,8 @@ public class SalesGoals extends Composite {
 
     @UiField(provided = true)
     Displayer bubbleByCountry;
+
+    DisplayerCoordinator displayerCoordinator = new DisplayerCoordinator();
 
     public SalesGoals() {
 
@@ -136,8 +146,7 @@ public class SalesGoals extends Composite {
                 .filterOn(false, true, true)
                 .buildSettings());
 
-        // Make that charts interact among them
-        DisplayerCoordinator displayerCoordinator = new DisplayerCoordinator();
+        // Make the charts interact among them
         displayerCoordinator.addDisplayer(meterChartAmount);
         displayerCoordinator.addDisplayer(lineChartByDate);
         displayerCoordinator.addDisplayer(barChartByProduct);
@@ -151,4 +160,7 @@ public class SalesGoals extends Composite {
         displayerCoordinator.drawAll();
     }
 
+    public void redrawAll() {
+        displayerCoordinator.redrawAll();
+    }
 }

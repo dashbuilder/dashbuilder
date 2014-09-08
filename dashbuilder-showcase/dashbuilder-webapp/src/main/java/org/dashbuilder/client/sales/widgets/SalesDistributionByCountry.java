@@ -26,7 +26,7 @@ import org.dashbuilder.displayer.client.DisplayerHelper;
 import org.dashbuilder.displayer.DisplayerSettingsFactory;
 import org.dashbuilder.renderer.table.client.TableRenderer;
 
-import static org.dashbuilder.client.sales.SalesConstants.*;
+import static org.dashbuilder.shared.sales.SalesConstants.*;
 import static org.dashbuilder.dataset.sort.SortOrder.*;
 
 /**
@@ -46,6 +46,8 @@ public class SalesDistributionByCountry extends Composite {
 
     @UiField(provided = true)
     Displayer tableAll;
+
+    DisplayerCoordinator displayerCoordinator = new DisplayerCoordinator();
 
     public SalesDistributionByCountry() {
 
@@ -107,7 +109,6 @@ public class SalesDistributionByCountry extends Composite {
                 .buildSettings());
 
         // Make that charts interact among them
-        DisplayerCoordinator displayerCoordinator = new DisplayerCoordinator();
         displayerCoordinator.addDisplayer(bubbleByCountry);
         displayerCoordinator.addDisplayer(mapByCountry);
         displayerCoordinator.addDisplayer(tableAll);
@@ -117,5 +118,9 @@ public class SalesDistributionByCountry extends Composite {
 
         // Draw the charts
         displayerCoordinator.drawAll();
+    }
+
+    public void redrawAll() {
+        displayerCoordinator.redrawAll();
     }
 }
