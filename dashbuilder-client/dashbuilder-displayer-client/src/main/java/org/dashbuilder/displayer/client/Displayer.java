@@ -15,10 +15,8 @@
  */
 package org.dashbuilder.displayer.client;
 
-import java.util.List;
-
 import com.google.gwt.user.client.ui.IsWidget;
-import org.dashbuilder.displayer.DisplayerSettingId;
+import org.dashbuilder.displayer.DisplayerEditorConfig;
 import org.dashbuilder.displayer.DisplayerSettings;
 
 /**
@@ -38,18 +36,8 @@ public interface Displayer extends DisplayerListener, IsWidget {
     void setDataSetHandler(DataSetHandler dataSetHandler);
     DataSetHandler getDataSetHandler();
 
-
-    // TODO put this in subinterface EditableDisplayer? Create similar NonEditableDisplayer (e.g. Selector)?
-    /**
-     * @return A list of DisplayerSettingId enum values indicating which DisplayerSettings are supported by this Displayer.
-     */
-    List<DisplayerSettingId> getSupportedDisplayerAttributes();
-
-    /**
-     * TODO maintain this method in the API?
-     * Define whether a certain type of Displayer Setting is supported by this Displayer.
-     */
-    boolean isDisplayerSettingSupported(DisplayerSettingId displayerSettingId );
+    // Put this in sub-interface EditableDisplayer?
+    DisplayerEditorConfig getDisplayerEditorConfig();
 
     /**
      * Add a listener interested in receive events generated within this displayer component.

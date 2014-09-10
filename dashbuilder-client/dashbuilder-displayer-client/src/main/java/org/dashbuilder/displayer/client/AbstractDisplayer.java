@@ -30,7 +30,6 @@ import org.dashbuilder.dataset.group.GroupStrategy;
 import org.dashbuilder.dataset.sort.ColumnSort;
 import org.dashbuilder.dataset.sort.DataSetSort;
 import org.dashbuilder.dataset.sort.SortOrder;
-import org.dashbuilder.displayer.DisplayerSettingId;
 import org.dashbuilder.displayer.DisplayerSettings;
 
 /**
@@ -80,11 +79,6 @@ public abstract class AbstractDisplayer extends Composite implements Displayer {
             return Integer.toString(hash < 0 ? hash*-1 : hash);
         }
         return null;
-    }
-
-    @Override
-    public boolean isDisplayerSettingSupported( DisplayerSettingId displayerSettingId ) {
-        return getSupportedDisplayerAttributes() != null && getSupportedDisplayerAttributes().contains( displayerSettingId );
     }
 
     // CAPTURE EVENTS RECEIVED FROM OTHER DISPLAYERS

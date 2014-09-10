@@ -15,11 +15,13 @@
  */
 package org.dashbuilder.renderer.google.client;
 
-import java.util.Arrays;
 import java.util.List;
 
-import com.github.gwtbootstrap.client.ui.*;
+import com.github.gwtbootstrap.client.ui.Icon;
 import com.github.gwtbootstrap.client.ui.Label;
+import com.github.gwtbootstrap.client.ui.NavLink;
+import com.github.gwtbootstrap.client.ui.Pagination;
+import com.github.gwtbootstrap.client.ui.Tooltip;
 import com.github.gwtbootstrap.client.ui.constants.IconSize;
 import com.github.gwtbootstrap.client.ui.constants.IconType;
 import com.github.gwtbootstrap.client.ui.resources.Bootstrap;
@@ -27,7 +29,11 @@ import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Event;
-import com.google.gwt.user.client.ui.*;
+import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HasVerticalAlignment;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
 import com.googlecode.gwt.charts.client.ChartPackage;
 import com.googlecode.gwt.charts.client.DataTable;
 import com.googlecode.gwt.charts.client.event.SortEvent;
@@ -36,11 +42,13 @@ import com.googlecode.gwt.charts.client.options.TableSort;
 import com.googlecode.gwt.charts.client.table.Table;
 import com.googlecode.gwt.charts.client.table.TableOptions;
 import org.dashbuilder.common.client.SpacerWidget;
-import org.dashbuilder.displayer.DisplayerSettingId;
-import org.dashbuilder.displayer.client.Displayer;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.group.DataSetGroup;
 import org.dashbuilder.dataset.sort.SortOrder;
+import org.dashbuilder.displayer.DisplayerAttributeGroupDef;
+import org.dashbuilder.displayer.DisplayerEditorConfig;
+import org.dashbuilder.displayer.client.Displayer;
+import org.dashbuilder.displayer.impl.DisplayerEditorConfigImpl;
 import org.dashbuilder.renderer.google.client.resources.i18n.GoogleDisplayerConstants;
 
 public class GoogleTableDisplayer extends GoogleDisplayer {
@@ -67,19 +75,10 @@ public class GoogleTableDisplayer extends GoogleDisplayer {
     }
 
     @Override
-    public List<DisplayerSettingId> getSupportedDisplayerAttributes() {
-        return Arrays.asList(
-                new DisplayerSettingId[]{
-                        DisplayerSettingId.TITLE_VISIBLE,
-                        DisplayerSettingId.TITLE,
-                        DisplayerSettingId.COLUMNS,
-                        DisplayerSettingId.TABLE_PAGESIZE,
-                        DisplayerSettingId.TABLE_WIDTH,
-                        DisplayerSettingId.TABLE_SORTENABLED,
-                        DisplayerSettingId.TABLE_SORTCOLUMNID,
-                        DisplayerSettingId.TABLE_SORTORDER
-                }
-        );
+    public DisplayerEditorConfig getDisplayerEditorConfig() {
+        return new DisplayerEditorConfigImpl()
+                   .supportsAttribute( DisplayerAttributeGroupDef.COMMON_GROUP )
+                   .supportsAttribute( DisplayerAttributeGroupDef.TABLE_GROUP );
     }
 
     @Override

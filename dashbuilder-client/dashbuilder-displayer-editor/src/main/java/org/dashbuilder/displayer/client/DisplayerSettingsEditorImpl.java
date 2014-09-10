@@ -17,6 +17,7 @@ package org.dashbuilder.displayer.client;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import com.github.gwtbootstrap.client.ui.CheckBox;
 import com.github.gwtbootstrap.client.ui.IntegerBox;
@@ -41,7 +42,8 @@ import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.common.client.SpacerWidget;
 import org.dashbuilder.common.client.StringUtils;
 import org.dashbuilder.dataset.sort.SortOrder;
-import org.dashbuilder.displayer.DisplayerSettingId;
+import org.dashbuilder.displayer.DisplayerAttributeDef;
+import org.dashbuilder.displayer.DisplayerEditorConfig;
 import org.dashbuilder.displayer.DisplayerSettings;
 import org.dashbuilder.displayer.DisplayerSettingsColumn;
 import org.dashbuilder.displayer.Position;
@@ -117,8 +119,8 @@ public class DisplayerSettingsEditorImpl extends Composite implements DisplayerS
     private Label xaxisShowLabelsCheckBoxLabel = new Label( DisplayerSettingsEditorConstants.INSTANCE.xaxis_showLabels() );
     private CheckBox xaxisShowLabelsCheckBox = new CheckBox();
 
-    private Label xaxisAngleIntegerBoxLabel = new Label( DisplayerSettingsEditorConstants.INSTANCE.xaxis_angle() );
-    private IntegerBox xaxisAngleIntegerBox = new IntegerBox();
+//    private Label xaxisAngleIntegerBoxLabel = new Label( DisplayerSettingsEditorConstants.INSTANCE.xaxis_angle() );
+//    private IntegerBox xaxisAngleIntegerBox = new IntegerBox();
 
     private Label xaxisTitleTextBoxLabel = new Label( DisplayerSettingsEditorConstants.INSTANCE.xaxis_title() );
     private TextBox xaxisTitleTextBox = new TextBox();
@@ -126,8 +128,8 @@ public class DisplayerSettingsEditorImpl extends Composite implements DisplayerS
     private Label yaxisShowLabelsCheckBoxLabel = new Label( DisplayerSettingsEditorConstants.INSTANCE.yaxis_showLabels() );
     private CheckBox yaxisShowLabelsCheckBox = new CheckBox();
 
-    private Label yaxisAngleIntegerBoxLabel = new Label( DisplayerSettingsEditorConstants.INSTANCE.yaxis_angle() );
-    private IntegerBox yaxisAngleIntegerBox = new IntegerBox();
+//    private Label yaxisAngleIntegerBoxLabel = new Label( DisplayerSettingsEditorConstants.INSTANCE.yaxis_angle() );
+//    private IntegerBox yaxisAngleIntegerBox = new IntegerBox();
 
     private Label yaxisTitleTextBoxLabel = new Label( DisplayerSettingsEditorConstants.INSTANCE.yaxis_title() );
     private TextBox yaxisTitleTextBox = new TextBox();
@@ -155,7 +157,10 @@ public class DisplayerSettingsEditorImpl extends Composite implements DisplayerS
 
     protected DisplayerSettings displayerSettings;
     protected DisplayerSettingsEditorListener listener;
+    // todo probably no longer needed, so could be removed
     protected Displayer displayer;
+    protected DisplayerEditorConfig displayerEditorConfig;
+    private Set<DisplayerAttributeDef> supportedAttributes;
 
     public DisplayerSettingsEditorImpl() {
 
@@ -382,16 +387,16 @@ public class DisplayerSettingsEditorImpl extends Composite implements DisplayerS
             }
         } );
 
-        xaxisAngleIntegerBox.setAlignment( ValueBoxBase.TextAlignment.RIGHT );
-        xaxisAngleIntegerBox.addValueChangeHandler( new ValueChangeHandler<Integer>() {
-            @Override
-            public void onValueChange( ValueChangeEvent<Integer> event ) {
-                int axisAngle = displayerSettings.getXAxisLabelsAngle();
-                if ( event.getValue() != null ) axisAngle = event.getValue();
-                displayerSettings.setXAxisLabelsAngle( axisAngle );
-                notifyChanges();
-            }
-        } );
+//        xaxisAngleIntegerBox.setAlignment( ValueBoxBase.TextAlignment.RIGHT );
+//        xaxisAngleIntegerBox.addValueChangeHandler( new ValueChangeHandler<Integer>() {
+//            @Override
+//            public void onValueChange( ValueChangeEvent<Integer> event ) {
+//                int axisAngle = displayerSettings.getXAxisLabelsAngle();
+//                if ( event.getValue() != null ) axisAngle = event.getValue();
+//                displayerSettings.setXAxisLabelsAngle( axisAngle );
+//                notifyChanges();
+//            }
+//        } );
 
         yaxisShowLabelsCheckBox.addClickHandler( new ClickHandler() {
             @Override
@@ -415,16 +420,16 @@ public class DisplayerSettingsEditorImpl extends Composite implements DisplayerS
             }
         } );
 
-        yaxisAngleIntegerBox.setAlignment( ValueBoxBase.TextAlignment.RIGHT );
-        yaxisAngleIntegerBox.addValueChangeHandler( new ValueChangeHandler<Integer>() {
-            @Override
-            public void onValueChange( ValueChangeEvent<Integer> event ) {
-                int axisAngle = displayerSettings.getYAxisLabelsAngle();
-                if ( event.getValue() != null ) axisAngle = event.getValue();
-                displayerSettings.setYAxisLabelsAngle( axisAngle );
-                notifyChanges();
-            }
-        } );
+//        yaxisAngleIntegerBox.setAlignment( ValueBoxBase.TextAlignment.RIGHT );
+//        yaxisAngleIntegerBox.addValueChangeHandler( new ValueChangeHandler<Integer>() {
+//            @Override
+//            public void onValueChange( ValueChangeEvent<Integer> event ) {
+//                int axisAngle = displayerSettings.getYAxisLabelsAngle();
+//                if ( event.getValue() != null ) axisAngle = event.getValue();
+//                displayerSettings.setYAxisLabelsAngle( axisAngle );
+//                notifyChanges();
+//            }
+//        } );
 
         meterStartLongBox.setAlignment( ValueBoxBase.TextAlignment.RIGHT );
         meterStartLongBox.addValueChangeHandler( new ValueChangeHandler<Long>() {
@@ -496,114 +501,116 @@ public class DisplayerSettingsEditorImpl extends Composite implements DisplayerS
     public void setDisplayerSettings(DisplayerSettings displayerSettings) {
         this.displayerSettings = displayerSettings;
         this.displayer = DisplayerHelper.lookupDisplayer(displayerSettings);
+        this.displayerEditorConfig = displayer.getDisplayerEditorConfig();
+        this.supportedAttributes = displayerEditorConfig.getSupportedAttributes();
 
         int rowCounter = 0;
-        if ( displayer.isDisplayerSettingSupported( DisplayerSettingId.TITLE_VISIBLE ) ) {
+        if ( supportedAttributes.contains( DisplayerAttributeDef.TITLE_VISIBLE ) ) {
             showTitleCheckbox.setValue( displayerSettings.isTitleVisible() );
             editorSettingsTable.setWidget( rowCounter, 0, showTitleCheckboxLabel );
             editorSettingsTable.setWidget( rowCounter, 1, SpacerWidget.SINGLE );
             editorSettingsTable.setWidget( rowCounter++, 2, showTitleCheckbox );
         }
 
-        if ( displayer.isDisplayerSettingSupported( DisplayerSettingId.TITLE ) ) {
+        if ( supportedAttributes.contains( DisplayerAttributeDef.TITLE ) ) {
             titleTextBox.setText( displayerSettings.getTitle() );
             editorSettingsTable.setWidget( rowCounter, 0, titleTextBoxLabel);
             editorSettingsTable.setWidget( rowCounter, 1, SpacerWidget.SINGLE );
             editorSettingsTable.setWidget( rowCounter++, 2, titleTextBox );
         }
 
-        if ( displayer.isDisplayerSettingSupported( DisplayerSettingId.COLUMNS ) ) {
+        if ( supportedAttributes.contains( DisplayerAttributeDef.COLUMNS ) ) {
             columnsTextBox.setText( formatColumns( displayerSettings.getColumnList() ) );
             editorSettingsTable.setWidget( rowCounter, 0, columnsTextBoxLabel);
             editorSettingsTable.setWidget( rowCounter, 1, SpacerWidget.SINGLE );
             editorSettingsTable.setWidget( rowCounter++, 2, columnsTextBox );
         }
 
-        if ( displayer.isDisplayerSettingSupported( DisplayerSettingId.CHART_WIDTH ) ) {
+        if ( supportedAttributes.contains( DisplayerAttributeDef.CHART_WIDTH ) ) {
             chartWidthIntegerBox.setValue( displayerSettings.getChartWidth() );
             editorSettingsTable.setWidget( rowCounter, 0, chartWidthIntegerBoxLabel);
             editorSettingsTable.setWidget( rowCounter, 1, SpacerWidget.SINGLE );
             editorSettingsTable.setWidget( rowCounter++, 2, chartWidthIntegerBox );
         }
 
-        if ( displayer.isDisplayerSettingSupported( DisplayerSettingId.CHART_HEIGHT ) ) {
+        if ( supportedAttributes.contains( DisplayerAttributeDef.CHART_HEIGHT ) ) {
             chartHeightIntegerBox.setValue( displayerSettings.getChartHeight() );
             editorSettingsTable.setWidget( rowCounter, 0, chartHeightIntegerBoxLabel);
             editorSettingsTable.setWidget( rowCounter, 1, SpacerWidget.SINGLE );
             editorSettingsTable.setWidget( rowCounter++, 2, chartHeightIntegerBox );
         }
 
-        if ( displayer.isDisplayerSettingSupported( DisplayerSettingId.CHART_MARGIN_TOP ) ) {
+        if ( supportedAttributes.contains( DisplayerAttributeDef.CHART_MARGIN_TOP ) ) {
             chartTopMarginIntegerBox.setValue( displayerSettings.getChartMarginTop() );
             editorSettingsTable.setWidget( rowCounter, 0, chartTopMarginIntegerBoxLabel);
             editorSettingsTable.setWidget( rowCounter, 1, SpacerWidget.SINGLE );
             editorSettingsTable.setWidget( rowCounter++, 2, chartTopMarginIntegerBox );
         }
 
-        if ( displayer.isDisplayerSettingSupported( DisplayerSettingId.CHART_MARGIN_BOTTOM ) ) {
+        if ( supportedAttributes.contains( DisplayerAttributeDef.CHART_MARGIN_BOTTOM ) ) {
             chartBottomMarginIntegerBox.setValue( displayerSettings.getChartMarginBottom() );
             editorSettingsTable.setWidget( rowCounter, 0, chartBottomMarginIntegerBoxLabel);
             editorSettingsTable.setWidget( rowCounter, 1, SpacerWidget.SINGLE );
             editorSettingsTable.setWidget( rowCounter++, 2, chartBottomMarginIntegerBox );
         }
 
-        if ( displayer.isDisplayerSettingSupported( DisplayerSettingId.CHART_MARGIN_LEFT ) ) {
+        if ( supportedAttributes.contains( DisplayerAttributeDef.CHART_MARGIN_LEFT ) ) {
             chartLeftMarginIntegerBox.setValue( displayerSettings.getChartMarginLeft() );
             editorSettingsTable.setWidget( rowCounter, 0, chartLeftMarginIntegerBoxLabel);
             editorSettingsTable.setWidget( rowCounter, 1, SpacerWidget.SINGLE );
             editorSettingsTable.setWidget( rowCounter++, 2, chartLeftMarginIntegerBox );
         }
 
-        if ( displayer.isDisplayerSettingSupported( DisplayerSettingId.CHART_MARGIN_RIGHT ) ) {
+        if ( supportedAttributes.contains( DisplayerAttributeDef.CHART_MARGIN_RIGHT ) ) {
             chartRightMarginIntegerBox.setValue( displayerSettings.getChartMarginRight() );
             editorSettingsTable.setWidget( rowCounter, 0, chartRightMarginIntegerBoxLabel);
             editorSettingsTable.setWidget( rowCounter, 1, SpacerWidget.SINGLE );
             editorSettingsTable.setWidget( rowCounter++, 2, chartRightMarginIntegerBox );
         }
 
-        if ( displayer.isDisplayerSettingSupported( DisplayerSettingId.CHART_SHOWLEGEND ) ) {
+        if ( supportedAttributes.contains( DisplayerAttributeDef.CHART_SHOWLEGEND ) ) {
             chartShowLegendCheckBox.setValue( displayerSettings.isChartShowLegend() );
             editorSettingsTable.setWidget( rowCounter, 0, chartShowLegendCheckBoxLabel );
             editorSettingsTable.setWidget( rowCounter, 1, SpacerWidget.SINGLE );
             editorSettingsTable.setWidget( rowCounter++, 2, chartShowLegendCheckBox );
         }
 
-        if ( displayer.isDisplayerSettingSupported( DisplayerSettingId.CHART_LEGENDPOSITION ) ) {
+        if ( supportedAttributes.contains( DisplayerAttributeDef.CHART_LEGENDPOSITION ) ) {
             chartLegendPositionListBox.setSelectedValue( displayerSettings.getChartLegendPosition().toString() );
             editorSettingsTable.setWidget( rowCounter, 0, chartLegendPositionListBoxLabel );
             editorSettingsTable.setWidget( rowCounter, 1, SpacerWidget.SINGLE );
             editorSettingsTable.setWidget( rowCounter++, 2, chartLegendPositionListBox );
         }
 
-        if ( displayer.isDisplayerSettingSupported( DisplayerSettingId.CHART_3D ) ) {
+        if ( supportedAttributes.contains( DisplayerAttributeDef.CHART_3D ) ) {
             chart3DCheckbox.setValue( displayerSettings.isChart3D() );
             editorSettingsTable.setWidget( rowCounter, 0, chart3DCheckboxLabel);
             editorSettingsTable.setWidget( rowCounter, 1, SpacerWidget.SINGLE );
             editorSettingsTable.setWidget( rowCounter++, 2, chart3DCheckbox );
         }
 
-        if ( displayer.isDisplayerSettingSupported( DisplayerSettingId.TABLE_PAGESIZE ) ) {
+        if ( supportedAttributes.contains( DisplayerAttributeDef.TABLE_PAGESIZE ) ) {
             tablePageSizeIntegerBox.setValue( displayerSettings.getTablePageSize() );
             editorSettingsTable.setWidget( rowCounter, 0, tablePageSizeIntegerBoxLabel );
             editorSettingsTable.setWidget( rowCounter, 1, SpacerWidget.SINGLE );
             editorSettingsTable.setWidget( rowCounter++, 2, tablePageSizeIntegerBox );
         }
 
-        if ( displayer.isDisplayerSettingSupported( DisplayerSettingId.TABLE_WIDTH ) ) {
+        if ( supportedAttributes.contains( DisplayerAttributeDef.TABLE_WIDTH ) ) {
             tableWidthIntegerBox.setValue( displayerSettings.getTableWidth() );
             editorSettingsTable.setWidget( rowCounter, 0, tableWidthIntegerBoxLabel );
             editorSettingsTable.setWidget( rowCounter, 1, SpacerWidget.SINGLE );
             editorSettingsTable.setWidget( rowCounter++, 2, tableWidthIntegerBox );
         }
 
-        if ( displayer.isDisplayerSettingSupported( DisplayerSettingId.TABLE_SORTENABLED ) ) {
+        if ( supportedAttributes.contains( DisplayerAttributeDef.TABLE_SORTENABLED ) ) {
             tableSortEnabledCheckBox.setValue( displayerSettings.isTableSortEnabled() );
             editorSettingsTable.setWidget( rowCounter, 0, tableSortEnabledCheckBoxLabel );
             editorSettingsTable.setWidget( rowCounter, 1, SpacerWidget.SINGLE );
             editorSettingsTable.setWidget( rowCounter++, 2, tableSortEnabledCheckBox );
         }
 
-        if ( displayer.isDisplayerSettingSupported( DisplayerSettingId.TABLE_SORTCOLUMNID ) ) {
+        if ( supportedAttributes.contains( DisplayerAttributeDef.TABLE_SORTCOLUMNID ) ) {
             tableDefaultSortColumnId = displayerSettings.getTableDefaultSortColumnId();
 
             tableDefaultSortColumnTextBox.setText( displayerSettings.getTableDefaultSortColumnId() );
@@ -612,7 +619,7 @@ public class DisplayerSettingsEditorImpl extends Composite implements DisplayerS
             editorSettingsTable.setWidget( rowCounter++, 2, tableDefaultSortColumnTextBox );
         }
 
-        if ( displayer.isDisplayerSettingSupported( DisplayerSettingId.TABLE_SORTORDER ) ) {
+        if ( supportedAttributes.contains( DisplayerAttributeDef.TABLE_SORTORDER ) ) {
             tableDefaultSortOrder = displayerSettings.getTableDefaultSortOrder();
 
             boolean ascending = SortOrder.ASCENDING.equals( tableDefaultSortOrder );
@@ -633,77 +640,77 @@ public class DisplayerSettingsEditorImpl extends Composite implements DisplayerS
             editorSettingsTable.setWidget( rowCounter++, 2, barRadios );
         }
 
-        if ( displayer.isDisplayerSettingSupported( DisplayerSettingId.XAXIS_SHOWLABELS ) ) {
+        if ( supportedAttributes.contains( DisplayerAttributeDef.XAXIS_SHOWLABELS ) ) {
             xaxisShowLabelsCheckBox.setValue( displayerSettings.isXAxisShowLabels() );
             editorSettingsTable.setWidget( rowCounter, 0, xaxisShowLabelsCheckBoxLabel );
             editorSettingsTable.setWidget( rowCounter, 1, SpacerWidget.SINGLE );
             editorSettingsTable.setWidget( rowCounter++, 2, xaxisShowLabelsCheckBox );
         }
 
-        if ( displayer.isDisplayerSettingSupported( DisplayerSettingId.XAXIS_TITLE ) ) {
+        if ( supportedAttributes.contains( DisplayerAttributeDef.XAXIS_TITLE ) ) {
             xaxisTitleTextBox.setText( displayerSettings.getXAxisTitle() );
             editorSettingsTable.setWidget( rowCounter, 0, xaxisTitleTextBoxLabel);
             editorSettingsTable.setWidget( rowCounter, 1, SpacerWidget.SINGLE );
             editorSettingsTable.setWidget( rowCounter++, 2, xaxisTitleTextBox );
         }
 
-        if ( displayer.isDisplayerSettingSupported( DisplayerSettingId.XAXIS_LABELSANGLE ) ) {
-            xaxisAngleIntegerBox.setValue( displayerSettings.getXAxisLabelsAngle() );
-            editorSettingsTable.setWidget( rowCounter, 0, xaxisAngleIntegerBoxLabel);
-            editorSettingsTable.setWidget( rowCounter, 1, SpacerWidget.SINGLE );
-            editorSettingsTable.setWidget( rowCounter++, 2, xaxisAngleIntegerBox );
-        }
+//        if ( supportedAttributes.contains( DisplayerAttributeDef.XAXIS_LABELSANGLE ) ) {
+//            xaxisAngleIntegerBox.setValue( displayerSettings.getXAxisLabelsAngle() );
+//            editorSettingsTable.setWidget( rowCounter, 0, xaxisAngleIntegerBoxLabel);
+//            editorSettingsTable.setWidget( rowCounter, 1, SpacerWidget.SINGLE );
+//            editorSettingsTable.setWidget( rowCounter++, 2, xaxisAngleIntegerBox );
+//        }
 
-        if ( displayer.isDisplayerSettingSupported( DisplayerSettingId.YAXIS_SHOWLABELS ) ) {
+        if ( supportedAttributes.contains( DisplayerAttributeDef.YAXIS_SHOWLABELS ) ) {
             yaxisShowLabelsCheckBox.setValue( displayerSettings.isYAxisShowLabels() );
             editorSettingsTable.setWidget( rowCounter, 0, yaxisShowLabelsCheckBoxLabel );
             editorSettingsTable.setWidget( rowCounter, 1, SpacerWidget.SINGLE );
             editorSettingsTable.setWidget( rowCounter++, 2, yaxisShowLabelsCheckBox );
         }
 
-        if ( displayer.isDisplayerSettingSupported( DisplayerSettingId.YAXIS_TITLE ) ) {
+        if ( supportedAttributes.contains( DisplayerAttributeDef.YAXIS_TITLE ) ) {
             yaxisTitleTextBox.setText( displayerSettings.getYAxisTitle() );
             editorSettingsTable.setWidget( rowCounter, 0, yaxisTitleTextBoxLabel);
             editorSettingsTable.setWidget( rowCounter, 1, SpacerWidget.SINGLE );
             editorSettingsTable.setWidget( rowCounter++, 2, yaxisTitleTextBox );
         }
 
-        if ( displayer.isDisplayerSettingSupported( DisplayerSettingId.YAXIS_LABELSANGLE ) ) {
-            yaxisAngleIntegerBox.setValue( displayerSettings.getYAxisLabelsAngle() );
-            editorSettingsTable.setWidget( rowCounter, 0, yaxisAngleIntegerBoxLabel);
-            editorSettingsTable.setWidget( rowCounter, 1, SpacerWidget.SINGLE );
-            editorSettingsTable.setWidget( rowCounter++, 2, yaxisAngleIntegerBox );
-        }
+//        if ( supportedAttributes.contains( DisplayerAttributeDef.YAXIS_LABELSANGLE ) ) {
+//            yaxisAngleIntegerBox.setValue( displayerSettings.getYAxisLabelsAngle() );
+//            editorSettingsTable.setWidget( rowCounter, 0, yaxisAngleIntegerBoxLabel);
+//            editorSettingsTable.setWidget( rowCounter, 1, SpacerWidget.SINGLE );
+//            editorSettingsTable.setWidget( rowCounter++, 2, yaxisAngleIntegerBox );
+//        }
 
-        if ( displayer.isDisplayerSettingSupported( DisplayerSettingId.METER_START ) ) {
+        if ( supportedAttributes.contains( DisplayerAttributeDef.METER_START ) ) {
             meterStartLongBox.setValue( displayerSettings.getMeterStart() );
             editorSettingsTable.setWidget( rowCounter, 0, meterStartLongBoxLabel);
             editorSettingsTable.setWidget( rowCounter, 1, SpacerWidget.SINGLE );
             editorSettingsTable.setWidget( rowCounter++, 2, meterStartLongBox );
         }
 
-        if ( displayer.isDisplayerSettingSupported( DisplayerSettingId.METER_WARNING ) ) {
+        if ( supportedAttributes.contains( DisplayerAttributeDef.METER_WARNING ) ) {
             meterWarningLongBox.setValue( displayerSettings.getMeterWarning() );
             editorSettingsTable.setWidget( rowCounter, 0, meterWarningLongBoxLabel);
             editorSettingsTable.setWidget( rowCounter, 1, SpacerWidget.SINGLE );
             editorSettingsTable.setWidget( rowCounter++, 2, meterWarningLongBox );
         }
 
-        if ( displayer.isDisplayerSettingSupported( DisplayerSettingId.METER_CRITICAL ) ) {
+        if ( supportedAttributes.contains( DisplayerAttributeDef.METER_CRITICAL ) ) {
             meterCriticalLongBox.setValue( displayerSettings.getMeterCritical() );
             editorSettingsTable.setWidget( rowCounter, 0, meterCriticalLongBoxLabel);
             editorSettingsTable.setWidget( rowCounter, 1, SpacerWidget.SINGLE );
             editorSettingsTable.setWidget( rowCounter++, 2, meterCriticalLongBox );
         }
 
-        if ( displayer.isDisplayerSettingSupported( DisplayerSettingId.METER_END ) ) {
+        if ( supportedAttributes.contains( DisplayerAttributeDef.METER_END ) ) {
             meterEndLongBox.setValue( displayerSettings.getMeterEnd() );
             editorSettingsTable.setWidget( rowCounter, 0, meterEndLongBoxLabel);
             editorSettingsTable.setWidget( rowCounter, 1, SpacerWidget.SINGLE );
             editorSettingsTable.setWidget( rowCounter++, 2, meterEndLongBox );
         }
 
-        if ( displayer.isDisplayerSettingSupported( DisplayerSettingId.BARCHART_HORIZONTAL ) ) {
+        if ( supportedAttributes.contains( DisplayerAttributeDef.BARCHART_HORIZONTAL ) ) {
             barChartHorizontalRadio.setValue( displayerSettings.isBarchartHorizontal() );
             barChartVerticalRadio.setValue( !displayerSettings.isBarchartHorizontal() );
 

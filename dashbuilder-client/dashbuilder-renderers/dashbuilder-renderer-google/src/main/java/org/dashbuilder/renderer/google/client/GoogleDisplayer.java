@@ -29,12 +29,12 @@ import com.googlecode.gwt.charts.client.format.NumberFormat;
 import com.googlecode.gwt.charts.client.format.NumberFormatOptions;
 import com.googlecode.gwt.charts.client.options.FormatType;
 import org.dashbuilder.common.client.StringUtils;
-import org.dashbuilder.dataset.client.DataSetReadyCallback;
-import org.dashbuilder.displayer.DisplayerSettingsColumn;
-import org.dashbuilder.displayer.client.AbstractDisplayer;
 import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.dataset.DataSet;
+import org.dashbuilder.dataset.client.DataSetReadyCallback;
+import org.dashbuilder.displayer.DisplayerSettingsColumn;
+import org.dashbuilder.displayer.client.AbstractDisplayer;
 import org.dashbuilder.renderer.google.client.resources.i18n.GoogleDisplayerConstants;
 
 public abstract class GoogleDisplayer extends AbstractDisplayer {

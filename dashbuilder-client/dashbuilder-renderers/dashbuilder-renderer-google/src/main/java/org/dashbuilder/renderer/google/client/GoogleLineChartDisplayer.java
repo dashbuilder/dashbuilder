@@ -15,9 +15,6 @@
  */
 package org.dashbuilder.renderer.google.client;
 
-import java.util.Arrays;
-import java.util.List;
-
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.SimplePanel;
@@ -28,7 +25,10 @@ import com.googlecode.gwt.charts.client.corechart.LineChart;
 import com.googlecode.gwt.charts.client.corechart.LineChartOptions;
 import com.googlecode.gwt.charts.client.options.Animation;
 import com.googlecode.gwt.charts.client.options.AnimationEasing;
-import org.dashbuilder.displayer.DisplayerSettingId;
+import org.dashbuilder.displayer.DisplayerAttributeDef;
+import org.dashbuilder.displayer.DisplayerAttributeGroupDef;
+import org.dashbuilder.displayer.DisplayerEditorConfig;
+import org.dashbuilder.displayer.impl.DisplayerEditorConfigImpl;
 
 public class GoogleLineChartDisplayer extends GoogleXAxisChartDisplayer {
 
@@ -59,26 +59,14 @@ public class GoogleLineChartDisplayer extends GoogleXAxisChartDisplayer {
     }
 
     @Override
-    public List<DisplayerSettingId> getSupportedDisplayerAttributes() {
-        return Arrays.asList(
-            new DisplayerSettingId[]{
-                    DisplayerSettingId.TITLE_VISIBLE,
-                    DisplayerSettingId.TITLE,
-                    DisplayerSettingId.COLUMNS,
-                    DisplayerSettingId.CHART_WIDTH,
-                    DisplayerSettingId.CHART_HEIGHT,
-                    DisplayerSettingId.CHART_MARGIN_TOP,
-                    DisplayerSettingId.CHART_MARGIN_BOTTOM,
-                    DisplayerSettingId.CHART_MARGIN_LEFT,
-                    DisplayerSettingId.CHART_MARGIN_RIGHT,
-                    DisplayerSettingId.CHART_SHOWLEGEND,
-                    DisplayerSettingId.CHART_LEGENDPOSITION,
-                    DisplayerSettingId.XAXIS_SHOWLABELS,
-                    DisplayerSettingId.XAXIS_TITLE,
-                    DisplayerSettingId.YAXIS_SHOWLABELS,
-                    DisplayerSettingId.YAXIS_TITLE
-            }
-        );
+    public DisplayerEditorConfig getDisplayerEditorConfig() {
+        return new DisplayerEditorConfigImpl()
+                   .supportsAttribute( DisplayerAttributeGroupDef.COMMON_GROUP )
+                   .supportsAttribute( DisplayerAttributeDef.CHART_WIDTH )
+                   .supportsAttribute( DisplayerAttributeDef.CHART_HEIGHT )
+                   .supportsAttribute( DisplayerAttributeGroupDef.CHART_MARGIN_GROUP )
+                   .supportsAttribute( DisplayerAttributeGroupDef.CHART_LEGEND_GROUP )
+                   .supportsAttribute( DisplayerAttributeGroupDef.AXIS_GROUP );
     }
 
     protected void updateVisualization() {

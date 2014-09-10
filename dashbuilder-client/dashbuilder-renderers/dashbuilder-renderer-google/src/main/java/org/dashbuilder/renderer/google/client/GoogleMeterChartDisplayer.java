@@ -15,9 +15,6 @@
  */
 package org.dashbuilder.renderer.google.client;
 
-import java.util.Arrays;
-import java.util.List;
-
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -26,7 +23,10 @@ import com.googlecode.gwt.charts.client.gauge.Gauge;
 import com.googlecode.gwt.charts.client.gauge.GaugeOptions;
 import com.googlecode.gwt.charts.client.options.Animation;
 import com.googlecode.gwt.charts.client.options.AnimationEasing;
-import org.dashbuilder.displayer.DisplayerSettingId;
+import org.dashbuilder.displayer.DisplayerAttributeDef;
+import org.dashbuilder.displayer.DisplayerAttributeGroupDef;
+import org.dashbuilder.displayer.DisplayerEditorConfig;
+import org.dashbuilder.displayer.impl.DisplayerEditorConfigImpl;
 
 public class GoogleMeterChartDisplayer extends GoogleDisplayer {
 
@@ -54,24 +54,13 @@ public class GoogleMeterChartDisplayer extends GoogleDisplayer {
     }
 
     @Override
-    public List<DisplayerSettingId> getSupportedDisplayerAttributes() {
-        return Arrays.asList(
-                new DisplayerSettingId[]{
-                        DisplayerSettingId.TITLE_VISIBLE,
-                        DisplayerSettingId.TITLE,
-                        DisplayerSettingId.COLUMNS,
-                        DisplayerSettingId.CHART_WIDTH,
-                        DisplayerSettingId.CHART_HEIGHT,
-                        DisplayerSettingId.CHART_MARGIN_TOP,
-                        DisplayerSettingId.CHART_MARGIN_BOTTOM,
-                        DisplayerSettingId.CHART_MARGIN_LEFT,
-                        DisplayerSettingId.CHART_MARGIN_RIGHT,
-                        DisplayerSettingId.METER_START,
-                        DisplayerSettingId.METER_WARNING,
-                        DisplayerSettingId.METER_CRITICAL,
-                        DisplayerSettingId.METER_END
-                }
-        );
+    public DisplayerEditorConfig getDisplayerEditorConfig() {
+        return new DisplayerEditorConfigImpl()
+                   .supportsAttribute( DisplayerAttributeGroupDef.COMMON_GROUP )
+                   .supportsAttribute( DisplayerAttributeDef.CHART_WIDTH )
+                   .supportsAttribute( DisplayerAttributeDef.CHART_HEIGHT )
+                   .supportsAttribute( DisplayerAttributeGroupDef.CHART_MARGIN_GROUP )
+                   .supportsAttribute( DisplayerAttributeGroupDef.METER_GROUP );
     }
 
     protected void updateVisualization() {

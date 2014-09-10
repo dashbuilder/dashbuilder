@@ -15,9 +15,6 @@
  */
 package org.dashbuilder.renderer.google.client;
 
-import java.util.Arrays;
-import java.util.List;
-
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.SimplePanel;
@@ -26,7 +23,9 @@ import com.google.gwt.user.client.ui.Widget;
 import com.googlecode.gwt.charts.client.ChartPackage;
 import com.googlecode.gwt.charts.client.corechart.PieChart;
 import com.googlecode.gwt.charts.client.corechart.PieChartOptions;
-import org.dashbuilder.displayer.DisplayerSettingId;
+import org.dashbuilder.displayer.DisplayerAttributeGroupDef;
+import org.dashbuilder.displayer.DisplayerEditorConfig;
+import org.dashbuilder.displayer.impl.DisplayerEditorConfigImpl;
 
 public class GooglePieChartDisplayer extends GoogleXAxisChartDisplayer {
 
@@ -57,23 +56,10 @@ public class GooglePieChartDisplayer extends GoogleXAxisChartDisplayer {
     }
 
     @Override
-    public List<DisplayerSettingId> getSupportedDisplayerAttributes() {
-        return Arrays.asList(
-                new DisplayerSettingId[]{
-                        DisplayerSettingId.TITLE_VISIBLE,
-                        DisplayerSettingId.TITLE,
-                        DisplayerSettingId.COLUMNS,
-                        DisplayerSettingId.CHART_WIDTH,
-                        DisplayerSettingId.CHART_HEIGHT,
-                        DisplayerSettingId.CHART_MARGIN_TOP,
-                        DisplayerSettingId.CHART_MARGIN_BOTTOM,
-                        DisplayerSettingId.CHART_MARGIN_LEFT,
-                        DisplayerSettingId.CHART_MARGIN_RIGHT,
-                        DisplayerSettingId.CHART_SHOWLEGEND,
-                        DisplayerSettingId.CHART_LEGENDPOSITION,
-                        DisplayerSettingId.CHART_3D
-               }
-        );
+    public DisplayerEditorConfig getDisplayerEditorConfig() {
+        return new DisplayerEditorConfigImpl()
+                   .supportsAttribute( DisplayerAttributeGroupDef.COMMON_GROUP )
+                   .supportsAttribute( DisplayerAttributeGroupDef.CHART_GROUP );
     }
 
     protected void updateVisualization() {
