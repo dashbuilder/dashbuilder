@@ -16,19 +16,25 @@
 package org.dashbuilder.displayer;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
+import com.google.gwt.json.client.JSONObject;
+import com.google.gwt.json.client.JSONParser;
+import com.google.gwt.json.client.JSONString;
+import com.google.gwt.json.client.JSONValue;
+import org.dashbuilder.common.client.StringUtils;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetLookup;
 import org.dashbuilder.dataset.sort.SortOrder;
 import org.jboss.errai.common.client.api.annotations.Portable;
 
+import static org.dashbuilder.displayer.DisplayerEditorConfig.ATTRIBUTE_PATH_SEPARATOR;
+
 @Portable
 public class DisplayerSettings {
 
-    private Map<String, String> settings = new HashMap<String, String>( 30 );
+    // Transient because no need to marshall this through errai.
+    private transient JSONObject json = new JSONObject();
 
     private static final String _true = "true";
     private static final String _false = "false";
@@ -42,38 +48,91 @@ public class DisplayerSettings {
         this();
         setType( displayerType );
         if ( DisplayerType.PIECHART.equals( displayerType ) ) {
-            settings.put( getSettingPath( DisplayerAttributeDef.CHART_3D ), _true );
+            setNodeValue( json, getSettingPath( DisplayerAttributeDef.CHART_3D ), _true );
         }
     }
 
     public DisplayerSettings() {
-        settings.put( getSettingPath( DisplayerAttributeDef.TITLE_VISIBLE ), _true );
-        settings.put( getSettingPath( DisplayerAttributeDef.FILTER_ENABLED ), _false );
-        settings.put( getSettingPath( DisplayerAttributeDef.FILTER_SELFAPPLY_ENABLED ), _false );
-        settings.put( getSettingPath( DisplayerAttributeDef.FILTER_NOTIFICATION_ENABLED ), _false );
-        settings.put( getSettingPath( DisplayerAttributeDef.FILTER_LISTENING_ENABLED ), _false);
-        settings.put( getSettingPath( DisplayerAttributeDef.CHART_WIDTH ), "600" );
-        settings.put( getSettingPath( DisplayerAttributeDef.CHART_HEIGHT ), "300" );
-        settings.put( getSettingPath( DisplayerAttributeDef.CHART_MARGIN_TOP ), "20" );
-        settings.put( getSettingPath( DisplayerAttributeDef.CHART_MARGIN_BOTTOM ), "50" );
-        settings.put( getSettingPath( DisplayerAttributeDef.CHART_MARGIN_LEFT ), "80" );
-        settings.put( getSettingPath( DisplayerAttributeDef.CHART_MARGIN_RIGHT ), "80" );
-        settings.put( getSettingPath( DisplayerAttributeDef.CHART_SHOWLEGEND ), _true );
-        settings.put( getSettingPath( DisplayerAttributeDef.CHART_LEGENDPOSITION ), "POSITION_RIGHT" );
-        settings.put( getSettingPath( DisplayerAttributeDef.TABLE_PAGESIZE ), "20" );
-        settings.put( getSettingPath( DisplayerAttributeDef.TABLE_WIDTH ), "0" );
-        settings.put( getSettingPath( DisplayerAttributeDef.TABLE_SORTENABLED ), _true);
-        settings.put( getSettingPath( DisplayerAttributeDef.TABLE_SORTORDER ), "asc" );
-        settings.put( getSettingPath( DisplayerAttributeDef.XAXIS_SHOWLABELS ), _false );
-//        settings.put( getSettingPath( DisplayerAttributeDef.XAXIS_LABELSANGLE ), "0" );
-        settings.put( getSettingPath( DisplayerAttributeDef.YAXIS_SHOWLABELS ), _false );
-//        settings.put( getSettingPath( DisplayerAttributeDef.YAXIS_LABELSANGLE ), "0" );
-        settings.put( getSettingPath( DisplayerAttributeDef.METER_START ), "0" );
-        settings.put( getSettingPath( DisplayerAttributeDef.METER_WARNING ), "0" );
-        settings.put( getSettingPath( DisplayerAttributeDef.METER_CRITICAL ), "0" );
-        settings.put( getSettingPath( DisplayerAttributeDef.METER_END ), "0" );
-        settings.put( getSettingPath( DisplayerAttributeDef.CHART_3D ), _false );
-        settings.put( getSettingPath( DisplayerAttributeDef.BARCHART_HORIZONTAL ), _false );
+        setNodeValue( json, getSettingPath( DisplayerAttributeDef.TITLE_VISIBLE ), _true );
+        setNodeValue( json, getSettingPath( DisplayerAttributeDef.FILTER_ENABLED ), _false );
+        setNodeValue( json, getSettingPath( DisplayerAttributeDef.FILTER_SELFAPPLY_ENABLED ), _false );
+        setNodeValue( json, getSettingPath( DisplayerAttributeDef.FILTER_NOTIFICATION_ENABLED ), _false );
+        setNodeValue( json, getSettingPath( DisplayerAttributeDef.FILTER_LISTENING_ENABLED ), _false);
+        setNodeValue( json, getSettingPath( DisplayerAttributeDef.CHART_WIDTH ), "600" );
+        setNodeValue( json, getSettingPath( DisplayerAttributeDef.CHART_HEIGHT ), "300" );
+        setNodeValue( json, getSettingPath( DisplayerAttributeDef.CHART_MARGIN_TOP ), "20" );
+        setNodeValue( json, getSettingPath( DisplayerAttributeDef.CHART_MARGIN_BOTTOM ), "50" );
+        setNodeValue( json, getSettingPath( DisplayerAttributeDef.CHART_MARGIN_LEFT ), "80" );
+        setNodeValue( json, getSettingPath( DisplayerAttributeDef.CHART_MARGIN_RIGHT ), "80" );
+        setNodeValue( json, getSettingPath( DisplayerAttributeDef.CHART_SHOWLEGEND ), _true );
+        setNodeValue( json, getSettingPath( DisplayerAttributeDef.CHART_LEGENDPOSITION ), "POSITION_RIGHT" );
+        setNodeValue( json, getSettingPath( DisplayerAttributeDef.TABLE_PAGESIZE ), "20" );
+        setNodeValue( json, getSettingPath( DisplayerAttributeDef.TABLE_WIDTH ), "0" );
+        setNodeValue( json, getSettingPath( DisplayerAttributeDef.TABLE_SORTENABLED ), _true);
+        setNodeValue( json, getSettingPath( DisplayerAttributeDef.TABLE_SORTORDER ), "asc" );
+        setNodeValue( json, getSettingPath( DisplayerAttributeDef.XAXIS_SHOWLABELS ), _false );
+//        setNodeValue( json, getSettingPath( DisplayerAttributeDef.XAXIS_LABELSANGLE ), "0" );
+        setNodeValue( json, getSettingPath( DisplayerAttributeDef.YAXIS_SHOWLABELS ), _false );
+//        setNodeValue( json, getSettingPath( DisplayerAttributeDef.YAXIS_LABELSANGLE ), "0" );
+        setNodeValue( json, getSettingPath( DisplayerAttributeDef.METER_START ), "0" );
+        setNodeValue( json, getSettingPath( DisplayerAttributeDef.METER_WARNING ), "0" );
+        setNodeValue( json, getSettingPath( DisplayerAttributeDef.METER_CRITICAL ), "0" );
+        setNodeValue( json, getSettingPath( DisplayerAttributeDef.METER_END ), "0" );
+        setNodeValue( json, getSettingPath( DisplayerAttributeDef.CHART_3D ), _false );
+        setNodeValue( json, getSettingPath( DisplayerAttributeDef.BARCHART_HORIZONTAL ), _false );
+    }
+
+    public static DisplayerSettings getInstanceFromJson( String jsonString ) {
+        DisplayerSettings ds = new DisplayerSettings();
+        if ( !StringUtils.isBlank( jsonString ) ) {
+            JSONValue parseResult = JSONParser.parseStrict( jsonString );
+            JSONObject jsonObject = parseResult.isObject();
+            if ( parseResult.isNull() == null && jsonObject != null ) ds.json = jsonObject;
+        }
+        return ds;
+    }
+
+    private void setNodeValue( JSONObject node, String path, String value ) {
+        if ( node == null || StringUtils.isBlank( path ) || value == null ) return;
+
+        int separatorIndex = path.lastIndexOf( ATTRIBUTE_PATH_SEPARATOR );
+        String nodesPath = separatorIndex > 0 ? path.substring( 0, separatorIndex ) : "";
+        String leaf = separatorIndex > 0 ? path.substring( separatorIndex + 1 ) : path;
+
+        findNode( node, nodesPath, true ).put( leaf, new JSONString( value ) );
+    }
+
+    private String getNodeValue( JSONObject node, String path ) {
+        if ( node == null || StringUtils.isBlank( path ) ) return null;
+
+        int separatorIndex = path.lastIndexOf( ATTRIBUTE_PATH_SEPARATOR );
+        String subNodesPath = separatorIndex > 0 ? path.substring( 0, separatorIndex ) : "";
+        String leaf = separatorIndex > 0 ? path.substring( separatorIndex + 1 ) : path;
+
+        JSONObject childNode = findNode( node, subNodesPath, false );
+        String value = null;
+        if ( childNode != null) {
+            JSONValue jsonValue = childNode.get( leaf );
+            if (jsonValue != null && jsonValue.isString() != null) value = jsonValue.isString().stringValue();
+        }
+        return value;
+    }
+
+    private JSONObject findNode(JSONObject parent, String path, boolean createPath) {
+        if ( parent == null ) return null;
+        if ( StringUtils.isBlank( path ) ) return parent;
+
+        int separatorIndex = path.indexOf( DisplayerEditorConfig.ATTRIBUTE_PATH_SEPARATOR );
+        String strChildNode = separatorIndex > 0 ? path.substring( 0, separatorIndex ) : path;
+        String remainingNodes = separatorIndex > 0 ? path.substring( separatorIndex + 1 ) : "";
+
+        JSONObject childNode = (JSONObject) parent.get( strChildNode );
+        if ( childNode == null && createPath ) {
+            childNode = new JSONObject();
+            parent.put( strChildNode, childNode );
+        }
+
+        return findNode( childNode, remainingNodes, createPath );
     }
 
     private String getSettingPath( DisplayerAttributeDef displayerAttributeDef ) {
@@ -110,276 +169,276 @@ public class DisplayerSettings {
 
     // 'Generic' getter method
     public String getDisplayerSetting( DisplayerAttributeDef displayerAttributeDef ) {
-        return settings.get( getSettingPath( displayerAttributeDef ) );
+        return getNodeValue( json, getSettingPath( displayerAttributeDef ) );
     }
 
     // 'Generic' setter method
     public void setDisplayerSetting( DisplayerAttributeDef displayerAttributeDef, String value ) {
-        settings.put( getSettingPath( displayerAttributeDef ), value );
+        setNodeValue( json, getSettingPath( displayerAttributeDef ), value );
     }
 
     public DisplayerType getType() {
-        String strType = settings.get( getSettingPath( DisplayerAttributeDef.TYPE ) );
+        String strType = getNodeValue( json, getSettingPath( DisplayerAttributeDef.TYPE ) );
         return DisplayerType.getByName( strType );
     }
 
     public void setType( DisplayerType displayerType ) {
-        settings.put( getSettingPath( DisplayerAttributeDef.TYPE ), displayerType.toString() );
+        setNodeValue( json, getSettingPath( DisplayerAttributeDef.TYPE ), displayerType.toString() );
     }
 
     public String getRenderer() {
-        return settings.get( getSettingPath( DisplayerAttributeDef.RENDERER ) );
+        return getNodeValue( json, getSettingPath( DisplayerAttributeDef.RENDERER ) );
     }
 
     public void setRenderer( String renderer ) {
-        settings.put( getSettingPath( DisplayerAttributeDef.RENDERER ), renderer );
+        setNodeValue( json, getSettingPath( DisplayerAttributeDef.RENDERER ), renderer );
     }
 
     public String getTitle() {
-        return settings.get( getSettingPath( DisplayerAttributeDef.TITLE ) );
+        return getNodeValue( json, getSettingPath( DisplayerAttributeDef.TITLE ) );
     }
 
     public void setTitle( String title ) {
-        settings.put( getSettingPath( DisplayerAttributeDef.TITLE ), title );
+        setNodeValue( json, getSettingPath( DisplayerAttributeDef.TITLE ), title );
     }
 
     public boolean isTitleVisible() {
-        return Boolean.parseBoolean( settings.get( getSettingPath( DisplayerAttributeDef.TITLE_VISIBLE ) ) );
+        return Boolean.parseBoolean( getNodeValue( json, getSettingPath( DisplayerAttributeDef.TITLE_VISIBLE ) ) );
     }
 
     public void setTitleVisible( boolean titleVisible ) {
-        settings.put( getSettingPath( DisplayerAttributeDef.TITLE_VISIBLE ), Boolean.toString( titleVisible ) );
+        setNodeValue( json, getSettingPath( DisplayerAttributeDef.TITLE_VISIBLE ), Boolean.toString( titleVisible ) );
     }
 
     public boolean isFilterEnabled() {
-        return Boolean.parseBoolean( settings.get( getSettingPath( DisplayerAttributeDef.FILTER_ENABLED ) ) );
+        return Boolean.parseBoolean( getNodeValue( json, getSettingPath( DisplayerAttributeDef.FILTER_ENABLED ) ) );
     }
 
     public void setFilterEnabled( boolean filterEnabled ) {
-        settings.put( getSettingPath( DisplayerAttributeDef.FILTER_ENABLED ), Boolean.toString( filterEnabled ) );
+        setNodeValue( json, getSettingPath( DisplayerAttributeDef.FILTER_ENABLED ), Boolean.toString( filterEnabled ) );
     }
 
     public boolean isFilterSelfApplyEnabled() {
-        return Boolean.parseBoolean( settings.get( getSettingPath( DisplayerAttributeDef.FILTER_SELFAPPLY_ENABLED ) ) );
+        return Boolean.parseBoolean( getNodeValue( json, getSettingPath( DisplayerAttributeDef.FILTER_SELFAPPLY_ENABLED ) ) );
     }
 
     public void setFilterSelfApplyEnabled( boolean filterSelfApplyEnabled ) {
-        settings.put( getSettingPath( DisplayerAttributeDef.FILTER_SELFAPPLY_ENABLED ), Boolean.toString( filterSelfApplyEnabled ) );
+        setNodeValue( json, getSettingPath( DisplayerAttributeDef.FILTER_SELFAPPLY_ENABLED ), Boolean.toString( filterSelfApplyEnabled ) );
     }
 
     public boolean isFilterNotificationEnabled() {
-        return Boolean.parseBoolean( settings.get( getSettingPath( DisplayerAttributeDef.FILTER_NOTIFICATION_ENABLED ) ) );
+        return Boolean.parseBoolean( getNodeValue( json, getSettingPath( DisplayerAttributeDef.FILTER_NOTIFICATION_ENABLED ) ) );
     }
 
     public void setFilterNotificationEnabled( boolean filterNotificationEnabled ) {
-        settings.put( getSettingPath( DisplayerAttributeDef.FILTER_NOTIFICATION_ENABLED ), Boolean.toString( filterNotificationEnabled ) );
+        setNodeValue( json, getSettingPath( DisplayerAttributeDef.FILTER_NOTIFICATION_ENABLED ), Boolean.toString( filterNotificationEnabled ) );
     }
 
     public boolean isFilterListeningEnabled() {
-        return Boolean.parseBoolean( settings.get( getSettingPath( DisplayerAttributeDef.FILTER_LISTENING_ENABLED ) ) );
+        return Boolean.parseBoolean( getNodeValue( json, getSettingPath( DisplayerAttributeDef.FILTER_LISTENING_ENABLED ) ) );
     }
 
     public void setFilterListeningEnabled( boolean filterListeningEnabled ) {
-        settings.put( getSettingPath( DisplayerAttributeDef.FILTER_LISTENING_ENABLED ), Boolean.toString( filterListeningEnabled ) );
+        setNodeValue( json, getSettingPath( DisplayerAttributeDef.FILTER_LISTENING_ENABLED ), Boolean.toString( filterListeningEnabled ) );
     }
 
     public int getChartWidth() {
-        return Integer.parseInt( settings.get( getSettingPath( DisplayerAttributeDef.CHART_WIDTH ) ), 10 );
+        return Integer.parseInt( getNodeValue( json, getSettingPath( DisplayerAttributeDef.CHART_WIDTH ) ), 10 );
     }
 
     public void setChartWidth( int chartWidth ) {
-        settings.put( getSettingPath( DisplayerAttributeDef.CHART_WIDTH ), Integer.toString( chartWidth ) );
+        setNodeValue( json, getSettingPath( DisplayerAttributeDef.CHART_WIDTH ), Integer.toString( chartWidth ) );
     }
 
     public int getChartHeight() {
-        return Integer.parseInt( settings.get( getSettingPath( DisplayerAttributeDef.CHART_HEIGHT ) ), 10 );
+        return Integer.parseInt( getNodeValue( json, getSettingPath( DisplayerAttributeDef.CHART_HEIGHT ) ), 10 );
     }
 
     public void setChartHeight( int chartHeight ) {
-        settings.put( getSettingPath( DisplayerAttributeDef.CHART_HEIGHT ), Integer.toString( chartHeight ) );
+        setNodeValue( json, getSettingPath( DisplayerAttributeDef.CHART_HEIGHT ), Integer.toString( chartHeight ) );
     }
 
     public int getChartMarginTop() {
-        return Integer.parseInt( settings.get( getSettingPath( DisplayerAttributeDef.CHART_MARGIN_TOP ) ), 10 );
+        return Integer.parseInt( getNodeValue( json, getSettingPath( DisplayerAttributeDef.CHART_MARGIN_TOP ) ), 10 );
     }
 
     public void setChartMarginTop( int chartMarginTop ) {
-        settings.put( getSettingPath( DisplayerAttributeDef.CHART_MARGIN_TOP ), Integer.toString( chartMarginTop ) );
+        setNodeValue( json, getSettingPath( DisplayerAttributeDef.CHART_MARGIN_TOP ), Integer.toString( chartMarginTop ) );
     }
 
     public int getChartMarginBottom() {
-        return Integer.parseInt( settings.get( getSettingPath( DisplayerAttributeDef.CHART_MARGIN_BOTTOM ) ), 10 );
+        return Integer.parseInt( getNodeValue( json, getSettingPath( DisplayerAttributeDef.CHART_MARGIN_BOTTOM ) ), 10 );
     }
 
     public void setChartMarginBottom( int chartMarginBottom ) {
-        settings.put( getSettingPath( DisplayerAttributeDef.CHART_MARGIN_BOTTOM ), Integer.toString( chartMarginBottom ) );
+        setNodeValue( json, getSettingPath( DisplayerAttributeDef.CHART_MARGIN_BOTTOM ), Integer.toString( chartMarginBottom ) );
     }
 
     public int getChartMarginLeft() {
-        return Integer.parseInt( settings.get( getSettingPath( DisplayerAttributeDef.CHART_MARGIN_LEFT ) ), 10 );
+        return Integer.parseInt( getNodeValue( json, getSettingPath( DisplayerAttributeDef.CHART_MARGIN_LEFT ) ), 10 );
     }
 
     public void setChartMarginLeft( int chartMarginLeft ) {
-        settings.put( getSettingPath( DisplayerAttributeDef.CHART_MARGIN_LEFT ), Integer.toString( chartMarginLeft ) );
+        setNodeValue( json, getSettingPath( DisplayerAttributeDef.CHART_MARGIN_LEFT ), Integer.toString( chartMarginLeft ) );
     }
 
     public int getChartMarginRight() {
-        return Integer.parseInt( settings.get( getSettingPath( DisplayerAttributeDef.CHART_MARGIN_RIGHT ) ), 10 );
+        return Integer.parseInt( getNodeValue( json, getSettingPath( DisplayerAttributeDef.CHART_MARGIN_RIGHT ) ), 10 );
     }
 
     public void setChartMarginRight( int chartMarginRight ) {
-        settings.put( getSettingPath( DisplayerAttributeDef.CHART_MARGIN_RIGHT ), Integer.toString( chartMarginRight ) );
+        setNodeValue( json, getSettingPath( DisplayerAttributeDef.CHART_MARGIN_RIGHT ), Integer.toString( chartMarginRight ) );
     }
 
     public boolean isChartShowLegend() {
-        return Boolean.parseBoolean( settings.get( getSettingPath( DisplayerAttributeDef.CHART_SHOWLEGEND ) ) );
+        return Boolean.parseBoolean( getNodeValue( json, getSettingPath( DisplayerAttributeDef.CHART_SHOWLEGEND ) ) );
     }
 
     public void setChartShowLegend( boolean chartShowLegend ) {
-        settings.put( getSettingPath( DisplayerAttributeDef.CHART_SHOWLEGEND ), Boolean.toString( chartShowLegend ) );
+        setNodeValue( json, getSettingPath( DisplayerAttributeDef.CHART_SHOWLEGEND ), Boolean.toString( chartShowLegend ) );
     }
 
     public Position getChartLegendPosition() {
-        return Position.getByName( settings.get( getSettingPath( DisplayerAttributeDef.CHART_LEGENDPOSITION ) ) );
+        return Position.getByName( getNodeValue( json, getSettingPath( DisplayerAttributeDef.CHART_LEGENDPOSITION ) ) );
     }
 
     public void setChartLegendPosition( Position chartLegendPosition ) {
-        settings.put( getSettingPath( DisplayerAttributeDef.CHART_LEGENDPOSITION ), chartLegendPosition.toString() );
+        setNodeValue( json, getSettingPath( DisplayerAttributeDef.CHART_LEGENDPOSITION ), chartLegendPosition.toString() );
     }
 
     public int getTablePageSize() {
-        return Integer.parseInt( settings.get( getSettingPath( DisplayerAttributeDef.TABLE_PAGESIZE ) ), 10 );
+        return Integer.parseInt( getNodeValue( json, getSettingPath( DisplayerAttributeDef.TABLE_PAGESIZE ) ), 10 );
     }
 
     public void setTablePageSize( int tablePageSize ) {
-        settings.put( getSettingPath( DisplayerAttributeDef.TABLE_PAGESIZE ), Integer.toString( tablePageSize ) );
+        setNodeValue( json, getSettingPath( DisplayerAttributeDef.TABLE_PAGESIZE ), Integer.toString( tablePageSize ) );
     }
 
     public int getTableWidth() {
-        return Integer.parseInt( settings.get( getSettingPath( DisplayerAttributeDef.TABLE_WIDTH ) ), 10 );
+        return Integer.parseInt( getNodeValue( json, getSettingPath( DisplayerAttributeDef.TABLE_WIDTH ) ), 10 );
     }
 
     public void setTableWidth( int tableWidth ) {
-        settings.put( getSettingPath( DisplayerAttributeDef.TABLE_WIDTH ), Integer.toString( tableWidth ) );
+        setNodeValue( json, getSettingPath( DisplayerAttributeDef.TABLE_WIDTH ), Integer.toString( tableWidth ) );
     }
 
     public boolean isTableSortEnabled() {
-        return Boolean.parseBoolean( settings.get( getSettingPath( DisplayerAttributeDef.TABLE_SORTENABLED ) ) );
+        return Boolean.parseBoolean( getNodeValue( json, getSettingPath( DisplayerAttributeDef.TABLE_SORTENABLED ) ) );
     }
 
     public void setTableSortEnabled( boolean tableSortEnabled ) {
-        settings.put( getSettingPath( DisplayerAttributeDef.TABLE_SORTENABLED ), Boolean.toString( tableSortEnabled ) );
+        setNodeValue( json, getSettingPath( DisplayerAttributeDef.TABLE_SORTENABLED ), Boolean.toString( tableSortEnabled ) );
     }
 
     public String getTableDefaultSortColumnId() {
-        return settings.get( getSettingPath( DisplayerAttributeDef.TABLE_SORTCOLUMNID ) );
+        return getNodeValue( json, getSettingPath( DisplayerAttributeDef.TABLE_SORTCOLUMNID ) );
     }
 
     public void setTableDefaultSortColumnId( String tableDefaultSortColumnId ) {
-        settings.put( getSettingPath( DisplayerAttributeDef.TABLE_SORTCOLUMNID ), tableDefaultSortColumnId );
+        setNodeValue( json, getSettingPath( DisplayerAttributeDef.TABLE_SORTCOLUMNID ), tableDefaultSortColumnId );
     }
 
     public SortOrder getTableDefaultSortOrder() {
-        return SortOrder.getByName( settings.get( getSettingPath( DisplayerAttributeDef.TABLE_SORTORDER ) ) );
+        return SortOrder.getByName( getNodeValue( json, getSettingPath( DisplayerAttributeDef.TABLE_SORTORDER ) ) );
     }
 
     public void setTableDefaultSortOrder( SortOrder tableDefaultSortOrder ) {
-        settings.put( getSettingPath( DisplayerAttributeDef.TABLE_SORTORDER ), tableDefaultSortOrder.toString() );
+        setNodeValue( json, getSettingPath( DisplayerAttributeDef.TABLE_SORTORDER ), tableDefaultSortOrder.toString() );
     }
 
     public boolean isXAxisShowLabels() {
-        return Boolean.parseBoolean( settings.get( getSettingPath( DisplayerAttributeDef.XAXIS_SHOWLABELS ) ) );
+        return Boolean.parseBoolean( getNodeValue( json, getSettingPath( DisplayerAttributeDef.XAXIS_SHOWLABELS ) ) );
     }
 
     public void setXAxisShowLabels( boolean axisShowLabels ) {
-        settings.put( getSettingPath( DisplayerAttributeDef.XAXIS_SHOWLABELS ), Boolean.toString( axisShowLabels ) );
+        setNodeValue( json, getSettingPath( DisplayerAttributeDef.XAXIS_SHOWLABELS ), Boolean.toString( axisShowLabels ) );
     }
 
 //    public int getXAxisLabelsAngle() {
-//        return Integer.parseInt( settings.get( getSettingPath( DisplayerAttributeDef.XAXIS_LABELSANGLE ) ), 10 );
+//        return Integer.parseInt( getNodeValue( json, getSettingPath( DisplayerAttributeDef.XAXIS_LABELSANGLE ) ), 10 );
 //    }
 //
 //    public void setXAxisLabelsAngle( int axisLabelsAngle ) {
-//        settings.put( getSettingPath( DisplayerAttributeDef.XAXIS_LABELSANGLE ), Integer.toString( axisLabelsAngle ) );
+//        setNodeValue( json, getSettingPath( DisplayerAttributeDef.XAXIS_LABELSANGLE ), Integer.toString( axisLabelsAngle ) );
 //    }
 
     public String getXAxisTitle() {
-        return settings.get( getSettingPath( DisplayerAttributeDef.XAXIS_TITLE ) );
+        return getNodeValue( json, getSettingPath( DisplayerAttributeDef.XAXIS_TITLE ) );
     }
 
     public void setXAxisTitle( String axisTitle ) {
-        settings.put( getSettingPath( DisplayerAttributeDef.XAXIS_TITLE ), axisTitle );
+        setNodeValue( json, getSettingPath( DisplayerAttributeDef.XAXIS_TITLE ), axisTitle );
     }
 
     public boolean isYAxisShowLabels() {
-        return Boolean.parseBoolean( settings.get( getSettingPath( DisplayerAttributeDef.YAXIS_SHOWLABELS ) ) );
+        return Boolean.parseBoolean( getNodeValue( json, getSettingPath( DisplayerAttributeDef.YAXIS_SHOWLABELS ) ) );
     }
 
     public void setYAxisShowLabels( boolean axisShowLabels ) {
-        settings.put( getSettingPath( DisplayerAttributeDef.YAXIS_SHOWLABELS ), Boolean.toString( axisShowLabels ) );
+        setNodeValue( json, getSettingPath( DisplayerAttributeDef.YAXIS_SHOWLABELS ), Boolean.toString( axisShowLabels ) );
     }
 
 //    public int getYAxisLabelsAngle() {
-//        return Integer.parseInt( settings.get( getSettingPath( DisplayerAttributeDef.YAXIS_LABELSANGLE ) ), 10 );
+//        return Integer.parseInt( getNodeValue( json, getSettingPath( DisplayerAttributeDef.YAXIS_LABELSANGLE ) ), 10 );
 //    }
 //
 //    public void setYAxisLabelsAngle( int axisLabelsAngle ) {
-//        settings.put( getSettingPath( DisplayerAttributeDef.YAXIS_LABELSANGLE ), Integer.toString( axisLabelsAngle ) );
+//        setNodeValue( json, getSettingPath( DisplayerAttributeDef.YAXIS_LABELSANGLE ), Integer.toString( axisLabelsAngle ) );
 //    }
 
     public String getYAxisTitle() {
-        return settings.get( getSettingPath( DisplayerAttributeDef.YAXIS_TITLE ) );
+        return getNodeValue( json, getSettingPath( DisplayerAttributeDef.YAXIS_TITLE ) );
     }
 
     public void setYAxisTitle( String axisTitle ) {
-        settings.put( getSettingPath( DisplayerAttributeDef.YAXIS_TITLE ), axisTitle );
+        setNodeValue( json, getSettingPath( DisplayerAttributeDef.YAXIS_TITLE ), axisTitle );
     }
 
     public long getMeterStart() {
-        return Long.parseLong( settings.get( getSettingPath( DisplayerAttributeDef.METER_START ) ), 10 );
+        return Long.parseLong( getNodeValue( json, getSettingPath( DisplayerAttributeDef.METER_START ) ), 10 );
     }
 
     public void setMeterStart( long meterStart ) {
-        settings.put( getSettingPath( DisplayerAttributeDef.METER_START ), Long.toString( meterStart ) );
+        setNodeValue( json, getSettingPath( DisplayerAttributeDef.METER_START ), Long.toString( meterStart ) );
     }
 
     public long getMeterWarning() {
-        return Long.parseLong( settings.get( getSettingPath( DisplayerAttributeDef.METER_WARNING ) ), 10 );
+        return Long.parseLong( getNodeValue( json, getSettingPath( DisplayerAttributeDef.METER_WARNING ) ), 10 );
     }
 
     public void setMeterWarning( long meterWarning ) {
-        settings.put( getSettingPath( DisplayerAttributeDef.METER_WARNING ), Long.toString( meterWarning ) );
+        setNodeValue( json, getSettingPath( DisplayerAttributeDef.METER_WARNING ), Long.toString( meterWarning ) );
     }
 
     public long getMeterCritical() {
-        return Long.parseLong( settings.get( getSettingPath( DisplayerAttributeDef.METER_CRITICAL ) ), 10 );
+        return Long.parseLong( getNodeValue( json, getSettingPath( DisplayerAttributeDef.METER_CRITICAL ) ), 10 );
     }
 
     public void setMeterCritical( long meterCritical ) {
-        settings.put( getSettingPath( DisplayerAttributeDef.METER_CRITICAL ), Long.toString( meterCritical ) );
+        setNodeValue( json, getSettingPath( DisplayerAttributeDef.METER_CRITICAL ), Long.toString( meterCritical ) );
     }
 
     public long getMeterEnd() {
-        return Long.parseLong( settings.get( getSettingPath( DisplayerAttributeDef.METER_END ) ), 10 );
+        return Long.parseLong( getNodeValue( json, getSettingPath( DisplayerAttributeDef.METER_END ) ), 10 );
     }
 
     public void setMeterEnd( long meterEnd ) {
-        settings.put( getSettingPath( DisplayerAttributeDef.METER_END ), Long.toString( meterEnd ) );
+        setNodeValue( json, getSettingPath( DisplayerAttributeDef.METER_END ), Long.toString( meterEnd ) );
     }
 
     public boolean isChart3D() {
-        return Boolean.parseBoolean( settings.get( getSettingPath( DisplayerAttributeDef.CHART_3D ) ) );
+        return Boolean.parseBoolean( getNodeValue( json, getSettingPath( DisplayerAttributeDef.CHART_3D ) ) );
     }
 
     public void setChart3D( boolean barchartThreeDimension ) {
-        settings.put( getSettingPath( DisplayerAttributeDef.CHART_3D ), Boolean.toString( barchartThreeDimension ) );
+        setNodeValue( json, getSettingPath( DisplayerAttributeDef.CHART_3D ), Boolean.toString( barchartThreeDimension ) );
     }
 
     public boolean isBarchartHorizontal() {
-        return Boolean.parseBoolean( settings.get( getSettingPath( DisplayerAttributeDef.BARCHART_HORIZONTAL ) ) );
+        return Boolean.parseBoolean( getNodeValue( json, getSettingPath( DisplayerAttributeDef.BARCHART_HORIZONTAL ) ) );
     }
 
     public void setBarchartHorizontal( boolean barchartHorizontal ) {
-        settings.put( getSettingPath( DisplayerAttributeDef.BARCHART_HORIZONTAL ), Boolean.toString( barchartHorizontal ) );
+        setNodeValue( json, getSettingPath( DisplayerAttributeDef.BARCHART_HORIZONTAL ), Boolean.toString( barchartHorizontal ) );
     }
 }
