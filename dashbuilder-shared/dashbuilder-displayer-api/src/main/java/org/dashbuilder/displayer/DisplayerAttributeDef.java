@@ -59,7 +59,7 @@ public class DisplayerAttributeDef {
     public static final DisplayerAttributeDef METER_CRITICAL = new DisplayerAttributeDef("critical");
     public static final DisplayerAttributeDef METER_END = new DisplayerAttributeDef("end");
 
-    public static final DisplayerAttributeDef BARCHART_HORIZONTAL = new DisplayerAttributeDef("horizontal");
+    public static final DisplayerAttributeDef BARCHART_HORIZONTAL = new DisplayerAttributeDef("bar_horizontal");
 
     protected String id;
     protected DisplayerAttributeDef parent;
