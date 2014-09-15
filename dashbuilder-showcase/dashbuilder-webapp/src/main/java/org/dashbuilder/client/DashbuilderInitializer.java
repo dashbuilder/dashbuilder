@@ -45,19 +45,19 @@ public class DashbuilderInitializer {
         // not only to the ClientDataSetManager but also to the remote DataSetLookupService.
         dataSetLookupClient.setLookupService(dataSetLookupService);
 
-        // Enable the ability to push and handle on client data sets greater than 1 Mb
+        // Enable the ability to push and handle on client data sets smaller than 2 Mb
         dataSetLookupClient.setPushRemoteDataSetEnabled(true);
         dataSetLookupClient.setPushRemoteDataSetMaxSize(2024);
 
         // Set the default renderer lib for each displayer type.
-        rendererLibLocator.setDefaultRenderer( DisplayerType.BARCHART, GoogleRenderer.UUID);
-        rendererLibLocator.setDefaultRenderer( DisplayerType.PIECHART, GoogleRenderer.UUID);
-        rendererLibLocator.setDefaultRenderer( DisplayerType.AREACHART, GoogleRenderer.UUID);
-        rendererLibLocator.setDefaultRenderer( DisplayerType.LINECHART, GoogleRenderer.UUID);
-        rendererLibLocator.setDefaultRenderer( DisplayerType.BUBBLECHART, GoogleRenderer.UUID);
-        rendererLibLocator.setDefaultRenderer( DisplayerType.METERCHART, GoogleRenderer.UUID);
-        rendererLibLocator.setDefaultRenderer( DisplayerType.MAP, GoogleRenderer.UUID);
-        rendererLibLocator.setDefaultRenderer( DisplayerType.TABLE, GoogleRenderer.UUID);
-        rendererLibLocator.setDefaultRenderer( DisplayerType.SELECTOR, SelectorRenderer.UUID);
+        rendererLibLocator.setDefaultRenderer(DisplayerType.BARCHART, GoogleRenderer.UUID);
+        rendererLibLocator.setDefaultRenderer(DisplayerType.PIECHART, GoogleRenderer.UUID);
+        rendererLibLocator.setDefaultRenderer(DisplayerType.AREACHART, GoogleRenderer.UUID);
+        rendererLibLocator.setDefaultRenderer(DisplayerType.LINECHART, GoogleRenderer.UUID);
+        rendererLibLocator.setDefaultRenderer(DisplayerType.BUBBLECHART, GoogleRenderer.UUID);
+        rendererLibLocator.setDefaultRenderer(DisplayerType.METERCHART, GoogleRenderer.UUID);
+        rendererLibLocator.setDefaultRenderer(DisplayerType.MAP, GoogleRenderer.UUID);
+        rendererLibLocator.setDefaultRenderer(DisplayerType.TABLE, GoogleRenderer.UUID);
+        rendererLibLocator.setDefaultRenderer(DisplayerType.SELECTOR, SelectorRenderer.UUID);
     }
 }

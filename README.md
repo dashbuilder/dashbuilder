@@ -36,7 +36,7 @@ Change log
 0.1.0 Final
 
 The main purpose of this very first release is to make it possible the creation of
-composite dashboards using a easy to use API. Feature set:
+composite dashboards using an straightforward API. Feature set:
 
 * Shared API for defining and registering data sets
 * Shared operation engine for executing filter, group & sort operations over a data set
