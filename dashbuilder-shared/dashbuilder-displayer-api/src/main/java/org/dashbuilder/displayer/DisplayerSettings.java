@@ -16,6 +16,7 @@
 package org.dashbuilder.displayer;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import com.google.gwt.json.client.JSONObject;
@@ -42,7 +43,7 @@ public class DisplayerSettings {
     protected String UUID;
     protected DataSet dataSet;
     protected DataSetLookup dataSetLookup;
-    protected List<DisplayerSettingsColumn> columnList = new ArrayList<DisplayerSettingsColumn>();
+    private List<DisplayerSettingsColumn> columnList = new ArrayList<DisplayerSettingsColumn>();
 
     public DisplayerSettings( DisplayerType displayerType ) {
         this();
@@ -163,8 +164,16 @@ public class DisplayerSettings {
         this.dataSetLookup = dataSetLookup;
     }
 
-    public List<DisplayerSettingsColumn> getColumnList() {
-        return columnList;
+    public void addColumn(DisplayerSettingsColumn displayerSettingsColumn) {
+        columnList.add( displayerSettingsColumn );
+    }
+
+    public DisplayerSettingsColumn[] getColumns() {
+        return columnList.toArray( new DisplayerSettingsColumn[columnList.size()] );
+    }
+
+    public void setColumns(DisplayerSettingsColumn[] columns) {
+        this.columnList = Arrays.asList( columns );
     }
 
     // 'Generic' getter method

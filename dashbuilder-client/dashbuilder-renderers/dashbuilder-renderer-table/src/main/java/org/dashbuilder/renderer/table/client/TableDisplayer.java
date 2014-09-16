@@ -220,12 +220,12 @@ public class TableDisplayer extends AbstractDisplayer {
     protected PagedTable<Integer> createTable() {
 
         final PagedTable<Integer> pagedTable = new PagedTable<Integer>(displayerSettings.getTablePageSize());
-        List<DisplayerSettingsColumn> displayerSettingsColumns = displayerSettings.getColumnList();
+        DisplayerSettingsColumn[] displayerSettingsColumns = displayerSettings.getColumns();
 
         int nColumns = 0;
-        if ( !displayerSettingsColumns.isEmpty() ) {
+        if ( displayerSettingsColumns.length > 0 ) {
             createTableColumnsFromDisplayerSettings( pagedTable, displayerSettingsColumns );
-            nColumns = displayerSettingsColumns.size();
+            nColumns = displayerSettingsColumns.length;
         } else {
             createTableColumnsFromDataSet( pagedTable, dataSet.getColumns() );
             nColumns = dataSet.getColumns().size();
@@ -269,10 +269,10 @@ public class TableDisplayer extends AbstractDisplayer {
         }
     }
 
-    private void createTableColumnsFromDisplayerSettings( PagedTable<Integer> table, List<DisplayerSettingsColumn> displayerSettingsColumns ) {
+    private void createTableColumnsFromDisplayerSettings( PagedTable<Integer> table, DisplayerSettingsColumn[] displayerSettingsColumns ) {
         int columnIndex = 0;
-        for ( int i = 0; i < displayerSettingsColumns.size(); i++ ) {
-            DisplayerSettingsColumn displayerSettingsColumn = displayerSettingsColumns.get( i );
+        for ( int i = 0; i < displayerSettingsColumns.length; i++ ) {
+            DisplayerSettingsColumn displayerSettingsColumn = displayerSettingsColumns[ i ];
             DataColumn dataColumn;
             if (displayerSettingsColumn.getColumnId() != null) dataColumn = dataSet.getColumnById( displayerSettingsColumn.getColumnId() );
             else dataColumn = dataSet.getColumnByIndex( columnIndex++ );

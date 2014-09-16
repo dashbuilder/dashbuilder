@@ -45,8 +45,8 @@ public abstract class GoogleXAxisChartDisplayer extends AbstractGoogleChartDispl
     public static final String COLOR_NOT_SELECTED = "grey";
 
     public DataTable createTable() {
-        List<DisplayerSettingsColumn> displayerSettingsColumns = displayerSettings.getColumnList();
-        if (displayerSettingsColumns.size() == 1) {
+        DisplayerSettingsColumn[] displayerSettingsColumns = displayerSettings.getColumns();
+        if (displayerSettingsColumns.length == 1) {
             throw new IllegalArgumentException("XAxis charts require to specify at least 2 columns. The X axis plus one ore more columns for the Y axis.");
         }
         return super.createTable();

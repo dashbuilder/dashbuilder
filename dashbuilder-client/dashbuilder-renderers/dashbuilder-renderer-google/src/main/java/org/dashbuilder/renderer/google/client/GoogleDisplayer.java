@@ -161,8 +161,8 @@ public abstract class GoogleDisplayer extends AbstractDisplayer {
     // Google DataTable manipulation methods
 
     public DataTable createTable() {
-        List<DisplayerSettingsColumn> displayerSettingsColumns = displayerSettings.getColumnList();
-        if (displayerSettingsColumns.isEmpty()) {
+        DisplayerSettingsColumn[] displayerSettingsColumns = displayerSettings.getColumns();
+        if (displayerSettingsColumns.length == 0) {
             return googleTable = formatTable(createTableFromDataSet());
         }
         return googleTable = formatTable(createTableFromDisplayerSettings());
@@ -211,9 +211,9 @@ public abstract class GoogleDisplayer extends AbstractDisplayer {
         gTable.addRows(dataSet.getRowCount());
         int columnIndex = 0;
 
-        List<DisplayerSettingsColumn> displayerSettingsColumns = displayerSettings.getColumnList();
-        for (int i = 0; i < displayerSettingsColumns.size(); i++) {
-            DisplayerSettingsColumn displayerSettingsColumn = displayerSettingsColumns.get(i);
+        DisplayerSettingsColumn[] displayerSettingsColumns = displayerSettings.getColumns();
+        for (int i = 0; i < displayerSettingsColumns.length; i++) {
+            DisplayerSettingsColumn displayerSettingsColumn = displayerSettingsColumns[i];
             DataColumn dataColumn = null;
             if (displayerSettingsColumn.getColumnId() != null) dataColumn = dataSet.getColumnById(displayerSettingsColumn.getColumnId());
             else dataColumn = dataSet.getColumnByIndex(columnIndex++);

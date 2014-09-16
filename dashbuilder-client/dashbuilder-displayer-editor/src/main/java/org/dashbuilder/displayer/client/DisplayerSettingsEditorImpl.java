@@ -194,8 +194,7 @@ public class DisplayerSettingsEditorImpl extends Composite implements DisplayerS
         columnsTextBox.addValueChangeHandler( new ValueChangeHandler<String>() {
             @Override
             public void onValueChange( ValueChangeEvent<String> event ) {
-                displayerSettings.getColumnList().clear();
-                displayerSettings.getColumnList().addAll( parseColumns( event.getValue() ) );
+                displayerSettings.setColumns( parseColumns( event.getValue() ) );
                 notifyChanges();
             }
         } );
@@ -520,7 +519,7 @@ public class DisplayerSettingsEditorImpl extends Composite implements DisplayerS
         }
 
         if ( supportedAttributes.contains( DisplayerAttributeDef.COLUMNS ) ) {
-            columnsTextBox.setText( formatColumns( displayerSettings.getColumnList() ) );
+            columnsTextBox.setText( formatColumns( displayerSettings.getColumns() ) );
             editorSettingsTable.setWidget( rowCounter, 0, columnsTextBoxLabel);
             editorSettingsTable.setWidget( rowCounter, 1, SpacerWidget.SINGLE );
             editorSettingsTable.setWidget( rowCounter++, 2, columnsTextBox );
@@ -754,10 +753,10 @@ public class DisplayerSettingsEditorImpl extends Composite implements DisplayerS
         }
     }
 
-    private List<DisplayerSettingsColumn> parseColumns( String columns ) {
+    private DisplayerSettingsColumn[] parseColumns( String columns ) {
         if ( columns.length() > 0) {
             String[] sa = columns.split( "," );
-            List<DisplayerSettingsColumn> l = new ArrayList<DisplayerSettingsColumn>( sa.length );
+            DisplayerSettingsColumn[] arr = new DisplayerSettingsColumn[ sa.length ];
             for ( int i = 0; i < sa.length; i++ ) {
                 DisplayerSettingsColumnImpl dsci = new DisplayerSettingsColumnImpl();
                 String[] idAlias = sa[i].trim().split( ":" );
@@ -775,23 +774,23 @@ public class DisplayerSettingsEditorImpl extends Composite implements DisplayerS
                     if ( !StringUtils.isBlank( idAlias[0] ) ) dsci.setDisplayName( idAlias[0].trim() );
                     else throw new IllegalArgumentException( "You must specify at least a column alias." );
                 }
-                l.add( dsci );
+                arr[i] = dsci;
             }
-            return l;
+            return arr;
         }
-        return new ArrayList<DisplayerSettingsColumn>();
+        return new DisplayerSettingsColumn[]{};
     }
 
-    private String formatColumns( List<DisplayerSettingsColumn> columns ) {
+    private String formatColumns( DisplayerSettingsColumn[] columns ) {
         StringBuilder sb = new StringBuilder( "" );
         if ( columns != null ) {
-            for ( int i = 0; i < columns.size(); i++ ) {
-                String columnId = columns.get( i ).getColumnId();
+            for ( int i = 0; i < columns.length; i++ ) {
+                String columnId = columns[ i ].getColumnId();
                 if ( !StringUtils.isBlank( columnId ) ) {
                     sb.append( columnId ).append( ":" );
                 }
-                sb.append( columns.get( i ).getDisplayName() );
-                if ( i != columns.size() -1 ) sb.append( "," );
+                sb.append( columns[ i ].getDisplayName() );
+                if ( i != columns.length -1 ) sb.append( "," );
             }
         }
         return sb.toString();

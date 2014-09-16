@@ -59,7 +59,7 @@ public abstract class AbstractDisplayerSettingsBuilder<T> extends AbstractDataSe
     }
 
     public T column(String columnId, String displayName) {
-        displayerSettings.getColumnList().add(new DisplayerSettingsColumnImpl(columnId, displayName));
+        displayerSettings.addColumn(new DisplayerSettingsColumnImpl(columnId, displayName));
         return (T) this;
     }
 
