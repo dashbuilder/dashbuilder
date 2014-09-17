@@ -13,7 +13,7 @@
 
   <groupId>org.dashbuilder</groupId>
   <artifactId>dashbuilder-parent-metadata</artifactId>
-  <version>0.1.2-SNAPSHOT</version>
+  <version>0.1.2.Final</version>
   <packaging>pom</packaging>
 
   <name>Dashbuilder Project</name>
