@@ -6,7 +6,7 @@
   <parent>
     <groupId>org.dashbuilder</groupId>
     <artifactId>dashbuilder-parent-metadata</artifactId>
-    <version>0.1.2-SNAPSHOT</version>
+    <version>0.1.3-SNAPSHOT</version>
   </parent>
 
   <artifactId>dashbuilder-parent-with-dependencies</artifactId>
