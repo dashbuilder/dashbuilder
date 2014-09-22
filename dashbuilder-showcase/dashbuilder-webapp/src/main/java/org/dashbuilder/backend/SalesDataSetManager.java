@@ -15,6 +15,7 @@
  */
 package org.dashbuilder.backend;
 
+import java.util.Calendar;
 import java.util.Date;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
@@ -40,8 +41,8 @@ public class SalesDataSetManager {
     @PostConstruct
     private void init() {
         // Generate the data set to be used by the Showcase Gallery and by the Sales sample dashboards.
-        Date currentDate = new Date();
-        DataSet salesDataSet = salesDataSetGenerator.generateDataSet(SalesConstants.SALES_OPPS, 30, currentDate.getYear()-1, currentDate.getYear()+3);
+        int year =  Calendar.getInstance().get(Calendar.YEAR);
+        DataSet salesDataSet = salesDataSetGenerator.generateDataSet(SalesConstants.SALES_OPPS, 30, year-1, year+3);
         dataSetManager.registerDataSet(salesDataSet);
     }
 
