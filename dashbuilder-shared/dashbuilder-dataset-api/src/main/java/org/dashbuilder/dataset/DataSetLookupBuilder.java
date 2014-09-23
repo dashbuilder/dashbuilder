@@ -46,7 +46,7 @@ public interface DataSetLookupBuilder<T> {
 
     /**
      * Set a row offset for the data set.
-     * @param offset The row offset for the resulting data set.
+     * @param offset The row offset for the resulting data set (starting at 0).
      * @return The DataSetLookupBuilder instance that is being used to configure a DataSetLookup request.
      */
     T rowOffset(int offset);

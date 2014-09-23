@@ -99,7 +99,7 @@ public interface DataSet {
 
     /**
      * Returns a data set containing only the specified row sub set.
-     * @param offset The position where the row sub set starts.
+     * @param offset The position where the row sub set starts (starting at 0).
      * @param rows The number of rows to get.
      * @return A trimmed data set.
      */
