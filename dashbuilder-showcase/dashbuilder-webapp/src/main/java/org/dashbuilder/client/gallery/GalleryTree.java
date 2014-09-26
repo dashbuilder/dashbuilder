@@ -33,9 +33,11 @@ import org.dashbuilder.client.sales.widgets.SalesDistributionByCountry;
 import org.dashbuilder.client.sales.widgets.SalesGoals;
 import org.dashbuilder.client.sales.widgets.SalesTableReports;
 import org.dashbuilder.dataset.DataSetFactory;
+import org.dashbuilder.displayer.client.json.DisplayerSettingsJSONMarshaller;
 import org.dashbuilder.renderer.table.client.TableRenderer;
 import org.uberfire.workbench.events.NotificationEvent;
 
+import org.dashbuilder.client.gallery.resources.json.*;
 import static org.dashbuilder.dataset.group.DateIntervalType.*;
 import static org.dashbuilder.dataset.filter.FilterFactory.*;
 import static org.dashbuilder.dataset.sort.SortOrder.*;
@@ -57,6 +59,8 @@ public class GalleryTree {
 
     @Inject DisplayerSettingsManager settingsManager;
 
+    @Inject DisplayerSettingsJSONMarshaller jsonHelper;
+
     private SalesGoals salesGoalsWidget;
     private SalesExpectedByDate salesByDateWidget;
     private SalesDistributionByCountry salesByCountryWidget;
@@ -77,6 +81,7 @@ public class GalleryTree {
         initMeterChartCategory();
         initMapChartCategory();
         initDashboardCategory();
+        initJsonExamples();
     }
 
     private void onSalesDataSetOutdated(@Observes DataSetModifiedEvent event) {
@@ -472,5 +477,108 @@ public class GalleryTree {
                 return salesReportsWidget = new SalesTableReports();
             }
         });
+    }
+
+    private void initJsonExamples() {
+        GalleryNodeList jsonExamples = new GalleryNodeList( "JSON Examples" );
+        mainNodes.add( jsonExamples );
+
+        GalleryNodeList nodeList = new GalleryNodeList("Bar Chart");
+        jsonExamples.add(nodeList);
+
+        nodeList.add( new GalleryNodeDisplayer("Horizontal", true,
+                jsonHelper.fromJson( DisplayerJsonDefinitions.INSTANCE.barChart_horizontal() )
+        ) );
+        nodeList.add(new GalleryNodeDisplayer("Vertical (3D)", true,
+                jsonHelper.fromJson( DisplayerJsonDefinitions.INSTANCE.barChart_vertical() )
+        ) );
+        nodeList.add(new GalleryNodeDisplayer("Multiple", true,
+                jsonHelper.fromJson( DisplayerJsonDefinitions.INSTANCE.barChart_multiple() )
+        ) );
+
+        nodeList = new GalleryNodeList("Pie Chart");
+        jsonExamples.add(nodeList);
+
+        nodeList.add( new GalleryNodeDisplayer("Basic", true,
+                jsonHelper.fromJson( DisplayerJsonDefinitions.INSTANCE.pieChart_basic() )
+        ) );
+        nodeList.add(new GalleryNodeDisplayer("Drill-down", true,
+                jsonHelper.fromJson( DisplayerJsonDefinitions.INSTANCE.pieChart_drillDown() )
+        ) );
+
+
+        nodeList = new GalleryNodeList("Line Chart");
+        jsonExamples.add(nodeList);
+
+        nodeList.add(new GalleryNodeDisplayer("Basic", true,
+                jsonHelper.fromJson( DisplayerJsonDefinitions.INSTANCE.lineChart_basic() )
+        ));
+        nodeList.add(new GalleryNodeDisplayer("Multiple", true,
+                jsonHelper.fromJson( DisplayerJsonDefinitions.INSTANCE.lineChart_multiple() )
+        ));
+        nodeList.add(new GalleryNodeDisplayer("Multiple (static)", true,
+                jsonHelper.fromJson( DisplayerJsonDefinitions.INSTANCE.lineChart_multipleStatic() )
+        ));
+
+
+        nodeList = new GalleryNodeList("Area Chart");
+        jsonExamples.add(nodeList);
+
+        nodeList.add(new GalleryNodeDisplayer("Basic", true,
+                jsonHelper.fromJson( DisplayerJsonDefinitions.INSTANCE.areaChart_basic() )
+        ));
+        nodeList.add(new GalleryNodeDisplayer("Fixed (per month)", true,
+                jsonHelper.fromJson( DisplayerJsonDefinitions.INSTANCE.areaChart_fixedMonth() )
+        ));
+        nodeList.add(new GalleryNodeDisplayer("Drill-down", true,
+                jsonHelper.fromJson( DisplayerJsonDefinitions.INSTANCE.areaChart_drillDown() )
+        ));
+
+
+        nodeList = new GalleryNodeList("Bubble Chart");
+        jsonExamples.add(nodeList);
+
+        nodeList.add(new GalleryNodeDisplayer("Basic", true,
+                jsonHelper.fromJson( DisplayerJsonDefinitions.INSTANCE.bubbleChart_basic() )
+        ));
+
+
+        nodeList = new GalleryNodeList("Table report");
+        jsonExamples.add(nodeList);
+
+        nodeList.add(new GalleryNodeDisplayer("Basic", true,
+                jsonHelper.fromJson( DisplayerJsonDefinitions.INSTANCE.tableReport_basic() )
+        ));
+        nodeList.add(new GalleryNodeDisplayer("Filtered", true,
+                jsonHelper.fromJson( DisplayerJsonDefinitions.INSTANCE.tableReport_filtered() )
+        ));
+        nodeList.add(new GalleryNodeDisplayer("Grouped", true,
+                jsonHelper.fromJson( DisplayerJsonDefinitions.INSTANCE.tableReport_grouped() )
+        ));
+        nodeList.add(new GalleryNodeDisplayer("Default (drill-down)", true,
+                jsonHelper.fromJson( DisplayerJsonDefinitions.INSTANCE.tableReport_default() )
+        ));
+
+
+        nodeList = new GalleryNodeList("Meter Chart");
+        jsonExamples.add(nodeList);
+
+        nodeList.add(new GalleryNodeDisplayer("Basic", true,
+                jsonHelper.fromJson( DisplayerJsonDefinitions.INSTANCE.meterChart_basic() )
+        ));
+        nodeList.add(new GalleryNodeDisplayer("Multiple", true,
+                jsonHelper.fromJson( DisplayerJsonDefinitions.INSTANCE.meterChart_multiple() )
+        ));
+        nodeList.add(new GalleryNodeDisplayer("Multiple (static)", true,
+                jsonHelper.fromJson( DisplayerJsonDefinitions.INSTANCE.meterChart_multipleStatic() )
+        ));
+
+
+        nodeList = new GalleryNodeList("Map");
+        jsonExamples.add(nodeList);
+
+        nodeList.add(new GalleryNodeDisplayer("GeoMap", true,
+                jsonHelper.fromJson( DisplayerJsonDefinitions.INSTANCE.geoMap() )
+        ));
     }
 }
