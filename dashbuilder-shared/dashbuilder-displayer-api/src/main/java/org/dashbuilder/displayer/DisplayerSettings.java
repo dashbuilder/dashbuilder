@@ -127,6 +127,14 @@ public class DisplayerSettings {
         settings.put( getSettingPath( displayerAttributeDef ), value );
     }
 
+    public Map<String, String> getSettingsFlatMap() {
+        return settings;
+    }
+
+    public void setSettingsFlatMap( Map<String, String> settings ) {
+        this.settings = settings;
+    }
+
     public DisplayerType getType() {
         String strType = settings.get( getSettingPath( DisplayerAttributeDef.TYPE ) );
         return DisplayerType.getByName( strType );
