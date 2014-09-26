@@ -171,7 +171,7 @@ public class DataSetLookupJSONMarshaller {
     }
 
     private JSONObject formatColumnGroup( ColumnGroup columnGroup ) {
-        if ( columnGroup == null ) throw new RuntimeException( "ColumnGroup cannot be null" );
+        if ( columnGroup == null ) return null;
         JSONObject columnGroupJson = new JSONObject();
         columnGroupJson.put( SOURCEID, columnGroup.getSourceId() != null ? new JSONString( columnGroup.getSourceId() ) : null );
         columnGroupJson.put( COLUMNID, columnGroup.getColumnId() != null ? new JSONString( columnGroup.getColumnId() ) : null );
@@ -221,7 +221,7 @@ public class DataSetLookupJSONMarshaller {
         JSONArray columnSortsJsonArray = new JSONArray();
         int columnSortCounter = 0;
         for ( ColumnSort columnSort : columnSorts ) {
-            columnSortsJsonArray.set( columnSortCounter, formatColumnSort( columnSort ) );
+            columnSortsJsonArray.set( columnSortCounter++, formatColumnSort( columnSort ) );
         }
         return columnSortsJsonArray;
     }

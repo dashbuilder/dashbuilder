@@ -72,9 +72,9 @@ public class DisplayerSettingsJSONMarshaller {
                 ds.setUUID( getNodeValue( jsonPart, SETTINGS_UUID ) );
 
                 // DisplayerSettings columns
-                JSONArray columnsJson = jsonPart.get( SETTINGS_COLUMNS ).isArray();
-                if ( columnsJson != null ) {
-                    ds.setColumns( parseSettingsColumns( columnsJson ) );
+                JSONValue value = jsonPart.get( SETTINGS_COLUMNS );
+                if ( value != null && value.isArray() != null ) {
+                    ds.setColumns( parseSettingsColumns( value.isArray() ) );
                     // Remove column part so that it doesn't end up in the settings map
                     jsonPart.put( SETTINGS_COLUMNS, null );
                 }
@@ -177,7 +177,7 @@ public class DisplayerSettingsJSONMarshaller {
         JSONArray settingsColumnsJsonArray = new JSONArray();
         int columnCounter = 0;
         for ( DisplayerSettingsColumn displayerSettingsColumn : columns ) {
-            settingsColumnsJsonArray.set( columnCounter, formatSettingsColumn( displayerSettingsColumn ) );
+            settingsColumnsJsonArray.set( columnCounter++, formatSettingsColumn( displayerSettingsColumn ) );
         }
         return settingsColumnsJsonArray;
     }
@@ -204,12 +204,11 @@ public class DisplayerSettingsJSONMarshaller {
     private DisplayerSettingsColumn parseSettingsColumn( JSONObject columnsJson ) {
         if ( columnsJson == null ) return null;
 
-        JSONString jsonColumnId = columnsJson.get( SETTINGS_COLUMN_ID ).isString();
-        JSONString jsonColumnName = columnsJson.get( SETTINGS_COLUMN_NAME ).isString();
-
         DisplayerSettingsColumnImpl dsci = new DisplayerSettingsColumnImpl(  );
-        dsci.setColumnId( jsonColumnId != null ? jsonColumnId.stringValue() : null );
-        dsci.setDisplayName( jsonColumnName != null ? jsonColumnName.stringValue() : null );
+
+        JSONValue value = columnsJson.get( SETTINGS_COLUMN_ID );
+        dsci.setColumnId( value != null ? value.isString().stringValue() : null );
+        dsci.setDisplayName( (value = columnsJson.get(SETTINGS_COLUMN_NAME)) != null ? value.isString().stringValue() : null );
         return dsci;
     }
 
