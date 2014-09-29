@@ -148,8 +148,11 @@ public class TableDisplayer extends AbstractDisplayer {
     @Override
     public DisplayerEditorConfig getDisplayerEditorConfig() {
         return new DisplayerEditorConfigImpl()
-                .supportsAttribute( DisplayerAttributeGroupDef.COMMON_GROUP )
-                .supportsAttribute( DisplayerAttributeGroupDef.TABLE_GROUP );
+                   .supportsAttribute( DisplayerAttributeGroupDef.TYPE )
+                   .supportsAttribute( DisplayerAttributeGroupDef.RENDERER )
+                   .supportsAttribute( DisplayerAttributeGroupDef.COLUMNS )
+                   .supportsAttribute( DisplayerAttributeGroupDef.TITLE_GROUP )
+                   .supportsAttribute( DisplayerAttributeGroupDef.TABLE_GROUP );
     }
 
     /**

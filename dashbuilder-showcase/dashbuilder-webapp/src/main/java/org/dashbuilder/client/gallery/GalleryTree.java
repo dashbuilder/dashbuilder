@@ -37,7 +37,6 @@ import org.dashbuilder.displayer.client.json.DisplayerSettingsJSONMarshaller;
 import org.dashbuilder.renderer.table.client.TableRenderer;
 import org.uberfire.workbench.events.NotificationEvent;
 
-import org.dashbuilder.client.gallery.resources.json.*;
 import static org.dashbuilder.dataset.group.DateIntervalType.*;
 import static org.dashbuilder.dataset.filter.FilterFactory.*;
 import static org.dashbuilder.dataset.sort.SortOrder.*;
@@ -487,23 +486,533 @@ public class GalleryTree {
         jsonExamples.add(nodeList);
 
         nodeList.add( new GalleryNodeDisplayer("Horizontal", true,
-                jsonHelper.fromJson( DisplayerJsonDefinitions.INSTANCE.barChart_horizontal() )
+                jsonHelper.fromJson(
+                                "{\n" +
+                                "    \"columns\": [\n" +
+                                "        {\n" +
+                                "            \"columnDisplayName\": \"Product\"\n" +
+                                "        },\n" +
+                                "        {\n" +
+                                "            \"columnDisplayName\": \"Total amount\"\n" +
+                                "        }\n" +
+                                "    ],\n" +
+                                "    \"barChart\": {\n" +
+                                "        \"bar_horizontal\": \"true\"\n" +
+                                "    },\n" +
+                                "    \"chart\": {\n" +
+                                "        \"margin\": {\n" +
+                                "            \"bottom\": \"30\",\n" +
+                                "            \"top\": \"10\",\n" +
+                                "            \"left\": \"120\",\n" +
+                                "            \"right\": \"120\"\n" +
+                                "        },\n" +
+                                "        \"3d\": \"false\",\n" +
+                                "        \"width\": \"600\",\n" +
+                                "        \"height\": \"300\",\n" +
+                                "        \"legend\": {\n" +
+                                "            \"show\": \"true\",\n" +
+                                "            \"position\": \"POSITION_RIGHT\"\n" +
+                                "        }\n" +
+                                "    },\n" +
+                                "    \"table\": {\n" +
+                                "        \"sort\": {\n" +
+                                "            \"order\": \"asc\",\n" +
+                                "            \"enabled\": \"true\"\n" +
+                                "        },\n" +
+                                "        \"pageSize\": \"20\",\n" +
+                                "        \"width\": \"0\"\n" +
+                                "    },\n" +
+                                "    \"meter\": {\n" +
+                                "        \"critical\": \"0\",\n" +
+                                "        \"warning\": \"0\",\n" +
+                                "        \"start\": \"0\",\n" +
+                                "        \"end\": \"0\"\n" +
+                                "    },\n" +
+                                "    \"type\": \"BARCHART\",\n" +
+                                "    \"filter\": {\n" +
+                                "        \"listening\": \"false\",\n" +
+                                "        \"selfapply\": \"false\",\n" +
+                                "        \"enabled\": \"false\",\n" +
+                                "        \"notification\": \"false\"\n" +
+                                "    },\n" +
+                                "    \"title\": {\n" +
+                                "        \"visible\": \"true\",\n" +
+                                "        \"title\": \"By Product\"\n" +
+                                "    },\n" +
+                                "    \"axis\": {\n" +
+                                "        \"x\": {\n" +
+                                "            \"labels_show\": \"false\"\n" +
+                                "        },\n" +
+                                "        \"y\": {\n" +
+                                "            \"labels_show\": \"false\"\n" +
+                                "        }\n" +
+                                "    },\n" +
+                                "    \"dataSetLookup\": {\n" +
+                                "        \"dataSetUuid\": \"dataset-sales-opportunities\",\n" +
+                                "        \"rowCount\": \"-1\",\n" +
+                                "        \"rowOffset\": \"0\",\n" +
+                                "        \"groupOps\": [\n" +
+                                "            {\n" +
+                                "                \"columnGroup\": {\n" +
+                                "                    \"sourceId\": \"product\",\n" +
+                                "                    \"columnId\": \"product\",\n" +
+                                "                    \"groupStrategy\": \"DYNAMIC\",\n" +
+                                "                    \"maxIntervals\": \"15\",\n" +
+                                "                    \"asc\": \"true\",\n" +
+                                "                    \"firstMonthOfYear\": \"JANUARY\",\n" +
+                                "                    \"firstDayOfWeek\": \"MONDAY\"\n" +
+                                "                },\n" +
+                                "                \"groupFunctions\": [\n" +
+                                "                    {\n" +
+                                "                        \"sourceId\": \"amount\",\n" +
+                                "                        \"columnId\": \"amount\",\n" +
+                                "                        \"function\": \"SUM\"\n" +
+                                "                    }\n" +
+                                "                ],\n" +
+                                "                \"selectedIntervals\": []\n" +
+                                "            }\n" +
+                                "        ]\n" +
+                                "    }\n" +
+                                "}"
+                )
         ) );
+
         nodeList.add(new GalleryNodeDisplayer("Vertical (3D)", true,
-                jsonHelper.fromJson( DisplayerJsonDefinitions.INSTANCE.barChart_vertical() )
+                jsonHelper.fromJson(
+                                "{\n" +
+                                "    \"columns\": [\n" +
+                                "        {\n" +
+                                "            \"columnDisplayName\": \"Product\"\n" +
+                                "        },\n" +
+                                "        {\n" +
+                                "            \"columnDisplayName\": \"Total amount\"\n" +
+                                "        }\n" +
+                                "    ],\n" +
+                                "    \"barChart\": {\n" +
+                                "        \"bar_horizontal\": \"false\"\n" +
+                                "    },\n" +
+                                "    \"chart\": {\n" +
+                                "        \"margin\": {\n" +
+                                "            \"bottom\": \"80\",\n" +
+                                "            \"top\": \"10\",\n" +
+                                "            \"left\": \"120\",\n" +
+                                "            \"right\": \"120\"\n" +
+                                "        },\n" +
+                                "        \"3d\": \"true\",\n" +
+                                "        \"width\": \"600\",\n" +
+                                "        \"height\": \"300\",\n" +
+                                "        \"legend\": {\n" +
+                                "            \"show\": \"true\",\n" +
+                                "            \"position\": \"POSITION_RIGHT\"\n" +
+                                "        }\n" +
+                                "    },\n" +
+                                "    \"table\": {\n" +
+                                "        \"sort\": {\n" +
+                                "            \"order\": \"asc\",\n" +
+                                "            \"enabled\": \"true\"\n" +
+                                "        },\n" +
+                                "        \"pageSize\": \"20\",\n" +
+                                "        \"width\": \"0\"\n" +
+                                "    },\n" +
+                                "    \"meter\": {\n" +
+                                "        \"critical\": \"0\",\n" +
+                                "        \"warning\": \"0\",\n" +
+                                "        \"start\": \"0\",\n" +
+                                "        \"end\": \"0\"\n" +
+                                "    },\n" +
+                                "    \"type\": \"BARCHART\",\n" +
+                                "    \"filter\": {\n" +
+                                "        \"listening\": \"false\",\n" +
+                                "        \"selfapply\": \"false\",\n" +
+                                "        \"enabled\": \"false\",\n" +
+                                "        \"notification\": \"false\"\n" +
+                                "    },\n" +
+                                "    \"title\": {\n" +
+                                "        \"visible\": \"true\",\n" +
+                                "        \"title\": \"By Product\"\n" +
+                                "    },\n" +
+                                "    \"axis\": {\n" +
+                                "        \"x\": {\n" +
+                                "            \"labels_show\": \"false\"\n" +
+                                "        },\n" +
+                                "        \"y\": {\n" +
+                                "            \"labels_show\": \"false\"\n" +
+                                "        }\n" +
+                                "    },\n" +
+                                "    \"dataSetLookup\": {\n" +
+                                "        \"dataSetUuid\": \"dataset-sales-opportunities\",\n" +
+                                "        \"rowCount\": \"-1\",\n" +
+                                "        \"rowOffset\": \"0\",\n" +
+                                "        \"groupOps\": [\n" +
+                                "            {\n" +
+                                "                \"columnGroup\": {\n" +
+                                "                    \"sourceId\": \"product\",\n" +
+                                "                    \"columnId\": \"product\",\n" +
+                                "                    \"groupStrategy\": \"DYNAMIC\",\n" +
+                                "                    \"maxIntervals\": \"15\",\n" +
+                                "                    \"asc\": \"true\",\n" +
+                                "                    \"firstMonthOfYear\": \"JANUARY\",\n" +
+                                "                    \"firstDayOfWeek\": \"MONDAY\"\n" +
+                                "                },\n" +
+                                "                \"groupFunctions\": [\n" +
+                                "                    {\n" +
+                                "                        \"sourceId\": \"amount\",\n" +
+                                "                        \"columnId\": \"amount\",\n" +
+                                "                        \"function\": \"SUM\"\n" +
+                                "                    }\n" +
+                                "                ],\n" +
+                                "                \"selectedIntervals\": []\n" +
+                                "            }\n" +
+                                "        ]\n" +
+                                "    }\n" +
+                                "}"
+                )
         ) );
+
         nodeList.add(new GalleryNodeDisplayer("Multiple", true,
-                jsonHelper.fromJson( DisplayerJsonDefinitions.INSTANCE.barChart_multiple() )
+                jsonHelper.fromJson(
+                                "{\n" +
+                                "    \"columns\": [\n" +
+                                "        {\n" +
+                                "            \"columnDisplayName\": \"Country\"\n" +
+                                "        },\n" +
+                                "        {\n" +
+                                "            \"columnId\": \"Min\",\n" +
+                                "            \"columnDisplayName\": \"Min\"\n" +
+                                "        },\n" +
+                                "        {\n" +
+                                "            \"columnId\": \"Max\",\n" +
+                                "            \"columnDisplayName\": \"Max\"\n" +
+                                "        },\n" +
+                                "        {\n" +
+                                "            \"columnId\": \"Average\",\n" +
+                                "            \"columnDisplayName\": \"Avg\"\n" +
+                                "        }\n" +
+                                "    ],\n" +
+                                "    \"barChart\": {\n" +
+                                "        \"bar_horizontal\": \"true\"\n" +
+                                "    },\n" +
+                                "    \"chart\": {\n" +
+                                "        \"margin\": {\n" +
+                                "            \"bottom\": \"50\",\n" +
+                                "            \"top\": \"10\",\n" +
+                                "            \"left\": \"120\",\n" +
+                                "            \"right\": \"100\"\n" +
+                                "        },\n" +
+                                "        \"3d\": \"false\",\n" +
+                                "        \"width\": \"700\",\n" +
+                                "        \"height\": \"600\",\n" +
+                                "        \"legend\": {\n" +
+                                "            \"show\": \"true\",\n" +
+                                "            \"position\": \"POSITION_RIGHT\"\n" +
+                                "        }\n" +
+                                "    },\n" +
+                                "    \"table\": {\n" +
+                                "        \"sort\": {\n" +
+                                "            \"order\": \"asc\",\n" +
+                                "            \"enabled\": \"true\"\n" +
+                                "        },\n" +
+                                "        \"pageSize\": \"20\",\n" +
+                                "        \"width\": \"0\"\n" +
+                                "    },\n" +
+                                "    \"meter\": {\n" +
+                                "        \"critical\": \"0\",\n" +
+                                "        \"warning\": \"0\",\n" +
+                                "        \"start\": \"0\",\n" +
+                                "        \"end\": \"0\"\n" +
+                                "    },\n" +
+                                "    \"type\": \"BARCHART\",\n" +
+                                "    \"filter\": {\n" +
+                                "        \"listening\": \"false\",\n" +
+                                "        \"selfapply\": \"false\",\n" +
+                                "        \"enabled\": \"false\",\n" +
+                                "        \"notification\": \"false\"\n" +
+                                "    },\n" +
+                                "    \"title\": {\n" +
+                                "        \"visible\": \"true\",\n" +
+                                "        \"title\": \"By Country (min/max/avg)\"\n" +
+                                "    },\n" +
+                                "    \"axis\": {\n" +
+                                "        \"x\": {\n" +
+                                "            \"labels_show\": \"false\"\n" +
+                                "        },\n" +
+                                "        \"y\": {\n" +
+                                "            \"labels_show\": \"false\"\n" +
+                                "        }\n" +
+                                "    },\n" +
+                                "    \"dataSetLookup\": {\n" +
+                                "        \"dataSetUuid\": \"dataset-sales-opportunities\",\n" +
+                                "        \"rowCount\": \"-1\",\n" +
+                                "        \"rowOffset\": \"0\",\n" +
+                                "        \"groupOps\": [\n" +
+                                "            {\n" +
+                                "                \"columnGroup\": {\n" +
+                                "                    \"sourceId\": \"country\",\n" +
+                                "                    \"columnId\": \"Country\",\n" +
+                                "                    \"groupStrategy\": \"DYNAMIC\",\n" +
+                                "                    \"maxIntervals\": \"15\",\n" +
+                                "                    \"asc\": \"true\",\n" +
+                                "                    \"firstMonthOfYear\": \"JANUARY\",\n" +
+                                "                    \"firstDayOfWeek\": \"MONDAY\"\n" +
+                                "                },\n" +
+                                "                \"groupFunctions\": [\n" +
+                                "                    {\n" +
+                                "                        \"columnId\": \"#Opps\",\n" +
+                                "                        \"function\": \"COUNT\"\n" +
+                                "                    },\n" +
+                                "                    {\n" +
+                                "                        \"sourceId\": \"amount\",\n" +
+                                "                        \"columnId\": \"Min\",\n" +
+                                "                        \"function\": \"MIN\"\n" +
+                                "                    },\n" +
+                                "                    {\n" +
+                                "                        \"sourceId\": \"amount\",\n" +
+                                "                        \"columnId\": \"Max\",\n" +
+                                "                        \"function\": \"MAX\"\n" +
+                                "                    },\n" +
+                                "                    {\n" +
+                                "                        \"sourceId\": \"amount\",\n" +
+                                "                        \"columnId\": \"Average\",\n" +
+                                "                        \"function\": \"AVERAGE\"\n" +
+                                "                    },\n" +
+                                "                    {\n" +
+                                "                        \"sourceId\": \"amount\",\n" +
+                                "                        \"columnId\": \"Total\",\n" +
+                                "                        \"function\": \"SUM\"\n" +
+                                "                    }\n" +
+                                "                ],\n" +
+                                "                \"selectedIntervals\": []\n" +
+                                "            }\n" +
+                                "        ]\n" +
+                                "    }\n" +
+                                "}"
+                )
         ) );
+
 
         nodeList = new GalleryNodeList("Pie Chart");
         jsonExamples.add(nodeList);
 
         nodeList.add( new GalleryNodeDisplayer("Basic", true,
-                jsonHelper.fromJson( DisplayerJsonDefinitions.INSTANCE.pieChart_basic() )
+                jsonHelper.fromJson(
+                                "{\n" +
+                                "    \"columns\": [\n" +
+                                "        {\n" +
+                                "            \"columnDisplayName\": \"Status\"\n" +
+                                "        },\n" +
+                                "        {\n" +
+                                "            \"columnDisplayName\": \"Total amount\"\n" +
+                                "        }\n" +
+                                "    ],\n" +
+                                "    \"barChart\": {\n" +
+                                "        \"bar_horizontal\": \"false\"\n" +
+                                "    },\n" +
+                                "    \"chart\": {\n" +
+                                "        \"margin\": {\n" +
+                                "            \"bottom\": \"10\",\n" +
+                                "            \"top\": \"10\",\n" +
+                                "            \"left\": \"10\",\n" +
+                                "            \"right\": \"10\"\n" +
+                                "        },\n" +
+                                "        \"3d\": \"true\",\n" +
+                                "        \"width\": \"600\",\n" +
+                                "        \"height\": \"300\",\n" +
+                                "        \"legend\": {\n" +
+                                "            \"show\": \"true\",\n" +
+                                "            \"position\": \"POSITION_RIGHT\"\n" +
+                                "        }\n" +
+                                "    },\n" +
+                                "    \"table\": {\n" +
+                                "        \"sort\": {\n" +
+                                "            \"order\": \"asc\",\n" +
+                                "            \"enabled\": \"true\"\n" +
+                                "        },\n" +
+                                "        \"pageSize\": \"20\",\n" +
+                                "        \"width\": \"0\"\n" +
+                                "    },\n" +
+                                "    \"meter\": {\n" +
+                                "        \"critical\": \"0\",\n" +
+                                "        \"warning\": \"0\",\n" +
+                                "        \"start\": \"0\",\n" +
+                                "        \"end\": \"0\"\n" +
+                                "    },\n" +
+                                "    \"type\": \"PIECHART\",\n" +
+                                "    \"filter\": {\n" +
+                                "        \"listening\": \"false\",\n" +
+                                "        \"selfapply\": \"false\",\n" +
+                                "        \"enabled\": \"false\",\n" +
+                                "        \"notification\": \"false\"\n" +
+                                "    },\n" +
+                                "    \"title\": {\n" +
+                                "        \"visible\": \"true\",\n" +
+                                "        \"title\": \"By Status\"\n" +
+                                "    },\n" +
+                                "    \"axis\": {\n" +
+                                "        \"x\": {\n" +
+                                "            \"labels_show\": \"false\"\n" +
+                                "        },\n" +
+                                "        \"y\": {\n" +
+                                "            \"labels_show\": \"false\"\n" +
+                                "        }\n" +
+                                "    },\n" +
+                                "    \"dataSetLookup\": {\n" +
+                                "        \"dataSetUuid\": \"dataset-sales-opportunities\",\n" +
+                                "        \"rowCount\": \"-1\",\n" +
+                                "        \"rowOffset\": \"0\",\n" +
+                                "        \"groupOps\": [\n" +
+                                "            {\n" +
+                                "                \"columnGroup\": {\n" +
+                                "                    \"sourceId\": \"status\",\n" +
+                                "                    \"columnId\": \"status\",\n" +
+                                "                    \"groupStrategy\": \"DYNAMIC\",\n" +
+                                "                    \"maxIntervals\": \"15\",\n" +
+                                "                    \"asc\": \"true\",\n" +
+                                "                    \"firstMonthOfYear\": \"JANUARY\",\n" +
+                                "                    \"firstDayOfWeek\": \"MONDAY\"\n" +
+                                "                },\n" +
+                                "                \"groupFunctions\": [\n" +
+                                "                    {\n" +
+                                "                        \"sourceId\": \"amount\",\n" +
+                                "                        \"columnId\": \"amount\",\n" +
+                                "                        \"function\": \"SUM\"\n" +
+                                "                    }\n" +
+                                "                ],\n" +
+                                "                \"selectedIntervals\": []\n" +
+                                "            }\n" +
+                                "        ]\n" +
+                                "    }\n" +
+                                "}"
+                )
         ) );
+
         nodeList.add(new GalleryNodeDisplayer("Drill-down", true,
-                jsonHelper.fromJson( DisplayerJsonDefinitions.INSTANCE.pieChart_drillDown() )
+                jsonHelper.fromJson(
+                                "{\n" +
+                                "    \"columns\": [\n" +
+                                "        {\n" +
+                                "            \"columnDisplayName\": \"Status\"\n" +
+                                "        },\n" +
+                                "        {\n" +
+                                "            \"columnDisplayName\": \"Total amount\"\n" +
+                                "        }\n" +
+                                "    ],\n" +
+                                "    \"barChart\": {\n" +
+                                "        \"bar_horizontal\": \"false\"\n" +
+                                "    },\n" +
+                                "    \"chart\": {\n" +
+                                "        \"margin\": {\n" +
+                                "            \"bottom\": \"10\",\n" +
+                                "            \"top\": \"10\",\n" +
+                                "            \"left\": \"10\",\n" +
+                                "            \"right\": \"10\"\n" +
+                                "        },\n" +
+                                "        \"3d\": \"true\",\n" +
+                                "        \"width\": \"600\",\n" +
+                                "        \"height\": \"300\",\n" +
+                                "        \"legend\": {\n" +
+                                "            \"show\": \"true\",\n" +
+                                "            \"position\": \"POSITION_RIGHT\"\n" +
+                                "        }\n" +
+                                "    },\n" +
+                                "    \"table\": {\n" +
+                                "        \"sort\": {\n" +
+                                "            \"order\": \"asc\",\n" +
+                                "            \"enabled\": \"true\"\n" +
+                                "        },\n" +
+                                "        \"pageSize\": \"20\",\n" +
+                                "        \"width\": \"0\"\n" +
+                                "    },\n" +
+                                "    \"meter\": {\n" +
+                                "        \"critical\": \"0\",\n" +
+                                "        \"warning\": \"0\",\n" +
+                                "        \"start\": \"0\",\n" +
+                                "        \"end\": \"0\"\n" +
+                                "    },\n" +
+                                "    \"type\": \"PIECHART\",\n" +
+                                "    \"filter\": {\n" +
+                                "        \"listening\": \"false\",\n" +
+                                "        \"selfapply\": \"true\",\n" +
+                                "        \"enabled\": \"true\",\n" +
+                                "        \"notification\": \"false\"\n" +
+                                "    },\n" +
+                                "    \"title\": {\n" +
+                                "        \"visible\": \"true\",\n" +
+                                "        \"title\": \"By Pipeline/Status/Sales person\"\n" +
+                                "    },\n" +
+                                "    \"axis\": {\n" +
+                                "        \"x\": {\n" +
+                                "            \"labels_show\": \"false\"\n" +
+                                "        },\n" +
+                                "        \"y\": {\n" +
+                                "            \"labels_show\": \"false\"\n" +
+                                "        }\n" +
+                                "    },\n" +
+                                "    \"dataSetLookup\": {\n" +
+                                "        \"dataSetUuid\": \"dataset-sales-opportunities\",\n" +
+                                "        \"rowCount\": \"-1\",\n" +
+                                "        \"rowOffset\": \"0\",\n" +
+                                "        \"groupOps\": [\n" +
+                                "            {\n" +
+                                "                \"columnGroup\": {\n" +
+                                "                    \"sourceId\": \"pipeline\",\n" +
+                                "                    \"columnId\": \"pipeline\",\n" +
+                                "                    \"groupStrategy\": \"DYNAMIC\",\n" +
+                                "                    \"maxIntervals\": \"15\",\n" +
+                                "                    \"asc\": \"true\",\n" +
+                                "                    \"firstMonthOfYear\": \"JANUARY\",\n" +
+                                "                    \"firstDayOfWeek\": \"MONDAY\"\n" +
+                                "                },\n" +
+                                "                \"groupFunctions\": [\n" +
+                                "                    {\n" +
+                                "                        \"sourceId\": \"amount\",\n" +
+                                "                        \"columnId\": \"amount\",\n" +
+                                "                        \"function\": \"SUM\"\n" +
+                                "                    }\n" +
+                                "                ],\n" +
+                                "                \"selectedIntervals\": []\n" +
+                                "            },\n" +
+                                "            {\n" +
+                                "                \"columnGroup\": {\n" +
+                                "                    \"sourceId\": \"status\",\n" +
+                                "                    \"columnId\": \"status\",\n" +
+                                "                    \"groupStrategy\": \"DYNAMIC\",\n" +
+                                "                    \"maxIntervals\": \"15\",\n" +
+                                "                    \"asc\": \"true\",\n" +
+                                "                    \"firstMonthOfYear\": \"JANUARY\",\n" +
+                                "                    \"firstDayOfWeek\": \"MONDAY\"\n" +
+                                "                },\n" +
+                                "                \"groupFunctions\": [\n" +
+                                "                    {\n" +
+                                "                        \"sourceId\": \"amount\",\n" +
+                                "                        \"columnId\": \"amount\",\n" +
+                                "                        \"function\": \"SUM\"\n" +
+                                "                    }\n" +
+                                "                ],\n" +
+                                "                \"selectedIntervals\": []\n" +
+                                "            },\n" +
+                                "            {\n" +
+                                "                \"columnGroup\": {\n" +
+                                "                    \"sourceId\": \"salesPerson\",\n" +
+                                "                    \"columnId\": \"salesPerson\",\n" +
+                                "                    \"groupStrategy\": \"DYNAMIC\",\n" +
+                                "                    \"maxIntervals\": \"15\",\n" +
+                                "                    \"asc\": \"true\",\n" +
+                                "                    \"firstMonthOfYear\": \"JANUARY\",\n" +
+                                "                    \"firstDayOfWeek\": \"MONDAY\"\n" +
+                                "                },\n" +
+                                "                \"groupFunctions\": [\n" +
+                                "                    {\n" +
+                                "                        \"sourceId\": \"amount\",\n" +
+                                "                        \"columnId\": \"amount\",\n" +
+                                "                        \"function\": \"SUM\"\n" +
+                                "                    }\n" +
+                                "                ],\n" +
+                                "                \"selectedIntervals\": []\n" +
+                                "            }\n" +
+                                "        ]\n" +
+                                "    }\n" +
+                                "}"
+                )
         ) );
 
 
@@ -511,13 +1020,310 @@ public class GalleryTree {
         jsonExamples.add(nodeList);
 
         nodeList.add(new GalleryNodeDisplayer("Basic", true,
-                jsonHelper.fromJson( DisplayerJsonDefinitions.INSTANCE.lineChart_basic() )
+                jsonHelper.fromJson(
+                                "{\n" +
+                                "    \"columns\": [\n" +
+                                "        {\n" +
+                                "            \"columnDisplayName\": \"Closing date\"\n" +
+                                "        },\n" +
+                                "        {\n" +
+                                "            \"columnDisplayName\": \"Total amount\"\n" +
+                                "        }\n" +
+                                "    ],\n" +
+                                "    \"barChart\": {\n" +
+                                "        \"bar_horizontal\": \"false\"\n" +
+                                "    },\n" +
+                                "    \"chart\": {\n" +
+                                "        \"margin\": {\n" +
+                                "            \"bottom\": \"50\",\n" +
+                                "            \"top\": \"20\",\n" +
+                                "            \"left\": \"100\",\n" +
+                                "            \"right\": \"120\"\n" +
+                                "        },\n" +
+                                "        \"3d\": \"false\",\n" +
+                                "        \"width\": \"600\",\n" +
+                                "        \"height\": \"300\",\n" +
+                                "        \"legend\": {\n" +
+                                "            \"show\": \"true\",\n" +
+                                "            \"position\": \"POSITION_RIGHT\"\n" +
+                                "        }\n" +
+                                "    },\n" +
+                                "    \"table\": {\n" +
+                                "        \"sort\": {\n" +
+                                "            \"order\": \"asc\",\n" +
+                                "            \"enabled\": \"true\"\n" +
+                                "        },\n" +
+                                "        \"pageSize\": \"20\",\n" +
+                                "        \"width\": \"0\"\n" +
+                                "    },\n" +
+                                "    \"meter\": {\n" +
+                                "        \"critical\": \"0\",\n" +
+                                "        \"warning\": \"0\",\n" +
+                                "        \"start\": \"0\",\n" +
+                                "        \"end\": \"0\"\n" +
+                                "    },\n" +
+                                "    \"type\": \"LINECHART\",\n" +
+                                "    \"filter\": {\n" +
+                                "        \"listening\": \"false\",\n" +
+                                "        \"selfapply\": \"false\",\n" +
+                                "        \"enabled\": \"false\",\n" +
+                                "        \"notification\": \"false\"\n" +
+                                "    },\n" +
+                                "    \"title\": {\n" +
+                                "        \"visible\": \"true\",\n" +
+                                "        \"title\": \"Sales opportunities evolution\"\n" +
+                                "    },\n" +
+                                "    \"axis\": {\n" +
+                                "        \"x\": {\n" +
+                                "            \"labels_show\": \"false\"\n" +
+                                "        },\n" +
+                                "        \"y\": {\n" +
+                                "            \"labels_show\": \"false\"\n" +
+                                "        }\n" +
+                                "    },\n" +
+                                "    \"dataSetLookup\": {\n" +
+                                "        \"dataSetUuid\": \"dataset-sales-opportunities\",\n" +
+                                "        \"rowCount\": \"-1\",\n" +
+                                "        \"rowOffset\": \"0\",\n" +
+                                "        \"groupOps\": [\n" +
+                                "            {\n" +
+                                "                \"columnGroup\": {\n" +
+                                "                    \"sourceId\": \"closingDate\",\n" +
+                                "                    \"columnId\": \"closingDate\",\n" +
+                                "                    \"groupStrategy\": \"DYNAMIC\",\n" +
+                                "                    \"maxIntervals\": \"12\",\n" +
+                                "                    \"intervalSize\": \"MONTH\",\n" +
+                                "                    \"asc\": \"true\",\n" +
+                                "                    \"firstMonthOfYear\": \"JANUARY\",\n" +
+                                "                    \"firstDayOfWeek\": \"MONDAY\"\n" +
+                                "                },\n" +
+                                "                \"groupFunctions\": [\n" +
+                                "                    {\n" +
+                                "                        \"sourceId\": \"amount\",\n" +
+                                "                        \"columnId\": \"amount\",\n" +
+                                "                        \"function\": \"SUM\"\n" +
+                                "                    }\n" +
+                                "                ],\n" +
+                                "                \"selectedIntervals\": []\n" +
+                                "            }\n" +
+                                "        ]\n" +
+                                "    }\n" +
+                                "}"
+                )
         ));
+
         nodeList.add(new GalleryNodeDisplayer("Multiple", true,
-                jsonHelper.fromJson( DisplayerJsonDefinitions.INSTANCE.lineChart_multiple() )
+                jsonHelper.fromJson(
+                                "{\n" +
+                                "    \"columns\": [\n" +
+                                "        {\n" +
+                                "            \"columnDisplayName\": \"Country\"\n" +
+                                "        },\n" +
+                                "        {\n" +
+                                "            \"columnId\": \"Min\",\n" +
+                                "            \"columnDisplayName\": \"Min\"\n" +
+                                "        },\n" +
+                                "        {\n" +
+                                "            \"columnId\": \"Max\",\n" +
+                                "            \"columnDisplayName\": \"Max\"\n" +
+                                "        },\n" +
+                                "        {\n" +
+                                "            \"columnId\": \"Average\",\n" +
+                                "            \"columnDisplayName\": \"Avg\"\n" +
+                                "        }\n" +
+                                "    ],\n" +
+                                "    \"barChart\": {\n" +
+                                "        \"bar_horizontal\": \"false\"\n" +
+                                "    },\n" +
+                                "    \"chart\": {\n" +
+                                "        \"margin\": {\n" +
+                                "            \"bottom\": \"100\",\n" +
+                                "            \"top\": \"30\",\n" +
+                                "            \"left\": \"80\",\n" +
+                                "            \"right\": \"80\"\n" +
+                                "        },\n" +
+                                "        \"3d\": \"false\",\n" +
+                                "        \"width\": \"600\",\n" +
+                                "        \"height\": \"300\",\n" +
+                                "        \"legend\": {\n" +
+                                "            \"show\": \"true\",\n" +
+                                "            \"position\": \"POSITION_RIGHT\"\n" +
+                                "        }\n" +
+                                "    },\n" +
+                                "    \"table\": {\n" +
+                                "        \"sort\": {\n" +
+                                "            \"order\": \"asc\",\n" +
+                                "            \"enabled\": \"true\"\n" +
+                                "        },\n" +
+                                "        \"pageSize\": \"20\",\n" +
+                                "        \"width\": \"0\"\n" +
+                                "    },\n" +
+                                "    \"meter\": {\n" +
+                                "        \"critical\": \"0\",\n" +
+                                "        \"warning\": \"0\",\n" +
+                                "        \"start\": \"0\",\n" +
+                                "        \"end\": \"0\"\n" +
+                                "    },\n" +
+                                "    \"type\": \"LINECHART\",\n" +
+                                "    \"filter\": {\n" +
+                                "        \"listening\": \"false\",\n" +
+                                "        \"selfapply\": \"false\",\n" +
+                                "        \"enabled\": \"false\",\n" +
+                                "        \"notification\": \"false\"\n" +
+                                "    },\n" +
+                                "    \"title\": {\n" +
+                                "        \"visible\": \"true\",\n" +
+                                "        \"title\": \"By Country (min/max/avg)\"\n" +
+                                "    },\n" +
+                                "    \"axis\": {\n" +
+                                "        \"x\": {\n" +
+                                "            \"labels_show\": \"false\"\n" +
+                                "        },\n" +
+                                "        \"y\": {\n" +
+                                "            \"labels_show\": \"false\"\n" +
+                                "        }\n" +
+                                "    },\n" +
+                                "    \"dataSetLookup\": {\n" +
+                                "        \"dataSetUuid\": \"dataset-sales-opportunities\",\n" +
+                                "        \"rowCount\": \"-1\",\n" +
+                                "        \"rowOffset\": \"0\",\n" +
+                                "        \"groupOps\": [\n" +
+                                "            {\n" +
+                                "                \"columnGroup\": {\n" +
+                                "                    \"sourceId\": \"country\",\n" +
+                                "                    \"columnId\": \"Country\",\n" +
+                                "                    \"groupStrategy\": \"DYNAMIC\",\n" +
+                                "                    \"maxIntervals\": \"15\",\n" +
+                                "                    \"asc\": \"true\",\n" +
+                                "                    \"firstMonthOfYear\": \"JANUARY\",\n" +
+                                "                    \"firstDayOfWeek\": \"MONDAY\"\n" +
+                                "                },\n" +
+                                "                \"groupFunctions\": [\n" +
+                                "                    {\n" +
+                                "                        \"columnId\": \"#Opps\",\n" +
+                                "                        \"function\": \"COUNT\"\n" +
+                                "                    },\n" +
+                                "                    {\n" +
+                                "                        \"sourceId\": \"amount\",\n" +
+                                "                        \"columnId\": \"Min\",\n" +
+                                "                        \"function\": \"MIN\"\n" +
+                                "                    },\n" +
+                                "                    {\n" +
+                                "                        \"sourceId\": \"amount\",\n" +
+                                "                        \"columnId\": \"Max\",\n" +
+                                "                        \"function\": \"MAX\"\n" +
+                                "                    },\n" +
+                                "                    {\n" +
+                                "                        \"sourceId\": \"amount\",\n" +
+                                "                        \"columnId\": \"Average\",\n" +
+                                "                        \"function\": \"AVERAGE\"\n" +
+                                "                    },\n" +
+                                "                    {\n" +
+                                "                        \"sourceId\": \"amount\",\n" +
+                                "                        \"columnId\": \"Total\",\n" +
+                                "                        \"function\": \"SUM\"\n" +
+                                "                    }\n" +
+                                "                ],\n" +
+                                "                \"selectedIntervals\": []\n" +
+                                "            }\n" +
+                                "        ]\n" +
+                                "    }\n" +
+                                "}"
+                )
         ));
+
         nodeList.add(new GalleryNodeDisplayer("Multiple (static)", true,
-                jsonHelper.fromJson( DisplayerJsonDefinitions.INSTANCE.lineChart_multipleStatic() )
+                jsonHelper.fromJson(
+                                "{\n" +
+                                "    \"columns\": [\n" +
+                                "        {\n" +
+                                "            \"columnDisplayName\": \"Month\"\n" +
+                                "        },\n" +
+                                "        {\n" +
+                                "            \"columnDisplayName\": \"Sales in 2014\"\n" +
+                                "        },\n" +
+                                "        {\n" +
+                                "            \"columnDisplayName\": \"Sales in 2015\"\n" +
+                                "        },\n" +
+                                "        {\n" +
+                                "            \"columnDisplayName\": \"Sales in 2016\"\n" +
+                                "        }\n" +
+                                "    ],\n" +
+                                "    \"barChart\": {\n" +
+                                "        \"bar_horizontal\": \"false\"\n" +
+                                "    },\n" +
+                                "    \"chart\": {\n" +
+                                "        \"margin\": {\n" +
+                                "            \"bottom\": \"80\",\n" +
+                                "            \"top\": \"20\",\n" +
+                                "            \"left\": \"50\",\n" +
+                                "            \"right\": \"120\"\n" +
+                                "        },\n" +
+                                "        \"3d\": \"false\",\n" +
+                                "        \"width\": \"600\",\n" +
+                                "        \"height\": \"300\",\n" +
+                                "        \"legend\": {\n" +
+                                "            \"show\": \"true\",\n" +
+                                "            \"position\": \"POSITION_RIGHT\"\n" +
+                                "        }\n" +
+                                "    },\n" +
+                                "    \"table\": {\n" +
+                                "        \"sort\": {\n" +
+                                "            \"order\": \"asc\",\n" +
+                                "            \"enabled\": \"true\"\n" +
+                                "        },\n" +
+                                "        \"pageSize\": \"20\",\n" +
+                                "        \"width\": \"0\"\n" +
+                                "    },\n" +
+                                "    \"meter\": {\n" +
+                                "        \"critical\": \"0\",\n" +
+                                "        \"warning\": \"0\",\n" +
+                                "        \"start\": \"0\",\n" +
+                                "        \"end\": \"0\"\n" +
+                                "    },\n" +
+                                "    \"type\": \"LINECHART\",\n" +
+                                "    \"filter\": {\n" +
+                                "        \"listening\": \"false\",\n" +
+                                "        \"selfapply\": \"false\",\n" +
+                                "        \"enabled\": \"false\",\n" +
+                                "        \"notification\": \"false\"\n" +
+                                "    },\n" +
+                                "    \"title\": {\n" +
+                                "        \"visible\": \"true\",\n" +
+                                "        \"title\": \"Sales Evolution Per Year\"\n" +
+                                "    },\n" +
+                                "    \"axis\": {\n" +
+                                "        \"x\": {\n" +
+                                "            \"labels_show\": \"false\"\n" +
+                                "        },\n" +
+                                "        \"y\": {\n" +
+                                "            \"labels_show\": \"false\"\n" +
+                                "        }\n" +
+                                "    },\n" +
+                                "    \"dataSet\": {\n" +
+                                "        \"column.0\": {\n" +
+                                "            \"id\": \"month\",\n" +
+                                "            \"type\": \"LABEL\",\n" +
+                                "            \"values\": [\"JANUARY\", \"FEBRUARY\", \"MARCH\", \"APRIL\", \"MAY\", \"JUNE\", \"JULY\", \"AUGUST\", \"SEPTEMBER\", \"OCTOBER\", \"NOVEMBER\", \"DECEMBER\"]\n" +
+                                "        },\n" +
+                                "        \"column.1\": {\n" +
+                                "            \"id\": \"2014\",\n" +
+                                "            \"type\": \"NUMBER\",\n" +
+                                "            \"values\": [\"1000.0\", \"1400.0\", \"1300.0\", \"900.0\", \"1300.0\", \"1010.0\", \"1050.0\", \"2300.0\", \"1900.0\", \"1200.0\", \"1400.0\", \"1100.0\"]\n" +
+                                "        },\n" +
+                                "        \"column.2\": {\n" +
+                                "            \"id\": \"2015\",\n" +
+                                "            \"type\": \"NUMBER\",\n" +
+                                "            \"values\": [\"2000.0\", \"2300.0\", \"2000.0\", \"2100.0\", \"2300.0\", \"2000.0\", \"2400.0\", \"2000.0\", \"2700.0\", \"2200.0\", \"2100.0\", \"2100.0\"]\n" +
+                                "        },\n" +
+                                "        \"column.3\": {\n" +
+                                "            \"id\": \"2016\",\n" +
+                                "            \"type\": \"NUMBER\",\n" +
+                                "            \"values\": [\"3000.0\", \"2000.0\", \"1400.0\", \"1500.0\", \"1600.0\", \"1500.0\", \"3000.0\", \"3200.0\", \"3000.0\", \"3100.0\", \"3100.0\", \"4200.0\"]\n" +
+                                "        }\n" +
+                                "    }\n" +
+                                "}"
+                )
         ));
 
 
@@ -525,13 +1331,281 @@ public class GalleryTree {
         jsonExamples.add(nodeList);
 
         nodeList.add(new GalleryNodeDisplayer("Basic", true,
-                jsonHelper.fromJson( DisplayerJsonDefinitions.INSTANCE.areaChart_basic() )
+                jsonHelper.fromJson(
+                                "{\n" +
+                                "    \"columns\": [\n" +
+                                "        {\n" +
+                                "            \"columnDisplayName\": \"Closing date\"\n" +
+                                "        },\n" +
+                                "        {\n" +
+                                "            \"columnDisplayName\": \"Expected amount\"\n" +
+                                "        }\n" +
+                                "    ],\n" +
+                                "    \"barChart\": {\n" +
+                                "        \"bar_horizontal\": \"false\"\n" +
+                                "    },\n" +
+                                "    \"chart\": {\n" +
+                                "        \"margin\": {\n" +
+                                "            \"bottom\": \"50\",\n" +
+                                "            \"top\": \"20\",\n" +
+                                "            \"left\": \"100\",\n" +
+                                "            \"right\": \"120\"\n" +
+                                "        },\n" +
+                                "        \"3d\": \"false\",\n" +
+                                "        \"width\": \"600\",\n" +
+                                "        \"height\": \"300\",\n" +
+                                "        \"legend\": {\n" +
+                                "            \"show\": \"true\",\n" +
+                                "            \"position\": \"POSITION_RIGHT\"\n" +
+                                "        }\n" +
+                                "    },\n" +
+                                "    \"table\": {\n" +
+                                "        \"sort\": {\n" +
+                                "            \"order\": \"asc\",\n" +
+                                "            \"enabled\": \"true\"\n" +
+                                "        },\n" +
+                                "        \"pageSize\": \"20\",\n" +
+                                "        \"width\": \"0\"\n" +
+                                "    },\n" +
+                                "    \"meter\": {\n" +
+                                "        \"critical\": \"0\",\n" +
+                                "        \"warning\": \"0\",\n" +
+                                "        \"start\": \"0\",\n" +
+                                "        \"end\": \"0\"\n" +
+                                "    },\n" +
+                                "    \"type\": \"AREACHART\",\n" +
+                                "    \"filter\": {\n" +
+                                "        \"listening\": \"false\",\n" +
+                                "        \"selfapply\": \"false\",\n" +
+                                "        \"enabled\": \"false\",\n" +
+                                "        \"notification\": \"false\"\n" +
+                                "    },\n" +
+                                "    \"title\": {\n" +
+                                "        \"visible\": \"true\",\n" +
+                                "        \"title\": \"Expected Pipeline\"\n" +
+                                "    },\n" +
+                                "    \"axis\": {\n" +
+                                "        \"x\": {\n" +
+                                "            \"labels_show\": \"false\"\n" +
+                                "        },\n" +
+                                "        \"y\": {\n" +
+                                "            \"labels_show\": \"false\"\n" +
+                                "        }\n" +
+                                "    },\n" +
+                                "    \"dataSetLookup\": {\n" +
+                                "        \"dataSetUuid\": \"dataset-sales-opportunities\",\n" +
+                                "        \"rowCount\": \"-1\",\n" +
+                                "        \"rowOffset\": \"0\",\n" +
+                                "        \"groupOps\": [\n" +
+                                "            {\n" +
+                                "                \"columnGroup\": {\n" +
+                                "                    \"sourceId\": \"closingDate\",\n" +
+                                "                    \"columnId\": \"closingDate\",\n" +
+                                "                    \"groupStrategy\": \"DYNAMIC\",\n" +
+                                "                    \"maxIntervals\": \"24\",\n" +
+                                "                    \"intervalSize\": \"MONTH\",\n" +
+                                "                    \"asc\": \"true\",\n" +
+                                "                    \"firstMonthOfYear\": \"JANUARY\",\n" +
+                                "                    \"firstDayOfWeek\": \"MONDAY\"\n" +
+                                "                },\n" +
+                                "                \"groupFunctions\": [\n" +
+                                "                    {\n" +
+                                "                        \"sourceId\": \"expectedAmount\",\n" +
+                                "                        \"columnId\": \"expectedAmount\",\n" +
+                                "                        \"function\": \"SUM\"\n" +
+                                "                    }\n" +
+                                "                ],\n" +
+                                "                \"selectedIntervals\": []\n" +
+                                "            }\n" +
+                                "        ]\n" +
+                                "    }\n" +
+                                "}"
+                )
         ));
+
         nodeList.add(new GalleryNodeDisplayer("Fixed (per month)", true,
-                jsonHelper.fromJson( DisplayerJsonDefinitions.INSTANCE.areaChart_fixedMonth() )
+                jsonHelper.fromJson(
+                                "{\n" +
+                                "    \"columns\": [\n" +
+                                "        {\n" +
+                                "            \"columnDisplayName\": \"Closing date\"\n" +
+                                "        },\n" +
+                                "        {\n" +
+                                "            \"columnDisplayName\": \"Expected amount per month\"\n" +
+                                "        }\n" +
+                                "    ],\n" +
+                                "    \"barChart\": {\n" +
+                                "        \"bar_horizontal\": \"false\"\n" +
+                                "    },\n" +
+                                "    \"chart\": {\n" +
+                                "        \"margin\": {\n" +
+                                "            \"bottom\": \"80\",\n" +
+                                "            \"top\": \"20\",\n" +
+                                "            \"left\": \"100\",\n" +
+                                "            \"right\": \"100\"\n" +
+                                "        },\n" +
+                                "        \"3d\": \"false\",\n" +
+                                "        \"width\": \"600\",\n" +
+                                "        \"height\": \"300\",\n" +
+                                "        \"legend\": {\n" +
+                                "            \"show\": \"true\",\n" +
+                                "            \"position\": \"POSITION_RIGHT\"\n" +
+                                "        }\n" +
+                                "    },\n" +
+                                "    \"table\": {\n" +
+                                "        \"sort\": {\n" +
+                                "            \"order\": \"asc\",\n" +
+                                "            \"enabled\": \"true\"\n" +
+                                "        },\n" +
+                                "        \"pageSize\": \"20\",\n" +
+                                "        \"width\": \"0\"\n" +
+                                "    },\n" +
+                                "    \"meter\": {\n" +
+                                "        \"critical\": \"0\",\n" +
+                                "        \"warning\": \"0\",\n" +
+                                "        \"start\": \"0\",\n" +
+                                "        \"end\": \"0\"\n" +
+                                "    },\n" +
+                                "    \"type\": \"AREACHART\",\n" +
+                                "    \"filter\": {\n" +
+                                "        \"listening\": \"false\",\n" +
+                                "        \"selfapply\": \"false\",\n" +
+                                "        \"enabled\": \"false\",\n" +
+                                "        \"notification\": \"false\"\n" +
+                                "    },\n" +
+                                "    \"title\": {\n" +
+                                "        \"visible\": \"true\",\n" +
+                                "        \"title\": \"Pipeline (best month)\"\n" +
+                                "    },\n" +
+                                "    \"axis\": {\n" +
+                                "        \"x\": {\n" +
+                                "            \"labels_show\": \"false\"\n" +
+                                "        },\n" +
+                                "        \"y\": {\n" +
+                                "            \"labels_show\": \"false\"\n" +
+                                "        }\n" +
+                                "    },\n" +
+                                "    \"dataSetLookup\": {\n" +
+                                "        \"dataSetUuid\": \"dataset-sales-opportunities\",\n" +
+                                "        \"rowCount\": \"-1\",\n" +
+                                "        \"rowOffset\": \"0\",\n" +
+                                "        \"groupOps\": [\n" +
+                                "            {\n" +
+                                "                \"columnGroup\": {\n" +
+                                "                    \"sourceId\": \"closingDate\",\n" +
+                                "                    \"columnId\": \"closingDate\",\n" +
+                                "                    \"groupStrategy\": \"FIXED\",\n" +
+                                "                    \"maxIntervals\": \"15\",\n" +
+                                "                    \"intervalSize\": \"MONTH\",\n" +
+                                "                    \"asc\": \"true\",\n" +
+                                "                    \"firstMonthOfYear\": \"JANUARY\",\n" +
+                                "                    \"firstDayOfWeek\": \"MONDAY\"\n" +
+                                "                },\n" +
+                                "                \"groupFunctions\": [\n" +
+                                "                    {\n" +
+                                "                        \"sourceId\": \"expectedAmount\",\n" +
+                                "                        \"columnId\": \"expectedAmount\",\n" +
+                                "                        \"function\": \"SUM\"\n" +
+                                "                    }\n" +
+                                "                ],\n" +
+                                "                \"selectedIntervals\": []\n" +
+                                "            }\n" +
+                                "        ]\n" +
+                                "    }\n" +
+                                "}"
+                )
         ));
+
         nodeList.add(new GalleryNodeDisplayer("Drill-down", true,
-                jsonHelper.fromJson( DisplayerJsonDefinitions.INSTANCE.areaChart_drillDown() )
+                jsonHelper.fromJson(
+                                "{\n" +
+                                "    \"columns\": [\n" +
+                                "        {\n" +
+                                "            \"columnDisplayName\": \"Closing date\"\n" +
+                                "        },\n" +
+                                "        {\n" +
+                                "            \"columnDisplayName\": \"Expected amount\"\n" +
+                                "        }\n" +
+                                "    ],\n" +
+                                "    \"barChart\": {\n" +
+                                "        \"bar_horizontal\": \"false\"\n" +
+                                "    },\n" +
+                                "    \"chart\": {\n" +
+                                "        \"margin\": {\n" +
+                                "            \"bottom\": \"70\",\n" +
+                                "            \"top\": \"20\",\n" +
+                                "            \"left\": \"100\",\n" +
+                                "            \"right\": \"120\"\n" +
+                                "        },\n" +
+                                "        \"3d\": \"false\",\n" +
+                                "        \"width\": \"600\",\n" +
+                                "        \"height\": \"300\",\n" +
+                                "        \"legend\": {\n" +
+                                "            \"show\": \"true\",\n" +
+                                "            \"position\": \"POSITION_RIGHT\"\n" +
+                                "        }\n" +
+                                "    },\n" +
+                                "    \"table\": {\n" +
+                                "        \"sort\": {\n" +
+                                "            \"order\": \"asc\",\n" +
+                                "            \"enabled\": \"true\"\n" +
+                                "        },\n" +
+                                "        \"pageSize\": \"20\",\n" +
+                                "        \"width\": \"0\"\n" +
+                                "    },\n" +
+                                "    \"meter\": {\n" +
+                                "        \"critical\": \"0\",\n" +
+                                "        \"warning\": \"0\",\n" +
+                                "        \"start\": \"0\",\n" +
+                                "        \"end\": \"0\"\n" +
+                                "    },\n" +
+                                "    \"type\": \"AREACHART\",\n" +
+                                "    \"filter\": {\n" +
+                                "        \"listening\": \"false\",\n" +
+                                "        \"selfapply\": \"true\",\n" +
+                                "        \"enabled\": \"true\",\n" +
+                                "        \"notification\": \"false\"\n" +
+                                "    },\n" +
+                                "    \"title\": {\n" +
+                                "        \"visible\": \"true\",\n" +
+                                "        \"title\": \"Expected Pipeline\"\n" +
+                                "    },\n" +
+                                "    \"axis\": {\n" +
+                                "        \"x\": {\n" +
+                                "            \"labels_show\": \"false\"\n" +
+                                "        },\n" +
+                                "        \"y\": {\n" +
+                                "            \"labels_show\": \"false\"\n" +
+                                "        }\n" +
+                                "    },\n" +
+                                "    \"dataSetLookup\": {\n" +
+                                "        \"dataSetUuid\": \"dataset-sales-opportunities\",\n" +
+                                "        \"rowCount\": \"-1\",\n" +
+                                "        \"rowOffset\": \"0\",\n" +
+                                "        \"groupOps\": [\n" +
+                                "            {\n" +
+                                "                \"columnGroup\": {\n" +
+                                "                    \"sourceId\": \"closingDate\",\n" +
+                                "                    \"columnId\": \"closingDate\",\n" +
+                                "                    \"groupStrategy\": \"DYNAMIC\",\n" +
+                                "                    \"maxIntervals\": \"12\",\n" +
+                                "                    \"asc\": \"true\",\n" +
+                                "                    \"firstMonthOfYear\": \"JANUARY\",\n" +
+                                "                    \"firstDayOfWeek\": \"MONDAY\"\n" +
+                                "                },\n" +
+                                "                \"groupFunctions\": [\n" +
+                                "                    {\n" +
+                                "                        \"sourceId\": \"expectedAmount\",\n" +
+                                "                        \"columnId\": \"expectedAmount\",\n" +
+                                "                        \"function\": \"SUM\"\n" +
+                                "                    }\n" +
+                                "                ],\n" +
+                                "                \"selectedIntervals\": []\n" +
+                                "            }\n" +
+                                "        ]\n" +
+                                "    }\n" +
+                                "}"
+                )
         ));
 
 
@@ -539,7 +1613,118 @@ public class GalleryTree {
         jsonExamples.add(nodeList);
 
         nodeList.add(new GalleryNodeDisplayer("Basic", true,
-                jsonHelper.fromJson( DisplayerJsonDefinitions.INSTANCE.bubbleChart_basic() )
+                jsonHelper.fromJson(
+                                "{\n" +
+                                "    \"columns\": [\n" +
+                                "        {\n" +
+                                "            \"columnId\": \"country\",\n" +
+                                "            \"columnDisplayName\": \"Country\"\n" +
+                                "        },\n" +
+                                "        {\n" +
+                                "            \"columnId\": \"opps\",\n" +
+                                "            \"columnDisplayName\": \"Number of opportunities\"\n" +
+                                "        },\n" +
+                                "        {\n" +
+                                "            \"columnId\": \"probability\",\n" +
+                                "            \"columnDisplayName\": \"Average probability\"\n" +
+                                "        },\n" +
+                                "        {\n" +
+                                "            \"columnId\": \"country\",\n" +
+                                "            \"columnDisplayName\": \"Country\"\n" +
+                                "        },\n" +
+                                "        {\n" +
+                                "            \"columnId\": \"expectedAmount\",\n" +
+                                "            \"columnDisplayName\": \"Expected amount\"\n" +
+                                "        }\n" +
+                                "    ],\n" +
+                                "    \"barChart\": {\n" +
+                                "        \"bar_horizontal\": \"false\"\n" +
+                                "    },\n" +
+                                "    \"chart\": {\n" +
+                                "        \"margin\": {\n" +
+                                "            \"bottom\": \"50\",\n" +
+                                "            \"top\": \"20\",\n" +
+                                "            \"left\": \"50\",\n" +
+                                "            \"right\": \"0\"\n" +
+                                "        },\n" +
+                                "        \"3d\": \"false\",\n" +
+                                "        \"width\": \"700\",\n" +
+                                "        \"height\": \"400\",\n" +
+                                "        \"legend\": {\n" +
+                                "            \"show\": \"true\",\n" +
+                                "            \"position\": \"POSITION_RIGHT\"\n" +
+                                "        }\n" +
+                                "    },\n" +
+                                "    \"table\": {\n" +
+                                "        \"sort\": {\n" +
+                                "            \"order\": \"asc\",\n" +
+                                "            \"enabled\": \"true\"\n" +
+                                "        },\n" +
+                                "        \"pageSize\": \"20\",\n" +
+                                "        \"width\": \"0\"\n" +
+                                "    },\n" +
+                                "    \"meter\": {\n" +
+                                "        \"critical\": \"0\",\n" +
+                                "        \"warning\": \"0\",\n" +
+                                "        \"start\": \"0\",\n" +
+                                "        \"end\": \"0\"\n" +
+                                "    },\n" +
+                                "    \"type\": \"BUBBLECHART\",\n" +
+                                "    \"filter\": {\n" +
+                                "        \"listening\": \"false\",\n" +
+                                "        \"selfapply\": \"false\",\n" +
+                                "        \"enabled\": \"false\",\n" +
+                                "        \"notification\": \"false\"\n" +
+                                "    },\n" +
+                                "    \"title\": {\n" +
+                                "        \"visible\": \"true\",\n" +
+                                "        \"title\": \"Opportunities distribution by Country \"\n" +
+                                "    },\n" +
+                                "    \"axis\": {\n" +
+                                "        \"x\": {\n" +
+                                "            \"labels_show\": \"false\"\n" +
+                                "        },\n" +
+                                "        \"y\": {\n" +
+                                "            \"labels_show\": \"false\"\n" +
+                                "        }\n" +
+                                "    },\n" +
+                                "    \"dataSetLookup\": {\n" +
+                                "        \"dataSetUuid\": \"dataset-sales-opportunities\",\n" +
+                                "        \"rowCount\": \"-1\",\n" +
+                                "        \"rowOffset\": \"0\",\n" +
+                                "        \"groupOps\": [\n" +
+                                "            {\n" +
+                                "                \"columnGroup\": {\n" +
+                                "                    \"sourceId\": \"country\",\n" +
+                                "                    \"columnId\": \"country\",\n" +
+                                "                    \"groupStrategy\": \"DYNAMIC\",\n" +
+                                "                    \"maxIntervals\": \"15\",\n" +
+                                "                    \"asc\": \"true\",\n" +
+                                "                    \"firstMonthOfYear\": \"JANUARY\",\n" +
+                                "                    \"firstDayOfWeek\": \"MONDAY\"\n" +
+                                "                },\n" +
+                                "                \"groupFunctions\": [\n" +
+                                "                    {\n" +
+                                "                        \"columnId\": \"opps\",\n" +
+                                "                        \"function\": \"COUNT\"\n" +
+                                "                    },\n" +
+                                "                    {\n" +
+                                "                        \"sourceId\": \"probability\",\n" +
+                                "                        \"columnId\": \"probability\",\n" +
+                                "                        \"function\": \"AVERAGE\"\n" +
+                                "                    },\n" +
+                                "                    {\n" +
+                                "                        \"sourceId\": \"expectedAmount\",\n" +
+                                "                        \"columnId\": \"expectedAmount\",\n" +
+                                "                        \"function\": \"SUM\"\n" +
+                                "                    }\n" +
+                                "                ],\n" +
+                                "                \"selectedIntervals\": []\n" +
+                                "            }\n" +
+                                "        ]\n" +
+                                "    }\n" +
+                                "}"
+                )
         ));
 
 
@@ -547,16 +1732,436 @@ public class GalleryTree {
         jsonExamples.add(nodeList);
 
         nodeList.add(new GalleryNodeDisplayer("Basic", true,
-                jsonHelper.fromJson( DisplayerJsonDefinitions.INSTANCE.tableReport_basic() )
+                jsonHelper.fromJson(
+                                "{\n" +
+                                "    \"columns\": [\n" +
+                                "        {\n" +
+                                "            \"columnId\": \"country\",\n" +
+                                "            \"columnDisplayName\": \"Country\"\n" +
+                                "        },\n" +
+                                "        {\n" +
+                                "            \"columnId\": \"customer\",\n" +
+                                "            \"columnDisplayName\": \"Customer\"\n" +
+                                "        },\n" +
+                                "        {\n" +
+                                "            \"columnId\": \"product\",\n" +
+                                "            \"columnDisplayName\": \"Product\"\n" +
+                                "        },\n" +
+                                "        {\n" +
+                                "            \"columnId\": \"salesPerson\",\n" +
+                                "            \"columnDisplayName\": \"Salesman\"\n" +
+                                "        },\n" +
+                                "        {\n" +
+                                "            \"columnId\": \"status\",\n" +
+                                "            \"columnDisplayName\": \"Status\"\n" +
+                                "        },\n" +
+                                "        {\n" +
+                                "            \"columnId\": \"source\",\n" +
+                                "            \"columnDisplayName\": \"Source\"\n" +
+                                "        },\n" +
+                                "        {\n" +
+                                "            \"columnId\": \"creationDate\",\n" +
+                                "            \"columnDisplayName\": \"Creation\"\n" +
+                                "        },\n" +
+                                "        {\n" +
+                                "            \"columnId\": \"expectedAmount\",\n" +
+                                "            \"columnDisplayName\": \"Expected\"\n" +
+                                "        },\n" +
+                                "        {\n" +
+                                "            \"columnId\": \"closingDate\",\n" +
+                                "            \"columnDisplayName\": \"Closing\"\n" +
+                                "        },\n" +
+                                "        {\n" +
+                                "            \"columnId\": \"amount\",\n" +
+                                "            \"columnDisplayName\": \"Amount\"\n" +
+                                "        }\n" +
+                                "    ],\n" +
+                                "    \"barChart\": {\n" +
+                                "        \"bar_horizontal\": \"false\"\n" +
+                                "    },\n" +
+                                "    \"chart\": {\n" +
+                                "        \"margin\": {\n" +
+                                "            \"bottom\": \"50\",\n" +
+                                "            \"top\": \"20\",\n" +
+                                "            \"left\": \"80\",\n" +
+                                "            \"right\": \"80\"\n" +
+                                "        },\n" +
+                                "        \"3d\": \"false\",\n" +
+                                "        \"width\": \"600\",\n" +
+                                "        \"height\": \"300\",\n" +
+                                "        \"legend\": {\n" +
+                                "            \"show\": \"true\",\n" +
+                                "            \"position\": \"POSITION_RIGHT\"\n" +
+                                "        }\n" +
+                                "    },\n" +
+                                "    \"table\": {\n" +
+                                "        \"sort\": {\n" +
+                                "            \"order\": \"DESCENDING\",\n" +
+                                "            \"enabled\": \"true\",\n" +
+                                "            \"columnId\": \"amount\"\n" +
+                                "        },\n" +
+                                "        \"pageSize\": \"10\",\n" +
+                                "        \"width\": \"0\"\n" +
+                                "    },\n" +
+                                "    \"meter\": {\n" +
+                                "        \"critical\": \"0\",\n" +
+                                "        \"warning\": \"0\",\n" +
+                                "        \"start\": \"0\",\n" +
+                                "        \"end\": \"0\"\n" +
+                                "    },\n" +
+                                "    \"type\": \"TABLE\",\n" +
+                                "    \"filter\": {\n" +
+                                "        \"listening\": \"false\",\n" +
+                                "        \"selfapply\": \"false\",\n" +
+                                "        \"enabled\": \"false\",\n" +
+                                "        \"notification\": \"false\"\n" +
+                                "    },\n" +
+                                "    \"title\": {\n" +
+                                "        \"visible\": \"true\",\n" +
+                                "        \"title\": \"List of Opportunities\"\n" +
+                                "    },\n" +
+                                "    \"axis\": {\n" +
+                                "        \"x\": {\n" +
+                                "            \"labels_show\": \"false\"\n" +
+                                "        },\n" +
+                                "        \"y\": {\n" +
+                                "            \"labels_show\": \"false\"\n" +
+                                "        }\n" +
+                                "    },\n" +
+                                "    \"dataSetLookup\": {\n" +
+                                "        \"dataSetUuid\": \"dataset-sales-opportunities\",\n" +
+                                "        \"rowCount\": \"-1\",\n" +
+                                "        \"rowOffset\": \"0\"\n" +
+                                "    }\n" +
+                                "}"
+                )
         ));
+
         nodeList.add(new GalleryNodeDisplayer("Filtered", true,
-                jsonHelper.fromJson( DisplayerJsonDefinitions.INSTANCE.tableReport_filtered() )
+                jsonHelper.fromJson(
+                                "{\n" +
+                                "    \"columns\": [\n" +
+                                "        {\n" +
+                                "            \"columnId\": \"customer\",\n" +
+                                "            \"columnDisplayName\": \"Customer\"\n" +
+                                "        },\n" +
+                                "        {\n" +
+                                "            \"columnId\": \"product\",\n" +
+                                "            \"columnDisplayName\": \"Product\"\n" +
+                                "        },\n" +
+                                "        {\n" +
+                                "            \"columnId\": \"status\",\n" +
+                                "            \"columnDisplayName\": \"Status\"\n" +
+                                "        },\n" +
+                                "        {\n" +
+                                "            \"columnId\": \"source\",\n" +
+                                "            \"columnDisplayName\": \"Source\"\n" +
+                                "        },\n" +
+                                "        {\n" +
+                                "            \"columnId\": \"creationDate\",\n" +
+                                "            \"columnDisplayName\": \"Creation\"\n" +
+                                "        },\n" +
+                                "        {\n" +
+                                "            \"columnId\": \"expectedAmount\",\n" +
+                                "            \"columnDisplayName\": \"Expected\"\n" +
+                                "        },\n" +
+                                "        {\n" +
+                                "            \"columnId\": \"closingDate\",\n" +
+                                "            \"columnDisplayName\": \"Closing\"\n" +
+                                "        },\n" +
+                                "        {\n" +
+                                "            \"columnId\": \"amount\",\n" +
+                                "            \"columnDisplayName\": \"Amount\"\n" +
+                                "        }\n" +
+                                "    ],\n" +
+                                "    \"barChart\": {\n" +
+                                "        \"bar_horizontal\": \"false\"\n" +
+                                "    },\n" +
+                                "    \"chart\": {\n" +
+                                "        \"margin\": {\n" +
+                                "            \"bottom\": \"50\",\n" +
+                                "            \"top\": \"20\",\n" +
+                                "            \"left\": \"80\",\n" +
+                                "            \"right\": \"80\"\n" +
+                                "        },\n" +
+                                "        \"3d\": \"false\",\n" +
+                                "        \"width\": \"600\",\n" +
+                                "        \"height\": \"300\",\n" +
+                                "        \"legend\": {\n" +
+                                "            \"show\": \"true\",\n" +
+                                "            \"position\": \"POSITION_RIGHT\"\n" +
+                                "        }\n" +
+                                "    },\n" +
+                                "    \"table\": {\n" +
+                                "        \"sort\": {\n" +
+                                "            \"order\": \"DESCENDING\",\n" +
+                                "            \"enabled\": \"true\",\n" +
+                                "            \"columnId\": \"amount\"\n" +
+                                "        },\n" +
+                                "        \"pageSize\": \"10\",\n" +
+                                "        \"width\": \"0\"\n" +
+                                "    },\n" +
+                                "    \"meter\": {\n" +
+                                "        \"critical\": \"0\",\n" +
+                                "        \"warning\": \"0\",\n" +
+                                "        \"start\": \"0\",\n" +
+                                "        \"end\": \"0\"\n" +
+                                "    },\n" +
+                                "    \"type\": \"TABLE\",\n" +
+                                "    \"filter\": {\n" +
+                                "        \"listening\": \"false\",\n" +
+                                "        \"selfapply\": \"false\",\n" +
+                                "        \"enabled\": \"false\",\n" +
+                                "        \"notification\": \"false\"\n" +
+                                "    },\n" +
+                                "    \"title\": {\n" +
+                                "        \"visible\": \"true\",\n" +
+                                "        \"title\": \"Opportunities in USA & Brazil\"\n" +
+                                "    },\n" +
+                                "    \"axis\": {\n" +
+                                "        \"x\": {\n" +
+                                "            \"labels_show\": \"false\"\n" +
+                                "        },\n" +
+                                "        \"y\": {\n" +
+                                "            \"labels_show\": \"false\"\n" +
+                                "        }\n" +
+                                "    },\n" +
+                                "    \"dataSetLookup\": {\n" +
+                                "        \"dataSetUuid\": \"dataset-sales-opportunities\",\n" +
+                                "        \"rowCount\": \"-1\",\n" +
+                                "        \"rowOffset\": \"0\",\n" +
+                                "        \"filterOps\": [\n" +
+                                "            {\n" +
+                                "                \"columnId\": \"country\",\n" +
+                                "                \"functionType\": \"OR\",\n" +
+                                "                \"terms\": [\n" +
+                                "                    {\n" +
+                                "                        \"columnId\": \"country\",\n" +
+                                "                        \"functionType\": \"IS_EQUALS_TO\",\n" +
+                                "                        \"terms\": [\"United States\"]\n" +
+                                "                    },\n" +
+                                "                    {\n" +
+                                "                        \"columnId\": \"country\",\n" +
+                                "                        \"functionType\": \"IS_EQUALS_TO\",\n" +
+                                "                        \"terms\": [\"Brazil\"]\n" +
+                                "                    }\n" +
+                                "                ]\n" +
+                                "            }\n" +
+                                "        ]\n" +
+                                "    }\n" +
+                                "}"
+                )
         ));
+
         nodeList.add(new GalleryNodeDisplayer("Grouped", true,
-                jsonHelper.fromJson( DisplayerJsonDefinitions.INSTANCE.tableReport_grouped() )
+                jsonHelper.fromJson(
+                                "{\n" +
+                                "    \"barChart\": {\n" +
+                                "        \"bar_horizontal\": \"false\"\n" +
+                                "    },\n" +
+                                "    \"chart\": {\n" +
+                                "        \"margin\": {\n" +
+                                "            \"bottom\": \"50\",\n" +
+                                "            \"top\": \"20\",\n" +
+                                "            \"left\": \"80\",\n" +
+                                "            \"right\": \"80\"\n" +
+                                "        },\n" +
+                                "        \"3d\": \"false\",\n" +
+                                "        \"width\": \"600\",\n" +
+                                "        \"height\": \"300\",\n" +
+                                "        \"legend\": {\n" +
+                                "            \"show\": \"true\",\n" +
+                                "            \"position\": \"POSITION_RIGHT\"\n" +
+                                "        }\n" +
+                                "    },\n" +
+                                "    \"table\": {\n" +
+                                "        \"sort\": {\n" +
+                                "            \"order\": \"DESCENDING\",\n" +
+                                "            \"enabled\": \"true\",\n" +
+                                "            \"columnId\": \"Country\"\n" +
+                                "        },\n" +
+                                "        \"pageSize\": \"10\",\n" +
+                                "        \"width\": \"0\"\n" +
+                                "    },\n" +
+                                "    \"meter\": {\n" +
+                                "        \"critical\": \"0\",\n" +
+                                "        \"warning\": \"0\",\n" +
+                                "        \"start\": \"0\",\n" +
+                                "        \"end\": \"0\"\n" +
+                                "    },\n" +
+                                "    \"type\": \"TABLE\",\n" +
+                                "    \"filter\": {\n" +
+                                "        \"listening\": \"false\",\n" +
+                                "        \"selfapply\": \"false\",\n" +
+                                "        \"enabled\": \"false\",\n" +
+                                "        \"notification\": \"false\"\n" +
+                                "    },\n" +
+                                "    \"title\": {\n" +
+                                "        \"visible\": \"true\",\n" +
+                                "        \"title\": \"Country Summary\"\n" +
+                                "    },\n" +
+                                "    \"axis\": {\n" +
+                                "        \"x\": {\n" +
+                                "            \"labels_show\": \"false\"\n" +
+                                "        },\n" +
+                                "        \"y\": {\n" +
+                                "            \"labels_show\": \"false\"\n" +
+                                "        }\n" +
+                                "    },\n" +
+                                "    \"dataSetLookup\": {\n" +
+                                "        \"dataSetUuid\": \"dataset-sales-opportunities\",\n" +
+                                "        \"rowCount\": \"-1\",\n" +
+                                "        \"rowOffset\": \"0\",\n" +
+                                "        \"groupOps\": [\n" +
+                                "            {\n" +
+                                "                \"columnGroup\": {\n" +
+                                "                    \"sourceId\": \"country\",\n" +
+                                "                    \"columnId\": \"Country\",\n" +
+                                "                    \"groupStrategy\": \"DYNAMIC\",\n" +
+                                "                    \"maxIntervals\": \"15\",\n" +
+                                "                    \"asc\": \"true\",\n" +
+                                "                    \"firstMonthOfYear\": \"JANUARY\",\n" +
+                                "                    \"firstDayOfWeek\": \"MONDAY\"\n" +
+                                "                },\n" +
+                                "                \"groupFunctions\": [\n" +
+                                "                    {\n" +
+                                "                        \"columnId\": \"#Opps\",\n" +
+                                "                        \"function\": \"COUNT\"\n" +
+                                "                    },\n" +
+                                "                    {\n" +
+                                "                        \"sourceId\": \"amount\",\n" +
+                                "                        \"columnId\": \"Min\",\n" +
+                                "                        \"function\": \"MIN\"\n" +
+                                "                    },\n" +
+                                "                    {\n" +
+                                "                        \"sourceId\": \"amount\",\n" +
+                                "                        \"columnId\": \"Max\",\n" +
+                                "                        \"function\": \"MAX\"\n" +
+                                "                    },\n" +
+                                "                    {\n" +
+                                "                        \"sourceId\": \"amount\",\n" +
+                                "                        \"columnId\": \"Average\",\n" +
+                                "                        \"function\": \"AVERAGE\"\n" +
+                                "                    },\n" +
+                                "                    {\n" +
+                                "                        \"sourceId\": \"amount\",\n" +
+                                "                        \"columnId\": \"Total\",\n" +
+                                "                        \"function\": \"SUM\"\n" +
+                                "                    }\n" +
+                                "                ],\n" +
+                                "                \"selectedIntervals\": []\n" +
+                                "            }\n" +
+                                "        ]\n" +
+                                "    }\n" +
+                                "}"
+                )
         ));
+
         nodeList.add(new GalleryNodeDisplayer("Default (drill-down)", true,
-                jsonHelper.fromJson( DisplayerJsonDefinitions.INSTANCE.tableReport_default() )
+                jsonHelper.fromJson(
+                                "{\n" +
+                                "    \"columns\": [\n" +
+                                "        {\n" +
+                                "            \"columnId\": \"country\",\n" +
+                                "            \"columnDisplayName\": \"Country\"\n" +
+                                "        },\n" +
+                                "        {\n" +
+                                "            \"columnId\": \"customer\",\n" +
+                                "            \"columnDisplayName\": \"Customer\"\n" +
+                                "        },\n" +
+                                "        {\n" +
+                                "            \"columnId\": \"product\",\n" +
+                                "            \"columnDisplayName\": \"Product\"\n" +
+                                "        },\n" +
+                                "        {\n" +
+                                "            \"columnId\": \"salesPerson\",\n" +
+                                "            \"columnDisplayName\": \"Salesman\"\n" +
+                                "        },\n" +
+                                "        {\n" +
+                                "            \"columnId\": \"status\",\n" +
+                                "            \"columnDisplayName\": \"Status\"\n" +
+                                "        },\n" +
+                                "        {\n" +
+                                "            \"columnId\": \"source\",\n" +
+                                "            \"columnDisplayName\": \"Source\"\n" +
+                                "        },\n" +
+                                "        {\n" +
+                                "            \"columnId\": \"creationDate\",\n" +
+                                "            \"columnDisplayName\": \"Creation\"\n" +
+                                "        },\n" +
+                                "        {\n" +
+                                "            \"columnId\": \"expectedAmount\",\n" +
+                                "            \"columnDisplayName\": \"Expected\"\n" +
+                                "        },\n" +
+                                "        {\n" +
+                                "            \"columnId\": \"closingDate\",\n" +
+                                "            \"columnDisplayName\": \"Closing\"\n" +
+                                "        },\n" +
+                                "        {\n" +
+                                "            \"columnId\": \"amount\",\n" +
+                                "            \"columnDisplayName\": \"Amount\"\n" +
+                                "        }\n" +
+                                "    ],\n" +
+                                "    \"barChart\": {\n" +
+                                "        \"bar_horizontal\": \"false\"\n" +
+                                "    },\n" +
+                                "    \"chart\": {\n" +
+                                "        \"margin\": {\n" +
+                                "            \"bottom\": \"50\",\n" +
+                                "            \"top\": \"20\",\n" +
+                                "            \"left\": \"80\",\n" +
+                                "            \"right\": \"80\"\n" +
+                                "        },\n" +
+                                "        \"3d\": \"false\",\n" +
+                                "        \"width\": \"600\",\n" +
+                                "        \"height\": \"300\",\n" +
+                                "        \"legend\": {\n" +
+                                "            \"show\": \"true\",\n" +
+                                "            \"position\": \"POSITION_RIGHT\"\n" +
+                                "        }\n" +
+                                "    },\n" +
+                                "    \"table\": {\n" +
+                                "        \"sort\": {\n" +
+                                "            \"order\": \"DESCENDING\",\n" +
+                                "            \"enabled\": \"true\",\n" +
+                                "            \"columnId\": \"amount\"\n" +
+                                "        },\n" +
+                                "        \"pageSize\": \"10\",\n" +
+                                "        \"width\": \"0\"\n" +
+                                "    },\n" +
+                                "    \"meter\": {\n" +
+                                "        \"critical\": \"0\",\n" +
+                                "        \"warning\": \"0\",\n" +
+                                "        \"start\": \"0\",\n" +
+                                "        \"end\": \"0\"\n" +
+                                "    },\n" +
+                                "    \"type\": \"TABLE\",\n" +
+                                "    \"filter\": {\n" +
+                                "        \"listening\": \"false\",\n" +
+                                "        \"selfapply\": \"true\",\n" +
+                                "        \"enabled\": \"true\",\n" +
+                                "        \"notification\": \"false\"\n" +
+                                "    },\n" +
+                                "    \"title\": {\n" +
+                                "        \"visible\": \"true\",\n" +
+                                "        \"title\": \"List of Opportunities\"\n" +
+                                "    },\n" +
+                                "    \"axis\": {\n" +
+                                "        \"x\": {\n" +
+                                "            \"labels_show\": \"false\"\n" +
+                                "        },\n" +
+                                "        \"y\": {\n" +
+                                "            \"labels_show\": \"false\"\n" +
+                                "        }\n" +
+                                "    },\n" +
+                                "    \"renderer\": \"table\",\n" +
+                                "    \"dataSetLookup\": {\n" +
+                                "        \"dataSetUuid\": \"dataset-sales-opportunities\",\n" +
+                                "        \"rowCount\": \"-1\",\n" +
+                                "        \"rowOffset\": \"0\"\n" +
+                                "    }\n" +
+                                "}"
+                )
         ));
 
 
@@ -564,13 +2169,254 @@ public class GalleryTree {
         jsonExamples.add(nodeList);
 
         nodeList.add(new GalleryNodeDisplayer("Basic", true,
-                jsonHelper.fromJson( DisplayerJsonDefinitions.INSTANCE.meterChart_basic() )
+                jsonHelper.fromJson(
+                                "{\n" +
+                                "    \"columns\": [\n" +
+                                "        {\n" +
+                                "            \"columnDisplayName\": \"Total amount\"\n" +
+                                "        }\n" +
+                                "    ],\n" +
+                                "    \"barChart\": {\n" +
+                                "        \"bar_horizontal\": \"false\"\n" +
+                                "    },\n" +
+                                "    \"chart\": {\n" +
+                                "        \"margin\": {\n" +
+                                "            \"bottom\": \"50\",\n" +
+                                "            \"top\": \"20\",\n" +
+                                "            \"left\": \"80\",\n" +
+                                "            \"right\": \"80\"\n" +
+                                "        },\n" +
+                                "        \"3d\": \"false\",\n" +
+                                "        \"width\": \"400\",\n" +
+                                "        \"height\": \"200\",\n" +
+                                "        \"legend\": {\n" +
+                                "            \"show\": \"true\",\n" +
+                                "            \"position\": \"POSITION_RIGHT\"\n" +
+                                "        }\n" +
+                                "    },\n" +
+                                "    \"table\": {\n" +
+                                "        \"sort\": {\n" +
+                                "            \"order\": \"asc\",\n" +
+                                "            \"enabled\": \"true\"\n" +
+                                "        },\n" +
+                                "        \"pageSize\": \"20\",\n" +
+                                "        \"width\": \"0\"\n" +
+                                "    },\n" +
+                                "    \"meter\": {\n" +
+                                "        \"critical\": \"8000000\",\n" +
+                                "        \"warning\": \"5000000\",\n" +
+                                "        \"start\": \"0\",\n" +
+                                "        \"end\": \"10000000\"\n" +
+                                "    },\n" +
+                                "    \"type\": \"METERCHART\",\n" +
+                                "    \"filter\": {\n" +
+                                "        \"listening\": \"false\",\n" +
+                                "        \"selfapply\": \"false\",\n" +
+                                "        \"enabled\": \"false\",\n" +
+                                "        \"notification\": \"false\"\n" +
+                                "    },\n" +
+                                "    \"title\": {\n" +
+                                "        \"visible\": \"true\",\n" +
+                                "        \"title\": \"Sales goal\"\n" +
+                                "    },\n" +
+                                "    \"axis\": {\n" +
+                                "        \"x\": {\n" +
+                                "            \"labels_show\": \"false\"\n" +
+                                "        },\n" +
+                                "        \"y\": {\n" +
+                                "            \"labels_show\": \"false\"\n" +
+                                "        }\n" +
+                                "    },\n" +
+                                "    \"dataSetLookup\": {\n" +
+                                "        \"dataSetUuid\": \"dataset-sales-opportunities\",\n" +
+                                "        \"rowCount\": \"-1\",\n" +
+                                "        \"rowOffset\": \"0\",\n" +
+                                "        \"groupOps\": [\n" +
+                                "            {\n" +
+                                "                \"groupFunctions\": [\n" +
+                                "                    {\n" +
+                                "                        \"sourceId\": \"amount\",\n" +
+                                "                        \"columnId\": \"Total amount\",\n" +
+                                "                        \"function\": \"SUM\"\n" +
+                                "                    }\n" +
+                                "                ],\n" +
+                                "                \"selectedIntervals\": []\n" +
+                                "            }\n" +
+                                "        ]\n" +
+                                "    }\n" +
+                                "}"
+                )
         ));
+
         nodeList.add(new GalleryNodeDisplayer("Multiple", true,
-                jsonHelper.fromJson( DisplayerJsonDefinitions.INSTANCE.meterChart_multiple() )
+                jsonHelper.fromJson(
+                                "{\n" +
+                                "    \"columns\": [\n" +
+                                "        {\n" +
+                                "            \"columnDisplayName\": \"Year\"\n" +
+                                "        },\n" +
+                                "        {\n" +
+                                "            \"columnDisplayName\": \"Amount\"\n" +
+                                "        }\n" +
+                                "    ],\n" +
+                                "    \"barChart\": {\n" +
+                                "        \"bar_horizontal\": \"false\"\n" +
+                                "    },\n" +
+                                "    \"chart\": {\n" +
+                                "        \"margin\": {\n" +
+                                "            \"bottom\": \"50\",\n" +
+                                "            \"top\": \"20\",\n" +
+                                "            \"left\": \"80\",\n" +
+                                "            \"right\": \"80\"\n" +
+                                "        },\n" +
+                                "        \"3d\": \"false\",\n" +
+                                "        \"width\": \"600\",\n" +
+                                "        \"height\": \"200\",\n" +
+                                "        \"legend\": {\n" +
+                                "            \"show\": \"true\",\n" +
+                                "            \"position\": \"POSITION_RIGHT\"\n" +
+                                "        }\n" +
+                                "    },\n" +
+                                "    \"table\": {\n" +
+                                "        \"sort\": {\n" +
+                                "            \"order\": \"asc\",\n" +
+                                "            \"enabled\": \"true\"\n" +
+                                "        },\n" +
+                                "        \"pageSize\": \"20\",\n" +
+                                "        \"width\": \"0\"\n" +
+                                "    },\n" +
+                                "    \"meter\": {\n" +
+                                "        \"critical\": \"3000000\",\n" +
+                                "        \"warning\": \"1000000\",\n" +
+                                "        \"start\": \"0\",\n" +
+                                "        \"end\": \"5000000\"\n" +
+                                "    },\n" +
+                                "    \"type\": \"METERCHART\",\n" +
+                                "    \"filter\": {\n" +
+                                "        \"listening\": \"false\",\n" +
+                                "        \"selfapply\": \"false\",\n" +
+                                "        \"enabled\": \"false\",\n" +
+                                "        \"notification\": \"false\"\n" +
+                                "    },\n" +
+                                "    \"title\": {\n" +
+                                "        \"visible\": \"true\",\n" +
+                                "        \"title\": \"Expected amount per year\"\n" +
+                                "    },\n" +
+                                "    \"axis\": {\n" +
+                                "        \"x\": {\n" +
+                                "            \"labels_show\": \"false\"\n" +
+                                "        },\n" +
+                                "        \"y\": {\n" +
+                                "            \"labels_show\": \"false\"\n" +
+                                "        }\n" +
+                                "    },\n" +
+                                "    \"dataSetLookup\": {\n" +
+                                "        \"dataSetUuid\": \"dataset-sales-opportunities\",\n" +
+                                "        \"rowCount\": \"-1\",\n" +
+                                "        \"rowOffset\": \"0\",\n" +
+                                "        \"groupOps\": [\n" +
+                                "            {\n" +
+                                "                \"columnGroup\": {\n" +
+                                "                    \"sourceId\": \"creationDate\",\n" +
+                                "                    \"columnId\": \"creationDate\",\n" +
+                                "                    \"groupStrategy\": \"DYNAMIC\",\n" +
+                                "                    \"maxIntervals\": \"-1\",\n" +
+                                "                    \"intervalSize\": \"YEAR\",\n" +
+                                "                    \"asc\": \"true\",\n" +
+                                "                    \"firstMonthOfYear\": \"JANUARY\",\n" +
+                                "                    \"firstDayOfWeek\": \"MONDAY\"\n" +
+                                "                },\n" +
+                                "                \"groupFunctions\": [\n" +
+                                "                    {\n" +
+                                "                        \"sourceId\": \"amount\",\n" +
+                                "                        \"columnId\": \"amount\",\n" +
+                                "                        \"function\": \"SUM\"\n" +
+                                "                    }\n" +
+                                "                ],\n" +
+                                "                \"selectedIntervals\": []\n" +
+                                "            }\n" +
+                                "        ]\n" +
+                                "    }\n" +
+                                "}"
+                )
         ));
+
         nodeList.add(new GalleryNodeDisplayer("Multiple (static)", true,
-                jsonHelper.fromJson( DisplayerJsonDefinitions.INSTANCE.meterChart_multipleStatic() )
+                jsonHelper.fromJson(
+                                "{\n" +
+                                "    \"columns\": [\n" +
+                                "        {\n" +
+                                "            \"columnDisplayName\": \"Person\"\n" +
+                                "        },\n" +
+                                "        {\n" +
+                                "            \"columnDisplayName\": \"Heart rate\"\n" +
+                                "        }\n" +
+                                "    ],\n" +
+                                "    \"barChart\": {\n" +
+                                "        \"bar_horizontal\": \"false\"\n" +
+                                "    },\n" +
+                                "    \"chart\": {\n" +
+                                "        \"margin\": {\n" +
+                                "            \"bottom\": \"50\",\n" +
+                                "            \"top\": \"20\",\n" +
+                                "            \"left\": \"80\",\n" +
+                                "            \"right\": \"80\"\n" +
+                                "        },\n" +
+                                "        \"3d\": \"false\",\n" +
+                                "        \"width\": \"500\",\n" +
+                                "        \"height\": \"200\",\n" +
+                                "        \"legend\": {\n" +
+                                "            \"show\": \"true\",\n" +
+                                "            \"position\": \"POSITION_RIGHT\"\n" +
+                                "        }\n" +
+                                "    },\n" +
+                                "    \"table\": {\n" +
+                                "        \"sort\": {\n" +
+                                "            \"order\": \"asc\",\n" +
+                                "            \"enabled\": \"true\"\n" +
+                                "        },\n" +
+                                "        \"pageSize\": \"20\",\n" +
+                                "        \"width\": \"0\"\n" +
+                                "    },\n" +
+                                "    \"meter\": {\n" +
+                                "        \"critical\": \"190\",\n" +
+                                "        \"warning\": \"160\",\n" +
+                                "        \"start\": \"30\",\n" +
+                                "        \"end\": \"220\"\n" +
+                                "    },\n" +
+                                "    \"type\": \"METERCHART\",\n" +
+                                "    \"filter\": {\n" +
+                                "        \"listening\": \"false\",\n" +
+                                "        \"selfapply\": \"false\",\n" +
+                                "        \"enabled\": \"false\",\n" +
+                                "        \"notification\": \"false\"\n" +
+                                "    },\n" +
+                                "    \"title\": {\n" +
+                                "        \"visible\": \"true\",\n" +
+                                "        \"title\": \"Heart rate\"\n" +
+                                "    },\n" +
+                                "    \"axis\": {\n" +
+                                "        \"x\": {\n" +
+                                "            \"labels_show\": \"false\"\n" +
+                                "        },\n" +
+                                "        \"y\": {\n" +
+                                "            \"labels_show\": \"false\"\n" +
+                                "        }\n" +
+                                "    },\n" +
+                                "    \"dataSet\": {\n" +
+                                "        \"column.0\": {\n" +
+                                "            \"id\": \"person\",\n" +
+                                "            \"type\": \"LABEL\",\n" +
+                                "            \"values\": [\"David\", \"Roger\", \"Mark\", \"Michael\", \"Kris\"]\n" +
+                                "        },\n" +
+                                "        \"column.1\": {\n" +
+                                "            \"id\": \"heartRate\",\n" +
+                                "            \"type\": \"NUMBER\",\n" +
+                                "            \"values\": [\"52\", \"120\", \"74\", \"78\", \"74\"]\n" +
+                                "        }\n" +
+                                "    }\n" +
+                                "}"
+                )
         ));
 
 
@@ -578,7 +2424,95 @@ public class GalleryTree {
         jsonExamples.add(nodeList);
 
         nodeList.add(new GalleryNodeDisplayer("GeoMap", true,
-                jsonHelper.fromJson( DisplayerJsonDefinitions.INSTANCE.geoMap() )
+                jsonHelper.fromJson(
+                                "{\n" +
+                                "    \"columns\": [\n" +
+                                "        {\n" +
+                                "            \"columnDisplayName\": \"Country\"\n" +
+                                "        },\n" +
+                                "        {\n" +
+                                "            \"columnDisplayName\": \"Total amount\"\n" +
+                                "        }\n" +
+                                "    ],\n" +
+                                "    \"barChart\": {\n" +
+                                "        \"bar_horizontal\": \"false\"\n" +
+                                "    },\n" +
+                                "    \"chart\": {\n" +
+                                "        \"margin\": {\n" +
+                                "            \"bottom\": \"10\",\n" +
+                                "            \"top\": \"10\",\n" +
+                                "            \"left\": \"10\",\n" +
+                                "            \"right\": \"10\"\n" +
+                                "        },\n" +
+                                "        \"3d\": \"false\",\n" +
+                                "        \"width\": \"700\",\n" +
+                                "        \"height\": \"500\",\n" +
+                                "        \"legend\": {\n" +
+                                "            \"show\": \"true\",\n" +
+                                "            \"position\": \"POSITION_RIGHT\"\n" +
+                                "        }\n" +
+                                "    },\n" +
+                                "    \"table\": {\n" +
+                                "        \"sort\": {\n" +
+                                "            \"order\": \"asc\",\n" +
+                                "            \"enabled\": \"true\"\n" +
+                                "        },\n" +
+                                "        \"pageSize\": \"20\",\n" +
+                                "        \"width\": \"0\"\n" +
+                                "    },\n" +
+                                "    \"meter\": {\n" +
+                                "        \"critical\": \"0\",\n" +
+                                "        \"warning\": \"0\",\n" +
+                                "        \"start\": \"0\",\n" +
+                                "        \"end\": \"0\"\n" +
+                                "    },\n" +
+                                "    \"type\": \"MAP\",\n" +
+                                "    \"filter\": {\n" +
+                                "        \"listening\": \"false\",\n" +
+                                "        \"selfapply\": \"false\",\n" +
+                                "        \"enabled\": \"false\",\n" +
+                                "        \"notification\": \"false\"\n" +
+                                "    },\n" +
+                                "    \"title\": {\n" +
+                                "        \"visible\": \"true\",\n" +
+                                "        \"title\": \"By Country\"\n" +
+                                "    },\n" +
+                                "    \"axis\": {\n" +
+                                "        \"x\": {\n" +
+                                "            \"labels_show\": \"false\"\n" +
+                                "        },\n" +
+                                "        \"y\": {\n" +
+                                "            \"labels_show\": \"false\"\n" +
+                                "        }\n" +
+                                "    },\n" +
+                                "    \"dataSetLookup\": {\n" +
+                                "        \"dataSetUuid\": \"dataset-sales-opportunities\",\n" +
+                                "        \"rowCount\": \"-1\",\n" +
+                                "        \"rowOffset\": \"0\",\n" +
+                                "        \"groupOps\": [\n" +
+                                "            {\n" +
+                                "                \"columnGroup\": {\n" +
+                                "                    \"sourceId\": \"country\",\n" +
+                                "                    \"columnId\": \"country\",\n" +
+                                "                    \"groupStrategy\": \"DYNAMIC\",\n" +
+                                "                    \"maxIntervals\": \"15\",\n" +
+                                "                    \"asc\": \"true\",\n" +
+                                "                    \"firstMonthOfYear\": \"JANUARY\",\n" +
+                                "                    \"firstDayOfWeek\": \"MONDAY\"\n" +
+                                "                },\n" +
+                                "                \"groupFunctions\": [\n" +
+                                "                    {\n" +
+                                "                        \"sourceId\": \"amount\",\n" +
+                                "                        \"columnId\": \"amount\",\n" +
+                                "                        \"function\": \"SUM\"\n" +
+                                "                    }\n" +
+                                "                ],\n" +
+                                "                \"selectedIntervals\": []\n" +
+                                "            }\n" +
+                                "        ]\n" +
+                                "    }\n" +
+                                "}"
+                )
         ));
     }
 }

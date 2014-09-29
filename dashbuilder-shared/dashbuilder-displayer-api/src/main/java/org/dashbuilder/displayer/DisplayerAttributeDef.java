@@ -29,9 +29,9 @@ public class DisplayerAttributeDef {
     public static final DisplayerAttributeDef TITLE_VISIBLE = new DisplayerAttributeDef("visible");
 
     public static final DisplayerAttributeDef FILTER_ENABLED = new DisplayerAttributeDef("enabled");
-    public static final DisplayerAttributeDef FILTER_SELFAPPLY_ENABLED = new DisplayerAttributeDef("selfapply_enabled");
-    public static final DisplayerAttributeDef FILTER_NOTIFICATION_ENABLED = new DisplayerAttributeDef("notification_enabled");
-    public static final DisplayerAttributeDef FILTER_LISTENING_ENABLED = new DisplayerAttributeDef("listening_enabled");
+    public static final DisplayerAttributeDef FILTER_SELFAPPLY_ENABLED = new DisplayerAttributeDef("selfapply");
+    public static final DisplayerAttributeDef FILTER_NOTIFICATION_ENABLED = new DisplayerAttributeDef("notification");
+    public static final DisplayerAttributeDef FILTER_LISTENING_ENABLED = new DisplayerAttributeDef("listening");
 
     public static final DisplayerAttributeDef CHART_WIDTH = new DisplayerAttributeDef("width");
     public static final DisplayerAttributeDef CHART_HEIGHT = new DisplayerAttributeDef("height");

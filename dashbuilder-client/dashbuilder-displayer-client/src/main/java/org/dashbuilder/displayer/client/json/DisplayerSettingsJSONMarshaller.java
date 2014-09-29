@@ -38,7 +38,6 @@ import static org.dashbuilder.displayer.DisplayerEditorConfig.ATTRIBUTE_PATH_SEP
 
 public class DisplayerSettingsJSONMarshaller {
 
-    private static final String JSON_SETTINGS_PREFIX = "settings";
     private static final String JSON_DATASET_PREFIX = "dataSet";
     private static final String JSON_DATASET_LOOKUP_PREFIX = "dataSetLookup";
 
@@ -65,22 +64,20 @@ public class DisplayerSettingsJSONMarshaller {
 
             if ( parseResult != null ) {
 
-                JSONObject jsonPart = parseResult.get( JSON_SETTINGS_PREFIX ).isObject();
-                if ( jsonPart == null ) throw new RuntimeException( "No settings specified in the JSON input" );
-
                 // UUID
-                ds.setUUID( getNodeValue( jsonPart, SETTINGS_UUID ) );
+                JSONValue uuidValue = parseResult.get( SETTINGS_UUID );
+                ds.setUUID( uuidValue != null && uuidValue.isString() != null ? uuidValue.isString().stringValue() : null );
 
                 // DisplayerSettings columns
-                JSONValue value = jsonPart.get( SETTINGS_COLUMNS );
+                JSONValue value = parseResult.get( SETTINGS_COLUMNS );
                 if ( value != null && value.isArray() != null ) {
                     ds.setColumns( parseSettingsColumns( value.isArray() ) );
                     // Remove column part so that it doesn't end up in the settings map
-                    jsonPart.put( SETTINGS_COLUMNS, null );
+                    parseResult.put( SETTINGS_COLUMNS, null );
                 }
 
                 // Other settings
-                ds.setSettingsFlatMap( parseSettingsFromJson( jsonPart ) );
+                ds.setSettingsFlatMap( parseSettingsFromJson( parseResult ) );
 
                 // First look if a dataset 'on-the-fly' has been specified
                 JSONValue data = parseResult.get( JSON_DATASET_PREFIX );
@@ -104,17 +101,14 @@ public class DisplayerSettingsJSONMarshaller {
         JSONObject json = new JSONObject(  );
 
         // UUID
-        setNodeValue( json, JSON_SETTINGS_PREFIX + ATTRIBUTE_PATH_SEPARATOR + SETTINGS_UUID, displayerSettings.getUUID() );
+        json.put( SETTINGS_UUID, displayerSettings.getUUID() != null ? new JSONString( displayerSettings.getUUID() ) : null );
 
         // First the columns
-        JSONValue settingsNode = json.get( JSON_SETTINGS_PREFIX );
-        if ( settingsNode == null ) settingsNode = new JSONObject();        // Might not have been initialized yet
-        settingsNode.isObject().put( SETTINGS_COLUMNS, formatSettingsColumns( displayerSettings.getColumns() ) );
-        json.put( JSON_SETTINGS_PREFIX, settingsNode );
+        json.put( SETTINGS_COLUMNS, formatSettingsColumns( displayerSettings.getColumns() ) );
 
         // Then all the other settings
         for ( Map.Entry<String, String> entry : displayerSettings.getSettingsFlatMap().entrySet() ) {
-            setNodeValue( json, JSON_SETTINGS_PREFIX + ATTRIBUTE_PATH_SEPARATOR + entry.getKey(), entry.getValue() );
+            setNodeValue( json, entry.getKey(), entry.getValue() );
         }
 
         // DataSet or DataSetLookup

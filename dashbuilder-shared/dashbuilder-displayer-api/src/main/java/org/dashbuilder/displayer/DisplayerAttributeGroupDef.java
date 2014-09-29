@@ -25,11 +25,6 @@ public class DisplayerAttributeGroupDef extends DisplayerAttributeDef {
 
     // SUBGROUPS
 
-    public static final DisplayerAttributeGroupDef TITLE_GROUP =
-            new DisplayerAttributeGroupDef( DisplayerAttributeGroupDef.COMMON_GROUP, "title",
-                                            DisplayerAttributeDef.TITLE_VISIBLE,
-                                            DisplayerAttributeDef.TITLE);
-
     public static final DisplayerAttributeGroupDef CHART_MARGIN_GROUP =
             new DisplayerAttributeGroupDef( DisplayerAttributeGroupDef.CHART_GROUP, "margin",
                                             DisplayerAttributeDef.CHART_MARGIN_BOTTOM,
@@ -60,11 +55,10 @@ public class DisplayerAttributeGroupDef extends DisplayerAttributeDef {
 
     // ROOT-GROUPS
 
-    public static final DisplayerAttributeGroupDef COMMON_GROUP =
-            new DisplayerAttributeGroupDef("common", DisplayerAttributeDef.TYPE,
-                    DisplayerAttributeDef.RENDERER,
-                    DisplayerAttributeDef.COLUMNS,
-                    DisplayerAttributeGroupDef.TITLE_GROUP);
+    public static final DisplayerAttributeGroupDef TITLE_GROUP =
+            new DisplayerAttributeGroupDef( "title",
+                    DisplayerAttributeDef.TITLE_VISIBLE,
+                    DisplayerAttributeDef.TITLE);
 
     public static final DisplayerAttributeGroupDef FILTER_GROUP =
             new DisplayerAttributeGroupDef("filter", DisplayerAttributeDef.FILTER_ENABLED,
@@ -93,6 +87,9 @@ public class DisplayerAttributeGroupDef extends DisplayerAttributeDef {
                     DisplayerAttributeDef.METER_WARNING,
                     DisplayerAttributeDef.METER_CRITICAL,
                     DisplayerAttributeDef.METER_END);
+
+    public static final DisplayerAttributeGroupDef BARCHART_GROUP =
+            new DisplayerAttributeGroupDef("barChart", new DisplayerAttributeDef[]{DisplayerAttributeGroupDef.BARCHART_HORIZONTAL});
 
     private Set<DisplayerAttributeDef> flatMembers = new HashSet<DisplayerAttributeDef>();
 

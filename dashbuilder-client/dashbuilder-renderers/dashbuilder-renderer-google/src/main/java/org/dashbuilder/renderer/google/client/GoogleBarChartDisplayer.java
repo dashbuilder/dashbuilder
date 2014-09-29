@@ -69,13 +69,16 @@ public class GoogleBarChartDisplayer extends GoogleXAxisChartDisplayer {
     @Override
     public DisplayerEditorConfig getDisplayerEditorConfig() {
         return new DisplayerEditorConfigImpl()
-                   .supportsAttribute( DisplayerAttributeGroupDef.COMMON_GROUP )
+                   .supportsAttribute( DisplayerAttributeGroupDef.TYPE )
+                   .supportsAttribute( DisplayerAttributeGroupDef.RENDERER )
+                   .supportsAttribute( DisplayerAttributeGroupDef.COLUMNS )
+                   .supportsAttribute( DisplayerAttributeGroupDef.TITLE_GROUP )
                    .supportsAttribute( DisplayerAttributeDef.CHART_WIDTH )
                    .supportsAttribute( DisplayerAttributeDef.CHART_HEIGHT )
                    .supportsAttribute( DisplayerAttributeGroupDef.CHART_MARGIN_GROUP )
                    .supportsAttribute( DisplayerAttributeGroupDef.CHART_LEGEND_GROUP )
                    .supportsAttribute( DisplayerAttributeGroupDef.AXIS_GROUP )
-                   .supportsAttribute( DisplayerAttributeDef.BARCHART_HORIZONTAL );
+                   .supportsAttribute( DisplayerAttributeGroupDef.BARCHART_GROUP );
     }
 
     protected void updateVisualization() {
