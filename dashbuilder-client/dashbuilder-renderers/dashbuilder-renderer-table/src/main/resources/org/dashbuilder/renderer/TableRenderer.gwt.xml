@@ -4,8 +4,6 @@
 <module>
   <inherits name="org.dashbuilder.DisplayerClient"/>
 
-  <inherits name="org.kie.uberfire.KIEUberfireWidgetsCommons"/>
-
   <source path='table'/>
 
 </module>
