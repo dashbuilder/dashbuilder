@@ -109,6 +109,32 @@
         <classifier>sources</classifier>
       </dependency>
 
+      <dependency>
+        <groupId>org.dashbuilder</groupId>
+        <artifactId>dashbuilder-dataset-sql</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.dashbuilder</groupId>
+        <artifactId>dashbuilder-dataset-sql</artifactId>
+        <version>${project.version}</version>
+        <classifier>sources</classifier>
+      </dependency>
+
+      <dependency>
+        <groupId>org.dashbuilder</groupId>
+        <artifactId>dashbuilder-dataset-csv</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.dashbuilder</groupId>
+        <artifactId>dashbuilder-dataset-csv</artifactId>
+        <version>${project.version}</version>
+        <classifier>sources</classifier>
+      </dependency>
+
       <!-- Dashbuilder Client -->
       <dependency>
         <groupId>org.dashbuilder</groupId>

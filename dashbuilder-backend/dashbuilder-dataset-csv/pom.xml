@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ Copyright 2012 JBoss Inc
+  ~ Copyright 2014 JBoss Inc
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -15,25 +15,29 @@
   ~ limitations under the License.
   -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.dashbuilder</groupId>
-    <artifactId>dashbuilder-packaging</artifactId>
+    <artifactId>dashbuilder-backend</artifactId>
     <version>0.2.0-SNAPSHOT</version>
   </parent>
 
-  <artifactId>dashbuilder-server-all</artifactId>
+  <artifactId>dashbuilder-dataset-csv</artifactId>
   <packaging>jar</packaging>
 
-  <name>Dashbuilder All Server Libraries</name>
+  <name>Dashbuilder Dataset CSV Provider</name>
 
   <dependencies>
+
+    <dependency>
+      <groupId>javax.enterprise</groupId>
+      <artifactId>cdi-api</artifactId>
+    </dependency>
+
     <dependency>
       <groupId>org.dashbuilder</groupId>
-      <artifactId>dashbuilder-common</artifactId>
+      <artifactId>dashbuilder-dataset-api</artifactId>
     </dependency>
 
     <dependency>
@@ -43,17 +47,21 @@
 
     <dependency>
       <groupId>org.dashbuilder</groupId>
-      <artifactId>dashbuilder-dataset-sql</artifactId>
+      <artifactId>dashbuilder-common</artifactId>
     </dependency>
 
     <dependency>
-      <groupId>org.dashbuilder</groupId>
-      <artifactId>dashbuilder-dataset-csv</artifactId>
+      <groupId>net.sf.opencsv</groupId>
+      <artifactId>opencsv</artifactId>
     </dependency>
+
+    <!-- Unit testing -->
 
     <dependency>
       <groupId>org.dashbuilder</groupId>
-      <artifactId>dashbuilder-dataset-shared</artifactId>
+      <artifactId>dashbuilder-common</artifactId>
+      <type>test-jar</type>
+      <scope>test</scope>
     </dependency>
 
   </dependencies>

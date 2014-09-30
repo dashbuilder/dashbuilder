@@ -17,6 +17,8 @@
   <modules>
     <module>dashbuilder-common</module>
     <module>dashbuilder-dataset-core</module>
+    <module>dashbuilder-dataset-sql</module>
+    <module>dashbuilder-dataset-csv</module>
   </modules>
 
   <dependencies>
