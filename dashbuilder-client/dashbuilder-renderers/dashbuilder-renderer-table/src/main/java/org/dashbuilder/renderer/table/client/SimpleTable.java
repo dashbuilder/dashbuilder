@@ -40,9 +40,9 @@ import com.google.gwt.view.client.Range;
 import com.google.gwt.view.client.RangeChangeEvent;
 import com.google.gwt.view.client.RowCountChangeEvent;
 import com.google.gwt.view.client.SelectionModel;
+import org.dashbuilder.renderer.table.client.resources.SimpleTableResources;
+
 import java.util.List;
-import javax.inject.Inject;
-import org.uberfire.client.resources.CommonResources;
 
 /**
  * A composite Widget that shows rows of data (not-paged) and a "column picker"
@@ -62,7 +62,7 @@ public class SimpleTable<T>
 
     private static Binder uiBinder = GWT.create( Binder.class );
 
-    //@UiField(provided = true)
+    @UiField(provided = true)
     public Button columnPickerButton;
 
     @UiField(provided = true)
@@ -100,7 +100,7 @@ public class SimpleTable<T>
         dataGrid.setSkipRowHoverStyleUpdate( false );
         dataGrid.setWidth( "100%" );
         dataGrid.setHeight( "300px" );
-        dataGrid.addStyleName( CommonResources.INSTANCE.CSS().dataGrid() );
+        dataGrid.addStyleName( SimpleTableResources.INSTANCE.CSS().dataGrid() );
 
         setEmptyTableWidget();
 

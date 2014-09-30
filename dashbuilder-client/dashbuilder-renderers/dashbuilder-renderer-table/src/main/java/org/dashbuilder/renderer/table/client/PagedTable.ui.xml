@@ -55,7 +55,7 @@ THIS FILE HAS BEEN COPIED FROM KIE UBERFIRE EXTENSIONS UNTIL IS PLACED INTO AN U
       </g:cell>
       <g:cell width="33%">
         <g:FlowPanel width="100%"  ui:field="rightToolbar" addStyleNames="{style.rightToolBar}">
-          <!--<b:Button ui:field="columnPickerButton" toggle="true" icon="LIST_UL"/>-->
+          <b:Button ui:field="columnPickerButton" toggle="true" icon="LIST_UL"/>
         </g:FlowPanel>
       </g:cell>
     </g:HorizontalPanel>
