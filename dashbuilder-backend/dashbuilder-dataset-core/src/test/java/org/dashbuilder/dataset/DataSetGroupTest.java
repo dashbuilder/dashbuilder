@@ -61,7 +61,7 @@ public class DataSetGroupTest {
     @Test
     public void testDataSetFunctions() throws Exception {
         DataSet result = dataSetManager.lookupDataSet(
-                DataSetFactory.newDSLookupBuilder()
+                DataSetFactory.newDataSetLookupBuilder()
                 .dataset(EXPENSE_REPORTS)
                 .count("#items")
                 .min("amount")
@@ -79,7 +79,7 @@ public class DataSetGroupTest {
     @Test
     public void testGroupByLabelDynamic() throws Exception {
         DataSet result = dataSetManager.lookupDataSet(
-                DataSetFactory.newDSLookupBuilder()
+                DataSetFactory.newDataSetLookupBuilder()
                 .dataset(EXPENSE_REPORTS)
                 .group("department", "Department")
                 .count("Occurrences")
@@ -102,7 +102,7 @@ public class DataSetGroupTest {
     @Test
     public void testGroupByDateDynamic() throws Exception {
         DataSet result = dataSetManager.lookupDataSet(
-                DataSetFactory.newDSLookupBuilder()
+                DataSetFactory.newDataSetLookupBuilder()
                 .dataset(EXPENSE_REPORTS)
                 .group("date", "Period", GroupStrategy.DYNAMIC, 10, "year")
                 .count("Occurrences")
@@ -121,7 +121,7 @@ public class DataSetGroupTest {
     @Test
     public void testGroupByMonth() throws Exception {
         DataSet result = dataSetManager.lookupDataSet(
-                DataSetFactory.newDSLookupBuilder()
+                DataSetFactory.newDataSetLookupBuilder()
                 .dataset(EXPENSE_REPORTS)
                 .group("date", "Period").fixed(MONTH)
                 .count("Occurrences")
@@ -148,7 +148,7 @@ public class DataSetGroupTest {
     @Test
     public void testGroupByMonthFirstMonth() throws Exception {
         DataSet result = dataSetManager.lookupDataSet(
-                DataSetFactory.newDSLookupBuilder()
+                DataSetFactory.newDataSetLookupBuilder()
                         .dataset(EXPENSE_REPORTS)
                         .group("date", "Period").fixed(MONTH).firstMonth( Month.NOVEMBER )
                         .count("Occurrences")
@@ -175,7 +175,7 @@ public class DataSetGroupTest {
     @Test
     public void testGroupByMonthReverse() throws Exception {
         DataSet result = dataSetManager.lookupDataSet(
-                DataSetFactory.newDSLookupBuilder()
+                DataSetFactory.newDataSetLookupBuilder()
                         .dataset(EXPENSE_REPORTS)
                         .group("date", "Period").fixed(MONTH).desc()
                         .count("Occurrences")
@@ -202,7 +202,7 @@ public class DataSetGroupTest {
     @Test
     public void testGroupByMonthFirstMonthReverse() throws Exception {
         DataSet result = dataSetManager.lookupDataSet(
-                DataSetFactory.newDSLookupBuilder()
+                DataSetFactory.newDataSetLookupBuilder()
                 .dataset(EXPENSE_REPORTS)
                 .group("date", "Period").fixed(MONTH).desc().firstMonth( Month.MARCH )
                 .count("Occurrences")
@@ -228,7 +228,7 @@ public class DataSetGroupTest {
 
     @Test
     public void testFirstDayOfWeekOk() throws Exception {
-        DataSetFactory.newDSLookupBuilder()
+        DataSetFactory.newDataSetLookupBuilder()
             .group("date")
             .fixed(DAY_OF_WEEK)
             .firstDay(DayOfWeek.MONDAY);
@@ -237,7 +237,7 @@ public class DataSetGroupTest {
     @Test
     public void testFirstDayOfWeekNok() throws Exception {
         try {
-            DataSetFactory.newDSLookupBuilder()
+            DataSetFactory.newDataSetLookupBuilder()
                 .group("date")
                 .fixed(QUARTER)
                 .firstDay(DayOfWeek.MONDAY);
@@ -249,7 +249,7 @@ public class DataSetGroupTest {
 
     @Test
     public void testFirstDayOfMonthOk() throws Exception {
-        DataSetFactory.newDSLookupBuilder()
+        DataSetFactory.newDataSetLookupBuilder()
             .group("date")
             .fixed(MONTH)
             .firstMonth(Month.APRIL);
@@ -258,7 +258,7 @@ public class DataSetGroupTest {
     @Test
     public void testFirstDayOfMonthNok() throws Exception {
         try {
-            DataSetFactory.newDSLookupBuilder()
+            DataSetFactory.newDataSetLookupBuilder()
                 .group("date")
                 .fixed(QUARTER)
                 .firstMonth(Month.APRIL);
@@ -271,7 +271,7 @@ public class DataSetGroupTest {
     @Test
     public void testGroupByWeek() throws Exception {
         DataSet result = dataSetManager.lookupDataSet(
-                DataSetFactory.newDSLookupBuilder()
+                DataSetFactory.newDataSetLookupBuilder()
                 .dataset(EXPENSE_REPORTS)
                 .group("date", "Period").fixed(DAY_OF_WEEK).firstDay(DayOfWeek.MONDAY)
                 .count("Occurrences")
@@ -293,7 +293,7 @@ public class DataSetGroupTest {
     @Test
     public void testGroupByQuarter() throws Exception {
         DataSet result = dataSetManager.lookupDataSet(
-                DataSetFactory.newDSLookupBuilder()
+                DataSetFactory.newDataSetLookupBuilder()
                 .dataset(EXPENSE_REPORTS)
                 .group("date", "Period").fixed(QUARTER)
                 .count("Occurrences")

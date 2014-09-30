@@ -16,105 +16,103 @@
 package org.dashbuilder.dataset.backend;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
+import org.dashbuilder.config.Config;
+import org.dashbuilder.dataprovider.DataSetProvider;
+import org.dashbuilder.dataprovider.DataSetProviderRegistry;
+import org.dashbuilder.dataprovider.DataSetProviderType;
+import org.dashbuilder.dataprovider.backend.StaticDataSetProvider;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetFactory;
 import org.dashbuilder.dataset.DataSetLookup;
 import org.dashbuilder.dataset.DataSetManager;
 import org.dashbuilder.dataset.DataSetMetadata;
-import org.dashbuilder.dataset.engine.SharedDataSetOpEngine;
-import org.dashbuilder.dataset.engine.index.DataSetIndex;
-import org.dashbuilder.dataset.events.DataSetBackendRegisteredEvent;
-import org.dashbuilder.dataset.events.DataSetBackendRemovedEvent;
+import org.dashbuilder.dataset.def.DataSetDef;
+import org.dashbuilder.dataset.def.DataSetDefRegistry;
+import org.dashbuilder.dataset.def.StaticDataSetDef;
+import org.slf4j.Logger;
 
 /**
- * Backend implementation of the DataSetManager interface. It's been designed with several goals in mind:
- * <ul>
- *     <li>To provide a highly reusable data set cache.</li>
- *     <li>To index almost every operation performed over a data set.</li>
- *     <li>Multiple clients requesting the same data set operations will benefit from the indexing/caching services provided.</li>
- * </ul>
+ * Backend implementation of the DataSetManager interface. It provides an uniform interface to the data set
+ * registration and lookup services on top of the data set provider interface.
  */
 @ApplicationScoped
 public class BackendDataSetManager implements DataSetManager {
 
     @Inject
-    protected SharedDataSetOpEngine dataSetOpEngine;
+    protected DataSetDefRegistry dataSetDefRegistry;
 
     @Inject
-    private Event<DataSetBackendRegisteredEvent> dataSetRegisteredEvent;
+    protected DataSetProviderRegistry dataSetProviderRegistry;
 
     @Inject
-    private Event<DataSetBackendRemovedEvent> dataSetRemovedEvent;
+    protected StaticDataSetProvider staticDataSetProvider;
+
+    @Inject @Config("true")
+    protected boolean pushEnabled = false;
+
+    @Inject @Config("1024")
+    protected int maxPushSize = 2048;
+
+    @Inject
+    protected Logger log;
 
     public DataSet createDataSet(String uuid) {
-        DataSet dataSet = DataSetFactory.newDataSet();
+        DataSet dataSet = DataSetFactory.newEmptyDataSet();
         dataSet.setUUID(uuid);
         return dataSet;
     }
 
     public DataSet getDataSet(String uuid) {
-        DataSetIndex index = fetchDataSet(uuid);
-        if (index == null) return null;
+        try {
+            DataSetDef dataSetDef = dataSetDefRegistry.getDataSetDef(uuid);
+            if (dataSetDef == null) return null;
 
-        return index.getDataSet();
-    }
-
-    public DataSetMetadata getDataSetMetadata(String uuid) {
-        DataSet dataSet = getDataSet(uuid);
-        if (dataSet == null) return null;
-
-        return dataSet.getMetadata();
+            // Fetch the specified data set
+            return resolveProvider(dataSetDef)
+                    .lookupDataSet(dataSetDef, DataSetFactory.newDataSetLookupBuilder()
+                            .dataset(uuid)
+                            .buildLookup());
+        } catch (Exception e) {
+            throw new RuntimeException("Can't fetch the specified data set: " + uuid, e);
+        }
     }
 
     public void registerDataSet(DataSet dataSet) {
         if (dataSet != null) {
-            dataSetOpEngine.getIndexRegistry().put(dataSet);
+            staticDataSetProvider.registerDataSet(dataSet);
 
-            // Fire an event
-            dataSetRegisteredEvent.fire(new DataSetBackendRegisteredEvent(dataSet.getMetadata()));
+            StaticDataSetDef def = new StaticDataSetDef();
+            def.setUUID(dataSet.getUUID());
+            def.setDataSet(dataSet);
+            def.setPushEnabled(pushEnabled);
+            def.setMaxPushSize(maxPushSize);
+            dataSetDefRegistry.registerDataSetDef(def);
         }
     }
 
     public DataSet removeDataSet(String uuid) {
-        DataSetIndex index = dataSetOpEngine.getIndexRegistry().remove(uuid);
-        if (index == null) return null;
+        if (StringUtils.isEmpty(uuid)) return null;
 
-        // Fire an event before return.
-        DataSet dataSet = index.getDataSet();
-        dataSetRemovedEvent.fire(new DataSetBackendRemovedEvent(dataSet.getMetadata()));
-        return dataSet;
-
-    }
-
-    public DataSet refreshDataSet(String uuid) {
-        dataSetOpEngine.getIndexRegistry().remove(uuid);
-        DataSetIndex index = fetchDataSet(uuid);
-        if (index == null) return null;
-
-        return index.getDataSet();
+        dataSetDefRegistry.removeDataSetDef(uuid);
+        return staticDataSetProvider.removeDataSet(uuid);
     }
 
     public DataSet lookupDataSet(DataSetLookup lookup) {
-        String uuid = lookup.getDataSetUUID();
-        if (StringUtils.isEmpty(uuid)) return null;
+        try {
+            String uuid = lookup.getDataSetUUID();
+            if (StringUtils.isEmpty(uuid)) return null;
 
-        // Get the target data set
-        DataSetIndex dataSetIndex = fetchDataSet(uuid);
-        if (dataSetIndex == null) return null;
-        DataSet dataSet = dataSetIndex.getDataSet();
+            DataSetDef dataSetDef = dataSetDefRegistry.getDataSetDef(uuid);
+            if (dataSetDef == null) return null;
 
-        // Apply the list of operations specified (if any).
-        if (!lookup.getOperationList().isEmpty()) {
-            dataSet = dataSetOpEngine.execute(dataSetIndex.getDataSet(), lookup.getOperationList());
+            return resolveProvider(dataSetDef)
+                    .lookupDataSet(dataSetDef, lookup);
+        } catch (Exception e) {
+            throw new RuntimeException("Can't lookup on specified data set: " + lookup.getDataSetUUID(), e);
         }
-
-        // Trim the data set as requested.
-        dataSet = dataSet.trim(lookup.getRowOffset(), lookup.getNumberOfRows());
-        return dataSet;
     }
 
     public DataSet[] lookupDataSets(DataSetLookup[] lookup) {
@@ -126,28 +124,23 @@ public class BackendDataSetManager implements DataSetManager {
     }
 
     public DataSetMetadata lookupDataSetMetadata(DataSetLookup lookup) {
-        DataSet dataSet = lookupDataSet(lookup);
-        if (dataSet == null) return null;
+        if (lookup == null) return null;
 
+        DataSet dataSet = lookupDataSet(lookup);
+
+        if (dataSet == null) return null;
         return dataSet.getMetadata();
     }
 
-    // Internal stuff
+    public DataSetProvider resolveProvider(DataSetDef dataSetDef) {
+        // Get the target data set provider
+        if (!StringUtils.isEmpty(dataSetDef.getProvider())) {
+            DataSetProviderType type = DataSetProviderType.getByName(dataSetDef.getProvider());
+            DataSetProvider dataSetProvider = dataSetProviderRegistry.getDataSetProvider(type);
+            if (dataSetProvider != null) return dataSetProvider;
+        }
 
-    protected DataSetIndex fetchDataSet(String uuid) {
-        DataSetIndex index = dataSetOpEngine.getIndexRegistry().get(uuid);
-        if (index != null) return index;
-
-        return loadDataSet(uuid);
-    }
-
-    protected DataSetIndex loadDataSet(String uuid) {
-        /* TODO: Get the data set from an external provider.
-        DataProviderManager dataProviderManager = DataProviderServices.getDataProviderManager();
-        DataSet dataSet = dataProviderManager.fetchDataSet(uuid);
-        return dataSetIndexer.put(dataSet);
-        */
-
-        return null;
+        // If no provider is defined then return the static one
+        return staticDataSetProvider;
     }
 }

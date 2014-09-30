@@ -34,13 +34,6 @@ public interface DataSetManager {
     DataSet getDataSet(String uuid);
 
     /**
-     * Fetch the metadata instance for the specified data set.
-     * @param uuid The UUID of the data set.
-     * @return null, if the data set can be retrieved.
-     */
-    DataSetMetadata getDataSetMetadata(String uuid);
-
-    /**
      * Registers the specified data set instance.
      */
     void registerDataSet(DataSet dataSet);
@@ -65,7 +58,7 @@ public interface DataSetManager {
 
     /**
      * Same as lookupDataSet but only retrieves the metadata of the resulting data set.
-     * @return A DataSetMetadata instance containing general information about the data set or null, if the data set can be retrieved.
+     * @return A DataSetMetadata instance containing general information about the data set, or null if the data set can be retrieved.
      */
     DataSetMetadata lookupDataSetMetadata(DataSetLookup lookup);
 }

@@ -95,7 +95,7 @@ public interface DataSetLookupBuilder<T> {
      * will be applied.
      * For example:
      * <pre>
-     *   DataSetFactory.newDSLookupBuilder()
+     *   DataSetFactory.newDataSetLookupBuilder()
      *   .dataset(SALES_OPPS)
      *   .group(CLOSING_DATE, 80, MONTH)
      * </pre>
@@ -288,7 +288,7 @@ public interface DataSetLookupBuilder<T> {
      *
      * Example:
      * <pre>
-     *   DataSetFactory.newDSLookupBuilder()
+     *   DataSetFactory.newDataSetLookupBuilder()
      *   .dataset(SALES_OPPS)
      *   .group(CLOSING_DATE)
      *   .fixed(MONTH).firstMonth(JANUARY)
@@ -416,7 +416,7 @@ public interface DataSetLookupBuilder<T> {
      *
      * For example:
      * <pre>
-     *   DataSetFactory.newDSLookupBuilder()
+     *   DataSetFactory.newDataSetLookupBuilder()
      *   .dataset(EXPENSE_REPORTS)
      *   .group("department", "Department")
      *   .select("Services", "Engineering", "Support")
@@ -436,7 +436,7 @@ public interface DataSetLookupBuilder<T> {
      *
      * For example:
      * <pre>
-     *   DataSetFactory.newDSLookupBuilder()
+     *   DataSetFactory.newDataSetLookupBuilder()
      *   .dataset(EXPENSE_REPORTS)
      *   .filter(AND(
      *               isEqualsTo("department", "Sales"),
@@ -463,7 +463,7 @@ public interface DataSetLookupBuilder<T> {
      *
      * For example:
      * <pre>
-     *   DataSetFactory.newDSLookupBuilder()
+     *   DataSetFactory.newDataSetLookupBuilder()
      *   .dataset(EXPENSE_REPORTS)
      *   .filter("amount",
      *           AND(

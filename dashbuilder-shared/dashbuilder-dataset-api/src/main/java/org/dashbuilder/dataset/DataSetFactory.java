@@ -15,24 +15,36 @@
  */
 package org.dashbuilder.dataset;
 
+import org.dashbuilder.dataset.def.CSVDataSetDefBuilder;
+import org.dashbuilder.dataset.def.DataSetDefBuilder;
+import org.dashbuilder.dataset.impl.CSVDataSetDefBuilderImpl;
 import org.dashbuilder.dataset.impl.DataSetBuilderImpl;
 import org.dashbuilder.dataset.impl.DataSetImpl;
 import org.dashbuilder.dataset.impl.DataSetLookupBuilderImpl;
+import org.dashbuilder.dataset.impl.StaticDataSetDefBuilderImpl;
 
 /**
  * Factory class for building DataSet instances.
  */
 public final class DataSetFactory {
 
-    public static DataSet newDataSet() {
+    public static DataSet newEmptyDataSet() {
         return new DataSetImpl();
     }
 
-    public static DataSetBuilder newDSBuilder() {
+    public static DataSetBuilder newDataSetBuilder() {
         return new DataSetBuilderImpl();
     }
 
-    public static DataSetLookupBuilder<DataSetLookupBuilderImpl> newDSLookupBuilder() {
+    public static DataSetLookupBuilder<DataSetLookupBuilderImpl> newDataSetLookupBuilder() {
         return new DataSetLookupBuilderImpl();
+    }
+
+    public static DataSetDefBuilder<StaticDataSetDefBuilderImpl> newStaticDataSetDef() {
+        return new StaticDataSetDefBuilderImpl();
+    }
+
+    public static DataSetDefBuilder<CSVDataSetDefBuilderImpl> newCSVDataSetDef() {
+        return new CSVDataSetDefBuilderImpl();
     }
 }

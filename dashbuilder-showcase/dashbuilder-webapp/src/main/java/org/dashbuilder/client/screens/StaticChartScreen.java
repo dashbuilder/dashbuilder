@@ -41,7 +41,7 @@ public class StaticChartScreen {
             .column("Sales in 2013")
             .column("Sales in 2014")
             .column("Sales in 2015")
-            .dataset(DataSetFactory.newDSBuilder()
+            .dataset(DataSetFactory.newDataSetBuilder()
                 .label("month")
                 .number("2012")
                 .number("2013")

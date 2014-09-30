@@ -47,7 +47,7 @@ public class ClientDataSetManager implements DataSetManager {
     @Inject SharedDataSetOpEngine dataSetOpEngine;
 
     public DataSet createDataSet(String uuid) {
-        DataSet dataSet = DataSetFactory.newDataSet();
+        DataSet dataSet = DataSetFactory.newEmptyDataSet();
         dataSet.setUUID(uuid);
         return dataSet;
     }
@@ -69,13 +69,6 @@ public class ClientDataSetManager implements DataSetManager {
         DataSet dataSet = getDataSet(uuid);
         dataSetOpEngine.getIndexRegistry().remove(uuid);
         return dataSet;
-    }
-
-    public DataSetMetadata getDataSetMetadata(String uuid) {
-        DataSet dataSet = getDataSet(uuid);
-        if (dataSet == null) return null;
-
-        return dataSet.getMetadata();
     }
 
     public DataSet lookupDataSet(DataSetLookup lookup) {

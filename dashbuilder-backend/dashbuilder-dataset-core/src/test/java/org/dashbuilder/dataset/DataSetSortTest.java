@@ -57,7 +57,7 @@ public class DataSetSortTest {
     @Test
     public void testSortByString() throws Exception {
         DataSet result = dataSetManager.lookupDataSet(
-                DataSetFactory.newDSLookupBuilder()
+                DataSetFactory.newDataSetLookupBuilder()
                 .dataset(EXPENSE_REPORTS)
                 .sort("city", ASCENDING)
                 .buildLookup());
@@ -74,7 +74,7 @@ public class DataSetSortTest {
     @Test
     public void testSortByNumber() throws Exception {
         DataSet result = dataSetManager.lookupDataSet(
-                DataSetFactory.newDSLookupBuilder()
+                DataSetFactory.newDataSetLookupBuilder()
                 .dataset(EXPENSE_REPORTS)
                 .sort("amount", ASCENDING)
                 .buildLookup());
@@ -87,7 +87,7 @@ public class DataSetSortTest {
     @Test
     public void testSortByDate() throws Exception {
         DataSet result = dataSetManager.lookupDataSet(
-                DataSetFactory.newDSLookupBuilder()
+                DataSetFactory.newDataSetLookupBuilder()
                 .dataset(EXPENSE_REPORTS)
                 .sort("date", ASCENDING)
                 .buildLookup());
@@ -100,7 +100,7 @@ public class DataSetSortTest {
     @Test
     public void testSortMultiple() throws Exception {
         DataSet result = dataSetManager.lookupDataSet(
-                DataSetFactory.newDSLookupBuilder()
+                DataSetFactory.newDataSetLookupBuilder()
                 .dataset(EXPENSE_REPORTS)
                 .sort("city", ASCENDING)
                 .sort("department", ASCENDING)
@@ -117,7 +117,7 @@ public class DataSetSortTest {
     @Test
     public void testGroupandSort() throws Exception {
         DataSet result = dataSetManager.lookupDataSet(
-                DataSetFactory.newDSLookupBuilder()
+                DataSetFactory.newDataSetLookupBuilder()
                 .dataset(EXPENSE_REPORTS)
                 .group("department")
                 .sum("amount", "total")

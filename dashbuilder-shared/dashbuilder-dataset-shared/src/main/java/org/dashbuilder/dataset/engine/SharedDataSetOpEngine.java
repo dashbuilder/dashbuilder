@@ -465,7 +465,7 @@ public class SharedDataSetOpEngine implements DataSetOpEngine {
             List<GroupFunction> groupFunctions = op.getGroupFunctions();
 
             // Data set header.
-            DataSet result = DataSetFactory.newDataSet();
+            DataSet result = DataSetFactory.newEmptyDataSet();
             result.addColumn(columnGroup.getColumnId(), ColumnType.LABEL);
             for (GroupFunction groupFunction : op.getGroupFunctions()) {
                 result.addColumn(groupFunction.getColumnId(), ColumnType.NUMBER);
@@ -493,7 +493,7 @@ public class SharedDataSetOpEngine implements DataSetOpEngine {
             DataSetIndexNode index = context.index;
             DataSet dataSet = context.dataSet;
 
-            DataSet result= DataSetFactory.newDataSet();
+            DataSet result= DataSetFactory.newEmptyDataSet();
 
             for (int i=0; i< groupFunctions.size(); i++) {
                 GroupFunction groupFunction = groupFunctions.get(i);

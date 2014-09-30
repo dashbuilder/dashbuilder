@@ -47,8 +47,6 @@ public class DataSetLookupServiceImpl implements DataSetLookupService {
      * @return A DataSetMetadata instance containing general information about the data set.
      */
     public DataSetMetadata lookupDataSetMetadata(DataSetLookup lookup) throws Exception {
-        DataSet dataSet = dataSetManager.lookupDataSet(lookup);
-        if (dataSet == null) return null;
-        return dataSet.getMetadata();
+        return dataSetManager.lookupDataSetMetadata(lookup);
     }
 }
