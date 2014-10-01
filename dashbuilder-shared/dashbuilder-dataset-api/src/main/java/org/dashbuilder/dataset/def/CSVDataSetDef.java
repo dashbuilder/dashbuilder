@@ -18,17 +18,23 @@ package org.dashbuilder.dataset.def;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.dashbuilder.dataprovider.DataSetProviderType;
+
 public class CSVDataSetDef extends DataSetDef {
 
     protected String fileURL;
     protected String filePath;
-    protected String separator;
-    protected String quoteChar;
-    protected String escapeChar;
-    protected String datePattern;
-    protected String numberPattern;
+    protected char separator;
+    protected char quoteChar;
+    protected char escapeChar;
+    protected String datePattern = "MM-dd-yyyy HH:mm:ss";
+    protected String numberPattern = "#,###.##";
     protected Map<String,String> datePatternMap = new HashMap<String,String>();
     protected Map<String,String> numberPatternMap = new HashMap<String,String>();
+
+    public CSVDataSetDef() {
+        super.setProvider(DataSetProviderType.CSV.toString());
+    }
 
     public String getFileURL() {
         return fileURL;
@@ -46,27 +52,27 @@ public class CSVDataSetDef extends DataSetDef {
         this.filePath = filePath;
     }
 
-    public String getSeparator() {
+    public char getSeparator() {
         return separator;
     }
 
-    public void setSeparator(String separator) {
+    public void setSeparator(char separator) {
         this.separator = separator;
     }
 
-    public String getQuoteChar() {
+    public char getQuoteChar() {
         return quoteChar;
     }
 
-    public void setQuoteChar(String quoteChar) {
+    public void setQuoteChar(char quoteChar) {
         this.quoteChar = quoteChar;
     }
 
-    public String getEscapeChar() {
+    public char getEscapeChar() {
         return escapeChar;
     }
 
-    public void setEscapeChar(String escapeChar) {
+    public void setEscapeChar(char escapeChar) {
         this.escapeChar = escapeChar;
     }
 
@@ -106,5 +112,31 @@ public class CSVDataSetDef extends DataSetDef {
 
     public void setDatePattern(String columnId, String datePattern) {
         datePatternMap.put(columnId, datePattern);
+    }
+
+    public char getNumberGroupSeparator(String columnId) {
+        String pattern = getNumberPattern(columnId);
+        if (pattern.length() < 2) return ',';
+        else return pattern.charAt(1);
+    }
+
+    public char getNumberDecimalSeparator(String columnId) {
+        String pattern = getNumberPattern(columnId);
+        if (pattern.length() < 6) return '.';
+        else return pattern.charAt(5);
+    }
+
+    public String toString() {
+        StringBuilder out = new StringBuilder();
+        out.append("File=");
+        if (filePath != null) out.append(filePath);
+        else out.append(fileURL);
+        out.append("\n");
+        out.append("Separator char=").append(separator).append("\n");
+        out.append("Quote char=").append(quoteChar).append("\n");
+        out.append("Escape char=").append(escapeChar).append("\n");
+        out.append("Number pattern=").append(numberPattern).append("\n");
+        out.append("Date pattern=").append(datePattern).append("\n");
+        return out.toString();
     }
 }

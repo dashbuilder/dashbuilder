@@ -15,6 +15,7 @@
  */
 package org.dashbuilder.dataset;
 
+import java.util.Date;
 import java.util.List;
 
 public interface DataSet {
@@ -28,6 +29,16 @@ public interface DataSet {
      * The unique data set identifier.
      */
     String getUUID();
+
+    /**
+     * The creation date
+     */
+    Date getCreationDate();
+
+    /**
+     * The creation date
+     */
+    void setCreationDate(Date date);
 
     /**
      * Set an unique identifier to this data set.

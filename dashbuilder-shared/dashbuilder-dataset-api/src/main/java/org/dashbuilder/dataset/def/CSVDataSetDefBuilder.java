@@ -22,7 +22,7 @@ package org.dashbuilder.dataset.def;
  *    DataSetDef dataSetDef = DataSetDefFactory.newCSVDataSetDef()
  *     .uuid("all_employees")
  *     .url("http://myhost.com/file.csv")
- *     .separator(";")
+ *     .separatorChar(";")
  *     .label("name")
  *     .date("creationDate", "MM/dd/yyyy")
  *     .number("amount", "#.###,00")
@@ -32,12 +32,12 @@ package org.dashbuilder.dataset.def;
 public interface CSVDataSetDefBuilder<T extends DataSetDefBuilder> extends DataSetDefBuilder<T> {
 
     /**
-     * Set the CSV column separator.
+     * Set the CSV column separator char.
      *
      * @param separator An string for separating columns
      * @return The DataSetDefBuilder instance that is being used to configure a DataSetDef.
      */
-    T separator(String separator);
+    T separatorChar(char separator);
 
     /**
      * Set the quote symbol.
@@ -45,7 +45,7 @@ public interface CSVDataSetDefBuilder<T extends DataSetDefBuilder> extends DataS
      * @param quote A char representing the quote symbol
      * @return The DataSetDefBuilder instance that is being used to configure a DataSetDef.
      */
-    T quoteChar(String quote);
+    T quoteChar(char quote);
 
     /**
      * Set the escape char.
@@ -53,7 +53,7 @@ public interface CSVDataSetDefBuilder<T extends DataSetDefBuilder> extends DataS
      * @param escape The scape char
      * @return The DataSetDefBuilder instance that is being used to configure a DataSetDef.
      */
-    T escapeChar(String escape);
+    T escapeChar(char escape);
 
     /**
      * Set the pattern for the specified date column.

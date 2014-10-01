@@ -15,10 +15,13 @@
  */
 package org.dashbuilder.dataset.def;
 
-import org.dashbuilder.dataset.def.DataSetDef;
+import org.dashbuilder.dataprovider.DataSetProviderType;
 import org.jboss.errai.common.client.api.annotations.Portable;
 
 @Portable
 public class StaticDataSetDef extends DataSetDef {
 
+    public StaticDataSetDef() {
+        super.setProvider(DataSetProviderType.STATIC.toString());
+    }
 }

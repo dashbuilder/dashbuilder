@@ -76,13 +76,14 @@ public class StaticDataSetProvider implements DataSetProvider {
     }
 
     public DataSet lookupDataSet(DataSetDef def, DataSetLookup lookup) {
-        String uuid = lookup.getDataSetUUID();
+        String uuid = def.getUUID();
         if (StringUtils.isEmpty(uuid)) return null;
 
         // Get the target data set
         DataSetIndex dataSetIndex = dataSetOpEngine.getIndexRegistry().get(uuid);
         if (dataSetIndex == null) return null;
         DataSet dataSet = dataSetIndex.getDataSet();
+        if (lookup == null) return dataSet;
 
         // Apply the list of operations specified (if any).
         if (!lookup.getOperationList().isEmpty()) {

@@ -72,9 +72,7 @@ public class BackendDataSetManager implements DataSetManager {
 
             // Fetch the specified data set
             return resolveProvider(dataSetDef)
-                    .lookupDataSet(dataSetDef, DataSetFactory.newDataSetLookupBuilder()
-                            .dataset(uuid)
-                            .buildLookup());
+                    .lookupDataSet(dataSetDef, null);
         } catch (Exception e) {
             throw new RuntimeException("Can't fetch the specified data set: " + uuid, e);
         }

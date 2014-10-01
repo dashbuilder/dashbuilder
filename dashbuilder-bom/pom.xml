@@ -93,7 +93,6 @@
         <artifactId>dashbuilder-common</artifactId>
         <version>${project.version}</version>
         <type>test-jar</type>
-        <!-- <scope>test</scope> -->
       </dependency>
 
       <dependency>
@@ -107,6 +106,13 @@
         <artifactId>dashbuilder-dataset-core</artifactId>
         <version>${project.version}</version>
         <classifier>sources</classifier>
+      </dependency>
+
+      <dependency>
+        <groupId>org.dashbuilder</groupId>
+        <artifactId>dashbuilder-dataset-core</artifactId>
+        <version>${project.version}</version>
+        <type>test-jar</type>
       </dependency>
 
       <dependency>

@@ -25,17 +25,27 @@ public class CSVDataSetDefBuilderImpl extends AbstractDataSetDefBuilder<CSVDataS
         return new CSVDataSetDef();
     }
 
-    public CSVDataSetDefBuilderImpl separator(String separator) {
+    public CSVDataSetDefBuilderImpl fileURL(String url) {
+        ((CSVDataSetDef) def).setFileURL(url);
+        return this;
+    }
+
+    public CSVDataSetDefBuilderImpl filePath(String path) {
+        ((CSVDataSetDef) def).setFilePath(path);
+        return this;
+    }
+
+    public CSVDataSetDefBuilderImpl separatorChar(char separator) {
         ((CSVDataSetDef) def).setSeparator(separator);
         return this;
     }
 
-    public CSVDataSetDefBuilderImpl quoteChar(String quote) {
+    public CSVDataSetDefBuilderImpl quoteChar(char quote) {
         ((CSVDataSetDef) def).setQuoteChar(quote);
         return this;
     }
 
-    public CSVDataSetDefBuilderImpl escapeChar(String escape) {
+    public CSVDataSetDefBuilderImpl escapeChar(char escape) {
         ((CSVDataSetDef) def).setEscapeChar(escape);
         return this;
     }
@@ -49,6 +59,16 @@ public class CSVDataSetDefBuilderImpl extends AbstractDataSetDefBuilder<CSVDataS
     public CSVDataSetDefBuilderImpl number(String columnId, String numberPattern) {
         ((CSVDataSetDef) def).setNumberPattern(columnId, numberPattern);
         super.number(columnId);
+        return this;
+    }
+
+    public CSVDataSetDefBuilderImpl datePattern(String datePattern) {
+        ((CSVDataSetDef) def).setDatePattern(datePattern);
+        return this;
+    }
+
+    public CSVDataSetDefBuilderImpl numberPattern(String numberPattern) {
+        ((CSVDataSetDef) def).setNumberPattern(numberPattern);
         return this;
     }
 }

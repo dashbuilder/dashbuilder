@@ -15,39 +15,23 @@
  */
 package org.dashbuilder.dataprovider.backend.csv;
 
+import java.io.File;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.dashbuilder.config.Config;
+import org.apache.commons.lang.StringUtils;
 import org.dashbuilder.dataprovider.DataSetProvider;
 import org.dashbuilder.dataprovider.DataSetProviderType;
 import org.dashbuilder.dataprovider.backend.StaticDataSetProvider;
 import org.dashbuilder.dataset.DataSet;
-import org.dashbuilder.dataset.DataSetFactory;
 import org.dashbuilder.dataset.DataSetLookup;
 import org.dashbuilder.dataset.def.CSVDataSetDef;
 import org.dashbuilder.dataset.def.DataSetDef;
-import org.dashbuilder.dataset.def.DataSetDefRegistry;
 
 @ApplicationScoped
 @Named("csv")
 public class CSVDataSetProvider implements DataSetProvider {
-
-    @Inject @Config(";")
-    protected String csvSeparatedBy;
-
-    @Inject @Config("\"")
-    protected String csvQuoteChar;
-
-    @Inject @Config("\\")
-    protected String csvEscapeChar;
-
-    @Inject @Config("MM-dd-yyyy HH:mm:ss")
-    protected String csvDatePattern;
-
-    @Inject @Config("#,###.##")
-    protected String csvNumberPattern;
 
     @Inject
     protected StaticDataSetProvider staticDataSetProvider;
@@ -58,31 +42,33 @@ public class CSVDataSetProvider implements DataSetProvider {
 
     public DataSet lookupDataSet(DataSetDef def, DataSetLookup lookup) throws Exception {
         // Look first into the static data set provider since CSV data set are statically registered once loaded.
-        String uuid = lookup.getDataSetUUID();
-        DataSet dataSet = staticDataSetProvider.lookupDataSet(def,
-                DataSetFactory.newDataSetLookupBuilder()
-                        .dataset(uuid)
-                        .buildLookup());
+        DataSet dataSet = staticDataSetProvider.lookupDataSet(def, null);
 
         // If not exists or is outdated then load from the CSV file
         CSVDataSetDef csvDef = (CSVDataSetDef) def;
-        if (dataSet == null || hasCSVFileChanged(csvDef)) {
+        if (dataSet == null || hasCSVFileChanged(dataSet, csvDef)) {
             dataSet = loadDataSetFromCSV(csvDef);
+            dataSet.setUUID(def.getUUID());
 
             // Make the data set static before return
             staticDataSetProvider.registerDataSet(dataSet);
+
         }
-        return dataSet;
+        // Always do the lookup on the statically registered data set.
+        return staticDataSetProvider.lookupDataSet(def, lookup);
     }
 
     // Internal implementation stuff
 
     protected DataSet loadDataSetFromCSV(CSVDataSetDef def) throws Exception {
-        return null;
+        CSVParser csvParser = new CSVParser(def);
+        return csvParser.load();
     }
 
+    protected boolean hasCSVFileChanged(DataSet dataSet, CSVDataSetDef def) {
+        if (StringUtils.isBlank(def.getFilePath())) return false;
 
-    protected boolean hasCSVFileChanged(CSVDataSetDef def) {
-        return false;
+        File f = new File(def.getFilePath());
+        return f.lastModified() > dataSet.getCreationDate().getTime();
     }
 }

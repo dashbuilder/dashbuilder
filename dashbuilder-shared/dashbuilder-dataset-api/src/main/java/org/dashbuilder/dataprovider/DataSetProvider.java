@@ -34,7 +34,7 @@ public interface DataSetProvider {
      * Fetch a data set and optionally apply several operations (filter, sort, group, ...) on top of it.
      *
      * @param def The data set definition lookup request
-     * @param lookup The lookup request over the data set
+     * @param lookup The lookup request over the data set. If null then return the data set as is.
      * @return The resulting data set instance
      */
     DataSet lookupDataSet(DataSetDef def, DataSetLookup lookup) throws Exception;

@@ -15,6 +15,7 @@
  */
 package org.dashbuilder.dataset.impl;
 
+import java.util.Date;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -28,6 +29,7 @@ import org.jboss.errai.common.client.api.annotations.Portable;
 public class DataSetImpl implements DataSet {
 
     protected String uuid = null;
+    protected Date creationDate = new Date();
     protected List<DataColumn> columns = new ArrayList<DataColumn>();
     protected int rowCountNonTrimmed = -1;
 
@@ -41,6 +43,14 @@ public class DataSetImpl implements DataSet {
 
     public void setUUID(String uuid) {
         this.uuid = uuid;
+    }
+
+    public Date getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(Date creationDate) {
+        this.creationDate = creationDate;
     }
 
     public List<DataColumn> getColumns() {
