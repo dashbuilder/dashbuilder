@@ -35,7 +35,6 @@ public class StaticChartScreen {
 
     public static final DisplayerSettings displayerSettings =
             DisplayerSettingsFactory.newLineChartSettings()
-            .dataset("static_chart_sample")
             .title("Sales Evolution Per Year")
             .column("Month")
             .column("Sales in 2013")
