@@ -17,8 +17,10 @@ package org.dashbuilder.displayer.client.json;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -30,8 +32,11 @@ import com.google.gwt.json.client.JSONValue;
 import org.dashbuilder.common.client.StringUtils;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetLookup;
+import org.dashbuilder.displayer.DisplayerAttributeDef;
 import org.dashbuilder.displayer.DisplayerSettings;
 import org.dashbuilder.displayer.DisplayerSettingsColumn;
+import org.dashbuilder.displayer.client.Displayer;
+import org.dashbuilder.displayer.client.DisplayerLocator;
 import org.dashbuilder.displayer.impl.DisplayerSettingsColumnImpl;
 
 import static org.dashbuilder.displayer.DisplayerEditorConfig.ATTRIBUTE_PATH_SEPARATOR;
@@ -113,9 +118,18 @@ public class DisplayerSettingsJSONMarshaller {
         // First the columns
         json.put( SETTINGS_COLUMNS, formatSettingsColumns( displayerSettings.getColumns() ) );
 
-        // Then all the other settings
+        Set<String> supportedSettings = new HashSet<String>( displayerSettings.getSettingsFlatMap().size() );
+        Displayer displayer = DisplayerLocator.get().lookupDisplayer( displayerSettings );
+        for ( DisplayerAttributeDef attDef : displayer.getDisplayerEditorConfig().getSupportedAttributes() ) {
+            supportedSettings.add( attDef.getFullId() );
+        }
+
+
+        // Then all the other supported settings
         for ( Map.Entry<String, String> entry : displayerSettings.getSettingsFlatMap().entrySet() ) {
-            setNodeValue( json, entry.getKey(), entry.getValue() );
+            if ( supportedSettings.contains( entry.getKey() ) ) {
+                setNodeValue( json, entry.getKey(), entry.getValue() );
+            }
         }
 
         // DataSet or DataSetLookup
