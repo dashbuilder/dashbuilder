@@ -76,22 +76,29 @@ public class DisplayerSettingsJSONMarshaller {
                     parseResult.put( SETTINGS_COLUMNS, null );
                 }
 
-                // Other settings
-                ds.setSettingsFlatMap( parseSettingsFromJson( parseResult ) );
-
                 // First look if a dataset 'on-the-fly' has been specified
                 JSONValue data = parseResult.get( JSON_DATASET_PREFIX );
                 if ( data != null ) {
                     DataSet dataSet = dataSetJSONMarshaller.fromJson( data.isObject() );
                     ds.setDataSet( dataSet );
 
+                    // Remove from the json input so that it doesn't end up in the settings map.
+                    parseResult.put( JSON_DATASET_PREFIX, null );
+
                 // If none was found, look for a dataset lookup definition
                 } else if ( (data = parseResult.get( JSON_DATASET_LOOKUP_PREFIX )) != null ) {
                     DataSetLookup dataSetLookup = dataSetLookupJSONMarshaller.fromJson( data.isObject() );
                     ds.setDataSetLookup( dataSetLookup );
+
+                    // Remove from the json input so that it doesn't end up in the settings map.
+                    parseResult.put( JSON_DATASET_LOOKUP_PREFIX, null );
+
                 } else {
                     throw new RuntimeException( "Either a DataSet or a DataSetLookup should be specified" );
                 }
+
+                // Now parse all other settings
+                ds.setSettingsFlatMap( parseSettingsFromJson( parseResult ) );
             }
         }
         return ds;
