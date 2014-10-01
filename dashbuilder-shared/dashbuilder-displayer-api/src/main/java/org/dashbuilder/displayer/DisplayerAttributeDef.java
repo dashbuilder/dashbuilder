@@ -25,41 +25,41 @@ public class DisplayerAttributeDef {
     public static final DisplayerAttributeDef TYPE = new DisplayerAttributeDef("type");
     public static final DisplayerAttributeDef RENDERER = new DisplayerAttributeDef("renderer");
     public static final DisplayerAttributeDef COLUMNS = new DisplayerAttributeDef("columns");
-    public static final DisplayerAttributeDef TITLE = new DisplayerAttributeDef("title");
-    public static final DisplayerAttributeDef TITLE_VISIBLE = new DisplayerAttributeDef("visible");
+    public static final DisplayerAttributeDef TITLE = new DisplayerAttributeDef("title", DisplayerAttributeGroupDef.TITLE_GROUP);
+    public static final DisplayerAttributeDef TITLE_VISIBLE = new DisplayerAttributeDef("visible", DisplayerAttributeGroupDef.TITLE_GROUP);
 
-    public static final DisplayerAttributeDef FILTER_ENABLED = new DisplayerAttributeDef("enabled");
-    public static final DisplayerAttributeDef FILTER_SELFAPPLY_ENABLED = new DisplayerAttributeDef("selfapply");
-    public static final DisplayerAttributeDef FILTER_NOTIFICATION_ENABLED = new DisplayerAttributeDef("notification");
-    public static final DisplayerAttributeDef FILTER_LISTENING_ENABLED = new DisplayerAttributeDef("listening");
+    public static final DisplayerAttributeDef FILTER_ENABLED = new DisplayerAttributeDef("enabled", DisplayerAttributeGroupDef.FILTER_GROUP);
+    public static final DisplayerAttributeDef FILTER_SELFAPPLY_ENABLED = new DisplayerAttributeDef("selfapply", DisplayerAttributeGroupDef.FILTER_GROUP);
+    public static final DisplayerAttributeDef FILTER_NOTIFICATION_ENABLED = new DisplayerAttributeDef("notification", DisplayerAttributeGroupDef.FILTER_GROUP);
+    public static final DisplayerAttributeDef FILTER_LISTENING_ENABLED = new DisplayerAttributeDef("listening", DisplayerAttributeGroupDef.FILTER_GROUP);
 
-    public static final DisplayerAttributeDef CHART_WIDTH = new DisplayerAttributeDef("width");
-    public static final DisplayerAttributeDef CHART_HEIGHT = new DisplayerAttributeDef("height");
-    public static final DisplayerAttributeDef CHART_3D = new DisplayerAttributeDef("3d");
-    public static final DisplayerAttributeDef CHART_MARGIN_TOP = new DisplayerAttributeDef("top");
-    public static final DisplayerAttributeDef CHART_MARGIN_BOTTOM = new DisplayerAttributeDef("bottom");
-    public static final DisplayerAttributeDef CHART_MARGIN_LEFT = new DisplayerAttributeDef("left");
-    public static final DisplayerAttributeDef CHART_MARGIN_RIGHT = new DisplayerAttributeDef("right");
-    public static final DisplayerAttributeDef CHART_SHOWLEGEND = new DisplayerAttributeDef("show");
-    public static final DisplayerAttributeDef CHART_LEGENDPOSITION = new DisplayerAttributeDef("position");
+    public static final DisplayerAttributeDef CHART_WIDTH = new DisplayerAttributeDef("width", DisplayerAttributeGroupDef.CHART_GROUP);
+    public static final DisplayerAttributeDef CHART_HEIGHT = new DisplayerAttributeDef("height", DisplayerAttributeGroupDef.CHART_GROUP);
+    public static final DisplayerAttributeDef CHART_3D = new DisplayerAttributeDef("3d", DisplayerAttributeGroupDef.CHART_GROUP);
+    public static final DisplayerAttributeDef CHART_MARGIN_TOP = new DisplayerAttributeDef("top", DisplayerAttributeGroupDef.CHART_MARGIN_GROUP);
+    public static final DisplayerAttributeDef CHART_MARGIN_BOTTOM = new DisplayerAttributeDef("bottom", DisplayerAttributeGroupDef.CHART_MARGIN_GROUP);
+    public static final DisplayerAttributeDef CHART_MARGIN_LEFT = new DisplayerAttributeDef("left", DisplayerAttributeGroupDef.CHART_MARGIN_GROUP);
+    public static final DisplayerAttributeDef CHART_MARGIN_RIGHT = new DisplayerAttributeDef("right", DisplayerAttributeGroupDef.CHART_MARGIN_GROUP);
+    public static final DisplayerAttributeDef CHART_SHOWLEGEND = new DisplayerAttributeDef("show", DisplayerAttributeGroupDef.CHART_LEGEND_GROUP);
+    public static final DisplayerAttributeDef CHART_LEGENDPOSITION = new DisplayerAttributeDef("position", DisplayerAttributeGroupDef.CHART_LEGEND_GROUP);
 
-    public static final DisplayerAttributeDef TABLE_PAGESIZE = new DisplayerAttributeDef("pageSize");
-    public static final DisplayerAttributeDef TABLE_WIDTH = new DisplayerAttributeDef("width");
-    public static final DisplayerAttributeDef TABLE_SORTENABLED = new DisplayerAttributeDef("enabled");
-    public static final DisplayerAttributeDef TABLE_SORTCOLUMNID = new DisplayerAttributeDef("columnId");
-    public static final DisplayerAttributeDef TABLE_SORTORDER = new DisplayerAttributeDef("order");
+    public static final DisplayerAttributeDef TABLE_PAGESIZE = new DisplayerAttributeDef("pageSize", DisplayerAttributeGroupDef.TABLE_GROUP);
+    public static final DisplayerAttributeDef TABLE_WIDTH = new DisplayerAttributeDef("width", DisplayerAttributeGroupDef.TABLE_GROUP);
+    public static final DisplayerAttributeDef TABLE_SORTENABLED = new DisplayerAttributeDef("enabled", DisplayerAttributeGroupDef.TABLE_SORT_GROUP);
+    public static final DisplayerAttributeDef TABLE_SORTCOLUMNID = new DisplayerAttributeDef("columnId", DisplayerAttributeGroupDef.TABLE_SORT_GROUP);
+    public static final DisplayerAttributeDef TABLE_SORTORDER = new DisplayerAttributeDef("order", DisplayerAttributeGroupDef.TABLE_SORT_GROUP);
 
-    public static final DisplayerAttributeDef XAXIS_SHOWLABELS = new DisplayerAttributeDef("labels_show");
-    public static final DisplayerAttributeDef XAXIS_TITLE = new DisplayerAttributeDef("title");
-    public static final DisplayerAttributeDef YAXIS_SHOWLABELS = new DisplayerAttributeDef("labels_show");
-    public static final DisplayerAttributeDef YAXIS_TITLE = new DisplayerAttributeDef("title");
+    public static final DisplayerAttributeDef XAXIS_SHOWLABELS = new DisplayerAttributeDef("labels_show", DisplayerAttributeGroupDef.XAXIS_GROUP);
+    public static final DisplayerAttributeDef XAXIS_TITLE = new DisplayerAttributeDef("title", DisplayerAttributeGroupDef.XAXIS_GROUP);
+    public static final DisplayerAttributeDef YAXIS_SHOWLABELS = new DisplayerAttributeDef("labels_show", DisplayerAttributeGroupDef.YAXIS_GROUP);
+    public static final DisplayerAttributeDef YAXIS_TITLE = new DisplayerAttributeDef("title", DisplayerAttributeGroupDef.YAXIS_GROUP);
 
-    public static final DisplayerAttributeDef METER_START = new DisplayerAttributeDef("start");
-    public static final DisplayerAttributeDef METER_WARNING = new DisplayerAttributeDef("warning");
-    public static final DisplayerAttributeDef METER_CRITICAL = new DisplayerAttributeDef("critical");
-    public static final DisplayerAttributeDef METER_END = new DisplayerAttributeDef("end");
+    public static final DisplayerAttributeDef METER_START = new DisplayerAttributeDef("start", DisplayerAttributeGroupDef.METER_GROUP);
+    public static final DisplayerAttributeDef METER_WARNING = new DisplayerAttributeDef("warning", DisplayerAttributeGroupDef.METER_GROUP);
+    public static final DisplayerAttributeDef METER_CRITICAL = new DisplayerAttributeDef("critical", DisplayerAttributeGroupDef.METER_GROUP);
+    public static final DisplayerAttributeDef METER_END = new DisplayerAttributeDef("end", DisplayerAttributeGroupDef.METER_GROUP);
 
-    public static final DisplayerAttributeDef BARCHART_HORIZONTAL = new DisplayerAttributeDef("bar_horizontal");
+    public static final DisplayerAttributeDef BARCHART_HORIZONTAL = new DisplayerAttributeDef("bar_horizontal", DisplayerAttributeGroupDef.BARCHART_GROUP);
 
     protected String id;
     protected DisplayerAttributeDef parent;
@@ -74,6 +74,7 @@ public class DisplayerAttributeDef {
     public DisplayerAttributeDef( String id, DisplayerAttributeDef parent ) {
         this.id = id;
         this.parent = parent;
+        if (parent != null) parent.setChild( this );
     }
 
     public String getFullId() {
@@ -88,11 +89,7 @@ public class DisplayerAttributeDef {
         return parent;
     }
 
-    public void setParent( DisplayerAttributeDef parent ) {
-        // Disallow reuse of DisplayerAttributeDefs and group definitions
-        if ( this.parent != null && !parent.equals( this.parent ) )
-            throw new RuntimeException( "The attribute definition (" + id + ") is already assigned to " + this.parent.getFullId() );
-        this.parent = parent;
+    public void setChild( DisplayerAttributeDef child ) {
     }
 
     @Override
