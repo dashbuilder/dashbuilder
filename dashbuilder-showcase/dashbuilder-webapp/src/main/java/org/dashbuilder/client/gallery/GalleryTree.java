@@ -506,27 +506,12 @@ public class GalleryTree {
                                 "            \"left\": \"120\",\n" +
                                 "            \"right\": \"120\"\n" +
                                 "        },\n" +
-                                "        \"3d\": \"false\",\n" +
                                 "        \"width\": \"600\",\n" +
                                 "        \"height\": \"300\",\n" +
                                 "        \"legend\": {\n" +
                                 "            \"show\": \"true\",\n" +
                                 "            \"position\": \"POSITION_RIGHT\"\n" +
                                 "        }\n" +
-                                "    },\n" +
-                                "    \"table\": {\n" +
-                                "        \"sort\": {\n" +
-                                "            \"order\": \"asc\",\n" +
-                                "            \"enabled\": \"true\"\n" +
-                                "        },\n" +
-                                "        \"pageSize\": \"20\",\n" +
-                                "        \"width\": \"0\"\n" +
-                                "    },\n" +
-                                "    \"meter\": {\n" +
-                                "        \"critical\": \"0\",\n" +
-                                "        \"warning\": \"0\",\n" +
-                                "        \"start\": \"0\",\n" +
-                                "        \"end\": \"0\"\n" +
                                 "    },\n" +
                                 "    \"type\": \"BARCHART\",\n" +
                                 "    \"filter\": {\n" +
@@ -598,27 +583,12 @@ public class GalleryTree {
                                 "            \"left\": \"120\",\n" +
                                 "            \"right\": \"120\"\n" +
                                 "        },\n" +
-                                "        \"3d\": \"true\",\n" +
                                 "        \"width\": \"600\",\n" +
                                 "        \"height\": \"300\",\n" +
                                 "        \"legend\": {\n" +
                                 "            \"show\": \"true\",\n" +
                                 "            \"position\": \"POSITION_RIGHT\"\n" +
                                 "        }\n" +
-                                "    },\n" +
-                                "    \"table\": {\n" +
-                                "        \"sort\": {\n" +
-                                "            \"order\": \"asc\",\n" +
-                                "            \"enabled\": \"true\"\n" +
-                                "        },\n" +
-                                "        \"pageSize\": \"20\",\n" +
-                                "        \"width\": \"0\"\n" +
-                                "    },\n" +
-                                "    \"meter\": {\n" +
-                                "        \"critical\": \"0\",\n" +
-                                "        \"warning\": \"0\",\n" +
-                                "        \"start\": \"0\",\n" +
-                                "        \"end\": \"0\"\n" +
                                 "    },\n" +
                                 "    \"type\": \"BARCHART\",\n" +
                                 "    \"filter\": {\n" +
@@ -699,27 +669,12 @@ public class GalleryTree {
                                 "            \"left\": \"120\",\n" +
                                 "            \"right\": \"100\"\n" +
                                 "        },\n" +
-                                "        \"3d\": \"false\",\n" +
                                 "        \"width\": \"700\",\n" +
                                 "        \"height\": \"600\",\n" +
                                 "        \"legend\": {\n" +
                                 "            \"show\": \"true\",\n" +
                                 "            \"position\": \"POSITION_RIGHT\"\n" +
                                 "        }\n" +
-                                "    },\n" +
-                                "    \"table\": {\n" +
-                                "        \"sort\": {\n" +
-                                "            \"order\": \"asc\",\n" +
-                                "            \"enabled\": \"true\"\n" +
-                                "        },\n" +
-                                "        \"pageSize\": \"20\",\n" +
-                                "        \"width\": \"0\"\n" +
-                                "    },\n" +
-                                "    \"meter\": {\n" +
-                                "        \"critical\": \"0\",\n" +
-                                "        \"warning\": \"0\",\n" +
-                                "        \"start\": \"0\",\n" +
-                                "        \"end\": \"0\"\n" +
                                 "    },\n" +
                                 "    \"type\": \"BARCHART\",\n" +
                                 "    \"filter\": {\n" +
@@ -804,9 +759,6 @@ public class GalleryTree {
                                 "            \"columnDisplayName\": \"Total amount\"\n" +
                                 "        }\n" +
                                 "    ],\n" +
-                                "    \"barChart\": {\n" +
-                                "        \"bar_horizontal\": \"false\"\n" +
-                                "    },\n" +
                                 "    \"chart\": {\n" +
                                 "        \"margin\": {\n" +
                                 "            \"bottom\": \"10\",\n" +
@@ -822,20 +774,6 @@ public class GalleryTree {
                                 "            \"position\": \"POSITION_RIGHT\"\n" +
                                 "        }\n" +
                                 "    },\n" +
-                                "    \"table\": {\n" +
-                                "        \"sort\": {\n" +
-                                "            \"order\": \"asc\",\n" +
-                                "            \"enabled\": \"true\"\n" +
-                                "        },\n" +
-                                "        \"pageSize\": \"20\",\n" +
-                                "        \"width\": \"0\"\n" +
-                                "    },\n" +
-                                "    \"meter\": {\n" +
-                                "        \"critical\": \"0\",\n" +
-                                "        \"warning\": \"0\",\n" +
-                                "        \"start\": \"0\",\n" +
-                                "        \"end\": \"0\"\n" +
-                                "    },\n" +
                                 "    \"type\": \"PIECHART\",\n" +
                                 "    \"filter\": {\n" +
                                 "        \"listening\": \"false\",\n" +
@@ -846,14 +784,6 @@ public class GalleryTree {
                                 "    \"title\": {\n" +
                                 "        \"visible\": \"true\",\n" +
                                 "        \"title\": \"By Status\"\n" +
-                                "    },\n" +
-                                "    \"axis\": {\n" +
-                                "        \"x\": {\n" +
-                                "            \"labels_show\": \"false\"\n" +
-                                "        },\n" +
-                                "        \"y\": {\n" +
-                                "            \"labels_show\": \"false\"\n" +
-                                "        }\n" +
                                 "    },\n" +
                                 "    \"dataSetLookup\": {\n" +
                                 "        \"dataSetUuid\": \"dataset-sales-opportunities\",\n" +
@@ -896,9 +826,6 @@ public class GalleryTree {
                                 "            \"columnDisplayName\": \"Total amount\"\n" +
                                 "        }\n" +
                                 "    ],\n" +
-                                "    \"barChart\": {\n" +
-                                "        \"bar_horizontal\": \"false\"\n" +
-                                "    },\n" +
                                 "    \"chart\": {\n" +
                                 "        \"margin\": {\n" +
                                 "            \"bottom\": \"10\",\n" +
@@ -914,20 +841,6 @@ public class GalleryTree {
                                 "            \"position\": \"POSITION_RIGHT\"\n" +
                                 "        }\n" +
                                 "    },\n" +
-                                "    \"table\": {\n" +
-                                "        \"sort\": {\n" +
-                                "            \"order\": \"asc\",\n" +
-                                "            \"enabled\": \"true\"\n" +
-                                "        },\n" +
-                                "        \"pageSize\": \"20\",\n" +
-                                "        \"width\": \"0\"\n" +
-                                "    },\n" +
-                                "    \"meter\": {\n" +
-                                "        \"critical\": \"0\",\n" +
-                                "        \"warning\": \"0\",\n" +
-                                "        \"start\": \"0\",\n" +
-                                "        \"end\": \"0\"\n" +
-                                "    },\n" +
                                 "    \"type\": \"PIECHART\",\n" +
                                 "    \"filter\": {\n" +
                                 "        \"listening\": \"false\",\n" +
@@ -938,14 +851,6 @@ public class GalleryTree {
                                 "    \"title\": {\n" +
                                 "        \"visible\": \"true\",\n" +
                                 "        \"title\": \"By Pipeline/Status/Sales person\"\n" +
-                                "    },\n" +
-                                "    \"axis\": {\n" +
-                                "        \"x\": {\n" +
-                                "            \"labels_show\": \"false\"\n" +
-                                "        },\n" +
-                                "        \"y\": {\n" +
-                                "            \"labels_show\": \"false\"\n" +
-                                "        }\n" +
                                 "    },\n" +
                                 "    \"dataSetLookup\": {\n" +
                                 "        \"dataSetUuid\": \"dataset-sales-opportunities\",\n" +
@@ -1030,9 +935,6 @@ public class GalleryTree {
                                 "            \"columnDisplayName\": \"Total amount\"\n" +
                                 "        }\n" +
                                 "    ],\n" +
-                                "    \"barChart\": {\n" +
-                                "        \"bar_horizontal\": \"false\"\n" +
-                                "    },\n" +
                                 "    \"chart\": {\n" +
                                 "        \"margin\": {\n" +
                                 "            \"bottom\": \"50\",\n" +
@@ -1040,27 +942,12 @@ public class GalleryTree {
                                 "            \"left\": \"100\",\n" +
                                 "            \"right\": \"120\"\n" +
                                 "        },\n" +
-                                "        \"3d\": \"false\",\n" +
                                 "        \"width\": \"600\",\n" +
                                 "        \"height\": \"300\",\n" +
                                 "        \"legend\": {\n" +
                                 "            \"show\": \"true\",\n" +
                                 "            \"position\": \"POSITION_RIGHT\"\n" +
                                 "        }\n" +
-                                "    },\n" +
-                                "    \"table\": {\n" +
-                                "        \"sort\": {\n" +
-                                "            \"order\": \"asc\",\n" +
-                                "            \"enabled\": \"true\"\n" +
-                                "        },\n" +
-                                "        \"pageSize\": \"20\",\n" +
-                                "        \"width\": \"0\"\n" +
-                                "    },\n" +
-                                "    \"meter\": {\n" +
-                                "        \"critical\": \"0\",\n" +
-                                "        \"warning\": \"0\",\n" +
-                                "        \"start\": \"0\",\n" +
-                                "        \"end\": \"0\"\n" +
                                 "    },\n" +
                                 "    \"type\": \"LINECHART\",\n" +
                                 "    \"filter\": {\n" +
@@ -1132,9 +1019,6 @@ public class GalleryTree {
                                 "            \"columnDisplayName\": \"Avg\"\n" +
                                 "        }\n" +
                                 "    ],\n" +
-                                "    \"barChart\": {\n" +
-                                "        \"bar_horizontal\": \"false\"\n" +
-                                "    },\n" +
                                 "    \"chart\": {\n" +
                                 "        \"margin\": {\n" +
                                 "            \"bottom\": \"100\",\n" +
@@ -1142,27 +1026,12 @@ public class GalleryTree {
                                 "            \"left\": \"80\",\n" +
                                 "            \"right\": \"80\"\n" +
                                 "        },\n" +
-                                "        \"3d\": \"false\",\n" +
                                 "        \"width\": \"600\",\n" +
                                 "        \"height\": \"300\",\n" +
                                 "        \"legend\": {\n" +
                                 "            \"show\": \"true\",\n" +
                                 "            \"position\": \"POSITION_RIGHT\"\n" +
                                 "        }\n" +
-                                "    },\n" +
-                                "    \"table\": {\n" +
-                                "        \"sort\": {\n" +
-                                "            \"order\": \"asc\",\n" +
-                                "            \"enabled\": \"true\"\n" +
-                                "        },\n" +
-                                "        \"pageSize\": \"20\",\n" +
-                                "        \"width\": \"0\"\n" +
-                                "    },\n" +
-                                "    \"meter\": {\n" +
-                                "        \"critical\": \"0\",\n" +
-                                "        \"warning\": \"0\",\n" +
-                                "        \"start\": \"0\",\n" +
-                                "        \"end\": \"0\"\n" +
                                 "    },\n" +
                                 "    \"type\": \"LINECHART\",\n" +
                                 "    \"filter\": {\n" +
@@ -1249,9 +1118,6 @@ public class GalleryTree {
                                 "            \"columnDisplayName\": \"Sales in 2016\"\n" +
                                 "        }\n" +
                                 "    ],\n" +
-                                "    \"barChart\": {\n" +
-                                "        \"bar_horizontal\": \"false\"\n" +
-                                "    },\n" +
                                 "    \"chart\": {\n" +
                                 "        \"margin\": {\n" +
                                 "            \"bottom\": \"80\",\n" +
@@ -1259,27 +1125,12 @@ public class GalleryTree {
                                 "            \"left\": \"50\",\n" +
                                 "            \"right\": \"120\"\n" +
                                 "        },\n" +
-                                "        \"3d\": \"false\",\n" +
                                 "        \"width\": \"600\",\n" +
                                 "        \"height\": \"300\",\n" +
                                 "        \"legend\": {\n" +
                                 "            \"show\": \"true\",\n" +
                                 "            \"position\": \"POSITION_RIGHT\"\n" +
                                 "        }\n" +
-                                "    },\n" +
-                                "    \"table\": {\n" +
-                                "        \"sort\": {\n" +
-                                "            \"order\": \"asc\",\n" +
-                                "            \"enabled\": \"true\"\n" +
-                                "        },\n" +
-                                "        \"pageSize\": \"20\",\n" +
-                                "        \"width\": \"0\"\n" +
-                                "    },\n" +
-                                "    \"meter\": {\n" +
-                                "        \"critical\": \"0\",\n" +
-                                "        \"warning\": \"0\",\n" +
-                                "        \"start\": \"0\",\n" +
-                                "        \"end\": \"0\"\n" +
                                 "    },\n" +
                                 "    \"type\": \"LINECHART\",\n" +
                                 "    \"filter\": {\n" +
@@ -1341,9 +1192,6 @@ public class GalleryTree {
                                 "            \"columnDisplayName\": \"Expected amount\"\n" +
                                 "        }\n" +
                                 "    ],\n" +
-                                "    \"barChart\": {\n" +
-                                "        \"bar_horizontal\": \"false\"\n" +
-                                "    },\n" +
                                 "    \"chart\": {\n" +
                                 "        \"margin\": {\n" +
                                 "            \"bottom\": \"50\",\n" +
@@ -1351,27 +1199,12 @@ public class GalleryTree {
                                 "            \"left\": \"100\",\n" +
                                 "            \"right\": \"120\"\n" +
                                 "        },\n" +
-                                "        \"3d\": \"false\",\n" +
                                 "        \"width\": \"600\",\n" +
                                 "        \"height\": \"300\",\n" +
                                 "        \"legend\": {\n" +
                                 "            \"show\": \"true\",\n" +
                                 "            \"position\": \"POSITION_RIGHT\"\n" +
                                 "        }\n" +
-                                "    },\n" +
-                                "    \"table\": {\n" +
-                                "        \"sort\": {\n" +
-                                "            \"order\": \"asc\",\n" +
-                                "            \"enabled\": \"true\"\n" +
-                                "        },\n" +
-                                "        \"pageSize\": \"20\",\n" +
-                                "        \"width\": \"0\"\n" +
-                                "    },\n" +
-                                "    \"meter\": {\n" +
-                                "        \"critical\": \"0\",\n" +
-                                "        \"warning\": \"0\",\n" +
-                                "        \"start\": \"0\",\n" +
-                                "        \"end\": \"0\"\n" +
                                 "    },\n" +
                                 "    \"type\": \"AREACHART\",\n" +
                                 "    \"filter\": {\n" +
@@ -1434,9 +1267,6 @@ public class GalleryTree {
                                 "            \"columnDisplayName\": \"Expected amount per month\"\n" +
                                 "        }\n" +
                                 "    ],\n" +
-                                "    \"barChart\": {\n" +
-                                "        \"bar_horizontal\": \"false\"\n" +
-                                "    },\n" +
                                 "    \"chart\": {\n" +
                                 "        \"margin\": {\n" +
                                 "            \"bottom\": \"80\",\n" +
@@ -1444,27 +1274,12 @@ public class GalleryTree {
                                 "            \"left\": \"100\",\n" +
                                 "            \"right\": \"100\"\n" +
                                 "        },\n" +
-                                "        \"3d\": \"false\",\n" +
                                 "        \"width\": \"600\",\n" +
                                 "        \"height\": \"300\",\n" +
                                 "        \"legend\": {\n" +
                                 "            \"show\": \"true\",\n" +
                                 "            \"position\": \"POSITION_RIGHT\"\n" +
                                 "        }\n" +
-                                "    },\n" +
-                                "    \"table\": {\n" +
-                                "        \"sort\": {\n" +
-                                "            \"order\": \"asc\",\n" +
-                                "            \"enabled\": \"true\"\n" +
-                                "        },\n" +
-                                "        \"pageSize\": \"20\",\n" +
-                                "        \"width\": \"0\"\n" +
-                                "    },\n" +
-                                "    \"meter\": {\n" +
-                                "        \"critical\": \"0\",\n" +
-                                "        \"warning\": \"0\",\n" +
-                                "        \"start\": \"0\",\n" +
-                                "        \"end\": \"0\"\n" +
                                 "    },\n" +
                                 "    \"type\": \"AREACHART\",\n" +
                                 "    \"filter\": {\n" +
@@ -1527,9 +1342,6 @@ public class GalleryTree {
                                 "            \"columnDisplayName\": \"Expected amount\"\n" +
                                 "        }\n" +
                                 "    ],\n" +
-                                "    \"barChart\": {\n" +
-                                "        \"bar_horizontal\": \"false\"\n" +
-                                "    },\n" +
                                 "    \"chart\": {\n" +
                                 "        \"margin\": {\n" +
                                 "            \"bottom\": \"70\",\n" +
@@ -1537,27 +1349,12 @@ public class GalleryTree {
                                 "            \"left\": \"100\",\n" +
                                 "            \"right\": \"120\"\n" +
                                 "        },\n" +
-                                "        \"3d\": \"false\",\n" +
                                 "        \"width\": \"600\",\n" +
                                 "        \"height\": \"300\",\n" +
                                 "        \"legend\": {\n" +
                                 "            \"show\": \"true\",\n" +
                                 "            \"position\": \"POSITION_RIGHT\"\n" +
                                 "        }\n" +
-                                "    },\n" +
-                                "    \"table\": {\n" +
-                                "        \"sort\": {\n" +
-                                "            \"order\": \"asc\",\n" +
-                                "            \"enabled\": \"true\"\n" +
-                                "        },\n" +
-                                "        \"pageSize\": \"20\",\n" +
-                                "        \"width\": \"0\"\n" +
-                                "    },\n" +
-                                "    \"meter\": {\n" +
-                                "        \"critical\": \"0\",\n" +
-                                "        \"warning\": \"0\",\n" +
-                                "        \"start\": \"0\",\n" +
-                                "        \"end\": \"0\"\n" +
                                 "    },\n" +
                                 "    \"type\": \"AREACHART\",\n" +
                                 "    \"filter\": {\n" +
@@ -1637,9 +1434,6 @@ public class GalleryTree {
                                 "            \"columnDisplayName\": \"Expected amount\"\n" +
                                 "        }\n" +
                                 "    ],\n" +
-                                "    \"barChart\": {\n" +
-                                "        \"bar_horizontal\": \"false\"\n" +
-                                "    },\n" +
                                 "    \"chart\": {\n" +
                                 "        \"margin\": {\n" +
                                 "            \"bottom\": \"50\",\n" +
@@ -1647,27 +1441,12 @@ public class GalleryTree {
                                 "            \"left\": \"50\",\n" +
                                 "            \"right\": \"0\"\n" +
                                 "        },\n" +
-                                "        \"3d\": \"false\",\n" +
                                 "        \"width\": \"700\",\n" +
                                 "        \"height\": \"400\",\n" +
                                 "        \"legend\": {\n" +
                                 "            \"show\": \"true\",\n" +
                                 "            \"position\": \"POSITION_RIGHT\"\n" +
                                 "        }\n" +
-                                "    },\n" +
-                                "    \"table\": {\n" +
-                                "        \"sort\": {\n" +
-                                "            \"order\": \"asc\",\n" +
-                                "            \"enabled\": \"true\"\n" +
-                                "        },\n" +
-                                "        \"pageSize\": \"20\",\n" +
-                                "        \"width\": \"0\"\n" +
-                                "    },\n" +
-                                "    \"meter\": {\n" +
-                                "        \"critical\": \"0\",\n" +
-                                "        \"warning\": \"0\",\n" +
-                                "        \"start\": \"0\",\n" +
-                                "        \"end\": \"0\"\n" +
                                 "    },\n" +
                                 "    \"type\": \"BUBBLECHART\",\n" +
                                 "    \"filter\": {\n" +
@@ -1776,24 +1555,6 @@ public class GalleryTree {
                                 "            \"columnDisplayName\": \"Amount\"\n" +
                                 "        }\n" +
                                 "    ],\n" +
-                                "    \"barChart\": {\n" +
-                                "        \"bar_horizontal\": \"false\"\n" +
-                                "    },\n" +
-                                "    \"chart\": {\n" +
-                                "        \"margin\": {\n" +
-                                "            \"bottom\": \"50\",\n" +
-                                "            \"top\": \"20\",\n" +
-                                "            \"left\": \"80\",\n" +
-                                "            \"right\": \"80\"\n" +
-                                "        },\n" +
-                                "        \"3d\": \"false\",\n" +
-                                "        \"width\": \"600\",\n" +
-                                "        \"height\": \"300\",\n" +
-                                "        \"legend\": {\n" +
-                                "            \"show\": \"true\",\n" +
-                                "            \"position\": \"POSITION_RIGHT\"\n" +
-                                "        }\n" +
-                                "    },\n" +
                                 "    \"table\": {\n" +
                                 "        \"sort\": {\n" +
                                 "            \"order\": \"DESCENDING\",\n" +
@@ -1802,12 +1563,6 @@ public class GalleryTree {
                                 "        },\n" +
                                 "        \"pageSize\": \"10\",\n" +
                                 "        \"width\": \"0\"\n" +
-                                "    },\n" +
-                                "    \"meter\": {\n" +
-                                "        \"critical\": \"0\",\n" +
-                                "        \"warning\": \"0\",\n" +
-                                "        \"start\": \"0\",\n" +
-                                "        \"end\": \"0\"\n" +
                                 "    },\n" +
                                 "    \"type\": \"TABLE\",\n" +
                                 "    \"filter\": {\n" +
@@ -1819,14 +1574,6 @@ public class GalleryTree {
                                 "    \"title\": {\n" +
                                 "        \"visible\": \"true\",\n" +
                                 "        \"title\": \"List of Opportunities\"\n" +
-                                "    },\n" +
-                                "    \"axis\": {\n" +
-                                "        \"x\": {\n" +
-                                "            \"labels_show\": \"false\"\n" +
-                                "        },\n" +
-                                "        \"y\": {\n" +
-                                "            \"labels_show\": \"false\"\n" +
-                                "        }\n" +
                                 "    },\n" +
                                 "    \"dataSetLookup\": {\n" +
                                 "        \"dataSetUuid\": \"dataset-sales-opportunities\",\n" +
@@ -1874,24 +1621,6 @@ public class GalleryTree {
                                 "            \"columnDisplayName\": \"Amount\"\n" +
                                 "        }\n" +
                                 "    ],\n" +
-                                "    \"barChart\": {\n" +
-                                "        \"bar_horizontal\": \"false\"\n" +
-                                "    },\n" +
-                                "    \"chart\": {\n" +
-                                "        \"margin\": {\n" +
-                                "            \"bottom\": \"50\",\n" +
-                                "            \"top\": \"20\",\n" +
-                                "            \"left\": \"80\",\n" +
-                                "            \"right\": \"80\"\n" +
-                                "        },\n" +
-                                "        \"3d\": \"false\",\n" +
-                                "        \"width\": \"600\",\n" +
-                                "        \"height\": \"300\",\n" +
-                                "        \"legend\": {\n" +
-                                "            \"show\": \"true\",\n" +
-                                "            \"position\": \"POSITION_RIGHT\"\n" +
-                                "        }\n" +
-                                "    },\n" +
                                 "    \"table\": {\n" +
                                 "        \"sort\": {\n" +
                                 "            \"order\": \"DESCENDING\",\n" +
@@ -1900,12 +1629,6 @@ public class GalleryTree {
                                 "        },\n" +
                                 "        \"pageSize\": \"10\",\n" +
                                 "        \"width\": \"0\"\n" +
-                                "    },\n" +
-                                "    \"meter\": {\n" +
-                                "        \"critical\": \"0\",\n" +
-                                "        \"warning\": \"0\",\n" +
-                                "        \"start\": \"0\",\n" +
-                                "        \"end\": \"0\"\n" +
                                 "    },\n" +
                                 "    \"type\": \"TABLE\",\n" +
                                 "    \"filter\": {\n" +
@@ -1917,14 +1640,6 @@ public class GalleryTree {
                                 "    \"title\": {\n" +
                                 "        \"visible\": \"true\",\n" +
                                 "        \"title\": \"Opportunities in USA & Brazil\"\n" +
-                                "    },\n" +
-                                "    \"axis\": {\n" +
-                                "        \"x\": {\n" +
-                                "            \"labels_show\": \"false\"\n" +
-                                "        },\n" +
-                                "        \"y\": {\n" +
-                                "            \"labels_show\": \"false\"\n" +
-                                "        }\n" +
                                 "    },\n" +
                                 "    \"dataSetLookup\": {\n" +
                                 "        \"dataSetUuid\": \"dataset-sales-opportunities\",\n" +
@@ -1956,24 +1671,6 @@ public class GalleryTree {
         nodeList.add(new GalleryNodeDisplayer("Grouped", true,
                 jsonHelper.fromJson(
                                 "{\n" +
-                                "    \"barChart\": {\n" +
-                                "        \"bar_horizontal\": \"false\"\n" +
-                                "    },\n" +
-                                "    \"chart\": {\n" +
-                                "        \"margin\": {\n" +
-                                "            \"bottom\": \"50\",\n" +
-                                "            \"top\": \"20\",\n" +
-                                "            \"left\": \"80\",\n" +
-                                "            \"right\": \"80\"\n" +
-                                "        },\n" +
-                                "        \"3d\": \"false\",\n" +
-                                "        \"width\": \"600\",\n" +
-                                "        \"height\": \"300\",\n" +
-                                "        \"legend\": {\n" +
-                                "            \"show\": \"true\",\n" +
-                                "            \"position\": \"POSITION_RIGHT\"\n" +
-                                "        }\n" +
-                                "    },\n" +
                                 "    \"table\": {\n" +
                                 "        \"sort\": {\n" +
                                 "            \"order\": \"DESCENDING\",\n" +
@@ -1982,12 +1679,6 @@ public class GalleryTree {
                                 "        },\n" +
                                 "        \"pageSize\": \"10\",\n" +
                                 "        \"width\": \"0\"\n" +
-                                "    },\n" +
-                                "    \"meter\": {\n" +
-                                "        \"critical\": \"0\",\n" +
-                                "        \"warning\": \"0\",\n" +
-                                "        \"start\": \"0\",\n" +
-                                "        \"end\": \"0\"\n" +
                                 "    },\n" +
                                 "    \"type\": \"TABLE\",\n" +
                                 "    \"filter\": {\n" +
@@ -1999,14 +1690,6 @@ public class GalleryTree {
                                 "    \"title\": {\n" +
                                 "        \"visible\": \"true\",\n" +
                                 "        \"title\": \"Country Summary\"\n" +
-                                "    },\n" +
-                                "    \"axis\": {\n" +
-                                "        \"x\": {\n" +
-                                "            \"labels_show\": \"false\"\n" +
-                                "        },\n" +
-                                "        \"y\": {\n" +
-                                "            \"labels_show\": \"false\"\n" +
-                                "        }\n" +
                                 "    },\n" +
                                 "    \"dataSetLookup\": {\n" +
                                 "        \"dataSetUuid\": \"dataset-sales-opportunities\",\n" +
@@ -2102,24 +1785,6 @@ public class GalleryTree {
                                 "            \"columnDisplayName\": \"Amount\"\n" +
                                 "        }\n" +
                                 "    ],\n" +
-                                "    \"barChart\": {\n" +
-                                "        \"bar_horizontal\": \"false\"\n" +
-                                "    },\n" +
-                                "    \"chart\": {\n" +
-                                "        \"margin\": {\n" +
-                                "            \"bottom\": \"50\",\n" +
-                                "            \"top\": \"20\",\n" +
-                                "            \"left\": \"80\",\n" +
-                                "            \"right\": \"80\"\n" +
-                                "        },\n" +
-                                "        \"3d\": \"false\",\n" +
-                                "        \"width\": \"600\",\n" +
-                                "        \"height\": \"300\",\n" +
-                                "        \"legend\": {\n" +
-                                "            \"show\": \"true\",\n" +
-                                "            \"position\": \"POSITION_RIGHT\"\n" +
-                                "        }\n" +
-                                "    },\n" +
                                 "    \"table\": {\n" +
                                 "        \"sort\": {\n" +
                                 "            \"order\": \"DESCENDING\",\n" +
@@ -2128,12 +1793,6 @@ public class GalleryTree {
                                 "        },\n" +
                                 "        \"pageSize\": \"10\",\n" +
                                 "        \"width\": \"0\"\n" +
-                                "    },\n" +
-                                "    \"meter\": {\n" +
-                                "        \"critical\": \"0\",\n" +
-                                "        \"warning\": \"0\",\n" +
-                                "        \"start\": \"0\",\n" +
-                                "        \"end\": \"0\"\n" +
                                 "    },\n" +
                                 "    \"type\": \"TABLE\",\n" +
                                 "    \"filter\": {\n" +
@@ -2145,14 +1804,6 @@ public class GalleryTree {
                                 "    \"title\": {\n" +
                                 "        \"visible\": \"true\",\n" +
                                 "        \"title\": \"List of Opportunities\"\n" +
-                                "    },\n" +
-                                "    \"axis\": {\n" +
-                                "        \"x\": {\n" +
-                                "            \"labels_show\": \"false\"\n" +
-                                "        },\n" +
-                                "        \"y\": {\n" +
-                                "            \"labels_show\": \"false\"\n" +
-                                "        }\n" +
                                 "    },\n" +
                                 "    \"renderer\": \"table\",\n" +
                                 "    \"dataSetLookup\": {\n" +
@@ -2176,9 +1827,6 @@ public class GalleryTree {
                                 "            \"columnDisplayName\": \"Total amount\"\n" +
                                 "        }\n" +
                                 "    ],\n" +
-                                "    \"barChart\": {\n" +
-                                "        \"bar_horizontal\": \"false\"\n" +
-                                "    },\n" +
                                 "    \"chart\": {\n" +
                                 "        \"margin\": {\n" +
                                 "            \"bottom\": \"50\",\n" +
@@ -2186,21 +1834,8 @@ public class GalleryTree {
                                 "            \"left\": \"80\",\n" +
                                 "            \"right\": \"80\"\n" +
                                 "        },\n" +
-                                "        \"3d\": \"false\",\n" +
                                 "        \"width\": \"400\",\n" +
-                                "        \"height\": \"200\",\n" +
-                                "        \"legend\": {\n" +
-                                "            \"show\": \"true\",\n" +
-                                "            \"position\": \"POSITION_RIGHT\"\n" +
-                                "        }\n" +
-                                "    },\n" +
-                                "    \"table\": {\n" +
-                                "        \"sort\": {\n" +
-                                "            \"order\": \"asc\",\n" +
-                                "            \"enabled\": \"true\"\n" +
-                                "        },\n" +
-                                "        \"pageSize\": \"20\",\n" +
-                                "        \"width\": \"0\"\n" +
+                                "        \"height\": \"200\"\n" +
                                 "    },\n" +
                                 "    \"meter\": {\n" +
                                 "        \"critical\": \"8000000\",\n" +
@@ -2218,14 +1853,6 @@ public class GalleryTree {
                                 "    \"title\": {\n" +
                                 "        \"visible\": \"true\",\n" +
                                 "        \"title\": \"Sales goal\"\n" +
-                                "    },\n" +
-                                "    \"axis\": {\n" +
-                                "        \"x\": {\n" +
-                                "            \"labels_show\": \"false\"\n" +
-                                "        },\n" +
-                                "        \"y\": {\n" +
-                                "            \"labels_show\": \"false\"\n" +
-                                "        }\n" +
                                 "    },\n" +
                                 "    \"dataSetLookup\": {\n" +
                                 "        \"dataSetUuid\": \"dataset-sales-opportunities\",\n" +
@@ -2259,9 +1886,6 @@ public class GalleryTree {
                                 "            \"columnDisplayName\": \"Amount\"\n" +
                                 "        }\n" +
                                 "    ],\n" +
-                                "    \"barChart\": {\n" +
-                                "        \"bar_horizontal\": \"false\"\n" +
-                                "    },\n" +
                                 "    \"chart\": {\n" +
                                 "        \"margin\": {\n" +
                                 "            \"bottom\": \"50\",\n" +
@@ -2269,21 +1893,8 @@ public class GalleryTree {
                                 "            \"left\": \"80\",\n" +
                                 "            \"right\": \"80\"\n" +
                                 "        },\n" +
-                                "        \"3d\": \"false\",\n" +
                                 "        \"width\": \"600\",\n" +
-                                "        \"height\": \"200\",\n" +
-                                "        \"legend\": {\n" +
-                                "            \"show\": \"true\",\n" +
-                                "            \"position\": \"POSITION_RIGHT\"\n" +
-                                "        }\n" +
-                                "    },\n" +
-                                "    \"table\": {\n" +
-                                "        \"sort\": {\n" +
-                                "            \"order\": \"asc\",\n" +
-                                "            \"enabled\": \"true\"\n" +
-                                "        },\n" +
-                                "        \"pageSize\": \"20\",\n" +
-                                "        \"width\": \"0\"\n" +
+                                "        \"height\": \"200\"\n" +
                                 "    },\n" +
                                 "    \"meter\": {\n" +
                                 "        \"critical\": \"3000000\",\n" +
@@ -2301,14 +1912,6 @@ public class GalleryTree {
                                 "    \"title\": {\n" +
                                 "        \"visible\": \"true\",\n" +
                                 "        \"title\": \"Expected amount per year\"\n" +
-                                "    },\n" +
-                                "    \"axis\": {\n" +
-                                "        \"x\": {\n" +
-                                "            \"labels_show\": \"false\"\n" +
-                                "        },\n" +
-                                "        \"y\": {\n" +
-                                "            \"labels_show\": \"false\"\n" +
-                                "        }\n" +
                                 "    },\n" +
                                 "    \"dataSetLookup\": {\n" +
                                 "        \"dataSetUuid\": \"dataset-sales-opportunities\",\n" +
@@ -2352,9 +1955,6 @@ public class GalleryTree {
                                 "            \"columnDisplayName\": \"Heart rate\"\n" +
                                 "        }\n" +
                                 "    ],\n" +
-                                "    \"barChart\": {\n" +
-                                "        \"bar_horizontal\": \"false\"\n" +
-                                "    },\n" +
                                 "    \"chart\": {\n" +
                                 "        \"margin\": {\n" +
                                 "            \"bottom\": \"50\",\n" +
@@ -2362,21 +1962,8 @@ public class GalleryTree {
                                 "            \"left\": \"80\",\n" +
                                 "            \"right\": \"80\"\n" +
                                 "        },\n" +
-                                "        \"3d\": \"false\",\n" +
                                 "        \"width\": \"500\",\n" +
-                                "        \"height\": \"200\",\n" +
-                                "        \"legend\": {\n" +
-                                "            \"show\": \"true\",\n" +
-                                "            \"position\": \"POSITION_RIGHT\"\n" +
-                                "        }\n" +
-                                "    },\n" +
-                                "    \"table\": {\n" +
-                                "        \"sort\": {\n" +
-                                "            \"order\": \"asc\",\n" +
-                                "            \"enabled\": \"true\"\n" +
-                                "        },\n" +
-                                "        \"pageSize\": \"20\",\n" +
-                                "        \"width\": \"0\"\n" +
+                                "        \"height\": \"200\"\n" +
                                 "    },\n" +
                                 "    \"meter\": {\n" +
                                 "        \"critical\": \"190\",\n" +
@@ -2394,14 +1981,6 @@ public class GalleryTree {
                                 "    \"title\": {\n" +
                                 "        \"visible\": \"true\",\n" +
                                 "        \"title\": \"Heart rate\"\n" +
-                                "    },\n" +
-                                "    \"axis\": {\n" +
-                                "        \"x\": {\n" +
-                                "            \"labels_show\": \"false\"\n" +
-                                "        },\n" +
-                                "        \"y\": {\n" +
-                                "            \"labels_show\": \"false\"\n" +
-                                "        }\n" +
                                 "    },\n" +
                                 "    \"dataSet\": {\n" +
                                 "        \"column.0\": {\n" +
@@ -2434,9 +2013,6 @@ public class GalleryTree {
                                 "            \"columnDisplayName\": \"Total amount\"\n" +
                                 "        }\n" +
                                 "    ],\n" +
-                                "    \"barChart\": {\n" +
-                                "        \"bar_horizontal\": \"false\"\n" +
-                                "    },\n" +
                                 "    \"chart\": {\n" +
                                 "        \"margin\": {\n" +
                                 "            \"bottom\": \"10\",\n" +
@@ -2444,27 +2020,8 @@ public class GalleryTree {
                                 "            \"left\": \"10\",\n" +
                                 "            \"right\": \"10\"\n" +
                                 "        },\n" +
-                                "        \"3d\": \"false\",\n" +
                                 "        \"width\": \"700\",\n" +
-                                "        \"height\": \"500\",\n" +
-                                "        \"legend\": {\n" +
-                                "            \"show\": \"true\",\n" +
-                                "            \"position\": \"POSITION_RIGHT\"\n" +
-                                "        }\n" +
-                                "    },\n" +
-                                "    \"table\": {\n" +
-                                "        \"sort\": {\n" +
-                                "            \"order\": \"asc\",\n" +
-                                "            \"enabled\": \"true\"\n" +
-                                "        },\n" +
-                                "        \"pageSize\": \"20\",\n" +
-                                "        \"width\": \"0\"\n" +
-                                "    },\n" +
-                                "    \"meter\": {\n" +
-                                "        \"critical\": \"0\",\n" +
-                                "        \"warning\": \"0\",\n" +
-                                "        \"start\": \"0\",\n" +
-                                "        \"end\": \"0\"\n" +
+                                "        \"height\": \"500\"\n" +
                                 "    },\n" +
                                 "    \"type\": \"MAP\",\n" +
                                 "    \"filter\": {\n" +
@@ -2476,14 +2033,6 @@ public class GalleryTree {
                                 "    \"title\": {\n" +
                                 "        \"visible\": \"true\",\n" +
                                 "        \"title\": \"By Country\"\n" +
-                                "    },\n" +
-                                "    \"axis\": {\n" +
-                                "        \"x\": {\n" +
-                                "            \"labels_show\": \"false\"\n" +
-                                "        },\n" +
-                                "        \"y\": {\n" +
-                                "            \"labels_show\": \"false\"\n" +
-                                "        }\n" +
                                 "    },\n" +
                                 "    \"dataSetLookup\": {\n" +
                                 "        \"dataSetUuid\": \"dataset-sales-opportunities\",\n" +
