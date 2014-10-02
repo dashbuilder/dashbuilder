@@ -60,7 +60,7 @@ public class DisplayerSettingsJSONMarshaller {
         if ( dataSetLookupJSONMarshaller == null) dataSetLookupJSONMarshaller = new DataSetLookupJSONMarshaller();
     }
 
-    public DisplayerSettings fromJson( String jsonString ) {
+    public DisplayerSettings fromJsonString( String jsonString ) {
         DisplayerSettings ds = new DisplayerSettings();
 
         if ( !StringUtils.isBlank( jsonString ) ) {
@@ -109,7 +109,11 @@ public class DisplayerSettingsJSONMarshaller {
         return ds;
     }
 
-    public String toJson(DisplayerSettings displayerSettings) {
+    public String toJsonString(DisplayerSettings displayerSettings) {
+        return toJsonObject( displayerSettings ).toString();
+    }
+
+    public JSONObject toJsonObject( DisplayerSettings displayerSettings ) {
         JSONObject json = new JSONObject(  );
 
         // UUID
@@ -141,7 +145,7 @@ public class DisplayerSettingsJSONMarshaller {
             json.put( JSON_DATASET_LOOKUP_PREFIX, dataSetLookupJSONMarshaller.toJson( dataSetLookup ) );
         } else throw new RuntimeException( "Either a DataSet or a DataSetLookup should be specified" );
 
-        return json.toString();
+        return json;
     }
 
     private void setNodeValue( JSONObject node, String path, String value ) {

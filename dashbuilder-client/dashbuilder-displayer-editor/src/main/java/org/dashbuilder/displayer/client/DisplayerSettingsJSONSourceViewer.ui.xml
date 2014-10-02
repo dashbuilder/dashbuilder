@@ -16,6 +16,7 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
              xmlns:b="urn:import:com.github.gwtbootstrap.client.ui"
+             xmlns:db="urn:import:org.dashbuilder.common.client"
              xmlns:gwt="urn:import:com.google.gwt.user.client.ui">
 
   <ui:with field="i18n" type="org.dashbuilder.displayer.client.resources.i18n.DisplayerSettingsEditorConstants"/>
@@ -26,10 +27,9 @@
 
       <b:Fieldset>
         <b:Legend>
-          <b:Heading size="4" text="{i18n.settingsEditor_caption}" />
+          <b:Heading size="4" text="{i18n.settingsJsonSource_caption}" />
         </b:Legend>
-        <gwt:FlexTable ui:field="editorSettingsTable">
-        </gwt:FlexTable>
+        <db:JsonSourceViewer ui:field="jsonSourceViewer"/>
       </b:Fieldset>
 
     </div>

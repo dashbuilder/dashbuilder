@@ -37,6 +37,10 @@ public interface DisplayerSettingsEditorConstants extends ConstantsWithLookup {
 
     // Common settings editor literals
 
+    String settingsEditor_caption();
+
+    String settingsJsonSource_caption();
+
     String common_showTitle();
 
     String common_title();

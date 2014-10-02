@@ -22,6 +22,7 @@ import org.dashbuilder.displayer.client.DisplayerSettingsEditorListener;
 import org.dashbuilder.displayer.client.DisplayerSettingsEditor;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import org.dashbuilder.displayer.client.DisplayerSettingsJSONSourceViewer;
 import org.dashbuilder.displayer.client.DisplayerView;
 
 /**
@@ -29,20 +30,20 @@ import org.dashbuilder.displayer.client.DisplayerView;
  */
 public class GalleryNodeDisplayer extends GalleryNode {
 
-    private DisplayerSettingsEditor displayerSettingsEditor = new DisplayerSettingsEditorImpl();
+    private DisplayerSettingsEditor displayerSettingsEditor;
 
+    private GalleryEditorType galleryEditorType;
     protected DisplayerSettings displayerSettings;
-    protected boolean editEnabled = false;
 
     public GalleryNodeDisplayer(String name, DisplayerSettings settings) {
         super(name);
         this.displayerSettings = settings;
     }
 
-    public GalleryNodeDisplayer(String name, boolean editEnabled, DisplayerSettings settings) {
+    public GalleryNodeDisplayer(String name, GalleryEditorType galleryEditorType, DisplayerSettings settings) {
         super(name);
         this.displayerSettings = settings;
-        this.editEnabled = editEnabled;
+        this.galleryEditorType = galleryEditorType;
     }
 
     public DisplayerSettings getDisplayerSettings() {
@@ -53,20 +54,16 @@ public class GalleryNodeDisplayer extends GalleryNode {
         this.displayerSettings = displayerSettings;
     }
 
-    public boolean isEditEnabled() {
-        return editEnabled;
-    }
-
-    public void setEditEnabled(boolean editEnabled) {
-        this.editEnabled = editEnabled;
-    }
-
     protected Widget createWidget() {
-        if (!isEditEnabled()) {
+        if (galleryEditorType == null) {
             return new DisplayerView(displayerSettings).draw();
         }
 
-        // TODO encapsulate the editor in a DisplayerSettingsView, similar to the DisplayerView, for coherency ?
+        switch (galleryEditorType) {
+            case FORM: displayerSettingsEditor = new DisplayerSettingsEditorImpl(); break;
+            case JSON: displayerSettingsEditor = new DisplayerSettingsJSONSourceViewer();
+        }
+
         displayerSettingsEditor.setDisplayerSettings( displayerSettings );
 
         SimplePanel editorPanel = new SimplePanel();

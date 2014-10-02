@@ -100,7 +100,7 @@ public class GalleryTree {
         GalleryNodeList nodeList = new GalleryNodeList("Bar Chart");
         mainNodes.add(nodeList);
 
-        nodeList.add(new GalleryNodeDisplayer("Horizontal", true,
+        nodeList.add(new GalleryNodeDisplayer("Horizontal", GalleryEditorType.FORM,
                 DisplayerSettingsFactory.newBarChartSettings()
                         .dataset(SALES_OPPS)
                         .group(PRODUCT)
@@ -112,7 +112,7 @@ public class GalleryTree {
                         .margins(10, 30, 120, 120)
                         .buildSettings()
         ));
-        nodeList.add(new GalleryNodeDisplayer("Vertical (3D)", true,
+        nodeList.add(new GalleryNodeDisplayer("Vertical (3D)", GalleryEditorType.FORM,
                 DisplayerSettingsFactory.newBarChartSettings()
                         .dataset(SALES_OPPS)
                         .group(PRODUCT)
@@ -124,7 +124,7 @@ public class GalleryTree {
                         .margins(10, 80, 120, 120)
                         .buildSettings()
         ));
-        nodeList.add(new GalleryNodeDisplayer("Multiple", true,
+        nodeList.add(new GalleryNodeDisplayer("Multiple", GalleryEditorType.FORM,
                 DisplayerSettingsFactory.newBarChartSettings()
                         .dataset(SALES_OPPS)
                         .group(COUNTRY, "Country")
@@ -149,7 +149,7 @@ public class GalleryTree {
         GalleryNodeList nodeList = new GalleryNodeList("Pie Chart");
         mainNodes.add(nodeList);
 
-        nodeList.add(new GalleryNodeDisplayer("Basic", true,
+        nodeList.add(new GalleryNodeDisplayer("Basic", GalleryEditorType.FORM,
                 DisplayerSettingsFactory.newPieChartSettings()
                 .dataset(SALES_OPPS)
                 .group(STATUS)
@@ -161,7 +161,7 @@ public class GalleryTree {
                 .buildSettings()
         ));
 
-        nodeList.add(new GalleryNodeDisplayer("Drill-down", true,
+        nodeList.add(new GalleryNodeDisplayer("Drill-down", GalleryEditorType.FORM,
                 DisplayerSettingsFactory.newPieChartSettings()
                 .dataset(SALES_OPPS)
                 .group(PIPELINE)
@@ -183,7 +183,7 @@ public class GalleryTree {
         GalleryNodeList nodeList = new GalleryNodeList("Line Chart");
         mainNodes.add(nodeList);
 
-        nodeList.add(new GalleryNodeDisplayer("Basic", true,
+        nodeList.add(new GalleryNodeDisplayer("Basic", GalleryEditorType.FORM,
                 DisplayerSettingsFactory.newLineChartSettings()
                 .dataset(SALES_OPPS)
                 .group(CLOSING_DATE, 12, MONTH)
@@ -194,7 +194,7 @@ public class GalleryTree {
                 .column("Total amount")
                 .buildSettings()
         ));
-        nodeList.add(new GalleryNodeDisplayer("Multiple", true,
+        nodeList.add(new GalleryNodeDisplayer("Multiple", GalleryEditorType.FORM,
                 DisplayerSettingsFactory.newLineChartSettings()
                 .dataset(SALES_OPPS)
                 .group(COUNTRY, "Country")
@@ -211,7 +211,7 @@ public class GalleryTree {
                 .column("Average", "Avg")
                 .buildSettings()
         ));
-        nodeList.add(new GalleryNodeDisplayer("Multiple (static)", true,
+        nodeList.add(new GalleryNodeDisplayer("Multiple (static)", GalleryEditorType.FORM,
                 DisplayerSettingsFactory.newLineChartSettings()
                 .title("Sales Evolution Per Year")
                 .margins(20, 80, 50, 120)
@@ -247,7 +247,7 @@ public class GalleryTree {
         GalleryNodeList nodeList = new GalleryNodeList("Area Chart");
         mainNodes.add(nodeList);
 
-        nodeList.add(new GalleryNodeDisplayer("Basic", true,
+        nodeList.add(new GalleryNodeDisplayer("Basic", GalleryEditorType.FORM,
                 DisplayerSettingsFactory.newAreaChartSettings()
                 .dataset(SALES_OPPS)
                 .group(CLOSING_DATE, 24, MONTH)
@@ -258,7 +258,7 @@ public class GalleryTree {
                 .column("Expected amount")
                 .buildSettings()
         ));
-        nodeList.add(new GalleryNodeDisplayer("Fixed (per month)", true,
+        nodeList.add(new GalleryNodeDisplayer("Fixed (per month)", GalleryEditorType.FORM,
                 DisplayerSettingsFactory.newAreaChartSettings()
                 .dataset(SALES_OPPS)
                 .group(CLOSING_DATE)
@@ -270,7 +270,7 @@ public class GalleryTree {
                 .column("Expected amount per month")
                 .buildSettings()
         ));
-        nodeList.add(new GalleryNodeDisplayer("Drill-down", true,
+        nodeList.add(new GalleryNodeDisplayer("Drill-down", GalleryEditorType.FORM,
                 DisplayerSettingsFactory.newAreaChartSettings()
                         .dataset(SALES_OPPS)
                         .group(CLOSING_DATE, 12, (String) null)
@@ -288,7 +288,7 @@ public class GalleryTree {
         GalleryNodeList nodeList = new GalleryNodeList("Bubble Chart");
         mainNodes.add(nodeList);
 
-        nodeList.add(new GalleryNodeDisplayer("Basic", true,
+        nodeList.add(new GalleryNodeDisplayer("Basic", GalleryEditorType.FORM,
                 DisplayerSettingsFactory.newBubbleChartSettings()
                 .dataset(SALES_OPPS)
                 .group(COUNTRY)
@@ -311,7 +311,7 @@ public class GalleryTree {
         GalleryNodeList nodeList = new GalleryNodeList("Meter Chart");
         mainNodes.add(nodeList);
 
-        nodeList.add(new GalleryNodeDisplayer("Basic", true,
+        nodeList.add(new GalleryNodeDisplayer("Basic", GalleryEditorType.FORM,
                 DisplayerSettingsFactory.newMeterChartSettings()
                 .title("Sales goal")
                 .dataset(SALES_OPPS)
@@ -321,7 +321,7 @@ public class GalleryTree {
                 .column("Total amount")
                 .buildSettings()
         ));
-        nodeList.add(new GalleryNodeDisplayer("Multiple", true,
+        nodeList.add(new GalleryNodeDisplayer("Multiple", GalleryEditorType.FORM,
                 DisplayerSettingsFactory.newMeterChartSettings()
                 .title("Expected amount per year")
                 .dataset(SALES_OPPS)
@@ -333,7 +333,7 @@ public class GalleryTree {
                 .column("Amount")
                 .buildSettings()
         ));
-        nodeList.add(new GalleryNodeDisplayer("Multiple (static)", true,
+        nodeList.add(new GalleryNodeDisplayer("Multiple (static)", GalleryEditorType.FORM,
                 DisplayerSettingsFactory.newMeterChartSettings()
                 .title("Heart rate")
                 .width(500).height(200)
@@ -359,7 +359,7 @@ public class GalleryTree {
         GalleryNodeList nodeList = new GalleryNodeList("Map");
         mainNodes.add(nodeList);
 
-        nodeList.add(new GalleryNodeDisplayer("GeoMap", true,
+        nodeList.add(new GalleryNodeDisplayer("GeoMap", GalleryEditorType.FORM,
                 DisplayerSettingsFactory.newMapChartSettings()
                 .dataset(SALES_OPPS)
                 .group(COUNTRY)
@@ -377,7 +377,7 @@ public class GalleryTree {
         GalleryNodeList nodeList = new GalleryNodeList("Table report");
         mainNodes.add(nodeList);
 
-        nodeList.add(new GalleryNodeDisplayer("Basic", true,
+        nodeList.add(new GalleryNodeDisplayer("Basic", GalleryEditorType.FORM,
                 DisplayerSettingsFactory.newTableSettings()
                 .dataset(SALES_OPPS)
                 .title("List of Opportunities")
@@ -396,7 +396,7 @@ public class GalleryTree {
                 .column(AMOUNT, "Amount")
                 .buildSettings()
         ));
-        nodeList.add(new GalleryNodeDisplayer("Filtered", true,
+        nodeList.add(new GalleryNodeDisplayer("Filtered", GalleryEditorType.FORM,
                 DisplayerSettingsFactory.newTableSettings()
                 .dataset(SALES_OPPS)
                 .filter(COUNTRY, OR(isEqualsTo("United States"), isEqualsTo("Brazil")))
@@ -414,7 +414,7 @@ public class GalleryTree {
                 .column(AMOUNT, "Amount")
                 .buildSettings()
         ));
-        nodeList.add(new GalleryNodeDisplayer("Grouped", true,
+        nodeList.add(new GalleryNodeDisplayer("Grouped", GalleryEditorType.FORM,
                 DisplayerSettingsFactory.newTableSettings()
                 .dataset(SALES_OPPS)
                 .group(COUNTRY, "Country")
@@ -429,7 +429,7 @@ public class GalleryTree {
                 .tableOrderDefault("Country", DESCENDING)
                 .buildSettings()
         ));
-        nodeList.add(new GalleryNodeDisplayer("Default (drill-down)", true,
+        nodeList.add(new GalleryNodeDisplayer("Default (drill-down)", GalleryEditorType.FORM,
                 DisplayerSettingsFactory.newTableSettings()
                 .dataset(SALES_OPPS)
                 .title("List of Opportunities")
@@ -485,8 +485,8 @@ public class GalleryTree {
         GalleryNodeList nodeList = new GalleryNodeList("Bar Chart");
         jsonExamples.add(nodeList);
 
-        nodeList.add( new GalleryNodeDisplayer("Horizontal", true,
-                jsonHelper.fromJson(
+        nodeList.add( new GalleryNodeDisplayer("Horizontal", GalleryEditorType.JSON,
+                jsonHelper.fromJsonString(
                                 "{\n" +
                                 "    \"columns\": [\n" +
                                 "        {\n" +
@@ -562,8 +562,8 @@ public class GalleryTree {
                 )
         ) );
 
-        nodeList.add(new GalleryNodeDisplayer("Vertical (3D)", true,
-                jsonHelper.fromJson(
+        nodeList.add(new GalleryNodeDisplayer("Vertical (3D)", GalleryEditorType.JSON,
+                jsonHelper.fromJsonString(
                                 "{\n" +
                                 "    \"columns\": [\n" +
                                 "        {\n" +
@@ -639,8 +639,8 @@ public class GalleryTree {
                 )
         ) );
 
-        nodeList.add(new GalleryNodeDisplayer("Multiple", true,
-                jsonHelper.fromJson(
+        nodeList.add(new GalleryNodeDisplayer("Multiple", GalleryEditorType.JSON,
+                jsonHelper.fromJsonString(
                                 "{\n" +
                                 "    \"columns\": [\n" +
                                 "        {\n" +
@@ -748,8 +748,8 @@ public class GalleryTree {
         nodeList = new GalleryNodeList("Pie Chart");
         jsonExamples.add(nodeList);
 
-        nodeList.add( new GalleryNodeDisplayer("Basic", true,
-                jsonHelper.fromJson(
+        nodeList.add( new GalleryNodeDisplayer("Basic", GalleryEditorType.JSON,
+                jsonHelper.fromJsonString(
                                 "{\n" +
                                 "    \"columns\": [\n" +
                                 "        {\n" +
@@ -815,8 +815,8 @@ public class GalleryTree {
                 )
         ) );
 
-        nodeList.add(new GalleryNodeDisplayer("Drill-down", true,
-                jsonHelper.fromJson(
+        nodeList.add(new GalleryNodeDisplayer("Drill-down", GalleryEditorType.JSON,
+                jsonHelper.fromJsonString(
                                 "{\n" +
                                 "    \"columns\": [\n" +
                                 "        {\n" +
@@ -924,8 +924,8 @@ public class GalleryTree {
         nodeList = new GalleryNodeList("Line Chart");
         jsonExamples.add(nodeList);
 
-        nodeList.add(new GalleryNodeDisplayer("Basic", true,
-                jsonHelper.fromJson(
+        nodeList.add(new GalleryNodeDisplayer("Basic", GalleryEditorType.JSON,
+                jsonHelper.fromJsonString(
                                 "{\n" +
                                 "    \"columns\": [\n" +
                                 "        {\n" +
@@ -999,8 +999,8 @@ public class GalleryTree {
                 )
         ));
 
-        nodeList.add(new GalleryNodeDisplayer("Multiple", true,
-                jsonHelper.fromJson(
+        nodeList.add(new GalleryNodeDisplayer("Multiple", GalleryEditorType.JSON,
+                jsonHelper.fromJsonString(
                                 "{\n" +
                                 "    \"columns\": [\n" +
                                 "        {\n" +
@@ -1101,8 +1101,8 @@ public class GalleryTree {
                 )
         ));
 
-        nodeList.add(new GalleryNodeDisplayer("Multiple (static)", true,
-                jsonHelper.fromJson(
+        nodeList.add(new GalleryNodeDisplayer("Multiple (static)", GalleryEditorType.JSON,
+                jsonHelper.fromJsonString(
                                 "{\n" +
                                 "    \"columns\": [\n" +
                                 "        {\n" +
@@ -1181,8 +1181,8 @@ public class GalleryTree {
         nodeList = new GalleryNodeList("Area Chart");
         jsonExamples.add(nodeList);
 
-        nodeList.add(new GalleryNodeDisplayer("Basic", true,
-                jsonHelper.fromJson(
+        nodeList.add(new GalleryNodeDisplayer("Basic", GalleryEditorType.JSON,
+                jsonHelper.fromJsonString(
                                 "{\n" +
                                 "    \"columns\": [\n" +
                                 "        {\n" +
@@ -1256,8 +1256,8 @@ public class GalleryTree {
                 )
         ));
 
-        nodeList.add(new GalleryNodeDisplayer("Fixed (per month)", true,
-                jsonHelper.fromJson(
+        nodeList.add(new GalleryNodeDisplayer("Fixed (per month)", GalleryEditorType.JSON,
+                jsonHelper.fromJsonString(
                                 "{\n" +
                                 "    \"columns\": [\n" +
                                 "        {\n" +
@@ -1331,8 +1331,8 @@ public class GalleryTree {
                 )
         ));
 
-        nodeList.add(new GalleryNodeDisplayer("Drill-down", true,
-                jsonHelper.fromJson(
+        nodeList.add(new GalleryNodeDisplayer("Drill-down", GalleryEditorType.JSON,
+                jsonHelper.fromJsonString(
                                 "{\n" +
                                 "    \"columns\": [\n" +
                                 "        {\n" +
@@ -1409,8 +1409,8 @@ public class GalleryTree {
         nodeList = new GalleryNodeList("Bubble Chart");
         jsonExamples.add(nodeList);
 
-        nodeList.add(new GalleryNodeDisplayer("Basic", true,
-                jsonHelper.fromJson(
+        nodeList.add(new GalleryNodeDisplayer("Basic", GalleryEditorType.JSON,
+                jsonHelper.fromJsonString(
                                 "{\n" +
                                 "    \"columns\": [\n" +
                                 "        {\n" +
@@ -1510,8 +1510,8 @@ public class GalleryTree {
         nodeList = new GalleryNodeList("Table report");
         jsonExamples.add(nodeList);
 
-        nodeList.add(new GalleryNodeDisplayer("Basic", true,
-                jsonHelper.fromJson(
+        nodeList.add(new GalleryNodeDisplayer("Basic", GalleryEditorType.JSON,
+                jsonHelper.fromJsonString(
                                 "{\n" +
                                 "    \"columns\": [\n" +
                                 "        {\n" +
@@ -1584,8 +1584,8 @@ public class GalleryTree {
                 )
         ));
 
-        nodeList.add(new GalleryNodeDisplayer("Filtered", true,
-                jsonHelper.fromJson(
+        nodeList.add(new GalleryNodeDisplayer("Filtered", GalleryEditorType.JSON,
+                jsonHelper.fromJsonString(
                                 "{\n" +
                                 "    \"columns\": [\n" +
                                 "        {\n" +
@@ -1668,8 +1668,8 @@ public class GalleryTree {
                 )
         ));
 
-        nodeList.add(new GalleryNodeDisplayer("Grouped", true,
-                jsonHelper.fromJson(
+        nodeList.add(new GalleryNodeDisplayer("Grouped", GalleryEditorType.JSON,
+                jsonHelper.fromJsonString(
                                 "{\n" +
                                 "    \"table\": {\n" +
                                 "        \"sort\": {\n" +
@@ -1740,8 +1740,8 @@ public class GalleryTree {
                 )
         ));
 
-        nodeList.add(new GalleryNodeDisplayer("Default (drill-down)", true,
-                jsonHelper.fromJson(
+        nodeList.add(new GalleryNodeDisplayer("Default (drill-down)", GalleryEditorType.JSON,
+                jsonHelper.fromJsonString(
                                 "{\n" +
                                 "    \"columns\": [\n" +
                                 "        {\n" +
@@ -1819,8 +1819,8 @@ public class GalleryTree {
         nodeList = new GalleryNodeList("Meter Chart");
         jsonExamples.add(nodeList);
 
-        nodeList.add(new GalleryNodeDisplayer("Basic", true,
-                jsonHelper.fromJson(
+        nodeList.add(new GalleryNodeDisplayer("Basic", GalleryEditorType.JSON,
+                jsonHelper.fromJsonString(
                                 "{\n" +
                                 "    \"columns\": [\n" +
                                 "        {\n" +
@@ -1875,8 +1875,8 @@ public class GalleryTree {
                 )
         ));
 
-        nodeList.add(new GalleryNodeDisplayer("Multiple", true,
-                jsonHelper.fromJson(
+        nodeList.add(new GalleryNodeDisplayer("Multiple", GalleryEditorType.JSON,
+                jsonHelper.fromJsonString(
                                 "{\n" +
                                 "    \"columns\": [\n" +
                                 "        {\n" +
@@ -1944,8 +1944,8 @@ public class GalleryTree {
                 )
         ));
 
-        nodeList.add(new GalleryNodeDisplayer("Multiple (static)", true,
-                jsonHelper.fromJson(
+        nodeList.add(new GalleryNodeDisplayer("Multiple (static)", GalleryEditorType.JSON,
+                jsonHelper.fromJsonString(
                                 "{\n" +
                                 "    \"columns\": [\n" +
                                 "        {\n" +
@@ -2002,8 +2002,8 @@ public class GalleryTree {
         nodeList = new GalleryNodeList("Map");
         jsonExamples.add(nodeList);
 
-        nodeList.add(new GalleryNodeDisplayer("GeoMap", true,
-                jsonHelper.fromJson(
+        nodeList.add(new GalleryNodeDisplayer("GeoMap", GalleryEditorType.JSON,
+                jsonHelper.fromJsonString(
                                 "{\n" +
                                 "    \"columns\": [\n" +
                                 "        {\n" +
