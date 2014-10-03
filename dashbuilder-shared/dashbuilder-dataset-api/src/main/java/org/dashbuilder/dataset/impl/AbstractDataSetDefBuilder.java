@@ -27,7 +27,6 @@ import org.dashbuilder.dataset.ColumnType;
 public abstract class AbstractDataSetDefBuilder<T> implements DataSetDefBuilder<T> {
 
     protected DataSetDef def = createDataSetDef();
-    protected DataSetBuilder dataSetBuilder = DataSetFactory.newDataSetBuilder();
 
     protected abstract DataSetDef createDataSetDef();
 
@@ -45,32 +44,31 @@ public abstract class AbstractDataSetDefBuilder<T> implements DataSetDefBuilder<
     }
 
     public T label(String columnId) {
-        dataSetBuilder.label(columnId);
+        def.getDataSet().addColumn(columnId, ColumnType.LABEL);
         return (T) this;
     }
 
     public T number(String columnId) {
-        dataSetBuilder.number(columnId);
+        def.getDataSet().addColumn(columnId, ColumnType.NUMBER);
         return (T) this;
     }
 
     public T date(String columnId) {
-        dataSetBuilder.date(columnId);
+        def.getDataSet().addColumn(columnId, ColumnType.DATE);
         return (T) this;
     }
 
     public T column(String columnId, ColumnType type) {
-        dataSetBuilder.column(columnId, type);
+        def.getDataSet().addColumn(columnId, type);
         return (T) this;
     }
 
     public T row(Object... values) {
-        dataSetBuilder.row(values);
+        def.getDataSet().setValuesAt(def.getDataSet().getRowCount(), values);
         return (T) this;
     }
     
     public DataSetDef buildDef() {
-        def.setDataSet(dataSetBuilder.buildDataSet());
         return def;
     }
 }

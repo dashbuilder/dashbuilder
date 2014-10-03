@@ -15,6 +15,7 @@
  */
 package org.dashbuilder.dataprovider.backend.sql;
 
+import javax.enterprise.event.Observes;
 import javax.inject.Named;
 
 import org.dashbuilder.dataprovider.DataSetProvider;
@@ -22,6 +23,9 @@ import org.dashbuilder.dataprovider.DataSetProviderType;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetLookup;
 import org.dashbuilder.dataset.def.DataSetDef;
+import org.dashbuilder.dataset.events.DataSetDefModifiedEvent;
+
+import static org.uberfire.commons.validation.PortablePreconditions.checkNotNull;
 
 @Named("sql")
 public class SQLDataSetProvider implements DataSetProvider {
@@ -32,5 +36,12 @@ public class SQLDataSetProvider implements DataSetProvider {
 
     public DataSet lookupDataSet(DataSetDef def, DataSetLookup lookup) throws Exception {
         return null;
+    }
+
+    // Listen to changes on the data set definition registry
+
+    private void onDataSetDefModifiedEvent(@Observes DataSetDefModifiedEvent event) {
+        checkNotNull("event", event);
+        String uuid = event.getOldDataSetDef().getUUID();
     }
 }

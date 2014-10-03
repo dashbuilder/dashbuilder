@@ -34,7 +34,6 @@ import org.jboss.errai.common.client.api.Caller;
 @ApplicationScoped
 public class DashbuilderInitializer {
 
-    @Inject DataSetManager dataSetManager;
     @Inject RendererLibLocator rendererLibLocator;
     @Inject DataSetLookupClient dataSetLookupClient;
     @Inject Caller<DataSetLookupService> dataSetLookupService;
@@ -44,10 +43,6 @@ public class DashbuilderInitializer {
         // Enable the data set lookup backend service so that the DataSetLookupClient is able to send requests
         // not only to the ClientDataSetManager but also to the remote DataSetLookupService.
         dataSetLookupClient.setLookupService(dataSetLookupService);
-
-        // Enable the ability to push and handle on client data sets smaller than 2 Mb
-        dataSetLookupClient.setPushRemoteDataSetEnabled(true);
-        dataSetLookupClient.setPushRemoteDataSetMaxSize(2024);
 
         // Set the default renderer lib for each displayer type.
         rendererLibLocator.setDefaultRenderer(DisplayerType.BARCHART, GoogleRenderer.UUID);

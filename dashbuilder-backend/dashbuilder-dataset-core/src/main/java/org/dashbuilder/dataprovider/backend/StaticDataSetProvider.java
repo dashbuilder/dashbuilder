@@ -17,6 +17,7 @@ package org.dashbuilder.dataprovider.backend;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
+import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -30,6 +31,9 @@ import org.dashbuilder.dataset.engine.SharedDataSetOpEngine;
 import org.dashbuilder.dataset.engine.index.DataSetIndex;
 import org.dashbuilder.dataset.events.DataSetBackendRegisteredEvent;
 import org.dashbuilder.dataset.events.DataSetBackendRemovedEvent;
+import org.dashbuilder.dataset.events.DataSetDefModifiedEvent;
+
+import static org.uberfire.commons.validation.PortablePreconditions.checkNotNull;
 
 /**
  * DataSetProvider implementation for static (in-memory) data sets.
@@ -93,5 +97,14 @@ public class StaticDataSetProvider implements DataSetProvider {
         // Trim the data set as requested.
         dataSet = dataSet.trim(lookup.getRowOffset(), lookup.getNumberOfRows());
         return dataSet;
+    }
+
+    // Listen to changes on the data set definition registry
+
+    private void onDataSetDefModifiedEvent(@Observes DataSetDefModifiedEvent event) {
+        checkNotNull("event", event);
+        String uuid = event.getOldDataSetDef().getUUID();
+        removeDataSet(uuid);
+        registerDataSet(event.getNewDataSetDef().getDataSet());
     }
 }

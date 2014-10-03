@@ -13,25 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbuilder.dataprovider;
+package org.dashbuilder.dataset.events;
 
-import java.util.List;
+import org.dashbuilder.dataset.def.DataSetDef;
+import org.jboss.errai.common.client.api.annotations.Portable;
 
-import org.jboss.errai.bus.server.annotations.Remote;
+@Portable
+public class DataSetDefRegisteredEvent {
 
-/**
- * Data set provider registry
- */
-public interface DataSetProviderRegistry {
+    DataSetDef dataSetDef;
 
-    /**
-     * Get the provider instance named as specified.
-     */
-    DataSetProvider getDataSetProvider(DataSetProviderType type);
+    public DataSetDefRegisteredEvent() {
+    }
 
-    /**
-     * Get the list of available DataSetProvider types.
-     * @return A list of
-     */
-    List<DataSetProviderType> getAvailableTypes();
+    public DataSetDefRegisteredEvent(DataSetDef dataSetDef) {
+        this.dataSetDef = dataSetDef;
+    }
+
+    public DataSetDef getDataSetDef() {
+        return dataSetDef;
+    }
+
+    public void setDataSetDef(DataSetDef dataSetDef) {
+        this.dataSetDef = dataSetDef;
+    }
 }

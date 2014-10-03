@@ -30,7 +30,9 @@ import org.dashbuilder.dataset.DataSetLookup;
 import org.dashbuilder.dataset.DataSetMetadata;
 import org.dashbuilder.dataset.DataSetLookupService;
 import org.dashbuilder.dataset.client.resources.i18n.DataSetConstants;
+import org.dashbuilder.dataset.def.DataSetDef;
 import org.dashbuilder.dataset.events.DataSetBackendRegisteredEvent;
+import org.dashbuilder.dataset.events.DataSetDefModifiedEvent;
 import org.dashbuilder.dataset.events.DataSetModifiedEvent;
 import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.common.client.api.RemoteCallback;
@@ -79,11 +81,6 @@ public class DataSetLookupClient {
     private boolean pushRemoteDataSetEnabled = true;
 
     /**
-     * Maximum size (in kbytes) a data set may have in order to be pushed to clients.
-     */
-    private int pushRemoteDataSetMaxSize = 1024;
-
-    /**
      * It holds a set of data set push requests in progress.
      */
     private Map<String,DataSetPushHandler> pushRequestMap = new HashMap<String,DataSetPushHandler>();
@@ -97,17 +94,6 @@ public class DataSetLookupClient {
      */
     public void setPushRemoteDataSetEnabled(boolean pushRemoteDataSetEnabled) {
         this.pushRemoteDataSetEnabled = pushRemoteDataSetEnabled;
-    }
-
-    public int getPushRemoteDataSetMaxSize() {
-        return pushRemoteDataSetMaxSize;
-    }
-
-    /**
-     * Set the maximum size (in kbytes) a data set may have in order to be pushed to clients.
-     */
-    public void setPushRemoteDataSetMaxSize(int pushRemoteDataSetMaxSize) {
-        this.pushRemoteDataSetMaxSize = pushRemoteDataSetMaxSize;
     }
 
     /**
@@ -170,8 +156,11 @@ public class DataSetLookupClient {
             fetchMetadata(lookupSourceDataSet, new DataSetMetadataCallback() {
                 public void callback(DataSetMetadata metatada) {
 
-                    // Push smalls data sets to client.
-                    if (pushRemoteDataSetEnabled && metatada.getEstimatedSize() < pushRemoteDataSetMaxSize) {
+                    // Push the data set to client if and only if the push feature is enabled, the data set is
+                    // pushable & the data set is smaller than the max push size defined.
+                    DataSetDef dsetDef = metatada.getDefinition();
+                    boolean isPushable = dsetDef != null && dsetDef.isPushEnabled() && metatada.getEstimatedSize() < dsetDef.getMaxPushSize();
+                    if (pushRemoteDataSetEnabled && isPushable) {
 
                         // Check if a push is already in progress.
                         // (This is necessary in order to avoid repeating multiple push requests over the same data set).
@@ -269,11 +258,21 @@ public class DataSetLookupClient {
 
     // Catch backend events
 
-    private void onDataSetRegistered(@Observes DataSetBackendRegisteredEvent event) {
+    private void onDataSetDefModifiedEvent(@Observes DataSetDefModifiedEvent event) {
+        checkNotNull("event", event);
+        String uuid = event.getNewDataSetDef().getUUID();
+        removeStaleDataSet(uuid);
+    }
 
-        // Remove stale data. This will force next lookup requests to push a refreshed data set.
+    private void onDataSetRegistered(@Observes DataSetBackendRegisteredEvent event) {
         checkNotNull("event", event);
         String uuid = event.getDataSetMetadata().getUUID();
+        removeStaleDataSet(uuid);
+    }
+
+    private void removeStaleDataSet(String uuid) {
+
+        // Remove stale data. This will force next lookup requests to push a refreshed data set.
         DataSet clientDataSet = clientDataSetManager.removeDataSet(uuid);
 
         // If the data set existed on client then an out of date event is fired.

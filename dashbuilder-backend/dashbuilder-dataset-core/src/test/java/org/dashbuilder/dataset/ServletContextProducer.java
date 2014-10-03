@@ -13,25 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbuilder.dataprovider;
+package org.dashbuilder.dataset;
 
-import java.util.List;
-
-import org.jboss.errai.bus.server.annotations.Remote;
+import javax.enterprise.inject.Produces;
+import javax.inject.Named;
+import javax.servlet.ServletContext;
 
 /**
- * Data set provider registry
+ * Satisfies the ServletContext injection into the DataSetDefDeployer instance at test time.
  */
-public interface DataSetProviderRegistry {
+public class ServletContextProducer {
 
-    /**
-     * Get the provider instance named as specified.
-     */
-    DataSetProvider getDataSetProvider(DataSetProviderType type);
-
-    /**
-     * Get the list of available DataSetProvider types.
-     * @return A list of
-     */
-    List<DataSetProviderType> getAvailableTypes();
+    @Produces @Named("uf")
+    public ServletContext mockup() {
+        return null;
+    }
 }

@@ -21,11 +21,13 @@ import java.util.ArrayList;
 import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.dataset.DataSetMetadata;
+import org.dashbuilder.dataset.def.DataSetDef;
 import org.jboss.errai.common.client.api.annotations.Portable;
 
 @Portable
 public class DataSetMetadataImpl implements DataSetMetadata {
 
+    protected DataSetDef definition;
     protected String uuid;
     protected int numberOfRows;
     protected int numberOfColumns;
@@ -37,6 +39,7 @@ public class DataSetMetadataImpl implements DataSetMetadata {
     }
 
     public DataSetMetadataImpl(DataSetImpl dataSet) {
+        this.definition = dataSet.getDefinition();
         this.uuid = dataSet.uuid;
         this.numberOfRows = dataSet.getRowCount();
         this.estimatedSize = (int) dataSet.getEstimatedSize() / 1000;
@@ -69,5 +72,13 @@ public class DataSetMetadataImpl implements DataSetMetadata {
 
     public ColumnType getColumnType(int columnIndex) {
         return columnTypes.get(columnIndex);
+    }
+
+    public DataSetDef getDefinition() {
+        return definition;
+    }
+
+    public void setDefinition(DataSetDef definition) {
+        this.definition = definition;
     }
 }

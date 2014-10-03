@@ -17,10 +17,10 @@ package org.dashbuilder.dataprovider.backend.csv;
 
 import java.io.File;
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.apache.commons.lang.StringUtils;
 import org.dashbuilder.dataprovider.DataSetProvider;
 import org.dashbuilder.dataprovider.DataSetProviderType;
 import org.dashbuilder.dataprovider.backend.StaticDataSetProvider;
@@ -28,6 +28,9 @@ import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetLookup;
 import org.dashbuilder.dataset.def.CSVDataSetDef;
 import org.dashbuilder.dataset.def.DataSetDef;
+import org.dashbuilder.dataset.events.DataSetDefModifiedEvent;
+
+import static org.uberfire.commons.validation.PortablePreconditions.checkNotNull;
 
 @ApplicationScoped
 @Named("csv")
@@ -46,9 +49,13 @@ public class CSVDataSetProvider implements DataSetProvider {
 
         // If not exists or is outdated then load from the CSV file
         CSVDataSetDef csvDef = (CSVDataSetDef) def;
-        if (dataSet == null || hasCSVFileChanged(dataSet, csvDef)) {
-            dataSet = loadDataSetFromCSV(csvDef);
+        CSVParser csvParser = new CSVParser(csvDef);
+        File csvFile = csvParser.getCSVFile();
+
+        if (dataSet == null || hasCSVFileChanged(dataSet, csvFile)) {
+            dataSet = csvParser.load();
             dataSet.setUUID(def.getUUID());
+            dataSet.setDefinition(def);
 
             // Make the data set static before return
             staticDataSetProvider.registerDataSet(dataSet);
@@ -58,17 +65,15 @@ public class CSVDataSetProvider implements DataSetProvider {
         return staticDataSetProvider.lookupDataSet(def, lookup);
     }
 
-    // Internal implementation stuff
-
-    protected DataSet loadDataSetFromCSV(CSVDataSetDef def) throws Exception {
-        CSVParser csvParser = new CSVParser(def);
-        return csvParser.load();
+    protected boolean hasCSVFileChanged(DataSet dataSet, File csvFile) {
+        return csvFile != null && csvFile.lastModified() > dataSet.getCreationDate().getTime();
     }
 
-    protected boolean hasCSVFileChanged(DataSet dataSet, CSVDataSetDef def) {
-        if (StringUtils.isBlank(def.getFilePath())) return false;
+    // Listen to changes on the data set definition registry
 
-        File f = new File(def.getFilePath());
-        return f.lastModified() > dataSet.getCreationDate().getTime();
+    private void onDataSetDefModifiedEvent(@Observes DataSetDefModifiedEvent event) {
+        checkNotNull("event", event);
+        String uuid = event.getOldDataSetDef().getUUID();
+        staticDataSetProvider.removeDataSet(uuid);
     }
 }

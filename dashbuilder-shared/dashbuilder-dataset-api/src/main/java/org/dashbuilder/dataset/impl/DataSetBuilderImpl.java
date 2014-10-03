@@ -19,12 +19,13 @@ import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetBuilder;
+import org.dashbuilder.dataset.DataSetFactory;
 import org.jboss.errai.common.client.api.annotations.Portable;
 
 @Portable
 public class DataSetBuilderImpl implements DataSetBuilder {
 
-    protected DataSetImpl dataSet = new DataSetImpl();
+    protected DataSet dataSet = DataSetFactory.newEmptyDataSet();
 
     public DataSetBuilderImpl label(String columnId) {
         dataSet.addColumn(columnId, ColumnType.LABEL);

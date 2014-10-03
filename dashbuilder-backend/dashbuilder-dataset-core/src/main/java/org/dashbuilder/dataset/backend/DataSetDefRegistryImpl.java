@@ -13,32 +13,40 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbuilder.dataprovider.backend;
+package org.dashbuilder.dataset.backend;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.event.Event;
+import javax.inject.Inject;
 
 import org.dashbuilder.dataset.def.DataSetDef;
 import org.dashbuilder.dataset.def.DataSetDefRegistry;
-import org.jboss.errai.bus.server.annotations.Service;
+import org.dashbuilder.dataset.events.DataSetDefModifiedEvent;
+import org.dashbuilder.dataset.events.DataSetDefRegisteredEvent;
 
 /**
  * Data set definitions backend registry
  */
 @ApplicationScoped
-@Service
 public class DataSetDefRegistryImpl implements DataSetDefRegistry {
 
-    private Map<String,DataSetDef> dataSetDefMap = new HashMap<String, DataSetDef>();
+    @Inject
+    private Event<DataSetDefModifiedEvent> dataSetDefModifiedEvent;
+
+    @Inject
+    private Event<DataSetDefRegisteredEvent> dataSetDefRegisteredEvent;
+
+    protected Map<String,DataSetDef> dataSetDefMap = new HashMap<String, DataSetDef>();
 
     public synchronized List<DataSetDef> getSharedDataSetDefs() {
         List<DataSetDef> results = new ArrayList<DataSetDef>();
-        for (DataSetDef settings : dataSetDefMap.values()) {
-            if (settings.isShared()) {
-                results.add(settings);
+        for (DataSetDef r : dataSetDefMap.values()) {
+            if (r.isShared()) {
+                results.add(r);
             }
         }
         return results;
@@ -52,7 +60,14 @@ public class DataSetDefRegistryImpl implements DataSetDefRegistry {
         return dataSetDefMap.remove(uuid);
     }
 
-    public synchronized void registerDataSetDef(DataSetDef dataSetDef) {
-        dataSetDefMap.put(dataSetDef.getUUID(), dataSetDef);
+    public synchronized void registerDataSetDef(DataSetDef newDef) {
+        DataSetDef oldDef = dataSetDefMap.get(newDef.getUUID());
+        if (oldDef != null) {
+            dataSetDefMap.put(newDef.getUUID(), newDef);
+            dataSetDefModifiedEvent.fire(new DataSetDefModifiedEvent(oldDef, newDef));
+        } else {
+            dataSetDefMap.put(newDef.getUUID(), newDef);
+            dataSetDefRegisteredEvent.fire(new DataSetDefRegisteredEvent(newDef));
+        }
     }
 }

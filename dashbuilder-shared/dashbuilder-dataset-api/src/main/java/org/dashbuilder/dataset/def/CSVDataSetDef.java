@@ -19,12 +19,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.dashbuilder.dataprovider.DataSetProviderType;
+import org.dashbuilder.dataset.ColumnType;
+import org.jboss.errai.common.client.api.annotations.Portable;
 
+@Portable
 public class CSVDataSetDef extends DataSetDef {
 
     protected String fileURL;
     protected String filePath;
-    protected char separator;
+    protected char separatorChar;
     protected char quoteChar;
     protected char escapeChar;
     protected String datePattern = "MM-dd-yyyy HH:mm:ss";
@@ -52,12 +55,12 @@ public class CSVDataSetDef extends DataSetDef {
         this.filePath = filePath;
     }
 
-    public char getSeparator() {
-        return separator;
+    public char getSeparatorChar() {
+        return separatorChar;
     }
 
-    public void setSeparator(char separator) {
-        this.separator = separator;
+    public void setSeparatorChar(char separatorChar) {
+        this.separatorChar = separatorChar;
     }
 
     public char getQuoteChar() {
@@ -100,6 +103,7 @@ public class CSVDataSetDef extends DataSetDef {
     }
 
     public void setNumberPattern(String columnId, String numberPattern) {
+        dataSet.addColumn(columnId, ColumnType.NUMBER);
         numberPatternMap.put(columnId, numberPattern);
     }
 
@@ -111,6 +115,7 @@ public class CSVDataSetDef extends DataSetDef {
     }
 
     public void setDatePattern(String columnId, String datePattern) {
+        dataSet.addColumn(columnId, ColumnType.DATE);
         datePatternMap.put(columnId, datePattern);
     }
 
@@ -132,7 +137,12 @@ public class CSVDataSetDef extends DataSetDef {
         if (filePath != null) out.append(filePath);
         else out.append(fileURL);
         out.append("\n");
-        out.append("Separator char=").append(separator).append("\n");
+        out.append("UUID=").append(UUID).append("\n");
+        out.append("Provider=").append(provider).append("\n");
+        out.append("Shared=").append(shared).append("\n");
+        out.append("Push enabled=").append(pushEnabled).append("\n");
+        out.append("Max push size=").append(maxPushSize).append(" Kb\n");
+        out.append("Separator char=").append(separatorChar).append("\n");
         out.append("Quote char=").append(quoteChar).append("\n");
         out.append("Escape char=").append(escapeChar).append("\n");
         out.append("Number pattern=").append(numberPattern).append("\n");

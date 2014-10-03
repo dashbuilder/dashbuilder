@@ -36,7 +36,6 @@ import org.jboss.errai.bus.server.annotations.Service;
  * Data provider setting backend registry
  */
 @ApplicationScoped
-@Service
 public class DataSetProviderRegistryImpl implements DataSetProviderRegistry {
 
     @Inject

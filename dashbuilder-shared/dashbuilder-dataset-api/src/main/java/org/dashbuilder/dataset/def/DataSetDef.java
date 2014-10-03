@@ -15,18 +15,21 @@
  */
 package org.dashbuilder.dataset.def;
 
+import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.DataSet;
+import org.dashbuilder.dataset.DataSetFactory;
 import org.jboss.errai.common.client.api.annotations.Portable;
 
 /**
- * This class is used to define the structure and runtime behaviour of a data set instance.
+ * This class is used to define the origin, structure and runtime behaviour of a data set instance.
  */
 @Portable
 public class DataSetDef {
 
     protected String UUID;
+    protected String defFilePath;
     protected String provider;
-    protected DataSet dataSet;
+    protected DataSet dataSet = DataSetFactory.newEmptyDataSet();
     protected boolean shared = true;
     protected boolean pushEnabled = false;
     protected int maxPushSize = 1024;
@@ -37,6 +40,14 @@ public class DataSetDef {
 
     public void setUUID(String UUID) {
         this.UUID = UUID;
+    }
+
+    public String getDefFilePath() {
+        return defFilePath;
+    }
+
+    public void setDefFilePath(String defFilePath) {
+        this.defFilePath = defFilePath;
     }
 
     public DataSet getDataSet() {
@@ -77,5 +88,9 @@ public class DataSetDef {
 
     public void setMaxPushSize(int maxPushSize) {
         this.maxPushSize = maxPushSize;
+    }
+
+    public void asLabel(String columnId) {
+        dataSet.addColumn(columnId, ColumnType.LABEL);
     }
 }

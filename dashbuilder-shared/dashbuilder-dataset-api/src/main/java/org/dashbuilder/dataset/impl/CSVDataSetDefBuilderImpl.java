@@ -36,7 +36,7 @@ public class CSVDataSetDefBuilderImpl extends AbstractDataSetDefBuilder<CSVDataS
     }
 
     public CSVDataSetDefBuilderImpl separatorChar(char separator) {
-        ((CSVDataSetDef) def).setSeparator(separator);
+        ((CSVDataSetDef) def).setSeparatorChar(separator);
         return this;
     }
 

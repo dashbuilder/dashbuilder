@@ -23,11 +23,13 @@ import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetMetadata;
+import org.dashbuilder.dataset.def.DataSetDef;
 import org.jboss.errai.common.client.api.annotations.Portable;
 
 @Portable
 public class DataSetImpl implements DataSet {
 
+    protected DataSetDef definition;
     protected String uuid = null;
     protected Date creationDate = new Date();
     protected List<DataColumn> columns = new ArrayList<DataColumn>();
@@ -35,6 +37,14 @@ public class DataSetImpl implements DataSet {
 
     public DataSetMetadata getMetadata() {
         return new DataSetMetadataImpl(this);
+    }
+
+    public DataSetDef getDefinition() {
+        return definition;
+    }
+
+    public void setDefinition(DataSetDef definition) {
+        this.definition = definition;
     }
 
     public String getUUID() {

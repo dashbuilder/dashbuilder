@@ -15,8 +15,11 @@
  */
 package org.dashbuilder.dataset.backend;
 
+import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.inject.Named;
+import javax.servlet.ServletContext;
 
 import org.dashbuilder.dataset.DataSetManager;
 import org.dashbuilder.dataset.DataSet;
@@ -34,6 +37,19 @@ import org.jboss.errai.bus.server.annotations.Service;
 public class DataSetLookupServiceImpl implements DataSetLookupService {
 
     @Inject BackendDataSetManager dataSetManager;
+    @Inject DataSetDefDeployer dataSetDefDeployer;
+    @Inject @Named("uf") ServletContext servletContext;
+
+    @PostConstruct
+    private void init() {
+        if (!dataSetDefDeployer.isRunning() && servletContext != null) {
+            String dir = servletContext.getRealPath("datasets");
+            if (dir != null) {
+                dir = dir.replaceAll("\\\\", "/");
+                dataSetDefDeployer.deploy(dir);
+            }
+        }
+    }
 
     /**
      * Apply a sequence of operations (filter, sort, group, ...) on a remote and get the resulting data set.

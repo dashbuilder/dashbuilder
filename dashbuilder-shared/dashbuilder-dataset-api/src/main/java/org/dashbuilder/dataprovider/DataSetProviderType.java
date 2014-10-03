@@ -15,6 +15,9 @@
  */
 package org.dashbuilder.dataprovider;
 
+import org.dashbuilder.dataset.def.CSVDataSetDef;
+import org.dashbuilder.dataset.def.DataSetDef;
+import org.dashbuilder.dataset.def.StaticDataSetDef;
 import org.jboss.errai.common.client.api.annotations.Portable;
 
 /**
@@ -40,5 +43,13 @@ public enum DataSetProviderType {
 
     public static DataSetProviderType getByName(String name) {
         return valueOf(name.toUpperCase());
+    }
+
+    public static DataSetDef createDataSetDef(DataSetProviderType type) {
+        switch (type) {
+            case STATIC: return new StaticDataSetDef();
+            case CSV: return new CSVDataSetDef();
+        }
+        throw new RuntimeException("Unknown type: " + type);
     }
 }

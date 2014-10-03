@@ -42,22 +42,7 @@
 
     <dependency>
       <groupId>org.uberfire</groupId>
-      <artifactId>uberfire-backend-api</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.uberfire</groupId>
-      <artifactId>uberfire-backend-server</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.uberfire</groupId>
-      <artifactId>uberfire-api</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.uberfire</groupId>
-      <artifactId>uberfire-io</artifactId>
+      <artifactId>uberfire-server-all</artifactId>
     </dependency>
 
     <dependency>
@@ -73,6 +58,24 @@
     <dependency>
       <groupId>org.dashbuilder</groupId>
       <artifactId>dashbuilder-common</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.jboss.spec.javax.servlet</groupId>
+      <artifactId>jboss-servlet-api_3.0_spec</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+    </dependency>
+
+    <!-- JSON -->
+
+    <dependency>
+      <groupId>org.json</groupId>
+      <artifactId>json</artifactId>
     </dependency>
 
     <!-- Unit testing -->

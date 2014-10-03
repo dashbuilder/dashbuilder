@@ -22,7 +22,6 @@ import org.jboss.errai.bus.server.annotations.Remote;
 /**
  * Data set definitions registry service
  */
-@Remote
 public interface DataSetDefRegistry {
 
     /**

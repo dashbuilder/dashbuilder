@@ -18,12 +18,24 @@ package org.dashbuilder.dataset;
 import java.util.Date;
 import java.util.List;
 
+import org.dashbuilder.dataset.def.DataSetDef;
+
 public interface DataSet {
 
     /**
      * The metadata
      */
     DataSetMetadata getMetadata();
+
+    /**
+     * The data set definition
+     */
+    DataSetDef getDefinition();
+
+    /**
+     * The data set definition
+     */
+    void setDefinition(DataSetDef def);
 
     /**
      * The unique data set identifier.

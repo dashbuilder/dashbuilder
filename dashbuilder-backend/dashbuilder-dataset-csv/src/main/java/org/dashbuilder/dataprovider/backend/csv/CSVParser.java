@@ -49,10 +49,10 @@ public class CSVParser {
     }
 
     protected DataSet load() throws Exception {
-        InputStream is = getCSVInputStream(dataSetDef);
+        InputStream is = getCSVInputStream();
         try {
             BufferedReader br = new BufferedReader(new InputStreamReader(is));
-            CSVReader csvReader = new CSVReader(br, dataSetDef.getSeparator(), dataSetDef.getQuoteChar(), dataSetDef.getEscapeChar());
+            CSVReader csvReader = new CSVReader(br, dataSetDef.getSeparatorChar(), dataSetDef.getQuoteChar(), dataSetDef.getEscapeChar());
 
             String[] header = csvReader.readNext();
             if (header == null) throw new IOException("The CSV has no header: " + dataSetDef);
@@ -84,18 +84,37 @@ public class CSVParser {
         }
     }
 
+    protected InputStream getCSVInputStream() throws Exception {
+        String path = dataSetDef.getFilePath();
+        if (!StringUtils.isBlank(path)) {
+            File f = getCSVFile();
+            if (f != null) return new FileInputStream(f);
+            throw new IllegalArgumentException("CSV file not found: " + dataSetDef.getFilePath());
+        }
 
-    protected InputStream getCSVInputStream(CSVDataSetDef def) throws Exception {
-        if (!StringUtils.isBlank(def.getFilePath())) {
-            File f = new File(def.getFilePath());
-            if (!f.exists()) throw new IllegalArgumentException("CSV file not found: " + def.getFilePath());
-            return new FileInputStream(f);
+        String url = dataSetDef.getFileURL();
+        if (!StringUtils.isBlank(url)) {
+            return new URL(url).openStream();
         }
-        else if (!StringUtils.isBlank(def.getFileURL())) {
-            URL url = new URL(def.getFileURL());
-            return url.openStream();
+        throw new IllegalArgumentException("CSV location not specified. Missing path or URL: " + dataSetDef);
+    }
+
+    public File getCSVFile() throws Exception {
+        String path = dataSetDef.getFilePath();
+        if (StringUtils.isBlank(path)) return null;
+
+        File f = new File(path);
+        if (f.exists()) return f;
+
+        String defFilePath = dataSetDef.getDefFilePath();
+        if (!StringUtils.isBlank(defFilePath)) {
+            File defFile = new File(defFilePath);
+            if (defFile.exists()) {
+                f = new File(defFile.getParent(), path);
+                if (f.exists()) return f;
+            }
         }
-        throw new IllegalArgumentException("CSV location not specified: " + def);
+        return null;
     }
 
 
@@ -132,7 +151,7 @@ public class CSVParser {
         return row;
     }
 
-    public Object parseValue(DataColumn column, String value) throws Exception {
+    protected Object parseValue(DataColumn column, String value) throws Exception {
         ColumnType type = column.getColumnType();
         try {
             if (type.equals(ColumnType.DATE)) {

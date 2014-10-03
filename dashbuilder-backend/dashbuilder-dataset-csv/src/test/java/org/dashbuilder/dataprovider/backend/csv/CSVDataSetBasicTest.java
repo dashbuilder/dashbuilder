@@ -15,10 +15,7 @@
  */
 package org.dashbuilder.dataprovider.backend.csv;
 
-import java.io.InputStream;
 import java.net.URL;
-import java.util.Calendar;
-import java.util.Date;
 import javax.inject.Inject;
 
 import org.dashbuilder.dataset.DataSet;
@@ -61,20 +58,18 @@ public class CSVDataSetBasicTest {
 
     @Before
     public void setUp() throws Exception {
-        URL fileURl = Thread.currentThread().getContextClassLoader().getResource("expenseReports.csv");
+        URL fileURL = Thread.currentThread().getContextClassLoader().getResource("expenseReports.csv");
         dataSetDefRegistry.registerDataSetDef(
                 DataSetFactory.newCSVDataSetDef()
-                .uuid(EXPENSE_REPORTS)
-                .fileURL(fileURl.toString())
-                .label("id")
-                .date("date", "MM-dd-yyyy")
-                .number("amount", "#,###.##")
-                .datePattern("MM-dd-yyyy")
-                .separatorChar(';')
-                .quoteChar('\"')
-                .escapeChar('\\')
-                .separatorChar(';')
-                .buildDef());
+                        .uuid(EXPENSE_REPORTS)
+                        .fileURL(fileURL.toString())
+                        .label("id")
+                        .date("date", "MM-dd-yyyy")
+                        .number("amount", "#,###.##")
+                        .separatorChar(';')
+                        .quoteChar('\"')
+                        .escapeChar('\\')
+                        .buildDef());
     }
 
     @Test

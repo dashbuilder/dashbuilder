@@ -15,6 +15,8 @@
  */
 package org.dashbuilder.dataset;
 
+import org.dashbuilder.dataset.def.DataSetDef;
+
 /**
  * Metadata associated with a data set instance
  */
@@ -51,4 +53,10 @@ public interface DataSetMetadata {
      * Get the estimated size in kilobytes.
      */
     int getEstimatedSize();
+
+    /**
+     * Get the definition this data set has been created from.
+     * Is null for manually created data set instances.
+     */
+    DataSetDef getDefinition();
 }
