@@ -90,17 +90,17 @@ public class GalleryTree {
     private void onSalesDataSetOutdated(@Observes DataSetModifiedEvent event) {
         checkNotNull("event", event);
 
-        String targetUUID = event.getDataSetMetadata().getUUID();
+        String targetUUID = event.getDataSetUUID();
         if (SalesConstants.SALES_OPPS.equals(targetUUID)) {
             workbenchNotification.fire(new NotificationEvent("The sales data set has been modified. Refreshing the dashboard ...", INFO));
-            salesGoalsWidget.redrawAll();
-            salesByCountryWidget.redrawAll();
-            salesByDateWidget.redrawAll();
-            salesReportsWidget.redrawAll();
+            if (salesGoalsWidget != null) salesGoalsWidget.redrawAll();
+            if (salesByCountryWidget != null) salesByCountryWidget.redrawAll();
+            if (salesByDateWidget != null) salesByDateWidget.redrawAll();
+            if (salesReportsWidget != null) salesReportsWidget.redrawAll();
         }
         if (ExpenseConstants.EXPENSES.equals(targetUUID)) {
             workbenchNotification.fire(new NotificationEvent("The expense reports data set has been modified. Refreshing the dashboard ...", INFO));
-            expensesDashboardWidget.redrawAll();
+            if (expensesDashboardWidget != null) expensesDashboardWidget.redrawAll();
         }
     }
 

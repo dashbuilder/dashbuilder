@@ -17,15 +17,14 @@ package org.dashbuilder.backend;
 
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
-import java.util.ArrayList;
+import java.util.Map;
 import java.util.Random;
 import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
 
-import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.DataSet;
-import org.dashbuilder.dataset.DataSetManager;
+import org.dashbuilder.dataset.DataSetBuilder;
+import org.dashbuilder.dataset.DataSetFactory;
+import org.dashbuilder.dataset.DataSetGenerator;
 
 import static org.dashbuilder.shared.sales.SalesConstants.*;
 
@@ -33,9 +32,7 @@ import static org.dashbuilder.shared.sales.SalesConstants.*;
  * Generates a random data set containing sales opportunity records.
  */
 @ApplicationScoped
-public class SalesDataSetGenerator {
-
-    @Inject DataSetManager dataSetManager;
+public class SalesDataSetGenerator implements DataSetGenerator {
 
     private static String[] DIC_PIPELINE = {"EARLY", "STANDBY", "ADVANCED"};
 
@@ -67,20 +64,57 @@ public class SalesDataSetGenerator {
 
     private Random random = new Random(System.currentTimeMillis());
 
-    public static class Opportunity {
-        public String pipeline;
-        public String status;
-        public String country;
-        public String product;
-        public String customer;
-        public String salesPerson;
-        double amount;
-        double probability;
-        double expectedAmount;
-        public Date creationDate;
-        public Date closingDate;
-        public String source;
-        public String color;
+    public DataSet buildDataSet(Map<String,String> params) {
+
+        int currentYear =  Calendar.getInstance().get(Calendar.YEAR);
+        int startYear = currentYear + Integer.parseInt(params.get("startYear"));
+        int endYear = currentYear + Integer.parseInt(params.get("endYear"));
+        int opportunitiesPerMonth = Integer.parseInt(params.get("oppsPerMonth"));
+
+        DataSetBuilder builder = DataSetFactory.newDataSetBuilder()
+                .number(AMOUNT)
+                .date(CREATION_DATE)
+                .date(CLOSING_DATE)
+                .label(PIPELINE)
+                .label(STATUS)
+                .label(CUSTOMER)
+                .label(COUNTRY)
+                .label(PRODUCT)
+                .label(SALES_PERSON)
+                .number(PROBABILITY)
+                .label(SOURCE)
+                .number(EXPECTED_AMOUNT)
+                .label(COLOR);
+
+        for (int year = startYear; year <= endYear; year++) {
+            for (int month = 0; month < 12; month++) {
+                for (int i = 0; i < opportunitiesPerMonth; i++) {
+
+                    double amount = MIN_AMOUNT + random.nextDouble() * (MAX_AMOUNT - MIN_AMOUNT);
+                    double probability = random.nextDouble() * 100.0;
+                    Date creationDate = buildDate(month, year);
+                    String color = "GREEN";
+                    if (probability < 25) color = "RED";
+                    else if (probability < 50) color = "GREY";
+                    else if (probability < 75) color = "YELLOW";
+
+                    builder.row(amount,
+                            creationDate,
+                            addDates(creationDate, (int) (AVG_CLOSING_DAYS + random.nextDouble() * AVG_CLOSING_DAYS * 0.5)),
+                            randomValue(DIC_PIPELINE),
+                            randomValue(DIC_STATUS),
+                            randomValue(DIC_CUSTOMER),
+                            randomValue(DIC_COUNTRIES),
+                            randomValue(DIC_PRODUCT),
+                            randomValue(DIC_SALES_PERSON),
+                            probability,
+                            randomValue(DIC_SOURCE),
+                            amount * (1 + (random.nextDouble() * ((month*i)%10)/10)),
+                            color);
+                }
+            }
+        }
+        return builder.buildDataSet();
     }
 
     private Date buildDate(int month, int year) {
@@ -102,71 +136,5 @@ public class SalesDataSetGenerator {
 
     private String randomValue(String[] dic) {
         return dic[random.nextInt(dic.length)];
-    }
-
-    public List<Opportunity> randomOpportunities(int opportunitiesPerMonth, int startYear, int endYear) {
-        List<Opportunity> opportunities = new ArrayList<Opportunity>();
-        for (int year = startYear; year <= endYear; year++) {
-            for (int month = 0; month < 12; month++) {
-                for (int i = 0; i < opportunitiesPerMonth; i++) {
-                    Opportunity opportunity = new Opportunity();
-                    opportunity.amount = MIN_AMOUNT + random.nextDouble() * (MAX_AMOUNT - MIN_AMOUNT);
-                    opportunity.creationDate = buildDate(month, year);
-                    opportunity.closingDate = addDates(opportunity.creationDate, (int) (AVG_CLOSING_DAYS + random.nextDouble() * AVG_CLOSING_DAYS * 0.5));
-                    opportunity.pipeline = randomValue(DIC_PIPELINE);
-                    opportunity.status = randomValue(DIC_STATUS);
-                    opportunity.country = randomValue(DIC_COUNTRIES);
-                    opportunity.customer = randomValue(DIC_CUSTOMER);
-                    opportunity.product = randomValue(DIC_PRODUCT);
-                    opportunity.salesPerson = randomValue(DIC_SALES_PERSON);
-                    opportunity.probability = random.nextDouble() * 100.0;
-                    opportunity.expectedAmount = opportunity.amount * (1 + (random.nextDouble() * ((month*i)%10)/10));
-                    opportunity.source = randomValue(DIC_SOURCE);
-                    if (opportunity.probability < 25) opportunity.color = "RED";
-                    else if (opportunity.probability < 50) opportunity.color = "GREY";
-                    else if (opportunity.probability < 75) opportunity.color = "YELLOW";
-                    else opportunity.color = "GREEN";
-                    opportunities.add(opportunity);
-                }
-            }
-        }
-        return opportunities;
-    }
-
-    public DataSet generateDataSet(String uuid, int opportunitiesPerMonth, int startYear, int endYear) {
-        List<Opportunity> opportunities = randomOpportunities(opportunitiesPerMonth, startYear, endYear);
-        DataSet dataSet = dataSetManager.createDataSet(uuid);
-
-        dataSet.addColumn(AMOUNT, ColumnType.NUMBER);
-        dataSet.addColumn(CREATION_DATE, ColumnType.DATE);
-        dataSet.addColumn(CLOSING_DATE, ColumnType.DATE);
-        dataSet.addColumn(PIPELINE, ColumnType.LABEL);
-        dataSet.addColumn(STATUS, ColumnType.LABEL);
-        dataSet.addColumn(CUSTOMER, ColumnType.LABEL);
-        dataSet.addColumn(COUNTRY, ColumnType.LABEL);
-        dataSet.addColumn(PRODUCT, ColumnType.LABEL);
-        dataSet.addColumn(SALES_PERSON, ColumnType.LABEL);
-        dataSet.addColumn(PROBABILITY, ColumnType.LABEL);
-        dataSet.addColumn(SOURCE, ColumnType.LABEL);
-        dataSet.addColumn(EXPECTED_AMOUNT, ColumnType.NUMBER);
-        dataSet.addColumn(COLOR, ColumnType.LABEL);
-
-        for (int i = 0; i < opportunities.size(); i++) {
-            Opportunity opp = opportunities.get(i);
-            dataSet.setValueAt(i, 0, opp.amount);
-            dataSet.setValueAt(i, 1, opp.creationDate);
-            dataSet.setValueAt(i, 2, opp.closingDate);
-            dataSet.setValueAt(i, 3, opp.pipeline);
-            dataSet.setValueAt(i, 4, opp.status);
-            dataSet.setValueAt(i, 5, opp.customer);
-            dataSet.setValueAt(i, 6, opp.country);
-            dataSet.setValueAt(i, 7, opp.product);
-            dataSet.setValueAt(i, 8, opp.salesPerson);
-            dataSet.setValueAt(i, 9, opp.probability);
-            dataSet.setValueAt(i, 10, opp.source);
-            dataSet.setValueAt(i, 11, opp.expectedAmount);
-            dataSet.setValueAt(i, 12, opp.color);
-        }
-        return dataSet;
     }
 }
