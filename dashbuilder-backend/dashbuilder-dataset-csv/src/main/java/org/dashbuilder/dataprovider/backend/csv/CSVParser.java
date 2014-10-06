@@ -73,7 +73,7 @@ public class CSVParser {
             Object[] row = processLine(dataSet, firstRow);
             dataSet.setValuesAt(dataSet.getRowCount(), row);
             String[] line = csvReader.readNext();
-            while (line != null) {
+            while (line != null && line.length == dataSet.getColumns().size()) {
                 row = processLine(dataSet, line);
                 dataSet.setValuesAt(dataSet.getRowCount(), row);
                 line = csvReader.readNext();
