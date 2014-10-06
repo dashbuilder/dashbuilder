@@ -21,20 +21,20 @@ import org.jboss.errai.common.client.api.annotations.Portable;
 @Portable
 public class DataSetModifiedEvent {
 
-    DataSetMetadata dataSetMetadata;
+    String dataSetUUID;
 
     public DataSetModifiedEvent() {
     }
 
-    public DataSetModifiedEvent(DataSetMetadata dataSetMetadata) {
-        this.dataSetMetadata = dataSetMetadata;
+    public DataSetModifiedEvent(String dataSetUUID) {
+        this.dataSetUUID = dataSetUUID;
     }
 
-    public DataSetMetadata getDataSetMetadata() {
-        return dataSetMetadata;
+    public String getDataSetUUID() {
+        return dataSetUUID;
     }
 
-    public void setDataSetMetadata(DataSetMetadata dataSetMetadata) {
-        this.dataSetMetadata = dataSetMetadata;
+    public void setDataSetUUID(String dataSetUUID) {
+        this.dataSetUUID = dataSetUUID;
     }
 }
