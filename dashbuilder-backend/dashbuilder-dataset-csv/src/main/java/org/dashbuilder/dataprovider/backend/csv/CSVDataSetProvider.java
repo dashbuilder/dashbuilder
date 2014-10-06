@@ -73,7 +73,12 @@ public class CSVDataSetProvider implements DataSetProvider {
 
     private void onDataSetDefModifiedEvent(@Observes DataSetDefModifiedEvent event) {
         checkNotNull("event", event);
-        String uuid = event.getOldDataSetDef().getUUID();
-        staticDataSetProvider.removeDataSet(uuid);
+        checkNotNull("event", event.getOldDataSetDef());
+
+        DataSetDef oldDef = event.getOldDataSetDef();
+        if (DataSetProviderType.CSV.equals(oldDef.getProvider())) {
+            String uuid = event.getOldDataSetDef().getUUID();
+            staticDataSetProvider.removeDataSet(uuid);
+        }
     }
 }

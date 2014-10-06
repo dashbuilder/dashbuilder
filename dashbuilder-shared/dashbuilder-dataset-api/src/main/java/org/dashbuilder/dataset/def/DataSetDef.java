@@ -15,6 +15,7 @@
  */
 package org.dashbuilder.dataset.def;
 
+import org.dashbuilder.dataprovider.DataSetProviderType;
 import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetFactory;
@@ -28,7 +29,7 @@ public class DataSetDef {
 
     protected String UUID;
     protected String defFilePath;
-    protected String provider;
+    protected DataSetProviderType provider;
     protected DataSet dataSet = DataSetFactory.newEmptyDataSet();
     protected boolean shared = true;
     protected boolean pushEnabled = false;
@@ -58,11 +59,11 @@ public class DataSetDef {
         this.dataSet = dataSet;
     }
 
-    public String getProvider() {
+    public DataSetProviderType getProvider() {
         return provider;
     }
 
-    public void setProvider(String provider) {
+    public void setProvider(DataSetProviderType provider) {
         this.provider = provider;
     }
 

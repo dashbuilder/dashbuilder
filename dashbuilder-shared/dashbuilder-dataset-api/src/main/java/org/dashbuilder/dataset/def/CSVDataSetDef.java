@@ -36,7 +36,7 @@ public class CSVDataSetDef extends DataSetDef {
     protected Map<String,String> numberPatternMap = new HashMap<String,String>();
 
     public CSVDataSetDef() {
-        super.setProvider(DataSetProviderType.CSV.toString());
+        super.setProvider(DataSetProviderType.CSV);
     }
 
     public String getFileURL() {

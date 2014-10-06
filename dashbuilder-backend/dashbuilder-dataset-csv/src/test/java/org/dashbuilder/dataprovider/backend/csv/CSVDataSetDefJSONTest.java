@@ -56,7 +56,7 @@ public class CSVDataSetDefJSONTest {
         String json = IOUtils.toString(fileURL);
 
         DataSetDef def = jsonMarshaller.fromJson(json);
-        assertThat(def.getProvider()).isEqualTo(DataSetProviderType.CSV.toString());
+        assertThat(def.getProvider()).isEqualTo(DataSetProviderType.CSV);
         assertThat(def.isShared()).isEqualTo(true);
         assertThat(def.isPushEnabled()).isEqualTo(true);
         assertThat(def.getMaxPushSize()).isEqualTo(1024);

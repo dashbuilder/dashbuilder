@@ -132,8 +132,8 @@ public class BackendDataSetManager implements DataSetManager {
 
     public DataSetProvider resolveProvider(DataSetDef dataSetDef) {
         // Get the target data set provider
-        if (!StringUtils.isEmpty(dataSetDef.getProvider())) {
-            DataSetProviderType type = DataSetProviderType.getByName(dataSetDef.getProvider());
+        DataSetProviderType type = dataSetDef.getProvider();
+        if (type != null) {
             DataSetProvider dataSetProvider = dataSetProviderRegistry.getDataSetProvider(type);
             if (dataSetProvider != null) return dataSetProvider;
         }

@@ -42,6 +42,7 @@ public enum DataSetProviderType {
     CSV;
 
     public static DataSetProviderType getByName(String name) {
+        if (name == null || name.length() == 0) return null;
         return valueOf(name.toUpperCase());
     }
 

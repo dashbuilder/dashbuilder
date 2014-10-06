@@ -22,6 +22,6 @@ import org.jboss.errai.common.client.api.annotations.Portable;
 public class StaticDataSetDef extends DataSetDef {
 
     public StaticDataSetDef() {
-        super.setProvider(DataSetProviderType.STATIC.toString());
+        super.setProvider(DataSetProviderType.STATIC);
     }
 }

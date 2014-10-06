@@ -103,8 +103,18 @@ public class StaticDataSetProvider implements DataSetProvider {
 
     private void onDataSetDefModifiedEvent(@Observes DataSetDefModifiedEvent event) {
         checkNotNull("event", event);
-        String uuid = event.getOldDataSetDef().getUUID();
-        removeDataSet(uuid);
-        registerDataSet(event.getNewDataSetDef().getDataSet());
+        checkNotNull("event", event.getOldDataSetDef());
+        checkNotNull("event", event.getNewDataSetDef());
+
+        DataSetDef oldDef = event.getOldDataSetDef();
+        if (DataSetProviderType.STATIC.equals(oldDef.getProvider())) {
+            String uuid = event.getOldDataSetDef().getUUID();
+            removeDataSet(uuid);
+        }
+        DataSetDef newDef = event.getNewDataSetDef();
+        if (DataSetProviderType.STATIC.equals(newDef.getProvider())) {
+            String uuid = event.getNewDataSetDef().getUUID();
+            registerDataSet(newDef.getDataSet());
+        }
     }
 }
