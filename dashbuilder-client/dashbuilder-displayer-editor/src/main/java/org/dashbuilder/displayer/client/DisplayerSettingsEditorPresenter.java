@@ -35,6 +35,7 @@ import org.uberfire.client.annotations.WorkbenchScreen;
 import org.uberfire.client.mvp.PlaceManager;
 import org.uberfire.lifecycle.OnStartup;
 import org.uberfire.mvp.PlaceRequest;
+import org.uberfire.workbench.model.CompassPosition;
 import org.uberfire.workbench.model.Position;
 
 import static org.uberfire.commons.validation.PortablePreconditions.checkNotNull;
@@ -76,7 +77,7 @@ public class DisplayerSettingsEditorPresenter {
 
     @DefaultPosition
     public Position getDefaultPosition() {
-        return Position.EAST;
+        return CompassPosition.EAST;
     }
 
     public void setDisplayerSettings(DisplayerSettings displayerSettings) {
