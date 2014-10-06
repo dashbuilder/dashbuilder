@@ -15,8 +15,8 @@
  */
 package org.dashbuilder.dataset;
 
-import org.dashbuilder.dataset.def.CSVDataSetDefBuilder;
 import org.dashbuilder.dataset.def.DataSetDefBuilder;
+import org.dashbuilder.dataset.impl.BeanDataSetDefBuilderImpl;
 import org.dashbuilder.dataset.impl.CSVDataSetDefBuilderImpl;
 import org.dashbuilder.dataset.impl.DataSetBuilderImpl;
 import org.dashbuilder.dataset.impl.DataSetImpl;
@@ -46,5 +46,9 @@ public final class DataSetFactory {
 
     public static DataSetDefBuilder<CSVDataSetDefBuilderImpl> newCSVDataSetDef() {
         return new CSVDataSetDefBuilderImpl();
+    }
+
+    public static DataSetDefBuilder<BeanDataSetDefBuilderImpl> newBeanDataSetDef() {
+        return new BeanDataSetDefBuilderImpl();
     }
 }

@@ -1,0 +1,8 @@
+{
+    "uuid": "salesPerYear",
+    "provider": "BEAN",
+    "pushEnabled": true,
+    "maxPushSize": 1024,
+    "shared": true,
+    "generatorClass": "org.dashbuilder.dataprovider.SalesPerYearDataSetGenerator",
+}

@@ -20,7 +20,7 @@ import javax.inject.Inject;
 import org.apache.commons.lang.StringUtils;
 import org.dashbuilder.dataprovider.DataSetProviderRegistry;
 import org.dashbuilder.dataprovider.DataSetProviderType;
-import org.dashbuilder.dataset.ColumnType;
+import org.dashbuilder.dataset.def.BeanDataSetDef;
 import org.dashbuilder.dataset.def.CSVDataSetDef;
 import org.dashbuilder.dataset.def.DataSetDef;
 import org.json.JSONArray;
@@ -31,11 +31,14 @@ import org.json.JSONObject;
  */
 public class DataSetDefJSONMarshaller {
 
+    // General settings
     public static final String UUID = "uuid";
     public static final String PROVIDER = "provider";
     public static final String SHARED = "shared";
     public static final String PUSHENABLED = "pushEnabled";
     public static final String MAXPUSHSIZE = "maxPushSize";
+
+    // CSV related
     public static final String FILEURL = "fileURL";
     public static final String FILEPATH = "filePath";
     public static final String SEPARATORCHAR = "separatorChar";
@@ -46,6 +49,9 @@ public class DataSetDefJSONMarshaller {
     public static final String COLUMNS = "columns";
     public static final String COLUMN_ID = "columnId";
     public static final String ASLABEL = "asLabel";
+
+    // Bean related
+    public static final String GENERATOR_CLASS = "generatorClass";
 
     @Inject
     DataSetProviderRegistry dataSetProviderRegistry;
@@ -59,6 +65,9 @@ public class DataSetDefJSONMarshaller {
         switch (providerType) {
             case CSV:
                 readCSVSettings((CSVDataSetDef) dataSetDef, json);
+                break;
+            case BEAN:
+                readBeanSettings((BeanDataSetDef) dataSetDef, json);
                 break;
         }
         return dataSetDef;
@@ -86,6 +95,13 @@ public class DataSetDefJSONMarshaller {
         if (!StringUtils.isBlank(shared)) def.setShared(Boolean.parseBoolean(shared));
         if (!StringUtils.isBlank(pushEnabled)) def.setPushEnabled(Boolean.parseBoolean(pushEnabled));
         if (!StringUtils.isBlank(maxPushSize)) def.setMaxPushSize(Integer.parseInt(maxPushSize));
+        return def;
+    }
+
+    public DataSetDef readBeanSettings(BeanDataSetDef def, JSONObject json) throws Exception {
+        String generator = json.has(GENERATOR_CLASS) ? json.getString(GENERATOR_CLASS) : null;
+
+        if (!StringUtils.isBlank(generator)) def.setGeneratorClass(generator);
         return def;
     }
 
