@@ -15,6 +15,9 @@
  */
 package org.dashbuilder.dataset.def;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.dashbuilder.dataprovider.DataSetProviderType;
 import org.jboss.errai.common.client.api.annotations.Portable;
 
@@ -22,6 +25,7 @@ import org.jboss.errai.common.client.api.annotations.Portable;
 public class BeanDataSetDef extends DataSetDef {
 
     protected String generatorClass;
+    protected Map<String,String> paramaterMap = new HashMap<String,String>();
 
     public BeanDataSetDef() {
         super.setProvider(DataSetProviderType.BEAN);
@@ -35,6 +39,14 @@ public class BeanDataSetDef extends DataSetDef {
         this.generatorClass = generatorClass;
     }
 
+    public Map<String, String> getParamaterMap() {
+        return paramaterMap;
+    }
+
+    public void setParamaterMap(Map<String, String> paramaterMap) {
+        this.paramaterMap = paramaterMap;
+    }
+
     public String toString() {
         StringBuilder out = new StringBuilder();
         out.append("UUID=").append(UUID).append("\n");
@@ -42,7 +54,10 @@ public class BeanDataSetDef extends DataSetDef {
         out.append("Shared=").append(shared).append("\n");
         out.append("Push enabled=").append(pushEnabled).append("\n");
         out.append("Max push size=").append(maxPushSize).append(" Kb\n");
-        out.append("Generator=").append(generatorClass);
+        out.append("Generator class=").append(generatorClass).append("\n");
+        for (String param : paramaterMap.keySet()) {
+            out.append("Generator ").append(param).append("=").append(paramaterMap.get(param)).append("\n");
+        }
         return out.toString();
     }
 }

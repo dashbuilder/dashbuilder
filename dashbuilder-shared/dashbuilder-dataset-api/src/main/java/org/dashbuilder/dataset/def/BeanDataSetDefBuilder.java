@@ -34,4 +34,13 @@ public interface BeanDataSetDefBuilder<T extends DataSetDefBuilder> extends Data
      * @return The DataSetDefBuilder instance that is being used to configure a DataSetDef.
      */
     T generatorClass(String className);
+
+    /**
+     * Set a parameter which will be passed through the generator class when invoked.
+     *
+     * @param paramName The name of the parameter.
+     * @param paramValue A string representation of the parameter value.
+     * @return The DataSetDefBuilder instance that is being used to configure a DataSetDef.
+     */
+    T generatorParam(String paramName, String paramValue);
 }

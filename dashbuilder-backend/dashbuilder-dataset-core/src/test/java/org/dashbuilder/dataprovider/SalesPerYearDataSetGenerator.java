@@ -15,6 +15,8 @@
  */
 package org.dashbuilder.dataprovider;
 
+import java.util.Map;
+
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetFactory;
 import org.dashbuilder.dataset.DataSetGenerator;
@@ -23,24 +25,27 @@ import static org.dashbuilder.dataset.date.Month.*;
 
 public class SalesPerYearDataSetGenerator implements DataSetGenerator {
 
-    public DataSet buildDataSet() {
+    public DataSet buildDataSet(Map<String,String> params) {
+
+        double multiplier = Double.parseDouble(params.get("multiplier"));
+
         return DataSetFactory.newDataSetBuilder()
                 .label("month")
                 .number("2012")
                 .number("2013")
                 .number("2014")
-                .row(JANUARY, 1000d, 2000d, 3000d)
-                .row(FEBRUARY, 1400d, 2300d, 2000d)
-                .row(MARCH, 1300d, 2000d, 1400d)
-                .row(APRIL, 900d, 2100d, 1500d)
-                .row(MAY, 1300d, 2300d, 1600d)
-                .row(JUNE, 1010d, 2000d, 1500d)
-                .row(JULY, 1050d, 2400d, 3000d)
-                .row(AUGUST, 2300d, 2000d, 3200d)
-                .row(SEPTEMBER, 1900d, 2700d, 3000d)
-                .row(OCTOBER, 1200d, 2200d, 3100d)
-                .row(NOVEMBER, 1400d, 2100d, 3100d)
-                .row(DECEMBER, 1100d, 2100d, 4200d)
+                .row(JANUARY, 1000d*multiplier, 2000d*multiplier, 3000d*multiplier)
+                .row(FEBRUARY, 1400d*multiplier, 2300d*multiplier, 2000d*multiplier)
+                .row(MARCH, 1300d*multiplier, 2000d*multiplier, 1400d*multiplier)
+                .row(APRIL, 900d*multiplier, 2100d*multiplier, 1500d*multiplier)
+                .row(MAY, 1300d*multiplier, 2300d*multiplier, 1600d*multiplier)
+                .row(JUNE, 1010d*multiplier, 2000d*multiplier, 1500d*multiplier)
+                .row(JULY, 1050d*multiplier, 2400d*multiplier, 3000d*multiplier)
+                .row(AUGUST, 2300d*multiplier, 2000d*multiplier, 3200d*multiplier)
+                .row(SEPTEMBER, 1900d*multiplier, 2700d*multiplier, 3000d*multiplier)
+                .row(OCTOBER, 1200d*multiplier, 2200d*multiplier, 3100d*multiplier)
+                .row(NOVEMBER, 1400d*multiplier, 2100d*multiplier, 3100d*multiplier)
+                .row(DECEMBER, 1100d*multiplier, 2100d*multiplier, 4200d*multiplier)
                 .buildDataSet();
     }
 }

@@ -17,8 +17,6 @@ package org.dashbuilder.dataset.impl;
 
 import org.dashbuilder.dataset.def.BeanDataSetDef;
 import org.dashbuilder.dataset.def.BeanDataSetDefBuilder;
-import org.dashbuilder.dataset.def.CSVDataSetDef;
-import org.dashbuilder.dataset.def.CSVDataSetDefBuilder;
 import org.dashbuilder.dataset.def.DataSetDef;
 
 public class BeanDataSetDefBuilderImpl extends AbstractDataSetDefBuilder<BeanDataSetDefBuilderImpl> implements BeanDataSetDefBuilder<BeanDataSetDefBuilderImpl> {
@@ -29,6 +27,11 @@ public class BeanDataSetDefBuilderImpl extends AbstractDataSetDefBuilder<BeanDat
 
     public BeanDataSetDefBuilderImpl generatorClass(String className) {
         ((BeanDataSetDef) def).setGeneratorClass(className);
+        return this;
+    }
+
+    public BeanDataSetDefBuilderImpl generatorParam(String paramName, String paramValue) {
+        ((BeanDataSetDef) def).getParamaterMap().put(paramName, paramValue);
         return this;
     }
 }

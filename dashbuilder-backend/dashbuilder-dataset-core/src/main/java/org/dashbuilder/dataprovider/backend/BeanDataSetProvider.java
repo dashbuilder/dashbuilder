@@ -56,7 +56,7 @@ public class BeanDataSetProvider implements DataSetProvider {
             BeanDataSetDef beanDef = (BeanDataSetDef) def;
             Class generatorClass = Class.forName(beanDef.getGeneratorClass());
             DataSetGenerator dataSetGenerator = (DataSetGenerator) generatorClass.newInstance();
-            dataSet = dataSetGenerator.buildDataSet();
+            dataSet = dataSetGenerator.buildDataSet(beanDef.getParamaterMap());
             dataSet.setUUID(def.getUUID());
             dataSet.setDefinition(def);
 

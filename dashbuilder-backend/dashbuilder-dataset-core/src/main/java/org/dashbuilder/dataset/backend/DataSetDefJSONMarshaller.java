@@ -52,6 +52,9 @@ public class DataSetDefJSONMarshaller {
 
     // Bean related
     public static final String GENERATOR_CLASS = "generatorClass";
+    public static final String GENERATOR_PARAMS = "generatorParams";
+    public static final String PARAM = "param";
+    public static final String VALUE = "value";
 
     @Inject
     DataSetProviderRegistry dataSetProviderRegistry;
@@ -102,6 +105,19 @@ public class DataSetDefJSONMarshaller {
         String generator = json.has(GENERATOR_CLASS) ? json.getString(GENERATOR_CLASS) : null;
 
         if (!StringUtils.isBlank(generator)) def.setGeneratorClass(generator);
+
+        if (json.has(GENERATOR_PARAMS)) {
+            JSONArray array = json.getJSONArray(GENERATOR_PARAMS);
+            for (int i=0; i<array.length(); i++) {
+                JSONObject param = array.getJSONObject(i);
+                String paramId = param.has(PARAM) ? param.getString(PARAM) : null;
+                String value = param.has(VALUE) ? param.getString(VALUE) : null;
+
+                if (!StringUtils.isBlank(paramId)) {
+                    def.getParamaterMap().put(paramId, value);
+                }
+            }
+        }
         return def;
     }
 

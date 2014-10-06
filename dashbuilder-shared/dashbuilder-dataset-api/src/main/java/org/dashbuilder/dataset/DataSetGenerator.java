@@ -15,6 +15,8 @@
  */
 package org.dashbuilder.dataset;
 
+import java.util.Map;
+
 /**
  * Interface for generating data set instances.
  */
@@ -22,6 +24,8 @@ public interface DataSetGenerator {
 
     /**
      * Build and get a DataSet instance.
+     *
+     * @params A map of parameters to be passed through the generator.
      */
-    DataSet buildDataSet();
+    DataSet buildDataSet(Map<String,String> params);
 }

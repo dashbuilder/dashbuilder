@@ -66,6 +66,11 @@ public class BeanDataSetGeneratorTest {
         String json = IOUtils.toString(fileURL);
         DataSetDef def = jsonMarshaller.fromJson(json);
         dataSetDefRegistry.registerDataSetDef(def);
+
+        fileURL = Thread.currentThread().getContextClassLoader().getResource("salesPerYearAdjusted.dset");
+        json = IOUtils.toString(fileURL);
+        def = jsonMarshaller.fromJson(json);
+        dataSetDefRegistry.registerDataSetDef(def);
     }
 
     @Test
@@ -86,6 +91,27 @@ public class BeanDataSetGeneratorTest {
                 {"OCTOBER", "1,200.00", "2,200.00", "3,100.00"},
                 {"NOVEMBER", "1,400.00", "2,100.00", "3,100.00"},
                 {"DECEMBER", "1,100.00", "2,100.00", "4,200.00"}
+        }, 0);
+    }
+
+    @Test
+    public void testGenerateDataSetAdjusted() throws Exception {
+        DataSet result = dataSetManager.getDataSet("salesPerYearAdjusted");
+
+        //printDataSet(result);
+        assertDataSetValues(result, dataSetFormatter, new String[][] {
+                {"JANUARY", "900.00", "1,800.00", "2,700.00"},
+                {"FEBRUARY", "1,260.00", "2,070.00", "1,800.00"},
+                {"MARCH", "1,170.00", "1,800.00", "1,260.00"},
+                {"APRIL", "810.00", "1,890.00", "1,350.00"},
+                {"MAY", "1,170.00", "2,070.00", "1,440.00"},
+                {"JUNE", "909.00", "1,800.00", "1,350.00"},
+                {"JULY", "945.00", "2,160.00", "2,700.00"},
+                {"AUGUST", "2,070.00", "1,800.00", "2,880.00"},
+                {"SEPTEMBER", "1,710.00", "2,430.00", "2,700.00"},
+                {"OCTOBER", "1,080.00", "1,980.00", "2,790.00"},
+                {"NOVEMBER", "1,260.00", "1,890.00", "2,790.00"},
+                {"DECEMBER", "990.00", "1,890.00", "3,780.00"}
         }, 0);
     }
 
