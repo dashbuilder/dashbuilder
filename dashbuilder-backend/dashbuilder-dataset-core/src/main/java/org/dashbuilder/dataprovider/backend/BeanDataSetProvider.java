@@ -35,7 +35,7 @@ import org.slf4j.Logger;
 import static org.uberfire.commons.validation.PortablePreconditions.*;
 
 @ApplicationScoped
-@Named("csv")
+@Named("bean")
 public class BeanDataSetProvider implements DataSetProvider {
 
     @Inject
@@ -70,5 +70,18 @@ public class BeanDataSetProvider implements DataSetProvider {
 
     public boolean isDataSetOutdated(DataSetDef def) {
         return false;
+    }
+
+    // Listen to changes on the data set definition registry
+
+    private void onDataSetDefModifiedEvent(@Observes DataSetDefModifiedEvent event) {
+        checkNotNull("event", event);
+        checkNotNull("event", event.getOldDataSetDef());
+
+        DataSetDef oldDef = event.getOldDataSetDef();
+        if (DataSetProviderType.BEAN.equals(oldDef.getProvider())) {
+            String uuid = event.getOldDataSetDef().getUUID();
+            staticDataSetProvider.removeDataSet(uuid);
+        }
     }
 }
