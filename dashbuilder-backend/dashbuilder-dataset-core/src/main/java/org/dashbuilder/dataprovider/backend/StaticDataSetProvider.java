@@ -99,6 +99,10 @@ public class StaticDataSetProvider implements DataSetProvider {
         return dataSet;
     }
 
+    public boolean isDataSetOutdated(DataSetDef def) {
+        return false;
+    }
+
     // Listen to changes on the data set definition registry
 
     private void onDataSetDefModifiedEvent(@Observes DataSetDefModifiedEvent event) {

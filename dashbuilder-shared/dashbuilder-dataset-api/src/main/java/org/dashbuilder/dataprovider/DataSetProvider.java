@@ -38,4 +38,13 @@ public interface DataSetProvider {
      * @return The resulting data set instance
      */
     DataSet lookupDataSet(DataSetDef def, DataSetLookup lookup) throws Exception;
+
+    /**
+     * Check if the specified data set definition is outdated. This means that the data set might have been updated at
+     * origin. When this happens, any data hold by the provider can be considered stale and a refresh is needed.
+     *
+     * @param def The data set definition to check for
+     * @return true if the data set has become stale. false otherwise.
+     */
+    boolean isDataSetOutdated(DataSetDef def);
 }

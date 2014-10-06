@@ -29,6 +29,8 @@ import javax.inject.Inject;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.dashbuilder.config.Config;
+import org.dashbuilder.dataprovider.DataSetProvider;
+import org.dashbuilder.dataprovider.DataSetProviderRegistry;
 import org.dashbuilder.dataset.def.DataSetDef;
 import org.dashbuilder.dataset.def.DataSetDefRegistry;
 import org.slf4j.Logger;
@@ -49,6 +51,9 @@ public class DataSetDefDeployer {
 
      @Inject
     protected DataSetDefRegistry dataSetDefRegistry;
+
+     @Inject
+    protected DataSetProviderRegistry dataSetProviderRegistry;
 
     @Inject
     protected DataSetDefJSONMarshaller dataSetDefJSONMarshaller;
@@ -157,8 +162,9 @@ public class DataSetDefDeployer {
         }
     };
 
-    protected static class DataSetDefRecord {
+    protected class DataSetDefRecord {
 
+        DataSetProvider provider;
         DataSetDef def;
         File defFile;
         long regTime;
@@ -167,10 +173,11 @@ public class DataSetDefDeployer {
             this.def = def;
             this.regTime = new Date().getTime();
             this.defFile = f;
+            this.provider = dataSetProviderRegistry.getDataSetProvider(def.getProvider());
         }
 
         boolean isOutdated() {
-            return defFile.lastModified() > regTime;
+            return defFile.lastModified() > regTime || provider.isDataSetOutdated(def);
         }
     }
 }

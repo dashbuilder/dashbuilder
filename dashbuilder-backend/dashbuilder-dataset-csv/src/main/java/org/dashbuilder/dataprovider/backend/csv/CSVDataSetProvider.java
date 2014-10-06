@@ -29,6 +29,7 @@ import org.dashbuilder.dataset.DataSetLookup;
 import org.dashbuilder.dataset.def.CSVDataSetDef;
 import org.dashbuilder.dataset.def.DataSetDef;
 import org.dashbuilder.dataset.events.DataSetDefModifiedEvent;
+import org.slf4j.Logger;
 
 import static org.uberfire.commons.validation.PortablePreconditions.checkNotNull;
 
@@ -38,6 +39,9 @@ public class CSVDataSetProvider implements DataSetProvider {
 
     @Inject
     protected StaticDataSetProvider staticDataSetProvider;
+
+    @Inject
+    protected Logger log;
 
     public DataSetProviderType getType() {
         return DataSetProviderType.CSV;
@@ -63,6 +67,22 @@ public class CSVDataSetProvider implements DataSetProvider {
         }
         // Always do the lookup on the statically registered data set.
         return staticDataSetProvider.lookupDataSet(def, lookup);
+    }
+
+    public boolean isDataSetOutdated(DataSetDef def) {
+        // If no data set is registered then no way for having stale data.
+        DataSet dataSet = staticDataSetProvider.lookupDataSet(def, null);
+        if (dataSet == null) return false;
+
+        // Check if the CSV file has changed.
+        try {
+            CSVDataSetDef csvDef = (CSVDataSetDef) def;
+            File csvFile = new CSVParser(csvDef).getCSVFile();
+            return hasCSVFileChanged(dataSet, csvFile);
+        } catch (Exception e) {
+            log.error("Problems reading CSV file: " + def, e);
+            return false;
+        }
     }
 
     protected boolean hasCSVFileChanged(DataSet dataSet, File csvFile) {
