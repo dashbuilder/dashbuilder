@@ -25,6 +25,8 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
 import com.google.gwt.user.client.ui.Widget;
+import org.dashbuilder.client.expenses.ExpenseConstants;
+import org.dashbuilder.client.expenses.ExpensesDashboard;
 import org.dashbuilder.dataset.events.DataSetModifiedEvent;
 import org.dashbuilder.displayer.DisplayerSettingsFactory;
 import org.dashbuilder.displayer.client.DisplayerSettingsManager;
@@ -35,6 +37,7 @@ import org.dashbuilder.client.sales.widgets.SalesTableReports;
 import org.dashbuilder.dataset.DataSetFactory;
 import org.dashbuilder.displayer.client.json.DisplayerSettingsJSONMarshaller;
 import org.dashbuilder.renderer.table.client.TableRenderer;
+import org.dashbuilder.shared.sales.SalesConstants;
 import org.uberfire.workbench.events.NotificationEvent;
 
 import static org.dashbuilder.dataset.group.DateIntervalType.*;
@@ -64,6 +67,7 @@ public class GalleryTree {
     private SalesExpectedByDate salesByDateWidget;
     private SalesDistributionByCountry salesByCountryWidget;
     private SalesTableReports salesReportsWidget;
+    private ExpensesDashboard expensesDashboardWidget;
 
     public List<GalleryNode> getMainNodes() {
         return mainNodes;
@@ -87,12 +91,16 @@ public class GalleryTree {
         checkNotNull("event", event);
 
         String targetUUID = event.getDataSetMetadata().getUUID();
-        if (SALES_OPPS.equals(targetUUID)) {
+        if (SalesConstants.SALES_OPPS.equals(targetUUID)) {
             workbenchNotification.fire(new NotificationEvent("The sales data set has been modified. Refreshing the dashboard ...", INFO));
             salesGoalsWidget.redrawAll();
             salesByCountryWidget.redrawAll();
             salesByDateWidget.redrawAll();
             salesReportsWidget.redrawAll();
+        }
+        if (ExpenseConstants.EXPENSES.equals(targetUUID)) {
+            workbenchNotification.fire(new NotificationEvent("The expense reports data set has been modified. Refreshing the dashboard ...", INFO));
+            expensesDashboardWidget.redrawAll();
         }
     }
 
@@ -474,6 +482,11 @@ public class GalleryTree {
         nodeList.add(new GalleryNode("Sales reports") {
             public Widget createWidget() {
                 return salesReportsWidget = new SalesTableReports();
+            }
+        });
+        nodeList.add(new GalleryNode("Expense reports") {
+            public Widget createWidget() {
+                return expensesDashboardWidget = new ExpensesDashboard();
             }
         });
     }
