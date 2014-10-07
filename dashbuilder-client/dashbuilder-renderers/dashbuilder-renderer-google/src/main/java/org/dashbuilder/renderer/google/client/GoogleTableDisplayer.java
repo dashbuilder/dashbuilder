@@ -45,6 +45,7 @@ import org.dashbuilder.common.client.SpacerWidget;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.group.DataSetGroup;
 import org.dashbuilder.dataset.sort.SortOrder;
+import org.dashbuilder.displayer.DisplayerAttributeDef;
 import org.dashbuilder.displayer.DisplayerAttributeGroupDef;
 import org.dashbuilder.displayer.DisplayerEditorConfig;
 import org.dashbuilder.displayer.client.Displayer;
@@ -77,9 +78,10 @@ public class GoogleTableDisplayer extends GoogleDisplayer {
     @Override
     public DisplayerEditorConfig getDisplayerEditorConfig() {
         return new DisplayerEditorConfigImpl()
-                   .supportsAttribute( DisplayerAttributeGroupDef.TYPE )
-                   .supportsAttribute( DisplayerAttributeGroupDef.RENDERER )
-                   .supportsAttribute( DisplayerAttributeGroupDef.COLUMNS )
+                   .supportsAttribute( DisplayerAttributeDef.TYPE )
+                   .supportsAttribute( DisplayerAttributeDef.RENDERER )
+                   .supportsAttribute( DisplayerAttributeDef.COLUMNS )
+                   .supportsAttribute( DisplayerAttributeGroupDef.FILTER_GROUP )
                    .supportsAttribute( DisplayerAttributeGroupDef.TITLE_GROUP )
                    .supportsAttribute( DisplayerAttributeGroupDef.TABLE_GROUP );
     }

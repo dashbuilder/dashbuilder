@@ -23,6 +23,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.googlecode.gwt.charts.client.ChartPackage;
 import com.googlecode.gwt.charts.client.corechart.PieChart;
 import com.googlecode.gwt.charts.client.corechart.PieChartOptions;
+import org.dashbuilder.displayer.DisplayerAttributeDef;
 import org.dashbuilder.displayer.DisplayerAttributeGroupDef;
 import org.dashbuilder.displayer.DisplayerEditorConfig;
 import org.dashbuilder.displayer.impl.DisplayerEditorConfigImpl;
@@ -58,9 +59,10 @@ public class GooglePieChartDisplayer extends GoogleXAxisChartDisplayer {
     @Override
     public DisplayerEditorConfig getDisplayerEditorConfig() {
         return new DisplayerEditorConfigImpl()
-                   .supportsAttribute( DisplayerAttributeGroupDef.TYPE )
-                   .supportsAttribute( DisplayerAttributeGroupDef.RENDERER )
-                   .supportsAttribute( DisplayerAttributeGroupDef.COLUMNS )
+                   .supportsAttribute( DisplayerAttributeDef.TYPE )
+                   .supportsAttribute( DisplayerAttributeDef.RENDERER )
+                   .supportsAttribute( DisplayerAttributeDef.COLUMNS )
+                   .supportsAttribute( DisplayerAttributeGroupDef.FILTER_GROUP )
                    .supportsAttribute( DisplayerAttributeGroupDef.TITLE_GROUP )
                    .supportsAttribute( DisplayerAttributeGroupDef.CHART_GROUP );
     }

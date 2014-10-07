@@ -43,9 +43,10 @@ public class GoogleAreaChartDisplayer extends GoogleXAxisChartDisplayer {
     @Override
     public DisplayerEditorConfig getDisplayerEditorConfig() {
         return new DisplayerEditorConfigImpl()
-                   .supportsAttribute( DisplayerAttributeGroupDef.TYPE )
-                   .supportsAttribute( DisplayerAttributeGroupDef.RENDERER )
-                   .supportsAttribute( DisplayerAttributeGroupDef.COLUMNS )
+                   .supportsAttribute( DisplayerAttributeDef.TYPE )
+                   .supportsAttribute( DisplayerAttributeDef.RENDERER )
+                   .supportsAttribute( DisplayerAttributeDef.COLUMNS )
+                   .supportsAttribute( DisplayerAttributeGroupDef.FILTER_GROUP )
                    .supportsAttribute( DisplayerAttributeGroupDef.TITLE_GROUP )
                    .supportsAttribute( DisplayerAttributeDef.CHART_WIDTH )
                    .supportsAttribute( DisplayerAttributeDef.CHART_HEIGHT )

@@ -49,6 +49,7 @@ import com.google.gwt.view.client.AsyncDataProvider;
 import com.google.gwt.view.client.HasData;
 import org.dashbuilder.common.client.StringUtils;
 import org.dashbuilder.dataset.client.DataSetReadyCallback;
+import org.dashbuilder.displayer.DisplayerAttributeDef;
 import org.dashbuilder.displayer.DisplayerAttributeGroupDef;
 import org.dashbuilder.displayer.DisplayerEditorConfig;
 import org.dashbuilder.displayer.DisplayerSettingsColumn;
@@ -147,9 +148,10 @@ public class TableDisplayer extends AbstractDisplayer {
     @Override
     public DisplayerEditorConfig getDisplayerEditorConfig() {
         return new DisplayerEditorConfigImpl()
-                   .supportsAttribute( DisplayerAttributeGroupDef.TYPE )
-                   .supportsAttribute( DisplayerAttributeGroupDef.RENDERER )
-                   .supportsAttribute( DisplayerAttributeGroupDef.COLUMNS )
+                   .supportsAttribute( DisplayerAttributeDef.TYPE )
+                   .supportsAttribute( DisplayerAttributeDef.RENDERER )
+                   .supportsAttribute( DisplayerAttributeDef.COLUMNS )
+                   .supportsAttribute( DisplayerAttributeGroupDef.FILTER_GROUP )
                    .supportsAttribute( DisplayerAttributeGroupDef.TITLE_GROUP )
                    .supportsAttribute( DisplayerAttributeGroupDef.TABLE_GROUP );
     }
