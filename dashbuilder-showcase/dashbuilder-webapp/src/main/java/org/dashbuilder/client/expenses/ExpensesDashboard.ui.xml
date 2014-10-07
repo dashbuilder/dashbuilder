@@ -11,12 +11,12 @@
     </g:HorizontalPanel>
     <b:TabPanel>
       <b:Tab heading="Expenses evolution">
-        <g:FlowPanel>
+        <g:FlowPanel width="550px" height="300px">
           <my:Displayer ui:field="lineByDate"/>
         </g:FlowPanel>
       </b:Tab>
       <b:Tab heading="By employee">
-        <g:FlowPanel>
+        <g:FlowPanel width="650px" height="300px">
           <my:Displayer ui:field="bubbleByEmployee"/>
         </g:FlowPanel>
       </b:Tab>
