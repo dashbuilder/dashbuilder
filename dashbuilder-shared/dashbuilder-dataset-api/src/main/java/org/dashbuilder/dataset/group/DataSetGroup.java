@@ -74,7 +74,7 @@ public class DataSetGroup implements DataSetOp {
     }
 
     public void setSelectedIntervalNames(List<String> names) {
-        selectedIntervalNames = names;
+        selectedIntervalNames = (names != null) ? names : new ArrayList<String>();
     }
 
     public DataSetGroup cloneInstance() {

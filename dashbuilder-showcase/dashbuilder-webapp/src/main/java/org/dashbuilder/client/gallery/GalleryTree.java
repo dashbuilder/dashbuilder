@@ -578,8 +578,7 @@ public class GalleryTree {
                                 "                        \"columnId\": \"amount\",\n" +
                                 "                        \"function\": \"SUM\"\n" +
                                 "                    }\n" +
-                                "                ],\n" +
-                                "                \"selectedIntervals\": []\n" +
+                                "                ]\n" +
                                 "            }\n" +
                                 "        ]\n" +
                                 "    }\n" +
@@ -655,8 +654,7 @@ public class GalleryTree {
                                 "                        \"columnId\": \"amount\",\n" +
                                 "                        \"function\": \"SUM\"\n" +
                                 "                    }\n" +
-                                "                ],\n" +
-                                "                \"selectedIntervals\": []\n" +
+                                "                ]\n" +
                                 "            }\n" +
                                 "        ]\n" +
                                 "    }\n" +
@@ -760,8 +758,7 @@ public class GalleryTree {
                                 "                        \"columnId\": \"Total\",\n" +
                                 "                        \"function\": \"SUM\"\n" +
                                 "                    }\n" +
-                                "                ],\n" +
-                                "                \"selectedIntervals\": []\n" +
+                                "                ]\n" +
                                 "            }\n" +
                                 "        ]\n" +
                                 "    }\n" +
@@ -831,8 +828,7 @@ public class GalleryTree {
                                 "                        \"columnId\": \"amount\",\n" +
                                 "                        \"function\": \"SUM\"\n" +
                                 "                    }\n" +
-                                "                ],\n" +
-                                "                \"selectedIntervals\": []\n" +
+                                "                ]\n" +
                                 "            }\n" +
                                 "        ]\n" +
                                 "    }\n" +
@@ -898,8 +894,7 @@ public class GalleryTree {
                                 "                        \"columnId\": \"amount\",\n" +
                                 "                        \"function\": \"SUM\"\n" +
                                 "                    }\n" +
-                                "                ],\n" +
-                                "                \"selectedIntervals\": []\n" +
+                                "                ]\n" +
                                 "            },\n" +
                                 "            {\n" +
                                 "                \"columnGroup\": {\n" +
@@ -917,8 +912,7 @@ public class GalleryTree {
                                 "                        \"columnId\": \"amount\",\n" +
                                 "                        \"function\": \"SUM\"\n" +
                                 "                    }\n" +
-                                "                ],\n" +
-                                "                \"selectedIntervals\": []\n" +
+                                "                ]\n" +
                                 "            },\n" +
                                 "            {\n" +
                                 "                \"columnGroup\": {\n" +
@@ -936,8 +930,7 @@ public class GalleryTree {
                                 "                        \"columnId\": \"amount\",\n" +
                                 "                        \"function\": \"SUM\"\n" +
                                 "                    }\n" +
-                                "                ],\n" +
-                                "                \"selectedIntervals\": []\n" +
+                                "                ]\n" +
                                 "            }\n" +
                                 "        ]\n" +
                                 "    }\n" +
@@ -1015,8 +1008,7 @@ public class GalleryTree {
                                 "                        \"columnId\": \"amount\",\n" +
                                 "                        \"function\": \"SUM\"\n" +
                                 "                    }\n" +
-                                "                ],\n" +
-                                "                \"selectedIntervals\": []\n" +
+                                "                ]\n" +
                                 "            }\n" +
                                 "        ]\n" +
                                 "    }\n" +
@@ -1117,8 +1109,7 @@ public class GalleryTree {
                                 "                        \"columnId\": \"Total\",\n" +
                                 "                        \"function\": \"SUM\"\n" +
                                 "                    }\n" +
-                                "                ],\n" +
-                                "                \"selectedIntervals\": []\n" +
+                                "                ]\n" +
                                 "            }\n" +
                                 "        ]\n" +
                                 "    }\n" +
@@ -1272,8 +1263,7 @@ public class GalleryTree {
                                 "                        \"columnId\": \"expectedAmount\",\n" +
                                 "                        \"function\": \"SUM\"\n" +
                                 "                    }\n" +
-                                "                ],\n" +
-                                "                \"selectedIntervals\": []\n" +
+                                "                ]\n" +
                                 "            }\n" +
                                 "        ]\n" +
                                 "    }\n" +
@@ -1347,8 +1337,7 @@ public class GalleryTree {
                                 "                        \"columnId\": \"expectedAmount\",\n" +
                                 "                        \"function\": \"SUM\"\n" +
                                 "                    }\n" +
-                                "                ],\n" +
-                                "                \"selectedIntervals\": []\n" +
+                                "                ]\n" +
                                 "            }\n" +
                                 "        ]\n" +
                                 "    }\n" +
@@ -1421,8 +1410,7 @@ public class GalleryTree {
                                 "                        \"columnId\": \"expectedAmount\",\n" +
                                 "                        \"function\": \"SUM\"\n" +
                                 "                    }\n" +
-                                "                ],\n" +
-                                "                \"selectedIntervals\": []\n" +
+                                "                ]\n" +
                                 "            }\n" +
                                 "        ]\n" +
                                 "    }\n" +
@@ -1522,8 +1510,7 @@ public class GalleryTree {
                                 "                        \"columnId\": \"expectedAmount\",\n" +
                                 "                        \"function\": \"SUM\"\n" +
                                 "                    }\n" +
-                                "                ],\n" +
-                                "                \"selectedIntervals\": []\n" +
+                                "                ]\n" +
                                 "            }\n" +
                                 "        ]\n" +
                                 "    }\n" +
@@ -1756,8 +1743,7 @@ public class GalleryTree {
                                 "                        \"columnId\": \"Total\",\n" +
                                 "                        \"function\": \"SUM\"\n" +
                                 "                    }\n" +
-                                "                ],\n" +
-                                "                \"selectedIntervals\": []\n" +
+                                "                ]\n" +
                                 "            }\n" +
                                 "        ]\n" +
                                 "    }\n" +
@@ -1891,8 +1877,7 @@ public class GalleryTree {
                                 "                        \"columnId\": \"Total amount\",\n" +
                                 "                        \"function\": \"SUM\"\n" +
                                 "                    }\n" +
-                                "                ],\n" +
-                                "                \"selectedIntervals\": []\n" +
+                                "                ]\n" +
                                 "            }\n" +
                                 "        ]\n" +
                                 "    }\n" +
@@ -1960,8 +1945,7 @@ public class GalleryTree {
                                 "                        \"columnId\": \"amount\",\n" +
                                 "                        \"function\": \"SUM\"\n" +
                                 "                    }\n" +
-                                "                ],\n" +
-                                "                \"selectedIntervals\": []\n" +
+                                "                ]\n" +
                                 "            }\n" +
                                 "        ]\n" +
                                 "    }\n" +
@@ -2080,8 +2064,7 @@ public class GalleryTree {
                                 "                        \"columnId\": \"amount\",\n" +
                                 "                        \"function\": \"SUM\"\n" +
                                 "                    }\n" +
-                                "                ],\n" +
-                                "                \"selectedIntervals\": []\n" +
+                                "                ]\n" +
                                 "            }\n" +
                                 "        ]\n" +
                                 "    }\n" +
