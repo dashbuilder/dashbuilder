@@ -20,6 +20,7 @@ import javax.inject.Inject;
 
 import org.dashbuilder.dataset.client.DataSetLookupClient;
 import org.dashbuilder.dataset.DataSetLookupService;
+import org.dashbuilder.displayer.DisplayerType;
 import org.jboss.errai.common.client.api.Caller;
 
 /**
@@ -28,6 +29,7 @@ import org.jboss.errai.common.client.api.Caller;
 @ApplicationScoped
 public class ClientSettings {
 
+    @Inject RendererLibLocator rendererLibLocator;
     @Inject DataSetLookupClient dataSetLookupClient;
     @Inject Caller<DataSetLookupService> dataSetLookupService;
 
@@ -44,6 +46,17 @@ public class ClientSettings {
      * sets as the performance of any lookup request is much faster on client.
      */
     public void turnOnDataSetPush() {
-        dataSetLookupClient.setPushRemoteDataSetEnabled(true);
+        dataSetLookupClient.setPushRemoteDataSetEnabled( true );
+    }
+
+    /**
+     * It's possible to have one or more renderer libs available per displayer type. If a displayer does not define
+     * its renderer lib then the default one is taken. This method can be used to define the default renderers.
+     *
+     * @param displayerType The type of the displayer we want to configure.
+     * @param rendererLib The UUID of the renderer library.
+     */
+    public void setDefaultRenderer(DisplayerType displayerType, String rendererLib) {
+        rendererLibLocator.setDefaultRenderer( displayerType, rendererLib );
     }
 }

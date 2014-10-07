@@ -58,6 +58,10 @@ public class RendererLibLocator {
         return defaultRenderers.get(displayerType);
     }
 
+    public void setDefaultRenderer(DisplayerType displayerType, String rendererName) {
+        defaultRenderers.put(displayerType, rendererName);
+    }
+
     public Set<String> getAvailableRenderersByDisplayerType( DisplayerType displayerType ) {
         return renderersByDisplayerType.get( displayerType );
     }
