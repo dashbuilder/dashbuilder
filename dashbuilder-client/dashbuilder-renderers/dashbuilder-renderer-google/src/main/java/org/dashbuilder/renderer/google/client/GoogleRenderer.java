@@ -18,6 +18,7 @@ package org.dashbuilder.renderer.google.client;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Named;
 
@@ -27,6 +28,7 @@ import org.dashbuilder.displayer.DisplayerSettings;
 import org.dashbuilder.displayer.DisplayerType;
 import org.dashbuilder.displayer.client.AbstractRendererLibrary;
 import org.dashbuilder.displayer.client.Displayer;
+import org.dashbuilder.displayer.client.RendererLibLocator;
 
 /**
  * Google's Visualization API based renderer.
@@ -36,6 +38,19 @@ import org.dashbuilder.displayer.client.Displayer;
 public class GoogleRenderer extends AbstractRendererLibrary {
 
     public static final String UUID = "google";
+
+    @PostConstruct
+    private void init() {
+        RendererLibLocator rll = RendererLibLocator.get();
+        rll.registerRendererForDisplayerType( DisplayerType.BARCHART, UUID, true);
+        rll.registerRendererForDisplayerType( DisplayerType.PIECHART, UUID, true );
+        rll.registerRendererForDisplayerType( DisplayerType.AREACHART, UUID, true );
+        rll.registerRendererForDisplayerType( DisplayerType.LINECHART, UUID, true);
+        rll.registerRendererForDisplayerType( DisplayerType.BUBBLECHART, UUID, true );
+        rll.registerRendererForDisplayerType( DisplayerType.METERCHART, UUID, true );
+        rll.registerRendererForDisplayerType( DisplayerType.MAP, UUID, true );
+        rll.registerRendererForDisplayerType( DisplayerType.TABLE, UUID, true );
+    }
 
     public String getUUID() {
         return UUID;

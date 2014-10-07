@@ -17,8 +17,9 @@ package org.dashbuilder.displayer.client;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
-import javax.annotation.PostConstruct;
+import java.util.Set;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
@@ -43,27 +44,22 @@ public class RendererLibLocator {
     @Inject SyncBeanManager beanManager;
 
     private Map<DisplayerType,String> defaultRenderers = new HashMap<DisplayerType,String>();
+    private Map<DisplayerType, Set<String>> renderersByDisplayerType = new HashMap<DisplayerType, Set<String>>();
 
-    @PostConstruct
-    private void init() {
-        // Set the default renderer lib for each displayer type.
-        setDefaultRenderer(DisplayerType.BARCHART, "google");
-        setDefaultRenderer(DisplayerType.PIECHART, "google");
-        setDefaultRenderer(DisplayerType.AREACHART, "google");
-        setDefaultRenderer(DisplayerType.LINECHART, "google");
-        setDefaultRenderer(DisplayerType.BUBBLECHART, "google");
-        setDefaultRenderer(DisplayerType.METERCHART, "google");
-        setDefaultRenderer(DisplayerType.MAP, "google");
-        setDefaultRenderer(DisplayerType.TABLE, "google");
-        setDefaultRenderer(DisplayerType.SELECTOR, "selector");
-    }
-
-    public void setDefaultRenderer(DisplayerType displayerType, String rendererName) {
-        defaultRenderers.put(displayerType, rendererName);
+    public void registerRendererForDisplayerType( DisplayerType displayerType, String rendererName, boolean isDefault ) {
+        Set<String> renderers = renderersByDisplayerType.get( displayerType );
+        if ( renderers == null ) renderers = new HashSet<String>();
+        renderers.add( rendererName );
+        renderersByDisplayerType.put( displayerType, renderers );
+        if ( isDefault ) defaultRenderers.put(displayerType, rendererName);
     }
 
     public String getDefaultRenderer(DisplayerType displayerType) {
         return defaultRenderers.get(displayerType);
+    }
+
+    public Set<String> getAvailableRenderersByDisplayerType( DisplayerType displayerType ) {
+        return renderersByDisplayerType.get( displayerType );
     }
 
     public RendererLibrary lookupRenderer(DisplayerSettings target) {

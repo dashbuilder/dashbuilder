@@ -15,6 +15,7 @@
  */
 package org.dashbuilder.renderer.table.client;
 
+import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Named;
 
@@ -22,6 +23,7 @@ import org.dashbuilder.displayer.DisplayerSettings;
 import org.dashbuilder.displayer.DisplayerType;
 import org.dashbuilder.displayer.client.AbstractRendererLibrary;
 import org.dashbuilder.displayer.client.Displayer;
+import org.dashbuilder.displayer.client.RendererLibLocator;
 
 /**
  * Table renderer based on the core PagedTable widget.
@@ -31,6 +33,11 @@ import org.dashbuilder.displayer.client.Displayer;
 public class TableRenderer extends AbstractRendererLibrary {
 
     public static final String UUID = "table";
+
+    @PostConstruct
+    private void init() {
+        RendererLibLocator.get().registerRendererForDisplayerType( DisplayerType.TABLE, UUID, false );
+    }
 
     @Override
     public String getUUID() {
