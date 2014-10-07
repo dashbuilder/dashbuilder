@@ -28,6 +28,7 @@ import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.RootPanel;
+import org.dashbuilder.displayer.client.ClientSettings;
 import org.jboss.errai.bus.client.api.ClientMessageBus;
 import org.jboss.errai.ioc.client.api.EntryPoint;
 import org.jboss.errai.ioc.client.container.IOCBeanDef;
@@ -67,13 +68,12 @@ public class ShowcaseEntryPoint {
     private ClientMessageBus bus;
 
     @Inject
-    private DashbuilderInitializer dashbuilderInitializer;
+    private ClientSettings clientSettings;
 
     @PostConstruct
     public void startApp() {
-        // Init the Dashbuilder subsystem
-        dashbuilderInitializer.init();
-
+        clientSettings.turnOnBackend();
+        clientSettings.turnOnDataSetPush();
         hideLoadingPopup();
     }
 
