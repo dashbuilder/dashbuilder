@@ -185,6 +185,7 @@ public class DataSetLookupJSONMarshaller {
     }
 
     private JSONArray formatgroupFunctions( List<GroupFunction> groupFunctions ) {
+        if ( groupFunctions.size() == 0 ) return null;
         JSONArray groupOpsJsonArray = new JSONArray();
         int groupFunctionCounter = 0;
         for ( GroupFunction groupFunction : groupFunctions ) {
@@ -203,6 +204,7 @@ public class DataSetLookupJSONMarshaller {
     }
 
     private JSONArray formatSelectedIntervals( List<String> selectedIntervalNames ) {
+        if ( selectedIntervalNames.size() == 0 ) return null;
         JSONArray selectedIntervalNamesJsonArray = new JSONArray();
         int intervalNamesCounter = 0;
         for ( String intervalName : selectedIntervalNames ) {
@@ -218,6 +220,7 @@ public class DataSetLookupJSONMarshaller {
     }
 
     private JSONArray formatColumnSorts( List<ColumnSort> columnSorts ) {
+        if ( columnSorts.size() == 0 ) return null;
         JSONArray columnSortsJsonArray = new JSONArray();
         int columnSortCounter = 0;
         for ( ColumnSort columnSort : columnSorts ) {
@@ -340,7 +343,6 @@ public class DataSetLookupJSONMarshaller {
         }
         return params;
     }
-
 
     private List<DataSetGroup> parseGroupOperations( JSONArray groupOpsJsonArray ) {
         if ( groupOpsJsonArray == null ) return null;
