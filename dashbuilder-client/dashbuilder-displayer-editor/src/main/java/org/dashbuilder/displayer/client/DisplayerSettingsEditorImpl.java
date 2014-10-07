@@ -64,7 +64,6 @@ public class DisplayerSettingsEditorImpl extends Composite implements DisplayerS
     private Label titleTextBoxLabel = new Label( DisplayerSettingsEditorConstants.INSTANCE.common_title() );
     private TextBox titleTextBox = new TextBox();
 
-    // TODO complete
     private Label rendererListBoxLabel = new Label( DisplayerSettingsEditorConstants.INSTANCE.common_renderer() );
     private ListBox rendererListBox = new ListBox( false );
 
