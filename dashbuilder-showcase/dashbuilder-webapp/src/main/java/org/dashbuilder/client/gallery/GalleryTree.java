@@ -27,7 +27,10 @@ import javax.inject.Inject;
 import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.client.expenses.ExpenseConstants;
 import org.dashbuilder.client.expenses.ExpensesDashboard;
+import org.dashbuilder.dataset.DataSetMetadata;
+import org.dashbuilder.dataset.def.DataSetDef;
 import org.dashbuilder.dataset.events.DataSetModifiedEvent;
+import org.dashbuilder.dataset.events.DataSetPushOkEvent;
 import org.dashbuilder.displayer.DisplayerSettingsFactory;
 import org.dashbuilder.displayer.client.DisplayerSettingsManager;
 import org.dashbuilder.client.sales.widgets.SalesExpectedByDate;
@@ -102,6 +105,15 @@ public class GalleryTree {
             workbenchNotification.fire(new NotificationEvent("The expense reports data set has been modified. Refreshing the dashboard ...", INFO));
             if (expensesDashboardWidget != null) expensesDashboardWidget.redrawAll();
         }
+    }
+
+    private void onDataSetPushOkEvent(@Observes DataSetPushOkEvent event) {
+        checkNotNull("event", event);
+        checkNotNull("event", event.getDataSetMetadata());
+
+        DataSetMetadata metadata = event.getDataSetMetadata();
+        DataSetDef def = metadata.getDefinition();
+        workbenchNotification.fire(new NotificationEvent("Data set loaded from server [" + def.getProvider() + ", " + event.getDataSetMetadata().getEstimatedSize() + " Kb]", INFO));
     }
 
     private void initBarChartCategory() {
@@ -248,7 +260,7 @@ public class GalleryTree {
                 .buildSettings()
         ));
 
-        // nodeList.add(new GalleryNodeKPI("Multiple (date)", ...));
+        // nodeList.add(new GalleryNodeDisplayer("Multiple (date)", ...));
     }
 
     private void initAreaChartCategory() {
@@ -360,7 +372,7 @@ public class GalleryTree {
                 .buildSettings()
         ));
 
-        // nodeList.add(new GalleryNodeKPI("Multiple (date)", ...));
+        // nodeList.add(new GalleryNodeDisplayer("Multiple (date)", ...));
     }
 
     private void initMapChartCategory() {

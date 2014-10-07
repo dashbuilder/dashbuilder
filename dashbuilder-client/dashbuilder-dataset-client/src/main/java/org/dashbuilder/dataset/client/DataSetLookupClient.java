@@ -29,19 +29,18 @@ import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetLookup;
 import org.dashbuilder.dataset.DataSetMetadata;
 import org.dashbuilder.dataset.DataSetLookupService;
-import org.dashbuilder.dataset.client.resources.i18n.DataSetConstants;
 import org.dashbuilder.dataset.def.DataSetDef;
 import org.dashbuilder.dataset.events.DataSetBackendRegisteredEvent;
 import org.dashbuilder.dataset.events.DataSetDefModifiedEvent;
+import org.dashbuilder.dataset.events.DataSetPushOkEvent;
+import org.dashbuilder.dataset.events.DataSetPushingEvent;
 import org.dashbuilder.dataset.events.DataSetModifiedEvent;
 import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.common.client.api.RemoteCallback;
 import org.jboss.errai.ioc.client.container.IOC;
 import org.jboss.errai.ioc.client.container.IOCBeanDef;
-import org.uberfire.workbench.events.NotificationEvent;
 
 import static org.uberfire.commons.validation.PortablePreconditions.checkNotNull;
-import static org.uberfire.workbench.events.NotificationEvent.NotificationType.*;
 
 /**
  * Proxy interface to the list of available DataSetManager implementations.
@@ -60,7 +59,10 @@ public class DataSetLookupClient {
     private ClientDataSetManager clientDataSetManager;
 
     @Inject
-    private Event<NotificationEvent> notification;
+    private Event<DataSetPushingEvent> dataSetPushingEvent;
+
+    @Inject
+    private Event<DataSetPushOkEvent> dataSetPushOkEvent;
 
     @Inject
     private Event<DataSetModifiedEvent> dataSetModifiedEvent;
@@ -78,7 +80,7 @@ public class DataSetLookupClient {
     /**
      * If enabled then remote data set can be pushed to clients.
      */
-    private boolean pushRemoteDataSetEnabled = true;
+    private boolean pushRemoteDataSetEnabled = false;
 
     /**
      * It holds a set of data set push requests in progress.
@@ -214,9 +216,8 @@ public class DataSetLookupClient {
             this.dataSetMetadata = metadata;
 
             pushRequestMap.put(dataSetMetadata.getUUID(), this);
-            notification.fire(
-                    new NotificationEvent( DataSetConstants.INSTANCE.dsLookupClient_loadingFromServer( Integer.toString( metadata.getEstimatedSize() ) ), INFO)
-            );
+
+            dataSetPushingEvent.fire(new DataSetPushingEvent(dataSetMetadata));
         }
 
         public void registerLookup(DataSetLookup lookup, DataSetReadyCallback listener) {
@@ -227,7 +228,8 @@ public class DataSetLookupClient {
             pushRequestMap.remove(dataSetMetadata.getUUID());
 
             clientDataSetManager.registerDataSet(dataSet);
-            notification.fire(new NotificationEvent( DataSetConstants.INSTANCE.dsLookupClient_successfullyLoaded(), SUCCESS));
+
+            dataSetPushOkEvent.fire(new DataSetPushOkEvent(dataSetMetadata));
 
             for (DataSetLookupListenerPair pair : listenerList) {
                 DataSet result = clientDataSetManager.lookupDataSet(pair.lookup);
@@ -238,7 +240,6 @@ public class DataSetLookupClient {
         public void notFound() {
             pushRequestMap.remove(dataSetMetadata.getUUID());
 
-            notification.fire(new NotificationEvent(DataSetConstants.INSTANCE.dsLookupClient_dsNotFoundInServer(), ERROR));
             for (DataSetLookupListenerPair pair : listenerList) {
                 pair.listener.notFound();
             }

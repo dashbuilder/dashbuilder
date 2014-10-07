@@ -89,20 +89,23 @@ public class DataSetDefDeployer {
             log.info("Data sets deployment directory = " + dir);
             directory = dir;
             doDeploy();
-            watcherThread = new Thread(new Runnable() {
-                public void run() {
-                    // TODO: replace polling by a NIO WatcherService after update to Java 1.7
-                    while (directory != null) {
-                        try {
-                            Thread.sleep(pollingTime);
-                            doDeploy();
-                        } catch (InterruptedException e) {
-                            log.error("Data set watcher thread error.", e);
+
+            if (pollingTime > 0) {
+                watcherThread = new Thread(new Runnable() {
+                    public void run() {
+                        // TODO: replace by NIO WatcherService (requires upgrading to Java 1.7)
+                        while (directory != null) {
+                            try {
+                                Thread.sleep(pollingTime);
+                                doDeploy();
+                            } catch (InterruptedException e) {
+                                log.error("Data set watcher thread error.", e);
+                            }
                         }
                     }
-                }
-            });
-            watcherThread.start();
+                });
+                watcherThread.start();
+            }
         }
         else {
             log.warn("Data sets deployment directory invalid: " + dir);

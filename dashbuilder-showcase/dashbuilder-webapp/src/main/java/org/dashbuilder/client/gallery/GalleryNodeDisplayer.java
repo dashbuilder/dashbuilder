@@ -26,7 +26,7 @@ import org.dashbuilder.displayer.client.DisplayerSettingsJSONSourceViewer;
 import org.dashbuilder.displayer.client.DisplayerView;
 
 /**
- * A KPI gallery node.
+ * A DisplayerSettings gallery node.
  */
 public class GalleryNodeDisplayer extends GalleryNode {
 

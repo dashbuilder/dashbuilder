@@ -49,11 +49,11 @@ public class DisplayerPresenter {
         this.displayerSettings = displayerSettingsManager.getDisplayerSettings(uuid);
         if (displayerSettings == null) throw new IllegalArgumentException("Displayer settings not found.");
 
-        // Draw the KPI.
+        // Draw the Displayer.
         displayerView.setDisplayerSettings(displayerSettings);
         displayerView.draw();
 
-        // Register the KPIViewer into the coordinator.
+        // Register the DisplayerView into the coordinator.
         displayerViewCoordinator.addDisplayerView(displayerView);
     }
 

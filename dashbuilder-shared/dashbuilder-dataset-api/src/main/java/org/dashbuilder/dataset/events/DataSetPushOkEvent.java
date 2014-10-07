@@ -13,19 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.dashbuilder.dataset.events;
 
-package org.dashbuilder.dataset.client.resources.i18n;
+import org.dashbuilder.dataset.DataSetMetadata;
+import org.jboss.errai.common.client.api.annotations.Portable;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.i18n.client.Messages;
+@Portable
+public class DataSetPushOkEvent {
 
-public interface DataSetConstants extends Messages {
+    DataSetMetadata dataSetMetadata;
 
-    public static final DataSetConstants INSTANCE = GWT.create( DataSetConstants.class );
+    public DataSetPushOkEvent() {
+    }
 
-    public String dsLookupClient_loadingFromServer( String estimatedSize );
+    public DataSetPushOkEvent(DataSetMetadata dataSetMetadata) {
+        this.dataSetMetadata = dataSetMetadata;
+    }
 
-    public String dsLookupClient_successfullyLoaded();
+    public DataSetMetadata getDataSetMetadata() {
+        return dataSetMetadata;
+    }
 
-    public String dsLookupClient_dsNotFoundInServer();
+    public void setDataSetMetadata(DataSetMetadata dataSetMetadata) {
+        this.dataSetMetadata = dataSetMetadata;
+    }
 }
