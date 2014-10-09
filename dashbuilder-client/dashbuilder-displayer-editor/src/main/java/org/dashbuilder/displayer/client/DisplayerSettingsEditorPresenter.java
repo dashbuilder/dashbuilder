@@ -21,15 +21,18 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
 import com.google.gwt.user.client.ui.IsWidget;
+import com.google.gwt.user.client.ui.SimplePanel;
 import org.dashbuilder.common.client.StringUtils;
 import org.dashbuilder.displayer.DisplayerSettings;
 import org.dashbuilder.displayer.client.json.DisplayerSettingsJSONMarshaller;
 import org.dashbuilder.displayer.events.DisplayerSettingsChangedEvent;
+import org.dashbuilder.displayer.events.DisplayerSettingsOnCloseEvent;
 import org.dashbuilder.displayer.events.DisplayerSettingsOnEditEvent;
 import org.uberfire.client.annotations.DefaultPosition;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
 import org.uberfire.client.annotations.WorkbenchPartView;
 import org.uberfire.client.annotations.WorkbenchScreen;
+import org.uberfire.client.mvp.PlaceManager;
 import org.uberfire.lifecycle.OnStartup;
 import org.uberfire.mvp.PlaceRequest;
 import org.uberfire.workbench.model.Position;
@@ -40,20 +43,21 @@ import static org.uberfire.commons.validation.PortablePreconditions.checkNotNull
 @Dependent
 public class DisplayerSettingsEditorPresenter {
 
-    /** The displayer settings */
     private DisplayerSettings displayerSettings;
 
-    /** The displayer settings JSON marshaller */
     @Inject private DisplayerSettingsJSONMarshaller jsonMarshaller;
 
-    /** The displayer settings editor widget */
     @Inject private DisplayerSettingsEditorForm settingsEditor;
 
-    /** The displayer settings editor widget */
     @Inject private Event<DisplayerSettingsChangedEvent> settingsChangedEvent;
+
+    @Inject private PlaceManager placeManager;
+
+    private PlaceRequest placeRequest;
 
     @OnStartup
     public void onStartup(PlaceRequest placeRequest) {
+        this.placeRequest = placeRequest;
         String json = placeRequest.getParameter("json", "");
         if (!StringUtils.isBlank(json)) {
             setDisplayerSettings(jsonMarshaller.fromJsonString(json));
@@ -77,6 +81,7 @@ public class DisplayerSettingsEditorPresenter {
 
     public void setDisplayerSettings(DisplayerSettings displayerSettings) {
         this.displayerSettings = displayerSettings;
+
         settingsEditor.setDisplayerSettings(displayerSettings);
         settingsEditor.setListener(new DisplayerSettingsEditorListener() {
             public void onDisplayerSettingsChanged(DisplayerSettingsEditor editor) {
@@ -85,13 +90,19 @@ public class DisplayerSettingsEditorPresenter {
         });
     }
 
-    /**
-     * Listen to edit requests
-     */
     private void onDisplayerSettingsOnEditEvent(@Observes DisplayerSettingsOnEditEvent event) {
         checkNotNull("event", event);
         checkNotNull("settings", event.getDisplayerSettings());
 
         setDisplayerSettings(event.getDisplayerSettings());
+    }
+
+    private void onDisplayerSettingsOnCloseEvent(@Observes DisplayerSettingsOnCloseEvent event) {
+        checkNotNull("event", event);
+        checkNotNull("settings", event.getDisplayerSettings());
+
+        if (displayerSettings.getUUID().equals(event.getDisplayerSettings().getUUID())) {
+            placeManager.forceClosePlace(placeRequest);
+        }
     }
 }

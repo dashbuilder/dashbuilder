@@ -28,12 +28,14 @@ import org.dashbuilder.common.client.StringUtils;
 import org.dashbuilder.displayer.DisplayerSettings;
 import org.dashbuilder.displayer.client.json.DisplayerSettingsJSONMarshaller;
 import org.dashbuilder.displayer.events.DisplayerSettingsChangedEvent;
+import org.dashbuilder.displayer.events.DisplayerSettingsOnCloseEvent;
 import org.dashbuilder.displayer.events.DisplayerSettingsOnEditEvent;
 import org.uberfire.client.annotations.WorkbenchMenu;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
 import org.uberfire.client.annotations.WorkbenchPartView;
 import org.uberfire.client.annotations.WorkbenchScreen;
 import org.uberfire.client.mvp.PlaceManager;
+import org.uberfire.lifecycle.OnClose;
 import org.uberfire.lifecycle.OnStartup;
 import org.uberfire.mvp.Command;
 import org.uberfire.mvp.PlaceRequest;
@@ -53,6 +55,7 @@ public class DisplayerPresenter {
     private PlaceManager placeManager;
     private DisplayerSettings displayerSettings;
     private Event<DisplayerSettingsOnEditEvent> displayerSettingsOnEditEvent;
+    private Event<DisplayerSettingsOnCloseEvent> displayerSettingsOnCloseEvent;
     private Menus menu;
 
     @Inject
@@ -60,12 +63,14 @@ public class DisplayerPresenter {
             PerspectiveCoordinator perspectiveCoordinator,
             DisplayerSettingsJSONMarshaller jsonMarshaller,
             Event<DisplayerSettingsOnEditEvent> displayerSettingsOnEditEvent,
+            Event<DisplayerSettingsOnCloseEvent> displayerSettingsOnCloseEvent,
             PlaceManager placeManager) {
         this.displayerView = displayerView;
         this.perspectiveCoordinator = perspectiveCoordinator;
         this.jsonMarshaller = jsonMarshaller;
         this.placeManager = placeManager;
         this.displayerSettingsOnEditEvent = displayerSettingsOnEditEvent;
+        this.displayerSettingsOnCloseEvent = displayerSettingsOnCloseEvent;
         this.menu = makeMenuBar();
     }
 
@@ -99,6 +104,11 @@ public class DisplayerPresenter {
         return menu;
     }
 
+    @OnClose
+    public void onClose() {
+        displayerSettingsOnCloseEvent.fire(new DisplayerSettingsOnCloseEvent(displayerSettings));
+    }
+
     private Menus makeMenuBar() {
         return MenuFactory
                 .newTopLevelMenu("Edit")
@@ -110,7 +120,7 @@ public class DisplayerPresenter {
     private Command getEditCommand() {
         return new Command() {
             public void execute() {
-                placeManager.goTo(new DefaultPlaceRequest("DisplayerSettingsEditor"));
+                placeManager.goTo("DisplayerSettingsEditor");
                 displayerSettingsOnEditEvent.fire(new DisplayerSettingsOnEditEvent(displayerSettings));
             }
         };
