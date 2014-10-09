@@ -21,13 +21,13 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
 import com.google.gwt.user.client.ui.IsWidget;
-import com.google.gwt.user.client.ui.SimplePanel;
 import org.dashbuilder.common.client.StringUtils;
 import org.dashbuilder.displayer.DisplayerSettings;
 import org.dashbuilder.displayer.client.json.DisplayerSettingsJSONMarshaller;
 import org.dashbuilder.displayer.events.DisplayerSettingsChangedEvent;
 import org.dashbuilder.displayer.events.DisplayerSettingsOnCloseEvent;
 import org.dashbuilder.displayer.events.DisplayerSettingsOnEditEvent;
+import org.dashbuilder.displayer.events.DisplayerSettingsOnFocusEvent;
 import org.uberfire.client.annotations.DefaultPosition;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
 import org.uberfire.client.annotations.WorkbenchPartView;
@@ -90,18 +90,29 @@ public class DisplayerSettingsEditorPresenter {
         });
     }
 
-    private void onDisplayerSettingsOnEditEvent(@Observes DisplayerSettingsOnEditEvent event) {
+    private void onDisplayerSettingsEditEvent(@Observes DisplayerSettingsOnEditEvent event) {
         checkNotNull("event", event);
         checkNotNull("settings", event.getDisplayerSettings());
 
         setDisplayerSettings(event.getDisplayerSettings());
     }
 
-    private void onDisplayerSettingsOnCloseEvent(@Observes DisplayerSettingsOnCloseEvent event) {
+    private void onDisplayerSettingsFocusEvent(@Observes DisplayerSettingsOnFocusEvent event) {
+        checkNotNull("event", event);
+        checkNotNull("settings", event.getDisplayerSettings());
+
+        // Only change current settings if it was in edition mode already.
+        if (displayerSettings != null) {
+            setDisplayerSettings(event.getDisplayerSettings());
+        }
+    }
+
+    private void onDisplayerSettingsCloseEvent(@Observes DisplayerSettingsOnCloseEvent event) {
         checkNotNull("event", event);
         checkNotNull("settings", event.getDisplayerSettings());
 
         if (displayerSettings.getUUID().equals(event.getDisplayerSettings().getUUID())) {
+            displayerSettings = null;
             placeManager.forceClosePlace(placeRequest);
         }
     }

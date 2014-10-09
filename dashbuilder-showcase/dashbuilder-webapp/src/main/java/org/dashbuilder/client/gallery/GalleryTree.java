@@ -63,13 +63,14 @@ public class GalleryTree {
         initMeterChartCategory();
         initMapChartCategory();
         initDashboardCategory();
-        initJsonExamples();
+        //initJsonExamples();
     }
 
     private PlaceRequest createPlaceRequest(DisplayerSettings displayerSettings) {
         String json = jsonHelper.toJsonString(displayerSettings);
         Map<String,String> params = new HashMap<String,String>();
         params.put("json", json);
+        params.put("edit", "false");
         return new DefaultPlaceRequest("DisplayerScreen", params);
     }
 
@@ -96,7 +97,7 @@ public class GalleryTree {
                         .filterOn(false, true, true)
                         .buildSettings()
         )));
-        nodeList.add(new GalleryPlaceRequest("Vertical (3D)", createPlaceRequest(
+        nodeList.add(new GalleryPlaceRequest("Vertical", createPlaceRequest(
                 DisplayerSettingsFactory.newBarChartSettings()
                         .dataset(SALES_OPPS)
                         .group(PRODUCT)
@@ -460,7 +461,7 @@ public class GalleryTree {
         nodeList.add(new GalleryPlaceRequest("Sales reports", createPlaceRequest("salesReports")));
         nodeList.add(new GalleryPlaceRequest("Expense reports", createPlaceRequest("expenseReports")));
     }
-
+/*
     private void initJsonExamples() {
         GalleryTreeNodeList jsonExamples = new GalleryTreeNodeList( "JSON Examples" );
         mainNodes.add( jsonExamples );
@@ -2030,4 +2031,5 @@ public class GalleryTree {
                 )
         )));
     }
+*/
 }

@@ -15,8 +15,6 @@
  */
 package org.dashbuilder.displayer.client;
 
-import java.util.HashMap;
-import java.util.Map;
 import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
@@ -30,16 +28,17 @@ import org.dashbuilder.displayer.client.json.DisplayerSettingsJSONMarshaller;
 import org.dashbuilder.displayer.events.DisplayerSettingsChangedEvent;
 import org.dashbuilder.displayer.events.DisplayerSettingsOnCloseEvent;
 import org.dashbuilder.displayer.events.DisplayerSettingsOnEditEvent;
+import org.dashbuilder.displayer.events.DisplayerSettingsOnFocusEvent;
 import org.uberfire.client.annotations.WorkbenchMenu;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
 import org.uberfire.client.annotations.WorkbenchPartView;
 import org.uberfire.client.annotations.WorkbenchScreen;
 import org.uberfire.client.mvp.PlaceManager;
 import org.uberfire.lifecycle.OnClose;
+import org.uberfire.lifecycle.OnFocus;
 import org.uberfire.lifecycle.OnStartup;
 import org.uberfire.mvp.Command;
 import org.uberfire.mvp.PlaceRequest;
-import org.uberfire.mvp.impl.DefaultPlaceRequest;
 import org.uberfire.workbench.model.menu.MenuFactory;
 import org.uberfire.workbench.model.menu.Menus;
 
@@ -54,14 +53,17 @@ public class DisplayerPresenter {
     private DisplayerSettingsJSONMarshaller jsonMarshaller;
     private PlaceManager placeManager;
     private DisplayerSettings displayerSettings;
+    private Event<DisplayerSettingsOnFocusEvent> displayerSettingsOnFocusEvent;
     private Event<DisplayerSettingsOnEditEvent> displayerSettingsOnEditEvent;
     private Event<DisplayerSettingsOnCloseEvent> displayerSettingsOnCloseEvent;
-    private Menus menu;
+    private Menus menu = null;
+    private boolean editEnabled = false;
 
     @Inject
     public DisplayerPresenter(DisplayerView displayerView,
             PerspectiveCoordinator perspectiveCoordinator,
             DisplayerSettingsJSONMarshaller jsonMarshaller,
+            Event<DisplayerSettingsOnFocusEvent> displayerSettingsOnFocusEvent,
             Event<DisplayerSettingsOnEditEvent> displayerSettingsOnEditEvent,
             Event<DisplayerSettingsOnCloseEvent> displayerSettingsOnCloseEvent,
             PlaceManager placeManager) {
@@ -69,9 +71,9 @@ public class DisplayerPresenter {
         this.perspectiveCoordinator = perspectiveCoordinator;
         this.jsonMarshaller = jsonMarshaller;
         this.placeManager = placeManager;
+        this.displayerSettingsOnFocusEvent = displayerSettingsOnFocusEvent;
         this.displayerSettingsOnEditEvent = displayerSettingsOnEditEvent;
         this.displayerSettingsOnCloseEvent = displayerSettingsOnCloseEvent;
-        this.menu = makeMenuBar();
     }
 
     @OnStartup
@@ -87,6 +89,11 @@ public class DisplayerPresenter {
 
         // Register the Displayer into the coordinator.
         perspectiveCoordinator.addDisplayer(displayer);
+
+        // Check edit mode
+        String edit = placeRequest.getParameter("edit", "false");
+        editEnabled = Boolean.parseBoolean(edit);
+        if (editEnabled) this.menu = makeMenuBar();
     }
 
     @WorkbenchPartTitle
@@ -104,6 +111,11 @@ public class DisplayerPresenter {
         return menu;
     }
 
+    @OnFocus
+    public void onFocus() {
+        displayerSettingsOnFocusEvent.fire(new DisplayerSettingsOnFocusEvent(displayerSettings));
+    }
+
     @OnClose
     public void onClose() {
         displayerSettingsOnCloseEvent.fire(new DisplayerSettingsOnCloseEvent(displayerSettings));
@@ -112,7 +124,6 @@ public class DisplayerPresenter {
     private Menus makeMenuBar() {
         return MenuFactory
                 .newTopLevelMenu("Edit")
-                //.withRoles( kieACL.getGrantedRoles( F_PROJECT_AUTHORING_SAVE ) )
                 .respondsWith(getEditCommand())
                 .endMenu().build();
     }
@@ -134,7 +145,7 @@ public class DisplayerPresenter {
         checkNotNull("settings", event.getDisplayerSettings());
 
         DisplayerSettings settings = event.getDisplayerSettings();
-        if (settings.getUUID().equals(displayerSettings.getUUID())) {
+        if (displayerSettings != null && settings.getUUID().equals(displayerSettings.getUUID())) {
             Displayer oldDisplayer = this.displayerView.getDisplayer();
             this.displayerSettings = settings;
             this.displayerView.setDisplayerSettings(displayerSettings);

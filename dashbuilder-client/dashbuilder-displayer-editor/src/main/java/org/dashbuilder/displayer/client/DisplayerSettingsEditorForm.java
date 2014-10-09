@@ -513,6 +513,8 @@ public class DisplayerSettingsEditorForm extends Composite implements DisplayerS
 
         initRendererList();
 
+        editorSettingsTable.clear();
+
         int rowCounter = 0;
         if ( supportedAttributes.contains( DisplayerAttributeDef.TITLE_VISIBLE ) ) {
             showTitleCheckbox.setValue( displayerSettings.isTitleVisible() );
