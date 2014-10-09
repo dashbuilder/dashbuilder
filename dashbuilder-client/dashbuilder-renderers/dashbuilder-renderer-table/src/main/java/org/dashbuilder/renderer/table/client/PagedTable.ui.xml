@@ -46,6 +46,7 @@ THIS FILE HAS BEEN COPIED FROM KIE UBERFIRE EXTENSIONS UNTIL IS PLACED INTO AN U
   </ui:style>
 
   <g:FlowPanel addStyleNames="{style.dataGridContainer}">
+<!--
      <g:HorizontalPanel ui:field="toolbarContainer" width="100%" addStyleNames="{style.horizontalContainer}">
       <g:cell width="33%">
         <g:FlowPanel width="100%"  ui:field="leftToolbar" addStyleNames="{style.leftToolBar}"></g:FlowPanel> 
@@ -59,6 +60,7 @@ THIS FILE HAS BEEN COPIED FROM KIE UBERFIRE EXTENSIONS UNTIL IS PLACED INTO AN U
         </g:FlowPanel>
       </g:cell>
     </g:HorizontalPanel>
+-->
     <g:SimplePanel>
       <b:DataGrid ui:field="dataGrid" addStyleNames="table table-bordered table-striped table-hover"/>
     </g:SimplePanel>

@@ -62,19 +62,19 @@ public class SimpleTable<T>
 
     private static Binder uiBinder = GWT.create( Binder.class );
 
-    @UiField(provided = true)
+    //@UiField(provided = true)
     public Button columnPickerButton;
 
     @UiField(provided = true)
     public DataGrid<T> dataGrid;
 
-    @UiField
+    //@UiField
     public HorizontalPanel toolbarContainer;
-    @UiField
+    //@UiField
     public FlowPanel rightToolbar;
-    @UiField
+    //@UiField
     public FlowPanel leftToolbar;
-    @UiField
+    //@UiField
     public FlowPanel centerToolbar;
 
     private String emptyTableCaption;
