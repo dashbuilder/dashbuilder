@@ -15,10 +15,6 @@
  */
 package org.dashbuilder.client.sales;
 
-import javax.annotation.PostConstruct;
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-
 import org.dashbuilder.dataset.group.DateIntervalType;
 import org.dashbuilder.displayer.DisplayerSettings;
 import org.dashbuilder.displayer.DisplayerSettingsFactory;
@@ -29,21 +25,10 @@ import static org.dashbuilder.dataset.sort.SortOrder.*;
 /**
  * A set of displayer definitions for the Sales Dashboard
  */
-@ApplicationScoped
 public class SalesOppsDisplayers {
 
-    public static final String OPPS_BY_EMPLOYEE = "opps-by-pipeline";
-    public static final String OPPS_EXPECTED_PIPELINE = "opps-expected-pipeline";
-    public static final String OPPS_SALES_PER_YEAR = "opps-sales-per-year";
-    public static final String OPPS_BY_STATUS = "opps-by-status";
-    public static final String OPPS_BY_SALESMAN = "opps-by-salesman";
-    public static final String OPPS_BY_PRODUCT = "opps-by-product";
-    public static final String OPPS_BY_COUNTRY = "opps-by-country";
-    public static final String OPPS_COUNTRY_SUMMARY = "opps-country-summary";
-    public static final String OPPS_ALL = "opps-allopps-listing";
-
-    public static final DisplayerSettings PIE_PIPELINE = DisplayerSettingsFactory.newPieChartSettings()
-            .uuid(OPPS_BY_EMPLOYEE)
+    public static final DisplayerSettings OPPS_BY_PIPELINE = DisplayerSettingsFactory.newPieChartSettings()
+            .uuid("opps-by-pipeline")
             .dataset(SALES_OPPS)
             .group(PIPELINE)
             .count("occurrences")
@@ -55,8 +40,8 @@ public class SalesOppsDisplayers {
             .filterOn(false, true, true)
             .buildSettings();
 
-    public static final DisplayerSettings PIE_STATUS = DisplayerSettingsFactory.newPieChartSettings()
-            .uuid(OPPS_BY_STATUS)
+    public static final DisplayerSettings OPPS_BY_STATUS = DisplayerSettingsFactory.newPieChartSettings()
+            .uuid("opps-by-status")
             .dataset(SALES_OPPS)
             .group(STATUS)
             .sum(AMOUNT)
@@ -68,8 +53,8 @@ public class SalesOppsDisplayers {
             .filterOn(false, true, true)
             .buildSettings();
 
-    public static final DisplayerSettings PIE_SALES_PERSON = DisplayerSettingsFactory.newPieChartSettings()
-            .uuid(OPPS_BY_SALESMAN)
+    public static final DisplayerSettings OPPS_BY_SALESMAN = DisplayerSettingsFactory.newPieChartSettings()
+            .uuid("opps-by-salesman")
             .dataset(SALES_OPPS)
             .group(SALES_PERSON)
             .sum(AMOUNT)
@@ -81,8 +66,8 @@ public class SalesOppsDisplayers {
             .filterOn(false, true, true)
             .buildSettings();
 
-    public static final DisplayerSettings AREA_EXPECTED_AMOUNT = DisplayerSettingsFactory.newAreaChartSettings()
-            .uuid(OPPS_EXPECTED_PIPELINE)
+    public static final DisplayerSettings OPPS_EXPECTED_PIPELINE = DisplayerSettingsFactory.newAreaChartSettings()
+            .uuid("opps-expected-pipeline")
             .dataset(SALES_OPPS)
             .group(CLOSING_DATE, 24, DateIntervalType.MONTH)
             .sum(EXPECTED_AMOUNT)
@@ -94,8 +79,8 @@ public class SalesOppsDisplayers {
             .filterOn(true, true, true)
             .buildSettings();
 
-    public static final DisplayerSettings HBAR_PRODUCT = DisplayerSettingsFactory.newBarChartSettings()
-            .uuid(OPPS_BY_PRODUCT)
+    public static final DisplayerSettings OPPS_BY_PRODUCT = DisplayerSettingsFactory.newBarChartSettings()
+            .uuid("opps-by-product")
             .dataset(SALES_OPPS)
             .group(PRODUCT)
             .sum(AMOUNT)
@@ -108,8 +93,8 @@ public class SalesOppsDisplayers {
             .filterOn(false, true, true)
             .buildSettings();
 
-    public static final DisplayerSettings HBAR_COUNTRY = DisplayerSettingsFactory.newBarChartSettings()
-            .uuid(OPPS_BY_COUNTRY)
+    public static final DisplayerSettings OPPS_BY_COUNTRY = DisplayerSettingsFactory.newBarChartSettings()
+            .uuid("opps-by-country")
             .dataset(SALES_OPPS)
             .group(COUNTRY)
             .count("opps")
@@ -126,8 +111,8 @@ public class SalesOppsDisplayers {
             .filterOn(false, true, true)
             .buildSettings();
 
-    public static final DisplayerSettings TABLE_COUNTRY = DisplayerSettingsFactory.newTableSettings()
-            .uuid(OPPS_COUNTRY_SUMMARY)
+    public static final DisplayerSettings OPPS_COUNTRY_SUMMARY = DisplayerSettingsFactory.newTableSettings()
+            .uuid("opps-country-summary")
             .dataset(SALES_OPPS)
             .group(COUNTRY)
             .count("opps")
@@ -147,8 +132,8 @@ public class SalesOppsDisplayers {
             .filterOff(true)
             .buildSettings();
 
-    public static final DisplayerSettings TABLE_ALL = DisplayerSettingsFactory.newTableSettings()
-            .uuid(OPPS_ALL)
+    public static final DisplayerSettings OPPS_ALLOPPS_LISTING = DisplayerSettingsFactory.newTableSettings()
+            .uuid("opps-allopps-listing")
             .dataset(SALES_OPPS)
             .title("List of Opportunities")
             .titleVisible(false)

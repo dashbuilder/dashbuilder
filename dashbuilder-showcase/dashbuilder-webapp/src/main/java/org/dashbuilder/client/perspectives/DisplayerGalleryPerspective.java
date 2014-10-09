@@ -18,13 +18,13 @@ import org.uberfire.workbench.model.impl.PerspectiveDefinitionImpl;
  * The gallery perspective.
  */
 @ApplicationScoped
-@WorkbenchPerspective(identifier = "GalleryPerspective", isDefault = true)
-public class MainPerspective {
+@WorkbenchPerspective(identifier = "DisplayerGalleryPerspective", isDefault = true)
+public class DisplayerGalleryPerspective {
 
     @Perspective
     public PerspectiveDefinition buildPerspective() {
 
-        PerspectiveDefinition perspective = new PerspectiveDefinitionImpl( PanelType.ROOT_LIST);
+        PerspectiveDefinition perspective = new PerspectiveDefinitionImpl( PanelType.ROOT_TAB);
         perspective.setTransient(true);
         perspective.setName("Gallery");
 

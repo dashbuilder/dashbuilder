@@ -47,25 +47,16 @@ import org.uberfire.workbench.model.menu.Menus;
 import static org.uberfire.workbench.model.menu.MenuFactory.*;
 
 /**
- * GWT's Entry-point for the Dashbuilder showcase
+ * Entry-point for the Dashbuilder showcase
  */
 @EntryPoint
 public class ShowcaseEntryPoint {
-
-    @Inject
-    private SyncBeanManager manager;
 
     @Inject
     private WorkbenchMenuBar menubar;
 
     @Inject
     private PlaceManager placeManager;
-
-    @Inject
-    private ActivityManager activityManager;
-
-    @Inject
-    private ClientMessageBus bus;
 
     @Inject
     private ClientSettings clientSettings;
@@ -78,61 +69,42 @@ public class ShowcaseEntryPoint {
     }
 
     private void setupMenu( @Observes final ApplicationReadyEvent event ) {
-        final PerspectiveActivity defaultPerspective = getDefaultPerspectiveActivity();
 
-        final Menus menus =
+        menubar.addMenus(
                 newTopLevelMenu("Gallery").respondsWith(new Command() {
                     public void execute() {
-                        if (defaultPerspective != null) {
-                            placeManager.goTo(new DefaultPlaceRequest(defaultPerspective.getIdentifier()));
-                        } else {
-                            Window.alert("Default perspective not found.");
-                        }
+                        placeManager.goTo("DisplayerGalleryPerspective");
                     }
                 }).endMenu().
-                newTopLevelMenu("Dashboards").withItems(getSampleDashboardMenuItems()).endMenu().
-                build();
-
-        menubar.addMenus( menus );
+                newTopLevelMenu("Composer").respondsWith(new Command() {
+                    public void execute() {
+                        placeManager.goTo("DashboardComposerPerspective");
+                    }
+                }).endMenu().
+                newTopLevelMenu("Examples").withItems(getSampleDashboardMenuItems()).endMenu().
+                build()
+        );
     }
 
     private List<? extends MenuItem> getSampleDashboardMenuItems() {
-        final List<MenuItem> result = new ArrayList<MenuItem>( 1 );
+        final List<MenuItem> result = new ArrayList<MenuItem>(2);
 
         result.add(MenuFactory.newSimpleItem("Sales Dashboard").respondsWith(new Command() {
             public void execute() {
-                placeManager.goTo( new DefaultPlaceRequest( "Sales Dashboard" ) );
+                placeManager.goTo("SalesDashboardPerspective");
             }
         }).endMenu().build().getItems().get(0));
 
         result.add(MenuFactory.newSimpleItem("Table reports").respondsWith(new Command() {
             public void execute() {
-                placeManager.goTo( new DefaultPlaceRequest( "Sales Reports" ) );
+                placeManager.goTo("SalesReportsPerspective");
             }
         }).endMenu().build().getItems().get(0));
 
         return result;
     }
 
-    private PerspectiveActivity getDefaultPerspectiveActivity() {
-        PerspectiveActivity defaultPerspective = null;
-        final Collection<IOCBeanDef<PerspectiveActivity>> perspectives = manager.lookupBeans( PerspectiveActivity.class );
-        final Iterator<IOCBeanDef<PerspectiveActivity>> perspectivesIterator = perspectives.iterator();
-
-        while ( perspectivesIterator.hasNext() ) {
-            final IOCBeanDef<PerspectiveActivity> perspective = perspectivesIterator.next();
-            final PerspectiveActivity instance = perspective.getInstance();
-            if ( instance.isDefault() ) {
-                defaultPerspective = instance;
-                break;
-            } else {
-                manager.destroyBean( instance );
-            }
-        }
-        return defaultPerspective;
-    }
-
-    //Fade out the "Loading application" pop-up
+    // Fade out the "Loading application" pop-up
     private void hideLoadingPopup() {
         final Element e = RootPanel.get( "loading" ).getElement();
 
@@ -149,9 +121,4 @@ public class ShowcaseEntryPoint {
             }
         }.run( 500 );
     }
-
-    public static native void redirect( String url )/*-{
-        $wnd.location = url;
-    }-*/;
-
 }
