@@ -21,26 +21,38 @@ import javax.inject.Inject;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
 import org.uberfire.client.annotations.WorkbenchPartView;
 import org.uberfire.client.annotations.WorkbenchScreen;
+import org.uberfire.client.mvp.PlaceManager;
 import org.uberfire.client.mvp.UberView;
+import org.uberfire.mvp.PlaceRequest;
 
-@WorkbenchScreen(identifier = "GalleryScreen")
+@WorkbenchScreen(identifier = "org.dashbuilder.gallery.GalleryTreeScreen")
 @ApplicationScoped
-public class GalleryPresenter {
+public class GalleryTreePresenter {
 
-    public interface GalleryView extends UberView<GalleryPresenter> {
+    public interface GalleryTreeView extends UberView<GalleryTreePresenter> {
 
     }
 
     @Inject
-    GalleryView view;
+    GalleryTreeView view;
+
+    @Inject
+    PlaceManager placeManager;
 
     @WorkbenchPartTitle
     public String getTitle() {
-        return "Gallery";
+        return "Gallery Tree";
     }
 
     @WorkbenchPartView
-    public UberView<GalleryPresenter> getView() {
+    public UberView<GalleryTreePresenter> getView() {
         return view;
+    }
+
+    public void navigateToNode(GalleryTreeNode node) {
+        if (node instanceof GalleryPlaceRequest) {
+            PlaceRequest placeRequest = ((GalleryPlaceRequest) node).getPlaceRequest();
+            placeManager.goTo(placeRequest);
+        }
     }
 }

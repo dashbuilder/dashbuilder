@@ -43,6 +43,18 @@ public class DisplayerCoordinator {
         rendererGroup.add(displayer);
     }
 
+    public List<Displayer> getDisplayerList() {
+        return displayerList;
+    }
+
+    public boolean removeDisplayer(Displayer displayer) {
+        RendererLibrary renderer = RendererLibLocator.get().lookupRenderer(displayer.getDisplayerSettings());
+        List<Displayer> rendererGroup = rendererMap.get(renderer);
+        if (rendererGroup != null) rendererGroup.remove(displayer);
+
+        return displayerList.remove(displayer);
+    }
+
     public void drawAll() {
         for (RendererLibrary renderer : rendererMap.keySet()) {
             List<Displayer> rendererGroup = rendererMap.get(renderer);

@@ -22,7 +22,6 @@ import javax.inject.Inject;
 import org.dashbuilder.dataset.group.DateIntervalType;
 import org.dashbuilder.displayer.DisplayerSettings;
 import org.dashbuilder.displayer.DisplayerSettingsFactory;
-import org.dashbuilder.displayer.client.DisplayerSettingsManager;
 
 import static org.dashbuilder.shared.sales.SalesConstants.*;
 import static org.dashbuilder.dataset.sort.SortOrder.*;
@@ -158,18 +157,4 @@ public class SalesOppsDisplayers {
             .tableOrderDefault(AMOUNT, DESCENDING)
             .filterOn(true, true, true)
             .buildSettings();
-
-    @Inject DisplayerSettingsManager displayerSettingsManager;
-
-    @PostConstruct
-    public void init() {
-        displayerSettingsManager.addDisplayerSettings(PIE_PIPELINE);
-        displayerSettingsManager.addDisplayerSettings(AREA_EXPECTED_AMOUNT);
-        displayerSettingsManager.addDisplayerSettings(PIE_STATUS);
-        displayerSettingsManager.addDisplayerSettings(PIE_SALES_PERSON);
-        displayerSettingsManager.addDisplayerSettings(HBAR_PRODUCT);
-        displayerSettingsManager.addDisplayerSettings(HBAR_COUNTRY);
-        displayerSettingsManager.addDisplayerSettings(TABLE_COUNTRY);
-        displayerSettingsManager.addDisplayerSettings(TABLE_ALL);
-    }
 }

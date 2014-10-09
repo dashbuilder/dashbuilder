@@ -63,6 +63,10 @@ public class SalesGoals extends Composite {
 
     DisplayerCoordinator displayerCoordinator = new DisplayerCoordinator();
 
+    public String getTitle() {
+        return "Sales goals";
+    }
+
     public SalesGoals() {
 
         // Create the chart definitions

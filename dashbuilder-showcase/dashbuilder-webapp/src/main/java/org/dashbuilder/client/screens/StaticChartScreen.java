@@ -64,7 +64,8 @@ public class StaticChartScreen {
 
     @OnStartup
     public void init() {
-        DisplayerView displayerView = new DisplayerView(displayerSettings);
+        DisplayerView displayerView = new DisplayerView();
+        displayerView.setDisplayerSettings(displayerSettings);
         displayerView.draw();
     }
 

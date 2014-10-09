@@ -49,6 +49,10 @@ public class SalesDistributionByCountry extends Composite {
 
     DisplayerCoordinator displayerCoordinator = new DisplayerCoordinator();
 
+    public String getTitle() {
+        return "Sales by country";
+    }
+
     public SalesDistributionByCountry() {
 
         // Create the chart definitions

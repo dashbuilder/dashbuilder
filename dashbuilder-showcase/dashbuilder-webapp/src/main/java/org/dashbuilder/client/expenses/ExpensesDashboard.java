@@ -57,6 +57,10 @@ public class ExpensesDashboard extends Composite {
 
     DisplayerCoordinator displayerCoordinator = new DisplayerCoordinator();
 
+    public String getTitle() {
+        return "Expense reports";
+    }
+
     public ExpensesDashboard() {
 
         // Create the chart definitions

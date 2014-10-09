@@ -55,6 +55,10 @@ public class SalesTableReports extends Composite {
 
     DisplayerCoordinator displayerCoordinator = new DisplayerCoordinator();
 
+    public String getTitle() {
+        return "Sales reports";
+    }
+
     public SalesTableReports() {
 
         // Create the chart definitions

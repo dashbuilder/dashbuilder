@@ -50,9 +50,9 @@ import org.dashbuilder.displayer.Position;
 import org.dashbuilder.displayer.client.resources.i18n.DisplayerSettingsEditorConstants;
 import org.dashbuilder.displayer.impl.DisplayerSettingsColumnImpl;
 
-public class DisplayerSettingsEditorImpl extends Composite implements DisplayerSettingsEditor {
+public class DisplayerSettingsEditorForm extends Composite implements DisplayerSettingsEditor {
 
-    interface SettingsEditorUIBinder extends UiBinder<Widget, DisplayerSettingsEditorImpl> {}
+    interface SettingsEditorUIBinder extends UiBinder<Widget, DisplayerSettingsEditorForm> {}
     private static final SettingsEditorUIBinder uiBinder = GWT.create( SettingsEditorUIBinder.class );
 
     private String tableDefaultSortColumnId = null;
@@ -161,7 +161,7 @@ public class DisplayerSettingsEditorImpl extends Composite implements DisplayerS
     protected DisplayerEditorConfig displayerEditorConfig;
     private Set<DisplayerAttributeDef> supportedAttributes;
 
-    public DisplayerSettingsEditorImpl() {
+    public DisplayerSettingsEditorForm() {
 
         // Init the editor from the UI Binder template
         initWidget( uiBinder.createAndBindUi( this ) );

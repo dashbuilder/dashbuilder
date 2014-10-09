@@ -15,25 +15,25 @@
  */
 package org.dashbuilder.client.gallery;
 
-import java.util.ArrayList;
-
-import com.google.gwt.user.client.ui.Widget;
+import java.util.List;
 
 /**
- * A list of gallery nodes.
+ * Base class for all gallery nodes.
  */
-public class GalleryNodeList extends GalleryNode {
+public abstract class GalleryTreeNode {
 
-    public GalleryNodeList(String name) {
-        super(name);
+    protected String name = null;
+    protected List<GalleryTreeNode> children = null;
+
+    public GalleryTreeNode(String name) {
+        this.name = name;
     }
 
-    public void add(GalleryNode node) {
-        if (children == null) children = new ArrayList<GalleryNode>();
-        children.add(node);
+    public String getName() {
+        return name;
     }
 
-    protected Widget createWidget() {
-        return null;
+    public List<GalleryTreeNode> getChildren() {
+        return children;
     }
 }

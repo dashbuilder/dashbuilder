@@ -68,6 +68,10 @@ public class SalesExpectedByDate extends Composite {
 
     DisplayerCoordinator displayerCoordinator = new DisplayerCoordinator();
 
+    public String getTitle() {
+        return "Sales pipeline";
+    }
+
     public SalesExpectedByDate() {
 
         // Create the chart definitions

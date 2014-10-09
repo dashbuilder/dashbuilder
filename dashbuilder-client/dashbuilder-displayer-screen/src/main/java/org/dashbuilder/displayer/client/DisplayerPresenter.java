@@ -15,46 +15,73 @@
  */
 package org.dashbuilder.displayer.client;
 
+import java.util.HashMap;
+import java.util.Map;
 import javax.enterprise.context.Dependent;
+import javax.enterprise.event.Event;
+import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
+import com.google.gwt.dom.client.Document;
 import com.google.gwt.user.client.ui.IsWidget;
+import org.dashbuilder.common.client.StringUtils;
 import org.dashbuilder.displayer.DisplayerSettings;
+import org.dashbuilder.displayer.client.json.DisplayerSettingsJSONMarshaller;
+import org.dashbuilder.displayer.events.DisplayerSettingsChangedEvent;
+import org.dashbuilder.displayer.events.DisplayerSettingsOnEditEvent;
+import org.uberfire.client.annotations.WorkbenchMenu;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
 import org.uberfire.client.annotations.WorkbenchPartView;
 import org.uberfire.client.annotations.WorkbenchScreen;
+import org.uberfire.client.mvp.PlaceManager;
 import org.uberfire.lifecycle.OnStartup;
+import org.uberfire.mvp.Command;
 import org.uberfire.mvp.PlaceRequest;
+import org.uberfire.mvp.impl.DefaultPlaceRequest;
+import org.uberfire.workbench.model.menu.MenuFactory;
+import org.uberfire.workbench.model.menu.Menus;
+
+import static org.uberfire.commons.validation.PortablePreconditions.checkNotNull;
 
 @WorkbenchScreen(identifier = "DisplayerScreen")
 @Dependent
 public class DisplayerPresenter {
 
-    /** The displayer settings */
+    private DisplayerView displayerView;
+    private PerspectiveCoordinator perspectiveCoordinator;
+    private DisplayerSettingsJSONMarshaller jsonMarshaller;
+    private PlaceManager placeManager;
     private DisplayerSettings displayerSettings;
+    private Event<DisplayerSettingsOnEditEvent> displayerSettingsOnEditEvent;
+    private Menus menu;
 
-    /** The setting manager */
-    @Inject private DisplayerSettingsManager displayerSettingsManager;
-
-    /** The displayer view */
-    @Inject private DisplayerView displayerView;
-
-    /** The dashboard context */
-    @Inject private DisplayerViewCoordinator displayerViewCoordinator;
+    @Inject
+    public DisplayerPresenter(DisplayerView displayerView,
+            PerspectiveCoordinator perspectiveCoordinator,
+            DisplayerSettingsJSONMarshaller jsonMarshaller,
+            Event<DisplayerSettingsOnEditEvent> displayerSettingsOnEditEvent,
+            PlaceManager placeManager) {
+        this.displayerView = displayerView;
+        this.perspectiveCoordinator = perspectiveCoordinator;
+        this.jsonMarshaller = jsonMarshaller;
+        this.placeManager = placeManager;
+        this.displayerSettingsOnEditEvent = displayerSettingsOnEditEvent;
+        this.menu = makeMenuBar();
+    }
 
     @OnStartup
     public void onStartup( final PlaceRequest placeRequest) {
-        // Locate the UUID specified as a parameter.
-        String uuid = placeRequest.getParameter("uuid", "");
-        this.displayerSettings = displayerSettingsManager.getDisplayerSettings(uuid);
+        String json = placeRequest.getParameter("json", "");
+        if (!StringUtils.isBlank(json)) this.displayerSettings = jsonMarshaller.fromJsonString(json);
         if (displayerSettings == null) throw new IllegalArgumentException("Displayer settings not found.");
 
         // Draw the Displayer.
+        if (StringUtils.isBlank(displayerSettings.getUUID())) displayerSettings.setUUID(Document.get().createUniqueId());
         displayerView.setDisplayerSettings(displayerSettings);
-        displayerView.draw();
+        Displayer displayer = displayerView.draw();
 
-        // Register the DisplayerView into the coordinator.
-        displayerViewCoordinator.addDisplayerView(displayerView);
+        // Register the Displayer into the coordinator.
+        perspectiveCoordinator.addDisplayer(displayer);
     }
 
     @WorkbenchPartTitle
@@ -65,5 +92,46 @@ public class DisplayerPresenter {
     @WorkbenchPartView
     public IsWidget getView() {
         return displayerView;
+    }
+
+    @WorkbenchMenu
+    public Menus getMenu() {
+        return menu;
+    }
+
+    private Menus makeMenuBar() {
+        return MenuFactory
+                .newTopLevelMenu("Edit")
+                //.withRoles( kieACL.getGrantedRoles( F_PROJECT_AUTHORING_SAVE ) )
+                .respondsWith(getEditCommand())
+                .endMenu().build();
+    }
+
+    private Command getEditCommand() {
+        return new Command() {
+            public void execute() {
+                placeManager.goTo(new DefaultPlaceRequest("DisplayerSettingsEditor"));
+                displayerSettingsOnEditEvent.fire(new DisplayerSettingsOnEditEvent(displayerSettings));
+            }
+        };
+    }
+
+    /**
+     * Be aware of changes in the displayer settings.
+     */
+    private void onDisplayerSettingsChangedEvent(@Observes DisplayerSettingsChangedEvent event) {
+        checkNotNull("event", event);
+        checkNotNull("settings", event.getDisplayerSettings());
+
+        DisplayerSettings settings = event.getDisplayerSettings();
+        if (settings.getUUID().equals(displayerSettings.getUUID())) {
+            Displayer oldDisplayer = this.displayerView.getDisplayer();
+            this.displayerSettings = settings;
+            this.displayerView.setDisplayerSettings(displayerSettings);
+            Displayer newDisplayer = this.displayerView.draw();
+
+            this.perspectiveCoordinator.removeDisplayer(oldDisplayer);
+            this.perspectiveCoordinator.addDisplayer(newDisplayer);
+        }
     }
 }

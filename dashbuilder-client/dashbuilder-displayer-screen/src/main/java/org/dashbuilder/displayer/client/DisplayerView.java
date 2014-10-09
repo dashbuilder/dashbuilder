@@ -20,6 +20,8 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimplePanel;
 import org.dashbuilder.displayer.DisplayerSettings;
 
+import static org.uberfire.commons.validation.PortablePreconditions.checkNotNull;
+
 public class DisplayerView extends Composite {
 
     protected DisplayerSettings displayerSettings;
@@ -31,26 +33,24 @@ public class DisplayerView extends Composite {
         initWidget(container);
     }
 
-    public DisplayerView(DisplayerSettings displayerSettings) {
-        this();
-        setDisplayerSettings(displayerSettings);
-    }
-
     public DisplayerSettings getDisplayerSettings() {
         return displayerSettings;
     }
 
     public void setDisplayerSettings(DisplayerSettings displayerSettings) {
         this.displayerSettings = displayerSettings;
-        this.displayer = DisplayerHelper.lookupDisplayer(displayerSettings);
     }
 
     public Displayer getDisplayer() {
         return displayer;
     }
 
-    public DisplayerView draw() {
+    public Displayer draw() {
         try {
+            checkNotNull("displayerSettings", displayerSettings);
+
+            displayer = DisplayerHelper.lookupDisplayer(displayerSettings);
+
             container.clear();
             container.add( displayer );
 
@@ -58,19 +58,21 @@ public class DisplayerView extends Composite {
         } catch (Exception e) {
             displayMessage(e.getMessage());
         }
-        return this;
+        return displayer;
     }
 
-    public DisplayerView redraw() {
+    public Displayer redraw() {
         try {
-            container.clear();
-            container.add( displayer );
+            checkNotNull("displayerSettings", displayerSettings);
+            checkNotNull("displayer", displayer);
+
+            displayer.setDisplayerSettings(displayerSettings);
 
             DisplayerHelper.redraw( displayer );
         } catch (Exception e) {
             displayMessage(e.getMessage());
         }
-        return this;
+        return displayer;
     }
 
     private void displayMessage(String msg) {

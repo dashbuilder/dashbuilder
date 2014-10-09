@@ -16,40 +16,27 @@
 package org.dashbuilder.client.gallery;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.event.Event;
-import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
-import com.google.gwt.user.client.ui.Widget;
-import org.dashbuilder.client.expenses.ExpenseConstants;
-import org.dashbuilder.client.expenses.ExpensesDashboard;
-import org.dashbuilder.dataset.DataSetMetadata;
-import org.dashbuilder.dataset.def.DataSetDef;
-import org.dashbuilder.dataset.events.DataSetModifiedEvent;
-import org.dashbuilder.dataset.events.DataSetPushOkEvent;
+import org.dashbuilder.displayer.DisplayerSettings;
 import org.dashbuilder.displayer.DisplayerSettingsFactory;
-import org.dashbuilder.displayer.client.DisplayerSettingsManager;
-import org.dashbuilder.client.sales.widgets.SalesExpectedByDate;
-import org.dashbuilder.client.sales.widgets.SalesDistributionByCountry;
-import org.dashbuilder.client.sales.widgets.SalesGoals;
-import org.dashbuilder.client.sales.widgets.SalesTableReports;
 import org.dashbuilder.dataset.DataSetFactory;
 import org.dashbuilder.displayer.client.json.DisplayerSettingsJSONMarshaller;
 import org.dashbuilder.renderer.table.client.TableRenderer;
-import org.dashbuilder.shared.sales.SalesConstants;
-import org.uberfire.workbench.events.NotificationEvent;
+import org.uberfire.mvp.PlaceRequest;
+import org.uberfire.mvp.impl.DefaultPlaceRequest;
 
 import static org.dashbuilder.dataset.group.DateIntervalType.*;
 import static org.dashbuilder.dataset.filter.FilterFactory.*;
 import static org.dashbuilder.dataset.sort.SortOrder.*;
 import static org.dashbuilder.dataset.date.Month.*;
 import static org.dashbuilder.shared.sales.SalesConstants.*;
-import static org.uberfire.commons.validation.PortablePreconditions.checkNotNull;
-import static org.uberfire.workbench.events.NotificationEvent.NotificationType.*;
 
 /**
  * The Gallery tree.
@@ -57,22 +44,11 @@ import static org.uberfire.workbench.events.NotificationEvent.NotificationType.*
 @ApplicationScoped
 public class GalleryTree {
 
-    private List<GalleryNode> mainNodes = new ArrayList<GalleryNode>();
-
-    @Inject
-    private Event<NotificationEvent> workbenchNotification;
-
-    @Inject DisplayerSettingsManager settingsManager;
+    private List<GalleryTreeNode> mainNodes = new ArrayList<GalleryTreeNode>();
 
     @Inject DisplayerSettingsJSONMarshaller jsonHelper;
 
-    private SalesGoals salesGoalsWidget;
-    private SalesExpectedByDate salesByDateWidget;
-    private SalesDistributionByCountry salesByCountryWidget;
-    private SalesTableReports salesReportsWidget;
-    private ExpensesDashboard expensesDashboardWidget;
-
-    public List<GalleryNode> getMainNodes() {
+    public List<GalleryTreeNode> getMainNodes() {
         return mainNodes;
     }
 
@@ -90,37 +66,24 @@ public class GalleryTree {
         initJsonExamples();
     }
 
-    private void onSalesDataSetOutdated(@Observes DataSetModifiedEvent event) {
-        checkNotNull("event", event);
-
-        String targetUUID = event.getDataSetUUID();
-        if (SalesConstants.SALES_OPPS.equals(targetUUID)) {
-            workbenchNotification.fire(new NotificationEvent("The sales data set has been modified. Refreshing the dashboard ...", INFO));
-            if (salesGoalsWidget != null) salesGoalsWidget.redrawAll();
-            if (salesByCountryWidget != null) salesByCountryWidget.redrawAll();
-            if (salesByDateWidget != null) salesByDateWidget.redrawAll();
-            if (salesReportsWidget != null) salesReportsWidget.redrawAll();
-        }
-        if (ExpenseConstants.EXPENSES.equals(targetUUID)) {
-            workbenchNotification.fire(new NotificationEvent("The expense reports data set has been modified. Refreshing the dashboard ...", INFO));
-            if (expensesDashboardWidget != null) expensesDashboardWidget.redrawAll();
-        }
+    private PlaceRequest createPlaceRequest(DisplayerSettings displayerSettings) {
+        String json = jsonHelper.toJsonString(displayerSettings);
+        Map<String,String> params = new HashMap<String,String>();
+        params.put("json", json);
+        return new DefaultPlaceRequest("DisplayerScreen", params);
     }
 
-    private void onDataSetPushOkEvent(@Observes DataSetPushOkEvent event) {
-        checkNotNull("event", event);
-        checkNotNull("event", event.getDataSetMetadata());
-
-        DataSetMetadata metadata = event.getDataSetMetadata();
-        DataSetDef def = metadata.getDefinition();
-        workbenchNotification.fire(new NotificationEvent("Data set loaded from server [" + def.getProvider() + ", " + event.getDataSetMetadata().getEstimatedSize() + " Kb]", INFO));
+    private PlaceRequest createPlaceRequest(String widgetId) {
+        Map<String,String> params = new HashMap<String,String>();
+        params.put("widgetId", widgetId);
+        return new DefaultPlaceRequest("GalleryWidgetScreen", params);
     }
 
     private void initBarChartCategory() {
-        GalleryNodeList nodeList = new GalleryNodeList("Bar Chart");
+        GalleryTreeNodeList nodeList = new GalleryTreeNodeList("Bar Chart");
         mainNodes.add(nodeList);
 
-        nodeList.add(new GalleryNodeDisplayer("Horizontal", GalleryEditorType.FORM,
+        nodeList.add(new GalleryPlaceRequest("Horizontal", createPlaceRequest(
                 DisplayerSettingsFactory.newBarChartSettings()
                         .dataset(SALES_OPPS)
                         .group(PRODUCT)
@@ -130,9 +93,10 @@ public class GalleryTree {
                         .column("Total amount")
                         .horizontal()
                         .margins(10, 30, 120, 120)
+                        .filterOn(false, true, true)
                         .buildSettings()
-        ));
-        nodeList.add(new GalleryNodeDisplayer("Vertical (3D)", GalleryEditorType.FORM,
+        )));
+        nodeList.add(new GalleryPlaceRequest("Vertical (3D)", createPlaceRequest(
                 DisplayerSettingsFactory.newBarChartSettings()
                         .dataset(SALES_OPPS)
                         .group(PRODUCT)
@@ -142,9 +106,10 @@ public class GalleryTree {
                         .column("Total amount")
                         .vertical().set3d(true)
                         .margins(10, 80, 120, 120)
+                        .filterOn(false, true, true)
                         .buildSettings()
-        ));
-        nodeList.add(new GalleryNodeDisplayer("Multiple", GalleryEditorType.FORM,
+        )));
+        nodeList.add(new GalleryPlaceRequest("Multiple", createPlaceRequest(
                 DisplayerSettingsFactory.newBarChartSettings()
                         .dataset(SALES_OPPS)
                         .group(COUNTRY, "Country")
@@ -161,136 +126,142 @@ public class GalleryTree {
                         .column("Max", "Max")
                         .column("Average", "Avg")
                         .horizontal()
+                        .filterOn(false, true, true)
                         .buildSettings()
-        ));
+        )));
     }
 
     private void initPieChartCategory() {
-        GalleryNodeList nodeList = new GalleryNodeList("Pie Chart");
+        GalleryTreeNodeList nodeList = new GalleryTreeNodeList("Pie Chart");
         mainNodes.add(nodeList);
 
-        nodeList.add(new GalleryNodeDisplayer("Basic", GalleryEditorType.FORM,
+        nodeList.add(new GalleryPlaceRequest("Basic", createPlaceRequest(
                 DisplayerSettingsFactory.newPieChartSettings()
-                .dataset(SALES_OPPS)
-                .group(STATUS)
-                .sum(AMOUNT)
-                .title("By Status")
-                .margins(10, 10, 10, 10)
-                .column("Status")
-                .column("Total amount")
-                .buildSettings()
-        ));
+                        .dataset(SALES_OPPS)
+                        .group(STATUS)
+                        .sum(AMOUNT)
+                        .title("By Status")
+                        .margins(10, 10, 10, 10)
+                        .column("Status")
+                        .column("Total amount")
+                        .filterOn(false, true, true)
+                        .buildSettings()
+        )));
 
-        nodeList.add(new GalleryNodeDisplayer("Drill-down", GalleryEditorType.FORM,
+        nodeList.add(new GalleryPlaceRequest("Drill-down", createPlaceRequest(
                 DisplayerSettingsFactory.newPieChartSettings()
-                .dataset(SALES_OPPS)
-                .group(PIPELINE)
-                .sum(AMOUNT)
-                .group(STATUS)
-                .sum(AMOUNT)
-                .group(SALES_PERSON)
-                .sum(AMOUNT)
-                .title("By Pipeline/Status/Sales person")
-                .margins(10, 10, 10, 10)
-                .column("Status")
-                .column("Total amount")
-                .filterOn(true, false, false)
-                .buildSettings()
-        ));
+                        .dataset(SALES_OPPS)
+                        .group(PIPELINE)
+                        .sum(AMOUNT)
+                        .group(STATUS)
+                        .sum(AMOUNT)
+                        .group(SALES_PERSON)
+                        .sum(AMOUNT)
+                        .title("By Pipeline/Status/Sales person")
+                        .margins(10, 10, 10, 10)
+                        .column("Status")
+                        .column("Total amount")
+                        .filterOn(true, false, false)
+                        .buildSettings()
+        )));
     }
 
     private void initLineChartCategory() {
-        GalleryNodeList nodeList = new GalleryNodeList("Line Chart");
+        GalleryTreeNodeList nodeList = new GalleryTreeNodeList("Line Chart");
         mainNodes.add(nodeList);
 
-        nodeList.add(new GalleryNodeDisplayer("Basic", GalleryEditorType.FORM,
+        nodeList.add(new GalleryPlaceRequest("Basic", createPlaceRequest(
                 DisplayerSettingsFactory.newLineChartSettings()
-                .dataset(SALES_OPPS)
-                .group(CLOSING_DATE, 12, MONTH)
-                .sum(AMOUNT)
-                .title("Sales opportunities evolution")
-                .margins(20, 50, 100, 120)
-                .column("Closing date")
-                .column("Total amount")
-                .buildSettings()
-        ));
-        nodeList.add(new GalleryNodeDisplayer("Multiple", GalleryEditorType.FORM,
+                        .dataset(SALES_OPPS)
+                        .group(CLOSING_DATE, 12, MONTH)
+                        .sum(AMOUNT)
+                        .title("Sales opportunities evolution")
+                        .margins(20, 50, 100, 120)
+                        .column("Closing date")
+                        .column("Total amount")
+                        .filterOn(false, true, true)
+                        .buildSettings()
+        )));
+        nodeList.add(new GalleryPlaceRequest("Multiple", createPlaceRequest(
                 DisplayerSettingsFactory.newLineChartSettings()
-                .dataset(SALES_OPPS)
-                .group(COUNTRY, "Country")
-                .count("#Opps")
-                .min(AMOUNT, "Min")
-                .max(AMOUNT, "Max")
-                .avg(AMOUNT, "Average")
-                .sum(AMOUNT, "Total")
-                .title("By Country (min/max/avg)")
-                .margins(30, 100, 80, 80)
-                .column("Country")
-                .column("Min", "Min")
-                .column("Max", "Max")
-                .column("Average", "Avg")
-                .buildSettings()
-        ));
-        nodeList.add(new GalleryNodeDisplayer("Multiple (static)", GalleryEditorType.FORM,
+                        .dataset(SALES_OPPS)
+                        .group(COUNTRY, "Country")
+                        .count("#Opps")
+                        .min(AMOUNT, "Min")
+                        .max(AMOUNT, "Max")
+                        .avg(AMOUNT, "Average")
+                        .sum(AMOUNT, "Total")
+                        .title("By Country (min/max/avg)")
+                        .margins(30, 100, 80, 80)
+                        .column("Country")
+                        .column("Min", "Min")
+                        .column("Max", "Max")
+                        .column("Average", "Avg")
+                        .filterOn(false, true, true)
+                        .buildSettings()
+        )));
+        nodeList.add(new GalleryPlaceRequest("Multiple (static)", createPlaceRequest(
                 DisplayerSettingsFactory.newLineChartSettings()
-                .title("Sales Evolution Per Year")
-                .margins(20, 80, 50, 120)
-                .column("Month")
-                .column("Sales in 2014")
-                .column("Sales in 2015")
-                .column("Sales in 2016")
-                .dataset(DataSetFactory.newDataSetBuilder()
-                        .label("month")
-                        .number("2014")
-                        .number("2015")
-                        .number("2016")
-                        .row(JANUARY, 1000d, 2000d, 3000d)
-                        .row(FEBRUARY, 1400d, 2300d, 2000d)
-                        .row(MARCH, 1300d, 2000d, 1400d)
-                        .row(APRIL, 900d, 2100d, 1500d)
-                        .row(MAY, 1300d, 2300d, 1600d)
-                        .row(JUNE, 1010d, 2000d, 1500d)
-                        .row(JULY, 1050d, 2400d, 3000d)
-                        .row(AUGUST, 2300d, 2000d, 3200d)
-                        .row(SEPTEMBER, 1900d, 2700d, 3000d)
-                        .row(OCTOBER, 1200d, 2200d, 3100d)
-                        .row(NOVEMBER, 1400d, 2100d, 3100d)
-                        .row(DECEMBER, 1100d, 2100d, 4200d)
-                        .buildDataSet())
-                .buildSettings()
-        ));
+                        .title("Sales Evolution Per Year")
+                        .margins(20, 80, 50, 120)
+                        .column("Month")
+                        .column("Sales in 2014")
+                        .column("Sales in 2015")
+                        .column("Sales in 2016")
+                        .dataset(DataSetFactory.newDataSetBuilder()
+                                .label("month")
+                                .number("2014")
+                                .number("2015")
+                                .number("2016")
+                                .row(JANUARY, 1000d, 2000d, 3000d)
+                                .row(FEBRUARY, 1400d, 2300d, 2000d)
+                                .row(MARCH, 1300d, 2000d, 1400d)
+                                .row(APRIL, 900d, 2100d, 1500d)
+                                .row(MAY, 1300d, 2300d, 1600d)
+                                .row(JUNE, 1010d, 2000d, 1500d)
+                                .row(JULY, 1050d, 2400d, 3000d)
+                                .row(AUGUST, 2300d, 2000d, 3200d)
+                                .row(SEPTEMBER, 1900d, 2700d, 3000d)
+                                .row(OCTOBER, 1200d, 2200d, 3100d)
+                                .row(NOVEMBER, 1400d, 2100d, 3100d)
+                                .row(DECEMBER, 1100d, 2100d, 4200d)
+                                .buildDataSet())
+                        .buildSettings()
+        )));
 
-        // nodeList.add(new GalleryNodeDisplayer("Multiple (date)", ...));
+        // nodeList.add(new GalleryNodeDisplayer("Multiple (date)", ...)));
     }
 
     private void initAreaChartCategory() {
-        GalleryNodeList nodeList = new GalleryNodeList("Area Chart");
+        GalleryTreeNodeList nodeList = new GalleryTreeNodeList("Area Chart");
         mainNodes.add(nodeList);
 
-        nodeList.add(new GalleryNodeDisplayer("Basic", GalleryEditorType.FORM,
+        nodeList.add(new GalleryPlaceRequest("Basic", createPlaceRequest(
                 DisplayerSettingsFactory.newAreaChartSettings()
-                .dataset(SALES_OPPS)
-                .group(CLOSING_DATE, 24, MONTH)
-                .sum(EXPECTED_AMOUNT)
-                .title("Expected Pipeline")
-                .margins(20, 50, 100, 120)
-                .column("Closing date")
-                .column("Expected amount")
-                .buildSettings()
-        ));
-        nodeList.add(new GalleryNodeDisplayer("Fixed (per month)", GalleryEditorType.FORM,
+                        .dataset(SALES_OPPS)
+                        .group(CLOSING_DATE, 24, MONTH)
+                        .sum(EXPECTED_AMOUNT)
+                        .title("Expected Pipeline")
+                        .margins(20, 50, 100, 120)
+                        .column("Closing date")
+                        .column("Expected amount")
+                        .filterOn(false, true, true)
+                        .buildSettings()
+        )));
+        nodeList.add(new GalleryPlaceRequest("Fixed (per month)", createPlaceRequest(
                 DisplayerSettingsFactory.newAreaChartSettings()
-                .dataset(SALES_OPPS)
-                .group(CLOSING_DATE)
-                .fixed(MONTH).firstMonth(JANUARY).asc()
-                .sum(EXPECTED_AMOUNT)
-                .title("Pipeline (best month)")
-                .margins(20, 80, 100, 100)
-                .column("Closing date")
-                .column("Expected amount per month")
-                .buildSettings()
-        ));
-        nodeList.add(new GalleryNodeDisplayer("Drill-down", GalleryEditorType.FORM,
+                        .dataset(SALES_OPPS)
+                        .group(CLOSING_DATE)
+                        .fixed(MONTH).firstMonth(JANUARY).asc()
+                        .sum(EXPECTED_AMOUNT)
+                        .title("Pipeline (best month)")
+                        .margins(20, 80, 100, 100)
+                        .column("Closing date")
+                        .column("Expected amount per month")
+                        .filterOn(false, true, true)
+                        .buildSettings()
+        )));
+        nodeList.add(new GalleryPlaceRequest("Drill-down", createPlaceRequest(
                 DisplayerSettingsFactory.newAreaChartSettings()
                         .dataset(SALES_OPPS)
                         .group(CLOSING_DATE, 12, (String) null)
@@ -299,220 +270,207 @@ public class GalleryTree {
                         .margins(20, 70, 100, 120)
                         .column("Closing date")
                         .column("Expected amount")
-                        .filterOn(true, false, false)
+                        .filterOn(true, true, true)
                         .buildSettings()
-        ));
+        )));
     }
 
     private void initBubbleChartCategory() {
-        GalleryNodeList nodeList = new GalleryNodeList("Bubble Chart");
+        GalleryTreeNodeList nodeList = new GalleryTreeNodeList("Bubble Chart");
         mainNodes.add(nodeList);
 
-        nodeList.add(new GalleryNodeDisplayer("Basic", GalleryEditorType.FORM,
+        nodeList.add(new GalleryPlaceRequest("Basic", createPlaceRequest(
                 DisplayerSettingsFactory.newBubbleChartSettings()
-                .dataset(SALES_OPPS)
-                .group(COUNTRY)
-                .count("opps")
-                .avg(PROBABILITY)
-                .sum(EXPECTED_AMOUNT)
-                .title("Opportunities distribution by Country ")
-                .width(700).height(400)
-                .margins(20, 50, 50, 0)
-                .column(COUNTRY, "Country")
-                .column("opps", "Number of opportunities")
-                .column(PROBABILITY, "Average probability")
-                .column(COUNTRY, "Country")
-                .column(EXPECTED_AMOUNT, "Expected amount")
-                .buildSettings()
-        ));
+                        .dataset(SALES_OPPS)
+                        .group(COUNTRY)
+                        .count("opps")
+                        .avg(PROBABILITY)
+                        .sum(EXPECTED_AMOUNT)
+                        .title("Opportunities distribution by Country ")
+                        .width(700).height(400)
+                        .margins(20, 50, 50, 0)
+                        .column(COUNTRY, "Country")
+                        .column("opps", "Number of opportunities")
+                        .column(PROBABILITY, "Average probability")
+                        .column(COUNTRY, "Country")
+                        .column(EXPECTED_AMOUNT, "Expected amount")
+                        .filterOn(false, true, true)
+                        .buildSettings()
+        )));
     }
 
     private void initMeterChartCategory() {
-        GalleryNodeList nodeList = new GalleryNodeList("Meter Chart");
+        GalleryTreeNodeList nodeList = new GalleryTreeNodeList("Meter Chart");
         mainNodes.add(nodeList);
 
-        nodeList.add(new GalleryNodeDisplayer("Basic", GalleryEditorType.FORM,
+        nodeList.add(new GalleryPlaceRequest("Basic", createPlaceRequest(
                 DisplayerSettingsFactory.newMeterChartSettings()
-                .title("Sales goal")
-                .dataset(SALES_OPPS)
-                .sum(AMOUNT, "Total amount")
-                .width(400).height(200)
-                .meter(0, 5000000, 8000000, 10000000)
-                .column("Total amount")
-                .buildSettings()
-        ));
-        nodeList.add(new GalleryNodeDisplayer("Multiple", GalleryEditorType.FORM,
+                        .title("Sales goal")
+                        .dataset(SALES_OPPS)
+                        .sum(AMOUNT, "Total amount")
+                        .width(400).height(200)
+                        .meter(0, 5000000, 8000000, 10000000)
+                        .column("Total amount")
+                        .filterOn(false, true, true)
+                        .buildSettings()
+        )));
+        nodeList.add(new GalleryPlaceRequest("Multiple", createPlaceRequest(
                 DisplayerSettingsFactory.newMeterChartSettings()
-                .title("Expected amount per year")
-                .dataset(SALES_OPPS)
-                .group(CREATION_DATE, YEAR)
-                .sum(AMOUNT)
-                .width(600).height(200)
-                .meter(0, 1000000, 3000000, 5000000)
-                .column("Year")
-                .column("Amount")
-                .buildSettings()
-        ));
-        nodeList.add(new GalleryNodeDisplayer("Multiple (static)", GalleryEditorType.FORM,
+                        .title("Expected amount per year")
+                        .dataset(SALES_OPPS)
+                        .group(CREATION_DATE, YEAR)
+                        .sum(AMOUNT)
+                        .width(600).height(200)
+                        .meter(0, 1000000, 3000000, 5000000)
+                        .column("Year")
+                        .column("Amount")
+                        .filterOn(false, true, true)
+                        .buildSettings()
+        )));
+        nodeList.add(new GalleryPlaceRequest("Multiple (static)", createPlaceRequest(
                 DisplayerSettingsFactory.newMeterChartSettings()
-                .title("Heart rate")
-                .width(500).height(200)
-                .meter(30, 160, 190, 220)
-                .column("Person")
-                .column("Heart rate")
-                .dataset(DataSetFactory.newDataSetBuilder()
-                        .label("person")
-                        .number("heartRate")
-                        .row("David", 52)
-                        .row("Roger", 120)
-                        .row("Mark", 74)
-                        .row("Michael", 78)
-                        .row("Kris", 74)
-                        .buildDataSet())
-                .buildSettings()
-        ));
+                        .title("Heart rate")
+                        .width(500).height(200)
+                        .meter(30, 160, 190, 220)
+                        .column("Person")
+                        .column("Heart rate")
+                        .dataset(DataSetFactory.newDataSetBuilder()
+                                .label("person")
+                                .number("heartRate")
+                                .row("David", 52)
+                                .row("Roger", 120)
+                                .row("Mark", 74)
+                                .row("Michael", 78)
+                                .row("Kris", 74)
+                                .buildDataSet())
+                        .buildSettings()
+        )));
 
-        // nodeList.add(new GalleryNodeDisplayer("Multiple (date)", ...));
+        // nodeList.add(new GalleryNodeDisplayer("Multiple (date)", ...)));
     }
 
     private void initMapChartCategory() {
-        GalleryNodeList nodeList = new GalleryNodeList("Map");
+        GalleryTreeNodeList nodeList = new GalleryTreeNodeList("Map");
         mainNodes.add(nodeList);
 
-        nodeList.add(new GalleryNodeDisplayer("GeoMap", GalleryEditorType.FORM,
+        nodeList.add(new GalleryPlaceRequest("GeoMap", createPlaceRequest(
                 DisplayerSettingsFactory.newMapChartSettings()
-                .dataset(SALES_OPPS)
-                .group(COUNTRY)
-                .sum(AMOUNT)
-                .title("By Country")
-                .width(700).height(500)
-                .margins(10, 10, 10, 10)
-                .column("Country")
-                .column("Total amount")
-                .buildSettings()
-        ));
+                        .dataset(SALES_OPPS)
+                        .group(COUNTRY)
+                        .sum(AMOUNT)
+                        .title("By Country")
+                        .width(700).height(500)
+                        .margins(10, 10, 10, 10)
+                        .column("Country")
+                        .column("Total amount")
+                        .filterOn(false, true, true)
+                        .buildSettings()
+        )));
     }
 
     private void initTableReportCategory() {
-        GalleryNodeList nodeList = new GalleryNodeList("Table report");
+        GalleryTreeNodeList nodeList = new GalleryTreeNodeList("Table report");
         mainNodes.add(nodeList);
 
-        nodeList.add(new GalleryNodeDisplayer("Basic", GalleryEditorType.FORM,
+        nodeList.add(new GalleryPlaceRequest("Basic", createPlaceRequest(
                 DisplayerSettingsFactory.newTableSettings()
-                .dataset(SALES_OPPS)
-                .title("List of Opportunities")
-                .tablePageSize(10)
-                .tableOrderEnabled(true)
-                .tableOrderDefault(AMOUNT, DESCENDING)
-                .column(COUNTRY, "Country")
-                .column(CUSTOMER, "Customer")
-                .column(PRODUCT, "Product")
-                .column(SALES_PERSON, "Salesman")
-                .column(STATUS, "Status")
-                .column(SOURCE, "Source")
-                .column(CREATION_DATE, "Creation")
-                .column(EXPECTED_AMOUNT, "Expected")
-                .column(CLOSING_DATE, "Closing")
-                .column(AMOUNT, "Amount")
-                .buildSettings()
-        ));
-        nodeList.add(new GalleryNodeDisplayer("Filtered", GalleryEditorType.FORM,
+                        .dataset(SALES_OPPS)
+                        .title("List of Opportunities")
+                        .tablePageSize(10)
+                        .tableOrderEnabled(true)
+                        .tableOrderDefault(AMOUNT, DESCENDING)
+                        .column(COUNTRY, "Country")
+                        .column(CUSTOMER, "Customer")
+                        .column(PRODUCT, "Product")
+                        .column(SALES_PERSON, "Salesman")
+                        .column(STATUS, "Status")
+                        .column(SOURCE, "Source")
+                        .column(CREATION_DATE, "Creation")
+                        .column(EXPECTED_AMOUNT, "Expected")
+                        .column(CLOSING_DATE, "Closing")
+                        .column(AMOUNT, "Amount")
+                        .filterOn(false, true, true)
+                        .buildSettings()
+        )));
+        nodeList.add(new GalleryPlaceRequest("Filtered", createPlaceRequest(
                 DisplayerSettingsFactory.newTableSettings()
-                .dataset(SALES_OPPS)
-                .filter(COUNTRY, OR(isEqualsTo("United States"), isEqualsTo("Brazil")))
-                .title("Opportunities in USA & Brazil")
-                .tablePageSize(10)
-                .tableOrderEnabled(true)
-                .tableOrderDefault(AMOUNT, DESCENDING)
-                .column(CUSTOMER, "Customer")
-                .column(PRODUCT, "Product")
-                .column(STATUS, "Status")
-                .column(SOURCE, "Source")
-                .column(CREATION_DATE, "Creation")
-                .column(EXPECTED_AMOUNT, "Expected")
-                .column(CLOSING_DATE, "Closing")
-                .column(AMOUNT, "Amount")
-                .buildSettings()
-        ));
-        nodeList.add(new GalleryNodeDisplayer("Grouped", GalleryEditorType.FORM,
+                        .dataset(SALES_OPPS)
+                        .filter(COUNTRY, OR(isEqualsTo("United States"), isEqualsTo("Brazil")))
+                        .title("Opportunities in USA & Brazil")
+                        .tablePageSize(10)
+                        .tableOrderEnabled(true)
+                        .tableOrderDefault(AMOUNT, DESCENDING)
+                        .column(CUSTOMER, "Customer")
+                        .column(PRODUCT, "Product")
+                        .column(STATUS, "Status")
+                        .column(SOURCE, "Source")
+                        .column(CREATION_DATE, "Creation")
+                        .column(EXPECTED_AMOUNT, "Expected")
+                        .column(CLOSING_DATE, "Closing")
+                        .column(AMOUNT, "Amount")
+                        .filterOn(false, true, true)
+                        .buildSettings()
+        )));
+        nodeList.add(new GalleryPlaceRequest("Grouped", createPlaceRequest(
                 DisplayerSettingsFactory.newTableSettings()
-                .dataset(SALES_OPPS)
-                .group(COUNTRY, "Country")
-                .count("#Opps")
-                .min(AMOUNT, "Min")
-                .max(AMOUNT, "Max")
-                .avg(AMOUNT, "Average")
-                .sum(AMOUNT, "Total")
-                .title("Country Summary")
-                .tablePageSize(10)
-                .tableOrderEnabled(true)
-                .tableOrderDefault("Country", DESCENDING)
-                .buildSettings()
-        ));
-        nodeList.add(new GalleryNodeDisplayer("Default (drill-down)", GalleryEditorType.FORM,
+                        .dataset(SALES_OPPS)
+                        .group(COUNTRY, "Country")
+                        .count("#Opps")
+                        .min(AMOUNT, "Min")
+                        .max(AMOUNT, "Max")
+                        .avg(AMOUNT, "Average")
+                        .sum(AMOUNT, "Total")
+                        .title("Country Summary")
+                        .tablePageSize(10)
+                        .tableOrderEnabled(true)
+                        .tableOrderDefault("Country", DESCENDING)
+                        .filterOn(false, true, true)
+                        .buildSettings()
+        )));
+        nodeList.add(new GalleryPlaceRequest("Default (drill-down)", createPlaceRequest(
                 DisplayerSettingsFactory.newTableSettings()
-                .dataset(SALES_OPPS)
-                .title("List of Opportunities")
-                .tablePageSize(10)
-                .tableOrderEnabled(true)
-                .tableOrderDefault(AMOUNT, DESCENDING)
-                .column(COUNTRY, "Country")
-                .column(CUSTOMER, "Customer")
-                .column(PRODUCT, "Product")
-                .column(SALES_PERSON, "Salesman")
-                .column(STATUS, "Status")
-                .column(SOURCE, "Source")
-                .column(CREATION_DATE, "Creation")
-                .column(EXPECTED_AMOUNT, "Expected")
-                .column(CLOSING_DATE, "Closing")
-                .column(AMOUNT, "Amount")
-                .filterOn(true, false, false)
-                .renderer(TableRenderer.UUID)
-                .buildSettings()
-        ));
+                        .dataset(SALES_OPPS)
+                        .title("List of Opportunities")
+                        .tablePageSize(10)
+                        .tableOrderEnabled(true)
+                        .tableOrderDefault(AMOUNT, DESCENDING)
+                        .column(COUNTRY, "Country")
+                        .column(CUSTOMER, "Customer")
+                        .column(PRODUCT, "Product")
+                        .column(SALES_PERSON, "Salesman")
+                        .column(STATUS, "Status")
+                        .column(SOURCE, "Source")
+                        .column(CREATION_DATE, "Creation")
+                        .column(EXPECTED_AMOUNT, "Expected")
+                        .column(CLOSING_DATE, "Closing")
+                        .column(AMOUNT, "Amount")
+                        .filterOn(true, true, true)
+                        .renderer(TableRenderer.UUID)
+                        .buildSettings()
+        )));
     }
 
     private void initDashboardCategory() {
-        GalleryNodeList nodeList = new GalleryNodeList("Dashboards");
+        GalleryTreeNodeList nodeList = new GalleryTreeNodeList("Combined");
         mainNodes.add(nodeList);
 
-        nodeList.add(new GalleryNode("Sales goal") {
-            public Widget createWidget() {
-                return salesGoalsWidget = new SalesGoals();
-            }
-        });
-        nodeList.add(new GalleryNode("Sales pipeline") {
-            public Widget createWidget() {
-                return salesByDateWidget = new SalesExpectedByDate();
-            }
-        });
-        nodeList.add(new GalleryNode("Sales per country") {
-            public Widget createWidget() {
-                return salesByCountryWidget = new SalesDistributionByCountry();
-            }
-        });
-        nodeList.add(new GalleryNode("Sales reports") {
-            public Widget createWidget() {
-                return salesReportsWidget = new SalesTableReports();
-            }
-        });
-        nodeList.add(new GalleryNode("Expense reports") {
-            public Widget createWidget() {
-                return expensesDashboardWidget = new ExpensesDashboard();
-            }
-        });
+        nodeList.add(new GalleryPlaceRequest("Sales goal", createPlaceRequest("salesGoal")));
+        nodeList.add(new GalleryPlaceRequest("Sales pipeline", createPlaceRequest("salesPipeline")));
+        nodeList.add(new GalleryPlaceRequest("Sales per country", createPlaceRequest("salesPerCountry")));
+        nodeList.add(new GalleryPlaceRequest("Sales reports", createPlaceRequest("salesReports")));
+        nodeList.add(new GalleryPlaceRequest("Expense reports", createPlaceRequest("expenseReports")));
     }
 
     private void initJsonExamples() {
-        GalleryNodeList jsonExamples = new GalleryNodeList( "JSON Examples" );
+        GalleryTreeNodeList jsonExamples = new GalleryTreeNodeList( "JSON Examples" );
         mainNodes.add( jsonExamples );
 
-        GalleryNodeList nodeList = new GalleryNodeList("Bar Chart");
+        GalleryTreeNodeList nodeList = new GalleryTreeNodeList("Bar Chart");
         jsonExamples.add(nodeList);
 
-        nodeList.add( new GalleryNodeDisplayer("Horizontal", GalleryEditorType.JSON,
+        nodeList.add( new GalleryPlaceRequest("Horizontal", createPlaceRequest(
                 jsonHelper.fromJsonString(
-                                "{\n" +
+                        "{\n" +
                                 "    \"columns\": [\n" +
                                 "        {\n" +
                                 "            \"columnDisplayName\": \"Product\"\n" +
@@ -584,11 +542,11 @@ public class GalleryTree {
                                 "    }\n" +
                                 "}"
                 )
-        ) );
+        )));
 
-        nodeList.add(new GalleryNodeDisplayer("Vertical (3D)", GalleryEditorType.JSON,
+        nodeList.add(new GalleryPlaceRequest("Vertical (3D)", createPlaceRequest(
                 jsonHelper.fromJsonString(
-                                "{\n" +
+                        "{\n" +
                                 "    \"columns\": [\n" +
                                 "        {\n" +
                                 "            \"columnDisplayName\": \"Product\"\n" +
@@ -660,11 +618,11 @@ public class GalleryTree {
                                 "    }\n" +
                                 "}"
                 )
-        ) );
+        )));
 
-        nodeList.add(new GalleryNodeDisplayer("Multiple", GalleryEditorType.JSON,
+        nodeList.add(new GalleryPlaceRequest("Multiple", createPlaceRequest(
                 jsonHelper.fromJsonString(
-                                "{\n" +
+                        "{\n" +
                                 "    \"columns\": [\n" +
                                 "        {\n" +
                                 "            \"columnDisplayName\": \"Country\"\n" +
@@ -764,15 +722,15 @@ public class GalleryTree {
                                 "    }\n" +
                                 "}"
                 )
-        ) );
+        )));
 
 
-        nodeList = new GalleryNodeList("Pie Chart");
+        nodeList = new GalleryTreeNodeList("Pie Chart");
         jsonExamples.add(nodeList);
 
-        nodeList.add( new GalleryNodeDisplayer("Basic", GalleryEditorType.JSON,
+        nodeList.add( new GalleryPlaceRequest("Basic", createPlaceRequest(
                 jsonHelper.fromJsonString(
-                                "{\n" +
+                        "{\n" +
                                 "    \"columns\": [\n" +
                                 "        {\n" +
                                 "            \"columnDisplayName\": \"Status\"\n" +
@@ -834,11 +792,11 @@ public class GalleryTree {
                                 "    }\n" +
                                 "}"
                 )
-        ) );
+        )));
 
-        nodeList.add(new GalleryNodeDisplayer("Drill-down", GalleryEditorType.JSON,
+        nodeList.add(new GalleryPlaceRequest("Drill-down", createPlaceRequest(
                 jsonHelper.fromJsonString(
-                                "{\n" +
+                        "{\n" +
                                 "    \"columns\": [\n" +
                                 "        {\n" +
                                 "            \"columnDisplayName\": \"Status\"\n" +
@@ -936,15 +894,15 @@ public class GalleryTree {
                                 "    }\n" +
                                 "}"
                 )
-        ) );
+        )));
 
 
-        nodeList = new GalleryNodeList("Line Chart");
+        nodeList = new GalleryTreeNodeList("Line Chart");
         jsonExamples.add(nodeList);
 
-        nodeList.add(new GalleryNodeDisplayer("Basic", GalleryEditorType.JSON,
+        nodeList.add(new GalleryPlaceRequest("Basic", createPlaceRequest(
                 jsonHelper.fromJsonString(
-                                "{\n" +
+                        "{\n" +
                                 "    \"columns\": [\n" +
                                 "        {\n" +
                                 "            \"columnDisplayName\": \"Closing date\"\n" +
@@ -1014,11 +972,11 @@ public class GalleryTree {
                                 "    }\n" +
                                 "}"
                 )
-        ));
+        )));
 
-        nodeList.add(new GalleryNodeDisplayer("Multiple", GalleryEditorType.JSON,
+        nodeList.add(new GalleryPlaceRequest("Multiple", createPlaceRequest(
                 jsonHelper.fromJsonString(
-                                "{\n" +
+                        "{\n" +
                                 "    \"columns\": [\n" +
                                 "        {\n" +
                                 "            \"columnDisplayName\": \"Country\"\n" +
@@ -1115,11 +1073,11 @@ public class GalleryTree {
                                 "    }\n" +
                                 "}"
                 )
-        ));
+        )));
 
-        nodeList.add(new GalleryNodeDisplayer("Multiple (static)", GalleryEditorType.JSON,
+        nodeList.add(new GalleryPlaceRequest("Multiple (static)", createPlaceRequest(
                 jsonHelper.fromJsonString(
-                                "{\n" +
+                        "{\n" +
                                 "    \"columns\": [\n" +
                                 "        {\n" +
                                 "            \"columnDisplayName\": \"Month\"\n" +
@@ -1191,15 +1149,15 @@ public class GalleryTree {
                                 "    }\n" +
                                 "}"
                 )
-        ));
+        )));
 
 
-        nodeList = new GalleryNodeList("Area Chart");
+        nodeList = new GalleryTreeNodeList("Area Chart");
         jsonExamples.add(nodeList);
 
-        nodeList.add(new GalleryNodeDisplayer("Basic", GalleryEditorType.JSON,
+        nodeList.add(new GalleryPlaceRequest("Basic", createPlaceRequest(
                 jsonHelper.fromJsonString(
-                                "{\n" +
+                        "{\n" +
                                 "    \"columns\": [\n" +
                                 "        {\n" +
                                 "            \"columnDisplayName\": \"Closing date\"\n" +
@@ -1269,11 +1227,11 @@ public class GalleryTree {
                                 "    }\n" +
                                 "}"
                 )
-        ));
+        )));
 
-        nodeList.add(new GalleryNodeDisplayer("Fixed (per month)", GalleryEditorType.JSON,
+        nodeList.add(new GalleryPlaceRequest("Fixed (per month)", createPlaceRequest(
                 jsonHelper.fromJsonString(
-                                "{\n" +
+                        "{\n" +
                                 "    \"columns\": [\n" +
                                 "        {\n" +
                                 "            \"columnDisplayName\": \"Closing date\"\n" +
@@ -1343,11 +1301,11 @@ public class GalleryTree {
                                 "    }\n" +
                                 "}"
                 )
-        ));
+        )));
 
-        nodeList.add(new GalleryNodeDisplayer("Drill-down", GalleryEditorType.JSON,
+        nodeList.add(new GalleryPlaceRequest("Drill-down", createPlaceRequest(
                 jsonHelper.fromJsonString(
-                                "{\n" +
+                        "{\n" +
                                 "    \"columns\": [\n" +
                                 "        {\n" +
                                 "            \"columnDisplayName\": \"Closing date\"\n" +
@@ -1416,15 +1374,15 @@ public class GalleryTree {
                                 "    }\n" +
                                 "}"
                 )
-        ));
+        )));
 
 
-        nodeList = new GalleryNodeList("Bubble Chart");
+        nodeList = new GalleryTreeNodeList("Bubble Chart");
         jsonExamples.add(nodeList);
 
-        nodeList.add(new GalleryNodeDisplayer("Basic", GalleryEditorType.JSON,
+        nodeList.add(new GalleryPlaceRequest("Basic", createPlaceRequest(
                 jsonHelper.fromJsonString(
-                                "{\n" +
+                        "{\n" +
                                 "    \"columns\": [\n" +
                                 "        {\n" +
                                 "            \"columnId\": \"country\",\n" +
@@ -1516,15 +1474,15 @@ public class GalleryTree {
                                 "    }\n" +
                                 "}"
                 )
-        ));
+        )));
 
 
-        nodeList = new GalleryNodeList("Table report");
+        nodeList = new GalleryTreeNodeList("Table report");
         jsonExamples.add(nodeList);
 
-        nodeList.add(new GalleryNodeDisplayer("Basic", GalleryEditorType.JSON,
+        nodeList.add(new GalleryPlaceRequest("Basic", createPlaceRequest(
                 jsonHelper.fromJsonString(
-                                "{\n" +
+                        "{\n" +
                                 "    \"columns\": [\n" +
                                 "        {\n" +
                                 "            \"columnId\": \"country\",\n" +
@@ -1594,11 +1552,11 @@ public class GalleryTree {
                                 "    }\n" +
                                 "}"
                 )
-        ));
+        )));
 
-        nodeList.add(new GalleryNodeDisplayer("Filtered", GalleryEditorType.JSON,
+        nodeList.add(new GalleryPlaceRequest("Filtered", createPlaceRequest(
                 jsonHelper.fromJsonString(
-                                "{\n" +
+                        "{\n" +
                                 "    \"columns\": [\n" +
                                 "        {\n" +
                                 "            \"columnId\": \"customer\",\n" +
@@ -1678,11 +1636,11 @@ public class GalleryTree {
                                 "    }\n" +
                                 "}"
                 )
-        ));
+        )));
 
-        nodeList.add(new GalleryNodeDisplayer("Grouped", GalleryEditorType.JSON,
+        nodeList.add(new GalleryPlaceRequest("Grouped", createPlaceRequest(
                 jsonHelper.fromJsonString(
-                                "{\n" +
+                        "{\n" +
                                 "    \"table\": {\n" +
                                 "        \"sort\": {\n" +
                                 "            \"order\": \"DESCENDING\",\n" +
@@ -1749,11 +1707,11 @@ public class GalleryTree {
                                 "    }\n" +
                                 "}"
                 )
-        ));
+        )));
 
-        nodeList.add(new GalleryNodeDisplayer("Default (drill-down)", GalleryEditorType.JSON,
+        nodeList.add(new GalleryPlaceRequest("Default (drill-down)", createPlaceRequest(
                 jsonHelper.fromJsonString(
-                                "{\n" +
+                        "{\n" +
                                 "    \"columns\": [\n" +
                                 "        {\n" +
                                 "            \"columnId\": \"country\",\n" +
@@ -1824,15 +1782,15 @@ public class GalleryTree {
                                 "    }\n" +
                                 "}"
                 )
-        ));
+        )));
 
 
-        nodeList = new GalleryNodeList("Meter Chart");
+        nodeList = new GalleryTreeNodeList("Meter Chart");
         jsonExamples.add(nodeList);
 
-        nodeList.add(new GalleryNodeDisplayer("Basic", GalleryEditorType.JSON,
+        nodeList.add(new GalleryPlaceRequest("Basic", createPlaceRequest(
                 jsonHelper.fromJsonString(
-                                "{\n" +
+                        "{\n" +
                                 "    \"columns\": [\n" +
                                 "        {\n" +
                                 "            \"columnDisplayName\": \"Total amount\"\n" +
@@ -1883,11 +1841,11 @@ public class GalleryTree {
                                 "    }\n" +
                                 "}"
                 )
-        ));
+        )));
 
-        nodeList.add(new GalleryNodeDisplayer("Multiple", GalleryEditorType.JSON,
+        nodeList.add(new GalleryPlaceRequest("Multiple", createPlaceRequest(
                 jsonHelper.fromJsonString(
-                                "{\n" +
+                        "{\n" +
                                 "    \"columns\": [\n" +
                                 "        {\n" +
                                 "            \"columnDisplayName\": \"Year\"\n" +
@@ -1951,11 +1909,11 @@ public class GalleryTree {
                                 "    }\n" +
                                 "}"
                 )
-        ));
+        )));
 
-        nodeList.add(new GalleryNodeDisplayer("Multiple (static)", GalleryEditorType.JSON,
+        nodeList.add(new GalleryPlaceRequest("Multiple (static)", createPlaceRequest(
                 jsonHelper.fromJsonString(
-                                "{\n" +
+                        "{\n" +
                                 "    \"columns\": [\n" +
                                 "        {\n" +
                                 "            \"columnDisplayName\": \"Person\"\n" +
@@ -2005,15 +1963,15 @@ public class GalleryTree {
                                 "    }\n" +
                                 "}"
                 )
-        ));
+        )));
 
 
-        nodeList = new GalleryNodeList("Map");
+        nodeList = new GalleryTreeNodeList("Map");
         jsonExamples.add(nodeList);
 
-        nodeList.add(new GalleryNodeDisplayer("GeoMap", GalleryEditorType.JSON,
+        nodeList.add(new GalleryPlaceRequest("GeoMap", createPlaceRequest(
                 jsonHelper.fromJsonString(
-                                "{\n" +
+                        "{\n" +
                                 "    \"columns\": [\n" +
                                 "        {\n" +
                                 "            \"columnDisplayName\": \"Country\"\n" +
@@ -2070,6 +2028,6 @@ public class GalleryTree {
                                 "    }\n" +
                                 "}"
                 )
-        ));
+        )));
     }
 }

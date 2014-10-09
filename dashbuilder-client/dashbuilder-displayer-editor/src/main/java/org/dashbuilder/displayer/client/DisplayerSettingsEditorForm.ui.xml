@@ -25,9 +25,11 @@
     <div class="well">
 
       <b:Fieldset>
+<!--
         <b:Legend>
           <b:Heading size="4" text="{i18n.settingsEditor_caption}" />
         </b:Legend>
+-->
         <gwt:FlexTable ui:field="editorSettingsTable">
         </gwt:FlexTable>
       </b:Fieldset>
