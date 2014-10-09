@@ -66,7 +66,7 @@ public class DisplayerSettingsEditorPresenter {
 
     @WorkbenchPartTitle
     public String getTitle() {
-        return "Displayer Settings Editor";
+        return "Displayer Settings";
     }
 
     @WorkbenchPartView

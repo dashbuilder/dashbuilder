@@ -68,13 +68,13 @@ public class SimpleTable<T>
     @UiField(provided = true)
     public DataGrid<T> dataGrid;
 
-    //@UiField
+    @UiField
     public HorizontalPanel toolbarContainer;
-    //@UiField
+    @UiField
     public FlowPanel rightToolbar;
-    //@UiField
+    @UiField
     public FlowPanel leftToolbar;
-    //@UiField
+    @UiField
     public FlowPanel centerToolbar;
 
     private String emptyTableCaption;
