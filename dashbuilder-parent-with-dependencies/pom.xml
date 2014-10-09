@@ -20,7 +20,7 @@
 
   <properties>
     <version.org.jboss.integration-platform>6.0.0.CR13</version.org.jboss.integration-platform>
-    <version.org.uberfire>0.4.0.CR2</version.org.uberfire>
+    <version.org.uberfire>0.4.2-SNAPSHOT</version.org.uberfire>
     <version.org.mortbay.jetty>6.1.25</version.org.mortbay.jetty>
 
     <!-- temporary: makes the enforcerRule (illegal-transitive-dependency-check) not to break the build -->
