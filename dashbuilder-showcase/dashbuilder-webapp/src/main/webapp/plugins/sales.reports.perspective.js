@@ -2,7 +2,7 @@ $registerPerspective({
     id: "Sales Reports",
     is_serializable: "true",
     roles: [ "admins", "users" ],
-    panel_type: "root_tab",
+    panel_type: "org.uberfire.client.workbench.panels.impl.MultiTabWorkbenchPanelPresenter",
     view: {
         parts: [
             {

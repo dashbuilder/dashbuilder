@@ -2,7 +2,7 @@ $registerPerspective({
     id: "Sales Dashboard",
     is_serializable: "true",
     roles: [ "admins", "users" ],
-    panel_type: "root_tab",
+    panel_type: "org.uberfire.client.workbench.panels.impl.MultiTabWorkbenchPanelPresenter",
     view: {
         parts: [
             {
@@ -30,7 +30,7 @@ $registerPerspective({
             {
                 height: 500,
                 position: "north",
-                panel_type: "simple",
+                panel_type: "org.uberfire.client.workbench.panels.impl.SimpleWorkbenchPanelPresenter",
                 parts: [
                     {
                         place: "DisplayerScreen",
@@ -41,7 +41,7 @@ $registerPerspective({
                     {
                         height: 400,
                         position: "east",
-                        panel_type: "simple",
+                        panel_type: "org.uberfire.client.workbench.panels.impl.SimpleWorkbenchPanelPresenter",
                         parts: [
                             {
                                 place: "DisplayerScreen",
