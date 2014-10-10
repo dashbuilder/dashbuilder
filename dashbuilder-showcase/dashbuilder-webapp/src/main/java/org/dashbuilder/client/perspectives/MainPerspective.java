@@ -2,42 +2,27 @@ package org.dashbuilder.client.perspectives;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 
-import org.uberfire.client.annotations.Perspective;
+import com.google.gwt.user.client.ui.FlowPanel;
+import org.uberfire.client.annotations.WorkbenchPanel;
 import org.uberfire.client.annotations.WorkbenchPerspective;
-import org.uberfire.mvp.impl.DefaultPlaceRequest;
-import org.uberfire.workbench.model.PanelType;
-import org.uberfire.workbench.model.PerspectiveDefinition;
-import org.uberfire.workbench.model.impl.PartDefinitionImpl;
-import org.uberfire.workbench.model.impl.PerspectiveDefinitionImpl;
+import org.uberfire.client.util.Layouts;
 
 /**
  * A Perspective to show File Explorer
  */
 @ApplicationScoped
 @WorkbenchPerspective(identifier = "MainPerspective", isDefault = true)
-public class MainPerspective {
+public class MainPerspective extends FlowPanel {
 
-    private PerspectiveDefinition perspective;
+    @Inject
+    @WorkbenchPanel(parts = "GalleryScreen")
+    FlowPanel gallery;
 
     @PostConstruct
-    public void init() {
-        buildPerspective();
-    }
-
-    @Perspective
-    public PerspectiveDefinition getPerspective() {
-        return this.perspective;
-    }
-
-    public PerspectiveDefinition buildPerspective() {
-        perspective = new PerspectiveDefinitionImpl( PanelType.ROOT_STATIC);
-        perspective.setTransient(true);
-        perspective.setName("MainPerspective");
-        //perspective.getRoot().addPart(new PartDefinitionImpl(new DefaultPlaceRequest("HomeScreen")));
-        perspective.getRoot().addPart( new PartDefinitionImpl( new DefaultPlaceRequest( "GalleryScreen" ) ) );
-        //perspective.getRoot().addPart( new PartDefinitionImpl( new DefaultPlaceRequest( "StaticChartScreen" ) ) );
-        //perspective.getRoot().addPart( new PartDefinitionImpl( new DefaultPlaceRequest( "DisplayerScreen" ).addParameter("uuid", "opps-country-summary") ) );
-        return perspective;
+    void doLayout() {
+        Layouts.setToFillParent( gallery );
+        add( gallery );
     }
 }
