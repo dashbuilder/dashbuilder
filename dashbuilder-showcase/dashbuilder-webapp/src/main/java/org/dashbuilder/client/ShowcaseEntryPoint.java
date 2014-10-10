@@ -76,9 +76,9 @@ public class ShowcaseEntryPoint {
                         placeManager.goTo("DisplayerGalleryPerspective");
                     }
                 }).endMenu().
-                newTopLevelMenu("Composer").respondsWith(new Command() {
+                newTopLevelMenu("Designer").respondsWith(new Command() {
                     public void execute() {
-                        placeManager.goTo("DashboardComposerPerspective");
+                        placeManager.goTo("DashboardDesignerPerspective");
                     }
                 }).endMenu().
                 newTopLevelMenu("Examples").withItems(getSampleDashboardMenuItems()).endMenu().

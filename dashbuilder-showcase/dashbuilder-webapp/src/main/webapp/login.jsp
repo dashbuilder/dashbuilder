@@ -28,7 +28,7 @@
       margin: 0;
       padding: 0;
       color: #fff;
-      background: url('<%=request.getContextPath()%>/org.dashbuilder.DashbuilderShowcase/images/bg-login.png') repeat #1b1b1b;
+      background: url('images/bg-login.png') repeat #1b1b1b;
       font-size: 14px;
       text-shadow: #050505 0 -1px 0;
       font-weight: bold;
@@ -45,7 +45,7 @@
       border-bottom: solid 3px #777973;
       height: 250px;
       width: 100%;
-      background: url('<%=request.getContextPath()%>/org.dashbuilder.DashbuilderShowcase/images/bg-login-top.png') repeat #fff;
+      background: url('images/bg-login-top.png') repeat #fff;
       z-index: 1;
     }
 
@@ -142,7 +142,7 @@
 
 <div id="login-wrapper" class="png_bg">
   <div id="login-top">
-    <img src="<%=request.getContextPath()%>/org.dashbuilder.DashbuilderShowcase/images/dashbuilder-logo.png" alt="Logo" title="Powered By Dashbuilder"/>
+    <img src="images/dashbuilder-logo.png" alt="Logo" title="Powered By Dashbuilder"/>
   </div>
 
   <div id="login-content">
@@ -160,6 +160,9 @@
       <br style="clear: both;"/>
 
       <p>
+        <% if (request.getParameter("gwt.codesvr") != null) { %>
+        <input type="hidden" name="gwt.codesvr" value="<%= org.owasp.encoder.Encode.forHtmlAttribute(request.getParameter("gwt.codesvr")) %>"/>
+        <% } %>
         <input class="button" type="submit" value="Sign In"/>
       </p>
     </form>

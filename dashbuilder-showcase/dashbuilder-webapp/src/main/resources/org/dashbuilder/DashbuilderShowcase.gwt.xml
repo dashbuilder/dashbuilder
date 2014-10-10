@@ -3,7 +3,6 @@
     "http://google-web-toolkit.googlecode.com/svn/tags/2.5.0/distro-source/core/src/gwt-module.dtd">
 <module>
   <inherits name="org.uberfire.UberfireClientAll"/>
-  <inherits name="org.uberfire.UberfireNSWEManager" />
 
   <inherits name="org.dashbuilder.DashbuilderClientAll"/>
   <inherits name="org.dashbuilder.renderer.GChartsRenderer"/>
@@ -16,4 +15,6 @@
   <set-configuration-property name="devModeRedirectEnabled" value="true"/>
   <set-property name="compiler.useSourceMaps" value="true"/>
   <set-configuration-property name='xsiframe.failIfScriptTag' value='false'/>
+
+  <set-property name="gwt.logging.popupHandler" value="DISABLED"/>
 </module>

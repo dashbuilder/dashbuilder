@@ -28,6 +28,7 @@ import org.dashbuilder.dataset.DataSetMetadata;
 import org.dashbuilder.dataset.DataSetLookupService;
 import org.dashbuilder.dataset.backend.BackendDataSetManager;
 import org.jboss.errai.bus.server.annotations.Service;
+import org.jboss.errai.bus.server.api.RpcContext;
 
 /**
  * Data set lookup service implementation
@@ -38,10 +39,10 @@ public class DataSetLookupServiceImpl implements DataSetLookupService {
 
     @Inject BackendDataSetManager dataSetManager;
     @Inject DataSetDefDeployer dataSetDefDeployer;
-    @Inject @Named("uf") ServletContext servletContext;
 
     @PostConstruct
     private void init() {
+        ServletContext servletContext = RpcContext.getHttpSession().getServletContext();
         if (!dataSetDefDeployer.isRunning() && servletContext != null) {
             String dir = servletContext.getRealPath("datasets");
             if (dir != null) {

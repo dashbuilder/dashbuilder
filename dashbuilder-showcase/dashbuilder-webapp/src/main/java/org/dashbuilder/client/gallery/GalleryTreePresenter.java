@@ -25,7 +25,7 @@ import org.uberfire.client.mvp.PlaceManager;
 import org.uberfire.client.mvp.UberView;
 import org.uberfire.mvp.PlaceRequest;
 
-@WorkbenchScreen(identifier = "org.dashbuilder.gallery.GalleryTreeScreen")
+@WorkbenchScreen(identifier = "GalleryTreeScreen")
 @ApplicationScoped
 public class GalleryTreePresenter {
 
