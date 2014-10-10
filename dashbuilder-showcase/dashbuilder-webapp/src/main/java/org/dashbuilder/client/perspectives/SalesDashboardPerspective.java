@@ -9,12 +9,13 @@ import org.dashbuilder.displayer.DisplayerSettings;
 import org.dashbuilder.displayer.client.json.DisplayerSettingsJSONMarshaller;
 import org.uberfire.client.annotations.Perspective;
 import org.uberfire.client.annotations.WorkbenchPerspective;
+import org.uberfire.client.workbench.panels.impl.MultiTabWorkbenchPanelPresenter;
+import org.uberfire.client.workbench.panels.impl.StaticWorkbenchPanelPresenter;
 import org.uberfire.mvp.PlaceRequest;
 import org.uberfire.mvp.impl.DefaultPlaceRequest;
+import org.uberfire.workbench.model.CompassPosition;
 import org.uberfire.workbench.model.PanelDefinition;
-import org.uberfire.workbench.model.PanelType;
 import org.uberfire.workbench.model.PerspectiveDefinition;
-import org.uberfire.workbench.model.Position;
 import org.uberfire.workbench.model.impl.PanelDefinitionImpl;
 import org.uberfire.workbench.model.impl.PartDefinitionImpl;
 import org.uberfire.workbench.model.impl.PerspectiveDefinitionImpl;
@@ -34,8 +35,7 @@ public class SalesDashboardPerspective {
     @Perspective
     public PerspectiveDefinition buildPerspective() {
 
-        PerspectiveDefinition perspective = new PerspectiveDefinitionImpl( PanelType.ROOT_TAB);
-        perspective.setTransient(true);
+        PerspectiveDefinition perspective = new PerspectiveDefinitionImpl( MultiTabWorkbenchPanelPresenter.class.getName() );
         perspective.setName("Sales summary");
 
         perspective.getRoot().addPart(new PartDefinitionImpl(createPlaceRequest(OPPS_BY_STATUS)));
@@ -44,18 +44,18 @@ public class SalesDashboardPerspective {
         perspective.getRoot().addPart(new PartDefinitionImpl(createPlaceRequest(OPPS_BY_COUNTRY)));
         perspective.getRoot().addPart(new PartDefinitionImpl(createPlaceRequest(OPPS_COUNTRY_SUMMARY)));
 
-        PanelDefinition east = new PanelDefinitionImpl(PanelType.STATIC);
+        PanelDefinition east = new PanelDefinitionImpl(StaticWorkbenchPanelPresenter.class.getName());
         east.setMinWidth(400);
         east.setWidth(400);
         east.addPart(new PartDefinitionImpl(createPlaceRequest(OPPS_BY_PIPELINE)));
 
-        PanelDefinition north = new PanelDefinitionImpl(PanelType.STATIC);
+        PanelDefinition north = new PanelDefinitionImpl(StaticWorkbenchPanelPresenter.class.getName());
         north.setMinWidth(400);
         north.setWidth(500);
         north.addPart(new PartDefinitionImpl(createPlaceRequest(OPPS_EXPECTED_PIPELINE)));
-        north.insertChild(Position.EAST, east);
+        north.insertChild(CompassPosition.EAST, east);
 
-        perspective.getRoot().insertChild(Position.NORTH, north);
+        perspective.getRoot().insertChild( CompassPosition.NORTH, north);
         return perspective;
     }
 

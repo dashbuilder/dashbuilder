@@ -15,18 +15,18 @@ import org.uberfire.client.annotations.Perspective;
 import org.uberfire.client.annotations.WorkbenchMenu;
 import org.uberfire.client.annotations.WorkbenchPerspective;
 import org.uberfire.client.mvp.PlaceManager;
+import org.uberfire.client.workbench.panels.impl.MultiTabWorkbenchPanelPresenter;
 import org.uberfire.mvp.Command;
 import org.uberfire.mvp.PlaceRequest;
 import org.uberfire.mvp.impl.DefaultPlaceRequest;
-import org.uberfire.workbench.model.PanelType;
 import org.uberfire.workbench.model.PerspectiveDefinition;
 import org.uberfire.workbench.model.impl.PerspectiveDefinitionImpl;
 import org.uberfire.workbench.model.menu.MenuFactory;
 import org.uberfire.workbench.model.menu.MenuItem;
 import org.uberfire.workbench.model.menu.Menus;
 
-import static org.dashbuilder.dataset.group.DateIntervalType.MONTH;
-import static org.dashbuilder.dataset.sort.SortOrder.DESCENDING;
+import static org.dashbuilder.dataset.group.DateIntervalType.*;
+import static org.dashbuilder.dataset.sort.SortOrder.*;
 import static org.dashbuilder.shared.sales.SalesConstants.*;
 
 /**
@@ -44,9 +44,7 @@ public class DashboardComposerPerspective {
 
     @Perspective
     public PerspectiveDefinition buildPerspective() {
-
-        PerspectiveDefinition perspective = new PerspectiveDefinitionImpl( PanelType.ROOT_LIST);
-        perspective.setTransient(true);
+        PerspectiveDefinition perspective = new PerspectiveDefinitionImpl( MultiTabWorkbenchPanelPresenter.class.getName() );
         perspective.setName("Composer");
         return perspective;
     }
