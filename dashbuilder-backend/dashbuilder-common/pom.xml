@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.dashbuilder</groupId>
     <artifactId>dashbuilder-backend</artifactId>
-    <version>0.1.4-SNAPSHOT</version>
+    <version>0.1.4.CR1</version>
   </parent>
 
   <artifactId>dashbuilder-common</artifactId>

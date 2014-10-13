@@ -6,7 +6,7 @@
   <parent>
     <groupId>org.dashbuilder</groupId>
     <artifactId>dashbuilder-parent-metadata</artifactId>
-    <version>0.1.4-SNAPSHOT</version>
+    <version>0.1.4.CR1</version>
   </parent>
 
   <artifactId>dashbuilder-parent-with-dependencies</artifactId>
@@ -20,8 +20,8 @@
 
   <properties>
     <version.org.jboss.integration-platform>6.0.0.CR14</version.org.jboss.integration-platform>
-    <version.org.uberfire>0.5.0-SNAPSHOT</version.org.uberfire>
-    <version.org.jboss.errai>3.0.3-SNAPSHOT</version.org.jboss.errai>
+    <version.org.uberfire>0.5.0.CR1</version.org.uberfire>
+    <version.org.jboss.errai>3.0.3.Final</version.org.jboss.errai>
     <version.org.jboss.logging.jboss-logging>3.1.4.GA</version.org.jboss.logging.jboss-logging>
     <version.org.owasp.encoder>1.1</version.org.owasp.encoder>
   </properties>
