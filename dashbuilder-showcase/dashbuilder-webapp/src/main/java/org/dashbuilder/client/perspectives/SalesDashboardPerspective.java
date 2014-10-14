@@ -24,7 +24,9 @@ import org.dashbuilder.displayer.DisplayerSettings;
 import org.dashbuilder.displayer.client.json.DisplayerSettingsJSONMarshaller;
 import org.uberfire.client.annotations.Perspective;
 import org.uberfire.client.annotations.WorkbenchPerspective;
+import org.uberfire.client.workbench.panels.impl.MultiListWorkbenchPanelPresenter;
 import org.uberfire.client.workbench.panels.impl.MultiTabWorkbenchPanelPresenter;
+import org.uberfire.client.workbench.panels.impl.SplitLayoutPanelPresenter;
 import org.uberfire.client.workbench.panels.impl.StaticWorkbenchPanelPresenter;
 import org.uberfire.mvp.PlaceRequest;
 import org.uberfire.mvp.impl.DefaultPlaceRequest;
@@ -60,20 +62,12 @@ public class SalesDashboardPerspective {
         perspective.getRoot().addPart(new PartDefinitionImpl(createPlaceRequest(OPPS_BY_COUNTRY)));
         perspective.getRoot().addPart(new PartDefinitionImpl(createPlaceRequest(OPPS_COUNTRY_SUMMARY)));
 
-        PanelDefinition east = new PanelDefinitionImpl(StaticWorkbenchPanelPresenter.class.getName());
-        east.setMinWidth(500);
-        east.setWidth(550);
-        east.setMinHeight(350);
-        east.setHeight(350);
-        east.addPart(new PartDefinitionImpl(createPlaceRequest(OPPS_BY_PIPELINE)));
-
-        PanelDefinition north = new PanelDefinitionImpl(StaticWorkbenchPanelPresenter.class.getName());
+        PanelDefinition north = new PanelDefinitionImpl(MultiListWorkbenchPanelPresenter.class.getName());
         north.setMinWidth(500);
         north.setWidth(550);
         north.setMinHeight(350);
         north.setHeight(350);
         north.addPart(new PartDefinitionImpl(createPlaceRequest(OPPS_EXPECTED_PIPELINE)));
-        north.insertChild(CompassPosition.EAST, east);
 
         perspective.getRoot().insertChild(CompassPosition.NORTH, north);
         return perspective;
