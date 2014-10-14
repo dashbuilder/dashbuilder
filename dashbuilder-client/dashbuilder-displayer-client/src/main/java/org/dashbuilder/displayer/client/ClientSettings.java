@@ -34,7 +34,7 @@ public class ClientSettings {
     @Inject Caller<DataSetLookupService> dataSetLookupService;
 
     /**
-     * By default the Dashbuilder is configured to work on client mode only. We must turn on the backend layer to be
+     * By default Dashbuilder is configured to work only on client mode. We must turn on the backend layer to be
      * able to query any data set stored on the server.
      */
     public void turnOnBackend() {
