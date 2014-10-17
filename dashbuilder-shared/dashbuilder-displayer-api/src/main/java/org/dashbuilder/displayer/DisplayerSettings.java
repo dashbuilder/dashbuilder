@@ -77,6 +77,15 @@ public class DisplayerSettings {
         settings.put( getSettingPath( DisplayerAttributeDef.BARCHART_HORIZONTAL ), _false );
     }
 
+    public DisplayerSettings cloneInstance() {
+        DisplayerSettings clone = new DisplayerSettings();
+        clone.settings = new HashMap(settings);
+        clone.columnList = new ArrayList(columnList);
+        if (dataSet != null) clone.dataSet = dataSet.cloneInstance();
+        if (dataSetLookup != null) clone.dataSetLookup = dataSetLookup.cloneInstance();
+        return clone;
+    }
+
     private String getSettingPath( DisplayerAttributeDef displayerAttributeDef ) {
         return displayerAttributeDef.getFullId();
     }

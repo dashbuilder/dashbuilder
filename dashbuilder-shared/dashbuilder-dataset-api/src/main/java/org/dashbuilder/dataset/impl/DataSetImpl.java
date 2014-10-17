@@ -90,7 +90,7 @@ public class DataSetImpl implements DataSet {
 
     @Override
     public int getColumnIndex( DataColumn dataColumn ) {
-        if (dataColumn == null || "".equals( dataColumn.getId() ) ) {
+        if (dataColumn == null || "".equals(dataColumn.getId()) ) {
             throw new IllegalArgumentException("Wrong column specified.");
         }
         for (int i = 0; i < columns.size(); i++) {
@@ -229,6 +229,17 @@ public class DataSetImpl implements DataSet {
         for (int i=0; i<columns.size(); i++) {
             DataColumn column = columns.get(i);
             other.addColumn(column.getId(), column.getColumnType());
+        }
+        return other;
+    }
+
+    public DataSetImpl cloneInstance() {
+        DataSetImpl other = new DataSetImpl();
+        for (int i=0; i<columns.size(); i++) {
+            DataColumn column = columns.get(i);
+            other.addColumn(column.getId(),
+                    column.getColumnType(),
+                    new ArrayList(column.getValues()));
         }
         return other;
     }

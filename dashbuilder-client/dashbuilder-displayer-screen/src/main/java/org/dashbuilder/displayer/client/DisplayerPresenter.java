@@ -25,10 +25,10 @@ import com.google.gwt.user.client.ui.IsWidget;
 import org.dashbuilder.common.client.StringUtils;
 import org.dashbuilder.displayer.DisplayerSettings;
 import org.dashbuilder.displayer.client.json.DisplayerSettingsJSONMarshaller;
-import org.dashbuilder.displayer.events.DisplayerSettingsChangedEvent;
-import org.dashbuilder.displayer.events.DisplayerSettingsOnCloseEvent;
-import org.dashbuilder.displayer.events.DisplayerSettingsOnEditEvent;
-import org.dashbuilder.displayer.events.DisplayerSettingsOnFocusEvent;
+import org.dashbuilder.displayer.events.DisplayerEditedEvent;
+import org.dashbuilder.displayer.events.DisplayerClosedEvent;
+import org.dashbuilder.displayer.events.DisplayerOnFocusEvent;
+import org.dashbuilder.displayer.events.DisplayerUpdatedEvent;
 import org.uberfire.client.annotations.WorkbenchMenu;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
 import org.uberfire.client.annotations.WorkbenchPartView;
@@ -53,9 +53,9 @@ public class DisplayerPresenter {
     private DisplayerSettingsJSONMarshaller jsonMarshaller;
     private PlaceManager placeManager;
     private DisplayerSettings displayerSettings;
-    private Event<DisplayerSettingsOnFocusEvent> displayerSettingsOnFocusEvent;
-    private Event<DisplayerSettingsOnEditEvent> displayerSettingsOnEditEvent;
-    private Event<DisplayerSettingsOnCloseEvent> displayerSettingsOnCloseEvent;
+    private Event<DisplayerOnFocusEvent> displayerOnFocusEvent;
+    private Event<DisplayerEditedEvent> displayerOnEditEvent;
+    private Event<DisplayerClosedEvent> displayerOnCloseEvent;
     private Menus menu = null;
     private boolean editEnabled = false;
 
@@ -63,17 +63,17 @@ public class DisplayerPresenter {
     public DisplayerPresenter(DisplayerView displayerView,
             PerspectiveCoordinator perspectiveCoordinator,
             DisplayerSettingsJSONMarshaller jsonMarshaller,
-            Event<DisplayerSettingsOnFocusEvent> displayerSettingsOnFocusEvent,
-            Event<DisplayerSettingsOnEditEvent> displayerSettingsOnEditEvent,
-            Event<DisplayerSettingsOnCloseEvent> displayerSettingsOnCloseEvent,
+            Event<DisplayerOnFocusEvent> displayerOnFocusEvent,
+            Event<DisplayerEditedEvent> displayerOnEditEvent,
+            Event<DisplayerClosedEvent> displayerOnCloseEvent,
             PlaceManager placeManager) {
         this.displayerView = displayerView;
         this.perspectiveCoordinator = perspectiveCoordinator;
         this.jsonMarshaller = jsonMarshaller;
         this.placeManager = placeManager;
-        this.displayerSettingsOnFocusEvent = displayerSettingsOnFocusEvent;
-        this.displayerSettingsOnEditEvent = displayerSettingsOnEditEvent;
-        this.displayerSettingsOnCloseEvent = displayerSettingsOnCloseEvent;
+        this.displayerOnFocusEvent = displayerOnFocusEvent;
+        this.displayerOnEditEvent = displayerOnEditEvent;
+        this.displayerOnCloseEvent = displayerOnCloseEvent;
     }
 
     @OnStartup
@@ -113,12 +113,12 @@ public class DisplayerPresenter {
 
     @OnFocus
     public void onFocus() {
-        displayerSettingsOnFocusEvent.fire(new DisplayerSettingsOnFocusEvent(displayerSettings));
+        displayerOnFocusEvent.fire(new DisplayerOnFocusEvent(displayerSettings));
     }
 
     @OnClose
     public void onClose() {
-        displayerSettingsOnCloseEvent.fire(new DisplayerSettingsOnCloseEvent(displayerSettings));
+        displayerOnCloseEvent.fire(new DisplayerClosedEvent(displayerSettings));
     }
 
     private Menus makeMenuBar() {
@@ -131,8 +131,8 @@ public class DisplayerPresenter {
     private Command getEditCommand() {
         return new Command() {
             public void execute() {
-                placeManager.goTo("DisplayerSettingsEditor");
-                displayerSettingsOnEditEvent.fire(new DisplayerSettingsOnEditEvent(displayerSettings));
+                placeManager.goTo("DisplayerEditor");
+                displayerOnEditEvent.fire(new DisplayerEditedEvent(displayerSettings));
             }
         };
     }
@@ -140,11 +140,11 @@ public class DisplayerPresenter {
     /**
      * Be aware of changes in the displayer settings.
      */
-    private void onDisplayerSettingsChangedEvent(@Observes DisplayerSettingsChangedEvent event) {
+    private void onDisplayerUpdated(@Observes DisplayerUpdatedEvent event) {
         checkNotNull("event", event);
-        checkNotNull("settings", event.getDisplayerSettings());
+        checkNotNull("settings", event.getModifiedSettings());
 
-        DisplayerSettings settings = event.getDisplayerSettings();
+        DisplayerSettings settings = event.getModifiedSettings();
         if (displayerSettings != null && settings.getUUID().equals(displayerSettings.getUUID())) {
             Displayer oldDisplayer = this.displayerView.getDisplayer();
             this.displayerSettings = settings;

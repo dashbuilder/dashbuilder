@@ -19,14 +19,14 @@ import org.dashbuilder.displayer.DisplayerSettings;
 import org.jboss.errai.common.client.api.annotations.Portable;
 
 @Portable
-public class DisplayerSettingsOnEditEvent {
+public class DisplayerClosedEvent {
 
     private DisplayerSettings displayerSettings;
 
-    public DisplayerSettingsOnEditEvent() {
+    public DisplayerClosedEvent() {
     }
 
-    public DisplayerSettingsOnEditEvent(DisplayerSettings displayerSettings) {
+    public DisplayerClosedEvent(DisplayerSettings displayerSettings) {
         this.displayerSettings = displayerSettings;
     }
 

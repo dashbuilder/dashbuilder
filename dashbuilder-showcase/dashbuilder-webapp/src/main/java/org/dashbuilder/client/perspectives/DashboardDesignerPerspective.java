@@ -20,19 +20,20 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
 import com.google.gwt.dom.client.Document;
 import org.dashbuilder.displayer.DisplayerSettings;
 import org.dashbuilder.displayer.DisplayerSettingsFactory;
 import org.dashbuilder.displayer.client.json.DisplayerSettingsJSONMarshaller;
+import org.dashbuilder.displayer.events.DisplayerUpdatedEvent;
 import org.dashbuilder.renderer.table.client.TableRenderer;
 import org.uberfire.client.annotations.Perspective;
 import org.uberfire.client.annotations.WorkbenchMenu;
 import org.uberfire.client.annotations.WorkbenchPerspective;
 import org.uberfire.client.mvp.PlaceManager;
 import org.uberfire.client.workbench.panels.impl.MultiListWorkbenchPanelPresenter;
-import org.uberfire.client.workbench.panels.impl.MultiTabWorkbenchPanelPresenter;
 import org.uberfire.mvp.Command;
 import org.uberfire.mvp.PlaceRequest;
 import org.uberfire.mvp.impl.DefaultPlaceRequest;
@@ -45,6 +46,7 @@ import org.uberfire.workbench.model.menu.Menus;
 import static org.dashbuilder.dataset.group.DateIntervalType.MONTH;
 import static org.dashbuilder.dataset.sort.SortOrder.*;
 import static org.dashbuilder.shared.sales.SalesConstants.*;
+import static org.uberfire.commons.validation.PortablePreconditions.checkNotNull;
 
 /**
  * The dashboard composer perspective.
@@ -71,8 +73,25 @@ public class DashboardDesignerPerspective {
     public Menus buildMenuBar() {
         return MenuFactory
                 .newTopLevelMenu("New displayer")
-                .withItems(getNewDisplayerMenuItems())
+                .respondsWith(new Command() {
+                    public void execute() {
+                        placeManager.goTo("DisplayerEditor");
+                    }
+                })
+                .endMenu()
+                .newTopLevelMenu("Select prototype")
+                .withItems(getSelectPrototypeMenuItems())
                 .endMenu().build();
+    }
+
+    private void onDisplayerSaved(@Observes DisplayerUpdatedEvent event) {
+        checkNotNull("event", event);
+        checkNotNull("settings", event.getModifiedSettings());
+
+        // If we're creating a new displayer then open it into a new panel
+        if (event.getOriginalSettings() == null) {
+            placeManager.goTo(createPlaceRequest(event.getModifiedSettings()));
+        }
     }
 
     private PlaceRequest createPlaceRequest(DisplayerSettings displayerSettings) {
@@ -83,7 +102,7 @@ public class DashboardDesignerPerspective {
         return new DefaultPlaceRequest("DisplayerScreen", params);
     }
 
-    private List<? extends MenuItem> getNewDisplayerMenuItems() {
+    private List<? extends MenuItem> getSelectPrototypeMenuItems() {
         List<MenuItem> results = new ArrayList<MenuItem>();
 
         results.add(MenuFactory.newSimpleItem("Bar chart").respondsWith(new Command() {
@@ -117,7 +136,8 @@ public class DashboardDesignerPerspective {
                                 .column("Total amount")
                                 .filterOn(false, true, true)
                                 .buildSettings()));
-            }}).endMenu().build().getItems().get(0));
+            }
+        }).endMenu().build().getItems().get(0));
 
         results.add(MenuFactory.newSimpleItem("Line chart").respondsWith(new Command() {
             public void execute() {
@@ -133,7 +153,8 @@ public class DashboardDesignerPerspective {
                                 .column("Total amount")
                                 .filterOn(false, true, true)
                                 .buildSettings()));
-            }}).endMenu().build().getItems().get(0));
+            }
+        }).endMenu().build().getItems().get(0));
 
         results.add(MenuFactory.newSimpleItem("Area chart").respondsWith(new Command() {
             public void execute() {

@@ -147,6 +147,11 @@ public interface DataSet {
     DataSet cloneEmpty();
 
     /**
+     * Build a data set with the same structure and content.
+     */
+    DataSet cloneInstance();
+
+    /**
      * Return the estimated memory (in bytes) the data set is consuming.
      * @return The number of bytes
      */

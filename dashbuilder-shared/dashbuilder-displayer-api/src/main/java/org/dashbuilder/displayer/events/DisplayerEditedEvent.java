@@ -19,14 +19,14 @@ import org.dashbuilder.displayer.DisplayerSettings;
 import org.jboss.errai.common.client.api.annotations.Portable;
 
 @Portable
-public class DisplayerSettingsOnFocusEvent {
+public class DisplayerEditedEvent {
 
     private DisplayerSettings displayerSettings;
 
-    public DisplayerSettingsOnFocusEvent() {
+    public DisplayerEditedEvent() {
     }
 
-    public DisplayerSettingsOnFocusEvent(DisplayerSettings displayerSettings) {
+    public DisplayerEditedEvent(DisplayerSettings displayerSettings) {
         this.displayerSettings = displayerSettings;
     }
 

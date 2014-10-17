@@ -13,28 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbuilder.displayer.events;
+package org.dashbuilder.displayer.client;
 
 import org.dashbuilder.displayer.DisplayerSettings;
-import org.jboss.errai.common.client.api.annotations.Portable;
 
-@Portable
-public class DisplayerSettingsOnCloseEvent {
+public interface DisplayerEditorPresenter {
 
-    private DisplayerSettings displayerSettings;
+    void init(DisplayerSettings displayerSettings, DisplayerEditorListener editorListener);
 
-    public DisplayerSettingsOnCloseEvent() {
-    }
+    void update();
 
-    public DisplayerSettingsOnCloseEvent(DisplayerSettings displayerSettings) {
-        this.displayerSettings = displayerSettings;
-    }
+    void close();
 
-    public DisplayerSettings getDisplayerSettings() {
-        return displayerSettings;
-    }
+    DisplayerEditorView getView();
 
-    public void setDisplayerSettings(DisplayerSettings displayerSettings) {
-        this.displayerSettings = displayerSettings;
-    }
+    DisplayerSettings getOriginalSettings();
+
+    DisplayerSettings getCurrentSettings();
+
+    boolean isEditing(DisplayerSettings settings);
+
+    boolean isCurrentDisplayerReady();
 }
