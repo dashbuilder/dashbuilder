@@ -19,6 +19,7 @@ import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
 import org.dashbuilder.displayer.DisplayerSettings;
+import org.dashbuilder.displayer.DisplayerType;
 import org.dashbuilder.displayer.client.prototypes.DisplayerPrototypes;
 
 @Dependent
@@ -32,13 +33,25 @@ public class DisplayerEditorPresenterImpl implements DisplayerEditorPresenter {
     private DisplayerSettings currentSettings = null;
 
     public void init(DisplayerSettings settings, DisplayerEditorListener editorListener) {
+
         this.originalSettings = settings;
         this.editorListener = editorListener;
 
-        if (settings != null) currentSettings = settings.cloneInstance();
-        else currentSettings = DisplayerPrototypes.BAR_CHART_PROTO.cloneInstance();
+        if (settings != null) {
+            currentSettings = settings.cloneInstance();
+            view.init(this);
+            view.disableTypeSelection();
+            view.gotoDisplaySettings();
+        } else {
+            currentSettings = prototypes.get(DisplayerType.BARCHART).cloneInstance();
+            view.init(this);
+            view.gotoTypeSelection();
+        }
+    }
 
-        view.init(this);
+    public void changeDisplayerType(DisplayerType type) {
+        currentSettings = prototypes.get(type).cloneInstance();
+        view.showDisplayer();
     }
 
     public boolean isEditing(DisplayerSettings settings) {

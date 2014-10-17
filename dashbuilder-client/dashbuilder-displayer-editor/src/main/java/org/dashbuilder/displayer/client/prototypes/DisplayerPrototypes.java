@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 
 import org.dashbuilder.dataset.sort.SortOrder;
 import org.dashbuilder.displayer.DisplayerSettings;
@@ -30,115 +31,110 @@ import static org.dashbuilder.displayer.client.prototypes.DataSetPrototypes.*;
 @ApplicationScoped
 public class DisplayerPrototypes {
 
+    @Inject
+    DataSetPrototypes dataSetPrototypes;
+
     private Map<DisplayerType,DisplayerSettings> prototypeMap = new HashMap<DisplayerType,DisplayerSettings>();
-
-
-    public static final DisplayerSettings BAR_CHART_PROTO = DisplayerSettingsFactory
-            .newBarChartSettings()
-            .uuid("barChartPrototype")
-            .dataset(CONTINENT_POPULATION)
-            .title("Population per Continent (2013)")
-            .titleVisible(true)
-            .width(500).height(300)
-            .margins(10, 20, 70, 10)
-            .horizontal().set3d(false)
-            .filterOff(false)
-            .buildSettings();
-
-    public static final DisplayerSettings PIE_CHART_PROTO = DisplayerSettingsFactory
-            .newPieChartSettings()
-            .uuid("pieChartPrototype")
-            .dataset(CONTINENT_POPULATION)
-            .title("Population per Continent (2013)")
-            .titleVisible(true)
-            .width(400).height(300)
-            .margins(10, 10, 10, 10)
-            .set3d(false)
-            .filterOff(false)
-            .buildSettings();
-
-    public static final DisplayerSettings LINE_CHART_PROTO = DisplayerSettingsFactory
-            .newLineChartSettings()
-            .uuid("lineChartPrototype")
-            .dataset(CONTINENT_POPULATION)
-            .title("Population per Continent (2013)")
-            .titleVisible(true)
-            .width(400).height(300)
-            .margins(10, 10, 10, 10)
-            .filterOff(false)
-            .buildSettings();
-
-    public static final DisplayerSettings AREA_CHART_PROTO = DisplayerSettingsFactory
-            .newAreaChartSettings()
-            .uuid("areaChartPrototype")
-            .dataset(CONTINENT_POPULATION)
-            .title("Population per Continent (2013)")
-            .titleVisible(true)
-            .width(400).height(300)
-            .margins(10, 10, 10, 10)
-            .filterOff(false)
-            .buildSettings();
-
-    public static final DisplayerSettings BUBBLE_CHART_PROTO = DisplayerSettingsFactory
-            .newBubbleChartSettings()
-            .uuid("bubbleChartPrototype")
-            .dataset(CONTINENT_POPULATION_EXT)
-            .title("Population per Continent (2013)")
-            .titleVisible(true)
-            .width(400).height(300)
-            .margins(10, 10, 10, 10)
-            .filterOff(false)
-            .buildSettings();
-
-    public static final DisplayerSettings METER_CHART_PROTO = DisplayerSettingsFactory
-            .newMeterChartSettings()
-            .uuid("meterChartPrototype")
-            .dataset(CONTINENT_POPULATION)
-            .title("Population per Continent (2013)")
-            .titleVisible(true)
-            .width(100).height(100)
-            .margins(10, 10, 10, 10)
-            .meter(0, 500000000L, 1000000000L, 6000000000L)
-            .filterOff(false)
-            .buildSettings();
-
-    public static final DisplayerSettings MAP_CHART_PROTO = DisplayerSettingsFactory
-            .newMapChartSettings()
-            .uuid("mapChartPrototype")
-            .dataset(CONTINENT_POPULATION)
-            .title("Population per Continent (2013)")
-            .titleVisible(true)
-            .width(400).height(300)
-            .margins(10, 10, 10, 10)
-            .filterOff(false)
-            .buildSettings();
-
-    public static final DisplayerSettings TABLE_PROTO = DisplayerSettingsFactory
-            .newTableSettings()
-            .uuid("tablePrototype")
-            .dataset(CONTINENT_POPULATION)
-            .title("Population per Continent (2013)")
-            .titleVisible(true)
-            .tableOrderEnabled(true)
-            .tableOrderDefault(POPULATION, SortOrder.DESCENDING)
-            .tableWidth(400)
-            .tablePageSize(10)
-            .filterOff(false)
-            .buildSettings();
 
     @PostConstruct
     private void init() {
-        prototypeMap.put(DisplayerType.BARCHART, BAR_CHART_PROTO);
-        prototypeMap.put(DisplayerType.PIECHART, PIE_CHART_PROTO);
-        prototypeMap.put(DisplayerType.LINECHART, LINE_CHART_PROTO);
-        prototypeMap.put(DisplayerType.AREACHART, AREA_CHART_PROTO);
-        prototypeMap.put(DisplayerType.BUBBLECHART, BUBBLE_CHART_PROTO);
-        prototypeMap.put(DisplayerType.METERCHART, METER_CHART_PROTO);
-        prototypeMap.put(DisplayerType.MAP, MAP_CHART_PROTO);
-        prototypeMap.put(DisplayerType.TABLE, TABLE_PROTO);
+        prototypeMap.put(DisplayerType.PIECHART, DisplayerSettingsFactory
+                .newPieChartSettings()
+                .uuid("pieChartPrototype")
+                .dataset(dataSetPrototypes.getContinentPopulation())
+                .title("Population per Continent")
+                .titleVisible(true)
+                .width(300).height(300)
+                .margins(0, 0, 0, 0)
+                .set3d(false)
+                .filterOff(false)
+                .buildSettings());
+
+        prototypeMap.put(DisplayerType.BARCHART, DisplayerSettingsFactory
+                .newBarChartSettings()
+                .uuid("barChartPrototype")
+                .dataset(dataSetPrototypes.getContinentPopulation())
+                .title("Population per Continent")
+                .titleVisible(true)
+                .width(500).height(250)
+                .margins(10, 20, 90, 30)
+                .horizontal().set3d(false)
+                .filterOff(false)
+                .buildSettings());
+
+        prototypeMap.put(DisplayerType.LINECHART, DisplayerSettingsFactory
+                .newLineChartSettings()
+                .uuid("lineChartPrototype")
+                .dataset(dataSetPrototypes.getContinentPopulation())
+                .title("Population per Continent")
+                .titleVisible(true)
+                .width(500).height(300)
+                .margins(10, 40, 90, 10)
+                .filterOff(false)
+                .buildSettings());
+
+        prototypeMap.put(DisplayerType.AREACHART, DisplayerSettingsFactory
+                .newAreaChartSettings()
+                .uuid("areaChartPrototype")
+                .dataset(dataSetPrototypes.getContinentPopulation())
+                .title("Population per Continent")
+                .titleVisible(true)
+                .width(500).height(300)
+                .margins(10, 40, 90, 10)
+                .filterOff(false)
+                .buildSettings());
+
+        prototypeMap.put(DisplayerType.BUBBLECHART, DisplayerSettingsFactory
+                .newBubbleChartSettings()
+                .uuid("bubbleChartPrototype")
+                .dataset(dataSetPrototypes.getContinentPopulationExt())
+                .title("Population per Continent")
+                .titleVisible(true)
+                .width(500).height(300)
+                .margins(10, 30, 50, 10)
+                .filterOff(false)
+                .buildSettings());
+
+        prototypeMap.put(DisplayerType.METERCHART, DisplayerSettingsFactory
+                .newMeterChartSettings()
+                .uuid("meterChartPrototype")
+                .dataset(dataSetPrototypes.getContinentPopulation())
+                .title("Population per Continent")
+                .titleVisible(true)
+                .width(400).height(300)
+                .margins(10, 10, 10, 10)
+                .meter(0, 1000000000L, 3000000000L, 6000000000L)
+                .filterOff(false)
+                .buildSettings());
+
+        prototypeMap.put(DisplayerType.MAP, DisplayerSettingsFactory
+                .newMapChartSettings()
+                .uuid("mapChartPrototype")
+                .dataset(dataSetPrototypes.getCountryPopulation())
+                .column(COUNTRY)
+                .column(POPULATION)
+                .title("World Population")
+                .titleVisible(true)
+                .width(500).height(300)
+                .margins(10, 10, 10, 10)
+                .filterOff(false)
+                .buildSettings());
+
+        prototypeMap.put(DisplayerType.TABLE, DisplayerSettingsFactory
+                .newTableSettings()
+                .uuid("tablePrototype")
+                .dataset(dataSetPrototypes.getContinentPopulation())
+                .title("Population per Continent")
+                .titleVisible(true)
+                .tableOrderEnabled(true)
+                .tableOrderDefault(POPULATION, SortOrder.DESCENDING)
+                .tableWidth(400)
+                .tablePageSize(10)
+                .filterOff(false)
+                .buildSettings());
     }
 
-    public DisplayerSettings get(DisplayerType type   ) {
+    public DisplayerSettings get(DisplayerType type) {
         return prototypeMap.get(type);
     }
 }

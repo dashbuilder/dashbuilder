@@ -83,6 +83,11 @@ public interface DataSet {
     DataSet addColumn(String id, ColumnType type);
 
     /**
+     * Removes an existing column.
+     */
+    DataSet removeColumn(String id);
+
+    /**
      * Get the number of rows in the dataset.
      */
     int getRowCount();

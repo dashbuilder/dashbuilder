@@ -16,6 +16,7 @@
 package org.dashbuilder.dataset.impl;
 
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -101,6 +102,17 @@ public class DataSetImpl implements DataSet {
 
     public DataSet addColumn(String id, ColumnType type) {
         return addColumn(id, type, null);
+    }
+
+    public DataSet removeColumn(String id) {
+        Iterator<DataColumn> it = columns.iterator();
+        while (it.hasNext()) {
+            DataColumn column = it.next();
+            if (column.getId().equals(id)) {
+                it.remove();
+            }
+        }
+        return this;
     }
 
     public DataSet addColumn(String id, ColumnType type, List values) {

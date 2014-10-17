@@ -16,8 +16,10 @@
 package org.dashbuilder.displayer.client;
 
 import org.dashbuilder.displayer.DisplayerSettings;
+import org.dashbuilder.displayer.client.widgets.DisplayerTypeSelector;
 
-public interface DisplayerEditorPresenter {
+public interface DisplayerEditorPresenter
+        extends DisplayerTypeSelector.Presenter {
 
     void init(DisplayerSettings displayerSettings, DisplayerEditorListener editorListener);
 

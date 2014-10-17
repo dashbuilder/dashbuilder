@@ -42,6 +42,11 @@ package org.dashbuilder.dataset;
 public interface DataSetBuilder {
 
     /**
+     * Assigns an UUID to the data set
+     */
+    DataSetBuilder uuid(String uuid);
+
+    /**
      * Add an empty column of type label.
      */
     DataSetBuilder label(String columnId);

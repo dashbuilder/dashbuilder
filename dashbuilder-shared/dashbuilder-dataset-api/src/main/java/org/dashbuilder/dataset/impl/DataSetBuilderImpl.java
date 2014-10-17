@@ -27,6 +27,11 @@ public class DataSetBuilderImpl implements DataSetBuilder {
 
     protected DataSet dataSet = DataSetFactory.newEmptyDataSet();
 
+    public DataSetBuilderImpl uuid(String uuid) {
+        dataSet.setUUID(uuid);
+        return this;
+    }
+
     public DataSetBuilderImpl label(String columnId) {
         dataSet.addColumn(columnId, ColumnType.LABEL);
         return this;
