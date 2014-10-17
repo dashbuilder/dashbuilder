@@ -21,6 +21,7 @@ import javax.servlet.ServletContext;
 
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetFactory;
+import org.dashbuilder.dataset.DataSetFormatter;
 import org.dashbuilder.dataset.DataSetManager;
 import org.dashbuilder.dataset.backend.DataSetDefDeployer;
 import org.dashbuilder.test.ShrinkWrapHelper;
@@ -49,6 +50,9 @@ public class CSVAutoDeployDataSetTest {
     @Inject
     DataSetDefDeployer dataSetDefDeployer;
 
+    @Inject
+    DataSetFormatter dataSetFormatter;
+
     @Before
     public void setUp() throws Exception {
         URL fileURL = Thread.currentThread().getContextClassLoader().getResource("expenseReports.dset");
@@ -57,7 +61,7 @@ public class CSVAutoDeployDataSetTest {
     }
 
     @Test
-    public void testLoadDataSet() throws Exception {
+    public void testExpenseReportsDataSet() throws Exception {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                         .dataset("expenseReports")
@@ -66,5 +70,17 @@ public class CSVAutoDeployDataSetTest {
         assertThat(result).isNotNull();
         assertThat(result.getRowCount()).isEqualTo(50);
         assertThat(result.getColumns().size()).isEqualTo(6);
+    }
+
+    @Test
+    public void testWorldPopulationDataSet() throws Exception {
+        DataSet result = dataSetManager.lookupDataSet(
+                DataSetFactory.newDataSetLookupBuilder()
+                        .dataset("worldPopulation")
+                        .buildLookup());
+
+        assertThat(result).isNotNull();
+        assertThat(result.getRowCount()).isGreaterThan(100);
+        assertThat(result.getColumns().size()).isEqualTo(5);
     }
 }

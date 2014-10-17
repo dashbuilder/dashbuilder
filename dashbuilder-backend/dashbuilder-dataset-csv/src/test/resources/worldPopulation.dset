@@ -1,0 +1,21 @@
+{
+    "uuid": "worldPopulation",
+    "provider": "CSV",
+    "pushEnabled": true,
+    "maxPushSize": 1024,
+    "shared": true,
+    "filePath": "worldPopulation.csv",
+    "separatorChar": "\,",
+    "quoteChar": "\"",
+    "escapeChar": "\\",
+    "datePattern": "MM-dd-yyyy",
+    "numberPattern": "#,###.##",
+    "columns": [
+      {"columnId": "City / Urban area"},
+      {"columnId": "Country"},
+      {"columnId": "Population"},
+      {"columnId": "Land Area"},
+      {"columnId": "Density"},
+      {"columnId": "date"}
+    ]
+}
