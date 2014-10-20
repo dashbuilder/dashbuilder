@@ -123,7 +123,8 @@ public class DataSetJSONMarshaller {
                 switch ( dataColumn.getColumnType() ) {
                     case DATE: values.add( parseDateValue( stringJson.stringValue() ) ); break;
                     case NUMBER: values.add( parseNumberValue( stringJson.stringValue() ) ); break;
-                    case LABEL: values.add( stringJson.stringValue() );
+                    case LABEL: values.add( stringJson.stringValue() ); break;
+                    case TEXT: values.add( stringJson.stringValue() ); break;
                 }
             }
             dataColumn.setValues( values );

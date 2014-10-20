@@ -36,7 +36,12 @@ public enum ColumnType {
     /**
      * A Label type column.
      */
-    LABEL;
+    LABEL,
+
+    /**
+     * Text based column not eligible for grouping operations.
+     */
+    TEXT;
 
     public static ColumnType getByName(String name) {
         return valueOf(name.toUpperCase());

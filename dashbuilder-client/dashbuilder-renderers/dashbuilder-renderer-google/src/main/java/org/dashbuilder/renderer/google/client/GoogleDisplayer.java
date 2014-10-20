@@ -254,6 +254,7 @@ public abstract class GoogleDisplayer extends AbstractDisplayer {
     public com.googlecode.gwt.charts.client.ColumnType getColumnType(DataColumn dataColumn) {
         ColumnType type = dataColumn.getColumnType();
         if (ColumnType.LABEL.equals(type)) return com.googlecode.gwt.charts.client.ColumnType.STRING;
+        if (ColumnType.TEXT.equals(type)) return com.googlecode.gwt.charts.client.ColumnType.STRING;
         if (ColumnType.NUMBER.equals(type)) return com.googlecode.gwt.charts.client.ColumnType.NUMBER;
         if (ColumnType.DATE.equals(type)) return com.googlecode.gwt.charts.client.ColumnType.DATE;
         return com.googlecode.gwt.charts.client.ColumnType.STRING;

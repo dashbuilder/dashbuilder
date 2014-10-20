@@ -36,6 +36,7 @@ import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.ColumnSortEvent;
+import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -311,6 +312,14 @@ public class TableDisplayer extends AbstractDisplayer {
         switch ( columnType ) {
             case LABEL: return new Column<Integer, String>(
                             new SelectableTextCell( columnId ) ) {
+                                public String getValue( Integer row ) {
+                                    Object value = dataSet.getValueAt(row, columnNumber);
+                                    return value.toString();
+                                }
+                            };
+
+            case TEXT: return new Column<Integer, String>(
+                            new TextCell() ) {
                                 public String getValue( Integer row ) {
                                     Object value = dataSet.getValueAt(row, columnNumber);
                                     return value.toString();

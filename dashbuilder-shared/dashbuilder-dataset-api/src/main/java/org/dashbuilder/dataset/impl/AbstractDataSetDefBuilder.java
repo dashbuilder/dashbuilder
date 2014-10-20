@@ -48,6 +48,11 @@ public abstract class AbstractDataSetDefBuilder<T> implements DataSetDefBuilder<
         return (T) this;
     }
 
+    public T text(String columnId) {
+        def.getDataSet().addColumn(columnId, ColumnType.TEXT);
+        return (T) this;
+    }
+
     public T number(String columnId) {
         def.getDataSet().addColumn(columnId, ColumnType.NUMBER);
         return (T) this;

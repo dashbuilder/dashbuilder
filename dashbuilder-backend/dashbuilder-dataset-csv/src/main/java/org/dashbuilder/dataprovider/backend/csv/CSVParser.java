@@ -132,7 +132,7 @@ public class CSVParser {
                 numberFormat.parse(value);
                 return ColumnType.NUMBER;
             } catch (Exception ee) {
-                return ColumnType.LABEL;
+                return ColumnType.TEXT;
             }
         }
     }

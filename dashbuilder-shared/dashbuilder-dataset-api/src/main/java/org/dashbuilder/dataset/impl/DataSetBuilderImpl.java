@@ -37,6 +37,11 @@ public class DataSetBuilderImpl implements DataSetBuilder {
         return this;
     }
 
+    public DataSetBuilderImpl text(String columnId) {
+        dataSet.addColumn(columnId, ColumnType.TEXT);
+        return this;
+    }
+
     public DataSetBuilderImpl number(String columnId) {
         dataSet.addColumn(columnId, ColumnType.NUMBER);
         return this;

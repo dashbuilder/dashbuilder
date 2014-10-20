@@ -49,6 +49,9 @@ public class ClientIntervalBuilderLocator implements IntervalBuilderLocator {
         if (ColumnType.NUMBER.equals(columnType)) {
             // TODO
         }
+        if (ColumnType.TEXT.equals(columnType)) {
+            throw new IllegalArgumentException("TEXT columns do not support grouping.");
+        }
         return null;
     }
 

@@ -12,6 +12,9 @@
     "numberPattern": "#,###.##",
     "columns": [
       {"columnId": "id", "asLabel": "true"},
+      {"columnId": "office", "asLabel": "true"},
+      {"columnId": "department", "asLabel": "true"},
+      {"columnId": "author", "asLabel": "true"},
       {"columnId": "amount", "numberPattern": "#,###.##"},
       {"columnId": "date", "datePattern": "MM-dd-yyyy"}
     ]

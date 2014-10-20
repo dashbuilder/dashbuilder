@@ -52,6 +52,11 @@ public interface DataSetBuilder {
     DataSetBuilder label(String columnId);
 
     /**
+     * Add an empty column of type text.
+     */
+    DataSetBuilder text(String columnId);
+
+    /**
      * Add an empty column of numeric type.
      */
     DataSetBuilder number(String columnId);

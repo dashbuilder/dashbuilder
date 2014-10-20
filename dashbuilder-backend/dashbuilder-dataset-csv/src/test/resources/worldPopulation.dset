@@ -15,7 +15,6 @@
       {"columnId": "Country"},
       {"columnId": "Population"},
       {"columnId": "Land Area"},
-      {"columnId": "Density"},
-      {"columnId": "date"}
+      {"columnId": "Density"}
     ]
 }

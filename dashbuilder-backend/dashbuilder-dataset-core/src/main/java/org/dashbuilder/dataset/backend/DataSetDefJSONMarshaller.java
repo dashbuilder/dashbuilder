@@ -149,8 +149,8 @@ public class DataSetDefJSONMarshaller {
 
                 if (!StringUtils.isBlank(columnId)) {
                     if (!StringUtils.isBlank(asLabel)) def.asLabel(columnId);
-                    if (!StringUtils.isBlank(cNumberPattern)) def.setNumberPattern(columnId, cNumberPattern);
-                    if (!StringUtils.isBlank(cDatePattern)) def.setDatePattern(columnId, cDatePattern);
+                    else if (!StringUtils.isBlank(cNumberPattern)) def.setNumberPattern(columnId, cNumberPattern);
+                    else if (!StringUtils.isBlank(cDatePattern)) def.setDatePattern(columnId, cDatePattern);
                 }
             }
         }

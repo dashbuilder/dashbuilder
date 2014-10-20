@@ -72,6 +72,11 @@ public interface DataSetDefBuilder<T> {
     T label(String columnId);
 
     /**
+     * Add an empty column of type text.
+     */
+    T text(String columnId);
+
+    /**
      * Add an empty column of numeric type.
      *
      * @return The DataSetDefBuilder instance that is being used to configure a DataSetDef.
