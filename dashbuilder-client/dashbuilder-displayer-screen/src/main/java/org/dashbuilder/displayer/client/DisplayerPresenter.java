@@ -15,6 +15,8 @@
  */
 package org.dashbuilder.displayer.client;
 
+import java.util.HashMap;
+import java.util.Map;
 import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
@@ -39,6 +41,7 @@ import org.uberfire.lifecycle.OnFocus;
 import org.uberfire.lifecycle.OnStartup;
 import org.uberfire.mvp.Command;
 import org.uberfire.mvp.PlaceRequest;
+import org.uberfire.mvp.impl.DefaultPlaceRequest;
 import org.uberfire.workbench.model.menu.MenuFactory;
 import org.uberfire.workbench.model.menu.Menus;
 
@@ -131,8 +134,9 @@ public class DisplayerPresenter {
     private Command getEditCommand() {
         return new Command() {
             public void execute() {
-                placeManager.goTo("DisplayerEditor");
-                displayerOnEditEvent.fire(new DisplayerEditedEvent(displayerSettings));
+                Map<String,String> params = new HashMap<String,String>();
+                params.put("json", jsonMarshaller.toJsonString(displayerSettings));
+                placeManager.goTo(new DefaultPlaceRequest("DisplayerEditor", params));
             }
         };
     }

@@ -51,8 +51,11 @@ public class DisplayerEditorPopup {
 
     private PlaceRequest placeRequest;
 
+    private DisplayerSettings displayerSettings;
+
     @WorkbenchPartTitle
     public String getTitle() {
+        if (displayerSettings == null) return "New Displayer";
         return "Displayer Editor";
     }
 
@@ -76,6 +79,7 @@ public class DisplayerEditorPopup {
     }
 
     private void init(DisplayerSettings settings) {
+        displayerSettings = settings;
         displayerEditorPresenter.init(settings, new DisplayerEditorListener() {
 
             public void onEditorClosed(DisplayerEditorPresenter editor) {
@@ -89,13 +93,6 @@ public class DisplayerEditorPopup {
     }
 
     // Listen to DisplayerPresenter events
-
-    private void onDisplayerEditedEvent(@Observes DisplayerEditedEvent event) {
-        checkNotNull("event", event);
-        checkNotNull("settings", event.getDisplayerSettings());
-
-        init(event.getDisplayerSettings());
-    }
 
     private void onDisplayerFocusEvent(@Observes DisplayerOnFocusEvent event) {
         checkNotNull("event", event);
