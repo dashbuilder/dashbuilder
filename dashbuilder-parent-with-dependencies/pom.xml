@@ -20,6 +20,7 @@
 
   <properties>
     <version.org.jboss.integration-platform>6.0.0.CR14</version.org.jboss.integration-platform>
+    <version.org.kie>6.3.0-SNAPSHOT</version.org.kie>
     <version.org.uberfire>0.5.0-SNAPSHOT</version.org.uberfire>
     <version.org.jboss.errai>3.0.3-SNAPSHOT</version.org.jboss.errai>
     <version.org.jboss.logging.jboss-logging>3.1.4.GA</version.org.jboss.logging.jboss-logging>
@@ -48,6 +49,32 @@
         <type>pom</type>
         <version>${version.org.jboss.integration-platform}</version>
         <scope>import</scope>
+      </dependency>
+
+      <!-- KIE -->
+
+      <dependency>
+        <groupId>org.kie.uberfire</groupId>
+        <artifactId>kie-uberfire-widgets-commons</artifactId>
+        <version>${version.org.kie}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.kie.uberfire</groupId>
+        <artifactId>kie-uberfire-widgets-properties-editor-client</artifactId>
+        <version>${version.org.kie}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.kie.uberfire</groupId>
+        <artifactId>kie-uberfire-perspective-editor-client</artifactId>
+        <version>${version.org.kie}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.kie.uberfire</groupId>
+        <artifactId>kie-uberfire-perspective-editor-backend</artifactId>
+        <version>${version.org.kie}</version>
       </dependency>
 
       <!-- UberFire -->

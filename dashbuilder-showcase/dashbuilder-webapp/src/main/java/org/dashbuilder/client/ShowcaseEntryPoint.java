@@ -78,7 +78,7 @@ public class ShowcaseEntryPoint {
                 }).endMenu().
                 newTopLevelMenu("Designer").respondsWith(new Command() {
                     public void execute() {
-                        placeManager.goTo("DashboardDesignerPerspective");
+                        placeManager.goTo("PerspectiveEditorPerspective");
                     }
                 }).endMenu().
                 newTopLevelMenu("Examples").withItems(getSampleDashboardMenuItems()).endMenu().
@@ -98,6 +98,12 @@ public class ShowcaseEntryPoint {
         result.add(MenuFactory.newSimpleItem("Table reports").respondsWith(new Command() {
             public void execute() {
                 placeManager.goTo("SalesReportsPerspective");
+            }
+        }).endMenu().build().getItems().get(0));
+
+        result.add(MenuFactory.newSimpleItem("Ad-hoc").respondsWith(new Command() {
+            public void execute() {
+                placeManager.goTo("DashboardDesignerPerspective");
             }
         }).endMenu().build().getItems().get(0));
 

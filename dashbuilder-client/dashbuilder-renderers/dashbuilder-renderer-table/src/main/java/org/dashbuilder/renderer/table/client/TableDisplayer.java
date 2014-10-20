@@ -36,7 +36,6 @@ import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.ColumnSortEvent;
-import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -62,6 +61,8 @@ import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.sort.SortOrder;
 import org.dashbuilder.displayer.impl.DisplayerEditorConfigImpl;
 import org.dashbuilder.renderer.table.client.resources.i18n.TableConstants;
+
+import org.kie.uberfire.client.tables.PagedTable;
 
 import static com.google.gwt.dom.client.BrowserEvents.CLICK;
 

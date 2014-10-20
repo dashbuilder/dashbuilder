@@ -41,6 +41,17 @@
       <scope>provided</scope>
     </dependency>
 
+    <!-- KIE -->
+    <dependency>
+      <groupId>org.kie.uberfire</groupId>
+      <artifactId>kie-uberfire-perspective-editor-client</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.kie.uberfire</groupId>
+      <artifactId>kie-uberfire-perspective-editor-backend</artifactId>
+    </dependency>
+
     <!-- Log -->
     <dependency>
       <groupId>org.slf4j</groupId>
@@ -61,7 +72,6 @@
       <groupId>javax.enterprise</groupId>
       <artifactId>cdi-api</artifactId>
     </dependency>
-
 
     <!-- Errai Security -->
     <dependency>
@@ -157,6 +167,9 @@
             <compileSourcesArtifact>org.dashbuilder:dashbuilder-renderer-google</compileSourcesArtifact>
             <compileSourcesArtifact>org.dashbuilder:dashbuilder-renderer-table</compileSourcesArtifact>
             <compileSourcesArtifact>org.dashbuilder:dashbuilder-renderer-selector</compileSourcesArtifact>
+
+            <!-- KIE -->
+            <compileSourcesArtifact>org.kie.uberfire:kie-uberfire-perspective-editor-client</compileSourcesArtifact>
 
           </compileSourcesArtifacts>
           <runTarget>dashbuilder.html</runTarget>
