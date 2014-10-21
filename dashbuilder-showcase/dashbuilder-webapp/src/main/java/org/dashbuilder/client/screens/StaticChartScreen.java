@@ -21,7 +21,7 @@ import com.google.gwt.user.client.ui.IsWidget;
 import org.dashbuilder.dataset.DataSetFactory;
 import org.dashbuilder.displayer.DisplayerSettingsFactory;
 import org.dashbuilder.displayer.DisplayerSettings;
-import org.dashbuilder.displayer.client.DisplayerView;
+import org.dashbuilder.displayer.client.widgets.DisplayerView;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
 import org.uberfire.client.annotations.WorkbenchPartView;
 import org.uberfire.client.annotations.WorkbenchScreen;

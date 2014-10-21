@@ -13,24 +13,42 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbuilder.displayer.client;
+package org.dashbuilder.displayer.client.widgets;
 
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
 import org.dashbuilder.displayer.DisplayerSettings;
 import org.dashbuilder.displayer.DisplayerType;
-import org.dashbuilder.displayer.client.prototypes.DisplayerPrototypes;
 
 @Dependent
-public class DisplayerEditorPresenterImpl implements DisplayerEditorPresenter {
+public class DisplayerEditor implements
+        DisplayerTypeSelector.Presenter,
+        DisplayerSettingsEditorForm.Presenter {
 
-    @Inject DisplayerEditorView view;
-    @Inject DisplayerPrototypes prototypes;
+    DisplayerEditorView view;
+    DisplayerPrototypes prototypes;
 
     private DisplayerEditorListener editorListener = null;
     private DisplayerSettings originalSettings = null;
     private DisplayerSettings currentSettings = null;
+    private boolean brandNewDisplayer = true;
+
+    public DisplayerEditor() {
+        this.prototypes = DisplayerPrototypes.get();
+        this.view = new DisplayerEditorView(
+                new DisplayerTypeSelector(),
+                new DisplayerSettingsEditorForm());
+    }
+
+    @Inject
+    public DisplayerEditor(
+            DisplayerEditorView view,
+            DisplayerPrototypes prototypes) {
+
+        this.view = view;
+        this.prototypes = prototypes;
+    }
 
     public void init(DisplayerSettings settings, DisplayerEditorListener editorListener) {
 
@@ -38,19 +56,29 @@ public class DisplayerEditorPresenterImpl implements DisplayerEditorPresenter {
         this.editorListener = editorListener;
 
         if (settings != null) {
+            brandNewDisplayer = false;
             currentSettings = settings.cloneInstance();
             view.init(this);
             view.disableTypeSelection();
             view.gotoDisplaySettings();
         } else {
-            currentSettings = prototypes.get(DisplayerType.BARCHART).cloneInstance();
+            brandNewDisplayer = true;
+            currentSettings = prototypes.getProto(DisplayerType.BARCHART).cloneInstance();
             view.init(this);
             view.gotoTypeSelection();
         }
     }
 
+    public void displayerSettingsChanged(DisplayerSettings settings) {
+        currentSettings = settings;
+        view.showDisplayer();
+    }
+
     public void changeDisplayerType(DisplayerType type) {
-        currentSettings = prototypes.get(type).cloneInstance();
+        // Rest the current settings
+        currentSettings = prototypes.getProto(type).cloneInstance();
+
+        // Show the new displayer
         view.showDisplayer();
     }
 
@@ -60,6 +88,10 @@ public class DisplayerEditorPresenterImpl implements DisplayerEditorPresenter {
 
     public boolean isCurrentDisplayerReady() {
         return true;
+    }
+
+    public boolean isBrandNewDisplayer() {
+        return brandNewDisplayer;
     }
 
     public DisplayerEditorView getView() {
@@ -74,11 +106,10 @@ public class DisplayerEditorPresenterImpl implements DisplayerEditorPresenter {
         return currentSettings;
     }
 
-    public void update() {
+    public void save() {
         if (editorListener != null) {
-            editorListener.onDisplayerUpdated(this);
+            editorListener.onDisplayerSaved(this);
         }
-        close();
     }
 
     public void close() {

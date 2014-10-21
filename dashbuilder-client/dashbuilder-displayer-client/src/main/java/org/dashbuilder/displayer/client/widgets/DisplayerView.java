@@ -13,12 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbuilder.displayer.client;
+package org.dashbuilder.displayer.client.widgets;
 
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimplePanel;
 import org.dashbuilder.displayer.DisplayerSettings;
+import org.dashbuilder.displayer.client.Displayer;
+import org.dashbuilder.displayer.client.DisplayerHelper;
 
 import static org.uberfire.commons.validation.PortablePreconditions.checkNotNull;
 

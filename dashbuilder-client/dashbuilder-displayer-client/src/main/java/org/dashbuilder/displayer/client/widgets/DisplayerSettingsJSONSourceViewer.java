@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbuilder.displayer.client;
+package org.dashbuilder.displayer.client.widgets;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -24,14 +24,12 @@ import org.dashbuilder.common.client.JsonSourceViewer;
 import org.dashbuilder.displayer.DisplayerSettings;
 import org.dashbuilder.displayer.client.json.DisplayerSettingsJSONMarshaller;
 
-public class DisplayerSettingsJSONSourceViewer extends Composite implements DisplayerSettingsEditor {
+public class DisplayerSettingsJSONSourceViewer extends Composite {
 
     interface SettingsEditorUIBinder extends UiBinder<Widget, DisplayerSettingsJSONSourceViewer> {}
     private static final SettingsEditorUIBinder uiBinder = GWT.create( SettingsEditorUIBinder.class );
 
     protected DisplayerSettings displayerSettings;
-    protected DisplayerSettingsEditorListener listener;
-    protected Displayer displayer;
 
     DisplayerSettingsJSONMarshaller jsonMarshaller;
 
@@ -45,22 +43,10 @@ public class DisplayerSettingsJSONSourceViewer extends Composite implements Disp
         jsonMarshaller = new DisplayerSettingsJSONMarshaller();
     }
 
-    @Override
-    public Displayer getDisplayer() {
-        return displayer;
-    }
-
-    @Override
-    public void setListener(DisplayerSettingsEditorListener listener) {
-        this.listener = listener;
-    }
-
-    @Override
     public DisplayerSettings getDisplayerSettings() {
         return displayerSettings;
     }
 
-    @Override
     public void setDisplayerSettings(DisplayerSettings displayerSettings) {
         jsonSourceViewer.setContent( jsonMarshaller.toJsonObject( displayerSettings ) );
     }

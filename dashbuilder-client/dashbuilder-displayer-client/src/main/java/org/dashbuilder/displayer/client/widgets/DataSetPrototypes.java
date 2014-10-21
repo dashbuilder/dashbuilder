@@ -13,10 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbuilder.displayer.client.prototypes;
+package org.dashbuilder.displayer.client.widgets;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Collection;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -24,6 +23,8 @@ import javax.inject.Inject;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetFactory;
 import org.dashbuilder.dataset.client.ClientDataSetManager;
+import org.jboss.errai.ioc.client.container.IOC;
+import org.jboss.errai.ioc.client.container.IOCBeanDef;
 
 @ApplicationScoped
 public class DataSetPrototypes {
@@ -35,6 +36,12 @@ public class DataSetPrototypes {
     public static final String DENSITY = "Density (people / km2)";
     public static final String REGION = "Region";
     public static final String POPULATION = "Population";
+
+    public static DataSetPrototypes get() {
+        Collection<IOCBeanDef<DataSetPrototypes>> beans = IOC.getBeanManager().lookupBeans(DataSetPrototypes.class);
+        IOCBeanDef<DataSetPrototypes> beanDef = beans.iterator().next();
+        return beanDef.getInstance();
+    }
 
     @Inject
     ClientDataSetManager dataSetManager;

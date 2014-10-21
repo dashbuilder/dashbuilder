@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbuilder.displayer.client;
+package org.dashbuilder.displayer.client.widgets;
 
 public interface DisplayerEditorListener {
 
-    void onEditorClosed(DisplayerEditorPresenter editor);
-    void onDisplayerUpdated(DisplayerEditorPresenter editor);
+    void onEditorClosed(DisplayerEditor editor);
+    void onDisplayerSaved(DisplayerEditor editor);
 }

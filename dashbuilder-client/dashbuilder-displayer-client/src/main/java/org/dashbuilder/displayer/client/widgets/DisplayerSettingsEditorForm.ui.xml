@@ -20,22 +20,9 @@
 
   <ui:with field="i18n" type="org.dashbuilder.displayer.client.resources.i18n.DisplayerSettingsEditorConstants"/>
 
-  <gwt:HTMLPanel width="95%">
-
-    <div class="well">
-
-      <b:Fieldset>
-<!--
-        <b:Legend>
-          <b:Heading size="4" text="{i18n.settingsEditor_caption}" />
-        </b:Legend>
--->
-        <gwt:FlexTable ui:field="editorSettingsTable">
-        </gwt:FlexTable>
-      </b:Fieldset>
-
-    </div>
-
-  </gwt:HTMLPanel>
-
+  <b:Well>
+    <b:Fieldset>
+      <gwt:FlexTable ui:field="editorSettingsTable" />
+    </b:Fieldset>
+  </b:Well>
 </ui:UiBinder>

@@ -27,6 +27,10 @@ import com.google.gwt.user.client.ui.IsWidget;
 import org.dashbuilder.common.client.StringUtils;
 import org.dashbuilder.displayer.DisplayerSettings;
 import org.dashbuilder.displayer.client.json.DisplayerSettingsJSONMarshaller;
+import org.dashbuilder.displayer.client.widgets.DisplayerEditor;
+import org.dashbuilder.displayer.client.widgets.DisplayerEditorListener;
+import org.dashbuilder.displayer.client.widgets.DisplayerEditorPopup;
+import org.dashbuilder.displayer.client.widgets.DisplayerView;
 import org.dashbuilder.displayer.events.DisplayerEditedEvent;
 import org.dashbuilder.displayer.events.DisplayerClosedEvent;
 import org.dashbuilder.displayer.events.DisplayerOnFocusEvent;
@@ -49,34 +53,22 @@ import static org.uberfire.commons.validation.PortablePreconditions.checkNotNull
 
 @WorkbenchScreen(identifier = "DisplayerScreen")
 @Dependent
-public class DisplayerPresenter {
+public class DisplayerScreenPresenter {
 
     private DisplayerView displayerView;
     private PerspectiveCoordinator perspectiveCoordinator;
     private DisplayerSettingsJSONMarshaller jsonMarshaller;
-    private PlaceManager placeManager;
     private DisplayerSettings displayerSettings;
-    private Event<DisplayerOnFocusEvent> displayerOnFocusEvent;
-    private Event<DisplayerEditedEvent> displayerOnEditEvent;
-    private Event<DisplayerClosedEvent> displayerOnCloseEvent;
     private Menus menu = null;
     private boolean editEnabled = false;
 
     @Inject
-    public DisplayerPresenter(DisplayerView displayerView,
+    public DisplayerScreenPresenter(DisplayerView displayerView,
             PerspectiveCoordinator perspectiveCoordinator,
-            DisplayerSettingsJSONMarshaller jsonMarshaller,
-            Event<DisplayerOnFocusEvent> displayerOnFocusEvent,
-            Event<DisplayerEditedEvent> displayerOnEditEvent,
-            Event<DisplayerClosedEvent> displayerOnCloseEvent,
-            PlaceManager placeManager) {
+            DisplayerSettingsJSONMarshaller jsonMarshaller) {
         this.displayerView = displayerView;
         this.perspectiveCoordinator = perspectiveCoordinator;
         this.jsonMarshaller = jsonMarshaller;
-        this.placeManager = placeManager;
-        this.displayerOnFocusEvent = displayerOnFocusEvent;
-        this.displayerOnEditEvent = displayerOnEditEvent;
-        this.displayerOnCloseEvent = displayerOnCloseEvent;
     }
 
     @OnStartup
@@ -114,16 +106,6 @@ public class DisplayerPresenter {
         return menu;
     }
 
-    @OnFocus
-    public void onFocus() {
-        displayerOnFocusEvent.fire(new DisplayerOnFocusEvent(displayerSettings));
-    }
-
-    @OnClose
-    public void onClose() {
-        displayerOnCloseEvent.fire(new DisplayerClosedEvent(displayerSettings));
-    }
-
     private Menus makeMenuBar() {
         return MenuFactory
                 .newTopLevelMenu("Edit")
@@ -134,29 +116,28 @@ public class DisplayerPresenter {
     private Command getEditCommand() {
         return new Command() {
             public void execute() {
-                Map<String,String> params = new HashMap<String,String>();
-                params.put("json", jsonMarshaller.toJsonString(displayerSettings));
-                placeManager.goTo(new DefaultPlaceRequest("DisplayerEditor", params));
+                DisplayerEditorPopup displayerEditor =  new DisplayerEditorPopup();
+                displayerEditor.init(displayerSettings, new DisplayerEditorListener() {
+
+                    public void onEditorClosed(DisplayerEditor editor) {
+                    }
+
+                    public void onDisplayerSaved(DisplayerEditor editor) {
+                        updateDisplayer(editor.getCurrentSettings());
+                    }
+                });
             }
         };
     }
 
-    /**
-     * Be aware of changes in the displayer settings.
-     */
-    private void onDisplayerUpdated(@Observes DisplayerUpdatedEvent event) {
-        checkNotNull("event", event);
-        checkNotNull("settings", event.getModifiedSettings());
+    private void updateDisplayer(DisplayerSettings settings) {
+        this.displayerSettings = settings;
+        this.displayerView.setDisplayerSettings(settings);
 
-        DisplayerSettings settings = event.getModifiedSettings();
-        if (displayerSettings != null && settings.getUUID().equals(displayerSettings.getUUID())) {
-            Displayer oldDisplayer = this.displayerView.getDisplayer();
-            this.displayerSettings = settings;
-            this.displayerView.setDisplayerSettings(displayerSettings);
-            Displayer newDisplayer = this.displayerView.draw();
+        Displayer oldDisplayer = this.displayerView.getDisplayer();
+        Displayer newDisplayer = this.displayerView.draw();
 
-            this.perspectiveCoordinator.removeDisplayer(oldDisplayer);
-            this.perspectiveCoordinator.addDisplayer(newDisplayer);
-        }
+        this.perspectiveCoordinator.removeDisplayer(oldDisplayer);
+        this.perspectiveCoordinator.addDisplayer(newDisplayer);
     }
 }

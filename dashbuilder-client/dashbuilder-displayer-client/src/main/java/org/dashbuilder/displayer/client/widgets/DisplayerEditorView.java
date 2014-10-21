@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbuilder.displayer.client;
+package org.dashbuilder.displayer.client.widgets;
 
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
@@ -27,29 +27,38 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
-import org.dashbuilder.displayer.DisplayerSettings;
-import org.dashbuilder.displayer.client.widgets.DisplayerTypeSelector;
+import org.dashbuilder.displayer.client.Displayer;
+import org.dashbuilder.displayer.client.DisplayerHelper;
+import org.dashbuilder.displayer.client.DisplayerLocator;
 
 @Dependent
 public class DisplayerEditorView extends Composite {
 
-    interface DisplayerEditorViewBinder extends
-            UiBinder<Widget, DisplayerEditorView> {
-
-    }
-    private static DisplayerEditorViewBinder uiBinder = GWT.create(DisplayerEditorViewBinder.class);
+    interface Binder extends UiBinder<Widget, DisplayerEditorView> {}
+    private static Binder uiBinder = GWT.create(Binder.class);
 
     public DisplayerEditorView() {
         initWidget(uiBinder.createAndBindUi(this));
     }
 
-    DisplayerEditorPresenter presenter;
+    @Inject
+    public DisplayerEditorView(DisplayerTypeSelector displayerTypeSelector,
+            DisplayerSettingsEditorForm settingsEditor) {
+        this();
+        this.typeSelector = displayerTypeSelector;
+        this.settingsEditor = settingsEditor;
+    }
+
+    DisplayerEditor presenter;
 
     @Inject
     DisplayerTypeSelector typeSelector;
+
+    @Inject
+    DisplayerSettingsEditorForm settingsEditor;
 
     @UiField
     SimplePanel leftPanel;
@@ -69,9 +78,8 @@ public class DisplayerEditorView extends Composite {
     @UiField
     Tab optionSettings;
 
-    public void init(DisplayerEditorPresenter presenter) {
+    public void init(DisplayerEditor presenter) {
         this.presenter = presenter;
-        this.typeSelector.init(presenter);
     }
 
     public void showDisplayer() {
@@ -88,6 +96,7 @@ public class DisplayerEditorView extends Composite {
     public void gotoTypeSelection() {
         optionsPanel.selectTab(0);
 
+        typeSelector.init(presenter);
         typeSelector.select(presenter.getCurrentSettings().getType());
         leftPanel.clear();
         leftPanel.add(typeSelector);
@@ -106,7 +115,10 @@ public class DisplayerEditorView extends Composite {
         optionsPanel.selectTab(2);
         optionSettings.setActive(true);
 
+        settingsEditor.init(presenter.getCurrentSettings(), presenter);
         leftPanel.clear();
+        leftPanel.add(settingsEditor);
+
         showDisplayer();
     }
 

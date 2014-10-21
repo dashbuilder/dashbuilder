@@ -20,13 +20,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
 import com.google.gwt.dom.client.Document;
 import org.dashbuilder.displayer.DisplayerSettings;
 import org.dashbuilder.displayer.DisplayerSettingsFactory;
 import org.dashbuilder.displayer.client.json.DisplayerSettingsJSONMarshaller;
+import org.dashbuilder.displayer.client.widgets.DisplayerEditor;
+import org.dashbuilder.displayer.client.widgets.DisplayerEditorListener;
+import org.dashbuilder.displayer.client.widgets.DisplayerEditorPopup;
 import org.dashbuilder.displayer.events.DisplayerUpdatedEvent;
 import org.dashbuilder.renderer.table.client.TableRenderer;
 import org.uberfire.client.annotations.Perspective;
@@ -63,7 +65,6 @@ public class DashboardDesignerPerspective {
 
     @Perspective
     public PerspectiveDefinition buildPerspective() {
-
         PerspectiveDefinition perspective = new PerspectiveDefinitionImpl(MultiListWorkbenchPanelPresenter.class.getName());
         perspective.setName("Designer");
         return perspective;
@@ -73,25 +74,29 @@ public class DashboardDesignerPerspective {
     public Menus buildMenuBar() {
         return MenuFactory
                 .newTopLevelMenu("New displayer")
-                .respondsWith(new Command() {
-                    public void execute() {
-                        placeManager.goTo("DisplayerEditor");
-                    }
-                })
+                .respondsWith(getNewDisplayerCommand())
                 .endMenu()
                 .newTopLevelMenu("Select prototype")
                 .withItems(getSelectPrototypeMenuItems())
                 .endMenu().build();
     }
 
-    private void onDisplayerSaved(@Observes DisplayerUpdatedEvent event) {
-        checkNotNull("event", event);
-        checkNotNull("settings", event.getModifiedSettings());
+    private Command getNewDisplayerCommand() {
+        return new Command() {
+            public void execute() {
+                /* Displayer settings == null => Create a brand new displayer */
+                DisplayerEditorPopup displayerEditor = new DisplayerEditorPopup();
+                displayerEditor.init(null, new DisplayerEditorListener() {
 
-        // If we're creating a new displayer then open it into a new panel
-        if (event.getOriginalSettings() == null) {
-            placeManager.goTo(createPlaceRequest(event.getModifiedSettings()));
-        }
+                    public void onEditorClosed(DisplayerEditor editor) {
+                    }
+
+                    public void onDisplayerSaved(DisplayerEditor editor) {
+                        placeManager.goTo(createPlaceRequest(editor.getCurrentSettings()));
+                    }
+                });
+            }
+        };
     }
 
     private PlaceRequest createPlaceRequest(DisplayerSettings displayerSettings) {

@@ -13,10 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbuilder.displayer.client;
+package org.dashbuilder.displayer.client.widgets;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 
 import com.github.gwtbootstrap.client.ui.CheckBox;
@@ -47,10 +45,17 @@ import org.dashbuilder.displayer.DisplayerEditorConfig;
 import org.dashbuilder.displayer.DisplayerSettings;
 import org.dashbuilder.displayer.DisplayerSettingsColumn;
 import org.dashbuilder.displayer.Position;
+import org.dashbuilder.displayer.client.Displayer;
+import org.dashbuilder.displayer.client.DisplayerHelper;
+import org.dashbuilder.displayer.client.RendererLibLocator;
 import org.dashbuilder.displayer.client.resources.i18n.DisplayerSettingsEditorConstants;
 import org.dashbuilder.displayer.impl.DisplayerSettingsColumnImpl;
 
-public class DisplayerSettingsEditorForm extends Composite implements DisplayerSettingsEditor {
+public class DisplayerSettingsEditorForm extends Composite {
+
+    public interface Presenter {
+        void displayerSettingsChanged(DisplayerSettings settings);
+    }
 
     interface SettingsEditorUIBinder extends UiBinder<Widget, DisplayerSettingsEditorForm> {}
     private static final SettingsEditorUIBinder uiBinder = GWT.create( SettingsEditorUIBinder.class );
@@ -154,10 +159,8 @@ public class DisplayerSettingsEditorForm extends Composite implements DisplayerS
     @UiField
     FlexTable editorSettingsTable;
 
+    protected Presenter presenter;
     protected DisplayerSettings displayerSettings;
-    protected DisplayerSettingsEditorListener listener;
-    // todo probably no longer needed, so could be removed
-    protected Displayer displayer;
     protected DisplayerEditorConfig displayerEditorConfig;
     private Set<DisplayerAttributeDef> supportedAttributes;
 
@@ -505,9 +508,11 @@ public class DisplayerSettingsEditorForm extends Composite implements DisplayerS
         return displayerSettings;
     }
 
-    public void setDisplayerSettings(DisplayerSettings displayerSettings) {
-        this.displayerSettings = displayerSettings;
-        this.displayer = DisplayerHelper.lookupDisplayer(displayerSettings);
+    public void init(DisplayerSettings displayerSettings, Presenter presenter) {
+        this.displayerSettings = displayerSettings.cloneInstance();
+        this.presenter = presenter;
+
+        Displayer displayer = DisplayerHelper.lookupDisplayer(displayerSettings);
         this.displayerEditorConfig = displayer.getDisplayerEditorConfig();
         this.supportedAttributes = displayerEditorConfig.getSupportedAttributes();
 
@@ -746,21 +751,10 @@ public class DisplayerSettingsEditorForm extends Composite implements DisplayerS
         }
     }
 
-    @Override
-    public Displayer getDisplayer() {
-        return displayer;
-    }
-
-    public DisplayerSettingsEditorListener getListener() {
-        return listener;
-    }
-
-    public void setListener(DisplayerSettingsEditorListener listener) {
-        this.listener = listener;
-    }
-
     protected void notifyChanges() {
-        listener.onDisplayerSettingsChanged(this);
+        if (presenter != null) {
+            presenter.displayerSettingsChanged(displayerSettings);
+        }
     }
 
     private void initPositionList() {

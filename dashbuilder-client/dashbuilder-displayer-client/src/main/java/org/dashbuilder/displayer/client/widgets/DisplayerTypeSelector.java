@@ -51,13 +51,19 @@ public class DisplayerTypeSelector extends Composite {
     @UiField
     TabPanel optionsPanel;
 
+    @UiField
+    Tab optionBar;
+
     public void init(Presenter presenter) {
         this.presenter = presenter;
     }
 
     public void select(DisplayerType type) {
+        boolean change = !selectedType.equals(type);
         selectedType = type;
-        presenter.changeDisplayerType(type);
+        if (change && presenter != null) {
+            presenter.changeDisplayerType(type);
+        }
     }
 
     @UiHandler(value = "optionBar")

@@ -21,14 +21,15 @@
              xmlns:g='urn:import:com.google.gwt.user.client.ui'
              xmlns:b="urn:import:com.github.gwtbootstrap.client.ui">
 
-  <b:TabPanel tabPosition="left" ui:field="optionsPanel">
-    <b:Tab ui:field="optionBar" heading="Bar" />
-    <b:Tab ui:field="optionPie" heading="Pie" />
-    <b:Tab ui:field="optionLine" heading="Line" />
-    <b:Tab ui:field="optionArea" heading="Area" />
-    <b:Tab ui:field="optionMeter" heading="Meter" />
-    <b:Tab ui:field="optionBubble" heading="Bubble" />
-    <b:Tab ui:field="optionMap" heading="Map" />
-    <b:Tab ui:field="optionTable" heading="Table" />
-  </b:TabPanel>
+  <g:HTMLPanel>
+    <b:TabPanel ui:field="optionsPanel">
+      <b:Tab ui:field="optionType" heading="Visualization Type" />
+      <b:Tab ui:field="optionData" heading="Data Set" />
+      <b:Tab ui:field="optionSettings" heading="Display Settings" />
+    </b:TabPanel>
+    <g:HorizontalPanel>
+        <g:SimplePanel ui:field="leftPanel" />
+        <g:SimplePanel ui:field="centerPanel" />
+    </g:HorizontalPanel>
+  </g:HTMLPanel>
 </ui:UiBinder>

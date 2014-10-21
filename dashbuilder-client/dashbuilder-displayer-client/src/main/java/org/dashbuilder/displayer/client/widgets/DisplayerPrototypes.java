@@ -13,8 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbuilder.displayer.client.prototypes;
+package org.dashbuilder.displayer.client.widgets;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import javax.annotation.PostConstruct;
@@ -25,11 +26,19 @@ import org.dashbuilder.dataset.sort.SortOrder;
 import org.dashbuilder.displayer.DisplayerSettings;
 import org.dashbuilder.displayer.DisplayerSettingsFactory;
 import org.dashbuilder.displayer.DisplayerType;
+import org.jboss.errai.ioc.client.container.IOC;
+import org.jboss.errai.ioc.client.container.IOCBeanDef;
 
-import static org.dashbuilder.displayer.client.prototypes.DataSetPrototypes.*;
+import static org.dashbuilder.displayer.client.widgets.DataSetPrototypes.*;
 
 @ApplicationScoped
 public class DisplayerPrototypes {
+
+    public static DisplayerPrototypes get() {
+        Collection<IOCBeanDef<DisplayerPrototypes>> beans = IOC.getBeanManager().lookupBeans(DisplayerPrototypes.class);
+        IOCBeanDef<DisplayerPrototypes> beanDef = beans.iterator().next();
+        return beanDef.getInstance();
+    }
 
     @Inject
     DataSetPrototypes dataSetPrototypes;
@@ -134,7 +143,7 @@ public class DisplayerPrototypes {
                 .buildSettings());
     }
 
-    public DisplayerSettings get(DisplayerType type) {
+    public DisplayerSettings getProto(DisplayerType type) {
         return prototypeMap.get(type);
     }
 }
