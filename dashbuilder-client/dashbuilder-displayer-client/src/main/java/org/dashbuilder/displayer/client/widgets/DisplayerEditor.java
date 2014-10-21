@@ -20,6 +20,7 @@ import javax.inject.Inject;
 
 import org.dashbuilder.displayer.DisplayerSettings;
 import org.dashbuilder.displayer.DisplayerType;
+import org.dashbuilder.displayer.client.prototypes.DisplayerPrototypes;
 
 @Dependent
 public class DisplayerEditor implements

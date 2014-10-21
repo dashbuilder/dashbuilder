@@ -761,7 +761,7 @@ public class DisplayerSettingsEditorForm extends Composite {
         chartLegendPositionListBox.clear();
         for ( Position position : Position.values()) {
             String positionKey = position.toString();
-            String positionLabel = DisplayerSettingsEditorConstants.INSTANCE.getString( positionKey );
+            String positionLabel = DisplayerSettingsEditorConstants.INSTANCE.getString("POSITION_" + positionKey );
             chartLegendPositionListBox.addItem( positionLabel, positionKey );
         }
     }

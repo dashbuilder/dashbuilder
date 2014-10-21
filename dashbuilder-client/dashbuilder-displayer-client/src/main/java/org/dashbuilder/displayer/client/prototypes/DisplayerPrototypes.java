@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbuilder.displayer.client.widgets;
+package org.dashbuilder.displayer.client.prototypes;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -29,7 +29,7 @@ import org.dashbuilder.displayer.DisplayerType;
 import org.jboss.errai.ioc.client.container.IOC;
 import org.jboss.errai.ioc.client.container.IOCBeanDef;
 
-import static org.dashbuilder.displayer.client.widgets.DataSetPrototypes.*;
+import static org.dashbuilder.displayer.client.prototypes.DataSetPrototypes.*;
 
 @ApplicationScoped
 public class DisplayerPrototypes {
@@ -66,8 +66,9 @@ public class DisplayerPrototypes {
                 .title("Population per Continent")
                 .titleVisible(true)
                 .width(500).height(250)
-                .margins(10, 20, 90, 30)
+                .margins(10, 20, 90, 50)
                 .horizontal().set3d(false)
+                .legendOff()
                 .filterOff(false)
                 .buildSettings());
 
@@ -79,6 +80,7 @@ public class DisplayerPrototypes {
                 .titleVisible(true)
                 .width(500).height(300)
                 .margins(10, 40, 90, 10)
+                .legendOff()
                 .filterOff(false)
                 .buildSettings());
 
@@ -89,7 +91,8 @@ public class DisplayerPrototypes {
                 .title("Population per Continent")
                 .titleVisible(true)
                 .width(500).height(300)
-                .margins(10, 40, 90, 10)
+                .margins(10, 40, 90, 40)
+                .legendOff()
                 .filterOff(false)
                 .buildSettings());
 
@@ -100,7 +103,8 @@ public class DisplayerPrototypes {
                 .title("Population per Continent")
                 .titleVisible(true)
                 .width(500).height(300)
-                .margins(10, 30, 50, 10)
+                .margins(10, 30, 50, 50)
+                .legendOff()
                 .filterOff(false)
                 .buildSettings());
 

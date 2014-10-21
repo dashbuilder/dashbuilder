@@ -16,6 +16,7 @@
 package org.dashbuilder.displayer.impl;
 
 import org.dashbuilder.displayer.ChartSettingsBuilder;
+import org.dashbuilder.displayer.Position;
 
 public abstract class AbstractChartSettingsBuilder<T extends ChartSettingsBuilder> extends AbstractDisplayerSettingsBuilder<T> implements ChartSettingsBuilder<T> {
 
@@ -34,6 +35,17 @@ public abstract class AbstractChartSettingsBuilder<T extends ChartSettingsBuilde
         displayerSettings.setChartMarginBottom(bottom);
         displayerSettings.setChartMarginLeft(left);
         displayerSettings.setChartMarginRight(right);
+        return (T) this;
+    }
+
+    public T legendOff() {
+        displayerSettings.setChartShowLegend(false);
+        return (T) this;
+    }
+
+    public T legendOn(String position) {
+        displayerSettings.setChartShowLegend(true);
+        displayerSettings.setChartLegendPosition(Position.getByName(position));
         return (T) this;
     }
 }

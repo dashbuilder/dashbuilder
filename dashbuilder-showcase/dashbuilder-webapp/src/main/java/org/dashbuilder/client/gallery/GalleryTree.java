@@ -494,7 +494,7 @@ public class GalleryTree {
                                 "        \"height\": \"300\",\n" +
                                 "        \"legend\": {\n" +
                                 "            \"show\": \"true\",\n" +
-                                "            \"position\": \"POSITION_RIGHT\"\n" +
+                                "            \"position\": \"RIGHT\"\n" +
                                 "        }\n" +
                                 "    },\n" +
                                 "    \"type\": \"BARCHART\",\n" +
@@ -570,7 +570,7 @@ public class GalleryTree {
                                 "        \"height\": \"300\",\n" +
                                 "        \"legend\": {\n" +
                                 "            \"show\": \"true\",\n" +
-                                "            \"position\": \"POSITION_RIGHT\"\n" +
+                                "            \"position\": \"RIGHT\"\n" +
                                 "        }\n" +
                                 "    },\n" +
                                 "    \"type\": \"BARCHART\",\n" +
@@ -655,7 +655,7 @@ public class GalleryTree {
                                 "        \"height\": \"600\",\n" +
                                 "        \"legend\": {\n" +
                                 "            \"show\": \"true\",\n" +
-                                "            \"position\": \"POSITION_RIGHT\"\n" +
+                                "            \"position\": \"RIGHT\"\n" +
                                 "        }\n" +
                                 "    },\n" +
                                 "    \"type\": \"BARCHART\",\n" +
@@ -752,7 +752,7 @@ public class GalleryTree {
                                 "        \"height\": \"300\",\n" +
                                 "        \"legend\": {\n" +
                                 "            \"show\": \"true\",\n" +
-                                "            \"position\": \"POSITION_RIGHT\"\n" +
+                                "            \"position\": \"RIGHT\"\n" +
                                 "        }\n" +
                                 "    },\n" +
                                 "    \"type\": \"PIECHART\",\n" +
@@ -818,7 +818,7 @@ public class GalleryTree {
                                 "        \"height\": \"300\",\n" +
                                 "        \"legend\": {\n" +
                                 "            \"show\": \"true\",\n" +
-                                "            \"position\": \"POSITION_RIGHT\"\n" +
+                                "            \"position\": \"RIGHT\"\n" +
                                 "        }\n" +
                                 "    },\n" +
                                 "    \"type\": \"PIECHART\",\n" +
@@ -923,7 +923,7 @@ public class GalleryTree {
                                 "        \"height\": \"300\",\n" +
                                 "        \"legend\": {\n" +
                                 "            \"show\": \"true\",\n" +
-                                "            \"position\": \"POSITION_RIGHT\"\n" +
+                                "            \"position\": \"RIGHT\"\n" +
                                 "        }\n" +
                                 "    },\n" +
                                 "    \"type\": \"LINECHART\",\n" +
@@ -1006,7 +1006,7 @@ public class GalleryTree {
                                 "        \"height\": \"300\",\n" +
                                 "        \"legend\": {\n" +
                                 "            \"show\": \"true\",\n" +
-                                "            \"position\": \"POSITION_RIGHT\"\n" +
+                                "            \"position\": \"RIGHT\"\n" +
                                 "        }\n" +
                                 "    },\n" +
                                 "    \"type\": \"LINECHART\",\n" +
@@ -1104,7 +1104,7 @@ public class GalleryTree {
                                 "        \"height\": \"300\",\n" +
                                 "        \"legend\": {\n" +
                                 "            \"show\": \"true\",\n" +
-                                "            \"position\": \"POSITION_RIGHT\"\n" +
+                                "            \"position\": \"RIGHT\"\n" +
                                 "        }\n" +
                                 "    },\n" +
                                 "    \"type\": \"LINECHART\",\n" +
@@ -1178,7 +1178,7 @@ public class GalleryTree {
                                 "        \"height\": \"300\",\n" +
                                 "        \"legend\": {\n" +
                                 "            \"show\": \"true\",\n" +
-                                "            \"position\": \"POSITION_RIGHT\"\n" +
+                                "            \"position\": \"RIGHT\"\n" +
                                 "        }\n" +
                                 "    },\n" +
                                 "    \"type\": \"AREACHART\",\n" +
@@ -1252,7 +1252,7 @@ public class GalleryTree {
                                 "        \"height\": \"300\",\n" +
                                 "        \"legend\": {\n" +
                                 "            \"show\": \"true\",\n" +
-                                "            \"position\": \"POSITION_RIGHT\"\n" +
+                                "            \"position\": \"RIGHT\"\n" +
                                 "        }\n" +
                                 "    },\n" +
                                 "    \"type\": \"AREACHART\",\n" +
@@ -1326,7 +1326,7 @@ public class GalleryTree {
                                 "        \"height\": \"300\",\n" +
                                 "        \"legend\": {\n" +
                                 "            \"show\": \"true\",\n" +
-                                "            \"position\": \"POSITION_RIGHT\"\n" +
+                                "            \"position\": \"RIGHT\"\n" +
                                 "        }\n" +
                                 "    },\n" +
                                 "    \"type\": \"AREACHART\",\n" +
@@ -1417,7 +1417,7 @@ public class GalleryTree {
                                 "        \"height\": \"400\",\n" +
                                 "        \"legend\": {\n" +
                                 "            \"show\": \"true\",\n" +
-                                "            \"position\": \"POSITION_RIGHT\"\n" +
+                                "            \"position\": \"RIGHT\"\n" +
                                 "        }\n" +
                                 "    },\n" +
                                 "    \"type\": \"BUBBLECHART\",\n" +

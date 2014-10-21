@@ -35,11 +35,11 @@ public abstract class AbstractGoogleChartDisplayer extends GoogleDisplayer {
     protected String getLegendPosition( DisplayerSettings displayerSettings ) {
         if ( !displayerSettings.isChartShowLegend() ) return LegendPosition.NONE.toString().toLowerCase();
         switch ( displayerSettings.getChartLegendPosition() ) {
-            case POSITION_TOP: return LegendPosition.TOP.toString().toLowerCase();
-            case POSITION_BOTTOM: return LegendPosition.BOTTOM.toString().toLowerCase();
-            case POSITION_RIGHT: return LegendPosition.RIGHT.toString().toLowerCase();
-            case POSITION_IN: return LegendPosition.IN.toString().toLowerCase();
-            case POSITION_LEFT: return "left";
+            case TOP: return LegendPosition.TOP.toString().toLowerCase();
+            case BOTTOM: return LegendPosition.BOTTOM.toString().toLowerCase();
+            case RIGHT: return LegendPosition.RIGHT.toString().toLowerCase();
+            case IN: return LegendPosition.IN.toString().toLowerCase();
+            case LEFT: return "left";
             default: return LegendPosition.RIGHT.toString().toLowerCase();
         }
     }

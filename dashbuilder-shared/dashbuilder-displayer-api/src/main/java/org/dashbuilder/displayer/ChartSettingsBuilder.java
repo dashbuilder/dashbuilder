@@ -43,4 +43,17 @@ public interface ChartSettingsBuilder<T extends ChartSettingsBuilder> extends Di
      * @return The DisplayerSettingsBuilder instance that is being used to configure a Chart data displayer.
      */
     T margins(int top, int bottom, int left, int right);
+
+    /**
+     * Hides off the char legend.
+     * @return The DisplayerSettingsBuilder instance that is being used to configure a Chart data displayer.
+     */
+    T legendOff();
+
+    /**
+     * Turns on the char legend display.
+     * @param position The display position.
+     * @return The DisplayerSettingsBuilder instance that is being used to configure a Chart data displayer.
+     */
+    T legendOn(String position);
 }

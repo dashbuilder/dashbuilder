@@ -60,7 +60,7 @@ public class DisplayerSettings {
         settings.put( getSettingPath( DisplayerAttributeDef.CHART_MARGIN_LEFT ), "80" );
         settings.put( getSettingPath( DisplayerAttributeDef.CHART_MARGIN_RIGHT ), "80" );
         settings.put( getSettingPath( DisplayerAttributeDef.CHART_SHOWLEGEND ), _true );
-        settings.put( getSettingPath( DisplayerAttributeDef.CHART_LEGENDPOSITION ), "POSITION_RIGHT" );
+        settings.put( getSettingPath( DisplayerAttributeDef.CHART_LEGENDPOSITION ), Position.RIGHT.toString() );
         settings.put( getSettingPath( DisplayerAttributeDef.TABLE_PAGESIZE ), "20" );
         settings.put( getSettingPath( DisplayerAttributeDef.TABLE_WIDTH ), "0" );
         settings.put( getSettingPath( DisplayerAttributeDef.TABLE_SORTENABLED ), _true );

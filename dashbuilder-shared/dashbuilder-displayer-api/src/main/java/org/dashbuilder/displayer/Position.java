@@ -20,11 +20,11 @@ package org.dashbuilder.displayer;
  */
 public enum Position {
 
-    POSITION_BOTTOM,
-    POSITION_TOP,
-    POSITION_LEFT,
-    POSITION_RIGHT,
-    POSITION_IN;
+    BOTTOM,
+    TOP,
+    LEFT,
+    RIGHT,
+    IN;
 
     public static Position getByName(String str) {
         return valueOf(str.toUpperCase());
