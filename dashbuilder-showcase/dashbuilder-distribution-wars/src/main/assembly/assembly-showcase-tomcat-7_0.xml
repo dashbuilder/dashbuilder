@@ -49,6 +49,8 @@
           <exclude>WEB-INF/lib/uberfire-workbench-*.jar</exclude>
           <exclude>WEB-INF/lib/uberfire-widgets-commons-*.jar</exclude>
 
+          <!-- KIE Client Related -->
+          <exclude>WEB-INF/lib/kie-uberfire-perspective-editor-client-*.jar</exclude>
 
           <!-- GWT Client Related -->
           <exclude>WEB-INF/lib/gwt-user-*.jar</exclude>
