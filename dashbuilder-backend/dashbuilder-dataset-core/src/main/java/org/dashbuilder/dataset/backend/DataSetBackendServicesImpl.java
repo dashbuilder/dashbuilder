@@ -15,30 +15,31 @@
  */
 package org.dashbuilder.dataset.backend;
 
+import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.servlet.ServletContext;
 
-import org.dashbuilder.dataset.DataSetManager;
+import org.dashbuilder.dataset.DataSetBackendServices;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetLookup;
 import org.dashbuilder.dataset.DataSetMetadata;
-import org.dashbuilder.dataset.DataSetLookupService;
-import org.dashbuilder.dataset.backend.BackendDataSetManager;
+import org.dashbuilder.dataset.def.DataSetDef;
+import org.dashbuilder.dataset.def.DataSetDefRegistry;
 import org.jboss.errai.bus.server.annotations.Service;
 import org.jboss.errai.bus.server.api.RpcContext;
 
 /**
- * Data set lookup service implementation
+ * Data set backend services implementation
  */
 @ApplicationScoped
 @Service
-public class DataSetLookupServiceImpl implements DataSetLookupService {
+public class DataSetBackendServicesImpl implements DataSetBackendServices {
 
     @Inject BackendDataSetManager dataSetManager;
     @Inject DataSetDefDeployer dataSetDefDeployer;
+    @Inject DataSetDefRegistry dataSetDefRegistry;
 
     @PostConstruct
     private void init() {
@@ -52,18 +53,15 @@ public class DataSetLookupServiceImpl implements DataSetLookupService {
         }
     }
 
-    /**
-     * Apply a sequence of operations (filter, sort, group, ...) on a remote and get the resulting data set.
-     */
     public DataSet lookupDataSet(DataSetLookup lookup) throws Exception {
         return dataSetManager.lookupDataSet(lookup);
     }
 
-    /**
-     * Same as lookupDataSet but only retrieves the metadata of the resulting data set.
-     * @return A DataSetMetadata instance containing general information about the data set.
-     */
     public DataSetMetadata lookupDataSetMetadata(DataSetLookup lookup) throws Exception {
         return dataSetManager.lookupDataSetMetadata(lookup);
+    }
+
+    public List<DataSetDef> getSharedDataSetDefs() {
+        return dataSetDefRegistry.getSharedDataSetDefs();
     }
 }

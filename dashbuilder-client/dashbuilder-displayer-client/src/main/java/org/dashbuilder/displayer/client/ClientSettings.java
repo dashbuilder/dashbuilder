@@ -18,10 +18,8 @@ package org.dashbuilder.displayer.client;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
-import org.dashbuilder.dataset.client.DataSetLookupClient;
-import org.dashbuilder.dataset.DataSetLookupService;
+import org.dashbuilder.dataset.client.DataSetClientServices;
 import org.dashbuilder.displayer.DisplayerType;
-import org.jboss.errai.common.client.api.Caller;
 
 /**
  * This class provides some methods for defining the behaviour of the Dashbuilder client layer
@@ -30,23 +28,14 @@ import org.jboss.errai.common.client.api.Caller;
 public class ClientSettings {
 
     @Inject RendererLibLocator rendererLibLocator;
-    @Inject DataSetLookupClient dataSetLookupClient;
-    @Inject Caller<DataSetLookupService> dataSetLookupService;
+    @Inject DataSetClientServices dataSetClientServices;
 
     /**
-     * By default Dashbuilder is configured to work only on client mode. We must turn on the backend layer to be
-     * able to query any data set stored on the server.
+     * Turns off the ability to push data sets from server (is enabled by default). Push is very useful when dealing
+     * with small size data sets as the performance of any lookup request is much faster on client.
      */
-    public void turnOnBackend() {
-        dataSetLookupClient.setLookupService(dataSetLookupService);
-    }
-
-    /**
-     * Turns on the ability to push data sets from server. This is very useful when dealing with small size data
-     * sets as the performance of any lookup request is much faster on client.
-     */
-    public void turnOnDataSetPush() {
-        dataSetLookupClient.setPushRemoteDataSetEnabled( true );
+    public void turnOffDataSetPush() {
+        dataSetClientServices.setPushRemoteDataSetEnabled(false);
     }
 
     /**

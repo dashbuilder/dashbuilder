@@ -26,9 +26,9 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
 import org.dashbuilder.dataset.DataSet;
+import org.dashbuilder.dataset.DataSetBackendServices;
 import org.dashbuilder.dataset.DataSetLookup;
 import org.dashbuilder.dataset.DataSetMetadata;
-import org.dashbuilder.dataset.DataSetLookupService;
 import org.dashbuilder.dataset.def.DataSetDef;
 import org.dashbuilder.dataset.events.DataSetBackendRegisteredEvent;
 import org.dashbuilder.dataset.events.DataSetDefModifiedEvent;
@@ -43,15 +43,15 @@ import org.jboss.errai.ioc.client.container.IOCBeanDef;
 import static org.uberfire.commons.validation.PortablePreconditions.checkNotNull;
 
 /**
- * Proxy interface to the list of available DataSetManager implementations.
- * It hides to client widgets where the data sets are stored and how they are fetched and processed.
+ * Data set services for clients.
+ * <p>It hides to client widgets where the data sets are stored and how they are fetched and processed.</p>
  */
 @ApplicationScoped
-public class DataSetLookupClient {
+public class DataSetClientServices {
 
-    public static DataSetLookupClient get() {
-        Collection<IOCBeanDef<DataSetLookupClient>> beans = IOC.getBeanManager().lookupBeans(DataSetLookupClient.class);
-        IOCBeanDef<DataSetLookupClient> beanDef = beans.iterator().next();
+    public static DataSetClientServices get() {
+        Collection<IOCBeanDef<DataSetClientServices>> beans = IOC.getBeanManager().lookupBeans(DataSetClientServices.class);
+        IOCBeanDef<DataSetClientServices> beanDef = beans.iterator().next();
         return beanDef.getInstance();
     }
 
@@ -70,7 +70,8 @@ public class DataSetLookupClient {
     /**
      * The service caller used to lookup data sets from the backend.
      */
-    private Caller<DataSetLookupService> dataSetLookupService = null;
+    @Inject
+    private Caller<DataSetBackendServices> dataSetBackendServices;
 
     /**
      * A cache of DataSetMetadata instances
@@ -80,7 +81,7 @@ public class DataSetLookupClient {
     /**
      * If enabled then remote data set can be pushed to clients.
      */
-    private boolean pushRemoteDataSetEnabled = false;
+    private boolean pushRemoteDataSetEnabled = true;
 
     /**
      * It holds a set of data set push requests in progress.
@@ -99,14 +100,6 @@ public class DataSetLookupClient {
     }
 
     /**
-     * The DataSetLookupService instance is disabled by default.
-     * Those client modules interested in activate the data set backend should set an instance.
-     */
-    public void setLookupService(Caller<DataSetLookupService> dataSetLookupService) {
-        this.dataSetLookupService = dataSetLookupService;
-    }
-
-    /**
      * Fetch the metadata instance for the specified data set.
      *
      * @param request The data set lookup request
@@ -117,11 +110,11 @@ public class DataSetLookupClient {
         if (metadata != null) {
             listener.callback(metadata);
         }
-        else if (dataSetLookupService != null) {
+        else if (dataSetBackendServices != null) {
             if (remoteMetadataMap.containsKey(request)) {
                 listener.callback(remoteMetadataMap.get(request));
             } else {
-                dataSetLookupService.call(
+                dataSetBackendServices.call(
                     new RemoteCallback<DataSetMetadata>() {
                     public void callback(DataSetMetadata result) {
                         if (result == null) listener.notFound();
@@ -151,7 +144,7 @@ public class DataSetLookupClient {
             listener.callback(dataSet);
         }
         // If the data set is not in client, then look up remotely (only if the remote access is available).
-        else if (dataSetLookupService != null) {
+        else if (dataSetBackendServices != null) {
 
             // First of all, get the target data set estimated size.
             final DataSetLookup lookupSourceDataSet = new DataSetLookup(request.getDataSetUUID());
@@ -196,7 +189,7 @@ public class DataSetLookupClient {
 
     private void _lookupDataSet(DataSetLookup request, final DataSetReadyCallback listener) {
         try {
-            dataSetLookupService.call(
+            dataSetBackendServices.call(
                 new RemoteCallback<DataSet>() {
                     public void callback(DataSet result) {
                         if (result == null) listener.notFound();
@@ -206,6 +199,16 @@ public class DataSetLookupClient {
             throw new RuntimeException(e);
         }
     }
+
+    public void getRemoteSharedDataSetDefs(RemoteCallback<List<DataSetDef>> callback) {
+        try {
+            dataSetBackendServices.call(callback).getSharedDataSetDefs();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    // Classes for the handling of concurrent lookup requests over any push-able data set
 
     private class DataSetPushHandler implements DataSetReadyCallback {
 

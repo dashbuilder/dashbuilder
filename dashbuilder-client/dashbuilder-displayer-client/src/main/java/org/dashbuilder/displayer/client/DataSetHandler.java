@@ -15,6 +15,7 @@
  */
 package org.dashbuilder.displayer.client;
 
+import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.client.DataSetReadyCallback;
 import org.dashbuilder.dataset.group.DataSetGroup;
 import org.dashbuilder.dataset.sort.DataSetSort;
@@ -91,4 +92,9 @@ public interface DataSetHandler {
      * @param callback The callback interface that is invoked right after the data is available.
      */
     void lookupDataSet(DataSetReadyCallback callback) throws Exception;
+
+    /**
+     * Get the data set get on the last lookup call (if any)
+     */
+    DataSet getLastDataSet();
 }

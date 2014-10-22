@@ -58,13 +58,8 @@ public class ShowcaseEntryPoint {
     @Inject
     private PlaceManager placeManager;
 
-    @Inject
-    private ClientSettings clientSettings;
-
     @PostConstruct
     public void startApp() {
-        clientSettings.turnOnBackend();
-        clientSettings.turnOnDataSetPush();
         hideLoadingPopup();
     }
 

@@ -21,8 +21,9 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
 
+import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetOp;
-import org.dashbuilder.dataset.client.DataSetLookupClient;
+import org.dashbuilder.dataset.client.DataSetClientServices;
 import org.dashbuilder.dataset.client.DataSetReadyCallback;
 import org.dashbuilder.dataset.DataSetLookup;
 import org.dashbuilder.dataset.DataSetOpType;
@@ -33,13 +34,18 @@ import org.dashbuilder.dataset.sort.DataSetSort;
 
 public class DataSetHandlerImpl implements DataSetHandler {
 
-    protected DataSetLookupClient dataSetLookupClient = DataSetLookupClient.get();
+    protected DataSetClientServices dataSetLookupClient = DataSetClientServices.get();
     protected DataSetLookup lookupBase;
     protected DataSetLookup lookupCurrent;
+    protected DataSet lastLookedUpDataSet;
 
     public DataSetHandlerImpl(DataSetLookup lookup) {
         this.lookupBase = lookup;
         this.lookupCurrent = lookup.cloneInstance();
+    }
+
+    public DataSet getLastDataSet() {
+        return lastLookedUpDataSet;
     }
 
     public void resetAllOperations() {
@@ -127,8 +133,16 @@ public class DataSetHandlerImpl implements DataSetHandler {
         return n > 0;
     }
 
-    public void lookupDataSet(DataSetReadyCallback callback) throws Exception {
-        dataSetLookupClient.lookupDataSet(lookupCurrent, callback);
+    public void lookupDataSet(final DataSetReadyCallback callback) throws Exception {
+        dataSetLookupClient.lookupDataSet(lookupCurrent, new DataSetReadyCallback() {
+            public void callback(DataSet dataSet) {
+                lastLookedUpDataSet = dataSet;
+                callback.callback(dataSet);
+            }
+            public void notFound() {
+                callback.notFound();
+            }
+        });
     }
 
 

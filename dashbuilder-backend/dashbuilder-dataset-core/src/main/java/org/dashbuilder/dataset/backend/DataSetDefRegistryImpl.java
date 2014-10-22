@@ -27,6 +27,7 @@ import org.dashbuilder.dataset.def.DataSetDef;
 import org.dashbuilder.dataset.def.DataSetDefRegistry;
 import org.dashbuilder.dataset.events.DataSetDefModifiedEvent;
 import org.dashbuilder.dataset.events.DataSetDefRegisteredEvent;
+import org.jboss.errai.bus.server.annotations.Service;
 
 /**
  * Data set definitions backend registry

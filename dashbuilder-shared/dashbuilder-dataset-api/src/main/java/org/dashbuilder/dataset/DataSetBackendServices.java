@@ -15,16 +15,19 @@
  */
 package org.dashbuilder.dataset;
 
+import java.util.List;
+
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetLookup;
 import org.dashbuilder.dataset.DataSetMetadata;
+import org.dashbuilder.dataset.def.DataSetDef;
 import org.jboss.errai.bus.server.annotations.Remote;
 
 /**
- * Data set lookup service
+ * Data set backend services
  */
 @Remote
-public interface DataSetLookupService {
+public interface DataSetBackendServices {
 
     /**
      * Apply a sequence of operations (filter, sort, group, ...) on a remote data set.
@@ -39,4 +42,9 @@ public interface DataSetLookupService {
      * @return A DataSetMetadata instance containing general information about the data set.
      */
     DataSetMetadata lookupDataSetMetadata(DataSetLookup lookup) throws Exception;
+
+    /**
+     * Get those shareable data set definition (those with the shared flag set to true)
+     */
+    List<DataSetDef> getSharedDataSetDefs();
 }
