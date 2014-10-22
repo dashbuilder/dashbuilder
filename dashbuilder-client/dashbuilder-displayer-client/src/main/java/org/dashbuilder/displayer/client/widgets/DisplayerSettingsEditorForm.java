@@ -53,7 +53,7 @@ import org.dashbuilder.displayer.impl.DisplayerSettingsColumnImpl;
 
 public class DisplayerSettingsEditorForm extends Composite {
 
-    public interface Presenter {
+    public interface Listener {
         void displayerSettingsChanged(DisplayerSettings settings);
     }
 
@@ -159,7 +159,7 @@ public class DisplayerSettingsEditorForm extends Composite {
     @UiField
     FlexTable editorSettingsTable;
 
-    protected Presenter presenter;
+    protected Listener listener;
     protected DisplayerSettings displayerSettings;
     protected DisplayerEditorConfig displayerEditorConfig;
     private Set<DisplayerAttributeDef> supportedAttributes;
@@ -508,9 +508,9 @@ public class DisplayerSettingsEditorForm extends Composite {
         return displayerSettings;
     }
 
-    public void init(DisplayerSettings displayerSettings, Presenter presenter) {
+    public void init(DisplayerSettings displayerSettings, Listener listener) {
         this.displayerSettings = displayerSettings.cloneInstance();
-        this.presenter = presenter;
+        this.listener = listener;
 
         Displayer displayer = DisplayerHelper.lookupDisplayer(displayerSettings);
         this.displayerEditorConfig = displayer.getDisplayerEditorConfig();
@@ -752,8 +752,8 @@ public class DisplayerSettingsEditorForm extends Composite {
     }
 
     protected void notifyChanges() {
-        if (presenter != null) {
-            presenter.displayerSettingsChanged(displayerSettings);
+        if (listener != null) {
+            listener.displayerSettingsChanged(displayerSettings);
         }
     }
 

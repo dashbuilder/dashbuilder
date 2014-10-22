@@ -18,43 +18,64 @@ package org.dashbuilder.displayer.client.widgets;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
+import com.google.gwt.user.client.ui.IsWidget;
+import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.displayer.DisplayerSettings;
 import org.dashbuilder.displayer.DisplayerType;
 import org.dashbuilder.displayer.client.prototypes.DisplayerPrototypes;
 
 @Dependent
-public class DisplayerEditor implements
-        DisplayerTypeSelector.Presenter,
-        DisplayerSettingsEditorForm.Presenter {
+public class DisplayerEditor implements IsWidget,
+        DisplayerTypeSelector.Listener,
+        DataSetLookupEditor.Listener,
+        DisplayerSettingsEditorForm.Listener {
 
-    DisplayerEditorView view;
+    public interface Listener {
+        void onClose(DisplayerEditor editor);
+        void onSave(DisplayerEditor editor);
+    }
+
+    public interface View extends IsWidget {
+        void init(DisplayerEditor presenter);
+        void refreshDisplayer();
+        void disableTypeSelection();
+        void gotoTypeSelection();
+        void gotoDataSetConf();
+        void gotoDisplaySettings();
+    }
+
+    View view = null;
+    Listener listener = null;
+
     DisplayerPrototypes prototypes;
-
-    private DisplayerEditorListener editorListener = null;
-    private DisplayerSettings originalSettings = null;
-    private DisplayerSettings currentSettings = null;
-    private boolean brandNewDisplayer = true;
+    DisplayerSettings originalSettings = null;
+    DisplayerSettings currentSettings = null;
+    boolean brandNewDisplayer = true;
 
     public DisplayerEditor() {
         this.prototypes = DisplayerPrototypes.get();
         this.view = new DisplayerEditorView(
                 new DisplayerTypeSelector(),
+                new DataSetLookupEditor(),
                 new DisplayerSettingsEditorForm());
     }
 
     @Inject
     public DisplayerEditor(
-            DisplayerEditorView view,
+            View view,
             DisplayerPrototypes prototypes) {
 
         this.view = view;
         this.prototypes = prototypes;
     }
 
-    public void init(DisplayerSettings settings, DisplayerEditorListener editorListener) {
+    public Widget asWidget() {
+        return view.asWidget();
+    }
 
+    public void init(DisplayerSettings settings, Listener editorListener) {
         this.originalSettings = settings;
-        this.editorListener = editorListener;
+        this.listener = editorListener;
 
         if (settings != null) {
             brandNewDisplayer = false;
@@ -72,7 +93,7 @@ public class DisplayerEditor implements
 
     public void displayerSettingsChanged(DisplayerSettings settings) {
         currentSettings = settings;
-        view.showDisplayer();
+        view.refreshDisplayer();
     }
 
     public void changeDisplayerType(DisplayerType type) {
@@ -80,7 +101,7 @@ public class DisplayerEditor implements
         currentSettings = prototypes.getProto(type).cloneInstance();
 
         // Show the new displayer
-        view.showDisplayer();
+        view.refreshDisplayer();
     }
 
     public boolean isEditing(DisplayerSettings settings) {
@@ -95,7 +116,7 @@ public class DisplayerEditor implements
         return brandNewDisplayer;
     }
 
-    public DisplayerEditorView getView() {
+    public View getView() {
         return view;
     }
 
@@ -108,14 +129,14 @@ public class DisplayerEditor implements
     }
 
     public void save() {
-        if (editorListener != null) {
-            editorListener.onDisplayerSaved(this);
+        if (listener != null) {
+            listener.onSave(this);
         }
     }
 
     public void close() {
-        if (editorListener != null) {
-            editorListener.onEditorClosed(this);
+        if (listener != null) {
+            listener.onClose(this);
         }
     }
 }

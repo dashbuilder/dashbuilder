@@ -31,7 +31,7 @@ import org.dashbuilder.displayer.DisplayerType;
 @Dependent
 public class DisplayerTypeSelector extends Composite {
 
-    public interface Presenter {
+    public interface Listener {
         void changeDisplayerType(DisplayerType type);
     }
 
@@ -45,7 +45,7 @@ public class DisplayerTypeSelector extends Composite {
         initWidget(uiBinder.createAndBindUi(this));
     }
 
-    Presenter presenter = null;
+    Listener listener = null;
     DisplayerType selectedType = DisplayerType.BARCHART;
 
     @UiField
@@ -54,15 +54,15 @@ public class DisplayerTypeSelector extends Composite {
     @UiField
     Tab optionBar;
 
-    public void init(Presenter presenter) {
-        this.presenter = presenter;
+    public void init(Listener listener) {
+        this.listener = listener;
     }
 
     public void select(DisplayerType type) {
         boolean change = !selectedType.equals(type);
         selectedType = type;
-        if (change && presenter != null) {
-            presenter.changeDisplayerType(type);
+        if (change && listener != null) {
+            listener.changeDisplayerType(type);
         }
     }
 

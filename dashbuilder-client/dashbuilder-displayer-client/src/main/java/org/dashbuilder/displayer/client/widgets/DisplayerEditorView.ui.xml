@@ -29,7 +29,15 @@
     </b:TabPanel>
     <g:HorizontalPanel>
         <g:SimplePanel ui:field="leftPanel" />
-        <g:SimplePanel ui:field="centerPanel" />
+        <g:VerticalPanel>
+          <g:SimplePanel>
+            <b:ButtonGroup toggle="radio">
+              <b:Button ui:field="graphMode" active="true">Graph</b:Button>
+              <b:Button ui:field="dataMode">Data</b:Button>
+            </b:ButtonGroup>
+          </g:SimplePanel>
+          <g:SimplePanel ui:field="centerPanel" addStyleNames="table-bordered"/>
+        </g:VerticalPanel>
     </g:HorizontalPanel>
   </g:HTMLPanel>
 </ui:UiBinder>

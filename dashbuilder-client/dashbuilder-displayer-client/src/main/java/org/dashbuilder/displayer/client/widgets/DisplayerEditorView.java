@@ -18,6 +18,8 @@ package org.dashbuilder.displayer.client.widgets;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
+import com.github.gwtbootstrap.client.ui.Button;
+import com.github.gwtbootstrap.client.ui.ButtonGroup;
 import com.github.gwtbootstrap.client.ui.Tab;
 import com.github.gwtbootstrap.client.ui.TabPanel;
 import com.github.gwtbootstrap.client.ui.constants.VisibilityChange;
@@ -27,15 +29,20 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
+import org.dashbuilder.dataset.DataSet;
+import org.dashbuilder.dataset.DataSetLookup;
+import org.dashbuilder.displayer.DisplayerSettings;
+import org.dashbuilder.displayer.DisplayerSettingsFactory;
+import org.dashbuilder.displayer.DisplayerType;
 import org.dashbuilder.displayer.client.Displayer;
 import org.dashbuilder.displayer.client.DisplayerHelper;
 import org.dashbuilder.displayer.client.DisplayerLocator;
 
 @Dependent
-public class DisplayerEditorView extends Composite {
+public class DisplayerEditorView extends Composite
+        implements DisplayerEditor.View {
 
     interface Binder extends UiBinder<Widget, DisplayerEditorView> {}
     private static Binder uiBinder = GWT.create(Binder.class);
@@ -46,18 +53,17 @@ public class DisplayerEditorView extends Composite {
 
     @Inject
     public DisplayerEditorView(DisplayerTypeSelector displayerTypeSelector,
+            DataSetLookupEditor lookupEditor,
             DisplayerSettingsEditorForm settingsEditor) {
         this();
         this.typeSelector = displayerTypeSelector;
+        this.lookupEditor = lookupEditor;
         this.settingsEditor = settingsEditor;
     }
 
     DisplayerEditor presenter;
-
-    @Inject
     DisplayerTypeSelector typeSelector;
-
-    @Inject
+    DataSetLookupEditor lookupEditor;
     DisplayerSettingsEditorForm settingsEditor;
 
     @UiField
@@ -78,15 +84,30 @@ public class DisplayerEditorView extends Composite {
     @UiField
     Tab optionSettings;
 
+    @UiField
+    Button graphMode;
+
+    @UiField
+    Button dataMode;
+
     public void init(DisplayerEditor presenter) {
         this.presenter = presenter;
+        refreshDisplayer();
     }
 
-    public void showDisplayer() {
-        Displayer displayer = DisplayerLocator.get().lookupDisplayer(presenter.getCurrentSettings());
-        DisplayerHelper.draw(displayer);
+    public void refreshDisplayer() {
+        Displayer displayer = null;
+        if (graphMode.isActive()) {
+            displayer = DisplayerLocator.get().lookupDisplayer(presenter.getCurrentSettings());
+        } else {
+            DisplayerSettings tableSettings = presenter.getCurrentSettings().cloneInstance();
+            tableSettings.setType(DisplayerType.TABLE);
+            displayer = DisplayerLocator.get().lookupDisplayer(tableSettings);
+        }
+
         centerPanel.clear();
         centerPanel.add(displayer);
+        DisplayerHelper.draw(displayer);
     }
 
     public void disableTypeSelection() {
@@ -100,15 +121,21 @@ public class DisplayerEditorView extends Composite {
         typeSelector.select(presenter.getCurrentSettings().getType());
         leftPanel.clear();
         leftPanel.add(typeSelector);
-
-        showDisplayer();
     }
 
     public void gotoDataSetConf() {
         optionsPanel.selectTab(1);
 
+        DataSet dataSet = presenter.getCurrentSettings().getDataSet();
+        DataSetLookup dataSetLookup = presenter.getCurrentSettings().getDataSetLookup();
+        if (dataSet != null) {
+            lookupEditor.init(dataSet, presenter);
+        } else {
+            lookupEditor.init(dataSetLookup, presenter);
+        }
+
         leftPanel.clear();
-        showDisplayer();
+        leftPanel.add(lookupEditor.getView());
     }
 
     public void gotoDisplaySettings() {
@@ -118,13 +145,21 @@ public class DisplayerEditorView extends Composite {
         settingsEditor.init(presenter.getCurrentSettings(), presenter);
         leftPanel.clear();
         leftPanel.add(settingsEditor);
-
-        showDisplayer();
     }
 
     @UiHandler(value = "optionType")
     public void onTypeSelected(ClickEvent clickEvent) {
         gotoTypeSelection();
+    }
+
+    @UiHandler(value = "graphMode")
+    public void onGraphModeSelected(ClickEvent clickEvent) {
+        refreshDisplayer();
+    }
+
+    @UiHandler(value = "dataMode")
+    public void onDataModeSelected(ClickEvent clickEvent) {
+        refreshDisplayer();
     }
 
     @UiHandler(value = "optionData")

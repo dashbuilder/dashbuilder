@@ -16,9 +16,8 @@
 package org.dashbuilder.displayer.client.widgets;
 
 import javax.enterprise.context.Dependent;
-import javax.inject.Inject;
 
-import com.github.gwtbootstrap.client.ui.Modal;
+import com.github.gwtbootstrap.client.ui.Label;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -26,46 +25,35 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
-import org.dashbuilder.displayer.DisplayerSettings;
 
 @Dependent
-public class DisplayerEditorPopup extends Composite {
+public class DataSetLookupEditorView extends Composite
+        implements DataSetLookupEditor.View {
 
-    interface Binder extends UiBinder<Widget, DisplayerEditorPopup> {}
+    interface Binder extends UiBinder<Widget, DataSetLookupEditorView> {}
     private static Binder uiBinder = GWT.create(Binder.class);
 
-    @UiField
-    Modal popup;
-
-    @UiField(provided = true)
-    DisplayerEditor editor;
-
-    public DisplayerEditorPopup() {
-        this(new DisplayerEditor());
-    }
-
-    @Inject
-    public DisplayerEditorPopup(DisplayerEditor editor) {
-        this.editor = editor;
+    public DataSetLookupEditorView() {
         initWidget(uiBinder.createAndBindUi(this));
     }
 
-    public void init(DisplayerSettings settings, DisplayerEditor.Listener editorListener) {
-        editor.init(settings, editorListener);
-        popup.setTitle("Displayer Editor");
-        if (editor.isBrandNewDisplayer()) popup.setTitle("New Displayer");
-        popup.show();
+    DataSetLookupEditor presenter;
+
+    @UiField
+    Label label;
+
+    @Override
+    public void init(DataSetLookupEditor presenter) {
+        this.presenter = presenter;
     }
 
-    @UiHandler("close")
-    void close(final ClickEvent event) {
-        popup.hide();
-        editor.close();
+    @Override
+    public void notFound() {
+        label.setText("NOT FOUND");
     }
 
-    @UiHandler("save")
-    void save(final ClickEvent event) {
-        popup.hide();
-        editor.save();
+    @Override
+    public void error(Exception e) {
+        label.setText("ERROR");
     }
 }

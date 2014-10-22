@@ -28,28 +28,17 @@ import org.dashbuilder.common.client.StringUtils;
 import org.dashbuilder.displayer.DisplayerSettings;
 import org.dashbuilder.displayer.client.json.DisplayerSettingsJSONMarshaller;
 import org.dashbuilder.displayer.client.widgets.DisplayerEditor;
-import org.dashbuilder.displayer.client.widgets.DisplayerEditorListener;
 import org.dashbuilder.displayer.client.widgets.DisplayerEditorPopup;
 import org.dashbuilder.displayer.client.widgets.DisplayerView;
-import org.dashbuilder.displayer.events.DisplayerEditedEvent;
-import org.dashbuilder.displayer.events.DisplayerClosedEvent;
-import org.dashbuilder.displayer.events.DisplayerOnFocusEvent;
-import org.dashbuilder.displayer.events.DisplayerUpdatedEvent;
 import org.uberfire.client.annotations.WorkbenchMenu;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
 import org.uberfire.client.annotations.WorkbenchPartView;
 import org.uberfire.client.annotations.WorkbenchScreen;
-import org.uberfire.client.mvp.PlaceManager;
-import org.uberfire.lifecycle.OnClose;
-import org.uberfire.lifecycle.OnFocus;
 import org.uberfire.lifecycle.OnStartup;
 import org.uberfire.mvp.Command;
 import org.uberfire.mvp.PlaceRequest;
-import org.uberfire.mvp.impl.DefaultPlaceRequest;
 import org.uberfire.workbench.model.menu.MenuFactory;
 import org.uberfire.workbench.model.menu.Menus;
-
-import static org.uberfire.commons.validation.PortablePreconditions.checkNotNull;
 
 @WorkbenchScreen(identifier = "DisplayerScreen")
 @Dependent
@@ -117,12 +106,12 @@ public class DisplayerScreenPresenter {
         return new Command() {
             public void execute() {
                 DisplayerEditorPopup displayerEditor =  new DisplayerEditorPopup();
-                displayerEditor.init(displayerSettings, new DisplayerEditorListener() {
+                displayerEditor.init(displayerSettings, new DisplayerEditor.Listener() {
 
-                    public void onEditorClosed(DisplayerEditor editor) {
+                    public void onClose(DisplayerEditor editor) {
                     }
 
-                    public void onDisplayerSaved(DisplayerEditor editor) {
+                    public void onSave(DisplayerEditor editor) {
                         updateDisplayer(editor.getCurrentSettings());
                     }
                 });

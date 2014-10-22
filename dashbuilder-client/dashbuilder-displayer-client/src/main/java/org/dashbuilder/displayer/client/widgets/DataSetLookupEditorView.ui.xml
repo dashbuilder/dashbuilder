@@ -17,25 +17,11 @@
   -->
 
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
-<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-             xmlns:g="urn:import:com.google.gwt.user.client.ui"
-             xmlns:b="urn:import:com.github.gwtbootstrap.client.ui"
-             xmlns:dashb="urn:import:org.dashbuilder.displayer.client.widgets">
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+             xmlns:g='urn:import:com.google.gwt.user.client.ui'
+             xmlns:b="urn:import:com.github.gwtbootstrap.client.ui">
 
   <g:HTMLPanel>
-    <b:Modal ui:field="popup" backdrop="STATIC" width="800px" keyboard="true" animation="true">
-
-      <dashb:DisplayerEditor ui:field="editor" />
-
-      <b:ModalFooter>
-        <b:Button icon="SAVE" type="PRIMARY" ui:field="save">
-          Save
-        </b:Button>
-        <b:Button icon="EYE_CLOSE" type="PRIMARY" ui:field="close">
-          Close
-        </b:Button>
-      </b:ModalFooter>
-    </b:Modal>
+    <b:Label ui:field="label" />
   </g:HTMLPanel>
-
 </ui:UiBinder>

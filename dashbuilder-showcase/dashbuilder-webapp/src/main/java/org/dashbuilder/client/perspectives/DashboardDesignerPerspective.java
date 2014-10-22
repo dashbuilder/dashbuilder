@@ -27,9 +27,7 @@ import org.dashbuilder.displayer.DisplayerSettings;
 import org.dashbuilder.displayer.DisplayerSettingsFactory;
 import org.dashbuilder.displayer.client.json.DisplayerSettingsJSONMarshaller;
 import org.dashbuilder.displayer.client.widgets.DisplayerEditor;
-import org.dashbuilder.displayer.client.widgets.DisplayerEditorListener;
 import org.dashbuilder.displayer.client.widgets.DisplayerEditorPopup;
-import org.dashbuilder.displayer.events.DisplayerUpdatedEvent;
 import org.dashbuilder.renderer.table.client.TableRenderer;
 import org.uberfire.client.annotations.Perspective;
 import org.uberfire.client.annotations.WorkbenchMenu;
@@ -86,12 +84,12 @@ public class DashboardDesignerPerspective {
             public void execute() {
                 /* Displayer settings == null => Create a brand new displayer */
                 DisplayerEditorPopup displayerEditor = new DisplayerEditorPopup();
-                displayerEditor.init(null, new DisplayerEditorListener() {
+                displayerEditor.init(null, new DisplayerEditor.Listener() {
 
-                    public void onEditorClosed(DisplayerEditor editor) {
+                    public void onClose(DisplayerEditor editor) {
                     }
 
-                    public void onDisplayerSaved(DisplayerEditor editor) {
+                    public void onSave(DisplayerEditor editor) {
                         placeManager.goTo(createPlaceRequest(editor.getCurrentSettings()));
                     }
                 });
