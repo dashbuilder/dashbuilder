@@ -77,6 +77,18 @@
         <version>${version.org.kie}</version>
       </dependency>
 
+      <dependency>
+        <groupId>org.kie.uberfire</groupId>
+        <artifactId>kie-uberfire-apps-client</artifactId>
+        <version>${version.org.kie}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.kie.uberfire</groupId>
+        <artifactId>kie-uberfire-apps-backend</artifactId>
+        <version>${version.org.kie}</version>
+      </dependency>
+
       <!-- UberFire -->
       <dependency>
         <groupId>org.uberfire</groupId>

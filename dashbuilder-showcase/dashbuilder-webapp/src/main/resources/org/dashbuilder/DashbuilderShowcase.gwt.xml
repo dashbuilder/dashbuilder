@@ -5,6 +5,7 @@
   <inherits name="org.uberfire.UberfireClientAll"/>
 
   <inherits name="org.kie.uberfire.perspective.editor.PerspectiveEditorClient"/>
+  <inherits name="org.kie.uberfire.apps.UberfireAppsClient"/>
 
   <inherits name="org.dashbuilder.DashbuilderClientAll"/>
   <inherits name="org.dashbuilder.renderer.GChartsRenderer"/>

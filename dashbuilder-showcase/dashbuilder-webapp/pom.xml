@@ -52,6 +52,16 @@
       <artifactId>kie-uberfire-perspective-editor-backend</artifactId>
     </dependency>
 
+    <dependency>
+      <groupId>org.kie.uberfire</groupId>
+      <artifactId>kie-uberfire-apps-client</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.kie.uberfire</groupId>
+      <artifactId>kie-uberfire-apps-backend</artifactId>
+    </dependency>
+
     <!-- Log -->
     <dependency>
       <groupId>org.slf4j</groupId>
@@ -170,6 +180,7 @@
 
             <!-- KIE -->
             <compileSourcesArtifact>org.kie.uberfire:kie-uberfire-perspective-editor-client</compileSourcesArtifact>
+            <compileSourcesArtifact>org.kie.uberfire:kie-uberfire-apps-client</compileSourcesArtifact>
 
           </compileSourcesArtifacts>
           <runTarget>dashbuilder.html</runTarget>

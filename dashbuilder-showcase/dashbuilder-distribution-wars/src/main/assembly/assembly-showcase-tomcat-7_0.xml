@@ -51,6 +51,7 @@
 
           <!-- KIE Client Related -->
           <exclude>WEB-INF/lib/kie-uberfire-perspective-editor-client-*.jar</exclude>
+          <exclude>WEB-INF/lib/kie-uberfire-apps-client-*.jar</exclude>
 
           <!-- GWT Client Related -->
           <exclude>WEB-INF/lib/gwt-user-*.jar</exclude>
