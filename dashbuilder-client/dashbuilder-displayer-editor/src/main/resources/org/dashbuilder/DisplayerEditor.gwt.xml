@@ -7,6 +7,8 @@
 
   <inherits name='org.jboss.errai.ioc.Container'/>
 
+  <inherits name="org.kie.uberfire.perspective.editor.PerspectiveEditorClient"/>
+
   <source path='displayer'/>
 
 </module>

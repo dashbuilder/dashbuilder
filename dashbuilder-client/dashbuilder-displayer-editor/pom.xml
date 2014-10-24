@@ -73,6 +73,11 @@
       <artifactId>dashbuilder-displayer-screen</artifactId>
     </dependency>
 
+    <dependency>
+      <groupId>org.kie.uberfire</groupId>
+      <artifactId>kie-uberfire-perspective-editor-client</artifactId>
+    </dependency>
+
   </dependencies>
 
   <build>
