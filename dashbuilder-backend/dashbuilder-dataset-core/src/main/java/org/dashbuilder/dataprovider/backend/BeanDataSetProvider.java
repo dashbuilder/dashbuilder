@@ -49,10 +49,10 @@ public class BeanDataSetProvider implements DataSetProvider {
     }
 
     public DataSet lookupDataSet(DataSetDef def, DataSetLookup lookup) throws Exception {
-        // Look first into the static data set provider since CSV data set are statically registered once loaded.
+        // Look first into the static data set provider since BEAN data sets are statically registered once loaded.
         DataSet dataSet = staticDataSetProvider.lookupDataSet(def, null);
         if (dataSet == null) {
-            // If not exists or is outdated then load from the CSV file
+            // If not exists then invoke the BEAN generator class
             BeanDataSetDef beanDef = (BeanDataSetDef) def;
             Class generatorClass = Class.forName(beanDef.getGeneratorClass());
             DataSetGenerator dataSetGenerator = (DataSetGenerator) generatorClass.newInstance();
@@ -60,11 +60,11 @@ public class BeanDataSetProvider implements DataSetProvider {
             dataSet.setUUID(def.getUUID());
             dataSet.setDefinition(def);
 
-            // Make the data set static before return
+            // Register the data set before return
             staticDataSetProvider.registerDataSet(dataSet);
 
         }
-        // Always do the lookup on the statically registered data set.
+        // Always do the lookup over the static data set registry.
         return staticDataSetProvider.lookupDataSet(def, lookup);
     }
 

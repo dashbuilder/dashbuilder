@@ -93,7 +93,7 @@ public class DataSetDefDeployer {
             if (pollingTime > 0) {
                 watcherThread = new Thread(new Runnable() {
                     public void run() {
-                        // TODO: replace by NIO WatcherService (requires upgrading to Java 1.7)
+                        // TODO: replace by NIO WatcherService (requires upgrade to Java 7)
                         while (directory != null) {
                             try {
                                 Thread.sleep(pollingTime);
