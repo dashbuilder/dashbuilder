@@ -20,10 +20,12 @@ import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
 
+import com.github.gwtbootstrap.client.ui.Modal;
 import com.google.gwt.user.client.ui.IsWidget;
 import org.dashbuilder.displayer.DisplayerSettings;
 import org.dashbuilder.displayer.client.json.DisplayerSettingsJSONMarshaller;
 import org.dashbuilder.displayer.client.widgets.DisplayerEditor;
+import org.dashbuilder.displayer.client.widgets.DisplayerView;
 import org.kie.uberfire.perspective.editor.client.api.ExternalPerspectiveEditorComponent;
 
 @Dependent
@@ -51,7 +53,7 @@ public class DisplayerPerspectiveEditorComponent implements ExternalPerspectiveE
 
     @Override
     public Map<String,String> getParametersMap() {
-        Map<String,String> params = new HashMap<String, String>();
+        Map<String,String> params = new HashMap<String,String>();
         params.put("json", jsonMarshaller.toJsonString(editor.getDisplayerSettings()));
         return params;
     }
@@ -62,7 +64,15 @@ public class DisplayerPerspectiveEditorComponent implements ExternalPerspectiveE
     }
 
     @Override
-    public IsWidget getPreview( Map<String, String> parameters ) {
-        return null;
+    public IsWidget getPreview(Map<String,String> parameters) {
+        String json = parameters.get("json");
+        DisplayerSettings settings = jsonMarshaller.fromJsonString(json);
+        return new DisplayerView(settings).draw();
+    }
+
+    @Override
+    public void modalSettings(Modal popup) {
+        popup.setWidth(900);
+        popup.setMaxHeigth("600px");
     }
 }
