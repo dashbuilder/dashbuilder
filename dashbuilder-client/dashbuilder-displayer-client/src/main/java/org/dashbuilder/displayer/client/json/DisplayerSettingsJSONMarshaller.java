@@ -39,8 +39,6 @@ import org.dashbuilder.displayer.client.Displayer;
 import org.dashbuilder.displayer.client.DisplayerLocator;
 import org.dashbuilder.displayer.impl.DisplayerSettingsColumnImpl;
 
-import static org.dashbuilder.displayer.DisplayerEditorConfig.ATTRIBUTE_PATH_SEPARATOR;
-
 public class DisplayerSettingsJSONMarshaller {
 
     private static final String JSON_DATASET_PREFIX = "dataSet";
@@ -51,13 +49,19 @@ public class DisplayerSettingsJSONMarshaller {
     private static final String SETTINGS_COLUMN_ID = "columnId";
     private static final String SETTINGS_COLUMN_NAME = "columnDisplayName";
 
-    @Inject private DataSetJSONMarshaller dataSetJSONMarshaller;
-    @Inject private DataSetLookupJSONMarshaller dataSetLookupJSONMarshaller;
+    private DataSetJSONMarshaller dataSetJSONMarshaller;
+    private DataSetLookupJSONMarshaller dataSetLookupJSONMarshaller;
 
-    // todo remove this
+    @Inject
+    public DisplayerSettingsJSONMarshaller(DataSetJSONMarshaller dataSetJSONMarshaller,
+            DataSetLookupJSONMarshaller dataSetLookupJSONMarshaller) {
+        this.dataSetJSONMarshaller = dataSetJSONMarshaller;
+        this.dataSetLookupJSONMarshaller = dataSetLookupJSONMarshaller;
+    }
+
     public DisplayerSettingsJSONMarshaller() {
-        if ( dataSetJSONMarshaller == null) dataSetJSONMarshaller = new DataSetJSONMarshaller();
-        if ( dataSetLookupJSONMarshaller == null) dataSetLookupJSONMarshaller = new DataSetLookupJSONMarshaller();
+        dataSetJSONMarshaller = new DataSetJSONMarshaller();
+        dataSetLookupJSONMarshaller = new DataSetLookupJSONMarshaller();
     }
 
     public DisplayerSettings fromJsonString( String jsonString ) {
@@ -124,7 +128,7 @@ public class DisplayerSettingsJSONMarshaller {
 
         Set<String> supportedSettings = new HashSet<String>( displayerSettings.getSettingsFlatMap().size() );
         Displayer displayer = DisplayerLocator.get().lookupDisplayer( displayerSettings );
-        for ( DisplayerAttributeDef attDef : displayer.getDisplayerEditorConfig().getSupportedAttributes() ) {
+        for ( DisplayerAttributeDef attDef : displayer.getDisplayerConstraints().getSupportedAttributes() ) {
             supportedSettings.add( attDef.getFullId() );
         }
 
@@ -151,7 +155,7 @@ public class DisplayerSettingsJSONMarshaller {
     private void setNodeValue( JSONObject node, String path, String value ) {
         if ( node == null || StringUtils.isBlank( path ) || value == null ) return;
 
-        int separatorIndex = path.lastIndexOf( ATTRIBUTE_PATH_SEPARATOR );
+        int separatorIndex = path.lastIndexOf(".");
         String nodesPath = separatorIndex > 0 ? path.substring( 0, separatorIndex ) : "";
         String leaf = separatorIndex > 0 ? path.substring( separatorIndex + 1 ) : path;
 
@@ -162,7 +166,7 @@ public class DisplayerSettingsJSONMarshaller {
     private String getNodeValue( JSONObject node, String path ) {
         if ( node == null || StringUtils.isBlank( path ) ) return null;
 
-        int separatorIndex = path.lastIndexOf( ATTRIBUTE_PATH_SEPARATOR );
+        int separatorIndex = path.lastIndexOf(".");
         String subNodesPath = separatorIndex > 0 ? path.substring( 0, separatorIndex ) : "";
         String leaf = separatorIndex > 0 ? path.substring( separatorIndex + 1 ) : path;
 
@@ -179,7 +183,7 @@ public class DisplayerSettingsJSONMarshaller {
         if ( parent == null ) return null;
         if ( StringUtils.isBlank( path ) ) return parent;
 
-        int separatorIndex = path.indexOf( ATTRIBUTE_PATH_SEPARATOR );
+        int separatorIndex = path.indexOf(".");
         String strChildNode = separatorIndex > 0 ? path.substring( 0, separatorIndex ) : path;
         String remainingNodes = separatorIndex > 0 ? path.substring( separatorIndex + 1 ) : "";
 
@@ -241,7 +245,7 @@ public class DisplayerSettingsJSONMarshaller {
     }
 
     private void fillRecursive( String parentPath, JSONObject json, Map<String, String> settings ) {
-        String sb = new String( StringUtils.isBlank( parentPath ) ? "" : parentPath + ATTRIBUTE_PATH_SEPARATOR );
+        String sb = new String( StringUtils.isBlank( parentPath ) ? "" : parentPath + ".");
         for ( String key : json.keySet() ) {
             String path = sb + key;
             JSONValue value = json.get( key );

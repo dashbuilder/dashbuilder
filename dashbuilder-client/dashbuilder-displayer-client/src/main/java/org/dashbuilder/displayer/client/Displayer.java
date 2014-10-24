@@ -16,7 +16,7 @@
 package org.dashbuilder.displayer.client;
 
 import com.google.gwt.user.client.ui.IsWidget;
-import org.dashbuilder.displayer.DisplayerEditorConfig;
+import org.dashbuilder.displayer.DisplayerConstraints;
 import org.dashbuilder.displayer.DisplayerSettings;
 
 /**
@@ -36,8 +36,15 @@ public interface Displayer extends DisplayerListener, IsWidget {
     void setDataSetHandler(DataSetHandler dataSetHandler);
     DataSetHandler getDataSetHandler();
 
-    // Put this in sub-interface EditableDisplayer?
-    DisplayerEditorConfig getDisplayerEditorConfig();
+    /**
+     * Every Displayer implementation must define the set of features it supports as well as other behavioral settings.
+     * These "constrains" are needed for two main reasons:
+     * <ul>
+     *     <li>Validation purposes: in order to ensure the DisplayerSettings are valid and ready for rendering.</li>
+     *     <li>Edition purposes: in order to let the DisplayerEditor know what features/settings/behaviour this Displayer implementation supports.</li>
+     * </ul>
+     */
+    DisplayerConstraints getDisplayerConstraints();
 
     /**
      * Add a listener interested in receive events generated within this displayer component.

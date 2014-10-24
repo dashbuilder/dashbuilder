@@ -23,10 +23,11 @@ import com.googlecode.gwt.charts.client.gauge.Gauge;
 import com.googlecode.gwt.charts.client.gauge.GaugeOptions;
 import com.googlecode.gwt.charts.client.options.Animation;
 import com.googlecode.gwt.charts.client.options.AnimationEasing;
+import org.dashbuilder.dataset.ColumnType;
+import org.dashbuilder.dataset.DataSetLookupConstraints;
 import org.dashbuilder.displayer.DisplayerAttributeDef;
 import org.dashbuilder.displayer.DisplayerAttributeGroupDef;
-import org.dashbuilder.displayer.DisplayerEditorConfig;
-import org.dashbuilder.displayer.impl.DisplayerEditorConfigImpl;
+import org.dashbuilder.displayer.DisplayerConstraints;
 
 public class GoogleMeterChartDisplayer extends GoogleDisplayer {
 
@@ -54,8 +55,15 @@ public class GoogleMeterChartDisplayer extends GoogleDisplayer {
     }
 
     @Override
-    public DisplayerEditorConfig getDisplayerEditorConfig() {
-        return new DisplayerEditorConfigImpl()
+    public DisplayerConstraints createDisplayerConstraints() {
+
+        DataSetLookupConstraints lookupConstraints = new DataSetLookupConstraints()
+                .setGroupAllowed(true)
+                .setGroupRequired(false)
+                .setMaxColumns(2)
+                .setMinColumns(1);
+
+        return new DisplayerConstraints(lookupConstraints)
                    .supportsAttribute( DisplayerAttributeDef.TYPE )
                    .supportsAttribute( DisplayerAttributeDef.RENDERER )
                    .supportsAttribute( DisplayerAttributeDef.COLUMNS )

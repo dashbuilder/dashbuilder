@@ -48,10 +48,11 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.AsyncDataProvider;
 import com.google.gwt.view.client.HasData;
 import org.dashbuilder.common.client.StringUtils;
+import org.dashbuilder.dataset.DataSetLookupConstraints;
 import org.dashbuilder.dataset.client.DataSetReadyCallback;
 import org.dashbuilder.displayer.DisplayerAttributeDef;
 import org.dashbuilder.displayer.DisplayerAttributeGroupDef;
-import org.dashbuilder.displayer.DisplayerEditorConfig;
+import org.dashbuilder.displayer.DisplayerConstraints;
 import org.dashbuilder.displayer.DisplayerSettingsColumn;
 import org.dashbuilder.displayer.client.AbstractDisplayer;
 import org.dashbuilder.dataset.ColumnType;
@@ -59,7 +60,6 @@ import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.dataset.DataSet;
 
 import org.dashbuilder.dataset.sort.SortOrder;
-import org.dashbuilder.displayer.impl.DisplayerEditorConfigImpl;
 import org.dashbuilder.renderer.table.client.resources.i18n.TableConstants;
 
 import org.kie.uberfire.client.tables.PagedTable;
@@ -148,8 +148,17 @@ public class TableDisplayer extends AbstractDisplayer {
     }
 
     @Override
-    public DisplayerEditorConfig getDisplayerEditorConfig() {
-        return new DisplayerEditorConfigImpl()
+    public DisplayerConstraints createDisplayerConstraints() {
+
+        DataSetLookupConstraints lookupConstraints = new DataSetLookupConstraints()
+                .setGroupAllowed(true)
+                .setGroupRequired(false)
+                .setMaxColumns(-1)
+                .setMinColumns(1)
+                .setColumnTypes(new ColumnType[] {
+                        ColumnType.LABEL});
+
+        return new DisplayerConstraints(lookupConstraints)
                    .supportsAttribute( DisplayerAttributeDef.TYPE )
                    .supportsAttribute( DisplayerAttributeDef.RENDERER )
                    .supportsAttribute( DisplayerAttributeDef.COLUMNS )

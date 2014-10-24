@@ -30,8 +30,6 @@ import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.impl.DataColumnImpl;
 import org.dashbuilder.dataset.impl.DataSetImpl;
 
-import static org.dashbuilder.displayer.DisplayerEditorConfig.ATTRIBUTE_PATH_SEPARATOR;
-
 public class DataSetJSONMarshaller {
 
     private static final String DATASET_COLUMN = "column";
@@ -45,7 +43,7 @@ public class DataSetJSONMarshaller {
             int i = 0;
             // TODO change to JSONArray ?
             for ( DataColumn dataColumn: dataSet.getColumns() ) {
-                json.put( DATASET_COLUMN + ATTRIBUTE_PATH_SEPARATOR + i++, formatDataColumn( dataColumn ) );
+                json.put( DATASET_COLUMN + "." + i++, formatDataColumn( dataColumn ) );
             }
         }
         return json;
@@ -89,7 +87,7 @@ public class DataSetJSONMarshaller {
 
         DataSetImpl dataSet = new DataSetImpl();
         for (int i = 0; i < dataSetJson.size(); i++) {
-            JSONObject columnJson = dataSetJson.get( DATASET_COLUMN + ATTRIBUTE_PATH_SEPARATOR + Integer.toString( i ) ).isObject();
+            JSONObject columnJson = dataSetJson.get( DATASET_COLUMN + "." + Integer.toString( i ) ).isObject();
             dataSet.getColumns().add( parseDataColumn( dataSet, columnJson ) );
         }
         return dataSet;

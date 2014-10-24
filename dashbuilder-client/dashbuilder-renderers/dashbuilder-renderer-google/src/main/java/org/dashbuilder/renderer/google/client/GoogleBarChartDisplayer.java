@@ -29,10 +29,11 @@ import com.googlecode.gwt.charts.client.corechart.CoreChartWidget;
 import com.googlecode.gwt.charts.client.options.Animation;
 import com.googlecode.gwt.charts.client.options.AnimationEasing;
 import com.googlecode.gwt.charts.client.options.CoreOptions;
+import org.dashbuilder.dataset.ColumnType;
+import org.dashbuilder.dataset.DataSetLookupConstraints;
 import org.dashbuilder.displayer.DisplayerAttributeDef;
 import org.dashbuilder.displayer.DisplayerAttributeGroupDef;
-import org.dashbuilder.displayer.DisplayerEditorConfig;
-import org.dashbuilder.displayer.impl.DisplayerEditorConfigImpl;
+import org.dashbuilder.displayer.DisplayerConstraints;
 
 public class GoogleBarChartDisplayer extends GoogleXAxisChartDisplayer {
 
@@ -67,8 +68,17 @@ public class GoogleBarChartDisplayer extends GoogleXAxisChartDisplayer {
     }
 
     @Override
-    public DisplayerEditorConfig getDisplayerEditorConfig() {
-        return new DisplayerEditorConfigImpl()
+    public DisplayerConstraints createDisplayerConstraints() {
+
+        DataSetLookupConstraints lookupConstraints = new DataSetLookupConstraints()
+                .setGroupRequired(true)
+                .setMaxColumns(2)
+                .setMinColumns(2)
+                .setColumnTypes(new ColumnType[] {
+                        ColumnType.LABEL,
+                        ColumnType.NUMBER});
+
+        return new DisplayerConstraints(lookupConstraints)
                    .supportsAttribute( DisplayerAttributeDef.TYPE )
                    .supportsAttribute( DisplayerAttributeDef.RENDERER )
                    .supportsAttribute( DisplayerAttributeDef.COLUMNS )

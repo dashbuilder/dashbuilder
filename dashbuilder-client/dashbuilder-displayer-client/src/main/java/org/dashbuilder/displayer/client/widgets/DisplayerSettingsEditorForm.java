@@ -41,7 +41,7 @@ import org.dashbuilder.common.client.SpacerWidget;
 import org.dashbuilder.common.client.StringUtils;
 import org.dashbuilder.dataset.sort.SortOrder;
 import org.dashbuilder.displayer.DisplayerAttributeDef;
-import org.dashbuilder.displayer.DisplayerEditorConfig;
+import org.dashbuilder.displayer.DisplayerConstraints;
 import org.dashbuilder.displayer.DisplayerSettings;
 import org.dashbuilder.displayer.DisplayerSettingsColumn;
 import org.dashbuilder.displayer.Position;
@@ -161,7 +161,7 @@ public class DisplayerSettingsEditorForm extends Composite {
 
     protected Listener listener;
     protected DisplayerSettings displayerSettings;
-    protected DisplayerEditorConfig displayerEditorConfig;
+    protected DisplayerConstraints displayerContraints;
     private Set<DisplayerAttributeDef> supportedAttributes;
 
     public DisplayerSettingsEditorForm() {
@@ -513,8 +513,8 @@ public class DisplayerSettingsEditorForm extends Composite {
         this.listener = listener;
 
         Displayer displayer = DisplayerHelper.lookupDisplayer(displayerSettings);
-        this.displayerEditorConfig = displayer.getDisplayerEditorConfig();
-        this.supportedAttributes = displayerEditorConfig.getSupportedAttributes();
+        this.displayerContraints = displayer.getDisplayerConstraints();
+        this.supportedAttributes = displayerContraints.getSupportedAttributes();
 
         initRendererList();
 

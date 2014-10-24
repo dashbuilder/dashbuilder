@@ -25,10 +25,11 @@ import com.googlecode.gwt.charts.client.corechart.AreaChart;
 import com.googlecode.gwt.charts.client.corechart.AreaChartOptions;
 import com.googlecode.gwt.charts.client.options.Animation;
 import com.googlecode.gwt.charts.client.options.AnimationEasing;
+import org.dashbuilder.dataset.ColumnType;
+import org.dashbuilder.dataset.DataSetLookupConstraints;
 import org.dashbuilder.displayer.DisplayerAttributeDef;
 import org.dashbuilder.displayer.DisplayerAttributeGroupDef;
-import org.dashbuilder.displayer.DisplayerEditorConfig;
-import org.dashbuilder.displayer.impl.DisplayerEditorConfigImpl;
+import org.dashbuilder.displayer.DisplayerConstraints;
 
 public class GoogleAreaChartDisplayer extends GoogleXAxisChartDisplayer {
 
@@ -41,18 +42,27 @@ public class GoogleAreaChartDisplayer extends GoogleXAxisChartDisplayer {
     }
 
     @Override
-    public DisplayerEditorConfig getDisplayerEditorConfig() {
-        return new DisplayerEditorConfigImpl()
-                   .supportsAttribute( DisplayerAttributeDef.TYPE )
-                   .supportsAttribute( DisplayerAttributeDef.RENDERER )
-                   .supportsAttribute( DisplayerAttributeDef.COLUMNS )
-                   .supportsAttribute( DisplayerAttributeGroupDef.FILTER_GROUP )
-                   .supportsAttribute( DisplayerAttributeGroupDef.TITLE_GROUP )
-                   .supportsAttribute( DisplayerAttributeDef.CHART_WIDTH )
-                   .supportsAttribute( DisplayerAttributeDef.CHART_HEIGHT )
-                   .supportsAttribute( DisplayerAttributeGroupDef.CHART_MARGIN_GROUP )
-                   .supportsAttribute( DisplayerAttributeGroupDef.CHART_LEGEND_GROUP )
-                   .supportsAttribute( DisplayerAttributeGroupDef.AXIS_GROUP );
+    public DisplayerConstraints createDisplayerConstraints() {
+
+        DataSetLookupConstraints lookupConstraints = new DataSetLookupConstraints()
+                .setGroupRequired(true)
+                .setMaxColumns(2)
+                .setMinColumns(2)
+                .setColumnTypes(new ColumnType[] {
+                        ColumnType.LABEL,
+                        ColumnType.NUMBER});
+
+        return new DisplayerConstraints(lookupConstraints)
+                .supportsAttribute(DisplayerAttributeDef.TYPE)
+                .supportsAttribute( DisplayerAttributeDef.RENDERER )
+                .supportsAttribute( DisplayerAttributeDef.COLUMNS )
+                .supportsAttribute( DisplayerAttributeGroupDef.FILTER_GROUP )
+                .supportsAttribute( DisplayerAttributeGroupDef.TITLE_GROUP )
+                .supportsAttribute( DisplayerAttributeDef.CHART_WIDTH )
+                .supportsAttribute( DisplayerAttributeDef.CHART_HEIGHT )
+                .supportsAttribute( DisplayerAttributeGroupDef.CHART_MARGIN_GROUP )
+                .supportsAttribute( DisplayerAttributeGroupDef.CHART_LEGEND_GROUP )
+                .supportsAttribute(DisplayerAttributeGroupDef.AXIS_GROUP);
     }
 
     @Override

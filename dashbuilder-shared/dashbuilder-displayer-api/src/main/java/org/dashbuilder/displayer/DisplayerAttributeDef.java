@@ -15,11 +15,6 @@
  */
 package org.dashbuilder.displayer;
 
-import javax.enterprise.context.ApplicationScoped;
-
-import static org.dashbuilder.displayer.DisplayerEditorConfig.ATTRIBUTE_PATH_SEPARATOR;
-
-@ApplicationScoped
 public class DisplayerAttributeDef {
 
     public static final DisplayerAttributeDef TYPE = new DisplayerAttributeDef("type");
@@ -78,7 +73,7 @@ public class DisplayerAttributeDef {
     }
 
     public String getFullId() {
-        return parent != null ? parent.getFullId() + ATTRIBUTE_PATH_SEPARATOR + id : id;
+        return parent != null ? parent.getFullId() + "." + id : id;
     }
 
     public DisplayerAttributeDef[] getMembers() {

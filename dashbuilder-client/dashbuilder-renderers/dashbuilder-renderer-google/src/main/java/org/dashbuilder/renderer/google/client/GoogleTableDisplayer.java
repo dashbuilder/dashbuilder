@@ -42,14 +42,15 @@ import com.googlecode.gwt.charts.client.options.TableSort;
 import com.googlecode.gwt.charts.client.table.Table;
 import com.googlecode.gwt.charts.client.table.TableOptions;
 import org.dashbuilder.common.client.SpacerWidget;
+import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.DataSet;
+import org.dashbuilder.dataset.DataSetLookupConstraints;
 import org.dashbuilder.dataset.group.DataSetGroup;
 import org.dashbuilder.dataset.sort.SortOrder;
 import org.dashbuilder.displayer.DisplayerAttributeDef;
 import org.dashbuilder.displayer.DisplayerAttributeGroupDef;
-import org.dashbuilder.displayer.DisplayerEditorConfig;
+import org.dashbuilder.displayer.DisplayerConstraints;
 import org.dashbuilder.displayer.client.Displayer;
-import org.dashbuilder.displayer.impl.DisplayerEditorConfigImpl;
 import org.dashbuilder.renderer.google.client.resources.i18n.GoogleDisplayerConstants;
 
 public class GoogleTableDisplayer extends GoogleDisplayer {
@@ -76,8 +77,16 @@ public class GoogleTableDisplayer extends GoogleDisplayer {
     }
 
     @Override
-    public DisplayerEditorConfig getDisplayerEditorConfig() {
-        return new DisplayerEditorConfigImpl()
+    public DisplayerConstraints createDisplayerConstraints() {
+        DataSetLookupConstraints lookupConstraints = new DataSetLookupConstraints()
+                .setGroupAllowed(true)
+                .setGroupRequired(false)
+                .setMaxColumns(-1)
+                .setMinColumns(1)
+                .setColumnTypes(new ColumnType[] {
+                        ColumnType.LABEL});
+
+        return new DisplayerConstraints(lookupConstraints)
                    .supportsAttribute( DisplayerAttributeDef.TYPE )
                    .supportsAttribute( DisplayerAttributeDef.RENDERER )
                    .supportsAttribute( DisplayerAttributeDef.COLUMNS )

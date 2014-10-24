@@ -27,12 +27,13 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.common.client.StringUtils;
+import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.DataSet;
+import org.dashbuilder.dataset.DataSetLookupConstraints;
 import org.dashbuilder.dataset.client.DataSetReadyCallback;
-import org.dashbuilder.displayer.DisplayerEditorConfig;
+import org.dashbuilder.displayer.DisplayerConstraints;
 import org.dashbuilder.displayer.DisplayerSettingsColumn;
 import org.dashbuilder.displayer.client.AbstractDisplayer;
-import org.dashbuilder.displayer.impl.DisplayerEditorConfigImpl;
 import org.dashbuilder.renderer.selector.client.resources.i18n.SelectorConstants;
 
 public class SelectorDisplayer extends AbstractDisplayer {
@@ -106,8 +107,14 @@ public class SelectorDisplayer extends AbstractDisplayer {
     }
 
     @Override
-    public DisplayerEditorConfig getDisplayerEditorConfig() {
-        return new DisplayerEditorConfigImpl();
+    public DisplayerConstraints createDisplayerConstraints() {
+
+        return new DisplayerConstraints(new DataSetLookupConstraints()
+                .setGroupRequired(true)
+                .setMaxColumns(1)
+                .setMinColumns(1)
+                .setColumnTypes(new ColumnType[] {
+                        ColumnType.LABEL}));
     }
 
     /**

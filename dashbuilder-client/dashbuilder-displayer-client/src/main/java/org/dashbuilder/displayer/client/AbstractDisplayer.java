@@ -30,6 +30,7 @@ import org.dashbuilder.dataset.group.GroupStrategy;
 import org.dashbuilder.dataset.sort.ColumnSort;
 import org.dashbuilder.dataset.sort.DataSetSort;
 import org.dashbuilder.dataset.sort.SortOrder;
+import org.dashbuilder.displayer.DisplayerConstraints;
 import org.dashbuilder.displayer.DisplayerSettings;
 
 /**
@@ -44,15 +45,36 @@ public abstract class AbstractDisplayer extends Composite implements Displayer {
 
     protected DataSetHandler dataSetHandler;
     protected DisplayerSettings displayerSettings;
+    protected DisplayerConstraints displayerConstraints;
     protected List<DisplayerListener> listenerList = new ArrayList<DisplayerListener>();
     protected Map<String,List<String>> columnSelectionMap = new HashMap<String,List<String>>();
+
+    public abstract DisplayerConstraints createDisplayerConstraints();
+
+    public DisplayerConstraints getDisplayerConstraints() {
+        if (displayerConstraints == null) {
+            displayerConstraints = createDisplayerConstraints();
+        }
+        return displayerConstraints;
+    }
 
     public DisplayerSettings getDisplayerSettings() {
         return displayerSettings;
     }
 
     public void setDisplayerSettings(DisplayerSettings displayerSettings) {
+        checkDisplayerSettings(displayerSettings);
         this.displayerSettings = displayerSettings;
+    }
+
+    public void checkDisplayerSettings(DisplayerSettings displayerSettings) {
+        DisplayerConstraints constraints = getDisplayerConstraints();
+        if (displayerConstraints != null) {
+            DisplayerConstraints.ValidationError error = constraints.check(displayerSettings);
+            if (error != null) {
+                throw new RuntimeException("ERROR " + error.getCode() + " on " + displayerSettings.getType() + " displayer");
+            }
+        }
     }
 
     public DataSetHandler getDataSetHandler() {

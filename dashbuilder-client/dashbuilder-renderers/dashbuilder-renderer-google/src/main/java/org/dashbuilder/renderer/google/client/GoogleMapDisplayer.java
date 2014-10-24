@@ -23,10 +23,11 @@ import com.google.gwt.user.client.ui.Widget;
 import com.googlecode.gwt.charts.client.ChartPackage;
 import com.googlecode.gwt.charts.client.geochart.GeoChart;
 import com.googlecode.gwt.charts.client.geochart.GeoChartOptions;
+import org.dashbuilder.dataset.ColumnType;
+import org.dashbuilder.dataset.DataSetLookupConstraints;
 import org.dashbuilder.displayer.DisplayerAttributeDef;
 import org.dashbuilder.displayer.DisplayerAttributeGroupDef;
-import org.dashbuilder.displayer.DisplayerEditorConfig;
-import org.dashbuilder.displayer.impl.DisplayerEditorConfigImpl;
+import org.dashbuilder.displayer.DisplayerConstraints;
 
 public class GoogleMapDisplayer extends GoogleXAxisChartDisplayer {
 
@@ -57,8 +58,16 @@ public class GoogleMapDisplayer extends GoogleXAxisChartDisplayer {
     }
 
     @Override
-    public DisplayerEditorConfig getDisplayerEditorConfig() {
-        return new DisplayerEditorConfigImpl()
+    public DisplayerConstraints createDisplayerConstraints() {
+        DataSetLookupConstraints lookupConstraints = new DataSetLookupConstraints()
+                .setGroupRequired(true)
+                .setMaxColumns(2)
+                .setMinColumns(2)
+                .setColumnTypes(new ColumnType[] {
+                        ColumnType.LABEL,
+                        ColumnType.NUMBER});
+
+        return new DisplayerConstraints(lookupConstraints)
                    .supportsAttribute( DisplayerAttributeDef.TYPE )
                    .supportsAttribute( DisplayerAttributeDef.RENDERER )
                    .supportsAttribute( DisplayerAttributeDef.COLUMNS )
