@@ -29,13 +29,12 @@ import org.kie.uberfire.perspective.editor.client.api.ExternalPerspectiveEditorC
 @Dependent
 public class DisplayerPerspectiveEditorComponent implements ExternalPerspectiveEditorComponent {
 
-    private DisplayerEditor editor;
-    private DisplayerSettingsJSONMarshaller jsonMarshaller;
+    private DisplayerEditor editor = new DisplayerEditor();
+    DisplayerSettingsJSONMarshaller jsonMarshaller = new DisplayerSettingsJSONMarshaller();
 
     @PostConstruct
     public void setup() {
-        editor = new DisplayerEditor();
-        jsonMarshaller = new DisplayerSettingsJSONMarshaller();
+        editor.init(null, null);
     }
 
     @Override
@@ -47,7 +46,7 @@ public class DisplayerPerspectiveEditorComponent implements ExternalPerspectiveE
 
     @Override
     public String getPlaceName() {
-        return "Displayer";
+        return "DisplayerScreen";
     }
 
     @Override
