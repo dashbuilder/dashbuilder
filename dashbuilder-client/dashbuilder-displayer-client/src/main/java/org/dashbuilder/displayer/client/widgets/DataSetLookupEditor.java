@@ -18,6 +18,7 @@ package org.dashbuilder.displayer.client.widgets;
 import java.util.List;
 import java.util.ArrayList;
 import javax.enterprise.context.Dependent;
+import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
 import com.google.gwt.user.client.ui.IsWidget;
@@ -29,8 +30,13 @@ import org.dashbuilder.dataset.DataSetLookupConstraints;
 import org.dashbuilder.dataset.DataSetMetadata;
 import org.dashbuilder.dataset.client.DataSetClientServices;
 import org.dashbuilder.dataset.def.DataSetDef;
+import org.dashbuilder.dataset.events.DataSetDefRegisteredEvent;
+import org.dashbuilder.dataset.events.DataSetDefRemovedEvent;
 import org.dashbuilder.dataset.group.DataSetGroup;
+import org.dashbuilder.dataset.group.GroupFunction;
 import org.jboss.errai.common.client.api.RemoteCallback;
+
+import static org.uberfire.commons.validation.PortablePreconditions.checkNotNull;
 
 @Dependent
 public class DataSetLookupEditor implements IsWidget {
@@ -42,7 +48,9 @@ public class DataSetLookupEditor implements IsWidget {
     public interface View extends IsWidget {
         void init(DataSetLookupEditor presenter);
         void updateDataSetLookup();
-        void showAvailableDataSets(List<DataSetDef> dataSetDefs);
+        void showDataSetDefs(List<DataSetDef> dataSetDefs);
+        void addDataSetDef(DataSetDef dataSetDef);
+        void removeDataSetDef(DataSetDef dataSetDef);
         void errorOnInit(Exception e);
         void errorDataSetNotFound(String dataSetUUID);
     }
@@ -70,15 +78,35 @@ public class DataSetLookupEditor implements IsWidget {
 
     public void init(Listener listener) {
         this.listener = listener;
+        this.dataSetLookup = null;
+        this.lookupConstraints = null;
+        this.dataSetMetadata = null;
         view.init(this);
-        fetchAvailableDataSets();
+
+        DataSetClientServices.get().getRemoteSharedDataSetDefs(new RemoteCallback<List<DataSetDef>>() {
+            public void callback(List<DataSetDef> dataSetDefs) {
+                view.showDataSetDefs(dataSetDefs);
+            }
+        });
     }
 
-    public void update(DataSetLookup dataSetLookup, DataSetLookupConstraints constraints, DataSetMetadata metadata) {
+    public void init(Listener listener,
+            DataSetLookup dataSetLookup,
+            DataSetLookupConstraints constraints,
+            DataSetMetadata metadata) {
+
+        this.listener = listener;
         this.dataSetLookup = dataSetLookup.cloneInstance();
         this.lookupConstraints = constraints;
         this.dataSetMetadata = metadata;
-        view.updateDataSetLookup();
+        view.init(this);
+
+        DataSetClientServices.get().getRemoteSharedDataSetDefs(new RemoteCallback<List<DataSetDef>>() {
+            public void callback(List<DataSetDef> dataSetDefs) {
+                view.showDataSetDefs(dataSetDefs);
+                view.updateDataSetLookup();
+            }
+        });
     }
 
     public View getView() {
@@ -110,12 +138,36 @@ public class DataSetLookupEditor implements IsWidget {
         return dataSetMetadata.getColumnType(index);
     }
 
-    public String getGroupColumnId() {
-        DataSetGroup groupOp = dataSetLookup.getOperationList(DataSetGroup.class).get(0);
+    public List<GroupFunction> getFirstGroupFunctions() {
+        List<DataSetGroup> groupOpList = dataSetLookup.getOperationList(DataSetGroup.class);
+        if (groupOpList.isEmpty()) return null;
+
+        return groupOpList.get(0).getGroupFunctions();
+    }
+
+    public String getFirstGroupColumnId() {
+        List<DataSetGroup> groupOpList = dataSetLookup.getOperationList(DataSetGroup.class);
+        if (groupOpList.isEmpty()) return null;
+
+        DataSetGroup groupOp = groupOpList.get(0);
         return groupOp.getColumnGroup().getSourceId();
     }
 
-    public List<Integer> getGroupColumnIdxs() {
+    public List<Integer> getAvailableFunctionColumnIdxs() {
+        List<Integer> result = new ArrayList<Integer>();
+        for (int i=0; i<dataSetMetadata.getNumberOfColumns(); i++) {
+            ColumnType columnType = dataSetMetadata.getColumnType(i);
+            if (ColumnType.LABEL.equals(columnType)
+                    || ColumnType.NUMBER.equals(columnType)
+                    || ColumnType.TEXT.equals(columnType)) {
+
+                result.add(i);
+            }
+        }
+        return result;
+    }
+
+    public List<Integer> getAvailableGroupColumnIdxs() {
         List<Integer> result = new ArrayList<Integer>();
         for (int i=0; i<dataSetMetadata.getNumberOfColumns(); i++) {
             ColumnType columnType = dataSetMetadata.getColumnType(i);
@@ -126,17 +178,23 @@ public class DataSetLookupEditor implements IsWidget {
         return result;
     }
 
-    public void fetchAvailableDataSets() {
-        DataSetClientServices.get().getRemoteSharedDataSetDefs(new RemoteCallback<List<DataSetDef>>() {
-            public void callback(List<DataSetDef> dataSetDefs) {
-                view.showAvailableDataSets(dataSetDefs);
-            }
-        });
-    }
-
     public void selectDataSet(String uuid) {
         if (listener != null) {
             listener.dataSetSelected(uuid);
         }
+    }
+
+    // Be aware of data set lifecycle events
+
+    private void onDataSetDefRegisteredEvent(@Observes DataSetDefRegisteredEvent event) {
+        checkNotNull("event", event);
+
+        view.addDataSetDef(event.getDataSetDef());
+    }
+
+    private void onDataSetDefRemovedEvent(@Observes DataSetDefRemovedEvent event) {
+        checkNotNull("event", event);
+
+        view.removeDataSetDef(event.getDataSetDef());
     }
 }

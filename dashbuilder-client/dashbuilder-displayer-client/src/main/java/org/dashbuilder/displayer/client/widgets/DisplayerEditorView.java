@@ -112,10 +112,13 @@ public class DisplayerEditorView extends Composite
     public void gotoDataSetConf() {
         optionsPanel.selectTab(1);
 
-        lookupEditor.init(presenter);
         if (settings.getDataSet() == null && settings.getDataSetLookup() != null) {
-            // Fetch lookup based displayer
+            // Fetch before initializing the editor
             presenter.fetchDataSetLookup();
+        }
+        else {
+            // Just init the lookup editor
+            lookupEditor.init(presenter);
         }
 
         leftPanel.clear();
@@ -127,7 +130,7 @@ public class DisplayerEditorView extends Composite
     @Override
     public void updateDataSetLookup(DataSetLookupConstraints constraints, DataSetMetadata metadata) {
         DataSetLookup dataSetLookup = settings.getDataSetLookup();
-        lookupEditor.update(dataSetLookup, constraints, metadata);
+        lookupEditor.init(presenter, dataSetLookup, constraints, metadata);
 
         refreshDisplayer();
     }

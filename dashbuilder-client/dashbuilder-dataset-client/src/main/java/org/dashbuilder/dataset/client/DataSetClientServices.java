@@ -35,6 +35,7 @@ import org.dashbuilder.dataset.events.DataSetDefModifiedEvent;
 import org.dashbuilder.dataset.events.DataSetPushOkEvent;
 import org.dashbuilder.dataset.events.DataSetPushingEvent;
 import org.dashbuilder.dataset.events.DataSetModifiedEvent;
+import org.dashbuilder.dataset.group.AggregateFunctionManager;
 import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.common.client.api.RemoteCallback;
 import org.jboss.errai.ioc.client.container.IOC;
@@ -57,6 +58,9 @@ public class DataSetClientServices {
 
     @Inject
     private ClientDataSetManager clientDataSetManager;
+
+    @Inject
+    private AggregateFunctionManager aggregateFunctionManager;
 
     @Inject
     private Event<DataSetPushingEvent> dataSetPushingEvent;
@@ -206,6 +210,10 @@ public class DataSetClientServices {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public AggregateFunctionManager getAggregateFunctionManager() {
+        return aggregateFunctionManager;
     }
 
     // Classes for the handling of concurrent lookup requests over any push-able data set

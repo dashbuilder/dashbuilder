@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.dashbuilder.common.client.StringUtils;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetLookup;
 import org.dashbuilder.dataset.sort.SortOrder;
@@ -88,6 +89,21 @@ public class DisplayerSettings {
 
     private String getSettingPath( DisplayerAttributeDef displayerAttributeDef ) {
         return displayerAttributeDef.getFullId();
+    }
+
+    private int parseInt(String value, int defaultValue) {
+        if (StringUtils.isBlank(value)) return defaultValue;
+        return Integer.parseInt(value);
+    }
+
+    private long parseLong(String value, long defaultValue) {
+        if (StringUtils.isBlank(value)) return defaultValue;
+        return Long.parseLong(value);
+    }
+
+    private boolean parseBoolean(String value) {
+        if (StringUtils.isBlank(value)) return false;
+        return Boolean.parseBoolean(value);
     }
 
     public String getUUID() {
@@ -170,7 +186,7 @@ public class DisplayerSettings {
     }
 
     public boolean isTitleVisible() {
-        return Boolean.parseBoolean( settings.get( getSettingPath( DisplayerAttributeDef.TITLE_VISIBLE ) ) );
+        return parseBoolean( settings.get( getSettingPath( DisplayerAttributeDef.TITLE_VISIBLE ) ) );
     }
 
     public void setTitleVisible( boolean titleVisible ) {
@@ -178,7 +194,7 @@ public class DisplayerSettings {
     }
 
     public boolean isFilterEnabled() {
-        return Boolean.parseBoolean( settings.get( getSettingPath( DisplayerAttributeDef.FILTER_ENABLED ) ) );
+        return parseBoolean( settings.get( getSettingPath( DisplayerAttributeDef.FILTER_ENABLED ) ) );
     }
 
     public void setFilterEnabled( boolean filterEnabled ) {
@@ -186,7 +202,7 @@ public class DisplayerSettings {
     }
 
     public boolean isFilterSelfApplyEnabled() {
-        return Boolean.parseBoolean( settings.get( getSettingPath( DisplayerAttributeDef.FILTER_SELFAPPLY_ENABLED ) ) );
+        return parseBoolean( settings.get( getSettingPath( DisplayerAttributeDef.FILTER_SELFAPPLY_ENABLED ) ) );
     }
 
     public void setFilterSelfApplyEnabled( boolean filterSelfApplyEnabled ) {
@@ -194,7 +210,7 @@ public class DisplayerSettings {
     }
 
     public boolean isFilterNotificationEnabled() {
-        return Boolean.parseBoolean( settings.get( getSettingPath( DisplayerAttributeDef.FILTER_NOTIFICATION_ENABLED ) ) );
+        return parseBoolean( settings.get( getSettingPath( DisplayerAttributeDef.FILTER_NOTIFICATION_ENABLED ) ) );
     }
 
     public void setFilterNotificationEnabled( boolean filterNotificationEnabled ) {
@@ -202,7 +218,7 @@ public class DisplayerSettings {
     }
 
     public boolean isFilterListeningEnabled() {
-        return Boolean.parseBoolean( settings.get( getSettingPath( DisplayerAttributeDef.FILTER_LISTENING_ENABLED ) ) );
+        return parseBoolean( settings.get( getSettingPath( DisplayerAttributeDef.FILTER_LISTENING_ENABLED ) ) );
     }
 
     public void setFilterListeningEnabled( boolean filterListeningEnabled ) {
@@ -210,7 +226,7 @@ public class DisplayerSettings {
     }
 
     public int getChartWidth() {
-        return Integer.parseInt( settings.get( getSettingPath( DisplayerAttributeDef.CHART_WIDTH ) ), 10 );
+        return parseInt( settings.get( getSettingPath( DisplayerAttributeDef.CHART_WIDTH ) ), 500 );
     }
 
     public void setChartWidth( int chartWidth ) {
@@ -218,7 +234,7 @@ public class DisplayerSettings {
     }
 
     public int getChartHeight() {
-        return Integer.parseInt( settings.get( getSettingPath( DisplayerAttributeDef.CHART_HEIGHT ) ), 10 );
+        return parseInt( settings.get( getSettingPath( DisplayerAttributeDef.CHART_HEIGHT ) ), 300 );
     }
 
     public void setChartHeight( int chartHeight ) {
@@ -226,7 +242,7 @@ public class DisplayerSettings {
     }
 
     public int getChartMarginTop() {
-        return Integer.parseInt( settings.get( getSettingPath( DisplayerAttributeDef.CHART_MARGIN_TOP ) ), 10 );
+        return parseInt( settings.get( getSettingPath( DisplayerAttributeDef.CHART_MARGIN_TOP ) ), 10 );
     }
 
     public void setChartMarginTop( int chartMarginTop ) {
@@ -234,7 +250,7 @@ public class DisplayerSettings {
     }
 
     public int getChartMarginBottom() {
-        return Integer.parseInt( settings.get( getSettingPath( DisplayerAttributeDef.CHART_MARGIN_BOTTOM ) ), 10 );
+        return parseInt( settings.get( getSettingPath( DisplayerAttributeDef.CHART_MARGIN_BOTTOM ) ), 10 );
     }
 
     public void setChartMarginBottom( int chartMarginBottom ) {
@@ -242,7 +258,7 @@ public class DisplayerSettings {
     }
 
     public int getChartMarginLeft() {
-        return Integer.parseInt( settings.get( getSettingPath( DisplayerAttributeDef.CHART_MARGIN_LEFT ) ), 10 );
+        return parseInt( settings.get( getSettingPath( DisplayerAttributeDef.CHART_MARGIN_LEFT ) ), 10 );
     }
 
     public void setChartMarginLeft( int chartMarginLeft ) {
@@ -250,7 +266,7 @@ public class DisplayerSettings {
     }
 
     public int getChartMarginRight() {
-        return Integer.parseInt( settings.get( getSettingPath( DisplayerAttributeDef.CHART_MARGIN_RIGHT ) ), 10 );
+        return parseInt( settings.get( getSettingPath( DisplayerAttributeDef.CHART_MARGIN_RIGHT ) ), 10 );
     }
 
     public void setChartMarginRight( int chartMarginRight ) {
@@ -258,7 +274,7 @@ public class DisplayerSettings {
     }
 
     public boolean isChartShowLegend() {
-        return Boolean.parseBoolean( settings.get( getSettingPath( DisplayerAttributeDef.CHART_SHOWLEGEND ) ) );
+        return parseBoolean( settings.get( getSettingPath( DisplayerAttributeDef.CHART_SHOWLEGEND ) ) );
     }
 
     public void setChartShowLegend( boolean chartShowLegend ) {
@@ -266,7 +282,9 @@ public class DisplayerSettings {
     }
 
     public Position getChartLegendPosition() {
-        return Position.getByName( settings.get( getSettingPath( DisplayerAttributeDef.CHART_LEGENDPOSITION ) ) );
+        Position pos = Position.getByName( settings.get( getSettingPath( DisplayerAttributeDef.CHART_LEGENDPOSITION ) ) );
+        if (pos == null) return Position.RIGHT;
+        return pos;
     }
 
     public void setChartLegendPosition( Position chartLegendPosition ) {
@@ -274,7 +292,7 @@ public class DisplayerSettings {
     }
 
     public int getTablePageSize() {
-        return Integer.parseInt( settings.get( getSettingPath( DisplayerAttributeDef.TABLE_PAGESIZE ) ), 10 );
+        return parseInt( settings.get( getSettingPath( DisplayerAttributeDef.TABLE_PAGESIZE ) ), 10 );
     }
 
     public void setTablePageSize( int tablePageSize ) {
@@ -282,7 +300,7 @@ public class DisplayerSettings {
     }
 
     public int getTableWidth() {
-        return Integer.parseInt( settings.get( getSettingPath( DisplayerAttributeDef.TABLE_WIDTH ) ), 10 );
+        return parseInt( settings.get( getSettingPath( DisplayerAttributeDef.TABLE_WIDTH ) ), 0 );
     }
 
     public void setTableWidth( int tableWidth ) {
@@ -290,7 +308,7 @@ public class DisplayerSettings {
     }
 
     public boolean isTableSortEnabled() {
-        return Boolean.parseBoolean( settings.get( getSettingPath( DisplayerAttributeDef.TABLE_SORTENABLED ) ) );
+        return parseBoolean( settings.get( getSettingPath( DisplayerAttributeDef.TABLE_SORTENABLED ) ) );
     }
 
     public void setTableSortEnabled( boolean tableSortEnabled ) {
@@ -306,7 +324,9 @@ public class DisplayerSettings {
     }
 
     public SortOrder getTableDefaultSortOrder() {
-        return SortOrder.getByName( settings.get( getSettingPath( DisplayerAttributeDef.TABLE_SORTORDER ) ) );
+        SortOrder order = SortOrder.getByName( settings.get( getSettingPath( DisplayerAttributeDef.TABLE_SORTORDER ) ) );
+        if (order == null) return SortOrder.ASCENDING;
+        return order;
     }
 
     public void setTableDefaultSortOrder( SortOrder tableDefaultSortOrder ) {
@@ -314,7 +334,7 @@ public class DisplayerSettings {
     }
 
     public boolean isXAxisShowLabels() {
-        return Boolean.parseBoolean( settings.get( getSettingPath( DisplayerAttributeDef.XAXIS_SHOWLABELS ) ) );
+        return parseBoolean( settings.get( getSettingPath( DisplayerAttributeDef.XAXIS_SHOWLABELS ) ) );
     }
 
     public void setXAxisShowLabels( boolean axisShowLabels ) {
@@ -322,7 +342,7 @@ public class DisplayerSettings {
     }
 
 //    public int getXAxisLabelsAngle() {
-//        return Integer.parseInt( settings.get( getSettingPath( DisplayerAttributeDef.XAXIS_LABELSANGLE ) ), 10 );
+//        return parseInt( settings.get( getSettingPath( DisplayerAttributeDef.XAXIS_LABELSANGLE ) ), 10 );
 //    }
 //
 //    public void setXAxisLabelsAngle( int axisLabelsAngle ) {
@@ -338,7 +358,7 @@ public class DisplayerSettings {
     }
 
     public boolean isYAxisShowLabels() {
-        return Boolean.parseBoolean( settings.get( getSettingPath( DisplayerAttributeDef.YAXIS_SHOWLABELS ) ) );
+        return parseBoolean( settings.get( getSettingPath( DisplayerAttributeDef.YAXIS_SHOWLABELS ) ) );
     }
 
     public void setYAxisShowLabels( boolean axisShowLabels ) {
@@ -346,7 +366,7 @@ public class DisplayerSettings {
     }
 
 //    public int getYAxisLabelsAngle() {
-//        return Integer.parseInt( settings.get( getSettingPath( DisplayerAttributeDef.YAXIS_LABELSANGLE ) ), 10 );
+//        return parseInt( settings.get( getSettingPath( DisplayerAttributeDef.YAXIS_LABELSANGLE ) ), 10 );
 //    }
 //
 //    public void setYAxisLabelsAngle( int axisLabelsAngle ) {
@@ -362,7 +382,7 @@ public class DisplayerSettings {
     }
 
     public long getMeterStart() {
-        return Long.parseLong( settings.get( getSettingPath( DisplayerAttributeDef.METER_START ) ), 10 );
+        return parseLong( settings.get( getSettingPath( DisplayerAttributeDef.METER_START ) ), 0 );
     }
 
     public void setMeterStart( long meterStart ) {
@@ -370,7 +390,7 @@ public class DisplayerSettings {
     }
 
     public long getMeterWarning() {
-        return Long.parseLong( settings.get( getSettingPath( DisplayerAttributeDef.METER_WARNING ) ), 10 );
+        return parseLong( settings.get( getSettingPath( DisplayerAttributeDef.METER_WARNING ) ), 60 );
     }
 
     public void setMeterWarning( long meterWarning ) {
@@ -378,7 +398,7 @@ public class DisplayerSettings {
     }
 
     public long getMeterCritical() {
-        return Long.parseLong( settings.get( getSettingPath( DisplayerAttributeDef.METER_CRITICAL ) ), 10 );
+        return parseLong( settings.get( getSettingPath( DisplayerAttributeDef.METER_CRITICAL ) ), 90 );
     }
 
     public void setMeterCritical( long meterCritical ) {
@@ -386,7 +406,7 @@ public class DisplayerSettings {
     }
 
     public long getMeterEnd() {
-        return Long.parseLong( settings.get( getSettingPath( DisplayerAttributeDef.METER_END ) ), 10 );
+        return parseLong( settings.get( getSettingPath( DisplayerAttributeDef.METER_END ) ), 100 );
     }
 
     public void setMeterEnd( long meterEnd ) {
@@ -394,7 +414,7 @@ public class DisplayerSettings {
     }
 
     public boolean isChart3D() {
-        return Boolean.parseBoolean( settings.get( getSettingPath( DisplayerAttributeDef.CHART_3D ) ) );
+        return parseBoolean( settings.get( getSettingPath( DisplayerAttributeDef.CHART_3D ) ) );
     }
 
     public void setChart3D( boolean barchartThreeDimension ) {
@@ -402,7 +422,7 @@ public class DisplayerSettings {
     }
 
     public boolean isBarchartHorizontal() {
-        return Boolean.parseBoolean( settings.get( getSettingPath( DisplayerAttributeDef.BARCHART_HORIZONTAL ) ) );
+        return parseBoolean( settings.get( getSettingPath( DisplayerAttributeDef.BARCHART_HORIZONTAL ) ) );
     }
 
     public void setBarchartHorizontal( boolean barchartHorizontal ) {

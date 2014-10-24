@@ -28,7 +28,7 @@
         Data set
       </b:ControlLabel>
       <b:Controls>
-        <b:ListBox ui:field="dataSetListBox"/>
+        <b:ListBox ui:field="dataSetListBox" width="120"/>
       </b:Controls>
     </b:ControlGroup>
     <b:ControlGroup ui:field="rowsControlGroup" visible="false">
@@ -36,7 +36,7 @@
         Rows
       </b:ControlLabel>
       <b:Controls>
-        <b:ListBox ui:field="rowColumnListBox"/>
+        <b:ListBox ui:field="rowColumnListBox" width="120"/>
       </b:Controls>
     </b:ControlGroup>
     <b:ControlGroup  ui:field="columnsControlGroup" visible="false">
@@ -44,6 +44,7 @@
         Columns
       </b:ControlLabel>
       <b:Controls>
+        <g:VerticalPanel ui:field="columnsPanel"/>
       </b:Controls>
     </b:ControlGroup>
   </g:HTMLPanel>

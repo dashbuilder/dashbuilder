@@ -13,22 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbuilder.shared.sales;
+package org.dashbuilder.dataset.events;
 
-public interface SalesConstants {
+import org.dashbuilder.dataset.def.DataSetDef;
+import org.jboss.errai.common.client.api.annotations.Portable;
 
-    String SALES_OPPS = "salesOpportunities";
-    String AMOUNT = "amount";
-    String CREATION_DATE = "creationDate";
-    String CLOSING_DATE = "closingDate";
-    String PIPELINE = "pipeline";
-    String STATUS = "status";
-    String CUSTOMER = "customer";
-    String COUNTRY = "country";
-    String PRODUCT = "product";
-    String SALES_PERSON = "salesPerson";
-    String PROBABILITY = "probability";
-    String SOURCE = "source";
-    String EXPECTED_AMOUNT = "expectedAmount";
-    String COLOR = "color";
+@Portable
+public class DataSetDefRemovedEvent {
+
+    DataSetDef dataSetDef;
+
+    public DataSetDefRemovedEvent() {
+    }
+
+    public DataSetDefRemovedEvent(DataSetDef dataSetDef) {
+        this.dataSetDef = dataSetDef;
+    }
+
+    public DataSetDef getDataSetDef() {
+        return dataSetDef;
+    }
+
+    public void setDataSetDef(DataSetDef dataSetDef) {
+        this.dataSetDef = dataSetDef;
+    }
 }

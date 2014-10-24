@@ -1,5 +1,5 @@
 {
-    "uuid": "dataset-sales-opportunities",
+    "uuid": "salesOpportunities",
     "provider": "BEAN",
     "pushEnabled": true,
     "maxPushSize": 2048,

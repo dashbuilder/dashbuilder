@@ -34,9 +34,10 @@ public enum SortOrder {
         }
     }
 
-    public static SortOrder getByName(String strategy) {
-        if (ASC.equals(strategy)) return ASCENDING;
-        if (DESC.equals(strategy)) return DESCENDING;
-        return valueOf(strategy.toUpperCase());
+    public static SortOrder getByName(String str) {
+        if (str == null || str.length() == 0) return null;
+        if (ASC.equals(str)) return ASCENDING;
+        if (DESC.equals(str)) return DESCENDING;
+        return valueOf(str.toUpperCase());
     }
 }

@@ -27,6 +27,7 @@ import org.dashbuilder.dataset.def.DataSetDef;
 import org.dashbuilder.dataset.def.DataSetDefRegistry;
 import org.dashbuilder.dataset.events.DataSetDefModifiedEvent;
 import org.dashbuilder.dataset.events.DataSetDefRegisteredEvent;
+import org.dashbuilder.dataset.events.DataSetDefRemovedEvent;
 import org.jboss.errai.bus.server.annotations.Service;
 
 /**
@@ -40,6 +41,9 @@ public class DataSetDefRegistryImpl implements DataSetDefRegistry {
 
     @Inject
     private Event<DataSetDefRegisteredEvent> dataSetDefRegisteredEvent;
+
+    @Inject
+    private Event<DataSetDefRemovedEvent> dataSetDefRemovedEvent;
 
     protected Map<String,DataSetDef> dataSetDefMap = new HashMap<String, DataSetDef>();
 
@@ -58,7 +62,11 @@ public class DataSetDefRegistryImpl implements DataSetDefRegistry {
     }
 
     public synchronized DataSetDef removeDataSetDef(String uuid) {
-        return dataSetDefMap.remove(uuid);
+        DataSetDef oldDef = dataSetDefMap.remove(uuid);
+        if (oldDef == null) return null;
+
+        dataSetDefRemovedEvent.fire(new DataSetDefRemovedEvent(oldDef));
+        return oldDef;
     }
 
     public synchronized void registerDataSetDef(DataSetDef newDef) {
