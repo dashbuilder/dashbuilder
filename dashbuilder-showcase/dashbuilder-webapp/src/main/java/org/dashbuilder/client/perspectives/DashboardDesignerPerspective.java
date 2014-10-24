@@ -46,7 +46,6 @@ import org.uberfire.workbench.model.menu.Menus;
 import static org.dashbuilder.dataset.group.DateIntervalType.MONTH;
 import static org.dashbuilder.dataset.sort.SortOrder.*;
 import static org.dashbuilder.shared.sales.SalesConstants.*;
-import static org.uberfire.commons.validation.PortablePreconditions.checkNotNull;
 
 /**
  * The dashboard composer perspective.
@@ -90,7 +89,7 @@ public class DashboardDesignerPerspective {
                     }
 
                     public void onSave(DisplayerEditor editor) {
-                        placeManager.goTo(createPlaceRequest(editor.getCurrentSettings()));
+                        placeManager.goTo(createPlaceRequest(editor.getDisplayerSettings()));
                     }
                 });
             }

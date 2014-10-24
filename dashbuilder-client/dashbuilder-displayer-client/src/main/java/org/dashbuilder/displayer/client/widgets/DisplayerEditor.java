@@ -20,8 +20,17 @@ import javax.inject.Inject;
 
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
+import org.dashbuilder.dataset.DataSetFactory;
+import org.dashbuilder.dataset.DataSetLookup;
+import org.dashbuilder.dataset.DataSetLookupConstraints;
+import org.dashbuilder.dataset.DataSetMetadata;
+import org.dashbuilder.dataset.client.DataSetClientServices;
+import org.dashbuilder.dataset.client.DataSetMetadataCallback;
+import org.dashbuilder.displayer.DisplayerConstraints;
 import org.dashbuilder.displayer.DisplayerSettings;
 import org.dashbuilder.displayer.DisplayerType;
+import org.dashbuilder.displayer.client.Displayer;
+import org.dashbuilder.displayer.client.DisplayerLocator;
 import org.dashbuilder.displayer.client.prototypes.DisplayerPrototypes;
 
 @Dependent
@@ -36,20 +45,20 @@ public class DisplayerEditor implements IsWidget,
     }
 
     public interface View extends IsWidget {
-        void init(DisplayerEditor presenter);
-        void refreshDisplayer();
+        void init(DisplayerSettings settings, DisplayerEditor presenter);
         void disableTypeSelection();
         void gotoTypeSelection();
         void gotoDataSetConf();
         void gotoDisplaySettings();
+        void updateDataSetLookup(DataSetLookupConstraints constraints, DataSetMetadata metadata);
+        void error(String msg, Exception e);
     }
 
     View view = null;
     Listener listener = null;
 
     DisplayerPrototypes prototypes;
-    DisplayerSettings originalSettings = null;
-    DisplayerSettings currentSettings = null;
+    DisplayerSettings displayerSettings = null;
     boolean brandNewDisplayer = true;
 
     public DisplayerEditor() {
@@ -74,42 +83,20 @@ public class DisplayerEditor implements IsWidget,
     }
 
     public void init(DisplayerSettings settings, Listener editorListener) {
-        this.originalSettings = settings;
         this.listener = editorListener;
 
         if (settings != null) {
             brandNewDisplayer = false;
-            currentSettings = settings.cloneInstance();
-            view.init(this);
+            displayerSettings = settings.cloneInstance();
+            view.init(displayerSettings, this);
             view.disableTypeSelection();
             view.gotoDisplaySettings();
         } else {
             brandNewDisplayer = true;
-            currentSettings = prototypes.getProto(DisplayerType.BARCHART).cloneInstance();
-            view.init(this);
+            displayerSettings = prototypes.getProto(DisplayerType.BARCHART).cloneInstance();
+            view.init(displayerSettings, this);
             view.gotoTypeSelection();
         }
-    }
-
-    public void displayerSettingsChanged(DisplayerSettings settings) {
-        currentSettings = settings;
-        view.refreshDisplayer();
-    }
-
-    public void changeDisplayerType(DisplayerType type) {
-        // Rest the current settings
-        currentSettings = prototypes.getProto(type).cloneInstance();
-
-        // Show the new displayer
-        view.refreshDisplayer();
-    }
-
-    public boolean isEditing(DisplayerSettings settings) {
-        return originalSettings != null && originalSettings.getUUID().equals(settings.getUUID());
-    }
-
-    public boolean isCurrentDisplayerReady() {
-        return true;
     }
 
     public boolean isBrandNewDisplayer() {
@@ -120,12 +107,8 @@ public class DisplayerEditor implements IsWidget,
         return view;
     }
 
-    public DisplayerSettings getOriginalSettings() {
-        return originalSettings;
-    }
-
-    public DisplayerSettings getCurrentSettings() {
-        return currentSettings;
+    public DisplayerSettings getDisplayerSettings() {
+        return displayerSettings;
     }
 
     public void save() {
@@ -137,6 +120,68 @@ public class DisplayerEditor implements IsWidget,
     public void close() {
         if (listener != null) {
             listener.onClose(this);
+        }
+    }
+
+    public void fetchDataSetLookup() {
+        try {
+            String uuid = displayerSettings.getDataSetLookup().getDataSetUUID();
+            DataSetLookup metadataLookup = DataSetFactory.newDataSetLookupBuilder().dataset(uuid).buildLookup();
+            DataSetClientServices.get().fetchMetadata(metadataLookup, new DataSetMetadataCallback() {
+                public void callback(DataSetMetadata metadata) {
+
+                    Displayer displayer = DisplayerLocator.get().lookupDisplayer(displayerSettings);
+                    DataSetLookupConstraints constraints = displayer.getDisplayerConstraints().getDataSetLookupConstraints();
+                    view.updateDataSetLookup(constraints, metadata);
+                }
+                public void notFound() {
+                    // Very unlikely since this data set has been selected from a list provided by the backend.
+                    view.error("Selected data set not found", null);
+                }
+            });
+        } catch (Exception e) {
+            view.error("Error fetching the data set metadata", e);
+        }
+    }
+
+    // Widget listeners callback notifications
+
+    @Override
+    public void displayerSettingsChanged(DisplayerSettings settings) {
+        displayerSettings = settings;
+        view.init(displayerSettings, this);
+    }
+
+    @Override
+    public void displayerTypeChanged(DisplayerType type) {
+        displayerSettings = prototypes.getProto(type).cloneInstance();
+        view.init(displayerSettings, this);
+    }
+
+    @Override
+    public void dataSetSelected(final String uuid) {
+        try {
+            DataSetClientServices.get().fetchMetadata(DataSetFactory.newDataSetLookupBuilder().dataset(uuid).buildLookup(), new DataSetMetadataCallback() {
+                public void callback(DataSetMetadata metadata) {
+
+                    // Create a dataSetLookup instance for the target data set that fits the displayer constraints
+                    Displayer displayer = DisplayerLocator.get().lookupDisplayer(displayerSettings);
+                    DataSetLookupConstraints constraints = displayer.getDisplayerConstraints().getDataSetLookupConstraints();
+                    DataSetLookup lookup = constraints.newDataSetLookup(metadata);
+                    if (lookup == null) view.error("Is not possible to create a data lookup request for the selected data set", null);
+
+                    // Make the view show the new lookup instance
+                    displayerSettings.setDataSet(null);
+                    displayerSettings.setDataSetLookup(lookup);
+                    view.updateDataSetLookup(constraints, metadata);
+                }
+                public void notFound() {
+                    // Very unlikely since this data set has been selected from a list provided by the backend.
+                    view.error("Selected data set not found", null);
+                }
+            });
+        } catch (Exception e) {
+            view.error("Error fetching the data set metadata", e);
         }
     }
 }

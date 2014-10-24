@@ -22,6 +22,29 @@
              xmlns:b="urn:import:com.github.gwtbootstrap.client.ui">
 
   <g:HTMLPanel>
-    <b:Label ui:field="label" />
+    <b:Label ui:field="statusLabel" visible="false" />
+    <b:ControlGroup>
+      <b:ControlLabel>
+        Data set
+      </b:ControlLabel>
+      <b:Controls>
+        <b:ListBox ui:field="dataSetListBox"/>
+      </b:Controls>
+    </b:ControlGroup>
+    <b:ControlGroup ui:field="rowsControlGroup" visible="false">
+      <b:ControlLabel>
+        Rows
+      </b:ControlLabel>
+      <b:Controls>
+        <b:ListBox ui:field="rowColumnListBox"/>
+      </b:Controls>
+    </b:ControlGroup>
+    <b:ControlGroup  ui:field="columnsControlGroup" visible="false">
+      <b:ControlLabel>
+        Columns
+      </b:ControlLabel>
+      <b:Controls>
+      </b:Controls>
+    </b:ControlGroup>
   </g:HTMLPanel>
 </ui:UiBinder>

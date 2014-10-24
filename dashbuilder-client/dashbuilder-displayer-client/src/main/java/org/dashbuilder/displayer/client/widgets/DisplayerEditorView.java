@@ -18,8 +18,7 @@ package org.dashbuilder.displayer.client.widgets;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
-import com.github.gwtbootstrap.client.ui.Button;
-import com.github.gwtbootstrap.client.ui.ButtonGroup;
+import com.github.gwtbootstrap.client.ui.Label;
 import com.github.gwtbootstrap.client.ui.Tab;
 import com.github.gwtbootstrap.client.ui.TabPanel;
 import com.github.gwtbootstrap.client.ui.constants.VisibilityChange;
@@ -31,10 +30,10 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
-import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetLookup;
+import org.dashbuilder.dataset.DataSetLookupConstraints;
+import org.dashbuilder.dataset.DataSetMetadata;
 import org.dashbuilder.displayer.DisplayerSettings;
-import org.dashbuilder.displayer.DisplayerSettingsFactory;
 import org.dashbuilder.displayer.DisplayerType;
 import org.dashbuilder.displayer.client.Displayer;
 import org.dashbuilder.displayer.client.DisplayerHelper;
@@ -62,6 +61,7 @@ public class DisplayerEditorView extends Composite
     }
 
     DisplayerEditor presenter;
+    DisplayerSettings settings;
     DisplayerTypeSelector typeSelector;
     DataSetLookupEditor lookupEditor;
     DisplayerSettingsEditorForm settingsEditor;
@@ -84,82 +84,91 @@ public class DisplayerEditorView extends Composite
     @UiField
     Tab optionSettings;
 
-    @UiField
-    Button graphMode;
-
-    @UiField
-    Button dataMode;
-
-    public void init(DisplayerEditor presenter) {
+    @Override
+    public void init(DisplayerSettings settings, DisplayerEditor presenter) {
+        this.settings = settings;
         this.presenter = presenter;
         refreshDisplayer();
     }
 
+    @Override
+    public void disableTypeSelection() {
+        optionType.addStyle(VisibilityChange.HIDE);
+    }
+
+    @Override
+    public void gotoTypeSelection() {
+        optionsPanel.selectTab(0);
+
+        typeSelector.init(presenter);
+        typeSelector.select(settings.getType());
+        leftPanel.clear();
+        leftPanel.add(typeSelector);
+
+        refreshDisplayer();
+    }
+
+    @Override
+    public void gotoDataSetConf() {
+        optionsPanel.selectTab(1);
+
+        lookupEditor.init(presenter);
+        if (settings.getDataSet() == null && settings.getDataSetLookup() != null) {
+            // Fetch lookup based displayer
+            presenter.fetchDataSetLookup();
+        }
+
+        leftPanel.clear();
+        leftPanel.add(lookupEditor);
+
+        refreshDisplayer();
+    }
+
+    @Override
+    public void updateDataSetLookup(DataSetLookupConstraints constraints, DataSetMetadata metadata) {
+        DataSetLookup dataSetLookup = settings.getDataSetLookup();
+        lookupEditor.update(dataSetLookup, constraints, metadata);
+
+        refreshDisplayer();
+    }
+
+    @Override
+    public void gotoDisplaySettings() {
+        optionsPanel.selectTab(2);
+        optionSettings.setActive(true);
+
+        settingsEditor.init(settings, presenter);
+        leftPanel.clear();
+        leftPanel.add(settingsEditor);
+
+        refreshDisplayer();
+    }
+
+    @Override
+    public void error(String msg, Exception e) {
+        centerPanel.clear();
+        centerPanel.add(new Label(msg));
+        GWT.log(msg, e);
+    }
+
     public void refreshDisplayer() {
         Displayer displayer = null;
-        if (graphMode.isActive()) {
-            displayer = DisplayerLocator.get().lookupDisplayer(presenter.getCurrentSettings());
+        if (optionsPanel.getSelectedTab() != 1) {
+            displayer = DisplayerLocator.get().lookupDisplayer(settings);
         } else {
-            DisplayerSettings tableSettings = presenter.getCurrentSettings().cloneInstance();
+            DisplayerSettings tableSettings = settings.cloneInstance();
+            tableSettings.setTitleVisible(false);
             tableSettings.setType(DisplayerType.TABLE);
             displayer = DisplayerLocator.get().lookupDisplayer(tableSettings);
         }
-
         centerPanel.clear();
         centerPanel.add(displayer);
         DisplayerHelper.draw(displayer);
     }
 
-    public void disableTypeSelection() {
-        optionType.addStyle(VisibilityChange.HIDE);
-    }
-
-    public void gotoTypeSelection() {
-        optionsPanel.selectTab(0);
-
-        typeSelector.init(presenter);
-        typeSelector.select(presenter.getCurrentSettings().getType());
-        leftPanel.clear();
-        leftPanel.add(typeSelector);
-    }
-
-    public void gotoDataSetConf() {
-        optionsPanel.selectTab(1);
-
-        DataSet dataSet = presenter.getCurrentSettings().getDataSet();
-        DataSetLookup dataSetLookup = presenter.getCurrentSettings().getDataSetLookup();
-        if (dataSet != null) {
-            lookupEditor.init(dataSet, presenter);
-        } else {
-            lookupEditor.init(dataSetLookup, presenter);
-        }
-
-        leftPanel.clear();
-        leftPanel.add(lookupEditor.getView());
-    }
-
-    public void gotoDisplaySettings() {
-        optionsPanel.selectTab(2);
-        optionSettings.setActive(true);
-
-        settingsEditor.init(presenter.getCurrentSettings(), presenter);
-        leftPanel.clear();
-        leftPanel.add(settingsEditor);
-    }
-
     @UiHandler(value = "optionType")
     public void onTypeSelected(ClickEvent clickEvent) {
         gotoTypeSelection();
-    }
-
-    @UiHandler(value = "graphMode")
-    public void onGraphModeSelected(ClickEvent clickEvent) {
-        refreshDisplayer();
-    }
-
-    @UiHandler(value = "dataMode")
-    public void onDataModeSelected(ClickEvent clickEvent) {
-        refreshDisplayer();
     }
 
     @UiHandler(value = "optionData")

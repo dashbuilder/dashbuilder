@@ -32,7 +32,7 @@ import org.dashbuilder.displayer.DisplayerType;
 public class DisplayerTypeSelector extends Composite {
 
     public interface Listener {
-        void changeDisplayerType(DisplayerType type);
+        void displayerTypeChanged(DisplayerType type);
     }
 
     interface ViewBinder extends
@@ -62,7 +62,7 @@ public class DisplayerTypeSelector extends Composite {
         boolean change = !selectedType.equals(type);
         selectedType = type;
         if (change && listener != null) {
-            listener.changeDisplayerType(type);
+            listener.displayerTypeChanged(type);
         }
     }
 

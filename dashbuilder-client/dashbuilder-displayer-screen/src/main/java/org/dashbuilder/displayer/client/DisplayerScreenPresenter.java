@@ -15,11 +15,7 @@
  */
 package org.dashbuilder.displayer.client;
 
-import java.util.HashMap;
-import java.util.Map;
 import javax.enterprise.context.Dependent;
-import javax.enterprise.event.Event;
-import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
 import com.google.gwt.dom.client.Document;
@@ -112,7 +108,7 @@ public class DisplayerScreenPresenter {
                     }
 
                     public void onSave(DisplayerEditor editor) {
-                        updateDisplayer(editor.getCurrentSettings());
+                        updateDisplayer(editor.getDisplayerSettings());
                     }
                 });
             }
