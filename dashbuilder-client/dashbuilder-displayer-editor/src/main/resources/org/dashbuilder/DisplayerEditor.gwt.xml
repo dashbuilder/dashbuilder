@@ -9,6 +9,6 @@
 
   <inherits name="org.kie.uberfire.perspective.editor.PerspectiveEditorClient"/>
 
-  <source path='displayer'/>
+  <source path='client'/>
 
 </module>
