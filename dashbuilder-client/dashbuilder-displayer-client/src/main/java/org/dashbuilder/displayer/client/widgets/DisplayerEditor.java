@@ -26,6 +26,8 @@ import org.dashbuilder.dataset.DataSetLookupConstraints;
 import org.dashbuilder.dataset.DataSetMetadata;
 import org.dashbuilder.dataset.client.DataSetClientServices;
 import org.dashbuilder.dataset.client.DataSetMetadataCallback;
+import org.dashbuilder.dataset.group.DataSetGroup;
+import org.dashbuilder.dataset.group.GroupFunction;
 import org.dashbuilder.displayer.DisplayerConstraints;
 import org.dashbuilder.displayer.DisplayerSettings;
 import org.dashbuilder.displayer.DisplayerType;
@@ -159,7 +161,7 @@ public class DisplayerEditor implements IsWidget,
     }
 
     @Override
-    public void dataSetSelected(final String uuid) {
+    public void dataSetChanged(final String uuid) {
         try {
             DataSetClientServices.get().fetchMetadata(DataSetFactory.newDataSetLookupBuilder().dataset(uuid).buildLookup(), new DataSetMetadataCallback() {
                 public void callback(DataSetMetadata metadata) {
@@ -183,5 +185,15 @@ public class DisplayerEditor implements IsWidget,
         } catch (Exception e) {
             view.error("Error fetching the data set metadata", e);
         }
+    }
+
+    @Override
+    public void groupColumnChanged(DataSetGroup groupOp) {
+        view.init(displayerSettings, this);
+    }
+
+    @Override
+    public void groupFunctionColumnChanged(GroupFunction groupFunction) {
+        view.init(displayerSettings, this);
     }
 }

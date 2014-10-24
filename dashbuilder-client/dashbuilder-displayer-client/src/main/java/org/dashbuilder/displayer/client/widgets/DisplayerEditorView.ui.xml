@@ -21,6 +21,16 @@
              xmlns:g='urn:import:com.google.gwt.user.client.ui'
              xmlns:b="urn:import:com.github.gwtbootstrap.client.ui">
 
+  <ui:style>
+    .childPanel {
+      font-size: 12pt;
+      padding: 5px;
+      margin: 10px;
+      height: 100%;
+      width: 100%;
+    }
+  </ui:style>
+
   <g:HTMLPanel>
     <b:TabPanel ui:field="optionsPanel">
       <b:Tab ui:field="optionType" heading="Type" />
@@ -28,8 +38,8 @@
       <b:Tab ui:field="optionSettings" heading="Display" />
     </b:TabPanel>
     <g:HorizontalPanel>
-        <g:SimplePanel ui:field="leftPanel" />
-        <g:SimplePanel ui:field="centerPanel" />
+        <g:SimplePanel ui:field="leftPanel" styleName="{style.childPanel}" />
+        <g:SimplePanel ui:field="centerPanel" styleName="{style.childPanel}" />
     </g:HorizontalPanel>
   </g:HTMLPanel>
 </ui:UiBinder>

@@ -34,7 +34,6 @@ import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.dataset.ColumnType;
-import org.dashbuilder.dataset.DataSetLookupConstraints;
 import org.dashbuilder.dataset.client.DataSetClientServices;
 import org.dashbuilder.dataset.def.DataSetDef;
 import org.dashbuilder.dataset.group.AggregateFunction;
@@ -77,6 +76,8 @@ public class DataSetLookupEditorView extends Composite
         this.presenter = presenter;
         rowsControlGroup.setVisible(false);
         columnsControlGroup.setVisible(false);
+        dataSetListBox.setWidth("200px");
+        rowColumnListBox.setWidth("200px");
     }
 
     @Override
@@ -139,10 +140,15 @@ public class DataSetLookupEditorView extends Composite
     public void onDataSetSelected(ChangeEvent changeEvent) {
         rowsControlGroup.setVisible(false);
         columnsControlGroup.setVisible(false);
-        if (presenter != null) {
-            String dataSetUUID = dataSetListBox.getValue(dataSetListBox.getSelectedIndex());
-            presenter.selectDataSet(dataSetUUID);
-        }
+
+        String dataSetUUID = dataSetListBox.getValue(dataSetListBox.getSelectedIndex());
+        presenter.changeDataSet(dataSetUUID);
+    }
+
+    @UiHandler(value = "rowColumnListBox")
+    public void onRowColumnChanged(ChangeEvent changeEvent) {
+        String columnId = rowColumnListBox.getValue(rowColumnListBox.getSelectedIndex());
+        presenter.changeGroupColumn(columnId);
     }
 
     // UI handling stuff
@@ -167,27 +173,39 @@ public class DataSetLookupEditorView extends Composite
         }
     }
 
-    private Panel createColumnPanel(GroupFunction groupFunction) {
+    private Panel createColumnPanel(final GroupFunction groupFunction) {
         HorizontalPanel panel = new HorizontalPanel();
-        ListBox columnListBox = new ListBox();
-        for (Integer i : presenter.getAvailableFunctionColumnIdxs()) {
-            String columnId = presenter.getColumnId(i);
-            ColumnType columnType = presenter.getColumnType(i);
+        final ListBox columnListBox = new ListBox();
+        List<Integer> columnIdxs = presenter.getAvailableFunctionColumnIdxs();
+
+        for (int i=0; i<columnIdxs.size(); i++) {
+            int columnIdx = columnIdxs.get(i);
+            String columnId = presenter.getColumnId(columnIdx);
+            ColumnType columnType = presenter.getColumnType(columnIdx);
             columnListBox.addItem(columnId + " (" + columnType + ")", columnId);
             if (columnId != null && columnId.equals(groupFunction.getSourceId())) {
                 columnListBox.setSelectedIndex(i);
             }
         }
 
-        ListBox funcListBox = createFunctionListBox(groupFunction.getFunction());
-        columnListBox.setWidth("80px");
-        funcListBox.setWidth("40px");
+        final ListBox funcListBox = createFunctionListBox(groupFunction.getFunction());
+        columnListBox.setWidth("130px");
+        funcListBox.setWidth("70px");
         panel.add(columnListBox);
         panel.add(funcListBox);
 
         columnListBox.addChangeHandler(new ChangeHandler() {
             public void onChange(ChangeEvent event) {
-                //presenter.groupColumnChanged()
+                String columnId = columnListBox.getValue(columnListBox.getSelectedIndex());
+                String function = funcListBox.getValue(funcListBox.getSelectedIndex());
+                presenter.changeGroupFunction(groupFunction, columnId, function);
+            }
+        });
+        funcListBox.addChangeHandler(new ChangeHandler() {
+            public void onChange(ChangeEvent event) {
+                String columnId = columnListBox.getValue(columnListBox.getSelectedIndex());
+                String function = funcListBox.getValue(funcListBox.getSelectedIndex());
+                presenter.changeGroupFunction(groupFunction, columnId, function);
             }
         });
         return panel;

@@ -32,6 +32,7 @@ import org.dashbuilder.dataset.client.DataSetClientServices;
 import org.dashbuilder.dataset.def.DataSetDef;
 import org.dashbuilder.dataset.events.DataSetDefRegisteredEvent;
 import org.dashbuilder.dataset.events.DataSetDefRemovedEvent;
+import org.dashbuilder.dataset.group.AggregateFunctionType;
 import org.dashbuilder.dataset.group.DataSetGroup;
 import org.dashbuilder.dataset.group.GroupFunction;
 import org.jboss.errai.common.client.api.RemoteCallback;
@@ -42,7 +43,9 @@ import static org.uberfire.commons.validation.PortablePreconditions.checkNotNull
 public class DataSetLookupEditor implements IsWidget {
 
     public interface Listener {
-        void dataSetSelected(String uuid);
+        void dataSetChanged(String uuid);
+        void groupFunctionColumnChanged(GroupFunction groupFunction);
+        void groupColumnChanged(DataSetGroup groupOp);
     }
 
     public interface View extends IsWidget {
@@ -96,7 +99,7 @@ public class DataSetLookupEditor implements IsWidget {
             DataSetMetadata metadata) {
 
         this.listener = listener;
-        this.dataSetLookup = dataSetLookup.cloneInstance();
+        this.dataSetLookup = dataSetLookup;
         this.lookupConstraints = constraints;
         this.dataSetMetadata = metadata;
         view.init(this);
@@ -136,6 +139,23 @@ public class DataSetLookupEditor implements IsWidget {
 
     public ColumnType getColumnType(int index) {
         return dataSetMetadata.getColumnType(index);
+    }
+
+    public DataSetGroup getGroupOp(String columnId) {
+        List<DataSetGroup> groupOpList = dataSetLookup.getOperationList(DataSetGroup.class);
+        for (DataSetGroup op : groupOpList) {
+            if (columnId.equals(op.getColumnGroup().getSourceId())) {
+                return op;
+            }
+        }
+        return null;
+    }
+
+    public DataSetGroup getFirstGroupOp() {
+        List<DataSetGroup> groupOpList = dataSetLookup.getOperationList(DataSetGroup.class);
+        if (groupOpList.isEmpty()) return null;
+
+        return groupOpList.get(0);
     }
 
     public List<GroupFunction> getFirstGroupFunctions() {
@@ -178,9 +198,30 @@ public class DataSetLookupEditor implements IsWidget {
         return result;
     }
 
-    public void selectDataSet(String uuid) {
+    // UI notifications
+
+    public void changeDataSet(String uuid) {
         if (listener != null) {
-            listener.dataSetSelected(uuid);
+            listener.dataSetChanged(uuid);
+        }
+    }
+
+    public void changeGroupColumn(String columnId) {
+        DataSetGroup groupOp = getFirstGroupOp();
+        if (groupOp != null) {
+            groupOp.getColumnGroup().setSourceId(columnId);
+            if (listener != null) {
+                listener.groupColumnChanged(groupOp);
+            }
+        }
+    }
+
+    public void changeGroupFunction(GroupFunction groupFunction, String columnId, String function) {
+        AggregateFunctionType functionType = AggregateFunctionType.getByName(function);
+        groupFunction.setSourceId(columnId);
+        groupFunction.setFunction(functionType);
+        if (listener != null) {
+            listener.groupFunctionColumnChanged(groupFunction);
         }
     }
 
