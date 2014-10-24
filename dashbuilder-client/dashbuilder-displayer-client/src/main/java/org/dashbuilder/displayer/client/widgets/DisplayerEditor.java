@@ -59,12 +59,10 @@ public class DisplayerEditor implements IsWidget,
     View view = null;
     Listener listener = null;
 
-    DisplayerPrototypes prototypes;
     DisplayerSettings displayerSettings = null;
     boolean brandNewDisplayer = true;
 
     public DisplayerEditor() {
-        this.prototypes = DisplayerPrototypes.get();
         this.view = new DisplayerEditorView(
                 new DisplayerTypeSelector(),
                 new DataSetLookupEditor(),
@@ -77,7 +75,6 @@ public class DisplayerEditor implements IsWidget,
             DisplayerPrototypes prototypes) {
 
         this.view = view;
-        this.prototypes = prototypes;
     }
 
     public Widget asWidget() {
@@ -95,7 +92,7 @@ public class DisplayerEditor implements IsWidget,
             view.gotoDisplaySettings();
         } else {
             brandNewDisplayer = true;
-            displayerSettings = prototypes.getProto(DisplayerType.BARCHART).cloneInstance();
+            displayerSettings = DisplayerPrototypes.get().getProto(DisplayerType.BARCHART).cloneInstance();
             view.init(displayerSettings, this);
             view.gotoTypeSelection();
         }
@@ -156,7 +153,7 @@ public class DisplayerEditor implements IsWidget,
 
     @Override
     public void displayerTypeChanged(DisplayerType type) {
-        displayerSettings = prototypes.getProto(type).cloneInstance();
+        displayerSettings = DisplayerPrototypes.get().getProto(type).cloneInstance();
         view.init(displayerSettings, this);
     }
 

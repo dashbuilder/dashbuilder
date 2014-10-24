@@ -56,7 +56,7 @@ public class DisplayerPrototypes {
                 .width(300).height(300)
                 .margins(0, 0, 0, 0)
                 .set3d(false)
-                .filterOff(false)
+                .filterOn(false, true, true)
                 .buildSettings());
 
         prototypeMap.put(DisplayerType.BARCHART, DisplayerSettingsFactory
@@ -69,7 +69,7 @@ public class DisplayerPrototypes {
                 .margins(10, 20, 90, 50)
                 .horizontal().set3d(false)
                 .legendOff()
-                .filterOff(false)
+                .filterOn(false, true, true)
                 .buildSettings());
 
         prototypeMap.put(DisplayerType.LINECHART, DisplayerSettingsFactory
@@ -81,7 +81,7 @@ public class DisplayerPrototypes {
                 .width(500).height(300)
                 .margins(10, 40, 90, 10)
                 .legendOff()
-                .filterOff(false)
+                .filterOn(false, true, true)
                 .buildSettings());
 
         prototypeMap.put(DisplayerType.AREACHART, DisplayerSettingsFactory
@@ -93,7 +93,7 @@ public class DisplayerPrototypes {
                 .width(500).height(300)
                 .margins(10, 40, 90, 40)
                 .legendOff()
-                .filterOff(false)
+                .filterOn(false, true, true)
                 .buildSettings());
 
         prototypeMap.put(DisplayerType.BUBBLECHART, DisplayerSettingsFactory
@@ -105,7 +105,7 @@ public class DisplayerPrototypes {
                 .width(500).height(300)
                 .margins(10, 30, 50, 50)
                 .legendOff()
-                .filterOff(false)
+                .filterOn(false, true, true)
                 .buildSettings());
 
         prototypeMap.put(DisplayerType.METERCHART, DisplayerSettingsFactory
@@ -117,7 +117,7 @@ public class DisplayerPrototypes {
                 .width(400).height(300)
                 .margins(10, 10, 10, 10)
                 .meter(0, 1000000000L, 3000000000L, 6000000000L)
-                .filterOff(false)
+                .filterOn(false, true, true)
                 .buildSettings());
 
         prototypeMap.put(DisplayerType.MAP, DisplayerSettingsFactory
@@ -130,7 +130,7 @@ public class DisplayerPrototypes {
                 .titleVisible(true)
                 .width(500).height(300)
                 .margins(10, 10, 10, 10)
-                .filterOff(false)
+                .filterOn(false, true, true)
                 .buildSettings());
 
         prototypeMap.put(DisplayerType.TABLE, DisplayerSettingsFactory
@@ -143,7 +143,7 @@ public class DisplayerPrototypes {
                 .tableOrderDefault(POPULATION, SortOrder.DESCENDING)
                 .tableWidth(400)
                 .tablePageSize(10)
-                .filterOff(false)
+                .filterOn(false, true, true)
                 .buildSettings());
     }
 

@@ -35,6 +35,11 @@ public class DisplayerView extends Composite {
         initWidget(container);
     }
 
+    public DisplayerView(DisplayerSettings settings) {
+        this();
+        this.displayerSettings = settings;
+    }
+
     public DisplayerSettings getDisplayerSettings() {
         return displayerSettings;
     }
