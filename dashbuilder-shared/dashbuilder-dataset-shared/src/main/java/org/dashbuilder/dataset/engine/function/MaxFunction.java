@@ -18,22 +18,19 @@ package org.dashbuilder.dataset.engine.function;
 import java.util.Iterator;
 import java.util.List;
 
+import org.dashbuilder.dataset.group.AggregateFunctionType;
+
 /**
  * It calculates the max. number of a set of numbers.
  */
 public class MaxFunction extends AbstractFunction {
 
-    /**
-     * The code of the function.
-     */
-    public static final String CODE = "max";
-
     public MaxFunction() {
         super();
     }
 
-    public String getCode() {
-        return CODE;
+    public AggregateFunctionType getType() {
+        return AggregateFunctionType.MAX;
     }
 
     public double aggregate(List values) {

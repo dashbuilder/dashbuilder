@@ -27,6 +27,7 @@ import org.dashbuilder.dataset.engine.function.DistinctFunction;
 import org.dashbuilder.dataset.engine.function.MaxFunction;
 import org.dashbuilder.dataset.engine.function.MinFunction;
 import org.dashbuilder.dataset.engine.function.SumFunction;
+import org.dashbuilder.dataset.group.AggregateFunctionType;
 import org.dashbuilder.test.ShrinkWrapHelper;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -54,42 +55,42 @@ public class AggregateFunctionTest {
 
     @Test
     public void testSumFunction() throws Exception {
-        AggregateFunction sf = aggregateFunctionManager.getFunctionByCode(SumFunction.CODE);
+        AggregateFunction sf = aggregateFunctionManager.getFunctionByType(AggregateFunctionType.SUM);
         double result = sf.aggregate(listOfNumbers);
         assertThat(result).isEqualTo(15);
     }
 
     @Test
     public void testAvgFunction() throws Exception {
-        AggregateFunction sf = aggregateFunctionManager.getFunctionByCode(AverageFunction.CODE);
+        AggregateFunction sf = aggregateFunctionManager.getFunctionByType(AggregateFunctionType.AVERAGE);
         double result = sf.aggregate(listOfNumbers);
         assertThat(result).isEqualTo(3);
     }
 
     @Test
     public void testMaxFunction() throws Exception {
-        AggregateFunction sf = aggregateFunctionManager.getFunctionByCode(MaxFunction.CODE);
+        AggregateFunction sf = aggregateFunctionManager.getFunctionByType(AggregateFunctionType.MAX);
         double result = sf.aggregate(listOfNumbers);
         assertThat(result).isEqualTo(5);
     }
 
     @Test
     public void testMinFunction() throws Exception {
-        AggregateFunction sf = aggregateFunctionManager.getFunctionByCode(MinFunction.CODE);
+        AggregateFunction sf = aggregateFunctionManager.getFunctionByType(AggregateFunctionType.MIN);
         double result = sf.aggregate(listOfNumbers);
         assertThat(result).isEqualTo(1);
     }
 
     @Test
     public void testCountFunction() throws Exception {
-        AggregateFunction sf = aggregateFunctionManager.getFunctionByCode(CountFunction.CODE);
+        AggregateFunction sf = aggregateFunctionManager.getFunctionByType(AggregateFunctionType.COUNT);
         double result = sf.aggregate(listOfStrings);
         assertThat(result).isEqualTo(5);
     }
 
     @Test
     public void testDistinctFunction() throws Exception {
-        AggregateFunction sf = aggregateFunctionManager.getFunctionByCode(DistinctFunction.CODE);
+        AggregateFunction sf = aggregateFunctionManager.getFunctionByType(AggregateFunctionType.DISTINCT);
         double result = sf.aggregate(listOfStrings);
         assertThat(result).isEqualTo(3);
     }

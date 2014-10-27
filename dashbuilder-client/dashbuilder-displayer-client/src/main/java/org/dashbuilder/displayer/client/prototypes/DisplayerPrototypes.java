@@ -124,8 +124,6 @@ public class DisplayerPrototypes {
                 .newMapChartSettings()
                 .uuid("mapChartPrototype")
                 .dataset(dataSetPrototypes.getCountryPopulation())
-                .column(COUNTRY)
-                .column(POPULATION)
                 .title("World Population")
                 .titleVisible(true)
                 .width(500).height(300)

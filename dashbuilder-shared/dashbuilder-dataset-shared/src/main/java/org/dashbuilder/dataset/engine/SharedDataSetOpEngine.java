@@ -516,7 +516,7 @@ public class SharedDataSetOpEngine implements DataSetOpEngine {
             }
             // Do the aggregate calculations.
             chronometer.start();
-            AggregateFunction function = aggregateFunctionManager.getFunctionByCode(type.toString().toLowerCase());
+            AggregateFunction function = aggregateFunctionManager.getFunctionByType(type);
             double aggValue = function.aggregate(column.getValues(), index.getRows());
             chronometer.stop();
 

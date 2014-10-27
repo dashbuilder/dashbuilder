@@ -23,6 +23,7 @@ import javax.enterprise.context.ApplicationScoped;
 
 import org.dashbuilder.dataset.group.AggregateFunction;
 import org.dashbuilder.dataset.group.AggregateFunctionManager;
+import org.dashbuilder.dataset.group.AggregateFunctionType;
 
 @ApplicationScoped
 public class AggregateFunctionManagerImpl implements AggregateFunctionManager {
@@ -30,7 +31,7 @@ public class AggregateFunctionManagerImpl implements AggregateFunctionManager {
     /**
      * The built-in aggregate function registry.
      */
-    protected Map<String,AggregateFunction> functionMap = new HashMap<String,AggregateFunction>();
+    protected Map<AggregateFunctionType,AggregateFunction> functionMap = new HashMap<AggregateFunctionType,AggregateFunction>();
 
     @PostConstruct
     protected void init() {
@@ -48,11 +49,11 @@ public class AggregateFunctionManagerImpl implements AggregateFunctionManager {
         return functionMap.values();
     }
 
-    public AggregateFunction getFunctionByCode(String code) {
-        return functionMap.get(code);
+    public AggregateFunction getFunctionByType(AggregateFunctionType type) {
+        return functionMap.get(type);
     }
 
     public void registerFunction(AggregateFunction function) {
-        functionMap.put(function.getCode(), function);
+        functionMap.put(function.getType(), function);
     }
 }

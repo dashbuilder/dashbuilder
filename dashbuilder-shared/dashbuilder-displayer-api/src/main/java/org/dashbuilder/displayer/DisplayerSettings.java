@@ -139,7 +139,8 @@ public class DisplayerSettings {
     }
 
     public void setColumns(DisplayerSettingsColumn[] columns) {
-        this.columnList = Arrays.asList( columns );
+        this.columnList.clear();
+        if (columns != null) this.columnList.addAll(Arrays.asList(columns));
     }
 
     // 'Generic' getter method

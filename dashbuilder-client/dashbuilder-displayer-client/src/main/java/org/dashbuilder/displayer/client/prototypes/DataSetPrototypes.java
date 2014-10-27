@@ -235,7 +235,6 @@ public class DataSetPrototypes {
                         .group(COUNTRY)
                         .sum(POPULATION)
                         .sum(AREA_SIZE)
-                        .avg(DENSITY)
                         .buildLookup());
 
         result.setUUID("countryPopulation");

@@ -159,9 +159,11 @@ public class DataSetLookupEditorView extends Composite
         rowColumnListBox.clear();
         columnsPanel.clear();
 
-        for (Integer i : presenter.getAvailableGroupColumnIdxs()) {
-            String columnId = presenter.getColumnId(i);
-            ColumnType columnType = presenter.getColumnType(i);
+        List<Integer> groupColumnIdxs = presenter.getAvailableGroupColumnIdxs();
+        for (int i=0; i<groupColumnIdxs.size(); i++) {
+            int idx = groupColumnIdxs.get(i);
+            String columnId = presenter.getColumnId(idx);
+            ColumnType columnType = presenter.getColumnType(idx);
             rowColumnListBox.addItem(columnId + " (" + columnType + ")", columnId);
             if (groupColumnId != null && groupColumnId.equals(columnId)) {
                 rowColumnListBox.setSelectedIndex(i);
@@ -214,9 +216,9 @@ public class DataSetLookupEditorView extends Composite
     private ListBox createFunctionListBox(AggregateFunctionType selected) {
         ListBox lb = new ListBox();
         for (AggregateFunction function : DataSetClientServices.get().getAggregateFunctionManager().getAllFunctions()) {
-            lb.addItem(function.getCode());
-            if (selected != null && selected.equals(function.getCode())) {
-                lb.setSelectedValue(function.getCode());
+            lb.addItem(function.getType().name());
+            if (selected != null && selected.equals(function.getType())) {
+                lb.setSelectedValue(function.getType().name());
             }
         }
         return lb;

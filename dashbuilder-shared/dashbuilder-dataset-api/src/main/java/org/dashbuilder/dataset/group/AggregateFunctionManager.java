@@ -28,9 +28,9 @@ public interface AggregateFunctionManager {
     Collection<AggregateFunction> getAllFunctions();
 
     /**
-     * Get an aggregate function by its code.
+     * Get an aggregate function by its type.
      */
-    AggregateFunction getFunctionByCode(String code);
+    AggregateFunction getFunctionByType(AggregateFunctionType type);
 
     /**
      * Register an aggregate function.

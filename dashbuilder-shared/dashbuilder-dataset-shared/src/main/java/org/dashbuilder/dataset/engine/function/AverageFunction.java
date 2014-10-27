@@ -17,22 +17,19 @@ package org.dashbuilder.dataset.engine.function;
 
 import java.util.List;
 
+import org.dashbuilder.dataset.group.AggregateFunctionType;
+
 /**
  * It calculates the average value of a set of numbers.
  */
 public class AverageFunction extends SumFunction {
 
-    /**
-     * The code of the function.
-     */
-    public static final String CODE = "average";
-    
     public AverageFunction() {
         super();
     }
 
-    public String getCode() {
-        return CODE;
+    public AggregateFunctionType getType() {
+        return AggregateFunctionType.AVERAGE;
     }
 
     public double aggregate(List values) {

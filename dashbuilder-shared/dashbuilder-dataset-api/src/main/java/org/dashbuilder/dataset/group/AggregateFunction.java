@@ -24,7 +24,7 @@ import java.util.List;
  */
 public interface AggregateFunction {
 
-    String getCode();
+    AggregateFunctionType getType();
     double aggregate(List values);
     double aggregate(List values, List<Integer> rows);
 }

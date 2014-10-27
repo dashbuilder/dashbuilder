@@ -20,25 +20,19 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.dashbuilder.dataset.group.AggregateFunctionType;
+
 /**
  * It calculates the number of distinct occurrences inside a given collection.
  */
 public class DistinctFunction extends AbstractFunction {
 
-    /**
-     * The code of the function.
-     */
-    public static final String CODE = "distinct";
-
-    protected String code;
-
     public DistinctFunction() {
         super();
-        code = CODE;
     }
 
-    public String getCode() {
-        return code;
+    public AggregateFunctionType getType() {
+        return AggregateFunctionType.DISTINCT;
     }
 
     public double aggregate(List values) {

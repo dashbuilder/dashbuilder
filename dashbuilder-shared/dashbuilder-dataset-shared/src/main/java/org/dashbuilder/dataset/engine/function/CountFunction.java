@@ -17,25 +17,19 @@ package org.dashbuilder.dataset.engine.function;
 
 import java.util.List;
 
+import org.dashbuilder.dataset.group.AggregateFunctionType;
+
 /**
  * It calculates the number of occurrences inside a given collection.
  */
 public class CountFunction extends AbstractFunction {
 
-    /**
-     * The code of the function.
-     */
-    public static final String CODE = "count";
-
-    protected String code;
-
     public CountFunction() {
         super();
-        code = CODE;
     }
 
-    public String getCode() {
-        return code;
+    public AggregateFunctionType getType() {
+        return AggregateFunctionType.COUNT;
     }
 
     public double aggregate(List values) {

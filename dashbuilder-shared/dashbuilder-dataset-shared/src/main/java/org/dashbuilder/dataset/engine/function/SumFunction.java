@@ -18,22 +18,19 @@ package org.dashbuilder.dataset.engine.function;
 import java.util.Iterator;
 import java.util.List;
 
+import org.dashbuilder.dataset.group.AggregateFunctionType;
+
 /**
  * It calculates the sum value of a set of numbers.
  */
 public class SumFunction extends AbstractFunction {
 
-    /**
-     * The code of the function.
-     */
-    public static final String CODE = "sum";
-
     public SumFunction() {
         super();
     }
 
-    public String getCode() {
-        return CODE;
+    public AggregateFunctionType getType() {
+        return AggregateFunctionType.SUM;
     }
 
     public double aggregate(List values) {

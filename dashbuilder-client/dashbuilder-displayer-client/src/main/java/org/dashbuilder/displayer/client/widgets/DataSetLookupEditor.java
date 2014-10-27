@@ -210,6 +210,7 @@ public class DataSetLookupEditor implements IsWidget {
         DataSetGroup groupOp = getFirstGroupOp();
         if (groupOp != null) {
             groupOp.getColumnGroup().setSourceId(columnId);
+            groupOp.getColumnGroup().setColumnId(columnId);
             if (listener != null) {
                 listener.groupColumnChanged(groupOp);
             }
@@ -219,6 +220,7 @@ public class DataSetLookupEditor implements IsWidget {
     public void changeGroupFunction(GroupFunction groupFunction, String columnId, String function) {
         AggregateFunctionType functionType = AggregateFunctionType.getByName(function);
         groupFunction.setSourceId(columnId);
+        groupFunction.setColumnId(columnId);
         groupFunction.setFunction(functionType);
         if (listener != null) {
             listener.groupFunctionColumnChanged(groupFunction);

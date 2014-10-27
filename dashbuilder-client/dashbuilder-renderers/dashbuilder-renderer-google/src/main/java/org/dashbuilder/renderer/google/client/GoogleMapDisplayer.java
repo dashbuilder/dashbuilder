@@ -61,8 +61,8 @@ public class GoogleMapDisplayer extends GoogleXAxisChartDisplayer {
     public DisplayerConstraints createDisplayerConstraints() {
         DataSetLookupConstraints lookupConstraints = new DataSetLookupConstraints()
                 .setGroupRequired(true)
-                .setMaxColumns(2)
                 .setMinColumns(2)
+                .setMaxColumns(3)
                 .setColumnTypes(new ColumnType[] {
                         ColumnType.LABEL,
                         ColumnType.NUMBER});

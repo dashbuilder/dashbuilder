@@ -88,7 +88,7 @@ public class DisplayerEditor implements IsWidget,
             brandNewDisplayer = false;
             displayerSettings = settings.cloneInstance();
             view.init(displayerSettings, this);
-            view.disableTypeSelection();
+            //view.disableTypeSelection();
             view.gotoDisplaySettings();
         } else {
             brandNewDisplayer = true;
@@ -172,6 +172,7 @@ public class DisplayerEditor implements IsWidget,
                     // Make the view show the new lookup instance
                     displayerSettings.setDataSet(null);
                     displayerSettings.setDataSetLookup(lookup);
+                    displayerSettings.setColumns(null);
                     view.updateDataSetLookup(constraints, metadata);
                 }
                 public void notFound() {
