@@ -73,6 +73,6 @@ public class DisplayerPerspectiveEditorComponent implements ExternalPerspectiveE
     @Override
     public void modalSettings(Modal popup) {
         popup.setWidth(900);
-        popup.setMaxHeigth("600px");
+        popup.setMaxHeigth("500px");
     }
 }

@@ -139,7 +139,7 @@ public class DisplayerPrototypes {
                 .titleVisible(true)
                 .tableOrderEnabled(true)
                 .tableOrderDefault(POPULATION, SortOrder.DESCENDING)
-                .tableWidth(400)
+                .tableWidth(700)
                 .tablePageSize(10)
                 .filterOn(false, true, true)
                 .buildSettings());
