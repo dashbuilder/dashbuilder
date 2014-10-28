@@ -273,22 +273,24 @@ public class DataSetClientServices {
     private void onDataSetDefModifiedEvent(@Observes DataSetDefModifiedEvent event) {
         checkNotNull("event", event);
         String uuid = event.getNewDataSetDef().getUUID();
-        removeStaleDataSet(uuid);
+
+        // Remove any stale data existing on the client.
+        // This will force next lookup requests to push a refreshed data set.
+        clientDataSetManager.removeDataSet(uuid);
+
+        // If a data set has been updated on the sever then fire an event.
+        // In this case the notification is always send, no matter whether the data set is pushed to the client or not.
+        dataSetModifiedEvent.fire(new DataSetModifiedEvent(uuid));
     }
 
     private void onDataSetRegistered(@Observes DataSetBackendRegisteredEvent event) {
         checkNotNull("event", event);
         String uuid = event.getDataSetMetadata().getUUID();
-        removeStaleDataSet(uuid);
-    }
-
-    private void removeStaleDataSet(String uuid) {
 
         // Remove any stale data existing on the client.
         // This will force next lookup requests to push a refreshed data set.
         DataSet clientDataSet = clientDataSetManager.removeDataSet(uuid);
 
-        // If a data set has been updated on the sever then fire an event.
         // If the dataset already existed on client then an update event is fired.
         if (clientDataSet != null) {
             dataSetModifiedEvent.fire(new DataSetModifiedEvent(uuid));
