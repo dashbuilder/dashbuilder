@@ -33,7 +33,7 @@ import static org.dashbuilder.client.expenses.ExpenseConstants.*;
  * A composite widget that represents an entire dashboard sample based on a UI binder template.
  * The dashboard itself is composed by a set of Displayer instances.</p>
  * <p>The data set that feeds this dashboard is a CSV file stored into an specific server folder so
- * that is auto-deployed during server start up: <code>dashbuilder-showcase/dashbuilder-webapp/src/main/webapp/datasets/expenseReports.csv</code></p>
+ * that is auto-deployed during server start up: <code>dashbuilder-webapp/src/main/webapp/datasets/expenseReports.csv</code></p>
  */
 public class ExpensesDashboard extends Composite {
 

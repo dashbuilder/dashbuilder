@@ -51,8 +51,22 @@
     <module>dashbuilder-shared</module>
     <module>dashbuilder-client</module>
     <module>dashbuilder-packaging</module>
-    <module>dashbuilder-showcase</module>
+    <module>dashbuilder-webapp</module>
   </modules>
+
+  <profiles>
+    <profile>
+      <id>fullProfile</id>
+      <activation>
+        <property>
+          <name>full</name>
+        </property>
+      </activation>
+      <modules>
+        <module>dashbuilder-distros</module>
+      </modules>
+    </profile>
+  </profiles>
 
   <!-- Repositories -->
   <repositories>

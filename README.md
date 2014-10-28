@@ -17,7 +17,7 @@ Build the project
 
 Run the app
 
-    cd dashbuilder-showcase/dashbuilder-webapp
+    cd dashbuilder-webapp
     mvn gwt:run
 
 Login
@@ -42,7 +42,7 @@ composite dashboards using an straightforward API. Feature set:
 * Shared operation engine for executing filter, group & sort operations over a data set
 * Client API & widgets for defining Displayer instances
 * Uberfire wrapper screen for the Displayer widget
-* Showcase providing a built-in displayer gallery plus some dashboard samples
+* Showcase App. providing a built-in displayer gallery plus some dashboard samples
 * Default renderer based on the Google Visualization library
 * Additional table renderer based on the KIE PagedTable widget
 * Tomcat 7 and JBoss AS 7 distributions provided

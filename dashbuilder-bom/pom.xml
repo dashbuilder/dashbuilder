@@ -286,7 +286,7 @@
         <classifier>sources</classifier>
       </dependency>
 
-      <!-- Showcase WebApp -->
+      <!-- Dashbuilder WebApp -->
       <dependency>
         <groupId>org.dashbuilder</groupId>
         <artifactId>dashbuilder-webapp</artifactId>

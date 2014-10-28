@@ -5,11 +5,12 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.dashbuilder</groupId>
-    <artifactId>dashbuilder-showcase</artifactId>
+    <artifactId>dashbuilder-parent-with-dependencies</artifactId>
     <version>0.2.0-SNAPSHOT</version>
+    <relativePath>../dashbuilder-parent-with-dependencies/pom.xml</relativePath>
   </parent>
 
-  <artifactId>dashbuilder-distribution-wars</artifactId>
+  <artifactId>dashbuilder-distros</artifactId>
   <packaging>pom</packaging>
 
   <name>Dashbuilder Distribution WARs</name>
@@ -31,10 +32,10 @@
           </execution>
         </executions>
         <configuration>
-          <finalName>dashbuilder-showcase-${project.version}</finalName>
+          <finalName>dashbuilder-${project.version}</finalName>
           <descriptors>
-            <descriptor>src/main/assembly/assembly-showcase-tomcat-7_0.xml</descriptor>
-            <descriptor>src/main/assembly/assembly-showcase-jboss-eap-6_3.xml</descriptor>
+            <descriptor>src/main/assembly/assembly-tomcat-7_0.xml</descriptor>
+            <descriptor>src/main/assembly/assembly-jboss-eap-6_3.xml</descriptor>
           </descriptors>
           <archive>
             <addMavenDescriptor>false</addMavenDescriptor>
