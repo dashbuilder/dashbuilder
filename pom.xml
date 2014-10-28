@@ -46,7 +46,7 @@
 
   <modules>
     <module>dashbuilder-bom</module>
-    <module>dashbuilder-parent-with-dependencies</module>
+    <module>dashbuilder-deps</module>
     <module>dashbuilder-backend</module>
     <module>dashbuilder-shared</module>
     <module>dashbuilder-client</module>
@@ -122,7 +122,7 @@
     </pluginRepository>
   </pluginRepositories>
 
-  <!-- IMPORTANT: Do not declare any dependencies here! Declare them in dashbuilder-parent-with-dependencies. -->
+  <!-- IMPORTANT: Do not declare any dependencies here! Declare them in dashbuilder-deps. -->
   <dependencyManagement />
   <dependencies/>
 

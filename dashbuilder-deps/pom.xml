@@ -9,7 +9,7 @@
     <version>0.2.0-SNAPSHOT</version>
   </parent>
 
-  <artifactId>dashbuilder-parent-with-dependencies</artifactId>
+  <artifactId>dashbuilder-deps</artifactId>
   <packaging>pom</packaging>
 
   <name>Dashbuilder Parent With Dependencies</name>
