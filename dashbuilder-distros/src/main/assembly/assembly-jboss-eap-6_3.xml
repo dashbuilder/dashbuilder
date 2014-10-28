@@ -51,6 +51,7 @@
           <exclude>WEB-INF/lib/uberfire-panel-manager*.jar</exclude>
 
           <!-- Dashbuilder client -->
+          <exclude>WEB-INF/lib/dashbuilder-*-all-*.jar</exclude>
           <exclude>WEB-INF/lib/dashbuilder-common-client-*.jar</exclude>
           <exclude>WEB-INF/lib/dashbuilder-dataset-client-*.jar</exclude>
           <exclude>WEB-INF/lib/dashbuilder-displayer-client-*.jar</exclude>
