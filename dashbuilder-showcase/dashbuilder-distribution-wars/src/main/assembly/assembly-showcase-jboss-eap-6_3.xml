@@ -19,7 +19,7 @@
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2 http://maven.apache.org/xsd/assembly-1.1.2.xsd">
 
-  <id>jboss-as7.0</id>
+  <id>eap6_3</id>
   <formats>
     <format>war</format>
   </formats>
@@ -27,7 +27,7 @@
   <includeBaseDirectory>false</includeBaseDirectory>
   <fileSets>
     <fileSet>
-      <directory>${project.basedir}/src/main/jbossas7</directory>
+      <directory>${project.basedir}/src/main/eap6_3</directory>
       <outputDirectory>.</outputDirectory>
     </fileSet>
   </fileSets>
@@ -43,24 +43,12 @@
           <exclude>WEB-INF/jetty-env.xml</exclude>
           <exclude>WEB-INF/web.xml</exclude>
 
-          <!-- Dashbuilder client related -->
-          <exclude>WEB-INF/lib/dashbuilder-common-client-*.jar</exclude>
-          <exclude>WEB-INF/lib/dashbuilder-dataset-client-*.jar</exclude>
-          <exclude>WEB-INF/lib/dashbuilder-displayer-client-*.jar</exclude>
-          <exclude>WEB-INF/lib/dashbuilder-displayer-screen-*.jar</exclude>
-          <exclude>WEB-INF/lib/dashbuilder-displayer-editor-*.jar</exclude>
-          <exclude>WEB-INF/lib/dashbuilder-renderer-google-*.jar</exclude>
-          <exclude>WEB-INF/lib/dashbuilder-renderer-table-*.jar</exclude>
-          <exclude>WEB-INF/lib/dashbuilder-renderer-selector-*.jar</exclude>
-
           <!-- UF Client Related -->
           <exclude>WEB-INF/lib/uberfire-js-*.jar</exclude>
           <exclude>WEB-INF/lib/uberfire-client-api-*.jar</exclude>
-          <exclude>WEB-INF/lib/uberfire-widget-markdown-*.jar</exclude>
-          <exclude>WEB-INF/lib/uberfire-widgets-core-client-*.jar</exclude>
           <exclude>WEB-INF/lib/uberfire-security-client-*.jar</exclude>
           <exclude>WEB-INF/lib/uberfire-workbench-*.jar</exclude>
-          <exclude>WEB-INF/lib/uberfire-widgets-commons-*.jar</exclude>
+          <exclude>WEB-INF/lib/uberfire-panel-manager*.jar</exclude>
 
           <!-- KIE Client Related -->
           <exclude>WEB-INF/lib/kie-uberfire-perspective-editor-client-*.jar</exclude>
@@ -76,8 +64,12 @@
           <!-- General -->
           <exclude>WEB-INF/lib/*-sources.jar</exclude>
           <exclude>WEB-INF/lib/el-api-*.jar</exclude>
-          <exclude>WEB-INF/lib/jboss-el-api_*.jar</exclude>
+          <exclude>WEB-INF/lib/jboss-*-api*.jar</exclude>
           <exclude>WEB-INF/lib/xml-apis-*.jar</exclude>
+          <exclude>WEB-INF/lib/logback-core-*.jar</exclude>
+          <exclude>WEB-INF/lib/resteasy-*.jar</exclude>
+          <exclude>WEB-INF/lib/slf4j-*.jar</exclude>
+          <exclude>WEB-INF/lib/jaxb-impl-*.jar</exclude>
 
           <!-- Errai -->
           <exclude>WEB-INF/lib/errai-codegen-gwt-*.jar</exclude>
@@ -88,20 +80,12 @@
           <exclude>WEB-INF/lib/mail-*.jar</exclude>
           <exclude>WEB-INF/lib/geronimo-spec-jta-*.jar</exclude>
           <exclude>WEB-INF/lib/servlet-api-*.jar</exclude>
-          <exclude>WEB-INF/lib/jboss-servlet-api_*.jar</exclude>
-          <exclude>WEB-INF/lib/jstl-*.jar</exclude>
-
           <exclude>WEB-INF/lib/jcip-annotations-*.jar</exclude>
           <exclude>WEB-INF/lib/cal10n-api-*.jar</exclude>
           <exclude>WEB-INF/lib/jsr250-api-*.jar</exclude>
           <exclude>WEB-INF/lib/weld-*.jar</exclude>
-          <exclude>WEB-INF/lib/cdi-api*.jar</exclude>
           <exclude>WEB-INF/lib/javax*.jar</exclude>
-          <exclude>WEB-INF/lib/jboss-interceptors-api_1-*.jar</exclude>
-          <exclude>WEB-INF/lib/resteasy*.jar</exclude>
-
-          <!-- Netty-->
-          <exclude>WEB-INF/lib/netty-3*.jar</exclude>
+          <exclude>WEB-INF/lib/jboss-interceptors-api_*.jar</exclude>
         </excludes>
       </unpackOptions>
       <useStrictFiltering>true</useStrictFiltering>

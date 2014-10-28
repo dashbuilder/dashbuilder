@@ -14,7 +14,7 @@
      http://docs.jboss.org/weld/reference/1.0.0/en-US/html/environments.html
 -->
 <Context>
-   <Resource name="BeanManager" 
+   <Resource name="BeanManager"
       auth="Container"
       type="javax.enterprise.inject.spi.BeanManager"
       factory="org.jboss.weld.resources.ManagerObjectFactory"/>
