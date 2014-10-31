@@ -91,7 +91,7 @@ public class GoogleTableDisplayer extends GoogleDisplayer {
                    .supportsAttribute( DisplayerAttributeDef.RENDERER )
                    .supportsAttribute( DisplayerAttributeDef.COLUMNS )
                    .supportsAttribute( DisplayerAttributeGroupDef.FILTER_GROUP )
-                   .supportsAttribute( DisplayerAttributeGroupDef.TITLE_GROUP )
+                   .supportsAttribute( DisplayerAttributeGroupDef.GENERAL_GROUP)
                    .supportsAttribute( DisplayerAttributeGroupDef.TABLE_GROUP );
     }
 

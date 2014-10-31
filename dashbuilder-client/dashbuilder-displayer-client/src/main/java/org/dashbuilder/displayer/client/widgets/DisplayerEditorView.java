@@ -55,7 +55,7 @@ public class DisplayerEditorView extends Composite
     @Inject
     public DisplayerEditorView(DisplayerTypeSelector displayerTypeSelector,
             DataSetLookupEditor lookupEditor,
-            DisplayerSettingsEditorForm settingsEditor) {
+            DisplayerSettingsEditor settingsEditor) {
         this();
         this.typeSelector = displayerTypeSelector;
         this.lookupEditor = lookupEditor;
@@ -66,7 +66,7 @@ public class DisplayerEditorView extends Composite
     DisplayerSettings settings;
     DisplayerTypeSelector typeSelector;
     DataSetLookupEditor lookupEditor;
-    DisplayerSettingsEditorForm settingsEditor;
+    DisplayerSettingsEditor settingsEditor;
 
     @UiField
     SimplePanel leftPanel;

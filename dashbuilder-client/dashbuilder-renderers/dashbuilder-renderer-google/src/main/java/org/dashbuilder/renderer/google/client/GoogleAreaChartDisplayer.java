@@ -54,10 +54,9 @@ public class GoogleAreaChartDisplayer extends GoogleXAxisChartDisplayer {
 
         return new DisplayerConstraints(lookupConstraints)
                 .supportsAttribute(DisplayerAttributeDef.TYPE)
-                .supportsAttribute( DisplayerAttributeDef.RENDERER )
                 .supportsAttribute( DisplayerAttributeDef.COLUMNS )
                 .supportsAttribute( DisplayerAttributeGroupDef.FILTER_GROUP )
-                .supportsAttribute( DisplayerAttributeGroupDef.TITLE_GROUP )
+                .supportsAttribute( DisplayerAttributeGroupDef.GENERAL_GROUP)
                 .supportsAttribute( DisplayerAttributeDef.CHART_WIDTH )
                 .supportsAttribute( DisplayerAttributeDef.CHART_HEIGHT )
                 .supportsAttribute( DisplayerAttributeGroupDef.CHART_MARGIN_GROUP )

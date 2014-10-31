@@ -69,10 +69,9 @@ public class GooglePieChartDisplayer extends GoogleXAxisChartDisplayer {
 
         return new DisplayerConstraints(lookupConstraints)
                    .supportsAttribute( DisplayerAttributeDef.TYPE )
-                   .supportsAttribute( DisplayerAttributeDef.RENDERER )
                    .supportsAttribute( DisplayerAttributeDef.COLUMNS )
                    .supportsAttribute( DisplayerAttributeGroupDef.FILTER_GROUP )
-                   .supportsAttribute( DisplayerAttributeGroupDef.TITLE_GROUP )
+                   .supportsAttribute( DisplayerAttributeGroupDef.GENERAL_GROUP)
                    .supportsAttribute( DisplayerAttributeGroupDef.CHART_GROUP );
     }
 

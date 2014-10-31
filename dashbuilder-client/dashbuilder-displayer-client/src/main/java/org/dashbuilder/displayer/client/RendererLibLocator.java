@@ -46,7 +46,7 @@ public class RendererLibLocator {
     private Map<DisplayerType,String> defaultRenderers = new HashMap<DisplayerType,String>();
     private Map<DisplayerType, Set<String>> renderersByDisplayerType = new HashMap<DisplayerType, Set<String>>();
 
-    public void registerRendererForDisplayerType( DisplayerType displayerType, String rendererName, boolean isDefault ) {
+    public void registerRenderer(DisplayerType displayerType, String rendererName, boolean isDefault) {
         Set<String> renderers = renderersByDisplayerType.get( displayerType );
         if ( renderers == null ) renderers = new HashSet<String>();
         renderers.add( rendererName );
@@ -62,7 +62,7 @@ public class RendererLibLocator {
         defaultRenderers.put(displayerType, rendererName);
     }
 
-    public Set<String> getAvailableRenderersByDisplayerType( DisplayerType displayerType ) {
+    public Set<String> getAvailableRenderers(DisplayerType displayerType) {
         return renderersByDisplayerType.get( displayerType );
     }
 

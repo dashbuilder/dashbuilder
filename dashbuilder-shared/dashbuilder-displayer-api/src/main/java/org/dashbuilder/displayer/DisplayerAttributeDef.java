@@ -18,10 +18,11 @@ package org.dashbuilder.displayer;
 public class DisplayerAttributeDef {
 
     public static final DisplayerAttributeDef TYPE = new DisplayerAttributeDef("type");
-    public static final DisplayerAttributeDef RENDERER = new DisplayerAttributeDef("renderer");
     public static final DisplayerAttributeDef COLUMNS = new DisplayerAttributeDef("columns");
-    public static final DisplayerAttributeDef TITLE = new DisplayerAttributeDef("title", DisplayerAttributeGroupDef.TITLE_GROUP);
-    public static final DisplayerAttributeDef TITLE_VISIBLE = new DisplayerAttributeDef("visible", DisplayerAttributeGroupDef.TITLE_GROUP);
+
+    public static final DisplayerAttributeDef TITLE = new DisplayerAttributeDef("title", DisplayerAttributeGroupDef.GENERAL_GROUP);
+    public static final DisplayerAttributeDef TITLE_VISIBLE = new DisplayerAttributeDef("visible", DisplayerAttributeGroupDef.GENERAL_GROUP);
+    public static final DisplayerAttributeDef RENDERER = new DisplayerAttributeDef("renderer", DisplayerAttributeGroupDef.GENERAL_GROUP);
 
     public static final DisplayerAttributeDef FILTER_ENABLED = new DisplayerAttributeDef("enabled", DisplayerAttributeGroupDef.FILTER_GROUP);
     public static final DisplayerAttributeDef FILTER_SELFAPPLY_ENABLED = new DisplayerAttributeDef("selfapply", DisplayerAttributeGroupDef.FILTER_GROUP);
@@ -57,7 +58,7 @@ public class DisplayerAttributeDef {
     public static final DisplayerAttributeDef BARCHART_HORIZONTAL = new DisplayerAttributeDef("bar_horizontal", DisplayerAttributeGroupDef.BARCHART_GROUP);
 
     protected String id;
-    protected DisplayerAttributeDef parent;
+    protected DisplayerAttributeGroupDef parent;
 
     public DisplayerAttributeDef() {
     }
@@ -66,25 +67,23 @@ public class DisplayerAttributeDef {
         this( id, null );
     }
 
-    public DisplayerAttributeDef( String id, DisplayerAttributeDef parent ) {
+    public DisplayerAttributeDef( String id, DisplayerAttributeGroupDef parent ) {
         this.id = id;
-        this.parent = parent;
-        if (parent != null) parent.setChild( this );
+        if (parent != null) {
+            parent.addChild(this);
+        }
     }
 
     public String getFullId() {
         return parent != null ? parent.getFullId() + "." + id : id;
     }
 
-    public DisplayerAttributeDef[] getMembers() {
-        return new DisplayerAttributeDef[]{ this };
-    }
-
     public DisplayerAttributeDef getParent() {
         return parent;
     }
 
-    public void setChild( DisplayerAttributeDef child ) {
+    public void setParent(DisplayerAttributeGroupDef parent) {
+        this.parent = parent;
     }
 
     @Override
@@ -104,5 +103,10 @@ public class DisplayerAttributeDef {
         int result = 23;
         result = 31 * result + getFullId().hashCode();
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return getFullId();
     }
 }

@@ -768,7 +768,7 @@ public class DisplayerSettingsEditorForm extends Composite {
 
     private void initRendererList() {
         rendererListBox.clear();
-        for ( String renderer : RendererLibLocator.get().getAvailableRenderersByDisplayerType( this.displayerSettings.getType() ) ) {
+        for ( String renderer : RendererLibLocator.get().getAvailableRenderers(this.displayerSettings.getType()) ) {
             rendererListBox.addItem( renderer, renderer );
         }
     }

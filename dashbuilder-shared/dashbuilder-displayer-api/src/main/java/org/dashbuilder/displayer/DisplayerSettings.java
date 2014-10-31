@@ -153,6 +153,11 @@ public class DisplayerSettings {
         settings.put( getSettingPath( displayerAttributeDef ), value );
     }
 
+    // 'Generic' setter method
+    public void setDisplayerSetting( String displayerAttributeDef, String value ) {
+        settings.put( displayerAttributeDef, value );
+    }
+
     public Map<String, String> getSettingsFlatMap() {
         return settings;
     }

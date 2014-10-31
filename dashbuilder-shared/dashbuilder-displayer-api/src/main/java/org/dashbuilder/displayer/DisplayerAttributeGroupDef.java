@@ -15,7 +15,6 @@
  */
 package org.dashbuilder.displayer;
 
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import javax.enterprise.context.ApplicationScoped;
@@ -24,7 +23,7 @@ import javax.enterprise.context.ApplicationScoped;
 public class DisplayerAttributeGroupDef extends DisplayerAttributeDef {
 
     // ROOT-GROUPS
-    public static final DisplayerAttributeGroupDef TITLE_GROUP = new DisplayerAttributeGroupDef( "title" );
+    public static final DisplayerAttributeGroupDef GENERAL_GROUP = new DisplayerAttributeGroupDef( "general" );
 
     public static final DisplayerAttributeGroupDef FILTER_GROUP = new DisplayerAttributeGroupDef( "filter" );
 
@@ -55,7 +54,7 @@ public class DisplayerAttributeGroupDef extends DisplayerAttributeDef {
     public static final DisplayerAttributeGroupDef YAXIS_GROUP =
             new DisplayerAttributeGroupDef( "y", DisplayerAttributeGroupDef.AXIS_GROUP );
 
-    private Set<DisplayerAttributeDef> flatMembers = new HashSet<DisplayerAttributeDef>();
+    private Set<DisplayerAttributeDef> children = new HashSet<DisplayerAttributeDef>();
 
     public DisplayerAttributeGroupDef() {
     }
@@ -64,27 +63,17 @@ public class DisplayerAttributeGroupDef extends DisplayerAttributeDef {
         super( id );
     }
 
-    public DisplayerAttributeGroupDef( String id, DisplayerAttributeDef parent ) {
+    public DisplayerAttributeGroupDef( String id, DisplayerAttributeGroupDef parent ) {
         super( id, parent );
     }
 
-    @Override
-    // Recursively get all sub-members
-    public DisplayerAttributeDef[] getMembers() {
-        Set<DisplayerAttributeDef> members = new HashSet<DisplayerAttributeDef>();
-        for ( DisplayerAttributeDef member : flatMembers ) {
-            members.addAll( Arrays.asList( member.getMembers() ) );
-        }
-        return members.toArray( new DisplayerAttributeDef[]{} );
+    public Set<DisplayerAttributeDef> getChildren() {
+        return children;
     }
 
-    public DisplayerAttributeGroupDef addGroupMember( DisplayerAttributeDef member ) {
-        flatMembers.add( member );
+    public DisplayerAttributeGroupDef addChild(DisplayerAttributeDef member) {
+        children.add(member);
+        member.setParent(this);
         return this;
-    }
-
-    @Override
-    public void setChild( DisplayerAttributeDef child ) {
-        addGroupMember( child );
     }
 }

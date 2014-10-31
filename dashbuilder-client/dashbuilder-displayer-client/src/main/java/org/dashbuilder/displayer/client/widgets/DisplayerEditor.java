@@ -39,7 +39,7 @@ import org.dashbuilder.displayer.client.prototypes.DisplayerPrototypes;
 public class DisplayerEditor implements IsWidget,
         DisplayerTypeSelector.Listener,
         DataSetLookupEditor.Listener,
-        DisplayerSettingsEditorForm.Listener {
+        DisplayerSettingsEditor.Listener {
 
     public interface Listener {
         void onClose(DisplayerEditor editor);
@@ -66,7 +66,7 @@ public class DisplayerEditor implements IsWidget,
         this.view = new DisplayerEditorView(
                 new DisplayerTypeSelector(),
                 new DataSetLookupEditor(),
-                new DisplayerSettingsEditorForm());
+                new DisplayerSettingsEditor());
     }
 
     @Inject

@@ -36,7 +36,7 @@ public class TableRenderer extends AbstractRendererLibrary {
 
     @PostConstruct
     private void init() {
-        RendererLibLocator.get().registerRendererForDisplayerType( DisplayerType.TABLE, UUID, false );
+        RendererLibLocator.get().registerRenderer(DisplayerType.TABLE, UUID, false);
     }
 
     @Override

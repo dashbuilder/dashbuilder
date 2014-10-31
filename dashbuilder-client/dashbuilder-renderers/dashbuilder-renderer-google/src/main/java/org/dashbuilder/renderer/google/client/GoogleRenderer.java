@@ -42,14 +42,14 @@ public class GoogleRenderer extends AbstractRendererLibrary {
     @PostConstruct
     private void init() {
         RendererLibLocator rll = RendererLibLocator.get();
-        rll.registerRendererForDisplayerType( DisplayerType.BARCHART, UUID, true);
-        rll.registerRendererForDisplayerType( DisplayerType.PIECHART, UUID, true );
-        rll.registerRendererForDisplayerType( DisplayerType.AREACHART, UUID, true );
-        rll.registerRendererForDisplayerType( DisplayerType.LINECHART, UUID, true);
-        rll.registerRendererForDisplayerType( DisplayerType.BUBBLECHART, UUID, true );
-        rll.registerRendererForDisplayerType( DisplayerType.METERCHART, UUID, true );
-        rll.registerRendererForDisplayerType( DisplayerType.MAP, UUID, true );
-        rll.registerRendererForDisplayerType( DisplayerType.TABLE, UUID, true );
+        rll.registerRenderer(DisplayerType.BARCHART, UUID, true);
+        rll.registerRenderer(DisplayerType.PIECHART, UUID, true);
+        rll.registerRenderer(DisplayerType.AREACHART, UUID, true);
+        rll.registerRenderer(DisplayerType.LINECHART, UUID, true);
+        rll.registerRenderer(DisplayerType.BUBBLECHART, UUID, true);
+        rll.registerRenderer(DisplayerType.METERCHART, UUID, true);
+        rll.registerRenderer(DisplayerType.MAP, UUID, true);
+        rll.registerRenderer(DisplayerType.TABLE, UUID, true);
     }
 
     public String getUUID() {

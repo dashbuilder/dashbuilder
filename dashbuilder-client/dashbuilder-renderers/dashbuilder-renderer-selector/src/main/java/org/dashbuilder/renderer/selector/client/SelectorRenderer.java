@@ -36,7 +36,7 @@ public class SelectorRenderer extends AbstractRendererLibrary {
 
     @PostConstruct
     private void init() {
-        RendererLibLocator.get().registerRendererForDisplayerType( DisplayerType.SELECTOR, UUID, true );
+        RendererLibLocator.get().registerRenderer(DisplayerType.SELECTOR, UUID, true);
     }
 
     @Override

@@ -67,6 +67,12 @@
 
       <dependency>
         <groupId>org.kie.uberfire</groupId>
+        <artifactId>kie-uberfire-widgets-properties-editor-backend</artifactId>
+        <version>${version.org.kie}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.kie.uberfire</groupId>
         <artifactId>kie-uberfire-perspective-editor-client</artifactId>
         <version>${version.org.kie}</version>
       </dependency>

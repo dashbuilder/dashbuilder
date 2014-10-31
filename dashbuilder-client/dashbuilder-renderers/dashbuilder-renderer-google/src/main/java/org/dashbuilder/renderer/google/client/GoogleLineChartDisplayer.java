@@ -26,7 +26,6 @@ import com.googlecode.gwt.charts.client.corechart.LineChartOptions;
 import com.googlecode.gwt.charts.client.options.Animation;
 import com.googlecode.gwt.charts.client.options.AnimationEasing;
 import org.dashbuilder.dataset.ColumnType;
-import org.dashbuilder.dataset.DataSetConstraints;
 import org.dashbuilder.dataset.DataSetLookupConstraints;
 import org.dashbuilder.displayer.DisplayerAttributeDef;
 import org.dashbuilder.displayer.DisplayerAttributeGroupDef;
@@ -73,10 +72,9 @@ public class GoogleLineChartDisplayer extends GoogleXAxisChartDisplayer {
 
         return new DisplayerConstraints(lookupConstraints)
                    .supportsAttribute( DisplayerAttributeDef.TYPE )
-                   .supportsAttribute( DisplayerAttributeDef.RENDERER )
                    .supportsAttribute( DisplayerAttributeDef.COLUMNS )
                    .supportsAttribute( DisplayerAttributeGroupDef.FILTER_GROUP )
-                   .supportsAttribute( DisplayerAttributeGroupDef.TITLE_GROUP )
+                   .supportsAttribute( DisplayerAttributeGroupDef.GENERAL_GROUP)
                    .supportsAttribute( DisplayerAttributeDef.CHART_WIDTH )
                    .supportsAttribute( DisplayerAttributeDef.CHART_HEIGHT )
                    .supportsAttribute( DisplayerAttributeGroupDef.CHART_MARGIN_GROUP )

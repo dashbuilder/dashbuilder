@@ -20,10 +20,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.dashbuilder.dataset.DataSetConstraints;
-import org.dashbuilder.dataset.DataSetLookup;
 import org.dashbuilder.dataset.DataSetLookupConstraints;
-import org.dashbuilder.dataset.group.DataSetGroup;
 
 /**
  * Every Displayer implementation can used this class to specify what are the supported DisplayerSettings attributes.
@@ -41,8 +38,18 @@ public class DisplayerConstraints {
     }
 
     public DisplayerConstraints supportsAttribute( DisplayerAttributeDef attributeDef ) {
-        for ( DisplayerAttributeDef member : attributeDef.getMembers() ) {
-            supportedEditorAttributes.add( member );
+
+        // Support the attribute and all its ancestors.
+        DisplayerAttributeDef _attr = attributeDef;
+        while (_attr != null) {
+            supportedEditorAttributes.add(_attr);
+            _attr = _attr.getParent();
+        }
+        // ... and all its descendants as well.
+        if (attributeDef instanceof DisplayerAttributeGroupDef) {
+            for (DisplayerAttributeDef member : ((DisplayerAttributeGroupDef) attributeDef).getChildren()) {
+                supportsAttribute(member);
+            }
         }
         return this;
     }
