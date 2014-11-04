@@ -53,11 +53,11 @@ public class DisplayerEditorView extends Composite
     }
 
     @Inject
-    public DisplayerEditorView(DisplayerTypeSelector displayerTypeSelector,
+    public DisplayerEditorView(DisplayerTypeSelector typeSelector,
             DataSetLookupEditor lookupEditor,
             DisplayerSettingsEditor settingsEditor) {
         this();
-        this.typeSelector = displayerTypeSelector;
+        this.typeSelector = typeSelector;
         this.lookupEditor = lookupEditor;
         this.settingsEditor = settingsEditor;
     }

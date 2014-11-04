@@ -22,9 +22,14 @@
              xmlns:b="urn:import:com.github.gwtbootstrap.client.ui"
              xmlns:uf='urn:import:org.kie.uberfire.properties.editor.client'>
 
+  <ui:style>
+    .smallFont {
+      font-size: 12px;
+    }
+  </ui:style>
 
-  <b:Well>
+  <g:FlowPanel styleName="{style.smallFont}">
     <uf:PropertyEditorWidget ui:field="propertyEditor"/>
-  </b:Well>
+  </g:FlowPanel>
 
 </ui:UiBinder>

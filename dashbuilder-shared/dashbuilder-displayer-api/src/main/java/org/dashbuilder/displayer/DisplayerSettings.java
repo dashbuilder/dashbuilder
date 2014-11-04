@@ -106,6 +106,11 @@ public class DisplayerSettings {
         return Boolean.parseBoolean(value);
     }
 
+    private String parseString(String value) {
+        if (StringUtils.isBlank(value)) return "";
+        return value;
+    }
+
     public String getUUID() {
         return UUID;
     }
@@ -184,7 +189,7 @@ public class DisplayerSettings {
     }
 
     public String getTitle() {
-        return settings.get( getSettingPath( DisplayerAttributeDef.TITLE ) );
+        return parseString(settings.get(getSettingPath(DisplayerAttributeDef.TITLE)));
     }
 
     public void setTitle( String title ) {
@@ -322,7 +327,7 @@ public class DisplayerSettings {
     }
 
     public String getTableDefaultSortColumnId() {
-        return settings.get( getSettingPath( DisplayerAttributeDef.TABLE_SORTCOLUMNID ) );
+        return parseString(settings.get(getSettingPath(DisplayerAttributeDef.TABLE_SORTCOLUMNID)));
     }
 
     public void setTableDefaultSortColumnId( String tableDefaultSortColumnId ) {
@@ -356,7 +361,7 @@ public class DisplayerSettings {
 //    }
 
     public String getXAxisTitle() {
-        return settings.get( getSettingPath( DisplayerAttributeDef.XAXIS_TITLE ) );
+        return parseString(settings.get( getSettingPath( DisplayerAttributeDef.XAXIS_TITLE ) ));
     }
 
     public void setXAxisTitle( String axisTitle ) {
@@ -380,7 +385,7 @@ public class DisplayerSettings {
 //    }
 
     public String getYAxisTitle() {
-        return settings.get( getSettingPath( DisplayerAttributeDef.YAXIS_TITLE ) );
+        return parseString(settings.get( getSettingPath( DisplayerAttributeDef.YAXIS_TITLE ) ));
     }
 
     public void setYAxisTitle( String axisTitle ) {

@@ -23,7 +23,7 @@ import javax.enterprise.context.ApplicationScoped;
 public class DisplayerAttributeGroupDef extends DisplayerAttributeDef {
 
     // ROOT-GROUPS
-    public static final DisplayerAttributeGroupDef GENERAL_GROUP = new DisplayerAttributeGroupDef( "general" );
+    public static final DisplayerAttributeGroupDef TITLE_GROUP = new DisplayerAttributeGroupDef( "title" );
 
     public static final DisplayerAttributeGroupDef FILTER_GROUP = new DisplayerAttributeGroupDef( "filter" );
 

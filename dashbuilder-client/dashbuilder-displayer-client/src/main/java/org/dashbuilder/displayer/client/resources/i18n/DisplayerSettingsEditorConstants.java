@@ -116,4 +116,12 @@ public interface DisplayerSettingsEditorConstants extends ConstantsWithLookup {
     String barchart_horizontal();
 
     String barchart_vertical();
+
+    String filter_enabled();
+
+    String filter_self();
+
+    String filter_listening();
+
+    String filter_notifications();
 }

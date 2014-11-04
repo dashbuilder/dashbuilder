@@ -66,6 +66,7 @@ public enum DisplayerType {
     SELECTOR;
 
     public static DisplayerType getByName(String str) {
+        if (str == null || str.length() == 0) return null;
         return valueOf(str.toUpperCase());
     }
 }

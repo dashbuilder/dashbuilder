@@ -71,7 +71,7 @@ public class GooglePieChartDisplayer extends GoogleXAxisChartDisplayer {
                    .supportsAttribute( DisplayerAttributeDef.TYPE )
                    .supportsAttribute( DisplayerAttributeDef.COLUMNS )
                    .supportsAttribute( DisplayerAttributeGroupDef.FILTER_GROUP )
-                   .supportsAttribute( DisplayerAttributeGroupDef.GENERAL_GROUP)
+                   .supportsAttribute( DisplayerAttributeGroupDef.TITLE_GROUP)
                    .supportsAttribute( DisplayerAttributeGroupDef.CHART_GROUP );
     }
 

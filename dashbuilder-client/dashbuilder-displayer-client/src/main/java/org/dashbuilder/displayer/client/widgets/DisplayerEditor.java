@@ -34,6 +34,9 @@ import org.dashbuilder.displayer.DisplayerType;
 import org.dashbuilder.displayer.client.Displayer;
 import org.dashbuilder.displayer.client.DisplayerLocator;
 import org.dashbuilder.displayer.client.prototypes.DisplayerPrototypes;
+import org.jboss.errai.ioc.client.container.IOC;
+import org.jboss.errai.ioc.client.container.IOCBeanDef;
+import org.jboss.errai.ioc.client.container.SyncBeanManager;
 
 @Dependent
 public class DisplayerEditor implements IsWidget,
@@ -63,17 +66,18 @@ public class DisplayerEditor implements IsWidget,
     boolean brandNewDisplayer = true;
 
     public DisplayerEditor() {
+        SyncBeanManager beanManager = IOC.getBeanManager();
+        IOCBeanDef iocBeanDef = beanManager.lookupBean(DisplayerSettingsEditor.class);
+        DisplayerSettingsEditor settingsEditor = (DisplayerSettingsEditor) iocBeanDef.getInstance();
+
         this.view = new DisplayerEditorView(
                 new DisplayerTypeSelector(),
                 new DataSetLookupEditor(),
-                new DisplayerSettingsEditor());
+                settingsEditor);
     }
 
     @Inject
-    public DisplayerEditor(
-            View view,
-            DisplayerPrototypes prototypes) {
-
+    public DisplayerEditor(View view) {
         this.view = view;
     }
 

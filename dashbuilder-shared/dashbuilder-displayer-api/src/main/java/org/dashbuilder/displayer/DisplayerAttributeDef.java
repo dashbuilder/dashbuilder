@@ -18,11 +18,11 @@ package org.dashbuilder.displayer;
 public class DisplayerAttributeDef {
 
     public static final DisplayerAttributeDef TYPE = new DisplayerAttributeDef("type");
+    public static final DisplayerAttributeDef RENDERER = new DisplayerAttributeDef("renderer");
     public static final DisplayerAttributeDef COLUMNS = new DisplayerAttributeDef("columns");
 
-    public static final DisplayerAttributeDef TITLE = new DisplayerAttributeDef("title", DisplayerAttributeGroupDef.GENERAL_GROUP);
-    public static final DisplayerAttributeDef TITLE_VISIBLE = new DisplayerAttributeDef("visible", DisplayerAttributeGroupDef.GENERAL_GROUP);
-    public static final DisplayerAttributeDef RENDERER = new DisplayerAttributeDef("renderer", DisplayerAttributeGroupDef.GENERAL_GROUP);
+    public static final DisplayerAttributeDef TITLE = new DisplayerAttributeDef("title", DisplayerAttributeGroupDef.TITLE_GROUP);
+    public static final DisplayerAttributeDef TITLE_VISIBLE = new DisplayerAttributeDef("visible", DisplayerAttributeGroupDef.TITLE_GROUP);
 
     public static final DisplayerAttributeDef FILTER_ENABLED = new DisplayerAttributeDef("enabled", DisplayerAttributeGroupDef.FILTER_GROUP);
     public static final DisplayerAttributeDef FILTER_SELFAPPLY_ENABLED = new DisplayerAttributeDef("selfapply", DisplayerAttributeGroupDef.FILTER_GROUP);
