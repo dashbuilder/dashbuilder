@@ -198,6 +198,7 @@ public class GoogleTableDisplayer extends GoogleDisplayer {
     protected void createTablePager() {
         pagerPanel.clear();
         pagerPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
+        pagerPanel.getElement().setAttribute("cellpadding", "5");
 
         Pagination pagination = new Pagination();
         pagination.setSize(Pagination.PaginationSize.NORMAL);
@@ -296,22 +297,14 @@ public class GoogleTableDisplayer extends GoogleDisplayer {
 
         if ( numberOfPages > 1) {
             pagerPanel.add( firstPageTooltip );
-            pagerPanel.add( SpacerWidget.DOUBLE );
             pagerPanel.add( leftPageTooltip );
-            pagerPanel.add( SpacerWidget.DOUBLE );
             pagerPanel.add( pagination );
-            pagerPanel.add( SpacerWidget.DOUBLE );
             pagerPanel.add( rightPageTooltip );
-            pagerPanel.add( SpacerWidget.DOUBLE );
             pagerPanel.add( lastPageTooltip );
         }
 
-        boolean both = showTotalPagesHint && showTotalRowsHint;
         if ( showTotalPagesHint || showTotalRowsHint ) {
-            pagerPanel.add( SpacerWidget.DOUBLE );
-            pagerPanel.add( SpacerWidget.DOUBLE );
             if ( totalPages != null && numberOfPages > 1 ) pagerPanel.add( totalPages );
-            if ( both ) pagerPanel.add( SpacerWidget.DOUBLE );
             if ( totalRows != null ) pagerPanel.add( totalRows );
         }
     }

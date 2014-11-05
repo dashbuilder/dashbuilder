@@ -22,11 +22,20 @@
              xmlns:b="urn:import:com.github.gwtbootstrap.client.ui">
 
   <ui:style>
-    .childPanel {
+    .leftPanel {
       font-size: 12pt;
       float: left;
-      margin-right: 40px;
+      margin-right: 25px;
       height: 350px;
+      max-height: 350px;
+      overflow-y: auto;
+    }
+    .centerPanel {
+      font-size: 12pt;
+      float: left;
+      margin-right: 25px;
+      height: 350px;
+      max-width: 570px;
       max-height: 350px;
       overflow: auto;
     }
@@ -39,8 +48,8 @@
       <b:Tab ui:field="optionSettings" heading="Display" />
     </b:TabPanel>
     <g:HorizontalPanel>
-        <g:SimplePanel ui:field="leftPanel" styleName="{style.childPanel}" />
-        <g:SimplePanel ui:field="centerPanel" styleName="{style.childPanel}" />
+        <g:SimplePanel ui:field="leftPanel" styleName="{style.leftPanel}" />
+        <g:SimplePanel ui:field="centerPanel" styleName="{style.centerPanel}" />
     </g:HorizontalPanel>
   </g:HTMLPanel>
 </ui:UiBinder>

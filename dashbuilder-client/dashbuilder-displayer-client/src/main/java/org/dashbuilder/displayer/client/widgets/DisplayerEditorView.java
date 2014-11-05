@@ -164,7 +164,7 @@ public class DisplayerEditorView extends Composite
             DisplayerSettings tableSettings = settings.cloneInstance();
             tableSettings.setTitleVisible(false);
             tableSettings.setType(DisplayerType.TABLE);
-            tableSettings.setTablePageSize(5);
+            tableSettings.setTablePageSize(8);
             displayer = DisplayerLocator.get().lookupDisplayer(tableSettings);
         }
         centerPanel.clear();
