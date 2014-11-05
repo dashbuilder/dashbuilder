@@ -24,10 +24,11 @@
   <ui:style>
     .childPanel {
       font-size: 12pt;
-      padding: 5px;
-      margin: 10px;
-      height: 100%;
-      width: 100%;
+      float: left;
+      margin-right: 40px;
+      height: 350px;
+      max-height: 350px;
+      overflow: auto;
     }
   </ui:style>
 
