@@ -11,7 +11,6 @@
     "datePattern": "MM-dd-yyyy",
     "numberPattern": "#,###.##",
     "columns": [
-      {"columnId": "id", "asLabel": "true"},
       {"columnId": "office", "asLabel": "true"},
       {"columnId": "department", "asLabel": "true"},
       {"columnId": "employee", "asLabel": "true"},
