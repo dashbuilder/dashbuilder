@@ -23,7 +23,7 @@
              xmlns:dashb="urn:import:org.dashbuilder.displayer.client.widgets">
 
   <g:HTMLPanel>
-    <b:Modal ui:field="popup" backdrop="STATIC" width="900px" keyboard="true" animation="true">
+    <b:Modal ui:field="popup" backdrop="STATIC" width="900px" maxHeigth="450px" keyboard="true" animation="true">
 
       <dashb:DisplayerEditor ui:field="editor" />
 

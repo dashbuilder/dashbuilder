@@ -34,6 +34,7 @@
       font-size: 12pt;
       float: left;
       margin-right: 25px;
+      width: 570px;
       height: 350px;
       max-width: 570px;
       max-height: 350px;
