@@ -33,7 +33,7 @@ Change log
 ---------------------------
 
 
-0.1.0 Final
+0.1.0
 
 The main purpose of this very first release is to make it possible the creation of
 composite dashboards using an straightforward API. Feature set:
@@ -47,8 +47,14 @@ composite dashboards using an straightforward API. Feature set:
 * Additional table renderer based on the KIE PagedTable widget
 * Tomcat 7 and JBoss AS 7 distributions provided
 
-0.1.1 Final
+0.1.1
 
 * Notify clients about data set registration/removal events
 * Assign an HTML identifier to every Displayer instance (useful for testing purposes)
+
+0.2.0
+
+* Data set definition files: Support for CSV & Bean generated data sets
+* Displayer Editor widget for the creation of displayer definitions
+* Perspective editor integration of the Displayer Editor which allows for creating dashboards by drag&drop
 
