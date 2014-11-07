@@ -19,7 +19,7 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
              xmlns:g='urn:import:com.google.gwt.user.client.ui'
-             xmlns:b="urn:import:com.github.gwtbootstrap.client.ui">
+             xmlns:b="urn:import:com.github.gwtbootstrap.client.ui" xmlns:Sg="urn:import:com.github.gwtbootstrap.client.ui">
 
   <ui:style>
     .leftPanel {
@@ -39,6 +39,10 @@
       max-height: 350px;
       overflow: auto;
     }
+    .dataTablePanel {
+      font-size: 12pt;
+      float: left;
+    }
   </ui:style>
 
   <g:HTMLPanel>
@@ -48,8 +52,14 @@
       <b:Tab ui:field="optionSettings" heading="Display" />
     </b:TabPanel>
     <g:HorizontalPanel>
+      <g:VerticalPanel>
+        <g:HorizontalPanel ui:field="dataTablePanel" styleName="{style.dataTablePanel}" visible="false">
+          <g:Label>View as table</g:Label>
+          <b:CheckBox ui:field="viewAsTable" />
+        </g:HorizontalPanel>
         <g:SimplePanel ui:field="leftPanel" styleName="{style.leftPanel}" />
-        <g:SimplePanel ui:field="centerPanel" styleName="{style.centerPanel}" />
+      </g:VerticalPanel>
+      <g:SimplePanel ui:field="centerPanel" styleName="{style.centerPanel}" />
     </g:HorizontalPanel>
   </g:HTMLPanel>
 </ui:UiBinder>

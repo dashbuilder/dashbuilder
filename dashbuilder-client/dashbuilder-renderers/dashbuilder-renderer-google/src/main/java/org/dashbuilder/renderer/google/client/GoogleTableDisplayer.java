@@ -171,7 +171,7 @@ public class GoogleTableDisplayer extends GoogleDisplayer {
         // TODO complete options.setSortAscending( SortOrder.ASCENDING.equals( displayerSettings.getTableDefaultSortOrder() ) );
         options.setPageSize(displayerSettings.getTablePageSize());
         options.setShowRowNumber(false);
-        if ( displayerSettings.getTableWidth() != 0 ) options.setWidth( displayerSettings.getTableWidth() );
+        if ( displayerSettings.getTableWidth() > 0 ) options.setWidth( displayerSettings.getTableWidth() );
         return options;
     }
 

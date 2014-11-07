@@ -18,6 +18,7 @@ package org.dashbuilder.displayer.client.widgets;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
+import com.github.gwtbootstrap.client.ui.CheckBox;
 import com.github.gwtbootstrap.client.ui.Label;
 import com.github.gwtbootstrap.client.ui.Tab;
 import com.github.gwtbootstrap.client.ui.TabPanel;
@@ -29,7 +30,6 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.dataset.DataSetLookup;
@@ -50,6 +50,7 @@ public class DisplayerEditorView extends Composite
 
     public DisplayerEditorView() {
         initWidget(uiBinder.createAndBindUi(this));
+        dataTablePanel.getElement().setAttribute("cellpadding", "5");
     }
 
     @Inject
@@ -86,11 +87,17 @@ public class DisplayerEditorView extends Composite
     @UiField
     Tab optionSettings;
 
+    @UiField
+    HorizontalPanel dataTablePanel;
+
+    @UiField
+    CheckBox viewAsTable;
+
     @Override
     public void init(DisplayerSettings settings, DisplayerEditor presenter) {
         this.settings = settings;
         this.presenter = presenter;
-        refreshDisplayer();
+        showDisplayer();
     }
 
     @Override
@@ -107,7 +114,8 @@ public class DisplayerEditorView extends Composite
         leftPanel.clear();
         leftPanel.add(typeSelector);
 
-        refreshDisplayer();
+        dataTablePanel.setVisible(false);
+        showDisplayer();
     }
 
     @Override
@@ -126,7 +134,12 @@ public class DisplayerEditorView extends Composite
         leftPanel.clear();
         leftPanel.add(lookupEditor);
 
-        refreshDisplayer();
+        if (DisplayerType.TABLE.equals(settings.getType())) {
+            dataTablePanel.setVisible(false);
+        } else {
+            dataTablePanel.setVisible(true);
+        }
+        showDisplayer();
     }
 
     @Override
@@ -134,7 +147,7 @@ public class DisplayerEditorView extends Composite
         DataSetLookup dataSetLookup = settings.getDataSetLookup();
         lookupEditor.init(presenter, dataSetLookup, constraints, metadata);
 
-        refreshDisplayer();
+        showDisplayer();
     }
 
     @Override
@@ -146,7 +159,8 @@ public class DisplayerEditorView extends Composite
         leftPanel.clear();
         leftPanel.add(settingsEditor);
 
-        refreshDisplayer();
+        dataTablePanel.setVisible(false);
+        showDisplayer();
     }
 
     @Override
@@ -156,20 +170,23 @@ public class DisplayerEditorView extends Composite
         GWT.log(msg, e);
     }
 
-    public void refreshDisplayer() {
-        Displayer displayer = null;
-        if (optionsPanel.getSelectedTab() != 1) {
-            displayer = DisplayerLocator.get().lookupDisplayer(settings);
-        } else {
+    public void showDisplayer() {
+        if (dataTablePanel.isVisible() && viewAsTable.getValue()) {
             DisplayerSettings tableSettings = settings.cloneInstance();
             tableSettings.setTitleVisible(false);
             tableSettings.setType(DisplayerType.TABLE);
             tableSettings.setTablePageSize(8);
-            displayer = DisplayerLocator.get().lookupDisplayer(tableSettings);
+            tableSettings.setTableWidth(-1);
+            Displayer displayer = DisplayerLocator.get().lookupDisplayer(tableSettings);
+            centerPanel.clear();
+            centerPanel.add(displayer);
+            DisplayerHelper.draw(displayer);
+        } else {
+            Displayer displayer = DisplayerLocator.get().lookupDisplayer(settings);
+            centerPanel.clear();
+            centerPanel.add(displayer);
+            DisplayerHelper.draw(displayer);
         }
-        centerPanel.clear();
-        centerPanel.add(displayer);
-        DisplayerHelper.draw(displayer);
     }
 
     @UiHandler(value = "optionType")
@@ -185,5 +202,10 @@ public class DisplayerEditorView extends Composite
     @UiHandler(value = "optionSettings")
     public void onSettingsSelected(ClickEvent clickEvent) {
         gotoDisplaySettings();
+    }
+
+    @UiHandler(value = "viewAsTable")
+    public void onRawTableChecked(ClickEvent clickEvent) {
+        showDisplayer();
     }
 }
