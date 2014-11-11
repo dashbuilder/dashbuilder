@@ -42,35 +42,34 @@
       <scope>provided</scope>
     </dependency>
 
-    <!-- KIE -->
     <dependency>
-      <groupId>org.kie.uberfire</groupId>
-      <artifactId>kie-uberfire-perspective-editor-client</artifactId>
+      <groupId>org.uberfire</groupId>
+      <artifactId>uberfire-perspective-editor-client</artifactId>
     </dependency>
 
     <dependency>
-      <groupId>org.kie.uberfire</groupId>
-      <artifactId>kie-uberfire-perspective-editor-backend</artifactId>
+      <groupId>org.uberfire</groupId>
+      <artifactId>uberfire-perspective-editor-backend</artifactId>
     </dependency>
 
     <dependency>
-      <groupId>org.kie.uberfire</groupId>
-      <artifactId>kie-uberfire-apps-client</artifactId>
+      <groupId>org.uberfire</groupId>
+      <artifactId>uberfire-apps-client</artifactId>
     </dependency>
 
     <dependency>
-      <groupId>org.kie.uberfire</groupId>
-      <artifactId>kie-uberfire-apps-backend</artifactId>
+      <groupId>org.uberfire</groupId>
+      <artifactId>uberfire-apps-backend</artifactId>
     </dependency>
 
     <dependency>
-      <groupId>org.kie.uberfire</groupId>
-      <artifactId>kie-uberfire-widgets-properties-editor-client</artifactId>
+      <groupId>org.uberfire</groupId>
+      <artifactId>uberfire-widgets-properties-editor-client</artifactId>
     </dependency>
 
     <dependency>
-      <groupId>org.kie.uberfire</groupId>
-      <artifactId>kie-uberfire-widgets-properties-editor-backend</artifactId>
+      <groupId>org.uberfire</groupId>
+      <artifactId>uberfire-widgets-properties-editor-backend</artifactId>
     </dependency>
 
     <!-- Log -->
@@ -189,10 +188,10 @@
             <compileSourcesArtifact>org.dashbuilder:dashbuilder-renderer-table</compileSourcesArtifact>
             <compileSourcesArtifact>org.dashbuilder:dashbuilder-renderer-selector</compileSourcesArtifact>
 
-            <!-- KIE -->
-            <compileSourcesArtifact>org.kie.uberfire:kie-uberfire-perspective-editor-client</compileSourcesArtifact>
-            <compileSourcesArtifact>org.kie.uberfire:kie-uberfire-apps-client</compileSourcesArtifact>
-            <compileSourcesArtifact>org.kie.uberfire:kie-uberfire-widgets-properties-editor-client</compileSourcesArtifact>
+            <!-- Uberfire ext -->
+            <compileSourcesArtifact>org.uberfire:uberfire-perspective-editor-client</compileSourcesArtifact>
+            <compileSourcesArtifact>org.uberfire:uberfire-apps-client</compileSourcesArtifact>
+            <compileSourcesArtifact>org.uberfire:uberfire-widgets-properties-editor-client</compileSourcesArtifact>
 
           </compileSourcesArtifacts>
           <runTarget>dashbuilder.html</runTarget>

@@ -33,6 +33,8 @@
           <exclude>WEB-INF/lib/uberfire-security-client-*.jar</exclude>
           <exclude>WEB-INF/lib/uberfire-workbench-*.jar</exclude>
           <exclude>WEB-INF/lib/uberfire-panel-manager*.jar</exclude>
+          <exclude>WEB-INF/lib/uberfire-perspective-editor-client-*.jar</exclude>
+          <exclude>WEB-INF/lib/uberfire-apps-client-*.jar</exclude>
 
           <!-- Dashbuilder client -->
           <exclude>WEB-INF/lib/dashbuilder-*-all-*.jar</exclude>
@@ -44,10 +46,6 @@
           <exclude>WEB-INF/lib/dashbuilder-renderer-google-*.jar</exclude>
           <exclude>WEB-INF/lib/dashbuilder-renderer-table-*.jar</exclude>
           <exclude>WEB-INF/lib/dashbuilder-renderer-selector-*.jar</exclude>
-
-          <!-- KIE Client Related -->
-          <exclude>WEB-INF/lib/kie-uberfire-perspective-editor-client-*.jar</exclude>
-          <exclude>WEB-INF/lib/kie-uberfire-apps-client-*.jar</exclude>
 
           <!-- GWT Client Related -->
           <exclude>WEB-INF/lib/gwt-bootstrap-*.jar</exclude>

@@ -44,7 +44,7 @@ composite dashboards using an straightforward API. Feature set:
 * Uberfire wrapper screen for the Displayer widget
 * Showcase App. providing a built-in displayer gallery plus some dashboard samples
 * Default renderer based on the Google Visualization library
-* Additional table renderer based on the KIE PagedTable widget
+* Additional table renderer based on the Uberfire PagedTable widget
 * Tomcat 7 and JBoss AS 7 distributions provided
 
 0.1.1
@@ -56,5 +56,5 @@ composite dashboards using an straightforward API. Feature set:
 
 * Data set definition files: Support for CSV & Bean generated data sets
 * Displayer Editor widget for the creation of displayer definitions
-* Perspective editor integration of the Displayer Editor which allows for creating dashboards by drag&drop
+* Perspective editor integration which allows the creation of dashboards by drag&drop
 

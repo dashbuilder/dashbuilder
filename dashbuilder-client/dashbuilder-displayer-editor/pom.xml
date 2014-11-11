@@ -74,8 +74,8 @@
     </dependency>
 
     <dependency>
-      <groupId>org.kie.uberfire</groupId>
-      <artifactId>kie-uberfire-perspective-editor-client</artifactId>
+      <groupId>org.uberfire</groupId>
+      <artifactId>uberfire-perspective-editor-client</artifactId>
     </dependency>
 
   </dependencies>

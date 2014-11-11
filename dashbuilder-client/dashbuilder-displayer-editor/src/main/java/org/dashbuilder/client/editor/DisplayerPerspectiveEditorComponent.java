@@ -26,7 +26,7 @@ import org.dashbuilder.displayer.DisplayerSettings;
 import org.dashbuilder.displayer.client.json.DisplayerSettingsJSONMarshaller;
 import org.dashbuilder.displayer.client.widgets.DisplayerEditor;
 import org.dashbuilder.displayer.client.widgets.DisplayerView;
-import org.kie.uberfire.perspective.editor.client.api.ExternalPerspectiveEditorComponent;
+import org.uberfire.ext.perspective.editor.client.api.ExternalPerspectiveEditorComponent;
 
 @Dependent
 public class DisplayerPerspectiveEditorComponent implements ExternalPerspectiveEditorComponent {
