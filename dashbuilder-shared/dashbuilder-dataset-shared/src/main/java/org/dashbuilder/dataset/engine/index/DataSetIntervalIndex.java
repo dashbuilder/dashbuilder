@@ -58,5 +58,11 @@ public class DataSetIntervalIndex extends DataSetIndexNode implements DataSetInt
         }
         return result;
     }
+
+    public String toString() {
+        StringBuilder out = new StringBuilder(intervalName);
+        out.append(" ").append(super.toString());
+        return out.toString();
+    }
 }
 

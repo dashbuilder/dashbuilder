@@ -73,6 +73,7 @@ public class DataSetLookupJSONMarshaller {
     private static final String FUNCTION = "function";
 
     private static final String SELECTEDINTERVALS = "selectedIntervals";
+    private static final String JOIN = "join";
 
     private static final String SORTOPS = "sortOps";
     private static final String SORTORDER = "sortOrder";
@@ -165,8 +166,9 @@ public class DataSetLookupJSONMarshaller {
         if ( dataSetGroup == null ) return null;
         JSONObject dataSetGroupJson = new JSONObject();
         dataSetGroupJson.put( COLUMNGROUP, formatColumnGroup( dataSetGroup.getColumnGroup() ) );
-        dataSetGroupJson.put( GROUPFUNCTIONS, formatgroupFunctions( dataSetGroup.getGroupFunctions() ) );
-        dataSetGroupJson.put( SELECTEDINTERVALS, formatSelectedIntervals( dataSetGroup.getSelectedIntervalNames() ) );
+        dataSetGroupJson.put( GROUPFUNCTIONS, formatgroupFunctions(dataSetGroup.getGroupFunctions()) );
+        dataSetGroupJson.put( SELECTEDINTERVALS, formatSelectedIntervals(dataSetGroup.getSelectedIntervalNames()) );
+        dataSetGroupJson.put( JOIN, new JSONString( dataSetGroup.isJoin() ? "true" : "false" ));
         return dataSetGroupJson;
     }
 
@@ -358,15 +360,21 @@ public class DataSetLookupJSONMarshaller {
         if ( dataSetGroupJson == null ) return null;
 
         DataSetGroup dataSetGroup = new DataSetGroup();
-        JSONValue value = dataSetGroupJson.get( COLUMNGROUP );
 
-        dataSetGroup.setColumnGroup( parseColumnGroup( value != null ? value.isObject() : null ) );
+        dataSetGroup.setColumnGroup(null);
+        JSONValue value = dataSetGroupJson.get( COLUMNGROUP );
+        if (value != null) dataSetGroup.setColumnGroup( parseColumnGroup( value.isObject() ) );
 
         List<GroupFunction> groupFunctions = parseGroupFunctions( ( value = dataSetGroupJson.get( GROUPFUNCTIONS ) ) != null ? value.isArray() : null );
         if ( groupFunctions != null ) dataSetGroup.getGroupFunctions().addAll( groupFunctions );
 
-        dataSetGroup.setSelectedIntervalNames(
-            parseSelectedIntervals( (value = dataSetGroupJson.get(SELECTEDINTERVALS)) != null ? value.isArray() : null ) );
+        dataSetGroup.setSelectedIntervalNames(null);
+        value = dataSetGroupJson.get(SELECTEDINTERVALS);
+        if (value != null) dataSetGroup.setSelectedIntervalNames(parseSelectedIntervals(value.isArray()));
+
+        dataSetGroup.setJoin(false);
+        value = dataSetGroupJson.get(JOIN);
+        if (value != null) dataSetGroup.setJoin(Boolean.valueOf(value.isString().stringValue()));
 
         return dataSetGroup;
     }
@@ -378,9 +386,9 @@ public class DataSetLookupJSONMarshaller {
         columnGroup.setSourceId( value != null ? value.isString().stringValue() : null );
         columnGroup.setColumnId( (value = columnGroupJson.get(COLUMNID)) != null ? value.isString().stringValue() : null );
         columnGroup.setStrategy( (value = columnGroupJson.get(GROUPSTRATEGY)) != null ? GroupStrategy.getByName( value.isString().stringValue() ) : null );
-        columnGroup.setMaxIntervals( (value = columnGroupJson.get(MAXINTERVALS)) != null ? Integer.parseInt(value.isString().stringValue()) : null );
+        columnGroup.setMaxIntervals( (value = columnGroupJson.get(MAXINTERVALS)) != null ? Integer.parseInt(value.isString().stringValue()) : -1 );
         columnGroup.setIntervalSize( (value = columnGroupJson.get(INTERVALSIZE)) != null ? value.isString().stringValue() : null );
-        columnGroup.setAscendingOrder( (value = columnGroupJson.get(ASCENDING)) != null ? Boolean.valueOf(value.isString().stringValue()) : null );
+        columnGroup.setAscendingOrder( (value = columnGroupJson.get(ASCENDING)) != null ? Boolean.valueOf(value.isString().stringValue()) : false );
         columnGroup.setFirstMonthOfYear( (value = columnGroupJson.get(FIRSTMONTHOFYEAR)) != null ? Month.getByName(value.isString().stringValue()) : null );
         columnGroup.setFirstDayOfWeek( (value = columnGroupJson.get(FIRSTDAYOFWEEK)) != null ? DayOfWeek.getByName(value.isString().stringValue()) : null );
         return columnGroup;

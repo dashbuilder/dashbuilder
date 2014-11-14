@@ -27,6 +27,7 @@ public class DataColumnImpl implements DataColumn {
 
     protected DataSetImpl dataSet = null;
     protected String id = null;
+    protected String name = null;
     protected ColumnType columnType = ColumnType.LABEL;
     protected List values = new ArrayList();
 
@@ -35,6 +36,7 @@ public class DataColumnImpl implements DataColumn {
 
     public DataColumnImpl(String id, ColumnType columnType) {
         this.id = id;
+        this.name = id;
         this.columnType = columnType;
     }
 
@@ -52,6 +54,15 @@ public class DataColumnImpl implements DataColumn {
 
     public void setId(String id) {
         this.id = id;
+        if (name == null) name = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public ColumnType getColumnType() {
@@ -68,5 +79,13 @@ public class DataColumnImpl implements DataColumn {
 
     public void setValues(List values) {
         this.values = values;
+    }
+
+    public String toString() {
+        StringBuilder out = new StringBuilder();
+        if (id != null) out.append(" id=").append(id);
+        if (name != null) out.append(" name=").append(name);
+        if (columnType != null) out.append(" type=").append(columnType);
+        return out.toString();
     }
 }

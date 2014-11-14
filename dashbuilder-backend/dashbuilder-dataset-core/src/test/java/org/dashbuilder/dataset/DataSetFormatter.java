@@ -61,7 +61,7 @@ public class DataSetFormatter {
         if (ColumnType.NUMBER.equals(column.getColumnType())) {
             return numberFormat.format(val);
         }
-        return val.toString();
+        return val == null ? null : val.toString();
     }
 
     /**

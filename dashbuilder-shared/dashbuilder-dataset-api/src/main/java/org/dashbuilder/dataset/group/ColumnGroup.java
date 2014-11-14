@@ -37,6 +37,11 @@ public class ColumnGroup {
     public ColumnGroup() {
     }
 
+    public ColumnGroup(String columnId, String newColumnId) {
+        this.sourceId = columnId;
+        this.columnId = newColumnId;
+    }
+
     public ColumnGroup(String columnId, String newColumnId, GroupStrategy strategy) {
         this.sourceId = columnId;
         this.columnId = newColumnId;

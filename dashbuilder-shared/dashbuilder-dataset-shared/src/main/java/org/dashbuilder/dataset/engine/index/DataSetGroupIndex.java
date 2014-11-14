@@ -168,5 +168,12 @@ public class DataSetGroupIndex extends DataSetIndexNode implements DataSetInterv
             index.acceptVisitor(visitor);
         }
     }
+
+    public String toString() {
+        StringBuilder out = new StringBuilder(super.toString());
+        if (columnGroup != null) out.append(" column=").append(columnGroup.getColumnId());
+        if (selectKey != null) out.append(" select=").append(selectKey);
+        return out.toString();
+    }
 }
 

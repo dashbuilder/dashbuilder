@@ -34,7 +34,6 @@ import com.googlecode.gwt.charts.client.geochart.GeoChart;
 import com.googlecode.gwt.charts.client.options.ChartArea;
 import com.googlecode.gwt.charts.client.options.HAxis;
 import com.googlecode.gwt.charts.client.options.VAxis;
-import org.dashbuilder.displayer.DisplayerSettingsColumn;
 import org.dashbuilder.renderer.google.client.resources.i18n.GoogleDisplayerConstants;
 
 public abstract class GoogleXAxisChartDisplayer extends AbstractGoogleChartDisplayer {
@@ -43,14 +42,6 @@ public abstract class GoogleXAxisChartDisplayer extends AbstractGoogleChartDispl
             "green", "lime", "magenta", "pink", "silver", "yellow"};
 
     public static final String COLOR_NOT_SELECTED = "grey";
-
-    public DataTable createTable() {
-        DisplayerSettingsColumn[] displayerSettingsColumns = displayerSettings.getColumns();
-        if (displayerSettingsColumns.length == 1) {
-            throw new IllegalArgumentException("XAxis charts require to specify at least 2 columns. The X axis plus one ore more columns for the Y axis.");
-        }
-        return super.createTable();
-    }
 
     public String[] createColorArray(DataTable table) {
         String[] colorArray = new String[table.getNumberOfRows()];

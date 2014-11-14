@@ -34,6 +34,11 @@ public interface DataColumn {
     String getId();
 
     /**
+     * @return The name of this DataColumn
+     */
+    String getName();
+
+    /**
      * @return The column's type.
      * @see org.dashbuilder.dataset.ColumnType
      */

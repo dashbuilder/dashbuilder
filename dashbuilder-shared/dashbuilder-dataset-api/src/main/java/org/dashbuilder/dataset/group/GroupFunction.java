@@ -79,4 +79,12 @@ public class GroupFunction {
             return false;
         }
     }
+
+    public String toString() {
+        StringBuilder out = new StringBuilder();
+        if (sourceId != null) out.append(" column=").append(sourceId);
+        if (columnId != null) out.append(" result=").append(columnId);
+        if (function != null) out.append(" function=").append(function);
+        return out.toString();
+    }
 }

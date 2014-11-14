@@ -28,6 +28,7 @@ import org.dashbuilder.displayer.client.DisplayerHelper;
 import static org.dashbuilder.dataset.group.DateIntervalType.*;
 import static org.dashbuilder.dataset.sort.SortOrder.*;
 import static org.dashbuilder.client.expenses.ExpenseConstants.*;
+import static org.dashbuilder.dataset.group.AggregateFunctionType.*;
 
 /**
  * A composite widget that represents an entire dashboard sample based on a UI binder template.
@@ -69,16 +70,17 @@ public class ExpensesDashboard extends Composite {
                 DisplayerSettingsFactory.newPieChartSettings()
                         .dataset(EXPENSES)
                         .group(OFFICE)
-                        .sum(AMOUNT)
+                        .column(OFFICE)
+                        .column(AMOUNT, SUM, "Total Amount")
                         .group(DEPARTMENT)
-                        .sum(AMOUNT)
+                        .column(DEPARTMENT)
+                        .column(AMOUNT, SUM, "Total Amount")
                         .group(EMPLOYEE)
-                        .sum(AMOUNT)
+                        .column(EMPLOYEE)
+                        .column(AMOUNT, SUM, "Total Amount")
                         .title("Expenses by Office")
                         .width(400).height(250)
                         .margins(10, 10, 10, 0)
-                        .column("Office")
-                        .column("Total Amount")
                         .filterOn(true, true, true)
                         .buildSettings());
 
@@ -86,12 +88,11 @@ public class ExpensesDashboard extends Composite {
                 DisplayerSettingsFactory.newBarChartSettings()
                         .dataset(EXPENSES)
                         .group(DEPARTMENT)
-                        .sum(AMOUNT)
+                        .column(DEPARTMENT)
+                        .column(AMOUNT, SUM, "Total Amount")
                         .title("Expenses by Department")
                         .width(400).height(250)
                         .margins(10, 50, 50, 20)
-                        .column(DEPARTMENT, "Department")
-                        .column(AMOUNT, "Total Amount")
                         .filterOn(false, true, true)
                         .buildSettings());
 
@@ -99,32 +100,28 @@ public class ExpensesDashboard extends Composite {
                 DisplayerSettingsFactory.newBubbleChartSettings()
                         .dataset(EXPENSES)
                         .group(EMPLOYEE)
-                        .count("expenses")
-                        .avg(AMOUNT, "average")
-                        .sum(AMOUNT)
+                        .column(EMPLOYEE)
+                        .column(AMOUNT, SUM, "Total amount")
+                        .column(AMOUNT, AVERAGE, "Average amount")
+                        .column(EMPLOYEE, "Employee")
+                        .column(COUNT, "Number of expense reports")
                         .title("Expenses by Employee")
                         .titleVisible(false)
                         .width(600).height(280)
                         .margins(10, 50, 80, 0)
-                        .column(EMPLOYEE, "Employee")
-                        .column(AMOUNT, "Total amount")
-                        .column("average", "Average amount")
-                        .column(EMPLOYEE, "Employee")
-                        .column("expenses", "Number of expense reports")
                         .filterOn(false, true, true)
                         .buildSettings());
 
         lineByDate = DisplayerHelper.lookupDisplayer(
                 DisplayerSettingsFactory.newAreaChartSettings()
                         .dataset(EXPENSES)
-                        .group(DATE, 8, DAY_OF_WEEK)
-                        .sum(AMOUNT)
+                        .group(DATE).dynamic(8, DAY_OF_WEEK)
+                        .column(DATE)
+                        .column(AMOUNT, SUM, "Total Amount")
                         .title("Expenses evolution")
                         .titleVisible(false)
                         .width(500).height(250)
                         .margins(10, 50, 50, 50)
-                        .column(DATE, "Date")
-                        .column(AMOUNT, "Total Amount")
                         .filterOn(true, true, true)
                         .buildSettings());
 

@@ -17,6 +17,7 @@ package org.dashbuilder.dataset;
 
 import javax.inject.Inject;
 
+import org.dashbuilder.dataset.group.AggregateFunctionType;
 import org.dashbuilder.test.ShrinkWrapHelper;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -120,7 +121,8 @@ public class DataSetSortTest {
                 DataSetFactory.newDataSetLookupBuilder()
                 .dataset(EXPENSE_REPORTS)
                 .group("department")
-                .sum("amount", "total")
+                .column("department")
+                .column("amount", AggregateFunctionType.SUM, "total")
                 .sort("total", DESCENDING)
                 .buildLookup());
 

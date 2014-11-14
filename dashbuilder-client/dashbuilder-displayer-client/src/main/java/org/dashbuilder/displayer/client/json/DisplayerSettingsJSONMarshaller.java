@@ -34,10 +34,8 @@ import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetLookup;
 import org.dashbuilder.displayer.DisplayerAttributeDef;
 import org.dashbuilder.displayer.DisplayerSettings;
-import org.dashbuilder.displayer.DisplayerSettingsColumn;
 import org.dashbuilder.displayer.client.Displayer;
 import org.dashbuilder.displayer.client.DisplayerLocator;
-import org.dashbuilder.displayer.impl.DisplayerSettingsColumnImpl;
 
 public class DisplayerSettingsJSONMarshaller {
 
@@ -45,9 +43,6 @@ public class DisplayerSettingsJSONMarshaller {
     private static final String JSON_DATASET_LOOKUP_PREFIX = "dataSetLookup";
 
     private static final String SETTINGS_UUID = "uuid";
-    private static final String SETTINGS_COLUMNS = "columns";
-    private static final String SETTINGS_COLUMN_ID = "columnId";
-    private static final String SETTINGS_COLUMN_NAME = "columnDisplayName";
 
     private DataSetJSONMarshaller dataSetJSONMarshaller;
     private DataSetLookupJSONMarshaller dataSetLookupJSONMarshaller;
@@ -76,14 +71,6 @@ public class DisplayerSettingsJSONMarshaller {
                 // UUID
                 JSONValue uuidValue = parseResult.get( SETTINGS_UUID );
                 ds.setUUID( uuidValue != null && uuidValue.isString() != null ? uuidValue.isString().stringValue() : null );
-
-                // DisplayerSettings columns
-                JSONValue value = parseResult.get( SETTINGS_COLUMNS );
-                if ( value != null && value.isArray() != null ) {
-                    ds.setColumns( parseSettingsColumns( value.isArray() ) );
-                    // Remove column part so that it doesn't end up in the settings map
-                    parseResult.put( SETTINGS_COLUMNS, null );
-                }
 
                 // First look if a dataset 'on-the-fly' has been specified
                 JSONValue data = parseResult.get( JSON_DATASET_PREFIX );
@@ -122,9 +109,6 @@ public class DisplayerSettingsJSONMarshaller {
 
         // UUID
         json.put( SETTINGS_UUID, displayerSettings.getUUID() != null ? new JSONString( displayerSettings.getUUID() ) : null );
-
-        // First the columns
-        json.put( SETTINGS_COLUMNS, formatSettingsColumns( displayerSettings.getColumns() ) );
 
         Set<String> supportedSettings = new HashSet<String>( displayerSettings.getSettingsFlatMap().size() );
         Displayer displayer = DisplayerLocator.get().lookupDisplayer( displayerSettings );
@@ -193,46 +177,6 @@ public class DisplayerSettingsJSONMarshaller {
             parent.put( strChildNode, childNode );
         }
         return findNode( childNode, remainingNodes, createPath );
-    }
-
-    private JSONArray formatSettingsColumns( DisplayerSettingsColumn[] columns ) {
-        if ( columns.length == 0 ) return null;
-        JSONArray settingsColumnsJsonArray = new JSONArray();
-        int columnCounter = 0;
-        for ( DisplayerSettingsColumn displayerSettingsColumn : columns ) {
-            settingsColumnsJsonArray.set( columnCounter++, formatSettingsColumn( displayerSettingsColumn ) );
-        }
-        return settingsColumnsJsonArray;
-    }
-
-    private JSONObject formatSettingsColumn( DisplayerSettingsColumn settingsColumn ) {
-        if ( settingsColumn == null ) return null;
-        JSONObject columnJson = new JSONObject();
-        columnJson.put( SETTINGS_COLUMN_ID, settingsColumn.getColumnId() != null ? new JSONString(settingsColumn.getColumnId()) : null );
-        columnJson.put( SETTINGS_COLUMN_NAME, settingsColumn.getDisplayName() != null ? new JSONString(settingsColumn.getDisplayName()) : null );
-        return columnJson;
-    }
-
-    private DisplayerSettingsColumn[] parseSettingsColumns( JSONArray columnsJsonArray ) {
-        List<DisplayerSettingsColumn> lCols = new ArrayList<DisplayerSettingsColumn>();
-
-        if ( columnsJsonArray != null ) {
-            for (int i = 0; i < columnsJsonArray.size(); i++) {
-                lCols.add( parseSettingsColumn( columnsJsonArray.get( i ).isObject() ) );
-            }
-        }
-        return lCols.toArray( new DisplayerSettingsColumn[ lCols.size() ] );
-    }
-
-    private DisplayerSettingsColumn parseSettingsColumn( JSONObject columnsJson ) {
-        if ( columnsJson == null ) return null;
-
-        DisplayerSettingsColumnImpl dsci = new DisplayerSettingsColumnImpl(  );
-
-        JSONValue value = columnsJson.get( SETTINGS_COLUMN_ID );
-        dsci.setColumnId( value != null ? value.isString().stringValue() : null );
-        dsci.setDisplayName( (value = columnsJson.get(SETTINGS_COLUMN_NAME)) != null ? value.isString().stringValue() : null );
-        return dsci;
     }
 
     private Map<String, String> parseSettingsFromJson( JSONObject settingsJson ) {

@@ -38,7 +38,6 @@ public class DisplayerSettings {
     protected String UUID;
     protected DataSet dataSet;
     protected DataSetLookup dataSetLookup;
-    private List<DisplayerSettingsColumn> columnList = new ArrayList<DisplayerSettingsColumn>();
 
     public DisplayerSettings( DisplayerType displayerType ) {
         this();
@@ -81,7 +80,6 @@ public class DisplayerSettings {
     public DisplayerSettings cloneInstance() {
         DisplayerSettings clone = new DisplayerSettings();
         clone.settings = new HashMap(settings);
-        clone.columnList = new ArrayList(columnList);
         if (dataSet != null) clone.dataSet = dataSet.cloneInstance();
         if (dataSetLookup != null) clone.dataSetLookup = dataSetLookup.cloneInstance();
         return clone;
@@ -133,19 +131,6 @@ public class DisplayerSettings {
 
     public void setDataSetLookup( DataSetLookup dataSetLookup ) {
         this.dataSetLookup = dataSetLookup;
-    }
-
-    public void addColumn(DisplayerSettingsColumn displayerSettingsColumn) {
-        columnList.add( displayerSettingsColumn );
-    }
-
-    public DisplayerSettingsColumn[] getColumns() {
-        return columnList.toArray( new DisplayerSettingsColumn[columnList.size()] );
-    }
-
-    public void setColumns(DisplayerSettingsColumn[] columns) {
-        this.columnList.clear();
-        if (columns != null) this.columnList.addAll(Arrays.asList(columns));
     }
 
     // 'Generic' getter method

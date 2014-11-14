@@ -75,23 +75,6 @@ public interface DisplayerSettingsBuilder<T> extends DataSetLookupBuilder<T> {
     T renderer(String renderer);
 
     /**
-     * Set a data set column header caption. If no column identifier is specified, each successive call to this
-     * method will set the specified caption to the next occurring column of the data set.
-     * @param displayName The header caption to be set to a column.
-     * @return The DisplayerSettingsBuilder instance that is being used to configure a DisplayerSettings.
-     */
-    T column(String displayName);
-
-    /**
-     * Set a data set column header caption. If no column identifier is specified, each successive call to this
-     * method will set the specified caption to the next occurring column of the data set.
-     * @param columnId The identifier within the data set of the column this caption should be set to.
-     * @param displayName The header caption to be set to the column specified by the identifier.
-     * @return The DisplayerSettingsBuilder instance that is being used to configure a DisplayerSettings.
-     */
-    T column(String columnId, String displayName);
-
-    /**
      * Enable the ability to select/filter values (or range of values) within the data displayer.
      *
      * <p> Usually, in a dashboard there exists a unique coordinator which takes cares of propagate all the data

@@ -15,27 +15,20 @@
  */
 package org.dashbuilder.client.sales.widgets;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.event.Event;
-import javax.enterprise.event.Observes;
-import javax.inject.Inject;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
-import org.dashbuilder.dataset.events.DataSetModifiedEvent;
 import org.dashbuilder.displayer.DisplayerSettingsFactory;
 import org.dashbuilder.displayer.client.Displayer;
 import org.dashbuilder.displayer.client.DisplayerCoordinator;
 import org.dashbuilder.displayer.client.DisplayerHelper;
-import org.uberfire.workbench.events.NotificationEvent;
 
 import static org.dashbuilder.shared.sales.SalesConstants.*;
 import static org.dashbuilder.dataset.group.DateIntervalType.*;
 import static org.dashbuilder.dataset.sort.SortOrder.*;
-import static org.uberfire.commons.validation.PortablePreconditions.checkNotNull;
+import static org.dashbuilder.dataset.group.AggregateFunctionType.*;
 
 /**
  * A composite widget that represents an entire dashboard sample composed using an UI binder template.
@@ -74,28 +67,25 @@ public class SalesGoals extends Composite {
         meterChartAmount = DisplayerHelper.lookupDisplayer(
                 DisplayerSettingsFactory.newMeterChartSettings()
                 .dataset(SALES_OPPS)
-                .sum(AMOUNT)
+                .column(AMOUNT, SUM, "Total amount")
                 .title("Sales goal")
                 .titleVisible(true)
                 .width(200).height(200)
                 .meter(0, 15000000, 25000000, 35000000)
-                .column("Total amount")
                 .filterOn(false, true, true)
                 .buildSettings());
 
         lineChartByDate = DisplayerHelper.lookupDisplayer(
                 DisplayerSettingsFactory.newLineChartSettings()
                 .dataset(SALES_OPPS)
-                .group(CLOSING_DATE, 80, MONTH)
-                .sum(AMOUNT)
-                .sum(EXPECTED_AMOUNT)
+                .group(CLOSING_DATE).dynamic(80, MONTH)
+                .column(CLOSING_DATE, "Closing date")
+                .column(AMOUNT, SUM, "Total amount")
+                .column(EXPECTED_AMOUNT, SUM, "Expected amount")
                 .title("Expected pipeline")
                 .titleVisible(true)
                 .width(800).height(200)
                 .margins(10, 80, 80, 100)
-                .column("Closing date")
-                .column("Total amount")
-                .column("Expected amount")
                 .filterOn(false, true, true)
                 .buildSettings());
 
@@ -103,13 +93,11 @@ public class SalesGoals extends Composite {
                 DisplayerSettingsFactory.newBarChartSettings()
                 .dataset(SALES_OPPS)
                 .group(PRODUCT)
-                .sum(AMOUNT)
-                .sum(EXPECTED_AMOUNT)
+                .column(PRODUCT, "Product")
+                .column(AMOUNT, SUM, "Amount")
+                .column(EXPECTED_AMOUNT, SUM, "Expected")
                 .title("By product")
                 .titleVisible(true)
-                .column("Product")
-                .column("Amount")
-                .column("Expected")
                 .width(400).height(150)
                 .margins(10, 80, 80, 10)
                 .vertical()
@@ -120,12 +108,11 @@ public class SalesGoals extends Composite {
                 DisplayerSettingsFactory.newBarChartSettings()
                 .dataset(SALES_OPPS)
                 .group(SALES_PERSON)
-                .sum(AMOUNT)
+                .column(SALES_PERSON, "Employee")
+                .column(AMOUNT, SUM, "Amount")
                 .sort(AMOUNT, DESCENDING)
                 .title("By employee")
                 .titleVisible(true)
-                .column("Employee")
-                .column("Amount")
                 .width(400).height(150)
                 .margins(10, 80, 80, 10)
                 .vertical()
@@ -136,17 +123,14 @@ public class SalesGoals extends Composite {
                 DisplayerSettingsFactory.newBubbleChartSettings()
                 .dataset(SALES_OPPS)
                 .group(COUNTRY)
-                .count("opps")
-                .avg(PROBABILITY)
-                .sum(EXPECTED_AMOUNT)
+                .column(COUNTRY, "Country")
+                .column(COUNT, "Number of opportunities")
+                .column(PROBABILITY, AVERAGE, "Average probability")
+                .column(COUNTRY, "Country")
+                .column(EXPECTED_AMOUNT, SUM, "Expected amount")
                 .title("Opportunities distribution by Country ")
                 .width(550).height(250)
                 .margins(10, 30, 50, 0)
-                .column(COUNTRY, "Country")
-                .column("opps", "Number of opportunities")
-                .column(PROBABILITY, "Average probability")
-                .column(COUNTRY, "Country")
-                .column(EXPECTED_AMOUNT, "Expected amount")
                 .filterOn(false, true, true)
                 .buildSettings());
 

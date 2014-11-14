@@ -176,7 +176,6 @@ public class DisplayerEditor implements IsWidget,
                     // Make the view show the new lookup instance
                     displayerSettings.setDataSet(null);
                     displayerSettings.setDataSetLookup(lookup);
-                    displayerSettings.setColumns(null);
                     view.updateDataSetLookup(constraints, metadata);
                 }
                 public void notFound() {
