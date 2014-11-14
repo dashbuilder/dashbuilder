@@ -32,7 +32,6 @@ import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetLookupConstraints;
 import org.dashbuilder.dataset.client.DataSetReadyCallback;
 import org.dashbuilder.displayer.DisplayerConstraints;
-import org.dashbuilder.displayer.DisplayerSettingsColumn;
 import org.dashbuilder.displayer.client.AbstractDisplayer;
 import org.dashbuilder.renderer.selector.client.resources.i18n.SelectorConstants;
 
@@ -186,17 +185,10 @@ public class SelectorDisplayer extends AbstractDisplayer {
     }
 
     protected int getNumberOfColumns(DataSet dataSet) {
-        DisplayerSettingsColumn[] displayerSettingsColumns = displayerSettings.getColumns();
-        if (displayerSettingsColumns.length > 0) return displayerSettingsColumns.length;
         return dataSet.getColumns().size();
     }
 
     protected String getColumnId(DataSet dataSet, int index) {
-        DisplayerSettingsColumn[] displayerSettingsColumns = displayerSettings.getColumns();
-        if (index < displayerSettingsColumns.length) {
-            DisplayerSettingsColumn settingsColumn = displayerSettingsColumns[index];
-            if (settingsColumn.getColumnId() != null) return settingsColumn.getColumnId();
-        }
         int ncolumns = dataSet.getColumns().size();
         if (index < ncolumns) {
             return dataSet.getColumnByIndex(index).getId();
@@ -206,13 +198,9 @@ public class SelectorDisplayer extends AbstractDisplayer {
     }
 
     protected String getColumnName(DataSet dataSet, int index) {
-        DisplayerSettingsColumn[] displayerSettingsColumns = displayerSettings.getColumns();
-        if (index < displayerSettingsColumns.length) {
-            return displayerSettingsColumns[index].getDisplayName();
-        }
         int ncolumns = dataSet.getColumns().size();
         if (index < ncolumns) {
-            return dataSet.getColumnByIndex(index).getId();
+            return dataSet.getColumnByIndex(index).getName();
         }
         throw new IndexOutOfBoundsException("Index " + index + " is greater than " +
                 "the number of columns in the data set " + ncolumns);

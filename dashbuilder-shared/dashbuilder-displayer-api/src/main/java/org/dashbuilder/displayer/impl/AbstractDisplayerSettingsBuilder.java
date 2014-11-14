@@ -54,15 +54,6 @@ public abstract class AbstractDisplayerSettingsBuilder<T> extends AbstractDataSe
         return (T) this;
     }
 
-    public T column(String displayName) {
-        return column(null, displayName);
-    }
-
-    public T column(String columnId, String displayName) {
-        displayerSettings.addColumn(new DisplayerSettingsColumnImpl(columnId, displayName));
-        return (T) this;
-    }
-
     public T filterOn(boolean applySelf, boolean notifyOthers, boolean receiveFromOthers) {
         displayerSettings.setFilterEnabled(true);
         displayerSettings.setFilterSelfApplyEnabled(applySelf);

@@ -34,5 +34,11 @@ public class DataSetFilterIndex extends DataSetIndexNode {
     public ColumnFilter getColumnFilter() {
         return columnFilter;
     }
+
+    public String toString() {
+        StringBuilder out = new StringBuilder(super.toString());
+        if (columnFilter != null) out.append(columnFilter.toString());
+        return out.toString();
+    }
 }
 

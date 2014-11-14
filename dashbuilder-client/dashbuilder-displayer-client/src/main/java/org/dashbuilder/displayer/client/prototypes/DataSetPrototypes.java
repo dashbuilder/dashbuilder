@@ -23,6 +23,7 @@ import javax.inject.Inject;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetFactory;
 import org.dashbuilder.dataset.client.ClientDataSetManager;
+import org.dashbuilder.dataset.group.AggregateFunctionType;
 import org.jboss.errai.ioc.client.container.IOC;
 import org.jboss.errai.ioc.client.container.IOCBeanDef;
 
@@ -233,8 +234,9 @@ public class DataSetPrototypes {
                 DataSetFactory.newDataSetLookupBuilder()
                         .dataset("worldPopulation")
                         .group(COUNTRY)
-                        .sum(POPULATION)
-                        .sum(AREA_SIZE)
+                        .column(COUNTRY)
+                        .column(POPULATION, AggregateFunctionType.SUM)
+                        .column(AREA_SIZE, AggregateFunctionType.SUM)
                         .buildLookup());
 
         result.setUUID("countryPopulation");

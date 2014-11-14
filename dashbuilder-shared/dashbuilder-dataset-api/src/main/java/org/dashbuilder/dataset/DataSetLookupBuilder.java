@@ -16,6 +16,7 @@
 package org.dashbuilder.dataset;
 
 import org.dashbuilder.dataset.filter.ColumnFilter;
+import org.dashbuilder.dataset.group.AggregateFunctionType;
 import org.dashbuilder.dataset.group.DateIntervalType;
 import org.dashbuilder.dataset.group.GroupStrategy;
 import org.dashbuilder.dataset.sort.SortOrder;
@@ -30,9 +31,9 @@ import org.dashbuilder.dataset.date.Month;
  *   DataSetFactory.newLookupBuilder()
  *   .dataset("target-dataset-uuid")
  *   .group("department")
- *   .count("id", "occurrences")
- *   .sum("amount", "totalAmount")
- *   .sort("total", "asc")
+ *   .column("id", COUNT, "occurrences")
+ *   .column("amount", SUM, "totalAmount")
+ *   .sort("totalAmount", "asc")
  *   .buildLookup();
  * </pre>
  *
@@ -66,124 +67,6 @@ public interface DataSetLookupBuilder<T> {
     T group(String columnId);
 
     /**
-     * Group the data set by one of the columns, specifying the grouping strategy to use.
-     * @param columnId The column identifier of the column to be grouped
-     * @param strategy The grouping strategy to use.
-     * @return The DataSetLookupBuilder instance that is being used to configure a DataSetLookup request.
-     * @see org.dashbuilder.dataset.group.GroupStrategy
-     */
-    T group(String columnId, GroupStrategy strategy);
-
-    /**
-     * Group the data set by one of the columns, of type ColumnType.Date, specifying the size of the date interval
-     * by which the column should be grouped. By default the DYNAMIC GroupStrategy will be applied.
-     * @see org.dashbuilder.dataset.group.GroupStrategy
-     * @param columnId The column identifier of the column to be grouped
-     * @param intervalSize The size of the date interval
-     * @see org.dashbuilder.dataset.group.DateIntervalType
-     * @return The DataSetLookupBuilder instance that is being used to configure a DataSetLookup request.
-     */
-    T group(String columnId, DateIntervalType intervalSize);
-
-    /**
-     * Group the data set by one of the columns, of type ColumnType.Date, specifying the size of the date interval
-     * by which the column should be grouped. By default the DYNAMIC GroupStrategy will be applied.
-     * @see org.dashbuilder.dataset.group.GroupStrategy
-     * @param columnId The column identifier of the column to be grouped.
-     * @param maxIntervals The maximum number of date intervals that should appear on the graph. The DYNAMIC GroupStrategy
-     * implies that if, after grouping, more intervals are generated than the specified amount, a 'greater' DateIntervalType
-     * will be applied.
-     * For example:
-     * <pre>
-     *   DataSetFactory.newDataSetLookupBuilder()
-     *   .dataset(SALES_OPPS)
-     *   .group(CLOSING_DATE, 80, MONTH)
-     * </pre>
-     * will group the data set by its closing date column, in monthly intervals, up to a maximum 80 months. If this
-     * dataset's time-span exceeds this number of months, then the next bigger DateIntervalType (i.e. QUARTER) will be applied.
-     * @param intervalSize The size of the date interval.
-     * @see org.dashbuilder.dataset.group.DateIntervalType
-     * @return The DataSetLookupBuilder instance that is being used to configure a DataSetLookup request.
-     */
-    T group(String columnId, int maxIntervals, DateIntervalType intervalSize);
-
-    /**
-     * Group the data set by one of the columns, specifying the size of the interval
-     * by which the column should be grouped. By default the DYNAMIC GroupStrategy will be applied.
-     * @see org.dashbuilder.dataset.group.GroupStrategy
-     * @param columnId The column identifier of the column to be grouped.
-     * @param maxIntervals The maximum number of intervals that should appear on the graph. The DYNAMIC GroupStrategy
-     * implies that if, after grouping, more intervals are generated than the specified amount, a larger interval
-     * will be applied.
-     * @param intervalSize The size of the interval, specified as a String.
-     * @return The DataSetLookupBuilder instance that is being used to configure a DataSetLookup request.
-     */
-    T group(String columnId, int maxIntervals, String intervalSize);
-
-    /**
-     * Group the data set by one of the columns, of type ColumnType.Date, specifying the size of the date interval
-     * by which the column should be grouped.
-     * @see org.dashbuilder.dataset.group.GroupStrategy
-     * @param columnId The column identifier of the column to be grouped.
-     * @param strategy The GroupStrategy that is to be applied, specified as a String.
-     * @see org.dashbuilder.dataset.group.GroupStrategy
-     * @param maxIntervals The maximum number of date intervals that should appear on the graph.
-     * @param intervalSize The size of the date interval.
-     * @see org.dashbuilder.dataset.group.DateIntervalType
-     * @return The DataSetLookupBuilder instance that is being used to configure a DataSetLookup request.
-     */
-    T group(String columnId, String strategy, int maxIntervals, DateIntervalType intervalSize);
-
-    /**
-     * Group the data set by one of the columns, specifying the grouping strategy and the size of the interval
-     * by which the column should be grouped.
-     * @param columnId The column identifier of the column to be grouped.
-     * @param strategy The GroupStrategy that is to be applied, specified as a String.
-     * @param maxIntervals The maximum number of intervals that should appear on the graph. The DYNAMIC GroupStrategy
-     * implies that if, after grouping, more intervals are generated than the specified amount, a larger interval
-     * will be applied.
-     * @param intervalSize The size of the interval, specified as a String.
-     * @return The DataSetLookupBuilder instance that is being used to configure a DataSetLookup request.
-     */
-    T group(String columnId, String strategy, int maxIntervals, String intervalSize);
-
-    /**
-     * Group the data set by one of the columns, specifying the grouping strategy to use.
-     * @param columnId The column identifier of the column to be grouped
-     * @param strategy The grouping strategy to use.
-     * @see org.dashbuilder.dataset.group.GroupStrategy
-     * @param intervalSize The size of the interval, specified as a String.
-     * @return The DataSetLookupBuilder instance that is being used to configure a DataSetLookup request.
-     */
-    T group(String columnId, GroupStrategy strategy, String intervalSize);
-
-    /**
-     * Group the data set by one of the columns, of type ColumnType.Date, specifying the size of the date interval
-     * by which the column should be grouped, as well as the GroupStrategy that should be applied.
-     * @see org.dashbuilder.dataset.group.GroupStrategy
-     * @param columnId The column identifier of the column to be grouped.
-     * @param strategy The GroupStrategy to be applied.
-     * @see org.dashbuilder.dataset.group.GroupStrategy
-     * @param intervalSize The size of the date interval.
-     * @see org.dashbuilder.dataset.group.DateIntervalType
-     * @return The DataSetLookupBuilder instance that is being used to configure a DataSetLookup request.
-     */
-    T group(String columnId, GroupStrategy strategy, DateIntervalType intervalSize);
-
-    /**
-     * Group the data set by one of the columns, specifying the grouping strategy, the maximum allowed amount of intervals,
-     * and the size of the interval by which the column should be grouped.
-     * @param columnId The column identifier of the column to be grouped.
-     * @param strategy The GroupStrategy that is to be applied.
-     * @param maxIntervals The maximum number of intervals that should appear on the graph. The DYNAMIC GroupStrategy
-     * implies that if, after grouping, more intervals are generated than the specified amount, a larger interval
-     * will be applied.
-     * @param intervalSize The size of the interval, specified as a String.
-     * @return The DataSetLookupBuilder instance that is being used to configure a DataSetLookup request.
-     */
-    T group(String columnId, GroupStrategy strategy, int maxIntervals, String intervalSize);
-
-    /**
      * Group the data set by one of the columns. The resulting group will be given the new column identifier.
      * @param columnId The column identifier
      * @param newColumnId The identifier for the group column
@@ -192,82 +75,62 @@ public interface DataSetLookupBuilder<T> {
     T group(String columnId, String newColumnId);
 
     /**
-     * Group the data set by one of the columns, of type ColumnType.Date, specifying the size of the date interval
-     * by which the column should be grouped. The resulting group will be given the new column identifier.
-     * By default the DYNAMIC GroupStrategy will be applied.
-     * @see org.dashbuilder.dataset.group.GroupStrategy
-     * @param columnId The column identifier of the column to be grouped.
-     * @param newColumnId The identifier for the group column
-     * @param intervalSize The size of the date interval.
-     * @see org.dashbuilder.dataset.group.DateIntervalType
+     * This call will operate only on a previously grouped data set (i.e. one of the group() methods has been called
+     * previously on the data set lookup), and it's used to indicate that the group results must be joined with the
+     * group results of a previous group operation (if any). Example:
+     *
+     *  <ul>
+     *  <li>.group(PIPELINE)</li>
+     *  <li>.group(COUNTRY).join()</li>
+     *  <li>.column(PIPELINE)</li>
+     *  <li>.column(COUNTRY)</li>
+     *  <li>.column(AMOUNT, SUM, "TOTAL")</li>
+     *  </ul>
+     *
+     * <p>Group by PIPELINE:</p>
+     * <pre>
+     *
+     *   --------------------------
+     *   | PIPELINE   | TOTAL     |
+     *   --------------------------
+     *   | EARLY      | 369.09    |
+     *   | ADVANCED   | 246.06    |
+     *   --------------------------
+     * </pre>
+     *
+     * <p>Group by COUNTRY:</p>
+     * <pre>
+     *
+     *   ------------------------
+     *   | COUNTRY  | TOTAL     |
+     *   ------------------------
+     *   | USA      | 369.09    |
+     *   | UK       | 246.06    |
+     *   | Spain    | 369.09    |
+     *   ------------------------
+     * </pre>
+     *
+     * <p>Result:</p>
+     * <pre>
+     *
+     *   ---------------------------------------
+     *   | PIPELINE   |  COUNTRY   | TOTAL     |
+     *   ---------------------------------------
+     *   | EARLY      |  USA       | 123.03    |
+     *   | EARLY      |  UK        | 123.03    |
+     *   | EARLY      |  Spain     | 123.03    |
+     *   | ADVANCED   |  USA       | 123.03    |
+     *   | ADVANCED   |  Spain     | 123.03    |
+     *   | STANDBY    |  USA       | 123.03    |
+     *   | STANDBY    |  UK        | 123.03    |
+     *   | STANDBY    |  Spain     | 123.03    |
+     *   ---------------------------------------
+     * </pre>
+     * <p>A joined data set grouped by PIPELINE/COUNTRY is returned.
+     *
      * @return The DataSetLookupBuilder instance that is being used to configure a DataSetLookup request.
      */
-    T group(String columnId, String newColumnId, DateIntervalType intervalSize);
-
-    /**
-     * Group the data set by one of the columns, applying the indicated grouping strategy. The resulting group
-     * will be given the new column identifier.
-     * @param columnId The column identifier
-     * @param newColumnId The identifier for the group column
-     * @param strategy The grouping strategy to use, as a String.
-     * @return The DataSetLookupBuilder instance that is being used to configure a DataSetLookup request.
-     * @see org.dashbuilder.dataset.group.GroupStrategy
-     */
-    T group(String columnId, String newColumnId, String strategy);
-
-    /**
-     * Group the data set by one of the columns, applying the indicated grouping strategy. The resulting group
-     * will be given the new column identifier.
-     * @param columnId The column identifier
-     * @param newColumnId The identifier for the group column.
-     * @param strategy The grouping strategy to use, as a String.
-     * @return The DataSetLookupBuilder instance that is being used to configure a DataSetLookup request.
-     * @see org.dashbuilder.dataset.group.GroupStrategy
-     */
-    T group(String columnId, String newColumnId, GroupStrategy strategy);
-
-    /**
-     * TODO
-     * @param columnId
-     * @param newColumnId
-     * @param strategy
-     * @param maxIntervals
-     * @param intervalSize
-     * @return The DataSetLookupBuilder instance that is being used to configure a DataSetLookup request.
-     */
-    T group(String columnId, String newColumnId, String strategy, int maxIntervals, String intervalSize);
-
-    /**
-     * Group the data set by one of the columns, applying the indicated grouping strategy and specifying the maximum
-     * allowed amount of intervals and the size of the interval by which the column should be grouped. The resulting group
-     * will be given the new column identifier.
-     * @param columnId The column identifier
-     * @param newColumnId The identifier for the group column.
-     * @param strategy The grouping strategy to use.
-     * @see org.dashbuilder.dataset.group.GroupStrategy
-     * @param maxIntervals The maximum number of intervals that should appear on the graph. The DYNAMIC GroupStrategy
-     * implies that if, after grouping, more intervals are generated than the specified amount, a larger interval
-     * will be applied.
-     * @param intervalSize The size of the interval, specified as a String.
-     * @return The DataSetLookupBuilder instance that is being used to configure a DataSetLookup request.
-     */
-    T group(String columnId, String newColumnId, GroupStrategy strategy, int maxIntervals, String intervalSize);
-
-    /**
-     * Group the data set by one of the columns, of type ColumnType.Date, specifying the grouping strategy, the size of
-     * the date interval by which the column should be grouped, as well as the maximum of intervals that can appear on the
-     * graph.
-     * The resulting group will be given the new column identifier.
-     * @param columnId The column identifier of the column to be grouped.
-     * @param newColumnId The identifier for the group column.
-     * @param strategy The GroupStrategy to be applied.
-     * @see org.dashbuilder.dataset.group.GroupStrategy
-     * @param maxIntervals The maximum number of date intervals that should appear on the graph.
-     * @param intervalSize The size of the date interval.
-     * @see org.dashbuilder.dataset.group.DateIntervalType
-     * @return The DataSetLookupBuilder instance that is being used to configure a DataSetLookup request.
-     */
-    T group(String columnId, String newColumnId, GroupStrategy strategy, int maxIntervals, DateIntervalType intervalSize);
+    T join();
 
     /**
      * This call will operate only on a previously grouped data set (i.e. one of the group() methods has been called
@@ -284,7 +147,41 @@ public interface DataSetLookupBuilder<T> {
     T desc();
 
     /**
-     * Apply a fixed grouping strategy by the specified date interval, on a previously date-grouped data set.
+     * Group the data set by one of the columns, of type ColumnType.Date, specifying the size of the date interval
+     * by which the column should be grouped. By default the DYNAMIC GroupStrategy will be applied.
+     * @see org.dashbuilder.dataset.group.GroupStrategy
+     * @param maxIntervals The maximum number of date intervals that should appear on the graph. The DYNAMIC GroupStrategy
+     * implies that if, after grouping, more intervals are generated than the specified amount, a 'greater' DateIntervalType
+     * will be applied.
+     * For example:
+     * <pre>
+     *   DataSetFactory.newDataSetLookupBuilder()
+     *   .dataset(SALES_OPPS)
+     *   .group(CLOSING_DATE).dynamic(80, MONTH)
+     * </pre>
+     * will group the data set by its closing date column, in monthly intervals, up to a maximum 80 months. If this
+     * dataset's time-span exceeds this number of months, then the next bigger DateIntervalType (i.e. QUARTER) will be applied.
+     * @param intervalSize The size of the date interval.
+     * @see org.dashbuilder.dataset.group.DateIntervalType
+     * @return The DataSetLookupBuilder instance that is being used to configure a DataSetLookup request.
+     */
+    T dynamic(int maxIntervals, DateIntervalType intervalSize);
+
+    /**
+     * Same as &quot;dynamic(int maxIntervals, DateIntervalType intervalSize)&quot; but in this case the
+     * &quot;intervalSize&quot; is dynamically calculated to the minimum size that generates less intervals
+     * than the &quot;maxIntervals&quot; specified.
+     */
+    T dynamic(int maxIntervals);
+
+    /**
+     * Same as &quot;dynamic(int maxIntervals, DateIntervalType intervalSize)&quot; but taking
+     * &quot;maxIntervals=15&quot; as default.
+     */
+    T dynamic(DateIntervalType intervalSize);
+
+    /**
+     * Set the grouping strategy to a fixed date interval on a previously defined date group operation.
      *
      * Example:
      * <pre>
@@ -321,94 +218,6 @@ public interface DataSetLookupBuilder<T> {
      * @return The DataSetLookupBuilder instance that is being used to configure a DataSetLookup request.
      */
     T firstMonth(Month month);
-
-    /**
-     * This function will group the specified column by its distinct values
-     * @param columnId The identifier of the column that is to be grouped.
-     * @return The DataSetLookupBuilder instance that is being used to configure a DataSetLookup request.
-     */
-    T distinct(String columnId);
-
-    /**
-     * This function will group the specified column by its distinct values. The resulting group will be given the
-     * new column identifier.
-     * @param columnId The identifier of the column that is to be grouped.
-     * @param newColumnId The new identifier for the group column.
-     * @return The DataSetLookupBuilder instance that is being used to configure a DataSetLookup request.
-     */
-    T distinct(String columnId, String newColumnId);
-
-    /**
-     * This function counts the ocurrences of the values a previously grouped column, and stores them in a new column
-     * with the given identifier.
-     * @param newColumnId The identifier for the new column.
-     * @return The DataSetLookupBuilder instance that is being used to configure a DataSetLookup request.
-     */
-    T count(String newColumnId);
-
-    /**
-     * This function will return the minimum value for the specified column.
-     * @param columnId The identifier of the column over which this aggregate function will be invoked.
-     * @return The DataSetLookupBuilder instance that is being used to configure a DataSetLookup request.
-     */
-    T min(String columnId);
-
-    /**
-     * This function will return the minimum value for the specified column. The result will be stored in a new
-     * column with the given identifier.
-     * @param columnId The identifier of the column over which this aggregate function will be invoked.
-     * @param newColumnId The identifier for the new column.
-     * @return The DataSetLookupBuilder instance that is being used to configure a DataSetLookup request.
-     */
-    T min(String columnId, String newColumnId);
-
-    /**
-     * This function will return the maximum value for the specified column.
-     * @param columnId The identifier of the column over which this aggregate function will be invoked.
-     * @return The DataSetLookupBuilder instance that is being used to configure a DataSetLookup request.
-     */
-    T max(String columnId);
-
-    /**
-     * This function will return the maximum value for the specified column. The result will be stored in a new
-     * column with the given identifier.
-     * @param columnId The identifier of the column over which this aggregate function will be invoked.
-     * @param newColumnId The identifier for the new column.
-     * @return The DataSetLookupBuilder instance that is being used to configure a DataSetLookup request.
-     */
-    T max(String columnId, String newColumnId);
-
-    /**
-     * This function will calculate the average over the set of values for the specified column.
-     * @param columnId The identifier of the column over which this aggregate function will be invoked.
-     * @return The DataSetLookupBuilder instance that is being used to configure a DataSetLookup request.
-     */
-    T avg(String columnId);
-
-    /**
-     * This function will calculate the average over the set of values for the specified column. The result will be
-     * stored in a new column with the given identifier.
-     * @param columnId The identifier of the column over which this aggregate function will be invoked.
-     * @param newColumnId The identifier for the new column.
-     * @return The DataSetLookupBuilder instance that is being used to configure a DataSetLookup request.
-     */
-    T avg(String columnId, String newColumnId);
-
-    /**
-     * This function will calculate the sum of the set of values for the specified column.
-     * @param columnId The identifier of the column over which this aggregate function will be invoked.
-     * @return The DataSetLookupBuilder instance that is being used to configure a DataSetLookup request.
-     */
-    T sum(String columnId);
-
-    /**
-     * This function will calculate the sum of the set of values for the specified column. The result will be
-     * stored in a new column with the given identifier.
-     * @param columnId The identifier of the column over which this aggregate function will be invoked.
-     * @param newColumnId The identifier for the new column.
-     * @return The DataSetLookupBuilder instance that is being used to configure a DataSetLookup request.
-     */
-    T sum(String columnId, String newColumnId);
 
     /**
      * The function will reduce the generated data set by selecting some of the intervals that were previously generated
@@ -503,6 +312,58 @@ public interface DataSetLookupBuilder<T> {
      * @return The DataSetLookupBuilder instance that is being used to configure a DataSetLookup request.
      */
     T sort(String columnId, SortOrder order);
+
+    /**
+     * Select the specified column as part of the resulting data set.
+     *
+     * @param columnId The identifier of the source column.
+     * @return The DisplayerSettingsBuilder instance that is being used to configure a DisplayerSettings.
+     */
+    T column(String columnId);
+
+    /**
+     * Select the specified column as part of the resulting data set.
+     *
+     * @param columnId The identifier of the source column.
+     * @param newColumnId A new identifier for the column into the resulting data set.
+     * @return The DisplayerSettingsBuilder instance that is being used to configure a DisplayerSettings.
+     */
+    T column(String columnId, String newColumnId);
+
+    /**
+     * Generates a new column on the resulting data set by which values will be the result of applying the specified
+     * aggregation function on the source data set column.
+     *
+     * @param columnId The identifier of the source column.
+     * @param function The AggregationFunction for calculating the column values.
+     * @return The DisplayerSettingsBuilder instance that is being used to configure a DisplayerSettings.
+     */
+    T column(String columnId, AggregateFunctionType function);
+
+    /**
+     * Generates a new column on the resulting data set by which values will be the result of applying the specified
+     * aggregation function on the source data set column.
+     * <p>This variant requires a previous group() method invocation as it's not possible to apply aggregation
+     * functions on non-grouped data sets.
+     *
+     * @param columnId The identifier of the source column.
+     * @param function The aggregation function for calculating the column values.
+     * @param newColumnId A new identifier for the column into the resulting data set.
+     * @return The DisplayerSettingsBuilder instance that is being used to configure a DisplayerSettings.
+     */
+    T column(String columnId, AggregateFunctionType function, String newColumnId);
+
+    /**
+     * Generates a new column on the resulting data set by which values will be the result of applying the specified
+     * aggregation function on the source data set column.
+     * <p>This variant does not require a source column which is fine for some aggregation functions like
+     * AggregateFunctionType.COUNT</p>
+     *
+     * @param function The aggregation function for calculating the column values.
+     * @param newColumnId A new identifier for the column into the resulting data set.
+     * @return The DisplayerSettingsBuilder instance that is being used to configure a DisplayerSettings.
+     */
+    T column(AggregateFunctionType function, String newColumnId);
 
     /**
      * @return The DataSetLookup request instance that has been configured.

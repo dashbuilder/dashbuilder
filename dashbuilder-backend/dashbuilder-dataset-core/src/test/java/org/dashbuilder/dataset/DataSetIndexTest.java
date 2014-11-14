@@ -20,6 +20,7 @@ import javax.inject.Inject;
 import org.dashbuilder.dataset.engine.SharedDataSetOpEngine;
 import org.dashbuilder.dataset.engine.index.DataSetIndex;
 import org.dashbuilder.dataset.engine.index.stats.DataSetIndexStats;
+import org.dashbuilder.dataset.group.AggregateFunctionType;
 import org.dashbuilder.test.ShrinkWrapHelper;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -49,7 +50,7 @@ public class DataSetIndexTest {
     DataSetLookup groupByDeptAndCount = DataSetFactory.newDataSetLookupBuilder()
             .dataset(EXPENSE_REPORTS)
             .group("department", "Department")
-            .count("occurrences")
+            .column(AggregateFunctionType.COUNT, "occurrences")
             .buildLookup();
 
     /**
@@ -58,7 +59,7 @@ public class DataSetIndexTest {
     DataSetLookup groupByDeptAndSum = DataSetFactory.newDataSetLookupBuilder()
             .dataset(EXPENSE_REPORTS)
             .group("department", "Department")
-            .avg("amount")
+            .column("amount", AggregateFunctionType.AVERAGE)
             .buildLookup();
 
     /**

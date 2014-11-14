@@ -29,6 +29,7 @@ import static org.dashbuilder.dataset.group.DateIntervalType.*;
 import static org.dashbuilder.dataset.date.DayOfWeek.*;
 import static org.dashbuilder.shared.sales.SalesConstants.*;
 import static org.dashbuilder.dataset.sort.SortOrder.*;
+import static org.dashbuilder.dataset.group.AggregateFunctionType.*;
 
 /**
  * A composite widget that represents an entire dashboard sample composed using an UI binder template.
@@ -79,22 +80,22 @@ public class SalesExpectedByDate extends Composite {
         areaChartByDate = DisplayerHelper.lookupDisplayer(
                 DisplayerSettingsFactory.newAreaChartSettings()
                 .dataset(SALES_OPPS)
-                .group(CREATION_DATE, 80, DAY)
-                .sum(EXPECTED_AMOUNT)
+                .group(CREATION_DATE).dynamic(80, DAY)
+                .column(CREATION_DATE, "Creation date")
+                .column(EXPECTED_AMOUNT, SUM, "Amount")
                 .title("Expected pipeline")
                 .titleVisible(true)
                 .width(600).height(200)
                 .margins(10, 80, 80, 100)
-                .column("Creation date")
-                .column("Amount")
                 .filterOn(true, true, true)
                 .buildSettings());
 
         pieChartYears = DisplayerHelper.lookupDisplayer(
                 DisplayerSettingsFactory.newPieChartSettings()
                 .dataset(SALES_OPPS)
-                .group(CREATION_DATE, YEAR)
-                .count("occurrences")
+                .group(CREATION_DATE).dynamic(YEAR)
+                .column(CREATION_DATE, "Year")
+                .column(COUNT, "Occurrences")
                 .title("Year")
                 .titleVisible(true)
                 .width(200).height(150)
@@ -106,7 +107,8 @@ public class SalesExpectedByDate extends Composite {
                 DisplayerSettingsFactory.newPieChartSettings()
                 .dataset(SALES_OPPS)
                 .group(CREATION_DATE).fixed(QUARTER)
-                .count("occurrences")
+                .column(CREATION_DATE, "Creation date")
+                .column(COUNT, "Occurrences")
                 .title("Quarter")
                 .titleVisible(true)
                 .width(200).height(150)
@@ -118,7 +120,8 @@ public class SalesExpectedByDate extends Composite {
                 DisplayerSettingsFactory.newBarChartSettings()
                 .dataset(SALES_OPPS)
                 .group(CREATION_DATE).fixed(DAY_OF_WEEK).firstDay(SUNDAY)
-                .count("occurrences")
+                .column(CREATION_DATE, "Creation date")
+                .column(COUNT, "Occurrences")
                 .title("Day of week")
                 .titleVisible(true)
                 .width(200).height(150)
@@ -132,13 +135,12 @@ public class SalesExpectedByDate extends Composite {
                 DisplayerSettingsFactory.newPieChartSettings()
                 .dataset(SALES_OPPS)
                 .group(PIPELINE)
-                .count("occurrences")
+                .column(PIPELINE, "Pipeline")
+                .column(COUNT, "Number of opps")
                 .title("Pipeline")
                 .titleVisible(true)
                 .width(200).height(150)
                 .margins(0, 0, 0, 0)
-                .column("Pipeline")
-                .column("Number of opps")
                 .filterOn(false, true, true)
                 .buildSettings());
 
@@ -166,27 +168,23 @@ public class SalesExpectedByDate extends Composite {
 
         countrySelector = DisplayerHelper.lookupDisplayer(
                 DisplayerSettingsFactory.newSelectorSettings()
-                        .dataset(SALES_OPPS)
-                        .group(COUNTRY)
-                        .count("#Opps")
-                        .sum(AMOUNT)
-                        .sort(COUNTRY, ASCENDING)
-                        .column("Country")
-                        .column("#Opps")
-                        .column("Total")
-                        .filterOn(false, true, true)
-                        .buildSettings());
+                .dataset(SALES_OPPS)
+                .group(COUNTRY)
+                .column(COUNTRY, "Country")
+                .column(COUNT, "#Opps")
+                .column(AMOUNT, SUM, "Total")
+                .sort("Country", ASCENDING)
+                .filterOn(false, true, true)
+                .buildSettings());
 
         salesmanSelector = DisplayerHelper.lookupDisplayer(
                 DisplayerSettingsFactory.newSelectorSettings()
                 .dataset(SALES_OPPS)
                 .group(SALES_PERSON)
-                .count("#Opps")
-                .sum(AMOUNT)
-                .sort(SALES_PERSON, ASCENDING)
-                .column("Employee")
-                .column("#Opps")
-                .column("Total")
+                .column(SALES_PERSON, "Employee")
+                .column(COUNT, "#Opps")
+                .column(AMOUNT, SUM, "Total")
+                .sort("Employee", ASCENDING)
                 .filterOn(false, true, true)
                 .buildSettings());
 
@@ -194,12 +192,10 @@ public class SalesExpectedByDate extends Composite {
                 DisplayerSettingsFactory.newSelectorSettings()
                 .dataset(SALES_OPPS)
                 .group(CUSTOMER)
-                .count("#Opps")
-                .sum(AMOUNT)
-                .sort(CUSTOMER, ASCENDING)
-                .column("Customer")
-                .column("#Opps")
-                .column("Total")
+                .column(CUSTOMER, "Customer")
+                .column(COUNT, "#Opps")
+                .column(AMOUNT, SUM, "Total")
+                .sort("Customer", ASCENDING)
                 .filterOn(false, true, true)
                 .buildSettings());
 

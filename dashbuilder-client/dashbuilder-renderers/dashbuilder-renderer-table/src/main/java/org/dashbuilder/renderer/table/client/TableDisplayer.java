@@ -53,7 +53,6 @@ import org.dashbuilder.dataset.client.DataSetReadyCallback;
 import org.dashbuilder.displayer.DisplayerAttributeDef;
 import org.dashbuilder.displayer.DisplayerAttributeGroupDef;
 import org.dashbuilder.displayer.DisplayerConstraints;
-import org.dashbuilder.displayer.DisplayerSettingsColumn;
 import org.dashbuilder.displayer.client.AbstractDisplayer;
 import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.DataColumn;
@@ -227,7 +226,7 @@ public class TableDisplayer extends AbstractDisplayer {
         }
 
         VerticalPanel verticalPanel = new VerticalPanel();
-        verticalPanel.add( titleHtml );
+        verticalPanel.add(titleHtml);
         verticalPanel.add(table);
         return verticalPanel;
     }
@@ -235,15 +234,18 @@ public class TableDisplayer extends AbstractDisplayer {
     protected PagedTable<Integer> createTable() {
 
         final PagedTable<Integer> pagedTable = new PagedTable<Integer>(displayerSettings.getTablePageSize());
-        DisplayerSettingsColumn[] displayerSettingsColumns = displayerSettings.getColumns();
 
-        int nColumns = 0;
-        if ( displayerSettingsColumns.length > 0 ) {
-            createTableColumnsFromDisplayerSettings( pagedTable, displayerSettingsColumns );
-            nColumns = displayerSettingsColumns.length;
-        } else {
-            createTableColumnsFromDataSet( pagedTable, dataSet.getColumns() );
-            nColumns = dataSet.getColumns().size();
+        List<DataColumn> dataColumns = dataSet.getColumns();
+        for ( int i = 0; i < dataColumns.size(); i++ ) {
+            DataColumn dataColumn = dataColumns.get( i );
+            String columnId = dataColumn.getId();
+            String columnName = dataColumn.getName();
+
+            Column<Integer, ?> column = createColumn( dataColumn.getColumnType(), columnId, i );
+            if ( column != null ) {
+                column.setSortable( true );
+                pagedTable.addColumn( column, columnName );
+            }
         }
 
         pagedTable.setRowCount( numberOfRows, true );
@@ -251,7 +253,7 @@ public class TableDisplayer extends AbstractDisplayer {
         pagedTable.setHeight( ( height > ( Window.getClientHeight() - this.getAbsoluteTop() ) ? ( Window.getClientHeight() - this.getAbsoluteTop() ) : height ) + "px" );
 
         int tableWidth = displayerSettings.getTableWidth();
-        pagedTable.setWidth( tableWidth == 0 ? nColumns * 100 + "px" : tableWidth + "px");
+        pagedTable.setWidth( tableWidth == 0 ? dataColumns.size() * 100 + "px" : tableWidth + "px");
 
         pagedTable.setEmptyTableCaption( TableConstants.INSTANCE.tableDisplayer_noDataAvailable() );
 
@@ -269,52 +271,6 @@ public class TableDisplayer extends AbstractDisplayer {
             }
         });
         return pagedTable;
-    }
-
-    private void createTableColumnsFromDataSet( PagedTable<Integer> table, List<DataColumn> dataColumns ) {
-        for ( int i = 0; i < dataColumns.size(); i++ ) {
-            DataColumn dataColumn = dataColumns.get( i );
-            String columnId = dataColumn.getId();
-
-            Column<Integer, ?> column = createColumn( dataColumn.getColumnType(), columnId, i );
-            if ( column != null ) {
-                column.setSortable( true );
-                table.addColumn( column, columnId );
-            }
-        }
-    }
-
-    private void createTableColumnsFromDisplayerSettings( PagedTable<Integer> table, DisplayerSettingsColumn[] displayerSettingsColumns ) {
-        int columnIndex = 0;
-        for ( int i = 0; i < displayerSettingsColumns.length; i++ ) {
-            DisplayerSettingsColumn displayerSettingsColumn = displayerSettingsColumns[ i ];
-            DataColumn dataColumn;
-            if (displayerSettingsColumn.getColumnId() != null) dataColumn = dataSet.getColumnById( displayerSettingsColumn.getColumnId() );
-            else dataColumn = dataSet.getColumnByIndex( columnIndex++ );
-
-            if (dataColumn == null) {
-                String msg = "Displayer column not found in the data set: " + displayerSettingsColumn.getDisplayName();
-                GWT.log( msg );
-                throw new RuntimeException( msg );
-            }
-
-            String columnId = dataColumn.getId();
-            String displayName = displayerSettingsColumn.getDisplayName();
-            String caption = null;
-            if ( displayName != null && !"".equals( displayName ) ) {
-                caption = displayName;
-                columnCaptionIds.put( displayName, columnId );
-            } else {
-                caption = columnId;
-            }
-
-            int colIndex = dataSet.getColumnIndex( dataColumn );
-            Column<Integer, ?> column = createColumn( dataColumn.getColumnType(), columnId, colIndex );
-            if ( column != null ) {
-                column.setSortable( true );
-                table.addColumn( column, caption );
-            }
-        }
     }
 
     private Column<Integer, ?> createColumn( ColumnType columnType, String columnId, final int columnNumber ) {

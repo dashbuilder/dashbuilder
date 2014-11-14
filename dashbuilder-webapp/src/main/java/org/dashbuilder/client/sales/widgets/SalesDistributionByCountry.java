@@ -28,6 +28,7 @@ import org.dashbuilder.renderer.table.client.TableRenderer;
 
 import static org.dashbuilder.shared.sales.SalesConstants.*;
 import static org.dashbuilder.dataset.sort.SortOrder.*;
+import static org.dashbuilder.dataset.group.AggregateFunctionType.*;
 
 /**
  * A composite widget that represents an entire dashboard sample composed using an UI binder template.
@@ -61,17 +62,14 @@ public class SalesDistributionByCountry extends Composite {
                 DisplayerSettingsFactory.newBubbleChartSettings()
                 .dataset(SALES_OPPS)
                 .group(COUNTRY)
-                .count("opps")
-                .avg(PROBABILITY)
-                .sum(EXPECTED_AMOUNT)
+                .column(COUNTRY, "Country")
+                .column(COUNT, "Number of opportunities")
+                .column(PROBABILITY, AVERAGE, "Average probability")
+                .column(COUNTRY, "Country")
+                .column(EXPECTED_AMOUNT, SUM, "Expected amount")
                 .title("Opportunities distribution by Country ")
                 .width(450).height(300)
                 .margins(20, 50, 50, 0)
-                .column(COUNTRY, "Country")
-                .column("opps", "Number of opportunities")
-                .column(PROBABILITY, "Average probability")
-                .column(COUNTRY, "Country")
-                .column(EXPECTED_AMOUNT, "Expected amount")
                 .filterOn(false, true, true)
                 .buildSettings());
 
@@ -79,14 +77,12 @@ public class SalesDistributionByCountry extends Composite {
                 DisplayerSettingsFactory.newMapChartSettings()
                 .dataset(SALES_OPPS)
                 .group(COUNTRY)
-                .count("opps")
-                .sum(EXPECTED_AMOUNT)
+                .column(COUNTRY, "Country")
+                .column(COUNT, "Number of opportunities")
+                .column(EXPECTED_AMOUNT, SUM, "Total amount")
                 .title("By Country")
                 .width(450).height(290)
                 .margins(10, 10, 10, 10)
-                .column("Country")
-                .column("Number of opportunities")
-                .column("Total amount")
                 .filterOn(false, true, true)
                 .buildSettings());
 

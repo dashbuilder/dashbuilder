@@ -68,6 +68,11 @@ public interface DataSet {
     DataColumn getColumnById(String id);
 
     /**
+     * Get a column by its name.
+     */
+    DataColumn getColumnByName(String name);
+
+    /**
      * Get a column by its index (starting at 0).
      */
     DataColumn getColumnByIndex(int index);
@@ -81,6 +86,21 @@ public interface DataSet {
      * Add a brand new column.
      */
     DataSet addColumn(String id, ColumnType type);
+
+    /**
+     * Add a brand new column populated with the given values.
+     */
+    DataSet addColumn(String id, ColumnType type, List values);
+
+    /**
+     * Add a brand new column.
+     */
+    DataSet addColumn(String id, String name, ColumnType type);
+
+    /**
+     * Add a brand new column populated with the given values.
+     */
+    DataSet addColumn(String id, String name, ColumnType type, List values);
 
     /**
      * Removes an existing column.

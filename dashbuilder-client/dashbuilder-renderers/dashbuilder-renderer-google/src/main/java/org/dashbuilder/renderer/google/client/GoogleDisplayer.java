@@ -33,7 +33,6 @@ import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.client.DataSetReadyCallback;
-import org.dashbuilder.displayer.DisplayerSettingsColumn;
 import org.dashbuilder.displayer.client.AbstractDisplayer;
 import org.dashbuilder.renderer.google.client.resources.i18n.GoogleDisplayerConstants;
 
@@ -161,75 +160,40 @@ public abstract class GoogleDisplayer extends AbstractDisplayer {
     // Google DataTable manipulation methods
 
     public DataTable createTable() {
-        DisplayerSettingsColumn[] displayerSettingsColumns = displayerSettings.getColumns();
-        if (displayerSettingsColumns.length == 0) {
-            return googleTable = formatTable(createTableFromDataSet());
-        }
-        return googleTable = formatTable(createTableFromDisplayerSettings());
-    }
 
-    protected DataTable formatTable(DataTable gTable) {
-        DateFormatOptions dateFormatOptions = DateFormatOptions.create();
-        dateFormatOptions.setFormatType(FormatType.MEDIUM);
-        DateFormat dateFormat = DateFormat.create(dateFormatOptions);
-
-        NumberFormatOptions numberFormatOptions = NumberFormatOptions.create();
-        numberFormatOptions.setPattern("#,###.##");
-        NumberFormat numberFormat = NumberFormat.create(numberFormatOptions);
-
-        for (int i = 0; i < gTable.getNumberOfColumns(); i++) {
-            com.googlecode.gwt.charts.client.ColumnType type = gTable.getColumnType(i);
-            if (com.googlecode.gwt.charts.client.ColumnType.DATE.equals(type)) {
-                dateFormat.format(gTable, i);
-            }
-            else if (com.googlecode.gwt.charts.client.ColumnType.NUMBER.equals(type)) {
-                numberFormat.format(gTable, i);
-            }
-        }
-        return gTable;
-    }
-
-    protected DataTable createTableFromDataSet() {
-        DataTable gTable = DataTable.create();
-        gTable.addRows(dataSet.getRowCount());
+        // Init & populate the table
+        googleTable = DataTable.create();
+        googleTable.addRows(dataSet.getRowCount());
         List<DataColumn> columns = dataSet.getColumns();
         for (int i = 0; i < columns.size(); i++) {
             DataColumn dataColumn = columns.get(i);
             List columnValues = dataColumn.getValues();
             ColumnType columnType = dataColumn.getColumnType();
-            gTable.addColumn(getColumnType(dataColumn), dataColumn.getId(), dataColumn.getId());
+            googleTable.addColumn(getColumnType(dataColumn), dataColumn.getName(), dataColumn.getId());
             for (int j = 0; j < columnValues.size(); j++) {
                 Object value = columnValues.get(j);
-                setTableValue(gTable, columnType, value, j, i);
+                setTableValue(googleTable, columnType, value, j, i);
             }
         }
-        return gTable;
-    }
 
-    public DataTable createTableFromDisplayerSettings() {
-        DataTable gTable = DataTable.create();
-        gTable.addRows(dataSet.getRowCount());
-        int columnIndex = 0;
+        // Format the table values
+        DateFormatOptions dateFormatOptions = DateFormatOptions.create();
+        dateFormatOptions.setFormatType(FormatType.MEDIUM);
+        DateFormat dateFormat = DateFormat.create(dateFormatOptions);
+        NumberFormatOptions numberFormatOptions = NumberFormatOptions.create();
+        numberFormatOptions.setPattern("#,###.##");
+        NumberFormat numberFormat = NumberFormat.create(numberFormatOptions);
 
-        DisplayerSettingsColumn[] displayerSettingsColumns = displayerSettings.getColumns();
-        for (int i = 0; i < displayerSettingsColumns.length; i++) {
-            DisplayerSettingsColumn displayerSettingsColumn = displayerSettingsColumns[i];
-            DataColumn dataColumn = null;
-            if (displayerSettingsColumn.getColumnId() != null) dataColumn = dataSet.getColumnById(displayerSettingsColumn.getColumnId());
-            else dataColumn = dataSet.getColumnByIndex(columnIndex++);
-            if (dataColumn == null) {
-                throw new RuntimeException("Displayer column not found in the data set: " + displayerSettingsColumn.getDisplayName());
+        for (int i = 0; i < googleTable.getNumberOfColumns(); i++) {
+            com.googlecode.gwt.charts.client.ColumnType type = googleTable.getColumnType(i);
+            if (com.googlecode.gwt.charts.client.ColumnType.DATE.equals(type)) {
+                dateFormat.format(googleTable, i);
             }
-
-            ColumnType columnType = dataColumn.getColumnType();
-            List columnValues = dataColumn.getValues();
-            gTable.addColumn(getColumnType(dataColumn), displayerSettingsColumn.getDisplayName(), dataColumn.getId());
-            for (int j = 0; j < columnValues.size(); j++) {
-                Object value = columnValues.get(j);
-                setTableValue(gTable, columnType, value, j, i);
+            else if (com.googlecode.gwt.charts.client.ColumnType.NUMBER.equals(type)) {
+                numberFormat.format(googleTable, i);
             }
         }
-        return gTable;
+        return googleTable;
     }
 
     public String getValueString(int row, int column) {

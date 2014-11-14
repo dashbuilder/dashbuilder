@@ -28,10 +28,10 @@ import org.jboss.errai.common.client.api.annotations.Portable;
 @Portable
 public class DataSetGroup implements DataSetOp {
 
+    protected boolean join = false;
     protected ColumnGroup columnGroup = null;
     protected List<GroupFunction> groupFunctionList = new ArrayList<GroupFunction>();
     protected List<String> selectedIntervalNames = new ArrayList<String>();
-    protected NestedGroupType nestedGroupType = null;
 
     public DataSetOpType getType() {
         return DataSetOpType.GROUP;
@@ -55,14 +55,6 @@ public class DataSetGroup implements DataSetOp {
         return groupFunctionList;
     }
 
-    public NestedGroupType getNestedGroupType() {
-        return nestedGroupType;
-    }
-
-    public void setNestedGroupType(NestedGroupType nestedGroupType) {
-        this.nestedGroupType = nestedGroupType;
-    }
-
     public void addSelectedIntervalNames(String... names) {
         for (String name : names) {
             selectedIntervalNames.add(name);
@@ -77,10 +69,18 @@ public class DataSetGroup implements DataSetOp {
         selectedIntervalNames = (names != null) ? names : new ArrayList<String>();
     }
 
+    public boolean isJoin() {
+        return join;
+    }
+
+    public void setJoin(boolean join) {
+        this.join = join;
+    }
+
     public DataSetGroup cloneInstance() {
         DataSetGroup clone = new DataSetGroup();
-        clone.nestedGroupType = nestedGroupType;
         if (columnGroup != null) clone.columnGroup = columnGroup.cloneInstance();
+        clone.join = join;
         clone.selectedIntervalNames = new ArrayList(selectedIntervalNames);
         clone.groupFunctionList = new ArrayList();
         for (GroupFunction groupFunction : groupFunctionList) {
@@ -93,6 +93,7 @@ public class DataSetGroup implements DataSetOp {
         if (obj == this) return true;
         try {
             DataSetGroup other = (DataSetGroup) obj;
+            if (join != other.join) return false;
             if (columnGroup != null && other.columnGroup == null) return false;
             if (columnGroup == null && other.columnGroup != null) return false;
             if (columnGroup != null && !columnGroup.equals(other.columnGroup)) return false;
@@ -115,7 +116,10 @@ public class DataSetGroup implements DataSetOp {
 
     public String toString() {
         StringBuilder out = new StringBuilder();
-        if (columnGroup != null) out.append("group(").append(columnGroup).append(") ");
+        if (columnGroup != null) {
+            out.append("group(").append(columnGroup).append(") ");
+            if (join) out.append(".join()");
+        }
         if (!selectedIntervalNames.isEmpty()) {
             out.append("select(");
             for (String intervalName : selectedIntervalNames) {

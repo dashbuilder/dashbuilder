@@ -23,6 +23,7 @@ import org.dashbuilder.dataset.DataSetFactory;
 import org.dashbuilder.dataset.DataSetFormatter;
 import org.dashbuilder.dataset.DataSetManager;
 import org.dashbuilder.dataset.def.DataSetDefRegistry;
+import org.dashbuilder.dataset.group.AggregateFunctionType;
 import org.dashbuilder.test.ShrinkWrapHelper;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -94,8 +95,9 @@ public class CSVDataSetBasicTest {
                         .dataset(EXPENSE_REPORTS)
                         .filter("amount", isLowerThan(1000))
                         .group("department")
-                        .count("#items")
-                        .sum("amount")
+                        .column("department")
+                        .column(AggregateFunctionType.COUNT, "#items")
+                        .column("amount", AggregateFunctionType.SUM)
                         .buildLookup());
 
         //printDataSet(result);

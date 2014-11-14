@@ -30,6 +30,7 @@ import org.junit.runner.RunWith;
 
 import static org.dashbuilder.dataset.Assertions.*;
 import static org.fest.assertions.api.Assertions.*;
+import static org.dashbuilder.dataset.group.AggregateFunctionType.*;
 
 @RunWith(Arquillian.class)
 public class DataSetNestedGroupTest {
@@ -56,27 +57,20 @@ public class DataSetNestedGroupTest {
         dataSetFormatter = new DataSetFormatter();
     }
 
-    /* @Test
-      TODO: public void testMultipleYearSplit() throws Exception {
+/*
+     @Test
+     public void testMultipleYearSplit() throws Exception {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                 .dataset(EXPENSE_REPORTS)
-                .group("date").fixed(MONTH)
-                .sum("total")
-                .group("date", YEAR)
-                .sum("total per year")
+                .group("date").fixed(DateIntervalType.MONTH)
+                .column("amount", SUM, "total")
+                .column("date", "amount", SUM, "total in {date}", DateIntervalType.YEAR)
                 .buildLookup());
 
         printDataSet(result);
-        assertDataSetValues(result, dataSetFormatter, new String[][] {
-                {"Barcelona", "6.00", "120.35", "1,100.10", "485.52", "2,913.14"},
-                {"Madrid", "2.00", "800.80", "911.11", "855.95", "1,711.91"},
-                {"Brno", "4.00", "159.01", "800.24", "364.86", "1,459.45"},
-                {"Westford", "5.00", "1.10", "600.34", "265.29", "1,326.43"},
-                {"Raleigh", "4.00", "209.55", "401.40", "284.38", "1,137.53"},
-                {"London", "3.00", "333.45", "868.45", "535.40", "1,606.20"}
-        }, 0);
-    }*/
+    }
+*/
 
     @Test
     public void testGroupSelectionFilter() throws Exception {
@@ -100,11 +94,12 @@ public class DataSetNestedGroupTest {
                 .dataset(EXPENSE_REPORTS)
                 .group("department", "Department").select("Services", "Engineering")
                 .group("city", "City")
-                .count("Occurrences")
-                .min("amount", "min")
-                .max("amount", "max")
-                .avg("amount", "average")
-                .sum("amount", "total")
+                .column("city")
+                .column(COUNT, "Occurrences")
+                .column("amount", MIN, "min")
+                .column("amount", MAX, "max")
+                .column("amount", AVERAGE, "average")
+                .column("amount", SUM, "total")
                 .buildLookup());
 
         //printDataSet(result);
@@ -124,6 +119,7 @@ public class DataSetNestedGroupTest {
                 DataSetFactory.newDataSetLookupBuilder()
                 .dataset(EXPENSE_REPORTS)
                 .group("department", "Department")
+                .column("department")
                 .group("city", "city")
                 .buildLookup());
 
@@ -146,7 +142,8 @@ public class DataSetNestedGroupTest {
                         .group("department").select("Engineering")
                         .group("city").select("Westford")
                         .group("date").fixed(DateIntervalType.MONTH)
-                        .sum("amount", "total")
+                        .column("date")
+                        .column("amount", SUM, "total")
                         .buildLookup());
 
         //printDataSet(result);
@@ -174,7 +171,8 @@ public class DataSetNestedGroupTest {
                         .group("department").select("Services", "Engineering")
                         .group("city").select("Madrid", "Barcelona")
                         .group("date").fixed(DateIntervalType.MONTH)
-                        .sum("amount", "total")
+                        .column("date")
+                        .column("amount", SUM, "total")
                         .buildLookup());
 
         //printDataSet(result);
@@ -192,6 +190,23 @@ public class DataSetNestedGroupTest {
                 {"NOVEMBER", "900.10"},
                 {"DECEMBER", "1,220.45"}
         }, 0);
+    }
+
+    @Test
+    public void testGroupJoin() throws Exception {
+        DataSet result = dataSetManager.lookupDataSet(
+                DataSetFactory.newDataSetLookupBuilder()
+                        .dataset(EXPENSE_REPORTS)
+                        .group("department")
+                        .group("city").select("Barcelona", "Brno").join()
+                        .group("date", "month").fixed(DateIntervalType.MONTH).join()
+                        .column("department")
+                        .column("city")
+                        .column("month")
+                        .column("amount", SUM, "total")
+                        .buildLookup());
+
+        //printDataSet(result);
     }
 
 

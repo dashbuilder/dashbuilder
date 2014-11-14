@@ -79,6 +79,13 @@ public class DataSetImpl implements DataSet {
         return null;
     }
 
+    public DataColumn getColumnByName(String name) {
+        for (DataColumn column : columns) {
+            if (column.getName().equals(name)) return column;
+        }
+        return null;
+    }
+
     public DataColumn getColumnByIndex(int index) {
         if (columns == null || columns.isEmpty()) {
             throw new IllegalArgumentException("The data set is empty.");
@@ -104,6 +111,25 @@ public class DataSetImpl implements DataSet {
         return addColumn(id, type, null);
     }
 
+    public DataSet addColumn(String id, String name, ColumnType type) {
+        return addColumn(id, name, type, null);
+    }
+
+    public DataSet addColumn(String id, ColumnType type, List values) {
+        return addColumn(id, id, type, values);
+    }
+
+    public DataSet addColumn(String id, String name, ColumnType type, List values) {
+        DataColumnImpl c = new DataColumnImpl();
+        c.setDataSet(this);
+        c.setId(id);
+        c.setName(name);
+        c.setColumnType(type);
+        if (values != null) c.setValues(values);
+        columns.add(c);
+        return this;
+    }
+
     public DataSet removeColumn(String id) {
         Iterator<DataColumn> it = columns.iterator();
         while (it.hasNext()) {
@@ -112,16 +138,6 @@ public class DataSetImpl implements DataSet {
                 it.remove();
             }
         }
-        return this;
-    }
-
-    public DataSet addColumn(String id, ColumnType type, List values) {
-        DataColumnImpl c = new DataColumnImpl();
-        c.setDataSet(this);
-        c.setId(id);
-        c.setColumnType(type);
-        if (values != null) c.setValues(values);
-        columns.add(c);
         return this;
     }
 
@@ -220,6 +236,9 @@ public class DataSetImpl implements DataSet {
     }
 
     public DataSet trim(List<Integer> rows) {
+        if (rows == null || rows.isEmpty()) {
+            return this;
+        }
         DataSetImpl other = cloneEmpty();
         other.rowCountNonTrimmed = getRowCount();
         for (int i=0; i<columns.size(); i++) {
@@ -240,7 +259,9 @@ public class DataSetImpl implements DataSet {
         DataSetImpl other = new DataSetImpl();
         for (int i=0; i<columns.size(); i++) {
             DataColumn column = columns.get(i);
-            other.addColumn(column.getId(), column.getColumnType());
+            other.addColumn(column.getId(),
+                    column.getName(),
+                    column.getColumnType());
         }
         return other;
     }
@@ -250,6 +271,7 @@ public class DataSetImpl implements DataSet {
         for (int i=0; i<columns.size(); i++) {
             DataColumn column = columns.get(i);
             other.addColumn(column.getId(),
+                    column.getName(),
                     column.getColumnType(),
                     new ArrayList(column.getValues()));
         }

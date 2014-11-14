@@ -41,7 +41,7 @@ public abstract class AbstractDataSetLookupBuilder<T> implements DataSetLookupBu
     private DataSetOp getCurrentOp() {
         List<DataSetOp> dataSetOps = dataSetLookup.getOperationList();
         if (dataSetOps.isEmpty()) return null;
-        return dataSetOps.get(dataSetOps.size()-1);
+        return dataSetOps.get(dataSetOps.size() - 1);
     }
 
     public T dataset(String uuid) {
@@ -60,85 +60,23 @@ public abstract class AbstractDataSetLookupBuilder<T> implements DataSetLookupBu
     }
 
     public T group(String columnId) {
-        return group(columnId, columnId, GroupStrategy.DYNAMIC);
+        return group(columnId, columnId);
     }
 
     public T group(String columnId, String newColumnId) {
-        return group(columnId, newColumnId, GroupStrategy.DYNAMIC);
-    }
-
-    public T group(String columnId, GroupStrategy strategy) {
-        return group(columnId, columnId, strategy, -1, (String) null);
-    }
-
-    public T group(String columnId, DateIntervalType intervalSize) {
-        return group(columnId, -1, intervalSize.toString());
-    }
-
-    public T group(String columnId, int maxIntervals, DateIntervalType intervalSize) {
-        return group(columnId, maxIntervals, intervalSize.toString());
-    }
-
-    public T group(String columnId, int maxIntervals, String intervalSize) {
-        return group(columnId, columnId, GroupStrategy.DYNAMIC, maxIntervals, intervalSize);
-    }
-
-    public T group(String columnId, String strategy, int maxIntervals, DateIntervalType intervalSize) {
-        return group(columnId, columnId, GroupStrategy.getByName(strategy), maxIntervals, intervalSize.toString());
-    }
-
-    public T group(String columnId, String strategy, int maxIntervals, String intervalSize) {
-        return group(columnId, columnId, GroupStrategy.getByName(strategy), maxIntervals, intervalSize);
-    }
-
-    public T group(String columnId, GroupStrategy strategy, String intervalSize) {
-        return group(columnId, columnId, strategy, 0, intervalSize);
-    }
-
-    public T group(String columnId, GroupStrategy strategy, DateIntervalType intervalSize) {
-        return group(columnId, columnId, strategy, 0, intervalSize.toString());
-    }
-
-    public T group(String columnId, GroupStrategy strategy, int maxIntervals, String intervalSize) {
-        return group(columnId, columnId, strategy, maxIntervals, intervalSize);
-    }
-
-    public T group(String columnId, String newColumnId, DateIntervalType intervalSize) {
-        return group(columnId, newColumnId, GroupStrategy.DYNAMIC, 0, intervalSize);
-    }
-
-    public T group(String columnId, String newColumnId, String strategy) {
-        return group(columnId, newColumnId, GroupStrategy.getByName(strategy));
-    }
-
-    public T group(String columnId, String newColumnId, GroupStrategy strategy) {
-        return group(columnId, newColumnId, strategy, 15, (String) null);
-    }
-
-    public T group(String columnId, String newColumnId, String strategy, int maxIntervals, String intervalSize) {
-        return group(columnId, newColumnId, GroupStrategy.getByName(strategy), maxIntervals, intervalSize);
-    }
-
-    public T group(String columnId, String newColumnId, GroupStrategy strategy, int maxIntervals, DateIntervalType intervalSize) {
-        return group(columnId, newColumnId, strategy, maxIntervals, intervalSize.toString());
-    }
-
-    public T group(String columnId, String newColumnId, GroupStrategy strategy, int maxIntervals, String intervalSize) {
         DataSetGroup gOp = new DataSetGroup();
-        gOp.setColumnGroup(new ColumnGroup(columnId, newColumnId, strategy, maxIntervals, intervalSize));
+        gOp.setColumnGroup(new ColumnGroup(columnId, newColumnId));
         dataSetLookup.addOperation(gOp);
         return (T) this;
     }
 
-    public T fixed(DateIntervalType type) {
+    public T join() {
         DataSetGroup gOp = (DataSetGroup) getCurrentOp();
         if (gOp == null || gOp.getColumnGroup() == null) {
             throw new RuntimeException("group() must be called first.");
         }
 
-        ColumnGroup columnGroup = gOp.getColumnGroup();
-        columnGroup.setStrategy( GroupStrategy.FIXED );
-        columnGroup.setIntervalSize( type.toString() );
+        gOp.setJoin(true);
         return (T) this;
     }
 
@@ -149,7 +87,7 @@ public abstract class AbstractDataSetLookupBuilder<T> implements DataSetLookupBu
         }
 
         ColumnGroup columnGroup = gOp.getColumnGroup();
-        columnGroup.setAscendingOrder( true );
+        columnGroup.setAscendingOrder(true);
         return (T) this;
     }
 
@@ -160,8 +98,24 @@ public abstract class AbstractDataSetLookupBuilder<T> implements DataSetLookupBu
         }
 
         ColumnGroup columnGroup = gOp.getColumnGroup();
-        columnGroup.setAscendingOrder( false );
+        columnGroup.setAscendingOrder(false);
         return (T) this;
+    }
+
+    public T dynamic(int maxIntervals) {
+        return groupStrategy(GroupStrategy.DYNAMIC, maxIntervals, null);
+    }
+
+    public T dynamic(int maxIntervals, DateIntervalType intervalSize) {
+        return groupStrategy(GroupStrategy.DYNAMIC, maxIntervals, intervalSize.toString());
+    }
+
+    public T dynamic(DateIntervalType intervalSize) {
+        return groupStrategy(GroupStrategy.DYNAMIC, -1, intervalSize.toString());
+    }
+
+    public T fixed(DateIntervalType intervalSize) {
+        return groupStrategy(GroupStrategy.FIXED, -1, intervalSize.toString());
     }
 
     public T firstDay(DayOfWeek dayOfWeek) {
@@ -198,57 +152,15 @@ public abstract class AbstractDataSetLookupBuilder<T> implements DataSetLookupBu
         return (T) this;
     }
 
-    public T distinct(String columnId) {
-        return function(columnId, columnId, AggregateFunctionType.DISTINCT);
-    }
-
-    public T distinct(String columnId, String newColumnId) {
-        return function(columnId, newColumnId, AggregateFunctionType.DISTINCT);
-    }
-
-    public T count(String newColumnId) {
-        return function(null, newColumnId, AggregateFunctionType.COUNT);
-    }
-
-    public T min(String columnId) {
-        return function(columnId, columnId, AggregateFunctionType.MIN);
-    }
-
-    public T min(String columnId, String newColumnId) {
-        return function(columnId, newColumnId, AggregateFunctionType.MIN);
-    }
-
-    public T max(String columnId) {
-        return function(columnId, columnId, AggregateFunctionType.MAX);
-    }
-
-    public T max(String columnId, String newColumnId) {
-        return function(columnId, newColumnId, AggregateFunctionType.MAX);
-    }
-
-    public T avg(String columnId) {
-        return function(columnId, columnId, AggregateFunctionType.AVERAGE);
-    }
-
-    public T avg(String columnId, String newColumnId) {
-        return function(columnId, newColumnId, AggregateFunctionType.AVERAGE);
-    }
-
-    public T sum(String columnId) {
-        return function(columnId, columnId, AggregateFunctionType.SUM);
-    }
-
-    public T sum(String columnId, String newColumnId) {
-        return function(columnId, newColumnId, AggregateFunctionType.SUM);
-    }
-
-    protected T function(String columnId, String newColumnId, AggregateFunctionType function) {
-        DataSetOp op = getCurrentOp();
-        if (op == null || !(op instanceof DataSetGroup)) {
-            dataSetLookup.addOperation(new DataSetGroup());
-        }
+    private T groupStrategy(GroupStrategy strategy, int maxIntervals, String intervalSize) {
         DataSetGroup gOp = (DataSetGroup) getCurrentOp();
-        gOp.addGroupFunction(new GroupFunction(columnId, newColumnId, function));
+        if (gOp == null || gOp.getColumnGroup() == null) {
+            throw new RuntimeException("group() must be called first.");
+        }
+        ColumnGroup cg = gOp.getColumnGroup();
+        cg.setStrategy(strategy);
+        cg.setMaxIntervals(maxIntervals);
+        cg.setIntervalSize(intervalSize);
         return (T) this;
     }
 
@@ -290,6 +202,32 @@ public abstract class AbstractDataSetLookupBuilder<T> implements DataSetLookupBu
         }
         DataSetSort sOp = (DataSetSort) getCurrentOp();
         sOp.addSortColumn(new ColumnSort(columnId, order));
+        return (T) this;
+    }
+
+    public T column(String columnId) {
+        return this.column(columnId, null, columnId);
+    }
+
+    public T column(String columnId, String newColumnId) {
+        return this.column(columnId, null, newColumnId);
+    }
+
+    public T column(String columnId, AggregateFunctionType function) {
+        return this.column(columnId, function, columnId);
+    }
+
+    public T column(AggregateFunctionType function, String newColumnId) {
+        return this.column(null, function, newColumnId);
+    }
+
+    public T column(String columnId, AggregateFunctionType function, String newColumnId) {
+        DataSetOp op = getCurrentOp();
+        if (op == null || !(op instanceof DataSetGroup)) {
+            dataSetLookup.addOperation(new DataSetGroup());
+        }
+        DataSetGroup gOp = (DataSetGroup) getCurrentOp();
+        gOp.addGroupFunction(new GroupFunction(columnId, newColumnId, function));
         return (T) this;
     }
 

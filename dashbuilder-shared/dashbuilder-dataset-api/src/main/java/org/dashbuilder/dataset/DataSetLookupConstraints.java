@@ -20,6 +20,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.dashbuilder.dataset.group.AggregateFunctionType;
 import org.dashbuilder.dataset.group.DataSetGroup;
 import org.dashbuilder.dataset.impl.DataSetLookupBuilderImpl;
 
@@ -93,6 +94,7 @@ public class DataSetLookupConstraints extends DataSetConstraints<DataSetLookupCo
             Set<Integer> exclude = new HashSet<Integer>();
             exclude.add(groupIdx);
             builder.group(metatada.getColumnId(groupIdx));
+            builder.column(metatada.getColumnId(groupIdx));
 
             // Add the rest of the columns
             for (int i=1; columnTypes != null && i<columnTypes.length; i++) {
@@ -109,26 +111,24 @@ public class DataSetLookupConstraints extends DataSetConstraints<DataSetLookupCo
                 ColumnType columnType = metatada.getColumnType(idx);
 
                 if (ColumnType.LABEL.equals(targetType)) {
-                    // TODO: label functions
+                    builder.column(columnId);
                 }
                 else if (ColumnType.DATE.equals(targetType)) {
-                    // TODO: date functions
+                    builder.column(columnId);
                 }
                 else if (ColumnType.NUMBER.equals(targetType)) {
                     if (ColumnType.LABEL.equals(columnType)) {
-                        builder.count("#items");
+                        builder.column(AggregateFunctionType.COUNT, "#items");
                     }
                     else if (ColumnType.LABEL.equals(columnType)) {
-                        builder.count("#items");
+                        builder.column(AggregateFunctionType.COUNT, "#items");
                     }
                     else if (ColumnType.NUMBER.equals(columnType)) {
-                        builder.sum(columnId);
+                        builder.column(columnId, AggregateFunctionType.SUM);
                     }
                 }
             }
         }
-        // TODO: columns selection
-
         return builder.buildLookup();
     }
 

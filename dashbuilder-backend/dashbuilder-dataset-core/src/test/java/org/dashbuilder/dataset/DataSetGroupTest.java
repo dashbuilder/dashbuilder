@@ -32,6 +32,7 @@ import org.junit.runner.RunWith;
 import static org.dashbuilder.dataset.Assertions.*;
 import static org.dashbuilder.dataset.group.DateIntervalType.*;
 import static org.fest.assertions.api.Assertions.*;
+import static org.dashbuilder.dataset.group.AggregateFunctionType.*;
 
 @RunWith(Arquillian.class)
 public class DataSetGroupTest {
@@ -63,12 +64,12 @@ public class DataSetGroupTest {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                 .dataset(EXPENSE_REPORTS)
-                .count("#items")
-                .min("amount")
-                .max("amount")
-                .avg("amount")
-                .sum("amount")
-                .distinct("city")
+                .column(COUNT, "#items")
+                .column("amount", MIN)
+                .column("amount", MAX)
+                .column("amount", AVERAGE)
+                .column("amount", SUM)
+                .column("city", DISTINCT)
                 .buildLookup());
 
         assertDataSetValues(result, dataSetFormatter, new String[][] {
@@ -81,12 +82,13 @@ public class DataSetGroupTest {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                 .dataset(EXPENSE_REPORTS)
-                .group("department", "Department")
-                .count("Occurrences")
-                .min("amount", "min")
-                .max("amount", "max")
-                .avg("amount", "average")
-                .sum("amount", "total")
+                .group("department")
+                .column("department", "Department")
+                .column(COUNT, "Occurrences")
+                .column("amount", MIN, "min")
+                .column("amount", MAX, "max")
+                .column("amount", AVERAGE, "average")
+                .column("amount", SUM, "total")
                 .buildLookup());
 
         //printDataSet(result);
@@ -104,9 +106,10 @@ public class DataSetGroupTest {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                 .dataset(EXPENSE_REPORTS)
-                .group("date", "Period", GroupStrategy.DYNAMIC, 10, "year")
-                .count("Occurrences")
-                .sum("amount", "totalAmount")
+                .group("date").dynamic(10, YEAR)
+                .column("date", "Period")
+                .column(COUNT, "Occurrences")
+                .column("amount", SUM, "totalAmount")
                 .buildLookup());
 
         //printDataSet(result);
@@ -123,9 +126,10 @@ public class DataSetGroupTest {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                 .dataset(EXPENSE_REPORTS)
-                .group("date", "Period").fixed(MONTH)
-                .count("Occurrences")
-                .sum("amount", "totalAmount")
+                .group("date").fixed(MONTH)
+                .column("date", "Period")
+                .column(COUNT, "Occurrences")
+                .column("amount", SUM, "totalAmount")
                 .buildLookup());
 
         //printDataSet(result);
@@ -149,11 +153,12 @@ public class DataSetGroupTest {
     public void testGroupByMonthFirstMonth() throws Exception {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
-                        .dataset(EXPENSE_REPORTS)
-                        .group("date", "Period").fixed(MONTH).firstMonth( Month.NOVEMBER )
-                        .count("Occurrences")
-                        .sum("amount", "totalAmount")
-                        .buildLookup());
+                .dataset(EXPENSE_REPORTS)
+                .group("date").fixed(MONTH).firstMonth(Month.NOVEMBER)
+                .column("date", "Period")
+                .column(COUNT, "Occurrences")
+                .column("amount", SUM, "totalAmount")
+                .buildLookup());
 
         //printDataSet(result);
         assertDataSetValues(result, dataSetFormatter, new String[][]{
@@ -176,11 +181,12 @@ public class DataSetGroupTest {
     public void testGroupByMonthReverse() throws Exception {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
-                        .dataset(EXPENSE_REPORTS)
-                        .group("date", "Period").fixed(MONTH).desc()
-                        .count("Occurrences")
-                        .sum("amount", "totalAmount")
-                        .buildLookup());
+                .dataset(EXPENSE_REPORTS)
+                .group("date").fixed(MONTH).desc()
+                .column("date", "Period")
+                .column(COUNT, "Occurrences")
+                .column("amount", SUM, "totalAmount")
+                .buildLookup());
 
         //printDataSet(result);
         assertDataSetValues(result, dataSetFormatter, new String[][]{
@@ -202,12 +208,13 @@ public class DataSetGroupTest {
     @Test
     public void testGroupByMonthFirstMonthReverse() throws Exception {
         DataSet result = dataSetManager.lookupDataSet(
-                DataSetFactory.newDataSetLookupBuilder()
-                .dataset(EXPENSE_REPORTS)
-                .group("date", "Period").fixed(MONTH).desc().firstMonth( Month.MARCH )
-                .count("Occurrences")
-                .sum("amount", "totalAmount")
-                .buildLookup());
+            DataSetFactory.newDataSetLookupBuilder()
+            .dataset(EXPENSE_REPORTS)
+            .group("date").fixed(MONTH).desc().firstMonth(Month.MARCH)
+            .column("date", "Period")
+            .column(COUNT, "Occurrences")
+            .column("amount", SUM, "totalAmount")
+            .buildLookup());
 
         //printDataSet(result);
         assertDataSetValues(result, dataSetFormatter, new String[][]{
@@ -273,9 +280,10 @@ public class DataSetGroupTest {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                 .dataset(EXPENSE_REPORTS)
-                .group("date", "Period").fixed(DAY_OF_WEEK).firstDay(DayOfWeek.MONDAY)
-                .count("Occurrences")
-                .sum("amount", "totalAmount")
+                .group("date").fixed(DAY_OF_WEEK).firstDay(DayOfWeek.MONDAY)
+                .column("date", "Period")
+                .column(COUNT, "Occurrences")
+                .column("amount", SUM, "totalAmount")
                 .buildLookup());
 
         //printDataSet(result);
@@ -295,9 +303,10 @@ public class DataSetGroupTest {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                 .dataset(EXPENSE_REPORTS)
-                .group("date", "Period").fixed(QUARTER)
-                .count("Occurrences")
-                .sum("amount", "totalAmount")
+                .group("date").fixed(QUARTER)
+                .column("date", "Period")
+                .column(COUNT, "Occurrences")
+                .column("amount", SUM, "totalAmount")
                 .buildLookup());
 
         //printDataSet(result);
