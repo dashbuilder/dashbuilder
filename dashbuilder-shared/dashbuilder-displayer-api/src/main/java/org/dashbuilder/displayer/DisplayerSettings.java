@@ -15,10 +15,7 @@
  */
 package org.dashbuilder.displayer;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.dashbuilder.common.client.StringUtils;
@@ -123,6 +120,7 @@ public class DisplayerSettings {
 
     public void setDataSet( DataSet dataSet ) {
         this.dataSet = dataSet;
+        clearDataSetRelatedSettings();
     }
 
     public DataSetLookup getDataSetLookup() {
@@ -131,6 +129,11 @@ public class DisplayerSettings {
 
     public void setDataSetLookup( DataSetLookup dataSetLookup ) {
         this.dataSetLookup = dataSetLookup;
+        clearDataSetRelatedSettings();
+    }
+
+    private void clearDataSetRelatedSettings() {
+        setTableDefaultSortColumnId(null);
     }
 
     // 'Generic' getter method

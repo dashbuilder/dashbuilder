@@ -41,9 +41,7 @@ import com.googlecode.gwt.charts.client.event.SortHandler;
 import com.googlecode.gwt.charts.client.options.TableSort;
 import com.googlecode.gwt.charts.client.table.Table;
 import com.googlecode.gwt.charts.client.table.TableOptions;
-import org.dashbuilder.common.client.SpacerWidget;
 import org.dashbuilder.dataset.ColumnType;
-import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetLookupConstraints;
 import org.dashbuilder.dataset.group.DataSetGroup;
@@ -61,21 +59,14 @@ public class GoogleTableDisplayer extends GoogleDisplayer {
     protected int numberOfRows = 0;
     protected int numberOfPages = 1;
     protected int pageSelectorSize = 10;
+    protected String lastOrderedColumn = null;
+    protected SortOrder lastSortOrder = null;
 
     protected boolean showTotalRowsHint = true;
     protected boolean showTotalPagesHint = true;
 
     private Table table;
     private HorizontalPanel pagerPanel = new HorizontalPanel();
-    private SortInfo sortInfo = new SortInfo();
-
-    public void setShowTotalPagesHint(boolean showTotalPagesHint) {
-        this.showTotalPagesHint = showTotalPagesHint;
-    }
-
-    public void setShowTotalRowsHint(boolean showTotalRowsHint) {
-        this.showTotalRowsHint = showTotalRowsHint;
-    }
 
     @Override
     public DisplayerConstraints createDisplayerConstraints() {
@@ -103,6 +94,18 @@ public class GoogleTableDisplayer extends GoogleDisplayer {
 
     @Override
     protected void beforeDataSetLookup() {
+        // Get the sort settings
+        if (lastOrderedColumn == null) {
+            String defaultSortColumn = displayerSettings.getTableDefaultSortColumnId();
+            if (defaultSortColumn != null && !"".equals( defaultSortColumn)) {
+                lastOrderedColumn = defaultSortColumn;
+                lastSortOrder = displayerSettings.getTableDefaultSortOrder();
+            }
+        }
+        // Apply the sort order specified (if any)
+        if (lastOrderedColumn != null) {
+            sortApply(lastOrderedColumn, lastSortOrder);
+        }
         // Draw only the data subset corresponding to the current page.
         int pageSize = displayerSettings.getTablePageSize();
         int offset = (currentPage - 1) * pageSize;
@@ -137,13 +140,15 @@ public class GoogleTableDisplayer extends GoogleDisplayer {
     public Widget createVisualization() {
         final DataTable dataTable = createTable();
         table = new Table();
-        table.addSortHandler( new SortHandler() {
-            @Override public void onSort( SortEvent sortEvent ) {
-                String columnId = dataTable.getColumnId(sortEvent.getColumn());
-                sortApply(columnId, sortInfo.getSortOrder(columnId));
-                redraw();
-            }
-        } );
+        if (displayerSettings.isTableSortEnabled()) {
+            table.addSortHandler( new SortHandler() {
+                @Override public void onSort( SortEvent sortEvent ) {
+                    lastOrderedColumn = dataTable.getColumnLabel(sortEvent.getColumn());
+                    lastSortOrder = lastSortOrder != null ? lastSortOrder.reverse() : SortOrder.ASCENDING;
+                    redraw();
+                }
+            } );
+        }
 
         table.draw(dataTable, createOptions());
         HTML titleHtml = new HTML();
@@ -168,8 +173,6 @@ public class GoogleTableDisplayer extends GoogleDisplayer {
     private TableOptions createOptions() {
         TableOptions options = TableOptions.create();
         options.setSort(TableSort.EVENT);
-        // TODO options.setSortColumn(  );
-        // TODO complete options.setSortAscending( SortOrder.ASCENDING.equals( displayerSettings.getTableDefaultSortOrder() ) );
         options.setPageSize(displayerSettings.getTablePageSize());
         options.setShowRowNumber(false);
         if ( displayerSettings.getTableWidth() > 0 ) options.setWidth( displayerSettings.getTableWidth() );
@@ -307,26 +310,6 @@ public class GoogleTableDisplayer extends GoogleDisplayer {
         if ( showTotalPagesHint || showTotalRowsHint ) {
             if ( totalPages != null && numberOfPages > 1 ) pagerPanel.add( totalPages );
             if ( totalRows != null ) pagerPanel.add( totalRows );
-        }
-    }
-
-    private static class SortInfo {
-        private String columnId;
-        private SortOrder sortOrder;
-        private SortInfo() {}
-        private SortOrder getSortOrder( String columnId ) {
-            if ( this.columnId == null || !this.columnId.equalsIgnoreCase( columnId ) ) {
-                this.columnId = columnId;
-                this.sortOrder = SortOrder.ASCENDING;
-            } else {    //columnId != null && columnId == columnId) --> 'invert' order
-                switch (this.sortOrder) {
-                    case UNSPECIFIED: this.sortOrder = SortOrder.ASCENDING; break;
-                    case ASCENDING: this.sortOrder = SortOrder.DESCENDING; break;
-                    case DESCENDING: this.sortOrder = SortOrder.ASCENDING; break;
-                    default: this.sortOrder = SortOrder.ASCENDING;
-                }
-            }
-            return sortOrder;
         }
     }
 }

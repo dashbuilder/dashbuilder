@@ -64,7 +64,6 @@ public class GalleryTree {
         initMeterChartCategory();
         initMapChartCategory();
         initDashboardCategory();
-        //initJsonExamples();
     }
 
     private PlaceRequest createPlaceRequest(DisplayerSettings displayerSettings) {
@@ -292,7 +291,6 @@ public class GalleryTree {
                         .column(AMOUNT, SUM, "Total amount")
                         .width(400).height(200)
                         .meter(0, 5000000, 8000000, 10000000)
-                        .column("Total amount")
                         .filterOn(false, true, true)
                         .buildSettings()
         )));
@@ -401,6 +399,7 @@ public class GalleryTree {
                         .column(AMOUNT, MAX, "Max")
                         .column(AMOUNT, AVERAGE, "Average")
                         .column(AMOUNT, SUM, "Total")
+                        .sort("Total", DESCENDING)
                         .title("Country Summary")
                         .tablePageSize(10)
                         .tableOrderEnabled(true)
