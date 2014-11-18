@@ -30,11 +30,14 @@
           <!-- UF Client Related -->
           <exclude>WEB-INF/lib/uberfire-js-*.jar</exclude>
           <exclude>WEB-INF/lib/uberfire-client-api-*.jar</exclude>
+          <exclude>WEB-INF/lib/uberfire-client-*.jar</exclude>
+          <exclude>WEB-INF/lib/uberfire-client-all-*.jar</exclude>
           <exclude>WEB-INF/lib/uberfire-security-client-*.jar</exclude>
           <exclude>WEB-INF/lib/uberfire-workbench-*.jar</exclude>
           <exclude>WEB-INF/lib/uberfire-panel-manager*.jar</exclude>
           <exclude>WEB-INF/lib/uberfire-perspective-editor-client-*.jar</exclude>
           <exclude>WEB-INF/lib/uberfire-apps-client-*.jar</exclude>
+          <exclude>WEB-INF/lib/uberfire-widgets-properties-editor-client-*.jar</exclude>
 
           <!-- Dashbuilder client -->
           <exclude>WEB-INF/lib/dashbuilder-*-all-*.jar</exclude>
@@ -53,6 +56,7 @@
           <exclude>WEB-INF/lib/guava-gwt-*.jar</exclude>
           <exclude>WEB-INF/lib/gwt-dnd-*.jar</exclude>
           <exclude>WEB-INF/lib/gchart-*.jar</exclude>
+          <exclude>WEB-INF/lib/gwt-charts-*.jar</exclude>
 
           <exclude>WEB-INF/lib/*-sources.jar</exclude>
           <exclude>WEB-INF/lib/el-api-*.jar</exclude>
