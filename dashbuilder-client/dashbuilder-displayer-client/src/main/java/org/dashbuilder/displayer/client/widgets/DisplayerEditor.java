@@ -173,7 +173,7 @@ public class DisplayerEditor implements IsWidget,
                     DataSetLookup lookup = constraints.newDataSetLookup(metadata);
                     if (lookup == null) view.error("Is not possible to create a data lookup request for the selected data set", null);
 
-                    // Make the view show the new lookup instance
+                    // Make the view to show the new lookup instance
                     displayerSettings.setDataSet(null);
                     displayerSettings.setDataSetLookup(lookup);
                     view.updateDataSetLookup(constraints, metadata);

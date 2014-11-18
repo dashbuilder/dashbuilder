@@ -133,10 +133,16 @@ public class DataSetLookup {
                 DataSetGroup groupOp = (DataSetGroup) op;
 
                 ColumnGroup cg = groupOp.getColumnGroup();
-                if (cg != null && columnId != null && !cg.getColumnId().equals(columnId)) {
+                if (cg == null) {
+                    // Discard column selection ops
+                    continue;
+                }
+                if (columnId != null && !cg.getColumnId().equals(columnId)) {
+                    // Discard group ops related to other columns
                     continue;
                 }
                 if (onlySelections && groupOp.getSelectedIntervalNames().isEmpty()) {
+                    // Discard non-selections
                     continue;
                 }
                 target= i;
