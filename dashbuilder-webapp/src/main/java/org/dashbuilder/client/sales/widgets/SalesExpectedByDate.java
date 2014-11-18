@@ -173,7 +173,7 @@ public class SalesExpectedByDate extends Composite {
                 .column(COUNTRY, "Country")
                 .column(COUNT, "#Opps")
                 .column(AMOUNT, SUM, "Total")
-                .sort("Country", ASCENDING)
+                .sort(COUNTRY, ASCENDING)
                 .filterOn(false, true, true)
                 .buildSettings());
 
@@ -184,7 +184,7 @@ public class SalesExpectedByDate extends Composite {
                 .column(SALES_PERSON, "Employee")
                 .column(COUNT, "#Opps")
                 .column(AMOUNT, SUM, "Total")
-                .sort("Employee", ASCENDING)
+                .sort(SALES_PERSON, ASCENDING)
                 .filterOn(false, true, true)
                 .buildSettings());
 
@@ -195,7 +195,7 @@ public class SalesExpectedByDate extends Composite {
                 .column(CUSTOMER, "Customer")
                 .column(COUNT, "#Opps")
                 .column(AMOUNT, SUM, "Total")
-                .sort("Customer", ASCENDING)
+                .sort(CUSTOMER, ASCENDING)
                 .filterOn(false, true, true)
                 .buildSettings());
 

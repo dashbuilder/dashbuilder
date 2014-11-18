@@ -67,8 +67,6 @@ import static com.google.gwt.dom.client.BrowserEvents.CLICK;
 
 public class TableDisplayer extends AbstractDisplayer {
 
-    private Map< String, String > columnCaptionIds = new HashMap< String, String >(5);
-
     private Widget currentSelectionWidget = null;
 
     protected int numberOfRows = 0;
@@ -254,22 +252,17 @@ public class TableDisplayer extends AbstractDisplayer {
 
         int tableWidth = displayerSettings.getTableWidth();
         pagedTable.setWidth( tableWidth == 0 ? dataColumns.size() * 100 + "px" : tableWidth + "px");
-
         pagedTable.setEmptyTableCaption( TableConstants.INSTANCE.tableDisplayer_noDataAvailable() );
 
-        pagedTable.addColumnSortHandler(new ColumnSortEvent.AsyncHandler( pagedTable ) {
-
-            public void onColumnSort( ColumnSortEvent event ) {
-                // Get the column Id, in case the table is being drawn from a displayer configuration, the identifier will
-                // have to be recovered from the columnCaptionIds correspondence Map
-                String sortEventColumnName = event.getColumn().getDataStoreName();
-                String _columnId = columnCaptionIds.get( sortEventColumnName );
-                lastOrderedColumn = _columnId != null ? _columnId : sortEventColumnName;
-                lastSortOrder = event.isSortAscending() ? SortOrder.ASCENDING : SortOrder.DESCENDING;
-
-                redraw();
-            }
-        });
+        if (displayerSettings.isTableSortEnabled()) {
+            pagedTable.addColumnSortHandler(new ColumnSortEvent.AsyncHandler( pagedTable ) {
+                public void onColumnSort( ColumnSortEvent event ) {
+                    lastOrderedColumn = event.getColumn().getDataStoreName();
+                    lastSortOrder = event.isSortAscending() ? SortOrder.ASCENDING : SortOrder.DESCENDING;
+                    redraw();
+                }
+            });
+        }
         return pagedTable;
     }
 

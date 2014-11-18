@@ -161,7 +161,8 @@ public class SharedDataSetOpEngine implements DataSetOpEngine {
                     DataSetGroup gOp = (DataSetGroup) op;
                     ColumnGroup columnGroup = gOp.getColumnGroup();
                     if (columnGroup == null) {
-                        // No group requested
+                        // No real group requested only column selections
+                        group = true;
                         context.lastOperation = op;
                     } else {
                         if (group(gOp, context)) {
@@ -374,7 +375,7 @@ public class SharedDataSetOpEngine implements DataSetOpEngine {
         protected void checkSortOp(DataSet dataSet, DataSetSort op) {
             for (ColumnSort columnSort : op.getColumnSortList()) {
                 String id = columnSort.getColumnId();
-                if (dataSet.getColumnById(id) == null) {
+                if (dataSet.getColumnByName(id) == null && dataSet.getColumnById(id) == null) {
                     throw new IllegalArgumentException("Sort column specified not found in the data set: " + id);
                 }
             }
@@ -450,7 +451,7 @@ public class SharedDataSetOpEngine implements DataSetOpEngine {
                 return dataSet.trim(index.getRows());
             }
             if (lastOp instanceof DataSetSort) {
-                DataSetImpl sortedDataSet = new DataSetImpl();
+                DataSet sortedDataSet = DataSetFactory.newEmptyDataSet();
                 for (DataColumn column : dataSet.getColumns()) {
                     SortedList sortedValues = new SortedList(column.getValues(), index.getRows());
                     sortedDataSet.addColumn(column.getId(),
@@ -489,6 +490,7 @@ public class SharedDataSetOpEngine implements DataSetOpEngine {
                     // Column values selection
                     else {
                         DataColumn targetColumn = dataSet.getColumnById(columnId);
+                        if (targetColumn == null) throw new IllegalArgumentException("Column not found: " + columnId);
                         result.addColumn(columnId, columnName, targetColumn.getColumnType());
                     }
                 }
@@ -573,6 +575,10 @@ public class SharedDataSetOpEngine implements DataSetOpEngine {
         }
 
         private Double _calculateFunction(DataColumn column, AggregateFunctionType type, DataSetIndexNode index) {
+            // Preconditions
+            if (type == null) {
+                throw new IllegalArgumentException("No aggregation function specified for the column: " + column.getName());
+            }
             // Look into the index first
             if (index != null) {
                 Double sv = index.getAggValue(column.getId(), type);

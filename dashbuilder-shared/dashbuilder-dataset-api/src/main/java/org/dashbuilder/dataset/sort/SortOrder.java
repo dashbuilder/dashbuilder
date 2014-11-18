@@ -40,4 +40,12 @@ public enum SortOrder {
         if (DESC.equals(str)) return DESCENDING;
         return valueOf(str.toUpperCase());
     }
+
+    public SortOrder reverse() {
+        switch (this) {
+            case ASCENDING: return SortOrder.DESCENDING;
+            case DESCENDING: return SortOrder.ASCENDING;
+            default: return SortOrder.UNSPECIFIED;
+        }
+    }
 }
