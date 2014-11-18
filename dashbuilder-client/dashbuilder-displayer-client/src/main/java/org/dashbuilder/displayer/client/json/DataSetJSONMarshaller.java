@@ -27,8 +27,7 @@ import org.dashbuilder.common.client.StringUtils;
 import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.dataset.DataSet;
-import org.dashbuilder.dataset.impl.DataColumnImpl;
-import org.dashbuilder.dataset.impl.DataSetImpl;
+import org.dashbuilder.dataset.DataSetFactory;
 
 public class DataSetJSONMarshaller {
 
@@ -85,37 +84,31 @@ public class DataSetJSONMarshaller {
     public DataSet fromJson( JSONObject dataSetJson ) {
         if ( dataSetJson == null ) return null;
 
-        DataSetImpl dataSet = new DataSetImpl();
+        DataSet dataSet = DataSetFactory.newEmptyDataSet();
         for (int i = 0; i < dataSetJson.size(); i++) {
             JSONObject columnJson = dataSetJson.get( DATASET_COLUMN + "." + Integer.toString( i ) ).isObject();
-            dataSet.getColumns().add( parseDataColumn( dataSet, columnJson ) );
+            parseDataColumn(dataSet, columnJson);
         }
         return dataSet;
     }
 
-    private DataColumn parseDataColumn( DataSetImpl dataSet, JSONObject columnJson ) {
-        DataColumnImpl dataColumn = null;
+    private void parseDataColumn( DataSet dataSet, JSONObject columnJson ) {
         if ( columnJson != null) {
-            dataColumn = new DataColumnImpl();
-            dataColumn.setDataSet( dataSet );
-
             JSONString columnId = columnJson.get( DATASET_COLUMN_ID ).isString();
             JSONString columnType = columnJson.get( DATASET_COLUMN_TYPE ).isString();
 
             if ( columnId == null || columnType == null ) throw new RuntimeException( "Column id / type need to be specified" );
 
-            dataColumn.setId( columnId.stringValue() );
-            dataColumn.setColumnType( ColumnType.valueOf( columnType.stringValue() ) );
-
+            dataSet.addColumn(columnId.stringValue(), ColumnType.valueOf(columnType.stringValue()));
+            DataColumn dataColumn = dataSet.getColumnById( columnId.stringValue() );
             parseColumnValues( dataColumn, columnJson );
         }
-        return dataColumn;
     }
 
-    private void parseColumnValues( DataColumnImpl dataColumn, JSONObject columnJson ) {
+    private void parseColumnValues( DataColumn dataColumn, JSONObject columnJson ) {
         JSONArray valueArray = columnJson.get( DATASET_COLUMN_VALUES ).isArray();
         if ( valueArray != null ) {
-            List values = new ArrayList( valueArray.size() );
+            List values = dataColumn.getValues();
             for ( int i = 0; i < valueArray.size(); i++ ) {
                 JSONString stringJson = valueArray.get( i ).isString();
                 switch ( dataColumn.getColumnType() ) {
@@ -125,7 +118,6 @@ public class DataSetJSONMarshaller {
                     case TEXT: values.add( stringJson.stringValue() ); break;
                 }
             }
-            dataColumn.setValues( values );
         }
     }
 

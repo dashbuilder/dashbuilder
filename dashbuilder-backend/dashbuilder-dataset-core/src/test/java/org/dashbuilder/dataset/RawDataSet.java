@@ -70,7 +70,7 @@ public class RawDataSet implements Serializable {
     }
 
     public DataSet toDataSet() throws ParseException {
-        DataSetImpl dataSet = new DataSetImpl();
+        DataSet dataSet = DataSetFactory.newEmptyDataSet();
         for (int i = 0; i < columnIds.length; i++) {
             dataSet.addColumn(columnIds[i], getColumnType(types[i]));
             for (int j = 0; j < data.length; j++) {

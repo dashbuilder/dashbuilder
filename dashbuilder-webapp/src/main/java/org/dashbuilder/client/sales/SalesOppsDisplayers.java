@@ -45,7 +45,7 @@ public class SalesOppsDisplayers {
             .uuid("opps-by-status")
             .dataset(SALES_OPPS)
             .group(STATUS)
-            .column("Status")
+            .column(STATUS, "Status")
             .column(AMOUNT, SUM, "Total amount")
             .title("By Status")
             .titleVisible(false)
