@@ -18,6 +18,7 @@ package org.dashbuilder.dataset.engine.function;
 import java.util.Iterator;
 import java.util.List;
 
+import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.group.AggregateFunctionType;
 
 /**
@@ -31,6 +32,10 @@ public class SumFunction extends AbstractFunction {
 
     public AggregateFunctionType getType() {
         return AggregateFunctionType.SUM;
+    }
+
+    public boolean supportType(ColumnType type) {
+        return type != null && type.equals(ColumnType.NUMBER);
     }
 
     public double aggregate(List values) {

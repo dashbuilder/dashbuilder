@@ -15,6 +15,8 @@
  */
 package org.dashbuilder.dataset;
 
+import java.util.List;
+
 import org.dashbuilder.dataset.def.DataSetDef;
 
 /**
@@ -48,6 +50,12 @@ public interface DataSetMetadata {
      * @param columnIndex The column index (starting at 0).
      */
     ColumnType getColumnType(int columnIndex);
+
+    /**
+     * Get the type of the specified column.
+     * @param columnId The column id.
+     */
+    ColumnType getColumnType(String columnId);
 
     /**
      * Get the estimated size in kilobytes.

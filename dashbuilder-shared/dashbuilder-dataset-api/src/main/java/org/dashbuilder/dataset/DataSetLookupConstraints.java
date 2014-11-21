@@ -15,9 +15,10 @@
  */
 package org.dashbuilder.dataset;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.dashbuilder.dataset.group.AggregateFunctionType;
@@ -36,6 +37,11 @@ public class DataSetLookupConstraints extends DataSetConstraints<DataSetLookupCo
     protected boolean groupAllowed = true;
     protected boolean groupRequired = false;
     protected int maxGroups = -1;
+    protected String groupsTitle = "Rows";
+    protected String columnsTitle = "Column";
+    protected boolean groupColumn = false;
+    protected boolean functionRequired = false;
+    protected Map<Integer,String> columnTitleMap = new HashMap<Integer,String>();
 
     public boolean isGroupAllowed() {
         return groupAllowed;
@@ -64,6 +70,51 @@ public class DataSetLookupConstraints extends DataSetConstraints<DataSetLookupCo
         return this;
     }
 
+    public String getGroupsTitle() {
+        return groupsTitle;
+    }
+
+    public DataSetLookupConstraints setGroupsTitle(String groupsTitle) {
+        this.groupsTitle = groupsTitle;
+        return this;
+    }
+
+    public String getColumnsTitle() {
+        return columnsTitle;
+    }
+
+    public DataSetLookupConstraints setColumnsTitle(String columnsTitle) {
+        this.columnsTitle = columnsTitle;
+        return this;
+    }
+
+    public DataSetLookupConstraints setColumnTitle(Integer index, String title) {
+        columnTitleMap.put(index, title);
+        return this;
+    }
+
+    public String getColumnTitle(Integer index) {
+        return columnTitleMap.get(index);
+    }
+
+    public boolean isGroupColumn() {
+        return groupColumn;
+    }
+
+    public DataSetLookupConstraints setGroupColumn(boolean groupColumn) {
+        this.groupColumn = groupColumn;
+        return this;
+    }
+
+    public boolean isFunctionRequired() {
+        return functionRequired;
+    }
+
+    public DataSetLookupConstraints setFunctionRequired(boolean functionRequired) {
+        this.functionRequired = functionRequired;
+        return this;
+    }
+
     public ValidationError check(DataSetLookup lookup) {
 
         List<DataSetGroup> grOps = lookup.getOperationList(DataSetGroup.class);
@@ -83,49 +134,65 @@ public class DataSetLookupConstraints extends DataSetConstraints<DataSetLookupCo
         DataSetLookupBuilder<DataSetLookupBuilderImpl> builder = DataSetFactory.newDataSetLookupBuilder();
         builder.dataset(metatada.getUUID());
 
-        // Data set group lookup
+        Set<Integer> exclude = new HashSet<Integer>();
+        int startIndex = 0;
+
+        // A group lookup requires to add a group-ready column
         if (groupRequired) {
             int groupIdx = getGroupColumn(metatada);
             if (groupIdx == -1) {
-                // No group-able column available
-                return null;
+                throw new IllegalStateException("The data set does not contains group-able columns (label or date)");
             }
             // Add the group column
-            Set<Integer> exclude = new HashSet<Integer>();
             exclude.add(groupIdx);
             builder.group(metatada.getColumnId(groupIdx));
             builder.column(metatada.getColumnId(groupIdx));
+            startIndex = 1;
+        }
+        // If no target columns has been specified then take them all
+        ColumnType[] types = columnTypes;
+        if (types == null || types.length == 0) {
 
-            // Add the rest of the columns
-            for (int i=1; columnTypes != null && i<columnTypes.length; i++) {
-                ColumnType targetType = columnTypes[i];
+            if (maxColumns > 0 && maxColumns < metatada.getNumberOfColumns()) types = new ColumnType[maxColumns];
+            else types = new ColumnType[metatada.getNumberOfColumns()];
 
-                // Do the best to get a new (not already added) column for the targetType.
-                int idx = getTargetColumn(metatada, targetType, exclude);
+            for (int i = 0; i < types.length; i++) {
+                types[i] = metatada.getColumnType(i);
+            }
+        }
+        // Add the columns to the lookup
+        for (int i=startIndex; i<types.length; i++) {
+            ColumnType targetType = types[i];
 
-                // Otherwise, get the first column available.
-                if (idx == -1) idx = getTargetColumn(metatada, exclude);
+            // Do the best to get a new (not already added) column for the targetType.
+            int idx = getTargetColumn(metatada, targetType, exclude);
 
-                exclude.add(idx);
-                String columnId = metatada.getColumnId(idx);
-                ColumnType columnType = metatada.getColumnType(idx);
+            // Otherwise, get the first column available.
+            if (idx == -1) idx = getTargetColumn(metatada, exclude);
 
-                if (ColumnType.LABEL.equals(targetType)) {
-                    builder.column(columnId);
-                }
-                else if (ColumnType.DATE.equals(targetType)) {
-                    builder.column(columnId);
-                }
-                else if (ColumnType.NUMBER.equals(targetType)) {
+            String columnId = metatada.getColumnId(idx);
+            ColumnType columnType = metatada.getColumnType(idx);
+            exclude.add(idx);
+
+            if (ColumnType.LABEL.equals(targetType)) {
+                if (functionRequired) builder.column(AggregateFunctionType.COUNT, "#items");
+                else builder.column(columnId);
+            }
+            else if (ColumnType.DATE.equals(targetType)) {
+                if (functionRequired) builder.column(AggregateFunctionType.COUNT, "#items");
+                else builder.column(columnId);
+            }
+            else if (ColumnType.NUMBER.equals(targetType)) {
+                if (groupRequired || functionRequired) {
                     if (ColumnType.LABEL.equals(columnType)) {
                         builder.column(AggregateFunctionType.COUNT, "#items");
-                    }
-                    else if (ColumnType.LABEL.equals(columnType)) {
+                    } else if (ColumnType.LABEL.equals(columnType)) {
                         builder.column(AggregateFunctionType.COUNT, "#items");
-                    }
-                    else if (ColumnType.NUMBER.equals(columnType)) {
+                    } else if (ColumnType.NUMBER.equals(columnType)) {
                         builder.column(columnId, AggregateFunctionType.SUM);
                     }
+                } else {
+                    builder.column(columnId);
                 }
             }
         }

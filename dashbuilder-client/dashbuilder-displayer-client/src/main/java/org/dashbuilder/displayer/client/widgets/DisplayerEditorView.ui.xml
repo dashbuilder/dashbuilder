@@ -26,6 +26,8 @@
       font-size: 12pt;
       float: left;
       margin-right: 25px;
+      width: 250px;
+      max-width: 250px;
       height: 350px;
       max-height: 350px;
       overflow-y: auto;

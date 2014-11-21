@@ -17,6 +17,7 @@ package org.dashbuilder.dataset.engine.function;
 
 import java.util.List;
 
+import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.group.AggregateFunctionType;
 
 /**
@@ -30,6 +31,10 @@ public class CountFunction extends AbstractFunction {
 
     public AggregateFunctionType getType() {
         return AggregateFunctionType.COUNT;
+    }
+
+    public boolean supportType(ColumnType type) {
+        return true;
     }
 
     public double aggregate(List values) {

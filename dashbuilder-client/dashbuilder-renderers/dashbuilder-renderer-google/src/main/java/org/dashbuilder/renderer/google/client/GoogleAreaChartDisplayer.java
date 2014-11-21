@@ -46,8 +46,12 @@ public class GoogleAreaChartDisplayer extends GoogleXAxisChartDisplayer {
 
         DataSetLookupConstraints lookupConstraints = new DataSetLookupConstraints()
                 .setGroupRequired(true)
-                .setMaxColumns(2)
+                .setGroupColumn(true)
+                .setMaxGroups(1)
                 .setMinColumns(2)
+                .setMaxColumns(10)
+                .setGroupsTitle("Categories")
+                .setColumnsTitle("Series")
                 .setColumnTypes(new ColumnType[] {
                         ColumnType.LABEL,
                         ColumnType.NUMBER});

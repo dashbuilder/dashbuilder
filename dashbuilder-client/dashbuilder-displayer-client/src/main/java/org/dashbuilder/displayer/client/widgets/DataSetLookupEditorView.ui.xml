@@ -33,7 +33,7 @@
     </b:ControlGroup>
     <b:ControlGroup ui:field="rowsControlGroup" visible="false">
       <b:ControlLabel>
-        Rows
+        <g:Label ui:field="rowsControlLabel">Rows</g:Label>
       </b:ControlLabel>
       <b:Controls>
         <b:ListBox ui:field="rowColumnListBox" />
@@ -41,7 +41,7 @@
     </b:ControlGroup>
     <b:ControlGroup  ui:field="columnsControlGroup" visible="false">
       <b:ControlLabel>
-        Columns
+        <g:Label ui:field="columnsControlLabel">Columns</g:Label>
       </b:ControlLabel>
       <b:Controls>
         <g:VerticalPanel ui:field="columnsPanel"/>

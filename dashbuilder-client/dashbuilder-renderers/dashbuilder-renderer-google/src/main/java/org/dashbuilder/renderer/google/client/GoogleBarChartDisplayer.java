@@ -72,9 +72,12 @@ public class GoogleBarChartDisplayer extends GoogleXAxisChartDisplayer {
 
         DataSetLookupConstraints lookupConstraints = new DataSetLookupConstraints()
                 .setGroupRequired(true)
-                .setMaxColumns(2)
+                .setGroupColumn(true)
+                .setMaxColumns(10)
                 .setMinColumns(2)
-                .setColumnTypes(new ColumnType[] {
+                .setGroupsTitle("Categories")
+                .setColumnsTitle("Series")
+                .setColumnTypes(new ColumnType[]{
                         ColumnType.LABEL,
                         ColumnType.NUMBER});
 

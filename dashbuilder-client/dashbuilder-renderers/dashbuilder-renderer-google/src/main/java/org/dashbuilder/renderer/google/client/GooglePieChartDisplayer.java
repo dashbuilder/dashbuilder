@@ -61,8 +61,11 @@ public class GooglePieChartDisplayer extends GoogleXAxisChartDisplayer {
     public DisplayerConstraints createDisplayerConstraints() {
         DataSetLookupConstraints lookupConstraints = new DataSetLookupConstraints()
                 .setGroupRequired(true)
+                .setGroupColumn(true)
                 .setMaxColumns(2)
                 .setMinColumns(2)
+                .setGroupsTitle("Categories")
+                .setColumnsTitle("Series")
                 .setColumnTypes(new ColumnType[] {
                         ColumnType.LABEL,
                         ColumnType.NUMBER});

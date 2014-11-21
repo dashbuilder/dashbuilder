@@ -478,7 +478,8 @@ public class SharedDataSetOpEngine implements DataSetOpEngine {
                 // Group columns
                 String columnId = groupFunction.getSourceId();
                 String columnName = groupFunction.getColumnId();
-                if (columnId != null && columnId.equals(columnGroup.getColumnId())) {
+                AggregateFunctionType columnFunction = groupFunction.getFunction();
+                if (columnId != null && columnId.equals(columnGroup.getColumnId()) && columnFunction == null) {
                     result.addColumn(columnId, columnName, ColumnType.LABEL);
                 } else {
                     // Columns based on aggregation functions
@@ -505,16 +506,16 @@ public class SharedDataSetOpEngine implements DataSetOpEngine {
                 for (int j=0; j< groupFunctions.size(); j++) {
                     GroupFunction groupFunction = groupFunctions.get(j);
                     String columnId = groupFunction.getSourceId();
+                    AggregateFunctionType columnFunction = groupFunction.getFunction();
 
-                    if (columnId != null && columnId.equals(columnGroup.getColumnId())) {
+                    if (columnId != null && columnId.equals(columnGroup.getColumnId()) && columnFunction == null) {
                         result.setValueAt(i, j, intervalIdx.getName());
                     } else {
                         DataColumn dataColumn = dataSet.getColumnByIndex(0);
                         if (columnId != null) dataColumn = dataSet.getColumnById(columnId);
 
                         // Columns based on aggregation functions
-                        AggregateFunctionType aggF = groupFunction.getFunction();
-                        if (aggF != null) {
+                        if (columnFunction != null) {
                             Double aggValue = _calculateFunction(dataColumn, groupFunction.getFunction(), intervalIdx);
                             result.setValueAt(i, j, aggValue);
                         }

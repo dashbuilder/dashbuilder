@@ -27,6 +27,7 @@ public class DataSetConstraints<T> {
     public static final int ERROR_COLUMN_NUMBER = 101;
 
     protected ColumnType[] columnTypes = null;
+    protected List<ColumnType[]> alternativeTypes = new ArrayList<ColumnType[]>();
     protected int minColumns = -1;
     protected int maxColumns = -1;
 
@@ -38,6 +39,18 @@ public class DataSetConstraints<T> {
         _checkSizes(minColumns, maxColumns, columns);
         this.columnTypes = columns;
         return (T) this;
+    }
+
+    public T setAlternativeTypes(ColumnType[]... columns) {
+        for (ColumnType[] types : columns) {
+            _checkSizes(minColumns, maxColumns, types);
+            this.alternativeTypes.add(types);
+        }
+        return (T) this;
+    }
+
+    public List<ColumnType[]> getAlternativeTypes() {
+        return alternativeTypes;
     }
 
     public int getMaxColumns() {
@@ -88,12 +101,23 @@ public class DataSetConstraints<T> {
         if (maxColumns != -1 && dataSet.getColumns().size() > maxColumns) {
             return new ValidationError(ERROR_COLUMN_NUMBER);
         }
+        ValidationError error = null;
         if (columnTypes != null) {
-            for (int i = 0; i < dataSet.getColumns().size(); i++) {
-                ColumnType columnType = dataSet.getColumnByIndex(i).getColumnType();
-                if (i < columnTypes.length && !columnType.equals(columnTypes[i])) {
-                    return new ValidationError(ERROR_COLUMN_TYPE, i);
+            error = checkTypes(dataSet, columnTypes);
+            if (error != null) {
+                for (ColumnType[] _types : alternativeTypes) {
+                    error = checkTypes(dataSet, _types);
                 }
+            }
+        }
+        return error;
+    }
+
+    private ValidationError checkTypes(DataSet dataSet, ColumnType[] types) {
+        for (int i = 0; i < dataSet.getColumns().size(); i++) {
+            ColumnType columnType = dataSet.getColumnByIndex(i).getColumnType();
+            if (i < types.length && !columnType.equals(types[i])) {
+                return new ValidationError(ERROR_COLUMN_TYPE, i);
             }
         }
         return null;

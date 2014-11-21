@@ -169,7 +169,11 @@ public abstract class GoogleDisplayer extends AbstractDisplayer {
             DataColumn dataColumn = columns.get(i);
             List columnValues = dataColumn.getValues();
             ColumnType columnType = dataColumn.getColumnType();
-            googleTable.addColumn(getColumnType(dataColumn), dataColumn.getName(), dataColumn.getId());
+            String columnId = dataColumn.getId();
+            String columnName = dataColumn.getName();
+            if (columnName == null) columnName = columnId;
+
+            googleTable.addColumn(getColumnType(dataColumn), columnName, columnId);
             for (int j = 0; j < columnValues.size(); j++) {
                 Object value = columnValues.get(j);
                 setTableValue(googleTable, columnType, value, j, i);
