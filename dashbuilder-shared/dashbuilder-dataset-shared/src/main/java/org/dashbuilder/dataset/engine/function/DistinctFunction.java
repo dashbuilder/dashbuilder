@@ -20,6 +20,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.group.AggregateFunctionType;
 
 /**
@@ -33,6 +34,10 @@ public class DistinctFunction extends AbstractFunction {
 
     public AggregateFunctionType getType() {
         return AggregateFunctionType.DISTINCT;
+    }
+
+    public boolean supportType(ColumnType type) {
+        return true;
     }
 
     public double aggregate(List values) {

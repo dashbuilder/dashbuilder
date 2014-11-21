@@ -17,6 +17,8 @@ package org.dashbuilder.dataset.group;
 
 import java.util.List;
 
+import org.dashbuilder.dataset.ColumnType;
+
 /**
  * Interface used to get the aggregate value of a given collection.
  * <p>Aggregate functions are used to calculate the aggregate
@@ -27,4 +29,5 @@ public interface AggregateFunction {
     AggregateFunctionType getType();
     double aggregate(List values);
     double aggregate(List values, List<Integer> rows);
+    boolean supportType(ColumnType type);
 }

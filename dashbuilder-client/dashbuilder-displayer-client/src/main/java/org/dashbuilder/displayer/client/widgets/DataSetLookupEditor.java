@@ -32,7 +32,9 @@ import org.dashbuilder.dataset.client.DataSetClientServices;
 import org.dashbuilder.dataset.def.DataSetDef;
 import org.dashbuilder.dataset.events.DataSetDefRegisteredEvent;
 import org.dashbuilder.dataset.events.DataSetDefRemovedEvent;
+import org.dashbuilder.dataset.group.AggregateFunction;
 import org.dashbuilder.dataset.group.AggregateFunctionType;
+import org.dashbuilder.dataset.group.ColumnGroup;
 import org.dashbuilder.dataset.group.DataSetGroup;
 import org.dashbuilder.dataset.group.GroupFunction;
 import org.jboss.errai.common.client.api.RemoteCallback;
@@ -44,8 +46,8 @@ public class DataSetLookupEditor implements IsWidget {
 
     public interface Listener {
         void dataSetChanged(String uuid);
-        void groupFunctionColumnChanged(GroupFunction groupFunction);
-        void groupColumnChanged(DataSetGroup groupOp);
+        void columnChanged(GroupFunction groupFunction);
+        void groupChanged(DataSetGroup groupOp);
     }
 
     public interface View extends IsWidget {
@@ -141,14 +143,9 @@ public class DataSetLookupEditor implements IsWidget {
         return dataSetMetadata.getColumnType(index);
     }
 
-    public DataSetGroup getGroupOp(String columnId) {
-        List<DataSetGroup> groupOpList = dataSetLookup.getOperationList(DataSetGroup.class);
-        for (DataSetGroup op : groupOpList) {
-            if (columnId.equals(op.getColumnGroup().getSourceId())) {
-                return op;
-            }
-        }
-        return null;
+    public ColumnType getColumnType(String columnId) {
+        if (columnId == null) return null;
+        return dataSetMetadata.getColumnType(columnId);
     }
 
     public DataSetGroup getFirstGroupOp() {
@@ -170,19 +167,14 @@ public class DataSetLookupEditor implements IsWidget {
         if (groupOpList.isEmpty()) return null;
 
         DataSetGroup groupOp = groupOpList.get(0);
+        if (groupOp.getColumnGroup() == null) return null;
         return groupOp.getColumnGroup().getSourceId();
     }
 
     public List<Integer> getAvailableFunctionColumnIdxs() {
         List<Integer> result = new ArrayList<Integer>();
         for (int i=0; i<dataSetMetadata.getNumberOfColumns(); i++) {
-            ColumnType columnType = dataSetMetadata.getColumnType(i);
-            if (ColumnType.LABEL.equals(columnType)
-                    || ColumnType.NUMBER.equals(columnType)
-                    || ColumnType.TEXT.equals(columnType)) {
-
-                result.add(i);
-            }
+            result.add(i);
         }
         return result;
     }
@@ -198,6 +190,18 @@ public class DataSetLookupEditor implements IsWidget {
         return result;
     }
 
+    public List<AggregateFunctionType> getAvailableFunctions(GroupFunction groupFunction) {
+        List<AggregateFunctionType> result = new ArrayList<AggregateFunctionType>();
+        ColumnType targetType = getColumnType(groupFunction.getSourceId());
+        AggregateFunctionType selected = groupFunction.getFunction();
+        for (AggregateFunction function : DataSetClientServices.get().getAggregateFunctionManager().getAllFunctions()) {
+            if (function.supportType(targetType)) {
+                result.add(function.getType());
+            }
+        }
+        return result;
+    }
+
     // UI notifications
 
     public void changeDataSet(String uuid) {
@@ -206,13 +210,51 @@ public class DataSetLookupEditor implements IsWidget {
         }
     }
 
+    public void createGroupColumn(String columnId) {
+        DataSetGroup groupOp = new DataSetGroup();
+        groupOp.getColumnGroup().setSourceId(columnId);
+        groupOp.getColumnGroup().setColumnId(columnId);
+        dataSetLookup.addOperation(groupOp);
+        if (listener != null) {
+            listener.groupChanged(groupOp);
+        }
+    }
+
     public void changeGroupColumn(String columnId) {
         DataSetGroup groupOp = getFirstGroupOp();
         if (groupOp != null) {
-            groupOp.getColumnGroup().setSourceId(columnId);
-            groupOp.getColumnGroup().setColumnId(columnId);
+
+            // Group reset
+            if (columnId == null) {
+                groupOp.setColumnGroup(null);
+
+                if (lookupConstraints.isGroupColumn()) {
+                    groupOp.getGroupFunctions().remove(0);
+                }
+                if (!lookupConstraints.isFunctionRequired()) {
+                    for (GroupFunction groupFunction : groupOp.getGroupFunctions()) {
+                        groupFunction.setFunction(null);
+                    }
+                }
+            }
+            // Group column change
+            else {
+                groupOp.setColumnGroup(new ColumnGroup(columnId, columnId));
+                if (lookupConstraints.isGroupColumn()) {
+                    if (groupOp.getGroupFunctions().size() == 1) {
+                        GroupFunction groupFunction = new GroupFunction(groupOp.getColumnGroup().getSourceId(), null, null);
+                        groupOp.getGroupFunctions().add(0, groupFunction);
+                    } else {
+                        GroupFunction groupFunction = groupOp.getGroupFunctions().get(0);
+                        groupFunction.setSourceId(groupOp.getColumnGroup().getSourceId());
+                        groupFunction.setColumnId(null);
+                        groupFunction.setFunction(null);
+                    }
+                }
+            }
+            // Notify listener
             if (listener != null) {
-                listener.groupColumnChanged(groupOp);
+                listener.groupChanged(groupOp);
             }
         }
     }
@@ -222,8 +264,22 @@ public class DataSetLookupEditor implements IsWidget {
         groupFunction.setSourceId(columnId);
         groupFunction.setColumnId(columnId);
         groupFunction.setFunction(functionType);
+
+        if (functionType != null) {
+            AggregateFunction aggF = DataSetClientServices.get().getAggregateFunctionManager().getFunctionByType(functionType);
+            ColumnType columnType = getColumnType(columnId);
+            if (!aggF.supportType(columnType)) {
+                for (AggregateFunction f : DataSetClientServices.get().getAggregateFunctionManager().getAllFunctions()) {
+                    if (f.supportType(columnType)) {
+                        groupFunction.setFunction(f.getType());
+                        break;
+                    }
+                }
+            }
+        }
+
         if (listener != null) {
-            listener.groupFunctionColumnChanged(groupFunction);
+            listener.columnChanged(groupFunction);
         }
     }
 

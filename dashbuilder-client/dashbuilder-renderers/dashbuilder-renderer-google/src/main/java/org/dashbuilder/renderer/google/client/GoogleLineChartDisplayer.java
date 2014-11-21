@@ -63,9 +63,12 @@ public class GoogleLineChartDisplayer extends GoogleXAxisChartDisplayer {
     public DisplayerConstraints createDisplayerConstraints() {
         DataSetLookupConstraints lookupConstraints = new DataSetLookupConstraints()
                 .setGroupRequired(true)
+                .setGroupColumn(true)
                 .setMaxGroups(1)
                 .setMinColumns(2)
                 .setMaxColumns(-1)
+                .setGroupsTitle("Categories")
+                .setColumnsTitle("Series")
                 .setColumnTypes(new ColumnType[] {
                         ColumnType.LABEL,
                         ColumnType.NUMBER});

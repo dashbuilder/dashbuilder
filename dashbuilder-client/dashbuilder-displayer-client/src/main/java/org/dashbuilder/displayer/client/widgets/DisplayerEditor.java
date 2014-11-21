@@ -189,12 +189,12 @@ public class DisplayerEditor implements IsWidget,
     }
 
     @Override
-    public void groupColumnChanged(DataSetGroup groupOp) {
+    public void groupChanged(DataSetGroup groupOp) {
         view.init(displayerSettings, this);
     }
 
     @Override
-    public void groupFunctionColumnChanged(GroupFunction groupFunction) {
+    public void columnChanged(GroupFunction groupFunction) {
         view.init(displayerSettings, this);
     }
 }

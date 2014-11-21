@@ -74,6 +74,16 @@ public class DataSetMetadataImpl implements DataSetMetadata {
         return columnTypes.get(columnIndex);
     }
 
+    public ColumnType getColumnType(String columnId) {
+        if (columnId == null) return null;
+        for (int i=0; i<columnIds.size(); i++) {
+            if (columnId.equals(columnIds.get(i))) {
+                return columnTypes.get(i);
+            }
+        }
+        return null;
+    }
+
     public DataSetDef getDefinition() {
         return definition;
     }

@@ -66,8 +66,15 @@ public class GoogleBubbleChartDisplayer extends GoogleXAxisChartDisplayer {
 
         DataSetLookupConstraints lookupConstraints = new DataSetLookupConstraints()
                 .setGroupRequired(true)
+                .setGroupColumn(true)
                 .setMaxColumns(5)
                 .setMinColumns(5)
+                .setGroupsTitle("Categories")
+                .setColumnsTitle("Values")
+                .setColumnTitle(1, "X Axis")
+                .setColumnTitle(2, "Y Axis")
+                .setColumnTitle(3, "Bubble color")
+                .setColumnTitle(4, "Bubble size")
                 .setColumnTypes(new ColumnType[] {
                         ColumnType.LABEL,
                         ColumnType.NUMBER,

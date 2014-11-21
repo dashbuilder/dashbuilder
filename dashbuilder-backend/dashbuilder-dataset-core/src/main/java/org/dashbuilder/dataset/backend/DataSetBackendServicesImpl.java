@@ -15,6 +15,7 @@
  */
 package org.dashbuilder.dataset.backend;
 
+import java.io.File;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
@@ -46,7 +47,7 @@ public class DataSetBackendServicesImpl implements DataSetBackendServices {
         ServletContext servletContext = RpcContext.getHttpSession().getServletContext();
         if (!dataSetDefDeployer.isRunning() && servletContext != null) {
             String dir = servletContext.getRealPath("datasets");
-            if (dir != null) {
+            if (dir != null && new File(dir).exists()) {
                 dir = dir.replaceAll("\\\\", "/");
                 dataSetDefDeployer.deploy(dir);
             }

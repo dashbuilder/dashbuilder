@@ -110,8 +110,11 @@ public class SelectorDisplayer extends AbstractDisplayer {
 
         return new DisplayerConstraints(new DataSetLookupConstraints()
                 .setGroupRequired(true)
+                .setGroupColumn(true)
                 .setMaxColumns(1)
                 .setMinColumns(1)
+                .setGroupsTitle("Categories")
+                .setColumnsTitle("Values")
                 .setColumnTypes(new ColumnType[] {
                         ColumnType.LABEL}));
     }

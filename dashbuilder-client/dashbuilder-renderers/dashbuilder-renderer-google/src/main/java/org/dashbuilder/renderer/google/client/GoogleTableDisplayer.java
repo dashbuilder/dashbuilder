@@ -41,7 +41,6 @@ import com.googlecode.gwt.charts.client.event.SortHandler;
 import com.googlecode.gwt.charts.client.options.TableSort;
 import com.googlecode.gwt.charts.client.table.Table;
 import com.googlecode.gwt.charts.client.table.TableOptions;
-import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetLookupConstraints;
 import org.dashbuilder.dataset.group.DataSetGroup;
@@ -75,8 +74,8 @@ public class GoogleTableDisplayer extends GoogleDisplayer {
                 .setGroupRequired(false)
                 .setMaxColumns(-1)
                 .setMinColumns(1)
-                .setColumnTypes(new ColumnType[] {
-                        ColumnType.LABEL});
+                .setGroupsTitle("Rows")
+                .setColumnsTitle("Columns");
 
         return new DisplayerConstraints(lookupConstraints)
                    .supportsAttribute( DisplayerAttributeDef.TYPE )

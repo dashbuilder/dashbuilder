@@ -17,17 +17,14 @@ package org.dashbuilder.renderer.table.client;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import com.google.gwt.cell.client.DateCell;
 import com.google.gwt.cell.client.NumberCell;
 import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.cell.client.ValueUpdater;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -152,8 +149,8 @@ public class TableDisplayer extends AbstractDisplayer {
                 .setGroupRequired(false)
                 .setMaxColumns(-1)
                 .setMinColumns(1)
-                .setColumnTypes(new ColumnType[] {
-                        ColumnType.LABEL});
+                .setGroupsTitle("Rows")
+                .setColumnsTitle("Columns");
 
         return new DisplayerConstraints(lookupConstraints)
                    .supportsAttribute( DisplayerAttributeDef.TYPE )

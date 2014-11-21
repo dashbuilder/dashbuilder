@@ -15,15 +15,18 @@
  */
 package org.dashbuilder.displayer.client.widgets;
 
+import java.util.List;
+import java.util.ArrayList;
 import javax.enterprise.context.Dependent;
 
 import com.github.gwtbootstrap.client.ui.Tab;
 import com.github.gwtbootstrap.client.ui.TabPanel;
+import com.github.gwtbootstrap.client.ui.resources.Bootstrap;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.displayer.DisplayerType;
@@ -41,68 +44,70 @@ public class DisplayerTypeSelector extends Composite {
     }
     private static ViewBinder uiBinder = GWT.create(ViewBinder.class);
 
-    public DisplayerTypeSelector() {
-        initWidget(uiBinder.createAndBindUi(this));
-    }
-
     Listener listener = null;
     DisplayerType selectedType = DisplayerType.BARCHART;
+    List<DisplayerTab> tabList = new ArrayList<DisplayerTab>();
 
-    @UiField
+    @UiField(provided = true)
     TabPanel optionsPanel;
 
-    @UiField
-    Tab optionBar;
+    public DisplayerTypeSelector() {
+        tabList.add(new DisplayerTab("Bar", DisplayerType.BARCHART, true));
+        tabList.add(new DisplayerTab("Pie", DisplayerType.PIECHART));
+        tabList.add(new DisplayerTab("Line", DisplayerType.LINECHART));
+        tabList.add(new DisplayerTab("Area", DisplayerType.AREACHART));
+        tabList.add(new DisplayerTab("Bubble", DisplayerType.BUBBLECHART));
+        tabList.add(new DisplayerTab("Meter", DisplayerType.METERCHART));
+        tabList.add(new DisplayerTab("Map", DisplayerType.MAP));
+        tabList.add(new DisplayerTab("Table", DisplayerType.TABLE));
+
+        optionsPanel = new TabPanel(Bootstrap.Tabs.LEFT);
+        for (DisplayerTab tab : tabList) optionsPanel.add(tab);
+
+        initWidget(uiBinder.createAndBindUi(this));
+    }
 
     public void init(Listener listener) {
         this.listener = listener;
     }
 
     public void select(DisplayerType type) {
-        boolean change = !selectedType.equals(type);
         selectedType = type;
-        if (change && listener != null) {
-            listener.displayerTypeChanged(type);
+
+        for (int i = 0; i < tabList.size(); i++) {
+            DisplayerTab tab = tabList.get(i);
+            if (tab.type.equals(selectedType)) {
+                optionsPanel.selectTab(i);
+            }
         }
     }
 
-    @UiHandler(value = "optionBar")
-    public void onBarSelected(ClickEvent clickEvent) {
-        select(DisplayerType.BARCHART);
-    }
+    private class DisplayerTab extends Tab {
+        
+        String name;
+        DisplayerType type;
 
-    @UiHandler(value = "optionPie")
-    public void onPieSelected(ClickEvent clickEvent) {
-        select(DisplayerType.PIECHART);
-    }
+        public DisplayerTab(String name, final DisplayerType type) {
+            this(name, type, false);
+        }
 
-    @UiHandler(value = "optionLine")
-    public void onLineSelected(ClickEvent clickEvent) {
-        select(DisplayerType.LINECHART);
-    }
+        public DisplayerTab(String name, final DisplayerType type, boolean active) {
+            super();
+            super.setActive(active);
+            super.setHeading(name);
 
-    @UiHandler(value = "optionArea")
-    public void onAreaSelected(ClickEvent clickEvent) {
-        select(DisplayerType.AREACHART);
-    }
-
-    @UiHandler(value = "optionBubble")
-    public void onBubbleSelected(ClickEvent clickEvent) {
-        select(DisplayerType.BUBBLECHART);
-    }
-
-    @UiHandler(value = "optionMeter")
-    public void onMeterSelected(ClickEvent clickEvent) {
-        select(DisplayerType.METERCHART);
-    }
-
-    @UiHandler(value = "optionMap")
-    public void onMapSelected(ClickEvent clickEvent) {
-        select(DisplayerType.MAP);
-    }
-
-    @UiHandler(value = "optionTable")
-    public void onTableSelected(ClickEvent clickEvent) {
-        select(DisplayerType.TABLE);
+            this.name = name;
+            this.type = type;
+            
+            super.addClickHandler(new ClickHandler() {
+                public void onClick(ClickEvent event) {
+                    boolean change = !selectedType.equals(type);
+                    selectedType = type;
+                    if (change && listener != null) {
+                        listener.displayerTypeChanged(type);
+                    }
+                }
+            });
+        }
     }
 }
