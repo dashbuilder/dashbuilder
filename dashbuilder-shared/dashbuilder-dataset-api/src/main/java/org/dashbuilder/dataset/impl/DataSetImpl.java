@@ -81,7 +81,7 @@ public class DataSetImpl implements DataSet {
 
     public DataColumn getColumnByName(String name) {
         for (DataColumn column : columns) {
-            if (column.getName().equals(name)) return column;
+            if (column.getName() != null && column.getName().equals(name)) return column;
         }
         return null;
     }

@@ -193,7 +193,6 @@ public class DataSetLookupEditor implements IsWidget {
     public List<AggregateFunctionType> getAvailableFunctions(GroupFunction groupFunction) {
         List<AggregateFunctionType> result = new ArrayList<AggregateFunctionType>();
         ColumnType targetType = getColumnType(groupFunction.getSourceId());
-        AggregateFunctionType selected = groupFunction.getFunction();
         for (AggregateFunction function : DataSetClientServices.get().getAggregateFunctionManager().getAllFunctions()) {
             if (function.supportType(targetType)) {
                 result.add(function.getType());
