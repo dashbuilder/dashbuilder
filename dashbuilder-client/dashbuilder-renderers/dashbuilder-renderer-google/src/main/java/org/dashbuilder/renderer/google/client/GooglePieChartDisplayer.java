@@ -65,7 +65,7 @@ public class GooglePieChartDisplayer extends GoogleXAxisChartDisplayer {
                 .setMaxColumns(2)
                 .setMinColumns(2)
                 .setGroupsTitle("Categories")
-                .setColumnsTitle("Series")
+                .setColumnsTitle("Values")
                 .setColumnTypes(new ColumnType[] {
                         ColumnType.LABEL,
                         ColumnType.NUMBER});
