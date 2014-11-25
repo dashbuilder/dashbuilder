@@ -152,6 +152,23 @@
           <configuration>
             <encoding>UTF-8</encoding>
           </configuration>
+          <executions>
+            <execution>
+              <id>copy-resources</id>
+              <phase>prepare-package</phase>
+              <goals>
+                <goal>copy-resources</goal>
+              </goals>
+              <configuration>
+                <outputDirectory>${basedir}/target/classes</outputDirectory>
+                <resources>
+                  <resource>
+                    <directory>target/generated-sources/annotations</directory>
+                  </resource>
+                </resources>
+              </configuration>
+            </execution>
+          </executions>
         </plugin>
 
         <plugin>
