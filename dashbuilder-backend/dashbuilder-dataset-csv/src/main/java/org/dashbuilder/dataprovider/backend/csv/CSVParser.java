@@ -58,25 +58,27 @@ public class CSVParser {
             if (header == null) throw new IOException("The CSV has no header: " + dataSetDef);
 
             String[] firstRow = csvReader.readNext();
-            if (firstRow == null) throw new IOException("The CSV  has no entries: " + dataSetDef);
+            if (firstRow == null || firstRow.length < header.length) firstRow = null;
 
             // Build the data set structure
             DataSet dataSet = DataSetFactory.newEmptyDataSet();
-            for (int i = 0; i < firstRow.length; i++) {
+            for (int i = 0; i < header.length; i++) {
                 String columnId = header[i];
-                String value = firstRow[i];
-                ColumnType type = calculateType(columnId, value);
+                ColumnType type = ColumnType.LABEL;
+                if (firstRow != null) type = calculateType(columnId, firstRow[i]);
                 dataSet.addColumn(columnId, type);
             }
 
             // Load & insert the CSV rows
-            Object[] row = processLine(dataSet, firstRow);
-            dataSet.setValuesAt(dataSet.getRowCount(), row);
-            String[] line = csvReader.readNext();
-            while (line != null && line.length == dataSet.getColumns().size()) {
-                row = processLine(dataSet, line);
+            if (firstRow != null) {
+                Object[] row = processLine(dataSet, firstRow);
                 dataSet.setValuesAt(dataSet.getRowCount(), row);
-                line = csvReader.readNext();
+                String[] line = csvReader.readNext();
+                while (line != null && line.length == header.length) {
+                    row = processLine(dataSet, line);
+                    dataSet.setValuesAt(dataSet.getRowCount(), row);
+                    line = csvReader.readNext();
+                }
             }
             return dataSet;
         } finally {
@@ -116,7 +118,6 @@ public class CSVParser {
         }
         return null;
     }
-
 
     protected ColumnType calculateType(String columnId, String value) {
         DataColumn column = dataSetDef.getDataSet().getColumnById(columnId);
