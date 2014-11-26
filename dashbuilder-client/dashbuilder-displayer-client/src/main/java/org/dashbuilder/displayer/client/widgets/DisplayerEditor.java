@@ -70,10 +70,13 @@ public class DisplayerEditor implements IsWidget,
         IOCBeanDef iocBeanDef = beanManager.lookupBean(DisplayerSettingsEditor.class);
         DisplayerSettingsEditor settingsEditor = (DisplayerSettingsEditor) iocBeanDef.getInstance();
 
-        this.view = new DisplayerEditorView(
-                new DisplayerTypeSelector(),
-                new DataSetLookupEditor(),
-                settingsEditor);
+        iocBeanDef = beanManager.lookupBean(DisplayerTypeSelector.class);
+        DisplayerTypeSelector typeSelector = (DisplayerTypeSelector) iocBeanDef.getInstance();
+
+        iocBeanDef = beanManager.lookupBean(DataSetLookupEditor.class);
+        DataSetLookupEditor lookupEditor = (DataSetLookupEditor) iocBeanDef.getInstance();
+
+        this.view = new DisplayerEditorView(typeSelector, lookupEditor, settingsEditor);
     }
 
     @Inject
