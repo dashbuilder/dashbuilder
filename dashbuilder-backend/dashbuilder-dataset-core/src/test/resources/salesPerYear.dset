@@ -3,7 +3,7 @@
     "provider": "BEAN",
     "pushEnabled": true,
     "maxPushSize": 1024,
-    "shared": true,
+    "isPublic": true,
     "generatorClass": "org.dashbuilder.dataprovider.SalesPerYearDataSetGenerator",
     "generatorParams": [
         {"param": "multiplier", "value": "1"}

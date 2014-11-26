@@ -3,7 +3,7 @@
     "provider": "CSV",
     "pushEnabled": true,
     "maxPushSize": 1024,
-    "shared": true,
+    "isPublic": true,
     "filePath": "expenseReports.csv",
     "separatorChar": ";",
     "quoteChar": "\"",

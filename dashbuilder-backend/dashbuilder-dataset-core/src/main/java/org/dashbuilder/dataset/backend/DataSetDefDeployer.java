@@ -135,6 +135,7 @@ public class DataSetDefDeployer {
         File[] files = new File(directory).listFiles(_dsetFilter);
         if (files == null) return;
 
+        // look for new data set deployments and updates
         for (File f : files) {
             try {
                 // Avoid repetitions
@@ -155,6 +156,15 @@ public class DataSetDefDeployer {
             }
             catch (Exception e) {
                 log.error("Error parsing the data set definition file: " + f.getName(), e);
+            }
+        }
+        // Look for data set removals
+        for (DataSetDef dataSetDef : dataSetDefRegistry.getDataSetDefs(false)) {
+            if (!StringUtils.isBlank(dataSetDef.getDefFilePath())) {
+                if (!new File(dataSetDef.getDefFilePath()).exists()) {
+                    deployed.remove(dataSetDef.getDefFilePath());
+                    dataSetDefRegistry.removeDataSetDef(dataSetDef.getUUID());
+                }
             }
         }
     }

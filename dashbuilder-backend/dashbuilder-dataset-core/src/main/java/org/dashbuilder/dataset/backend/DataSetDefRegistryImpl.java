@@ -28,7 +28,6 @@ import org.dashbuilder.dataset.def.DataSetDefRegistry;
 import org.dashbuilder.dataset.events.DataSetDefModifiedEvent;
 import org.dashbuilder.dataset.events.DataSetDefRegisteredEvent;
 import org.dashbuilder.dataset.events.DataSetDefRemovedEvent;
-import org.jboss.errai.bus.server.annotations.Service;
 
 /**
  * Data set definitions backend registry
@@ -47,10 +46,10 @@ public class DataSetDefRegistryImpl implements DataSetDefRegistry {
 
     protected Map<String,DataSetDef> dataSetDefMap = new HashMap<String, DataSetDef>();
 
-    public synchronized List<DataSetDef> getSharedDataSetDefs() {
+    public synchronized List<DataSetDef> getDataSetDefs(boolean onlyPublic) {
         List<DataSetDef> results = new ArrayList<DataSetDef>();
         for (DataSetDef r : dataSetDefMap.values()) {
-            if (r.isShared()) {
+            if (!onlyPublic || r.isPublic()) {
                 results.add(r);
             }
         }

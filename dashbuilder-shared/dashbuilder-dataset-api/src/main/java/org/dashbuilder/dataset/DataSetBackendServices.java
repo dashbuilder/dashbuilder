@@ -44,7 +44,7 @@ public interface DataSetBackendServices {
     DataSetMetadata lookupDataSetMetadata(DataSetLookup lookup) throws Exception;
 
     /**
-     * Get those shareable data set definition (those with the shared flag set to true)
+     * Get those public (shareable) data set definition (those with the public flag set to true)
      */
-    List<DataSetDef> getSharedDataSetDefs();
+    List<DataSetDef> getPublicDataSetDefs();
 }
