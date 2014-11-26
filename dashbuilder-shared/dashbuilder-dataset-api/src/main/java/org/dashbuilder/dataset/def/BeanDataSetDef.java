@@ -51,7 +51,7 @@ public class BeanDataSetDef extends DataSetDef {
         StringBuilder out = new StringBuilder();
         out.append("UUID=").append(UUID).append("\n");
         out.append("Provider=").append(provider).append("\n");
-        out.append("Shared=").append(shared).append("\n");
+        out.append("Public=").append(isPublic).append("\n");
         out.append("Push enabled=").append(pushEnabled).append("\n");
         out.append("Max push size=").append(maxPushSize).append(" Kb\n");
         out.append("Generator class=").append(generatorClass).append("\n");

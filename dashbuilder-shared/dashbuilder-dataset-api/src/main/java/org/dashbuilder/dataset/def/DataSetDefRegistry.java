@@ -25,9 +25,11 @@ import org.jboss.errai.bus.server.annotations.Remote;
 public interface DataSetDefRegistry {
 
     /**
-     * Get those shareable data set definition (those with the shared flag set to true)
+     * Get the data set definitions available.
+     *
+     * @param onlyPublic Get only those public (shareable) data set definition (public flag set to true)
      */
-    List<DataSetDef> getSharedDataSetDefs();
+    List<DataSetDef> getDataSetDefs(boolean onlyPublic);
 
     /**
      * Get the definition for the specified data set.

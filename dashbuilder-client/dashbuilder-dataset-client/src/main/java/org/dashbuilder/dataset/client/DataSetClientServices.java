@@ -206,7 +206,7 @@ public class DataSetClientServices {
 
     public void getRemoteSharedDataSetDefs(RemoteCallback<List<DataSetDef>> callback) {
         try {
-            dataSetBackendServices.call(callback).getSharedDataSetDefs();
+            dataSetBackendServices.call(callback).getPublicDataSetDefs();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

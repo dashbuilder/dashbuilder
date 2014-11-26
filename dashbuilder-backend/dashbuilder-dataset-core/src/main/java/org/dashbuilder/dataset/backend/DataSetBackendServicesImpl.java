@@ -62,7 +62,7 @@ public class DataSetBackendServicesImpl implements DataSetBackendServices {
         return dataSetManager.lookupDataSetMetadata(lookup);
     }
 
-    public List<DataSetDef> getSharedDataSetDefs() {
-        return dataSetDefRegistry.getSharedDataSetDefs();
+    public List<DataSetDef> getPublicDataSetDefs() {
+        return dataSetDefRegistry.getDataSetDefs(true);
     }
 }

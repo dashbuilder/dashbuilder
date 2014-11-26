@@ -31,7 +31,7 @@ public class DataSetDef {
     protected String defFilePath;
     protected DataSetProviderType provider;
     protected DataSet dataSet = DataSetFactory.newEmptyDataSet();
-    protected boolean shared = true;
+    protected boolean isPublic = true;
     protected boolean pushEnabled = false;
     protected int maxPushSize = 1024;
 
@@ -67,12 +67,12 @@ public class DataSetDef {
         this.provider = provider;
     }
 
-    public boolean isShared() {
-        return shared;
+    public boolean isPublic() {
+        return isPublic;
     }
 
-    public void setShared(boolean shared) {
-        this.shared = shared;
+    public void setPublic(boolean isPublic) {
+        this.isPublic = isPublic;
     }
 
     public boolean isPushEnabled() {
