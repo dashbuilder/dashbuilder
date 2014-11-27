@@ -115,6 +115,9 @@ public abstract class AbstractDataSetLookupBuilder<T> implements DataSetLookupBu
     }
 
     public T fixed(DateIntervalType intervalSize) {
+        if (!DateIntervalType.FIXED_INTERVALS_SUPPORTED.contains(intervalSize)) {
+            throw new IllegalArgumentException("Fixed group size '" + intervalSize + "' not supported.");
+        }
         return groupStrategy(GroupStrategy.FIXED, -1, intervalSize.toString());
     }
 

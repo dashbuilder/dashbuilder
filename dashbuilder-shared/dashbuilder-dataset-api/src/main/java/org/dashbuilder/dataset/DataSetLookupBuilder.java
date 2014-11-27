@@ -193,7 +193,8 @@ public interface DataSetLookupBuilder<T> {
      * will group the data set by a column identified by 'CLOSING_DATE', into a fixed monthly interval, starting with
      * January as the first month interval.
      *
-     * @param type The size of the date interval.
+     * @param type The size of the date interval. Only the following types are supported: QUARTER, MONTH,
+     * DAY_OF_WEEK, HOUR, MINUTE, SECOND
      * @see org.dashbuilder.dataset.group.DateIntervalType
      * @return The DataSetLookupBuilder instance that is being used to configure a DataSetLookup request.
      */

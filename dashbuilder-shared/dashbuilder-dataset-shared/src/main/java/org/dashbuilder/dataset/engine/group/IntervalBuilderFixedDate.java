@@ -32,11 +32,6 @@ import static org.dashbuilder.dataset.group.DateIntervalType.*;
 @ApplicationScoped
 public class IntervalBuilderFixedDate implements IntervalBuilder {
 
-    /** List of the only DateIntervalType's supported as fixed date intervals. */
-    private DateIntervalType[] FIXED_INTERVALS_SUPPORTED = new DateIntervalType[] {
-            QUARTER, MONTH, DAY_OF_WEEK, HOUR, MINUTE, SECOND};
-
-
     public IntervalList build(DataSetHandler ctx, ColumnGroup columnGroup) {
         IntervalList intervalList = createIntervalList(columnGroup);
 
@@ -76,14 +71,14 @@ public class IntervalBuilderFixedDate implements IntervalBuilder {
             return new IntervalListSecond(columnGroup);
         }
         throw new IllegalArgumentException("Interval size '" + columnGroup.getIntervalSize() + "' not supported for " +
-                "fixed date intervals. The only supported sizes are: " + join(FIXED_INTERVALS_SUPPORTED, ","));
+                "fixed date intervals. The only supported sizes are: " + join(DateIntervalType.FIXED_INTERVALS_SUPPORTED, ","));
     }
 
-    public String join(Object[] array, String separator) {
+    public String join(List array, String separator) {
         StringBuilder builder = new StringBuilder();
-        for (int i = 0; i < array.length; i++) {
+        for (int i = 0; i < array.size(); i++) {
             if (i > 0) builder.append(separator);
-            builder.append(array[i]);
+            builder.append(array.get(i));
         }
         return builder.toString();
     }
