@@ -17,6 +17,7 @@ package org.dashbuilder.dataset;
 
 import javax.inject.Inject;
 
+import org.dashbuilder.dataset.group.DateIntervalType;
 import org.dashbuilder.dataset.group.GroupStrategy;
 import org.dashbuilder.dataset.date.DayOfWeek;
 import org.dashbuilder.dataset.date.Month;
@@ -231,6 +232,22 @@ public class DataSetGroupTest {
                 {"MAY", "5.00", "2,503.34"},
                 {"APRIL", "3.00", "1,061.06"}
         }, 0);
+    }
+
+    @Test
+    public void testFixedIntervalsSupported() throws Exception {
+        for (DateIntervalType type : DateIntervalType.values()) {
+            try {
+                DataSetFactory.newDataSetLookupBuilder().group("date").fixed(type);
+                if (!DateIntervalType.FIXED_INTERVALS_SUPPORTED.contains(type)) {
+                    fail("Missing exception on a not supported fixed interval: " + type);
+                }
+            } catch (Exception e) {
+                if (DateIntervalType.FIXED_INTERVALS_SUPPORTED.contains(type)) {
+                    fail("Exception on a supported fixed interval: " + type);
+                }
+            }
+        }
     }
 
     @Test

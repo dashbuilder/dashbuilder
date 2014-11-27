@@ -15,7 +15,9 @@
  */
 package org.dashbuilder.dataset.group;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.jboss.errai.common.client.api.annotations.Portable;
@@ -40,6 +42,12 @@ public enum DateIntervalType {
     DECADE,
     CENTURY,
     MILLENIUM;
+
+    /**
+     * List of the only DateIntervalType's supported as fixed date intervals
+     */
+    public static List<DateIntervalType> FIXED_INTERVALS_SUPPORTED = Arrays.asList(
+            QUARTER, MONTH, DAY_OF_WEEK, HOUR, MINUTE, SECOND);
 
     private static final Map<DateIntervalType,Long> DURATION_IN_MILLIS = new HashMap<DateIntervalType, Long>();
     static {
