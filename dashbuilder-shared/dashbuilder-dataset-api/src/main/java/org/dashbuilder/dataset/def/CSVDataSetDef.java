@@ -15,11 +15,9 @@
  */
 package org.dashbuilder.dataset.def;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.dashbuilder.dataprovider.DataSetProviderType;
 import org.dashbuilder.dataset.ColumnType;
+import org.dashbuilder.dataset.DataColumn;
 import org.jboss.errai.common.client.api.annotations.Portable;
 
 @Portable
@@ -32,8 +30,6 @@ public class CSVDataSetDef extends DataSetDef {
     protected char escapeChar;
     protected String datePattern = "MM-dd-yyyy HH:mm:ss";
     protected String numberPattern = "#,###.##";
-    protected Map<String,String> datePatternMap = new HashMap<String,String>();
-    protected Map<String,String> numberPatternMap = new HashMap<String,String>();
 
     public CSVDataSetDef() {
         super.setProvider(DataSetProviderType.CSV);
@@ -79,6 +75,18 @@ public class CSVDataSetDef extends DataSetDef {
         this.escapeChar = escapeChar;
     }
 
+    public String getPattern(String columnId) {
+        String p = super.getPattern(columnId);
+        if (p != null) return p;
+
+        DataColumn c = getDataSet().getColumnById(columnId);
+        if (c == null) return null;
+
+        if (c.getColumnType().equals(ColumnType.NUMBER)) return numberPattern;
+        if (c.getColumnType().equals(ColumnType.DATE)) return datePattern;
+        return null;
+    }
+
     public String getNumberPattern() {
         return numberPattern;
     }
@@ -95,38 +103,14 @@ public class CSVDataSetDef extends DataSetDef {
         this.datePattern = datePattern;
     }
 
-    public String getNumberPattern(String columnId) {
-        if (!numberPatternMap.containsKey(columnId)) {
-            return numberPattern;
-        }
-        return numberPatternMap.get(columnId);
-    }
-
-    public void setNumberPattern(String columnId, String numberPattern) {
-        dataSet.addColumn(columnId, ColumnType.NUMBER);
-        numberPatternMap.put(columnId, numberPattern);
-    }
-
-    public String getDatePattern(String columnId) {
-        if (!datePatternMap.containsKey(columnId)) {
-            return datePattern;
-        }
-        return datePatternMap.get(columnId);
-    }
-
-    public void setDatePattern(String columnId, String datePattern) {
-        dataSet.addColumn(columnId, ColumnType.DATE);
-        datePatternMap.put(columnId, datePattern);
-    }
-
     public char getNumberGroupSeparator(String columnId) {
-        String pattern = getNumberPattern(columnId);
+        String pattern = getPattern(columnId);
         if (pattern.length() < 2) return ',';
         else return pattern.charAt(1);
     }
 
     public char getNumberDecimalSeparator(String columnId) {
-        String pattern = getNumberPattern(columnId);
+        String pattern = getPattern(columnId);
         if (pattern.length() < 6) return '.';
         else return pattern.charAt(5);
     }
@@ -141,7 +125,7 @@ public class CSVDataSetDef extends DataSetDef {
         out.append("Provider=").append(provider).append("\n");
         out.append("Public=").append(isPublic).append("\n");
         out.append("Push enabled=").append(pushEnabled).append("\n");
-        out.append("Max push size=").append(maxPushSize).append(" Kb\n");
+        out.append("Push max size=").append(pushMaxSize).append(" Kb\n");
         out.append("Separator char=").append(separatorChar).append("\n");
         out.append("Quote char=").append(quoteChar).append("\n");
         out.append("Escape char=").append(escapeChar).append("\n");

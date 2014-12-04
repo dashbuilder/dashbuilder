@@ -38,6 +38,17 @@ public class DataSetMetadataImpl implements DataSetMetadata {
     public DataSetMetadataImpl() {
     }
 
+    public DataSetMetadataImpl(DataSetDef definition, String uuid, int numberOfRows, int numberOfColumns,
+            List<String> columnIds, List<ColumnType> columnTypes, int estimatedSize) {
+        this.definition = definition;
+        this.uuid = uuid;
+        this.numberOfRows = numberOfRows;
+        this.numberOfColumns = numberOfColumns;
+        this.columnIds = columnIds;
+        this.columnTypes = columnTypes;
+        this.estimatedSize = estimatedSize;
+    }
+
     public DataSetMetadataImpl(DataSetImpl dataSet) {
         this.definition = dataSet.getDefinition();
         this.uuid = dataSet.uuid;

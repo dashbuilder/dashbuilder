@@ -53,7 +53,7 @@ public class BeanDataSetDef extends DataSetDef {
         out.append("Provider=").append(provider).append("\n");
         out.append("Public=").append(isPublic).append("\n");
         out.append("Push enabled=").append(pushEnabled).append("\n");
-        out.append("Max push size=").append(maxPushSize).append(" Kb\n");
+        out.append("Push max size=").append(pushMaxSize).append(" Kb\n");
         out.append("Generator class=").append(generatorClass).append("\n");
         for (String param : paramaterMap.keySet()) {
             out.append("Generator ").append(param).append("=").append(paramaterMap.get(param)).append("\n");

@@ -77,6 +77,16 @@ public class DataSetGroup implements DataSetOp {
         this.join = join;
     }
 
+    public List<GroupFunction> getAggregationFunctions() {
+        List<GroupFunction> result = new ArrayList<GroupFunction>();
+        for (GroupFunction groupFunction : groupFunctionList) {
+            if (groupFunction.getFunction() != null) {
+                result.add(groupFunction);
+            }
+        }
+        return result;
+    }
+
     public DataSetGroup cloneInstance() {
         DataSetGroup clone = new DataSetGroup();
         if (columnGroup != null) clone.columnGroup = columnGroup.cloneInstance();

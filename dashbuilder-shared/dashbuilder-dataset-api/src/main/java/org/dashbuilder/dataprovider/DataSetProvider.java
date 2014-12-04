@@ -17,6 +17,7 @@ package org.dashbuilder.dataprovider;
 
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetLookup;
+import org.dashbuilder.dataset.DataSetMetadata;
 import org.dashbuilder.dataset.def.DataSetDef;
 
 /**
@@ -29,6 +30,14 @@ public interface DataSetProvider {
      * The type of the provider.
      */
     DataSetProviderType getType();
+
+    /**
+     * Retrieves the metadata for a given data set definition
+     *
+     * @param def The data set definition lookup request
+     * @return The data set metadata
+     */
+    DataSetMetadata getDataSetMetadata(DataSetDef def) throws Exception;
 
     /**
      * Fetch a data set and optionally apply several operations (filter, sort, group, ...) on top of it.

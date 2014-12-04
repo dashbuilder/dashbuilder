@@ -173,7 +173,7 @@ public class CSVParser {
     protected DateFormat getDateFormat(String columnId) {
         DateFormat format = _dateFormatMap.get(columnId);
         if (format == null) {
-            format = new SimpleDateFormat(dataSetDef.getDatePattern(columnId));
+            format = new SimpleDateFormat(dataSetDef.getPattern(columnId));
             _dateFormatMap.put(columnId, format);
         }
         return format;
@@ -185,7 +185,7 @@ public class CSVParser {
             DecimalFormatSymbols numberSymbols = new DecimalFormatSymbols();
             numberSymbols.setGroupingSeparator(dataSetDef.getNumberGroupSeparator(columnId));
             numberSymbols.setDecimalSeparator(dataSetDef.getNumberDecimalSeparator(columnId));
-            format = new DecimalFormat(dataSetDef.getNumberPattern(columnId), numberSymbols);
+            format = new DecimalFormat(dataSetDef.getPattern(columnId), numberSymbols);
             _numberFormatMap.put(columnId, format);
         }
         return format;

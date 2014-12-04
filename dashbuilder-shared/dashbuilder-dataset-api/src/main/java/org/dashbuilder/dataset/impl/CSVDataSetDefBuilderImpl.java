@@ -51,13 +51,13 @@ public class CSVDataSetDefBuilderImpl extends AbstractDataSetDefBuilder<CSVDataS
     }
 
     public CSVDataSetDefBuilderImpl date(String columnId, String datePattern) {
-        ((CSVDataSetDef) def).setDatePattern(columnId, datePattern);
+        def.setPattern(columnId, datePattern);
         super.date(columnId);
         return this;
     }
 
     public CSVDataSetDefBuilderImpl number(String columnId, String numberPattern) {
-        ((CSVDataSetDef) def).setNumberPattern(columnId, numberPattern);
+        def.setPattern(columnId, numberPattern);
         super.number(columnId);
         return this;
     }

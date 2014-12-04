@@ -26,8 +26,8 @@ import org.dashbuilder.dataprovider.DataSetProviderType;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetGenerator;
 import org.dashbuilder.dataset.DataSetLookup;
+import org.dashbuilder.dataset.DataSetMetadata;
 import org.dashbuilder.dataset.def.BeanDataSetDef;
-import org.dashbuilder.dataset.def.CSVDataSetDef;
 import org.dashbuilder.dataset.def.DataSetDef;
 import org.dashbuilder.dataset.events.DataSetDefModifiedEvent;
 import org.slf4j.Logger;
@@ -46,6 +46,12 @@ public class BeanDataSetProvider implements DataSetProvider {
 
     public DataSetProviderType getType() {
         return DataSetProviderType.BEAN;
+    }
+
+    public DataSetMetadata getDataSetMetadata(DataSetDef def) {
+        DataSet dataSet = staticDataSetProvider.lookupDataSet(def, null);
+        if (dataSet == null) return null;
+        return dataSet.getMetadata();
     }
 
     public DataSet lookupDataSet(DataSetDef def, DataSetLookup lookup) throws Exception {

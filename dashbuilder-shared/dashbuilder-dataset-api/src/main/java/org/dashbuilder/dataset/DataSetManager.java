@@ -57,8 +57,8 @@ public interface DataSetManager {
     DataSet[] lookupDataSets(DataSetLookup[] lookup);
 
     /**
-     * Same as lookupDataSet but only retrieves the metadata of the resulting data set.
+     * Retrieves the metadata for a given data set
      * @return A DataSetMetadata instance containing general information about the data set, or null if the data set can be retrieved.
      */
-    DataSetMetadata lookupDataSetMetadata(DataSetLookup lookup);
+    DataSetMetadata getDataSetMetadata(String uuid);
 }

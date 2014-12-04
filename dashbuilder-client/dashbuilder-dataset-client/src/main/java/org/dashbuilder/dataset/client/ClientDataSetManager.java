@@ -98,7 +98,8 @@ public class ClientDataSetManager implements DataSetManager {
         return result;
     }
 
-    public DataSetMetadata lookupDataSetMetadata(DataSetLookup lookup) {
+    public DataSetMetadata getDataSetMetadata(String uuid) {
+        DataSetLookup lookup = new DataSetLookup(uuid);
         DataSet dataSet = lookupDataSet(lookup);
         if (dataSet == null) return null;
 

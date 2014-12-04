@@ -80,7 +80,7 @@ public class DataSetClientServices {
     /**
      * A cache of DataSetMetadata instances
      */
-    private Map<DataSetLookup,DataSetMetadata> remoteMetadataMap = new HashMap<DataSetLookup,DataSetMetadata>();
+    private Map<String,DataSetMetadata> remoteMetadataMap = new HashMap<String,DataSetMetadata>();
 
     /**
      * If enabled then remote data set can be pushed to clients.
@@ -106,27 +106,27 @@ public class DataSetClientServices {
     /**
      * Fetch the metadata instance for the specified data set.
      *
-     * @param request The data set lookup request
+     * @param uuid The UUID of the data set
      * @throws Exception It there is an unexpected error trying to execute the lookup request.
      */
-    public void fetchMetadata(final DataSetLookup request, final DataSetMetadataCallback listener) throws Exception {
-        DataSetMetadata metadata = clientDataSetManager.lookupDataSetMetadata(request);
+    public void fetchMetadata(final String uuid, final DataSetMetadataCallback listener) throws Exception {
+        DataSetMetadata metadata = clientDataSetManager.getDataSetMetadata(uuid);
         if (metadata != null) {
             listener.callback(metadata);
         }
         else if (dataSetBackendServices != null) {
-            if (remoteMetadataMap.containsKey(request)) {
-                listener.callback(remoteMetadataMap.get(request));
+            if (remoteMetadataMap.containsKey(uuid)) {
+                listener.callback(remoteMetadataMap.get(uuid));
             } else {
                 dataSetBackendServices.call(
                     new RemoteCallback<DataSetMetadata>() {
                     public void callback(DataSetMetadata result) {
                         if (result == null) listener.notFound();
                         else {
-                            remoteMetadataMap.put(request, result);
+                            remoteMetadataMap.put(uuid, result);
                             listener.callback(result);
                         }
-                    }}).lookupDataSetMetadata(request);
+                    }}).lookupDataSetMetadata(uuid);
             }
         }
         else {
@@ -151,14 +151,13 @@ public class DataSetClientServices {
         else if (dataSetBackendServices != null) {
 
             // First of all, get the target data set estimated size.
-            final DataSetLookup lookupSourceDataSet = new DataSetLookup(request.getDataSetUUID());
-            fetchMetadata(lookupSourceDataSet, new DataSetMetadataCallback() {
+            fetchMetadata(request.getDataSetUUID(), new DataSetMetadataCallback() {
                 public void callback(DataSetMetadata metatada) {
 
                     // Push the data set to client if and only if the push feature is enabled, the data set is
                     // pushable & the data set is smaller than the max push size defined.
                     DataSetDef dsetDef = metatada.getDefinition();
-                    boolean isPushable = dsetDef != null && dsetDef.isPushEnabled() && metatada.getEstimatedSize() < dsetDef.getMaxPushSize();
+                    boolean isPushable = dsetDef != null && dsetDef.isPushEnabled() && metatada.getEstimatedSize() < dsetDef.getPushMaxSize();
                     if (pushRemoteDataSetEnabled && isPushable) {
 
                         // Check if a push is already in progress.
@@ -169,6 +168,7 @@ public class DataSetClientServices {
                             pushHandler = new DataSetPushHandler(metatada);
 
                             // Send the lookup request to the server...
+                            DataSetLookup lookupSourceDataSet = new DataSetLookup(request.getDataSetUUID());
                             _lookupDataSet(lookupSourceDataSet, pushHandler);
                         }
                         // Register the lookup request into the current handler.
