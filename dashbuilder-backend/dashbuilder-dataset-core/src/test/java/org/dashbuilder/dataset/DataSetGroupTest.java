@@ -21,6 +21,7 @@ import org.dashbuilder.dataset.group.DateIntervalType;
 import org.dashbuilder.dataset.group.GroupStrategy;
 import org.dashbuilder.dataset.date.DayOfWeek;
 import org.dashbuilder.dataset.date.Month;
+import org.dashbuilder.dataset.sort.SortOrder;
 import org.dashbuilder.test.ShrinkWrapHelper;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -44,20 +45,19 @@ public class DataSetGroupTest {
                 .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
     }
 
-    public static final String EXPENSE_REPORTS = "expense_reports_dataset";
+    public static final String EXPENSE_REPORTS = "expense_reports";
 
     @Inject
-    DataSetManager dataSetManager;
+    public DataSetManager dataSetManager;
 
-    protected DataSet dataSet;
-    protected DataSetFormatter dataSetFormatter;
+    @Inject
+    public DataSetFormatter dataSetFormatter;
 
     @Before
     public void setUp() throws Exception {
-        dataSet = RawDataSetSamples.EXPENSE_REPORTS.toDataSet();
+        DataSet dataSet = RawDataSetSamples.EXPENSE_REPORTS.toDataSet();
         dataSet.setUUID(EXPENSE_REPORTS);
         dataSetManager.registerDataSet(dataSet);
-        dataSetFormatter = new DataSetFormatter();
     }
 
     @Test
@@ -90,15 +90,16 @@ public class DataSetGroupTest {
                 .column("amount", MAX, "max")
                 .column("amount", AVERAGE, "average")
                 .column("amount", SUM, "total")
+                .sort("department", SortOrder.ASCENDING)
                 .buildLookup());
 
         //printDataSet(result);
         assertDataSetValues(result, dataSetFormatter, new String[][] {
                 {"Engineering", "19.00", "1.10", "1,100.10", "402.64", "7,650.16"},
-                {"Services", "5.00", "152.25", "911.11", "500.90", "2,504.50"},
+                {"Management", "11.00", "43.03", "992.20", "547.04", "6,017.47"},
                 {"Sales", "8.00", "75.75", "995.30", "401.69", "3,213.53"},
-                {"Support", "7.00", "300.01", "1,001.90", "477.94", "3,345.60"},
-                {"Management", "11.00", "43.03", "992.20", "547.04", "6,017.47"}
+                {"Services", "5.00", "152.25", "911.11", "500.90", "2,504.50"},
+                {"Support", "7.00", "300.01", "1,001.90", "477.94", "3,345.60"}
         }, 0);
     }
 
