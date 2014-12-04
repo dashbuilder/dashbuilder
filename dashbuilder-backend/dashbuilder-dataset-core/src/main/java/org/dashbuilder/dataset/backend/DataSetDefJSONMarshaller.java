@@ -24,6 +24,7 @@ import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.def.BeanDataSetDef;
 import org.dashbuilder.dataset.def.CSVDataSetDef;
 import org.dashbuilder.dataset.def.DataSetDef;
+import org.dashbuilder.dataset.def.SQLDataSetDef;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -53,6 +54,12 @@ public class DataSetDefJSONMarshaller {
     public static final String DATEPATTERN = "datePattern";
     public static final String NUMBERPATTERN = "numberPattern";
 
+    // SQL related
+    public static final String DATA_SOURCE = "dataSource";
+    public static final String DB_TABLE = "dbTable";
+    public static final String CACHE_ENABLED = "cacheEnabled";
+    public static final String CACHE_MAXROWS = "cacheMaxRows";
+
     // Bean related
     public static final String GENERATOR_CLASS = "generatorClass";
     public static final String GENERATOR_PARAMS = "generatorParams";
@@ -72,6 +79,9 @@ public class DataSetDefJSONMarshaller {
         switch (providerType) {
             case CSV:
                 readCSVSettings((CSVDataSetDef) dataSetDef, json);
+                break;
+            case SQL:
+                readSQLSettings((SQLDataSetDef) dataSetDef, json);
                 break;
             case BEAN:
                 readBeanSettings((BeanDataSetDef) dataSetDef, json);
@@ -174,6 +184,20 @@ public class DataSetDefJSONMarshaller {
         if (!StringUtils.isBlank(escapeChar)) def.setEscapeChar(escapeChar.charAt(0));
         if (!StringUtils.isBlank(numberPattern)) def.setNumberPattern(numberPattern);
         if (!StringUtils.isBlank(datePattern)) def.setDatePattern(datePattern);
+
+        return def;
+    }
+
+    public SQLDataSetDef readSQLSettings(SQLDataSetDef def, JSONObject json) throws Exception {
+        String dataSource = json.has(DATA_SOURCE) ? json.getString(DATA_SOURCE) : null;
+        String dbTable = json.has(DB_TABLE) ? json.getString(DB_TABLE) : null;
+        String cacheEnabled = json.has(CACHE_ENABLED) ? json.getString(CACHE_ENABLED) : null;
+        String cacheMaxRows = json.has(CACHE_MAXROWS) ? json.getString(CACHE_MAXROWS) : null;
+
+        if (!StringUtils.isBlank(dataSource)) def.setDataSource(dataSource);
+        if (!StringUtils.isBlank(dbTable)) def.setDbTable(dbTable);
+        if (!StringUtils.isBlank(cacheEnabled)) def.setCacheEnabled(Boolean.parseBoolean(cacheEnabled));
+        if (!StringUtils.isBlank(cacheMaxRows)) def.setCacheMaxRows(Integer.parseInt(cacheMaxRows));
 
         return def;
     }

@@ -1,0 +1,19 @@
+{
+    "uuid": "expense_reports",
+    "provider": "SQL",
+    "pushEnabled": true,
+    "pushMaxSize": 1024,
+    "isPublic": true,
+    "dataSource": "jdbc:h2:mem:test;DATABASE_TO_UPPER=FALSE",
+    "dbTable": "expense_reports",
+    "cacheEnabled": false,
+    "cacheMaxRows": 1000,
+    "columns": [
+        {"id": "id", "name": "id", "type": "number"},
+        {"id": "city", "name": "city", "type": "label"},
+        {"id": "department", "name": "dept", "type": "label"},
+        {"id": "employee", "name": "author", "type": "label"},
+        {"id": "amount", "name": "amount", "type": "number"},
+        {"id": "date", "name": "date", "type": "date"}
+    ]
+}

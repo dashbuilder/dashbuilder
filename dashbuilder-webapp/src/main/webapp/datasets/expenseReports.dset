@@ -11,10 +11,10 @@
     "datePattern": "MM-dd-yyyy",
     "numberPattern": "#,###.##",
     "columns": [
-      {"columnId": "office", "type": "label"},
-      {"columnId": "department", "type": "label"},
-      {"columnId": "employee", "type": "label"},
-      {"columnId": "amount", "type": "number", "poattern": "#,###.##"},
-      {"columnId": "date", "type": "date", "pattern": "MM-dd-yyyy"}
+      {"id": "office", "type": "label"},
+      {"id": "department", "type": "label"},
+      {"id": "employee", "type": "label"},
+      {"id": "amount", "type": "number", "pattern": "#,###.##"},
+      {"id": "date", "type": "date", "pattern": "MM-dd-yyyy"}
     ]
 }
