@@ -36,14 +36,10 @@ public class ClientIntervalBuilderLocator implements IntervalBuilderLocator {
         if (ColumnType.LABEL.equals(columnType)) {
             if (GroupStrategy.FIXED.equals(strategy)) return intervalBuilderDynamicLabel;
             if (GroupStrategy.DYNAMIC.equals(strategy)) return intervalBuilderDynamicLabel;
-            if (GroupStrategy.MULTIPLE.equals(strategy)) return intervalBuilderDynamicLabel;
-            if (GroupStrategy.CUSTOM.equals(strategy)) return intervalBuilderDynamicLabel;
         }
         if (ColumnType.DATE.equals(columnType)) {
             if (GroupStrategy.FIXED.equals(strategy)) return intervalBuilderFixedDate;
             if (GroupStrategy.DYNAMIC.equals(strategy)) return intervalBuilderDynamicDate;
-            if (GroupStrategy.MULTIPLE.equals(strategy)) return intervalBuilderFixedDate;
-            if (GroupStrategy.CUSTOM.equals(strategy)) return intervalBuilderDynamicDate;
             return intervalBuilderDynamicDate;
         }
         if (ColumnType.NUMBER.equals(columnType)) {

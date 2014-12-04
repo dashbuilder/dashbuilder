@@ -36,11 +36,6 @@ public enum GroupStrategy {
     DYNAMIC,
 
     /**
-     * Same as FIXED but each interval data is split into multiple series.
-     */
-    MULTIPLE,
-
-    /**
      * The intervals are defined in a custom manner and are not bound to any specific generation algorithm.
      */
     CUSTOM;
@@ -51,11 +46,9 @@ public enum GroupStrategy {
     public boolean isColumnTypeSupported(ColumnType ct) {
         switch (this) {
             case DYNAMIC:
-            case CUSTOM:
                 return true;
 
             case FIXED:
-            case MULTIPLE:
                 return ct.equals(ColumnType.DATE) || ct.equals(ColumnType.NUMBER);
         }
         return false;
