@@ -15,8 +15,8 @@
  */
 package org.dashbuilder.dataset;
 
+import java.sql.Timestamp;
 import java.util.Calendar;
-import java.util.Date;
 import javax.inject.Inject;
 
 import org.dashbuilder.test.ShrinkWrapHelper;
@@ -41,17 +41,17 @@ public class DataSetFilterTest {
                 .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
     }
 
-    public static final String EXPENSE_REPORTS = "expense_reports_dataset";
+    public static final String EXPENSE_REPORTS = "expense_reports";
 
     @Inject
-    DataSetManager dataSetManager;
+    public DataSetManager dataSetManager;
 
-    protected DataSet dataSet;
-    protected DataSetFormatter dataSetFormatter;
+    @Inject
+    public DataSetFormatter dataSetFormatter;
 
     @Before
     public void setUp() throws Exception {
-        dataSet = RawDataSetSamples.EXPENSE_REPORTS.toDataSet();
+        DataSet dataSet = RawDataSetSamples.EXPENSE_REPORTS.toDataSet();
         dataSet.setUUID(EXPENSE_REPORTS);
         dataSetManager.registerDataSet(dataSet);
         dataSetFormatter = new DataSetFormatter();
@@ -92,12 +92,12 @@ public class DataSetFilterTest {
     public void testFilterByDate() throws Exception {
         Calendar c = Calendar.getInstance();
         c.set(2015, 0, 0, 0, 0);
-        Date date = c.getTime();
+        Timestamp date = new Timestamp(c.getTime().getTime());
 
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                     .dataset(EXPENSE_REPORTS)
-                    .filter("date", isGreaterThan(date))
+                    .filter("date", isGreaterThan(new Timestamp(date.getTime())))
                     .buildLookup());
 
         //printDataSet(result);
@@ -108,7 +108,7 @@ public class DataSetFilterTest {
     public void testFilterMultiple() throws Exception {
         Calendar c = Calendar.getInstance();
         c.set(2015, 0, 0, 0, 0);
-        Date date = c.getTime();
+        Timestamp date = new Timestamp(c.getTime().getTime());
 
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
