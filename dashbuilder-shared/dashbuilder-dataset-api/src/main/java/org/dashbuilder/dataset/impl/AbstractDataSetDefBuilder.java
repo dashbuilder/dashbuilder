@@ -35,7 +35,7 @@ public abstract class AbstractDataSetDefBuilder<T> implements DataSetDefBuilder<
         return (T) this;
     }
 
-    public T pushOn(int maxPushSize) {
+    public T pushOn(int pushMaxSize) {
         return (T) this;
     }
 

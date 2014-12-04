@@ -15,8 +15,10 @@
  */
 package org.dashbuilder.dataset.def;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.dashbuilder.dataprovider.DataSetProviderType;
-import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetFactory;
 import org.jboss.errai.common.client.api.annotations.Portable;
@@ -33,7 +35,8 @@ public class DataSetDef {
     protected DataSet dataSet = DataSetFactory.newEmptyDataSet();
     protected boolean isPublic = true;
     protected boolean pushEnabled = false;
-    protected int maxPushSize = 1024;
+    protected int pushMaxSize = 1024;
+    protected Map<String,String> patternMap = new HashMap<String,String>();
 
     public String getUUID() {
         return UUID;
@@ -83,15 +86,19 @@ public class DataSetDef {
         this.pushEnabled = pushEnabled;
     }
 
-    public int getMaxPushSize() {
-        return maxPushSize;
+    public int getPushMaxSize() {
+        return pushMaxSize;
     }
 
-    public void setMaxPushSize(int maxPushSize) {
-        this.maxPushSize = maxPushSize;
+    public void setPushMaxSize(int pushMaxSize) {
+        this.pushMaxSize = this.pushMaxSize;
     }
 
-    public void asLabel(String columnId) {
-        dataSet.addColumn(columnId, ColumnType.LABEL);
+    public String getPattern(String columnId) {
+        return patternMap.get(columnId);
+    }
+
+    public void setPattern(String columnId, String pattern) {
+        patternMap.put(columnId, pattern);
     }
 }

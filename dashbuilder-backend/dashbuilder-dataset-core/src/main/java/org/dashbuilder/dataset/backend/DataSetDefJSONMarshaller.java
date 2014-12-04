@@ -20,6 +20,7 @@ import javax.inject.Inject;
 import org.apache.commons.lang.StringUtils;
 import org.dashbuilder.dataprovider.DataSetProviderRegistry;
 import org.dashbuilder.dataprovider.DataSetProviderType;
+import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.def.BeanDataSetDef;
 import org.dashbuilder.dataset.def.CSVDataSetDef;
 import org.dashbuilder.dataset.def.DataSetDef;
@@ -35,8 +36,13 @@ public class DataSetDefJSONMarshaller {
     public static final String UUID = "uuid";
     public static final String PROVIDER = "provider";
     public static final String ISPUBLIC = "isPublic";
-    public static final String PUSHENABLED = "pushEnabled";
-    public static final String MAXPUSHSIZE = "maxPushSize";
+    public static final String PUSH_ENABLED = "pushEnabled";
+    public static final String PUSH_MAXSIZE = "pushMaxSize";
+    public static final String COLUMNS = "columns";
+    public static final String COLUMN_ID = "id";
+    public static final String COLUMN_NAME = "name";
+    public static final String COLUMN_TYPE = "type";
+    public static final String COLUMN_PATTERN = "pattern";
 
     // CSV related
     public static final String FILEURL = "fileURL";
@@ -46,9 +52,6 @@ public class DataSetDefJSONMarshaller {
     public static final String ESCAPECHAR = "escapeChar";
     public static final String DATEPATTERN = "datePattern";
     public static final String NUMBERPATTERN = "numberPattern";
-    public static final String COLUMNS = "columns";
-    public static final String COLUMN_ID = "columnId";
-    public static final String ASLABEL = "asLabel";
 
     // Bean related
     public static final String GENERATOR_CLASS = "generatorClass";
@@ -65,6 +68,7 @@ public class DataSetDefJSONMarshaller {
         DataSetDef dataSetDef = DataSetProviderType.createDataSetDef(providerType);
 
         readGeneralSettings(dataSetDef, json);
+
         switch (providerType) {
             case CSV:
                 readCSVSettings((CSVDataSetDef) dataSetDef, json);
@@ -91,13 +95,46 @@ public class DataSetDefJSONMarshaller {
     public DataSetDef readGeneralSettings(DataSetDef def, JSONObject json) throws Exception {
         String uuid = json.has(UUID) ? json.getString(UUID) : null;
         String isPublic = json.has(ISPUBLIC) ? json.getString(ISPUBLIC) : null;
-        String pushEnabled = json.has(PUSHENABLED) ? json.getString(PUSHENABLED) : null;
-        String maxPushSize = json.has(MAXPUSHSIZE) ? json.getString(MAXPUSHSIZE) : null;
+        String pushEnabled = json.has(PUSH_ENABLED) ? json.getString(PUSH_ENABLED) : null;
+        String pushMaxSize = json.has(PUSH_MAXSIZE) ? json.getString(PUSH_MAXSIZE) : null;
 
         if (!StringUtils.isBlank(uuid)) def.setUUID(uuid);
         if (!StringUtils.isBlank(isPublic)) def.setPublic(Boolean.parseBoolean(isPublic));
         if (!StringUtils.isBlank(pushEnabled)) def.setPushEnabled(Boolean.parseBoolean(pushEnabled));
-        if (!StringUtils.isBlank(maxPushSize)) def.setMaxPushSize(Integer.parseInt(maxPushSize));
+        if (!StringUtils.isBlank(pushMaxSize)) def.setPushMaxSize(Integer.parseInt(pushMaxSize));
+
+        if (json.has(COLUMNS)) {
+            JSONArray array = json.getJSONArray(COLUMNS);
+            for (int i=0; i<array.length(); i++) {
+                JSONObject column = array.getJSONObject(i);
+                String columnId = column.has(COLUMN_ID) ? column.getString(COLUMN_ID) : null;
+                String columnName = column.has(COLUMN_NAME) ? column.getString(COLUMN_NAME) : null;
+                String columnType = column.has(COLUMN_TYPE) ? column.getString(COLUMN_TYPE) : null;
+                String columnPattern = column.has(COLUMN_PATTERN) ? column.getString(COLUMN_PATTERN) : null;
+
+                if (StringUtils.isBlank(columnId)) {
+                    throw new IllegalArgumentException("Column id. attribute is mandatory.");
+                }
+                if (StringUtils.isBlank(columnType)) {
+                    throw new IllegalArgumentException("Missing column 'type' attribute: " + columnId);
+                }
+
+                ColumnType type = ColumnType.TEXT;
+                if (columnType.equals("label")) type = ColumnType.LABEL;
+                else if (columnType.equals("date")) type = ColumnType.DATE;
+                else if (columnType.equals("number")) type = ColumnType.NUMBER;
+
+                if (StringUtils.isBlank(columnName)) {
+                    def.getDataSet().addColumn(columnId, type);
+                } else {
+                    def.getDataSet().addColumn(columnId, columnName, type);
+                }
+
+                if (!StringUtils.isBlank(columnPattern)) {
+                    def.setPattern(columnId, columnPattern);
+                }
+            }
+        }
         return def;
     }
 
@@ -138,22 +175,6 @@ public class DataSetDefJSONMarshaller {
         if (!StringUtils.isBlank(numberPattern)) def.setNumberPattern(numberPattern);
         if (!StringUtils.isBlank(datePattern)) def.setDatePattern(datePattern);
 
-        if (json.has(COLUMNS)) {
-            JSONArray array = json.getJSONArray(COLUMNS);
-            for (int i=0; i<array.length(); i++) {
-                JSONObject column = array.getJSONObject(i);
-                String columnId = column.has(COLUMN_ID) ? column.getString(COLUMN_ID) : null;
-                String asLabel = column.has(ASLABEL) ? column.getString(ASLABEL) : null;
-                String cNumberPattern = column.has(NUMBERPATTERN) ? column.getString(NUMBERPATTERN) : null;
-                String cDatePattern = column.has(DATEPATTERN) ? column.getString(DATEPATTERN) : null;
-
-                if (!StringUtils.isBlank(columnId)) {
-                    if (!StringUtils.isBlank(asLabel)) def.asLabel(columnId);
-                    else if (!StringUtils.isBlank(cNumberPattern)) def.setNumberPattern(columnId, cNumberPattern);
-                    else if (!StringUtils.isBlank(cDatePattern)) def.setDatePattern(columnId, cDatePattern);
-                }
-            }
-        }
         return def;
     }
 }

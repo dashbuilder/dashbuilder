@@ -52,10 +52,10 @@ public interface DataSetDefBuilder<T> {
     /**
      * Enable the ability to push remote data sets from server.
      *
-     * @param maxPushSize The maximum size (in kbytes) a data set may have in order to be pushed to clients.
+     * @param pushMaxSize The maximum size (in kbytes) a data set may have in order to be pushed to clients.
      * @return The DataSetDefBuilder instance that is being used to configure a DataSetDef.
      */
-    T pushOn(int maxPushSize);
+    T pushOn(int pushMaxSize);
 
     /**
      * Disable the ability to push remote data sets from server.

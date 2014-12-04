@@ -54,7 +54,7 @@ public class BackendDataSetManager implements DataSetManager {
     protected boolean pushEnabled = false;
 
     @Inject @Config("1024")
-    protected int maxPushSize = 2048;
+    protected int pushMaxSize = 2048;
 
     @Inject
     protected Logger log;
@@ -86,13 +86,13 @@ public class BackendDataSetManager implements DataSetManager {
             def.setUUID(dataSet.getUUID());
             def.setDataSet(dataSet);
             def.setPushEnabled(pushEnabled);
-            def.setMaxPushSize(maxPushSize);
+            def.setPushMaxSize(pushMaxSize);
             dataSetDefRegistry.registerDataSetDef(def);
         }
     }
 
     public DataSet removeDataSet(String uuid) {
-        if (StringUtils.isEmpty(uuid)) return null;
+        if (StringUtils.isBlank(uuid)) return null;
 
         dataSetDefRegistry.removeDataSetDef(uuid);
         return staticDataSetProvider.removeDataSet(uuid);
@@ -101,7 +101,7 @@ public class BackendDataSetManager implements DataSetManager {
     public DataSet lookupDataSet(DataSetLookup lookup) {
         try {
             String uuid = lookup.getDataSetUUID();
-            if (StringUtils.isEmpty(uuid)) return null;
+            if (StringUtils.isBlank(uuid)) return null;
 
             DataSetDef dataSetDef = dataSetDefRegistry.getDataSetDef(uuid);
             if (dataSetDef == null) return null;
@@ -121,13 +121,18 @@ public class BackendDataSetManager implements DataSetManager {
         return result;
     }
 
-    public DataSetMetadata lookupDataSetMetadata(DataSetLookup lookup) {
-        if (lookup == null) return null;
+    public DataSetMetadata getDataSetMetadata(String uuid) {
+        try {
+            if (StringUtils.isBlank(uuid)) return null;
 
-        DataSet dataSet = lookupDataSet(lookup);
+            DataSetDef dataSetDef = dataSetDefRegistry.getDataSetDef(uuid);
+            if (dataSetDef == null) return null;
 
-        if (dataSet == null) return null;
-        return dataSet.getMetadata();
+            return resolveProvider(dataSetDef)
+                    .getDataSetMetadata(dataSetDef);
+        } catch (Exception e) {
+            throw new RuntimeException("Can't get metadata on specified data set: " + uuid, e);
+        }
     }
 
     public DataSetProvider resolveProvider(DataSetDef dataSetDef) {

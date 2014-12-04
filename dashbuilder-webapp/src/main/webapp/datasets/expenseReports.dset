@@ -2,7 +2,7 @@
     "uuid": "expenseReports",
     "provider": "CSV",
     "pushEnabled": true,
-    "maxPushSize": 1024,
+    "pushMaxSize": 1024,
     "isPublic": true,
     "filePath": "expenseReports.csv",
     "separatorChar": ";",
@@ -11,10 +11,10 @@
     "datePattern": "MM-dd-yyyy",
     "numberPattern": "#,###.##",
     "columns": [
-      {"columnId": "office", "asLabel": "true"},
-      {"columnId": "department", "asLabel": "true"},
-      {"columnId": "employee", "asLabel": "true"},
-      {"columnId": "amount", "numberPattern": "#,###.##"},
-      {"columnId": "date", "datePattern": "MM-dd-yyyy"}
+      {"columnId": "office", "type": "label"},
+      {"columnId": "department", "type": "label"},
+      {"columnId": "employee", "type": "label"},
+      {"columnId": "amount", "type": "number", "poattern": "#,###.##"},
+      {"columnId": "date", "type": "date", "pattern": "MM-dd-yyyy"}
     ]
 }

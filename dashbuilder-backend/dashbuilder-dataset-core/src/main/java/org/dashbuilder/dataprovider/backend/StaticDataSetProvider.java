@@ -26,6 +26,7 @@ import org.dashbuilder.dataprovider.DataSetProvider;
 import org.dashbuilder.dataprovider.DataSetProviderType;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetLookup;
+import org.dashbuilder.dataset.DataSetMetadata;
 import org.dashbuilder.dataset.def.DataSetDef;
 import org.dashbuilder.dataset.engine.SharedDataSetOpEngine;
 import org.dashbuilder.dataset.engine.index.DataSetIndex;
@@ -60,6 +61,12 @@ public class StaticDataSetProvider implements DataSetProvider {
 
     public DataSetProviderType getType() {
         return DataSetProviderType.STATIC;
+    }
+
+    public DataSetMetadata getDataSetMetadata(DataSetDef def) {
+        DataSet dataSet = lookupDataSet(def, null);
+        if (dataSet == null) return null;
+        return dataSet.getMetadata();
     }
 
     public void registerDataSet(DataSet dataSet) {

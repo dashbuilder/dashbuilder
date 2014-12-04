@@ -58,8 +58,8 @@ public class DataSetBackendServicesImpl implements DataSetBackendServices {
         return dataSetManager.lookupDataSet(lookup);
     }
 
-    public DataSetMetadata lookupDataSetMetadata(DataSetLookup lookup) throws Exception {
-        return dataSetManager.lookupDataSetMetadata(lookup);
+    public DataSetMetadata lookupDataSetMetadata(String uuid) throws Exception {
+        return dataSetManager.getDataSetMetadata(uuid);
     }
 
     public List<DataSetDef> getPublicDataSetDefs() {

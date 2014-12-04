@@ -438,7 +438,8 @@ public class SharedDataSetOpEngine implements DataSetOpEngine {
                 DataSetGroup gOp = (DataSetGroup) lastOp;
                 ColumnGroup columnGroup = gOp.getColumnGroup();
                 if (columnGroup == null) {
-                    return _buildDataSet(context, gOp.getGroupFunctions());
+                    boolean hasAggregations = !gOp.getAggregationFunctions().isEmpty();
+                    return _buildDataSet(context, gOp.getGroupFunctions(), hasAggregations);
                 } else {
                     if (!gOp.getSelectedIntervalNames().isEmpty() && gOp.getGroupFunctions().isEmpty()) {
                         return dataSet.trim(index.getRows());
@@ -536,18 +537,11 @@ public class SharedDataSetOpEngine implements DataSetOpEngine {
             return result;
         }
 
-        private DataSet _buildDataSet(InternalContext context, List<GroupFunction> groupFunctions) {
+        private DataSet _buildDataSet(InternalContext context, List<GroupFunction> groupFunctions, boolean hasAggregations) {
             DataSetIndexNode index = context.index;
             DataSet dataSet = context.dataSet;
-            boolean hasAggregations = false;
-            for (GroupFunction groupFunction : groupFunctions) {
-                if (groupFunction.getFunction() != null) {
-                    hasAggregations = true;
-                    break;
-                }
-            }
-
             DataSet result= DataSetFactory.newEmptyDataSet();
+
             if (hasAggregations) {
                 for (int i=0; i< groupFunctions.size(); i++) {
                     GroupFunction groupFunction = groupFunctions.get(i);

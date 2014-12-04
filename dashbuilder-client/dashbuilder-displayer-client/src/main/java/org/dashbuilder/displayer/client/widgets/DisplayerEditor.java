@@ -132,10 +132,9 @@ public class DisplayerEditor implements IsWidget,
     public void fetchDataSetLookup() {
         try {
             String uuid = displayerSettings.getDataSetLookup().getDataSetUUID();
-            DataSetLookup metadataLookup = DataSetFactory.newDataSetLookupBuilder().dataset(uuid).buildLookup();
-            DataSetClientServices.get().fetchMetadata(metadataLookup, new DataSetMetadataCallback() {
-                public void callback(DataSetMetadata metadata) {
+            DataSetClientServices.get().fetchMetadata(uuid, new DataSetMetadataCallback() {
 
+                public void callback(DataSetMetadata metadata) {
                     Displayer displayer = DisplayerLocator.get().lookupDisplayer(displayerSettings);
                     DataSetLookupConstraints constraints = displayer.getDisplayerConstraints().getDataSetLookupConstraints();
                     view.updateDataSetLookup(constraints, metadata);
@@ -167,7 +166,7 @@ public class DisplayerEditor implements IsWidget,
     @Override
     public void dataSetChanged(final String uuid) {
         try {
-            DataSetClientServices.get().fetchMetadata(DataSetFactory.newDataSetLookupBuilder().dataset(uuid).buildLookup(), new DataSetMetadataCallback() {
+            DataSetClientServices.get().fetchMetadata(uuid, new DataSetMetadataCallback() {
                 public void callback(DataSetMetadata metadata) {
 
                     // Create a dataSetLookup instance for the target data set that fits the displayer constraints

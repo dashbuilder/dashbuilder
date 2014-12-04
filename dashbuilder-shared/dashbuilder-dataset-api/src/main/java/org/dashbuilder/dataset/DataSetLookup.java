@@ -19,8 +19,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ArrayList;
 
+import org.dashbuilder.dataset.filter.DataSetFilter;
 import org.dashbuilder.dataset.group.ColumnGroup;
 import org.dashbuilder.dataset.group.DataSetGroup;
+import org.dashbuilder.dataset.sort.DataSetSort;
 import org.jboss.errai.common.client.api.annotations.Portable;
 
 /**
@@ -123,6 +125,37 @@ public class DataSetLookup {
     public DataSetLookup addOperation(DataSetOp op) {
         operationList.add(op);
         return this;
+    }
+
+    public DataSetFilter getFirstFilterOp() {
+        List<DataSetFilter> ops = getOperationList(DataSetFilter.class);
+        if (ops.isEmpty()) return null;
+        return ops.get(0);
+    }
+
+    public DataSetSort getFirstSortOp() {
+        List<DataSetSort> ops = getOperationList(DataSetSort.class);
+        if (ops.isEmpty()) return null;
+        return ops.get(0);
+    }
+
+    public int getFirstGroupOpIndex(int fromIndex, String columnId, boolean onlySelections) {
+        for (int i = fromIndex; i < operationList.size(); i++) {
+            DataSetOp op = operationList.get(i);
+            if (DataSetOpType.GROUP.equals(op.getType())) {
+                DataSetGroup groupOp = (DataSetGroup) op;
+                ColumnGroup cg = groupOp.getColumnGroup();
+
+                boolean hasSelections = !groupOp.getSelectedIntervalNames().isEmpty();
+                boolean matchColumn = columnId == null || (cg != null && cg.getColumnId().equals(columnId));
+                boolean matchSelections = (onlySelections && hasSelections) || (!onlySelections && !hasSelections);
+
+                if (matchColumn && matchSelections) {
+                    return i;
+                }
+            }
+        }
+        return -1;
     }
 
     public int getLastGroupOpIndex(int fromIndex, String columnId, boolean onlySelections) {

@@ -41,7 +41,7 @@ public interface DataSetBackendServices {
      *
      * @return A DataSetMetadata instance containing general information about the data set.
      */
-    DataSetMetadata lookupDataSetMetadata(DataSetLookup lookup) throws Exception;
+    DataSetMetadata lookupDataSetMetadata(String uuid) throws Exception;
 
     /**
      * Get those public (shareable) data set definition (those with the public flag set to true)
