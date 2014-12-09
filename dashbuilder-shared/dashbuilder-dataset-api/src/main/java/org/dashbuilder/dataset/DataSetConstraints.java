@@ -96,10 +96,10 @@ public class DataSetConstraints<T> {
     public ValidationError check(DataSet dataSet) {
 
         if (minColumns != -1 && dataSet.getColumns().size() < minColumns) {
-            return new ValidationError(ERROR_COLUMN_NUMBER);
+            return createValidationError(ERROR_COLUMN_NUMBER);
         }
         if (maxColumns != -1 && dataSet.getColumns().size() > maxColumns) {
-            return new ValidationError(ERROR_COLUMN_NUMBER);
+            return createValidationError(ERROR_COLUMN_NUMBER);
         }
         ValidationError error = null;
         if (columnTypes != null) {
@@ -117,27 +117,23 @@ public class DataSetConstraints<T> {
         for (int i = 0; i < dataSet.getColumns().size(); i++) {
             ColumnType columnType = dataSet.getColumnByIndex(i).getColumnType();
             if (i < types.length && !columnType.equals(types[i])) {
-                return new ValidationError(ERROR_COLUMN_TYPE, i);
+                return createValidationError(ERROR_COLUMN_TYPE, i, types[i], columnType);
             }
         }
         return null;
     }
 
-    public class ValidationError {
-        int code = -1;
-        List parameters = new ArrayList();
-
-        public ValidationError(int code, Object... params) {
-            this.code = code;
-            this.parameters.add(params);
+    protected ValidationError createValidationError(int error, Object... params) {
+        switch (error) {
+            case ERROR_COLUMN_NUMBER:
+                return new ValidationError(error, "Number of columns exceeds the limits ["
+                        + (minColumns == -1 ? 0 : minColumns) + ", " + (maxColumns != -1 ? maxColumns : "unlimited") + "]");
+            case ERROR_COLUMN_TYPE:
+                Integer idx = (Integer) params[0];
+                ColumnType expected = (ColumnType) params[1];
+                ColumnType found = (ColumnType) params[2];
+                return new ValidationError(error, "Column " + idx + " type=" + found + ", expected=" + expected);
         }
-
-        public int getCode() {
-            return code;
-        }
-
-        public List getParameters() {
-            return parameters;
-        }
+        return new ValidationError(error);
     }
 }

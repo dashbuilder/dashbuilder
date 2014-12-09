@@ -119,15 +119,28 @@ public class DataSetLookupConstraints extends DataSetConstraints<DataSetLookupCo
 
         List<DataSetGroup> grOps = lookup.getOperationList(DataSetGroup.class);
         if (!groupAllowed && grOps.size() > 0) {
-            return new ValidationError(ERROR_GROUP_NOT_ALLOWED);
+            return createValidationError(ERROR_GROUP_NOT_ALLOWED);
         }
         if (groupRequired && grOps.size() == 0) {
-            return new ValidationError(ERROR_GROUP_REQUIRED);
+            return createValidationError(ERROR_GROUP_REQUIRED);
         }
         if (maxGroups != -1 && grOps.size() > maxGroups) {
-            return new ValidationError(ERROR_GROUP_NUMBER);
+            return createValidationError(ERROR_GROUP_NUMBER);
         }
         return null;
+    }
+
+    protected ValidationError createValidationError(int error) {
+        switch (error) {
+            case ERROR_GROUP_NOT_ALLOWED:
+                return new ValidationError(error, "Group not allowed");
+            case ERROR_GROUP_REQUIRED:
+                String groupColumn = groupsTitle != null ? groupsTitle : "Group";
+                return new ValidationError(error, groupColumn + " column required");
+            case ERROR_GROUP_NUMBER:
+                return new ValidationError(error, "Max. groups allowed exceeded " + maxGroups);
+        }
+        return new ValidationError(error);
     }
 
     public DataSetLookup newDataSetLookup(DataSetMetadata metatada) {
