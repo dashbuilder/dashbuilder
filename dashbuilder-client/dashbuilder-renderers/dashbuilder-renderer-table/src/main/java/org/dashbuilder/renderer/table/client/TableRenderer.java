@@ -32,7 +32,7 @@ import org.dashbuilder.displayer.client.RendererLibLocator;
 @Named(TableRenderer.UUID + "_renderer")
 public class TableRenderer extends AbstractRendererLibrary {
 
-    public static final String UUID = "table";
+    public static final String UUID = "GWT Core";
 
     @PostConstruct
     private void init() {

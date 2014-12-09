@@ -37,7 +37,7 @@ import org.dashbuilder.displayer.client.RendererLibLocator;
 @Named(GoogleRenderer.UUID + "_renderer")
 public class GoogleRenderer extends AbstractRendererLibrary {
 
-    public static final String UUID = "google";
+    public static final String UUID = "GWT Charts";
 
     @PostConstruct
     private void init() {

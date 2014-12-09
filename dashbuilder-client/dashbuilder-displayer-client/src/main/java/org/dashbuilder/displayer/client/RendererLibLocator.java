@@ -78,7 +78,7 @@ public class RendererLibLocator {
     public RendererLibrary lookupRenderer(String renderer) {
 
         // Take the google renderer as the default.
-        if (renderer == null) renderer = "google";
+        if (renderer == null) renderer = "GWT Charts";
 
         // Lookup the renderer library.
         String beanName = renderer + "_renderer";

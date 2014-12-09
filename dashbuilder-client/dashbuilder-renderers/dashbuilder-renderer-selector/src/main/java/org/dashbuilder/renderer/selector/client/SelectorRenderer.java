@@ -32,7 +32,7 @@ import org.dashbuilder.displayer.client.RendererLibLocator;
 @Named(SelectorRenderer.UUID + "_renderer")
 public class SelectorRenderer extends AbstractRendererLibrary {
 
-    public static final String UUID = "selector";
+    public static final String UUID = "Standard";
 
     @PostConstruct
     private void init() {
