@@ -24,6 +24,7 @@ import java.util.Set;
 
 import com.google.gwt.user.client.ui.Composite;
 import org.dashbuilder.common.client.StringUtils;
+import org.dashbuilder.dataset.ValidationError;
 import org.dashbuilder.dataset.group.ColumnGroup;
 import org.dashbuilder.dataset.group.DataSetGroup;
 import org.dashbuilder.dataset.group.GroupStrategy;
@@ -70,10 +71,8 @@ public abstract class AbstractDisplayer extends Composite implements Displayer {
     public void checkDisplayerSettings(DisplayerSettings displayerSettings) {
         DisplayerConstraints constraints = getDisplayerConstraints();
         if (displayerConstraints != null) {
-            DisplayerConstraints.ValidationError error = constraints.check(displayerSettings);
-            if (error != null) {
-                throw new RuntimeException("ERROR " + error.getCode() + " on " + displayerSettings.getType() + " displayer");
-            }
+            ValidationError error = constraints.check(displayerSettings);
+            if (error != null) throw error;
         }
     }
 

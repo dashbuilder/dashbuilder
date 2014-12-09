@@ -102,8 +102,14 @@ public class DataSetLookupConstraintsTest {
         assertThat(constraints.check(lookup)).isNull();
 
         DataSet result = dataSetManager.lookupDataSet(lookup);
-        // TODO: label functions
-        //printDataSet(result);
+        assertDataSetValues(result, dataSetFormatter, new String[][]{
+                {"Barcelona", "Engineering"},
+                {"Madrid", "Services"},
+                {"Brno", "Support"},
+                {"Westford", "Engineering"},
+                {"Raleigh", "Management"},
+                {"London", "Engineering"}
+        }, 0);
     }
 
     @Test

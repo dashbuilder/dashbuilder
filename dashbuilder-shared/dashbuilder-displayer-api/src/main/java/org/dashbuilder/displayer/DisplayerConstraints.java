@@ -15,19 +15,16 @@
  */
 package org.dashbuilder.displayer;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import org.dashbuilder.dataset.DataSetLookupConstraints;
+import org.dashbuilder.dataset.ValidationError;
 
 /**
  * Every Displayer implementation can used this class to specify what are the supported DisplayerSettings attributes.
  */
 public class DisplayerConstraints {
-
-    public static final int ERROR_DATASET_LOOKUP_CONSTRAINTS_NOT_FOUND = 301;
 
     protected DataSetLookupConstraints dataSetLookupConstraints;
     protected Set<DisplayerAttributeDef> supportedEditorAttributes;
@@ -69,34 +66,26 @@ public class DisplayerConstraints {
 
     public ValidationError check(DisplayerSettings settings) {
         if (dataSetLookupConstraints == null) {
-            return new ValidationError(ERROR_DATASET_LOOKUP_CONSTRAINTS_NOT_FOUND);
+            return createValidationError(ERROR_DATASET_LOOKUP_CONSTRAINTS_NOT_FOUND);
         }
         if (settings.getDataSet() != null) {
-            DataSetLookupConstraints.ValidationError error = dataSetLookupConstraints.check(settings.getDataSet());
-            if (error != null) return new ValidationError(error.getCode(), error.getParameters());
+            ValidationError error = dataSetLookupConstraints.check(settings.getDataSet());
+            if (error != null) return error;
         }
         else if (settings.getDataSetLookup() != null) {
-            DataSetLookupConstraints.ValidationError error = dataSetLookupConstraints.check(settings.getDataSetLookup());
-            if (error != null) return new ValidationError(error.getCode(), error.getParameters());
+            ValidationError error = dataSetLookupConstraints.check(settings.getDataSetLookup());
+            if (error != null) return error;
         }
         return null;
     }
 
-    public class ValidationError {
-        int code = -1;
-        List parameters = new ArrayList();
+    public static final int ERROR_DATASET_LOOKUP_CONSTRAINTS_NOT_FOUND = 301;
 
-        public ValidationError(int code, Object... params) {
-            this.code = code;
-            this.parameters.add(params);
+    protected ValidationError createValidationError(int error) {
+        switch (error) {
+            case ERROR_DATASET_LOOKUP_CONSTRAINTS_NOT_FOUND:
+                return new ValidationError(error, "Missing DataSetLookupContraints instance");
         }
-
-        public int getCode() {
-            return code;
-        }
-
-        public List getParameters() {
-            return parameters;
-        }
+        return new ValidationError(error);
     }
 }
