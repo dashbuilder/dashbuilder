@@ -105,12 +105,14 @@ public class SQLDataSetProvider implements DataSetProvider {
                 }
                 // Fetch from database and register into the static cache. Further requests will lookup from cache.
                 dataSet = _lookupDataSet(sqlDef, null);
+                dataSet.setUUID(def.getUUID());
+                dataSet.setDefinition(def);
                 staticDataSetProvider.registerDataSet(dataSet);
                 return staticDataSetProvider.lookupDataSet(def, lookup);
             }
         }
 
-        // If cache is disabled always fetch from database.
+        // If cache is disabled then always fetch from database.
         return _lookupDataSet(sqlDef, lookup);
     }
 
@@ -120,11 +122,14 @@ public class SQLDataSetProvider implements DataSetProvider {
             SQLDataSetDef sqlDef = (SQLDataSetDef) def;
             if (!sqlDef.isCacheEnabled()) return false;
 
+            // A no-synced cache will always contains the same rows since it was created.
+            if (!sqlDef.isCacheSynced()) return false;
+
             // ... for non cached data sets either.
             DataSet dataSet = staticDataSetProvider.lookupDataSet(def, null);
             if (dataSet == null) return false;
 
-            // Compare the cached vs database data set sizes.
+            // Compare the cached vs database rows.
             int rows = getRowCount(sqlDef);
             return rows != dataSet.getRowCount();
         }

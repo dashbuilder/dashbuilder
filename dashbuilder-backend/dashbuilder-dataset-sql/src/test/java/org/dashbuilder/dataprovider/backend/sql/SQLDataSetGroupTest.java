@@ -15,120 +15,18 @@
  */
 package org.dashbuilder.dataprovider.backend.sql;
 
-import java.net.URL;
-import java.sql.Connection;
-import javax.inject.Inject;
-import javax.sql.DataSource;
-
-import org.apache.commons.io.IOUtils;
 import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetFactory;
 import org.dashbuilder.dataset.DataSetFilterTest;
-import org.dashbuilder.dataset.DataSetFormatter;
 import org.dashbuilder.dataset.DataSetGroupTest;
-import org.dashbuilder.dataset.DataSetManager;
-import org.dashbuilder.dataset.RawDataSetSamples;
-import org.dashbuilder.dataset.backend.DataSetDefJSONMarshaller;
-import org.dashbuilder.dataset.def.DataSetDefRegistry;
-import org.dashbuilder.dataset.def.SQLDataSetDef;
-import org.dashbuilder.test.ShrinkWrapHelper;
-import org.jboss.arquillian.container.test.api.Deployment;
-import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.shrinkwrap.api.Archive;
-import org.jboss.shrinkwrap.api.asset.EmptyAsset;
-import org.jooq.Field;
-import org.jooq.Table;
-import org.jooq.impl.SQLDataType;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
-import static org.dashbuilder.dataset.Assertions.*;
 import static org.dashbuilder.dataset.group.AggregateFunctionType.*;
-import static org.dashbuilder.dataset.group.DateIntervalType.*;
 import static org.dashbuilder.dataset.filter.FilterFactory.*;
 import static org.fest.assertions.api.Assertions.*;
-import static org.jooq.impl.DSL.*;
 
-@RunWith(Arquillian.class)
-public class SQLDataSetGroupTest {
-
-    @Deployment
-    public static Archive<?> createTestArchive()  {
-        return ShrinkWrapHelper.createJavaArchive()
-                .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
-    }
-
-    @Inject
-    DataSetManager dataSetManager;
-
-    @Inject
-    DataSetFormatter dataSetFormatter;
-
-    @Inject
-    DataSetDefRegistry dataSetDefRegistry;
-
-    @Inject
-    DataSetDefJSONMarshaller jsonMarshaller;
-
-    @Inject
-    SQLDataSourceLocator dataSourceLocator;
-
-    public static final String CREATE_TABLE = "CREATE TABLE expense_reports (\n" +
-            "  id INTEGER NOT NULL,\n" +
-            "  city VARCHAR(50),\n" +
-            "  department VARCHAR(50),\n" +
-            "  employee VARCHAR(50),\n" +
-            "  date TIMESTAMP,\n" +
-            "  amount NUMERIC(28,2),\n" +
-            "  PRIMARY KEY(id)\n" +
-            ")";
-
-    Connection conn;
-    Table EXPENSES = table("expense_reports");
-    Field ID = field("id", SQLDataType.INTEGER);
-    Field CITY = field("city", SQLDataType.VARCHAR.length(50));
-    Field DEPT = field("department", SQLDataType.VARCHAR.length(50));
-    Field EMPLOYEE = field("employee", SQLDataType.VARCHAR.length(50));
-    Field DATE = field("date", SQLDataType.DATE);
-    Field AMOUNT = field("amount", SQLDataType.FLOAT);
-
-    @Before
-    public void setUp() throws Exception {
-
-        // Register the SQL based data set
-        URL fileURL = Thread.currentThread().getContextClassLoader().getResource("expenseReports.dset");
-        String json = IOUtils.toString(fileURL);
-        SQLDataSetDef def = (SQLDataSetDef) jsonMarshaller.fromJson(json);
-        dataSetDefRegistry.registerDataSetDef(def);
-
-        // Get a data source connection
-        DataSource dataSource = dataSourceLocator.lookup(def);
-        conn = dataSource.getConnection();
-
-        // Create the expense reports table
-        using(conn).execute(CREATE_TABLE);
-
-        // Populate the table
-        DataSet dataSet = RawDataSetSamples.EXPENSE_REPORTS.toDataSet();
-        for (int i = 0; i < dataSet.getRowCount(); i++) {
-            using(conn).insertInto(EXPENSES)
-                    .set(ID, dataSet.getValueAt(i, 0))
-                    .set(CITY, dataSet.getValueAt(i, 1))
-                    .set(DEPT, dataSet.getValueAt(i, 2))
-                    .set(EMPLOYEE, dataSet.getValueAt(i, 3))
-                    .set(DATE, dataSet.getValueAt(i, 4))
-                    .set(AMOUNT, dataSet.getValueAt(i, 5))
-                    .execute();
-        }
-    }
-
-    @After
-    public void tearDown() throws Exception {
-        conn.close();
-    }
+public class SQLDataSetGroupTest extends SQLDataSetTestBase {
 
     @Test
     public void testDataSetTrim() throws Exception {

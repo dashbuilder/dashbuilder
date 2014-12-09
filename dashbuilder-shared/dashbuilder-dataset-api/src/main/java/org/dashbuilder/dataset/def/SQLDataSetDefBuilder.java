@@ -51,4 +51,13 @@ public interface SQLDataSetDefBuilder<T extends DataSetDefBuilder> extends DataS
      * @return The DataSetDefBuilder instance that is being used to configure a DataSetDef.
      */
     T dbTable(String dbTable);
+
+    /**
+     * Enables the static cache
+     *
+     * @param synced For keeping the cache synced with the remote database content. If false, the cached content will get never updated once read.
+     * @param maxRowsInCache Max. rows the cache is able to handle. For higher values the cache is automatically disabled.
+     * @return The DataSetDefBuilder instance that is being used to configure a DataSetDef.
+     */
+    T cacheOn(boolean synced, int maxRowsInCache);
 }
