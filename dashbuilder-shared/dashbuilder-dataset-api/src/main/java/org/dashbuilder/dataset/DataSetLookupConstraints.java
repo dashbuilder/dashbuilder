@@ -191,6 +191,10 @@ public class DataSetLookupConstraints extends DataSetConstraints<DataSetLookupCo
                 if (functionRequired) builder.column(AggregateFunctionType.COUNT, "#items");
                 else builder.column(columnId);
             }
+            else if (ColumnType.TEXT.equals(targetType)) {
+                if (functionRequired) builder.column(AggregateFunctionType.COUNT, "#items");
+                else builder.column(columnId);
+            }
             else if (ColumnType.DATE.equals(targetType)) {
                 if (functionRequired) builder.column(AggregateFunctionType.COUNT, "#items");
                 else builder.column(columnId);

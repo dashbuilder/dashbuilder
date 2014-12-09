@@ -22,6 +22,7 @@ import org.jboss.errai.common.client.api.annotations.Portable;
 public class SQLDataSetDef extends DataSetDef {
 
     protected String dataSource;
+    protected String dbSchema;
     protected String dbTable;
     protected boolean cacheEnabled = false;
     protected int cacheMaxRows = 1000;
@@ -44,6 +45,14 @@ public class SQLDataSetDef extends DataSetDef {
 
     public void setDbTable(String dbTable) {
         this.dbTable = dbTable;
+    }
+
+    public String getDbSchema() {
+        return dbSchema;
+    }
+
+    public void setDbSchema(String dbSchema) {
+        this.dbSchema = dbSchema;
     }
 
     public boolean isCacheEnabled() {
@@ -70,6 +79,7 @@ public class SQLDataSetDef extends DataSetDef {
         out.append("Push enabled=").append(pushEnabled).append("\n");
         out.append("Push max size=").append(pushMaxSize).append(" Kb\n");
         out.append("Data source=").append(dataSource).append("\n");
+        if (dbSchema != null) out.append("DB Schema=").append(dbSchema).append("\n");
         out.append("DB Table=").append(dbTable).append("\n");
         out.append("Cache enabled=").append(cacheEnabled).append("\n");
         out.append("Cache max rows=").append(cacheMaxRows).append(" Kb\n");

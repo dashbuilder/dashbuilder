@@ -161,10 +161,16 @@ public interface DataSet {
     DataSet trim(List<Integer> rows);
 
     /**
-     * If this data set is teh result of a trim operation on a data set this method will return
+     * If this data set is the result of a trim operation on a data set this method will return
      * the total number of rows existing before trim.
      */
     int getRowCountNonTrimmed();
+
+    /**
+     * If this data set is the result of a trim operation on a data set this method will return
+     * the total number of rows existing before trim.
+     */
+    void setRowCountNonTrimmed(int count);
 
     /**
      * Build a data set with the same structure as this but containing no data.

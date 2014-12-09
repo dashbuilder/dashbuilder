@@ -56,6 +56,7 @@ public class DataSetDefJSONMarshaller {
 
     // SQL related
     public static final String DATA_SOURCE = "dataSource";
+    public static final String DB_SCHEMA = "dbSchema";
     public static final String DB_TABLE = "dbTable";
     public static final String CACHE_ENABLED = "cacheEnabled";
     public static final String CACHE_MAXROWS = "cacheMaxRows";
@@ -191,10 +192,12 @@ public class DataSetDefJSONMarshaller {
     public SQLDataSetDef readSQLSettings(SQLDataSetDef def, JSONObject json) throws Exception {
         String dataSource = json.has(DATA_SOURCE) ? json.getString(DATA_SOURCE) : null;
         String dbTable = json.has(DB_TABLE) ? json.getString(DB_TABLE) : null;
+        String dbSchema = json.has(DB_SCHEMA) ? json.getString(DB_SCHEMA) : null;
         String cacheEnabled = json.has(CACHE_ENABLED) ? json.getString(CACHE_ENABLED) : null;
         String cacheMaxRows = json.has(CACHE_MAXROWS) ? json.getString(CACHE_MAXROWS) : null;
 
         if (!StringUtils.isBlank(dataSource)) def.setDataSource(dataSource);
+        if (!StringUtils.isBlank(dbSchema)) def.setDbSchema(dbSchema);
         if (!StringUtils.isBlank(dbTable)) def.setDbTable(dbTable);
         if (!StringUtils.isBlank(cacheEnabled)) def.setCacheEnabled(Boolean.parseBoolean(cacheEnabled));
         if (!StringUtils.isBlank(cacheMaxRows)) def.setCacheMaxRows(Integer.parseInt(cacheMaxRows));

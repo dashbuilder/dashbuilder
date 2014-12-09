@@ -30,6 +30,11 @@ public class SQLDataSetDefBuilderImpl extends AbstractDataSetDefBuilder<SQLDataS
         return this;
     }
 
+    public SQLDataSetDefBuilderImpl dbSchema(String dbSchema) {
+        ((SQLDataSetDef) def).setDbSchema(dbSchema);
+        return this;
+    }
+
     public SQLDataSetDefBuilderImpl dbTable(String dbTable) {
         ((SQLDataSetDef) def).setDbTable(dbTable);
         return this;

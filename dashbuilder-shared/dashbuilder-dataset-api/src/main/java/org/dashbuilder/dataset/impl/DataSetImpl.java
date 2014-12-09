@@ -157,6 +157,10 @@ public class DataSetImpl implements DataSet {
         return rowCountNonTrimmed;
     }
 
+    public void setRowCountNonTrimmed(int rowCountNonTrimmed) {
+        this.rowCountNonTrimmed = rowCountNonTrimmed;
+    }
+
     public Object getValueAt(int row, String columnId) {
         DataColumn columnObj = getColumnById(columnId);
         return getValueAt(row, columnObj);

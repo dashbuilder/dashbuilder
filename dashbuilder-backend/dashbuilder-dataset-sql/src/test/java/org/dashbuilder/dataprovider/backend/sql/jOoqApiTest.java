@@ -27,6 +27,7 @@ import org.jooq.Field;
 import org.jooq.Result;
 import org.jooq.ResultQuery;
 import org.jooq.Table;
+import org.jooq.conf.RenderMapping;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
 import org.jooq.impl.SQLDataType;
@@ -48,6 +49,16 @@ public class jOoqApiTest {
     Field DATE = field("DATE", SQLDataType.DATE);
     Field AMOUNT = field("AMOUNT", SQLDataType.FLOAT);
 
+    public static final String CREATE_TABLE = "CREATE TABLE expense_reports (\n" +
+            "  id INTEGER NOT NULL,\n" +
+            "  city VARCHAR(50),\n" +
+            "  department VARCHAR(50),\n" +
+            "  employee VARCHAR(50),\n" +
+            "  date TIMESTAMP,\n" +
+            "  amount NUMERIC(28,2),\n" +
+            "  PRIMARY KEY(id)\n" +
+            ")";
+
     @Before
     public void setUp() throws Exception {
         JdbcDataSource ds = new JdbcDataSource();
@@ -55,15 +66,7 @@ public class jOoqApiTest {
         conn = ds.getConnection();
 
         // Create the table
-        using(conn)
-                .createTable(EXPENSES)
-                .column(ID, SQLDataType.INTEGER)
-                .column(CITY, SQLDataType.VARCHAR.length(50))
-                .column(DEPT, SQLDataType.VARCHAR.length(50))
-                .column(EMPLOYEE, SQLDataType.VARCHAR.length(50))
-                .column(DATE, SQLDataType.DATE)
-                .column(AMOUNT, SQLDataType.FLOAT)
-                .execute();
+        using(conn).execute(CREATE_TABLE);
 
         // Populate the table
         DataSet dataSet = RawDataSetSamples.EXPENSE_REPORTS.toDataSet();
@@ -82,6 +85,16 @@ public class jOoqApiTest {
     @After
     public void tearDown() throws Exception {
         conn.close();
+    }
+
+    @Test
+    public void testDefaultSchema() throws Exception {
+        ResultQuery ctx = DSL.using(conn)
+                .select(fieldByName("dashbuilder", ID.getName()))
+                .from(tableByName("dashbuilder", EXPENSES.getName()));
+
+        String sql = ctx.getSQL();
+        assertThat(sql).isEqualTo("select \"dashbuilder\".\"ID\" from \"dashbuilder\".\"table\"");
     }
 
     @Test

@@ -18,7 +18,6 @@ package org.dashbuilder.dataprovider.backend.sql;
 import java.net.URL;
 import java.sql.Connection;
 import javax.inject.Inject;
-import javax.naming.InitialContext;
 import javax.sql.DataSource;
 
 import org.apache.commons.io.IOUtils;
@@ -31,19 +30,13 @@ import org.dashbuilder.dataset.DataSetGroupTest;
 import org.dashbuilder.dataset.DataSetManager;
 import org.dashbuilder.dataset.RawDataSetSamples;
 import org.dashbuilder.dataset.backend.DataSetDefJSONMarshaller;
-import org.dashbuilder.dataset.date.DayOfWeek;
-import org.dashbuilder.dataset.date.Month;
-import org.dashbuilder.dataset.def.DataSetDef;
 import org.dashbuilder.dataset.def.DataSetDefRegistry;
 import org.dashbuilder.dataset.def.SQLDataSetDef;
-import org.dashbuilder.dataset.group.DateIntervalType;
 import org.dashbuilder.test.ShrinkWrapHelper;
-import org.h2.jdbcx.JdbcDataSource;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
-import org.jooq.DSLContext;
 import org.jooq.Field;
 import org.jooq.Table;
 import org.jooq.impl.SQLDataType;
@@ -55,6 +48,7 @@ import org.junit.runner.RunWith;
 import static org.dashbuilder.dataset.Assertions.*;
 import static org.dashbuilder.dataset.group.AggregateFunctionType.*;
 import static org.dashbuilder.dataset.group.DateIntervalType.*;
+import static org.dashbuilder.dataset.filter.FilterFactory.*;
 import static org.fest.assertions.api.Assertions.*;
 import static org.jooq.impl.DSL.*;
 
@@ -82,6 +76,16 @@ public class SQLDataSetGroupTest {
     @Inject
     SQLDataSourceLocator dataSourceLocator;
 
+    public static final String CREATE_TABLE = "CREATE TABLE expense_reports (\n" +
+            "  id INTEGER NOT NULL,\n" +
+            "  city VARCHAR(50),\n" +
+            "  department VARCHAR(50),\n" +
+            "  employee VARCHAR(50),\n" +
+            "  date TIMESTAMP,\n" +
+            "  amount NUMERIC(28,2),\n" +
+            "  PRIMARY KEY(id)\n" +
+            ")";
+
     Connection conn;
     Table EXPENSES = table("expense_reports");
     Field ID = field("id", SQLDataType.INTEGER);
@@ -105,15 +109,7 @@ public class SQLDataSetGroupTest {
         conn = dataSource.getConnection();
 
         // Create the expense reports table
-        using(conn)
-                .createTable(EXPENSES)
-                .column(ID, SQLDataType.INTEGER)
-                .column(CITY, SQLDataType.VARCHAR.length(50))
-                .column(DEPT, SQLDataType.VARCHAR.length(50))
-                .column(EMPLOYEE, SQLDataType.VARCHAR.length(50))
-                .column(DATE, SQLDataType.DATE)
-                .column(AMOUNT, SQLDataType.FLOAT)
-                .execute();
+        using(conn).execute(CREATE_TABLE);
 
         // Populate the table
         DataSet dataSet = RawDataSetSamples.EXPENSE_REPORTS.toDataSet();
@@ -146,6 +142,30 @@ public class SQLDataSetGroupTest {
         assertThat(result.getRowCount()).isEqualTo(10);
         assertThat(result.getValueAt(0, 0)).isEqualTo(41d);
         assertThat(result.getValueAt(9, 0)).isEqualTo(50d);
+
+        result = dataSetManager.lookupDataSet(
+                DataSetFactory.newDataSetLookupBuilder()
+                        .dataset(DataSetGroupTest.EXPENSE_REPORTS)
+                        .group(DEPT.getName())
+                        .column(DEPT.getName())
+                        .column(AMOUNT.getName(), SUM)
+                        .rowNumber(3)
+                        .rowOffset(0)
+                        .buildLookup());
+
+        assertThat(result.getRowCount()).isEqualTo(3);
+        assertThat(result.getRowCountNonTrimmed()).isEqualTo(5);
+
+        result = dataSetManager.lookupDataSet(
+                DataSetFactory.newDataSetLookupBuilder()
+                        .dataset(DataSetGroupTest.EXPENSE_REPORTS)
+                        .filter(CITY.getName(), isEqualsTo("Barcelona"))
+                        .rowNumber(3)
+                        .rowOffset(0)
+                        .buildLookup());
+
+        assertThat(result.getRowCount()).isEqualTo(3);
+        assertThat(result.getRowCountNonTrimmed()).isEqualTo(6);
     }
 
     @Test

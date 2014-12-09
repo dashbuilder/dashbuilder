@@ -37,9 +37,17 @@ public interface SQLDataSetDefBuilder<T extends DataSetDefBuilder> extends DataS
     T dataSource(String dataSource);
 
     /**
-     * Set the database table honding all the data set rows.
+     * Set the database schema where the target table relies
      *
-     * @param dbTable the fully qualified database table name
+     * @param dbSchema the schema name
+     * @return The DataSetDefBuilder instance that is being used to configure a DataSetDef.
+     */
+    T dbSchema(String dbSchema);
+
+    /**
+     * Set the database table holding all the data set rows.
+     *
+     * @param dbTable the table name
      * @return The DataSetDefBuilder instance that is being used to configure a DataSetDef.
      */
     T dbTable(String dbTable);
