@@ -270,6 +270,7 @@ public class TableDisplayer extends AbstractDisplayer {
                             new SelectableTextCell( columnId ) ) {
                                 public String getValue( Integer row ) {
                                     Object value = dataSet.getValueAt(row, columnNumber);
+                                    if (value == null) return "---";
                                     return value.toString();
                                 }
                             };
@@ -278,6 +279,7 @@ public class TableDisplayer extends AbstractDisplayer {
                             new TextCell() ) {
                                 public String getValue( Integer row ) {
                                     Object value = dataSet.getValueAt(row, columnNumber);
+                                    if (value == null) return "---";
                                     return value.toString();
                                 }
                             };
@@ -285,14 +287,18 @@ public class TableDisplayer extends AbstractDisplayer {
             case NUMBER: return new Column<Integer, Number>(
                             new NumberCell( NumberFormat.getFormat( "#.###" ) ) ) {
                                 public Number getValue( Integer row ) {
-                                    return (Number) dataSet.getValueAt(row, columnNumber);
+                                    Object value = dataSet.getValueAt(row, columnNumber);
+                                    if (value == null) return 0;
+                                    return (Number) value;
                                 }
                             };
 
             case DATE:return new Column<Integer, Date>(
                             new DateCell( DateTimeFormat.getFormat( DateTimeFormat.PredefinedFormat.DATE_TIME_MEDIUM ) ) ) {
                                 public Date getValue( Integer row ) {
-                                    return (Date) dataSet.getValueAt(row, columnNumber);
+                                    Object value = dataSet.getValueAt(row, columnNumber);
+                                    if (value == null) return new Date();
+                                    return (Date) value;
                                 }
                             };
         }

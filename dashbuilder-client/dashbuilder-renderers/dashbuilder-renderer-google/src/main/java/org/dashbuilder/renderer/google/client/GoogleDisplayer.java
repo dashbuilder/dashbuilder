@@ -208,14 +208,20 @@ public abstract class GoogleDisplayer extends AbstractDisplayer {
 
     public void setTableValue(DataTable gTable, ColumnType type, Object value, int row, int column) {
         if (ColumnType.DATE.equals(type)) {
-            gTable.setValue(row, column, (Date) value);
+            if (value == null) gTable.setValue(row, column, new Date());
+            else gTable.setValue(row, column, (Date) value);
         }
         else if (ColumnType.NUMBER.equals(type)) {
-            String valueStr = numberFormat.format((Number) value);
-            gTable.setValue(row, column, Double.parseDouble(valueStr));
+            if (value == null) {
+                gTable.setValue(row, column, 0d);
+            } else {
+                String valueStr = numberFormat.format((Number) value);
+                gTable.setValue(row, column, Double.parseDouble(valueStr));
+            }
         }
         else {
-            gTable.setValue(row, column, value.toString());
+            if (value == null) gTable.setValue(row, column, "---");
+            else gTable.setValue(row, column, value.toString());
         }
     }
 
