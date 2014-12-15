@@ -22,6 +22,7 @@ import org.dashbuilder.dataprovider.DataSetProvider;
 import org.dashbuilder.dataprovider.DataSetProviderType;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetLookup;
+import org.dashbuilder.dataset.DataSetMetadata;
 import org.dashbuilder.dataset.def.DataSetDef;
 import org.dashbuilder.dataset.events.DataSetDefModifiedEvent;
 
@@ -32,6 +33,10 @@ public class SQLDataSetProvider implements DataSetProvider {
 
     public DataSetProviderType getType() {
         return DataSetProviderType.SQL;
+    }
+
+    public DataSetMetadata getDataSetMetadata(DataSetDef def) {
+        return null;
     }
 
     public DataSet lookupDataSet(DataSetDef def, DataSetLookup lookup) throws Exception {

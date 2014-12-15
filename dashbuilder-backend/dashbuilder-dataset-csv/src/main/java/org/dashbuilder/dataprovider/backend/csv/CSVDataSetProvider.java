@@ -48,8 +48,8 @@ public class CSVDataSetProvider implements DataSetProvider {
         return DataSetProviderType.CSV;
     }
 
-    public DataSetMetadata getDataSetMetadata(DataSetDef def) {
-        DataSet dataSet = staticDataSetProvider.lookupDataSet(def, null);
+    public DataSetMetadata getDataSetMetadata(DataSetDef def) throws Exception {
+        DataSet dataSet = lookupDataSet(def, null);
         if (dataSet == null) return null;
         return dataSet.getMetadata();
     }
