@@ -34,7 +34,7 @@ import org.dashbuilder.displayer.DisplayerConstraints;
 public class GoogleAreaChartDisplayer extends GoogleXAxisChartDisplayer {
 
     protected AreaChart chart;
-    protected Panel filterPanel;
+    protected Panel filterPanel = new SimplePanel();
 
     @Override
     public ChartPackage getPackage() {
@@ -81,7 +81,7 @@ public class GoogleAreaChartDisplayer extends GoogleXAxisChartDisplayer {
 
         VerticalPanel verticalPanel = new VerticalPanel();
         verticalPanel.add(titleHtml);
-        verticalPanel.add(filterPanel = new SimplePanel());
+        verticalPanel.add(filterPanel);
         verticalPanel.add(chart);
         return verticalPanel;
     }

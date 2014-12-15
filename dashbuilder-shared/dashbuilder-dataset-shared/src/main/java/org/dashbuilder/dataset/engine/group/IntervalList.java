@@ -58,13 +58,14 @@ public abstract class IntervalList extends ArrayList<Interval> {
      * Index the given value into the appropriate interval.
      * @param value The value to index
      * @param row The row index where the value is hold within the data set.
-     * @return The interval which the value belongs to.
      */
-    public Interval indexValue(Object value, int row) {
-        Interval interval = locateInterval(value);
-        if (interval == null) throw new RuntimeException("Can't locate the interval for the specified value: " + value);
-        interval.rows.add(row);
-        return interval;
+    public void indexValue(Object value, int row) {
+        if (value != null) {
+            Interval interval = locateInterval(value);
+            if (interval != null) {
+                interval.rows.add(row);
+            }
+        }
     }
 
     /**

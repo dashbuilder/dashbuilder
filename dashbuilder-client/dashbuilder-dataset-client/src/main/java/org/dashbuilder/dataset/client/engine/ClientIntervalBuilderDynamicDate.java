@@ -61,11 +61,17 @@ public class ClientIntervalBuilderDynamicDate implements IntervalBuilder {
 
         // Get the lower & upper limits.
         SortedList sortedValues = new SortedList(values, sortedRows);
-        Date minDate = (Date) sortedValues.get(0);
-        Date maxDate = (Date) sortedValues.get(sortedValues.size()-1);
+        Date minDate = null;
+        Date maxDate = null;
+        for (int i = 0; minDate == null && i < sortedValues.size(); i++) {
+            minDate = (Date) sortedValues.get(i);
+        }
+        for (int i = sortedValues.size()-1; maxDate == null && i >= 0; i--) {
+            maxDate = (Date) sortedValues.get(i);
+        }
 
         // If min/max are equals then create a single interval.
-        if (minDate.compareTo(maxDate) == 0) {
+        if (minDate == null || minDate.compareTo(maxDate) == 0) {
             IntervalDateRange interval = new IntervalDateRange(DAY, minDate, maxDate);
             for (int row = 0; row < sortedValues.size(); row++) interval.rows.add(row);
             results.add(interval);
@@ -185,7 +191,9 @@ public class ClientIntervalBuilderDynamicDate implements IntervalBuilder {
                 } else {
                     Date dateValue = (Date) sortedValues.get(index);
                     Integer row = sortedRows.get(index);
-                    if (dateValue.before(intervalMaxDate)){
+                    if (dateValue == null) {
+                        index++;
+                    } else if (dateValue.before(intervalMaxDate)){
                         interval.rows.add(row);
                         index++;
                     } else {

@@ -36,7 +36,7 @@ import org.dashbuilder.displayer.DisplayerConstraints;
 public class GoogleBubbleChartDisplayer extends GoogleXAxisChartDisplayer {
 
     private BubbleChart chart;
-    protected Panel filterPanel;
+    protected Panel filterPanel = new SimplePanel();
 
     @Override
     public ChartPackage getPackage() {
@@ -56,7 +56,7 @@ public class GoogleBubbleChartDisplayer extends GoogleXAxisChartDisplayer {
 
         VerticalPanel verticalPanel = new VerticalPanel();
         verticalPanel.add(titleHtml);
-        verticalPanel.add(filterPanel = new SimplePanel());
+        verticalPanel.add(filterPanel);
         verticalPanel.add(chart);
         return verticalPanel;
     }

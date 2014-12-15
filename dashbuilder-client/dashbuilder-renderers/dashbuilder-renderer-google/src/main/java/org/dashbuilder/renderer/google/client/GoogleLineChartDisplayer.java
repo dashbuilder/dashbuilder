@@ -34,7 +34,7 @@ import org.dashbuilder.displayer.DisplayerConstraints;
 public class GoogleLineChartDisplayer extends GoogleXAxisChartDisplayer {
 
     private LineChart chart;
-    protected Panel filterPanel;
+    protected Panel filterPanel = new SimplePanel();
 
     @Override
     public ChartPackage getPackage() {
@@ -54,7 +54,7 @@ public class GoogleLineChartDisplayer extends GoogleXAxisChartDisplayer {
 
         VerticalPanel verticalPanel = new VerticalPanel();
         verticalPanel.add(titleHtml);
-        verticalPanel.add(filterPanel = new SimplePanel());
+        verticalPanel.add(filterPanel);
         verticalPanel.add(chart);
         return verticalPanel;
     }
