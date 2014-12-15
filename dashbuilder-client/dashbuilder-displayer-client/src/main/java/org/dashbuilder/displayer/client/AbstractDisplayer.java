@@ -17,11 +17,14 @@ package org.dashbuilder.displayer.client;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.user.client.ui.Composite;
 import org.dashbuilder.common.client.StringUtils;
 import org.dashbuilder.dataset.ValidationError;
@@ -289,5 +292,26 @@ public abstract class AbstractDisplayer extends Composite implements Displayer {
         DataSetSort sortOp = new DataSetSort();
         sortOp.addSortColumn(new ColumnSort(columnId, sortOrder));
         dataSetHandler.sort(sortOp);
+    }
+
+    // DATA FORMATTING
+
+    protected String format(Object value, String columnId) {
+
+        // TODO: displayer settings column format
+        // For example: .format("amount", "#,###.##", "---")
+
+        if (value == null) {
+            return "---";
+        }
+        if (value instanceof Number) {
+            Double d = ((Number) value).doubleValue();
+            return NumberFormat.getDecimalFormat().format(d);
+        }
+        if (value instanceof Date) {
+            Date d = (Date) value;
+            return DateTimeFormat.getFormat(DateTimeFormat.PredefinedFormat.DATE_TIME_MEDIUM).format(d);
+        }
+        return value.toString();
     }
 }

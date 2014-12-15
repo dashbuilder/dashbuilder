@@ -38,7 +38,7 @@ import org.dashbuilder.displayer.DisplayerConstraints;
 public class GoogleBarChartDisplayer extends GoogleXAxisChartDisplayer {
 
     protected CoreChartWidget chart;
-    protected Panel filterPanel;
+    protected Panel filterPanel = new SimplePanel();
 
     @Override
     public ChartPackage getPackage() {
@@ -62,7 +62,7 @@ public class GoogleBarChartDisplayer extends GoogleXAxisChartDisplayer {
 
         VerticalPanel verticalPanel = new VerticalPanel();
         verticalPanel.add(titleHtml);
-        verticalPanel.add(filterPanel = new SimplePanel());
+        verticalPanel.add(filterPanel);
         verticalPanel.add(chart);
         return verticalPanel;
     }

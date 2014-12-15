@@ -41,14 +41,13 @@ public class IntervalBuilderDynamicLabel implements IntervalBuilder {
             super(columnGroup);
         }
 
-        public Interval indexValue(Object value, int row) {
+        public void indexValue(Object value, int row) {
             Interval interval = locateInterval(value);
             if (interval == null) {
                 // TODO: create a composite interval when the maxIntervals are reached.
                 this.add(interval = new Interval(value == null ? null : value.toString()));
             }
             interval.getRows().add(row);
-            return interval;
         }
 
         public Interval locateInterval(Object value) {

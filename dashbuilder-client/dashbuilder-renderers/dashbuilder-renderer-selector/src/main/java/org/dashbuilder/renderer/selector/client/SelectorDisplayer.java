@@ -31,8 +31,10 @@ import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetLookupConstraints;
 import org.dashbuilder.dataset.client.DataSetReadyCallback;
+import org.dashbuilder.dataset.group.DataSetGroup;
 import org.dashbuilder.displayer.DisplayerConstraints;
 import org.dashbuilder.displayer.client.AbstractDisplayer;
+import org.dashbuilder.displayer.client.Displayer;
 import org.dashbuilder.renderer.selector.client.resources.i18n.SelectorConstants;
 
 public class SelectorDisplayer extends AbstractDisplayer {
@@ -164,7 +166,11 @@ public class SelectorDisplayer extends AbstractDisplayer {
         // Generate the list entries from the current data set
         List<String> currentFilter = filterValues(firstColumnId);
         for (int i = 0; i < dataSet.getRowCount(); i++) {
-            String value = dataSet.getValueAt(i, firstColumnId).toString();
+
+            Object obj = dataSet.getValueAt(i, firstColumnId);
+            if (obj == null) continue;
+
+            String value = obj.toString();
             listBox.addItem(value);
             if (currentFilter != null && currentFilter.contains(value)) {
                 listBox.setSelectedIndex(i+1);
@@ -179,8 +185,11 @@ public class SelectorDisplayer extends AbstractDisplayer {
                     String extraColumnName = getColumnName(dataSet, j);
                     Object extraValue = dataSet.getValueAt(i, extraColumnId);
 
-                    if (j > 1) out.append("  ");
-                    out.append(extraColumnName).append("=").append(extraValue.toString());
+                    if (extraValue != null) {
+                        if (j > 1) out.append("  ");
+                        String formattedValue = super.format(extraValue, extraColumnId);
+                        out.append(extraColumnName).append("=").append(formattedValue);
+                    }
                 }
                 options.getItem(i+1).setTitle(out.toString());
             }
@@ -207,5 +216,25 @@ public class SelectorDisplayer extends AbstractDisplayer {
         }
         throw new IndexOutOfBoundsException("Index " + index + " is greater than " +
                 "the number of columns in the data set " + ncolumns);
+    }
+
+    // KEEP IN SYNC THE CURRENT SELECTION WITH ANY EXTERNAL FILTER
+
+    public void onGroupIntervalsSelected(Displayer displayer, DataSetGroup groupOp) {
+        String firstColumnId = getColumnId(dataSet, 0);
+        if (firstColumnId.equals(groupOp.getColumnGroup().getColumnId())) {
+            columnSelectionMap.put(groupOp.getColumnGroup().getColumnId(), groupOp.getSelectedIntervalNames());
+        }
+        super.onGroupIntervalsSelected(displayer, groupOp);
+    }
+
+    public void onGroupIntervalsReset(Displayer displayer, List<DataSetGroup> groupOps) {
+        String firstColumnId = getColumnId(dataSet, 0);
+        for (DataSetGroup groupOp : groupOps) {
+            if (firstColumnId.equals(groupOp.getColumnGroup().getColumnId())) {
+                columnSelectionMap.remove(groupOp.getColumnGroup().getColumnId());
+            }
+        }
+        super.onGroupIntervalsReset(displayer, groupOps);
     }
 }
