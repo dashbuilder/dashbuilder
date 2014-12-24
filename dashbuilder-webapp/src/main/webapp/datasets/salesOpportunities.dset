@@ -1,7 +1,7 @@
 {
     "uuid": "salesOpportunities",
     "provider": "BEAN",
-    "pushEnabled": true,
+    "pushEnabled": false,
     "pushMaxSize": 2048,
     "isPublic": true,
     "generatorClass": "org.dashbuilder.backend.SalesDataSetGenerator",
