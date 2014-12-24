@@ -117,6 +117,34 @@ public class jOoqApiTest {
     }
 
     @Test
+    public void testGroupMultiple() throws Exception {
+        ResultQuery ctx = DSL.using(conn, new Settings().withRenderFormatted(true))
+                .select(DEPT, EMPLOYEE, DEPT.count(), AMOUNT.sum())
+                .from(EXPENSES)
+                .groupBy(DEPT, EMPLOYEE);
+
+        String sql = ctx.getSQL();
+        Result result= ctx.fetch();
+        assertThat(result.size()).isEqualTo(16);
+    }
+
+
+    @Test
+    public void testGroupByMonthDynamic() throws Exception {
+        ResultQuery ctx = DSL.using(conn, new Settings().withRenderFormatted(true))
+                .select(concat(year(DATE), field("'_'"), month(DATE)), DEPT.count(), AMOUNT.sum())
+                .from(EXPENSES)
+                .groupBy(DATE).orderBy(DATE.asc());
+
+        String sql = ctx.getSQL();
+        Result result= ctx.fetch();
+        //printResult(result);
+        assertThat(result.getValue(0, 0)).isEqualTo("2012_1");
+        assertThat(result.getValue(47, 0)).isEqualTo("2015_12");
+        assertThat(result.size()).isEqualTo(48);
+    }
+
+    @Test
     public void testAggregateFunction() throws Exception {
         ResultQuery ctx = DSL.using(conn, new Settings().withRenderFormatted(true))
                 .select(ID.count(), AMOUNT.sum())
@@ -198,5 +226,20 @@ public class jOoqApiTest {
         assertThat(((BigDecimal) result.getValue(9, 1)).longValue()).isEqualTo(1366L);
         assertThat(((BigDecimal) result.getValue(10, 1)).longValue()).isEqualTo(1443L);
         assertThat(((BigDecimal) result.getValue(11, 1)).longValue()).isEqualTo(2520L);
+    }
+
+    public void printResult(Result rs) {
+        for (int i=0; i<rs.getValues(0).size(); i++) {
+            System.out.println("");
+            try {
+                for (int j=0;; j++) {
+                    if (j > 0) System.out.print(", ");
+                    System.out.print(rs.getValue(i, j));
+
+                }
+            } catch (Exception e) {
+                continue;
+            }
+        }
     }
 }

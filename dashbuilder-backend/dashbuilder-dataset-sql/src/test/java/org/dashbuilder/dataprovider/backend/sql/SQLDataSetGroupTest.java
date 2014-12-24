@@ -20,6 +20,7 @@ import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetFactory;
 import org.dashbuilder.dataset.DataSetFilterTest;
 import org.dashbuilder.dataset.DataSetGroupTest;
+import org.dashbuilder.dataset.DataSetNestedGroupTest;
 import org.junit.Test;
 
 import static org.dashbuilder.dataset.group.AggregateFunctionType.*;
@@ -99,6 +100,23 @@ public class SQLDataSetGroupTest extends SQLDataSetTestBase {
         subTest.dataSetFormatter = dataSetFormatter;
         subTest.testDataSetFunctions();
         subTest.testGroupByLabelDynamic();
+        subTest.testGroupByYearDynamic();
+        // TODO: Order intervals subTest.testGroupByMonthDynamic();
+        // TODO: Order intervals subTest.testGroupByDayDynamic();
+        // TODO: Not supported by DB subTest.testGroupByWeek();
+        // TODO: Format months subTest.testGroupByMonthFixed();
+    }
+
+    @Test
+    public void testDataSetNestedGroup() throws Exception {
+        DataSetNestedGroupTest subTest = new DataSetNestedGroupTest();
+        subTest.dataSetManager = dataSetManager;
+        subTest.dataSetFormatter = dataSetFormatter;
+        subTest.testGroupSelectionFilter();
+        subTest.testNestedGroupFromMultipleSelection();
+        subTest.testNestedGroupRequiresSelection();
+        // TODO: Add empty intervals subTest.testThreeNestedLevels();
+        // TODO: Add empty intervals subTest.testNoResultsSelection();
     }
 
     @Test
