@@ -91,7 +91,7 @@ public class DataSetDef {
     }
 
     public void setPushMaxSize(int pushMaxSize) {
-        this.pushMaxSize = this.pushMaxSize;
+        this.pushMaxSize = pushMaxSize;
     }
 
     public String getPattern(String columnId) {
