@@ -18,6 +18,7 @@ package org.dashbuilder.displayer.client;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.client.DataSetReadyCallback;
 import org.dashbuilder.dataset.group.DataSetGroup;
+import org.dashbuilder.dataset.group.Interval;
 import org.dashbuilder.dataset.sort.DataSetSort;
 
 /**
@@ -28,11 +29,35 @@ public interface DataSetHandler {
     /**
      * Retrieves any group operation present in the current data set lookup for the target column specified.
      * @param columnId The column id. to look for. It can be either the column used to group the data set or
-     * the column id. assigned int the grouped data set result.
+     * the column id. assigned to the grouped column.
      *
      * @return The group operation that matches the given column id. Or null if no operation is found.
      */
     DataSetGroup getGroupOperation(String columnId);
+
+    /**
+     * Get the interval at the given row for the column specified.
+     *
+     * <p>In case of grouped data sets, the interval may contain information
+     * related to the group operation. For instance, for a data set grouped
+     * by month, will return an interval containing the min/max dates of such month.</p>
+     *
+     * <p>For non-grouped data set or grouped by label data set will
+     * return only an interval with the value of the row/column selected.</p>
+     *
+     * The interval information is useful for filtering purposes as the data provider needs
+     * all the information related to the selected interval.
+     *
+     * @param columnId The column id.
+     * @param row The row which interval we want to retrieve.
+     * @return An interval with information related to the target row/column. Or null, if
+     * <ul>
+     *     <li>the column does not exist,</li>
+     *     <li>the row index is out of bounds,</li>
+     *     <li>or the value is null.</li>
+     * </ul>
+     */
+    Interval getInterval(String columnId, int row);
 
     /**
      * Forces the underlying data set to be updated according the group interval selection filter.

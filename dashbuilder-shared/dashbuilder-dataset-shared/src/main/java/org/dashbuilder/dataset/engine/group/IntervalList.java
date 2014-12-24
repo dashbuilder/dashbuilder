@@ -19,21 +19,50 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.dashbuilder.dataset.group.ColumnGroup;
+import org.dashbuilder.dataset.group.Interval;
 
 /**
  * An list containing the intervals derived from an specific domain configuration.
  */
 public abstract class IntervalList extends ArrayList<Interval> {
 
-    protected ColumnGroup columnGroup;
+    protected ColumnGroup columnGroup = null;
+    protected String intervalType = null;
+    protected Object minValue = null;
+    protected Object maxValue = null;
 
     public IntervalList(ColumnGroup columnGroup) {
         super();
         this.columnGroup = columnGroup;
+        this.intervalType = columnGroup.getIntervalSize();
     }
 
     public ColumnGroup getColumnGroup() {
         return columnGroup;
+    }
+
+    public String getIntervalType() {
+        return intervalType;
+    }
+
+    public void setIntervalType(String intervalType) {
+        this.intervalType = intervalType;
+    }
+
+    public Object getMinValue() {
+        return minValue;
+    }
+
+    public void setMinValue(Object minValue) {
+        this.minValue = minValue;
+    }
+
+    public Object getMaxValue() {
+        return maxValue;
+    }
+
+    public void setMaxValue(Object maxValue) {
+        this.maxValue = maxValue;
     }
 
     /**
@@ -63,7 +92,7 @@ public abstract class IntervalList extends ArrayList<Interval> {
         if (value != null) {
             Interval interval = locateInterval(value);
             if (interval != null) {
-                interval.rows.add(row);
+                interval.getRows().add(row);
             }
         }
     }

@@ -32,6 +32,12 @@ public class CoreFunctionFilter extends ColumnFilter {
     public CoreFunctionFilter() {
     }
 
+    public CoreFunctionFilter(String columnId, CoreFunctionType type, List<Comparable> parameters) {
+        super(columnId);
+        this.type = type;
+        this.setParameters(parameters);
+    }
+
     public CoreFunctionFilter(String columnId, CoreFunctionType type, Comparable... parameters) {
         super(columnId);
         this.type = type;
@@ -57,8 +63,8 @@ public class CoreFunctionFilter extends ColumnFilter {
         }
     }
 
-    public void setFunctionParams(List<Comparable> functionParams) {
-        this.parameters = functionParams;
+    public void setParameters(List<Comparable> parameters) {
+        this.parameters = parameters;
     }
 
     public String toString() {

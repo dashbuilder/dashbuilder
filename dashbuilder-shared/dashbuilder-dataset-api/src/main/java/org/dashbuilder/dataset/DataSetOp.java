@@ -21,6 +21,11 @@ package org.dashbuilder.dataset;
 public interface DataSetOp {
 
     /**
+     * The UUID of the data set to retrieve.
+     */
+    String getDataSetUUID();
+
+    /**
      * @return The type of this DataSet operation.
      * @see org.dashbuilder.dataset.DataSetOpType
      */

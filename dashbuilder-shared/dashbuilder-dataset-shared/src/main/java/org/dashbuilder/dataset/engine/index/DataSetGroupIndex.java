@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.dashbuilder.dataset.engine.group.Interval;
+import org.dashbuilder.dataset.group.Interval;
 import org.dashbuilder.dataset.engine.group.IntervalList;
 import org.dashbuilder.dataset.engine.index.visitor.DataSetIndexVisitor;
 import org.dashbuilder.dataset.group.ColumnGroup;
@@ -32,6 +32,9 @@ public class DataSetGroupIndex extends DataSetIndexNode implements DataSetInterv
     // The group index is composed by a set of interval indexes.
     ColumnGroup columnGroup = null;
     List<DataSetIntervalIndex> intervalIndexList = null;
+    String intervalType = null;
+    Object minValue = null;
+    Object maxValue = null;
 
     // And can (optionally) contains a subset of interval selections.
     List<DataSetGroupIndex> selectIndexList = null;
@@ -47,6 +50,9 @@ public class DataSetGroupIndex extends DataSetIndexNode implements DataSetInterv
 
     public DataSetGroupIndex(ColumnGroup columnGroup, IntervalList intervalList) {
         this(columnGroup);
+        intervalType = intervalList.getIntervalType();
+        minValue = intervalList.getMinValue();
+        maxValue = intervalList.getMaxValue();
         for (Interval interval : intervalList) {
             intervalIndexList.add(new DataSetIntervalIndex(this, interval));
         }
@@ -60,14 +66,26 @@ public class DataSetGroupIndex extends DataSetIndexNode implements DataSetInterv
         }
     }
 
+    public String getIntervalType() {
+        return intervalType;
+    }
+
+    public Object getMinValue() {
+        return minValue;
+    }
+
+    public Object getMaxValue() {
+        return maxValue;
+    }
+
     public List<DataSetIntervalIndex> getIntervalIndexes() {
         return intervalIndexList;
     }
 
-    public List<DataSetIntervalIndex> getIntervalIndexes(List<String> names) {
+    public List<DataSetIntervalIndex> getIntervalIndexes(List<Interval> intervalList) {
         List<DataSetIntervalIndex> result = new ArrayList<DataSetIntervalIndex>();
-        for (String name : names) {
-            DataSetIntervalIndex idx = getIntervalIndex(name);
+        for (Interval interval : intervalList) {
+            DataSetIntervalIndex idx = getIntervalIndex(interval.getName());
             if (idx != null) result.add(idx);
         }
         return result;
@@ -92,10 +110,10 @@ public class DataSetGroupIndex extends DataSetIndexNode implements DataSetInterv
         return -1;
     }
 
-    public DataSetGroupIndex getSelectionIndex(List<String> names) {
+    public DataSetGroupIndex getSelectionIndex(List<Interval> intervalList) {
         if (selectIndexList == null) return null;
 
-        String targetKey = buildSelectKey(names);
+        String targetKey = buildSelectKey(intervalList);
         for (DataSetGroupIndex idx : selectIndexList) {
             if (idx.selectKey.equals(targetKey)) {
                 idx.reuseHit();
@@ -105,10 +123,10 @@ public class DataSetGroupIndex extends DataSetIndexNode implements DataSetInterv
         return null;
     }
 
-    public DataSetGroupIndex indexSelection(List<String> intervalNames, List<DataSetIntervalIndex> intervalIndexes) {
+    public DataSetGroupIndex indexSelection(List<Interval> intervalList, List<DataSetIntervalIndex> intervalIndexes) {
         if (selectIndexList == null) selectIndexList = new ArrayList<DataSetGroupIndex>();
 
-        String key = buildSelectKey(intervalNames);
+        String key = buildSelectKey(intervalList);
         DataSetGroupIndex index = new DataSetGroupIndex(key, intervalIndexes);
         index.setParent(this);
         index.setBuildTime(buildTime);
@@ -116,11 +134,11 @@ public class DataSetGroupIndex extends DataSetIndexNode implements DataSetInterv
         return index;
     }
 
-    protected String buildSelectKey(List<String> intervalNames) {
+    protected String buildSelectKey(List<Interval> intervalList) {
         StringBuilder out = new StringBuilder();
-        for (int i=0; i<intervalNames.size(); i++) {
+        for (int i=0; i<intervalList.size(); i++) {
             if (i > 0) out.append(", ");
-            out.append(intervalNames.get(i));
+            out.append(intervalList.get(i).getName());
         }
         return out.toString();
     }

@@ -58,6 +58,11 @@ public interface DataSetMetadata {
     ColumnType getColumnType(String columnId);
 
     /**
+     * Get the column types
+     */
+    List<ColumnType> getColumnTypes();
+
+    /**
      * Get the estimated size in kilobytes.
      */
     int getEstimatedSize();

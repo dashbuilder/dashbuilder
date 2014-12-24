@@ -18,8 +18,10 @@ package org.dashbuilder.dataset.engine.group;
 import java.util.List;
 import javax.enterprise.context.ApplicationScoped;
 
+import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.dataset.engine.DataSetHandler;
 import org.dashbuilder.dataset.group.ColumnGroup;
+import org.dashbuilder.dataset.group.Interval;
 
 /**
  * Interval builder for label columns which generates one interval per label.
@@ -28,11 +30,22 @@ import org.dashbuilder.dataset.group.ColumnGroup;
 public class IntervalBuilderDynamicLabel implements IntervalBuilder {
 
     public IntervalList build(DataSetHandler ctx, ColumnGroup columnGroup) {
-        IntervalListLabel result = new IntervalListLabel(columnGroup);
+        IntervalListLabel intervalList = new IntervalListLabel(columnGroup);
         String columnId = columnGroup.getSourceId();
         List values = ctx.getDataSet().getColumnById(columnId).getValues();
         List<Integer> rows = ctx.getRows();
-        return result.indexValues(values, rows);
+        return intervalList.indexValues(values, rows);
+    }
+
+    public Interval locate(DataColumn column, Integer intervalIndex) {
+        ColumnGroup columnGroup = column.getColumnGroup();
+        if (columnGroup == null) return null;
+        if (intervalIndex == null) return null;
+
+        IntervalListLabel intervalList = new IntervalListLabel(columnGroup);
+        intervalList.indexValues(column.getValues(), null);
+        if (intervalIndex >= intervalList.size()) return null;
+        return intervalList.get(intervalIndex);
     }
 
     private class IntervalListLabel extends IntervalList {

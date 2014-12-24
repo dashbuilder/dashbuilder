@@ -21,6 +21,7 @@ import java.util.Map;
 
 import org.dashbuilder.dataset.date.Month;
 import org.dashbuilder.dataset.group.ColumnGroup;
+import org.dashbuilder.dataset.group.Interval;
 
 /**
  * List of the 12-months intervals present in a year.
@@ -39,7 +40,7 @@ public class IntervalListMonth extends IntervalList {
 
         for (int i = 0; i < months.length; i++) {
             Month month = months[monthIndex];
-            Interval interval = new Interval(month.toString());
+            Interval interval = new Interval(month.toString(), month.getIndex());
             this.add(interval);
 
             intervalMap.put(monthIndex, interval);

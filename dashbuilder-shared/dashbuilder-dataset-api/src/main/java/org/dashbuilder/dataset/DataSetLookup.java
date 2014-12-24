@@ -18,10 +18,12 @@ package org.dashbuilder.dataset;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.ListIterator;
 
 import org.dashbuilder.dataset.filter.DataSetFilter;
 import org.dashbuilder.dataset.group.ColumnGroup;
 import org.dashbuilder.dataset.group.DataSetGroup;
+import org.dashbuilder.dataset.impl.AbstractDataSetOp;
 import org.dashbuilder.dataset.sort.DataSetSort;
 import org.jboss.errai.common.client.api.annotations.Portable;
 
@@ -124,6 +126,7 @@ public class DataSetLookup {
 
     public DataSetLookup addOperation(DataSetOp op) {
         operationList.add(op);
+        ((AbstractDataSetOp) op).setDataSetUUID(dataSetUUID);
         return this;
     }
 
@@ -146,7 +149,7 @@ public class DataSetLookup {
                 DataSetGroup groupOp = (DataSetGroup) op;
                 ColumnGroup cg = groupOp.getColumnGroup();
 
-                boolean hasSelections = !groupOp.getSelectedIntervalNames().isEmpty();
+                boolean hasSelections = groupOp.isSelect();
                 boolean matchColumn = columnId == null || (cg != null && cg.getColumnId().equals(columnId));
                 boolean matchSelections = (onlySelections && hasSelections) || (!onlySelections && !hasSelections);
 
@@ -156,6 +159,18 @@ public class DataSetLookup {
             }
         }
         return -1;
+    }
+
+    public List<DataSetGroup> getFirstGroupOpSelections() {
+        List<DataSetGroup> result = new ArrayList<DataSetGroup>();
+        for (DataSetGroup group : getOperationList(DataSetGroup.class)) {
+            if (group.isSelect()) {
+                result.add(group);
+            } else {
+                break;
+            }
+        }
+        return result;
     }
 
     public int getLastGroupOpIndex(int fromIndex, String columnId, boolean onlySelections) {
@@ -174,7 +189,7 @@ public class DataSetLookup {
                     // Discard group ops related to other columns
                     continue;
                 }
-                if (onlySelections && groupOp.getSelectedIntervalNames().isEmpty()) {
+                if (onlySelections && !groupOp.isSelect()) {
                     // Discard non-selections
                     continue;
                 }

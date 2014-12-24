@@ -17,13 +17,15 @@ package org.dashbuilder.dataset;
 
 import java.util.List;
 
+import org.dashbuilder.dataset.group.ColumnGroup;
+
 /**
  * A data set is a matrix of values composed by a fixed number of columns.
  */
 public interface DataColumn {
 
     /**
-     * @return The DataSet instance associated to this this DataColumn.
+     * @return The DataSet instance associated to this DataColumn.
      * @see org.dashbuilder.dataset.DataSet
      */
     DataSet getDataSet();
@@ -43,6 +45,34 @@ public interface DataColumn {
      * @see org.dashbuilder.dataset.ColumnType
      */
     ColumnType getColumnType();
+
+    /**
+     * The column group settings
+     *
+     * @return null if this column is not the result of a group operation.
+     */
+    ColumnGroup getColumnGroup();
+
+    /**
+     * The interval type used to group this column.
+     *
+     * @return null if this column is not the result of a group operation.
+     */
+    String getIntervalType();
+
+    /**
+     * The minimum column value
+     *
+     * @return null if this column is not the result of a group operation.
+     */
+    Object getMinValue();
+
+    /**
+     * The maximum column value
+     *
+     * @return null if this column is not the result of a group operation.
+     */
+    Object getMaxValue();
 
     /**
      * @return A List of the values for this DataColumn.

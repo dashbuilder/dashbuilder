@@ -16,12 +16,15 @@
 package org.dashbuilder.dataset.engine.group;
 
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import javax.enterprise.context.ApplicationScoped;
 
+import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.dataset.engine.DataSetHandler;
 import org.dashbuilder.dataset.group.ColumnGroup;
 import org.dashbuilder.dataset.group.DateIntervalType;
+import org.dashbuilder.dataset.group.Interval;
 
 import static org.dashbuilder.dataset.group.DateIntervalType.*;
 
@@ -33,6 +36,26 @@ import static org.dashbuilder.dataset.group.DateIntervalType.*;
 public class IntervalBuilderFixedDate implements IntervalBuilder {
 
     public IntervalList build(DataSetHandler ctx, ColumnGroup columnGroup) {
+        IntervalList intervalList = _build(columnGroup);
+
+        // Index the values
+        String columnId = columnGroup.getSourceId();
+        List values = ctx.getDataSet().getColumnById(columnId).getValues();
+        List<Integer> rows = ctx.getRows();
+        intervalList.indexValues(values, rows);
+        return intervalList;
+    }
+
+    public Interval locate(DataColumn column, Integer intervalIndex) {
+        ColumnGroup columnGroup = column.getColumnGroup();
+        if (columnGroup == null) return null;
+        if (intervalIndex == null) return null;
+
+        IntervalList intervalList = _build(columnGroup);
+        return intervalList.locateInterval(intervalIndex);
+    }
+
+    protected IntervalList _build(ColumnGroup columnGroup) {
         IntervalList intervalList = createIntervalList(columnGroup);
 
         // Reverse intervals if requested
@@ -41,12 +64,6 @@ public class IntervalBuilderFixedDate implements IntervalBuilder {
             Collections.reverse(intervalList);
             intervalList.add( 0, intervalList.remove( intervalList.size() - 1));
         }
-
-        // Index the values
-        String columnId = columnGroup.getSourceId();
-        List values = ctx.getDataSet().getColumnById(columnId).getValues();
-        List<Integer> rows = ctx.getRows();
-        intervalList.indexValues(values, rows);
         return intervalList;
     }
 

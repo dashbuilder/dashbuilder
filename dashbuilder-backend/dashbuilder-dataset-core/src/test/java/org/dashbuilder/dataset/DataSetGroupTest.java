@@ -73,7 +73,7 @@ public class DataSetGroupTest {
                 .column("city", DISTINCT)
                 .buildLookup());
 
-        assertDataSetValues(result, dataSetFormatter, new String[][] {
+        assertDataSetValues(result, dataSetFormatter, new String[][]{
                 {"50.00", "1.10", "1,100.10", "454.63", "22,731.26", "6.00"}
         }, 0);
     }
@@ -104,11 +104,11 @@ public class DataSetGroupTest {
     }
 
     @Test
-    public void testGroupByDateDynamic() throws Exception {
+    public void testGroupByYearDynamic() throws Exception {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                 .dataset(EXPENSE_REPORTS)
-                .group("date").dynamic(10, YEAR)
+                .group("date").dynamic(YEAR)
                 .column("date", "Period")
                 .column(COUNT, "Occurrences")
                 .column("amount", SUM, "totalAmount")
@@ -124,7 +124,39 @@ public class DataSetGroupTest {
     }
 
     @Test
-    public void testGroupByMonth() throws Exception {
+    public void testGroupByMonthDynamic() throws Exception {
+        DataSet result = dataSetManager.lookupDataSet(
+                DataSetFactory.newDataSetLookupBuilder()
+                .dataset(EXPENSE_REPORTS)
+                .group("date").dynamic(99, MONTH)
+                .column("date", "Period")
+                .column(COUNT, "Occurrences")
+                .column("amount", SUM, "totalAmount")
+                .buildLookup());
+
+        //printDataSet(result);
+        assertThat(result.getRowCount()).isEqualTo(48);
+        assertThat(result.getValueAt(0, 0)).isEqualTo("2012-01");
+    }
+
+    @Test
+    public void testGroupByDayDynamic() throws Exception {
+        DataSet result = dataSetManager.lookupDataSet(
+                DataSetFactory.newDataSetLookupBuilder()
+                .dataset(EXPENSE_REPORTS)
+                .group("date").dynamic(9999, DAY_OF_WEEK)
+                .column("date", "Period")
+                .column(COUNT, "Occurrences")
+                .column("amount", SUM, "totalAmount")
+                .buildLookup());
+
+        //printDataSet(result);
+        assertThat(result.getRowCount()).isEqualTo(1438);
+        assertThat(result.getValueAt(0, 0)).isEqualTo("2012-01-04");
+    }
+
+    @Test
+    public void testGroupByMonthFixed() throws Exception {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                 .dataset(EXPENSE_REPORTS)

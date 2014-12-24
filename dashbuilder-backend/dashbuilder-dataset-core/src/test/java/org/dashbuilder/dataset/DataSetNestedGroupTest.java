@@ -41,17 +41,17 @@ public class DataSetNestedGroupTest {
                 .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
     }
 
-    public static final String EXPENSE_REPORTS = "expense_reports_dataset";
+    public static final String EXPENSE_REPORTS = "expense_reports";
 
     @Inject
-    DataSetManager dataSetManager;
+    public DataSetManager dataSetManager;
 
-    protected DataSet dataSet;
-    protected DataSetFormatter dataSetFormatter;
+    @Inject
+    public DataSetFormatter dataSetFormatter;
 
     @Before
     public void setUp() throws Exception {
-        dataSet = RawDataSetSamples.EXPENSE_REPORTS.toDataSet();
+        DataSet dataSet = RawDataSetSamples.EXPENSE_REPORTS.toDataSet();
         dataSet.setUUID(EXPENSE_REPORTS);
         dataSetManager.registerDataSet(dataSet);
         dataSetFormatter = new DataSetFormatter();
@@ -100,16 +100,17 @@ public class DataSetNestedGroupTest {
                 .column("amount", MAX, "max")
                 .column("amount", AVERAGE, "average")
                 .column("amount", SUM, "total")
+                .sort("city", "asc")
                 .buildLookup());
 
         //printDataSet(result);
         assertDataSetValues(result, dataSetFormatter, new String[][] {
                 {"Barcelona", "6.00", "120.35", "1,100.10", "485.52", "2,913.14"},
-                {"Madrid", "2.00", "800.80", "911.11", "855.95", "1,711.91"},
                 {"Brno", "4.00", "159.01", "800.24", "364.86", "1,459.45"},
-                {"Westford", "5.00", "1.10", "600.34", "265.29", "1,326.43"},
+                {"London", "3.00", "333.45", "868.45", "535.40", "1,606.20"},
+                {"Madrid", "2.00", "800.80", "911.11", "855.96", "1,711.91"},
                 {"Raleigh", "4.00", "209.55", "401.40", "284.38", "1,137.53"},
-                {"London", "3.00", "333.45", "868.45", "535.40", "1,606.20"}
+                {"Westford", "5.00", "1.10", "600.34", "265.29", "1,326.43"}
         }, 0);
     }
 
@@ -121,15 +122,16 @@ public class DataSetNestedGroupTest {
                 .group("department", "Department")
                 .column("department")
                 .group("city", "city")
+                .sort("department", "asc")
                 .buildLookup());
 
         //printDataSet(result);
         assertDataSetValues(result, dataSetFormatter, new String[][] {
                 {"Engineering"},
-                {"Services"},
+                {"Management"},
                 {"Sales"},
-                {"Support"},
-                {"Management"}
+                {"Services"},
+                {"Support"}
         }, 0);
     }
 
@@ -137,14 +139,14 @@ public class DataSetNestedGroupTest {
     public void testNoResultsSelection() throws Exception {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
-                        .dataset(EXPENSE_REPORTS)
-                        .group("employee").select("Jerri Preble")
-                        .group("department").select("Engineering")
-                        .group("city").select("Westford")
-                        .group("date").fixed(DateIntervalType.MONTH)
-                        .column("date")
-                        .column("amount", SUM, "total")
-                        .buildLookup());
+                .dataset(EXPENSE_REPORTS)
+                .group("employee").select("Jerri Preble")
+                .group("department").select("Engineering")
+                .group("city").select("Westford")
+                .group("date").fixed(DateIntervalType.MONTH)
+                .column("date")
+                .column("amount", SUM, "total")
+                .buildLookup());
 
         //printDataSet(result);
         assertDataSetValues(result, dataSetFormatter, new String[][] {
@@ -167,13 +169,13 @@ public class DataSetNestedGroupTest {
     public void testThreeNestedLevels() throws Exception {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
-                        .dataset(EXPENSE_REPORTS)
-                        .group("department").select("Services", "Engineering")
-                        .group("city").select("Madrid", "Barcelona")
-                        .group("date").fixed(DateIntervalType.MONTH)
-                        .column("date")
-                        .column("amount", SUM, "total")
-                        .buildLookup());
+                .dataset(EXPENSE_REPORTS)
+                .group("department").select("Services", "Engineering")
+                .group("city").select("Madrid", "Barcelona")
+                .group("date").fixed(DateIntervalType.MONTH)
+                .column("date")
+                .column("amount", SUM, "total")
+                .buildLookup());
 
         //printDataSet(result);
         assertDataSetValues(result, dataSetFormatter, new String[][] {
@@ -196,19 +198,18 @@ public class DataSetNestedGroupTest {
     public void testGroupJoin() throws Exception {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
-                        .dataset(EXPENSE_REPORTS)
-                        .group("department")
-                        .group("city").select("Barcelona", "Brno").join()
-                        .group("date", "month").fixed(DateIntervalType.MONTH).join()
-                        .column("department")
-                        .column("city")
-                        .column("month")
-                        .column("amount", SUM, "total")
-                        .buildLookup());
+                .dataset(EXPENSE_REPORTS)
+                .group("department")
+                .group("city").select("Barcelona", "Brno").join()
+                .group("date", "month").fixed(DateIntervalType.MONTH).join()
+                .column("department")
+                .column("city")
+                .column("month")
+                .column("amount", SUM, "total")
+                .buildLookup());
 
         //printDataSet(result);
     }
-
 
     private void printDataSet(DataSet dataSet) {
         System.out.print(dataSetFormatter.formatDataSet(dataSet, "{", "}", ",\n", "\"", "\"", ", ") + "\n\n");

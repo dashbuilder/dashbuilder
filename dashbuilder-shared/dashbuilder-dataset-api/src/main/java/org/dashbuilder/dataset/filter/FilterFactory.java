@@ -15,6 +15,8 @@
  */
 package org.dashbuilder.dataset.filter;
 
+import java.util.List;
+
 /**
  * A factory of filter functions
  */
@@ -42,8 +44,16 @@ public class FilterFactory {
         return isEqualsTo(null, allowedValue);
     }
 
+    public static ColumnFilter isEqualsTo(List<Comparable> allowedValues) {
+        return new CoreFunctionFilter(null, CoreFunctionType.IS_EQUALS_TO, allowedValues);
+    }
+
     public static ColumnFilter isEqualsTo(String columnId, Comparable allowedValue) {
         return new CoreFunctionFilter(columnId, CoreFunctionType.IS_EQUALS_TO, allowedValue);
+    }
+
+    public static ColumnFilter isEqualsTo(String columnId, List<Comparable> allowedValues) {
+        return new CoreFunctionFilter(columnId, CoreFunctionType.IS_EQUALS_TO, allowedValues);
     }
 
     public static ColumnFilter isNotEqualsTo(Comparable allowedValue) {

@@ -50,7 +50,8 @@ import org.dashbuilder.dataset.group.DataSetGroup;
 import org.dashbuilder.dataset.group.ColumnGroup;
 import org.dashbuilder.dataset.group.GroupFunction;
 import org.dashbuilder.dataset.group.GroupStrategy;
-import org.dashbuilder.dataset.impl.DataSetImpl;
+import org.dashbuilder.dataset.group.Interval;
+import org.dashbuilder.dataset.impl.DataColumnImpl;
 import org.dashbuilder.dataset.sort.ColumnSort;
 import org.dashbuilder.dataset.sort.SortedList;
 import org.dashbuilder.dataset.sort.DataSetSort;
@@ -167,7 +168,7 @@ public class SharedDataSetOpEngine implements DataSetOpEngine {
                     } else {
                         if (group(gOp, context)) {
                             // The group will be required if is not an interval selection
-                            group = context.getLastGroupOp().getSelectedIntervalNames().isEmpty();
+                            group = !context.getLastGroupOp().isSelect();
                             context.lastOperation = op;
                         }
                     }
@@ -222,7 +223,7 @@ public class SharedDataSetOpEngine implements DataSetOpEngine {
 
             // Nested groups are only supported on the presence of an interval selection or group join operation.
             DataSetGroup lastGroupOp = context.getLastGroupOp();
-            if (lastGroupOp != null && lastGroupOp.getSelectedIntervalNames().isEmpty() && !op.isJoin()) {
+            if (lastGroupOp != null && !lastGroupOp.isSelect() && !op.isJoin()) {
                 return false;
             }
 
@@ -305,24 +306,24 @@ public class SharedDataSetOpEngine implements DataSetOpEngine {
 
 
         protected DataSetGroupIndex selectIntervals(DataSetGroup groupOp, DataSetGroupIndex groupIndex) {
-            List<String> intervalNames = groupOp.getSelectedIntervalNames();
-            if (intervalNames != null && !intervalNames.isEmpty()) {
+            List<Interval> intervalList = groupOp.getSelectedIntervalList();
+            if (intervalList != null && !intervalList.isEmpty()) {
 
                 // Look for an existing selection index.
-                DataSetGroupIndex selectionIndex = groupIndex.getSelectionIndex(intervalNames);
+                DataSetGroupIndex selectionIndex = groupIndex.getSelectionIndex(intervalList);
                 if (selectionIndex != null) return selectionIndex;
 
                 // Create a brand new selection index.
-                List<DataSetIntervalIndex> intervalIdxs = groupIndex.getIntervalIndexes(intervalNames);
+                List<DataSetIntervalIndex> intervalIdxs = groupIndex.getIntervalIndexes(intervalList);
                 if (intervalIdxs.isEmpty()) {
                     intervalIdxs = new ArrayList<DataSetIntervalIndex>();
-                    for (String name : intervalNames) {
-                        intervalIdxs.add(new DataSetIntervalIndex(groupIndex, name, new ArrayList<Integer>()));
+                    for (Interval interval : intervalList) {
+                        intervalIdxs.add(new DataSetIntervalIndex(groupIndex, interval));
                     }
                 }
 
                 //if (intervalIdxs.size() == 1) return intervalIdxs.get(0);
-                return groupIndex.indexSelection(intervalNames, intervalIdxs);
+                return groupIndex.indexSelection(intervalList, intervalIdxs);
             }
             return groupIndex;
         }
@@ -441,7 +442,7 @@ public class SharedDataSetOpEngine implements DataSetOpEngine {
                     boolean hasAggregations = !gOp.getAggregationFunctions().isEmpty();
                     return _buildDataSet(context, gOp.getGroupFunctions(), hasAggregations);
                 } else {
-                    if (!gOp.getSelectedIntervalNames().isEmpty() && gOp.getGroupFunctions().isEmpty()) {
+                    if (gOp.isSelect() && gOp.getGroupFunctions().isEmpty()) {
                         return dataSet.trim(index.getRows());
                     } else {
                         return _buildDataSet(context, gOp);
@@ -482,6 +483,11 @@ public class SharedDataSetOpEngine implements DataSetOpEngine {
                 AggregateFunctionType columnFunction = groupFunction.getFunction();
                 if (columnId != null && columnId.equals(columnGroup.getColumnId()) && columnFunction == null) {
                     result.addColumn(columnId, columnName, ColumnType.LABEL);
+                    DataColumnImpl column = (DataColumnImpl) result.getColumnById(columnId);
+                    column.setColumnGroup(columnGroup);
+                    column.setIntervalType(index.getIntervalType());
+                    column.setMinValue(index.getMinValue());
+                    column.setMaxValue(index.getMaxValue());
                 } else {
                     // Columns based on aggregation functions
                     AggregateFunctionType aggF = groupFunction.getFunction();

@@ -95,6 +95,10 @@ public class DataSetMetadataImpl implements DataSetMetadata {
         return null;
     }
 
+    public List<ColumnType> getColumnTypes() {
+        return columnTypes;
+    }
+
     public DataSetDef getDefinition() {
         return definition;
     }

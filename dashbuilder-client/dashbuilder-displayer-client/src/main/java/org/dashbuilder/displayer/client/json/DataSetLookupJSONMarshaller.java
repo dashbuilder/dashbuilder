@@ -41,6 +41,7 @@ import org.dashbuilder.dataset.group.ColumnGroup;
 import org.dashbuilder.dataset.group.DataSetGroup;
 import org.dashbuilder.dataset.group.GroupFunction;
 import org.dashbuilder.dataset.group.GroupStrategy;
+import org.dashbuilder.dataset.group.Interval;
 import org.dashbuilder.dataset.sort.ColumnSort;
 import org.dashbuilder.dataset.sort.DataSetSort;
 import org.dashbuilder.dataset.sort.SortOrder;
@@ -167,7 +168,7 @@ public class DataSetLookupJSONMarshaller {
         JSONObject dataSetGroupJson = new JSONObject();
         dataSetGroupJson.put( COLUMNGROUP, formatColumnGroup( dataSetGroup.getColumnGroup() ) );
         dataSetGroupJson.put( GROUPFUNCTIONS, formatgroupFunctions(dataSetGroup.getGroupFunctions()) );
-        dataSetGroupJson.put( SELECTEDINTERVALS, formatSelectedIntervals(dataSetGroup.getSelectedIntervalNames()) );
+        dataSetGroupJson.put( SELECTEDINTERVALS, formatSelectedIntervals(dataSetGroup.getSelectedIntervalList()) );
         dataSetGroupJson.put( JOIN, new JSONString( dataSetGroup.isJoin() ? "true" : "false" ));
         return dataSetGroupJson;
     }
@@ -205,12 +206,12 @@ public class DataSetLookupJSONMarshaller {
         return groupFunctionJson;
     }
 
-    private JSONArray formatSelectedIntervals( List<String> selectedIntervalNames ) {
-        if ( selectedIntervalNames.size() == 0 ) return null;
+    private JSONArray formatSelectedIntervals( List<Interval> selectedIntervalList ) {
+        if ( selectedIntervalList.size() == 0 ) return null;
         JSONArray selectedIntervalNamesJsonArray = new JSONArray();
         int intervalNamesCounter = 0;
-        for ( String intervalName : selectedIntervalNames ) {
-            selectedIntervalNamesJsonArray.set( intervalNamesCounter++, new JSONString( intervalName ) );
+        for ( Interval interval : selectedIntervalList ) {
+            selectedIntervalNamesJsonArray.set( intervalNamesCounter++, new JSONString( interval.getName() ) );
         }
         return selectedIntervalNamesJsonArray;
     }
@@ -368,9 +369,9 @@ public class DataSetLookupJSONMarshaller {
         List<GroupFunction> groupFunctions = parseGroupFunctions( ( value = dataSetGroupJson.get( GROUPFUNCTIONS ) ) != null ? value.isArray() : null );
         if ( groupFunctions != null ) dataSetGroup.getGroupFunctions().addAll( groupFunctions );
 
-        dataSetGroup.setSelectedIntervalNames(null);
+        dataSetGroup.setSelectedIntervalList(null);
         value = dataSetGroupJson.get(SELECTEDINTERVALS);
-        if (value != null) dataSetGroup.setSelectedIntervalNames(parseSelectedIntervals(value.isArray()));
+        if (value != null) dataSetGroup.setSelectedIntervalList(parseSelectedIntervals(value.isArray()));
 
         dataSetGroup.setJoin(false);
         value = dataSetGroupJson.get(JOIN);
@@ -413,14 +414,16 @@ public class DataSetLookupJSONMarshaller {
         return groupFunction;
     }
 
-    private List<String> parseSelectedIntervals( JSONArray selectedIntervalsJson ) {
+    private List<Interval> parseSelectedIntervals( JSONArray selectedIntervalsJson ) {
         if ( selectedIntervalsJson == null ) return null;
-        List<String> intervalNames = new ArrayList<String>( selectedIntervalsJson.size() );
+        List<Interval> intervalList = new ArrayList<Interval>( selectedIntervalsJson.size() );
         for ( int i = 0; i < selectedIntervalsJson.size(); i++) {
             JSONString value = selectedIntervalsJson.get( i ).isString();
-            if ( value != null ) intervalNames.add( value.stringValue() );
+            if ( value != null ) {
+                intervalList.add(new Interval(value.stringValue()));
+            }
         }
-        return intervalNames;
+        return intervalList;
     }
 
     private List<DataSetSort> parseSortOperations( JSONArray columnSortsJsonArray ) {

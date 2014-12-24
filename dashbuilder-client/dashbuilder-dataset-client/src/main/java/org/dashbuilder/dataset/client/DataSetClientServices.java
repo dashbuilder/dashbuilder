@@ -30,6 +30,7 @@ import org.dashbuilder.dataset.DataSetBackendServices;
 import org.dashbuilder.dataset.DataSetLookup;
 import org.dashbuilder.dataset.DataSetMetadata;
 import org.dashbuilder.dataset.def.DataSetDef;
+import org.dashbuilder.dataset.engine.group.IntervalBuilderLocator;
 import org.dashbuilder.dataset.events.DataSetBackendRegisteredEvent;
 import org.dashbuilder.dataset.events.DataSetDefModifiedEvent;
 import org.dashbuilder.dataset.events.DataSetPushOkEvent;
@@ -61,6 +62,9 @@ public class DataSetClientServices {
 
     @Inject
     private AggregateFunctionManager aggregateFunctionManager;
+
+    @Inject
+    private IntervalBuilderLocator intervalBuilderLocator;
 
     @Inject
     private Event<DataSetPushingEvent> dataSetPushingEvent;
@@ -132,6 +136,18 @@ public class DataSetClientServices {
         else {
             listener.notFound();
         }
+    }
+
+    /**
+     * Get the cached metadata instance for the specified data set.
+     *
+     * @param uuid The UUID of the data set. Null if the metadata is not stored on client yet.
+     */
+    public DataSetMetadata getMetadata(String uuid) {
+        DataSetMetadata metadata = clientDataSetManager.getDataSetMetadata(uuid);
+        if (metadata != null) return metadata;
+
+        return remoteMetadataMap.get(uuid);
     }
 
     /**
@@ -216,6 +232,10 @@ public class DataSetClientServices {
         return aggregateFunctionManager;
     }
 
+    public IntervalBuilderLocator getIntervalBuilderLocator() {
+        return intervalBuilderLocator;
+    }
+
     // Classes for the handling of concurrent lookup requests over any push-able data set
 
     private class DataSetPushHandler implements DataSetReadyCallback {
@@ -277,6 +297,7 @@ public class DataSetClientServices {
         // Remove any stale data existing on the client.
         // This will force next lookup requests to push a refreshed data set.
         clientDataSetManager.removeDataSet(uuid);
+        remoteMetadataMap.remove(uuid);
 
         // If a data set has been updated on the sever then fire an event.
         // In this case the notification is always send, no matter whether the data set is pushed to the client or not.
@@ -290,6 +311,7 @@ public class DataSetClientServices {
         // Remove any stale data existing on the client.
         // This will force next lookup requests to push a refreshed data set.
         DataSet clientDataSet = clientDataSetManager.removeDataSet(uuid);
+        remoteMetadataMap.remove(uuid);
 
         // If the dataset already existed on client then an update event is fired.
         if (clientDataSet != null) {

@@ -18,7 +18,7 @@ package org.dashbuilder.dataset.engine.index;
 import java.util.Arrays;
 import java.util.List;
 
-import org.dashbuilder.dataset.engine.group.Interval;
+import org.dashbuilder.dataset.group.Interval;
 import org.dashbuilder.dataset.impl.MemSizeEstimator;
 
 /**
@@ -28,17 +28,12 @@ public class DataSetIntervalIndex extends DataSetIndexNode implements DataSetInt
 
     String intervalName = null;
 
-    public DataSetIntervalIndex(DataSetGroupIndex parent, String intervalName, List<Integer> rows) {
-        super(parent, rows, 0);
-        this.intervalName = intervalName;
-    }
-
-    DataSetIntervalIndex(DataSetGroupIndex parent, String intervalName) {
+    public DataSetIntervalIndex(DataSetGroupIndex parent, String intervalName) {
         super(parent, null, 0);
         this.intervalName = intervalName;
     }
 
-    DataSetIntervalIndex(DataSetGroupIndex parent, Interval interval) {
+    public DataSetIntervalIndex(DataSetGroupIndex parent, Interval interval) {
         super(parent, interval.getRows(), 0);
         this.intervalName = interval.getName();
     }

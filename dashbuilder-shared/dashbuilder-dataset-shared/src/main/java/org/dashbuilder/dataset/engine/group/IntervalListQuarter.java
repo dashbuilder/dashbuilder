@@ -22,6 +22,7 @@ import java.util.Map;
 import org.dashbuilder.dataset.date.Month;
 import org.dashbuilder.dataset.date.Quarter;
 import org.dashbuilder.dataset.group.ColumnGroup;
+import org.dashbuilder.dataset.group.Interval;
 
 /**
  * List of the 4-quarter intervals present in a year.
@@ -39,7 +40,7 @@ public class IntervalListQuarter extends IntervalList {
 
         for (int i = 0; i < 4; i++) {
             Quarter quarter = Quarter.getByIndex(i);
-            Interval interval = new Interval(quarter.toString());
+            Interval interval = new Interval(quarter.toString(), i);
             this.add(interval);
 
             for (int j = 0; j < 3; j++) {

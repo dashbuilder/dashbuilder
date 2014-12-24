@@ -13,25 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbuilder.dataset.engine.function;
+package org.dashbuilder.dataset.impl;
 
-import org.dashbuilder.dataset.group.AggregateFunction;
+import org.dashbuilder.dataset.DataSetOp;
 
 /**
- * Base class for the implementation of aggregate functions.
+ * Base class for DataSetOp implementations
  */
-public abstract class AbstractFunction implements AggregateFunction {
+public abstract class AbstractDataSetOp implements DataSetOp {
 
-    protected int precission;
+    protected String dataSetUUID = null;
 
-    public AbstractFunction() {
-        precission = 2;
+    public String getDataSetUUID() {
+        return dataSetUUID;
     }
 
-    public double round(double value, int precission) {
-        if (precission < 0) return value;
-
-        double power = Math.pow(10, precission);
-        return Math.round(value * power) / power;
+    public void setDataSetUUID(String dataSetUUID) {
+        this.dataSetUUID = dataSetUUID;
     }
 }

@@ -95,6 +95,16 @@ public enum DateIntervalType {
         DURATION_IN_MILLIS.put(MILLENIUM, millenium);
     }
 
+    private static DateIntervalType[] _typeArray = values();
+
+    public int getIndex() {
+        for (int i = 0; i < _typeArray.length; i++) {
+            DateIntervalType type = _typeArray[i];
+            if (this.equals(type)) return i;
+        }
+        return -1;
+    }
+
     public static DateIntervalType getByName(String interval) {
         if (interval == null || interval.length() == 0) return null;
         return valueOf(interval.toUpperCase());

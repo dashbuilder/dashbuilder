@@ -21,6 +21,7 @@ import java.util.Map;
 
 import org.dashbuilder.dataset.date.DayOfWeek;
 import org.dashbuilder.dataset.group.ColumnGroup;
+import org.dashbuilder.dataset.group.Interval;
 
 /**
  * List of the 7-days intervals present in a week.
@@ -39,7 +40,7 @@ public class IntervalListDayOfWeek extends IntervalList {
 
         for (int i = 0; i < array.length; i++) {
             DayOfWeek dayOfWeek = array[index];
-            Interval interval = new Interval(dayOfWeek.toString());
+            Interval interval = new Interval(dayOfWeek.toString(), dayOfWeek.getIndex());
             this.add(interval);
 
             intervalMap.put(index, interval);

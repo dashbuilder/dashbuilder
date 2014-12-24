@@ -68,8 +68,7 @@ public abstract class GoogleXAxisChartDisplayer extends AbstractGoogleChartDispl
                     Selection selection = selections.get(i);
                     int row = selection.getRow();
 
-                    String intervalSelected = getValueString(row, 0);
-                    filterUpdate(googleTable.getColumnId(0), intervalSelected, googleTable.getNumberOfRows());
+                    filterUpdate(googleTable.getColumnId(0), row, googleTable.getNumberOfRows());
                 }
                 // Redraw the char in order to reflect the current selection
                 updateVisualization();
@@ -87,8 +86,7 @@ public abstract class GoogleXAxisChartDisplayer extends AbstractGoogleChartDispl
                     Selection selection = selections.get(i);
                     int row = selection.getRow();
 
-                    String intervalSelected = getValueString(row, 0);
-                    filterUpdate(googleTable.getColumnId(0), intervalSelected, googleTable.getNumberOfRows());
+                    filterUpdate(googleTable.getColumnId(0), row, googleTable.getNumberOfRows());
                 }
                 // Redraw the char in order to reflect the current selection
                 updateVisualization();

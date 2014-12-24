@@ -15,10 +15,33 @@
  */
 package org.dashbuilder.dataset.engine.group;
 
+import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.dataset.engine.DataSetHandler;
 import org.dashbuilder.dataset.group.ColumnGroup;
+import org.dashbuilder.dataset.group.Interval;
 
+/**
+ * Group operations requires to split the values of a column into intervals. This interface provides an abstraction
+ * for the different group strategy implementations.
+ */
 public interface IntervalBuilder {
 
+    /**
+     * Build a list of intervals according to the column group settings.
+     * @param ctx The current operation engine data set handler context.
+     * @param columnGroup The column group operation to apply.
+     *
+     * @return A list of intervals containing a split of all the values for the given column.
+     */
     IntervalList build(DataSetHandler ctx, ColumnGroup columnGroup);
+
+    /**
+     * Given a grouped column, locate the interval at the position specified.
+     *
+     * @param column The grouped column.
+     * @param intervalIndex The target interval index we want to select.
+     *
+     * @return The target interval
+     */
+    Interval locate(DataColumn column, Integer intervalIndex);
 }

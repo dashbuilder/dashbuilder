@@ -20,6 +20,7 @@ import java.util.ArrayList;
 
 import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.DataColumn;
+import org.dashbuilder.dataset.group.ColumnGroup;
 import org.jboss.errai.common.client.api.annotations.Portable;
 
 @Portable
@@ -30,6 +31,10 @@ public class DataColumnImpl implements DataColumn {
     protected String name = null;
     protected ColumnType columnType = ColumnType.LABEL;
     protected List values = new ArrayList();
+    protected ColumnGroup columnGroup;
+    protected String intervalType;
+    protected Object minValue;
+    protected Object maxValue;
 
     public DataColumnImpl() {
     }
@@ -79,6 +84,38 @@ public class DataColumnImpl implements DataColumn {
 
     public void setValues(List values) {
         this.values = values;
+    }
+
+    public ColumnGroup getColumnGroup() {
+        return columnGroup;
+    }
+
+    public void setColumnGroup(ColumnGroup columnGroup) {
+        this.columnGroup = columnGroup;
+    }
+
+    public String getIntervalType() {
+        return intervalType;
+    }
+
+    public void setIntervalType(String intervalType) {
+        this.intervalType = intervalType;
+    }
+
+    public Object getMinValue() {
+        return minValue;
+    }
+
+    public void setMinValue(Object minValue) {
+        this.minValue = minValue;
+    }
+
+    public Object getMaxValue() {
+        return maxValue;
+    }
+
+    public void setMaxValue(Object maxValue) {
+        this.maxValue = maxValue;
     }
 
     public String toString() {

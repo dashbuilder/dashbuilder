@@ -68,7 +68,7 @@ public class BackendDataSetManager implements DataSetManager {
     public DataSet getDataSet(String uuid) {
         try {
             DataSetDef dataSetDef = dataSetDefRegistry.getDataSetDef(uuid);
-            if (dataSetDef == null) return null;
+            if (dataSetDef == null) throw new RuntimeException("Data set not found: " + uuid);
 
             // Fetch the specified data set
             return resolveProvider(dataSetDef)
@@ -99,13 +99,13 @@ public class BackendDataSetManager implements DataSetManager {
     }
 
     public DataSet lookupDataSet(DataSetLookup lookup) {
+        String uuid = lookup.getDataSetUUID();
+        if (StringUtils.isBlank(uuid)) return null;
+
+        DataSetDef dataSetDef = dataSetDefRegistry.getDataSetDef(uuid);
+        if (dataSetDef == null) throw new RuntimeException("Data set not found: " + uuid);
+
         try {
-            String uuid = lookup.getDataSetUUID();
-            if (StringUtils.isBlank(uuid)) return null;
-
-            DataSetDef dataSetDef = dataSetDefRegistry.getDataSetDef(uuid);
-            if (dataSetDef == null) return null;
-
             return resolveProvider(dataSetDef)
                     .lookupDataSet(dataSetDef, lookup);
         } catch (Exception e) {
@@ -122,12 +122,12 @@ public class BackendDataSetManager implements DataSetManager {
     }
 
     public DataSetMetadata getDataSetMetadata(String uuid) {
+        if (StringUtils.isBlank(uuid)) return null;
+
+        DataSetDef dataSetDef = dataSetDefRegistry.getDataSetDef(uuid);
+        if (dataSetDef == null) throw new RuntimeException("Data set not found: " + uuid);
+
         try {
-            if (StringUtils.isBlank(uuid)) return null;
-
-            DataSetDef dataSetDef = dataSetDefRegistry.getDataSetDef(uuid);
-            if (dataSetDef == null) return null;
-
             return resolveProvider(dataSetDef)
                     .getDataSetMetadata(dataSetDef);
         } catch (Exception e) {

@@ -27,10 +27,12 @@ import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.user.client.ui.Composite;
 import org.dashbuilder.common.client.StringUtils;
+import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.dataset.ValidationError;
 import org.dashbuilder.dataset.group.ColumnGroup;
 import org.dashbuilder.dataset.group.DataSetGroup;
 import org.dashbuilder.dataset.group.GroupStrategy;
+import org.dashbuilder.dataset.group.Interval;
 import org.dashbuilder.dataset.sort.ColumnSort;
 import org.dashbuilder.dataset.sort.DataSetSort;
 import org.dashbuilder.dataset.sort.SortOrder;
@@ -51,7 +53,7 @@ public abstract class AbstractDisplayer extends Composite implements Displayer {
     protected DisplayerSettings displayerSettings;
     protected DisplayerConstraints displayerConstraints;
     protected List<DisplayerListener> listenerList = new ArrayList<DisplayerListener>();
-    protected Map<String,List<String>> columnSelectionMap = new HashMap<String,List<String>>();
+    protected Map<String,List<Interval>> columnSelectionMap = new HashMap<String,List<Interval>>();
 
     public abstract DisplayerConstraints createDisplayerConstraints();
 
@@ -139,49 +141,59 @@ public abstract class AbstractDisplayer extends Composite implements Displayer {
      * @return A list of distinct values currently selected.
      */
     protected List<String> filterValues(String columnId) {
-        return columnSelectionMap.get(columnId);
+        List<String> result = new ArrayList<String>();
+        List<Interval> selected = columnSelectionMap.get(columnId);
+        if (selected == null) return result;
+
+        for (Interval interval : selected) {
+            result.add(interval.getName());
+        }
+        return result;
     }
 
     /**
      * Updates the current filter values for the given data set column.
      *
      * @param columnId The column to filter for.
-     * @param valueSelected The value to add/remove from the current filter.
+     * @param row The row selected.
      */
-    protected void filterUpdate(String columnId, String valueSelected) {
-        filterUpdate(columnId, valueSelected, null);
+    protected void filterUpdate(String columnId, int row) {
+        filterUpdate(columnId, row, null);
     }
 
     /**
      * Updates the current filter values for the given data set column.
      *
      * @param columnId The column to filter for.
-     * @param valueSelected The value to add/remove from the current filter.
+     * @param row The row selected.
      * @param maxSelections The number of different selectable values available.
      */
-    protected void filterUpdate(String columnId, String valueSelected, Integer maxSelections) {
+    protected void filterUpdate(String columnId, int row, Integer maxSelections) {
         if (!displayerSettings.isFilterEnabled()) return;
 
-        List<String> selectedValues = columnSelectionMap.get(columnId);
-        if (selectedValues == null) {
-            selectedValues = new ArrayList<String>();
-            selectedValues.add(valueSelected);
-            columnSelectionMap.put(columnId, selectedValues);
-            filterApply(columnId, selectedValues);
+        Interval intervalSelected = dataSetHandler.getInterval(columnId, row);
+        if (intervalSelected == null) return;
+
+        List<Interval> selectedIntervals = columnSelectionMap.get(columnId);
+        if (selectedIntervals == null) {
+            selectedIntervals = new ArrayList<Interval>();
+            selectedIntervals.add(intervalSelected);
+            columnSelectionMap.put(columnId, selectedIntervals);
+            filterApply(columnId, selectedIntervals);
         }
-        else if (selectedValues.contains(valueSelected)) {
-            selectedValues.remove(valueSelected);
-            if (!selectedValues.isEmpty()) {
-                filterApply(columnId, selectedValues);
+        else if (selectedIntervals.contains(intervalSelected)) {
+            selectedIntervals.remove(intervalSelected);
+            if (!selectedIntervals.isEmpty()) {
+                filterApply(columnId, selectedIntervals);
             } else {
                 filterReset(columnId);
             }
         } else {
-            selectedValues.add(valueSelected);
-            if (maxSelections != null && maxSelections > 0 && selectedValues.size() >= maxSelections) {
+            selectedIntervals.add(intervalSelected);
+            if (maxSelections != null && maxSelections > 0 && selectedIntervals.size() >= maxSelections) {
                 filterReset(columnId);
             } else {
-                filterApply(columnId, selectedValues);
+                filterApply(columnId, selectedIntervals);
             }
         }
     }
@@ -190,9 +202,9 @@ public abstract class AbstractDisplayer extends Composite implements Displayer {
      * Filter the values of the given column.
      *
      * @param columnId The name of the column to filter.
-     * @param values A list of values to filter for.
+     * @param intervalList A list of interval selections to filter for.
      */
-    protected void filterApply(String columnId, List<String> values) {
+    protected void filterApply(String columnId, List<Interval> intervalList) {
         if (!displayerSettings.isFilterEnabled()) return;
 
         // For string column filters, create and notify a group interval selection operation.
@@ -200,11 +212,12 @@ public abstract class AbstractDisplayer extends Composite implements Displayer {
         DataSetGroup _groupSelect = null;
         if (groupOp != null && groupOp.getColumnGroup() != null) {
             _groupSelect = groupOp.cloneInstance();
-            _groupSelect.setSelectedIntervalNames(values);
+            _groupSelect.setSelectedIntervalList(intervalList);
 
         } else {
             _groupSelect = new DataSetGroup();
-            _groupSelect.setSelectedIntervalNames(values);
+            _groupSelect.setDataSetUUID(displayerSettings.getDataSetLookup().getDataSetUUID());
+            _groupSelect.setSelectedIntervalList(intervalList);
             _groupSelect.setColumnGroup(new ColumnGroup(columnId, columnId, GroupStrategy.DYNAMIC));
         }
         // Notify to those interested parties the selection event.
@@ -297,6 +310,11 @@ public abstract class AbstractDisplayer extends Composite implements Displayer {
     // DATA FORMATTING
 
     protected String format(Object value, String columnId) {
+
+        // Dynamic
+        // 2014
+        // 2014_12
+        // 2014_11_24
 
         // TODO: displayer settings column format
         // For example: .format("amount", "#,###.##", "---")

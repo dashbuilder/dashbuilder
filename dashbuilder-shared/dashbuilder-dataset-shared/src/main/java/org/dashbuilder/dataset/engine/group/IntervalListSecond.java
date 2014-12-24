@@ -20,8 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.dashbuilder.dataset.group.ColumnGroup;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.dashbuilder.dataset.group.Interval;
 
 /**
  * List of the 60-second intervals present in a minute.
@@ -39,7 +38,7 @@ public class IntervalListSecond extends IntervalList {
         intervalMap = new HashMap<Integer, Interval>();
 
         for (int i = 0; i < size; i++) {
-            Interval interval = new Interval(Integer.toString(i));
+            Interval interval = new Interval(Integer.toString(i), i);
             this.add(interval);
 
             intervalMap.put(i, interval);

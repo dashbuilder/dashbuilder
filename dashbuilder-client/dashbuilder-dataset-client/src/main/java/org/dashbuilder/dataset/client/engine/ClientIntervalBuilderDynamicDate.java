@@ -21,10 +21,11 @@ import java.util.List;
 import javax.enterprise.context.ApplicationScoped;
 
 import com.google.gwt.i18n.client.DateTimeFormat;
+import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.dataset.engine.DataSetHandler;
 import org.dashbuilder.dataset.DataSet;
-import org.dashbuilder.dataset.engine.group.Interval;
 import org.dashbuilder.dataset.engine.group.IntervalBuilder;
+import org.dashbuilder.dataset.group.Interval;
 import org.dashbuilder.dataset.engine.group.IntervalList;
 import org.dashbuilder.dataset.group.ColumnGroup;
 import org.dashbuilder.dataset.group.DateIntervalType;
@@ -72,9 +73,13 @@ public class ClientIntervalBuilderDynamicDate implements IntervalBuilder {
 
         // If min/max are equals then create a single interval.
         if (minDate == null || minDate.compareTo(maxDate) == 0) {
-            IntervalDateRange interval = new IntervalDateRange(DAY, minDate, maxDate);
-            for (int row = 0; row < sortedValues.size(); row++) interval.rows.add(row);
+            IntervalDateRange interval = new IntervalDateRange(0, DAY, minDate, maxDate);
+            for (int row = 0; row < sortedValues.size(); row++) interval.getRows().add(row);
             results.add(interval);
+
+            results.setIntervalType(columnGroup.getIntervalSize());
+            results.setMinValue(minDate);
+            results.setMaxValue(maxDate);
             return results;
         }
 
@@ -101,7 +106,71 @@ public class ClientIntervalBuilderDynamicDate implements IntervalBuilder {
             intervalType = intervalSize;
         }
 
-        // Adjust the minDate according to the interval type.
+        // Create the intervals according to the min/max dates.
+        Date intervalMinDate = firstIntervalDate(intervalType, minDate, columnGroup);
+        int index = 0;
+        int counter = 0;
+        while (intervalMinDate.compareTo(maxDate) <= 0) {
+
+            // Go to the next interval
+            Date intervalMaxDate = nextIntervalDate(intervalMinDate, intervalType, 1);
+
+            // Create the interval.
+            IntervalDateRange interval = new IntervalDateRange(counter++, intervalType, intervalMinDate, intervalMaxDate);
+            results.add(interval);
+
+            // Add the target rows to the interval.
+            boolean stop = false;
+            while (!stop) {
+                if (index >= sortedValues.size()) {
+                    stop = true;
+                } else {
+                    Date dateValue = (Date) sortedValues.get(index);
+                    Integer row = sortedRows.get(index);
+                    if (dateValue.before(intervalMaxDate)){
+                        interval.getRows().add(row);
+                        index++;
+                    } else {
+                        stop = true;
+                    }
+                }
+            }
+            // Move to the next interval.
+            intervalMinDate = intervalMaxDate;
+        }
+
+        // Reverse intervals if requested
+        boolean asc = columnGroup.isAscendingOrder();
+        if (!asc) Collections.reverse( results );
+
+        results.setIntervalType(intervalType.toString());
+        results.setMinValue(minDate);
+        results.setMaxValue(maxDate);
+        return results;
+    }
+
+    public Interval locate(DataColumn column, Integer intervalIndex) {
+        ColumnGroup columnGroup = column.getColumnGroup();
+        Date columnMinDate = (Date) column.getMinValue();
+        String type = column.getIntervalType();
+
+        if (columnGroup == null) return null;
+        if (columnMinDate == null) return null;
+        if (type == null) return null;
+
+        // Calculate the interval min. date.
+        DateIntervalType intervalType = DateIntervalType.getByName(type);
+        Date startDate = firstIntervalDate(intervalType, columnMinDate, columnGroup);
+        Date intervalMinDate = nextIntervalDate(startDate, intervalType, intervalIndex);
+
+        // Calculate the interval max. date.
+        Date intervalMaxDate = nextIntervalDate(intervalMinDate, intervalType, 1);
+
+        // Build & return the selected interval
+        return new IntervalDateRange(intervalIndex, intervalType, intervalMinDate, intervalMaxDate);
+    }
+
+    protected Date firstIntervalDate(DateIntervalType intervalType, Date minDate, ColumnGroup columnGroup) {
         Date intervalMinDate = new Date(minDate.getTime());
         if (YEAR.equals(intervalType)) {
             intervalMinDate.setMonth(0);
@@ -138,78 +207,46 @@ public class ClientIntervalBuilderDynamicDate implements IntervalBuilder {
         if (MINUTE.equals(intervalType)) {
             intervalMinDate.setSeconds(0);
         }
+        return intervalMinDate;
+    }
 
-        // Create the intervals according to the min/max dates.
-        int index = 0;
-        while (intervalMinDate.compareTo(maxDate) <= 0) {
-            Date intervalMaxDate = new Date(intervalMinDate.getTime());
+    protected Date nextIntervalDate(Date intervalMinDate, DateIntervalType intervalType, int intervals) {
+        Date intervalMaxDate = new Date(intervalMinDate.getTime());
 
-            // Go to the next interval
-            if (MILLENIUM.equals(intervalType)) {
-                intervalMaxDate.setYear(intervalMinDate.getYear()+1000);
-            }
-            if (CENTURY.equals(intervalType)) {
-                intervalMaxDate.setYear(intervalMinDate.getYear()+100);
-            }
-            if (DECADE.equals(intervalType)) {
-                intervalMaxDate.setYear(intervalMinDate.getYear()+10);
-            }
-            if (YEAR.equals(intervalType)) {
-                intervalMaxDate.setYear(intervalMinDate.getYear()+1);
-            }
-            if (QUARTER.equals(intervalType)) {
-                intervalMaxDate.setMonth(intervalMinDate.getMonth()+3);
-            }
-            if (MONTH.equals(intervalType)) {
-                intervalMaxDate.setMonth(intervalMinDate.getMonth()+1);
-            }
-            if (WEEK.equals(intervalType)) {
-                intervalMaxDate.setDate(intervalMinDate.getDate()+7);
-            }
-            if (DAY.equals(intervalType) || DAY_OF_WEEK.equals(intervalType)) {
-                intervalMaxDate.setDate(intervalMinDate.getDate()+1);
-            }
-            if (HOUR.equals(intervalType)) {
-                intervalMaxDate.setHours(intervalMinDate.getHours()+1);
-            }
-            if (MINUTE.equals(intervalType)) {
-                intervalMaxDate.setMinutes(intervalMinDate.getMinutes()+1);
-            }
-            if (SECOND.equals(intervalType)) {
-                intervalMaxDate.setSeconds(intervalMinDate.getSeconds()+1);
-            }
-
-            // Create the interval.
-            IntervalDateRange interval = new IntervalDateRange(intervalType, intervalMinDate, intervalMaxDate);
-            results.add(interval);
-
-            // Add the target rows to the interval.
-            boolean stop = false;
-            while (!stop) {
-                if (index >= sortedValues.size()) {
-                    stop = true;
-                } else {
-                    Date dateValue = (Date) sortedValues.get(index);
-                    Integer row = sortedRows.get(index);
-                    if (dateValue == null) {
-                        index++;
-                    } else if (dateValue.before(intervalMaxDate)){
-                        interval.rows.add(row);
-                        index++;
-                    } else {
-                        stop = true;
-                    }
-                }
-            }
-            // Move to the next interval.
-            intervalMinDate = intervalMaxDate;
+        if (MILLENIUM.equals(intervalType)) {
+            intervalMaxDate.setYear(intervalMinDate.getYear() + 1000 * intervals);
         }
-
-        // Reverse intervals if requested
-        boolean asc = columnGroup.isAscendingOrder();
-        if (!asc) Collections.reverse( results );
-
-        return results;
+        if (CENTURY.equals(intervalType)) {
+            intervalMaxDate.setYear(intervalMinDate.getYear() + 100 * intervals);
+        }
+        if (DECADE.equals(intervalType)) {
+            intervalMaxDate.setYear(intervalMinDate.getYear() + 10 * intervals);
+        }
+        if (YEAR.equals(intervalType)) {
+            intervalMaxDate.setYear(intervalMinDate.getYear() +  intervals);
+        }
+        if (QUARTER.equals(intervalType)) {
+            intervalMaxDate.setMonth(intervalMinDate.getMonth() + 3 * intervals);
+        }
+        if (MONTH.equals(intervalType)) {
+            intervalMaxDate.setMonth(intervalMinDate.getMonth() + intervals);
+        }
+        if (WEEK.equals(intervalType)) {
+            intervalMaxDate.setDate(intervalMinDate.getDate() + 7 * intervals);
+        }
+        if (DAY.equals(intervalType) || DAY_OF_WEEK.equals(intervalType)) {
+            intervalMaxDate.setDate(intervalMinDate.getDate() + intervals);
+        }
+        if (HOUR.equals(intervalType)) {
+            intervalMaxDate.setHours(intervalMinDate.getHours() + intervals);
+        }
+        if (MINUTE.equals(intervalType)) {
+            intervalMaxDate.setMinutes(intervalMinDate.getMinutes() + intervals);
+        }
+        if (SECOND.equals(intervalType)) {
+            intervalMaxDate.setSeconds(intervalMinDate.getSeconds() + intervals);
+        }
+        return intervalMaxDate;
     }
 
     /**
@@ -225,7 +262,7 @@ public class ClientIntervalBuilderDynamicDate implements IntervalBuilder {
             Date d = (Date) value;
             for (Interval interval : this) {
                 IntervalDateRange dateRange = (IntervalDateRange) interval;
-                if (d.equals(dateRange.minDate) || (d.after(dateRange.minDate) && d.before(dateRange.maxDate))) {
+                if (d.equals(dateRange.getMinDate()) || (d.after(dateRange.getMinDate()) && d.before(dateRange.getMaxDate()))) {
                     return interval;
                 }
             }
@@ -238,68 +275,49 @@ public class ClientIntervalBuilderDynamicDate implements IntervalBuilder {
      */
     public class IntervalDateRange extends Interval {
 
-        protected DateIntervalType intervalType;
-        protected Date minDate;
-        protected Date maxDate;
-
-        public IntervalDateRange(DateIntervalType intervalType, Date minDate, Date maxDate) {
-            super();
-            this.name = calculateName(intervalType, minDate);
-            this.intervalType = intervalType;
-            this.minDate = minDate;
-            this.maxDate = maxDate;
-
+        public IntervalDateRange(int index, DateIntervalType intervalType, Date minDate, Date maxDate) {
+            super(calculateName(intervalType, minDate));
+            super.setMinValue(minDate);
+            super.setMaxValue(maxDate);
+            super.setIndex(index);
+            super.setType(intervalType.toString());
         }
 
-        public String calculateName(DateIntervalType intervalType, Date d) {
-            if (MILLENIUM.equals(intervalType)) {
-                DateTimeFormat format  = DateTimeFormat.getFormat("yyyy");
-                return format.format(d);
-            }
-            if (CENTURY.equals(intervalType)) {
-                DateTimeFormat format  = DateTimeFormat.getFormat("yyyy");
-                return format.format(d);
-            }
-            if (DECADE.equals(intervalType)) {
-                DateTimeFormat format  = DateTimeFormat.getFormat("yyyy");
-                return format.format(d);
-            }
-            if (YEAR.equals(intervalType)) {
-                DateTimeFormat format  = DateTimeFormat.getFormat("yyyy");
-                return format.format(d);
-            }
-            if (QUARTER.equals(intervalType)) {
-                DateTimeFormat format  = DateTimeFormat.getFormat("yyyy");
-                if (d.getMonth() < 3) return "Q1 " + format.format(d);
-                if (d.getMonth() < 6) return "Q2 " + format.format(d);
-                if (d.getMonth() < 9) return "Q3 " + format.format(d);
-                return "Q4 " + format.format(d);
-            }
-            if (MONTH.equals(intervalType)) {
-                DateTimeFormat format  = DateTimeFormat.getFormat("MMMM yyyy");
-                return format.format(d);
-            }
-            if (WEEK.equals(intervalType)) {
-                DateTimeFormat format  = DateTimeFormat.getFormat("MMM dd");
-                return format.format(d);
-            }
-            if (DAY.equals(intervalType) || DAY_OF_WEEK.equals(intervalType)) {
-                DateTimeFormat format  = DateTimeFormat.getFormat("EEE dd ");
-                return format.format(d);
-            }
-            if (HOUR.equals(intervalType)) {
-                DateTimeFormat format  = DateTimeFormat.getFormat("HH");
-                return format.format(d) + "h";
-            }
-            if (MINUTE.equals(intervalType)) {
-                DateTimeFormat format  = DateTimeFormat.getFormat("mm");
-                return format.format(d);
-            }
-            if (SECOND.equals(intervalType)) {
-                DateTimeFormat format  = DateTimeFormat.getFormat("ss");
-                return format.format(d);
-            }
-            return null;
+        public Date getMinDate() {
+            return (Date) minValue;
         }
+
+        public Date getMaxDate() {
+            return (Date) maxValue;
+        }
+    }
+
+    public static String calculateName(DateIntervalType intervalType, Date d) {
+        if (MILLENIUM.equals(intervalType) || CENTURY.equals(intervalType)
+            || DECADE.equals(intervalType) || YEAR.equals(intervalType)) {
+            DateTimeFormat format  = DateTimeFormat.getFormat("yyyy");
+            return format.format(d);
+        }
+        if (QUARTER.equals(intervalType) || MONTH.equals(intervalType)) {
+            DateTimeFormat format  = DateTimeFormat.getFormat("yyyy-MM");
+            return format.format(d);
+        }
+        if (WEEK.equals(intervalType) || DAY.equals(intervalType) || DAY_OF_WEEK.equals(intervalType)) {
+            DateTimeFormat format  = DateTimeFormat.getFormat("yyyy-MM-dd");
+            return format.format(d);
+        }
+        if (HOUR.equals(intervalType)) {
+            DateTimeFormat format  = DateTimeFormat.getFormat("yyyy-MM-dd HH");
+            return format.format(d) + "h";
+        }
+        if (MINUTE.equals(intervalType)) {
+            DateTimeFormat format  = DateTimeFormat.getFormat("yyyy-MM-dd HH:mm");
+            return format.format(d);
+        }
+        if (SECOND.equals(intervalType)) {
+            DateTimeFormat format  = DateTimeFormat.getFormat("yyyy-MM-dd HH:mm:ss");
+            return format.format(d);
+        }
+        return null;
     }
 }

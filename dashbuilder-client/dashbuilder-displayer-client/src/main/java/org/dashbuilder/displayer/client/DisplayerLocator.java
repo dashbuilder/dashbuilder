@@ -22,6 +22,7 @@ import javax.inject.Inject;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetLookup;
 import org.dashbuilder.dataset.client.ClientDataSetManager;
+import org.dashbuilder.dataset.engine.group.IntervalBuilderLocator;
 import org.dashbuilder.displayer.DisplayerSettings;
 import org.jboss.errai.ioc.client.container.IOC;
 import org.jboss.errai.ioc.client.container.IOCBeanDef;

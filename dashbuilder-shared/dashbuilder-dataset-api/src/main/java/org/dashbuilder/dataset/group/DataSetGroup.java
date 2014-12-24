@@ -18,20 +18,20 @@ package org.dashbuilder.dataset.group;
 import java.util.List;
 import java.util.ArrayList;
 
-import org.dashbuilder.dataset.DataSetOp;
 import org.dashbuilder.dataset.DataSetOpType;
+import org.dashbuilder.dataset.impl.AbstractDataSetOp;
 import org.jboss.errai.common.client.api.annotations.Portable;
 
 /**
  * A data set group operation.
  */
 @Portable
-public class DataSetGroup implements DataSetOp {
+public class DataSetGroup extends AbstractDataSetOp {
 
     protected boolean join = false;
     protected ColumnGroup columnGroup = null;
     protected List<GroupFunction> groupFunctionList = new ArrayList<GroupFunction>();
-    protected List<String> selectedIntervalNames = new ArrayList<String>();
+    protected List<Interval> selectedIntervalList = new ArrayList<Interval>();
 
     public DataSetOpType getType() {
         return DataSetOpType.GROUP;
@@ -57,16 +57,22 @@ public class DataSetGroup implements DataSetOp {
 
     public void addSelectedIntervalNames(String... names) {
         for (String name : names) {
-            selectedIntervalNames.add(name);
+            Interval interval = new Interval(name);
+            selectedIntervalList.add(interval);
         }
     }
 
-    public List<String> getSelectedIntervalNames() {
-        return selectedIntervalNames;
+    public void setSelectedIntervalList(List<Interval> intervalList) {
+        if (intervalList == null) selectedIntervalList.clear();
+        else selectedIntervalList = intervalList;
     }
 
-    public void setSelectedIntervalNames(List<String> names) {
-        selectedIntervalNames = (names != null) ? names : new ArrayList<String>();
+    public List<Interval> getSelectedIntervalList() {
+        return selectedIntervalList;
+    }
+
+    public boolean isSelect() {
+        return !selectedIntervalList.isEmpty();
     }
 
     public boolean isJoin() {
@@ -91,7 +97,10 @@ public class DataSetGroup implements DataSetOp {
         DataSetGroup clone = new DataSetGroup();
         if (columnGroup != null) clone.columnGroup = columnGroup.cloneInstance();
         clone.join = join;
-        clone.selectedIntervalNames = new ArrayList(selectedIntervalNames);
+        clone.selectedIntervalList = new ArrayList();
+        for (Interval interval : selectedIntervalList) {
+            clone.selectedIntervalList.add(interval.cloneInstance());
+        }
         clone.groupFunctionList = new ArrayList();
         for (GroupFunction groupFunction : groupFunctionList) {
             clone.groupFunctionList.add(groupFunction.cloneInstance());
@@ -108,15 +117,15 @@ public class DataSetGroup implements DataSetOp {
             if (columnGroup == null && other.columnGroup != null) return false;
             if (columnGroup != null && !columnGroup.equals(other.columnGroup)) return false;
             if (groupFunctionList.size() != other.groupFunctionList.size()) return false;
-            if (selectedIntervalNames.size() != other.selectedIntervalNames.size()) return false;
+            if (selectedIntervalList.size() != other.selectedIntervalList.size()) return false;
 
             for (int i = 0; i < groupFunctionList.size(); i++) {
                 GroupFunction el = groupFunctionList.get(i);
                 if (!other.groupFunctionList.contains(el)) return false;
             }
-            for (int i = 0; i < selectedIntervalNames.size(); i++) {
-                String el = selectedIntervalNames.get(i);
-                if (!other.selectedIntervalNames.contains(el)) return false;
+            for (int i = 0; i < selectedIntervalList.size(); i++) {
+                Interval el = selectedIntervalList.get(i);
+                if (!other.selectedIntervalList.contains(el)) return false;
             }
             return true;
         } catch (ClassCastException e) {
@@ -130,10 +139,10 @@ public class DataSetGroup implements DataSetOp {
             out.append("group(").append(columnGroup).append(") ");
             if (join) out.append(".join()");
         }
-        if (!selectedIntervalNames.isEmpty()) {
+        if (!selectedIntervalList.isEmpty()) {
             out.append("select(");
-            for (String intervalName : selectedIntervalNames) {
-                out.append(intervalName).append(" ");
+            for (Interval interval : selectedIntervalList) {
+                out.append(interval.getName()).append(" ");
             }
             out.append(")");
         }
