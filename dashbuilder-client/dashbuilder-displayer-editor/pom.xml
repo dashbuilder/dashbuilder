@@ -75,7 +75,7 @@
 
     <dependency>
       <groupId>org.uberfire</groupId>
-      <artifactId>uberfire-perspective-editor-client</artifactId>
+      <artifactId>uberfire-runtime-plugins-client</artifactId>
     </dependency>
 
   </dependencies>

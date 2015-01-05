@@ -44,12 +44,11 @@
 
     <dependency>
       <groupId>org.uberfire</groupId>
-      <artifactId>uberfire-perspective-editor-client</artifactId>
+      <artifactId>uberfire-runtime-plugins-client</artifactId>
     </dependency>
-
     <dependency>
       <groupId>org.uberfire</groupId>
-      <artifactId>uberfire-perspective-editor-backend</artifactId>
+      <artifactId>uberfire-runtime-plugins-backend</artifactId>
     </dependency>
 
     <dependency>
@@ -189,7 +188,8 @@
             <compileSourcesArtifact>org.dashbuilder:dashbuilder-renderer-selector</compileSourcesArtifact>
 
             <!-- Uberfire ext -->
-            <compileSourcesArtifact>org.uberfire:uberfire-perspective-editor-client</compileSourcesArtifact>
+            <compileSourcesArtifact>org.uberfire:uberfire-runtime-plugins-client</compileSourcesArtifact>
+            <compileSourcesArtifact>org.uberfire:uberfire-commons-editor-client</compileSourcesArtifact>
             <compileSourcesArtifact>org.uberfire:uberfire-apps-client</compileSourcesArtifact>
             <compileSourcesArtifact>org.uberfire:uberfire-widgets-properties-editor-client</compileSourcesArtifact>
 
