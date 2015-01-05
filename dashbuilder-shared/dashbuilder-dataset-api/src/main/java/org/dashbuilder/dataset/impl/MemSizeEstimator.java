@@ -49,11 +49,15 @@ public class MemSizeEstimator {
         sizeOfMap.put(BigDecimal.class, sizeOfBigDecimal);
     }
 
+    public static int sizeOf(Class clazz) {
+        Integer size = sizeOfMap.get(clazz);
+        return (size != null ? size : 0);
+    }
+
     public static int sizeOf(Object o) {
         if (o == null) return 0;
 
-        Integer size = sizeOfMap.get(o.getClass());
-        return (size != null ? size : 0);
+        return sizeOf(o.getClass());
     }
 
     public static int sizeOfString(String s) {

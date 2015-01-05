@@ -35,8 +35,9 @@ public class SQLDataSetDefBuilderImpl extends AbstractDataSetDefBuilder<SQLDataS
         return this;
     }
 
-    public SQLDataSetDefBuilderImpl dbTable(String dbTable) {
+    public SQLDataSetDefBuilderImpl dbTable(String dbTable, boolean allColumns) {
         ((SQLDataSetDef) def).setDbTable(dbTable);
+        ((SQLDataSetDef) def).setAllColumnsEnabled(allColumns);
         return this;
     }
 

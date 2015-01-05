@@ -48,9 +48,11 @@ public interface SQLDataSetDefBuilder<T extends DataSetDefBuilder> extends DataS
      * Set the database table holding all the data set rows.
      *
      * @param dbTable the table name
+     * @param allColumns If true then all the DB table columns will be part of the data set.
+     * If false then only the columns defined (see the DataSetDefBuilder column definition methods)
      * @return The DataSetDefBuilder instance that is being used to configure a DataSetDef.
      */
-    T dbTable(String dbTable);
+    T dbTable(String dbTable, boolean allColumns);
 
     /**
      * Enables the static cache

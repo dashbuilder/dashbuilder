@@ -55,6 +55,20 @@ public class DataSetGroup extends AbstractDataSetOp {
         return groupFunctionList;
     }
 
+    public GroupFunction getGroupFunction(String columnId) {
+        for (GroupFunction gf : groupFunctionList) {
+            if (columnId != null && !columnId.equals(gf.getColumnId())) {
+                return gf;
+            }
+        }
+        for (GroupFunction gf : groupFunctionList) {
+            if (columnId != null && !columnId.equals(gf.getSourceId())) {
+                return gf;
+            }
+        }
+        return null;
+    }
+
     public void addSelectedIntervalNames(String... names) {
         for (String name : names) {
             Interval interval = new Interval(name);

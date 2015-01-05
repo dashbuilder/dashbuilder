@@ -58,6 +58,7 @@ public class DataSetDefJSONMarshaller {
     public static final String DATA_SOURCE = "dataSource";
     public static final String DB_SCHEMA = "dbSchema";
     public static final String DB_TABLE = "dbTable";
+    public static final String ALL_COLUMNS = "allColumns";
     public static final String CACHE_ENABLED = "cacheEnabled";
     public static final String CACHE_MAXROWS = "cacheMaxRows";
     public static final String CACHE_SYNCED = "cacheSynced";
@@ -195,12 +196,14 @@ public class DataSetDefJSONMarshaller {
         String dbTable = json.has(DB_TABLE) ? json.getString(DB_TABLE) : null;
         String dbSchema = json.has(DB_SCHEMA) ? json.getString(DB_SCHEMA) : null;
         String cacheEnabled = json.has(CACHE_ENABLED) ? json.getString(CACHE_ENABLED) : null;
+        String allColumns = json.has(ALL_COLUMNS) ? json.getString(ALL_COLUMNS) : null;
         String cacheMaxRows = json.has(CACHE_MAXROWS) ? json.getString(CACHE_MAXROWS) : null;
         String cacheSynced = json.has(CACHE_SYNCED) ? json.getString(CACHE_SYNCED) : null;
 
         if (!StringUtils.isBlank(dataSource)) def.setDataSource(dataSource);
         if (!StringUtils.isBlank(dbSchema)) def.setDbSchema(dbSchema);
         if (!StringUtils.isBlank(dbTable)) def.setDbTable(dbTable);
+        if (!StringUtils.isBlank(allColumns)) def.setAllColumnsEnabled(Boolean.parseBoolean(allColumns));
         if (!StringUtils.isBlank(cacheEnabled)) def.setCacheEnabled(Boolean.parseBoolean(cacheEnabled));
         if (!StringUtils.isBlank(cacheMaxRows)) def.setCacheMaxRows(Integer.parseInt(cacheMaxRows));
         if (!StringUtils.isBlank(cacheSynced)) def.setCacheSynced(Boolean.parseBoolean(cacheSynced));
