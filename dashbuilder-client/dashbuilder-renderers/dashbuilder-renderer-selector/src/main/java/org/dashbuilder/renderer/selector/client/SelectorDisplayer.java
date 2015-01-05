@@ -148,7 +148,7 @@ public class SelectorDisplayer extends AbstractDisplayer {
                 // Filter by the selected value (if any)
                 int index = listBox.getSelectedIndex();
                 if (index > 0) {
-                    filterUpdate(firstColumnId, listBox.getValue(index));
+                    filterUpdate(firstColumnId, index-1);
                 }
             }
         });
@@ -223,7 +223,7 @@ public class SelectorDisplayer extends AbstractDisplayer {
     public void onGroupIntervalsSelected(Displayer displayer, DataSetGroup groupOp) {
         String firstColumnId = getColumnId(dataSet, 0);
         if (firstColumnId.equals(groupOp.getColumnGroup().getColumnId())) {
-            columnSelectionMap.put(groupOp.getColumnGroup().getColumnId(), groupOp.getSelectedIntervalNames());
+            columnSelectionMap.put(groupOp.getColumnGroup().getColumnId(), groupOp.getSelectedIntervalList());
         }
         super.onGroupIntervalsSelected(displayer, groupOp);
     }

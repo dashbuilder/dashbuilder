@@ -359,7 +359,7 @@ public class TableDisplayer extends AbstractDisplayer {
 
             if ( !displayerSettings.isFilterEnabled() ) return;
 
-            filterUpdate( columnId, value );
+            filterUpdate( columnId, context.getIndex() );
             redrawColumnSelectionWidget();
         }
     }
