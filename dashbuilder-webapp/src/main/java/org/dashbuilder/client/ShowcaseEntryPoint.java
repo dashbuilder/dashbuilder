@@ -73,7 +73,7 @@ public class ShowcaseEntryPoint {
                 }).endMenu().
                 newTopLevelMenu("Designer").respondsWith(new Command() {
                     public void execute() {
-                        placeManager.goTo("PerspectiveEditorPerspective");
+                        placeManager.goTo("PlugInAuthoringPerspective");
                     }
                 }).endMenu().
                 newTopLevelMenu("Apps").respondsWith(new Command() {
