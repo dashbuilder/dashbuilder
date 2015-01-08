@@ -71,7 +71,7 @@ public class ShowcaseEntryPoint {
                         placeManager.goTo("DisplayerGalleryPerspective");
                     }
                 }).endMenu().
-                newTopLevelMenu("Designer").respondsWith(new Command() {
+                newTopLevelMenu("Plugins").respondsWith(new Command() {
                     public void execute() {
                         placeManager.goTo("PlugInAuthoringPerspective");
                     }
