@@ -74,5 +74,6 @@ public class DisplayerPerspectiveEditorComponent implements ExternalPerspectiveE
     public void modalSettings(Modal popup) {
         popup.setWidth(900);
         popup.setMaxHeigth("500px");
+        popup.setTitle("Edit Displayer");
     }
 }
