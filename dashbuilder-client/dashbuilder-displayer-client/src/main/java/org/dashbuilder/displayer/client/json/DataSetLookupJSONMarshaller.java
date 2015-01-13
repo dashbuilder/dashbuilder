@@ -66,6 +66,7 @@ public class DataSetLookupJSONMarshaller {
     private static final String GROUPSTRATEGY = "groupStrategy";
     private static final String MAXINTERVALS = "maxIntervals";
     private static final String INTERVALSIZE = "intervalSize";
+    private static final String EMPTYINTERVALS = "emptyIntervals";
     private static final String ASCENDING = "asc";
     private static final String FIRSTMONTHOFYEAR = "firstMonthOfYear";
     private static final String FIRSTDAYOFWEEK = "firstDayOfWeek";
@@ -384,12 +385,13 @@ public class DataSetLookupJSONMarshaller {
         if ( columnGroupJson == null ) return null;
         ColumnGroup columnGroup = new ColumnGroup();
         JSONValue value = columnGroupJson.get( SOURCEID );
-        columnGroup.setSourceId( value != null ? value.isString().stringValue() : null );
-        columnGroup.setColumnId( (value = columnGroupJson.get(COLUMNID)) != null ? value.isString().stringValue() : null );
-        columnGroup.setStrategy( (value = columnGroupJson.get(GROUPSTRATEGY)) != null ? GroupStrategy.getByName( value.isString().stringValue() ) : null );
-        columnGroup.setMaxIntervals( (value = columnGroupJson.get(MAXINTERVALS)) != null ? Integer.parseInt(value.isString().stringValue()) : -1 );
-        columnGroup.setIntervalSize( (value = columnGroupJson.get(INTERVALSIZE)) != null ? value.isString().stringValue() : null );
-        columnGroup.setAscendingOrder( (value = columnGroupJson.get(ASCENDING)) != null ? Boolean.valueOf(value.isString().stringValue()) : false );
+        columnGroup.setSourceId(value != null ? value.isString().stringValue() : null);
+        columnGroup.setColumnId((value = columnGroupJson.get(COLUMNID)) != null ? value.isString().stringValue() : null);
+        columnGroup.setStrategy((value = columnGroupJson.get(GROUPSTRATEGY)) != null ? GroupStrategy.getByName(value.isString().stringValue()) : null);
+        columnGroup.setMaxIntervals((value = columnGroupJson.get(MAXINTERVALS)) != null ? Integer.parseInt(value.isString().stringValue()) : -1);
+        columnGroup.setIntervalSize((value = columnGroupJson.get(INTERVALSIZE)) != null ? value.isString().stringValue() : null);
+        columnGroup.setEmptyIntervalsAllowed((value = columnGroupJson.get(EMPTYINTERVALS)) != null ? Boolean.valueOf(value.isString().stringValue()) : false);
+        columnGroup.setAscendingOrder((value = columnGroupJson.get(ASCENDING)) != null ? Boolean.valueOf(value.isString().stringValue()) : false);
         columnGroup.setFirstMonthOfYear( (value = columnGroupJson.get(FIRSTMONTHOFYEAR)) != null ? Month.getByName(value.isString().stringValue()) : null );
         columnGroup.setFirstDayOfWeek( (value = columnGroupJson.get(FIRSTDAYOFWEEK)) != null ? DayOfWeek.getByName(value.isString().stringValue()) : null );
         return columnGroup;

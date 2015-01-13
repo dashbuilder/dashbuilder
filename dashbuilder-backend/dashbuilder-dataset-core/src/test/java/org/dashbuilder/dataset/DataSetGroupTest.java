@@ -108,7 +108,7 @@ public class DataSetGroupTest {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                 .dataset(EXPENSE_REPORTS)
-                .group("date").dynamic(YEAR)
+                .group("date").dynamic(YEAR, true)
                 .column("date", "Period")
                 .column(COUNT, "Occurrences")
                 .column("amount", SUM, "totalAmount")
@@ -125,14 +125,7 @@ public class DataSetGroupTest {
 
     @Test
     public void testGroupByMonthDynamic() throws Exception {
-        DataSet result = dataSetManager.lookupDataSet(
-                DataSetFactory.newDataSetLookupBuilder()
-                .dataset(EXPENSE_REPORTS)
-                .group("date").dynamic(99, MONTH)
-                .column("date", "Period")
-                .column(COUNT, "Occurrences")
-                .column("amount", SUM, "totalAmount")
-                .buildLookup());
+        DataSet result = lookupGroupByMonthDynamic(true);
 
         //printDataSet(result);
         assertThat(result.getRowCount()).isEqualTo(48);
@@ -140,11 +133,33 @@ public class DataSetGroupTest {
     }
 
     @Test
+    public void testGroupByMonthDynamicNonEmpty() throws Exception {
+        DataSet result = lookupGroupByMonthDynamic(false);
+
+        //printDataSet(result);
+        assertThat(result.getRowCount()).isEqualTo(37);
+        assertThat(result.getValueAt(0, 0)).isEqualTo("2012-01");
+    }
+
+    public DataSet lookupGroupByMonthDynamic(boolean emptyIntervals) throws Exception {
+        return dataSetManager.lookupDataSet(
+                DataSetFactory.newDataSetLookupBuilder()
+                        .dataset(EXPENSE_REPORTS)
+                        .group("date").dynamic(99, MONTH, emptyIntervals)
+                        .column("date", "Period")
+                        .column("employee", "Employee")
+                        .column(COUNT, "Occurrences")
+                        .column("amount", SUM, "totalAmount")
+                        .buildLookup());
+    }
+
+
+    @Test
     public void testGroupByDayDynamic() throws Exception {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                 .dataset(EXPENSE_REPORTS)
-                .group("date").dynamic(9999, DAY_OF_WEEK)
+                .group("date").dynamic(9999, DAY_OF_WEEK, true)
                 .column("date", "Period")
                 .column(COUNT, "Occurrences")
                 .column("amount", SUM, "totalAmount")
@@ -160,7 +175,7 @@ public class DataSetGroupTest {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                 .dataset(EXPENSE_REPORTS)
-                .group("date").fixed(MONTH)
+                .group("date").fixed(MONTH, true)
                 .column("date", "Period")
                 .column(COUNT, "Occurrences")
                 .column("amount", SUM, "totalAmount")
@@ -188,7 +203,7 @@ public class DataSetGroupTest {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                 .dataset(EXPENSE_REPORTS)
-                .group("date").fixed(MONTH).firstMonth(Month.NOVEMBER)
+                .group("date").fixed(MONTH, true).firstMonth(Month.NOVEMBER)
                 .column("date", "Period")
                 .column(COUNT, "Occurrences")
                 .column("amount", SUM, "totalAmount")
@@ -216,7 +231,7 @@ public class DataSetGroupTest {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                 .dataset(EXPENSE_REPORTS)
-                .group("date").fixed(MONTH).desc()
+                .group("date").fixed(MONTH, true).desc()
                 .column("date", "Period")
                 .column(COUNT, "Occurrences")
                 .column("amount", SUM, "totalAmount")
@@ -244,7 +259,7 @@ public class DataSetGroupTest {
         DataSet result = dataSetManager.lookupDataSet(
             DataSetFactory.newDataSetLookupBuilder()
             .dataset(EXPENSE_REPORTS)
-            .group("date").fixed(MONTH).desc().firstMonth(Month.MARCH)
+            .group("date").fixed(MONTH, true).desc().firstMonth(Month.MARCH)
             .column("date", "Period")
             .column(COUNT, "Occurrences")
             .column("amount", SUM, "totalAmount")
@@ -271,7 +286,7 @@ public class DataSetGroupTest {
     public void testFixedIntervalsSupported() throws Exception {
         for (DateIntervalType type : DateIntervalType.values()) {
             try {
-                DataSetFactory.newDataSetLookupBuilder().group("date").fixed(type);
+                DataSetFactory.newDataSetLookupBuilder().group("date").fixed(type, true);
                 if (!DateIntervalType.FIXED_INTERVALS_SUPPORTED.contains(type)) {
                     fail("Missing exception on a not supported fixed interval: " + type);
                 }
@@ -287,7 +302,7 @@ public class DataSetGroupTest {
     public void testFirstDayOfWeekOk() throws Exception {
         DataSetFactory.newDataSetLookupBuilder()
             .group("date")
-            .fixed(DAY_OF_WEEK)
+            .fixed(DAY_OF_WEEK, true)
             .firstDay(DayOfWeek.MONDAY);
     }
 
@@ -296,7 +311,7 @@ public class DataSetGroupTest {
         try {
             DataSetFactory.newDataSetLookupBuilder()
                 .group("date")
-                .fixed(QUARTER)
+                .fixed(QUARTER, true)
                 .firstDay(DayOfWeek.MONDAY);
             fail("firstDayOfWeek required a DAY_OF_WEEK fixed domain.");
         } catch (Exception e) {
@@ -308,7 +323,7 @@ public class DataSetGroupTest {
     public void testFirstDayOfMonthOk() throws Exception {
         DataSetFactory.newDataSetLookupBuilder()
             .group("date")
-            .fixed(MONTH)
+            .fixed(MONTH, true)
             .firstMonth(Month.APRIL);
     }
 
@@ -317,7 +332,7 @@ public class DataSetGroupTest {
         try {
             DataSetFactory.newDataSetLookupBuilder()
                 .group("date")
-                .fixed(QUARTER)
+                .fixed(QUARTER, true)
                 .firstMonth(Month.APRIL);
             fail("firstDayOfWeek required a DAY_OF_WEEK fixed domain.");
         } catch (Exception e) {
@@ -330,7 +345,7 @@ public class DataSetGroupTest {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                 .dataset(EXPENSE_REPORTS)
-                .group("date").fixed(DAY_OF_WEEK).firstDay(DayOfWeek.MONDAY)
+                .group("date").fixed(DAY_OF_WEEK, true).firstDay(DayOfWeek.MONDAY)
                 .column("date", "Period")
                 .column(COUNT, "Occurrences")
                 .column("amount", SUM, "totalAmount")
@@ -353,7 +368,7 @@ public class DataSetGroupTest {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                 .dataset(EXPENSE_REPORTS)
-                .group("date").fixed(QUARTER)
+                .group("date").fixed(QUARTER, true)
                 .column("date", "Period")
                 .column(COUNT, "Occurrences")
                 .column("amount", SUM, "totalAmount")

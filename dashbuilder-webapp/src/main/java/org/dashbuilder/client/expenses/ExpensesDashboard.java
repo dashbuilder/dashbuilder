@@ -115,7 +115,7 @@ public class ExpensesDashboard extends Composite {
         lineByDate = DisplayerHelper.lookupDisplayer(
                 DisplayerSettingsFactory.newAreaChartSettings()
                         .dataset(EXPENSES)
-                        .group(DATE).dynamic(8, DAY_OF_WEEK)
+                        .group(DATE).dynamic(8, DAY_OF_WEEK, true)
                         .column(DATE)
                         .column(AMOUNT, SUM, "Total Amount")
                         .title("Expenses evolution")

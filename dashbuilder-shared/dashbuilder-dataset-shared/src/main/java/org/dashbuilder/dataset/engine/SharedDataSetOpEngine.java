@@ -505,9 +505,14 @@ public class SharedDataSetOpEngine implements DataSetOpEngine {
             }
             // Add the aggregate calculations to the result.
             List<DataSetIntervalIndex> intervalIdxs = index.getIntervalIndexes();
+            int row = 0;
             for (int i=0; i<intervalIdxs.size(); i++) {
                 DataSetIntervalIndex intervalIdx = intervalIdxs.get(i);
-                result.setValueAt(i, 0, intervalIdx.getName());
+
+                // Include/discard empty intervals
+                if (intervalIdx.getRows().isEmpty() && !columnGroup.areEmptyIntervalsAllowed()) {
+                    continue;
+                }
 
                 // Add the aggregate calculations.
                 for (int j=0; j< groupFunctions.size(); j++) {
@@ -516,7 +521,7 @@ public class SharedDataSetOpEngine implements DataSetOpEngine {
                     AggregateFunctionType columnFunction = groupFunction.getFunction();
 
                     if (columnId != null && columnId.equals(columnGroup.getColumnId()) && columnFunction == null) {
-                        result.setValueAt(i, j, intervalIdx.getName());
+                        result.setValueAt(row, j, intervalIdx.getName());
                     } else {
                         DataColumn dataColumn = dataSet.getColumnByIndex(0);
                         if (columnId != null) dataColumn = dataSet.getColumnById(columnId);
@@ -524,21 +529,22 @@ public class SharedDataSetOpEngine implements DataSetOpEngine {
                         // Columns based on aggregation functions
                         if (columnFunction != null) {
                             Double aggValue = _calculateFunction(dataColumn, groupFunction.getFunction(), intervalIdx);
-                            result.setValueAt(i, j, aggValue);
+                            result.setValueAt(row, j, aggValue);
                         }
                         // Pick up the first column value for the interval
                         else {
                             List<Integer> rows = intervalIdx.getRows();
                             if (rows == null || rows.isEmpty()) {
-                                result.setValueAt(i, j, null);
+                                result.setValueAt(row, j, null);
                             } else {
                                 int intervalRow = rows.get(0);
                                 Object firstValue = dataColumn.getValues().get(intervalRow);
-                                result.setValueAt(i, j, firstValue);
+                                result.setValueAt(row, j, firstValue);
                             }
                         }
                     }
                 }
+                row++;
             }
             return result;
         }

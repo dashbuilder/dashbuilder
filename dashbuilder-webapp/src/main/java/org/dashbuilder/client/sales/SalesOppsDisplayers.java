@@ -68,7 +68,7 @@ public class SalesOppsDisplayers {
     public static final DisplayerSettings OPPS_EXPECTED_PIPELINE = DisplayerSettingsFactory.newAreaChartSettings()
             .uuid("opps-expected-pipeline")
             .dataset(SALES_OPPS)
-            .group(CLOSING_DATE).dynamic(24, DateIntervalType.MONTH)
+            .group(CLOSING_DATE).dynamic(24, DateIntervalType.MONTH, true)
             .column(CLOSING_DATE, "Closing date")
             .column(EXPECTED_AMOUNT, SUM, "Expected amount")
             .title("Expected Amount")

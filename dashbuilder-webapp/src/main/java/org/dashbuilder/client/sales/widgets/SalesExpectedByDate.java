@@ -80,7 +80,7 @@ public class SalesExpectedByDate extends Composite {
         areaChartByDate = DisplayerHelper.lookupDisplayer(
                 DisplayerSettingsFactory.newAreaChartSettings()
                 .dataset(SALES_OPPS)
-                .group(CREATION_DATE).dynamic(80, DAY)
+                .group(CREATION_DATE).dynamic(80, DAY, true)
                 .column(CREATION_DATE, "Creation date")
                 .column(EXPECTED_AMOUNT, SUM, "Amount")
                 .title("Expected pipeline")
@@ -93,7 +93,7 @@ public class SalesExpectedByDate extends Composite {
         pieChartYears = DisplayerHelper.lookupDisplayer(
                 DisplayerSettingsFactory.newPieChartSettings()
                 .dataset(SALES_OPPS)
-                .group(CREATION_DATE).dynamic(YEAR)
+                .group(CREATION_DATE).dynamic(YEAR, true)
                 .column(CREATION_DATE, "Year")
                 .column(COUNT, "Occurrences")
                 .title("Year")
@@ -106,7 +106,7 @@ public class SalesExpectedByDate extends Composite {
         pieChartQuarters = DisplayerHelper.lookupDisplayer(
                 DisplayerSettingsFactory.newPieChartSettings()
                 .dataset(SALES_OPPS)
-                .group(CREATION_DATE).fixed(QUARTER)
+                .group(CREATION_DATE).fixed(QUARTER, true)
                 .column(CREATION_DATE, "Creation date")
                 .column(COUNT, "Occurrences")
                 .title("Quarter")
@@ -119,7 +119,7 @@ public class SalesExpectedByDate extends Composite {
         barChartDayOfWeek = DisplayerHelper.lookupDisplayer(
                 DisplayerSettingsFactory.newBarChartSettings()
                 .dataset(SALES_OPPS)
-                .group(CREATION_DATE).fixed(DAY_OF_WEEK).firstDay(SUNDAY)
+                .group(CREATION_DATE).fixed(DAY_OF_WEEK, true).firstDay(SUNDAY)
                 .column(CREATION_DATE, "Creation date")
                 .column(COUNT, "Occurrences")
                 .title("Day of week")

@@ -162,23 +162,24 @@ public interface DataSetLookupBuilder<T> {
      * will group the data set by its closing date column, in monthly intervals, up to a maximum 80 months. If this
      * dataset's time-span exceeds this number of months, then the next bigger DateIntervalType (i.e. QUARTER) will be applied.
      * @param intervalSize The size of the date interval.
+     * @param emptyAllowed If true then empty intervals will be also considered part of the resulting data set.
      * @see org.dashbuilder.dataset.group.DateIntervalType
      * @return The DataSetLookupBuilder instance that is being used to configure a DataSetLookup request.
      */
-    T dynamic(int maxIntervals, DateIntervalType intervalSize);
+    T dynamic(int maxIntervals, DateIntervalType intervalSize, boolean emptyAllowed);
 
     /**
      * Same as &quot;dynamic(int maxIntervals, DateIntervalType intervalSize)&quot; but in this case the
      * &quot;intervalSize&quot; is dynamically calculated to the minimum size that generates less intervals
      * than the &quot;maxIntervals&quot; specified.
      */
-    T dynamic(int maxIntervals);
+    T dynamic(int maxIntervals, boolean emptyAllowed);
 
     /**
      * Same as &quot;dynamic(int maxIntervals, DateIntervalType intervalSize)&quot; but taking
      * &quot;maxIntervals=15&quot; as default.
      */
-    T dynamic(DateIntervalType intervalSize);
+    T dynamic(DateIntervalType intervalSize, boolean emptyAllowed);
 
     /**
      * Set the grouping strategy to a fixed date interval on a previously defined date group operation.
@@ -195,10 +196,11 @@ public interface DataSetLookupBuilder<T> {
      *
      * @param type The size of the date interval. Only the following types are supported: QUARTER, MONTH,
      * DAY_OF_WEEK, HOUR, MINUTE, SECOND
+     * @param emptyAllowed If true then empty intervals will be also considered part of the resulting data set.
      * @see org.dashbuilder.dataset.group.DateIntervalType
      * @return The DataSetLookupBuilder instance that is being used to configure a DataSetLookup request.
      */
-    T fixed(DateIntervalType type);
+    T fixed(DateIntervalType type, boolean emptyAllowed);
 
     /**
      * This call requires a previously grouped data set with fixed DateIntervalType.DAY_OF_WEEK intervals, i.e. both

@@ -141,7 +141,7 @@ public class SalesTableReports extends Composite {
         tableByYear = DisplayerHelper.lookupDisplayer(
                 DisplayerSettingsFactory.newTableSettings()
                 .dataset(SALES_OPPS)
-                .group(CREATION_DATE).dynamic(DateIntervalType.YEAR)
+                .group(CREATION_DATE).dynamic(DateIntervalType.YEAR, true)
                 .column(CREATION_DATE, "Creation date")
                 .column(COUNT, "#Opps")
                 .column(AMOUNT, MIN, "Min")

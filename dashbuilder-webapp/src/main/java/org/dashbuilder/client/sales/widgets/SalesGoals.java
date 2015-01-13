@@ -78,7 +78,7 @@ public class SalesGoals extends Composite {
         lineChartByDate = DisplayerHelper.lookupDisplayer(
                 DisplayerSettingsFactory.newLineChartSettings()
                 .dataset(SALES_OPPS)
-                .group(CLOSING_DATE).dynamic(80, MONTH)
+                .group(CLOSING_DATE).dynamic(80, MONTH, true)
                 .column(CLOSING_DATE, "Closing date")
                 .column(AMOUNT, SUM, "Total amount")
                 .column(EXPECTED_AMOUNT, SUM, "Expected amount")

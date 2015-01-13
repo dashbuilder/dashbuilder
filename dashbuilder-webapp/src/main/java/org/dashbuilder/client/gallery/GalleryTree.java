@@ -167,7 +167,7 @@ public class GalleryTree {
         nodeList.add(new GalleryPlaceRequest("Basic", createPlaceRequest(
                 DisplayerSettingsFactory.newLineChartSettings()
                         .dataset(SALES_OPPS)
-                        .group(CLOSING_DATE).dynamic(12, MONTH)
+                        .group(CLOSING_DATE).dynamic(12, MONTH, true)
                         .column(CLOSING_DATE, "Closing date")
                         .column(AMOUNT, SUM, "Total amount")
                         .title("Sales opportunities evolution")
@@ -227,7 +227,7 @@ public class GalleryTree {
         nodeList.add(new GalleryPlaceRequest("Basic", createPlaceRequest(
                 DisplayerSettingsFactory.newAreaChartSettings()
                         .dataset(SALES_OPPS)
-                        .group(CLOSING_DATE).dynamic(24, MONTH)
+                        .group(CLOSING_DATE).dynamic(24, MONTH, true)
                         .column(CLOSING_DATE, "Closing date")
                         .column(EXPECTED_AMOUNT, SUM, "Expected amount")
                         .title("Expected Pipeline")
@@ -238,7 +238,7 @@ public class GalleryTree {
         nodeList.add(new GalleryPlaceRequest("Fixed (per month)", createPlaceRequest(
                 DisplayerSettingsFactory.newAreaChartSettings()
                         .dataset(SALES_OPPS)
-                        .group(CLOSING_DATE).fixed(MONTH).firstMonth(JANUARY).asc()
+                        .group(CLOSING_DATE).fixed(MONTH, true).firstMonth(JANUARY).asc()
                         .column(CLOSING_DATE, "Closing date")
                         .column(EXPECTED_AMOUNT, SUM, "Expected amount per month")
                         .title("Pipeline (best month)")
@@ -249,7 +249,7 @@ public class GalleryTree {
         nodeList.add(new GalleryPlaceRequest("Drill-down", createPlaceRequest(
                 DisplayerSettingsFactory.newAreaChartSettings()
                         .dataset(SALES_OPPS)
-                        .group(CLOSING_DATE).dynamic(12)
+                        .group(CLOSING_DATE).dynamic(12, true)
                         .column(CLOSING_DATE, "Closing date")
                         .column(EXPECTED_AMOUNT, SUM, "Expected amount")
                         .title("Expected Pipeline")
@@ -298,7 +298,7 @@ public class GalleryTree {
                 DisplayerSettingsFactory.newMeterChartSettings()
                         .title("Expected amount per year")
                         .dataset(SALES_OPPS)
-                        .group(CREATION_DATE).dynamic(12, YEAR)
+                        .group(CREATION_DATE).dynamic(12, YEAR, true)
                         .column(CREATION_DATE, "Year")
                         .column(AMOUNT, SUM, "Amount")
                         .width(600).height(200)

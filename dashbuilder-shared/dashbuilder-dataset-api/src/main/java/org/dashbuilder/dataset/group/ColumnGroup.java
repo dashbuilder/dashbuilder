@@ -30,6 +30,7 @@ public class ColumnGroup {
     protected GroupStrategy strategy = GroupStrategy.DYNAMIC;
     protected int maxIntervals = 15;
     protected String intervalSize = null;
+    protected boolean emptyIntervals = false;
     protected boolean ascendingOrder = true;
     protected Month firstMonthOfYear;
     protected DayOfWeek firstDayOfWeek;
@@ -94,6 +95,14 @@ public class ColumnGroup {
 
     public void setIntervalSize(String intervalSize) {
         this.intervalSize = intervalSize;
+    }
+
+    public boolean areEmptyIntervalsAllowed() {
+        return emptyIntervals;
+    }
+
+    public void setEmptyIntervalsAllowed(boolean emptyIntervals) {
+        this.emptyIntervals = emptyIntervals;
     }
 
     public boolean isAscendingOrder() {

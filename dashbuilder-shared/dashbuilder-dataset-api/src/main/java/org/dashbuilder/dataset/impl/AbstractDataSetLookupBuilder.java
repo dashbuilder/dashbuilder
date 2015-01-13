@@ -102,23 +102,23 @@ public abstract class AbstractDataSetLookupBuilder<T> implements DataSetLookupBu
         return (T) this;
     }
 
-    public T dynamic(int maxIntervals) {
-        return groupStrategy(GroupStrategy.DYNAMIC, maxIntervals, null);
+    public T dynamic(int maxIntervals, boolean emptyAllowed) {
+        return groupStrategy(GroupStrategy.DYNAMIC, maxIntervals, null, emptyAllowed);
     }
 
-    public T dynamic(int maxIntervals, DateIntervalType intervalSize) {
-        return groupStrategy(GroupStrategy.DYNAMIC, maxIntervals, intervalSize.toString());
+    public T dynamic(int maxIntervals, DateIntervalType intervalSize, boolean emptyAllowed) {
+        return groupStrategy(GroupStrategy.DYNAMIC, maxIntervals, intervalSize.toString(), emptyAllowed);
     }
 
-    public T dynamic(DateIntervalType intervalSize) {
-        return groupStrategy(GroupStrategy.DYNAMIC, -1, intervalSize.toString());
+    public T dynamic(DateIntervalType intervalSize, boolean emptyAllowed) {
+        return groupStrategy(GroupStrategy.DYNAMIC, -1, intervalSize.toString(), emptyAllowed);
     }
 
-    public T fixed(DateIntervalType intervalSize) {
+    public T fixed(DateIntervalType intervalSize, boolean emptyAllowed) {
         if (!DateIntervalType.FIXED_INTERVALS_SUPPORTED.contains(intervalSize)) {
             throw new IllegalArgumentException("Fixed group size '" + intervalSize + "' not supported.");
         }
-        return groupStrategy(GroupStrategy.FIXED, -1, intervalSize.toString());
+        return groupStrategy(GroupStrategy.FIXED, -1, intervalSize.toString(), emptyAllowed);
     }
 
     public T firstDay(DayOfWeek dayOfWeek) {
@@ -155,7 +155,7 @@ public abstract class AbstractDataSetLookupBuilder<T> implements DataSetLookupBu
         return (T) this;
     }
 
-    private T groupStrategy(GroupStrategy strategy, int maxIntervals, String intervalSize) {
+    private T groupStrategy(GroupStrategy strategy, int maxIntervals, String intervalSize, boolean emptyAllowed) {
         DataSetGroup gOp = (DataSetGroup) getCurrentOp();
         if (gOp == null || gOp.getColumnGroup() == null) {
             throw new RuntimeException("group() must be called first.");
@@ -164,6 +164,7 @@ public abstract class AbstractDataSetLookupBuilder<T> implements DataSetLookupBu
         cg.setStrategy(strategy);
         cg.setMaxIntervals(maxIntervals);
         cg.setIntervalSize(intervalSize);
+        cg.setEmptyIntervalsAllowed(emptyAllowed);
         return (T) this;
     }
 

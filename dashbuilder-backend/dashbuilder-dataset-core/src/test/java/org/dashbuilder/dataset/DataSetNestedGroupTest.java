@@ -143,7 +143,7 @@ public class DataSetNestedGroupTest {
                 .group("employee").select("Jerri Preble")
                 .group("department").select("Engineering")
                 .group("city").select("Westford")
-                .group("date").fixed(DateIntervalType.MONTH)
+                .group("date").fixed(DateIntervalType.MONTH, true)
                 .column("date")
                 .column("amount", SUM, "total")
                 .buildLookup());
@@ -172,7 +172,7 @@ public class DataSetNestedGroupTest {
                 .dataset(EXPENSE_REPORTS)
                 .group("department").select("Services", "Engineering")
                 .group("city").select("Madrid", "Barcelona")
-                .group("date").fixed(DateIntervalType.MONTH)
+                .group("date").fixed(DateIntervalType.MONTH, true)
                 .column("date")
                 .column("amount", SUM, "total")
                 .buildLookup());
@@ -201,7 +201,7 @@ public class DataSetNestedGroupTest {
                 .dataset(EXPENSE_REPORTS)
                 .group("department")
                 .group("city").select("Barcelona", "Brno").join()
-                .group("date", "month").fixed(DateIntervalType.MONTH).join()
+                .group("date", "month").fixed(DateIntervalType.MONTH, true).join()
                 .column("department")
                 .column("city")
                 .column("month")
