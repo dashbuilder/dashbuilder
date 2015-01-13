@@ -82,7 +82,7 @@ public class ClientDataSetManager implements DataSetManager {
 
         // Apply the list of operations specified (if any).
         if (!lookup.getOperationList().isEmpty()) {
-            dataSet = dataSetOpEngine.execute(dataSetIndex.getDataSet(), lookup.getOperationList());
+            dataSet = dataSetOpEngine.execute(uuid, lookup.getOperationList());
         }
 
         // Trim the data set as requested.

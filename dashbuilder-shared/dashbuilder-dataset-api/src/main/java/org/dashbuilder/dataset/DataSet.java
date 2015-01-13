@@ -103,6 +103,11 @@ public interface DataSet {
     DataSet addColumn(String id, String name, ColumnType type, List values);
 
     /**
+     * Add a brand new column.
+     */
+    DataSet addColumn(DataColumn column);
+
+    /**
      * Removes an existing column.
      */
     DataSet removeColumn(String id);
@@ -140,10 +145,23 @@ public interface DataSet {
     DataSet setValuesAt(int row, Object... values);
 
     /**
-     * Set all the values in the given array.
-     * @param values A 2-dim array containing an array of rows where each row is an array of values.
+     * Add a value at a given cell.
+     * @param row The cell row (the first row is 0).
+     * @param column The cell column (the first column is 0).
      */
-    DataSet setValues(Object[][] values);
+    DataSet addValueAt(int row, int column, Object value);
+
+    /**
+     * Add a row at the given position.
+     * @param row The cell row (the first row is 0).
+     */
+    DataSet addValuesAt(int row, Object... values);
+
+    /**
+     * Add an empty row at the given position.
+     * @param row The cell row (the first row is 0).
+     */
+    DataSet addEmptyRowAt(int row);
 
     /**
      * Returns a data set containing only the specified row sub set.

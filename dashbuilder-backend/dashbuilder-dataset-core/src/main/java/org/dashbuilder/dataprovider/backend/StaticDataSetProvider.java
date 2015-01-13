@@ -98,7 +98,7 @@ public class StaticDataSetProvider implements DataSetProvider {
 
         // Apply the list of operations specified (if any).
         if (!lookup.getOperationList().isEmpty()) {
-            dataSet = dataSetOpEngine.execute(dataSet, lookup.getOperationList());
+            dataSet = dataSetOpEngine.execute(uuid, lookup.getOperationList());
         }
 
         // Trim the data set as requested.

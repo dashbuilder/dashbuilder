@@ -78,4 +78,14 @@ public interface DataColumn {
      * @return A List of the values for this DataColumn.
      */
     List getValues();
+
+    /**
+     * Only clone the column definition.
+     */
+    DataColumn cloneEmpty();
+
+    /**
+     * Clone the column entirely (definition & values).
+     */
+    DataColumn cloneInstance();
 }

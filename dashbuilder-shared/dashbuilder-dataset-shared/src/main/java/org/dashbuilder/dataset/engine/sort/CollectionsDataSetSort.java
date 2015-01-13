@@ -32,8 +32,11 @@ import org.dashbuilder.dataset.sort.ColumnSort;
 public class CollectionsDataSetSort implements DataSetSortAlgorithm {
 
 
-    public List<Integer> sort(DataSetHandler ctx, List<ColumnSort> columnSortList) {
-        DataSet dataSet = ctx.getDataSet();
+    public List<Integer> sort(DataSet dataSet, List<ColumnSort> columnSortList) {
+        return sort(dataSet, null, columnSortList);
+    }
+
+    public List<Integer> sort(DataSet dataSet, List<Integer> rowNumbers, List<ColumnSort> columnSortList) {
 
         // Create the comparator.
         DataSetRowComparator comparator = new DataSetRowComparator();
@@ -46,8 +49,8 @@ public class CollectionsDataSetSort implements DataSetSortAlgorithm {
         }
         // Create the row number list to sort.
         List<Integer> rows = new ArrayList<Integer>();
-        if (ctx != null && ctx.getRows() != null) {
-            rows.addAll(ctx.getRows());
+        if (rowNumbers != null) {
+            rows.addAll(rowNumbers);
         } else {
             for (int i=0; i<dataSet.getRowCount(); i++) {
                 rows.add(i);

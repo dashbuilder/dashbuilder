@@ -15,14 +15,13 @@
  */
 package org.dashbuilder.dataset.engine;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.ArrayList;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import javax.xml.crypto.Data;
 
 import org.dashbuilder.dataset.DataSetOpEngine;
+import org.dashbuilder.dataset.engine.index.DataSetStaticIndex;
 import org.dashbuilder.dataset.group.AggregateFunction;
 import org.dashbuilder.dataset.group.AggregateFunctionManager;
 import org.dashbuilder.dataset.engine.group.IntervalBuilder;
@@ -53,7 +52,6 @@ import org.dashbuilder.dataset.group.GroupStrategy;
 import org.dashbuilder.dataset.group.Interval;
 import org.dashbuilder.dataset.impl.DataColumnImpl;
 import org.dashbuilder.dataset.sort.ColumnSort;
-import org.dashbuilder.dataset.sort.SortedList;
 import org.dashbuilder.dataset.sort.DataSetSort;
 import org.dashbuilder.dataset.engine.sort.DataSetSortAlgorithm;
 
@@ -90,15 +88,18 @@ public class SharedDataSetOpEngine implements DataSetOpEngine {
         return filterAlgorithm;
     }
 
-    public DataSet execute(DataSet dataSet, DataSetOp... ops) {
-        List<DataSetOp> opList = new ArrayList<DataSetOp>();
-        Collections.addAll(opList, ops);
-        return execute(dataSet, opList);
-    }
-
     public DataSet execute(DataSet dataSet, List<DataSetOp> opList) {
         DataSetOpListProcessor processor = new DataSetOpListProcessor();
-        processor.setDataSetIndex(indexRegistry.get(dataSet.getUUID()));
+        DataSetStaticIndex index = new DataSetStaticIndex(dataSet);
+        processor.setDataSetIndex(index);
+        processor.setOperationList(opList);
+        processor.run();
+        return processor.getDataSet();
+    }
+
+    public DataSet execute(String uuid, List<DataSetOp> opList) {
+        DataSetOpListProcessor processor = new DataSetOpListProcessor();
+        processor.setDataSetIndex(indexRegistry.get(uuid));
         processor.setOperationList(opList);
         processor.run();
         return processor.getDataSet();
@@ -391,7 +392,7 @@ public class SharedDataSetOpEngine implements DataSetOpEngine {
 
             // No index => Sort required
             if (context.index == null) {
-                List<Integer> orderedRows = sortAlgorithm.sort(new InternalHandler(context), op.getColumnSortList());
+                List<Integer> orderedRows = sortAlgorithm.sort(context.getDataSet(), context.getRows(), op.getColumnSortList());
                 context.index(op, new DataSetSortIndex(op, orderedRows));
                 return;
 
@@ -404,7 +405,7 @@ public class SharedDataSetOpEngine implements DataSetOpEngine {
             }
             // No index match => Sort required
             chronometer.start();
-            List<Integer> orderedRows = sortAlgorithm.sort(new InternalHandler(context), op.getColumnSortList());
+            List<Integer> orderedRows = sortAlgorithm.sort(context.getDataSet(), context.getRows(), op.getColumnSortList());
             chronometer.stop();
 
             // Index before return.
@@ -453,15 +454,7 @@ public class SharedDataSetOpEngine implements DataSetOpEngine {
                 return dataSet.trim(index.getRows());
             }
             if (lastOp instanceof DataSetSort) {
-                DataSet sortedDataSet = DataSetFactory.newEmptyDataSet();
-                for (DataColumn column : dataSet.getColumns()) {
-                    SortedList sortedValues = new SortedList(column.getValues(), index.getRows());
-                    sortedDataSet.addColumn(column.getId(),
-                            column.getName(),
-                            column.getColumnType(),
-                            sortedValues);
-                }
-                return sortedDataSet;
+                return DataSetFactory.filterDataSet(dataSet, index.getRows());
             }
             return dataSet;
         }

@@ -118,6 +118,24 @@ public class DataColumnImpl implements DataColumn {
         this.maxValue = maxValue;
     }
 
+    public DataColumn cloneEmpty() {
+        DataColumnImpl otherCol = new DataColumnImpl();
+        otherCol.setId(getId());
+        otherCol.setName(getName());
+        otherCol.setColumnType(getColumnType());
+        otherCol.setColumnGroup(getColumnGroup());
+        otherCol.setIntervalType(getIntervalType());
+        otherCol.setMinValue(getMinValue());
+        otherCol.setMaxValue(getMaxValue());
+        return otherCol;
+    }
+
+    public DataColumn cloneInstance() {
+        DataColumnImpl otherCol = (DataColumnImpl) cloneEmpty();
+        otherCol.setValues(new ArrayList(values));
+        return otherCol;
+    }
+
     public String toString() {
         StringBuilder out = new StringBuilder();
         if (id != null) out.append(" id=").append(id);

@@ -28,10 +28,19 @@ public interface DataSetOpEngine {
     /**
      * Apply a sequence of operations on the specified data set.
      *
+     * @param uuid The target data set identifier. Requires the data set ot be previously registered on the data set
+     * registry (see <i>DataSetManager.registerDataSet</i>).
+     * @param opList The list of operations.
+     * @return A brand new data set reflecting all the operations.
+     */
+    DataSet execute(String uuid, List<DataSetOp> opList);
+
+    /**
+     * Apply a sequence of operations on the specified data set.
+     *
      * @param dataSet The target data set.
      * @param opList The list of operations.
      * @return A brand new data set reflecting all the operations.
      */
     DataSet execute(DataSet dataSet, List<DataSetOp> opList);
-    DataSet execute(DataSet dataSet, DataSetOp... opList);
 }

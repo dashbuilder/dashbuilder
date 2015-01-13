@@ -135,6 +135,33 @@ public class BackendIntervalBuilderDynamicDate implements IntervalBuilder {
         return results;
     }
 
+    public IntervalList build(Date minDate, Date maxDate, ColumnGroup columnGroup) {
+        DateIntervalType intervalType = calculateIntervalSize(minDate, maxDate, columnGroup);
+        IntervalDateRangeList results = new IntervalDateRangeList(columnGroup);
+        Calendar c = firstIntervalDate(intervalType, minDate, columnGroup);
+        int index = 0;
+        int counter = 0;
+        while (c.getTime().compareTo(maxDate) <= 0) {
+            Date intervalMinDate = c.getTime();
+
+            // Create the next interval
+            nextIntervalDate(c, intervalType, 1);
+            Date intervalMaxDate = c.getTime();
+            IntervalDateRange interval = new IntervalDateRange(counter++, intervalType, intervalMinDate, intervalMaxDate);
+            results.add(interval);
+        }
+
+        // Reverse intervals if requested
+        boolean asc = columnGroup.isAscendingOrder();
+        if (!asc) Collections.reverse( results );
+
+        // Return the results
+        results.setIntervalType(intervalType.toString());
+        results.setMinValue(minDate);
+        results.setMaxValue(maxDate);
+        return results;
+    }
+
     public DateIntervalType calculateIntervalSize(Date minDate, Date maxDate, ColumnGroup columnGroup) {
 
         // Calculate the interval type used according to the constraints set.

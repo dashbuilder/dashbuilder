@@ -33,7 +33,7 @@ public class DataSetImpl implements DataSet {
     protected DataSetDef definition;
     protected String uuid = null;
     protected Date creationDate = new Date();
-    protected List<DataColumn> columns = new ArrayList<DataColumn>();
+    protected List<DataColumnImpl> columns = new ArrayList<DataColumnImpl>();
     protected int rowCountNonTrimmed = -1;
 
     public DataSetMetadata getMetadata() {
@@ -65,11 +65,7 @@ public class DataSetImpl implements DataSet {
     }
 
     public List<DataColumn> getColumns() {
-        return columns;
-    }
-
-    public void setColumns(List<DataColumn> columns) {
-        this.columns = columns;
+        return new ArrayList<DataColumn>(columns);
     }
 
     public DataColumn getColumnById(String id) {
@@ -130,8 +126,13 @@ public class DataSetImpl implements DataSet {
         return this;
     }
 
+    public DataSet addColumn(DataColumn column) {
+        columns.add((DataColumnImpl) column);
+        return this;
+    }
+
     public DataSet removeColumn(String id) {
-        Iterator<DataColumn> it = columns.iterator();
+        Iterator<DataColumnImpl> it = columns.iterator();
         while (it.hasNext()) {
             DataColumn column = it.next();
             if (column.getId().equals(id)) {
@@ -179,6 +180,16 @@ public class DataSetImpl implements DataSet {
     }
 
     public DataSet setValueAt(int row, int column, Object value) {
+        _setValueAt(row, column, value, false);
+        return this;
+    }
+
+    public DataSet addValueAt(int row, int column, Object value) {
+        _setValueAt(row, column, value, true);
+        return this;
+    }
+
+    protected void _setValueAt(int row, int column, Object value, boolean insert) {
         DataColumn columnObj = getColumnByIndex(column);
 
         List l = columnObj.getValues();
@@ -187,29 +198,45 @@ public class DataSetImpl implements DataSet {
         }
 
         if (row == l.size()) l.add(value);
-        l.set(row, value);
-        return this;
+        else if (insert) l.add(row, value);
+        else l.set(row, value);
     }
 
     public DataSet setValuesAt(int row, Object... values) {
-        if (columns == null || columns.isEmpty()) return null;
-        for (int i = 0; i < values.length; i++) {
-            Object value = values[i];
-            setValueAt(row, i, value);
-        }
+        _setValuesAt(row, false, values);
         return this;
     }
 
-    public DataSet setValues(Object[][] values) {
-        if (columns == null || columns.isEmpty()) return null;
+    public DataSet addValuesAt(int row, Object... values) {
+        _setValuesAt(row, true, values);
+        return this;
+    }
+
+    protected void _setValuesAt(int row, boolean insert, Object... values) {
         for (int i = 0; i < values.length; i++) {
-            Object[] row = values[i];
-            for (int j = 0; j < row.length; j++) {
-                Object value = row[j];
-                setValueAt(i, j, value);
+            Object value = values[i];
+            _setValueAt(row, i, value, insert);
+        }
+    }
+
+    public DataSet addEmptyRowAt(int row) {
+        _setEmptyRowAt(row, true);
+        return this;
+    }
+
+    protected void _setEmptyRowAt(int row, boolean insert) {
+        for (int i = 0; i < columns.size(); i++) {
+            DataColumn column = columns.get(i);
+            if (ColumnType.DATE.equals(column.getColumnType())) {
+                _setValueAt(row, i, new Date(), insert);
+            }
+            else if (ColumnType.NUMBER.equals(column.getColumnType())) {
+                _setValueAt(row, i, 0d, insert);
+            }
+            else {
+                _setValueAt(row, i, "", insert);
             }
         }
-        return this;
     }
 
     public DataSet trim(int offset, int rows) {
@@ -263,9 +290,8 @@ public class DataSetImpl implements DataSet {
         DataSetImpl other = new DataSetImpl();
         for (int i=0; i<columns.size(); i++) {
             DataColumn column = columns.get(i);
-            other.addColumn(column.getId(),
-                    column.getName(),
-                    column.getColumnType());
+            DataColumn otherCol = column.cloneEmpty();
+            other.columns.add((DataColumnImpl) otherCol);
         }
         return other;
     }
@@ -274,10 +300,8 @@ public class DataSetImpl implements DataSet {
         DataSetImpl other = new DataSetImpl();
         for (int i=0; i<columns.size(); i++) {
             DataColumn column = columns.get(i);
-            other.addColumn(column.getId(),
-                    column.getName(),
-                    column.getColumnType(),
-                    new ArrayList(column.getValues()));
+            DataColumn otherCol = column.cloneInstance();
+            other.columns.add((DataColumnImpl) otherCol);
         }
         return other;
     }

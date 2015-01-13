@@ -88,11 +88,10 @@ public class DataSetIndexTest {
             .buildLookup();
 
     @Inject SharedDataSetOpEngine dataSetOpEngine;
-    DataSet dataSet;
 
     @Before
     public void setUp() throws Exception {
-        dataSet = RawDataSetSamples.EXPENSE_REPORTS.toDataSet();
+        DataSet dataSet = RawDataSetSamples.EXPENSE_REPORTS.toDataSet();
         dataSet.setUUID(EXPENSE_REPORTS);
         dataSetOpEngine.getIndexRegistry().put(dataSet);
     }
@@ -104,8 +103,8 @@ public class DataSetIndexTest {
         long begin = System.nanoTime();
         int lookupTimes = 1000;
         for (int i = 0; i < lookupTimes; i++) {
-            dataSetOpEngine.execute(dataSet, groupByDeptAndCount.getOperationList());
-            dataSetOpEngine.execute(dataSet, groupByDeptAndSum.getOperationList());
+            dataSetOpEngine.execute(EXPENSE_REPORTS, groupByDeptAndCount.getOperationList());
+            dataSetOpEngine.execute(EXPENSE_REPORTS, groupByDeptAndSum.getOperationList());
         }
         long time = System.nanoTime()-begin;
 
@@ -135,7 +134,7 @@ public class DataSetIndexTest {
         long begin = System.nanoTime();
         int lookupTimes = 1000;
         for (int i = 0; i < lookupTimes; i++) {
-            dataSetOpEngine.execute(dataSet, filterByCityAndDept.getOperationList());
+            dataSetOpEngine.execute(EXPENSE_REPORTS, filterByCityAndDept.getOperationList());
         }
         long time = System.nanoTime()-begin;
 
@@ -166,8 +165,8 @@ public class DataSetIndexTest {
         long begin = System.nanoTime();
         int lookupTimes = 1000;
         for (int i = 0; i < lookupTimes; i++) {
-            dataSetOpEngine.execute(dataSet, sortByAmountAsc.getOperationList());
-            dataSetOpEngine.execute(dataSet, sortByAmountDesc.getOperationList());
+            dataSetOpEngine.execute(EXPENSE_REPORTS, sortByAmountAsc.getOperationList());
+            dataSetOpEngine.execute(EXPENSE_REPORTS, sortByAmountDesc.getOperationList());
         }
         long time = System.nanoTime()-begin;
 

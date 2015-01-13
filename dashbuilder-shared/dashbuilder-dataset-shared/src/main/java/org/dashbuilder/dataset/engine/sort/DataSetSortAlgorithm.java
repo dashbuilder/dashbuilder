@@ -17,7 +17,7 @@ package org.dashbuilder.dataset.engine.sort;
 
 import java.util.List;
 
-import org.dashbuilder.dataset.engine.DataSetHandler;
+import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.sort.ColumnSort;
 
 /**
@@ -27,8 +27,18 @@ public interface DataSetSortAlgorithm {
 
     /**
      * Sort the specified data set according the sort criteria list specified.
-     * @param ctx The data set context to filter
+     * @param dataSet The data set to sort
+     * @param columnSortList The sort operations to apply
      * @return A list of ordered row numbers reflecting the sort results.
      */
-    List<Integer> sort(DataSetHandler ctx, List<ColumnSort> columnSortList);
+    List<Integer> sort(DataSet dataSet, List<ColumnSort> columnSortList);
+
+    /**
+     * Sort the specified data set according the sort criteria list specified.
+     * @param dataSet The data set to sort
+     * @param rowNumbers The subset of rows to sort.
+     * @param columnSortList The sort operations to apply
+     * @return A list of ordered row numbers reflecting the sort results.
+     */
+    List<Integer> sort(DataSet dataSet, List<Integer> rowNumbers, List<ColumnSort> columnSortList);
 }
