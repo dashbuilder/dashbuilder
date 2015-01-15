@@ -37,9 +37,15 @@ import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetFactory;
 import org.dashbuilder.dataset.DataSetLookup;
 import org.dashbuilder.dataset.DataSetMetadata;
+import org.dashbuilder.dataset.DataSetOp;
 import org.dashbuilder.dataset.backend.BackendIntervalBuilderDynamicDate;
+import org.dashbuilder.dataset.backend.date.DateUtils;
 import org.dashbuilder.dataset.def.DataSetDef;
 import org.dashbuilder.dataset.def.SQLDataSetDef;
+import org.dashbuilder.dataset.engine.SharedDataSetOpEngine;
+import org.dashbuilder.dataset.engine.group.IntervalBuilder;
+import org.dashbuilder.dataset.engine.group.IntervalBuilderLocator;
+import org.dashbuilder.dataset.engine.group.IntervalList;
 import org.dashbuilder.dataset.events.DataSetDefModifiedEvent;
 import org.dashbuilder.dataset.filter.ColumnFilter;
 import org.dashbuilder.dataset.filter.CoreFunctionFilter;
@@ -68,6 +74,7 @@ import org.jooq.SelectWhereStep;
 import org.jooq.SortField;
 import org.jooq.Table;
 import org.jooq.impl.SQLDataType;
+import org.slf4j.Logger;
 
 import static org.uberfire.commons.validation.PortablePreconditions.checkNotNull;
 import static org.jooq.impl.DSL.*;
@@ -76,13 +83,22 @@ import static org.jooq.impl.DSL.*;
 public class SQLDataSetProvider implements DataSetProvider {
 
     @Inject
+    protected Logger log;
+
+    @Inject
     protected StaticDataSetProvider staticDataSetProvider;
 
     @Inject
     protected SQLDataSourceLocator dataSourceLocator;
 
     @Inject
-    protected BackendIntervalBuilderDynamicDate intervalBuilder;
+    protected IntervalBuilderLocator intervalBuilderLocator;
+
+    @Inject
+    protected BackendIntervalBuilderDynamicDate dateDynamicIntervalBuilder;
+
+    @Inject
+    protected SharedDataSetOpEngine opEngine;
 
     public DataSetProviderType getType() {
         return DataSetProviderType.SQL;
@@ -307,6 +323,7 @@ public class SQLDataSetProvider implements DataSetProvider {
         Connection conn;
         Date[] dateLimits;
         DateIntervalType dateIntervalType;
+        List<DataSetOp> postProcessingOps = new ArrayList<DataSetOp>();
 
         public LookupProcessor(SQLDataSetDef def, DataSetLookup lookup) {
             this.def = def;
@@ -413,7 +430,8 @@ public class SQLDataSetProvider implements DataSetProvider {
             if (GroupStrategy.DYNAMIC.equals(cg.getStrategy())) {
                 Date[] limits = calculateDateLimits(cg.getSourceId());
                 if (limits != null) {
-                    dateIntervalType = intervalBuilder.calculateIntervalSize(limits[0], limits[1], cg);
+                    dateIntervalType = dateDynamicIntervalBuilder.calculateIntervalSize(limits[0], limits[1], cg);
+                    return dateIntervalType;
                 }
             }
             dateIntervalType = DateIntervalType.getByName(cg.getIntervalSize());
@@ -476,6 +494,7 @@ public class SQLDataSetProvider implements DataSetProvider {
                     String columnId = gFunc.getSourceId();
                     String columnName = gFunc.getColumnId();
                     if (columnId != null) _assertColumnExists(columnId);
+                    else columnId = columnName;
 
                     DataColumnImpl column = new DataColumnImpl();
                     column.setId(columnId);
@@ -521,10 +540,20 @@ public class SQLDataSetProvider implements DataSetProvider {
             _jooqQuery.orderBy(_jooqFields);
         }
 
-        protected void _appendJooqOrderGroupBy(DataSetGroup groupOp) {
+        protected boolean isDynamicDateGroup(DataSetGroup groupOp) {
             ColumnGroup cg = groupOp.getColumnGroup();
-            if (ColumnType.DATE.equals(metadata.getColumnType(cg.getSourceId()))) {
+            if (!ColumnType.DATE.equals(metadata.getColumnType(cg.getSourceId()))) return false;
+            if (!GroupStrategy.DYNAMIC.equals(cg.getStrategy())) return false;
+            return true;
+        }
+
+        protected void _appendJooqOrderGroupBy(DataSetGroup groupOp) {
+            if (isDynamicDateGroup(groupOp)) {
+                ColumnGroup cg = groupOp.getColumnGroup();
                 _jooqQuery.orderBy(_createJooqField(cg).asc());
+                DataSetSort sortOp = new DataSetSort();
+                sortOp.addSortColumn(new ColumnSort(cg.getSourceId(), SortOrder.ASCENDING));
+                postProcessingOps.add(sortOp);
             }
         }
 
@@ -540,8 +569,14 @@ public class SQLDataSetProvider implements DataSetProvider {
                 if (cg.getSourceId().equals(cs.getColumnId()) || cg.getColumnId().equals(cs.getColumnId())) {
                     if (SortOrder.DESCENDING.equals(cs.getOrder())) {
                         _jooqFields.add(_createJooqField(cg).desc());
+                        if (isDynamicDateGroup(groupOp)) {
+                            postProcessingOps.add(sortOp);
+                        }
                     } else {
                         _jooqFields.add(_createJooqField(cg).asc());
+                        if (isDynamicDateGroup(groupOp)) {
+                            postProcessingOps.add(sortOp);
+                        }
                     }
                 }
                 // Sort by an aggregation
@@ -669,6 +704,7 @@ public class SQLDataSetProvider implements DataSetProvider {
             ColumnGroup cg = groupOp.getColumnGroup();
             String columnId = cg.getSourceId();
             ColumnType columnType = metadata.getColumnType(_assertColumnExists(columnId));
+            boolean postProcessing = false;
 
             // Group by Number => not supported
             if (ColumnType.NUMBER.equals(columnType)) {
@@ -682,46 +718,112 @@ public class SQLDataSetProvider implements DataSetProvider {
             else if (ColumnType.DATE.equals(columnType)) {
                 DateIntervalType type = calculateDateInterval(cg);
                 _jooqQuery.groupBy(_createJooqGroupField(cg, type));
+                postProcessing = true;
             }
             // Group by Label
             else {
                 _jooqQuery.groupBy(_createJooqField(columnId));
             }
+
+            // Also add any non-aggregated column (columns pick up) to the group statement
+            for (GroupFunction gf : groupOp.getGroupFunctions()) {
+                if (gf.getFunction() == null && !gf.getSourceId().equals(cg.getSourceId())) {
+                    _jooqQuery.groupBy(_createJooqField(gf.getSourceId()));
+                }
+            }
+            // The group operation might require post processing
+            if (postProcessing) {
+                DataSetGroup postGroup = groupOp.cloneInstance();
+                for (GroupFunction pgf : postGroup.getGroupFunctions()) {
+                    AggregateFunctionType pft = pgf.getFunction();
+                    if (pft != null && (AggregateFunctionType.DISTINCT.equals(pft) || AggregateFunctionType.COUNT.equals(pft))) {
+                        pgf.setSourceId(pgf.getColumnId());
+                        pgf.setFunction(AggregateFunctionType.SUM);
+                    }
+                }
+                postProcessingOps.add(postGroup);
+            }
         }
 
         protected DataSet _buildDataSet(List<DataColumn> columns, Result _jooqRs) {
             DataSet dataSet = DataSetFactory.newEmptyDataSet();
-
+            int dateGroupColumnIdx = -1;
+            boolean dateIncludeEmptyIntervals = false;
             Field[] rsFields = _jooqRs.fields();
             for (int i = 0; i < rsFields.length; i++) {
                 Field f = rsFields[i];
-                DataColumnImpl column = (DataColumnImpl) columns.get(i);
+                DataColumn column = columns.get(i).cloneEmpty();
                 ColumnType columnType = column.getColumnType();
-
                 List values = _jooqRs.getValues(f);
-                if (!values.isEmpty()) {
 
-                    if (ColumnType.LABEL.equals(columnType)) {
-                        if (!(values.get(0) instanceof String)) {
-                            for (int j=0; j<values.size(); j++) {
-                                Object val = values.remove(j);
-                                values.add(j, val != null ? val.toString() : null);
+                if (ColumnType.LABEL.equals(columnType)) {
+                    ColumnGroup cg = column.getColumnGroup();
+                    if (cg != null && ColumnType.DATE.equals(metadata.getColumnType(cg.getSourceId()))) {
+                        dateGroupColumnIdx = i;
+                        dateIncludeEmptyIntervals = cg.areEmptyIntervalsAllowed();
+
+                        // If grouped by date then convert back to absolute dates
+                        // in order to allow the post processing of the data set.
+                        column.setColumnType(ColumnType.DATE);
+                        for (int j=0; j<values.size(); j++) {
+                            Object val = values.remove(j);
+                            try {
+                                Date dateObj = DateUtils.parseDate(column, val);
+                                values.add(j, dateObj);
+                            } catch (Exception e) {
+                                log.error("Error parsing date: " + val);
+                                values.add(j, null);
                             }
                         }
                     }
-                    if (ColumnType.NUMBER.equals(columnType)) {
-                        for (int j=0; j<values.size(); j++) {
-                            Number num = (Number) values.remove(j);
-                            values.add(j, num != null ? num.doubleValue() : null);
-                        }
+                }
+                if (ColumnType.NUMBER.equals(columnType)) {
+                    for (int j=0; j<values.size(); j++) {
+                        Number num = (Number) values.remove(j);
+                        values.add(j, num != null ? num.doubleValue() : null);
                     }
                 }
 
                 column.setValues(values);
-                dataSet.getColumns().add(column);
+                dataSet.addColumn(column);
+            }
+            // Some operations requires some in-memory post-processing
+            if (!postProcessingOps.isEmpty()) {
+                DataSet tempSet = opEngine.execute(dataSet, postProcessingOps);
+                dataSet = DataSetFactory.newEmptyDataSet();
+                dataSet.setColumns(columns);
+                for (int i=0; i<columns.size(); i++) {
+                    DataColumn source = tempSet.getColumnByIndex(i);
+                    DataColumn target = dataSet.getColumnByIndex(i);
+                    target.setValues(new ArrayList(source.getValues()));
+                }
+            }
+            // Group by date might require to include empty intervals
+            if (dateIncludeEmptyIntervals)  {
+                DataColumn dateColumn = dataSet.getColumnByIndex(dateGroupColumnIdx);
+                IntervalBuilder intervalBuilder = intervalBuilderLocator.lookup(ColumnType.DATE, dateColumn.getColumnGroup().getStrategy());
+                IntervalList intervalList = intervalBuilder.build(dateColumn);
+                if (intervalList.size() > dataSet.getRowCount()) {
+                    List values = dateColumn.getValues();
+
+                    int intervalIdx = -1;
+                    for (int valuesIdx = 0; valuesIdx < values.size(); valuesIdx++) {
+                        String value = (String) values.get(valuesIdx);
+                        String interval = intervalList.get(++intervalIdx).getName();
+
+                        while (!value.equals(interval)) {
+                            dataSet.addEmptyRowAt(valuesIdx);
+                            dataSet.setValueAt(valuesIdx, dateGroupColumnIdx, interval);
+                            valuesIdx++;
+                            intervalIdx++;
+                            interval = intervalList.get(intervalIdx).getName();
+                        }
+                    }
+                }
             }
             return dataSet;
         }
+
 
         protected Table _createJooqTable(String name) {
             return _getJooqTable(def, name);
@@ -859,14 +961,21 @@ public class SQLDataSetProvider implements DataSetProvider {
                         month(_jooqField), SEPARATOR,
                         day(_jooqField));
             }
-            if (DateIntervalType.MONTH.equals(type)) {
+            if (DateIntervalType.MONTH.equals(type)
+                || DateIntervalType.QUARTER.equals(type)) {
+
                 return concat(year(_jooqField), SEPARATOR,
                         month(_jooqField));
             }
-            if (DateIntervalType.YEAR.equals(type)) {
+            if (DateIntervalType.YEAR.equals(type)
+                || DateIntervalType.DECADE.equals(type)
+                || DateIntervalType.CENTURY.equals(type)
+                || DateIntervalType.MILLENIUM.equals(type)) {
+
                 return year(_jooqField);
             }
-            throw new IllegalArgumentException("Group '" + columnId + "' by the given data interval type is not supported: " + type);
+            throw new IllegalArgumentException("Group '" + columnId +
+                    "' by the given data interval type is not supported: " + type);
         }
 
         protected Field _createJooqGroupFixedField(ColumnGroup cg, DateIntervalType type) {
@@ -882,16 +991,19 @@ public class SQLDataSetProvider implements DataSetProvider {
             if (DateIntervalType.HOUR.equals(type)) {
                 return hour(_jooqField);
             }
-            if (DateIntervalType.DAY.equals(type)) {
+            if (DateIntervalType.DAY_OF_WEEK.equals(type)) {
                 return day(_jooqField);
             }
             if (DateIntervalType.MONTH.equals(type)) {
                 return month(_jooqField);
             }
-            if (DateIntervalType.YEAR.equals(type)) {
-                return year(_jooqField);
+            if (DateIntervalType.QUARTER.equals(type)) {
+                // Emulated using month and converted to quarter during the data set post-processing
+                return month(_jooqField);
             }
-            throw new IllegalArgumentException("Group '" + columnId + "' by the given data interval type is not supported: " + type);
+            throw new IllegalArgumentException("Interval size '" + type + "' not supported for " +
+                    "fixed date intervals. The only supported sizes are: " +
+                    StringUtils.join(DateIntervalType.FIXED_INTERVALS_SUPPORTED, ","));
         }
 
         protected int _assertColumnExists(String columnId) {
@@ -900,7 +1012,8 @@ public class SQLDataSetProvider implements DataSetProvider {
                     return i;
                 }
             }
-            throw new RuntimeException("Column '" + columnId + "' not found in data set: " + metadata.getUUID());
+            throw new RuntimeException("Column '" + columnId +
+                    "' not found in data set: " + metadata.getUUID());
         }
     }
 }

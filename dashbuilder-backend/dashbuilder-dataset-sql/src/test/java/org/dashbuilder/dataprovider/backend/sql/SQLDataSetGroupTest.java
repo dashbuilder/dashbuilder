@@ -101,10 +101,15 @@ public class SQLDataSetGroupTest extends SQLDataSetTestBase {
         subTest.testDataSetFunctions();
         subTest.testGroupByLabelDynamic();
         subTest.testGroupByYearDynamic();
-        // TODO: Order intervals subTest.testGroupByMonthDynamic();
-        // TODO: Order intervals subTest.testGroupByDayDynamic();
+        subTest.testGroupByMonthDynamic();
+        subTest.testGroupByMonthDynamicNonEmpty();
+        subTest.testGroupByDayDynamic();
         // TODO: Not supported by DB subTest.testGroupByWeek();
-        // TODO: Format months subTest.testGroupByMonthFixed();
+        subTest.testGroupByMonthReverse();
+        subTest.testGroupByMonthFixed();
+        subTest.testGroupByMonthFirstMonth();
+        subTest.testGroupByMonthFirstMonthReverse();
+        subTest.testGroupByQuarter();
     }
 
     @Test
