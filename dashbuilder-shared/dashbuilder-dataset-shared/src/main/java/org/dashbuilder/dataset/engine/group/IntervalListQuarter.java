@@ -39,12 +39,12 @@ public class IntervalListQuarter extends IntervalList {
         int monthIndex = firstMonth.getIndex();
 
         for (int i = 0; i < 4; i++) {
-            Quarter quarter = Quarter.getByIndex(i);
-            Interval interval = new Interval(quarter.toString(), i);
+            Quarter quarter = Quarter.getByIndex(i+1);
+            Interval interval = new Interval((Integer.toString(quarter.getIndex())), i);
             this.add(interval);
 
             for (int j = 0; j < 3; j++) {
-                intervalMap.put(monthIndex, interval);
+                intervalMap.put(monthIndex-1, interval);
                 monthIndex = Month.nextIndex(monthIndex);
             }
         }

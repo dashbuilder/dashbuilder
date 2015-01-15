@@ -15,6 +15,7 @@
  */
 package org.dashbuilder.dataset.client.engine;
 
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -135,6 +136,38 @@ public class ClientIntervalBuilderDynamicDate implements IntervalBuilder {
                     }
                 }
             }
+            // Move to the next interval.
+            intervalMinDate = intervalMaxDate;
+        }
+
+        // Reverse intervals if requested
+        boolean asc = columnGroup.isAscendingOrder();
+        if (!asc) Collections.reverse( results );
+
+        results.setIntervalType(intervalType.toString());
+        results.setMinValue(minDate);
+        results.setMaxValue(maxDate);
+        return results;
+    }
+
+    public IntervalList build(DataColumn dataColumn) {
+        ColumnGroup columnGroup = dataColumn.getColumnGroup();
+        Date minDate = (Date) dataColumn.getMinValue();
+        Date maxDate = (Date) dataColumn.getMaxValue();
+        DateIntervalType intervalType = DateIntervalType.getByName(dataColumn.getIntervalType());
+
+        IntervalDateRangeList results = new IntervalDateRangeList(columnGroup);
+        Date intervalMinDate = firstIntervalDate(intervalType, minDate, columnGroup);
+        int counter = 0;
+        while (intervalMinDate.compareTo(maxDate) <= 0) {
+
+            // Go to the next interval
+            Date intervalMaxDate = nextIntervalDate(intervalMinDate, intervalType, 1);
+
+            // Create the interval.
+            IntervalDateRange interval = new IntervalDateRange(counter++, intervalType, intervalMinDate, intervalMaxDate);
+            results.add(interval);
+
             // Move to the next interval.
             intervalMinDate = intervalMaxDate;
         }

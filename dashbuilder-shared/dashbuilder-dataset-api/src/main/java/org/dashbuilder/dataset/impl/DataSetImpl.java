@@ -68,6 +68,13 @@ public class DataSetImpl implements DataSet {
         return new ArrayList<DataColumn>(columns);
     }
 
+    public void setColumns(List<DataColumn> columnList) {
+        columns.clear();
+        for (DataColumn column : columnList) {
+            columns.add((DataColumnImpl) column);
+        }
+    }
+
     public DataColumn getColumnById(String id) {
         for (DataColumn column : columns) {
             if (column.getId().equals(id)) return column;

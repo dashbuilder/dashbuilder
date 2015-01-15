@@ -150,18 +150,18 @@ public class DataSetNestedGroupTest {
 
         //printDataSet(result);
         assertDataSetValues(result, dataSetFormatter, new String[][] {
-                {"JANUARY", "0.00"},
-                {"FEBRUARY", "0.00"},
-                {"MARCH", "0.00"},
-                {"APRIL", "0.00"},
-                {"MAY", "0.00"},
-                {"JUNE", "0.00"},
-                {"JULY", "0.00"},
-                {"AUGUST", "0.00"},
-                {"SEPTEMBER", "0.00"},
-                {"OCTOBER", "0.00"},
-                {"NOVEMBER", "0.00"},
-                {"DECEMBER", "0.00"}
+                {"1", "0.00"},
+                {"2", "0.00"},
+                {"3", "0.00"},
+                {"4", "0.00"},
+                {"5", "0.00"},
+                {"6", "0.00"},
+                {"7", "0.00"},
+                {"8", "0.00"},
+                {"9", "0.00"},
+                {"10", "0.00"},
+                {"11", "0.00"},
+                {"12", "0.00"}
         }, 0);
     }
 
@@ -179,18 +179,18 @@ public class DataSetNestedGroupTest {
 
         //printDataSet(result);
         assertDataSetValues(result, dataSetFormatter, new String[][] {
-                {"JANUARY", "0.00"},
-                {"FEBRUARY", "0.00"},
-                {"MARCH", "0.00"},
-                {"APRIL", "0.00"},
-                {"MAY", "0.00"},
-                {"JUNE", "911.11"},
-                {"JULY", "800.80"},
-                {"AUGUST", "152.25"},
-                {"SEPTEMBER", "300.00"},
-                {"OCTOBER", "340.34"},
-                {"NOVEMBER", "900.10"},
-                {"DECEMBER", "1,220.45"}
+                {"1", "0.00"},
+                {"2", "0.00"},
+                {"3", "0.00"},
+                {"4", "0.00"},
+                {"5", "0.00"},
+                {"6", "911.11"},
+                {"7", "800.80"},
+                {"8", "152.25"},
+                {"9", "300.00"},
+                {"10", "340.34"},
+                {"11", "900.10"},
+                {"12", "1,220.45"}
         }, 0);
     }
 

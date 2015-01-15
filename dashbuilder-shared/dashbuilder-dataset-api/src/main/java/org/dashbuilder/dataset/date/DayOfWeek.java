@@ -32,15 +32,15 @@ public enum DayOfWeek {
     public int getIndex() {
         for (int i = 0; i < _array.length; i++) {
             DayOfWeek el = _array[i];
-            if (this.equals(el)) return i;
+            if (this.equals(el)) return i+1;
         }
         return -1;
     }
 
     public static int nextIndex(int index) {
         index++;
-        if (index < _array.length) return index;
-        return 0;
+        if (index <= _array.length) return index;
+        return 1;
     }
 
     public static DayOfWeek[] getAll() {
@@ -52,6 +52,6 @@ public enum DayOfWeek {
     }
 
     public static DayOfWeek getByIndex(int index) {
-        return _array[index];
+        return _array[index-1];
     }
 }

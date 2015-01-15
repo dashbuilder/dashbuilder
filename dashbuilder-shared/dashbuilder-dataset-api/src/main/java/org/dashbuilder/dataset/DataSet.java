@@ -61,6 +61,7 @@ public interface DataSet {
      * The dataset columns
      */
     List<DataColumn> getColumns();
+    void setColumns(List<DataColumn> columnList);
 
     /**
      * Get a column by its id.

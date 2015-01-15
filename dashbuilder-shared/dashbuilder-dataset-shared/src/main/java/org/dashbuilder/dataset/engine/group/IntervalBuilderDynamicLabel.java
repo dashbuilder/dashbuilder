@@ -37,6 +37,13 @@ public class IntervalBuilderDynamicLabel implements IntervalBuilder {
         return intervalList.indexValues(values, rows);
     }
 
+    public IntervalList build(DataColumn dataColumn) {
+        ColumnGroup columnGroup = dataColumn.getColumnGroup();
+        IntervalListLabel intervalList = new IntervalListLabel(columnGroup);
+        List values = dataColumn.getValues();
+        return intervalList.indexValues(values, null);
+    }
+
     public Interval locate(DataColumn column, Integer intervalIndex) {
         ColumnGroup columnGroup = column.getColumnGroup();
         if (columnGroup == null) return null;

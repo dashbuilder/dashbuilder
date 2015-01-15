@@ -38,15 +38,15 @@ public enum Month {
     public int getIndex() {
         for (int i = 0; i < _monthArray.length; i++) {
             Month month = _monthArray[i];
-            if (this.equals(month)) return i;
+            if (this.equals(month)) return i+1;
         }
         return -1;
     }
 
     public static int nextIndex(int index) {
         index++;
-        if (index < _monthArray.length) return index;
-        return 0;
+        if (index <= _monthArray.length) return index;
+        return 1;
     }
 
     public static Month[] getAll() {
@@ -58,6 +58,6 @@ public enum Month {
     }
 
     public static Month getByIndex(int index) {
-        return _monthArray[index];
+        return _monthArray[index-1];
     }
 }

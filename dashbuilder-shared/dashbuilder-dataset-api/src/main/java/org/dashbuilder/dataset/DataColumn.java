@@ -34,17 +34,20 @@ public interface DataColumn {
      * @return The identifier of this DataColumn
      */
     String getId();
+    void setId(String id);
 
     /**
      * @return The name of this DataColumn
      */
     String getName();
+    void setName(String name);
 
     /**
      * @return The column's type.
      * @see org.dashbuilder.dataset.ColumnType
      */
     ColumnType getColumnType();
+    void setColumnType(ColumnType columnType);
 
     /**
      * The column group settings
@@ -52,6 +55,7 @@ public interface DataColumn {
      * @return null if this column is not the result of a group operation.
      */
     ColumnGroup getColumnGroup();
+    void setColumnGroup(ColumnGroup columnGroup);
 
     /**
      * The interval type used to group this column.
@@ -59,6 +63,7 @@ public interface DataColumn {
      * @return null if this column is not the result of a group operation.
      */
     String getIntervalType();
+    void setIntervalType(String type);
 
     /**
      * The minimum column value
@@ -66,6 +71,7 @@ public interface DataColumn {
      * @return null if this column is not the result of a group operation.
      */
     Object getMinValue();
+    void setMinValue(Object minValue);
 
     /**
      * The maximum column value
@@ -73,11 +79,13 @@ public interface DataColumn {
      * @return null if this column is not the result of a group operation.
      */
     Object getMaxValue();
+    void setMaxValue(Object maxValue);
 
     /**
      * @return A List of the values for this DataColumn.
      */
     List getValues();
+    void setValues(List values);
 
     /**
      * Only clone the column definition.

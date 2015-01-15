@@ -29,7 +29,7 @@ public enum Quarter {
     public int getIndex() {
         for (int i = 0; i < _array.length; i++) {
             Quarter q = _array[i];
-            if (this.equals(q)) return i;
+            if (this.equals(q)) return i+1;
         }
         return -1;
     }
@@ -39,11 +39,11 @@ public enum Quarter {
     }
 
     public static Quarter getByIndex(int index) {
-        return _array[index];
+        return _array[index-1];
     }
 
     /**
-     * Given a month (from 0 to 11) it calculates the first month of its quarter.
+     * Given a month (from 1 to 12) it calculates the first month of its quarter.
      *
      * @param firstMonthOfYear The first month of the year considered the first month of the first quarter.
      * @param targetMonth The month we want to evaluate to which quarter belongs.
@@ -64,7 +64,7 @@ public enum Quarter {
     }
 
     /**
-     * Given a month (from 0 to 11) it calculates the ordinal within the quarter it belongs.
+     * Given a month (from 1 to 12) it calculates the ordinal within the quarter it belongs.
      *
      * @param firstMonthOfYear The first month of the year considered the first month of the first quarter.
      * @param targetMonth The month we want to evaluate.

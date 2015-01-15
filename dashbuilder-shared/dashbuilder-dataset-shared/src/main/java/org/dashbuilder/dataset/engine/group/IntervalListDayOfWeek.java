@@ -39,11 +39,11 @@ public class IntervalListDayOfWeek extends IntervalList {
         DayOfWeek[] array = DayOfWeek.getAll();
 
         for (int i = 0; i < array.length; i++) {
-            DayOfWeek dayOfWeek = array[index];
-            Interval interval = new Interval(dayOfWeek.toString(), dayOfWeek.getIndex());
+            DayOfWeek dayOfWeek = array[index-1];
+            Interval interval = new Interval(Integer.toString(dayOfWeek.getIndex()), i);
             this.add(interval);
 
-            intervalMap.put(index, interval);
+            intervalMap.put(index-1, interval);
             index = DayOfWeek.nextIndex(index);
         }
     }

@@ -55,6 +55,11 @@ public class IntervalBuilderFixedDate implements IntervalBuilder {
         return intervalList.locateInterval(intervalIndex);
     }
 
+    public IntervalList build(DataColumn dataColumn) {
+        ColumnGroup columnGroup = dataColumn.getColumnGroup();
+        return _build(columnGroup);
+    }
+
     protected IntervalList _build(ColumnGroup columnGroup) {
         IntervalList intervalList = createIntervalList(columnGroup);
 

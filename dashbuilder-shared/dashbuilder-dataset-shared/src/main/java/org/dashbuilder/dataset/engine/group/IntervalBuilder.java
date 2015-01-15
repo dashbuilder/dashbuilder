@@ -27,13 +27,21 @@ import org.dashbuilder.dataset.group.Interval;
 public interface IntervalBuilder {
 
     /**
-     * Build a list of intervals according to the column group settings.
+     * Build a list of intervals according to the column group settings. The resulting intervals contain the row references belonging to it.
      * @param ctx The current operation engine data set handler context.
      * @param columnGroup The column group operation to apply.
      *
      * @return A list of intervals containing a split of all the values for the given column.
      */
     IntervalList build(DataSetHandler ctx, ColumnGroup columnGroup);
+
+    /**
+     * Build a list of intervals according to the column group settings. The resulting intervals are empty (no row references in).
+     * @param groupedColumn The data set grouped column
+     *
+     * @return A list of intervals containing a split of all the values for the given column.
+     */
+    IntervalList build(DataColumn groupedColumn);
 
     /**
      * Given a grouped column, locate the interval at the position specified.
