@@ -120,8 +120,8 @@ public class SQLDataSetGroupTest extends SQLDataSetTestBase {
         subTest.testGroupSelectionFilter();
         subTest.testNestedGroupFromMultipleSelection();
         subTest.testNestedGroupRequiresSelection();
-        // TODO: Add empty intervals subTest.testThreeNestedLevels();
-        // TODO: Add empty intervals subTest.testNoResultsSelection();
+        subTest.testThreeNestedLevels();
+        subTest.testNoResultsSelection();
     }
 
     @Test

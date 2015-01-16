@@ -79,6 +79,23 @@ import org.slf4j.Logger;
 import static org.uberfire.commons.validation.PortablePreconditions.checkNotNull;
 import static org.jooq.impl.DSL.*;
 
+/**
+ *  DataSetProvider implementation for JDBC-compliant data sources.
+ *
+ *  <p>It totally relies on the jOOQ library in order to abstract the query logic from the database implementation.
+ *  jOOQ takes are of providing the right SQL syntax for the target database implementation. The SQL provider resolves
+ *  every data set lookup request by transforming such request into the proper jOOQ query. In some cases an extra
+ *  processing of the resulting data set coming from the database is required since some lookup request do not map
+ *  directly to the SQL world. In such cases, specially the grouping of date based data, the core dataset operation
+ *  engine is used.</p>
+ *
+ *  <p>
+ *      Pending stuff:
+ *      - Logical expressions filter
+ *      - Filter on foreign data sets
+ *      - Group (fixed) by date of week
+ *  </p>
+ */
 @Named("sql")
 public class SQLDataSetProvider implements DataSetProvider {
 
@@ -690,7 +707,6 @@ public class SQLDataSetProvider implements DataSetProvider {
                 LogicalExprFilter f = (LogicalExprFilter) filter;
                 LogicalExprType type = f.getLogicalOperator();
 
-                // TODO: logical expr filters
                 if (LogicalExprType.AND.equals(type)) {
                 }
                 if (LogicalExprType.OR.equals(type)) {
@@ -805,25 +821,20 @@ public class SQLDataSetProvider implements DataSetProvider {
                 IntervalList intervalList = intervalBuilder.build(dateColumn);
                 if (intervalList.size() > dataSet.getRowCount()) {
                     List values = dateColumn.getValues();
+                    int valueIdx = 0;
 
-                    int intervalIdx = -1;
-                    for (int valuesIdx = 0; valuesIdx < values.size(); valuesIdx++) {
-                        String value = (String) values.get(valuesIdx);
-                        String interval = intervalList.get(++intervalIdx).getName();
-
-                        while (!value.equals(interval)) {
-                            dataSet.addEmptyRowAt(valuesIdx);
-                            dataSet.setValueAt(valuesIdx, dateGroupColumnIdx, interval);
-                            valuesIdx++;
-                            intervalIdx++;
-                            interval = intervalList.get(intervalIdx).getName();
+                    for (int intervalIdx = 0; intervalIdx < intervalList.size(); intervalIdx++) {
+                        String interval = intervalList.get(intervalIdx).getName();
+                        String value = values.isEmpty() ? null : (String) values.get(valueIdx++);
+                        if (value == null || !value.equals(interval)) {
+                            dataSet.addEmptyRowAt(intervalIdx);
+                            dataSet.setValueAt(intervalIdx, dateGroupColumnIdx, interval);
                         }
                     }
                 }
             }
             return dataSet;
         }
-
 
         protected Table _createJooqTable(String name) {
             return _getJooqTable(def, name);
