@@ -31,7 +31,12 @@ public enum DataSetProviderType {
     /**
      * For accessing data sets that are the result of loading all the rows of a CSV file.
      */
-    CSV;
+    CSV,
+
+    /**
+     * For accessing data sets that are the result of querying an elasticsearch server.
+     */
+    ELASTICSEARCH;
 
     public static DataSetProviderType getByName(String name) {
         if (name == null || name.length() == 0) return null;

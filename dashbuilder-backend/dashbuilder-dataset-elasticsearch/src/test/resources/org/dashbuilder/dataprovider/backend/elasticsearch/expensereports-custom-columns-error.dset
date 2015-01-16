@@ -1,0 +1,19 @@
+{
+    "uuid": "expense_reports_custom_columns_error",
+    "provider": "ELASTICSEARCH",
+    "pushEnabled": true,
+    "pushMaxSize": 1024,
+    "isPublic": true,
+    "serverURL": "http://localhost:9200",
+    "clusterName": "elasticsearch",
+    "index": "expensereports",
+    "type": "expense",
+    "cacheEnabled": false,
+    "cacheMaxRows": 1000,
+    "columns": [
+            {"id": "id", "name": "id", "type": "number"},
+            {"id": "employee", "name": "author", "type": "label"},
+            {"id": "city", "name": "city", "type": "text"},
+            {"id": "amount", "name": "amount", "type": "number"},
+        ]
+}

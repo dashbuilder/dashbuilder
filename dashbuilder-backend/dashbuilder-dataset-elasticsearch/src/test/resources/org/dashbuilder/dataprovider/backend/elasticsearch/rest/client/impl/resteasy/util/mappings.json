@@ -1,0 +1,83 @@
+{"testindex": {
+    "mappings": {
+        "_default_": {
+            "properties": {
+                "prop1": {
+                    "type": "string",
+                    "index": "not_analyzed"
+                },
+                "prop2": {
+                    "type": "integer",
+                    "index": "analyzed"
+                }
+            }
+        }
+    },
+    "settings": {
+        "index": {
+            "creation_date": "1418586354204",
+            "uuid": "XSug4eRHTb2ZmskbjI6heg",
+            "number_of_replicas": "1",
+            "number_of_shards": "5",
+            "version": {
+                "created": "1040199"
+            }
+        }
+    }
+}, "shakespeare": {
+    "mappings": {
+        "_default_": {
+            "properties": {
+                "line_id": {
+                    "type": "integer"
+                },
+                "play_name": {
+                    "type": "string",
+                    "index": "not_analyzed"
+                },
+                "speaker": {
+                    "type": "string",
+                    "index": "no"
+                },
+                "speech_number": {
+                    "type": "integer"
+                }
+            }
+        },
+        "test": {
+            "properties": {
+                "line_id": {
+                    "type": "integer"
+                },
+                "play_name": {
+                    "type": "string",
+                    "index": "not_analyzed"
+                },
+                "speaker": {
+                    "type": "string",
+                    "index": "not_analyzed"
+                },
+                "speech_number": {
+                    "type": "integer"
+                },
+                "date_entry": {
+                    "type": "date"
+                },
+                "test_field": {
+                    "type": "boolean"
+                }
+            }
+        }
+    },
+    "settings": {
+        "index": {
+            "creation_date": "1417811318571",
+            "uuid": "MTw-XRRkTaGgd-JcAaBsxA",
+            "number_of_replicas": "1",
+            "number_of_shards": "5",
+            "version": {
+                "created": "1040199"
+            }
+        }
+    }
+}}

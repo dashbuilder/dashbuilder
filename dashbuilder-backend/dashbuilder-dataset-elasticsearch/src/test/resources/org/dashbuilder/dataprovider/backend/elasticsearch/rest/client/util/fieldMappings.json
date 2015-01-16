@@ -1,0 +1,12 @@
+{"act": {
+    "properties": {
+        "play_name": {
+            "type": "string",
+            "index": "not_analyzed"
+        },
+        "speech_number": {
+            "type": "integer",
+            "index": "analyzed"
+        }
+    }
+}}
