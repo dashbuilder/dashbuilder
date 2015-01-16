@@ -274,11 +274,13 @@ public class DataSetImpl implements DataSet {
     }
 
     public DataSet trim(List<Integer> rows) {
-        if (rows == null || rows.isEmpty()) {
+        if (rows == null) {
             return this;
         }
         DataSetImpl other = cloneEmpty();
         other.rowCountNonTrimmed = getRowCount();
+        if (rows.isEmpty()) return other;
+
         for (int i=0; i<columns.size(); i++) {
             List values = columns.get(i).getValues();
             List valOther = other.getColumns().get(i).getValues();

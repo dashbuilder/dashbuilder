@@ -17,6 +17,8 @@ package org.dashbuilder.dataset.filter;
 
 import java.util.List;
 
+import org.dashbuilder.dataset.group.DateIntervalType;
+
 /**
  * A factory of filter functions
  */
@@ -108,6 +110,16 @@ public class FilterFactory {
         if (low instanceof Number) low = ((Number) low).doubleValue();
         if (high instanceof Number) high = ((Number) high).doubleValue();
         return new CoreFunctionFilter(columnId, CoreFunctionType.IS_BETWEEN, low, high);
+    }
+
+    public static ColumnFilter isUntilToday(String timeFrame) {
+        return isUntilToday(null, timeFrame);
+    }
+
+    public static ColumnFilter isUntilToday(String columnId, String timeFrame) {
+        long millis = DateIntervalType.toMillis(timeFrame);
+        if (millis < 0) throw new IllegalArgumentException("Invalid time frame: " + timeFrame);
+        return new CoreFunctionFilter(columnId, CoreFunctionType.IS_UNTIL_TODAY, timeFrame);
     }
 
     // Boolean operators

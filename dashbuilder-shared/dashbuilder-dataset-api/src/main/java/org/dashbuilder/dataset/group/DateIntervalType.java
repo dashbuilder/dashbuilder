@@ -120,4 +120,20 @@ public enum DateIntervalType {
         if (!DURATION_IN_MILLIS.containsKey(type)) return 0;
         return DURATION_IN_MILLIS.get(type);
     }
+
+    public static long toMillis(String timeFrame) {
+        String number = "";
+        int i = 0;
+        for (; i<timeFrame.length(); i++) {
+            char ch = timeFrame.charAt(i);
+            if (Character.isDigit(ch)) number += ch;
+            else break;
+        }
+        String type = timeFrame.substring(i).trim();
+        DateIntervalType intervalType = getByName(type);
+        if (intervalType == null) return -1;
+        if (number.length() == 0) return -1;
+
+        return Long.parseLong(number) * getDurationInMillis(intervalType);
+    }
 }

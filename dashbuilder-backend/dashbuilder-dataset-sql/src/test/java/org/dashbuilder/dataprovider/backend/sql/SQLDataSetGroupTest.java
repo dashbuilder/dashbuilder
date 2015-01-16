@@ -133,5 +133,6 @@ public class SQLDataSetGroupTest extends SQLDataSetTestBase {
         subTest.testFilterByDate();
         subTest.testFilterByNumber();
         subTest.testFilterMultiple();
+        subTest.testFilterUntilToday();
     }
 }

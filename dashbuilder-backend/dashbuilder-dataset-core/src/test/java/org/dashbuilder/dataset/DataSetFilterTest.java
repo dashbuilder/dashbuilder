@@ -105,6 +105,17 @@ public class DataSetFilterTest {
     }
 
     @Test
+    public void testFilterUntilToday() throws Exception {
+        DataSet result = dataSetManager.lookupDataSet(
+                DataSetFactory.newDataSetLookupBuilder()
+                    .dataset(EXPENSE_REPORTS)
+                    .filter("date", isUntilToday("10second"))
+                    .buildLookup());
+
+        assertThat(result.getRowCount()).isEqualTo(0);
+    }
+
+    @Test
     public void testFilterMultiple() throws Exception {
         Calendar c = Calendar.getInstance();
         c.set(2015, 0, 0, 0, 0);

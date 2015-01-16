@@ -31,10 +31,11 @@ public enum CoreFunctionType {
     IS_GREATER_OR_EQUALS_TO,
     IS_LOWER_THAN,
     IS_LOWER_OR_EQUALS_TO,
-    IS_BETWEEN;
+    IS_BETWEEN,
+    IS_UNTIL_TODAY;
 
-    public static CoreFunctionType getByName(String interval) {
-        if (interval == null || interval.length() == 0) return null;
-        return valueOf(interval.toUpperCase());
+    public static CoreFunctionType getByName(String type) {
+        if (type == null || type.length() == 0) return null;
+        return valueOf(type.toUpperCase());
     }
 }

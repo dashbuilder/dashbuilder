@@ -16,6 +16,7 @@
 package org.dashbuilder.dataprovider.backend.sql;
 
 import java.sql.Connection;
+import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -38,11 +39,11 @@ import org.dashbuilder.dataset.DataSetFactory;
 import org.dashbuilder.dataset.DataSetLookup;
 import org.dashbuilder.dataset.DataSetMetadata;
 import org.dashbuilder.dataset.DataSetOp;
+import org.dashbuilder.dataset.DataSetOpEngine;
 import org.dashbuilder.dataset.backend.BackendIntervalBuilderDynamicDate;
 import org.dashbuilder.dataset.backend.date.DateUtils;
 import org.dashbuilder.dataset.def.DataSetDef;
 import org.dashbuilder.dataset.def.SQLDataSetDef;
-import org.dashbuilder.dataset.engine.SharedDataSetOpEngine;
 import org.dashbuilder.dataset.engine.group.IntervalBuilder;
 import org.dashbuilder.dataset.engine.group.IntervalBuilderLocator;
 import org.dashbuilder.dataset.engine.group.IntervalList;
@@ -83,11 +84,10 @@ import static org.jooq.impl.DSL.*;
  *  DataSetProvider implementation for JDBC-compliant data sources.
  *
  *  <p>It totally relies on the jOOQ library in order to abstract the query logic from the database implementation.
- *  jOOQ takes are of providing the right SQL syntax for the target database implementation. The SQL provider resolves
- *  every data set lookup request by transforming such request into the proper jOOQ query. In some cases an extra
- *  processing of the resulting data set coming from the database is required since some lookup request do not map
- *  directly to the SQL world. In such cases, specially the grouping of date based data, the core dataset operation
- *  engine is used.</p>
+ *  jOOQ takes are of providing the right SQL syntax for the target database. The SQL provider resolves
+ *  every data set lookup request by transforming such request into the proper jOOQ query. In some cases, an extra
+ *  processing of the resulting data is required since some lookup requests do not map directly into the SQL world.
+ *  In such cases, specially the grouping of date based data, the core data set operation engine is used.</p>
  *
  *  <p>
  *      Pending stuff:
@@ -112,10 +112,10 @@ public class SQLDataSetProvider implements DataSetProvider {
     protected IntervalBuilderLocator intervalBuilderLocator;
 
     @Inject
-    protected BackendIntervalBuilderDynamicDate dateDynamicIntervalBuilder;
+    protected BackendIntervalBuilderDynamicDate intervalBuilderDynamicDate;
 
     @Inject
-    protected SharedDataSetOpEngine opEngine;
+    protected DataSetOpEngine opEngine;
 
     public DataSetProviderType getType() {
         return DataSetProviderType.SQL;
@@ -137,7 +137,7 @@ public class SQLDataSetProvider implements DataSetProvider {
 
                 // Lookup from cache.
                 return staticDataSetProvider.lookupDataSet(def, lookup);
-            }  else  {
+            } else  {
 
                 // Fetch always from database if existing rows are greater than the cache max. rows
                 int rows = getRowCount(sqlDef);
@@ -447,7 +447,7 @@ public class SQLDataSetProvider implements DataSetProvider {
             if (GroupStrategy.DYNAMIC.equals(cg.getStrategy())) {
                 Date[] limits = calculateDateLimits(cg.getSourceId());
                 if (limits != null) {
-                    dateIntervalType = dateDynamicIntervalBuilder.calculateIntervalSize(limits[0], limits[1], cg);
+                    dateIntervalType = intervalBuilderDynamicDate.calculateIntervalSize(limits[0], limits[1], cg);
                     return dateIntervalType;
                 }
             }
@@ -698,6 +698,13 @@ public class SQLDataSetProvider implements DataSetProvider {
                 }
                 else if (CoreFunctionType.IS_BETWEEN.equals(type)) {
                     _jooqQuery.where(_jooqField.between(params.get(0), params.get(1)));
+                }
+                else if (CoreFunctionType.IS_UNTIL_TODAY.equals(type)) {
+                    String timeFrame = params.get(0).toString();
+                    long millis = System.currentTimeMillis();
+                    Timestamp now = new Timestamp(millis);
+                    Timestamp past = new Timestamp(millis-DateIntervalType.toMillis(timeFrame));
+                    _jooqQuery.where(_jooqField.between(past, now));
                 }
                 else {
                     throw new IllegalArgumentException("Core function type not supported: " + type);

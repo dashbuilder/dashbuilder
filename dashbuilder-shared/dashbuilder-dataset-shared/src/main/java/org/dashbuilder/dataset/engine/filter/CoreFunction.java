@@ -15,8 +15,11 @@
  */
 package org.dashbuilder.dataset.engine.filter;
 
+import java.util.Date;
+
 import org.dashbuilder.dataset.filter.CoreFunctionFilter;
 import org.dashbuilder.dataset.filter.CoreFunctionType;
+import org.dashbuilder.dataset.group.DateIntervalType;
 
 public class CoreFunction extends DataSetFunction {
 
@@ -64,6 +67,9 @@ public class CoreFunction extends DataSetFunction {
         }
         if (CoreFunctionType.IS_BETWEEN.equals(type)) {
             return isBetween(getCurrentValue());
+        }
+        if (CoreFunctionType.IS_UNTIL_TODAY.equals(type)) {
+            return isUntilToday(getCurrentValue());
         }
         throw new IllegalArgumentException("Core function type not supported: " + type);
     }
@@ -122,6 +128,21 @@ public class CoreFunction extends DataSetFunction {
         Comparable high = getParameter(1);
         if (value.compareTo(low) == -1) return false;
         if (value.compareTo(high) == 1) return false;
+        return true;
+    }
+
+    public boolean isUntilToday(Comparable value) {
+        if (isNull(value)) return false;
+        if (!(value instanceof Date)) return false;
+        Date target = (Date) value;
+
+        String timeFrame = getParameter(0).toString();
+        long millis = System.currentTimeMillis();
+        Date now = new Date(millis);
+        Date past = new Date(millis-DateIntervalType.toMillis(timeFrame));
+
+        if (target.after(now)) return false;
+        if (target.before(past)) return false;
         return true;
     }
 }
