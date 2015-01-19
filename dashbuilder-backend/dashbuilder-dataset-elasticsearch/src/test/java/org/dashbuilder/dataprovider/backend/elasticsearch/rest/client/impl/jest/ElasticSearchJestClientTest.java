@@ -20,14 +20,22 @@ import com.google.gson.GsonBuilder;
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.model.Query;
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.model.SearchHitResponse;
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.model.SearchResponse;
+import org.dashbuilder.dataset.ColumnType;
+import org.dashbuilder.dataset.DataSetMetadata;
+import org.dashbuilder.dataset.group.*;
 import org.jboss.arquillian.junit.Arquillian;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+
+import static org.mockito.Mockito.when;
 
 /**
  * <p>Test unit for Jest EL REST api client.</p>
@@ -37,6 +45,35 @@ import java.util.Map;
 @RunWith(Arquillian.class)
 public class ElasticSearchJestClientTest {
 
+    @Mock
+    protected DataSetMetadata metadata;
+    
+    @Before
+    public void setUp() throws Exception {
+        // Init the annotated mocks.
+        MockitoAnnotations.initMocks(this);
+        
+        // Init the metadata mocked instance.
+        when(metadata.getNumberOfColumns()).thenReturn(6);
+        when(metadata.getColumnId(0)).thenReturn("id");
+        when(metadata.getColumnType(0)).thenReturn(ColumnType.NUMBER);
+        when(metadata.getColumnType("id")).thenReturn(ColumnType.NUMBER);
+        when(metadata.getColumnId(1)).thenReturn("city");
+        when(metadata.getColumnType(1)).thenReturn(ColumnType.LABEL);
+        when(metadata.getColumnType("city")).thenReturn(ColumnType.LABEL);
+        when(metadata.getColumnId(2)).thenReturn("department");
+        when(metadata.getColumnType(2)).thenReturn(ColumnType.LABEL);
+        when(metadata.getColumnType("department")).thenReturn(ColumnType.LABEL);
+        when(metadata.getColumnId(3)).thenReturn("employee");
+        when(metadata.getColumnType(3)).thenReturn(ColumnType.TEXT);
+        when(metadata.getColumnType("employee")).thenReturn(ColumnType.TEXT);
+        when(metadata.getColumnId(4)).thenReturn("date");
+        when(metadata.getColumnType(4)).thenReturn(ColumnType.DATE);
+        when(metadata.getColumnType("date")).thenReturn(ColumnType.DATE);
+        when(metadata.getColumnId(5)).thenReturn("amount");
+        when(metadata.getColumnType(5)).thenReturn(ColumnType.NUMBER);
+        when(metadata.getColumnType("amount")).thenReturn(ColumnType.NUMBER);
+    }
 
     @Test
     public void testQuerySerializer() {
@@ -173,4 +210,66 @@ public class ElasticSearchJestClientTest {
         Assert.assertEquals(hit7Fields.get("date").toString(), "11-30-2010");
         Assert.assertEquals(hit7Fields.get("amount").toString(), "343.45");
     }
+
+    @Test
+    public void testAggregationSerializer() {
+        
+        GsonBuilder builder = new GsonBuilder();
+        builder.registerTypeAdapter(DataSetGroup.class, new ElasticSearchJestClient.AggregationSerializer().setDataSetMetadata(metadata));
+        Gson gson = builder.create();
+
+        // **************
+        // Core functions
+        // **************
+        
+        // Count, min, max, avg, distinct, sum. ( no grouping by columns).
+        DataSetGroup aggregation = new DataSetGroup();
+        aggregation.setDataSetUUID("testUUID");
+        aggregation.setColumnGroup(null);
+        aggregation.setJoin(false);
+        GroupFunction countFunction = new GroupFunction("department", "department-count", AggregateFunctionType.COUNT);
+        GroupFunction minFunction = new GroupFunction("amount", "amount-min", AggregateFunctionType.MIN);
+        GroupFunction maxFunction = new GroupFunction("amount", "amount-max", AggregateFunctionType.MAX);
+        GroupFunction avgFunction = new GroupFunction("amount", "amount-avg", AggregateFunctionType.AVERAGE);
+        GroupFunction sumFunction = new GroupFunction("amount", "amount-sum", AggregateFunctionType.SUM);
+        GroupFunction distinctFunction = new GroupFunction("amount", "amount-distinct", AggregateFunctionType.DISTINCT);
+        aggregation.addGroupFunction(countFunction, minFunction, maxFunction, avgFunction, sumFunction, distinctFunction);
+        String aggregationResult = gson.toJson(aggregation,  DataSetGroup.class);
+        Assert.assertEquals(aggregationResult, "{\"aggregations\":[{\"department-count\":{\"value_count\":{\"field\":\"department\"}}},{\"amount-min\":{\"min\":{\"field\":\"amount\"}}},{\"amount-max\":{\"max\":{\"field\":\"amount\"}}},{\"amount-avg\":{\"avg\":{\"field\":\"amount\"}}},{\"amount-sum\":{\"sum\":{\"field\":\"amount\"}}},{\"amount-distinct\":{\"cardinality\":{\"field\":\"amount\"}}}]}");
+        
+        // *****************
+        // GroupBy functions
+        // *****************
+        
+        // Term aggregation.
+        DataSetGroup groupByAggregation = new DataSetGroup();
+        groupByAggregation.setDataSetUUID("testUUID");
+        groupByAggregation.setJoin(false);
+        groupByAggregation.setColumnGroup(new ColumnGroup("department", "departmentGrouped", GroupStrategy.DYNAMIC));
+        GroupFunction groupByCountFunction = new GroupFunction("amount", "amount-count", AggregateFunctionType.COUNT);
+        GroupFunction groupByMinFunction = new GroupFunction("amount", "amount-min", AggregateFunctionType.MIN);
+        groupByAggregation.addGroupFunction(groupByCountFunction, groupByMinFunction);
+        
+        // TODO: serialization & assertions.
+        
+        // Date Histogram aggregation.
+        DataSetGroup dateHistogramAggreagation = new DataSetGroup();
+        dateHistogramAggreagation.setDataSetUUID("testUUID");
+        groupByAggregation.setColumnGroup(new ColumnGroup("date", "dateGroupped", GroupStrategy.DYNAMIC, -1, DateIntervalType.YEAR.name()));
+        dateHistogramAggreagation.setJoin(false);
+        dateHistogramAggreagation.addGroupFunction(groupByCountFunction, groupByMinFunction);
+
+        // TODO: serialization & assertions.
+        
+        
+        
+        // TODO: Histogram aggregation.
+        DataSetGroup histogramAggreagation = new DataSetGroup();
+        histogramAggreagation.setDataSetUUID("testUUID");
+        histogramAggreagation.setColumnGroup(null);
+        histogramAggreagation.setJoin(false);
+
+        
+    }
+
 }

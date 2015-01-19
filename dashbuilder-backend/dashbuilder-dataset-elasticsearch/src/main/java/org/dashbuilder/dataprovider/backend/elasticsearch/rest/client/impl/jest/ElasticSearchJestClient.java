@@ -22,15 +22,27 @@ import io.searchbox.client.JestResult;
 import io.searchbox.client.config.HttpClientConfig;
 import io.searchbox.core.Count;
 import io.searchbox.core.CountResult;
+import io.searchbox.core.Search;
+import io.searchbox.core.search.sort.Sort;
 import io.searchbox.indices.mapping.GetMapping;
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.ElasticSearchClient;
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.exception.ElasticSearchClientGenericException;
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.impl.jest.gson.FieldMapping;
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.model.*;
+import org.dashbuilder.dataset.ColumnType;
+import org.dashbuilder.dataset.DataSetMetadata;
+import org.dashbuilder.dataset.def.DataSetDef;
+import org.dashbuilder.dataset.def.ElasticSearchDataSetDef;
+import org.dashbuilder.dataset.group.AggregateFunctionType;
+import org.dashbuilder.dataset.group.DataSetGroup;
+import org.dashbuilder.dataset.group.GroupFunction;
+import org.dashbuilder.dataset.sort.ColumnSort;
+import org.dashbuilder.dataset.sort.DataSetSort;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Named;
 import java.lang.reflect.Type;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -167,23 +179,274 @@ public class ElasticSearchJestClient implements ElasticSearchClient<ElasticSearc
     }
 
     @Override
-    public SearchResponse search(SearchRequest request) throws ElasticSearchClientGenericException {
+    public SearchResponse search(DataSetDef definition, SearchRequest request) throws ElasticSearchClientGenericException {
         if (client == null) throw new IllegalArgumentException("elasticsearchRESTEasyClient instance is not build.");
 
+        DataSetMetadata metadata = request.getMetadata();
+        DataSetDef dataSetDef = metadata.getDefinition();
+        String[] index = request.getIndexes();
+        String[] type = request.getTypes();
+        String[] fields = request.getFields();
+        int start = request.getStart();
+        int size = request.getSize();
+        List<DataSetGroup> aggregations = request.getAggregations();
+        List<DataSetSort> sorting = request.getSorting();
         Query query = request.getQuery();
         
-        
+        // Crate the Gson builder and instance.        
         GsonBuilder builder = new GsonBuilder();
-        builder.registerTypeAdapter(Query.class, new QuerySerializer());
+        builder.registerTypeAdapter(DataSetGroup.class, new AggregationSerializer().setDataSetMetadata(metadata));
+        builder.registerTypeAdapter(Query.class, new QuerySerializer().setDataSetDef((ElasticSearchDataSetDef) definition));
         builder.registerTypeAdapter(SearchResponse.class, new SearchResponseDeserializer());
         builder.registerTypeAdapter(SearchHitResponse.class, new HitDeserializer());
         Gson gson = builder.create();
-        String gsonResult = gson.toJson(query);
+        
+        // Set request lookup constraints.
+        // TODO: Improve using search types - http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search-request-search-type.html        
+        String gsonQuery = gson.toJson(query);
+        Search.Builder searchRequestBuilder = new Search.Builder(gsonQuery).addIndex(index[0]);
+        if (type != null && type.length > 0) searchRequestBuilder.addType(type[0]);
 
-        // TODO
-        return null;
+        // The columns id and type that will compose the dataset.
+        List<String> columnIds = new ArrayList<String>();
+        List<ColumnType> columnTypes = new ArrayList<ColumnType>();
+
+        // Sorting.
+        if (sorting != null && !sorting.isEmpty()) {
+            for (DataSetSort sortOp : sorting) {
+                List<ColumnSort> columnSorts = sortOp.getColumnSortList();
+                if (columnSorts != null && !columnSorts.isEmpty()) {
+                    for (ColumnSort columnSort : columnSorts) {
+                        Sort sort = new Sort(columnSort.getColumnId(), columnSort.getOrder().asInt() == 1 ? Sort.Sorting.ASC : Sort.Sorting.DESC);
+                        searchRequestBuilder.addSort(sort);
+                    }
+                }
+            }
+        }
+
+
+        /* 
+
+
+
+        boolean existAggregations = false;
+        
+        // Add the group functions translated as query aggregations.
+        if (aggregations != null && !aggregations.isEmpty()) {
+            existAggregations = true;
+            // TODO: builder.setNoFields();
+            for (DataSetGroup aggregation : aggregations) {
+                JsonObject aggregationObject = addAggregation(aggregation, metadata, columnIds, columnTypes);
+                asdf
+            }
+        }
+
+        // If there are no aggregations. Use original dataset columns.
+        if (!existAggregations && fields != null) {
+            //  TODO: http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search-request-fields.html
+            builder = builder.addFields(fields);
+            for (String field : fields) {
+                if (!existColumnInMetadataDef(field, metadata)) throw new RuntimeException("Aggregation by column [" + field + "] failed. No column with the given id.");
+                ColumnType colType = metadata.getColumnType(field);
+                columnIds.add(field);
+                columnTypes.add(colType);
+            }
+        }
+        
+
+        // if aggregations exist, we care about the aggregation results, not document results.
+        int sizeToPull = existAggregations ? 0 : size;
+        int startToPull = existAggregations ? 0 : start;
+
+        // Trimming.
+        // TODO: http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search-request-from-size.html
+        builder = builder.setFrom(startToPull).setSize(sizeToPull);
+
+        */
+        
+        
+        // Perform the query to the EL server.
+        Search searchRequest = searchRequestBuilder.build();
+        JestResult result = null;
+        try {
+            result = client.execute(searchRequest);
+        } catch (Exception e) {
+            throw new ElasticSearchClientGenericException("An error ocurred during search operation.", e);
+        }
+        return gson.fromJson(result.getJsonObject(), SearchResponse.class);
     }
 
+    
+    
+    /**
+     * <p>Translates the ColumnGroup definition into a JsonObject.</p>
+     * <p>It found for the GroupFunction that does not have any operation associated, as it's the group column name definition.</p>
+     */
+    /*
+    protected JsonObject addAggregation(DataSetGroup groupOp, DataSetMetadata metadata, List<String> columnIds, List<ColumnType> columnTypes) {
+        if (groupOp == null) return null;
+
+        ColumnGroup columnGroup = groupOp.getColumnGroup();
+        List<GroupFunction> groupFunctions = groupOp.getGroupFunctions();
+
+        // DateHistogramBuilder
+        ValuesSourceAggregationBuilder groupByAggregation = null;
+        // Group by - Term ,histogram, date histogram.
+        if (columnGroup != null) {
+
+            String columnId = columnGroup.getColumnId();
+            String sourceId = columnGroup.getSourceId();
+            boolean asc = columnGroup.isAscendingOrder();
+
+            if (groupFunctions != null && !groupFunctions.isEmpty()) {
+                for (GroupFunction groupFunction : groupFunctions) {
+                    if (groupFunction.getFunction() == null) {
+                        columnId = groupFunction.getColumnId();
+                        if (!sourceId.equals(groupFunction.getSourceId())) throw new RuntimeException("Grouping by this source property [" + sourceId + "] not possible.");
+                        if (!existColumnInMetadataDef(sourceId, metadata)) throw new RuntimeException("Aggregation by column [" + sourceId + "] failed. No column with the given id.");
+                    }
+                }
+            }
+            groupByAggregation = translateAggregationGroupBy(metadata, columnGroup, columnId);
+            builder.addAggregation(groupByAggregation);
+            String colId = groupByAggregation.getName();
+            ColumnType colType = metadata.getColumnType(colId);
+            columnIds.add(colId);
+            columnTypes.add(colType);
+        }
+
+        // Aggregation functions -SUM, MAX, MIN, AVG, DISTINCT, COUNT
+        if (groupFunctions != null && !groupFunctions.isEmpty()) {
+            for (GroupFunction groupFunction : groupFunctions) {
+                AbstractAggregationBuilder aggr = translateAggregationFunction(metadata, groupFunction, groupByAggregation);
+                if (groupByAggregation == null && aggr != null) builder.addAggregation(aggr);
+                else if (groupByAggregation!= null && aggr != null) groupByAggregation.subAggregation(aggr);
+                if (aggr != null) {
+                    String colId = aggr.getName();
+                    columnIds.add(colId);
+                    columnTypes.add(ColumnType.NUMBER);
+                }
+            }
+        }
+
+    }
+    */
+
+
+    /*
+        TODO: 
+        - TermBuilder
+        - HistogramBuilder
+        - DateHistogramBuilder
+     */
+    /**
+     * Serializes DataSetGroup operations.
+     *
+     * TODO: support for join attribute.
+     */
+    protected static class AggregationSerializer implements JsonSerializer<DataSetGroup> {
+        private DataSetGroup groupOp;
+        private DataSetMetadata metadata;
+
+        public AggregationSerializer setDataSetMetadata(DataSetMetadata metadata) {
+            this.metadata = metadata;
+            return this;
+        }
+
+        public JsonObject serialize(DataSetGroup groupOp, Type typeOfSrc, JsonSerializationContext context) {
+            this.groupOp = groupOp;
+
+            JsonObject result = new JsonObject();
+
+            // Group functions.
+            List<JsonObject> coreFunctions = null;
+            if (groupOp.getGroupFunctions() != null && !groupOp.getGroupFunctions().isEmpty()) {
+                coreFunctions = new LinkedList<JsonObject>();
+                for (GroupFunction groupFunction : groupOp.getGroupFunctions()) {
+                    JsonObject coreFunctionObject = serializeCoreFunction(groupFunction);
+                    if (coreFunctionObject != null) coreFunctions.add(coreFunctionObject);
+                }
+            }
+
+            JsonArray aggregationsArray = new JsonArray();
+
+            if (coreFunctions != null && !coreFunctions.isEmpty()) {
+                for (JsonObject coreFunction : coreFunctions) {
+                    aggregationsArray.add(coreFunction);
+                }
+            }
+
+            result.add("aggregations", aggregationsArray);
+            return result;
+        }
+
+        /**
+         * <p>Serializes a core function.</p>
+         * <p>Example of SUM function serialization:</p>
+         * <code>
+         *     "column_id" : {
+         *          "sum" : { "field" : "change" }
+         *     }
+         * </code>
+         * @return
+         */
+        protected JsonObject serializeCoreFunction(GroupFunction groupFunction) {
+            JsonObject result = null;
+            if (groupFunction != null) {
+                result = new JsonObject();
+
+                String sourceId = groupFunction.getSourceId();
+                if (sourceId != null && !existColumnInMetadataDef(sourceId)) throw new RuntimeException("Aggregation by column [" + sourceId + "] failed. No column with the given id.");
+                if (sourceId == null) sourceId = metadata.getColumnId(0);
+                if (sourceId == null) throw new IllegalArgumentException("Aggregation from unknown column id.");
+                String columnId = groupFunction.getColumnId();
+                if (columnId == null) columnId = sourceId;
+
+                AggregateFunctionType type = groupFunction.getFunction();
+                String aggregationName = null;
+                switch (type) {
+                    case COUNT:
+                        aggregationName = "value_count";
+                        break;
+                    case DISTINCT:
+                        aggregationName = "cardinality";
+                        break;
+                    case AVERAGE:
+                        aggregationName = "avg";
+                        break;
+                    case SUM:
+                        aggregationName = "sum";
+                        break;
+                    case MIN:
+                        aggregationName = "min";
+                        break;
+                    case MAX:
+                        aggregationName = "max";
+                        break;
+
+                }
+                JsonObject fieldObject = new JsonObject();
+                fieldObject.addProperty("field", sourceId);
+                JsonObject subObject = new JsonObject();
+                subObject.add(aggregationName, fieldObject);
+                result.add(columnId, subObject);
+
+            }
+            return result;
+        }
+
+        protected boolean existColumnInMetadataDef(String name) {
+            if (name == null || metadata == null) return false;
+
+            int cols = metadata.getNumberOfColumns();
+            for (int x = 0; x < cols; x++) {
+                String colName = metadata.getColumnId(x);
+                if (name.equals(colName)) return true;
+            }
+            return false;
+        }
+    }
+    
     protected static class SearchResponseDeserializer implements JsonDeserializer<SearchResponse> {
 
         @Override
@@ -293,9 +556,15 @@ public class ElasticSearchJestClient implements ElasticSearchClient<ElasticSearc
         public static final String SEARCH_API_MUST_NOT = "must_not";
         public static final String SEARCH_API_SHOULD = "should";
         public static final String SEARCH_API_BOOL = "bool";
+        private ElasticSearchDataSetDef definition;
         private Query query;
         private static Gson gson = new GsonBuilder().create();
 
+        public QuerySerializer setDataSetDef(ElasticSearchDataSetDef definition) {
+            this.definition = definition;
+            return this;
+        }
+        
         public JsonObject serialize(Query src, Type typeOfSrc, JsonSerializationContext context) {
             this.query = src;
             
@@ -396,8 +665,11 @@ public class ElasticSearchJestClient implements ElasticSearchClient<ElasticSearc
             if (value != null) {
                 if (value instanceof Number) {
                     object.addProperty(key, (Number) value);
+                } else if (value instanceof Date) {
+                    String datePattern = definition.getPattern(key);
+                    String formattedValue = new SimpleDateFormat(datePattern).format(value);
+                    object.addProperty(key, formattedValue);
                 } else {
-                    // TODO: Format date using "format" attribute for field or default EL expected format.
                     object.addProperty(key, value.toString());
                 }
             }

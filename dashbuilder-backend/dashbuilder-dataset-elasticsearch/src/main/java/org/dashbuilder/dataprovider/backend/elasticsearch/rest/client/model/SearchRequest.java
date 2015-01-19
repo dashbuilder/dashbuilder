@@ -37,7 +37,7 @@ public class SearchRequest {
     private String[] types;
     private String[] fields;
     private List<DataSetGroup> aggregations = new LinkedList<DataSetGroup>();
-    /* The query is the filter representation for ElasticSearch queries and filters from a collection of DataSetFilter instances. */
+    /* The query is the filter representation for ElasticSearch queries and filters from a collection of DataSetFilter instances, including aggregations. */
     private Query query;
     private List<DataSetSort> sorting = new LinkedList<DataSetSort>();
     private int start = 0;

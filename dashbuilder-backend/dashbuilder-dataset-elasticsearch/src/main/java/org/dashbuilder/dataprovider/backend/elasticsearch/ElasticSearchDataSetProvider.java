@@ -229,7 +229,7 @@ public class ElasticSearchDataSetProvider implements DataSetProvider {
         
         // Perform the query & generate the resulting dataset.
         DataSet dataSet = DataSetFactory.newEmptyDataSet();
-        SearchResponse searchResponse = getClient(elDef).search(request);
+        SearchResponse searchResponse = getClient(elDef).search(elDef, request);
 
         // Add the dataset columns.
         addDataSetColumns(dataSet, searchResponse);
