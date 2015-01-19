@@ -40,6 +40,7 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 import javax.inject.Named;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -107,6 +108,7 @@ public class ElasticSearchDataSetProvider implements DataSetProvider {
 
     protected static final String KEYWORD_ALL = "_all";
     protected static final String NULL_VALUE = "---";
+    protected static final String DEFAULT_DATE_PATTERN = "yyyy/MM/dd HH:mm:ss";
 
     @Inject
     protected StaticDataSetProvider staticDataSetProvider;
@@ -236,7 +238,7 @@ public class ElasticSearchDataSetProvider implements DataSetProvider {
         if (searchResponse instanceof EmptySearchResponse) return dataSet;
 
         // There exist values. Fill the dataset.
-        fillDataSetValues(dataSet, searchResponse.getHits());
+        fillDataSetValues(elDef, dataSet, searchResponse.getHits());
 
         if (trim) {
             // TODO: Do not truncate!
@@ -308,7 +310,7 @@ public class ElasticSearchDataSetProvider implements DataSetProvider {
      *             
      * @throws Exception 
      */
-    protected void fillDataSetValues(DataSet dataSet, SearchHitResponse[] hits) throws Exception {
+    protected void fillDataSetValues(ElasticSearchDataSetDef elDef, DataSet dataSet, SearchHitResponse[] hits) throws Exception {
         List<DataColumn> dataSetColumns = dataSet.getColumns();
         int position = 0;
         for (SearchHitResponse hit : hits) {
@@ -317,7 +319,7 @@ public class ElasticSearchDataSetProvider implements DataSetProvider {
                 String columnId = column.getId();
                 ColumnType columnType = column.getColumnType();
                 Object value = hit.getFieldValue(columnId);
-                Object formattedValue = formatColumnValue(columnType, value);
+                Object formattedValue = formatColumnValue(elDef, column, value);
                 dataSet.setValueAt(position, columnNumber, formattedValue);
                 columnNumber++;
             }
@@ -327,19 +329,23 @@ public class ElasticSearchDataSetProvider implements DataSetProvider {
 
     /**
      * Formats a given value for a given column type.
-     * @param columnType The type of column
+     * @param column The data column definition.
      * @param value The value to format
      * @return The formatted value for the given column type.
      */
-    protected Object formatColumnValue(ColumnType columnType, Object value) {
+    protected Object formatColumnValue(ElasticSearchDataSetDef elDef, DataColumn column, Object value) throws Exception {
 
+        ColumnType columnType = column.getColumnType();
+        
         if (ColumnType.NUMBER.equals(columnType)) {
             if (value == null || value.toString().trim().length() == 0) return 0d;
-            return ((Number)value).doubleValue();
+            if (value instanceof Number) return ((Number)value).doubleValue();
+            else if (value instanceof String) return Double.parseDouble((String)value);
         }
         else if (ColumnType.DATE.equals(columnType)) {
             if (value == null || value.toString().trim().length() == 0) return new Date();
-            return value;
+            String datePattern = elDef.getPattern(column.getId());
+            return new SimpleDateFormat(datePattern).parse(value.toString());
         }
         
         // LABEL or TEXT colum types.
@@ -359,7 +365,8 @@ public class ElasticSearchDataSetProvider implements DataSetProvider {
         if (columnIds != null && !columnIds.isEmpty()) {
             int x = 0;
             for (String columnId : columnIds) {
-                dataSet.addColumn(columnId, columnId, searchResponse.getColumnTypes().get(x++));
+                DataColumn dataColumn = dataSet.getColumnById(columnId);
+                dataSet.addColumn(columnId, columnId, dataColumn.getColumnType());
             }
         }
         
@@ -486,6 +493,9 @@ public class ElasticSearchDataSetProvider implements DataSetProvider {
                             String existingPattern = def.getPattern(columnId);
                             if (existingPattern != null && !existingPattern.equals(format)) throw new IllegalArgumentException("Column [" + columnId + "] is already present in data set with pattern [" + existingPattern + "] and you are trying to add it again with pattern [" + format + "[");
                             def.setPattern(columnId, format);
+                        } else {
+                            // Apply elasticsearch default date format.
+                            def.setPattern(columnId, DEFAULT_DATE_PATTERN);
                         }
                     } else {
                         result.put(columnId, columnType);

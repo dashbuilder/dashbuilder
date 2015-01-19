@@ -17,7 +17,6 @@ package org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.impl.jest
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonObject;
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.model.Query;
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.model.SearchHitResponse;
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.model.SearchResponse;
@@ -28,6 +27,7 @@ import org.junit.runner.RunWith;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>Test unit for Jest EL REST api client.</p>
@@ -119,7 +119,6 @@ public class ElasticSearchJestClientTest {
         Assert.assertEquals(serializedQuery, "{\"filter\":{\"range\":{\"amount\":{\"lt\":100,\"lte\":200,\"gt\":300,\"gte\":400}}}}");
     }
     
-    // TODO
     @Test
     public void testSearchResponseDeserialization() {
         String response = "{\"took\":4,\"timed_out\":false,\"_shards\":{\"total\":5,\"successful\":5,\"failed\":0},\"hits\":{\"total\":8,\"max_score\":2.609438,\"hits\":[{\"_index\":\"expensereports\",\"_type\":\"expense\",\"_id\":\"12\",\"_score\":2.609438,\"_source\":{\"id\":12, \"city\": \"Madrid\", \"department\": \"Sales\", \"employee\": \"Nita Marling\" ,\"date\": \"03-02-2012\" , \"amount\":344.9}},{\"_index\":\"expensereports\",\"_type\":\"expense\",\"_id\":\"20\",\"_score\":2.609438,\"_source\":{\"id\":20, \"city\": \"Brno\", \"department\": \"Sales\", \"employee\": \"Neva Hunger\" ,\"date\": \"06-11-2011\" , \"amount\":995.3}},{\"_index\":\"expensereports\",\"_type\":\"expense\",\"_id\":\"21\",\"_score\":2.609438,\"_source\":{\"id\":21, \"city\": \"Brno\", \"department\": \"Sales\", \"employee\": \"Neva Hunger\" ,\"date\": \"06-11-2011\" , \"amount\":234.3}},{\"_index\":\"expensereports\",\"_type\":\"expense\",\"_id\":\"10\",\"_score\":2.2039728,\"_source\":{\"id\":10, \"city\": \"Madrid\", \"department\": \"Sales\", \"employee\": \"Nita Marling\" ,\"date\": \"03-11-2012\" , \"amount\":100}},{\"_index\":\"expensereports\",\"_type\":\"expense\",\"_id\":\"27\",\"_score\":2.2039728,\"_source\":{\"id\":27, \"city\": \"Westford\", \"department\": \"Sales\", \"employee\": \"Jerri Preble\" ,\"date\": \"12-23-2010\" , \"amount\":899.03}},{\"_index\":\"expensereports\",\"_type\":\"expense\",\"_id\":\"9\",\"_score\":1.9162908,\"_source\":{\"id\":9, \"city\": \"Madrid\", \"department\": \"Sales\", \"employee\": \"Nita Marling\" ,\"date\": \"05-11-2012\" , \"amount\":75.75}},{\"_index\":\"expensereports\",\"_type\":\"expense\",\"_id\":\"11\",\"_score\":1.9162908,\"_source\":{\"id\":11, \"city\": \"Madrid\", \"department\": \"Sales\", \"employee\": \"Nita Marling\" ,\"date\": \"03-16-2012\" , \"amount\":220.8}},{\"_index\":\"expensereports\",\"_type\":\"expense\",\"_id\":\"28\",\"_score\":1.9162908,\"_source\":{\"id\":28, \"city\": \"Westford\", \"department\": \"Sales\", \"employee\": \"Jerri Preble\" ,\"date\": \"11-30-2010\" , \"amount\":343.45}}]}}";
@@ -130,6 +129,48 @@ public class ElasticSearchJestClientTest {
         Gson gson = builder.create();
         SearchResponse result = gson.fromJson(response, SearchResponse.class);
         
-        System.out.println(result);
+        Assert.assertNotNull(result);
+        Assert.assertEquals(result.getTookInMillis(), 4);
+        Assert.assertEquals(result.getMaxScore(), 2.609438f, 0.1);
+        Assert.assertEquals(result.getResponseStatus(), 200);
+        Assert.assertEquals(result.getShardFailures(), 0);
+        Assert.assertEquals(result.getTotalShards(), 5);
+        Assert.assertEquals(result.getSuccessfulShards(), 5);
+        Assert.assertEquals(result.getTotalHits(), 8);
+        Assert.assertEquals(result.getHits().length, 8);
+        
+        // Assert first response hit.
+        SearchHitResponse hit0 = result.getHits()[0];
+        Assert.assertNotNull(hit0);
+        Assert.assertEquals(hit0.getIndex(), "expensereports");
+        Assert.assertEquals(hit0.getType(), "expense");
+        Assert.assertEquals(hit0.getId(), "12");
+        Assert.assertEquals(hit0.getScore(), 2.609438f, 0.1);
+        Map<String, Object> hit0Fields = hit0.getFields();
+        Assert.assertNotNull(hit0Fields);
+        Assert.assertEquals(hit0Fields.size(), 6);
+        Assert.assertEquals(hit0Fields.get("id").toString(), "12");
+        Assert.assertEquals(hit0Fields.get("city").toString(), "Madrid");
+        Assert.assertEquals(hit0Fields.get("department").toString(), "Sales");
+        Assert.assertEquals(hit0Fields.get("employee").toString(), "Nita Marling");
+        Assert.assertEquals(hit0Fields.get("date").toString(), "03-02-2012");
+        Assert.assertEquals(hit0Fields.get("amount").toString(), "344.9");
+
+        // Assert first response hit.
+        SearchHitResponse hit7 = result.getHits()[7];
+        Assert.assertNotNull(hit7);
+        Assert.assertEquals(hit7.getIndex(), "expensereports");
+        Assert.assertEquals(hit7.getType(), "expense");
+        Assert.assertEquals(hit7.getId(), "28");
+        Assert.assertEquals(hit7.getScore(), 1.9162908f, 0.1);
+        Map<String, Object> hit7Fields = hit7.getFields();
+        Assert.assertNotNull(hit7Fields);
+        Assert.assertEquals(hit7Fields.size(), 6);
+        Assert.assertEquals(hit7Fields.get("id").toString(), "28");
+        Assert.assertEquals(hit7Fields.get("city").toString(), "Westford");
+        Assert.assertEquals(hit7Fields.get("department").toString(), "Sales");
+        Assert.assertEquals(hit7Fields.get("employee").toString(), "Jerri Preble");
+        Assert.assertEquals(hit7Fields.get("date").toString(), "11-30-2010");
+        Assert.assertEquals(hit7Fields.get("amount").toString(), "343.45");
     }
 }

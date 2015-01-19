@@ -21,6 +21,6 @@ package org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.model;
 public class EmptySearchResponse extends SearchResponse {
 
     public EmptySearchResponse(long tookInMillis, int responseStatus, long totalHits, float maxScore, int totalShards, int successfulShards, int shardFailures) {
-        super(tookInMillis, responseStatus, totalHits, maxScore, totalShards, successfulShards, shardFailures, null, null, null);
+        super(tookInMillis, responseStatus, totalHits, maxScore, totalShards, successfulShards, shardFailures, null, null);
     }
 }

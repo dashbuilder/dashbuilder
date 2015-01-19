@@ -23,12 +23,10 @@ import io.searchbox.client.config.HttpClientConfig;
 import io.searchbox.core.Count;
 import io.searchbox.core.CountResult;
 import io.searchbox.indices.mapping.GetMapping;
-import org.apache.commons.lang.ArrayUtils;
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.ElasticSearchClient;
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.exception.ElasticSearchClientGenericException;
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.impl.jest.gson.FieldMapping;
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.model.*;
-import org.json.JSONObject;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Named;
@@ -188,13 +186,56 @@ public class ElasticSearchJestClient implements ElasticSearchClient<ElasticSearc
 
     protected static class SearchResponseDeserializer implements JsonDeserializer<SearchResponse> {
 
-        // TODO        
         @Override
         public SearchResponse deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
             SearchResponse result = null;
             if (typeOfT.equals(SearchResponse.class)) {
+                JsonObject responseObject = json.getAsJsonObject();
+                
+                if (responseObject != null) {
+                    long tookInMillis = responseObject.get("took").getAsLong();
+                    int responseStatus = 200;
 
-                // result = new SearchResponse();
+                    JsonObject shardsObject = responseObject.getAsJsonObject("_shards");
+                    int totalShards = shardsObject.get("total").getAsInt();
+                    int successfulShards = shardsObject.get("successful").getAsInt();
+                    int shardFailures = shardsObject.get("failed").getAsInt();
+
+                    long totalHits = 0;
+                    float maxScore = 0;
+                    List<String> columnIds = new LinkedList<String>();
+                    List<SearchHitResponse> hits = new LinkedList<SearchHitResponse>(); 
+                    JsonObject hitsObject = responseObject.getAsJsonObject("hits");
+                    if (hitsObject != null) {
+                        totalHits = hitsObject.get("total").getAsLong();
+                        maxScore = hitsObject.get("max_score").getAsFloat();
+                        JsonArray hitsArray = hitsObject.getAsJsonArray("hits");
+                        if (hitsArray != null && hitsArray.size() > 0) {
+                            for (int i = 0; i < hitsArray.size() ; i++) {
+                                JsonElement hitResponseElement = hitsArray.get(i);
+                                SearchHitResponse hit = context.deserialize(hitResponseElement, SearchHitResponse.class);
+                                hits.add(hit);
+                            }
+                        }
+                        
+                        // Obtain the resulting column ids and types from the first hit.
+                        if (!hits.isEmpty()) {
+                            SearchHitResponse hit = hits.get(0);
+
+                            Map<String, Object> fields = hit.getFields();
+                            if (fields != null) {
+                                Set<String> fieldNames = fields.keySet();
+                                if (!fieldNames.isEmpty()) {
+                                    for (String fieldName : fieldNames) {
+                                        columnIds.add(fieldName);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    
+                    result = new SearchResponse(tookInMillis, responseStatus, totalHits, maxScore, totalShards, successfulShards, shardFailures, columnIds, hits.toArray(new SearchHitResponse[hits.size()]));
+                }
             }
             
             return result;
@@ -203,12 +244,29 @@ public class ElasticSearchJestClient implements ElasticSearchClient<ElasticSearc
 
     protected static class HitDeserializer implements JsonDeserializer<SearchHitResponse> {
 
-        // TODO        
         @Override
         public SearchHitResponse deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
             SearchHitResponse result = null;
             if (typeOfT.equals(SearchHitResponse.class)) {
-                
+
+                JsonObject hitObject = (JsonObject) json;
+                float score = hitObject.get("_score").getAsFloat();
+                String index = hitObject.get("_index").getAsString();
+                String id = hitObject.get("_id").getAsString();
+                String type = hitObject.get("_type").getAsString();
+                long version = 0;
+                Map<String ,Object> fields = new HashMap<String, Object>();
+                JsonObject source = hitObject.getAsJsonObject("_source");
+                if (source != null) {
+                    Set<Map.Entry<String, JsonElement>> _fields = source.entrySet();
+                    for (Map.Entry<String, JsonElement> field : _fields) {
+                        String fieldName = field.getKey();
+                        String fieldValue = field.getValue().getAsString();
+                        fields.put(fieldName, fieldValue);
+                    }
+                    
+                }
+                result = new SearchHitResponse(score, index, id, type, version, fields);
             }
             
             return result;

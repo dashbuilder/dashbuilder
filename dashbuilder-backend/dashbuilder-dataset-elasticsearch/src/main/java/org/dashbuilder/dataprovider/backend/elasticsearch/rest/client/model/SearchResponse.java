@@ -15,9 +15,6 @@
  */
 package org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.model;
 
-import org.dashbuilder.dataset.ColumnType;
-
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -33,11 +30,10 @@ public class SearchResponse {
     protected int successfulShards;
     protected int shardFailures;
     protected List<String> columnIds;
-    protected List<ColumnType> columnTypes;
     protected SearchHitResponse[] hits;
 
 
-    public SearchResponse(long tookInMillis, int responseStatus, long totalHits, float maxScore, int totalShards, int successfulShards, int shardFailures, List<String> columnIds, List<ColumnType> columnTypes, SearchHitResponse[] hits) {
+    public SearchResponse(long tookInMillis, int responseStatus, long totalHits, float maxScore, int totalShards, int successfulShards, int shardFailures, List<String> columnIds, SearchHitResponse[] hits) {
         this.tookInMillis = tookInMillis;
         this.responseStatus = responseStatus;
         this.totalHits = totalHits;
@@ -46,7 +42,6 @@ public class SearchResponse {
         this.successfulShards = successfulShards;
         this.shardFailures = shardFailures;
         this.columnIds = columnIds;
-        this.columnTypes = columnTypes;
         this.hits = hits;
     }
 
@@ -80,10 +75,6 @@ public class SearchResponse {
 
     public List<String> getColumnIds() {
         return columnIds;
-    }
-
-    public List<ColumnType> getColumnTypes() {
-        return columnTypes;
     }
 
     public SearchHitResponse[] getHits() {
