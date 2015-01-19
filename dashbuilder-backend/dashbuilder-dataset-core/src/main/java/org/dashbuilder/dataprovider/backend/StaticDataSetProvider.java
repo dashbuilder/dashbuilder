@@ -33,6 +33,7 @@ import org.dashbuilder.dataset.engine.index.DataSetIndex;
 import org.dashbuilder.dataset.events.DataSetBackendRegisteredEvent;
 import org.dashbuilder.dataset.events.DataSetBackendRemovedEvent;
 import org.dashbuilder.dataset.events.DataSetDefModifiedEvent;
+import org.dashbuilder.dataset.filter.DataSetFilter;
 
 import static org.uberfire.commons.validation.PortablePreconditions.checkNotNull;
 
@@ -88,6 +89,17 @@ public class StaticDataSetProvider implements DataSetProvider {
 
     public DataSet lookupDataSet(DataSetDef def, DataSetLookup lookup) {
         String uuid = def.getUUID();
+        if (StringUtils.isEmpty(uuid)) return null;
+
+        DataSetFilter dataSetFilter = def.getDataSetFilter();
+        if (dataSetFilter != null) {
+            if (lookup == null) lookup = new DataSetLookup(uuid, dataSetFilter);
+            else lookup.addOperation(0, dataSetFilter);
+        }
+        return lookupDataSet(uuid, lookup);
+    }
+
+    public DataSet lookupDataSet(String uuid, DataSetLookup lookup) {
         if (StringUtils.isEmpty(uuid)) return null;
 
         // Get the target data set

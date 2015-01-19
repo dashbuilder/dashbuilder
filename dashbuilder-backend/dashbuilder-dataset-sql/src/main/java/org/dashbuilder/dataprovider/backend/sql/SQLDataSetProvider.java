@@ -132,11 +132,11 @@ public class SQLDataSetProvider implements DataSetProvider {
 
         // Look first into the static data set provider cache.
         if (sqlDef.isCacheEnabled()) {
-            DataSet dataSet = staticDataSetProvider.lookupDataSet(def, null);
+            DataSet dataSet = staticDataSetProvider.lookupDataSet(def.getUUID(), null);
             if (dataSet != null) {
 
                 // Lookup from cache.
-                return staticDataSetProvider.lookupDataSet(def, lookup);
+                return staticDataSetProvider.lookupDataSet(def.getUUID(), lookup);
             } else  {
 
                 // Fetch always from database if existing rows are greater than the cache max. rows
@@ -149,7 +149,7 @@ public class SQLDataSetProvider implements DataSetProvider {
                 dataSet.setUUID(def.getUUID());
                 dataSet.setDefinition(def);
                 staticDataSetProvider.registerDataSet(dataSet);
-                return staticDataSetProvider.lookupDataSet(def, lookup);
+                return staticDataSetProvider.lookupDataSet(def.getUUID(), lookup);
             }
         }
 
@@ -298,8 +298,21 @@ public class SQLDataSetProvider implements DataSetProvider {
     }
 
     protected int _getRowCount(SQLDataSetDef def, Connection conn) throws Exception {
-        /* jOOQ 3.1.0 style => return using(conn).selectFrom(_getJooqTable(def, def.getDbTable())).fetchCount(); */
-        return using(conn).fetchCount(_getJooqTable(def, def.getDbTable()));
+        DataSetFilter filterOp = def.getDataSetFilter();
+        if (filterOp == null) {
+            /* jOOQ 3.1.0 style => return using(conn).selectFrom(_getJooqTable(def, def.getDbTable())).fetchCount(); */
+            return using(conn).fetchCount(_getJooqTable(def, def.getDbTable()));
+        }
+
+        SelectWhereStep _jooqQuery = using(conn)
+                .selectCount()
+                .from(_getJooqTable(def, def.getDbTable()));
+
+        List<ColumnFilter> filterList = filterOp.getColumnFilterList();
+        for (ColumnFilter filter : filterList) {
+            _appendJooqFilterBy(def, filter, _jooqQuery);
+        }
+        return ((Number) _jooqQuery.fetch().getValue(0 ,0)).intValue();
     }
 
     protected DataSet _lookupDataSet(SQLDataSetDef def, DataSetLookup lookup) throws Exception {
@@ -327,6 +340,74 @@ public class SQLDataSetProvider implements DataSetProvider {
         else return fieldByName(clazz, def.getDbTable(), name);
     }
 
+    protected void _appendJooqFilterBy(SQLDataSetDef def, DataSetFilter filterOp, SelectWhereStep _jooqQuery) {
+        List<ColumnFilter> filterList = filterOp.getColumnFilterList();
+        for (ColumnFilter filter : filterList) {
+            _appendJooqFilterBy(def, filter, _jooqQuery);
+        }
+    }
+
+    protected void _appendJooqFilterBy(SQLDataSetDef def, ColumnFilter filter, SelectWhereStep _jooqQuery) {
+        String filterId = filter.getColumnId();
+        Field _jooqField = _getJooqField(def, filterId);
+
+        if (filter instanceof CoreFunctionFilter) {
+            CoreFunctionFilter f = (CoreFunctionFilter) filter;
+            CoreFunctionType type = f.getType();
+            List<Comparable> params = f.getParameters();
+
+            if (CoreFunctionType.IS_NULL.equals(type)) {
+                _jooqQuery.where(_jooqField.isNull());
+            }
+            else if (CoreFunctionType.IS_NOT_NULL.equals(type)) {
+                _jooqQuery.where(_jooqField.isNotNull());
+            }
+            else if (CoreFunctionType.IS_EQUALS_TO.equals(type)) {
+                if (params.size() == 1) _jooqQuery.where(_jooqField.equal(params.get(0)));
+                else _jooqQuery.where(_jooqField.in(params));
+            }
+            else if (CoreFunctionType.IS_NOT_EQUALS_TO.equals(type)) {
+                _jooqQuery.where(_jooqField.notEqual(params.get(0)));
+            }
+            else if (CoreFunctionType.IS_LOWER_THAN.equals(type)) {
+                _jooqQuery.where(_jooqField.lessThan(params.get(0)));
+            }
+            else if (CoreFunctionType.IS_LOWER_OR_EQUALS_TO.equals(type)) {
+                _jooqQuery.where(_jooqField.lessOrEqual(params.get(0)));
+            }
+            else if (CoreFunctionType.IS_GREATER_THAN.equals(type)) {
+                _jooqQuery.where(_jooqField.greaterThan(params.get(0)));
+            }
+            else if (CoreFunctionType.IS_GREATER_OR_EQUALS_TO.equals(type)) {
+                _jooqQuery.where(_jooqField.greaterOrEqual(params.get(0)));
+            }
+            else if (CoreFunctionType.IS_BETWEEN.equals(type)) {
+                _jooqQuery.where(_jooqField.between(params.get(0), params.get(1)));
+            }
+            else if (CoreFunctionType.IS_UNTIL_TODAY.equals(type)) {
+                String timeFrame = params.get(0).toString();
+                long millis = System.currentTimeMillis();
+                Timestamp now = new Timestamp(millis);
+                Timestamp past = new Timestamp(millis-DateIntervalType.toMillis(timeFrame));
+                _jooqQuery.where(_jooqField.between(past, now));
+            }
+            else {
+                throw new IllegalArgumentException("Core function type not supported: " + type);
+            }
+        }
+        if (filter instanceof LogicalExprFilter) {
+            LogicalExprFilter f = (LogicalExprFilter) filter;
+            LogicalExprType type = f.getLogicalOperator();
+
+            if (LogicalExprType.AND.equals(type)) {
+            }
+            if (LogicalExprType.OR.equals(type)) {
+            }
+            if (LogicalExprType.NOT.equals(type)) {
+            }
+        }
+    }
+
     /**
      * Class that provides an isolated context for the processing of a single lookup request.
      */
@@ -345,6 +426,11 @@ public class SQLDataSetProvider implements DataSetProvider {
         public LookupProcessor(SQLDataSetDef def, DataSetLookup lookup) {
             this.def = def;
             this.lookup = lookup;
+            DataSetFilter dataSetFilter = def.getDataSetFilter();
+            if (dataSetFilter != null) {
+                if (lookup == null) this.lookup = new DataSetLookup(def.getUUID(), dataSetFilter);
+                else this.lookup.addOperation(0, dataSetFilter);
+            }
             _jooqTable = _createJooqTable(def.getDbTable());
         }
 
@@ -392,7 +478,7 @@ public class SQLDataSetProvider implements DataSetProvider {
                     // Append the filter clauses
                     DataSetFilter filterOp = lookup.getFirstFilterOp();
                     if (filterOp != null) {
-                        _appendJooqFilterBy(filterOp, _jooqQuery);
+                        _appendJooqFilterBy(def, filterOp, _jooqQuery);
                         totalRowsChanged = true;
                     }
 
@@ -473,7 +559,7 @@ public class SQLDataSetProvider implements DataSetProvider {
             // Append the filter clauses
             DataSetFilter filterOp = lookup.getFirstFilterOp();
             if (filterOp != null) {
-                _appendJooqFilterBy(filterOp, _jooqLimits);
+                _appendJooqFilterBy(def, filterOp, _jooqLimits);
             }
 
             // Append group interval selection filters
@@ -609,13 +695,6 @@ public class SQLDataSetProvider implements DataSetProvider {
             _jooqQuery.orderBy(_jooqFields);
         }
 
-        protected void _appendJooqFilterBy(DataSetFilter filterOp, SelectWhereStep _jooqQuery) {
-            List<ColumnFilter> filterList = filterOp.getColumnFilterList();
-            for (ColumnFilter filter : filterList) {
-                _appendJooqFilterBy(filter, _jooqQuery);
-            }
-        }
-
         protected void _appendJooqIntervalSelection(DataSetGroup intervalSel, SelectWhereStep _jooqQuery) {
             if (intervalSel != null && intervalSel.isSelect()) {
                 ColumnGroup cg = intervalSel.getColumnGroup();
@@ -658,68 +737,7 @@ public class SQLDataSetProvider implements DataSetProvider {
                 else {
                     filter = FilterFactory.isEqualsTo(cg.getSourceId(), names);
                 }
-                _appendJooqFilterBy(filter, _jooqQuery);
-            }
-        }
-
-        protected void _appendJooqFilterBy(ColumnFilter filter, SelectWhereStep _jooqQuery) {
-            String filterId = filter.getColumnId();
-            Field _jooqField = _createJooqField(filterId);
-
-            if (filter instanceof CoreFunctionFilter) {
-                CoreFunctionFilter f = (CoreFunctionFilter) filter;
-                CoreFunctionType type = f.getType();
-                List<Comparable> params = f.getParameters();
-
-                if (CoreFunctionType.IS_NULL.equals(type)) {
-                    _jooqQuery.where(_jooqField.isNull());
-                }
-                else if (CoreFunctionType.IS_NOT_NULL.equals(type)) {
-                    _jooqQuery.where(_jooqField.isNotNull());
-                }
-                else if (CoreFunctionType.IS_EQUALS_TO.equals(type)) {
-                    if (params.size() == 1) _jooqQuery.where(_jooqField.equal(params.get(0)));
-                    else _jooqQuery.where(_jooqField.in(params));
-                }
-                else if (CoreFunctionType.IS_NOT_EQUALS_TO.equals(type)) {
-                    _jooqQuery.where(_jooqField.notEqual(params.get(0)));
-                }
-                else if (CoreFunctionType.IS_LOWER_THAN.equals(type)) {
-                    _jooqQuery.where(_jooqField.lessThan(params.get(0)));
-                }
-                else if (CoreFunctionType.IS_LOWER_OR_EQUALS_TO.equals(type)) {
-                    _jooqQuery.where(_jooqField.lessOrEqual(params.get(0)));
-                }
-                else if (CoreFunctionType.IS_GREATER_THAN.equals(type)) {
-                    _jooqQuery.where(_jooqField.greaterThan(params.get(0)));
-                }
-                else if (CoreFunctionType.IS_GREATER_OR_EQUALS_TO.equals(type)) {
-                    _jooqQuery.where(_jooqField.greaterOrEqual(params.get(0)));
-                }
-                else if (CoreFunctionType.IS_BETWEEN.equals(type)) {
-                    _jooqQuery.where(_jooqField.between(params.get(0), params.get(1)));
-                }
-                else if (CoreFunctionType.IS_UNTIL_TODAY.equals(type)) {
-                    String timeFrame = params.get(0).toString();
-                    long millis = System.currentTimeMillis();
-                    Timestamp now = new Timestamp(millis);
-                    Timestamp past = new Timestamp(millis-DateIntervalType.toMillis(timeFrame));
-                    _jooqQuery.where(_jooqField.between(past, now));
-                }
-                else {
-                    throw new IllegalArgumentException("Core function type not supported: " + type);
-                }
-            }
-            if (filter instanceof LogicalExprFilter) {
-                LogicalExprFilter f = (LogicalExprFilter) filter;
-                LogicalExprType type = f.getLogicalOperator();
-
-                if (LogicalExprType.AND.equals(type)) {
-                }
-                if (LogicalExprType.OR.equals(type)) {
-                }
-                if (LogicalExprType.NOT.equals(type)) {
-                }
+                _appendJooqFilterBy(def, filter, _jooqQuery);
             }
         }
 

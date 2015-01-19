@@ -25,6 +25,7 @@ import org.dashbuilder.dataset.def.BeanDataSetDef;
 import org.dashbuilder.dataset.def.CSVDataSetDef;
 import org.dashbuilder.dataset.def.DataSetDef;
 import org.dashbuilder.dataset.def.SQLDataSetDef;
+import org.dashbuilder.dataset.filter.DataSetFilter;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -44,6 +45,7 @@ public class DataSetDefJSONMarshaller {
     public static final String COLUMN_NAME = "name";
     public static final String COLUMN_TYPE = "type";
     public static final String COLUMN_PATTERN = "pattern";
+    public static final String FILTERS = "filters";
 
     // CSV related
     public static final String FILEURL = "fileURL";
@@ -71,6 +73,9 @@ public class DataSetDefJSONMarshaller {
 
     @Inject
     DataSetProviderRegistry dataSetProviderRegistry;
+
+    @Inject
+    DataSetLookupJSONMarshaller dataSetLookupJSONMarshaller;
 
     public DataSetDef fromJson(String jsonString) throws Exception {
         JSONObject json = new JSONObject(jsonString);
@@ -147,6 +152,11 @@ public class DataSetDefJSONMarshaller {
                     def.setPattern(columnId, columnPattern);
                 }
             }
+        }
+        if (json.has(FILTERS)) {
+            JSONArray array = json.getJSONArray(FILTERS);
+            DataSetFilter dataSetFilter = dataSetLookupJSONMarshaller.fromJsonFilterOps(array);
+            def.setDataSetFilter(dataSetFilter);
         }
         return def;
     }

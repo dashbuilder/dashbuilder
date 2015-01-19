@@ -1,0 +1,16 @@
+{
+  "uuid": "expense_reports_filtered",
+  "provider": "SQL",
+  "dataSource": "jdbc:h2:mem:test;DATABASE_TO_UPPER=FALSE",
+  "dbTable": "expense_reports",
+  "allColumns": false,
+  "columns": [
+    {"id": "department", "name": "Dept", "type": "label"},
+    {"id": "employee", "name": "Author", "type": "label"},
+    {"id": "amount", "name": "Amount", "type": "number"},
+    {"id": "date", "name": "Date", "type": "date"}
+  ],
+  "filters": [
+    {"column": "city", "function": "IS_EQUALS_TO", "args": ["Barcelona"]}
+  ]
+}

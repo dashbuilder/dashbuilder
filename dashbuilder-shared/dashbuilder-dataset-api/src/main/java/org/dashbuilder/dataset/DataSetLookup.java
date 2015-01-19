@@ -119,14 +119,19 @@ public class DataSetLookup {
         return removed;
     }
 
-    public DataSetLookup addOperation(int pos, DataSetOp op) {
-        operationList.add(pos, op);
+    public DataSetLookup addOperation(int pos, DataSetOp... ops) {
+        for (DataSetOp op : ops) {
+            operationList.add(pos, op);
+            ((AbstractDataSetOp) op).setDataSetUUID(dataSetUUID);
+        }
         return this;
     }
 
-    public DataSetLookup addOperation(DataSetOp op) {
-        operationList.add(op);
-        ((AbstractDataSetOp) op).setDataSetUUID(dataSetUUID);
+    public DataSetLookup addOperation(DataSetOp... ops) {
+        for (DataSetOp op : ops) {
+            operationList.add(op);
+            ((AbstractDataSetOp) op).setDataSetUUID(dataSetUUID);
+        }
         return this;
     }
 

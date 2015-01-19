@@ -21,6 +21,7 @@ import java.util.Map;
 import org.dashbuilder.dataprovider.DataSetProviderType;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetFactory;
+import org.dashbuilder.dataset.filter.DataSetFilter;
 import org.jboss.errai.common.client.api.annotations.Portable;
 
 /**
@@ -33,6 +34,7 @@ public class DataSetDef {
     protected String defFilePath;
     protected DataSetProviderType provider;
     protected DataSet dataSet = DataSetFactory.newEmptyDataSet();
+    protected DataSetFilter dataSetFilter = null;
     protected boolean isPublic = true;
     protected boolean pushEnabled = false;
     protected int pushMaxSize = 1024;
@@ -60,6 +62,14 @@ public class DataSetDef {
 
     public void setDataSet(DataSet dataSet) {
         this.dataSet = dataSet;
+    }
+
+    public DataSetFilter getDataSetFilter() {
+        return dataSetFilter;
+    }
+
+    public void setDataSetFilter(DataSetFilter dataSetFilter) {
+        this.dataSetFilter = dataSetFilter;
     }
 
     public DataSetProviderType getProvider() {
