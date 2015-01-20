@@ -215,7 +215,9 @@ public class ElasticSearchJestClientTest {
     public void testAggregationSerializer() {
         
         GsonBuilder builder = new GsonBuilder();
-        builder.registerTypeAdapter(DataSetGroup.class, new ElasticSearchJestClient.AggregationSerializer().setDataSetMetadata(metadata));
+        ElasticSearchJestClient client = new ElasticSearchJestClient();
+        ElasticSearchJestClient.AggregationSerializer serializer = client.buildAggregationsSerializer();
+        builder.registerTypeAdapter(DataSetGroup.class, serializer.setDataSetMetadata(metadata));
         Gson gson = builder.create();
 
         // **************

@@ -31,11 +31,10 @@ import org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.impl.jest.
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.model.*;
 import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.DataSetMetadata;
+import org.dashbuilder.dataset.backend.BackendIntervalBuilderDynamicDate;
 import org.dashbuilder.dataset.def.DataSetDef;
 import org.dashbuilder.dataset.def.ElasticSearchDataSetDef;
-import org.dashbuilder.dataset.group.AggregateFunctionType;
-import org.dashbuilder.dataset.group.DataSetGroup;
-import org.dashbuilder.dataset.group.GroupFunction;
+import org.dashbuilder.dataset.group.*;
 import org.dashbuilder.dataset.sort.ColumnSort;
 import org.dashbuilder.dataset.sort.DataSetSort;
 
@@ -61,6 +60,17 @@ import java.util.*;
 @Named("elasticsearchJestClient")
 public class ElasticSearchJestClient implements ElasticSearchClient<ElasticSearchJestClient> {
 
+    protected static final String EL_DATE_FORMAT_YEAR = "yyyy";
+    protected static final String EL_DATE_FORMAT_MONTH = "yyyy-MM";
+    protected static final String EL_DATE_FORMAT_DAY = "yyyy-MM-dd";
+    protected static final String EL_DATE_FORMAT_DAY_OF_WEEK = "yyyy-MM-dd";
+    protected static final String EL_DATE_FORMAT_HOUR = "hh";
+    protected static final String EL_DATE_FORMAT_MINUTE= "mm";
+    protected static final String EL_DATE_FORMAT_SECOND = "ss";
+    protected static final int RESPONSE_CODE_NOT_FOUND = 404;
+    protected static final int RESPONSE_CODE_OK = 200;
+
+    
     protected String serverURL;
     protected String clusterName;
     protected String[] index;
@@ -70,8 +80,11 @@ public class ElasticSearchJestClient implements ElasticSearchClient<ElasticSearc
     
     // JestClient is designed to be singleton, don't construct it for each request.
     private JestClient client;
+    // TODO: @Inject -> Not working
+    protected BackendIntervalBuilderDynamicDate intervalBuilder;
 
     public ElasticSearchJestClient() {
+        intervalBuilder = new BackendIntervalBuilderDynamicDate();
     }
 
     @Override
@@ -275,64 +288,11 @@ public class ElasticSearchJestClient implements ElasticSearchClient<ElasticSearc
         }
         return gson.fromJson(result.getJsonObject(), SearchResponse.class);
     }
-
     
-    
-    /**
-     * <p>Translates the ColumnGroup definition into a JsonObject.</p>
-     * <p>It found for the GroupFunction that does not have any operation associated, as it's the group column name definition.</p>
-     */
-    /*
-    protected JsonObject addAggregation(DataSetGroup groupOp, DataSetMetadata metadata, List<String> columnIds, List<ColumnType> columnTypes) {
-        if (groupOp == null) return null;
-
-        ColumnGroup columnGroup = groupOp.getColumnGroup();
-        List<GroupFunction> groupFunctions = groupOp.getGroupFunctions();
-
-        // DateHistogramBuilder
-        ValuesSourceAggregationBuilder groupByAggregation = null;
-        // Group by - Term ,histogram, date histogram.
-        if (columnGroup != null) {
-
-            String columnId = columnGroup.getColumnId();
-            String sourceId = columnGroup.getSourceId();
-            boolean asc = columnGroup.isAscendingOrder();
-
-            if (groupFunctions != null && !groupFunctions.isEmpty()) {
-                for (GroupFunction groupFunction : groupFunctions) {
-                    if (groupFunction.getFunction() == null) {
-                        columnId = groupFunction.getColumnId();
-                        if (!sourceId.equals(groupFunction.getSourceId())) throw new RuntimeException("Grouping by this source property [" + sourceId + "] not possible.");
-                        if (!existColumnInMetadataDef(sourceId, metadata)) throw new RuntimeException("Aggregation by column [" + sourceId + "] failed. No column with the given id.");
-                    }
-                }
-            }
-            groupByAggregation = translateAggregationGroupBy(metadata, columnGroup, columnId);
-            builder.addAggregation(groupByAggregation);
-            String colId = groupByAggregation.getName();
-            ColumnType colType = metadata.getColumnType(colId);
-            columnIds.add(colId);
-            columnTypes.add(colType);
-        }
-
-        // Aggregation functions -SUM, MAX, MIN, AVG, DISTINCT, COUNT
-        if (groupFunctions != null && !groupFunctions.isEmpty()) {
-            for (GroupFunction groupFunction : groupFunctions) {
-                AbstractAggregationBuilder aggr = translateAggregationFunction(metadata, groupFunction, groupByAggregation);
-                if (groupByAggregation == null && aggr != null) builder.addAggregation(aggr);
-                else if (groupByAggregation!= null && aggr != null) groupByAggregation.subAggregation(aggr);
-                if (aggr != null) {
-                    String colId = aggr.getName();
-                    columnIds.add(colId);
-                    columnTypes.add(ColumnType.NUMBER);
-                }
-            }
-        }
-
+    public AggregationSerializer buildAggregationsSerializer() {
+        return new AggregationSerializer();
     }
-    */
-
-
+    
     /*
         TODO: 
         - TermBuilder
@@ -344,7 +304,7 @@ public class ElasticSearchJestClient implements ElasticSearchClient<ElasticSearc
      *
      * TODO: support for join attribute.
      */
-    protected static class AggregationSerializer implements JsonSerializer<DataSetGroup> {
+    protected class AggregationSerializer implements JsonSerializer<DataSetGroup> {
         private DataSetGroup groupOp;
         private DataSetMetadata metadata;
 
@@ -356,19 +316,190 @@ public class ElasticSearchJestClient implements ElasticSearchClient<ElasticSearc
         public JsonObject serialize(DataSetGroup groupOp, Type typeOfSrc, JsonSerializationContext context) {
             this.groupOp = groupOp;
 
-            JsonObject aggregationsObject = new JsonObject();
+
+            ColumnGroup columnGroup = groupOp.getColumnGroup();
+            List<GroupFunction> groupFunctions = groupOp.getGroupFunctions();
 
             // Group functions.
-            if (groupOp.getGroupFunctions() != null && !groupOp.getGroupFunctions().isEmpty()) {
-                for (GroupFunction groupFunction : groupOp.getGroupFunctions()) {
+            JsonObject aggregationsObject = null;
+            if (groupFunctions != null && !groupFunctions.isEmpty()) {
+                aggregationsObject = new JsonObject();
+                for (GroupFunction groupFunction : groupFunctions) {
                     serializeCoreFunction(aggregationsObject, groupFunction);
                 }
             }
 
+            // Group by columns.
+            JsonObject groupByObject = null;
+            if (columnGroup != null) {
+                groupByObject = new JsonObject();
+                String columnId = columnGroup.getColumnId();
+                String sourceId = columnGroup.getSourceId();
+
+                if (groupFunctions != null && !groupFunctions.isEmpty()) {
+                    for (GroupFunction groupFunction : groupFunctions) {
+                        if (groupFunction.getFunction() == null) {
+                            columnId = groupFunction.getColumnId();
+                            if (!sourceId.equals(groupFunction.getSourceId())) throw new RuntimeException("Grouping by this source property [" + sourceId + "] not possible.");
+                            if (!existColumnInMetadataDef(sourceId)) throw new RuntimeException("Aggregation by column [" + sourceId + "] failed. No column with the given id.");
+                        }
+                    }
+                }
+
+                serializeGroupByFunction(groupByObject, columnGroup, columnId, aggregationsObject);
+            }
+
+            return groupByObject != null ? buildAggregations(groupByObject) : buildAggregations(aggregationsObject);
+        }
+        
+        protected JsonObject buildAggregations(JsonObject object) {
             JsonObject result = new JsonObject();
-            result.add("aggregations", aggregationsObject);
+            result.add("aggregations", object);
             return result;
         }
+
+        /**
+         * <p>Serializes a groupby function.</p>
+         * <p>Example of TERM HISTOGRAM function serialization:</p>
+         * <code>
+         *     "column_id" : {
+         *          "terms" : { "field" : "change" },
+         *          "aggregations": {
+         *              ....
+         *          }
+         *     }
+         * </code>
+         * @return
+         */
+        protected void serializeGroupByFunction(JsonObject parent, ColumnGroup columnGroup, String resultingColumnId, JsonObject aggregationsObject) {
+            if (columnGroup == null || metadata == null) return;
+
+            String sourceId = columnGroup.getSourceId();
+            if (resultingColumnId == null) resultingColumnId = sourceId;
+            boolean asc = columnGroup.isAscendingOrder();
+            String order = asc ? "asc" : "desc";
+            ColumnType columnType = metadata.getColumnType(sourceId);
+            GroupStrategy groupStrategy = columnGroup.getStrategy();
+            String intervalSize = columnGroup.getIntervalSize();
+            // TODO: Support for maxIntervals.
+            int maxIntervals = columnGroup.getMaxIntervals();
+
+            if (ColumnType.LABEL.equals(columnType)) {
+                // Translate into a TERMS aggregation.
+                JsonObject subObject = new JsonObject();
+                subObject.addProperty("field", sourceId);
+                JsonObject orderObject = new JsonObject();
+                orderObject.addProperty(sourceId, order);
+                subObject.add("order", orderObject);
+                subObject.addProperty("min_doc_count", 0);
+                JsonObject result = new JsonObject();
+                result.add("terms", subObject);
+                if (aggregationsObject != null) result.add("aggregations", aggregationsObject);
+                parent.add(resultingColumnId, result);
+            } else if (ColumnType.NUMBER.equals(columnType)) {
+                // Translate into a HISTOGRAM aggregation.
+                JsonObject subObject = new JsonObject();
+                subObject.addProperty("field", sourceId);
+                subObject.addProperty("interval", Long.parseLong(intervalSize));
+                JsonObject orderObject = new JsonObject();
+                orderObject.addProperty(sourceId, order);
+                subObject.add("order", orderObject);
+                subObject.addProperty("min_doc_count", 0);
+                JsonObject result = new JsonObject();
+                result.add("histogram", subObject);
+                if (aggregationsObject != null) result.add("aggregations", aggregationsObject);
+                parent.add(resultingColumnId, result);
+
+            } else if (ColumnType.DATE.equals(columnType)) {
+                // Translate into a DATE HISTOGRAM aggregation.
+                DateIntervalType dateIntervalType = null;
+
+                if (GroupStrategy.DYNAMIC.equals(columnGroup.getStrategy())) {
+                    Date[] limits = calculateDateLimits(columnGroup.getSourceId());
+                    if (limits != null) {
+                        dateIntervalType = intervalBuilder.calculateIntervalSize(limits[0], limits[1], columnGroup);
+                    }
+                } else {
+                    dateIntervalType = DateIntervalType.valueOf(intervalSize);
+                }
+
+                String intervalFormat = null;
+                String returnFormat = null;
+                switch (dateIntervalType) {
+                    case MILLISECOND:
+                        intervalFormat = "0.001s";
+                        break;
+                    case HUNDRETH:
+                        intervalFormat = "0.01s";
+                        break;
+                    case TENTH:
+                        intervalFormat = "0.1s";
+                        break;
+                    case SECOND:
+                        returnFormat = EL_DATE_FORMAT_SECOND;
+                        intervalFormat = "1s";
+                        break;
+                    case MINUTE:
+                        returnFormat = EL_DATE_FORMAT_MINUTE;
+                        intervalFormat = "1m";
+                        break;
+                    case HOUR:
+                        returnFormat = EL_DATE_FORMAT_HOUR;
+                        intervalFormat = "1h";
+                        break;
+                    case DAY:
+                        intervalFormat = "1d";
+                        returnFormat = EL_DATE_FORMAT_DAY;
+                        break;
+                    case DAY_OF_WEEK:
+                        returnFormat = EL_DATE_FORMAT_DAY_OF_WEEK;
+                        intervalFormat = "1d";
+                        break;
+                    case WEEK:
+                        intervalFormat = "1w";
+                        break;
+                    case MONTH:
+                        intervalFormat = "1M";
+                        returnFormat = EL_DATE_FORMAT_MONTH;
+                        break;
+                    case QUARTER:
+                        intervalFormat = "1q";
+                        break;
+                    case YEAR:
+                        intervalFormat = "1y";
+                        returnFormat = EL_DATE_FORMAT_YEAR;
+                        break;
+                    case DECADE:
+                        intervalFormat = "10y";
+                        break;
+                    case CENTURY:
+                        intervalFormat = "100y";
+                        break;
+                    case MILLENIUM:
+                        intervalFormat = "1000y";
+                        break;
+                    default:
+                        throw new RuntimeException("No interval mapping for date interval type with index [" + dateIntervalType.getIndex() + "].");
+                }
+
+                JsonObject subObject = new JsonObject();
+                subObject.addProperty("field", sourceId);
+                subObject.addProperty("interval", intervalFormat);
+                if (returnFormat != null) subObject.addProperty("format", returnFormat);
+                JsonObject orderObject = new JsonObject();
+                orderObject.addProperty(sourceId, order);
+                subObject.add("order", orderObject);
+                subObject.addProperty("min_doc_count", 0);
+                JsonObject result = new JsonObject();
+                result.add("date_histogram", subObject);
+                if (aggregationsObject != null) result.add("aggregations", aggregationsObject);
+                parent.add(resultingColumnId, result);
+            }
+
+            throw new RuntimeException("No translation supported for column group with sourceId [" + sourceId + "] and group strategy [" + groupStrategy.name() + "].");
+        }
+        
+        
 
         /**
          * <p>Serializes a core function.</p>
@@ -380,8 +511,8 @@ public class ElasticSearchJestClient implements ElasticSearchClient<ElasticSearc
          * </code>
          * @return
          */
-        protected void serializeCoreFunction(JsonObject result, GroupFunction groupFunction) {
-            if (result != null && groupFunction != null) {
+        protected void serializeCoreFunction(JsonObject parent, GroupFunction groupFunction) {
+            if (parent != null && groupFunction != null) {
                 String sourceId = groupFunction.getSourceId();
                 if (sourceId != null && !existColumnInMetadataDef(sourceId)) throw new RuntimeException("Aggregation by column [" + sourceId + "] failed. No column with the given id.");
                 if (sourceId == null) sourceId = metadata.getColumnId(0);
@@ -416,11 +547,52 @@ public class ElasticSearchJestClient implements ElasticSearchClient<ElasticSearc
                 fieldObject.addProperty("field", sourceId);
                 JsonObject subObject = new JsonObject();
                 subObject.add(aggregationName, fieldObject);
-                result.add(columnId, subObject);
-
+                parent.add(columnId, subObject);
             }
         }
 
+        /**
+         * <p>Obtain the minimum date and maximum date values for the given column with identifier <code>dateColumnId</code>.</p>
+         *
+         * @param dateColumnId The column identifier for the date type column.
+         * @return The minimum and maximum dates.
+         */
+        protected Date[] calculateDateLimits(String dateColumnId) {
+            JestClient client = buildNewClient();
+            if (client == null) throw new IllegalArgumentException("ElasticSearchRestClient instance is not build.");
+
+            // TODO
+            
+            /* 
+            // Build the request object.
+            SearchRequestBuilder builder = new SearchRequestBuilder(client);
+
+            if (index != null) builder = builder.setIndices(index);
+            if (index != null && type != null) builder = builder.setTypes(type);
+            if (request.getQuery() != null) builder = builder.setQuery(((QueryBuilder)queryBuilder));
+
+            // Search for max & min date aggregations.
+            MinBuilder minBuilder = AggregationBuilders.min("Min").field(dateColumnId);
+            MaxBuilder maxBuilder = AggregationBuilders.max("Max").field(dateColumnId);
+            builder.addAggregation(minBuilder);
+            builder.addAggregation(maxBuilder);
+
+            org.elasticsearch.action.search.SearchResponse response =  client.search(builder.request()).actionGet();
+            Max maxAggregation = response.getAggregations().get("Max");
+            Min minAggregation = response.getAggregations().get("Min");
+            long maxAggregationValue = (long) maxAggregation.getValue();
+            long minAggregationValue = (long) minAggregation.getValue();
+
+            // Close the client
+            client.close();
+
+            // Return the intervals.
+            return new Date[] {new Date(minAggregationValue), new Date(maxAggregationValue)};
+            
+            */
+            return null;
+        }
+        
         protected boolean existColumnInMetadataDef(String name) {
             if (name == null || metadata == null) return false;
 
