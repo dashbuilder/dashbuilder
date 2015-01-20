@@ -35,12 +35,15 @@ import org.dashbuilder.dataset.group.GroupFunction;
 import org.dashbuilder.dataset.impl.DataSetMetadataImpl;
 import org.dashbuilder.dataset.sort.ColumnSort;
 import org.dashbuilder.dataset.sort.DataSetSort;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.ISODateTimeFormat;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 import javax.inject.Named;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -232,7 +235,7 @@ public class ElasticSearchDataSetProvider implements DataSetProvider {
         SearchResponse searchResponse = getClient(elDef).search(elDef, request);
 
         // Add the dataset columns.
-        addDataSetColumns(dataSet, searchResponse);
+        addDataSetColumns(dataSet, metadata, searchResponse);
 
         // There are no results. Return an empty dataset.
         if (searchResponse instanceof EmptySearchResponse) return dataSet;
@@ -345,7 +348,8 @@ public class ElasticSearchDataSetProvider implements DataSetProvider {
         else if (ColumnType.DATE.equals(columnType)) {
             if (value == null || value.toString().trim().length() == 0) return new Date();
             String datePattern = elDef.getPattern(column.getId());
-            return new SimpleDateFormat(datePattern).parse(value.toString());
+            DateTime dateTime = DateTimeFormat.forPattern(datePattern).parseDateTime(value.toString());
+            return dateTime.toDate();
         }
         
         // LABEL or TEXT colum types.
@@ -360,13 +364,13 @@ public class ElasticSearchDataSetProvider implements DataSetProvider {
      *
      * @throws Exception
      */
-    protected void addDataSetColumns(DataSet dataSet, SearchResponse searchResponse) throws Exception {
+    protected void addDataSetColumns(DataSet dataSet, DataSetMetadata metadata, SearchResponse searchResponse) throws Exception {
         List<String> columnIds = searchResponse.getColumnIds();
         if (columnIds != null && !columnIds.isEmpty()) {
             int x = 0;
             for (String columnId : columnIds) {
-                DataColumn dataColumn = dataSet.getColumnById(columnId);
-                dataSet.addColumn(columnId, columnId, dataColumn.getColumnType());
+                ColumnType columnType = metadata.getColumnType(columnId);
+                dataSet.addColumn(columnId, columnId, columnType);
             }
         }
         

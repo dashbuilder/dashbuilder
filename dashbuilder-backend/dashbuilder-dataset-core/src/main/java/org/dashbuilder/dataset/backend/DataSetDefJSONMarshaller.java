@@ -21,10 +21,7 @@ import org.apache.commons.lang.StringUtils;
 import org.dashbuilder.dataprovider.DataSetProviderRegistry;
 import org.dashbuilder.dataprovider.DataSetProviderType;
 import org.dashbuilder.dataset.ColumnType;
-import org.dashbuilder.dataset.def.BeanDataSetDef;
-import org.dashbuilder.dataset.def.CSVDataSetDef;
-import org.dashbuilder.dataset.def.DataSetDef;
-import org.dashbuilder.dataset.def.SQLDataSetDef;
+import org.dashbuilder.dataset.def.*;
 import org.dashbuilder.dataset.filter.DataSetFilter;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -66,12 +63,25 @@ public class DataSetDefJSONMarshaller {
     public static final String REFRESH_TIME = "refreshTime";
     public static final String REFRESH_ALWAYS = "refreshAlways";
 
+    // ElasticSearch related
+    public static final String SERVER_URL = "serverURL";
+    public static final String CLUSTER_NAME = "clusterName";
+    public static final String INDEX = "index";
+    public static final String TYPE = "type";
+    public static final String FIELD = "field";
+    public static final String QUERY = "query";
+    public static final String RELEVANCE = "relevance";
+    public static final String CACHE_SYNCED = "cacheSynced";
+    
     // Bean related
     public static final String GENERATOR_CLASS = "generatorClass";
     public static final String GENERATOR_PARAMS = "generatorParams";
     public static final String PARAM = "param";
     public static final String VALUE = "value";
 
+    // Other
+    public static final String COMMA = ",";
+    
     @Inject
     DataSetProviderRegistry dataSetProviderRegistry;
 
@@ -92,10 +102,80 @@ public class DataSetDefJSONMarshaller {
             case SQL:
                 readSQLSettings((SQLDataSetDef) dataSetDef, json);
                 break;
+            case ELASTICSEARCH:
+                readElasticSearchSettings((ElasticSearchDataSetDef) dataSetDef, json);
+                break;
             case BEAN:
                 readBeanSettings((BeanDataSetDef) dataSetDef, json);
                 break;
         }
+        return dataSetDef;
+    }
+
+    public ElasticSearchDataSetDef readElasticSearchSettings(ElasticSearchDataSetDef dataSetDef, JSONObject json) throws Exception {
+        String serverURL = json.has(SERVER_URL) ? json.getString(SERVER_URL) : null;
+        String clusterName = json.has(CLUSTER_NAME) ? json.getString(CLUSTER_NAME) : null;
+        String index = json.has(INDEX) ? json.getString(INDEX) : null;
+        String type = json.has(TYPE) ? json.getString(TYPE) : null;
+        String field = json.has(FIELD) ? json.getString(FIELD) : null;
+        String query = json.has(QUERY) ? json.getString(QUERY) : null;
+        String relevance = json.has(RELEVANCE) ? json.getString(RELEVANCE) : null;
+        String cacheEnabled = json.has(CACHE_ENABLED) ? json.getString(CACHE_ENABLED) : null;
+        String cacheMaxRows = json.has(CACHE_MAXROWS) ? json.getString(CACHE_MAXROWS) : null;
+        String cacheSynced = json.has(CACHE_SYNCED) ? json.getString(CACHE_SYNCED) : null;
+
+
+        // ServerURL parameter.
+        if (StringUtils.isBlank(serverURL)) {
+            throw new IllegalArgumentException("The serverURL property is missing.");
+        } else {
+            dataSetDef.setServerURL(serverURL);
+        }
+
+        // Cluster name parameter.
+        if (StringUtils.isBlank(clusterName)) {
+            throw new IllegalArgumentException("The clusterName property is missing.");
+        } else {
+            dataSetDef.setClusterName(clusterName);
+        }
+
+        // Index parameter
+        if (StringUtils.isBlank(index)) {
+            throw new IllegalArgumentException("The index property is missing.");
+        } else {
+            String[] indexList = index.split(COMMA);
+            if (indexList != null && indexList.length > 0) {
+                for (String _index : indexList) {
+                    dataSetDef.addIndex(_index);
+                }
+            }
+        }
+
+        // Type parameter.
+        if (!StringUtils.isBlank(type)) {
+            String[] typeList = type.split(COMMA);
+            if (typeList != null && typeList.length > 0) {
+                for (String _type : typeList) {
+                    dataSetDef.addType(_type);
+                }
+            }
+        }
+
+        // Query parameter.
+        if (!StringUtils.isBlank(query)) dataSetDef.setQuery(query);
+
+        // Relevance parameter.
+        if (!StringUtils.isBlank(relevance)) dataSetDef.setRelevance(relevance);
+
+        // Cache enabled parameter.
+        if (!StringUtils.isBlank(cacheEnabled)) dataSetDef.setCacheEnabled(Boolean.parseBoolean(cacheEnabled));
+
+        // Cache max rows parameter.
+        if (!StringUtils.isBlank(cacheMaxRows)) dataSetDef.setCacheMaxRows(Integer.parseInt(cacheMaxRows));
+
+        // Cache synced parameter.
+        if (!StringUtils.isBlank(cacheSynced)) dataSetDef.setCacheSynced(Boolean.parseBoolean(cacheSynced));
+
         return dataSetDef;
     }
 

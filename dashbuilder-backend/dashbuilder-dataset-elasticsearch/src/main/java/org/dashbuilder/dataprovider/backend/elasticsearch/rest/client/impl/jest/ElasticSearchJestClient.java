@@ -214,15 +214,17 @@ public class ElasticSearchJestClient implements ElasticSearchClient<ElasticSearc
         GsonBuilder builder = new GsonBuilder();
         builder.registerTypeAdapter(DataSetGroup.class, buildAggregationsSerializer().setDataSetMetadata(metadata));
         builder.registerTypeAdapter(Query.class, new QuerySerializer().setDataSetDef((ElasticSearchDataSetDef) definition));
-        builder.registerTypeAdapter(Query.class, new SearchQuerySerializer());
+        builder.registerTypeAdapter(SearchQuery.class, new SearchQuerySerializer());
         builder.registerTypeAdapter(SearchResponse.class, new SearchResponseDeserializer());
         builder.registerTypeAdapter(SearchHitResponse.class, new HitDeserializer());
         builder.registerTypeAdapter(SearchHitResponse[].class, new AggregationsDeserializer());
         Gson gson = builder.create();
         
         // Set request lookup constraints into the query JSON request.
-        JsonObject gsonQuery = (JsonObject) gson.toJsonTree(query);
-
+        JsonElement gsonQueryElement = gson.toJsonTree(query);
+        JsonObject gsonQuery = null;
+        if (gsonQueryElement instanceof JsonObject) gsonQuery = (JsonObject) gsonQueryElement;
+        
         // Add the group functions translated as query aggregations.
         List<JsonObject> aggregationObjects = null;
         if (aggregations != null && !aggregations.isEmpty()) {
@@ -260,7 +262,12 @@ public class ElasticSearchJestClient implements ElasticSearchClient<ElasticSearc
         } catch (Exception e) {
             throw new ElasticSearchClientGenericException("An error ocurred during search operation.", e);
         }
-        SearchResponse searchResult = gson.fromJson(result.getJsonObject(), SearchResponse.class);
+        JsonObject resultObject = result.getJsonObject();
+        if (resultObject.get("error") != null) {
+            String errorMessage = resultObject.get("error").getAsString();
+            throw new ElasticSearchClientGenericException("An error ocurred during search operation. This is the internal error: \n" + errorMessage);
+        }
+        SearchResponse searchResult = gson.fromJson(resultObject, SearchResponse.class);
         return searchResult;
     }
 
@@ -307,27 +314,40 @@ public class ElasticSearchJestClient implements ElasticSearchClient<ElasticSearc
             int size = searchQuery.size;
             int sizeToPull =  existAggregations ? 0 : size;
             int startToPull  = existAggregations ? 0 : start;
+
+            result.addProperty(FROM, startToPull);
+            result.addProperty(SIZE, sizeToPull);
+            
+            boolean addFields = true;
             
             // Build the search request in EL expected JSON format.
             if (query != null)  {
-                if (!existAggregations ) {
-                    JsonArray fieldsArray = new JsonArray();
-                    for (String field : fields) {
-                        fieldsArray.add(new JsonPrimitive(field));
-                    }
-                    result.add(FIELDS, fieldsArray);
-                }
-                result.addProperty(FROM, startToPull);
-                result.addProperty(SIZE, sizeToPull);
                 JsonObject queryObject = query.getAsJsonObject(QUERY);
                 result.add(QUERY, queryObject);
             }
 
             // TODO: Use all aggregations, not just first one.
             if (existAggregations) {
+                addFields = false;
                 JsonObject aggregationObject = aggregations.get(0);
                 JsonObject aggregationsSubObject = aggregationObject.getAsJsonObject(AGGREGATIONS);
                 result.add(AGGREGATIONS, aggregationsSubObject);
+            }
+            
+            // If neither query or aggregations exists (just retrieving all element with optinal sort operation), perform a "match_all" query to EL server.
+            if (query == null && !existAggregations) {
+                JsonObject queryObject = new JsonObject();
+                queryObject.add("match_all", new JsonObject());
+                result.add("query", queryObject);
+            }
+
+            // Add the fields to retrieve, if apply.
+            if (addFields) {
+                JsonArray fieldsArray = new JsonArray();
+                for (String field : fields) {
+                    fieldsArray.add(new JsonPrimitive(field));
+                }
+                result.add(FIELDS, fieldsArray);
             }
             
             return result;
@@ -809,8 +829,10 @@ public class ElasticSearchJestClient implements ElasticSearchClient<ElasticSearc
             float maxScore = 0;
             JsonObject hitsObject = responseObject.getAsJsonObject("hits");
             if (hitsObject != null) {
-                totalHits = hitsObject.get("total").getAsLong();
-                maxScore = hitsObject.get("max_score").getAsFloat();
+                JsonElement totalElement = hitsObject.get("total"); 
+                if (totalElement.isJsonPrimitive()) totalHits = totalElement.getAsLong();
+                JsonElement scoreElement = hitsObject.get("max_score");
+                if (scoreElement.isJsonPrimitive()) maxScore = scoreElement.getAsFloat();
             }
             return new Object[] {totalHits, maxScore};
         }
@@ -824,15 +846,34 @@ public class ElasticSearchJestClient implements ElasticSearchClient<ElasticSearc
             if (typeOfT.equals(SearchHitResponse.class)) {
 
                 JsonObject hitObject = (JsonObject) json;
-                float score = hitObject.get("_score").getAsFloat();
+                float score = 0;
+                JsonElement scoreElement = hitObject.get("_score"); 
+                if (scoreElement != null && scoreElement.isJsonPrimitive()) score = scoreElement.getAsFloat();
                 String index = hitObject.get("_index").getAsString();
                 String id = hitObject.get("_id").getAsString();
                 String type = hitObject.get("_type").getAsString();
                 long version = 0;
                 Map<String ,Object> fields = new HashMap<String, Object>();
-                JsonObject source = hitObject.getAsJsonObject("_source");
-                if (source != null) {
-                    Set<Map.Entry<String, JsonElement>> _fields = source.entrySet();
+                JsonElement sourceObject = hitObject.get("_source");
+                JsonElement fieldsObject = hitObject.get("fields");
+                
+                if (fieldsObject != null && fieldsObject.isJsonObject()) {
+                    Set<Map.Entry<String, JsonElement>> _fields = ((JsonObject)fieldsObject).entrySet();
+                    for (Map.Entry<String, JsonElement> field : _fields) {
+                        String fieldName = field.getKey();
+                        JsonElement fieldValueArray = field.getValue();
+                        if (fieldValueArray != null && fieldValueArray.isJsonArray()) {
+                            Iterator fieldValueArrayIt = ((JsonArray)fieldValueArray).iterator();
+                            while (fieldValueArrayIt.hasNext()) {
+                                JsonElement element = (JsonElement) fieldValueArrayIt.next();
+                                if (element != null && element.isJsonPrimitive()) fields.put(fieldName, element.getAsString()); 
+                            }
+                        }
+                    }
+                }
+                
+                if (sourceObject != null && sourceObject.isJsonObject()) {
+                    Set<Map.Entry<String, JsonElement>> _fields = ((JsonObject)sourceObject).entrySet();
                     for (Map.Entry<String, JsonElement> field : _fields) {
                         String fieldName = field.getKey();
                         String fieldValue = field.getValue().getAsString();

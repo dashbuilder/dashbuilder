@@ -1,10 +1,6 @@
 package org.dashbuilder.dataprovider;
 
-import org.dashbuilder.dataset.def.BeanDataSetDef;
-import org.dashbuilder.dataset.def.CSVDataSetDef;
-import org.dashbuilder.dataset.def.DataSetDef;
-import org.dashbuilder.dataset.def.SQLDataSetDef;
-import org.dashbuilder.dataset.def.StaticDataSetDef;
+import org.dashbuilder.dataset.def.*;
 import org.jboss.errai.common.client.api.annotations.Portable;
 
 /**
@@ -49,6 +45,7 @@ public enum DataSetProviderType {
             case BEAN: return new BeanDataSetDef();
             case CSV: return new CSVDataSetDef();
             case SQL: return new SQLDataSetDef();
+            case ELASTICSEARCH: return new ElasticSearchDataSetDef();
         }
         throw new RuntimeException("Unknown type: " + type);
     }

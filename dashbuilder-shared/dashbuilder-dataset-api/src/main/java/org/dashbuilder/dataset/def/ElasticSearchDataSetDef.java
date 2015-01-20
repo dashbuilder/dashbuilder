@@ -18,13 +18,15 @@ package org.dashbuilder.dataset.def;
 import org.dashbuilder.dataprovider.DataSetProviderType;
 import org.dashbuilder.dataset.sort.ColumnSort;
 import org.jboss.errai.common.client.api.annotations.Portable;
+import org.omg.CORBA._PolicyStub;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
  * <p>DataSet definition class for ElasticSearch provider.</p>
- * 
+ *
  * <p>This dataset provides these configuration parameters:</p>
  * <ul>
  *     <li>
@@ -49,14 +51,14 @@ import java.util.List;
  *         <code>columns</code> - If not specified, the column definitions for the ElasticSearch dataset are automatically given by querying the index mappings. Otherwise, you can bind a column to another datatype in dashbuilder application using this parameters (OPTIONAL)
  *     </li>
  * </ul>
- * 
+ *
  * @since 0.3.0
  */
 @Portable
 public class ElasticSearchDataSetDef extends DataSetDef {
 
     // Constants.
-    
+
     public static enum ElasticSearchKeywords {
         ALL;
 
@@ -69,7 +71,7 @@ public class ElasticSearchDataSetDef extends DataSetDef {
         }
 
     }
-    
+
     // Data Set user parameters.
     protected String serverURL;
     protected String clusterName;
@@ -78,6 +80,9 @@ public class ElasticSearchDataSetDef extends DataSetDef {
     protected String query;
     protected String relevance;
     protected ColumnSort columnSort;
+    protected boolean cacheEnabled = false;
+    protected int cacheMaxRows = 1000;
+    protected boolean cacheSynced = false;
 
     public ElasticSearchDataSetDef() {
         super.setProvider(DataSetProviderType.ELASTICSEARCH);
@@ -108,11 +113,11 @@ public class ElasticSearchDataSetDef extends DataSetDef {
     public boolean addType(String type) {
         return this.type.add(type);
     }
-    
+
     /**
      * <p>Returns the index/es specified by dataset user parameters.</p>
      * <p>If not specified, returns <code>ElasticSearchKeywords.ALL</code></p>
-     * 
+     *
      * @return The index/es to use. If not specified, returns <code>ElasticSearchKeywords.ALL</code>
      */
     public String[] getIndex() {
@@ -161,6 +166,14 @@ public class ElasticSearchDataSetDef extends DataSetDef {
         this.cacheMaxRows = cacheMaxRows;
     }
 
+    public boolean isCacheSynced() {
+        return cacheSynced;
+    }
+
+    public void setCacheSynced(boolean cacheSynced) {
+        this.cacheSynced = cacheSynced;
+    }
+
     public ColumnSort getColumnSort() {
         return columnSort;
     }
@@ -182,10 +195,7 @@ public class ElasticSearchDataSetDef extends DataSetDef {
         out.append("Query=").append(query).append("\n");
         out.append("Cache enabled=").append(cacheEnabled).append("\n");
         out.append("Cache max rows=").append(cacheMaxRows).append(" Kb\n");
-        if (refreshTime != null) {
-            out.append("Refresh time=").append(refreshTime).append("\n");
-            out.append("Refresh always=").append(refreshAlways).append("\n");
-        }
+        out.append("Cache synced=").append(cacheSynced).append("\n");
         return out.toString();
     }
 }
