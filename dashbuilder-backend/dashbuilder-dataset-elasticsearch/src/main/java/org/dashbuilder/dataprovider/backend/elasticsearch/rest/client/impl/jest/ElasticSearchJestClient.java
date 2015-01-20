@@ -615,11 +615,13 @@ public class ElasticSearchJestClient implements ElasticSearchClient<ElasticSearc
         protected Date[] calculateDateLimits(String dateColumnId) throws ElasticSearchClientGenericException{
             if (client == null) throw new IllegalArgumentException("ElasticSearchRestClient instance is not build.");
 
+            String minDateColumnId = dateColumnId + "_min";
+            String maxDateColumnId = dateColumnId + "_max";
 
             // Create the aggregation model to bulid the query to EL server.
             DataSetGroup aggregation = new DataSetGroup();
-            GroupFunction minFunction = new GroupFunction(dateColumnId, dateColumnId + "_min", AggregateFunctionType.MIN);
-            GroupFunction maxFunction = new GroupFunction(dateColumnId, dateColumnId + "_max", AggregateFunctionType.MAX);
+            GroupFunction minFunction = new GroupFunction(dateColumnId, minDateColumnId, AggregateFunctionType.MIN);
+            GroupFunction maxFunction = new GroupFunction(dateColumnId, maxDateColumnId, AggregateFunctionType.MAX);
             aggregation.addGroupFunction(minFunction, maxFunction);
             
             // Serialize the aggregation.
@@ -638,14 +640,20 @@ public class ElasticSearchJestClient implements ElasticSearchClient<ElasticSearc
             } catch (Exception e) {
                 throw new ElasticSearchClientGenericException("An error ocurred during search operation.", e);
             }
-            
-            /* TODO
-            - parseJSON
-                gson.fromJson(result.getJsonObject(), SearchResponse.class);
-            - obtain max and min date values
-                // Return the intervals.
-                return new Date[] {new Date(minAggregationValue), new Date(maxAggregationValue)};
-            */
+
+            SearchResponse searchResult = gson.fromJson(result.getJsonObject(), SearchResponse.class);
+            if (searchResult != null) {
+                SearchHitResponse[] hits = searchResult.getHits();
+                if (hits != null && hits.length == 1) {
+                    SearchHitResponse hit0 = hits[0];
+                    Map<String, Object> fields = hit0.getFields();
+                    if (fields != null && !fields.isEmpty()) {
+                        long minValue = (Long) fields.get(minDateColumnId);
+                        long maxValue = (Long) fields.get(maxDateColumnId);
+                        return new Date[] {new Date(minValue), new Date(maxValue)};
+                    }
+                }
+            }
             
             return null;
         }
