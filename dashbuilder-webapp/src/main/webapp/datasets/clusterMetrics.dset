@@ -1,0 +1,18 @@
+{
+    "uuid": "clusterMetrics",
+    "provider": "BEAN",
+    "isPublic": true,
+    "pushEnabled": true,
+    "pushMaxSize": 1024,
+    "refreshTime": "1second",
+    "refreshAlways": "true",
+    "generatorClass": "org.dashbuilder.backend.ClusterMetricsDataSetGenerator",
+    "generatorParams": [
+      {"param": "timeFrame", "value": "10second"},
+      {"param": "aliveNodes", "value": "server1,server2,server3,server4,server5"},
+      {"param": "cpuHighNodes", "value": ""},
+      {"param": "cpuLowNodes", "value": ""},
+      {"param": "memHighNodes", "value": ""},
+      {"param": "memLowNodes", "value": ""}
+    ]
+}
