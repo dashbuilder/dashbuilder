@@ -52,8 +52,8 @@ public class DataSetBuilderImpl implements DataSetBuilder {
         return this;
     }
 
-    public DataSetBuilderImpl column(String columnId, ColumnType type) {
-        dataSet.addColumn(columnId, type);
+    public DataSetBuilderImpl column(String columnId, String columnName, ColumnType type) {
+        dataSet.addColumn(columnId, columnName, type);
         return this;
     }
 

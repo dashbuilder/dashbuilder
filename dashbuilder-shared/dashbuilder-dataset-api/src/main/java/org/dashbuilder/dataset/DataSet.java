@@ -146,17 +146,15 @@ public interface DataSet {
     DataSet setValuesAt(int row, Object... values);
 
     /**
-     * Add a value at a given cell.
-     * @param row The cell row (the first row is 0).
-     * @param column The cell column (the first column is 0).
-     */
-    DataSet addValueAt(int row, int column, Object value);
-
-    /**
      * Add a row at the given position.
      * @param row The cell row (the first row is 0).
      */
     DataSet addValuesAt(int row, Object... values);
+
+    /**
+     * Add a row at the end of the data set.
+     */
+    DataSet addValues(Object... values);
 
     /**
      * Add an empty row at the given position.

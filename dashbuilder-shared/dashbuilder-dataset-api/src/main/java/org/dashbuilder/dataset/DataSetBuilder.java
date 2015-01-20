@@ -69,7 +69,7 @@ public interface DataSetBuilder {
     /**
      * Add an empty column of the specified type.
      */
-    DataSetBuilder column(String columnId, ColumnType type);
+    DataSetBuilder column(String columnId, String columnName, ColumnType type);
 
     /**
      * Add a row with the given values at the end of the data set.

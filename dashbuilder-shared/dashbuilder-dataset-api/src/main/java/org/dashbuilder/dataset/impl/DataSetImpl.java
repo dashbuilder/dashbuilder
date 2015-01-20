@@ -196,6 +196,11 @@ public class DataSetImpl implements DataSet {
         return this;
     }
 
+    public DataSet addValueAt(int column, Object value) {
+        _setValueAt(-1, column, value, true);
+        return this;
+    }
+
     protected void _setValueAt(int row, int column, Object value, boolean insert) {
         DataColumn columnObj = getColumnByIndex(column);
 
@@ -204,7 +209,7 @@ public class DataSetImpl implements DataSet {
             throw new IllegalArgumentException("The row index " + row + " is out of bounds: " + (l.size()-1));
         }
 
-        if (row == l.size()) l.add(value);
+        if (row < 0 || row == l.size()) l.add(value);
         else if (insert) l.add(row, value);
         else l.set(row, value);
     }
@@ -216,6 +221,11 @@ public class DataSetImpl implements DataSet {
 
     public DataSet addValuesAt(int row, Object... values) {
         _setValuesAt(row, true, values);
+        return this;
+    }
+
+    public DataSet addValues(Object... values) {
+        _setValuesAt(-1, true, values);
         return this;
     }
 
