@@ -38,6 +38,7 @@ import org.dashbuilder.dataset.def.ElasticSearchDataSetDef;
 import org.dashbuilder.dataset.group.*;
 import org.dashbuilder.dataset.sort.ColumnSort;
 import org.dashbuilder.dataset.sort.DataSetSort;
+import org.json.JSONObject;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Named;
@@ -204,7 +205,6 @@ public class ElasticSearchJestClient implements ElasticSearchClient<ElasticSearc
         if (client == null) throw new IllegalArgumentException("elasticsearchRESTEasyClient instance is not build.");
 
         DataSetMetadata metadata = request.getMetadata();
-        DataSetDef dataSetDef = metadata.getDefinition();
         String[] index = request.getIndexes();
         String[] type = request.getTypes();
         String[] fields = request.getFields();
@@ -218,8 +218,10 @@ public class ElasticSearchJestClient implements ElasticSearchClient<ElasticSearc
         GsonBuilder builder = new GsonBuilder();
         builder.registerTypeAdapter(DataSetGroup.class, buildAggregationsSerializer().setDataSetMetadata(metadata));
         builder.registerTypeAdapter(Query.class, new QuerySerializer().setDataSetDef((ElasticSearchDataSetDef) definition));
+        builder.registerTypeAdapter(Query.class, new SearchQuerySerializer());
         builder.registerTypeAdapter(SearchResponse.class, new SearchResponseDeserializer());
         builder.registerTypeAdapter(SearchHitResponse.class, new HitDeserializer());
+        builder.registerTypeAdapter(List.class, new AggregationsDeserializer());
         Gson gson = builder.create();
         
         // Set request lookup constraints into the query JSON request.
@@ -276,30 +278,63 @@ public class ElasticSearchJestClient implements ElasticSearchClient<ElasticSearc
         JsonObject query;
         List<JsonObject> aggregations;
         int start;
-        int end;
+        int size;
 
-        public SearchQuery(String[] fields, JsonObject query, List<JsonObject> aggregations, int start, int end) {
+        public SearchQuery(String[] fields, JsonObject query, List<JsonObject> aggregations, int start, int size) {
             this.fields = fields;
             this.query = query;
             this.aggregations = aggregations;
             this.start = start;
-            this.end = end;
+            this.size = size;
         }
     }
 
-    protected class SearchQyerySerializer implements JsonSerializer<SearchQuery> {
-        private SearchQuery searchQuery;
+    protected class SearchQuerySerializer implements JsonSerializer<SearchQuery> {
+
+        protected static final String FIELDS = "fields";
+        protected static final String FROM = "from";
+        protected static final String QUERY = "query";
+        protected static final String SIZE = "size";
+        protected static final String AGGREGATIONS = "aggregations";
 
         public JsonObject serialize(SearchQuery searchQuery, Type typeOfSrc, JsonSerializationContext context) {
-            this.searchQuery = searchQuery;
-
+            JsonObject result = new JsonObject();
+            
+            String[] fields = searchQuery.fields;
+            JsonObject query = searchQuery.query;
+            List<JsonObject> aggregations = searchQuery.aggregations;
+            boolean existAggregations = aggregations != null;
 
             // Trimming.
             // If aggregations exist, we care about the aggregation results, not document results.
-            // int sizeToPull =  aggregationObjects != null ? 0 : size;
-            // int startToPull  = aggregationObjects != null ? 0 : start;
+            int start = searchQuery.start;
+            int size = searchQuery.size;
+            int sizeToPull =  existAggregations ? 0 : size;
+            int startToPull  = existAggregations ? 0 : start;
             
-            return null;
+            // Build the search request in EL expected JSON format.
+            if (query != null)  {
+                if (!existAggregations ) {
+                    JsonArray fieldsArray = new JsonArray();
+                    for (String field : fields) {
+                        fieldsArray.add(new JsonPrimitive(field));
+                    }
+                    result.add(FIELDS, fieldsArray);
+                }
+                result.addProperty(FROM, startToPull);
+                result.addProperty(SIZE, sizeToPull);
+                JsonObject queryObject = query.getAsJsonObject(QUERY);
+                result.add(QUERY, queryObject);
+            }
+
+            // TODO: Use all aggregations, not just first one.
+            if (existAggregations) {
+                JsonObject aggregationObject = aggregations.get(0);
+                JsonObject aggregationsSubObject = aggregationObject.getAsJsonObject(AGGREGATIONS);
+                result.add(AGGREGATIONS, aggregationsSubObject);
+            }
+            
+            return result;
         }
     }
     
@@ -417,7 +452,7 @@ public class ElasticSearchJestClient implements ElasticSearchClient<ElasticSearc
                 // Translate into a HISTOGRAM aggregation.
                 JsonObject subObject = new JsonObject();
                 subObject.addProperty(AGG_FIELD, sourceId);
-                subObject.addProperty(AGG_INTERVAL, Long.parseLong(intervalSize));
+                if (intervalSize != null) subObject.addProperty(AGG_INTERVAL, Long.parseLong(intervalSize));
                 JsonObject orderObject = new JsonObject();
                 orderObject.addProperty(AGG_KEY, order);
                 subObject.add(AGG_ORDER, orderObject);
@@ -627,6 +662,52 @@ public class ElasticSearchJestClient implements ElasticSearchClient<ElasticSearc
             return false;
         }
     }
+
+    protected static class AggregationsDeserializer implements JsonDeserializer<List<SearchHitResponse>> {
+
+        @Override
+        public List<SearchHitResponse> deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+            List<SearchHitResponse> result = null;
+
+            if (typeOfT.equals(SearchResponse.class)) {
+                JsonObject aggregationsObject = (JsonObject) json;
+
+                Set<Map.Entry<String, JsonElement>> entries = aggregationsObject.entrySet();
+                if (entries != null && !entries.isEmpty()) {
+                    result = new LinkedList<SearchHitResponse>();
+                    for (Map.Entry<String, JsonElement> entry : entries) {
+                        String columnId = entry.getKey();
+                        JsonObject columnAggregationObject = (JsonObject) entry.getValue();
+                        JsonArray buckets = columnAggregationObject.getAsJsonArray("buckets");
+                        if (buckets != null && buckets.size() > 0 ) {
+                            Iterator<JsonElement> bucketsIt = buckets.iterator();
+                            while (bucketsIt.hasNext()) {
+                                JsonObject bucket = (JsonObject) bucketsIt.next();
+
+                                Map<String, Object> bucketFields = new HashMap<String, Object>();
+                                String value = bucket.get("key").getAsString();
+                                bucketFields.put(columnId, value);
+                                
+                                Set<Map.Entry<String, JsonElement>> bucketEntries = bucket.entrySet();
+                                for (Map.Entry<String, JsonElement> bucketEntry : bucketEntries) {
+                                    String aggName = bucketEntry.getKey();
+                                    JsonElement aggValue = ((JsonObject)bucketEntry.getValue()).get("value"); 
+                                    String _aggValue = null;
+                                    if (aggValue != null) _aggValue = aggValue.getAsString();
+                                    bucketFields.put(aggName, _aggValue);
+                                }
+                                
+                                result.add(new SearchHitResponse(bucketFields));
+                            }
+                        }
+                    }
+                }
+                
+            }
+            
+            return result;
+        }
+    }
     
     protected static class SearchResponseDeserializer implements JsonDeserializer<SearchResponse> {
 
@@ -645,34 +726,34 @@ public class ElasticSearchJestClient implements ElasticSearchClient<ElasticSearc
                     int successfulShards = shardsObject.get("successful").getAsInt();
                     int shardFailures = shardsObject.get("failed").getAsInt();
 
-                    long totalHits = 0;
-                    float maxScore = 0;
-                    List<String> columnIds = new LinkedList<String>();
-                    List<SearchHitResponse> hits = new LinkedList<SearchHitResponse>(); 
-                    JsonObject hitsObject = responseObject.getAsJsonObject("hits");
-                    if (hitsObject != null) {
-                        totalHits = hitsObject.get("total").getAsLong();
-                        maxScore = hitsObject.get("max_score").getAsFloat();
-                        JsonArray hitsArray = hitsObject.getAsJsonArray("hits");
-                        if (hitsArray != null && hitsArray.size() > 0) {
-                            for (int i = 0; i < hitsArray.size() ; i++) {
-                                JsonElement hitResponseElement = hitsArray.get(i);
-                                SearchHitResponse hit = context.deserialize(hitResponseElement, SearchHitResponse.class);
-                                hits.add(hit);
-                            }
-                        }
-                        
-                        // Obtain the resulting column ids and types from the first hit.
-                        if (!hits.isEmpty()) {
-                            SearchHitResponse hit = hits.get(0);
+                    List<SearchHitResponse> hits = null;
+                    Object[] hitsParseResult = parseTotalAndScore(responseObject);
+                    long totalHits = (Long) hitsParseResult[0];
+                    float maxScore = (Float) hitsParseResult[1];
+                    
+                    // Check the resulting aggregations, if exist.
+                    JsonObject aggregations = responseObject.getAsJsonObject("aggregations");
+                    boolean existAggregations = aggregations != null;
+                    
+                    // If exist aggregations, discard hit results.
+                    if (!existAggregations) {
+                        // Parse hit results from "hits" resulting field.
+                        hits = parseHits(responseObject, context); 
+                    } else {
+                        // Parse hit results from "aggregations" resulting field.
+                        hits = parseAggregations(responseObject, context);
+                    }
 
-                            Map<String, Object> fields = hit.getFields();
-                            if (fields != null) {
-                                Set<String> fieldNames = fields.keySet();
-                                if (!fieldNames.isEmpty()) {
-                                    for (String fieldName : fieldNames) {
-                                        columnIds.add(fieldName);
-                                    }
+                    // Obtain the resulting column ids and types from the first hit.
+                    List<String> columnIds = new LinkedList<String>();
+                    if (!hits.isEmpty()) {
+                        SearchHitResponse hit = hits.get(0);
+                        Map<String, Object> fields = hit.getFields();
+                        if (fields != null) {
+                            Set<String> fieldNames = fields.keySet();
+                            if (!fieldNames.isEmpty()) {
+                                for (String fieldName : fieldNames) {
+                                    columnIds.add(fieldName);
                                 }
                             }
                         }
@@ -683,6 +764,43 @@ public class ElasticSearchJestClient implements ElasticSearchClient<ElasticSearc
             }
             
             return result;
+        }
+        
+        protected List<SearchHitResponse> parseAggregations(JsonObject responseObject, JsonDeserializationContext context) {
+            JsonObject aggregationsObject = responseObject.getAsJsonObject("aggregations");
+            if (aggregationsObject != null) {
+                return context.deserialize(aggregationsObject, List.class);
+            }
+            
+            return null;
+        }
+        
+        protected List<SearchHitResponse> parseHits(JsonObject responseObject, JsonDeserializationContext context) {
+            List<SearchHitResponse> hits = null;
+            JsonObject hitsObject = responseObject.getAsJsonObject("hits");
+            if (hitsObject != null) {
+                JsonArray hitsArray = hitsObject.getAsJsonArray("hits");
+                if (hitsArray != null && hitsArray.size() > 0) {
+                    hits = new LinkedList<SearchHitResponse>();
+                    for (int i = 0; i < hitsArray.size() ; i++) {
+                        JsonElement hitResponseElement = hitsArray.get(i);
+                        SearchHitResponse hit = context.deserialize(hitResponseElement, SearchHitResponse.class);
+                        hits.add(hit);
+                    }
+                }
+            }
+            return hits;
+        }
+
+        protected Object[] parseTotalAndScore(JsonObject responseObject) {
+            long totalHits = 0;
+            float maxScore = 0;
+            JsonObject hitsObject = responseObject.getAsJsonObject("hits");
+            if (hitsObject != null) {
+                totalHits = hitsObject.get("total").getAsLong();
+                maxScore = hitsObject.get("max_score").getAsFloat();
+            }
+            return new Object[] {totalHits, maxScore};
         }
     }
 

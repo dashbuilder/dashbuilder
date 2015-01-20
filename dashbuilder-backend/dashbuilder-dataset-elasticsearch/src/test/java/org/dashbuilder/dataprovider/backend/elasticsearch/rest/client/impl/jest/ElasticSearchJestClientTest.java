@@ -254,17 +254,18 @@ public class ElasticSearchJestClientTest {
         aggregationResult = gson.toJson(groupByAggregation,  DataSetGroup.class);
         Assert.assertEquals(aggregationResult, "{\"aggregations\":{\"departmentGrouped\":{\"terms\":{\"field\":\"department\",\"order\":{\"_term\":\"asc\"},\"min_doc_count\":0},\"aggregations\":{\"amount-count\":{\"value_count\":{\"field\":\"amount\"}},\"amount-min\":{\"min\":{\"field\":\"amount\"}}}}}}");
 
-        /* TODO
 
         DataSetGroup histogramAggreagation = new DataSetGroup();
         histogramAggreagation.setDataSetUUID("testUUID");
-        histogramAggreagation.setColumnGroup(new ColumnGroup("amount", "amount", GroupStrategy.DYNAMIC));
+        histogramAggreagation.setColumnGroup(new ColumnGroup("amount", "amount", GroupStrategy.DYNAMIC, 99, "20"));
         histogramAggreagation.setJoin(false);
-        GroupFunction groupByCountFunction = new GroupFunction("amount", "amount-count", AggregateFunctionType.COUNT);
-        GroupFunction groupByMinFunction = new GroupFunction("amount", "amount-min", AggregateFunctionType.MIN);
+        groupByCountFunction = new GroupFunction("amount", "amount-max", AggregateFunctionType.MAX);
+        groupByMinFunction = new GroupFunction("amount", "amount-min", AggregateFunctionType.MIN);
         histogramAggreagation.addGroupFunction(groupByCountFunction, groupByMinFunction);
-        String aggregationResult = gson.toJson(dateHistogramAggreagation,  DataSetGroup.class);
-        System.out.println(aggregationResult);
+        aggregationResult = gson.toJson(histogramAggreagation,  DataSetGroup.class);
+        Assert.assertEquals(aggregationResult, "{\"aggregations\":{\"amount\":{\"histogram\":{\"field\":\"amount\",\"interval\":20,\"order\":{\"_key\":\"asc\"},\"min_doc_count\":0},\"aggregations\":{\"amount-max\":{\"max\":{\"field\":\"amount\"}},\"amount-min\":{\"min\":{\"field\":\"amount\"}}}}}}");
+
+        /* TODO
 
         // Date Histogram aggregation.
         DataSetGroup dateHistogramAggreagation = new DataSetGroup();
