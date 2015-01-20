@@ -37,6 +37,7 @@ import org.dashbuilder.dataset.def.ElasticSearchDataSetDef;
 import org.dashbuilder.dataset.group.*;
 import org.dashbuilder.dataset.sort.ColumnSort;
 import org.dashbuilder.dataset.sort.DataSetSort;
+import sun.awt.image.ImageWatched;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Named;
@@ -216,8 +217,8 @@ public class ElasticSearchJestClient implements ElasticSearchClient<ElasticSearc
         builder.registerTypeAdapter(Query.class, new QuerySerializer().setDataSetDef((ElasticSearchDataSetDef) definition));
         builder.registerTypeAdapter(SearchQuery.class, new SearchQuerySerializer());
         builder.registerTypeAdapter(SearchResponse.class, new SearchResponseDeserializer());
-        builder.registerTypeAdapter(SearchHitResponse.class, new HitDeserializer());
-        builder.registerTypeAdapter(SearchHitResponse[].class, new AggregationsDeserializer());
+        builder.registerTypeAdapter(SearchHitResponse.class, new HitDeserializer().setDataSetMetadata(metadata));
+        builder.registerTypeAdapter(SearchHitResponse[].class, new AggregationsDeserializer().setDataSetMetadata(metadata));
         Gson gson = builder.create();
         
         // Set request lookup constraints into the query JSON request.
@@ -273,6 +274,18 @@ public class ElasticSearchJestClient implements ElasticSearchClient<ElasticSearc
 
     public AggregationSerializer buildAggregationsSerializer() {
         return new AggregationSerializer();
+    }
+
+    protected static LinkedHashMap<String, Object> orderFields(Map<String, Object> fields, DataSetMetadata metadata) {
+        if (fields == null) return null;
+        if (metadata == null) return null;
+
+        LinkedHashMap<String, Object> result = new LinkedHashMap<String, Object>();
+        for (int i = 0; i < metadata.getNumberOfColumns(); i++) {
+            String columnId = metadata.getColumnId(i);
+            if (fields.containsKey(columnId)) result.put(columnId, fields.get(columnId));
+        }
+        return result;
     }
 
 
@@ -689,6 +702,13 @@ public class ElasticSearchJestClient implements ElasticSearchClient<ElasticSearc
 
     protected static class AggregationsDeserializer implements JsonDeserializer<SearchHitResponse[]> {
 
+        private DataSetMetadata metadata;
+
+        public AggregationsDeserializer setDataSetMetadata(DataSetMetadata metadata) {
+            this.metadata = metadata;
+            return this;
+        }
+        
         @Override
         public SearchHitResponse[] deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
             List<SearchHitResponse> result = null;
@@ -727,7 +747,7 @@ public class ElasticSearchJestClient implements ElasticSearchClient<ElasticSearc
                                         }
                                     }
 
-                                    result.add(new SearchHitResponse(bucketFields));
+                                    result.add(new SearchHitResponse(orderFields(bucketFields, metadata)));
                                 }
                             }
                         }
@@ -779,7 +799,7 @@ public class ElasticSearchJestClient implements ElasticSearchClient<ElasticSearc
                     List<String> columnIds = new LinkedList<String>();
                     if (!hits.isEmpty()) {
                         SearchHitResponse hit = hits.get(0);
-                        Map<String, Object> fields = hit.getFields();
+                        LinkedHashMap<String, Object> fields = hit.getFields();
                         if (fields != null) {
                             Set<String> fieldNames = fields.keySet();
                             if (!fieldNames.isEmpty()) {
@@ -839,7 +859,13 @@ public class ElasticSearchJestClient implements ElasticSearchClient<ElasticSearc
     }
 
     protected static class HitDeserializer implements JsonDeserializer<SearchHitResponse> {
+        private DataSetMetadata metadata;
 
+        public HitDeserializer setDataSetMetadata(DataSetMetadata metadata) {
+            this.metadata = metadata;
+            return this;
+        }
+        
         @Override
         public SearchHitResponse deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
             SearchHitResponse result = null;
@@ -881,11 +907,12 @@ public class ElasticSearchJestClient implements ElasticSearchClient<ElasticSearc
                     }
                     
                 }
-                result = new SearchHitResponse(score, index, id, type, version, fields);
+                result = new SearchHitResponse(score, index, id, type, version, orderFields(fields, metadata));
             }
             
             return result;
         }
+        
     }
 
     protected static class QuerySerializer implements JsonSerializer<Query> {

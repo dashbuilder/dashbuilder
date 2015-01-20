@@ -68,7 +68,6 @@ public class DataSetDefJSONMarshaller {
     public static final String CLUSTER_NAME = "clusterName";
     public static final String INDEX = "index";
     public static final String TYPE = "type";
-    public static final String FIELD = "field";
     public static final String QUERY = "query";
     public static final String RELEVANCE = "relevance";
     public static final String CACHE_SYNCED = "cacheSynced";
@@ -117,7 +116,6 @@ public class DataSetDefJSONMarshaller {
         String clusterName = json.has(CLUSTER_NAME) ? json.getString(CLUSTER_NAME) : null;
         String index = json.has(INDEX) ? json.getString(INDEX) : null;
         String type = json.has(TYPE) ? json.getString(TYPE) : null;
-        String field = json.has(FIELD) ? json.getString(FIELD) : null;
         String query = json.has(QUERY) ? json.getString(QUERY) : null;
         String relevance = json.has(RELEVANCE) ? json.getString(RELEVANCE) : null;
         String cacheEnabled = json.has(CACHE_ENABLED) ? json.getString(CACHE_ENABLED) : null;

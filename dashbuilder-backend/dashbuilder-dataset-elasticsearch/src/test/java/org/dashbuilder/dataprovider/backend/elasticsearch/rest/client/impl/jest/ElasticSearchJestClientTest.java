@@ -163,7 +163,7 @@ public class ElasticSearchJestClientTest {
 
         GsonBuilder builder = new GsonBuilder();
         builder.registerTypeAdapter(SearchResponse.class, new ElasticSearchJestClient.SearchResponseDeserializer());
-        builder.registerTypeAdapter(SearchHitResponse.class, new ElasticSearchJestClient.HitDeserializer());
+        builder.registerTypeAdapter(SearchHitResponse.class, new ElasticSearchJestClient.HitDeserializer().setDataSetMetadata(metadata));
         Gson gson = builder.create();
         SearchResponse result = gson.fromJson(response, SearchResponse.class);
         

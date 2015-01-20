@@ -9,5 +9,13 @@
     "index": "expensereports",
     "type": "expense",
     "cacheEnabled": false,
-    "cacheMaxRows": 1000
+    "cacheMaxRows": 1000,
+    "columns": [
+                {"id": "id", "name": "id", "type": "number"},
+                {"id": "amount", "name": "amount", "type": "number"},
+                {"id": "department", "name": "department", "type": "label"},
+                {"id": "employee", "name": "author", "type": "text"},
+                {"id": "date", "name": "date", "type": "date"},
+                {"id": "city", "name": "city", "type": "label"},
+            ]
 }

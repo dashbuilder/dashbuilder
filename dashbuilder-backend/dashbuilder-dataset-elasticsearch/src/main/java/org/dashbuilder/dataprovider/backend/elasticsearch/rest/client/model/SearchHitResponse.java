@@ -18,6 +18,7 @@ package org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.model;
 import org.apache.commons.collections.map.UnmodifiableMap;
 
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class SearchHitResponse {
@@ -27,9 +28,9 @@ public class SearchHitResponse {
     protected String id;
     protected String type;
     protected long version;
-    protected Map<String ,Object> fields;
+    protected LinkedHashMap<String ,Object> fields;
 
-    public SearchHitResponse(float score, String index, String id, String type, long version, Map<String ,Object> fields) {
+    public SearchHitResponse(float score, String index, String id, String type, long version, LinkedHashMap<String ,Object> fields) {
         this.score = score;
         this.index = index;
         this.id = id;
@@ -38,7 +39,7 @@ public class SearchHitResponse {
         this.fields = fields;
     }
 
-    public SearchHitResponse(Map<String ,Object> fields) {
+    public SearchHitResponse(LinkedHashMap<String ,Object> fields) {
         this.score = -1;
         this.index = null;
         this.id = null;
@@ -67,7 +68,7 @@ public class SearchHitResponse {
         return version;
     }
 
-    public Map<String, Object> getFields() {
+    public LinkedHashMap<String, Object> getFields() {
         return fields;
     }
     public Object getFieldValue(String name) {
