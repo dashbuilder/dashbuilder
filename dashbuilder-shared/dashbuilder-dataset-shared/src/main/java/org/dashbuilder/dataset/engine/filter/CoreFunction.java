@@ -139,7 +139,7 @@ public class CoreFunction extends DataSetFunction {
         String timeFrame = getParameter(0).toString();
         long millis = System.currentTimeMillis();
         Date now = new Date(millis);
-        Date past = new Date(millis-DateIntervalType.toMillis(timeFrame));
+        Date past = new Date(millis-DateIntervalType.getDurationInMillis(timeFrame));
 
         if (target.after(now)) return false;
         if (target.before(past)) return false;

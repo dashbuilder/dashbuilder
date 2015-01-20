@@ -40,11 +40,4 @@ public class SQLDataSetDefBuilderImpl extends AbstractDataSetDefBuilder<SQLDataS
         ((SQLDataSetDef) def).setAllColumnsEnabled(allColumns);
         return this;
     }
-
-    public SQLDataSetDefBuilderImpl cacheOn(boolean synced, int maxRowsInCache) {
-        ((SQLDataSetDef) def).setCacheEnabled(true);
-        ((SQLDataSetDef) def).setCacheSynced(synced);
-        ((SQLDataSetDef) def).setCacheMaxRows(maxRowsInCache);
-        return this;
-    }
 }

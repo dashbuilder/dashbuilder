@@ -16,26 +16,25 @@
 package org.dashbuilder.dataset.events;
 
 import org.dashbuilder.dataset.DataSetMetadata;
-import org.dashbuilder.dataset.def.DataSetDef;
 import org.jboss.errai.common.client.api.annotations.Portable;
 
 @Portable
-public class DataSetModifiedEvent {
+public class StaticDataSetRemovedEvent {
 
-    DataSetDef dataSetDef;
+    DataSetMetadata dataSetMetadata;
 
-    public DataSetModifiedEvent() {
+    public StaticDataSetRemovedEvent() {
     }
 
-    public DataSetModifiedEvent(DataSetDef dataSetDef) {
-        this.dataSetDef = dataSetDef;
+    public StaticDataSetRemovedEvent(DataSetMetadata dataSetMetadata) {
+        this.dataSetMetadata = dataSetMetadata;
     }
 
-    public DataSetDef getDataSetDef() {
-        return dataSetDef;
+    public DataSetMetadata getDataSetMetadata() {
+        return dataSetMetadata;
     }
 
-    public void setDataSetDef(DataSetDef dataSetDef) {
-        this.dataSetDef = dataSetDef;
+    public void setDataSetMetadata(DataSetMetadata dataSetMetadata) {
+        this.dataSetMetadata = dataSetMetadata;
     }
 }

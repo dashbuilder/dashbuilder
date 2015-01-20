@@ -177,7 +177,6 @@ public class DataSetDefDeployer {
 
     protected class DataSetDefRecord {
 
-        DataSetProvider provider;
         DataSetDef def;
         File defFile;
         long regTime;
@@ -186,11 +185,10 @@ public class DataSetDefDeployer {
             this.def = def;
             this.regTime = new Date().getTime();
             this.defFile = f;
-            this.provider = dataSetProviderRegistry.getDataSetProvider(def.getProvider());
         }
 
         boolean isOutdated() {
-            return defFile.lastModified() > regTime || provider.isDataSetOutdated(def);
+            return defFile.lastModified() > regTime;
         }
     }
 }

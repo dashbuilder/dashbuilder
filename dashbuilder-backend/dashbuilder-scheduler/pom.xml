@@ -23,31 +23,21 @@
     <version>0.3.0-SNAPSHOT</version>
   </parent>
 
-  <artifactId>dashbuilder-dataset-core</artifactId>
+  <artifactId>dashbuilder-scheduler</artifactId>
   <packaging>jar</packaging>
 
-  <name>Dashbuilder Dataset Core</name>
+  <name>Dashbuilder Scheduler</name>
 
   <dependencies>
 
     <dependency>
-      <groupId>org.jboss.errai</groupId>
-      <artifactId>errai-bus</artifactId>
+      <groupId>commons-lang</groupId>
+      <artifactId>commons-lang</artifactId>
     </dependency>
 
     <dependency>
-      <groupId>javax.enterprise</groupId>
-      <artifactId>cdi-api</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.uberfire</groupId>
-      <artifactId>uberfire-server-all</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.dashbuilder</groupId>
-      <artifactId>dashbuilder-dataset-api</artifactId>
+      <groupId>commons-collections</groupId>
+      <artifactId>commons-collections</artifactId>
     </dependency>
 
     <dependency>
@@ -61,35 +51,33 @@
     </dependency>
 
     <dependency>
-      <groupId>org.dashbuilder</groupId>
-      <artifactId>dashbuilder-scheduler</artifactId>
+      <groupId>org.jboss.errai</groupId>
+      <artifactId>errai-bus</artifactId>
     </dependency>
 
     <dependency>
-      <groupId>org.jboss.spec.javax.servlet</groupId>
-      <artifactId>jboss-servlet-api_3.0_spec</artifactId>
-      <scope>provided</scope>
+      <groupId>javax.enterprise</groupId>
+      <artifactId>cdi-api</artifactId>
     </dependency>
 
     <dependency>
-      <groupId>commons-io</groupId>
-      <artifactId>commons-io</artifactId>
+      <groupId>org.uberfire</groupId>
+      <artifactId>uberfire-backend-api</artifactId>
     </dependency>
 
-    <!-- JSON -->
-
     <dependency>
-      <groupId>org.json</groupId>
-      <artifactId>json</artifactId>
+      <groupId>org.uberfire</groupId>
+      <artifactId>uberfire-backend-server</artifactId>
     </dependency>
 
-    <!-- Unit testing -->
+    <dependency>
+      <groupId>org.uberfire</groupId>
+      <artifactId>uberfire-api</artifactId>
+    </dependency>
 
     <dependency>
-      <groupId>org.dashbuilder</groupId>
-      <artifactId>dashbuilder-common</artifactId>
-      <type>test-jar</type>
-      <scope>test</scope>
+      <groupId>org.uberfire</groupId>
+      <artifactId>uberfire-io</artifactId>
     </dependency>
 
   </dependencies>

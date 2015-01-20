@@ -23,11 +23,20 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
+import org.dashbuilder.dataprovider.DataSetProvider;
+import org.dashbuilder.dataprovider.DataSetProviderRegistry;
+import org.dashbuilder.dataprovider.DataSetProviderType;
+import org.dashbuilder.dataprovider.backend.StaticDataSetProvider;
 import org.dashbuilder.dataset.def.DataSetDef;
 import org.dashbuilder.dataset.def.DataSetDefRegistry;
 import org.dashbuilder.dataset.events.DataSetDefModifiedEvent;
 import org.dashbuilder.dataset.events.DataSetDefRegisteredEvent;
 import org.dashbuilder.dataset.events.DataSetDefRemovedEvent;
+import org.dashbuilder.dataset.events.DataSetStaleEvent;
+import org.dashbuilder.dataset.group.DateIntervalType;
+import org.dashbuilder.scheduler.Scheduler;
+import org.dashbuilder.scheduler.SchedulerTask;
+import org.slf4j.Logger;
 
 /**
  * Data set definitions backend registry
@@ -44,38 +53,140 @@ public class DataSetDefRegistryImpl implements DataSetDefRegistry {
     @Inject
     private Event<DataSetDefRemovedEvent> dataSetDefRemovedEvent;
 
-    protected Map<String,DataSetDef> dataSetDefMap = new HashMap<String, DataSetDef>();
+    @Inject
+    private Event<DataSetStaleEvent> dataSetStaleEvent;
+
+    @Inject
+    protected DataSetProviderRegistry dataSetProviderRegistry;
+
+    @Inject
+    protected StaticDataSetProvider staticDataSetProvider;
+
+    @Inject
+    protected Logger log;
+
+    @Inject
+    protected Scheduler scheduler;
+
+    protected Map<String,DataSetDefEntry> dataSetDefMap = new HashMap<String, DataSetDefEntry>();
+
+    protected class DataSetDefEntry extends SchedulerTask {
+
+        DataSetDef def;
+        long lastRefreshTime;
+        long refreshInMillis;
+
+        DataSetDefEntry(DataSetDef def) {
+            this.def = def;
+            this.lastRefreshTime = System.currentTimeMillis();
+            this.refreshInMillis = DateIntervalType.getDurationInMillis(def.getRefreshTime());
+        }
+
+        public void schedule() {
+            if (refreshInMillis != -1) {
+                scheduler.schedule(this, refreshInMillis / 1000);
+            }
+        }
+
+        public void unschedule() {
+            scheduler.unschedule(getKey());
+        }
+
+        public boolean isStale() {
+            if (refreshInMillis == -1) {
+                return false;
+            }
+            if (!def.isRefreshAlways()) {
+                DataSetProvider provider = resolveProvider(def);
+                return provider.isDataSetOutdated(def);
+            }
+            return System.currentTimeMillis() >= lastRefreshTime + refreshInMillis;
+        }
+
+         public void stale() {
+            lastRefreshTime = System.currentTimeMillis();
+            staticDataSetProvider.removeDataSet(def.getUUID());
+            dataSetStaleEvent.fire(new DataSetStaleEvent(def));
+        }
+
+        @Override
+        public String getDescription() {
+            return "DataSetDef refresh task "  + def.getUUID();
+        }
+
+        @Override
+        public String getKey() {
+            return def.getUUID();
+        }
+
+        @Override
+        public void execute() {
+            if (isStale()) {
+                stale();
+            }
+        }
+    }
+
+    protected DataSetProvider resolveProvider(DataSetDef dataSetDef) {
+        DataSetProviderType type = dataSetDef.getProvider();
+        if (type != null) {
+            DataSetProvider dataSetProvider = dataSetProviderRegistry.getDataSetProvider(type);
+            if (dataSetProvider != null) return dataSetProvider;
+        }
+        return staticDataSetProvider;
+    }
 
     public synchronized List<DataSetDef> getDataSetDefs(boolean onlyPublic) {
         List<DataSetDef> results = new ArrayList<DataSetDef>();
-        for (DataSetDef r : dataSetDefMap.values()) {
-            if (!onlyPublic || r.isPublic()) {
-                results.add(r);
+        for (DataSetDefEntry r : dataSetDefMap.values()) {
+            if (!onlyPublic || r.def.isPublic()) {
+                results.add(r.def);
             }
         }
         return results;
     }
 
     public synchronized DataSetDef getDataSetDef(String uuid) {
-        return dataSetDefMap.get(uuid);
+        DataSetDefEntry record = dataSetDefMap.get(uuid);
+        if (record == null) return null;
+        return record.def;
     }
 
     public synchronized DataSetDef removeDataSetDef(String uuid) {
-        DataSetDef oldDef = dataSetDefMap.remove(uuid);
-        if (oldDef == null) return null;
+        DataSetDefEntry oldEntry = _removeDataSetDef(uuid);
+        if (oldEntry == null) return null;
 
-        dataSetDefRemovedEvent.fire(new DataSetDefRemovedEvent(oldDef));
-        return oldDef;
+        // Notify about the removal
+        dataSetDefRemovedEvent.fire(new DataSetDefRemovedEvent(oldEntry.def));
+        return oldEntry.def;
     }
 
     public synchronized void registerDataSetDef(DataSetDef newDef) {
-        DataSetDef oldDef = dataSetDefMap.get(newDef.getUUID());
-        if (oldDef != null) {
-            dataSetDefMap.put(newDef.getUUID(), newDef);
-            dataSetDefModifiedEvent.fire(new DataSetDefModifiedEvent(oldDef, newDef));
+
+        // Register the new entry
+        DataSetDefEntry oldEntry = _removeDataSetDef(newDef.getUUID());
+        dataSetDefMap.put(newDef.getUUID(), new DataSetDefEntry(newDef));
+        DataSetDefEntry newEntry = dataSetDefMap.get(newDef.getUUID());
+
+        // Notify the proper event
+        if (oldEntry != null) {
+            dataSetDefModifiedEvent.fire(new DataSetDefModifiedEvent(oldEntry.def, newDef));
         } else {
-            dataSetDefMap.put(newDef.getUUID(), newDef);
             dataSetDefRegisteredEvent.fire(new DataSetDefRegisteredEvent(newDef));
         }
+        // Register the data set into the scheduler
+        newEntry.schedule();
+    }
+
+    protected DataSetDefEntry _removeDataSetDef(String uuid) {
+        DataSetDefEntry oldEntry = dataSetDefMap.remove(uuid);
+        if (oldEntry == null) return null;
+
+        // Remove from the scheduler
+        oldEntry.unschedule();
+
+        // Make any data set reference stale
+        oldEntry.stale();
+        return oldEntry;
     }
 }

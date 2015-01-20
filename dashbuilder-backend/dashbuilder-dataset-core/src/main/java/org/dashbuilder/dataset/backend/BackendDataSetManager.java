@@ -80,14 +80,16 @@ public class BackendDataSetManager implements DataSetManager {
 
     public void registerDataSet(DataSet dataSet) {
         if (dataSet != null) {
-            staticDataSetProvider.registerDataSet(dataSet);
-
             StaticDataSetDef def = new StaticDataSetDef();
             def.setUUID(dataSet.getUUID());
             def.setDataSet(dataSet);
             def.setPushEnabled(pushEnabled);
             def.setPushMaxSize(pushMaxSize);
             dataSetDefRegistry.registerDataSetDef(def);
+
+            // Register the data set after the definition. It's mandatory to do this right after since
+            // the registerDataSetDef will delete any old existing data set matching the given UUID.
+            staticDataSetProvider.registerDataSet(dataSet);
         }
     }
 

@@ -15,9 +15,9 @@
  */
 package org.dashbuilder.dataprovider.backend;
 
-import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -29,10 +29,7 @@ import org.dashbuilder.dataset.DataSetLookup;
 import org.dashbuilder.dataset.DataSetMetadata;
 import org.dashbuilder.dataset.def.BeanDataSetDef;
 import org.dashbuilder.dataset.def.DataSetDef;
-import org.dashbuilder.dataset.events.DataSetDefModifiedEvent;
 import org.slf4j.Logger;
-
-import static org.uberfire.commons.validation.PortablePreconditions.*;
 
 @ApplicationScoped
 @Named("bean")
@@ -40,6 +37,8 @@ public class BeanDataSetProvider implements DataSetProvider {
 
     @Inject
     protected StaticDataSetProvider staticDataSetProvider;
+
+    protected Map<String,DataSetGenerator> beanMap = new HashMap<String, DataSetGenerator>();
 
     @Inject
     protected Logger log;
@@ -60,8 +59,12 @@ public class BeanDataSetProvider implements DataSetProvider {
         if (dataSet == null) {
             // If not exists then invoke the BEAN generator class
             BeanDataSetDef beanDef = (BeanDataSetDef) def;
-            Class generatorClass = Class.forName(beanDef.getGeneratorClass());
-            DataSetGenerator dataSetGenerator = (DataSetGenerator) generatorClass.newInstance();
+            String beanName = beanDef.getGeneratorClass();
+            DataSetGenerator dataSetGenerator = beanMap.get(beanName);
+            if (dataSetGenerator == null) {
+                Class generatorClass = Class.forName(beanName);
+                beanMap.put(beanName, dataSetGenerator = (DataSetGenerator) generatorClass.newInstance());
+            }
             dataSet = dataSetGenerator.buildDataSet(beanDef.getParamaterMap());
             dataSet.setUUID(def.getUUID());
             dataSet.setDefinition(def);
@@ -76,18 +79,5 @@ public class BeanDataSetProvider implements DataSetProvider {
 
     public boolean isDataSetOutdated(DataSetDef def) {
         return false;
-    }
-
-    // Listen to changes on the data set definition registry
-
-    private void onDataSetDefModifiedEvent(@Observes DataSetDefModifiedEvent event) {
-        checkNotNull("event", event);
-        checkNotNull("event", event.getOldDataSetDef());
-
-        DataSetDef oldDef = event.getOldDataSetDef();
-        if (DataSetProviderType.BEAN.equals(oldDef.getProvider())) {
-            String uuid = event.getOldDataSetDef().getUUID();
-            staticDataSetProvider.removeDataSet(uuid);
-        }
     }
 }

@@ -15,8 +15,6 @@
  */
 package org.dashbuilder.displayer.client;
 
-import java.util.HashSet;
-import java.util.Set;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
@@ -73,7 +71,7 @@ public class PerspectiveCoordinator {
     private void onDataSetModifiedEvent(@Observes DataSetModifiedEvent event) {
         checkNotNull("event", event);
 
-        String targetUUID = event.getDataSetUUID();
+        String targetUUID = event.getDataSetDef().getUUID();
         for (Displayer displayer : coordinator.getDisplayerList()) {
 
             String uuid = null;

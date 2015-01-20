@@ -126,6 +126,10 @@ public class CSVDataSetDef extends DataSetDef {
         out.append("Public=").append(isPublic).append("\n");
         out.append("Push enabled=").append(pushEnabled).append("\n");
         out.append("Push max size=").append(pushMaxSize).append(" Kb\n");
+        if (refreshTime != null) {
+            out.append("Refresh time=").append(refreshTime).append("\n");
+            out.append("Refresh always=").append(refreshAlways).append("\n");
+        }
         out.append("Separator char=").append(separatorChar).append("\n");
         out.append("Quote char=").append(quoteChar).append("\n");
         out.append("Escape char=").append(escapeChar).append("\n");

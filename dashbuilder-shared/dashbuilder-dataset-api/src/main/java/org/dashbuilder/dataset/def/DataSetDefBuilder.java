@@ -64,6 +64,43 @@ public interface DataSetDefBuilder<T> {
      */
     T pushOff();
 
+    // Cache settings
+
+    /**
+     * Enables the cache for this data set
+     *
+     * @param maxRowsInCache Max. rows the cache is able to handle. For higher values the cache is automatically disabled.
+     * @return The DataSetDefBuilder instance that is being used to configure a DataSetDef.
+     */
+    T cacheOn(int maxRowsInCache);
+
+    /**
+     * Disables the cache
+     *
+     * @return The DataSetDefBuilder instance that is being used to configure a DataSetDef.
+     */
+    T cacheOff();
+
+    // Refresh settings
+
+    /**
+     * Turns on the data set refresh mechanism. Every time the refresh time is met the data set will be forced to refresh.
+     * Any cache on the data set will be considered stale from that time on.
+     *
+     * @param refreshExpression The refresh expression that sets when the data set has to be refreshed.
+     * @param onlyWhenOutdated In order for the refresh to be performed the data set provider must confirm first the
+     * data set is outdated. This can be very useful to avoid refreshing unnecessarily.
+     * @return The DataSetDefBuilder instance that is being used to configure a DataSetDef.
+     */
+    T refreshOn(String refreshExpression, boolean onlyWhenOutdated);
+
+    /**
+     * Turns of the data set refresh mechanism.
+     *
+     * @return The DataSetDefBuilder instance that is being used to configure a DataSetDef.
+     */
+    T refreshOff();
+
     // Data set structure settings
 
     /**

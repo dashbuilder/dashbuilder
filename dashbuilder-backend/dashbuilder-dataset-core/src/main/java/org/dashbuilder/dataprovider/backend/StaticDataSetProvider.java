@@ -17,7 +17,6 @@ package org.dashbuilder.dataprovider.backend;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
-import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -30,9 +29,8 @@ import org.dashbuilder.dataset.DataSetMetadata;
 import org.dashbuilder.dataset.def.DataSetDef;
 import org.dashbuilder.dataset.engine.SharedDataSetOpEngine;
 import org.dashbuilder.dataset.engine.index.DataSetIndex;
-import org.dashbuilder.dataset.events.DataSetBackendRegisteredEvent;
-import org.dashbuilder.dataset.events.DataSetBackendRemovedEvent;
-import org.dashbuilder.dataset.events.DataSetDefModifiedEvent;
+import org.dashbuilder.dataset.events.StaticDataSetRegisteredEvent;
+import org.dashbuilder.dataset.events.StaticDataSetRemovedEvent;
 import org.dashbuilder.dataset.filter.DataSetFilter;
 
 import static org.uberfire.commons.validation.PortablePreconditions.checkNotNull;
@@ -55,10 +53,10 @@ public class StaticDataSetProvider implements DataSetProvider {
     private SharedDataSetOpEngine dataSetOpEngine;
 
     @Inject
-    private Event<DataSetBackendRegisteredEvent> dataSetRegisteredEvent;
+    private Event<StaticDataSetRegisteredEvent> dataSetRegisteredEvent;
 
     @Inject
-    private Event<DataSetBackendRemovedEvent> dataSetRemovedEvent;
+    private Event<StaticDataSetRemovedEvent> dataSetRemovedEvent;
 
     public DataSetProviderType getType() {
         return DataSetProviderType.STATIC;
@@ -74,7 +72,7 @@ public class StaticDataSetProvider implements DataSetProvider {
         dataSetOpEngine.getIndexRegistry().put(dataSet);
 
         // Fire an event
-        dataSetRegisteredEvent.fire(new DataSetBackendRegisteredEvent(dataSet.getMetadata()));
+        dataSetRegisteredEvent.fire(new StaticDataSetRegisteredEvent(dataSet.getMetadata()));
     }
 
     public DataSet removeDataSet(String uuid) {
@@ -83,7 +81,7 @@ public class StaticDataSetProvider implements DataSetProvider {
 
         // Fire an event before return
         DataSet dataSet = index.getDataSet();
-        dataSetRemovedEvent.fire(new DataSetBackendRemovedEvent(dataSet.getMetadata()));
+        dataSetRemovedEvent.fire(new StaticDataSetRemovedEvent(dataSet.getMetadata()));
         return dataSet;
     }
 
@@ -120,24 +118,5 @@ public class StaticDataSetProvider implements DataSetProvider {
 
     public boolean isDataSetOutdated(DataSetDef def) {
         return false;
-    }
-
-    // Listen to changes on the data set definition registry
-
-    private void onDataSetDefModifiedEvent(@Observes DataSetDefModifiedEvent event) {
-        checkNotNull("event", event);
-        checkNotNull("event", event.getOldDataSetDef());
-        checkNotNull("event", event.getNewDataSetDef());
-
-        DataSetDef oldDef = event.getOldDataSetDef();
-        if (DataSetProviderType.STATIC.equals(oldDef.getProvider())) {
-            String uuid = event.getOldDataSetDef().getUUID();
-            removeDataSet(uuid);
-        }
-        DataSetDef newDef = event.getNewDataSetDef();
-        if (DataSetProviderType.STATIC.equals(newDef.getProvider())) {
-            String uuid = event.getNewDataSetDef().getUUID();
-            registerDataSet(newDef.getDataSet());
-        }
     }
 }

@@ -32,18 +32,12 @@ public class SQLDataSetCacheTest extends SQLDataSetTestBase {
     SQLDataSetProvider sqlDataSetProvider;
 
     @Test
-    public void testDataSetSyncedCache() throws Exception {
-        // A synced data set always gets outdated after inserting some rows into the database
-        _testDataSetCache("synced", true, 50);
-    }
-
-    @Test
     public void testDataSetNonCached() throws Exception {
         // A non-cached (database held) data set never gets outdated
         _testDataSetCache("noncached", false, 100);
     }
 
-    @Test
+    //@Test
     public void testDataSetStaticCache() throws Exception {
         // A non-synced (static) data set never gets outdated and it always contains the same content
         _testDataSetCache("static", false, 50);

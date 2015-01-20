@@ -163,9 +163,6 @@ public class SQLDataSetProvider implements DataSetProvider {
             SQLDataSetDef sqlDef = (SQLDataSetDef) def;
             if (!sqlDef.isCacheEnabled()) return false;
 
-            // A no-synced cache will always contains the same rows since it was created.
-            if (!sqlDef.isCacheSynced()) return false;
-
             // ... for non cached data sets either.
             DataSet dataSet = staticDataSetProvider.lookupDataSet(def, null);
             if (dataSet == null) return false;
@@ -198,19 +195,6 @@ public class SQLDataSetProvider implements DataSetProvider {
             return _getRowCount(def, conn);
         } finally {
             conn.close();
-        }
-    }
-
-    // Listen to changes on the data set definition registry
-
-    private void onDataSetDefModifiedEvent(@Observes DataSetDefModifiedEvent event) {
-        checkNotNull("event", event);
-
-        DataSetDef oldDef = event.getOldDataSetDef();
-        if (DataSetProviderType.SQL.equals(oldDef.getProvider())) {
-            String uuid = event.getOldDataSetDef().getUUID();
-            _metadataMap.remove(uuid);
-            staticDataSetProvider.removeDataSet(uuid);
         }
     }
 
@@ -388,7 +372,7 @@ public class SQLDataSetProvider implements DataSetProvider {
                 String timeFrame = params.get(0).toString();
                 long millis = System.currentTimeMillis();
                 Timestamp now = new Timestamp(millis);
-                Timestamp past = new Timestamp(millis-DateIntervalType.toMillis(timeFrame));
+                Timestamp past = new Timestamp(millis-DateIntervalType.getDurationInMillis(timeFrame));
                 _jooqQuery.where(_jooqField.between(past, now));
             }
             else {

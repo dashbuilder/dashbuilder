@@ -63,7 +63,8 @@ public class DataSetDefJSONMarshaller {
     public static final String ALL_COLUMNS = "allColumns";
     public static final String CACHE_ENABLED = "cacheEnabled";
     public static final String CACHE_MAXROWS = "cacheMaxRows";
-    public static final String CACHE_SYNCED = "cacheSynced";
+    public static final String REFRESH_TIME = "refreshTime";
+    public static final String REFRESH_ALWAYS = "refreshAlways";
 
     // Bean related
     public static final String GENERATOR_CLASS = "generatorClass";
@@ -115,11 +116,19 @@ public class DataSetDefJSONMarshaller {
         String isPublic = json.has(ISPUBLIC) ? json.getString(ISPUBLIC) : null;
         String pushEnabled = json.has(PUSH_ENABLED) ? json.getString(PUSH_ENABLED) : null;
         String pushMaxSize = json.has(PUSH_MAXSIZE) ? json.getString(PUSH_MAXSIZE) : null;
+        String cacheEnabled = json.has(CACHE_ENABLED) ? json.getString(CACHE_ENABLED) : null;
+        String cacheMaxRows = json.has(CACHE_MAXROWS) ? json.getString(CACHE_MAXROWS) : null;
+        String refreshTime  = json.has(REFRESH_TIME) ? json.getString(REFRESH_TIME) : null;
+        String refreshAlways = json.has(REFRESH_ALWAYS) ? json.getString(REFRESH_ALWAYS) : null;
 
         if (!StringUtils.isBlank(uuid)) def.setUUID(uuid);
         if (!StringUtils.isBlank(isPublic)) def.setPublic(Boolean.parseBoolean(isPublic));
         if (!StringUtils.isBlank(pushEnabled)) def.setPushEnabled(Boolean.parseBoolean(pushEnabled));
         if (!StringUtils.isBlank(pushMaxSize)) def.setPushMaxSize(Integer.parseInt(pushMaxSize));
+        if (!StringUtils.isBlank(cacheEnabled)) def.setCacheEnabled(Boolean.parseBoolean(cacheEnabled));
+        if (!StringUtils.isBlank(cacheMaxRows)) def.setCacheMaxRows(Integer.parseInt(cacheMaxRows));
+        if (!StringUtils.isBlank(refreshTime)) def.setRefreshTime(refreshTime);
+        if (!StringUtils.isBlank(refreshAlways)) def.setRefreshAlways(Boolean.parseBoolean(refreshAlways));
 
         if (json.has(COLUMNS)) {
             JSONArray array = json.getJSONArray(COLUMNS);
@@ -205,18 +214,12 @@ public class DataSetDefJSONMarshaller {
         String dataSource = json.has(DATA_SOURCE) ? json.getString(DATA_SOURCE) : null;
         String dbTable = json.has(DB_TABLE) ? json.getString(DB_TABLE) : null;
         String dbSchema = json.has(DB_SCHEMA) ? json.getString(DB_SCHEMA) : null;
-        String cacheEnabled = json.has(CACHE_ENABLED) ? json.getString(CACHE_ENABLED) : null;
         String allColumns = json.has(ALL_COLUMNS) ? json.getString(ALL_COLUMNS) : null;
-        String cacheMaxRows = json.has(CACHE_MAXROWS) ? json.getString(CACHE_MAXROWS) : null;
-        String cacheSynced = json.has(CACHE_SYNCED) ? json.getString(CACHE_SYNCED) : null;
 
         if (!StringUtils.isBlank(dataSource)) def.setDataSource(dataSource);
         if (!StringUtils.isBlank(dbSchema)) def.setDbSchema(dbSchema);
         if (!StringUtils.isBlank(dbTable)) def.setDbTable(dbTable);
         if (!StringUtils.isBlank(allColumns)) def.setAllColumnsEnabled(Boolean.parseBoolean(allColumns));
-        if (!StringUtils.isBlank(cacheEnabled)) def.setCacheEnabled(Boolean.parseBoolean(cacheEnabled));
-        if (!StringUtils.isBlank(cacheMaxRows)) def.setCacheMaxRows(Integer.parseInt(cacheMaxRows));
-        if (!StringUtils.isBlank(cacheSynced)) def.setCacheSynced(Boolean.parseBoolean(cacheSynced));
 
         return def;
     }

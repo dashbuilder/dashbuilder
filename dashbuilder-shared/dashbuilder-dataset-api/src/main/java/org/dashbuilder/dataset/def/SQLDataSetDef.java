@@ -25,9 +25,6 @@ public class SQLDataSetDef extends DataSetDef {
     protected String dbSchema;
     protected String dbTable;
     protected boolean allColumnsEnabled = true;
-    protected boolean cacheEnabled = false;
-    protected int cacheMaxRows = 1000;
-    protected boolean cacheSynced = false;
 
     public SQLDataSetDef() {
         super.setProvider(DataSetProviderType.SQL);
@@ -81,14 +78,6 @@ public class SQLDataSetDef extends DataSetDef {
         this.cacheMaxRows = cacheMaxRows;
     }
 
-    public boolean isCacheSynced() {
-        return cacheSynced;
-    }
-
-    public void setCacheSynced(boolean cacheSynced) {
-        this.cacheSynced = cacheSynced;
-    }
-
     public String toString() {
         StringBuilder out = new StringBuilder();
         out.append("UUID=").append(UUID).append("\n");
@@ -96,13 +85,16 @@ public class SQLDataSetDef extends DataSetDef {
         out.append("Public=").append(isPublic).append("\n");
         out.append("Push enabled=").append(pushEnabled).append("\n");
         out.append("Push max size=").append(pushMaxSize).append(" Kb\n");
+        if (refreshTime != null) {
+            out.append("Refresh time=").append(refreshTime).append("\n");
+            out.append("Refresh always=").append(refreshAlways).append("\n");
+        }
         out.append("Data source=").append(dataSource).append("\n");
         if (dbSchema != null) out.append("DB Schema=").append(dbSchema).append("\n");
         out.append("DB Table=").append(dbTable).append("\n");
         out.append("Get all columns=").append(allColumnsEnabled).append("\n");
         out.append("Cache enabled=").append(cacheEnabled).append("\n");
         out.append("Cache max rows=").append(cacheMaxRows).append(" Kb\n");
-        out.append("Cache synced=").append(cacheSynced).append("\n");
         return out.toString();
     }
 }

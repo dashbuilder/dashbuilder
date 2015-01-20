@@ -19,14 +19,14 @@ import org.dashbuilder.dataset.DataSetMetadata;
 import org.jboss.errai.common.client.api.annotations.Portable;
 
 @Portable
-public class DataSetBackendRemovedEvent {
+public class StaticDataSetRegisteredEvent {
 
     DataSetMetadata dataSetMetadata;
 
-    public DataSetBackendRemovedEvent() {
+    public StaticDataSetRegisteredEvent() {
     }
 
-    public DataSetBackendRemovedEvent(DataSetMetadata dataSetMetadata) {
+    public StaticDataSetRegisteredEvent(DataSetMetadata dataSetMetadata) {
         this.dataSetMetadata = dataSetMetadata;
     }
 

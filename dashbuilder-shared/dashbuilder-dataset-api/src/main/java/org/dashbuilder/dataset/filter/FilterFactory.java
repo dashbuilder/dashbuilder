@@ -117,7 +117,7 @@ public class FilterFactory {
     }
 
     public static ColumnFilter isUntilToday(String columnId, String timeFrame) {
-        long millis = DateIntervalType.toMillis(timeFrame);
+        long millis = DateIntervalType.getDurationInMillis(timeFrame);
         if (millis < 0) throw new IllegalArgumentException("Invalid time frame: " + timeFrame);
         return new CoreFunctionFilter(columnId, CoreFunctionType.IS_UNTIL_TODAY, timeFrame);
     }

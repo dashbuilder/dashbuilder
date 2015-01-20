@@ -121,7 +121,10 @@ public enum DateIntervalType {
         return DURATION_IN_MILLIS.get(type);
     }
 
-    public static long toMillis(String timeFrame) {
+    public static long getDurationInMillis(String timeFrame) {
+        if (timeFrame == null || timeFrame.length() == 0) {
+            return -1;
+        }
         String number = "";
         int i = 0;
         for (; i<timeFrame.length(); i++) {

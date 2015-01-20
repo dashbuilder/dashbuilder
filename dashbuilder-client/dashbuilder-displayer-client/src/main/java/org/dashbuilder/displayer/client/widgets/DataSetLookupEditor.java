@@ -30,6 +30,7 @@ import org.dashbuilder.dataset.DataSetLookupConstraints;
 import org.dashbuilder.dataset.DataSetMetadata;
 import org.dashbuilder.dataset.client.DataSetClientServices;
 import org.dashbuilder.dataset.def.DataSetDef;
+import org.dashbuilder.dataset.events.DataSetDefModifiedEvent;
 import org.dashbuilder.dataset.events.DataSetDefRegisteredEvent;
 import org.dashbuilder.dataset.events.DataSetDefRemovedEvent;
 import org.dashbuilder.dataset.group.AggregateFunction;
@@ -288,6 +289,13 @@ public class DataSetLookupEditor implements IsWidget {
         checkNotNull("event", event);
 
         view.addDataSetDef(event.getDataSetDef());
+    }
+
+    private void onDataSetDefModifiedEvent(@Observes DataSetDefModifiedEvent event) {
+        checkNotNull("event", event);
+
+        view.removeDataSetDef(event.getOldDataSetDef());
+        view.addDataSetDef(event.getNewDataSetDef());
     }
 
     private void onDataSetDefRemovedEvent(@Observes DataSetDefRemovedEvent event) {

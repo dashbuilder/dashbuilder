@@ -32,6 +32,7 @@ import org.dashbuilder.dataset.DataSetMetadata;
 import org.dashbuilder.dataset.def.DataSetDef;
 import org.dashbuilder.dataset.events.DataSetModifiedEvent;
 import org.dashbuilder.dataset.events.DataSetPushOkEvent;
+import org.dashbuilder.dataset.group.DateIntervalType;
 import org.dashbuilder.shared.sales.SalesConstants;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
 import org.uberfire.client.annotations.WorkbenchPartView;
@@ -97,21 +98,29 @@ public class GalleryWidgetPresenter {
         throw new IllegalArgumentException("Unknown gallery widget: " + widgetId);
     }
 
-    // Catch some data set related events
+    // Catch some data set related events and display workbench notifications only and only if:
+    // - The data set refresh is enabled and
+    // - It's refresh rate is greater than 60 seconds (avoid tons of notifications in "real-time" scenarios)
 
     private void onDataSetModifiedEvent(@Observes DataSetModifiedEvent event) {
         checkNotNull("event", event);
 
-        String targetUUID = event.getDataSetUUID();
+        DataSetDef def = event.getDataSetDef();
+        String targetUUID = event.getDataSetDef().getUUID();
+        long refreshMillis = DateIntervalType.getDurationInMillis(def.getRefreshTime());
         if (SalesConstants.SALES_OPPS.equals(targetUUID)) {
-            workbenchNotification.fire(new NotificationEvent("The sales data set has been modified. Refreshing the view ...", INFO));
+            if (refreshMillis > 60000) {
+                workbenchNotification.fire(new NotificationEvent("The sales data set has been modified. Refreshing the view ...", INFO));
+            }
             if (salesGoalsWidget != null) salesGoalsWidget.redrawAll();
             if (salesByCountryWidget != null) salesByCountryWidget.redrawAll();
             if (salesByDateWidget != null) salesByDateWidget.redrawAll();
             if (salesReportsWidget != null) salesReportsWidget.redrawAll();
         }
         if (ExpenseConstants.EXPENSES.equals(targetUUID)) {
-            workbenchNotification.fire(new NotificationEvent("The expense reports data set has been modified. Refreshing the view...", INFO));
+            if (refreshMillis > 60000) {
+                workbenchNotification.fire(new NotificationEvent("The expense reports data set has been modified. Refreshing the view...", INFO));
+            }
             if (expensesDashboardWidget != null) expensesDashboardWidget.redrawAll();
         }
     }
@@ -122,6 +131,9 @@ public class GalleryWidgetPresenter {
 
         DataSetMetadata metadata = event.getDataSetMetadata();
         DataSetDef def = metadata.getDefinition();
-        workbenchNotification.fire(new NotificationEvent("Data set loaded from server [" + def.getProvider() + ", " + event.getDataSetMetadata().getEstimatedSize() + " Kb]", INFO));
+        long refreshMillis = DateIntervalType.getDurationInMillis(def.getRefreshTime());
+        if (refreshMillis > 60000) {
+            workbenchNotification.fire(new NotificationEvent("Data set loaded from server [" + def.getProvider() + ", " + event.getDataSetMetadata().getEstimatedSize() + " Kb]", INFO));
+        }
     }
 }

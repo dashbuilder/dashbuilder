@@ -15,8 +15,6 @@
  */
 package org.dashbuilder.dataset.impl;
 
-import org.dashbuilder.dataset.DataSetBuilder;
-import org.dashbuilder.dataset.DataSetFactory;
 import org.dashbuilder.dataset.def.DataSetDef;
 import org.dashbuilder.dataset.def.DataSetDefBuilder;
 import org.dashbuilder.dataset.ColumnType;
@@ -40,6 +38,28 @@ public abstract class AbstractDataSetDefBuilder<T> implements DataSetDefBuilder<
     }
 
     public T pushOff() {
+        return (T) this;
+    }
+
+    public T cacheOn(int maxRowsInCache) {
+        def.setCacheEnabled(true);
+        def.setCacheMaxRows(maxRowsInCache);
+        return (T) this;
+    }
+
+    public T cacheOff() {
+        def.setCacheEnabled(false);
+        return (T) this;
+    }
+
+    public T refreshOn(String refreshTime, boolean onlyWhenOutdated) {
+        def.setRefreshTime(refreshTime);
+        def.setRefreshAlways(!onlyWhenOutdated);
+        return (T) this;
+    }
+
+    public T refreshOff() {
+        def.setRefreshTime(null);
         return (T) this;
     }
 

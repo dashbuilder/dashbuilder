@@ -95,17 +95,4 @@ public class CSVDataSetProvider implements DataSetProvider {
     protected boolean hasCSVFileChanged(DataSet dataSet, File csvFile) {
         return csvFile != null && csvFile.lastModified() > dataSet.getCreationDate().getTime();
     }
-
-    // Listen to changes on the data set definition registry
-
-    private void onDataSetDefModifiedEvent(@Observes DataSetDefModifiedEvent event) {
-        checkNotNull("event", event);
-        checkNotNull("event", event.getOldDataSetDef());
-
-        DataSetDef oldDef = event.getOldDataSetDef();
-        if (DataSetProviderType.CSV.equals(oldDef.getProvider())) {
-            String uuid = event.getOldDataSetDef().getUUID();
-            staticDataSetProvider.removeDataSet(uuid);
-        }
-    }
 }

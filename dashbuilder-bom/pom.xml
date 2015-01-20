@@ -97,6 +97,26 @@
 
       <dependency>
         <groupId>org.dashbuilder</groupId>
+        <artifactId>dashbuilder-scheduler</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.dashbuilder</groupId>
+        <artifactId>dashbuilder-scheduler</artifactId>
+        <version>${project.version}</version>
+        <classifier>sources</classifier>
+      </dependency>
+
+      <dependency>
+        <groupId>org.dashbuilder</groupId>
+        <artifactId>dashbuilder-scheduler</artifactId>
+        <version>${project.version}</version>
+        <type>test-jar</type>
+      </dependency>
+
+      <dependency>
+        <groupId>org.dashbuilder</groupId>
         <artifactId>dashbuilder-dataset-core</artifactId>
         <version>${project.version}</version>
       </dependency>

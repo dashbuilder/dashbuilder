@@ -378,9 +378,6 @@ public class ElasticSearchDataSetProvider implements DataSetProvider {
             ElasticSearchDataSetDef elDef = (ElasticSearchDataSetDef) def;
             if (!elDef.isCacheEnabled()) return false;
 
-            // A no-synced cache will always contains the same rows since it was created.
-            if (!elDef.isCacheSynced()) return false;
-
             // ... for non cached data sets either.
             DataSet dataSet = staticDataSetProvider.lookupDataSet(def, null);
             if (dataSet == null) return false;

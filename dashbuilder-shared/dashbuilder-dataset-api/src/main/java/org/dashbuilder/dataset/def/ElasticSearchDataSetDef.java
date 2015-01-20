@@ -78,9 +78,6 @@ public class ElasticSearchDataSetDef extends DataSetDef {
     protected String query;
     protected String relevance;
     protected ColumnSort columnSort;
-    protected boolean cacheEnabled = false;
-    protected int cacheMaxRows = 1000;
-    protected boolean cacheSynced = false;
 
     public ElasticSearchDataSetDef() {
         super.setProvider(DataSetProviderType.ELASTICSEARCH);
@@ -164,14 +161,6 @@ public class ElasticSearchDataSetDef extends DataSetDef {
         this.cacheMaxRows = cacheMaxRows;
     }
 
-    public boolean isCacheSynced() {
-        return cacheSynced;
-    }
-
-    public void setCacheSynced(boolean cacheSynced) {
-        this.cacheSynced = cacheSynced;
-    }
-
     public ColumnSort getColumnSort() {
         return columnSort;
     }
@@ -193,7 +182,10 @@ public class ElasticSearchDataSetDef extends DataSetDef {
         out.append("Query=").append(query).append("\n");
         out.append("Cache enabled=").append(cacheEnabled).append("\n");
         out.append("Cache max rows=").append(cacheMaxRows).append(" Kb\n");
-        out.append("Cache synced=").append(cacheSynced).append("\n");
+        if (refreshTime != null) {
+            out.append("Refresh time=").append(refreshTime).append("\n");
+            out.append("Refresh always=").append(refreshAlways).append("\n");
+        }
         return out.toString();
     }
 }

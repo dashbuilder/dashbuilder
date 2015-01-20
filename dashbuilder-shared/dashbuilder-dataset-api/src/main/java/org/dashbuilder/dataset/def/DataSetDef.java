@@ -22,6 +22,7 @@ import org.dashbuilder.dataprovider.DataSetProviderType;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetFactory;
 import org.dashbuilder.dataset.filter.DataSetFilter;
+import org.dashbuilder.dataset.group.DateIntervalType;
 import org.jboss.errai.common.client.api.annotations.Portable;
 
 /**
@@ -38,6 +39,11 @@ public class DataSetDef {
     protected boolean isPublic = true;
     protected boolean pushEnabled = false;
     protected int pushMaxSize = 1024;
+    protected boolean cacheEnabled = false;
+    protected int cacheMaxRows = 1000;
+    protected String refreshTime = null;
+    protected boolean refreshAlways = false;
+
     protected Map<String,String> patternMap = new HashMap<String,String>();
 
     public String getUUID() {
@@ -102,6 +108,41 @@ public class DataSetDef {
 
     public void setPushMaxSize(int pushMaxSize) {
         this.pushMaxSize = pushMaxSize;
+    }
+
+    public boolean isCacheEnabled() {
+        return cacheEnabled;
+    }
+
+    public void setCacheEnabled(boolean cacheEnabled) {
+        this.cacheEnabled = cacheEnabled;
+    }
+
+    public int getCacheMaxRows() {
+        return cacheMaxRows;
+    }
+
+    public void setCacheMaxRows(int cacheMaxRows) {
+        this.cacheMaxRows = cacheMaxRows;
+    }
+
+    public String getRefreshTime() {
+        return refreshTime;
+    }
+
+    public void setRefreshTime(String refreshTime) {
+        if (DateIntervalType.getDurationInMillis(refreshTime) == -1) {
+            throw new IllegalArgumentException("Invalid time frame: " + refreshTime);
+        }
+        this.refreshTime = refreshTime;
+    }
+
+    public boolean isRefreshAlways() {
+        return refreshAlways;
+    }
+
+    public void setRefreshAlways(boolean refreshAlways) {
+        this.refreshAlways = refreshAlways;
     }
 
     public String getPattern(String columnId) {

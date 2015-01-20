@@ -1,9 +1,0 @@
-{
-    "uuid": "expense_reports_synced",
-    "provider": "SQL",
-    "dataSource": "jdbc:h2:mem:test;DATABASE_TO_UPPER=FALSE",
-    "dbTable": "expense_reports",
-    "cacheEnabled": true,
-    "cacheMaxRows": 1000,
-    "cacheSynced": true
-}

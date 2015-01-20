@@ -31,8 +31,7 @@ import org.dashbuilder.dataset.DataSetLookup;
 import org.dashbuilder.dataset.DataSetMetadata;
 import org.dashbuilder.dataset.def.DataSetDef;
 import org.dashbuilder.dataset.engine.group.IntervalBuilderLocator;
-import org.dashbuilder.dataset.events.DataSetBackendRegisteredEvent;
-import org.dashbuilder.dataset.events.DataSetDefModifiedEvent;
+import org.dashbuilder.dataset.events.DataSetStaleEvent;
 import org.dashbuilder.dataset.events.DataSetPushOkEvent;
 import org.dashbuilder.dataset.events.DataSetPushingEvent;
 import org.dashbuilder.dataset.events.DataSetModifiedEvent;
@@ -290,9 +289,9 @@ public class DataSetClientServices {
 
     // Catch backend events
 
-    private void onDataSetDefModifiedEvent(@Observes DataSetDefModifiedEvent event) {
+    private void onDataSetStaleEvent(@Observes DataSetStaleEvent event) {
         checkNotNull("event", event);
-        String uuid = event.getNewDataSetDef().getUUID();
+        String uuid = event.getDataSetDef().getUUID();
 
         // Remove any stale data existing on the client.
         // This will force next lookup requests to push a refreshed data set.
@@ -301,21 +300,6 @@ public class DataSetClientServices {
 
         // If a data set has been updated on the sever then fire an event.
         // In this case the notification is always send, no matter whether the data set is pushed to the client or not.
-        dataSetModifiedEvent.fire(new DataSetModifiedEvent(uuid));
-    }
-
-    private void onDataSetRegistered(@Observes DataSetBackendRegisteredEvent event) {
-        checkNotNull("event", event);
-        String uuid = event.getDataSetMetadata().getUUID();
-
-        // Remove any stale data existing on the client.
-        // This will force next lookup requests to push a refreshed data set.
-        DataSet clientDataSet = clientDataSetManager.removeDataSet(uuid);
-        remoteMetadataMap.remove(uuid);
-
-        // If the dataset already existed on client then an update event is fired.
-        if (clientDataSet != null) {
-            dataSetModifiedEvent.fire(new DataSetModifiedEvent(uuid));
-        }
+        dataSetModifiedEvent.fire(new DataSetModifiedEvent(event.getDataSetDef()));
     }
 }
