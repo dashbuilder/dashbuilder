@@ -356,27 +356,17 @@ public class ElasticSearchJestClient implements ElasticSearchClient<ElasticSearc
         public JsonObject serialize(DataSetGroup groupOp, Type typeOfSrc, JsonSerializationContext context) {
             this.groupOp = groupOp;
 
-            JsonObject result = new JsonObject();
+            JsonObject aggregationsObject = new JsonObject();
 
             // Group functions.
-            List<JsonObject> coreFunctions = null;
             if (groupOp.getGroupFunctions() != null && !groupOp.getGroupFunctions().isEmpty()) {
-                coreFunctions = new LinkedList<JsonObject>();
                 for (GroupFunction groupFunction : groupOp.getGroupFunctions()) {
-                    JsonObject coreFunctionObject = serializeCoreFunction(groupFunction);
-                    if (coreFunctionObject != null) coreFunctions.add(coreFunctionObject);
+                    serializeCoreFunction(aggregationsObject, groupFunction);
                 }
             }
 
-            JsonArray aggregationsArray = new JsonArray();
-
-            if (coreFunctions != null && !coreFunctions.isEmpty()) {
-                for (JsonObject coreFunction : coreFunctions) {
-                    aggregationsArray.add(coreFunction);
-                }
-            }
-
-            result.add("aggregations", aggregationsArray);
+            JsonObject result = new JsonObject();
+            result.add("aggregations", aggregationsObject);
             return result;
         }
 
@@ -390,11 +380,8 @@ public class ElasticSearchJestClient implements ElasticSearchClient<ElasticSearc
          * </code>
          * @return
          */
-        protected JsonObject serializeCoreFunction(GroupFunction groupFunction) {
-            JsonObject result = null;
-            if (groupFunction != null) {
-                result = new JsonObject();
-
+        protected void serializeCoreFunction(JsonObject result, GroupFunction groupFunction) {
+            if (result != null && groupFunction != null) {
                 String sourceId = groupFunction.getSourceId();
                 if (sourceId != null && !existColumnInMetadataDef(sourceId)) throw new RuntimeException("Aggregation by column [" + sourceId + "] failed. No column with the given id.");
                 if (sourceId == null) sourceId = metadata.getColumnId(0);
@@ -432,7 +419,6 @@ public class ElasticSearchJestClient implements ElasticSearchClient<ElasticSearc
                 result.add(columnId, subObject);
 
             }
-            return result;
         }
 
         protected boolean existColumnInMetadataDef(String name) {

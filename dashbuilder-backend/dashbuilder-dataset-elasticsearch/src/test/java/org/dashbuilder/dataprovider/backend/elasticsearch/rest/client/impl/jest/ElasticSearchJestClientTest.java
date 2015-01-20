@@ -235,7 +235,7 @@ public class ElasticSearchJestClientTest {
         GroupFunction distinctFunction = new GroupFunction("amount", "amount-distinct", AggregateFunctionType.DISTINCT);
         aggregation.addGroupFunction(countFunction, minFunction, maxFunction, avgFunction, sumFunction, distinctFunction);
         String aggregationResult = gson.toJson(aggregation,  DataSetGroup.class);
-        Assert.assertEquals(aggregationResult, "{\"aggregations\":[{\"department-count\":{\"value_count\":{\"field\":\"department\"}}},{\"amount-min\":{\"min\":{\"field\":\"amount\"}}},{\"amount-max\":{\"max\":{\"field\":\"amount\"}}},{\"amount-avg\":{\"avg\":{\"field\":\"amount\"}}},{\"amount-sum\":{\"sum\":{\"field\":\"amount\"}}},{\"amount-distinct\":{\"cardinality\":{\"field\":\"amount\"}}}]}");
+        Assert.assertEquals(aggregationResult, "{\"aggregations\":{\"department-count\":{\"value_count\":{\"field\":\"department\"}},\"amount-min\":{\"min\":{\"field\":\"amount\"}},\"amount-max\":{\"max\":{\"field\":\"amount\"}},\"amount-avg\":{\"avg\":{\"field\":\"amount\"}},\"amount-sum\":{\"sum\":{\"field\":\"amount\"}},\"amount-distinct\":{\"cardinality\":{\"field\":\"amount\"}}}}");
         
         // *****************
         // GroupBy functions
