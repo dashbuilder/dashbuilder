@@ -25,7 +25,6 @@ import io.searchbox.core.CountResult;
 import io.searchbox.core.Search;
 import io.searchbox.core.search.sort.Sort;
 import io.searchbox.indices.mapping.GetMapping;
-import org.apache.commons.lang.ArrayUtils;
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.ElasticSearchClient;
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.exception.ElasticSearchClientGenericException;
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.impl.jest.gson.FieldMapping;
@@ -68,9 +67,7 @@ public class ElasticSearchJestClient implements ElasticSearchClient<ElasticSearc
     protected static final String EL_DATE_FORMAT_HOUR = "hh";
     protected static final String EL_DATE_FORMAT_MINUTE= "mm";
     protected static final String EL_DATE_FORMAT_SECOND = "ss";
-    protected static final int RESPONSE_CODE_NOT_FOUND = 404;
     protected static final int RESPONSE_CODE_OK = 200;
-
     
     protected String serverURL;
     protected String clusterName;
@@ -135,7 +132,7 @@ public class ElasticSearchJestClient implements ElasticSearchClient<ElasticSearc
                 IndexMappingResponse indexMappings = getMappings(_index, null);
                 result[x++]  = indexMappings;
             }
-            return new MappingsResponse(200, result);
+            return new MappingsResponse(RESPONSE_CODE_OK, result);
         } catch (Exception e) {
             throw  new ElasticSearchClientGenericException("Cannot obtain mappings.", e);
         }
@@ -272,7 +269,7 @@ public class ElasticSearchJestClient implements ElasticSearchClient<ElasticSearc
     }
 
 
-    protected class SearchQuery {
+    protected static class SearchQuery {
         String[] fields;
         JsonObject query;
         List<JsonObject> aggregations;
@@ -288,7 +285,7 @@ public class ElasticSearchJestClient implements ElasticSearchClient<ElasticSearc
         }
     }
 
-    protected class SearchQuerySerializer implements JsonSerializer<SearchQuery> {
+    protected static class SearchQuerySerializer implements JsonSerializer<SearchQuery> {
 
         protected static final String FIELDS = "fields";
         protected static final String FROM = "from";
@@ -534,7 +531,7 @@ public class ElasticSearchJestClient implements ElasticSearchClient<ElasticSearc
                         intervalFormat = "1000y";
                         break;
                     default:
-                        throw new RuntimeException("No interval mapping for date interval type with index [" + dateIntervalType.getIndex() + "].");
+                        throw new RuntimeException("No interval mapping for date interval type [" + dateIntervalType.name() + "].");
                 }
 
                 JsonObject subObject = new JsonObject();
@@ -733,7 +730,7 @@ public class ElasticSearchJestClient implements ElasticSearchClient<ElasticSearc
                 
                 if (responseObject != null) {
                     long tookInMillis = responseObject.get("took").getAsLong();
-                    int responseStatus = 200;
+                    int responseStatus = RESPONSE_CODE_OK;
 
                     JsonObject shardsObject = responseObject.getAsJsonObject("_shards");
                     int totalShards = shardsObject.get("total").getAsInt();

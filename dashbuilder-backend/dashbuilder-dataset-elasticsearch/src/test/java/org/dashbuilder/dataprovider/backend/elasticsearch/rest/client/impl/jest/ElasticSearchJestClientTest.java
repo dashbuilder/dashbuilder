@@ -390,4 +390,16 @@ public class ElasticSearchJestClientTest {
 
     }
 
+
+    // @Test
+    public void testSearchQuerySerializer() {
+
+        GsonBuilder builder = new GsonBuilder();
+        builder.registerTypeAdapter(DataSetGroup.class, new ElasticSearchJestClient.SearchQuerySerializer());
+        Gson gson = builder.create();
+        
+        // TODO ElasticSearchJestClient.SearchQuery searchQuery = new ElasticSearchJestClient.SearchQuery();
+
     }
+    
+}
