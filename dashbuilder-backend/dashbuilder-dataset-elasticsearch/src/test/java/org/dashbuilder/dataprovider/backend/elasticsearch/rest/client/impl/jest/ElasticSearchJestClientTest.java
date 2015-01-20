@@ -251,26 +251,31 @@ public class ElasticSearchJestClientTest {
         GroupFunction groupByCountFunction = new GroupFunction("amount", "amount-count", AggregateFunctionType.COUNT);
         GroupFunction groupByMinFunction = new GroupFunction("amount", "amount-min", AggregateFunctionType.MIN);
         groupByAggregation.addGroupFunction(groupByCountFunction, groupByMinFunction);
-        
-        // TODO: serialization & assertions.
-        
+        aggregationResult = gson.toJson(groupByAggregation,  DataSetGroup.class);
+        Assert.assertEquals(aggregationResult, "{\"aggregations\":{\"departmentGrouped\":{\"terms\":{\"field\":\"department\",\"order\":{\"_term\":\"asc\"},\"min_doc_count\":0},\"aggregations\":{\"amount-count\":{\"value_count\":{\"field\":\"amount\"}},\"amount-min\":{\"min\":{\"field\":\"amount\"}}}}}}");
+
+        /* TODO
+
+        DataSetGroup histogramAggreagation = new DataSetGroup();
+        histogramAggreagation.setDataSetUUID("testUUID");
+        histogramAggreagation.setColumnGroup(new ColumnGroup("amount", "amount", GroupStrategy.DYNAMIC));
+        histogramAggreagation.setJoin(false);
+        GroupFunction groupByCountFunction = new GroupFunction("amount", "amount-count", AggregateFunctionType.COUNT);
+        GroupFunction groupByMinFunction = new GroupFunction("amount", "amount-min", AggregateFunctionType.MIN);
+        histogramAggreagation.addGroupFunction(groupByCountFunction, groupByMinFunction);
+        String aggregationResult = gson.toJson(dateHistogramAggreagation,  DataSetGroup.class);
+        System.out.println(aggregationResult);
+
         // Date Histogram aggregation.
         DataSetGroup dateHistogramAggreagation = new DataSetGroup();
         dateHistogramAggreagation.setDataSetUUID("testUUID");
-        groupByAggregation.setColumnGroup(new ColumnGroup("date", "dateGroupped", GroupStrategy.DYNAMIC, -1, DateIntervalType.YEAR.name()));
+        dateHistogramAggreagation.setColumnGroup(new ColumnGroup("date", "dateGroupped", GroupStrategy.DYNAMIC, -1, DateIntervalType.YEAR.name()));
         dateHistogramAggreagation.setJoin(false);
+        GroupFunction groupByCountFunction = new GroupFunction("amount", "amount-count", AggregateFunctionType.COUNT);
+        GroupFunction groupByMinFunction = new GroupFunction("amount", "amount-min", AggregateFunctionType.MIN);
         dateHistogramAggreagation.addGroupFunction(groupByCountFunction, groupByMinFunction);
-
-        // TODO: serialization & assertions.
-        
-        
-        
-        // TODO: Histogram aggregation.
-        DataSetGroup histogramAggreagation = new DataSetGroup();
-        histogramAggreagation.setDataSetUUID("testUUID");
-        histogramAggreagation.setColumnGroup(null);
-        histogramAggreagation.setJoin(false);
-
+        String aggregationResult = gson.toJson(dateHistogramAggreagation,  DataSetGroup.class);
+        System.out.println(aggregationResult); */
         
     }
 

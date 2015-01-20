@@ -23,6 +23,7 @@ import io.searchbox.client.config.HttpClientConfig;
 import io.searchbox.core.Count;
 import io.searchbox.core.CountResult;
 import io.searchbox.core.Search;
+import io.searchbox.core.SearchResult;
 import io.searchbox.core.search.sort.Sort;
 import io.searchbox.indices.mapping.GetMapping;
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.ElasticSearchClient;
@@ -191,6 +192,13 @@ public class ElasticSearchJestClient implements ElasticSearchClient<ElasticSearc
         }
     }
 
+    /**
+     * TODO: Improve using search types - http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search-request-search-type.html        
+     * @param definition The dataset definition.
+     * @param request The search reuest.
+     * @return
+     * @throws ElasticSearchClientGenericException
+     */
     @Override
     public SearchResponse search(DataSetDef definition, SearchRequest request) throws ElasticSearchClientGenericException {
         if (client == null) throw new IllegalArgumentException("elasticsearchRESTEasyClient instance is not build.");
@@ -208,23 +216,32 @@ public class ElasticSearchJestClient implements ElasticSearchClient<ElasticSearc
         
         // Crate the Gson builder and instance.        
         GsonBuilder builder = new GsonBuilder();
-        builder.registerTypeAdapter(DataSetGroup.class, new AggregationSerializer().setDataSetMetadata(metadata));
+        builder.registerTypeAdapter(DataSetGroup.class, buildAggregationsSerializer().setDataSetMetadata(metadata));
         builder.registerTypeAdapter(Query.class, new QuerySerializer().setDataSetDef((ElasticSearchDataSetDef) definition));
         builder.registerTypeAdapter(SearchResponse.class, new SearchResponseDeserializer());
         builder.registerTypeAdapter(SearchHitResponse.class, new HitDeserializer());
         Gson gson = builder.create();
         
-        // Set request lookup constraints.
-        // TODO: Improve using search types - http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search-request-search-type.html        
-        String gsonQuery = gson.toJson(query);
-        Search.Builder searchRequestBuilder = new Search.Builder(gsonQuery).addIndex(index[0]);
+        // Set request lookup constraints into the query JSON request.
+        JsonObject gsonQuery = (JsonObject) gson.toJsonTree(query);
+
+        // Add the group functions translated as query aggregations.
+        List<JsonObject> aggregationObjects = null;
+        if (aggregations != null && !aggregations.isEmpty()) {
+            aggregationObjects = new LinkedList<JsonObject>();
+            for (DataSetGroup aggregation : aggregations) {
+                aggregationObjects.add((JsonObject) gson.toJsonTree(aggregation, DataSetGroup.class));
+                
+            }
+        }
+
+        // Build the search request.
+        SearchQuery searchQuery = new SearchQuery(fields, gsonQuery, aggregationObjects, start, size);
+        String serializedSearchQuery = gson.toJson(searchQuery, SearchQuery.class);
+        Search.Builder searchRequestBuilder = new Search.Builder(serializedSearchQuery).addIndex(index[0]);
         if (type != null && type.length > 0) searchRequestBuilder.addType(type[0]);
 
-        // The columns id and type that will compose the dataset.
-        List<String> columnIds = new ArrayList<String>();
-        List<ColumnType> columnTypes = new ArrayList<ColumnType>();
-
-        // Sorting.
+        // Add sorting.
         if (sorting != null && !sorting.isEmpty()) {
             for (DataSetSort sortOp : sorting) {
                 List<ColumnSort> columnSorts = sortOp.getColumnSortList();
@@ -237,47 +254,6 @@ public class ElasticSearchJestClient implements ElasticSearchClient<ElasticSearc
             }
         }
 
-
-        /* 
-
-
-
-        boolean existAggregations = false;
-        
-        // Add the group functions translated as query aggregations.
-        if (aggregations != null && !aggregations.isEmpty()) {
-            existAggregations = true;
-            // TODO: builder.setNoFields();
-            for (DataSetGroup aggregation : aggregations) {
-                JsonObject aggregationObject = addAggregation(aggregation, metadata, columnIds, columnTypes);
-                asdf
-            }
-        }
-
-        // If there are no aggregations. Use original dataset columns.
-        if (!existAggregations && fields != null) {
-            //  TODO: http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search-request-fields.html
-            builder = builder.addFields(fields);
-            for (String field : fields) {
-                if (!existColumnInMetadataDef(field, metadata)) throw new RuntimeException("Aggregation by column [" + field + "] failed. No column with the given id.");
-                ColumnType colType = metadata.getColumnType(field);
-                columnIds.add(field);
-                columnTypes.add(colType);
-            }
-        }
-        
-
-        // if aggregations exist, we care about the aggregation results, not document results.
-        int sizeToPull = existAggregations ? 0 : size;
-        int startToPull = existAggregations ? 0 : start;
-
-        // Trimming.
-        // TODO: http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search-request-from-size.html
-        builder = builder.setFrom(startToPull).setSize(sizeToPull);
-
-        */
-        
-        
         // Perform the query to the EL server.
         Search searchRequest = searchRequestBuilder.build();
         JestResult result = null;
@@ -286,25 +262,66 @@ public class ElasticSearchJestClient implements ElasticSearchClient<ElasticSearc
         } catch (Exception e) {
             throw new ElasticSearchClientGenericException("An error ocurred during search operation.", e);
         }
-        return gson.fromJson(result.getJsonObject(), SearchResponse.class);
+        SearchResponse searchResult = gson.fromJson(result.getJsonObject(), SearchResponse.class);
+        return searchResult;
     }
-    
+
     public AggregationSerializer buildAggregationsSerializer() {
         return new AggregationSerializer();
     }
+
+
+    protected class SearchQuery {
+        String[] fields;
+        JsonObject query;
+        List<JsonObject> aggregations;
+        int start;
+        int end;
+
+        public SearchQuery(String[] fields, JsonObject query, List<JsonObject> aggregations, int start, int end) {
+            this.fields = fields;
+            this.query = query;
+            this.aggregations = aggregations;
+            this.start = start;
+            this.end = end;
+        }
+    }
+
+    protected class SearchQyerySerializer implements JsonSerializer<SearchQuery> {
+        private SearchQuery searchQuery;
+
+        public JsonObject serialize(SearchQuery searchQuery, Type typeOfSrc, JsonSerializationContext context) {
+            this.searchQuery = searchQuery;
+
+
+            // Trimming.
+            // If aggregations exist, we care about the aggregation results, not document results.
+            // int sizeToPull =  aggregationObjects != null ? 0 : size;
+            // int startToPull  = aggregationObjects != null ? 0 : start;
+            
+            return null;
+        }
+    }
     
-    /*
-        TODO: 
-        - TermBuilder
-        - HistogramBuilder
-        - DateHistogramBuilder
-     */
     /**
      * Serializes DataSetGroup operations.
      *
      * TODO: support for join attribute.
      */
     protected class AggregationSerializer implements JsonSerializer<DataSetGroup> {
+        protected static final String AGG_ORDER_ASC = "asc";
+        protected static final String AGG_ORDER_DESC = "desc";
+        protected static final String AGG_FIELD = "field";
+        protected static final String AGG_TERM = "_term";
+        protected static final String AGG_ORDER = "order";
+        protected static final String AGG_MIN_DOC_COUNT = "min_doc_count";
+        protected static final String AGG_TERMS = "terms";
+        protected static final String AGG_AGGREGATIONS = "aggregations";
+        protected static final String AGG_INTERVAL = "interval";
+        protected static final String AGG_KEY = "_key";
+        protected static final String AGG_HISTORGRAM = "histogram";
+        protected static final String AGG_FORMAT = "format";
+        protected static final String AGG_DATE_HISTORGRAM = "date_histogram";
         private DataSetGroup groupOp;
         private DataSetMetadata metadata;
 
@@ -377,7 +394,7 @@ public class ElasticSearchJestClient implements ElasticSearchClient<ElasticSearc
             String sourceId = columnGroup.getSourceId();
             if (resultingColumnId == null) resultingColumnId = sourceId;
             boolean asc = columnGroup.isAscendingOrder();
-            String order = asc ? "asc" : "desc";
+            String order = asc ? AGG_ORDER_ASC : AGG_ORDER_DESC;
             ColumnType columnType = metadata.getColumnType(sourceId);
             GroupStrategy groupStrategy = columnGroup.getStrategy();
             String intervalSize = columnGroup.getIntervalSize();
@@ -387,35 +404,39 @@ public class ElasticSearchJestClient implements ElasticSearchClient<ElasticSearc
             if (ColumnType.LABEL.equals(columnType)) {
                 // Translate into a TERMS aggregation.
                 JsonObject subObject = new JsonObject();
-                subObject.addProperty("field", sourceId);
+                subObject.addProperty(AGG_FIELD, sourceId);
                 JsonObject orderObject = new JsonObject();
-                orderObject.addProperty(sourceId, order);
-                subObject.add("order", orderObject);
-                subObject.addProperty("min_doc_count", 0);
+                orderObject.addProperty(AGG_TERM, order);
+                subObject.add(AGG_ORDER, orderObject);
+                subObject.addProperty(AGG_MIN_DOC_COUNT, 0);
                 JsonObject result = new JsonObject();
-                result.add("terms", subObject);
-                if (aggregationsObject != null) result.add("aggregations", aggregationsObject);
+                result.add(AGG_TERMS, subObject);
+                if (aggregationsObject != null) result.add(AGG_AGGREGATIONS, aggregationsObject);
                 parent.add(resultingColumnId, result);
             } else if (ColumnType.NUMBER.equals(columnType)) {
                 // Translate into a HISTOGRAM aggregation.
                 JsonObject subObject = new JsonObject();
-                subObject.addProperty("field", sourceId);
-                subObject.addProperty("interval", Long.parseLong(intervalSize));
+                subObject.addProperty(AGG_FIELD, sourceId);
+                subObject.addProperty(AGG_INTERVAL, Long.parseLong(intervalSize));
                 JsonObject orderObject = new JsonObject();
-                orderObject.addProperty(sourceId, order);
-                subObject.add("order", orderObject);
-                subObject.addProperty("min_doc_count", 0);
+                orderObject.addProperty(AGG_KEY, order);
+                subObject.add(AGG_ORDER, orderObject);
+                subObject.addProperty(AGG_MIN_DOC_COUNT, 0);
                 JsonObject result = new JsonObject();
-                result.add("histogram", subObject);
-                if (aggregationsObject != null) result.add("aggregations", aggregationsObject);
+                result.add(AGG_HISTORGRAM, subObject);
+                if (aggregationsObject != null) result.add(AGG_AGGREGATIONS, aggregationsObject);
                 parent.add(resultingColumnId, result);
-
             } else if (ColumnType.DATE.equals(columnType)) {
                 // Translate into a DATE HISTOGRAM aggregation.
                 DateIntervalType dateIntervalType = null;
 
                 if (GroupStrategy.DYNAMIC.equals(columnGroup.getStrategy())) {
-                    Date[] limits = calculateDateLimits(columnGroup.getSourceId());
+                    Date[] limits = null;
+                    try {
+                        limits = calculateDateLimits(columnGroup.getSourceId());
+                    } catch (ElasticSearchClientGenericException e) {
+                        throw new RuntimeException("Cannot calculate date limits.", e);
+                    }
                     if (limits != null) {
                         dateIntervalType = intervalBuilder.calculateIntervalSize(limits[0], limits[1], columnGroup);
                     }
@@ -483,22 +504,21 @@ public class ElasticSearchJestClient implements ElasticSearchClient<ElasticSearc
                 }
 
                 JsonObject subObject = new JsonObject();
-                subObject.addProperty("field", sourceId);
-                subObject.addProperty("interval", intervalFormat);
-                if (returnFormat != null) subObject.addProperty("format", returnFormat);
+                subObject.addProperty(AGG_FIELD, sourceId);
+                subObject.addProperty(AGG_INTERVAL, intervalFormat);
+                if (returnFormat != null) subObject.addProperty(AGG_FORMAT, returnFormat);
                 JsonObject orderObject = new JsonObject();
-                orderObject.addProperty(sourceId, order);
-                subObject.add("order", orderObject);
-                subObject.addProperty("min_doc_count", 0);
+                orderObject.addProperty(AGG_KEY, order);
+                subObject.add(AGG_ORDER, orderObject);
+                subObject.addProperty(AGG_MIN_DOC_COUNT, 0);
                 JsonObject result = new JsonObject();
-                result.add("date_histogram", subObject);
-                if (aggregationsObject != null) result.add("aggregations", aggregationsObject);
+                result.add(AGG_DATE_HISTORGRAM, subObject);
+                if (aggregationsObject != null) result.add(AGG_AGGREGATIONS, aggregationsObject);
                 parent.add(resultingColumnId, result);
+            } else {
+                throw new RuntimeException("No translation supported for column group with sourceId [" + sourceId + "] and group strategy [" + groupStrategy.name() + "].");
             }
-
-            throw new RuntimeException("No translation supported for column group with sourceId [" + sourceId + "] and group strategy [" + groupStrategy.name() + "].");
         }
-        
         
 
         /**
@@ -554,42 +574,45 @@ public class ElasticSearchJestClient implements ElasticSearchClient<ElasticSearc
         /**
          * <p>Obtain the minimum date and maximum date values for the given column with identifier <code>dateColumnId</code>.</p>
          *
+         * TODO: Apply filters?
          * @param dateColumnId The column identifier for the date type column.
          * @return The minimum and maximum dates.
          */
-        protected Date[] calculateDateLimits(String dateColumnId) {
-            JestClient client = buildNewClient();
+        protected Date[] calculateDateLimits(String dateColumnId) throws ElasticSearchClientGenericException{
             if (client == null) throw new IllegalArgumentException("ElasticSearchRestClient instance is not build.");
 
-            // TODO
+
+            // Create the aggregation model to bulid the query to EL server.
+            DataSetGroup aggregation = new DataSetGroup();
+            GroupFunction minFunction = new GroupFunction(dateColumnId, dateColumnId + "_min", AggregateFunctionType.MIN);
+            GroupFunction maxFunction = new GroupFunction(dateColumnId, dateColumnId + "_max", AggregateFunctionType.MAX);
+            aggregation.addGroupFunction(minFunction, maxFunction);
             
-            /* 
-            // Build the request object.
-            SearchRequestBuilder builder = new SearchRequestBuilder(client);
+            // Serialize the aggregation.
+            GsonBuilder builder = new GsonBuilder();
+            builder.registerTypeAdapter(DataSetGroup.class, buildAggregationsSerializer().setDataSetMetadata(metadata));
+            Gson gson = builder.create();
+            String serializedAggregation = gson.toJson(aggregation, DataSetGroup.class);
 
-            if (index != null) builder = builder.setIndices(index);
-            if (index != null && type != null) builder = builder.setTypes(type);
-            if (request.getQuery() != null) builder = builder.setQuery(((QueryBuilder)queryBuilder));
-
-            // Search for max & min date aggregations.
-            MinBuilder minBuilder = AggregationBuilders.min("Min").field(dateColumnId);
-            MaxBuilder maxBuilder = AggregationBuilders.max("Max").field(dateColumnId);
-            builder.addAggregation(minBuilder);
-            builder.addAggregation(maxBuilder);
-
-            org.elasticsearch.action.search.SearchResponse response =  client.search(builder.request()).actionGet();
-            Max maxAggregation = response.getAggregations().get("Max");
-            Min minAggregation = response.getAggregations().get("Min");
-            long maxAggregationValue = (long) maxAggregation.getValue();
-            long minAggregationValue = (long) minAggregation.getValue();
-
-            // Close the client
-            client.close();
-
-            // Return the intervals.
-            return new Date[] {new Date(minAggregationValue), new Date(maxAggregationValue)};
+            Search.Builder searchRequestBuilder = new Search.Builder(serializedAggregation).addIndex(index[0]);
+            if (type != null && type.length > 0) searchRequestBuilder.addType(type[0]);
             
+            Search searchRequest = searchRequestBuilder.build();
+            JestResult result = null;
+            try {
+                result = client.execute(searchRequest);
+            } catch (Exception e) {
+                throw new ElasticSearchClientGenericException("An error ocurred during search operation.", e);
+            }
+            
+            /* TODO
+            - parseJSON
+                gson.fromJson(result.getJsonObject(), SearchResponse.class);
+            - obtain max and min date values
+                // Return the intervals.
+                return new Date[] {new Date(minAggregationValue), new Date(maxAggregationValue)};
             */
+            
             return null;
         }
         
