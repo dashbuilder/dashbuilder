@@ -35,6 +35,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import static org.mockito.Matchers.endsWith;
 import static org.mockito.Mockito.when;
 
 /**
@@ -280,4 +281,113 @@ public class ElasticSearchJestClientTest {
         
     }
 
-}
+    @Test
+    public void testAggregationDeserializer() {
+
+        String aggregations1 = "{\"aggregations\": {\n" +
+                "    \"departmentGrouped\": {\n" +
+                "        \"doc_count_error_upper_bound\": 0,\n" +
+                "        \"sum_other_doc_count\": 0,\n" +
+                "        \"buckets\": [\n" +
+                "            {\n" +
+                "                \"key\": \"Engineering\",\n" +
+                "                \"doc_count\": 19,\n" +
+                "                \"amount-count\": {\n" +
+                "                    \"value\": 19\n" +
+                "                },\n" +
+                "                \"amount-min\": {\n" +
+                "                    \"value\": 120.3499984741211\n" +
+                "                }\n" +
+                "            },\n" +
+                "            {\n" +
+                "                \"key\": \"Management\",\n" +
+                "                \"doc_count\": 11,\n" +
+                "                \"amount-count\": {\n" +
+                "                    \"value\": 11\n" +
+                "                },\n" +
+                "                \"amount-min\": {\n" +
+                "                    \"value\": 43.029998779296875\n" +
+                "                }\n" +
+                "            },\n" +
+                "            {\n" +
+                "                \"key\": \"Sales\",\n" +
+                "                \"doc_count\": 8,\n" +
+                "                \"amount-count\": {\n" +
+                "                    \"value\": 8\n" +
+                "                },\n" +
+                "                \"amount-min\": {\n" +
+                "                    \"value\": 75.75\n" +
+                "                }\n" +
+                "            },\n" +
+                "            {\n" +
+                "                \"key\": \"Services\",\n" +
+                "                \"doc_count\": 5,\n" +
+                "                \"amount-count\": {\n" +
+                "                    \"value\": 5\n" +
+                "                },\n" +
+                "                \"amount-min\": {\n" +
+                "                    \"value\": 152.25\n" +
+                "                }\n" +
+                "            },\n" +
+                "            {\n" +
+                "                \"key\": \"Support\",\n" +
+                "                \"doc_count\": 7,\n" +
+                "                \"amount-count\": {\n" +
+                "                    \"value\": 7\n" +
+                "                },\n" +
+                "                \"amount-min\": {\n" +
+                "                    \"value\": 300.010009765625\n" +
+                "                }\n" +
+                "            }\n" +
+                "        ]\n" +
+                "    }\n" +
+                "}}";
+
+        GsonBuilder builder = new GsonBuilder();
+        builder.registerTypeAdapter(SearchHitResponse[].class, new ElasticSearchJestClient.AggregationsDeserializer());
+        Gson gson = builder.create();
+        SearchHitResponse[] hits = gson.fromJson(aggregations1, SearchHitResponse[].class);
+        
+        Assert.assertTrue(hits != null);
+        Assert.assertTrue(hits.length == 5);
+        
+        SearchHitResponse hit0 = hits[0];
+        Assert.assertTrue(hit0 != null);
+        Map<String, Object> hit0Fields = hit0.getFields();
+        Assert.assertTrue(hit0Fields != null);
+        Assert.assertTrue(hit0Fields.size() == 3);
+        String hit0AmountCount = hit0Fields.get("amount-count").toString();
+        String hit0Dept = hit0Fields.get("departmentGrouped").toString();
+        String hit0AmountMin = hit0Fields.get("amount-min").toString();
+        Assert.assertEquals(hit0AmountCount, "19");
+        Assert.assertEquals(hit0Dept, "Engineering");
+        Assert.assertEquals(hit0AmountMin, "120.3499984741211");
+
+        SearchHitResponse hit1 = hits[1];
+        Assert.assertTrue(hit1 != null);
+        Map<String, Object> hit1Fields = hit1.getFields();
+        Assert.assertTrue(hit1Fields != null);
+        Assert.assertTrue(hit1Fields.size() == 3);
+        String hit1AmountCount = hit1Fields.get("amount-count").toString();
+        String hit1Dept = hit1Fields.get("departmentGrouped").toString();
+        String hit1AmountMin = hit1Fields.get("amount-min").toString();
+        Assert.assertEquals(hit1AmountCount, "11");
+        Assert.assertEquals(hit1Dept, "Management");
+        Assert.assertEquals(hit1AmountMin, "43.029998779296875");
+
+        SearchHitResponse hit4 = hits[4];
+        Assert.assertTrue(hit4 != null);
+        Map<String, Object> hit4Fields = hit4.getFields();
+        Assert.assertTrue(hit4Fields != null);
+        Assert.assertTrue(hit4Fields.size() == 3);
+        String hit4AmountCount = hit4Fields.get("amount-count").toString();
+        String hit4Dept = hit4Fields.get("departmentGrouped").toString();
+        String hit4AmountMin = hit4Fields.get("amount-min").toString();
+        Assert.assertEquals(hit4AmountCount, "7");
+        Assert.assertEquals(hit4Dept, "Support");
+        Assert.assertEquals(hit4AmountMin, "300.010009765625");
+        
+
+    }
+
+    }

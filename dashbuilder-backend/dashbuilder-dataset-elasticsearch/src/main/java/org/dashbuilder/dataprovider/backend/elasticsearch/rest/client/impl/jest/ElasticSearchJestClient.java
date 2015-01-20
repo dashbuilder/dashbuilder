@@ -23,9 +23,9 @@ import io.searchbox.client.config.HttpClientConfig;
 import io.searchbox.core.Count;
 import io.searchbox.core.CountResult;
 import io.searchbox.core.Search;
-import io.searchbox.core.SearchResult;
 import io.searchbox.core.search.sort.Sort;
 import io.searchbox.indices.mapping.GetMapping;
+import org.apache.commons.lang.ArrayUtils;
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.ElasticSearchClient;
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.exception.ElasticSearchClientGenericException;
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.impl.jest.gson.FieldMapping;
@@ -38,7 +38,6 @@ import org.dashbuilder.dataset.def.ElasticSearchDataSetDef;
 import org.dashbuilder.dataset.group.*;
 import org.dashbuilder.dataset.sort.ColumnSort;
 import org.dashbuilder.dataset.sort.DataSetSort;
-import org.json.JSONObject;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Named;
@@ -221,7 +220,7 @@ public class ElasticSearchJestClient implements ElasticSearchClient<ElasticSearc
         builder.registerTypeAdapter(Query.class, new SearchQuerySerializer());
         builder.registerTypeAdapter(SearchResponse.class, new SearchResponseDeserializer());
         builder.registerTypeAdapter(SearchHitResponse.class, new HitDeserializer());
-        builder.registerTypeAdapter(List.class, new AggregationsDeserializer());
+        builder.registerTypeAdapter(SearchHitResponse[].class, new AggregationsDeserializer());
         Gson gson = builder.create();
         
         // Set request lookup constraints into the query JSON request.
@@ -663,49 +662,56 @@ public class ElasticSearchJestClient implements ElasticSearchClient<ElasticSearc
         }
     }
 
-    protected static class AggregationsDeserializer implements JsonDeserializer<List<SearchHitResponse>> {
+    protected static class AggregationsDeserializer implements JsonDeserializer<SearchHitResponse[]> {
 
         @Override
-        public List<SearchHitResponse> deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+        public SearchHitResponse[] deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
             List<SearchHitResponse> result = null;
 
-            if (typeOfT.equals(SearchResponse.class)) {
-                JsonObject aggregationsObject = (JsonObject) json;
+            if (typeOfT.equals(SearchHitResponse[].class)) {
+                JsonObject aggregationsObject = (JsonObject) ((JsonObject) json).get("aggregations");
+                if (aggregationsObject != null) {
+                    Set<Map.Entry<String, JsonElement>> entries = aggregationsObject.entrySet();
+                    if (entries != null && !entries.isEmpty()) {
+                        result = new LinkedList<SearchHitResponse>();
+                        for (Map.Entry<String, JsonElement> entry : entries) {
+                            String columnId = entry.getKey();
+                            JsonObject columnAggregationObject = (JsonObject) entry.getValue();
+                            JsonArray buckets = columnAggregationObject.getAsJsonArray("buckets");
+                            if (buckets != null && buckets.size() > 0 ) {
+                                Iterator<JsonElement> bucketsIt = buckets.iterator();
+                                while (bucketsIt.hasNext()) {
+                                    JsonObject bucket = (JsonObject) bucketsIt.next();
 
-                Set<Map.Entry<String, JsonElement>> entries = aggregationsObject.entrySet();
-                if (entries != null && !entries.isEmpty()) {
-                    result = new LinkedList<SearchHitResponse>();
-                    for (Map.Entry<String, JsonElement> entry : entries) {
-                        String columnId = entry.getKey();
-                        JsonObject columnAggregationObject = (JsonObject) entry.getValue();
-                        JsonArray buckets = columnAggregationObject.getAsJsonArray("buckets");
-                        if (buckets != null && buckets.size() > 0 ) {
-                            Iterator<JsonElement> bucketsIt = buckets.iterator();
-                            while (bucketsIt.hasNext()) {
-                                JsonObject bucket = (JsonObject) bucketsIt.next();
+                                    Map<String, Object> bucketFields = new HashMap<String, Object>();
+                                    
 
-                                Map<String, Object> bucketFields = new HashMap<String, Object>();
-                                String value = bucket.get("key").getAsString();
-                                bucketFields.put(columnId, value);
-                                
-                                Set<Map.Entry<String, JsonElement>> bucketEntries = bucket.entrySet();
-                                for (Map.Entry<String, JsonElement> bucketEntry : bucketEntries) {
-                                    String aggName = bucketEntry.getKey();
-                                    JsonElement aggValue = ((JsonObject)bucketEntry.getValue()).get("value"); 
-                                    String _aggValue = null;
-                                    if (aggValue != null) _aggValue = aggValue.getAsString();
-                                    bucketFields.put(aggName, _aggValue);
+                                    Set<Map.Entry<String, JsonElement>> bucketEntries = bucket.entrySet();
+                                    for (Map.Entry<String, JsonElement> bucketEntry : bucketEntries) {
+                                        String aggName = bucketEntry.getKey();
+                                        if ("key".equals(aggName)) {
+                                            String value = bucketEntry.getValue().getAsString();
+                                            bucketFields.put(columnId, value);
+                                        } else if ("doc_count".equals(aggName)) {
+                                            // Do nothing.
+                                        } else {
+                                            JsonElement aggValue = ((JsonObject)bucketEntry.getValue()).get("value");
+                                            String _aggValue = null;
+                                            if (aggValue != null) _aggValue = aggValue.getAsString();
+                                            bucketFields.put(aggName, _aggValue);
+                                        }
+                                    }
+
+                                    result.add(new SearchHitResponse(bucketFields));
                                 }
-                                
-                                result.add(new SearchHitResponse(bucketFields));
                             }
                         }
                     }
                 }
-                
             }
             
-            return result;
+            if (result == null) return null;
+            return result.toArray(new SearchHitResponse[result.size()]);
         }
     }
     
@@ -769,7 +775,8 @@ public class ElasticSearchJestClient implements ElasticSearchClient<ElasticSearc
         protected List<SearchHitResponse> parseAggregations(JsonObject responseObject, JsonDeserializationContext context) {
             JsonObject aggregationsObject = responseObject.getAsJsonObject("aggregations");
             if (aggregationsObject != null) {
-                return context.deserialize(aggregationsObject, List.class);
+                SearchHitResponse[] hits = context.deserialize(aggregationsObject, SearchHitResponse[].class);
+                if (hits != null) return Arrays.asList(hits);
             }
             
             return null;
