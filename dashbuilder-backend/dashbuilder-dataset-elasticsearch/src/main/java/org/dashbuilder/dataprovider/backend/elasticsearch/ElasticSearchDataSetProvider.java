@@ -26,12 +26,15 @@ import org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.impl.Elast
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.impl.jest.ElasticSearchJestClient;
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.model.*;
 import org.dashbuilder.dataset.*;
+import org.dashbuilder.dataset.backend.date.DateUtils;
 import org.dashbuilder.dataset.def.DataSetDef;
 import org.dashbuilder.dataset.def.ElasticSearchDataSetDef;
 import org.dashbuilder.dataset.filter.ColumnFilter;
 import org.dashbuilder.dataset.filter.DataSetFilter;
 import org.dashbuilder.dataset.group.DataSetGroup;
+import org.dashbuilder.dataset.group.DateIntervalType;
 import org.dashbuilder.dataset.group.GroupFunction;
+import org.dashbuilder.dataset.group.GroupStrategy;
 import org.dashbuilder.dataset.impl.DataSetMetadataImpl;
 import org.dashbuilder.dataset.sort.ColumnSort;
 import org.dashbuilder.dataset.sort.DataSetSort;
@@ -44,6 +47,7 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 import javax.inject.Named;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -109,7 +113,6 @@ import java.util.*;
 @Dependent
 public class ElasticSearchDataSetProvider implements DataSetProvider {
 
-    protected static final String KEYWORD_ALL = "_all";
     protected static final String NULL_VALUE = "---";
     protected static final String DEFAULT_DATE_PATTERN = "yyyy/MM/dd HH:mm:ss";
 
@@ -347,9 +350,24 @@ public class ElasticSearchDataSetProvider implements DataSetProvider {
         }
         else if (ColumnType.DATE.equals(columnType)) {
             if (value == null || value.toString().trim().length() == 0) return new Date();
+            return value;
+            
+            /*
+            
+            // Obtain the date value from the EL pattern specified.
             String datePattern = elDef.getPattern(column.getId());
             DateTime dateTime = DateTimeFormat.forPattern(datePattern).parseDateTime(value.toString());
-            return dateTime.toDate();
+            Date date = dateTime.toDate();
+            return date;
+            
+            
+            String intervalType = column.getIntervalType();
+            DateIntervalType type = DateIntervalType.getByName(intervalType);
+            GroupStrategy strategy = column.getColumnGroup() != null ? column.getColumnGroup().getStrategy() : null;
+            if (type == null) type = DateIntervalType.DAY;
+            if (strategy == null) strategy= GroupStrategy.DYNAMIC;
+            return DateUtils.parseDate(type, strategy, date);
+            */
         }
         
         // LABEL or TEXT colum types.
