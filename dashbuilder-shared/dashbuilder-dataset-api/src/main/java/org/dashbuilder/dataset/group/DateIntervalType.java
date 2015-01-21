@@ -106,8 +106,11 @@ public enum DateIntervalType {
     }
 
     public static DateIntervalType getByName(String interval) {
-        if (interval == null || interval.length() == 0) return null;
-        return valueOf(interval.toUpperCase());
+        try {
+            return valueOf(interval.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
     }
 
     public static int compare(DateIntervalType interval1, DateIntervalType interval2) {

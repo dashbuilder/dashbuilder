@@ -35,7 +35,7 @@ public class CoreFunction extends DataSetFunction {
     }
 
     public Comparable getParameter(int index) {
-        return coreFunctionFilter.getParameters().get(index);
+        return (Comparable) coreFunctionFilter.getParameters().get(index);
     }
 
     public boolean pass() {
@@ -44,32 +44,32 @@ public class CoreFunction extends DataSetFunction {
         if (CoreFunctionType.IS_NULL.equals(type)) {
             return isNull(getCurrentValue());
         }
-        if (CoreFunctionType.IS_NOT_NULL.equals(type)) {
+        if (CoreFunctionType.NOT_NULL.equals(type)) {
             return isNotNull(getCurrentValue());
         }
-        if (CoreFunctionType.IS_EQUALS_TO.equals(type)) {
+        if (CoreFunctionType.EQUALS_TO.equals(type)) {
             return isEqualsTo(getCurrentValue());
         }
-        if (CoreFunctionType.IS_NOT_EQUALS_TO.equals(type)) {
+        if (CoreFunctionType.NOT_EQUALS_TO.equals(type)) {
             return isNotEqualsTo(getCurrentValue());
         }
-        if (CoreFunctionType.IS_LOWER_THAN.equals(type)) {
+        if (CoreFunctionType.LOWER_THAN.equals(type)) {
             return isLowerThan(getCurrentValue());
         }
-        if (CoreFunctionType.IS_LOWER_OR_EQUALS_TO.equals(type)) {
+        if (CoreFunctionType.LOWER_OR_EQUALS_TO.equals(type)) {
             return isLowerThanOrEqualsTo(getCurrentValue());
         }
-        if (CoreFunctionType.IS_GREATER_THAN.equals(type)) {
+        if (CoreFunctionType.GREATER_THAN.equals(type)) {
             return isGreaterThan(getCurrentValue());
         }
-        if (CoreFunctionType.IS_GREATER_OR_EQUALS_TO.equals(type)) {
+        if (CoreFunctionType.GREATER_OR_EQUALS_TO.equals(type)) {
             return isGreaterThanOrEqualsTo(getCurrentValue());
         }
-        if (CoreFunctionType.IS_BETWEEN.equals(type)) {
+        if (CoreFunctionType.BETWEEN.equals(type)) {
             return isBetween(getCurrentValue());
         }
-        if (CoreFunctionType.IS_UNTIL_TODAY.equals(type)) {
-            return isUntilToday(getCurrentValue());
+        if (CoreFunctionType.TIME_FRAME.equals(type)) {
+            return timeFrame(getCurrentValue());
         }
         throw new IllegalArgumentException("Core function type not supported: " + type);
     }
@@ -131,7 +131,7 @@ public class CoreFunction extends DataSetFunction {
         return true;
     }
 
-    public boolean isUntilToday(Comparable value) {
+    public boolean timeFrame(Comparable value) {
         if (isNull(value)) return false;
         if (!(value instanceof Date)) return false;
         Date target = (Date) value;

@@ -44,6 +44,10 @@ public enum ColumnType {
     TEXT;
 
     public static ColumnType getByName(String name) {
-        return valueOf(name.toUpperCase());
+        try {
+            return valueOf(name.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
     }
 }

@@ -24,18 +24,21 @@ import org.jboss.errai.common.client.api.annotations.Portable;
 public enum CoreFunctionType {
 
     IS_NULL,
-    IS_NOT_NULL,
-    IS_EQUALS_TO,
-    IS_NOT_EQUALS_TO,
-    IS_GREATER_THAN,
-    IS_GREATER_OR_EQUALS_TO,
-    IS_LOWER_THAN,
-    IS_LOWER_OR_EQUALS_TO,
-    IS_BETWEEN,
-    IS_UNTIL_TODAY;
+    NOT_NULL,
+    EQUALS_TO,
+    NOT_EQUALS_TO,
+    GREATER_THAN,
+    GREATER_OR_EQUALS_TO,
+    LOWER_THAN,
+    LOWER_OR_EQUALS_TO,
+    BETWEEN,
+    TIME_FRAME;
 
     public static CoreFunctionType getByName(String type) {
-        if (type == null || type.length() == 0) return null;
-        return valueOf(type.toUpperCase());
+        try {
+            return valueOf(type.toUpperCase());
+        } catch (Exception e) {
+            return null;
+        }
     }
 }

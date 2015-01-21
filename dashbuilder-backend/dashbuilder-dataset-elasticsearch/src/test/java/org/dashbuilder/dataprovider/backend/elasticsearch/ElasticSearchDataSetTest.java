@@ -462,7 +462,7 @@ public class ElasticSearchDataSetTest extends ElasticSearchDataSetTestBase {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                         .dataset(EL_DATASET_UUID)
-                        .filter(EL_EXAMPLE_COLUMN_AMOUNT, isBetween(100, 200))
+                        .filter(EL_EXAMPLE_COLUMN_AMOUNT, between(100, 200))
                         .sort(EL_EXAMPLE_COLUMN_ID, SortOrder.ASCENDING)
                         .buildLookup());
 
@@ -482,7 +482,7 @@ public class ElasticSearchDataSetTest extends ElasticSearchDataSetTestBase {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                         .dataset(EL_DATASET_UUID)
-                        .filter(EL_EXAMPLE_COLUMN_DATE, isGreaterThan(new Timestamp(date.getTime())))
+                        .filter(EL_EXAMPLE_COLUMN_DATE, greaterThan(new Timestamp(date.getTime())))
                         .sort(EL_EXAMPLE_COLUMN_ID, SortOrder.ASCENDING)
                         .buildLookup());
 
@@ -514,8 +514,8 @@ public class ElasticSearchDataSetTest extends ElasticSearchDataSetTestBase {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                         .dataset(EL_DATASET_UUID)
-                        .filter(EL_EXAMPLE_COLUMN_DATE, isLowerThan(new Timestamp(date.getTime())))
-                        .filter(EL_EXAMPLE_COLUMN_AMOUNT, isGreaterThan(500))
+                        .filter(EL_EXAMPLE_COLUMN_DATE, lowerThan(new Timestamp(date.getTime())))
+                        .filter(EL_EXAMPLE_COLUMN_AMOUNT, greaterThan(500))
                         .sort(EL_EXAMPLE_COLUMN_ID, SortOrder.ASCENDING)
                         .buildLookup());
 
@@ -531,7 +531,7 @@ public class ElasticSearchDataSetTest extends ElasticSearchDataSetTestBase {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                         .dataset(EL_DATASET_UUID)
-                        .filter(EL_EXAMPLE_COLUMN_AMOUNT, isLowerOrEqualsTo(120.35))
+                        .filter(EL_EXAMPLE_COLUMN_AMOUNT, lowerOrEqualsTo(120.35))
                         .filter(EL_EXAMPLE_COLUMN_CITY, isEqualsTo(EL_EXAMPLE_CITY_BARCELONA))
                         .sort(EL_EXAMPLE_COLUMN_ID, SortOrder.ASCENDING)
                         .buildLookup());
@@ -544,7 +544,7 @@ public class ElasticSearchDataSetTest extends ElasticSearchDataSetTestBase {
                 DataSetFactory.newDataSetLookupBuilder()
                         .dataset(EL_DATASET_UUID)
                         .filter(EL_EXAMPLE_COLUMN_CITY, isEqualsTo(EL_EXAMPLE_CITY_BARCELONA))
-                        .filter(EL_EXAMPLE_COLUMN_AMOUNT, isLowerOrEqualsTo(120.35))
+                        .filter(EL_EXAMPLE_COLUMN_AMOUNT, lowerOrEqualsTo(120.35))
                         .sort(EL_EXAMPLE_COLUMN_ID, SortOrder.ASCENDING)
                         .buildLookup());
 
@@ -559,8 +559,8 @@ public class ElasticSearchDataSetTest extends ElasticSearchDataSetTestBase {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                         .dataset(EL_DATASET_UUID)
-                        .filter(EL_EXAMPLE_COLUMN_CITY, isNotEqualsTo(EL_EXAMPLE_CITY_BARCELONA))
-                        .filter(EL_EXAMPLE_COLUMN_AMOUNT, isGreaterOrEqualsTo(1000))
+                        .filter(EL_EXAMPLE_COLUMN_CITY, notEqualsTo(EL_EXAMPLE_CITY_BARCELONA))
+                        .filter(EL_EXAMPLE_COLUMN_AMOUNT, greaterOrEqualsTo(1000))
                         .sort(EL_EXAMPLE_COLUMN_ID, SortOrder.ASCENDING)
                         .buildLookup());
 
@@ -576,7 +576,7 @@ public class ElasticSearchDataSetTest extends ElasticSearchDataSetTestBase {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                         .dataset(EL_DATASET_UUID)
-                        .filter("myfield", isGreaterOrEqualsTo(1000))
+                        .filter("myfield", greaterOrEqualsTo(1000))
                         .buildLookup());
     }
 
@@ -586,7 +586,7 @@ public class ElasticSearchDataSetTest extends ElasticSearchDataSetTestBase {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                         .dataset(EL_DATASET_UUID)
-                        .filter(EL_EXAMPLE_COLUMN_AMOUNT, AND(isGreaterThan(100), isLowerThan(150)))
+                        .filter(EL_EXAMPLE_COLUMN_AMOUNT, AND(greaterThan(100), lowerThan(150)))
                         .sort(EL_EXAMPLE_COLUMN_ID, SortOrder.ASCENDING)
                         .buildLookup());
 
@@ -600,7 +600,7 @@ public class ElasticSearchDataSetTest extends ElasticSearchDataSetTestBase {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                         .dataset(EL_DATASET_UUID)
-                        .filter(EL_EXAMPLE_COLUMN_AMOUNT, OR(isLowerThan(200), isGreaterThan(1000)))
+                        .filter(EL_EXAMPLE_COLUMN_AMOUNT, OR(lowerThan(200), greaterThan(1000)))
                         .sort(EL_EXAMPLE_COLUMN_ID, SortOrder.ASCENDING)
                         .buildLookup());
 
@@ -624,7 +624,7 @@ public class ElasticSearchDataSetTest extends ElasticSearchDataSetTestBase {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                         .dataset(EL_DATASET_UUID)
-                        .filter(EL_EXAMPLE_COLUMN_AMOUNT, NOT(isGreaterThan(200)))
+                        .filter(EL_EXAMPLE_COLUMN_AMOUNT, NOT(greaterThan(200)))
                         .sort(EL_EXAMPLE_COLUMN_ID, SortOrder.ASCENDING)
                         .buildLookup());
 
@@ -645,8 +645,8 @@ public class ElasticSearchDataSetTest extends ElasticSearchDataSetTestBase {
                 DataSetFactory.newDataSetLookupBuilder()
                         .dataset(EL_DATASET_UUID)
                         .filter(EL_EXAMPLE_COLUMN_AMOUNT, AND(
-                                isEqualsTo(EL_EXAMPLE_COLUMN_DEPT, EL_EXAMPLE_DEPT_SALES),
-                                OR(NOT(isLowerThan(300)), isEqualsTo(EL_EXAMPLE_COLUMN_CITY, EL_EXAMPLE_CITY_MADRID))))
+                                equalsTo(EL_EXAMPLE_COLUMN_DEPT, EL_EXAMPLE_DEPT_SALES),
+                                OR(NOT(lowerThan(300)), equalsTo(EL_EXAMPLE_COLUMN_CITY, EL_EXAMPLE_CITY_MADRID))))
                         .sort(EL_EXAMPLE_COLUMN_ID, SortOrder.ASCENDING)
                         .buildLookup());
 

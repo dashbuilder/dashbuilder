@@ -11,6 +11,6 @@
     {"id": "date", "name": "Date", "type": "date"}
   ],
   "filters": [
-    {"column": "city", "function": "IS_EQUALS_TO", "args": ["Barcelona"]}
+    {"column": "city", "function": "EQUALS_TO", "args": ["Barcelona"]}
   ]
 }

@@ -381,7 +381,7 @@ public class GalleryTree {
                         .column(EXPECTED_AMOUNT, "Expected")
                         .column(CLOSING_DATE, "Closing")
                         .column(AMOUNT, "Amount")
-                        .filter(COUNTRY, OR(isEqualsTo("United States"), isEqualsTo("Brazil")))
+                        .filter(COUNTRY, OR(equalsTo("United States"), equalsTo("Brazil")))
                         .title("Opportunities in USA & Brazil")
                         .tablePageSize(10)
                         .tableOrderEnabled(true)

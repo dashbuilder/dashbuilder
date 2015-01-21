@@ -35,10 +35,13 @@ public enum SortOrder {
     }
 
     public static SortOrder getByName(String str) {
-        if (str == null || str.length() == 0) return null;
-        if (ASC.equals(str)) return ASCENDING;
-        if (DESC.equals(str)) return DESCENDING;
-        return valueOf(str.toUpperCase());
+        try {
+            if (ASC.equals(str)) return ASCENDING;
+            if (DESC.equals(str)) return DESCENDING;
+            return valueOf(str.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
     }
 
     public SortOrder reverse() {

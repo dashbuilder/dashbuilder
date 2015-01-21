@@ -48,7 +48,11 @@ public enum DayOfWeek {
     }
 
     public static DayOfWeek getByName(String name) {
-        return valueOf(name.toUpperCase());
+        try {
+            return valueOf(name.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
     }
 
     public static DayOfWeek getByIndex(int index) {

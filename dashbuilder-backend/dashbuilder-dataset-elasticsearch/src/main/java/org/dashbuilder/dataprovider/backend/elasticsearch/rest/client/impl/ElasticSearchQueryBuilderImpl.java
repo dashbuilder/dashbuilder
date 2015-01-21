@@ -312,11 +312,11 @@ public class ElasticSearchQueryBuilderImpl implements ElasticSearchQueryBuilder<
             Query existResult = new Query(columnId, Query.Type.EXISTS);
             result.setParam(Query.Parameter.FILTER.name(), existResult);
             
-        } else if (CoreFunctionType.IS_NOT_NULL.equals(type)) {
+        } else if (CoreFunctionType.NOT_NULL.equals(type)) {
             
             result = new Query(columnId, Query.Type.EXISTS);
             
-        } else if (CoreFunctionType.IS_EQUALS_TO.equals(type)) {
+        } else if (CoreFunctionType.EQUALS_TO.equals(type)) {
             
             Object value = formatFilterValue(columnId, metadata, params.get(0));
 
@@ -327,7 +327,7 @@ public class ElasticSearchQueryBuilderImpl implements ElasticSearchQueryBuilder<
             }
             result.setParam(Query.Parameter.VALUE.name(), value);
             
-        } else if (CoreFunctionType.IS_NOT_EQUALS_TO.equals(type)) {
+        } else if (CoreFunctionType.NOT_EQUALS_TO.equals(type)) {
             
             Object value = formatFilterValue(columnId, metadata, params.get(0));
 
@@ -343,31 +343,31 @@ public class ElasticSearchQueryBuilderImpl implements ElasticSearchQueryBuilder<
                 result.setParam(Query.Parameter.MUST_NOT.name(), asList(resultMatch));
             }
             
-        } else if (CoreFunctionType.IS_LOWER_THAN.equals(type)) {
+        } else if (CoreFunctionType.LOWER_THAN.equals(type)) {
 
             Object value = formatFilterValue(columnId, metadata, params.get(0));
             result = new Query(columnId, Query.Type.RANGE);
             result.setParam(Query.Parameter.LT.name(), value);
             
-        } else if (CoreFunctionType.IS_LOWER_OR_EQUALS_TO.equals(type)) {
+        } else if (CoreFunctionType.LOWER_OR_EQUALS_TO.equals(type)) {
 
             Object value = formatFilterValue(columnId, metadata, params.get(0));
             result = new Query(columnId, Query.Type.RANGE);
             result.setParam(Query.Parameter.LTE.name(), value);
             
-        } else if (CoreFunctionType.IS_GREATER_THAN.equals(type)) {
+        } else if (CoreFunctionType.GREATER_THAN.equals(type)) {
 
             Object value = formatFilterValue(columnId, metadata, params.get(0));
             result = new Query(columnId, Query.Type.RANGE);
             result.setParam(Query.Parameter.GT.name(), value);
             
-        } else if (CoreFunctionType.IS_GREATER_OR_EQUALS_TO.equals(type)) {
+        } else if (CoreFunctionType.GREATER_OR_EQUALS_TO.equals(type)) {
 
             Object value = formatFilterValue(columnId, metadata, params.get(0));
             result = new Query(columnId, Query.Type.RANGE);
             result.setParam("gte", value);
             
-        } else if (CoreFunctionType.IS_BETWEEN.equals(type)) {
+        } else if (CoreFunctionType.BETWEEN.equals(type)) {
 
             Object value0 = formatFilterValue(columnId, metadata, params.get(0));
             Object value1 = formatFilterValue(columnId, metadata, params.get(1));
@@ -375,6 +375,9 @@ public class ElasticSearchQueryBuilderImpl implements ElasticSearchQueryBuilder<
             result.setParam(Query.Parameter.GT.name(), value0);
             result.setParam(Query.Parameter.LT.name(), value1);
             
+        } else if (CoreFunctionType.TIME_FRAME.equals(type)) {
+            // TODO
+
         } else {
             throw new IllegalArgumentException("Core function type not supported: " + type);
         }

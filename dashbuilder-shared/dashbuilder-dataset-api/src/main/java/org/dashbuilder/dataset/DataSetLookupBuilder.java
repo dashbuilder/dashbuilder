@@ -251,10 +251,10 @@ public interface DataSetLookupBuilder<T> {
      *   DataSetFactory.newDataSetLookupBuilder()
      *   .dataset(EXPENSE_REPORTS)
      *   .filter(AND(
-     *               isEqualsTo("department", "Sales"),
+     *               equalsTo("department", "Sales"),
      *               OR(
-     *                 NOT(isLowerThan("amount", 300)),
-     *                 isEqualsTo("city", "Madrid")
+     *                 NOT(lowerThan("amount", 300)),
+     *                 equalsTo("city", "Madrid")
      *               )
      *           )
      *   )
@@ -279,17 +279,17 @@ public interface DataSetLookupBuilder<T> {
      *   .dataset(EXPENSE_REPORTS)
      *   .filter("amount",
      *           AND(
-     *               isEqualsTo("department", "Sales"),
+     *               equalsTo("department", "Sales"),
      *               OR(
-     *                 NOT(isLowerThan(300)),
-     *                 isEqualsTo("city", "Madrid")
+     *                 NOT(lowerThan(300)),
+     *                 equalsTo("city", "Madrid")
      *               )
      *           )
      *   )
      *   .buildLookup());
      * </pre>
      * Will limit the expense reports data set such that for all obtained records, the department will always equal "Sales",
-     * and either the amount will not be lower than 300, or the city will be equal to "Madrid". Since the isLowerThan filter
+     * and either the amount will not be lower than 300, or the city will be equal to "Madrid". Since the lowerThan filter
      * does not reference a column, it implicitly refers to the amount column.
      * @see org.dashbuilder.dataset.filter.ColumnFilter
      * @see org.dashbuilder.dataset.filter.FilterFactory

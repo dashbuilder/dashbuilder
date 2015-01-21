@@ -27,7 +27,10 @@ public enum LogicalExprType {
     NOT;
 
     public static LogicalExprType getByName(String str) {
-        if (str == null || str.length() == 0) return null;
-        return valueOf(str.toUpperCase());
+        try {
+            return valueOf(str.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
     }
 }

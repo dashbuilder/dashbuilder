@@ -27,12 +27,12 @@ import org.jboss.errai.common.client.api.annotations.Portable;
 public class CoreFunctionFilter extends ColumnFilter {
 
     protected CoreFunctionType type = null;
-    protected List<Comparable> parameters = new ArrayList();
+    protected List parameters = new ArrayList();
 
     public CoreFunctionFilter() {
     }
 
-    public CoreFunctionFilter(String columnId, CoreFunctionType type, List<Comparable> parameters) {
+    public CoreFunctionFilter(String columnId, CoreFunctionType type, List parameters) {
         super(columnId);
         this.type = type;
         this.setParameters(parameters);
@@ -52,7 +52,7 @@ public class CoreFunctionFilter extends ColumnFilter {
         this.type = type;
     }
 
-    public List<Comparable> getParameters() {
+    public List getParameters() {
         return parameters;
     }
 
@@ -63,38 +63,38 @@ public class CoreFunctionFilter extends ColumnFilter {
         }
     }
 
-    public void setParameters(List<Comparable> parameters) {
+    public void setParameters(List parameters) {
         this.parameters = parameters;
     }
 
     public String toString() {
         StringBuilder out = new StringBuilder();
-        if (CoreFunctionType.IS_BETWEEN.equals(type)) {
+        if (CoreFunctionType.BETWEEN.equals(type)) {
             out.append(columnId).append(" between (");
             appendParameters(out);
             out.append(")");
         }
-        else if (CoreFunctionType.IS_GREATER_THAN.equals(type)) {
+        else if (CoreFunctionType.GREATER_THAN.equals(type)) {
             out.append(columnId).append(" > ");
             appendParameters(out);
         }
-        else if (CoreFunctionType.IS_GREATER_OR_EQUALS_TO.equals(type)) {
+        else if (CoreFunctionType.GREATER_OR_EQUALS_TO.equals(type)) {
             out.append(columnId).append(" >= ");
             appendParameters(out);
         }
-        else if (CoreFunctionType.IS_LOWER_THAN.equals(type)) {
+        else if (CoreFunctionType.LOWER_THAN.equals(type)) {
             out.append(columnId).append(" < ");
             appendParameters(out);
         }
-        else if (CoreFunctionType.IS_LOWER_OR_EQUALS_TO.equals(type)) {
+        else if (CoreFunctionType.LOWER_OR_EQUALS_TO.equals(type)) {
             out.append(columnId).append(" <= ");
             appendParameters(out);
         }
-        else if (CoreFunctionType.IS_EQUALS_TO.equals(type)) {
+        else if (CoreFunctionType.EQUALS_TO.equals(type)) {
             out.append(columnId).append(" = ");
             appendParameters(out);
         }
-        else if (CoreFunctionType.IS_NOT_EQUALS_TO.equals(type)) {
+        else if (CoreFunctionType.NOT_EQUALS_TO.equals(type)) {
             out.append(columnId).append(" != ");
             appendParameters(out);
         }
@@ -102,8 +102,12 @@ public class CoreFunctionFilter extends ColumnFilter {
             out.append(columnId).append(" is_null ");
             appendParameters(out);
         }
-        else if (CoreFunctionType.IS_NOT_NULL.equals(type)) {
-            out.append(columnId).append(" is_not_null ");
+        else if (CoreFunctionType.NOT_NULL.equals(type)) {
+            out.append(columnId).append(" not_null ");
+            appendParameters(out);
+        }
+        else if (CoreFunctionType.TIME_FRAME.equals(type)) {
+            out.append(columnId).append(" time_frame ");
             appendParameters(out);
         }
         return out.toString();

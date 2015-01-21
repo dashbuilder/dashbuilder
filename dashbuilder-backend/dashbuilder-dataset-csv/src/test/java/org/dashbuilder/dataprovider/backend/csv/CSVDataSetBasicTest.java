@@ -93,7 +93,7 @@ public class CSVDataSetBasicTest {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                         .dataset(EXPENSE_REPORTS)
-                        .filter("amount", isLowerThan(1000))
+                        .filter("amount", lowerThan(1000))
                         .group("department")
                         .column("department")
                         .column(AggregateFunctionType.COUNT, "#items")

@@ -15,6 +15,7 @@
  */
 package org.dashbuilder.dataset.backend;
 
+import org.apache.commons.lang.StringUtils;
 import org.dashbuilder.dataset.filter.CoreFunctionFilter;
 import org.dashbuilder.dataset.filter.CoreFunctionType;
 import org.dashbuilder.dataset.filter.DataSetFilter;
@@ -31,18 +32,26 @@ public class DataSetLookupJSONMarshaller {
     public static final String FILTER_FUNCTION = "function";
     public static final String FILTER_ARGS = "args";
 
+    BackendDataSetValueFormatter valueFormatter = new BackendDataSetValueFormatter();
+
     public DataSetFilter fromJsonFilterOps(JSONArray array) throws Exception {
         DataSetFilter dataSetFilter = new DataSetFilter();
         for (int i=0; i<array.length(); i++) {
             JSONObject filter = array.getJSONObject(i);
             String column = filter.has(FILTER_COLUMN) ? filter.getString(FILTER_COLUMN) : null;
             String function = filter.has(FILTER_FUNCTION) ? filter.getString(FILTER_FUNCTION) : null;
-            CoreFunctionFilter columnFilter = new CoreFunctionFilter(column, CoreFunctionType.getByName(function));
+            if (StringUtils.isBlank(column)) throw new IllegalArgumentException("Missing function column");
+            if (StringUtils.isBlank(function)) throw new IllegalArgumentException("Missing function: " + column);
+            CoreFunctionType functionType = CoreFunctionType.getByName(function);
+            if (functionType == null) throw new IllegalArgumentException("Function does not exist: " + function);
+            CoreFunctionFilter columnFilter = new CoreFunctionFilter(column, functionType);
             dataSetFilter.addFilterColumn(columnFilter);
 
             JSONArray argsArray = filter.getJSONArray(FILTER_ARGS);
             for (int j=0; j<argsArray.length(); j++) {
-                Comparable arg = (Comparable) argsArray.get(j);
+                String str = argsArray.getString(j);
+                if (StringUtils.isBlank(str)) throw new IllegalArgumentException("Empty filter function argument: " + function);
+                Object arg  = valueFormatter.parseValue(str);
                 columnFilter.getParameters().add(arg);
             }
         }

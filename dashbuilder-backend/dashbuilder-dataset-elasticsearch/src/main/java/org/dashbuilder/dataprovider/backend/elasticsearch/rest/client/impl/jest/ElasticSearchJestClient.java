@@ -37,7 +37,6 @@ import org.dashbuilder.dataset.def.ElasticSearchDataSetDef;
 import org.dashbuilder.dataset.group.*;
 import org.dashbuilder.dataset.sort.ColumnSort;
 import org.dashbuilder.dataset.sort.DataSetSort;
-import sun.awt.image.ImageWatched;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Named;

@@ -23,7 +23,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
-import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.sql.DataSource;
@@ -47,7 +46,6 @@ import org.dashbuilder.dataset.def.SQLDataSetDef;
 import org.dashbuilder.dataset.engine.group.IntervalBuilder;
 import org.dashbuilder.dataset.engine.group.IntervalBuilderLocator;
 import org.dashbuilder.dataset.engine.group.IntervalList;
-import org.dashbuilder.dataset.events.DataSetDefModifiedEvent;
 import org.dashbuilder.dataset.filter.ColumnFilter;
 import org.dashbuilder.dataset.filter.CoreFunctionFilter;
 import org.dashbuilder.dataset.filter.CoreFunctionType;
@@ -77,7 +75,6 @@ import org.jooq.Table;
 import org.jooq.impl.SQLDataType;
 import org.slf4j.Logger;
 
-import static org.uberfire.commons.validation.PortablePreconditions.checkNotNull;
 import static org.jooq.impl.DSL.*;
 
 /**
@@ -338,37 +335,37 @@ public class SQLDataSetProvider implements DataSetProvider {
         if (filter instanceof CoreFunctionFilter) {
             CoreFunctionFilter f = (CoreFunctionFilter) filter;
             CoreFunctionType type = f.getType();
-            List<Comparable> params = f.getParameters();
+            List params = f.getParameters();
 
             if (CoreFunctionType.IS_NULL.equals(type)) {
                 _jooqQuery.where(_jooqField.isNull());
             }
-            else if (CoreFunctionType.IS_NOT_NULL.equals(type)) {
+            else if (CoreFunctionType.NOT_NULL.equals(type)) {
                 _jooqQuery.where(_jooqField.isNotNull());
             }
-            else if (CoreFunctionType.IS_EQUALS_TO.equals(type)) {
+            else if (CoreFunctionType.EQUALS_TO.equals(type)) {
                 if (params.size() == 1) _jooqQuery.where(_jooqField.equal(params.get(0)));
                 else _jooqQuery.where(_jooqField.in(params));
             }
-            else if (CoreFunctionType.IS_NOT_EQUALS_TO.equals(type)) {
+            else if (CoreFunctionType.NOT_EQUALS_TO.equals(type)) {
                 _jooqQuery.where(_jooqField.notEqual(params.get(0)));
             }
-            else if (CoreFunctionType.IS_LOWER_THAN.equals(type)) {
+            else if (CoreFunctionType.LOWER_THAN.equals(type)) {
                 _jooqQuery.where(_jooqField.lessThan(params.get(0)));
             }
-            else if (CoreFunctionType.IS_LOWER_OR_EQUALS_TO.equals(type)) {
+            else if (CoreFunctionType.LOWER_OR_EQUALS_TO.equals(type)) {
                 _jooqQuery.where(_jooqField.lessOrEqual(params.get(0)));
             }
-            else if (CoreFunctionType.IS_GREATER_THAN.equals(type)) {
+            else if (CoreFunctionType.GREATER_THAN.equals(type)) {
                 _jooqQuery.where(_jooqField.greaterThan(params.get(0)));
             }
-            else if (CoreFunctionType.IS_GREATER_OR_EQUALS_TO.equals(type)) {
+            else if (CoreFunctionType.GREATER_OR_EQUALS_TO.equals(type)) {
                 _jooqQuery.where(_jooqField.greaterOrEqual(params.get(0)));
             }
-            else if (CoreFunctionType.IS_BETWEEN.equals(type)) {
+            else if (CoreFunctionType.BETWEEN.equals(type)) {
                 _jooqQuery.where(_jooqField.between(params.get(0), params.get(1)));
             }
-            else if (CoreFunctionType.IS_UNTIL_TODAY.equals(type)) {
+            else if (CoreFunctionType.TIME_FRAME.equals(type)) {
                 String timeFrame = params.get(0).toString();
                 long millis = System.currentTimeMillis();
                 Timestamp now = new Timestamp(millis);
@@ -710,16 +707,16 @@ public class SQLDataSetProvider implements DataSetProvider {
                 // Apply the filter
                 ColumnFilter filter = null;
                 if (min != null && max != null) {
-                    filter = FilterFactory.isBetween(cg.getSourceId(), min, max);
+                    filter = FilterFactory.between(cg.getSourceId(), min, max);
                 }
                 else if (min != null) {
-                    filter = FilterFactory.isGreaterOrEqualsTo(cg.getSourceId(), min);
+                    filter = FilterFactory.greaterOrEqualsTo(cg.getSourceId(), min);
                 }
                 else if (max != null) {
-                    filter = FilterFactory.isLowerOrEqualsTo(cg.getSourceId(), max);
+                    filter = FilterFactory.lowerOrEqualsTo(cg.getSourceId(), max);
                 }
                 else {
-                    filter = FilterFactory.isEqualsTo(cg.getSourceId(), names);
+                    filter = FilterFactory.equalsTo(cg.getSourceId(), names);
                 }
                 _appendJooqFilterBy(def, filter, _jooqQuery);
             }

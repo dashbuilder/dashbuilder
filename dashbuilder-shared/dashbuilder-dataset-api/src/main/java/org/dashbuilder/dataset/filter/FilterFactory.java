@@ -34,92 +34,92 @@ public class FilterFactory {
         return new CoreFunctionFilter(columnId, CoreFunctionType.IS_NULL);
     }
 
-    public static ColumnFilter isNotNull() {
-        return isNotNull(null);
+    public static ColumnFilter notNull() {
+        return notNull(null);
     }
 
-    public static ColumnFilter isNotNull(String columnId) {
-        return new CoreFunctionFilter(columnId, CoreFunctionType.IS_NOT_NULL);
+    public static ColumnFilter notNull(String columnId) {
+        return new CoreFunctionFilter(columnId, CoreFunctionType.NOT_NULL);
     }
 
-    public static ColumnFilter isEqualsTo(Comparable allowedValue) {
-        return isEqualsTo(null, allowedValue);
+    public static ColumnFilter equalsTo(Comparable allowedValue) {
+        return equalsTo(null, allowedValue);
     }
 
     public static ColumnFilter isEqualsTo(List<Comparable> allowedValues) {
-        return new CoreFunctionFilter(null, CoreFunctionType.IS_EQUALS_TO, allowedValues);
+        return new CoreFunctionFilter(null, CoreFunctionType.EQUALS_TO, allowedValues);
     }
 
-    public static ColumnFilter isEqualsTo(String columnId, Comparable allowedValue) {
-        return new CoreFunctionFilter(columnId, CoreFunctionType.IS_EQUALS_TO, allowedValue);
+    public static ColumnFilter equalsTo(String columnId, Comparable allowedValue) {
+        return new CoreFunctionFilter(columnId, CoreFunctionType.EQUALS_TO, allowedValue);
     }
 
-    public static ColumnFilter isEqualsTo(String columnId, List<Comparable> allowedValues) {
-        return new CoreFunctionFilter(columnId, CoreFunctionType.IS_EQUALS_TO, allowedValues);
+    public static ColumnFilter equalsTo(String columnId, List<Comparable> allowedValues) {
+        return new CoreFunctionFilter(columnId, CoreFunctionType.EQUALS_TO, allowedValues);
     }
 
-    public static ColumnFilter isNotEqualsTo(Comparable allowedValue) {
-        return isNotEqualsTo(null, allowedValue);
+    public static ColumnFilter notEqualsTo(Comparable allowedValue) {
+        return notEqualsTo(null, allowedValue);
     }
 
-    public static ColumnFilter isNotEqualsTo(String columnId, Comparable allowedValue) {
-        return new CoreFunctionFilter(columnId, CoreFunctionType.IS_NOT_EQUALS_TO, allowedValue);
+    public static ColumnFilter notEqualsTo(String columnId, Comparable allowedValue) {
+        return new CoreFunctionFilter(columnId, CoreFunctionType.NOT_EQUALS_TO, allowedValue);
     }
 
-    public static ColumnFilter isLowerThan(Comparable ref) {
-        return isLowerThan(null, ref);
+    public static ColumnFilter lowerThan(Comparable ref) {
+        return lowerThan(null, ref);
     }
 
-    public static ColumnFilter isLowerThan(String columnId, Comparable ref) {
+    public static ColumnFilter lowerThan(String columnId, Comparable ref) {
         if (ref instanceof Number) ref = ((Number) ref).doubleValue();
-        return new CoreFunctionFilter(columnId, CoreFunctionType.IS_LOWER_THAN, ref);
+        return new CoreFunctionFilter(columnId, CoreFunctionType.LOWER_THAN, ref);
     }
 
-    public static ColumnFilter isLowerOrEqualsTo(Comparable ref) {
-        return isLowerOrEqualsTo(null, ref);
+    public static ColumnFilter lowerOrEqualsTo(Comparable ref) {
+        return lowerOrEqualsTo(null, ref);
     }
 
-    public static ColumnFilter isLowerOrEqualsTo(String columnId, Comparable ref) {
+    public static ColumnFilter lowerOrEqualsTo(String columnId, Comparable ref) {
         if (ref instanceof Number) ref = ((Number) ref).doubleValue();
-        return new CoreFunctionFilter(columnId, CoreFunctionType.IS_LOWER_OR_EQUALS_TO, ref);
+        return new CoreFunctionFilter(columnId, CoreFunctionType.LOWER_OR_EQUALS_TO, ref);
     }
 
-    public static ColumnFilter isGreaterThan(Comparable ref) {
-        return isGreaterThan(null, ref);
+    public static ColumnFilter greaterThan(Comparable ref) {
+        return greaterThan(null, ref);
     }
 
-    public static ColumnFilter isGreaterThan(String columnId, Comparable ref) {
+    public static ColumnFilter greaterThan(String columnId, Comparable ref) {
         if (ref instanceof Number) ref = ((Number) ref).doubleValue();
-        return new CoreFunctionFilter(columnId, CoreFunctionType.IS_GREATER_THAN, ref);
+        return new CoreFunctionFilter(columnId, CoreFunctionType.GREATER_THAN, ref);
     }
 
-    public static ColumnFilter isGreaterOrEqualsTo(Comparable ref) {
-        return isGreaterOrEqualsTo(null, ref);
+    public static ColumnFilter greaterOrEqualsTo(Comparable ref) {
+        return greaterOrEqualsTo(null, ref);
     }
 
-    public static ColumnFilter isGreaterOrEqualsTo(String columnId, Comparable ref) {
+    public static ColumnFilter greaterOrEqualsTo(String columnId, Comparable ref) {
         if (ref instanceof Number) ref = ((Number) ref).doubleValue();
-        return new CoreFunctionFilter(columnId, CoreFunctionType.IS_GREATER_OR_EQUALS_TO, ref);
+        return new CoreFunctionFilter(columnId, CoreFunctionType.GREATER_OR_EQUALS_TO, ref);
     }
 
-    public static ColumnFilter isBetween(Comparable low, Comparable high) {
-        return isBetween(null, low, high);
+    public static ColumnFilter between(Comparable low, Comparable high) {
+        return between(null, low, high);
     }
 
-    public static ColumnFilter isBetween(String columnId, Comparable low, Comparable high) {
+    public static ColumnFilter between(String columnId, Comparable low, Comparable high) {
         if (low instanceof Number) low = ((Number) low).doubleValue();
         if (high instanceof Number) high = ((Number) high).doubleValue();
-        return new CoreFunctionFilter(columnId, CoreFunctionType.IS_BETWEEN, low, high);
+        return new CoreFunctionFilter(columnId, CoreFunctionType.BETWEEN, low, high);
     }
 
-    public static ColumnFilter isUntilToday(String timeFrame) {
-        return isUntilToday(null, timeFrame);
+    public static ColumnFilter timeFrame(String timeFrame) {
+        return timeFrame(null, timeFrame);
     }
 
-    public static ColumnFilter isUntilToday(String columnId, String timeFrame) {
+    public static ColumnFilter timeFrame(String columnId, String timeFrame) {
         long millis = DateIntervalType.getDurationInMillis(timeFrame);
         if (millis < 0) throw new IllegalArgumentException("Invalid time frame: " + timeFrame);
-        return new CoreFunctionFilter(columnId, CoreFunctionType.IS_UNTIL_TODAY, timeFrame);
+        return new CoreFunctionFilter(columnId, CoreFunctionType.TIME_FRAME, timeFrame);
     }
 
     // Boolean operators

@@ -77,7 +77,7 @@ public class DataSetNestedGroupTest {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                         .dataset(EXPENSE_REPORTS)
-                        .filter("amount", FilterFactory.isGreaterThan(500))
+                        .filter("amount", FilterFactory.greaterThan(500))
                         .group("department").select("Engineering")
                         .group("city").select("Westford")
                         .buildLookup());

@@ -67,8 +67,8 @@ public class DataSetIndexTest {
      */
     DataSetLookup filterByCityAndDept = DataSetFactory.newDataSetLookupBuilder()
             .dataset(EXPENSE_REPORTS)
-            .filter("city", isEqualsTo("Barcelona"))
-            .filter("department", isEqualsTo("Engineering"))
+            .filter("city", equalsTo("Barcelona"))
+            .filter("department", equalsTo("Engineering"))
             .buildLookup();
 
     /**

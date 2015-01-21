@@ -28,6 +28,7 @@ import com.google.gwt.json.client.JSONValue;
 import org.dashbuilder.common.client.StringUtils;
 import org.dashbuilder.dataset.DataSetLookup;
 import org.dashbuilder.dataset.DataSetOp;
+import org.dashbuilder.dataset.client.ClientDataSetValueFormatter;
 import org.dashbuilder.dataset.date.DayOfWeek;
 import org.dashbuilder.dataset.date.Month;
 import org.dashbuilder.dataset.filter.ColumnFilter;
@@ -82,6 +83,7 @@ public class DataSetLookupJSONMarshaller {
 
     private List<String> coreFunctionTypes = new ArrayList<String>();
     private List<String> logicalFunctionTypes = new ArrayList<String>();
+    private ClientDataSetValueFormatter valueFormatter = new ClientDataSetValueFormatter();
 
     public DataSetLookupJSONMarshaller() {
         for ( LogicalExprType type : LogicalExprType.values() ) {
@@ -143,8 +145,9 @@ public class DataSetLookupJSONMarshaller {
             colFilterJson.put( FUNCTION_TYPE, new JSONString( cff.getType().toString() ) );
             JSONArray paramsJsonArray = new JSONArray();
             int paramCounter = 0;
-            for ( Comparable param : cff.getParameters() ) {
-                paramsJsonArray.set( paramCounter++, new JSONString( param.toString() ) );
+            for ( Object param : cff.getParameters() ) {
+                String paramStr = valueFormatter.formatValue(param);
+                paramsJsonArray.set( paramCounter++, new JSONString( paramStr ) );
             }
             colFilterJson.put( FUNCTION_TERMS, paramsJsonArray );
 

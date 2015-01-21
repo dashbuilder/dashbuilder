@@ -58,7 +58,7 @@ public class SQLDataSetGroupTest extends SQLDataSetTestBase {
         result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                         .dataset(DataSetGroupTest.EXPENSE_REPORTS)
-                        .filter(CITY.getName(), isEqualsTo("Barcelona"))
+                        .filter(CITY.getName(), equalsTo("Barcelona"))
                         .rowNumber(3)
                         .rowOffset(0)
                         .buildLookup());

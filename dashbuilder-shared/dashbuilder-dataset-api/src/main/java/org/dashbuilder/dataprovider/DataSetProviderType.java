@@ -35,8 +35,11 @@ public enum DataSetProviderType {
     ELASTICSEARCH;
 
     public static DataSetProviderType getByName(String name) {
-        if (name == null || name.length() == 0) return null;
-        return valueOf(name.toUpperCase());
+        try {
+            return valueOf(name.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
     }
 
     public static DataSetDef createDataSetDef(DataSetProviderType type) {

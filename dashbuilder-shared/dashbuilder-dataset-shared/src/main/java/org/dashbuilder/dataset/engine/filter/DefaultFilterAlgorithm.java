@@ -40,15 +40,15 @@ public class DefaultFilterAlgorithm implements DataSetFilterAlgorithm {
        - type: AND, OR, NOT
        - FilterColumn... target
 
-     .filter(AMOUNT, NOT(isBetween(0, 10000)))
+     .filter(AMOUNT, NOT(between(0, 10000)))
      .filter(COUNTRY, OR(isEqualTo("USA", "UK"), isNotEqualTo("Spain")))
-     .filter(AMOUNT, AND(isLowerThan(1000), isGreaterThan(0)))
-     .filter(AMOUNT, isLowerThan(1000), isGreaterThan(0))
+     .filter(AMOUNT, AND(lowerThan(1000), greaterThan(0)))
+     .filter(AMOUNT, lowerThan(1000), greaterThan(0))
 
-     .filter(AND(isLowerThan(1000, AMOUNT), isGreaterThan(0, AMOUNT)))
-     .filter(OR(isLowerThan(1000, AMOUNT), isGreaterThan(0, EXPECTED_AMOUNT)))
+     .filter(AND(lowerThan(1000, AMOUNT), greaterThan(0, AMOUNT)))
+     .filter(OR(lowerThan(1000, AMOUNT), greaterThan(0, EXPECTED_AMOUNT)))
 
-     .filter(isBetween(0, 1000, AMOUNT), isEqualsTo("Spain", COUNTRY)))
+     .filter(between(0, 1000, AMOUNT), equalsTo("Spain", COUNTRY)))
 
      ProvidedFunction
      --------------------
@@ -66,12 +66,12 @@ public class DefaultFilterAlgorithm implements DataSetFilterAlgorithm {
      SimpleFunction
      --------------------
        - columnId
-       - type: IS_EQUALS_TO, IS_GREATER_THAN, ...
+       - type: EQUALS_TO, GREATER_THAN, ...
        - Object... parameters
 
      // Filters coming from the UI are single and are not set all at the same time.
-     .filter(AMOUNT, isBetween(0, 1000)
-     .filter(COUNTRY, isEqualsTo("Spain"))
+     .filter(AMOUNT, between(0, 1000)
+     .filter(COUNTRY, equalsTo("Spain"))
 
      */
     public List<Integer> filter(DataSetHandler ctx, ColumnFilter columnFilter) {

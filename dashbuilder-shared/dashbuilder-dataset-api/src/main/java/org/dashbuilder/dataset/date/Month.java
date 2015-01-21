@@ -54,7 +54,11 @@ public enum Month {
     }
 
     public static Month getByName(String name) {
-        return valueOf(name.toUpperCase());
+        try {
+            return valueOf(name.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
     }
 
     public static Month getByIndex(int index) {

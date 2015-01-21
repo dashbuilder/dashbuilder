@@ -62,7 +62,7 @@ public class DataSetFilterTest {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                 .dataset(EXPENSE_REPORTS)
-                .filter("city", isEqualsTo("Barcelona"))
+                .filter("city", equalsTo("Barcelona"))
                 .buildLookup());
 
         //printDataSet(result);
@@ -76,7 +76,7 @@ public class DataSetFilterTest {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                 .dataset(EXPENSE_REPORTS)
-                .filter("amount", isBetween(100, 200))
+                .filter("amount", between(100, 200))
                 .buildLookup());
 
         //printDataSet(result);
@@ -97,7 +97,7 @@ public class DataSetFilterTest {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                     .dataset(EXPENSE_REPORTS)
-                    .filter("date", isGreaterThan(new Timestamp(date.getTime())))
+                    .filter("date", greaterThan(new Timestamp(date.getTime())))
                     .buildLookup());
 
         //printDataSet(result);
@@ -109,7 +109,7 @@ public class DataSetFilterTest {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                     .dataset(EXPENSE_REPORTS)
-                    .filter("date", isUntilToday("10second"))
+                    .filter("date", timeFrame("10second"))
                     .buildLookup());
 
         assertThat(result.getRowCount()).isEqualTo(0);
@@ -124,9 +124,9 @@ public class DataSetFilterTest {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                     .dataset(EXPENSE_REPORTS)
-                    .filter("date", isGreaterThan(date))
-                    .filter("amount", isLowerOrEqualsTo(120.35))
-                    .filter("city", isNotEqualsTo("Barcelona"))
+                    .filter("date", greaterThan(date))
+                    .filter("amount", lowerOrEqualsTo(120.35))
+                    .filter("city", notEqualsTo("Barcelona"))
                     .buildLookup());
 
         //printDataSet(result);
@@ -138,9 +138,9 @@ public class DataSetFilterTest {
         result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                     .dataset(EXPENSE_REPORTS)
-                    .filter("city", isNotEqualsTo("Barcelona"))
-                    .filter("amount", isLowerOrEqualsTo(120.35))
-                    .filter("date", isGreaterThan(date))
+                    .filter("city", notEqualsTo("Barcelona"))
+                    .filter("amount", lowerOrEqualsTo(120.35))
+                    .filter("date", greaterThan(date))
                     .buildLookup());
 
         //printDataSet(result);
@@ -155,7 +155,7 @@ public class DataSetFilterTest {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                         .dataset(EXPENSE_REPORTS)
-                        .filter("amount", AND(isGreaterThan(100), isLowerThan(150)))
+                        .filter("amount", AND(greaterThan(100), lowerThan(150)))
                         .buildLookup());
 
         //printDataSet(result);
@@ -169,7 +169,7 @@ public class DataSetFilterTest {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                         .dataset(EXPENSE_REPORTS)
-                        .filter("amount", NOT(isGreaterThan(100)))
+                        .filter("amount", NOT(greaterThan(100)))
                         .buildLookup());
 
         //printDataSet(result);
@@ -184,7 +184,7 @@ public class DataSetFilterTest {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                         .dataset(EXPENSE_REPORTS)
-                        .filter("amount", OR( NOT(isGreaterThan(100)), isGreaterThan(1000) ))
+                        .filter("amount", OR(NOT(greaterThan(100)), greaterThan(1000)))
                         .buildLookup());
 
         //printDataSet(result);
@@ -200,8 +200,8 @@ public class DataSetFilterTest {
                 DataSetFactory.newDataSetLookupBuilder()
                         .dataset(EXPENSE_REPORTS)
                         .filter("amount", AND(
-                                isEqualsTo("department", "Sales"),
-                                OR( NOT(isLowerThan(300)), isEqualsTo("city", "Madrid") )))
+                                equalsTo("department", "Sales"),
+                                OR(NOT(lowerThan(300)), equalsTo("city", "Madrid"))))
                         .buildLookup());
 
         //printDataSet(result);
