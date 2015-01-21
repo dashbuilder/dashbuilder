@@ -349,21 +349,21 @@ public class DisplayerSettingsEditor extends Composite {
                         Long.toString(displayerSettings.getMeterWarning()),
                         PropertyEditorType.TEXT)
                         .withKey(METER_WARNING.getFullId())
-                        .withValidators(new MeterValidator(displayerSettings, 0)));
+                        .withValidators(new MeterValidator(displayerSettings, 1)));
             }
             if (isSupported(METER_CRITICAL)) {
                 category.withField(new PropertyEditorFieldInfo(DisplayerSettingsEditorConstants.INSTANCE.meter_critical(),
                         Long.toString(displayerSettings.getMeterCritical()),
                         PropertyEditorType.TEXT)
                         .withKey(METER_CRITICAL.getFullId())
-                        .withValidators(new MeterValidator(displayerSettings, 0)));
+                        .withValidators(new MeterValidator(displayerSettings, 2)));
             }
             if (isSupported(METER_END)) {
                 category.withField(new PropertyEditorFieldInfo(DisplayerSettingsEditorConstants.INSTANCE.meter_end(),
                         Long.toString(displayerSettings.getMeterEnd()),
                         PropertyEditorType.TEXT)
                         .withKey(METER_END.getFullId())
-                        .withValidators(new MeterValidator(displayerSettings, 0)));
+                        .withValidators(new MeterValidator(displayerSettings, 3)));
             }
 
         }
@@ -464,6 +464,8 @@ public class DisplayerSettingsEditor extends Composite {
 
         private DisplayerSettings displayerSettings;
         private int level;
+        private boolean lowerOk = true;
+        private boolean upperOk = true;
 
         public MeterValidator(DisplayerSettings displayerSettings, int level) {
             this.displayerSettings = displayerSettings;
@@ -477,7 +479,7 @@ public class DisplayerSettingsEditor extends Composite {
                 case 2: return displayerSettings.getMeterCritical();
                 case 3: return displayerSettings.getMeterEnd();
             }
-            return Long.MAX_VALUE;
+            return level < 0 ? Long.MIN_VALUE : Long.MAX_VALUE;
         }
 
         private String getLevelDescr(int level) {
@@ -496,13 +498,18 @@ public class DisplayerSettingsEditor extends Composite {
                 return false;
             }
             long thisLevel = Long.parseLong(value.toString());
-            long upperLevel = getLevelValue(level+1);
-            return thisLevel <= upperLevel;
+            long lowerLevel = getLevelValue(level-1);
+            long upperLevel = getLevelValue(level + 1);
+            lowerOk = thisLevel >= lowerLevel;
+            upperOk = thisLevel <= upperLevel;
+            return lowerOk && upperOk;
         }
 
         @Override
         public String getValidatorErrorMessage() {
-            return "Must be lower than the " + getLevelDescr(level+1) + " value.";
+            if (!lowerOk) return "Must be higher than the " + getLevelDescr(level-1) + " value.";
+            if (!upperOk) return "Must be lower than the " + getLevelDescr(level+1) + " value.";
+            return "Invalid value";
         }
     }
 }
