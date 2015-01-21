@@ -62,8 +62,17 @@ public class DataSetGroupIndex extends DataSetIndexNode implements DataSetInterv
         this(null);
         this.selectKey = selectKey;
         for (DataSetIntervalIndex index : intervalIndexes) {
-            intervalIndexList.add(index);
+            addIntervalIndex(index);
         }
+    }
+
+    public void addIntervalIndex(DataSetIntervalIndex index) {
+        intervalType = index.getIntervalType();
+        Comparable min = (Comparable) index.getMinValue();
+        Comparable max = (Comparable) index.getMaxValue();
+        if (minValue == null || ((Comparable) minValue).compareTo(min) > 0) minValue = min;
+        if (maxValue == null || ((Comparable) maxValue).compareTo(max) < 0) maxValue = max;
+        intervalIndexList.add(index);
     }
 
     public String getIntervalType() {
@@ -76,6 +85,18 @@ public class DataSetGroupIndex extends DataSetIndexNode implements DataSetInterv
 
     public Object getMaxValue() {
         return maxValue;
+    }
+
+    public void setIntervalType(String intervalType) {
+        this.intervalType = intervalType;
+    }
+
+    public void setMinValue(Object minValue) {
+        this.minValue = minValue;
+    }
+
+    public void setMaxValue(Object maxValue) {
+        this.maxValue = maxValue;
     }
 
     public List<DataSetIntervalIndex> getIntervalIndexes() {
@@ -164,16 +185,16 @@ public class DataSetGroupIndex extends DataSetIndexNode implements DataSetInterv
         String intervalName = intervalIdx.getName();
         DataSetIntervalIndex existing = getIntervalIndex(intervalName);
         if (existing == null) {
-            intervalIndexList.add(intervalIdx);
+            addIntervalIndex(intervalIdx);
         } else {
             if (existing instanceof DataSetIntervalSetIndex) {
-                existing.getIntervalIndexes().add(intervalIdx);
+                ((DataSetIntervalSetIndex) existing).addIntervalIndex(intervalIdx);
             }
             else if (existing != intervalIdx){
                 int i = indexOfIntervalIndex(existing);
                 DataSetIntervalSetIndex indexSet = new DataSetIntervalSetIndex(this, intervalName);
-                indexSet.getIntervalIndexes().add(existing);
-                indexSet.getIntervalIndexes().add(intervalIdx);
+                indexSet.addIntervalIndex(existing);
+                indexSet.addIntervalIndex(intervalIdx);
                 intervalIndexList.set(i, indexSet);
             }
         }

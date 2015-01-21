@@ -166,7 +166,14 @@ public class DataSetHandlerImpl implements DataSetHandler {
             IntervalBuilderLocator intervalBuilderLocator = dataServices.getIntervalBuilderLocator();
             ColumnType columnType = metadata.getColumnType(cg.getSourceId());
             IntervalBuilder intervalBuilder = intervalBuilderLocator.lookup(columnType, cg.getStrategy());
-            return intervalBuilder.locate(column, row);
+            Interval target = intervalBuilder.locate(column, row);
+
+            // The resulting interval must be portable.
+            Interval result = new Interval(target.getName(), target.getIndex());
+            result.setType(target.getType());
+            result.setMinValue(target.getMinValue());
+            result.setMaxValue(target.getMaxValue());
+            return result;
         }
 
         // Return the interval by name.

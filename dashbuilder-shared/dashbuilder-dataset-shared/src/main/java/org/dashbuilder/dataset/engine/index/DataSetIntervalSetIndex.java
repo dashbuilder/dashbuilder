@@ -33,6 +33,16 @@ public class DataSetIntervalSetIndex extends DataSetIntervalIndex {
         return intervalIndexList;
     }
 
+
+    public void addIntervalIndex(DataSetIntervalIndex index) {
+        intervalType = index.getIntervalType();
+        Comparable min = (Comparable) index.getMinValue();
+        Comparable max = (Comparable) index.getMaxValue();
+        if (minValue == null || ((Comparable) minValue).compareTo(min) > 0) minValue = min;
+        if (maxValue == null || ((Comparable) maxValue).compareTo(max) < 0) maxValue = max;
+        intervalIndexList.add(index);
+    }
+
     public List<Integer> getRows() {
         if (intervalIndexList == null || intervalIndexList.isEmpty()) {
             return null;

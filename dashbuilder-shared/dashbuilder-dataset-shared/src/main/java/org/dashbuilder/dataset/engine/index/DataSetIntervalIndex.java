@@ -27,6 +27,9 @@ import org.dashbuilder.dataset.impl.MemSizeEstimator;
 public class DataSetIntervalIndex extends DataSetIndexNode implements DataSetIntervalIndexHolder {
 
     String intervalName = null;
+    String intervalType = null;
+    Object minValue = null;
+    Object maxValue = null;
 
     public DataSetIntervalIndex(DataSetGroupIndex parent, String intervalName) {
         super(parent, null, 0);
@@ -36,6 +39,9 @@ public class DataSetIntervalIndex extends DataSetIndexNode implements DataSetInt
     public DataSetIntervalIndex(DataSetGroupIndex parent, Interval interval) {
         super(parent, interval.getRows(), 0);
         this.intervalName = interval.getName();
+        intervalType = interval.getType();
+        minValue = interval.getMinValue();
+        maxValue = interval.getMaxValue();
     }
 
     public List<DataSetIntervalIndex> getIntervalIndexes() {
@@ -52,6 +58,30 @@ public class DataSetIntervalIndex extends DataSetIndexNode implements DataSetInt
             result += MemSizeEstimator.sizeOfString(intervalName);
         }
         return result;
+    }
+
+    public String getIntervalType() {
+        return intervalType;
+    }
+
+    public Object getMinValue() {
+        return minValue;
+    }
+
+    public Object getMaxValue() {
+        return maxValue;
+    }
+
+    public void setIntervalType(String intervalType) {
+        this.intervalType = intervalType;
+    }
+
+    public void setMinValue(Object minValue) {
+        this.minValue = minValue;
+    }
+
+    public void setMaxValue(Object maxValue) {
+        this.maxValue = maxValue;
     }
 
     public String toString() {
