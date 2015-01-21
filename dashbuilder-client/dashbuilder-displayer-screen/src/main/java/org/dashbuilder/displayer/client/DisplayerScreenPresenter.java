@@ -78,7 +78,7 @@ public class DisplayerScreenPresenter {
 
     @WorkbenchPartTitle
     public String getTitle() {
-        return displayerSettings.getTitle() + (editEnabled ? " editor" : "");
+        return displayerSettings.getTitle();
     }
 
     @WorkbenchPartView

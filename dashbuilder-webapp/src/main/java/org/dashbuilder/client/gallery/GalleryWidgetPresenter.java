@@ -109,7 +109,7 @@ public class GalleryWidgetPresenter {
         String targetUUID = event.getDataSetDef().getUUID();
         long refreshMillis = DateIntervalType.getDurationInMillis(def.getRefreshTime());
         if (SalesConstants.SALES_OPPS.equals(targetUUID)) {
-            if (refreshMillis > 60000) {
+            if (refreshMillis == -1 || refreshMillis > 60000) {
                 workbenchNotification.fire(new NotificationEvent("The sales data set has been modified. Refreshing the view ...", INFO));
             }
             if (salesGoalsWidget != null) salesGoalsWidget.redrawAll();
@@ -118,7 +118,7 @@ public class GalleryWidgetPresenter {
             if (salesReportsWidget != null) salesReportsWidget.redrawAll();
         }
         if (ExpenseConstants.EXPENSES.equals(targetUUID)) {
-            if (refreshMillis > 60000) {
+            if (refreshMillis == -1 || refreshMillis > 60000) {
                 workbenchNotification.fire(new NotificationEvent("The expense reports data set has been modified. Refreshing the view...", INFO));
             }
             if (expensesDashboardWidget != null) expensesDashboardWidget.redrawAll();
