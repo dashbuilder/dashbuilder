@@ -21,9 +21,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
-import java.util.Random;
-import javax.annotation.PostConstruct;
-import javax.enterprise.context.ApplicationScoped;
 
 import org.apache.commons.lang.StringUtils;
 import org.dashbuilder.dataset.ColumnType;
@@ -41,10 +38,7 @@ public class ClusterMetricsDataSetGenerator implements DataSetGenerator {
     DataSet dataSet = null;
     long timeFrameMillis = 100000;
     List<String> aliveNodes = new ArrayList<String>();
-    List<String> cpuHighNodes = new ArrayList<String>();
-    List<String> cpuLowNodes = new ArrayList<String>();
-    List<String> memHighNodes = new ArrayList<String>();
-    List<String> memLowNodes = new ArrayList<String>();
+    List<String> overloadedNodes = new ArrayList<String>();
 
     public ClusterMetricsDataSetGenerator() {
         dataSet = DataSetFactory.newDataSetBuilder()
@@ -73,17 +67,8 @@ public class ClusterMetricsDataSetGenerator implements DataSetGenerator {
         if (!StringUtils.isBlank(params.get("aliveNodes"))) {
             aliveNodes = Arrays.asList(StringUtils.split(params.get("aliveNodes"), ","));
         }
-        if (!StringUtils.isBlank(params.get("cpuHighNodes"))) {
-            cpuHighNodes = Arrays.asList(StringUtils.split(params.get("cpuHighNodes"), ","));
-        }
-        if (!StringUtils.isBlank(params.get("cpuLowNodes"))) {
-            cpuLowNodes = Arrays.asList(StringUtils.split(params.get("cpuLowNodes"), ","));
-        }
-        if (!StringUtils.isBlank(params.get("memHighNodes"))) {
-            memHighNodes = Arrays.asList(StringUtils.split(params.get("memHighNodes"), ","));
-        }
-        if (!StringUtils.isBlank(params.get("memLowNodes"))) {
-            memLowNodes = Arrays.asList(StringUtils.split(params.get("memLowNodes"), ","));
+        if (!StringUtils.isBlank(params.get("overloadedNodes"))) {
+            overloadedNodes = Arrays.asList(StringUtils.split(params.get("overloadedNodes"), ","));
         }
         if (aliveNodes.isEmpty()) {
             return dataSet;
@@ -122,22 +107,16 @@ public class ClusterMetricsDataSetGenerator implements DataSetGenerator {
 
     public int cpu(String node) {
         double r = Math.random();
-        if (cpuHighNodes.contains(node)) {
+        if (overloadedNodes.contains(node)) {
             return (int) (80 + 20*r);
-        }
-        if (cpuLowNodes.contains(node)) {
-            return (int) (0 + 20*r);
         }
         return (int) (20 + 60*r);
     }
 
     public int mem(String node) {
         double r = Math.random();
-        if (memHighNodes.contains(node)) {
+        if (overloadedNodes.contains(node)) {
             return  (int) (50 + 14*r);
-        }
-        if (memLowNodes.contains(node)) {
-            return (int) (0 + 4*r);
         }
         return (int) (4 + 46*r);
     }
