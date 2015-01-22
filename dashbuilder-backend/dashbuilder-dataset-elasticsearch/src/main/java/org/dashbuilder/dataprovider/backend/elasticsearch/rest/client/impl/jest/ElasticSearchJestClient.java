@@ -971,6 +971,7 @@ public class ElasticSearchJestClient implements ElasticSearchClient<ElasticSearc
         public static final String SEARCH_API_OR = "or";
         public static final String SEARCH_API_NOT  = "not";
         public static final String SEARCH_API_FILTER = "filter";
+        public static final String SEARCH_API_FILTERED = "filtered";
         public static final String SEARCH_API_QUERY = "query";
         public static final String SEARCH_API_MATCH = "match";
         public static final String SEARCH_API_MATCH_ALL = "match_all";
@@ -1145,7 +1146,10 @@ public class ElasticSearchJestClient implements ElasticSearchClient<ElasticSearc
             JsonObject result = new JsonObject();
             result.add(SEARCH_API_QUERY, queryObject);
             result.add(SEARCH_API_FILTER, filterObject);
-            return result;
+            
+            JsonObject filteredQuery = new JsonObject();
+            filteredQuery.add(SEARCH_API_FILTERED, result);
+            return filteredQuery;
         }
 
         private JsonObject translateMatch(Query query) {
