@@ -114,7 +114,7 @@ public class ElasticSearchJestClientTest {
         query.setParam(Query.Parameter.QUERY.name(), subQuery);
         query.setParam(Query.Parameter.FILTER.name(), subFilter);
         serializedQuery = gson.toJson(query, Query.class);
-        Assert.assertEquals(serializedQuery, "{\"query\":{\"query\":{\"match_all\":{}},\"filter\":{\"term\":{\"amount\":\"Sales\"}}}}");
+        Assert.assertEquals(serializedQuery, "{\"query\":{\"filtered\":{\"query\":{\"match_all\":{}},\"filter\":{\"term\":{\"amount\":\"Sales\"}}}}}");
 
         // Boolean query.
         query = new Query("department", Query.Type.BOOL);
@@ -174,9 +174,26 @@ public class ElasticSearchJestClientTest {
     public void testSearchResponseDeserialization() {
         String response = "{\"took\":4,\"timed_out\":false,\"_shards\":{\"total\":5,\"successful\":5,\"failed\":0},\"hits\":{\"total\":8,\"max_score\":2.609438,\"hits\":[{\"_index\":\"expensereports\",\"_type\":\"expense\",\"_id\":\"12\",\"_score\":2.609438,\"_source\":{\"id\":12, \"city\": \"Madrid\", \"department\": \"Sales\", \"employee\": \"Nita Marling\" ,\"date\": \"03-02-2012\" , \"amount\":344.9}},{\"_index\":\"expensereports\",\"_type\":\"expense\",\"_id\":\"20\",\"_score\":2.609438,\"_source\":{\"id\":20, \"city\": \"Brno\", \"department\": \"Sales\", \"employee\": \"Neva Hunger\" ,\"date\": \"06-11-2011\" , \"amount\":995.3}},{\"_index\":\"expensereports\",\"_type\":\"expense\",\"_id\":\"21\",\"_score\":2.609438,\"_source\":{\"id\":21, \"city\": \"Brno\", \"department\": \"Sales\", \"employee\": \"Neva Hunger\" ,\"date\": \"06-11-2011\" , \"amount\":234.3}},{\"_index\":\"expensereports\",\"_type\":\"expense\",\"_id\":\"10\",\"_score\":2.2039728,\"_source\":{\"id\":10, \"city\": \"Madrid\", \"department\": \"Sales\", \"employee\": \"Nita Marling\" ,\"date\": \"03-11-2012\" , \"amount\":100}},{\"_index\":\"expensereports\",\"_type\":\"expense\",\"_id\":\"27\",\"_score\":2.2039728,\"_source\":{\"id\":27, \"city\": \"Westford\", \"department\": \"Sales\", \"employee\": \"Jerri Preble\" ,\"date\": \"12-23-2010\" , \"amount\":899.03}},{\"_index\":\"expensereports\",\"_type\":\"expense\",\"_id\":\"9\",\"_score\":1.9162908,\"_source\":{\"id\":9, \"city\": \"Madrid\", \"department\": \"Sales\", \"employee\": \"Nita Marling\" ,\"date\": \"05-11-2012\" , \"amount\":75.75}},{\"_index\":\"expensereports\",\"_type\":\"expense\",\"_id\":\"11\",\"_score\":1.9162908,\"_source\":{\"id\":11, \"city\": \"Madrid\", \"department\": \"Sales\", \"employee\": \"Nita Marling\" ,\"date\": \"03-16-2012\" , \"amount\":220.8}},{\"_index\":\"expensereports\",\"_type\":\"expense\",\"_id\":\"28\",\"_score\":1.9162908,\"_source\":{\"id\":28, \"city\": \"Westford\", \"department\": \"Sales\", \"employee\": \"Jerri Preble\" ,\"date\": \"11-30-2010\" , \"amount\":343.45}}]}}";
 
+        // Build the resulting column definitions list.        
+        DataColumn col0 = new DataColumnImpl("id", ColumnType.NUMBER);
+        DataColumn col1 = new DataColumnImpl("city", ColumnType.LABEL);
+        DataColumn col2 = new DataColumnImpl("department", ColumnType.LABEL);
+        DataColumn col3 = new DataColumnImpl("employee", ColumnType.TEXT);
+        DataColumn col4 = new DataColumnImpl("date", ColumnType.DATE);
+        DataColumn col5 = new DataColumnImpl("amount", ColumnType.NUMBER);
+        
+        List<DataColumn> columns = new LinkedList<DataColumn>();
+        columns.add(col0);
+        columns.add(col1);
+        columns.add(col2);
+        columns.add(col3);
+        columns.add(col4);
+        columns.add(col5);
+
+        // Build the Json serializer.
         GsonBuilder builder = new GsonBuilder();
-        SearchResponseDeserializer searchResponseDeserializer = new SearchResponseDeserializer(metadata, definition, new ArrayList<DataColumn>());
-        HitDeserializer hitDeserializer = new HitDeserializer(metadata, definition, new ArrayList<DataColumn>());
+        SearchResponseDeserializer searchResponseDeserializer = new SearchResponseDeserializer(metadata, definition, columns);
+        HitDeserializer hitDeserializer = new HitDeserializer(metadata, definition, columns);
         builder.registerTypeAdapter(SearchResponse.class, searchResponseDeserializer);
         builder.registerTypeAdapter(SearchHitResponse.class, hitDeserializer);
         Gson gson = builder.create();

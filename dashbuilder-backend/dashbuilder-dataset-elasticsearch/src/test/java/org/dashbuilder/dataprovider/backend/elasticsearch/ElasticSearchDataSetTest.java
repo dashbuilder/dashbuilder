@@ -365,7 +365,6 @@ public class ElasticSearchDataSetTest extends ElasticSearchDataSetTestBase {
      * An RuntimeException must be thrown.
      * @throws Exception
      * 
-     * TODO
      */
     @Test(expected = RuntimeException.class)
     public void testAggregationByNoFunctionColumn() throws Exception {
@@ -510,7 +509,7 @@ public class ElasticSearchDataSetTest extends ElasticSearchDataSetTestBase {
     public void testFilterMultipleByDate() throws Exception {
         // Date column filtering and other filters.
         Calendar c = Calendar.getInstance();
-        c.set(2009, 0, 0, 0, 0);
+        c.set(2010, 0, 0, 0, 0);
         Timestamp date = new Timestamp(c.getTime().getTime());
 
         DataSet result = dataSetManager.lookupDataSet(

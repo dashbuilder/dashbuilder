@@ -22,9 +22,11 @@ import org.dashbuilder.dataset.DataSetMetadata;
 import org.dashbuilder.dataset.filter.*;
 import org.dashbuilder.dataset.group.DataSetGroup;
 import org.dashbuilder.dataset.group.Interval;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
-import java.text.SimpleDateFormat;
 import java.util.Collections;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -90,7 +92,7 @@ public class ElasticSearchQueryBuilderImpl implements ElasticSearchQueryBuilder<
             }
         }
 
-        Query result = joinQueriesAndFiltersUsing(queries, Operator.AND);
+        Query result = joinQueriesAndFilters(queries, Operator.AND);
         
         // If result is a filter, wrap into a MATCH_ALL filtered query, as EL aggregations requires working with queries.
         if (result != null && isFilter(result)) {
@@ -135,7 +137,7 @@ public class ElasticSearchQueryBuilderImpl implements ElasticSearchQueryBuilder<
         return result;
     }
 
-    private Query joinQueriesAndFiltersUsing(List<Query> queries, Operator operator) {
+    private Query joinQueriesAndFilters(List<Query> queries, Operator operator) {
         if (queries == null || queries.isEmpty()) return null;
 
         Query result = null;
@@ -175,10 +177,25 @@ public class ElasticSearchQueryBuilderImpl implements ElasticSearchQueryBuilder<
             }
         }
         else {
-            Query booleanQuery = new Query(Query.Type.BOOL);
-            booleanQuery.setParam(boolType, subQueries);
-            Query filter = new Query(filterOperator);
-            filter.setParam(Query.Parameter.FILTERS.name(), subFilters);
+
+            Query booleanQuery = null;
+            if (subQueries.size() == 1) {
+                booleanQuery = subQueries.get(0);
+            } else {
+                booleanQuery = new Query(Query.Type.BOOL);
+                booleanQuery.setParam(boolType, subQueries);
+            }
+
+            Query filter = null;
+            if (subFilters.size() == 1) {
+                filter = subFilters.get(0);
+            }
+            else {
+                new Query(filterOperator);
+                filter.setParam(Query.Parameter.FILTERS.name(), subFilters);
+            }
+
+            // Join queries and filters using a FILTERED query.
             result = new Query(Query.Type.FILTERED);
             result.setParam(Query.Parameter.QUERY.name(), booleanQuery);
             result.setParam(Query.Parameter.FILTER.name(), filter);
@@ -283,7 +300,7 @@ public class ElasticSearchQueryBuilderImpl implements ElasticSearchQueryBuilder<
             
         }
         
-        return joinQueriesAndFiltersUsing(results, operator);
+        return joinQueriesAndFilters(results, operator);
     }
     
     protected Query buildLogicalExpressionFilter(LogicalExprFilter filter, Operator operator) {
@@ -365,7 +382,7 @@ public class ElasticSearchQueryBuilderImpl implements ElasticSearchQueryBuilder<
 
             Object value = formatFilterValue(columnId, metadata, params.get(0));
             result = new Query(columnId, Query.Type.RANGE);
-            result.setParam("gte", value);
+            result.setParam(Query.Parameter.GTE.name(), value);
             
         } else if (CoreFunctionType.BETWEEN.equals(type)) {
 
@@ -392,7 +409,8 @@ public class ElasticSearchQueryBuilderImpl implements ElasticSearchQueryBuilder<
         // TODO: Currently only formatted dates using format defined by index mappings response. Format numbers too?
         if (ColumnType.DATE.equals(columnType)) {
             String pattern = metadata.getDefinition().getPattern(columnId);
-            return new SimpleDateFormat(pattern).format(value);
+            DateTimeFormatter formatter = DateTimeFormat.forPattern(pattern);
+            return formatter.print(((Date)value).getTime());
         }
 
         return value;

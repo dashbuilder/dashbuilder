@@ -2,6 +2,7 @@ package org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.impl.jest
 
 import com.google.gson.*;
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.impl.jest.ElasticSearchJestClient;
+import org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.model.EmptySearchResponse;
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.model.SearchHitResponse;
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.model.SearchResponse;
 import org.dashbuilder.dataset.DataColumn;
@@ -53,7 +54,9 @@ public class SearchResponseDeserializer extends AbstractAdapter<SearchResponseDe
                     hits = parseAggregations(responseObject, context);
                 }
 
-                result = new SearchResponse(tookInMillis, responseStatus, totalHits, maxScore, totalShards, successfulShards, shardFailures, columns, hits.toArray(new SearchHitResponse[hits.size()]));
+                // Build the response model.
+                if (hits == null || hits.isEmpty()) result = new EmptySearchResponse(tookInMillis, responseStatus, totalHits, maxScore, totalShards, successfulShards, shardFailures);
+                else result = new SearchResponse(tookInMillis, responseStatus, totalHits, maxScore, totalShards, successfulShards, shardFailures, columns, hits.toArray(new SearchHitResponse[hits.size()]));
             }
         }
 

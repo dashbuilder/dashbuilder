@@ -17,10 +17,7 @@ import org.dashbuilder.dataset.group.*;
 import org.dashbuilder.dataset.impl.DataColumnImpl;
 
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Serializes DataSetGroup operations.
@@ -49,7 +46,7 @@ public class AggregationSerializer extends AbstractAdapter<AggregationSerializer
     protected static final String EL_DATE_FORMAT_MINUTE= "mm";
     protected static final String EL_DATE_FORMAT_SECOND = "ss";
 
-    // TODO: @Inject -> Not working
+    // TODO: @Inject
     protected BackendIntervalBuilderDynamicDate intervalBuilder;
 
     public AggregationSerializer(DataSetMetadata metadata, ElasticSearchDataSetDef definition, List<DataColumn> columns) {
@@ -61,13 +58,19 @@ public class AggregationSerializer extends AbstractAdapter<AggregationSerializer
         ColumnGroup columnGroup = groupOp.getColumnGroup();
         List<GroupFunction> groupFunctions = groupOp.getGroupFunctions();
 
+        List<GroupFunction> columnPickUps = new LinkedList<GroupFunction>();
+        
         // Group functions.
         JsonObject aggregationsObject = null;
         if (groupFunctions != null && !groupFunctions.isEmpty()) {
             aggregationsObject = new JsonObject();
             for (GroupFunction groupFunction : groupFunctions) {
                 // If not a "group" lookup operation (not the groupby column), seralize the core function.
-                if (groupFunction.getFunction() != null) serializeCoreFunction(aggregationsObject, groupFunction);
+                if (groupFunction.getFunction() != null) {
+                    serializeCoreFunction(aggregationsObject, groupFunction);
+                } else {
+                    columnPickUps.add(groupFunction);
+                }
             }
         }
 
@@ -78,8 +81,9 @@ public class AggregationSerializer extends AbstractAdapter<AggregationSerializer
             String columnId = columnGroup.getColumnId();
             String sourceId = columnGroup.getSourceId();
 
-            if (groupFunctions != null && !groupFunctions.isEmpty()) {
-                for (GroupFunction groupFunction : groupFunctions) {
+            // Check that all column pickups are also column groups.
+            if (!columnPickUps.isEmpty()) {
+                for (GroupFunction groupFunction : columnPickUps) {
                     if (groupFunction.getFunction() == null) {
                         columnId = groupFunction.getColumnId();
                         if (!sourceId.equals(groupFunction.getSourceId())) throw new RuntimeException("Grouping by this source property [" + sourceId + "] not possible.");
@@ -89,6 +93,12 @@ public class AggregationSerializer extends AbstractAdapter<AggregationSerializer
             }
 
             serializeGroupByFunction(groupByObject, columnGroup, columnId, aggregationsObject);
+
+        } else {
+
+            // If there is no group function, cannot use column pickups.
+            if (!columnPickUps.isEmpty()) throw new RuntimeException("Column [" + columnPickUps.get(0).getSourceId() + "] pickup  failed. No grouping is set for this column.");
+
         }
 
         return groupByObject != null ? buildAggregations(groupByObject) : buildAggregations(aggregationsObject);
