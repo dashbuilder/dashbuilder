@@ -663,31 +663,25 @@ public class ElasticSearchJestClient implements ElasticSearchClient<ElasticSearc
 
                 AggregateFunctionType type = groupFunction.getFunction();
                 String aggregationName = null;
-                ColumnType resultingColumnType = null;
+                ColumnType resultingColumnType = ColumnType.NUMBER;
                 switch (type) {
                     case COUNT:
                         aggregationName = "value_count";
-                        resultingColumnType = ColumnType.NUMBER;
                         break;
                     case DISTINCT:
                         aggregationName = "cardinality";
-                        resultingColumnType = ColumnType.LABEL;
                         break;
                     case AVERAGE:
                         aggregationName = "avg";
-                        resultingColumnType = ColumnType.NUMBER;
                         break;
                     case SUM:
                         aggregationName = "sum";
-                        resultingColumnType = ColumnType.NUMBER;
                         break;
                     case MIN:
                         aggregationName = "min";
-                        resultingColumnType = ColumnType.NUMBER;
                         break;
                     case MAX:
                         aggregationName = "max";
-                        resultingColumnType = ColumnType.NUMBER;
                         break;
 
                 }
