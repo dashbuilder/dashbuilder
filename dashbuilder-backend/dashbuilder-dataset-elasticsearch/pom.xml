@@ -45,6 +45,21 @@
       <version>1.1.1</version>   <!--TODO: Set version in parent -->
     </dependency>
 
+    <!-- Jest ES client. -->
+    <dependency>
+      <groupId>io.searchbox</groupId>
+      <artifactId>jest</artifactId>
+      <version>0.1.3</version> <!-- TODO: Set version in parent. -->
+    </dependency>
+
+
+    <dependency>
+      <groupId>joda-time</groupId>
+      <artifactId>joda-time</artifactId>
+    </dependency>
+
+    <!-- Testing scope -->
+
     <dependency>
       <groupId>org.elasticsearch</groupId>
       <artifactId>elasticsearch</artifactId>
@@ -66,17 +81,6 @@
       <scope>test</scope>
     </dependency>
     
-    
-    
-    <!-- Jest ES client. -->
-    <dependency>
-      <groupId>io.searchbox</groupId>
-      <artifactId>jest</artifactId>
-      <version>0.1.3</version> <!-- TODO: Set version in parent. -->
-    </dependency>
-    
-    <!-- Unit testing -->
-
     <dependency>
       <groupId>org.dashbuilder</groupId>
       <artifactId>dashbuilder-common</artifactId>

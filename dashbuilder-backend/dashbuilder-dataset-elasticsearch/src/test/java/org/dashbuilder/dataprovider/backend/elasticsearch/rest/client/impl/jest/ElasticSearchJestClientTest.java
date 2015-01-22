@@ -21,8 +21,10 @@ import org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.model.Quer
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.model.SearchHitResponse;
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.model.SearchResponse;
 import org.dashbuilder.dataset.ColumnType;
+import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.dataset.DataSetMetadata;
 import org.dashbuilder.dataset.group.*;
+import org.dashbuilder.dataset.impl.DataColumnImpl;
 import org.jboss.arquillian.junit.Arquillian;
 import org.junit.Assert;
 import org.junit.Before;
@@ -35,7 +37,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import static org.mockito.Matchers.endsWith;
 import static org.mockito.Mockito.when;
 
 /**
@@ -48,11 +49,15 @@ public class ElasticSearchJestClientTest {
 
     @Mock
     protected DataSetMetadata metadata;
+    protected ElasticSearchJestClient jestClient;
     
     @Before
     public void setUp() throws Exception {
         // Init the annotated mocks.
         MockitoAnnotations.initMocks(this);
+        
+        // Jest client.
+        jestClient = new ElasticSearchJestClient();
         
         // Init the metadata mocked instance.
         when(metadata.getNumberOfColumns()).thenReturn(6);
@@ -79,7 +84,8 @@ public class ElasticSearchJestClientTest {
     @Test
     public void testQuerySerializer() {
         GsonBuilder builder = new GsonBuilder();
-        builder.registerTypeAdapter(Query.class, new ElasticSearchJestClient.QuerySerializer());
+        
+        builder.registerTypeAdapter(Query.class, jestClient.buildQuerySerializer());
         Gson gson = builder.create();
         
         // Match ALL query.
@@ -162,8 +168,8 @@ public class ElasticSearchJestClientTest {
         String response = "{\"took\":4,\"timed_out\":false,\"_shards\":{\"total\":5,\"successful\":5,\"failed\":0},\"hits\":{\"total\":8,\"max_score\":2.609438,\"hits\":[{\"_index\":\"expensereports\",\"_type\":\"expense\",\"_id\":\"12\",\"_score\":2.609438,\"_source\":{\"id\":12, \"city\": \"Madrid\", \"department\": \"Sales\", \"employee\": \"Nita Marling\" ,\"date\": \"03-02-2012\" , \"amount\":344.9}},{\"_index\":\"expensereports\",\"_type\":\"expense\",\"_id\":\"20\",\"_score\":2.609438,\"_source\":{\"id\":20, \"city\": \"Brno\", \"department\": \"Sales\", \"employee\": \"Neva Hunger\" ,\"date\": \"06-11-2011\" , \"amount\":995.3}},{\"_index\":\"expensereports\",\"_type\":\"expense\",\"_id\":\"21\",\"_score\":2.609438,\"_source\":{\"id\":21, \"city\": \"Brno\", \"department\": \"Sales\", \"employee\": \"Neva Hunger\" ,\"date\": \"06-11-2011\" , \"amount\":234.3}},{\"_index\":\"expensereports\",\"_type\":\"expense\",\"_id\":\"10\",\"_score\":2.2039728,\"_source\":{\"id\":10, \"city\": \"Madrid\", \"department\": \"Sales\", \"employee\": \"Nita Marling\" ,\"date\": \"03-11-2012\" , \"amount\":100}},{\"_index\":\"expensereports\",\"_type\":\"expense\",\"_id\":\"27\",\"_score\":2.2039728,\"_source\":{\"id\":27, \"city\": \"Westford\", \"department\": \"Sales\", \"employee\": \"Jerri Preble\" ,\"date\": \"12-23-2010\" , \"amount\":899.03}},{\"_index\":\"expensereports\",\"_type\":\"expense\",\"_id\":\"9\",\"_score\":1.9162908,\"_source\":{\"id\":9, \"city\": \"Madrid\", \"department\": \"Sales\", \"employee\": \"Nita Marling\" ,\"date\": \"05-11-2012\" , \"amount\":75.75}},{\"_index\":\"expensereports\",\"_type\":\"expense\",\"_id\":\"11\",\"_score\":1.9162908,\"_source\":{\"id\":11, \"city\": \"Madrid\", \"department\": \"Sales\", \"employee\": \"Nita Marling\" ,\"date\": \"03-16-2012\" , \"amount\":220.8}},{\"_index\":\"expensereports\",\"_type\":\"expense\",\"_id\":\"28\",\"_score\":1.9162908,\"_source\":{\"id\":28, \"city\": \"Westford\", \"department\": \"Sales\", \"employee\": \"Jerri Preble\" ,\"date\": \"11-30-2010\" , \"amount\":343.45}}]}}";
 
         GsonBuilder builder = new GsonBuilder();
-        builder.registerTypeAdapter(SearchResponse.class, new ElasticSearchJestClient.SearchResponseDeserializer());
-        builder.registerTypeAdapter(SearchHitResponse.class, new ElasticSearchJestClient.HitDeserializer().setDataSetMetadata(metadata));
+        builder.registerTypeAdapter(SearchResponse.class, jestClient.buildSearchResponseDeserializer());
+        builder.registerTypeAdapter(SearchHitResponse.class, jestClient.buildHitDeserializer().setDataSetMetadata(metadata));
         Gson gson = builder.create();
         SearchResponse result = gson.fromJson(response, SearchResponse.class);
         
@@ -217,7 +223,7 @@ public class ElasticSearchJestClientTest {
         
         GsonBuilder builder = new GsonBuilder();
         ElasticSearchJestClient client = new ElasticSearchJestClient();
-        ElasticSearchJestClient.AggregationSerializer serializer = client.buildAggregationsSerializer();
+        ElasticSearchJestClient.AggregationSerializer serializer = client.buildAggregationSerializer();
         builder.registerTypeAdapter(DataSetGroup.class, serializer.setDataSetMetadata(metadata));
         Gson gson = builder.create();
 
@@ -284,8 +290,7 @@ public class ElasticSearchJestClientTest {
     @Test
     public void testAggregationDeserializer() {
 
-        String aggregations1 = "{\"aggregations\": {\n" +
-                "    \"departmentGrouped\": {\n" +
+        String aggregations1 = "{ \"departmentGrouped\": {\n" +
                 "        \"doc_count_error_upper_bound\": 0,\n" +
                 "        \"sum_other_doc_count\": 0,\n" +
                 "        \"buckets\": [\n" +
@@ -341,10 +346,19 @@ public class ElasticSearchJestClientTest {
                 "            }\n" +
                 "        ]\n" +
                 "    }\n" +
-                "}}";
+                "}";
 
+        // The resulting datacolumns to obtain.
+        
+        DataColumn deptColumn = new DataColumnImpl("departmentGrouped", ColumnType.LABEL);
+        DataColumn amounutCountColumn = new DataColumnImpl("amount-count", ColumnType.NUMBER);
+        DataColumn amounutMinColumn = new DataColumnImpl("amount-min", ColumnType.NUMBER);
+        List<DataColumn> columns = new LinkedList<DataColumn>();
+        columns.add(deptColumn);
+        columns.add(amounutCountColumn);
+        columns.add(amounutMinColumn);
         GsonBuilder builder = new GsonBuilder();
-        builder.registerTypeAdapter(SearchHitResponse[].class, new ElasticSearchJestClient.AggregationsDeserializer());
+        builder.registerTypeAdapter(SearchHitResponse[].class, jestClient.buildAggregationsDeserializer().setColumns(columns));
         Gson gson = builder.create();
         SearchHitResponse[] hits = gson.fromJson(aggregations1, SearchHitResponse[].class);
         
@@ -387,6 +401,9 @@ public class ElasticSearchJestClientTest {
         Assert.assertEquals(hit4Dept, "Support");
         Assert.assertEquals(hit4AmountMin, "300.010009765625");
         
+        
+        // TODO: NO bucketed aggs.
+        
 
     }
 
@@ -395,7 +412,7 @@ public class ElasticSearchJestClientTest {
     public void testSearchQuerySerializer() {
 
         GsonBuilder builder = new GsonBuilder();
-        builder.registerTypeAdapter(DataSetGroup.class, new ElasticSearchJestClient.SearchQuerySerializer());
+        builder.registerTypeAdapter(DataSetGroup.class, jestClient.buildSearchQuerySerializer());
         Gson gson = builder.create();
         
         // TODO ElasticSearchJestClient.SearchQuery searchQuery = new ElasticSearchJestClient.SearchQuery();

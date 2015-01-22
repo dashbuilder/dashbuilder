@@ -26,28 +26,20 @@ import org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.impl.Elast
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.impl.jest.ElasticSearchJestClient;
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.model.*;
 import org.dashbuilder.dataset.*;
-import org.dashbuilder.dataset.backend.date.DateUtils;
 import org.dashbuilder.dataset.def.DataSetDef;
 import org.dashbuilder.dataset.def.ElasticSearchDataSetDef;
 import org.dashbuilder.dataset.filter.ColumnFilter;
 import org.dashbuilder.dataset.filter.DataSetFilter;
 import org.dashbuilder.dataset.group.DataSetGroup;
-import org.dashbuilder.dataset.group.DateIntervalType;
 import org.dashbuilder.dataset.group.GroupFunction;
-import org.dashbuilder.dataset.group.GroupStrategy;
 import org.dashbuilder.dataset.impl.DataSetMetadataImpl;
 import org.dashbuilder.dataset.sort.ColumnSort;
 import org.dashbuilder.dataset.sort.DataSetSort;
-import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
-import org.joda.time.format.ISODateTimeFormat;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 import javax.inject.Named;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -238,7 +230,7 @@ public class ElasticSearchDataSetProvider implements DataSetProvider {
         SearchResponse searchResponse = getClient(elDef).search(elDef, request);
 
         // Add the dataset columns.
-        addDataSetColumns(dataSet, metadata, searchResponse);
+        addDataSetColumns(dataSet, searchResponse);
 
         // There are no results. Return an empty dataset.
         if (searchResponse instanceof EmptySearchResponse) return dataSet;
@@ -382,12 +374,13 @@ public class ElasticSearchDataSetProvider implements DataSetProvider {
      *
      * @throws Exception
      */
-    protected void addDataSetColumns(DataSet dataSet, DataSetMetadata metadata, SearchResponse searchResponse) throws Exception {
-        List<String> columnIds = searchResponse.getColumnIds();
-        if (columnIds != null && !columnIds.isEmpty()) {
+    protected void addDataSetColumns(DataSet dataSet, SearchResponse searchResponse) throws Exception {
+        List<DataColumn> columns = searchResponse.getColumns();
+        if (columns != null && !columns.isEmpty()) {
             int x = 0;
-            for (String columnId : columnIds) {
-                ColumnType columnType = metadata.getColumnType(columnId);
+            for (DataColumn column : columns) {
+                String columnId = column.getId();
+                ColumnType columnType = column.getColumnType();
                 dataSet.addColumn(columnId, columnId, columnType);
             }
         }
