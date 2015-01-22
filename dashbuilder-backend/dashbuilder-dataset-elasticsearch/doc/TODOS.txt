@@ -1,0 +1,13 @@
+- David
+    - TimeSeries function support
+    - empty intervals group selection (min_doc_count) - https://github.com/dashbuilder/dashbuilder/blob/master/dashbuilder-shared/dashbuilder-dataset-api/src/main/java/org/dashbuilder/dataset/DataSetLookupBuilder.java#L165
+    - initial filter (as part of dataset def) 
+    
+- Structure
+    - Verify pom TODOS
+    - BOM & packaging
+
+- Code
+    - CDI Injections
+    - Date interval calculations when group by date dynamic
+    

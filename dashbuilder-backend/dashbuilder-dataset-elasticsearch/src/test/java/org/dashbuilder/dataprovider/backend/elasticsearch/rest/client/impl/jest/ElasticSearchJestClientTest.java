@@ -17,12 +17,14 @@ package org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.impl.jest
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.impl.jest.gson.*;
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.model.Query;
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.model.SearchHitResponse;
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.model.SearchResponse;
 import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.dataset.DataSetMetadata;
+import org.dashbuilder.dataset.def.ElasticSearchDataSetDef;
 import org.dashbuilder.dataset.group.*;
 import org.dashbuilder.dataset.impl.DataColumnImpl;
 import org.jboss.arquillian.junit.Arquillian;
@@ -33,6 +35,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -49,15 +52,14 @@ public class ElasticSearchJestClientTest {
 
     @Mock
     protected DataSetMetadata metadata;
-    protected ElasticSearchJestClient jestClient;
+    @Mock
+    protected ElasticSearchDataSetDef definition;
+    
     
     @Before
     public void setUp() throws Exception {
         // Init the annotated mocks.
         MockitoAnnotations.initMocks(this);
-        
-        // Jest client.
-        jestClient = new ElasticSearchJestClient();
         
         // Init the metadata mocked instance.
         when(metadata.getNumberOfColumns()).thenReturn(6);
@@ -79,13 +81,18 @@ public class ElasticSearchJestClientTest {
         when(metadata.getColumnId(5)).thenReturn("amount");
         when(metadata.getColumnType(5)).thenReturn(ColumnType.NUMBER);
         when(metadata.getColumnType("amount")).thenReturn(ColumnType.NUMBER);
+        
+        // Init the dataset defintion mocked instance.
+        when(definition.getIndex()).thenReturn(new String[] {"expensereports"});
+        when(definition.getType()).thenReturn(new String[] {"expense"});
     }
 
     @Test
     public void testQuerySerializer() {
         GsonBuilder builder = new GsonBuilder();
-        
-        builder.registerTypeAdapter(Query.class, jestClient.buildQuerySerializer());
+
+        QuerySerializer querySerializer = new QuerySerializer(metadata, definition, new ArrayList<DataColumn>());
+        builder.registerTypeAdapter(Query.class, querySerializer);
         Gson gson = builder.create();
         
         // Match ALL query.
@@ -168,8 +175,10 @@ public class ElasticSearchJestClientTest {
         String response = "{\"took\":4,\"timed_out\":false,\"_shards\":{\"total\":5,\"successful\":5,\"failed\":0},\"hits\":{\"total\":8,\"max_score\":2.609438,\"hits\":[{\"_index\":\"expensereports\",\"_type\":\"expense\",\"_id\":\"12\",\"_score\":2.609438,\"_source\":{\"id\":12, \"city\": \"Madrid\", \"department\": \"Sales\", \"employee\": \"Nita Marling\" ,\"date\": \"03-02-2012\" , \"amount\":344.9}},{\"_index\":\"expensereports\",\"_type\":\"expense\",\"_id\":\"20\",\"_score\":2.609438,\"_source\":{\"id\":20, \"city\": \"Brno\", \"department\": \"Sales\", \"employee\": \"Neva Hunger\" ,\"date\": \"06-11-2011\" , \"amount\":995.3}},{\"_index\":\"expensereports\",\"_type\":\"expense\",\"_id\":\"21\",\"_score\":2.609438,\"_source\":{\"id\":21, \"city\": \"Brno\", \"department\": \"Sales\", \"employee\": \"Neva Hunger\" ,\"date\": \"06-11-2011\" , \"amount\":234.3}},{\"_index\":\"expensereports\",\"_type\":\"expense\",\"_id\":\"10\",\"_score\":2.2039728,\"_source\":{\"id\":10, \"city\": \"Madrid\", \"department\": \"Sales\", \"employee\": \"Nita Marling\" ,\"date\": \"03-11-2012\" , \"amount\":100}},{\"_index\":\"expensereports\",\"_type\":\"expense\",\"_id\":\"27\",\"_score\":2.2039728,\"_source\":{\"id\":27, \"city\": \"Westford\", \"department\": \"Sales\", \"employee\": \"Jerri Preble\" ,\"date\": \"12-23-2010\" , \"amount\":899.03}},{\"_index\":\"expensereports\",\"_type\":\"expense\",\"_id\":\"9\",\"_score\":1.9162908,\"_source\":{\"id\":9, \"city\": \"Madrid\", \"department\": \"Sales\", \"employee\": \"Nita Marling\" ,\"date\": \"05-11-2012\" , \"amount\":75.75}},{\"_index\":\"expensereports\",\"_type\":\"expense\",\"_id\":\"11\",\"_score\":1.9162908,\"_source\":{\"id\":11, \"city\": \"Madrid\", \"department\": \"Sales\", \"employee\": \"Nita Marling\" ,\"date\": \"03-16-2012\" , \"amount\":220.8}},{\"_index\":\"expensereports\",\"_type\":\"expense\",\"_id\":\"28\",\"_score\":1.9162908,\"_source\":{\"id\":28, \"city\": \"Westford\", \"department\": \"Sales\", \"employee\": \"Jerri Preble\" ,\"date\": \"11-30-2010\" , \"amount\":343.45}}]}}";
 
         GsonBuilder builder = new GsonBuilder();
-        builder.registerTypeAdapter(SearchResponse.class, jestClient.buildSearchResponseDeserializer());
-        builder.registerTypeAdapter(SearchHitResponse.class, jestClient.buildHitDeserializer().setDataSetMetadata(metadata));
+        SearchResponseDeserializer searchResponseDeserializer = new SearchResponseDeserializer(metadata, definition, new ArrayList<DataColumn>());
+        HitDeserializer hitDeserializer = new HitDeserializer(metadata, definition, new ArrayList<DataColumn>());
+        builder.registerTypeAdapter(SearchResponse.class, searchResponseDeserializer);
+        builder.registerTypeAdapter(SearchHitResponse.class, hitDeserializer);
         Gson gson = builder.create();
         SearchResponse result = gson.fromJson(response, SearchResponse.class);
         
@@ -222,9 +231,8 @@ public class ElasticSearchJestClientTest {
     public void testAggregationSerializer() {
         
         GsonBuilder builder = new GsonBuilder();
-        ElasticSearchJestClient client = new ElasticSearchJestClient();
-        ElasticSearchJestClient.AggregationSerializer serializer = client.buildAggregationSerializer();
-        builder.registerTypeAdapter(DataSetGroup.class, serializer.setDataSetMetadata(metadata));
+        AggregationSerializer aggregationSerializer = new AggregationSerializer(metadata, definition, new ArrayList<DataColumn>());
+        builder.registerTypeAdapter(DataSetGroup.class, aggregationSerializer);
         Gson gson = builder.create();
 
         // **************
@@ -358,7 +366,8 @@ public class ElasticSearchJestClientTest {
         columns.add(amounutCountColumn);
         columns.add(amounutMinColumn);
         GsonBuilder builder = new GsonBuilder();
-        builder.registerTypeAdapter(SearchHitResponse[].class, jestClient.buildAggregationsDeserializer().setColumns(columns));
+        AggregationsDeserializer aggregationsDeserializer = new AggregationsDeserializer(metadata, definition, columns);
+        builder.registerTypeAdapter(SearchHitResponse[].class, aggregationsDeserializer);
         Gson gson = builder.create();
         SearchHitResponse[] hits = gson.fromJson(aggregations1, SearchHitResponse[].class);
         
@@ -400,10 +409,6 @@ public class ElasticSearchJestClientTest {
         Assert.assertEquals(hit4AmountCount, "7");
         Assert.assertEquals(hit4Dept, "Support");
         Assert.assertEquals(hit4AmountMin, "300.010009765625");
-        
-        
-        // TODO: NO bucketed aggs.
-        
 
     }
 
@@ -411,8 +416,16 @@ public class ElasticSearchJestClientTest {
     // @Test
     public void testSearchQuerySerializer() {
 
+        DataColumn deptColumn = new DataColumnImpl("departmentGrouped", ColumnType.LABEL);
+        DataColumn amounutCountColumn = new DataColumnImpl("amount-count", ColumnType.NUMBER);
+        DataColumn amounutMinColumn = new DataColumnImpl("amount-min", ColumnType.NUMBER);
+        List<DataColumn> columns = new LinkedList<DataColumn>();
+        columns.add(deptColumn);
+        columns.add(amounutCountColumn);
+        columns.add(amounutMinColumn);
         GsonBuilder builder = new GsonBuilder();
-        builder.registerTypeAdapter(DataSetGroup.class, jestClient.buildSearchQuerySerializer());
+        SearchQuerySerializer searchQuerySerializer = new SearchQuerySerializer(metadata, definition, columns);
+        builder.registerTypeAdapter(DataSetGroup.class, searchQuerySerializer);
         Gson gson = builder.create();
         
         // TODO ElasticSearchJestClient.SearchQuery searchQuery = new ElasticSearchJestClient.SearchQuery();
