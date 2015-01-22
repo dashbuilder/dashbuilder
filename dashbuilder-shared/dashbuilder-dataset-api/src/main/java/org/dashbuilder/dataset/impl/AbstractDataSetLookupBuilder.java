@@ -36,6 +36,7 @@ import org.dashbuilder.dataset.sort.SortOrder;
 
 public abstract class AbstractDataSetLookupBuilder<T> implements DataSetLookupBuilder<T> {
 
+    private static final String SYMBOL_UNDERSCORE = "_";
     private DataSetLookup dataSetLookup = new DataSetLookup();
 
     private DataSetOp getCurrentOp() {
@@ -217,8 +218,16 @@ public abstract class AbstractDataSetLookupBuilder<T> implements DataSetLookupBu
         return this.column(columnId, null, newColumnId);
     }
 
+    /**
+     * <p>In this method, no resulting column identifier is specified by user.</p>
+     * <p>By default, use a naming convention to generate the resulting column identifier by using <code>columnId</code> and <code>function</code> arguments.</p>
+     *
+     * @param columnId The identifier of the source column.
+     * @param function The AggregationFunction for calculating the column values.
+     */
     public T column(String columnId, AggregateFunctionType function) {
-        return this.column(columnId, function, columnId);
+        String newColumnId = buildColumnId(columnId, function);
+        return this.column(columnId, function, newColumnId);
     }
 
     public T column(AggregateFunctionType function, String newColumnId) {
@@ -237,5 +246,20 @@ public abstract class AbstractDataSetLookupBuilder<T> implements DataSetLookupBu
 
     public DataSetLookup buildLookup() {
         return dataSetLookup;
+    }
+
+    /**
+     * <p>Builds a column identifier when applying an aggregate function to the column, but no id is specified by user.</p>
+     * <p>It follows the nomenclature: <code>sourceId_function</code>.</p>
+     *
+     * @param sourceId The source column identifier.
+     * @param function The aggregate function.
+     * @return A new column identifier.
+     */
+    protected String buildColumnId(String sourceId, AggregateFunctionType function) {
+        if (sourceId == null && function == null) return null;
+        if (sourceId != null && function == null) return sourceId;
+        if (sourceId == null) return function.name();
+        return sourceId + SYMBOL_UNDERSCORE + function.name();
     }
 }
