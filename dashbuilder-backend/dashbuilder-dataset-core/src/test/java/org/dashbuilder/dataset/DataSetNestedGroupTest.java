@@ -29,6 +29,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import static org.dashbuilder.dataset.Assertions.*;
+import static org.dashbuilder.dataset.group.DateIntervalType.QUARTER;
 import static org.fest.assertions.api.Assertions.*;
 import static org.dashbuilder.dataset.group.AggregateFunctionType.*;
 
@@ -192,6 +193,18 @@ public class DataSetNestedGroupTest {
                 {"11", "900.10"},
                 {"12", "1,220.45"}
         }, 0);
+    }
+
+    @Test
+    public void testGroupByQuarter() throws Exception {
+        DataSet result = dataSetManager.lookupDataSet(
+                DataSetFactory.newDataSetLookupBuilder()
+                        .dataset(EXPENSE_REPORTS)
+                        .group("date").fixed(QUARTER, true).select("1")
+                        .buildLookup());
+
+        //printDataSet(result);
+        assertThat(result.getRowCount()).isEqualTo(14);
     }
 
     @Test

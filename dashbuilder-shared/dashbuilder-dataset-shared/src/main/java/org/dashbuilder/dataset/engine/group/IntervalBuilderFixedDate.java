@@ -52,7 +52,7 @@ public class IntervalBuilderFixedDate implements IntervalBuilder {
         if (intervalIndex == null) return null;
 
         IntervalList intervalList = _build(columnGroup);
-        return intervalList.locateInterval(intervalIndex);
+        return intervalList.get(intervalIndex);
     }
 
     public IntervalList build(DataColumn dataColumn) {
