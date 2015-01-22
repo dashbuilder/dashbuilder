@@ -43,6 +43,11 @@ public interface DataSet {
     String getUUID();
 
     /**
+     * Set an unique identifier to this data set.
+     */
+    void setUUID(String uuid);
+
+    /**
      * The creation date
      */
     Date getCreationDate();
@@ -51,11 +56,6 @@ public interface DataSet {
      * The creation date
      */
     void setCreationDate(Date date);
-
-    /**
-     * Set an unique identifier to this data set.
-     */
-    void setUUID(String uuid);
 
     /**
      * The dataset columns

@@ -76,6 +76,7 @@ public class DataSetDef {
 
     public void setDataSetFilter(DataSetFilter dataSetFilter) {
         this.dataSetFilter = dataSetFilter;
+        if (dataSetFilter != null) this.dataSetFilter.setDataSetUUID(UUID);
     }
 
     public DataSetProviderType getProvider() {

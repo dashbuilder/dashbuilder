@@ -56,6 +56,12 @@ public class DataSetLookup {
     public DataSetLookup() {
     }
 
+    public boolean isEmpty() {
+        if (!operationList.isEmpty()) return false;
+        if (numberOfRows > 0) return false;
+        if (rowOffset > 0) return false;
+        return true;
+    }
     public void setDataSetUUID(String dataSetUUID) {
         this.dataSetUUID = dataSetUUID;
     }

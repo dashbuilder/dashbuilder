@@ -310,7 +310,7 @@ public class DataSetImpl implements DataSet {
         for (int i=0; i<columns.size(); i++) {
             DataColumn column = columns.get(i);
             DataColumn otherCol = column.cloneEmpty();
-            other.columns.add((DataColumnImpl) otherCol);
+            other.addColumn(otherCol);
         }
         return other;
     }
@@ -320,7 +320,7 @@ public class DataSetImpl implements DataSet {
         for (int i=0; i<columns.size(); i++) {
             DataColumn column = columns.get(i);
             DataColumn otherCol = column.cloneInstance();
-            other.columns.add((DataColumnImpl) otherCol);
+            other.addColumn(otherCol);
         }
         return other;
     }

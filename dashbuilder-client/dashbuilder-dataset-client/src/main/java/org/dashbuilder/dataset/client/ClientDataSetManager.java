@@ -1,4 +1,5 @@
 /**
+/**
  * Copyright (C) 2014 JBoss Inc
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -66,9 +67,9 @@ public class ClientDataSetManager implements DataSetManager {
     }
 
     public DataSet removeDataSet(String uuid) {
-        DataSet dataSet = getDataSet(uuid);
-        dataSetOpEngine.getIndexRegistry().remove(uuid);
-        return dataSet;
+        DataSetIndex index = dataSetOpEngine.getIndexRegistry().remove(uuid);
+        if (index == null) return null;
+        return index.getDataSet();
     }
 
     public DataSet lookupDataSet(DataSetLookup lookup) {
