@@ -95,8 +95,8 @@ public class GoogleLineChartDisplayer extends GoogleXAxisChartDisplayer {
 
     private LineChartOptions createOptions() {
         Animation anim = Animation.create();
-        anim.setDuration(700);
-        anim.setEasing(AnimationEasing.IN_AND_OUT);
+        anim.setDuration(500);
+        anim.setEasing(AnimationEasing.LINEAR);
 
         LineChartOptions options = LineChartOptions.create();
         options.setWidth(displayerSettings.getChartWidth());

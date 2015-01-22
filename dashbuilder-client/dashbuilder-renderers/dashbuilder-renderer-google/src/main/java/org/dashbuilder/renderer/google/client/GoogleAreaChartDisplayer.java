@@ -96,8 +96,8 @@ public class GoogleAreaChartDisplayer extends GoogleXAxisChartDisplayer {
 
     private AreaChartOptions createOptions() {
         Animation anim = Animation.create();
-        anim.setDuration(700);
-        anim.setEasing(AnimationEasing.IN_AND_OUT);
+        anim.setDuration(500);
+        anim.setEasing(AnimationEasing.LINEAR);
 
         AreaChartOptions options = AreaChartOptions.create();
         options.setWidth(displayerSettings.getChartWidth());
