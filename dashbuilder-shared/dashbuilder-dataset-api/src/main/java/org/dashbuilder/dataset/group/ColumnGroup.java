@@ -136,6 +136,7 @@ public class ColumnGroup {
         clone.strategy = strategy;
         clone.maxIntervals = maxIntervals;
         clone.intervalSize = intervalSize;
+        clone.emptyIntervals = emptyIntervals;
         clone.ascendingOrder = ascendingOrder;
         clone.firstDayOfWeek = firstDayOfWeek;
         clone.firstMonthOfYear = firstMonthOfYear;
@@ -149,6 +150,7 @@ public class ColumnGroup {
             if (columnId != null && !columnId.equals(other.columnId)) return false;
             if (strategy != null && !strategy.equals(other.strategy)) return false;
             if (intervalSize != null && !intervalSize.equals(other.intervalSize)) return false;
+            if (emptyIntervals != other.emptyIntervals) return false;
             if (maxIntervals != other.maxIntervals) return false;
             return true;
         } catch (ClassCastException e) {
@@ -158,9 +160,10 @@ public class ColumnGroup {
 
     public String toString() {
         StringBuilder out = new StringBuilder();
-        out.append("column=").append(columnId).append(" ");
+        out.append("column=").append(sourceId).append(" ");
         out.append("strategy=").append(strategy).append(" ");
         if (intervalSize != null) out.append("intervalSize=").append(intervalSize).append(" ");;
+        out.append("emptyIntervals=").append(emptyIntervals).append(" ");;
         out.append("maxIntervals=").append(maxIntervals);
         return out.toString();
     }

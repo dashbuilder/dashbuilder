@@ -349,7 +349,7 @@ public class DataSetGroupTest {
                 .column("date", "Period")
                 .column(COUNT, "Occurrences")
                 .column("amount", SUM, "totalAmount")
-                .buildLookup());
+                .buildLookup().cloneInstance());
 
         //printDataSet(result);
         assertDataSetValues(result, dataSetFormatter, new String[][]{
@@ -372,7 +372,7 @@ public class DataSetGroupTest {
                 .column("date", "Period")
                 .column(COUNT, "Occurrences")
                 .column("amount", SUM, "totalAmount")
-                .buildLookup());
+                .buildLookup().cloneInstance());
 
         //printDataSet(result);
         assertDataSetValues(result, dataSetFormatter, new String[][]{
