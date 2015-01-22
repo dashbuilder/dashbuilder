@@ -364,6 +364,8 @@ public class ElasticSearchDataSetTest extends ElasticSearchDataSetTestBase {
      * Aggregating by a non grouped column with no aggregation function is not allowed.
      * An RuntimeException must be thrown.
      * @throws Exception
+     * 
+     * TODO
      */
     @Test(expected = RuntimeException.class)
     public void testAggregationByNoFunctionColumn() throws Exception {
@@ -425,7 +427,7 @@ public class ElasticSearchDataSetTest extends ElasticSearchDataSetTestBase {
 
     /**
      * **********************************************************************************************************************************************************************************************
-     * FILTER TESTING.
+     * TODO: FILTER TESTING.
      * **********************************************************************************************************************************************************************************************
      */
     

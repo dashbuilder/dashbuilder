@@ -441,7 +441,8 @@ public class ElasticSearchJestClient implements ElasticSearchClient<ElasticSearc
             if (groupFunctions != null && !groupFunctions.isEmpty()) {
                 aggregationsObject = new JsonObject();
                 for (GroupFunction groupFunction : groupFunctions) {
-                    serializeCoreFunction(aggregationsObject, groupFunction);
+                    // If not a "group" lookup operation (not the groupby column), seralize the core function.
+                    if (groupFunction.getFunction() != null) serializeCoreFunction(aggregationsObject, groupFunction);
                 }
             }
 
