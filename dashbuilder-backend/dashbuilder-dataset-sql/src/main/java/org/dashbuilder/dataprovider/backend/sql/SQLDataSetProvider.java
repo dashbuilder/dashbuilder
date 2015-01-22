@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
+import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.sql.DataSource;
@@ -46,6 +47,7 @@ import org.dashbuilder.dataset.def.SQLDataSetDef;
 import org.dashbuilder.dataset.engine.group.IntervalBuilder;
 import org.dashbuilder.dataset.engine.group.IntervalBuilderLocator;
 import org.dashbuilder.dataset.engine.group.IntervalList;
+import org.dashbuilder.dataset.events.DataSetStaleEvent;
 import org.dashbuilder.dataset.filter.ColumnFilter;
 import org.dashbuilder.dataset.filter.CoreFunctionFilter;
 import org.dashbuilder.dataset.filter.CoreFunctionType;
@@ -192,6 +194,17 @@ public class SQLDataSetProvider implements DataSetProvider {
             return _getRowCount(def, conn);
         } finally {
             conn.close();
+        }
+    }
+
+    // Listen to changes on the data set definition registry
+
+    protected void onDataSetStaleEvent(@Observes DataSetStaleEvent event) {
+        DataSetDef def = event.getDataSetDef();
+        if (DataSetProviderType.SQL.equals(def.getProvider())) {
+            String uuid = def.getUUID();
+            _metadataMap.remove(uuid);
+            staticDataSetProvider.removeDataSet(uuid);
         }
     }
 

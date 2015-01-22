@@ -28,6 +28,7 @@ import org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.model.*;
 import org.dashbuilder.dataset.*;
 import org.dashbuilder.dataset.def.DataSetDef;
 import org.dashbuilder.dataset.def.ElasticSearchDataSetDef;
+import org.dashbuilder.dataset.events.DataSetStaleEvent;
 import org.dashbuilder.dataset.filter.ColumnFilter;
 import org.dashbuilder.dataset.filter.DataSetFilter;
 import org.dashbuilder.dataset.group.DataSetGroup;
@@ -38,6 +39,7 @@ import org.dashbuilder.dataset.sort.DataSetSort;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
+import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Named;
 import java.util.*;
@@ -134,13 +136,15 @@ public class ElasticSearchDataSetProvider implements DataSetProvider {
     public DataSet lookupDataSet(DataSetDef def, DataSetLookup lookup) throws Exception {
         ElasticSearchDataSetDef elDef = (ElasticSearchDataSetDef) def;
 
+         // TODO: compute any existing def.getDataSetFilter() setting both in getRowCount and in _lookupDataSet.
+
         // Look first into the static data set provider cache.
         if (elDef.isCacheEnabled()) {
-            DataSet dataSet = staticDataSetProvider.lookupDataSet(def, null);
+            DataSet dataSet = staticDataSetProvider.lookupDataSet(def.getUUID(), null);
             if (dataSet != null) {
 
                 // Lookup from cache.
-                return staticDataSetProvider.lookupDataSet(def, lookup);
+                return staticDataSetProvider.lookupDataSet(def.getUUID(), lookup);
             }  else  {
 
                 // Fetch always from EL server if existing rows are greater than the cache max. rows
@@ -153,7 +157,7 @@ public class ElasticSearchDataSetProvider implements DataSetProvider {
                 dataSet.setUUID(def.getUUID());
                 dataSet.setDefinition(def);
                 staticDataSetProvider.registerDataSet(dataSet);
-                return staticDataSetProvider.lookupDataSet(def, lookup);
+                return staticDataSetProvider.lookupDataSet(def.getUUID(), lookup);
             }
         }
 
@@ -605,5 +609,16 @@ public class ElasticSearchDataSetProvider implements DataSetProvider {
     protected ElasticSearchQueryBuilder getQueryBuilder() {
         // TODO: New instance for every request.
         return queryBuilder = new ElasticSearchQueryBuilderImpl();
+    }
+
+    // Listen to changes on the data set definition registry
+
+    protected void onDataSetStaleEvent(@Observes DataSetStaleEvent event) {
+        DataSetDef def = event.getDataSetDef();
+        if (DataSetProviderType.ELASTICSEARCH.equals(def.getProvider())) {
+            String uuid = def.getUUID();
+            _metadataMap.remove(uuid);
+            staticDataSetProvider.removeDataSet(uuid);
+        }
     }
 }

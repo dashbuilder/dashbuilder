@@ -29,7 +29,7 @@ import org.dashbuilder.dataset.DataSetLookup;
 import org.dashbuilder.dataset.DataSetMetadata;
 import org.dashbuilder.dataset.def.CSVDataSetDef;
 import org.dashbuilder.dataset.def.DataSetDef;
-import org.dashbuilder.dataset.events.DataSetDefModifiedEvent;
+import org.dashbuilder.dataset.events.DataSetStaleEvent;
 import org.slf4j.Logger;
 
 import static org.uberfire.commons.validation.PortablePreconditions.checkNotNull;
@@ -56,7 +56,7 @@ public class CSVDataSetProvider implements DataSetProvider {
 
     public DataSet lookupDataSet(DataSetDef def, DataSetLookup lookup) throws Exception {
         // Look first into the static data set provider since CSV data set are statically registered once loaded.
-        DataSet dataSet = staticDataSetProvider.lookupDataSet(def, null);
+        DataSet dataSet = staticDataSetProvider.lookupDataSet(def.getUUID(), null);
 
         // If not exists or is outdated then load from the CSV file
         CSVDataSetDef csvDef = (CSVDataSetDef) def;
@@ -94,5 +94,15 @@ public class CSVDataSetProvider implements DataSetProvider {
 
     protected boolean hasCSVFileChanged(DataSet dataSet, File csvFile) {
         return csvFile != null && csvFile.lastModified() > dataSet.getCreationDate().getTime();
+    }
+
+    // Listen to changes on the data set definition registry
+
+    protected void onDataSetStaleEvent(@Observes DataSetStaleEvent event) {
+        DataSetDef def = event.getDataSetDef();
+        if (DataSetProviderType.CSV.equals(def.getProvider())) {
+            String uuid = def.getUUID();
+            staticDataSetProvider.removeDataSet(uuid);
+        }
     }
 }

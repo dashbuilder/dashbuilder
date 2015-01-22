@@ -60,9 +60,6 @@ public class DataSetDefRegistryImpl implements DataSetDefRegistry {
     protected DataSetProviderRegistry dataSetProviderRegistry;
 
     @Inject
-    protected StaticDataSetProvider staticDataSetProvider;
-
-    @Inject
     protected Logger log;
 
     @Inject
@@ -105,7 +102,6 @@ public class DataSetDefRegistryImpl implements DataSetDefRegistry {
 
          public void stale() {
             lastRefreshTime = System.currentTimeMillis();
-            staticDataSetProvider.removeDataSet(def.getUUID());
             dataSetStaleEvent.fire(new DataSetStaleEvent(def));
         }
 
@@ -133,7 +129,7 @@ public class DataSetDefRegistryImpl implements DataSetDefRegistry {
             DataSetProvider dataSetProvider = dataSetProviderRegistry.getDataSetProvider(type);
             if (dataSetProvider != null) return dataSetProvider;
         }
-        return staticDataSetProvider;
+        throw new IllegalStateException("DataSetProvider not found: " + dataSetDef.getProvider());
     }
 
     public synchronized List<DataSetDef> getDataSetDefs(boolean onlyPublic) {

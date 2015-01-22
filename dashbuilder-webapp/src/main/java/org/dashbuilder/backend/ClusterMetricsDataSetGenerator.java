@@ -50,7 +50,6 @@ public class ClusterMetricsDataSetGenerator implements DataSetGenerator {
     }
 
     public synchronized DataSet buildDataSet(Map<String,String> params) {
-
         // Check if the data set is up to date.
         long now = System.currentTimeMillis();
         long last = dataSet.getRowCount() > 0 ? ((Date)dataSet.getValueAt(0, 1)).getTime() : -1;
@@ -64,11 +63,13 @@ public class ClusterMetricsDataSetGenerator implements DataSetGenerator {
             long millis = DateIntervalType.getDurationInMillis(p);
             if (millis != -1) timeFrameMillis = millis;
         }
-        if (!StringUtils.isBlank(params.get("aliveNodes"))) {
-            aliveNodes = Arrays.asList(StringUtils.split(params.get("aliveNodes"), ","));
+        if (params.containsKey("aliveNodes")) {
+            aliveNodes.clear();
+            aliveNodes.addAll(Arrays.asList(StringUtils.split(params.get("aliveNodes"), ",")));
         }
-        if (!StringUtils.isBlank(params.get("overloadedNodes"))) {
-            overloadedNodes = Arrays.asList(StringUtils.split(params.get("overloadedNodes"), ","));
+        if (params.containsKey("overloadedNodes")) {
+            overloadedNodes.clear();
+            overloadedNodes.addAll(Arrays.asList(StringUtils.split(params.get("overloadedNodes"), ",")));
         }
         if (aliveNodes.isEmpty()) {
             return dataSet;

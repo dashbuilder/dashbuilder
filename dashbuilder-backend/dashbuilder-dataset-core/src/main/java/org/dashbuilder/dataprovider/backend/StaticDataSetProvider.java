@@ -88,13 +88,24 @@ public class StaticDataSetProvider implements DataSetProvider {
     public DataSet lookupDataSet(DataSetDef def, DataSetLookup lookup) {
         String uuid = def.getUUID();
         if (StringUtils.isEmpty(uuid)) return null;
+        boolean isRoot = (lookup == null || lookup.isEmpty());
 
-        DataSetFilter dataSetFilter = def.getDataSetFilter();
-        if (dataSetFilter != null) {
-            if (lookup == null) lookup = new DataSetLookup(uuid, dataSetFilter);
-            else lookup.addOperation(0, dataSetFilter);
+        // Be aware of filters on the data set definition
+        DataSetFilter filter = def.getDataSetFilter();
+        if (filter != null) {
+            if (lookup == null) lookup = new DataSetLookup(uuid, filter);
+            else lookup.addOperation(0, filter);
         }
-        return lookupDataSet(uuid, lookup);
+
+        // Lookup the data set (with any existing filters)
+        DataSet dataSet = lookupDataSet(uuid, lookup);
+
+        // Add the proper metadata to any root data set retrieval call
+        if (dataSet != null && isRoot) {
+            dataSet.setUUID(uuid);
+            dataSet.setDefinition(def);
+        }
+        return dataSet;
     }
 
     public DataSet lookupDataSet(String uuid, DataSetLookup lookup) {

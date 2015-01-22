@@ -17,13 +17,11 @@ package org.dashbuilder.dataset.backend;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import javax.enterprise.context.Dependent;
 
 import org.dashbuilder.dataset.DataSetValueFormatter;
-import org.dashbuilder.dataset.engine.Chronometer;
+import org.dashbuilder.dataset.group.DateIntervalType;
 
 @Dependent
 public final class BackendDataSetValueFormatter implements DataSetValueFormatter {
@@ -51,6 +49,9 @@ public final class BackendDataSetValueFormatter implements DataSetValueFormatter
     }
 
     public Comparable parseValue(String str) {
+        if (DateIntervalType.getDurationInMillis(str) != -1) {
+            return str;
+        }
         try {
             return _dateFormat.parse(str);
         } catch (Exception e) {

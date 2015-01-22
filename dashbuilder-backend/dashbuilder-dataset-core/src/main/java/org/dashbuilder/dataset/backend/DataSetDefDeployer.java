@@ -152,6 +152,8 @@ public class DataSetDefDeployer {
                 def.setDefFilePath(f.getAbsolutePath());
                 dataSetDefRegistry.registerDataSetDef(def);
                 deployed.put(f.getName(), new DataSetDefRecord(def, f));
+                if (r == null) log.info("Data set definition deployed: " + def.getUUID());
+                else log.info("Data set definition updated: " + def.getUUID());
 
             }
             catch (Exception e) {
@@ -159,11 +161,12 @@ public class DataSetDefDeployer {
             }
         }
         // Look for data set removals
-        for (DataSetDef dataSetDef : dataSetDefRegistry.getDataSetDefs(false)) {
-            if (!StringUtils.isBlank(dataSetDef.getDefFilePath())) {
-                if (!new File(dataSetDef.getDefFilePath()).exists()) {
-                    deployed.remove(dataSetDef.getDefFilePath());
-                    dataSetDefRegistry.removeDataSetDef(dataSetDef.getUUID());
+        for (DataSetDef def : dataSetDefRegistry.getDataSetDefs(false)) {
+            if (!StringUtils.isBlank(def.getDefFilePath())) {
+                if (!new File(def.getDefFilePath()).exists()) {
+                    deployed.remove(def.getDefFilePath());
+                    dataSetDefRegistry.removeDataSetDef(def.getUUID());
+                    log.info("Data set definition removed: " + def.getUUID());
                 }
             }
         }
