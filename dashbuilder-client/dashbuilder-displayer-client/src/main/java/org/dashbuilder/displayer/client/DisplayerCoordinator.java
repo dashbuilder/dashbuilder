@@ -48,6 +48,7 @@ public class DisplayerCoordinator {
     }
 
     public boolean removeDisplayer(Displayer displayer) {
+        if (displayer == null) return false;
         RendererLibrary renderer = RendererLibLocator.get().lookupRenderer(displayer.getDisplayerSettings());
         List<Displayer> rendererGroup = rendererMap.get(renderer);
         if (rendererGroup != null) rendererGroup.remove(displayer);

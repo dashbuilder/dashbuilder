@@ -30,6 +30,7 @@ import org.uberfire.client.annotations.WorkbenchMenu;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
 import org.uberfire.client.annotations.WorkbenchPartView;
 import org.uberfire.client.annotations.WorkbenchScreen;
+import org.uberfire.lifecycle.OnClose;
 import org.uberfire.lifecycle.OnStartup;
 import org.uberfire.mvp.Command;
 import org.uberfire.mvp.PlaceRequest;
@@ -74,6 +75,12 @@ public class DisplayerScreenPresenter {
         String edit = placeRequest.getParameter("edit", "false");
         editEnabled = Boolean.parseBoolean(edit);
         if (editEnabled) this.menu = makeMenuBar();
+    }
+
+    @OnClose
+    public void onClose() {
+        Displayer displayer = displayerView.getDisplayer();
+        perspectiveCoordinator.removeDisplayer(displayer);
     }
 
     @WorkbenchPartTitle
