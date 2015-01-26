@@ -221,7 +221,7 @@ public class BackendIntervalBuilderDynamicDate implements IntervalBuilder {
             c.set(Calendar.SECOND, 0);
             c.set(Calendar.MILLISECOND, 0);
         }
-        if (DAY.equals(intervalType) || DAY_OF_WEEK.equals(intervalType)) {
+        if (DAY.equals(intervalType) || DAY_OF_WEEK.equals(intervalType) || WEEK.equals(intervalType)) {
             c.set(Calendar.HOUR, 0);
             c.set(Calendar.MINUTE, 0);
             c.set(Calendar.SECOND, 0);
@@ -364,7 +364,7 @@ public class BackendIntervalBuilderDynamicDate implements IntervalBuilder {
         }
         if (HOUR.equals(intervalType)) {
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH");
-            return format.format(d) + "h";
+            return format.format(d);
         }
         if (MINUTE.equals(intervalType)) {
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");

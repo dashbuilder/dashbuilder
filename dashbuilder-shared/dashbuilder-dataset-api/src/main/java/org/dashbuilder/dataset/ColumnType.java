@@ -46,7 +46,7 @@ public enum ColumnType {
     public static ColumnType getByName(String name) {
         try {
             return valueOf(name.toUpperCase());
-        } catch (IllegalArgumentException e) {
+        } catch (Exception e) {
             return null;
         }
     }

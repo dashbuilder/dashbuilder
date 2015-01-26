@@ -57,7 +57,7 @@ public enum GroupStrategy {
     public static GroupStrategy getByName(String strategy) {
         try {
             return valueOf(strategy.toUpperCase());
-        } catch (IllegalArgumentException e) {
+        } catch (Exception e) {
             return null;
         }
     }

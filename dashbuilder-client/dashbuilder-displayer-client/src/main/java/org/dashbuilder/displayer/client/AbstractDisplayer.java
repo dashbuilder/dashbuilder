@@ -27,10 +27,13 @@ import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.user.client.ui.Composite;
 import org.dashbuilder.common.client.StringUtils;
+import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.dataset.ValidationError;
+import org.dashbuilder.dataset.client.date.DateUtils;
 import org.dashbuilder.dataset.group.ColumnGroup;
 import org.dashbuilder.dataset.group.DataSetGroup;
+import org.dashbuilder.dataset.group.DateIntervalType;
 import org.dashbuilder.dataset.group.GroupStrategy;
 import org.dashbuilder.dataset.group.Interval;
 import org.dashbuilder.dataset.sort.ColumnSort;
@@ -135,18 +138,30 @@ public abstract class AbstractDisplayer extends Composite implements Displayer {
     }
 
     /**
-     * Get the current filter values for the given data set column.
+     * Get the current filter intervals for the given data set column.
      *
-     * @param columnId The column identifier-
-     * @return A list of distinct values currently selected.
+     * @param columnId The column identifier.
+     * @return A list of intervals.
      */
-    protected List<String> filterValues(String columnId) {
-        List<String> result = new ArrayList<String>();
+    protected List<Interval> filterIntervals(String columnId) {
+        List<Interval> selected = columnSelectionMap.get(columnId);
+        if (selected == null) return new ArrayList<Interval>();;
+        return selected;
+    }
+
+    /**
+     * Get the current filter selected interval indexes for the given data set column.
+     *
+     * @param columnId The column identifier.
+     * @return A list of interval indexes
+     */
+    protected List<Integer> filterIndexes(String columnId) {
+        List<Integer> result = new ArrayList<Integer>();
         List<Interval> selected = columnSelectionMap.get(columnId);
         if (selected == null) return result;
 
         for (Interval interval : selected) {
-            result.add(interval.getName());
+            result.add(interval.getIndex());
         }
         return result;
     }
@@ -189,6 +204,9 @@ public abstract class AbstractDisplayer extends Composite implements Displayer {
                 filterReset(columnId);
             }
         } else {
+            if (displayerSettings.isFilterSelfApplyEnabled()) {
+                columnSelectionMap.put(columnId, selectedIntervals = new ArrayList<Interval>());
+            }
             selectedIntervals.add(intervalSelected);
             if (maxSelections != null && maxSelections > 0 && selectedIntervals.size() >= maxSelections) {
                 filterReset(columnId);
@@ -309,27 +327,59 @@ public abstract class AbstractDisplayer extends Composite implements Displayer {
 
     // DATA FORMATTING
 
-    protected String format(Object value, String columnId) {
+    protected String formatInterval(Interval interval, DataColumn column) {
 
-        // Dynamic
-        // 2014
-        // 2014_12
-        // 2014_11_24
-
-        // TODO: displayer settings column format
-        // For example: .format("amount", "#,###.##", "---")
-
-        if (value == null) {
-            return "---";
+        // Raw values
+        if (column == null || column.getColumnGroup() == null) {
+            return interval.getName();
         }
-        if (value instanceof Number) {
-            Double d = ((Number) value).doubleValue();
-            return NumberFormat.getDecimalFormat().format(d);
+        // Date interval
+        String type = interval.getType();
+        if (StringUtils.isBlank(type)) type = column.getIntervalType();
+        DateIntervalType intervalType = DateIntervalType.getByName(type);
+        if (intervalType != null) {
+            return DateUtils.formatDate(intervalType,
+                    column.getColumnGroup().getStrategy(),
+                    interval.getName());
         }
-        if (value instanceof Date) {
+        // Label interval
+        return interval.getName();
+    }
+
+    protected String formatValue(Object value, DataColumn column) {
+
+        // TODO: support for displayer settings column format
+        // For example: .format("amount", "{value} profit in $", "---", "#,###.##")
+
+        if (column == null) {
+            return value.toString();
+        }
+        // Aggregations and raw values
+        ColumnGroup cg = column.getColumnGroup();
+        if (cg == null) {
+            return formatValue(value, column.getColumnType());
+        }
+        // Date group
+        DateIntervalType intervalType = DateIntervalType.getByName(column.getIntervalType());
+        if (intervalType != null) {
+            return DateUtils.formatDate(intervalType, cg.getStrategy(), value.toString());
+        }
+        // Label group
+        return value.toString();
+    }
+
+    protected String formatValue(Object value, ColumnType columnType) {
+
+        if (ColumnType.DATE.equals(columnType)) {
+            if (value == null) return "---";
             Date d = (Date) value;
             return DateTimeFormat.getFormat(DateTimeFormat.PredefinedFormat.DATE_TIME_MEDIUM).format(d);
         }
-        return value.toString();
+        if (ColumnType.NUMBER.equals(columnType)) {
+            Double d = (value == null ? 0d : ((Number) value).doubleValue());
+            return NumberFormat.getDecimalFormat().format(d);
+        }
+
+        return (value == null ? "---" : value.toString());
     }
 }

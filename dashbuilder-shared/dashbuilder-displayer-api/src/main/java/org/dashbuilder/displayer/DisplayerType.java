@@ -68,7 +68,7 @@ public enum DisplayerType {
     public static DisplayerType getByName(String str) {
         try {
             return valueOf(str.toUpperCase());
-        } catch (IllegalArgumentException e) {
+        } catch (Exception e) {
             return null;
         }
     }

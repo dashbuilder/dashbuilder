@@ -228,7 +228,7 @@ public class ClientIntervalBuilderDynamicDate implements IntervalBuilder {
             intervalMinDate.setMinutes(0);
             intervalMinDate.setSeconds(0);
         }
-        if (DAY.equals(intervalType) || DAY_OF_WEEK.equals(intervalType)) {
+        if (DAY.equals(intervalType) || DAY_OF_WEEK.equals(intervalType) || WEEK.equals(intervalType)) {
             intervalMinDate.setHours(0);
             intervalMinDate.setMinutes(0);
             intervalMinDate.setSeconds(0);
@@ -341,7 +341,7 @@ public class ClientIntervalBuilderDynamicDate implements IntervalBuilder {
         }
         if (HOUR.equals(intervalType)) {
             DateTimeFormat format  = DateTimeFormat.getFormat("yyyy-MM-dd HH");
-            return format.format(d) + "h";
+            return format.format(d);
         }
         if (MINUTE.equals(intervalType)) {
             DateTimeFormat format  = DateTimeFormat.getFormat("yyyy-MM-dd HH:mm");

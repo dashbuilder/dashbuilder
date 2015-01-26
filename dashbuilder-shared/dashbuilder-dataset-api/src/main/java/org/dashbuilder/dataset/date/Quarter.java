@@ -35,7 +35,11 @@ public enum Quarter {
     }
 
     public static Quarter getByName(String name) {
-        return valueOf(name.toUpperCase());
+        try {
+            return valueOf(name.toUpperCase());
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     public static Quarter getByIndex(int index) {

@@ -39,7 +39,7 @@ public enum SortOrder {
             if (ASC.equals(str)) return ASCENDING;
             if (DESC.equals(str)) return DESCENDING;
             return valueOf(str.toUpperCase());
-        } catch (IllegalArgumentException e) {
+        } catch (Exception e) {
             return null;
         }
     }

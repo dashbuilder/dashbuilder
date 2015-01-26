@@ -50,7 +50,7 @@ public enum DayOfWeek {
     public static DayOfWeek getByName(String name) {
         try {
             return valueOf(name.toUpperCase());
-        } catch (IllegalArgumentException e) {
+        } catch (Exception e) {
             return null;
         }
     }

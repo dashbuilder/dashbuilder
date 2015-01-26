@@ -109,6 +109,7 @@ public class DataSetGroup extends AbstractDataSetOp {
 
     public DataSetGroup cloneInstance() {
         DataSetGroup clone = new DataSetGroup();
+        clone.dataSetUUID = dataSetUUID;
         if (columnGroup != null) clone.columnGroup = columnGroup.cloneInstance();
         clone.join = join;
         clone.selectedIntervalList = new ArrayList();

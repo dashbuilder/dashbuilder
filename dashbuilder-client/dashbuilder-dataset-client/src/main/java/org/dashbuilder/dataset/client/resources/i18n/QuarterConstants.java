@@ -13,24 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbuilder.displayer;
+package org.dashbuilder.dataset.client.resources.i18n;
 
-/*
- * Generic enum for displayer element positioning purposes.
- */
-public enum Position {
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.i18n.client.ConstantsWithLookup;
 
-    BOTTOM,
-    TOP,
-    LEFT,
-    RIGHT,
-    IN;
+public interface QuarterConstants extends ConstantsWithLookup {
 
-    public static Position getByName(String str) {
-        try {
-            return valueOf(str.toUpperCase());
-        } catch (Exception e) {
-            return null;
-        }
-    }
+    public static final QuarterConstants INSTANCE = GWT.create( QuarterConstants.class );
+
+    String Q1();
+    String Q2();
+    String Q3();
+    String Q4();
 }

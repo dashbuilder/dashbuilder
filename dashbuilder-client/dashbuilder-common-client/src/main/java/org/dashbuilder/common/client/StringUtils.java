@@ -114,7 +114,7 @@ public class StringUtils {
      * @param delimiter The delimiter to use to join them.
      * @return The string built by joining the string with the delimiter.
      */
-    public static String join(Collection<String> strings, String delimiter) {
+    public static String join(Collection strings, String delimiter) {
         StringBuilder builder = new StringBuilder();
         Iterator<String> iter = strings.iterator();
         while (iter.hasNext()) {

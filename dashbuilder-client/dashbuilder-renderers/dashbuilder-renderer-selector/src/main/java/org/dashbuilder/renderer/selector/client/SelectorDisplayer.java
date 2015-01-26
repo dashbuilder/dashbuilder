@@ -28,6 +28,7 @@ import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.common.client.StringUtils;
 import org.dashbuilder.dataset.ColumnType;
+import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetLookupConstraints;
 import org.dashbuilder.dataset.client.DataSetReadyCallback;
@@ -139,8 +140,8 @@ public class SelectorDisplayer extends AbstractDisplayer {
         listBox.addChangeHandler(new ChangeHandler() {
             public void onChange(ChangeEvent event) {
                 // Reset the current filter (if any)
-                String firstColumnId = getColumnId(dataSet, 0);
-                List<String> currentFilter = filterValues(firstColumnId);
+                String firstColumnId = dataSet.getColumnByIndex(0).getId();
+                List<Integer> currentFilter = filterIndexes(firstColumnId);
                 if (currentFilter != null && !currentFilter.isEmpty()) {
                     filterReset();
                 }
@@ -157,22 +158,23 @@ public class SelectorDisplayer extends AbstractDisplayer {
 
     protected void populateSelector() {
         listBox.clear();
-        final String firstColumnId = getColumnId(dataSet, 0);
-        final String firstColumnName = getColumnName(dataSet, 0);
+        final DataColumn firstColumn = dataSet.getColumnByIndex(0);
+        final String firstColumnId = firstColumn.getId();
+        final String firstColumnName = firstColumn.getName();
         listBox.addItem("- Select " + firstColumnName + " -");
         SelectElement selectElement = SelectElement.as(listBox.getElement());
         NodeList<OptionElement> options = selectElement.getOptions();
 
         // Generate the list entries from the current data set
-        List<String> currentFilter = filterValues(firstColumnId);
+        List<Integer> currentFilter = super.filterIndexes(firstColumnId);
         for (int i = 0; i < dataSet.getRowCount(); i++) {
 
-            Object obj = dataSet.getValueAt(i, firstColumnId);
+            Object obj = dataSet.getValueAt(i, 0);
             if (obj == null) continue;
 
-            String value = obj.toString();
+            String value = super.formatValue(obj, firstColumn);
             listBox.addItem(value);
-            if (currentFilter != null && currentFilter.contains(value)) {
+            if (currentFilter != null && currentFilter.contains(i)) {
                 listBox.setSelectedIndex(i+1);
             }
 
@@ -181,13 +183,13 @@ public class SelectorDisplayer extends AbstractDisplayer {
             if (ncolumns > 1) {
                 StringBuilder out = new StringBuilder();
                 for (int j = 1; j < ncolumns; j++) {
-                    String extraColumnId = getColumnId(dataSet, j);
-                    String extraColumnName = getColumnName(dataSet, j);
-                    Object extraValue = dataSet.getValueAt(i, extraColumnId);
+                    final DataColumn extraColumn = dataSet.getColumnByIndex(j);
+                    String extraColumnName = extraColumn.getName();
+                    Object extraValue = dataSet.getValueAt(i, j);
 
                     if (extraValue != null) {
                         if (j > 1) out.append("  ");
-                        String formattedValue = super.format(extraValue, extraColumnId);
+                        String formattedValue = super.formatValue(extraValue, extraColumn);
                         out.append(extraColumnName).append("=").append(formattedValue);
                     }
                 }
@@ -200,28 +202,10 @@ public class SelectorDisplayer extends AbstractDisplayer {
         return dataSet.getColumns().size();
     }
 
-    protected String getColumnId(DataSet dataSet, int index) {
-        int ncolumns = dataSet.getColumns().size();
-        if (index < ncolumns) {
-            return dataSet.getColumnByIndex(index).getId();
-        }
-        throw new IndexOutOfBoundsException("Index " + index + " is greater than " +
-                "the number of columns in the data set " + ncolumns);
-    }
-
-    protected String getColumnName(DataSet dataSet, int index) {
-        int ncolumns = dataSet.getColumns().size();
-        if (index < ncolumns) {
-            return dataSet.getColumnByIndex(index).getName();
-        }
-        throw new IndexOutOfBoundsException("Index " + index + " is greater than " +
-                "the number of columns in the data set " + ncolumns);
-    }
-
     // KEEP IN SYNC THE CURRENT SELECTION WITH ANY EXTERNAL FILTER
 
     public void onGroupIntervalsSelected(Displayer displayer, DataSetGroup groupOp) {
-        String firstColumnId = getColumnId(dataSet, 0);
+        String firstColumnId = dataSet.getColumnByIndex(0).getId();
         if (firstColumnId.equals(groupOp.getColumnGroup().getColumnId())) {
             columnSelectionMap.put(groupOp.getColumnGroup().getColumnId(), groupOp.getSelectedIntervalList());
         }
@@ -229,7 +213,7 @@ public class SelectorDisplayer extends AbstractDisplayer {
     }
 
     public void onGroupIntervalsReset(Displayer displayer, List<DataSetGroup> groupOps) {
-        String firstColumnId = getColumnId(dataSet, 0);
+        String firstColumnId = dataSet.getColumnByIndex(0).getId();
         for (DataSetGroup groupOp : groupOps) {
             if (firstColumnId.equals(groupOp.getColumnGroup().getColumnId())) {
                 columnSelectionMap.remove(groupOp.getColumnGroup().getColumnId());

@@ -47,6 +47,7 @@ import com.google.gwt.view.client.HasData;
 import org.dashbuilder.common.client.StringUtils;
 import org.dashbuilder.dataset.DataSetLookupConstraints;
 import org.dashbuilder.dataset.client.DataSetReadyCallback;
+import org.dashbuilder.dataset.group.Interval;
 import org.dashbuilder.displayer.DisplayerAttributeDef;
 import org.dashbuilder.displayer.DisplayerAttributeGroupDef;
 import org.dashbuilder.displayer.DisplayerConstraints;
@@ -232,11 +233,10 @@ public class TableDisplayer extends AbstractDisplayer {
 
         List<DataColumn> dataColumns = dataSet.getColumns();
         for ( int i = 0; i < dataColumns.size(); i++ ) {
-            DataColumn dataColumn = dataColumns.get( i );
-            String columnId = dataColumn.getId();
+            DataColumn dataColumn = dataColumns.get(i);
             String columnName = dataColumn.getName();
 
-            Column<Integer, ?> column = createColumn( dataColumn.getColumnType(), columnId, i );
+            Column<Integer, ?> column = createColumn( dataColumn, i );
             if ( column != null ) {
                 column.setSortable( true );
                 pagedTable.addColumn( column, columnName );
@@ -263,44 +263,26 @@ public class TableDisplayer extends AbstractDisplayer {
         return pagedTable;
     }
 
-    private Column<Integer, ?> createColumn( ColumnType columnType, String columnId, final int columnNumber ) {
+    private Column<Integer, ?> createColumn( final DataColumn column, final int columnNumber ) {
 
-        switch ( columnType ) {
+        switch ( column.getColumnType() ) {
             case LABEL: return new Column<Integer, String>(
-                            new SelectableTextCell( columnId ) ) {
+                            new SelectableTextCell( column.getId() ) ) {
                                 public String getValue( Integer row ) {
                                     Object value = dataSet.getValueAt(row, columnNumber);
-                                    if (value == null) return "---";
-                                    return value.toString();
+                                    return formatValue(value, column);
                                 }
                             };
 
+            case NUMBER:
+            case DATE:
             case TEXT: return new Column<Integer, String>(
                             new TextCell() ) {
                                 public String getValue( Integer row ) {
                                     Object value = dataSet.getValueAt(row, columnNumber);
-                                    if (value == null) return "---";
-                                    return value.toString();
+                                    return formatValue(value, column);
                                 }
-                            };
-
-            case NUMBER: return new Column<Integer, Number>(
-                            new NumberCell( NumberFormat.getFormat( "#.###" ) ) ) {
-                                public Number getValue( Integer row ) {
-                                    Object value = dataSet.getValueAt(row, columnNumber);
-                                    if (value == null) return 0;
-                                    return (Number) value;
-                                }
-                            };
-
-            case DATE:return new Column<Integer, Date>(
-                            new DateCell( DateTimeFormat.getFormat( DateTimeFormat.PredefinedFormat.DATE_TIME_MEDIUM ) ) ) {
-                                public Date getValue( Integer row ) {
-                                    Object value = dataSet.getValueAt(row, columnNumber);
-                                    if (value == null) return new Date();
-                                    return (Date) value;
-                                }
-                            };
+            };
         }
         return null;
     }
@@ -316,9 +298,11 @@ public class TableDisplayer extends AbstractDisplayer {
         panel.getElement().setAttribute("cellpadding", "2");
 
         for ( String columnId : columnFilters ) {
-            List<String> selectedValues = filterValues( columnId );
-            for (String interval : selectedValues) {
-                panel.add(new com.github.gwtbootstrap.client.ui.Label(interval));
+            List<Interval> selectedValues = filterIntervals(columnId);
+            DataColumn column = dataSet.getColumnById(columnId);
+            for (Interval interval : selectedValues) {
+                String formattedValue = formatInterval(interval, column);
+                panel.add(new com.github.gwtbootstrap.client.ui.Label(formattedValue));
             }
         }
 

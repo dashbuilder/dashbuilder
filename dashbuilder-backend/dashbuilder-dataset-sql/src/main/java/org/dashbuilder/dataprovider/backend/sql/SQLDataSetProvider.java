@@ -986,7 +986,7 @@ public class SQLDataSetProvider implements DataSetProvider {
                         day(_jooqField), SEPARATOR,
                         hour(_jooqField));
             }
-            if (DateIntervalType.DAY.equals(type)) {
+            if (DateIntervalType.DAY.equals(type) || DateIntervalType.WEEK.equals(type)) {
                 return concat(year(_jooqField), SEPARATOR,
                         month(_jooqField), SEPARATOR,
                         day(_jooqField));

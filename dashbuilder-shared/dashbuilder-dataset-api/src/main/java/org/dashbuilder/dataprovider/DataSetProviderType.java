@@ -37,7 +37,7 @@ public enum DataSetProviderType {
     public static DataSetProviderType getByName(String name) {
         try {
             return valueOf(name.toUpperCase());
-        } catch (IllegalArgumentException e) {
+        } catch (Exception e) {
             return null;
         }
     }

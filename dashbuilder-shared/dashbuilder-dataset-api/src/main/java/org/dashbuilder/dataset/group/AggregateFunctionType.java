@@ -32,7 +32,7 @@ public enum AggregateFunctionType {
     public static AggregateFunctionType getByName(String str) {
         try {
             return valueOf(str.toUpperCase());
-        } catch (IllegalArgumentException e) {
+        } catch (Exception e) {
             return null;
         }
     }

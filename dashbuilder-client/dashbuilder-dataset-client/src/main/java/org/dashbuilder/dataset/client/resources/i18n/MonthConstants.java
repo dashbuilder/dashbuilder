@@ -13,24 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbuilder.displayer;
+package org.dashbuilder.dataset.client.resources.i18n;
 
-/*
- * Generic enum for displayer element positioning purposes.
- */
-public enum Position {
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.i18n.client.ConstantsWithLookup;
 
-    BOTTOM,
-    TOP,
-    LEFT,
-    RIGHT,
-    IN;
+public interface MonthConstants extends ConstantsWithLookup {
 
-    public static Position getByName(String str) {
-        try {
-            return valueOf(str.toUpperCase());
-        } catch (Exception e) {
-            return null;
-        }
-    }
+    public static final MonthConstants INSTANCE = GWT.create( MonthConstants.class );
+
+    String JANUARY();
+    String FEBRUARY();
+    String MARCH();
+    String APRIL();
+    String MAY();
+    String JUNE();
+    String JULY();
+    String AUGUST();
+    String SEPTEMBER();
+    String OCTOBER();
+    String NOVEMBER();
+    String DECEMBER();
 }

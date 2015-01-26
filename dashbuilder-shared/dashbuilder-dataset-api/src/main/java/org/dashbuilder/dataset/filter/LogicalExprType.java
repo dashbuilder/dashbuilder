@@ -29,7 +29,7 @@ public enum LogicalExprType {
     public static LogicalExprType getByName(String str) {
         try {
             return valueOf(str.toUpperCase());
-        } catch (IllegalArgumentException e) {
+        } catch (Exception e) {
             return null;
         }
     }

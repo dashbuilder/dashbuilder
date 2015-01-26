@@ -176,6 +176,7 @@ public abstract class GoogleDisplayer extends AbstractDisplayer {
             googleTable.addColumn(getColumnType(dataColumn), columnName, columnId);
             for (int j = 0; j < columnValues.size(); j++) {
                 Object value = columnValues.get(j);
+                if (ColumnType.LABEL.equals(columnType)) value = super.formatValue(value, dataColumn);
                 setTableValue(googleTable, columnType, value, j, i);
             }
         }
@@ -200,10 +201,6 @@ public abstract class GoogleDisplayer extends AbstractDisplayer {
         return googleTable;
     }
 
-    public String getValueString(int row, int column) {
-        return googleTable.getValueString(row, column);
-    }
-
     protected com.google.gwt.i18n.client.NumberFormat numberFormat = com.google.gwt.i18n.client.NumberFormat.getFormat("#0.00");
 
     public void setTableValue(DataTable gTable, ColumnType type, Object value, int row, int column) {
@@ -220,8 +217,7 @@ public abstract class GoogleDisplayer extends AbstractDisplayer {
             }
         }
         else {
-            if (value == null) gTable.setValue(row, column, "---");
-            else gTable.setValue(row, column, value.toString());
+            gTable.setValue(row, column, value.toString());
         }
     }
 

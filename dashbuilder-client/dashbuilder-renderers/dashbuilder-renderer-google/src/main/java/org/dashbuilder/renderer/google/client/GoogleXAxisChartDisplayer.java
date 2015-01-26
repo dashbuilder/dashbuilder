@@ -34,6 +34,8 @@ import com.googlecode.gwt.charts.client.geochart.GeoChart;
 import com.googlecode.gwt.charts.client.options.ChartArea;
 import com.googlecode.gwt.charts.client.options.HAxis;
 import com.googlecode.gwt.charts.client.options.VAxis;
+import org.dashbuilder.dataset.DataColumn;
+import org.dashbuilder.dataset.group.Interval;
 import org.dashbuilder.renderer.google.client.resources.i18n.GoogleDisplayerConstants;
 
 public abstract class GoogleXAxisChartDisplayer extends AbstractGoogleChartDisplayer {
@@ -47,9 +49,8 @@ public abstract class GoogleXAxisChartDisplayer extends AbstractGoogleChartDispl
         String[] colorArray = new String[table.getNumberOfRows()];
         for (int i = 0, j = 0; i < table.getNumberOfRows(); i++, j++) {
             if (j >= COLOR_ARRAY.length) j = 0;
-            String intervalSelected = getValueString(i, 0);
-            List<String> selectedIntervals = filterValues(googleTable.getColumnId(0));
-            if (selectedIntervals != null && !selectedIntervals.isEmpty() && !selectedIntervals.contains(intervalSelected)) {
+            List<Integer> selectedIdxs = filterIndexes(googleTable.getColumnId(0));
+            if (selectedIdxs != null && !selectedIdxs.isEmpty() && !selectedIdxs.contains(i)) {
                 colorArray[i] = COLOR_NOT_SELECTED;
             } else {
                 colorArray[i] = COLOR_ARRAY[j];
@@ -68,7 +69,8 @@ public abstract class GoogleXAxisChartDisplayer extends AbstractGoogleChartDispl
                     Selection selection = selections.get(i);
                     int row = selection.getRow();
 
-                    filterUpdate(googleTable.getColumnId(0), row, googleTable.getNumberOfRows());
+                    Integer maxSelections = displayerSettings.isFilterSelfApplyEnabled() ? null : googleTable.getNumberOfRows();
+                    filterUpdate(googleTable.getColumnId(0), row, maxSelections);
                 }
                 // Redraw the char in order to reflect the current selection
                 updateVisualization();
@@ -104,9 +106,11 @@ public abstract class GoogleXAxisChartDisplayer extends AbstractGoogleChartDispl
         panel.getElement().setAttribute("cellpadding", "2");
 
         for (String columnId : columnFilters) {
-            List<String> selectedValues = filterValues(columnId);
-            for (String interval : selectedValues) {
-                panel.add(new Label(interval));
+            List<Interval> selectedValues = filterIntervals(columnId);
+            DataColumn column = dataSet.getColumnById(columnId);
+            for (Interval interval : selectedValues) {
+                String formattedValue = formatInterval(interval, column);
+                panel.add(new Label(formattedValue));
             }
         }
 
