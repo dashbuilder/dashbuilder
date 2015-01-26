@@ -348,6 +348,8 @@ public class BackendIntervalBuilderDynamicDate implements IntervalBuilder {
     }
 
     public static String calculateName(DateIntervalType intervalType, Date d) {
+        if (d == null) return null;
+        
         Locale l = Locale.getDefault();
         if (MILLENIUM.equals(intervalType) || CENTURY.equals(intervalType)
             || DECADE.equals(intervalType) || YEAR.equals(intervalType)) {
