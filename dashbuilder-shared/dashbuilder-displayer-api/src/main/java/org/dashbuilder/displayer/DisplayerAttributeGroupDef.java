@@ -17,9 +17,7 @@ package org.dashbuilder.displayer;
 
 import java.util.HashSet;
 import java.util.Set;
-import javax.enterprise.context.ApplicationScoped;
 
-@ApplicationScoped
 public class DisplayerAttributeGroupDef extends DisplayerAttributeDef {
 
     // ROOT-GROUPS
