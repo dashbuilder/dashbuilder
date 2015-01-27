@@ -215,7 +215,7 @@ public class ClientIntervalBuilderDynamicDate implements IntervalBuilder {
         if (QUARTER.equals(intervalType)) {
             int currentMonth = intervalMinDate.getMonth();
             int firstMonthYear = columnGroup.getFirstMonthOfYear().getIndex();
-            int rest = Quarter.getPositionInQuarter(firstMonthYear, currentMonth);
+            int rest = Quarter.getPositionInQuarter(firstMonthYear, currentMonth+1);
             intervalMinDate.setMonth(currentMonth - rest);
             intervalMinDate.setDate(1);
             intervalMinDate.setHours(0);

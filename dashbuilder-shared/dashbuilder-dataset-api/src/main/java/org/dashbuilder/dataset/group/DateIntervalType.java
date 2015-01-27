@@ -79,7 +79,7 @@ public enum DateIntervalType {
         long month = day*31;
         DURATION_IN_MILLIS.put(MONTH, month);
 
-        long quarter = month*4;
+        long quarter = month*3;
         DURATION_IN_MILLIS.put(QUARTER, quarter);
 
         long year = month*12;

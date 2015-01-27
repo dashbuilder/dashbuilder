@@ -206,7 +206,7 @@ public class BackendIntervalBuilderDynamicDate implements IntervalBuilder {
         if (QUARTER.equals(intervalType)) {
             int currentMonth = c.get(Calendar.MONTH);
             int firstMonthYear = columnGroup.getFirstMonthOfYear().getIndex();
-            int rest = Quarter.getPositionInQuarter(firstMonthYear, currentMonth);
+            int rest = Quarter.getPositionInQuarter(firstMonthYear, currentMonth+1);
             c.add(Calendar.MONTH, rest * -1);
             c.set(Calendar.DAY_OF_MONTH, 1);
             c.set(Calendar.HOUR, 0);
