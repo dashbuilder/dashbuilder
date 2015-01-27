@@ -265,7 +265,6 @@ public class ElasticSearchQueryBuilderImpl implements ElasticSearchQueryBuilder<
     /**
      * @see <a>http://www.elasticsearch.org/guide/en/elasticsearch/client/java-api/current/query-dsl-filters.html</a>
      *
-     * TODO: Improve filters query implementation?
      */
     private Query build(List<ColumnFilter> filterList, Operator operator) {
         if (filterList == null) return null;

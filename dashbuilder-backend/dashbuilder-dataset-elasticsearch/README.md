@@ -7,6 +7,7 @@ Table of contents
 ------------------
 
 * **[Usage](#usage)**
+* **[Running an EL server with examples](#running-an-EL-server-with-examples)**
 * **[clients](#clients)**
 * **[Query builder](#query-builder)**
 * **[Notes](#notes)**
@@ -86,7 +87,33 @@ By default, the following ElasticSearch core types are mapped into Dashbuilder t
 
 You can override a mapping for a given column using the <code>columns</code> property in the dataset definition. But keep in mind that analyzed index fields cannot be never used as <code>LABEL</code> type for Dashbuilder.       
 
+Running an EL server with examples
+----------------------------------
 
+These are the steps for running an ElasticSearch server instance locally, if you want to use it as source for an ElasticSearch data provider:               
+
+1.- Download ElasticSearch version <code>1.4.2</code> from [downloads page](http://www.elasticsearch.org/download/) and follow the installation instructions                
+
+2.- Run the ElasticSearch server using the command:
+    
+    <EL_HOME>/bin/elasticsearch -f
+    
+Next step is to create the expense reports example index and bulk some data:           
+
+3.- Create the index mappings using the JSON definition found [here](./src/test/resources/org/dashbuilder/dataprovider/backend/elasticsearch/server/example-data/expensereports-mappings.json)                      
+    
+    curl -XPUT http://localhost:9200/expensereports -d '<JSON_MAPPINGS_DEFINITION>'
+    
+4.- Index using bulk operation some example data found [here](./src/test/resources/org/dashbuilder/dataprovider/backend/elasticsearch/server/example-data/expensereports-data.json)               
+    
+    curl -XPUT http://localhost:9200/_bulk --data-binary @expensereports-data.json
+
+Once index mappings and data are indexed, you can try to query the ElasticSearch server using:                     
+
+    curl -XGET http://localhost:9200/expensereports/_count
+    
+You should obtain a resulting value count of <code>50</code> documents.
+    
 Clients
 -------
 

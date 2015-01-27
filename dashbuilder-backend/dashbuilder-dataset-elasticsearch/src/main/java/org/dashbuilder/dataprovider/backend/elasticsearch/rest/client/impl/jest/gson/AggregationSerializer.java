@@ -23,7 +23,6 @@ import java.util.*;
 /**
  * Serializes DataSetGroup operations.
  *
- * TODO: support for join attribute.
  */
 public class AggregationSerializer extends AbstractAdapter<AggregationSerializer> implements JsonSerializer<DataSetGroup> {
     protected static final String AGG_ORDER_ASC = "asc";
@@ -334,7 +333,6 @@ public class AggregationSerializer extends AbstractAdapter<AggregationSerializer
     /**
      * <p>Obtain the minimum date and maximum date values for the given column with identifier <code>dateColumnId</code>.</p>
      *
-     * TODO: Apply filters?
      * @param dateColumnId The column identifier for the date type column.
      * @return The minimum and maximum dates.
      */

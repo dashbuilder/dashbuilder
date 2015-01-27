@@ -254,8 +254,6 @@ public class ElasticSearchJestClient implements ElasticSearchClient<ElasticSearc
         Search searchRequest = searchRequestBuilder.build();
         JestResult result = null;
         try {
-            // TODO: remove system out, just for testing.
-            System.out.println("Request: " + serializedSearchQuery);
             result = client.execute(searchRequest);
         } catch (Exception e) {
             throw new ElasticSearchClientGenericException("An error ocurred during search operation.", e);

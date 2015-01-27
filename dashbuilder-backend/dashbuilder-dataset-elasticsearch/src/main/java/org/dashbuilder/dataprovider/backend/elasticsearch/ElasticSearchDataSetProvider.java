@@ -141,8 +141,6 @@ public class ElasticSearchDataSetProvider implements DataSetProvider {
     public DataSet lookupDataSet(DataSetDef def, DataSetLookup lookup) throws Exception {
         ElasticSearchDataSetDef elDef = (ElasticSearchDataSetDef) def;
 
-         // TODO: compute any existing def.getDataSetFilter() setting both in getRowCount and in _lookupDataSet.
-
         // Look first into the static data set provider cache.
         if (elDef.isCacheEnabled()) {
             DataSet dataSet = staticDataSetProvider.lookupDataSet(def.getUUID(), null);
@@ -248,7 +246,6 @@ public class ElasticSearchDataSetProvider implements DataSetProvider {
         fillDataSetValues(elDef, dataSet, searchResponse.getHits());
 
         if (trim) {
-            // TODO: Do not truncate!
             dataSet.setRowCountNonTrimmed((int)searchResponse.getTotalHits());            
         }
         return dataSet;
@@ -396,7 +393,6 @@ public class ElasticSearchDataSetProvider implements DataSetProvider {
         List<ColumnType> columnTypes = new LinkedList<ColumnType>();
         
         // Check if custom columns has been configured in the dataset definition or we have to query the index mappings and retrieve column information from it.
-        // TODO: Pending to set ELColumnPattern in ElasticSearchDatasetMetadata
         Map<String, Object[]> columns = parseColumns(mappingsResponse.getIndexMappings(), elasticSearchDataSetDef);
         if (columns == null || columns.isEmpty()) throw new RuntimeException("There are no column for index [" + index[0] + "] and type [" + ArrayUtils.toString(type) + "].");
 
@@ -427,7 +423,6 @@ public class ElasticSearchDataSetProvider implements DataSetProvider {
             }
         }
 
-        // TODO: Do not change the data type to int!
         int _rowCount = (int) rowCount;
         // TODO: Improve estimation.
         int estimatedSize = 100 * _rowCount;
@@ -468,7 +463,6 @@ public class ElasticSearchDataSetProvider implements DataSetProvider {
                 FieldMappingResponse[] properties = typeMapping.getFields();
                 if (properties == null || properties.length == 0) throw new IllegalArgumentException("There are no fields for index: [" + indexName + "] and type [" + typeName + "[");
                 for (FieldMappingResponse fieldMapping : properties) {
-                    // TODO: Support for other field properties.
                     String fieldName = fieldMapping.getName();
                     String format = fieldMapping.getFormat();
 
