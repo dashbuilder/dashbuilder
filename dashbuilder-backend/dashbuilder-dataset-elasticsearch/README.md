@@ -7,7 +7,7 @@ Table of contents
 ------------------
 
 * **[Usage](#usage)**
-* **[Running an EL server with examples](#running-an-EL-server-with-examples)**
+* **[Running an EL server with examples](#running-an-el-server-with-examples)**
 * **[clients](#clients)**
 * **[Query builder](#query-builder)**
 * **[Notes](#notes)**
