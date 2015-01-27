@@ -79,13 +79,16 @@ public class ClusterMetricsDataSetGenerator implements DataSetGenerator {
         }
 
         // Create a new data set containing the missing metrics since the last update.
+        if (last == -1) last = now-timeFrameMillis;
         DataSet newDataSet = dataSet.cloneEmpty();
         long seconds = diff / 1000;
-        for (long i = 0; i <seconds; i++) {
-            long metricTime = now - i*1000;
+        Integer lastCpu = (dataSet.getRowCount() > 0 ? ((Double) dataSet.getValueAt(0, 2)).intValue() : null);
+        Integer lastMem = (dataSet.getRowCount() > 0 ? ((Double) dataSet.getValueAt(0, 3)).intValue() : null);
+        for (long i = 1; i <=seconds; i++) {
+            long metricTime = last + i*1000;
             for (int j = 0; j < aliveNodes.size(); j++) {
                 String node = aliveNodes.get(j);
-                newDataSet.addValues(node, new Date(metricTime), cpu(node), mem(node));
+                newDataSet.addValuesAt(0, node, new Date(metricTime), cpu(node, lastCpu), mem(node, lastMem));
             }
         }
         // Add the remain metric history
@@ -106,20 +109,48 @@ public class ClusterMetricsDataSetGenerator implements DataSetGenerator {
         return dataSet = newDataSet;
     }
 
-    public int cpu(String node) {
-        double r = Math.random();
+    public Double cpu(String node, Integer last) {
+        double r = Math.random() - 0.5;
         if (overloadedNodes.contains(node)) {
-            return (int) (80 + 20*r);
+            if (last == null) {
+                return 90 + 10 * r;
+            } else {
+                double v = last + 10 * r;
+                if (v > 100) return 100d;
+                if (v < 90) return 90d;
+                return v;
+            }
         }
-        return (int) (20 + 60*r);
+        if (last == null) {
+            return 20 + 20 * r;
+        } else {
+            double v = last + 10 * r;
+            if (v > 100) return 100d;
+            if (v < 0) return 0d;
+            return v;
+        }
     }
 
-    public int mem(String node) {
-        double r = Math.random();
+    public Double mem(String node, Integer last) {
+        double r = Math.random() - 0.5;
         if (overloadedNodes.contains(node)) {
-            return  (int) (50 + 14*r);
+            if (last == null) {
+                return 50 + 10 * r;
+            } else {
+                double v = last + 10 * r;
+                if (v > 64) return 64d;
+                if (v < 50) return 50d;
+                return v;
+            }
         }
-        return (int) (4 + 46*r);
+        if (last == null) {
+            return 4 + 20 * r;
+        } else {
+            double v = last + 10 * r;
+            if (v > 64) return 64d;
+            if (v < 0) return 0d;
+            return v;
+        }
     }
 
     public static void main(String[] args) throws Exception {
