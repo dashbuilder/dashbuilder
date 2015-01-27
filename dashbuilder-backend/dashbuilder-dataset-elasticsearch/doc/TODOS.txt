@@ -1,19 +1,13 @@
 - David
     - TimeSeries function support
-    - empty intervals group selection (min_doc_count) - https://github.com/dashbuilder/dashbuilder/blob/master/dashbuilder-shared/dashbuilder-dataset-api/src/main/java/org/dashbuilder/dataset/DataSetLookupBuilder.java#L165
-    - initial filter (as part of dataset def) 
+    - empty intervals group selection (min_doc_count) for column groups - https://github.com/dashbuilder/dashbuilder/blob/master/dashbuilder-shared/dashbuilder-dataset-api/src/main/java/org/dashbuilder/dataset/DataSetLookupBuilder.java#L165
+    - initial filter (as part of dataset def) - Example at SQLDataSetDefTest#testFilters
     
-- Structure
-    - Verify pom TODOS
-    - BOM & packaging
-
 - Code
     - CDI Injections
     - Date interval calculations when group by date dynamic
-    - Initial filter in datasetdef (example at SQLDataSetDefTest#testFilters)
     - Cache impl in provider - impl and unit testing (ElasticSearchDataSetCacheTest)
     - Custom columns (include_all flag)
-    - Empty intervals for column groups
     - Test -> Enable run EL server for running unit tests
     - Dates -> added more test cases to ElasticSearchDataSetDatesTest
     - Provider -> improve metadata size estimation.

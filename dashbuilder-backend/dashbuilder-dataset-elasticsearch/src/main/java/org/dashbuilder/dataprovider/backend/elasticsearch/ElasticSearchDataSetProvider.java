@@ -41,7 +41,6 @@ import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
 
 import javax.annotation.PostConstruct;
-import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -107,7 +106,6 @@ import java.util.*;
  * 
  */
 @Named("elasticsearch")
-@Dependent
 public class ElasticSearchDataSetProvider implements DataSetProvider {
 
     public static final DateTimeFormatter EL_DEFAULT_DATETIME_FORMATTER = ISODateTimeFormat.dateOptionalTimeParser();

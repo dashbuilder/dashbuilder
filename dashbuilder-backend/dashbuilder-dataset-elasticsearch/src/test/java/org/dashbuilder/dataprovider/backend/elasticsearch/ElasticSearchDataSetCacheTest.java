@@ -15,13 +15,8 @@
  */
 package org.dashbuilder.dataprovider.backend.elasticsearch;
 
-import org.dashbuilder.dataset.ColumnType;
-import org.dashbuilder.dataset.DataSet;
-import org.dashbuilder.dataset.DataSetFactory;
-import org.dashbuilder.dataset.sort.SortOrder;
-import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Test;
+import org.junit.Ignore;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
@@ -31,6 +26,7 @@ import static org.fest.assertions.api.Assertions.assertThat;
  * TODO
  * @since 0.3.0
  */
+@Ignore
 public class ElasticSearchDataSetCacheTest extends ElasticSearchDataSetTestBase {
 
     protected static final String EL_EXAMPLE_DATASET_DEF = "org/dashbuilder/dataprovider/backend/elasticsearch/expensereports.dset";

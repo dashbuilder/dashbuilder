@@ -164,7 +164,7 @@ public class ElasticSearchDataSetTestBase {
     protected static ElasticSearchUrlBuilder urlBuilder = new ElasticSearchUrlBuilder(EL_SERVER, EL_EXAMPLE_INDEX);
     
     // For local testing against an existing and running EL server.
-    private static boolean runAndPopulateServer = false;
+    private static boolean runAndPopulateServer = true;
 
     @BeforeClass
     public static void runELServer() throws Exception {
@@ -397,8 +397,6 @@ public class ElasticSearchDataSetTestBase {
      * Helper method to print to standard output the dataset values.
      */
     protected void printDataSet(DataSet dataSet) {
-        // TODO: Use System.out.print(dataSetFormatter.formatDataSet(dataSet, "{", "}", ",\n", "\"", "\"", ", ") + "\n\n");
-        
         final String SPACER = "| \t |";
         
         if (dataSet == null) System.out.println("DataSet is null");

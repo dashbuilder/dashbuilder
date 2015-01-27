@@ -63,8 +63,6 @@ public class ElasticSearchDataSetDatesTest extends ElasticSearchDataSetTestBase 
                         .sort(EL_EXAMPLE_COLUMN_ID, SortOrder.ASCENDING)
                         .buildLookup());
 
-        // printDataSet(result);
-        
         assertDataSetValues(result, dataSetFormatter, new String[][]{
                 {"2009", "13.00", "6,126.13"},
                 {"2010", "11.00", "5,252.96"},
@@ -86,8 +84,6 @@ public class ElasticSearchDataSetDatesTest extends ElasticSearchDataSetTestBase 
                         .sort(EL_EXAMPLE_COLUMN_ID, SortOrder.ASCENDING)
                         .buildLookup());
 
-        // printDataSet(result);
-        
         assertThat(result.getRowCount()).isEqualTo(48);
         assertThat(result.getValueAt(0, 0)).isEqualTo("2009-01");
         assertThat(result.getValueAt(0, 1)).isEqualTo(1d);
@@ -112,7 +108,6 @@ public class ElasticSearchDataSetDatesTest extends ElasticSearchDataSetTestBase 
                         .sort(EL_EXAMPLE_COLUMN_ID, SortOrder.ASCENDING)
                         .buildLookup());
 
-        printDataSet(result);
         assertThat(result.getRowCount()).isEqualTo(1438);
         assertThat(result.getValueAt(0, 0)).isEqualTo("2009-01-04");
     }
