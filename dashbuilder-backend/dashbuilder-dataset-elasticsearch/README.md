@@ -160,5 +160,4 @@ If you don't feel comfortable with the default queries that are build to query t
 
 Notes
 -----
-* In order to use the official elasticsearch java client api as rest client, you must compile and run using Java 1.7+.               
 * This module has benn build and tested against an ElasticSearch server version  <code>1.4.2</code>. In other releases you may hit with some incompatibility issues.                     
