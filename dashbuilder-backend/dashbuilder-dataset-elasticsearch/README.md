@@ -112,14 +112,40 @@ Once index mappings and data are indexed, you can try to query the ElasticSearch
 
     curl -XGET http://localhost:9200/expensereports/_count
     
-You should obtain a resulting value count of <code>50</code> documents.
-    
+You should obtain a resulting value count of <code>50</code> documents.                  
+
+Here is an example of a DataSet definition for this example:                        
+
+    {
+        "uuid": "expense_reports",
+        "provider": "ELASTICSEARCH",
+        "pushEnabled": true,
+        "pushMaxSize": 1024,
+        "isPublic": true,
+        "serverURL": "http://localhost:9200",
+        "clusterName": "elasticsearch",
+        "index": "expensereports",
+        "type": "expense",
+        "cacheEnabled": false,
+        "cacheMaxRows": 1000,
+        "columns": [
+                    {"id": "id", "name": "id", "type": "number"},
+                    {"id": "amount", "name": "amount", "type": "number"},
+                    {"id": "department", "name": "department", "type": "label"},
+                    {"id": "employee", "name": "author", "type": "text"},
+                    {"id": "date", "name": "date", "type": "date"},
+                    {"id": "city", "name": "city", "type": "label"},
+                ]
+    }
+
 Clients
 -------
 
 The ElasticSearch dataset provider implementation is decoupled from the REST API client used to query the server.       
 
-Be default the provided implementation is the [ElasticSearch java client](http://www.elasticsearch.org/guide/en/elasticsearch/client/java-api/current/client.html). This implementation requires to build the application using **Java 1.7+**.                
+By default the provided client implementation is based on [ElasticSearch Jest client](https://github.com/searchbox-io/Jest), as this implementation works using **Java 1.6**                   
+
+If you are using **Java 1.7+**, you can use the [ElasticSearch java client](http://www.elasticsearch.org/guide/en/elasticsearch/client/java-api/current/client.html) implementation provided too.                                    
 
 You can build your own client implementation by implementing the interface <code>org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.ElasticSearchClient</code> and use CDI to override it as the default one.         
 
