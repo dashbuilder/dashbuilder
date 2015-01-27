@@ -5,7 +5,7 @@
     
 - Code
     - CDI Injections
-    - Date interval calculations when group by date dynamic
+    - Date interval calculations when group by date is type FIXED
     - Cache impl in provider - impl and unit testing (ElasticSearchDataSetCacheTest)
     - Custom columns (include_all flag)
     - Test -> Enable run EL server for running unit tests
