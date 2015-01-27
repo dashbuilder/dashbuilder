@@ -10,11 +10,12 @@ import org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.model.Sear
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.model.SearchResponse;
 import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.DataColumn;
-import org.dashbuilder.dataset.DataSetMetadata;
 import org.dashbuilder.dataset.backend.BackendIntervalBuilderDynamicDate;
+import org.dashbuilder.dataset.backend.date.DateUtils;
 import org.dashbuilder.dataset.def.ElasticSearchDataSetDef;
 import org.dashbuilder.dataset.group.*;
 import org.dashbuilder.dataset.impl.DataColumnImpl;
+import org.dashbuilder.dataset.impl.ElasticSearchDataSetMetadata;
 
 import java.lang.reflect.Type;
 import java.util.*;
@@ -38,18 +39,11 @@ public class AggregationSerializer extends AbstractAdapter<AggregationSerializer
     protected static final String AGG_HISTORGRAM = "histogram";
     protected static final String AGG_FORMAT = "format";
     protected static final String AGG_DATE_HISTORGRAM = "date_histogram";
-    protected static final String EL_DATE_FORMAT_YEAR = "yyyy";
-    protected static final String EL_DATE_FORMAT_MONTH = "yyyy-MM";
-    protected static final String EL_DATE_FORMAT_DAY = "yyyy-MM-dd";
-    protected static final String EL_DATE_FORMAT_DAY_OF_WEEK = "yyyy-MM-dd";
-    protected static final String EL_DATE_FORMAT_HOUR = "hh";
-    protected static final String EL_DATE_FORMAT_MINUTE= "mm";
-    protected static final String EL_DATE_FORMAT_SECOND = "ss";
 
     // TODO: @Inject
     protected BackendIntervalBuilderDynamicDate intervalBuilder;
 
-    public AggregationSerializer(DataSetMetadata metadata, ElasticSearchDataSetDef definition, List<DataColumn> columns) {
+    public AggregationSerializer(ElasticSearchDataSetMetadata metadata, ElasticSearchDataSetDef definition, List<DataColumn> columns) {
         super(metadata, definition, columns);
         intervalBuilder = new BackendIntervalBuilderDynamicDate();
     }
@@ -151,8 +145,8 @@ public class AggregationSerializer extends AbstractAdapter<AggregationSerializer
 
             // Add the resulting dataset column.
             if (columns != null) {
-                ColumnType columnType1 = metadata.getColumnType(resultingColumnId);
-                DataColumn column = new DataColumnImpl(resultingColumnId, columnType1);
+                DataColumn column = new DataColumnImpl(resultingColumnId, columnType);
+                column.setColumnGroup(new ColumnGroup(sourceId, resultingColumnId, columnGroup.getStrategy(), columnGroup.getMaxIntervals(), columnGroup.getIntervalSize()));
                 columns.add(0, column);
             }
 
@@ -172,8 +166,8 @@ public class AggregationSerializer extends AbstractAdapter<AggregationSerializer
 
             // Add the resulting dataset column.
             if (columns != null) {
-                ColumnType columnType1 = metadata.getColumnType(resultingColumnId);
-                DataColumn column = new DataColumnImpl(resultingColumnId, columnType1);
+                DataColumn column = new DataColumnImpl(resultingColumnId, columnType);
+                column.setColumnGroup(new ColumnGroup(sourceId, resultingColumnId, columnGroup.getStrategy(), columnGroup.getMaxIntervals(), columnGroup.getIntervalSize()));
                 columns.add(0, column);
             }
         } else if (ColumnType.DATE.equals(columnType)) {
@@ -195,7 +189,7 @@ public class AggregationSerializer extends AbstractAdapter<AggregationSerializer
             }
 
             String intervalFormat = null;
-            String returnFormat = null;
+            String returnFormat = DateUtils.PATTERN_DAY;
             switch (dateIntervalType) {
                 case MILLISECOND:
                     intervalFormat = "0.001s";
@@ -207,38 +201,38 @@ public class AggregationSerializer extends AbstractAdapter<AggregationSerializer
                     intervalFormat = "0.1s";
                     break;
                 case SECOND:
-                    returnFormat = EL_DATE_FORMAT_SECOND;
                     intervalFormat = "1s";
+                    returnFormat = DateUtils.PATTERN_SECOND;
                     break;
                 case MINUTE:
-                    returnFormat = EL_DATE_FORMAT_MINUTE;
                     intervalFormat = "1m";
+                    returnFormat = DateUtils.PATTERN_MINUTE;
                     break;
                 case HOUR:
-                    returnFormat = EL_DATE_FORMAT_HOUR;
                     intervalFormat = "1h";
+                    returnFormat = DateUtils.PATTERN_HOUR;
                     break;
                 case DAY:
                     intervalFormat = "1d";
-                    returnFormat = EL_DATE_FORMAT_DAY;
+                    returnFormat = DateUtils.PATTERN_DAY;
                     break;
                 case DAY_OF_WEEK:
-                    returnFormat = EL_DATE_FORMAT_DAY_OF_WEEK;
                     intervalFormat = "1d";
+                    returnFormat = DateUtils.PATTERN_DAY;
                     break;
                 case WEEK:
                     intervalFormat = "1w";
                     break;
                 case MONTH:
                     intervalFormat = "1M";
-                    returnFormat = EL_DATE_FORMAT_MONTH;
+                    returnFormat = DateUtils.PATTERN_MONTH;
                     break;
                 case QUARTER:
                     intervalFormat = "1q";
                     break;
                 case YEAR:
                     intervalFormat = "1y";
-                    returnFormat = EL_DATE_FORMAT_YEAR;
+                    returnFormat = DateUtils.PATTERN_YEAR;
                     break;
                 case DECADE:
                     intervalFormat = "10y";
@@ -256,7 +250,7 @@ public class AggregationSerializer extends AbstractAdapter<AggregationSerializer
             JsonObject subObject = new JsonObject();
             subObject.addProperty(AGG_FIELD, sourceId);
             subObject.addProperty(AGG_INTERVAL, intervalFormat);
-            if (returnFormat != null) subObject.addProperty(AGG_FORMAT, returnFormat);
+            subObject.addProperty(AGG_FORMAT, returnFormat);
             JsonObject orderObject = new JsonObject();
             orderObject.addProperty(AGG_KEY, order);
             subObject.add(AGG_ORDER, orderObject);
@@ -268,8 +262,9 @@ public class AggregationSerializer extends AbstractAdapter<AggregationSerializer
 
             // Add the resulting dataset column.
             if (columns != null) {
-                ColumnType columnType1 = metadata.getColumnType(resultingColumnId);
-                DataColumn column = new DataColumnImpl(resultingColumnId, columnType1);
+                DataColumn column = new DataColumnImpl(resultingColumnId, ColumnType.LABEL);
+                column.setIntervalType(dateIntervalType.name());
+                column.setColumnGroup(new ColumnGroup(sourceId, resultingColumnId, columnGroup.getStrategy(), columnGroup.getMaxIntervals(), columnGroup.getIntervalSize()));
                 columns.add(0, column);
             }
         } else {
@@ -299,7 +294,8 @@ public class AggregationSerializer extends AbstractAdapter<AggregationSerializer
 
             AggregateFunctionType type = groupFunction.getFunction();
             String aggregationName = null;
-            ColumnType resultingColumnType = ColumnType.NUMBER;
+            ColumnType sourceColumnType = metadata.getColumnType(sourceId);
+            ColumnType resultingColumnType = sourceColumnType.equals(ColumnType.DATE) ? ColumnType.DATE : ColumnType.NUMBER;
             switch (type) {
                 case COUNT:
                     aggregationName = "value_count";
@@ -389,9 +385,9 @@ public class AggregationSerializer extends AbstractAdapter<AggregationSerializer
                 SearchHitResponse hit0 = hits[0];
                 Map<String, Object> fields = hit0.getFields();
                 if (fields != null && !fields.isEmpty()) {
-                    long minValue = (Long) fields.get(minDateColumnId);
-                    long maxValue = (Long) fields.get(maxDateColumnId);
-                    return new Date[] {new Date(minValue), new Date(maxValue)};
+                    Date minValue = (Date) fields.get(minDateColumnId);
+                    Date maxValue = (Date) fields.get(maxDateColumnId);
+                    return new Date[] {minValue, maxValue};
                 }
             }
         }

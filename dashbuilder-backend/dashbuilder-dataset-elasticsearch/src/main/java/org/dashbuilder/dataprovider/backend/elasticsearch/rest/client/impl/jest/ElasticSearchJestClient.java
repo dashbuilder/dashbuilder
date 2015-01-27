@@ -25,17 +25,22 @@ import io.searchbox.core.CountResult;
 import io.searchbox.core.Search;
 import io.searchbox.core.search.sort.Sort;
 import io.searchbox.indices.mapping.GetMapping;
+import org.dashbuilder.dataprovider.backend.elasticsearch.ElasticSearchDataSetProvider;
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.ElasticSearchClient;
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.exception.ElasticSearchClientGenericException;
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.impl.jest.gson.*;
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.model.*;
+import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.DataColumn;
-import org.dashbuilder.dataset.DataSetMetadata;
 import org.dashbuilder.dataset.def.DataSetDef;
 import org.dashbuilder.dataset.def.ElasticSearchDataSetDef;
 import org.dashbuilder.dataset.group.DataSetGroup;
+import org.dashbuilder.dataset.impl.ElasticSearchDataSetMetadata;
 import org.dashbuilder.dataset.sort.ColumnSort;
 import org.dashbuilder.dataset.sort.DataSetSort;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Named;
@@ -177,10 +182,9 @@ public class ElasticSearchJestClient implements ElasticSearchClient<ElasticSearc
      * @throws ElasticSearchClientGenericException
      */
     @Override
-    public SearchResponse search(DataSetDef definition, SearchRequest request) throws ElasticSearchClientGenericException {
+    public SearchResponse search(DataSetDef definition, ElasticSearchDataSetMetadata metadata, SearchRequest request) throws ElasticSearchClientGenericException {
         if (client == null) throw new IllegalArgumentException("elasticsearchRESTEasyClient instance is not build.");
 
-        DataSetMetadata metadata = request.getMetadata();
         ElasticSearchDataSetDef elasticSearchDataSetDef = (ElasticSearchDataSetDef) definition;
         String[] index = request.getIndexes();
         String[] type = request.getTypes();
@@ -308,6 +312,87 @@ public class ElasticSearchJestClient implements ElasticSearchClient<ElasticSearc
        * Helper methods.
      *********************************************************************
      */
+
+    /**
+     * Parses a given value (for a given column type) returned by response JSON query body from EL server.
+     *
+     * @param column The data column definition.
+     * @param valueElement  The value element from JSON query response to format.
+     * @return The formatted value for the given column type.
+     */
+    public static Object parseValue(ElasticSearchDataSetDef definition, ElasticSearchDataSetMetadata metadata, DataColumn column, JsonElement valueElement) {
+        if (column == null || valueElement == null || valueElement.isJsonNull()) return null;
+        if (!valueElement.isJsonPrimitive()) throw new RuntimeException("Not expected JsonElement type to parse from query response.");
+        
+        JsonPrimitive valuePrimitive = valueElement.getAsJsonPrimitive();
+        
+        ColumnType columnType = column.getColumnType();
+
+        if (ColumnType.NUMBER.equals(columnType)) {
+            
+            return valueElement.getAsDouble();
+            
+        } else if (ColumnType.DATE.equals(columnType)) {
+
+            // We can expect two return core types from EL server when handling dates:
+            // 1.- String type, using the field pattern defined in the index' mappings, when it's result of a query without aggregations.
+            // 2.- Numeric type, when it's result from a scalar function or a value pickup.
+
+            if (valuePrimitive.isString()) {
+
+                DateTimeFormatter formatter = null;
+                String datePattern = metadata.getFieldPattern(column.getId());
+                if (datePattern == null || datePattern.trim().length() == 0) {
+                    // If no custom pattern for date field, use the default by EL -> org.joda.time.format.ISODateTimeFormat#dateOptionalTimeParser
+                    formatter = ElasticSearchDataSetProvider.EL_DEFAULT_DATETIME_FORMATTER;
+                } else {
+                    // Obtain the date value by parsing using the EL pattern specified for this field.
+                    formatter = DateTimeFormat.forPattern(datePattern);
+                }
+                
+                DateTime dateTime = formatter.parseDateTime(valuePrimitive.getAsString());
+                return dateTime.toDate();
+            }
+
+            if (valuePrimitive.isNumber()) {
+
+                return new Date(valuePrimitive.getAsLong());
+
+            }
+
+            throw new UnsupportedOperationException("Value core type not supported. Expecting string or number when using date core field types.");
+
+        }
+
+        // LABEL, TEXT or grouped DATE column types.
+        return valueElement.getAsString();
+    }
+
+    /**
+     * Formats the given value in a String type in order to send the JSON query body to the EL server. 
+     */
+    public static String formatValue(String columnId, ElasticSearchDataSetMetadata metadata, Object value) {
+        if (value == null) return null;
+
+        ColumnType columnType = metadata.getColumnType(columnId);
+        if (ColumnType.DATE.equals(columnType)) {
+            DateTimeFormatter formatter = null;
+            String pattern = metadata.getFieldPattern(columnId);
+            if (pattern == null || pattern.trim().length() == 0) {
+                // If no custom pattern for date field, use the default by EL -> org.joda.time.format.ISODateTimeFormat#dateOptionalTimeParser
+                formatter = ElasticSearchDataSetProvider.EL_DEFAULT_DATETIME_FORMATTER;
+            } else {
+                // Obtain the date value by parsing using the EL pattern specified for this field.
+                formatter = DateTimeFormat.forPattern(pattern);
+            }
+
+            return formatter.print(((Date)value).getTime());
+        } else if (ColumnType.NUMBER.equals(columnType)) {
+            return Double.toString((Double) value);
+        }
+
+        return value.toString();
+    }
 
     protected JestClient buildClient() throws IllegalArgumentException{
         return  client = buildNewClient(serverURL, clusterName, timeout);

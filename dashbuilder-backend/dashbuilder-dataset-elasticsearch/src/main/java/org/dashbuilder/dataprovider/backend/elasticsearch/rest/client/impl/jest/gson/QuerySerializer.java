@@ -3,8 +3,8 @@ package org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.impl.jest
 import com.google.gson.*;
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.model.Query;
 import org.dashbuilder.dataset.DataColumn;
-import org.dashbuilder.dataset.DataSetMetadata;
 import org.dashbuilder.dataset.def.ElasticSearchDataSetDef;
+import org.dashbuilder.dataset.impl.ElasticSearchDataSetMetadata;
 
 import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
@@ -36,7 +36,7 @@ public class QuerySerializer extends AbstractAdapter<QuerySerializer> implements
     private Query query;
     private Gson gson = new GsonBuilder().create();
 
-    public QuerySerializer(DataSetMetadata metadata, ElasticSearchDataSetDef definition, List<DataColumn> columns) {
+    public QuerySerializer(ElasticSearchDataSetMetadata metadata, ElasticSearchDataSetDef definition, List<DataColumn> columns) {
         super(metadata, definition, columns);
     }
 

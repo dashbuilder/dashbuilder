@@ -16,8 +16,12 @@
 package org.dashbuilder.dataprovider.backend.elasticsearch.rest.client;
 
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.exception.ElasticSearchClientGenericException;
-import org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.model.*;
+import org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.model.CountResponse;
+import org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.model.MappingsResponse;
+import org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.model.SearchRequest;
+import org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.model.SearchResponse;
 import org.dashbuilder.dataset.def.DataSetDef;
+import org.dashbuilder.dataset.impl.ElasticSearchDataSetMetadata;
 
 /**
  * <p>This is the contract for a JBoss Dashbuilder REST client for ElasticSearch servers.</p>
@@ -84,8 +88,9 @@ public interface ElasticSearchClient<T extends ElasticSearchClient> {
      * <p>If the type/s value set in the <code>request</code> is <code>null</code> returns all documents in all indexes or in the index specified by <code>index</code>.</p>
      *
      * @param definition The dataset definition.
+     * @param metadata The metadata.
      * @param searchRequest The search request.
      * @return The number of documents for a given index/es and type/es
      */
-    SearchResponse search(DataSetDef definition, SearchRequest searchRequest) throws ElasticSearchClientGenericException;
+    SearchResponse search(DataSetDef definition, ElasticSearchDataSetMetadata metadata, SearchRequest searchRequest) throws ElasticSearchClientGenericException;
 }

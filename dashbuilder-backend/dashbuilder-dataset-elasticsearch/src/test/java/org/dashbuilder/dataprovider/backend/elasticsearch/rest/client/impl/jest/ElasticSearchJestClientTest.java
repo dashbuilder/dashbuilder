@@ -24,9 +24,11 @@ import org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.model.Sear
 import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.dataset.DataSetMetadata;
+import org.dashbuilder.dataset.backend.date.DateUtils;
 import org.dashbuilder.dataset.def.ElasticSearchDataSetDef;
 import org.dashbuilder.dataset.group.*;
 import org.dashbuilder.dataset.impl.DataColumnImpl;
+import org.dashbuilder.dataset.impl.ElasticSearchDataSetMetadata;
 import org.jboss.arquillian.junit.Arquillian;
 import org.junit.Assert;
 import org.junit.Before;
@@ -35,10 +37,8 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 import static org.mockito.Mockito.when;
 
@@ -51,7 +51,7 @@ import static org.mockito.Mockito.when;
 public class ElasticSearchJestClientTest {
 
     @Mock
-    protected DataSetMetadata metadata;
+    protected ElasticSearchDataSetMetadata metadata;
     @Mock
     protected ElasticSearchDataSetDef definition;
     
@@ -81,6 +81,7 @@ public class ElasticSearchJestClientTest {
         when(metadata.getColumnId(5)).thenReturn("amount");
         when(metadata.getColumnType(5)).thenReturn(ColumnType.NUMBER);
         when(metadata.getColumnType("amount")).thenReturn(ColumnType.NUMBER);
+        when(metadata.getFieldPattern("date")).thenReturn("MM-dd-YYYY");
         
         // Init the dataset defintion mocked instance.
         when(definition.getIndex()).thenReturn(new String[] {"expensereports"});
@@ -171,7 +172,7 @@ public class ElasticSearchJestClientTest {
     }
     
     @Test
-    public void testSearchResponseDeserialization() {
+    public void testSearchResponseDeserialization() throws Exception {
         String response = "{\"took\":4,\"timed_out\":false,\"_shards\":{\"total\":5,\"successful\":5,\"failed\":0},\"hits\":{\"total\":8,\"max_score\":2.609438,\"hits\":[{\"_index\":\"expensereports\",\"_type\":\"expense\",\"_id\":\"12\",\"_score\":2.609438,\"_source\":{\"id\":12, \"city\": \"Madrid\", \"department\": \"Sales\", \"employee\": \"Nita Marling\" ,\"date\": \"03-02-2012\" , \"amount\":344.9}},{\"_index\":\"expensereports\",\"_type\":\"expense\",\"_id\":\"20\",\"_score\":2.609438,\"_source\":{\"id\":20, \"city\": \"Brno\", \"department\": \"Sales\", \"employee\": \"Neva Hunger\" ,\"date\": \"06-11-2011\" , \"amount\":995.3}},{\"_index\":\"expensereports\",\"_type\":\"expense\",\"_id\":\"21\",\"_score\":2.609438,\"_source\":{\"id\":21, \"city\": \"Brno\", \"department\": \"Sales\", \"employee\": \"Neva Hunger\" ,\"date\": \"06-11-2011\" , \"amount\":234.3}},{\"_index\":\"expensereports\",\"_type\":\"expense\",\"_id\":\"10\",\"_score\":2.2039728,\"_source\":{\"id\":10, \"city\": \"Madrid\", \"department\": \"Sales\", \"employee\": \"Nita Marling\" ,\"date\": \"03-11-2012\" , \"amount\":100}},{\"_index\":\"expensereports\",\"_type\":\"expense\",\"_id\":\"27\",\"_score\":2.2039728,\"_source\":{\"id\":27, \"city\": \"Westford\", \"department\": \"Sales\", \"employee\": \"Jerri Preble\" ,\"date\": \"12-23-2010\" , \"amount\":899.03}},{\"_index\":\"expensereports\",\"_type\":\"expense\",\"_id\":\"9\",\"_score\":1.9162908,\"_source\":{\"id\":9, \"city\": \"Madrid\", \"department\": \"Sales\", \"employee\": \"Nita Marling\" ,\"date\": \"05-11-2012\" , \"amount\":75.75}},{\"_index\":\"expensereports\",\"_type\":\"expense\",\"_id\":\"11\",\"_score\":1.9162908,\"_source\":{\"id\":11, \"city\": \"Madrid\", \"department\": \"Sales\", \"employee\": \"Nita Marling\" ,\"date\": \"03-16-2012\" , \"amount\":220.8}},{\"_index\":\"expensereports\",\"_type\":\"expense\",\"_id\":\"28\",\"_score\":1.9162908,\"_source\":{\"id\":28, \"city\": \"Westford\", \"department\": \"Sales\", \"employee\": \"Jerri Preble\" ,\"date\": \"11-30-2010\" , \"amount\":343.45}}]}}";
 
         // Build the resulting column definitions list.        
@@ -219,11 +220,12 @@ public class ElasticSearchJestClientTest {
         Map<String, Object> hit0Fields = hit0.getFields();
         Assert.assertNotNull(hit0Fields);
         Assert.assertEquals(hit0Fields.size(), 6);
-        Assert.assertEquals(hit0Fields.get("id").toString(), "12");
+        Assert.assertEquals(hit0Fields.get("id").toString(), "12.0");
         Assert.assertEquals(hit0Fields.get("city").toString(), "Madrid");
         Assert.assertEquals(hit0Fields.get("department").toString(), "Sales");
         Assert.assertEquals(hit0Fields.get("employee").toString(), "Nita Marling");
-        Assert.assertEquals(hit0Fields.get("date").toString(), "03-02-2012");
+        Date date = new SimpleDateFormat(DateUtils.PATTERN_DAY).parse("2012-03-02");
+        Assert.assertEquals(hit0Fields.get("date"), date);
         Assert.assertEquals(hit0Fields.get("amount").toString(), "344.9");
 
         // Assert first response hit.
@@ -236,11 +238,12 @@ public class ElasticSearchJestClientTest {
         Map<String, Object> hit7Fields = hit7.getFields();
         Assert.assertNotNull(hit7Fields);
         Assert.assertEquals(hit7Fields.size(), 6);
-        Assert.assertEquals(hit7Fields.get("id").toString(), "28");
+        Assert.assertEquals(hit7Fields.get("id").toString(), "28.0");
         Assert.assertEquals(hit7Fields.get("city").toString(), "Westford");
         Assert.assertEquals(hit7Fields.get("department").toString(), "Sales");
         Assert.assertEquals(hit7Fields.get("employee").toString(), "Jerri Preble");
-        Assert.assertEquals(hit7Fields.get("date").toString(), "11-30-2010");
+        date = new SimpleDateFormat(DateUtils.PATTERN_DAY).parse("2010-11-30");
+        Assert.assertEquals(hit7Fields.get("date"), date);
         Assert.assertEquals(hit7Fields.get("amount").toString(), "343.45");
     }
 
@@ -399,7 +402,7 @@ public class ElasticSearchJestClientTest {
         String hit0AmountCount = hit0Fields.get("amount-count").toString();
         String hit0Dept = hit0Fields.get("departmentGrouped").toString();
         String hit0AmountMin = hit0Fields.get("amount-min").toString();
-        Assert.assertEquals(hit0AmountCount, "19");
+        Assert.assertEquals(hit0AmountCount, "19.0");
         Assert.assertEquals(hit0Dept, "Engineering");
         Assert.assertEquals(hit0AmountMin, "120.3499984741211");
 
@@ -411,7 +414,7 @@ public class ElasticSearchJestClientTest {
         String hit1AmountCount = hit1Fields.get("amount-count").toString();
         String hit1Dept = hit1Fields.get("departmentGrouped").toString();
         String hit1AmountMin = hit1Fields.get("amount-min").toString();
-        Assert.assertEquals(hit1AmountCount, "11");
+        Assert.assertEquals(hit1AmountCount, "11.0");
         Assert.assertEquals(hit1Dept, "Management");
         Assert.assertEquals(hit1AmountMin, "43.029998779296875");
 
@@ -423,7 +426,7 @@ public class ElasticSearchJestClientTest {
         String hit4AmountCount = hit4Fields.get("amount-count").toString();
         String hit4Dept = hit4Fields.get("departmentGrouped").toString();
         String hit4AmountMin = hit4Fields.get("amount-min").toString();
-        Assert.assertEquals(hit4AmountCount, "7");
+        Assert.assertEquals(hit4AmountCount, "7.0");
         Assert.assertEquals(hit4Dept, "Support");
         Assert.assertEquals(hit4AmountMin, "300.010009765625");
 

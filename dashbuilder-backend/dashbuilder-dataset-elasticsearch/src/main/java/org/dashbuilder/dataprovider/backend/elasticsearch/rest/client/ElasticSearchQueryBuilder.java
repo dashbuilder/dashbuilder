@@ -16,9 +16,9 @@
 package org.dashbuilder.dataprovider.backend.elasticsearch.rest.client;
 
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.model.Query;
-import org.dashbuilder.dataset.DataSetMetadata;
 import org.dashbuilder.dataset.filter.DataSetFilter;
 import org.dashbuilder.dataset.group.DataSetGroup;
+import org.dashbuilder.dataset.impl.ElasticSearchDataSetMetadata;
 
 import java.util.List;
 
@@ -32,7 +32,7 @@ public interface ElasticSearchQueryBuilder<T extends ElasticSearchQueryBuilder> 
      * Set the dataset metadata.
      * @param metadata The dataset metadata.
      */
-    T metadata(DataSetMetadata metadata);
+    T metadata(ElasticSearchDataSetMetadata metadata);
 
     /**
      * Group operations can contain interval selections to filter that must be added into the resulting query too.

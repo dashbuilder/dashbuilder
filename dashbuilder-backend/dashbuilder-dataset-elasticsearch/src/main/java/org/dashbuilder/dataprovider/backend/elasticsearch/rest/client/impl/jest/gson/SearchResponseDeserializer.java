@@ -6,8 +6,8 @@ import org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.model.Empt
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.model.SearchHitResponse;
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.model.SearchResponse;
 import org.dashbuilder.dataset.DataColumn;
-import org.dashbuilder.dataset.DataSetMetadata;
 import org.dashbuilder.dataset.def.ElasticSearchDataSetDef;
+import org.dashbuilder.dataset.impl.ElasticSearchDataSetMetadata;
 
 import java.lang.reflect.Type;
 import java.util.Arrays;
@@ -17,7 +17,7 @@ import java.util.List;
 public class SearchResponseDeserializer extends AbstractAdapter<SearchResponseDeserializer> implements JsonDeserializer<SearchResponse> {
 
 
-    public SearchResponseDeserializer(DataSetMetadata metadata, ElasticSearchDataSetDef definition, List<DataColumn> columns) {
+    public SearchResponseDeserializer(ElasticSearchDataSetMetadata metadata, ElasticSearchDataSetDef definition, List<DataColumn> columns) {
         super(metadata, definition, columns);
     }
 

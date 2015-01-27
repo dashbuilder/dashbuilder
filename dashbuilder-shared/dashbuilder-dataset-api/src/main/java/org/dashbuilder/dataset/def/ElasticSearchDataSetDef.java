@@ -18,10 +18,8 @@ package org.dashbuilder.dataset.def;
 import org.dashbuilder.dataprovider.DataSetProviderType;
 import org.dashbuilder.dataset.sort.ColumnSort;
 import org.jboss.errai.common.client.api.annotations.Portable;
-import org.omg.CORBA._PolicyStub;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**

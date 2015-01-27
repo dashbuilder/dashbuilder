@@ -18,13 +18,16 @@ package org.dashbuilder.dataprovider.backend.elasticsearch;
 import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetFactory;
+import org.dashbuilder.dataset.backend.date.DateUtils;
 import org.dashbuilder.dataset.sort.SortOrder;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 
 import static org.dashbuilder.dataset.Assertions.assertDataSetValue;
 import static org.dashbuilder.dataset.filter.FilterFactory.*;
@@ -53,7 +56,7 @@ public class ElasticSearchDataSetTest extends ElasticSearchDataSetTestBase {
 
     /**
      * **********************************************************************************************************************************************************************************************
-     * COLUMNS TESING.
+     * COLUMNS TESTING.
      * **********************************************************************************************************************************************************************************************
      */
     
@@ -135,7 +138,8 @@ public class ElasticSearchDataSetTest extends ElasticSearchDataSetTestBase {
         assertThat(result.getValueAt(0, 1)).isEqualTo(120.35d);
         assertThat(result.getValueAt(0, 2)).isEqualTo(EL_EXAMPLE_DEPT_ENGINEERING);
         assertThat(result.getValueAt(0, 3)).isEqualTo(EL_EXAMPLE_EMP_ROXIE);
-        assertThat(result.getValueAt(0, 4)).isEqualTo("12-11-2012");
+        Date date = new SimpleDateFormat(DateUtils.PATTERN_DAY).parse("2012-12-11");
+        assertThat(result.getValueAt(0, 4)).isEqualTo(date);
         assertThat(result.getValueAt(0, 5)).isEqualTo(EL_EXAMPLE_CITY_BARCELONA);
 
         // Test row 1 values.
@@ -143,7 +147,8 @@ public class ElasticSearchDataSetTest extends ElasticSearchDataSetTestBase {
         assertThat(result.getValueAt(1, 1)).isEqualTo(1100.1d);
         assertThat(result.getValueAt(1, 2)).isEqualTo(EL_EXAMPLE_DEPT_ENGINEERING);
         assertThat(result.getValueAt(1, 3)).isEqualTo(EL_EXAMPLE_EMP_ROXIE);
-        assertThat(result.getValueAt(1, 4)).isEqualTo("12-01-2012");
+        date = new SimpleDateFormat(DateUtils.PATTERN_DAY).parse("2012-12-01");
+        assertThat(result.getValueAt(1, 4)).isEqualTo(date);
         assertThat(result.getValueAt(1, 5)).isEqualTo(EL_EXAMPLE_CITY_BARCELONA);
 
         // Test row 8 values.
@@ -151,7 +156,8 @@ public class ElasticSearchDataSetTest extends ElasticSearchDataSetTestBase {
         assertThat(result.getValueAt(8, 1)).isEqualTo(75.75d);
         assertThat(result.getValueAt(8, 2)).isEqualTo(EL_EXAMPLE_DEPT_SALES);
         assertThat(result.getValueAt(8, 3)).isEqualTo(EL_EXAMPLE_EMP_NITA);
-        assertThat(result.getValueAt(8, 4)).isEqualTo("05-11-2012");
+        date = new SimpleDateFormat(DateUtils.PATTERN_DAY).parse("2012-05-11");
+        assertThat(result.getValueAt(8, 4)).isEqualTo(date);
         assertThat(result.getValueAt(8, 5)).isEqualTo(EL_EXAMPLE_CITY_MADRID);
 
         // Test row 30 values.
@@ -159,7 +165,8 @@ public class ElasticSearchDataSetTest extends ElasticSearchDataSetTestBase {
         assertThat(result.getValueAt(30, 1)).isEqualTo(234.34d);
         assertThat(result.getValueAt(30, 2)).isEqualTo(EL_EXAMPLE_DEPT_MANAGEMENT);
         assertThat(result.getValueAt(30, 3)).isEqualTo(EL_EXAMPLE_EMP_HANNA);
-        assertThat(result.getValueAt(30, 4)).isEqualTo("09-01-2010");
+        date = new SimpleDateFormat(DateUtils.PATTERN_DAY).parse("2010-09-01");
+        assertThat(result.getValueAt(30, 4)).isEqualTo(date);
         assertThat(result.getValueAt(30, 5)).isEqualTo(EL_EXAMPLE_CITY_RALEIGH);
 
         // Test row 46 values.
@@ -167,7 +174,8 @@ public class ElasticSearchDataSetTest extends ElasticSearchDataSetTestBase {
         assertThat(result.getValueAt(46, 1)).isEqualTo(565.56d);
         assertThat(result.getValueAt(46, 2)).isEqualTo(EL_EXAMPLE_DEPT_MANAGEMENT);
         assertThat(result.getValueAt(46, 3)).isEqualTo(EL_EXAMPLE_EMP_PATRICIA);
-        assertThat(result.getValueAt(46, 4)).isEqualTo("04-14-2009");
+        date = new SimpleDateFormat(DateUtils.PATTERN_DAY).parse("2009-04-14");
+        assertThat(result.getValueAt(46, 4)).isEqualTo(date);
         assertThat(result.getValueAt(46, 5)).isEqualTo(EL_EXAMPLE_CITY_LONDON);
     }
 
@@ -219,7 +227,8 @@ public class ElasticSearchDataSetTest extends ElasticSearchDataSetTestBase {
         assertThat(result.getValueAt(6, 1)).isEqualTo(565.56d);
         assertThat(result.getValueAt(6, 2)).isEqualTo(EL_EXAMPLE_DEPT_MANAGEMENT);
         assertThat(result.getValueAt(6, 3)).isEqualTo(EL_EXAMPLE_EMP_PATRICIA);
-        assertThat(result.getValueAt(6, 4)).isEqualTo("04-14-2009");
+        Date date = new SimpleDateFormat(DateUtils.PATTERN_DAY).parse("2009-04-14");
+        assertThat(result.getValueAt(6, 4)).isEqualTo(date);
         assertThat(result.getValueAt(6, 5)).isEqualTo(EL_EXAMPLE_CITY_LONDON);
     }
 

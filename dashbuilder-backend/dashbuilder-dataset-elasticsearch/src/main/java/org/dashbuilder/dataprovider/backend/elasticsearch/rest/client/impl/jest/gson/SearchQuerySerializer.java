@@ -4,9 +4,9 @@ import com.google.gson.*;
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.impl.jest.ElasticSearchJestClient;
 import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.DataColumn;
-import org.dashbuilder.dataset.DataSetMetadata;
 import org.dashbuilder.dataset.def.ElasticSearchDataSetDef;
 import org.dashbuilder.dataset.impl.DataColumnImpl;
+import org.dashbuilder.dataset.impl.ElasticSearchDataSetMetadata;
 
 import java.lang.reflect.Type;
 import java.util.List;
@@ -19,7 +19,7 @@ public class SearchQuerySerializer extends AbstractAdapter<SearchQuerySerializer
     protected static final String SIZE = "size";
     protected static final String AGGREGATIONS = "aggregations";
 
-    public SearchQuerySerializer(DataSetMetadata metadata, ElasticSearchDataSetDef definition, List<DataColumn> columns) {
+    public SearchQuerySerializer(ElasticSearchDataSetMetadata metadata, ElasticSearchDataSetDef definition, List<DataColumn> columns) {
         super(metadata, definition, columns);
     }
 

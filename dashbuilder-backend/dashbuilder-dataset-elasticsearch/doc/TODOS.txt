@@ -11,3 +11,11 @@
     - CDI Injections
     - Date interval calculations when group by date dynamic
     - Cache impl in provider - impl and unit testing.
+    - Custom columns (include_all flag)
+    - Empty intervals for column groups
+    - Test -> Enable run EL server for running unit tests
+    - Dates -> added more test cases to ElasticSearchDataSetDatesTest
+    - Cache -> ElasticSearchDataSetCacheTest
+    
+- Others
+    - Import EL native client classes and make them not processed by the compiler (mvn-compiler-plugin) 

@@ -16,17 +16,15 @@
 package org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.impl;
 
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.ElasticSearchQueryBuilder;
+import org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.impl.jest.ElasticSearchJestClient;
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.model.Query;
 import org.dashbuilder.dataset.ColumnType;
-import org.dashbuilder.dataset.DataSetMetadata;
 import org.dashbuilder.dataset.filter.*;
 import org.dashbuilder.dataset.group.DataSetGroup;
 import org.dashbuilder.dataset.group.Interval;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
+import org.dashbuilder.dataset.impl.ElasticSearchDataSetMetadata;
 
 import java.util.Collections;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -38,7 +36,7 @@ import java.util.List;
  */
 public class ElasticSearchQueryBuilderImpl implements ElasticSearchQueryBuilder<ElasticSearchQueryBuilderImpl> {
     
-    private DataSetMetadata metadata;
+    private ElasticSearchDataSetMetadata metadata;
     private List<DataSetGroup> groups= new LinkedList<DataSetGroup>();
     private List<DataSetFilter> filters = new LinkedList<DataSetFilter>();
 
@@ -47,7 +45,7 @@ public class ElasticSearchQueryBuilderImpl implements ElasticSearchQueryBuilder<
     }
     
     @Override
-    public ElasticSearchQueryBuilderImpl metadata(DataSetMetadata metadata) {
+    public ElasticSearchQueryBuilderImpl metadata(ElasticSearchDataSetMetadata metadata) {
         this.metadata = metadata;
         return this;
     }
@@ -122,8 +120,8 @@ public class ElasticSearchQueryBuilderImpl implements ElasticSearchQueryBuilder<
             } else if (ColumnType.NUMBER.equals(columnType) || (ColumnType.DATE.equals(columnType))) {
                 Object maxValue = interval.getMaxValue();
                 Object minValue = interval.getMinValue();
-                Object value0 = formatFilterValue(sourceId, metadata, minValue);
-                Object value1 = formatFilterValue(sourceId, metadata, maxValue);
+                Object value0 = ElasticSearchJestClient.formatValue(sourceId, metadata, minValue);
+                Object value1 = ElasticSearchJestClient.formatValue(sourceId, metadata, maxValue);
                 _result = new Query(sourceId, Query.Type.RANGE);
                 _result.setParam(Query.Parameter.GT.name(), value0);
                 _result.setParam(Query.Parameter.LT.name(), value1);
@@ -314,7 +312,7 @@ public class ElasticSearchQueryBuilderImpl implements ElasticSearchQueryBuilder<
         return null;
     }
 
-    protected Query buildColumnCoreFunctionFilter(CoreFunctionFilter filter, DataSetMetadata metadata) {
+    protected Query buildColumnCoreFunctionFilter(CoreFunctionFilter filter, ElasticSearchDataSetMetadata metadata) {
         String columnId = filter.getColumnId();
         ColumnType columnType = metadata.getColumnType(columnId);
 
@@ -335,7 +333,7 @@ public class ElasticSearchQueryBuilderImpl implements ElasticSearchQueryBuilder<
             
         } else if (CoreFunctionType.EQUALS_TO.equals(type)) {
             
-            Object value = formatFilterValue(columnId, metadata, params.get(0));
+            Object value = ElasticSearchJestClient.formatValue(columnId, metadata, params.get(0));
 
             if (ColumnType.LABEL.equals(columnType)) {
                 result = new Query(columnId, Query.Type.TERM);
@@ -346,7 +344,7 @@ public class ElasticSearchQueryBuilderImpl implements ElasticSearchQueryBuilder<
             
         } else if (CoreFunctionType.NOT_EQUALS_TO.equals(type)) {
             
-            Object value = formatFilterValue(columnId, metadata, params.get(0));
+            Object value = ElasticSearchJestClient.formatValue(columnId, metadata, params.get(0));
 
             if (ColumnType.LABEL.equals(columnType)) {
                 Query resultMatch = new Query(columnId, Query.Type.TERM);
@@ -362,32 +360,32 @@ public class ElasticSearchQueryBuilderImpl implements ElasticSearchQueryBuilder<
             
         } else if (CoreFunctionType.LOWER_THAN.equals(type)) {
 
-            Object value = formatFilterValue(columnId, metadata, params.get(0));
+            Object value = ElasticSearchJestClient.formatValue(columnId, metadata, params.get(0));
             result = new Query(columnId, Query.Type.RANGE);
             result.setParam(Query.Parameter.LT.name(), value);
             
         } else if (CoreFunctionType.LOWER_OR_EQUALS_TO.equals(type)) {
 
-            Object value = formatFilterValue(columnId, metadata, params.get(0));
+            Object value = ElasticSearchJestClient.formatValue(columnId, metadata, params.get(0));
             result = new Query(columnId, Query.Type.RANGE);
             result.setParam(Query.Parameter.LTE.name(), value);
             
         } else if (CoreFunctionType.GREATER_THAN.equals(type)) {
 
-            Object value = formatFilterValue(columnId, metadata, params.get(0));
+            Object value = ElasticSearchJestClient.formatValue(columnId, metadata, params.get(0));
             result = new Query(columnId, Query.Type.RANGE);
             result.setParam(Query.Parameter.GT.name(), value);
             
         } else if (CoreFunctionType.GREATER_OR_EQUALS_TO.equals(type)) {
 
-            Object value = formatFilterValue(columnId, metadata, params.get(0));
+            Object value = ElasticSearchJestClient.formatValue(columnId, metadata, params.get(0));
             result = new Query(columnId, Query.Type.RANGE);
             result.setParam(Query.Parameter.GTE.name(), value);
             
         } else if (CoreFunctionType.BETWEEN.equals(type)) {
 
-            Object value0 = formatFilterValue(columnId, metadata, params.get(0));
-            Object value1 = formatFilterValue(columnId, metadata, params.get(1));
+            Object value0 = ElasticSearchJestClient.formatValue(columnId, metadata, params.get(0));
+            Object value1 = ElasticSearchJestClient.formatValue(columnId, metadata, params.get(1));
             result = new Query(columnId, Query.Type.RANGE);
             result.setParam(Query.Parameter.GT.name(), value0);
             result.setParam(Query.Parameter.LT.name(), value1);
@@ -400,20 +398,6 @@ public class ElasticSearchQueryBuilderImpl implements ElasticSearchQueryBuilder<
         }
 
         return result;
-    }
-    
-    protected Object formatFilterValue(String columnId, DataSetMetadata metadata, Object value) {
-        if (value == null) return null;
-
-        ColumnType columnType = metadata.getColumnType(columnId);
-        // TODO: Currently only formatted dates using format defined by index mappings response. Format numbers too?
-        if (ColumnType.DATE.equals(columnType)) {
-            String pattern = metadata.getDefinition().getPattern(columnId);
-            DateTimeFormatter formatter = DateTimeFormat.forPattern(pattern);
-            return formatter.print(((Date)value).getTime());
-        }
-
-        return value;
     }
     
     protected List<Query> asList(Query... queries) {
