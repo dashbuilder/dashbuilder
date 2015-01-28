@@ -150,10 +150,14 @@ public abstract class DataSetIndexNode extends DataSetIndexElement {
     }
 
     public String getGroupKey(ColumnGroup columnGroup) {
-        return columnGroup.getSourceId() + "_" +
-                columnGroup.getStrategy().toString() + "_" +
-                columnGroup.getIntervalSize() + "_" +
-                columnGroup.getMaxIntervals();
+        return columnGroup.getSourceId()
+                + "_" + columnGroup.getStrategy().toString()
+                + "_" + columnGroup.getIntervalSize()
+                + "_" + columnGroup.getMaxIntervals()
+                + "_" + columnGroup.areEmptyIntervalsAllowed()
+                + "_" + columnGroup.isAscendingOrder()
+                + (columnGroup.getFirstMonthOfYear() != null ? "_" + columnGroup.getFirstMonthOfYear() : "")
+                + (columnGroup.getFirstDayOfWeek() != null ? "_" + columnGroup.getFirstDayOfWeek() : "");
     }
 
     // Filter indexes

@@ -105,6 +105,10 @@ public enum DateIntervalType {
         return -1;
     }
 
+    public static DateIntervalType getByIndex(int index) {
+        return _typeArray[index];
+    }
+
     public static DateIntervalType getByName(String interval) {
         try {
             return valueOf(interval.toUpperCase());

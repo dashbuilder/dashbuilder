@@ -29,6 +29,20 @@ public enum AggregateFunctionType {
     MIN,
     MAX;
 
+    private static AggregateFunctionType[] _typeArray = values();
+
+    public int getIndex() {
+        for (int i = 0; i < _typeArray.length; i++) {
+            AggregateFunctionType type = _typeArray[i];
+            if (this.equals(type)) return i;
+        }
+        return -1;
+    }
+
+    public static AggregateFunctionType getByIndex(int index) {
+        return _typeArray[index];
+    }
+
     public static AggregateFunctionType getByName(String str) {
         try {
             return valueOf(str.toUpperCase());

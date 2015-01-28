@@ -35,6 +35,9 @@ public enum Month {
 
     private static Month[] _monthArray = values();
 
+    /**
+     * Get the index (from 1 to 12)
+     */
     public int getIndex() {
         for (int i = 0; i < _monthArray.length; i++) {
             Month month = _monthArray[i];
@@ -61,6 +64,9 @@ public enum Month {
         }
     }
 
+    /**
+     * Get the index (from 1 to 12)
+     */
     public static Month getByIndex(int index) {
         return _monthArray[index-1];
     }

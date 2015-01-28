@@ -29,6 +29,8 @@ import org.dashbuilder.dataset.DataSetLookup;
 import org.dashbuilder.dataset.DataSetLookupConstraints;
 import org.dashbuilder.dataset.DataSetMetadata;
 import org.dashbuilder.dataset.client.DataSetClientServices;
+import org.dashbuilder.dataset.date.DayOfWeek;
+import org.dashbuilder.dataset.date.Month;
 import org.dashbuilder.dataset.def.DataSetDef;
 import org.dashbuilder.dataset.events.DataSetDefModifiedEvent;
 import org.dashbuilder.dataset.events.DataSetDefRegisteredEvent;
@@ -156,6 +158,13 @@ public class DataSetLookupEditor implements IsWidget {
         return groupOpList.get(0);
     }
 
+    public boolean isFirstGroupOpDateBased() {
+        DataSetGroup first = getFirstGroupOp();
+        if (first == null) return false;
+        ColumnType type = getColumnType(first.getColumnGroup().getSourceId());
+        return ColumnType.DATE.equals(type);
+    }
+
     public List<GroupFunction> getFirstGroupFunctions() {
         List<DataSetGroup> groupOpList = dataSetLookup.getOperationList(DataSetGroup.class);
         if (groupOpList.isEmpty()) return null;
@@ -217,6 +226,18 @@ public class DataSetLookupEditor implements IsWidget {
         dataSetLookup.addOperation(groupOp);
         if (listener != null) {
             listener.groupChanged(groupOp);
+        }
+    }
+
+    public void changeGroupColumn(ColumnGroup columnGroup) {
+        DataSetGroup groupOp = getFirstGroupOp();
+        if (groupOp != null) {
+            groupOp.setColumnGroup(columnGroup);
+
+            // Notify listener
+            if (listener != null) {
+                listener.groupChanged(groupOp);
+            }
         }
     }
 

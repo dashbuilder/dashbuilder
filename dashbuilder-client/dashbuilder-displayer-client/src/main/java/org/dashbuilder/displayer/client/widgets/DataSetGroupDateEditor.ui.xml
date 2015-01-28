@@ -19,8 +19,7 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
              xmlns:g='urn:import:com.google.gwt.user.client.ui'
-             xmlns:b="urn:import:com.github.gwtbootstrap.client.ui"
-             xmlns:dashb="urn:import:org.dashbuilder.displayer.client.widgets">
+             xmlns:b="urn:import:com.github.gwtbootstrap.client.ui">
 
   <ui:style>
     .cellPaddingPanel {
@@ -29,24 +28,29 @@
   </ui:style>
 
   <g:VerticalPanel styleName="{style.cellPaddingPanel}">
+    <g:HorizontalPanel styleName="{style.cellPaddingPanel}">
+      <b:CheckBox ui:field="fixedStrategyCheckBox" />
+      <g:Label>Fixed strategy</g:Label>
+    </g:HorizontalPanel>
+    <g:HorizontalPanel styleName="{style.cellPaddingPanel}">
+      <b:CheckBox ui:field="emptyIntervalsCheckBox" />
+      <g:Label>Empty intervals</g:Label>
+    </g:HorizontalPanel>
     <g:VerticalPanel>
-      <b:Label ui:field="statusLabel" visible="false" />
-      <g:Label>Data set</g:Label>
-      <b:ListBox ui:field="dataSetListBox" />
+      <g:Label>Interval type</g:Label>
+      <b:ListBox ui:field="intervalTypeListBox" width="130px" />
     </g:VerticalPanel>
-    <g:VerticalPanel ui:field="groupControlPanel" visible="false">
-      <g:Label ui:field="groupControlLabel">Rows</g:Label>
-      <g:HorizontalPanel styleName="{style.cellPaddingPanel}">
-        <b:ListBox ui:field="groupColumnListBox" />
-        <b:Icon type="ARROW_DOWN" ui:field="groupDetailsIcon" iconSize="LARGE"/>
-      </g:HorizontalPanel>
-      <b:Well ui:field="groupDatePanel" visible="false">
-        <dashb:DataSetGroupDateEditor ui:field="groupDateEditor" />
-      </b:Well>
+    <g:VerticalPanel ui:field="maxIntervalsGroup" visible="false">
+      <g:Label>Max. intervals</g:Label>
+      <b:TextBox ui:field="maxIntervalsTextBox" width="130px" />
     </g:VerticalPanel>
-    <g:VerticalPanel ui:field="columnsControlPanel" visible="false">
-        <g:Label ui:field="columnsControlLabel">Columns</g:Label>
-        <g:VerticalPanel ui:field="columnsPanel"/>
+    <g:VerticalPanel ui:field="firstDayPanel" visible="false">
+      <g:Label>First Day</g:Label>
+      <b:ListBox ui:field="firstDayListBox" width="130px"/>
+    </g:VerticalPanel>
+    <g:VerticalPanel ui:field="firstMonthPanel" visible="false">
+      <g:Label>First Month</g:Label>
+      <b:ListBox ui:field="firstMonthListBox" width="130px"/>
     </g:VerticalPanel>
   </g:VerticalPanel>
 </ui:UiBinder>

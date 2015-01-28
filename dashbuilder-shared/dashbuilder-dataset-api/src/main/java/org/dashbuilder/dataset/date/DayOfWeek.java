@@ -29,6 +29,9 @@ public enum DayOfWeek {
 
     private static DayOfWeek[] _array = values();
 
+    /**
+     * Get the index (from 1 to 7)
+     */
     public int getIndex() {
         for (int i = 0; i < _array.length; i++) {
             DayOfWeek el = _array[i];
@@ -55,6 +58,9 @@ public enum DayOfWeek {
         }
     }
 
+    /**
+     * Get by index (from 1 to 7)
+     */
     public static DayOfWeek getByIndex(int index) {
         return _array[index-1];
     }

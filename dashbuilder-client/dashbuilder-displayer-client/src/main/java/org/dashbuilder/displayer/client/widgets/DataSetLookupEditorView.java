@@ -18,15 +18,20 @@ package org.dashbuilder.displayer.client.widgets;
 import java.util.List;
 import javax.enterprise.context.Dependent;
 
-import com.github.gwtbootstrap.client.ui.ControlGroup;
+import com.github.gwtbootstrap.client.ui.Icon;
 import com.github.gwtbootstrap.client.ui.ListBox;
+import com.github.gwtbootstrap.client.ui.Well;
+import com.github.gwtbootstrap.client.ui.constants.IconType;
 import com.github.gwtbootstrap.client.ui.constants.LabelType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
@@ -36,19 +41,28 @@ import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.common.client.StringUtils;
 import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.DataSetLookupConstraints;
+import org.dashbuilder.dataset.client.resources.i18n.AggregateFunctionTypeConstants;
 import org.dashbuilder.dataset.def.DataSetDef;
 import org.dashbuilder.dataset.group.AggregateFunctionType;
+import org.dashbuilder.dataset.group.ColumnGroup;
 import org.dashbuilder.dataset.group.GroupFunction;
 
 @Dependent
 public class DataSetLookupEditorView extends Composite
-        implements DataSetLookupEditor.View {
+        implements DataSetLookupEditor.View, DataSetGroupDateEditor.Listener {
 
     interface Binder extends UiBinder<Widget, DataSetLookupEditorView> {}
     private static Binder uiBinder = GWT.create(Binder.class);
 
     public DataSetLookupEditorView() {
         initWidget(uiBinder.createAndBindUi(this));
+        dataSetListBox.setWidth("200px");
+        groupColumnListBox.setWidth("200px");
+        groupDetailsIcon.addDomHandler(new ClickHandler() {
+            public void onClick(ClickEvent event) {
+                expandCollapseGroupDetails();
+            }
+        }, ClickEvent.getType());
     }
 
     DataSetLookupEditor presenter;
@@ -60,16 +74,25 @@ public class DataSetLookupEditorView extends Composite
     com.github.gwtbootstrap.client.ui.Label statusLabel;
 
     @UiField
-    ControlGroup rowsControlGroup;
+    VerticalPanel groupControlPanel;
 
     @UiField
-    Label rowsControlLabel;
+    Label groupControlLabel;
 
     @UiField
-    ListBox rowColumnListBox;
+    Icon groupDetailsIcon;
 
     @UiField
-    ControlGroup columnsControlGroup;
+    ListBox groupColumnListBox;
+
+    @UiField
+    Well groupDatePanel;
+
+    @UiField
+    DataSetGroupDateEditor groupDateEditor;
+
+    @UiField
+    VerticalPanel columnsControlPanel;
 
     @UiField
     Label columnsControlLabel;
@@ -80,10 +103,8 @@ public class DataSetLookupEditorView extends Composite
     @Override
     public void init(DataSetLookupEditor presenter) {
         this.presenter = presenter;
-        rowsControlGroup.setVisible(false);
-        columnsControlGroup.setVisible(false);
-        dataSetListBox.setWidth("200px");
-        rowColumnListBox.setWidth("200px");
+        groupControlPanel.setVisible(false);
+        columnsControlPanel.setVisible(false);
     }
 
     @Override
@@ -151,19 +172,39 @@ public class DataSetLookupEditorView extends Composite
 
     @UiHandler(value = "dataSetListBox")
     public void onDataSetSelected(ChangeEvent changeEvent) {
-        rowsControlGroup.setVisible(false);
-        columnsControlGroup.setVisible(false);
+        groupControlPanel.setVisible(false);
+        columnsControlPanel.setVisible(false);
 
         String dataSetUUID = dataSetListBox.getValue(dataSetListBox.getSelectedIndex());
         presenter.changeDataSet(dataSetUUID);
     }
 
-    @UiHandler(value = "rowColumnListBox")
+    @UiHandler(value = "groupColumnListBox")
     public void onRowColumnChanged(ChangeEvent changeEvent) {
-        String columnId = rowColumnListBox.getValue(rowColumnListBox.getSelectedIndex());
+        String columnId = groupColumnListBox.getValue(groupColumnListBox.getSelectedIndex());
         if ("- All - ".equals(columnId)) columnId = null;
         presenter.changeGroupColumn(columnId);
+
         _updateColumnControls();
+
+        groupDatePanel.setVisible(false);
+        groupDetailsIcon.setVisible(false);
+        if (presenter.isFirstGroupOpDateBased()) {
+            groupDetailsIcon.setVisible(true);
+            expandCollapseGroupDetails();
+        }
+    }
+
+    public void expandCollapseGroupDetails() {
+        if (groupDatePanel.isVisible()) {
+            groupDatePanel.setVisible(false);
+            groupDetailsIcon.setType(IconType.ARROW_DOWN);
+        } else {
+            groupDatePanel.setVisible(true);
+            groupDetailsIcon.setType(IconType.ARROW_UP);
+            ColumnGroup columnGroup = presenter.getFirstGroupOp().getColumnGroup();
+            groupDateEditor.init(columnGroup, this);
+        }
     }
 
     // UI handling stuff
@@ -174,27 +215,33 @@ public class DataSetLookupEditorView extends Composite
         List<Integer> groupColumnIdxs = presenter.getAvailableGroupColumnIdxs();
         String rowsTitle = constraints.getGroupsTitle();
 
-        rowsControlGroup.setVisible(false);
-        rowColumnListBox.clear();
+        groupControlPanel.setVisible(false);
+        groupColumnListBox.clear();
+        groupDatePanel.setVisible(false);
+        groupDetailsIcon.setVisible(false);
+        if (presenter.isFirstGroupOpDateBased()) {
+            groupDetailsIcon.setVisible(true);
+            groupDetailsIcon.setType(IconType.ARROW_DOWN);
+        }
 
         // Only show the group controls if group is enabled
         if (constraints.isGroupRequired() || constraints.isGroupAllowed()) {
 
-            rowsControlGroup.setVisible(true);
-            if (!StringUtils.isBlank(rowsTitle)) rowsControlLabel.setText(rowsTitle);
+            groupControlPanel.setVisible(true);
+            if (!StringUtils.isBlank(rowsTitle)) groupControlLabel.setText(rowsTitle);
 
             int offset = 0;
             if (!constraints.isGroupRequired()) {
-                rowColumnListBox.addItem("- All - ");
+                groupColumnListBox.addItem("- All - ");
                 offset++;
             }
             for (int i = 0; i < groupColumnIdxs.size(); i++) {
                 int idx = groupColumnIdxs.get(i);
                 String columnId = presenter.getColumnId(idx);
 
-                rowColumnListBox.addItem(columnId, columnId);
+                groupColumnListBox.addItem(columnId, columnId);
                 if (groupColumnId != null && groupColumnId.equals(columnId)) {
-                    rowColumnListBox.setSelectedIndex(i+offset);
+                    groupColumnListBox.setSelectedIndex(i+offset);
                 }
             }
             // Always ensure a group exists when required
@@ -215,7 +262,7 @@ public class DataSetLookupEditorView extends Composite
 
         // Show the columns section
         columnsPanel.clear();
-        columnsControlGroup.setVisible(true);
+        columnsControlPanel.setVisible(true);
         if (!StringUtils.isBlank(columnsTitle)) columnsControlLabel.setText(columnsTitle);
 
         for (int i=0; i<groupFunctions.size(); i++) {
@@ -297,11 +344,18 @@ public class DataSetLookupEditorView extends Composite
 
         AggregateFunctionType selected = groupFunction.getFunction();
         for (AggregateFunctionType functionType : presenter.getAvailableFunctions(groupFunction)) {
-            lb.addItem(functionType.name());
+            String functionName = AggregateFunctionTypeConstants.INSTANCE.getString(functionType.name());
+            lb.addItem(functionName);
             if (selected != null && selected.equals(functionType)) {
-                lb.setSelectedValue(functionType.name());
+                lb.setSelectedValue(functionName);
             }
         }
         return lb;
+    }
+
+    // DataSetGroupDateEditor callback
+
+    public void columnGroupChanged(ColumnGroup columnGroup) {
+        presenter.changeGroupColumn(columnGroup);
     }
 }
