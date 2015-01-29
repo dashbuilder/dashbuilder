@@ -187,60 +187,45 @@ public class AggregationSerializer extends AbstractAdapter<AggregationSerializer
                 dateIntervalType = DateIntervalType.valueOf(intervalSize);
             }
 
-            String intervalFormat = null;
+            String interval = ElasticSearchJestClient.getInterval(dateIntervalType);
             String returnFormat = DateUtils.PATTERN_DAY;
             switch (dateIntervalType) {
                 case MILLISECOND:
-                    intervalFormat = "0.001s";
                     break;
                 case HUNDRETH:
-                    intervalFormat = "0.01s";
                     break;
                 case TENTH:
-                    intervalFormat = "0.1s";
                     break;
                 case SECOND:
-                    intervalFormat = "1s";
                     returnFormat = DateUtils.PATTERN_SECOND;
                     break;
                 case MINUTE:
-                    intervalFormat = "1m";
                     returnFormat = DateUtils.PATTERN_MINUTE;
                     break;
                 case HOUR:
-                    intervalFormat = "1h";
                     returnFormat = DateUtils.PATTERN_HOUR;
                     break;
                 case DAY:
-                    intervalFormat = "1d";
                     returnFormat = DateUtils.PATTERN_DAY;
                     break;
                 case DAY_OF_WEEK:
-                    intervalFormat = "1d";
                     returnFormat = DateUtils.PATTERN_DAY;
                     break;
                 case WEEK:
-                    intervalFormat = "1w";
                     break;
                 case MONTH:
-                    intervalFormat = "1M";
                     returnFormat = DateUtils.PATTERN_MONTH;
                     break;
                 case QUARTER:
-                    intervalFormat = "1q";
                     break;
                 case YEAR:
-                    intervalFormat = "1y";
                     returnFormat = DateUtils.PATTERN_YEAR;
                     break;
                 case DECADE:
-                    intervalFormat = "10y";
                     break;
                 case CENTURY:
-                    intervalFormat = "100y";
                     break;
                 case MILLENIUM:
-                    intervalFormat = "1000y";
                     break;
                 default:
                     throw new RuntimeException("No interval mapping for date interval type [" + dateIntervalType.name() + "].");
@@ -248,7 +233,7 @@ public class AggregationSerializer extends AbstractAdapter<AggregationSerializer
 
             JsonObject subObject = new JsonObject();
             subObject.addProperty(AGG_FIELD, sourceId);
-            subObject.addProperty(AGG_INTERVAL, intervalFormat);
+            subObject.addProperty(AGG_INTERVAL, interval);
             subObject.addProperty(AGG_FORMAT, returnFormat);
             JsonObject orderObject = new JsonObject();
             orderObject.addProperty(AGG_KEY, order);

@@ -390,8 +390,15 @@ public class ElasticSearchQueryBuilderImpl implements ElasticSearchQueryBuilder<
             result.setParam(Query.Parameter.LT.name(), value1);
             
         } else if (CoreFunctionType.TIME_FRAME.equals(type)) {
-            // TODO
-
+            // TODO: Use date range aggregation instead a range filter?
+            String timeFrame = params.get(0).toString();
+            String duration = ElasticSearchJestClient.getIntervalDuration(timeFrame);
+            if (duration != null && duration.trim().length() > 0) {
+                result = new Query(columnId, Query.Type.RANGE);
+                result.setParam(Query.Parameter.GTE.name(), "now-" + duration);
+                result.setParam(Query.Parameter.LTE.name(), "now");
+            }
+            
         } else {
             throw new IllegalArgumentException("Core function type not supported: " + type);
         }

@@ -13,4 +13,5 @@
     - Provider -> improve metadata size estimation.
     
 - Others
-    - Import EL native client classes and make them not processed by the compiler (mvn-compiler-plugin) 
+    - Import EL native client classes and make them not processed by the compiler (mvn-compiler-plugin)
+    - Performance tests & profiling

@@ -35,6 +35,7 @@ import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.dataset.def.DataSetDef;
 import org.dashbuilder.dataset.def.ElasticSearchDataSetDef;
 import org.dashbuilder.dataset.group.DataSetGroup;
+import org.dashbuilder.dataset.group.DateIntervalType;
 import org.dashbuilder.dataset.impl.ElasticSearchDataSetMetadata;
 import org.dashbuilder.dataset.sort.ColumnSort;
 import org.dashbuilder.dataset.sort.DataSetSort;
@@ -45,6 +46,8 @@ import org.joda.time.format.DateTimeFormatter;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Named;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * <p>The Jest/GSON client for ElasticSearch server.</p>
@@ -390,6 +393,140 @@ public class ElasticSearchJestClient implements ElasticSearchClient<ElasticSearc
         }
 
         return value.toString();
+    }
+
+    public static String getInterval(DateIntervalType dateIntervalType) {
+        String intervalExpression = null;
+        switch (dateIntervalType) {
+            case MILLISECOND:
+                intervalExpression = "0.001s";
+                break;
+            case HUNDRETH:
+                intervalExpression = "0.01s";
+                break;
+            case TENTH:
+                intervalExpression = "0.1s";
+                break;
+            case SECOND:
+                intervalExpression = "1s";
+                break;
+            case MINUTE:
+                intervalExpression = "1m";
+                break;
+            case HOUR:
+                intervalExpression = "1h";
+                break;
+            case DAY:
+                intervalExpression = "1d";
+                break;
+            case DAY_OF_WEEK:
+                intervalExpression = "1d";
+                break;
+            case WEEK:
+                intervalExpression = "1w";
+                break;
+            case MONTH:
+                intervalExpression = "1M";
+                break;
+            case QUARTER:
+                intervalExpression = "1q";
+                break;
+            case YEAR:
+                intervalExpression = "1y";
+                break;
+            case DECADE:
+                intervalExpression = "10y";
+                break;
+            case CENTURY:
+                intervalExpression = "100y";
+                break;
+            case MILLENIUM:
+                intervalExpression = "1000y";
+                break;
+            default:
+                throw new RuntimeException("No interval mapping for date interval type [" + dateIntervalType.name() + "].");
+        }
+        return intervalExpression;
+    }
+
+    public static final Pattern TIMEFRAME_PATTERN = Pattern.compile("(\\d*)(\\D*)");
+    
+    public static String getIntervalDuration(String timeFrame) {
+        if (timeFrame == null || timeFrame.trim().length() == 0) return null;
+        Matcher m = TIMEFRAME_PATTERN.matcher(timeFrame);
+        
+        if (m.find()) {
+            double quantifier = 1d;
+            DateIntervalType intervalType = DateIntervalType.DAY;
+            
+            String _q = m.group(1);
+            String _i = m.group(2);
+            quantifier = Double.parseDouble(_q);
+            intervalType = DateIntervalType.getByName(_i);
+
+            double intervalMultiplier = 1d;
+            String dateMathExpression = "d";
+            switch (intervalType) {
+                case MILLISECOND:
+                    intervalMultiplier = 0.001d;
+                    dateMathExpression = "s";
+                    break;
+                case HUNDRETH:
+                    intervalMultiplier = 0.01d;
+                    dateMathExpression = "s";
+                    break;
+                case TENTH:
+                    intervalMultiplier = 0.1d;
+                    dateMathExpression = "s";
+                    break;
+                case SECOND:
+                    dateMathExpression = "s";
+                    break;
+                case MINUTE:
+                    dateMathExpression = "m";
+                    break;
+                case HOUR:
+                    dateMathExpression = "h";
+                    break;
+                case DAY:
+                    dateMathExpression = "d";
+                    break;
+                case DAY_OF_WEEK:
+                    dateMathExpression = "d";
+                    break;
+                case WEEK:
+                    dateMathExpression = "w";
+                    break;
+                case MONTH:
+                    dateMathExpression = "M";
+                    break;
+                case QUARTER:
+                    intervalMultiplier = 3d;
+                    dateMathExpression = "M";
+                    break;
+                case YEAR:
+                    dateMathExpression = "y";
+                    break;
+                case DECADE:
+                    intervalMultiplier = 10d;
+                    dateMathExpression = "y";
+                    break;
+                case CENTURY:
+                    intervalMultiplier = 100d;
+                    dateMathExpression = "y";
+                    break;
+                case MILLENIUM:
+                    intervalMultiplier = 1000d;
+                    dateMathExpression = "y";
+                    break;
+                default:
+                    throw new RuntimeException("No interval mapping for date interval type [" + intervalType.name() + "].");
+            }
+
+            return "" + (intervalMultiplier*quantifier) + dateMathExpression;
+        } 
+
+        return null;
     }
 
     protected JestClient buildClient() throws IllegalArgumentException{
