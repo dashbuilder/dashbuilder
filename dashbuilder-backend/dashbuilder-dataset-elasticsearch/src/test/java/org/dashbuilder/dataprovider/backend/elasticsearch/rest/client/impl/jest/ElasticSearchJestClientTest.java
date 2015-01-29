@@ -288,12 +288,25 @@ public class ElasticSearchJestClientTest {
         GroupFunction groupByMinFunction = new GroupFunction("amount", "amount-min", AggregateFunctionType.MIN);
         groupByAggregation.addGroupFunction(groupByCountFunction, groupByMinFunction);
         aggregationResult = gson.toJson(groupByAggregation,  DataSetGroup.class);
-        Assert.assertEquals(aggregationResult, "{\"aggregations\":{\"departmentGrouped\":{\"terms\":{\"field\":\"department\",\"order\":{\"_term\":\"asc\"},\"min_doc_count\":0},\"aggregations\":{\"amount-count\":{\"value_count\":{\"field\":\"amount\"}},\"amount-min\":{\"min\":{\"field\":\"amount\"}}}}}}");
+        Assert.assertEquals(aggregationResult, "{\"aggregations\":{\"departmentGrouped\":{\"terms\":{\"field\":\"department\",\"order\":{\"_term\":\"asc\"},\"min_doc_count\":1},\"aggregations\":{\"amount-count\":{\"value_count\":{\"field\":\"amount\"}},\"amount-min\":{\"min\":{\"field\":\"amount\"}}}}}}");
 
 
         DataSetGroup histogramAggreagation = new DataSetGroup();
         histogramAggreagation.setDataSetUUID("testUUID");
         histogramAggreagation.setColumnGroup(new ColumnGroup("amount", "amount", GroupStrategy.DYNAMIC, 99, "20"));
+        histogramAggreagation.setJoin(false);
+        groupByCountFunction = new GroupFunction("amount", "amount-max", AggregateFunctionType.MAX);
+        groupByMinFunction = new GroupFunction("amount", "amount-min", AggregateFunctionType.MIN);
+        histogramAggreagation.addGroupFunction(groupByCountFunction, groupByMinFunction);
+        aggregationResult = gson.toJson(histogramAggreagation,  DataSetGroup.class);
+        Assert.assertEquals(aggregationResult, "{\"aggregations\":{\"amount\":{\"histogram\":{\"field\":\"amount\",\"interval\":20,\"order\":{\"_key\":\"asc\"},\"min_doc_count\":1},\"aggregations\":{\"amount-max\":{\"max\":{\"field\":\"amount\"}},\"amount-min\":{\"min\":{\"field\":\"amount\"}}}}}}");
+
+        // Allowing empty intervals.
+        histogramAggreagation = new DataSetGroup();
+        histogramAggreagation.setDataSetUUID("testUUID");
+        ColumnGroup cg = new ColumnGroup("amount", "amount", GroupStrategy.DYNAMIC, 99, "20");
+        cg.setEmptyIntervalsAllowed(true);
+        histogramAggreagation.setColumnGroup(cg);
         histogramAggreagation.setJoin(false);
         groupByCountFunction = new GroupFunction("amount", "amount-max", AggregateFunctionType.MAX);
         groupByMinFunction = new GroupFunction("amount", "amount-min", AggregateFunctionType.MIN);

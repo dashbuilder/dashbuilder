@@ -126,6 +126,8 @@ public class AggregationSerializer extends AbstractAdapter<AggregationSerializer
         ColumnType columnType = metadata.getColumnType(sourceId);
         GroupStrategy groupStrategy = columnGroup.getStrategy();
         String intervalSize = columnGroup.getIntervalSize();
+        boolean areEmptyIntervalsAllowed = columnGroup.areEmptyIntervalsAllowed();
+        int minDocCount = areEmptyIntervalsAllowed ? 0 : 1;
         // TODO: Support for maxIntervals.
         int maxIntervals = columnGroup.getMaxIntervals();
 
@@ -136,7 +138,7 @@ public class AggregationSerializer extends AbstractAdapter<AggregationSerializer
             JsonObject orderObject = new JsonObject();
             orderObject.addProperty(AGG_TERM, order);
             subObject.add(AGG_ORDER, orderObject);
-            subObject.addProperty(AGG_MIN_DOC_COUNT, 0);
+            subObject.addProperty(AGG_MIN_DOC_COUNT, minDocCount);
             JsonObject result = new JsonObject();
             result.add(AGG_TERMS, subObject);
             if (aggregationsObject != null) result.add(AGG_AGGREGATIONS, aggregationsObject);
@@ -157,7 +159,7 @@ public class AggregationSerializer extends AbstractAdapter<AggregationSerializer
             JsonObject orderObject = new JsonObject();
             orderObject.addProperty(AGG_KEY, order);
             subObject.add(AGG_ORDER, orderObject);
-            subObject.addProperty(AGG_MIN_DOC_COUNT, 0);
+            subObject.addProperty(AGG_MIN_DOC_COUNT, minDocCount);
             JsonObject result = new JsonObject();
             result.add(AGG_HISTORGRAM, subObject);
             if (aggregationsObject != null) result.add(AGG_AGGREGATIONS, aggregationsObject);
@@ -238,7 +240,7 @@ public class AggregationSerializer extends AbstractAdapter<AggregationSerializer
             JsonObject orderObject = new JsonObject();
             orderObject.addProperty(AGG_KEY, order);
             subObject.add(AGG_ORDER, orderObject);
-            subObject.addProperty(AGG_MIN_DOC_COUNT, 0);
+            subObject.addProperty(AGG_MIN_DOC_COUNT, minDocCount);
             JsonObject result = new JsonObject();
             result.add(AGG_DATE_HISTORGRAM, subObject);
             if (aggregationsObject != null) result.add(AGG_AGGREGATIONS, aggregationsObject);
