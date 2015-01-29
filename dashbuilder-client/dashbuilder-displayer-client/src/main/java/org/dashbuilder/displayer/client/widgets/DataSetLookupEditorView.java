@@ -265,13 +265,15 @@ public class DataSetLookupEditorView extends Composite
         columnsControlPanel.setVisible(true);
         if (!StringUtils.isBlank(columnsTitle)) columnsControlLabel.setText(columnsTitle);
 
+        ColumnType[] targetTypes = constraints.getColumnTypes(groupFunctions.size());
         for (int i=0; i<groupFunctions.size(); i++) {
-            GroupFunction groupFunction = groupFunctions.get(i);
-            if (i == 0 && groupColumnId != null && constraints.isGroupColumn()) continue;
-
             try {
+                GroupFunction groupFunction = groupFunctions.get(i);
+                if (i == 0 && groupColumnId != null && constraints.isGroupColumn()) {
+                    continue;
+                }
+
                 ColumnType columnType = null;
-                ColumnType[] targetTypes = constraints.getColumnTypes();
                 if (targetTypes != null && i<targetTypes.length) columnType = targetTypes[i];
 
                 String columnTitle = constraints.getColumnTitle(i);
@@ -294,18 +296,21 @@ public class DataSetLookupEditorView extends Composite
         columnListBox.setTitle(columnTitle);
         panel.add(columnListBox);
 
+        boolean targetNumeric = targetType != null && targetType.equals(ColumnType.NUMBER);
         List<Integer> columnIdxs = presenter.getAvailableFunctionColumnIdxs();
         for (int i=0; i<columnIdxs.size(); i++) {
             int columnIdx = columnIdxs.get(i);
             String columnId = presenter.getColumnId(columnIdx);
-            columnListBox.addItem(columnId, columnId);
-            if (columnId != null && columnId.equals(groupFunction.getSourceId())) {
-                columnListBox.setSelectedIndex(i);
+            ColumnType columnType = presenter.getColumnType(columnIdx);
+
+            if (targetType == null || targetNumeric || targetType.equals(columnType)) {
+                columnListBox.addItem(columnId, columnId);
+                if (columnId != null && columnId.equals(groupFunction.getSourceId())) {
+                    columnListBox.setSelectedIndex(i);
+                }
             }
         }
-        boolean targetNumeric = targetType != null && targetType.equals(ColumnType.NUMBER);
-        boolean targetOpen = targetType == null;
-        if (functionsEnabled && (targetOpen || targetNumeric)) {
+        if (functionsEnabled && (targetType == null || targetNumeric)) {
             final ListBox funcListBox = _createFunctionListBox(groupFunction, targetNumeric);
             funcListBox.setWidth("70px");
             panel.add(funcListBox);

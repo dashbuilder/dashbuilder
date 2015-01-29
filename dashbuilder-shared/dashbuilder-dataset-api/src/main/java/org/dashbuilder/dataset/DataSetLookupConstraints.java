@@ -163,7 +163,7 @@ public class DataSetLookupConstraints extends DataSetConstraints<DataSetLookupCo
             startIndex = 1;
         }
         // If no target columns has been specified then take them all
-        ColumnType[] types = columnTypes;
+        ColumnType[] types = getColumnTypes();
         if (types == null || types.length == 0) {
 
             if (maxColumns > 0 && maxColumns < metatada.getNumberOfColumns()) types = new ColumnType[maxColumns];

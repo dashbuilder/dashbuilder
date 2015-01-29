@@ -66,12 +66,8 @@ public class GoogleMeterChartDisplayer extends GoogleDisplayer {
                 .setGroupsTitle("Categories")
                 .setColumnsTitle("Value")
                 .setFunctionRequired(true)
-                .setColumnTypes(new ColumnType[]{
-                        ColumnType.NUMBER})
-                .setAlternativeTypes(new ColumnType[]{
-                        ColumnType.LABEL,
-                        ColumnType.NUMBER});
-
+                .setColumnTypes(new ColumnType[] {ColumnType.NUMBER},
+                        new ColumnType[] {ColumnType.LABEL, ColumnType.NUMBER});
 
         return new DisplayerConstraints(lookupConstraints)
                    .supportsAttribute( DisplayerAttributeDef.TYPE )

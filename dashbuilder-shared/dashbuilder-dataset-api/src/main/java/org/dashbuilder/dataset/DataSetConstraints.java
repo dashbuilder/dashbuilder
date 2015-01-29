@@ -26,31 +26,29 @@ public class DataSetConstraints<T> {
     public static final int ERROR_COLUMN_TYPE = 100;
     public static final int ERROR_COLUMN_NUMBER = 101;
 
-    protected ColumnType[] columnTypes = null;
-    protected List<ColumnType[]> alternativeTypes = new ArrayList<ColumnType[]>();
+    protected List<ColumnType[]> columnTypeList = new ArrayList<ColumnType[]>();
     protected int minColumns = -1;
     protected int maxColumns = -1;
 
     public ColumnType[] getColumnTypes() {
-        return columnTypes;
+        if (columnTypeList.isEmpty()) return null;
+        return columnTypeList.get(0);
     }
 
-    public T setColumnTypes(ColumnType[] columns) {
-        _checkSizes(minColumns, maxColumns, columns);
-        this.columnTypes = columns;
-        return (T) this;
+    public ColumnType[] getColumnTypes(int numberOfColumns) {
+        if (columnTypeList.isEmpty()) return null;
+        for (ColumnType[] types : columnTypeList) {
+            if (types.length == numberOfColumns) return types;
+        }
+        return columnTypeList.get(0);
     }
 
-    public T setAlternativeTypes(ColumnType[]... columns) {
-        for (ColumnType[] types : columns) {
+    public T setColumnTypes(ColumnType[]... columnTypeList) {
+        for (ColumnType[] types : columnTypeList) {
             _checkSizes(minColumns, maxColumns, types);
-            this.alternativeTypes.add(types);
+            this.columnTypeList.add(types);
         }
         return (T) this;
-    }
-
-    public List<ColumnType[]> getAlternativeTypes() {
-        return alternativeTypes;
     }
 
     public int getMaxColumns() {
@@ -58,7 +56,9 @@ public class DataSetConstraints<T> {
     }
 
     public T setMaxColumns(int maxColumns) {
-        _checkSizes(minColumns, maxColumns, columnTypes);
+        for (ColumnType[] types : columnTypeList) {
+            _checkSizes(minColumns, maxColumns, types);
+        }
         this.maxColumns = maxColumns;
         return (T) this;
     }
@@ -68,7 +68,9 @@ public class DataSetConstraints<T> {
     }
 
     public T setMinColumns(int minColumns) {
-        _checkSizes(minColumns, maxColumns, columnTypes);
+        for (ColumnType[] types : columnTypeList) {
+            _checkSizes(minColumns, maxColumns, types);
+        }
         this.minColumns = minColumns;
         return (T) this;
     }
@@ -102,13 +104,8 @@ public class DataSetConstraints<T> {
             return createValidationError(ERROR_COLUMN_NUMBER);
         }
         ValidationError error = null;
-        if (columnTypes != null) {
-            error = checkTypes(dataSet, columnTypes);
-            if (error != null) {
-                for (ColumnType[] _types : alternativeTypes) {
-                    error = checkTypes(dataSet, _types);
-                }
-            }
+        for (ColumnType[] types : columnTypeList) {
+            error = checkTypes(dataSet, types);
         }
         return error;
     }

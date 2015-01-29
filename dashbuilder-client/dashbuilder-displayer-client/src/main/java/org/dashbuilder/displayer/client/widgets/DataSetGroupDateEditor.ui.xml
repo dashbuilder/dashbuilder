@@ -30,7 +30,7 @@
   <g:VerticalPanel styleName="{style.cellPaddingPanel}">
     <g:HorizontalPanel styleName="{style.cellPaddingPanel}">
       <b:CheckBox ui:field="fixedStrategyCheckBox" />
-      <g:Label>Fixed strategy</g:Label>
+      <g:Label>Fixed intervals</g:Label>
     </g:HorizontalPanel>
     <g:HorizontalPanel styleName="{style.cellPaddingPanel}">
       <b:CheckBox ui:field="emptyIntervalsCheckBox" />

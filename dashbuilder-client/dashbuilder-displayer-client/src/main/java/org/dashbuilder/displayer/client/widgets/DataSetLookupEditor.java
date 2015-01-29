@@ -161,7 +161,10 @@ public class DataSetLookupEditor implements IsWidget {
     public boolean isFirstGroupOpDateBased() {
         DataSetGroup first = getFirstGroupOp();
         if (first == null) return false;
-        ColumnType type = getColumnType(first.getColumnGroup().getSourceId());
+        ColumnGroup cg = first.getColumnGroup();
+        if (cg == null) return false;
+
+        ColumnType type = getColumnType(cg.getSourceId());
         return ColumnType.DATE.equals(type);
     }
 
