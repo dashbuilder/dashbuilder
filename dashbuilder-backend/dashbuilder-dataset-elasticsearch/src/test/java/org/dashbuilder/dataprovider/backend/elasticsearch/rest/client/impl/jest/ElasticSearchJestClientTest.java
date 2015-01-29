@@ -40,6 +40,7 @@ import org.mockito.MockitoAnnotations;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.when;
 
 /**
@@ -451,105 +452,120 @@ public class ElasticSearchJestClientTest {
         // TODO ElasticSearchJestClient.SearchQuery searchQuery = new ElasticSearchJestClient.SearchQuery();
 
     }
-    
+
     @Test
-    public void testIntervalDurations() {
+    public void testUnsupportedIntervalDurations() {
 
         // Miliseconds.
-        String timeFrame = "20millisecond";
-        String result = ElasticSearchJestClient.getIntervalDuration(timeFrame);
-        Assert.assertTrue(result != null && result.trim().length() > 0);
-        Assert.assertEquals("0.02s", result);
-        
+        String timeFrame = null;
+        String result = null;
+        try {
+            timeFrame = "20millisecond";
+            result = ElasticSearchJestClient.getIntervalDuration(timeFrame);
+            fail("UnsupportedOperationException expected");
+        } catch (UnsupportedOperationException e) {
+            // OK
+        }
+
         // HUNDRETH
-        timeFrame = "20hundreth";
-        result = ElasticSearchJestClient.getIntervalDuration(timeFrame);
-        Assert.assertTrue(result != null && result.trim().length() > 0);
-        Assert.assertEquals("0.2s", result);
+        try {
+            timeFrame = "20hundreth";
+            result = ElasticSearchJestClient.getIntervalDuration(timeFrame);
+            fail("UnsupportedOperationException expected");
+        } catch (Exception e) {
+            // OK
+        }
 
         // TENTH
-        timeFrame = "2tenth";
-        result = ElasticSearchJestClient.getIntervalDuration(timeFrame);
-        Assert.assertTrue(result != null && result.trim().length() > 0);
-        Assert.assertEquals("0.2s", result);
-        
+        try {
+            timeFrame = "2tenth";
+            result = ElasticSearchJestClient.getIntervalDuration(timeFrame);
+            fail("UnsupportedOperationException expected");
+        } catch (Exception e) {
+            // OK
+        }
+    }
+
+        @Test
+    public void testSupportedIntervalDurations() {
+
         // SECOND
-        timeFrame = "20second";
-        result = ElasticSearchJestClient.getIntervalDuration(timeFrame);
+        String timeFrame = "20second";
+        String result = ElasticSearchJestClient.getIntervalDuration(timeFrame);
         Assert.assertTrue(result != null && result.trim().length() > 0);
-        Assert.assertEquals("20.0s", result);
+        Assert.assertEquals("20s", result);
         
         // MINUTE
         timeFrame = "20minute";
         result = ElasticSearchJestClient.getIntervalDuration(timeFrame);
         Assert.assertTrue(result != null && result.trim().length() > 0);
-        Assert.assertEquals("20.0m", result);
+        Assert.assertEquals("20m", result);
 
         // HOUR
         timeFrame = "20hour";
         result = ElasticSearchJestClient.getIntervalDuration(timeFrame);
         Assert.assertTrue(result != null && result.trim().length() > 0);
-        Assert.assertEquals("20.0h", result);
+        Assert.assertEquals("20h", result);
 
         // DAY
         timeFrame = "20day";
         result = ElasticSearchJestClient.getIntervalDuration(timeFrame);
         Assert.assertTrue(result != null && result.trim().length() > 0);
-        Assert.assertEquals("20.0d", result);
+        Assert.assertEquals("20d", result);
         
         // DAY_OF_WEEK
         timeFrame = "20day_of_week";
         result = ElasticSearchJestClient.getIntervalDuration(timeFrame);
         Assert.assertTrue(result != null && result.trim().length() > 0);
-        Assert.assertEquals("20.0d", result);
+        Assert.assertEquals("20d", result);
         
         // WEEK
         timeFrame = "20week";
         result = ElasticSearchJestClient.getIntervalDuration(timeFrame);
         Assert.assertTrue(result != null && result.trim().length() > 0);
-        Assert.assertEquals("20.0w", result);
+        Assert.assertEquals("20w", result);
         
         // MONTH
         timeFrame = "20month";
         result = ElasticSearchJestClient.getIntervalDuration(timeFrame);
         Assert.assertTrue(result != null && result.trim().length() > 0);
-        Assert.assertEquals("20.0M", result);
+        Assert.assertEquals("20M", result);
         
         // QUARTER
         timeFrame = "2quarter";
         result = ElasticSearchJestClient.getIntervalDuration(timeFrame);
         Assert.assertTrue(result != null && result.trim().length() > 0);
-        Assert.assertEquals("6.0M", result);
+        Assert.assertEquals("6M", result);
         
         // YEAR
         timeFrame = "20year";
         result = ElasticSearchJestClient.getIntervalDuration(timeFrame);
         Assert.assertTrue(result != null && result.trim().length() > 0);
-        Assert.assertEquals("20.0y", result);
+        Assert.assertEquals("20y", result);
         
         // DECADE
         timeFrame = "1decade";
         result = ElasticSearchJestClient.getIntervalDuration(timeFrame);
         Assert.assertTrue(result != null && result.trim().length() > 0);
-        Assert.assertEquals("10.0y", result);
+        Assert.assertEquals("10y", result);
         
         // CENTURY
         timeFrame = "1century";
         result = ElasticSearchJestClient.getIntervalDuration(timeFrame);
         Assert.assertTrue(result != null && result.trim().length() > 0);
-        Assert.assertEquals("100.0y", result);
+        Assert.assertEquals("100y", result);
         
         // MILLENIUM
         timeFrame = "20millenium";
         result = ElasticSearchJestClient.getIntervalDuration(timeFrame);
         Assert.assertTrue(result != null && result.trim().length() > 0);
-        Assert.assertEquals("20000.0y", result);
+        Assert.assertEquals("20000y", result);
         
         // Upper case test.
         timeFrame = "20SECOND";
         result = ElasticSearchJestClient.getIntervalDuration(timeFrame);
         Assert.assertTrue(result != null && result.trim().length() > 0);
-        Assert.assertEquals("20.0s", result);
+        Assert.assertEquals("20s", result);
         
     }
     

@@ -17,19 +17,16 @@ package org.dashbuilder.dataprovider.backend.elasticsearch;
 
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetFactory;
-import org.dashbuilder.dataset.date.DayOfWeek;
-import org.dashbuilder.dataset.date.Month;
-import org.dashbuilder.dataset.group.DateIntervalType;
 import org.dashbuilder.dataset.sort.SortOrder;
 import org.junit.Before;
 import org.junit.Test;
 
 import static org.dashbuilder.dataset.Assertions.assertDataSetValues;
+import static org.dashbuilder.dataset.filter.FilterFactory.timeFrame;
 import static org.dashbuilder.dataset.group.AggregateFunctionType.COUNT;
 import static org.dashbuilder.dataset.group.AggregateFunctionType.SUM;
 import static org.dashbuilder.dataset.group.DateIntervalType.*;
 import static org.fest.assertions.api.Assertions.assertThat;
-import static org.fest.assertions.api.Assertions.fail;
 
 /**
  * <p>Data test for date types for ElasticSearchDataSet. It tests grouping and filtering with date related fields.</p>
@@ -112,4 +109,15 @@ public class ElasticSearchDataSetDatesTest extends ElasticSearchDataSetTestBase 
         assertThat(result.getValueAt(0, 0)).isEqualTo("2009-01-04");
     }
 
+    // Time frame function.
+    @Test
+    public void testTimeFrameFunction() throws Exception {
+        DataSet result = dataSetManager.lookupDataSet(
+                DataSetFactory.newDataSetLookupBuilder()
+                        .dataset(EL_DATASET_UUID)
+                        .filter(EL_EXAMPLE_COLUMN_DATE, timeFrame("10second"))
+                        .buildLookup());
+
+        assertThat(result.getRowCount()).isEqualTo(0);
+    }
 }

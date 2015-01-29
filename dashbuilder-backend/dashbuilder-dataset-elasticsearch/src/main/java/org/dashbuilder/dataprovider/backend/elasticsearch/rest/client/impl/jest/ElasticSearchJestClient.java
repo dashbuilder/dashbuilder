@@ -456,29 +456,23 @@ public class ElasticSearchJestClient implements ElasticSearchClient<ElasticSearc
         Matcher m = TIMEFRAME_PATTERN.matcher(timeFrame);
         
         if (m.find()) {
-            double quantifier = 1d;
+            int quantifier = 1;
             DateIntervalType intervalType = DateIntervalType.DAY;
             
             String _q = m.group(1);
             String _i = m.group(2);
-            quantifier = Double.parseDouble(_q);
+            quantifier = Integer.parseInt(_q);
             intervalType = DateIntervalType.getByName(_i);
 
-            double intervalMultiplier = 1d;
+            int intervalMultiplier = 1;
             String dateMathExpression = "d";
+            // Intervals lower than a second are not allowed by date math expressions.
+            // @see http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/mapping-date-format.html#date-math
             switch (intervalType) {
                 case MILLISECOND:
-                    intervalMultiplier = 0.001d;
-                    dateMathExpression = "s";
-                    break;
                 case HUNDRETH:
-                    intervalMultiplier = 0.01d;
-                    dateMathExpression = "s";
-                    break;
                 case TENTH:
-                    intervalMultiplier = 0.1d;
-                    dateMathExpression = "s";
-                    break;
+                    throw new UnsupportedOperationException("ElasticSearch date math expressions does not support intervals lower than a second.");
                 case SECOND:
                     dateMathExpression = "s";
                     break;
@@ -501,22 +495,22 @@ public class ElasticSearchJestClient implements ElasticSearchClient<ElasticSearc
                     dateMathExpression = "M";
                     break;
                 case QUARTER:
-                    intervalMultiplier = 3d;
+                    intervalMultiplier = 3;
                     dateMathExpression = "M";
                     break;
                 case YEAR:
                     dateMathExpression = "y";
                     break;
                 case DECADE:
-                    intervalMultiplier = 10d;
+                    intervalMultiplier = 10;
                     dateMathExpression = "y";
                     break;
                 case CENTURY:
-                    intervalMultiplier = 100d;
+                    intervalMultiplier = 100;
                     dateMathExpression = "y";
                     break;
                 case MILLENIUM:
-                    intervalMultiplier = 1000d;
+                    intervalMultiplier = 1000;
                     dateMathExpression = "y";
                     break;
                 default:
