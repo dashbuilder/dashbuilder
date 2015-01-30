@@ -73,8 +73,9 @@ public class ClientIntervalBuilderDynamicDate implements IntervalBuilder {
         }
 
         // If min/max are equals then create a single interval.
+        DateIntervalType intervalType = calculateIntervalSize(minDate, maxDate, columnGroup);
         if (minDate == null || minDate.compareTo(maxDate) == 0) {
-            IntervalDateRange interval = new IntervalDateRange(0, DAY, minDate, maxDate);
+            IntervalDateRange interval = new IntervalDateRange(0, intervalType, minDate, maxDate);
             for (int row = 0; row < sortedValues.size(); row++) interval.getRows().add(row);
             results.add(interval);
 
@@ -82,29 +83,6 @@ public class ClientIntervalBuilderDynamicDate implements IntervalBuilder {
             results.setMinValue(minDate);
             results.setMaxValue(maxDate);
             return results;
-        }
-
-        // Calculate the interval type used according to the constraints set.
-        int maxIntervals = columnGroup.getMaxIntervals();
-        if (maxIntervals < 1) maxIntervals = 15;
-        DateIntervalType intervalType = YEAR;
-        long millis = (maxDate.getTime() - minDate.getTime());
-        for (DateIntervalType type : values()) {
-            long nintervals = millis / getDurationInMillis(type);
-            if (nintervals < maxIntervals) {
-                intervalType = type;
-                break;
-            }
-        }
-
-        // Ensure the interval mode obtained is always greater or equals than the preferred interval size.
-        DateIntervalType intervalSize = null;
-        String preferredSize = columnGroup.getIntervalSize();
-        if (preferredSize != null && preferredSize.trim().length() > 0) {
-            intervalSize = getByName(columnGroup.getIntervalSize());
-        }
-        if (intervalSize != null && compare(intervalType, intervalSize) == -1) {
-            intervalType = intervalSize;
         }
 
         // Create the intervals according to the min/max dates.
@@ -201,6 +179,32 @@ public class ClientIntervalBuilderDynamicDate implements IntervalBuilder {
 
         // Build & return the selected interval
         return new IntervalDateRange(intervalIndex, intervalType, intervalMinDate, intervalMaxDate);
+    }
+
+    public DateIntervalType calculateIntervalSize(Date minDate, Date maxDate, ColumnGroup columnGroup) {
+        // Calculate the interval type used according to the constraints set.
+        int maxIntervals = columnGroup.getMaxIntervals();
+        if (maxIntervals < 1) maxIntervals = 15;
+        DateIntervalType intervalType = YEAR;
+        long millis = (maxDate.getTime() - minDate.getTime());
+        for (DateIntervalType type : values()) {
+            long nintervals = millis / getDurationInMillis(type);
+            if (nintervals < maxIntervals) {
+                intervalType = type;
+                break;
+            }
+        }
+
+        // Ensure the interval mode obtained is always greater or equals than the preferred interval size.
+        DateIntervalType intervalSize = null;
+        String preferredSize = columnGroup.getIntervalSize();
+        if (preferredSize != null && preferredSize.trim().length() > 0) {
+            intervalSize = getByName(columnGroup.getIntervalSize());
+        }
+        if (intervalSize != null && compare(intervalType, intervalSize) == -1) {
+            intervalType = intervalSize;
+        }
+        return intervalType;
     }
 
     protected Date firstIntervalDate(DateIntervalType intervalType, Date minDate, ColumnGroup columnGroup) {

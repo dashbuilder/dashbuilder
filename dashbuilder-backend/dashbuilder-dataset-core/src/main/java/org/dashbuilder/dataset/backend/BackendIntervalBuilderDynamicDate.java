@@ -78,9 +78,10 @@ public class BackendIntervalBuilderDynamicDate implements IntervalBuilder {
         }
 
         // If min/max are equals then return a single interval.
+        DateIntervalType intervalType = calculateIntervalSize(minDate, maxDate, columnGroup);
         if (minDate == null || minDate.compareTo(maxDate) == 0) {
 
-            IntervalDateRange interval = new IntervalDateRange(0, DAY, minDate, maxDate);
+            IntervalDateRange interval = new IntervalDateRange(0, intervalType, minDate, maxDate);
             for (int row = 0; row < sortedValues.size(); row++) interval.getRows().add(row);
 
             results.add(interval);
@@ -91,7 +92,6 @@ public class BackendIntervalBuilderDynamicDate implements IntervalBuilder {
         }
 
         // Create the intervals according to the min/max dates.
-        DateIntervalType intervalType = calculateIntervalSize(minDate, maxDate, columnGroup);
         Calendar c = firstIntervalDate(intervalType, minDate, columnGroup);
         int index = 0;
         int counter = 0;
