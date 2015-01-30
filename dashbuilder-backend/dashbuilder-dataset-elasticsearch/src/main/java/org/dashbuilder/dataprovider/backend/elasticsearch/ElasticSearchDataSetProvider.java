@@ -466,21 +466,24 @@ public class ElasticSearchDataSetProvider implements DataSetProvider {
 
                     String columnId = getColumnId(indexName, typeName, fieldName);
                     ColumnType columnType = getDataType(fieldMapping);
-                    boolean columnExists = result.containsKey(columnId);
-                    if ( columnExists ) {
-                        // Check column type for existing column.
-                        ColumnType existingColumnType = (ColumnType) result.get(columnId)[0];
-                        if (existingColumnType != null && !existingColumnType.equals(columnType)) throw new IllegalArgumentException("Column [" + columnId + "] is already present in data set with type [" + existingColumnType + "] and you are trying to add it again as type [" + columnType.toString() + "[");
+                    
+                    // Only use supported column types.
+                    if (columnType != null) {
+                        boolean columnExists = result.containsKey(columnId);
+                        if ( columnExists ) {
+                            // Check column type for existing column.
+                            ColumnType existingColumnType = (ColumnType) result.get(columnId)[0];
+                            if (existingColumnType != null && !existingColumnType.equals(columnType)) throw new IllegalArgumentException("Column [" + columnId + "] is already present in data set with type [" + existingColumnType + "] and you are trying to add it again as type [" + columnType.toString() + "[");
 
-                        // Check column format for existing column.
-                        if (!StringUtils.isBlank(format)) {
-                            String existingPattern = def.getPattern(columnId);
-                            if (existingPattern != null && !existingPattern.equals(format)) throw new IllegalArgumentException("Column [" + columnId + "] is already present in data set with pattern [" + existingPattern + "] and you are trying to add it again with pattern [" + format + "[");
-                        }
-                    } else {
-                        result.put(columnId, new Object[] {columnType, format});
+                            // Check column format for existing column.
+                            if (!StringUtils.isBlank(format)) {
+                                String existingPattern = def.getPattern(columnId);
+                                if (existingPattern != null && !existingPattern.equals(format)) throw new IllegalArgumentException("Column [" + columnId + "] is already present in data set with pattern [" + existingPattern + "] and you are trying to add it again with pattern [" + format + "[");
+                            }
+                        } else {
+                            result.put(columnId, new Object[] {columnType, format});
+                        }    
                     }
-
                 }
             }
         }
@@ -504,6 +507,7 @@ public class ElasticSearchDataSetProvider implements DataSetProvider {
      */
     protected ColumnType getDataType(FieldMappingResponse fieldMapping) throws IllegalArgumentException {
         FieldMappingResponse.FieldType fieldType = fieldMapping.getDataType();
+        if (fieldType == null) return null;
         switch (fieldType) {
             case STRING:
                 if (fieldMapping.getIndexType() != null  && fieldMapping.getIndexType().equals(FieldMappingResponse.IndexType.NOT_ANALYZED)) return ColumnType.LABEL;
