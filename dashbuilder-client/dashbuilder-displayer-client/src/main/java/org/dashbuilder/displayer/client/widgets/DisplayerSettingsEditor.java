@@ -396,6 +396,18 @@ public class DisplayerSettingsEditor extends Composite {
                         .withKey(FILTER_NOTIFICATION_ENABLED.getFullId()));
             }
         }
+        if (isSupported(REFRESH_GROUP)) {
+            PropertyEditorCategory category = new PropertyEditorCategory("Refresh");
+            categories.add(category);
+
+            if (isSupported(REFRESH_INTERVAL)) {
+                category.withField(new PropertyEditorFieldInfo(DisplayerSettingsEditorConstants.INSTANCE.refresh_interval(),
+                        Integer.toString(displayerSettings.getRefreshInterval()),
+                        PropertyEditorType.TEXT)
+                        .withKey(REFRESH_INTERVAL.getFullId())
+                        .withValidators(new LongValidator()));
+            }
+        }
         return categories;
     }
 

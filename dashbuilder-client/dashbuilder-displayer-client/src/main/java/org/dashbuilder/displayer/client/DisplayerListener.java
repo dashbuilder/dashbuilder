@@ -25,6 +25,27 @@ import org.dashbuilder.dataset.group.DataSetGroup;
 public interface DisplayerListener {
 
     /**
+     * Invoked just after the displayer has been drawn.
+     *
+     * @param displayer The Displayer instance where the interval selection event comes from.
+     */
+    void onDraw(Displayer displayer);
+
+    /**
+     * Invoked just after the displayer has been redrawn.
+     *
+     * @param displayer The Displayer instance where the interval selection event comes from.
+     */
+    void onRedraw(Displayer displayer);
+
+    /**
+     * Invoked just after the displayer has been closed.
+     *
+     * @param displayer The Displayer instance where the interval selection event comes from.
+     */
+    void onClose(Displayer displayer);
+
+    /**
      * Invoked when a group interval selection filter request is executed on a given Displayer instance.
      *
      * @param displayer The Displayer instance where the interval selection event comes from.

@@ -143,7 +143,7 @@ public class DisplayerSettings {
 
     // 'Generic' setter method
     public void setDisplayerSetting( DisplayerAttributeDef displayerAttributeDef, String value ) {
-        settings.put( getSettingPath( displayerAttributeDef ), value );
+        settings.put(getSettingPath(displayerAttributeDef), value);
     }
 
     // 'Generic' setter method
@@ -169,7 +169,7 @@ public class DisplayerSettings {
     }
 
     public String getRenderer() {
-        return settings.get( getSettingPath( DisplayerAttributeDef.RENDERER ) );
+        return settings.get(getSettingPath(DisplayerAttributeDef.RENDERER));
     }
 
     public void setRenderer( String renderer ) {
@@ -185,11 +185,19 @@ public class DisplayerSettings {
     }
 
     public boolean isTitleVisible() {
-        return parseBoolean( settings.get( getSettingPath( DisplayerAttributeDef.TITLE_VISIBLE ) ) );
+        return parseBoolean(settings.get(getSettingPath(DisplayerAttributeDef.TITLE_VISIBLE)));
     }
 
     public void setTitleVisible( boolean titleVisible ) {
         settings.put( getSettingPath( DisplayerAttributeDef.TITLE_VISIBLE ), Boolean.toString( titleVisible ) );
+    }
+
+    public int getRefreshInterval() {
+        return parseInt(settings.get(getSettingPath(DisplayerAttributeDef.REFRESH_INTERVAL)), -1);
+    }
+
+    public void setRefreshInterval( int refreshInSeconds ) {
+        settings.put( getSettingPath( DisplayerAttributeDef.REFRESH_INTERVAL ), Integer.toString( refreshInSeconds ) );
     }
 
     public boolean isFilterEnabled() {

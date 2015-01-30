@@ -73,6 +73,7 @@ public class GoogleMeterChartDisplayer extends GoogleDisplayer {
                    .supportsAttribute( DisplayerAttributeDef.TYPE )
                    .supportsAttribute( DisplayerAttributeDef.COLUMNS )
                    .supportsAttribute( DisplayerAttributeGroupDef.FILTER_GROUP )
+                   .supportsAttribute( DisplayerAttributeGroupDef.REFRESH_GROUP )
                    .supportsAttribute( DisplayerAttributeGroupDef.TITLE_GROUP)
                    .supportsAttribute( DisplayerAttributeDef.CHART_WIDTH )
                    .supportsAttribute( DisplayerAttributeDef.CHART_HEIGHT )

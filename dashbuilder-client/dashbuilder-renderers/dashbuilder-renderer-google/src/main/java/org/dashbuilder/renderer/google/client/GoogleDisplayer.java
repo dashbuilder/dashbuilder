@@ -84,6 +84,8 @@ public abstract class GoogleDisplayer extends AbstractDisplayer {
                             if (!StringUtils.isBlank(id)) {
                                 panel.getElement().setId(id);
                             }
+                            // Draw done
+                            afterDraw();
                         }
                         public void notFound() {
                             displayMessage("ERROR: Data set not found.");
@@ -110,6 +112,9 @@ public abstract class GoogleDisplayer extends AbstractDisplayer {
                         dataSet = result;
                         afterDataSetLookup(result);
                         updateVisualization();
+
+                        // Redraw done
+                        afterRedraw();
                     }
                     public void notFound() {
                         displayMessage("ERROR: Data set not found.");
@@ -119,6 +124,16 @@ public abstract class GoogleDisplayer extends AbstractDisplayer {
                 displayMessage("ERROR: " + e.getMessage());
             }
         }
+    }
+
+    /**
+     * Close the displayer
+     */
+    public void close() {
+        panel.clear();
+
+        // Close done
+        afterClose();
     }
 
     /**

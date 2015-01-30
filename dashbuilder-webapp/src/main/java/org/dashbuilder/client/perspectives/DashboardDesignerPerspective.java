@@ -25,6 +25,7 @@ import javax.inject.Inject;
 import com.google.gwt.dom.client.Document;
 import org.dashbuilder.displayer.DisplayerSettings;
 import org.dashbuilder.displayer.DisplayerSettingsFactory;
+import org.dashbuilder.displayer.client.PerspectiveCoordinator;
 import org.dashbuilder.displayer.client.json.DisplayerSettingsJSONMarshaller;
 import org.dashbuilder.displayer.client.widgets.DisplayerEditor;
 import org.dashbuilder.displayer.client.widgets.DisplayerEditorPopup;
@@ -60,6 +61,9 @@ public class DashboardDesignerPerspective {
     @Inject
     DisplayerSettingsJSONMarshaller jsonHelper;
 
+    @Inject
+    private PerspectiveCoordinator perspectiveCoordinator;
+
     @Perspective
     public PerspectiveDefinition buildPerspective() {
         PerspectiveDefinition perspective = new PerspectiveDefinitionImpl(MultiListWorkbenchPanelPresenter.class.getName());
@@ -79,13 +83,16 @@ public class DashboardDesignerPerspective {
         return new Command() {
             public void execute() {
                 /* Displayer settings == null => Create a brand new displayer */
+                perspectiveCoordinator.editOn();
                 DisplayerEditorPopup displayerEditor = new DisplayerEditorPopup();
                 displayerEditor.init(null, new DisplayerEditor.Listener() {
 
                     public void onClose(DisplayerEditor editor) {
+                        perspectiveCoordinator.editOff();
                     }
 
                     public void onSave(DisplayerEditor editor) {
+                        perspectiveCoordinator.editOff();
                         placeManager.goTo(createPlaceRequest(editor.getDisplayerSettings()));
                     }
                 });

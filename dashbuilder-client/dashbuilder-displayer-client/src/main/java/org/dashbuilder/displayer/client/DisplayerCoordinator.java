@@ -75,6 +75,27 @@ public class DisplayerCoordinator {
      */
     private class CoordinatorListener implements DisplayerListener {
 
+        public void onDraw(Displayer displayer) {
+            for (Displayer other : displayerList) {
+                if (other == displayer) continue;
+                other.onDraw(displayer);
+            }
+        }
+
+        public void onRedraw(Displayer displayer) {
+            for (Displayer other : displayerList) {
+                if (other == displayer) continue;
+                other.onRedraw(displayer);
+            }
+        }
+
+        public void onClose(Displayer displayer) {
+            for (Displayer other : displayerList) {
+                if (other == displayer) continue;
+                other.onClose(displayer);
+            }
+        }
+
         public void onGroupIntervalsSelected(Displayer displayer, DataSetGroup groupOp) {
             for (Displayer other : displayerList) {
                 if (other == displayer) continue;

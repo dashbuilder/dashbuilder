@@ -99,6 +99,23 @@ public interface DisplayerSettingsBuilder<T> extends DataSetLookupBuilder<T> {
     T filterOff(boolean receiveFromOthers);
 
     /**
+     * Force the displayer to redraw every time interval.
+     *
+     * @param seconds The refresh time frame in seconds.
+     *
+     * @return The DisplayerSettingsBuilder instance that is being used to configure a DisplayerSettings.
+     */
+    T refreshOn(int seconds);
+
+    /**
+     * Switch off the automatic refresh.
+     *
+     * @see DisplayerSettingsBuilder#refreshOn DisplayerSettingsBuilder's refreshOn method.
+     * @return The DisplayerSettingsBuilder instance that is being used to configure a DisplayerSettings.
+     */
+    T refreshOff();
+
+    /**
      * @return The DisplayerSettings instance that has been configured.
      * @see DisplayerSettings
      */

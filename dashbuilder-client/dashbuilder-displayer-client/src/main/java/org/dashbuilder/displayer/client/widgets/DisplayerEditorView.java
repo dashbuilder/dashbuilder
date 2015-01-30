@@ -68,6 +68,7 @@ public class DisplayerEditorView extends Composite
     DisplayerTypeSelector typeSelector;
     DataSetLookupEditor lookupEditor;
     DisplayerSettingsEditor settingsEditor;
+    Displayer displayer;
 
     @UiField
     SimplePanel leftPanel;
@@ -170,19 +171,31 @@ public class DisplayerEditorView extends Composite
         GWT.log(msg, e);
     }
 
+    @Override
+    public void close() {
+        centerPanel.clear();
+        leftPanel.clear();
+        if (displayer != null) {
+            displayer.close();
+        }
+    }
+
     public void showDisplayer() {
+        if (displayer != null) {
+            displayer.close();
+        }
         if (dataTablePanel.isVisible() && viewAsTable.getValue()) {
             DisplayerSettings tableSettings = settings.cloneInstance();
             tableSettings.setTitleVisible(false);
             tableSettings.setType(DisplayerType.TABLE);
             tableSettings.setTablePageSize(8);
             tableSettings.setTableWidth(-1);
-            Displayer displayer = DisplayerLocator.get().lookupDisplayer(tableSettings);
+            displayer = DisplayerLocator.get().lookupDisplayer(tableSettings);
             centerPanel.clear();
             centerPanel.add(displayer);
             DisplayerHelper.draw(displayer);
         } else {
-            Displayer displayer = DisplayerLocator.get().lookupDisplayer(settings);
+            displayer = DisplayerLocator.get().lookupDisplayer(settings);
             centerPanel.clear();
             centerPanel.add(displayer);
             DisplayerHelper.draw(displayer);

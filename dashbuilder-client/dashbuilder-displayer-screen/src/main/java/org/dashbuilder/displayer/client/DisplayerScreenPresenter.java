@@ -67,6 +67,7 @@ public class DisplayerScreenPresenter {
         if (StringUtils.isBlank(displayerSettings.getUUID())) displayerSettings.setUUID(Document.get().createUniqueId());
         displayerView.setDisplayerSettings(displayerSettings);
         Displayer displayer = displayerView.draw();
+        displayer.refreshOn();
 
         // Register the Displayer into the coordinator.
         perspectiveCoordinator.addDisplayer(displayer);
@@ -79,8 +80,7 @@ public class DisplayerScreenPresenter {
 
     @OnClose
     public void onClose() {
-        Displayer displayer = displayerView.getDisplayer();
-        perspectiveCoordinator.removeDisplayer(displayer);
+        this.removeDisplayer();
     }
 
     @WorkbenchPartTitle
@@ -108,13 +108,16 @@ public class DisplayerScreenPresenter {
     private Command getEditCommand() {
         return new Command() {
             public void execute() {
+                perspectiveCoordinator.editOn();
                 DisplayerEditorPopup displayerEditor =  new DisplayerEditorPopup();
                 displayerEditor.init(displayerSettings, new DisplayerEditor.Listener() {
 
                     public void onClose(DisplayerEditor editor) {
+                        perspectiveCoordinator.editOff();
                     }
 
                     public void onSave(DisplayerEditor editor) {
+                        perspectiveCoordinator.editOff();
                         updateDisplayer(editor.getDisplayerSettings());
                     }
                 });
@@ -123,13 +126,20 @@ public class DisplayerScreenPresenter {
     }
 
     private void updateDisplayer(DisplayerSettings settings) {
+        this.removeDisplayer();
+
         this.displayerSettings = settings;
         this.displayerView.setDisplayerSettings(settings);
-
-        Displayer oldDisplayer = this.displayerView.getDisplayer();
         Displayer newDisplayer = this.displayerView.draw();
+        newDisplayer.refreshOn();
 
-        this.perspectiveCoordinator.removeDisplayer(oldDisplayer);
         this.perspectiveCoordinator.addDisplayer(newDisplayer);
+    }
+
+    protected void removeDisplayer() {
+        Displayer displayer = displayerView.getDisplayer();
+        perspectiveCoordinator.removeDisplayer(displayer);
+        displayer.refreshOff();
+        displayer.close();
     }
 }

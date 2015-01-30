@@ -112,6 +112,8 @@ public class TableDisplayer extends AbstractDisplayer {
                             if (!StringUtils.isBlank(id)) {
                                 panel.getElement().setId(id);
                             }
+                            // Draw done
+                            afterDraw();
                         }
                         public void notFound() {
                             displayMessage( "ERROR: Data set not found." );
@@ -135,11 +137,24 @@ public class TableDisplayer extends AbstractDisplayer {
                 table.setRowCount(numberOfRows, true);
                 table.redraw();
                 redrawColumnSelectionWidget();
+
+                // Redraw done
+                afterRedraw();
             }
             public void notFound() {
                 displayMessage( "ERROR: Data set not found." );
             }
         } );
+    }
+
+    /**
+     * Close the displayer
+     */
+    public void close() {
+        panel.clear();
+
+        // Close done
+        afterClose();
     }
 
     @Override
@@ -157,7 +172,7 @@ public class TableDisplayer extends AbstractDisplayer {
                    .supportsAttribute( DisplayerAttributeDef.TYPE )
                    .supportsAttribute( DisplayerAttributeDef.RENDERER )
                    .supportsAttribute( DisplayerAttributeDef.COLUMNS )
-                   .supportsAttribute( DisplayerAttributeGroupDef.FILTER_GROUP )
+                   .supportsAttribute( DisplayerAttributeGroupDef.REFRESH_GROUP )
                    .supportsAttribute( DisplayerAttributeGroupDef.TITLE_GROUP)
                    .supportsAttribute( DisplayerAttributeGroupDef.TABLE_GROUP );
     }

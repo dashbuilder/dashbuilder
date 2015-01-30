@@ -68,6 +68,16 @@ public abstract class AbstractDisplayerSettingsBuilder<T> extends AbstractDataSe
         return (T) this;
     }
 
+    public T refreshOn(int seconds) {
+        displayerSettings.setRefreshInterval(seconds);
+        return (T) this;
+    }
+
+    public T refreshOff() {
+        displayerSettings.setRefreshInterval(-1);
+        return (T) this;
+    }
+
     public DisplayerSettings buildSettings() {
         displayerSettings.setDataSetLookup(super.buildLookup());
         return displayerSettings;

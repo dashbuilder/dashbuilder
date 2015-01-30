@@ -57,6 +57,7 @@ public class DisplayerEditor implements IsWidget,
         void gotoDisplaySettings();
         void updateDataSetLookup(DataSetLookupConstraints constraints, DataSetMetadata metadata);
         void error(String msg, Exception e);
+        void close();
     }
 
     View view = null;
@@ -118,12 +119,14 @@ public class DisplayerEditor implements IsWidget,
     }
 
     public void save() {
+        view.close();
         if (listener != null) {
             listener.onSave(this);
         }
     }
 
     public void close() {
+        view.close();
         if (listener != null) {
             listener.onClose(this);
         }

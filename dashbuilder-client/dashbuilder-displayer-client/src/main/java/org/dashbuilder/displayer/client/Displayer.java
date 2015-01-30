@@ -61,4 +61,25 @@ public interface Displayer extends DisplayerListener, IsWidget {
      * It's just a matter of update & display the latest data set changes.
      */
     void redraw();
+
+    /**
+     * Check if the automatic refresh is on.
+     */
+    boolean isRefreshOn();
+
+    /**
+     * Turns on the automatic refresh. If not automatic refresh is enabled then this method does nothing.
+     * @see DisplayerSettings#getRefreshInterval()
+     */
+    void refreshOn();
+
+    /**
+     * Turns off the automatic refresh. If not automatic refresh is enabled then this method does nothing.
+     */
+    void refreshOff();
+
+    /**
+     * Frees any resource the displayer is consuming.
+     */
+    void close();
 }

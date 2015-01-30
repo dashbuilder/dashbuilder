@@ -33,6 +33,8 @@ import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetLookupConstraints;
 import org.dashbuilder.dataset.client.DataSetReadyCallback;
 import org.dashbuilder.dataset.group.DataSetGroup;
+import org.dashbuilder.displayer.DisplayerAttributeDef;
+import org.dashbuilder.displayer.DisplayerAttributeGroupDef;
 import org.dashbuilder.displayer.DisplayerConstraints;
 import org.dashbuilder.displayer.client.AbstractDisplayer;
 import org.dashbuilder.displayer.client.Displayer;
@@ -76,6 +78,8 @@ public class SelectorDisplayer extends AbstractDisplayer {
                             if (!StringUtils.isBlank(id)) {
                                 panel.getElement().setId(id);
                             }
+                            // Draw done
+                            afterDraw();
                         }
                         public void notFound() {
                             displayMessage("ERROR: Data set not found.");
@@ -97,6 +101,9 @@ public class SelectorDisplayer extends AbstractDisplayer {
                     public void callback(DataSet result) {
                         dataSet = result;
                         populateSelector();
+
+                        // Redraw done
+                        afterRedraw();
                     }
                     public void notFound() {
                         displayMessage("ERROR: Data set not found.");
@@ -108,10 +115,17 @@ public class SelectorDisplayer extends AbstractDisplayer {
         }
     }
 
+    public void close() {
+        panel.clear();
+
+        // Close done
+        afterClose();
+    }
+
     @Override
     public DisplayerConstraints createDisplayerConstraints() {
 
-        return new DisplayerConstraints(new DataSetLookupConstraints()
+        DataSetLookupConstraints lookupConstraints = new DataSetLookupConstraints()
                 .setGroupRequired(true)
                 .setGroupColumn(true)
                 .setMaxColumns(1)
@@ -119,7 +133,14 @@ public class SelectorDisplayer extends AbstractDisplayer {
                 .setGroupsTitle("Categories")
                 .setColumnsTitle("Values")
                 .setColumnTypes(new ColumnType[] {
-                        ColumnType.LABEL}));
+                        ColumnType.LABEL});
+
+        return new DisplayerConstraints(lookupConstraints)
+                .supportsAttribute( DisplayerAttributeDef.TYPE )
+                .supportsAttribute( DisplayerAttributeDef.COLUMNS )
+                .supportsAttribute( DisplayerAttributeGroupDef.FILTER_GROUP )
+                .supportsAttribute( DisplayerAttributeGroupDef.REFRESH_GROUP )
+                .supportsAttribute( DisplayerAttributeGroupDef.TITLE_GROUP );
     }
 
     /**

@@ -22,9 +22,8 @@ import javax.enterprise.event.Observes;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetLookup;
 import org.dashbuilder.dataset.events.DataSetModifiedEvent;
+import org.dashbuilder.displayer.DisplayerSettings;
 import org.uberfire.client.workbench.events.PerspectiveChange;
-
-import static org.uberfire.commons.validation.PortablePreconditions.*;
 
 /**
  * It holds the set of Displayer instances being displayed on the current perspective.
@@ -38,6 +37,11 @@ public class PerspectiveCoordinator {
      * The real coordinator.
      */
     private DisplayerCoordinator coordinator;
+
+    /**
+     * Flag indicating if the perspective is on edit mode.
+     */
+    boolean editOn = false;
 
     @PostConstruct
     public void init() {
@@ -59,6 +63,30 @@ public class PerspectiveCoordinator {
     }
 
     /**
+     * Turn on the edition of the perspective
+     */
+    public void editOn() {
+        editOn = true;
+
+        // Turns off the automatic refresh of all the displayers.
+        for (Displayer displayer : coordinator.getDisplayerList()) {
+            displayer.refreshOff();
+        }
+    }
+
+    /**
+     * Turn off the edition of the perspective
+     */
+    public void editOff() {
+        editOn = false;
+
+        // Turns on the automatic refresh of all the displayers.
+        for (Displayer displayer : coordinator.getDisplayerList()) {
+            displayer.refreshOn();
+        }
+    }
+
+    /**
      * Reset the coordinator every time the perspective is changed.
      */
     private void onPerspectiveChanged(@Observes final PerspectiveChange event) {
@@ -69,17 +97,23 @@ public class PerspectiveCoordinator {
      * Listen to modifications on any of the data set being used in this perspective.
      */
     private void onDataSetModifiedEvent(@Observes DataSetModifiedEvent event) {
-        checkNotNull("event", event);
+        if (editOn) return;
 
         String targetUUID = event.getDataSetDef().getUUID();
         for (Displayer displayer : coordinator.getDisplayerList()) {
 
+            // If a displayer is handling the refresh by itself then do nothing.
+            if (displayer.isRefreshOn()) {
+                continue;
+            }
+
             String uuid = null;
-            DataSet dataSet = displayer.getDisplayerSettings().getDataSet();
+            DisplayerSettings settings = displayer.getDisplayerSettings();
+            DataSet dataSet = settings.getDataSet();
             if (dataSet != null) {
                 uuid = dataSet.getUUID();
             }
-            DataSetLookup dataSetLookup = displayer.getDisplayerSettings().getDataSetLookup();
+            DataSetLookup dataSetLookup = settings.getDataSetLookup();
             if (uuid == null && dataSetLookup != null) {
                 uuid = dataSetLookup.getDataSetUUID();
             }

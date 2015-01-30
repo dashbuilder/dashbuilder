@@ -23,6 +23,8 @@ public class DisplayerAttributeGroupDef extends DisplayerAttributeDef {
     // ROOT-GROUPS
     public static final DisplayerAttributeGroupDef TITLE_GROUP = new DisplayerAttributeGroupDef( "title" );
 
+    public static final DisplayerAttributeGroupDef REFRESH_GROUP = new DisplayerAttributeGroupDef( "refresh" );
+
     public static final DisplayerAttributeGroupDef FILTER_GROUP = new DisplayerAttributeGroupDef( "filter" );
 
     public static final DisplayerAttributeGroupDef CHART_GROUP = new DisplayerAttributeGroupDef( "chart" );

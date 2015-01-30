@@ -25,6 +25,7 @@ import java.util.Set;
 
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.NumberFormat;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.Composite;
 import org.dashbuilder.common.client.StringUtils;
 import org.dashbuilder.dataset.ColumnType;
@@ -46,7 +47,7 @@ import org.dashbuilder.displayer.DisplayerSettings;
  * Base class for implementing custom displayers.
  * <p>Any derived class must implement:
  * <ul>
- *     <li>The draw() & redraw() methods.</li>
+ *     <li>The draw(), redraw() & close() methods.</li>
  *     <li>The capture of events coming from the DisplayerListener interface.</li>
  * </ul>
  */
@@ -57,6 +58,12 @@ public abstract class AbstractDisplayer extends Composite implements Displayer {
     protected DisplayerConstraints displayerConstraints;
     protected List<DisplayerListener> listenerList = new ArrayList<DisplayerListener>();
     protected Map<String,List<Interval>> columnSelectionMap = new HashMap<String,List<Interval>>();
+    protected boolean refreshOn = false;
+    protected Timer refreshTimer = new Timer() {
+        public void run() {
+            redraw();
+        }
+    };
 
     public abstract DisplayerConstraints createDisplayerConstraints();
 
@@ -110,7 +117,66 @@ public abstract class AbstractDisplayer extends Composite implements Displayer {
         return null;
     }
 
+    // REFRESH TIMER
+
+    public boolean isRefreshOn() {
+        return refreshOn;
+    }
+
+    public void refreshOn() {
+        int seconds = displayerSettings.getRefreshInterval();
+        if (seconds > 0) {
+            refreshOn = true;
+            refreshTimer.schedule(seconds * 1000);
+        } else {
+            refreshTimer.cancel();
+        }
+    }
+
+    public void refreshOff() {
+        // Cancel timer
+        refreshTimer.cancel();
+    }
+
+    // LIFECYCLE CALLBACKS
+
+    protected void afterDraw() {
+        for (DisplayerListener listener : listenerList) {
+            listener.onDraw(this);
+        }
+    }
+
+    protected void afterRedraw() {
+        if (refreshOn) {
+            refreshOn();
+        }
+        for (DisplayerListener listener : listenerList) {
+            listener.onRedraw(this);
+        }
+    }
+
+    protected void afterClose() {
+        if (refreshOn) {
+            refreshOff();
+        }
+        for (DisplayerListener listener : listenerList) {
+            listener.onClose(this);
+        }
+    }
+
     // CAPTURE EVENTS RECEIVED FROM OTHER DISPLAYERS
+
+    public void onDraw(Displayer displayer) {
+        // Do nothing
+    }
+
+    public void onRedraw(Displayer displayer) {
+        // Do nothing
+    }
+
+    public void onClose(Displayer displayer) {
+        // Do nothing
+    }
 
     public void onGroupIntervalsSelected(Displayer displayer, DataSetGroup groupOp) {
         if (displayerSettings.isFilterListeningEnabled()) {
@@ -351,6 +417,9 @@ public abstract class AbstractDisplayer extends Composite implements Displayer {
         // TODO: support for displayer settings column format
         // For example: .format("amount", "{value} profit in $", "---", "#,###.##")
 
+        if (value == null) {
+            return formatValue(null, column != null ? column.getColumnType() : ColumnType.LABEL);
+        }
         if (column == null) {
             return value.toString();
         }
