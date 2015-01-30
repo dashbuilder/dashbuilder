@@ -214,7 +214,8 @@ public class SelectorDisplayer extends AbstractDisplayer {
                         out.append(extraColumnName).append("=").append(formattedValue);
                     }
                 }
-                options.getItem(i+1).setTitle(out.toString());
+                OptionElement optionElement = options.getItem(i+1); 
+                if (optionElement != null) optionElement.setTitle(out.toString());
             }
         }
     }
