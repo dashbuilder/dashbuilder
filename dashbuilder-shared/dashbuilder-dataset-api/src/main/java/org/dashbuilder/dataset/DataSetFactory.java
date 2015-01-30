@@ -63,11 +63,10 @@ public final class DataSetFactory {
     public static DataSet filterDataSet(DataSet dataSet, List<Integer> rows) {
         DataSet result = DataSetFactory.newEmptyDataSet();
         for (DataColumn column : dataSet.getColumns()) {
+            DataColumn sortedColumn = column.cloneEmpty();
             SortedList sortedValues = new SortedList(column.getValues(), rows);
-            result.addColumn(column.getId(),
-                    column.getName(),
-                    column.getColumnType(),
-                    sortedValues);
+            sortedColumn.setValues(sortedValues);
+            result.addColumn(sortedColumn);
         }
         return result;
     }

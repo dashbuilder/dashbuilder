@@ -123,7 +123,7 @@ public class DataColumnImpl implements DataColumn {
         otherCol.setId(getId());
         otherCol.setName(getName());
         otherCol.setColumnType(getColumnType());
-        otherCol.setColumnGroup(getColumnGroup());
+        if (columnGroup != null) otherCol.setColumnGroup(columnGroup.cloneInstance());
         otherCol.setIntervalType(getIntervalType());
         otherCol.setMinValue(getMinValue());
         otherCol.setMaxValue(getMaxValue());
