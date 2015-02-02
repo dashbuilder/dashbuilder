@@ -462,7 +462,7 @@ public class ElasticSearchJestClient implements ElasticSearchClient<ElasticSearc
             String _q = m.group(1);
             String _i = m.group(2);
             quantifier = Integer.parseInt(_q);
-            intervalType = DateIntervalType.getByName(_i);
+            intervalType = DateIntervalType.getByName(_i.trim());
 
             int intervalMultiplier = 1;
             String dateMathExpression = "d";
