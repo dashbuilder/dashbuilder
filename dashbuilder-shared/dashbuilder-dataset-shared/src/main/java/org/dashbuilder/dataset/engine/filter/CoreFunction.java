@@ -19,7 +19,7 @@ import java.util.Date;
 
 import org.dashbuilder.dataset.filter.CoreFunctionFilter;
 import org.dashbuilder.dataset.filter.CoreFunctionType;
-import org.dashbuilder.dataset.group.DateIntervalType;
+import org.dashbuilder.dataset.group.TimeFrame;
 
 public class CoreFunction extends DataSetFunction {
 
@@ -136,10 +136,10 @@ public class CoreFunction extends DataSetFunction {
         if (!(value instanceof Date)) return false;
         Date target = (Date) value;
 
-        String timeFrame = getParameter(0).toString();
+        TimeFrame timeFrame = TimeFrame.parse(getParameter(0).toString());
         long millis = System.currentTimeMillis();
         Date now = new Date(millis);
-        Date past = new Date(millis-DateIntervalType.getDurationInMillis(timeFrame));
+        Date past = new Date(millis-timeFrame.toMillis());
 
         if (target.after(now)) return false;
         if (target.before(past)) return false;

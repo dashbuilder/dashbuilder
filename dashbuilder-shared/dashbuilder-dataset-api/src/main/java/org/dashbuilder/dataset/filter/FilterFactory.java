@@ -15,9 +15,13 @@
  */
 package org.dashbuilder.dataset.filter;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
+import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.group.DateIntervalType;
+import org.dashbuilder.dataset.group.TimeFrame;
 
 /**
  * A factory of filter functions
@@ -117,8 +121,8 @@ public class FilterFactory {
     }
 
     public static ColumnFilter timeFrame(String columnId, String timeFrame) {
-        long millis = DateIntervalType.getDurationInMillis(timeFrame);
-        if (millis < 0) throw new IllegalArgumentException("Invalid time frame: " + timeFrame);
+        TimeFrame tf = TimeFrame.parse(timeFrame);
+        if (tf == null) throw new IllegalArgumentException("Invalid time frame: " + timeFrame);
         return new CoreFunctionFilter(columnId, CoreFunctionType.TIME_FRAME, timeFrame);
     }
 
@@ -146,6 +150,40 @@ public class FilterFactory {
 
     public static ColumnFilter NOT(String columnId, ColumnFilter... filters) {
         return new LogicalExprFilter(columnId, LogicalExprType.NOT, filters);
+    }
+
+    public static CoreFunctionFilter createCoreFunctionFilter(String columnId, ColumnType columnType, CoreFunctionType functionType) {
+        List params = createParameters(columnType, functionType);
+        CoreFunctionFilter columnFilter = new CoreFunctionFilter();
+        columnFilter.setColumnId(columnId);
+        columnFilter.setType(functionType);
+        columnFilter.setParameters(params);
+        return columnFilter;
+    }
+
+    public static List createParameters(ColumnType columnType, CoreFunctionType functionType) {
+        List result = new ArrayList();
+        int n = functionType.getNumberOfParameters();
+
+        for (int i=0; i<n; i++) {
+
+            if (ColumnType.NUMBER.equals(columnType)) {
+                result.add(100000d * i);
+            }
+            else if (ColumnType.DATE.equals(columnType)) {
+                if (CoreFunctionType.TIME_FRAME.equals(functionType)) {
+                    result.add("1 " + DateIntervalType.YEAR.toString().toLowerCase());
+                }
+                else {
+                    Date d = new Date();
+                    d.setYear(d.getYear()-n+i+1);
+                    result.add(d);
+                }
+            } else {
+                result.add("val" + (i + 1));
+            }
+        }
+        return result;
     }
 
     // Custom filter

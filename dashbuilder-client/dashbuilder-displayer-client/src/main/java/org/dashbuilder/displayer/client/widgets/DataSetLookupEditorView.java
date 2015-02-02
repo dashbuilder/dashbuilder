@@ -18,6 +18,7 @@ package org.dashbuilder.displayer.client.widgets;
 import java.util.List;
 import javax.enterprise.context.Dependent;
 
+import com.github.gwtbootstrap.client.ui.Button;
 import com.github.gwtbootstrap.client.ui.Icon;
 import com.github.gwtbootstrap.client.ui.ListBox;
 import com.github.gwtbootstrap.client.ui.Well;
@@ -49,15 +50,13 @@ import org.dashbuilder.dataset.group.GroupFunction;
 
 @Dependent
 public class DataSetLookupEditorView extends Composite
-        implements DataSetLookupEditor.View, DataSetGroupDateEditor.Listener {
+        implements DataSetLookupEditor.View {
 
     interface Binder extends UiBinder<Widget, DataSetLookupEditorView> {}
     private static Binder uiBinder = GWT.create(Binder.class);
 
     public DataSetLookupEditorView() {
         initWidget(uiBinder.createAndBindUi(this));
-        dataSetListBox.setWidth("200px");
-        groupColumnListBox.setWidth("200px");
         groupDetailsIcon.addDomHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
                 expandCollapseGroupDetails();
@@ -74,7 +73,7 @@ public class DataSetLookupEditorView extends Composite
     com.github.gwtbootstrap.client.ui.Label statusLabel;
 
     @UiField
-    VerticalPanel groupControlPanel;
+    Panel groupControlPanel;
 
     @UiField
     Label groupControlLabel;
@@ -86,29 +85,37 @@ public class DataSetLookupEditorView extends Composite
     ListBox groupColumnListBox;
 
     @UiField
-    Well groupDatePanel;
+    Panel groupDatePanel;
 
     @UiField
     DataSetGroupDateEditor groupDateEditor;
 
     @UiField
-    VerticalPanel columnsControlPanel;
+    Panel columnsControlPanel;
 
     @UiField
     Label columnsControlLabel;
 
     @UiField
-    VerticalPanel columnsPanel;
+    Panel columnsPanel;
+
+    @UiField
+    Panel filtersControlPanel;
+
+    @UiField
+    DataSetFilterEditor filterEditor;
 
     @Override
     public void init(DataSetLookupEditor presenter) {
         this.presenter = presenter;
+        filtersControlPanel.setVisible(false);
         groupControlPanel.setVisible(false);
         columnsControlPanel.setVisible(false);
     }
 
     @Override
     public void updateDataSetLookup() {
+        _updateFilterControls();
         _updateGroupControls();
         _updateColumnControls();
     }
@@ -172,6 +179,7 @@ public class DataSetLookupEditorView extends Composite
 
     @UiHandler(value = "dataSetListBox")
     public void onDataSetSelected(ChangeEvent changeEvent) {
+        filtersControlPanel.setVisible(false);
         groupControlPanel.setVisible(false);
         columnsControlPanel.setVisible(false);
 
@@ -203,11 +211,18 @@ public class DataSetLookupEditorView extends Composite
             groupDatePanel.setVisible(true);
             groupDetailsIcon.setType(IconType.ARROW_UP);
             ColumnGroup columnGroup = presenter.getFirstGroupOp().getColumnGroup();
-            groupDateEditor.init(columnGroup, this);
+            groupDateEditor.init(columnGroup, presenter);
         }
     }
 
     // UI handling stuff
+
+    private void _updateFilterControls() {
+        filtersControlPanel.setVisible(true);
+        filterEditor.init(presenter.getDataSetMetadata(),
+                presenter.getDataSetLookup().getFirstFilterOp(),
+                presenter);
+    }
 
     private void _updateGroupControls() {
         DataSetLookupConstraints constraints = presenter.getConstraints();
@@ -356,11 +371,5 @@ public class DataSetLookupEditorView extends Composite
             }
         }
         return lb;
-    }
-
-    // DataSetGroupDateEditor callback
-
-    public void columnGroupChanged(ColumnGroup columnGroup) {
-        presenter.changeGroupColumn(columnGroup);
     }
 }

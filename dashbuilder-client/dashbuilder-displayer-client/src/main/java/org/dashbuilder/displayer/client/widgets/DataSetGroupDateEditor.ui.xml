@@ -23,7 +23,7 @@
 
   <ui:style>
     .cellPaddingPanel {
-      cellpadding: 5;
+      padding: 10px;
     }
   </ui:style>
 

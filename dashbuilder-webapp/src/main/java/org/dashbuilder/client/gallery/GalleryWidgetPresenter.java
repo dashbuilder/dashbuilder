@@ -32,7 +32,7 @@ import org.dashbuilder.dataset.DataSetMetadata;
 import org.dashbuilder.dataset.def.DataSetDef;
 import org.dashbuilder.dataset.events.DataSetModifiedEvent;
 import org.dashbuilder.dataset.events.DataSetPushOkEvent;
-import org.dashbuilder.dataset.group.DateIntervalType;
+import org.dashbuilder.dataset.group.TimeFrame;
 import org.dashbuilder.shared.sales.SalesConstants;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
 import org.uberfire.client.annotations.WorkbenchPartView;
@@ -107,9 +107,11 @@ public class GalleryWidgetPresenter {
 
         DataSetDef def = event.getDataSetDef();
         String targetUUID = event.getDataSetDef().getUUID();
-        long refreshMillis = DateIntervalType.getDurationInMillis(def.getRefreshTime());
+        TimeFrame timeFrame = TimeFrame.parse(def.getRefreshTime());
+        boolean noRealTime = timeFrame == null || timeFrame.toMillis() > 60000;
+
         if (SalesConstants.SALES_OPPS.equals(targetUUID)) {
-            if (!def.isRefreshAlways() || refreshMillis == -1 || refreshMillis > 60000) {
+            if (!def.isRefreshAlways() || noRealTime) {
                 workbenchNotification.fire(new NotificationEvent("The sales data set has been modified. Refreshing the view ...", INFO));
             }
             if (salesGoalsWidget != null) salesGoalsWidget.redrawAll();
@@ -118,7 +120,7 @@ public class GalleryWidgetPresenter {
             if (salesReportsWidget != null) salesReportsWidget.redrawAll();
         }
         if (ExpenseConstants.EXPENSES.equals(targetUUID)) {
-            if (!def.isRefreshAlways() || refreshMillis == -1 || refreshMillis > 60000) {
+            if (!def.isRefreshAlways() || noRealTime) {
                 workbenchNotification.fire(new NotificationEvent("The expense reports data set has been modified. Refreshing the view...", INFO));
             }
             if (expensesDashboardWidget != null) expensesDashboardWidget.redrawAll();
@@ -131,8 +133,8 @@ public class GalleryWidgetPresenter {
 
         DataSetMetadata metadata = event.getDataSetMetadata();
         DataSetDef def = metadata.getDefinition();
-        long refreshMillis = DateIntervalType.getDurationInMillis(def.getRefreshTime());
-        if (refreshMillis > 60000) {
+        TimeFrame timeFrame = TimeFrame.parse(def.getRefreshTime());
+        if (timeFrame == null || timeFrame.toMillis()> 60000) {
             workbenchNotification.fire(new NotificationEvent("Data set loaded from server [" + def.getProvider() + ", " + event.getDataSetMetadata().getEstimatedSize() + " Kb]", INFO));
         }
     }

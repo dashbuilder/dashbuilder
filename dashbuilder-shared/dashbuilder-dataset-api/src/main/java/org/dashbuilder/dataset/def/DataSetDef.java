@@ -22,7 +22,7 @@ import org.dashbuilder.dataprovider.DataSetProviderType;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetFactory;
 import org.dashbuilder.dataset.filter.DataSetFilter;
-import org.dashbuilder.dataset.group.DateIntervalType;
+import org.dashbuilder.dataset.group.TimeFrame;
 import org.jboss.errai.common.client.api.annotations.Portable;
 
 /**
@@ -132,7 +132,8 @@ public class DataSetDef {
     }
 
     public void setRefreshTime(String refreshTime) {
-        if (DateIntervalType.getDurationInMillis(refreshTime) == -1) {
+        TimeFrame timeFrame = TimeFrame.parse(refreshTime);
+        if (timeFrame == null) {
             throw new IllegalArgumentException("Invalid time frame: " + refreshTime);
         }
         this.refreshTime = refreshTime;

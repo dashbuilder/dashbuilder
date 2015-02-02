@@ -27,7 +27,7 @@ import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetFactory;
 import org.dashbuilder.dataset.DataSetGenerator;
-import org.dashbuilder.dataset.group.DateIntervalType;
+import org.dashbuilder.dataset.group.TimeFrame;
 
 /**
  * Generates performance metrics on a mock cluster.
@@ -60,8 +60,8 @@ public class ClusterMetricsDataSetGenerator implements DataSetGenerator {
 
         if (!StringUtils.isBlank(params.get("timeFrame"))) {
             String p = params.get("timeFrame");
-            long millis = DateIntervalType.getDurationInMillis(p);
-            if (millis != -1) timeFrameMillis = millis;
+            TimeFrame timeFrame = TimeFrame.parse(p);
+            if (timeFrame != null) timeFrameMillis = timeFrame.toMillis();
         }
         if (params.containsKey("aliveNodes")) {
             aliveNodes.clear();

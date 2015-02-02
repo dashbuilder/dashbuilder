@@ -23,30 +23,43 @@
              xmlns:dashb="urn:import:org.dashbuilder.displayer.client.widgets">
 
   <ui:style>
+    .sectionLabel {
+      font-weight: bold;
+    }
     .cellPaddingPanel {
-      cellpadding: 5;
+      padding: 10px;
+    }
+    .groupDatePanel {
+      width: 200px;
+      padding: 10px;
+      background: #dddddd;
+      border-radius: 5px;
     }
   </ui:style>
 
-  <g:VerticalPanel styleName="{style.cellPaddingPanel}">
-    <g:VerticalPanel>
+  <g:FlowPanel styleName="{style.cellPaddingPanel}">
+    <g:FlowPanel>
       <b:Label ui:field="statusLabel" visible="false" />
-      <g:Label>Data set</g:Label>
-      <b:ListBox ui:field="dataSetListBox" />
-    </g:VerticalPanel>
-    <g:VerticalPanel ui:field="groupControlPanel" visible="false">
-      <g:Label ui:field="groupControlLabel">Rows</g:Label>
+      <g:Label styleName="{style.sectionLabel}">Data set</g:Label>
+      <b:ListBox ui:field="dataSetListBox" width="200px" />
+    </g:FlowPanel>
+    <g:FlowPanel ui:field="filtersControlPanel" visible="false">
+      <b:Label styleName="{style.sectionLabel}">Filters</b:Label>
+      <dashb:DataSetFilterEditor ui:field="filterEditor" />
+    </g:FlowPanel>
+    <g:FlowPanel ui:field="groupControlPanel" visible="false">
+      <g:Label ui:field="groupControlLabel" styleName="{style.sectionLabel}">Rows</g:Label>
       <g:HorizontalPanel styleName="{style.cellPaddingPanel}">
-        <b:ListBox ui:field="groupColumnListBox" />
+        <b:ListBox ui:field="groupColumnListBox" width="200px" />
         <b:Icon type="ARROW_DOWN" ui:field="groupDetailsIcon" iconSize="LARGE"/>
       </g:HorizontalPanel>
-      <b:Well ui:field="groupDatePanel" visible="false">
+      <g:FlowPanel ui:field="groupDatePanel" visible="false" styleName="{style.groupDatePanel}">
         <dashb:DataSetGroupDateEditor ui:field="groupDateEditor" />
-      </b:Well>
-    </g:VerticalPanel>
-    <g:VerticalPanel ui:field="columnsControlPanel" visible="false">
-        <g:Label ui:field="columnsControlLabel">Columns</g:Label>
+      </g:FlowPanel>
+    </g:FlowPanel>
+    <g:FlowPanel ui:field="columnsControlPanel" visible="false">
+        <g:Label ui:field="columnsControlLabel" styleName="{style.sectionLabel}">Columns</g:Label>
         <g:VerticalPanel ui:field="columnsPanel"/>
-    </g:VerticalPanel>
-  </g:VerticalPanel>
+    </g:FlowPanel>
+  </g:FlowPanel>
 </ui:UiBinder>

@@ -22,6 +22,7 @@ import javax.enterprise.context.Dependent;
 
 import org.dashbuilder.dataset.DataSetValueFormatter;
 import org.dashbuilder.dataset.group.DateIntervalType;
+import org.dashbuilder.dataset.group.TimeFrame;
 
 @Dependent
 public final class BackendDataSetValueFormatter implements DataSetValueFormatter {
@@ -49,7 +50,8 @@ public final class BackendDataSetValueFormatter implements DataSetValueFormatter
     }
 
     public Comparable parseValue(String str) {
-        if (DateIntervalType.getDurationInMillis(str) != -1) {
+        TimeFrame timeFrame = TimeFrame.parse(str);
+        if (timeFrame != null) {
             return str;
         }
         try {

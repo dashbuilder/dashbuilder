@@ -33,7 +33,7 @@ import org.dashbuilder.dataset.events.DataSetDefModifiedEvent;
 import org.dashbuilder.dataset.events.DataSetDefRegisteredEvent;
 import org.dashbuilder.dataset.events.DataSetDefRemovedEvent;
 import org.dashbuilder.dataset.events.DataSetStaleEvent;
-import org.dashbuilder.dataset.group.DateIntervalType;
+import org.dashbuilder.dataset.group.TimeFrame;
 import org.dashbuilder.scheduler.Scheduler;
 import org.dashbuilder.scheduler.SchedulerTask;
 import org.slf4j.Logger;
@@ -76,7 +76,8 @@ public class DataSetDefRegistryImpl implements DataSetDefRegistry {
         DataSetDefEntry(DataSetDef def) {
             this.def = def;
             this.lastRefreshTime = System.currentTimeMillis();
-            this.refreshInMillis = DateIntervalType.getDurationInMillis(def.getRefreshTime());
+            TimeFrame tf = TimeFrame.parse(def.getRefreshTime());
+            this.refreshInMillis = (tf == null ? -1 : tf.toMillis());
         }
 
         public void schedule() {

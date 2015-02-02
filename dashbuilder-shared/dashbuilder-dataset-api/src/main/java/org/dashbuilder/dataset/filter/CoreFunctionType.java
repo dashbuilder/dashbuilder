@@ -15,6 +15,10 @@
  */
 package org.dashbuilder.dataset.filter;
 
+import java.util.List;
+import java.util.ArrayList;
+
+import org.dashbuilder.dataset.ColumnType;
 import org.jboss.errai.common.client.api.annotations.Portable;
 
 /**
@@ -34,11 +38,51 @@ public enum CoreFunctionType {
     BETWEEN,
     TIME_FRAME;
 
+    private static CoreFunctionType[] _typeArray = values();
+
+    private static int[] _parametersSize = new int[] {0,0,1,1,1,1,1,1,2,1};
+
+    public int getIndex() {
+        for (int i = 0; i < _typeArray.length; i++) {
+            CoreFunctionType type = _typeArray[i];
+            if (this.equals(type)) return i;
+        }
+        return -1;
+    }
+
+    public int getNumberOfParameters() {
+        return _parametersSize[getIndex()];
+    }
+
+    public boolean supportType(ColumnType type) {
+        if (TIME_FRAME.equals(this)) {
+            return ColumnType.DATE.equals(type);
+        }
+        return true;
+    }
+    public static CoreFunctionType getByIndex(int index) {
+        return _typeArray[index];
+    }
+
     public static CoreFunctionType getByName(String type) {
         try {
             return valueOf(type.toUpperCase());
         } catch (Exception e) {
             return null;
         }
+    }
+
+    public static int getNumberOfParameters(String type) {
+        CoreFunctionType ft = getByName(type);
+        return ft.getNumberOfParameters();
+    }
+
+    public static List<CoreFunctionType> getSupportedTypes(ColumnType columnType) {
+        List<CoreFunctionType> result = new ArrayList<CoreFunctionType>();
+        for (int i = 0; i < _typeArray.length; i++) {
+            CoreFunctionType type = _typeArray[i];
+            if (type.supportType(columnType)) result.add(type);
+        }
+        return result;
     }
 }

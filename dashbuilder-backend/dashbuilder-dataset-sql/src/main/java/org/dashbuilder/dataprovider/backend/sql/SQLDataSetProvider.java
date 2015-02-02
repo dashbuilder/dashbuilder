@@ -62,6 +62,7 @@ import org.dashbuilder.dataset.group.DateIntervalType;
 import org.dashbuilder.dataset.group.GroupFunction;
 import org.dashbuilder.dataset.group.GroupStrategy;
 import org.dashbuilder.dataset.group.Interval;
+import org.dashbuilder.dataset.group.TimeFrame;
 import org.dashbuilder.dataset.impl.DataColumnImpl;
 import org.dashbuilder.dataset.impl.DataSetMetadataImpl;
 import org.dashbuilder.dataset.impl.MemSizeEstimator;
@@ -379,11 +380,13 @@ public class SQLDataSetProvider implements DataSetProvider {
                 _jooqQuery.where(_jooqField.between(params.get(0), params.get(1)));
             }
             else if (CoreFunctionType.TIME_FRAME.equals(type)) {
-                String timeFrame = params.get(0).toString();
-                long millis = System.currentTimeMillis();
-                Timestamp now = new Timestamp(millis);
-                Timestamp past = new Timestamp(millis-DateIntervalType.getDurationInMillis(timeFrame));
-                _jooqQuery.where(_jooqField.between(past, now));
+                TimeFrame timeFrame = TimeFrame.parse(params.get(0).toString());
+                if (timeFrame != null) {
+                    long millis = System.currentTimeMillis();
+                    Timestamp now = new Timestamp(millis);
+                    Timestamp past = new Timestamp(millis - timeFrame.toMillis());
+                    _jooqQuery.where(_jooqField.between(past, now));
+                }
             }
             else {
                 throw new IllegalArgumentException("Core function type not supported: " + type);

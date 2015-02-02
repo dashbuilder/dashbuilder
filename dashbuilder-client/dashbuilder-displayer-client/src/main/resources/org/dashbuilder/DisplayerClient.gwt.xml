@@ -20,9 +20,11 @@
 <module>
   <inherits name='com.google.gwt.user.User'/>
   <inherits name="com.github.gwtbootstrap.Bootstrap"/>
+  <inherits name="com.github.gwtbootstrap.datetimepicker.Datetimepicker"/>
 
   <inherits name='org.jboss.errai.ioc.Container'/>
 
+  <inherits name="org.uberfire.ext.widgets.common.UberfireWidgetsCommons"/>
   <inherits name="org.uberfire.ext.properties.editor.PropertiesEditorClient"/>
 
   <inherits name="org.dashbuilder.DatasetClient"/>

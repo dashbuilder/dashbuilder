@@ -28,6 +28,7 @@ import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetLookup;
 import org.dashbuilder.dataset.DataSetLookupConstraints;
 import org.dashbuilder.dataset.DataSetMetadata;
+import org.dashbuilder.dataset.DataSetOpType;
 import org.dashbuilder.dataset.client.DataSetClientServices;
 import org.dashbuilder.dataset.date.DayOfWeek;
 import org.dashbuilder.dataset.date.Month;
@@ -35,6 +36,7 @@ import org.dashbuilder.dataset.def.DataSetDef;
 import org.dashbuilder.dataset.events.DataSetDefModifiedEvent;
 import org.dashbuilder.dataset.events.DataSetDefRegisteredEvent;
 import org.dashbuilder.dataset.events.DataSetDefRemovedEvent;
+import org.dashbuilder.dataset.filter.DataSetFilter;
 import org.dashbuilder.dataset.group.AggregateFunction;
 import org.dashbuilder.dataset.group.AggregateFunctionType;
 import org.dashbuilder.dataset.group.ColumnGroup;
@@ -45,12 +47,15 @@ import org.jboss.errai.common.client.api.RemoteCallback;
 import static org.uberfire.commons.validation.PortablePreconditions.checkNotNull;
 
 @Dependent
-public class DataSetLookupEditor implements IsWidget {
+public class DataSetLookupEditor implements IsWidget,
+                                DataSetFilterEditor.Listener,
+                                DataSetGroupDateEditor.Listener {
 
     public interface Listener {
         void dataSetChanged(String uuid);
         void columnChanged(GroupFunction groupFunction);
         void groupChanged(DataSetGroup groupOp);
+        void filterChanged(DataSetFilter filterOp);
     }
 
     public interface View extends IsWidget {
@@ -305,6 +310,29 @@ public class DataSetLookupEditor implements IsWidget {
         if (listener != null) {
             listener.columnChanged(groupFunction);
         }
+    }
+
+    public void changeDataSetFilter(DataSetFilter filterOp) {
+        dataSetLookup.removeOperations(DataSetOpType.FILTER);
+        if (filterOp != null) {
+            dataSetLookup.addOperation(0, filterOp);
+        }
+        // Notify listener
+        if (listener != null) {
+            listener.filterChanged(filterOp);
+        }
+    }
+
+    // DataSetFilterEditor callback
+
+    public void filterChanged(DataSetFilter filter) {
+        changeDataSetFilter(filter);
+    }
+
+    // DataSetGroupDateEditor callback
+
+    public void columnGroupChanged(ColumnGroup columnGroup) {
+        changeGroupColumn(columnGroup);
     }
 
     // Be aware of data set lifecycle events

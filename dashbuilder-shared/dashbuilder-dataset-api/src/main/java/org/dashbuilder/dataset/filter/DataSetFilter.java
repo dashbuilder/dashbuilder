@@ -44,6 +44,14 @@ public class DataSetFilter extends AbstractDataSetOp {
         return columnFilterList;
     }
 
+    public Integer getColumnFilterIdx(ColumnFilter columnFilter) {
+        for (int i=0; i<columnFilterList.size(); i++) {
+            ColumnFilter cf = columnFilterList.get(i);
+            if (columnFilter.equals(cf)) return i;
+        }
+        return null;
+    }
+
     public DataSetFilter cloneInstance() {
         DataSetFilter clone = new DataSetFilter();
         for (ColumnFilter columnFilter : columnFilterList) {

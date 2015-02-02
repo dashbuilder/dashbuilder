@@ -26,6 +26,7 @@ import org.dashbuilder.dataset.DataSetLookupConstraints;
 import org.dashbuilder.dataset.DataSetMetadata;
 import org.dashbuilder.dataset.client.DataSetClientServices;
 import org.dashbuilder.dataset.client.DataSetMetadataCallback;
+import org.dashbuilder.dataset.filter.DataSetFilter;
 import org.dashbuilder.dataset.group.DataSetGroup;
 import org.dashbuilder.dataset.group.GroupFunction;
 import org.dashbuilder.displayer.DisplayerConstraints;
@@ -200,6 +201,11 @@ public class DisplayerEditor implements IsWidget,
 
     @Override
     public void columnChanged(GroupFunction groupFunction) {
+        view.init(displayerSettings, this);
+    }
+
+    @Override
+    public void filterChanged(DataSetFilter filterOp) {
         view.init(displayerSettings, this);
     }
 }
