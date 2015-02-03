@@ -2,6 +2,7 @@ package org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.impl.jest
 
 import com.google.gson.JsonElement;
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.impl.jest.ElasticSearchJestClient;
+import org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.model.SearchRequest;
 import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.dataset.def.ElasticSearchDataSetDef;
 import org.dashbuilder.dataset.impl.ElasticSearchDataSetMetadata;
@@ -17,11 +18,19 @@ public abstract class AbstractAdapter<T extends AbstractAdapter> {
     protected ElasticSearchDataSetMetadata metadata;
     protected List<DataColumn> columns;
     protected ElasticSearchDataSetDef definition;
+    protected SearchRequest request;
 
     public AbstractAdapter(ElasticSearchDataSetMetadata metadata, ElasticSearchDataSetDef definition, List<DataColumn> columns) {
         this.metadata = metadata;
         this.columns = columns;
         this.definition = definition;
+    }
+
+    public AbstractAdapter(ElasticSearchDataSetMetadata metadata, ElasticSearchDataSetDef definition, List<DataColumn> columns, SearchRequest request) {
+        this.metadata = metadata;
+        this.columns = columns;
+        this.definition = definition;
+        this.request = request;
     }
 
     /**

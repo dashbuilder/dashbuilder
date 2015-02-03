@@ -7,12 +7,14 @@ import io.searchbox.core.Search;
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.exception.ElasticSearchClientGenericException;
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.impl.jest.ElasticSearchJestClient;
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.model.SearchHitResponse;
+import org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.model.SearchRequest;
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.model.SearchResponse;
 import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.dataset.backend.BackendIntervalBuilderDynamicDate;
 import org.dashbuilder.dataset.backend.date.DateUtils;
 import org.dashbuilder.dataset.def.ElasticSearchDataSetDef;
+import org.dashbuilder.dataset.filter.DataSetFilter;
 import org.dashbuilder.dataset.group.*;
 import org.dashbuilder.dataset.impl.DataColumnImpl;
 import org.dashbuilder.dataset.impl.ElasticSearchDataSetMetadata;
@@ -44,6 +46,11 @@ public class AggregationSerializer extends AbstractAdapter<AggregationSerializer
 
     public AggregationSerializer(ElasticSearchDataSetMetadata metadata, ElasticSearchDataSetDef definition, List<DataColumn> columns) {
         super(metadata, definition, columns);
+        intervalBuilder = new BackendIntervalBuilderDynamicDate();
+    }
+
+    public AggregationSerializer(ElasticSearchDataSetMetadata metadata, ElasticSearchDataSetDef definition, List<DataColumn> columns, SearchRequest request) {
+        super(metadata, definition, columns, request);
         intervalBuilder = new BackendIntervalBuilderDynamicDate();
     }
 
@@ -185,7 +192,9 @@ public class AggregationSerializer extends AbstractAdapter<AggregationSerializer
                 if (limits != null) {
                     dateIntervalType = intervalBuilder.calculateIntervalSize(limits[0], limits[1], columnGroup);
                 }
-            } else {
+            } 
+            
+            if (dateIntervalType == null) {
                 dateIntervalType = DateIntervalType.valueOf(intervalSize);
             }
 
@@ -324,46 +333,26 @@ public class AggregationSerializer extends AbstractAdapter<AggregationSerializer
      * @return The minimum and maximum dates.
      */
     protected Date[] calculateDateLimits(String dateColumnId) throws ElasticSearchClientGenericException{
-        JestClient client = ElasticSearchJestClient.buildNewClient(definition.getServerURL(), definition.getClusterName(), ElasticSearchJestClient.DEFAULT_TIMEOUT);
-        if (client == null) throw new IllegalArgumentException("ElasticSearchRestClient instance is not build.");
-
+        ElasticSearchJestClient client = new ElasticSearchJestClient()
+                .serverURL(definition.getServerURL()).clusterName(definition.getClusterName()).index(definition.getIndex());
+        
         String minDateColumnId = dateColumnId + "_min";
         String maxDateColumnId = dateColumnId + "_max";
-
+        
         // Create the aggregation model to bulid the query to EL server.
         DataSetGroup aggregation = new DataSetGroup();
         GroupFunction minFunction = new GroupFunction(dateColumnId, minDateColumnId, AggregateFunctionType.MIN);
         GroupFunction maxFunction = new GroupFunction(dateColumnId, maxDateColumnId, AggregateFunctionType.MAX);
         aggregation.addGroupFunction(minFunction, maxFunction);
 
-        // Serialize the aggregation.
-        List<DataColumn> dateLimitColumns = new ArrayList<DataColumn>(2);
-        GsonBuilder builder = new GsonBuilder();
-        JsonSerializer aggregationSerializer = new AggregationSerializer(metadata, definition, dateLimitColumns);
-        JsonDeserializer searchResponseDeserializer = new SearchResponseDeserializer(metadata, definition, dateLimitColumns);
-        JsonDeserializer hitDeserializer = new HitDeserializer(metadata, definition, dateLimitColumns);
-        JsonDeserializer aggreationsDeserializer = new AggregationsDeserializer(metadata, definition, dateLimitColumns);
-        builder.registerTypeAdapter(DataSetGroup.class, aggregationSerializer);
-        builder.registerTypeAdapter(SearchResponse.class, searchResponseDeserializer);
-        builder.registerTypeAdapter(SearchHitResponse.class, hitDeserializer);
-        builder.registerTypeAdapter(SearchHitResponse[].class, aggreationsDeserializer);
+        SearchRequest request = new SearchRequest(metadata);
+        request.setAggregations(Arrays.asList(aggregation));
         
-        Gson gson = builder.create();
-        String serializedAggregation = gson.toJson(aggregation, DataSetGroup.class);
-
-        Search.Builder searchRequestBuilder = new Search.Builder(serializedAggregation).addIndex(definition.getIndex()[0]);
-        String[] type = definition.getType(); 
-        if (type != null && type.length > 0) searchRequestBuilder.addType(type[0]);
-
-        Search searchRequest = searchRequestBuilder.build();
-        JestResult result = null;
-        try {
-            result = client.execute(searchRequest);
-        } catch (Exception e) {
-            throw new ElasticSearchClientGenericException("An error ocurred during search operation.", e);
-        }
-
-        SearchResponse searchResult = gson.fromJson(result.getJsonObject(), SearchResponse.class);
+        // Append the filter clauses
+        if (this.request != null && this.request.getQuery() != null) request.setQuery(this.request.getQuery());
+        
+        // Perform the query.
+        SearchResponse searchResult = client.search(definition, metadata, request);
         if (searchResult != null) {
             SearchHitResponse[] hits = searchResult.getHits();
             if (hits != null && hits.length == 1) {

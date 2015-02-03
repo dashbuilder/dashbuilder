@@ -189,8 +189,8 @@ public class ElasticSearchJestClient implements ElasticSearchClient<ElasticSearc
         if (client == null) throw new IllegalArgumentException("elasticsearchRESTEasyClient instance is not build.");
 
         ElasticSearchDataSetDef elasticSearchDataSetDef = (ElasticSearchDataSetDef) definition;
-        String[] index = request.getIndexes();
-        String[] type = request.getTypes();
+        String[] index = ((ElasticSearchDataSetDef) definition).getIndex();
+        String[] type = ((ElasticSearchDataSetDef) definition).getType();
         String[] fields = request.getFields();
         int start = request.getStart();
         int size = request.getSize();
@@ -203,7 +203,7 @@ public class ElasticSearchJestClient implements ElasticSearchClient<ElasticSearc
 
         // Crate the Gson builder and instance.        
         GsonBuilder builder = new GsonBuilder();
-        JsonSerializer aggregationSerializer = new AggregationSerializer(metadata, elasticSearchDataSetDef, columns);
+        JsonSerializer aggregationSerializer = new AggregationSerializer(metadata, elasticSearchDataSetDef, columns, request);
         JsonSerializer querySerializer = new QuerySerializer(metadata, elasticSearchDataSetDef, columns);
         JsonSerializer searchQuerySerializer = new SearchQuerySerializer(metadata, elasticSearchDataSetDef, columns);
         JsonDeserializer searchResponseDeserializer = new SearchResponseDeserializer(metadata, elasticSearchDataSetDef, columns);
@@ -257,6 +257,7 @@ public class ElasticSearchJestClient implements ElasticSearchClient<ElasticSearc
         Search searchRequest = searchRequestBuilder.build();
         JestResult result = null;
         try {
+            System.out.println(serializedSearchQuery);
             result = client.execute(searchRequest);
         } catch (Exception e) {
             throw new ElasticSearchClientGenericException("An error ocurred during search operation.", e);
@@ -266,6 +267,7 @@ public class ElasticSearchJestClient implements ElasticSearchClient<ElasticSearc
             String errorMessage = resultObject.get("error").getAsString();
             throw new ElasticSearchClientGenericException("An error ocurred during search operation. This is the internal error: \n" + errorMessage);
         }
+        System.out.println(resultObject.toString());
         SearchResponse searchResult = gson.fromJson(resultObject, SearchResponse.class);
         return searchResult;
     }

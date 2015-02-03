@@ -33,8 +33,6 @@ import java.util.List;
 public class SearchRequest {
 
     private DataSetMetadata metadata;
-    private String[] indexes;
-    private String[] types;
     private String[] fields;
     private List<DataSetGroup> aggregations = new LinkedList<DataSetGroup>();
     /* The query is the filter representation for ElasticSearch queries and filters from a collection of DataSetFilter instances, including aggregations. */
@@ -49,22 +47,6 @@ public class SearchRequest {
 
     public DataSetMetadata getMetadata() {
         return metadata;
-    }
-
-    public String[] getIndexes() {
-        return indexes;
-    }
-
-    public void setIndexes(String[] indexes) {
-        this.indexes = indexes;
-    }
-
-    public String[] getTypes() {
-        return types;
-    }
-
-    public void setTypes(String[] types) {
-        this.types = types;
     }
 
     public String[] getFields() {

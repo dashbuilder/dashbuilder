@@ -177,8 +177,6 @@ public class ElasticSearchDataSetProvider implements DataSetProvider {
 
         SearchRequest request = new SearchRequest(metadata);
 
-        if (index != null) request.setIndexes(index);
-        if (type != null) request.setTypes(type);
         int numberOfColumns = metadata.getNumberOfColumns();
         List<String> columnIds = new ArrayList<String>(numberOfColumns);
         for (int x = 0; x < numberOfColumns; x++) {
