@@ -27,6 +27,7 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -40,6 +41,9 @@ import org.dashbuilder.dataset.def.CSVDataSetDef;
 
 public class CSVParser {
 
+    // Custom pattern for Unix dates (epoch).
+    public static final String DATE_FORMAT_EPOCH = "epoch";
+    
     protected transient Map<String,DateFormat> _dateFormatMap = new HashMap<String,DateFormat>();
     protected transient Map<String,DecimalFormat> _numberFormatMap = new HashMap<String,DecimalFormat>();
     protected CSVDataSetDef dataSetDef;
@@ -156,8 +160,15 @@ public class CSVParser {
         ColumnType type = column.getColumnType();
         try {
             if (type.equals(ColumnType.DATE)) {
-                DateFormat dateFormat = getDateFormat(column.getId());
-                return dateFormat.parse(value);
+                String pattern = dataSetDef.getPattern(column.getId());
+                // Handle special date pattern "epoch"
+                if (pattern != null && DATE_FORMAT_EPOCH.equalsIgnoreCase(pattern)) {
+                    Double _epoch = Double.parseDouble(value);
+                    return new Date(_epoch.longValue() * 1000);
+                } else {
+                    DateFormat dateFormat = getDateFormat(column.getId());
+                    return dateFormat.parse(value);
+                }
             } else if (type.equals(ColumnType.NUMBER)) {
                 DecimalFormat numberFormat = getNumberFormat(column.getId());
                 return numberFormat.parse(value).doubleValue();
