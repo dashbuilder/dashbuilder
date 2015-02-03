@@ -34,10 +34,6 @@ public class MaxFunction extends AbstractFunction {
         return AggregateFunctionType.MAX;
     }
 
-    public boolean supportType(ColumnType type) {
-        return type != null && type.equals(ColumnType.NUMBER);
-    }
-
     public double aggregate(List values) {
         if (values == null || values.isEmpty()) return 0;
 

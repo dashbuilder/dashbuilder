@@ -36,10 +36,6 @@ public class DistinctFunction extends AbstractFunction {
         return AggregateFunctionType.DISTINCT;
     }
 
-    public boolean supportType(ColumnType type) {
-        return true;
-    }
-
     public double aggregate(List values) {
         if (values == null || values.isEmpty()) return 0;
 

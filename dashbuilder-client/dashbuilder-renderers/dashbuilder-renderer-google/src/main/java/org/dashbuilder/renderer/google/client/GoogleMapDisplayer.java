@@ -64,6 +64,7 @@ public class GoogleMapDisplayer extends GoogleXAxisChartDisplayer {
                 .setGroupColumn(true)
                 .setMinColumns(2)
                 .setMaxColumns(3)
+                .setExtraColumnsAllowed(true)
                 .setGroupsTitle("Categories")
                 .setColumnsTitle("Series")
                 .setColumnTypes(new ColumnType[] {

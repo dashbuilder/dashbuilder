@@ -74,6 +74,7 @@ public class GoogleTableDisplayer extends GoogleDisplayer {
                 .setGroupRequired(false)
                 .setMaxColumns(-1)
                 .setMinColumns(1)
+                .setExtraColumnsAllowed(true)
                 .setGroupsTitle("Rows")
                 .setColumnsTitle("Columns");
 

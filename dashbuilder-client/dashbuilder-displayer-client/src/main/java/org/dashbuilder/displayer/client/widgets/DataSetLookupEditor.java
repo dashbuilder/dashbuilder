@@ -23,6 +23,7 @@ import javax.inject.Inject;
 
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
+import org.dashbuilder.common.client.StringUtils;
 import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetLookup;
@@ -30,18 +31,17 @@ import org.dashbuilder.dataset.DataSetLookupConstraints;
 import org.dashbuilder.dataset.DataSetMetadata;
 import org.dashbuilder.dataset.DataSetOpType;
 import org.dashbuilder.dataset.client.DataSetClientServices;
-import org.dashbuilder.dataset.date.DayOfWeek;
-import org.dashbuilder.dataset.date.Month;
 import org.dashbuilder.dataset.def.DataSetDef;
 import org.dashbuilder.dataset.events.DataSetDefModifiedEvent;
 import org.dashbuilder.dataset.events.DataSetDefRegisteredEvent;
 import org.dashbuilder.dataset.events.DataSetDefRemovedEvent;
 import org.dashbuilder.dataset.filter.DataSetFilter;
-import org.dashbuilder.dataset.group.AggregateFunction;
 import org.dashbuilder.dataset.group.AggregateFunctionType;
 import org.dashbuilder.dataset.group.ColumnGroup;
 import org.dashbuilder.dataset.group.DataSetGroup;
 import org.dashbuilder.dataset.group.GroupFunction;
+import org.dashbuilder.displayer.client.widgets.filter.DataSetFilterEditor;
+import org.dashbuilder.displayer.client.widgets.group.DataSetGroupDateEditor;
 import org.jboss.errai.common.client.api.RemoteCallback;
 
 import static org.uberfire.commons.validation.PortablePreconditions.checkNotNull;
@@ -189,31 +189,12 @@ public class DataSetLookupEditor implements IsWidget,
         return groupOp.getColumnGroup().getSourceId();
     }
 
-    public List<Integer> getAvailableFunctionColumnIdxs() {
-        List<Integer> result = new ArrayList<Integer>();
-        for (int i=0; i<dataSetMetadata.getNumberOfColumns(); i++) {
-            result.add(i);
-        }
-        return result;
-    }
-
     public List<Integer> getAvailableGroupColumnIdxs() {
         List<Integer> result = new ArrayList<Integer>();
         for (int i=0; i<dataSetMetadata.getNumberOfColumns(); i++) {
             ColumnType columnType = dataSetMetadata.getColumnType(i);
             if (ColumnType.LABEL.equals(columnType) || ColumnType.DATE.equals(columnType)) {
                 result.add(i);
-            }
-        }
-        return result;
-    }
-
-    public List<AggregateFunctionType> getAvailableFunctions(GroupFunction groupFunction) {
-        List<AggregateFunctionType> result = new ArrayList<AggregateFunctionType>();
-        ColumnType targetType = getColumnType(groupFunction.getSourceId());
-        for (AggregateFunction function : DataSetClientServices.get().getAggregateFunctionManager().getAllFunctions()) {
-            if (function.supportType(targetType)) {
-                result.add(function.getType());
             }
         }
         return result;
@@ -288,19 +269,20 @@ public class DataSetLookupEditor implements IsWidget,
         }
     }
 
-    public void changeGroupFunction(GroupFunction groupFunction, String columnId, String function) {
-        AggregateFunctionType functionType = AggregateFunctionType.getByName(function);
-        groupFunction.setSourceId(columnId);
-        groupFunction.setColumnId(columnId);
-        groupFunction.setFunction(functionType);
+    public void changeGroupFunction(GroupFunction groupFunction, String sourceId, String columnId, AggregateFunctionType function) {
+        groupFunction.setSourceId(sourceId);
+        groupFunction.setColumnId(sourceId);
+        if (!StringUtils.isBlank(columnId)) groupFunction.setColumnId(columnId);
+        groupFunction.setFunction(null);
 
-        if (functionType != null) {
-            AggregateFunction aggF = DataSetClientServices.get().getAggregateFunctionManager().getFunctionByType(functionType);
-            ColumnType columnType = getColumnType(columnId);
-            if (!aggF.supportType(columnType)) {
-                for (AggregateFunction f : DataSetClientServices.get().getAggregateFunctionManager().getAllFunctions()) {
-                    if (f.supportType(columnType)) {
-                        groupFunction.setFunction(f.getType());
+        if (function != null) {
+            ColumnType columnType = getColumnType(sourceId);
+            if (function.supportType(columnType)) {
+                groupFunction.setFunction(function);
+            } else {
+                for (AggregateFunctionType functionType : AggregateFunctionType.values()) {
+                    if (functionType.supportType(columnType)) {
+                        groupFunction.setFunction(functionType);
                         break;
                     }
                 }
@@ -320,6 +302,27 @@ public class DataSetLookupEditor implements IsWidget,
         // Notify listener
         if (listener != null) {
             listener.filterChanged(filterOp);
+        }
+    }
+
+    public void addGroupFunction() {
+        if (lookupConstraints.areExtraColumnsAllowed()) {
+            DataSetGroup op = getFirstGroupOp();
+            List<GroupFunction> functionList = op.getGroupFunctions();
+            GroupFunction last = functionList.get(functionList.size() - 1);
+            GroupFunction clone = last.cloneInstance();
+            functionList.add(clone);
+            if (listener != null) {
+                listener.groupChanged(op);
+            }
+        }
+    }
+
+    public void removeGroupFunction(int columnIdx) {
+        DataSetGroup op = getFirstGroupOp();
+        op.getGroupFunctions().remove(columnIdx);
+        if (listener != null) {
+            listener.groupChanged(op);
         }
     }
 

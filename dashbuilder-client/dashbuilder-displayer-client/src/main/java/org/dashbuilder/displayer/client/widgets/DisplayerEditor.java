@@ -98,7 +98,7 @@ public class DisplayerEditor implements IsWidget,
             displayerSettings = settings.cloneInstance();
             view.init(displayerSettings, this);
             //view.disableTypeSelection();
-            view.gotoDisplaySettings();
+            view.gotoDataSetConf();
         } else {
             brandNewDisplayer = true;
             displayerSettings = DisplayerPrototypes.get().getProto(DisplayerType.BARCHART).cloneInstance();

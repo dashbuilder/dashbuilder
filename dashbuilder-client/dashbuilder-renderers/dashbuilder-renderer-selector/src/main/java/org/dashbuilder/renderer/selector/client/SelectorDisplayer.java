@@ -128,8 +128,9 @@ public class SelectorDisplayer extends AbstractDisplayer {
         DataSetLookupConstraints lookupConstraints = new DataSetLookupConstraints()
                 .setGroupRequired(true)
                 .setGroupColumn(true)
-                .setMaxColumns(1)
+                .setMaxColumns(-1)
                 .setMinColumns(1)
+                .setExtraColumnsAllowed(true)
                 .setGroupsTitle("Categories")
                 .setColumnsTitle("Values")
                 .setColumnTypes(new ColumnType[] {

@@ -66,7 +66,7 @@ public abstract class GoogleDisplayer extends AbstractDisplayer {
             else {
                 try {
                     String initMsg = GoogleDisplayerConstants.INSTANCE.googleDisplayer_initalizing();
-                    if (!StringUtils.isBlank(displayerSettings.getTitle())) initMsg += " '" + displayerSettings.getTitle() + "'";
+                    //if (!StringUtils.isBlank(displayerSettings.getTitle())) initMsg += " '" + displayerSettings.getTitle() + "'";
                     displayMessage(initMsg + " ...");
 
                     beforeDataSetLookup();

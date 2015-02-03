@@ -21,32 +21,28 @@ import javax.enterprise.context.Dependent;
 import com.github.gwtbootstrap.client.ui.Button;
 import com.github.gwtbootstrap.client.ui.Icon;
 import com.github.gwtbootstrap.client.ui.ListBox;
-import com.github.gwtbootstrap.client.ui.Well;
 import com.github.gwtbootstrap.client.ui.constants.IconType;
 import com.github.gwtbootstrap.client.ui.constants.LabelType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.common.client.StringUtils;
 import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.DataSetLookupConstraints;
-import org.dashbuilder.dataset.client.resources.i18n.AggregateFunctionTypeConstants;
 import org.dashbuilder.dataset.def.DataSetDef;
-import org.dashbuilder.dataset.group.AggregateFunctionType;
 import org.dashbuilder.dataset.group.ColumnGroup;
 import org.dashbuilder.dataset.group.GroupFunction;
+import org.dashbuilder.displayer.client.widgets.filter.DataSetFilterEditor;
+import org.dashbuilder.displayer.client.widgets.group.ColumnFunctionEditor;
+import org.dashbuilder.displayer.client.widgets.group.DataSetGroupDateEditor;
 
 @Dependent
 public class DataSetLookupEditorView extends Composite
@@ -98,6 +94,9 @@ public class DataSetLookupEditorView extends Composite
 
     @UiField
     Panel columnsPanel;
+
+    @UiField
+    Button addColumnButton;
 
     @UiField
     Panel filtersControlPanel;
@@ -187,6 +186,12 @@ public class DataSetLookupEditorView extends Composite
         presenter.changeDataSet(dataSetUUID);
     }
 
+    @UiHandler(value = "addColumnButton")
+    public void onAddColumnClicked(ClickEvent clickEvent) {
+        presenter.addGroupFunction();
+        _updateColumnControls();
+    }
+
     @UiHandler(value = "groupColumnListBox")
     public void onRowColumnChanged(ChangeEvent changeEvent) {
         String columnId = groupColumnListBox.getValue(groupColumnListBox.getSelectedIndex());
@@ -274,102 +279,47 @@ public class DataSetLookupEditorView extends Composite
         String columnsTitle = constraints.getColumnsTitle();
         boolean functionsRequired = constraints.isFunctionRequired();
         boolean functionsEnabled = (groupColumnId != null || functionsRequired);
+        boolean canDelete = groupFunctions.size() > constraints.getMinColumns();
+        int n = constraints.getMaxColumns();
+        boolean canAdd = constraints.areExtraColumnsAllowed() && (n < 0 || groupFunctions.size() < n);
 
         // Show the columns section
         columnsPanel.clear();
         columnsControlPanel.setVisible(true);
         if (!StringUtils.isBlank(columnsTitle)) columnsControlLabel.setText(columnsTitle);
+        addColumnButton.setVisible(canAdd);
 
+        ColumnType lastTargetType = null;
         ColumnType[] targetTypes = constraints.getColumnTypes(groupFunctions.size());
         for (int i=0; i<groupFunctions.size(); i++) {
-            try {
-                GroupFunction groupFunction = groupFunctions.get(i);
-                if (i == 0 && groupColumnId != null && constraints.isGroupColumn()) {
-                    continue;
-                }
+            final int columnIdx = i;
 
-                ColumnType columnType = null;
-                if (targetTypes != null && i<targetTypes.length) columnType = targetTypes[i];
-
-                String columnTitle = constraints.getColumnTitle(i);
-                columnsPanel.add(_createColumnPanel(groupFunction, columnType, columnTitle, functionsEnabled));
+            final GroupFunction groupFunction = groupFunctions.get(columnIdx);
+            if (targetTypes != null && i < targetTypes.length) {
+                lastTargetType = targetTypes[i];
             }
-            catch (Exception e) {
-                columnsPanel.add(new Label(e.getMessage()));
+            if (columnIdx == 0 && groupColumnId != null && constraints.isGroupColumn()) {
+                continue;
             }
+            ColumnType columnType = null;
+            if (targetTypes != null && i<targetTypes.length) columnType = targetTypes[columnIdx];
+            if (columnType == null) columnType = lastTargetType; // Extra columns
+
+            String columnTitle = constraints.getColumnTitle(columnIdx);
+            ColumnFunctionEditor columnEditor = new ColumnFunctionEditor();
+            columnEditor.init(presenter.getDataSetMetadata(),  groupFunction, columnType,
+                    columnTitle, functionsEnabled, canDelete, new ColumnFunctionEditor.Listener() {
+
+                        public void columnChanged(ColumnFunctionEditor editor) {
+                            presenter.changeGroupFunction(groupFunction,
+                                    editor.getSourceId(), editor.getColumnId(), editor.getFunction());
+                        }
+                        public void columnDeleted(ColumnFunctionEditor editor) {
+                            presenter.removeGroupFunction(columnIdx);
+                            _updateColumnControls();
+                        }
+                    });
+            columnsPanel.add(columnEditor);
         }
-    }
-
-    private Panel _createColumnPanel(final GroupFunction groupFunction,
-            ColumnType targetType,
-            String columnTitle,
-            boolean functionsEnabled) throws Exception {
-
-        HorizontalPanel panel = new HorizontalPanel();
-        final ListBox columnListBox = new ListBox();
-        columnListBox.setWidth("130px");
-        columnListBox.setTitle(columnTitle);
-        panel.add(columnListBox);
-
-        boolean targetNumeric = targetType != null && targetType.equals(ColumnType.NUMBER);
-        List<Integer> columnIdxs = presenter.getAvailableFunctionColumnIdxs();
-        for (int i=0; i<columnIdxs.size(); i++) {
-            int columnIdx = columnIdxs.get(i);
-            String columnId = presenter.getColumnId(columnIdx);
-            ColumnType columnType = presenter.getColumnType(columnIdx);
-
-            if (targetType == null || targetNumeric || targetType.equals(columnType)) {
-                columnListBox.addItem(columnId, columnId);
-                if (columnId != null && columnId.equals(groupFunction.getSourceId())) {
-                    columnListBox.setSelectedIndex(i);
-                }
-            }
-        }
-        if (functionsEnabled && (targetType == null || targetNumeric)) {
-            final ListBox funcListBox = _createFunctionListBox(groupFunction, targetNumeric);
-            funcListBox.setWidth("70px");
-            panel.add(funcListBox);
-
-            columnListBox.addChangeHandler(new ChangeHandler() {
-                public void onChange(ChangeEvent event) {
-                    _changeColumnSettings(groupFunction, columnListBox, funcListBox);
-                }
-            });
-            funcListBox.addChangeHandler(new ChangeHandler() {
-                public void onChange(ChangeEvent event) {
-                    _changeColumnSettings(groupFunction, columnListBox, funcListBox);
-                }
-            });
-        } else {
-            columnListBox.addChangeHandler(new ChangeHandler() {
-                public void onChange(ChangeEvent event) {
-                    _changeColumnSettings(groupFunction, columnListBox, null);
-                }
-            });
-        }
-        return panel;
-    }
-
-    private void _changeColumnSettings(GroupFunction groupFunction, ListBox columnListBox, ListBox functionListBox) {
-        String columnId = columnListBox.getValue(columnListBox.getSelectedIndex());
-        String function = (functionListBox != null ? functionListBox.getValue(functionListBox.getSelectedIndex()) : null);
-        if (function != null && function.equals("---")) function = null;
-        presenter.changeGroupFunction(groupFunction, columnId, function);
-        _updateColumnControls();
-    }
-
-    private ListBox _createFunctionListBox(GroupFunction groupFunction, boolean numericOnly) {
-        ListBox lb = new ListBox();
-        if (!numericOnly) lb.addItem("---");
-
-        AggregateFunctionType selected = groupFunction.getFunction();
-        for (AggregateFunctionType functionType : presenter.getAvailableFunctions(groupFunction)) {
-            String functionName = AggregateFunctionTypeConstants.INSTANCE.getString(functionType.name());
-            lb.addItem(functionName);
-            if (selected != null && selected.equals(functionType)) {
-                lb.setSelectedValue(functionName);
-            }
-        }
-        return lb;
     }
 }

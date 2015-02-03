@@ -69,6 +69,7 @@ public class GoogleBubbleChartDisplayer extends GoogleXAxisChartDisplayer {
                 .setGroupColumn(true)
                 .setMaxColumns(5)
                 .setMinColumns(5)
+                .setExtraColumnsAllowed(false)
                 .setGroupsTitle("Categories")
                 .setColumnsTitle("Values")
                 .setColumnTitle(1, "X Axis")

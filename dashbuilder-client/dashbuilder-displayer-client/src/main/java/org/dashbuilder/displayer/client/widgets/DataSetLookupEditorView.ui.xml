@@ -20,14 +20,15 @@
 <ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
              xmlns:g='urn:import:com.google.gwt.user.client.ui'
              xmlns:b="urn:import:com.github.gwtbootstrap.client.ui"
-             xmlns:dashb="urn:import:org.dashbuilder.displayer.client.widgets">
+             xmlns:df="urn:import:org.dashbuilder.displayer.client.widgets.filter"
+             xmlns:dg="urn:import:org.dashbuilder.displayer.client.widgets.group">
 
   <ui:style>
     .sectionLabel {
       font-weight: bold;
     }
     .cellPaddingPanel {
-      padding: 10px;
+      padding: 3px;
     }
     .groupDatePanel {
       width: 200px;
@@ -37,29 +38,30 @@
     }
   </ui:style>
 
-  <g:FlowPanel styleName="{style.cellPaddingPanel}">
-    <g:FlowPanel>
+  <g:FlowPanel>
+    <g:FlowPanel styleName="{style.cellPaddingPanel}">
       <b:Label ui:field="statusLabel" visible="false" />
       <g:Label styleName="{style.sectionLabel}">Data set</g:Label>
       <b:ListBox ui:field="dataSetListBox" width="200px" />
     </g:FlowPanel>
-    <g:FlowPanel ui:field="filtersControlPanel" visible="false">
+    <g:FlowPanel ui:field="filtersControlPanel" visible="false" styleName="{style.cellPaddingPanel}">
       <b:Label styleName="{style.sectionLabel}">Filters</b:Label>
-      <dashb:DataSetFilterEditor ui:field="filterEditor" />
+      <df:DataSetFilterEditor ui:field="filterEditor" />
     </g:FlowPanel>
-    <g:FlowPanel ui:field="groupControlPanel" visible="false">
+    <g:FlowPanel ui:field="groupControlPanel" visible="false" styleName="{style.cellPaddingPanel}">
       <g:Label ui:field="groupControlLabel" styleName="{style.sectionLabel}">Rows</g:Label>
       <g:HorizontalPanel styleName="{style.cellPaddingPanel}">
         <b:ListBox ui:field="groupColumnListBox" width="200px" />
         <b:Icon type="ARROW_DOWN" ui:field="groupDetailsIcon" iconSize="LARGE"/>
       </g:HorizontalPanel>
       <g:FlowPanel ui:field="groupDatePanel" visible="false" styleName="{style.groupDatePanel}">
-        <dashb:DataSetGroupDateEditor ui:field="groupDateEditor" />
+        <dg:DataSetGroupDateEditor ui:field="groupDateEditor" />
       </g:FlowPanel>
     </g:FlowPanel>
-    <g:FlowPanel ui:field="columnsControlPanel" visible="false">
+    <g:FlowPanel ui:field="columnsControlPanel" visible="false" styleName="{style.cellPaddingPanel}">
         <g:Label ui:field="columnsControlLabel" styleName="{style.sectionLabel}">Columns</g:Label>
-        <g:VerticalPanel ui:field="columnsPanel"/>
+        <g:FlowPanel ui:field="columnsPanel"/>
+        <b:Button ui:field="addColumnButton" type="LINK" visible="false">Add New</b:Button>
     </g:FlowPanel>
   </g:FlowPanel>
 </ui:UiBinder>

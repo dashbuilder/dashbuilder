@@ -21,18 +21,12 @@
              xmlns:g='urn:import:com.google.gwt.user.client.ui'
              xmlns:b="urn:import:com.github.gwtbootstrap.client.ui">
 
-  <ui:style>
-    .cellPaddingPanel {
-      padding: 5px;
-    }
-  </ui:style>
-
-  <g:FlowPanel styleName="{style.cellPaddingPanel}">
+  <g:FlowPanel>
     <g:FlowPanel ui:field="filterListPanel" />
     <g:HorizontalPanel ui:field="addFilterPanel" visible="false">
       <b:ListBox ui:field="newFilterListBox" width="180px" />
       <b:Icon type="REMOVE" ui:field="filterDeleteIcon" iconSize="LARGE"/>
     </g:HorizontalPanel>
-    <b:Button ui:field="addFilterButton" type="LINK">New Filter</b:Button>
+    <b:Button ui:field="addFilterButton" type="LINK">Add New</b:Button>
   </g:FlowPanel>
 </ui:UiBinder>

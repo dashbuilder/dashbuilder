@@ -29,6 +29,7 @@ public class DataSetConstraints<T> {
     protected List<ColumnType[]> columnTypeList = new ArrayList<ColumnType[]>();
     protected int minColumns = -1;
     protected int maxColumns = -1;
+    protected boolean extraColumnsAllowed = false;
 
     public ColumnType[] getColumnTypes() {
         if (columnTypeList.isEmpty()) return null;
@@ -72,6 +73,15 @@ public class DataSetConstraints<T> {
             _checkSizes(minColumns, maxColumns, types);
         }
         this.minColumns = minColumns;
+        return (T) this;
+    }
+
+    public boolean areExtraColumnsAllowed() {
+        return extraColumnsAllowed;
+    }
+
+    public T setExtraColumnsAllowed(boolean extraColumnsAllowed) {
+        this.extraColumnsAllowed = extraColumnsAllowed;
         return (T) this;
     }
 

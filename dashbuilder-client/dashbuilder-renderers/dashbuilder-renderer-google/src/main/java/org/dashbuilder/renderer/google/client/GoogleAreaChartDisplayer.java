@@ -50,6 +50,7 @@ public class GoogleAreaChartDisplayer extends GoogleXAxisChartDisplayer {
                 .setMaxGroups(1)
                 .setMinColumns(2)
                 .setMaxColumns(10)
+                .setExtraColumnsAllowed(true)
                 .setGroupsTitle("Categories")
                 .setColumnsTitle("Series")
                 .setColumnTypes(new ColumnType[] {

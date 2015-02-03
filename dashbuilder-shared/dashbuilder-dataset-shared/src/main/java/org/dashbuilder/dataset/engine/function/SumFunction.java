@@ -34,10 +34,6 @@ public class SumFunction extends AbstractFunction {
         return AggregateFunctionType.SUM;
     }
 
-    public boolean supportType(ColumnType type) {
-        return type != null && type.equals(ColumnType.NUMBER);
-    }
-
     public double aggregate(List values) {
         if (values == null || values.isEmpty()) return 0;
 

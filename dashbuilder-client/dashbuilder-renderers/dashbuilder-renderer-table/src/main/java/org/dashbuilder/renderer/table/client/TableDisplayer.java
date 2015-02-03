@@ -165,6 +165,7 @@ public class TableDisplayer extends AbstractDisplayer {
                 .setGroupRequired(false)
                 .setMaxColumns(-1)
                 .setMinColumns(1)
+                .setExtraColumnsAllowed(true)
                 .setGroupsTitle("Rows")
                 .setColumnsTitle("Columns");
 

@@ -13,20 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbuilder.displayer.client.widgets;
+package org.dashbuilder.displayer.client.widgets.filter;
 
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
 import javax.enterprise.context.Dependent;
 
 import com.github.gwtbootstrap.client.ui.Button;
-import com.github.gwtbootstrap.client.ui.CheckBox;
 import com.github.gwtbootstrap.client.ui.Icon;
 import com.github.gwtbootstrap.client.ui.ListBox;
-import com.github.gwtbootstrap.client.ui.TextBox;
-import com.github.gwtbootstrap.client.ui.constants.ButtonType;
-import com.github.gwtbootstrap.client.ui.resources.ButtonSize;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -36,24 +29,14 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Panel;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.DataSetMetadata;
-import org.dashbuilder.dataset.client.resources.i18n.DateIntervalTypeConstants;
-import org.dashbuilder.dataset.client.resources.i18n.DayOfWeekConstants;
-import org.dashbuilder.dataset.client.resources.i18n.MonthConstants;
-import org.dashbuilder.dataset.date.DayOfWeek;
-import org.dashbuilder.dataset.date.Month;
 import org.dashbuilder.dataset.filter.ColumnFilter;
 import org.dashbuilder.dataset.filter.CoreFunctionFilter;
 import org.dashbuilder.dataset.filter.CoreFunctionType;
 import org.dashbuilder.dataset.filter.DataSetFilter;
 import org.dashbuilder.dataset.filter.FilterFactory;
-import org.dashbuilder.dataset.group.ColumnGroup;
-import org.dashbuilder.dataset.group.DateIntervalType;
-import org.dashbuilder.dataset.group.GroupStrategy;
-import org.dashbuilder.displayer.client.widgets.filter.ColumnFilterEditor;
 
 @Dependent
 public class DataSetFilterEditor extends Composite implements ColumnFilterEditor.Listener {

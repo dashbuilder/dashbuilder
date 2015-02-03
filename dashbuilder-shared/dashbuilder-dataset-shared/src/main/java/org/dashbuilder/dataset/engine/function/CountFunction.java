@@ -33,10 +33,6 @@ public class CountFunction extends AbstractFunction {
         return AggregateFunctionType.COUNT;
     }
 
-    public boolean supportType(ColumnType type) {
-        return true;
-    }
-
     public double aggregate(List values) {
         if (values == null || values.isEmpty()) return 0;
         return values.size();

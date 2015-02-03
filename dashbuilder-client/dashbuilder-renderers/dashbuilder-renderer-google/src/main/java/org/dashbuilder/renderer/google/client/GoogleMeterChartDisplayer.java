@@ -63,6 +63,7 @@ public class GoogleMeterChartDisplayer extends GoogleDisplayer {
                 .setGroupColumn(true)
                 .setMaxColumns(2)
                 .setMinColumns(1)
+                .setExtraColumnsAllowed(false)
                 .setGroupsTitle("Categories")
                 .setColumnsTitle("Value")
                 .setFunctionRequired(true)

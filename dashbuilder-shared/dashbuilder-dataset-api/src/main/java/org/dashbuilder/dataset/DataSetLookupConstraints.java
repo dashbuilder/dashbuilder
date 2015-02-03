@@ -38,7 +38,7 @@ public class DataSetLookupConstraints extends DataSetConstraints<DataSetLookupCo
     protected boolean groupRequired = false;
     protected int maxGroups = -1;
     protected String groupsTitle = "Rows";
-    protected String columnsTitle = "Column";
+    protected String columnsTitle = "Columns";
     protected boolean groupColumn = false;
     protected boolean functionRequired = false;
     protected Map<Integer,String> columnTitleMap = new HashMap<Integer,String>();

@@ -29,5 +29,4 @@ public interface AggregateFunction {
     AggregateFunctionType getType();
     double aggregate(List values);
     double aggregate(List values, List<Integer> rows);
-    boolean supportType(ColumnType type);
 }

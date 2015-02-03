@@ -66,7 +66,8 @@ public class GoogleLineChartDisplayer extends GoogleXAxisChartDisplayer {
                 .setGroupColumn(true)
                 .setMaxGroups(1)
                 .setMinColumns(2)
-                .setMaxColumns(-1)
+                .setMaxColumns(10)
+                .setExtraColumnsAllowed(true)
                 .setGroupsTitle("Categories")
                 .setColumnsTitle("Series")
                 .setColumnTypes(new ColumnType[] {

@@ -34,10 +34,6 @@ public class MinFunction extends AbstractFunction {
         return AggregateFunctionType.MIN;
     }
 
-    public boolean supportType(ColumnType type) {
-        return type != null && type.equals(ColumnType.NUMBER);
-    }
-
     public double aggregate(List values) {
         if (values == null || values.isEmpty()) return 0;
 

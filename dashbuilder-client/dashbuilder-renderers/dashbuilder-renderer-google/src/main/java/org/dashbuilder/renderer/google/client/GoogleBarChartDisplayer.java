@@ -75,6 +75,7 @@ public class GoogleBarChartDisplayer extends GoogleXAxisChartDisplayer {
                 .setGroupColumn(true)
                 .setMaxColumns(10)
                 .setMinColumns(2)
+                .setExtraColumnsAllowed(true)
                 .setGroupsTitle("Categories")
                 .setColumnsTitle("Series")
                 .setColumnTypes(new ColumnType[]{

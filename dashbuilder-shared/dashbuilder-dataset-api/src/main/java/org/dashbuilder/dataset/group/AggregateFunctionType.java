@@ -15,6 +15,10 @@
  */
 package org.dashbuilder.dataset.group;
 
+import java.util.Arrays;
+import java.util.List;
+
+import org.dashbuilder.dataset.ColumnType;
 import org.jboss.errai.common.client.api.annotations.Portable;
 
 /**
@@ -30,6 +34,7 @@ public enum AggregateFunctionType {
     MAX;
 
     private static AggregateFunctionType[] _typeArray = values();
+    private static List<AggregateFunctionType> _numericOnly = Arrays.asList(AVERAGE, SUM, MAX, MIN);
 
     public int getIndex() {
         for (int i = 0; i < _typeArray.length; i++) {
@@ -37,6 +42,13 @@ public enum AggregateFunctionType {
             if (this.equals(type)) return i;
         }
         return -1;
+    }
+
+    public boolean supportType(ColumnType type) {
+        if (_numericOnly.contains(this)) {
+            return type != null && type.equals(ColumnType.NUMBER);
+        }
+        return true;
     }
 
     public static AggregateFunctionType getByIndex(int index) {
