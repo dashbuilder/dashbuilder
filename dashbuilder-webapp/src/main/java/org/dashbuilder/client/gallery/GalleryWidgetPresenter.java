@@ -24,6 +24,7 @@ import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.client.expenses.ExpenseConstants;
 import org.dashbuilder.client.expenses.ExpensesDashboard;
+import org.dashbuilder.client.metrics.MetricsDashboard;
 import org.dashbuilder.client.sales.widgets.SalesDistributionByCountry;
 import org.dashbuilder.client.sales.widgets.SalesExpectedByDate;
 import org.dashbuilder.client.sales.widgets.SalesGoals;
@@ -54,6 +55,7 @@ public class GalleryWidgetPresenter {
     private SalesDistributionByCountry salesByCountryWidget;
     private SalesTableReports salesReportsWidget;
     private ExpensesDashboard expensesDashboardWidget;
+    private MetricsDashboard metricsDashboard;
 
     @Inject
     private Event<NotificationEvent> workbenchNotification;
@@ -94,6 +96,10 @@ public class GalleryWidgetPresenter {
         if ("expenseReports".equals(widgetId)) {
             if (expensesDashboardWidget == null) expensesDashboardWidget = new ExpensesDashboard();
             return expensesDashboardWidget;
+        }
+        if ("metrics".equals(widgetId)) {
+            if (metricsDashboard == null) metricsDashboard = new MetricsDashboard();
+            return metricsDashboard;
         }
         throw new IllegalArgumentException("Unknown gallery widget: " + widgetId);
     }
