@@ -29,7 +29,8 @@ public class ClusterMetricsDataSetGenerator implements DataSetGenerator {
 
     public static final String COLUMN_SERVER = "server";
     public static final String COLUMN_TIMESTAMP = "timestamp";
-    public static final String COLUMN_CPU = "cpu";
+    public static final String COLUMN_CPU0 = "cpu0";
+    public static final String COLUMN_CPU1 = "cpu1";
     public static final String COLUMN_MEMORY_FREE = "mem_free";
     public static final String COLUMN_MEMORY_USED = "mem_used";
     public static final String COLUMN_NETWORK_TX = "tx";
@@ -49,7 +50,8 @@ public class ClusterMetricsDataSetGenerator implements DataSetGenerator {
         dataSet = DataSetFactory.newDataSetBuilder()
                 .column(COLUMN_SERVER, "Server", ColumnType.LABEL)
                 .column(COLUMN_TIMESTAMP, "Time", ColumnType.DATE)
-                .column(COLUMN_CPU, "CPU %", ColumnType.NUMBER)
+                .column(COLUMN_CPU0, "CPU0 %", ColumnType.NUMBER)
+                .column(COLUMN_CPU1, "CPU1 %", ColumnType.NUMBER)
                 .column(COLUMN_MEMORY_FREE, "Mem (Gb)", ColumnType.NUMBER)
                 .column(COLUMN_MEMORY_USED, "Mem (Gb)", ColumnType.NUMBER)
                 .column(COLUMN_NETWORK_TX, "Upstream (Kbps)", ColumnType.NUMBER)
@@ -94,20 +96,22 @@ public class ClusterMetricsDataSetGenerator implements DataSetGenerator {
         if (last == -1) last = now-timeFrameMillis;
         DataSet newDataSet = dataSet.cloneEmpty();
         long seconds = diff / 1000;
-        Integer lastCpu = (dataSet.getRowCount() > 0 ? ((Double) dataSet.getValueAt(0, 2)).intValue() : null);
-        Integer lastFreeMem = (dataSet.getRowCount() > 0 ? ((Double) dataSet.getValueAt(0, 3)).intValue() : null);
-        Integer lastUsedMem = (dataSet.getRowCount() > 0 ? ((Double) dataSet.getValueAt(0, 4)).intValue() : null);
-        Integer lastTx = (dataSet.getRowCount() > 0 ? ((Double) dataSet.getValueAt(0, 5)).intValue() : null);
-        Integer lastRx = (dataSet.getRowCount() > 0 ? ((Double) dataSet.getValueAt(0, 6)).intValue() : null);
-        Integer lastRunningProc = (dataSet.getRowCount() > 0 ? ((Double) dataSet.getValueAt(0, 7)).intValue() : null);
-        Integer lastSleepingProc = (dataSet.getRowCount() > 0 ? ((Double) dataSet.getValueAt(0, 8)).intValue() : null);
-        Integer lastFreeDisk = (dataSet.getRowCount() > 0 ? ((Double) dataSet.getValueAt(0, 9)).intValue() : null);
-        Integer lastUsedDisk = (dataSet.getRowCount() > 0 ? ((Double) dataSet.getValueAt(0, 10)).intValue() : null);
+        Integer lastCpu0 = (dataSet.getRowCount() > 0 ? ((Double) dataSet.getValueAt(0, 2)).intValue() : null);
+        Integer lastCpu1 = (dataSet.getRowCount() > 0 ? ((Double) dataSet.getValueAt(0, 3)).intValue() : null);
+        Integer lastFreeMem = (dataSet.getRowCount() > 0 ? ((Double) dataSet.getValueAt(0, 4)).intValue() : null);
+        Integer lastUsedMem = (dataSet.getRowCount() > 0 ? ((Double) dataSet.getValueAt(0, 5)).intValue() : null);
+        Integer lastTx = (dataSet.getRowCount() > 0 ? ((Double) dataSet.getValueAt(0, 6)).intValue() : null);
+        Integer lastRx = (dataSet.getRowCount() > 0 ? ((Double) dataSet.getValueAt(0, 7)).intValue() : null);
+        Integer lastRunningProc = (dataSet.getRowCount() > 0 ? ((Double) dataSet.getValueAt(0, 8)).intValue() : null);
+        Integer lastSleepingProc = (dataSet.getRowCount() > 0 ? ((Double) dataSet.getValueAt(0, 9)).intValue() : null);
+        Integer lastFreeDisk = (dataSet.getRowCount() > 0 ? ((Double) dataSet.getValueAt(0, 10)).intValue() : null);
+        Integer lastUsedDisk = (dataSet.getRowCount() > 0 ? ((Double) dataSet.getValueAt(0, 11)).intValue() : null);
         for (long i = 1; i <=seconds; i++) {
             long metricTime = last + i*1000;
             for (int j = 0; j < aliveNodes.size(); j++) {
                 String node = aliveNodes.get(j);
-                newDataSet.addValuesAt(0, node, new Date(metricTime), cpu(node, lastCpu),  
+                newDataSet.addValuesAt(0, node, new Date(metricTime), 
+                        cpu(node, lastCpu0), cpu(node, lastCpu1),  
                         mem(node, lastFreeMem), mem(node, lastUsedMem), 
                         net(node, lastTx), net(node, lastRx),
                         proc(node, lastRunningProc), proc(node, lastSleepingProc),
@@ -131,7 +135,8 @@ public class ClusterMetricsDataSetGenerator implements DataSetGenerator {
                         dataSet.getValueAt(i, 7),
                         dataSet.getValueAt(i, 8),
                         dataSet.getValueAt(i, 9),
-                        dataSet.getValueAt(i, 10));
+                        dataSet.getValueAt(i, 10),
+                        dataSet.getValueAt(i, 11));
             } else {
                 outOfBounds = true;
             }
