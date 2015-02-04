@@ -154,16 +154,16 @@ public class ClusterMetricsDataSetGenerator implements DataSetGenerator {
             if (last == null) {
                 return 3000 + 1000 * r;
             } else {
-                double v = last + 1000 * r;
+                double v = last + 100 * r;
                 if (v > 4000) return 4000d;
                 if (v < 3000) return 3000d;
                 return v;
             }
         }
         if (last == null) {
-            return 2000 + 1000 * r;
+            return 1000 + 100 * r;
         } else {
-            double v = last + 1000 * r;
+            double v = (last < 3500) ? last + 100  * r : last - 100  * r; 
             if (v > 4000) return 4000d;
             if (v < 0) return 0d;
             return v;
@@ -178,18 +178,18 @@ public class ClusterMetricsDataSetGenerator implements DataSetGenerator {
         double r = Math.random();
         if (overloadedNodes.contains(node)) {
             if (last == null) {
-                return 1024 + 500 * r;
+                return 1024 + 100 * r;
             } else {
-                double v = last + 500 * r;
+                double v = last + 100 * r;
                 if (v > 1500) return 1500d;
                 if (v < 0) return 0d;
                 return v;
             }
         }
         if (last == null) {
-            return 280 + 500 * r;
+            return 280 + 100 * r;
         } else {
-            double v = last + 500 * r;
+            double v = last + 10 * r;
             if (v > 1500) return 1500d;
             if (v < 0) return 0d;
             return v;
@@ -204,18 +204,18 @@ public class ClusterMetricsDataSetGenerator implements DataSetGenerator {
         double r = Math.random();
         if (overloadedNodes.contains(node)) {
             if (last == null) {
-                return 3000 + 1000 * r;
+                return 3000 + 100 * r;
             } else {
-                double v = last + 1000 * r;
+                double v = last + 100 * r;
                 if (v > 4000) return 4000d;
                 if (v < 3000) return 3000d;
                 return v;
             }
         }
         if (last == null) {
-            return 1500 + 20 * r;
+            return 1000 + 10 * r;
         } else {
-            double v = last + 500 * r;
+            double v = last + 10 * r;
             if (v > 4000) return 40000d;
             if (v < 0) return 0d;
             return v;
@@ -256,18 +256,18 @@ public class ClusterMetricsDataSetGenerator implements DataSetGenerator {
         double r = Math.random();
         if (overloadedNodes.contains(node)) {
             if (last == null) {
-                return 3 + 1 * r;
+                return 3 + 0.5 * r;
             } else {
-                double v = last + 1 * r;
+                double v = last + 0.5 * r;
                 if (v > 4) return 4d;
                 if (v < 0) return 0d;
                 return v;
             }
         }
         if (last == null) {
-            return 1.5 + 2 * r;
+            return 1 + 1 * r;
         } else {
-            double v = last + 2 * r;
+            double v = (last < 3.5) ? last + 1.5 * r : last - 1.5 * r;
             if (v > 4) return 4d;
             if (v < 0) return 0d;
             return v;
