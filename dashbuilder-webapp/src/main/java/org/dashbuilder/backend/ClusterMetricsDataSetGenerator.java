@@ -15,19 +15,11 @@
  */
 package org.dashbuilder.backend;
 
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Map;
-
 import org.apache.commons.lang.StringUtils;
-import org.dashbuilder.dataset.ColumnType;
-import org.dashbuilder.dataset.DataSet;
-import org.dashbuilder.dataset.DataSetFactory;
-import org.dashbuilder.dataset.DataSetGenerator;
+import org.dashbuilder.dataset.*;
 import org.dashbuilder.dataset.group.TimeFrame;
+
+import java.util.*;
 
 /**
  * Generates performance metrics on a mock cluster.
@@ -35,6 +27,19 @@ import org.dashbuilder.dataset.group.TimeFrame;
  */
 public class ClusterMetricsDataSetGenerator implements DataSetGenerator {
 
+    public static final String COLUMN_SERVER = "server";
+    public static final String COLUMN_TIMESTAMP = "timestamp";
+    public static final String COLUMN_CPU = "cpu";
+    public static final String COLUMN_MEMORY_FREE = "mem_free";
+    public static final String COLUMN_MEMORY_USED = "mem_used";
+    public static final String COLUMN_NETWORK_TX = "tx";
+    public static final String COLUMN_NETWORK_RX = "rx";
+    public static final String COLUMN_PROCESSES_RUNNING = "p_running";
+    public static final String COLUMN_PROCESSES_SLEEPING  = "p_sleeping";
+    public static final String COLUMN_DISK_FREE = "disk_free";
+    public static final String COLUMN_DISK_USED = "disk_used";
+    
+    
     DataSet dataSet = null;
     long timeFrameMillis = 100000;
     List<String> aliveNodes = new ArrayList<String>();
@@ -42,10 +47,17 @@ public class ClusterMetricsDataSetGenerator implements DataSetGenerator {
 
     public ClusterMetricsDataSetGenerator() {
         dataSet = DataSetFactory.newDataSetBuilder()
-                .column("server", "Server", ColumnType.LABEL)
-                .column("time", "Time", ColumnType.DATE)
-                .column("cpu", "CPU %", ColumnType.NUMBER)
-                .column("mem", "Mem (Gb)", ColumnType.NUMBER)
+                .column(COLUMN_SERVER, "Server", ColumnType.LABEL)
+                .column(COLUMN_TIMESTAMP, "Time", ColumnType.DATE)
+                .column(COLUMN_CPU, "CPU %", ColumnType.NUMBER)
+                .column(COLUMN_MEMORY_FREE, "Mem (Gb)", ColumnType.NUMBER)
+                .column(COLUMN_MEMORY_USED, "Mem (Gb)", ColumnType.NUMBER)
+                .column(COLUMN_NETWORK_TX, "Upstream (Kbps)", ColumnType.NUMBER)
+                .column(COLUMN_NETWORK_RX, "Downstream (Kbps)", ColumnType.NUMBER)
+                .column(COLUMN_PROCESSES_RUNNING, "Running processes", ColumnType.NUMBER)
+                .column(COLUMN_PROCESSES_SLEEPING, "Sleeping processes", ColumnType.NUMBER)
+                .column(COLUMN_DISK_FREE, "Free disk space (Gb)", ColumnType.NUMBER)
+                .column(COLUMN_DISK_USED, "Used disk space (Gb)", ColumnType.NUMBER)
                 .buildDataSet();
     }
 
@@ -83,12 +95,23 @@ public class ClusterMetricsDataSetGenerator implements DataSetGenerator {
         DataSet newDataSet = dataSet.cloneEmpty();
         long seconds = diff / 1000;
         Integer lastCpu = (dataSet.getRowCount() > 0 ? ((Double) dataSet.getValueAt(0, 2)).intValue() : null);
-        Integer lastMem = (dataSet.getRowCount() > 0 ? ((Double) dataSet.getValueAt(0, 3)).intValue() : null);
+        Integer lastFreeMem = (dataSet.getRowCount() > 0 ? ((Double) dataSet.getValueAt(0, 3)).intValue() : null);
+        Integer lastUsedMem = (dataSet.getRowCount() > 0 ? ((Double) dataSet.getValueAt(0, 4)).intValue() : null);
+        Integer lastTx = (dataSet.getRowCount() > 0 ? ((Double) dataSet.getValueAt(0, 5)).intValue() : null);
+        Integer lastRx = (dataSet.getRowCount() > 0 ? ((Double) dataSet.getValueAt(0, 6)).intValue() : null);
+        Integer lastRunningProc = (dataSet.getRowCount() > 0 ? ((Double) dataSet.getValueAt(0, 7)).intValue() : null);
+        Integer lastSleepingProc = (dataSet.getRowCount() > 0 ? ((Double) dataSet.getValueAt(0, 8)).intValue() : null);
+        Integer lastFreeDisk = (dataSet.getRowCount() > 0 ? ((Double) dataSet.getValueAt(0, 9)).intValue() : null);
+        Integer lastUsedDisk = (dataSet.getRowCount() > 0 ? ((Double) dataSet.getValueAt(0, 10)).intValue() : null);
         for (long i = 1; i <=seconds; i++) {
             long metricTime = last + i*1000;
             for (int j = 0; j < aliveNodes.size(); j++) {
                 String node = aliveNodes.get(j);
-                newDataSet.addValuesAt(0, node, new Date(metricTime), cpu(node, lastCpu), mem(node, lastMem));
+                newDataSet.addValuesAt(0, node, new Date(metricTime), cpu(node, lastCpu),  
+                        mem(node, lastFreeMem), mem(node, lastUsedMem), 
+                        net(node, lastTx), net(node, lastRx),
+                        proc(node, lastRunningProc), proc(node, lastSleepingProc),
+                        disk(node, lastFreeDisk), disk(node, lastUsedDisk));
             }
         }
         // Add the remain metric history
@@ -101,7 +124,14 @@ public class ClusterMetricsDataSetGenerator implements DataSetGenerator {
                         dataSet.getValueAt(i, 0),
                         dataSet.getValueAt(i, 1),
                         dataSet.getValueAt(i, 2),
-                        dataSet.getValueAt(i, 3));
+                        dataSet.getValueAt(i, 3),
+                        dataSet.getValueAt(i, 4),
+                        dataSet.getValueAt(i, 5),
+                        dataSet.getValueAt(i, 6),
+                        dataSet.getValueAt(i, 7),
+                        dataSet.getValueAt(i, 8),
+                        dataSet.getValueAt(i, 9),
+                        dataSet.getValueAt(i, 10));
             } else {
                 outOfBounds = true;
             }
@@ -109,6 +139,88 @@ public class ClusterMetricsDataSetGenerator implements DataSetGenerator {
         return dataSet = newDataSet;
     }
 
+    /**
+     * Network (kbps)
+     * Overloaded values : from 3000 kbps (3,75 MB/s) to 4000 kbps (5,00 MB/s)
+     */
+    public Double net(String node, Integer last) {
+        double r = Math.random();
+        if (overloadedNodes.contains(node)) {
+            if (last == null) {
+                return 3000 + 1000 * r;
+            } else {
+                double v = last + 1000 * r;
+                if (v > 4000) return 4000d;
+                if (v < 3000) return 3000d;
+                return v;
+            }
+        }
+        if (last == null) {
+            return 2000 + 1000 * r;
+        } else {
+            double v = last + 1000 * r;
+            if (v > 4000) return 4000d;
+            if (v < 0) return 0d;
+            return v;
+        }
+    }
+
+    /**
+     * Processes (count)
+     * Overloaded values : from 1024 to 1500
+     */
+    public Double proc(String node, Integer last) {
+        double r = Math.random();
+        if (overloadedNodes.contains(node)) {
+            if (last == null) {
+                return 1024 + 500 * r;
+            } else {
+                double v = last + 500 * r;
+                if (v > 1500) return 1500d;
+                if (v < 0) return 0d;
+                return v;
+            }
+        }
+        if (last == null) {
+            return 280 + 500 * r;
+        } else {
+            double v = last + 500 * r;
+            if (v > 1500) return 1500d;
+            if (v < 0) return 0d;
+            return v;
+        }
+    }
+
+    /**
+     * Disk space (Gb) 
+     * Overloaded values : from 3000Gb (3Tb) to 4000Gb (4Tb) 
+     */
+    public Double disk(String node, Integer last) {
+        double r = Math.random();
+        if (overloadedNodes.contains(node)) {
+            if (last == null) {
+                return 3000 + 1000 * r;
+            } else {
+                double v = last + 1000 * r;
+                if (v > 4000) return 4000d;
+                if (v < 3000) return 3000d;
+                return v;
+            }
+        }
+        if (last == null) {
+            return 1500 + 20 * r;
+        } else {
+            double v = last + 500 * r;
+            if (v > 4000) return 40000d;
+            if (v < 0) return 0d;
+            return v;
+        }
+    }
+
+    /**
+     * CPU (%) 
+     * Overloaded values : from 90% to 100% 
+     */
     public Double cpu(String node, Integer last) {
         double r = Math.random() - 0.5;
         if (overloadedNodes.contains(node)) {
@@ -131,23 +243,27 @@ public class ClusterMetricsDataSetGenerator implements DataSetGenerator {
         }
     }
 
+    /**
+     * Memory (Gb) 
+     * Overloaded values : from 3Gb to 4Gb 
+     */
     public Double mem(String node, Integer last) {
-        double r = Math.random() - 0.5;
+        double r = Math.random();
         if (overloadedNodes.contains(node)) {
             if (last == null) {
-                return 50 + 10 * r;
+                return 3 + 1 * r;
             } else {
-                double v = last + 10 * r;
-                if (v > 64) return 64d;
-                if (v < 50) return 50d;
+                double v = last + 1 * r;
+                if (v > 4) return 4d;
+                if (v < 0) return 0d;
                 return v;
             }
         }
         if (last == null) {
-            return 4 + 20 * r;
+            return 1.5 + 2 * r;
         } else {
-            double v = last + 10 * r;
-            if (v > 64) return 64d;
+            double v = last + 2 * r;
+            if (v > 4) return 4d;
             if (v < 0) return 0d;
             return v;
         }
@@ -158,9 +274,50 @@ public class ClusterMetricsDataSetGenerator implements DataSetGenerator {
         Map<String,String> params = new HashMap<String, String>();
         params.put("aliveNodes", "server1");
         params.put("timeFrame", "10second");
-        DataSet dataSet = g.buildDataSet(params);
-        Thread.sleep(3000);
-        dataSet = g.buildDataSet(params);
-        Thread.sleep(1000);
+        System.out.println("************* Single node not overloaded *******************************");
+        for (int i = 0; i < 5; i++) {
+            DataSet dataSet = g.buildDataSet(params);
+            printDataSet(dataSet);
+            Thread.sleep(1000);
+        }
+
+        System.out.println("************* Two nodes and the second one overloaded *******************************");
+        g = new ClusterMetricsDataSetGenerator();
+        params = new HashMap<String, String>();
+        params.put("aliveNodes", "server1,server2");
+        params.put("overloadedNodes", "server2");
+        params.put("timeFrame", "10second");
+        for (int i = 0; i < 5; i++) {
+            DataSet dataSet = g.buildDataSet(params);
+            printDataSet(dataSet);
+            Thread.sleep(1000);
+        }
+    }
+
+    /**
+     * Helper method to print to standard output the dataset values.
+     */
+    protected static void printDataSet(DataSet dataSet) {
+        final String SPACER = "| \t |";
+
+        if (dataSet == null) System.out.println("DataSet is null");
+        if (dataSet.getRowCount() == 0) System.out.println("DataSet is empty");
+
+        List<DataColumn> dataSetColumns = dataSet.getColumns();
+        int colColunt = dataSetColumns.size();
+        int rowCount = dataSet.getRowCount();
+
+        System.out.println("********************************************************************************************************************************************************");
+        for (int row = 0; row < rowCount; row++) {
+            System.out.print(SPACER);
+            for (int col= 0; col< colColunt; col++) {
+                Object value = dataSet.getValueAt(row, col);
+                String colId = dataSet.getColumnByIndex(col).getId();
+                System.out.print(colId + ": " +  value);
+                System.out.print(SPACER);
+            }
+            System.out.println("");
+        }
+        System.out.println("********************************************************************************************************************************************************");
     }
 }
