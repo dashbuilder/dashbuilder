@@ -60,7 +60,7 @@ public class MetricsDashboard extends Composite {
                         .column(VALUE, MAX, "Max")
                         .title("Used memory")
                         .width(400).height(250)
-                        .refreshOn(1)
+                        .refreshOn(1, false)
                         .buildSettings());
 
         // Make that charts interact among them
@@ -89,7 +89,7 @@ public class MetricsDashboard extends Composite {
                         .sort(TIMESTAMP, SortOrder.DESCENDING)
                         .title("Used memory")
                         .width(400).height(250)
-                        .refreshOn(1)
+                        .refreshOn(1, false)
                         .buildSettings());
     }
 

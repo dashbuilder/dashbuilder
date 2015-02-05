@@ -55,6 +55,8 @@ public interface DisplayerSettingsEditorConstants extends ConstantsWithLookup {
 
     String refresh_interval();
 
+    String refresh_stale_data();
+
     String chart_width();
 
     String chart_height();

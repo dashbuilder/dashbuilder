@@ -50,6 +50,7 @@ public class DisplayerSettings {
         settings.put( getSettingPath( DisplayerAttributeDef.FILTER_SELFAPPLY_ENABLED ), _false );
         settings.put( getSettingPath( DisplayerAttributeDef.FILTER_NOTIFICATION_ENABLED ), _false );
         settings.put( getSettingPath( DisplayerAttributeDef.FILTER_LISTENING_ENABLED ), _false );
+        settings.put( getSettingPath( DisplayerAttributeDef.REFRESH_STALE_DATA), _false );
         settings.put( getSettingPath( DisplayerAttributeDef.CHART_WIDTH ), "600" );
         settings.put( getSettingPath( DisplayerAttributeDef.CHART_HEIGHT ), "300" );
         settings.put( getSettingPath( DisplayerAttributeDef.CHART_MARGIN_TOP ), "20" );
@@ -198,6 +199,14 @@ public class DisplayerSettings {
 
     public void setRefreshInterval( int refreshInSeconds ) {
         settings.put( getSettingPath( DisplayerAttributeDef.REFRESH_INTERVAL ), Integer.toString( refreshInSeconds ) );
+    }
+
+    public boolean isRefreshStaleData() {
+        return parseBoolean(settings.get(getSettingPath(DisplayerAttributeDef.REFRESH_STALE_DATA)));
+    }
+
+    public void setRefreshStaleData( boolean refresh) {
+        settings.put( getSettingPath( DisplayerAttributeDef.REFRESH_STALE_DATA ), Boolean.toString( refresh ) );
     }
 
     public boolean isFilterEnabled() {

@@ -68,8 +68,15 @@ public abstract class AbstractDisplayerSettingsBuilder<T> extends AbstractDataSe
         return (T) this;
     }
 
-    public T refreshOn(int seconds) {
+    public T refreshOn() {
+        displayerSettings.setRefreshInterval(-1);
+        displayerSettings.setRefreshStaleData(true);
+        return (T) this;
+    }
+
+    public T refreshOn(int seconds, boolean staleData) {
         displayerSettings.setRefreshInterval(seconds);
+        displayerSettings.setRefreshStaleData(staleData);
         return (T) this;
     }
 

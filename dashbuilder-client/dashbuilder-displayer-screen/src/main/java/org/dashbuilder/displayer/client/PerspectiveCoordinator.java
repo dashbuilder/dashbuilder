@@ -101,14 +101,14 @@ public class PerspectiveCoordinator {
 
         String targetUUID = event.getDataSetDef().getUUID();
         for (Displayer displayer : coordinator.getDisplayerList()) {
+            DisplayerSettings settings = displayer.getDisplayerSettings();
 
             // If a displayer is handling the refresh by itself then do nothing.
-            if (displayer.isRefreshOn()) {
+            if (!settings.isRefreshStaleData() || displayer.isRefreshOn()) {
                 continue;
             }
 
             String uuid = null;
-            DisplayerSettings settings = displayer.getDisplayerSettings();
             DataSet dataSet = settings.getDataSet();
             if (dataSet != null) {
                 uuid = dataSet.getUUID();
