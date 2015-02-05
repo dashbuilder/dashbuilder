@@ -97,6 +97,9 @@ public class MetricsDashboard extends Composite {
     FocusPanel serverIconArea1;
 
     @UiField()
+    FocusPanel serverIconArea2;
+    
+    @UiField()
     HorizontalPanel summaryArea;
 
     @UiField()

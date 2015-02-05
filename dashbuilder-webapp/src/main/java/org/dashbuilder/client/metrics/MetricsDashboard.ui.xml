@@ -12,95 +12,105 @@
       height: 800px;
       background-color: #ffffff;
     }
+
     .dashboard_title_area {
       width: 800px;
-      font-weight: bold; 
-      font-size: medium; 
+      font-weight: bold;
+      font-size: medium;
     }
-    .server_icon_Panel {
-      margin-top: 100px;
+
+    .server_icons_area {
+      margin-top: 75px;
       width: 150px;
     }
-    .server_icon_area { 
+
+    .server_icon_area {
       width: 150px;
       height: 100px;
-      border: 1px darkgrey;
+      /*border: 1px solid;*/
     }
+    
+    .server_icon_area_selected {
+      background-color: whitesmoke;
+    }
+
+    .server_icon {
+      width: 50px;
+      height: 50px;
+    }
+
     .server_details_area {
-      background-color: darkgrey;
+      
     }
+
     .server_cpu_area {
       width: 200px;
       height: 600px;
-      font-weight: bold;
-      background-color: ghostwhite;
       margin-right: 25px;
     }
+
     .server_memory_area {
       width: 600px;
       height: 300px;
-      font-weight: bold;
-      background-color: ghostwhite;
     }
+
     .server_network_area {
       width: 600px;
       height: 300px;
-      font-weight: bold;
-      background-color: ghostwhite;
       margin-top: 10px;
     }
+
     .server_disk_area {
       width: 200px;
       height: 300px;
-      font-weight: bold;
-      background-color: ghostwhite;
       margin-left: 25px;
     }
-    .server_processes_area  {
+
+    .server_processes_area {
       width: 200px;
       height: 300px;
-      font-weight: bold;
-      background-color: ghostwhite;
       margin-left: 25px;
       margin-top: 10px;
     }
 
-
-    .metrics_dashboard_panel
-    {
+    .metrics_dashboard_panel {
       border-radius: 5px 5px 5px 5px;
       margin: 10px;
-      position:relative;
-      -webkit-box-shadow:0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset;
-      -moz-box-shadow:0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset;
-      box-shadow:0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset;
+      padding: 10px;
+      font-weight: bold;
+      background-color: ghostwhite;
+      position: relative;
+      -webkit-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset;
+      -moz-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset;
     }
-    .metrics_dashboard_panel:before, .metrics_dashboard_panel:after
-    {
-      content:"";
-      position:absolute;
-      z-index:-1;
-      -webkit-box-shadow:0 0 20px rgba(0,0,0,0.8);
-      -moz-box-shadow:0 0 20px rgba(0,0,0,0.8);
-      box-shadow:0 0 20px rgba(0,0,0,0.8);
-      top:10px;
-      bottom:10px;
-      left:0;
-      right:0;
-      -moz-border-radius:100px / 10px;
-      border-radius:100px / 10px;
+
+    .metrics_dashboard_panel:before, .metrics_dashboard_panel:after {
+      content: "";
+      position: absolute;
+      z-index: -1;
+      -webkit-box-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
+      -moz-box-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
+      top: 10px;
+      bottom: 10px;
+      left: 0;
+      right: 0;
+      -moz-border-radius: 100px / 10px;
+      border-radius: 100px / 10px;
     }
-    .metrics_dashboard_panel:after
-    {
-      right:10px;
-      left:auto;
-      -webkit-transform:skew(8deg) rotate(3deg);
-      -moz-transform:skew(8deg) rotate(3deg);
-      -ms-transform:skew(8deg) rotate(3deg);
-      -o-transform:skew(8deg) rotate(3deg);
-      transform:skew(8deg) rotate(3deg);
+
+    .metrics_dashboard_panel:after {
+      right: 10px;
+      left: auto;
+      -webkit-transform: skew(8deg) rotate(3deg);
+      -moz-transform: skew(8deg) rotate(3deg);
+      -ms-transform: skew(8deg) rotate(3deg);
+      -o-transform: skew(8deg) rotate(3deg);
+      transform: skew(8deg) rotate(3deg);
     }
-  </ui:style>
+
+    </ui:style>
   
   <g:VerticalPanel spacing="10" addStyleNames="{style.main_panel}">
     <!-- Dashboard title -->
@@ -113,12 +123,12 @@
     <g:HorizontalPanel spacing="10">
 
       <!-- Server icons left area.-->
-      <g:VerticalPanel spacing="10" ui:field="serverIconsPanel" addStyleNames="{style.server_icon_Panel}">
+      <g:VerticalPanel spacing="10" ui:field="serverIconsPanel" addStyleNames="{style.server_icons_area}">
 
-        <g:FocusPanel ui:field="serverIconArea1">
+        <g:FocusPanel ui:field="serverIconArea1" addStyleNames="{style.metrics_dashboard_panel} {style.server_icon_area} {style.server_icon_area_selected}">
           <g:VerticalPanel spacing="10" addStyleNames="{style.server_icon_area}">
             <g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
-              <g:Image resource='{resources.computerIcon}' altText="server1" title="server1"/>
+              <g:Image resource='{resources.computerIcon}' altText="server1" title="server1" addStyleNames="{style.server_icon}"/>
             </g:cell>
             <g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
               <g:HTML text="Server1"/>
@@ -126,30 +136,17 @@
           </g:VerticalPanel>
         </g:FocusPanel>
 
-        <g:VerticalPanel spacing="10" addStyleNames="{style.server_icon_area}">
-          <g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
-            <g:Image resource='{resources.computerIcon}' altText="server2" title="server2"/>
-          </g:cell>
-        </g:VerticalPanel>
+        <g:FocusPanel ui:field="serverIconArea2" addStyleNames="{style.metrics_dashboard_panel} {style.server_icon_area}">
+          <g:VerticalPanel spacing="10" addStyleNames="{style.server_icon_area}">
+            <g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
+              <g:Image resource='{resources.computerIcon}' altText="server2" title="server2" addStyleNames="{style.server_icon}"/>
+            </g:cell>
+            <g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
+              <g:HTML text="Server2"/>
+            </g:cell>
+          </g:VerticalPanel>
+        </g:FocusPanel>
 
-        <g:VerticalPanel spacing="10" addStyleNames="{style.server_icon_area}">
-          <g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
-            <g:Image resource='{resources.computerIcon}' altText="server3" title="server3"/>
-          </g:cell>
-        </g:VerticalPanel>
-
-        <g:VerticalPanel spacing="10" addStyleNames="{style.server_icon_area}">
-          <g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
-            <g:Image resource='{resources.computerIcon}' altText="server4" title="server4"/>
-          </g:cell>
-        </g:VerticalPanel>
-
-        <g:VerticalPanel spacing="10" addStyleNames="{style.server_icon_area}">
-          <g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
-            <g:Image resource='{resources.computerIcon}' altText="server5" title="server5"/>
-          </g:cell>
-        </g:VerticalPanel>
-        
       </g:VerticalPanel>
 
       <!-- Summary area. -->
