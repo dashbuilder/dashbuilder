@@ -153,7 +153,7 @@ public class DataSetLookup {
         return ops.get(0);
     }
 
-    public int getFirstGroupOpIndex(int fromIndex, String columnId, boolean onlySelections) {
+    public int getFirstGroupOpIndex(int fromIndex, String columnId, Boolean onlySelections) {
         for (int i = fromIndex; i < operationList.size(); i++) {
             DataSetOp op = operationList.get(i);
             if (DataSetOpType.GROUP.equals(op.getType())) {
@@ -162,7 +162,7 @@ public class DataSetLookup {
 
                 boolean hasSelections = groupOp.isSelect();
                 boolean matchColumn = columnId == null || (cg != null && cg.getColumnId().equals(columnId));
-                boolean matchSelections = (onlySelections && hasSelections) || (!onlySelections && !hasSelections);
+                boolean matchSelections = onlySelections == null || (onlySelections && hasSelections) || (!onlySelections && !hasSelections);
 
                 if (matchColumn && matchSelections) {
                     return i;

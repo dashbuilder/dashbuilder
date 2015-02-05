@@ -81,10 +81,11 @@ public class DataSetHandlerImpl implements DataSetHandler {
                 return false;
             }
         }
-        // The interval selection op. must be added after the latest selection.
+        // The interval selection op. must be added right before the first existing group op.
         DataSetGroup clone = op.cloneInstance();
         clone.getGroupFunctions().clear();
-        _filter(0, clone, false);
+        int idx = lookupCurrent.getFirstGroupOpIndex(0, null, null);
+        _filter(idx, clone, false);
         return true;
     }
 
