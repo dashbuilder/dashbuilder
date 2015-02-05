@@ -232,11 +232,10 @@ public class TableDisplayer extends AbstractDisplayer {
 
         List<DataColumn> dataColumns = dataSet.getColumns();
         for ( int i = 0; i < dataColumns.size(); i++ ) {
-            DataColumn dataColumn = dataColumns.get( i );
-            String columnId = dataColumn.getId();
+            DataColumn dataColumn = dataColumns.get(i);
             String columnName = dataColumn.getName();
 
-            Column<Integer, ?> column = createColumn( dataColumn.getColumnType(), columnId, i );
+            Column<Integer, ?> column = createColumn( dataColumn, i );
             if ( column != null ) {
                 column.setSortable( true );
                 pagedTable.addColumn( column, columnName );
@@ -254,7 +253,7 @@ public class TableDisplayer extends AbstractDisplayer {
         if (displayerSettings.isTableSortEnabled()) {
             pagedTable.addColumnSortHandler(new ColumnSortEvent.AsyncHandler( pagedTable ) {
                 public void onColumnSort( ColumnSortEvent event ) {
-                    lastOrderedColumn = event.getColumn().getDataStoreName();
+                    lastOrderedColumn = ((DataColumnCell) event.getColumn().getCell()).columnId;
                     lastSortOrder = event.isSortAscending() ? SortOrder.ASCENDING : SortOrder.DESCENDING;
                     redraw();
                 }
@@ -263,42 +262,22 @@ public class TableDisplayer extends AbstractDisplayer {
         return pagedTable;
     }
 
-    private Column<Integer, ?> createColumn( ColumnType columnType, String columnId, final int columnNumber ) {
+    private Column<Integer, ?> createColumn( final DataColumn column, final int columnNumber ) {
 
-        switch ( columnType ) {
-            case LABEL: return new Column<Integer, String>(
-                            new SelectableTextCell( columnId ) ) {
+        switch ( column.getColumnType() ) {
+            case LABEL: return new Column<Integer, String>(new DataColumnCell(column.getId(), true)) {
                                 public String getValue( Integer row ) {
                                     Object value = dataSet.getValueAt(row, columnNumber);
-                                    if (value == null) return "---";
-                                    return value.toString();
+                                    return TableDisplayer.this.format(value, column.getId());
                                 }
                             };
 
-            case TEXT: return new Column<Integer, String>(
-                            new TextCell() ) {
+            case TEXT:
+            case NUMBER:
+            case DATE:return new Column<Integer, String>(new DataColumnCell(column.getId(), false)) {
                                 public String getValue( Integer row ) {
                                     Object value = dataSet.getValueAt(row, columnNumber);
-                                    if (value == null) return "---";
-                                    return value.toString();
-                                }
-                            };
-
-            case NUMBER: return new Column<Integer, Number>(
-                            new NumberCell( NumberFormat.getFormat( "#.###" ) ) ) {
-                                public Number getValue( Integer row ) {
-                                    Object value = dataSet.getValueAt(row, columnNumber);
-                                    if (value == null) return 0;
-                                    return (Number) value;
-                                }
-                            };
-
-            case DATE:return new Column<Integer, Date>(
-                            new DateCell( DateTimeFormat.getFormat( DateTimeFormat.PredefinedFormat.DATE_TIME_MEDIUM ) ) ) {
-                                public Date getValue( Integer row ) {
-                                    Object value = dataSet.getValueAt(row, columnNumber);
-                                    if (value == null) return new Date();
-                                    return (Date) value;
+                                    return TableDisplayer.this.format(value, column.getId());
                                 }
                             };
         }
@@ -339,12 +318,14 @@ public class TableDisplayer extends AbstractDisplayer {
         if ( currentSelectionWidget != null ) table.getLeftToolbar().add( currentSelectionWidget );
     }
 
-    private class SelectableTextCell extends TextCell {
+    private class DataColumnCell extends TextCell {
 
         private String columnId;
+        private boolean selectable;
 
-        private SelectableTextCell( String columnId ) {
+        private DataColumnCell(String columnId, boolean selectable) {
             this.columnId = columnId;
+            this.selectable = selectable;
         }
 
         @Override
@@ -357,7 +338,7 @@ public class TableDisplayer extends AbstractDisplayer {
         @Override
         public void onBrowserEvent( Context context, Element parent, String value, NativeEvent event, ValueUpdater<String> valueUpdater ) {
 
-            if ( !displayerSettings.isFilterEnabled() ) return;
+            if ( !selectable || !displayerSettings.isFilterEnabled() ) return;
 
             filterUpdate( columnId, value );
             redrawColumnSelectionWidget();
