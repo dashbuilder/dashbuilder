@@ -58,3 +58,14 @@ composite dashboards using an straightforward API. Feature set:
 * Displayer Editor widget for the creation of displayer definitions
 * Perspective editor integration which allows the creation of dashboards by drag&drop
 
+0.3.0
+
+* SQL provider for the definition of data sets stored into external databases.
+* Elastic Search integration for the retrieval of data stored into Elastic Search nodes.
+* Support for real-time dashboards. Displayer refresh settings.
+* Displayer editor data set lookup enhancements:
+  - Filter editor for retrieving only a data subset.
+  - Time frame function for the retrieval of time series data in real-time.
+  - Different strategies for grouping time series data.
+  - Ability to add/remove the columns/series to display.
+
