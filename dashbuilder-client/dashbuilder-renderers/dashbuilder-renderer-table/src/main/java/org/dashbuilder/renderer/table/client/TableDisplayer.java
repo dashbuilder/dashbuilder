@@ -16,21 +16,16 @@
 package org.dashbuilder.renderer.table.client;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.google.gwt.cell.client.DateCell;
-import com.google.gwt.cell.client.NumberCell;
 import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.i18n.client.DateTimeFormat;
-import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.ColumnSortEvent;
 import com.google.gwt.user.client.Window;
@@ -52,7 +47,6 @@ import org.dashbuilder.displayer.DisplayerAttributeDef;
 import org.dashbuilder.displayer.DisplayerAttributeGroupDef;
 import org.dashbuilder.displayer.DisplayerConstraints;
 import org.dashbuilder.displayer.client.AbstractDisplayer;
-import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.dataset.DataSet;
 
@@ -173,6 +167,7 @@ public class TableDisplayer extends AbstractDisplayer {
                    .supportsAttribute( DisplayerAttributeDef.TYPE )
                    .supportsAttribute( DisplayerAttributeDef.RENDERER )
                    .supportsAttribute( DisplayerAttributeDef.COLUMNS )
+                   .supportsAttribute( DisplayerAttributeGroupDef.FILTER_GROUP)
                    .supportsAttribute( DisplayerAttributeGroupDef.REFRESH_GROUP )
                    .supportsAttribute( DisplayerAttributeGroupDef.TITLE_GROUP)
                    .supportsAttribute( DisplayerAttributeGroupDef.TABLE_GROUP );
@@ -270,7 +265,7 @@ public class TableDisplayer extends AbstractDisplayer {
         if (displayerSettings.isTableSortEnabled()) {
             pagedTable.addColumnSortHandler(new ColumnSortEvent.AsyncHandler( pagedTable ) {
                 public void onColumnSort( ColumnSortEvent event ) {
-                    lastOrderedColumn = event.getColumn().getDataStoreName();
+                    lastOrderedColumn = ((DataColumnCell) event.getColumn().getCell()).columnId;
                     lastSortOrder = event.isSortAscending() ? SortOrder.ASCENDING : SortOrder.DESCENDING;
                     redraw();
                 }
@@ -283,7 +278,7 @@ public class TableDisplayer extends AbstractDisplayer {
 
         switch ( column.getColumnType() ) {
             case LABEL: return new Column<Integer, String>(
-                            new SelectableTextCell( column.getId() ) ) {
+                            new DataColumnCell( column.getId(), true ) ) {
                                 public String getValue( Integer row ) {
                                     Object value = dataSet.getValueAt(row, columnNumber);
                                     return formatValue(value, column);
@@ -293,7 +288,7 @@ public class TableDisplayer extends AbstractDisplayer {
             case NUMBER:
             case DATE:
             case TEXT: return new Column<Integer, String>(
-                            new TextCell() ) {
+                            new DataColumnCell( column.getId(), false ) ) {
                                 public String getValue( Integer row ) {
                                     Object value = dataSet.getValueAt(row, columnNumber);
                                     return formatValue(value, column);
@@ -339,12 +334,14 @@ public class TableDisplayer extends AbstractDisplayer {
         if ( currentSelectionWidget != null ) table.getLeftToolbar().add( currentSelectionWidget );
     }
 
-    private class SelectableTextCell extends TextCell {
+    private class DataColumnCell extends TextCell {
 
         private String columnId;
+        private boolean selectable = false;
 
-        private SelectableTextCell( String columnId ) {
+        DataColumnCell(String columnId, boolean selectable) {
             this.columnId = columnId;
+            this.selectable = selectable;
         }
 
         @Override
@@ -357,7 +354,7 @@ public class TableDisplayer extends AbstractDisplayer {
         @Override
         public void onBrowserEvent( Context context, Element parent, String value, NativeEvent event, ValueUpdater<String> valueUpdater ) {
 
-            if ( !displayerSettings.isFilterEnabled() ) return;
+            if ( !selectable || !displayerSettings.isFilterEnabled() ) return;
 
             filterUpdate( columnId, context.getIndex() );
             redrawColumnSelectionWidget();
