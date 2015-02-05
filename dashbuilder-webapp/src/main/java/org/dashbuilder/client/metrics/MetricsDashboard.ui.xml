@@ -7,7 +7,13 @@
   <ui:with field='resources' type='org.dashbuilder.client.metrics.MetricsDashboardClientBundle'/>
 
   <ui:style>
-    .dashboard_title { 
+    .main_panel {
+      width: 800px;
+      height: 800px;
+      background-color: #ffffff;
+    }
+    .dashboard_title_area {
+      width: 800px;
       font-weight: bold; 
       font-size: medium; 
     }
@@ -21,50 +27,86 @@
       border: 1px darkgrey;
     }
     .server_details_area {
-      
+      background-color: darkgrey;
     }
     .server_cpu_area {
       width: 200px;
       height: 600px;
       font-weight: bold;
-      background-color: darkgrey;
+      background-color: ghostwhite;
       margin-right: 25px;
     }
     .server_memory_area {
       width: 600px;
       height: 300px;
       font-weight: bold;
-      background-color: darkgrey;
+      background-color: ghostwhite;
     }
     .server_network_area {
       width: 600px;
       height: 300px;
       font-weight: bold;
-      background-color: darkgrey;
+      background-color: ghostwhite;
       margin-top: 10px;
     }
     .server_disk_area {
       width: 200px;
       height: 300px;
       font-weight: bold;
-      background-color: darkgrey;
+      background-color: ghostwhite;
       margin-left: 25px;
     }
     .server_processes_area  {
       width: 200px;
       height: 300px;
       font-weight: bold;
-      background-color: darkgrey;
+      background-color: ghostwhite;
       margin-left: 25px;
       margin-top: 10px;
     }
+
+
+    .metrics_dashboard_panel
+    {
+      border-radius: 5px 5px 5px 5px;
+      margin: 10px;
+      position:relative;
+      -webkit-box-shadow:0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset;
+      -moz-box-shadow:0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset;
+      box-shadow:0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset;
+    }
+    .metrics_dashboard_panel:before, .metrics_dashboard_panel:after
+    {
+      content:"";
+      position:absolute;
+      z-index:-1;
+      -webkit-box-shadow:0 0 20px rgba(0,0,0,0.8);
+      -moz-box-shadow:0 0 20px rgba(0,0,0,0.8);
+      box-shadow:0 0 20px rgba(0,0,0,0.8);
+      top:10px;
+      bottom:10px;
+      left:0;
+      right:0;
+      -moz-border-radius:100px / 10px;
+      border-radius:100px / 10px;
+    }
+    .metrics_dashboard_panel:after
+    {
+      right:10px;
+      left:auto;
+      -webkit-transform:skew(8deg) rotate(3deg);
+      -moz-transform:skew(8deg) rotate(3deg);
+      -ms-transform:skew(8deg) rotate(3deg);
+      -o-transform:skew(8deg) rotate(3deg);
+      transform:skew(8deg) rotate(3deg);
+    }
   </ui:style>
   
-  <g:VerticalPanel spacing="10" width="800px" height="800px">
+  <g:VerticalPanel spacing="10" addStyleNames="{style.main_panel}">
     <!-- Dashboard title -->
-    <g:HorizontalPanel spacing="10" width="800px">
+    <g:HorizontalPanel spacing="10" addStyleNames="{style.dashboard_title_area}">
       <g:cell horizontalAlignment="ALIGN_CENTER">
-        <g:HTML ui:field="title" addStyleNames="{style.dashboard_title}"/>
+        <g:HTML ui:field="title"/>
       </g:cell>
     </g:HorizontalPanel>
 
@@ -143,7 +185,7 @@
       <g:HorizontalPanel spacing="10" visible="true" addStyleNames="{style.server_details_area}" ui:field="serverDetailsArea">
 
         <!-- CPU usage area. -->
-        <g:VerticalPanel spacing="10" addStyleNames="{style.server_cpu_area}">
+        <g:VerticalPanel spacing="10" addStyleNames="{style.server_cpu_area} {style.metrics_dashboard_panel}">
 
           <g:VerticalPanel spacing="10">
             <g:HTML text="Current CPU usage (%)"/>
@@ -159,12 +201,12 @@
           </g:VerticalPanel>
           
         </g:VerticalPanel>
-
+        
         <!-- Memory and network usage area. -->
         <g:VerticalPanel spacing="10">
 
           <!-- Memory usage area. -->
-          <g:VerticalPanel spacing="10" addStyleNames="{style.server_memory_area}">
+          <g:VerticalPanel spacing="10" addStyleNames="{style.server_memory_area} {style.metrics_dashboard_panel}">
             <g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
               <g:HTML text="Current Memory usage (Gb)"/>
             </g:cell>
@@ -174,7 +216,7 @@
           </g:VerticalPanel>
 
           <!-- Network usage area. -->
-          <g:VerticalPanel spacing="10" addStyleNames="{style.server_network_area}">
+          <g:VerticalPanel spacing="10" addStyleNames="{style.server_network_area} {style.metrics_dashboard_panel}">
             <g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
               <g:HTML text="Current Network usage (kbps)"/>
             </g:cell>
@@ -189,7 +231,7 @@
         <g:VerticalPanel spacing="10">
 
           <!-- Disk usage area. -->
-          <g:VerticalPanel spacing="10" addStyleNames="{style.server_disk_area}">
+          <g:VerticalPanel spacing="10" addStyleNames="{style.server_disk_area} {style.metrics_dashboard_panel}">
             <g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
               <g:HTML text="Current disk usage (Mb)"/>
             </g:cell>
@@ -199,7 +241,7 @@
           </g:VerticalPanel>
 
           <!-- Processes usage area. -->
-          <g:VerticalPanel spacing="10" addStyleNames="{style.server_processes_area}">
+          <g:VerticalPanel spacing="10" addStyleNames="{style.server_processes_area} {style.metrics_dashboard_panel}">
             <g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
               <g:HTML text="Current processes usage"/>
             </g:cell>
