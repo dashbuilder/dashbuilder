@@ -65,7 +65,9 @@ public class IntervalBuilderDynamicLabel implements IntervalBuilder {
             Interval interval = locateInterval(value);
             if (interval == null) {
                 // TODO: create a composite interval when the maxIntervals are reached.
-                this.add(interval = new Interval(value == null ? null : value.toString()));
+                String name = (value == null ? null : value.toString());
+                int index = this.size();
+                this.add(interval = new Interval(name, index));
             }
             interval.getRows().add(row);
         }
