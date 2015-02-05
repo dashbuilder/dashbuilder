@@ -126,6 +126,15 @@ public class MetricsDashboard extends Composite {
     @UiField(provided = true)
     Displayer serverNetwork;
 
+    @UiField(provided = true)
+    Displayer serverDisk;
+
+    @UiField(provided = true)
+    Displayer serverProcessesRunning;
+            
+    @UiField(provided = true)
+    Displayer serverProcessesSleeping;
+
     DisplayerCoordinator displayerCoordinator = new DisplayerCoordinator();
 
     public String getTitle() {
@@ -235,14 +244,60 @@ public class MetricsDashboard extends Composite {
                         .refreshOn(2, false)
                         .buildSettings());
 
+        serverDisk = DisplayerHelper.lookupDisplayer(
+                DisplayerSettingsFactory.newPieChartSettings()
+                        .dataset(CLUSTER_METRICS_UUID)
+                        .filter(ClusterMetricsDataSetGenerator.COLUMN_SERVER, equalsTo(server))
+                        .filter(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP, timeFrame("10second"))
+                        .group(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP).dynamic(1, SECOND, true)
+                        .column(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP)
+                        .column(ClusterMetricsDataSetGenerator.COLUMN_DISK_FREE, MAX, "Free disk space")
+                        .column(ClusterMetricsDataSetGenerator.COLUMN_DISK_USED, MAX, "Used disk space")
+                        .title("Disk usage")
+                        .titleVisible(false)
+                        .width(200).height(200)
+                        .refreshOn(2, false)
+                        .buildSettings());
+
+        serverProcessesRunning = DisplayerHelper.lookupDisplayer(
+                DisplayerSettingsFactory.newTableSettings()
+                        .dataset(CLUSTER_METRICS_UUID)
+                        .filter(ClusterMetricsDataSetGenerator.COLUMN_SERVER, equalsTo(server))
+                        .filter(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP, timeFrame("1second"))
+                        .column(ClusterMetricsDataSetGenerator.COLUMN_PROCESSES_RUNNING, "Running processes")
+                        .title("Running processes")
+                        .titleVisible(false)
+                        .tableWidth(100)
+                        .refreshOn(1, false)
+                        .buildSettings());
+
+        serverProcessesSleeping = DisplayerHelper.lookupDisplayer(
+                DisplayerSettingsFactory.newTableSettings()
+                        .dataset(CLUSTER_METRICS_UUID)
+                        .filter(ClusterMetricsDataSetGenerator.COLUMN_SERVER, equalsTo(server))
+                        .filter(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP, timeFrame("1second"))
+                        .column(ClusterMetricsDataSetGenerator.COLUMN_PROCESSES_SLEEPING, "Sleeping processes")
+                        .title("Sleeping processes")
+                        .titleVisible(false)
+                        .tableWidth(100)
+                        .refreshOn(1, false)
+                        .buildSettings());
+        
+        
         displayerCoordinator.addDisplayer(serverCPU0);
         displayerCoordinator.addDisplayer(serverCPU1);
         displayerCoordinator.addDisplayer(serverMemory);
         displayerCoordinator.addDisplayer(serverNetwork);
+        displayerCoordinator.addDisplayer(serverDisk);
+        displayerCoordinator.addDisplayer(serverProcessesRunning);
+        displayerCoordinator.addDisplayer(serverProcessesSleeping);
         serverCPU0.refreshOn();
         serverCPU1.refreshOn();
         serverMemory.refreshOn();
         serverNetwork.refreshOn();
+        serverDisk.refreshOn();
+        serverProcessesRunning.refreshOn();
+        serverProcessesSleeping.refreshOn();
     }
 
 

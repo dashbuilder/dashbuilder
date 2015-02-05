@@ -43,6 +43,21 @@
       background-color: darkgrey;
       margin-top: 10px;
     }
+    .server_disk_area {
+      width: 200px;
+      height: 300px;
+      font-weight: bold;
+      background-color: darkgrey;
+      margin-left: 25px;
+    }
+    .server_processes_area  {
+      width: 200px;
+      height: 300px;
+      font-weight: bold;
+      background-color: darkgrey;
+      margin-left: 25px;
+      margin-top: 10px;
+    }
   </ui:style>
   
   <g:VerticalPanel spacing="10" width="800px" height="800px">
@@ -165,6 +180,34 @@
             </g:cell>
             <g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
               <dashbuilder:Displayer ui:field="serverNetwork"/>
+            </g:cell>
+          </g:VerticalPanel>
+          
+        </g:VerticalPanel>
+
+        <!-- Disk and processes usage area. -->
+        <g:VerticalPanel spacing="10">
+
+          <!-- Disk usage area. -->
+          <g:VerticalPanel spacing="10" addStyleNames="{style.server_disk_area}">
+            <g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
+              <g:HTML text="Current disk usage (Mb)"/>
+            </g:cell>
+            <g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
+              <dashbuilder:Displayer ui:field="serverDisk"/>
+            </g:cell>
+          </g:VerticalPanel>
+
+          <!-- Processes usage area. -->
+          <g:VerticalPanel spacing="10" addStyleNames="{style.server_processes_area}">
+            <g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
+              <g:HTML text="Current processes usage"/>
+            </g:cell>
+            <g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
+              <dashbuilder:Displayer ui:field="serverProcessesRunning"/>
+            </g:cell>
+            <g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
+              <dashbuilder:Displayer ui:field="serverProcessesSleeping"/>
             </g:cell>
           </g:VerticalPanel>
           
