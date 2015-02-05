@@ -17,17 +17,7 @@ package org.dashbuilder.client.metrics;
 
 public interface MetricsConstants {
 
-    String METRICS_UUID = "metrics";
-    String METRICS_CSV_UUID = "metrics_csv";
-    String EPOCH = "epoch";
-    String TIMESTAMP = "@timestamp";
-    String MEMORY = "memory";
-    String MEMORY_USED = "used";
-    String HOST = "host";
-    String PLUGIN = "plugin";
-    String COLLECTD_TYPE = "collectd_type";
-    String TYPE_INSTANCE = "type_instance";
-    String VALUE  = "value";
+    String CLUSTER_METRICS_UUID = "clusterMetrics";
 
     
 }
