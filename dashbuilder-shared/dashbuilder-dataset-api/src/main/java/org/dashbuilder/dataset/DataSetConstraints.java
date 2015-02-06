@@ -44,10 +44,13 @@ public class DataSetConstraints<T> {
         return columnTypeList.get(0);
     }
 
-    public T setColumnTypes(ColumnType[]... columnTypeList) {
-        for (ColumnType[] types : columnTypeList) {
-            _checkSizes(minColumns, maxColumns, types);
-            this.columnTypeList.add(types);
+    public T setColumnTypes(ColumnType[]... typeList) {
+        columnTypeList.clear();
+        if (typeList != null) {
+            for (ColumnType[] types : typeList) {
+                _checkSizes(minColumns, maxColumns, types);
+                this.columnTypeList.add(types);
+            }
         }
         return (T) this;
     }
