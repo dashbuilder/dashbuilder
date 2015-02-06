@@ -16,10 +16,8 @@
 package org.dashbuilder.dataset.group;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
-import org.dashbuilder.dataset.group.DateIntervalType;
 import org.jboss.errai.common.client.api.annotations.Portable;
 
 /**

@@ -17,8 +17,6 @@ package org.dashbuilder.dataprovider;
 
 import java.util.List;
 
-import org.jboss.errai.bus.server.annotations.Remote;
-
 /**
  * Data set provider registry
  */

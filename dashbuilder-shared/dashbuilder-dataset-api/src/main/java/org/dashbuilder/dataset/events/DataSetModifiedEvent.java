@@ -15,7 +15,6 @@
  */
 package org.dashbuilder.dataset.events;
 
-import org.dashbuilder.dataset.DataSetMetadata;
 import org.dashbuilder.dataset.def.DataSetDef;
 import org.jboss.errai.common.client.api.annotations.Portable;
 

@@ -15,8 +15,6 @@
  */
 package org.dashbuilder.dataset.def;
 
-import org.dashbuilder.dataset.def.DataSetDefBuilder;
-
 /**
  * A builder for defining static data sets
  *
