@@ -1,118 +1,28 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
              xmlns:g="urn:import:com.google.gwt.user.client.ui"
-             xmlns:b="urn:import:com.github.gwtbootstrap.client.ui"
-             xmlns:dashbuilder="urn:import:org.dashbuilder.displayer.client">
+    >
   
   <ui:with field='resources' type='org.dashbuilder.client.metrics.MetricsDashboardClientBundle'/>
 
   <ui:style>
+    
     .main_panel {
-      width: 800px;
-      height: 800px;
+      width: 1200px;
+      height: 1200px;
       background-color: #ffffff;
     }
 
     .dashboard_title_area {
-      width: 800px;
+      width: 1200px;
       font-weight: bold;
       font-size: medium;
-    }
-
-    .server_icons_area {
-      margin-top: 75px;
-      width: 150px;
-    }
-
-    .server_icon_area {
-      width: 150px;
-      height: 100px;
-      /*border: 1px solid;*/
-    }
-    
-    .server_icon_area_selected {
-      background-color: whitesmoke;
-    }
-
-    .server_icon {
-      width: 50px;
-      height: 50px;
-    }
-
-    .server_details_area {
-      
-    }
-
-    .server_cpu_area {
-      width: 200px;
-      height: 600px;
-      margin-right: 25px;
-    }
-
-    .server_memory_area {
-      width: 600px;
-      height: 300px;
-    }
-
-    .server_network_area {
-      width: 600px;
-      height: 300px;
-      margin-top: 10px;
-    }
-
-    .server_disk_area {
-      width: 200px;
-      height: 300px;
-      margin-left: 25px;
-    }
-
-    .server_processes_area {
-      width: 200px;
-      height: 300px;
-      margin-left: 25px;
-      margin-top: 10px;
-    }
-
-    .metrics_dashboard_panel {
-      border-radius: 5px 5px 5px 5px;
-      margin: 10px;
-      padding: 10px;
-      font-weight: bold;
-      background-color: ghostwhite;
-      position: relative;
-      -webkit-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset;
-      -moz-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset;
-      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset;
-    }
-
-    .metrics_dashboard_panel:before, .metrics_dashboard_panel:after {
-      content: "";
-      position: absolute;
-      z-index: -1;
-      -webkit-box-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
-      -moz-box-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
-      box-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
-      top: 10px;
-      bottom: 10px;
-      left: 0;
-      right: 0;
-      -moz-border-radius: 100px / 10px;
-      border-radius: 100px / 10px;
-    }
-
-    .metrics_dashboard_panel:after {
-      right: 10px;
-      left: auto;
-      -webkit-transform: skew(8deg) rotate(3deg);
-      -moz-transform: skew(8deg) rotate(3deg);
-      -ms-transform: skew(8deg) rotate(3deg);
-      -o-transform: skew(8deg) rotate(3deg);
-      transform: skew(8deg) rotate(3deg);
     }
 
     </ui:style>
   
   <g:VerticalPanel spacing="10" addStyleNames="{style.main_panel}">
+    
     <!-- Dashboard title -->
     <g:HorizontalPanel spacing="10" addStyleNames="{style.dashboard_title_area}">
       <g:cell horizontalAlignment="ALIGN_CENTER">
@@ -120,139 +30,25 @@
       </g:cell>
     </g:HorizontalPanel>
 
-    <g:HorizontalPanel spacing="10">
 
-      <!-- Server icons left area.-->
-      <g:VerticalPanel spacing="10" ui:field="serverIconsPanel" addStyleNames="{style.server_icons_area}">
+    <!-- Summary area. -->
+    <g:HorizontalPanel visible="false" spacing="10" ui:field="summaryArea">
 
-        <g:FocusPanel ui:field="serverIconArea1" addStyleNames="{style.metrics_dashboard_panel} {style.server_icon_area} {style.server_icon_area_selected}">
-          <g:VerticalPanel spacing="10" addStyleNames="{style.server_icon_area}">
-            <g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
-              <g:Image resource='{resources.computerIcon}' altText="server1" title="server1" addStyleNames="{style.server_icon}"/>
-            </g:cell>
-            <g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
-              <g:HTML text="Server1"/>
-            </g:cell>
-          </g:VerticalPanel>
-        </g:FocusPanel>
+      <!-- Metrics summary widget inserted here programatically. -->
 
-        <g:FocusPanel ui:field="serverIconArea2" addStyleNames="{style.metrics_dashboard_panel} {style.server_icon_area}">
-          <g:VerticalPanel spacing="10" addStyleNames="{style.server_icon_area}">
-            <g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
-              <g:Image resource='{resources.computerIcon}' altText="server2" title="server2" addStyleNames="{style.server_icon}"/>
-            </g:cell>
-            <g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
-              <g:HTML text="Server2"/>
-            </g:cell>
-          </g:VerticalPanel>
-        </g:FocusPanel>
+    </g:HorizontalPanel>
 
-      </g:VerticalPanel>
+    <!-- Vertical servers summary area. -->
+    <g:HorizontalPanel visible="false" spacing="10" ui:field="verticalSummaryArea">
 
-      <!-- Summary area. -->
-      <g:HorizontalPanel visible="false" spacing="10" ui:field="summaryArea">
-        
-        <g:VerticalPanel spacing="10">
-          
-          <g:HorizontalPanel spacing="10">
-            <dashbuilder:Displayer ui:field="maxCPUxServer"/>
-          </g:HorizontalPanel>
-          
-          <g:HorizontalPanel spacing="10">
-            <dashbuilder:Displayer ui:field="maxMemxServerSettings"/>
-          </g:HorizontalPanel>
-          
-        </g:VerticalPanel>
-        
-        <g:VerticalPanel spacing="10">
-          
-          <g:HorizontalPanel spacing="10">
-            <dashbuilder:Displayer ui:field="maxProcessesxServerSettings"/>
-          </g:HorizontalPanel>
-          
-          <g:HorizontalPanel spacing="10">
-            <dashbuilder:Displayer ui:field="maxNetworkxServerSettings"/>
-          </g:HorizontalPanel>
-          
-        </g:VerticalPanel>
-        
-      </g:HorizontalPanel>
+      <!-- Server vertical details widget inserted here programatically. -->
 
-      <!-- Server detail area. -->
-      <g:HorizontalPanel spacing="10" visible="true" addStyleNames="{style.server_details_area}" ui:field="serverDetailsArea">
+    </g:HorizontalPanel>
 
-        <!-- CPU usage area. -->
-        <g:VerticalPanel spacing="10" addStyleNames="{style.server_cpu_area} {style.metrics_dashboard_panel}">
+    <!-- Server detail area. -->
+    <g:HorizontalPanel spacing="10" visible="false" ui:field="serverDetailsArea">
 
-          <g:VerticalPanel spacing="10">
-            <g:HTML text="Current CPU usage (%)"/>
-          </g:VerticalPanel>
-          
-          <g:VerticalPanel spacing="10">
-            <g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
-              <dashbuilder:Displayer ui:field="serverCPU0"/>  
-            </g:cell>
-            <g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
-              <dashbuilder:Displayer ui:field="serverCPU1"/>
-            </g:cell>
-          </g:VerticalPanel>
-          
-        </g:VerticalPanel>
-        
-        <!-- Memory and network usage area. -->
-        <g:VerticalPanel spacing="10">
-
-          <!-- Memory usage area. -->
-          <g:VerticalPanel spacing="10" addStyleNames="{style.server_memory_area} {style.metrics_dashboard_panel}">
-            <g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
-              <g:HTML text="Current Memory usage (Gb)"/>
-            </g:cell>
-            <g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
-              <dashbuilder:Displayer ui:field="serverMemory"/>
-            </g:cell>
-          </g:VerticalPanel>
-
-          <!-- Network usage area. -->
-          <g:VerticalPanel spacing="10" addStyleNames="{style.server_network_area} {style.metrics_dashboard_panel}">
-            <g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
-              <g:HTML text="Current Network usage (kbps)"/>
-            </g:cell>
-            <g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
-              <dashbuilder:Displayer ui:field="serverNetwork"/>
-            </g:cell>
-          </g:VerticalPanel>
-          
-        </g:VerticalPanel>
-
-        <!-- Disk and processes usage area. -->
-        <g:VerticalPanel spacing="10">
-
-          <!-- Disk usage area. -->
-          <g:VerticalPanel spacing="10" addStyleNames="{style.server_disk_area} {style.metrics_dashboard_panel}">
-            <g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
-              <g:HTML text="Current disk usage (Mb)"/>
-            </g:cell>
-            <g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
-              <dashbuilder:Displayer ui:field="serverDisk"/>
-            </g:cell>
-          </g:VerticalPanel>
-
-          <!-- Processes usage area. -->
-          <g:VerticalPanel spacing="10" addStyleNames="{style.server_processes_area} {style.metrics_dashboard_panel}">
-            <g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
-              <g:HTML text="Current processes usage"/>
-            </g:cell>
-            <g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
-              <dashbuilder:Displayer ui:field="serverProcessesRunning"/>
-            </g:cell>
-            <g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
-              <dashbuilder:Displayer ui:field="serverProcessesSleeping"/>
-            </g:cell>
-          </g:VerticalPanel>
-          
-        </g:VerticalPanel>
-
-      </g:HorizontalPanel>
+      <!-- Server details widget inserted here programatically. -->
 
     </g:HorizontalPanel>
     
