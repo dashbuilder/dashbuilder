@@ -23,14 +23,9 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
-import javax.inject.Named;
-
-import org.apache.commons.lang.StringUtils;
 import org.dashbuilder.dataprovider.DataSetProviderType;
-import org.dashbuilder.dataset.def.DataSetDef;
 import org.dashbuilder.dataprovider.DataSetProvider;
 import org.dashbuilder.dataprovider.DataSetProviderRegistry;
-import org.jboss.errai.bus.server.annotations.Service;
 
 /**
  * Data provider setting backend registry

@@ -21,7 +21,6 @@ import java.text.SimpleDateFormat;
 import javax.enterprise.context.Dependent;
 
 import org.dashbuilder.dataset.DataSetValueFormatter;
-import org.dashbuilder.dataset.group.DateIntervalType;
 import org.dashbuilder.dataset.group.TimeFrame;
 
 @Dependent

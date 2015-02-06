@@ -16,14 +16,9 @@
 package org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.model;
 
 import org.dashbuilder.dataset.DataSetMetadata;
-import org.dashbuilder.dataset.filter.DataSetFilter;
-import org.dashbuilder.dataset.group.ColumnGroup;
 import org.dashbuilder.dataset.group.DataSetGroup;
-import org.dashbuilder.dataset.group.GroupFunction;
-import org.dashbuilder.dataset.sort.ColumnSort;
 import org.dashbuilder.dataset.sort.DataSetSort;
 
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 

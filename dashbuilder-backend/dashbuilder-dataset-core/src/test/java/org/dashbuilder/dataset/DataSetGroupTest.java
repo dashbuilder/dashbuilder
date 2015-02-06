@@ -18,7 +18,6 @@ package org.dashbuilder.dataset;
 import javax.inject.Inject;
 
 import org.dashbuilder.dataset.group.DateIntervalType;
-import org.dashbuilder.dataset.group.GroupStrategy;
 import org.dashbuilder.dataset.date.DayOfWeek;
 import org.dashbuilder.dataset.date.Month;
 import org.dashbuilder.dataset.sort.SortOrder;

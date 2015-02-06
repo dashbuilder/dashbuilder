@@ -20,11 +20,6 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.util.List;
-import javax.enterprise.context.ApplicationScoped;
-
-import org.dashbuilder.dataset.ColumnType;
-import org.dashbuilder.dataset.DataColumn;
-import org.dashbuilder.dataset.DataSet;
 
 public class DataSetFormatter {
 

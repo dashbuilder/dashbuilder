@@ -1,9 +1,6 @@
 package org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.impl.jest.gson;
 
 import com.google.gson.*;
-import io.searchbox.client.JestClient;
-import io.searchbox.client.JestResult;
-import io.searchbox.core.Search;
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.exception.ElasticSearchClientGenericException;
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.impl.jest.ElasticSearchJestClient;
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.model.SearchHitResponse;
@@ -14,7 +11,6 @@ import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.dataset.backend.BackendIntervalBuilderDynamicDate;
 import org.dashbuilder.dataset.backend.date.DateUtils;
 import org.dashbuilder.dataset.def.ElasticSearchDataSetDef;
-import org.dashbuilder.dataset.filter.DataSetFilter;
 import org.dashbuilder.dataset.group.*;
 import org.dashbuilder.dataset.impl.DataColumnImpl;
 import org.dashbuilder.dataset.impl.ElasticSearchDataSetMetadata;
