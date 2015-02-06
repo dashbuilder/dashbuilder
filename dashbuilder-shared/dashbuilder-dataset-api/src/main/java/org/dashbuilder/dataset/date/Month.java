@@ -17,9 +17,9 @@ package org.dashbuilder.dataset.date;
 
 import org.jboss.errai.common.client.api.annotations.Portable;
 
-
 @Portable
 public enum Month {
+
     JANUARY,
     FEBRUARY,
     MARCH,
@@ -33,27 +33,21 @@ public enum Month {
     NOVEMBER,
     DECEMBER;
 
-    private static Month[] _monthArray = values();
+    private static final Month[] months = values();
 
     /**
-     * Get the index (from 1 to 12)
+     * @return index of month from 1 (JANUARY) to 12 (DECEMBER)
      */
     public int getIndex() {
-        for (int i = 0; i < _monthArray.length; i++) {
-            Month month = _monthArray[i];
-            if (this.equals(month)) return i+1;
-        }
-        return -1;
+        return ordinal() + 1;
     }
 
     public static int nextIndex(int index) {
-        index++;
-        if (index <= _monthArray.length) return index;
-        return 1;
+        return ++index <= 12 ? index : 1;
     }
 
     public static Month[] getAll() {
-        return _monthArray;
+        return months;
     }
 
     public static Month getByName(String name) {
@@ -65,9 +59,10 @@ public enum Month {
     }
 
     /**
-     * Get the index (from 1 to 12)
+     * @param index index of month (1= JANUARY, ... 12 = DECEMBER)
+     * @return month with given index
      */
     public static Month getByIndex(int index) {
-        return _monthArray[index-1];
+        return months[index - 1];
     }
 }

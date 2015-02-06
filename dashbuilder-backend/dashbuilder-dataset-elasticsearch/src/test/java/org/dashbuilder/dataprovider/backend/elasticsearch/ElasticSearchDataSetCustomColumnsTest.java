@@ -18,19 +18,11 @@ package org.dashbuilder.dataprovider.backend.elasticsearch;
 import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetFactory;
-import org.dashbuilder.dataset.DataSetGroupTest;
 import org.dashbuilder.dataset.sort.SortOrder;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.sql.Timestamp;
-import java.util.Calendar;
-
-import static org.dashbuilder.dataset.Assertions.assertDataSetValue;
-import static org.dashbuilder.dataset.filter.FilterFactory.*;
-import static org.dashbuilder.dataset.group.AggregateFunctionType.*;
-import static org.dashbuilder.dataset.group.AggregateFunctionType.COUNT;
 import static org.fest.assertions.api.Assertions.assertThat;
 
 /**

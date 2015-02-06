@@ -18,7 +18,6 @@ package org.dashbuilder.dataset;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ArrayList;
-import java.util.ListIterator;
 
 import org.dashbuilder.dataset.filter.DataSetFilter;
 import org.dashbuilder.dataset.group.ColumnGroup;

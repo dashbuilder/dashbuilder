@@ -19,19 +19,16 @@ import org.jboss.errai.common.client.api.annotations.Portable;
 
 @Portable
 public enum Quarter {
+
     Q1,
     Q2,
     Q3,
     Q4;
 
-    private static Quarter[] _array = values();
+    private static final Quarter[] quarters = values();
 
     public int getIndex() {
-        for (int i = 0; i < _array.length; i++) {
-            Quarter q = _array[i];
-            if (this.equals(q)) return i+1;
-        }
-        return -1;
+        return ordinal() + 1;
     }
 
     public static Quarter getByName(String name) {
@@ -43,7 +40,7 @@ public enum Quarter {
     }
 
     public static Quarter getByIndex(int index) {
-        return _array[index-1];
+        return quarters[index - 1];
     }
 
     /**
@@ -64,7 +61,7 @@ public enum Quarter {
             }
             quarter = index;
         }
-        throw new RuntimeException("Month not found.");
+        throw new RuntimeException("Month not found : " + targetMonth);
     }
 
     /**
@@ -72,7 +69,7 @@ public enum Quarter {
      *
      * @param firstMonthOfYear The first month of the year considered the first month of the first quarter.
      * @param targetMonth The month we want to evaluate.
-     * @return The position (from 0 to 2 ) of the target within the quarter.
+     * @return The position (from 0 to 2) of the target within the quarter.
      */
     public static int getPositionInQuarter(int firstMonthOfYear, int targetMonth) {
         int index = firstMonthOfYear;
@@ -83,6 +80,6 @@ public enum Quarter {
                 index = Month.nextIndex(index);
             }
         }
-        throw new RuntimeException("Month not found.");
+        throw new RuntimeException("Month not found : " + targetMonth);
     }
 }

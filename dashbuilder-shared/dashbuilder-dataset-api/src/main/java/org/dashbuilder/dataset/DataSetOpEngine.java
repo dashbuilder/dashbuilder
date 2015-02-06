@@ -17,9 +17,6 @@ package org.dashbuilder.dataset;
 
 import java.util.List;
 
-import org.dashbuilder.dataset.DataSet;
-import org.dashbuilder.dataset.DataSetOp;
-
 /**
  * Provides several operations for data set manipulation.
  */

@@ -33,8 +33,6 @@ import org.dashbuilder.dataset.events.StaticDataSetRegisteredEvent;
 import org.dashbuilder.dataset.events.StaticDataSetRemovedEvent;
 import org.dashbuilder.dataset.filter.DataSetFilter;
 
-import static org.uberfire.commons.validation.PortablePreconditions.checkNotNull;
-
 /**
  * DataSetProvider implementation for static (in-memory) data sets.
  * <p>It's been designed with several goals in mind:

@@ -163,7 +163,7 @@ public class FilterFactory {
 
     public static List createParameters(ColumnType columnType, CoreFunctionType functionType) {
         List result = new ArrayList();
-        int n = functionType.getNumberOfParameters();
+        int n = functionType.getParametersCount();
 
         for (int i=0; i<n; i++) {
 

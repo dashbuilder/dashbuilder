@@ -27,41 +27,42 @@ import org.jboss.errai.common.client.api.annotations.Portable;
 @Portable
 public enum CoreFunctionType {
 
-    IS_NULL,
-    NOT_NULL,
-    EQUALS_TO,
-    NOT_EQUALS_TO,
-    GREATER_THAN,
-    GREATER_OR_EQUALS_TO,
-    LOWER_THAN,
-    LOWER_OR_EQUALS_TO,
-    BETWEEN,
-    TIME_FRAME;
+    IS_NULL(0),
+    NOT_NULL(0),
+    EQUALS_TO(1),
+    NOT_EQUALS_TO(1),
+    GREATER_THAN(1),
+    GREATER_OR_EQUALS_TO(1),
+    LOWER_THAN(1),
+    LOWER_OR_EQUALS_TO(1),
+    BETWEEN(2),
+    TIME_FRAME(1);
 
-    private static CoreFunctionType[] _typeArray = values();
+    private final int parametersCount;
 
-    private static int[] _parametersSize = new int[] {0,0,1,1,1,1,1,1,2,1};
+    private CoreFunctionType(int parametersCount) {
+        this.parametersCount = parametersCount;
+    }
+
+    private static final CoreFunctionType[] coreFunctionTypes = values();
 
     public int getIndex() {
-        for (int i = 0; i < _typeArray.length; i++) {
-            CoreFunctionType type = _typeArray[i];
-            if (this.equals(type)) return i;
-        }
-        return -1;
+        return ordinal();
     }
 
-    public int getNumberOfParameters() {
-        return _parametersSize[getIndex()];
+    public int getParametersCount() {
+        return parametersCount;
     }
 
-    public boolean supportType(ColumnType type) {
+    public boolean supportsType(ColumnType type) {
         if (TIME_FRAME.equals(this)) {
             return ColumnType.DATE.equals(type);
         }
         return true;
     }
+
     public static CoreFunctionType getByIndex(int index) {
-        return _typeArray[index];
+        return coreFunctionTypes[index];
     }
 
     public static CoreFunctionType getByName(String type) {
@@ -74,14 +75,15 @@ public enum CoreFunctionType {
 
     public static int getNumberOfParameters(String type) {
         CoreFunctionType ft = getByName(type);
-        return ft.getNumberOfParameters();
+        return ft.getParametersCount();
     }
 
     public static List<CoreFunctionType> getSupportedTypes(ColumnType columnType) {
         List<CoreFunctionType> result = new ArrayList<CoreFunctionType>();
-        for (int i = 0; i < _typeArray.length; i++) {
-            CoreFunctionType type = _typeArray[i];
-            if (type.supportType(columnType)) result.add(type);
+        for (CoreFunctionType funType : coreFunctionTypes) {
+            if (funType.supportsType(columnType)) {
+                result.add(funType);
+            }
         }
         return result;
     }

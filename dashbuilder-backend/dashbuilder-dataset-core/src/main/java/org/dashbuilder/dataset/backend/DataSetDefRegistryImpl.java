@@ -26,7 +26,6 @@ import javax.inject.Inject;
 import org.dashbuilder.dataprovider.DataSetProvider;
 import org.dashbuilder.dataprovider.DataSetProviderRegistry;
 import org.dashbuilder.dataprovider.DataSetProviderType;
-import org.dashbuilder.dataprovider.backend.StaticDataSetProvider;
 import org.dashbuilder.dataset.def.DataSetDef;
 import org.dashbuilder.dataset.def.DataSetDefRegistry;
 import org.dashbuilder.dataset.events.DataSetDefModifiedEvent;

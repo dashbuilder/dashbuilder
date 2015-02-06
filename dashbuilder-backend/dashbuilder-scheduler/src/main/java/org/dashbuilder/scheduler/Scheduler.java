@@ -23,14 +23,12 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import javax.inject.Named;
 
 import org.dashbuilder.config.Config;
 import org.slf4j.Logger;
@@ -54,7 +52,7 @@ public class Scheduler {
 
     protected PausableThreadPoolExecutor executor;
     protected ThreadFactory threadFactory;
-    protected Map<Object,SchedulerTask> scheduledTasks;
+    protected Map<Object, SchedulerTask> scheduledTasks;
 
     @Inject @Config("10")
     protected int maxThreadPoolSize;
@@ -106,11 +104,11 @@ public class Scheduler {
     }
 
     public List<SchedulerTask> getScheduledTasks() {
-        return new ArrayList(scheduledTasks.values());
+        return new ArrayList<SchedulerTask>(scheduledTasks.values());
     }
 
     public List<SchedulerTask> getRunningTasks() {
-        List<SchedulerTask> result = new ArrayList();
+        List<SchedulerTask> result = new ArrayList<SchedulerTask>();
         for (SchedulerTask task : scheduledTasks.values()) {
             if (task.isRunning()) result.add(task);
         }
@@ -118,7 +116,7 @@ public class Scheduler {
     }
 
     public List<SchedulerTask> getMisfiredTasks() {
-        List<SchedulerTask> result = new ArrayList();
+        List<SchedulerTask> result = new ArrayList<SchedulerTask>();
         for (SchedulerTask task : scheduledTasks.values()) {
             if (task.isMisfired()) result.add(task);
         }
@@ -126,7 +124,7 @@ public class Scheduler {
     }
 
     public List<SchedulerTask> getWaitingTasks() {
-        List<SchedulerTask> result = new ArrayList();
+        List<SchedulerTask> result = new ArrayList<SchedulerTask>();
         for (SchedulerTask task : scheduledTasks.values()) {
             if (!task.isDone() && !task.isRunning() && !task.isMisfired()) result.add(task);
         }
@@ -274,11 +272,11 @@ public class Scheduler {
     }
 
     public String printScheduledTasksReport() {
-        Map<Object,SchedulerTask> temp = new HashMap(scheduledTasks);
-        StringBuffer buf = new StringBuffer();
-        buf.append("\n\n------------------ SCHEDULED TASKS=").append(temp.size()).append(" (Queue size=" + executor.getQueue().size() + ") -----------------------------\n");
-        Set<Map.Entry<Object,SchedulerTask>> entries = temp.entrySet();
-        for (Map.Entry<Object, SchedulerTask> entry : entries) {
+        Map<Object, SchedulerTask> temp = new HashMap<Object, SchedulerTask>(scheduledTasks);
+        StringBuilder buf = new StringBuilder();
+        buf.append("\n\n------------------ SCHEDULED TASKS=").append(temp.size())
+                .append(" (Queue size=").append(executor.getQueue().size()).append(") -----------------------------\n");
+        for (Map.Entry<Object, SchedulerTask> entry : temp.entrySet()) {
             SchedulerTask task = entry.getValue();
             // Sample entry: WAITING - [Firing in 0h 0m 8s] - [task=5365, BPM Trigger 5365 firing task]
             buf.append("\n");

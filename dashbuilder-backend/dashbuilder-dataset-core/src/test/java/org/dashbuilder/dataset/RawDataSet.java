@@ -21,10 +21,6 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import org.dashbuilder.dataset.ColumnType;
-import org.dashbuilder.dataset.DataSet;
-import org.dashbuilder.dataset.impl.DataSetImpl;
-
 public class RawDataSet implements Serializable {
 
     protected String[][] data;

@@ -15,11 +15,7 @@
  */
 package org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.model;
 
-import org.apache.commons.collections.map.UnmodifiableMap;
-
-import java.util.Collections;
 import java.util.LinkedHashMap;
-import java.util.Map;
 
 public class SearchHitResponse {
 

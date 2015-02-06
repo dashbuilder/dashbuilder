@@ -23,7 +23,6 @@ import org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.model.Sear
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.model.SearchResponse;
 import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.DataColumn;
-import org.dashbuilder.dataset.DataSetMetadata;
 import org.dashbuilder.dataset.backend.date.DateUtils;
 import org.dashbuilder.dataset.def.ElasticSearchDataSetDef;
 import org.dashbuilder.dataset.group.*;

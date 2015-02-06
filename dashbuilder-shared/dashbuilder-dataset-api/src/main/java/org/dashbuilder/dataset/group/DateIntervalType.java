@@ -16,7 +16,7 @@
 package org.dashbuilder.dataset.group;
 
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
@@ -49,7 +49,8 @@ public enum DateIntervalType {
     public static List<DateIntervalType> FIXED_INTERVALS_SUPPORTED = Arrays.asList(
             QUARTER, MONTH, DAY_OF_WEEK, HOUR, MINUTE, SECOND);
 
-    private static final Map<DateIntervalType,Long> DURATION_IN_MILLIS = new HashMap<DateIntervalType, Long>();
+    private static final Map<DateIntervalType,Long> DURATION_IN_MILLIS =
+            new EnumMap<DateIntervalType, Long>(DateIntervalType.class);
     static {
         long milli = 1;
         DURATION_IN_MILLIS.put(MILLISECOND, milli);
@@ -95,14 +96,10 @@ public enum DateIntervalType {
         DURATION_IN_MILLIS.put(MILLENIUM, millenium);
     }
 
-    private static DateIntervalType[] _typeArray = values();
+    private static final DateIntervalType[] _typeArray = values();
 
     public int getIndex() {
-        for (int i = 0; i < _typeArray.length; i++) {
-            DateIntervalType type = _typeArray[i];
-            if (this.equals(type)) return i;
-        }
-        return -1;
+        return ordinal();
     }
 
     public static DateIntervalType getByIndex(int index) {

@@ -45,7 +45,7 @@ public class SchedulerTaskComparator extends AbstractComparatorByCriteria {
         while (it.hasNext()) {
             Object[] criteriaProps =  (Object[]) it.next();
             String criteriaId = (String) criteriaProps[0];
-            int ordering = ((Integer)criteriaProps[1]).intValue();
+            int ordering = (Integer) criteriaProps[1];
             if (criteriaId.equals(TIME_TO_FIRE)) {
                 int compById = ComparatorUtils.compare(entry1.getMillisTimeToFire(), entry2.getMillisTimeToFire(), ordering);
                 if (compById != 0) return compById;

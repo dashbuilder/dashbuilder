@@ -32,8 +32,6 @@ import org.dashbuilder.dataset.def.DataSetDef;
 import org.dashbuilder.dataset.events.DataSetStaleEvent;
 import org.slf4j.Logger;
 
-import static org.uberfire.commons.validation.PortablePreconditions.checkNotNull;
-
 @ApplicationScoped
 @Named("csv")
 public class CSVDataSetProvider implements DataSetProvider {

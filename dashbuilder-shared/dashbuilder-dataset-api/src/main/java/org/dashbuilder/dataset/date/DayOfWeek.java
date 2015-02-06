@@ -19,6 +19,7 @@ import org.jboss.errai.common.client.api.annotations.Portable;
 
 @Portable
 public enum DayOfWeek {
+
     SUNDAY,
     MONDAY,
     TUESDAY,
@@ -27,27 +28,21 @@ public enum DayOfWeek {
     FRIDAY,
     SATURDAY;
 
-    private static DayOfWeek[] _array = values();
+    private final static DayOfWeek[] days = values();
 
     /**
-     * Get the index (from 1 to 7)
+     * @return index from 1 (SUNDAY) to 7 (SATURDAY)
      */
     public int getIndex() {
-        for (int i = 0; i < _array.length; i++) {
-            DayOfWeek el = _array[i];
-            if (this.equals(el)) return i+1;
-        }
-        return -1;
+        return ordinal() + 1;
     }
 
     public static int nextIndex(int index) {
-        index++;
-        if (index <= _array.length) return index;
-        return 1;
+        return ++index <= 7 ? index : 1;
     }
 
     public static DayOfWeek[] getAll() {
-        return _array;
+        return days;
     }
 
     public static DayOfWeek getByName(String name) {
@@ -59,9 +54,10 @@ public enum DayOfWeek {
     }
 
     /**
-     * Get by index (from 1 to 7)
+     * @param index index of day (1 = SUNDAY,... 7 = SATURDAY)
+     * @return day with given index
      */
     public static DayOfWeek getByIndex(int index) {
-        return _array[index-1];
+        return days[index - 1];
     }
 }
