@@ -18,7 +18,6 @@ package org.dashbuilder.dataset;
 import org.dashbuilder.dataset.filter.ColumnFilter;
 import org.dashbuilder.dataset.group.AggregateFunctionType;
 import org.dashbuilder.dataset.group.DateIntervalType;
-import org.dashbuilder.dataset.group.GroupStrategy;
 import org.dashbuilder.dataset.sort.SortOrder;
 import org.dashbuilder.dataset.date.DayOfWeek;
 import org.dashbuilder.dataset.date.Month;
