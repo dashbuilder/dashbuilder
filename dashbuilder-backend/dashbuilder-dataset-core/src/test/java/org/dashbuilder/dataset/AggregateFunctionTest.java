@@ -21,12 +21,6 @@ import javax.inject.Inject;
 
 import org.dashbuilder.dataset.group.AggregateFunction;
 import org.dashbuilder.dataset.group.AggregateFunctionManager;
-import org.dashbuilder.dataset.engine.function.AverageFunction;
-import org.dashbuilder.dataset.engine.function.CountFunction;
-import org.dashbuilder.dataset.engine.function.DistinctFunction;
-import org.dashbuilder.dataset.engine.function.MaxFunction;
-import org.dashbuilder.dataset.engine.function.MinFunction;
-import org.dashbuilder.dataset.engine.function.SumFunction;
 import org.dashbuilder.dataset.group.AggregateFunctionType;
 import org.dashbuilder.test.ShrinkWrapHelper;
 import org.jboss.arquillian.container.test.api.Deployment;

@@ -21,9 +21,6 @@ import org.dashbuilder.dataset.sort.SortOrder;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.dashbuilder.dataset.Assertions.assertDataSetValue;
-import static org.fest.assertions.api.Assertions.assertThat;
-
 /**
  * <p>Data test for ElasticSearchDataSet.</p>
  * <p>It uses as source dataset: <code>org/dashbuilder/dataprovider/backend/elasticsearch/expensereports-custom-columns-error.dset</code></p>

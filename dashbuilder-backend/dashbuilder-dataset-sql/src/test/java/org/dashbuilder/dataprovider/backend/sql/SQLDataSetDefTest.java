@@ -18,13 +18,9 @@ package org.dashbuilder.dataprovider.backend.sql;
 import java.net.URL;
 
 import org.apache.commons.io.IOUtils;
-import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetFactory;
-import org.dashbuilder.dataset.DataSetFilterTest;
-import org.dashbuilder.dataset.DataSetGroupTest;
 import org.dashbuilder.dataset.DataSetMetadata;
-import org.dashbuilder.dataset.DataSetNestedGroupTest;
 import org.dashbuilder.dataset.def.SQLDataSetDef;
 import org.junit.Test;
 

@@ -22,7 +22,6 @@ import javax.sql.DataSource;
 
 import org.apache.commons.io.IOUtils;
 import org.dashbuilder.dataset.DataSet;
-import org.dashbuilder.dataset.DataSetFactory;
 import org.dashbuilder.dataset.DataSetFormatter;
 import org.dashbuilder.dataset.DataSetManager;
 import org.dashbuilder.dataset.RawDataSetSamples;
@@ -39,10 +38,8 @@ import org.jooq.Table;
 import org.jooq.impl.SQLDataType;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import static org.fest.assertions.api.Assertions.*;
 import static org.jooq.impl.DSL.*;
 
 @RunWith(Arquillian.class)

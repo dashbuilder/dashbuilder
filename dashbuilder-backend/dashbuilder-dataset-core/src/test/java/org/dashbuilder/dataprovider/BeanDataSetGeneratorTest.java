@@ -20,10 +20,8 @@ import javax.inject.Inject;
 
 import org.apache.commons.io.IOUtils;
 import org.dashbuilder.dataset.DataSet;
-import org.dashbuilder.dataset.DataSetFactory;
 import org.dashbuilder.dataset.DataSetFormatter;
 import org.dashbuilder.dataset.DataSetManager;
-import org.dashbuilder.dataset.RawDataSetSamples;
 import org.dashbuilder.dataset.backend.DataSetDefJSONMarshaller;
 import org.dashbuilder.dataset.def.DataSetDef;
 import org.dashbuilder.dataset.def.DataSetDefRegistry;
@@ -37,7 +35,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import static org.dashbuilder.dataset.Assertions.*;
-import static org.dashbuilder.dataset.sort.SortOrder.*;
 
 @RunWith(Arquillian.class)
 public class BeanDataSetGeneratorTest {

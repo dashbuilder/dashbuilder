@@ -15,9 +15,7 @@
  */
 package org.dashbuilder.dataprovider.backend.sql;
 
-import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Specializes;
-import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
 

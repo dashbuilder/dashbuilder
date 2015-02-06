@@ -18,8 +18,6 @@ package org.dashbuilder.dataprovider.backend.elasticsearch;
 import org.junit.Before;
 import org.junit.Ignore;
 
-import static org.fest.assertions.api.Assertions.assertThat;
-
 /**
  * <p>Data test for ElasticSearchDataSet.</p>
  * 

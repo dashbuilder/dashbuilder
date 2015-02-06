@@ -17,7 +17,6 @@ package org.dashbuilder.dataprovider.backend.csv;
 
 import java.net.URL;
 import javax.inject.Inject;
-import javax.servlet.ServletContext;
 
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetFactory;
