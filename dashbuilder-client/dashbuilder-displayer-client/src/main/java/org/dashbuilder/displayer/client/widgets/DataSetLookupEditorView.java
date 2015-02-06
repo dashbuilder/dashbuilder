@@ -313,6 +313,7 @@ public class DataSetLookupEditorView extends Composite
                         public void columnChanged(ColumnFunctionEditor editor) {
                             presenter.changeGroupFunction(groupFunction,
                                     editor.getSourceId(), editor.getColumnId(), editor.getFunction());
+                            _updateColumnControls();
                         }
                         public void columnDeleted(ColumnFunctionEditor editor) {
                             presenter.removeGroupFunction(columnIdx);
