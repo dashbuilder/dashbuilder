@@ -30,21 +30,21 @@ import org.uberfire.client.annotations.WorkbenchScreen;
 
 @Dependent
 @Templated
-@WorkbenchScreen(identifier="HomeScreen")
-public class HomeScreen extends Composite {
+@WorkbenchScreen(identifier="GalleryHomeScreen")
+public class GalleryHomeScreen extends Composite {
 
     @Inject
     @DataField
-    private FlowPanel homeImagePanel;
+    private FlowPanel galleryImagePanel;
 
     @WorkbenchPartTitle
     public String getScreenTitle() {
-        return "Welcome to Dashbuilder";
+        return "Gallery";
     }
 
     @PostConstruct
     void doLayout() {
-        Image image = new Image(AppResource.INSTANCE.images().pieChartLogo());
-        homeImagePanel.add(image);
+        Image image = new Image(AppResource.INSTANCE.images().barChartLogo());
+        galleryImagePanel.add(image);
     }
 }

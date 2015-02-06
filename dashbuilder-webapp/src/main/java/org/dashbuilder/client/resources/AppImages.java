@@ -27,4 +27,9 @@ public interface AppImages extends ClientBundle {
     @Source("images/dashbuilder_user_logo.png")
     ImageResource ufUserLogo();
 
+    @Source("images/dashbuilder_home_pie.png")
+    ImageResource pieChartLogo();
+
+    @Source("images/dashbuilder_gallery_bar.png")
+    ImageResource barChartLogo();
 }

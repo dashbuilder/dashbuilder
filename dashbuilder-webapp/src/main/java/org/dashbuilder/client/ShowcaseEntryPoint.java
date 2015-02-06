@@ -16,8 +16,6 @@
 package org.dashbuilder.client;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.enterprise.event.Observes;
@@ -26,23 +24,14 @@ import javax.inject.Inject;
 import com.google.gwt.animation.client.Animation;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.RootPanel;
-import org.dashbuilder.displayer.client.ClientSettings;
-import org.jboss.errai.bus.client.api.ClientMessageBus;
 import org.jboss.errai.ioc.client.api.EntryPoint;
-import org.jboss.errai.ioc.client.container.IOCBeanDef;
-import org.jboss.errai.ioc.client.container.SyncBeanManager;
-import org.uberfire.client.mvp.ActivityManager;
-import org.uberfire.client.mvp.PerspectiveActivity;
 import org.uberfire.client.mvp.PlaceManager;
 import org.uberfire.client.workbench.events.ApplicationReadyEvent;
 import org.uberfire.client.workbench.widgets.menu.WorkbenchMenuBar;
 import org.uberfire.mvp.Command;
-import org.uberfire.mvp.impl.DefaultPlaceRequest;
 import org.uberfire.workbench.model.menu.MenuFactory;
 import org.uberfire.workbench.model.menu.MenuItem;
-import org.uberfire.workbench.model.menu.Menus;
 
 import static org.uberfire.workbench.model.menu.MenuFactory.*;
 
@@ -66,29 +55,27 @@ public class ShowcaseEntryPoint {
     private void setupMenu( @Observes final ApplicationReadyEvent event ) {
 
         menubar.addMenus(
+                newTopLevelMenu("Home").respondsWith(new Command() {
+                    public void execute() {
+                        placeManager.goTo("HomePerspective");
+                    }
+                }).endMenu().
                 newTopLevelMenu("Gallery").respondsWith(new Command() {
                     public void execute() {
                         placeManager.goTo("DisplayerGalleryPerspective");
                     }
                 }).endMenu().
-                newTopLevelMenu("Plugins").respondsWith(new Command() {
-                    public void execute() {
-                        placeManager.goTo("PlugInAuthoringPerspective");
-                    }
-                }).endMenu().
-                newTopLevelMenu("Apps").respondsWith(new Command() {
-                    public void execute() {
-                        placeManager.goTo("AppsPerspective");
-                    }
-                }).endMenu().
-                newTopLevelMenu("Examples")
-                        .withItems(getSampleDashboardMenuItems())
-                        .endMenu().
+                newTopLevelMenu("Dashboards")
+                .withItems(getDashboardMenuItems())
+                .endMenu().
+                newTopLevelMenu("Extensions")
+                .withItems(getExtensionsMenuItems())
+                .endMenu().
                 build()
         );
     }
 
-    private List<? extends MenuItem> getSampleDashboardMenuItems() {
+    private List<? extends MenuItem> getDashboardMenuItems() {
         final List<MenuItem> result = new ArrayList<MenuItem>(2);
 
         result.add(MenuFactory.newSimpleItem("Sales Dashboard").respondsWith(new Command() {
@@ -97,15 +84,33 @@ public class ShowcaseEntryPoint {
             }
         }).endMenu().build().getItems().get(0));
 
-        result.add(MenuFactory.newSimpleItem("Table reports").respondsWith(new Command() {
+        result.add(MenuFactory.newSimpleItem("Sales Reports").respondsWith(new Command() {
             public void execute() {
                 placeManager.goTo("SalesReportsPerspective");
             }
         }).endMenu().build().getItems().get(0));
 
-        result.add(MenuFactory.newSimpleItem("Ad-hoc").respondsWith(new Command() {
+        result.add(MenuFactory.newSimpleItem("- New -").respondsWith(new Command() {
             public void execute() {
                 placeManager.goTo("DashboardDesignerPerspective");
+            }
+        }).endMenu().build().getItems().get(0));
+
+        return result;
+    }
+
+    private List<? extends MenuItem> getExtensionsMenuItems() {
+        final List<MenuItem> result = new ArrayList<MenuItem>(2);
+
+        result.add(MenuFactory.newSimpleItem("Plugins").respondsWith(new Command() {
+            public void execute() {
+                placeManager.goTo("PlugInAuthoringPerspective");
+            }
+        }).endMenu().build().getItems().get(0));
+
+        result.add(MenuFactory.newSimpleItem("Apps").respondsWith(new Command() {
+            public void execute() {
+                placeManager.goTo("AppsPerspective");
             }
         }).endMenu().build().getItems().get(0));
 

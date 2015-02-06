@@ -431,10 +431,10 @@ public class GalleryTree {
     }
 
     private void initDashboardCategory() {
-        GalleryTreeNodeList nodeList = new GalleryTreeNodeList("Combined");
+        GalleryTreeNodeList nodeList = new GalleryTreeNodeList("Dashboards");
         mainNodes.add(nodeList);
 
-        nodeList.add(new GalleryPlaceRequest("Sales goal", createPlaceRequest("salesGoal")));
+        nodeList.add(new GalleryPlaceRequest("Sales goals", createPlaceRequest("salesGoal")));
         nodeList.add(new GalleryPlaceRequest("Sales pipeline", createPlaceRequest("salesPipeline")));
         nodeList.add(new GalleryPlaceRequest("Sales per country", createPlaceRequest("salesPerCountry")));
         nodeList.add(new GalleryPlaceRequest("Sales reports", createPlaceRequest("salesReports")));
