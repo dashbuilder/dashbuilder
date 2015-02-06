@@ -62,7 +62,7 @@ public class SelectorDisplayer extends AbstractDisplayer {
             } else {
                 try {
                     String initMsg = SelectorConstants.INSTANCE.selectorDisplayer_initializing();
-                    if (!StringUtils.isBlank(displayerSettings.getTitle())) initMsg += " '" + displayerSettings.getTitle() + "'";
+                    //if (!StringUtils.isBlank(displayerSettings.getTitle())) initMsg += " '" + displayerSettings.getTitle() + "'";
                     displayMessage(initMsg + " ...");
 
                     dataSetHandler.lookupDataSet(new DataSetReadyCallback() {

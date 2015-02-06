@@ -90,7 +90,7 @@ public class TableDisplayer extends AbstractDisplayer {
             } else {
                 try {
                     String initMsg = TableConstants.INSTANCE.tableDisplayer_initializing();
-                    if (!StringUtils.isBlank(displayerSettings.getTitle())) initMsg += " '" + displayerSettings.getTitle() + "'";
+                    //if (!StringUtils.isBlank(displayerSettings.getTitle())) initMsg += " '" + displayerSettings.getTitle() + "'";
                     displayMessage(initMsg + " ...");
 
                     lookupDataSet(0, new DataSetReadyCallback() {
