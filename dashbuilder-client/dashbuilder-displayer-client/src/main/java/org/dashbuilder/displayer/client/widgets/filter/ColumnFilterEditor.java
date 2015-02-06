@@ -115,7 +115,7 @@ public class ColumnFilterEditor extends Composite {
 
     public boolean hasDetails() {
         CoreFunctionFilter coreFilter = getCoreFilter();
-        return (coreFilter != null && coreFilter.getType().getNumberOfParameters() > 0);
+        return (coreFilter != null && coreFilter.getType().getParametersCount() > 0);
     }
 
     public void expand() {
@@ -189,7 +189,7 @@ public class ColumnFilterEditor extends Composite {
         filterDetailsPanel.clear();
 
         CoreFunctionFilter coreFilter = getCoreFilter();
-        for (int i=0; i<coreFilter.getType().getNumberOfParameters(); i++) {
+        for (int i=0; i<coreFilter.getType().getParametersCount(); i++) {
             Widget paramInput = createParamInputWidget(coreFilter, i);
             filterDetailsPanel.add(paramInput);
         }
