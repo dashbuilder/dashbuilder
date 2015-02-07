@@ -16,13 +16,13 @@
 package org.dashbuilder.client.metrics.widgets.vertical;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.*;
 import org.dashbuilder.backend.ClusterMetricsDataSetGenerator;
+import org.dashbuilder.client.metrics.MetricsDashboard;
 import org.dashbuilder.displayer.DisplayerSettingsFactory;
 import org.dashbuilder.displayer.client.Displayer;
 import org.dashbuilder.displayer.client.DisplayerCoordinator;
@@ -44,6 +44,9 @@ public class VerticalServerMetrics extends Composite {
 
     @UiField
     VerticalPanel labelsPanel;
+
+    @UiField
+    FocusPanel serverIcon;
     
     @UiField
     HTML serverName;
@@ -54,11 +57,11 @@ public class VerticalServerMetrics extends Composite {
         return "Server metrics (Vertical)";
     }
 
-    public VerticalServerMetrics(String server) {
-        this(server, false);
+    public VerticalServerMetrics(MetricsDashboard metricsDashboard, String server) {
+        this(metricsDashboard, server, false);
     }
     
-    public VerticalServerMetrics(String server, boolean showLabels) {
+    public VerticalServerMetrics(final MetricsDashboard metricsDashboard, final String server, boolean showLabels) {
 
         // Init the dashboard from the UI Binder template
         initWidget(uiBinder.createAndBindUi(this));
@@ -175,6 +178,15 @@ public class VerticalServerMetrics extends Composite {
         
         addDisplayer(serverDisk);
 
+        // Add the click handler for server details action.
+        serverIcon.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent clickEvent) {
+                GWT.log("VerticalServerMetrics - Show details for server: " + server);
+                metricsDashboard.showServerDetails(server);
+            }
+        });
+        
         // Draw the charts
         displayerCoordinator.drawAll();
     }

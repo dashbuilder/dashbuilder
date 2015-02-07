@@ -17,12 +17,12 @@
     }
 
     .server_memory_area {
-      width: 600px;
+      width: 975px;
       height: 300px;
     }
 
     .server_network_area {
-      width: 600px;
+      width: 550px;
       height: 300px;
       margin-top: 10px;
     }
@@ -31,6 +31,7 @@
       width: 200px;
       height: 300px;
       margin-left: 25px;
+      margin-top: 10px;
     }
 
     .server_processes_area {
@@ -79,7 +80,7 @@
 
     </ui:style>
 
-  <g:HorizontalPanel spacing="10" visible="false" addStyleNames="{style.server_details_area}" ui:field="serverDetailsArea">
+  <g:HorizontalPanel spacing="10" addStyleNames="{style.server_details_area}" ui:field="serverDetailsArea">
 
     <!-- CPU usage area. -->
     <g:VerticalPanel spacing="10" addStyleNames="{style.server_cpu_area} {style.metrics_dashboard_panel}">
@@ -112,43 +113,43 @@
         </g:cell>
       </g:VerticalPanel>
 
-      <!-- Network usage area. -->
-      <g:VerticalPanel spacing="10" addStyleNames="{style.server_network_area} {style.metrics_dashboard_panel}">
-        <g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
-          <g:HTML text="Current Network usage (kbps)"/>
-        </g:cell>
-        <g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
-          <dashbuilder:Displayer ui:field="serverNetwork"/>
-        </g:cell>
-      </g:VerticalPanel>
 
-    </g:VerticalPanel>
+      <g:HorizontalPanel spacing="10">
+        
+        <!-- Network usage area. -->
+        <g:VerticalPanel spacing="10" addStyleNames="{style.server_network_area} {style.metrics_dashboard_panel}">
+          <g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
+            <g:HTML text="Current Network usage (kbps)"/>
+          </g:cell>
+          <g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
+            <dashbuilder:Displayer ui:field="serverNetwork"/>
+          </g:cell>
+        </g:VerticalPanel>
 
-    <!-- Disk and processes usage area. -->
-    <g:VerticalPanel spacing="10">
+        <!-- Disk usage area. -->
+        <g:VerticalPanel spacing="10" addStyleNames="{style.server_disk_area} {style.metrics_dashboard_panel}">
+          <g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
+            <g:HTML text="Current disk usage (Mb)"/>
+          </g:cell>
+          <g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
+            <dashbuilder:Displayer ui:field="serverDisk"/>
+          </g:cell>
+        </g:VerticalPanel>
 
-      <!-- Disk usage area. -->
-      <g:VerticalPanel spacing="10" addStyleNames="{style.server_disk_area} {style.metrics_dashboard_panel}">
-        <g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
-          <g:HTML text="Current disk usage (Mb)"/>
-        </g:cell>
-        <g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
-          <dashbuilder:Displayer ui:field="serverDisk"/>
-        </g:cell>
-      </g:VerticalPanel>
-
-      <!-- Processes usage area. -->
-      <g:VerticalPanel spacing="10" addStyleNames="{style.server_processes_area} {style.metrics_dashboard_panel}">
-        <g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
-          <g:HTML text="Current processes usage"/>
-        </g:cell>
-        <g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
-          <dashbuilder:Displayer ui:field="serverProcessesRunning"/>
-        </g:cell>
-        <g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
-          <dashbuilder:Displayer ui:field="serverProcessesSleeping"/>
-        </g:cell>
-      </g:VerticalPanel>
+        <!-- Processes usage area. -->
+        <g:VerticalPanel spacing="10" addStyleNames="{style.server_processes_area} {style.metrics_dashboard_panel}">
+          <g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
+            <g:HTML text="Current processes usage"/>
+          </g:cell>
+          <g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
+            <dashbuilder:Displayer ui:field="serverProcessesRunning"/>
+          </g:cell>
+          <g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
+            <dashbuilder:Displayer ui:field="serverProcessesSleeping"/>
+          </g:cell>
+        </g:VerticalPanel>
+        
+      </g:HorizontalPanel>
 
     </g:VerticalPanel>
 

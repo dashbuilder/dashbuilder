@@ -13,4 +13,7 @@ public interface MetricsDashboardClientBundle
     @Source("images/computer-icon.gif")
     ImageResource computerIcon();
 
+    @Source("images/back-icon.png")
+    ImageResource backIcon();
+
 }

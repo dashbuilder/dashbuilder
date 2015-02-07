@@ -21,6 +21,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.backend.ClusterMetricsDataSetGenerator;
+import org.dashbuilder.client.metrics.MetricsDashboard;
 import org.dashbuilder.displayer.DisplayerSettingsFactory;
 import org.dashbuilder.displayer.client.Displayer;
 import org.dashbuilder.displayer.client.DisplayerCoordinator;
@@ -64,7 +65,7 @@ public class DetailedServerMetrics extends Composite {
         return "Server metrics (Vertical)";
     }
 
-    public DetailedServerMetrics(String server) {
+    public DetailedServerMetrics(MetricsDashboard metricsDashboard, String server) {
 
         buildServerDetailsDisplayers(server);
         
@@ -83,7 +84,7 @@ public class DetailedServerMetrics extends Composite {
                         .filter(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP, timeFrame("1second"))
                         .column(ClusterMetricsDataSetGenerator.COLUMN_CPU0, MAX, "CPU0")
                         .title("CPU0")
-                        .width(400).height(200)
+                        .width(400).height(250)
                         .meter(0, 25, 50, 100)
                         .refreshOn(1, false)
                         .buildSettings());
@@ -95,7 +96,7 @@ public class DetailedServerMetrics extends Composite {
                         .filter(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP, timeFrame("1second"))
                         .column(ClusterMetricsDataSetGenerator.COLUMN_CPU1, MAX, "CPU1")
                         .title("CPU1")
-                        .width(400).height(200)
+                        .width(400).height(250)
                         .meter(0, 25, 50, 100)
                         .refreshOn(1, false)
                         .buildSettings());
@@ -104,14 +105,14 @@ public class DetailedServerMetrics extends Composite {
                 DisplayerSettingsFactory.newAreaChartSettings()
                         .dataset(CLUSTER_METRICS_UUID)
                         .filter(ClusterMetricsDataSetGenerator.COLUMN_SERVER, equalsTo(server))
-                        .filter(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP, timeFrame("10second"))
-                        .group(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP).dynamic(10, SECOND, true)
+                        .filter(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP, timeFrame("60second"))
+                        .group(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP).fixed(SECOND, true)
                         .column(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP)
                         .column(ClusterMetricsDataSetGenerator.COLUMN_MEMORY_USED, MAX, "Used memory")
                         .column(ClusterMetricsDataSetGenerator.COLUMN_MEMORY_FREE, MAX, "Free memory")
                         .title("Memory consumption")
                         .titleVisible(false)
-                        .width(400).height(250)
+                        .width(800).height(250)
                         .refreshOn(2, false)
                         .buildSettings());
 
@@ -126,7 +127,7 @@ public class DetailedServerMetrics extends Composite {
                         .column(ClusterMetricsDataSetGenerator.COLUMN_NETWORK_TX, MAX, "Upstream")
                         .title("Network bandwidth")
                         .titleVisible(false)
-                        .width(400).height(250)
+                        .width(500).height(250)
                         .refreshOn(2, false)
                         .buildSettings());
 
@@ -141,6 +142,7 @@ public class DetailedServerMetrics extends Composite {
                         .column(ClusterMetricsDataSetGenerator.COLUMN_DISK_USED, MAX, "Used disk space")
                         .title("Disk usage")
                         .titleVisible(false)
+                        .legendOff()
                         .width(200).height(200)
                         .refreshOn(2, false)
                         .buildSettings());

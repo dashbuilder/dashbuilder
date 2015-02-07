@@ -118,14 +118,16 @@
     <!-- Server summary column. -->
     <g:VerticalPanel spacing="10" addStyleNames="{style.summary_panel}">
 
-      <g:VerticalPanel spacing="10" addStyleNames="{style.icon_panel} {style.metrics_dashboard_panel}">
-        <g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
-          <g:Image resource='{resources.computerIcon}' addStyleNames="{style.server_icon}"/>
-        </g:cell>
-        <g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
-          <g:HTML ui:field="serverName"/>
-        </g:cell>
-      </g:VerticalPanel>
+      <g:FocusPanel ui:field="serverIcon" >
+        <g:VerticalPanel spacing="10" addStyleNames="{style.icon_panel} {style.metrics_dashboard_panel}">
+          <g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
+            <g:Image resource='{resources.computerIcon}' addStyleNames="{style.server_icon}"/>
+          </g:cell>
+          <g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
+            <g:HTML ui:field="serverName"/>
+          </g:cell>
+        </g:VerticalPanel>
+      </g:FocusPanel>
 
       <g:VerticalPanel spacing="10" addStyleNames="{style.displayers_panel} {style.metrics_dashboard_panel}" ui:field="mainPanel"
                        horizontalAlignment="ALIGN_CENTER">
