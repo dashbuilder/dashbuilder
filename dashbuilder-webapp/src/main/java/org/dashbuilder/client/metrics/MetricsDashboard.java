@@ -50,7 +50,8 @@ public class MetricsDashboard extends Composite {
     public static final String METRICS_DATASET_UUID = "clusterMetrics";
     public static final String[] METRICS_DATASET_DEFAULT_SERVERS = new String[] {"server1","server2","server3","server4","server5"};
     private static final int ANIMATION_DURATION = 5000;
-    private static final int TIMER_DELAY = 1000;
+    private static final int DS_LOOKUP_TIMER_DELAY = 1000;
+    private static final int NOTIFICATIONS_TIMER_DELAY = 3000;
     
     // The client bundle for this widget.
     @UiField
@@ -76,6 +77,12 @@ public class MetricsDashboard extends Composite {
 
     @UiField
     FocusPanel buttonNow;
+
+    @UiField
+    Label notificationsLabel;
+
+    @UiField
+    FlowPanel notificationsLabelPanel;
 
     private boolean isViewingSummary;
     private boolean isViewingVerticalSummary;
@@ -131,10 +138,10 @@ public class MetricsDashboard extends Composite {
             @Override
             public void run() {
                 checkServersAlive();
-                timer.schedule(TIMER_DELAY);
+                timer.schedule(DS_LOOKUP_TIMER_DELAY);
             }
         };
-        timer.schedule(TIMER_DELAY);
+        timer.schedule(DS_LOOKUP_TIMER_DELAY);
     }
 
     private void showSummary() {
@@ -243,12 +250,34 @@ public class MetricsDashboard extends Composite {
             }
             
             if (found) {
-                getVerticalServerMetrics(availableServer).on();
+                on(availableServer);
             } else {
-                getVerticalServerMetrics(availableServer).off();
+                off(availableServer);
             }
         }
         
+    }
+    
+    private void off(String server) {
+        getVerticalServerMetrics(server).off();
+        showNotification(server + " has been down");
+    }
+
+    private void on(String server) {
+        getVerticalServerMetrics(server).on();
+        showNotification(server + " has been up");
+    }
+    
+    private void showNotification(String message) {
+        notificationsLabel.setText(message);
+        notificationsLabelPanel.setVisible(true);
+        Timer timer1 = new Timer() {
+            @Override
+            public void run() {
+                notificationsLabelPanel.setVisible(false);
+            }
+        };
+        timer1.schedule(NOTIFICATIONS_TIMER_DELAY);
     }
     
     private String[] getDataSetServers() {
