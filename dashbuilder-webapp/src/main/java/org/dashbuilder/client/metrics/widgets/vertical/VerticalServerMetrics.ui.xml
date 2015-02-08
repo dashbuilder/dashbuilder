@@ -1,5 +1,6 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+             xmlns:b="urn:import:com.github.gwtbootstrap.client.ui"
              xmlns:g="urn:import:com.google.gwt.user.client.ui"
     >
   
@@ -105,11 +106,11 @@
       <g:VerticalPanel spacing="10" addStyleNames="{style.labels_text_panel} {style.metrics_dashboard_panel}"
                        horizontalAlignment="ALIGN_CENTER" >
 
-        <g:Label text="CPU usage" addStyleNames="{style.label}"/>
-        <g:Label text="Used memory" addStyleNames="{style.label}"/>
-        <g:Label text="Network BW" addStyleNames="{style.label}"/>
+        <g:Label text="CPU usage (%)" addStyleNames="{style.label}"/>
+        <g:Label text="Used memory (Gb)" addStyleNames="{style.label}"/>
+        <g:Label text="Network BW (kbps)" addStyleNames="{style.label}"/>
         <g:Label text="Running proc" addStyleNames="{style.label}"/>
-        <g:Label text="Free &amp; used disk space" addStyleNames="{style.label}"/>
+        <g:Label text="Free &amp; used disk space (Mb)" addStyleNames="{style.label}"/>
 
       </g:VerticalPanel>
       
@@ -119,14 +120,16 @@
     <g:VerticalPanel spacing="10" addStyleNames="{style.summary_panel}">
 
       <g:FocusPanel ui:field="serverIcon" >
-        <g:VerticalPanel spacing="10" addStyleNames="{style.icon_panel} {style.metrics_dashboard_panel}">
-          <g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
-            <g:Image resource='{resources.computerIcon}' addStyleNames="{style.server_icon}"/>
-          </g:cell>
-          <g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
-            <g:HTML ui:field="serverName"/>
-          </g:cell>
-        </g:VerticalPanel>
+        <b:Tooltip text='Show server details' placement="BOTTOM" ui:field="tooltip">
+          <g:VerticalPanel spacing="10" addStyleNames="{style.icon_panel} {style.metrics_dashboard_panel}">
+            <g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
+              <g:Image resource='{resources.computerIcon}' addStyleNames="{style.server_icon}"/>
+            </g:cell>
+            <g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
+              <g:HTML ui:field="serverName"/>
+            </g:cell>
+          </g:VerticalPanel>
+        </b:Tooltip>
       </g:FocusPanel>
 
       <g:VerticalPanel spacing="10" addStyleNames="{style.displayers_panel} {style.metrics_dashboard_panel}" ui:field="mainPanel"

@@ -1,5 +1,6 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+             xmlns:b="urn:import:com.github.gwtbootstrap.client.ui"
              xmlns:g="urn:import:com.google.gwt.user.client.ui"
     >
   
@@ -8,16 +9,43 @@
   <ui:style>
     
     .main_panel {
-      margin: 50px;
+      margin-left: 50px;
+      margin-top: 10px;
       width: 1200px;
       height: 1200px;
       background-color: #ffffff;
     }
+    
+    .dashboard_buttons_area {
+      width: 1200px;
+      height: 50px;
+      font-size: medium;
+      font-weight: bold;
+      margin-bottom: 50px;
+    }
+    
+    .dashboard_history_button {
+      width: 595px;
+      height: 50px;
+      background-color: whitesmoke;
+      margin-right: 5px;
+    }
+    
+    .dashboard_now_button {
+      width: 595px;
+      height: 50px;
+      background-color: whitesmoke;
+      margin-left: 5px;
+    }
 
     .dashboard_title_area {
       width: 1200px;
+      margin-bottom: 25px;
+    }
+    
+    .dashboard_title {
       font-weight: bold;
-      font-size: medium;
+      font-size: large;
     }
     
     .back_icon {
@@ -28,6 +56,30 @@
     </ui:style>
   
   <g:VerticalPanel spacing="10" addStyleNames="{style.main_panel}">
+
+    <g:HorizontalPanel spacing="10" addStyleNames="{style.dashboard_buttons_area}">
+
+      <g:FocusPanel ui:field="buttonHistory">
+        <b:Tooltip text='Show historic metrics summary (analytic dashboard)' placement="BOTTOM">
+          <g:HorizontalPanel spacing="10" addStyleNames="{style.dashboard_history_button}">
+            <g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
+              <g:HTML text="History"/>
+            </g:cell>
+          </g:HorizontalPanel>
+        </b:Tooltip>
+      </g:FocusPanel>
+
+      <g:FocusPanel ui:field="buttonNow">
+        <b:Tooltip text='Show current metrics summary (real-time dashboard)' placement="BOTTOM">
+          <g:HorizontalPanel spacing="10" addStyleNames="{style.dashboard_now_button}">
+            <g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
+              <g:HTML text="Now"/>
+            </g:cell>
+          </g:HorizontalPanel>
+        </b:Tooltip>
+      </g:FocusPanel>
+      
+    </g:HorizontalPanel>
     
     <!-- Dashboard title -->
     <g:HorizontalPanel spacing="10" addStyleNames="{style.dashboard_title_area}">
@@ -35,7 +87,7 @@
         <g:Image resource='{resources.backIcon}' addStyleNames="{style.back_icon}" ui:field="backIcon"/>
       </g:cell>
       <g:cell horizontalAlignment="ALIGN_CENTER">
-        <g:HTML ui:field="title"/>
+        <g:HTML ui:field="title" addStyleNames="{style.dashboard_title}"/>
       </g:cell>
     </g:HorizontalPanel>
 

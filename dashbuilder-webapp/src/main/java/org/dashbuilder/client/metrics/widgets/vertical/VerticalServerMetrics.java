@@ -15,7 +15,9 @@
  */
 package org.dashbuilder.client.metrics.widgets.vertical;
 
+import com.github.gwtbootstrap.client.ui.Tooltip;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -51,6 +53,9 @@ public class VerticalServerMetrics extends Composite {
     @UiField
     HTML serverName;
     
+    @UiField
+    Tooltip tooltip;
+    
     DisplayerCoordinator displayerCoordinator = new DisplayerCoordinator();
 
     public String getTitle() {
@@ -73,7 +78,7 @@ public class VerticalServerMetrics extends Composite {
         
         // The server name.
         serverName.setText(server);
-        
+        tooltip.setText("Show real-time metric details for server " + server);
 
         // CPU0
         Displayer serverCPU0 = DisplayerHelper.lookupDisplayer(
@@ -109,29 +114,29 @@ public class VerticalServerMetrics extends Composite {
 
         // Used memory
         Displayer serverMemory = DisplayerHelper.lookupDisplayer(
-                DisplayerSettingsFactory.newAreaChartSettings()
+                DisplayerSettingsFactory.newBarChartSettings()
                         .dataset(CLUSTER_METRICS_UUID)
                         .filter(ClusterMetricsDataSetGenerator.COLUMN_SERVER, equalsTo(server))
-                        .filter(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP, timeFrame("10second"))
-                        .group(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP).dynamic(10, SECOND, true)
+                        .filter(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP, timeFrame("1second"))
+                        .group(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP).dynamic(1, SECOND, true)
                         .column(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP)
                         .column(ClusterMetricsDataSetGenerator.COLUMN_MEMORY_USED, MAX, "Used memory")
                         .title("Memory consumption")
                         .titleVisible(false)
                         .width(200).height(200)
                         .legendOff()
-                        .refreshOn(2, false)
+                        .refreshOn(1, false)
                         .buildSettings());
 
         addDisplayer(serverMemory);
 
         // TX/RX
         Displayer serverNetwork = DisplayerHelper.lookupDisplayer(
-                DisplayerSettingsFactory.newAreaChartSettings()
+                DisplayerSettingsFactory.newBarChartSettings()
                         .dataset(CLUSTER_METRICS_UUID)
                         .filter(ClusterMetricsDataSetGenerator.COLUMN_SERVER, equalsTo(server))
-                        .filter(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP, timeFrame("10second"))
-                        .group(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP).dynamic(10, SECOND, true)
+                        .filter(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP, timeFrame("1second"))
+                        .group(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP).dynamic(1, SECOND, true)
                         .column(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP)
                         .column(ClusterMetricsDataSetGenerator.COLUMN_NETWORK_RX, MAX, "Downstream")
                         .column(ClusterMetricsDataSetGenerator.COLUMN_NETWORK_TX, MAX, "Upstream")
@@ -139,7 +144,7 @@ public class VerticalServerMetrics extends Composite {
                         .titleVisible(false)
                         .legendOff()
                         .width(200).height(200)
-                        .refreshOn(2, false)
+                        .refreshOn(1, false)
                         .buildSettings());
 
         addDisplayer(serverNetwork);
@@ -186,6 +191,7 @@ public class VerticalServerMetrics extends Composite {
                 metricsDashboard.showServerDetails(server);
             }
         });
+        setPointerCursor(serverIcon);
         
         // Draw the charts
         displayerCoordinator.drawAll();
@@ -196,6 +202,8 @@ public class VerticalServerMetrics extends Composite {
         displayer.refreshOn();
         mainPanel.add(displayer);
     }
-    
-    
+
+    private void setPointerCursor(UIObject object) {
+        object.getElement().getStyle().setCursor(Style.Cursor.POINTER);
+    }
 }

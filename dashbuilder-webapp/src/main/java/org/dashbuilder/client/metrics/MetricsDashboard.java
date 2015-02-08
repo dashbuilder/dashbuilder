@@ -16,6 +16,7 @@
 package org.dashbuilder.client.metrics;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -23,6 +24,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.*;
 import org.dashbuilder.client.metrics.animation.VisibilityAnimation;
 import org.dashbuilder.client.metrics.widgets.details.DetailedServerMetrics;
+import org.dashbuilder.client.metrics.widgets.summary.SummaryMetrics;
 import org.dashbuilder.client.metrics.widgets.vertical.VerticalServerMetrics;
 
 public class MetricsDashboard extends Composite {
@@ -50,7 +52,12 @@ public class MetricsDashboard extends Composite {
 
     @UiField
     Image backIcon;
-    
+
+    @UiField
+    FocusPanel buttonHistory;
+
+    @UiField
+    FocusPanel buttonNow;
 
     public String getTitle() {
         return "System Metrics Dashboard Widget";
@@ -68,9 +75,36 @@ public class MetricsDashboard extends Composite {
                 showVerticalServersSummary();
             }
         });
+        setPointerCursor(backIcon);
+        
+        buttonNow.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent clickEvent) {
+                showVerticalServersSummary();
+            }
+        });
+        setPointerCursor(buttonNow);
+        
+        buttonHistory.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent clickEvent) {
+                showSummary();
+            }
+        });
+        setPointerCursor(buttonHistory);
         
         // Initially show vertical servers summary.
         showVerticalServersSummary();
+    }
+
+    private void showSummary() {
+        hideAll();
+        SummaryMetrics summaryMetrics = new SummaryMetrics();
+        title.setText("History summary (analytic dashboard)");
+        backIcon.setVisible(false);
+        analyticSummaryArea.add(summaryMetrics);
+        VisibilityAnimation animation = new VisibilityAnimation(analyticSummaryArea);
+        animation.run(ANIMATION_DURATION);
     }
     
     private void showVerticalServersSummary() {
@@ -85,7 +119,7 @@ public class MetricsDashboard extends Composite {
                 verticalSummaryArea.add(verticalServerMetrics);
             }
         }
-        title.setText("System metrics summary");
+        title.setText("Current system server metrics (real-time dashboard)");
         backIcon.setVisible(false);
         VisibilityAnimation animation = new VisibilityAnimation(verticalSummaryArea);
         animation.run(ANIMATION_DURATION);
@@ -95,7 +129,7 @@ public class MetricsDashboard extends Composite {
     public void showServerDetails(String server) {
         hideAll();
         DetailedServerMetrics detailedServerMetrics = new DetailedServerMetrics(this, server);
-        title.setText("Details for " + server);
+        title.setText("Current metrics for " + server);
         backIcon.setVisible(true);
         serverDetailsArea.add(detailedServerMetrics);
         VisibilityAnimation animation = new VisibilityAnimation(serverDetailsArea);
@@ -126,6 +160,10 @@ public class MetricsDashboard extends Composite {
     private String[] getAvailableServers() {
         // TODO: Perfom a real dataset lookup.
         return new String[] {"server1","server2","server3","server4","server5"};
+    }
+    
+    private void setPointerCursor(UIObject object) {
+        object.getElement().getStyle().setCursor(Style.Cursor.POINTER);
     }
 
 }
