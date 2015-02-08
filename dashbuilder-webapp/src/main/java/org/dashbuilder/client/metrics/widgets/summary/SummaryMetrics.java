@@ -21,13 +21,12 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.backend.ClusterMetricsDataSetGenerator;
-import org.dashbuilder.displayer.DisplayerSettings;
+import org.dashbuilder.client.metrics.MetricsDashboard;
 import org.dashbuilder.displayer.DisplayerSettingsFactory;
 import org.dashbuilder.displayer.client.Displayer;
 import org.dashbuilder.displayer.client.DisplayerCoordinator;
 import org.dashbuilder.displayer.client.DisplayerHelper;
 
-import static org.dashbuilder.client.metrics.MetricsConstants.CLUSTER_METRICS_UUID;
 import static org.dashbuilder.dataset.group.AggregateFunctionType.MAX;
 
 public class SummaryMetrics extends Composite {
@@ -35,50 +34,6 @@ public class SummaryMetrics extends Composite {
     interface SummaryMetricsBinder extends UiBinder<Widget, SummaryMetrics>{}
     private static final SummaryMetricsBinder uiBinder = GWT.create(SummaryMetricsBinder.class);
 
-    private static final DisplayerSettings MaxCPUxServerSettings = DisplayerSettingsFactory.newBarChartSettings()
-            .dataset(CLUSTER_METRICS_UUID)
-            .group(ClusterMetricsDataSetGenerator.COLUMN_SERVER)
-            .column(ClusterMetricsDataSetGenerator.COLUMN_SERVER, "Server")
-            .column(ClusterMetricsDataSetGenerator.COLUMN_CPU0, MAX, "CPU0 Max")
-            .column(ClusterMetricsDataSetGenerator.COLUMN_CPU1, MAX, "CPU1 Max")
-            .title("Max CPU usage")
-            .titleVisible(true)
-            .vertical()
-            .buildSettings();
-
-    private static final DisplayerSettings MaxMemxServerSettings = DisplayerSettingsFactory.newBarChartSettings()
-            .dataset(CLUSTER_METRICS_UUID)
-            .group(ClusterMetricsDataSetGenerator.COLUMN_SERVER)
-            .column(ClusterMetricsDataSetGenerator.COLUMN_SERVER, "Server")
-            .column(ClusterMetricsDataSetGenerator.COLUMN_MEMORY_USED, MAX, "Max used memory")
-            .column(ClusterMetricsDataSetGenerator.COLUMN_MEMORY_FREE, MAX, "Max free memory")
-            .title("Max Memory usage")
-            .titleVisible(true)
-            .vertical()
-            .buildSettings();
-
-    private static final DisplayerSettings MaxProcessesxServerSettings = DisplayerSettingsFactory.newBarChartSettings()
-            .dataset(CLUSTER_METRICS_UUID)
-            .group(ClusterMetricsDataSetGenerator.COLUMN_SERVER)
-            .column(ClusterMetricsDataSetGenerator.COLUMN_SERVER, "Server")
-            .column(ClusterMetricsDataSetGenerator.COLUMN_PROCESSES_RUNNING, MAX, "Max running processes")
-            .column(ClusterMetricsDataSetGenerator.COLUMN_PROCESSES_SLEEPING, MAX, "Max sleeping processes")
-            .title("Max processes usage")
-            .titleVisible(true)
-            .vertical()
-            .buildSettings();
-
-    private static final DisplayerSettings MaxNetworkxServerSettings = DisplayerSettingsFactory.newBarChartSettings()
-            .dataset(CLUSTER_METRICS_UUID)
-            .group(ClusterMetricsDataSetGenerator.COLUMN_SERVER)
-            .column(ClusterMetricsDataSetGenerator.COLUMN_SERVER, "Server")
-            .column(ClusterMetricsDataSetGenerator.COLUMN_NETWORK_TX, MAX, "Max upstream speed")
-            .column(ClusterMetricsDataSetGenerator.COLUMN_NETWORK_RX, MAX, "Max downstream speed")
-            .title("Max network speed")
-            .titleVisible(true)
-            .vertical()
-            .buildSettings();
-    
     @UiField(provided = true)
     Displayer maxCPUxServer;
 
@@ -97,9 +52,9 @@ public class SummaryMetrics extends Composite {
         return "Metrics summary (Analytic)";
     }
 
-    public SummaryMetrics() {
+    public SummaryMetrics(MetricsDashboard metricsDashboard) {
 
-        buildSummary();
+        buildSummary(metricsDashboard);
         
         // Init the dashboard from the UI Binder template
         initWidget(uiBinder.createAndBindUi(this));
@@ -108,11 +63,50 @@ public class SummaryMetrics extends Composite {
         displayerCoordinator.drawAll();
     }
 
-    protected void buildSummary() {
-        maxCPUxServer = DisplayerHelper.lookupDisplayer(MaxCPUxServerSettings);
-        maxMemxServerSettings = DisplayerHelper.lookupDisplayer(MaxMemxServerSettings);
-        maxProcessesxServerSettings = DisplayerHelper.lookupDisplayer(MaxProcessesxServerSettings);
-        maxNetworkxServerSettings = DisplayerHelper.lookupDisplayer(MaxNetworkxServerSettings);
+    protected void buildSummary(MetricsDashboard metricsDashboard) {
+        maxCPUxServer = DisplayerHelper.lookupDisplayer(DisplayerSettingsFactory.newBarChartSettings()
+                .dataset(metricsDashboard.getDataSetUUID())
+                .group(ClusterMetricsDataSetGenerator.COLUMN_SERVER)
+                .column(ClusterMetricsDataSetGenerator.COLUMN_SERVER, "Server")
+                .column(ClusterMetricsDataSetGenerator.COLUMN_CPU0, MAX, "CPU0 Max")
+                .column(ClusterMetricsDataSetGenerator.COLUMN_CPU1, MAX, "CPU1 Max")
+                .title("Max CPU usage")
+                .titleVisible(true)
+                .vertical()
+                .buildSettings());
+        
+        maxMemxServerSettings = DisplayerHelper.lookupDisplayer(DisplayerSettingsFactory.newBarChartSettings()
+                .dataset(metricsDashboard.getDataSetUUID())
+                .group(ClusterMetricsDataSetGenerator.COLUMN_SERVER)
+                .column(ClusterMetricsDataSetGenerator.COLUMN_SERVER, "Server")
+                .column(ClusterMetricsDataSetGenerator.COLUMN_MEMORY_USED, MAX, "Max used memory")
+                .column(ClusterMetricsDataSetGenerator.COLUMN_MEMORY_FREE, MAX, "Max free memory")
+                .title("Max Memory usage")
+                .titleVisible(true)
+                .vertical()
+                .buildSettings());
+        
+        maxProcessesxServerSettings = DisplayerHelper.lookupDisplayer(DisplayerSettingsFactory.newBarChartSettings()
+                .dataset(metricsDashboard.getDataSetUUID())
+                .group(ClusterMetricsDataSetGenerator.COLUMN_SERVER)
+                .column(ClusterMetricsDataSetGenerator.COLUMN_SERVER, "Server")
+                .column(ClusterMetricsDataSetGenerator.COLUMN_PROCESSES_RUNNING, MAX, "Max running processes")
+                .column(ClusterMetricsDataSetGenerator.COLUMN_PROCESSES_SLEEPING, MAX, "Max sleeping processes")
+                .title("Max processes usage")
+                .titleVisible(true)
+                .vertical()
+                .buildSettings());
+        
+        maxNetworkxServerSettings = DisplayerHelper.lookupDisplayer(DisplayerSettingsFactory.newBarChartSettings()
+                .dataset(metricsDashboard.getDataSetUUID())
+                .group(ClusterMetricsDataSetGenerator.COLUMN_SERVER)
+                .column(ClusterMetricsDataSetGenerator.COLUMN_SERVER, "Server")
+                .column(ClusterMetricsDataSetGenerator.COLUMN_NETWORK_TX, MAX, "Max upstream speed")
+                .column(ClusterMetricsDataSetGenerator.COLUMN_NETWORK_RX, MAX, "Max downstream speed")
+                .title("Max network speed")
+                .titleVisible(true)
+                .vertical()
+                .buildSettings());
 
         // Make that charts interact among them
         displayerCoordinator.addDisplayer(maxCPUxServer);

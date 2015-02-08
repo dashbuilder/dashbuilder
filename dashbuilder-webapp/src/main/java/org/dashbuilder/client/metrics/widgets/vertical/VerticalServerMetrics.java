@@ -30,7 +30,6 @@ import org.dashbuilder.displayer.client.Displayer;
 import org.dashbuilder.displayer.client.DisplayerCoordinator;
 import org.dashbuilder.displayer.client.DisplayerHelper;
 
-import static org.dashbuilder.client.metrics.MetricsConstants.CLUSTER_METRICS_UUID;
 import static org.dashbuilder.dataset.filter.FilterFactory.equalsTo;
 import static org.dashbuilder.dataset.filter.FilterFactory.timeFrame;
 import static org.dashbuilder.dataset.group.AggregateFunctionType.MAX;
@@ -58,6 +57,9 @@ public class VerticalServerMetrics extends Composite {
     
     DisplayerCoordinator displayerCoordinator = new DisplayerCoordinator();
 
+    private String server;
+    private boolean isOff = false;
+    
     public String getTitle() {
         return "Server metrics (Vertical)";
     }
@@ -67,7 +69,8 @@ public class VerticalServerMetrics extends Composite {
     }
     
     public VerticalServerMetrics(final MetricsDashboard metricsDashboard, final String server, boolean showLabels) {
-
+        this.server = server;
+        
         // Init the dashboard from the UI Binder template
         initWidget(uiBinder.createAndBindUi(this));
         
@@ -78,12 +81,12 @@ public class VerticalServerMetrics extends Composite {
         
         // The server name.
         serverName.setText(server);
-        tooltip.setText("Show real-time metric details for server " + server);
+        toolTipDefaultText();
 
         // CPU0
         Displayer serverCPU0 = DisplayerHelper.lookupDisplayer(
                 DisplayerSettingsFactory.newMeterChartSettings()
-                        .dataset(CLUSTER_METRICS_UUID)
+                        .dataset(metricsDashboard.getDataSetUUID())
                         .filter(ClusterMetricsDataSetGenerator.COLUMN_SERVER, equalsTo(server))
                         .filter(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP, timeFrame("1second"))
                         .column(ClusterMetricsDataSetGenerator.COLUMN_CPU0, MAX, "CPU0")
@@ -99,7 +102,7 @@ public class VerticalServerMetrics extends Composite {
         // CPU1
         Displayer serverCPU1 = DisplayerHelper.lookupDisplayer(
                 DisplayerSettingsFactory.newMeterChartSettings()
-                        .dataset(CLUSTER_METRICS_UUID)
+                        .dataset(metricsDashboard.getDataSetUUID())
                         .filter(ClusterMetricsDataSetGenerator.COLUMN_SERVER, equalsTo(server))
                         .filter(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP, timeFrame("1second"))
                         .column(ClusterMetricsDataSetGenerator.COLUMN_CPU1, MAX, "CPU1")
@@ -115,7 +118,7 @@ public class VerticalServerMetrics extends Composite {
         // Used memory
         Displayer serverMemory = DisplayerHelper.lookupDisplayer(
                 DisplayerSettingsFactory.newBarChartSettings()
-                        .dataset(CLUSTER_METRICS_UUID)
+                        .dataset(metricsDashboard.getDataSetUUID())
                         .filter(ClusterMetricsDataSetGenerator.COLUMN_SERVER, equalsTo(server))
                         .filter(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP, timeFrame("1second"))
                         .group(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP).dynamic(1, SECOND, true)
@@ -133,7 +136,7 @@ public class VerticalServerMetrics extends Composite {
         // TX/RX
         Displayer serverNetwork = DisplayerHelper.lookupDisplayer(
                 DisplayerSettingsFactory.newBarChartSettings()
-                        .dataset(CLUSTER_METRICS_UUID)
+                        .dataset(metricsDashboard.getDataSetUUID())
                         .filter(ClusterMetricsDataSetGenerator.COLUMN_SERVER, equalsTo(server))
                         .filter(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP, timeFrame("1second"))
                         .group(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP).dynamic(1, SECOND, true)
@@ -152,7 +155,7 @@ public class VerticalServerMetrics extends Composite {
         // Processes
         Displayer serverProcessesRunning = DisplayerHelper.lookupDisplayer(
                 DisplayerSettingsFactory.newBarChartSettings()
-                        .dataset(CLUSTER_METRICS_UUID)
+                        .dataset(metricsDashboard.getDataSetUUID())
                         .filter(ClusterMetricsDataSetGenerator.COLUMN_SERVER, equalsTo(server))
                         .filter(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP, timeFrame("1second"))
                         .group(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP).dynamic(1, SECOND, true)
@@ -170,7 +173,7 @@ public class VerticalServerMetrics extends Composite {
         // Disk
         Displayer serverDisk = DisplayerHelper.lookupDisplayer(
                 DisplayerSettingsFactory.newTableSettings()
-                        .dataset(CLUSTER_METRICS_UUID)
+                        .dataset(metricsDashboard.getDataSetUUID())
                         .filter(ClusterMetricsDataSetGenerator.COLUMN_SERVER, equalsTo(server))
                         .filter(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP, timeFrame("1second"))
                         .column(ClusterMetricsDataSetGenerator.COLUMN_DISK_FREE, "Free disk space")
@@ -187,8 +190,7 @@ public class VerticalServerMetrics extends Composite {
         serverIcon.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent clickEvent) {
-                GWT.log("VerticalServerMetrics - Show details for server: " + server);
-                metricsDashboard.showServerDetails(server);
+                if (!isOff) metricsDashboard.showServerDetails(server);
             }
         });
         setPointerCursor(serverIcon);
@@ -199,11 +201,41 @@ public class VerticalServerMetrics extends Composite {
 
     private void addDisplayer(Displayer displayer) {
         displayerCoordinator.addDisplayer(displayer);
-        displayer.refreshOn();
+        // displayer.refreshOn();
         mainPanel.add(displayer);
     }
 
     private void setPointerCursor(UIObject object) {
         object.getElement().getStyle().setCursor(Style.Cursor.POINTER);
+    }
+
+    /**
+     * Disable this server metrics (server probably down) 
+     */
+    public VerticalServerMetrics off() {
+        serverIcon.getElement().getStyle().setOpacity(0.3);
+        mainPanel.getElement().getStyle().setOpacity(0.3);
+        tooltip.setText(server + " is down");
+        isOff = true;
+        return this;
+    }
+
+    /**
+     * Enable this server metrics (server already up) 
+     */
+    public VerticalServerMetrics on() {
+        serverIcon.getElement().getStyle().setOpacity(1);
+        mainPanel.getElement().getStyle().setOpacity(1);
+        toolTipDefaultText();
+        isOff = false;
+        return this;
+    }
+    
+    private void toolTipDefaultText() {
+        tooltip.setText("Show real-time metric details for server " + server);
+    }
+
+    public String getServer() {
+        return server;
     }
 }

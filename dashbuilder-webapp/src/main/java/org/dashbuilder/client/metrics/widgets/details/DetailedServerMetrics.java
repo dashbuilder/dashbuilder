@@ -30,7 +30,6 @@ import org.dashbuilder.displayer.client.Displayer;
 import org.dashbuilder.displayer.client.DisplayerCoordinator;
 import org.dashbuilder.displayer.client.DisplayerHelper;
 
-import static org.dashbuilder.client.metrics.MetricsConstants.CLUSTER_METRICS_UUID;
 import static org.dashbuilder.dataset.filter.FilterFactory.equalsTo;
 import static org.dashbuilder.dataset.filter.FilterFactory.timeFrame;
 import static org.dashbuilder.dataset.group.AggregateFunctionType.MAX;
@@ -89,7 +88,7 @@ public class DetailedServerMetrics extends Composite {
 
     public DetailedServerMetrics(MetricsDashboard metricsDashboard, String server) {
 
-        buildServerDetailsDisplayers(server);
+        buildServerDetailsDisplayers(metricsDashboard, server);
         
         // Init the dashboard from the UI Binder template
         initWidget(uiBinder.createAndBindUi(this));
@@ -109,10 +108,10 @@ public class DetailedServerMetrics extends Composite {
         displayerCoordinator.drawAll();
     }
 
-    protected void buildServerDetailsDisplayers(String server) {
+    protected void buildServerDetailsDisplayers(MetricsDashboard metricsDashboard, String server) {
         serverCPU0 = DisplayerHelper.lookupDisplayer(
                 DisplayerSettingsFactory.newMeterChartSettings()
-                        .dataset(CLUSTER_METRICS_UUID)
+                        .dataset(metricsDashboard.getDataSetUUID())
                         .filter(ClusterMetricsDataSetGenerator.COLUMN_SERVER, equalsTo(server))
                         .filter(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP, timeFrame("1second"))
                         .column(ClusterMetricsDataSetGenerator.COLUMN_CPU0, MAX, "CPU0")
@@ -124,7 +123,7 @@ public class DetailedServerMetrics extends Composite {
 
         serverCPU1 = DisplayerHelper.lookupDisplayer(
                 DisplayerSettingsFactory.newMeterChartSettings()
-                        .dataset(CLUSTER_METRICS_UUID)
+                        .dataset(metricsDashboard.getDataSetUUID())
                         .filter(ClusterMetricsDataSetGenerator.COLUMN_SERVER, equalsTo(server))
                         .filter(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP, timeFrame("1second"))
                         .column(ClusterMetricsDataSetGenerator.COLUMN_CPU1, MAX, "CPU1")
@@ -136,7 +135,7 @@ public class DetailedServerMetrics extends Composite {
 
         serverMemory = DisplayerHelper.lookupDisplayer(
                 DisplayerSettingsFactory.newAreaChartSettings()
-                        .dataset(CLUSTER_METRICS_UUID)
+                        .dataset(metricsDashboard.getDataSetUUID())
                         .filter(ClusterMetricsDataSetGenerator.COLUMN_SERVER, equalsTo(server))
                         .filter(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP, timeFrame("60second"))
                         .group(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP).fixed(SECOND, true)
@@ -151,7 +150,7 @@ public class DetailedServerMetrics extends Composite {
 
         serverNetwork = DisplayerHelper.lookupDisplayer(
                 DisplayerSettingsFactory.newAreaChartSettings()
-                        .dataset(CLUSTER_METRICS_UUID)
+                        .dataset(metricsDashboard.getDataSetUUID())
                         .filter(ClusterMetricsDataSetGenerator.COLUMN_SERVER, equalsTo(server))
                         .filter(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP, timeFrame("10second"))
                         .group(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP).dynamic(10, SECOND, true)
@@ -166,7 +165,7 @@ public class DetailedServerMetrics extends Composite {
 
         serverDisk = DisplayerHelper.lookupDisplayer(
                 DisplayerSettingsFactory.newPieChartSettings()
-                        .dataset(CLUSTER_METRICS_UUID)
+                        .dataset(metricsDashboard.getDataSetUUID())
                         .filter(ClusterMetricsDataSetGenerator.COLUMN_SERVER, equalsTo(server))
                         .filter(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP, timeFrame("10second"))
                         .group(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP).dynamic(1, SECOND, true)
@@ -182,7 +181,7 @@ public class DetailedServerMetrics extends Composite {
 
         serverProcessesRunning = DisplayerHelper.lookupDisplayer(
                 DisplayerSettingsFactory.newTableSettings()
-                        .dataset(CLUSTER_METRICS_UUID)
+                        .dataset(metricsDashboard.getDataSetUUID())
                         .filter(ClusterMetricsDataSetGenerator.COLUMN_SERVER, equalsTo(server))
                         .filter(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP, timeFrame("1second"))
                         .column(ClusterMetricsDataSetGenerator.COLUMN_PROCESSES_RUNNING, "Running processes")
@@ -194,7 +193,7 @@ public class DetailedServerMetrics extends Composite {
 
         serverProcessesSleeping = DisplayerHelper.lookupDisplayer(
                 DisplayerSettingsFactory.newTableSettings()
-                        .dataset(CLUSTER_METRICS_UUID)
+                        .dataset(metricsDashboard.getDataSetUUID())
                         .filter(ClusterMetricsDataSetGenerator.COLUMN_SERVER, equalsTo(server))
                         .filter(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP, timeFrame("1second"))
                         .column(ClusterMetricsDataSetGenerator.COLUMN_PROCESSES_SLEEPING, "Sleeping processes")
@@ -206,7 +205,7 @@ public class DetailedServerMetrics extends Composite {
 
         serverTable = DisplayerHelper.lookupDisplayer(
                 DisplayerSettingsFactory.newTableSettings()
-                        .dataset(CLUSTER_METRICS_UUID)
+                        .dataset(metricsDashboard.getDataSetUUID())
                         .filter(ClusterMetricsDataSetGenerator.COLUMN_SERVER, equalsTo(server))
                         .filter(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP, timeFrame("1minute"))
                         .group(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP).fixed(MINUTE, true)
@@ -235,14 +234,14 @@ public class DetailedServerMetrics extends Composite {
         displayerCoordinator.addDisplayer(serverProcessesRunning);
         displayerCoordinator.addDisplayer(serverProcessesSleeping);
         displayerCoordinator.addDisplayer(serverTable);
-        serverCPU0.refreshOn();
-        serverCPU1.refreshOn();
-        serverMemory.refreshOn();
-        serverNetwork.refreshOn();
-        serverDisk.refreshOn();
-        serverProcessesRunning.refreshOn();
-        serverProcessesSleeping.refreshOn();
-        serverTable.refreshOn();
+//        serverCPU0.refreshOn();
+//        serverCPU1.refreshOn();
+//        serverMemory.refreshOn();
+//        serverNetwork.refreshOn();
+//        serverDisk.refreshOn();
+//        serverProcessesRunning.refreshOn();
+//        serverProcessesSleeping.refreshOn();
+//        serverTable.refreshOn();
     }
     
     private void enableChartMode() {

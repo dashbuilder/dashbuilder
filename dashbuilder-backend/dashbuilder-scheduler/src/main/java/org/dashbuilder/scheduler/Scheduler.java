@@ -31,6 +31,8 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import org.dashbuilder.config.Config;
+import org.jboss.errai.ioc.client.container.IOC;
+import org.jboss.errai.ioc.client.container.IOCBeanDef;
 import org.slf4j.Logger;
 import org.uberfire.commons.services.cdi.Startup;
 
@@ -57,6 +59,12 @@ public class Scheduler {
     @Inject @Config("10")
     protected int maxThreadPoolSize;
 
+    public static Scheduler get() {
+        Collection<IOCBeanDef<Scheduler>> beans = IOC.getBeanManager().lookupBeans(Scheduler.class);
+        IOCBeanDef<Scheduler> beanDef = beans.iterator().next();
+        return beanDef.getInstance();
+    }
+    
     @PostConstruct
     public void init() {
         scheduledTasks = Collections.synchronizedMap(new HashMap<Object,SchedulerTask>());

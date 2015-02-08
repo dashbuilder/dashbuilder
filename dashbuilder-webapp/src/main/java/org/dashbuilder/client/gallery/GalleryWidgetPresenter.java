@@ -98,7 +98,7 @@ public class GalleryWidgetPresenter {
             return expensesDashboardWidget;
         }
         if ("metrics".equals(widgetId)) {
-            if (metricsDashboard == null) metricsDashboard = new MetricsDashboard();
+            if (metricsDashboard == null) metricsDashboard = new MetricsDashboard(MetricsDashboard.METRICS_DATASET_UUID, MetricsDashboard.METRICS_DATASET_DEFAULT_SERVERS);
             return metricsDashboard;
         }
         throw new IllegalArgumentException("Unknown gallery widget: " + widgetId);
