@@ -37,7 +37,7 @@
       background-color: whitesmoke;
       margin-left: 5px;
     }
-
+    
     .dashboard_title_area {
       width: 1200px;
       margin-bottom: 25px;

@@ -15,13 +15,16 @@
  */
 package org.dashbuilder.client.metrics.widgets.details;
 
+import com.github.gwtbootstrap.client.ui.Tooltip;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.*;
 import org.dashbuilder.backend.ClusterMetricsDataSetGenerator;
 import org.dashbuilder.client.metrics.MetricsDashboard;
+import org.dashbuilder.client.metrics.MetricsDashboardClientBundle;
 import org.dashbuilder.displayer.DisplayerSettingsFactory;
 import org.dashbuilder.displayer.client.Displayer;
 import org.dashbuilder.displayer.client.DisplayerCoordinator;
@@ -31,6 +34,7 @@ import static org.dashbuilder.client.metrics.MetricsConstants.CLUSTER_METRICS_UU
 import static org.dashbuilder.dataset.filter.FilterFactory.equalsTo;
 import static org.dashbuilder.dataset.filter.FilterFactory.timeFrame;
 import static org.dashbuilder.dataset.group.AggregateFunctionType.MAX;
+import static org.dashbuilder.dataset.group.DateIntervalType.MINUTE;
 import static org.dashbuilder.dataset.group.DateIntervalType.SECOND;
 
 public class DetailedServerMetrics extends Composite {
@@ -57,10 +61,28 @@ public class DetailedServerMetrics extends Composite {
     Displayer serverProcessesRunning;
 
     @UiField(provided = true)
+    Displayer serverTable;
+
+    @UiField(provided = true)
     Displayer serverProcessesSleeping;
+
+    @UiField
+    Image modeIcon;
+
+    @UiField
+    Tooltip modeIconTooltip;
+
+    @UiField
+    HorizontalPanel chartsArea;
+
+    @UiField
+    VerticalPanel tableArea;
 
     DisplayerCoordinator displayerCoordinator = new DisplayerCoordinator();
 
+    private boolean isChartMode;
+    private boolean isTableMode;
+    
     public String getTitle() {
         return "Server metrics (Vertical)";
     }
@@ -71,6 +93,17 @@ public class DetailedServerMetrics extends Composite {
         
         // Init the dashboard from the UI Binder template
         initWidget(uiBinder.createAndBindUi(this));
+        
+        modeIcon.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                if (isChartMode) enableTableMode();
+                else enableChartMode();
+            }
+        });
+        
+        // By default use charts mode.
+        enableChartMode();
         
         // Draw the charts
         displayerCoordinator.drawAll();
@@ -171,6 +204,28 @@ public class DetailedServerMetrics extends Composite {
                         .refreshOn(1, false)
                         .buildSettings());
 
+        serverTable = DisplayerHelper.lookupDisplayer(
+                DisplayerSettingsFactory.newTableSettings()
+                        .dataset(CLUSTER_METRICS_UUID)
+                        .filter(ClusterMetricsDataSetGenerator.COLUMN_SERVER, equalsTo(server))
+                        .filter(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP, timeFrame("1minute"))
+                        .group(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP).fixed(MINUTE, true)
+                        .column(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP, "Timestamp")
+                        .column(ClusterMetricsDataSetGenerator.COLUMN_CPU0, "CPU0")
+                        .column(ClusterMetricsDataSetGenerator.COLUMN_CPU1, "CPU1")
+                        .column(ClusterMetricsDataSetGenerator.COLUMN_MEMORY_USED, "Used memory (Gb)")
+                        .column(ClusterMetricsDataSetGenerator.COLUMN_MEMORY_FREE, "Free memory (Gb)")
+                        .column(ClusterMetricsDataSetGenerator.COLUMN_NETWORK_TX, "Upstream (kbps)")
+                        .column(ClusterMetricsDataSetGenerator.COLUMN_NETWORK_RX, "Downstream (kbps)")
+                        .column(ClusterMetricsDataSetGenerator.COLUMN_PROCESSES_RUNNING, "Running processes")
+                        .column(ClusterMetricsDataSetGenerator.COLUMN_PROCESSES_SLEEPING, "Sleeping processes")
+                        .column(ClusterMetricsDataSetGenerator.COLUMN_DISK_USED, "Used disk space (Mb)")
+                        .column(ClusterMetricsDataSetGenerator.COLUMN_DISK_FREE, "Free disk space (Mb)")
+                        .title("Real-time " + server + " metrics")
+                        .titleVisible(false)
+                        .tableWidth(1200)
+                        .refreshOn(60, false)
+                        .buildSettings());
 
         displayerCoordinator.addDisplayer(serverCPU0);
         displayerCoordinator.addDisplayer(serverCPU1);
@@ -179,13 +234,35 @@ public class DetailedServerMetrics extends Composite {
         displayerCoordinator.addDisplayer(serverDisk);
         displayerCoordinator.addDisplayer(serverProcessesRunning);
         displayerCoordinator.addDisplayer(serverProcessesSleeping);
-        serverCPU0.refreshOn();
-        serverCPU1.refreshOn();
-        serverMemory.refreshOn();
-        serverNetwork.refreshOn();
-        serverDisk.refreshOn();
-        serverProcessesRunning.refreshOn();
-        serverProcessesSleeping.refreshOn();
+        displayerCoordinator.addDisplayer(serverTable);
+//        serverCPU0.refreshOn();
+//        serverCPU1.refreshOn();
+//        serverMemory.refreshOn();
+//        serverNetwork.refreshOn();
+//        serverDisk.refreshOn();
+//        serverProcessesRunning.refreshOn();
+//        serverProcessesSleeping.refreshOn();
+        serverTable.refreshOn();
+    }
+    
+    private void enableChartMode() {
+        isChartMode = true;
+        isTableMode = false;
+        // TODO: Animate.
+        chartsArea.setVisible(true);
+        tableArea.setVisible(false);
+        modeIcon.setResource(MetricsDashboardClientBundle.INSTANCE.tableIcon());
+        modeIconTooltip.setText("Use table perspective");
+    }
+
+    private void enableTableMode() {
+        isChartMode = false;
+        isTableMode = true;
+        // TODO: Animate.
+        chartsArea.setVisible(false);
+        tableArea.setVisible(true);
+        modeIcon.setResource(MetricsDashboardClientBundle.INSTANCE.chartIcon());
+        modeIconTooltip.setText("Use charting perspective");
     }
     
 }

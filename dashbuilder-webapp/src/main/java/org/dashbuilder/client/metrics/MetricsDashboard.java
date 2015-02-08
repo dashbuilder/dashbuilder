@@ -58,9 +58,13 @@ public class MetricsDashboard extends Composite {
 
     @UiField
     FocusPanel buttonNow;
+    
+    private boolean isViewingSummary;
+    private boolean isViewingVerticalSummary;
+    private boolean isViewingServerDetails;
 
     public String getTitle() {
-        return "System Metrics Dashboard Widget";
+        return "System Metrics Dashboard";
     }
 
     public MetricsDashboard() {
@@ -80,18 +84,16 @@ public class MetricsDashboard extends Composite {
         buttonNow.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent clickEvent) {
-                showVerticalServersSummary();
+                if (!isViewingVerticalSummary) showVerticalServersSummary();
             }
         });
-        setPointerCursor(buttonNow);
         
         buttonHistory.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent clickEvent) {
-                showSummary();
+                if (!isViewingSummary) showSummary();
             }
         });
-        setPointerCursor(buttonHistory);
         
         // Initially show vertical servers summary.
         showVerticalServersSummary();
@@ -100,8 +102,9 @@ public class MetricsDashboard extends Composite {
     private void showSummary() {
         hideAll();
         SummaryMetrics summaryMetrics = new SummaryMetrics();
+        isViewingSummary = true;
+        disableButtonHistory();
         title.setText("History summary (analytic dashboard)");
-        backIcon.setVisible(false);
         analyticSummaryArea.add(summaryMetrics);
         VisibilityAnimation animation = new VisibilityAnimation(analyticSummaryArea);
         animation.run(ANIMATION_DURATION);
@@ -119,8 +122,9 @@ public class MetricsDashboard extends Composite {
                 verticalSummaryArea.add(verticalServerMetrics);
             }
         }
+        isViewingVerticalSummary = true;
+        disableButtonNow();
         title.setText("Current system server metrics (real-time dashboard)");
-        backIcon.setVisible(false);
         VisibilityAnimation animation = new VisibilityAnimation(verticalSummaryArea);
         animation.run(ANIMATION_DURATION);
 
@@ -129,6 +133,8 @@ public class MetricsDashboard extends Composite {
     public void showServerDetails(String server) {
         hideAll();
         DetailedServerMetrics detailedServerMetrics = new DetailedServerMetrics(this, server);
+        isViewingServerDetails = true;
+        disableButtonNow();
         title.setText("Current metrics for " + server);
         backIcon.setVisible(true);
         serverDetailsArea.add(detailedServerMetrics);
@@ -140,6 +146,10 @@ public class MetricsDashboard extends Composite {
         hide(analyticSummaryArea);
         hide(serverDetailsArea);
         hide(verticalSummaryArea);
+        backIcon.setVisible(false);
+        isViewingSummary = false;
+        isViewingVerticalSummary = false;
+        isViewingServerDetails = false;
     }
 
     private void hide(Widget w) {
@@ -164,6 +174,24 @@ public class MetricsDashboard extends Composite {
     
     private void setPointerCursor(UIObject object) {
         object.getElement().getStyle().setCursor(Style.Cursor.POINTER);
+    }
+
+    private void setAutoCursor(UIObject object) {
+        object.getElement().getStyle().setCursor(Style.Cursor.AUTO);
+    }
+    
+    private void disableButtonNow() {
+        buttonNow.getElement().getStyle().setOpacity(0.3);
+        buttonHistory.getElement().getStyle().setOpacity(1);
+        setAutoCursor(buttonNow);
+        setPointerCursor(buttonHistory);
+    }
+
+    private void disableButtonHistory() {
+        buttonNow.getElement().getStyle().setOpacity(1);
+        buttonHistory.getElement().getStyle().setOpacity(0.3);
+        setAutoCursor(buttonHistory);
+        setPointerCursor(buttonNow);
     }
 
 }

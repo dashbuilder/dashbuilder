@@ -151,34 +151,34 @@ public class VerticalServerMetrics extends Composite {
 
         // Processes
         Displayer serverProcessesRunning = DisplayerHelper.lookupDisplayer(
-                DisplayerSettingsFactory.newTableSettings()
+                DisplayerSettingsFactory.newBarChartSettings()
                         .dataset(CLUSTER_METRICS_UUID)
                         .filter(ClusterMetricsDataSetGenerator.COLUMN_SERVER, equalsTo(server))
                         .filter(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP, timeFrame("1second"))
-                        .column(ClusterMetricsDataSetGenerator.COLUMN_PROCESSES_RUNNING, "Running processes")
+                        .group(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP).dynamic(1, SECOND, true)
+                        .column(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP)
+                        .column(ClusterMetricsDataSetGenerator.COLUMN_PROCESSES_RUNNING, MAX, "Running processes")
                         .title("Running processes")
                         .titleVisible(false)
-                        .tableWidth(100)
+                        .legendOff()
+                        .width(200).height(200)
                         .refreshOn(1, false)
                         .buildSettings());
-
+        
         addDisplayer(serverProcessesRunning);
 
         // Disk
         Displayer serverDisk = DisplayerHelper.lookupDisplayer(
-                DisplayerSettingsFactory.newPieChartSettings()
+                DisplayerSettingsFactory.newTableSettings()
                         .dataset(CLUSTER_METRICS_UUID)
                         .filter(ClusterMetricsDataSetGenerator.COLUMN_SERVER, equalsTo(server))
-                        .filter(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP, timeFrame("10second"))
-                        .group(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP).dynamic(1, SECOND, true)
-                        .column(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP)
-                        .column(ClusterMetricsDataSetGenerator.COLUMN_DISK_FREE, MAX, "Free disk space")
-                        .column(ClusterMetricsDataSetGenerator.COLUMN_DISK_USED, MAX, "Used disk space")
+                        .filter(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP, timeFrame("1second"))
+                        .column(ClusterMetricsDataSetGenerator.COLUMN_DISK_FREE, "Free disk space")
+                        .column(ClusterMetricsDataSetGenerator.COLUMN_DISK_USED, "Used disk space")
                         .title("Disk usage")
                         .titleVisible(false)
-                        .legendOff()
-                        .width(200).height(200)
-                        .refreshOn(2, false)
+                        .tableWidth(200)
+                        .refreshOn(1, false)
                         .buildSettings());
         
         addDisplayer(serverDisk);
@@ -199,7 +199,7 @@ public class VerticalServerMetrics extends Composite {
 
     private void addDisplayer(Displayer displayer) {
         displayerCoordinator.addDisplayer(displayer);
-        displayer.refreshOn();
+        // displayer.refreshOn();
         mainPanel.add(displayer);
     }
 

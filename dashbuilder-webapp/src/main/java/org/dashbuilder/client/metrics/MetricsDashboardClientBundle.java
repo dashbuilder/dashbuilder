@@ -16,4 +16,10 @@ public interface MetricsDashboardClientBundle
     @Source("images/back-icon.png")
     ImageResource backIcon();
 
+    @Source("images/table-icon.png")
+    ImageResource tableIcon();
+
+    @Source("images/chart-icon.png")
+    ImageResource chartIcon();
+
 }

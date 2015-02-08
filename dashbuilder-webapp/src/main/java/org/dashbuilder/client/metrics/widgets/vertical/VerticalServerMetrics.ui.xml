@@ -13,12 +13,12 @@
     }
 
     .labels_panel {
-      width: 50px;
-      height: 1200px;
+      width: 60px;
+      height: 1100px;
     }
 
     .labels_text_panel {
-      width: 50px;
+      width: 60px;
       height: 800px;
       margin-top: 25px;
     }
@@ -110,7 +110,6 @@
         <g:Label text="Used memory (Gb)" addStyleNames="{style.label}"/>
         <g:Label text="Network BW (kbps)" addStyleNames="{style.label}"/>
         <g:Label text="Running proc" addStyleNames="{style.label}"/>
-        <g:Label text="Free &amp; used disk space (Mb)" addStyleNames="{style.label}"/>
 
       </g:VerticalPanel>
       
