@@ -74,7 +74,7 @@ public class RealTimeMetricsDashboard extends Composite {
     Timer dataSetLookupTimer;
 
     public String getTitle() {
-        return "System Metrics Dashboard";
+        return "System Metrics Dashboard (Real-time)";
     }
 
     public RealTimeMetricsDashboard() {

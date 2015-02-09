@@ -54,36 +54,126 @@
     }
 
     </ui:style>
+
+  <g:TabPanel ui:field="tabPanel" addStyleNames="{style.main_panel}">
+    
+    <g:Tab text="Overall">
+
+      <!-- Summary area. -->
+      <g:HorizontalPanel spacing="10" >
+
+
+        <g:VerticalPanel spacing="10">
+
+          <g:HorizontalPanel spacing="10" addStyleNames="{style.metrics_dashboard_panel}">
+            <dashbuilder:Displayer ui:field="maxCPUxServer"/>
+          </g:HorizontalPanel>
+
+          <g:HorizontalPanel spacing="10" addStyleNames="{style.metrics_dashboard_panel}">
+            <dashbuilder:Displayer ui:field="maxMemxServerSettings"/>
+          </g:HorizontalPanel>
+
+        </g:VerticalPanel>
+
+        <g:VerticalPanel spacing="10">
+
+          <g:HorizontalPanel spacing="10" addStyleNames="{style.metrics_dashboard_panel}">
+            <dashbuilder:Displayer ui:field="maxProcessesxServerSettings"/>
+          </g:HorizontalPanel>
+
+          <g:HorizontalPanel spacing="10" addStyleNames="{style.metrics_dashboard_panel}">
+            <dashbuilder:Displayer ui:field="maxNetworkxServerSettings"/>
+          </g:HorizontalPanel>
+
+        </g:VerticalPanel>
+
+      </g:HorizontalPanel>
+      
+    </g:Tab>
+    
+    <g:Tab text="CPU">
+      
+      <g:VerticalPanel spacing="10">
+        
+        <g:cell>
+          <g:HorizontalPanel spacing="10" addStyleNames="{style.metrics_dashboard_panel}">
+            <g:cell>
+              <dashbuilder:Displayer ui:field="cpuDisplayer1"/>
+            </g:cell>
+          </g:HorizontalPanel>
+        </g:cell>
+        
+      </g:VerticalPanel>
+      
+    </g:Tab>
+
+    <g:Tab text="Memory">
+
+      <g:VerticalPanel spacing="10">
+
+        <g:cell>
+          <g:HorizontalPanel spacing="10" addStyleNames="{style.metrics_dashboard_panel}">
+            <g:cell>
+              <dashbuilder:Displayer ui:field="memoryDisplayer1"/>
+            </g:cell>
+          </g:HorizontalPanel>
+        </g:cell>
+
+      </g:VerticalPanel>
+
+    </g:Tab>
+
+    <g:Tab text="Network">
+
+      <g:VerticalPanel spacing="10">
+
+        <g:cell>
+          <g:HorizontalPanel spacing="10" addStyleNames="{style.metrics_dashboard_panel}">
+            <g:cell>
+              <dashbuilder:Displayer ui:field="networkDisplayer1"/>
+            </g:cell>
+          </g:HorizontalPanel>
+        </g:cell>
+
+      </g:VerticalPanel>
+
+    </g:Tab>
+
+    <g:Tab text="Processes">
+
+      <g:VerticalPanel spacing="10">
+
+        <g:cell>
+          <g:HorizontalPanel spacing="10" addStyleNames="{style.metrics_dashboard_panel}">
+            <g:cell>
+              <dashbuilder:Displayer ui:field="processDisplayer1"/>
+            </g:cell>
+          </g:HorizontalPanel>
+        </g:cell>
+
+      </g:VerticalPanel>
+
+    </g:Tab>
+
+    <g:Tab text="Disk">
+
+      <g:VerticalPanel spacing="10">
+
+        <g:cell>
+          <g:HorizontalPanel spacing="10" addStyleNames="{style.metrics_dashboard_panel}">
+            <g:cell>
+              <dashbuilder:Displayer ui:field="diskDisplayer1"/>
+            </g:cell>
+          </g:HorizontalPanel>
+        </g:cell>
+
+      </g:VerticalPanel>
+
+    </g:Tab>
+    
+    
+  </g:TabPanel>
+
   
-
-  <!-- Summary area. -->
-  <g:HorizontalPanel spacing="10" addStyleNames="{style.main_panel}">
-
-
-    <g:VerticalPanel spacing="10">
-
-      <g:HorizontalPanel spacing="10" addStyleNames="{style.metrics_dashboard_panel}">
-        <dashbuilder:Displayer ui:field="maxCPUxServer"/>
-      </g:HorizontalPanel>
-
-      <g:HorizontalPanel spacing="10" addStyleNames="{style.metrics_dashboard_panel}">
-        <dashbuilder:Displayer ui:field="maxMemxServerSettings"/>
-      </g:HorizontalPanel>
-
-    </g:VerticalPanel>
-
-    <g:VerticalPanel spacing="10">
-
-      <g:HorizontalPanel spacing="10" addStyleNames="{style.metrics_dashboard_panel}">
-        <dashbuilder:Displayer ui:field="maxProcessesxServerSettings"/>
-      </g:HorizontalPanel>
-
-      <g:HorizontalPanel spacing="10" addStyleNames="{style.metrics_dashboard_panel}">
-        <dashbuilder:Displayer ui:field="maxNetworkxServerSettings"/>
-      </g:HorizontalPanel>
-
-    </g:VerticalPanel>
-
-  </g:HorizontalPanel>
   
 </ui:UiBinder>
