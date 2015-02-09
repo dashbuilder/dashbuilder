@@ -188,7 +188,7 @@ public class VerticalServerMetrics extends Composite {
         
         // Draw the charts and enable automatic refresh.
         displayerCoordinator.drawAll();
-        // displayerCoordinator.refreshOnAll();
+        displayerCoordinator.refreshOnAll();
     }
 
     private void addDisplayer(Displayer displayer) {

@@ -34,7 +34,8 @@ public class AnalyticMetricsDashboard extends Composite {
     private static final AnalyticMetricsDashboardBinder uiBinder = GWT.create(AnalyticMetricsDashboardBinder.class);
 
     public static final String METRICS_DATASET_UUID = "clusterMetrics";
-
+    public static final String BACKGROUND_COLOR = "#F8F8FF";
+    
     @UiField(provided = true)
     Displayer maxCPUxServer;
 
@@ -73,6 +74,7 @@ public class AnalyticMetricsDashboard extends Composite {
                 .column(ClusterMetricsDataSetGenerator.COLUMN_CPU1, MAX, "CPU1 Max")
                 .title("Max CPU usage")
                 .titleVisible(true)
+                .backgroundColor(BACKGROUND_COLOR)
                 .vertical()
                 .buildSettings());
 
@@ -84,6 +86,7 @@ public class AnalyticMetricsDashboard extends Composite {
                 .column(ClusterMetricsDataSetGenerator.COLUMN_MEMORY_FREE, MAX, "Max free memory")
                 .title("Max Memory usage")
                 .titleVisible(true)
+                .backgroundColor(BACKGROUND_COLOR)
                 .vertical()
                 .buildSettings());
 
@@ -95,6 +98,7 @@ public class AnalyticMetricsDashboard extends Composite {
                 .column(ClusterMetricsDataSetGenerator.COLUMN_PROCESSES_SLEEPING, MAX, "Max sleeping processes")
                 .title("Max processes usage")
                 .titleVisible(true)
+                .backgroundColor(BACKGROUND_COLOR)
                 .vertical()
                 .buildSettings());
 
@@ -106,6 +110,7 @@ public class AnalyticMetricsDashboard extends Composite {
                 .column(ClusterMetricsDataSetGenerator.COLUMN_NETWORK_RX, MAX, "Max downstream speed")
                 .title("Max network speed")
                 .titleVisible(true)
+                .backgroundColor(BACKGROUND_COLOR)
                 .vertical()
                 .buildSettings());
 

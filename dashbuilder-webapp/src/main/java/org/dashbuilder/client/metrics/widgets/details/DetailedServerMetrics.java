@@ -105,7 +105,7 @@ public class DetailedServerMetrics extends Composite {
 
         // Draw the charts and enable automatic refresh.
         displayerCoordinator.drawAll();
-        // displayerCoordinator.refreshOnAll();
+        displayerCoordinator.refreshOnAll();
     }
 
     protected void buildServerDetailsDisplayers(RealTimeMetricsDashboard metricsDashboard, String server) {
