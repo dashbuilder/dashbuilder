@@ -83,6 +83,7 @@ public class DetailedServerMetrics extends Composite {
 
     DisplayerCoordinator displayerCoordinator = new DisplayerCoordinator();
 
+    private int refreshInterval;
     private boolean isChartMode;
     
     public String getTitle() {
@@ -90,7 +91,12 @@ public class DetailedServerMetrics extends Composite {
     }
 
     public DetailedServerMetrics(final RealTimeMetricsDashboard metricsDashboard, String server) {
-
+        this(metricsDashboard, server, 1);    
+    }
+    
+    public DetailedServerMetrics(final RealTimeMetricsDashboard metricsDashboard, String server, int refreshInterval) {
+        this.refreshInterval = refreshInterval;
+        
         buildServerDetailsDisplayers(metricsDashboard, server);
         
         // Init the dashboard from the UI Binder template
@@ -128,10 +134,11 @@ public class DetailedServerMetrics extends Composite {
                         .filter(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP, timeFrame("1second"))
                         .column(ClusterMetricsDataSetGenerator.COLUMN_CPU0, MAX, "CPU0")
                         .title("CPU0")
+                        .titleVisible(false)
                         .backgroundColor(RealTimeMetricsDashboard.BACKGROUND_COLOR)
                         .width(400).height(250)
                         .meter(0, 25, 50, 100)
-                        .refreshOn(1, false)
+                        .refreshOn(this.refreshInterval, false)
                         .buildSettings());
 
         serverCPU1 = DisplayerHelper.lookupDisplayer(
@@ -141,10 +148,11 @@ public class DetailedServerMetrics extends Composite {
                         .filter(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP, timeFrame("1second"))
                         .column(ClusterMetricsDataSetGenerator.COLUMN_CPU1, MAX, "CPU1")
                         .title("CPU1")
+                        .titleVisible(false)
                         .backgroundColor(RealTimeMetricsDashboard.BACKGROUND_COLOR)
                         .width(400).height(250)
                         .meter(0, 25, 50, 100)
-                        .refreshOn(1, false)
+                        .refreshOn(this.refreshInterval, false)
                         .buildSettings());
 
         serverMemory = DisplayerHelper.lookupDisplayer(
@@ -160,7 +168,7 @@ public class DetailedServerMetrics extends Composite {
                         .titleVisible(false)
                         .backgroundColor(RealTimeMetricsDashboard.BACKGROUND_COLOR)
                         .width(800).height(250)
-                        .refreshOn(2, false)
+                        .refreshOn(this.refreshInterval, false)
                         .buildSettings());
 
         serverNetwork = DisplayerHelper.lookupDisplayer(
@@ -176,7 +184,7 @@ public class DetailedServerMetrics extends Composite {
                         .titleVisible(false)
                         .backgroundColor(RealTimeMetricsDashboard.BACKGROUND_COLOR)
                         .width(500).height(250)
-                        .refreshOn(2, false)
+                        .refreshOn(this.refreshInterval, false)
                         .buildSettings());
 
         serverDisk = DisplayerHelper.lookupDisplayer(
@@ -192,8 +200,8 @@ public class DetailedServerMetrics extends Composite {
                         .titleVisible(false)
                         .backgroundColor(RealTimeMetricsDashboard.BACKGROUND_COLOR)
                         .legendOff()
-                        .width(200).height(200)
-                        .refreshOn(2, false)
+                        .width(250).height(250)
+                        .refreshOn(this.refreshInterval, false)
                         .buildSettings());
 
         serverProcessesRunning = DisplayerHelper.lookupDisplayer(
@@ -205,7 +213,7 @@ public class DetailedServerMetrics extends Composite {
                         .title("Running processes")
                         .titleVisible(false)
                         .tableWidth(100)
-                        .refreshOn(1, false)
+                        .refreshOn(this.refreshInterval, false)
                         .buildSettings());
 
         serverProcessesSleeping = DisplayerHelper.lookupDisplayer(
@@ -217,16 +225,16 @@ public class DetailedServerMetrics extends Composite {
                         .title("Sleeping processes")
                         .titleVisible(false)
                         .tableWidth(100)
-                        .refreshOn(1, false)
+                        .refreshOn(this.refreshInterval, false)
                         .buildSettings());
 
         serverTable = DisplayerHelper.lookupDisplayer(
                 DisplayerSettingsFactory.newTableSettings()
                         .dataset(RealTimeMetricsDashboard.METRICS_DATASET_UUID)
                         .filter(ClusterMetricsDataSetGenerator.COLUMN_SERVER, equalsTo(server))
-                        .filter(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP, timeFrame("1minute"))
+                        .filter(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP, timeFrame("60minute"))
                         .group(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP).dynamic(1000, MINUTE, true)
-                        .column(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP, "Timestamp")
+                        .column(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP, "Minute")
                         .column(ClusterMetricsDataSetGenerator.COLUMN_CPU0, "CPU0")
                         .column(ClusterMetricsDataSetGenerator.COLUMN_CPU1, "CPU1")
                         .column(ClusterMetricsDataSetGenerator.COLUMN_MEMORY_USED, "Used memory (Gb)")
@@ -239,8 +247,8 @@ public class DetailedServerMetrics extends Composite {
                         .column(ClusterMetricsDataSetGenerator.COLUMN_DISK_FREE, "Free disk space (Mb)")
                         .title("Real-time " + server + " metrics")
                         .titleVisible(false)
-                        .tableWidth(1200)
-                        .refreshOn(60, false)
+                        .tableWidth(1250)
+                        .refreshOn(this.refreshInterval, false)
                         .buildSettings());
 
         displayerCoordinator.addDisplayer(serverCPU0);

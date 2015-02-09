@@ -15,10 +15,8 @@
 
     .icon_panel {
       width: 250px;
-      height: 50px;
+      height: 30px;
       background-color: #ffffff;
-      margin-bottom: 10px;
-      padding-bottom: 0px;
     }
 
     .displayers_panel {
@@ -28,13 +26,13 @@
     }
 
     .server_icon {
-      width: 50px;
-      height: 50px;
+      width: 25px;
+      height: 25px;
     }
 
     .metrics_dashboard_panel {
       border-radius: 5px 5px 5px 5px;
-      margin: 10px;
+      margin-right: 10px;
       font-weight: bold;
       background-color: ghostwhite;
       position: relative;
@@ -71,7 +69,7 @@
   </ui:style>
 
   <!-- Server summary column. -->
-  <g:VerticalPanel spacing="10" addStyleNames="{style.summary_panel}">
+  <g:VerticalPanel addStyleNames="{style.summary_panel}">
 
     <g:FocusPanel ui:field="serverIcon" >
       <b:Tooltip text='Show server details' placement="BOTTOM" ui:field="tooltip">

@@ -61,6 +61,7 @@ public class VerticalServerMetrics extends Composite {
     
     DisplayerCoordinator displayerCoordinator = new DisplayerCoordinator();
 
+    private int refreshInterval;
     private String server;
     private boolean isOff = false;
     
@@ -69,7 +70,12 @@ public class VerticalServerMetrics extends Composite {
     }
 
     public VerticalServerMetrics(final RealTimeMetricsDashboard metricsDashboard, final String server) {
+        this(metricsDashboard, server, 1);
+    }
+    
+    public VerticalServerMetrics(final RealTimeMetricsDashboard metricsDashboard, final String server, int refreshInterval) {
         this.server = server;
+        this.refreshInterval = refreshInterval;
         
         // Init the dashboard from the UI Binder template
         initWidget(uiBinder.createAndBindUi(this));
@@ -92,7 +98,7 @@ public class VerticalServerMetrics extends Composite {
                         .backgroundColor(RealTimeMetricsDashboard.BACKGROUND_COLOR)
                         .width(200).height(200)
                         .legendOff()
-                        .refreshOn(1, false)
+                        .refreshOn(this.refreshInterval, false)
                         .buildSettings());
 
         addDisplayer(serverCPU, TOOLTIP_CPU);
@@ -111,7 +117,7 @@ public class VerticalServerMetrics extends Composite {
                         .backgroundColor(RealTimeMetricsDashboard.BACKGROUND_COLOR)
                         .width(200).height(200)
                         .legendOff()
-                        .refreshOn(1, false)
+                        .refreshOn(this.refreshInterval, false)
                         .buildSettings());
 
         addDisplayer(serverMemory, TOOLTIP_USED_MEMORY);
@@ -131,7 +137,7 @@ public class VerticalServerMetrics extends Composite {
                         .backgroundColor(RealTimeMetricsDashboard.BACKGROUND_COLOR)
                         .legendOff()
                         .width(200).height(200)
-                        .refreshOn(1, false)
+                        .refreshOn(this.refreshInterval, false)
                         .horizontal()
                         .buildSettings());
 
@@ -151,7 +157,7 @@ public class VerticalServerMetrics extends Composite {
                         .backgroundColor(RealTimeMetricsDashboard.BACKGROUND_COLOR)
                         .legendOff()
                         .width(200).height(200)
-                        .refreshOn(1, false)
+                        .refreshOn(this.refreshInterval, false)
                         .buildSettings());
         
         addDisplayer(serverProcessesRunning, TOOLTIP_PROCESSES);
@@ -167,7 +173,7 @@ public class VerticalServerMetrics extends Composite {
                         .title("Disk usage")
                         .titleVisible(false)
                         .tableWidth(200)
-                        .refreshOn(1, false)
+                        .refreshOn(this.refreshInterval, false)
                         .buildSettings());
         
         addDisplayer(serverDisk, TOOLTIP_DISK);
@@ -189,7 +195,7 @@ public class VerticalServerMetrics extends Composite {
     private void addDisplayer(Displayer displayer, String toolTipText) {
         displayerCoordinator.addDisplayer(displayer);
         Tooltip tooltip = new Tooltip(toolTipText);
-        tooltip.setPlacement(Placement.LEFT);
+        tooltip.setPlacement(Placement.TOP);
         tooltip.add(displayer);
         mainPanel.add(tooltip);
     }

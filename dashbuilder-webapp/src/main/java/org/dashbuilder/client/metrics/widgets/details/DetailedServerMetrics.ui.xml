@@ -14,7 +14,7 @@
     }
 
     .icons_area {
-      width: 1200px;
+      width: 1250px;
       height: 25px;
     }
 
@@ -34,10 +34,11 @@
       width: 200px;
       height: 600px;
       margin-right: 25px;
+      padding-bottom: 25px;
     }
 
     .server_memory_area {
-      width: 975px;
+      width: 1000px;
       height: 300px;
     }
 
@@ -122,7 +123,7 @@
 
     <g:VerticalPanel spacing="10" addStyleNames="{style.server_details_area} {style.metrics_dashboard_panel}" ui:field="tableArea">
       <g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
-        <g:HTML text="Last minutes metrics detail table (updated each minute)"/>
+        <g:HTML text="Last hour metrics table"/>
       </g:cell>
       <g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
         <dashbuilder:Displayer ui:field="serverTable"/>
@@ -134,18 +135,17 @@
       <!-- CPU usage area. -->
       <g:VerticalPanel spacing="10" addStyleNames="{style.server_cpu_area} {style.metrics_dashboard_panel}">
 
-        <g:VerticalPanel spacing="10">
+        <g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
           <g:HTML text="Current CPU usage (%)"/>
-        </g:VerticalPanel>
+        </g:cell>
 
-        <g:VerticalPanel spacing="10">
-          <g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
-            <dashbuilder:Displayer ui:field="serverCPU0"/>
-          </g:cell>
-          <g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
-            <dashbuilder:Displayer ui:field="serverCPU1"/>
-          </g:cell>
-        </g:VerticalPanel>
+        <g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
+          <dashbuilder:Displayer ui:field="serverCPU0"/>
+        </g:cell>
+
+        <g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
+          <dashbuilder:Displayer ui:field="serverCPU1"/>
+        </g:cell>
 
       </g:VerticalPanel>
 
