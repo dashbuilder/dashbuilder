@@ -106,6 +106,10 @@ public class TableDisplayer extends AbstractDisplayer {
                             if (!StringUtils.isBlank(id)) {
                                 panel.getElement().setId(id);
                             }
+                            
+                            // Handle table pager.
+                            handleTablePager();                            
+                            
                             // Draw done
                             afterDraw();
                         }
@@ -132,6 +136,9 @@ public class TableDisplayer extends AbstractDisplayer {
                 table.redraw();
                 redrawColumnSelectionWidget();
 
+                // Handle table pager.
+                handleTablePager();
+
                 // Redraw done
                 afterRedraw();
             }
@@ -139,6 +146,14 @@ public class TableDisplayer extends AbstractDisplayer {
                 displayMessage( "ERROR: Data set not found." );
             }
         } );
+    }
+
+    /**
+     * If only exists one page, do not show table pager.  
+     */
+    private void handleTablePager() {
+        if (table.getPageSize() >= table.getRowCount()) table.pager.setVisible(false);
+        else table.pager.setVisible(true);
     }
 
     /**

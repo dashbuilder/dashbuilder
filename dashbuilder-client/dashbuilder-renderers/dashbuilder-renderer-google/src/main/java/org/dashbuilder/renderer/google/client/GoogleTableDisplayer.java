@@ -202,6 +202,10 @@ public class GoogleTableDisplayer extends GoogleDisplayer {
 
     protected void createTablePager() {
         pagerPanel.clear();
+        
+        // If only exists one page, do not show pager component.
+        if (numberOfPages == 1) return;
+        
         pagerPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
         pagerPanel.getElement().setAttribute("cellpadding", "5");
 
