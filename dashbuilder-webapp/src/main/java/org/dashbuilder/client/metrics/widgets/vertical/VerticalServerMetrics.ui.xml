@@ -8,35 +8,9 @@
 
   <ui:style>
 
-    .main_panel {
-
-    }
-
-    .labels_panel {
-      width: 60px;
-      height: 1100px;
-    }
-
-    .labels_text_panel {
-      width: 60px;
-      height: 800px;
-      margin-top: 25px;
-    }
-
     .summary_panel {
       width: 250px;
       height: 1100px;
-    }
-
-    .label {
-      transform: rotate(-90deg) translateY(100%);
-      transform-origin: 0% 100%;
-      height: 150px;
-    }
-
-    .empty_icon_panel {
-      width: 50px;
-      height: 90px;
     }
 
     .icon_panel {
@@ -61,7 +35,6 @@
     .metrics_dashboard_panel {
       border-radius: 5px 5px 5px 5px;
       margin: 10px;
-      padding: 10px;
       font-weight: bold;
       background-color: ghostwhite;
       position: relative;
@@ -97,50 +70,27 @@
 
   </ui:style>
 
-  <g:HorizontalPanel spacing="10" addStyleNames="{style.main_panel}">
+  <!-- Server summary column. -->
+  <g:VerticalPanel spacing="10" addStyleNames="{style.summary_panel}">
 
-    <!-- Labels. -->
-    <g:VerticalPanel spacing="10" visible="false" addStyleNames="{style.labels_panel}" ui:field="labelsPanel">
+    <g:FocusPanel ui:field="serverIcon" >
+      <b:Tooltip text='Show server details' placement="BOTTOM" ui:field="tooltip">
+        <g:VerticalPanel spacing="10" addStyleNames="{style.icon_panel} {style.metrics_dashboard_panel}">
+          <g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
+            <g:Image resource='{resources.computerIcon}' addStyleNames="{style.server_icon}"/>
+          </g:cell>
+          <g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
+            <g:HTML ui:field="serverName"/>
+          </g:cell>
+        </g:VerticalPanel>
+      </b:Tooltip>
+    </g:FocusPanel>
 
-      <g:VerticalPanel spacing="10" addStyleNames="{style.empty_icon_panel}">
-      </g:VerticalPanel>
-
-      <g:VerticalPanel spacing="10" addStyleNames="{style.labels_text_panel} {style.metrics_dashboard_panel}"
-                       horizontalAlignment="ALIGN_CENTER" >
-
-        <g:Label text="CPU usage (%)" addStyleNames="{style.label}"/>
-        <g:Label text="Used memory (Gb)" addStyleNames="{style.label}"/>
-        <g:Label text="Network BW (kbps)" addStyleNames="{style.label}"/>
-        <g:Label text="Running proc" addStyleNames="{style.label}"/>
-
-      </g:VerticalPanel>
-      
+    <g:VerticalPanel spacing="10" addStyleNames="{style.displayers_panel} {style.metrics_dashboard_panel}" ui:field="mainPanel"
+                     horizontalAlignment="ALIGN_CENTER">
+      <!-- Displayer widgets are placed here programatically. -->
     </g:VerticalPanel>
-    
-    <!-- Server summary column. -->
-    <g:VerticalPanel spacing="10" addStyleNames="{style.summary_panel}">
 
-      <g:FocusPanel ui:field="serverIcon" >
-        <b:Tooltip text='Show server details' placement="BOTTOM" ui:field="tooltip">
-          <g:VerticalPanel spacing="10" addStyleNames="{style.icon_panel} {style.metrics_dashboard_panel}">
-            <g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
-              <g:Image resource='{resources.computerIcon}' addStyleNames="{style.server_icon}"/>
-            </g:cell>
-            <g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
-              <g:HTML ui:field="serverName"/>
-            </g:cell>
-          </g:VerticalPanel>
-        </b:Tooltip>
-      </g:FocusPanel>
-
-      <g:VerticalPanel spacing="10" addStyleNames="{style.displayers_panel} {style.metrics_dashboard_panel}" ui:field="mainPanel"
-                       horizontalAlignment="ALIGN_CENTER">
-        <!-- Displayer widgets are placed here programatically. -->
-      </g:VerticalPanel>
-
-    </g:VerticalPanel>
-    
-  </g:HorizontalPanel>
-
+  </g:VerticalPanel>
   
 </ui:UiBinder>

@@ -16,9 +16,6 @@
 package org.dashbuilder.client.metrics;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.Style;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Timer;
@@ -63,12 +60,6 @@ public class RealTimeMetricsDashboard extends Composite {
     HorizontalPanel serverDetailsArea;
 
     @UiField
-    Image backIcon;
-
-    @UiField
-    HorizontalPanel backIconPanel;
-
-    @UiField
     Label notificationsLabel;
 
     @UiField
@@ -96,14 +87,7 @@ public class RealTimeMetricsDashboard extends Composite {
         // Init the dashboard from the UI Binder template
         initWidget(uiBinder.createAndBindUi(this));
 
-        // Configure user actions.
-        backIcon.addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent clickEvent) {
-                showVerticalServersSummary();
-            }
-        });
-        setPointerCursor(backIcon);
+        
         
         dataSetLookupTimer = new Timer() {
             @Override
@@ -131,16 +115,13 @@ public class RealTimeMetricsDashboard extends Composite {
         dataSetLookupTimer.schedule(DS_LOOKUP_TIMER_DELAY);
     }
 
-    private void showVerticalServersSummary() {
+    public void showVerticalServersSummary() {
         hideAll();
         if (servers != null && servers.length > 0) {
             this.verticalServerMetrics = new VerticalServerMetrics[servers.length];
             for (int x = 0; x < servers.length; x++) {
                 String server = servers[x];
-                VerticalServerMetrics verticalServerMetrics = null;
-                if (x == 0) verticalServerMetrics = new VerticalServerMetrics(this, server, true);
-                else if (x == servers.length - 1) verticalServerMetrics = new VerticalServerMetrics(this, server);
-                else verticalServerMetrics = new VerticalServerMetrics(this, server);
+                VerticalServerMetrics verticalServerMetrics = new VerticalServerMetrics(this, server);
                 if (!dataSetServers.contains(server)) verticalServerMetrics = verticalServerMetrics.off();
                 this.verticalServerMetrics[x] = verticalServerMetrics;
                 summaryArea.add(this.verticalServerMetrics[x]);
@@ -164,7 +145,6 @@ public class RealTimeMetricsDashboard extends Composite {
         hideAll();
         DetailedServerMetrics detailedServerMetrics = new DetailedServerMetrics(this, server);
         isViewingServerDetails = true;
-        backIconPanel.setVisible(true);
         serverDetailsArea.add(detailedServerMetrics);
         serverDetailsArea.setVisible(true);
     }
@@ -172,7 +152,6 @@ public class RealTimeMetricsDashboard extends Composite {
     private void hideAll() {
         hide(serverDetailsArea);
         hide(summaryArea);
-        backIconPanel.setVisible(false);
         isViewingVerticalSummary = false;
         isViewingServerDetails = false;
     }
@@ -292,11 +271,4 @@ public class RealTimeMetricsDashboard extends Composite {
 
     }
     
-    private void setPointerCursor(UIObject object) {
-        object.getElement().getStyle().setCursor(Style.Cursor.POINTER);
-    }
-
-    private void setAutoCursor(UIObject object) {
-        object.getElement().getStyle().setCursor(Style.Cursor.AUTO);
-    }
 }

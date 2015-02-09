@@ -17,6 +17,7 @@ package org.dashbuilder.client.metrics.widgets.details;
 
 import com.github.gwtbootstrap.client.ui.Tooltip;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -66,6 +67,9 @@ public class DetailedServerMetrics extends Composite {
     Displayer serverProcessesSleeping;
 
     @UiField
+    Image backIcon;
+
+    @UiField
     Image modeIcon;
 
     @UiField
@@ -85,12 +89,20 @@ public class DetailedServerMetrics extends Composite {
         return "Server metrics (Vertical)";
     }
 
-    public DetailedServerMetrics(RealTimeMetricsDashboard metricsDashboard, String server) {
+    public DetailedServerMetrics(final RealTimeMetricsDashboard metricsDashboard, String server) {
 
         buildServerDetailsDisplayers(metricsDashboard, server);
         
         // Init the dashboard from the UI Binder template
         initWidget(uiBinder.createAndBindUi(this));
+
+        // Configure user actions.
+        backIcon.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent clickEvent) {
+                metricsDashboard.showVerticalServersSummary();
+            }
+        });
         
         modeIcon.addClickHandler(new ClickHandler() {
             @Override
@@ -246,7 +258,7 @@ public class DetailedServerMetrics extends Composite {
         chartsArea.setVisible(true);
         tableArea.setVisible(false);
         modeIcon.setResource(MetricsDashboardClientBundle.INSTANCE.tableIcon());
-        modeIconTooltip.setText("Use table perspective");
+        modeIconTooltip.setText("View as table");
     }
 
     private void enableTableMode() {
@@ -254,7 +266,7 @@ public class DetailedServerMetrics extends Composite {
         chartsArea.setVisible(false);
         tableArea.setVisible(true);
         modeIcon.setResource(MetricsDashboardClientBundle.INSTANCE.chartIcon());
-        modeIconTooltip.setText("Use charting perspective");
+        modeIconTooltip.setText("View as charts");
     }
-    
+
 }

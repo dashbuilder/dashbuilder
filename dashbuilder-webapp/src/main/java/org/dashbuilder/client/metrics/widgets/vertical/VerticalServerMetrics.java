@@ -16,6 +16,7 @@
 package org.dashbuilder.client.metrics.widgets.vertical;
 
 import com.github.gwtbootstrap.client.ui.Tooltip;
+import com.github.gwtbootstrap.client.ui.constants.Placement;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -40,11 +41,14 @@ public class VerticalServerMetrics extends Composite {
     interface VerticalServerMetricsBinder extends UiBinder<Widget, VerticalServerMetrics>{}
     private static final VerticalServerMetricsBinder uiBinder = GWT.create(VerticalServerMetricsBinder.class);
     
+    private static final String TOOLTIP_CPU = "CPU usage (%)";
+    private static final String TOOLTIP_USED_MEMORY = "Used memory (Gb)";
+    private static final String TOOLTIP_NET_BW = "Network BW (kbps)";
+    private static final String TOOLTIP_PROCESSES = "Running processes";
+    private static final String TOOLTIP_DISK = "Disk usage (Mb)";
+    
     @UiField
     VerticalPanel mainPanel;
-
-    @UiField
-    VerticalPanel labelsPanel;
 
     @UiField
     FocusPanel serverIcon;
@@ -64,20 +68,11 @@ public class VerticalServerMetrics extends Composite {
         return "Server metrics (Vertical)";
     }
 
-    public VerticalServerMetrics(RealTimeMetricsDashboard metricsDashboard, String server) {
-        this(metricsDashboard, server, false);
-    }
-    
-    public VerticalServerMetrics(final RealTimeMetricsDashboard metricsDashboard, final String server, boolean showLabels) {
+    public VerticalServerMetrics(final RealTimeMetricsDashboard metricsDashboard, final String server) {
         this.server = server;
         
         // Init the dashboard from the UI Binder template
         initWidget(uiBinder.createAndBindUi(this));
-        
-        // Labels.
-        if (showLabels) {
-            labelsPanel.setVisible(true);
-        }
         
         // The server name.
         serverName.setText(server);
@@ -100,7 +95,7 @@ public class VerticalServerMetrics extends Composite {
                         .refreshOn(1, false)
                         .buildSettings());
 
-        addDisplayer(serverCPU);
+        addDisplayer(serverCPU, TOOLTIP_CPU);
         
         // Used memory
         Displayer serverMemory = DisplayerHelper.lookupDisplayer(
@@ -119,7 +114,7 @@ public class VerticalServerMetrics extends Composite {
                         .refreshOn(1, false)
                         .buildSettings());
 
-        addDisplayer(serverMemory);
+        addDisplayer(serverMemory, TOOLTIP_USED_MEMORY);
 
         // TX/RX
         Displayer serverNetwork = DisplayerHelper.lookupDisplayer(
@@ -140,7 +135,7 @@ public class VerticalServerMetrics extends Composite {
                         .horizontal()
                         .buildSettings());
 
-        addDisplayer(serverNetwork);
+        addDisplayer(serverNetwork, TOOLTIP_NET_BW);
 
         // Processes
         Displayer serverProcessesRunning = DisplayerHelper.lookupDisplayer(
@@ -159,7 +154,7 @@ public class VerticalServerMetrics extends Composite {
                         .refreshOn(1, false)
                         .buildSettings());
         
-        addDisplayer(serverProcessesRunning);
+        addDisplayer(serverProcessesRunning, TOOLTIP_PROCESSES);
 
         // Disk
         Displayer serverDisk = DisplayerHelper.lookupDisplayer(
@@ -167,15 +162,15 @@ public class VerticalServerMetrics extends Composite {
                         .dataset(RealTimeMetricsDashboard.METRICS_DATASET_UUID)
                         .filter(ClusterMetricsDataSetGenerator.COLUMN_SERVER, equalsTo(server))
                         .filter(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP, timeFrame("1second"))
-                        .column(ClusterMetricsDataSetGenerator.COLUMN_DISK_FREE, "Free disk space")
-                        .column(ClusterMetricsDataSetGenerator.COLUMN_DISK_USED, "Used disk space")
+                        .column(ClusterMetricsDataSetGenerator.COLUMN_DISK_FREE, "Free disk space (Mb)")
+                        .column(ClusterMetricsDataSetGenerator.COLUMN_DISK_USED, "Used disk space (Mb)")
                         .title("Disk usage")
                         .titleVisible(false)
                         .tableWidth(200)
                         .refreshOn(1, false)
                         .buildSettings());
         
-        addDisplayer(serverDisk);
+        addDisplayer(serverDisk, TOOLTIP_DISK);
 
         // Add the click handler for server details action.
         serverIcon.addClickHandler(new ClickHandler() {
@@ -191,9 +186,12 @@ public class VerticalServerMetrics extends Composite {
         displayerCoordinator.refreshOnAll();
     }
 
-    private void addDisplayer(Displayer displayer) {
+    private void addDisplayer(Displayer displayer, String toolTipText) {
         displayerCoordinator.addDisplayer(displayer);
-        mainPanel.add(displayer);
+        Tooltip tooltip = new Tooltip(toolTipText);
+        tooltip.setPlacement(Placement.LEFT);
+        tooltip.add(displayer);
+        mainPanel.add(tooltip);
     }
 
     private void setPointerCursor(UIObject object) {
