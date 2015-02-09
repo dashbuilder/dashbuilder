@@ -45,10 +45,12 @@ public class RealTimeMetricsDashboard extends Composite {
 
     public static final String METRICS_DATASET_UUID = "clusterMetrics";
     public static final String[] METRICS_DATASET_DEFAULT_SERVERS = new String[] {"server1","server2","server3","server4","server5"};
+    public static final String BACKGROUND_COLOR = "#F8F8FF";
     private static final int DS_LOOKUP_TIMER_DELAY = 1000;
     private static final int NOTIFICATIONS_TIMER_DELAY = 3000;
     private static final String NOTIFICATIONS_SERVER_OFF_COLOR = "#CD5C5C";
     private static final String NOTIFICATIONS_SERVER_ON_COLOR = "#90EE90";
+    
     
     // The client bundle for this widget.
     @UiField
