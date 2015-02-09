@@ -76,13 +76,14 @@ public class GoogleLineChartDisplayer extends GoogleXAxisChartDisplayer {
 
         return new DisplayerConstraints(lookupConstraints)
                    .supportsAttribute( DisplayerAttributeDef.TYPE )
-                   .supportsAttribute( DisplayerAttributeDef.COLUMNS )
+                   .supportsAttribute(DisplayerAttributeDef.COLUMNS)
                    .supportsAttribute( DisplayerAttributeGroupDef.FILTER_GROUP )
                    .supportsAttribute( DisplayerAttributeGroupDef.REFRESH_GROUP )
                    .supportsAttribute( DisplayerAttributeGroupDef.TITLE_GROUP)
                    .supportsAttribute( DisplayerAttributeDef.CHART_WIDTH )
                    .supportsAttribute( DisplayerAttributeDef.CHART_HEIGHT )
-                   .supportsAttribute( DisplayerAttributeGroupDef.CHART_MARGIN_GROUP )
+                    .supportsAttribute(DisplayerAttributeDef.CHART_BGCOLOR)
+                   .supportsAttribute(DisplayerAttributeGroupDef.CHART_MARGIN_GROUP)
                    .supportsAttribute( DisplayerAttributeGroupDef.CHART_LEGEND_GROUP )
                    .supportsAttribute( DisplayerAttributeGroupDef.AXIS_GROUP );
     }
@@ -103,6 +104,7 @@ public class GoogleLineChartDisplayer extends GoogleXAxisChartDisplayer {
         LineChartOptions options = LineChartOptions.create();
         options.setWidth(displayerSettings.getChartWidth());
         options.setHeight(displayerSettings.getChartHeight());
+        options.setBackgroundColor(displayerSettings.getChartBackgroundColor());
         if ( displayerSettings.isXAxisShowLabels() ) options.setHAxis( createHAxis() );
         if ( displayerSettings.isYAxisShowLabels() ) options.setVAxis( createVAxis() );
         options.setLegend( createChartLegend( displayerSettings ) );

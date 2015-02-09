@@ -53,6 +53,7 @@ public class DisplayerSettings {
         settings.put( getSettingPath( DisplayerAttributeDef.REFRESH_STALE_DATA), _false );
         settings.put( getSettingPath( DisplayerAttributeDef.CHART_WIDTH ), "600" );
         settings.put( getSettingPath( DisplayerAttributeDef.CHART_HEIGHT ), "300" );
+        settings.put( getSettingPath( DisplayerAttributeDef.CHART_BGCOLOR), "#FFFFFF" );
         settings.put( getSettingPath( DisplayerAttributeDef.CHART_MARGIN_TOP ), "20" );
         settings.put( getSettingPath( DisplayerAttributeDef.CHART_MARGIN_BOTTOM ), "50" );
         settings.put( getSettingPath( DisplayerAttributeDef.CHART_MARGIN_LEFT ), "80" );
@@ -247,6 +248,14 @@ public class DisplayerSettings {
 
     public void setChartWidth( int chartWidth ) {
         settings.put( getSettingPath( DisplayerAttributeDef.CHART_WIDTH ), Integer.toString( chartWidth ) );
+    }
+    
+    public String getChartBackgroundColor() {
+        return settings.get(getSettingPath( DisplayerAttributeDef.CHART_BGCOLOR));
+    }
+
+    public void setChartBackgroundColor(String color) {
+        settings.put( getSettingPath( DisplayerAttributeDef.CHART_BGCOLOR ), color );
     }
 
     public int getChartHeight() {

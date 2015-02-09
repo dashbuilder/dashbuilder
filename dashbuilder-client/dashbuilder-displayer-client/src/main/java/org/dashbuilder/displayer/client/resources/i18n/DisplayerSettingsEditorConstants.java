@@ -60,6 +60,8 @@ public interface DisplayerSettingsEditorConstants extends ConstantsWithLookup {
     String chart_width();
 
     String chart_height();
+    
+    String chart_bgColor();
 
     String chart_topMargin();
 

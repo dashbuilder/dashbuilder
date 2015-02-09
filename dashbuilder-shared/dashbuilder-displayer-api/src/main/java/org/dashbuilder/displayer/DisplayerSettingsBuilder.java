@@ -68,6 +68,13 @@ public interface DisplayerSettingsBuilder<T> extends DataSetLookupBuilder<T> {
     T titleVisible(boolean visible);
 
     /**
+     * Set the background color for the displayer. 
+     * @param backgroundColor The background color code.
+     * @return The DisplayerSettingsBuilder instance that is being used to configure a DisplayerSettings.
+     */
+    T backgroundColor(String backgroundColor);
+    
+    /**
      * Set the renderer that will be used for visualizing this DisplayerSettings.
      * @param renderer The identifier of the renderer.
      * @return The DisplayerSettingsBuilder instance that is being used to configure a DisplayerSettings.

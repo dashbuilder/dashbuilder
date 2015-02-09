@@ -49,6 +49,11 @@ public abstract class AbstractDisplayerSettingsBuilder<T> extends AbstractDataSe
         return (T) this;
     }
 
+    public T backgroundColor(String backgroundColor) {
+        displayerSettings.setChartBackgroundColor(backgroundColor);
+        return (T) this;
+    }
+
     public T renderer(String renderer) {
         displayerSettings.setRenderer(renderer);
         return (T) this;

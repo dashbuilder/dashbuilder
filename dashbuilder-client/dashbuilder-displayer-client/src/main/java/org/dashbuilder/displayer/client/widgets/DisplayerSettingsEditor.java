@@ -171,6 +171,12 @@ public class DisplayerSettingsEditor extends Composite {
                         .withKey(CHART_HEIGHT.getFullId())
                         .withValidators(new LongValidator()));
             }
+            if (isSupported(CHART_BGCOLOR)) {
+                category.withField(new PropertyEditorFieldInfo(DisplayerSettingsEditorConstants.INSTANCE.chart_bgColor(),
+                        displayerSettings.getChartBackgroundColor(),
+                        PropertyEditorType.TEXT)
+                        .withKey(CHART_BGCOLOR.getFullId()));
+            }
             if (isSupported(CHART_3D)) {
                 category.withField(new PropertyEditorFieldInfo(DisplayerSettingsEditorConstants.INSTANCE.chart_3d(),
                         Boolean.toString(displayerSettings.isChart3D()),

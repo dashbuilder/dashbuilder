@@ -34,6 +34,7 @@ public class DisplayerAttributeDef {
 
     public static final DisplayerAttributeDef CHART_WIDTH = new DisplayerAttributeDef("width", DisplayerAttributeGroupDef.CHART_GROUP);
     public static final DisplayerAttributeDef CHART_HEIGHT = new DisplayerAttributeDef("height", DisplayerAttributeGroupDef.CHART_GROUP);
+    public static final DisplayerAttributeDef CHART_BGCOLOR = new DisplayerAttributeDef("bgColor", DisplayerAttributeGroupDef.CHART_GROUP);
     public static final DisplayerAttributeDef CHART_3D = new DisplayerAttributeDef("3d", DisplayerAttributeGroupDef.CHART_GROUP);
     public static final DisplayerAttributeDef CHART_MARGIN_TOP = new DisplayerAttributeDef("top", DisplayerAttributeGroupDef.CHART_MARGIN_GROUP);
     public static final DisplayerAttributeDef CHART_MARGIN_BOTTOM = new DisplayerAttributeDef("bottom", DisplayerAttributeGroupDef.CHART_MARGIN_GROUP);

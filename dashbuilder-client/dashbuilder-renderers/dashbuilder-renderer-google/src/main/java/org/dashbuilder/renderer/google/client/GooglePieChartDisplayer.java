@@ -92,6 +92,7 @@ public class GooglePieChartDisplayer extends GoogleXAxisChartDisplayer {
         PieChartOptions options = PieChartOptions.create();
         options.setWidth(displayerSettings.getChartWidth());
         options.setHeight(displayerSettings.getChartHeight());
+        options.setBackgroundColor(displayerSettings.getChartBackgroundColor());
         options.setIs3D(displayerSettings.isChart3D());
         options.setLegend( createChartLegend( displayerSettings ) );
         options.setColors(createColorArray(googleTable));

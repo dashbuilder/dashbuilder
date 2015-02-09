@@ -84,13 +84,14 @@ public class GoogleBarChartDisplayer extends GoogleXAxisChartDisplayer {
 
         return new DisplayerConstraints(lookupConstraints)
                    .supportsAttribute( DisplayerAttributeDef.TYPE )
-                   .supportsAttribute( DisplayerAttributeDef.COLUMNS )
+                   .supportsAttribute(DisplayerAttributeDef.COLUMNS)
                    .supportsAttribute( DisplayerAttributeGroupDef.FILTER_GROUP )
                    .supportsAttribute( DisplayerAttributeGroupDef.REFRESH_GROUP)
                    .supportsAttribute( DisplayerAttributeGroupDef.TITLE_GROUP)
                    .supportsAttribute( DisplayerAttributeDef.CHART_WIDTH )
                    .supportsAttribute( DisplayerAttributeDef.CHART_HEIGHT )
-                   .supportsAttribute( DisplayerAttributeGroupDef.CHART_MARGIN_GROUP )
+                    .supportsAttribute(DisplayerAttributeDef.CHART_BGCOLOR)
+                    .supportsAttribute(DisplayerAttributeGroupDef.CHART_MARGIN_GROUP)
                    .supportsAttribute( DisplayerAttributeGroupDef.CHART_LEGEND_GROUP )
                    .supportsAttribute( DisplayerAttributeGroupDef.AXIS_GROUP )
                    .supportsAttribute( DisplayerAttributeGroupDef.BARCHART_GROUP );
@@ -113,6 +114,7 @@ public class GoogleBarChartDisplayer extends GoogleXAxisChartDisplayer {
             BarChartOptions options = BarChartOptions.create();
             options.setWidth(displayerSettings.getChartWidth());
             options.setHeight( displayerSettings.getChartHeight() );
+            options.setBackgroundColor(displayerSettings.getChartBackgroundColor());
             options.setLegend( createChartLegend( displayerSettings ) );
             if ( displayerSettings.isXAxisShowLabels() ) options.setHAxis( createHAxis() );
             if ( displayerSettings.isYAxisShowLabels() ) options.setVAxis( createVAxis() );
@@ -124,6 +126,7 @@ public class GoogleBarChartDisplayer extends GoogleXAxisChartDisplayer {
             ColumnChartOptions options = ColumnChartOptions.create();
             options.setWidth(displayerSettings.getChartWidth());
             options.setHeight(displayerSettings.getChartHeight());
+            options.setBackgroundColor(displayerSettings.getChartBackgroundColor());
             options.setLegend( createChartLegend( displayerSettings ) );
             if ( displayerSettings.isXAxisShowLabels() ) options.setHAxis( createHAxis() );
             if ( displayerSettings.isYAxisShowLabels() ) options.setVAxis( createVAxis() );
