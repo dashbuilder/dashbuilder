@@ -24,22 +24,19 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.*;
 import org.dashbuilder.backend.ClusterMetricsDataSetGenerator;
-import org.dashbuilder.client.metrics.animation.VisibilityAnimation;
 import org.dashbuilder.client.metrics.widgets.details.DetailedServerMetrics;
 import org.dashbuilder.client.metrics.widgets.summary.SummaryMetrics;
 import org.dashbuilder.client.metrics.widgets.vertical.VerticalServerMetrics;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetFactory;
 import org.dashbuilder.dataset.DataSetLookup;
-import org.dashbuilder.dataset.client.ClientDataSetManager;
-import org.dashbuilder.displayer.DisplayerSettingsFactory;
-import org.dashbuilder.displayer.client.DataSetHandlerImpl;
-import org.dashbuilder.displayer.client.Displayer;
-import org.dashbuilder.displayer.client.DisplayerHelper;
+import org.dashbuilder.dataset.client.DataSetClientServices;
+import org.dashbuilder.dataset.client.DataSetReadyCallback;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
-import static org.dashbuilder.dataset.filter.FilterFactory.equalsTo;
 import static org.dashbuilder.dataset.filter.FilterFactory.timeFrame;
 
 public class MetricsDashboard extends Composite {
@@ -90,6 +87,7 @@ public class MetricsDashboard extends Composite {
     
     private String dataSetUUID;
     private String[] servers;
+    final List<String> dataSetServers = new ArrayList<String>();
     private VerticalServerMetrics[] verticalServerMetrics;
     Timer timer;
 
@@ -130,17 +128,30 @@ public class MetricsDashboard extends Composite {
                 if (!isViewingSummary) showSummary();
             }
         });
-        
-        // Initially show vertical servers summary.
-        showVerticalServersSummary();
 
         timer = new Timer() {
             @Override
             public void run() {
-                checkServersAlive();
+                updateDataSetServers(new Runnable() {
+                    @Override
+                    public void run() {
+                        checkServersAlive();
+                    }
+                });
                 timer.schedule(DS_LOOKUP_TIMER_DELAY);
             }
         };
+
+        // If server list is configured, use it.
+        if (servers != null) {
+            dataSetServers.clear();
+            for (String server : servers) {
+                dataSetServers.add(server);
+            }
+        }
+        
+        // Initially show vertical servers summary.
+        showVerticalServersSummary();
         timer.schedule(DS_LOOKUP_TIMER_DELAY);
     }
 
@@ -151,13 +162,11 @@ public class MetricsDashboard extends Composite {
         disableButtonHistory();
         title.setText("History summary (analytic dashboard)");
         analyticSummaryArea.add(summaryMetrics);
-        VisibilityAnimation animation = new VisibilityAnimation(analyticSummaryArea);
-        animation.run(ANIMATION_DURATION);
+        analyticSummaryArea.setVisible(true);
     }
     
     private void showVerticalServersSummary() {
         hideAll();
-        String[] servers = getAvailableServers();
         if (servers != null && servers.length > 0) {
             this.verticalServerMetrics = new VerticalServerMetrics[servers.length];
             for (int x = 0; x < servers.length; x++) {
@@ -166,6 +175,7 @@ public class MetricsDashboard extends Composite {
                 if (x == 0) verticalServerMetrics = new VerticalServerMetrics(this, server, true);
                 else if (x == servers.length - 1) verticalServerMetrics = new VerticalServerMetrics(this, server);
                 else verticalServerMetrics = new VerticalServerMetrics(this, server);
+                if (!dataSetServers.contains(server)) verticalServerMetrics = verticalServerMetrics.off();
                 this.verticalServerMetrics[x] = verticalServerMetrics;
                 verticalSummaryArea.add(this.verticalServerMetrics[x]);
             }
@@ -173,8 +183,7 @@ public class MetricsDashboard extends Composite {
         isViewingVerticalSummary = true;
         disableButtonNow();
         title.setText("Current system server metrics (real-time dashboard)");
-        VisibilityAnimation animation = new VisibilityAnimation(verticalSummaryArea);
-        animation.run(ANIMATION_DURATION);
+        verticalSummaryArea.setVisible(true);
 
     }
     
@@ -195,8 +204,7 @@ public class MetricsDashboard extends Composite {
         title.setText("Current metrics for " + server);
         backIcon.setVisible(true);
         serverDetailsArea.add(detailedServerMetrics);
-        VisibilityAnimation animation = new VisibilityAnimation(serverDetailsArea);
-        animation.run(ANIMATION_DURATION);
+        serverDetailsArea.setVisible(true);
     }
 
     private void hideAll() {
@@ -211,8 +219,8 @@ public class MetricsDashboard extends Composite {
 
     private void hide(Widget w) {
         if (w.isVisible()) {
-            w.setVisible(false);
             if (w instanceof HasWidgets) removeAllChidren((HasWidgets) w);
+            w.setVisible(false);
         }
     }
     
@@ -224,48 +232,42 @@ public class MetricsDashboard extends Composite {
         }
     }
     
-    private String[] getAvailableServers() {
-        // If server list is configured, use it.
-        if (servers != null) return servers;
-        
-        // If not, use servers found in the dataset.
-        return getDataSetServers();
-    }
-    
     private void checkServersAlive() {
         GWT.log("Checking servers alive...");
         
-        String[] currentAliveServers = getDataSetServers();
-        if (currentAliveServers == null) {
-            GWT.log("Cannot find out alive servers.");
-            return;
+        if (servers != null) {
+            for (String availableServer : servers) {
+                boolean found = false;
+
+                for (String currentAliveServer : dataSetServers) {
+                    if (currentAliveServer.equalsIgnoreCase(availableServer)) found = true;
+                }
+
+                if (found) {
+                    on(availableServer);
+                } else {
+                    off(availableServer);
+                }
+            }
         }
         
-        String[] availableServers = getAvailableServers();
-        for (String availableServer : availableServers) {
-            boolean found = false;
-            
-            for (String currentAliveServer : currentAliveServers) {
-                if (currentAliveServer.equalsIgnoreCase(availableServer)) found = true;
-            }
-            
-            if (found) {
-                on(availableServer);
-            } else {
-                off(availableServer);
-            }
-        }
         
     }
     
     private void off(String server) {
-        getVerticalServerMetrics(server).off();
-        showNotification(server + " has been down");
+        VerticalServerMetrics vm = getVerticalServerMetrics(server);
+        if (vm.isOn()) {
+            vm.off();
+            showNotification(server + " has been down");
+        }
     }
 
     private void on(String server) {
-        getVerticalServerMetrics(server).on();
-        showNotification(server + " has been up");
+        VerticalServerMetrics vm = getVerticalServerMetrics(server);
+        if (vm.isOff()) {
+            vm.on();
+            showNotification(server + " has been up");
+        }
     }
     
     private void showNotification(String message) {
@@ -280,33 +282,53 @@ public class MetricsDashboard extends Composite {
         timer1.schedule(NOTIFICATIONS_TIMER_DELAY);
     }
     
-    private String[] getDataSetServers() {
+    private synchronized void updateDataSetServers(final Runnable listener) {
         
-        DataSetLookup lookup = DataSetFactory.newDataSetLookupBuilder()
+        final DataSetLookup lookup = DataSetFactory.newDataSetLookupBuilder()
             .dataset(getDataSetUUID())
             .filter(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP, timeFrame("1second"))
             .group(ClusterMetricsDataSetGenerator.COLUMN_SERVER)
             .column(ClusterMetricsDataSetGenerator.COLUMN_SERVER)
             .buildLookup();
 
-        DataSet dataSet = ClientDataSetManager.get().lookupDataSet(lookup);
-
-        // TODO: DataSet is always null!
-        
-        if (dataSet != null && dataSet.getRowCount() > 0) {
-            List values = dataSet.getColumns().get(0).getValues();
-            if (values != null && !values.isEmpty()) {
-                String[] result = new String[dataSet.getColumns().size()];
-                int x = 0;
-                for (Object value : values) {
-                    result[x++] = value.toString();
+        try {
+            DataSetClientServices.get().lookupDataSet(lookup, new DataSetReadyCallback() {
+                @Override
+                public void callback(DataSet dataSet) {
+                    if (dataSet != null && dataSet.getRowCount() > 0) {
+                        List values = dataSet.getColumns().get(0).getValues();
+                        if (values != null && !values.isEmpty()) {
+                            boolean fireListener = false;
+                            for (Object value : values) {
+                                if (!dataSetServers.contains(value.toString())) {
+                                    dataSetServers.add(value.toString());
+                                    fireListener = true;
+                                }
+                                Iterator<String> existingServersIt = dataSetServers.iterator();
+                                while (existingServersIt.hasNext()) {
+                                    String s = existingServersIt.next();
+                                    if (!values.contains(s)) {
+                                        existingServersIt.remove();
+                                        fireListener = true;
+                                    }
+                                    
+                                }
+                            }
+                            if (fireListener) listener.run();
+                        }
+                    }
                 }
-                return result;
-            }
+    
+                @Override
+                public void notFound() {
+                    GWT.log("DataSet with UUID [" + getDataSetUUID() + "] not found.");
+                }
+            });
             
+        } catch (Exception e) {
+            GWT.log("Error looking up dataset with UUID [" + getDataSetUUID() + "]");
         }
-        
-        return null;        
+
     }
     
     private void setPointerCursor(UIObject object) {

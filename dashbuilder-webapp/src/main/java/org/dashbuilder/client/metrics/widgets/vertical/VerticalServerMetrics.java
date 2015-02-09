@@ -201,7 +201,7 @@ public class VerticalServerMetrics extends Composite {
 
     private void addDisplayer(Displayer displayer) {
         displayerCoordinator.addDisplayer(displayer);
-        displayer.refreshOn();
+        // displayer.refreshOn();
         mainPanel.add(displayer);
     }
 
@@ -237,5 +237,13 @@ public class VerticalServerMetrics extends Composite {
 
     public String getServer() {
         return server;
+    }
+
+    public boolean isOn() {
+        return !isOff;
+    }
+
+    public boolean isOff() {
+        return isOff;
     }
 }

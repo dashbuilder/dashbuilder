@@ -234,14 +234,14 @@ public class DetailedServerMetrics extends Composite {
         displayerCoordinator.addDisplayer(serverProcessesRunning);
         displayerCoordinator.addDisplayer(serverProcessesSleeping);
         displayerCoordinator.addDisplayer(serverTable);
-        serverCPU0.refreshOn();
-        serverCPU1.refreshOn();
-        serverMemory.refreshOn();
-        serverNetwork.refreshOn();
-        serverDisk.refreshOn();
-        serverProcessesRunning.refreshOn();
-        serverProcessesSleeping.refreshOn();
-        serverTable.refreshOn();
+//        serverCPU0.refreshOn();
+//        serverCPU1.refreshOn();
+//        serverMemory.refreshOn();
+//        serverNetwork.refreshOn();
+//        serverDisk.refreshOn();
+//        serverProcessesRunning.refreshOn();
+//        serverProcessesSleeping.refreshOn();
+//        serverTable.refreshOn();
     }
     
     private void enableChartMode() {
