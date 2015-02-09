@@ -15,16 +15,12 @@
  */
 package org.dashbuilder.client.gallery;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.event.Event;
-import javax.enterprise.event.Observes;
-import javax.inject.Inject;
-
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.client.expenses.ExpenseConstants;
 import org.dashbuilder.client.expenses.ExpensesDashboard;
-import org.dashbuilder.client.metrics.MetricsDashboard;
+import org.dashbuilder.client.metrics.AnalyticMetricsDashboard;
+import org.dashbuilder.client.metrics.RealTimeMetricsDashboard;
 import org.dashbuilder.client.sales.widgets.SalesDistributionByCountry;
 import org.dashbuilder.client.sales.widgets.SalesExpectedByDate;
 import org.dashbuilder.client.sales.widgets.SalesGoals;
@@ -42,6 +38,11 @@ import org.uberfire.lifecycle.OnStartup;
 import org.uberfire.mvp.PlaceRequest;
 import org.uberfire.workbench.events.NotificationEvent;
 
+import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.event.Event;
+import javax.enterprise.event.Observes;
+import javax.inject.Inject;
+
 import static org.uberfire.commons.validation.PortablePreconditions.checkNotNull;
 import static org.uberfire.workbench.events.NotificationEvent.NotificationType.INFO;
 
@@ -55,7 +56,8 @@ public class GalleryWidgetPresenter {
     private SalesDistributionByCountry salesByCountryWidget;
     private SalesTableReports salesReportsWidget;
     private ExpensesDashboard expensesDashboardWidget;
-    private MetricsDashboard metricsDashboard;
+    private RealTimeMetricsDashboard realTimeMetricsDashboard;
+    private AnalyticMetricsDashboard analyticMetricsDashboard;
 
     @Inject
     private Event<NotificationEvent> workbenchNotification;
@@ -97,9 +99,13 @@ public class GalleryWidgetPresenter {
             if (expensesDashboardWidget == null) expensesDashboardWidget = new ExpensesDashboard();
             return expensesDashboardWidget;
         }
-        if ("metrics".equals(widgetId)) {
-            if (metricsDashboard == null) metricsDashboard = new MetricsDashboard(MetricsDashboard.METRICS_DATASET_UUID, MetricsDashboard.METRICS_DATASET_DEFAULT_SERVERS);
-            return metricsDashboard;
+        if ("metrics_realtime".equals(widgetId)) {
+            if (realTimeMetricsDashboard == null) realTimeMetricsDashboard = new RealTimeMetricsDashboard(RealTimeMetricsDashboard.METRICS_DATASET_DEFAULT_SERVERS);
+            return realTimeMetricsDashboard;
+        }
+        if ("metrics_analytic".equals(widgetId)) {
+            if (analyticMetricsDashboard == null) analyticMetricsDashboard = new AnalyticMetricsDashboard();
+            return analyticMetricsDashboard;
         }
         throw new IllegalArgumentException("Unknown gallery widget: " + widgetId);
     }

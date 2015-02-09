@@ -23,8 +23,8 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.*;
 import org.dashbuilder.backend.ClusterMetricsDataSetGenerator;
-import org.dashbuilder.client.metrics.MetricsDashboard;
 import org.dashbuilder.client.metrics.MetricsDashboardClientBundle;
+import org.dashbuilder.client.metrics.RealTimeMetricsDashboard;
 import org.dashbuilder.displayer.DisplayerSettingsFactory;
 import org.dashbuilder.displayer.client.Displayer;
 import org.dashbuilder.displayer.client.DisplayerCoordinator;
@@ -80,13 +80,12 @@ public class DetailedServerMetrics extends Composite {
     DisplayerCoordinator displayerCoordinator = new DisplayerCoordinator();
 
     private boolean isChartMode;
-    private boolean isTableMode;
     
     public String getTitle() {
         return "Server metrics (Vertical)";
     }
 
-    public DetailedServerMetrics(MetricsDashboard metricsDashboard, String server) {
+    public DetailedServerMetrics(RealTimeMetricsDashboard metricsDashboard, String server) {
 
         buildServerDetailsDisplayers(metricsDashboard, server);
         
@@ -103,15 +102,16 @@ public class DetailedServerMetrics extends Composite {
         
         // By default use charts mode.
         enableChartMode();
-        
-        // Draw the charts
+
+        // Draw the charts and enable automatic refresh.
         displayerCoordinator.drawAll();
+        // displayerCoordinator.refreshOnAll();
     }
 
-    protected void buildServerDetailsDisplayers(MetricsDashboard metricsDashboard, String server) {
+    protected void buildServerDetailsDisplayers(RealTimeMetricsDashboard metricsDashboard, String server) {
         serverCPU0 = DisplayerHelper.lookupDisplayer(
                 DisplayerSettingsFactory.newMeterChartSettings()
-                        .dataset(metricsDashboard.getDataSetUUID())
+                        .dataset(RealTimeMetricsDashboard.METRICS_DATASET_UUID)
                         .filter(ClusterMetricsDataSetGenerator.COLUMN_SERVER, equalsTo(server))
                         .filter(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP, timeFrame("1second"))
                         .column(ClusterMetricsDataSetGenerator.COLUMN_CPU0, MAX, "CPU0")
@@ -123,7 +123,7 @@ public class DetailedServerMetrics extends Composite {
 
         serverCPU1 = DisplayerHelper.lookupDisplayer(
                 DisplayerSettingsFactory.newMeterChartSettings()
-                        .dataset(metricsDashboard.getDataSetUUID())
+                        .dataset(RealTimeMetricsDashboard.METRICS_DATASET_UUID)
                         .filter(ClusterMetricsDataSetGenerator.COLUMN_SERVER, equalsTo(server))
                         .filter(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP, timeFrame("1second"))
                         .column(ClusterMetricsDataSetGenerator.COLUMN_CPU1, MAX, "CPU1")
@@ -135,7 +135,7 @@ public class DetailedServerMetrics extends Composite {
 
         serverMemory = DisplayerHelper.lookupDisplayer(
                 DisplayerSettingsFactory.newAreaChartSettings()
-                        .dataset(metricsDashboard.getDataSetUUID())
+                        .dataset(RealTimeMetricsDashboard.METRICS_DATASET_UUID)
                         .filter(ClusterMetricsDataSetGenerator.COLUMN_SERVER, equalsTo(server))
                         .filter(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP, timeFrame("60second"))
                         .group(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP).fixed(SECOND, true)
@@ -150,7 +150,7 @@ public class DetailedServerMetrics extends Composite {
 
         serverNetwork = DisplayerHelper.lookupDisplayer(
                 DisplayerSettingsFactory.newAreaChartSettings()
-                        .dataset(metricsDashboard.getDataSetUUID())
+                        .dataset(RealTimeMetricsDashboard.METRICS_DATASET_UUID)
                         .filter(ClusterMetricsDataSetGenerator.COLUMN_SERVER, equalsTo(server))
                         .filter(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP, timeFrame("10second"))
                         .group(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP).dynamic(10, SECOND, true)
@@ -165,7 +165,7 @@ public class DetailedServerMetrics extends Composite {
 
         serverDisk = DisplayerHelper.lookupDisplayer(
                 DisplayerSettingsFactory.newPieChartSettings()
-                        .dataset(metricsDashboard.getDataSetUUID())
+                        .dataset(RealTimeMetricsDashboard.METRICS_DATASET_UUID)
                         .filter(ClusterMetricsDataSetGenerator.COLUMN_SERVER, equalsTo(server))
                         .filter(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP, timeFrame("10second"))
                         .group(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP).dynamic(1, SECOND, true)
@@ -181,7 +181,7 @@ public class DetailedServerMetrics extends Composite {
 
         serverProcessesRunning = DisplayerHelper.lookupDisplayer(
                 DisplayerSettingsFactory.newTableSettings()
-                        .dataset(metricsDashboard.getDataSetUUID())
+                        .dataset(RealTimeMetricsDashboard.METRICS_DATASET_UUID)
                         .filter(ClusterMetricsDataSetGenerator.COLUMN_SERVER, equalsTo(server))
                         .filter(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP, timeFrame("1second"))
                         .column(ClusterMetricsDataSetGenerator.COLUMN_PROCESSES_RUNNING, "Running processes")
@@ -193,7 +193,7 @@ public class DetailedServerMetrics extends Composite {
 
         serverProcessesSleeping = DisplayerHelper.lookupDisplayer(
                 DisplayerSettingsFactory.newTableSettings()
-                        .dataset(metricsDashboard.getDataSetUUID())
+                        .dataset(RealTimeMetricsDashboard.METRICS_DATASET_UUID)
                         .filter(ClusterMetricsDataSetGenerator.COLUMN_SERVER, equalsTo(server))
                         .filter(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP, timeFrame("1second"))
                         .column(ClusterMetricsDataSetGenerator.COLUMN_PROCESSES_SLEEPING, "Sleeping processes")
@@ -205,10 +205,10 @@ public class DetailedServerMetrics extends Composite {
 
         serverTable = DisplayerHelper.lookupDisplayer(
                 DisplayerSettingsFactory.newTableSettings()
-                        .dataset(metricsDashboard.getDataSetUUID())
+                        .dataset(RealTimeMetricsDashboard.METRICS_DATASET_UUID)
                         .filter(ClusterMetricsDataSetGenerator.COLUMN_SERVER, equalsTo(server))
                         .filter(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP, timeFrame("1minute"))
-                        .group(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP).fixed(MINUTE, true)
+                        .group(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP).dynamic(1000, MINUTE, true)
                         .column(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP, "Timestamp")
                         .column(ClusterMetricsDataSetGenerator.COLUMN_CPU0, "CPU0")
                         .column(ClusterMetricsDataSetGenerator.COLUMN_CPU1, "CPU1")
@@ -234,20 +234,10 @@ public class DetailedServerMetrics extends Composite {
         displayerCoordinator.addDisplayer(serverProcessesRunning);
         displayerCoordinator.addDisplayer(serverProcessesSleeping);
         displayerCoordinator.addDisplayer(serverTable);
-        serverCPU0.refreshOn();
-        serverCPU1.refreshOn();
-        serverMemory.refreshOn();
-        serverNetwork.refreshOn();
-        serverDisk.refreshOn();
-        serverProcessesRunning.refreshOn();
-        serverProcessesSleeping.refreshOn();
-        serverTable.refreshOn();
     }
     
     private void enableChartMode() {
         isChartMode = true;
-        isTableMode = false;
-        // TODO: Animate.
         chartsArea.setVisible(true);
         tableArea.setVisible(false);
         modeIcon.setResource(MetricsDashboardClientBundle.INSTANCE.tableIcon());
@@ -256,8 +246,6 @@ public class DetailedServerMetrics extends Composite {
 
     private void enableTableMode() {
         isChartMode = false;
-        isTableMode = true;
-        // TODO: Animate.
         chartsArea.setVisible(false);
         tableArea.setVisible(true);
         modeIcon.setResource(MetricsDashboardClientBundle.INSTANCE.chartIcon());

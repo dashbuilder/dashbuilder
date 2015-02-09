@@ -24,7 +24,7 @@
     }
 
     .summary_panel {
-      width: 200px;
+      width: 250px;
       height: 1100px;
     }
 
@@ -40,7 +40,7 @@
     }
 
     .icon_panel {
-      width: 200px;
+      width: 250px;
       height: 50px;
       background-color: #ffffff;
       margin-bottom: 10px;
@@ -48,7 +48,7 @@
     }
 
     .displayers_panel {
-      width: 200px;
+      width: 250px;
       height: 750px;
       background-color: #ffffff;
     }

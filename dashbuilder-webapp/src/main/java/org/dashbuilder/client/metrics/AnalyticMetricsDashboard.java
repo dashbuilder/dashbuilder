@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbuilder.client.metrics.widgets.summary;
+package org.dashbuilder.client.metrics;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -21,7 +21,6 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.backend.ClusterMetricsDataSetGenerator;
-import org.dashbuilder.client.metrics.MetricsDashboard;
 import org.dashbuilder.displayer.DisplayerSettingsFactory;
 import org.dashbuilder.displayer.client.Displayer;
 import org.dashbuilder.displayer.client.DisplayerCoordinator;
@@ -29,10 +28,12 @@ import org.dashbuilder.displayer.client.DisplayerHelper;
 
 import static org.dashbuilder.dataset.group.AggregateFunctionType.MAX;
 
-public class SummaryMetrics extends Composite {
+public class AnalyticMetricsDashboard extends Composite {
 
-    interface SummaryMetricsBinder extends UiBinder<Widget, SummaryMetrics>{}
-    private static final SummaryMetricsBinder uiBinder = GWT.create(SummaryMetricsBinder.class);
+    interface AnalyticMetricsDashboardBinder extends UiBinder<Widget, AnalyticMetricsDashboard>{}
+    private static final AnalyticMetricsDashboardBinder uiBinder = GWT.create(AnalyticMetricsDashboardBinder.class);
+
+    public static final String METRICS_DATASET_UUID = "clusterMetrics";
 
     @UiField(provided = true)
     Displayer maxCPUxServer;
@@ -52,20 +53,20 @@ public class SummaryMetrics extends Composite {
         return "Metrics summary (Analytic)";
     }
 
-    public SummaryMetrics(MetricsDashboard metricsDashboard) {
+    public AnalyticMetricsDashboard() {
 
-        buildSummary(metricsDashboard);
-        
+        buildSummary();
+
         // Init the dashboard from the UI Binder template
         initWidget(uiBinder.createAndBindUi(this));
-        
+
         // Draw the charts
         displayerCoordinator.drawAll();
     }
 
-    protected void buildSummary(MetricsDashboard metricsDashboard) {
+    protected void buildSummary() {
         maxCPUxServer = DisplayerHelper.lookupDisplayer(DisplayerSettingsFactory.newBarChartSettings()
-                .dataset(metricsDashboard.getDataSetUUID())
+                .dataset(METRICS_DATASET_UUID)
                 .group(ClusterMetricsDataSetGenerator.COLUMN_SERVER)
                 .column(ClusterMetricsDataSetGenerator.COLUMN_SERVER, "Server")
                 .column(ClusterMetricsDataSetGenerator.COLUMN_CPU0, MAX, "CPU0 Max")
@@ -74,9 +75,9 @@ public class SummaryMetrics extends Composite {
                 .titleVisible(true)
                 .vertical()
                 .buildSettings());
-        
+
         maxMemxServerSettings = DisplayerHelper.lookupDisplayer(DisplayerSettingsFactory.newBarChartSettings()
-                .dataset(metricsDashboard.getDataSetUUID())
+                .dataset(METRICS_DATASET_UUID)
                 .group(ClusterMetricsDataSetGenerator.COLUMN_SERVER)
                 .column(ClusterMetricsDataSetGenerator.COLUMN_SERVER, "Server")
                 .column(ClusterMetricsDataSetGenerator.COLUMN_MEMORY_USED, MAX, "Max used memory")
@@ -85,9 +86,9 @@ public class SummaryMetrics extends Composite {
                 .titleVisible(true)
                 .vertical()
                 .buildSettings());
-        
+
         maxProcessesxServerSettings = DisplayerHelper.lookupDisplayer(DisplayerSettingsFactory.newBarChartSettings()
-                .dataset(metricsDashboard.getDataSetUUID())
+                .dataset(METRICS_DATASET_UUID)
                 .group(ClusterMetricsDataSetGenerator.COLUMN_SERVER)
                 .column(ClusterMetricsDataSetGenerator.COLUMN_SERVER, "Server")
                 .column(ClusterMetricsDataSetGenerator.COLUMN_PROCESSES_RUNNING, MAX, "Max running processes")
@@ -96,9 +97,9 @@ public class SummaryMetrics extends Composite {
                 .titleVisible(true)
                 .vertical()
                 .buildSettings());
-        
+
         maxNetworkxServerSettings = DisplayerHelper.lookupDisplayer(DisplayerSettingsFactory.newBarChartSettings()
-                .dataset(metricsDashboard.getDataSetUUID())
+                .dataset(METRICS_DATASET_UUID)
                 .group(ClusterMetricsDataSetGenerator.COLUMN_SERVER)
                 .column(ClusterMetricsDataSetGenerator.COLUMN_SERVER, "Server")
                 .column(ClusterMetricsDataSetGenerator.COLUMN_NETWORK_TX, MAX, "Max upstream speed")
@@ -114,5 +115,5 @@ public class SummaryMetrics extends Composite {
         displayerCoordinator.addDisplayer(maxProcessesxServerSettings);
         displayerCoordinator.addDisplayer(maxNetworkxServerSettings);
     }
-    
+
 }

@@ -24,7 +24,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.*;
 import org.dashbuilder.backend.ClusterMetricsDataSetGenerator;
-import org.dashbuilder.client.metrics.MetricsDashboard;
+import org.dashbuilder.client.metrics.RealTimeMetricsDashboard;
 import org.dashbuilder.displayer.DisplayerSettingsFactory;
 import org.dashbuilder.displayer.client.Displayer;
 import org.dashbuilder.displayer.client.DisplayerCoordinator;
@@ -64,11 +64,11 @@ public class VerticalServerMetrics extends Composite {
         return "Server metrics (Vertical)";
     }
 
-    public VerticalServerMetrics(MetricsDashboard metricsDashboard, String server) {
+    public VerticalServerMetrics(RealTimeMetricsDashboard metricsDashboard, String server) {
         this(metricsDashboard, server, false);
     }
     
-    public VerticalServerMetrics(final MetricsDashboard metricsDashboard, final String server, boolean showLabels) {
+    public VerticalServerMetrics(final RealTimeMetricsDashboard metricsDashboard, final String server, boolean showLabels) {
         this.server = server;
         
         // Init the dashboard from the UI Binder template
@@ -83,45 +83,31 @@ public class VerticalServerMetrics extends Composite {
         serverName.setText(server);
         toolTipDefaultText();
 
-        // CPU0
-        Displayer serverCPU0 = DisplayerHelper.lookupDisplayer(
-                DisplayerSettingsFactory.newMeterChartSettings()
-                        .dataset(metricsDashboard.getDataSetUUID())
+        Displayer serverCPU = DisplayerHelper.lookupDisplayer(
+                DisplayerSettingsFactory.newLineChartSettings()
+                        .dataset(RealTimeMetricsDashboard.METRICS_DATASET_UUID)
                         .filter(ClusterMetricsDataSetGenerator.COLUMN_SERVER, equalsTo(server))
-                        .filter(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP, timeFrame("1second"))
+                        .filter(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP, timeFrame("10second"))
+                        .group(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP).dynamic(10, SECOND, true)
+                        .column(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP)
                         .column(ClusterMetricsDataSetGenerator.COLUMN_CPU0, MAX, "CPU0")
-                        .title("CPU0")
-                        .titleVisible(false)
-                        .width(100).height(100)
-                        .meter(0, 25, 50, 100)
-                        .refreshOn(1, false)
-                        .buildSettings());
-
-        addDisplayer(serverCPU0);
-        
-        // CPU1
-        Displayer serverCPU1 = DisplayerHelper.lookupDisplayer(
-                DisplayerSettingsFactory.newMeterChartSettings()
-                        .dataset(metricsDashboard.getDataSetUUID())
-                        .filter(ClusterMetricsDataSetGenerator.COLUMN_SERVER, equalsTo(server))
-                        .filter(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP, timeFrame("1second"))
                         .column(ClusterMetricsDataSetGenerator.COLUMN_CPU1, MAX, "CPU1")
-                        .title("CPU1")
+                        .title("CPU usage")
                         .titleVisible(false)
-                        .width(100).height(100)
-                        .meter(0, 25, 50, 100)
+                        .width(200).height(200)
+                        .legendOff()
                         .refreshOn(1, false)
                         .buildSettings());
 
-        addDisplayer(serverCPU1);
-
+        addDisplayer(serverCPU);
+        
         // Used memory
         Displayer serverMemory = DisplayerHelper.lookupDisplayer(
-                DisplayerSettingsFactory.newBarChartSettings()
-                        .dataset(metricsDashboard.getDataSetUUID())
+                DisplayerSettingsFactory.newAreaChartSettings()
+                        .dataset(RealTimeMetricsDashboard.METRICS_DATASET_UUID)
                         .filter(ClusterMetricsDataSetGenerator.COLUMN_SERVER, equalsTo(server))
-                        .filter(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP, timeFrame("1second"))
-                        .group(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP).dynamic(1, SECOND, true)
+                        .filter(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP, timeFrame("10second"))
+                        .group(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP).dynamic(10, SECOND, true)
                         .column(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP)
                         .column(ClusterMetricsDataSetGenerator.COLUMN_MEMORY_USED, MAX, "Used memory")
                         .title("Memory consumption")
@@ -136,10 +122,10 @@ public class VerticalServerMetrics extends Composite {
         // TX/RX
         Displayer serverNetwork = DisplayerHelper.lookupDisplayer(
                 DisplayerSettingsFactory.newBarChartSettings()
-                        .dataset(metricsDashboard.getDataSetUUID())
+                        .dataset(RealTimeMetricsDashboard.METRICS_DATASET_UUID)
                         .filter(ClusterMetricsDataSetGenerator.COLUMN_SERVER, equalsTo(server))
-                        .filter(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP, timeFrame("1second"))
-                        .group(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP).dynamic(1, SECOND, true)
+                        .filter(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP, timeFrame("10second"))
+                        .group(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP).dynamic(10, SECOND, true)
                         .column(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP)
                         .column(ClusterMetricsDataSetGenerator.COLUMN_NETWORK_RX, MAX, "Downstream")
                         .column(ClusterMetricsDataSetGenerator.COLUMN_NETWORK_TX, MAX, "Upstream")
@@ -148,6 +134,7 @@ public class VerticalServerMetrics extends Composite {
                         .legendOff()
                         .width(200).height(200)
                         .refreshOn(1, false)
+                        .horizontal()
                         .buildSettings());
 
         addDisplayer(serverNetwork);
@@ -155,7 +142,7 @@ public class VerticalServerMetrics extends Composite {
         // Processes
         Displayer serverProcessesRunning = DisplayerHelper.lookupDisplayer(
                 DisplayerSettingsFactory.newBarChartSettings()
-                        .dataset(metricsDashboard.getDataSetUUID())
+                        .dataset(RealTimeMetricsDashboard.METRICS_DATASET_UUID)
                         .filter(ClusterMetricsDataSetGenerator.COLUMN_SERVER, equalsTo(server))
                         .filter(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP, timeFrame("1second"))
                         .group(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP).dynamic(1, SECOND, true)
@@ -173,7 +160,7 @@ public class VerticalServerMetrics extends Composite {
         // Disk
         Displayer serverDisk = DisplayerHelper.lookupDisplayer(
                 DisplayerSettingsFactory.newTableSettings()
-                        .dataset(metricsDashboard.getDataSetUUID())
+                        .dataset(RealTimeMetricsDashboard.METRICS_DATASET_UUID)
                         .filter(ClusterMetricsDataSetGenerator.COLUMN_SERVER, equalsTo(server))
                         .filter(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP, timeFrame("1second"))
                         .column(ClusterMetricsDataSetGenerator.COLUMN_DISK_FREE, "Free disk space")
@@ -190,18 +177,18 @@ public class VerticalServerMetrics extends Composite {
         serverIcon.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent clickEvent) {
-                if (!isOff) metricsDashboard.showServerDetails(server);
+                metricsDashboard.showServerDetails(server);
             }
         });
         setPointerCursor(serverIcon);
         
-        // Draw the charts
+        // Draw the charts and enable automatic refresh.
         displayerCoordinator.drawAll();
+        // displayerCoordinator.refreshOnAll();
     }
 
     private void addDisplayer(Displayer displayer) {
         displayerCoordinator.addDisplayer(displayer);
-        displayer.refreshOn();
         mainPanel.add(displayer);
     }
 

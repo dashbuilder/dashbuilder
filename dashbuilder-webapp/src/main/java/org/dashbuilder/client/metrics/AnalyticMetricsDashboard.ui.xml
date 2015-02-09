@@ -3,10 +3,18 @@
              xmlns:g="urn:import:com.google.gwt.user.client.ui"
              xmlns:dashbuilder="urn:import:org.dashbuilder.displayer.client"
     >
-
+  
   <ui:with field='resources' type='org.dashbuilder.client.metrics.MetricsDashboardClientBundle'/>
 
   <ui:style>
+    
+    .main_panel {
+      margin-left: 50px;
+      margin-top: 10px;
+      width: 1200px;
+      height: 1200px;
+      background-color: #ffffff;
+    }
 
     .metrics_dashboard_panel {
       border-radius: 5px 5px 5px 5px;
@@ -46,41 +54,36 @@
     }
 
     </ui:style>
+  
+
+  <!-- Summary area. -->
+  <g:HorizontalPanel spacing="10" addStyleNames="{style.main_panel}">
 
 
-  <g:HorizontalPanel spacing="10">
-  
-    <!-- Summary area. -->
-    <g:HorizontalPanel spacing="10">
-  
-      
-      <g:VerticalPanel spacing="10">
-  
-        <g:HorizontalPanel spacing="10" addStyleNames="{style.metrics_dashboard_panel}">
-          <dashbuilder:Displayer ui:field="maxCPUxServer"/>
-        </g:HorizontalPanel>
-  
-        <g:HorizontalPanel spacing="10" addStyleNames="{style.metrics_dashboard_panel}">
-          <dashbuilder:Displayer ui:field="maxMemxServerSettings"/>
-        </g:HorizontalPanel>
-  
-      </g:VerticalPanel>
-  
-      <g:VerticalPanel spacing="10">
-  
-        <g:HorizontalPanel spacing="10" addStyleNames="{style.metrics_dashboard_panel}">
-          <dashbuilder:Displayer ui:field="maxProcessesxServerSettings"/>
-        </g:HorizontalPanel>
-  
-        <g:HorizontalPanel spacing="10" addStyleNames="{style.metrics_dashboard_panel}">
-          <dashbuilder:Displayer ui:field="maxNetworkxServerSettings"/>
-        </g:HorizontalPanel>
-  
-      </g:VerticalPanel>
-  
-    </g:HorizontalPanel>
+    <g:VerticalPanel spacing="10">
+
+      <g:HorizontalPanel spacing="10" addStyleNames="{style.metrics_dashboard_panel}">
+        <dashbuilder:Displayer ui:field="maxCPUxServer"/>
+      </g:HorizontalPanel>
+
+      <g:HorizontalPanel spacing="10" addStyleNames="{style.metrics_dashboard_panel}">
+        <dashbuilder:Displayer ui:field="maxMemxServerSettings"/>
+      </g:HorizontalPanel>
+
+    </g:VerticalPanel>
+
+    <g:VerticalPanel spacing="10">
+
+      <g:HorizontalPanel spacing="10" addStyleNames="{style.metrics_dashboard_panel}">
+        <dashbuilder:Displayer ui:field="maxProcessesxServerSettings"/>
+      </g:HorizontalPanel>
+
+      <g:HorizontalPanel spacing="10" addStyleNames="{style.metrics_dashboard_panel}">
+        <dashbuilder:Displayer ui:field="maxNetworkxServerSettings"/>
+      </g:HorizontalPanel>
+
+    </g:VerticalPanel>
 
   </g:HorizontalPanel>
-  
   
 </ui:UiBinder>

@@ -25,7 +25,6 @@ import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.*;
 import org.dashbuilder.backend.ClusterMetricsDataSetGenerator;
 import org.dashbuilder.client.metrics.widgets.details.DetailedServerMetrics;
-import org.dashbuilder.client.metrics.widgets.summary.SummaryMetrics;
 import org.dashbuilder.client.metrics.widgets.vertical.VerticalServerMetrics;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetFactory;
@@ -39,29 +38,24 @@ import java.util.List;
 
 import static org.dashbuilder.dataset.filter.FilterFactory.timeFrame;
 
-public class MetricsDashboard extends Composite {
+public class RealTimeMetricsDashboard extends Composite {
 
-    interface MetricsDashboardBinder extends UiBinder<Widget, MetricsDashboard>{}
-    private static final MetricsDashboardBinder uiBinder = GWT.create(MetricsDashboardBinder.class);
+    interface RealTimeMetricsDashboardBinder extends UiBinder<Widget, RealTimeMetricsDashboard>{}
+    private static final RealTimeMetricsDashboardBinder uiBinder = GWT.create(RealTimeMetricsDashboardBinder.class);
 
     public static final String METRICS_DATASET_UUID = "clusterMetrics";
     public static final String[] METRICS_DATASET_DEFAULT_SERVERS = new String[] {"server1","server2","server3","server4","server5"};
-    private static final int ANIMATION_DURATION = 5000;
     private static final int DS_LOOKUP_TIMER_DELAY = 1000;
     private static final int NOTIFICATIONS_TIMER_DELAY = 3000;
+    private static final String NOTIFICATIONS_SERVER_OFF_COLOR = "#CD5C5C";
+    private static final String NOTIFICATIONS_SERVER_ON_COLOR = "#90EE90";
     
     // The client bundle for this widget.
     @UiField
     MetricsDashboardClientBundle resources;
 
     @UiField
-    HTML title;
-
-    @UiField
-    HorizontalPanel analyticSummaryArea;
-
-    @UiField
-    HorizontalPanel verticalSummaryArea;
+    HorizontalPanel summaryArea;
 
     @UiField
     HorizontalPanel serverDetailsArea;
@@ -70,10 +64,7 @@ public class MetricsDashboard extends Composite {
     Image backIcon;
 
     @UiField
-    FocusPanel buttonHistory;
-
-    @UiField
-    FocusPanel buttonNow;
+    HorizontalPanel backIconPanel;
 
     @UiField
     Label notificationsLabel;
@@ -81,26 +72,23 @@ public class MetricsDashboard extends Composite {
     @UiField
     FlowPanel notificationsLabelPanel;
 
-    private boolean isViewingSummary;
     private boolean isViewingVerticalSummary;
     private boolean isViewingServerDetails;
     
-    private String dataSetUUID;
     private String[] servers;
     final List<String> dataSetServers = new ArrayList<String>();
     private VerticalServerMetrics[] verticalServerMetrics;
-    Timer timer;
+    Timer dataSetLookupTimer;
 
     public String getTitle() {
         return "System Metrics Dashboard";
     }
 
-    public MetricsDashboard(String dataSetUUID) {
-        this(dataSetUUID, null);
+    public RealTimeMetricsDashboard() {
+        this(null);
     }
     
-    public MetricsDashboard(String dataSetUUID, String[] servers) {
-        this.dataSetUUID = dataSetUUID;
+    public RealTimeMetricsDashboard(String[] servers) {
         this.servers = servers;
         
         // Init the dashboard from the UI Binder template
@@ -115,21 +103,7 @@ public class MetricsDashboard extends Composite {
         });
         setPointerCursor(backIcon);
         
-        buttonNow.addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent clickEvent) {
-                if (!isViewingVerticalSummary) showVerticalServersSummary();
-            }
-        });
-        
-        buttonHistory.addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent clickEvent) {
-                if (!isViewingSummary) showSummary();
-            }
-        });
-
-        timer = new Timer() {
+        dataSetLookupTimer = new Timer() {
             @Override
             public void run() {
                 updateDataSetServers(new Runnable() {
@@ -138,7 +112,7 @@ public class MetricsDashboard extends Composite {
                         checkServersAlive();
                     }
                 });
-                timer.schedule(DS_LOOKUP_TIMER_DELAY);
+                dataSetLookupTimer.schedule(DS_LOOKUP_TIMER_DELAY);
             }
         };
 
@@ -152,19 +126,9 @@ public class MetricsDashboard extends Composite {
         
         // Initially show vertical servers summary.
         showVerticalServersSummary();
-        timer.schedule(DS_LOOKUP_TIMER_DELAY);
+        dataSetLookupTimer.schedule(DS_LOOKUP_TIMER_DELAY);
     }
 
-    private void showSummary() {
-        hideAll();
-        SummaryMetrics summaryMetrics = new SummaryMetrics(this);
-        isViewingSummary = true;
-        disableButtonHistory();
-        title.setText("History summary (analytic dashboard)");
-        analyticSummaryArea.add(summaryMetrics);
-        analyticSummaryArea.setVisible(true);
-    }
-    
     private void showVerticalServersSummary() {
         hideAll();
         if (servers != null && servers.length > 0) {
@@ -177,13 +141,11 @@ public class MetricsDashboard extends Composite {
                 else verticalServerMetrics = new VerticalServerMetrics(this, server);
                 if (!dataSetServers.contains(server)) verticalServerMetrics = verticalServerMetrics.off();
                 this.verticalServerMetrics[x] = verticalServerMetrics;
-                verticalSummaryArea.add(this.verticalServerMetrics[x]);
+                summaryArea.add(this.verticalServerMetrics[x]);
             }
         }
         isViewingVerticalSummary = true;
-        disableButtonNow();
-        title.setText("Current system server metrics (real-time dashboard)");
-        verticalSummaryArea.setVisible(true);
+        summaryArea.setVisible(true);
 
     }
     
@@ -200,19 +162,15 @@ public class MetricsDashboard extends Composite {
         hideAll();
         DetailedServerMetrics detailedServerMetrics = new DetailedServerMetrics(this, server);
         isViewingServerDetails = true;
-        disableButtonNow();
-        title.setText("Current metrics for " + server);
-        backIcon.setVisible(true);
+        backIconPanel.setVisible(true);
         serverDetailsArea.add(detailedServerMetrics);
         serverDetailsArea.setVisible(true);
     }
 
     private void hideAll() {
-        hide(analyticSummaryArea);
         hide(serverDetailsArea);
-        hide(verticalSummaryArea);
-        backIcon.setVisible(false);
-        isViewingSummary = false;
+        hide(summaryArea);
+        backIconPanel.setVisible(false);
         isViewingVerticalSummary = false;
         isViewingServerDetails = false;
     }
@@ -258,7 +216,7 @@ public class MetricsDashboard extends Composite {
         VerticalServerMetrics vm = getVerticalServerMetrics(server);
         if (vm.isOn()) {
             vm.off();
-            showNotification(server + " has been down");
+            showNotification(server + " has been down", NOTIFICATIONS_SERVER_OFF_COLOR);
         }
     }
 
@@ -266,13 +224,14 @@ public class MetricsDashboard extends Composite {
         VerticalServerMetrics vm = getVerticalServerMetrics(server);
         if (vm.isOff()) {
             vm.on();
-            showNotification(server + " has been up");
+            showNotification(server + " has been up", NOTIFICATIONS_SERVER_ON_COLOR);
         }
     }
     
-    private void showNotification(String message) {
+    private void showNotification(String message, String bgColor) {
         notificationsLabel.setText(message);
         notificationsLabelPanel.setVisible(true);
+        notificationsLabelPanel.getElement().getStyle().setBackgroundColor(bgColor);
         Timer timer1 = new Timer() {
             @Override
             public void run() {
@@ -285,7 +244,7 @@ public class MetricsDashboard extends Composite {
     private synchronized void updateDataSetServers(final Runnable listener) {
         
         final DataSetLookup lookup = DataSetFactory.newDataSetLookupBuilder()
-            .dataset(getDataSetUUID())
+            .dataset(METRICS_DATASET_UUID)
             .filter(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP, timeFrame("1second"))
             .group(ClusterMetricsDataSetGenerator.COLUMN_SERVER)
             .column(ClusterMetricsDataSetGenerator.COLUMN_SERVER)
@@ -321,12 +280,12 @@ public class MetricsDashboard extends Composite {
     
                 @Override
                 public void notFound() {
-                    GWT.log("DataSet with UUID [" + getDataSetUUID() + "] not found.");
+                    GWT.log("DataSet with UUID [" + METRICS_DATASET_UUID + "] not found.");
                 }
             });
             
         } catch (Exception e) {
-            GWT.log("Error looking up dataset with UUID [" + getDataSetUUID() + "]");
+            GWT.log("Error looking up dataset with UUID [" + METRICS_DATASET_UUID + "]");
         }
 
     }
@@ -337,23 +296,5 @@ public class MetricsDashboard extends Composite {
 
     private void setAutoCursor(UIObject object) {
         object.getElement().getStyle().setCursor(Style.Cursor.AUTO);
-    }
-    
-    private void disableButtonNow() {
-        buttonNow.getElement().getStyle().setOpacity(0.3);
-        buttonHistory.getElement().getStyle().setOpacity(1);
-        setAutoCursor(buttonNow);
-        setPointerCursor(buttonHistory);
-    }
-
-    private void disableButtonHistory() {
-        buttonNow.getElement().getStyle().setOpacity(1);
-        buttonHistory.getElement().getStyle().setOpacity(0.3);
-        setAutoCursor(buttonHistory);
-        setPointerCursor(buttonNow);
-    }
-
-    public String getDataSetUUID() {
-        return dataSetUUID;
     }
 }

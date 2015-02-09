@@ -70,6 +70,12 @@ public class DisplayerCoordinator {
         }
     }
 
+    public void refreshOnAll() {
+        for (Displayer displayer : displayerList) {
+            displayer.refreshOn();
+        }
+    }
+
     /**
      * Internal class that listens to events raised by any of the Displayer instances handled by this coordinator.
      */
