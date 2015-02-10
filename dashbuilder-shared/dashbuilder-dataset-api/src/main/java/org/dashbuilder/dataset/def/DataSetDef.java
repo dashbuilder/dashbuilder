@@ -21,8 +21,8 @@ import java.util.Map;
 import org.dashbuilder.dataprovider.DataSetProviderType;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetFactory;
+import org.dashbuilder.dataset.date.TimeAmount;
 import org.dashbuilder.dataset.filter.DataSetFilter;
-import org.dashbuilder.dataset.group.TimeFrame;
 import org.jboss.errai.common.client.api.annotations.Portable;
 
 /**
@@ -132,11 +132,17 @@ public class DataSetDef {
     }
 
     public void setRefreshTime(String refreshTime) {
-        TimeFrame timeFrame = TimeFrame.parse(refreshTime);
-        if (timeFrame == null) {
-            throw new IllegalArgumentException("Invalid time frame: " + refreshTime);
+        if (refreshTime != null && refreshTime.trim().length() > 0) {
+            TimeAmount.parse(refreshTime);
         }
         this.refreshTime = refreshTime;
+    }
+
+    public TimeAmount getRefreshTimeAmount() {
+        if (refreshTime != null && refreshTime.trim().length() > 0) {
+            return TimeAmount.parse(refreshTime);
+        }
+        return null;
     }
 
     public boolean isRefreshAlways() {

@@ -31,8 +31,7 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.dataset.client.resources.i18n.DateIntervalTypeConstants;
 import org.dashbuilder.dataset.group.DateIntervalType;
-import org.dashbuilder.dataset.group.TimeFrame;
-import org.uberfire.ext.widgets.common.client.common.NumericDoubleTextBox;
+import org.dashbuilder.dataset.date.TimeFrame;
 import org.uberfire.ext.widgets.common.client.common.NumericLongTextBox;
 
 @Dependent
@@ -54,15 +53,26 @@ public class TimeFrameParameterEditor extends Composite {
     @UiField
     ListBox typeList;
 
-    static List<DateIntervalType> ALLOWED_TYPES = Arrays.asList(
+    static List<DateIntervalType> ALLOWED_SIZES = Arrays.asList(
             DateIntervalType.SECOND,
             DateIntervalType.MINUTE,
             DateIntervalType.HOUR,
             DateIntervalType.DAY,
             DateIntervalType.WEEK,
             DateIntervalType.MONTH,
+            DateIntervalType.QUARTER,
             DateIntervalType.YEAR,
             DateIntervalType.CENTURY);
+
+    static List<DateIntervalType> ALLOWED_STARTS = Arrays.asList(
+            DateIntervalType.MINUTE,
+            DateIntervalType.HOUR,
+            DateIntervalType.DAY,
+            DateIntervalType.MONTH,
+            DateIntervalType.QUARTER,
+            DateIntervalType.YEAR,
+            DateIntervalType.CENTURY,
+            DateIntervalType.MILLENIUM);
 
     public TimeFrameParameterEditor() {
         initWidget(uiBinder.createAndBindUi(this));
@@ -73,12 +83,12 @@ public class TimeFrameParameterEditor extends Composite {
         this.timeFrame = timeFrame;
         initListBox();
         if (timeFrame != null) {
-            input.setValue(Long.toString(timeFrame.getAmount()));
+            input.setValue(Long.toString(timeFrame.getFrom().getTimeAmount().getQuantity()));
         }
 
         input.addValueChangeHandler(new ValueChangeHandler<String>() {
             public void onValueChange(ValueChangeEvent<String> event) {
-                timeFrame.setAmount(Long.parseLong(event.getValue()));
+                timeFrame.getFrom().getTimeAmount().setQuantity(Long.parseLong(event.getValue()));
                 listener.valueChanged(timeFrame);
             }
         });
@@ -86,10 +96,10 @@ public class TimeFrameParameterEditor extends Composite {
 
     protected void initListBox() {
         typeList.clear();
-        for (int i=0; i<ALLOWED_TYPES.size(); i++) {
-            DateIntervalType type = ALLOWED_TYPES.get(i);
+        for (int i=0; i< ALLOWED_SIZES.size(); i++) {
+            DateIntervalType type = ALLOWED_SIZES.get(i);
             typeList.addItem(DateIntervalTypeConstants.INSTANCE.getString(type.name()));
-            if (timeFrame != null && timeFrame.getType().equals(type)) {
+            if (timeFrame != null && timeFrame.getFrom().getTimeAmount().getType().equals(type)) {
                 typeList.setSelectedIndex(i);
             }
         }
@@ -100,9 +110,9 @@ public class TimeFrameParameterEditor extends Composite {
     @UiHandler(value = "typeList")
     public void onFilterSelected(ChangeEvent changeEvent) {
         int selectedIdx = typeList.getSelectedIndex();
-        DateIntervalType type = ALLOWED_TYPES.get(selectedIdx);
+        DateIntervalType type = ALLOWED_SIZES.get(selectedIdx);
         if (timeFrame != null) {
-            timeFrame.setType(type);
+            timeFrame.getFrom().getTimeAmount().setType(type);
             listener.valueChanged(timeFrame);
         }
     }

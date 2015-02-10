@@ -21,7 +21,7 @@ import java.text.SimpleDateFormat;
 import javax.enterprise.context.Dependent;
 
 import org.dashbuilder.dataset.DataSetValueFormatter;
-import org.dashbuilder.dataset.group.TimeFrame;
+import org.dashbuilder.dataset.date.TimeFrame;
 
 @Dependent
 public final class BackendDataSetValueFormatter implements DataSetValueFormatter {
@@ -49,10 +49,6 @@ public final class BackendDataSetValueFormatter implements DataSetValueFormatter
     }
 
     public Comparable parseValue(String str) {
-        TimeFrame timeFrame = TimeFrame.parse(str);
-        if (timeFrame != null) {
-            return str;
-        }
         try {
             return _dateFormat.parse(str);
         } catch (Exception e) {

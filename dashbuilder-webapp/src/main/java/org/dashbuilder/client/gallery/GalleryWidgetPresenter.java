@@ -26,10 +26,11 @@ import org.dashbuilder.client.sales.widgets.SalesExpectedByDate;
 import org.dashbuilder.client.sales.widgets.SalesGoals;
 import org.dashbuilder.client.sales.widgets.SalesTableReports;
 import org.dashbuilder.dataset.DataSetMetadata;
+import org.dashbuilder.dataset.date.TimeAmount;
 import org.dashbuilder.dataset.def.DataSetDef;
 import org.dashbuilder.dataset.events.DataSetModifiedEvent;
 import org.dashbuilder.dataset.events.DataSetPushOkEvent;
-import org.dashbuilder.dataset.group.TimeFrame;
+import org.dashbuilder.dataset.date.TimeFrame;
 import org.dashbuilder.shared.sales.SalesConstants;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
 import org.uberfire.client.annotations.WorkbenchPartView;
@@ -119,7 +120,7 @@ public class GalleryWidgetPresenter {
 
         DataSetDef def = event.getDataSetDef();
         String targetUUID = event.getDataSetDef().getUUID();
-        TimeFrame timeFrame = TimeFrame.parse(def.getRefreshTime());
+        TimeAmount timeFrame = def.getRefreshTimeAmount();
         boolean noRealTime = timeFrame == null || timeFrame.toMillis() > 60000;
 
         if (SalesConstants.SALES_OPPS.equals(targetUUID)) {
@@ -145,8 +146,8 @@ public class GalleryWidgetPresenter {
 
         DataSetMetadata metadata = event.getDataSetMetadata();
         DataSetDef def = metadata.getDefinition();
-        TimeFrame timeFrame = TimeFrame.parse(def.getRefreshTime());
-        if (timeFrame == null || timeFrame.toMillis()> 60000) {
+        TimeAmount timeFrame = def.getRefreshTimeAmount();
+        if (timeFrame == null || timeFrame.toMillis() > 60000) {
             workbenchNotification.fire(new NotificationEvent("Data set loaded from server [" + def.getProvider() + ", " + event.getDataSetMetadata().getEstimatedSize() + " Kb]", INFO));
         }
     }

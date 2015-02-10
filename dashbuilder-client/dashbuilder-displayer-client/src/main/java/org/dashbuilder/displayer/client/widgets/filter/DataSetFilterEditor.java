@@ -126,7 +126,8 @@ public class DataSetFilterEditor extends Composite implements ColumnFilterEditor
             String columnId = metadata.getColumnId(selectedIdx-1);
             ColumnType columnType = metadata.getColumnType(selectedIdx - 1);
             CoreFunctionFilter columnFilter = FilterFactory.createCoreFunctionFilter(
-                                        columnId, columnType, CoreFunctionType.NOT_EQUALS_TO);
+                    columnId, columnType,
+                    ColumnType.DATE.equals(columnType) ? CoreFunctionType.TIME_FRAME : CoreFunctionType.NOT_EQUALS_TO);
 
             if (filter == null) filter = new DataSetFilter();
             filter.addFilterColumn(columnFilter);

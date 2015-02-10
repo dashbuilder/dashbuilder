@@ -21,7 +21,7 @@ import java.util.List;
 
 import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.group.DateIntervalType;
-import org.dashbuilder.dataset.group.TimeFrame;
+import org.dashbuilder.dataset.date.TimeFrame;
 
 /**
  * A factory of filter functions
@@ -116,10 +116,16 @@ public class FilterFactory {
         return new CoreFunctionFilter(columnId, CoreFunctionType.BETWEEN, low, high);
     }
 
+    /**
+     * @see TimeFrame
+     */
     public static ColumnFilter timeFrame(String timeFrame) {
         return timeFrame(null, timeFrame);
     }
 
+    /**
+     * @see TimeFrame
+     */
     public static ColumnFilter timeFrame(String columnId, String timeFrame) {
         TimeFrame tf = TimeFrame.parse(timeFrame);
         if (tf == null) throw new IllegalArgumentException("Invalid time frame: " + timeFrame);

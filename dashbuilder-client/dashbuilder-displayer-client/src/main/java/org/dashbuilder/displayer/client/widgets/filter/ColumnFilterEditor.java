@@ -15,18 +15,15 @@
  */
 package org.dashbuilder.displayer.client.widgets.filter;
 
-import java.sql.Time;
 import java.util.Date;
 import java.util.List;
 import javax.enterprise.context.Dependent;
 
 import com.github.gwtbootstrap.client.ui.Icon;
 import com.github.gwtbootstrap.client.ui.ListBox;
-import com.github.gwtbootstrap.client.ui.TextBox;
 import com.github.gwtbootstrap.client.ui.constants.IconType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
@@ -44,7 +41,7 @@ import org.dashbuilder.dataset.filter.ColumnFilter;
 import org.dashbuilder.dataset.filter.CoreFunctionFilter;
 import org.dashbuilder.dataset.filter.CoreFunctionType;
 import org.dashbuilder.dataset.filter.FilterFactory;
-import org.dashbuilder.dataset.group.TimeFrame;
+import org.dashbuilder.dataset.date.TimeFrame;
 
 @Dependent
 public class ColumnFilterEditor extends Composite {

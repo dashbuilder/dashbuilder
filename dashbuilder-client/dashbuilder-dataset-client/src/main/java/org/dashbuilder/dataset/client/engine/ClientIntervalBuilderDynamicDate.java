@@ -23,6 +23,7 @@ import javax.enterprise.context.ApplicationScoped;
 
 import com.google.gwt.i18n.client.DateTimeFormat;
 import org.dashbuilder.dataset.DataColumn;
+import org.dashbuilder.dataset.date.Month;
 import org.dashbuilder.dataset.engine.DataSetHandler;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.engine.group.IntervalBuilder;

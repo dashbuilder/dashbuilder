@@ -26,13 +26,14 @@ import javax.inject.Inject;
 import org.dashbuilder.dataprovider.DataSetProvider;
 import org.dashbuilder.dataprovider.DataSetProviderRegistry;
 import org.dashbuilder.dataprovider.DataSetProviderType;
+import org.dashbuilder.dataset.date.TimeAmount;
 import org.dashbuilder.dataset.def.DataSetDef;
 import org.dashbuilder.dataset.def.DataSetDefRegistry;
 import org.dashbuilder.dataset.events.DataSetDefModifiedEvent;
 import org.dashbuilder.dataset.events.DataSetDefRegisteredEvent;
 import org.dashbuilder.dataset.events.DataSetDefRemovedEvent;
 import org.dashbuilder.dataset.events.DataSetStaleEvent;
-import org.dashbuilder.dataset.group.TimeFrame;
+import org.dashbuilder.dataset.date.TimeFrame;
 import org.dashbuilder.scheduler.Scheduler;
 import org.dashbuilder.scheduler.SchedulerTask;
 import org.slf4j.Logger;
@@ -75,8 +76,11 @@ public class DataSetDefRegistryImpl implements DataSetDefRegistry {
         DataSetDefEntry(DataSetDef def) {
             this.def = def;
             this.lastRefreshTime = System.currentTimeMillis();
-            TimeFrame tf = TimeFrame.parse(def.getRefreshTime());
-            this.refreshInMillis = (tf == null ? -1 : tf.toMillis());
+            this.refreshInMillis = -1;
+            if (def.getRefreshTime() != null && def.getRefreshTime().trim().length() > 0) {
+                TimeAmount tf = TimeAmount.parse(def.getRefreshTime());
+                this.refreshInMillis = tf.toMillis();
+            }
         }
 
         public void schedule() {

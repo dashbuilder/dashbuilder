@@ -62,7 +62,7 @@ import org.dashbuilder.dataset.group.DateIntervalType;
 import org.dashbuilder.dataset.group.GroupFunction;
 import org.dashbuilder.dataset.group.GroupStrategy;
 import org.dashbuilder.dataset.group.Interval;
-import org.dashbuilder.dataset.group.TimeFrame;
+import org.dashbuilder.dataset.date.TimeFrame;
 import org.dashbuilder.dataset.impl.DataColumnImpl;
 import org.dashbuilder.dataset.impl.DataSetMetadataImpl;
 import org.dashbuilder.dataset.impl.MemSizeEstimator;
@@ -382,10 +382,9 @@ public class SQLDataSetProvider implements DataSetProvider {
             else if (CoreFunctionType.TIME_FRAME.equals(type)) {
                 TimeFrame timeFrame = TimeFrame.parse(params.get(0).toString());
                 if (timeFrame != null) {
-                    long millis = System.currentTimeMillis();
-                    Timestamp now = new Timestamp(millis);
-                    Timestamp past = new Timestamp(millis - timeFrame.toMillis());
-                    _jooqQuery.where(_jooqField.between(past, now));
+                    java.sql.Date past = new java.sql.Date(timeFrame.getFrom().getTimeInstant().getTime());
+                    java.sql.Date future = new java.sql.Date(timeFrame.getTo().getTimeInstant().getTime());
+                    _jooqQuery.where(_jooqField.between(past, future));
                 }
             }
             else {

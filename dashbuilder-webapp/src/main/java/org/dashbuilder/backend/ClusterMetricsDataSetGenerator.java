@@ -17,7 +17,8 @@ package org.dashbuilder.backend;
 
 import org.apache.commons.lang.StringUtils;
 import org.dashbuilder.dataset.*;
-import org.dashbuilder.dataset.group.TimeFrame;
+import org.dashbuilder.dataset.date.TimeAmount;
+import org.dashbuilder.dataset.date.TimeFrame;
 
 import java.util.*;
 
@@ -74,8 +75,10 @@ public class ClusterMetricsDataSetGenerator implements DataSetGenerator {
 
         if (!StringUtils.isBlank(params.get("timeFrame"))) {
             String p = params.get("timeFrame");
-            TimeFrame timeFrame = TimeFrame.parse(p);
-            if (timeFrame != null) timeFrameMillis = timeFrame.toMillis();
+            if (p != null && p.trim().length() > 0) {
+                TimeAmount timeFrame = TimeAmount.parse(p);
+                timeFrameMillis = timeFrame.toMillis();
+            }
         }
         if (params.containsKey("aliveNodes")) {
             aliveNodes.clear();

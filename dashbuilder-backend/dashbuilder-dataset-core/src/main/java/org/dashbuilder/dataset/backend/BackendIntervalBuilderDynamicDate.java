@@ -28,6 +28,7 @@ import javax.enterprise.context.ApplicationScoped;
 import org.apache.commons.lang.StringUtils;
 import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.dataset.DataSet;
+import org.dashbuilder.dataset.date.Month;
 import org.dashbuilder.dataset.engine.DataSetHandler;
 import org.dashbuilder.dataset.engine.group.IntervalBuilder;
 import org.dashbuilder.dataset.group.Interval;

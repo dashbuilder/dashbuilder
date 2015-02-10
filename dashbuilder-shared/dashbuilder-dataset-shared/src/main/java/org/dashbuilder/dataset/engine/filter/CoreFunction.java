@@ -16,10 +16,12 @@
 package org.dashbuilder.dataset.engine.filter;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.dashbuilder.dataset.filter.CoreFunctionFilter;
 import org.dashbuilder.dataset.filter.CoreFunctionType;
-import org.dashbuilder.dataset.group.TimeFrame;
+import org.dashbuilder.dataset.date.TimeFrame;
 
 public class CoreFunction extends DataSetFunction {
 
@@ -131,17 +133,23 @@ public class CoreFunction extends DataSetFunction {
         return true;
     }
 
+    Map<String, TimeFrame> _timeFrameExprCache = new HashMap<String, TimeFrame>();
+
     public boolean timeFrame(Comparable value) {
         if (isNull(value)) return false;
         if (!(value instanceof Date)) return false;
         Date target = (Date) value;
 
-        TimeFrame timeFrame = TimeFrame.parse(getParameter(0).toString());
-        long millis = System.currentTimeMillis();
-        Date now = new Date(millis);
-        Date past = new Date(millis-timeFrame.toMillis());
+        String timeFrameExpr = getParameter(0).toString();
+        TimeFrame timeFrame = _timeFrameExprCache.get(timeFrameExpr);
+        if (timeFrame == null) {
+            _timeFrameExprCache.put(timeFrameExpr, timeFrame = TimeFrame.parse(getParameter(0).toString()));
+        }
 
-        if (target.after(now)) return false;
+        Date future = timeFrame.getTo().getTimeInstant();
+        Date past = timeFrame.getFrom().getTimeInstant();
+
+        if (target.after(future)) return false;
         if (target.before(past)) return false;
         return true;
     }
