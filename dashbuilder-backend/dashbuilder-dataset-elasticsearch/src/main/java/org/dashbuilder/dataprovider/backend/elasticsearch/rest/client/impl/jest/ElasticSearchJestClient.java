@@ -46,8 +46,6 @@ import org.joda.time.format.DateTimeFormatter;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Named;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * <p>The Jest/GSON client for ElasticSearch server.</p>
@@ -449,80 +447,6 @@ public class ElasticSearchJestClient implements ElasticSearchClient<ElasticSearc
                 throw new RuntimeException("No interval mapping for date interval type [" + dateIntervalType.name() + "].");
         }
         return intervalExpression;
-    }
-
-    public static final Pattern TIMEFRAME_PATTERN = Pattern.compile("(\\d*)(\\D*)");
-    
-    public static String getIntervalDuration(String timeFrame) {
-        if (timeFrame == null || timeFrame.trim().length() == 0) return null;
-        Matcher m = TIMEFRAME_PATTERN.matcher(timeFrame);
-        
-        if (m.find()) {
-            int quantifier = 1;
-            DateIntervalType intervalType = DateIntervalType.DAY;
-            
-            String _q = m.group(1);
-            String _i = m.group(2);
-            quantifier = Integer.parseInt(_q);
-            intervalType = DateIntervalType.getByName(_i.trim());
-
-            int intervalMultiplier = 1;
-            String dateMathExpression = "d";
-            // Intervals lower than a second are not allowed by date math expressions.
-            // @see http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/mapping-date-format.html#date-math
-            switch (intervalType) {
-                case MILLISECOND:
-                case HUNDRETH:
-                case TENTH:
-                    throw new UnsupportedOperationException("ElasticSearch date math expressions does not support intervals lower than a second.");
-                case SECOND:
-                    dateMathExpression = "s";
-                    break;
-                case MINUTE:
-                    dateMathExpression = "m";
-                    break;
-                case HOUR:
-                    dateMathExpression = "h";
-                    break;
-                case DAY:
-                    dateMathExpression = "d";
-                    break;
-                case DAY_OF_WEEK:
-                    dateMathExpression = "d";
-                    break;
-                case WEEK:
-                    dateMathExpression = "w";
-                    break;
-                case MONTH:
-                    dateMathExpression = "M";
-                    break;
-                case QUARTER:
-                    intervalMultiplier = 3;
-                    dateMathExpression = "M";
-                    break;
-                case YEAR:
-                    dateMathExpression = "y";
-                    break;
-                case DECADE:
-                    intervalMultiplier = 10;
-                    dateMathExpression = "y";
-                    break;
-                case CENTURY:
-                    intervalMultiplier = 100;
-                    dateMathExpression = "y";
-                    break;
-                case MILLENIUM:
-                    intervalMultiplier = 1000;
-                    dateMathExpression = "y";
-                    break;
-                default:
-                    throw new RuntimeException("No interval mapping for date interval type [" + intervalType.name() + "].");
-            }
-
-            return "" + (intervalMultiplier*quantifier) + dateMathExpression;
-        } 
-
-        return null;
     }
 
     protected JestClient buildClient() throws IllegalArgumentException{

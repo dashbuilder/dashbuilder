@@ -1,6 +1,7 @@
 package org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.impl.jest.gson;
 
 import com.google.gson.*;
+import org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.impl.jest.ElasticSearchJestClient;
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.model.Query;
 import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.dataset.def.ElasticSearchDataSetDef;
@@ -126,23 +127,22 @@ public class QuerySerializer extends AbstractAdapter<QuerySerializer> implements
         JsonObject result = new JsonObject();
 
         JsonObject subResult = new JsonObject();
-        addPrimitiveProperty(subResult, SEARCH_API_LT, query.getParam(Query.Parameter.LT.name()));
-        addPrimitiveProperty(subResult, SEARCH_API_LTE, query.getParam(Query.Parameter.LTE.name()));
-        addPrimitiveProperty(subResult, SEARCH_API_GT, query.getParam(Query.Parameter.GT.name()));
-        addPrimitiveProperty(subResult, SEARCH_API_GTE, query.getParam(Query.Parameter.GTE.name()));
+        addPrimitiveProperty(subResult, field, SEARCH_API_LT, query.getParam(Query.Parameter.LT.name()));
+        addPrimitiveProperty(subResult, field, SEARCH_API_LTE, query.getParam(Query.Parameter.LTE.name()));
+        addPrimitiveProperty(subResult, field, SEARCH_API_GT, query.getParam(Query.Parameter.GT.name()));
+        addPrimitiveProperty(subResult, field, SEARCH_API_GTE, query.getParam(Query.Parameter.GTE.name()));
         JsonObject subObject = new JsonObject();
         subObject.add(field, subResult);
         result.add(SEARCH_API_RANGE, subObject);
         return result;
     }
 
-    private void addPrimitiveProperty(JsonObject object, String key, Object value) {
+    private void addPrimitiveProperty(JsonObject object, String field, String key, Object value) {
         if (value != null) {
             if (value instanceof Number) {
                 object.addProperty(key, (Number) value);
             } else if (value instanceof Date) {
-                String datePattern = definition.getPattern(key);
-                String formattedValue = new SimpleDateFormat(datePattern).format(value);
+                String formattedValue = ElasticSearchJestClient.formatValue(field, metadata, value);
                 object.addProperty(key, formattedValue);
             } else {
                 object.addProperty(key, value.toString());

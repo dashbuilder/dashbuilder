@@ -19,6 +19,7 @@ import org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.ElasticSea
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.impl.jest.ElasticSearchJestClient;
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.model.Query;
 import org.dashbuilder.dataset.ColumnType;
+import org.dashbuilder.dataset.date.TimeFrame;
 import org.dashbuilder.dataset.filter.*;
 import org.dashbuilder.dataset.group.DataSetGroup;
 import org.dashbuilder.dataset.group.Interval;
@@ -390,15 +391,16 @@ public class ElasticSearchQueryBuilderImpl implements ElasticSearchQueryBuilder<
             result.setParam(Query.Parameter.LT.name(), value1);
             
         } else if (CoreFunctionType.TIME_FRAME.equals(type)) {
-            // TODO: Use date range aggregation instead a range filter?
-            String timeFrame = params.get(0).toString();
-            String duration = ElasticSearchJestClient.getIntervalDuration(timeFrame);
-            if (duration != null && duration.trim().length() > 0) {
+
+            TimeFrame timeFrame = TimeFrame.parse(params.get(0).toString());
+            if (timeFrame != null) {
+                java.sql.Date past = new java.sql.Date(timeFrame.getFrom().getTimeInstant().getTime());
+                java.sql.Date future = new java.sql.Date(timeFrame.getTo().getTimeInstant().getTime());
                 result = new Query(columnId, Query.Type.RANGE);
-                result.setParam(Query.Parameter.GTE.name(), "now-" + duration);
-                result.setParam(Query.Parameter.LTE.name(), "now");
+                result.setParam(Query.Parameter.GTE.name(), past);
+                result.setParam(Query.Parameter.LTE.name(), future);
             }
-            
+
         } else {
             throw new IllegalArgumentException("Core function type not supported: " + type);
         }
