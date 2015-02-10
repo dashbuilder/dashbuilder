@@ -33,7 +33,7 @@ import org.dashbuilder.displayer.client.DisplayerHelper;
 
 import static org.dashbuilder.dataset.filter.FilterFactory.equalsTo;
 import static org.dashbuilder.dataset.filter.FilterFactory.timeFrame;
-import static org.dashbuilder.dataset.group.AggregateFunctionType.MAX;
+import static org.dashbuilder.dataset.group.AggregateFunctionType.*;
 import static org.dashbuilder.dataset.group.DateIntervalType.MINUTE;
 import static org.dashbuilder.dataset.group.DateIntervalType.SECOND;
 import static org.dashbuilder.backend.ClusterMetricsDataSetGenerator.*;
@@ -213,8 +213,8 @@ public class DetailedServerMetrics extends Composite {
                 DisplayerSettingsFactory.newTableSettings()
                         .dataset(METRICS_DATASET_UUID)
                         .filter(COLUMN_SERVER, equalsTo(server))
-                        .filter(COLUMN_TIMESTAMP, timeFrame("-1second"))
-                        .column(COLUMN_PROCESSES_RUNNING, "Running")
+                        .filter(COLUMN_TIMESTAMP, timeFrame("-2second"))
+                        .column(COLUMN_PROCESSES_RUNNING, AVERAGE, "Running")
                         .title("Running processes")
                         .titleVisible(false)
                         .tableWidth(100)
@@ -225,8 +225,8 @@ public class DetailedServerMetrics extends Composite {
                 DisplayerSettingsFactory.newTableSettings()
                         .dataset(METRICS_DATASET_UUID)
                         .filter(COLUMN_SERVER, equalsTo(server))
-                        .filter(COLUMN_TIMESTAMP, timeFrame("-1second"))
-                        .column(COLUMN_PROCESSES_SLEEPING, "Sleeping")
+                        .filter(COLUMN_TIMESTAMP, timeFrame("-2second"))
+                        .column(COLUMN_PROCESSES_SLEEPING, AVERAGE, "Sleeping")
                         .title("Sleeping processes")
                         .titleVisible(false)
                         .tableWidth(100)

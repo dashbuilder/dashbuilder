@@ -9,14 +9,14 @@
   <ui:style>
 
     .icon_panel {
-      width: 220px;
+      width: 200px;
       height: 30px;
       background-color: #ffffff;
       margin: 10px;
     }
 
     .displayers_panel {
-      width: 220px;
+      width: 200px;
       height: 500px;
       background-color: #ffffff;
       margin: 10px;

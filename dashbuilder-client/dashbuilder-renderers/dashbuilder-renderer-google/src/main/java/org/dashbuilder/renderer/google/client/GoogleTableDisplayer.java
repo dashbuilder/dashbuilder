@@ -202,10 +202,7 @@ public class GoogleTableDisplayer extends GoogleDisplayer {
 
     protected void createTablePager() {
         pagerPanel.clear();
-        
-        // If only exists one page, do not show pager component.
-        if (numberOfPages == 1) return;
-        
+
         pagerPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
         pagerPanel.getElement().setAttribute("cellpadding", "5");
 
@@ -293,8 +290,10 @@ public class GoogleTableDisplayer extends GoogleDisplayer {
         }
         Label totalRows = null;
         if ( numberOfRows == 0) {
-            totalRows = new Label( GoogleDisplayerConstants.INSTANCE.googleTableDisplayer_noData() );
-        } else if ( showTotalRowsHint ) {
+            Label noData = new Label( GoogleDisplayerConstants.INSTANCE.googleTableDisplayer_noData() );
+            pagerPanel.add(noData);
+        }
+        else if ( showTotalRowsHint ) {
             int currentRowsShown = currentPage * pageSize > numberOfRows ? numberOfRows : currentPage * pageSize;
             totalRows = new Label(
                                     GoogleDisplayerConstants.INSTANCE.googleTableDisplayer_rows(
@@ -310,11 +309,11 @@ public class GoogleTableDisplayer extends GoogleDisplayer {
             pagerPanel.add( pagination );
             pagerPanel.add( rightPageTooltip );
             pagerPanel.add( lastPageTooltip );
-        }
 
-        if ( showTotalPagesHint || showTotalRowsHint ) {
-            if ( totalPages != null && numberOfPages > 1 ) pagerPanel.add( totalPages );
-            if ( totalRows != null ) pagerPanel.add( totalRows );
+            if ( showTotalPagesHint || showTotalRowsHint ) {
+                if (totalPages != null) pagerPanel.add(totalPages);
+                if (totalRows != null) pagerPanel.add(totalRows);
+            }
         }
     }
 }

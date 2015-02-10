@@ -72,7 +72,7 @@ public class VerticalServerMetrics extends Composite {
     }
 
     public VerticalServerMetrics(final RealTimeMetricsDashboard metricsDashboard, final String server) {
-        this(metricsDashboard, server, 1);
+        this(metricsDashboard, server, 2);
     }
     
     public VerticalServerMetrics(final RealTimeMetricsDashboard metricsDashboard, final String server, int refreshInterval) {
@@ -222,6 +222,7 @@ public class VerticalServerMetrics extends Composite {
         mainPanel.getElement().getStyle().setOpacity(0.3);
         tooltip.setText(server + " is down");
         isOff = true;
+        displayerCoordinator.refreshOffAll();
         return this;
     }
 
@@ -233,6 +234,7 @@ public class VerticalServerMetrics extends Composite {
         mainPanel.getElement().getStyle().setOpacity(1);
         toolTipDefaultText();
         isOff = false;
+        displayerCoordinator.refreshOnAll();
         return this;
     }
     
