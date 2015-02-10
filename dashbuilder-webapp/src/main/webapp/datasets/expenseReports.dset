@@ -1,9 +1,11 @@
 {
     "uuid": "expenseReports",
     "provider": "CSV",
+    "isPublic": true,
     "pushEnabled": true,
     "pushMaxSize": 1024,
-    "isPublic": true,
+    "refreshTime": "2second",
+    "refreshAlways": "false",
     "filePath": "expenseReports.csv",
     "separatorChar": ";",
     "quoteChar": "\"",
