@@ -54,6 +54,18 @@ public abstract class AbstractDisplayerSettingsBuilder<T> extends AbstractDataSe
         return (T) this;
     }
 
+    public T xAxisTitle(String title) {
+        displayerSettings.setXAxisShowLabels(true);
+        displayerSettings.setXAxisTitle(title);
+        return (T) this;
+    }
+
+    public T yAxisTitle(String title) {
+        displayerSettings.setYAxisShowLabels(true);
+        displayerSettings.setYAxisTitle(title);
+        return (T) this;
+    }
+
     public T renderer(String renderer) {
         displayerSettings.setRenderer(renderer);
         return (T) this;
