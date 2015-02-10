@@ -226,7 +226,7 @@ public class RealTimeMetricsDashboard extends Composite {
         
         final DataSetLookup lookup = DataSetFactory.newDataSetLookupBuilder()
             .dataset(METRICS_DATASET_UUID)
-            .filter(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP, timeFrame("1second"))
+            .filter(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP, timeFrame("-1second"))
             .group(ClusterMetricsDataSetGenerator.COLUMN_SERVER)
             .column(ClusterMetricsDataSetGenerator.COLUMN_SERVER)
             .buildLookup();

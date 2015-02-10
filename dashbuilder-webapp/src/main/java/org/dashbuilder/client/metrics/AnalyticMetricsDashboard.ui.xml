@@ -11,9 +11,9 @@
     .main_panel {
       margin-left: 50px;
       margin-top: 10px;
-      width: 1200px;
-      height: 1200px;
+      width: 1000px;
       background-color: #ffffff;
+      padding: 10px;
     }
 
     .metrics_dashboard_panel {

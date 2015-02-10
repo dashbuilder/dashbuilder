@@ -8,26 +8,24 @@
 
   <ui:style>
 
-    .summary_panel {
-      width: 250px;
-      height: 1100px;
-    }
-
     .icon_panel {
-      width: 250px;
+      width: 220px;
       height: 30px;
       background-color: #ffffff;
+      margin: 10px;
     }
 
     .displayers_panel {
-      width: 250px;
-      height: 750px;
+      width: 220px;
+      height: 500px;
       background-color: #ffffff;
+      margin: 10px;
     }
 
     .server_icon {
       width: 25px;
       height: 25px;
+      horiz-align: center;
     }
 
     .metrics_dashboard_panel {
@@ -69,11 +67,11 @@
   </ui:style>
 
   <!-- Server summary column. -->
-  <g:VerticalPanel addStyleNames="{style.summary_panel}">
+  <g:FlowPanel >
 
     <g:FocusPanel ui:field="serverIcon" >
       <b:Tooltip text='Show server details' placement="BOTTOM" ui:field="tooltip">
-        <g:VerticalPanel spacing="10" addStyleNames="{style.icon_panel} {style.metrics_dashboard_panel}">
+        <g:VerticalPanel addStyleNames="{style.icon_panel} {style.metrics_dashboard_panel}">
           <g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
             <g:Image resource='{resources.computerIcon}' addStyleNames="{style.server_icon}"/>
           </g:cell>
@@ -84,11 +82,10 @@
       </b:Tooltip>
     </g:FocusPanel>
 
-    <g:VerticalPanel spacing="10" addStyleNames="{style.displayers_panel} {style.metrics_dashboard_panel}" ui:field="mainPanel"
-                     horizontalAlignment="ALIGN_CENTER">
+    <g:FlowPanel addStyleNames="{style.displayers_panel} {style.metrics_dashboard_panel}" ui:field="mainPanel">
       <!-- Displayer widgets are placed here programatically. -->
-    </g:VerticalPanel>
+    </g:FlowPanel>
 
-  </g:VerticalPanel>
+  </g:FlowPanel>
   
 </ui:UiBinder>

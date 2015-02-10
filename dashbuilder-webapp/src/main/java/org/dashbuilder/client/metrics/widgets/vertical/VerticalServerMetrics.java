@@ -34,7 +34,9 @@ import org.dashbuilder.displayer.client.DisplayerHelper;
 import static org.dashbuilder.dataset.filter.FilterFactory.equalsTo;
 import static org.dashbuilder.dataset.filter.FilterFactory.timeFrame;
 import static org.dashbuilder.dataset.group.AggregateFunctionType.MAX;
-import static org.dashbuilder.dataset.group.DateIntervalType.SECOND;
+import static org.dashbuilder.dataset.group.DateIntervalType.*;
+import static org.dashbuilder.backend.ClusterMetricsDataSetGenerator.*;
+import static org.dashbuilder.client.metrics.RealTimeMetricsDashboard.*;
 
 public class VerticalServerMetrics extends Composite {
 
@@ -44,11 +46,11 @@ public class VerticalServerMetrics extends Composite {
     private static final String TOOLTIP_CPU = "CPU usage (%)";
     private static final String TOOLTIP_USED_MEMORY = "Used memory (Gb)";
     private static final String TOOLTIP_NET_BW = "Network BW (kbps)";
-    private static final String TOOLTIP_PROCESSES = "Running processes";
+    private static final String TOOLTIP_PROCESSES = "Running/Sleeping processes";
     private static final String TOOLTIP_DISK = "Disk usage (Mb)";
     
     @UiField
-    VerticalPanel mainPanel;
+    Panel mainPanel;
 
     @UiField
     FocusPanel serverIcon;
@@ -86,17 +88,18 @@ public class VerticalServerMetrics extends Composite {
 
         Displayer serverCPU = DisplayerHelper.lookupDisplayer(
                 DisplayerSettingsFactory.newLineChartSettings()
-                        .dataset(RealTimeMetricsDashboard.METRICS_DATASET_UUID)
-                        .filter(ClusterMetricsDataSetGenerator.COLUMN_SERVER, equalsTo(server))
-                        .filter(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP, timeFrame("10second"))
-                        .group(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP).dynamic(10, SECOND, true)
-                        .column(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP)
-                        .column(ClusterMetricsDataSetGenerator.COLUMN_CPU0, MAX, "CPU0")
-                        .column(ClusterMetricsDataSetGenerator.COLUMN_CPU1, MAX, "CPU1")
+                        .dataset(METRICS_DATASET_UUID)
+                        .filter(COLUMN_SERVER, equalsTo(server))
+                        .filter(COLUMN_TIMESTAMP, timeFrame("begin[minute] till now"))
+                        .group(COLUMN_TIMESTAMP).fixed(SECOND, true)
+                        .column(COLUMN_TIMESTAMP)
+                        .column(COLUMN_CPU0, MAX, "CPU0")
+                        .column(COLUMN_CPU1, MAX, "CPU1")
                         .title("CPU usage")
                         .titleVisible(false)
-                        .backgroundColor(RealTimeMetricsDashboard.BACKGROUND_COLOR)
-                        .width(200).height(200)
+                        .backgroundColor(BACKGROUND_COLOR)
+                        .width(165).height(80)
+                        .margins(5, 5, 30, 5)
                         .legendOff()
                         .refreshOn(this.refreshInterval, false)
                         .buildSettings());
@@ -106,16 +109,17 @@ public class VerticalServerMetrics extends Composite {
         // Used memory
         Displayer serverMemory = DisplayerHelper.lookupDisplayer(
                 DisplayerSettingsFactory.newAreaChartSettings()
-                        .dataset(RealTimeMetricsDashboard.METRICS_DATASET_UUID)
-                        .filter(ClusterMetricsDataSetGenerator.COLUMN_SERVER, equalsTo(server))
-                        .filter(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP, timeFrame("10second"))
-                        .group(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP).dynamic(10, SECOND, true)
-                        .column(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP)
-                        .column(ClusterMetricsDataSetGenerator.COLUMN_MEMORY_USED, MAX, "Used memory")
+                        .dataset(METRICS_DATASET_UUID)
+                        .filter(COLUMN_SERVER, equalsTo(server))
+                        .filter(COLUMN_TIMESTAMP, timeFrame("begin[minute] till now"))
+                        .group(COLUMN_TIMESTAMP).fixed(SECOND, true)
+                        .column(COLUMN_TIMESTAMP)
+                        .column(COLUMN_MEMORY_USED, MAX, "Used memory")
                         .title("Memory consumption")
                         .titleVisible(false)
-                        .backgroundColor(RealTimeMetricsDashboard.BACKGROUND_COLOR)
-                        .width(200).height(200)
+                        .backgroundColor(BACKGROUND_COLOR)
+                        .width(165).height(80)
+                        .margins(5, 5, 30, 5)
                         .legendOff()
                         .refreshOn(this.refreshInterval, false)
                         .buildSettings());
@@ -125,20 +129,21 @@ public class VerticalServerMetrics extends Composite {
         // TX/RX
         Displayer serverNetwork = DisplayerHelper.lookupDisplayer(
                 DisplayerSettingsFactory.newBarChartSettings()
-                        .dataset(RealTimeMetricsDashboard.METRICS_DATASET_UUID)
-                        .filter(ClusterMetricsDataSetGenerator.COLUMN_SERVER, equalsTo(server))
-                        .filter(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP, timeFrame("10second"))
-                        .group(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP).dynamic(10, SECOND, true)
-                        .column(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP)
-                        .column(ClusterMetricsDataSetGenerator.COLUMN_NETWORK_RX, MAX, "Downstream")
-                        .column(ClusterMetricsDataSetGenerator.COLUMN_NETWORK_TX, MAX, "Upstream")
+                        .dataset(METRICS_DATASET_UUID)
+                        .filter(COLUMN_SERVER, equalsTo(server))
+                        .filter(COLUMN_TIMESTAMP, timeFrame("-10second"))
+                        .group(COLUMN_TIMESTAMP).dynamic(10, SECOND, true)
+                        .column(COLUMN_TIMESTAMP)
+                        .column(COLUMN_NETWORK_RX, MAX, "Downstream")
+                        .column(COLUMN_NETWORK_TX, MAX, "Upstream")
                         .title("Network bandwidth")
                         .titleVisible(false)
-                        .backgroundColor(RealTimeMetricsDashboard.BACKGROUND_COLOR)
+                        .backgroundColor(BACKGROUND_COLOR)
                         .legendOff()
-                        .width(200).height(200)
+                        .width(165).height(80)
+                        .margins(5, 5, 30, 5)
                         .refreshOn(this.refreshInterval, false)
-                        .horizontal()
+                        .vertical()
                         .buildSettings());
 
         addDisplayer(serverNetwork, TOOLTIP_NET_BW);
@@ -146,17 +151,19 @@ public class VerticalServerMetrics extends Composite {
         // Processes
         Displayer serverProcessesRunning = DisplayerHelper.lookupDisplayer(
                 DisplayerSettingsFactory.newBarChartSettings()
-                        .dataset(RealTimeMetricsDashboard.METRICS_DATASET_UUID)
-                        .filter(ClusterMetricsDataSetGenerator.COLUMN_SERVER, equalsTo(server))
-                        .filter(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP, timeFrame("1second"))
-                        .group(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP).dynamic(1, SECOND, true)
-                        .column(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP)
-                        .column(ClusterMetricsDataSetGenerator.COLUMN_PROCESSES_RUNNING, MAX, "Running processes")
-                        .title("Running processes")
+                        .dataset(METRICS_DATASET_UUID)
+                        .filter(COLUMN_SERVER, equalsTo(server))
+                        .filter(COLUMN_TIMESTAMP, timeFrame("-1second"))
+                        .group(COLUMN_TIMESTAMP).dynamic(1, SECOND, true)
+                        .column(COLUMN_TIMESTAMP)
+                        .column(COLUMN_PROCESSES_RUNNING, MAX, "Running processes")
+                        .column(COLUMN_PROCESSES_SLEEPING, MAX, "Slepping processes")
+                        .title("Running/Sleepping processes")
                         .titleVisible(false)
-                        .backgroundColor(RealTimeMetricsDashboard.BACKGROUND_COLOR)
+                        .backgroundColor(BACKGROUND_COLOR)
                         .legendOff()
-                        .width(200).height(200)
+                        .width(165).height(80)
+                        .margins(5, 5, 30, 5)
                         .refreshOn(this.refreshInterval, false)
                         .buildSettings());
         
@@ -165,14 +172,14 @@ public class VerticalServerMetrics extends Composite {
         // Disk
         Displayer serverDisk = DisplayerHelper.lookupDisplayer(
                 DisplayerSettingsFactory.newTableSettings()
-                        .dataset(RealTimeMetricsDashboard.METRICS_DATASET_UUID)
-                        .filter(ClusterMetricsDataSetGenerator.COLUMN_SERVER, equalsTo(server))
-                        .filter(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP, timeFrame("1second"))
-                        .column(ClusterMetricsDataSetGenerator.COLUMN_DISK_FREE, "Free disk space (Mb)")
-                        .column(ClusterMetricsDataSetGenerator.COLUMN_DISK_USED, "Used disk space (Mb)")
+                        .dataset(METRICS_DATASET_UUID)
+                        .filter(COLUMN_SERVER, equalsTo(server))
+                        .filter(COLUMN_TIMESTAMP, timeFrame("-1second"))
+                        .column(COLUMN_DISK_FREE, "Free disk (Mb)")
+                        .column(COLUMN_DISK_USED, "Used disk (Mb)")
                         .title("Disk usage")
                         .titleVisible(false)
-                        .tableWidth(200)
+                        .tableWidth(180)
                         .refreshOn(this.refreshInterval, false)
                         .buildSettings());
         
@@ -194,10 +201,13 @@ public class VerticalServerMetrics extends Composite {
 
     private void addDisplayer(Displayer displayer, String toolTipText) {
         displayerCoordinator.addDisplayer(displayer);
+        FlowPanel panel = new FlowPanel();
         Tooltip tooltip = new Tooltip(toolTipText);
         tooltip.setPlacement(Placement.TOP);
         tooltip.add(displayer);
-        mainPanel.add(tooltip);
+        panel.add(tooltip);
+        panel.getElement().getStyle().setPadding(10, Style.Unit.PX);
+        mainPanel.add(panel);
     }
 
     private void setPointerCursor(UIObject object) {
@@ -227,7 +237,7 @@ public class VerticalServerMetrics extends Composite {
     }
     
     private void toolTipDefaultText() {
-        tooltip.setText("Show real-time metric details for server " + server);
+        tooltip.setText("Click to get more details");
     }
 
     public String getServer() {

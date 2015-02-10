@@ -21,17 +21,15 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.Widget;
-import org.dashbuilder.backend.ClusterMetricsDataSetGenerator;
 import org.dashbuilder.displayer.DisplayerSettingsFactory;
 import org.dashbuilder.displayer.client.Displayer;
 import org.dashbuilder.displayer.client.DisplayerCoordinator;
 import org.dashbuilder.displayer.client.DisplayerHelper;
 
-import static org.dashbuilder.dataset.filter.FilterFactory.equalsTo;
-import static org.dashbuilder.dataset.filter.FilterFactory.timeFrame;
-import static org.dashbuilder.dataset.group.AggregateFunctionType.MAX;
-import static org.dashbuilder.dataset.group.DateIntervalType.MINUTE;
-import static org.dashbuilder.dataset.group.DateIntervalType.SECOND;
+import static org.dashbuilder.dataset.filter.FilterFactory.*;
+import static org.dashbuilder.dataset.group.AggregateFunctionType.*;
+import static org.dashbuilder.dataset.group.DateIntervalType.*;
+import static org.dashbuilder.backend.ClusterMetricsDataSetGenerator.*;
 
 public class AnalyticMetricsDashboard extends Composite {
 
@@ -113,147 +111,168 @@ public class AnalyticMetricsDashboard extends Composite {
 
         cpuDisplayer1 = DisplayerHelper.lookupDisplayer(DisplayerSettingsFactory.newAreaChartSettings()
                 .dataset(METRICS_DATASET_UUID)
-                .filter(ClusterMetricsDataSetGenerator.COLUMN_SERVER, equalsTo(server))
-                .group(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP).dynamic(999, MINUTE, true)
-                .column(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP, "Minute")
-                .column(ClusterMetricsDataSetGenerator.COLUMN_CPU0, "CPU0 (%)")
-                .column(ClusterMetricsDataSetGenerator.COLUMN_CPU1, "CPU1 (%)")
+                .filter(COLUMN_SERVER, equalsTo(server))
+                .group(COLUMN_TIMESTAMP).dynamic(100, MINUTE, true)
+                .column(COLUMN_TIMESTAMP, "Minute")
+                .column(COLUMN_CPU0, AVERAGE, "CPU0 (%)")
+                .column(COLUMN_CPU1, AVERAGE, "CPU1 (%)")
                 .title("CPU usage")
                 .titleVisible(true)
+                .width(900).height(400)
+                .margins(20, 30, 80, 120)
+                .legendOn("right")
+                .yAxisTitle("CPU %")
                 .backgroundColor(BACKGROUND_COLOR)
-                .width(1200).height(400)
                 .buildSettings());
 
-
         displayerCoordinator.addDisplayer(cpuDisplayer1);
-        
     }
 
     protected void buildMemory(String server) {
 
         memoryDisplayer1 = DisplayerHelper.lookupDisplayer(DisplayerSettingsFactory.newAreaChartSettings()
                 .dataset(METRICS_DATASET_UUID)
-                .filter(ClusterMetricsDataSetGenerator.COLUMN_SERVER, equalsTo(server))
-                .group(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP).dynamic(999, MINUTE, true)
-                .column(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP, "Minute")
-                .column(ClusterMetricsDataSetGenerator.COLUMN_MEMORY_USED, "Used memory (Gb)")
-                .column(ClusterMetricsDataSetGenerator.COLUMN_MEMORY_FREE, "Free memory (Gb)")
+                .filter(COLUMN_SERVER, equalsTo(server))
+                .group(COLUMN_TIMESTAMP).dynamic(100, MINUTE, true)
+                .column(COLUMN_TIMESTAMP, "Minute")
+                .column(COLUMN_MEMORY_USED, AVERAGE, "Used memory (Gb)")
+                .column(COLUMN_MEMORY_FREE, AVERAGE, "Free memory (Gb)")
                 .title("Memory usage")
                 .titleVisible(true)
+                .width(900).height(400)
+                .margins(20, 30, 80, 120)
+                .legendOn("right")
+                .yAxisTitle("Gigabytes")
                 .backgroundColor(BACKGROUND_COLOR)
-                .width(1200).height(400)
                 .buildSettings());
 
-
         displayerCoordinator.addDisplayer(memoryDisplayer1);
-
     }
 
     protected void buildNetwork(String server) {
 
         networkDisplayer1 = DisplayerHelper.lookupDisplayer(DisplayerSettingsFactory.newAreaChartSettings()
                 .dataset(METRICS_DATASET_UUID)
-                .filter(ClusterMetricsDataSetGenerator.COLUMN_SERVER, equalsTo(server))
-                .group(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP).dynamic(999, MINUTE, true)
-                .column(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP, "Minute")
-                .column(ClusterMetricsDataSetGenerator.COLUMN_NETWORK_TX, "Upstream (kbps)")
-                .column(ClusterMetricsDataSetGenerator.COLUMN_NETWORK_RX, "Downstream (kbps)")
+                .filter(COLUMN_SERVER, equalsTo(server))
+                .group(COLUMN_TIMESTAMP).dynamic(100, MINUTE, true)
+                .column(COLUMN_TIMESTAMP, "Minute")
+                .column(COLUMN_NETWORK_TX, AVERAGE, "Upstream (kbps)")
+                .column(COLUMN_NETWORK_RX, AVERAGE, "Downstream (kbps)")
                 .title("Network usage")
                 .titleVisible(true)
+                .width(900).height(400)
+                .margins(20, 30, 80, 120)
+                .legendOn("right")
+                .yAxisTitle("Kbps")
                 .backgroundColor(BACKGROUND_COLOR)
-                .width(1200).height(400)
                 .buildSettings());
 
-
         displayerCoordinator.addDisplayer(networkDisplayer1);
-
     }
 
     protected void buildProcesses(String server) {
 
         processDisplayer1 = DisplayerHelper.lookupDisplayer(DisplayerSettingsFactory.newAreaChartSettings()
                 .dataset(METRICS_DATASET_UUID)
-                .filter(ClusterMetricsDataSetGenerator.COLUMN_SERVER, equalsTo(server))
-                .group(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP).dynamic(999, MINUTE, true)
-                .column(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP, "Minute")
-                .column(ClusterMetricsDataSetGenerator.COLUMN_PROCESSES_RUNNING, "Running processes")
-                .column(ClusterMetricsDataSetGenerator.COLUMN_PROCESSES_SLEEPING, "Sleeping processes")
+                .filter(COLUMN_SERVER, equalsTo(server))
+                .group(COLUMN_TIMESTAMP).dynamic(100, MINUTE, true)
+                .column(COLUMN_TIMESTAMP, "Minute")
+                .column(COLUMN_PROCESSES_RUNNING, AVERAGE, "Running")
+                .column(COLUMN_PROCESSES_SLEEPING, AVERAGE, "Sleeping")
                 .title("Process usage")
                 .titleVisible(true)
+                .width(900).height(400)
+                .margins(20, 30, 80, 120)
+                .legendOn("right")
+                .yAxisTitle("Number of processes")
                 .backgroundColor(BACKGROUND_COLOR)
-                .width(1200).height(400)
                 .buildSettings());
 
-
         displayerCoordinator.addDisplayer(processDisplayer1);
-
     }
 
     protected void buildDisk(String server) {
 
         diskDisplayer1 = DisplayerHelper.lookupDisplayer(DisplayerSettingsFactory.newAreaChartSettings()
                 .dataset(METRICS_DATASET_UUID)
-                .filter(ClusterMetricsDataSetGenerator.COLUMN_SERVER, equalsTo(server))
-                .group(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP).dynamic(999, MINUTE, true)
-                .column(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP, "Minute")
-                .column(ClusterMetricsDataSetGenerator.COLUMN_DISK_USED, "Used disk space (Mb)")
-                .column(ClusterMetricsDataSetGenerator.COLUMN_DISK_FREE, "Free disk space (Mb)")
+                .filter(COLUMN_SERVER, equalsTo(server))
+                .group(COLUMN_TIMESTAMP).dynamic(100, MINUTE, true)
+                .column(COLUMN_TIMESTAMP, "Minute")
+                .column(COLUMN_DISK_USED, AVERAGE, "Used disk (Mb)")
+                .column(COLUMN_DISK_FREE, AVERAGE, "Free disk (Mb)")
                 .title("Disk usage")
                 .titleVisible(true)
+                .width(900).height(400)
+                .margins(20, 30, 80, 120)
+                .legendOn("right")
+                .yAxisTitle("Megabytes")
                 .backgroundColor(BACKGROUND_COLOR)
-                .width(1200).height(400)
                 .buildSettings());
 
-
         displayerCoordinator.addDisplayer(diskDisplayer1);
-
     }
 
     protected void buildSummary() {
         maxCPUxServer = DisplayerHelper.lookupDisplayer(DisplayerSettingsFactory.newBarChartSettings()
                 .dataset(METRICS_DATASET_UUID)
-                .group(ClusterMetricsDataSetGenerator.COLUMN_SERVER)
-                .column(ClusterMetricsDataSetGenerator.COLUMN_SERVER, "Server")
-                .column(ClusterMetricsDataSetGenerator.COLUMN_CPU0, MAX, "CPU0 Max")
-                .column(ClusterMetricsDataSetGenerator.COLUMN_CPU1, MAX, "CPU1 Max")
+                .group(COLUMN_SERVER)
+                .column(COLUMN_SERVER, "Server")
+                .column(COLUMN_CPU0, MAX, "CPU0 Max")
+                .column(COLUMN_CPU1, MAX, "CPU1 Max")
                 .title("Max CPU usage")
                 .titleVisible(true)
+                .width(500).height(200)
+                .legendOn("right")
+                .margins(10, 30, 60, 100)
+                .yAxisTitle("CPU %")
                 .backgroundColor(BACKGROUND_COLOR)
                 .vertical()
                 .buildSettings());
 
         maxMemxServerSettings = DisplayerHelper.lookupDisplayer(DisplayerSettingsFactory.newBarChartSettings()
                 .dataset(METRICS_DATASET_UUID)
-                .group(ClusterMetricsDataSetGenerator.COLUMN_SERVER)
-                .column(ClusterMetricsDataSetGenerator.COLUMN_SERVER, "Server")
-                .column(ClusterMetricsDataSetGenerator.COLUMN_MEMORY_USED, MAX, "Max used memory")
-                .column(ClusterMetricsDataSetGenerator.COLUMN_MEMORY_FREE, MAX, "Max free memory")
+                .group(COLUMN_SERVER)
+                .column(COLUMN_SERVER, "Server")
+                .column(COLUMN_MEMORY_USED, MAX, "Max used memory")
+                .column(COLUMN_MEMORY_FREE, MAX, "Max free memory")
                 .title("Max Memory usage")
                 .titleVisible(true)
+                .width(500).height(200)
+                .legendOn("right")
+                .margins(10, 30, 60, 100)
+                .yAxisTitle("Megabytes")
                 .backgroundColor(BACKGROUND_COLOR)
                 .vertical()
                 .buildSettings());
 
         maxProcessesxServerSettings = DisplayerHelper.lookupDisplayer(DisplayerSettingsFactory.newBarChartSettings()
                 .dataset(METRICS_DATASET_UUID)
-                .group(ClusterMetricsDataSetGenerator.COLUMN_SERVER)
-                .column(ClusterMetricsDataSetGenerator.COLUMN_SERVER, "Server")
-                .column(ClusterMetricsDataSetGenerator.COLUMN_PROCESSES_RUNNING, MAX, "Max running processes")
-                .column(ClusterMetricsDataSetGenerator.COLUMN_PROCESSES_SLEEPING, MAX, "Max sleeping processes")
+                .group(COLUMN_SERVER)
+                .column(COLUMN_SERVER, "Server")
+                .column(COLUMN_PROCESSES_RUNNING, MAX, "Max running")
+                .column(COLUMN_PROCESSES_SLEEPING, MAX, "Max sleeping")
                 .title("Max processes usage")
                 .titleVisible(true)
+                .width(500).height(200)
+                .legendOn("right")
+                .margins(10, 30, 60, 100)
+                .yAxisTitle("Number of processes")
                 .backgroundColor(BACKGROUND_COLOR)
                 .vertical()
                 .buildSettings());
 
         maxNetworkxServerSettings = DisplayerHelper.lookupDisplayer(DisplayerSettingsFactory.newBarChartSettings()
                 .dataset(METRICS_DATASET_UUID)
-                .group(ClusterMetricsDataSetGenerator.COLUMN_SERVER)
-                .column(ClusterMetricsDataSetGenerator.COLUMN_SERVER, "Server")
-                .column(ClusterMetricsDataSetGenerator.COLUMN_NETWORK_TX, MAX, "Max upstream speed")
-                .column(ClusterMetricsDataSetGenerator.COLUMN_NETWORK_RX, MAX, "Max downstream speed")
+                .group(COLUMN_SERVER)
+                .column(COLUMN_SERVER, "Server")
+                .column(COLUMN_NETWORK_TX, MAX, "Max upstream speed")
+                .column(COLUMN_NETWORK_RX, MAX, "Max downstream speed")
                 .title("Max network speed")
                 .titleVisible(true)
+                .width(500).height(200)
+                .legendOn("right")
+                .margins(10, 30, 60, 100)
+                .yAxisTitle("Kbps")
                 .backgroundColor(BACKGROUND_COLOR)
                 .vertical()
                 .buildSettings());

@@ -23,9 +23,9 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.*;
-import org.dashbuilder.backend.ClusterMetricsDataSetGenerator;
-import org.dashbuilder.client.metrics.MetricsDashboardClientBundle;
 import org.dashbuilder.client.metrics.RealTimeMetricsDashboard;
+import org.dashbuilder.client.metrics.MetricsDashboardClientBundle;
+import org.dashbuilder.dataset.sort.SortOrder;
 import org.dashbuilder.displayer.DisplayerSettingsFactory;
 import org.dashbuilder.displayer.client.Displayer;
 import org.dashbuilder.displayer.client.DisplayerCoordinator;
@@ -36,6 +36,8 @@ import static org.dashbuilder.dataset.filter.FilterFactory.timeFrame;
 import static org.dashbuilder.dataset.group.AggregateFunctionType.MAX;
 import static org.dashbuilder.dataset.group.DateIntervalType.MINUTE;
 import static org.dashbuilder.dataset.group.DateIntervalType.SECOND;
+import static org.dashbuilder.backend.ClusterMetricsDataSetGenerator.*;
+import static org.dashbuilder.client.metrics.RealTimeMetricsDashboard.*;
 
 public class DetailedServerMetrics extends Composite {
 
@@ -129,87 +131,90 @@ public class DetailedServerMetrics extends Composite {
     protected void buildServerDetailsDisplayers(RealTimeMetricsDashboard metricsDashboard, String server) {
         serverCPU0 = DisplayerHelper.lookupDisplayer(
                 DisplayerSettingsFactory.newMeterChartSettings()
-                        .dataset(RealTimeMetricsDashboard.METRICS_DATASET_UUID)
-                        .filter(ClusterMetricsDataSetGenerator.COLUMN_SERVER, equalsTo(server))
-                        .filter(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP, timeFrame("1second"))
-                        .column(ClusterMetricsDataSetGenerator.COLUMN_CPU0, MAX, "CPU0")
+                        .dataset(METRICS_DATASET_UUID)
+                        .filter(COLUMN_SERVER, equalsTo(server))
+                        .filter(COLUMN_TIMESTAMP, timeFrame("-1second"))
+                        .column(COLUMN_CPU0, MAX, "CPU0")
                         .title("CPU0")
                         .titleVisible(false)
-                        .backgroundColor(RealTimeMetricsDashboard.BACKGROUND_COLOR)
-                        .width(400).height(250)
-                        .meter(0, 25, 50, 100)
+                        .backgroundColor(BACKGROUND_COLOR)
+                        .width(200).height(200)
                         .refreshOn(this.refreshInterval, false)
+                        .meter(0, 50, 80, 100)
                         .buildSettings());
 
         serverCPU1 = DisplayerHelper.lookupDisplayer(
                 DisplayerSettingsFactory.newMeterChartSettings()
-                        .dataset(RealTimeMetricsDashboard.METRICS_DATASET_UUID)
-                        .filter(ClusterMetricsDataSetGenerator.COLUMN_SERVER, equalsTo(server))
-                        .filter(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP, timeFrame("1second"))
-                        .column(ClusterMetricsDataSetGenerator.COLUMN_CPU1, MAX, "CPU1")
+                        .dataset(METRICS_DATASET_UUID)
+                        .filter(COLUMN_SERVER, equalsTo(server))
+                        .filter(COLUMN_TIMESTAMP, timeFrame("-1second"))
+                        .column(COLUMN_CPU1, MAX, "CPU1")
                         .title("CPU1")
                         .titleVisible(false)
-                        .backgroundColor(RealTimeMetricsDashboard.BACKGROUND_COLOR)
-                        .width(400).height(250)
-                        .meter(0, 25, 50, 100)
+                        .backgroundColor(BACKGROUND_COLOR)
+                        .width(200).height(200)
+                        .meter(0, 50, 80, 100)
                         .refreshOn(this.refreshInterval, false)
                         .buildSettings());
 
         serverMemory = DisplayerHelper.lookupDisplayer(
-                DisplayerSettingsFactory.newAreaChartSettings()
-                        .dataset(RealTimeMetricsDashboard.METRICS_DATASET_UUID)
-                        .filter(ClusterMetricsDataSetGenerator.COLUMN_SERVER, equalsTo(server))
-                        .filter(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP, timeFrame("60second"))
-                        .group(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP).fixed(SECOND, true)
-                        .column(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP)
-                        .column(ClusterMetricsDataSetGenerator.COLUMN_MEMORY_USED, MAX, "Used memory")
-                        .column(ClusterMetricsDataSetGenerator.COLUMN_MEMORY_FREE, MAX, "Free memory")
+                DisplayerSettingsFactory.newBarChartSettings()
+                        .dataset(METRICS_DATASET_UUID)
+                        .filter(COLUMN_SERVER, equalsTo(server))
+                        .filter(COLUMN_TIMESTAMP, timeFrame("begin[minute] till now"))
+                        .group(COLUMN_TIMESTAMP).fixed(SECOND, true)
+                        .column(COLUMN_TIMESTAMP)
+                        .column(COLUMN_MEMORY_USED, MAX, "Used memory")
+                        .column(COLUMN_MEMORY_FREE, MAX, "Free memory")
                         .title("Memory consumption")
                         .titleVisible(false)
-                        .backgroundColor(RealTimeMetricsDashboard.BACKGROUND_COLOR)
-                        .width(800).height(250)
+                        .backgroundColor(BACKGROUND_COLOR)
+                        .width(650).height(190)
+                        .margins(20, 30, 30, 10)
                         .refreshOn(this.refreshInterval, false)
                         .buildSettings());
 
         serverNetwork = DisplayerHelper.lookupDisplayer(
                 DisplayerSettingsFactory.newAreaChartSettings()
-                        .dataset(RealTimeMetricsDashboard.METRICS_DATASET_UUID)
-                        .filter(ClusterMetricsDataSetGenerator.COLUMN_SERVER, equalsTo(server))
-                        .filter(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP, timeFrame("10second"))
-                        .group(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP).dynamic(10, SECOND, true)
-                        .column(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP)
-                        .column(ClusterMetricsDataSetGenerator.COLUMN_NETWORK_RX, MAX, "Downstream")
-                        .column(ClusterMetricsDataSetGenerator.COLUMN_NETWORK_TX, MAX, "Upstream")
+                        .dataset(METRICS_DATASET_UUID)
+                        .filter(COLUMN_SERVER, equalsTo(server))
+                        .filter(COLUMN_TIMESTAMP, timeFrame("-60second"))
+                        .group(COLUMN_TIMESTAMP).dynamic(60, SECOND, true)
+                        .column(COLUMN_TIMESTAMP)
+                        .column(COLUMN_NETWORK_RX, MAX, "Downstream")
+                        .column(COLUMN_NETWORK_TX, MAX, "Upstream")
                         .title("Network bandwidth")
                         .titleVisible(false)
-                        .backgroundColor(RealTimeMetricsDashboard.BACKGROUND_COLOR)
-                        .width(500).height(250)
+                        .backgroundColor(BACKGROUND_COLOR)
+                        .width(300).height(190)
+                        .margins(20, 30, 30, 10)
                         .refreshOn(this.refreshInterval, false)
                         .buildSettings());
 
         serverDisk = DisplayerHelper.lookupDisplayer(
                 DisplayerSettingsFactory.newPieChartSettings()
-                        .dataset(RealTimeMetricsDashboard.METRICS_DATASET_UUID)
-                        .filter(ClusterMetricsDataSetGenerator.COLUMN_SERVER, equalsTo(server))
-                        .filter(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP, timeFrame("10second"))
-                        .group(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP).dynamic(1, SECOND, true)
-                        .column(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP)
-                        .column(ClusterMetricsDataSetGenerator.COLUMN_DISK_FREE, MAX, "Free disk space")
-                        .column(ClusterMetricsDataSetGenerator.COLUMN_DISK_USED, MAX, "Used disk space")
+                        .dataset(METRICS_DATASET_UUID)
+                        .filter(COLUMN_SERVER, equalsTo(server))
+                        .filter(COLUMN_TIMESTAMP, timeFrame("-10second"))
+                        .group(COLUMN_TIMESTAMP).dynamic(1, SECOND, true)
+                        .column(COLUMN_TIMESTAMP)
+                        .column(COLUMN_DISK_FREE, MAX, "Free disk space")
+                        .column(COLUMN_DISK_USED, MAX, "Used disk space")
                         .title("Disk usage")
                         .titleVisible(false)
-                        .backgroundColor(RealTimeMetricsDashboard.BACKGROUND_COLOR)
+                        .backgroundColor(BACKGROUND_COLOR)
                         .legendOff()
-                        .width(250).height(250)
+                        .width(170).height(170)
+                        .margins(0, 0, 0, 0)
                         .refreshOn(this.refreshInterval, false)
                         .buildSettings());
 
         serverProcessesRunning = DisplayerHelper.lookupDisplayer(
                 DisplayerSettingsFactory.newTableSettings()
-                        .dataset(RealTimeMetricsDashboard.METRICS_DATASET_UUID)
-                        .filter(ClusterMetricsDataSetGenerator.COLUMN_SERVER, equalsTo(server))
-                        .filter(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP, timeFrame("1second"))
-                        .column(ClusterMetricsDataSetGenerator.COLUMN_PROCESSES_RUNNING, "Running processes")
+                        .dataset(METRICS_DATASET_UUID)
+                        .filter(COLUMN_SERVER, equalsTo(server))
+                        .filter(COLUMN_TIMESTAMP, timeFrame("-1second"))
+                        .column(COLUMN_PROCESSES_RUNNING, "Running")
                         .title("Running processes")
                         .titleVisible(false)
                         .tableWidth(100)
@@ -218,10 +223,10 @@ public class DetailedServerMetrics extends Composite {
 
         serverProcessesSleeping = DisplayerHelper.lookupDisplayer(
                 DisplayerSettingsFactory.newTableSettings()
-                        .dataset(RealTimeMetricsDashboard.METRICS_DATASET_UUID)
-                        .filter(ClusterMetricsDataSetGenerator.COLUMN_SERVER, equalsTo(server))
-                        .filter(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP, timeFrame("1second"))
-                        .column(ClusterMetricsDataSetGenerator.COLUMN_PROCESSES_SLEEPING, "Sleeping processes")
+                        .dataset(METRICS_DATASET_UUID)
+                        .filter(COLUMN_SERVER, equalsTo(server))
+                        .filter(COLUMN_TIMESTAMP, timeFrame("-1second"))
+                        .column(COLUMN_PROCESSES_SLEEPING, "Sleeping")
                         .title("Sleeping processes")
                         .titleVisible(false)
                         .tableWidth(100)
@@ -230,24 +235,25 @@ public class DetailedServerMetrics extends Composite {
 
         serverTable = DisplayerHelper.lookupDisplayer(
                 DisplayerSettingsFactory.newTableSettings()
-                        .dataset(RealTimeMetricsDashboard.METRICS_DATASET_UUID)
-                        .filter(ClusterMetricsDataSetGenerator.COLUMN_SERVER, equalsTo(server))
-                        .filter(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP, timeFrame("60minute"))
-                        .group(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP).dynamic(1000, MINUTE, true)
-                        .column(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP, "Minute")
-                        .column(ClusterMetricsDataSetGenerator.COLUMN_CPU0, "CPU0")
-                        .column(ClusterMetricsDataSetGenerator.COLUMN_CPU1, "CPU1")
-                        .column(ClusterMetricsDataSetGenerator.COLUMN_MEMORY_USED, "Used memory (Gb)")
-                        .column(ClusterMetricsDataSetGenerator.COLUMN_MEMORY_FREE, "Free memory (Gb)")
-                        .column(ClusterMetricsDataSetGenerator.COLUMN_NETWORK_TX, "Upstream (kbps)")
-                        .column(ClusterMetricsDataSetGenerator.COLUMN_NETWORK_RX, "Downstream (kbps)")
-                        .column(ClusterMetricsDataSetGenerator.COLUMN_PROCESSES_RUNNING, "Running processes")
-                        .column(ClusterMetricsDataSetGenerator.COLUMN_PROCESSES_SLEEPING, "Sleeping processes")
-                        .column(ClusterMetricsDataSetGenerator.COLUMN_DISK_USED, "Used disk space (Mb)")
-                        .column(ClusterMetricsDataSetGenerator.COLUMN_DISK_FREE, "Free disk space (Mb)")
+                        .dataset(METRICS_DATASET_UUID)
+                        .filter(COLUMN_SERVER, equalsTo(server))
+                        .filter(COLUMN_TIMESTAMP, timeFrame("-60minute"))
+                        .group(COLUMN_TIMESTAMP).dynamic(1000, MINUTE, true)
+                        .column(COLUMN_TIMESTAMP, "Minute")
+                        .column(COLUMN_CPU0, "CPU0")
+                        .column(COLUMN_CPU1, "CPU1")
+                        .column(COLUMN_MEMORY_USED, "Used memory (Gb)")
+                        .column(COLUMN_MEMORY_FREE, "Free memory (Gb)")
+                        .column(COLUMN_NETWORK_TX, "Upstream (kbps)")
+                        .column(COLUMN_NETWORK_RX, "Downstream (kbps)")
+                        .column(COLUMN_PROCESSES_RUNNING, "Running processes")
+                        .column(COLUMN_PROCESSES_SLEEPING, "Sleeping processes")
+                        .column(COLUMN_DISK_USED, "Used disk (Mb)")
+                        .column(COLUMN_DISK_FREE, "Free disk (Mb)")
+                        .sort(COLUMN_TIMESTAMP, SortOrder.DESCENDING)
                         .title("Real-time " + server + " metrics")
                         .titleVisible(false)
-                        .tableWidth(1250)
+                        .tableWidth(1020)
                         .refreshOn(this.refreshInterval, false)
                         .buildSettings());
 
