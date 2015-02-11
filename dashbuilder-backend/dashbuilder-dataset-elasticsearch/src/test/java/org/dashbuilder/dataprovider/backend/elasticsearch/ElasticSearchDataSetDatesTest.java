@@ -120,4 +120,34 @@ public class ElasticSearchDataSetDatesTest extends ElasticSearchDataSetTestBase 
 
         assertThat(result.getRowCount()).isEqualTo(0);
     }
+
+    
+    @Test
+    public void testGroupByMonthFixed() throws Exception {
+        DataSet result = dataSetManager.lookupDataSet(
+                DataSetFactory.newDataSetLookupBuilder()
+                        .dataset(EL_DATASET_UUID)
+                        .group(EL_EXAMPLE_COLUMN_DATE).fixed(MONTH, true)
+                        .column(EL_EXAMPLE_COLUMN_DATE, EL_EXAMPLE_COLUMN_DATE)
+                        .column(COUNT, "Occurrences")
+                        .column(EL_EXAMPLE_COLUMN_AMOUNT, SUM, "totalAmount")
+                        .buildLookup());
+
+        printDataSet(result);
+        
+        assertDataSetValues(result, dataSetFormatter, new String[][]{
+                {"1", "3.00", "2,324.20"},
+                {"2", "6.00", "2,885.57"},
+                {"3", "5.00", "2,413.45"},
+                {"4", "3.00", "2,160.06"},
+                {"5", "5.00", "2,503.34"},
+                {"6", "9.00", "4,113.87"},
+                {"7", "4.00", "2,354.04"},
+                {"8", "2.00", "452.25"},
+                {"9", "3.00", "693.35"},
+                {"10", "3.00", "1,366.40"},
+                {"11", "3.00", "1,443.75"},
+                {"12", "4.00", "2,520.88"}
+        }, 0);
+    }
 }

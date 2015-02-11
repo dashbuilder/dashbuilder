@@ -1,6 +1,8 @@
 package org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.impl.jest.gson;
 
-import com.google.gson.*;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.exception.ElasticSearchClientGenericException;
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.impl.jest.ElasticSearchJestClient;
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.model.SearchHitResponse;
@@ -16,6 +18,7 @@ import org.dashbuilder.dataset.impl.DataColumnImpl;
 import org.dashbuilder.dataset.impl.ElasticSearchDataSetMetadata;
 
 import java.lang.reflect.Type;
+import java.text.MessageFormat;
 import java.util.*;
 
 /**
@@ -26,6 +29,8 @@ public class AggregationSerializer extends AbstractAdapter<AggregationSerializer
     protected static final String AGG_ORDER_ASC = "asc";
     protected static final String AGG_ORDER_DESC = "desc";
     protected static final String AGG_FIELD = "field";
+    protected static final String AGG_SCRIPT = "script";
+    protected static final String AGG_SIZE = "size";
     protected static final String AGG_TERM = "_term";
     protected static final String AGG_ORDER = "order";
     protected static final String AGG_MIN_DOC_COUNT = "min_doc_count";
@@ -178,6 +183,24 @@ public class AggregationSerializer extends AbstractAdapter<AggregationSerializer
             // Translate into a DATE HISTOGRAM aggregation.
             DateIntervalType dateIntervalType = null;
 
+            // Fixed grouping -> use term field aggregation with a date format script.
+            if (GroupStrategy.FIXED.equals(columnGroup.getStrategy())) {
+                JsonObject subObject = new JsonObject();
+                String script = buildDateFormatScript(sourceId, dateIntervalType);
+                subObject.addProperty(AGG_SCRIPT, script);
+                JsonObject orderObject = new JsonObject();
+                orderObject.addProperty(AGG_TERM, order);
+                subObject.add(AGG_ORDER, orderObject);
+                subObject.addProperty(AGG_SIZE, 0);
+                subObject.addProperty(AGG_MIN_DOC_COUNT, minDocCount);
+                JsonObject result = new JsonObject();
+                result.add(AGG_TERMS, subObject);
+                if (aggregationsObject != null) result.add(AGG_AGGREGATIONS, aggregationsObject);
+                parent.add(resultingColumnId, result);
+                dateIntervalType = DateIntervalType.valueOf(intervalSize);
+            }
+            
+            // Dynamic grouping -> use date histograms.
             if (GroupStrategy.DYNAMIC.equals(columnGroup.getStrategy())) {
                 Date[] limits = null;
                 try {
@@ -185,71 +208,72 @@ public class AggregationSerializer extends AbstractAdapter<AggregationSerializer
                 } catch (ElasticSearchClientGenericException e) {
                     throw new RuntimeException("Cannot calculate date limits.", e);
                 }
+                
                 if (limits != null) {
                     dateIntervalType = intervalBuilder.calculateIntervalSize(limits[0], limits[1], columnGroup);
                 }
+                
+                if (dateIntervalType == null) {
+                    dateIntervalType = DateIntervalType.valueOf(intervalSize);
+                }
+                
+                String interval = ElasticSearchJestClient.getInterval(dateIntervalType);
+                String returnFormat = DateUtils.PATTERN_DAY;
+                switch (dateIntervalType) {
+                    case MILLISECOND:
+                        break;
+                    case HUNDRETH:
+                        break;
+                    case TENTH:
+                        break;
+                    case SECOND:
+                        returnFormat = DateUtils.PATTERN_SECOND;
+                        break;
+                    case MINUTE:
+                        returnFormat = DateUtils.PATTERN_MINUTE;
+                        break;
+                    case HOUR:
+                        returnFormat = DateUtils.PATTERN_HOUR;
+                        break;
+                    case DAY:
+                        returnFormat = DateUtils.PATTERN_DAY;
+                        break;
+                    case DAY_OF_WEEK:
+                        returnFormat = DateUtils.PATTERN_DAY;
+                        break;
+                    case WEEK:
+                        break;
+                    case MONTH:
+                        returnFormat = DateUtils.PATTERN_MONTH;
+                        break;
+                    case QUARTER:
+                        break;
+                    case YEAR:
+                        returnFormat = DateUtils.PATTERN_YEAR;
+                        break;
+                    case DECADE:
+                        break;
+                    case CENTURY:
+                        break;
+                    case MILLENIUM:
+                        break;
+                    default:
+                        throw new RuntimeException("No interval mapping for date interval type [" + dateIntervalType.name() + "].");
+                }
+
+                JsonObject subObject = new JsonObject();
+                subObject.addProperty(AGG_FIELD, sourceId);
+                subObject.addProperty(AGG_INTERVAL, interval);
+                subObject.addProperty(AGG_FORMAT, returnFormat);
+                JsonObject orderObject = new JsonObject();
+                orderObject.addProperty(AGG_KEY, order);
+                subObject.add(AGG_ORDER, orderObject);
+                subObject.addProperty(AGG_MIN_DOC_COUNT, minDocCount);
+                JsonObject result = new JsonObject();
+                result.add(AGG_DATE_HISTORGRAM, subObject);
+                if (aggregationsObject != null) result.add(AGG_AGGREGATIONS, aggregationsObject);
+                parent.add(resultingColumnId, result);
             } 
-            
-            if (dateIntervalType == null) {
-                dateIntervalType = DateIntervalType.valueOf(intervalSize);
-            }
-
-            String interval = ElasticSearchJestClient.getInterval(dateIntervalType);
-            String returnFormat = DateUtils.PATTERN_DAY;
-            switch (dateIntervalType) {
-                case MILLISECOND:
-                    break;
-                case HUNDRETH:
-                    break;
-                case TENTH:
-                    break;
-                case SECOND:
-                    returnFormat = DateUtils.PATTERN_SECOND;
-                    break;
-                case MINUTE:
-                    returnFormat = DateUtils.PATTERN_MINUTE;
-                    break;
-                case HOUR:
-                    returnFormat = DateUtils.PATTERN_HOUR;
-                    break;
-                case DAY:
-                    returnFormat = DateUtils.PATTERN_DAY;
-                    break;
-                case DAY_OF_WEEK:
-                    returnFormat = DateUtils.PATTERN_DAY;
-                    break;
-                case WEEK:
-                    break;
-                case MONTH:
-                    returnFormat = DateUtils.PATTERN_MONTH;
-                    break;
-                case QUARTER:
-                    break;
-                case YEAR:
-                    returnFormat = DateUtils.PATTERN_YEAR;
-                    break;
-                case DECADE:
-                    break;
-                case CENTURY:
-                    break;
-                case MILLENIUM:
-                    break;
-                default:
-                    throw new RuntimeException("No interval mapping for date interval type [" + dateIntervalType.name() + "].");
-            }
-
-            JsonObject subObject = new JsonObject();
-            subObject.addProperty(AGG_FIELD, sourceId);
-            subObject.addProperty(AGG_INTERVAL, interval);
-            subObject.addProperty(AGG_FORMAT, returnFormat);
-            JsonObject orderObject = new JsonObject();
-            orderObject.addProperty(AGG_KEY, order);
-            subObject.add(AGG_ORDER, orderObject);
-            subObject.addProperty(AGG_MIN_DOC_COUNT, minDocCount);
-            JsonObject result = new JsonObject();
-            result.add(AGG_DATE_HISTORGRAM, subObject);
-            if (aggregationsObject != null) result.add(AGG_AGGREGATIONS, aggregationsObject);
-            parent.add(resultingColumnId, result);
 
             // Add the resulting dataset column.
             if (columns != null) {
@@ -261,6 +285,11 @@ public class AggregationSerializer extends AbstractAdapter<AggregationSerializer
         } else {
             throw new RuntimeException("No translation supported for column group with sourceId [" + sourceId + "] and group strategy [" + groupStrategy.name() + "].");
         }
+    }
+    
+    private String buildDateFormatScript(String sourceId, DateIntervalType intervalType) {
+        // TODO: Use date format pattern from dateIntervalType provided
+        return MessageFormat.format("new Date(doc[\"{0}\"].value).format(\"{1}\")", sourceId, "MM");
     }
 
 

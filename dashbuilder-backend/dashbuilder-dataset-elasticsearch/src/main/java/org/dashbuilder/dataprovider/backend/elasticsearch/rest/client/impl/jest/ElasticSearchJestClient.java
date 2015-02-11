@@ -34,8 +34,10 @@ import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.dataset.def.DataSetDef;
 import org.dashbuilder.dataset.def.ElasticSearchDataSetDef;
+import org.dashbuilder.dataset.group.ColumnGroup;
 import org.dashbuilder.dataset.group.DataSetGroup;
 import org.dashbuilder.dataset.group.DateIntervalType;
+import org.dashbuilder.dataset.group.GroupStrategy;
 import org.dashbuilder.dataset.impl.ElasticSearchDataSetMetadata;
 import org.dashbuilder.dataset.sort.ColumnSort;
 import org.dashbuilder.dataset.sort.DataSetSort;
@@ -366,7 +368,11 @@ public class ElasticSearchJestClient implements ElasticSearchClient<ElasticSearc
         }
 
         // LABEL, TEXT or grouped DATE column types.
-        return valueElement.getAsString();
+        String valueAsString = valueElement.getAsString();
+        ColumnGroup columnGroup = column.getColumnGroup();
+        if (columnGroup != null && GroupStrategy.FIXED.equals(columnGroup.getStrategy())
+                && valueAsString.startsWith("0")) return valueAsString.substring(1);
+        return valueAsString;
     }
 
     /**
