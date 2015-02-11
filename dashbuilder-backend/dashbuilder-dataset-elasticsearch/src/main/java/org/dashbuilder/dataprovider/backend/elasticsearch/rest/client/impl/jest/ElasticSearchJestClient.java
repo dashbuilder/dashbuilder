@@ -370,8 +370,12 @@ public class ElasticSearchJestClient implements ElasticSearchClient<ElasticSearc
         // LABEL, TEXT or grouped DATE column types.
         String valueAsString = valueElement.getAsString();
         ColumnGroup columnGroup = column.getColumnGroup();
-        if (columnGroup != null && GroupStrategy.FIXED.equals(columnGroup.getStrategy())
+        
+        // For FIXED date values, remove the unnecessary "0" at first character. (eg: replace month "01" to "1")
+        if (columnGroup != null
+                && GroupStrategy.FIXED.equals(columnGroup.getStrategy())
                 && valueAsString.startsWith("0")) return valueAsString.substring(1);
+        
         return valueAsString;
     }
 

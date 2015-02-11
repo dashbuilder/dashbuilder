@@ -185,8 +185,9 @@ public class AggregationSerializer extends AbstractAdapter<AggregationSerializer
 
             // Fixed grouping -> use term field aggregation with a date format script.
             if (GroupStrategy.FIXED.equals(columnGroup.getStrategy())) {
+                dateIntervalType = DateIntervalType.valueOf(intervalSize);
                 JsonObject subObject = new JsonObject();
-                String script = buildDateFormatScript(sourceId, dateIntervalType);
+                String script = buildFixedDateFormatScript(sourceId, dateIntervalType);
                 subObject.addProperty(AGG_SCRIPT, script);
                 JsonObject orderObject = new JsonObject();
                 orderObject.addProperty(AGG_TERM, order);
@@ -197,7 +198,6 @@ public class AggregationSerializer extends AbstractAdapter<AggregationSerializer
                 result.add(AGG_TERMS, subObject);
                 if (aggregationsObject != null) result.add(AGG_AGGREGATIONS, aggregationsObject);
                 parent.add(resultingColumnId, result);
-                dateIntervalType = DateIntervalType.valueOf(intervalSize);
             }
             
             // Dynamic grouping -> use date histograms.
@@ -287,9 +287,39 @@ public class AggregationSerializer extends AbstractAdapter<AggregationSerializer
         }
     }
     
-    private String buildDateFormatScript(String sourceId, DateIntervalType intervalType) {
-        // TODO: Use date format pattern from dateIntervalType provided
-        return MessageFormat.format("new Date(doc[\"{0}\"].value).format(\"{1}\")", sourceId, "MM");
+    private String buildFixedDateFormatScript(String sourceId, DateIntervalType intervalType) {
+        // Supported intervals for FIXED strategy - @see DateIntervalType.FIXED_INTERVALS_SUPPORTED
+        String script = "new Date(doc[\"{0}\"].value).format(\"{1}\")";
+        String pattern = null;
+        switch (intervalType) {
+            case QUARTER:
+                // For quarters use this pseudocode script: <code>quarter = round-up(date.month / 3)</code>
+                script = "ceil(new Date(doc[\"{0}\"].value).format(\"{1}\").toInteger() / 3).toInteger()";
+                pattern = "M";
+                break;
+            case MONTH:
+                pattern = "MM";
+                break;
+            case DAY_OF_WEEK:
+                // Consider that scripts are executed in Groovy language, so the Date class uses SimpleDateFormat for formatting the value.
+                // As SimpleDateFormat considers first day of week on monday, and we need it to be sunday, let's do the trick by 
+                // parsing the date and increment it by one day (next function), then we can extract the day of week using "uu" pattern.
+                script = "new Date(doc[\"{0}\"].value).next().format(\"{1}\")";
+                pattern = "uu";
+                break;
+            case HOUR:
+                pattern = "HH";
+                break;
+            case MINUTE:
+                pattern = "mm";
+                break;
+            case SECOND:
+                pattern = "ss";
+                break;
+            default:
+                throw new UnsupportedOperationException("Fixed grouping strategy by interval type " + intervalType.name() + " is not supported.");
+        }
+        return MessageFormat.format(script, sourceId, pattern);
     }
 
 

@@ -17,6 +17,8 @@ package org.dashbuilder.dataprovider.backend.elasticsearch;
 
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetFactory;
+import org.dashbuilder.dataset.date.DayOfWeek;
+import org.dashbuilder.dataset.date.Month;
 import org.dashbuilder.dataset.sort.SortOrder;
 import org.junit.Before;
 import org.junit.Test;
@@ -133,8 +135,6 @@ public class ElasticSearchDataSetDatesTest extends ElasticSearchDataSetTestBase 
                         .column(EL_EXAMPLE_COLUMN_AMOUNT, SUM, "totalAmount")
                         .buildLookup());
 
-        printDataSet(result);
-        
         assertDataSetValues(result, dataSetFormatter, new String[][]{
                 {"1", "3.00", "2,324.20"},
                 {"2", "6.00", "2,885.57"},
@@ -148,6 +148,179 @@ public class ElasticSearchDataSetDatesTest extends ElasticSearchDataSetTestBase 
                 {"10", "3.00", "1,366.40"},
                 {"11", "3.00", "1,443.75"},
                 {"12", "4.00", "2,520.88"}
+        }, 0);
+    }
+
+    @Test
+    public void testGroupByMonthReverse() throws Exception {
+        DataSet result = dataSetManager.lookupDataSet(
+                DataSetFactory.newDataSetLookupBuilder()
+                        .dataset(EL_DATASET_UUID)
+                        .group(EL_EXAMPLE_COLUMN_DATE).fixed(MONTH, true).desc()
+                        .column(EL_EXAMPLE_COLUMN_DATE, "Period")
+                        .column(COUNT, "Occurrences")
+                        .column(EL_EXAMPLE_COLUMN_AMOUNT, SUM, "totalAmount")
+                        .buildLookup());
+
+        assertDataSetValues(result, dataSetFormatter, new String[][]{
+                {"12", "4.00", "2,520.88"},
+                {"11", "3.00", "1,443.75"},
+                {"10", "3.00", "1,366.40"},
+                {"9", "3.00", "693.35"},
+                {"8", "2.00", "452.25"},
+                {"7", "4.00", "2,354.04"},
+                {"6", "9.00", "4,113.87"},
+                {"5", "5.00", "2,503.34"},
+                {"4", "3.00", "2,160.06"},
+                {"3", "5.00", "2,413.45"},
+                {"2", "6.00", "2,885.57"},
+                {"1", "3.00", "2,324.20"}
+        }, 0);
+    }
+
+    /*
+    {
+      "from": 0,
+      "size": 0,
+      "aggregations": {
+        "date": {
+          "terms": {
+            "script": "new Date(doc[\"date\"].value).format(\"MM\")",
+            "order": {"sortOrder": "asc"},
+            "size": 0,
+            "min_doc_count": 0
+          },
+          "aggregations": {
+            "sortOrder" : {
+              "terms" : { "script" : "new Date(doc[\"date\"].value).format(\"MM\").toInteger() - 11"} 
+            },
+            "Occurrences": {"value_count": {"field": "id"}},
+            "totalAmount": {"sum": {"field": "amount"}}
+          }
+        }
+      }
+    }
+     */
+    // TODO @Test
+    public void testGroupByMonthFirstMonth() throws Exception {
+        DataSet result = dataSetManager.lookupDataSet(
+                DataSetFactory.newDataSetLookupBuilder()
+                        .dataset(EL_DATASET_UUID)
+                        .group(EL_EXAMPLE_COLUMN_DATE).fixed(MONTH, true).firstMonth(Month.NOVEMBER)
+                        .column(EL_EXAMPLE_COLUMN_DATE, "Period")
+                        .column(COUNT, "Occurrences")
+                        .column(EL_EXAMPLE_COLUMN_AMOUNT, SUM, "totalAmount")
+                        .buildLookup());
+
+        printDataSet(result);
+        
+        assertDataSetValues(result, dataSetFormatter, new String[][]{
+                {"11", "3.00", "1,443.75"},
+                {"12", "4.00", "2,520.88"},
+                {"1", "3.00", "2,324.20"},
+                {"2", "6.00", "2,885.57"},
+                {"3", "5.00", "1,012.55"},
+                {"4", "3.00", "1,061.06"},
+                {"5", "5.00", "2,503.34"},
+                {"6", "9.00", "4,113.87"},
+                {"7", "4.00", "2,354.04"},
+                {"8", "2.00", "452.25"},
+                {"9", "3.00", "693.35"},
+                {"10", "3.00", "1,366.40"}
+        }, 0);
+    }
+
+    // TODO @Test
+    public void testGroupByMonthFirstMonthReverse() throws Exception {
+        DataSet result = dataSetManager.lookupDataSet(
+                DataSetFactory.newDataSetLookupBuilder()
+                        .dataset(EL_DATASET_UUID)
+                        .group(EL_EXAMPLE_COLUMN_DATE).fixed(MONTH, true).desc().firstMonth(Month.MARCH)
+                        .column(EL_EXAMPLE_COLUMN_DATE, "Period")
+                        .column(COUNT, "Occurrences")
+                        .column(EL_EXAMPLE_COLUMN_AMOUNT, SUM, "totalAmount")
+                        .buildLookup());
+
+        //printDataSet(result);
+        assertDataSetValues(result, dataSetFormatter, new String[][]{
+                {"3", "5.00", "1,012.55"},
+                {"2", "6.00", "2,885.57"},
+                {"1", "3.00", "2,324.20"},
+                {"12", "4.00", "2,520.88"},
+                {"11", "3.00", "1,443.75"},
+                {"10", "3.00", "1,366.40"},
+                {"9", "3.00", "693.35"},
+                {"8", "2.00", "452.25"},
+                {"7", "4.00", "2,354.04"},
+                {"6", "9.00", "4,113.87"},
+                {"5", "5.00", "2,503.34"},
+                {"4", "3.00", "1,061.06"}
+        }, 0);
+    }
+
+    @Test
+    public void testGroupByWeek() throws Exception {
+        DataSet result = dataSetManager.lookupDataSet(
+                DataSetFactory.newDataSetLookupBuilder()
+                        .dataset(EL_DATASET_UUID)
+                        .group(EL_EXAMPLE_COLUMN_DATE).fixed(DAY_OF_WEEK, true)
+                        .column(EL_EXAMPLE_COLUMN_DATE, "Period")
+                        .column(COUNT, "Occurrences")
+                        .column(EL_EXAMPLE_COLUMN_AMOUNT, SUM, "totalAmount")
+                        .buildLookup().cloneInstance());
+
+        assertDataSetValues(result, dataSetFormatter, new String[][]{
+                {"1", "7.00", "4,245.55"},
+                {"2", "6.00", "2,278.07"},
+                {"3", "7.00", "3,932.06"},
+                {"4", "7.00", "2,965.08"},
+                {"5", "5.00", "2,759.12"},
+                {"6", "12.00", "5,170.74"},
+                {"7", "6.00", "3,880.54"}
+        }, 0);
+    }
+
+    // TODO @Test
+    public void testGroupByWeekFirstDayMonday() throws Exception {
+        DataSet result = dataSetManager.lookupDataSet(
+                DataSetFactory.newDataSetLookupBuilder()
+                        .dataset(EL_DATASET_UUID)
+                        .group(EL_EXAMPLE_COLUMN_DATE).fixed(DAY_OF_WEEK, true).firstDay(DayOfWeek.MONDAY)
+                        .column(EL_EXAMPLE_COLUMN_DATE, "Period")
+                        .column(COUNT, "Occurrences")
+                        .column(EL_EXAMPLE_COLUMN_AMOUNT, SUM, "totalAmount")
+                        .buildLookup().cloneInstance());
+
+        //printDataSet(result);
+        assertDataSetValues(result, dataSetFormatter, new String[][]{
+                {"2", "10.00", "3,904.17"},
+                {"3", "8.00", "4,525.69"},
+                {"4", "7.00", "4,303.14"},
+                {"5", "4.00", "1,021.95"},
+                {"6", "8.00", "3,099.08"},
+                {"7", "5.00", "2,012.05"},
+                {"1", "8.00", "3,865.18"}
+        }, 0);
+    }
+
+    @Test
+    public void testGroupByQuarter() throws Exception {
+        DataSet result = dataSetManager.lookupDataSet(
+                DataSetFactory.newDataSetLookupBuilder()
+                        .dataset(EL_DATASET_UUID)
+                        .group(EL_EXAMPLE_COLUMN_DATE).fixed(QUARTER, true)
+                        .column(EL_EXAMPLE_COLUMN_DATE, "Period")
+                        .column(COUNT, "Occurrences")
+                        .column(EL_EXAMPLE_COLUMN_AMOUNT, SUM, "totalAmount")
+                        .buildLookup().cloneInstance());
+
+        printDataSet(result);
+        
+        assertDataSetValues(result, dataSetFormatter, new String[][]{
+                {"1", "14.00", "7,623.22"},
+                {"2", "17.00", "8,777.27"},
+                {"3", "9.00", "3,499.64"},
+                {"4", "10.00", "5,331.03"}
         }, 0);
     }
 }
