@@ -133,6 +133,7 @@ public class GoogleBarChartDisplayer extends GoogleXAxisChartDisplayer {
             options.setAnimation(anim);
             // TODO: options.set3D(displayerSettings.is3d());
             options.setChartArea(createChartArea());
+            options.setColors(createColorArray(googleTable));
             return options;
         }
     }

@@ -101,11 +101,8 @@ public class VerticalServerMetrics extends Composite {
                         .width(165).height(80)
                         .margins(5, 5, 30, 5)
                         .legendOff()
-                        .refreshOn(this.refreshInterval, false)
                         .buildSettings());
 
-        addDisplayer(serverCPU, TOOLTIP_CPU);
-        
         // Used memory
         Displayer serverMemory = DisplayerHelper.lookupDisplayer(
                 DisplayerSettingsFactory.newAreaChartSettings()
@@ -121,10 +118,7 @@ public class VerticalServerMetrics extends Composite {
                         .width(165).height(80)
                         .margins(5, 5, 30, 5)
                         .legendOff()
-                        .refreshOn(this.refreshInterval, false)
                         .buildSettings());
-
-        addDisplayer(serverMemory, TOOLTIP_USED_MEMORY);
 
         // TX/RX
         Displayer serverNetwork = DisplayerHelper.lookupDisplayer(
@@ -142,18 +136,15 @@ public class VerticalServerMetrics extends Composite {
                         .legendOff()
                         .width(165).height(80)
                         .margins(5, 5, 30, 5)
-                        .refreshOn(this.refreshInterval, false)
                         .vertical()
                         .buildSettings());
-
-        addDisplayer(serverNetwork, TOOLTIP_NET_BW);
 
         // Processes
         Displayer serverProcessesRunning = DisplayerHelper.lookupDisplayer(
                 DisplayerSettingsFactory.newBarChartSettings()
                         .dataset(METRICS_DATASET_UUID)
                         .filter(COLUMN_SERVER, equalsTo(server))
-                        .filter(COLUMN_TIMESTAMP, timeFrame("-1second"))
+                        .filter(COLUMN_TIMESTAMP, timeFrame("-2second"))
                         .group(COLUMN_TIMESTAMP).dynamic(1, SECOND, true)
                         .column(COLUMN_TIMESTAMP)
                         .column(COLUMN_PROCESSES_RUNNING, MAX, "Running processes")
@@ -164,25 +155,26 @@ public class VerticalServerMetrics extends Composite {
                         .legendOff()
                         .width(165).height(80)
                         .margins(5, 5, 30, 5)
-                        .refreshOn(this.refreshInterval, false)
                         .buildSettings());
-        
-        addDisplayer(serverProcessesRunning, TOOLTIP_PROCESSES);
 
         // Disk
         Displayer serverDisk = DisplayerHelper.lookupDisplayer(
                 DisplayerSettingsFactory.newTableSettings()
                         .dataset(METRICS_DATASET_UUID)
                         .filter(COLUMN_SERVER, equalsTo(server))
-                        .filter(COLUMN_TIMESTAMP, timeFrame("-1second"))
+                        .filter(COLUMN_TIMESTAMP, timeFrame("-2second"))
                         .column(COLUMN_DISK_FREE, "Free disk (Mb)")
                         .column(COLUMN_DISK_USED, "Used disk (Mb)")
+                        .rowNumber(1)
                         .title("Disk usage")
                         .titleVisible(false)
                         .tableWidth(180)
-                        .refreshOn(this.refreshInterval, false)
                         .buildSettings());
-        
+
+        addDisplayer(serverCPU, TOOLTIP_CPU);
+        addDisplayer(serverMemory, TOOLTIP_USED_MEMORY);
+        addDisplayer(serverNetwork, TOOLTIP_NET_BW);
+        addDisplayer(serverProcessesRunning, TOOLTIP_PROCESSES);
         addDisplayer(serverDisk, TOOLTIP_DISK);
 
         // Add the click handler for server details action.
@@ -196,7 +188,6 @@ public class VerticalServerMetrics extends Composite {
         
         // Draw the charts and enable automatic refresh.
         displayerCoordinator.drawAll();
-        displayerCoordinator.refreshOnAll();
     }
 
     private void addDisplayer(Displayer displayer, String toolTipText) {
@@ -222,7 +213,6 @@ public class VerticalServerMetrics extends Composite {
         mainPanel.getElement().getStyle().setOpacity(0.3);
         tooltip.setText(server + " is down");
         isOff = true;
-        displayerCoordinator.refreshOffAll();
         return this;
     }
 
@@ -234,10 +224,22 @@ public class VerticalServerMetrics extends Composite {
         mainPanel.getElement().getStyle().setOpacity(1);
         toolTipDefaultText();
         isOff = false;
-        displayerCoordinator.refreshOnAll();
         return this;
     }
-    
+
+    /**
+     * redraw
+     */
+    public VerticalServerMetrics redraw() {
+        displayerCoordinator.redrawAll();
+        return this;
+    }
+
+    public VerticalServerMetrics dispose() {
+        this.displayerCoordinator.closeAll();
+        return this;
+    }
+
     private void toolTipDefaultText() {
         tooltip.setText("Click to get more details");
     }

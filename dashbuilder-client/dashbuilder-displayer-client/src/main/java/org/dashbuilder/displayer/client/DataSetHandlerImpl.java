@@ -61,7 +61,9 @@ public class DataSetHandlerImpl implements DataSetHandler {
 
     public void limitDataSetRows(int offset, int rows) {
         lookupCurrent.setRowOffset(offset);
-        lookupCurrent.setNumberOfRows(rows);
+        if (lookupCurrent.getNumberOfRows() != -1 && lookupCurrent.getNumberOfRows() > rows) {
+            lookupCurrent.setNumberOfRows(rows);
+        }
     }
 
     public DataSetGroup getGroupOperation(String columnId) {

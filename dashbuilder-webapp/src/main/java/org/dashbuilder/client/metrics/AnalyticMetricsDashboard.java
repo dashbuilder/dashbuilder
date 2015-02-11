@@ -79,7 +79,7 @@ public class AnalyticMetricsDashboard extends Composite {
     DisplayerCoordinator displayerCoordinator = new DisplayerCoordinator();
 
     public String getTitle() {
-        return "System Metrics Dashboard (Analytic)";
+        return "System Metrics (Analytic)";
     }
 
     public AnalyticMetricsDashboard() {

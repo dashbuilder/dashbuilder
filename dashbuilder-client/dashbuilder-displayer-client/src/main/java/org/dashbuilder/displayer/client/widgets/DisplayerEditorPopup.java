@@ -57,14 +57,14 @@ public class DisplayerEditorPopup extends Composite {
         popup.show();
     }
 
-    @UiHandler("close")
-    void close(final ClickEvent event) {
+    @UiHandler("cancelButton")
+    void cancel(final ClickEvent event) {
         popup.hide();
         editor.close();
     }
 
-    @UiHandler("save")
-    void save(final ClickEvent event) {
+    @UiHandler("okButton")
+    void ok(final ClickEvent event) {
         popup.hide();
         editor.save();
     }

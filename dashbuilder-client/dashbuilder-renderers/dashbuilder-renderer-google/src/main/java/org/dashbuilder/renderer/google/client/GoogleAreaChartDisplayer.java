@@ -111,6 +111,7 @@ public class GoogleAreaChartDisplayer extends GoogleXAxisChartDisplayer {
         if ( displayerSettings.isYAxisShowLabels() ) options.setVAxis( createVAxis() );
         options.setAnimation(anim);
         options.setChartArea(createChartArea());
+        options.setColors(createColorArray(googleTable));
         return options;
     }
 }

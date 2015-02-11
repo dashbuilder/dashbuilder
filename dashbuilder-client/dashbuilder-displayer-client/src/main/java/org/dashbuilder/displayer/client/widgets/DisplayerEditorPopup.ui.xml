@@ -24,16 +24,12 @@
 
   <g:HTMLPanel>
     <b:Modal ui:field="popup" backdrop="STATIC" width="950px" maxHeigth="450px" keyboard="true" animation="true">
-
-      <dashb:DisplayerEditor ui:field="editor" />
-
+      <g:FlowPanel>
+        <dashb:DisplayerEditor ui:field="editor" />
+      </g:FlowPanel>
       <b:ModalFooter>
-        <b:Button icon="SAVE" type="PRIMARY" ui:field="save">
-          Save
-        </b:Button>
-        <b:Button icon="EYE_CLOSE" type="PRIMARY" ui:field="close">
-          Close
-        </b:Button>
+        <b:Button ui:field="okButton" icon="PLUS_SIGN" type="PRIMARY" text="Ok"></b:Button>
+        <b:Button ui:field="cancelButton" type="DEFAULT" text="Cancel"></b:Button>
       </b:ModalFooter>
     </b:Modal>
   </g:HTMLPanel>

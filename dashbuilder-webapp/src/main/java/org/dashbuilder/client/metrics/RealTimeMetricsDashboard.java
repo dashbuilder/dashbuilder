@@ -41,9 +41,10 @@ public class RealTimeMetricsDashboard extends Composite {
     private static final RealTimeMetricsDashboardBinder uiBinder = GWT.create(RealTimeMetricsDashboardBinder.class);
 
     public static final String METRICS_DATASET_UUID = "clusterMetrics";
-    public static final String[] METRICS_DATASET_DEFAULT_SERVERS = new String[] {"server1","server2","server3","server4","server5"};
+    public static final String[] METRICS_DATASET_DEFAULT_SERVERS = new String[] {"server1","server2","server3","server4"};
     public static final String BACKGROUND_COLOR = "#F8F8FF";
     private static final int DS_LOOKUP_TIMER_DELAY = 1000;
+    private static final int REFRESH_TIMER_DELAY = 3000;
     private static final int NOTIFICATIONS_TIMER_DELAY = 3000;
     private static final String NOTIFICATIONS_SERVER_OFF_COLOR = "#CD5C5C";
     private static final String NOTIFICATIONS_SERVER_ON_COLOR = "#90EE90";
@@ -65,35 +66,48 @@ public class RealTimeMetricsDashboard extends Composite {
     @UiField
     FlowPanel notificationsLabelPanel;
 
-    private boolean isViewingVerticalSummary;
-    private boolean isViewingServerDetails;
-    
     private String[] servers;
     final List<String> dataSetServers = new ArrayList<String>();
     private VerticalServerMetrics[] verticalServerMetrics;
     Timer dataSetLookupTimer;
+    Timer refreshTimer;
 
     public String getTitle() {
-        return "System Metrics Dashboard (Real-time)";
+        return "System Metrics (Real-time)";
     }
 
     public RealTimeMetricsDashboard() {
         this(null);
     }
-    
+
     public RealTimeMetricsDashboard(String[] servers) {
         this.servers = servers;
-        
+
         // Init the dashboard from the UI Binder template
         initWidget(uiBinder.createAndBindUi(this));
+    }
 
-        
-        
+    @Override
+    protected void onLoad() {
+        init();
+    }
+
+    @Override
+    protected void onUnload() {
+        dispose();
+    }
+
+    public void init() {
+        refreshTimer = new Timer() {
+            public void run() {
+                refreshServerWidgets();
+                refreshTimer.schedule(REFRESH_TIMER_DELAY);
+            }
+        };
         dataSetLookupTimer = new Timer() {
             @Override
             public void run() {
                 updateDataSetServers(new Runnable() {
-                    @Override
                     public void run() {
                         checkServersAlive();
                     }
@@ -109,10 +123,24 @@ public class RealTimeMetricsDashboard extends Composite {
                 dataSetServers.add(server);
             }
         }
-        
+
         // Initially show vertical servers summary.
         showVerticalServersSummary();
         dataSetLookupTimer.schedule(DS_LOOKUP_TIMER_DELAY);
+        refreshTimer.schedule(REFRESH_TIMER_DELAY);
+    }
+
+    public void dispose() {
+        dataSetLookupTimer.cancel();
+        refreshTimer.cancel();
+        if (verticalServerMetrics != null && verticalServerMetrics.length > 0) {
+            for (VerticalServerMetrics verticalServerMetric : verticalServerMetrics) {
+                if (verticalServerMetric != null && verticalServerMetric.isOn()) {
+                    verticalServerMetric.off();
+                    verticalServerMetric.dispose();
+                }
+            }
+        }
     }
 
     public void showVerticalServersSummary() {
@@ -127,9 +155,7 @@ public class RealTimeMetricsDashboard extends Composite {
                 summaryArea.add(this.verticalServerMetrics[x]);
             }
         }
-        isViewingVerticalSummary = true;
         summaryArea.setVisible(true);
-
     }
     
     private VerticalServerMetrics getVerticalServerMetrics(String server) {
@@ -142,9 +168,9 @@ public class RealTimeMetricsDashboard extends Composite {
     }
 
     public void showServerDetails(String server) {
+        dispose();
         hideAll();
-        DetailedServerMetrics detailedServerMetrics = new DetailedServerMetrics(this, server);
-        isViewingServerDetails = true;
+        DetailedServerMetrics detailedServerMetrics = new DetailedServerMetrics(this, server, 3);
         serverDetailsArea.add(detailedServerMetrics);
         serverDetailsArea.setVisible(true);
     }
@@ -152,8 +178,6 @@ public class RealTimeMetricsDashboard extends Composite {
     private void hideAll() {
         hide(serverDetailsArea);
         hide(summaryArea);
-        isViewingVerticalSummary = false;
-        isViewingServerDetails = false;
     }
 
     private void hide(Widget w) {
@@ -189,8 +213,6 @@ public class RealTimeMetricsDashboard extends Composite {
                 }
             }
         }
-        
-        
     }
     
     private void off(String server) {
@@ -222,8 +244,18 @@ public class RealTimeMetricsDashboard extends Composite {
         timer1.schedule(NOTIFICATIONS_TIMER_DELAY);
     }
     
+    private synchronized void refreshServerWidgets() {
+        if (verticalServerMetrics != null && verticalServerMetrics.length > 0) {
+            for (VerticalServerMetrics verticalServerMetric : verticalServerMetrics) {
+                if (verticalServerMetric != null && verticalServerMetric.isOn()) {
+                    verticalServerMetric.redraw();
+                }
+            }
+        }
+    }
+
     private synchronized void updateDataSetServers(final Runnable listener) {
-        
+
         final DataSetLookup lookup = DataSetFactory.newDataSetLookupBuilder()
             .dataset(METRICS_DATASET_UUID)
             .filter(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP, timeFrame("-1second"))
@@ -268,7 +300,5 @@ public class RealTimeMetricsDashboard extends Composite {
         } catch (Exception e) {
             GWT.log("Error looking up dataset with UUID [" + METRICS_DATASET_UUID + "]");
         }
-
     }
-    
 }

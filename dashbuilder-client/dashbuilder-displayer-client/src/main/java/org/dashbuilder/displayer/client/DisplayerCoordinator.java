@@ -76,9 +76,9 @@ public class DisplayerCoordinator {
         }
     }
 
-    public void refreshOffAll() {
+    public void closeAll() {
         for (Displayer displayer : displayerList) {
-            displayer.refreshOff();
+            displayer.close();;
         }
     }
 

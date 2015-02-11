@@ -110,6 +110,7 @@ public class GoogleLineChartDisplayer extends GoogleXAxisChartDisplayer {
         options.setLegend( createChartLegend( displayerSettings ) );
         options.setAnimation(anim);
         options.setChartArea(createChartArea());
+        options.setColors(createColorArray(googleTable));
         return options;
     }
 }

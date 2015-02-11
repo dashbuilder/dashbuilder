@@ -22,6 +22,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.*;
 import org.dashbuilder.client.metrics.RealTimeMetricsDashboard;
 import org.dashbuilder.client.metrics.MetricsDashboardClientBundle;
@@ -87,7 +88,8 @@ public class DetailedServerMetrics extends Composite {
 
     private int refreshInterval;
     private boolean isChartMode;
-    
+    Timer refreshTimer;
+
     public String getTitle() {
         return "Server metrics (Vertical)";
     }
@@ -108,7 +110,7 @@ public class DetailedServerMetrics extends Composite {
         backIcon.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent clickEvent) {
-                metricsDashboard.showVerticalServersSummary();
+                metricsDashboard.init();
             }
         });
         
@@ -119,13 +121,30 @@ public class DetailedServerMetrics extends Composite {
                 else enableChartMode();
             }
         });
-        
+    }
+
+    @Override
+    protected void onLoad() {
         // By default use charts mode.
         enableChartMode();
 
         // Draw the charts and enable automatic refresh.
         displayerCoordinator.drawAll();
-        displayerCoordinator.refreshOnAll();
+
+        // Refresh timer
+        refreshTimer = new Timer() {
+            public void run() {
+                displayerCoordinator.redrawAll();
+                refreshTimer.schedule(refreshInterval);
+            }
+        };
+        refreshTimer.schedule(refreshInterval);
+    }
+
+    @Override
+    protected void onUnload() {
+        refreshTimer.cancel();
+        displayerCoordinator.closeAll();
     }
 
     protected void buildServerDetailsDisplayers(RealTimeMetricsDashboard metricsDashboard, String server) {
@@ -139,7 +158,6 @@ public class DetailedServerMetrics extends Composite {
                         .titleVisible(false)
                         .backgroundColor(BACKGROUND_COLOR)
                         .width(200).height(200)
-                        .refreshOn(this.refreshInterval, false)
                         .meter(0, 50, 80, 100)
                         .buildSettings());
 
@@ -154,11 +172,10 @@ public class DetailedServerMetrics extends Composite {
                         .backgroundColor(BACKGROUND_COLOR)
                         .width(200).height(200)
                         .meter(0, 50, 80, 100)
-                        .refreshOn(this.refreshInterval, false)
                         .buildSettings());
 
         serverMemory = DisplayerHelper.lookupDisplayer(
-                DisplayerSettingsFactory.newBarChartSettings()
+                DisplayerSettingsFactory.newLineChartSettings()
                         .dataset(METRICS_DATASET_UUID)
                         .filter(COLUMN_SERVER, equalsTo(server))
                         .filter(COLUMN_TIMESTAMP, timeFrame("begin[minute] till now"))
@@ -171,7 +188,6 @@ public class DetailedServerMetrics extends Composite {
                         .backgroundColor(BACKGROUND_COLOR)
                         .width(650).height(190)
                         .margins(20, 30, 30, 10)
-                        .refreshOn(this.refreshInterval, false)
                         .buildSettings());
 
         serverNetwork = DisplayerHelper.lookupDisplayer(
@@ -188,7 +204,6 @@ public class DetailedServerMetrics extends Composite {
                         .backgroundColor(BACKGROUND_COLOR)
                         .width(300).height(190)
                         .margins(20, 30, 30, 10)
-                        .refreshOn(this.refreshInterval, false)
                         .buildSettings());
 
         serverDisk = DisplayerHelper.lookupDisplayer(
@@ -206,7 +221,6 @@ public class DetailedServerMetrics extends Composite {
                         .legendOff()
                         .width(170).height(170)
                         .margins(0, 0, 0, 0)
-                        .refreshOn(this.refreshInterval, false)
                         .buildSettings());
 
         serverProcessesRunning = DisplayerHelper.lookupDisplayer(
@@ -230,7 +244,6 @@ public class DetailedServerMetrics extends Composite {
                         .title("Sleeping processes")
                         .titleVisible(false)
                         .tableWidth(100)
-                        .refreshOn(this.refreshInterval, false)
                         .buildSettings());
 
         serverTable = DisplayerHelper.lookupDisplayer(
@@ -254,7 +267,6 @@ public class DetailedServerMetrics extends Composite {
                         .title("Real-time " + server + " metrics")
                         .titleVisible(false)
                         .tableWidth(1020)
-                        .refreshOn(this.refreshInterval, false)
                         .buildSettings());
 
         displayerCoordinator.addDisplayer(serverCPU0);
