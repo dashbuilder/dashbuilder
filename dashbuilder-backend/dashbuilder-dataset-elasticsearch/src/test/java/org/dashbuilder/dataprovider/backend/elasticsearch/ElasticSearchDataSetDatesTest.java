@@ -135,7 +135,6 @@ public class ElasticSearchDataSetDatesTest extends ElasticSearchDataSetTestBase 
                         .column(EL_EXAMPLE_COLUMN_AMOUNT, SUM, "totalAmount")
                         .buildLookup());
 
-        printDataSet(result);
         assertDataSetValues(result, dataSetFormatter, new String[][]{
                 {"1", "3.00", "2,324.20"},
                 {"2", "6.00", "2,885.57"},
@@ -244,7 +243,6 @@ public class ElasticSearchDataSetDatesTest extends ElasticSearchDataSetTestBase 
                         .column(EL_EXAMPLE_COLUMN_AMOUNT, SUM, "totalAmount")
                         .buildLookup().cloneInstance());
 
-        //printDataSet(result);
         assertDataSetValues(result, dataSetFormatter, new String[][]{
                 {"2", "6.00", "2,278.07"},
                 {"3", "7.00", "3,932.06"},
@@ -267,7 +265,6 @@ public class ElasticSearchDataSetDatesTest extends ElasticSearchDataSetTestBase 
                         .column(EL_EXAMPLE_COLUMN_AMOUNT, SUM, "totalAmount")
                         .buildLookup().cloneInstance());
 
-        //printDataSet(result);
         assertDataSetValues(result, dataSetFormatter, new String[][]{
                 {"2", "6.00", "2,278.07"},
                 {"1", "7.00", "4,245.55"},
@@ -313,8 +310,6 @@ public class ElasticSearchDataSetDatesTest extends ElasticSearchDataSetTestBase 
                         .column(EL_EXAMPLE_COLUMN_AMOUNT, SUM, "totalAmount")
                         .buildLookup().cloneInstance());
 
-        printDataSet(result);
-        
         assertDataSetValues(result, dataSetFormatter, new String[][]{
                 {"1", "14.00", "7,623.22"},
                 {"2", "17.00", "8,777.27"},

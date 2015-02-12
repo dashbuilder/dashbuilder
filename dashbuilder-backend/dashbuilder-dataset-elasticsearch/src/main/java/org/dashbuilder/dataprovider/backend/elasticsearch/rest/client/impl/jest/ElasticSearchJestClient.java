@@ -259,7 +259,7 @@ public class ElasticSearchJestClient implements ElasticSearchClient<ElasticSearc
         Search searchRequest = searchRequestBuilder.build();
         JestResult result = null;
         try {
-            System.out.println(serializedSearchQuery);
+            //System.out.println(serializedSearchQuery);
             result = client.execute(searchRequest);
         } catch (Exception e) {
             throw new ElasticSearchClientGenericException("An error ocurred during search operation.", e);
@@ -269,7 +269,7 @@ public class ElasticSearchJestClient implements ElasticSearchClient<ElasticSearc
             String errorMessage = resultObject.get("error").getAsString();
             throw new ElasticSearchClientGenericException("An error ocurred during search operation. This is the internal error: \n" + errorMessage);
         }
-        System.out.println(resultObject.toString());
+        //System.out.println(resultObject.toString());
         SearchResponse searchResult = gson.fromJson(resultObject, SearchResponse.class);
         return searchResult;
     }
