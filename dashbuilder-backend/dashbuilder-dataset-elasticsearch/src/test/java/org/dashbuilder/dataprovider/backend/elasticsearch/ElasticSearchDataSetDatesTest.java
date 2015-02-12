@@ -135,6 +135,7 @@ public class ElasticSearchDataSetDatesTest extends ElasticSearchDataSetTestBase 
                         .column(EL_EXAMPLE_COLUMN_AMOUNT, SUM, "totalAmount")
                         .buildLookup());
 
+        printDataSet(result);
         assertDataSetValues(result, dataSetFormatter, new String[][]{
                 {"1", "3.00", "2,324.20"},
                 {"2", "6.00", "2,885.57"},
@@ -178,30 +179,7 @@ public class ElasticSearchDataSetDatesTest extends ElasticSearchDataSetTestBase 
         }, 0);
     }
 
-    /*
-    {
-      "from": 0,
-      "size": 0,
-      "aggregations": {
-        "date": {
-          "terms": {
-            "script": "new Date(doc[\"date\"].value).format(\"MM\")",
-            "order": {"sortOrder": "asc"},
-            "size": 0,
-            "min_doc_count": 0
-          },
-          "aggregations": {
-            "sortOrder" : {
-              "terms" : { "script" : "new Date(doc[\"date\"].value).format(\"MM\").toInteger() - 11"} 
-            },
-            "Occurrences": {"value_count": {"field": "id"}},
-            "totalAmount": {"sum": {"field": "amount"}}
-          }
-        }
-      }
-    }
-     */
-    // TODO @Test
+    @Test
     public void testGroupByMonthFirstMonth() throws Exception {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
@@ -212,15 +190,13 @@ public class ElasticSearchDataSetDatesTest extends ElasticSearchDataSetTestBase 
                         .column(EL_EXAMPLE_COLUMN_AMOUNT, SUM, "totalAmount")
                         .buildLookup());
 
-        printDataSet(result);
-        
         assertDataSetValues(result, dataSetFormatter, new String[][]{
                 {"11", "3.00", "1,443.75"},
                 {"12", "4.00", "2,520.88"},
                 {"1", "3.00", "2,324.20"},
                 {"2", "6.00", "2,885.57"},
-                {"3", "5.00", "1,012.55"},
-                {"4", "3.00", "1,061.06"},
+                {"3", "5.00", "2,413.45"},
+                {"4", "3.00", "2,160.06"},
                 {"5", "5.00", "2,503.34"},
                 {"6", "9.00", "4,113.87"},
                 {"7", "4.00", "2,354.04"},
@@ -230,7 +206,7 @@ public class ElasticSearchDataSetDatesTest extends ElasticSearchDataSetTestBase 
         }, 0);
     }
 
-    // TODO @Test
+    @Test
     public void testGroupByMonthFirstMonthReverse() throws Exception {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
@@ -241,9 +217,8 @@ public class ElasticSearchDataSetDatesTest extends ElasticSearchDataSetTestBase 
                         .column(EL_EXAMPLE_COLUMN_AMOUNT, SUM, "totalAmount")
                         .buildLookup());
 
-        //printDataSet(result);
         assertDataSetValues(result, dataSetFormatter, new String[][]{
-                {"3", "5.00", "1,012.55"},
+                {"3", "5.00", "2,413.45"},
                 {"2", "6.00", "2,885.57"},
                 {"1", "3.00", "2,324.20"},
                 {"12", "4.00", "2,520.88"},
@@ -254,33 +229,11 @@ public class ElasticSearchDataSetDatesTest extends ElasticSearchDataSetTestBase 
                 {"7", "4.00", "2,354.04"},
                 {"6", "9.00", "4,113.87"},
                 {"5", "5.00", "2,503.34"},
-                {"4", "3.00", "1,061.06"}
+                {"4", "3.00", "2,160.06"}
         }, 0);
     }
 
     @Test
-    public void testGroupByWeek() throws Exception {
-        DataSet result = dataSetManager.lookupDataSet(
-                DataSetFactory.newDataSetLookupBuilder()
-                        .dataset(EL_DATASET_UUID)
-                        .group(EL_EXAMPLE_COLUMN_DATE).fixed(DAY_OF_WEEK, true)
-                        .column(EL_EXAMPLE_COLUMN_DATE, "Period")
-                        .column(COUNT, "Occurrences")
-                        .column(EL_EXAMPLE_COLUMN_AMOUNT, SUM, "totalAmount")
-                        .buildLookup().cloneInstance());
-
-        assertDataSetValues(result, dataSetFormatter, new String[][]{
-                {"1", "7.00", "4,245.55"},
-                {"2", "6.00", "2,278.07"},
-                {"3", "7.00", "3,932.06"},
-                {"4", "7.00", "2,965.08"},
-                {"5", "5.00", "2,759.12"},
-                {"6", "12.00", "5,170.74"},
-                {"7", "6.00", "3,880.54"}
-        }, 0);
-    }
-
-    // TODO @Test
     public void testGroupByWeekFirstDayMonday() throws Exception {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
@@ -293,13 +246,59 @@ public class ElasticSearchDataSetDatesTest extends ElasticSearchDataSetTestBase 
 
         //printDataSet(result);
         assertDataSetValues(result, dataSetFormatter, new String[][]{
-                {"2", "10.00", "3,904.17"},
-                {"3", "8.00", "4,525.69"},
-                {"4", "7.00", "4,303.14"},
-                {"5", "4.00", "1,021.95"},
-                {"6", "8.00", "3,099.08"},
-                {"7", "5.00", "2,012.05"},
-                {"1", "8.00", "3,865.18"}
+                {"2", "6.00", "2,278.07"},
+                {"3", "7.00", "3,932.06"},
+                {"4", "7.00", "2,965.08"},
+                {"5", "5.00", "2,759.12"},
+                {"6", "12.00", "5,170.74"},
+                {"7", "6.00", "3,880.54"},
+                {"1", "7.00", "4,245.55"}
+        }, 0);
+    }
+
+    @Test
+    public void testGroupByWeekFirstDayMondayDesc() throws Exception {
+        DataSet result = dataSetManager.lookupDataSet(
+                DataSetFactory.newDataSetLookupBuilder()
+                        .dataset(EL_DATASET_UUID)
+                        .group(EL_EXAMPLE_COLUMN_DATE).fixed(DAY_OF_WEEK, true).firstDay(DayOfWeek.MONDAY).desc()
+                        .column(EL_EXAMPLE_COLUMN_DATE, "Period")
+                        .column(COUNT, "Occurrences")
+                        .column(EL_EXAMPLE_COLUMN_AMOUNT, SUM, "totalAmount")
+                        .buildLookup().cloneInstance());
+
+        //printDataSet(result);
+        assertDataSetValues(result, dataSetFormatter, new String[][]{
+                {"2", "6.00", "2,278.07"},
+                {"1", "7.00", "4,245.55"},
+                {"7", "6.00", "3,880.54"},
+                {"6", "12.00", "5,170.74"},
+                {"5", "5.00", "2,759.12"},
+                {"4", "7.00", "2,965.08"},
+                {"3", "7.00", "3,932.06"}
+        }, 0);
+    }
+
+    @Test
+    public void testGroupByWeekFirstDaySunday() throws Exception {
+        DataSet result = dataSetManager.lookupDataSet(
+                DataSetFactory.newDataSetLookupBuilder()
+                        .dataset(EL_DATASET_UUID)
+                        .group(EL_EXAMPLE_COLUMN_DATE).fixed(DAY_OF_WEEK, true).firstDay(DayOfWeek.SUNDAY)
+                        .column(EL_EXAMPLE_COLUMN_DATE, "Period")
+                        .column(COUNT, "Occurrences")
+                        .column(EL_EXAMPLE_COLUMN_AMOUNT, SUM, "totalAmount")
+                        .buildLookup().cloneInstance());
+
+        //printDataSet(result);
+        assertDataSetValues(result, dataSetFormatter, new String[][]{
+                {"1", "7.00", "4,245.55"},
+                {"2", "6.00", "2,278.07"},
+                {"3", "7.00", "3,932.06"},
+                {"4", "7.00", "2,965.08"},
+                {"5", "5.00", "2,759.12"},
+                {"6", "12.00", "5,170.74"},
+                {"7", "6.00", "3,880.54"}
         }, 0);
     }
 

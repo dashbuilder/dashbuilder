@@ -3,6 +3,7 @@ package org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.impl.jest
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
+import org.apache.commons.lang.ArrayUtils;
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.exception.ElasticSearchClientGenericException;
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.impl.jest.ElasticSearchJestClient;
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.model.SearchHitResponse;
@@ -12,6 +13,8 @@ import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.dataset.backend.BackendIntervalBuilderDynamicDate;
 import org.dashbuilder.dataset.backend.date.DateUtils;
+import org.dashbuilder.dataset.date.DayOfWeek;
+import org.dashbuilder.dataset.date.Month;
 import org.dashbuilder.dataset.def.ElasticSearchDataSetDef;
 import org.dashbuilder.dataset.group.*;
 import org.dashbuilder.dataset.impl.DataColumnImpl;
@@ -187,15 +190,28 @@ public class AggregationSerializer extends AbstractAdapter<AggregationSerializer
             if (GroupStrategy.FIXED.equals(columnGroup.getStrategy())) {
                 dateIntervalType = DateIntervalType.valueOf(intervalSize);
                 JsonObject subObject = new JsonObject();
-                String script = buildFixedDateFormatScript(sourceId, dateIntervalType);
-                subObject.addProperty(AGG_SCRIPT, script);
+                String[] scripts = buildIntervalExtractorScript(sourceId, columnGroup);
+                String valueScript = scripts[0];
+                String orderScript = scripts[1];
+                subObject.addProperty(AGG_SCRIPT, valueScript);
                 JsonObject orderObject = new JsonObject();
-                orderObject.addProperty(AGG_TERM, order);
+                if (orderScript == null) orderObject.addProperty(AGG_TERM, order);
+                else orderObject.addProperty("_sortOrder", AGG_ORDER_ASC);
                 subObject.add(AGG_ORDER, orderObject);
                 subObject.addProperty(AGG_SIZE, 0);
                 subObject.addProperty(AGG_MIN_DOC_COUNT, minDocCount);
                 JsonObject result = new JsonObject();
                 result.add(AGG_TERMS, subObject);
+                
+                if (orderScript != null) {
+                    JsonObject scriptOrderObject = new JsonObject();
+                    scriptOrderObject.addProperty("script",orderScript);
+                    JsonObject minOrderObject = new JsonObject();
+                    minOrderObject.add("min", scriptOrderObject);
+                    if (aggregationsObject == null) aggregationsObject = new JsonObject();
+                    aggregationsObject.add("_sortOrder", minOrderObject);
+                }
+                
                 if (aggregationsObject != null) result.add(AGG_AGGREGATIONS, aggregationsObject);
                 parent.add(resultingColumnId, result);
             }
@@ -287,7 +303,11 @@ public class AggregationSerializer extends AbstractAdapter<AggregationSerializer
         }
     }
     
-    private String buildFixedDateFormatScript(String sourceId, DateIntervalType intervalType) {
+    private String[] buildIntervalExtractorScript(String sourceId, ColumnGroup columnGroup) {
+        DateIntervalType intervalType = DateIntervalType.getByName(columnGroup.getIntervalSize());
+        Month firstMonth = columnGroup.getFirstMonthOfYear();
+        DayOfWeek firstDayOfWeek = columnGroup.getFirstDayOfWeek();
+        
         // Supported intervals for FIXED strategy - @see DateIntervalType.FIXED_INTERVALS_SUPPORTED
         String script = "new Date(doc[\"{0}\"].value).format(\"{1}\")";
         String pattern = null;
@@ -319,7 +339,38 @@ public class AggregationSerializer extends AbstractAdapter<AggregationSerializer
             default:
                 throw new UnsupportedOperationException("Fixed grouping strategy by interval type " + intervalType.name() + " is not supported.");
         }
-        return MessageFormat.format(script, sourceId, pattern);
+        
+        String valueScript = MessageFormat.format(script, sourceId, pattern);
+        
+        String orderScript = null;
+        
+        if (firstMonth != null && intervalType.equals(DateIntervalType.MONTH)) {
+            int firstMonthIndex = firstMonth.getIndex();
+            int[] positions = buildPositionsArray(firstMonthIndex, 12, columnGroup.isAscendingOrder());
+            orderScript = "month="+valueScript+".toInteger(); list = "+Arrays.toString(positions)+"; list.indexOf(month)";
+        }
+
+        if (firstDayOfWeek!= null && intervalType.equals(DateIntervalType.DAY_OF_WEEK)) {
+            int firstDayIndex = firstDayOfWeek.getIndex();
+            int[] positions = buildPositionsArray(firstDayIndex, 7, columnGroup.isAscendingOrder());
+            orderScript = "day="+valueScript+".toInteger(); list = "+Arrays.toString(positions)+"; list.indexOf(day)";
+        }
+        
+        return new String[] { valueScript, orderScript};
+    }
+    
+    private int[] buildPositionsArray(int firstElementIndex, int end, boolean asc) {
+        int[] positions = new int[end];
+
+        for (int x = 0, month = firstElementIndex; x < end; x++) {
+            if (month > end) month = 1;
+            if (month < 1 ) month = end;
+            positions[x] = month;
+            if (asc) month ++; else month--;
+        }
+        
+        return positions;
+        
     }
 
 
