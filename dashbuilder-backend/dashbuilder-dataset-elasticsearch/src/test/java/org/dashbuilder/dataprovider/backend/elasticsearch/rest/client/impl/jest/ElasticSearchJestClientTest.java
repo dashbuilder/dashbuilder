@@ -316,19 +316,6 @@ public class ElasticSearchJestClientTest {
         aggregationResult = gson.toJson(histogramAggreagation,  DataSetGroup.class);
         Assert.assertEquals(aggregationResult, "{\"aggregations\":{\"amount\":{\"histogram\":{\"field\":\"amount\",\"interval\":20,\"order\":{\"_key\":\"asc\"},\"min_doc_count\":0},\"aggregations\":{\"amount-max\":{\"max\":{\"field\":\"amount\"}},\"amount-min\":{\"min\":{\"field\":\"amount\"}}}}}}");
 
-        /* TODO
-
-        // Date Histogram aggregation.
-        DataSetGroup dateHistogramAggreagation = new DataSetGroup();
-        dateHistogramAggreagation.setDataSetUUID("testUUID");
-        dateHistogramAggreagation.setColumnGroup(new ColumnGroup("date", "dateGroupped", GroupStrategy.DYNAMIC, -1, DateIntervalType.YEAR.name()));
-        dateHistogramAggreagation.setJoin(false);
-        GroupFunction groupByCountFunction = new GroupFunction("amount", "amount-count", AggregateFunctionType.COUNT);
-        GroupFunction groupByMinFunction = new GroupFunction("amount", "amount-min", AggregateFunctionType.MIN);
-        dateHistogramAggreagation.addGroupFunction(groupByCountFunction, groupByMinFunction);
-        String aggregationResult = gson.toJson(dateHistogramAggreagation,  DataSetGroup.class);
-        System.out.println(aggregationResult); */
-        
     }
 
     @Test
@@ -448,24 +435,5 @@ public class ElasticSearchJestClientTest {
 
     }
 
-
-    // @Test
-    public void testSearchQuerySerializer() {
-
-        DataColumn deptColumn = new DataColumnImpl("departmentGrouped", ColumnType.LABEL);
-        DataColumn amounutCountColumn = new DataColumnImpl("amount-count", ColumnType.NUMBER);
-        DataColumn amounutMinColumn = new DataColumnImpl("amount-min", ColumnType.NUMBER);
-        List<DataColumn> columns = new LinkedList<DataColumn>();
-        columns.add(deptColumn);
-        columns.add(amounutCountColumn);
-        columns.add(amounutMinColumn);
-        GsonBuilder builder = new GsonBuilder();
-        SearchQuerySerializer searchQuerySerializer = new SearchQuerySerializer(metadata, definition, columns);
-        builder.registerTypeAdapter(DataSetGroup.class, searchQuerySerializer);
-        Gson gson = builder.create();
-        
-        // TODO ElasticSearchJestClient.SearchQuery searchQuery = new ElasticSearchJestClient.SearchQuery();
-
-    }
 
 }

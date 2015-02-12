@@ -1,9 +1,0 @@
-- Code
-    - Test -> Enable run EL server for running unit tests
-    - Review TODOs
-    - Run EL server in tests using java 1.6! -> MUST use EL 0.9.X
-    
-- Others
-    - Import EL native client classes and make them not processed by the compiler (mvn-compiler-plugin)
-    - Performance tests & profiling
-    - Optional: Refactor expensereports data examples and use common DataSetGroupTest & DataSetFilterTest

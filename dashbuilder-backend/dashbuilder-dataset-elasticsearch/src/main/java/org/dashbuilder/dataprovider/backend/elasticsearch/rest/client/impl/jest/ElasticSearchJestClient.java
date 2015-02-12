@@ -59,7 +59,6 @@ import java.util.*;
 @Named("elasticsearchJestClient")
 public class ElasticSearchJestClient implements ElasticSearchClient<ElasticSearchJestClient> {
 
-    public static final int RESPONSE_CODE_OK = 200;
     public static final int DEFAULT_TIMEOUT = 30000; // Defaults to 30sec.
 
     protected String serverURL;
@@ -122,7 +121,7 @@ public class ElasticSearchJestClient implements ElasticSearchClient<ElasticSearc
                 IndexMappingResponse indexMappings = getMappings(_index, null);
                 result[x++] = indexMappings;
             }
-            return new MappingsResponse(RESPONSE_CODE_OK, result);
+            return new MappingsResponse(ElasticSearchDataSetProvider.RESPONSE_CODE_OK, result);
         } catch (Exception e) {
             throw new ElasticSearchClientGenericException("Cannot obtain mappings.", e);
         }

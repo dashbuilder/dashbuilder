@@ -105,6 +105,7 @@ import java.util.*;
 public class ElasticSearchDataSetProvider implements DataSetProvider {
 
     public static final DateTimeFormatter EL_DEFAULT_DATETIME_FORMATTER = ISODateTimeFormat.dateOptionalTimeParser();
+    public static final int RESPONSE_CODE_OK = 200;
 
     @Inject
     protected StaticDataSetProvider staticDataSetProvider;
@@ -372,7 +373,7 @@ public class ElasticSearchDataSetProvider implements DataSetProvider {
         // Obtain the indexMappings
         MappingsResponse mappingsResponse = clientFactory.newClient(elasticSearchDataSetDef).getMappings(index);
         // TODO: Check response code too.
-        if (mappingsResponse == null) throw new IllegalArgumentException("Cannot retrieve index mappings for index: [" + index[0] + "]");
+        if (mappingsResponse == null || mappingsResponse.getStatus() != RESPONSE_CODE_OK) throw new IllegalArgumentException("Cannot retrieve index mappings for index: [" + index[0] + "]");
 
 
         // Obtain the columns (ids and types).

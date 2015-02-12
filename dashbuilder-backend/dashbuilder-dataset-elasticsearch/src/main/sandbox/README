@@ -1,0 +1,5 @@
+This sandbox directory contains classes and resources excluded from build/runtime/test classpaths and contains:
+
+- The ElasticSearch client implementation using the Java Native client that ElasticSearch provides. 
+  The EL java native client requires Java 1.7+. As we still use Java 1.6, these classes cannot be used for build/runtime classpaths.
+  These classes will be moved to source classpath when moving to Java 1.7

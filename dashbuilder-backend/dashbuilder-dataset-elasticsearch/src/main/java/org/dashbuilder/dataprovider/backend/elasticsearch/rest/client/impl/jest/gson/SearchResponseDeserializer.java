@@ -1,7 +1,7 @@
 package org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.impl.jest.gson;
 
 import com.google.gson.*;
-import org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.impl.jest.ElasticSearchJestClient;
+import org.dashbuilder.dataprovider.backend.elasticsearch.ElasticSearchDataSetProvider;
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.model.EmptySearchResponse;
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.model.SearchHitResponse;
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.model.SearchResponse;
@@ -29,7 +29,7 @@ public class SearchResponseDeserializer extends AbstractAdapter<SearchResponseDe
 
             if (responseObject != null) {
                 long tookInMillis = responseObject.get("took").getAsLong();
-                int responseStatus = ElasticSearchJestClient.RESPONSE_CODE_OK;
+                int responseStatus = ElasticSearchDataSetProvider.RESPONSE_CODE_OK;
 
                 JsonObject shardsObject = responseObject.getAsJsonObject("_shards");
                 int totalShards = shardsObject.get("total").getAsInt();

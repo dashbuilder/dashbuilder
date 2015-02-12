@@ -12,6 +12,41 @@
   <artifactId>dashbuilder-dataset-elasticsearch</artifactId>
   <name>Dashbuilder Dataset ElasticSearch Provider</name>
 
+  <build>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+      </resource>
+      <!-- Sandbox directory contains files that must be compiled with Java 1.7+. -->
+      <resource>
+        <directory>src/main/sandbox</directory>
+        <excludes>
+          <exclude>**/*.*</exclude>
+        </excludes>
+      </resource>
+    </resources>
+  </build>
+
+  <profiles>
+    <!-- 
+      IMPORTANT NOTE:
+      **************
+      - ElasticSearch v1.X requires Java 1.7+
+      - Running tests implies to run an ElasticSearch server instance
+      - Until not moving to Java 1.7+ tests must be skipped by default, as they will fail using Java 1.6
+    -->
+    <profile>
+      <id>java6</id>
+      <properties>
+        <maven.test.skip>true</maven.test.skip>
+      </properties>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+    </profile>
+  </profiles>
+
+  
   <dependencies>
 
     <dependency>
