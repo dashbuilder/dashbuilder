@@ -161,3 +161,4 @@ If you don't feel comfortable with the default queries that are build to query t
 Notes
 -----
 * This module has benn build and tested against an ElasticSearch server version  <code>1.4.2</code>. In other releases you may hit with some incompatibility issues.                     
+* In order to perform dataset lookups using FIXED date interval types, groovy dynamic scripting must be enabled in your ElasticSearch server. For more information go [here](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/modules-scripting.html#_enabling_dynamic_scripting).           
