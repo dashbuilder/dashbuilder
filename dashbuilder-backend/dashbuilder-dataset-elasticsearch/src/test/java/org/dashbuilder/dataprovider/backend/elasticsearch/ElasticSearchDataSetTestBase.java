@@ -88,7 +88,7 @@ import java.util.List;
 public class ElasticSearchDataSetTestBase {
 
     // NOTE: If you change the host or port in config/elasticsearch.yml, you should modify this value.
-    protected static final String EL_SERVER = "http://localhost:9200/";
+    public static final String EL_SERVER = "http://localhost:9200/";
     
     // System properties for EL server.
     protected static final String EL_PROPERTY_ELASTICSEARCH = "elasticsearch";
@@ -103,6 +103,7 @@ public class ElasticSearchDataSetTestBase {
     protected static final String EL_EXAMPLE_TYPE = "expense";
     protected static final String EL_EXAMPLE_MAPPINGS = "org/dashbuilder/dataprovider/backend/elasticsearch/server/example-data/expensereports-mappings.json";
     protected static final String EL_EXAMPLE_DATA = "org/dashbuilder/dataprovider/backend/elasticsearch/server/example-data/expensereports-data.json";
+    protected static final String EL_EXAMPLE_MORE_DATA = "org/dashbuilder/dataprovider/backend/elasticsearch/server/example-data/expensereports-more-data.json";
     protected static final String EL_EXAMPLE_COLUMN_ID = "id";
     protected static final String EL_EXAMPLE_COLUMN_AMOUNT = "amount";
     protected static final String EL_EXAMPLE_COLUMN_DEPT = "department";
@@ -164,52 +165,62 @@ public class ElasticSearchDataSetTestBase {
     protected static ElasticSearchUrlBuilder urlBuilder = new ElasticSearchUrlBuilder(EL_SERVER, EL_EXAMPLE_INDEX);
     
     // For local testing against an existing and running EL server.
-    private static boolean runAndPopulateServer = true;
+    private static boolean runServer = true;
+    private static boolean populateServer = true;
 
     @BeforeClass
     public static void runELServer() throws Exception {
-        if (!runAndPopulateServer) return;
+        if (runServer) {
+            // Build a temporary EL home folder. Copy config files to it.
+            File elHome = elHomeFolder.newFolder("dashbuilder-elasticsearch");
+            File elHomeConfig = new File(elHome, EL_CONFIG_DIR);
+            URL configFileUrl = Thread.currentThread().getContextClassLoader().getResource(EL_CONFIG_ELASTICSEARCH);
+            URL loggingFileUrl = Thread.currentThread().getContextClassLoader().getResource(EL_CONFIG_LOGGING);
+            File configFile = new File(configFileUrl.getFile());
+            File loggingFile = new File(loggingFileUrl.getFile());
+
+            // Create the configuration files and copy config files.
+            if (!elHomeConfig.mkdirs()) throw new RuntimeException("Cannot create config directory at [" + elHomeConfig.getAbsolutePath() + "].");
+            FileUtils.copyFileToDirectory(configFile, elHomeConfig);
+            FileUtils.copyFileToDirectory(loggingFile, elHomeConfig);
+
+            // Set the system properties for running the EL server.
+            System.setProperty(EL_PROPERTY_ELASTICSEARCH, "");
+            System.setProperty(EL_PROPERTY_FOREGROUND, "yes");
+            System.setProperty(EL_PROPERTY_HOME, elHome.getAbsolutePath());
+
+            // Run the EL server.
+            new Thread("test_ELserver") {
+                @Override
+                public void run() {
+                    super.run();
+                    Bootstrap.main(new String[] {});
+                }
+            }.run();
+        }
         
-        // Build a temporary EL home folder. Copy config files to it.
-        File elHome = elHomeFolder.newFolder("dashbuilder-elasticsearch");
-        File elHomeConfig = new File(elHome, EL_CONFIG_DIR);
-        URL configFileUrl = Thread.currentThread().getContextClassLoader().getResource(EL_CONFIG_ELASTICSEARCH);
-        URL loggingFileUrl = Thread.currentThread().getContextClassLoader().getResource(EL_CONFIG_LOGGING);
-        File configFile = new File(configFileUrl.getFile());
-        File loggingFile = new File(loggingFileUrl.getFile());
-        
-        // Create the configuration files and copy config files.
-        if (!elHomeConfig.mkdirs()) throw new RuntimeException("Cannot create config directory at [" + elHomeConfig.getAbsolutePath() + "].");
-        FileUtils.copyFileToDirectory(configFile, elHomeConfig);
-        FileUtils.copyFileToDirectory(loggingFile, elHomeConfig);
-        
-        // Set the system properties for running the EL server.
-        System.setProperty(EL_PROPERTY_ELASTICSEARCH, "");
-        System.setProperty(EL_PROPERTY_FOREGROUND, "yes");
-        System.setProperty(EL_PROPERTY_HOME, elHome.getAbsolutePath());
-        
-        // Run the EL server.
-        new Thread("test_ELserver") {
-            @Override
-            public void run() {
-                super.run();
-                Bootstrap.main(new String[] {});
-            }
-        }.run();
-        
-        // Populate the server with some test content.
-        populateELServer();
+        if (populateServer) {
+            // Create the expensereports example index.
+            createIndexELServer();
+
+            // Populate the server with some test content.
+            populateELServer(EL_EXAMPLE_DATA);
+
+            // Test mappings and document count.
+            testMappingCreated();
+            testDocumentsCount();
+            
+        }
     }
 
-    public static void populateELServer() throws Exception {
-        if (!runAndPopulateServer) return;
-        
+    public static void createIndexELServer() throws Exception {
+
         // Create an http client
         CloseableHttpClient httpclient = HttpClients.createDefault();
-        
+
         // Obtain data to configure & populate the server.
         String mappingsContent = getFileAsString(EL_EXAMPLE_MAPPINGS);
-        
+
         // Create an index mappings.
         HttpPost httpPost = new HttpPost(urlBuilder.getIndexRoot());
         StringEntity inputMappings = new StringEntity(mappingsContent);
@@ -220,35 +231,36 @@ public class ElasticSearchDataSetTestBase {
             System.out.println("Error response body:");
             System.out.println(responseAsString(mappingsResponse));
         }
-        Assert.assertEquals(mappingsResponse.getStatusLine().getStatusCode(), EL_REST_RESPONSE_OK);
-        
+        Assert.assertEquals(EL_REST_RESPONSE_OK, mappingsResponse.getStatusLine().getStatusCode());
+    }
+    
+    public static void populateELServer(String dataFile) throws Exception {
+
         // Insert documents in bulk mode.
-        File dataContentFile = new File(Thread.currentThread().getContextClassLoader().getResource(EL_EXAMPLE_DATA).getFile());
+        CloseableHttpClient httpclient = HttpClients.createDefault();
+        File dataContentFile = new File(Thread.currentThread().getContextClassLoader().getResource(dataFile).getFile());
         addDocuments(httpclient, dataContentFile);
         
         // Let EL server some time to index all documents...
         Thread.sleep(5000);
-        
-        // Test mappings and document count.
-        testMappingCreated();
-        testDocumentsCount();
     }
 
     /**
      * <p>Index documents in bulk mode into EL server.</p>
      */
-    protected static void addDocuments(CloseableHttpClient httpclient, File dataContentFile) throws Exception {
+    protected static void addDocuments(CloseableHttpClient httpClient, File dataContentFile) throws Exception {
         HttpPost httpPost2 = new HttpPost(urlBuilder.getBulk());
         FileEntity inputData = new FileEntity(dataContentFile);
         inputData.setContentType(CONTENTTYPE_JSON);
         httpPost2.addHeader(HEADER_ACCEPT, CONTENTTYPE_JSON);
         httpPost2.addHeader(HEADER_CONTENTTYPE, CONTENTTYPE_JSON);
         httpPost2.setEntity(inputData);
-        CloseableHttpResponse dataResponse = httpclient.execute(httpPost2);
+        CloseableHttpResponse dataResponse = httpClient.execute(httpPost2);
         if (dataResponse.getStatusLine().getStatusCode() != EL_REST_RESPONSE_OK) {
             System.out.println("Error response body:");
             System.out.println(responseAsString(dataResponse));
         }
+        httpPost2.completed();
         Assert.assertEquals(dataResponse.getStatusLine().getStatusCode(), EL_REST_RESPONSE_OK);
     }
 
@@ -272,7 +284,7 @@ public class ElasticSearchDataSetTestBase {
 
     @AfterClass
     public static void stopELServer() throws Exception {
-        if (!runAndPopulateServer) return;
+        if (!runServer) return;
         
         // Clear the system properties that have been set for running the EL server.
         System.clearProperty(EL_PROPERTY_ELASTICSEARCH);
@@ -291,12 +303,13 @@ public class ElasticSearchDataSetTestBase {
      * 
      * @param resource The dataset definition resource.
      */
-    protected void _registerDataSet(String resource) throws Exception {
+    protected ElasticSearchDataSetDef _registerDataSet(String resource) throws Exception {
         // Register the SQL data set
         URL fileURL = Thread.currentThread().getContextClassLoader().getResource(resource);
         String json = IOUtils.toString(fileURL);
         ElasticSearchDataSetDef def = (ElasticSearchDataSetDef) jsonMarshaller.fromJson(json);
         dataSetDefRegistry.registerDataSetDef(def);
+        return def;
     }
 
     public static void testMappingCreated() throws Exception {

@@ -17,6 +17,8 @@ package org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.impl.jest
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import org.dashbuilder.dataprovider.backend.elasticsearch.ElasticSearchDataSetTestBase;
+import org.dashbuilder.dataprovider.backend.elasticsearch.ElasticSearchClientFactory;
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.impl.jest.gson.*;
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.model.Query;
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.model.SearchHitResponse;
@@ -83,6 +85,8 @@ public class ElasticSearchJestClientTest {
         when(metadata.getFieldPattern("date")).thenReturn("MM-dd-YYYY");
         
         // Init the dataset defintion mocked instance.
+        when(definition.getServerURL()).thenReturn(ElasticSearchDataSetTestBase.EL_SERVER);
+        when(definition.getClusterName()).thenReturn("elasticsearch");
         when(definition.getIndex()).thenReturn(new String[] {"expensereports"});
         when(definition.getType()).thenReturn(new String[] {"expense"});
     }
@@ -250,7 +254,7 @@ public class ElasticSearchJestClientTest {
     public void testAggregationSerializer() {
         
         GsonBuilder builder = new GsonBuilder();
-        AggregationSerializer aggregationSerializer = new AggregationSerializer(metadata, definition, new ArrayList<DataColumn>());
+        AggregationSerializer aggregationSerializer = new AggregationSerializer(metadata, definition, new ArrayList<DataColumn>(), ElasticSearchClientFactory.configure(new ElasticSearchJestClient(), definition));
         builder.registerTypeAdapter(DataSetGroup.class, aggregationSerializer);
         Gson gson = builder.create();
 

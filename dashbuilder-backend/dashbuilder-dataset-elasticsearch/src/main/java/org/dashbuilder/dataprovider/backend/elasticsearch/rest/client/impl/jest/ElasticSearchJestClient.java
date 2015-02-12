@@ -27,6 +27,7 @@ import io.searchbox.core.search.sort.Sort;
 import io.searchbox.indices.mapping.GetMapping;
 import org.dashbuilder.dataprovider.backend.elasticsearch.ElasticSearchDataSetProvider;
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.ElasticSearchClient;
+import org.dashbuilder.dataprovider.backend.elasticsearch.ElasticSearchClientFactory;
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.exception.ElasticSearchClientGenericException;
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.impl.jest.gson.*;
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.model.*;
@@ -51,7 +52,7 @@ import java.util.*;
 
 /**
  * <p>The Jest/GSON client for ElasticSearch server.</p>
- * 
+ *
  * @see <a href="https://github.com/searchbox-io/Jest">https://github.com/searchbox-io/Jest</a>
  */
 @ApplicationScoped
@@ -65,7 +66,7 @@ public class ElasticSearchJestClient implements ElasticSearchClient<ElasticSearc
     protected String clusterName;
     protected String[] index;
     protected String[] type;
-    
+
     // JestClient is designed to be singleton, don't construct it for each request.
     private JestClient client;
     protected int timeout = DEFAULT_TIMEOUT;
@@ -91,7 +92,8 @@ public class ElasticSearchJestClient implements ElasticSearchClient<ElasticSearc
     public ElasticSearchJestClient type(String... types) {
         this.type = types;
         if (serverURL != null && clusterName != null) {
-            if (index == null) throw new IllegalArgumentException("You cannot call elasticsearchRESTEasyClient#type before calling elasticsearchRESTEasyClient#index."); 
+            if (index == null)
+                throw new IllegalArgumentException("You cannot call elasticsearchRESTEasyClient#type before calling elasticsearchRESTEasyClient#index.");
             buildClient();
         }
         return this;
@@ -108,7 +110,7 @@ public class ElasticSearchJestClient implements ElasticSearchClient<ElasticSearc
     public void setTimeout(int timeout) {
         this.timeout = timeout;
     }
-    
+
     @Override
     public MappingsResponse getMappings(String... index) throws ElasticSearchClientGenericException {
         if (client == null) throw new IllegalArgumentException("elasticsearchRESTEasyClient instance is not build.");
@@ -118,18 +120,18 @@ public class ElasticSearchJestClient implements ElasticSearchClient<ElasticSearc
             int x = 0;
             for (String _index : index) {
                 IndexMappingResponse indexMappings = getMappings(_index, null);
-                result[x++]  = indexMappings;
+                result[x++] = indexMappings;
             }
             return new MappingsResponse(RESPONSE_CODE_OK, result);
         } catch (Exception e) {
-            throw  new ElasticSearchClientGenericException("Cannot obtain mappings.", e);
+            throw new ElasticSearchClientGenericException("Cannot obtain mappings.", e);
         }
     }
 
-    protected IndexMappingResponse getMappings(String index, String type) throws Exception{
+    protected IndexMappingResponse getMappings(String index, String type) throws Exception {
         GetMapping.Builder builder = new GetMapping.Builder().addIndex(index);
         if (type != null) builder = builder.addType(type);
-        
+
         GetMapping getMapping = builder.build();
         JestResult result = client.execute(getMapping);
         Set<Map.Entry<String, JsonElement>> mappings = result.getJsonObject().get(index).getAsJsonObject().get("mappings").getAsJsonObject().entrySet();
@@ -146,9 +148,11 @@ public class ElasticSearchJestClient implements ElasticSearchClient<ElasticSearc
                 String field = propertyMapping.getKey();
                 FieldMapping fieldMappings = new Gson().fromJson(propertyMapping.getValue(), FieldMapping.class);
                 FieldMappingResponse.FieldType fieldType = null;
-                if (fieldMappings.getType() != null) fieldType = FieldMappingResponse.FieldType.valueOf(fieldMappings.getType().toUpperCase());
+                if (fieldMappings.getType() != null)
+                    fieldType = FieldMappingResponse.FieldType.valueOf(fieldMappings.getType().toUpperCase());
                 FieldMappingResponse.IndexType indexType = null;
-                if (fieldMappings.getIndex() != null) indexType = FieldMappingResponse.IndexType.valueOf(fieldMappings.getIndex().toUpperCase());
+                if (fieldMappings.getIndex() != null)
+                    indexType = FieldMappingResponse.IndexType.valueOf(fieldMappings.getIndex().toUpperCase());
                 String format = fieldMappings.getFormat();
                 FieldMappingResponse fieldMappingResponse = new FieldMappingResponse(field, fieldType, indexType, format);
                 fields[y++] = fieldMappingResponse;
@@ -163,7 +167,7 @@ public class ElasticSearchJestClient implements ElasticSearchClient<ElasticSearc
     public CountResponse count(String[] index, String... type) throws ElasticSearchClientGenericException {
         if (client == null) throw new IllegalArgumentException("elasticsearchRESTEasyClient instance is not build.");
 
-        Count.Builder countBuilder = new Count.Builder().addIndex(Arrays.asList(index)); 
+        Count.Builder countBuilder = new Count.Builder().addIndex(Arrays.asList(index));
         if (type != null) countBuilder = countBuilder.addType(Arrays.asList(type));
         Count count = countBuilder.build();
         try {
@@ -171,16 +175,15 @@ public class ElasticSearchJestClient implements ElasticSearchClient<ElasticSearc
 
             double hitCount = result.getCount();
             int totalShards = result.getJsonObject().get("_shards").getAsJsonObject().get("total").getAsInt();
-            return new CountResponse((long)hitCount, totalShards);
+            return new CountResponse((long) hitCount, totalShards);
         } catch (Exception e) {
             throw new ElasticSearchClientGenericException("Cannot count.", e);
         }
     }
 
     /**
-     * TODO: Improve using search types - http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search-request-search-type.html        
      * @param definition The dataset definition.
-     * @param request The search reuest.
+     * @param request    The search reuest.
      * @return
      * @throws ElasticSearchClientGenericException
      */
@@ -203,7 +206,7 @@ public class ElasticSearchJestClient implements ElasticSearchClient<ElasticSearc
 
         // Crate the Gson builder and instance.        
         GsonBuilder builder = new GsonBuilder();
-        JsonSerializer aggregationSerializer = new AggregationSerializer(metadata, elasticSearchDataSetDef, columns, request);
+        JsonSerializer aggregationSerializer = new AggregationSerializer(metadata, elasticSearchDataSetDef, columns, request, ElasticSearchClientFactory.configure(new ElasticSearchJestClient(), elasticSearchDataSetDef));
         JsonSerializer querySerializer = new QuerySerializer(metadata, elasticSearchDataSetDef, columns);
         JsonSerializer searchQuerySerializer = new SearchQuerySerializer(metadata, elasticSearchDataSetDef, columns);
         JsonDeserializer searchResponseDeserializer = new SearchResponseDeserializer(metadata, elasticSearchDataSetDef, columns);
@@ -216,12 +219,12 @@ public class ElasticSearchJestClient implements ElasticSearchClient<ElasticSearc
         builder.registerTypeAdapter(SearchHitResponse.class, hitDeserializer);
         builder.registerTypeAdapter(SearchHitResponse[].class, aggreationsDeserializer);
         Gson gson = builder.create();
-        
+
         // Set request lookup constraints into the query JSON request.
         JsonElement gsonQueryElement = gson.toJsonTree(query);
         JsonObject gsonQuery = null;
         if (gsonQueryElement instanceof JsonObject) gsonQuery = (JsonObject) gsonQueryElement;
-        
+
         // Add the group functions translated as query aggregations.
         List<JsonObject> aggregationObjects = null;
         if (aggregations != null && !aggregations.isEmpty()) {
@@ -272,7 +275,6 @@ public class ElasticSearchJestClient implements ElasticSearchClient<ElasticSearc
         return searchResult;
     }
 
-    
 
     public static class SearchQuery {
         String[] fields;
@@ -319,22 +321,23 @@ public class ElasticSearchJestClient implements ElasticSearchClient<ElasticSearc
     /**
      * Parses a given value (for a given column type) returned by response JSON query body from EL server.
      *
-     * @param column The data column definition.
-     * @param valueElement  The value element from JSON query response to format.
+     * @param column       The data column definition.
+     * @param valueElement The value element from JSON query response to format.
      * @return The formatted value for the given column type.
      */
     public static Object parseValue(ElasticSearchDataSetDef definition, ElasticSearchDataSetMetadata metadata, DataColumn column, JsonElement valueElement) {
         if (column == null || valueElement == null || valueElement.isJsonNull()) return null;
-        if (!valueElement.isJsonPrimitive()) throw new RuntimeException("Not expected JsonElement type to parse from query response.");
-        
+        if (!valueElement.isJsonPrimitive())
+            throw new RuntimeException("Not expected JsonElement type to parse from query response.");
+
         JsonPrimitive valuePrimitive = valueElement.getAsJsonPrimitive();
-        
+
         ColumnType columnType = column.getColumnType();
 
         if (ColumnType.NUMBER.equals(columnType)) {
-            
+
             return valueElement.getAsDouble();
-            
+
         } else if (ColumnType.DATE.equals(columnType)) {
 
             // We can expect two return core types from EL server when handling dates:
@@ -352,7 +355,7 @@ public class ElasticSearchJestClient implements ElasticSearchClient<ElasticSearc
                     // Obtain the date value by parsing using the EL pattern specified for this field.
                     formatter = DateTimeFormat.forPattern(datePattern);
                 }
-                
+
                 DateTime dateTime = formatter.parseDateTime(valuePrimitive.getAsString());
                 return dateTime.toDate();
             }
@@ -370,17 +373,17 @@ public class ElasticSearchJestClient implements ElasticSearchClient<ElasticSearc
         // LABEL, TEXT or grouped DATE column types.
         String valueAsString = valueElement.getAsString();
         ColumnGroup columnGroup = column.getColumnGroup();
-        
+
         // For FIXED date values, remove the unnecessary "0" at first character. (eg: replace month "01" to "1")
         if (columnGroup != null
                 && GroupStrategy.FIXED.equals(columnGroup.getStrategy())
                 && valueAsString.startsWith("0")) return valueAsString.substring(1);
-        
+
         return valueAsString;
     }
 
     /**
-     * Formats the given value in a String type in order to send the JSON query body to the EL server. 
+     * Formats the given value in a String type in order to send the JSON query body to the EL server.
      */
     public static String formatValue(String columnId, ElasticSearchDataSetMetadata metadata, Object value) {
         if (value == null) return null;
@@ -397,7 +400,7 @@ public class ElasticSearchJestClient implements ElasticSearchClient<ElasticSearc
                 formatter = DateTimeFormat.forPattern(pattern);
             }
 
-            return formatter.print(((Date)value).getTime());
+            return formatter.print(((Date) value).getTime());
         } else if (ColumnType.NUMBER.equals(columnType)) {
             return Double.toString((Double) value);
         }
@@ -459,13 +462,15 @@ public class ElasticSearchJestClient implements ElasticSearchClient<ElasticSearc
         return intervalExpression;
     }
 
-    protected JestClient buildClient() throws IllegalArgumentException{
-        return  client = buildNewClient(serverURL, clusterName, timeout);
+    protected JestClient buildClient() throws IllegalArgumentException {
+        return client = buildNewClient(serverURL, clusterName, timeout);
     }
 
-    public static JestClient buildNewClient(String serverURL, String clusterName, int timeout) throws IllegalArgumentException{
-        if (serverURL == null || serverURL.trim().length() == 0) throw new IllegalArgumentException("Parameter serverURL is missing.");
-        if (clusterName == null || clusterName.trim().length() == 0) throw new IllegalArgumentException("Parameter clusterName is missing.");
+    public static JestClient buildNewClient(String serverURL, String clusterName, int timeout) throws IllegalArgumentException {
+        if (serverURL == null || serverURL.trim().length() == 0)
+            throw new IllegalArgumentException("Parameter serverURL is missing.");
+        if (clusterName == null || clusterName.trim().length() == 0)
+            throw new IllegalArgumentException("Parameter clusterName is missing.");
 
         // TODO: use clusterName.
         JestClientFactory factory = new JestClientFactory();
@@ -474,8 +479,8 @@ public class ElasticSearchJestClient implements ElasticSearchClient<ElasticSearc
                 .multiThreaded(true)
                 .connTimeout(timeout)
                 .build());
-        
+
         return factory.getObject();
     }
-    
+
 }

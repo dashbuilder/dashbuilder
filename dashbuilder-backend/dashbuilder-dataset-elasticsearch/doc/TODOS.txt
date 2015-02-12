@@ -1,13 +1,8 @@
-- David
-    - initial filter (as part of dataset def) - Example at SQLDataSetDefTest#testFilters
-    
 - Code
-    - CDI Injections
-    - Date interval calculations when group by date is type FIXED & add more test cases to ElasticSearchDataSetDatesTest
-    - Cache impl in provider - impl and unit testing (ElasticSearchDataSetCacheTest)
     - Custom columns in DataSet Def (include_all flag)
     - Test -> Enable run EL server for running unit tests
     - Provider -> improve metadata size estimation.
+    - Review TODOs
     
 - Others
     - Import EL native client classes and make them not processed by the compiler (mvn-compiler-plugin)

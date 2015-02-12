@@ -15,28 +15,66 @@
  */
 package org.dashbuilder.dataprovider.backend.elasticsearch;
 
-import org.junit.Before;
-import org.junit.Ignore;
+import org.dashbuilder.dataset.DataSet;
+import org.dashbuilder.dataset.DataSetFactory;
+import org.dashbuilder.dataset.def.ElasticSearchDataSetDef;
+import org.junit.Test;
+
+import javax.inject.Inject;
+
+import static org.fest.assertions.api.Assertions.assertThat;
 
 /**
  * <p>Data test for ElasticSearchDataSet.</p>
  * 
- * TODO
  * @since 0.3.0
  */
-@Ignore
 public class ElasticSearchDataSetCacheTest extends ElasticSearchDataSetTestBase {
 
-    protected static final String EL_EXAMPLE_DATASET_DEF = "org/dashbuilder/dataprovider/backend/elasticsearch/expensereports.dset";
+    protected static final String EL_EXAMPLE_DATASETS_ROOT = "org/dashbuilder/dataprovider/backend/elasticsearch/";
     protected static final String EL_DATASET_UUID = "expense_reports";
     
-    /**
-     * Register the dataset used for this test case. 
-     */
-    @Before
-    public void registerDataSet() throws Exception {
-        // Register the data set.
-        _registerDataSet(EL_EXAMPLE_DATASET_DEF);
+    @Inject
+    ElasticSearchDataSetProvider elasticSearchDataSetProvider;
+
+    @Test
+    public void testDataSetNonCached() throws Exception {
+        // A non-cached data set never gets outdated
+        _testDataSetCache(null, false, 52);
     }
-    
+
+    //@Test
+    public void testDataSetStaticCache() throws Exception {
+        // A non-synced (static) data set never gets outdated and it always contains the same content
+        _testDataSetCache("static_cache", false, 50);
+    }
+
+    protected void _testDataSetCache(String scenario, boolean outdated, int rows) throws Exception {
+
+        // Register the data set definition
+        String fileName = scenario != null ? "expensereports-" + scenario + ".dset" : "expensereports.dset";
+        ElasticSearchDataSetDef def = _registerDataSet(EL_EXAMPLE_DATASETS_ROOT + fileName);
+        
+        // Lookup the dataset (forces the caches to initialize)
+        String dataSetUUID = scenario != null ? EL_DATASET_UUID + "_" + scenario : EL_DATASET_UUID;
+        dataSetManager.lookupDataSet(
+                DataSetFactory.newDataSetLookupBuilder()
+                        .dataset(dataSetUUID)
+                        .buildLookup());
+
+        // Insert some extra rows into the database
+        populateELServer(EL_EXAMPLE_MORE_DATA);
+
+        // Check if the the data set is outdated
+        assertThat(elasticSearchDataSetProvider.isDataSetOutdated(def)).isEqualTo(outdated);
+
+        // Lookup the last database content
+        DataSet result = dataSetManager.lookupDataSet(
+                DataSetFactory.newDataSetLookupBuilder()
+                        .dataset(dataSetUUID)
+                        .rowNumber(100)
+                        .buildLookup());
+
+        assertThat(result.getRowCount()).isEqualTo(rows);
+    }
 }

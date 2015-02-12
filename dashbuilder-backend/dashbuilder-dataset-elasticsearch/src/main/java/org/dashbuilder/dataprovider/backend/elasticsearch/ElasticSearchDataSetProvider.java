@@ -20,10 +20,6 @@ import org.apache.commons.lang.StringUtils;
 import org.dashbuilder.dataprovider.DataSetProvider;
 import org.dashbuilder.dataprovider.DataSetProviderType;
 import org.dashbuilder.dataprovider.backend.StaticDataSetProvider;
-import org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.ElasticSearchClient;
-import org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.ElasticSearchQueryBuilder;
-import org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.impl.ElasticSearchQueryBuilderImpl;
-import org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.impl.jest.ElasticSearchJestClient;
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.model.*;
 import org.dashbuilder.dataset.*;
 import org.dashbuilder.dataset.def.DataSetDef;
@@ -40,7 +36,6 @@ import org.dashbuilder.dataset.sort.DataSetSort;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
 
-import javax.annotation.PostConstruct;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -116,22 +111,17 @@ public class ElasticSearchDataSetProvider implements DataSetProvider {
     @Inject
     protected DataSetDefRegistry dataSetDefRegistry;
 
-    // TODO: @Inject
-    protected ElasticSearchClient client;
-    protected ElasticSearchQueryBuilder queryBuilder;
+    @Inject
+    protected ElasticSearchClientFactory clientFactory;
+
+    @Inject
+    protected ElasticSearchQueryBuilderFactory queryBuilderFactory;
     
     protected final Map<String,DataSetMetadata> _metadataMap = new HashMap<String,DataSetMetadata>();
 
     public ElasticSearchDataSetProvider() {
     }
 
-    @PostConstruct
-    public void init() {
-        // TODO: Remove when injection /producer method works.
-        client = new ElasticSearchJestClient();
-        queryBuilder = new ElasticSearchQueryBuilderImpl();
-    }
-    
     public DataSetProviderType getType() {
         return DataSetProviderType.ELASTICSEARCH;
     }
@@ -207,7 +197,7 @@ public class ElasticSearchDataSetProvider implements DataSetProvider {
             if (filters != null && !filters.isEmpty()) {
                 
                 // The query is build from a given filters and/or from interval selections. Built it.
-                Query query = getQueryBuilder().metadata(metadata).groupInterval(groupOps).filter(filters).build();
+                Query query = queryBuilderFactory.newQueryBuilder().metadata(metadata).groupInterval(groupOps).filter(filters).build();
                 request.setQuery(query);
             }
             
@@ -230,7 +220,7 @@ public class ElasticSearchDataSetProvider implements DataSetProvider {
         
         // Perform the query & generate the resulting dataset.
         DataSet dataSet = DataSetFactory.newEmptyDataSet();
-        SearchResponse searchResponse = getClient(elDef).search(elDef, metadata, request);
+        SearchResponse searchResponse = clientFactory.newClient(elDef).search(elDef, metadata, request);
 
         // Add the dataset columns.
         addDataSetColumns(dataSet, searchResponse);
@@ -379,7 +369,7 @@ public class ElasticSearchDataSetProvider implements DataSetProvider {
         long rowCount = getRowCount(elasticSearchDataSetDef);
 
         // Obtain the indexMappings
-        MappingsResponse mappingsResponse = getClient(elasticSearchDataSetDef).getMappings(index);
+        MappingsResponse mappingsResponse = clientFactory.newClient(elasticSearchDataSetDef).getMappings(index);
         // TODO: Check response code too.
         if (mappingsResponse == null) throw new IllegalArgumentException("Cannot retrieve index mappings for index: [" + index[0] + "]");
 
@@ -540,41 +530,10 @@ public class ElasticSearchDataSetProvider implements DataSetProvider {
         String[] index = elasticSearchDataSetDef.getIndex();
         String[] type = elasticSearchDataSetDef.getType();
         
-        CountResponse response = getClient(elasticSearchDataSetDef).count(index, type);
+        CountResponse response = clientFactory.newClient(elasticSearchDataSetDef).count(index, type);
         
         if (response != null) return response.getCount();
         return 0;
-    }
-
-    /**
-     * Obtain an elasticsearch client for a given definition.
-     * 
-     * TODO: Cache
-     * @param elasticSearchDataSetDef The elasticsearch dataset definition.
-     * @return The dashbuilder REST client for this definition.
-     * @throws IllegalArgumentException
-     */
-    protected ElasticSearchClient getClient(ElasticSearchDataSetDef elasticSearchDataSetDef) throws IllegalArgumentException{
-        String serverURL = elasticSearchDataSetDef.getServerURL();
-        String clusterName = elasticSearchDataSetDef.getClusterName();
-        if (serverURL == null || serverURL.trim().length() == 0) throw new IllegalArgumentException("Server URL is not set.");
-        if (clusterName == null || clusterName.trim().length() == 0) throw new IllegalArgumentException("Cluster name is not set.");
-
-        // TODO: New instance for every request.
-        client = new ElasticSearchJestClient();
-        client.serverURL(serverURL).clusterName(clusterName);
-        
-        String[] indexes = elasticSearchDataSetDef.getIndex();
-        if (indexes != null && indexes.length > 0) client.index(indexes);
-        String[] types  = elasticSearchDataSetDef.getType();
-        if (types != null && types.length > 0) client.type(types);
-        
-        return client;
-    }
-    
-    protected ElasticSearchQueryBuilder getQueryBuilder() {
-        // TODO: New instance for every request.
-        return queryBuilder = new ElasticSearchQueryBuilderImpl();
     }
 
     // Listen to changes on the data set definition registry

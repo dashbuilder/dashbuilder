@@ -3,7 +3,7 @@ package org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.impl.jest
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
-import org.apache.commons.lang.ArrayUtils;
+import org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.ElasticSearchClient;
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.exception.ElasticSearchClientGenericException;
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.impl.jest.ElasticSearchJestClient;
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.model.SearchHitResponse;
@@ -45,16 +45,18 @@ public class AggregationSerializer extends AbstractAdapter<AggregationSerializer
     protected static final String AGG_FORMAT = "format";
     protected static final String AGG_DATE_HISTORGRAM = "date_histogram";
 
-    // TODO: @Inject
     protected BackendIntervalBuilderDynamicDate intervalBuilder;
+    protected ElasticSearchClient client;
 
-    public AggregationSerializer(ElasticSearchDataSetMetadata metadata, ElasticSearchDataSetDef definition, List<DataColumn> columns) {
+    public AggregationSerializer(ElasticSearchDataSetMetadata metadata, ElasticSearchDataSetDef definition, List<DataColumn> columns, ElasticSearchClient client) {
         super(metadata, definition, columns);
+        this.client = client;
         intervalBuilder = new BackendIntervalBuilderDynamicDate();
     }
 
-    public AggregationSerializer(ElasticSearchDataSetMetadata metadata, ElasticSearchDataSetDef definition, List<DataColumn> columns, SearchRequest request) {
+    public AggregationSerializer(ElasticSearchDataSetMetadata metadata, ElasticSearchDataSetDef definition, List<DataColumn> columns, SearchRequest request, ElasticSearchClient client) {
         super(metadata, definition, columns, request);
+        this.client = client;
         intervalBuilder = new BackendIntervalBuilderDynamicDate();
     }
 
@@ -439,8 +441,6 @@ public class AggregationSerializer extends AbstractAdapter<AggregationSerializer
      * @return The minimum and maximum dates.
      */
     protected Date[] calculateDateLimits(String dateColumnId) throws ElasticSearchClientGenericException{
-        ElasticSearchJestClient client = new ElasticSearchJestClient()
-                .serverURL(definition.getServerURL()).clusterName(definition.getClusterName()).index(definition.getIndex());
         
         String minDateColumnId = dateColumnId + "_min";
         String maxDateColumnId = dateColumnId + "_max";

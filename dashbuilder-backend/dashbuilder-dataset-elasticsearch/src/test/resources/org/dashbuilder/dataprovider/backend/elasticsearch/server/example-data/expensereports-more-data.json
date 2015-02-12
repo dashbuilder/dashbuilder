@@ -1,0 +1,4 @@
+{"index":{"_index":"expensereports","_type":"expense","_id":51}}
+{"id":51, "city": "Barcelona", "department": "Engineering", "employee": "Roger Martinez" ,"date": "12-11-2001" , "amount":1200.535}
+{"index":{"_index":"expensereports","_type":"expense","_id":52}}
+{"id":52, "city": "Barcelona", "department": "Engineering", "employee": "David Gutierrez" ,"date": "12-01-2001" , "amount":2200.161}

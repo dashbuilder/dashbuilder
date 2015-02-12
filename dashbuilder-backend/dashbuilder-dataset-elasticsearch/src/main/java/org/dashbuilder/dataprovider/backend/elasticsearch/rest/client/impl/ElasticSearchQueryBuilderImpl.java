@@ -25,6 +25,7 @@ import org.dashbuilder.dataset.group.DataSetGroup;
 import org.dashbuilder.dataset.group.Interval;
 import org.dashbuilder.dataset.impl.ElasticSearchDataSetMetadata;
 
+import javax.enterprise.context.RequestScoped;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -35,6 +36,7 @@ import java.util.List;
  * 
  * <p>If the resulting query only contains filters, wrap them into a MATCH_ALL filtered query, as aggregations do not work with post-filters (just filters, no queries). </p>
  */
+@RequestScoped
 public class ElasticSearchQueryBuilderImpl implements ElasticSearchQueryBuilder<ElasticSearchQueryBuilderImpl> {
     
     private ElasticSearchDataSetMetadata metadata;

@@ -40,7 +40,7 @@ public class SearchQuerySerializer extends AbstractAdapter<SearchQuerySerializer
         int startToPull  = existAggregations ? 0 : start;
 
         result.addProperty(FROM, startToPull);
-        result.addProperty(SIZE, sizeToPull);
+        if (sizeToPull > -1) result.addProperty(SIZE, sizeToPull);
 
         // Build the search request in EL expected JSON format.
         if (query != null)  {
