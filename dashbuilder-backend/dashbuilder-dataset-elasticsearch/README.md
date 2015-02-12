@@ -145,7 +145,7 @@ The ElasticSearch dataset provider implementation is decoupled from the REST API
 
 By default the provided client implementation is based on [ElasticSearch Jest client](https://github.com/searchbox-io/Jest), as this implementation works using **Java 1.6**                   
 
-If you are using **Java 1.7+**, you can use the [ElasticSearch java client](http://www.elasticsearch.org/guide/en/elasticsearch/client/java-api/current/client.html) implementation provided too.                                    
+If you are using **Java 1.7+**, you can use the [ElasticSearch java client](http://www.elasticsearch.org/guide/en/elasticsearch/client/java-api/current/client.html) implementation provided [here](./src/main/sandbox)                                    
 
 You can build your own client implementation by implementing the interface <code>org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.ElasticSearchClient</code> and use CDI to override it as the default one.         
 
