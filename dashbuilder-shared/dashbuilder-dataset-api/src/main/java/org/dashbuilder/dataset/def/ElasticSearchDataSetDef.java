@@ -81,6 +81,7 @@ public class ElasticSearchDataSetDef extends DataSetDef {
     protected boolean cacheEnabled = false;
     protected int cacheMaxRows = 1000;
     protected boolean cacheSynced = false;
+    protected boolean allColumnsEnabled = true;
 
     public ElasticSearchDataSetDef() {
         super.setProvider(DataSetProviderType.ELASTICSEARCH);
@@ -180,6 +181,14 @@ public class ElasticSearchDataSetDef extends DataSetDef {
         this.columnSort = columnSort;
     }
 
+    public boolean isAllColumnsEnabled() {
+        return allColumnsEnabled;
+    }
+
+    public void setAllColumnsEnabled(boolean allColumnsEnabled) {
+        this.allColumnsEnabled = allColumnsEnabled;
+    }
+
     public String toString() {
         StringBuilder out = new StringBuilder();
         out.append("UUID=").append(UUID).append("\n");
@@ -191,6 +200,7 @@ public class ElasticSearchDataSetDef extends DataSetDef {
         out.append("Index=").append(index).append("\n");
         out.append("Type=").append(type).append("\n");
         out.append("Query=").append(query).append("\n");
+        out.append("Get all columns=").append(allColumnsEnabled).append("\n");
         out.append("Cache enabled=").append(cacheEnabled).append("\n");
         out.append("Cache max rows=").append(cacheMaxRows).append(" Kb\n");
         out.append("Cache synced=").append(cacheSynced).append("\n");

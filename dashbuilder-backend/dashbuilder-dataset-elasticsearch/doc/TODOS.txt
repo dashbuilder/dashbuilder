@@ -1,8 +1,7 @@
 - Code
-    - Custom columns in DataSet Def (include_all flag)
     - Test -> Enable run EL server for running unit tests
-    - Provider -> improve metadata size estimation.
     - Review TODOs
+    - Run EL server in tests using java 1.6! -> MUST use EL 0.9.X
     
 - Others
     - Import EL native client classes and make them not processed by the compiler (mvn-compiler-plugin)

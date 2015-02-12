@@ -31,6 +31,7 @@ import org.dashbuilder.dataset.filter.DataSetFilter;
 import org.dashbuilder.dataset.group.DataSetGroup;
 import org.dashbuilder.dataset.group.GroupFunction;
 import org.dashbuilder.dataset.impl.ElasticSearchDataSetMetadata;
+import org.dashbuilder.dataset.impl.MemSizeEstimator;
 import org.dashbuilder.dataset.sort.ColumnSort;
 import org.dashbuilder.dataset.sort.DataSetSort;
 import org.joda.time.format.DateTimeFormatter;
@@ -382,36 +383,49 @@ public class ElasticSearchDataSetProvider implements DataSetProvider {
         Map<String, Object[]> columns = parseColumns(mappingsResponse.getIndexMappings(), elasticSearchDataSetDef);
         if (columns == null || columns.isEmpty()) throw new RuntimeException("There are no column for index [" + index[0] + "] and type [" + ArrayUtils.toString(type) + "].");
 
+        boolean isAllColumns = elasticSearchDataSetDef.isAllColumnsEnabled();
         List<DataColumn> dataSetColumns = elasticSearchDataSetDef.getDataSet().getColumns();
-        if (dataSetColumns != null && !dataSetColumns.isEmpty()) {
-            for (DataColumn column : dataSetColumns) {
-                String columnId = column.getId();
-                ColumnType columnType = column.getColumnType();
-                
-                ColumnType indexColumnType = (ColumnType) columns.get(columnId)[0];
-                String format = (String) columns.get(columnId)[1];
-                // Check user defined column exists in the index/type.
-                if (indexColumnType == null) throw new IllegalArgumentException("The column [" + columnId + "] defined in dataset definition does not exist for the index [" + index[0] + "] and type [" + ArrayUtils.toString(type) + "].");
-                // Check that analyzed fields on EL index definition are analyzed too in the dataset definition.
-                if (indexColumnType.equals(ColumnType.TEXT) && columnType.equals(ColumnType.LABEL)) throw new IllegalArgumentException("The column [" + columnId + "] is defined in dataset definition as LABEL, but the column in the index [" + index[0] + "] and type [" + ArrayUtils.toString(type) + "] is using ANALYZED index, you cannot use it as a label.");
-                columnIds.add(columnId);
-                columnTypes.add(columnType);
-            }
-        }
-        // No custom columns has been configured in the dataset definition, obtain the columns and column types for the dataset to build by querying the index mappings.        
-        else {
+        
+        if (isAllColumns) {
+            // Use colmns given from EL index mapping.
             for (Map.Entry<String, Object[]> entry : columns.entrySet()) {
                 String columnId = entry.getKey();
                 ColumnType columnType = (ColumnType) entry.getValue()[0];
-                String format = (String) entry.getValue()[1];
+
+                // Check if there is any column definition override.
+                DataColumn definitionColumn = getColumn(dataSetColumns, columnId);
+                if (definitionColumn != null) {
+                    ColumnType definitionColumnType = definitionColumn.getColumnType();
+                    if (columnType.equals(ColumnType.TEXT) && definitionColumnType.equals(ColumnType.LABEL)) throw new IllegalArgumentException("The column [" + columnId + "] is defined in dataset definition as LABEL, but the column in the index [" + index[0] + "] and type [" + ArrayUtils.toString(type) + "] is using ANALYZED index, you cannot use it as a label.");
+                    columnType = definitionColumnType;
+                }
+
                 columnIds.add(columnId);
                 columnTypes.add(columnType);
+            }
+            
+        } else {
+            
+            // Use given columns from dataset definition.
+            if (dataSetColumns != null && !dataSetColumns.isEmpty()) {
+                for (DataColumn column : dataSetColumns) {
+                    String columnId = column.getId();
+                    ColumnType columnType = column.getColumnType();
+
+                    ColumnType indexColumnType = (ColumnType) columns.get(columnId)[0];
+                    String format = (String) columns.get(columnId)[1];
+                    // Check user defined column exists in the index/type.
+                    if (indexColumnType == null) throw new IllegalArgumentException("The column [" + columnId + "] defined in dataset definition does not exist for the index [" + index[0] + "] and type [" + ArrayUtils.toString(type) + "].");
+                    // Check that analyzed fields on EL index definition are analyzed too in the dataset definition.
+                    if (indexColumnType.equals(ColumnType.TEXT) && columnType.equals(ColumnType.LABEL)) throw new IllegalArgumentException("The column [" + columnId + "] is defined in dataset definition as LABEL, but the column in the index [" + index[0] + "] and type [" + ArrayUtils.toString(type) + "] is using ANALYZED index, you cannot use it as a label.");
+                    columnIds.add(columnId);
+                    columnTypes.add(columnType);
+                }
             }
         }
 
         int _rowCount = (int) rowCount;
-        // TODO: Improve estimation.
-        int estimatedSize = 100 * _rowCount;
+        int estimatedSize = estimateSize(columnTypes, _rowCount);
 
         // Build the metadata instance.
         result = new ElasticSearchDataSetMetadata(def, def.getUUID(), _rowCount,
@@ -427,6 +441,37 @@ public class ElasticSearchDataSetProvider implements DataSetProvider {
         _metadataMap.put(def.getUUID(), result);
         
         return result;
+    }
+    
+    private int estimateSize(List<ColumnType> columnTypes, int rowCount) {
+        int estimatedSize = 0;
+        
+        if (columnTypes != null && !columnTypes.isEmpty()) {
+            for (ColumnType type : columnTypes) {
+                if (ColumnType.DATE.equals(type)) {
+                    estimatedSize += MemSizeEstimator.sizeOf(Date.class) * rowCount;
+                }
+                else if (ColumnType.NUMBER.equals(type)) {
+                    estimatedSize += MemSizeEstimator.sizeOf(Double.class) * rowCount;
+                }
+                else {
+                    // For string use an approximated value as EL does not provide size attribute for fields.
+                    estimatedSize += 30 * rowCount;
+                }
+            }
+        }
+        
+        return estimatedSize;
+    }
+    
+    private DataColumn getColumn(List<DataColumn> dataSetColumns, String columnId) {
+        if (dataSetColumns != null && !dataSetColumns.isEmpty()) {
+            for (DataColumn column : dataSetColumns) {
+                String id = column.getId();
+                if (id.equals(columnId)) return column;
+            }
+        }
+        return null;
     }
 
     /**

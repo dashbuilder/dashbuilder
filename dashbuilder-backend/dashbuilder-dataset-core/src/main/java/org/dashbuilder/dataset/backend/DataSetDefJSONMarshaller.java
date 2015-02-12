@@ -121,6 +121,7 @@ public class DataSetDefJSONMarshaller {
         String cacheEnabled = json.has(CACHE_ENABLED) ? json.getString(CACHE_ENABLED) : null;
         String cacheMaxRows = json.has(CACHE_MAXROWS) ? json.getString(CACHE_MAXROWS) : null;
         String cacheSynced = json.has(CACHE_SYNCED) ? json.getString(CACHE_SYNCED) : null;
+        String allColumns = json.has(ALL_COLUMNS) ? json.getString(ALL_COLUMNS) : null;
 
 
         // ServerURL parameter.
@@ -173,6 +174,9 @@ public class DataSetDefJSONMarshaller {
 
         // Cache synced parameter.
         if (!StringUtils.isBlank(cacheSynced)) dataSetDef.setCacheSynced(Boolean.parseBoolean(cacheSynced));
+
+        // All columns flag.
+        if (!StringUtils.isBlank(allColumns)) dataSetDef.setAllColumnsEnabled(Boolean.parseBoolean(allColumns));
 
         return dataSetDef;
     }

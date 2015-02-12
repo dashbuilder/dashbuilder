@@ -26,28 +26,51 @@ import org.junit.Test;
 import static org.fest.assertions.api.Assertions.assertThat;
 
 /**
- * <p>Data test for ElasticSearchDataSet.</p>
- * <p>It uses as source dataset: <code>org/dashbuilder/dataprovider/backend/elasticsearch/expensereports-custom-columns.dset</code></p>
- * <p>This dataset definition defines:</p>
+ * <p>Data test for ElasticSearchDataSet column definitions.</p>
+ *  
+ * <p>Test dataset: <code>org/dashbuilder/dataprovider/backend/elasticsearch/expensereports.dset</code></p>
  * <ul>
- *     <li>Id, employee, city & amount columns.</li>
- *     <li>Modify column type for city column as TEXT (not as LABEL, by default).</li>
+ *     <li>Uses column provided from EL index mapping (allColumns flag is set to true)</li>
  * </ul>
+ *
+ * <p>Test dataset: <code>org/dashbuilder/dataprovider/backend/elasticsearch/expensereports-custom-columns.dset</code></p>
+ * <ul>
+ *     <li>Modify column type for city column as TEXT (not as LABEL, by default, allColumns flag is set to true)</li>
+ * </ul>
+ *
+ * <p>Test dataset: <code>org/dashbuilder/dataprovider/backend/elasticsearch/expensereports-custom-columns2.dset</code></p>
+ * <ul>
+ *     <li>Defined custom columns: id (NUMBER), employee (TEXT), city (TEXT), amount (NUMBER)</li>
+ * </ul> 
+ *
+ * <p>Test dataset: <code>org/dashbuilder/dataprovider/backend/elasticsearch/expensereports-custom-columns-error.dset</code></p>
+ * <ul>
+ *     <li>Try to override employee column type to label and it's not allowed (as employee field is type analyzed string)</li>
+ * </ul> 
  * 
  * @since 0.3.0
  */
 public class ElasticSearchDataSetCustomColumnsTest extends ElasticSearchDataSetTestBase {
 
-    protected static final String EL_EXAMPLE_DATASET_DEF = "org/dashbuilder/dataprovider/backend/elasticsearch/expensereports-custom-columns.dset";
-    protected static final String EL_DATASET_UUID = "expense_reports_custom_columns";
+    protected static final String EL_EXAMPLE_ALL_COLUMNS_DATASET_DEF = "org/dashbuilder/dataprovider/backend/elasticsearch/expensereports-allcolumns.dset";
+    protected static final String EL_DATASET_ALL_COLUMNS_UUID = "expense_reports_allcolumns";
+    protected static final String EL_EXAMPLE_CUSTOM_COLUMNS_DATASET_DEF = "org/dashbuilder/dataprovider/backend/elasticsearch/expensereports-custom-columns.dset";
+    protected static final String EL_DATASET_CUSTOM_COLUMNS_UUID = "expense_reports_custom_columns";
+    protected static final String EL_EXAMPLE_CUSTOM_COLUMNS2_DATASET_DEF = "org/dashbuilder/dataprovider/backend/elasticsearch/expensereports-custom-columns2.dset";
+    protected static final String EL_DATASET_CUSTOM_COLUMNS2_UUID = "expense_reports_custom_columns2";
+    protected static final String EL_EXAMPLE_BAD_COLUMNS_DATASET_DEF = "org/dashbuilder/dataprovider/backend/elasticsearch/expensereports-custom-columns-error.dset";
+    protected static final String EL_DATASET_BAD_COLUMNS_UUID = "expense_reports_custom_columns_error";
     
     /**
      * Register the dataset used for this test case. 
      */
     @Before
     public void registerDataSet() throws Exception {
-        // Register the data set.
-        _registerDataSet(EL_EXAMPLE_DATASET_DEF);
+        // Register the data sets.
+        _registerDataSet(EL_EXAMPLE_ALL_COLUMNS_DATASET_DEF);
+        _registerDataSet(EL_EXAMPLE_CUSTOM_COLUMNS_DATASET_DEF);
+        _registerDataSet(EL_EXAMPLE_CUSTOM_COLUMNS2_DATASET_DEF);
+        _registerDataSet(EL_EXAMPLE_BAD_COLUMNS_DATASET_DEF);
     }
 
     /**
@@ -55,24 +78,97 @@ public class ElasticSearchDataSetCustomColumnsTest extends ElasticSearchDataSetT
      * COLUMNS TESING.
      * **********************************************************************************************************************************************************************************************
      */
-    
-    
+
     /**
-     * Test columns as this dataset defintion contains custom definitions.
-     * 
-     * Result should be:
-     * <ul>
-     *     <li>Column 0 -  id=id name=id type=NUMBER </li>
-     *     <li>Column 1 -  id=employee name=employee type=LABEL </li>
-     *     <li>Column 2 -  id=city name=city type=TEXT </li>
-     *     <li>Column 3 -  id=amount name=amount type=NUMBER </li>
-     * </ul>
+     * Test retrieving all columns from index mapping (no columns defined in def and allColumns flag is set to true)
      */
     @Test
-    public void testColumns() throws Exception {
+    public void testAllColumns() throws Exception {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
-                        .dataset(EL_DATASET_UUID)
+                        .dataset(EL_DATASET_ALL_COLUMNS_UUID)
+                        .buildLookup());
+
+        // Columns size assertion.
+        Assert.assertNotNull(result.getColumns());
+        Assert.assertTrue(result.getColumns().size() == 6);
+
+        // Columns id assertion.
+        Assert.assertTrue(result.getColumnByIndex(0).getId().equals(EL_EXAMPLE_COLUMN_AMOUNT));
+        Assert.assertTrue(result.getColumnByIndex(1).getId().equals(EL_EXAMPLE_COLUMN_CITY));
+        Assert.assertTrue(result.getColumnByIndex(2).getId().equals(EL_EXAMPLE_COLUMN_DATE));
+        Assert.assertTrue(result.getColumnByIndex(3).getId().equals(EL_EXAMPLE_COLUMN_DEPT));
+        Assert.assertTrue(result.getColumnByIndex(4).getId().equals(EL_EXAMPLE_COLUMN_EMPLOYEE));
+        Assert.assertTrue(result.getColumnByIndex(5).getId().equals(EL_EXAMPLE_COLUMN_ID));
+
+        // Columns name assertion.
+        Assert.assertTrue(result.getColumnByIndex(0).getName().equals(EL_EXAMPLE_COLUMN_AMOUNT));
+        Assert.assertTrue(result.getColumnByIndex(1).getName().equals(EL_EXAMPLE_COLUMN_CITY));
+        Assert.assertTrue(result.getColumnByIndex(2).getName().equals(EL_EXAMPLE_COLUMN_DATE));
+        Assert.assertTrue(result.getColumnByIndex(3).getName().equals(EL_EXAMPLE_COLUMN_DEPT));
+        Assert.assertTrue(result.getColumnByIndex(4).getName().equals(EL_EXAMPLE_COLUMN_EMPLOYEE));
+        Assert.assertTrue(result.getColumnByIndex(5).getName().equals(EL_EXAMPLE_COLUMN_ID));
+
+
+        // Columns type assertion.
+        Assert.assertTrue(result.getColumnByIndex(0).getColumnType().equals(ColumnType.NUMBER));
+        Assert.assertTrue(result.getColumnByIndex(1).getColumnType().equals(ColumnType.LABEL));
+        Assert.assertTrue(result.getColumnByIndex(2).getColumnType().equals(ColumnType.DATE));
+        Assert.assertTrue(result.getColumnByIndex(3).getColumnType().equals(ColumnType.LABEL));
+        Assert.assertTrue(result.getColumnByIndex(4).getColumnType().equals(ColumnType.TEXT));
+        Assert.assertTrue(result.getColumnByIndex(5).getColumnType().equals(ColumnType.NUMBER));
+    }
+
+
+    /**
+     * Test retrieving all columns from index mapping and overriding one (a column is  defined in def and allColumns flag is set to true)
+     */
+    @Test
+    public void testCustomColumns() throws Exception {
+        DataSet result = dataSetManager.lookupDataSet(
+                DataSetFactory.newDataSetLookupBuilder()
+                        .dataset(EL_DATASET_CUSTOM_COLUMNS_UUID)
+                        .sort(EL_EXAMPLE_COLUMN_ID, SortOrder.ASCENDING)
+                        .buildLookup());
+
+        // Columns size assertion.
+        Assert.assertNotNull(result.getColumns());
+        Assert.assertTrue(result.getColumns().size() == 6);
+
+        // Columns id assertion.
+        Assert.assertTrue(result.getColumnByIndex(0).getId().equals(EL_EXAMPLE_COLUMN_AMOUNT));
+        Assert.assertTrue(result.getColumnByIndex(1).getId().equals(EL_EXAMPLE_COLUMN_CITY));
+        Assert.assertTrue(result.getColumnByIndex(2).getId().equals(EL_EXAMPLE_COLUMN_DATE));
+        Assert.assertTrue(result.getColumnByIndex(3).getId().equals(EL_EXAMPLE_COLUMN_DEPT));
+        Assert.assertTrue(result.getColumnByIndex(4).getId().equals(EL_EXAMPLE_COLUMN_EMPLOYEE));
+        Assert.assertTrue(result.getColumnByIndex(5).getId().equals(EL_EXAMPLE_COLUMN_ID));
+
+        // Columns name assertion.
+        Assert.assertTrue(result.getColumnByIndex(0).getName().equals(EL_EXAMPLE_COLUMN_AMOUNT));
+        Assert.assertTrue(result.getColumnByIndex(1).getName().equals(EL_EXAMPLE_COLUMN_CITY));
+        Assert.assertTrue(result.getColumnByIndex(2).getName().equals(EL_EXAMPLE_COLUMN_DATE));
+        Assert.assertTrue(result.getColumnByIndex(3).getName().equals(EL_EXAMPLE_COLUMN_DEPT));
+        Assert.assertTrue(result.getColumnByIndex(4).getName().equals(EL_EXAMPLE_COLUMN_EMPLOYEE));
+        Assert.assertTrue(result.getColumnByIndex(5).getName().equals(EL_EXAMPLE_COLUMN_ID));
+
+
+        // Columns type assertion.
+        Assert.assertTrue(result.getColumnByIndex(0).getColumnType().equals(ColumnType.NUMBER));
+        Assert.assertTrue(result.getColumnByIndex(1).getColumnType().equals(ColumnType.TEXT));
+        Assert.assertTrue(result.getColumnByIndex(2).getColumnType().equals(ColumnType.DATE));
+        Assert.assertTrue(result.getColumnByIndex(3).getColumnType().equals(ColumnType.LABEL));
+        Assert.assertTrue(result.getColumnByIndex(4).getColumnType().equals(ColumnType.TEXT));
+        Assert.assertTrue(result.getColumnByIndex(5).getColumnType().equals(ColumnType.NUMBER));
+    }
+
+    /**
+     * Test using column defined in def (allColumns flag is set to false)
+     */
+    @Test
+    public void testGivenColumns() throws Exception {
+        DataSet result = dataSetManager.lookupDataSet(
+                DataSetFactory.newDataSetLookupBuilder()
+                        .dataset(EL_DATASET_CUSTOM_COLUMNS2_UUID)
                         .sort(EL_EXAMPLE_COLUMN_ID, SortOrder.ASCENDING)
                         .buildLookup());
 
@@ -92,6 +188,7 @@ public class ElasticSearchDataSetCustomColumnsTest extends ElasticSearchDataSetT
         Assert.assertTrue(result.getColumnByIndex(2).getName().equals(EL_EXAMPLE_COLUMN_CITY));
         Assert.assertTrue(result.getColumnByIndex(3).getName().equals(EL_EXAMPLE_COLUMN_AMOUNT));
 
+
         // Columns type assertion.
         Assert.assertTrue(result.getColumnByIndex(0).getColumnType().equals(ColumnType.NUMBER));
         Assert.assertTrue(result.getColumnByIndex(1).getColumnType().equals(ColumnType.TEXT));
@@ -105,73 +202,11 @@ public class ElasticSearchDataSetCustomColumnsTest extends ElasticSearchDataSetT
      * **********************************************************************************************************************************************************************************************
      */
 
-    /**
-     * Most basic test.
-     */
-    @Test
-    public void testDefaultLookup() throws Exception {
-        DataSet result = dataSetManager.lookupDataSet(
-                DataSetFactory.newDataSetLookupBuilder()
-                        .dataset(EL_DATASET_UUID)
-                        .sort(EL_EXAMPLE_COLUMN_ID, SortOrder.ASCENDING)
-                        .buildLookup());
-
-        assertThat(result.getRowCount()).isEqualTo(50);
-        // Test id column.
-        assertThat(result.getValueAt(0, 0)).isEqualTo(1d);
-        assertThat(result.getValueAt(49, 0)).isEqualTo(50d);
-
-        // Test row 0 values.
-        assertThat(result.getValueAt(0, 1)).isEqualTo(EL_EXAMPLE_EMP_ROXIE);
-        assertThat(result.getValueAt(0, 2)).isEqualTo(EL_EXAMPLE_CITY_BARCELONA);
-        assertThat(result.getValueAt(0, 3)).isEqualTo(120.35d);
-
-        // Test row 1 values.
-        assertThat(result.getValueAt(1, 0)).isEqualTo(2d);
-        assertThat(result.getValueAt(1, 1)).isEqualTo(EL_EXAMPLE_EMP_ROXIE);
-        assertThat(result.getValueAt(1, 2)).isEqualTo(EL_EXAMPLE_CITY_BARCELONA);
-        assertThat(result.getValueAt(1, 3)).isEqualTo(1100.1d);
-
-        // Test row 8 values.
-        assertThat(result.getValueAt(8, 0)).isEqualTo(9d);
-        assertThat(result.getValueAt(8, 1)).isEqualTo(EL_EXAMPLE_EMP_NITA);
-        assertThat(result.getValueAt(8, 2)).isEqualTo(EL_EXAMPLE_CITY_MADRID);
-        assertThat(result.getValueAt(8, 3)).isEqualTo(75.75d);
-
-        // Test row 30 values.
-        assertThat(result.getValueAt(30, 0)).isEqualTo(31d);
-        assertThat(result.getValueAt(30, 1)).isEqualTo(EL_EXAMPLE_EMP_HANNA);
-        assertThat(result.getValueAt(30, 2)).isEqualTo(EL_EXAMPLE_CITY_RALEIGH);
-        assertThat(result.getValueAt(30, 3)).isEqualTo(234.34d);
-
-        // Test row 46 values.
-        assertThat(result.getValueAt(46, 0)).isEqualTo(47d);
-        assertThat(result.getValueAt(46, 1)).isEqualTo(EL_EXAMPLE_EMP_PATRICIA);
-        assertThat(result.getValueAt(46, 2)).isEqualTo(EL_EXAMPLE_CITY_LONDON);
-        assertThat(result.getValueAt(46, 3)).isEqualTo(565.56d);
-    }
-
-    /**
-     * Most basic test. Apply descendant sorting.
-     */
-    @Test
-    public void testDefaultLookupWithSorting() throws Exception {
-        DataSet result = dataSetManager.lookupDataSet(
-                DataSetFactory.newDataSetLookupBuilder()
-                        .dataset(EL_DATASET_UUID)
-                        .sort(EL_EXAMPLE_COLUMN_ID, SortOrder.DESCENDING)
-                        .buildLookup());
-
-        assertThat(result.getRowCount()).isEqualTo(50);
-        assertThat(result.getValueAt(0, 0)).isEqualTo(50d);
-        assertThat(result.getValueAt(49, 0)).isEqualTo(1d);
-    }
-
     @Test(expected = RuntimeException.class)
     public void testSortingWithNonExstingColumn() throws Exception {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
-                        .dataset(EL_DATASET_UUID)
+                        .dataset(EL_DATASET_CUSTOM_COLUMNS_UUID)
                         .sort("mycolumn", SortOrder.DESCENDING)
                         .buildLookup());
     }
@@ -180,10 +215,23 @@ public class ElasticSearchDataSetCustomColumnsTest extends ElasticSearchDataSetT
     public void testSortingWithNonDefinedColumn() throws Exception {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
-                        .dataset(EL_DATASET_UUID)
+                        .dataset(EL_DATASET_CUSTOM_COLUMNS2_UUID)
                         .sort(EL_EXAMPLE_COLUMN_DEPT, SortOrder.DESCENDING)
                         .buildLookup());
     }
 
-   
+
+
+    /**
+     * Test columns as this dataset defintion contains custom definitions.
+     * An exception must be thrown due to cannot change employee column type to label, as it's an anaylzed string in the EL index mapping.
+     */
+    @Test(expected = RuntimeException.class)
+    public void testColumnsBadDefined() throws Exception {
+        dataSetManager.lookupDataSet(
+                DataSetFactory.newDataSetLookupBuilder()
+                        .dataset(EL_DATASET_BAD_COLUMNS_UUID)
+                        .sort(EL_EXAMPLE_COLUMN_ID, SortOrder.ASCENDING)
+                        .buildLookup());
+    }
 }

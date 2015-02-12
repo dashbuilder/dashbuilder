@@ -10,6 +10,7 @@
     "type": "expense",
     "cacheEnabled": false,
     "cacheMaxRows": 1000,
+    "allColumns": false,
     "columns": [
                 {"id": "id", "name": "id", "type": "number"},
                 {"id": "amount", "name": "amount", "type": "number"},

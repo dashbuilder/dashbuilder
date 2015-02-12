@@ -1,5 +1,5 @@
 {
-    "uuid": "expense_reports_custom_columns",
+    "uuid": "expense_reports_allcolumns",
     "provider": "ELASTICSEARCH",
     "pushEnabled": true,
     "pushMaxSize": 1024,
@@ -9,9 +9,5 @@
     "index": "expensereports",
     "type": "expense",
     "cacheEnabled": false,
-    "cacheMaxRows": 1000,
-    "allColumns": true,
-    "columns": [
-            {"id": "city", "name": "city", "type": "text"},
-        ]
+    "allColumns": true
 }
