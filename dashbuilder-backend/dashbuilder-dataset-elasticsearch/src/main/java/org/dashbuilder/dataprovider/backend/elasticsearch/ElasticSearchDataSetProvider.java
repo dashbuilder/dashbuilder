@@ -372,8 +372,7 @@ public class ElasticSearchDataSetProvider implements DataSetProvider {
 
         // Obtain the indexMappings
         MappingsResponse mappingsResponse = clientFactory.newClient(elasticSearchDataSetDef).getMappings(index);
-        // TODO: Check response code too.
-        if (mappingsResponse == null || mappingsResponse.getStatus() != RESPONSE_CODE_OK) throw new IllegalArgumentException("Cannot retrieve index mappings for index: [" + index[0] + "]");
+        if (mappingsResponse == null || mappingsResponse.getStatus() != RESPONSE_CODE_OK) throw new IllegalArgumentException("Cannot retrieve index mappings for index: [" + index[0] + "]. See previous errors.");
 
 
         // Obtain the columns (ids and types).

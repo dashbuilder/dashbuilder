@@ -33,7 +33,8 @@
       **************
       - ElasticSearch v1.X requires Java 1.7+
       - Running tests implies to run an ElasticSearch server instance
-      - Until not moving to Java 1.7+ tests must be skipped by default, as they will fail using Java 1.6
+      - Until not moving to Java 1.7+ this module's tests must be skipped by default, as they will fail using Java 1.6
+      - You can disable or remove this profile if using Java 1.7+
     -->
     <profile>
       <id>java6</id>
