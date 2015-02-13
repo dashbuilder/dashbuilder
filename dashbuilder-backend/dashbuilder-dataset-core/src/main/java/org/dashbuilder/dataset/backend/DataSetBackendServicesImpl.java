@@ -46,7 +46,7 @@ public class DataSetBackendServicesImpl implements DataSetBackendServices {
     private void init() {
         ServletContext servletContext = RpcContext.getHttpSession().getServletContext();
         if (!dataSetDefDeployer.isRunning() && servletContext != null) {
-            String dir = servletContext.getRealPath("datasets");
+            String dir = servletContext.getRealPath("WEB-INF/datasets");
             if (dir != null && new File(dir).exists()) {
                 dir = dir.replaceAll("\\\\", "/");
                 dataSetDefDeployer.deploy(dir);
