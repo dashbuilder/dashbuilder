@@ -49,6 +49,24 @@ public class TimeFrameTest {
     }
 
     @Test
+    public void testCurrentQuarter() throws Exception {
+        TimeFrame timeFrame = TimeFrame.parse("begin[quarter] till end[quarter]");
+        Date start = timeFrame.getFrom().getTimeInstant();
+        Date end = timeFrame.getTo().getTimeInstant();
+        assertThat(formatDate(start)).isEqualTo("2015-10-01 00:00:00");
+        assertThat(formatDate(end)).isEqualTo("2016-01-01 00:00:00");
+    }
+
+    @Test
+    public void testCurrentQuarter2() throws Exception {
+        TimeFrame timeFrame = TimeFrame.parse("begin[quarter march] till end[quarter march]");
+        Date start = timeFrame.getFrom().getTimeInstant();
+        Date end = timeFrame.getTo().getTimeInstant();
+        assertThat(formatDate(start)).isEqualTo("2015-09-01 00:00:00");
+        assertThat(formatDate(end)).isEqualTo("2015-12-01 00:00:00");
+    }
+
+    @Test
     public void testPastSeconds() throws Exception {
         TimeFrame timeFrame = TimeFrame.parse("-10second");
         Date start = timeFrame.getFrom().getTimeInstant();

@@ -210,11 +210,11 @@ public class TimeInstant {
         if (DateIntervalType.YEAR.equals(intervalType)) {
             int month = startDate.getMonth();
             int firstMonth = firstMonthOfYear.getIndex()-1;
-            int inc =  0;
-            if (TimeMode.BEGIN.equals(timeMode)) inc = (month < firstMonth ? -1 : 0);
-            else inc = (month < firstMonth ? 0 : 1);
+            int yearInc =  0;
+            if (TimeMode.BEGIN.equals(timeMode)) yearInc = (month < firstMonth ? -1 : 0);
+            else yearInc = (month < firstMonth ? 0 : 1);
 
-            startDate.setYear(startDate.getYear() + inc);
+            startDate.setYear(startDate.getYear() + yearInc);
             startDate.setMonth(firstMonth);
             startDate.setDate(1);
             startDate.setHours(0);
@@ -224,12 +224,14 @@ public class TimeInstant {
         if (DateIntervalType.QUARTER.equals(intervalType)) {
             int month = startDate.getMonth();
             int firstMonth = Quarter.getQuarterFirstMonth(firstMonthOfYear.getIndex(), month + 1)-1;
-            int inc = 0;
-            if (TimeMode.BEGIN.equals(timeMode)) inc = (month > 0 && firstMonth<12 ? -1 : 0);
-            else inc = (month<12 && firstMonth>=0 ? 1 : 0);
-
-            startDate.setYear(startDate.getYear() + inc);
-            startDate.setMonth(firstMonth);
+            int yearInc = 0;
+            int monthInc = 3;
+            if (TimeMode.BEGIN.equals(timeMode)) {
+                yearInc = (firstMonth>month ? -1 : 0);
+                monthInc = 0;
+            }
+            startDate.setYear(startDate.getYear() + yearInc);
+            startDate.setMonth(firstMonth + monthInc);
             startDate.setDate(1);
             startDate.setHours(0);
             startDate.setMinutes(0);

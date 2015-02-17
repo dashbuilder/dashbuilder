@@ -159,7 +159,7 @@ public class CoreFunction extends DataSetFunction {
 
         public TimeFrameLimits(TimeFrame timeFrame) {
             from = timeFrame.getFrom().getTimeInstant();
-                to = timeFrame.getTo().getTimeInstant();
+            to = timeFrame.getTo().getTimeInstant();
         }
     }
 }
