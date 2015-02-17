@@ -19,6 +19,7 @@ import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.client.expenses.ExpenseConstants;
 import org.dashbuilder.client.expenses.ExpensesDashboard;
+import org.dashbuilder.client.lienzo.LienzoDashboard;
 import org.dashbuilder.client.metrics.AnalyticMetricsDashboard;
 import org.dashbuilder.client.metrics.RealTimeMetricsDashboard;
 import org.dashbuilder.client.sales.widgets.SalesDistributionByCountry;
@@ -59,6 +60,7 @@ public class GalleryWidgetPresenter {
     private ExpensesDashboard expensesDashboardWidget;
     private RealTimeMetricsDashboard realTimeMetricsDashboard;
     private AnalyticMetricsDashboard analyticMetricsDashboard;
+    private LienzoDashboard lienzoDashboard;
 
     @Inject
     private Event<NotificationEvent> workbenchNotification;
@@ -107,6 +109,10 @@ public class GalleryWidgetPresenter {
         if ("metrics_analytic".equals(widgetId)) {
             if (analyticMetricsDashboard == null) analyticMetricsDashboard = new AnalyticMetricsDashboard();
             return analyticMetricsDashboard;
+        }
+        if ("lienzo".equals(widgetId)) {
+            if (lienzoDashboard == null) lienzoDashboard = new LienzoDashboard();
+            return lienzoDashboard;
         }
         throw new IllegalArgumentException("Unknown gallery widget: " + widgetId);
     }

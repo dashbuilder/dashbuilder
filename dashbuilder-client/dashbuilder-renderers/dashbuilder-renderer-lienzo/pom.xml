@@ -20,7 +20,6 @@
     <dependency>
       <groupId>com.ahome-it</groupId>
       <artifactId>lienzo-charts</artifactId>
-      <version>1.0.56-SNAPSHOT</version>
     </dependency>
 
     <dependency>
@@ -51,18 +50,6 @@
         <directory>src/main/resources</directory>
       </resource>
     </resources>
-
-    <plugins>
-
-      <!-- TODO: Remove when versions are set into parent. -->
-      <plugin>
-        <artifactId>maven-enforcer-plugin</artifactId>
-        <configuration>
-          <skip>true</skip>
-        </configuration>
-      </plugin>
-
-    </plugins>
 
   </build>
 

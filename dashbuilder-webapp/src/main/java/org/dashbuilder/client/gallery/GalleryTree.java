@@ -441,5 +441,6 @@ public class GalleryTree {
         nodeList.add(new GalleryPlaceRequest("Expense reports", createPlaceRequest("expenseReports")));
         nodeList.add(new GalleryPlaceRequest("System metrics (real-time)", createPlaceRequest("metrics_realtime")));
         nodeList.add(new GalleryPlaceRequest("System metrics (historic)", createPlaceRequest("metrics_analytic")));
+        nodeList.add(new GalleryPlaceRequest("Lienzo", createPlaceRequest("lienzo")));
     }
 }
