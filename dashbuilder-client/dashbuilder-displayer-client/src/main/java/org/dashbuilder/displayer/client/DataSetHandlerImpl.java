@@ -60,8 +60,17 @@ public class DataSetHandlerImpl implements DataSetHandler {
     }
 
     public void limitDataSetRows(int offset, int rows) {
-        lookupCurrent.setRowOffset(offset);
-        if (lookupCurrent.getNumberOfRows() != -1 && lookupCurrent.getNumberOfRows() > rows) {
+        int offsetBase = lookupBase.getRowOffset();
+        int rowsBase = lookupBase.getNumberOfRows();
+        lookupCurrent.setRowOffset(offsetBase + offset);
+
+        // base 0 to all, 0 to 20  => offset=0, rows=20
+        // base 0 to 1,   0 to 20  => offset=0, rows=1
+        // base 50 to 51, 0 to 20  => offset=50, rows=20
+        // base 10 to 31, 20 to 10 => offset=30, rows=10
+        // base 10 to 31, 0 to 50  => offset=10, rows=31
+
+        if (rowsBase == -1 || rowsBase > rows) {
             lookupCurrent.setNumberOfRows(rows);
         }
     }
