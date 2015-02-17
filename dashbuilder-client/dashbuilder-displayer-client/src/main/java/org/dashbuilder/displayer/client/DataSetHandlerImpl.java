@@ -70,7 +70,7 @@ public class DataSetHandlerImpl implements DataSetHandler {
         // base 10 to 31, 20 to 10 => offset=30, rows=10
         // base 10 to 31, 0 to 50  => offset=10, rows=31
 
-        if (rowsBase == -1 || rowsBase > rows) {
+        if (rowsBase < 1 || rowsBase > rows) {
             lookupCurrent.setNumberOfRows(rows);
         }
     }
