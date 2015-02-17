@@ -22,10 +22,13 @@ import java.util.Set;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
 
+import com.github.gwtbootstrap.client.ui.Label;
+import com.github.gwtbootstrap.client.ui.constants.LabelType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.dataset.DataSet;
@@ -62,6 +65,9 @@ public class DisplayerSettingsEditor extends Composite {
     private static final Binder uiBinder = GWT.create( Binder.class );
 
     @UiField
+    Panel mainPanel;
+
+    @UiField
     PropertyEditorWidget propertyEditor;
 
     protected Listener listener;
@@ -89,7 +95,18 @@ public class DisplayerSettingsEditor extends Composite {
         this.supportedAttributes = displayerContraints.getSupportedAttributes();
 
         propertyEditor.setFilterPanelVisible(false);
-        propertyEditor.handle(new PropertyEditorEvent(PROPERTY_EDITOR_ID, getPropertyEditorCategories()));
+        try {
+            displayer.getDataSetHandler().lookupDataSet(new DataSetReadyCallback() {
+                public void callback(DataSet dataSet) {
+                    propertyEditor.handle(new PropertyEditorEvent(PROPERTY_EDITOR_ID, getPropertyEditorCategories()));
+                }
+                public void notFound() {
+                    mainPanel.add(new Label(LabelType.WARNING, "ERROR: Data set not found"));
+                }
+            });
+        } catch (Exception e) {
+            mainPanel.add(new Label(LabelType.WARNING, "ERROR: " + e.toString()));
+        }
     }
 
     protected boolean isSupported(DisplayerAttributeDef attributeDef) {
@@ -308,21 +325,9 @@ public class DisplayerSettingsEditor extends Composite {
             }
             if (isSupported(TABLE_SORTCOLUMNID)) {
                 final List<String> optionList = new ArrayList<String>();
-                try {
-                    displayer.getDataSetHandler().lookupDataSet(new DataSetReadyCallback() {
-                        public void callback(DataSet dataSet) {
-                            List<DataColumn> dsColumns = dataSet.getColumns();
-                            for (DataColumn column : dsColumns) {
-                                optionList.add(column.getId());
-                            }
-                        }
-                        public void notFound() {
-                            optionList.add("ERROR: Data set not found");
-                        }
-                    });
-                } catch (Exception e) {
-                    optionList.add("ERROR: " + e.toString());
-                }
+                DataSet dataSet = displayer.getDataSetHandler().getLastDataSet();
+                List<DataColumn> dsColumns = dataSet.getColumns();
+                for (DataColumn column : dsColumns) optionList.add(column.getId());
 
                 category.withField(new PropertyEditorFieldInfo(DisplayerSettingsEditorConstants.INSTANCE.table_sortColumn(),
                         displayerSettings.getTableDefaultSortColumnId(),

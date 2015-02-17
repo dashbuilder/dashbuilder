@@ -28,7 +28,7 @@
     }
   </ui:style>
 
-  <g:FlowPanel styleName="{style.smallFont}">
+  <g:FlowPanel ui:field="mainPanel" styleName="{style.smallFont}">
     <uf:PropertyEditorWidget ui:field="propertyEditor"/>
   </g:FlowPanel>
 
