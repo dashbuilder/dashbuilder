@@ -37,7 +37,7 @@
       <g:Label>Empty intervals</g:Label>
     </g:HorizontalPanel>
     <g:VerticalPanel>
-      <g:Label>Min. interval type</g:Label>
+      <g:Label>Interval type</g:Label>
       <b:ListBox ui:field="intervalTypeListBox" width="130px" />
     </g:VerticalPanel>
     <g:VerticalPanel ui:field="maxIntervalsGroup" visible="false">

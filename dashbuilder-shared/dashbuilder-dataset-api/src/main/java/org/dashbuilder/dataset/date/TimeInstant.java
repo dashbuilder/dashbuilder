@@ -42,6 +42,12 @@ public class TimeInstant {
         BEGIN,
         END;
 
+        private final static TimeMode[] modes = values();
+
+        public int getIndex() {
+            return ordinal();
+        }
+
         public static TimeMode getByName(String name) {
             try {
                 return valueOf(name.toUpperCase());
@@ -49,6 +55,11 @@ public class TimeInstant {
                 return null;
             }
         }
+
+        public static TimeMode getByIndex(int index) {
+            return modes[index];
+        }
+
     }
 
     private TimeMode timeMode = null;
@@ -62,7 +73,7 @@ public class TimeInstant {
     private transient Date startTime = null;
 
     public TimeInstant() {
-        this(TimeMode.NOW, null, null, null);
+        this(TimeMode.NOW, DateIntervalType.YEAR, Month.JANUARY, null);
     }
 
     public TimeInstant(TimeMode timeMode, DateIntervalType intervalType, Month firstMonthOfYear, TimeAmount timeAmount) {
@@ -106,17 +117,38 @@ public class TimeInstant {
 
     public String toString() {
         StringBuilder out = new StringBuilder();
-        if (timeMode != null && !TimeMode.NOW.equals(timeMode)) {
-            out.append(timeMode).append("[").append(intervalType);
-            if (intervalType != null && intervalType.getIndex() > DateIntervalType.MONTH.getIndex()) {
-                out.append(" ").append(firstMonthOfYear);
+        if (timeMode != null) {
+            out.append(timeMode.name().toLowerCase());
+
+            if (!TimeMode.NOW.equals(timeMode)) {
+
+                out.append("[").append(intervalType.name().toLowerCase());
+                if (intervalType != null
+                    && intervalType.getIndex() > DateIntervalType.MONTH.getIndex()
+                    && firstMonthOfYear != null) {
+
+                    out.append(" ").append(firstMonthOfYear.name().toLowerCase());
+                }
+                out.append("]");
             }
-            out.append("] ");
-        } else {
-            out.append(TimeMode.NOW).append(" ");
         }
-        if (timeAmount != null) out.append(timeAmount);
+        if (timeAmount != null && timeAmount.getQuantity() != 0) {
+            if (out.length() > 0) out.append(" ");
+            out.append(timeAmount);
+        }
+        if (out.length() == 0) {
+            out.append(TimeMode.NOW.name().toLowerCase());
+        }
         return out.toString();
+    }
+
+    public TimeInstant cloneInstance() {
+        TimeInstant clone = new TimeInstant();
+        clone.timeMode = timeMode;
+        clone.intervalType = intervalType;
+        clone.firstMonthOfYear = firstMonthOfYear;
+        if (timeAmount != null) clone.timeAmount = timeAmount.cloneInstance();
+        return clone;
     }
 
     public Date getTimeInstant() {
@@ -136,7 +168,7 @@ public class TimeInstant {
             if (START_TIME != null) return new Date(START_TIME.getTime());
             return new Date();
         }
-        return startTime;
+        return new Date(startTime.getTime());
     }
 
     protected Date calculateStartTime() {
@@ -240,7 +272,7 @@ public class TimeInstant {
      * Return a time instant representing the current time.
      */
     public static TimeInstant now() {
-        return new TimeInstant(TimeMode.NOW, null, null, null);
+        return new TimeInstant();
     }
 
     /**

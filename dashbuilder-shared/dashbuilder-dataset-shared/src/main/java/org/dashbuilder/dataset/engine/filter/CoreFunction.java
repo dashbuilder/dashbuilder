@@ -133,7 +133,7 @@ public class CoreFunction extends DataSetFunction {
         return true;
     }
 
-    Map<String, TimeFrame> _timeFrameExprCache = new HashMap<String, TimeFrame>();
+    Map<String, TimeFrameLimits> _timeFrameExprCache = new HashMap<String, TimeFrameLimits>();
 
     public boolean timeFrame(Comparable value) {
         if (isNull(value)) return false;
@@ -141,16 +141,25 @@ public class CoreFunction extends DataSetFunction {
         Date target = (Date) value;
 
         String timeFrameExpr = getParameter(0).toString();
-        TimeFrame timeFrame = _timeFrameExprCache.get(timeFrameExpr);
-        if (timeFrame == null) {
-            _timeFrameExprCache.put(timeFrameExpr, timeFrame = TimeFrame.parse(getParameter(0).toString()));
+        TimeFrameLimits timeFrameLimits = _timeFrameExprCache.get(timeFrameExpr);
+        if (timeFrameLimits == null) {
+            TimeFrame timeFrame = TimeFrame.parse(getParameter(0).toString());
+            _timeFrameExprCache.put(timeFrameExpr, timeFrameLimits = new TimeFrameLimits(timeFrame));
         }
 
-        Date future = timeFrame.getTo().getTimeInstant();
-        Date past = timeFrame.getFrom().getTimeInstant();
-
-        if (target.after(future)) return false;
-        if (target.before(past)) return false;
+        if (target.before(timeFrameLimits.from)) return false;
+        if (target.after(timeFrameLimits.to)) return false;
         return true;
+    }
+
+    public class TimeFrameLimits {
+
+        Date from = null;
+        Date to = null;
+
+        public TimeFrameLimits(TimeFrame timeFrame) {
+            from = timeFrame.getFrom().getTimeInstant();
+                to = timeFrame.getTo().getTimeInstant();
+        }
     }
 }

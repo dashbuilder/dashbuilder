@@ -28,7 +28,7 @@ import org.jboss.errai.common.client.api.annotations.Portable;
  * <li>&quot;<i>now till 1year</i>&quot; => 1 year since now</li>
  * <li>&quot;<i>now till end[year March] 1year</i>&quot; => this year + next (year starting on March)</li>
  * <li>&quot;<i>end[year March] till 1year</i>&quot; => next year</li>
- * <li>&quot;<i>begin[year March] -1year till now</i>&quot; => beginning last year till now</li>
+ * <li>&quot;<i>begin[year March] -1year till now</i>&quot; => begin of last year till now</li>
  * <li>&quot;<i>end[year March] +2quarter till 1quarter</i>&quot; => 3rd quarter of next year</li>
  * <li>&quot;<i>begin[year March] -7day till begin[year March]</i>&quot; => Last week of last year</li>
  * </ul>
@@ -41,8 +41,6 @@ public class TimeFrame {
     private TimeInstant to = null;
 
     public TimeFrame() {
-        from = TimeInstant.parse("-10year");
-        to = TimeInstant.parse("+10year");
     }
 
     public TimeFrame(TimeInstant from, TimeInstant to) {
@@ -109,4 +107,21 @@ public class TimeFrame {
         }
         return timeFrame;
     }
+
+    public String toString() {
+        StringBuilder out = new StringBuilder();
+        if (from != null && to != null) {
+            out.append(from.toString());
+            out.append(" till ");
+            out.append(to.toString());
+        }
+        else if (from != null) {
+            out.append(from.toString());
+        }
+        else if (to != null) {
+            out.append(to.toString());
+        }
+        return out.toString();
+    }
+
 }
