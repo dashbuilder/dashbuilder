@@ -46,6 +46,12 @@ public class LienzoDashboard extends Composite {
     @UiField(provided = true)
     Displayer googleDisplayer;
 
+    @UiField(provided = true)
+    Displayer lienzoDisplayer2;
+
+    @UiField(provided = true)
+    Displayer googleDisplayer2;
+
     DisplayerCoordinator displayerCoordinator = new DisplayerCoordinator();
 
     public String getTitle() {
@@ -79,10 +85,38 @@ public class LienzoDashboard extends Composite {
                         .margins(10, 50, 50, 20)
                         .filterOn(false, false, false)
                         .buildSettings());
+        lienzoDisplayer2 = DisplayerHelper.lookupDisplayer(
+                DisplayerSettingsFactory.newBarChartSettings()
+                        .dataset(EXPENSES)
+                        .group(DEPARTMENT)
+                        .column(DEPARTMENT)
+                        .column(AMOUNT, SUM, "Total Amount")
+                        .title("Expenses by Department (Lienzo)")
+                        .width(600).height(400)
+                        .margins(10, 50, 50, 20)
+                        .filterOn(false, false, false)
+                        .renderer(LienzoRenderer.UUID)
+                        .horizontal()
+                        .buildSettings());
+
+        googleDisplayer2 = DisplayerHelper.lookupDisplayer(
+                DisplayerSettingsFactory.newBarChartSettings()
+                        .dataset(EXPENSES)
+                        .group(DEPARTMENT)
+                        .column(DEPARTMENT)
+                        .column(AMOUNT, SUM, "Total Amount")
+                        .title("Expenses by Department (Google)")
+                        .width(600).height(400)
+                        .margins(10, 50, 50, 20)
+                        .filterOn(false, false, false)
+                        .horizontal()
+                        .buildSettings());
 
         // Make that charts interact among them
         displayerCoordinator.addDisplayer(lienzoDisplayer);
         displayerCoordinator.addDisplayer(googleDisplayer);
+        displayerCoordinator.addDisplayer(lienzoDisplayer2);
+        displayerCoordinator.addDisplayer(googleDisplayer2);
 
         // Init the dashboard from the UI Binder template
         initWidget(uiBinder.createAndBindUi(this));

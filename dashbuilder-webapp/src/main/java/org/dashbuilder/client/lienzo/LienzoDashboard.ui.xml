@@ -6,9 +6,11 @@
   <g:VerticalPanel spacing="10">
     <g:HorizontalPanel spacing="10">
       <my:Displayer ui:field="lienzoDisplayer"/>
+      <my:Displayer ui:field="lienzoDisplayer2"/>
     </g:HorizontalPanel>
     <g:HorizontalPanel spacing="10">
       <my:Displayer ui:field="googleDisplayer"/>
+      <my:Displayer ui:field="googleDisplayer2"/>
     </g:HorizontalPanel>
   </g:VerticalPanel>
 
