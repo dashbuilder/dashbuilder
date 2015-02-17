@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbulider.renderer.lienzo.client;
+package org.dashbuilder.renderer.lienzo.client;
 
 import com.ait.lienzo.charts.client.axis.CategoryAxis;
 import com.ait.lienzo.charts.client.axis.NumericAxis;
@@ -30,8 +30,6 @@ import org.dashbuilder.dataset.DataSetLookupConstraints;
 import org.dashbuilder.displayer.DisplayerAttributeDef;
 import org.dashbuilder.displayer.DisplayerAttributeGroupDef;
 import org.dashbuilder.displayer.DisplayerConstraints;
-
-import java.util.List;
 
 public class LienzoBarChartDisplayer extends LienzoDisplayer {
 

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.dashbulider.renderer.lienzo.client.resources.i18n;
+package org.dashbuilder.renderer.lienzo.client.resources.i18n;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.i18n.client.Messages;

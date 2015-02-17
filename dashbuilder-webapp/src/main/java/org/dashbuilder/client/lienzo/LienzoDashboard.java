@@ -24,7 +24,7 @@ import org.dashbuilder.displayer.DisplayerSettingsFactory;
 import org.dashbuilder.displayer.client.Displayer;
 import org.dashbuilder.displayer.client.DisplayerCoordinator;
 import org.dashbuilder.displayer.client.DisplayerHelper;
-import org.dashbulider.renderer.lienzo.client.LienzoRenderer;
+import org.dashbuilder.renderer.lienzo.client.LienzoRenderer;
 
 import static org.dashbuilder.client.expenses.ExpenseConstants.*;
 import static org.dashbuilder.dataset.group.AggregateFunctionType.SUM;
@@ -41,7 +41,10 @@ public class LienzoDashboard extends Composite {
     private static final LienzoDashboardBinder uiBinder = GWT.create(LienzoDashboardBinder.class);
 
     @UiField(provided = true)
-    Displayer test;
+    Displayer lienzoDisplayer;
+
+    @UiField(provided = true)
+    Displayer googleDisplayer;
 
     DisplayerCoordinator displayerCoordinator = new DisplayerCoordinator();
 
@@ -52,22 +55,34 @@ public class LienzoDashboard extends Composite {
     public LienzoDashboard() {
 
         // Create the chart definitions
-
-        test = DisplayerHelper.lookupDisplayer(
+        lienzoDisplayer = DisplayerHelper.lookupDisplayer(
                 DisplayerSettingsFactory.newBarChartSettings()
                         .dataset(EXPENSES)
                         .group(DEPARTMENT)
                         .column(DEPARTMENT)
                         .column(AMOUNT, SUM, "Total Amount")
-                        .title("Expenses by Department")
-                        .width(400).height(250)
+                        .title("Expenses by Department (Lienzo)")
+                        .width(600).height(400)
                         .margins(10, 50, 50, 20)
                         .filterOn(false, false, false)
                         .renderer(LienzoRenderer.UUID)
                         .buildSettings());
 
+        googleDisplayer = DisplayerHelper.lookupDisplayer(
+                DisplayerSettingsFactory.newBarChartSettings()
+                        .dataset(EXPENSES)
+                        .group(DEPARTMENT)
+                        .column(DEPARTMENT)
+                        .column(AMOUNT, SUM, "Total Amount")
+                        .title("Expenses by Department (Google)")
+                        .width(600).height(400)
+                        .margins(10, 50, 50, 20)
+                        .filterOn(false, false, false)
+                        .buildSettings());
+
         // Make that charts interact among them
-        displayerCoordinator.addDisplayer(test);
+        displayerCoordinator.addDisplayer(lienzoDisplayer);
+        displayerCoordinator.addDisplayer(googleDisplayer);
 
         // Init the dashboard from the UI Binder template
         initWidget(uiBinder.createAndBindUi(this));

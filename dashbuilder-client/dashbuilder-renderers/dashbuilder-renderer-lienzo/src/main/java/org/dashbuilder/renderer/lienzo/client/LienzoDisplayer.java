@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbulider.renderer.lienzo.client;
+package org.dashbuilder.renderer.lienzo.client;
 
 import com.ait.lienzo.charts.client.model.DataTable;
 import com.ait.lienzo.charts.client.model.DataTableColumn;
@@ -21,6 +21,7 @@ import com.ait.lienzo.client.core.shape.IPrimitive;
 import com.ait.lienzo.client.core.shape.Layer;
 import com.ait.lienzo.client.widget.LienzoPanel;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.DataColumn;
@@ -34,18 +35,15 @@ import java.util.List;
 public abstract class LienzoDisplayer extends AbstractDisplayer {
 
     protected boolean drawn = false;
-    protected Layer layer = new Layer();
+    protected FlowPanel mainPanel = new FlowPanel();
     protected Label label = new Label();
 
     protected DataSet dataSet;
     protected DataTable lienzoTable = null;
 
     public LienzoDisplayer() {
-        // Create the main lienzo panel.
-        LienzoPanel panel = new LienzoPanel(getWidth(), getHeight());
-        layer.setTransformable(true);
-        panel.add(layer);
-        initWidget(panel);
+        // Create the main panel.
+        initWidget(mainPanel);
     }
 
     /**
@@ -72,6 +70,13 @@ public abstract class LienzoDisplayer extends AbstractDisplayer {
                         public void callback(DataSet result) {
                             dataSet = result;
                             afterDataSetLookup(result);
+
+                            LienzoPanel panel = new LienzoPanel(getWidth(), getHeight());
+                            Layer layer = new Layer();
+                            layer.setTransformable(true);
+                            panel.add(layer);
+                            mainPanel.add(panel);
+                            
                             IPrimitive primitive = createVisualization();
                             layer.clear();
                             layer.add(primitive);
@@ -123,7 +128,7 @@ public abstract class LienzoDisplayer extends AbstractDisplayer {
      * Close the displayer
      */
     public void close() {
-        layer.clear();
+        mainPanel.clear();
 
         // Close done
         afterClose();

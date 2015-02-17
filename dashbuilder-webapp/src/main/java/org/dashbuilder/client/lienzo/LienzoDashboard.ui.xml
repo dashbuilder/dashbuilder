@@ -4,7 +4,12 @@
              xmlns:my="urn:import:org.dashbuilder.displayer.client">
 
   <g:VerticalPanel spacing="10">
-    <my:Displayer ui:field="test"/>
+    <g:HorizontalPanel spacing="10">
+      <my:Displayer ui:field="lienzoDisplayer"/>
+    </g:HorizontalPanel>
+    <g:HorizontalPanel spacing="10">
+      <my:Displayer ui:field="googleDisplayer"/>
+    </g:HorizontalPanel>
   </g:VerticalPanel>
 
 </ui:UiBinder>
