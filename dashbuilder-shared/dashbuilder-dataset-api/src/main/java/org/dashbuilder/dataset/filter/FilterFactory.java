@@ -178,7 +178,7 @@ public class FilterFactory {
             }
             else if (ColumnType.DATE.equals(columnType)) {
                 if (CoreFunctionType.TIME_FRAME.equals(functionType)) {
-                    result.add("1 " + DateIntervalType.YEAR.toString().toLowerCase());
+                    result.add("begin[year] till end[year]");
                 }
                 else {
                     Date d = new Date();

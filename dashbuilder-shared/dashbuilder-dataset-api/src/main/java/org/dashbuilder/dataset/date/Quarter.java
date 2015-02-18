@@ -51,15 +51,15 @@ public enum Quarter {
      * @return The first month of the target quarter for the given month.
      */
     public static int getQuarterFirstMonth(int firstMonthOfYear, int targetMonth) {
-        int quarter = firstMonthOfYear;
-        int index = quarter;
+        int result = firstMonthOfYear;
+        int index = firstMonthOfYear;
 
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 3; j++) {
-                if (index == targetMonth) return quarter;
+                if (index == targetMonth) return result;
                 index = Month.nextIndex(index);
             }
-            quarter = index;
+            result = index;
         }
         throw new RuntimeException("Month not found : " + targetMonth);
     }

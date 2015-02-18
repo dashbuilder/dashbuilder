@@ -17,19 +17,16 @@
   -->
 
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
-<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-             xmlns:g="urn:import:com.google.gwt.user.client.ui"
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+             xmlns:g='urn:import:com.google.gwt.user.client.ui'
              xmlns:b="urn:import:com.github.gwtbootstrap.client.ui"
-             xmlns:uf='urn:import:org.uberfire.ext.properties.editor.client'>
+             xmlns:df="urn:import:org.dashbuilder.displayer.client.widgets.filter">
 
-  <ui:style>
-    .smallFont {
-      font-size: 12px;
-    }
-  </ui:style>
-
-  <g:FlowPanel ui:field="mainPanel" styleName="{style.smallFont}">
-    <uf:PropertyEditorWidget ui:field="propertyEditor"/>
-  </g:FlowPanel>
-
+  <g:VerticalPanel>
+    <g:HorizontalPanel>
+      <b:ListBox ui:field="timeModeList" width="100px" />
+      <b:ListBox ui:field="intervalTypeList" width="100px" visible="false" />
+    </g:HorizontalPanel>
+    <df:TimeAmountEditor ui:field="timeAmountEditor" />
+  </g:VerticalPanel>
 </ui:UiBinder>

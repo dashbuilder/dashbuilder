@@ -23,7 +23,9 @@
              xmlns:uf="urn:import:org.uberfire.ext.widgets.common.client.common">
 
     <g:HorizontalPanel>
-      <uf:NumericLongTextBox ui:field="input" width="65px" />
-      <b:ListBox ui:field="typeList" width="85px" />
+      <b:InputAddOn ui:field="inputAddOn">
+        <uf:NumericLongTextBox ui:field="input" width="32px" />
+      </b:InputAddOn>
+      <b:ListBox ui:field="typeList" width="100px" />
     </g:HorizontalPanel>
 </ui:UiBinder>

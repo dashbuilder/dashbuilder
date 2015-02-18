@@ -15,6 +15,7 @@
  */
 package org.dashbuilder.renderer.google.client;
 
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.SimplePanel;
@@ -31,6 +32,7 @@ import org.dashbuilder.displayer.DisplayerConstraints;
 
 public class GooglePieChartDisplayer extends GoogleXAxisChartDisplayer {
 
+    protected Panel chartPanel = new FlowPanel();
     private PieChart chart;
     protected Panel filterPanel = new SimplePanel();
 
@@ -41,10 +43,6 @@ public class GooglePieChartDisplayer extends GoogleXAxisChartDisplayer {
 
     @Override
     public Widget createVisualization() {
-        chart = new PieChart();
-        chart.addSelectHandler(createSelectHandler(chart));
-        chart.draw(createTable(), createOptions());
-
         HTML titleHtml = new HTML();
         if (displayerSettings.isTitleVisible()) {
             titleHtml.setText(displayerSettings.getTitle());
@@ -53,7 +51,16 @@ public class GooglePieChartDisplayer extends GoogleXAxisChartDisplayer {
         VerticalPanel verticalPanel = new VerticalPanel();
         verticalPanel.add(titleHtml);
         verticalPanel.add(filterPanel);
-        verticalPanel.add(chart);
+        verticalPanel.add(chartPanel);
+
+        if (dataSet.getRowCount() == 0) {
+            chartPanel.add(super.createNoDataMsgPanel());
+        } else {
+            chart = new PieChart();
+            chart.addSelectHandler(createSelectHandler(chart));
+            chart.draw(createTable(), createOptions());
+            chartPanel.add(chart);
+        }
         return verticalPanel;
     }
 
@@ -85,7 +92,13 @@ public class GooglePieChartDisplayer extends GoogleXAxisChartDisplayer {
         Widget filterReset = createCurrentSelectionWidget();
         if (filterReset != null) filterPanel.add(filterReset);
 
-        chart.draw(createTable(), createOptions());
+        chartPanel.clear();
+        if (dataSet.getRowCount() == 0) {
+            chartPanel.add(super.createNoDataMsgPanel());
+        } else {
+            chart.draw(createTable(), createOptions());
+            chartPanel.add(chart);
+        }
     }
 
     private PieChartOptions createOptions() {

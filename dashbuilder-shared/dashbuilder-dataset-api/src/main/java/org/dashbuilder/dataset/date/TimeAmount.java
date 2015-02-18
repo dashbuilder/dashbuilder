@@ -68,6 +68,13 @@ public class TimeAmount {
         return quantity + " " + type.name().toLowerCase();
     }
 
+    public TimeAmount cloneInstance() {
+        TimeAmount clone = new TimeAmount();
+        clone.quantity = quantity;
+        clone.type = type;
+        return clone;
+    }
+
     public void adjustDate(Date d) {
         if (DateIntervalType.MILLENIUM.equals(type)) {
             d.setYear(d.getYear() + (int) quantity*1000);
@@ -86,6 +93,9 @@ public class TimeAmount {
         }
         if (DateIntervalType.MONTH.equals(type)) {
             d.setMonth(d.getMonth() + (int) quantity);
+        }
+        if (DateIntervalType.WEEK.equals(type)) {
+            d.setDate(d.getDate() + (int) quantity*7);
         }
         if (DateIntervalType.DAY.equals(type)) {
             d.setDate(d.getDate() + (int) quantity);

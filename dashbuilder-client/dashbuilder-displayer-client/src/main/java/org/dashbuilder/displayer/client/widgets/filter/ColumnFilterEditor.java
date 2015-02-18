@@ -169,7 +169,9 @@ public class ColumnFilterEditor extends Composite {
         CoreFunctionFilter coreFilter = getCoreFilter();
         if (coreFilter != null) {
             filterListBox.clear();
-            filterListBox.addItem(formatFilter(coreFilter));
+            String currentFilter = formatFilter(coreFilter);
+            filterListBox.addItem(currentFilter);
+            filterListBox.setTitle(currentFilter);
 
             // Add the remain available functions
             ColumnType columnType = metadata.getColumnType(coreFilter.getColumnId());
@@ -255,8 +257,8 @@ public class ColumnFilterEditor extends Composite {
     protected Widget createTimeFrameWidget(final List paramList, final int paramIndex) {
         TimeFrame timeFrame = TimeFrame.parse((String) paramList.get(paramIndex));
 
-        TimeFrameParameterEditor input = new TimeFrameParameterEditor();
-        input.init(timeFrame, new TimeFrameParameterEditor.Listener() {
+        TimeFrameEditor input = new TimeFrameEditor();
+        input.init(timeFrame, new TimeFrameEditor.Listener() {
             public void valueChanged(TimeFrame tf) {
                 paramList.set(paramIndex, tf.toString());
                 filterUpdated();
@@ -308,7 +310,7 @@ public class ColumnFilterEditor extends Composite {
             formatParameters(out, f.getParameters());
         }
         else if (CoreFunctionType.TIME_FRAME.equals(type)) {
-            out.append(columnId).append(" < ");
+            out.append(columnId).append(" = ");
             formatParameters(out, f.getParameters());
         }
         return out.toString();

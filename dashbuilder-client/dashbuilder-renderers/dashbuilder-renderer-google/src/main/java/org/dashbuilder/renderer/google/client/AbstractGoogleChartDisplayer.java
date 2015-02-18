@@ -15,13 +15,15 @@
  */
 package org.dashbuilder.renderer.google.client;
 
+import com.github.gwtbootstrap.client.ui.Label;
+import com.google.gwt.user.client.ui.Widget;
 import com.googlecode.gwt.charts.client.options.Legend;
 import com.googlecode.gwt.charts.client.options.LegendAlignment;
 import com.googlecode.gwt.charts.client.options.LegendPosition;
 import org.dashbuilder.displayer.DisplayerSettings;
 
 /**
- * Abstract base class for all displayers that support the basic ChartDisplayerSettings configuration options
+ * Base class for all the Google chart like displayers
  */
 public abstract class AbstractGoogleChartDisplayer extends GoogleDisplayer {
 
@@ -44,4 +46,7 @@ public abstract class AbstractGoogleChartDisplayer extends GoogleDisplayer {
         }
     }
 
+    protected Widget createNoDataMsgPanel() {
+        return new Label("NO DATA");
+    }
 }

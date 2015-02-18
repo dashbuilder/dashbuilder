@@ -15,6 +15,7 @@
  */
 package org.dashbuilder.renderer.google.client;
 
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.SimplePanel;
@@ -33,6 +34,7 @@ import org.dashbuilder.displayer.DisplayerConstraints;
 
 public class GoogleAreaChartDisplayer extends GoogleXAxisChartDisplayer {
 
+    protected Panel chartPanel = new FlowPanel();
     protected AreaChart chart;
     protected Panel filterPanel = new SimplePanel();
 
@@ -73,10 +75,6 @@ public class GoogleAreaChartDisplayer extends GoogleXAxisChartDisplayer {
 
     @Override
     protected Widget createVisualization() {
-        chart = new AreaChart();
-        chart.addSelectHandler(createSelectHandler(chart));
-        chart.draw(createTable(), createOptions());
-
         HTML titleHtml = new HTML();
         if (displayerSettings.isTitleVisible()) {
             titleHtml.setText(displayerSettings.getTitle());
@@ -85,7 +83,16 @@ public class GoogleAreaChartDisplayer extends GoogleXAxisChartDisplayer {
         VerticalPanel verticalPanel = new VerticalPanel();
         verticalPanel.add(titleHtml);
         verticalPanel.add(filterPanel);
-        verticalPanel.add(chart);
+        verticalPanel.add(chartPanel);
+
+        if (dataSet.getRowCount() == 0) {
+            chartPanel.add(super.createNoDataMsgPanel());
+        } else {
+            chart = new AreaChart();
+            chart.addSelectHandler(createSelectHandler(chart));
+            chart.draw(createTable(), createOptions());
+            chartPanel.add(chart);
+        }
         return verticalPanel;
     }
 
@@ -94,7 +101,13 @@ public class GoogleAreaChartDisplayer extends GoogleXAxisChartDisplayer {
         Widget filterReset = createCurrentSelectionWidget();
         if (filterReset != null) filterPanel.add(filterReset);
 
-        chart.draw(createTable(), createOptions());
+        chartPanel.clear();
+        if (dataSet.getRowCount() == 0) {
+            chartPanel.add(super.createNoDataMsgPanel());
+        } else {
+            chart.draw(createTable(), createOptions());
+            chartPanel.add(chart);
+        }
     }
 
     private AreaChartOptions createOptions() {

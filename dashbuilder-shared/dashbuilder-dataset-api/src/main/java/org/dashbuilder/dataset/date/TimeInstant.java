@@ -42,6 +42,12 @@ public class TimeInstant {
         BEGIN,
         END;
 
+        private final static TimeMode[] modes = values();
+
+        public int getIndex() {
+            return ordinal();
+        }
+
         public static TimeMode getByName(String name) {
             try {
                 return valueOf(name.toUpperCase());
@@ -49,6 +55,11 @@ public class TimeInstant {
                 return null;
             }
         }
+
+        public static TimeMode getByIndex(int index) {
+            return modes[index];
+        }
+
     }
 
     private TimeMode timeMode = null;
@@ -62,7 +73,7 @@ public class TimeInstant {
     private transient Date startTime = null;
 
     public TimeInstant() {
-        this(TimeMode.NOW, null, null, null);
+        this(TimeMode.NOW, DateIntervalType.YEAR, Month.JANUARY, null);
     }
 
     public TimeInstant(TimeMode timeMode, DateIntervalType intervalType, Month firstMonthOfYear, TimeAmount timeAmount) {
@@ -106,17 +117,38 @@ public class TimeInstant {
 
     public String toString() {
         StringBuilder out = new StringBuilder();
-        if (timeMode != null && !TimeMode.NOW.equals(timeMode)) {
-            out.append(timeMode).append("[").append(intervalType);
-            if (intervalType != null && intervalType.getIndex() > DateIntervalType.MONTH.getIndex()) {
-                out.append(" ").append(firstMonthOfYear);
+        if (timeMode != null) {
+            out.append(timeMode.name().toLowerCase());
+
+            if (!TimeMode.NOW.equals(timeMode)) {
+
+                out.append("[").append(intervalType.name().toLowerCase());
+                if (intervalType != null
+                    && intervalType.getIndex() > DateIntervalType.MONTH.getIndex()
+                    && firstMonthOfYear != null) {
+
+                    out.append(" ").append(firstMonthOfYear.name().toLowerCase());
+                }
+                out.append("]");
             }
-            out.append("] ");
-        } else {
-            out.append(TimeMode.NOW).append(" ");
         }
-        if (timeAmount != null) out.append(timeAmount);
+        if (timeAmount != null && timeAmount.getQuantity() != 0) {
+            if (out.length() > 0) out.append(" ");
+            out.append(timeAmount);
+        }
+        if (out.length() == 0) {
+            out.append(TimeMode.NOW.name().toLowerCase());
+        }
         return out.toString();
+    }
+
+    public TimeInstant cloneInstance() {
+        TimeInstant clone = new TimeInstant();
+        clone.timeMode = timeMode;
+        clone.intervalType = intervalType;
+        clone.firstMonthOfYear = firstMonthOfYear;
+        if (timeAmount != null) clone.timeAmount = timeAmount.cloneInstance();
+        return clone;
     }
 
     public Date getTimeInstant() {
@@ -136,7 +168,7 @@ public class TimeInstant {
             if (START_TIME != null) return new Date(START_TIME.getTime());
             return new Date();
         }
-        return startTime;
+        return new Date(startTime.getTime());
     }
 
     protected Date calculateStartTime() {
@@ -178,11 +210,11 @@ public class TimeInstant {
         if (DateIntervalType.YEAR.equals(intervalType)) {
             int month = startDate.getMonth();
             int firstMonth = firstMonthOfYear.getIndex()-1;
-            int inc =  0;
-            if (TimeMode.BEGIN.equals(timeMode)) inc = (month < firstMonth ? -1 : 0);
-            else inc = (month < firstMonth ? 0 : 1);
+            int yearInc =  0;
+            if (TimeMode.BEGIN.equals(timeMode)) yearInc = (month < firstMonth ? -1 : 0);
+            else yearInc = (month < firstMonth ? 0 : 1);
 
-            startDate.setYear(startDate.getYear() + inc);
+            startDate.setYear(startDate.getYear() + yearInc);
             startDate.setMonth(firstMonth);
             startDate.setDate(1);
             startDate.setHours(0);
@@ -192,12 +224,14 @@ public class TimeInstant {
         if (DateIntervalType.QUARTER.equals(intervalType)) {
             int month = startDate.getMonth();
             int firstMonth = Quarter.getQuarterFirstMonth(firstMonthOfYear.getIndex(), month + 1)-1;
-            int inc = 0;
-            if (TimeMode.BEGIN.equals(timeMode)) inc = (month > 0 && firstMonth<12 ? -1 : 0);
-            else inc = (month<12 && firstMonth>=0 ? 1 : 0);
-
-            startDate.setYear(startDate.getYear() + inc);
-            startDate.setMonth(firstMonth);
+            int yearInc = 0;
+            int monthInc = 3;
+            if (TimeMode.BEGIN.equals(timeMode)) {
+                yearInc = (firstMonth>month ? -1 : 0);
+                monthInc = 0;
+            }
+            startDate.setYear(startDate.getYear() + yearInc);
+            startDate.setMonth(firstMonth + monthInc);
             startDate.setDate(1);
             startDate.setHours(0);
             startDate.setMinutes(0);
@@ -240,7 +274,7 @@ public class TimeInstant {
      * Return a time instant representing the current time.
      */
     public static TimeInstant now() {
-        return new TimeInstant(TimeMode.NOW, null, null, null);
+        return new TimeInstant();
     }
 
     /**

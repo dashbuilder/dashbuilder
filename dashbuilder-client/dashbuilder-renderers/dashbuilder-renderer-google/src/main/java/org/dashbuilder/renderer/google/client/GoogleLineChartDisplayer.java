@@ -15,6 +15,7 @@
  */
 package org.dashbuilder.renderer.google.client;
 
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.SimplePanel;
@@ -33,7 +34,8 @@ import org.dashbuilder.displayer.DisplayerConstraints;
 
 public class GoogleLineChartDisplayer extends GoogleXAxisChartDisplayer {
 
-    private LineChart chart;
+    protected Panel chartPanel = new FlowPanel();
+    protected LineChart chart;
     protected Panel filterPanel = new SimplePanel();
 
     @Override
@@ -43,10 +45,6 @@ public class GoogleLineChartDisplayer extends GoogleXAxisChartDisplayer {
 
     @Override
     public Widget createVisualization() {
-        chart = new LineChart();
-        chart.addSelectHandler(createSelectHandler(chart));
-        chart.draw(createTable(), createOptions());
-
         HTML titleHtml = new HTML();
         if (displayerSettings.isTitleVisible()) {
             titleHtml.setText(displayerSettings.getTitle());
@@ -55,7 +53,16 @@ public class GoogleLineChartDisplayer extends GoogleXAxisChartDisplayer {
         VerticalPanel verticalPanel = new VerticalPanel();
         verticalPanel.add(titleHtml);
         verticalPanel.add(filterPanel);
-        verticalPanel.add(chart);
+        verticalPanel.add(chartPanel);
+
+        if (dataSet.getRowCount() == 0) {
+            chartPanel.add(super.createNoDataMsgPanel());
+        } else {
+            chart = new LineChart();
+            chart.addSelectHandler(createSelectHandler(chart));
+            chart.draw(createTable(), createOptions());
+            chartPanel.add(chart);
+        }
         return verticalPanel;
     }
 
@@ -93,7 +100,13 @@ public class GoogleLineChartDisplayer extends GoogleXAxisChartDisplayer {
         Widget filterReset = createCurrentSelectionWidget();
         if (filterReset != null) filterPanel.add(filterReset);
 
-        chart.draw(createTable(), createOptions());
+        chartPanel.clear();
+        if (dataSet.getRowCount() == 0) {
+            chartPanel.add(super.createNoDataMsgPanel());
+        } else {
+            chart.draw(createTable(), createOptions());
+            chartPanel.add(chart);
+        }
     }
 
     private LineChartOptions createOptions() {

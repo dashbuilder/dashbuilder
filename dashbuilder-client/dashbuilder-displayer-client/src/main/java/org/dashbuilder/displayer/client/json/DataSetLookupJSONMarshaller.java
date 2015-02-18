@@ -256,8 +256,8 @@ public class DataSetLookupJSONMarshaller {
         DataSetLookup dataSetLookup = new DataSetLookup();
 
         dataSetLookup.setDataSetUUID( json.get( UUID ) != null ? json.get( UUID ).isString().stringValue() : null );
-        dataSetLookup.setNumberOfRows( json.get( ROWCOUNT ) != null ? Integer.parseInt( json.get( ROWCOUNT ).isString().stringValue(), 10 ) : 0 );
-        dataSetLookup.setNumberOfRows( json.get( ROWOFFSET ) != null ? Integer.parseInt( json.get( ROWOFFSET ).isString().stringValue(), 10 ) : 0 );
+        dataSetLookup.setNumberOfRows( json.get( ROWCOUNT ) != null ? Integer.parseInt( json.get( ROWCOUNT ).isString().stringValue(), 10 ) : -1 );
+        dataSetLookup.setRowOffset( json.get( ROWOFFSET ) != null ? Integer.parseInt( json.get( ROWOFFSET ).isString().stringValue(), 10 ) : 0 );
 
         List<DataSetOp> dataSetOpList = dataSetLookup.getOperationList();
 

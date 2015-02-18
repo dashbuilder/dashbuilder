@@ -19,9 +19,14 @@ import java.util.Arrays;
 import java.util.List;
 import javax.enterprise.context.Dependent;
 
+import com.github.gwtbootstrap.client.ui.Icon;
+import com.github.gwtbootstrap.client.ui.InputAddOn;
 import com.github.gwtbootstrap.client.ui.ListBox;
+import com.github.gwtbootstrap.client.ui.constants.IconType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -29,26 +34,31 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
+import org.dashbuilder.common.client.StringUtils;
 import org.dashbuilder.dataset.client.resources.i18n.DateIntervalTypeConstants;
-import org.dashbuilder.dataset.group.DateIntervalType;
+import org.dashbuilder.dataset.date.TimeAmount;
 import org.dashbuilder.dataset.date.TimeFrame;
+import org.dashbuilder.dataset.group.DateIntervalType;
 import org.uberfire.ext.widgets.common.client.common.NumericLongTextBox;
 
 @Dependent
-public class TimeFrameParameterEditor extends Composite {
+public class TimeAmountEditor extends Composite {
 
     interface Listener {
-        void valueChanged(TimeFrame tf);
+        void valueChanged(TimeAmount timeAmount);
     }
 
-    interface Binder extends UiBinder<Widget, TimeFrameParameterEditor> {}
+    interface Binder extends UiBinder<Widget, TimeAmountEditor> {}
     private static Binder uiBinder = GWT.create(Binder.class);
 
     Listener listener = null;
-    TimeFrame timeFrame = null;
+    TimeAmount timeAmount = null;
 
     @UiField
     NumericLongTextBox input;
+
+    @UiField
+    InputAddOn inputAddOn;
 
     @UiField
     ListBox typeList;
@@ -64,32 +74,41 @@ public class TimeFrameParameterEditor extends Composite {
             DateIntervalType.YEAR,
             DateIntervalType.CENTURY);
 
-    static List<DateIntervalType> ALLOWED_STARTS = Arrays.asList(
-            DateIntervalType.MINUTE,
-            DateIntervalType.HOUR,
-            DateIntervalType.DAY,
-            DateIntervalType.MONTH,
-            DateIntervalType.QUARTER,
-            DateIntervalType.YEAR,
-            DateIntervalType.CENTURY,
-            DateIntervalType.MILLENIUM);
-
-    public TimeFrameParameterEditor() {
+    public TimeAmountEditor() {
         initWidget(uiBinder.createAndBindUi(this));
+
+        Icon plusIcon = new Icon(IconType.PLUS);
+        Icon minusIcon = new Icon(IconType.MINUS);
+
+        plusIcon.addDomHandler(new ClickHandler() {
+            public void onClick(ClickEvent event) {
+                increaseQuantity();
+            }
+        }, ClickEvent.getType());
+
+        minusIcon.addDomHandler(new ClickHandler() {
+            public void onClick(ClickEvent event) {
+                decreaseQuantity();
+            }
+        }, ClickEvent.getType());
+
+
+        inputAddOn.addPrependWidget(minusIcon);
+        inputAddOn.addAppendWidget(plusIcon);
     }
 
-    public void init(final TimeFrame timeFrame, final Listener listener) {
+    public void init(final TimeAmount amount, final Listener listener) {
         this.listener = listener;
-        this.timeFrame = timeFrame;
+        this.timeAmount = amount;
         initListBox();
-        if (timeFrame != null) {
-            input.setValue(Long.toString(timeFrame.getFrom().getTimeAmount().getQuantity()));
-        }
+
+        if (timeAmount == null) input.setValue("0");
+        else input.setValue(Long.toString(timeAmount.getQuantity()));
 
         input.addValueChangeHandler(new ValueChangeHandler<String>() {
             public void onValueChange(ValueChangeEvent<String> event) {
-                timeFrame.getFrom().getTimeAmount().setQuantity(Long.parseLong(event.getValue()));
-                listener.valueChanged(timeFrame);
+                if (StringUtils.isBlank(event.getValue())) changeQuantity(0);
+                else changeQuantity(Long.parseLong(event.getValue()));
             }
         });
     }
@@ -99,10 +118,36 @@ public class TimeFrameParameterEditor extends Composite {
         for (int i=0; i< ALLOWED_SIZES.size(); i++) {
             DateIntervalType type = ALLOWED_SIZES.get(i);
             typeList.addItem(DateIntervalTypeConstants.INSTANCE.getString(type.name()));
-            if (timeFrame != null && timeFrame.getFrom().getTimeAmount().getType().equals(type)) {
+            if (timeAmount != null && timeAmount.getType().equals(type)) {
                 typeList.setSelectedIndex(i);
             }
         }
+    }
+
+    protected void increaseQuantity() {
+        changeQuantity(getQuantity()+1);
+        input.setValue(Long.toString(getQuantity()));
+    }
+
+    protected void decreaseQuantity() {
+        changeQuantity(getQuantity()-1);
+        input.setValue(Long.toString(getQuantity()));
+    }
+
+    protected long getQuantity() {
+        if (timeAmount == null) return 0;
+        return timeAmount.getQuantity();
+    }
+
+    protected void changeQuantity(long q) {
+        if (timeAmount == null) {
+            timeAmount = new TimeAmount();
+            int selectedIdx = typeList.getSelectedIndex();
+            DateIntervalType type = ALLOWED_SIZES.get(selectedIdx);
+            timeAmount.setType(type);
+        }
+        timeAmount.setQuantity(q);
+        listener.valueChanged(timeAmount);
     }
 
     // UI events
@@ -111,9 +156,9 @@ public class TimeFrameParameterEditor extends Composite {
     public void onFilterSelected(ChangeEvent changeEvent) {
         int selectedIdx = typeList.getSelectedIndex();
         DateIntervalType type = ALLOWED_SIZES.get(selectedIdx);
-        if (timeFrame != null) {
-            timeFrame.getFrom().getTimeAmount().setType(type);
-            listener.valueChanged(timeFrame);
+        if (timeAmount != null) {
+            timeAmount.setType(type);
+            listener.valueChanged(timeAmount);
         }
     }
 }

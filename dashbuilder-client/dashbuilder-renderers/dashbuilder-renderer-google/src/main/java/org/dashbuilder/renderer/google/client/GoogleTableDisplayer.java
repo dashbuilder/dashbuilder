@@ -57,7 +57,7 @@ public class GoogleTableDisplayer extends GoogleDisplayer {
     protected int currentPage = 1;
     protected int numberOfRows = 0;
     protected int numberOfPages = 1;
-    protected int pageSelectorSize = 10;
+    protected int pageSelectorSize = 6;
     protected String lastOrderedColumn = null;
     protected SortOrder lastSortOrder = null;
 
