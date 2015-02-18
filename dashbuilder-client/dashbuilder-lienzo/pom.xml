@@ -15,7 +15,6 @@
   <modules>
     <module>dashbuilder-lienzo-core</module>
     <module>dashbuilder-lienzo-charts</module>
-    <module>dashbuilder-renderer-lienzo</module>
   </modules>
 
 </project>
