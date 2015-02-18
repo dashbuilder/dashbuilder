@@ -253,6 +253,33 @@
         <classifier>sources</classifier>
       </dependency>
 
+      <!-- Lienzo -->
+      <dependency>
+        <groupId>org.dashbuilder</groupId>
+        <artifactId>dashbuilder-lienzo-core</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.dashbuilder</groupId>
+        <artifactId>dashbuilder-lienzo-core</artifactId>
+        <version>${project.version}</version>
+        <classifier>sources</classifier>
+      </dependency>
+
+      <dependency>
+        <groupId>org.dashbuilder</groupId>
+        <artifactId>dashbuilder-lienzo-charts</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.dashbuilder</groupId>
+        <artifactId>dashbuilder-lienzo-charts</artifactId>
+        <version>${project.version}</version>
+        <classifier>sources</classifier>
+      </dependency>
+      
       <dependency>
         <groupId>org.dashbuilder</groupId>
         <artifactId>dashbuilder-renderer-lienzo</artifactId>

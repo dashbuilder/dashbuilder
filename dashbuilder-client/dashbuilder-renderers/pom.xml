@@ -34,6 +34,5 @@
     <module>dashbuilder-renderer-google</module>
     <module>dashbuilder-renderer-table</module>
     <module>dashbuilder-renderer-selector</module>
-    <module>dashbuilder-renderer-lienzo</module>
   </modules>
 </project>
