@@ -63,6 +63,10 @@ public class DisplayerScreenPresenter {
         if (!StringUtils.isBlank(json)) this.displayerSettings = jsonMarshaller.fromJsonString(json);
         if (displayerSettings == null) throw new IllegalArgumentException("Displayer settings not found.");
 
+        // Check if display renderer selector component.
+        Boolean showRendererSelector = Boolean.parseBoolean(placeRequest.getParameter("showRendererSelector","false"));
+        displayerView.setIsShowRendererSelector(showRendererSelector);
+        
         // Draw the Displayer.
         if (StringUtils.isBlank(displayerSettings.getUUID())) displayerSettings.setUUID(Document.get().createUniqueId());
         displayerView.setDisplayerSettings(displayerSettings);

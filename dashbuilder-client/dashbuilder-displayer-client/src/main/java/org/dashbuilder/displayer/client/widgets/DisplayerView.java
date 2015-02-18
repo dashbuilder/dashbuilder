@@ -15,9 +15,7 @@
  */
 package org.dashbuilder.displayer.client.widgets;
 
-import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.SimplePanel;
+import com.google.gwt.user.client.ui.*;
 import org.dashbuilder.displayer.DisplayerSettings;
 import org.dashbuilder.displayer.client.Displayer;
 import org.dashbuilder.displayer.client.DisplayerHelper;
@@ -28,8 +26,11 @@ public class DisplayerView extends Composite {
 
     protected DisplayerSettings displayerSettings;
     protected SimplePanel container = new SimplePanel();
+    protected SimplePanel displayerContainer = new SimplePanel();
     protected Label label = new Label();
     protected Displayer displayer;
+    protected Boolean isShowRendererSelector = false;
+    protected RendererSelector rendererSelector;
 
     public DisplayerView() {
         initWidget(container);
@@ -48,6 +49,10 @@ public class DisplayerView extends Composite {
         this.displayerSettings = displayerSettings;
     }
 
+    public void setIsShowRendererSelector(Boolean isShowRendererSelector) {
+        this.isShowRendererSelector = isShowRendererSelector;
+    }
+
     public Displayer getDisplayer() {
         return displayer;
     }
@@ -55,17 +60,43 @@ public class DisplayerView extends Composite {
     public Displayer draw() {
         try {
             checkNotNull("displayerSettings", displayerSettings);
+            
+            // Lookup the displayer.
+            lookupDisplayer(null);
 
-            displayer = DisplayerHelper.lookupDisplayer(displayerSettings);
-
+            // Build the composite widget. 
             container.clear();
-            container.add( displayer );
+            IsWidget mainWidget = displayer;
+            if (isShowRendererSelector) {
+                mainWidget = new VerticalPanel();
+                rendererSelector = new RendererSelector(displayerSettings.getType(), new RendererSelector.RendererSelectorEvent() {
+                    @Override
+                    public void onRendererChanged(String renderer) {
+                        lookupDisplayer(renderer);
+                        displayerContainer.clear();
+                        displayerContainer.add(displayer);
+                        DisplayerHelper.draw(displayer);
+                    }
+                });
 
-            DisplayerHelper.draw( displayer );
+                        displayerContainer.add(displayer);
+                ((VerticalPanel)mainWidget).add(rendererSelector);
+                ((VerticalPanel)mainWidget).add(displayerContainer);
+            }
+            container.add( mainWidget );
+
+            DisplayerHelper.draw(displayer);
         } catch (Exception e) {
             displayMessage(e.getMessage());
         }
         return displayer;
+    }
+    
+    private void lookupDisplayer(String renderer) {
+        if (renderer != null && renderer.trim().length() > 0) {
+            displayerSettings.setRenderer(renderer);
+        }
+        displayer = DisplayerHelper.lookupDisplayer(displayerSettings);
     }
 
     public Displayer redraw() {

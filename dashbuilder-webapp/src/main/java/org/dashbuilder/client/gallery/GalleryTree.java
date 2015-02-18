@@ -71,6 +71,7 @@ public class GalleryTree {
         Map<String,String> params = new HashMap<String,String>();
         params.put("json", json);
         params.put("edit", "false");
+        params.put("showRendererSelector", "true");
         return new DefaultPlaceRequest("DisplayerScreen", params);
     }
 
@@ -441,6 +442,5 @@ public class GalleryTree {
         nodeList.add(new GalleryPlaceRequest("Expense reports", createPlaceRequest("expenseReports")));
         nodeList.add(new GalleryPlaceRequest("System metrics (real-time)", createPlaceRequest("metrics_realtime")));
         nodeList.add(new GalleryPlaceRequest("System metrics (historic)", createPlaceRequest("metrics_analytic")));
-        nodeList.add(new GalleryPlaceRequest("Lienzo", createPlaceRequest("lienzo")));
     }
 }

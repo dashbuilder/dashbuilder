@@ -1,0 +1,14 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+             xmlns:g="urn:import:com.google.gwt.user.client.ui"
+    >
+  
+  <!-- Main panel. -->
+  <g:FlowPanel ui:field="mainPanel">
+    
+    <!-- List box selector widget. -->
+    <g:ListBox ui:field="listBox"/>
+    
+  </g:FlowPanel>
+  
+</ui:UiBinder>
