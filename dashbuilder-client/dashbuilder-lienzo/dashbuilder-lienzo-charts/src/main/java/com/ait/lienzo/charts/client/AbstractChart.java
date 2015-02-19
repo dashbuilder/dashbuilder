@@ -34,12 +34,12 @@ import com.google.gwt.json.client.JSONObject;
  */
 public abstract class AbstractChart<T extends AbstractChart> extends Group {
 
+    public static final int AREA_PADDING = 50;
     // Default animation duration (2sec).
     protected static final double ANIMATION_DURATION = 1000;
-    protected static final int AREA_PADDING = 50;
     protected static final String AXIS_LABEL_DEFAULT_FONT_NAME = "Verdana";
     protected static final String AXIS_LABEL_DEFAULT_FONT_STYLE = "bold";
-    protected static final IColor AXIS_LABEL_COLOR = ColorName.SILVER;
+    protected static final IColor AXIS_LABEL_COLOR = ColorName.DARKGREY;
     protected static final int AXIS_LABEL_DEFAULT_FONT_SIZE = 10;
 
     // The available areas: chart, top, bottom, left and right. 
@@ -427,12 +427,12 @@ public abstract class AbstractChart<T extends AbstractChart> extends Group {
     }
 
     public AbstractChart setWidth(double width) {
-        getAttributes().setWidth(width);
+        getAttributes().setWidth(width + AREA_PADDING*2);
         return this;
     }
 
     public AbstractChart setHeight(double height) {
-        getAttributes().setHeight(height);
+        getAttributes().setHeight(height + AREA_PADDING*2);
         return this;
     }
 

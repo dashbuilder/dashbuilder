@@ -15,6 +15,7 @@
  */
 package org.dashbuilder.renderer.lienzo.client;
 
+import com.ait.lienzo.charts.client.AbstractChart;
 import com.ait.lienzo.charts.client.model.DataTable;
 import com.ait.lienzo.charts.client.model.DataTableColumn;
 import com.ait.lienzo.client.core.shape.IPrimitive;
@@ -71,7 +72,7 @@ public abstract class LienzoDisplayer extends AbstractDisplayer {
                             dataSet = result;
                             afterDataSetLookup(result);
 
-                            LienzoPanel panel = new LienzoPanel(getWidth(), getHeight());
+                            LienzoPanel panel = new LienzoPanel(getWidth() + AbstractChart.AREA_PADDING*2, getHeight()+AbstractChart.AREA_PADDING*2);
                             Layer layer = new Layer();
                             layer.setTransformable(true);
                             panel.add(layer);
