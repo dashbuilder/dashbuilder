@@ -1,6 +1,5 @@
 package com.ait.lienzo.charts.client;
 
-import com.ait.lienzo.charts.client.xy.axis.AxisBuilder;
 import com.ait.lienzo.charts.shared.core.types.*;
 import com.ait.lienzo.client.core.Attribute;
 import com.ait.lienzo.client.core.animation.*;
@@ -13,8 +12,6 @@ import com.ait.lienzo.client.core.types.Point2D;
 import com.ait.lienzo.shared.core.types.*;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.json.client.JSONObject;
-
-import java.util.List;
 
 /**
  *  <p>Base chart implementation class.</p>
@@ -38,7 +35,7 @@ import java.util.List;
 public abstract class AbstractChart<T extends AbstractChart> extends Group {
 
     // Default animation duration (2sec).
-    protected static final double ANIMATION_DURATION = 2000;
+    protected static final double ANIMATION_DURATION = 1000;
     protected static final int AREA_PADDING = 50;
     protected static final String AXIS_LABEL_DEFAULT_FONT_NAME = "Verdana";
     protected static final String AXIS_LABEL_DEFAULT_FONT_STYLE = "bold";
@@ -575,67 +572,4 @@ public abstract class AbstractChart<T extends AbstractChart> extends Group {
         return true;
     }
     
-    protected class LabelRendererFormatter {
-        private List<AxisBuilder.AxisLabel> labels;
-        private Text[] labelTexts;
-
-        public LabelRendererFormatter(List<AxisBuilder.AxisLabel> labels, Text[] labelTexts) {
-            this.labels = labels;
-            this.labelTexts = labelTexts;
-        }
-
-        /**
-         * Formats the label Text shapes in the given axis using the <code>visibility</code> attribute.
-         */
-        public void visibility(int index, double width, boolean animate) {
-            if (labels != null && !labels.isEmpty()) {
-                    AxisBuilder.AxisLabel lastVisibleLabel = null;
-                    Text lastVisibleText = null;
-                    if (index > 0)  {
-                        int last = 1;
-                        lastVisibleText = labelTexts[index - last];
-                        while (lastVisibleText != null && !lastVisibleText.isVisible()) {
-                            lastVisibleText = labelTexts[index - ++last];
-                        }
-                        lastVisibleLabel = labels.get(index - last);
-
-                    }
-                    AxisBuilder.AxisLabel label = labels.get(index);
-                    double position = label.getPosition();
-                    String text = label.getText();
-                    Text intervalText = labelTexts[index];
-                    final double lastTextWidth = lastVisibleText != null ? lastVisibleText.getBoundingBox().getWidth() : 0;
-                    final double textWidth = intervalText.getBoundingBox().getWidth();
-                    intervalText.setText(text);
-                    // If labels are overlapped, do not show it.
-                    if (lastVisibleLabel != null && lastVisibleLabel.getPosition() + lastTextWidth > label.getPosition()) {
-                        intervalText.setVisible(false);
-                    } else {
-                        intervalText.setVisible(true);
-                        double xPos = (index>0 && index < (labels.size() -1) ) ? position - textWidth/2 : position;
-                        setShapeAttributes(intervalText, xPos, 10d, null, width, animate);
-                    }
-            }
-        }
-
-        /**
-         * Formats the label Text shapes in the given axis by cutting text value.
-         */
-        public void cut(Text label, double width) {
-            cut(label, width, 1);
-        }
-
-        private void cut(Text label, double width, int iteration) {
-            String text = label.getText();
-            if (text != null && label.getBoundingBox().getWidth() > width) {
-                int cutLength = text.length() - iteration;
-                if (cutLength < 0) cutLength = 1;
-                String cuttedText = text.substring(0, cutLength);
-                label.setText(cuttedText + "..");
-                if (cuttedText.length() > 1) cut(label, width, ++iteration);
-            }
-        }
-        
-    }
-
 }

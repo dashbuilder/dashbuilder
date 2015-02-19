@@ -33,6 +33,8 @@ public class ChartAttribute extends Attribute
     public final static ChartAttribute LEGEND_ALIGN = new ChartAttribute("legendAlign", CHART_MESSAGES.legendAlignLabel(), CHART_MESSAGES.legendAlignDescription(), ChartAttributeType.LEGEND_ALIGN);
     public final static ChartAttribute CATEGORIES_AXIS = new ChartAttribute("categoriesAxis", CHART_MESSAGES.categoriesAxisLabel(), CHART_MESSAGES.categoriesAxisDescription(), ChartAttributeType.AXIS_TYPE);
     public final static ChartAttribute VALUES_AXIS = new ChartAttribute("valuesAxis", CHART_MESSAGES.valuesAxisLabel(), CHART_MESSAGES.valuesAxisDescription(), ChartAttributeType.AXIS_TYPE);
+    public final static ChartAttribute SHOW_CATEGORIES_AXIS_TITLE = new ChartAttribute("showCategoriesAxisTitle", CHART_MESSAGES.showCategoriesAxisTitleLabel(), CHART_MESSAGES.showCategoriesAxisTitleDescription(), AttributeType.BOOLEAN_TYPE);
+    public final static ChartAttribute SHOW_VALUES_AXIS_TITLE = new ChartAttribute("showValuesAxisTitle", CHART_MESSAGES.showValuesAxisTitleLabel(), CHART_MESSAGES.showValuesAxisTitleDescription(), AttributeType.BOOLEAN_TYPE);
     public final static ChartAttribute XY_CHART_DATA = new ChartAttribute("xyChartData", CHART_MESSAGES.xyDataLabel(), CHART_MESSAGES.xyDataDescription(), ChartAttributeType.XY_CHART_DATA_TYPE);
     public final static ChartAttribute PIE_CHART_DATA = new ChartAttribute("pieChartData", CHART_MESSAGES.pieDataLabel(), CHART_MESSAGES.pieDataDescription(), ChartAttributeType.PIE_CHART_DATA_TYPE);
     

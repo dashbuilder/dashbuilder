@@ -51,7 +51,7 @@ public final class NumericAxisBuilder extends AxisBuilder<Double> {
             double currentchartSizeAttribute = (axisDirection.equals(AxisDirection.DESC)) ? chartSizeAttribute - (sizeAttributeIncrement * x) : sizeAttributeIncrement * x; 
             double currentValue = valueIncrement * x;
             String formattedValue = format(currentValue);
-            result.add(new AxisLabel(formattedValue, currentchartSizeAttribute));
+            result.add(new AxisLabel(formattedValue, x, currentchartSizeAttribute));
         }
         return result;
     }

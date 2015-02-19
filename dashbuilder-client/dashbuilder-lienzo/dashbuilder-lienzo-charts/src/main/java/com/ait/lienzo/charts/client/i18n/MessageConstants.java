@@ -68,6 +68,18 @@ public interface MessageConstants extends Constants
     @DefaultStringValue("Values Axis")
     public String valuesAxisDescription();
 
+    @DefaultStringValue("Show Categories Axis title")
+    public String showCategoriesAxisTitleLabel();
+
+    @DefaultStringValue("Show Categories Axis title")
+    public String showCategoriesAxisTitleDescription();
+
+    @DefaultStringValue("Show Values Axis title")
+    public String showValuesAxisTitleLabel();
+
+    @DefaultStringValue("Show Values Axis title")
+    public String showValuesAxisTitleDescription();
+
     @DefaultStringValue("XY Chart Data")
     public String xyDataLabel();
 

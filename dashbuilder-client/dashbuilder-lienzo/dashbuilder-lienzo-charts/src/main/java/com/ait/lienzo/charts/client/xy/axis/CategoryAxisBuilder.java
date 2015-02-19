@@ -44,7 +44,7 @@ public final class CategoryAxisBuilder extends AxisBuilder<String> {
             String text = labelValues[i];
             int axisDivisions = axis.getSegments();
             double position = (axisDirection.equals(AxisDirection.DESC)) ? labelSize * i : labelSize * j;
-            result.add(new AxisLabel(text, position * seriesCount));
+            result.add(new AxisLabel(text, i, position * seriesCount));
         }
         return result;
     }

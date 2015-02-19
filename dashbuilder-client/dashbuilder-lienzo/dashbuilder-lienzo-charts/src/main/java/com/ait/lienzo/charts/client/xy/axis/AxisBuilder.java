@@ -52,12 +52,14 @@ public abstract class AxisBuilder<T> {
     }
 
     public class AxisLabel {
+        protected int index;
         protected String text;
         protected double position;
-
-        protected AxisLabel(String text, double position) {
+        
+        protected AxisLabel(String text, int index, double position) {
             this.text = text;
             this.position = position;
+            this.index = index;
         }
 
         public String getText() {
@@ -66,6 +68,10 @@ public abstract class AxisBuilder<T> {
 
         public double getPosition() {
             return position;
+        }
+
+        public int getIndex() {
+            return index;
         }
     }
 
