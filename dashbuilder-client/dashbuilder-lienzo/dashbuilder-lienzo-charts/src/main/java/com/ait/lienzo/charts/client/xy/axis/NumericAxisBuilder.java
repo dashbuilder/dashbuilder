@@ -11,7 +11,8 @@ import java.util.List;
 public final class NumericAxisBuilder extends AxisBuilder<Double> {
 
     private static final String NULL_VALUE = "0";
-    private static final NumberFormat numberFormat = NumberFormat.getFormat("#0.00");
+    // private static final NumberFormat numberFormat = NumberFormat.getFormat("#0.00");
+    private static final NumberFormat numberFormat = NumberFormat.getDecimalFormat();
     private NumericAxis axis;
     
 
@@ -38,8 +39,8 @@ public final class NumericAxisBuilder extends AxisBuilder<Double> {
         String modelProperty = dataSummary.getData().getCategoryAxisProperty();
         Double[] values = dataSummary.getData().getDataTable().getNumericValues(modelProperty);
         int segments = axis.getSegments();
-        Double maxValue = getMaxValue();
-        Double minValue = getMinValue();
+        Double maxValue = roundUp(getMaxValue());
+        Double minValue = roundDown(getMinValue());
 
 
         double sizeAttributeIncrement = chartSizeAttribute / segments;
@@ -101,4 +102,11 @@ public final class NumericAxisBuilder extends AxisBuilder<Double> {
         else return numberFormat;
     }
     
+    private Double roundUp(Double value) {
+        return Math.ceil(value);        
+    }
+
+    private Double roundDown(Double value) {
+        return Math.floor(value);
+    }
 }
