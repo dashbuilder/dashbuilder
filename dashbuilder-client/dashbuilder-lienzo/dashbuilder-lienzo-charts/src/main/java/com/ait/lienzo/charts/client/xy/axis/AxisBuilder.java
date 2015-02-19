@@ -44,7 +44,6 @@ public abstract class AxisBuilder<T> {
     }
 
     public String format(T value) {
-        // TODO: Override by subclasses. Format each type using datatable column -> pattern attribute.
         return value.toString();
     }
 

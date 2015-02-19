@@ -432,6 +432,27 @@ public class BarChart extends AbstractChart<BarChart>
         protected abstract T setValuesAttributesForSerie(final XYChartSerie serie, int numSerie, Double width, Double height, boolean animate);
         
         public abstract T reloadBuilders();
+
+        protected void adjustLabelSize(Text label, double width, double height) {
+            adjustLabelSize(label, width, height, 1);
+        }
+        
+        protected void adjustLabelSize(Text label, double width, double height, int iteration) {
+            String text = label.getText();
+            if (text != null && label.getBoundingBox().getWidth() > width) {
+                int cutLength = text.length() - iteration;
+                if (cutLength < 0) cutLength = 1;
+                label.setText(text.substring(0, cutLength) + "..");
+                adjustLabelSize(label, width, height, ++iteration);
+            }
+            if (text != null && label.getBoundingBox().getHeight() > height) {
+                int cutLength = text.length() - iteration;
+                if (cutLength < 0) cutLength = 1;
+                label.setText(text.substring(0, cutLength) + "..");
+                adjustLabelSize(label, width, height, ++iteration);
+            }
+        }
+        
     }
 
     private class VerticalBarChartBuilder extends BarChartBuilder<VerticalBarChartBuilder> {
@@ -510,12 +531,22 @@ public class BarChart extends AbstractChart<BarChart>
         public VerticalBarChartBuilder setCategoriesAxisIntervalsAttributes(Double width, Double height, boolean animate) {
             List<AxisBuilder.AxisLabel> labels = categoriesAxisBuilder[0].getLabels();
 
-            for (int i = 0; i < labels.size(); i++) {
-                AxisBuilder.AxisLabel label = labels.get(i);
-                double position = label.getPosition();
-                String text = label.getText();
-                seriesLabels.get(i).setText(text);
-                setShapeAttributes(seriesLabels.get(i), position, 10d, null, null, animate);
+            if (labels != null && !labels.isEmpty()) {
+                // Check max labels size.
+                double maxWidth = getChartWidth();
+                double maxHeight = AREA_PADDING;
+                double labelWidth = maxWidth / labels.size();
+                for (int i = 0; i < labels.size(); i++) {
+                    AxisBuilder.AxisLabel label = labels.get(i);
+                    double position = label.getPosition();
+                    String text = label.getText();
+                    Text seriesLabel = seriesLabels.get(i); 
+                    seriesLabel.setText(text);
+                    adjustLabelSize(seriesLabel, labelWidth, maxHeight);
+                    setShapeAttributes(seriesLabel, position, 10d, null, null, animate);
+                }
+            } else {
+                seriesLabels.clear();
             }
             return this;
         }
@@ -675,14 +706,24 @@ public class BarChart extends AbstractChart<BarChart>
         public HorizontalBarChartBuilder setCategoriesAxisIntervalsAttributes(Double width, Double height, boolean animate) {
             List<AxisBuilder.AxisLabel> labels = categoriesAxisBuilder[0].getLabels();
 
-            for (int i = 0; i < labels.size(); i++) {
-                AxisBuilder.AxisLabel label = labels.get(i);
-                double position = label.getPosition();
-                String text = label.getText();
-                seriesLabels.get(i).setText(text);
-                // The position value must be calculed plus a constant, as the labels are rotated 270 degrees. 
-                setShapeAttributes(seriesLabels.get(i), AREA_PADDING - 10d, position + 20d, null, null, animate);
+            if (labels != null && !labels.isEmpty()) {
+                double maxWidth = AREA_PADDING;
+                double maxHeight = getChartHeight();
+                double labelHeight = getChartHeight() / labels.size();
+                for (int i = 0; i < labels.size(); i++) {
+                    AxisBuilder.AxisLabel label = labels.get(i);
+                    double position = label.getPosition();
+                    String text = label.getText();
+                    Text seriesLabel = seriesLabels.get(i);
+                    seriesLabel.setText(text);
+                    adjustLabelSize(seriesLabel, maxWidth, labelHeight);
+                    // The position value must be calculed plus a constant, as the labels are rotated 270 degrees. 
+                    setShapeAttributes(seriesLabel, AREA_PADDING - 10d, position + 20d, null, null, animate);
+                }    
+            } else {
+                seriesLabels.clear();
             }
+            
 
             return this;
         }

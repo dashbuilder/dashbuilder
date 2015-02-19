@@ -3,13 +3,17 @@ package com.ait.lienzo.charts.client.xy.axis;
 import com.ait.lienzo.charts.client.axis.Axis;
 import com.ait.lienzo.charts.client.axis.NumericAxis;
 import com.ait.lienzo.charts.client.xy.XYChartData;
+import com.google.gwt.i18n.client.NumberFormat;
 
 import java.util.LinkedList;
 import java.util.List;
 
 public final class NumericAxisBuilder extends AxisBuilder<Double> {
 
-    protected NumericAxis axis;
+    private static final String NULL_VALUE = "0";
+    private static final NumberFormat numberFormat = NumberFormat.getFormat("#0.00");
+    private NumericAxis axis;
+    
 
     public NumericAxisBuilder(XYChartData data, double chartSizeAttribute, Axis.AxisJSO jso) {
         super(data, chartSizeAttribute);
@@ -86,4 +90,15 @@ public final class NumericAxisBuilder extends AxisBuilder<Double> {
         return ( chartSizeAttribute * value ) / maxValue;
     }
 
+    @Override
+    public String format(Double value) {
+        if (value != null) return getNumberFormat().format(value);
+        return NULL_VALUE;
+    }
+    
+    private NumberFormat getNumberFormat() {
+        if (axis.getFormat() != null && axis.getFormat().trim().length() > 0) return NumberFormat.getFormat(axis.getFormat());
+        else return numberFormat;
+    }
+    
 }
