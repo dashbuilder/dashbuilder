@@ -52,7 +52,7 @@ import static org.dashbuilder.shared.sales.SalesConstants.*;
  * The dashboard composer perspective.
  */
 @ApplicationScoped
-@WorkbenchPerspective(identifier = "DashboardDesignerPerspective")
+@WorkbenchPerspective(identifier = "DashboardDesignerPerspective", isTransient = false)
 public class DashboardDesignerPerspective {
 
     @Inject
@@ -105,6 +105,7 @@ public class DashboardDesignerPerspective {
         Map<String,String> params = new HashMap<String,String>();
         params.put("json", json);
         params.put("edit", "true");
+        params.put("clone", "true");
         return new DefaultPlaceRequest("DisplayerScreen", params);
     }
 }

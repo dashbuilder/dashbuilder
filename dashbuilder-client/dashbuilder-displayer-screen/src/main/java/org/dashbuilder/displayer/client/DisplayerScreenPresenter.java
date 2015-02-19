@@ -15,12 +15,14 @@
  */
 package org.dashbuilder.displayer.client;
 
+import java.util.HashMap;
+import java.util.Map;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
-import com.google.gwt.dom.client.Document;
 import com.google.gwt.user.client.ui.IsWidget;
 import org.dashbuilder.common.client.StringUtils;
+import org.dashbuilder.dataset.uuid.UUIDGenerator;
 import org.dashbuilder.displayer.DisplayerSettings;
 import org.dashbuilder.displayer.client.json.DisplayerSettingsJSONMarshaller;
 import org.dashbuilder.displayer.client.widgets.DisplayerEditor;
@@ -30,11 +32,14 @@ import org.uberfire.client.annotations.WorkbenchMenu;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
 import org.uberfire.client.annotations.WorkbenchPartView;
 import org.uberfire.client.annotations.WorkbenchScreen;
+import org.uberfire.client.mvp.PlaceManager;
 import org.uberfire.lifecycle.OnClose;
 import org.uberfire.lifecycle.OnStartup;
 import org.uberfire.mvp.Command;
 import org.uberfire.mvp.PlaceRequest;
+import org.uberfire.mvp.impl.DefaultPlaceRequest;
 import org.uberfire.workbench.model.menu.MenuFactory;
+import org.uberfire.workbench.model.menu.MenuItem;
 import org.uberfire.workbench.model.menu.Menus;
 
 @WorkbenchScreen(identifier = "DisplayerScreen")
@@ -45,13 +50,22 @@ public class DisplayerScreenPresenter {
     private PerspectiveCoordinator perspectiveCoordinator;
     private DisplayerSettingsJSONMarshaller jsonMarshaller;
     private DisplayerSettings displayerSettings;
+    private PlaceManager placeManager;
+    private UUIDGenerator uuidGenerator;
+
     private Menus menu = null;
     private boolean editEnabled = false;
+    private boolean cloneEnabled = false;
 
     @Inject
-    public DisplayerScreenPresenter(DisplayerView displayerView,
+    public DisplayerScreenPresenter(UUIDGenerator uuidGenerator,
+            PlaceManager placeManager,
+            DisplayerView displayerView,
             PerspectiveCoordinator perspectiveCoordinator,
             DisplayerSettingsJSONMarshaller jsonMarshaller) {
+
+        this.uuidGenerator = uuidGenerator;
+        this.placeManager = placeManager;
         this.displayerView = displayerView;
         this.perspectiveCoordinator = perspectiveCoordinator;
         this.jsonMarshaller = jsonMarshaller;
@@ -68,7 +82,7 @@ public class DisplayerScreenPresenter {
         displayerView.setIsShowRendererSelector(showRendererSelector);
         
         // Draw the Displayer.
-        if (StringUtils.isBlank(displayerSettings.getUUID())) displayerSettings.setUUID(Document.get().createUniqueId());
+        if (StringUtils.isBlank(displayerSettings.getUUID())) displayerSettings.setUUID(uuidGenerator.newUuid());
         displayerView.setDisplayerSettings(displayerSettings);
         Displayer displayer = displayerView.draw();
         displayer.refreshOn();
@@ -78,8 +92,10 @@ public class DisplayerScreenPresenter {
 
         // Check edit mode
         String edit = placeRequest.getParameter("edit", "false");
+        String clone = placeRequest.getParameter("clone", "false");
         editEnabled = Boolean.parseBoolean(edit);
-        if (editEnabled) this.menu = makeMenuBar();
+        cloneEnabled = Boolean.parseBoolean(clone);
+        this.menu = makeMenuBar();
     }
 
     @OnClose
@@ -103,10 +119,29 @@ public class DisplayerScreenPresenter {
     }
 
     private Menus makeMenuBar() {
-        return MenuFactory
-                .newTopLevelMenu("Edit")
-                .respondsWith(getEditCommand())
-                .endMenu().build();
+        if (editEnabled && !cloneEnabled) {
+            return MenuFactory
+                    .newTopLevelMenu("Edit")
+                    .respondsWith(getEditCommand())
+                    .endMenu().build();
+        }
+        if (!editEnabled && cloneEnabled) {
+            return MenuFactory
+                    .newTopLevelMenu("Clone")
+                    .respondsWith(getCloneCommand())
+                    .endMenu().build();
+        }
+        if (editEnabled && cloneEnabled) {
+            return MenuFactory
+                    .newTopLevelMenu("Edit")
+                    .respondsWith(getEditCommand())
+                    .endMenu()
+                    .newTopLevelMenu("Clone")
+                    .respondsWith(getCloneCommand())
+                    .endMenu()
+                    .build();
+        }
+        return null;
     }
 
     private Command getEditCommand() {
@@ -129,6 +164,28 @@ public class DisplayerScreenPresenter {
         };
     }
 
+    private Command getCloneCommand() {
+        return new Command() {
+            public void execute() {
+                perspectiveCoordinator.editOn();
+                DisplayerEditorPopup displayerEditor = new DisplayerEditorPopup();
+                DisplayerSettings clonedSettings = displayerSettings.cloneInstance();
+                clonedSettings.setUUID(uuidGenerator.newUuid());
+                displayerEditor.init(clonedSettings, new DisplayerEditor.Listener() {
+
+                    public void onClose(DisplayerEditor editor) {
+                        perspectiveCoordinator.editOff();
+                    }
+
+                    public void onSave(DisplayerEditor editor) {
+                        perspectiveCoordinator.editOff();
+                        placeManager.goTo(createPlaceRequest(editor.getDisplayerSettings()));
+                    }
+                });
+            }
+        };
+    }
+
     private void updateDisplayer(DisplayerSettings settings) {
         this.removeDisplayer();
 
@@ -145,5 +202,14 @@ public class DisplayerScreenPresenter {
         perspectiveCoordinator.removeDisplayer(displayer);
         displayer.refreshOff();
         displayer.close();
+    }
+
+    private PlaceRequest createPlaceRequest(DisplayerSettings displayerSettings) {
+        String json = jsonMarshaller.toJsonString(displayerSettings);
+        Map<String,String> params = new HashMap<String, String>();
+        params.put("json", json);
+        params.put("edit", "true");
+        params.put("clone", "true");
+        return new DefaultPlaceRequest("DisplayerScreen", params);
     }
 }
