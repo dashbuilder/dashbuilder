@@ -95,7 +95,7 @@ public class BarChart extends AbstractChart<BarChart>
     // Default separation size between bars.
     protected static final double BAR_SEPARATION = 2;
     private ChartLegend legend = null; // The legend.
-
+    final BarChartTooltip tooltip = new BarChartTooltip();
 
     protected BarChart(JSONObject node, ValidationContext ctx) throws ValidationException
     {
@@ -358,6 +358,9 @@ public class BarChart extends AbstractChart<BarChart>
             }
         }
         
+        // Tooltip.
+        chartArea.add(tooltip.build());
+        
         // Add the attributes event change handlers.
         this.addAttributesChangedHandler(ChartAttribute.XY_CHART_DATA, new AttributesChangedHandler() {
             @Override
@@ -485,12 +488,12 @@ public class BarChart extends AbstractChart<BarChart>
             XYChartSerie[] series = getData().getSeries();
             for (int numSerie = 0; numSerie < series.length; numSerie++) {
                 XYChartSerie serie = series[numSerie];
-                buildSerieValues(serie);
+                buildSerieValues(serie, numSerie);
             }
             return (T) this;
         }
         
-        protected void buildSerieValues(XYChartSerie serie) {
+        protected void buildSerieValues(XYChartSerie serie, int numSerie) {
             List<AxisBuilder.AxisValue> xAxisValues = categoriesAxisBuilder[0].getValues(getData().getCategoryAxisProperty());
 
             if (xAxisValues != null) {
@@ -498,17 +501,7 @@ public class BarChart extends AbstractChart<BarChart>
                 for (int i = 0; i < xAxisValues.size(); i++) {
                     AxisBuilder.AxisValue axisValue = xAxisValues.get(i);
                     final Rectangle bar = new Rectangle(0,0);
-
-                    // Mouse events for the bar shape.
-                    bar.addNodeMouseClickHandler(new NodeMouseClickHandler() {
-                        @Override
-                        public void onNodeMouseClick(NodeMouseClickEvent event) {
-                            // GWT.log("X: " + bar.getX());
-                            // GWT.log("Y: " + bar.getY());
-                            // GWT.log("W: " + bar.getWidth());
-                            // GWT.log("H: " + bar.getHeight());
-                        }
-                    });
+                    bar.setID(getBarId(numSerie, i));
                     bars.add(bar);
                     chartArea.add(bar);
                 }
@@ -516,6 +509,10 @@ public class BarChart extends AbstractChart<BarChart>
 
             }
             
+        }
+        
+        protected String getBarId(int numSerie, int numValue) {
+            return "value"+numSerie+""+numValue;
         }
 
         protected void removeSerieValues(final String serieName) {
@@ -553,7 +550,7 @@ public class BarChart extends AbstractChart<BarChart>
                     // If a new serie is added, build new bar rectangle instances.
                     if (categoriesAxisBuilder[0].getDataSummary().getAddedSeries().contains(serie.getName())) {
                         buildCategoriesAxisIntervals();
-                        buildSerieValues(serie);
+                        buildSerieValues(serie, numSerie);
                         if (legend != null) legend.add(serie);
                     }
 
@@ -567,39 +564,30 @@ public class BarChart extends AbstractChart<BarChart>
         
         public abstract T reloadBuilders();
 
-        protected void seriesValuesAlpha(int index, double alpha) {
+        protected void seriesValuesAlpha(int numSerie, int numValue, double alpha) {
+            String barId = getBarId(numSerie, numValue);
             for (Map.Entry<String, List<Rectangle>> entry : seriesValues.entrySet()) {
                 List<Rectangle> values = entry.getValue();
                 if (values != null && !values.isEmpty()) {
-                    int i = 0;
                     for (Rectangle value : values) {
-                        if (i != index) {
+                        String id = value.getID();
+                        if (!barId.equals(id)) {
                             AnimationProperties animationProperties = new AnimationProperties();
                             animationProperties.push(AnimationProperty.Properties.ALPHA(alpha));
                             value.animate(AnimationTweener.LINEAR, animationProperties, ANIMATION_DURATION);
                         }
-                        i++;
                     }
                 }
-
             }
         }
+        
+        
     }
 
     private class VerticalBarChartBuilder extends BarChartBuilder<VerticalBarChartBuilder> {
 
         final BarChartLabelFormatter valuesLabelFormatter = new BarChartLabelFormatter(valuesLabels);
-        final BarChartLabelFormatter categoriesLabelFormatter = new BarChartLabelFormatter(seriesLabels, new BarChartLabelFormatter.BarChartLabelFormatterCallback() {
-            @Override
-            public void onLabelHighlighed(BarChartLabel label) {
-                seriesValuesAlpha(label.getAxisLabel().getIndex(), 0d);
-            }
-
-            @Override
-            public void onLabelUnHighlighed(BarChartLabel label) {
-                seriesValuesAlpha(label.getAxisLabel().getIndex(), 1d);
-            }
-        });
+        final BarChartLabelFormatter categoriesLabelFormatter = new BarChartLabelFormatter(seriesLabels);
 
         public VerticalBarChartBuilder() {
             // Build categories axis builder.
@@ -727,7 +715,7 @@ public class BarChart extends AbstractChart<BarChart>
             return this;
         }
 
-        protected VerticalBarChartBuilder setValuesAttributesForSerie(final XYChartSerie serie, int numSerie, Double width, Double height, boolean animate) {
+        protected VerticalBarChartBuilder setValuesAttributesForSerie(final XYChartSerie serie, final int numSerie, Double width, Double height, boolean animate) {
             XYChartSerie[] series = getData().getSeries();
 
             // Rebuild bars for serie values
@@ -741,7 +729,9 @@ public class BarChart extends AbstractChart<BarChart>
                     AxisBuilder.AxisValue valueAxisvalue = valuesAxisValues.get(i);
                     double yAxisValuePosition = valueAxisvalue.getPosition();
                     Object yValue = valueAxisvalue.getValue();
-                    String yValueFormatted = valuesAxisBuilder[0].format(yValue);
+                    Object xValue = categoryAxisvalue.getValue();
+                    final String yValueFormatted = valuesAxisBuilder[0].format(yValue);
+                    final String xValueFormatted = categoriesAxisBuilder[0].format(xValue);
 
                     // Obtain width and height values for the bar.
                     double barHeight = yAxisValuePosition;
@@ -762,9 +752,34 @@ public class BarChart extends AbstractChart<BarChart>
                     }
 
                     // Obtain the shape instance, add mouse handlers and reposition/resize it.
-                    Rectangle barObject = bars.get(i);
+                    final Rectangle barObject = bars.get(i);
                     barObject.moveToTop();
                     barObject.setDraggable(true);
+
+                    // Mouse events for the bar shape.
+                    final int numValue = i;
+                    barObject.addNodeMouseEnterHandler(new NodeMouseEnterHandler() {
+                        @Override
+                        public void onNodeMouseEnter(NodeMouseEnterEvent event) {
+                            double x = barObject.getX();
+                            double y = barObject.getY();
+                            double width = barObject.getWidth();
+                            double height = barObject.getHeight();
+                            double xTooltip = x + width/2;
+                            double yTooltip = y;
+                            seriesValuesAlpha(numSerie, numValue, 0.5d);
+                            tooltip.show(xTooltip, yTooltip, xValueFormatted, yValueFormatted);
+                        }
+                    });
+                    
+                    barObject.addNodeMouseExitHandler(new NodeMouseExitHandler() {
+                        @Override
+                        public void onNodeMouseExit(NodeMouseExitEvent event) {
+                            seriesValuesAlpha(numSerie, numValue, 1d);
+                            tooltip.hide();
+                        }
+                    });
+                    
                     barObject.addNodeDragEndHandler(new NodeDragEndHandler() {
                         @Override
                         public void onNodeDragEnd(NodeDragEndEvent nodeDragEndEvent) {
@@ -808,17 +823,7 @@ public class BarChart extends AbstractChart<BarChart>
     private class HorizontalBarChartBuilder extends BarChartBuilder<HorizontalBarChartBuilder> {
 
         final BarChartLabelFormatter valuesLabelFormatter = new BarChartLabelFormatter(valuesLabels);
-        final BarChartLabelFormatter categoriesLabelFormatter = new BarChartLabelFormatter(seriesLabels, new BarChartLabelFormatter.BarChartLabelFormatterCallback() {
-            @Override
-            public void onLabelHighlighed(BarChartLabel label) {
-                seriesValuesAlpha(seriesLabels.size() - 1 - label.getAxisLabel().getIndex(), 0d);
-            }
-
-            @Override
-            public void onLabelUnHighlighed(BarChartLabel label) {
-                seriesValuesAlpha(seriesLabels.size() - 1 - label.getAxisLabel().getIndex(), 1d);
-            }
-        });
+        final BarChartLabelFormatter categoriesLabelFormatter = new BarChartLabelFormatter(seriesLabels);
 
         public HorizontalBarChartBuilder() {
             // Build X axis builder.
@@ -957,7 +962,7 @@ public class BarChart extends AbstractChart<BarChart>
 
         }
         
-        protected HorizontalBarChartBuilder setValuesAttributesForSerie(final XYChartSerie serie, int numSerie, Double width, Double height, boolean animate) {
+        protected HorizontalBarChartBuilder setValuesAttributesForSerie(final XYChartSerie serie, final int numSerie, Double width, Double height, boolean animate) {
             XYChartSerie[] series = getData().getSeries();
 
             // Rebuild bars for serie values
@@ -973,7 +978,9 @@ public class BarChart extends AbstractChart<BarChart>
 
                     double xAxisValuePosition = xAxisvalue.getPosition();
                     Object xValue = xAxisvalue.getValue();
-                    String xValueFormatted = valuesAxisBuilder[0].format(xValue);
+                    Object yValue = yAxisvalue.getValue();
+                    final String xValueFormatted = valuesAxisBuilder[0].format(xValue);
+                    final String yValueFormatted = categoriesAxisBuilder[0].format(yValue);
 
                     // Obtain width and height values for the bar.
                     int valuesSize = yAxisValues.size();
@@ -995,8 +1002,32 @@ public class BarChart extends AbstractChart<BarChart>
                     }
 
                     // Obtain the shape instance, add mouse handlers and reposition/resize it.
-                    Rectangle barObject = bars.get(i);
+                    final Rectangle barObject = bars.get(i);
                     barObject.setDraggable(true);
+
+                    final int numValue = i;
+                    barObject.addNodeMouseEnterHandler(new NodeMouseEnterHandler() {
+                        @Override
+                        public void onNodeMouseEnter(NodeMouseEnterEvent event) {
+                            double x = barObject.getX();
+                            double y = barObject.getY();
+                            double width = barObject.getWidth();
+                            double height = barObject.getHeight();
+                            double xTooltip = x + width/2;
+                            double yTooltip = y;
+                            seriesValuesAlpha(numSerie, numValue, 0.5d);
+                            tooltip.show(xTooltip, yTooltip, yValueFormatted, xValueFormatted);
+                        }
+                    });
+
+                    barObject.addNodeMouseExitHandler(new NodeMouseExitHandler() {
+                        @Override
+                        public void onNodeMouseExit(NodeMouseExitEvent event) {
+                            seriesValuesAlpha(numSerie, numValue, 1d);
+                            tooltip.hide();
+                        }
+                    });
+                    
                     barObject.addNodeDragEndHandler(new NodeDragEndHandler() {
                         @Override
                         public void onNodeDragEnd(NodeDragEndEvent nodeDragEndEvent) {
