@@ -80,6 +80,18 @@ public interface MessageConstants extends Constants
     @DefaultStringValue("Show Values Axis title")
     public String showValuesAxisTitleDescription();
 
+    @DefaultStringValue("Categories Axis Labels Position")
+    public String categoriesAxisLabelsPositionLabel();
+
+    @DefaultStringValue("Categories Axis Labels Position")
+    public String categoriesAxisLabelsPositionDescription();
+
+    @DefaultStringValue("Values Axis Labels Position")
+    public String valuesAxisLabelsPositionLabel();
+
+    @DefaultStringValue("Values Axis Labels Position")
+    public String valuesAxisLabelsPositionDescription();
+
     @DefaultStringValue("XY Chart Data")
     public String xyDataLabel();
 
@@ -103,5 +115,34 @@ public interface MessageConstants extends Constants
 
     @DefaultStringValue("Can be resized")
     public String resizableDescription();
-    
+
+    @DefaultStringValue("Animated")
+    public String animatedLabel();
+
+    @DefaultStringValue("Animated")
+    public String animatedDescription();
+
+    @DefaultStringValue("Margin left")
+    public String marginLeftLabel();
+
+    @DefaultStringValue("Margin left")
+    public String marginLeftDescription();
+
+    @DefaultStringValue("Margin right")
+    public String marginRightLabel();
+
+    @DefaultStringValue("Margin right")
+    public String marginRightDescription();
+
+    @DefaultStringValue("Margin top")
+    public String marginTopLabel();
+
+    @DefaultStringValue("Margin top")
+    public String marginTopDescription();
+
+    @DefaultStringValue("Margin bottom")
+    public String marginBottomLabel();
+
+    @DefaultStringValue("Margin left")
+    public String marginBottomDescription();
 }

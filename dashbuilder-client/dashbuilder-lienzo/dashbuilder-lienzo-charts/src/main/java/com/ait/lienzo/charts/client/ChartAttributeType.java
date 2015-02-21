@@ -33,6 +33,7 @@ public class ChartAttributeType extends AttributeType
     public final static ChartAttributeType LEGEND_POSITION = new ChartAttributeType(new EnumValidator<LegendPosition>("LegendPosition", LegendPosition.values()));
     public final static ChartAttributeType LEGEND_ALIGN = new ChartAttributeType(new EnumValidator<LegendAlign>("LegendAlign", LegendAlign.values()));
     public final static ChartAttributeType AXIS_TYPE = new ChartAttributeType(AxisValidator.INSTANCE);
+    public final static ChartAttributeType LABELS_POSITION  = new ChartAttributeType(new EnumValidator<LabelsPosition>("labelsPosition", LabelsPosition.values()));
     public final static ChartAttributeType XY_CHART_DATA_TYPE = new ChartAttributeType(new ArrayValidator(XYChartSerieValidator.INSTANCE));
     public final static ChartAttributeType PIE_CHART_DATA_TYPE = new ChartAttributeType(new ArrayValidator(PieChartEntryValidator.INSTANCE));
 

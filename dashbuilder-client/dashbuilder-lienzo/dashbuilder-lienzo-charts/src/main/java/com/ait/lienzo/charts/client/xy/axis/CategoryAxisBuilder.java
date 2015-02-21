@@ -34,16 +34,15 @@ public final class CategoryAxisBuilder extends AxisBuilder<String> {
     @Override
     public List<AxisLabel> getLabels() {
         List<AxisLabel> result = new LinkedList();
-        XYChartSerie[] series = dataSummary.getData().getSeries();
         DataTableColumn dataTableLabelsColumn = dataSummary.getData().getDataTable().getColumn(dataSummary.getData().getCategoryAxisProperty());
         String[] labelValues = dataTableLabelsColumn.getStringValues();
         int labelsCount = labelValues.length;
         int seriesCount = dataSummary.getNumSeries();
         double labelSize = chartSizeAttribute / ( seriesCount * labelsCount);
-        for (int i = 0, j = labelsCount; i < labelsCount; i++, j--) {
+        for (int i = 0, j = labelsCount - 1; i < labelsCount; i++, j--) {
             String text = labelValues[i];
-            int axisDivisions = axis.getSegments();
             double position = (axisDirection.equals(AxisDirection.DESC)) ? labelSize * i : labelSize * j;
+            position += labelSize * seriesCount / 2; 
             result.add(new AxisLabel(text, i, position * seriesCount));
         }
         return result;
@@ -52,7 +51,6 @@ public final class CategoryAxisBuilder extends AxisBuilder<String> {
     @Override
     public List<AxisValue<String>> getValues(String modelProperty) {
         String[] values = dataSummary.getData().getDataTable().getStringValues(modelProperty);
-        int segments = axis.getSegments();
         int valuesCount = values.length;
         int seriesCount = dataSummary.getNumSeries();
         
@@ -60,9 +58,8 @@ public final class CategoryAxisBuilder extends AxisBuilder<String> {
         if (values != null) {
             for (int i = 0, j = valuesCount - 1; i < valuesCount; i++, j--) {
                 String value = (axisDirection.equals(AxisDirection.DESC)) ? values[i] : values[j];
-                int axisDivisions = axis.getSegments();
-                double barSize =  (chartSizeAttribute - (axisDivisions * (valuesCount+1) ) ) / valuesCount / seriesCount;
-                double position = (barSize * seriesCount * i) + (segments * (i +1));
+                double barSize =  (chartSizeAttribute - (valuesCount+1)) / valuesCount / seriesCount;
+                double position = (barSize * seriesCount * i);
                 result.add(new AxisValue<String>(value, position));
             }
             return result;

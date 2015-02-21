@@ -14,18 +14,22 @@
    limitations under the License.
  */
 
-package com.ait.lienzo.charts.client.xy;
+package com.ait.lienzo.charts.client.xy.bar;
 
 import com.ait.lienzo.charts.client.AbstractChart;
 import com.ait.lienzo.charts.client.ChartAttribute;
 import com.ait.lienzo.charts.client.ChartNodeType;
 import com.ait.lienzo.charts.client.axis.Axis;
 import com.ait.lienzo.charts.client.axis.CategoryAxis;
+import com.ait.lienzo.charts.client.xy.XYChartData;
+import com.ait.lienzo.charts.client.xy.XYChartSerie;
 import com.ait.lienzo.charts.client.xy.axis.AxisBuilder;
 import com.ait.lienzo.charts.client.xy.axis.CategoryAxisBuilder;
 import com.ait.lienzo.charts.client.xy.axis.NumericAxisBuilder;
 import com.ait.lienzo.charts.shared.core.types.ChartDirection;
 import com.ait.lienzo.charts.shared.core.types.ChartOrientation;
+import com.ait.lienzo.charts.shared.core.types.LabelsPosition;
+import com.ait.lienzo.charts.shared.core.types.LegendPosition;
 import com.ait.lienzo.client.core.animation.AnimationProperties;
 import com.ait.lienzo.client.core.animation.AnimationProperty;
 import com.ait.lienzo.client.core.animation.AnimationTweener;
@@ -37,7 +41,6 @@ import com.ait.lienzo.client.core.shape.json.validators.ValidationContext;
 import com.ait.lienzo.client.core.shape.json.validators.ValidationException;
 import com.ait.lienzo.client.core.types.Point2D;
 import com.ait.lienzo.client.core.types.Point2DArray;
-import com.ait.lienzo.shared.core.types.Color;
 import com.ait.lienzo.shared.core.types.ColorName;
 import com.ait.lienzo.shared.core.types.TextAlign;
 import com.ait.lienzo.shared.core.types.TextBaseLine;
@@ -60,19 +63,26 @@ import java.util.Map;
  *     <li><code>Y</code>: The chart Y position.</li>
  *     <li><code>WIDTH</code>: The chart width.</li>
  *     <li><code>HEIGHT</code>: The chart height.</li>
+ *     <li><code>MARGIN_LEFT</code>: The left margin.</li>
+ *     <li><code>MARGIN_RIGHT</code>: The right margin.</li>
+ *     <li><code>MARGIN_TOP</code>: The top margin.</li>
+ *     <li><code>MARGIN_BOTTOM</code>: The bottom margin.</li>
  *     <li><code>NAME</code>: The chart name, used as title.</li>
  *     <li><code>SHOW_TITLE</code>: Flag for title visibility.</li>
  *     <li><code>FONT_FAMILY</code>: The chart font family.</li>
  *     <li><code>FONT_STYLE</code>: The chart font style.</li>
  *     <li><code>FONT_SIZE</code>: The chart font size.</li>
  *     <li><code>RESIZABLE</code>: Add or avoid the use of the chart resizer.</li>
+ *     <li><code>ANIMATED</code>: Enable animations.</li>
  *     <li><code>LEGEND_POSITION</code>: The chart legend position.</li>
  *     <li><code>LEGEND_ALIGN</code>: The chart legend alignment.</li>
  *     <li><code>XY_CHART_DATA</code>: The chart data.</li>
  *     <li><code>CATEGORY_AXIS</code>: The chart category axis.</li>
  *     <li><code>VALUES_AXIS</code>: The chart values axis.</li>
  *     <li><code>SHOW_CATEGORIES_AXIS_TITLE</code>: Show the title for categoreis axis.</li>
- *     <li><code>SHOW_VALUES_AXIS_TITLE</code>: Show the title for values axis.</li>     
+ *     <li><code>SHOW_VALUES_AXIS_TITLE</code>: Show the title for values axis.</li>
+ *     <li><code>CATEGORIES_AXIS_LABELS_POSITION</code>: The position for the categories axis labels.</li>
+ *     <li><code>VALUES_AXIS_LABELS_POSITION</code>: The position for the values axis labels.</li>
  *     <li><code>ALIGN</code>: The chart alignment.</li>
  *     <li><code>DIRECTION</code>: The chart direction.</li>
  *     <li><code>ORIENTATION</code>: The chart orientation (Bar or Column).</li>
@@ -84,6 +94,8 @@ public class BarChart extends AbstractChart<BarChart>
 {
     // Default separation size between bars.
     protected static final double BAR_SEPARATION = 2;
+    private ChartLegend legend = null; // The legend.
+
 
     protected BarChart(JSONObject node, ValidationContext ctx) throws ValidationException
     {
@@ -186,6 +198,42 @@ public class BarChart extends AbstractChart<BarChart>
         }
         return true;
     }
+
+    public final  BarChart setCategoriesAxisLabelsPosition(LabelsPosition labelsPosition)
+    {
+        if (null != labelsPosition)
+        {
+            getAttributes().put(ChartAttribute.CATEGORIES_AXIS_LABELS_POSITION.getProperty(), labelsPosition.getValue());
+        }
+        else
+        {
+            getAttributes().delete(ChartAttribute.CATEGORIES_AXIS_LABELS_POSITION.getProperty());
+        }
+        return this;
+    }
+
+    public final LabelsPosition getCategoriesAxisLabelsPosition()
+    {
+        return LabelsPosition.lookup(getAttributes().getString(ChartAttribute.CATEGORIES_AXIS_LABELS_POSITION.getProperty()));
+    }
+
+    public final  BarChart setValuesAxisLabelsPosition(LabelsPosition labelsPosition)
+    {
+        if (null != labelsPosition)
+        {
+            getAttributes().put(ChartAttribute.VALUES_AXIS_LABELS_POSITION.getProperty(), labelsPosition.getValue());
+        }
+        else
+        {
+            getAttributes().delete(ChartAttribute.VALUES_AXIS_LABELS_POSITION.getProperty());
+        }
+        return this;
+    }
+
+    public final LabelsPosition getValuesAxisLabelsPosition()
+    {
+        return LabelsPosition.lookup(getAttributes().getString(ChartAttribute.VALUES_AXIS_LABELS_POSITION.getProperty()));
+    }
    
     
     @Override
@@ -221,6 +269,8 @@ public class BarChart extends AbstractChart<BarChart>
             addAttribute(ChartAttribute.VALUES_AXIS, true);
             addAttribute(ChartAttribute.SHOW_CATEGORIES_AXIS_TITLE, false);
             addAttribute(ChartAttribute.SHOW_VALUES_AXIS_TITLE, false);
+            addAttribute(ChartAttribute.CATEGORIES_AXIS_LABELS_POSITION, false);
+            addAttribute(ChartAttribute.VALUES_AXIS_LABELS_POSITION, false);
         }
 
         @Override
@@ -244,6 +294,14 @@ public class BarChart extends AbstractChart<BarChart>
         return ChartDirection.POSITIVE.equals(direction);
     }
 
+    protected boolean isShowCategoriesLabels() {
+        return !LabelsPosition.NONE.equals(getCategoriesAxisLabelsPosition());
+    }
+
+    protected boolean isShowValuesLabels() {
+        return !LabelsPosition.NONE.equals(getValuesAxisLabelsPosition());
+    }
+
     protected void doBuild()
     {
 
@@ -263,12 +321,42 @@ public class BarChart extends AbstractChart<BarChart>
                 .buildValuesAxisIntervals()
         // Build the values shapes (Rectangles)
                 .buildValues();
-        
 
         // Set positions and sizes for shapes.
         Double chartWidth = getChartWidth();
         Double chartHeight = getChartHeight();
         redraw(builder, chartWidth, chartHeight, true);
+        
+        // Legend.
+        LegendPosition legendPosition = getLegendPosition();
+        if (!LegendPosition.NONE.equals(legendPosition)) {
+            legend = new ChartLegend();
+            switch (legendPosition) {
+                case TOP:
+                    topArea.add(legend.build());
+                    break;
+                case LEFT:
+                    leftArea.add(legend.build());
+                    break;
+                case RIGHT:
+                    rightArea.add(legend.build());
+                    break;
+                case INSIDE:
+                    chartArea.add(legend.build());
+                    break;
+                default:
+                    bottomArea.add(legend.build());
+                    break;
+            }
+
+            // Add legend elements.
+            XYChartSerie[] series = getData().getSeries();
+            if (series != null && series.length > 0) {
+                for (XYChartSerie serie : series) {
+                    legend.add(serie);
+                }
+            }
+        }
         
         // Add the attributes event change handlers.
         this.addAttributesChangedHandler(ChartAttribute.XY_CHART_DATA, new AttributesChangedHandler() {
@@ -313,215 +401,7 @@ public class BarChart extends AbstractChart<BarChart>
         // Recalculate positions, size and add or remove rectangles (if data has changed).
                 .setValuesAttributes(chartWidth, chartHeight, animate);
     }
-    
-    private class BarChartLabel {
-        private AxisBuilder.AxisLabel axisLabel;
-        private Text label;
-        private Rectangle labelContainer;
-        private IPrimitive iPrimitive;
-        
-        public BarChartLabel(AxisBuilder.AxisLabel axisLabel) {
-            this.axisLabel = axisLabel;
-        }
-        
-        public IPrimitive build() {
-            label = new Text(axisLabel.getText(), AXIS_LABEL_DEFAULT_FONT_NAME, AXIS_LABEL_DEFAULT_FONT_STYLE, AXIS_LABEL_DEFAULT_FONT_SIZE).setFillColor(AXIS_LABEL_COLOR).setTextAlign(TextAlign.LEFT).setTextBaseLine(TextBaseLine.TOP);
-            label.setID("label" + axisLabel.getIndex());
-            labelContainer = new Rectangle(1,1);
-            Group labelGroup = new Group();
-            labelGroup.add(label);
-            labelGroup.add(labelContainer);
-            labelContainer.setAlpha(0.01);
-            labelContainer.moveToTop();
-            return labelGroup;
-        }
 
-        public void setAttributes(Double x, Double y, Double width, Double height, Double labelWidth, boolean animate) {
-                String text = axisLabel.getText();
-                label.setText(text);
-                setShapeAttributes(label, x, y, width, height, animate);
-                setShapeAttributes(labelContainer, x, y, width, height, animate);
-        }
-
-        public Text getLabel() {
-            return label;
-        }
-
-        public Rectangle getLabelContainer() {
-            return labelContainer;
-        }
-
-        public AxisBuilder.AxisLabel getAxisLabel() {
-            return axisLabel;
-        }
-    }
-    
-    private static class BarChartLabelFormatter {
-        private List<BarChartLabel> labels;
-        private BarChartLabelFormatterCallback callback;
-        
-        public BarChartLabelFormatter(List<BarChartLabel> labels) {
-            this.labels = labels;
-        }
-
-        public BarChartLabelFormatter(List<BarChartLabel> labels, BarChartLabelFormatterCallback callback) {
-            this.labels = labels;
-            this.callback = callback;
-        }
-
-        public void format(BarChartLabel label, double width, double rotation, ChartOrientation orientation) {
-            //label.getLabelContainer().setAlpha(1);
-            //label.getLabelContainer().setFillColor(new Color(40 * label.getAxisLabel().getIndex(), 0, 0));
-            if (ChartOrientation.VERTICAL.equals(orientation)) {
-                label.getLabelContainer().setWidth(width);
-                label.getLabelContainer().setHeight(AREA_PADDING);
-            } else {
-                label.getLabelContainer().setWidth(AREA_PADDING);
-                label.getLabelContainer().setHeight(width);
-            }
-            cut(label, width, rotation);
-            label.getLabelContainer().setRotationDegrees(rotation);
-            label.getLabel().setRotationDegrees(rotation);
-        }
-
-        /**
-         * Formats the label Text shapes in the given axis by cutting text value.
-         */
-        private void cut(BarChartLabel label, double width, double originalRotation)
-        {
-            String text = label.getLabel().getText();
-
-            // Cut text.
-            cutLabelText(label, width - 5);
-
-            String cutText = label.getLabel().getText();
-
-            // If text is cut, add suffix characters.
-            if (text.length() != cutText.length()) {
-                label.getLabel().setText(label.getLabel().getText() + "...");
-            }
-            // Animate.
-            animate(label, text, cutText, originalRotation);
-
-            // Move label to top.
-            label.getLabelContainer().moveToTop();
-        }
-
-        private void cutLabelText(BarChartLabel label, double width) {
-            String text = label.getLabel().getText();
-            if (text != null && text.length() > 1 && label.getLabel().getBoundingBox().getWidth() > width) {
-                int cutLength = text.length() - 2;
-                String cuttedText = text.substring(0, cutLength);
-                label.getLabel().setText(cuttedText);
-                cutLabelText(label, width);
-            }
-        }
-
-        private void animate(final BarChartLabel label, final String text, final String cutText, final double originalRotation) {
-            final Rectangle labelContainer = label.getLabelContainer();
-            labelContainer.addNodeMouseEnterHandler(new NodeMouseEnterHandler() {
-                @Override
-                public void onNodeMouseEnter(NodeMouseEnterEvent event) {
-                    GWT.log("label mouse enter at " + label.getLabel().getText());
-                    highlightOff(label, text, cutText, originalRotation);
-                }
-            });
-            
-            labelContainer.addNodeMouseExitHandler(new NodeMouseExitHandler() {
-                @Override
-                public void onNodeMouseExit(NodeMouseExitEvent event) {
-                    GWT.log("label mouse exit at " + label.getLabel().getText());
-                    highlightOn(label, text, cutText, originalRotation);
-                }
-            });
-            
-        }
-
-        private void highlightOn(BarChartLabel label, String text, String cutText, double originalRotation) {
-            highlight(label, text, cutText, true, originalRotation);
-        }
-
-        private void highlightOff(BarChartLabel label, String text, String cutText, double originalRotation) {
-            highlight(label, text, cutText, false, 0);
-        }
-
-        private void highlight(BarChartLabel label, final String text, final String cutText, final boolean on, double rotation) {
-            label.getLabel().setText(on ? cutText : text);
-            AnimationProperties animationProperties = new AnimationProperties();
-            animationProperties.push(AnimationProperty.Properties.ROTATION_DEGREES(rotation));
-            label.getLabel().animate(AnimationTweener.LINEAR, animationProperties, ANIMATION_DURATION);
-            for (Text _label : getLabelTexts()) {
-                if (!_label.getID().equals(label.getLabel().getID())) {
-                    AnimationProperties animationProperties2 = new AnimationProperties();
-                    animationProperties2.push(AnimationProperty.Properties.ALPHA(on ? 1d : 0d));
-                    _label.animate(AnimationTweener.LINEAR, animationProperties2, ANIMATION_DURATION);
-                }
-            }
-            
-            if (callback != null && !on) callback.onLabelHighlighed(label);
-            if (callback != null && on) callback.onLabelUnHighlighed(label);
-        }
-        
-        private Text[] getLabelTexts() {
-            Text[] result = new Text[labels.size()];
-            int i = 0;
-            for (BarChartLabel label : labels) {
-                result[i++] = label.getLabel();
-            }
-            return result;
-        }
-
-        private Rectangle[] getLabelContainers() {
-            Rectangle[] result = new Rectangle[labels.size()];
-            int i = 0;
-            for (BarChartLabel label : labels) {
-                result[i++] = label.getLabelContainer();
-            }
-            return result;
-        }
-        
-        public interface BarChartLabelFormatterCallback {
-            
-            public void onLabelHighlighed(BarChartLabel label);
-
-            public void onLabelUnHighlighed(BarChartLabel label);
-        }
-
-        /**
-         * Formats the label Text shapes in the given axis using the <code>visibility</code> attribute.
-         */
-        /*public void visibility(int index, double width, boolean animate) {
-            if (labels != null && !labels.isEmpty()) {
-                AxisBuilder.AxisLabel lastVisibleLabel = null;
-                Text lastVisibleText = null;
-                if (index > 0)  {
-                    int last = 1;
-                    lastVisibleText = labelTexts[index - last];
-                    while (lastVisibleText != null && !lastVisibleText.isVisible()) {
-                        lastVisibleText = labelTexts[index - ++last];
-                    }
-                    lastVisibleLabel = labels.get(index - last);
-
-                }
-                AxisBuilder.AxisLabel label = labels.get(index);
-                double position = label.getPosition();
-                String text = label.getText();
-                Text intervalText = labelTexts[index];
-                final double lastTextWidth = lastVisibleText != null ? lastVisibleText.getBoundingBox().getWidth() : 0;
-                final double textWidth = intervalText.getBoundingBox().getWidth();
-                intervalText.setText(text);
-                // If labels are overlapped, do not show it.
-                if (lastVisibleLabel != null && lastVisibleLabel.getPosition() + lastTextWidth > label.getPosition()) {
-                    intervalText.setVisible(false);
-                } else {
-                    intervalText.setVisible(true);
-                    double xPos = (index>0 && index < (labels.size() -1) ) ? position - textWidth/2 : position;
-                    setShapeAttributes(intervalText, xPos, 10d, null, width, animate);
-                }
-            }
-        }*/
-    }
-    
     private abstract class BarChartBuilder<T extends BarChartBuilder> {
 
         final AxisBuilder[] categoriesAxisBuilder = new AxisBuilder[1];
@@ -534,7 +414,7 @@ public class BarChart extends AbstractChart<BarChart>
         final List<BarChartLabel> valuesLabels = new LinkedList<BarChartLabel>(); // The texts that represents the interval values in the Y axis.
         final List<BarChartLabel> seriesLabels = new LinkedList<BarChartLabel>(); // The labels for each interval (rectangle) in the X axis.
         final Map<String, List<Rectangle>> seriesValues = new LinkedHashMap(); // The rectangles that represents the data.
-
+        
         public BarChartBuilder() {
            
         }
@@ -560,15 +440,18 @@ public class BarChart extends AbstractChart<BarChart>
         public abstract T buildValuesAxisTitle();
 
         public T buildCategoriesAxisIntervals() {
-            List<AxisBuilder.AxisLabel> xAxisLabels = categoriesAxisBuilder[0].getLabels();
-            if (xAxisLabels != null) {
-                for (int i = 0; i < xAxisLabels.size(); i++) {
-                    AxisBuilder.AxisLabel axisLabel = xAxisLabels.get(i);
-                    BarChartLabel label = new BarChartLabel(axisLabel);
-                    seriesLabels.add(label);
-                    addCategoryAxisIntervalLabel(label.build());
+            if (isShowCategoriesLabels()) {
+                List<AxisBuilder.AxisLabel> xAxisLabels = categoriesAxisBuilder[0].getLabels();
+                if (xAxisLabels != null) {
+                    for (int i = 0; i < xAxisLabels.size(); i++) {
+                        AxisBuilder.AxisLabel axisLabel = xAxisLabels.get(i);
+                        BarChartLabel label = new BarChartLabel(axisLabel);
+                        seriesLabels.add(label);
+                        addCategoryAxisIntervalLabel(label.build());
 
+                    }
                 }
+                
             }
             return (T) this;
         }
@@ -582,11 +465,13 @@ public class BarChart extends AbstractChart<BarChart>
             valuesAxisIntervals = new Line[yAxisLabels.size() + 1];
             int x = 0;
             for (AxisBuilder.AxisLabel yAxisLabel : yAxisLabels) {
-                valuesAxisIntervals[x] = new Line(0,0,0,0).setStrokeColor(AXIS_LABEL_COLOR);
+                valuesAxisIntervals[x] = new Line(0,0,0,0).setStrokeColor(ColorName.DARKGREY);
                 chartArea.add(valuesAxisIntervals[x]);
-                BarChartLabel label = new BarChartLabel(yAxisLabel);
-                valuesLabels.add(label);
-                addValuesAxisIntervalLabel(label.build());
+                if (isShowValuesLabels()) {
+                    BarChartLabel label = new BarChartLabel(yAxisLabel);
+                    valuesLabels.add(label);
+                    addValuesAxisIntervalLabel(label.build());
+                }
                 x++;
             }
             return (T) this;
@@ -657,6 +542,7 @@ public class BarChart extends AbstractChart<BarChart>
             // Find removed series in order to remove bar rectangle instances.
             for (String removedSerieName : categoriesAxisBuilder[0].getDataSummary().getRemovedSeries()) {
                 removeSerieValues(removedSerieName);
+                if (legend != null) legend.remove(removedSerieName);
             }
 
             // Iterate over all series.
@@ -668,6 +554,7 @@ public class BarChart extends AbstractChart<BarChart>
                     if (categoriesAxisBuilder[0].getDataSummary().getAddedSeries().contains(serie.getName())) {
                         buildCategoriesAxisIntervals();
                         buildSerieValues(serie);
+                        if (legend != null) legend.add(serie);
                     }
 
                     setValuesAttributesForSerie(serie, numSerie, width, height, animate);
@@ -754,14 +641,17 @@ public class BarChart extends AbstractChart<BarChart>
             }
             return this;
         }
+        
         @Override
         protected void addCategoryAxisIntervalLabel(IPrimitive label) {
-            bottomArea.add(label);
+            if (!isCategoriesAxisLabelsPositionTop()) bottomArea.add(label);
+            else topArea.add(label);
         }
 
         @Override
         protected void addValuesAxisIntervalLabel(IPrimitive label) {
-            rightArea.add(label);
+            if (isValuesAxisLabelsPositionLeft()) leftArea.add(label);
+            else rightArea.add(label);
         }
 
         public VerticalBarChartBuilder setCategoriesAxisTitleAttributes(Double width, Double height, boolean animate) {
@@ -778,36 +668,62 @@ public class BarChart extends AbstractChart<BarChart>
         public VerticalBarChartBuilder setValuesAxisIntervalsAttributes(Double width, Double height, boolean animate) {
             List<AxisBuilder.AxisLabel> labels = valuesAxisBuilder[0].getLabels();
 
-            double labelWidth = getChartHeight() / labels.size();
+            double maxLabelWidth = isValuesAxisLabelsPositionLeft() ? getMarginLeft() : getMarginRight();
+            double maxLabelHeight  = getChartHeight() / labels.size();
             for (int i = 0; i < labels.size(); i++) {
                 AxisBuilder.AxisLabel label = labels.get(i);
                 double position = label.getPosition();
                 valuesAxisIntervals[i].setPoints(new Point2DArray(new Point2D(0, position), new Point2D(width, position)));
-                BarChartLabel chartLabel = valuesLabels.get(i);
-                chartLabel.setAttributes(null, position - 5d, null, null, labelWidth, animate);
-                valuesLabelFormatter.format(chartLabel, AREA_PADDING, 0, ChartOrientation.VERTICAL);
+                if (isShowValuesLabels()) {
+                    BarChartLabel chartLabel = valuesLabels.get(i);
+                    double xPos = 0;
+                    if (isValuesAxisLabelsPositionLeft()) {
+                        // Left.
+                        double marginLeft = getMarginLeft();
+                        double lw = chartLabel.getLabelWidth();
+                        xPos = (lw + 5 > marginLeft) ? 0 : marginLeft - lw - 5;
+                    } else {
+                        // Right.
+                        xPos = 5;
+                    }
+
+                    chartLabel.setAttributes(xPos, position - 5, null, null, animate);
+                }
+                valuesLabelFormatter.format(maxLabelWidth, maxLabelHeight);
             }
             return this;
         }
+        
+        private boolean isValuesAxisLabelsPositionLeft() {
+            return getValuesAxisLabelsPosition().equals(LabelsPosition.LEFT);
+            
+        }
+
+        private boolean isCategoriesAxisLabelsPositionTop() {
+            return getCategoriesAxisLabelsPosition().equals(LabelsPosition.TOP);
+
+        }
 
         public VerticalBarChartBuilder setCategoriesAxisIntervalsAttributes(Double width, Double height, boolean animate) {
-            List<AxisBuilder.AxisLabel> labels = categoriesAxisBuilder[0].getLabels();
+            if (isShowCategoriesLabels()) {
+                List<AxisBuilder.AxisLabel> labels = categoriesAxisBuilder[0].getLabels();
 
-            if (labels != null && !labels.isEmpty()) {
-                // Check max labels size.
-                double maxWidth = getChartWidth();
-                double labelWidth = maxWidth / labels.size();
-                for (int i = 0; i < labels.size(); i++) {
-                    AxisBuilder.AxisLabel label = labels.get(i);
-                    double position = label.getPosition();
-                    BarChartLabel chartLabel = seriesLabels.get(i);
-                    chartLabel.setAttributes(position, 10d, null, null, labelWidth, animate);
-                    // Rotate the label too.
-                    categoriesLabelFormatter.format(chartLabel, labelWidth, 45, ChartOrientation.VERTICAL);
+                if (labels != null && !labels.isEmpty()) {
+                    // Check max labels size.
+                    double maxLabelWidth = getChartWidth() / labels.size();
+                    double maxLabelHeight = !isCategoriesAxisLabelsPositionTop() ? getMarginBottom() : getMarginTop();
+                    for (int i = 0; i < labels.size(); i++) {
+                        AxisBuilder.AxisLabel label = labels.get(i);
+                        double position = label.getPosition();
+                        BarChartLabel chartLabel = seriesLabels.get(i);
+                        chartLabel.setAttributes(position - (maxLabelWidth / 2), 10d, null, null, animate);
+                    }
+                    categoriesLabelFormatter.format(maxLabelWidth, maxLabelHeight);
+                } else {
+                    seriesLabels.clear();
                 }
-            } else {
-                seriesLabels.clear();
             }
+            
             return this;
         }
 
@@ -830,7 +746,8 @@ public class BarChart extends AbstractChart<BarChart>
                     // Obtain width and height values for the bar.
                     double barHeight = yAxisValuePosition;
                     double barWidth = getWithForBar(width, series.length, categoryAxisValues.size());
-
+                    if (barWidth <= 0) barWidth = 1;
+                    
                     // Calculate bar positions.
                     double y = height - barHeight;
                     double x = (barWidth * series.length * i) + (barWidth * numSerie) + (getValuesAxis().getSegments() * (i +1));
@@ -946,12 +863,14 @@ public class BarChart extends AbstractChart<BarChart>
         
         @Override
         protected void addCategoryAxisIntervalLabel(IPrimitive label) {
-            leftArea.add(label);
+            if (isCategoriesAxisLabelsPositionLeft()) leftArea.add(label);
+            else rightArea.add(label);
         }
 
         @Override
         protected void addValuesAxisIntervalLabel(IPrimitive label) {
-            bottomArea.add(label);
+            if (isValuesAxisLabelsPositionTop()) topArea.add(label);
+            else bottomArea.add(label);
         }
 
         public HorizontalBarChartBuilder setCategoriesAxisTitleAttributes(Double width, Double height, boolean animate) {
@@ -969,40 +888,73 @@ public class BarChart extends AbstractChart<BarChart>
             List<AxisBuilder.AxisLabel> labels = valuesAxisBuilder[0].getLabels();
 
             if (labels != null && !labels.isEmpty()) {
-                double labelWidth = getChartWidth() / labels.size();
+                double maxLabelWidth = getChartWidth() / labels.size();
+                double maxLabelHeight = isValuesAxisLabelsPositionTop() ? getMarginTop() : getMarginBottom();
                 for (int i = 0; i < labels.size(); i++) {
                     AxisBuilder.AxisLabel label = labels.get(i);
                     double position = label.getPosition();
                     valuesAxisIntervals[i].setPoints(new Point2DArray(new Point2D(position, 0), new Point2D(position, height)));
-                    BarChartLabel chartLabel = valuesLabels.get(i); 
-                    chartLabel.setAttributes(position - labelWidth/2, 5d, null, null, labelWidth, animate);
-                    valuesLabelFormatter.format(chartLabel, labelWidth, 0, ChartOrientation.HORIZNONAL);
-                    
+                    if (isShowValuesLabels()) {
+                        BarChartLabel chartLabel = valuesLabels.get(i);
+                        double yPos = 0;
+                        if (!isValuesAxisLabelsPositionTop()) {
+                            // Top.
+                            double marginTop = getMarginTop();
+                            double lh = chartLabel.getLabelHeight();
+                            yPos = (lh + 5 > marginTop) ? 0 : marginTop - lh - 5;
+                        } else {
+                            // Bottom.
+                            yPos = 5;
+                        }
+                        chartLabel.setAttributes(position, yPos, null, null, animate);
+                    }
+                }
+                valuesLabelFormatter.format(maxLabelWidth, maxLabelHeight);
+            }
+
+            return this;
+        }
+
+        private boolean isValuesAxisLabelsPositionTop() {
+            return getValuesAxisLabelsPosition().equals(LabelsPosition.TOP);
+
+        }
+
+        public HorizontalBarChartBuilder setCategoriesAxisIntervalsAttributes(Double width, Double height, boolean animate) {
+            if (isShowCategoriesLabels()) {
+                List<AxisBuilder.AxisLabel> labels = categoriesAxisBuilder[0].getLabels();
+
+                if (labels != null && !labels.isEmpty()) {
+                    double maxLabelWidth = isCategoriesAxisLabelsPositionLeft() ? getMarginLeft() : getMarginRight();
+                    double maxLabelHeight = getChartHeight() / labels.size();
+                    for (int i = 0; i < labels.size(); i++) {
+                        AxisBuilder.AxisLabel label = labels.get(i);
+                        double position = label.getPosition();
+                        BarChartLabel chartLabel = seriesLabels.get(i);
+                        double xPos = 0;
+                        if (isCategoriesAxisLabelsPositionLeft()) {
+                            // Left.
+                            double margin = getMarginLeft();
+                            double lw = chartLabel.getLabelWidth();
+                            xPos = (lw + 5 > margin) ? 0 : margin - lw - 5;
+                        } else {
+                            // Right.
+                            xPos = 5;
+                        }
+                        chartLabel.setAttributes(xPos, position, null, null, animate);
+                    }
+                    categoriesLabelFormatter.format(maxLabelWidth, maxLabelHeight);
+                } else {
+                    seriesLabels.clear();
                 }
             }
 
             return this;
         }
 
-        public HorizontalBarChartBuilder setCategoriesAxisIntervalsAttributes(Double width, Double height, boolean animate) {
-            List<AxisBuilder.AxisLabel> labels = categoriesAxisBuilder[0].getLabels();
+        private boolean isCategoriesAxisLabelsPositionLeft() {
+            return getCategoriesAxisLabelsPosition().equals(LabelsPosition.LEFT);
 
-            if (labels != null && !labels.isEmpty()) {
-                double maxWidth = getChartHeight();
-                double labelWidth = maxWidth / labels.size();
-                for (int i = 0; i < labels.size(); i++) {
-                    AxisBuilder.AxisLabel label = labels.get(i);
-                    double position = label.getPosition();
-                    BarChartLabel chartLabel = seriesLabels.get(i);
-                    chartLabel.setAttributes(AREA_PADDING - 15d, position + AREA_PADDING, null, null, labelWidth, animate);
-                    categoriesLabelFormatter.format(chartLabel, labelWidth, 270, ChartOrientation.HORIZNONAL);
-                }    
-            } else {
-                seriesLabels.clear();
-            }
-            
-
-            return this;
         }
         
         protected HorizontalBarChartBuilder setValuesAttributesForSerie(final XYChartSerie serie, int numSerie, Double width, Double height, boolean animate) {
@@ -1024,12 +976,14 @@ public class BarChart extends AbstractChart<BarChart>
                     String xValueFormatted = valuesAxisBuilder[0].format(xValue);
 
                     // Obtain width and height values for the bar.
+                    int valuesSize = yAxisValues.size();
                     double barWidth = xAxisValuePosition;
-                    double barHeight = getHeightForBar(height, series.length, yAxisValues.size());
-
+                    double barHeight = getHeightForBar(height, series.length, valuesSize);
+                    if (barHeight <= 0) barHeight = 1;
+                    
                     // Calculate bar positions.
                     double x = 0;
-                    double y = (barHeight * series.length * i) + (barHeight * numSerie) + (getCategoriesAxis().getSegments() * (i +1));
+                    double y = (barHeight * series.length * i) + (barHeight * numSerie);
                     double alpha = 1d;
 
                     // If current bar is not in Y axis intervals (max / min values), resize it and apply an alpha.
@@ -1073,15 +1027,9 @@ public class BarChart extends AbstractChart<BarChart>
 
         protected double getHeightForBar(double chartHeight, int numSeries, int valuesCount) {
             // If exist more than one serie, and no stacked attribute is set, split each serie bar into the series count value.
-            return getAvailableHeight(chartHeight, valuesCount) / valuesCount / numSeries;
-
+            return chartHeight / valuesCount / numSeries;
         }
-
-        protected double getAvailableHeight(double chartHeight, int valuesCount) {
-            int xAxisDivisions = getCategoriesAxis().getSegments();
-            return chartHeight - (xAxisDivisions * (valuesCount+1) );
-
-        }
+        
     }
     
 }

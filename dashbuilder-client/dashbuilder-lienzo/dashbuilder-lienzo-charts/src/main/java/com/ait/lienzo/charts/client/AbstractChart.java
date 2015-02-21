@@ -34,13 +34,10 @@ import com.google.gwt.json.client.JSONObject;
  */
 public abstract class AbstractChart<T extends AbstractChart> extends Group {
 
-    public static final int AREA_PADDING = 50;
+    public static final double DEFAULT_MARGIN  = 50;
+    
     // Default animation duration (2sec).
     protected static final double ANIMATION_DURATION = 1000;
-    protected static final String AXIS_LABEL_DEFAULT_FONT_NAME = "Verdana";
-    protected static final String AXIS_LABEL_DEFAULT_FONT_STYLE = "bold";
-    protected static final IColor AXIS_LABEL_COLOR = ColorName.DARKGREY;
-    protected static final int AXIS_LABEL_DEFAULT_FONT_SIZE = 10;
 
     // The available areas: chart, top, bottom, left and right. 
     protected final Group chartArea = new Group();
@@ -68,6 +65,10 @@ public abstract class AbstractChart<T extends AbstractChart> extends Group {
             addAttribute(ChartAttribute.WIDTH, true);
             addAttribute(ChartAttribute.HEIGHT, true);
             addAttribute(ChartAttribute.NAME, true);
+            addAttribute(ChartAttribute.MARGIN_LEFT, false);
+            addAttribute(ChartAttribute.MARGIN_RIGHT, false);
+            addAttribute(ChartAttribute.MARGIN_BOTTOM, false);
+            addAttribute(ChartAttribute.MARGIN_TOP, false);
             addAttribute(ChartAttribute.ALIGN, false);
             addAttribute(ChartAttribute.DIRECTION, false);
             addAttribute(ChartAttribute.ORIENTATION, false);
@@ -78,6 +79,7 @@ public abstract class AbstractChart<T extends AbstractChart> extends Group {
             addAttribute(ChartAttribute.LEGEND_POSITION, false);
             addAttribute(ChartAttribute.LEGEND_ALIGN, false);
             addAttribute(ChartAttribute.RESIZABLE, false);
+            addAttribute(ChartAttribute.ANIMATED, true);
         }
 
         @Override
@@ -97,14 +99,14 @@ public abstract class AbstractChart<T extends AbstractChart> extends Group {
         add(rightArea); // Area for right padding.
 
         // Position the areas.
-        double currentx = chartArea.getX();
-        double currenty = chartArea.getY();
-        moveAreas(currentx, currenty);
-
+        moveAreas(0d, 0d);
+        
         // Chart title.
         final Text chartTitle = new Text(getName(), getFontFamily(), getFontStyle(), getFontSize()).setFillColor(ColorName.BLACK).setTextAlign(TextAlign.CENTER).setTextBaseLine(TextBaseLine.MIDDLE);
-        setShapeAttributes(chartTitle,getChartWidth() / 2, 10d, null, null, true);
-        topArea.add(chartTitle);
+        if (isShowTitle()) {
+            setShapeAttributes(chartTitle,getChartWidth() / 2, 10d, null, null, true);
+            topArea.add(chartTitle);
+        }
 
         // Call parent build implementation.
         doBuild();
@@ -137,10 +139,10 @@ public abstract class AbstractChart<T extends AbstractChart> extends Group {
         this.addAttributesChangedHandler(Attribute.WIDTH, new AttributesChangedHandler() {
             @Override
             public void onAttributesChanged(AttributesChangedEvent event) {
-                GWT.log("AbstractChart - WIDTH attribute changed -> " + getOriginalWidth());
-                setGroupAttributes(bottomArea, null, topArea.getY() + getChartHeight() + AREA_PADDING, false);
-                setGroupAttributes(rightArea, topArea.getX() + getChartWidth() + AREA_PADDING, null, false);
-                setShapeAttributes(chartTitle, getOriginalWidth() / 2, null, null, null, false);
+                GWT.log("AbstractChart - WIDTH attribute changed -> " + getWidth());
+                setGroupAttributes(bottomArea, null, topArea.getY() + getChartHeight() + getMarginTop(), false);
+                setGroupAttributes(rightArea, topArea.getX() + getChartWidth() + getMarginLeft(), null, false);
+                if (isShowTitle()) setShapeAttributes(chartTitle, getWidth() / 2, null, null, null, false);
                 moveResizerToTop(resizer);
             }
         });
@@ -148,10 +150,10 @@ public abstract class AbstractChart<T extends AbstractChart> extends Group {
         this.addAttributesChangedHandler(Attribute.HEIGHT, new AttributesChangedHandler() {
             @Override
             public void onAttributesChanged(AttributesChangedEvent event) {
-                GWT.log("AbstractChart - HEIGHT attribute changed -> " + getOriginalHeight());
-                setGroupAttributes(bottomArea, null, topArea.getY() + getChartHeight() + AREA_PADDING, false);
-                setGroupAttributes(rightArea, topArea.getX() + getChartWidth() + AREA_PADDING, null, false);
-                setShapeAttributes(chartTitle, getOriginalWidth() / 2, null, null, null, false);
+                GWT.log("AbstractChart - HEIGHT attribute changed -> " + getHeight());
+                setGroupAttributes(bottomArea, null, topArea.getY() + getChartHeight() + getMarginTop(), false);
+                setGroupAttributes(rightArea, topArea.getX() + getChartWidth() + getMarginLeft(), null, false);
+                if (isShowTitle())  setShapeAttributes(chartTitle, getWidth() / 2, null, null, null, false);
                 moveResizerToTop(resizer);
             }
         });
@@ -161,18 +163,20 @@ public abstract class AbstractChart<T extends AbstractChart> extends Group {
 
     protected void moveAreas(Double x, Double y) {
         if (x != null) {
-            topArea.setX(x);
-            chartArea.setX(x + AREA_PADDING);
-            bottomArea.setX(x + AREA_PADDING);
+            double marginLeft = getMarginLeft();
             leftArea.setX(x);
-            rightArea.setX(x + getChartWidth() + AREA_PADDING);
+            topArea.setX(x + marginLeft);
+            chartArea.setX(x + marginLeft);
+            bottomArea.setX(x + marginLeft);
+            rightArea.setX(x + getChartWidth() + marginLeft);
         }
         if (y != null) {
+            double marginTop = getMarginTop();
             topArea.setY(y);
-            chartArea.setY(y + AREA_PADDING);
-            bottomArea.setY(y + getChartHeight() + AREA_PADDING);
-            leftArea.setY(y);
-            rightArea.setY(y + AREA_PADDING);
+            chartArea.setY(y + marginTop);
+            leftArea.setY(y + marginTop);
+            rightArea.setY(y + marginTop);
+            bottomArea.setY(y + getChartHeight() + marginTop);
         }
     }
     
@@ -195,16 +199,16 @@ public abstract class AbstractChart<T extends AbstractChart> extends Group {
         return (T) this;
     }
 
-    protected T setShapeAttributes(Shape shape, Double x, Double y, Double width, Double height, boolean animate) {
-        return setShapeAttributes(shape, x, y, width, height, null, null, animate);
+    protected void setShapeAttributes(Shape shape, Double x, Double y, Double width, Double height, boolean animate) {
+        setShapeAttributes(shape, x, y, width, height, null, null, animate);
     }
 
-    protected T setShapeAttributes(Shape shape, Double x, Double y, Double width, Double height, IColor color, boolean animate) {
-        return setShapeAttributes(shape, x, y, width, height, color, null, animate);
+    protected void setShapeAttributes(Shape shape, Double x, Double y, Double width, Double height, IColor color, boolean animate) {
+        setShapeAttributes(shape, x, y, width, height, color, null, animate);
     }
 
-    protected T setShapeAttributes(Shape shape, Double x, Double y, Double width, Double height, IColor color, Double alpha, boolean animate) {
-        if (animate) {
+    protected void setShapeAttributes(Shape shape, Double x, Double y, Double width, Double height, IColor color, Double alpha, boolean animate) {
+        if (animate && isAnimated()) {
             AnimationProperties animationProperties = new AnimationProperties();
             if (width != null) animationProperties.push(AnimationProperty.Properties.WIDTH(width));
             if (height != null) animationProperties.push(AnimationProperty.Properties.HEIGHT(height));
@@ -221,7 +225,6 @@ public abstract class AbstractChart<T extends AbstractChart> extends Group {
             if (color != null) shape.setFillColor(color);
             if (alpha != null) shape.setAlpha(alpha);
         }
-        return (T) this;
     }
 
 
@@ -320,8 +323,8 @@ public abstract class AbstractChart<T extends AbstractChart> extends Group {
                         int incrementY = currentY - initialYPosition;
                         initialXPosition = currentX;
                         initialYPosition = currentY;
-                        double finalWidth = getOriginalWidth() + incrementX;
-                        double finalHeight = getOriginalHeight() + incrementY;
+                        double finalWidth = getWidth() + incrementX;
+                        double finalHeight = getHeight() + incrementY;
                         Double chartWidth = getChartWidth(finalWidth);
                         Double chartHeight = getChartHeight(finalHeight);
 
@@ -360,8 +363,8 @@ public abstract class AbstractChart<T extends AbstractChart> extends Group {
                         int currentY = event.getY();
                         int incrementX = currentX - initialXPosition;
                         int incrementY = currentY - initialYPosition;
-                        double finalWidth = getOriginalWidth() + incrementX;
-                        double finalHeight = getOriginalHeight() + incrementY;
+                        double finalWidth = getWidth() + incrementX;
+                        double finalHeight = getHeight() + incrementY;
                         Double chartWidth = getChartWidth(finalWidth);
                         Double chartHeight = getChartHeight(finalHeight);
                         resizeRectangle.setWidth(chartWidth).setHeight(chartHeight);
@@ -390,28 +393,28 @@ public abstract class AbstractChart<T extends AbstractChart> extends Group {
         }
     }
 
-    public double getChartHeight(double originalHeight) {
-        return originalHeight - (AREA_PADDING * 2);
+    protected double getChartHeight(double originalHeight) {
+        return originalHeight - (getMarginTop() + getMarginBottom());
     }
 
-    public double getChartWidth(double originalWidth) {
-        return originalWidth - (AREA_PADDING * 2);
+    protected double getChartWidth(double originalWidth) {
+        return originalWidth - (getMarginLeft() + getMarginRight());
     }
 
     public double getChartHeight() {
-        return getChartHeight(getOriginalHeight());
-    }
-
-    public double getChartWidth() {
-        return getChartWidth(getOriginalWidth());
-    }
-
-    protected double getOriginalHeight() {
         return getAttributes().getHeight();
     }
 
-    protected double getOriginalWidth() {
+    public double getChartWidth() {
         return getAttributes().getWidth();
+    }
+
+    public double getHeight() {
+        return getAttributes().getHeight() +  getMarginTop() + getMarginBottom();
+    }
+
+    public double getWidth() {
+        return getAttributes().getWidth() + getMarginLeft() + getMarginRight();
     }
 
     public String getFontFamily() {
@@ -427,12 +430,12 @@ public abstract class AbstractChart<T extends AbstractChart> extends Group {
     }
 
     public AbstractChart setWidth(double width) {
-        getAttributes().setWidth(width + AREA_PADDING*2);
+        getAttributes().setWidth(width);
         return this;
     }
 
     public AbstractChart setHeight(double height) {
-        getAttributes().setHeight(height + AREA_PADDING*2);
+        getAttributes().setHeight(height);
         return this;
     }
 
@@ -571,5 +574,79 @@ public abstract class AbstractChart<T extends AbstractChart> extends Group {
         }
         return true;
     }
-    
+
+    public final T setAnimated(boolean animated)
+    {
+        getAttributes().put(ChartAttribute.ANIMATED.getProperty(), animated);
+        return (T) this;
+    }
+
+    public final boolean isAnimated()
+    {
+        if (getAttributes().isDefined(ChartAttribute.ANIMATED))
+        {
+            return getAttributes().getBoolean(ChartAttribute.ANIMATED.getProperty());
+        }
+        return true;
+    }
+
+    public final double getMarginLeft()
+    {
+        if (getAttributes().isDefined(ChartAttribute.MARGIN_LEFT))
+        {
+            return getAttributes().getDouble(ChartAttribute.MARGIN_LEFT.getProperty());
+        }
+        return DEFAULT_MARGIN;
+    }
+
+    public final T setMarginLeft(final double margin)
+    {
+        getAttributes().put(ChartAttribute.MARGIN_LEFT.getProperty(), margin);
+        return (T) this;
+    }
+
+    public final double getMarginTop()
+    {
+        if (getAttributes().isDefined(ChartAttribute.MARGIN_TOP))
+        {
+            return getAttributes().getDouble(ChartAttribute.MARGIN_TOP.getProperty());
+        }
+        return DEFAULT_MARGIN;
+    }
+
+    public final T setMarginTop(final double margin)
+    {
+        getAttributes().put(ChartAttribute.MARGIN_TOP.getProperty(), margin);
+        return (T) this;
+    }
+
+    public final double getMarginRight()
+    {
+        if (getAttributes().isDefined(ChartAttribute.MARGIN_RIGHT))
+        {
+            return getAttributes().getDouble(ChartAttribute.MARGIN_RIGHT.getProperty());
+        }
+        return DEFAULT_MARGIN;
+    }
+
+    public final T setMarginRight(final double margin)
+    {
+        getAttributes().put(ChartAttribute.MARGIN_RIGHT.getProperty(), margin);
+        return (T) this;
+    }
+
+    public final double getMarginBottom()
+    {
+        if (getAttributes().isDefined(ChartAttribute.MARGIN_BOTTOM))
+        {
+            return getAttributes().getDouble(ChartAttribute.MARGIN_BOTTOM.getProperty());
+        }
+        return DEFAULT_MARGIN;
+    }
+
+    public final T setMarginBotom(final double margin)
+    {
+        getAttributes().put(ChartAttribute.MARGIN_BOTTOM.getProperty(), margin);
+        return (T) this;
+    }
 }

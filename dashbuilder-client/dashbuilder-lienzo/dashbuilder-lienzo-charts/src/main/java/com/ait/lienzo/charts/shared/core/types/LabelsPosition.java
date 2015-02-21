@@ -21,7 +21,7 @@ import com.ait.lienzo.shared.core.types.EnumWithValue;
 
 import java.util.List;
 
-public enum LegendPosition implements EnumWithValue
+public enum LabelsPosition implements EnumWithValue
 {
     /**
      * To the right of the chart.
@@ -40,19 +40,15 @@ public enum LegendPosition implements EnumWithValue
      */
     BOTTOM("bottom"),
     /**
-     * Inside the chart.
-     */
-    INSIDE("inside"),
-    /**
      * No legend is displayed.
      */
     NONE("none");
 
     private final String                            m_value;
 
-    private static final NFastStringMap<LegendPosition> LOOKUP_MAP = Statics.build(LegendPosition.values());
+    private static final NFastStringMap<LabelsPosition> LOOKUP_MAP = Statics.build(LabelsPosition.values());
 
-    private LegendPosition(String value)
+    private LabelsPosition(String value)
     {
         m_value = value;
     }
@@ -69,18 +65,18 @@ public enum LegendPosition implements EnumWithValue
         return m_value;
     }
 
-    public static final LegendPosition lookup(String key)
+    public static final LabelsPosition lookup(String key)
     {
         return Statics.lookup(key, LOOKUP_MAP, BOTTOM);
     }
 
     public static final List<String> getKeys()
     {
-        return Statics.getKeys(LegendPosition.values());
+        return Statics.getKeys(LabelsPosition.values());
     }
 
-    public static final List<LegendPosition> getValues()
+    public static final List<LabelsPosition> getValues()
     {
-        return Statics.getValues(LegendPosition.values());
+        return Statics.getValues(LabelsPosition.values());
     }
 }

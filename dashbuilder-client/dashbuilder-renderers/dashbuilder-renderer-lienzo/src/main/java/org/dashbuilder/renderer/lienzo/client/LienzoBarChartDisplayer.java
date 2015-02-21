@@ -17,10 +17,12 @@ package org.dashbuilder.renderer.lienzo.client;
 
 import com.ait.lienzo.charts.client.axis.CategoryAxis;
 import com.ait.lienzo.charts.client.axis.NumericAxis;
-import com.ait.lienzo.charts.client.xy.BarChart;
+import com.ait.lienzo.charts.client.xy.bar.BarChart;
 import com.ait.lienzo.charts.client.xy.XYChartData;
 import com.ait.lienzo.charts.client.xy.XYChartSerie;
 import com.ait.lienzo.charts.shared.core.types.ChartOrientation;
+import com.ait.lienzo.charts.shared.core.types.LabelsPosition;
+import com.ait.lienzo.charts.shared.core.types.LegendPosition;
 import com.ait.lienzo.client.core.shape.IPrimitive;
 import com.ait.lienzo.shared.core.types.ColorName;
 import com.google.gwt.core.client.GWT;
@@ -50,12 +52,24 @@ public class LienzoBarChartDisplayer extends LienzoDisplayer {
         chart.setX(0);
         chart.setY(0);
         chart.setName(displayerSettings.getTitle());
-        chart.setWidth(getWidth());
-        chart.setHeight(getHeight());
+        chart.setWidth(getChartWidth());
+        chart.setHeight(getChartHeight());
+        chart.setMarginLeft(displayerSettings.getChartMarginLeft());
+        chart.setMarginRight(displayerSettings.getChartMarginRight());
+        chart.setMarginTop(displayerSettings.getChartMarginTop());
+        chart.setMarginBotom(displayerSettings.getChartMarginBottom());
         chart.setFontFamily("Verdana");
         chart.setFontStyle("bold");
-        chart.setFontSize(12);
+        chart.setFontSize(8);
         chart.setShowTitle(displayerSettings.isTitleVisible());
+        chart.setShowCategoriesAxisTitle(false);
+        chart.setShowValuesAxisTitle(false);
+        chart.setLegendPosition(LegendPosition.RIGHT); 
+        chart.setCategoriesAxisLabelsPosition(LabelsPosition.LEFT); // TODO: Custom displayer parameter.
+        chart.setValuesAxisLabelsPosition(LabelsPosition.BOTTOM); // TODO: Custom displayer parameter.
+        chart.setLegendPosition(LegendPosition.RIGHT);
+        chart.setResizable(false); // TODO: Custom displayer parameter.
+        chart.setAnimated(true); // TODO: Custom displayer parameter.
         
         // TODO: Category and Number types?
         CategoryAxis categoryAxis = new CategoryAxis(displayerSettings.getXAxisTitle());
