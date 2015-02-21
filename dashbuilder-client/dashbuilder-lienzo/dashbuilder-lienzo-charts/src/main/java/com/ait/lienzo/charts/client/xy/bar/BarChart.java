@@ -26,10 +26,7 @@ import com.ait.lienzo.charts.client.xy.XYChartSerie;
 import com.ait.lienzo.charts.client.xy.axis.AxisBuilder;
 import com.ait.lienzo.charts.client.xy.axis.CategoryAxisBuilder;
 import com.ait.lienzo.charts.client.xy.axis.NumericAxisBuilder;
-import com.ait.lienzo.charts.shared.core.types.ChartDirection;
-import com.ait.lienzo.charts.shared.core.types.ChartOrientation;
-import com.ait.lienzo.charts.shared.core.types.LabelsPosition;
-import com.ait.lienzo.charts.shared.core.types.LegendPosition;
+import com.ait.lienzo.charts.shared.core.types.*;
 import com.ait.lienzo.client.core.animation.AnimationProperties;
 import com.ait.lienzo.client.core.animation.AnimationProperty;
 import com.ait.lienzo.client.core.animation.AnimationTweener;
@@ -329,23 +326,38 @@ public class BarChart extends AbstractChart<BarChart>
         
         // Legend.
         LegendPosition legendPosition = getLegendPosition();
+        LegendAlign legendAlign = getLegendAlignment();
         if (!LegendPosition.NONE.equals(legendPosition)) {
             legend = new ChartLegend();
+            Group legendGroup = legend.build();
+            double xLegend = 0;
+            double yLegend = 0;
+            // TODO: legendAlign
             switch (legendPosition) {
                 case TOP:
-                    topArea.add(legend.build());
+                    xLegend = getChartWidth() / 2;
+                    yLegend = 5;
+                    topArea.add(legendGroup.setX(xLegend).setY(yLegend));
                     break;
                 case LEFT:
-                    leftArea.add(legend.build());
+                    xLegend = 5;
+                    yLegend = getChartHeight() / 2;
+                    leftArea.add(legendGroup.setX(xLegend).setY(yLegend));
                     break;
                 case RIGHT:
-                    rightArea.add(legend.build());
+                    xLegend = 5;
+                    yLegend = getChartHeight() / 2;
+                    rightArea.add(legendGroup.setX(xLegend).setY(yLegend));
                     break;
                 case INSIDE:
-                    chartArea.add(legend.build());
+                    xLegend = getChartWidth() / 2;
+                    yLegend = 2;
+                    chartArea.add(legendGroup.setX(xLegend).setY(yLegend));
                     break;
                 default:
-                    bottomArea.add(legend.build());
+                    xLegend = getChartWidth() / 2;
+                    yLegend = 5;
+                    bottomArea.add(legendGroup.setX(xLegend).setY(yLegend));
                     break;
             }
 
@@ -766,7 +778,7 @@ public class BarChart extends AbstractChart<BarChart>
                             double width = barObject.getWidth();
                             double height = barObject.getHeight();
                             double xTooltip = x + width/2;
-                            double yTooltip = y;
+                            double yTooltip = y + height/2;
                             seriesValuesAlpha(numSerie, numValue, 0.5d);
                             tooltip.show(xTooltip, yTooltip, xValueFormatted, yValueFormatted);
                         }
@@ -1014,7 +1026,7 @@ public class BarChart extends AbstractChart<BarChart>
                             double width = barObject.getWidth();
                             double height = barObject.getHeight();
                             double xTooltip = x + width/2;
-                            double yTooltip = y;
+                            double yTooltip = y - height/2;
                             seriesValuesAlpha(numSerie, numValue, 0.5d);
                             tooltip.show(xTooltip, yTooltip, yValueFormatted, xValueFormatted);
                         }
