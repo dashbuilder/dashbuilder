@@ -44,6 +44,15 @@ public class BarChartLabel {
         setShapeAttributes(label, x, y, width, height, animate);
         setShapeAttributes(labelContainer, x, y, width, height, animate);
     }
+    
+    public void clear() {
+        // Create the animation properties.
+        AnimationProperties animationProperties = new AnimationProperties();
+        animationProperties.push(AnimationProperty.Properties.ALPHA(0d));
+
+        // Apply animation to axis titles.
+        label.animate(AnimationTweener.LINEAR, animationProperties, BarChart.CLEAR_ANIMATION_DURATION);
+    }
 
     public Text getLabel() {
         return label;

@@ -15,17 +15,21 @@
  */
 package org.dashbuilder.renderer.lienzo.client;
 
+import com.ait.lienzo.charts.client.AbstractChart;
 import com.ait.lienzo.charts.client.axis.CategoryAxis;
 import com.ait.lienzo.charts.client.axis.NumericAxis;
-import com.ait.lienzo.charts.client.xy.bar.BarChart;
+import com.ait.lienzo.charts.client.event.DataReloadedEvent;
+import com.ait.lienzo.charts.client.event.DataReloadedEventHandler;
 import com.ait.lienzo.charts.client.xy.XYChartData;
 import com.ait.lienzo.charts.client.xy.XYChartSerie;
+import com.ait.lienzo.charts.client.xy.bar.BarChart;
 import com.ait.lienzo.charts.shared.core.types.ChartOrientation;
 import com.ait.lienzo.charts.shared.core.types.LabelsPosition;
 import com.ait.lienzo.charts.shared.core.types.LegendPosition;
-import com.ait.lienzo.client.core.shape.IPrimitive;
 import com.ait.lienzo.shared.core.types.ColorName;
+import com.ait.lienzo.shared.core.types.IColor;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.dataset.DataSetLookupConstraints;
@@ -35,17 +39,32 @@ import org.dashbuilder.displayer.DisplayerConstraints;
 
 public class LienzoBarChartDisplayer extends LienzoDisplayer {
 
-    protected BarChart chart;
-    protected XYChartData chartData;
+    private static final ColorName[] DEFAULT_SERIE_COLORS = new ColorName[] {
+            ColorName.DEEPSKYBLUE, ColorName.RED, ColorName.YELLOWGREEN            
+    };
+    
+    final protected BarChart[] chart = new BarChart[1];
 
     @Override
-    public IPrimitive createVisualization() {
+    public AbstractChart createVisualization() {
 
         // Create the data for the chart instance.
-        createChartData();
-        
+        XYChartData chartData = createChartData();
+
         // Create the BarChart instance.
-        chart = new BarChart(this.chartData);
+        chart[0] = new BarChart(new DataReloadedEventHandler() {
+            @Override
+            public void onDataReloaded(DataReloadedEvent event) {
+                GWT.log("LienzoBarChartDisplayer - onDataReloaded");
+                configureBarChart(chart[0]);
+            }
+        });
+        chart[0].setData(chartData);
+
+        return chart[0];
+    }
+    
+    private void configureBarChart(BarChart chart) {
         if (displayerSettings.isBarchartHorizontal()) chart.setOrientation(ChartOrientation.HORIZNONAL);
         else chart.setOrientation(ChartOrientation.VERTICAL);
 
@@ -64,61 +83,70 @@ public class LienzoBarChartDisplayer extends LienzoDisplayer {
         chart.setShowTitle(displayerSettings.isTitleVisible());
         chart.setShowCategoriesAxisTitle(false);
         chart.setShowValuesAxisTitle(false);
-        chart.setLegendPosition(LegendPosition.RIGHT); 
-        chart.setCategoriesAxisLabelsPosition(LabelsPosition.LEFT); // TODO: Custom displayer parameter.
-        chart.setValuesAxisLabelsPosition(LabelsPosition.BOTTOM); // TODO: Custom displayer parameter.
-        chart.setLegendPosition(LegendPosition.RIGHT);
+        //chart.setLegendPosition(LegendPosition.RIGHT); // TODO: Custom displayer parameter.
+        //chart.setCategoriesAxisLabelsPosition(LabelsPosition.LEFT); // TODO: Custom displayer parameter.
+        //chart.setValuesAxisLabelsPosition(LabelsPosition.BOTTOM); // TODO: Custom displayer parameter.
         chart.setResizable(false); // TODO: Custom displayer parameter.
         chart.setAnimated(true); // TODO: Custom displayer parameter.
-        
+
+        // Events (filtering)
+        if (displayerSettings.isFilterEnabled()) {
+            chart.addSelectHandler(new SelectHandler());
+        }
+
         // TODO: Category and Number types?
         CategoryAxis categoryAxis = new CategoryAxis(displayerSettings.getXAxisTitle());
         NumericAxis numericAxis = new NumericAxis(displayerSettings.getYAxisTitle());
-        
+
         chart.setCategoriesAxis(categoryAxis);
         chart.setValuesAxis(numericAxis);
         chart.build();
-
-        return chart;
     }
 
     @Override
     protected void updateVisualization() {
-        // TODO
+        filterPanel.clear();
+        Widget filterReset = super.createCurrentSelectionWidget();
+        if (filterReset != null) filterPanel.add(filterReset);
+
+        if (dataSet.getRowCount() == 0) {
+            mainPanel.add(super.createNoDataMsgPanel());
+            chart[0] = null;
+        } else {
+            CategoryAxis categoryAxis = new CategoryAxis(displayerSettings.getXAxisTitle());
+            chart[0].setCategoriesAxis(categoryAxis);
+            XYChartData newData = createChartData();
+            newData.setCategoryAxisProperty(categoriesColumn.getId());
+            chart[0].setData(newData);
+        }
     }
 
-    protected void createChartData() {
-        // Ensure data model instance is created.
-        super.createTable();
+    protected XYChartData createChartData() {
 
         // Create data instance and the series to display.
-        if (chartData == null) {
-            chartData = new XYChartData(lienzoTable);
-            DataColumn categoriesColumn = getCategoriesColumn();
-            DataColumn[] valuesColumns = getValuesColumns();
-            
-            if (categoriesColumn != null) {
-                chartData.setCategoryAxisProperty(categoriesColumn.getId());
-                if (valuesColumns != null) {
-                    for (int i = 0; i < valuesColumns.length; i++) {
-                        DataColumn dataColumn = valuesColumns[i];
-                        String columnId = dataColumn.getId();
-                        String columnName = dataColumn.getName();
-                        if (columnName == null) columnName = columnId;
+        XYChartData chartData = new XYChartData(lienzoTable);
+        DataColumn categoriesColumn = getCategoriesColumn();
+        DataColumn[] valuesColumns = getValuesColumns();
+        
+        if (categoriesColumn != null) {
+            chartData.setCategoryAxisProperty(categoriesColumn.getId());
+            if (valuesColumns != null) {
+                for (int i = 0; i < valuesColumns.length; i++) {
+                    DataColumn dataColumn = valuesColumns[i];
+                    String columnId = dataColumn.getId();
+                    String columnName = dataColumn.getName();
+                    if (columnName == null) columnName = columnId;
 
-                        XYChartSerie series = new XYChartSerie(columnName, ColorName.DEEPSKYBLUE, columnId);
-                        chartData.addSerie(series);
-                    }
-                } else {
-                    GWT.log("No values columns specified.");
+                    XYChartSerie series = new XYChartSerie(columnName, getSeriesColor(i), columnId);
+                    chartData.addSerie(series);
                 }
             } else {
-                GWT.log("No categories column specified.");
+                GWT.log("No values columns specified.");
             }
-            
-
-            
+        } else {
+            GWT.log("No categories column specified.");
         }
+        return chartData;
     }
 
     @Override
@@ -149,5 +177,11 @@ public class LienzoBarChartDisplayer extends LienzoDisplayer {
                    .supportsAttribute( DisplayerAttributeGroupDef.CHART_LEGEND_GROUP )
                    .supportsAttribute( DisplayerAttributeGroupDef.AXIS_GROUP )
                    .supportsAttribute( DisplayerAttributeGroupDef.BARCHART_GROUP );
+    }
+    
+    private IColor getSeriesColor(int index) {
+        int defaultColorsSize = DEFAULT_SERIE_COLORS.length;
+        if (index >= defaultColorsSize) return ColorName.getValues().get(90 + index*2);
+        return DEFAULT_SERIE_COLORS[index];
     }
 }

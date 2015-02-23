@@ -45,8 +45,11 @@ public abstract class AbstractChart<T extends AbstractChart> extends Group {
     protected final Group bottomArea = new Group();
     protected final Group rightArea = new Group();
     protected final Group leftArea = new Group();
+    protected final Boolean[] isReloading = new Boolean[1];
+
 
     protected AbstractChart() {
+        isReloading[0] = false;
     }
 
     public AbstractChart(JSONObject node, ValidationContext ctx) throws ValidationException {
@@ -122,39 +125,52 @@ public abstract class AbstractChart<T extends AbstractChart> extends Group {
         this.addAttributesChangedHandler(Attribute.X, new AttributesChangedHandler() {
             @Override
             public void onAttributesChanged(AttributesChangedEvent event) {
-                GWT.log("AbstractChart - X attribute changed.");
-                moveAreas(getX(), null);
+                GWT.log("isReloading = " + isReloading[0]);
+                if (!isReloading[0]) {
+                    GWT.log("AbstractChart - X attribute changed.");
+                    moveAreas(getX(), null);
+                }
             }
         });
 
         this.addAttributesChangedHandler(Attribute.Y, new AttributesChangedHandler() {
             @Override
             public void onAttributesChanged(AttributesChangedEvent event) {
-                GWT.log("AbstractChart - Y attribute changed.");
-                moveAreas(null, getY());
-                moveResizerToTop(resizer);
+                GWT.log("isReloading = " + isReloading[0]);
+                if (!isReloading[0]) {
+                    GWT.log("AbstractChart - Y attribute changed.");
+                    moveAreas(null, getY());
+                    moveResizerToTop(resizer);
+                }
             }
         });
 
         this.addAttributesChangedHandler(Attribute.WIDTH, new AttributesChangedHandler() {
             @Override
             public void onAttributesChanged(AttributesChangedEvent event) {
-                GWT.log("AbstractChart - WIDTH attribute changed -> " + getWidth());
-                setGroupAttributes(bottomArea, null, topArea.getY() + getChartHeight() + getMarginTop(), false);
-                setGroupAttributes(rightArea, topArea.getX() + getChartWidth() + getMarginLeft(), null, false);
-                if (isShowTitle()) setShapeAttributes(chartTitle, getWidth() / 2, null, null, null, false);
-                moveResizerToTop(resizer);
+                GWT.log("isReloading = " + isReloading[0]);
+                if (!isReloading[0]) {
+                    GWT.log("AbstractChart - WIDTH/HEIGHT attribute changed -> " + getWidth());
+                    setGroupAttributes(bottomArea, null, topArea.getY() + getChartHeight() + getMarginTop(), false);
+                    setGroupAttributes(rightArea, topArea.getX() + getChartWidth() + getMarginLeft(), null, false);
+                    if (isShowTitle()) setShapeAttributes(chartTitle, getWidth() / 2, null, null, null, false);
+                    moveResizerToTop(resizer);
+                }
             }
         });
+        
 
         this.addAttributesChangedHandler(Attribute.HEIGHT, new AttributesChangedHandler() {
             @Override
             public void onAttributesChanged(AttributesChangedEvent event) {
-                GWT.log("AbstractChart - HEIGHT attribute changed -> " + getHeight());
-                setGroupAttributes(bottomArea, null, topArea.getY() + getChartHeight() + getMarginTop(), false);
-                setGroupAttributes(rightArea, topArea.getX() + getChartWidth() + getMarginLeft(), null, false);
-                if (isShowTitle())  setShapeAttributes(chartTitle, getWidth() / 2, null, null, null, false);
-                moveResizerToTop(resizer);
+                GWT.log("isReloading = " + isReloading[0]);
+                if (!isReloading[0]) {
+                    GWT.log("AbstractChart - HEIGHT attribute changed -> " + getHeight());
+                    setGroupAttributes(bottomArea, null, topArea.getY() + getChartHeight() + getMarginTop(), false);
+                    setGroupAttributes(rightArea, topArea.getX() + getChartWidth() + getMarginLeft(), null, false);
+                    if (isShowTitle())  setShapeAttributes(chartTitle, getWidth() / 2, null, null, null, false);
+                    moveResizerToTop(resizer);
+                }
             }
         });
 
@@ -178,6 +194,7 @@ public abstract class AbstractChart<T extends AbstractChart> extends Group {
             rightArea.setY(y + marginTop);
             bottomArea.setY(y + getChartHeight() + marginTop);
         }
+        chartArea.moveToTop();
     }
     
     protected void moveResizerToTop(ChartResizer resizer) {
@@ -188,6 +205,14 @@ public abstract class AbstractChart<T extends AbstractChart> extends Group {
 
     protected abstract void doBuild();
 
+    protected void clearAreas() {
+        topArea.removeAll();
+        bottomArea.removeAll();
+        leftArea.removeAll();
+        rightArea.removeAll();
+        chartArea.removeAll();
+    }
+    
     protected T setGroupAttributes(Group group, Double x, Double y, boolean animate) {
         return setGroupAttributes(group, x, y, null, animate);
     }

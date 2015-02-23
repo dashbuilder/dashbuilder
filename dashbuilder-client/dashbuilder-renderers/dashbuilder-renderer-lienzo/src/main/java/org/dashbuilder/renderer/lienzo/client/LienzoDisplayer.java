@@ -16,31 +16,39 @@
 package org.dashbuilder.renderer.lienzo.client;
 
 import com.ait.lienzo.charts.client.AbstractChart;
+import com.ait.lienzo.charts.client.event.SelectEvent;
+import com.ait.lienzo.charts.client.event.SelectEventHandler;
 import com.ait.lienzo.charts.client.model.DataTable;
 import com.ait.lienzo.charts.client.model.DataTableColumn;
 import com.ait.lienzo.client.core.shape.IPrimitive;
 import com.ait.lienzo.client.core.shape.Layer;
 import com.ait.lienzo.client.widget.LienzoPanel;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.ui.*;
 import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.client.DataSetReadyCallback;
+import org.dashbuilder.dataset.group.Interval;
 import org.dashbuilder.displayer.client.AbstractDisplayer;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 public abstract class LienzoDisplayer extends AbstractDisplayer {
 
     protected boolean drawn = false;
     protected FlowPanel mainPanel = new FlowPanel();
+    protected FlowPanel filterPanel = new FlowPanel();
+    protected Layer layer = new Layer();
     protected Label label = new Label();
 
     protected DataSet dataSet;
     protected DataTable lienzoTable = null;
+    protected DataColumn categoriesColumn = null;
 
     public LienzoDisplayer() {
         // Create the main panel.
@@ -66,22 +74,31 @@ public abstract class LienzoDisplayer extends AbstractDisplayer {
                     String initMsg = "Initalizing Lienzo displayer"; // TODO: Use i18n
                     GWT.log(initMsg + " ...");
 
+                    mainPanel.clear();
+                    
                     beforeDataSetLookup();
                     dataSetHandler.lookupDataSet(new DataSetReadyCallback() {
                         public void callback(DataSet result) {
                             dataSet = result;
                             afterDataSetLookup(result);
 
-                            LienzoPanel panel = new LienzoPanel(getWidth(), getHeight());
-                            Layer layer = new Layer();
-                            layer.setTransformable(true);
-                            panel.add(layer);
-                            mainPanel.add(panel);
+                            mainPanel.add(filterPanel);
                             
-                            IPrimitive primitive = createVisualization();
-                            layer.clear();
-                            layer.add(primitive);
-                            layer.draw();
+                            if (dataSet.getRowCount() == 0) {
+                                mainPanel.add(createNoDataMsgPanel());
+                            } else {
+                                // TODO: LienzoPanel panel = new LienzoPanel(getWidth(), getHeight());
+                                LienzoPanel panel = new LienzoPanel(1200, 800);
+                                layer.setTransformable(true);
+                                panel.add(layer);
+                                mainPanel.add(filterPanel);
+                                mainPanel.add(panel);
+
+                                AbstractChart chart = createVisualization();
+                                layer.clear();
+                                layer.add(chart);
+                                layer.draw();
+                            }
                             
                             // Draw done
                             afterDraw();
@@ -110,6 +127,7 @@ public abstract class LienzoDisplayer extends AbstractDisplayer {
                     public void callback(DataSet result) {
                         dataSet = result;
                         afterDataSetLookup(result);
+
                         updateVisualization();
 
                         // Redraw done
@@ -138,7 +156,7 @@ public abstract class LienzoDisplayer extends AbstractDisplayer {
     /**
      * Create the widget used by concrete Google displayer implementation.
      */
-    protected abstract IPrimitive createVisualization();
+    protected abstract AbstractChart createVisualization();
 
     /**
      * Update the widget used by concrete Google displayer implementation.
@@ -155,33 +173,37 @@ public abstract class LienzoDisplayer extends AbstractDisplayer {
      * Call back method invoked just after the data set lookup is executed.
      */
     protected void afterDataSetLookup(DataSet dataSet) {
+        
+        // Ensure data model instance is created.
+        lienzoTable = createTable();
+
+        // Update the categories column.
+        categoriesColumn = getCategoriesColumn();
+
+
     }
 
     protected DataTable createTable() {
 
-        if (lienzoTable == null) {
-            lienzoTable = new DataTable();
-            List<DataColumn> columns = dataSet.getColumns();
-            if (columns != null && !columns.isEmpty()) {
-                for (int i = 0; i < columns.size(); i++) {
-                    DataColumn dataColumn = columns.get(i);
-                    List columnValues = dataColumn.getValues();
-                    ColumnType columnType = dataColumn.getColumnType();
-                    String columnId = dataColumn.getId();
-                    String columnName = dataColumn.getName();
-                    if (columnName == null) columnName = columnId;
+        DataTable lienzoTable = new DataTable();
+        List<DataColumn> columns = dataSet.getColumns();
+        if (columns != null && !columns.isEmpty()) {
+            for (int i = 0; i < columns.size(); i++) {
+                DataColumn dataColumn = columns.get(i);
+                List columnValues = dataColumn.getValues();
+                ColumnType columnType = dataColumn.getColumnType();
+                String columnId = dataColumn.getId();
+                String columnName = dataColumn.getName();
+                if (columnName == null) columnName = columnId;
 
-                    lienzoTable.addColumn(columnId, getColumnType(dataColumn));
-                    for (int j = 0; j < columnValues.size(); j++) {
-                        Object value = columnValues.get(j);
-                        if (ColumnType.LABEL.equals(columnType)) value = super.formatValue(value, dataColumn);
-                        addTableValue(lienzoTable, columnType, value, columnId);
-                    }
+                lienzoTable.addColumn(columnId, getColumnType(dataColumn));
+                for (int j = 0; j < columnValues.size(); j++) {
+                    Object value = columnValues.get(j);
+                    if (ColumnType.LABEL.equals(columnType)) value = super.formatValue(value, dataColumn);
+                    addTableValue(lienzoTable, columnType, value, columnId);
                 }
             }
         }
-
-        // TODO: Format the table values
 
         return lienzoTable;
     }
@@ -200,6 +222,16 @@ public abstract class LienzoDisplayer extends AbstractDisplayer {
         }
         else {
             lTable.addValue(columnId, value.toString());
+        }
+    }
+
+    public class SelectHandler implements SelectEventHandler {
+
+        @Override
+        public void onSelect(SelectEvent event) {
+            GWT.log("filtering by serie [" + event.getSerie() + "], column [" + event.getColumn() 
+                    + "] and row [" + event.getRow() + "]");
+            filterUpdate(event.getColumn(), event.getRow());
         }
     }
 
@@ -254,6 +286,39 @@ public abstract class LienzoDisplayer extends AbstractDisplayer {
         int top = displayerSettings.getChartMarginTop();
         int bottom = displayerSettings.getChartMarginBottom();
         return height+top+bottom;
+    }
+
+    protected Widget createNoDataMsgPanel() {
+        return new com.github.gwtbootstrap.client.ui.Label("NO DATA");
+    }
+
+    protected Widget createCurrentSelectionWidget() {
+        if (!displayerSettings.isFilterEnabled()) return null;
+
+        Set<String> columnFilters = filterColumns();
+        if (columnFilters.isEmpty()) return null;
+
+        HorizontalPanel panel = new HorizontalPanel();
+        panel.getElement().setAttribute("cellpadding", "2");
+
+        for (String columnId : columnFilters) {
+            List<Interval> selectedValues = filterIntervals(columnId);
+            DataColumn column = dataSet.getColumnById(columnId);
+            for (Interval interval : selectedValues) {
+                String formattedValue = formatInterval(interval, column);
+                panel.add(new com.github.gwtbootstrap.client.ui.Label(formattedValue));
+            }
+        }
+
+        Anchor anchor = new Anchor( "Reset" );
+        panel.add(anchor);
+        anchor.addClickHandler(new ClickHandler() {
+            public void onClick(ClickEvent event) {
+                filterReset();
+                updateVisualization();
+            }
+        });
+        return panel;
     }
     
 }
