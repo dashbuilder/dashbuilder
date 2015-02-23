@@ -44,6 +44,7 @@ public class LienzoBarChartDisplayer extends LienzoDisplayer {
     };
     
     final protected BarChart[] chart = new BarChart[1];
+    private boolean isConfigured = false;
 
     @Override
     public AbstractChart createVisualization() {
@@ -65,6 +66,8 @@ public class LienzoBarChartDisplayer extends LienzoDisplayer {
     }
     
     private void configureBarChart(BarChart chart) {
+        if (isConfigured) return;
+        
         if (displayerSettings.isBarchartHorizontal()) chart.setOrientation(ChartOrientation.HORIZNONAL);
         else chart.setOrientation(ChartOrientation.VERTICAL);
 
@@ -101,6 +104,8 @@ public class LienzoBarChartDisplayer extends LienzoDisplayer {
         chart.setCategoriesAxis(categoryAxis);
         chart.setValuesAxis(numericAxis);
         chart.build();
+        
+        isConfigured=true;
     }
 
     @Override

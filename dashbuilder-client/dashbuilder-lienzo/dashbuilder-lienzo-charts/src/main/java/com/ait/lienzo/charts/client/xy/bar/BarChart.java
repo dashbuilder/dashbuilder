@@ -380,27 +380,50 @@ public class BarChart extends AbstractChart<BarChart>
         
         ChartOrientation orientation = getOrientation();
         
-        builder = (isVertical(orientation)) ? new VerticalBarChartBuilder() : new HorizontalBarChartBuilder();
-        
-        // **** Build all shape instances. ****
-        
-        // Build the categories axis title shape (Text)
-        builder.buildCategoriesAxisTitle()
-        // Build the values axis title shape (Text)
-                .buildValuesAxisTitle()
-        // Build the categories axis intervals shapes (Text and Line)
-                .buildCategoriesAxisIntervals()
-        // Build the values axis intervals shapes (Text and Line)
-                .buildValuesAxisIntervals()
-        // Build the values shapes (Rectangles)
-                .buildValues();
+        builder = build(orientation);
 
         // Set positions and sizes for shapes.
         Double chartWidth = getChartWidth();
         Double chartHeight = getChartHeight();
-        redraw(builder, chartWidth, chartHeight, true);
+        redraw(chartWidth, chartHeight, true);
         
         // Legend.
+        buildLegend();
+        
+        // Tooltip.
+        buildToolip();
+        
+        // Add the attributes event change handlers.
+        this.addAttributesChangedHandler(ChartAttribute.XY_CHART_DATA, new AttributesChangedHandler() {
+            @Override
+            public void onAttributesChanged(AttributesChangedEvent event) {
+                GWT.log(this.toString() + "- XYData attribute changed.");
+                redraw(getChartWidth(), getChartHeight(), true);
+                LayerRedrawManager.get().schedule(getLayer());
+            }
+        });
+        
+        AttributesChangedHandler whhandler = new AttributesChangedHandler() {
+            @Override
+            public void onAttributesChanged(AttributesChangedEvent event) {
+                GWT.log("isReloading = " + isReloading[0]);
+                if (!isReloading[0]) {
+                    GWT.log(this.toString() + "- WIDTH attribute changed.");
+                    redraw(getChartWidth(), getChartHeight(), false);
+                }
+            }
+        };
+        
+        this.addAttributesChangedHandler(ChartAttribute.WIDTH, whhandler);
+        this.addAttributesChangedHandler(ChartAttribute.HEIGHT,whhandler);
+
+    }
+    
+    private void buildToolip() {
+        chartArea.add(tooltip.build());
+    }
+
+    private void buildLegend() {
         LegendPosition legendPosition = getLegendPosition();
         LegendAlign legendAlign = getLegendAlignment();
         if (!LegendPosition.NONE.equals(legendPosition)) {
@@ -445,47 +468,28 @@ public class BarChart extends AbstractChart<BarChart>
                 }
             }
         }
-        
-        // Tooltip.
-        chartArea.add(tooltip.build());
+    }
+    
+    private BarChartBuilder build(ChartOrientation orientation) {
+        BarChartBuilder builder = (isVertical(orientation)) ? new VerticalBarChartBuilder() : new HorizontalBarChartBuilder();
 
-        // TODO: use of AnimationFrameAttributesChangedBatcher
-        
-        // Add the attributes event change handlers.
-        this.addAttributesChangedHandler(ChartAttribute.XY_CHART_DATA, new AttributesChangedHandler() {
-            @Override
-            public void onAttributesChanged(AttributesChangedEvent event) {
-                GWT.log("BarChart - XYData attribute changed.");
-                redraw(builder, getChartWidth(), getChartHeight(), true);
-                LayerRedrawManager.get().schedule(getLayer());
-            }
-        });
+        // **** Build all shape instances. ****
 
-        this.addAttributesChangedHandler(ChartAttribute.WIDTH, new AttributesChangedHandler() {
-            @Override
-            public void onAttributesChanged(AttributesChangedEvent event) {
-                GWT.log("isReloading = " + isReloading[0]);
-                if (!isReloading[0]) {
-                    GWT.log("BarChart - WIDTH attribute changed.");
-                    redraw(builder, getChartWidth(), getChartHeight(), false);
-                }
-            }
-        });
+        // Build the categories axis title shape (Text)
+        builder.buildCategoriesAxisTitle()
+                // Build the values axis title shape (Text)
+                .buildValuesAxisTitle()
+                        // Build the categories axis intervals shapes (Text and Line)
+                .buildCategoriesAxisIntervals()
+                        // Build the values axis intervals shapes (Text and Line)
+                .buildValuesAxisIntervals()
+                        // Build the values shapes (Rectangles)
+                .buildValues();
 
-        this.addAttributesChangedHandler(ChartAttribute.HEIGHT, new AttributesChangedHandler() {
-            @Override
-            public void onAttributesChanged(AttributesChangedEvent event) {
-                GWT.log("isReloading = " + isReloading[0]);
-                if (!isReloading[0]) {
-                    GWT.log("BarChart - WIDTH attribute changed.");
-                    redraw(builder, getChartWidth(), getChartHeight(), false);
-                }
-            }
-        });
-
+        return builder;
     }
 
-    private void redraw(BarChartBuilder builder, Double chartWidth, Double chartHeight, boolean animate) {
+    private void redraw(Double chartWidth, Double chartHeight, boolean animate) {
         
         if (getData() == null) {
             GWT.log("No data");
@@ -495,7 +499,9 @@ public class BarChart extends AbstractChart<BarChart>
         // If data axis properties has changed, builder instance will be null. Rebuild it.
         if (builder == null) {
             GWT.log("BarChart - Rebuilding BarChartBuilder instance.");
-            doBuild();
+            builder = build(getOrientation());
+            buildLegend();
+            buildToolip();
         }
 
         // Reload axis builder as data has changed.
@@ -543,6 +549,25 @@ public class BarChart extends AbstractChart<BarChart>
         
         public Axis.AxisJSO getValuesAxis() {
             return valuesAxisJSO;
+        }
+        
+        public T build(ChartOrientation orientation) {
+            BarChartBuilder builder = (isVertical(orientation)) ? new VerticalBarChartBuilder() : new HorizontalBarChartBuilder();
+
+            // **** Build all shape instances. ****
+
+            // Build the categories axis title shape (Text)
+            builder.buildCategoriesAxisTitle()
+                    // Build the values axis title shape (Text)
+                    .buildValuesAxisTitle()
+                            // Build the categories axis intervals shapes (Text and Line)
+                    .buildCategoriesAxisIntervals()
+                            // Build the values axis intervals shapes (Text and Line)
+                    .buildValuesAxisIntervals()
+                            // Build the values shapes (Rectangles)
+                    .buildValues();
+            
+            return (T) builder;
         }
         
         public abstract T buildCategoriesAxisTitle();
@@ -1263,7 +1288,7 @@ public class BarChart extends AbstractChart<BarChart>
                             }
                         }
                     });
-                    GWT.log("Rectangle for value " + i + " y:" + y + " / h: " + barHeight);
+                    // GWT.log("Rectangle for value " + i + " y:" + y + " / h: " + barHeight);
                     setShapeAttributes(barObject, x, y, barWidth, barHeight - BAR_SEPARATION, serie.getColor(), alpha, animate);
                 }
             }
