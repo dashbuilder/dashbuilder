@@ -2,12 +2,25 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
              xmlns:g="urn:import:com.google.gwt.user.client.ui"
     >
+
+  <ui:style>
+    .mainPanelStyle {
+      border: 1px solid;
+      margin: 10px;
+      padding: 10px;
+    }
+  </ui:style>
   
-  <!-- Main panel. -->
-  <g:FlowPanel ui:field="mainPanel">
-    
+  <!-- Main panel TODO: Title i18n. -->
+  <g:FlowPanel ui:field="mainPanel" addStyleNames="{style.mainPanelStyle}" title="Renderer selector">
+
     <!-- List box selector widget. -->
-    <g:ListBox ui:field="listBox"/>
+    <g:FlowPanel ui:field="listPanel" visible="false">
+      <g:ListBox ui:field="listBox"/>
+    </g:FlowPanel>
+
+    <!-- Radio buttons selector widget. -->
+  <g:HorizontalPanel ui:field="radioButtonsPanel" visible="false" spacing="10" ></g:HorizontalPanel>
     
   </g:FlowPanel>
   

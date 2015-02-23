@@ -24,6 +24,8 @@ import static org.uberfire.commons.validation.PortablePreconditions.checkNotNull
 
 public class DisplayerView extends Composite {
 
+    private static final String RENDERER_SELECTOR_WIDTH = "300px";
+    
     protected DisplayerSettings displayerSettings;
     protected SimplePanel container = new SimplePanel();
     protected SimplePanel displayerContainer = new SimplePanel();
@@ -69,19 +71,22 @@ public class DisplayerView extends Composite {
             IsWidget mainWidget = displayer;
             if (isShowRendererSelector) {
                 mainWidget = new VerticalPanel();
-                rendererSelector = new RendererSelector(displayerSettings.getType(), new RendererSelector.RendererSelectorEvent() {
+                rendererSelector = new RendererSelector(displayerSettings.getType(), displayerSettings.getRenderer(), RendererSelector.SelectorType.RADIO, new RendererSelector.RendererSelectorEventHandler() {
                     @Override
-                    public void onRendererChanged(String renderer) {
-                        lookupDisplayer(renderer);
+                    public void onRendererSelected(RendererSelector.RendererSelectorEvent event) {
+                        lookupDisplayer(event.getRenderer());
                         displayerContainer.clear();
                         displayerContainer.add(displayer);
                         DisplayerHelper.draw(displayer);
                     }
                 });
-
-                        displayerContainer.add(displayer);
-                ((VerticalPanel)mainWidget).add(rendererSelector);
+                
+                // Widget size.
+                rendererSelector.setWidth(RENDERER_SELECTOR_WIDTH);
+                
+                displayerContainer.add(displayer);
                 ((VerticalPanel)mainWidget).add(displayerContainer);
+                ((VerticalPanel)mainWidget).add(rendererSelector);
             }
             container.add( mainWidget );
 

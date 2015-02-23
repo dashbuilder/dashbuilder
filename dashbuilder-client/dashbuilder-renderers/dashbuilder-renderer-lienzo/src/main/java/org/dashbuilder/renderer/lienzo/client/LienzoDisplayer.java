@@ -71,7 +71,7 @@ public abstract class LienzoDisplayer extends AbstractDisplayer {
             }
             else {
                 try {
-                    String initMsg = "Initalizing Lienzo displayer"; // TODO: Use i18n
+                    String initMsg = "Initalizing Lienzo displayer";
                     GWT.log(initMsg + " ...");
 
                     mainPanel.clear();
@@ -88,7 +88,7 @@ public abstract class LienzoDisplayer extends AbstractDisplayer {
                                 mainPanel.add(createNoDataMsgPanel());
                             } else {
                                 // TODO: LienzoPanel panel = new LienzoPanel(getWidth(), getHeight());
-                                LienzoPanel panel = new LienzoPanel(1200, 800);
+                                LienzoPanel panel = new LienzoPanel(1200, getHeight());
                                 layer.setTransformable(true);
                                 panel.add(layer);
                                 mainPanel.add(filterPanel);
