@@ -23,6 +23,8 @@ import com.ait.lienzo.charts.client.xy.XYChartSerie;
 import com.ait.lienzo.charts.client.xy.bar.BarChart;
 import com.ait.lienzo.charts.client.xy.bar.event.DataReloadedEvent;
 import com.ait.lienzo.charts.client.xy.bar.event.DataReloadedEventHandler;
+import com.ait.lienzo.charts.client.xy.bar.event.ValueSelectedEvent;
+import com.ait.lienzo.charts.client.xy.bar.event.ValueSelectedHandler;
 import com.ait.lienzo.charts.shared.core.types.ChartOrientation;
 import com.ait.lienzo.shared.core.types.ColorName;
 import com.ait.lienzo.shared.core.types.IColor;
@@ -58,6 +60,8 @@ public class LienzoBarChartDisplayer extends LienzoDisplayer {
                 configureBarChart(event.getChart());
             }
         });
+
+        // Data.
         chart.setData(chartData);
 
         return chart;
@@ -69,9 +73,7 @@ public class LienzoBarChartDisplayer extends LienzoDisplayer {
         if (displayerSettings.isBarchartHorizontal()) chart.setOrientation(ChartOrientation.HORIZNONAL);
         else chart.setOrientation(ChartOrientation.VERTICAL);
 
-        chart.setX(0);
-        chart.setY(0);
-        chart.setName(displayerSettings.getTitle());
+        chart.setX(0).setY(0).setName(displayerSettings.getTitle());
         chart.setWidth(getChartWidth());
         chart.setHeight(getChartHeight());
         chart.setMarginLeft(displayerSettings.getChartMarginLeft());
@@ -92,7 +94,7 @@ public class LienzoBarChartDisplayer extends LienzoDisplayer {
 
         // Events (filtering)
         if (displayerSettings.isFilterEnabled()) {
-            chart.addSelectHandler(new SelectHandler());
+            chart.addValueSelectedHandler(new BarValueSelectedHandler());
         }
 
         // TODO: Category and Number types?
@@ -186,5 +188,15 @@ public class LienzoBarChartDisplayer extends LienzoDisplayer {
         int defaultColorsSize = DEFAULT_SERIE_COLORS.length;
         if (index >= defaultColorsSize) return ColorName.getValues().get(90 + index*2);
         return DEFAULT_SERIE_COLORS[index];
+    }
+
+    public class BarValueSelectedHandler implements ValueSelectedHandler {
+
+        @Override
+        public void onValueSelected(ValueSelectedEvent event) {
+            GWT.log("filtering by serie [" + event.getSeries() + "], column [" + event.getColumn()
+                    + "] and row [" + event.getRow() + "]");
+            filterUpdate(event.getColumn(), event.getRow());
+        }
     }
 }

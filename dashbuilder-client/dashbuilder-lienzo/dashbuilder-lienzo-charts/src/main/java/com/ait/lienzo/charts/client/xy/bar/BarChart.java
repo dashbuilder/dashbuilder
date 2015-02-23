@@ -28,8 +28,8 @@ import com.ait.lienzo.charts.client.xy.axis.CategoryAxisBuilder;
 import com.ait.lienzo.charts.client.xy.axis.NumericAxisBuilder;
 import com.ait.lienzo.charts.client.xy.bar.event.DataReloadedEvent;
 import com.ait.lienzo.charts.client.xy.bar.event.DataReloadedEventHandler;
-import com.ait.lienzo.charts.client.xy.bar.event.SelectEvent;
-import com.ait.lienzo.charts.client.xy.bar.event.SelectEventHandler;
+import com.ait.lienzo.charts.client.xy.bar.event.ValueSelectedEvent;
+import com.ait.lienzo.charts.client.xy.bar.event.ValueSelectedHandler;
 import com.ait.lienzo.charts.shared.core.types.*;
 import com.ait.lienzo.client.core.animation.*;
 import com.ait.lienzo.client.core.event.*;
@@ -341,11 +341,6 @@ public class BarChart extends AbstractChart<BarChart>
         return !LabelsPosition.NONE.equals(getValuesAxisLabelsPosition());
     }
 
-    public HandlerRegistration addSelectHandler(SelectEventHandler handler)
-    {
-        return addEnsureHandler(SelectEvent.TYPE, handler);
-    }
-
     public HandlerRegistration addDataReloadedHandler(DataReloadedEventHandler handler)
     {
         return addEnsureHandler(DataReloadedEvent.TYPE, handler);
@@ -369,6 +364,12 @@ public class BarChart extends AbstractChart<BarChart>
             });
         }
     }
+
+    public HandlerRegistration addValueSelectedHandler(ValueSelectedHandler handler)
+    {
+        return addEnsureHandler(ValueSelectedEvent.TYPE, handler);
+    }
+
 
     protected void doBuild()
     {
@@ -644,7 +645,7 @@ public class BarChart extends AbstractChart<BarChart>
                         @Override
                         public void onNodeMouseClick(NodeMouseClickEvent event) {
                             String columnId = formattedValue;
-                            BarChart.this.fireEvent(new SelectEvent(serie.getName(), getData().getCategoryAxisProperty(), row));
+                            BarChart.this.fireEvent(new ValueSelectedEvent(serie.getName(), getData().getCategoryAxisProperty(), row));
                         }
                     });
 

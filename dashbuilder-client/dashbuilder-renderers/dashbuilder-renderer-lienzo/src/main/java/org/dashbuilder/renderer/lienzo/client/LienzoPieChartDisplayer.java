@@ -20,9 +20,11 @@ import com.ait.lienzo.charts.client.pie.PieChart;
 import com.ait.lienzo.charts.client.pie.PieChartData;
 import com.ait.lienzo.charts.client.pie.event.DataReloadedEvent;
 import com.ait.lienzo.charts.client.pie.event.DataReloadedEventHandler;
+import com.ait.lienzo.charts.client.pie.event.ValueSelectedEvent;
+import com.ait.lienzo.charts.client.pie.event.ValueSelectedHandler;
 import com.ait.lienzo.charts.shared.core.types.ChartOrientation;
 import com.ait.lienzo.shared.core.types.ColorName;
-import com.ait.lienzo.shared.core.types.IColor;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.DataColumn;
@@ -53,8 +55,10 @@ public class LienzoPieChartDisplayer extends LienzoDisplayer {
                 configurePieChart(event.getChart());
             }
         });
+        
+        // Data.
         chart.setData(chartData);
-
+        
         return chart;
     }
     
@@ -64,8 +68,7 @@ public class LienzoPieChartDisplayer extends LienzoDisplayer {
         if (displayerSettings.isBarchartHorizontal()) chart.setOrientation(ChartOrientation.HORIZNONAL);
         else chart.setOrientation(ChartOrientation.VERTICAL);
 
-        chart.setX(0);
-        chart.setY(0);
+        chart.setX(0).setY(0);
         chart.setName(displayerSettings.getTitle());
         chart.setWidth(getChartWidth());
         chart.setHeight(getChartHeight());
@@ -79,6 +82,12 @@ public class LienzoPieChartDisplayer extends LienzoDisplayer {
         chart.setShowTitle(displayerSettings.isTitleVisible());
         chart.setResizable(false); // TODO: Custom displayer parameter.
         chart.setAnimated(true); // TODO: Custom displayer parameter.
+
+        // Filtering.
+        if (displayerSettings.isFilterEnabled()) {
+            chart.addValueSelectedHandler(new PieValueSelectedHandler());
+        }
+
         chart.build();
         
         isConfigured=true;
@@ -131,10 +140,14 @@ public class LienzoPieChartDisplayer extends LienzoDisplayer {
                 .supportsAttribute( DisplayerAttributeGroupDef.TITLE_GROUP)
                 .supportsAttribute( DisplayerAttributeGroupDef.CHART_GROUP );
     }
-    
-    private IColor getSeriesColor(int index) {
-        int defaultColorsSize = DEFAULT_SERIE_COLORS.length;
-        if (index >= defaultColorsSize) return ColorName.getValues().get(90 + index*2);
-        return DEFAULT_SERIE_COLORS[index];
+
+    public class PieValueSelectedHandler implements ValueSelectedHandler {
+
+        @Override
+        public void onValueSelected(ValueSelectedEvent event) {
+            GWT.log("filtering by column [" + event.getColumn() + "], row [" + event.getRow() + "]");
+            // TODO: filterUpdate(event.getColumn(), event.getRow());
+        }
+        
     }
 }

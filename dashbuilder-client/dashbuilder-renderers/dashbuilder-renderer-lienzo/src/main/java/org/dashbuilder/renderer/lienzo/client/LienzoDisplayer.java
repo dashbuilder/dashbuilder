@@ -18,8 +18,6 @@ package org.dashbuilder.renderer.lienzo.client;
 import com.ait.lienzo.charts.client.AbstractChart;
 import com.ait.lienzo.charts.client.model.DataTable;
 import com.ait.lienzo.charts.client.model.DataTableColumn;
-import com.ait.lienzo.charts.client.xy.bar.event.SelectEvent;
-import com.ait.lienzo.charts.client.xy.bar.event.SelectEventHandler;
 import com.ait.lienzo.client.core.shape.Layer;
 import com.ait.lienzo.client.widget.LienzoPanel;
 import com.google.gwt.core.client.GWT;
@@ -221,16 +219,6 @@ public abstract class LienzoDisplayer extends AbstractDisplayer {
         }
         else {
             lTable.addValue(columnId, value.toString());
-        }
-    }
-
-    public class SelectHandler implements SelectEventHandler {
-
-        @Override
-        public void onSelect(SelectEvent event) {
-            GWT.log("filtering by serie [" + event.getSerie() + "], column [" + event.getColumn() 
-                    + "] and row [" + event.getRow() + "]");
-            filterUpdate(event.getColumn(), event.getRow());
         }
     }
 

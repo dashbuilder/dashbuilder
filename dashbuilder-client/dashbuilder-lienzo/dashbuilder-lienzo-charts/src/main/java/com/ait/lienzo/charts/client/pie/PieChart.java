@@ -22,9 +22,10 @@ import com.ait.lienzo.charts.client.ChartNodeType;
 import com.ait.lienzo.charts.client.model.DataTable;
 import com.ait.lienzo.charts.client.pie.event.DataReloadedEvent;
 import com.ait.lienzo.charts.client.pie.event.DataReloadedEventHandler;
+import com.ait.lienzo.charts.client.pie.event.ValueSelectedEvent;
+import com.ait.lienzo.charts.client.pie.event.ValueSelectedHandler;
 import com.ait.lienzo.client.core.animation.*;
-import com.ait.lienzo.client.core.event.NodeMouseEnterEvent;
-import com.ait.lienzo.client.core.event.NodeMouseEnterHandler;
+import com.ait.lienzo.client.core.event.*;
 import com.ait.lienzo.client.core.shape.*;
 import com.ait.lienzo.client.core.shape.json.IFactory;
 import com.ait.lienzo.client.core.shape.json.validators.ValidationContext;
@@ -77,24 +78,38 @@ public class PieChart extends AbstractChart<PieChart>
         return addEnsureHandler(DataReloadedEvent.TYPE, handler);
     }
 
+    public HandlerRegistration addValueSelectedHandler(ValueSelectedHandler handler)
+    {
+        return addEnsureHandler(ValueSelectedEvent.TYPE, handler);
+    }
+
     @Override
     protected void doBuild() {
         PieChartData data = getData();
 
-        if (getRadius() <= 0 || (null == data) || (data.size() < 1))
+        if (getRadius(getChartWidth(), getChartHeight()) <= 0 || (null == data) || (data.size() < 1))
         {
             return;
         }
 
-        DataTable dataTable = data.getDataTable();
-        String[] categories = dataTable.getColumn(getData().getCategoriesProperty()).getStringValues();
-        Double[] values = dataTable.getColumn(getData().getValuesProperty()).getNumericValues();
+        final DataTable dataTable = data.getDataTable();
+        final String[] categories = dataTable.getColumn(getData().getCategoriesProperty()).getStringValues();
+        final Double[] values = dataTable.getColumn(getData().getValuesProperty()).getNumericValues();
 
         labels.setListening(false);
 
         for (int i = 0; i < values.length; i++)
         {
             final PieSlice slice = new PieSlice(0, 0, 0);
+
+            final int index = i;
+            slice.addNodeMouseClickHandler(new NodeMouseClickHandler() {
+                @Override
+                public void onNodeMouseClick(NodeMouseClickEvent event) {
+                    GWT.log("PieChart - filtering on "  + categories[index] + "/" + index);
+                    PieChart.this.fireEvent(new ValueSelectedEvent(categories[index], index));
+                }
+            });
 
             slice.setFillColor(getColor(i)).setStrokeColor(ColorName.BLACK).setStrokeWidth(3);
 
@@ -157,10 +172,39 @@ public class PieChart extends AbstractChart<PieChart>
         // Apply position and size to inner shapes. 
         redraw(getChartWidth(), getChartHeight(), true);
 
+        // Legend.
+        // TODO: buildLegend();
+
+        // Add the attributes event change handlers.
+        this.addAttributesChangedHandler(ChartAttribute.XY_CHART_DATA, new AttributesChangedHandler() {
+            @Override
+            public void onAttributesChanged(AttributesChangedEvent event) {
+                redraw(getChartWidth(), getChartHeight(), true);
+                LayerRedrawManager.get().schedule(getLayer());
+            }
+        });
+
+        AttributesChangedHandler whhandler = new AttributesChangedHandler() {
+            @Override
+            public void onAttributesChanged(AttributesChangedEvent event) {
+                if (!isReloading[0]) {
+                    redraw(getChartWidth(), getChartHeight(), false);
+                }
+            }
+        };
+
+        this.addAttributesChangedHandler(ChartAttribute.WIDTH, whhandler);
+        this.addAttributesChangedHandler(ChartAttribute.HEIGHT,whhandler);
     }
 
     private PieChart redraw(Double chartWidth, Double chartHeight, boolean animate) {
-        double radius = getRadius();
+
+        if (getData() == null) {
+            GWT.log("No data");
+            return this;
+        }
+        
+        double radius = getRadius(chartWidth, chartHeight);
 
         PieChartData data = getData();
 
@@ -281,6 +325,9 @@ public class PieChart extends AbstractChart<PieChart>
 
     protected void clear(final Runnable callback) {
         GWT.log("Performing PieChart#clear");
+        isReloading[0] = true;
+        // TODO 
+        isReloading[0] = false;
     }
     
     protected void addOnAreaChartCentered(Group group) {
@@ -301,8 +348,6 @@ public class PieChart extends AbstractChart<PieChart>
 
     public final PieChart setData(final PieChartData data)
     {
-
-
         // If new data contains different properties on axis, clear current shapes.
         if (isCleanRequired(getData(), data)) {
             clear(new Runnable() {
@@ -348,9 +393,9 @@ public class PieChart extends AbstractChart<PieChart>
         return false;
     }
 
-    private final double getRadius() {
-        double forSize = getChartHeight();
-        if (getChartWidth() < forSize) forSize = getChartWidth();
+    private final double getRadius(double chartWidth, double chartHeight) {
+        double forSize = chartHeight;
+        if (getChartWidth() < forSize) forSize = chartWidth;
 
         return (forSize / 2) - 100;
     }
@@ -396,8 +441,7 @@ public class PieChart extends AbstractChart<PieChart>
         }
 
         @Override
-        public boolean addNodeForContainer(IContainer<?, ?> container, Node<?> node, ValidationContext ctx)
-        {
+        public boolean addNodeForContainer(IContainer<?, ?> container, Node<?> node, ValidationContext ctx) {
             return false;
         }
 

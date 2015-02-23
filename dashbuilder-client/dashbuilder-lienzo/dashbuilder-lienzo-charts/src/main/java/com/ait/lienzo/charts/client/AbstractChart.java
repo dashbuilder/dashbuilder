@@ -10,8 +10,6 @@ import com.ait.lienzo.client.core.shape.json.validators.ValidationContext;
 import com.ait.lienzo.client.core.shape.json.validators.ValidationException;
 import com.ait.lienzo.client.core.types.Point2D;
 import com.ait.lienzo.shared.core.types.*;
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.json.client.JSONObject;
 
 /**
@@ -123,14 +121,12 @@ public abstract class AbstractChart<T extends AbstractChart> extends Group {
             moveResizerToTop(resizer);
         }
 
-        //AnimationFrameAttributesChangedBatcher attributesChangedBatcher = new AnimationFrameAttributesChangedBatcher();
         this.setAttributesChangedBatcher(attributesChangedBatcher);
 
         AttributesChangedHandler xyhandler = new AttributesChangedHandler() {
             @Override
             public void onAttributesChanged(AttributesChangedEvent event) {
                 if (!isReloading[0]) {
-                    GWT.log(this.toString() + "X/Y attribute changed.");
                     moveAreas(getX(), null);
                 }
             }
@@ -144,7 +140,6 @@ public abstract class AbstractChart<T extends AbstractChart> extends Group {
             @Override
             public void onAttributesChanged(AttributesChangedEvent event) {
                 if (!isReloading[0]) {
-                    GWT.log(this.toString() + "- WIDTH/HEIGHT attribute changed -> " + getWidth());
                     setGroupAttributes(bottomArea, null, topArea.getY() + getChartHeight() + getMarginTop(), false);
                     setGroupAttributes(rightArea, topArea.getX() + getChartWidth() + getMarginLeft(), null, false);
                     if (isShowTitle()) setShapeAttributes(chartTitle, getWidth() / 2, null, null, null, false);
