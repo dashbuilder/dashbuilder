@@ -191,7 +191,7 @@ public class DisplayerSettingsEditor extends Composite {
             if (isSupported(CHART_BGCOLOR)) {
                 category.withField(new PropertyEditorFieldInfo(DisplayerSettingsEditorConstants.INSTANCE.chart_bgColor(),
                         displayerSettings.getChartBackgroundColor(),
-                        PropertyEditorType.TEXT)
+                        PropertyEditorType.COLOR)
                         .withKey(CHART_BGCOLOR.getFullId()));
             }
             if (isSupported(CHART_3D)) {
