@@ -98,25 +98,6 @@ public class GalleryTree {
                         .filterOn(false, true, true)
                         .buildSettings()
         )));
-        nodeList.add(new GalleryPlaceRequest("Vertical (Drill-down)", createPlaceRequest(
-                DisplayerSettingsFactory.newBarChartSettings()
-                        .dataset(SALES_OPPS)
-                        .group(PIPELINE)
-                        .column(PIPELINE, "Pipeline")
-                        .column(AMOUNT, SUM, "Total amount")
-                        .group(STATUS)
-                        .column(STATUS, "Status")
-                        .column(AMOUNT, SUM, "Total amount")
-                        .group(SALES_PERSON)
-                        .column(SALES_PERSON, "Sales person")
-                        .column(AMOUNT, SUM, "Total amount")
-                        .title("By Pipeline/Status/Sales person")
-                        .width(600).height(400)
-                        .margins(50, 80, 120, 120)
-                        .vertical()
-                        .filterOn(true, false, false)
-                        .buildSettings()
-        )));
         nodeList.add(new GalleryPlaceRequest("Horizontal (Drill-down)", createPlaceRequest(
                 DisplayerSettingsFactory.newBarChartSettings()
                         .dataset(SALES_OPPS)
@@ -147,6 +128,25 @@ public class GalleryTree {
                         .width(600).height(400)
                         .margins(50, 80, 120, 120)
                         .filterOn(false, true, true)
+                        .buildSettings()
+        )));
+        nodeList.add(new GalleryPlaceRequest("Vertical (Drill-down)", createPlaceRequest(
+                DisplayerSettingsFactory.newBarChartSettings()
+                        .dataset(SALES_OPPS)
+                        .group(PIPELINE)
+                        .column(PIPELINE, "Pipeline")
+                        .column(AMOUNT, SUM, "Total amount")
+                        .group(STATUS)
+                        .column(STATUS, "Status")
+                        .column(AMOUNT, SUM, "Total amount")
+                        .group(SALES_PERSON)
+                        .column(SALES_PERSON, "Sales person")
+                        .column(AMOUNT, SUM, "Total amount")
+                        .title("By Pipeline/Status/Sales person")
+                        .width(600).height(400)
+                        .margins(50, 80, 120, 120)
+                        .vertical()
+                        .filterOn(true, false, false)
                         .buildSettings()
         )));
         nodeList.add(new GalleryPlaceRequest("Multiple", createPlaceRequest(
