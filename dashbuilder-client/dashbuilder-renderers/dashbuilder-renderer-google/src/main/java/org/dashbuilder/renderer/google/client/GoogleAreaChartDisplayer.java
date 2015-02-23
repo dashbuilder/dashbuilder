@@ -85,22 +85,15 @@ public class GoogleAreaChartDisplayer extends GoogleXAxisChartDisplayer {
         verticalPanel.add(filterPanel);
         verticalPanel.add(chartPanel);
 
-        if (dataSet.getRowCount() == 0) {
-            chartPanel.add(super.createNoDataMsgPanel());
-        } else {
-            chart = new AreaChart();
-            chart.addSelectHandler(createSelectHandler(chart));
-            chart.draw(createTable(), createOptions());
-            chartPanel.add(chart);
-        }
+        chart = new AreaChart();
+        chart.addSelectHandler(createSelectHandler(chart));
+
+        updateChartPanel();
         return verticalPanel;
     }
 
-    protected void updateVisualization() {
-        filterPanel.clear();
-        Widget filterReset = createCurrentSelectionWidget();
-        if (filterReset != null) filterPanel.add(filterReset);
 
+    protected void updateChartPanel() {
         chartPanel.clear();
         if (dataSet.getRowCount() == 0) {
             chartPanel.add(super.createNoDataMsgPanel());
@@ -110,10 +103,18 @@ public class GoogleAreaChartDisplayer extends GoogleXAxisChartDisplayer {
         }
     }
 
+    protected void updateVisualization() {
+        filterPanel.clear();
+        Widget filterReset = createCurrentSelectionWidget();
+        if (filterReset != null) filterPanel.add(filterReset);
+
+        updateChartPanel();
+    }
+
     private AreaChartOptions createOptions() {
         Animation anim = Animation.create();
         anim.setDuration(500);
-        anim.setEasing(AnimationEasing.LINEAR);
+        anim.setEasing(AnimationEasing.IN_AND_OUT);
 
         AreaChartOptions options = AreaChartOptions.create();
         options.setWidth(displayerSettings.getChartWidth());

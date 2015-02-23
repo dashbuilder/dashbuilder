@@ -89,7 +89,7 @@ public class GoogleMeterChartDisplayer extends GoogleDisplayer {
     private GaugeOptions createOptions() {
         Animation anim = Animation.create();
         anim.setDuration(500);
-        anim.setEasing(AnimationEasing.LINEAR);
+        anim.setEasing(AnimationEasing.IN_AND_OUT);
 
         GaugeOptions options = GaugeOptions.create();
         options.setWidth(displayerSettings.getChartWidth());

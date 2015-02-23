@@ -102,6 +102,7 @@ public class DisplayerEditor implements IsWidget,
         } else {
             brandNewDisplayer = true;
             displayerSettings = DisplayerPrototypes.get().getProto(DisplayerType.BARCHART).cloneInstance();
+            displayerSettings.setTitle("- New displayer - ");
             view.init(displayerSettings, this);
             view.gotoTypeSelection();
         }
@@ -164,6 +165,7 @@ public class DisplayerEditor implements IsWidget,
     @Override
     public void displayerTypeChanged(DisplayerType type) {
         displayerSettings = DisplayerPrototypes.get().getProto(type).cloneInstance();
+        displayerSettings.setTitle("- New displayer - ");
         view.init(displayerSettings, this);
     }
 

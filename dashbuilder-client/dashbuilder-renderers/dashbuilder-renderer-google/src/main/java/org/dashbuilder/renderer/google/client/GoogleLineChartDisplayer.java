@@ -55,14 +55,10 @@ public class GoogleLineChartDisplayer extends GoogleXAxisChartDisplayer {
         verticalPanel.add(filterPanel);
         verticalPanel.add(chartPanel);
 
-        if (dataSet.getRowCount() == 0) {
-            chartPanel.add(super.createNoDataMsgPanel());
-        } else {
-            chart = new LineChart();
-            chart.addSelectHandler(createSelectHandler(chart));
-            chart.draw(createTable(), createOptions());
-            chartPanel.add(chart);
-        }
+        chart = new LineChart();
+        chart.addSelectHandler(createSelectHandler(chart));
+
+        updateChartPanel();
         return verticalPanel;
     }
 
@@ -95,11 +91,8 @@ public class GoogleLineChartDisplayer extends GoogleXAxisChartDisplayer {
                    .supportsAttribute( DisplayerAttributeGroupDef.AXIS_GROUP );
     }
 
-    protected void updateVisualization() {
-        filterPanel.clear();
-        Widget filterReset = createCurrentSelectionWidget();
-        if (filterReset != null) filterPanel.add(filterReset);
 
+    protected void updateChartPanel() {
         chartPanel.clear();
         if (dataSet.getRowCount() == 0) {
             chartPanel.add(super.createNoDataMsgPanel());
@@ -109,10 +102,18 @@ public class GoogleLineChartDisplayer extends GoogleXAxisChartDisplayer {
         }
     }
 
+    protected void updateVisualization() {
+        filterPanel.clear();
+        Widget filterReset = createCurrentSelectionWidget();
+        if (filterReset != null) filterPanel.add(filterReset);
+
+        updateChartPanel();
+    }
+
     private LineChartOptions createOptions() {
         Animation anim = Animation.create();
         anim.setDuration(500);
-        anim.setEasing(AnimationEasing.LINEAR);
+        anim.setEasing(AnimationEasing.IN_AND_OUT);
 
         LineChartOptions options = LineChartOptions.create();
         options.setWidth(displayerSettings.getChartWidth());

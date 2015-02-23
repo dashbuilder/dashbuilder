@@ -59,14 +59,10 @@ public class GoogleBarChartDisplayer extends GoogleXAxisChartDisplayer {
         verticalPanel.add(filterPanel);
         verticalPanel.add(chartPanel);
 
-        if (dataSet.getRowCount() == 0) {
-            chartPanel.add(super.createNoDataMsgPanel());
-        } else {
-            chart= (displayerSettings.isBarchartHorizontal() ? new BarChart() : new ColumnChart());
-            chart.addSelectHandler(createSelectHandler(chart));
-            chart.draw(createTable(), createOptions());
-            chartPanel.add(chart);
-        }
+        chart = (displayerSettings.isBarchartHorizontal() ? new BarChart() : new ColumnChart());
+        chart.addSelectHandler(createSelectHandler(chart));
+
+        updateChartPanel();
         return verticalPanel;
     }
 
@@ -105,6 +101,10 @@ public class GoogleBarChartDisplayer extends GoogleXAxisChartDisplayer {
         Widget filterReset = createCurrentSelectionWidget();
         if (filterReset != null) filterPanel.add(filterReset);
 
+        updateChartPanel();
+    }
+
+    protected void updateChartPanel() {
         chartPanel.clear();
         if (dataSet.getRowCount() == 0) {
             chartPanel.add(super.createNoDataMsgPanel());
@@ -116,8 +116,8 @@ public class GoogleBarChartDisplayer extends GoogleXAxisChartDisplayer {
 
     private CoreOptions createOptions() {
         Animation anim = Animation.create();
-        anim.setDuration(500);
-        anim.setEasing(AnimationEasing.LINEAR);
+        anim.setDuration(700);
+        anim.setEasing(AnimationEasing.IN_AND_OUT);
 
         if (displayerSettings.isBarchartHorizontal()) {
             BarChartOptions options = BarChartOptions.create();

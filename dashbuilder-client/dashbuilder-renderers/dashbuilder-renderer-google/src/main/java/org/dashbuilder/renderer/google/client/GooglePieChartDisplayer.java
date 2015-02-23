@@ -53,14 +53,10 @@ public class GooglePieChartDisplayer extends GoogleXAxisChartDisplayer {
         verticalPanel.add(filterPanel);
         verticalPanel.add(chartPanel);
 
-        if (dataSet.getRowCount() == 0) {
-            chartPanel.add(super.createNoDataMsgPanel());
-        } else {
-            chart = new PieChart();
-            chart.addSelectHandler(createSelectHandler(chart));
-            chart.draw(createTable(), createOptions());
-            chartPanel.add(chart);
-        }
+        chart = new PieChart();
+        chart.addSelectHandler(createSelectHandler(chart));
+
+        updateChartPanel();
         return verticalPanel;
     }
 
@@ -87,11 +83,8 @@ public class GooglePieChartDisplayer extends GoogleXAxisChartDisplayer {
                    .supportsAttribute( DisplayerAttributeGroupDef.CHART_GROUP );
     }
 
-    protected void updateVisualization() {
-        filterPanel.clear();
-        Widget filterReset = createCurrentSelectionWidget();
-        if (filterReset != null) filterPanel.add(filterReset);
 
+    protected void updateChartPanel() {
         chartPanel.clear();
         if (dataSet.getRowCount() == 0) {
             chartPanel.add(super.createNoDataMsgPanel());
@@ -99,6 +92,14 @@ public class GooglePieChartDisplayer extends GoogleXAxisChartDisplayer {
             chart.draw(createTable(), createOptions());
             chartPanel.add(chart);
         }
+    }
+
+    protected void updateVisualization() {
+        filterPanel.clear();
+        Widget filterReset = createCurrentSelectionWidget();
+        if (filterReset != null) filterPanel.add(filterReset);
+
+        updateChartPanel();
     }
 
     private PieChartOptions createOptions() {

@@ -108,7 +108,7 @@ public class GoogleBubbleChartDisplayer extends GoogleXAxisChartDisplayer {
     private BubbleChartOptions createOptions() {
         Animation anim = Animation.create();
         anim.setDuration(500);
-        anim.setEasing(AnimationEasing.LINEAR);
+        anim.setEasing(AnimationEasing.IN_AND_OUT);
 
         BubbleChartOptions options = BubbleChartOptions.create();
         options.setWidth(displayerSettings.getChartWidth());
