@@ -1,7 +1,6 @@
 package com.ait.lienzo.charts.client.pie.event;
 
 import com.ait.lienzo.charts.client.pie.PieChart;
-import com.ait.lienzo.charts.client.xy.bar.BarChart;
 import com.google.gwt.event.shared.GwtEvent;
 
 public class DataReloadedEvent extends GwtEvent<DataReloadedEventHandler> {

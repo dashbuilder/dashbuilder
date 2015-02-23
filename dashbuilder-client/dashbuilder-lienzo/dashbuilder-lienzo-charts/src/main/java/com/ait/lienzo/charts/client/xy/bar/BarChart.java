@@ -91,8 +91,6 @@ import java.util.Map;
  */
 public class BarChart extends AbstractChart<BarChart>
 {
-    // Default animation duration when clearing chart.
-    public static final double CLEAR_ANIMATION_DURATION = 500;
     // Default separation size between bars.
     protected static final double BAR_SEPARATION = 2;
     private BarChartBuilder builder;

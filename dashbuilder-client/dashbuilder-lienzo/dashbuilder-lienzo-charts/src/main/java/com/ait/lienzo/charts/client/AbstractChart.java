@@ -12,6 +12,9 @@ import com.ait.lienzo.client.core.types.Point2D;
 import com.ait.lienzo.shared.core.types.*;
 import com.google.gwt.json.client.JSONObject;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 /**
  *  <p>Base chart implementation class.</p>
  *  <p>It provides:</p>
@@ -33,10 +36,12 @@ import com.google.gwt.json.client.JSONObject;
  */
 public abstract class AbstractChart<T extends AbstractChart> extends Group {
 
-    public static final double DEFAULT_MARGIN  = 50;
-    
     // Default animation duration (2sec).
     protected static final double ANIMATION_DURATION = 1000;
+    // Default animation duration when clearing chart.
+    public static final double CLEAR_ANIMATION_DURATION = 500;
+
+    public static final double DEFAULT_MARGIN  = 50;
 
     // The available areas: chart, top, bottom, left and right. 
     protected final Group chartArea = new Group();
@@ -203,30 +208,98 @@ public abstract class AbstractChart<T extends AbstractChart> extends Group {
     }
 
     protected void setShapeAttributes(Shape shape, Double x, Double y, Double width, Double height, boolean animate) {
-        setShapeAttributes(shape, x, y, width, height, null, null, animate);
+        Map<Attribute, Object> attributes = new LinkedHashMap<Attribute, Object>(4);
+        if (x != null) attributes.put(Attribute.X, x);
+        if (y != null) attributes.put(Attribute.Y, y);
+        if (width != null) attributes.put(Attribute.WIDTH, width);
+        if (height != null) attributes.put(Attribute.HEIGHT, height);
+        setShapeAttributes(shape, attributes, animate);
     }
 
-    protected void setShapeAttributes(Shape shape, Double x, Double y, Double width, Double height, IColor color, boolean animate) {
-        setShapeAttributes(shape, x, y, width, height, color, null, animate);
+    protected void setShapeAttributes(Shape shape, Double alpha, boolean animate) {
+        Map<Attribute, Object> attributes = new LinkedHashMap<Attribute, Object>(1);
+        if (alpha != null) attributes.put(Attribute.ALPHA, alpha);
+        setShapeAttributes(shape, attributes, animate);
+    }
+
+    protected void setShapeAttributes(Shape shape, Double radius, Double startAngle, Double endAngle, boolean animate) {
+        Map<Attribute, Object> attributes = new LinkedHashMap<Attribute, Object>(4);
+        if (radius != null) attributes.put(Attribute.RADIUS, radius);
+        if (startAngle != null) attributes.put(Attribute.START_ANGLE, startAngle);
+        if (endAngle != null) attributes.put(Attribute.END_ANGLE, endAngle);
+        setShapeAttributes(shape, attributes, animate);
     }
 
     protected void setShapeAttributes(Shape shape, Double x, Double y, Double width, Double height, IColor color, Double alpha, boolean animate) {
-        if (animate && isAnimated()) {
+        Map<Attribute, Object> attributes = new LinkedHashMap<Attribute, Object>(6);
+        if (x != null) attributes.put(Attribute.X, x);
+        if (y != null) attributes.put(Attribute.Y, y);
+        if (width != null) attributes.put(Attribute.WIDTH, width);
+        if (height != null) attributes.put(Attribute.HEIGHT, height);
+        if (color != null) attributes.put(Attribute.FILL, color);
+        if (alpha != null) attributes.put(Attribute.ALPHA, alpha);
+        setShapeAttributes(shape, attributes, animate);
+    }
+
+    protected void setShapeAttributes(Shape shape, Point2D scale, boolean animate) {
+        Map<Attribute, Object> attributes = new LinkedHashMap<Attribute, Object>(1);
+        if (scale != null) attributes.put(Attribute.SCALE, scale);
+        setShapeAttributes(shape, attributes, animate);
+    }
+
+    protected void setShapeAttributes(Shape shape, Map<Attribute, Object> attributes, boolean animate) {
+        
+        if (attributes != null && !attributes.isEmpty()) {
             AnimationProperties animationProperties = new AnimationProperties();
-            if (width != null) animationProperties.push(AnimationProperty.Properties.WIDTH(width));
-            if (height != null) animationProperties.push(AnimationProperty.Properties.HEIGHT(height));
-            if (x != null) animationProperties.push(AnimationProperty.Properties.X(x));
-            if (y != null) animationProperties.push(AnimationProperty.Properties.Y(y));
-            if (color != null) animationProperties.push(AnimationProperty.Properties.FILL_COLOR(color));
-            if (alpha != null) animationProperties.push(AnimationProperty.Properties.ALPHA(alpha));
-            shape.animate(AnimationTweener.LINEAR, animationProperties, ANIMATION_DURATION);
-        } else {
-            if (x != null) shape.setX(x);
-            if (y != null) shape.setY(y);
-            if (width != null) shape.getAttributes().setWidth(width);
-            if (height != null) shape.getAttributes().setHeight(height);
-            if (color != null) shape.setFillColor(color);
-            if (alpha != null) shape.setAlpha(alpha);
+            for (Map.Entry<Attribute, Object> entry : attributes.entrySet()) {
+                Attribute attribute = entry.getKey();
+                String property = attribute.getProperty();
+                Object value = entry.getValue();
+                
+                if (Attribute.WIDTH.getProperty().equals(property)) {
+                    if (animate) animationProperties.push(AnimationProperty.Properties.WIDTH((Double) value));
+                    else shape.getAttributes().setWidth((Double) value);
+                }
+                else if (Attribute.HEIGHT.getProperty().equals(property)) {
+                    if (animate) animationProperties.push(AnimationProperty.Properties.HEIGHT((Double) value));
+                    else shape.getAttributes().setHeight((Double) value);
+                }
+                else if (Attribute.X.getProperty().equals(property)) {
+                    if (animate) animationProperties.push(AnimationProperty.Properties.X((Double) value));
+                    else shape.setX((Double) value);
+                }
+                else if (Attribute.Y.getProperty().equals(property)) {
+                    if (animate) animationProperties.push(AnimationProperty.Properties.Y((Double) value));
+                    else shape.setY((Double) value);
+                }
+                else if (Attribute.FILL.getProperty().equals(property)) {
+                    if (animate) animationProperties.push(AnimationProperty.Properties.FILL_COLOR((IColor) value));
+                    else shape.setFillColor((IColor) value);
+                }
+                else if (Attribute.ALPHA.getProperty().equals(property)) {
+                    if (animate) animationProperties.push(AnimationProperty.Properties.ALPHA((Double) value));
+                    else shape.setAlpha((Double) value);
+                }
+                else if (Attribute.RADIUS.getProperty().equals(property)) {
+                    if (animate) animationProperties.push(AnimationProperty.Properties.RADIUS((Double) value));
+                    else shape.getAttributes().setRadius((Double) value);
+                }
+                else if (Attribute.START_ANGLE.getProperty().equals(property)) {
+                    //if (animate) animationProperties.push(AnimationProperty.Properties.START_ANGLE((Double) value)); else 
+                    shape.getAttributes().setStartAngle((Double) value);
+                }
+                else if (Attribute.END_ANGLE.getProperty().equals(property)) {
+                    // if (animate) animationProperties.push(AnimationProperty.Properties.END_ANGLE((Double) value)); else 
+                    shape.getAttributes().setEndAngle((Double) value);
+                }
+                else if (Attribute.SCALE.getProperty().equals(property)) {
+                    if (animate) animationProperties.push(AnimationProperty.Properties.SCALE((Point2D) value)); 
+                    else shape.getAttributes().setScale((Double) value);
+                }
+            }
+
+            if (animate) shape.animate(AnimationTweener.LINEAR, animationProperties, ANIMATION_DURATION);
+
         }
     }
 

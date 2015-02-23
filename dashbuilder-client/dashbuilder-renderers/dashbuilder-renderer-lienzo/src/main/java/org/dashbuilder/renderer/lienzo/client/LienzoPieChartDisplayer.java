@@ -146,7 +146,7 @@ public class LienzoPieChartDisplayer extends LienzoDisplayer {
         @Override
         public void onValueSelected(ValueSelectedEvent event) {
             GWT.log("filtering by column [" + event.getColumn() + "], row [" + event.getRow() + "]");
-            // TODO: filterUpdate(event.getColumn(), event.getRow());
+            filterUpdate(event.getColumn(), event.getRow());
         }
         
     }

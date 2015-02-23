@@ -92,6 +92,34 @@ public class PieChart extends AbstractChart<PieChart>
             return;
         }
 
+        _build(data);
+
+        // Apply position and size to inner shapes. 
+        redraw(getChartWidth(), getChartHeight(), true);
+
+        // Add the attributes event change handlers.
+        this.addAttributesChangedHandler(ChartAttribute.PIE_CHART_DATA, new AttributesChangedHandler() {
+            @Override
+            public void onAttributesChanged(AttributesChangedEvent event) {
+                redraw(getChartWidth(), getChartHeight(), true);
+                LayerRedrawManager.get().schedule(getLayer());
+            }
+        });
+
+        AttributesChangedHandler whhandler = new AttributesChangedHandler() {
+            @Override
+            public void onAttributesChanged(AttributesChangedEvent event) {
+                if (!isReloading[0]) {
+                    redraw(getChartWidth(), getChartHeight(), false);
+                }
+            }
+        };
+
+        this.addAttributesChangedHandler(ChartAttribute.WIDTH, whhandler);
+        this.addAttributesChangedHandler(ChartAttribute.HEIGHT,whhandler);
+    }
+    
+    private void _build(PieChartData data) {
         final DataTable dataTable = data.getDataTable();
         final String[] categories = dataTable.getColumn(getData().getCategoriesProperty()).getStringValues();
         final Double[] values = dataTable.getColumn(getData().getValuesProperty()).getNumericValues();
@@ -107,7 +135,7 @@ public class PieChart extends AbstractChart<PieChart>
                 @Override
                 public void onNodeMouseClick(NodeMouseClickEvent event) {
                     GWT.log("PieChart - filtering on "  + categories[index] + "/" + index);
-                    PieChart.this.fireEvent(new ValueSelectedEvent(categories[index], index));
+                    PieChart.this.fireEvent(new ValueSelectedEvent(getData().getCategoriesProperty(), index));
                 }
             });
 
@@ -153,10 +181,10 @@ public class PieChart extends AbstractChart<PieChart>
             pieSlices.add(slice);
             slices.add(slice);
 
-            Text text = new Text("", getFontFamily(), getFontStyle(), getFontSize()).setFillColor(ColorName.BLACK).setTextBaseLine(TextBaseLine.MIDDLE);
+            Text text = new Text("", getFontFamily(), getFontStyle(), getFontSize()).setFillColor(ColorName.BLACK).setTextBaseLine(TextBaseLine.MIDDLE).setAlpha(0d);
             texts.add(text);
 
-            Line line = new Line(0, 0, 0, 0).setStrokeColor(ColorName.BLACK).setStrokeWidth(3);
+            Line line = new Line(0, 0, 0, 0).setStrokeColor(ColorName.BLACK).setStrokeWidth(3).setAlpha(0d);
             lines.add(line);
 
             labels.add(text);
@@ -168,33 +196,6 @@ public class PieChart extends AbstractChart<PieChart>
         addOnAreaChartCentered(labels);
 
         addOnAreaChartCentered(slices);
-
-        // Apply position and size to inner shapes. 
-        redraw(getChartWidth(), getChartHeight(), true);
-
-        // Legend.
-        // TODO: buildLegend();
-
-        // Add the attributes event change handlers.
-        this.addAttributesChangedHandler(ChartAttribute.XY_CHART_DATA, new AttributesChangedHandler() {
-            @Override
-            public void onAttributesChanged(AttributesChangedEvent event) {
-                redraw(getChartWidth(), getChartHeight(), true);
-                LayerRedrawManager.get().schedule(getLayer());
-            }
-        });
-
-        AttributesChangedHandler whhandler = new AttributesChangedHandler() {
-            @Override
-            public void onAttributesChanged(AttributesChangedEvent event) {
-                if (!isReloading[0]) {
-                    redraw(getChartWidth(), getChartHeight(), false);
-                }
-            }
-        };
-
-        this.addAttributesChangedHandler(ChartAttribute.WIDTH, whhandler);
-        this.addAttributesChangedHandler(ChartAttribute.HEIGHT,whhandler);
     }
 
     private PieChart redraw(Double chartWidth, Double chartHeight, boolean animate) {
@@ -202,6 +203,13 @@ public class PieChart extends AbstractChart<PieChart>
         if (getData() == null) {
             GWT.log("No data");
             return this;
+        }
+
+        if (lines == null && texts == null && pieSlices == null) {
+            lines = new LinkedList<Line>();
+            texts = new LinkedList<Text>();
+            pieSlices = new LinkedList<PieSlice>();
+            _build(getData());
         }
         
         double radius = getRadius(chartWidth, chartHeight);
@@ -236,8 +244,8 @@ public class PieChart extends AbstractChart<PieChart>
             if (slice != null) {
                 double startAngle = PieSlice.buildStartAngle(sofar);
                 double endAngle = PieSlice.buildEngAngle(sofar, value);
-                slice.setRadius(radius).setStartAngle(startAngle).setEndAngle(endAngle);
-                // TODO: use redrawShape
+                // slice.setRadius(radius).setStartAngle(startAngle).setEndAngle(endAngle);
+                setShapeAttributes(slice, radius, startAngle, endAngle, animate);
             } else {
                 // TODO: New data values added.
             }
@@ -299,7 +307,7 @@ public class PieChart extends AbstractChart<PieChart>
             Text text = texts.get(i);
             if (text != null) {
                 text.setText(label + getLabel(value * 100)).setTextAlign(align);
-                setShapeAttributes(text, lx, ly, null, null, animate);
+                setShapeAttributes(text, lx, ly, null, null, null, 1d, animate);
             } else {
                 // TODO: New data values added.
             }
@@ -308,8 +316,8 @@ public class PieChart extends AbstractChart<PieChart>
             if (line != null) {
                 Point2D startPoint = new Point2D((Math.sin(n_ang) * radius), 0 - (Math.cos(n_ang) * radius));
                 Point2D endPoint = new Point2D((Math.sin(n_ang) * (radius + 50)), 0 - (Math.cos(n_ang) * (radius + 50)));
-                line.setPoints(new Point2DArray(startPoint, endPoint));
-                // TODO: redrawShape(text, lx, ly, null, null, animationDuration, animate);
+                line.setPoints(new Point2DArray(startPoint, endPoint)).setAlpha(0);
+                setShapeAttributes(line, 1d, animate);
             } else {
                 // TODO: New data values added.
             }
@@ -326,8 +334,88 @@ public class PieChart extends AbstractChart<PieChart>
     protected void clear(final Runnable callback) {
         GWT.log("Performing PieChart#clear");
         isReloading[0] = true;
-        // TODO 
-        isReloading[0] = false;
+
+        final List<IPrimitive> shapesToClear = new LinkedList<IPrimitive>();
+        // Create the animation callback.
+        IAnimationCallback animationCallback = new IAnimationCallback() {
+            @Override
+            public void onStart(IAnimation animation, IAnimationHandle handle) {
+
+            }
+
+            @Override
+            public void onFrame(IAnimation animation, IAnimationHandle handle) {
+
+            }
+
+            @Override
+            public void onClose(IAnimation animation, IAnimationHandle handle) {
+                GWT.log("IAnimationCallback - onclose (" + shapesToClear.size() + "remaining)");
+                if (!shapesToClear.isEmpty()) shapesToClear.remove(0);
+                if (shapesToClear.isEmpty()) {
+                    slices.removeAll();
+                    labels.removeAll();
+                    callback.run();
+                }
+            }
+        };
+
+        // Apply animation of lines.
+        if (lines != null) {
+            for (Line line : lines) {
+                if (line != null) shapesToClear.add(line);
+            }
+        }
+
+        // Apply animation to texts.
+        if (texts != null ) {
+            for (Text text : texts) {
+                if (text != null) shapesToClear.add(text);
+            }
+        }
+        
+        if (pieSlices != null) {
+            for (PieSlice slice : pieSlices) {
+                if (slice != null) shapesToClear.add(slice);
+            }
+        }
+
+        // Create the animation properties.
+        AnimationProperties animationProperties = new AnimationProperties();
+        animationProperties.push(AnimationProperty.Properties.ALPHA(0d));
+
+        // Apply animation of lines.
+        if (lines != null) {
+            for (Line line : lines) {
+                if (line != null) line.animate(AnimationTweener.LINEAR, animationProperties, CLEAR_ANIMATION_DURATION, animationCallback);
+            }
+        }
+
+        AnimationProperties animationProperties2 = new AnimationProperties();
+        animationProperties2.push(AnimationProperty.Properties.X(0));
+        animationProperties2.push(AnimationProperty.Properties.Y(0));
+        animationProperties2.push(AnimationProperty.Properties.WIDTH(0));
+        if (texts != null ) {
+            for (Text text : texts) {
+                if (text != null) text.animate(AnimationTweener.LINEAR, animationProperties2, CLEAR_ANIMATION_DURATION, animationCallback);
+            }
+        }
+
+        AnimationProperties animationProperties3 = new AnimationProperties();
+        animationProperties3.push(AnimationProperty.Properties.SCALE(0d));
+        if (pieSlices != null) {
+            for (PieSlice slice : pieSlices) {
+                if (slice != null) slice.animate(AnimationTweener.LINEAR, animationProperties3, CLEAR_ANIMATION_DURATION, animationCallback);
+            }
+        }
+        
+    }
+    
+    private void reset() {
+        lines = null;
+        texts = null;
+        pieSlices = null;
+        
     }
     
     protected void addOnAreaChartCentered(Group group) {
@@ -354,6 +442,10 @@ public class PieChart extends AbstractChart<PieChart>
                 @Override
                 public void run() {
                     GWT.log("Clear finished. Setting new data...");
+                    // Reset chart's inner shapes.
+                    isReloading[0] = false;
+                    reset();
+                    clearAreas();
                     _setData(data);
                 }
             });
@@ -361,12 +453,6 @@ public class PieChart extends AbstractChart<PieChart>
             _setData(data);
         }
         
-        
-        
-        if (null != data)
-        {
-            getAttributes().put(ChartAttribute.PIE_CHART_DATA.getProperty(), data.getJSO());
-        }
         return this;
     }
 
@@ -384,12 +470,31 @@ public class PieChart extends AbstractChart<PieChart>
 
     public final PieChartData getData()
     {
-        PieChartData.PieChartDataJSO jso = getAttributes().getObject(ChartAttribute.PIE_CHART_DATA.getProperty()).cast();
+        if (getAttributes().isDefined(ChartAttribute.PIE_CHART_DATA)) {
+            PieChartData.PieChartDataJSO jso = getAttributes().getObject(ChartAttribute.PIE_CHART_DATA.getProperty()).cast();
+            return new PieChartData(jso);
+        }
 
-        return new PieChartData(jso);
+        return null;
     }
 
     private boolean isCleanRequired(PieChartData currentData, PieChartData newData) {
+        if (currentData == null && newData == null) return false;
+        if (currentData == null && newData != null) return false;
+        if (newData == null && currentData != null) return true;
+        String categoriesColumn = currentData.getCategoriesProperty();
+        String newCategoriesColumn = newData.getCategoriesProperty();
+        if (hasDataColumnChanged(categoriesColumn, newCategoriesColumn)) return true;
+        String valuesColumn = currentData.getValuesProperty();
+        String newValuesColumn = newData.getValuesProperty();
+        return hasDataColumnChanged(valuesColumn, newValuesColumn);
+    }
+    
+    private boolean hasDataColumnChanged(String oldColumn, String newColumn) {
+        if (oldColumn == null && newColumn != null) return true;
+        if (oldColumn == null && newColumn == null) return false;
+        if (oldColumn != null && newColumn == null) return true;
+        if (oldColumn != null && !oldColumn.equals(newColumn)) return true;
         return false;
     }
 

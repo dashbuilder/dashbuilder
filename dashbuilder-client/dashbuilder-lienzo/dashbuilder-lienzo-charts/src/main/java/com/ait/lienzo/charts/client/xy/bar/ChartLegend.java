@@ -1,9 +1,6 @@
 package com.ait.lienzo.charts.client.xy.bar;
 
 import com.ait.lienzo.charts.client.xy.XYChartSerie;
-import com.ait.lienzo.client.core.animation.AnimationProperties;
-import com.ait.lienzo.client.core.animation.AnimationProperty;
-import com.ait.lienzo.client.core.animation.AnimationTweener;
 import com.ait.lienzo.client.core.shape.Group;
 import com.ait.lienzo.client.core.shape.Rectangle;
 import com.ait.lienzo.client.core.shape.Text;

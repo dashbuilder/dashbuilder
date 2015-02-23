@@ -1,6 +1,5 @@
 package com.ait.lienzo.charts.client.xy.bar;
 
-import com.ait.lienzo.charts.client.AbstractChart;
 import com.ait.lienzo.charts.client.xy.axis.AxisBuilder;
 import com.ait.lienzo.client.core.animation.AnimationProperties;
 import com.ait.lienzo.client.core.animation.AnimationProperty;

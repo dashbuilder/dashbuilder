@@ -1,7 +1,5 @@
 package com.ait.lienzo.charts.client.xy.bar;
 
-import com.ait.lienzo.charts.client.AbstractChart;
-import com.ait.lienzo.charts.shared.core.types.ChartOrientation;
 import com.ait.lienzo.client.core.animation.*;
 import com.ait.lienzo.client.core.event.NodeMouseEnterEvent;
 import com.ait.lienzo.client.core.event.NodeMouseEnterHandler;
