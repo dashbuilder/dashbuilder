@@ -16,93 +16,87 @@
 
 package com.ait.lienzo.charts.client.pie;
 
+import com.ait.lienzo.charts.client.AbstractChart;
 import com.ait.lienzo.charts.client.ChartAttribute;
 import com.ait.lienzo.charts.client.ChartNodeType;
-import com.ait.lienzo.charts.client.pie.PieChartData.PieChartDataJSO;
-import com.ait.lienzo.client.core.animation.AnimationCallback;
-import com.ait.lienzo.client.core.animation.AnimationProperties;
-import com.ait.lienzo.client.core.animation.AnimationProperty;
-import com.ait.lienzo.client.core.animation.AnimationTweener;
-import com.ait.lienzo.client.core.animation.IAnimation;
-import com.ait.lienzo.client.core.animation.IAnimationHandle;
+import com.ait.lienzo.charts.client.model.DataTable;
+import com.ait.lienzo.charts.client.pie.event.DataReloadedEvent;
+import com.ait.lienzo.charts.client.pie.event.DataReloadedEventHandler;
+import com.ait.lienzo.client.core.animation.*;
 import com.ait.lienzo.client.core.event.NodeMouseEnterEvent;
 import com.ait.lienzo.client.core.event.NodeMouseEnterHandler;
-import com.ait.lienzo.client.core.shape.Group;
-import com.ait.lienzo.client.core.shape.IContainer;
-import com.ait.lienzo.client.core.shape.Line;
-import com.ait.lienzo.client.core.shape.Node;
-import com.ait.lienzo.client.core.shape.Slice;
-import com.ait.lienzo.client.core.shape.Text;
+import com.ait.lienzo.client.core.shape.*;
 import com.ait.lienzo.client.core.shape.json.IFactory;
 import com.ait.lienzo.client.core.shape.json.validators.ValidationContext;
 import com.ait.lienzo.client.core.shape.json.validators.ValidationException;
-import com.ait.lienzo.shared.core.types.ColorName;
-import com.ait.lienzo.shared.core.types.TextAlign;
-import com.ait.lienzo.shared.core.types.TextBaseLine;
+import com.ait.lienzo.client.core.types.Point2D;
+import com.ait.lienzo.client.core.types.Point2DArray;
+import com.ait.lienzo.shared.core.types.*;
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
 
-public class PieChart extends Group
+import java.util.LinkedList;
+import java.util.List;
+
+public class PieChart extends AbstractChart<PieChart>
 {
+    private Group slices = new Group();
+    private Group labels = new Group();
+    private List<Line> lines = new LinkedList<Line>();
+    private List<Text> texts = new LinkedList<Text>();
+    private List<PieSlice> pieSlices = new LinkedList<PieSlice>();
+    
+    private static final ColorName[] DEFAULT_SLICE_COLORS = new ColorName[] {
+        ColorName.DEEPPINK, ColorName.YELLOW, ColorName.SALMON, ColorName.CORNFLOWERBLUE,
+            ColorName.AQUA, ColorName.DEEPSKYBLUE.GREENYELLOW, ColorName.BLUEVIOLET,
+            ColorName.FUCHSIA, ColorName.MAGENTA, ColorName.MAROON
+    };
+
     protected PieChart(JSONObject node, ValidationContext ctx) throws ValidationException
     {
         super(node, ctx);
 
         setNodeType(ChartNodeType.PIE_CHART);
 
-        initialize();
     }
 
-    public PieChart(double radius, PieChartData data)
+    public PieChart(DataReloadedEventHandler dataReloadedEventHandler)
     {
         setNodeType(ChartNodeType.PIE_CHART);
 
-        setRadius(radius);
-
-        setData(data);
-
+        if (dataReloadedEventHandler != null) addDataReloadedHandler(dataReloadedEventHandler);
+        
         getMetaData().put("creator", "Dean S. Jones").put("version", "1.0.1.SNAPSHOT");
 
-        initialize();
     }
 
-    protected final void initialize()
+    public HandlerRegistration addDataReloadedHandler(DataReloadedEventHandler handler)
     {
-        double radius = getRadius();
+        return addEnsureHandler(DataReloadedEvent.TYPE, handler);
+    }
 
+    @Override
+    protected void doBuild() {
         PieChartData data = getData();
 
-        if (radius <= 0)
+        if (getRadius() <= 0 || (null == data) || (data.size() < 1))
         {
             return;
         }
-        if ((null == data) || (data.size() < 1))
-        {
-            return;
-        }
-        final PieChartEntry[] values = data.getEntries();
 
-        double sofar = 0;
-
-        double total = 0;
-
-        for (int i = 0; i < values.length; i++)
-        {
-            total += values[i].getValue();
-        }
-        Group slices = new Group();
-
-        Group labels = new Group();
+        DataTable dataTable = data.getDataTable();
+        String[] categories = dataTable.getColumn(getData().getCategoriesProperty()).getStringValues();
+        Double[] values = dataTable.getColumn(getData().getValuesProperty()).getNumericValues();
 
         labels.setListening(false);
 
         for (int i = 0; i < values.length; i++)
         {
-            double value = values[i].getValue() / total;
+            final PieSlice slice = new PieSlice(0, 0, 0);
 
-            final PieSlice slice = new PieSlice(radius, sofar, value);
-
-            slice.setFillColor(values[i].getColor()).setStrokeColor(ColorName.BLACK).setStrokeWidth(3);
+            slice.setFillColor(getColor(i)).setStrokeColor(ColorName.BLACK).setStrokeWidth(3);
 
             slice.addNodeMouseEnterHandler(new NodeMouseEnterHandler()
             {
@@ -141,7 +135,68 @@ public class PieChart extends Group
                     }
                 }
             });
+            pieSlices.add(slice);
             slices.add(slice);
+
+            Text text = new Text("", getFontFamily(), getFontStyle(), getFontSize()).setFillColor(ColorName.BLACK).setTextBaseLine(TextBaseLine.MIDDLE);
+            texts.add(text);
+
+            Line line = new Line(0, 0, 0, 0).setStrokeColor(ColorName.BLACK).setStrokeWidth(3);
+            lines.add(line);
+
+            labels.add(text);
+
+            labels.add(line);
+
+        }
+
+        addOnAreaChartCentered(labels);
+
+        addOnAreaChartCentered(slices);
+
+        // Apply position and size to inner shapes. 
+        redraw(getChartWidth(), getChartHeight(), true);
+
+    }
+
+    private PieChart redraw(Double chartWidth, Double chartHeight, boolean animate) {
+        double radius = getRadius();
+
+        PieChartData data = getData();
+
+        if (radius <= 0 || (null == data) || (data.size() < 1))
+        {
+            return this;
+        }
+
+        DataTable dataTable = data.getDataTable();
+        String[] categories = dataTable.getColumn(getData().getCategoriesProperty()).getStringValues();
+        Double[] values = dataTable.getColumn(getData().getValuesProperty()).getNumericValues();
+
+        double sofar = 0;
+
+        double total = 0;
+
+        for (int i = 0; i < values.length; i++)
+        {
+            total += values[i];
+        }
+
+        labels.setListening(false);
+
+        for (int i = 0; i < values.length; i++)
+        {
+            double value = values[i] / total;
+
+            PieSlice slice  = pieSlices.get(i);
+            if (slice != null) {
+                double startAngle = PieSlice.buildStartAngle(sofar);
+                double endAngle = PieSlice.buildEngAngle(sofar, value);
+                slice.setRadius(radius).setStartAngle(startAngle).setEndAngle(endAngle);
+                // TODO: use redrawShape
+            } else {
+                // TODO: New data values added.
+            }
 
             double s_ang = Math.PI * (2.0 * sofar);
 
@@ -187,7 +242,7 @@ public class PieChart extends Group
 
                 align = TextAlign.RIGHT;
             }
-            String label = values[i].getLabel();
+            String label = categories[i];
 
             if (null == label)
             {
@@ -197,35 +252,72 @@ public class PieChart extends Group
             {
                 label = label + " ";
             }
-            Text text = new Text(label + getLabel(value * 100), "Calibri", "bold", 14).setFillColor(ColorName.BLACK).setX(lx).setY(ly).setTextAlign(align).setTextBaseLine(TextBaseLine.MIDDLE);
+            Text text = texts.get(i);
+            if (text != null) {
+                text.setText(label + getLabel(value * 100)).setTextAlign(align);
+                setShapeAttributes(text, lx, ly, null, null, animate);
+            } else {
+                // TODO: New data values added.
+            }
 
-            Line line = new Line((Math.sin(n_ang) * radius), 0 - (Math.cos(n_ang) * radius), (Math.sin(n_ang) * (radius + 50)), 0 - (Math.cos(n_ang) * (radius + 50))).setStrokeColor(ColorName.BLACK).setStrokeWidth(3);
-
-            labels.add(text);
-
-            labels.add(line);
+            Line line = lines.get(i);
+            if (line != null) {
+                Point2D startPoint = new Point2D((Math.sin(n_ang) * radius), 0 - (Math.cos(n_ang) * radius));
+                Point2D endPoint = new Point2D((Math.sin(n_ang) * (radius + 50)), 0 - (Math.cos(n_ang) * (radius + 50)));
+                line.setPoints(new Point2DArray(startPoint, endPoint));
+                // TODO: redrawShape(text, lx, ly, null, null, animationDuration, animate);
+            } else {
+                // TODO: New data values added.
+            }
 
             sofar += value;
         }
-        add(labels);
 
-        add(slices);
-    }
-
-    public final PieChart setRadius(double radius)
-    {
-        getAttributes().setRadius(radius);
+        addOnAreaChartCentered(labels);
+        addOnAreaChartCentered(slices);
 
         return this;
     }
 
-    public final double getRadius()
-    {
-        return getAttributes().getRadius();
+    protected void clear(final Runnable callback) {
+        GWT.log("Performing PieChart#clear");
+    }
+    
+    protected void addOnAreaChartCentered(Group group) {
+        chartArea.add(group);
+        setGroupAttributes(group, getChartWidth() / 2, getChartHeight() / 2, 1d, false);
     }
 
-    public final PieChart setData(PieChartData data)
+    // TODO: Use color strategy.
+    protected IColor getColor(int position) {
+        int defaultColorsSize = DEFAULT_SLICE_COLORS.length;
+        
+        if (position < defaultColorsSize) {
+            return DEFAULT_SLICE_COLORS[position];
+        }
+        
+        return new Color(position * 20 , 128, 0);
+    }
+
+    public final PieChart setData(final PieChartData data)
     {
+
+
+        // If new data contains different properties on axis, clear current shapes.
+        if (isCleanRequired(getData(), data)) {
+            clear(new Runnable() {
+                @Override
+                public void run() {
+                    GWT.log("Clear finished. Setting new data...");
+                    _setData(data);
+                }
+            });
+        } else {
+            _setData(data);
+        }
+        
+        
+        
         if (null != data)
         {
             getAttributes().put(ChartAttribute.PIE_CHART_DATA.getProperty(), data.getJSO());
@@ -233,18 +325,41 @@ public class PieChart extends Group
         return this;
     }
 
+    private final PieChart _setData(PieChartData data)
+    {
+        if (null != data)
+        {
+            getAttributes().put(ChartAttribute.PIE_CHART_DATA.getProperty(), data.getJSO());
+        }
+
+        PieChart.this.fireEvent(new DataReloadedEvent(this));
+        
+        return this;
+    }
+
     public final PieChartData getData()
     {
-        PieChartDataJSO jso = getAttributes().getArrayOfJSO(ChartAttribute.PIE_CHART_DATA.getProperty()).cast();
+        PieChartData.PieChartDataJSO jso = getAttributes().getObject(ChartAttribute.PIE_CHART_DATA.getProperty()).cast();
 
         return new PieChartData(jso);
     }
 
+    private boolean isCleanRequired(PieChartData currentData, PieChartData newData) {
+        return false;
+    }
+
+    private final double getRadius() {
+        double forSize = getChartHeight();
+        if (getChartWidth() < forSize) forSize = getChartWidth();
+
+        return (forSize / 2) - 100;
+    }
+
     private final native String getLabel(double perc)
     /*-{
-		var numb = perc;
+        var numb = perc;
 
-		return numb.toFixed(2) + "%";
+        return numb.toFixed(2) + "%";
     }-*/;
 
     @Override
@@ -269,13 +384,13 @@ public class PieChart extends Group
         return new PieChartFactory();
     }
 
-    public static class PieChartFactory extends GroupFactory
+    public static class PieChartFactory extends ChartFactory
     {
         public PieChartFactory()
         {
-            setTypeName(ChartNodeType.PIE_CHART.getValue());
+            super();
 
-            addAttribute(ChartAttribute.RADIUS, true);
+            setTypeName(ChartNodeType.PIE_CHART.getValue());
 
             addAttribute(ChartAttribute.PIE_CHART_DATA, true);
         }
@@ -300,6 +415,14 @@ public class PieChart extends Group
         public PieSlice(double radius, double sofar, double value)
         {
             super(radius, Math.PI * (-0.5 + 2 * sofar), Math.PI * (-0.5 + 2 * (sofar + value)), false);
+        }
+
+        protected static double buildStartAngle(double sofar) {
+            return Math.PI * (-0.5 + 2 * sofar);
+        }
+
+        protected static double buildEngAngle(double sofar, double value) {
+            return Math.PI * (-0.5 + 2 * (sofar + value));
         }
 
         public final void setAnimating(boolean animating)

@@ -37,6 +37,7 @@ public class LienzoRenderer extends AbstractRendererLibrary {
     @PostConstruct
     private void init() {
         RendererLibLocator.get().registerRenderer(DisplayerType.BARCHART, UUID, false);
+        RendererLibLocator.get().registerRenderer(DisplayerType.PIECHART, UUID, false);
     }
 
     @Override
@@ -48,7 +49,7 @@ public class LienzoRenderer extends AbstractRendererLibrary {
     public Displayer lookupDisplayer(DisplayerSettings displayerSettings) {
         DisplayerType type = displayerSettings.getType();
         if ( DisplayerType.BARCHART.equals(type)) return new LienzoBarChartDisplayer();
-
+        if ( DisplayerType.PIECHART.equals(type)) return new LienzoPieChartDisplayer();
         return null;
     }
 }

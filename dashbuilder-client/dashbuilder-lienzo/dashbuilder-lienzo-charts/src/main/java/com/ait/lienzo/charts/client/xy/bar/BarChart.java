@@ -21,15 +21,15 @@ import com.ait.lienzo.charts.client.ChartAttribute;
 import com.ait.lienzo.charts.client.ChartNodeType;
 import com.ait.lienzo.charts.client.axis.Axis;
 import com.ait.lienzo.charts.client.axis.CategoryAxis;
-import com.ait.lienzo.charts.client.event.DataReloadedEvent;
-import com.ait.lienzo.charts.client.event.DataReloadedEventHandler;
-import com.ait.lienzo.charts.client.event.SelectEvent;
-import com.ait.lienzo.charts.client.event.SelectEventHandler;
 import com.ait.lienzo.charts.client.xy.XYChartData;
 import com.ait.lienzo.charts.client.xy.XYChartSerie;
 import com.ait.lienzo.charts.client.xy.axis.AxisBuilder;
 import com.ait.lienzo.charts.client.xy.axis.CategoryAxisBuilder;
 import com.ait.lienzo.charts.client.xy.axis.NumericAxisBuilder;
+import com.ait.lienzo.charts.client.xy.bar.event.DataReloadedEvent;
+import com.ait.lienzo.charts.client.xy.bar.event.DataReloadedEventHandler;
+import com.ait.lienzo.charts.client.xy.bar.event.SelectEvent;
+import com.ait.lienzo.charts.client.xy.bar.event.SelectEventHandler;
 import com.ait.lienzo.charts.shared.core.types.*;
 import com.ait.lienzo.client.core.animation.*;
 import com.ait.lienzo.client.core.event.*;
@@ -180,7 +180,7 @@ public class BarChart extends AbstractChart<BarChart>
             getAttributes().delete(ChartAttribute.XY_CHART_DATA.getProperty());
         }
         
-        BarChart.this.fireEvent(new DataReloadedEvent());
+        BarChart.this.fireEvent(new DataReloadedEvent(this));
         
         return this;
     }

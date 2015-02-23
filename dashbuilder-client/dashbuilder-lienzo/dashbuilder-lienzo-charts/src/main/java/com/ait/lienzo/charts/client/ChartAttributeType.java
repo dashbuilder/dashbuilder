@@ -17,6 +17,7 @@
 package com.ait.lienzo.charts.client;
 
 import com.ait.lienzo.charts.client.axis.AxisValidator;
+import com.ait.lienzo.charts.client.pie.PieChartDataValidator;
 import com.ait.lienzo.charts.client.xy.XYChartSerieValidator;
 import com.ait.lienzo.charts.shared.core.types.*;
 import com.ait.lienzo.client.core.AttributeType;
@@ -35,7 +36,7 @@ public class ChartAttributeType extends AttributeType
     public final static ChartAttributeType AXIS_TYPE = new ChartAttributeType(AxisValidator.INSTANCE);
     public final static ChartAttributeType LABELS_POSITION  = new ChartAttributeType(new EnumValidator<LabelsPosition>("labelsPosition", LabelsPosition.values()));
     public final static ChartAttributeType XY_CHART_DATA_TYPE = new ChartAttributeType(new ArrayValidator(XYChartSerieValidator.INSTANCE));
-    public final static ChartAttributeType PIE_CHART_DATA_TYPE = new ChartAttributeType(new ArrayValidator(PieChartEntryValidator.INSTANCE));
+    public final static ChartAttributeType PIE_CHART_DATA_TYPE = new ChartAttributeType(new ArrayValidator(PieChartDataValidator.INSTANCE));
 
     protected ChartAttributeType(IAttributeTypeValidator validator)
     {

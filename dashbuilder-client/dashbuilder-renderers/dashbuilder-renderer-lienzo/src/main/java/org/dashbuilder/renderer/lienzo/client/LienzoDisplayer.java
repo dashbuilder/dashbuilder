@@ -16,11 +16,10 @@
 package org.dashbuilder.renderer.lienzo.client;
 
 import com.ait.lienzo.charts.client.AbstractChart;
-import com.ait.lienzo.charts.client.event.SelectEvent;
-import com.ait.lienzo.charts.client.event.SelectEventHandler;
 import com.ait.lienzo.charts.client.model.DataTable;
 import com.ait.lienzo.charts.client.model.DataTableColumn;
-import com.ait.lienzo.client.core.shape.IPrimitive;
+import com.ait.lienzo.charts.client.xy.bar.event.SelectEvent;
+import com.ait.lienzo.charts.client.xy.bar.event.SelectEventHandler;
 import com.ait.lienzo.client.core.shape.Layer;
 import com.ait.lienzo.client.widget.LienzoPanel;
 import com.google.gwt.core.client.GWT;
