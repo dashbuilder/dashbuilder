@@ -513,6 +513,16 @@ public class PieChart extends AbstractChart<PieChart>
     }-*/;
 
     @Override
+    public double getChartHeight() {
+        return getHeight();
+    }
+
+    @Override
+    public double getChartWidth() {
+        return getWidth();
+    }
+
+    @Override
     public JSONObject toJSONObject()
     {
         JSONObject object = new JSONObject();

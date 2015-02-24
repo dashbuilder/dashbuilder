@@ -40,6 +40,7 @@ import com.ait.lienzo.client.core.shape.json.validators.ValidationException;
 import com.ait.lienzo.client.core.types.Point2D;
 import com.ait.lienzo.client.core.types.Point2DArray;
 import com.ait.lienzo.shared.core.types.ColorName;
+import com.ait.lienzo.shared.core.types.IColor;
 import com.ait.lienzo.shared.core.types.TextAlign;
 import com.ait.lienzo.shared.core.types.TextBaseLine;
 import com.google.gwt.core.client.GWT;
@@ -656,6 +657,21 @@ public class BarChart extends AbstractChart<BarChart>
             return "value"+numSerie+""+numValue;
         }
 
+        protected void animateRectangle(final List<Object[]> rectanglesAttrs, final int index, final double duration) {
+            if (index >= rectanglesAttrs.size()) return;
+            Object[] rectangleAttrs = rectanglesAttrs.get(index);
+
+            setShapeAttributes((Shape) rectangleAttrs[0], (Double) rectangleAttrs[1], (Double) rectangleAttrs[2],
+                    (Double) rectangleAttrs[3], (Double) rectangleAttrs[4],
+                    (IColor) rectangleAttrs[5], (Double) rectangleAttrs[6], true, duration, new AnimationCallback() {
+                        @Override
+                        public void onClose(IAnimation animation, IAnimationHandle handle) {
+                            super.onClose(animation, handle);
+                            animateRectangle(rectanglesAttrs, new Integer(index) + 1, duration);
+                        }
+                    });
+        }
+        
         protected void removeSerieValues(final String serieName) {
             if (serieName != null) {
                 List<Rectangle> barsForSerie = seriesValues.get(serieName);
@@ -917,6 +933,7 @@ public class BarChart extends AbstractChart<BarChart>
             List<Rectangle> bars = seriesValues.get(serie.getName());
 
             if (categoryAxisValues != null && categoryAxisValues.size() > 0) {
+                List<Object[]> rectanglesAttrs = new LinkedList<Object[]>();
                 for (int i = 0; i < categoryAxisValues.size(); i++) {
                     AxisBuilder.AxisValue categoryAxisvalue = categoryAxisValues.get(i);
                     AxisBuilder.AxisValue valueAxisvalue = valuesAxisValues.get(i);
@@ -990,8 +1007,14 @@ public class BarChart extends AbstractChart<BarChart>
                     });
                     // Bars animation must start from chart bottom. So position the bar there.
                     barObject.setX(0).setY(getChartHeight());
-                    // Once bar position at chart bottom, animate it.
-                    setShapeAttributes(barObject, x, y, barWidth - BAR_SEPARATION, barHeight, serie.getColor(), alpha, animate);
+                    Object[] rectangleAttr = new Object[] {barObject, x, y, barWidth - BAR_SEPARATION, barHeight, serie.getColor(), alpha};
+                    rectanglesAttrs.add(rectangleAttr);
+                }
+
+                if (!rectanglesAttrs.isEmpty()) {
+                    double duration = ANIMATION_DURATION / categoryAxisValues.size();
+                    animateRectangle(rectanglesAttrs, 0, duration);
+
                 }
             }
             return this;
@@ -1216,6 +1239,7 @@ public class BarChart extends AbstractChart<BarChart>
             List<Rectangle> bars = seriesValues.get(serie.getName());
 
             if (yAxisValues != null && yAxisValues.size() > 0) {
+                List<Object[]> rectanglesAttrs = new LinkedList<Object[]>();
                 for (int i = 0; i < yAxisValues.size(); i++) {
                     AxisBuilder.AxisValue xAxisvalue = xAxisValues.get(i);
                     AxisBuilder.AxisValue yAxisvalue = yAxisValues.get(i);
@@ -1287,13 +1311,19 @@ public class BarChart extends AbstractChart<BarChart>
                             }
                         }
                     });
-                    // GWT.log("Rectangle for value " + i + " y:" + y + " / h: " + barHeight);
-                    setShapeAttributes(barObject, x, y, barWidth, barHeight - BAR_SEPARATION, serie.getColor(), alpha, animate);
+                    Object[] rectangleAttr = new Object[] {barObject, x, y, barWidth, barHeight - BAR_SEPARATION, serie.getColor(), alpha};
+                    rectanglesAttrs.add(rectangleAttr);
+                }
+                
+                if (!rectanglesAttrs.isEmpty()) {
+                    double duration = ANIMATION_DURATION / yAxisValues.size();
+                    animateRectangle(rectanglesAttrs, 0, duration);
+                    
                 }
             }
             return this;
         }
-
+        
         public HorizontalBarChartBuilder reloadBuilders() {
             // Rebuild data summary as columns, series and values can have been modified.
             categoriesAxisBuilder[0].reload(getData(), seriesValues.keySet(), getChartHeight());

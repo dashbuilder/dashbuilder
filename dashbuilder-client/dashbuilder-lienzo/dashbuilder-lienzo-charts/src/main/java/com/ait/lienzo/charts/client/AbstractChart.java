@@ -255,6 +255,17 @@ public abstract class AbstractChart<T extends AbstractChart> extends Group {
         setShapeAttributes(shape, attributes, animate);
     }
 
+    protected void setShapeAttributes(Shape shape, Double x, Double y, Double width, Double height, IColor color, Double alpha, boolean animate, double duration, IAnimationCallback callback) {
+        Map<Attribute, Object> attributes = new LinkedHashMap<Attribute, Object>(6);
+        if (x != null) attributes.put(Attribute.X, x);
+        if (y != null) attributes.put(Attribute.Y, y);
+        if (width != null) attributes.put(Attribute.WIDTH, width);
+        if (height != null) attributes.put(Attribute.HEIGHT, height);
+        if (color != null) attributes.put(Attribute.FILL, color);
+        if (alpha != null) attributes.put(Attribute.ALPHA, alpha);
+        setShapeAttributes(shape, attributes, animate, duration, callback);
+    }
+
     protected void setShapeAttributes(Shape shape, Point2D scale, boolean animate) {
         Map<Attribute, Object> attributes = new LinkedHashMap<Attribute, Object>(1);
         if (scale != null) attributes.put(Attribute.SCALE, scale);
@@ -262,6 +273,10 @@ public abstract class AbstractChart<T extends AbstractChart> extends Group {
     }
 
     protected void setShapeAttributes(Shape shape, Map<Attribute, Object> attributes, boolean animate) {
+        setShapeAttributes(shape, attributes, animate, 0, null);
+    }
+    
+    protected void setShapeAttributes(Shape shape, Map<Attribute, Object> attributes, boolean animate, double duration, IAnimationCallback callback) {
         
         if (attributes != null && !attributes.isEmpty()) {
             AnimationProperties animationProperties = new AnimationProperties();
@@ -312,7 +327,8 @@ public abstract class AbstractChart<T extends AbstractChart> extends Group {
                 }
             }
 
-            if (animate) shape.animate(AnimationTweener.LINEAR, animationProperties, ANIMATION_DURATION);
+            if (animate && callback == null) shape.animate(AnimationTweener.LINEAR, animationProperties, ANIMATION_DURATION);
+            if (animate && callback != null) shape.animate(AnimationTweener.LINEAR, animationProperties, duration, callback);
 
         }
     }
