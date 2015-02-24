@@ -10,6 +10,7 @@ import com.ait.lienzo.client.core.shape.json.validators.ValidationContext;
 import com.ait.lienzo.client.core.shape.json.validators.ValidationException;
 import com.ait.lienzo.client.core.types.Point2D;
 import com.ait.lienzo.shared.core.types.*;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.json.client.JSONObject;
 
 import java.util.LinkedHashMap;
@@ -49,6 +50,8 @@ public abstract class AbstractChart<T extends AbstractChart> extends Group {
     protected final Group bottomArea = new Group();
     protected final Group rightArea = new Group();
     protected final Group leftArea = new Group();
+    protected ChartResizer resizer = null;
+    protected Text chartTitle = null;
     protected final Boolean[] isReloading = new Boolean[1];
 
     protected IAttributesChangedBatcher attributesChangedBatcher = new AnimationFrameAttributesChangedBatcher();
@@ -110,21 +113,13 @@ public abstract class AbstractChart<T extends AbstractChart> extends Group {
         moveAreas(0d, 0d);
         
         // Chart title.
-        final Text chartTitle = new Text(getName(), getFontFamily(), getFontStyle(), getFontSize()).setFillColor(ColorName.BLACK).setTextAlign(TextAlign.CENTER).setTextBaseLine(TextBaseLine.MIDDLE);
-        if (isShowTitle()) {
-            setShapeAttributes(chartTitle,getChartWidth() / 2, 10d, null, null, true);
-            topArea.add(chartTitle);
-        }
+        buildTitle();
 
         // Call parent build implementation.
         doBuild();
         
         // Add the resizer.
-        final ChartResizer resizer = new ChartResizer();
-        if (isResizable()) {
-            resizer.build();
-            moveResizerToTop(resizer);
-        }
+        buildResizer();
 
         this.setAttributesChangedBatcher(attributesChangedBatcher);
 
@@ -132,7 +127,7 @@ public abstract class AbstractChart<T extends AbstractChart> extends Group {
             @Override
             public void onAttributesChanged(AttributesChangedEvent event) {
                 if (!isReloading[0]) {
-                    moveAreas(getX(), null);
+                    moveAreas(getX(), getY());
                 }
             }
         };
@@ -145,10 +140,7 @@ public abstract class AbstractChart<T extends AbstractChart> extends Group {
             @Override
             public void onAttributesChanged(AttributesChangedEvent event) {
                 if (!isReloading[0]) {
-                    setGroupAttributes(bottomArea, null, topArea.getY() + getChartHeight() + getMarginTop(), false);
-                    setGroupAttributes(rightArea, topArea.getX() + getChartWidth() + getMarginLeft(), null, false);
-                    if (isShowTitle()) setShapeAttributes(chartTitle, getWidth() / 2, null, null, null, false);
-                    moveResizerToTop(resizer);
+                    redraw(getChartWidth(), getChartHeight(), false);
                 }
             }
         };
@@ -158,6 +150,34 @@ public abstract class AbstractChart<T extends AbstractChart> extends Group {
         this.addAttributesChangedHandler(Attribute.HEIGHT, whhandler);
 
         return (T) this;
+    }
+
+    protected T redraw(final Double chartWidth, final Double chartHeight, final boolean animate) {
+        // Move areas using new width and height.
+        setGroupAttributes(bottomArea, null, topArea.getY() + getChartHeight() + getMarginTop(), animate);
+        setGroupAttributes(rightArea, getX() + getChartWidth() + getMarginLeft(), null, animate);
+        
+        // Chart title.
+        buildTitle();
+
+        // Add the resizer.
+        buildResizer();
+        
+        return (T) this;
+    }
+    
+    protected void buildResizer() {
+        if (isResizable()) {
+            resizer = new ChartResizer().build().moveToTop();
+        }
+    }
+    
+    protected void buildTitle() {
+        if (isShowTitle()) {
+            chartTitle = new Text(getName(), getFontFamily(), getFontStyle(), getFontSize()).setFillColor(ColorName.BLACK).setTextAlign(TextAlign.CENTER).setTextBaseLine(TextBaseLine.MIDDLE);
+            setShapeAttributes(chartTitle,getChartWidth() / 2, 10d, null, null, true);
+            topArea.add(chartTitle);
+        }
     }
 
     protected void moveAreas(Double x, Double y) {
@@ -180,12 +200,6 @@ public abstract class AbstractChart<T extends AbstractChart> extends Group {
         chartArea.moveToTop();
     }
     
-    protected void moveResizerToTop(ChartResizer resizer) {
-        if (isResizable()) {
-            resizer.moveToTop();
-        }
-    }
-
     protected abstract void doBuild();
 
     protected void clearAreas() {
@@ -323,7 +337,7 @@ public abstract class AbstractChart<T extends AbstractChart> extends Group {
         public ChartResizer() {
         }
 
-        public void build() {
+        public ChartResizer build() {
             if (resizeRectangleButton == null) {
                 double rectangleXPos = getChartWidth() - RECTANGLE_SIZE;
                 double rectangleYPos = getChartHeight() - RECTANGLE_SIZE;
@@ -461,11 +475,14 @@ public abstract class AbstractChart<T extends AbstractChart> extends Group {
             chartArea.add(resizeArrow3);
             chartArea.add(resizeArrow4);
             chartArea.add(resizeRectangleButton);
+            
+            return this;
         }
 
-        public void moveToTop() {
+        public ChartResizer moveToTop() {
             resizeRectangle.moveToTop();
             resizeRectangleButton.moveToTop();
+            return this;
         }
     }
 

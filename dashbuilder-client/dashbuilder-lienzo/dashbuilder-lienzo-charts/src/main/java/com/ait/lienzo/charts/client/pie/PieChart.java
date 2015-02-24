@@ -102,7 +102,6 @@ public class PieChart extends AbstractChart<PieChart>
             @Override
             public void onAttributesChanged(AttributesChangedEvent event) {
                 redraw(getChartWidth(), getChartHeight(), true);
-                LayerRedrawManager.get().schedule(getLayer());
             }
         });
 
@@ -198,13 +197,16 @@ public class PieChart extends AbstractChart<PieChart>
         addOnAreaChartCentered(slices);
     }
 
-    private PieChart redraw(Double chartWidth, Double chartHeight, boolean animate) {
+    protected PieChart redraw(final Double chartWidth, final Double chartHeight, final boolean animate) {
 
         if (getData() == null) {
             GWT.log("No data");
             return this;
         }
 
+        // Redraw shapes provided by super class.
+        super.redraw(chartWidth, chartHeight, animate);
+        
         if (lines == null && texts == null && pieSlices == null) {
             lines = new LinkedList<Line>();
             texts = new LinkedList<Text>();
@@ -332,7 +334,6 @@ public class PieChart extends AbstractChart<PieChart>
     }
 
     protected void clear(final Runnable callback) {
-        GWT.log("Performing PieChart#clear");
         isReloading[0] = true;
 
         final List<IPrimitive> shapesToClear = new LinkedList<IPrimitive>();
@@ -350,7 +351,6 @@ public class PieChart extends AbstractChart<PieChart>
 
             @Override
             public void onClose(IAnimation animation, IAnimationHandle handle) {
-                GWT.log("IAnimationCallback - onclose (" + shapesToClear.size() + "remaining)");
                 if (!shapesToClear.isEmpty()) shapesToClear.remove(0);
                 if (shapesToClear.isEmpty()) {
                     slices.removeAll();
@@ -408,7 +408,10 @@ public class PieChart extends AbstractChart<PieChart>
                 if (slice != null) slice.animate(AnimationTweener.LINEAR, animationProperties3, CLEAR_ANIMATION_DURATION, animationCallback);
             }
         }
-        
+
+        reset();
+        clearAreas();
+
     }
     
     private void reset() {
@@ -441,11 +444,8 @@ public class PieChart extends AbstractChart<PieChart>
             clear(new Runnable() {
                 @Override
                 public void run() {
-                    GWT.log("Clear finished. Setting new data...");
                     // Reset chart's inner shapes.
                     isReloading[0] = false;
-                    reset();
-                    clearAreas();
                     _setData(data);
                 }
             });

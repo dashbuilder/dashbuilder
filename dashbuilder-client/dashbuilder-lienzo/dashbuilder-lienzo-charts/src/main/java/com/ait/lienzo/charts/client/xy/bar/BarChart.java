@@ -156,7 +156,6 @@ public class BarChart extends AbstractChart<BarChart>
             clear(new Runnable() {
                 @Override
                 public void run() {
-                    GWT.log("Clear finished. Setting new data...");
                     _setData(data);
                 }
             });
@@ -345,10 +344,8 @@ public class BarChart extends AbstractChart<BarChart>
     }
     
     protected void clear(final Runnable callback) {
-        GWT.log("Performing BarChart#clear");
         if (builder != null) {
             isReloading[0] = true;
-            GWT.log("isReloading = true");
             builder.clear(new Runnable() {
                 @Override
                 public void run() {
@@ -356,7 +353,6 @@ public class BarChart extends AbstractChart<BarChart>
                     builder = null;
                     BarChart.this.clearAreas();
                     isReloading[0] = false;
-                    GWT.log("isReloading = false");
                     callback.run();
                 }
             });
@@ -396,18 +392,14 @@ public class BarChart extends AbstractChart<BarChart>
         this.addAttributesChangedHandler(ChartAttribute.XY_CHART_DATA, new AttributesChangedHandler() {
             @Override
             public void onAttributesChanged(AttributesChangedEvent event) {
-                GWT.log(this.toString() + "- XYData attribute changed.");
                 redraw(getChartWidth(), getChartHeight(), true);
-                LayerRedrawManager.get().schedule(getLayer());
             }
         });
         
         AttributesChangedHandler whhandler = new AttributesChangedHandler() {
             @Override
             public void onAttributesChanged(AttributesChangedEvent event) {
-                GWT.log("isReloading = " + isReloading[0]);
                 if (!isReloading[0]) {
-                    GWT.log(this.toString() + "- WIDTH attribute changed.");
                     redraw(getChartWidth(), getChartHeight(), false);
                 }
             }
@@ -415,7 +407,7 @@ public class BarChart extends AbstractChart<BarChart>
         
         this.addAttributesChangedHandler(ChartAttribute.WIDTH, whhandler);
         this.addAttributesChangedHandler(ChartAttribute.HEIGHT,whhandler);
-
+        
     }
     
     private void buildToolip() {
@@ -488,13 +480,16 @@ public class BarChart extends AbstractChart<BarChart>
         return builder;
     }
 
-    private void redraw(Double chartWidth, Double chartHeight, boolean animate) {
+    protected BarChart redraw(final Double chartWidth, final Double chartHeight, final boolean animate) {
         
         if (getData() == null) {
             GWT.log("No data");
-            return;
+            return this;
         }
-        
+
+        // Redraw shapes provided by super class.
+        super.redraw(chartWidth, chartHeight, animate);
+
         // If data axis properties has changed, builder instance will be null. Rebuild it.
         if (builder == null) {
             GWT.log("BarChart - Rebuilding BarChartBuilder instance.");
@@ -505,16 +500,18 @@ public class BarChart extends AbstractChart<BarChart>
 
         // Reload axis builder as data has changed.
         builder.reloadBuilders()
-        // Recalculate positions and size for categories axis title shape.
+                // Recalculate positions and size for categories axis title shape.
                 .setCategoriesAxisTitleAttributes(chartWidth, chartHeight, animate)
-        // Recalculate positions and size for categories intervals shapes.
+                        // Recalculate positions and size for categories intervals shapes.
                 .setCategoriesAxisIntervalsAttributes(chartWidth, chartHeight, animate)
-        // Recalculate positions and size for values axis title shape.
+                        // Recalculate positions and size for values axis title shape.
                 .setValuesAxisTitleAttributes(chartWidth, chartHeight, animate)
-        // Recalculate positions and size for values intervals shapes.
+                        // Recalculate positions and size for values intervals shapes.
                 .setValuesAxisIntervalsAttributes(chartWidth, chartHeight, animate)
-        // Recalculate positions, size and add or remove rectangles (if data has changed).
+                        // Recalculate positions, size and add or remove rectangles (if data has changed).
                 .setValuesAttributes(chartWidth, chartHeight, animate);
+        
+        return this;
     }
 
     private abstract class BarChartBuilder<T extends BarChartBuilder> {
@@ -742,7 +739,6 @@ public class BarChart extends AbstractChart<BarChart>
 
                 @Override
                 public void onClose(IAnimation animation, IAnimationHandle handle) {
-                    GWT.log("IAnimationCallback - onclose (" + shapesToClear.size() + "remaining)");
                     if (!shapesToClear.isEmpty()) shapesToClear.remove(0);
                     if (shapesToClear.isEmpty()) callback.run();
                 }
@@ -992,6 +988,9 @@ public class BarChart extends AbstractChart<BarChart>
                             }
                         }
                     });
+                    // Bars animation must start from chart bottom. So position the bar there.
+                    barObject.setX(0).setY(getChartHeight());
+                    // Once bar position at chart bottom, animate it.
                     setShapeAttributes(barObject, x, y, barWidth - BAR_SEPARATION, barHeight, serie.getColor(), alpha, animate);
                 }
             }
@@ -1027,7 +1026,7 @@ public class BarChart extends AbstractChart<BarChart>
             }
 
             // Create the animation properties.
-            double yClearPos = ChartDirection.POSITIVE.equals(getDirection()) ? 0 : getChartHeight(); 
+            double yClearPos = getChartHeight(); 
             AnimationProperties animationProperties = new AnimationProperties();
             animationProperties.push(AnimationProperty.Properties.Y(yClearPos));
 
@@ -1039,7 +1038,8 @@ public class BarChart extends AbstractChart<BarChart>
             }
 
             AnimationProperties animationProperties2 = new AnimationProperties();
-            animationProperties2.push(AnimationProperty.Properties.HEIGHT(yClearPos));
+            animationProperties2.push(AnimationProperty.Properties.Y(yClearPos));
+            animationProperties2.push(AnimationProperty.Properties.HEIGHT(0d));
             // Apply animation to values.
             if (seriesValues != null ) {
                 for (Map.Entry<String, List<Rectangle>> entry : seriesValues.entrySet()) {
