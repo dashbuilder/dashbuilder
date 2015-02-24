@@ -83,6 +83,7 @@ public class RendererSelector extends Composite {
         else {
             listPanel.setVisible(false);
             radioButtonsPanel.setVisible(false);
+            mainPanel.setVisible(false);
         }
     }
     
