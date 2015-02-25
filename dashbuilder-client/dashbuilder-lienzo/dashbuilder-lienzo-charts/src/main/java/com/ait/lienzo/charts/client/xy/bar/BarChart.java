@@ -94,6 +94,9 @@ public class BarChart extends AbstractChart<BarChart>
 {
     // Default separation size between bars.
     protected static final double BAR_SEPARATION = 2;
+    protected static final double BAR_MAX_SIZE = 75;
+    // If bar are too big, use this proportion (30%).
+    protected static final double BAR_MAX_SIZE_PROPORTION = 0.3;
     private BarChartBuilder builder;
     private ChartLegend legend = null; // The legend.
     final BarChartTooltip tooltip = new BarChartTooltip();
@@ -193,6 +196,8 @@ public class BarChart extends AbstractChart<BarChart>
         if (currentCategoryAxisProperty == null && newCategoryAxisProperty == null) return false;
         if (currentCategoryAxisProperty != null && newCategoryAxisProperty == null) return true;
         if (currentCategoryAxisProperty != null && !currentCategoryAxisProperty.equals(newCategoryAxisProperty)) return true;
+        if (currentData.getDataTable() != null && newData.getDataTable() != null && 
+                currentData.getDataTable().size() != newData.getDataTable().size()) return true;
         return false;
     }
 
@@ -867,6 +872,10 @@ public class BarChart extends AbstractChart<BarChart>
 
             double maxLabelWidth = isValuesAxisLabelsPositionLeft() ? getMarginLeft() : getMarginRight();
             double maxLabelHeight  = getChartHeight() / labels.size();
+
+            // Apply format to the labels.
+            valuesLabelFormatter.format(maxLabelWidth, maxLabelHeight);
+
             for (int i = 0; i < labels.size(); i++) {
                 AxisBuilder.AxisLabel label = labels.get(i);
                 double position = label.getPosition();
@@ -886,7 +895,6 @@ public class BarChart extends AbstractChart<BarChart>
 
                     chartLabel.setAttributes(xPos, position - 5, null, null, animate);
                 }
-                valuesLabelFormatter.format(maxLabelWidth, maxLabelHeight);
             }
             return this;
         }
@@ -909,13 +917,17 @@ public class BarChart extends AbstractChart<BarChart>
                     // Check max labels size.
                     double maxLabelWidth = getChartWidth() / labels.size();
                     double maxLabelHeight = !isCategoriesAxisLabelsPositionTop() ? getMarginBottom() : getMarginTop();
+                    
+                    // Apply format to the labels.
+                    categoriesLabelFormatter.format(maxLabelWidth, maxLabelHeight);
+                    
                     for (int i = 0; i < labels.size(); i++) {
                         AxisBuilder.AxisLabel label = labels.get(i);
                         double position = label.getPosition();
                         BarChartLabel chartLabel = seriesLabels.get(i);
-                        chartLabel.setAttributes(position - (maxLabelWidth / 2), 10d, null, null, animate);
+                        double labelWidth = chartLabel.getLabelWidth();
+                        chartLabel.setAttributes(position - labelWidth/2 , 10d, null, null, animate);
                     }
-                    categoriesLabelFormatter.format(maxLabelWidth, maxLabelHeight);
                 } else {
                     seriesLabels.clear();
                 }
@@ -1007,7 +1019,12 @@ public class BarChart extends AbstractChart<BarChart>
                     });
                     // Bars animation must start from chart bottom. So position the bar there.
                     barObject.setX(0).setY(getChartHeight());
-                    Object[] rectangleAttr = new Object[] {barObject, x, y, barWidth - BAR_SEPARATION, barHeight, serie.getColor(), alpha};
+                    double lastBarWidth = barWidth - BAR_SEPARATION;
+                    if (lastBarWidth > BAR_MAX_SIZE) {
+                        lastBarWidth -= barWidth * BAR_MAX_SIZE_PROPORTION;
+                        x += (barWidth/2 - lastBarWidth/2);
+                    }
+                    Object[] rectangleAttr = new Object[] {barObject, x, y, lastBarWidth, barHeight, serie.getColor(), alpha};
                     rectanglesAttrs.add(rectangleAttr);
                 }
 
@@ -1162,6 +1179,7 @@ public class BarChart extends AbstractChart<BarChart>
             if (labels != null && !labels.isEmpty()) {
                 double maxLabelWidth = getChartWidth() / labels.size();
                 double maxLabelHeight = isValuesAxisLabelsPositionTop() ? getMarginTop() : getMarginBottom();
+                valuesLabelFormatter.format(maxLabelWidth, maxLabelHeight);
                 for (int i = 0; i < labels.size(); i++) {
                     AxisBuilder.AxisLabel label = labels.get(i);
                     double position = label.getPosition();
@@ -1181,7 +1199,6 @@ public class BarChart extends AbstractChart<BarChart>
                         chartLabel.setAttributes(position, yPos, null, null, animate);
                     }
                 }
-                valuesLabelFormatter.format(maxLabelWidth, maxLabelHeight);
             }
 
             return this;
@@ -1199,6 +1216,10 @@ public class BarChart extends AbstractChart<BarChart>
                 if (labels != null && !labels.isEmpty()) {
                     double maxLabelWidth = !isCategoriesAxisLabelsPositionRight() ? getMarginLeft() : getMarginRight();
                     double maxLabelHeight = getChartHeight() / labels.size();
+                    
+                    // Apply format to the labels.                    
+                    categoriesLabelFormatter.format(maxLabelWidth, maxLabelHeight);
+
                     for (int i = 0; i < labels.size(); i++) {
                         AxisBuilder.AxisLabel label = labels.get(i);
                         double position = label.getPosition();
@@ -1213,9 +1234,8 @@ public class BarChart extends AbstractChart<BarChart>
                             // Right.
                             xPos = 5;
                         }
-                        chartLabel.setAttributes(xPos, position, null, null, animate);
+                        chartLabel.setAttributes(xPos, position - chartLabel.getLabelHeight()/2, null, null, animate);
                     }
-                    categoriesLabelFormatter.format(maxLabelWidth, maxLabelHeight);
                 } else {
                     seriesLabels.clear();
                 }
@@ -1311,7 +1331,12 @@ public class BarChart extends AbstractChart<BarChart>
                             }
                         }
                     });
-                    Object[] rectangleAttr = new Object[] {barObject, x, y, barWidth, barHeight - BAR_SEPARATION, serie.getColor(), alpha};
+                    double lastBarHeight = barHeight - BAR_SEPARATION;
+                    if (lastBarHeight > BAR_MAX_SIZE) {
+                        lastBarHeight -= barHeight * BAR_MAX_SIZE_PROPORTION;
+                        y += (barHeight/2 - lastBarHeight/2);
+                    } 
+                    Object[] rectangleAttr = new Object[] {barObject, x, y, barWidth, lastBarHeight, serie.getColor(), alpha};
                     rectanglesAttrs.add(rectangleAttr);
                 }
                 
