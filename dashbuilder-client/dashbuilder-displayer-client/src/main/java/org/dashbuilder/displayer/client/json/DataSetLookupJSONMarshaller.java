@@ -185,6 +185,7 @@ public class DataSetLookupJSONMarshaller {
         columnGroupJson.put( GROUPSTRATEGY, columnGroup.getStrategy() != null ? new JSONString( columnGroup.getStrategy().toString() ) : null );
         columnGroupJson.put( MAXINTERVALS, new JSONString( Integer.toString( columnGroup.getMaxIntervals() ) ) );
         columnGroupJson.put( INTERVALSIZE, columnGroup.getIntervalSize() != null ? new JSONString( columnGroup.getIntervalSize() ) : null );
+        columnGroupJson.put( EMPTYINTERVALS, new JSONString( columnGroup.areEmptyIntervalsAllowed() ? "true" : "false" ) );
         columnGroupJson.put( ASCENDING, new JSONString( columnGroup.isAscendingOrder() ? "true" : "false" ) );
         columnGroupJson.put( FIRSTMONTHOFYEAR, columnGroup.getFirstMonthOfYear() != null ? new JSONString( columnGroup.getFirstMonthOfYear().toString() ) : null );
         columnGroupJson.put( FIRSTDAYOFWEEK, columnGroup.getFirstDayOfWeek() != null ? new JSONString( columnGroup.getFirstDayOfWeek().toString() ) : null );
