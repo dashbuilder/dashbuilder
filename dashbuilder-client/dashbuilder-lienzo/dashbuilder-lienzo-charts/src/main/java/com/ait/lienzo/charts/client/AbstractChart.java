@@ -1,5 +1,8 @@
 package com.ait.lienzo.charts.client;
 
+import com.ait.lienzo.charts.client.resizer.ChartResizeEvent;
+import com.ait.lienzo.charts.client.resizer.ChartResizeEventHandler;
+import com.ait.lienzo.charts.client.resizer.ChartResizer;
 import com.ait.lienzo.charts.shared.core.types.*;
 import com.ait.lienzo.client.core.Attribute;
 import com.ait.lienzo.client.core.animation.*;
@@ -10,7 +13,6 @@ import com.ait.lienzo.client.core.shape.json.validators.ValidationContext;
 import com.ait.lienzo.client.core.shape.json.validators.ValidationException;
 import com.ait.lienzo.client.core.types.Point2D;
 import com.ait.lienzo.shared.core.types.*;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.json.client.JSONObject;
 
 import java.util.LinkedHashMap;
@@ -168,7 +170,21 @@ public abstract class AbstractChart<T extends AbstractChart> extends Group {
     
     protected void buildResizer() {
         if (isResizable()) {
-            resizer = new ChartResizer().build().moveToTop();
+            resizer = new ChartResizer(getWidth(), getHeight()).moveToTop();
+            resizer.addChartResizeEventHandler(new ChartResizeEventHandler() {
+                @Override
+                public void onChartResize(ChartResizeEvent event) {
+                    final double w = event.getWidth();
+                    final double h = event.getHeight();
+                    // Apply scale to chart area.
+                    AnimationProperties animationProperties = new AnimationProperties();
+                    animationProperties.push(AnimationProperty.Properties.WIDTH(w));
+                    animationProperties.push(AnimationProperty.Properties.HEIGHT(h));
+                    AbstractChart.this.animate(AnimationTweener.LINEAR, animationProperties, ANIMATION_DURATION);
+                }
+            });
+            
+            chartArea.add(resizer);
         }
     }
     
@@ -330,175 +346,6 @@ public abstract class AbstractChart<T extends AbstractChart> extends Group {
             if (animate && callback == null) shape.animate(AnimationTweener.LINEAR, animationProperties, ANIMATION_DURATION);
             if (animate && callback != null) shape.animate(AnimationTweener.LINEAR, animationProperties, duration, callback);
 
-        }
-    }
-
-
-    /**
-     * Build the shapes & mouse handlers for resizing the chart.
-     */
-    protected class ChartResizer {
-        private static final int RECTANGLE_SIZE = 30;
-        private static final double RECTANGLE_INITIA_ALPHA = 0.2d;
-        private static final double RECTANGLE_ANIMATION_DURATION = 500;
-        private int initialXPosition;
-        private int initialYPosition;
-        protected Rectangle resizeRectangleButton;
-        protected Rectangle resizeRectangle;
-        protected Arrow resizeArrow1;
-        protected Arrow resizeArrow2;
-        protected Arrow resizeArrow3;
-        protected Arrow resizeArrow4;
-
-        public ChartResizer() {
-        }
-
-        public ChartResizer build() {
-            if (resizeRectangleButton == null) {
-                double rectangleXPos = getChartWidth() - RECTANGLE_SIZE;
-                double rectangleYPos = getChartHeight() - RECTANGLE_SIZE;
-                resizeRectangleButton = new Rectangle(RECTANGLE_SIZE, RECTANGLE_SIZE).setX(rectangleXPos).setY(rectangleYPos).setFillColor(ColorName.GREY).setDraggable(true).setAlpha(RECTANGLE_INITIA_ALPHA);
-                resizeRectangle = new Rectangle(getChartWidth(), getChartHeight()).setX(0).setY(0).setFillColor(ColorName.GREY).setAlpha(0);
-                resizeArrow1 = new Arrow(new Point2D(getChartWidth() / 2, getChartHeight() / 2), new Point2D(getChartWidth(), getChartHeight() / 2), 0, 10, 10, 10, ArrowType.AT_END_TAPERED).setFillColor(ColorName.BLACK).setAlpha(0);
-                resizeArrow2 = new Arrow(new Point2D(getChartWidth() / 2, getChartHeight() / 2), new Point2D(getChartWidth() / 2, getChartHeight()), 0, 10, 10, 10, ArrowType.AT_END_TAPERED).setFillColor(ColorName.BLACK).setAlpha(0);
-                resizeArrow3 = new Arrow(new Point2D(getChartWidth() / 2, getChartHeight() / 2), new Point2D(0, getChartHeight() / 2), 0, 10, 10, 10, ArrowType.AT_END_TAPERED).setFillColor(ColorName.BLACK).setAlpha(0);
-                resizeArrow4 = new Arrow(new Point2D(getChartWidth() / 2, getChartHeight() / 2), new Point2D(getChartWidth() / 2, 0), 0, 10, 10, 10, ArrowType.AT_END_TAPERED).setFillColor(ColorName.BLACK).setAlpha(0);
-
-                resizeRectangleButton.addNodeMouseEnterHandler(new NodeMouseEnterHandler() {
-                    @Override
-                    public void onNodeMouseEnter(NodeMouseEnterEvent event) {
-                        // Apply alphas.
-                        AnimationProperties animationProperties = new AnimationProperties();
-                        animationProperties.push(AnimationProperty.Properties.ALPHA(0.5));
-                        resizeRectangleButton.animate(AnimationTweener.LINEAR, animationProperties, RECTANGLE_ANIMATION_DURATION);
-                        resizeRectangle.animate(AnimationTweener.LINEAR, animationProperties, RECTANGLE_ANIMATION_DURATION);
-                        resizeArrow1.animate(AnimationTweener.LINEAR, animationProperties, RECTANGLE_ANIMATION_DURATION);
-                        resizeArrow2.animate(AnimationTweener.LINEAR, animationProperties, RECTANGLE_ANIMATION_DURATION);
-                        resizeArrow3.animate(AnimationTweener.LINEAR, animationProperties, RECTANGLE_ANIMATION_DURATION);
-                        resizeArrow4.animate(AnimationTweener.LINEAR, animationProperties, RECTANGLE_ANIMATION_DURATION);
-                        AnimationProperties animationProperties2 = new AnimationProperties();
-                        animationProperties2.push(AnimationProperty.Properties.ALPHA(0));
-                        rightArea.animate(AnimationTweener.LINEAR, animationProperties2, RECTANGLE_ANIMATION_DURATION);
-                        leftArea.animate(AnimationTweener.LINEAR, animationProperties2, RECTANGLE_ANIMATION_DURATION);
-                        bottomArea.animate(AnimationTweener.LINEAR, animationProperties2, RECTANGLE_ANIMATION_DURATION);
-                        topArea.animate(AnimationTweener.LINEAR, animationProperties2, RECTANGLE_ANIMATION_DURATION);
-
-                    }
-                });
-
-                resizeRectangleButton.addNodeMouseExitHandler(new NodeMouseExitHandler() {
-                    @Override
-                    public void onNodeMouseExit(NodeMouseExitEvent event) {
-                        // Apply alphas.
-                        AnimationProperties animationProperties = new AnimationProperties();
-                        animationProperties.push(AnimationProperty.Properties.ALPHA(RECTANGLE_INITIA_ALPHA));
-                        resizeRectangleButton.animate(AnimationTweener.LINEAR, animationProperties, RECTANGLE_ANIMATION_DURATION);
-
-                        // Apply alphas.
-                        AnimationProperties animationProperties2 = new AnimationProperties();
-                        animationProperties2.push(AnimationProperty.Properties.ALPHA(0));
-                        resizeRectangle.animate(AnimationTweener.LINEAR, animationProperties2, RECTANGLE_ANIMATION_DURATION);
-                        resizeArrow1.animate(AnimationTweener.LINEAR, animationProperties2, RECTANGLE_ANIMATION_DURATION);
-                        resizeArrow2.animate(AnimationTweener.LINEAR, animationProperties2, RECTANGLE_ANIMATION_DURATION);
-                        resizeArrow3.animate(AnimationTweener.LINEAR, animationProperties2, RECTANGLE_ANIMATION_DURATION);
-                        resizeArrow4.animate(AnimationTweener.LINEAR, animationProperties2, RECTANGLE_ANIMATION_DURATION);
-
-                        AnimationProperties animationProperties3 = new AnimationProperties();
-                        animationProperties3.push(AnimationProperty.Properties.ALPHA(1));
-                        rightArea.animate(AnimationTweener.LINEAR, animationProperties3, RECTANGLE_ANIMATION_DURATION);
-                        leftArea.animate(AnimationTweener.LINEAR, animationProperties3, RECTANGLE_ANIMATION_DURATION);
-                        bottomArea.animate(AnimationTweener.LINEAR, animationProperties3, RECTANGLE_ANIMATION_DURATION);
-                        topArea.animate(AnimationTweener.LINEAR, animationProperties3, RECTANGLE_ANIMATION_DURATION);
-                    }
-                });
-
-                resizeRectangleButton.addNodeDragStartHandler(new NodeDragStartHandler() {
-                    @Override
-                    public void onNodeDragStart(NodeDragStartEvent event) {
-                        initialXPosition = event.getX();
-                        initialYPosition = event.getY();
-                    }
-                });
-
-                resizeRectangleButton.addNodeDragEndHandler(new NodeDragEndHandler() {
-                    @Override
-                    public void onNodeDragEnd(NodeDragEndEvent event) {
-                        int currentX = event.getX();
-                        int currentY = event.getY();
-                        int incrementX = currentX - initialXPosition;
-                        int incrementY = currentY - initialYPosition;
-                        initialXPosition = currentX;
-                        initialYPosition = currentY;
-                        double finalWidth = getWidth() + incrementX;
-                        double finalHeight = getHeight() + incrementY;
-                        Double chartWidth = getChartWidth(finalWidth);
-                        Double chartHeight = getChartHeight(finalHeight);
-
-                        // Apply scale to chart area.
-                        AnimationProperties animationProperties = new AnimationProperties();
-                        animationProperties.push(AnimationProperty.Properties.WIDTH(finalWidth));
-                        animationProperties.push(AnimationProperty.Properties.HEIGHT(finalHeight));
-                        IAnimationHandle chartAnimationHandle = AbstractChart.this.animate(AnimationTweener.LINEAR, animationProperties, ANIMATION_DURATION, new IAnimationCallback() {
-                            @Override
-                            public void onStart(IAnimation animation, IAnimationHandle handle) {
-                            }
-
-                            @Override
-                            public void onFrame(IAnimation animation, IAnimationHandle handle) {
-
-                            }
-
-                            @Override
-                            public void onClose(IAnimation animation, IAnimationHandle handle) {
-
-                            }
-                        });
-
-                        // Animate the resize rectangle to its final position.
-                        AnimationProperties rectangleAnimationProperties = new AnimationProperties();
-                        rectangleAnimationProperties.push(AnimationProperty.Properties.X(chartWidth - RECTANGLE_SIZE));
-                        rectangleAnimationProperties.push(AnimationProperty.Properties.Y(chartHeight - RECTANGLE_SIZE));
-                        IAnimationHandle rectangleAnimationHandle = resizeRectangleButton.animate(AnimationTweener.LINEAR, rectangleAnimationProperties, ANIMATION_DURATION);
-                    }
-                });
-
-                resizeRectangleButton.addNodeDragMoveHandler(new NodeDragMoveHandler() {
-                    @Override
-                    public void onNodeDragMove(NodeDragMoveEvent event) {
-                        int currentX = event.getX();
-                        int currentY = event.getY();
-                        int incrementX = currentX - initialXPosition;
-                        int incrementY = currentY - initialYPosition;
-                        double finalWidth = getWidth() + incrementX;
-                        double finalHeight = getHeight() + incrementY;
-                        Double chartWidth = getChartWidth(finalWidth);
-                        Double chartHeight = getChartHeight(finalHeight);
-                        resizeRectangle.setWidth(chartWidth).setHeight(chartHeight);
-                        Point2D start = new Point2D(chartWidth / 2, chartHeight / 2);
-                        resizeArrow1.setStart(start).setEnd(new Point2D(chartWidth, chartHeight / 2));
-                        resizeArrow2.setStart(start).setEnd(new Point2D(chartWidth / 2, chartHeight));
-                        resizeArrow3.setStart(start).setEnd(new Point2D(0, chartHeight / 2));
-                        resizeArrow4.setStart(start).setEnd(new Point2D(chartWidth / 2, 0));
-                        LayerRedrawManager.get().schedule(getLayer());
-                    }
-                });
-
-            }
-
-            chartArea.add(resizeRectangle);
-            chartArea.add(resizeArrow1);
-            chartArea.add(resizeArrow2);
-            chartArea.add(resizeArrow3);
-            chartArea.add(resizeArrow4);
-            chartArea.add(resizeRectangleButton);
-            
-            return this;
-        }
-
-        public ChartResizer moveToTop() {
-            resizeRectangle.moveToTop();
-            resizeRectangleButton.moveToTop();
-            return this;
         }
     }
 
