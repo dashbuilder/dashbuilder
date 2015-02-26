@@ -27,12 +27,10 @@ public class DisplayerView extends Composite {
     private static final String RENDERER_SELECTOR_WIDTH = "300px";
     
     protected DisplayerSettings displayerSettings;
-    protected SimplePanel container = new SimplePanel();
-    protected SimplePanel displayerContainer = new SimplePanel();
+    protected Panel container = new FlowPanel();
     protected Label label = new Label();
     protected Displayer displayer;
     protected Boolean isShowRendererSelector = false;
-    protected RendererSelector rendererSelector;
 
     public DisplayerView() {
         initWidget(container);
@@ -64,46 +62,38 @@ public class DisplayerView extends Composite {
             checkNotNull("displayerSettings", displayerSettings);
             
             // Lookup the displayer.
-            lookupDisplayer(null);
+            displayer = DisplayerHelper.lookupDisplayer(displayerSettings);
+            DisplayerHelper.draw(displayer);
 
-            // Build the composite widget. 
+            // Add the displayer into a container
             container.clear();
-            IsWidget mainWidget = displayer;
+            final FlowPanel displayerContainer = new FlowPanel();
+            displayerContainer.add(displayer);
+            container.add(displayerContainer);
+
+            // Add the renderer selector (if enabled)
             if (isShowRendererSelector) {
-                mainWidget = new VerticalPanel();
-                rendererSelector = new RendererSelector(displayerSettings.getType(), displayerSettings.getRenderer(), RendererSelector.SelectorType.RADIO, new RendererSelector.RendererSelectorEventHandler() {
-                    @Override
+                RendererSelector rendererSelector = new RendererSelector(displayerSettings.getType(), displayerSettings.getRenderer(), RendererSelector.SelectorType.RADIO, new RendererSelector.RendererSelectorEventHandler() {
+
                     public void onRendererSelected(RendererSelector.RendererSelectorEvent event) {
-                        lookupDisplayer(event.getRenderer());
+                        displayerSettings.setRenderer(event.getRenderer());
+                        displayer = DisplayerHelper.lookupDisplayer(displayerSettings);
+                        DisplayerHelper.draw(displayer);
+
                         displayerContainer.clear();
                         displayerContainer.add(displayer);
-                        DisplayerHelper.draw(displayer);
                     }
                 });
                 
-                // Widget size.
                 rendererSelector.setWidth(RENDERER_SELECTOR_WIDTH);
-                
-                displayerContainer.add(displayer);
-                ((VerticalPanel)mainWidget).add(displayerContainer);
-                ((VerticalPanel)mainWidget).add(rendererSelector);
+                container.add(rendererSelector);
             }
-            container.add( mainWidget );
-
-            DisplayerHelper.draw(displayer);
         } catch (Exception e) {
             displayMessage(e.getMessage());
         }
         return displayer;
     }
     
-    private void lookupDisplayer(String renderer) {
-        if (renderer != null && renderer.trim().length() > 0) {
-            displayerSettings.setRenderer(renderer);
-        }
-        displayer = DisplayerHelper.lookupDisplayer(displayerSettings);
-    }
-
     public Displayer redraw() {
         try {
             checkNotNull("displayerSettings", displayerSettings);

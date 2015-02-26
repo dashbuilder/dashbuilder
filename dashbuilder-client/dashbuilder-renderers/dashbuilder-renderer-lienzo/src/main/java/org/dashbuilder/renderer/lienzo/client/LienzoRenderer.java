@@ -32,7 +32,7 @@ import javax.inject.Named;
 @Named(LienzoRenderer.UUID + "_renderer")
 public class LienzoRenderer extends AbstractRendererLibrary {
 
-    public static final String UUID = "LienzoCharts";
+    public static final String UUID = "Lienzo";
 
     @PostConstruct
     private void init() {

@@ -68,7 +68,7 @@ public abstract class LienzoDisplayer extends AbstractDisplayer {
             }
             else {
                 try {
-                    String initMsg = "Initalizing Lienzo displayer";
+                    String initMsg = "Initializing";
                     GWT.log(initMsg + " ...");
 
                     mainPanel.clear();

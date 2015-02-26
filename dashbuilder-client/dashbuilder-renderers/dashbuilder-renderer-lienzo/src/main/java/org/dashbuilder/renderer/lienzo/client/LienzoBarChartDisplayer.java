@@ -171,14 +171,15 @@ public class LienzoBarChartDisplayer extends LienzoDisplayer {
 
         return new DisplayerConstraints(lookupConstraints)
                    .supportsAttribute( DisplayerAttributeDef.TYPE )
+                   .supportsAttribute(DisplayerAttributeDef.RENDERER)
                    .supportsAttribute(DisplayerAttributeDef.COLUMNS)
                    .supportsAttribute( DisplayerAttributeGroupDef.FILTER_GROUP )
                    .supportsAttribute( DisplayerAttributeGroupDef.REFRESH_GROUP)
                    .supportsAttribute( DisplayerAttributeGroupDef.TITLE_GROUP)
                    .supportsAttribute( DisplayerAttributeDef.CHART_WIDTH )
                    .supportsAttribute( DisplayerAttributeDef.CHART_HEIGHT )
-                    .supportsAttribute(DisplayerAttributeDef.CHART_BGCOLOR)
-                    .supportsAttribute(DisplayerAttributeGroupDef.CHART_MARGIN_GROUP)
+                   .supportsAttribute(DisplayerAttributeDef.CHART_BGCOLOR)
+                   .supportsAttribute(DisplayerAttributeGroupDef.CHART_MARGIN_GROUP)
                    .supportsAttribute( DisplayerAttributeGroupDef.CHART_LEGEND_GROUP )
                    .supportsAttribute( DisplayerAttributeGroupDef.AXIS_GROUP )
                    .supportsAttribute( DisplayerAttributeGroupDef.BARCHART_GROUP );
