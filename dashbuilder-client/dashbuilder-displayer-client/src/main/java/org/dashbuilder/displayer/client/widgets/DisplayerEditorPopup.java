@@ -27,6 +27,7 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.displayer.DisplayerSettings;
+import org.uberfire.ext.widgets.common.client.common.popups.BaseModal;
 
 @Dependent
 public class DisplayerEditorPopup extends Composite {
@@ -34,8 +35,8 @@ public class DisplayerEditorPopup extends Composite {
     interface Binder extends UiBinder<Widget, DisplayerEditorPopup> {}
     private static Binder uiBinder = GWT.create(Binder.class);
 
-    @UiField
-    Modal popup;
+    @UiField(provided = true)
+    BaseModal popup = new BaseModal();
 
     @UiField(provided = true)
     DisplayerEditor editor;
@@ -48,6 +49,8 @@ public class DisplayerEditorPopup extends Composite {
     public DisplayerEditorPopup(DisplayerEditor editor) {
         this.editor = editor;
         initWidget(uiBinder.createAndBindUi(this));
+        popup.setMaxHeigth("450px");
+        popup.setWidth(950);
     }
 
     public void init(DisplayerSettings settings, DisplayerEditor.Listener editorListener) {
