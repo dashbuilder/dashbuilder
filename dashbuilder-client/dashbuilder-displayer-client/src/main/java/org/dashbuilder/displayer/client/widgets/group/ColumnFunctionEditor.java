@@ -149,7 +149,9 @@ public class ColumnFunctionEditor extends Composite implements ColumnDetailsEdit
 
     public AggregateFunctionType getFunction() {
         int idx = functionListBox.getSelectedIndex();
-        if (idx == -1 || (!isColumnNumeric() && idx == 0)) return null;
+        if (!isColumnNumeric()) idx--;
+
+        if (idx < 0) return null;
         return getSupportedFunctions().get(idx);
     }
 
