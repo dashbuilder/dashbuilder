@@ -99,7 +99,7 @@ public class DisplayerEditor implements IsWidget,
             view.init(displayerSettings, this);
         } else {
             brandNewDisplayer = true;
-            displayerSettings = DisplayerPrototypes.get().getProto(DisplayerType.BARCHART).cloneInstance();
+            displayerSettings = DisplayerPrototypes.get().getProto(DisplayerType.BARCHART);
             displayerSettings.setTitle("- New displayer - ");
             view.init(displayerSettings, this);
             view.gotoTypeSelection();
@@ -162,7 +162,7 @@ public class DisplayerEditor implements IsWidget,
 
     @Override
     public void displayerTypeChanged(DisplayerType type) {
-        displayerSettings = DisplayerPrototypes.get().getProto(type).cloneInstance();
+        displayerSettings = DisplayerPrototypes.get().getProto(type);
         displayerSettings.setTitle("- New displayer - ");
         view.init(displayerSettings, this);
     }

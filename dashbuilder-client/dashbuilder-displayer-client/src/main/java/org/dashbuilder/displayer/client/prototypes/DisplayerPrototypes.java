@@ -23,6 +23,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import org.dashbuilder.dataset.sort.SortOrder;
+import org.dashbuilder.dataset.uuid.UUIDGenerator;
 import org.dashbuilder.displayer.DisplayerSettings;
 import org.dashbuilder.displayer.DisplayerSettingsFactory;
 import org.dashbuilder.displayer.DisplayerType;
@@ -42,6 +43,9 @@ public class DisplayerPrototypes {
 
     @Inject
     DataSetPrototypes dataSetPrototypes;
+
+    @Inject
+    UUIDGenerator uuidGenerator;
 
     private Map<DisplayerType,DisplayerSettings> prototypeMap = new HashMap<DisplayerType,DisplayerSettings>();
 
@@ -145,6 +149,8 @@ public class DisplayerPrototypes {
     }
 
     public DisplayerSettings getProto(DisplayerType type) {
-        return prototypeMap.get(type);
+        DisplayerSettings proto = prototypeMap.get(type);
+        proto.setUUID(uuidGenerator.newUuid());
+        return proto;
     }
 }
