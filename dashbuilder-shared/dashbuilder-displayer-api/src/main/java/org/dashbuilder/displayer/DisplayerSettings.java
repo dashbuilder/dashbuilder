@@ -78,6 +78,7 @@ public class DisplayerSettings {
 
     public DisplayerSettings cloneInstance() {
         DisplayerSettings clone = new DisplayerSettings();
+        clone.UUID = UUID;
         clone.settings = new HashMap(settings);
         if (dataSet != null) clone.dataSet = dataSet.cloneInstance();
         if (dataSetLookup != null) clone.dataSetLookup = dataSetLookup.cloneInstance();

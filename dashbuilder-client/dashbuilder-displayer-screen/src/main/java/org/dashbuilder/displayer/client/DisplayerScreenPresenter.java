@@ -47,6 +47,7 @@ import org.uberfire.workbench.model.menu.Menus;
 public class DisplayerScreenPresenter {
 
     private DisplayerView displayerView;
+    DisplayerEditorPopup displayerEditor;
     private PerspectiveCoordinator perspectiveCoordinator;
     private DisplayerSettingsJSONMarshaller jsonMarshaller;
     private DisplayerSettings displayerSettings;
@@ -69,6 +70,7 @@ public class DisplayerScreenPresenter {
         this.displayerView = displayerView;
         this.perspectiveCoordinator = perspectiveCoordinator;
         this.jsonMarshaller = jsonMarshaller;
+        this.displayerEditor =  new DisplayerEditorPopup();
     }
 
     @OnStartup
@@ -148,8 +150,8 @@ public class DisplayerScreenPresenter {
         return new Command() {
             public void execute() {
                 perspectiveCoordinator.editOn();
-                DisplayerEditorPopup displayerEditor =  new DisplayerEditorPopup();
-                displayerEditor.init(displayerSettings, new DisplayerEditor.Listener() {
+                DisplayerSettings clonedSettings = displayerSettings.cloneInstance();
+                displayerEditor.init(clonedSettings, new DisplayerEditor.Listener() {
 
                     public void onClose(DisplayerEditor editor) {
                         perspectiveCoordinator.editOff();

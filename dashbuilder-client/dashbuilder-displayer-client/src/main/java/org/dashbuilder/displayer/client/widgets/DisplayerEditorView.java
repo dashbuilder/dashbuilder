@@ -99,6 +99,7 @@ public class DisplayerEditorView extends Composite
         this.settings = settings;
         this.presenter = presenter;
         showDisplayer();
+        gotoLastTab();
     }
 
     @Override
@@ -106,9 +107,26 @@ public class DisplayerEditorView extends Composite
         optionType.addStyle(VisibilityChange.HIDE);
     }
 
+    public void gotoLastTab() {
+        int tab = DisplayerEditorStatus.get().getSelectedTab(settings.getUUID());
+        switch (tab) {
+            case 2: gotoDisplaySettings();
+                break;
+            case 1: gotoDataSetConf();
+                break;
+            default: gotoTypeSelection();
+                break;
+        }
+    }
+
+    private void saveLastTab(int tab) {
+        DisplayerEditorStatus.get().saveSelectedTab(settings.getUUID(), tab);
+    }
+
     @Override
     public void gotoTypeSelection() {
         optionsPanel.selectTab(0);
+        saveLastTab(0);
 
         typeSelector.init(presenter);
         typeSelector.select(settings.getType());
@@ -122,6 +140,7 @@ public class DisplayerEditorView extends Composite
     @Override
     public void gotoDataSetConf() {
         optionsPanel.selectTab(1);
+        saveLastTab(1);
 
         if (settings.getDataSet() == null && settings.getDataSetLookup() != null) {
             // Fetch before initializing the editor
@@ -154,6 +173,7 @@ public class DisplayerEditorView extends Composite
     @Override
     public void gotoDisplaySettings() {
         optionsPanel.selectTab(2);
+        saveLastTab(2);
         optionSettings.setActive(true);
 
         settingsEditor.init(settings, presenter);
