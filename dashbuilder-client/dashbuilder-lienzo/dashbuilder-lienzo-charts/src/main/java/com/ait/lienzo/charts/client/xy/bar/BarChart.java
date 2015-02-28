@@ -99,7 +99,7 @@ public class BarChart extends AbstractChart<BarChart>
     protected static final double BAR_MAX_SIZE_PROPORTION = 0.3;
     private BarChartBuilder builder;
     private ChartLegend legend = null; // The legend.
-    final BarChartTooltip tooltip = new BarChartTooltip();
+    BarChartTooltip tooltip = null; // The tooltip.
 
     protected BarChart(JSONObject node, ValidationContext ctx) throws ValidationException
     {
@@ -203,7 +203,7 @@ public class BarChart extends AbstractChart<BarChart>
 
     public final XYChartData getData()
     {
-        if (getAttributes().isDefined(ChartAttribute.SHOW_CATEGORIES_AXIS_TITLE)) {
+        if (getAttributes().isDefined(ChartAttribute.XY_CHART_DATA)) {
             XYChartData.XYChartDataJSO jso = getAttributes().getArrayOfJSO(ChartAttribute.XY_CHART_DATA.getProperty()).cast();
             return new XYChartData(jso);
         }
@@ -356,8 +356,8 @@ public class BarChart extends AbstractChart<BarChart>
                 @Override
                 public void run() {
                     if (legend != null) legend.clear();
+                    if (tooltip != null) tooltip.clear();
                     builder = null;
-                    BarChart.this.clearAreas();
                     isReloading[0] = false;
                     callback.run();
                 }
@@ -386,7 +386,23 @@ public class BarChart extends AbstractChart<BarChart>
         // Set positions and sizes for shapes.
         Double chartWidth = getChartWidth();
         Double chartHeight = getChartHeight();
-        redraw(chartWidth, chartHeight, true);
+        boolean animate = true;
+        
+        // Redraw shapes provided by super class.
+        super.redraw(chartWidth, chartHeight, animate);
+        
+        // Reload axis builder as data has changed.
+        builder.reloadBuilders()
+                // Recalculate positions and size for categories axis title shape.
+                .setCategoriesAxisTitleAttributes(chartWidth, chartHeight, animate)
+                        // Recalculate positions and size for categories intervals shapes.
+                .setCategoriesAxisIntervalsAttributes(chartWidth, chartHeight, animate)
+                        // Recalculate positions and size for values axis title shape.
+                .setValuesAxisTitleAttributes(chartWidth, chartHeight, animate)
+                        // Recalculate positions and size for values intervals shapes.
+                .setValuesAxisIntervalsAttributes(chartWidth, chartHeight, animate)
+                        // Recalculate positions, size and add or remove rectangles (if data has changed).
+                .setValuesAttributes(chartWidth, chartHeight, animate, new BarAnimation(BarAnimationType.CREATE));
         
         // Legend.
         buildLegend();
@@ -417,7 +433,8 @@ public class BarChart extends AbstractChart<BarChart>
     }
     
     private void buildToolip() {
-        chartArea.add(tooltip.build());
+        tooltip = new BarChartTooltip();
+        chartArea.add(tooltip);
     }
 
     private void buildLegend() {
@@ -515,11 +532,25 @@ public class BarChart extends AbstractChart<BarChart>
                         // Recalculate positions and size for values intervals shapes.
                 .setValuesAxisIntervalsAttributes(chartWidth, chartHeight, animate)
                         // Recalculate positions, size and add or remove rectangles (if data has changed).
-                .setValuesAttributes(chartWidth, chartHeight, animate);
+                .setValuesAttributes(chartWidth, chartHeight, animate, new BarAnimation(BarAnimationType.RESIZE));
         
         return this;
     }
 
+    private enum BarAnimationType {
+        CREATE, RESIZE;
+    }
+    
+    private class BarAnimation {
+        BarAnimationType type;
+        Double initialX;
+        Double initialY;
+
+        public BarAnimation(BarAnimationType type) {
+            this.type = type;
+        }
+    }
+    
     private abstract class BarChartBuilder<T extends BarChartBuilder> {
 
         final AxisBuilder[] categoriesAxisBuilder = new AxisBuilder[1];
@@ -662,17 +693,23 @@ public class BarChart extends AbstractChart<BarChart>
             return "value"+numSerie+""+numValue;
         }
 
-        protected void animateRectangle(final List<Object[]> rectanglesAttrs, final int index, final double duration) {
+        protected void animateRectangle(final List<Object[]> rectanglesAttrs, final BarAnimation barAnimation, final int index, final double duration) {
             if (index >= rectanglesAttrs.size()) return;
             Object[] rectangleAttrs = rectanglesAttrs.get(index);
 
-            setShapeAttributes((Shape) rectangleAttrs[0], (Double) rectangleAttrs[1], (Double) rectangleAttrs[2],
+            Shape bar = (Shape) rectangleAttrs[0];
+            
+            // Bars animation must start from chart bottom. So position the bar there.
+            if (barAnimation.initialX != null) bar.setX(barAnimation.initialX);
+            if (barAnimation.initialY != null) bar.setY(barAnimation.initialY);
+
+            setShapeAttributes(bar, (Double) rectangleAttrs[1], (Double) rectangleAttrs[2],
                     (Double) rectangleAttrs[3], (Double) rectangleAttrs[4],
                     (IColor) rectangleAttrs[5], (Double) rectangleAttrs[6], true, duration, new AnimationCallback() {
                         @Override
                         public void onClose(IAnimation animation, IAnimationHandle handle) {
                             super.onClose(animation, handle);
-                            animateRectangle(rectanglesAttrs, new Integer(index) + 1, duration);
+                            animateRectangle(rectanglesAttrs, barAnimation, new Integer(index) + 1, duration);
                         }
                     });
         }
@@ -695,7 +732,7 @@ public class BarChart extends AbstractChart<BarChart>
         public abstract T setCategoriesAxisIntervalsAttributes(Double width, Double height, boolean animate);
         public abstract T setValuesAxisIntervalsAttributes(Double width, Double height, boolean animate);
 
-        public T setValuesAttributes(Double width, Double height, boolean animate) {
+        public T setValuesAttributes(Double width, Double height, boolean animate, BarAnimation barAnimation) {
             XYChartSerie[] series = getData().getSeries();
 
             // Find removed series in order to remove bar rectangle instances.
@@ -716,14 +753,32 @@ public class BarChart extends AbstractChart<BarChart>
                         if (legend != null) legend.add(serie);
                     }
 
-                    setValuesAttributesForSerie(serie, numSerie, width, height, animate);
+                    setValuesAttributesForSerie(serie, numSerie, width, height, animate, barAnimation);
                 }
             }
             return (T) this;
         }
         
-        protected abstract T setValuesAttributesForSerie(final XYChartSerie serie, int numSerie, Double width, Double height, boolean animate);
+        protected abstract T setValuesAttributesForSerie(final XYChartSerie serie, int numSerie, Double width, Double height, boolean animate, BarAnimation barAnimation);
         
+        protected void animateBars(List<Object[]> rectanglesAttrs, BarAnimation barAnimation, int valuesCount, boolean animate) {
+            if (!rectanglesAttrs.isEmpty()) {
+                switch (barAnimation.type) {
+                    case CREATE:
+                        double duration = ANIMATION_DURATION / valuesCount;
+                        animateRectangle(rectanglesAttrs, barAnimation, 0, duration);
+                        break;
+                    case RESIZE:
+                        for (Object[] rectangleAttr : rectanglesAttrs) {
+                            setShapeAttributes((Shape) rectangleAttr[0], (Double) rectangleAttr[1], (Double) rectangleAttr[2], (Double) rectangleAttr[3], (Double) rectangleAttr[4], (IColor) rectangleAttr[5],(Double) rectangleAttr[6], animate);
+                        }
+                        break;
+                }
+
+
+            }
+            
+        }
         public abstract T reloadBuilders();
 
         protected void seriesValuesAlpha(int numSerie, int numValue, double alpha) {
@@ -760,8 +815,15 @@ public class BarChart extends AbstractChart<BarChart>
 
                 @Override
                 public void onClose(IAnimation animation, IAnimationHandle handle) {
-                    if (!shapesToClear.isEmpty()) shapesToClear.remove(0);
-                    if (shapesToClear.isEmpty()) callback.run();
+                    if (!shapesToClear.isEmpty()) {
+                        IPrimitive shape = shapesToClear.get(0);
+                        // Remove all shapes from parent.
+                        shape.removeFromParent();
+                        shapesToClear.remove(0);
+                    }
+                    if (shapesToClear.isEmpty()) {
+                        callback.run();
+                    }
                 }
             };
             
@@ -927,6 +989,7 @@ public class BarChart extends AbstractChart<BarChart>
                         BarChartLabel chartLabel = seriesLabels.get(i);
                         double labelWidth = chartLabel.getLabelWidth();
                         chartLabel.setAttributes(position - labelWidth/2 , 10d, null, null, animate);
+                        //bottomArea.add(new Rectangle(50,50).setX(position).setY(10d).setFillColor(ColorName.BLACK).setAlpha(0.5));
                     }
                 } else {
                     seriesLabels.clear();
@@ -936,7 +999,7 @@ public class BarChart extends AbstractChart<BarChart>
             return this;
         }
 
-        protected VerticalBarChartBuilder setValuesAttributesForSerie(final XYChartSerie serie, final int numSerie, Double width, Double height, boolean animate) {
+        protected VerticalBarChartBuilder setValuesAttributesForSerie(final XYChartSerie serie, final int numSerie, Double width, Double height, boolean animate, BarAnimation barAnimation) {
             XYChartSerie[] series = getData().getSeries();
 
             // Rebuild bars for serie values
@@ -990,7 +1053,8 @@ public class BarChart extends AbstractChart<BarChart>
                             double xTooltip = x + width/2;
                             double yTooltip = y - BarChartTooltip.TRIANGLE_SIZE;
                             seriesValuesAlpha(numSerie, numValue, 0.5d);
-                            tooltip.show(xTooltip, yTooltip, xValueFormatted, yValueFormatted);
+                            tooltip.setX(xTooltip).setY(yTooltip);
+                            tooltip.show(xValueFormatted, yValueFormatted);
                         }
                     });
                     
@@ -1017,8 +1081,6 @@ public class BarChart extends AbstractChart<BarChart>
                             }
                         }
                     });
-                    // Bars animation must start from chart bottom. So position the bar there.
-                    barObject.setX(0).setY(getChartHeight());
                     double lastBarWidth = barWidth - BAR_SEPARATION;
                     if (lastBarWidth > BAR_MAX_SIZE) {
                         lastBarWidth -= barWidth * BAR_MAX_SIZE_PROPORTION;
@@ -1026,13 +1088,12 @@ public class BarChart extends AbstractChart<BarChart>
                     }
                     Object[] rectangleAttr = new Object[] {barObject, x, y, lastBarWidth, barHeight, serie.getColor(), alpha};
                     rectanglesAttrs.add(rectangleAttr);
+                    //chartArea.add(new Rectangle(50,50).setX(x).setY(y).setFillColor(ColorName.RED).setAlpha(0.5));
                 }
-
-                if (!rectanglesAttrs.isEmpty()) {
-                    double duration = ANIMATION_DURATION / categoryAxisValues.size();
-                    animateRectangle(rectanglesAttrs, 0, duration);
-
-                }
+                // Animate the bars to their final positions and sizes.
+                barAnimation.initialX = 0d;
+                barAnimation.initialY = getChartHeight();
+                animateBars(rectanglesAttrs, barAnimation, categoryAxisValues.size(), animate);
             }
             return this;
         }
@@ -1249,7 +1310,7 @@ public class BarChart extends AbstractChart<BarChart>
 
         }
         
-        protected HorizontalBarChartBuilder setValuesAttributesForSerie(final XYChartSerie serie, final int numSerie, Double width, Double height, boolean animate) {
+        protected HorizontalBarChartBuilder setValuesAttributesForSerie(final XYChartSerie serie, final int numSerie, Double width, Double height, boolean animate, BarAnimation barAnimation) {
             XYChartSerie[] series = getData().getSeries();
 
             // Rebuild bars for serie values
@@ -1304,7 +1365,8 @@ public class BarChart extends AbstractChart<BarChart>
                             double xTooltip = x + width;
                             double yTooltip = y + height/2;
                             seriesValuesAlpha(numSerie, numValue, 0.5d);
-                            tooltip.show(xTooltip, yTooltip, yValueFormatted, xValueFormatted);
+                            tooltip.setX(xTooltip).setY(yTooltip);
+                            tooltip.show(yValueFormatted, xValueFormatted);
                         }
                     });
 
@@ -1339,12 +1401,10 @@ public class BarChart extends AbstractChart<BarChart>
                     Object[] rectangleAttr = new Object[] {barObject, x, y, barWidth, lastBarHeight, serie.getColor(), alpha};
                     rectanglesAttrs.add(rectangleAttr);
                 }
-                
-                if (!rectanglesAttrs.isEmpty()) {
-                    double duration = ANIMATION_DURATION / yAxisValues.size();
-                    animateRectangle(rectanglesAttrs, 0, duration);
-                    
-                }
+
+                // Animate the bars to their final positions and sizes.
+                animateBars(rectanglesAttrs, barAnimation, yAxisValues.size(), animate);
+
             }
             return this;
         }

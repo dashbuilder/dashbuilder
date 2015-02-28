@@ -51,7 +51,7 @@ public class BarChartLabelFormatter {
     private double checkRotation(double maxWidth) {
         if (labels != null && !labels.isEmpty()) {
             for (BarChartLabel label : labels) {
-                if (label.getLabel().getBoundingBox().getWidth() > maxWidth) return 45;
+                if (label.getLabel().getBoundingBox().getWidth() > maxWidth) return -45;
             }
         }
         return 0;        

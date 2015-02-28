@@ -38,12 +38,12 @@ public final class CategoryAxisBuilder extends AxisBuilder<String> {
         String[] labelValues = dataTableLabelsColumn.getStringValues();
         int labelsCount = labelValues.length;
         int seriesCount = dataSummary.getNumSeries();
-        double labelSize = chartSizeAttribute / ( seriesCount * labelsCount);
+        double labelSize = chartSizeAttribute / labelsCount;
         for (int i = 0, j = labelsCount - 1; i < labelsCount; i++, j--) {
             String text = labelValues[i];
             double position = (axisDirection.equals(AxisDirection.DESC)) ? labelSize * i : labelSize * j;
-            position += labelSize * seriesCount / 2; 
-            result.add(new AxisLabel(text, i, position * seriesCount));
+            position += labelSize/ 2; 
+            result.add(new AxisLabel(text, i, position));
         }
         return result;
     }

@@ -112,7 +112,7 @@ public abstract class AbstractChart<T extends AbstractChart> extends Group {
         add(rightArea); // Area for right padding.
 
         // Position the areas.
-        moveAreas(0d, 0d);
+        moveAreas(0d, 0d, false);
         
         // Chart title.
         buildTitle();
@@ -123,13 +123,14 @@ public abstract class AbstractChart<T extends AbstractChart> extends Group {
         // Add the resizer.
         buildResizer();
 
-        this.setAttributesChangedBatcher(attributesChangedBatcher);
+        // TODO: Dean - If setting the batcher, the attributechangedhandler for XY_CHART_DATA IN BARCHART IS CALLED WHEN USING RESIZER, AND SHOULD NOT BE CALLED. ONLY HANDLERS FOR X AND Y SHOULD BE CALLED, CHART DATA IS NOT MODIFIED ON RESIZING.
+        //this.setAttributesChangedBatcher(attributesChangedBatcher);
 
         AttributesChangedHandler xyhandler = new AttributesChangedHandler() {
             @Override
             public void onAttributesChanged(AttributesChangedEvent event) {
                 if (!isReloading[0]) {
-                    moveAreas(getX(), getY());
+                    moveAreas(getX(), getY(), false);
                 }
             }
         };
@@ -155,37 +156,36 @@ public abstract class AbstractChart<T extends AbstractChart> extends Group {
     }
 
     protected T redraw(final Double chartWidth, final Double chartHeight, final boolean animate) {
-        // Move areas using new width and height.
-        setGroupAttributes(bottomArea, null, topArea.getY() + getChartHeight() + getMarginTop(), animate);
-        setGroupAttributes(rightArea, getX() + getChartWidth() + getMarginLeft(), null, animate);
         
-        // Chart title.
-        buildTitle();
-
-        // Add the resizer.
-        buildResizer();
+        // Move areas using new width and height.
+        moveAreas(getX(), getY(), animate);
         
         return (T) this;
     }
     
     protected void buildResizer() {
-        if (isResizable()) {
-            resizer = new ChartResizer(getWidth(), getHeight()).moveToTop();
+        if (isResizable() && resizer == null) {
+            resizer = new ChartResizer(getWidth(), getHeight());
+            resizer.setX(getX()).setY(getY()).moveToTop();
             resizer.addChartResizeEventHandler(new ChartResizeEventHandler() {
                 @Override
                 public void onChartResize(ChartResizeEvent event) {
-                    final double w = event.getWidth();
-                    final double h = event.getHeight();
-                    // Apply scale to chart area.
-                    AnimationProperties animationProperties = new AnimationProperties();
-                    animationProperties.push(AnimationProperty.Properties.WIDTH(w));
-                    animationProperties.push(AnimationProperty.Properties.HEIGHT(h));
-                    AbstractChart.this.animate(AnimationTweener.LINEAR, animationProperties, ANIMATION_DURATION);
+                    AbstractChart.this.onChartResize(event);
                 }
             });
             
-            chartArea.add(resizer);
+            add(resizer);
         }
+    }
+    
+    protected void onChartResize(ChartResizeEvent event) {
+        final double w = event.getWidth();
+        final double h = event.getHeight();
+        // Apply scale to chart area.
+        AnimationProperties animationProperties = new AnimationProperties();
+        animationProperties.push(AnimationProperty.Properties.WIDTH(w - getMarginLeft() - getMarginRight()));
+        animationProperties.push(AnimationProperty.Properties.HEIGHT(h - getMarginBottom() - getMarginBottom()));
+        AbstractChart.this.animate(AnimationTweener.LINEAR, animationProperties, ANIMATION_DURATION);
     }
     
     protected void buildTitle() {
@@ -196,24 +196,58 @@ public abstract class AbstractChart<T extends AbstractChart> extends Group {
         }
     }
 
-    protected void moveAreas(Double x, Double y) {
-        if (x != null) {
-            double marginLeft = getMarginLeft();
-            leftArea.setX(x);
-            topArea.setX(x + marginLeft);
-            chartArea.setX(x + marginLeft);
-            bottomArea.setX(x + marginLeft);
-            rightArea.setX(x + getChartWidth() + marginLeft);
-        }
-        if (y != null) {
-            double marginTop = getMarginTop();
-            topArea.setY(y);
-            chartArea.setY(y + marginTop);
-            leftArea.setY(y + marginTop);
-            rightArea.setY(y + marginTop);
-            bottomArea.setY(y + getChartHeight() + marginTop);
-        }
+    protected void moveAreas(Double x, Double y, boolean animate) {
+        Double[] leftAreaPos = getLeftAreaPosition(x,y);
+        Double[] rightAreaPos = getRightAreaPosition(x, y);
+        Double[] topAreaPos = getTopAreaPosition(x, y);
+        Double[] bottomAreaPos = getBottomAreaPosition(x, y);
+        Double[] chartAreaPos = getChartAreaPosition(x, y);
+
+        setGroupAttributes(leftArea, leftAreaPos[0], leftAreaPos[1], animate);
+        setGroupAttributes(rightArea, rightAreaPos[0], rightAreaPos[1], animate);
+        setGroupAttributes(topArea, topAreaPos[0], topAreaPos[1], animate);
+        setGroupAttributes(bottomArea, bottomAreaPos[0], bottomAreaPos[1], animate);
+        setGroupAttributes(chartArea, chartAreaPos[0], chartAreaPos[1], animate);
+        
         chartArea.moveToTop();
+    }
+    
+    protected Double[] getLeftAreaPosition(Double x, Double y) {
+        double marginTop = getMarginTop();
+        Double _x = x != null ? x : null;
+        Double _y = y != null ? y + marginTop : null;
+        return new Double[] { _x , _y };
+    }
+
+    protected Double[] getRightAreaPosition(Double x, Double y) {
+        double marginLeft = getMarginLeft();
+        double marginTop = getMarginTop();
+        Double _x = x != null ? x + getChartWidth() + marginLeft : null;
+        Double _y = y != null ? y + marginTop : null;
+        return new Double[] { _x , _y };
+    }
+
+    protected Double[] getTopAreaPosition(Double x, Double y) {
+        double marginLeft = getMarginLeft();
+        Double _x = x != null ? x + marginLeft : null;
+        Double _y = y != null ? y : null;
+        return new Double[] { _x , _y };
+    }
+
+    protected Double[] getBottomAreaPosition(Double x, Double y) {
+        double marginLeft = getMarginLeft();
+        double marginTop = getMarginTop();
+        Double _x = x != null ? x + marginLeft : null;
+        Double _y = y != null ? y + marginTop + getChartHeight() : null;
+        return new Double[] { _x , _y };
+    }
+
+    protected Double[] getChartAreaPosition(Double x, Double y) {
+        double marginLeft = getMarginLeft();
+        double marginTop = getMarginTop();
+        Double _x = x != null ? x + marginLeft : null;
+        Double _y = y != null ? y + marginTop : null;
+        return new Double[] { _x , _y };
     }
     
     protected abstract void doBuild();
