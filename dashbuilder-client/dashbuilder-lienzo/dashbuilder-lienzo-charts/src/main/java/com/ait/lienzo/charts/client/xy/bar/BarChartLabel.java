@@ -10,7 +10,7 @@ import com.ait.lienzo.shared.core.types.IColor;
 import com.ait.lienzo.shared.core.types.TextAlign;
 import com.ait.lienzo.shared.core.types.TextBaseLine;
 
-public class BarChartLabel {
+public class BarChartLabel extends Group {
     private static final double ANIMATION_DURATION = 500;
     private static final String FONT_FAMILY = "Verdana";
     private static final String FONT_STYLE = "";
@@ -23,25 +23,25 @@ public class BarChartLabel {
 
     public BarChartLabel(AxisBuilder.AxisLabel axisLabel) {
         this.axisLabel = axisLabel;
+        build();
     }
 
-    public IPrimitive build() {
+    private void build() {
         label = new Text(axisLabel.getText(), FONT_FAMILY, FONT_STYLE, FONT_SIZE).setFillColor(LABEL_COLOR).setTextAlign(TextAlign.LEFT).setTextBaseLine(TextBaseLine.TOP);
         label.setID("label" + axisLabel.getIndex());
         labelContainer = new Rectangle(1,1);
-        Group labelGroup = new Group();
-        labelGroup.add(label);
-        labelGroup.add(labelContainer);
+        add(label);
+        add(labelContainer);
         labelContainer.setAlpha(0.01);
         labelContainer.moveToTop();
-        return labelGroup;
     }
 
     public void setAttributes(Double x, Double y, Double width, Double height, boolean animate) {
         String text = axisLabel.getText();
         label.setText(text);
-        setShapeAttributes(label, x, y, width, height, animate);
-        setShapeAttributes(labelContainer, x, y, width, height, animate);
+        this.setX(x).setY(y);
+        setShapeAttributes(label, null, null, width, height, animate);
+        setShapeAttributes(labelContainer, null, null, width, height, animate);
     }
     
     public void clear() {
@@ -73,16 +73,9 @@ public class BarChartLabel {
         return label.getBoundingBox().getHeight();
     }
     
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == null) return false;
-
-        try {
-            BarChartLabel _label = (BarChartLabel) obj;
-            return label.getID().equals(_label.getLabel().getID());
-        } catch (ClassCastException e) {
-            return false;
-        }
+    public String getId() {
+        return label.getID();
+        
     }
 
     private void setShapeAttributes(Shape shape, Double x, Double y, Double width, Double height, boolean animate) {

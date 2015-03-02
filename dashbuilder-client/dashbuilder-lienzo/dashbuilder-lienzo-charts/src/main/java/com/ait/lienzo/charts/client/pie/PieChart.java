@@ -24,6 +24,7 @@ import com.ait.lienzo.charts.client.pie.event.DataReloadedEvent;
 import com.ait.lienzo.charts.client.pie.event.DataReloadedEventHandler;
 import com.ait.lienzo.charts.client.pie.event.ValueSelectedEvent;
 import com.ait.lienzo.charts.client.pie.event.ValueSelectedHandler;
+import com.ait.lienzo.charts.client.xy.bar.ChartLegend;
 import com.ait.lienzo.client.core.animation.*;
 import com.ait.lienzo.client.core.event.*;
 import com.ait.lienzo.client.core.shape.*;
@@ -45,7 +46,6 @@ public class PieChart extends AbstractChart<PieChart>
 {
     private Group slices = new Group();
     private Group labels = new Group();
-    private List<Line> lines = new LinkedList<Line>();
     private List<Text> texts = new LinkedList<Text>();
     private List<PieSlice> pieSlices = new LinkedList<PieSlice>();
     
@@ -183,13 +183,7 @@ public class PieChart extends AbstractChart<PieChart>
             Text text = new Text("", getFontFamily(), getFontStyle(), getFontSize()).setFillColor(ColorName.BLACK).setTextBaseLine(TextBaseLine.MIDDLE).setAlpha(0d);
             texts.add(text);
 
-            Line line = new Line(0, 0, 0, 0).setStrokeColor(ColorName.BLACK).setStrokeWidth(3).setAlpha(0d);
-            lines.add(line);
-
             labels.add(text);
-
-            labels.add(line);
-
         }
 
         addOnAreaChartCentered(labels);
@@ -207,11 +201,11 @@ public class PieChart extends AbstractChart<PieChart>
         // Redraw shapes provided by super class.
         super.redraw(chartWidth, chartHeight, animate);
         
-        if (lines == null && texts == null && pieSlices == null) {
-            lines = new LinkedList<Line>();
+        if (texts == null && pieSlices == null) {
             texts = new LinkedList<Text>();
             pieSlices = new LinkedList<PieSlice>();
             _build(getData());
+            buildLegend();
         }
         
         double radius = getRadius(chartWidth, chartHeight);
@@ -246,7 +240,6 @@ public class PieChart extends AbstractChart<PieChart>
             if (slice != null) {
                 double startAngle = PieSlice.buildStartAngle(sofar);
                 double endAngle = PieSlice.buildEngAngle(sofar, value);
-                // slice.setRadius(radius).setStartAngle(startAngle).setEndAngle(endAngle);
                 setShapeAttributes(slice, radius, startAngle, endAngle, animate);
             } else {
                 // TODO: New data values added.
@@ -266,9 +259,9 @@ public class PieChart extends AbstractChart<PieChart>
             {
                 n_ang = n_ang + (Math.PI * 2.0);
             }
-            double lx = Math.sin(n_ang) * (radius + 50);
+            double lx = Math.sin(n_ang) * (radius/2);
 
-            double ly = 0 - Math.cos(n_ang) * (radius + 50);
+            double ly = 0 - Math.cos(n_ang) * (radius/2);
 
             TextAlign align;
 
@@ -296,30 +289,13 @@ public class PieChart extends AbstractChart<PieChart>
 
                 align = TextAlign.RIGHT;
             }
-            String label = categories[i];
 
-            if (null == label)
-            {
-                label = "";
-            }
-            else
-            {
-                label = label + " ";
-            }
             Text text = texts.get(i);
             if (text != null) {
-                text.setText(label + getLabel(value * 100)).setTextAlign(align);
-                setShapeAttributes(text, lx, ly, null, null, null, 1d, animate);
-            } else {
-                // TODO: New data values added.
-            }
-
-            Line line = lines.get(i);
-            if (line != null) {
-                Point2D startPoint = new Point2D((Math.sin(n_ang) * radius), 0 - (Math.cos(n_ang) * radius));
-                Point2D endPoint = new Point2D((Math.sin(n_ang) * (radius + 50)), 0 - (Math.cos(n_ang) * (radius + 50)));
-                line.setPoints(new Point2DArray(startPoint, endPoint)).setAlpha(0);
-                setShapeAttributes(line, 1d, animate);
+                text.setText(getLabel(value * 100)).setTextAlign(align);
+                double textWidth = text.getBoundingBox().getWidth();
+                double textHeight = text.getBoundingBox().getHeight();
+                setShapeAttributes(text, lx + textWidth/2, ly + textHeight/2, null, null, null, 1d, animate);
             } else {
                 // TODO: New data values added.
             }
@@ -329,7 +305,8 @@ public class PieChart extends AbstractChart<PieChart>
 
         addOnAreaChartCentered(labels);
         addOnAreaChartCentered(slices);
-
+        labels.moveToTop();
+        
         return this;
     }
 
@@ -360,13 +337,6 @@ public class PieChart extends AbstractChart<PieChart>
             }
         };
 
-        // Apply animation of lines.
-        if (lines != null) {
-            for (Line line : lines) {
-                if (line != null) shapesToClear.add(line);
-            }
-        }
-
         // Apply animation to texts.
         if (texts != null ) {
             for (Text text : texts) {
@@ -383,13 +353,6 @@ public class PieChart extends AbstractChart<PieChart>
         // Create the animation properties.
         AnimationProperties animationProperties = new AnimationProperties();
         animationProperties.push(AnimationProperty.Properties.ALPHA(0d));
-
-        // Apply animation of lines.
-        if (lines != null) {
-            for (Line line : lines) {
-                if (line != null) line.animate(AnimationTweener.LINEAR, animationProperties, CLEAR_ANIMATION_DURATION, animationCallback);
-            }
-        }
 
         AnimationProperties animationProperties2 = new AnimationProperties();
         animationProperties2.push(AnimationProperty.Properties.X(0));
@@ -410,12 +373,26 @@ public class PieChart extends AbstractChart<PieChart>
         }
 
         reset();
-        clearAreas();
-
     }
-    
+
+    @Override
+    protected void buildLegend() {
+        super.buildLegend();
+        
+        PieChartData data = getData();
+        if (legend != null && getData().getDataTable() != null) {
+            String catAxisProp = data.getCategoriesProperty();
+            String[] values = getData().getDataTable().getColumn(catAxisProp).getStringValues();
+            if (values != null && values.length > 0) {
+                for (int x = 0; x < values.length; x++) {
+                    String value = values[x];
+                    legend.add(new ChartLegend.ChartLegendEntry(value, getColor(x)));
+                }
+            }
+        }
+    }
+
     private void reset() {
-        lines = null;
         texts = null;
         pieSlices = null;
         
@@ -445,6 +422,8 @@ public class PieChart extends AbstractChart<PieChart>
                 @Override
                 public void run() {
                     // Reset chart's inner shapes.
+                    if (legend != null) legend.clear();
+                    isBuilt[0] = false;
                     isReloading[0] = false;
                     _setData(data);
                 }
@@ -502,7 +481,7 @@ public class PieChart extends AbstractChart<PieChart>
         double forSize = chartHeight;
         if (getChartWidth() < forSize) forSize = chartWidth;
 
-        return (forSize / 2) - 100;
+        return forSize / 2;
     }
 
     private final native String getLabel(double perc)
@@ -511,16 +490,6 @@ public class PieChart extends AbstractChart<PieChart>
 
         return numb.toFixed(2) + "%";
     }-*/;
-
-    @Override
-    public double getChartHeight() {
-        return getHeight();
-    }
-
-    @Override
-    public double getChartWidth() {
-        return getWidth();
-    }
 
     @Override
     public JSONObject toJSONObject()

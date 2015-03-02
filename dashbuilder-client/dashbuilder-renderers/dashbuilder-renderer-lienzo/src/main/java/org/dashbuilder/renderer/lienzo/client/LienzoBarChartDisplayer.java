@@ -89,7 +89,7 @@ public class LienzoBarChartDisplayer extends LienzoDisplayer {
         //chart.setLegendPosition(LegendPosition.RIGHT); // TODO: Custom displayer parameter.
         //chart.setCategoriesAxisLabelsPosition(LabelsPosition.LEFT); // TODO: Custom displayer parameter.
         //chart.setValuesAxisLabelsPosition(LabelsPosition.BOTTOM); // TODO: Custom displayer parameter.
-        chart.setResizable(false); // TODO: Custom displayer parameter.
+        chart.setResizable(displayerSettings.isResizable());
         chart.setAnimated(true); // TODO: Custom displayer parameter.
 
         // Events (filtering)
@@ -178,6 +178,9 @@ public class LienzoBarChartDisplayer extends LienzoDisplayer {
                    .supportsAttribute( DisplayerAttributeGroupDef.TITLE_GROUP)
                    .supportsAttribute( DisplayerAttributeDef.CHART_WIDTH )
                    .supportsAttribute( DisplayerAttributeDef.CHART_HEIGHT )
+                   .supportsAttribute(DisplayerAttributeDef.CHART_RESIZABLE)
+                   .supportsAttribute(DisplayerAttributeDef.CHART_MAX_WIDTH)
+                   .supportsAttribute( DisplayerAttributeDef.CHART_MAX_HEIGHT)
                    .supportsAttribute(DisplayerAttributeDef.CHART_BGCOLOR)
                    .supportsAttribute(DisplayerAttributeGroupDef.CHART_MARGIN_GROUP)
                    .supportsAttribute( DisplayerAttributeGroupDef.CHART_LEGEND_GROUP )

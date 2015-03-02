@@ -3,6 +3,8 @@ package com.ait.lienzo.charts.client;
 import com.ait.lienzo.charts.client.resizer.ChartResizeEvent;
 import com.ait.lienzo.charts.client.resizer.ChartResizeEventHandler;
 import com.ait.lienzo.charts.client.resizer.ChartResizer;
+import com.ait.lienzo.charts.client.xy.XYChartSerie;
+import com.ait.lienzo.charts.client.xy.bar.ChartLegend;
 import com.ait.lienzo.charts.shared.core.types.*;
 import com.ait.lienzo.client.core.Attribute;
 import com.ait.lienzo.client.core.animation.*;
@@ -13,6 +15,7 @@ import com.ait.lienzo.client.core.shape.json.validators.ValidationContext;
 import com.ait.lienzo.client.core.shape.json.validators.ValidationException;
 import com.ait.lienzo.client.core.types.Point2D;
 import com.ait.lienzo.shared.core.types.*;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.json.client.JSONObject;
 
 import java.util.LinkedHashMap;
@@ -54,11 +57,14 @@ public abstract class AbstractChart<T extends AbstractChart> extends Group {
     protected final Group leftArea = new Group();
     protected ChartResizer resizer = null;
     protected Text chartTitle = null;
+    protected ChartLegend legend = null; // The legend.
+    protected final Boolean[] isBuilt = new Boolean[1];
     protected final Boolean[] isReloading = new Boolean[1];
 
     protected IAttributesChangedBatcher attributesChangedBatcher = new AnimationFrameAttributesChangedBatcher();
 
     protected AbstractChart() {
+        isBuilt[0] = false;
         isReloading[0] = false;
     }
 
@@ -103,6 +109,7 @@ public abstract class AbstractChart<T extends AbstractChart> extends Group {
 
     public AbstractChart build() {
 
+        if (isBuilt[0]) return (T) this;
 
         // Add the area node containers.
         add(chartArea); // Area for drawing the chart.
@@ -123,8 +130,11 @@ public abstract class AbstractChart<T extends AbstractChart> extends Group {
         // Add the resizer.
         buildResizer();
 
+        // Legend.
+        buildLegend();
+        
         // TODO: Dean - If setting the batcher, the attributechangedhandler for XY_CHART_DATA IN BARCHART IS CALLED WHEN USING RESIZER, AND SHOULD NOT BE CALLED. ONLY HANDLERS FOR X AND Y SHOULD BE CALLED, CHART DATA IS NOT MODIFIED ON RESIZING.
-        //this.setAttributesChangedBatcher(attributesChangedBatcher);
+        // this.setAttributesChangedBatcher(attributesChangedBatcher);
 
         AttributesChangedHandler xyhandler = new AttributesChangedHandler() {
             @Override
@@ -152,6 +162,7 @@ public abstract class AbstractChart<T extends AbstractChart> extends Group {
         this.addAttributesChangedHandler(Attribute.WIDTH, whhandler);
         this.addAttributesChangedHandler(Attribute.HEIGHT, whhandler);
 
+        isBuilt[0] = true;
         return (T) this;
     }
 
@@ -193,6 +204,46 @@ public abstract class AbstractChart<T extends AbstractChart> extends Group {
             chartTitle = new Text(getName(), getFontFamily(), getFontStyle(), getFontSize()).setFillColor(ColorName.BLACK).setTextAlign(TextAlign.CENTER).setTextBaseLine(TextBaseLine.MIDDLE);
             setShapeAttributes(chartTitle,getChartWidth() / 2, 10d, null, null, true);
             topArea.add(chartTitle);
+        }
+    }
+
+    protected void buildLegend() {
+        LegendPosition legendPosition = getLegendPosition();
+        LegendAlign legendAlign = getLegendAlignment();
+        if (!LegendPosition.NONE.equals(legendPosition)) {
+            legend = new ChartLegend();
+            double xLegend = 0;
+            double yLegend = 0;
+            // TODO: legendAlign
+            switch (legendPosition) {
+                case TOP:
+                    xLegend = getChartWidth() / 2;
+                    yLegend = 5;
+                    topArea.add(legend.setX(xLegend).setY(yLegend));
+                    break;
+                case LEFT:
+                    xLegend = 5;
+                    yLegend = getChartHeight() / 2;
+                    leftArea.add(legend.setX(xLegend).setY(yLegend));
+                    break;
+                case RIGHT:
+                    xLegend = 5;
+                    yLegend = getChartHeight() / 2;
+                    rightArea.add(legend.setX(xLegend).setY(yLegend));
+                    break;
+                case INSIDE:
+                    xLegend = getChartWidth() / 2;
+                    yLegend = 2;
+                    chartArea.add(legend.setX(xLegend).setY(yLegend));
+                    break;
+                default:
+                    xLegend = getChartWidth() / 2;
+                    yLegend = 5;
+                    bottomArea.add(legend.setX(xLegend).setY(yLegend));
+                    break;
+            }
+            
+            legend.moveToTop();
         }
     }
 
@@ -638,5 +689,9 @@ public abstract class AbstractChart<T extends AbstractChart> extends Group {
     {
         getAttributes().put(ChartAttribute.MARGIN_BOTTOM.getProperty(), margin);
         return (T) this;
+    }
+    
+    protected void log(String message) {
+        GWT.log(message);
     }
 }

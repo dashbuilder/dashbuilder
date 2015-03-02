@@ -84,8 +84,7 @@ public abstract class LienzoDisplayer extends AbstractDisplayer {
                             if (dataSet.getRowCount() == 0) {
                                 mainPanel.add(createNoDataMsgPanel());
                             } else {
-                                // TODO: LienzoPanel panel = new LienzoPanel(getWidth(), getHeight());
-                                LienzoPanel panel = new LienzoPanel(1200, getHeight());
+                                LienzoPanel panel = new LienzoPanel(getWidth(), getHeight());
                                 layer.setTransformable(true);
                                 panel.add(layer);
                                 mainPanel.add(filterPanel);
@@ -260,16 +259,16 @@ public abstract class LienzoDisplayer extends AbstractDisplayer {
         return  displayerSettings.getChartHeight();
     }
 
-    protected int getWidth() {
-        int width = displayerSettings.getChartWidth();
+    private int getWidth() {
+        int width = displayerSettings.isResizable() ? displayerSettings.getChartMaxWidth() : displayerSettings.getChartWidth();
         int left = displayerSettings.getChartMarginLeft();
         int right = displayerSettings.getChartMarginRight();
         return width+right+left;
 
     }
 
-    protected int getHeight() {
-        int height = displayerSettings.getChartHeight();
+    private int getHeight() {
+        int height = displayerSettings.isResizable() ? displayerSettings.getChartMaxHeight() : displayerSettings.getChartHeight();
         int top = displayerSettings.getChartMarginTop();
         int bottom = displayerSettings.getChartMarginBottom();
         return height+top+bottom;

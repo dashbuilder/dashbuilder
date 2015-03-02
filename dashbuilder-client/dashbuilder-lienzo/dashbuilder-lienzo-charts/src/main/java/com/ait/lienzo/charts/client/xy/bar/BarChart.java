@@ -98,7 +98,6 @@ public class BarChart extends AbstractChart<BarChart>
     // If bar are too big, use this proportion (30%).
     protected static final double BAR_MAX_SIZE_PROPORTION = 0.3;
     private BarChartBuilder builder;
-    private ChartLegend legend = null; // The legend.
     BarChartTooltip tooltip = null; // The tooltip.
 
     protected BarChart(JSONObject node, ValidationContext ctx) throws ValidationException
@@ -157,6 +156,7 @@ public class BarChart extends AbstractChart<BarChart>
     {
         // If new data contains different properties on axis, clear current shapes.
         if (isCleanRequired(getData(), data)) {
+            log("BarChart - clear is required.");
             clear(new Runnable() {
                 @Override
                 public void run() {
@@ -164,6 +164,7 @@ public class BarChart extends AbstractChart<BarChart>
                 }
             });
         } else {
+            log("BarChart - clear is not required.");
             _setData(data);
         }
         
@@ -174,10 +175,12 @@ public class BarChart extends AbstractChart<BarChart>
         
         if (null != data)
         {
+            log("BarChart - setting data attribute.");
             getAttributes().put(ChartAttribute.XY_CHART_DATA.getProperty(), data.getJSO());
         }
         else
         {
+            log("BarChart - removing data attribute.");
             getAttributes().delete(ChartAttribute.XY_CHART_DATA.getProperty());
         }
         
@@ -350,6 +353,7 @@ public class BarChart extends AbstractChart<BarChart>
     }
     
     protected void clear(final Runnable callback) {
+        log("BarChart#clear.");
         if (builder != null) {
             isReloading[0] = true;
             builder.clear(new Runnable() {
@@ -358,6 +362,7 @@ public class BarChart extends AbstractChart<BarChart>
                     if (legend != null) legend.clear();
                     if (tooltip != null) tooltip.clear();
                     builder = null;
+                    isBuilt[0] = false;
                     isReloading[0] = false;
                     callback.run();
                 }
@@ -373,6 +378,7 @@ public class BarChart extends AbstractChart<BarChart>
 
     protected void doBuild()
     {
+        log("BarChart#doBuild.");
 
         if (getData() == null) {
             GWT.log("No data");
@@ -404,9 +410,6 @@ public class BarChart extends AbstractChart<BarChart>
                         // Recalculate positions, size and add or remove rectangles (if data has changed).
                 .setValuesAttributes(chartWidth, chartHeight, animate, new BarAnimation(BarAnimationType.CREATE));
         
-        // Legend.
-        buildLegend();
-        
         // Tooltip.
         buildToolip();
         
@@ -437,54 +440,22 @@ public class BarChart extends AbstractChart<BarChart>
         chartArea.add(tooltip);
     }
 
-    private void buildLegend() {
-        LegendPosition legendPosition = getLegendPosition();
-        LegendAlign legendAlign = getLegendAlignment();
-        if (!LegendPosition.NONE.equals(legendPosition)) {
-            legend = new ChartLegend();
-            Group legendGroup = legend.build();
-            double xLegend = 0;
-            double yLegend = 0;
-            // TODO: legendAlign
-            switch (legendPosition) {
-                case TOP:
-                    xLegend = getChartWidth() / 2;
-                    yLegend = 5;
-                    topArea.add(legendGroup.setX(xLegend).setY(yLegend));
-                    break;
-                case LEFT:
-                    xLegend = 5;
-                    yLegend = getChartHeight() / 2;
-                    leftArea.add(legendGroup.setX(xLegend).setY(yLegend));
-                    break;
-                case RIGHT:
-                    xLegend = 5;
-                    yLegend = getChartHeight() / 2;
-                    rightArea.add(legendGroup.setX(xLegend).setY(yLegend));
-                    break;
-                case INSIDE:
-                    xLegend = getChartWidth() / 2;
-                    yLegend = 2;
-                    chartArea.add(legendGroup.setX(xLegend).setY(yLegend));
-                    break;
-                default:
-                    xLegend = getChartWidth() / 2;
-                    yLegend = 5;
-                    bottomArea.add(legendGroup.setX(xLegend).setY(yLegend));
-                    break;
-            }
 
-            // Add legend elements.
-            XYChartSerie[] series = getData().getSeries();
-            if (series != null && series.length > 0) {
-                for (XYChartSerie serie : series) {
-                    legend.add(serie);
-                }
+    @Override
+    protected void buildLegend() {
+        super.buildLegend();
+        
+        // Add legend elements.
+        XYChartSerie[] series = getData().getSeries();
+        if (legend != null && series != null && series.length > 0) {
+            for (XYChartSerie serie : series) {
+                legend.add(new ChartLegend.ChartLegendEntry(serie.getName(), serie.getColor()));
             }
         }
     }
-    
+
     private BarChartBuilder build(ChartOrientation orientation) {
+        log("BarChart#build.");
         BarChartBuilder builder = (isVertical(orientation)) ? new VerticalBarChartBuilder() : new HorizontalBarChartBuilder();
 
         // **** Build all shape instances. ****
@@ -504,7 +475,8 @@ public class BarChart extends AbstractChart<BarChart>
     }
 
     protected BarChart redraw(final Double chartWidth, final Double chartHeight, final boolean animate) {
-        
+        log("BarChart#redraw.");
+
         if (getData() == null) {
             GWT.log("No data");
             return this;
@@ -615,7 +587,7 @@ public class BarChart extends AbstractChart<BarChart>
                         AxisBuilder.AxisLabel axisLabel = xAxisLabels.get(i);
                         BarChartLabel label = new BarChartLabel(axisLabel);
                         seriesLabels.add(label);
-                        addCategoryAxisIntervalLabel(label.build());
+                        addCategoryAxisIntervalLabel(label);
 
                     }
                 }
@@ -638,7 +610,7 @@ public class BarChart extends AbstractChart<BarChart>
                 if (isShowValuesLabels()) {
                     BarChartLabel label = new BarChartLabel(yAxisLabel);
                     valuesLabels.add(label);
-                    addValuesAxisIntervalLabel(label.build());
+                    addValuesAxisIntervalLabel(label);
                 }
                 x++;
             }
@@ -748,9 +720,8 @@ public class BarChart extends AbstractChart<BarChart>
 
                     // If a new serie is added, build new bar rectangle instances.
                     if (categoriesAxisBuilder[0].getDataSummary().getAddedSeries().contains(serie.getName())) {
-                        buildCategoriesAxisIntervals();
                         buildSerieValues(serie, numSerie);
-                        if (legend != null) legend.add(serie);
+                        if (legend != null) legend.add(new ChartLegend.ChartLegendEntry(serie.getName(), serie.getColor()));
                     }
 
                     setValuesAttributesForSerie(serie, numSerie, width, height, animate, barAnimation);
