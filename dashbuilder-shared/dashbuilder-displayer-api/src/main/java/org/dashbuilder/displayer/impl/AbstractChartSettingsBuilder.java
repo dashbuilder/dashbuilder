@@ -48,4 +48,16 @@ public abstract class AbstractChartSettingsBuilder<T extends ChartSettingsBuilde
         displayerSettings.setChartLegendPosition(Position.getByName(position));
         return (T) this;
     }
+
+    public T resizableOn(int maxWidth, int maxHeight) {
+        displayerSettings.setResizable(true);
+        displayerSettings.setChartMaxWidth(maxWidth);
+        displayerSettings.setChartMaxHeight(maxHeight);
+        return (T) this;
+    }
+
+    public T resizableOff() {
+        displayerSettings.setResizable(false);
+        return (T) this;
+    }
 }

@@ -53,6 +53,9 @@ public class DisplayerSettings {
         settings.put( getSettingPath( DisplayerAttributeDef.REFRESH_STALE_DATA), _false );
         settings.put( getSettingPath( DisplayerAttributeDef.CHART_WIDTH ), "600" );
         settings.put( getSettingPath( DisplayerAttributeDef.CHART_HEIGHT ), "300" );
+        settings.put( getSettingPath( DisplayerAttributeDef.CHART_RESIZABLE), _false );
+        settings.put( getSettingPath( DisplayerAttributeDef.CHART_MAX_WIDTH), "800" );
+        settings.put( getSettingPath( DisplayerAttributeDef.CHART_MAX_HEIGHT ), "400" );
         settings.put( getSettingPath( DisplayerAttributeDef.CHART_BGCOLOR), "#FFFFFF" );
         settings.put( getSettingPath( DisplayerAttributeDef.CHART_MARGIN_TOP ), "20" );
         settings.put( getSettingPath( DisplayerAttributeDef.CHART_MARGIN_BOTTOM ), "50" );
@@ -299,6 +302,30 @@ public class DisplayerSettings {
         settings.put( getSettingPath( DisplayerAttributeDef.CHART_MARGIN_RIGHT ), Integer.toString( chartMarginRight ) );
     }
 
+    public int getChartMaxWidth() {
+        return parseInt( settings.get( getSettingPath( DisplayerAttributeDef.CHART_MAX_WIDTH ) ), 600 );
+    }
+
+    public void setChartMaxWidth( int chartWidth ) {
+        settings.put( getSettingPath( DisplayerAttributeDef.CHART_MAX_WIDTH ), Integer.toString( chartWidth ) );
+    }
+
+    public int getChartMaxHeight() {
+        return parseInt( settings.get( getSettingPath( DisplayerAttributeDef.CHART_MAX_HEIGHT ) ), 400 );
+    }
+
+    public void setChartMaxHeight( int chartHeight ) {
+        settings.put( getSettingPath( DisplayerAttributeDef.CHART_MAX_HEIGHT ), Integer.toString( chartHeight ) );
+    }
+    
+    public void setResizable(boolean resizable) {
+        settings.put( getSettingPath( DisplayerAttributeDef.CHART_RESIZABLE ), Boolean.toString( resizable ) );
+    }
+
+    public boolean isResizable() {
+        return parseBoolean( settings.get( getSettingPath( DisplayerAttributeDef.CHART_RESIZABLE ) ) );
+    }
+    
     public boolean isChartShowLegend() {
         return parseBoolean( settings.get( getSettingPath( DisplayerAttributeDef.CHART_SHOWLEGEND ) ) );
     }

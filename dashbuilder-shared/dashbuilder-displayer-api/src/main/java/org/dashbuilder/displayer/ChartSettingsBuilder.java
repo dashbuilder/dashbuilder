@@ -56,4 +56,18 @@ public interface ChartSettingsBuilder<T extends ChartSettingsBuilder> extends Di
      * @return The DisplayerSettingsBuilder instance that is being used to configure a Chart data displayer.
      */
     T legendOn(String position);
+
+    /**
+     * Set the chart as resizable, it can change its size from the original one, defined by <code>width</code> and <code>height</code> attributes.
+     * @param maxWidth The maximum width value.
+     * @param maxHeight The maximum height value.
+     * @return The DisplayerSettingsBuilder instance that is being used to configure a Chart data displayer.
+     */
+    T resizableOn(int maxWidth, int maxHeight);
+
+    /**
+     * Set the chart as no resizable, it cannot change its size from the original one, defined by <code>width</code> and <code>height</code> attributes. 
+     * @return The DisplayerSettingsBuilder instance that is being used to configure a Chart data displayer.
+     */
+    T resizableOff();
 }
