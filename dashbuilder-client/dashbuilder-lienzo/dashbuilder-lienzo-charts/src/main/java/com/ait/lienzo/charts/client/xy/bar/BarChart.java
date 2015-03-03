@@ -31,6 +31,7 @@ import com.ait.lienzo.charts.client.xy.bar.event.DataReloadedEventHandler;
 import com.ait.lienzo.charts.client.xy.bar.event.ValueSelectedEvent;
 import com.ait.lienzo.charts.client.xy.bar.event.ValueSelectedHandler;
 import com.ait.lienzo.charts.shared.core.types.*;
+import com.ait.lienzo.client.core.Attribute;
 import com.ait.lienzo.client.core.animation.*;
 import com.ait.lienzo.client.core.event.*;
 import com.ait.lienzo.client.core.shape.*;
@@ -417,14 +418,16 @@ public class BarChart extends AbstractChart<BarChart>
         this.addAttributesChangedHandler(ChartAttribute.XY_CHART_DATA, new AttributesChangedHandler() {
             @Override
             public void onAttributesChanged(AttributesChangedEvent event) {
-                redraw(getChartWidth(), getChartHeight(), true);
+                if (event.has(ChartAttribute.XY_CHART_DATA)) {
+                    redraw(getChartWidth(), getChartHeight(), true);
+                }
             }
         });
         
         AttributesChangedHandler whhandler = new AttributesChangedHandler() {
             @Override
             public void onAttributesChanged(AttributesChangedEvent event) {
-                if (!isReloading[0]) {
+                if ((event.has(Attribute.WIDTH) || event.has(Attribute.HEIGHT)) &&!isReloading[0]) {
                     redraw(getChartWidth(), getChartHeight(), false);
                 }
             }

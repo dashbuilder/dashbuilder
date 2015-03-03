@@ -16,6 +16,7 @@ import com.ait.lienzo.client.core.shape.json.validators.ValidationException;
 import com.ait.lienzo.client.core.types.Point2D;
 import com.ait.lienzo.shared.core.types.*;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.json.client.JSONObject;
 
 import java.util.LinkedHashMap;
@@ -134,12 +135,12 @@ public abstract class AbstractChart<T extends AbstractChart> extends Group {
         buildLegend();
         
         // TODO: Dean - If setting the batcher, the attributechangedhandler for XY_CHART_DATA IN BARCHART IS CALLED WHEN USING RESIZER, AND SHOULD NOT BE CALLED. ONLY HANDLERS FOR X AND Y SHOULD BE CALLED, CHART DATA IS NOT MODIFIED ON RESIZING.
-        // this.setAttributesChangedBatcher(attributesChangedBatcher);
+        this.setAttributesChangedBatcher(attributesChangedBatcher);
 
         AttributesChangedHandler xyhandler = new AttributesChangedHandler() {
             @Override
             public void onAttributesChanged(AttributesChangedEvent event) {
-                if (!isReloading[0]) {
+                if ((event.has(Attribute.X) || event.has(Attribute.Y)) && !isReloading[0]) {
                     moveAreas(getX(), getY(), false);
                 }
             }
@@ -152,7 +153,7 @@ public abstract class AbstractChart<T extends AbstractChart> extends Group {
         AttributesChangedHandler whhandler = new AttributesChangedHandler() {
             @Override
             public void onAttributesChanged(AttributesChangedEvent event) {
-                if (!isReloading[0]) {
+                if ((event.has(Attribute.WIDTH) || event.has(Attribute.HEIGHT)) && !isReloading[0]) {
                     redraw(getChartWidth(), getChartHeight(), false);
                 }
             }
@@ -190,13 +191,24 @@ public abstract class AbstractChart<T extends AbstractChart> extends Group {
     }
     
     protected void onChartResize(ChartResizeEvent event) {
-        final double w = event.getWidth();
-        final double h = event.getHeight();
-        // Apply scale to chart area.
-        AnimationProperties animationProperties = new AnimationProperties();
-        animationProperties.push(AnimationProperty.Properties.WIDTH(w - getMarginLeft() - getMarginRight()));
-        animationProperties.push(AnimationProperty.Properties.HEIGHT(h - getMarginBottom() - getMarginBottom()));
-        AbstractChart.this.animate(AnimationTweener.LINEAR, animationProperties, ANIMATION_DURATION);
+        boolean apply = event.isApply();
+        if (apply) {
+            final double w = event.getWidth();
+            final double h = event.getHeight();
+            // Apply scale to chart area.
+            AnimationProperties animationProperties = new AnimationProperties();
+            animationProperties.push(AnimationProperty.Properties.WIDTH(w - getMarginLeft() - getMarginRight()));
+            animationProperties.push(AnimationProperty.Properties.HEIGHT(h - getMarginBottom() - getMarginBottom()));
+            AbstractChart.this.animate(AnimationTweener.LINEAR, animationProperties, ANIMATION_DURATION);
+        }
+        
+        // Fire event for chart resize.
+        fireEvent(event);
+    }
+
+    public HandlerRegistration addChartResizeEventHandler(ChartResizeEventHandler handler)
+    {
+        return addEnsureHandler(ChartResizeEvent.TYPE, handler);
     }
     
     protected void buildTitle() {

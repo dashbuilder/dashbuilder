@@ -25,14 +25,13 @@ import com.ait.lienzo.charts.client.pie.event.DataReloadedEventHandler;
 import com.ait.lienzo.charts.client.pie.event.ValueSelectedEvent;
 import com.ait.lienzo.charts.client.pie.event.ValueSelectedHandler;
 import com.ait.lienzo.charts.client.xy.bar.ChartLegend;
+import com.ait.lienzo.client.core.Attribute;
 import com.ait.lienzo.client.core.animation.*;
 import com.ait.lienzo.client.core.event.*;
 import com.ait.lienzo.client.core.shape.*;
 import com.ait.lienzo.client.core.shape.json.IFactory;
 import com.ait.lienzo.client.core.shape.json.validators.ValidationContext;
 import com.ait.lienzo.client.core.shape.json.validators.ValidationException;
-import com.ait.lienzo.client.core.types.Point2D;
-import com.ait.lienzo.client.core.types.Point2DArray;
 import com.ait.lienzo.shared.core.types.*;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.HandlerRegistration;
@@ -101,14 +100,17 @@ public class PieChart extends AbstractChart<PieChart>
         this.addAttributesChangedHandler(ChartAttribute.PIE_CHART_DATA, new AttributesChangedHandler() {
             @Override
             public void onAttributesChanged(AttributesChangedEvent event) {
-                redraw(getChartWidth(), getChartHeight(), true);
+                if (event.has(ChartAttribute.PIE_CHART_DATA)) {
+                    redraw(getChartWidth(), getChartHeight(), true);
+                    
+                }
             }
         });
 
         AttributesChangedHandler whhandler = new AttributesChangedHandler() {
             @Override
             public void onAttributesChanged(AttributesChangedEvent event) {
-                if (!isReloading[0]) {
+                if ((event.has(Attribute.WIDTH) || event.has(Attribute.HEIGHT)) && !isReloading[0]) {
                     redraw(getChartWidth(), getChartHeight(), false);
                 }
             }

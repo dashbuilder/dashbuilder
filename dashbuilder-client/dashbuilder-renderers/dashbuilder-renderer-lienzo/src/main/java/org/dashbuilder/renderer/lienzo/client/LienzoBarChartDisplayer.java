@@ -18,6 +18,8 @@ package org.dashbuilder.renderer.lienzo.client;
 import com.ait.lienzo.charts.client.AbstractChart;
 import com.ait.lienzo.charts.client.axis.CategoryAxis;
 import com.ait.lienzo.charts.client.axis.NumericAxis;
+import com.ait.lienzo.charts.client.resizer.ChartResizeEvent;
+import com.ait.lienzo.charts.client.resizer.ChartResizeEventHandler;
 import com.ait.lienzo.charts.client.xy.XYChartData;
 import com.ait.lienzo.charts.client.xy.XYChartSerie;
 import com.ait.lienzo.charts.client.xy.bar.BarChart;
@@ -92,10 +94,22 @@ public class LienzoBarChartDisplayer extends LienzoDisplayer {
         chart.setResizable(displayerSettings.isResizable());
         chart.setAnimated(true); // TODO: Custom displayer parameter.
 
-        // Events (filtering)
+        // Filtering event.
         if (displayerSettings.isFilterEnabled()) {
             chart.addValueSelectedHandler(new BarValueSelectedHandler());
         }
+
+        // Resize event.
+        if (displayerSettings.isResizable()) {
+            chart.addChartResizeEventHandler(new ChartResizeEventHandler() {
+                @Override
+                public void onChartResize(ChartResizeEvent event) {
+                    resizePanel((int) event.getWidth(), (int) event.getHeight());
+                }
+            });
+        }
+        
+        
 
         // TODO: Category and Number types?
         CategoryAxis categoryAxis = new CategoryAxis(displayerSettings.getXAxisTitle());

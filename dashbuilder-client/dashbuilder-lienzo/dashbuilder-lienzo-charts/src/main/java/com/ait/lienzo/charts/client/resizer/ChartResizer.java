@@ -98,8 +98,8 @@ public class ChartResizer extends Group {
                 rectangleAnimationProperties.push(AnimationProperty.Properties.Y(finalHeight - RECTANGLE_SIZE));
                 IAnimationHandle rectangleAnimationHandle = resizeRectangleButton.animate(AnimationTweener.LINEAR, rectangleAnimationProperties, ANIMATION_DURATION);
 
-                // Fire the resize event.
-                ChartResizer.this.fireEvent(new ChartResizeEvent(finalWidth, finalHeight));
+                // Fire the resize event with apply flag set (final size).
+                ChartResizer.this.fireEvent(new ChartResizeEvent(finalWidth, finalHeight, true));
 
                 ChartResizer.this.width = finalWidth;
                 ChartResizer.this.height = finalHeight;
@@ -121,6 +121,10 @@ public class ChartResizer extends Group {
                 resizeArrow2.setStart(start).setEnd(new Point2D(finalWidth / 2, finalHeight));
                 resizeArrow3.setStart(start).setEnd(new Point2D(0, finalHeight / 2));
                 resizeArrow4.setStart(start).setEnd(new Point2D(finalWidth / 2, 0));
+
+                // Fire the resize event with apply flag not set (not final size yet).
+                ChartResizer.this.fireEvent(new ChartResizeEvent(finalWidth, finalHeight, false));
+                
                 LayerRedrawManager.get().schedule(resizeRectangle.getLayer());
             }
         });

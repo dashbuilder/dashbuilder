@@ -20,7 +20,9 @@ import com.ait.lienzo.charts.client.model.DataTable;
 import com.ait.lienzo.charts.client.model.DataTableColumn;
 import com.ait.lienzo.client.core.shape.Layer;
 import com.ait.lienzo.client.widget.LienzoPanel;
+import com.ait.lienzo.shared.core.types.ColorName;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.*;
@@ -37,11 +39,15 @@ import java.util.Set;
 
 public abstract class LienzoDisplayer extends AbstractDisplayer {
 
+    private static final int PANEL_MARGIN = 50;
+    private static final String PIXEL = "px";
+    
     protected boolean drawn = false;
     protected FlowPanel mainPanel = new FlowPanel();
     protected FlowPanel filterPanel = new FlowPanel();
-    protected Layer layer = new Layer();
-    protected Label label = new Label();
+    final protected LienzoPanel panel = new LienzoPanel();
+    final protected Layer layer = new Layer();
+    final protected Label label = new Label();
 
     protected DataSet dataSet;
     protected DataTable lienzoTable = null;
@@ -84,7 +90,7 @@ public abstract class LienzoDisplayer extends AbstractDisplayer {
                             if (dataSet.getRowCount() == 0) {
                                 mainPanel.add(createNoDataMsgPanel());
                             } else {
-                                LienzoPanel panel = new LienzoPanel(getWidth(), getHeight());
+                                resizePanel(getWidth(), getHeight());
                                 layer.setTransformable(true);
                                 panel.add(layer);
                                 mainPanel.add(filterPanel);
@@ -147,6 +153,12 @@ public abstract class LienzoDisplayer extends AbstractDisplayer {
 
         // Close done
         afterClose();
+    }
+    
+    protected void resizePanel(int w, int h) {
+        String _w = w + PANEL_MARGIN + PIXEL;
+        String _h = h + PANEL_MARGIN + PIXEL;
+        panel.setSize(_w, _h);
     }
 
     /**
@@ -263,7 +275,7 @@ public abstract class LienzoDisplayer extends AbstractDisplayer {
         int width = displayerSettings.isResizable() ? displayerSettings.getChartMaxWidth() : displayerSettings.getChartWidth();
         int left = displayerSettings.getChartMarginLeft();
         int right = displayerSettings.getChartMarginRight();
-        return width+right+left;
+        return displayerSettings.getChartWidth()+right+left;
 
     }
 
@@ -271,7 +283,7 @@ public abstract class LienzoDisplayer extends AbstractDisplayer {
         int height = displayerSettings.isResizable() ? displayerSettings.getChartMaxHeight() : displayerSettings.getChartHeight();
         int top = displayerSettings.getChartMarginTop();
         int bottom = displayerSettings.getChartMarginBottom();
-        return height+top+bottom;
+        return displayerSettings.getChartHeight()+top+bottom;
     }
 
     protected Widget createNoDataMsgPanel() {

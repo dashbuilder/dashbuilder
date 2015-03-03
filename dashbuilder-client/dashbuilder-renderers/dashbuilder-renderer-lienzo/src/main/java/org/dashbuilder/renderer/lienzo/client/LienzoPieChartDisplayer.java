@@ -22,6 +22,8 @@ import com.ait.lienzo.charts.client.pie.event.DataReloadedEvent;
 import com.ait.lienzo.charts.client.pie.event.DataReloadedEventHandler;
 import com.ait.lienzo.charts.client.pie.event.ValueSelectedEvent;
 import com.ait.lienzo.charts.client.pie.event.ValueSelectedHandler;
+import com.ait.lienzo.charts.client.resizer.ChartResizeEvent;
+import com.ait.lienzo.charts.client.resizer.ChartResizeEventHandler;
 import com.ait.lienzo.charts.shared.core.types.ChartOrientation;
 import com.ait.lienzo.shared.core.types.ColorName;
 import com.google.gwt.core.client.GWT;
@@ -83,10 +85,21 @@ public class LienzoPieChartDisplayer extends LienzoDisplayer {
         chart.setResizable(false); // TODO: Custom displayer parameter.
         chart.setAnimated(true); // TODO: Custom displayer parameter.
 
-        // Filtering.
+        // Filtering event.
         if (displayerSettings.isFilterEnabled()) {
             chart.addValueSelectedHandler(new PieValueSelectedHandler());
         }
+
+        // Resize event.
+        if (displayerSettings.isResizable()) {
+            chart.addChartResizeEventHandler(new ChartResizeEventHandler() {
+                @Override
+                public void onChartResize(ChartResizeEvent event) {
+                    resizePanel((int) event.getWidth(), (int) event.getHeight());
+                }
+            });
+        }
+
 
         chart.build();
         

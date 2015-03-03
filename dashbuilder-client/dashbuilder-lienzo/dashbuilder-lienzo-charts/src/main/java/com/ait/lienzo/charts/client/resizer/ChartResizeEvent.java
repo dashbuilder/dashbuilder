@@ -1,7 +1,5 @@
 package com.ait.lienzo.charts.client.resizer;
 
-import com.ait.lienzo.charts.client.xy.bar.BarChart;
-import com.ait.lienzo.charts.client.xy.bar.event.DataReloadedEventHandler;
 import com.google.gwt.event.shared.GwtEvent;
 
 public class ChartResizeEvent extends GwtEvent<ChartResizeEventHandler> {
@@ -10,10 +8,12 @@ public class ChartResizeEvent extends GwtEvent<ChartResizeEventHandler> {
 
     private double width;
     private double height;
+    private boolean apply;
 
-    public ChartResizeEvent(double width, double height) {
+    public ChartResizeEvent(double width, double height, boolean apply) {
         this.width = width;
         this.height = height;
+        this.apply = apply;
     }
 
     @Override
@@ -32,5 +32,9 @@ public class ChartResizeEvent extends GwtEvent<ChartResizeEventHandler> {
 
     public double getWidth() {
         return width;
+    }
+
+    public boolean isApply() {
+        return apply;
     }
 }
