@@ -82,7 +82,7 @@ public class LienzoPieChartDisplayer extends LienzoDisplayer {
         chart.setFontStyle("bold");
         chart.setFontSize(8);
         chart.setShowTitle(displayerSettings.isTitleVisible());
-        chart.setResizable(false); // TODO: Custom displayer parameter.
+        chart.setResizable(displayerSettings.isResizable());
         chart.setAnimated(true); // TODO: Custom displayer parameter.
 
         // Filtering event.
