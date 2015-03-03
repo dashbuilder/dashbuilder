@@ -36,7 +36,7 @@ import org.dashbuilder.displayer.DisplayerAttributeDef;
 import org.dashbuilder.displayer.DisplayerAttributeGroupDef;
 import org.dashbuilder.displayer.DisplayerConstraints;
 
-public class GoogleBarChartDisplayer extends GoogleXAxisChartDisplayer {
+public class GoogleBarChartDisplayer extends GoogleCategoriesDisplayer {
 
     protected Panel chartPanel = new FlowPanel();
     protected CoreChartWidget chart;
@@ -75,6 +75,7 @@ public class GoogleBarChartDisplayer extends GoogleXAxisChartDisplayer {
                 .setMaxColumns(10)
                 .setMinColumns(2)
                 .setExtraColumnsAllowed(true)
+                .setExtraColumnsType(ColumnType.NUMBER)
                 .setGroupsTitle("Categories")
                 .setColumnsTitle("Series")
                 .setColumnTypes(new ColumnType[]{
@@ -125,7 +126,7 @@ public class GoogleBarChartDisplayer extends GoogleXAxisChartDisplayer {
             options.setWidth(displayerSettings.getChartWidth());
             options.setHeight( displayerSettings.getChartHeight() );
             options.setBackgroundColor(displayerSettings.getChartBackgroundColor());
-            options.setLegend( createChartLegend( displayerSettings ) );
+            options.setLegend( createChartLegend() );
             if ( displayerSettings.isXAxisShowLabels() ) options.setHAxis( createHAxis() );
             if ( displayerSettings.isYAxisShowLabels() ) options.setVAxis( createVAxis() );
             options.setAnimation( anim );
@@ -137,7 +138,7 @@ public class GoogleBarChartDisplayer extends GoogleXAxisChartDisplayer {
             options.setWidth(displayerSettings.getChartWidth());
             options.setHeight(displayerSettings.getChartHeight());
             options.setBackgroundColor(displayerSettings.getChartBackgroundColor());
-            options.setLegend( createChartLegend( displayerSettings ) );
+            options.setLegend( createChartLegend() );
             if ( displayerSettings.isXAxisShowLabels() ) options.setHAxis( createHAxis() );
             if ( displayerSettings.isYAxisShowLabels() ) options.setVAxis( createVAxis() );
             options.setAnimation(anim);

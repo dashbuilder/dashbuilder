@@ -29,54 +29,19 @@ public class DisplayerSettings {
 
     private Map<String, String> settings = new HashMap<String, String>( 30 );
 
-    private static final String _true = "true";
-    private static final String _false = "false";
-
     protected String UUID;
     protected DataSet dataSet;
     protected DataSetLookup dataSetLookup;
 
-    public DisplayerSettings( DisplayerType displayerType ) {
-        this();
-        setType( displayerType );
-        if ( DisplayerType.PIECHART.equals( displayerType ) ) {
-            settings.put( getSettingPath( DisplayerAttributeDef.CHART_3D ), _true );
-        }
+    public DisplayerSettings() {
     }
 
-    public DisplayerSettings() {
-        settings.put( getSettingPath( DisplayerAttributeDef.TITLE_VISIBLE ), _true );
-        settings.put( getSettingPath( DisplayerAttributeDef.FILTER_ENABLED ), _false );
-        settings.put( getSettingPath( DisplayerAttributeDef.FILTER_SELFAPPLY_ENABLED ), _false );
-        settings.put( getSettingPath( DisplayerAttributeDef.FILTER_NOTIFICATION_ENABLED ), _false );
-        settings.put( getSettingPath( DisplayerAttributeDef.FILTER_LISTENING_ENABLED ), _false );
-        settings.put( getSettingPath( DisplayerAttributeDef.REFRESH_STALE_DATA), _false );
-        settings.put( getSettingPath( DisplayerAttributeDef.CHART_WIDTH ), "600" );
-        settings.put( getSettingPath( DisplayerAttributeDef.CHART_HEIGHT ), "300" );
-        settings.put( getSettingPath( DisplayerAttributeDef.CHART_RESIZABLE), _false );
-        settings.put( getSettingPath( DisplayerAttributeDef.CHART_MAX_WIDTH), "800" );
-        settings.put( getSettingPath( DisplayerAttributeDef.CHART_MAX_HEIGHT ), "400" );
-        settings.put( getSettingPath( DisplayerAttributeDef.CHART_BGCOLOR), "#FFFFFF" );
-        settings.put( getSettingPath( DisplayerAttributeDef.CHART_MARGIN_TOP ), "20" );
-        settings.put( getSettingPath( DisplayerAttributeDef.CHART_MARGIN_BOTTOM ), "50" );
-        settings.put( getSettingPath( DisplayerAttributeDef.CHART_MARGIN_LEFT ), "80" );
-        settings.put( getSettingPath( DisplayerAttributeDef.CHART_MARGIN_RIGHT ), "80" );
-        settings.put( getSettingPath( DisplayerAttributeDef.CHART_SHOWLEGEND ), _true );
-        settings.put( getSettingPath( DisplayerAttributeDef.CHART_LEGENDPOSITION ), Position.RIGHT.toString() );
-        settings.put( getSettingPath( DisplayerAttributeDef.TABLE_PAGESIZE ), "20" );
-        settings.put( getSettingPath( DisplayerAttributeDef.TABLE_WIDTH ), "0" );
-        settings.put( getSettingPath( DisplayerAttributeDef.TABLE_SORTENABLED ), _true );
-        settings.put( getSettingPath( DisplayerAttributeDef.TABLE_SORTORDER ), "asc" );
-        settings.put( getSettingPath( DisplayerAttributeDef.XAXIS_SHOWLABELS ), _false );
-//        settings.put( getSettingPath( DisplayerAttributeDef.XAXIS_LABELSANGLE ), "0" );
-        settings.put( getSettingPath( DisplayerAttributeDef.YAXIS_SHOWLABELS ), _false );
-//        settings.put( getSettingPath( DisplayerAttributeDef.YAXIS_LABELSANGLE ), "0" );
-        settings.put( getSettingPath( DisplayerAttributeDef.METER_START ), "0" );
-        settings.put( getSettingPath( DisplayerAttributeDef.METER_WARNING ), "0" );
-        settings.put( getSettingPath( DisplayerAttributeDef.METER_CRITICAL ), "0" );
-        settings.put( getSettingPath( DisplayerAttributeDef.METER_END ), "0" );
-        settings.put( getSettingPath( DisplayerAttributeDef.CHART_3D ), _false );
-        settings.put( getSettingPath( DisplayerAttributeDef.BARCHART_HORIZONTAL ), _false );
+    public DisplayerSettings( DisplayerType displayerType ) {
+        this();
+        setType(displayerType);
+        if ( DisplayerType.PIECHART.equals( displayerType ) ) {
+        }
+        settings.put( getSettingPath( DisplayerAttributeDef.CHART_3D ), "true");
     }
 
     public DisplayerSettings cloneInstance() {
@@ -155,6 +120,23 @@ public class DisplayerSettings {
     // 'Generic' setter method
     public void setDisplayerSetting( String displayerAttributeDef, String value ) {
         settings.put( displayerAttributeDef, value );
+    }
+
+    // 'Generic' remove method
+    public void removeDisplayerSetting( DisplayerAttributeDef displayerAttributeDef ) {
+        settings.remove(getSettingPath(displayerAttributeDef));
+    }
+
+    // 'Generic' remove method
+    public void removeDisplayerSetting( DisplayerAttributeGroupDef displayerAttributeGroup ) {
+        for (DisplayerAttributeDef attributeDef : displayerAttributeGroup.getChildren()) {
+            settings.remove(getSettingPath(attributeDef));
+        }
+    }
+
+    // 'Generic' remove method
+    public void removeDisplayerSetting( String displayerAttributeDef ) {
+        settings.remove(displayerAttributeDef);
     }
 
     public Map<String, String> getSettingsFlatMap() {
@@ -253,7 +235,7 @@ public class DisplayerSettings {
     public void setChartWidth( int chartWidth ) {
         settings.put( getSettingPath( DisplayerAttributeDef.CHART_WIDTH ), Integer.toString( chartWidth ) );
     }
-    
+
     public String getChartBackgroundColor() {
         return settings.get(getSettingPath( DisplayerAttributeDef.CHART_BGCOLOR));
     }
@@ -317,7 +299,7 @@ public class DisplayerSettings {
     public void setChartMaxHeight( int chartHeight ) {
         settings.put( getSettingPath( DisplayerAttributeDef.CHART_MAX_HEIGHT ), Integer.toString( chartHeight ) );
     }
-    
+
     public void setResizable(boolean resizable) {
         settings.put( getSettingPath( DisplayerAttributeDef.CHART_RESIZABLE ), Boolean.toString( resizable ) );
     }
@@ -325,7 +307,7 @@ public class DisplayerSettings {
     public boolean isResizable() {
         return parseBoolean( settings.get( getSettingPath( DisplayerAttributeDef.CHART_RESIZABLE ) ) );
     }
-    
+
     public boolean isChartShowLegend() {
         return parseBoolean( settings.get( getSettingPath( DisplayerAttributeDef.CHART_SHOWLEGEND ) ) );
     }

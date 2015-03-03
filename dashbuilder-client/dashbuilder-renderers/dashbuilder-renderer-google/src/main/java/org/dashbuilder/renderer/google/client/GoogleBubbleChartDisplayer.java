@@ -33,7 +33,7 @@ import org.dashbuilder.displayer.DisplayerAttributeDef;
 import org.dashbuilder.displayer.DisplayerAttributeGroupDef;
 import org.dashbuilder.displayer.DisplayerConstraints;
 
-public class GoogleBubbleChartDisplayer extends GoogleXAxisChartDisplayer {
+public class GoogleBubbleChartDisplayer extends GoogleCategoriesDisplayer {
 
     private BubbleChart chart;
     protected Panel filterPanel = new SimplePanel();
@@ -118,7 +118,7 @@ public class GoogleBubbleChartDisplayer extends GoogleXAxisChartDisplayer {
         options.setHAxis(HAxis.create(googleTable.getColumnLabel(1)));
         options.setVAxis(VAxis.create(googleTable.getColumnLabel(2)));
         options.setChartArea(createChartArea());
-        options.setLegend( createChartLegend( displayerSettings ) );
+        options.setLegend( createChartLegend() );
         options.setAnimation(anim);
         String[] colors = createColorArray(googleTable);
         if (colors.length > 0) options.setColors(colors);

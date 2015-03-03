@@ -38,7 +38,7 @@ import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.dataset.group.Interval;
 import org.dashbuilder.renderer.google.client.resources.i18n.GoogleDisplayerConstants;
 
-public abstract class GoogleXAxisChartDisplayer extends AbstractGoogleChartDisplayer {
+public abstract class GoogleCategoriesDisplayer extends GoogleChartDisplayer {
 
     public static final String[] COLOR_ARRAY = new String[] {"aqua", "red", "orange", "brown", "coral", "blue", "fuchsia", "gold",
             "green", "lime", "magenta", "pink", "silver", "yellow"};
@@ -76,53 +76,6 @@ public abstract class GoogleXAxisChartDisplayer extends AbstractGoogleChartDispl
                 updateVisualization();
             }
         };
-    }
-
-    public SelectHandler createSelectHandler(final GeoChart selectable) {
-        return new SelectHandler() {
-            public void onSelect(SelectEvent event) {
-                if (!displayerSettings.isFilterEnabled()) return;
-
-                JsArray<Selection> selections = selectable.getSelection();
-                for (int i = 0; i < selections.length(); i++) {
-                    Selection selection = selections.get(i);
-                    int row = selection.getRow();
-
-                    filterUpdate(googleTable.getColumnId(0), row, googleTable.getNumberOfRows());
-                }
-                // Redraw the char in order to reflect the current selection
-                updateVisualization();
-            }
-        };
-    }
-
-    protected Widget createCurrentSelectionWidget() {
-        if (!displayerSettings.isFilterEnabled()) return null;
-
-        Set<String> columnFilters = filterColumns();
-        if (columnFilters.isEmpty()) return null;
-
-        HorizontalPanel panel = new HorizontalPanel();
-        panel.getElement().setAttribute("cellpadding", "2");
-
-        for (String columnId : columnFilters) {
-            List<Interval> selectedValues = filterIntervals(columnId);
-            DataColumn column = dataSet.getColumnById(columnId);
-            for (Interval interval : selectedValues) {
-                String formattedValue = formatInterval(interval, column);
-                panel.add(new Label(formattedValue));
-            }
-        }
-
-        Anchor anchor = new Anchor( GoogleDisplayerConstants.INSTANCE.googleDisplayer_resetAnchor() );
-        panel.add(anchor);
-        anchor.addClickHandler(new ClickHandler() {
-            public void onClick(ClickEvent event) {
-                filterReset();
-                updateVisualization();
-            }
-        });
-        return panel;
     }
 
     protected ChartArea createChartArea() {

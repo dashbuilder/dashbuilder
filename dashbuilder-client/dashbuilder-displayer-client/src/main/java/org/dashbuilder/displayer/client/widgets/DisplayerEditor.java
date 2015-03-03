@@ -20,19 +20,23 @@ import javax.inject.Inject;
 
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
-import org.dashbuilder.dataset.DataSetFactory;
+import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetLookup;
 import org.dashbuilder.dataset.DataSetLookupConstraints;
 import org.dashbuilder.dataset.DataSetMetadata;
+import org.dashbuilder.dataset.ValidationError;
 import org.dashbuilder.dataset.client.DataSetClientServices;
 import org.dashbuilder.dataset.client.DataSetMetadataCallback;
 import org.dashbuilder.dataset.filter.DataSetFilter;
 import org.dashbuilder.dataset.group.DataSetGroup;
 import org.dashbuilder.dataset.group.GroupFunction;
+import org.dashbuilder.displayer.DisplayerAttributeDef;
+import org.dashbuilder.displayer.DisplayerAttributeGroupDef;
 import org.dashbuilder.displayer.DisplayerConstraints;
 import org.dashbuilder.displayer.DisplayerSettings;
 import org.dashbuilder.displayer.DisplayerType;
 import org.dashbuilder.displayer.client.Displayer;
+import org.dashbuilder.displayer.client.DisplayerHelper;
 import org.dashbuilder.displayer.client.DisplayerLocator;
 import org.dashbuilder.displayer.client.prototypes.DisplayerPrototypes;
 import org.jboss.errai.ioc.client.container.IOC;
@@ -57,6 +61,7 @@ public class DisplayerEditor implements IsWidget,
         void gotoDataSetConf();
         void gotoDisplaySettings();
         void updateDataSetLookup(DataSetLookupConstraints constraints, DataSetMetadata metadata);
+        void showTypeChangedWarning(DisplayerSettings oldSettings, DisplayerSettings newSettings);
         void error(String msg, Exception e);
         void close();
     }
@@ -120,6 +125,12 @@ public class DisplayerEditor implements IsWidget,
 
     public void save() {
         view.close();
+
+        // Clear settings before return
+        Displayer displayer = DisplayerHelper.lookupDisplayer(displayerSettings);
+        DisplayerConstraints displayerConstraints = displayer.getDisplayerConstraints();
+        displayerConstraints.removeUnsupportedAttributes(displayerSettings);
+
         if (listener != null) {
             listener.onSave(this);
         }
@@ -162,11 +173,59 @@ public class DisplayerEditor implements IsWidget,
 
     @Override
     public void displayerTypeChanged(DisplayerType type) {
-        displayerSettings = DisplayerPrototypes.get().getProto(type);
-        displayerSettings.setTitle("- New displayer - ");
-        view.init(displayerSettings, this);
+
+        // Create new settings for the selected type
+        DisplayerSettings oldSettings = displayerSettings;
+        DisplayerSettings newSettings = DisplayerPrototypes.get().getProto(type);
+        DataSet oldDataSet = displayerSettings.getDataSet();
+        DataSetLookup oldDataLookup = displayerSettings.getDataSetLookup();
+
+        // Check if the current data lookup is compatible with the new displayer type
+        if (oldDataSet == null && oldDataLookup != null) {
+            Displayer displayer = DisplayerHelper.lookupDisplayer(newSettings);
+            DisplayerConstraints displayerConstraints = displayer.getDisplayerConstraints();
+            DataSetLookupConstraints dataConstraints = displayerConstraints.getDataSetLookupConstraints();
+            DataSetMetadata metadata = DataSetClientServices.get().getMetadata(oldDataLookup.getDataSetUUID());
+
+            // Keep the current data settings provided it satisfies the data constraints
+            ValidationError validationError = dataConstraints.check(oldDataLookup, metadata);
+            if (validationError == null) {
+                newSettings.setDataSet(null);
+                newSettings.setDataSetLookup(oldDataLookup);
+                changeSettings(oldSettings, newSettings);
+            }
+            // If the data lookup is not compatible then warn about it
+            else {
+                view.showTypeChangedWarning(oldSettings, newSettings);
+            }
+        }
+        // If the displayer is static (no data lookup) then just display the selected displayer prototype
+        else {
+            changeSettings(oldSettings, newSettings);
+        }
     }
 
+    public void changeSettings(DisplayerSettings oldSettings, DisplayerSettings newSettings) {
+        // Remove the non supported attributes
+        oldSettings.removeDisplayerSetting(DisplayerAttributeGroupDef.TYPE);
+        oldSettings.removeDisplayerSetting(DisplayerAttributeGroupDef.CHART_GROUP);
+        oldSettings.removeDisplayerSetting(DisplayerAttributeGroupDef.CHART_MARGIN_GROUP);
+        oldSettings.removeDisplayerSetting(DisplayerAttributeGroupDef.CHART_LEGEND_GROUP);
+        newSettings.getSettingsFlatMap().putAll(oldSettings.getSettingsFlatMap());
+
+        // Ensure the renderer supports the new type
+        try {
+            // Try to get the displayer for the new type
+            DisplayerHelper.lookupDisplayer(newSettings);
+        } catch(Exception e) {
+            // The new type might not support the selected renderer.
+            newSettings.removeDisplayerSetting(DisplayerAttributeDef.RENDERER);
+        }
+
+        // Update the view
+        displayerSettings = newSettings;
+        view.init(displayerSettings, this);
+    }
     @Override
     public void dataSetChanged(final String uuid) {
         try {

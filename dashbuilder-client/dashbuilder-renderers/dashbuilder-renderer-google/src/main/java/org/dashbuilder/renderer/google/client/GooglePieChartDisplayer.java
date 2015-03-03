@@ -30,7 +30,7 @@ import org.dashbuilder.displayer.DisplayerAttributeDef;
 import org.dashbuilder.displayer.DisplayerAttributeGroupDef;
 import org.dashbuilder.displayer.DisplayerConstraints;
 
-public class GooglePieChartDisplayer extends GoogleXAxisChartDisplayer {
+public class GooglePieChartDisplayer extends GoogleCategoriesDisplayer {
 
     protected Panel chartPanel = new FlowPanel();
     private PieChart chart;
@@ -109,7 +109,7 @@ public class GooglePieChartDisplayer extends GoogleXAxisChartDisplayer {
         options.setHeight(displayerSettings.getChartHeight());
         options.setBackgroundColor(displayerSettings.getChartBackgroundColor());
         options.setIs3D(displayerSettings.isChart3D());
-        options.setLegend( createChartLegend( displayerSettings ) );
+        options.setLegend( createChartLegend() );
         options.setColors(createColorArray(googleTable));
         options.setChartArea(createChartArea());
         return options;

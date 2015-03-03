@@ -28,6 +28,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
@@ -160,6 +161,16 @@ public class DisplayerEditorView extends Composite
             dataTablePanel.setVisible(true);
         }
         showDisplayer();
+    }
+
+    @Override
+    public void showTypeChangedWarning(DisplayerSettings oldSettings, DisplayerSettings newSettings) {
+
+        if (Window.confirm("Data settings are not compatible. The current settings will be lost. Continue?")) {
+            presenter.changeSettings(oldSettings, newSettings);
+        } else {
+            typeSelector.select(oldSettings.getType());
+        }
     }
 
     @Override

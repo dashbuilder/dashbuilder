@@ -29,7 +29,7 @@ import org.dashbuilder.displayer.DisplayerAttributeDef;
 import org.dashbuilder.displayer.DisplayerAttributeGroupDef;
 import org.dashbuilder.displayer.DisplayerConstraints;
 
-public class GoogleMeterChartDisplayer extends GoogleDisplayer {
+public class GoogleMeterChartDisplayer extends GoogleChartDisplayer {
 
     private Gauge chart;
 

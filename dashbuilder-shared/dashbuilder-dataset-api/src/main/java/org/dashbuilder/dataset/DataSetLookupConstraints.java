@@ -23,6 +23,7 @@ import java.util.Set;
 
 import org.dashbuilder.dataset.group.AggregateFunctionType;
 import org.dashbuilder.dataset.group.DataSetGroup;
+import org.dashbuilder.dataset.group.GroupFunction;
 import org.dashbuilder.dataset.impl.DataSetLookupBuilderImpl;
 
 /**
@@ -116,19 +117,70 @@ public class DataSetLookupConstraints extends DataSetConstraints<DataSetLookupCo
     }
 
     public ValidationError check(DataSetLookup lookup) {
+        return check(lookup, null);
+    }
+
+    public ValidationError check(DataSetLookup lookup, DataSetMetadata metadata) {
 
         List<DataSetGroup> grOps = lookup.getOperationList(DataSetGroup.class);
-        if (!groupAllowed && grOps.size() > 0) {
+        int lastGop = lookup.getLastGroupOpIndex(0);
+
+        if (!groupAllowed && lastGop != -1) {
             return createValidationError(ERROR_GROUP_NOT_ALLOWED);
         }
-        if (groupRequired && grOps.size() == 0) {
+        if (groupRequired && lastGop == -1) {
             return createValidationError(ERROR_GROUP_REQUIRED);
         }
         if (maxGroups != -1 && grOps.size() > maxGroups) {
             return createValidationError(ERROR_GROUP_NUMBER);
         }
+        if (lastGop != -1) {
+            DataSetGroup groupOp = lookup.getOperation(lastGop);
+            List<GroupFunction> groupFunctions = groupOp.getGroupFunctions();
+            if (minColumns != -1 && groupFunctions.size() < minColumns) {
+                return super.createValidationError(ERROR_COLUMN_NUMBER);
+            }
+            if (maxColumns != -1 && groupFunctions.size() > maxColumns) {
+                return super.createValidationError(ERROR_COLUMN_NUMBER);
+            }
+            if (metadata != null) {
+                int currentColumns  = -1;
+                boolean ok = false;
+                ValidationError error = null;
+                for (ColumnType[] types : columnTypeList) {
+                    if (currentColumns < 0 || currentColumns < types.length) currentColumns = types.length;
+                    error = checkTypes(metadata, groupFunctions, types);
+                    if (!ok && error == null) ok = true;
+                }
+                if (!ok) return error;
+
+                // Check extra columns type
+                if (currentColumns > 0 && extraColumnsAllowed && extraColumnsType != null && groupFunctions.size() > currentColumns) {
+                    for (int i = currentColumns; i < groupFunctions.size(); i++) {
+                        GroupFunction gf = groupFunctions.get(i);
+                        ColumnType columnType = metadata.getColumnType(gf.getSourceId());
+                        if (!columnType.equals(extraColumnsType)) {
+                            return createValidationError(ERROR_COLUMN_TYPE, i, extraColumnsType, columnType);
+                        }
+                    }
+                }
+                return null;
+            }
+        }
         return null;
     }
+
+    private ValidationError checkTypes(DataSetMetadata metadata, List<GroupFunction> groupFunctions, ColumnType[] types) {
+        for (int i = 0; i < groupFunctions.size(); i++) {
+            GroupFunction gf = groupFunctions.get(i);
+            ColumnType columnType = metadata.getColumnType(gf.getSourceId());
+            if (i < types.length && !columnType.equals(types[i])) {
+                return super.createValidationError(ERROR_COLUMN_TYPE, i, types[i], columnType);
+            }
+        }
+        return null;
+    }
+
 
     protected ValidationError createValidationError(int error) {
         switch (error) {

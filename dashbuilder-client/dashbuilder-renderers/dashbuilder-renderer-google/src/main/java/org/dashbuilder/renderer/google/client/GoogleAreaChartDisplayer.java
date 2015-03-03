@@ -32,7 +32,7 @@ import org.dashbuilder.displayer.DisplayerAttributeDef;
 import org.dashbuilder.displayer.DisplayerAttributeGroupDef;
 import org.dashbuilder.displayer.DisplayerConstraints;
 
-public class GoogleAreaChartDisplayer extends GoogleXAxisChartDisplayer {
+public class GoogleAreaChartDisplayer extends GoogleCategoriesDisplayer {
 
     protected Panel chartPanel = new FlowPanel();
     protected AreaChart chart;
@@ -53,6 +53,7 @@ public class GoogleAreaChartDisplayer extends GoogleXAxisChartDisplayer {
                 .setMinColumns(2)
                 .setMaxColumns(10)
                 .setExtraColumnsAllowed(true)
+                .setExtraColumnsType(ColumnType.NUMBER)
                 .setGroupsTitle("Categories")
                 .setColumnsTitle("Series")
                 .setColumnTypes(new ColumnType[] {
@@ -121,7 +122,7 @@ public class GoogleAreaChartDisplayer extends GoogleXAxisChartDisplayer {
         options.setWidth(displayerSettings.getChartWidth());
         options.setHeight(displayerSettings.getChartHeight());
         options.setBackgroundColor(displayerSettings.getChartBackgroundColor());
-        options.setLegend( createChartLegend( displayerSettings ) );
+        options.setLegend( createChartLegend() );
         if ( displayerSettings.isXAxisShowLabels() ) options.setHAxis( createHAxis() );
         if ( displayerSettings.isYAxisShowLabels() ) options.setVAxis( createVAxis() );
         options.setAnimation(anim);

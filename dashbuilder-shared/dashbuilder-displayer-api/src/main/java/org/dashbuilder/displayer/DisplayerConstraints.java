@@ -16,6 +16,7 @@
 package org.dashbuilder.displayer;
 
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.dashbuilder.dataset.DataSetLookupConstraints;
@@ -28,10 +29,12 @@ public class DisplayerConstraints {
 
     protected DataSetLookupConstraints dataSetLookupConstraints;
     protected Set<DisplayerAttributeDef> supportedEditorAttributes;
+    protected Set<String> supportedEditorAttrStrings;
 
     public DisplayerConstraints(DataSetLookupConstraints dataSetLookupConstraints) {
         this.dataSetLookupConstraints = dataSetLookupConstraints;
         supportedEditorAttributes = new HashSet<DisplayerAttributeDef>();
+        supportedEditorAttrStrings = new HashSet<String>();
     }
 
     public DisplayerConstraints supportsAttribute( DisplayerAttributeDef attributeDef ) {
@@ -40,6 +43,7 @@ public class DisplayerConstraints {
         DisplayerAttributeDef _attr = attributeDef;
         while (_attr != null) {
             supportedEditorAttributes.add(_attr);
+            supportedEditorAttrStrings.add(_attr.getFullId());
             _attr = _attr.getParent();
         }
         // ... and all its descendants as well.
@@ -62,6 +66,15 @@ public class DisplayerConstraints {
     public DisplayerConstraints setDataSetLookupConstraints(DataSetLookupConstraints dataSetLookupConstraints) {
         this.dataSetLookupConstraints = dataSetLookupConstraints;
         return this;
+    }
+
+    public void removeUnsupportedAttributes(DisplayerSettings displayerSettings) {
+        Map<String,String> settingsMap = displayerSettings.getSettingsFlatMap();
+        for (String setting : new HashSet<String>(settingsMap.keySet())) {
+            if (!supportedEditorAttrStrings.contains(setting)) {
+                displayerSettings.removeDisplayerSetting(setting);
+            }
+        }
     }
 
     public ValidationError check(DisplayerSettings settings) {

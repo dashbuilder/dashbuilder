@@ -57,9 +57,10 @@ public class DisplayerPrototypes {
                 .dataset(dataSetPrototypes.getContinentPopulation())
                 .title("Population per Continent")
                 .titleVisible(false)
-                .width(300).height(300)
-                .margins(0, 0, 0, 0)
-                .set3d(false)
+                .width(500).height(300)
+                .margins(10, 10, 10, 100)
+                .legendOn("right")
+                .set3d(true)
                 .filterOn(false, true, true)
                 .buildSettings());
 
@@ -70,7 +71,7 @@ public class DisplayerPrototypes {
                 .title("Population per Continent")
                 .titleVisible(false)
                 .width(500).height(250)
-                .margins(10, 20, 90, 50)
+                .margins(10, 40, 90, 50)
                 .horizontal().set3d(false)
                 .legendOff()
                 .filterOn(false, true, true)
@@ -95,7 +96,7 @@ public class DisplayerPrototypes {
                 .title("Population per Continent")
                 .titleVisible(false)
                 .width(500).height(300)
-                .margins(10, 40, 90, 40)
+                .margins(10, 40, 90, 10)
                 .legendOff()
                 .filterOn(false, true, true)
                 .buildSettings());
@@ -107,7 +108,7 @@ public class DisplayerPrototypes {
                 .title("Population per Continent")
                 .titleVisible(false)
                 .width(500).height(300)
-                .margins(10, 30, 50, 50)
+                .margins(10, 30, 50, 10)
                 .legendOff()
                 .filterOn(false, true, true)
                 .buildSettings());
@@ -149,7 +150,7 @@ public class DisplayerPrototypes {
     }
 
     public DisplayerSettings getProto(DisplayerType type) {
-        DisplayerSettings proto = prototypeMap.get(type);
+        DisplayerSettings proto = prototypeMap.get(type).cloneInstance();
         proto.setUUID(uuidGenerator.newUuid());
         return proto;
     }

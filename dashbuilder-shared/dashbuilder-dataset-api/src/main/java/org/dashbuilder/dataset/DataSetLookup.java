@@ -209,6 +209,17 @@ public class DataSetLookup {
         return target;
     }
 
+    public int getLastGroupOpIndex(int fromIndex) {
+        int target = -1;
+        for (int i = fromIndex; i < operationList.size(); i++) {
+            DataSetOp op = operationList.get(i);
+            if (DataSetOpType.GROUP.equals(op.getType())) {
+                target = i;
+            }
+        }
+        return target;
+    }
+
     public DataSetLookup cloneInstance() {
         DataSetLookup clone = new DataSetLookup();
         clone.setDataSetUUID(dataSetUUID);

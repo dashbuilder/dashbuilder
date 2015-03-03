@@ -30,6 +30,7 @@ public class DataSetConstraints<T> {
     protected int minColumns = -1;
     protected int maxColumns = -1;
     protected boolean extraColumnsAllowed = false;
+    protected ColumnType extraColumnsType = null;
 
     public ColumnType[] getColumnTypes() {
         if (columnTypeList.isEmpty()) return null;
@@ -88,6 +89,15 @@ public class DataSetConstraints<T> {
         return (T) this;
     }
 
+    public ColumnType getExtraColumnsType() {
+        return extraColumnsType;
+    }
+
+    public T setExtraColumnsType(ColumnType extraColumnsType) {
+        this.extraColumnsType = extraColumnsType;
+        return (T) this;
+    }
+
     private void _checkSizes(int min, int max, ColumnType[] types) {
         if (min == 0) {
             throw new IllegalArgumentException("Minimum data set columns must be greater or equals than 1. Actual=" + min);
@@ -117,10 +127,25 @@ public class DataSetConstraints<T> {
             return createValidationError(ERROR_COLUMN_NUMBER);
         }
         ValidationError error = null;
+        boolean ok = false;
+        int currentColumns  = -1;
         for (ColumnType[] types : columnTypeList) {
+            if (currentColumns < 0 || currentColumns < types.length) currentColumns = types.length;
             error = checkTypes(dataSet, types);
+            if (!ok && error == null) ok = true;
         }
-        return error;
+        if (!ok) return error;
+
+        // Check extra columns type
+        if (currentColumns > 0 && extraColumnsAllowed && extraColumnsType != null && dataSet.getColumns().size() > currentColumns) {
+            for (int i = currentColumns; i < dataSet.getColumns().size(); i++) {
+                ColumnType columnType = dataSet.getColumnByIndex(i).getColumnType();
+                if (!columnType.equals(extraColumnsType)) {
+                    return createValidationError(ERROR_COLUMN_TYPE, i, extraColumnsType, columnType);
+                }
+            }
+        }
+        return null;
     }
 
     private ValidationError checkTypes(DataSet dataSet, ColumnType[] types) {

@@ -52,7 +52,7 @@ public class DisplayerTypeSelector extends Composite {
     TabPanel optionsPanel;
 
     public DisplayerTypeSelector() {
-        tabList.add(new DisplayerTab("Bar", DisplayerType.BARCHART, true));
+        tabList.add(new DisplayerTab("Bar", DisplayerType.BARCHART));
         tabList.add(new DisplayerTab("Pie", DisplayerType.PIECHART));
         tabList.add(new DisplayerTab("Line", DisplayerType.LINECHART));
         tabList.add(new DisplayerTab("Area", DisplayerType.AREACHART));
@@ -69,17 +69,28 @@ public class DisplayerTypeSelector extends Composite {
 
     public void init(Listener listener) {
         this.listener = listener;
+        draw();
+    }
+
+
+    protected void draw() {
+        optionsPanel.clear();
+
+        for (int i = 0; i < tabList.size(); i++) {
+            DisplayerTab tab = tabList.get(i);
+            tab.setActive(false);
+            optionsPanel.add(tab);
+
+            if (tab.type.equals(selectedType)) {
+                tab.setActive(true);
+                optionsPanel.selectTab(i);
+            }
+        }
     }
 
     public void select(DisplayerType type) {
         selectedType = type;
-
-        for (int i = 0; i < tabList.size(); i++) {
-            DisplayerTab tab = tabList.get(i);
-            if (tab.type.equals(selectedType)) {
-                optionsPanel.selectTab(i);
-            }
-        }
+        draw();
     }
 
     private class DisplayerTab extends Tab {
@@ -88,12 +99,7 @@ public class DisplayerTypeSelector extends Composite {
         DisplayerType type;
 
         public DisplayerTab(String name, final DisplayerType type) {
-            this(name, type, false);
-        }
-
-        public DisplayerTab(String name, final DisplayerType type, boolean active) {
             super();
-            super.setActive(active);
             super.setHeading(name);
 
             this.name = name;
@@ -101,6 +107,7 @@ public class DisplayerTypeSelector extends Composite {
             
             super.addClickHandler(new ClickHandler() {
                 public void onClick(ClickEvent event) {
+                    event.stopPropagation();
                     boolean change = !selectedType.equals(type);
                     selectedType = type;
                     if (change && listener != null) {

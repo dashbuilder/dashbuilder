@@ -163,6 +163,7 @@ public class LienzoBarChartDisplayer extends LienzoDisplayer {
                 .setMaxColumns(10)
                 .setMinColumns(2)
                 .setExtraColumnsAllowed(true)
+                .setExtraColumnsType(ColumnType.NUMBER)
                 .setGroupsTitle("Categories")
                 .setColumnsTitle("Series")
                 .setColumnTypes(new ColumnType[]{

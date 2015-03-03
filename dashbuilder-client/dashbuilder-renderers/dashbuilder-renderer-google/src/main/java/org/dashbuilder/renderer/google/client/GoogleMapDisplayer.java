@@ -15,12 +15,16 @@
  */
 package org.dashbuilder.renderer.google.client;
 
+import com.google.gwt.core.client.JsArray;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.googlecode.gwt.charts.client.ChartPackage;
+import com.googlecode.gwt.charts.client.Selection;
+import com.googlecode.gwt.charts.client.event.SelectEvent;
+import com.googlecode.gwt.charts.client.event.SelectHandler;
 import com.googlecode.gwt.charts.client.geochart.GeoChart;
 import com.googlecode.gwt.charts.client.geochart.GeoChartOptions;
 import org.dashbuilder.dataset.ColumnType;
@@ -29,7 +33,7 @@ import org.dashbuilder.displayer.DisplayerAttributeDef;
 import org.dashbuilder.displayer.DisplayerAttributeGroupDef;
 import org.dashbuilder.displayer.DisplayerConstraints;
 
-public class GoogleMapDisplayer extends GoogleXAxisChartDisplayer {
+public class GoogleMapDisplayer extends GoogleChartDisplayer {
 
     private GeoChart chart;
     protected Panel filterPanel = new SimplePanel();
@@ -39,10 +43,29 @@ public class GoogleMapDisplayer extends GoogleXAxisChartDisplayer {
         return ChartPackage.GEOCHART;
     }
 
+    public SelectHandler createSelectHandler() {
+        return new SelectHandler() {
+            public void onSelect(SelectEvent event) {
+                if (!displayerSettings.isFilterEnabled()) return;
+
+                JsArray<Selection> selections = chart.getSelection();
+                for (int i = 0; i < selections.length(); i++) {
+                    Selection selection = selections.get(i);
+                    int row = selection.getRow();
+
+                    filterUpdate(googleTable.getColumnId(0), row, googleTable.getNumberOfRows());
+                }
+                // Redraw the char in order to reflect the current selection
+                updateVisualization();
+            }
+        };
+    }
+
+
     @Override
     public Widget createVisualization() {
         chart = new GeoChart();
-        chart.addSelectHandler(createSelectHandler(chart));
+        chart.addSelectHandler(createSelectHandler());
         chart.draw(createTable(), createOptions());
 
         HTML titleHtml = new HTML();
@@ -65,7 +88,7 @@ public class GoogleMapDisplayer extends GoogleXAxisChartDisplayer {
                 .setMinColumns(2)
                 .setMaxColumns(3)
                 .setExtraColumnsAllowed(true)
-                .setGroupsTitle("Categories")
+                .setGroupsTitle("Locations")
                 .setColumnsTitle("Series")
                 .setColumnTypes(new ColumnType[] {
                         ColumnType.LABEL,
