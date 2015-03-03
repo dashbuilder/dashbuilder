@@ -110,18 +110,8 @@ public class DisplayerSettingsJSONMarshaller {
         // UUID
         json.put( SETTINGS_UUID, displayerSettings.getUUID() != null ? new JSONString( displayerSettings.getUUID() ) : null );
 
-        Set<String> supportedSettings = new HashSet<String>( displayerSettings.getSettingsFlatMap().size() );
-        Displayer displayer = DisplayerLocator.get().lookupDisplayer( displayerSettings );
-        for ( DisplayerAttributeDef attDef : displayer.getDisplayerConstraints().getSupportedAttributes() ) {
-            supportedSettings.add( attDef.getFullId() );
-        }
-
-
-        // Then all the other supported settings
         for ( Map.Entry<String, String> entry : displayerSettings.getSettingsFlatMap().entrySet() ) {
-            if ( supportedSettings.contains( entry.getKey() ) ) {
                 setNodeValue( json, entry.getKey(), entry.getValue() );
-            }
         }
 
         // DataSet or DataSetLookup
