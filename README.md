@@ -2,6 +2,46 @@ Dashbuilder
 ===========
 
 Dashboard composition tooling based on the Uberfire framework
+
+Change log
+==========
+
+0.3.0
+
+* SQL provider for the definition of data sets stored into external databases.
+* Elastic Search integration for the retrieval of data stored into Elastic Search nodes.
+* Support for real-time dashboards. Displayer refresh settings.
+* Displayer editor data set lookup enhancements:
+  - Filter editor for retrieving only a data subset.
+  - Time frame function for the retrieval of time series data in real-time.
+  - Different strategies for grouping time series data.
+  - Ability to add/remove the columns/series to display.
+
+0.2.0
+
+* Data set definition files: Support for CSV & Bean generated data sets
+* Displayer Editor widget for the creation of displayer definitions
+* Perspective editor integration which allows the creation of dashboards by drag&drop
+
+0.1.1
+
+* Notify clients about data set registration/removal events
+* Assign an HTML identifier to every Displayer instance (useful for testing purposes)
+
+0.1.0
+
+Main goal of this very first release is to make it possible the creation of
+composite dashboards using an straightforward API. Feature set:
+
+* Shared API for defining and registering data sets
+* Shared operation engine for executing filter, group & sort operations over a data set
+* Client API & widgets for defining Displayer instances
+* Uberfire wrapper screen for the Displayer widget
+* Showcase App. providing a built-in displayer gallery plus some dashboard samples
+* Default renderer based on the Google Visualization library
+* Additional table renderer based on the Uberfire PagedTable widget
+* Tomcat 7 and JBoss AS 7 distributions provided
+
  
 Build & run
 ===========
@@ -26,7 +66,7 @@ Development mode
 
 Development mode allows a user to develop with the framework by compiling classes and client assets on runtime, which decreases the development time. There are more implications such as browser compatibilities, language support, etc. It's useful for developing and testing the application.                     
 
-Dashbuilder is currently built using GWT 2.6.1, so uou can use both [hosted mode](http://www.gwtproject.org/doc/latest/DevGuideCompilingAndDebugging.html) or [SuperSevMode](http://www.gwtproject.org/articles/superdevmode.html) to run the application.             
+Dashbuilder is currently built using GWT 2.6.1, so uou can use both [hosted mode](http://www.gwtproject.org/doc/latest/DevGuideCompilingAndDebugging.html) or [SuperDevMode](http://www.gwtproject.org/articles/superdevmode.html) to run the application.             
 
 **Hosted Mode** 
 
@@ -122,43 +162,3 @@ In order to build the production mode:
 Once build is finished, you'll find the WAR distributions for JBoss EAP/Wildfly and Tomcat into <code>dashbuilder/dashbuilder-distros/target/</code>.                
    
 Just deploy the WAR file into your application server!                          
-
-
-Change log
-==========
-
-0.3.0
-
-* SQL provider for the definition of data sets stored into external databases.
-* Elastic Search integration for the retrieval of data stored into Elastic Search nodes.
-* Support for real-time dashboards. Displayer refresh settings.
-* Displayer editor data set lookup enhancements:
-  - Filter editor for retrieving only a data subset.
-  - Time frame function for the retrieval of time series data in real-time.
-  - Different strategies for grouping time series data.
-  - Ability to add/remove the columns/series to display.
-
-0.2.0
-
-* Data set definition files: Support for CSV & Bean generated data sets
-* Displayer Editor widget for the creation of displayer definitions
-* Perspective editor integration which allows the creation of dashboards by drag&drop
-
-0.1.1
-
-* Notify clients about data set registration/removal events
-* Assign an HTML identifier to every Displayer instance (useful for testing purposes)
-
-0.1.0
-
-Main goal of this very first release is to make it possible the creation of
-composite dashboards using an straightforward API. Feature set:
-
-* Shared API for defining and registering data sets
-* Shared operation engine for executing filter, group & sort operations over a data set
-* Client API & widgets for defining Displayer instances
-* Uberfire wrapper screen for the Displayer widget
-* Showcase App. providing a built-in displayer gallery plus some dashboard samples
-* Default renderer based on the Google Visualization library
-* Additional table renderer based on the Uberfire PagedTable widget
-* Tomcat 7 and JBoss AS 7 distributions provided
