@@ -47,6 +47,7 @@ public class PieChart extends AbstractChart<PieChart>
     private Group labels = new Group();
     private List<Text> texts = new LinkedList<Text>();
     private List<PieSlice> pieSlices = new LinkedList<PieSlice>();
+    private PieChartTooltip tooltip = null;
     
     private static final ColorName[] DEFAULT_SLICE_COLORS = new ColorName[] {
         ColorName.DEEPPINK, ColorName.YELLOW, ColorName.SALMON, ColorName.CORNFLOWERBLUE,
@@ -96,6 +97,9 @@ public class PieChart extends AbstractChart<PieChart>
         // Apply position and size to inner shapes. 
         redraw(getChartWidth(), getChartHeight(), true);
 
+        // Tooltip.
+        buildToolip();
+
         // Add the attributes event change handlers.
         this.addAttributesChangedHandler(ChartAttribute.PIE_CHART_DATA, new AttributesChangedHandler() {
             @Override
@@ -135,50 +139,13 @@ public class PieChart extends AbstractChart<PieChart>
             slice.addNodeMouseClickHandler(new NodeMouseClickHandler() {
                 @Override
                 public void onNodeMouseClick(NodeMouseClickEvent event) {
-                    GWT.log("PieChart - filtering on "  + categories[index] + "/" + index);
+                    // GWT.log("PieChart - filtering on "  + categories[index] + "/" + index);
                     PieChart.this.fireEvent(new ValueSelectedEvent(getData().getCategoriesProperty(), index));
                 }
             });
 
-            slice.setFillColor(getColor(i)).setStrokeColor(ColorName.BLACK).setStrokeWidth(3);
-
-            slice.addNodeMouseEnterHandler(new NodeMouseEnterHandler()
-            {
-                @Override
-                public void onNodeMouseEnter(NodeMouseEnterEvent event)
-                {
-                    if (false == slice.isAnimating())
-                    {
-                        slice.setAnimating(true);
-
-                        slice.setListening(false);
-
-                        slice.getLayer().batch();
-
-                        slice.animate(AnimationTweener.LINEAR, AnimationProperties.toPropertyList(AnimationProperty.Properties.SCALE(1.3, 1.3)), 333, new AnimationCallback()
-                        {
-                            @Override
-                            public void onClose(IAnimation animation, IAnimationHandle handle)
-                            {
-                                slice.animate(AnimationTweener.LINEAR, AnimationProperties.toPropertyList(AnimationProperty.Properties.SCALE(1, 1)), 333, new AnimationCallback()
-                                {
-                                    @Override
-                                    public void onClose(IAnimation animation, IAnimationHandle handle)
-                                    {
-                                        slice.setScale(null);
-
-                                        slice.setListening(true);
-
-                                        slice.setAnimating(false);
-
-                                        slice.getLayer().batch();
-                                    }
-                                });
-                            }
-                        });
-                    }
-                }
-            });
+            slice.setFillColor(getColor(i)).setStrokeColor(ColorName.BLACK).setStrokeWidth(1);
+            slice.setID("pieSlice"+i);
             pieSlices.add(slice);
             slices.add(slice);
 
@@ -208,6 +175,7 @@ public class PieChart extends AbstractChart<PieChart>
             pieSlices = new LinkedList<PieSlice>();
             _build(getData());
             buildLegend();
+            buildToolip();
         }
         
         double radius = getRadius(chartWidth, chartHeight);
@@ -219,9 +187,9 @@ public class PieChart extends AbstractChart<PieChart>
             return this;
         }
 
-        DataTable dataTable = data.getDataTable();
-        String[] categories = dataTable.getColumn(getData().getCategoriesProperty()).getStringValues();
-        Double[] values = dataTable.getColumn(getData().getValuesProperty()).getNumericValues();
+        final DataTable dataTable = data.getDataTable();
+        final String[] categories = dataTable.getColumn(getData().getCategoriesProperty()).getStringValues();
+        final Double[] values = dataTable.getColumn(getData().getValuesProperty()).getNumericValues();
 
         double sofar = 0;
 
@@ -236,9 +204,9 @@ public class PieChart extends AbstractChart<PieChart>
 
         for (int i = 0; i < values.length; i++)
         {
-            double value = values[i] / total;
+            final double value = values[i] / total;
 
-            PieSlice slice  = pieSlices.get(i);
+            final PieSlice slice  = pieSlices.get(i);
             if (slice != null) {
                 double startAngle = PieSlice.buildStartAngle(sofar);
                 double endAngle = PieSlice.buildEngAngle(sofar, value);
@@ -292,12 +260,54 @@ public class PieChart extends AbstractChart<PieChart>
                 align = TextAlign.RIGHT;
             }
 
+            final double xToolTip = lx;
+            final double yToolTip = ly;
+            final int _i = i;
+            final String category = categories[i];
+            slice.addNodeMouseEnterHandler(new NodeMouseEnterHandler()
+            {
+                @Override
+                public void onNodeMouseEnter(NodeMouseEnterEvent event)
+                {
+                    // Animate other slices.
+                    alphaToOtherSlices(slice.getID(), 0.5);
+
+                    // Show the tooltip.
+                    tooltip.setX(xToolTip + getChartWidth()/2).setY(yToolTip + getChartHeight()/2);
+                    tooltip.show(category, getLabel(value * 100));
+                    
+                    // Hide text.
+                    AnimationProperties animationProperties = new AnimationProperties();
+                    animationProperties.push(AnimationProperty.Properties.ALPHA(0));
+                    Text _text = texts.get(_i);
+                    if (_text != null) _text.animate(AnimationTweener.LINEAR, animationProperties, CLEAR_ANIMATION_DURATION);
+                }
+            });
+
+            slice.addNodeMouseExitHandler(new NodeMouseExitHandler() {
+                @Override
+                public void onNodeMouseExit(NodeMouseExitEvent event) {
+                    // Animate other slices.
+                    alphaToOtherSlices(slice.getID(), 1);
+
+                    // Hide tooltip.
+                    if (tooltip != null) tooltip.hide();
+
+                    // Show text.
+                    AnimationProperties animationProperties = new AnimationProperties();
+                    animationProperties.push(AnimationProperty.Properties.ALPHA(1));
+                    Text _text = texts.get(_i);
+                    if (_text != null)
+                        _text.animate(AnimationTweener.LINEAR, animationProperties, CLEAR_ANIMATION_DURATION);
+                }
+            });
+            
             Text text = texts.get(i);
             if (text != null) {
-                text.setText(getLabel(value * 100)).setTextAlign(align);
+                text.setText(getLabel(value * 100));
                 double textWidth = text.getBoundingBox().getWidth();
                 double textHeight = text.getBoundingBox().getHeight();
-                setShapeAttributes(text, lx + textWidth/2, ly + textHeight/2, null, null, null, 1d, animate);
+                setShapeAttributes(text, lx - textWidth/2, ly - textHeight/2, null, null, null, 1d, animate);
             } else {
                 // TODO: New data values added.
             }
@@ -310,6 +320,16 @@ public class PieChart extends AbstractChart<PieChart>
         labels.moveToTop();
         
         return this;
+    }
+    
+    protected void alphaToOtherSlices(String sliceID, double alpha) {
+        for (PieSlice slice : pieSlices) {
+            if (!slice.getID().equals(sliceID)) {
+                AnimationProperties animationProperties = new AnimationProperties();
+                animationProperties.push(AnimationProperty.Properties.ALPHA(alpha));
+                slice.animate(AnimationTweener.LINEAR, animationProperties, CLEAR_ANIMATION_DURATION);
+            }
+        }
     }
 
     protected void clear(final Runnable callback) {
@@ -380,7 +400,8 @@ public class PieChart extends AbstractChart<PieChart>
     @Override
     protected void buildLegend() {
         super.buildLegend();
-        
+
+        // Set legend entries.
         PieChartData data = getData();
         if (legend != null && getData().getDataTable() != null) {
             String catAxisProp = data.getCategoriesProperty();
@@ -391,7 +412,15 @@ public class PieChart extends AbstractChart<PieChart>
                     legend.add(new ChartLegend.ChartLegendEntry(value, getColor(x)));
                 }
             }
+            legend.build();
         }
+    }
+    
+    
+
+    private void buildToolip() {
+        tooltip = new PieChartTooltip();
+        addOnAreaChartCentered(tooltip);
     }
 
     private void reset() {
@@ -425,6 +454,7 @@ public class PieChart extends AbstractChart<PieChart>
                 public void run() {
                     // Reset chart's inner shapes.
                     if (legend != null) legend.clear();
+                    if (tooltip != null) tooltip.clear();
                     isBuilt[0] = false;
                     isReloading[0] = false;
                     _setData(data);

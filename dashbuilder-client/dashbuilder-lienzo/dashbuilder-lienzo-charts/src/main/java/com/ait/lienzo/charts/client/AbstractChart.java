@@ -254,9 +254,22 @@ public abstract class AbstractChart<T extends AbstractChart> extends Group {
                     bottomArea.add(legend.setX(xLegend).setY(yLegend));
                     break;
             }
-            
+            // Set horizontal orientation.
+            legend.setOrientation(getLegendOrientation());
+
             legend.moveToTop();
         }
+    }
+
+    protected ChartLegend.ChartLegendOrientation getLegendOrientation() {
+        switch(getLegendPosition()) {
+            case LEFT:
+            case RIGHT:
+                return ChartLegend.ChartLegendOrientation.VERTICAL;
+            default:
+                return ChartLegend.ChartLegendOrientation.HORIZONTAL;
+        }
+
     }
 
     protected void moveAreas(Double x, Double y, boolean animate) {

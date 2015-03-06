@@ -454,6 +454,7 @@ public class BarChart extends AbstractChart<BarChart>
             for (XYChartSerie serie : series) {
                 legend.add(new ChartLegend.ChartLegendEntry(serie.getName(), serie.getColor()));
             }
+            legend.build();
         }
     }
 
@@ -713,7 +714,7 @@ public class BarChart extends AbstractChart<BarChart>
             // Find removed series in order to remove bar rectangle instances.
             for (String removedSerieName : categoriesAxisBuilder[0].getDataSummary().getRemovedSeries()) {
                 removeSerieValues(removedSerieName);
-                if (legend != null) legend.remove(removedSerieName);
+                if (legend != null) legend.remove(removedSerieName).build();
             }
 
             // Iterate over all series.
@@ -724,7 +725,7 @@ public class BarChart extends AbstractChart<BarChart>
                     // If a new serie is added, build new bar rectangle instances.
                     if (categoriesAxisBuilder[0].getDataSummary().getAddedSeries().contains(serie.getName())) {
                         buildSerieValues(serie, numSerie);
-                        if (legend != null) legend.add(new ChartLegend.ChartLegendEntry(serie.getName(), serie.getColor()));
+                        if (legend != null) legend.add(new ChartLegend.ChartLegendEntry(serie.getName(), serie.getColor())).build();
                     }
 
                     setValuesAttributesForSerie(serie, numSerie, width, height, animate, barAnimation);
