@@ -30,7 +30,9 @@ import com.ait.lienzo.charts.client.xy.bar.event.DataReloadedEvent;
 import com.ait.lienzo.charts.client.xy.bar.event.DataReloadedEventHandler;
 import com.ait.lienzo.charts.client.xy.bar.event.ValueSelectedEvent;
 import com.ait.lienzo.charts.client.xy.bar.event.ValueSelectedHandler;
-import com.ait.lienzo.charts.shared.core.types.*;
+import com.ait.lienzo.charts.shared.core.types.ChartDirection;
+import com.ait.lienzo.charts.shared.core.types.ChartOrientation;
+import com.ait.lienzo.charts.shared.core.types.LabelsPosition;
 import com.ait.lienzo.client.core.Attribute;
 import com.ait.lienzo.client.core.animation.*;
 import com.ait.lienzo.client.core.event.*;
@@ -409,7 +411,7 @@ public class BarChart extends AbstractChart<BarChart>
                         // Recalculate positions and size for values intervals shapes.
                 .setValuesAxisIntervalsAttributes(chartWidth, chartHeight, animate)
                         // Recalculate positions, size and add or remove rectangles (if data has changed).
-                .setValuesAttributes(chartWidth, chartHeight, animate, new BarAnimation(BarAnimationType.CREATE));
+                .setValuesAttributes(chartWidth, chartHeight, animate, BarAnimationType.CREATE);
         
         // Tooltip.
         buildToolip();
@@ -488,13 +490,15 @@ public class BarChart extends AbstractChart<BarChart>
 
         // Redraw shapes provided by super class.
         super.redraw(chartWidth, chartHeight, animate);
-
+        BarAnimationType barAnimationType = BarAnimationType.RESIZE;
+        
         // If data axis properties has changed, builder instance will be null. Rebuild it.
         if (builder == null) {
             GWT.log("BarChart - Rebuilding BarChartBuilder instance.");
             builder = build(getOrientation());
             buildLegend();
             buildToolip();
+            barAnimationType = BarAnimationType.CREATE;
         }
 
         // Reload axis builder as data has changed.
@@ -508,23 +512,13 @@ public class BarChart extends AbstractChart<BarChart>
                         // Recalculate positions and size for values intervals shapes.
                 .setValuesAxisIntervalsAttributes(chartWidth, chartHeight, animate)
                         // Recalculate positions, size and add or remove rectangles (if data has changed).
-                .setValuesAttributes(chartWidth, chartHeight, animate, new BarAnimation(BarAnimationType.RESIZE));
+                .setValuesAttributes(chartWidth, chartHeight, animate, barAnimationType);
         
         return this;
     }
 
     private enum BarAnimationType {
         CREATE, RESIZE;
-    }
-    
-    private class BarAnimation {
-        BarAnimationType type;
-        Double initialX;
-        Double initialY;
-
-        public BarAnimation(BarAnimationType type) {
-            this.type = type;
-        }
     }
     
     private abstract class BarChartBuilder<T extends BarChartBuilder> {
@@ -669,15 +663,15 @@ public class BarChart extends AbstractChart<BarChart>
             return "value"+numSerie+""+numValue;
         }
 
-        protected void animateRectangle(final List<Object[]> rectanglesAttrs, final BarAnimation barAnimation, final int index, final double duration) {
+        protected void animateRectangle(final List<Object[]> rectanglesAttrs, final double initialX, final double initialY, final int index, final double duration) {
             if (index >= rectanglesAttrs.size()) return;
             Object[] rectangleAttrs = rectanglesAttrs.get(index);
 
             Shape bar = (Shape) rectangleAttrs[0];
             
             // Bars animation must start from chart bottom. So position the bar there.
-            if (barAnimation.initialX != null) bar.setX(barAnimation.initialX);
-            if (barAnimation.initialY != null) bar.setY(barAnimation.initialY);
+            bar.setX(initialX);
+            bar.setY(initialY);
 
             setShapeAttributes(bar, (Double) rectangleAttrs[1], (Double) rectangleAttrs[2],
                     (Double) rectangleAttrs[3], (Double) rectangleAttrs[4],
@@ -685,7 +679,7 @@ public class BarChart extends AbstractChart<BarChart>
                         @Override
                         public void onClose(IAnimation animation, IAnimationHandle handle) {
                             super.onClose(animation, handle);
-                            animateRectangle(rectanglesAttrs, barAnimation, new Integer(index) + 1, duration);
+                            animateRectangle(rectanglesAttrs, initialX, initialY, new Integer(index) + 1, duration);
                         }
                     });
         }
@@ -708,7 +702,7 @@ public class BarChart extends AbstractChart<BarChart>
         public abstract T setCategoriesAxisIntervalsAttributes(Double width, Double height, boolean animate);
         public abstract T setValuesAxisIntervalsAttributes(Double width, Double height, boolean animate);
 
-        public T setValuesAttributes(Double width, Double height, boolean animate, BarAnimation barAnimation) {
+        public T setValuesAttributes(Double width, Double height, boolean animate, BarAnimationType barAnimationType) {
             XYChartSerie[] series = getData().getSeries();
 
             // Find removed series in order to remove bar rectangle instances.
@@ -728,20 +722,22 @@ public class BarChart extends AbstractChart<BarChart>
                         if (legend != null) legend.add(new ChartLegend.ChartLegendEntry(serie.getName(), serie.getColor())).build();
                     }
 
-                    setValuesAttributesForSerie(serie, numSerie, width, height, animate, barAnimation);
+                    setValuesAttributesForSerie(serie, numSerie, width, height, animate, barAnimationType);
                 }
             }
             return (T) this;
         }
         
-        protected abstract T setValuesAttributesForSerie(final XYChartSerie serie, int numSerie, Double width, Double height, boolean animate, BarAnimation barAnimation);
+        protected abstract T setValuesAttributesForSerie(final XYChartSerie serie, int numSerie, Double width, Double height, boolean animate, BarAnimationType barAnimationType);
         
-        protected void animateBars(List<Object[]> rectanglesAttrs, BarAnimation barAnimation, int valuesCount, boolean animate) {
+        protected void animateBars(List<Object[]> rectanglesAttrs, BarAnimationType barAnimationType, int valuesCount, boolean animate) {
             if (!rectanglesAttrs.isEmpty()) {
-                switch (barAnimation.type) {
+                switch (barAnimationType) {
                     case CREATE:
-                        double duration = ANIMATION_DURATION / valuesCount;
-                        animateRectangle(rectanglesAttrs, barAnimation, 0, duration);
+                        final double initialX = 0d;
+                        final double initialY = getChartHeight();
+                        final double duration = ANIMATION_DURATION / valuesCount;
+                        animateRectangle(rectanglesAttrs, initialX, initialY, 0, duration);
                         break;
                     case RESIZE:
                         for (Object[] rectangleAttr : rectanglesAttrs) {
@@ -974,7 +970,7 @@ public class BarChart extends AbstractChart<BarChart>
             return this;
         }
 
-        protected VerticalBarChartBuilder setValuesAttributesForSerie(final XYChartSerie serie, final int numSerie, Double width, Double height, boolean animate, BarAnimation barAnimation) {
+        protected VerticalBarChartBuilder setValuesAttributesForSerie(final XYChartSerie serie, final int numSerie, Double width, Double height, boolean animate, BarAnimationType barAnimationType) {
             XYChartSerie[] series = getData().getSeries();
 
             // Rebuild bars for serie values
@@ -1066,9 +1062,7 @@ public class BarChart extends AbstractChart<BarChart>
                     //chartArea.add(new Rectangle(50,50).setX(x).setY(y).setFillColor(ColorName.RED).setAlpha(0.5));
                 }
                 // Animate the bars to their final positions and sizes.
-                barAnimation.initialX = 0d;
-                barAnimation.initialY = getChartHeight();
-                animateBars(rectanglesAttrs, barAnimation, categoryAxisValues.size(), animate);
+                animateBars(rectanglesAttrs, barAnimationType, categoryAxisValues.size(), animate);
             }
             return this;
         }
@@ -1102,14 +1096,16 @@ public class BarChart extends AbstractChart<BarChart>
             }
 
             // Create the animation properties.
-            double yClearPos = getChartHeight(); 
-            AnimationProperties animationProperties = new AnimationProperties();
-            animationProperties.push(AnimationProperty.Properties.Y(yClearPos));
-
+            final double yClearPos = getChartHeight(); 
             // Apply animation values axis intervals.
             if (valuesAxisIntervals != null) {
-                for (Line line : valuesAxisIntervals) {
-                    if (line != null) line.animate(AnimationTweener.LINEAR, animationProperties, CLEAR_ANIMATION_DURATION, animationCallback);
+                for (final Line line : valuesAxisIntervals) {
+                    if (line != null) {
+                        final double yClearDiff = yClearPos - line.getPoints().get(1).getY();
+                        AnimationProperties animationProperties = new AnimationProperties();
+                        animationProperties.push(AnimationProperty.Properties.Y(yClearDiff));
+                        line.animate(AnimationTweener.LINEAR, animationProperties, CLEAR_ANIMATION_DURATION, animationCallback);
+                    }
                 }
             }
 
@@ -1285,7 +1281,7 @@ public class BarChart extends AbstractChart<BarChart>
 
         }
         
-        protected HorizontalBarChartBuilder setValuesAttributesForSerie(final XYChartSerie serie, final int numSerie, Double width, Double height, boolean animate, BarAnimation barAnimation) {
+        protected HorizontalBarChartBuilder setValuesAttributesForSerie(final XYChartSerie serie, final int numSerie, Double width, Double height, boolean animate, BarAnimationType barAnimationType) {
             XYChartSerie[] series = getData().getSeries();
 
             // Rebuild bars for serie values
@@ -1378,7 +1374,7 @@ public class BarChart extends AbstractChart<BarChart>
                 }
 
                 // Animate the bars to their final positions and sizes.
-                animateBars(rectanglesAttrs, barAnimation, yAxisValues.size(), animate);
+                animateBars(rectanglesAttrs, barAnimationType, yAxisValues.size(), animate);
 
             }
             return this;
@@ -1414,13 +1410,15 @@ public class BarChart extends AbstractChart<BarChart>
 
             // Create the animation properties.
             double xClearPos = ChartDirection.POSITIVE.equals(getDirection()) ? 0 : getChartWidth();
-            AnimationProperties animationProperties = new AnimationProperties();
-            animationProperties.push(AnimationProperty.Properties.X(xClearPos));
-
             // Apply animation values axis intervals.
             if (valuesAxisIntervals != null) {
                 for (Line line : valuesAxisIntervals) {
-                    if (line != null) line.animate(AnimationTweener.LINEAR, animationProperties, CLEAR_ANIMATION_DURATION, animationCallback);
+                    if (line != null) {
+                        final double xClearDiff = xClearPos - line.getPoints().get(1).getX();
+                        AnimationProperties animationProperties = new AnimationProperties();
+                        animationProperties.push(AnimationProperty.Properties.X(xClearDiff));
+                        line.animate(AnimationTweener.LINEAR, animationProperties, CLEAR_ANIMATION_DURATION, animationCallback);
+                    }
                 }
             }
 
