@@ -22,6 +22,7 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
+import org.dashbuilder.dataset.group.AggregateFunctionType;
 import org.dashbuilder.dataset.sort.SortOrder;
 import org.dashbuilder.dataset.uuid.UUIDGenerator;
 import org.dashbuilder.displayer.DisplayerSettings;
@@ -123,6 +124,18 @@ public class DisplayerPrototypes {
                 .margins(10, 10, 10, 10)
                 .meter(0, 1000000000L, 3000000000L, 6000000000L)
                 .filterOn(false, true, true)
+                .buildSettings());
+
+        prototypeMap.put(DisplayerType.METRIC, DisplayerSettingsFactory
+                .newMetricSettings()
+                .uuid("metricPrototype")
+                .dataset(dataSetPrototypes.getTotalPopulation())
+                .title("World population")
+                .titleVisible(true)
+                .width(300).height(150)
+                .margins(30, 30, 30, 30)
+                .backgroundColor("B5F2D3")
+                .filterOn(false, false, true)
                 .buildSettings());
 
         prototypeMap.put(DisplayerType.MAP, DisplayerSettingsFactory

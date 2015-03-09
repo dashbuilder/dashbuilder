@@ -21,6 +21,7 @@ import org.dashbuilder.displayer.impl.BubbleChartSettingsBuilderImpl;
 import org.dashbuilder.displayer.impl.LineChartSettingsBuilderImpl;
 import org.dashbuilder.displayer.impl.MapChartSettingsBuilderImpl;
 import org.dashbuilder.displayer.impl.MeterChartSettingsBuilderImpl;
+import org.dashbuilder.displayer.impl.MetricSettingsBuilderImpl;
 import org.dashbuilder.displayer.impl.PieChartSettingsBuilderImpl;
 import org.dashbuilder.displayer.impl.SelectorDisplayerSettingsBuilderImpl;
 import org.dashbuilder.displayer.impl.TableDisplayerSettingsBuilderImpl;
@@ -64,5 +65,9 @@ public final class DisplayerSettingsFactory {
 
     public static SelectorDisplayerSettingsBuilder<SelectorDisplayerSettingsBuilderImpl> newSelectorSettings() {
         return new SelectorDisplayerSettingsBuilderImpl();
+    }
+
+    public static MetricSettingsBuilder<MetricSettingsBuilderImpl> newMetricSettings() {
+        return new MetricSettingsBuilderImpl();
     }
 }

@@ -19,6 +19,7 @@ import java.util.Collection;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
+import org.dashbuilder.common.client.StringUtils;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetLookup;
 import org.dashbuilder.dataset.client.ClientDataSetManager;
@@ -47,7 +48,11 @@ public class DisplayerLocator {
     public Displayer lookupDisplayer(DisplayerSettings target) {
         RendererLibrary renderer = RendererLibLocator.get().lookupRenderer(target);
         Displayer displayer = renderer.lookupDisplayer(target);
-        if (displayer == null) throw new RuntimeException(target.getType() + " displayer not supported in " + target.getRenderer() + " renderer.");
+        if (displayer == null) {
+            String rendererUuid = target.getRenderer();
+            if (StringUtils.isBlank(rendererUuid)) throw new RuntimeException(target.getType() + " displayer default renderer not declared");
+            throw new RuntimeException(target.getType() + " displayer not supported in the " + rendererUuid + " renderer");
+        }
         displayer.setDisplayerSettings( target );
 
         // Check if a DataSet has been set instead of a DataSetLookup.

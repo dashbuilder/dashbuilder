@@ -24,7 +24,7 @@ import org.dashbuilder.displayer.client.Displayer;
 import org.dashbuilder.displayer.client.DisplayerCoordinator;
 import org.dashbuilder.displayer.client.DisplayerHelper;
 import org.dashbuilder.displayer.DisplayerSettingsFactory;
-import org.dashbuilder.renderer.table.client.TableRenderer;
+import org.dashbuilder.renderer.client.DefaultRenderer;
 
 import static org.dashbuilder.shared.sales.SalesConstants.*;
 import static org.dashbuilder.dataset.sort.SortOrder.*;
@@ -105,7 +105,7 @@ public class SalesDistributionByCountry extends Composite {
                 .column(AMOUNT, "Amount")
                 .filterOn(true, true, true)
                 .tableWidth(900)
-                .renderer(TableRenderer.UUID)
+                .renderer(DefaultRenderer.UUID)
                 .buildSettings());
 
         // Make that charts interact among them

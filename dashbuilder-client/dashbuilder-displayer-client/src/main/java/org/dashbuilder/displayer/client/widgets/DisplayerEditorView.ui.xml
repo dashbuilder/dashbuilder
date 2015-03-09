@@ -28,8 +28,8 @@
       margin-right: 25px;
       width: 250px;
       max-width: 250px;
-      height: 350px;
-      max-height: 350px;
+      height: 400px;
+      max-height: 400px;
       overflow-y: auto;
     }
     .centerPanel {
@@ -37,9 +37,9 @@
       float: left;
       margin-right: 25px;
       width: 570px;
-      height: 350px;
+      height: 400px;
       max-width: 570px;
-      max-height: 350px;
+      max-height: 400px;
       overflow: auto;
     }
     .dataTablePanel {

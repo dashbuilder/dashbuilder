@@ -215,21 +215,26 @@ public class DisplayerEditorView extends Composite
         if (displayer != null) {
             displayer.close();
         }
-        if (dataTablePanel.isVisible() && viewAsTable.getValue()) {
-            DisplayerSettings tableSettings = settings.cloneInstance();
-            tableSettings.setTitleVisible(false);
-            tableSettings.setType(DisplayerType.TABLE);
-            tableSettings.setTablePageSize(8);
-            tableSettings.setTableWidth(-1);
-            displayer = DisplayerLocator.get().lookupDisplayer(tableSettings);
+        try {
+            if (dataTablePanel.isVisible() && viewAsTable.getValue()) {
+                DisplayerSettings tableSettings = settings.cloneInstance();
+                tableSettings.setTitleVisible(false);
+                tableSettings.setType(DisplayerType.TABLE);
+                tableSettings.setTablePageSize(8);
+                tableSettings.setTableWidth(-1);
+                displayer = DisplayerLocator.get().lookupDisplayer(tableSettings);
+                centerPanel.clear();
+                centerPanel.add(displayer);
+                DisplayerHelper.draw(displayer);
+            } else {
+                displayer = DisplayerLocator.get().lookupDisplayer(settings);
+                centerPanel.clear();
+                centerPanel.add(displayer);
+                DisplayerHelper.draw(displayer);
+            }
+        } catch (Exception e) {
             centerPanel.clear();
-            centerPanel.add(displayer);
-            DisplayerHelper.draw(displayer);
-        } else {
-            displayer = DisplayerLocator.get().lookupDisplayer(settings);
-            centerPanel.clear();
-            centerPanel.add(displayer);
-            DisplayerHelper.draw(displayer);
+            centerPanel.add(new Label(e.getMessage()));
         }
     }
 

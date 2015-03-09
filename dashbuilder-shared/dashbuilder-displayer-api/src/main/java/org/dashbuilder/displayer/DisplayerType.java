@@ -63,7 +63,12 @@ public enum DisplayerType {
     /**
      * Selector
      */
-    SELECTOR;
+    SELECTOR,
+
+    /**
+     * Metric
+     */
+    METRIC;
 
     public static DisplayerType getByName(String str) {
         try {

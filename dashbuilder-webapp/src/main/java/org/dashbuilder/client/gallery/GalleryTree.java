@@ -24,11 +24,12 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
+import org.dashbuilder.dataset.filter.FilterFactory;
 import org.dashbuilder.displayer.DisplayerSettings;
 import org.dashbuilder.displayer.DisplayerSettingsFactory;
 import org.dashbuilder.dataset.DataSetFactory;
 import org.dashbuilder.displayer.client.json.DisplayerSettingsJSONMarshaller;
-import org.dashbuilder.renderer.table.client.TableRenderer;
+import org.dashbuilder.renderer.client.DefaultRenderer;
 import org.uberfire.mvp.PlaceRequest;
 import org.uberfire.mvp.impl.DefaultPlaceRequest;
 
@@ -62,6 +63,7 @@ public class GalleryTree {
         initBubbleChartCategory();
         initTableReportCategory();
         initMeterChartCategory();
+        initMetricCategory();
         initMapChartCategory();
         initDashboardCategory();
     }
@@ -376,6 +378,41 @@ public class GalleryTree {
         // nodeList.add(new GalleryNodeDisplayer("Multiple (date)", ...)));
     }
 
+    private void initMetricCategory() {
+        GalleryTreeNodeList nodeList = new GalleryTreeNodeList("Metrics");
+        mainNodes.add(nodeList);
+
+        nodeList.add(new GalleryPlaceRequest("Basic", createPlaceRequest(
+                DisplayerSettingsFactory.newMetricSettings()
+                        .title("Deals (current year)")
+                        .titleVisible(true)
+                        .dataset(SALES_OPPS)
+                        .filter(CLOSING_DATE, FilterFactory.timeFrame("begin[year February] till now"))
+                        .column(PIPELINE, COUNT, "Number of deals")
+                        .width(300).height(200)
+                        .margins(50, 50, 50, 50)
+                        .backgroundColor("FDE8D4")
+                        .filterOn(false, false, true)
+                        .buildSettings()
+        )));
+
+        nodeList.add(new GalleryPlaceRequest("Basic (static)", createPlaceRequest(
+                DisplayerSettingsFactory.newMetricSettings()
+                        .title("Tweets!")
+                        .titleVisible(true)
+                        .column("Tweets", SUM)
+                        .width(300).height(200)
+                        .margins(50, 50, 50, 50)
+                        .backgroundColor("ADE8D4")
+                        .filterOn(false, false, true)
+                        .dataset(DataSetFactory.newDataSetBuilder()
+                                .number("Tweets")
+                                .row(54213d)
+                                .buildDataSet())
+                        .buildSettings()
+        )));
+    }
+
     private void initMapChartCategory() {
         GalleryTreeNodeList nodeList = new GalleryTreeNodeList("Map");
         mainNodes.add(nodeList);
@@ -473,7 +510,7 @@ public class GalleryTree {
                         .tableOrderEnabled(true)
                         .tableOrderDefault(AMOUNT, DESCENDING)
                         .filterOn(true, true, true)
-                        .renderer(TableRenderer.UUID)
+                        .renderer(DefaultRenderer.UUID)
                         .buildSettings()
         )));
     }

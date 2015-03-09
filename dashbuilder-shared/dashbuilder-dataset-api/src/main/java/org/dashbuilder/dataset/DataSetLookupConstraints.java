@@ -126,7 +126,10 @@ public class DataSetLookupConstraints extends DataSetConstraints<DataSetLookupCo
         int lastGop = lookup.getLastGroupOpIndex(0);
 
         if (!groupAllowed && lastGop != -1) {
-            return createValidationError(ERROR_GROUP_NOT_ALLOWED);
+            DataSetGroup groupOp = lookup.getOperation(lastGop);
+            if (groupOp.getColumnGroup() != null) {
+                return createValidationError(ERROR_GROUP_NOT_ALLOWED);
+            }
         }
         if (groupRequired && lastGop == -1) {
             return createValidationError(ERROR_GROUP_REQUIRED);
@@ -136,6 +139,9 @@ public class DataSetLookupConstraints extends DataSetConstraints<DataSetLookupCo
         }
         if (lastGop != -1) {
             DataSetGroup groupOp = lookup.getOperation(lastGop);
+            if (groupRequired && groupOp.getColumnGroup() == null) {
+                return createValidationError(ERROR_GROUP_REQUIRED);
+            }
             List<GroupFunction> groupFunctions = groupOp.getGroupFunctions();
             if (minColumns != -1 && groupFunctions.size() < minColumns) {
                 return super.createValidationError(ERROR_COLUMN_NUMBER);

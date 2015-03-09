@@ -237,7 +237,7 @@ public class DisplayerSettings {
     }
 
     public String getChartBackgroundColor() {
-        return settings.get(getSettingPath( DisplayerAttributeDef.CHART_BGCOLOR));
+        return parseString(settings.get(getSettingPath( DisplayerAttributeDef.CHART_BGCOLOR)));
     }
 
     public void setChartBackgroundColor(String color) {

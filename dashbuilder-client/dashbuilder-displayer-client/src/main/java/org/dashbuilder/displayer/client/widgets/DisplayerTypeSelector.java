@@ -58,6 +58,7 @@ public class DisplayerTypeSelector extends Composite {
         tabList.add(new DisplayerTab("Area", DisplayerType.AREACHART));
         tabList.add(new DisplayerTab("Bubble", DisplayerType.BUBBLECHART));
         tabList.add(new DisplayerTab("Meter", DisplayerType.METERCHART));
+        tabList.add(new DisplayerTab("Metric", DisplayerType.METRIC));
         tabList.add(new DisplayerTab("Map", DisplayerType.MAP));
         tabList.add(new DisplayerTab("Table", DisplayerType.TABLE));
 

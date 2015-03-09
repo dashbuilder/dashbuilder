@@ -49,7 +49,7 @@ public class DisplayerEditorPopup extends Composite {
     public DisplayerEditorPopup(DisplayerEditor editor) {
         this.editor = editor;
         initWidget(uiBinder.createAndBindUi(this));
-        popup.setMaxHeigth("450px");
+        popup.setMaxHeigth("500px");
         popup.setWidth(950);
     }
 

@@ -51,6 +51,10 @@ public class DataSetPrototypes {
         return dataSetManager.getDataSet("worldPopulation");
     }
 
+    public DataSet getTotalPopulation() {
+        return dataSetManager.getDataSet("totalPopulation");
+    }
+
     public DataSet getCountryPopulation() {
         return dataSetManager.getDataSet("countryPopulation");
     }
@@ -77,6 +81,13 @@ public class DataSetPrototypes {
                 .row("South America", 972005000L)
                 .row("Europe", 742452000L)
                 .row("Oceania", 38304000L)
+                .buildDataSet());
+
+        dataSetManager.registerDataSet(DataSetFactory
+                .newDataSetBuilder()
+                .uuid("totalPopulation")
+                .number(POPULATION)
+                .row(42987L)
                 .buildDataSet());
 
         dataSetManager.registerDataSet(DataSetFactory

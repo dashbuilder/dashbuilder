@@ -21,29 +21,47 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.dashbuilder</groupId>
-    <artifactId>dashbuilder-packaging</artifactId>
+    <artifactId>dashbuilder-renderers</artifactId>
     <version>0.3.0-SNAPSHOT</version>
   </parent>
 
-  <artifactId>dashbuilder-client-all</artifactId>
+  <artifactId>dashbuilder-renderer-default</artifactId>
   <packaging>jar</packaging>
 
-  <name>Dashbuilder All Client Libraries</name>
+  <name>Dashbuilder Default Renderer</name>
+  <description>Dashbuilder Default Renderer</description>
 
   <dependencies>
+
     <dependency>
-      <groupId>org.dashbuilder</groupId>
-      <artifactId>dashbuilder-common-client</artifactId>
+      <groupId>org.jboss.errai</groupId>
+      <artifactId>errai-javax-enterprise</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.jboss.errai</groupId>
+      <artifactId>errai-common</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.jboss.errai</groupId>
+      <artifactId>errai-weld-integration</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>com.google.gwt</groupId>
+      <artifactId>gwt-user</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.uberfire</groupId>
+      <artifactId>uberfire-client-all</artifactId>
     </dependency>
 
     <dependency>
       <groupId>org.dashbuilder</groupId>
-      <artifactId>dashbuilder-dataset-client</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.dashbuilder</groupId>
-      <artifactId>dashbuilder-dataset-shared</artifactId>
+      <artifactId>dashbuilder-displayer-api</artifactId>
     </dependency>
 
     <dependency>
@@ -52,18 +70,8 @@
     </dependency>
 
     <dependency>
-      <groupId>org.dashbuilder</groupId>
-      <artifactId>dashbuilder-displayer-editor</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.dashbuilder</groupId>
-      <artifactId>dashbuilder-displayer-screen</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.dashbuilder</groupId>
-      <artifactId>dashbuilder-renderer-default</artifactId>
+      <groupId>org.uberfire</groupId>
+      <artifactId>uberfire-widgets-commons</artifactId>
     </dependency>
 
   </dependencies>
