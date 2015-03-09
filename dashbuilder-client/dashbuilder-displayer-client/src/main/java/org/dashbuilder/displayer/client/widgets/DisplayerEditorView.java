@@ -109,14 +109,20 @@ public class DisplayerEditorView extends Composite
     }
 
     public void gotoLastTab() {
-        int tab = DisplayerEditorStatus.get().getSelectedTab(settings.getUUID());
-        switch (tab) {
-            case 2: gotoDisplaySettings();
-                break;
-            case 1: gotoDataSetConf();
-                break;
-            default: gotoTypeSelection();
-                break;
+        int selectedTab = optionsPanel.getSelectedTab();
+        int lastTab = DisplayerEditorStatus.get().getSelectedTab(settings.getUUID());
+        if (selectedTab < 0 || selectedTab != lastTab) {
+            switch (lastTab) {
+                case 2:
+                    gotoDisplaySettings();
+                    break;
+                case 1:
+                    gotoDataSetConf();
+                    break;
+                default:
+                    gotoTypeSelection();
+                    break;
+            }
         }
     }
 
@@ -204,8 +210,6 @@ public class DisplayerEditorView extends Composite
 
     @Override
     public void close() {
-        centerPanel.clear();
-        leftPanel.clear();
         if (displayer != null) {
             displayer.close();
         }
