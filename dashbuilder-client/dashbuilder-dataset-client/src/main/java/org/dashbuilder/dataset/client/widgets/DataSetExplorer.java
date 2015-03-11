@@ -18,18 +18,46 @@ package org.dashbuilder.dataset.client.widgets;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.user.client.ui.*;
+import org.dashbuilder.dataset.DataSet;
+import org.dashbuilder.dataset.client.DataSetClientServices;
+import org.dashbuilder.dataset.def.DataSetDef;
+import org.jboss.errai.common.client.api.RemoteCallback;
 
 import javax.enterprise.context.Dependent;
+import java.util.List;
 
 // TODO
 @Dependent
-public class DataSetExplorer extends Composite {
+public class DataSetExplorer implements IsWidget {
 
-    interface DataSetExplorerBinder extends UiBinder<Widget, DataSetExplorer> {}
-    private static DataSetExplorerBinder uiBinder = GWT.create(DataSetExplorerBinder.class);
-
-    public DataSetExplorer() {
-        initWidget(uiBinder.createAndBindUi(this));
+    public interface View extends IsWidget {
+        void init(DataSetExplorer presenter);
+        void set(List<DataSetDef> dataSetDefs);
+        boolean add(DataSetDef dataSetDef);
+        boolean remove(DataSetDef dataSetDef);
+        void show();
+        void clear();
     }
 
+    View view;
+    
+    public DataSetExplorer() {
+        view = new DataSetExplorerView();
+        init();
+    }
+    
+    void init() {
+        DataSetClientServices.get().getRemoteSharedDataSetDefs(new RemoteCallback<List<DataSetDef>>() {
+            public void callback(List<DataSetDef> dataSetDefs) {
+                view.set(dataSetDefs);
+
+                view.init(DataSetExplorer.this);
+            }
+        });
+    }
+
+    @Override
+    public Widget asWidget() {
+        return view.asWidget();
+    }
 }

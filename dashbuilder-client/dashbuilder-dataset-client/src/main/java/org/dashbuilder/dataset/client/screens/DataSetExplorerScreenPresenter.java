@@ -47,9 +47,10 @@ public class DataSetExplorerScreenPresenter {
 
     @OnClose
     public void onClose() {
-        
+        // TODO: Close editor widget.
     }
 
+    // TODO: i18n.
     @WorkbenchPartTitle
     public String getTitle() {
         return "Data Set Explorer Screen";
@@ -67,7 +68,8 @@ public class DataSetExplorerScreenPresenter {
 
     private Menus makeMenuBar() {
         return MenuFactory
-                .newTopLevelMenu("New")
+                // TODO: i18n.
+                .newTopLevelMenu("New data set")
                 .respondsWith(getNewCommand())
                 .endMenu()
                 .build();
@@ -76,8 +78,8 @@ public class DataSetExplorerScreenPresenter {
     private Command getNewCommand() {
         return new Command() {
             public void execute() {
-                // TODO
-                GWT.log("New button clicked.");
+                // TODO: Open editor in creation mode.
+                GWT.log("New dataset button clicked.");
             }
         };
     }
