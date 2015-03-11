@@ -18,6 +18,8 @@ package org.dashbuilder.dataset.client.widgets;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
+import org.dashbuilder.dataset.client.widgets.events.EditDataSetEvent;
+import org.dashbuilder.dataset.client.widgets.events.NewDataSetEvent;
 
 import javax.enterprise.context.Dependent;
 
@@ -30,6 +32,16 @@ public class DataSetEditor extends Composite {
     public DataSetEditor() {
         initWidget(container);
         container.add(new Label("Data Set Editor Widget"));
+    }
+    
+    public void newDataSet(NewDataSetEvent event) {
+        container.clear();
+        container.add(new Label("New Data Set: " + event.getUuid()));
+    }
+
+    public void editDataSet(EditDataSetEvent event) {
+        container.clear();
+        container.add(new Label("Edit Data Set: " + event.getUuid()));
     }
 
 }

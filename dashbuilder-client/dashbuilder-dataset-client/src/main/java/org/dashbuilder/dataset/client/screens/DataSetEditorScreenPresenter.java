@@ -15,22 +15,19 @@
  */
 package org.dashbuilder.dataset.client.screens;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.IsWidget;
 import org.dashbuilder.dataset.client.widgets.DataSetEditor;
-import org.dashbuilder.dataset.client.widgets.DataSetExplorer;
-import org.uberfire.client.annotations.WorkbenchMenu;
+import org.dashbuilder.dataset.client.widgets.events.EditDataSetEvent;
+import org.dashbuilder.dataset.client.widgets.events.NewDataSetEvent;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
 import org.uberfire.client.annotations.WorkbenchPartView;
 import org.uberfire.client.annotations.WorkbenchScreen;
 import org.uberfire.lifecycle.OnClose;
 import org.uberfire.lifecycle.OnStartup;
-import org.uberfire.mvp.Command;
 import org.uberfire.mvp.PlaceRequest;
-import org.uberfire.workbench.model.menu.MenuFactory;
-import org.uberfire.workbench.model.menu.Menus;
 
 import javax.enterprise.context.Dependent;
+import javax.enterprise.event.Observes;
 
 @WorkbenchScreen(identifier = "DataSetEditor")
 @Dependent
@@ -56,6 +53,14 @@ public class DataSetEditorScreenPresenter {
     @WorkbenchPartView
     public IsWidget getView() {
         return editorWidget;
+    }
+
+    public void onNewDataSet(@Observes NewDataSetEvent event) {
+        editorWidget.newDataSet(event);
+    }
+
+    public void onEditDataSet(@Observes EditDataSetEvent event) {
+        editorWidget.editDataSet(event);
     }
     
 }

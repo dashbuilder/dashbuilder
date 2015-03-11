@@ -16,11 +16,16 @@
 package org.dashbuilder.dataset.client.widgets;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.event.shared.HasHandlers;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.user.client.ui.*;
+import com.google.inject.Inject;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.client.DataSetClientServices;
+import org.dashbuilder.dataset.client.widgets.events.*;
 import org.dashbuilder.dataset.def.DataSetDef;
+import org.dashbuilder.dataset.uuid.UUIDGenerator;
 import org.jboss.errai.common.client.api.RemoteCallback;
 
 import javax.enterprise.context.Dependent;
@@ -30,20 +35,29 @@ import java.util.List;
 @Dependent
 public class DataSetExplorer implements IsWidget {
 
-    public interface View extends IsWidget {
+    public interface View extends IsWidget, HasHandlers {
         void init(DataSetExplorer presenter);
         void set(List<DataSetDef> dataSetDefs);
         boolean add(DataSetDef dataSetDef);
         boolean remove(DataSetDef dataSetDef);
         void show();
         void clear();
+        HandlerRegistration addEditDataSetEventHandler(EditDataSetEventHandler handler);
+        HandlerRegistration addDeleteDataSetEventHandler(DeleteDataSetEventHandler handler);
     }
 
     View view;
     
+
+    @Inject
     public DataSetExplorer() {
         view = new DataSetExplorerView();
         init();
+    }
+
+    @Override
+    public Widget asWidget() {
+        return view.asWidget();
     }
     
     void init() {
@@ -55,9 +69,16 @@ public class DataSetExplorer implements IsWidget {
             }
         });
     }
+    
+    // **************** EVENT HANDLER REGISTRATIONS ****************************
 
-    @Override
-    public Widget asWidget() {
-        return view.asWidget();
+    public HandlerRegistration addEditDataSetEventHandler(EditDataSetEventHandler handler)
+    {
+        return view.addEditDataSetEventHandler(handler);
+    }
+
+    public HandlerRegistration addDeleteDataSetEventHandler(DeleteDataSetEventHandler handler)
+    {
+        return view.addDeleteDataSetEventHandler(handler);
     }
 }

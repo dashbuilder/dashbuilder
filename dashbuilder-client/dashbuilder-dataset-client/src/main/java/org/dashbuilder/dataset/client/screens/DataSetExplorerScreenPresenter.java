@@ -18,6 +18,10 @@ package org.dashbuilder.dataset.client.screens;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.IsWidget;
 import org.dashbuilder.dataset.client.widgets.DataSetExplorer;
+import org.dashbuilder.dataset.client.widgets.events.EditDataSetEvent;
+import org.dashbuilder.dataset.client.widgets.events.EditDataSetEventHandler;
+import org.dashbuilder.dataset.client.widgets.events.NewDataSetEvent;
+import org.dashbuilder.dataset.uuid.UUIDGenerator;
 import org.uberfire.client.annotations.WorkbenchMenu;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
 import org.uberfire.client.annotations.WorkbenchPartView;
@@ -30,6 +34,8 @@ import org.uberfire.workbench.model.menu.MenuFactory;
 import org.uberfire.workbench.model.menu.Menus;
 
 import javax.enterprise.context.Dependent;
+import javax.enterprise.event.Event;
+import javax.inject.Inject;
 
 @WorkbenchScreen(identifier = "DataSetExplorer")
 @Dependent
@@ -39,9 +45,25 @@ public class DataSetExplorerScreenPresenter {
     
     private Menus menu = null;
     
+    @Inject
+    Event<NewDataSetEvent> newDataSetEvent;
+
+    @Inject
+    Event<EditDataSetEvent> editDataSetEvent;
+
+    @Inject
+    private UUIDGenerator uuidGenerator;
+
     @OnStartup
     public void onStartup( final PlaceRequest placeRequest) {
         explorerWidget = new DataSetExplorer();
+        explorerWidget.addEditDataSetEventHandler(new EditDataSetEventHandler() {
+            @Override
+            public void onEditDataSet(EditDataSetEvent event) {
+                editDataSet(event);
+            }
+        });
+        
         this.menu = makeMenuBar();
     }
 
@@ -78,9 +100,18 @@ public class DataSetExplorerScreenPresenter {
     private Command getNewCommand() {
         return new Command() {
             public void execute() {
-                // TODO: Open editor in creation mode.
-                GWT.log("New dataset button clicked.");
+                newDataSet();
             }
         };
+    }
+    
+    public void newDataSet() {
+        String uuid = uuidGenerator.newUuid();
+        NewDataSetEvent event = new NewDataSetEvent(uuid);
+        newDataSetEvent.fire(event);
+    }
+    
+    public void editDataSet(EditDataSetEvent event) {
+        editDataSetEvent.fire(event);
     }
 }

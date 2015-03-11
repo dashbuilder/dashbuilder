@@ -6,7 +6,7 @@
 
   <ui:with field="i18n" type="org.dashbuilder.dataset.client.resources.i18n.DataSetExplorerConstants"/>
 
-  <ui:style>
+  <ui:style type="org.dashbuilder.dataset.client.widgets.DataSetExplorerView.DataSetExplorerViewStyle">
     .mainPanel {
       font-size: 12pt;
       float: left;

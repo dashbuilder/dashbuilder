@@ -18,7 +18,12 @@ package org.dashbuilder.dataset.client.widgets;
 import com.github.gwtbootstrap.client.ui.*;
 import com.github.gwtbootstrap.client.ui.Button;
 import com.github.gwtbootstrap.client.ui.CheckBox;
+import com.github.gwtbootstrap.client.ui.constants.ButtonType;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.*;
@@ -26,6 +31,7 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import org.dashbuilder.dataset.client.resources.bundles.DataSetClientResources;
 import org.dashbuilder.dataset.client.resources.i18n.DataSetExplorerConstants;
+import org.dashbuilder.dataset.client.widgets.events.*;
 import org.dashbuilder.dataset.def.DataSetDef;
 
 import javax.enterprise.context.Dependent;
@@ -39,8 +45,15 @@ public class DataSetExplorerView extends Composite implements DataSetExplorer.Vi
     interface DataSetExplorerViewBinder extends UiBinder<Widget, DataSetExplorerView> {}
     private static DataSetExplorerViewBinder uiBinder = GWT.create(DataSetExplorerViewBinder.class);
 
+    interface DataSetExplorerViewStyle extends CssResource {
+        
+    }
+    
     private DataSetExplorer explorer;
     private List<DataSetDef> dataSets;
+
+    @UiField
+    DataSetExplorerViewStyle style;
     
     @UiField
     Accordion dataSetsAccordion;
@@ -123,22 +136,26 @@ public class DataSetExplorerView extends Composite implements DataSetExplorer.Vi
         switch (dataSetDef.getProvider()) {
             case BEAN:
                 typeIcon = new Image(DataSetClientResources.INSTANCE.images().javaIconSmall());
+                typeIcon.setAltText(DataSetExplorerConstants.INSTANCE.bean());
                 break;
             case CSV:
                 typeIcon = new Image(DataSetClientResources.INSTANCE.images().csvIconSmall());
+                typeIcon.setAltText(DataSetExplorerConstants.INSTANCE.csv());
                 break;
             case SQL:
                 typeIcon = new Image(DataSetClientResources.INSTANCE.images().sqlIconSmall());
+                typeIcon.setAltText(DataSetExplorerConstants.INSTANCE.sql());
                 break;
             case ELASTICSEARCH:
                 typeIcon = new Image(DataSetClientResources.INSTANCE.images().elIconSmall());
+                typeIcon.setAltText(DataSetExplorerConstants.INSTANCE.el());
                 break;
         }
         return typeIcon;
         
     }
     
-    private void buildDescription(DataSetDef dataSetDef, Panel parent) {
+    private void buildDescription(final DataSetDef dataSetDef, Panel parent) {
         if (parent != null) {
             // Checks.
             CheckBox cacheEnabled = new CheckBox(DataSetExplorerConstants.INSTANCE.cache());
@@ -157,6 +174,21 @@ public class DataSetExplorerView extends Composite implements DataSetExplorer.Vi
             final boolean isPublic = dataSetDef.isPublic();
             editButton.setEnabled(isPublic);
             deleteButton.setEnabled(isPublic);
+            deleteButton.setType(ButtonType.DANGER);
+            
+            editButton.addClickHandler(new ClickHandler() {
+                @Override
+                public void onClick(ClickEvent event) {
+                    fireEvent(new EditDataSetEvent(dataSetDef.getUUID()));
+                }
+            });
+            
+            deleteButton.addClickHandler(new ClickHandler() {
+                @Override
+                public void onClick(ClickEvent event) {
+                    fireEvent(new DeleteDataSetEvent(dataSetDef.getUUID()));
+                }
+            });
             
             // Add into parent container.
             parent.add(cacheEnabled);
@@ -166,6 +198,19 @@ public class DataSetExplorerView extends Composite implements DataSetExplorer.Vi
             parent.add(deleteButton);
 
         }
+    }
+
+
+    // **************** EVENT HANDLER REGISTRATIONS ****************************
+
+    public HandlerRegistration addEditDataSetEventHandler(EditDataSetEventHandler handler)
+    {
+        return this.addHandler(handler, EditDataSetEvent.TYPE);
+    }
+
+    public HandlerRegistration addDeleteDataSetEventHandler(DeleteDataSetEventHandler handler)
+    {
+        return this.addHandler(handler, DeleteDataSetEvent.TYPE);
     }
 
 }
