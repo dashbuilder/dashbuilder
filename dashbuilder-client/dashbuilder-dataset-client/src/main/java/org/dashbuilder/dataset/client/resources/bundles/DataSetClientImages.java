@@ -17,6 +17,7 @@
 package org.dashbuilder.dataset.client.resources.bundles;
 
 import com.google.gwt.resources.client.ClientBundle;
+import com.google.gwt.resources.client.DataResource;
 import com.google.gwt.resources.client.ImageResource;
 
 /**
@@ -35,4 +36,20 @@ public interface DataSetClientImages extends ClientBundle {
 
     @Source("images/el_icon_small.png")
     ImageResource elIconSmall();
+
+    /* NOTE: Use DataResource instead of ImageResource in order to set a custom size to the image when creating it. **/
+    @Source("images/csv_icon_large.png")
+    DataResource csvIconLarge();
+
+    /* NOTE: Use DataResource instead of ImageResource in order to set a custom size to the image when creating it. **/
+    @Source("images/java_icon_large.png")
+    DataResource javaIconLarge();
+
+    /* NOTE: Use DataResource instead of ImageResource in order to set a custom size to the image when creating it. **/
+    @Source("images/sql_icon_large.png")
+    DataResource sqlIconLarge();
+
+    /* NOTE: Use DataResource instead of ImageResource in order to set a custom size to the image when creating it. **/
+    @Source("images/el_icon_large.png")
+    DataResource elIconLarge();
 }

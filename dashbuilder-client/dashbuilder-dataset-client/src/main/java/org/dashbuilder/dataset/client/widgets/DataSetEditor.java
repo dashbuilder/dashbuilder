@@ -15,33 +15,53 @@
  */
 package org.dashbuilder.dataset.client.widgets;
 
-import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.event.shared.HasHandlers;
+import com.google.gwt.user.client.ui.*;
+import org.dashbuilder.dataset.client.ClientDataSetManager;
+import org.dashbuilder.dataset.client.DataSetClientServices;
+import org.dashbuilder.dataset.client.widgets.events.DeleteDataSetEventHandler;
 import org.dashbuilder.dataset.client.widgets.events.EditDataSetEvent;
+import org.dashbuilder.dataset.client.widgets.events.EditDataSetEventHandler;
 import org.dashbuilder.dataset.client.widgets.events.NewDataSetEvent;
+import org.dashbuilder.dataset.def.DataSetDef;
+import org.jboss.errai.common.client.api.RemoteCallback;
 
 import javax.enterprise.context.Dependent;
+import java.util.List;
 
-// TODO
 @Dependent
-public class DataSetEditor extends Composite {
+public class DataSetEditor implements IsWidget {
+    
 
-    private FlowPanel container = new FlowPanel();
+    public interface View extends IsWidget, HasHandlers {
+        void init(DataSetEditor presenter);
+        void create(String uuid);
+        void edit(DataSetDef dataSetDef);
+        void clear();
+    }
+
+    View view;
     
     public DataSetEditor() {
-        initWidget(container);
-        container.add(new Label("Data Set Editor Widget"));
+        view = new DataSetEditorView();
+        init();
+    }
+    
+    void init() {
+        view.init(DataSetEditor.this);
     }
     
     public void newDataSet(NewDataSetEvent event) {
-        container.clear();
-        container.add(new Label("New Data Set: " + event.getUuid()));
+        view.create(event.getUuid());
     }
 
     public void editDataSet(EditDataSetEvent event) {
-        container.clear();
-        container.add(new Label("Edit Data Set: " + event.getUuid()));
+        // TODO: view.edit();
     }
 
+    @Override
+    public Widget asWidget() {
+        return view.asWidget();
+    }
 }

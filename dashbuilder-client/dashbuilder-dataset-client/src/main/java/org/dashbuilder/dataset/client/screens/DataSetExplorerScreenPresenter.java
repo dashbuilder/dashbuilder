@@ -18,9 +18,7 @@ package org.dashbuilder.dataset.client.screens;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.IsWidget;
 import org.dashbuilder.dataset.client.widgets.DataSetExplorer;
-import org.dashbuilder.dataset.client.widgets.events.EditDataSetEvent;
-import org.dashbuilder.dataset.client.widgets.events.EditDataSetEventHandler;
-import org.dashbuilder.dataset.client.widgets.events.NewDataSetEvent;
+import org.dashbuilder.dataset.client.widgets.events.*;
 import org.dashbuilder.dataset.uuid.UUIDGenerator;
 import org.uberfire.client.annotations.WorkbenchMenu;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
@@ -63,7 +61,12 @@ public class DataSetExplorerScreenPresenter {
                 editDataSet(event);
             }
         });
-        
+        explorerWidget.addDeleteDataSetEventHandler(new DeleteDataSetEventHandler() {
+            @Override
+            public void onDeleteDataSet(DeleteDataSetEvent event) {
+                deleteDataSet(event);
+            }
+        });
         this.menu = makeMenuBar();
     }
 
@@ -105,13 +108,25 @@ public class DataSetExplorerScreenPresenter {
         };
     }
     
-    public void newDataSet() {
+    void newDataSet() {
+        // TODO: Generate uuid using the backend uuid generator. Perform a RPC call.
         String uuid = uuidGenerator.newUuid();
+        GWT.log("Create data set " + uuid);
         NewDataSetEvent event = new NewDataSetEvent(uuid);
         newDataSetEvent.fire(event);
     }
     
-    public void editDataSet(EditDataSetEvent event) {
+    void editDataSet(EditDataSetEvent event) {
+        GWT.log("Edit data set " + event.getUuid());
         editDataSetEvent.fire(event);
+    }
+
+    void deleteDataSet(DeleteDataSetEvent event) {
+        deleteDataSet(event.getUuid());
+    }
+    
+    public void deleteDataSet(String uuid) {
+        GWT.log("Delete data set " + uuid);
+        // TODO
     }
 }

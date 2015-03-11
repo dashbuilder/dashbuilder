@@ -137,18 +137,22 @@ public class DataSetExplorerView extends Composite implements DataSetExplorer.Vi
             case BEAN:
                 typeIcon = new Image(DataSetClientResources.INSTANCE.images().javaIconSmall());
                 typeIcon.setAltText(DataSetExplorerConstants.INSTANCE.bean());
+                typeIcon.setTitle(DataSetExplorerConstants.INSTANCE.bean());
                 break;
             case CSV:
                 typeIcon = new Image(DataSetClientResources.INSTANCE.images().csvIconSmall());
                 typeIcon.setAltText(DataSetExplorerConstants.INSTANCE.csv());
+                typeIcon.setTitle(DataSetExplorerConstants.INSTANCE.csv());
                 break;
             case SQL:
                 typeIcon = new Image(DataSetClientResources.INSTANCE.images().sqlIconSmall());
                 typeIcon.setAltText(DataSetExplorerConstants.INSTANCE.sql());
+                typeIcon.setTitle(DataSetExplorerConstants.INSTANCE.sql());
                 break;
             case ELASTICSEARCH:
                 typeIcon = new Image(DataSetClientResources.INSTANCE.images().elIconSmall());
                 typeIcon.setAltText(DataSetExplorerConstants.INSTANCE.el());
+                typeIcon.setTitle(DataSetExplorerConstants.INSTANCE.el());
                 break;
         }
         return typeIcon;
