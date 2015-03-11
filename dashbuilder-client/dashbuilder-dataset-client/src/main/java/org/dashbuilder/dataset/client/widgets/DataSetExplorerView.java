@@ -17,6 +17,7 @@ package org.dashbuilder.dataset.client.widgets;
 
 import com.github.gwtbootstrap.client.ui.*;
 import com.github.gwtbootstrap.client.ui.Button;
+import com.github.gwtbootstrap.client.ui.CheckBox;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -139,20 +140,17 @@ public class DataSetExplorerView extends Composite implements DataSetExplorer.Vi
     
     private void buildDescription(DataSetDef dataSetDef, Panel parent) {
         if (parent != null) {
-            // Labels.
-            Label cacheEnabledLabel;
-            Label pushEnabledLabel;
-            Label refreshEnabledLabel;
-            if (dataSetDef.isCacheEnabled())
-                cacheEnabledLabel = new Label(DataSetExplorerConstants.INSTANCE.cacheEnabled());
-            else cacheEnabledLabel = new Label(DataSetExplorerConstants.INSTANCE.cacheDisabled());
-            if (dataSetDef.isPushEnabled())
-                pushEnabledLabel = new Label(DataSetExplorerConstants.INSTANCE.pushEnabled());
-            else pushEnabledLabel = new Label(DataSetExplorerConstants.INSTANCE.pushDisabled());
-            if (dataSetDef.isRefreshAlways())
-                refreshEnabledLabel = new Label(DataSetExplorerConstants.INSTANCE.refreshEnabled());
-            else refreshEnabledLabel = new Label(DataSetExplorerConstants.INSTANCE.refreshDisabled());
-
+            // Checks.
+            CheckBox cacheEnabled = new CheckBox(DataSetExplorerConstants.INSTANCE.cache());
+            cacheEnabled.setEnabled(false);
+            cacheEnabled.setValue(dataSetDef.isCacheEnabled());
+            CheckBox pushEnabled = new CheckBox(DataSetExplorerConstants.INSTANCE.push());
+            pushEnabled.setEnabled(false);
+            pushEnabled.setValue(dataSetDef.isPushEnabled());
+            CheckBox refreshEnabled = new CheckBox(DataSetExplorerConstants.INSTANCE.refresh());
+            refreshEnabled.setEnabled(false);
+            refreshEnabled.setValue(dataSetDef.isRefreshAlways());
+            
             // Buttons.
             com.github.gwtbootstrap.client.ui.Button editButton = new Button(DataSetExplorerConstants.INSTANCE.edit());
             com.github.gwtbootstrap.client.ui.Button deleteButton = new Button(DataSetExplorerConstants.INSTANCE.delete());
@@ -161,9 +159,9 @@ public class DataSetExplorerView extends Composite implements DataSetExplorer.Vi
             deleteButton.setEnabled(isPublic);
             
             // Add into parent container.
-            parent.add(cacheEnabledLabel);
-            parent.add(pushEnabledLabel);
-            parent.add(refreshEnabledLabel);
+            parent.add(cacheEnabled);
+            parent.add(pushEnabled);
+            parent.add(refreshEnabled);
             parent.add(editButton);
             parent.add(deleteButton);
 

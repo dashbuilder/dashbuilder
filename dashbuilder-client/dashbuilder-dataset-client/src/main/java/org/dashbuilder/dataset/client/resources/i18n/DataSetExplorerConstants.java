@@ -24,12 +24,9 @@ public interface DataSetExplorerConstants extends ConstantsWithLookup {
 
     String noDataSets();
     String availableDataSets();
-    String cacheEnabled();
-    String cacheDisabled();
-    String pushEnabled();
-    String pushDisabled();
-    String refreshEnabled();
-    String refreshDisabled();
+    String cache();
+    String push();
+    String refresh();
     String edit();
     String delete();
     
