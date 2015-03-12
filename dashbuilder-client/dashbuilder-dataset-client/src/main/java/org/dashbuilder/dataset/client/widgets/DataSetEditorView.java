@@ -145,7 +145,7 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
         buttonsPanel.setVisible(true);
 
         // Show available types.
-        DataSetProviderType[] types = DataSetProviderType.values();
+        final DataSetProviderType[] types = DataSetProviderType.values();
         for (final DataSetProviderType type : types) {
             final Image typeSelector = buildTypeSelectorWidget(type);
             if (typeSelector != null) {
@@ -169,6 +169,7 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
         buildCommonAttributesEditors();
         
         // Build backend cache attributes editors.
+        buildBackendCacheAttributesEditors();
         
         // Build client cache attributes editors.
 
@@ -179,6 +180,14 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
         // Show the attributes edition widgets.
         attributesForm.setVisible(true);
         attributesPanel.setVisible(true);
+        
+        attributesForm.addSubmitCompleteHandler(new Form.SubmitCompleteHandler() {
+            @Override
+            public void onSubmitComplete(Form.SubmitCompleteEvent submitCompleteEvent) {
+                GWT.log("attributesForm results: " + submitCompleteEvent.getResults());
+                dataSetDef.setCacheEnabled(isStatusLabelON(attributeBackendCacheStatus));
+            }
+        });
 
         // Screen buttons.
         cancelButton.setVisible(true);
@@ -193,6 +202,7 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
             @Override
             public void onClick(ClickEvent event) {
                 // TODO
+                log(dataSetDef);
             }
         });
         nextButton.setVisible(true);
@@ -207,14 +217,20 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
     }
     
     private void buildCommonAttributesEditors() {
-        attributeUUID.setText(dataSetDef.getUUID());
+        attributeUUID.setValue(dataSetDef.getUUID());
         // TODO: if (dataSetDef.getName() != null) attributeName.setText(dataSetDef.getName());
     }
 
     private void buildBackendCacheAttributesEditors() {
-        attributeBackendCacheStatus.setText(dataSetDef.isCacheEnabled() ? 
-            DataSetEditorConstants.INSTANCE.on() : DataSetEditorConstants.INSTANCE.off() );
-        attributeBackendCacheStatus.setType(dataSetDef.isCacheEnabled() ? LabelType.SUCCESS : LabelType.WARNING );
+        if (dataSetDef.isCacheEnabled()) statusLabelON(attributeBackendCacheStatus);
+        else statusLabelOFF(attributeBackendCacheStatus);
+        attributeBackendCacheStatus.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                statusLabelSwitchValue(attributeBackendCacheStatus);
+                dataSetDef.setCacheEnabled(isStatusLabelON(attributeBackendCacheStatus));
+            }
+        });
         attributeMaxRows.setValue(Integer.toString(dataSetDef.getCacheMaxRows()));
     }
 
@@ -284,15 +300,44 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
         
         // Attributes edition.
         attributeMaxRows.setValue(EMPTY_STRING);
-        attributeBackendCacheStatus.setText(EMPTY_STRING);
+        attributeBackendCacheStatus.setText(DataSetEditorConstants.INSTANCE.off());
         attributeName.setValue(EMPTY_STRING);
-        attributeUUID.setVisible(false);
+        attributeUUID.setValue(EMPTY_STRING);
         attributesForm.setVisible(false);
         attributesPanel.setVisible(false);
     }
     
     private void clearStatus() {
         dataSetDef = null;
+    }
+
+    private void statusLabelSwitchValue(final Label label) {
+        if (isStatusLabelON(label)) statusLabelOFF(label);
+        else statusLabelON(label);
+    }
+
+    private void statusLabelON(final Label label) {
+        label.setText(DataSetEditorConstants.INSTANCE.on());
+        label.setType(LabelType.SUCCESS);
+    }
+
+    private void statusLabelOFF(final Label label) {
+        label.setText(DataSetEditorConstants.INSTANCE.off());
+        label.setType(LabelType.WARNING);
+    }
+    
+    private boolean isStatusLabelON(final Label label) {
+        return DataSetEditorConstants.INSTANCE.on().equals(label.getText());
+    }
+
+    // TODO: Remove.
+    private void log(final DataSetDef dataSetDef) {
+        GWT.log("- UUID: " + dataSetDef.getUUID() 
+                + " / Backend: " + dataSetDef.isCacheEnabled() + " & " + dataSetDef.getCacheMaxRows() 
+                + " / Client: " + dataSetDef.isPushEnabled() + " & " + dataSetDef.getPushMaxSize()
+                + " / Refresh: " + dataSetDef.isRefreshAlways() + " & " + dataSetDef.getRefreshTime()
+        );
+        
     }
 
 }

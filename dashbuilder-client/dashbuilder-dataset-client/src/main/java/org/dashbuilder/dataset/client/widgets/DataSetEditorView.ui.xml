@@ -9,6 +9,9 @@
   <ui:style type="org.dashbuilder.dataset.client.widgets.DataSetEditorView.DataSetEditorViewStyle">
     .mainPanel {
     }
+    .statusLabel {
+      cursor: pointer;
+    }
   </ui:style>
   
   <g:HTMLPanel addStyleNames="{style.mainPanel} ">
@@ -30,7 +33,7 @@
             <b:Legend title="{i18n.commonAttributes}"><ui:text from="{i18n.commonAttributes}"/></b:Legend>
             <b:ControlGroup>
               <b:ControlLabel><ui:text from="{i18n.attributeUUID}"/></b:ControlLabel>
-              <b:TextBox placeholder="" ui:field="attributeUUID"/>
+              <b:TextBox placeholder="" ui:field="attributeUUID" enabled="false"/>
             </b:ControlGroup>
             <b:ControlGroup>
               <b:ControlLabel><ui:text from="{i18n.attributeName}"/></b:ControlLabel>
@@ -42,10 +45,10 @@
           <b:Fieldset>
             <b:Legend title="{i18n.backendCacheAttributes}"><ui:text from="{i18n.backendCacheAttributes}"/></b:Legend>
             <b:ControlGroup>
-              <b:Label ui:field="attributeBackendCacheStatus"/>
+              <b:Label addStyleNames="{style.statusLabel}" ui:field="attributeBackendCacheStatus"/>
             </b:ControlGroup>
             <b:ControlGroup>
-              <b:ControlLabel><ui:text from="{i18n.attributeMaxBytes}"/></b:ControlLabel>
+              <b:ControlLabel><ui:text from="{i18n.attributeMaxRows}"/></b:ControlLabel>
               <b:TextBox placeholder="{i18n.attributeMaxRows}" ui:field="attributeMaxRows"/>
             </b:ControlGroup>
           </b:Fieldset>

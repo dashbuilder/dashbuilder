@@ -131,7 +131,7 @@ public class DataSetExplorerView extends Composite implements DataSetExplorer.Vi
         return accordionGroup;
     } 
     
-    private Image buildTypeIcon(DataSetDef dataSetDef) {
+    private Image buildTypeIcon(final DataSetDef dataSetDef) {
         Image typeIcon = null;
         switch (dataSetDef.getProvider()) {
             case BEAN:
@@ -159,7 +159,7 @@ public class DataSetExplorerView extends Composite implements DataSetExplorer.Vi
         
     }
     
-    private void buildDescription(final DataSetDef dataSetDef, Panel parent) {
+    private void buildDescription(final DataSetDef dataSetDef, final Panel parent) {
         if (parent != null) {
             // Checks.
             CheckBox cacheEnabled = new CheckBox(DataSetExplorerConstants.INSTANCE.cache());
