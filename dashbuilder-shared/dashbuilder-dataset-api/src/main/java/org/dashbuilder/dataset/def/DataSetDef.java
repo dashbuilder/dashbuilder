@@ -32,6 +32,7 @@ import org.jboss.errai.common.client.api.annotations.Portable;
 public class DataSetDef {
 
     protected String UUID;
+    protected String name;
     protected String defFilePath;
     protected DataSetProviderType provider;
     protected DataSet dataSet = DataSetFactory.newEmptyDataSet();
@@ -52,6 +53,14 @@ public class DataSetDef {
 
     public void setUUID(String UUID) {
         this.UUID = UUID;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getDefFilePath() {

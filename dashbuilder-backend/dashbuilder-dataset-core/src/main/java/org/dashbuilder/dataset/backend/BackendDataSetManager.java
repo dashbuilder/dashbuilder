@@ -82,6 +82,7 @@ public class BackendDataSetManager implements DataSetManager {
         if (dataSet != null) {
             StaticDataSetDef def = new StaticDataSetDef();
             def.setUUID(dataSet.getUUID());
+            def.setName(dataSet.getUUID());
             def.setDataSet(dataSet);
             def.setPushEnabled(pushEnabled);
             def.setPushMaxSize(pushMaxSize);

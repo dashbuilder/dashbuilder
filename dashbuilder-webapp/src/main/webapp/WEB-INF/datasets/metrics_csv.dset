@@ -1,5 +1,6 @@
 {
     "uuid": "metrics_csv",
+    "name": "Metrics",
     "provider": "CSV",
     "isPublic": true,
     "refreshTime": "1second",

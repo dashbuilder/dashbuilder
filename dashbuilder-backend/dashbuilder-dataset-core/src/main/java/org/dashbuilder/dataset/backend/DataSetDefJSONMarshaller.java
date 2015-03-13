@@ -33,6 +33,7 @@ public class DataSetDefJSONMarshaller {
 
     // General settings
     public static final String UUID = "uuid";
+    public static final String NAME = "name";
     public static final String PROVIDER = "provider";
     public static final String ISPUBLIC = "isPublic";
     public static final String PUSH_ENABLED = "pushEnabled";
@@ -195,6 +196,7 @@ public class DataSetDefJSONMarshaller {
 
     public DataSetDef readGeneralSettings(DataSetDef def, JSONObject json) throws Exception {
         String uuid = json.has(UUID) ? json.getString(UUID) : null;
+        String name = json.has(NAME) ? json.getString(NAME) : null;
         String isPublic = json.has(ISPUBLIC) ? json.getString(ISPUBLIC) : null;
         String pushEnabled = json.has(PUSH_ENABLED) ? json.getString(PUSH_ENABLED) : null;
         String pushMaxSize = json.has(PUSH_MAXSIZE) ? json.getString(PUSH_MAXSIZE) : null;
@@ -204,6 +206,7 @@ public class DataSetDefJSONMarshaller {
         String refreshAlways = json.has(REFRESH_ALWAYS) ? json.getString(REFRESH_ALWAYS) : null;
 
         if (!StringUtils.isBlank(uuid)) def.setUUID(uuid);
+        if (!StringUtils.isBlank(name)) def.setName(name);
         if (!StringUtils.isBlank(isPublic)) def.setPublic(Boolean.parseBoolean(isPublic));
         if (!StringUtils.isBlank(pushEnabled)) def.setPushEnabled(Boolean.parseBoolean(pushEnabled));
         if (!StringUtils.isBlank(pushMaxSize)) def.setPushMaxSize(Integer.parseInt(pushMaxSize));

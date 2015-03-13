@@ -42,6 +42,14 @@ public interface DataSetDefBuilder<T> {
     T uuid(String uuid);
 
     /**
+     * Set the DataSetDef name.
+     *
+     * @param name The name of the DataSetDef that is being assembled.
+     * @return The DataSetDefBuilder instance that is being used to configure a DataSetDef.
+     */
+    T name(String name);
+
+    /**
      * @return The DataSetDef instance that has been configured.
      * @see DataSetDef
      */
