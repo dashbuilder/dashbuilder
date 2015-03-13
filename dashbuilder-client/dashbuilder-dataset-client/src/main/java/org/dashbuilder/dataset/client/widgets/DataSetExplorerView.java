@@ -112,7 +112,7 @@ public class DataSetExplorerView extends Composite implements DataSetExplorer.Vi
         final AccordionGroup accordionGroup = new AccordionGroup();
 
         // Heading.
-        accordionGroup.setHeading(dataSetDef.getUUID());
+        accordionGroup.setHeading(dataSetDef.getName());
         // CollapseTrigger collapseTrigger = new CollapseTrigger();
         
         // Icon for provider type.

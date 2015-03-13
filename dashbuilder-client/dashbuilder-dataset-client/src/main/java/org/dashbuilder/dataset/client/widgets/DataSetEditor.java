@@ -115,12 +115,10 @@ public class DataSetEditor implements IsWidget {
 
             @Override
             public void notFound() {
-                error("Data set defintiion with uuid [" + uuid + "] not found.");
+                error("Data set definition with uuid [" + uuid + "] not found.");
             }
         });
         
-        // Build loading screen while performing RPC call to backend.
-        buildLoadingScreenView();
     }
 
     @Override
@@ -128,7 +126,7 @@ public class DataSetEditor implements IsWidget {
         return mainPanel;
     }
 
-    public void buildLoadingScreenView() {
+    private void buildLoadingScreenView() {
         FlowPanel mainPanel = new FlowPanel();
         SafeHtml safeHtml = new SafeHtml() {
             @Override

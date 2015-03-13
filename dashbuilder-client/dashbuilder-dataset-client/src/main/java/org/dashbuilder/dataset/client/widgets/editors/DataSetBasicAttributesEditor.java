@@ -68,7 +68,10 @@ public class DataSetBasicAttributesEditor extends Composite implements DataSetEd
         // If defintion has a provider type set, show it.
         if (dataSetDef != null ) {
             attributeUUID.setValue(dataSetDef.getUUID());
-            // TODO: if (dataSetDef.getName() != null) attributeName.setText(dataSetDef.getName()).setEnabled(isEditMode);
+            if (dataSetDef.getName() != null) {
+                attributeName.setText(dataSetDef.getName());;
+                attributeName.setEnabled(isEditMode);
+            }
             
         }
 
