@@ -49,7 +49,6 @@ public class DataSetExplorerView extends Composite implements DataSetExplorer.Vi
         
     }
     
-    private DataSetExplorer explorer;
     private List<DataSetDef> dataSets;
 
     @UiField
@@ -65,12 +64,6 @@ public class DataSetExplorerView extends Composite implements DataSetExplorer.Vi
         initWidget(uiBinder.createAndBindUi(this));
         dataSets = new LinkedList<DataSetDef>();
     }
-
-    @Override
-    public void init(DataSetExplorer presenter) {
-        this.explorer =  presenter;
-        show();
-    }   
 
     @Override
     public void set(List<DataSetDef> dataSetDefs) {

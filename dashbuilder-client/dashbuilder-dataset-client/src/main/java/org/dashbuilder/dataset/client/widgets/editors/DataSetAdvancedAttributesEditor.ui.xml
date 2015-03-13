@@ -1,0 +1,38 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+             xmlns:g="urn:import:com.google.gwt.user.client.ui"
+             xmlns:b="urn:import:com.github.gwtbootstrap.client.ui"
+    >
+
+  <ui:with field="i18n" type="org.dashbuilder.dataset.client.resources.i18n.DataSetEditorConstants"/>
+
+  <ui:style>
+    .mainPanel {
+    }
+    .statusLabel {
+      cursor: pointer;
+    }
+  </ui:style>
+
+  <g:VerticalPanel spacing="10" ui:field="advancedAttributesPanel" addStyleNames="{style.mainPanel}">
+
+    <b:WellForm type="VERTICAL" method="POST" ui:field="attributesForm">
+
+      <!-- Backend attributes. -->
+      <b:Fieldset>
+        <b:Legend title="{i18n.backendCacheAttributes}"><ui:text from="{i18n.backendCacheAttributes}"/></b:Legend>
+        <b:ControlGroup>
+          <b:Label addStyleNames="{style.statusLabel}" ui:field="attributeBackendCacheStatus"/>
+        </b:ControlGroup>
+        <b:ControlGroup>
+          <b:ControlLabel><ui:text from="{i18n.attributeMaxRows}"/></b:ControlLabel>
+          <b:TextBox placeholder="{i18n.attributeMaxRows}" ui:field="attributeMaxRows"/>
+        </b:ControlGroup>
+      </b:Fieldset>
+
+    </b:WellForm>
+
+  </g:VerticalPanel>
+
+
+</ui:UiBinder>

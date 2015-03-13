@@ -56,11 +56,11 @@ public class DataSetEditorScreenPresenter {
     }
 
     public void onNewDataSet(@Observes NewDataSetEvent event) {
-        editorWidget.newDataSet(event);
+        editorWidget.newDataSet(event.getUuid());
     }
-
+    
     public void onEditDataSet(@Observes EditDataSetEvent event) {
-        editorWidget.editDataSet(event);
+        editorWidget.editDataSet(event.getUuid());
     }
     
 }

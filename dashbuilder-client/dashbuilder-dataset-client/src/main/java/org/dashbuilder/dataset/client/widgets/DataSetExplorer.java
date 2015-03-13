@@ -36,7 +36,6 @@ import java.util.List;
 public class DataSetExplorer implements IsWidget {
 
     public interface View extends IsWidget, HasHandlers {
-        void init(DataSetExplorer presenter);
         void set(List<DataSetDef> dataSetDefs);
         boolean add(DataSetDef dataSetDef);
         boolean remove(DataSetDef dataSetDef);
@@ -48,7 +47,6 @@ public class DataSetExplorer implements IsWidget {
 
     View view;
     
-
     @Inject
     public DataSetExplorer() {
         view = new DataSetExplorerView();
@@ -60,12 +58,11 @@ public class DataSetExplorer implements IsWidget {
         return view.asWidget();
     }
     
-    void init() {
+    private void init() {
         DataSetClientServices.get().getRemoteSharedDataSetDefs(new RemoteCallback<List<DataSetDef>>() {
             public void callback(List<DataSetDef> dataSetDefs) {
                 view.set(dataSetDefs);
-
-                view.init(DataSetExplorer.this);
+                view.show();
             }
         });
     }

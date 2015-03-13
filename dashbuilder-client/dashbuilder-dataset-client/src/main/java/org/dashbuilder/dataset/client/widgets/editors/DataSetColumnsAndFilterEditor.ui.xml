@@ -1,0 +1,21 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+             xmlns:g="urn:import:com.google.gwt.user.client.ui"
+             xmlns:b="urn:import:com.github.gwtbootstrap.client.ui"
+    >
+
+  <ui:with field="i18n" type="org.dashbuilder.dataset.client.resources.i18n.DataSetEditorConstants"/>
+
+  <ui:style>
+    .mainPanel {
+    }
+  </ui:style>
+  
+  <g:HorizontalPanel spacing="10" ui:field="columnFilterTablePanel" addStyleNames="{style.mainPanel} ">
+
+    <g:Label text="Columns, Filter and Table Editor - TODO"/>
+    
+  </g:HorizontalPanel>
+
+
+</ui:UiBinder>

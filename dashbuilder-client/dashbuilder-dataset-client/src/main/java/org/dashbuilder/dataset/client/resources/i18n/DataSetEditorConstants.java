@@ -26,7 +26,7 @@ public interface DataSetEditorConstants extends ConstantsWithLookup {
     String next();
     String cancel();
     String back();
-    String test();
+    String providerType();
     String commonAttributes();
     String backendCacheAttributes();
     String clientCacheAttributes();
@@ -46,4 +46,5 @@ public interface DataSetEditorConstants extends ConstantsWithLookup {
     String table();
     String on();
     String off();
+    String newDataSet();
 }
