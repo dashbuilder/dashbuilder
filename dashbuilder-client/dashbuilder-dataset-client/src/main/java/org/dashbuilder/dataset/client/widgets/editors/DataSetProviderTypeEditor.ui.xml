@@ -6,8 +6,11 @@
 
   <ui:with field="i18n" type="org.dashbuilder.dataset.client.resources.i18n.DataSetEditorConstants"/>
 
-  <ui:style>
+  <ui:style type="org.dashbuilder.dataset.client.widgets.editors.DataSetProviderTypeEditor.DataSetProviderTypeEditorStyle">
     .mainPanel {
+    }
+    .imagePointer {
+      cursor: pointer;
     }
   </ui:style>
 

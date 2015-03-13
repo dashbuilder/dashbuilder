@@ -14,11 +14,11 @@
     }
   </ui:style>
 
-  <g:VerticalPanel spacing="10" ui:field="advancedAttributesPanel" addStyleNames="{style.mainPanel}">
+  <g:HorizontalPanel spacing="10" ui:field="advancedAttributesPanel" addStyleNames="{style.mainPanel}">
 
-    <b:WellForm type="VERTICAL" method="POST" ui:field="attributesForm">
+    <b:WellForm type="HORIZONTAL" method="POST" ui:field="attributesForm">
 
-      <!-- Backend attributes. -->
+      <!-- Backend cache policy attributes. -->
       <b:Fieldset>
         <b:Legend title="{i18n.backendCacheAttributes}"><ui:text from="{i18n.backendCacheAttributes}"/></b:Legend>
         <b:ControlGroup>
@@ -30,9 +30,33 @@
         </b:ControlGroup>
       </b:Fieldset>
 
+      <!-- Client cache policy attributes. -->
+      <b:Fieldset>
+        <b:Legend title="{i18n.clientCacheAttributes}"><ui:text from="{i18n.clientCacheAttributes}"/></b:Legend>
+        <b:ControlGroup>
+          <b:Label addStyleNames="{style.statusLabel}" ui:field="attributeClientCacheStatus"/>
+        </b:ControlGroup>
+        <b:ControlGroup>
+          <b:ControlLabel><ui:text from="{i18n.attributeMaxBytes}"/></b:ControlLabel>
+          <b:TextBox placeholder="{i18n.attributeMaxBytes}" ui:field="attributeMaxBytes"/>
+        </b:ControlGroup>
+      </b:Fieldset>
+
+      <!-- Refresh policy attributes. -->
+      <b:Fieldset>
+        <b:Legend title="{i18n.refreshPolicyAttributes}"><ui:text from="{i18n.refreshPolicyAttributes}"/></b:Legend>
+        <b:ControlGroup>
+          <b:Label addStyleNames="{style.statusLabel}" ui:field="attributeRefreshStatus"/>
+        </b:ControlGroup>
+        <b:ControlGroup>
+          <b:ControlLabel><ui:text from="{i18n.attributeRefreshInterval}"/></b:ControlLabel>
+          <b:TextBox placeholder="{i18n.attributeRefreshInterval}" ui:field="attributeRefreshInterval"/>
+        </b:ControlGroup>
+      </b:Fieldset>
+
     </b:WellForm>
 
-  </g:VerticalPanel>
+  </g:HorizontalPanel>
 
 
 </ui:UiBinder>

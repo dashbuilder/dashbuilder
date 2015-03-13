@@ -21,7 +21,6 @@ import com.github.gwtbootstrap.client.ui.constants.LabelType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
@@ -40,21 +39,39 @@ import javax.enterprise.context.Dependent;
 @Dependent
 public class DataSetAdvancedAttributesEditor extends Composite implements DataSetEditor.View {
     
-    private static final int DEFAULT_CACHE_MAX_ROWS = 0;
+    private static final int DEFAULT_CACHE_MAX_ROWS = -1;
+    private static final int DEFAULT_CACHE_MAX_BYTES = -1;
+    private static final long DEFAULT_REFRESH_INTERVAL = -1;
 
     interface DataSetAdvancedAttributesEditorBinder extends UiBinder<Widget, DataSetAdvancedAttributesEditor> {}
     private static DataSetAdvancedAttributesEditorBinder uiBinder = GWT.create(DataSetAdvancedAttributesEditorBinder.class);
 
     @UiField
-    VerticalPanel advancedAttributesPanel;
+    HorizontalPanel advancedAttributesPanel;
 
+    /* **************** BACKEND CACHE *************** */
     @UiField
     Label attributeBackendCacheStatus;
 
     @UiField
     TextBox attributeMaxRows;
 
+    /* **************** CLIENT CACHE *************** */
+    @UiField
+    Label attributeClientCacheStatus;
+
+    @UiField
+    TextBox attributeMaxBytes;
+
+    /* **************** REFRESH POLICY *************** */
+    @UiField
+    Label attributeRefreshStatus;
+
+    @UiField
+    TextBox attributeRefreshInterval;
+
     private DataSetDef dataSetDef;
+    private boolean isEditMode;
 
     public DataSetAdvancedAttributesEditor() {
         initWidget(uiBinder.createAndBindUi(this));
@@ -66,10 +83,25 @@ public class DataSetAdvancedAttributesEditor extends Composite implements DataSe
     }
 
     @Override
-    public Widget show() {
+    public Widget show(final boolean isEditMode) {
+        this.isEditMode = isEditMode;
+
         // Clear the widget.
         clearScreen();
 
+        // Backend cache.
+        buildBackendCacheAttributes();
+
+        // Client cache.
+        buildClientCacheAttributes();
+        
+        // Refresh policy.
+        buildRefreshPolicyAttributes();
+        
+        return asWidget();
+    }
+    
+    private void buildBackendCacheAttributes() {
         boolean isCacheEnabled = false;
         int cacheMaxRows = DEFAULT_CACHE_MAX_ROWS;
         if (dataSetDef != null ) {
@@ -79,18 +111,72 @@ public class DataSetAdvancedAttributesEditor extends Composite implements DataSe
 
         if (isCacheEnabled) statusLabelON(attributeBackendCacheStatus);
         else statusLabelOFF(attributeBackendCacheStatus);
-        attributeBackendCacheStatus.addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                statusLabelSwitchValue(attributeBackendCacheStatus);
-                dataSetDef.setCacheEnabled(isStatusLabelON(attributeBackendCacheStatus));
-            }
-        });
+        if (isEditMode) {
+            attributeBackendCacheStatus.addClickHandler(new ClickHandler() {
+                @Override
+                public void onClick(ClickEvent event) {
+                    statusLabelSwitchValue(attributeBackendCacheStatus);
+                    final boolean isOn = isStatusLabelON(attributeBackendCacheStatus);
+                    dataSetDef.setCacheEnabled(isOn);
+                    attributeMaxRows.setEnabled(isOn);
+                }
+            });
+        }
+        attributeMaxRows.setEnabled(isEditMode && isCacheEnabled);
         attributeMaxRows.setValue(Integer.toString(cacheMaxRows));
-
-        return asWidget();
     }
 
+    private void buildClientCacheAttributes() {
+        boolean isPushEnabled = false;
+        int cacheMaxBytes = DEFAULT_CACHE_MAX_BYTES;
+        if (dataSetDef != null ) {
+            isPushEnabled = dataSetDef.isPushEnabled();
+            cacheMaxBytes = dataSetDef.getPushMaxSize();
+        }
+
+        if (isPushEnabled) statusLabelON(attributeClientCacheStatus);
+        else statusLabelOFF(attributeClientCacheStatus);
+        if (isEditMode) {
+            attributeClientCacheStatus.addClickHandler(new ClickHandler() {
+                @Override
+                public void onClick(ClickEvent event) {
+                    statusLabelSwitchValue(attributeClientCacheStatus);
+                    final boolean isOn = isStatusLabelON(attributeClientCacheStatus);
+                    dataSetDef.setPushEnabled(isOn);
+                    attributeMaxBytes.setEnabled(isOn);
+                }
+            });
+        }
+        attributeMaxBytes.setEnabled(isEditMode && isPushEnabled);
+        attributeMaxBytes.setValue(Integer.toString(cacheMaxBytes));
+    }
+
+    private void buildRefreshPolicyAttributes() {
+        boolean isRefreshEnabled = false;
+        long refreshInterval = DEFAULT_REFRESH_INTERVAL;
+        if (dataSetDef != null ) {
+            isRefreshEnabled = dataSetDef.isRefreshAlways();
+            if (dataSetDef.getRefreshTimeAmount() != null) refreshInterval = dataSetDef.getRefreshTimeAmount().getQuantity();
+        }
+
+        if (isRefreshEnabled) statusLabelON(attributeRefreshStatus);
+        else statusLabelOFF(attributeRefreshStatus);
+        if (isEditMode) {
+            attributeRefreshStatus.addClickHandler(new ClickHandler() {
+                @Override
+                public void onClick(ClickEvent event) {
+                    statusLabelSwitchValue(attributeRefreshStatus);
+                    final boolean isOn = isStatusLabelON(attributeRefreshStatus);
+                    dataSetDef.setRefreshAlways(isOn);
+                    attributeRefreshInterval.setEnabled(isOn);
+
+                }
+            });
+        }
+        attributeRefreshInterval.setEnabled(isEditMode && isRefreshEnabled);
+        attributeRefreshInterval.setValue(Double.toString(refreshInterval));
+    }
+    
     @Override
     public void hide() {
         advancedAttributesPanel.setVisible(false);
@@ -103,9 +189,17 @@ public class DataSetAdvancedAttributesEditor extends Composite implements DataSe
     }
     
     private void clearScreen() {
+        // Backend cache.
         statusLabelOFF(attributeBackendCacheStatus);
         attributeMaxRows.setValue(Integer.toString(DEFAULT_CACHE_MAX_ROWS));
 
+        // Client cache.
+        statusLabelOFF(attributeClientCacheStatus);
+        attributeMaxBytes.setValue(Integer.toString(DEFAULT_CACHE_MAX_BYTES));
+
+        // Refresh policy.
+        statusLabelOFF(attributeRefreshStatus);
+        attributeRefreshInterval.setValue(Double.toString(DEFAULT_REFRESH_INTERVAL));
     }
     
     private void clearStatus() {

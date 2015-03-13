@@ -15,6 +15,7 @@
  */
 package org.dashbuilder.dataset.client.screens;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.IsWidget;
 import org.dashbuilder.dataset.client.widgets.DataSetEditor;
 import org.dashbuilder.dataset.client.widgets.events.EditDataSetEvent;
@@ -60,7 +61,17 @@ public class DataSetEditorScreenPresenter {
     }
     
     public void onEditDataSet(@Observes EditDataSetEvent event) {
-        editorWidget.editDataSet(event.getUuid());
+        try {
+            editorWidget.editDataSet(event.getUuid());
+        } catch (Exception e) {
+            error("DataSetEditorScreenPresenter#onEditDataSet - Cannot edit dataset with uuid [" + event.getUuid() + "].", e);
+        }
     }
+
+    // TODO: Display message to user.
+    private void error(String message, Exception e) {
+        GWT.log(message + "\n Excetion: " + e.getMessage());
+    }
+
     
 }

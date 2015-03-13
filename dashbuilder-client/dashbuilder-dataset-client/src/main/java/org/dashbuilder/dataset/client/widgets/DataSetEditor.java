@@ -15,10 +15,17 @@
  */
 package org.dashbuilder.dataset.client.widgets;
 
+import com.github.gwtbootstrap.client.ui.base.TextNode;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.HasHandlers;
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.ui.*;
+import org.dashbuilder.dataset.DataSetMetadata;
+import org.dashbuilder.dataset.client.DataSetClientServices;
+import org.dashbuilder.dataset.client.DataSetMetadataCallback;
 import org.dashbuilder.dataset.client.resources.i18n.DataSetEditorConstants;
 import org.dashbuilder.dataset.client.widgets.editors.DataSetAdvancedAttributesEditor;
 import org.dashbuilder.dataset.client.widgets.editors.DataSetBasicAttributesEditor;
@@ -27,8 +34,10 @@ import org.dashbuilder.dataset.client.widgets.editors.DataSetProviderTypeEditor;
 import org.dashbuilder.dataset.client.widgets.events.EditDataSetEvent;
 import org.dashbuilder.dataset.client.widgets.events.NewDataSetEvent;
 import org.dashbuilder.dataset.def.DataSetDef;
+import org.jboss.errai.common.client.api.RemoteCallback;
 
 import javax.enterprise.context.Dependent;
+import java.util.List;
 
 /**
  * <p>Data Set Definition editor widget.</p>
@@ -56,7 +65,7 @@ public class DataSetEditor implements IsWidget {
     public interface View extends IsWidget, HasHandlers {
         void set(DataSetDef dataSetDef);
         void clear();
-        Widget show();
+        Widget show(final boolean isEditMode);
         void hide();
     }
 
@@ -65,12 +74,21 @@ public class DataSetEditor implements IsWidget {
     final DataSetAdvancedAttributesEditor dataSetAdvancedAttributesEditorView = new DataSetAdvancedAttributesEditor();
     final DataSetColumnsAndFilterEditor dataSetColumnsAndFilterEditorView = new DataSetColumnsAndFilterEditor();
     private FlowPanel mainPanel = new FlowPanel();
+    private boolean isCreate;
     
     public DataSetEditor() {
         buildInitialView();
     }
     
     public void newDataSet(String uuid) {
+        
+        if (uuid == null || uuid.trim().length() == 0) {
+            error("DataSetEditor#newDataSet - No UUID specified.");
+            return;
+        }
+
+        isCreate = true;
+        
         // Create a new data set def.
         DataSetDef dataSetDef = new DataSetDef();
         dataSetDef.setUUID(uuid);
@@ -79,16 +97,48 @@ public class DataSetEditor implements IsWidget {
         buildBasicAttributesEditionView();
     }
 
-    public void editDataSet(String uuid) {
-        DataSetDef dataSetDef = null; // TODO: Obtain instance using uuid.
-        setDataSetDef(dataSetDef);
+    public void editDataSet(final String uuid) throws Exception{
 
-        buildBasicAttributesEditionView();
+        if (uuid == null || uuid.trim().length() == 0) {
+            error("DataSetEditor#editDataSet - No UUID specified.");
+            return;
+        }
+
+        isCreate = false;
+
+        DataSetClientServices.get().fetchMetadata(uuid, new DataSetMetadataCallback() {
+            @Override
+            public void callback(DataSetMetadata metatada) {
+                setDataSetDef(metatada.getDefinition());
+                buildBasicAttributesEditionView();
+            }
+
+            @Override
+            public void notFound() {
+                error("Data set defintiion with uuid [" + uuid + "] not found.");
+            }
+        });
+        
+        // Build loading screen while performing RPC call to backend.
+        buildLoadingScreenView();
     }
 
     @Override
     public Widget asWidget() {
         return mainPanel;
+    }
+
+    public void buildLoadingScreenView() {
+        FlowPanel mainPanel = new FlowPanel();
+        SafeHtml safeHtml = new SafeHtml() {
+            @Override
+            public String asString() {
+                return "Loading...";
+            }
+        };
+        mainPanel.add(new TextNode(safeHtml.asString()));
+        this.mainPanel.clear();
+        this.mainPanel.add(mainPanel);
     }
     
     public void buildInitialView() {
@@ -109,8 +159,8 @@ public class DataSetEditor implements IsWidget {
 
     public void buildBasicAttributesEditionView() {
         VerticalPanel mainPanel = new VerticalPanel();
-        mainPanel.add(dataSetBasicAttributesEditorView.show());
-        mainPanel.add(dataSetProviderTypeEditorView.show());
+        mainPanel.add(dataSetBasicAttributesEditorView.show(true));
+        mainPanel.add(dataSetProviderTypeEditorView.show(isCreate));
         final ClickHandler nextButtonClickHandler = new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
@@ -124,8 +174,8 @@ public class DataSetEditor implements IsWidget {
 
     public void buildAdvancedAttributesEditionView() {
         VerticalPanel mainPanel = new VerticalPanel();
-        mainPanel.add(dataSetBasicAttributesEditorView.show());
-        mainPanel.add(dataSetAdvancedAttributesEditorView.show());
+        mainPanel.add(dataSetBasicAttributesEditorView.show(true));
+        mainPanel.add(dataSetAdvancedAttributesEditorView.show(true));
 
         final ClickHandler nextButtonClickHandler = new ClickHandler() {
             @Override
@@ -140,8 +190,8 @@ public class DataSetEditor implements IsWidget {
 
     public void buildColumnsAndFilterEditionView() {
         VerticalPanel mainPanel = new VerticalPanel();
-        mainPanel.add(dataSetBasicAttributesEditorView.show());
-        mainPanel.add(dataSetColumnsAndFilterEditorView.show());
+        mainPanel.add(dataSetBasicAttributesEditorView.show(true));
+        mainPanel.add(dataSetColumnsAndFilterEditorView.show(true));
         
         final ClickHandler backButtonClickHandler = new ClickHandler() {
             @Override
@@ -202,5 +252,10 @@ public class DataSetEditor implements IsWidget {
         dataSetBasicAttributesEditorView.set(dataSetDef);
         dataSetAdvancedAttributesEditorView.set(dataSetDef);
         dataSetColumnsAndFilterEditorView.set(dataSetDef);
+    }
+
+    // TODO: Display message to user.
+    private void error(String message) {
+        GWT.log(message);
     }
 }

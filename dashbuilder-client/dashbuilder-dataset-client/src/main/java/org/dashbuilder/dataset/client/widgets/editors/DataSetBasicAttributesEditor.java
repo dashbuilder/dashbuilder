@@ -47,6 +47,7 @@ public class DataSetBasicAttributesEditor extends Composite implements DataSetEd
     TextBox attributeName;
 
     private DataSetDef dataSetDef;
+    private  boolean isEditMode;
 
     public DataSetBasicAttributesEditor() {
         initWidget(uiBinder.createAndBindUi(this));
@@ -58,14 +59,16 @@ public class DataSetBasicAttributesEditor extends Composite implements DataSetEd
     }
 
     @Override
-    public Widget show() {
+    public Widget show(final boolean isEditMode) {
+        this.isEditMode = isEditMode;
+        
         // Clear the widget.
         clearScreen();
 
         // If defintion has a provider type set, show it.
         if (dataSetDef != null ) {
             attributeUUID.setValue(dataSetDef.getUUID());
-            // TODO: if (dataSetDef.getName() != null) attributeName.setText(dataSetDef.getName());
+            // TODO: if (dataSetDef.getName() != null) attributeName.setText(dataSetDef.getName()).setEnabled(isEditMode);
             
         }
 

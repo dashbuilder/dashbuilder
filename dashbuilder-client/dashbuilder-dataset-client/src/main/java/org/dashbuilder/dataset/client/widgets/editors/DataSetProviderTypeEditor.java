@@ -42,15 +42,26 @@ import java.util.*;
 @Dependent
 public class DataSetProviderTypeEditor extends Composite implements DataSetEditor.View {
 
+    private static final String ICONS_SIZE = "250px";
+    private static final double ALPHA_ICON_NOT_SELECTED = 0.2;
+    
     interface DataSetProviderTypeEditorBinder extends UiBinder<Widget, DataSetProviderTypeEditor> {}
     private static DataSetProviderTypeEditorBinder uiBinder = GWT.create(DataSetProviderTypeEditorBinder.class);
 
+    interface DataSetProviderTypeEditorStyle extends CssResource {
+        String mainPanel();
+        String imagePointer();
+    }
+
+    @UiField DataSetProviderTypeEditorStyle style;
+    
     @UiField
     HorizontalPanel typesPanel;
 
     private DataSetDef dataSetDef;
     Map<DataSetProviderType ,Image> typeSelectors = new LinkedHashMap<DataSetProviderType, Image>();
-
+    private  boolean isEditMode;
+    
     public DataSetProviderTypeEditor() {
         initWidget(uiBinder.createAndBindUi(this));
     }
@@ -61,31 +72,37 @@ public class DataSetProviderTypeEditor extends Composite implements DataSetEdito
     }
 
     @Override
-    public Widget show() {
+    public Widget show(final  boolean isEditMode) {
+        this.isEditMode = isEditMode;
+        
         // Clear the widget.
         clearScreen();
 
-        // If defintion has a provider type set, show it.
-        if (dataSetDef != null && dataSetDef.getProvider() != null) selectProviderType(dataSetDef.getProvider());
-        
         // Show available types.
         final DataSetProviderType[] types = DataSetProviderType.values();
         for (final DataSetProviderType type : types) {
             final Image typeSelector = buildTypeSelectorWidget(type);
 
             if (typeSelector != null) {
-                typeSelector.addClickHandler(new ClickHandler() {
-                    @Override
-                    public void onClick(ClickEvent event) {
-                        selectProviderType(type);
-                    }
-                });
+                if (isEditMode) {
+                    typeSelector.addStyleName(style.imagePointer());
+                    typeSelector.addClickHandler(new ClickHandler() {
+                        @Override
+                        public void onClick(ClickEvent event) {
+                            selectProviderType(type);
+                        }
+                    });
+                    
+                }
                 typesPanel.add(typeSelector);
                 typeSelectors.put(type, typeSelector);
             }
         }
         typesPanel.setVisible(true);
         
+        // If defintion has a provider type set, show it.
+        if (dataSetDef != null && dataSetDef.getProvider() != null) selectProviderType(dataSetDef.getProvider());
+
         return asWidget();
     }
 
@@ -117,7 +134,7 @@ public class DataSetProviderTypeEditor extends Composite implements DataSetEdito
             DataSetProviderType _type = entry.getKey();
             Image typeSelector = entry.getValue();
             if (type.equals(_type)) applyAlpha(typeSelector, 1);
-            else applyAlpha(typeSelector, 0.5);
+            else applyAlpha(typeSelector, ALPHA_ICON_NOT_SELECTED);
         }
     }
 
@@ -145,12 +162,12 @@ public class DataSetProviderTypeEditor extends Composite implements DataSetEdito
                 typeIcon.setTitle(DataSetExplorerConstants.INSTANCE.el());
                 break;
         }
-        if (typeIcon != null) typeIcon.setSize("250px", "250px");
+        if (typeIcon != null) typeIcon.setSize(ICONS_SIZE, ICONS_SIZE);
         return typeIcon;
     }
     
     private void applyAlpha(final Image image, final double alpha) {
         image.getElement().setAttribute("style", "filter: alpha(opacity=5);opacity: " + alpha);
-        image.setSize("250px", "250px");
+        image.setSize(ICONS_SIZE, ICONS_SIZE);
     }
 }

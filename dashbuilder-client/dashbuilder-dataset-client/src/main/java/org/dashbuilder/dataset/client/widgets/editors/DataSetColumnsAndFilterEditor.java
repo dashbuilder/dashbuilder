@@ -41,6 +41,7 @@ public class DataSetColumnsAndFilterEditor extends Composite implements DataSetE
     HorizontalPanel columnFilterTablePanel;
 
     private DataSetDef dataSetDef;
+    private boolean isEditMode;
 
     public DataSetColumnsAndFilterEditor() {
         initWidget(uiBinder.createAndBindUi(this));
@@ -52,7 +53,9 @@ public class DataSetColumnsAndFilterEditor extends Composite implements DataSetE
     }
 
     @Override
-    public Widget show() {
+    public Widget show(final boolean isEditMode) {
+        this.isEditMode = isEditMode;
+        
         // Clear the widget.
         clearScreen();
 
