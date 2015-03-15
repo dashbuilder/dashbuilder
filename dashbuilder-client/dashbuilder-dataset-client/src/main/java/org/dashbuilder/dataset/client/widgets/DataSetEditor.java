@@ -27,6 +27,8 @@ import org.dashbuilder.dataset.DataSetMetadata;
 import org.dashbuilder.dataset.client.DataSetClientServices;
 import org.dashbuilder.dataset.client.DataSetMetadataCallback;
 import org.dashbuilder.dataset.client.resources.i18n.DataSetEditorConstants;
+import org.dashbuilder.dataset.client.validation.DataSetDefEditWorkflow;
+import org.dashbuilder.dataset.client.validation.editors.DataSetDefEditor;
 import org.dashbuilder.dataset.client.widgets.editors.DataSetAdvancedAttributesEditor;
 import org.dashbuilder.dataset.client.widgets.editors.DataSetBasicAttributesEditor;
 import org.dashbuilder.dataset.client.widgets.editors.DataSetColumnsAndFilterEditor;
@@ -37,7 +39,9 @@ import org.dashbuilder.dataset.def.DataSetDef;
 import org.jboss.errai.common.client.api.RemoteCallback;
 
 import javax.enterprise.context.Dependent;
+import javax.validation.ConstraintViolation;
 import java.util.List;
+import java.util.Set;
 
 /**
  * <p>Data Set Definition editor widget.</p>
@@ -60,9 +64,10 @@ import java.util.List;
  */
 @Dependent
 public class DataSetEditor implements IsWidget {
-    
 
-    public interface View extends IsWidget, HasHandlers {
+    final DataSetDefEditWorkflow workflow = new DataSetDefEditWorkflow();
+    
+    public interface View extends IsWidget, HasHandlers, DataSetDefEditor {
         void set(DataSetDef dataSetDef);
         void clear();
         Widget show(final boolean isEditMode);
@@ -73,7 +78,8 @@ public class DataSetEditor implements IsWidget {
     final DataSetBasicAttributesEditor dataSetBasicAttributesEditorView = new DataSetBasicAttributesEditor();
     final DataSetAdvancedAttributesEditor dataSetAdvancedAttributesEditorView = new DataSetAdvancedAttributesEditor();
     final DataSetColumnsAndFilterEditor dataSetColumnsAndFilterEditorView = new DataSetColumnsAndFilterEditor();
-    private FlowPanel mainPanel = new FlowPanel();
+    final private FlowPanel mainPanel = new FlowPanel();
+    private DataSetDef dataSetDef;
     private boolean isCreate;
     
     public DataSetEditor() {
@@ -105,7 +111,7 @@ public class DataSetEditor implements IsWidget {
         }
 
         isCreate = false;
-
+        
         DataSetClientServices.get().fetchMetadata(uuid, new DataSetMetadataCallback() {
             @Override
             public void callback(DataSetMetadata metatada) {
@@ -126,19 +132,6 @@ public class DataSetEditor implements IsWidget {
         return mainPanel;
     }
 
-    private void buildLoadingScreenView() {
-        FlowPanel mainPanel = new FlowPanel();
-        SafeHtml safeHtml = new SafeHtml() {
-            @Override
-            public String asString() {
-                return "Loading...";
-            }
-        };
-        mainPanel.add(new TextNode(safeHtml.asString()));
-        this.mainPanel.clear();
-        this.mainPanel.add(mainPanel);
-    }
-    
     public void buildInitialView() {
         FlowPanel mainPanel = new FlowPanel();
         Hyperlink link = new InlineHyperlink();
@@ -156,13 +149,17 @@ public class DataSetEditor implements IsWidget {
     }
 
     public void buildBasicAttributesEditionView() {
+        workflow.edit(dataSetBasicAttributesEditorView, dataSetDef);
+
         VerticalPanel mainPanel = new VerticalPanel();
         mainPanel.add(dataSetBasicAttributesEditorView.show(true));
         mainPanel.add(dataSetProviderTypeEditorView.show(isCreate));
         final ClickHandler nextButtonClickHandler = new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                buildAdvancedAttributesEditionView();
+                if (save()) {
+                    buildAdvancedAttributesEditionView();
+                }
             }
         };
         mainPanel.add(buildButtons(false, true, null, nextButtonClickHandler));
@@ -171,6 +168,8 @@ public class DataSetEditor implements IsWidget {
     }
 
     public void buildAdvancedAttributesEditionView() {
+        // TODO: workflow.edit(dataSetBasicAttributesEditorView, dataSetDef);
+        
         VerticalPanel mainPanel = new VerticalPanel();
         mainPanel.add(dataSetBasicAttributesEditorView.show(true));
         mainPanel.add(dataSetAdvancedAttributesEditorView.show(true));
@@ -187,6 +186,8 @@ public class DataSetEditor implements IsWidget {
     }
 
     public void buildColumnsAndFilterEditionView() {
+        // TODO: workflow.edit(dataSetBasicAttributesEditorView, dataSetDef);
+        
         VerticalPanel mainPanel = new VerticalPanel();
         mainPanel.add(dataSetBasicAttributesEditorView.show(true));
         mainPanel.add(dataSetColumnsAndFilterEditorView.show(true));
@@ -207,7 +208,23 @@ public class DataSetEditor implements IsWidget {
         this.mainPanel.clear();
         this.mainPanel.add(mainPanel);
     }
-
+    
+    public boolean save() {
+        Set<ConstraintViolation<DataSetDef>> violations = workflow.save();
+        boolean isValid = violations == null || violations.isEmpty(); 
+        if (!isValid) {
+            GWT.log("There are validation errors.");
+        }
+        log();
+        return isValid;
+    }
+    
+    private void log() {
+        if (dataSetDef != null) {
+            GWT.log("DataSetEditor#log - uuid: " + dataSetDef.getUUID());
+            GWT.log("DataSetEditor#log - name: " + dataSetDef.getName());
+        }
+    }
 
     private Panel buildButtons(final boolean showBackButton, final boolean showNextButton, final ClickHandler backButtonClickHandler, final ClickHandler nextButtonClickHandler) {
         final HorizontalPanel buttonsPanel = new HorizontalPanel();
@@ -238,6 +255,7 @@ public class DataSetEditor implements IsWidget {
     }
 
     public void clear() {
+        this.dataSetDef = null;
         dataSetProviderTypeEditorView.clear();
         dataSetBasicAttributesEditorView.clear();
         dataSetAdvancedAttributesEditorView.clear();
@@ -246,6 +264,7 @@ public class DataSetEditor implements IsWidget {
     }
     
     private void setDataSetDef(DataSetDef dataSetDef) {
+        this.dataSetDef = dataSetDef;
         dataSetProviderTypeEditorView.set(dataSetDef);
         dataSetBasicAttributesEditorView.set(dataSetDef);
         dataSetAdvancedAttributesEditorView.set(dataSetDef);

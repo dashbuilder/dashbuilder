@@ -74,6 +74,19 @@
         <classifier>sources</classifier>
       </dependency>
 
+      <dependency>
+        <groupId>org.dashbuilder</groupId>
+        <artifactId>dashbuilder-common-shared</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.dashbuilder</groupId>
+        <artifactId>dashbuilder-common-shared</artifactId>
+        <version>${project.version}</version>
+        <classifier>sources</classifier>
+      </dependency>
+
       <!-- Dashbuilder Backend -->
       <dependency>
         <groupId>org.dashbuilder</groupId>

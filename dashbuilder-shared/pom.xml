@@ -18,6 +18,7 @@
     <module>dashbuilder-dataset-api</module>
     <module>dashbuilder-dataset-shared</module>
     <module>dashbuilder-displayer-api</module>
+    <module>dashbuilder-common-shared</module>
   </modules>
 
   <dependencies>

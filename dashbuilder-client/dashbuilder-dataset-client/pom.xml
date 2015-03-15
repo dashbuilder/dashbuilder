@@ -70,6 +70,11 @@
 
     <dependency>
       <groupId>org.dashbuilder</groupId>
+      <artifactId>dashbuilder-common-shared</artifactId>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.dashbuilder</groupId>
       <artifactId>dashbuilder-dataset-shared</artifactId>
     </dependency>
 
@@ -78,6 +83,33 @@
       <artifactId>dashbuilder-common-client</artifactId>
     </dependency>
 
+    <!-- GWT & Errai Bean Validation (JSR303) required artifacts. -->
+    <dependency>
+      <groupId>org.hibernate</groupId>
+      <artifactId>hibernate-validator</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.jboss.errai</groupId>
+      <artifactId>errai-validation</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>javax.validation</groupId>
+      <artifactId>validation-api</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    
   </dependencies>
 
   <build>

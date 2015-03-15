@@ -15,15 +15,18 @@
  */
 package org.dashbuilder.dataset.def;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.dashbuilder.dataprovider.DataSetProviderType;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetFactory;
 import org.dashbuilder.dataset.date.TimeAmount;
 import org.dashbuilder.dataset.filter.DataSetFilter;
+import org.hibernate.validator.constraints.NotEmpty;
 import org.jboss.errai.common.client.api.annotations.Portable;
+
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * This class is used to define the origin, structure and runtime behaviour of a data set instance.
@@ -31,8 +34,14 @@ import org.jboss.errai.common.client.api.annotations.Portable;
 @Portable
 public class DataSetDef {
 
+    @NotNull(message = "{dataSetApi_dataSetDef_uuid_notNull}")
+    @NotEmpty(message = "{dataSetApi_dataSetDef_uuid_notNull}")
     protected String UUID;
+
+    @NotNull(message = "{dataSetApi_dataSetDef_name_notNull}")
+    @NotEmpty(message = "{dataSetApi_dataSetDef_name_notNull}")
     protected String name;
+    
     protected String defFilePath;
     protected DataSetProviderType provider;
     protected DataSet dataSet = DataSetFactory.newEmptyDataSet();

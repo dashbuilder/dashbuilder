@@ -20,14 +20,19 @@
 <module>
   <inherits name='com.google.gwt.user.User'/>
 
-  <inherits name='org.jboss.errai.bus.ErraiBus'/>
-  <inherits name='org.jboss.errai.ioc.Container'/>
+  <!-- GWT & Errai Bean Validation (JSR303) -->
+  <inherits name="org.jboss.errai.validation.Validation" />
+  <inherits name="org.hibernate.validator.HibernateValidator" />
+  <replace-with
+      class="org.dashbuilder.common.shared.validation.factory.DashbuilderValidationFactory">
+    <when-type-is class="javax.validation.ValidatorFactory" />
+  </replace-with>
+  <replace-with
+      class="org.dashbuilder.common.shared.validation.messages.DashbuilderValidationMessagesResolver">
+    <when-type-is
+        class="com.google.gwt.validation.client.UserValidationMessagesResolver" />
+  </replace-with>
 
-  <inherits name="org.dashbuilder.CommonShared"/>
-  <inherits name="org.dashbuilder.CommonClient"/>
-  <inherits name="org.dashbuilder.DatasetAPI"/>
-  <inherits name="org.dashbuilder.DatasetShared"/>
 
-  <source path='dataset'/>
-
+  <source path='common'/>
 </module>

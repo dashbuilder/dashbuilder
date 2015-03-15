@@ -2,6 +2,7 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
              xmlns:g="urn:import:com.google.gwt.user.client.ui"
              xmlns:b="urn:import:com.github.gwtbootstrap.client.ui"
+             xmlns:dash-client="urn:import:org.dashbuilder.common.client.validation.editors"
     >
 
   <ui:with field="i18n" type="org.dashbuilder.dataset.client.resources.i18n.DataSetEditorConstants"/>
@@ -13,22 +14,32 @@
   
   <g:HorizontalPanel spacing="10" ui:field="basicAttributesPanel" addStyleNames="{style.mainPanel} ">
 
-    <b:WellForm type="HORIZONTAL" method="POST" ui:field="attributesForm">
-
       <!-- Common attributes. -->
       <b:Fieldset>
         <b:Legend title="{i18n.commonAttributes}"><ui:text from="{i18n.commonAttributes}"/></b:Legend>
         <b:ControlGroup>
           <b:ControlLabel><ui:text from="{i18n.attributeUUID}"/></b:ControlLabel>
-          <b:TextBox placeholder="" ui:field="attributeUUID" enabled="false"/>
+
+          <dash-client:ValueBoxEditorDecorator  ui:field="attributeUUID">
+            <dash-client:valuebox>
+              <g:TextBox />
+              <!--<b:TextBox enabled="false" />-->
+            </dash-client:valuebox>
+          </dash-client:ValueBoxEditorDecorator>
+          <!--<b:TextBox placeholder="" ui:field="attributeUUID" enabled="false"/>-->
         </b:ControlGroup>
         <b:ControlGroup>
           <b:ControlLabel><ui:text from="{i18n.attributeName}"/></b:ControlLabel>
-          <b:TextBox placeholder="{i18n.attributeName}" ui:field="attributeName"/>
+          <dash-client:ValueBoxEditorDecorator  ui:field="name">
+            <dash-client:valuebox>
+              <g:TextBox />
+              <!--<b:TextBox placeholder="{i18n.attributeName}" />-->
+            </dash-client:valuebox>
+          </dash-client:ValueBoxEditorDecorator>
+          <!--<b:TextBox placeholder="{i18n.attributeName}" ui:field="attributeName"/>-->
         </b:ControlGroup>
       </b:Fieldset>
 
-    </b:WellForm>
   </g:HorizontalPanel>
 
 
