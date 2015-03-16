@@ -8,6 +8,10 @@ import com.google.gwt.editor.client.EditorError;
 import com.google.gwt.editor.client.HasEditorErrors;
 import com.google.gwt.editor.client.IsEditor;
 import com.google.gwt.editor.ui.client.adapters.ValueBoxEditor;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiChild;
@@ -20,17 +24,12 @@ import com.google.gwt.user.client.ui.Widget;
 
 import java.util.List;
 
-/* TODO: 
-    - Color red
-    - Message position LEFT RIGHT, etc
-    - use tooltip for message (position or new component?)
- */
 public class ValueBoxEditorDecorator<T> extends Composite implements
         HasEditorErrors<T>, IsEditor<ValueBoxEditor<T>> {
     
     // The GWT bootstrap styles for error panels.
     private static final String STYLE_ERROR = " control-group error ";
-    
+
     interface Binder extends UiBinder<Widget, ValueBoxEditorDecorator<?>> {
         Binder BINDER = GWT.create(Binder.class);
     }
@@ -83,6 +82,7 @@ public class ValueBoxEditorDecorator<T> extends Composite implements
         this();
         contents.add(widget);
         this.editor = editor;
+        listenToValueBoxBaseChangeEvent(widget);
     }
 
     /**
@@ -112,9 +112,27 @@ public class ValueBoxEditorDecorator<T> extends Composite implements
      * @param widget a {@link com.google.gwt.user.client.ui.ValueBoxBase} widget
      */
     @UiChild(limit = 1, tagname = "valuebox")
-    public void setValueBox(ValueBoxBase<T> widget) {
+    public void setValueBox(final ValueBoxBase<T> widget) {
         contents.add(widget);
+        listenToValueBoxBaseChangeEvent(widget);
         setEditor(widget.asEditor());
+    }
+    
+    private void listenToValueBoxBaseChangeEvent(final ValueBoxBase<T> widget) {
+        if (widget != null) {
+            widget.addChangeHandler(new ChangeHandler() {
+                @Override
+                public void onChange(ChangeEvent event) {
+                    disableError();
+                }
+            });
+            widget.addValueChangeHandler(new ValueChangeHandler<T>() {
+                @Override
+                public void onValueChange(ValueChangeEvent<T> event) {
+                    disableError();
+                }
+            });
+        }
     }
 
     /**
@@ -134,22 +152,30 @@ public class ValueBoxEditorDecorator<T> extends Composite implements
 
         boolean hasErrors = sb.length() > 0;
         if (!hasErrors) {
-            contents.removeStyleName(STYLE_ERROR);
-            setErrorLabelText(null);
-            setTooltipText("");
+            disableError();
             return;
         }
 
         // Show the errors.
         contents.addStyleName(STYLE_ERROR);
+        enableError(sb.substring(1));
+    }
+    
+    private void enableError(String text) {
+        contents.addStyleName(STYLE_ERROR);
         if (isUsingErrorLabel()) {
-            setErrorLabelText(sb.substring(1));
-            setTooltipText("");          
+            setErrorLabelText(text);
+            setTooltipText(null);
         } else {
             setErrorLabelText(null);
-            setTooltipText(sb.substring(1));
+            setTooltipText(text);
         }
-        
+    }
+    
+    private void disableError() {
+        contents.removeStyleName(STYLE_ERROR);
+        setErrorLabelText(null);
+        setTooltipText(null);
     }
     
     private void setTooltipText(String text) {
@@ -161,7 +187,6 @@ public class ValueBoxEditorDecorator<T> extends Composite implements
         // See issue https://github.com/gwtbootstrap/gwt-bootstrap/issues/287
         errorTooltip.reconfigure();
     }
-    
     
     private void setErrorLabelText(String text) {
         if (text == null || text.trim().length() == 0) {
@@ -202,4 +227,5 @@ public class ValueBoxEditorDecorator<T> extends Composite implements
                 break;
         }
     }
+
 }

@@ -130,6 +130,9 @@ public class ImageListEditorDecorator<T> extends Composite implements
             return;
         }
 
+        // Disable current error markers, if present.
+        disableError();
+        
         T before = this.value;
         this.value = value;
 
@@ -159,14 +162,21 @@ public class ImageListEditorDecorator<T> extends Composite implements
         }
         
         if (toolTipText != null) {
-            setTooltipText(toolTipText);
-            markErrorPanel(true);
+           enableError(toolTipText);
         } else {
-            setTooltipText("");
-            markErrorPanel(false);
+            disableError();
         }
     }
+    
+    private void enableError(String text) {
+        setTooltipText(text);
+        markErrorPanel(true);
+    }
 
+    private void disableError() {
+        setTooltipText(null);
+        markErrorPanel(false);
+    }
 
     public void setEditMode(final boolean isEditMode) {
         // TODO
