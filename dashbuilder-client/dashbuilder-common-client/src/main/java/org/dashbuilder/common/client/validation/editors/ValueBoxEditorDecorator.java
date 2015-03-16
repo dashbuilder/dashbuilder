@@ -24,6 +24,15 @@ import com.google.gwt.user.client.ui.Widget;
 
 import java.util.List;
 
+/**
+ * <p>Editor component decorator that wraps an editor widget and provides displaying of output validation messages.</p>
+ * <p>The output validation messages can be displayed as:</p>
+ * <ul>
+ *     <li>Labels - The validation errors are placed in a label on the RIGHT or LEFT side of the editor widget.</li>     
+ *     <li>Tooltip - The validation errors are displayed using a tooltip.</li> 
+ * </ul> 
+ * @param <T> The type of the value that contains the editor widget.
+ */
 public class ValueBoxEditorDecorator<T> extends Composite implements
         HasEditorErrors<T>, IsEditor<ValueBoxEditor<T>> {
     

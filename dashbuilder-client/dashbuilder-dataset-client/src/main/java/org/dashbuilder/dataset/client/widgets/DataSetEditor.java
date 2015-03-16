@@ -15,13 +15,10 @@
  */
 package org.dashbuilder.dataset.client.widgets;
 
-import com.github.gwtbootstrap.client.ui.base.TextNode;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.HasHandlers;
-import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.ui.*;
 import org.dashbuilder.dataset.DataSetMetadata;
 import org.dashbuilder.dataset.client.DataSetClientServices;
@@ -33,14 +30,10 @@ import org.dashbuilder.dataset.client.widgets.editors.DataSetAdvancedAttributesE
 import org.dashbuilder.dataset.client.widgets.editors.DataSetBasicAttributesEditor;
 import org.dashbuilder.dataset.client.widgets.editors.DataSetColumnsAndFilterEditor;
 import org.dashbuilder.dataset.client.widgets.editors.DataSetProviderTypeEditor;
-import org.dashbuilder.dataset.client.widgets.events.EditDataSetEvent;
-import org.dashbuilder.dataset.client.widgets.events.NewDataSetEvent;
 import org.dashbuilder.dataset.def.DataSetDef;
-import org.jboss.errai.common.client.api.RemoteCallback;
 
 import javax.enterprise.context.Dependent;
 import javax.validation.ConstraintViolation;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -165,11 +158,9 @@ public class DataSetEditor implements IsWidget {
                 boolean isValid = basicAttributesViolations == null || basicAttributesViolations.isEmpty()
                     || providerTypeAttributeViolations == null || providerTypeAttributeViolations.isEmpty();
                 if (isValid) {
-                    // buildAdvancedAttributesEditionView();                    
-                } else {
-                    GWT.log("There are validation errors.");
+                    buildAdvancedAttributesEditionView();                    
                 }
-                log();
+                saveLog(basicAttributesViolations, providerTypeAttributeViolations);
             }
         };
         mainPanel.add(buildButtons(false, true, null, nextButtonClickHandler));
@@ -220,11 +211,19 @@ public class DataSetEditor implements IsWidget {
         this.mainPanel.add(mainPanel);
     }
     
-    private void log() {
+    private void saveLog(Set<ConstraintViolation<DataSetDef>>... violations) {
+        if (violations != null && violations.length > 0) {
+            for (int x = 0; x < violations.length; x++) {
+                Set<ConstraintViolation<DataSetDef>> driverViolation = violations[x];
+                for (ConstraintViolation<DataSetDef> violation : driverViolation) {
+                    GWT.log("Validation error - " + violation.getMessage());
+                }
+            }
+        }
         if (dataSetDef != null) {
-            GWT.log("DataSetEditor#log - uuid: " + dataSetDef.getUUID());
-            GWT.log("DataSetEditor#log - name: " + dataSetDef.getName());
-            GWT.log("DataSetEditor#log - provider: " + dataSetDef.getProvider());
+            GWT.log("DataSetDef uuid: " + dataSetDef.getUUID());
+            GWT.log("DataSetDef name: " + dataSetDef.getName());
+            GWT.log("DataSetDef provider: " + dataSetDef.getProvider());
         }
     }
 

@@ -21,8 +21,13 @@ import com.google.gwt.user.client.ui.*;
 
 import java.util.*;
 
-// @see com.google.gwt.user.client.ui.ValueListBox
-// @see org.dashbuilder.client.test.editors.ValueBoxEditorDecorator
+/**
+ * <p>Editor component decorator that accepts multiple values and display each one using a given image.</p>
+ * <p>The validation error messages are displayed by changing border color to RED and showing the message using a tooltip.</p>
+ * <p>This component is ideal for handling enums.</p>
+ *  
+ * @param <T> The type of the value that contains the editor widget
+ */
 public class ImageListEditorDecorator<T> extends Composite implements
         HasConstrainedValue<T>, HasEditorErrors<T>, IsEditor<TakesValueEditor<T>> {
 
