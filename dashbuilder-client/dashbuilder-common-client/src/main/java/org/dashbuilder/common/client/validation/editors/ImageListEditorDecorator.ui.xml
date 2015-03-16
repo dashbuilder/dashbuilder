@@ -11,8 +11,11 @@
       cursor: pointer;
     }
   </ui:style>
-
-  <g:HorizontalPanel spacing="10" ui:field="mainPanel" addStyleNames="{style.mainPanel} ">
-  </g:HorizontalPanel>
+  <g:HTMLPanel ui:field="errorPanel">
+    <b:Tooltip text="" ui:field="errorTooltip">
+      <g:HorizontalPanel spacing="10" ui:field="mainPanel" addStyleNames="{style.mainPanel} ">
+      </g:HorizontalPanel>
+    </b:Tooltip>
+  </g:HTMLPanel>
   
 </ui:UiBinder>

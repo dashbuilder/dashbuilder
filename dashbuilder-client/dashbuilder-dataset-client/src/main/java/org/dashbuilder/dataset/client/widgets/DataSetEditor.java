@@ -156,9 +156,20 @@ public class DataSetEditor implements IsWidget {
         final ClickHandler nextButtonClickHandler = new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                if (save()) {
-                    buildAdvancedAttributesEditionView();
+                // Save basic attributes (name and uuid).
+                Set<ConstraintViolation<DataSetDef>> basicAttributesViolations = workflow.saveBasicAttributes();
+                
+                // Save provider type attribute.
+                Set<ConstraintViolation<DataSetDef>> providerTypeAttributeViolations = workflow.saveProviderTypeAttribute();
+                
+                boolean isValid = basicAttributesViolations == null || basicAttributesViolations.isEmpty()
+                    || providerTypeAttributeViolations == null || providerTypeAttributeViolations.isEmpty();
+                if (isValid) {
+                    // buildAdvancedAttributesEditionView();                    
+                } else {
+                    GWT.log("There are validation errors.");
                 }
+                log();
             }
         };
         mainPanel.add(buildButtons(false, true, null, nextButtonClickHandler));
@@ -207,16 +218,6 @@ public class DataSetEditor implements IsWidget {
         mainPanel.add(buildButtons(true, true, backButtonClickHandler, nextButtonClickHandler));
         this.mainPanel.clear();
         this.mainPanel.add(mainPanel);
-    }
-    
-    public boolean save() {
-        Set<ConstraintViolation<DataSetDef>> violations = workflow.save();
-        boolean isValid = violations == null || violations.isEmpty(); 
-        if (!isValid) {
-            GWT.log("There are validation errors.");
-        }
-        log();
-        return isValid;
     }
     
     private void log() {

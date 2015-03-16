@@ -9,6 +9,7 @@ import org.dashbuilder.dataset.def.DataSetDef;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
+import java.util.HashSet;
 import java.util.Set;
 
 public class DataSetDefEditWorkflow {
@@ -30,17 +31,35 @@ public class DataSetDefEditWorkflow {
         providerTypeAttributesDriver.edit(p);
     }
 
-    // Called by some UI action
-    public Set<ConstraintViolation<DataSetDef>> save() {
-        DataSetDef edited = basicAttributesDriver.flush();
+    public Set<ConstraintViolation<DataSetDef>> saveBasicAttributes() {
+        return save(basicAttributesDriver);
+    }
+
+    public Set<ConstraintViolation<DataSetDef>> saveProviderTypeAttribute() {
+        return save(providerTypeAttributesDriver);
+    }
+
+    private Set<ConstraintViolation<DataSetDef>> save(SimpleBeanEditorDriver driver) {
+        DataSetDef edited = (DataSetDef) driver.flush();
         Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
         Set<ConstraintViolation<DataSetDef>> violations = validator.validate(edited);
         Set<?> test = violations;
-        basicAttributesDriver.setConstraintViolations((Set<ConstraintViolation<?>>) test);
-        if (basicAttributesDriver.hasErrors()) {
+        driver.setConstraintViolations(test);
+        if (driver.hasErrors()) {
             return violations;
         }
         return null;
+    }
+
+    public Set<ConstraintViolation<DataSetDef>> saveAll() {
+        Set<ConstraintViolation<DataSetDef>> violations = new HashSet<ConstraintViolation<DataSetDef>>();
+        Set<ConstraintViolation<DataSetDef>> basicAttributesViolations = saveBasicAttributes();
+        if (basicAttributesViolations != null) violations.addAll(basicAttributesViolations);
+        Set<ConstraintViolation<DataSetDef>> providerTypeAttributeViolations = saveProviderTypeAttribute();
+        if (providerTypeAttributeViolations != null) violations.addAll(providerTypeAttributeViolations);
+        
+        if (violations.isEmpty()) return null;
+        return violations;
     }
     
 }

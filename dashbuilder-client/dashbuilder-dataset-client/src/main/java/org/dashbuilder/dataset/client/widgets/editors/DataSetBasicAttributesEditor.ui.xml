@@ -30,7 +30,7 @@
         </b:ControlGroup>
         <b:ControlGroup>
           <b:ControlLabel><ui:text from="{i18n.attributeName}"/></b:ControlLabel>
-          <dash-client:ValueBoxEditorDecorator  ui:field="name">
+          <dash-client:ValueBoxEditorDecorator errorLabelPosition="TOOLTIP" ui:field="name">
             <dash-client:valuebox>
               <g:TextBox />
               <!--<b:TextBox placeholder="{i18n.attributeName}" />-->

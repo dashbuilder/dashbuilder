@@ -1,5 +1,6 @@
 package org.dashbuilder.common.client.validation.editors;
 
+import com.github.gwtbootstrap.client.ui.Tooltip;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.DivElement;
 import com.google.gwt.dom.client.Style;
@@ -7,6 +8,7 @@ import com.google.gwt.editor.client.EditorError;
 import com.google.gwt.editor.client.HasEditorErrors;
 import com.google.gwt.editor.client.IsEditor;
 import com.google.gwt.editor.ui.client.adapters.ValueBoxEditor;
+import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiChild;
 import com.google.gwt.uibinder.client.UiConstructor;
@@ -25,26 +27,50 @@ import java.util.List;
  */
 public class ValueBoxEditorDecorator<T> extends Composite implements
         HasEditorErrors<T>, IsEditor<ValueBoxEditor<T>> {
+    
+    // The GWT bootstrap styles for error panels.
+    private static final String STYLE_ERROR = " control-group error ";
+    
     interface Binder extends UiBinder<Widget, ValueBoxEditorDecorator<?>> {
         Binder BINDER = GWT.create(Binder.class);
     }
 
+    interface ValueBoxEditorDecoratorStyle extends CssResource {
+        String contents();
+        String errorLabel();
+        String errorLabelLeft();
+        String errorLabelRight();
+        
+    }
+
+    @UiField ValueBoxEditorDecoratorStyle style;
+    
     @UiField
     SimplePanel contents;
 
     @UiField
     DivElement errorLabel;
+    
+    @UiField
+    Tooltip errorTooltip;
+    
+    public enum ErrorLabelPosition {
+        LEFT, RIGHT, TOOLTIP;
+    }    
 
     private ValueBoxEditor<T> editor;
-
+    private ErrorLabelPosition errorLabelPosition;
+    
     /**
      * Constructs a ValueBoxEditorDecorator.
      */
     @UiConstructor
     public ValueBoxEditorDecorator() {
+        // By default, show errors using tooltips.
+        errorLabelPosition = ErrorLabelPosition.TOOLTIP;
         initWidget(Binder.BINDER.createAndBindUi(this));
     }
-
+    
     /**
      * Constructs a ValueBoxEditorDecorator using a {@link com.google.gwt.user.client.ui.ValueBoxBase}
      * widget and a {@link com.google.gwt.editor.ui.client.adapters.ValueBoxEditor} editor.
@@ -106,13 +132,74 @@ public class ValueBoxEditorDecorator<T> extends Composite implements
             }
         }
 
-        if (sb.length() == 0) {
-            errorLabel.setInnerText("");
-            errorLabel.getStyle().setDisplay(Style.Display.NONE);
+        boolean hasErrors = sb.length() > 0;
+        if (!hasErrors) {
+            contents.removeStyleName(STYLE_ERROR);
+            setErrorLabelText(null);
+            setTooltipText("");
             return;
         }
 
-        errorLabel.setInnerText(sb.substring(1));
-        errorLabel.getStyle().setDisplay(Style.Display.INLINE_BLOCK);
+        // Show the errors.
+        contents.addStyleName(STYLE_ERROR);
+        if (isUsingErrorLabel()) {
+            setErrorLabelText(sb.substring(1));
+            setTooltipText("");          
+        } else {
+            setErrorLabelText(null);
+            setTooltipText(sb.substring(1));
+        }
+        
+    }
+    
+    private void setTooltipText(String text) {
+        if (text == null || text.trim().length() == 0) {
+            errorTooltip.setText("");
+        } else {
+            errorTooltip.setText(text);
+        }
+        // See issue https://github.com/gwtbootstrap/gwt-bootstrap/issues/287
+        errorTooltip.reconfigure();
+    }
+    
+    
+    private void setErrorLabelText(String text) {
+        if (text == null || text.trim().length() == 0) {
+            errorLabel.setInnerText("");
+            errorLabel.getStyle().setDisplay(Style.Display.NONE);
+        } else {
+            errorLabel.setInnerText(text);
+            errorLabel.getStyle().setDisplay(Style.Display.INLINE);
+        }
+    }
+    
+    private boolean isUsingErrorLabel() {
+        return !ErrorLabelPosition.TOOLTIP.equals(getErrorLabelPosition());
+    }
+
+    private boolean isUsingErrorTooltip() {
+        return ErrorLabelPosition.TOOLTIP.equals(getErrorLabelPosition());
+    }
+
+    public ErrorLabelPosition getErrorLabelPosition() {
+        return errorLabelPosition;
+    }
+
+    public void setErrorLabelPosition(ErrorLabelPosition errorLabelPosition) {
+        this.errorLabelPosition = errorLabelPosition;
+        positionErrorLabel();
+    }
+
+    private void positionErrorLabel() {
+        switch (errorLabelPosition) {
+            case TOOLTIP:
+                break;
+            case LEFT:
+                errorLabel.addClassName(style.errorLabelLeft());
+                break;
+            default:
+                errorLabel.addClassName(style.errorLabelRight());
+                break;
+        }
     }
 }

@@ -23,4 +23,8 @@ public interface DataSetValidationMessages extends
 
     @Key("dataSetApi_dataSetDef_name_notNull")
     String dataSetApi_dataSetDef_name_notNull();
+
+    @Key("dataSetApi_dataSetDef_provider_notNull")
+    String dataSetApi_dataSetDef_provider_notNull();
+    
 }

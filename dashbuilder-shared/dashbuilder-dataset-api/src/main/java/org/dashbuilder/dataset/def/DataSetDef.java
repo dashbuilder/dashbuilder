@@ -43,7 +43,10 @@ public class DataSetDef {
     protected String name;
     
     protected String defFilePath;
+    
+    @NotNull(message = "{dataSetApi_dataSetDef_provider_notNull}")
     protected DataSetProviderType provider;
+    
     protected DataSet dataSet = DataSetFactory.newEmptyDataSet();
     protected DataSetFilter dataSetFilter = null;
     protected boolean isPublic = true;

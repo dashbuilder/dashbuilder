@@ -1,7 +1,11 @@
 package org.dashbuilder.common.client.validation.editors;
 
 import com.github.gwtbootstrap.client.ui.Image;
+import com.github.gwtbootstrap.client.ui.Tooltip;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style;
+import com.google.gwt.editor.client.EditorError;
+import com.google.gwt.editor.client.HasEditorErrors;
 import com.google.gwt.editor.client.IsEditor;
 import com.google.gwt.editor.client.adapters.TakesValueEditor;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -13,17 +17,18 @@ import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiConstructor;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.HasConstrainedValue;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.*;
 
 import java.util.*;
 
+// @see com.google.gwt.user.client.ui.ValueListBox
+// @see org.dashbuilder.client.test.editors.ValueBoxEditorDecorator
 public class ImageListEditorDecorator<T> extends Composite implements
-        HasConstrainedValue<T>, IsEditor<TakesValueEditor<T>> {
+        HasConstrainedValue<T>, HasEditorErrors<T>, IsEditor<TakesValueEditor<T>> {
 
-    
+    private static final String COLOR_RED = "#FF0000";
+    private static final String COLOR_BLACK = "#FFFFFF";
+
     interface Binder extends UiBinder<Widget, ImageListEditorDecorator> {
         Binder BINDER = GWT.create(Binder.class);
     }
@@ -45,7 +50,13 @@ public class ImageListEditorDecorator<T> extends Composite implements
     @UiField ImageListEditorDecoratorStyle style;
 
     @UiField
+    HTMLPanel errorPanel;
+    
+    @UiField
     HorizontalPanel mainPanel;
+
+    @UiField
+    Tooltip errorTooltip;
     
     @UiConstructor
     public ImageListEditorDecorator() {
@@ -134,6 +145,29 @@ public class ImageListEditorDecorator<T> extends Composite implements
         }
     }
 
+    @Override
+    public void showErrors(List<EditorError> errors) {
+        boolean hasErrors = errors != null && !errors.isEmpty();
+
+        String toolTipText = null;
+        if (hasErrors) {
+            StringBuilder sb = new StringBuilder();
+            for (EditorError error : errors) {
+                sb.append("\n").append(error.getMessage());
+            }
+            if (sb.length() > 0) toolTipText = sb.substring(1);
+        }
+        
+        if (toolTipText != null) {
+            setTooltipText(toolTipText);
+            markErrorPanel(true);
+        } else {
+            setTooltipText("");
+            markErrorPanel(false);
+        }
+    }
+
+
     public void setEditMode(final boolean isEditMode) {
         // TODO
         this.isEditMode = isEditMode;
@@ -150,10 +184,28 @@ public class ImageListEditorDecorator<T> extends Composite implements
     }
 
     public void clear() {
-        mainPanel.clear();
-        values.clear();
-        images.clear();
-        value = null;
+        setValue(null);
+    }
+
+    private void markErrorPanel(boolean error) {
+        if (error) {
+            errorPanel.getElement().getStyle().setBorderWidth(1, Style.Unit.PX);
+            errorPanel.getElement().getStyle().setBorderStyle(Style.BorderStyle.SOLID);
+            errorPanel.getElement().getStyle().setBorderColor(COLOR_RED);
+        } else {
+            errorPanel.getElement().getStyle().setBorderWidth(0, Style.Unit.PX);
+            errorPanel.getElement().getStyle().setBorderColor(COLOR_BLACK);
+        }
+        
+    }
+    private void setTooltipText(String text) {
+        if (text == null || text.trim().length() == 0) {
+            errorTooltip.setText("");
+        } else {
+            errorTooltip.setText(text);
+        }
+        // See issue https://github.com/gwtbootstrap/gwt-bootstrap/issues/287
+        errorTooltip.reconfigure();
     }
     
 }
