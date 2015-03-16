@@ -1,0 +1,18 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+             xmlns:g="urn:import:com.google.gwt.user.client.ui"
+             xmlns:b="urn:import:com.github.gwtbootstrap.client.ui"
+    >
+
+  <ui:style type="org.dashbuilder.common.client.validation.editors.ImageListEditorDecorator.ImageListEditorDecoratorStyle">
+    .mainPanel {
+    }
+    .imagePointer {
+      cursor: pointer;
+    }
+  </ui:style>
+
+  <g:HorizontalPanel spacing="10" ui:field="mainPanel" addStyleNames="{style.mainPanel} ">
+  </g:HorizontalPanel>
+  
+</ui:UiBinder>

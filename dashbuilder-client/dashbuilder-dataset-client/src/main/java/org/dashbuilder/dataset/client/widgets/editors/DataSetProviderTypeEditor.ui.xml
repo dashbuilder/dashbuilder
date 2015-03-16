@@ -2,27 +2,21 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
              xmlns:g="urn:import:com.google.gwt.user.client.ui"
              xmlns:b="urn:import:com.github.gwtbootstrap.client.ui"
+             xmlns:dash-client="urn:import:org.dashbuilder.common.client.validation.editors"
     >
 
   <ui:with field="i18n" type="org.dashbuilder.dataset.client.resources.i18n.DataSetEditorConstants"/>
 
-  <ui:style type="org.dashbuilder.dataset.client.widgets.editors.DataSetProviderTypeEditor.DataSetProviderTypeEditorStyle">
-    .mainPanel {
-    }
-    .imagePointer {
-      cursor: pointer;
-    }
-  </ui:style>
-
-  <b:WellForm type="HORIZONTAL" method="POST" ui:field="attributesForm">
+  <g:HorizontalPanel>
 
     <!-- Common attributes. -->
     <b:Fieldset>
     <b:Legend title="{i18n.providerType}"><ui:text from="{i18n.providerType}"/></b:Legend>
-      <g:HorizontalPanel spacing="10" ui:field="typesPanel" addStyleNames="{style.mainPanel} ">
-      </g:HorizontalPanel>
+
+      <dash-client:ImageListEditorDecorator ui:field="provider" />
+      
     </b:Fieldset>
 
-  </b:WellForm>
+  </g:HorizontalPanel>
   
 </ui:UiBinder>

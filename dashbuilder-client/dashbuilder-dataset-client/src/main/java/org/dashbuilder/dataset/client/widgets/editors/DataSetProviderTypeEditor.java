@@ -16,25 +16,21 @@
 package org.dashbuilder.dataset.client.widgets.editors;
 
 import com.github.gwtbootstrap.client.ui.Image;
-import com.github.gwtbootstrap.client.ui.constants.LabelType;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import org.dashbuilder.common.client.validation.editors.ImageListEditorDecorator;
 import org.dashbuilder.dataprovider.DataSetProviderType;
 import org.dashbuilder.dataset.client.resources.bundles.DataSetClientResources;
-import org.dashbuilder.dataset.client.resources.i18n.DataSetEditorConstants;
 import org.dashbuilder.dataset.client.resources.i18n.DataSetExplorerConstants;
 import org.dashbuilder.dataset.client.widgets.DataSetEditor;
 import org.dashbuilder.dataset.def.DataSetDef;
 
 import javax.enterprise.context.Dependent;
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * <p>This is the view implementation for Data Set Editor widget for editing the data set provider type.</p>
@@ -42,28 +38,29 @@ import java.util.*;
 @Dependent
 public class DataSetProviderTypeEditor extends Composite implements DataSetEditor.View {
 
-    private static final String ICONS_SIZE = "250px";
+    private static final int ICONS_SIZE = 250;
     private static final double ALPHA_ICON_NOT_SELECTED = 0.2;
     
     interface DataSetProviderTypeEditorBinder extends UiBinder<Widget, DataSetProviderTypeEditor> {}
     private static DataSetProviderTypeEditorBinder uiBinder = GWT.create(DataSetProviderTypeEditorBinder.class);
 
-    interface DataSetProviderTypeEditorStyle extends CssResource {
-        String mainPanel();
-        String imagePointer();
-    }
-
-    @UiField DataSetProviderTypeEditorStyle style;
-    
     @UiField
-    HorizontalPanel typesPanel;
+    ImageListEditorDecorator<DataSetProviderType> provider;
 
     private DataSetDef dataSetDef;
-    Map<DataSetProviderType ,Image> typeSelectors = new LinkedHashMap<DataSetProviderType, Image>();
     private  boolean isEditMode;
     
     public DataSetProviderTypeEditor() {
         initWidget(uiBinder.createAndBindUi(this));
+        
+        // Initialize the ImageListEditorDecorator with image for each data provider type.
+        final Map<DataSetProviderType, Image> providerEditorValues = new LinkedHashMap<DataSetProviderType, Image>();
+        for (final DataSetProviderType type : DataSetProviderType.values()) {
+            final Image _image = buildTypeSelectorWidget(type);
+            if (_image != null) providerEditorValues.put(type, _image);
+        }
+        provider.setSize(ICONS_SIZE, ICONS_SIZE);
+        provider.setAcceptableValues(providerEditorValues);
     }
 
     @Override
@@ -74,70 +71,21 @@ public class DataSetProviderTypeEditor extends Composite implements DataSetEdito
     @Override
     public Widget show(final  boolean isEditMode) {
         this.isEditMode = isEditMode;
-        
-        // Clear the widget.
-        clearScreen();
-
-        // Show available types.
-        final DataSetProviderType[] types = DataSetProviderType.values();
-        for (final DataSetProviderType type : types) {
-            final Image typeSelector = buildTypeSelectorWidget(type);
-
-            if (typeSelector != null) {
-                if (isEditMode) {
-                    typeSelector.addStyleName(style.imagePointer());
-                    typeSelector.addClickHandler(new ClickHandler() {
-                        @Override
-                        public void onClick(ClickEvent event) {
-                            selectProviderType(type);
-                        }
-                    });
-                    
-                }
-                typesPanel.add(typeSelector);
-                typeSelectors.put(type, typeSelector);
-            }
-        }
-        typesPanel.setVisible(true);
-        
-        // If defintion has a provider type set, show it.
-        if (dataSetDef != null && dataSetDef.getProvider() != null) selectProviderType(dataSetDef.getProvider());
-
+        provider.setVisible(true);
         return asWidget();
     }
 
     @Override
     public void hide() {
-        typesPanel.setVisible(false);
+        provider.setVisible(false);
     }
 
     @Override
     public void clear() {
-        clearScreen();
-        clearStatus();
-    }
-    
-    private void clearScreen() {
-        typesPanel.clear();
-    }
-    
-    private void clearStatus() {
         this.dataSetDef = null;
-        this.typeSelectors.clear();
+        this.provider.clear();
     }
-
-    private void selectProviderType(DataSetProviderType type) {
-        dataSetDef.setProvider(type);
-        
-        // Apply alphas.
-        for (Map.Entry<DataSetProviderType, Image> entry : typeSelectors.entrySet()) {
-            DataSetProviderType _type = entry.getKey();
-            Image typeSelector = entry.getValue();
-            if (type.equals(_type)) applyAlpha(typeSelector, 1);
-            else applyAlpha(typeSelector, ALPHA_ICON_NOT_SELECTED);
-        }
-    }
-
+    
     private Image buildTypeSelectorWidget(DataSetProviderType type) {
         Image typeIcon = null;
         switch (type) {
@@ -162,12 +110,7 @@ public class DataSetProviderTypeEditor extends Composite implements DataSetEdito
                 typeIcon.setTitle(DataSetExplorerConstants.INSTANCE.el());
                 break;
         }
-        if (typeIcon != null) typeIcon.setSize(ICONS_SIZE, ICONS_SIZE);
         return typeIcon;
     }
     
-    private void applyAlpha(final Image image, final double alpha) {
-        image.getElement().setAttribute("style", "filter: alpha(opacity=5);opacity: " + alpha);
-        image.setSize(ICONS_SIZE, ICONS_SIZE);
-    }
 }

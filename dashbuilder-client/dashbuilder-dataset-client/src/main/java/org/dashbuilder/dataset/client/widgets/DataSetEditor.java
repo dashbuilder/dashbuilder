@@ -100,7 +100,6 @@ public class DataSetEditor implements IsWidget {
         dataSetDef.setUUID(uuid);
         
         setDataSetDef(dataSetDef);
-        buildBasicAttributesEditionView();
     }
 
     public void editDataSet(final String uuid) throws Exception{
@@ -116,7 +115,6 @@ public class DataSetEditor implements IsWidget {
             @Override
             public void callback(DataSetMetadata metatada) {
                 setDataSetDef(metatada.getDefinition());
-                buildBasicAttributesEditionView();
             }
 
             @Override
@@ -150,6 +148,7 @@ public class DataSetEditor implements IsWidget {
 
     public void buildBasicAttributesEditionView() {
         workflow.edit(dataSetBasicAttributesEditorView, dataSetDef);
+        workflow.edit(dataSetProviderTypeEditorView, dataSetDef);
 
         VerticalPanel mainPanel = new VerticalPanel();
         mainPanel.add(dataSetBasicAttributesEditorView.show(true));
@@ -171,6 +170,7 @@ public class DataSetEditor implements IsWidget {
         // TODO: workflow.edit(dataSetBasicAttributesEditorView, dataSetDef);
         
         VerticalPanel mainPanel = new VerticalPanel();
+        mainPanel.setSpacing(10);
         mainPanel.add(dataSetBasicAttributesEditorView.show(true));
         mainPanel.add(dataSetAdvancedAttributesEditorView.show(true));
 
@@ -223,6 +223,7 @@ public class DataSetEditor implements IsWidget {
         if (dataSetDef != null) {
             GWT.log("DataSetEditor#log - uuid: " + dataSetDef.getUUID());
             GWT.log("DataSetEditor#log - name: " + dataSetDef.getName());
+            GWT.log("DataSetEditor#log - provider: " + dataSetDef.getProvider());
         }
     }
 
@@ -265,6 +266,8 @@ public class DataSetEditor implements IsWidget {
     
     private void setDataSetDef(DataSetDef dataSetDef) {
         this.dataSetDef = dataSetDef;
+        if (this.dataSetDef != null) buildBasicAttributesEditionView();
+        else buildInitialView();
         dataSetProviderTypeEditorView.set(dataSetDef);
         dataSetBasicAttributesEditorView.set(dataSetDef);
         dataSetAdvancedAttributesEditorView.set(dataSetDef);

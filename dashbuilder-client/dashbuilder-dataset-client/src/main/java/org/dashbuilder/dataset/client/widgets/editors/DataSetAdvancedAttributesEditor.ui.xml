@@ -16,8 +16,6 @@
 
   <g:HorizontalPanel spacing="10" ui:field="advancedAttributesPanel" addStyleNames="{style.mainPanel}">
 
-    <b:WellForm type="HORIZONTAL" method="POST" ui:field="attributesForm">
-
       <!-- Backend cache policy attributes. -->
       <b:Fieldset>
         <b:Legend title="{i18n.backendCacheAttributes}"><ui:text from="{i18n.backendCacheAttributes}"/></b:Legend>
@@ -53,8 +51,6 @@
           <b:TextBox placeholder="{i18n.attributeRefreshInterval}" ui:field="attributeRefreshInterval"/>
         </b:ControlGroup>
       </b:Fieldset>
-
-    </b:WellForm>
 
   </g:HorizontalPanel>
 

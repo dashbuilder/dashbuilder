@@ -22,6 +22,8 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import org.dashbuilder.common.client.validation.editors.ImageListEditorDecorator;
+import org.dashbuilder.dataprovider.DataSetProviderType;
 import org.dashbuilder.dataset.client.widgets.DataSetEditor;
 import org.dashbuilder.dataset.def.DataSetDef;
 

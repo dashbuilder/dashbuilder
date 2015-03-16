@@ -18,6 +18,11 @@ import com.google.gwt.user.client.ui.Widget;
 
 import java.util.List;
 
+/* TODO: 
+    - Color red
+    - Message position LEFT RIGHT, etc
+    - use tooltip for message (position or new component?)
+ */
 public class ValueBoxEditorDecorator<T> extends Composite implements
         HasEditorErrors<T>, IsEditor<ValueBoxEditor<T>> {
     interface Binder extends UiBinder<Widget, ValueBoxEditorDecorator<?>> {
