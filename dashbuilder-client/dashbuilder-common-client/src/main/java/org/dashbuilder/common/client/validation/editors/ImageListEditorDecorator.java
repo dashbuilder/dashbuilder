@@ -98,10 +98,9 @@ public class ImageListEditorDecorator<T> extends Composite implements
                 _image.addClickHandler(new ClickHandler() {
                     @Override
                     public void onClick(ClickEvent event) {
-                        setValue(_value);
+                        if (isEditMode) setValue(_value);
                     }
                 });
-                
                 values.add(_value);
                 images.put(_value, _image);
                 mainPanel.add(_image);

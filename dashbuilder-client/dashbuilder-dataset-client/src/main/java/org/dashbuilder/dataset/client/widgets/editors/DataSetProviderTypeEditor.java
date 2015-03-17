@@ -71,6 +71,7 @@ public class DataSetProviderTypeEditor extends Composite implements DataSetEdito
     @Override
     public Widget show(final  boolean isEditMode) {
         this.isEditMode = isEditMode;
+        provider.setEditMode(isEditMode);
         provider.setVisible(true);
         return asWidget();
     }

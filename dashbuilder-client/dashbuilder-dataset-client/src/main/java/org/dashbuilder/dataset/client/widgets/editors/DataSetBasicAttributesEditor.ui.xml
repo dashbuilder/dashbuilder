@@ -22,7 +22,7 @@
 
           <dash-client:ValueBoxEditorDecorator errorLabelPosition="TOOLTIP" ui:field="attributeUUID">
             <dash-client:valuebox>
-              <g:TextBox />
+              <g:TextBox enabled="false" />
             </dash-client:valuebox>
           </dash-client:ValueBoxEditorDecorator>
         </b:ControlGroup>
