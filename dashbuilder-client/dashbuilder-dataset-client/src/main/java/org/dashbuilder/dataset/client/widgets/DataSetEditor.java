@@ -179,9 +179,8 @@ public class DataSetEditor implements IsWidget {
             @Override
             public void onClick(ClickEvent event) {
 
-                // Save attributes.
+                // validate and save attributes.
                 Set<ConstraintViolation<DataSetDef>> advancedAttributesViolations = workflow.saveAdvancedAttributes();
-
                 boolean isValid = advancedAttributesViolations == null || advancedAttributesViolations.isEmpty();
                 if (isValid) {
                     // buildColumnsAndFilterEditionView();

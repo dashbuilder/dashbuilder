@@ -62,7 +62,12 @@
       <groupId>org.dashbuilder</groupId>
       <artifactId>dashbuilder-common-shared</artifactId>
     </dependency>
-    
+
+    <dependency>
+      <groupId>org.dashbuilder</groupId>
+      <artifactId>dashbuilder-validations</artifactId>
+    </dependency>
+
     <dependency>
       <groupId>org.dashbuilder</groupId>
       <artifactId>dashbuilder-dataset-api</artifactId>

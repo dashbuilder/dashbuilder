@@ -15,10 +15,11 @@
   <name>Dashbuilder Shared</name>
 
   <modules>
+    <module>dashbuilder-common-shared</module>
     <module>dashbuilder-dataset-api</module>
     <module>dashbuilder-dataset-shared</module>
     <module>dashbuilder-displayer-api</module>
-    <module>dashbuilder-common-shared</module>
+    <module>dashbuilder-validations</module>
   </modules>
 
   <dependencies>

@@ -20,11 +20,14 @@ import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetFactory;
 import org.dashbuilder.dataset.date.TimeAmount;
 import org.dashbuilder.dataset.filter.DataSetFilter;
+import org.dashbuilder.dataset.validation.IsTimeInterval;
+import org.dashbuilder.dataset.validation.groups.DataSetDefCacheRowsValidation;
+import org.dashbuilder.dataset.validation.groups.DataSetDefPushSizeValidation;
+import org.dashbuilder.dataset.validation.groups.DataSetDefRefreshIntervalValidation;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.jboss.errai.common.client.api.annotations.Portable;
-
+import javax.validation.constraints.Max;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -37,23 +40,26 @@ public class DataSetDef {
     @NotNull(message = "{dataSetApi_dataSetDef_uuid_notNull}")
     @NotEmpty(message = "{dataSetApi_dataSetDef_uuid_notNull}")
     protected String UUID;
-
     @NotNull(message = "{dataSetApi_dataSetDef_name_notNull}")
     @NotEmpty(message = "{dataSetApi_dataSetDef_name_notNull}")
     protected String name;
-    
     protected String defFilePath;
-    
     @NotNull(message = "{dataSetApi_dataSetDef_provider_notNull}")
     protected DataSetProviderType provider;
-    
     protected DataSet dataSet = DataSetFactory.newEmptyDataSet();
     protected DataSetFilter dataSetFilter = null;
     protected boolean isPublic = true;
     protected boolean pushEnabled = false;
-    protected int pushMaxSize = 1024;
+    @NotNull(message = "{dataSetApi_dataSetDef_pushMaxSize_notNull}", groups = DataSetDefPushSizeValidation.class)
+    @Max(value = 4096)
+    protected Integer pushMaxSize = 1024;
     protected boolean cacheEnabled = false;
-    protected int cacheMaxRows = 1000;
+    @NotNull(message = "{dataSetApi_dataSetDef_cacheMaxRows_notNull}", groups = DataSetDefCacheRowsValidation.class)
+    @Max(value = 10000)
+    protected Integer cacheMaxRows = 1000;
+    @NotNull(message = "{dataSetApi_dataSetDef_refreshTime_notNull}", groups = DataSetDefRefreshIntervalValidation.class)
+    @NotEmpty(message = "{dataSetApi_dataSetDef_refreshTime_notEmpty}", groups = DataSetDefRefreshIntervalValidation.class)
+    @IsTimeInterval(message = "{dataSetApi_dataSetDef_refreshTime_intervalInvalid}")
     protected String refreshTime = null;
     protected boolean refreshAlways = false;
 
@@ -124,11 +130,11 @@ public class DataSetDef {
         this.pushEnabled = pushEnabled;
     }
 
-    public int getPushMaxSize() {
+    public Integer getPushMaxSize() {
         return pushMaxSize;
     }
 
-    public void setPushMaxSize(int pushMaxSize) {
+    public void setPushMaxSize(Integer pushMaxSize) {
         this.pushMaxSize = pushMaxSize;
     }
 
@@ -140,11 +146,11 @@ public class DataSetDef {
         this.cacheEnabled = cacheEnabled;
     }
 
-    public int getCacheMaxRows() {
+    public Integer getCacheMaxRows() {
         return cacheMaxRows;
     }
 
-    public void setCacheMaxRows(int cacheMaxRows) {
+    public void setCacheMaxRows(Integer cacheMaxRows) {
         this.cacheMaxRows = cacheMaxRows;
     }
 
@@ -153,9 +159,6 @@ public class DataSetDef {
     }
 
     public void setRefreshTime(String refreshTime) {
-        if (refreshTime != null && refreshTime.trim().length() > 0) {
-            TimeAmount.parse(refreshTime);
-        }
         this.refreshTime = refreshTime;
     }
 

@@ -166,7 +166,6 @@ public class ValueBoxEditorDecorator<T> extends Composite implements
         }
 
         // Show the errors.
-        contents.addStyleName(STYLE_ERROR);
         enableError(sb.substring(1));
     }
     

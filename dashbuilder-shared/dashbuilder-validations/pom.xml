@@ -9,16 +9,36 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
-  <artifactId>dashbuilder-common-shared</artifactId>
+  <artifactId>dashbuilder-validations</artifactId>
   <packaging>jar</packaging>
 
-  <name>Dashbuilder Common Shared</name>
-  <description>Dashbuilder common resources for both client and server sides.</description>
+  <name>Dashbuilder Validations</name>
+  <description>Dashbuilder validation factory and messages provider.</description>
 
   <dependencies>
 
-    <!-- GWT & Errai Bean Validation (JSR303) required artifacts. -->
+    <dependency>
+      <groupId>org.dashbuilder</groupId>
+      <artifactId>dashbuilder-common-shared</artifactId>
+    </dependency>
     
+    <dependency>
+      <groupId>org.dashbuilder</groupId>
+      <artifactId>dashbuilder-dataset-api</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.dashbuilder</groupId>
+      <artifactId>dashbuilder-dataset-shared</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.dashbuilder</groupId>
+      <artifactId>dashbuilder-displayer-api</artifactId>
+    </dependency>
+
+    <!-- GWT & Errai Bean Validation (JSR303) required artifacts. -->
+
     <dependency>
       <groupId>com.google.gwt</groupId>
       <artifactId>gwt-user</artifactId>

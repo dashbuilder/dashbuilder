@@ -79,7 +79,7 @@ public class ElasticSearchDataSetDef extends DataSetDef {
     protected String relevance;
     protected ColumnSort columnSort;
     protected boolean cacheEnabled = false;
-    protected int cacheMaxRows = 1000;
+    protected Integer cacheMaxRows = 1000;
     protected boolean cacheSynced = false;
     protected boolean allColumnsEnabled = true;
 
@@ -157,11 +157,11 @@ public class ElasticSearchDataSetDef extends DataSetDef {
         this.cacheEnabled = cacheEnabled;
     }
 
-    public int getCacheMaxRows() {
+    public Integer getCacheMaxRows() {
         return cacheMaxRows;
     }
 
-    public void setCacheMaxRows(int cacheMaxRows) {
+    public void setCacheMaxRows(Integer cacheMaxRows) {
         this.cacheMaxRows = cacheMaxRows;
     }
 

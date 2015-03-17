@@ -70,11 +70,11 @@ public class SQLDataSetDef extends DataSetDef {
         this.cacheEnabled = cacheEnabled;
     }
 
-    public int getCacheMaxRows() {
+    public Integer getCacheMaxRows() {
         return cacheMaxRows;
     }
 
-    public void setCacheMaxRows(int cacheMaxRows) {
+    public void setCacheMaxRows(Integer cacheMaxRows) {
         this.cacheMaxRows = cacheMaxRows;
     }
 

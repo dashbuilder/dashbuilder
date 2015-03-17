@@ -26,5 +26,20 @@ public interface DataSetValidationMessages extends
 
     @Key("dataSetApi_dataSetDef_provider_notNull")
     String dataSetApi_dataSetDef_provider_notNull();
-    
+
+    @Key("dataSetApi_dataSetDef_refreshTime_notNull")
+    String dataSetApi_dataSetDef_refreshTime_notNull();
+
+    @Key("dataSetApi_dataSetDef_refreshTime_notEmpty")
+    String dataSetApi_dataSetDef_refreshTime_notEmpty();
+
+    @Key("dataSetApi_dataSetDef_pushMaxSize_notNull")
+    String dataSetApi_dataSetDef_pushMaxSize_notNull();
+
+    @Key("dataSetApi_dataSetDef_cacheMaxRows_notNull")
+    String dataSetApi_dataSetDef_cacheMaxRows_notNull();
+
+    @Key("dataSetApi_dataSetDef_refreshTime_intervalInvalid")
+    String dataSetApi_dataSetDef_refreshTime_intervalInvalid();
+            
 }
