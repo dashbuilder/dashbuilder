@@ -25,6 +25,7 @@ import org.dashbuilder.common.client.validation.editors.ImageListEditorDecorator
 import org.dashbuilder.dataprovider.DataSetProviderType;
 import org.dashbuilder.dataset.client.resources.bundles.DataSetClientResources;
 import org.dashbuilder.dataset.client.resources.i18n.DataSetExplorerConstants;
+import org.dashbuilder.dataset.client.validation.editors.DataSetDefEditor;
 import org.dashbuilder.dataset.client.widgets.DataSetEditor;
 import org.dashbuilder.dataset.def.DataSetDef;
 
@@ -36,7 +37,7 @@ import java.util.Map;
  * <p>This is the view implementation for Data Set Editor widget for editing the data set provider type.</p>
  */
 @Dependent
-public class DataSetProviderTypeEditor extends Composite implements DataSetEditor.View {
+public class DataSetProviderTypeEditor extends Composite implements DataSetEditor.View, DataSetDefEditor {
 
     private static final int ICONS_SIZE = 250;
     private static final double ALPHA_ICON_NOT_SELECTED = 0.2;

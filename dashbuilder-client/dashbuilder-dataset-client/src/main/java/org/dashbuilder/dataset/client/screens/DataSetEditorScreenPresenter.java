@@ -57,20 +57,20 @@ public class DataSetEditorScreenPresenter {
     }
 
     public void onNewDataSet(@Observes NewDataSetEvent event) {
-        editorWidget.newDataSet(event.getUuid());
+        editorWidget.newDataSet(event.getUuid()).buildBasicAttributesEditionView();
     }
     
     public void onEditDataSet(@Observes EditDataSetEvent event) {
         try {
-            editorWidget.editDataSet(event.getUuid());
+            editorWidget.editDataSet(event.getUuid()).buildBasicAttributesEditionView();
         } catch (Exception e) {
-            error("DataSetEditorScreenPresenter#onEditDataSet - Cannot edit dataset with uuid [" + event.getUuid() + "].", e);
+            error("DataSetEditorScreenPresenter#onEditDataSet - Cannot edit data set with uuid [" + event.getUuid() + "].", e);
         }
     }
 
     // TODO: Display message to user.
     private void error(String message, Exception e) {
-        GWT.log(message + "\n Excetion: " + e.getMessage());
+        GWT.log(message + "\n Exception: " + e.getMessage());
     }
 
     

@@ -13,77 +13,73 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbuilder.dataset.client.widgets.editors;
+package org.dashbuilder.dataset.client.widgets.editors.sql;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import org.dashbuilder.common.client.validation.editors.ImageListEditorDecorator;
-import org.dashbuilder.dataprovider.DataSetProviderType;
-import org.dashbuilder.dataset.DataSet;
-import org.dashbuilder.dataset.DataSetFactory;
-import org.dashbuilder.dataset.DataSetLookupBuilder;
-import org.dashbuilder.dataset.client.ClientDataSetManager;
-import org.dashbuilder.dataset.client.validation.editors.DataSetDefEditor;
+import org.dashbuilder.common.client.validation.editors.ValueBoxEditorDecorator;
+import org.dashbuilder.dataset.client.validation.editors.SQLDataSetDefEditor;
 import org.dashbuilder.dataset.client.widgets.DataSetEditor;
 import org.dashbuilder.dataset.def.DataSetDef;
+import org.dashbuilder.dataset.def.SQLDataSetDef;
 
 import javax.enterprise.context.Dependent;
 
-
 /**
- * <p>This is the view implementation for Data Set Editor widget for editing data set columns, intial filter and testing the results in a table.</p>
+ * <p>This is the view implementation for Data Set Editor widget for editing sql provider specific attributes.</p>
  */
 @Dependent
-public class DataSetColumnsAndFilterEditor extends Composite implements DataSetEditor.View, DataSetDefEditor {
+public class SQLDataSetDefAttributesEditor extends Composite implements DataSetEditor.View, SQLDataSetDefEditor {
+    
+    private static final int DEFAULT_CACHE_MAX_ROWS = -1;
+    private static final int DEFAULT_CACHE_MAX_BYTES = -1;
+    private static final long DEFAULT_REFRESH_INTERVAL = -1;
 
-    interface DataSetColumnsAndFilterEditorBinder extends UiBinder<Widget, DataSetColumnsAndFilterEditor> {}
-    private static DataSetColumnsAndFilterEditorBinder uiBinder = GWT.create(DataSetColumnsAndFilterEditorBinder.class);
+    interface SQLDataSetDefAttributesEditorBinder extends UiBinder<Widget, SQLDataSetDefAttributesEditor> {}
+    private static SQLDataSetDefAttributesEditorBinder uiBinder = GWT.create(SQLDataSetDefAttributesEditorBinder.class);
 
     @UiField
-    HorizontalPanel columnFilterTablePanel;
+    HorizontalPanel sqlAttributesPanel;
 
-    private DataSetDef dataSetDef;
+    @UiField
+    ValueBoxEditorDecorator<String> dataSource;
+    
+    private SQLDataSetDef dataSetDef;
     private boolean isEditMode;
 
-    public DataSetColumnsAndFilterEditor() {
+    public SQLDataSetDefAttributesEditor() {
         initWidget(uiBinder.createAndBindUi(this));
     }
 
     @Override
     public void set(DataSetDef dataSetDef) {
-        this.dataSetDef = dataSetDef;
+        this.dataSetDef = (SQLDataSetDef) dataSetDef;
     }
 
     @Override
     public Widget show(final boolean isEditMode) {
         this.isEditMode = isEditMode;
-        
+
         // Clear the widget.
         clearScreen();
 
-        // TODO
-        
+        // Attributes.
+        buildAtrributes();
+
         return asWidget();
     }
     
-    private void buildResultsTable() {
-        /*ClientDataSetManager clientDataSetManager = ClientDataSetManager.get();
-        clientDataSetManager.registerDataSet(dataSetDef);
-        DataSetLookupBuilder builder = DataSetFactory.newDataSetLookupBuilder()
-                .dataset();
-        builder.buildLookup();
-        DataSet dataSet = ClientDataSetManager.get().lookupDataSet();*/
-        
+    private void buildAtrributes() {
+        // TODO: Check edit mode.
     }
 
     @Override
     public void hide() {
-        columnFilterTablePanel.setVisible(false);
+        sqlAttributesPanel.setVisible(false);
     }
 
     @Override
@@ -93,7 +89,6 @@ public class DataSetColumnsAndFilterEditor extends Composite implements DataSetE
     }
     
     private void clearScreen() {
-        
     }
     
     private void clearStatus() {

@@ -32,6 +32,7 @@ import org.dashbuilder.common.client.validation.editors.ImageListEditorDecorator
 import org.dashbuilder.common.client.validation.editors.ValueBoxEditorDecorator;
 import org.dashbuilder.dataprovider.DataSetProviderType;
 import org.dashbuilder.dataset.client.resources.i18n.DataSetEditorConstants;
+import org.dashbuilder.dataset.client.validation.editors.DataSetDefEditor;
 import org.dashbuilder.dataset.client.widgets.DataSetEditor;
 import org.dashbuilder.dataset.def.DataSetDef;
 
@@ -41,7 +42,7 @@ import javax.enterprise.context.Dependent;
  * <p>This is the view implementation for Data Set Editor widget for editing data set backend cache policy, client cache policy and the refresh policy settings.</p>
  */
 @Dependent
-public class DataSetAdvancedAttributesEditor extends Composite implements DataSetEditor.View {
+public class DataSetAdvancedAttributesEditor extends Composite implements DataSetEditor.View, DataSetDefEditor {
     
     private static final int DEFAULT_CACHE_MAX_ROWS = -1;
     private static final int DEFAULT_CACHE_MAX_BYTES = -1;

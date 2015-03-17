@@ -32,6 +32,7 @@ import org.dashbuilder.common.client.validation.editors.ImageListEditorDecorator
 import org.dashbuilder.common.client.validation.editors.ValueBoxEditorDecorator;
 import org.dashbuilder.dataprovider.DataSetProviderType;
 import org.dashbuilder.dataset.client.ClientDataSetManager;
+import org.dashbuilder.dataset.client.validation.editors.DataSetDefEditor;
 import org.dashbuilder.dataset.client.widgets.DataSetEditor;
 import org.dashbuilder.dataset.def.DataSetDef;
 
@@ -41,7 +42,7 @@ import javax.enterprise.context.Dependent;
  * <p>This is the view implementation for Data Set Editor widget for editing data set UUID and name attributes.</p>
  */
 @Dependent
-public class DataSetBasicAttributesEditor extends Composite implements DataSetEditor.View {
+public class DataSetBasicAttributesEditor extends Composite implements DataSetEditor.View, DataSetDefEditor {
 
     interface DataSetBasicAttributesEditorBinder extends UiBinder<Widget, DataSetBasicAttributesEditor> {}
     private static DataSetBasicAttributesEditorBinder uiBinder = GWT.create(DataSetBasicAttributesEditorBinder.class);

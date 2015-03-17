@@ -16,11 +16,17 @@
 package org.dashbuilder.dataset.def;
 
 import org.dashbuilder.dataprovider.DataSetProviderType;
+import org.hibernate.validator.constraints.NotEmpty;
 import org.jboss.errai.common.client.api.annotations.Portable;
+
+import javax.validation.constraints.NotNull;
 
 @Portable
 public class SQLDataSetDef extends DataSetDef {
 
+    // TODO: Validate data source expression using Pattern annotation.
+    @NotNull(message = "{dataSetApi_sqlDataSetDef_dataSource_notNull}")
+    @NotEmpty(message = "{dataSetApi_sqlDataSetDef_dataSource_notNull}")
     protected String dataSource;
     protected String dbSchema;
     protected String dbTable;

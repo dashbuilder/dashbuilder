@@ -31,20 +31,19 @@ public interface DataSetEditorConstants extends ConstantsWithLookup {
     String backendCacheAttributes();
     String clientCacheAttributes();
     String refreshPolicyAttributes();
-    String sqlAttributes();
-    String beanAttributes();
-    String csvAttributes();
-    String elAttributes();
     String attributeUUID();
     String attributeName();
     String attributeMaxBytes();
     String attributeMaxRows();
     String attributeRefreshInterval();
-    String attributeResfreshOnStaleData();
+    String attributeRefreshOnStaleData();
     String attributeDataSource();
     String query();
     String table();
     String on();
     String off();
     String newDataSet();
+    String sqlAttributes();
+    String sql_datasource();
+    String sql_table();
 }

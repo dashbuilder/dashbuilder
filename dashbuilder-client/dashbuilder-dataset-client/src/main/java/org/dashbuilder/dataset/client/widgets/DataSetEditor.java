@@ -20,6 +20,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.HasHandlers;
 import com.google.gwt.user.client.ui.*;
+import org.dashbuilder.dataprovider.DataSetProviderType;
 import org.dashbuilder.dataset.DataSetMetadata;
 import org.dashbuilder.dataset.client.DataSetClientServices;
 import org.dashbuilder.dataset.client.DataSetMetadataCallback;
@@ -30,7 +31,9 @@ import org.dashbuilder.dataset.client.widgets.editors.DataSetAdvancedAttributesE
 import org.dashbuilder.dataset.client.widgets.editors.DataSetBasicAttributesEditor;
 import org.dashbuilder.dataset.client.widgets.editors.DataSetColumnsAndFilterEditor;
 import org.dashbuilder.dataset.client.widgets.editors.DataSetProviderTypeEditor;
+import org.dashbuilder.dataset.client.widgets.editors.sql.SQLDataSetDefAttributesEditor;
 import org.dashbuilder.dataset.def.DataSetDef;
+import org.dashbuilder.dataset.def.SQLDataSetDef;
 
 import javax.enterprise.context.Dependent;
 import javax.validation.ConstraintViolation;
@@ -60,7 +63,7 @@ public class DataSetEditor implements IsWidget {
 
     final DataSetDefEditWorkflow workflow = new DataSetDefEditWorkflow();
     
-    public interface View extends IsWidget, HasHandlers, DataSetDefEditor {
+    public interface View extends IsWidget, HasHandlers {
         void set(DataSetDef dataSetDef);
         void clear();
         Widget show(final boolean isEditMode);
@@ -79,11 +82,11 @@ public class DataSetEditor implements IsWidget {
         buildInitialView();
     }
     
-    public void newDataSet(String uuid) {
+    public DataSetEditor newDataSet(String uuid) {
         
         if (uuid == null || uuid.trim().length() == 0) {
             error("DataSetEditor#newDataSet - No UUID specified.");
-            return;
+            return this;
         }
 
         isCreate = true;
@@ -93,13 +96,15 @@ public class DataSetEditor implements IsWidget {
         dataSetDef.setUUID(uuid);
         
         setDataSetDef(dataSetDef);
+
+        return this;
     }
 
-    public void editDataSet(final String uuid) throws Exception{
+    public DataSetEditor editDataSet(final String uuid) throws Exception{
 
         if (uuid == null || uuid.trim().length() == 0) {
             error("DataSetEditor#editDataSet - No UUID specified.");
-            return;
+            return this;
         }
 
         isCreate = false;
@@ -115,7 +120,7 @@ public class DataSetEditor implements IsWidget {
                 error("Data set definition with uuid [" + uuid + "] not found.");
             }
         });
-        
+        return this;
     }
 
     @Override
@@ -123,7 +128,7 @@ public class DataSetEditor implements IsWidget {
         return mainPanel;
     }
 
-    public void buildInitialView() {
+    public DataSetEditor buildInitialView() {
         FlowPanel mainPanel = new FlowPanel();
         Hyperlink link = new InlineHyperlink();
         link.setText(DataSetEditorConstants.INSTANCE.newDataSet());
@@ -137,9 +142,10 @@ public class DataSetEditor implements IsWidget {
         mainPanel.add(link);
         this.mainPanel.clear();
         this.mainPanel.add(mainPanel);
+        return this;
     }
 
-    public void buildBasicAttributesEditionView() {
+    public DataSetEditor buildBasicAttributesEditionView() {
         workflow.edit(dataSetBasicAttributesEditorView, dataSetDef);
         workflow.edit(dataSetProviderTypeEditorView, dataSetDef);
 
@@ -158,6 +164,11 @@ public class DataSetEditor implements IsWidget {
                 boolean isValid = basicAttributesViolations == null || basicAttributesViolations.isEmpty()
                     || providerTypeAttributeViolations == null || providerTypeAttributeViolations.isEmpty();
                 if (isValid) {
+                    // Build the dataset instance for the given provider type.
+                    DataSetDef _dataSetDef = DataSetProviderType.createDataSetDef(dataSetDef.getProvider());
+                    _dataSetDef.setUUID(dataSetDef.getUUID());
+                    _dataSetDef.setName(dataSetDef.getName());
+                    setDataSetDef(_dataSetDef);
                     buildAdvancedAttributesEditionView();                    
                 }
                 saveLog(basicAttributesViolations, providerTypeAttributeViolations);
@@ -166,23 +177,38 @@ public class DataSetEditor implements IsWidget {
         mainPanel.add(buildButtons(false, true, null, nextButtonClickHandler));
         this.mainPanel.clear();
         this.mainPanel.add(mainPanel);
+        return this;
     }
 
-    public void buildAdvancedAttributesEditionView() {
+    public DataSetEditor buildAdvancedAttributesEditionView() {
         workflow.edit(dataSetAdvancedAttributesEditorView, dataSetDef);
         
-        VerticalPanel mainPanel = new VerticalPanel();
+        final VerticalPanel mainPanel = new VerticalPanel();
         mainPanel.setSpacing(10);
         mainPanel.add(dataSetAdvancedAttributesEditorView.show(true));
 
+        switch (dataSetDef.getProvider()) {
+            case SQL:
+                mainPanel.add(buildSQLAttributesEditorView());
+        }
         final ClickHandler nextButtonClickHandler = new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
 
                 // validate and save attributes.
-                Set<ConstraintViolation<DataSetDef>> advancedAttributesViolations = workflow.saveAdvancedAttributes();
-                boolean isValid = advancedAttributesViolations == null || advancedAttributesViolations.isEmpty();
-                if (isValid) {
+                final Set<ConstraintViolation<DataSetDef>> advancedAttributesViolations = workflow.saveAdvancedAttributes();
+                final boolean isValid = advancedAttributesViolations == null || advancedAttributesViolations.isEmpty();
+                
+                // Validate and save provider specific attributes.
+                Set<ConstraintViolation<SQLDataSetDef>> providerAttributesViolations = null;
+                switch (dataSetDef.getProvider()) {
+                    case SQL:
+                        providerAttributesViolations = workflow.saveSQLAttributes();
+                        saveSQLLog(providerAttributesViolations);
+                }
+                boolean isProviderSpecificValid = providerAttributesViolations == null || providerAttributesViolations.isEmpty();
+                if (isValid && isProviderSpecificValid) {
+                    // Valid
                     // buildColumnsAndFilterEditionView();
                 }
                 saveLog(advancedAttributesViolations);
@@ -191,9 +217,27 @@ public class DataSetEditor implements IsWidget {
         mainPanel.add(buildButtons(false, true, null, nextButtonClickHandler));
         this.mainPanel.clear();
         this.mainPanel.add(mainPanel);
+        return this;
     }
 
-    public void buildColumnsAndFilterEditionView() {
+    private void saveSQLLog(Set<ConstraintViolation<SQLDataSetDef>> violations) {
+        if (violations != null && !violations.isEmpty()) {
+            for (ConstraintViolation<SQLDataSetDef> violation : violations) {
+                GWT.log("SQL Validation error - " + violation.getMessage());
+            }
+        }
+        if (dataSetDef != null) {
+            GWT.log("SQLDataSetDef data source: " + ((SQLDataSetDef)dataSetDef).getDataSource());
+        }
+    }
+
+    private Widget buildSQLAttributesEditorView() {
+        final SQLDataSetDefAttributesEditor sqlDataSetDefAttributesEditor = new SQLDataSetDefAttributesEditor();
+        workflow.edit(sqlDataSetDefAttributesEditor, (SQLDataSetDef) dataSetDef);
+        return sqlDataSetDefAttributesEditor.show(true);
+    }
+
+    public DataSetEditor buildColumnsAndFilterEditionView() {
         // TODO: workflow.edit(dataSetBasicAttributesEditorView, dataSetDef);
         
         VerticalPanel mainPanel = new VerticalPanel();
@@ -215,6 +259,7 @@ public class DataSetEditor implements IsWidget {
         mainPanel.add(buildButtons(true, true, backButtonClickHandler, nextButtonClickHandler));
         this.mainPanel.clear();
         this.mainPanel.add(mainPanel);
+        return this;
     }
     
     private void saveLog(Set<ConstraintViolation<DataSetDef>>... violations) {
@@ -269,19 +314,18 @@ public class DataSetEditor implements IsWidget {
         return buttonsPanel;
     }
 
-    public void clear() {
+    public DataSetEditor clear() {
         this.dataSetDef = null;
         dataSetProviderTypeEditorView.clear();
         dataSetBasicAttributesEditorView.clear();
         dataSetAdvancedAttributesEditorView.clear();
         dataSetColumnsAndFilterEditorView.clear();
         buildInitialView();
+        return this;
     }
     
     private void setDataSetDef(DataSetDef dataSetDef) {
         this.dataSetDef = dataSetDef;
-        if (this.dataSetDef != null) buildBasicAttributesEditionView();
-        else buildInitialView();
         dataSetProviderTypeEditorView.set(dataSetDef);
         dataSetBasicAttributesEditorView.set(dataSetDef);
         dataSetAdvancedAttributesEditorView.set(dataSetDef);

@@ -1,0 +1,33 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+             xmlns:g="urn:import:com.google.gwt.user.client.ui"
+             xmlns:b="urn:import:com.github.gwtbootstrap.client.ui"
+             xmlns:dash-client="urn:import:org.dashbuilder.common.client.validation.editors"
+    >
+
+  <ui:with field="i18n" type="org.dashbuilder.dataset.client.resources.i18n.DataSetEditorConstants"/>
+
+  <ui:style>
+    .mainPanel {
+    }
+  </ui:style>
+
+  <g:HorizontalPanel spacing="10" ui:field="sqlAttributesPanel" addStyleNames="{style.mainPanel}">
+
+    <!-- SQL attributes. -->
+    <b:Fieldset>
+      <b:Legend title="{i18n.sqlAttributes}"><ui:text from="{i18n.sqlAttributes}"/></b:Legend>
+      <b:ControlGroup>
+        <b:ControlLabel><ui:text from="{i18n.sql_datasource}"/></b:ControlLabel>
+        <dash-client:ValueBoxEditorDecorator errorLabelPosition="TOOLTIP" ui:field="dataSource">
+          <dash-client:valuebox>
+            <g:TextBox /> <!-- TODO:  placeholder. -->
+          </dash-client:valuebox>
+        </dash-client:ValueBoxEditorDecorator>
+      </b:ControlGroup>
+    </b:Fieldset>
+
+  </g:HorizontalPanel>
+
+
+</ui:UiBinder>

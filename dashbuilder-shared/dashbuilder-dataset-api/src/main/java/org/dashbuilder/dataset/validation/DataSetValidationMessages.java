@@ -41,5 +41,8 @@ public interface DataSetValidationMessages extends
 
     @Key("dataSetApi_dataSetDef_refreshTime_intervalInvalid")
     String dataSetApi_dataSetDef_refreshTime_intervalInvalid();
-            
+
+    @Key("dataSetApi_sqlDataSetDef_dataSource_notNull")
+    String dataSetApi_sqlDataSetDef_dataSource_notNull();
+    
 }
