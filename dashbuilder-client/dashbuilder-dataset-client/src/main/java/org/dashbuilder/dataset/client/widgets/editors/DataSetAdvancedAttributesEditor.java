@@ -27,7 +27,9 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import org.dashbuilder.common.client.validation.editors.BooleanSwitchEditorDecorator;
 import org.dashbuilder.common.client.validation.editors.ImageListEditorDecorator;
+import org.dashbuilder.common.client.validation.editors.ValueBoxEditorDecorator;
 import org.dashbuilder.dataprovider.DataSetProviderType;
 import org.dashbuilder.dataset.client.resources.i18n.DataSetEditorConstants;
 import org.dashbuilder.dataset.client.widgets.DataSetEditor;
@@ -53,25 +55,31 @@ public class DataSetAdvancedAttributesEditor extends Composite implements DataSe
 
     /* **************** BACKEND CACHE *************** */
     @UiField
-    Label attributeBackendCacheStatus;
+    @Path("cacheEnabled")
+    BooleanSwitchEditorDecorator attributeBackendCacheStatus;
 
     @UiField
-    TextBox attributeMaxRows;
+    @Path("cacheMaxRows")
+    ValueBoxEditorDecorator<Integer> attributeMaxRows;
 
     /* **************** CLIENT CACHE *************** */
     @UiField
-    Label attributeClientCacheStatus;
+    @Path("pushEnabled")
+    BooleanSwitchEditorDecorator attributeClientCacheStatus;
 
     @UiField
-    TextBox attributeMaxBytes;
+    @Path("pushMaxSize")
+    ValueBoxEditorDecorator<Integer> attributeMaxBytes;
 
     /* **************** REFRESH POLICY *************** */
     @UiField
-    Label attributeRefreshStatus;
+    @Path("refreshAlways")
+    BooleanSwitchEditorDecorator attributeRefreshStatus;
 
     @UiField
-    TextBox attributeRefreshInterval;
-
+    @Path("refreshTime")
+    ValueBoxEditorDecorator<String> attributeRefreshInterval;
+    
     private DataSetDef dataSetDef;
     private boolean isEditMode;
 
@@ -96,89 +104,25 @@ public class DataSetAdvancedAttributesEditor extends Composite implements DataSe
 
         // Client cache.
         buildClientCacheAttributes();
-        
+
         // Refresh policy.
         buildRefreshPolicyAttributes();
-        
+
         return asWidget();
     }
     
     private void buildBackendCacheAttributes() {
-        boolean isCacheEnabled = false;
-        int cacheMaxRows = DEFAULT_CACHE_MAX_ROWS;
-        if (dataSetDef != null ) {
-            isCacheEnabled = dataSetDef.isCacheEnabled();
-            cacheMaxRows = dataSetDef.getCacheMaxRows();
-        }
-
-        if (isCacheEnabled) statusLabelON(attributeBackendCacheStatus);
-        else statusLabelOFF(attributeBackendCacheStatus);
-        if (isEditMode) {
-            attributeBackendCacheStatus.addClickHandler(new ClickHandler() {
-                @Override
-                public void onClick(ClickEvent event) {
-                    statusLabelSwitchValue(attributeBackendCacheStatus);
-                    final boolean isOn = isStatusLabelON(attributeBackendCacheStatus);
-                    dataSetDef.setCacheEnabled(isOn);
-                    attributeMaxRows.setEnabled(isOn);
-                }
-            });
-        }
-        attributeMaxRows.setEnabled(isEditMode && isCacheEnabled);
-        attributeMaxRows.setValue(Integer.toString(cacheMaxRows));
+        // TODO: Check edit mode.
     }
 
     private void buildClientCacheAttributes() {
-        boolean isPushEnabled = false;
-        int cacheMaxBytes = DEFAULT_CACHE_MAX_BYTES;
-        if (dataSetDef != null ) {
-            isPushEnabled = dataSetDef.isPushEnabled();
-            cacheMaxBytes = dataSetDef.getPushMaxSize();
-        }
-
-        if (isPushEnabled) statusLabelON(attributeClientCacheStatus);
-        else statusLabelOFF(attributeClientCacheStatus);
-        if (isEditMode) {
-            attributeClientCacheStatus.addClickHandler(new ClickHandler() {
-                @Override
-                public void onClick(ClickEvent event) {
-                    statusLabelSwitchValue(attributeClientCacheStatus);
-                    final boolean isOn = isStatusLabelON(attributeClientCacheStatus);
-                    dataSetDef.setPushEnabled(isOn);
-                    attributeMaxBytes.setEnabled(isOn);
-                }
-            });
-        }
-        attributeMaxBytes.setEnabled(isEditMode && isPushEnabled);
-        attributeMaxBytes.setValue(Integer.toString(cacheMaxBytes));
+        // TODO: Check edit mode.
     }
 
     private void buildRefreshPolicyAttributes() {
-        boolean isRefreshEnabled = false;
-        long refreshInterval = DEFAULT_REFRESH_INTERVAL;
-        if (dataSetDef != null ) {
-            isRefreshEnabled = dataSetDef.isRefreshAlways();
-            if (dataSetDef.getRefreshTimeAmount() != null) refreshInterval = dataSetDef.getRefreshTimeAmount().getQuantity();
-        }
-
-        if (isRefreshEnabled) statusLabelON(attributeRefreshStatus);
-        else statusLabelOFF(attributeRefreshStatus);
-        if (isEditMode) {
-            attributeRefreshStatus.addClickHandler(new ClickHandler() {
-                @Override
-                public void onClick(ClickEvent event) {
-                    statusLabelSwitchValue(attributeRefreshStatus);
-                    final boolean isOn = isStatusLabelON(attributeRefreshStatus);
-                    dataSetDef.setRefreshAlways(isOn);
-                    attributeRefreshInterval.setEnabled(isOn);
-
-                }
-            });
-        }
-        attributeRefreshInterval.setEnabled(isEditMode && isRefreshEnabled);
-        attributeRefreshInterval.setValue(Double.toString(refreshInterval));
+        // TODO: Check edit mode.
     }
-    
+
     @Override
     public void hide() {
         advancedAttributesPanel.setVisible(false);
@@ -191,41 +135,10 @@ public class DataSetAdvancedAttributesEditor extends Composite implements DataSe
     }
     
     private void clearScreen() {
-        // Backend cache.
-        statusLabelOFF(attributeBackendCacheStatus);
-        attributeMaxRows.setValue(Integer.toString(DEFAULT_CACHE_MAX_ROWS));
-
-        // Client cache.
-        statusLabelOFF(attributeClientCacheStatus);
-        attributeMaxBytes.setValue(Integer.toString(DEFAULT_CACHE_MAX_BYTES));
-
-        // Refresh policy.
-        statusLabelOFF(attributeRefreshStatus);
-        attributeRefreshInterval.setValue(Double.toString(DEFAULT_REFRESH_INTERVAL));
     }
     
     private void clearStatus() {
         this.dataSetDef = null;
     }
-
-    private void statusLabelSwitchValue(final Label label) {
-        if (isStatusLabelON(label)) statusLabelOFF(label);
-        else statusLabelON(label);
-    }
-
-    private void statusLabelON(final Label label) {
-        label.setText(DataSetEditorConstants.INSTANCE.on());
-        label.setType(LabelType.SUCCESS);
-    }
-
-    private void statusLabelOFF(final Label label) {
-        label.setText(DataSetEditorConstants.INSTANCE.off());
-        label.setType(LabelType.WARNING);
-    }
-
-    private boolean isStatusLabelON(final Label label) {
-        return DataSetEditorConstants.INSTANCE.on().equals(label.getText());
-    }
-
 
 }

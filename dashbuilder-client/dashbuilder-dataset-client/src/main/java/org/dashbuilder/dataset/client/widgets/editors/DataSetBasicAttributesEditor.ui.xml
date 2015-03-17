@@ -20,23 +20,19 @@
         <b:ControlGroup>
           <b:ControlLabel><ui:text from="{i18n.attributeUUID}"/></b:ControlLabel>
 
-          <dash-client:ValueBoxEditorDecorator  ui:field="attributeUUID">
+          <dash-client:ValueBoxEditorDecorator errorLabelPosition="TOOLTIP" ui:field="attributeUUID">
             <dash-client:valuebox>
               <g:TextBox />
-              <!--<b:TextBox enabled="false" />-->
             </dash-client:valuebox>
           </dash-client:ValueBoxEditorDecorator>
-          <!--<b:TextBox placeholder="" ui:field="attributeUUID" enabled="false"/>-->
         </b:ControlGroup>
         <b:ControlGroup>
           <b:ControlLabel><ui:text from="{i18n.attributeName}"/></b:ControlLabel>
           <dash-client:ValueBoxEditorDecorator errorLabelPosition="TOOLTIP" ui:field="name">
             <dash-client:valuebox>
-              <g:TextBox />
-              <!--<b:TextBox placeholder="{i18n.attributeName}" />-->
+              <g:TextBox /> <!-- TODO:  placeholder="{i18n.attributeName}" -->
             </dash-client:valuebox>
           </dash-client:ValueBoxEditorDecorator>
-          <!--<b:TextBox placeholder="{i18n.attributeName}" ui:field="attributeName"/>-->
         </b:ControlGroup>
       </b:Fieldset>
 

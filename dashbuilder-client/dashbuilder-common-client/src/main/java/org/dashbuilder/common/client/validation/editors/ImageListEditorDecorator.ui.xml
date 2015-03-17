@@ -5,15 +5,19 @@
     >
 
   <ui:style type="org.dashbuilder.common.client.validation.editors.ImageListEditorDecorator.ImageListEditorDecoratorStyle">
-    .mainPanel {
+    .errorPanel {
+      border: none;
+    }
+    .errorPanelError {
+      border: 1px solid red;
     }
     .imagePointer {
       cursor: pointer;
     }
   </ui:style>
-  <g:HTMLPanel ui:field="errorPanel">
+  <g:HTMLPanel ui:field="errorPanel" addStyleNames="{style.errorPanel} ">
     <b:Tooltip text="" ui:field="errorTooltip">
-      <g:HorizontalPanel spacing="10" ui:field="mainPanel" addStyleNames="{style.mainPanel} ">
+      <g:HorizontalPanel spacing="10" ui:field="mainPanel" >
       </g:HorizontalPanel>
     </b:Tooltip>
   </g:HTMLPanel>

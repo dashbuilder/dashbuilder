@@ -31,15 +31,13 @@ import java.util.*;
 public class ImageListEditorDecorator<T> extends Composite implements
         HasConstrainedValue<T>, HasEditorErrors<T>, IsEditor<TakesValueEditor<T>> {
 
-    private static final String COLOR_RED = "#FF0000";
-    private static final String COLOR_BLACK = "#FFFFFF";
-
     interface Binder extends UiBinder<Widget, ImageListEditorDecorator> {
         Binder BINDER = GWT.create(Binder.class);
     }
 
     interface ImageListEditorDecoratorStyle extends CssResource {
-        String mainPanel();
+        String errorPanel();
+        String errorPanelError();
         String imagePointer();
     }
     
@@ -204,15 +202,13 @@ public class ImageListEditorDecorator<T> extends Composite implements
 
     private void markErrorPanel(boolean error) {
         if (error) {
-            errorPanel.getElement().getStyle().setBorderWidth(1, Style.Unit.PX);
-            errorPanel.getElement().getStyle().setBorderStyle(Style.BorderStyle.SOLID);
-            errorPanel.getElement().getStyle().setBorderColor(COLOR_RED);
+            errorPanel.addStyleName(style.errorPanelError());
         } else {
-            errorPanel.getElement().getStyle().setBorderWidth(0, Style.Unit.PX);
-            errorPanel.getElement().getStyle().setBorderColor(COLOR_BLACK);
+            errorPanel.removeStyleName(style.errorPanelError());
         }
         
     }
+    
     private void setTooltipText(String text) {
         if (text == null || text.trim().length() == 0) {
             errorTooltip.setText("");

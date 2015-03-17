@@ -169,17 +169,24 @@ public class DataSetEditor implements IsWidget {
     }
 
     public void buildAdvancedAttributesEditionView() {
-        // TODO: workflow.edit(dataSetBasicAttributesEditorView, dataSetDef);
+        workflow.edit(dataSetAdvancedAttributesEditorView, dataSetDef);
         
         VerticalPanel mainPanel = new VerticalPanel();
         mainPanel.setSpacing(10);
-        mainPanel.add(dataSetBasicAttributesEditorView.show(true));
         mainPanel.add(dataSetAdvancedAttributesEditorView.show(true));
 
         final ClickHandler nextButtonClickHandler = new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                buildColumnsAndFilterEditionView();
+
+                // Save attributes.
+                Set<ConstraintViolation<DataSetDef>> advancedAttributesViolations = workflow.saveAdvancedAttributes();
+
+                boolean isValid = advancedAttributesViolations == null || advancedAttributesViolations.isEmpty();
+                if (isValid) {
+                    // buildColumnsAndFilterEditionView();
+                }
+                saveLog(advancedAttributesViolations);
             }
         };
         mainPanel.add(buildButtons(false, true, null, nextButtonClickHandler));
@@ -215,8 +222,10 @@ public class DataSetEditor implements IsWidget {
         if (violations != null && violations.length > 0) {
             for (int x = 0; x < violations.length; x++) {
                 Set<ConstraintViolation<DataSetDef>> driverViolation = violations[x];
-                for (ConstraintViolation<DataSetDef> violation : driverViolation) {
-                    GWT.log("Validation error - " + violation.getMessage());
+                if (driverViolation != null) {
+                    for (ConstraintViolation<DataSetDef> violation : driverViolation) {
+                        GWT.log("Validation error - " + violation.getMessage());
+                    }
                 }
             }
         }
@@ -224,6 +233,12 @@ public class DataSetEditor implements IsWidget {
             GWT.log("DataSetDef uuid: " + dataSetDef.getUUID());
             GWT.log("DataSetDef name: " + dataSetDef.getName());
             GWT.log("DataSetDef provider: " + dataSetDef.getProvider());
+            GWT.log("DataSetDef backend cache enabled: " + dataSetDef.isCacheEnabled());
+            GWT.log("DataSetDef backend cache max rows: " + dataSetDef.getCacheMaxRows());
+            GWT.log("DataSetDef client cache enabled: " + dataSetDef.isPushEnabled());
+            GWT.log("DataSetDef client cache max rows: " + dataSetDef.getPushMaxSize());
+            GWT.log("DataSetDef refresh always: " + dataSetDef.isRefreshAlways());
+            GWT.log("DataSetDef refresh interval: " + dataSetDef.getRefreshTime());
         }
     }
 
