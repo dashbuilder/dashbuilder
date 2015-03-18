@@ -8,7 +8,7 @@ import org.dashbuilder.validations.factory.DashbuilderValidationFactory;
 
 import javax.validation.Validator;
 
-public class ValidatorFactory {
+public final class ValidatorFactory {
     
     public static Validator getDataSetDefValidator() {
         AbstractGwtValidator validator = GWT.create(DashbuilderValidationFactory.DataSetDefValidator.class);

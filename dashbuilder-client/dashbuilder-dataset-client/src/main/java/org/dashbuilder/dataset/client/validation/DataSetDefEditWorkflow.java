@@ -12,13 +12,20 @@ import org.dashbuilder.dataset.validation.groups.DataSetDefCacheRowsValidation;
 import org.dashbuilder.dataset.validation.groups.DataSetDefPushSizeValidation;
 import org.dashbuilder.dataset.validation.groups.DataSetDefRefreshIntervalValidation;
 import org.dashbuilder.validations.ValidatorFactory;
-
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
-public class DataSetDefEditWorkflow {
+public final class DataSetDefEditWorkflow {
+
+    private final Set<ConstraintViolation<? extends DataSetDef>> violations;
+
+    public DataSetDefEditWorkflow() {
+        violations = new LinkedHashSet<ConstraintViolation<? extends DataSetDef>>();
+    }
 
     interface BasicAttributesDriver extends SimpleBeanEditorDriver<DataSetDef, DataSetBasicAttributesEditor> {}
     interface ProviderTypeAttributesDriver extends SimpleBeanEditorDriver<DataSetDef, DataSetProviderTypeEditor> {}
@@ -44,30 +51,53 @@ public class DataSetDefEditWorkflow {
      */
     public final SQLAttributesDriver sqlAttributesDriver = GWT.create(SQLAttributesDriver.class);
     
-    public void edit(DataSetBasicAttributesEditor view, DataSetDef p) {
+    private boolean saveBasicAttributes = false;
+    private boolean saveProviderTypeAttribute = false;
+    private boolean saveAdvancedAttributes = false;
+    private boolean saveSQLAttributes = false;
+    
+    public DataSetDefEditWorkflow edit(final DataSetBasicAttributesEditor view, final DataSetDef p) {
         basicAttributesDriver.initialize(view);
         basicAttributesDriver.edit(p);
+        saveBasicAttributes = true;
+        return this;
     }
 
-    public void edit(DataSetProviderTypeEditor view, DataSetDef p) {
+    public DataSetDefEditWorkflow edit(final DataSetProviderTypeEditor view, final DataSetDef p) {
         providerTypeAttributesDriver.initialize(view);
         providerTypeAttributesDriver.edit(p);
+        saveProviderTypeAttribute = true;
+        return this;
     }
 
-    public void edit(DataSetAdvancedAttributesEditor view, DataSetDef p) {
+    public DataSetDefEditWorkflow edit(final DataSetAdvancedAttributesEditor view, final DataSetDef p) {
         advancedAttributesDriver.initialize(view);
         advancedAttributesDriver.edit(p);
+        saveAdvancedAttributes = true;
+        return this;
     }
 
-    public void edit(SQLDataSetDefAttributesEditor view, SQLDataSetDef p) {
+    public DataSetDefEditWorkflow edit(final SQLDataSetDefAttributesEditor view, final SQLDataSetDef p) {
         sqlAttributesDriver.initialize(view);
         sqlAttributesDriver.edit(p);
+        saveSQLAttributes = true;
+        return this;
+    }
+    
+    public Set<ConstraintViolation<? extends DataSetDef>> save() {
+        this.violations.clear();
+        if (saveBasicAttributes) saveBasicAttributes();
+        if (saveProviderTypeAttribute) saveProviderTypeAttribute();
+        if (saveAdvancedAttributes) saveAdvancedAttributes();
+        if (saveSQLAttributes) saveSQLAttributes();
+        
+        return violations;
     }
 
     /**
      * <p>Saves <code>UUID</code> and <code>name</code> data set definition attributes.</p> 
      */
-    public Set<ConstraintViolation<DataSetDef>> saveBasicAttributes() {
+    private DataSetDefEditWorkflow saveBasicAttributes() {
         DataSetDef edited = (DataSetDef) basicAttributesDriver.flush();
         return validate(edited, basicAttributesDriver);
     }
@@ -75,7 +105,7 @@ public class DataSetDefEditWorkflow {
     /**
      * <p>Saves <code>provider</code> data set definition attribute.</p> 
      */
-    public Set<ConstraintViolation<DataSetDef>> saveProviderTypeAttribute() {
+    private DataSetDefEditWorkflow saveProviderTypeAttribute() {
         DataSetDef edited = (DataSetDef) providerTypeAttributesDriver.flush();
         return validate(edited, providerTypeAttributesDriver);
     }
@@ -83,72 +113,69 @@ public class DataSetDefEditWorkflow {
     /**
      * <p>Saves backend cache, client cache and refresh data set definition related attributes.</p> 
      */
-    public Set<ConstraintViolation<DataSetDef>> saveAdvancedAttributes() {
+    private DataSetDefEditWorkflow saveAdvancedAttributes() {
         DataSetDef edited = (DataSetDef) advancedAttributesDriver.flush();
-        Set<ConstraintViolation<DataSetDef>> violations =  new LinkedHashSet<ConstraintViolation<DataSetDef>>();
-        Set<ConstraintViolation<DataSetDef>> advViolations = validate(edited, advancedAttributesDriver);
-        if (advViolations != null) violations.addAll(advViolations);
-        // If cache enabled, validate backend max rows value.
-        if (edited.isCacheEnabled()) {
-            Set<ConstraintViolation<DataSetDef>> cacheViolations =  validate(edited, advancedAttributesDriver, DataSetDefCacheRowsValidation.class);
-            if (cacheViolations != null) violations.addAll(cacheViolations);
+        validate(edited, advancedAttributesDriver);
+        List<Class<?>> groups = new LinkedList<Class<?>>();
+        if (edited.isCacheEnabled()) groups.add(DataSetDefCacheRowsValidation.class);
+        if (edited.isPushEnabled()) groups.add(DataSetDefPushSizeValidation.class);
+        if (edited.isRefreshAlways()) groups.add(DataSetDefRefreshIntervalValidation.class);
+
+        // Validate custom groups, if necessary.
+        if (!groups.isEmpty()) {
+            validate(edited, advancedAttributesDriver, groups.toArray(new Class[groups.size()]));
         }
-        // If push enabled, validate push max bytes value.
-        if (edited.isPushEnabled()) {
-            Set<ConstraintViolation<DataSetDef>> pushViolations =  validate(edited, advancedAttributesDriver, DataSetDefPushSizeValidation.class);
-            if (pushViolations != null) violations.addAll(pushViolations);
-        }
-        // If refresh enabled, validate refresh interval value.
-        if (edited.isRefreshAlways()) {
-            Set<ConstraintViolation<DataSetDef>> refreshViolations =  validate(edited, advancedAttributesDriver, DataSetDefRefreshIntervalValidation.class);
-            if (refreshViolations != null) violations.addAll(refreshViolations);
-        }
-        return violations;
+
+        return this;
     }
 
     /**
      * <p>Saves sql data set definition attributes.</p> 
      */
-    public Set<ConstraintViolation<SQLDataSetDef>> saveSQLAttributes() {
+    private DataSetDefEditWorkflow saveSQLAttributes() {
         SQLDataSetDef edited = sqlAttributesDriver.flush();
         return validateSQL(edited, sqlAttributesDriver);
     }
 
-    private Set<ConstraintViolation<SQLDataSetDef>> validateSQL(SQLDataSetDef def, SimpleBeanEditorDriver driver) {
+    private DataSetDefEditWorkflow validateSQL(final SQLDataSetDef def, final SimpleBeanEditorDriver driver) {
         Validator validator = ValidatorFactory.getSQLDataSetDefValidator();
         Set<ConstraintViolation<SQLDataSetDef>> violations = validator.validate(def);
         Set<?> test = violations;
         driver.setConstraintViolations(test);
         if (driver.hasErrors()) {
-            return violations;
+            this.violations.addAll(violations);
         }
-        return null;
+        return this;
     }
     
-    private Set<ConstraintViolation<DataSetDef>> validate(DataSetDef def, SimpleBeanEditorDriver driver) {
+    private DataSetDefEditWorkflow validate(final DataSetDef def, final SimpleBeanEditorDriver driver) {
         Validator validator = ValidatorFactory.getDataSetDefValidator();
         Set<ConstraintViolation<DataSetDef>> violations = validator.validate(def);
         Set<?> test = violations;
         driver.setConstraintViolations(test);
         if (driver.hasErrors()) {
-            return violations;
+            this.violations.addAll(violations);
         }
         return null;
     }
     
-    private Set<ConstraintViolation<DataSetDef>> validate(DataSetDef def, SimpleBeanEditorDriver driver,  Class<?>... groups) {
+    private DataSetDefEditWorkflow validate(final DataSetDef def, final SimpleBeanEditorDriver driver,  final Class<?>... groups) {
         Validator validator = ValidatorFactory.getDataSetDefValidator();
         Set<ConstraintViolation<DataSetDef>> violations = validator.validate(def, groups);
         Set<?> test = violations;
         driver.setConstraintViolations(test);
         if (driver.hasErrors()) {
-            return violations;
+            this.violations.addAll(violations);
         }
-        return null;
-    }
-    
-    private boolean existViolations(Set<ConstraintViolation<DataSetDef>> violations) {
-        return violations != null && !violations.isEmpty();
+        return this;
     }
 
+    public DataSetDefEditWorkflow clear() {
+        saveBasicAttributes = false;
+        saveProviderTypeAttribute = false;
+        saveAdvancedAttributes = false;
+        saveSQLAttributes = false;
+        violations.clear();
+        return this;
+    }
 }

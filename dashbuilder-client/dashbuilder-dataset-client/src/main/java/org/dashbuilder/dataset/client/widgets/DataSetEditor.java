@@ -26,7 +26,6 @@ import org.dashbuilder.dataset.client.DataSetClientServices;
 import org.dashbuilder.dataset.client.DataSetMetadataCallback;
 import org.dashbuilder.dataset.client.resources.i18n.DataSetEditorConstants;
 import org.dashbuilder.dataset.client.validation.DataSetDefEditWorkflow;
-import org.dashbuilder.dataset.client.validation.editors.DataSetDefEditor;
 import org.dashbuilder.dataset.client.widgets.editors.DataSetAdvancedAttributesEditor;
 import org.dashbuilder.dataset.client.widgets.editors.DataSetBasicAttributesEditor;
 import org.dashbuilder.dataset.client.widgets.editors.DataSetColumnsAndFilterEditor;
@@ -92,7 +91,7 @@ public class DataSetEditor implements IsWidget {
         isCreate = true;
         
         // Create a new data set def.
-        DataSetDef dataSetDef = new DataSetDef();
+        final DataSetDef dataSetDef = new DataSetDef();
         dataSetDef.setUUID(uuid);
         
         setDataSetDef(dataSetDef);
@@ -146,32 +145,26 @@ public class DataSetEditor implements IsWidget {
     }
 
     public DataSetEditor buildBasicAttributesEditionView() {
-        workflow.edit(dataSetBasicAttributesEditorView, dataSetDef);
-        workflow.edit(dataSetProviderTypeEditorView, dataSetDef);
+        workflow.clear().edit(dataSetBasicAttributesEditorView, dataSetDef).edit(dataSetProviderTypeEditorView, dataSetDef);
 
-        VerticalPanel mainPanel = new VerticalPanel();
+        final VerticalPanel mainPanel = new VerticalPanel();
         mainPanel.add(dataSetBasicAttributesEditorView.show(true));
         mainPanel.add(dataSetProviderTypeEditorView.show(isCreate));
         final ClickHandler nextButtonClickHandler = new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                // Save basic attributes (name and uuid).
-                Set<ConstraintViolation<DataSetDef>> basicAttributesViolations = workflow.saveBasicAttributes();
-                
-                // Save provider type attribute.
-                Set<ConstraintViolation<DataSetDef>> providerTypeAttributeViolations = workflow.saveProviderTypeAttribute();
-                
-                boolean isValid = basicAttributesViolations == null || basicAttributesViolations.isEmpty()
-                    || providerTypeAttributeViolations == null || providerTypeAttributeViolations.isEmpty();
-                if (isValid) {
-                    // Build the dataset instance for the given provider type.
-                    DataSetDef _dataSetDef = DataSetProviderType.createDataSetDef(dataSetDef.getProvider());
+                // Save basic attributes (name and uuid) and provider type attribute.
+                // Check if exist validation violations.
+                final Set<ConstraintViolation<? extends  DataSetDef>> violations = workflow.save();
+                if (isValid(violations)) {
+                    // Build the data set class instance for the given provider type.
+                    final DataSetDef _dataSetDef = DataSetProviderType.createDataSetDef(dataSetDef.getProvider());
                     _dataSetDef.setUUID(dataSetDef.getUUID());
                     _dataSetDef.setName(dataSetDef.getName());
                     setDataSetDef(_dataSetDef);
                     buildAdvancedAttributesEditionView();                    
                 }
-                saveLog(basicAttributesViolations, providerTypeAttributeViolations);
+                saveLog(violations, violations);
             }
         };
         mainPanel.add(buildButtons(false, true, null, nextButtonClickHandler));
@@ -181,7 +174,7 @@ public class DataSetEditor implements IsWidget {
     }
 
     public DataSetEditor buildAdvancedAttributesEditionView() {
-        workflow.edit(dataSetAdvancedAttributesEditorView, dataSetDef);
+        workflow.clear().edit(dataSetAdvancedAttributesEditorView, dataSetDef);
         
         final VerticalPanel mainPanel = new VerticalPanel();
         mainPanel.setSpacing(10);
@@ -194,41 +187,19 @@ public class DataSetEditor implements IsWidget {
         final ClickHandler nextButtonClickHandler = new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-
-                // validate and save attributes.
-                final Set<ConstraintViolation<DataSetDef>> advancedAttributesViolations = workflow.saveAdvancedAttributes();
-                final boolean isValid = advancedAttributesViolations == null || advancedAttributesViolations.isEmpty();
-                
-                // Validate and save provider specific attributes.
-                Set<ConstraintViolation<SQLDataSetDef>> providerAttributesViolations = null;
-                switch (dataSetDef.getProvider()) {
-                    case SQL:
-                        providerAttributesViolations = workflow.saveSQLAttributes();
-                        saveSQLLog(providerAttributesViolations);
-                }
-                boolean isProviderSpecificValid = providerAttributesViolations == null || providerAttributesViolations.isEmpty();
-                if (isValid && isProviderSpecificValid) {
+                // Validate and save attributes.
+                final Set<ConstraintViolation<? extends DataSetDef>> violations = workflow.save();
+                if (isValid(violations)) {
                     // Valid
-                    // buildColumnsAndFilterEditionView();
+                    buildColumnsAndFilterEditionView();
                 }
-                saveLog(advancedAttributesViolations);
+                saveLog(violations);
             }
         };
         mainPanel.add(buildButtons(false, true, null, nextButtonClickHandler));
         this.mainPanel.clear();
         this.mainPanel.add(mainPanel);
         return this;
-    }
-
-    private void saveSQLLog(Set<ConstraintViolation<SQLDataSetDef>> violations) {
-        if (violations != null && !violations.isEmpty()) {
-            for (ConstraintViolation<SQLDataSetDef> violation : violations) {
-                GWT.log("SQL Validation error - " + violation.getMessage());
-            }
-        }
-        if (dataSetDef != null) {
-            GWT.log("SQLDataSetDef data source: " + ((SQLDataSetDef)dataSetDef).getDataSource());
-        }
     }
 
     private Widget buildSQLAttributesEditorView() {
@@ -238,9 +209,9 @@ public class DataSetEditor implements IsWidget {
     }
 
     public DataSetEditor buildColumnsAndFilterEditionView() {
-        // TODO: workflow.edit(dataSetBasicAttributesEditorView, dataSetDef);
-        
-        VerticalPanel mainPanel = new VerticalPanel();
+        // TODO: workflow.clear().edit(dataSetBasicAttributesEditorView, dataSetDef);
+
+        final VerticalPanel mainPanel = new VerticalPanel();
         mainPanel.add(dataSetBasicAttributesEditorView.show(true));
         mainPanel.add(dataSetColumnsAndFilterEditorView.show(true));
         
@@ -262,30 +233,6 @@ public class DataSetEditor implements IsWidget {
         return this;
     }
     
-    private void saveLog(Set<ConstraintViolation<DataSetDef>>... violations) {
-        if (violations != null && violations.length > 0) {
-            for (int x = 0; x < violations.length; x++) {
-                Set<ConstraintViolation<DataSetDef>> driverViolation = violations[x];
-                if (driverViolation != null) {
-                    for (ConstraintViolation<DataSetDef> violation : driverViolation) {
-                        GWT.log("Validation error - " + violation.getMessage());
-                    }
-                }
-            }
-        }
-        if (dataSetDef != null) {
-            GWT.log("DataSetDef uuid: " + dataSetDef.getUUID());
-            GWT.log("DataSetDef name: " + dataSetDef.getName());
-            GWT.log("DataSetDef provider: " + dataSetDef.getProvider());
-            GWT.log("DataSetDef backend cache enabled: " + dataSetDef.isCacheEnabled());
-            GWT.log("DataSetDef backend cache max rows: " + dataSetDef.getCacheMaxRows());
-            GWT.log("DataSetDef client cache enabled: " + dataSetDef.isPushEnabled());
-            GWT.log("DataSetDef client cache max rows: " + dataSetDef.getPushMaxSize());
-            GWT.log("DataSetDef refresh always: " + dataSetDef.isRefreshAlways());
-            GWT.log("DataSetDef refresh interval: " + dataSetDef.getRefreshTime());
-        }
-    }
-
     private Panel buildButtons(final boolean showBackButton, final boolean showNextButton, final ClickHandler backButtonClickHandler, final ClickHandler nextButtonClickHandler) {
         final HorizontalPanel buttonsPanel = new HorizontalPanel();
         buttonsPanel.setSpacing(10);
@@ -331,9 +278,43 @@ public class DataSetEditor implements IsWidget {
         dataSetAdvancedAttributesEditorView.set(dataSetDef);
         dataSetColumnsAndFilterEditorView.set(dataSetDef);
     }
+    
+    private boolean isValid(Set<ConstraintViolation<? extends  DataSetDef>> violations) {
+        return violations == null || (violations != null && violations.isEmpty());
+        
+    }
 
     // TODO: Display message to user.
     private void error(String message) {
         GWT.log(message);
     }
+
+    // TODO: For testing.
+    private void saveLog(Set<ConstraintViolation<? extends DataSetDef>>... violations) {
+        if (violations != null && violations.length > 0) {
+            for (int x = 0; x < violations.length; x++) {
+                Set<ConstraintViolation<? extends DataSetDef>> driverViolation = violations[x];
+                if (driverViolation != null) {
+                    for (ConstraintViolation<? extends DataSetDef> violation : driverViolation) {
+                        GWT.log("Validation error - " + violation.getMessage());
+                    }
+                }
+            }
+        }
+        if (dataSetDef != null) {
+            GWT.log("DataSetDef uuid: " + dataSetDef.getUUID());
+            GWT.log("DataSetDef name: " + dataSetDef.getName());
+            GWT.log("DataSetDef provider: " + dataSetDef.getProvider());
+            GWT.log("DataSetDef backend cache enabled: " + dataSetDef.isCacheEnabled());
+            GWT.log("DataSetDef backend cache max rows: " + dataSetDef.getCacheMaxRows());
+            GWT.log("DataSetDef client cache enabled: " + dataSetDef.isPushEnabled());
+            GWT.log("DataSetDef client cache max rows: " + dataSetDef.getPushMaxSize());
+            GWT.log("DataSetDef refresh always: " + dataSetDef.isRefreshAlways());
+            GWT.log("DataSetDef refresh interval: " + dataSetDef.getRefreshTime());
+            if (dataSetDef instanceof SQLDataSetDef) {
+                GWT.log("SQLDataSetDef data source: " + ((SQLDataSetDef)dataSetDef).getDataSource());
+            }
+        }
+    }
+
 }
