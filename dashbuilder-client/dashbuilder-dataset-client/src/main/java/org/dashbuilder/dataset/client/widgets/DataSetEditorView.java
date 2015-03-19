@@ -27,9 +27,11 @@ import org.dashbuilder.dataset.client.widgets.editors.DataSetAdvancedAttributesE
 import org.dashbuilder.dataset.client.widgets.editors.DataSetBasicAttributesEditor;
 import org.dashbuilder.dataset.client.widgets.editors.DataSetColumnsAndFilterEditor;
 import org.dashbuilder.dataset.client.widgets.editors.DataSetProviderTypeEditor;
+import org.dashbuilder.dataset.client.widgets.editors.bean.BeanDataSetDefAttributesEditor;
+import org.dashbuilder.dataset.client.widgets.editors.csv.CSVDataSetDefAttributesEditor;
+import org.dashbuilder.dataset.client.widgets.editors.elasticsearch.ELDataSetDefAttributesEditor;
 import org.dashbuilder.dataset.client.widgets.editors.sql.SQLDataSetDefAttributesEditor;
-import org.dashbuilder.dataset.def.DataSetDef;
-import org.dashbuilder.dataset.def.SQLDataSetDef;
+import org.dashbuilder.dataset.def.*;
 
 import javax.enterprise.context.Dependent;
 
@@ -81,6 +83,24 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
 
     @UiField
     DataSetColumnsAndFilterEditor dataSetColumnsAndFilterEditor;
+
+    @UiField
+    VerticalPanel csvAttributesEditionView;
+
+    @UiField
+    CSVDataSetDefAttributesEditor csvDataSetDefAttributesEditor;
+
+    @UiField
+    VerticalPanel beanAttributesEditionView;
+
+    @UiField
+    BeanDataSetDefAttributesEditor beanDataSetDefAttributesEditor;
+
+    @UiField
+    VerticalPanel elAttributesEditionView;
+
+    @UiField
+    ELDataSetDefAttributesEditor elDataSetDefAttributesEditor;
     
     @UiField
     HorizontalPanel buttonsPanel;
@@ -123,12 +143,8 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
     }
 
     public DataSetEditor.View showInitialView() {
+        resetViews();
         initialViewPanel.setVisible(true);
-        basicAttributesEditionViewPanel.setVisible(false);
-        advancedAttributesEditionView.setVisible(false);
-        sqlAttributesEditionView.setVisible(false);
-        columnsAndFilterEditionViewPanel.setVisible(false);
-        buttonsPanel.setVisible(false);
 
         return this;
     }
@@ -136,13 +152,10 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
     @Override
     public DataSetEditor.View showBasicAttributesEditionView(final ClickHandler nextHandler, final ClickHandler backHandler, ClickHandler cancelHandler) {
         workflow.clear().edit(dataSetBasicAttributesEditor, dataSetDef).edit(dataSetProviderTypeEditor, dataSetDef);
-        initialViewPanel.setVisible(false);
+        resetViews();
         basicAttributesEditionViewPanel.setVisible(true);
         dataSetBasicAttributesEditor.setEditMode(true);
         dataSetProviderTypeEditor.setEditMode(!isEditMode);
-        advancedAttributesEditionView.setVisible(false);
-        sqlAttributesEditionView.setVisible(false);
-        columnsAndFilterEditionViewPanel.setVisible(false);
         showButtons(nextHandler, backHandler, cancelHandler);
 
         return this;
@@ -151,12 +164,9 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
     @Override
     public DataSetEditor.View showAdvancedAttributesEditionView(final ClickHandler nextHandler, final ClickHandler backHandler, ClickHandler cancelHandler) {
         workflow.clear().edit(dataSetAdvancedAttributesEditor, dataSetDef);
-        initialViewPanel.setVisible(false);
-        basicAttributesEditionViewPanel.setVisible(false);
+        resetViews();
         advancedAttributesEditionView.setVisible(true);
         dataSetAdvancedAttributesEditor.setEditMode(true);
-        sqlAttributesEditionView.setVisible(false);
-        columnsAndFilterEditionViewPanel.setVisible(false);
         showButtons(nextHandler, backHandler, cancelHandler);
 
         return this;
@@ -167,6 +177,30 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
         workflow.edit(sqlDataSetDefAttributesEditor, (SQLDataSetDef) dataSetDef);
         sqlAttributesEditionView.setVisible(true);
         sqlDataSetDefAttributesEditor.setEditMode(true);
+        return this;
+    }
+
+    @Override
+    public DataSetEditor.View showBeanAttributesEditorView() {
+        workflow.edit(beanDataSetDefAttributesEditor, (BeanDataSetDef) dataSetDef);
+        beanAttributesEditionView.setVisible(true);
+        beanDataSetDefAttributesEditor.setEditMode(true);
+        return this;
+    }
+
+    @Override
+    public DataSetEditor.View showCSVAttributesEditorView() {
+        workflow.edit(csvDataSetDefAttributesEditor, (CSVDataSetDef) dataSetDef);
+        csvAttributesEditionView.setVisible(true);
+        csvDataSetDefAttributesEditor.setEditMode(true);
+        return this;
+    }
+
+    @Override
+    public DataSetEditor.View showELAttributesEditorView() {
+        workflow.edit(elDataSetDefAttributesEditor, (ElasticSearchDataSetDef) dataSetDef);
+        elAttributesEditionView.setVisible(true);
+        elDataSetDefAttributesEditor.setEditMode(true);
         return this;
     }
 
@@ -187,6 +221,18 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
     public DataSetEditor.View clear() {
         showInitialView();
         return this;
+    }
+    
+    private void resetViews() {
+        initialViewPanel.setVisible(false);
+        basicAttributesEditionViewPanel.setVisible(false);
+        advancedAttributesEditionView.setVisible(false);
+        sqlAttributesEditionView.setVisible(false);
+        csvAttributesEditionView.setVisible(false);
+        beanAttributesEditionView.setVisible(false);
+        elAttributesEditionView.setVisible(false);
+        columnsAndFilterEditionViewPanel.setVisible(false);
+        buttonsPanel.setVisible(false);
     }
     
     private void showButtons(ClickHandler nextHandler, final ClickHandler backHandler, ClickHandler cancelHandler) {

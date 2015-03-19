@@ -47,4 +47,9 @@ public interface DataSetEditorConstants extends ConstantsWithLookup {
     String sql_datasource();
     String sql_schema();
     String sql_table();
+    
+    String staticAttributes();
+    String beanAttributes();
+    String csvAttributes();
+    String elAttributes();
 }

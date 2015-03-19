@@ -4,6 +4,9 @@
              xmlns:b="urn:import:com.github.gwtbootstrap.client.ui"
              xmlns:dash-dset-editors="urn:import:org.dashbuilder.dataset.client.widgets.editors"
              xmlns:dash-dset-editors-sql="urn:import:org.dashbuilder.dataset.client.widgets.editors.sql"
+             xmlns:dash-dset-editors-csv="urn:import:org.dashbuilder.dataset.client.widgets.editors.csv"
+             xmlns:dash-dset-editors-static="urn:import:org.dashbuilder.dataset.client.widgets.editors.bean"
+             xmlns:dash-dset-editors-el="urn:import:org.dashbuilder.dataset.client.widgets.editors.elasticsearch"
     >
 
   <ui:with field="i18n" type="org.dashbuilder.dataset.client.resources.i18n.DataSetEditorConstants"/>
@@ -33,7 +36,19 @@
     <g:VerticalPanel ui:field="sqlAttributesEditionView">
       <dash-dset-editors-sql:SQLDataSetDefAttributesEditor editMode="true" ui:field="sqlDataSetDefAttributesEditor"/>
     </g:VerticalPanel>
-    
+
+    <g:VerticalPanel ui:field="csvAttributesEditionView">
+      <dash-dset-editors-csv:CSVDataSetDefAttributesEditor editMode="true" ui:field="csvDataSetDefAttributesEditor"/>
+    </g:VerticalPanel>
+
+    <g:VerticalPanel ui:field="beanAttributesEditionView">
+      <dash-dset-editors-static:BeanDataSetDefAttributesEditor editMode="true" ui:field="beanDataSetDefAttributesEditor"/>
+    </g:VerticalPanel>
+
+    <g:VerticalPanel ui:field="elAttributesEditionView">
+      <dash-dset-editors-el:ELDataSetDefAttributesEditor editMode="true" ui:field="elDataSetDefAttributesEditor"/>
+    </g:VerticalPanel>
+
     <g:VerticalPanel ui:field="columnsAndFilterEditionViewPanel">
       <dash-dset-editors:DataSetColumnsAndFilterEditor editMode="true" ui:field="dataSetColumnsAndFilterEditor"/>
     </g:VerticalPanel>

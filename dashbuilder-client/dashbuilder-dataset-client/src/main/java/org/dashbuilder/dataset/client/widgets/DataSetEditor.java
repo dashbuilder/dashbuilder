@@ -64,6 +64,9 @@ public class DataSetEditor implements IsWidget {
         View showBasicAttributesEditionView(ClickHandler nextHandler, ClickHandler backHandler, ClickHandler cancelHandler);
         View showAdvancedAttributesEditionView(ClickHandler nextHandler, ClickHandler backHandler, ClickHandler cancelHandler);
         View showSQLAttributesEditorView();
+        View showBeanAttributesEditorView();
+        View showCSVAttributesEditorView();
+        View showELAttributesEditorView();
         View showColumnsAndFilterEditionView(ClickHandler nextHandler, ClickHandler backHandler, ClickHandler cancelHandler);
         View removeButtonsHandler();
         View clear();
@@ -185,6 +188,16 @@ public class DataSetEditor implements IsWidget {
         switch (dataSetDef.getProvider()) {
             case SQL:
                 view.edit(dataSetDef, workflow).showSQLAttributesEditorView();
+                break;
+            case CSV:
+                view.edit(dataSetDef, workflow).showCSVAttributesEditorView();
+                break;
+            case BEAN:
+                view.edit(dataSetDef, workflow).showBeanAttributesEditorView();
+                break;
+            case ELASTICSEARCH:
+                view.edit(dataSetDef, workflow).showELAttributesEditorView();
+                break;
         }
     }
 
@@ -251,6 +264,7 @@ public class DataSetEditor implements IsWidget {
                 GWT.log("SQLDataSetDef schema: " + ((SQLDataSetDef)dataSetDef).getDbSchema());
                 GWT.log("SQLDataSetDef table: " + ((SQLDataSetDef)dataSetDef).getDbTable());
             }
+            // TODO: Print data set's attributes for other types
         }
     }
 

@@ -5,9 +5,11 @@ import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import org.dashbuilder.dataset.client.widgets.editors.DataSetAdvancedAttributesEditor;
 import org.dashbuilder.dataset.client.widgets.editors.DataSetBasicAttributesEditor;
 import org.dashbuilder.dataset.client.widgets.editors.DataSetProviderTypeEditor;
+import org.dashbuilder.dataset.client.widgets.editors.bean.BeanDataSetDefAttributesEditor;
+import org.dashbuilder.dataset.client.widgets.editors.csv.CSVDataSetDefAttributesEditor;
+import org.dashbuilder.dataset.client.widgets.editors.elasticsearch.ELDataSetDefAttributesEditor;
 import org.dashbuilder.dataset.client.widgets.editors.sql.SQLDataSetDefAttributesEditor;
-import org.dashbuilder.dataset.def.DataSetDef;
-import org.dashbuilder.dataset.def.SQLDataSetDef;
+import org.dashbuilder.dataset.def.*;
 import org.dashbuilder.dataset.validation.groups.DataSetDefCacheRowsValidation;
 import org.dashbuilder.dataset.validation.groups.DataSetDefPushSizeValidation;
 import org.dashbuilder.dataset.validation.groups.DataSetDefRefreshIntervalValidation;
@@ -31,6 +33,9 @@ public final class DataSetDefEditWorkflow {
     interface ProviderTypeAttributesDriver extends SimpleBeanEditorDriver<DataSetDef, DataSetProviderTypeEditor> {}
     interface AdvancedAttributesDriver extends SimpleBeanEditorDriver<DataSetDef, DataSetAdvancedAttributesEditor> {}
     interface SQLAttributesDriver extends SimpleBeanEditorDriver<SQLDataSetDef, SQLDataSetDefAttributesEditor> {}
+    interface CSVAttributesDriver extends SimpleBeanEditorDriver<CSVDataSetDef, CSVDataSetDefAttributesEditor> {}
+    interface BeanAttributesDriver extends SimpleBeanEditorDriver<BeanDataSetDef, BeanDataSetDefAttributesEditor> {}
+    interface ELAttributesDriver extends SimpleBeanEditorDriver<ElasticSearchDataSetDef, ELDataSetDefAttributesEditor> {}
 
     // Create the drivers.
     /**
@@ -50,11 +55,29 @@ public final class DataSetDefEditWorkflow {
      * <p>Handles SQL specific data set definition attributes.</p> 
      */
     public final SQLAttributesDriver sqlAttributesDriver = GWT.create(SQLAttributesDriver.class);
+
+    /**
+     * <p>Handles CSV specific data set definition attributes.</p> 
+     */
+    public final CSVAttributesDriver csvAttributesDriver = GWT.create(CSVAttributesDriver.class);
+
+    /**
+     * <p>Handles Bean specific data set definition attributes.</p> 
+     */
+    public final BeanAttributesDriver beanAttributesDriver = GWT.create(BeanAttributesDriver.class);
+
+    /**
+     * <p>Handles ElasticSearch specific data set definition attributes.</p> 
+     */
+    public final ELAttributesDriver elAttributesDriver = GWT.create(ELAttributesDriver.class);
     
     private boolean saveBasicAttributes = false;
     private boolean saveProviderTypeAttribute = false;
     private boolean saveAdvancedAttributes = false;
     private boolean saveSQLAttributes = false;
+    private boolean saveBeanAttributes = false;
+    private boolean saveCSVAttributes = false;
+    private boolean saveELAttributes = false;
     
     public DataSetDefEditWorkflow edit(final DataSetBasicAttributesEditor view, final DataSetDef p) {
         basicAttributesDriver.initialize(view);
@@ -81,6 +104,27 @@ public final class DataSetDefEditWorkflow {
         sqlAttributesDriver.initialize(view);
         sqlAttributesDriver.edit(p);
         saveSQLAttributes = true;
+        return this;
+    }
+
+    public DataSetDefEditWorkflow edit(final CSVDataSetDefAttributesEditor view, final CSVDataSetDef p) {
+        csvAttributesDriver.initialize(view);
+        csvAttributesDriver.edit(p);
+        saveCSVAttributes = true;
+        return this;
+    }
+
+    public DataSetDefEditWorkflow edit(final BeanDataSetDefAttributesEditor view, final BeanDataSetDef p) {
+        beanAttributesDriver.initialize(view);
+        beanAttributesDriver.edit(p);
+        saveBeanAttributes = true;
+        return this;
+    }
+
+    public DataSetDefEditWorkflow edit(final ELDataSetDefAttributesEditor view, final ElasticSearchDataSetDef p) {
+        elAttributesDriver.initialize(view);
+        elAttributesDriver.edit(p);
+        saveELAttributes = true;
         return this;
     }
     
