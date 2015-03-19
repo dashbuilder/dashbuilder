@@ -17,6 +17,8 @@
     <!-- SQL attributes. -->
     <b:Fieldset>
       <b:Legend title="{i18n.sqlAttributes}"><ui:text from="{i18n.sqlAttributes}"/></b:Legend>
+      
+      <!-- Data source. -->
       <b:ControlGroup>
         <b:ControlLabel><ui:text from="{i18n.sql_datasource}"/></b:ControlLabel>
         <dash-client:ValueBoxEditorDecorator errorLabelPosition="TOOLTIP" ui:field="dataSource">
@@ -25,6 +27,27 @@
           </dash-client:valuebox>
         </dash-client:ValueBoxEditorDecorator>
       </b:ControlGroup>
+
+      <!-- DB Schema. -->
+      <b:ControlGroup>
+        <b:ControlLabel><ui:text from="{i18n.sql_schema}"/></b:ControlLabel>
+        <dash-client:ValueBoxEditorDecorator errorLabelPosition="TOOLTIP" ui:field="dbSchema">
+          <dash-client:valuebox>
+            <g:TextBox /> <!-- TODO:  placeholder. -->
+          </dash-client:valuebox>
+        </dash-client:ValueBoxEditorDecorator>
+      </b:ControlGroup>
+
+      <!-- Table. -->
+      <b:ControlGroup>
+        <b:ControlLabel><ui:text from="{i18n.sql_table}"/></b:ControlLabel>
+        <dash-client:ValueBoxEditorDecorator errorLabelPosition="TOOLTIP" ui:field="dbTable">
+          <dash-client:valuebox>
+            <g:TextBox /> <!-- TODO:  placeholder. -->
+          </dash-client:valuebox>
+        </dash-client:ValueBoxEditorDecorator>
+      </b:ControlGroup>
+      
     </b:Fieldset>
 
   </g:HorizontalPanel>

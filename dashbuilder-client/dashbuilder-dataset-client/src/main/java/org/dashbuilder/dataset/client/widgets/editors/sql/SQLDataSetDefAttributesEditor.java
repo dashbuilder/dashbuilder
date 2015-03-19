@@ -35,10 +35,6 @@ import javax.enterprise.context.Dependent;
 @Dependent
 public class SQLDataSetDefAttributesEditor extends Composite implements SQLDataSetDefEditor {
     
-    private static final int DEFAULT_CACHE_MAX_ROWS = -1;
-    private static final int DEFAULT_CACHE_MAX_BYTES = -1;
-    private static final long DEFAULT_REFRESH_INTERVAL = -1;
-
     interface SQLDataSetDefAttributesEditorBinder extends UiBinder<Widget, SQLDataSetDefAttributesEditor> {}
     private static SQLDataSetDefAttributesEditorBinder uiBinder = GWT.create(SQLDataSetDefAttributesEditorBinder.class);
 
@@ -46,8 +42,17 @@ public class SQLDataSetDefAttributesEditor extends Composite implements SQLDataS
     HorizontalPanel sqlAttributesPanel;
 
     @UiField
+    @Path("dataSource")
     ValueBoxEditorDecorator<String> dataSource;
-    
+
+    @UiField
+    @Path("dbSchema")
+    ValueBoxEditorDecorator<String> dbSchema;
+
+    @UiField
+    @Path("dbTable")
+    ValueBoxEditorDecorator<String> dbTable;
+
     private boolean isEditMode;
 
     public SQLDataSetDefAttributesEditor() {

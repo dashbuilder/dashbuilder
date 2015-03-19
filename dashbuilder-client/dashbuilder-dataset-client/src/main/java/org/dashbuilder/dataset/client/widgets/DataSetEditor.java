@@ -65,10 +65,11 @@ public class DataSetEditor implements IsWidget {
         View showAdvancedAttributesEditionView(ClickHandler nextHandler, ClickHandler backHandler, ClickHandler cancelHandler);
         View showSQLAttributesEditorView();
         View showColumnsAndFilterEditionView(ClickHandler nextHandler, ClickHandler backHandler, ClickHandler cancelHandler);
+        View removeButtonsHandler();
         View clear();
     }
 
-    final DataSetEditorView view = new DataSetEditorView();
+    final View view = new DataSetEditorView();
 
     private DataSetDef dataSetDef;
     private boolean isEdit;
@@ -127,10 +128,13 @@ public class DataSetEditor implements IsWidget {
 
     @Override
     public Widget asWidget() {
-        return view;
+        return view.asWidget();
     }
 
     private void buildBasicAttributesEditionView() {
+        // Remove any handler for view buttons.
+        view.removeButtonsHandler();
+        
         view.edit(dataSetDef, workflow).showBasicAttributesEditionView(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
@@ -156,6 +160,9 @@ public class DataSetEditor implements IsWidget {
     }
 
     private void buildAdvancedAttributesEditionView() {
+        // Remove any handler for view buttons.
+        view.removeButtonsHandler();
+        
         view.edit(dataSetDef, workflow).showAdvancedAttributesEditionView(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
@@ -182,6 +189,9 @@ public class DataSetEditor implements IsWidget {
     }
 
     private void buildColumnsAndFilterEditionView() {
+        // Remove any handler for view buttons.
+        view.removeButtonsHandler();
+
         view.edit(dataSetDef, workflow).showColumnsAndFilterEditionView(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
@@ -238,6 +248,8 @@ public class DataSetEditor implements IsWidget {
             GWT.log("DataSetDef refresh interval: " + dataSetDef.getRefreshTime());
             if (dataSetDef instanceof SQLDataSetDef) {
                 GWT.log("SQLDataSetDef data source: " + ((SQLDataSetDef)dataSetDef).getDataSource());
+                GWT.log("SQLDataSetDef schema: " + ((SQLDataSetDef)dataSetDef).getDbSchema());
+                GWT.log("SQLDataSetDef table: " + ((SQLDataSetDef)dataSetDef).getDbTable());
             }
         }
     }

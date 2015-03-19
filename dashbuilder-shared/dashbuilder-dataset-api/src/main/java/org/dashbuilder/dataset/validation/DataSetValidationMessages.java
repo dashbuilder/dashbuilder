@@ -44,5 +44,12 @@ public interface DataSetValidationMessages extends
 
     @Key("dataSetApi_sqlDataSetDef_dataSource_notNull")
     String dataSetApi_sqlDataSetDef_dataSource_notNull();
+
+
+    @Key("dataSetApi_sqlDataSetDef_dbSchema_notNull")
+    String dataSetApi_sqlDataSetDef_dbSchema_notNull();
+
+    @Key("dataSetApi_sqlDataSetDef_dbTable_notNull")
+    String dataSetApi_sqlDataSetDef_dbTable_notNull();
     
 }

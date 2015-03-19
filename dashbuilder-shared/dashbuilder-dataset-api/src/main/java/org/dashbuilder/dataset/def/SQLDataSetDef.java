@@ -28,8 +28,13 @@ public class SQLDataSetDef extends DataSetDef {
     @NotNull(message = "{dataSetApi_sqlDataSetDef_dataSource_notNull}")
     @NotEmpty(message = "{dataSetApi_sqlDataSetDef_dataSource_notNull}")
     protected String dataSource;
+
     protected String dbSchema;
+
+    @NotNull(message = "{dataSetApi_sqlDataSetDef_dbTable_notNull}")
+    @NotEmpty(message = "{dataSetApi_sqlDataSetDef_dbTable_notNull}")
     protected String dbTable;
+    
     protected boolean allColumnsEnabled = true;
 
     public SQLDataSetDef() {
