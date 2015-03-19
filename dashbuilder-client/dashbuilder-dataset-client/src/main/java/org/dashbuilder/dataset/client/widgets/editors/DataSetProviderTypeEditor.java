@@ -26,7 +26,6 @@ import org.dashbuilder.dataprovider.DataSetProviderType;
 import org.dashbuilder.dataset.client.resources.bundles.DataSetClientResources;
 import org.dashbuilder.dataset.client.resources.i18n.DataSetExplorerConstants;
 import org.dashbuilder.dataset.client.validation.editors.DataSetDefEditor;
-import org.dashbuilder.dataset.client.widgets.DataSetEditor;
 import org.dashbuilder.dataset.def.DataSetDef;
 
 import javax.enterprise.context.Dependent;
@@ -37,7 +36,7 @@ import java.util.Map;
  * <p>This is the view implementation for Data Set Editor widget for editing the data set provider type.</p>
  */
 @Dependent
-public class DataSetProviderTypeEditor extends Composite implements DataSetEditor.View, DataSetDefEditor {
+public class DataSetProviderTypeEditor extends Composite implements DataSetDefEditor {
 
     private static final int ICONS_SIZE = 250;
     private static final double ALPHA_ICON_NOT_SELECTED = 0.2;
@@ -48,7 +47,6 @@ public class DataSetProviderTypeEditor extends Composite implements DataSetEdito
     @UiField
     ImageListEditorDecorator<DataSetProviderType> provider;
 
-    private DataSetDef dataSetDef;
     private  boolean isEditMode;
     
     public DataSetProviderTypeEditor() {
@@ -64,30 +62,6 @@ public class DataSetProviderTypeEditor extends Composite implements DataSetEdito
         provider.setAcceptableValues(providerEditorValues);
     }
 
-    @Override
-    public void set(DataSetDef dataSetDef) {
-        this.dataSetDef = dataSetDef;
-    }
-
-    @Override
-    public Widget show(final  boolean isEditMode) {
-        this.isEditMode = isEditMode;
-        provider.setEditMode(isEditMode);
-        provider.setVisible(true);
-        return asWidget();
-    }
-
-    @Override
-    public void hide() {
-        provider.setVisible(false);
-    }
-
-    @Override
-    public void clear() {
-        this.dataSetDef = null;
-        this.provider.clear();
-    }
-    
     private Image buildTypeSelectorWidget(DataSetProviderType type) {
         Image typeIcon = null;
         switch (type) {
@@ -114,5 +88,13 @@ public class DataSetProviderTypeEditor extends Composite implements DataSetEdito
         }
         return typeIcon;
     }
-    
+
+    public boolean isEditMode() {
+        return isEditMode;
+    }
+
+    public void setEditMode(boolean isEditMode) {
+        this.isEditMode = isEditMode;
+        provider.setEditMode(isEditMode);
+    }
 }

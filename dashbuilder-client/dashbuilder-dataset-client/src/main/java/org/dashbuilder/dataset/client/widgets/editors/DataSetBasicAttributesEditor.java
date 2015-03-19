@@ -15,26 +15,14 @@
  */
 package org.dashbuilder.dataset.client.widgets.editors;
 
-import com.github.gwtbootstrap.client.ui.TextBox;
-import com.github.gwtbootstrap.client.ui.WellForm;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.event.dom.client.ChangeHandler;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import org.dashbuilder.common.client.validation.editors.ImageListEditorDecorator;
 import org.dashbuilder.common.client.validation.editors.ValueBoxEditorDecorator;
-import org.dashbuilder.dataprovider.DataSetProviderType;
-import org.dashbuilder.dataset.client.ClientDataSetManager;
 import org.dashbuilder.dataset.client.validation.editors.DataSetDefEditor;
-import org.dashbuilder.dataset.client.widgets.DataSetEditor;
-import org.dashbuilder.dataset.def.DataSetDef;
 
 import javax.enterprise.context.Dependent;
 
@@ -42,7 +30,7 @@ import javax.enterprise.context.Dependent;
  * <p>This is the view implementation for Data Set Editor widget for editing data set UUID and name attributes.</p>
  */
 @Dependent
-public class DataSetBasicAttributesEditor extends Composite implements DataSetEditor.View, DataSetDefEditor {
+public class DataSetBasicAttributesEditor extends Composite implements DataSetDefEditor {
 
     interface DataSetBasicAttributesEditorBinder extends UiBinder<Widget, DataSetBasicAttributesEditor> {}
     private static DataSetBasicAttributesEditorBinder uiBinder = GWT.create(DataSetBasicAttributesEditorBinder.class);
@@ -57,51 +45,18 @@ public class DataSetBasicAttributesEditor extends Composite implements DataSetEd
     @UiField
     ValueBoxEditorDecorator<String> name;
 
-    private DataSetDef dataSetDef;
     private  boolean isEditMode;
 
     public DataSetBasicAttributesEditor() {
         initWidget(uiBinder.createAndBindUi(this));
     }
 
-    @Override
-    public void set(DataSetDef dataSetDef) {
-        this.dataSetDef = dataSetDef;
+
+    public boolean isEditMode() {
+        return isEditMode;
     }
 
-    @Override
-    public Widget show(final boolean isEditMode) {
+    public void setEditMode(boolean isEditMode) {
         this.isEditMode = isEditMode;
-        
-        // Clear the widget.
-        clearScreen();
-
-        // If defintion has a provider type set, show it.
-        if (dataSetDef != null ) {
-            // TODO: attributeName.setEnabled(isEditMode);
-        }
-
-        return asWidget();
     }
-
-    @Override
-    public void hide() {
-        basicAttributesPanel.setVisible(false);
-    }
-
-    @Override
-    public void clear() {
-        clearScreen();
-        clearStatus();
-    }
-    
-    private void clearScreen() {
-        // TODO: attributeUUID.setText("");
-        // TODO: attributeName.setText("");
-    }
-    
-    private void clearStatus() {
-        this.dataSetDef = null;
-    }
-
 }

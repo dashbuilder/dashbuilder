@@ -19,18 +19,13 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.HasHandlers;
-import com.google.gwt.user.client.ui.*;
+import com.google.gwt.user.client.ui.IsWidget;
+import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.dataprovider.DataSetProviderType;
 import org.dashbuilder.dataset.DataSetMetadata;
 import org.dashbuilder.dataset.client.DataSetClientServices;
 import org.dashbuilder.dataset.client.DataSetMetadataCallback;
-import org.dashbuilder.dataset.client.resources.i18n.DataSetEditorConstants;
 import org.dashbuilder.dataset.client.validation.DataSetDefEditWorkflow;
-import org.dashbuilder.dataset.client.widgets.editors.DataSetAdvancedAttributesEditor;
-import org.dashbuilder.dataset.client.widgets.editors.DataSetBasicAttributesEditor;
-import org.dashbuilder.dataset.client.widgets.editors.DataSetColumnsAndFilterEditor;
-import org.dashbuilder.dataset.client.widgets.editors.DataSetProviderTypeEditor;
-import org.dashbuilder.dataset.client.widgets.editors.sql.SQLDataSetDefAttributesEditor;
 import org.dashbuilder.dataset.def.DataSetDef;
 import org.dashbuilder.dataset.def.SQLDataSetDef;
 
@@ -42,7 +37,7 @@ import java.util.Set;
  * <p>Data Set Definition editor widget.</p>
  * <p>This widget allows edition or creation of a data set definitions.</p>
  *  
- * <p>This widget is presented using four views:</p>
+ * <p>The default view for this widget is displayed as:</p>
  * <ul>
  *     <li>Provider type editor view - @see <code>org.dashbuilder.dataset.client.widgets.editors.DataSetProviderTypeEditor</code></li>     
  *     <li>Basic attributes editor view - @see <code>org.dashbuilder.dataset.client.widgets.editors.DataSetBasicAttributesEditor</code></li>     
@@ -53,7 +48,7 @@ import java.util.Set;
  * <p>This editor provides three screens:</p>
  * <ul>
  *     <li>Basic data set attributes edition.</li>     
- *     <li>Advanced data set attributes edition.</li>
+ *     <li>Advanced data set attributes edition + provider specific attributes.</li>
  *     <li>Data set columns and initial filter edition.</li>     
  * </ul> 
  */
@@ -63,22 +58,23 @@ public class DataSetEditor implements IsWidget {
     final DataSetDefEditWorkflow workflow = new DataSetDefEditWorkflow();
     
     public interface View extends IsWidget, HasHandlers {
-        void set(DataSetDef dataSetDef);
-        void clear();
-        Widget show(final boolean isEditMode);
-        void hide();
+        View edit(DataSetDef dataSetDef, DataSetDefEditWorkflow workflow);
+        View setEditMode(boolean editMode);
+        View showInitialView();
+        View showBasicAttributesEditionView(ClickHandler nextHandler, ClickHandler backHandler, ClickHandler cancelHandler);
+        View showAdvancedAttributesEditionView(ClickHandler nextHandler, ClickHandler backHandler, ClickHandler cancelHandler);
+        View showSQLAttributesEditorView();
+        View showColumnsAndFilterEditionView(ClickHandler nextHandler, ClickHandler backHandler, ClickHandler cancelHandler);
+        View clear();
     }
 
-    final DataSetProviderTypeEditor dataSetProviderTypeEditorView = new DataSetProviderTypeEditor();
-    final DataSetBasicAttributesEditor dataSetBasicAttributesEditorView = new DataSetBasicAttributesEditor();
-    final DataSetAdvancedAttributesEditor dataSetAdvancedAttributesEditorView = new DataSetAdvancedAttributesEditor();
-    final DataSetColumnsAndFilterEditor dataSetColumnsAndFilterEditorView = new DataSetColumnsAndFilterEditor();
-    final private FlowPanel mainPanel = new FlowPanel();
+    final DataSetEditorView view = new DataSetEditorView();
+
     private DataSetDef dataSetDef;
-    private boolean isCreate;
+    private boolean isEdit;
     
     public DataSetEditor() {
-        buildInitialView();
+        view.showInitialView();
     }
     
     public DataSetEditor newDataSet(String uuid) {
@@ -88,14 +84,17 @@ public class DataSetEditor implements IsWidget {
             return this;
         }
 
-        isCreate = true;
+        isEdit = false;
         
         // Create a new data set def.
         final DataSetDef dataSetDef = new DataSetDef();
         dataSetDef.setUUID(uuid);
         
-        setDataSetDef(dataSetDef);
+        this.dataSetDef = dataSetDef;
 
+        view.setEditMode(isEdit);
+        buildBasicAttributesEditionView();
+                
         return this;
     }
 
@@ -106,17 +105,21 @@ public class DataSetEditor implements IsWidget {
             return this;
         }
 
-        isCreate = false;
+        isEdit = true;
+        view.setEditMode(isEdit);
         
         DataSetClientServices.get().fetchMetadata(uuid, new DataSetMetadataCallback() {
             @Override
-            public void callback(DataSetMetadata metatada) {
-                setDataSetDef(metatada.getDefinition());
+            public void callback(DataSetMetadata metatada)
+            {
+                DataSetEditor.this.dataSetDef = metatada.getDefinition();
+                buildBasicAttributesEditionView();
             }
 
             @Override
             public void notFound() {
                 error("Data set definition with uuid [" + uuid + "] not found.");
+                // TODO: Show error popup?
             }
         });
         return this;
@@ -124,67 +127,36 @@ public class DataSetEditor implements IsWidget {
 
     @Override
     public Widget asWidget() {
-        return mainPanel;
+        return view;
     }
 
-    public DataSetEditor buildInitialView() {
-        FlowPanel mainPanel = new FlowPanel();
-        Hyperlink link = new InlineHyperlink();
-        link.setText(DataSetEditorConstants.INSTANCE.newDataSet());
-        link.addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                // TODO: Generate uuid.
-                newDataSet("new-uuid");
-            }
-        });
-        mainPanel.add(link);
-        this.mainPanel.clear();
-        this.mainPanel.add(mainPanel);
-        return this;
-    }
-
-    public DataSetEditor buildBasicAttributesEditionView() {
-        workflow.clear().edit(dataSetBasicAttributesEditorView, dataSetDef).edit(dataSetProviderTypeEditorView, dataSetDef);
-
-        final VerticalPanel mainPanel = new VerticalPanel();
-        mainPanel.add(dataSetBasicAttributesEditorView.show(true));
-        mainPanel.add(dataSetProviderTypeEditorView.show(isCreate));
-        final ClickHandler nextButtonClickHandler = new ClickHandler() {
+    private void buildBasicAttributesEditionView() {
+        view.edit(dataSetDef, workflow).showBasicAttributesEditionView(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 // Save basic attributes (name and uuid) and provider type attribute.
                 // Check if exist validation violations.
-                final Set<ConstraintViolation<? extends  DataSetDef>> violations = workflow.save();
+                final Set<ConstraintViolation<? extends DataSetDef>> violations = workflow.save();
                 if (isValid(violations)) {
                     // Build the data set class instance for the given provider type.
                     final DataSetDef _dataSetDef = DataSetProviderType.createDataSetDef(dataSetDef.getProvider());
                     _dataSetDef.setUUID(dataSetDef.getUUID());
                     _dataSetDef.setName(dataSetDef.getName());
-                    setDataSetDef(_dataSetDef);
-                    buildAdvancedAttributesEditionView();                    
+                    DataSetEditor.this.dataSetDef = _dataSetDef;
+                    buildAdvancedAttributesEditionView();
                 }
                 saveLog(violations, violations);
             }
-        };
-        mainPanel.add(buildButtons(false, true, null, nextButtonClickHandler));
-        this.mainPanel.clear();
-        this.mainPanel.add(mainPanel);
-        return this;
+        }, null, new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                clear();
+            }
+        });
     }
 
-    public DataSetEditor buildAdvancedAttributesEditionView() {
-        workflow.clear().edit(dataSetAdvancedAttributesEditorView, dataSetDef);
-        
-        final VerticalPanel mainPanel = new VerticalPanel();
-        mainPanel.setSpacing(10);
-        mainPanel.add(dataSetAdvancedAttributesEditorView.show(true));
-
-        switch (dataSetDef.getProvider()) {
-            case SQL:
-                mainPanel.add(buildSQLAttributesEditorView());
-        }
-        final ClickHandler nextButtonClickHandler = new ClickHandler() {
+    private void buildAdvancedAttributesEditionView() {
+        view.edit(dataSetDef, workflow).showAdvancedAttributesEditionView(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 // Validate and save attributes.
@@ -195,93 +167,46 @@ public class DataSetEditor implements IsWidget {
                 }
                 saveLog(violations);
             }
-        };
-        mainPanel.add(buildButtons(false, true, null, nextButtonClickHandler));
-        this.mainPanel.clear();
-        this.mainPanel.add(mainPanel);
-        return this;
-    }
-
-    private Widget buildSQLAttributesEditorView() {
-        final SQLDataSetDefAttributesEditor sqlDataSetDefAttributesEditor = new SQLDataSetDefAttributesEditor();
-        workflow.edit(sqlDataSetDefAttributesEditor, (SQLDataSetDef) dataSetDef);
-        return sqlDataSetDefAttributesEditor.show(true);
-    }
-
-    public DataSetEditor buildColumnsAndFilterEditionView() {
-        // TODO: workflow.clear().edit(dataSetBasicAttributesEditorView, dataSetDef);
-
-        final VerticalPanel mainPanel = new VerticalPanel();
-        mainPanel.add(dataSetBasicAttributesEditorView.show(true));
-        mainPanel.add(dataSetColumnsAndFilterEditorView.show(true));
-        
-        final ClickHandler backButtonClickHandler = new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                buildAdvancedAttributesEditionView();
-            }
-        };
-        final ClickHandler nextButtonClickHandler = new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                // TODO
-            }
-        };
-        mainPanel.add(buildButtons(true, true, backButtonClickHandler, nextButtonClickHandler));
-        this.mainPanel.clear();
-        this.mainPanel.add(mainPanel);
-        return this;
-    }
-    
-    private Panel buildButtons(final boolean showBackButton, final boolean showNextButton, final ClickHandler backButtonClickHandler, final ClickHandler nextButtonClickHandler) {
-        final HorizontalPanel buttonsPanel = new HorizontalPanel();
-        buttonsPanel.setSpacing(10);
-        
-        final com.github.gwtbootstrap.client.ui.Button cancelButton = new com.github.gwtbootstrap.client.ui.Button(DataSetEditorConstants.INSTANCE.cancel());
-        buttonsPanel.add(cancelButton);
-        cancelButton.addClickHandler(new ClickHandler() {
+        }, null, new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 clear();
             }
         });
-
-        if (showBackButton) {
-            final com.github.gwtbootstrap.client.ui.Button backButton = new com.github.gwtbootstrap.client.ui.Button(DataSetEditorConstants.INSTANCE.back());
-            buttonsPanel.add(backButton);
-            if (backButtonClickHandler != null) backButton.addClickHandler(backButtonClickHandler);
-        }
-
-        if (showNextButton) {
-            final com.github.gwtbootstrap.client.ui.Button nextButton = new com.github.gwtbootstrap.client.ui.Button(DataSetEditorConstants.INSTANCE.next());
-            buttonsPanel.add(nextButton);
-            if (nextButtonClickHandler != null) nextButton.addClickHandler(nextButtonClickHandler);
-        }
         
-        return buttonsPanel;
+        
+        switch (dataSetDef.getProvider()) {
+            case SQL:
+                view.edit(dataSetDef, workflow).showSQLAttributesEditorView();
+        }
     }
 
-    public DataSetEditor clear() {
+    private void buildColumnsAndFilterEditionView() {
+        view.edit(dataSetDef, workflow).showColumnsAndFilterEditionView(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                // TODO
+            }
+        }, new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                buildAdvancedAttributesEditionView();
+            }
+        }, new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                clear();
+            }
+        });
+    }
+    
+    private void clear() {
         this.dataSetDef = null;
-        dataSetProviderTypeEditorView.clear();
-        dataSetBasicAttributesEditorView.clear();
-        dataSetAdvancedAttributesEditorView.clear();
-        dataSetColumnsAndFilterEditorView.clear();
-        buildInitialView();
-        return this;
+        view.clear();
+                
     }
-    
-    private void setDataSetDef(DataSetDef dataSetDef) {
-        this.dataSetDef = dataSetDef;
-        dataSetProviderTypeEditorView.set(dataSetDef);
-        dataSetBasicAttributesEditorView.set(dataSetDef);
-        dataSetAdvancedAttributesEditorView.set(dataSetDef);
-        dataSetColumnsAndFilterEditorView.set(dataSetDef);
-    }
-    
     private boolean isValid(Set<ConstraintViolation<? extends  DataSetDef>> violations) {
         return violations == null || (violations != null && violations.isEmpty());
-        
     }
 
     // TODO: Display message to user.

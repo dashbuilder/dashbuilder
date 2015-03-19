@@ -1,0 +1,53 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+             xmlns:g="urn:import:com.google.gwt.user.client.ui"
+             xmlns:b="urn:import:com.github.gwtbootstrap.client.ui"
+             xmlns:dash-dset-editors="urn:import:org.dashbuilder.dataset.client.widgets.editors"
+             xmlns:dash-dset-editors-sql="urn:import:org.dashbuilder.dataset.client.widgets.editors.sql"
+    >
+
+  <ui:with field="i18n" type="org.dashbuilder.dataset.client.resources.i18n.DataSetEditorConstants"/>
+
+  <ui:style type="org.dashbuilder.dataset.client.widgets.DataSetEditorView.DataSetEditorViewStyle">
+    .mainPanel {
+      font-size: 12pt;
+      float: left;
+    }
+  </ui:style>
+  
+  <g:FlowPanel addStyleNames="{style.mainPanel} " ui:field="mainPanel" >
+    
+    <g:FlowPanel ui:field="initialViewPanel">
+      <g:Hyperlink text="{i18n.newDataSet}" ui:field="newDataSetLink"/>
+    </g:FlowPanel>
+    
+    <g:VerticalPanel ui:field="basicAttributesEditionViewPanel">
+      <dash-dset-editors:DataSetBasicAttributesEditor editMode="true" ui:field="dataSetBasicAttributesEditor"/>
+      <dash-dset-editors:DataSetProviderTypeEditor editMode="true" ui:field="dataSetProviderTypeEditor"/>
+    </g:VerticalPanel>
+    
+    <g:VerticalPanel ui:field="advancedAttributesEditionView">
+      <dash-dset-editors:DataSetAdvancedAttributesEditor editMode="true" ui:field="dataSetAdvancedAttributesEditor"/>
+    </g:VerticalPanel>
+
+    <g:VerticalPanel ui:field="sqlAttributesEditionView">
+      <dash-dset-editors-sql:SQLDataSetDefAttributesEditor editMode="true" ui:field="sqlDataSetDefAttributesEditor"/>
+    </g:VerticalPanel>
+    
+    <g:VerticalPanel ui:field="columnsAndFilterEditionViewPanel">
+      <dash-dset-editors:DataSetColumnsAndFilterEditor editMode="true" ui:field="dataSetColumnsAndFilterEditor"/>
+    </g:VerticalPanel>
+    
+    <g:HorizontalPanel spacing="10" ui:field="buttonsPanel">
+      
+      <b:Button text="{i18n.cancel}" ui:field="cancelButton"/>
+
+      <b:Button text="{i18n.back}" ui:field="backButton"/>
+
+      <b:Button text="{i18n.next}" ui:field="nextButton"/>
+      
+    </g:HorizontalPanel>
+    
+  </g:FlowPanel>
+  
+</ui:UiBinder>

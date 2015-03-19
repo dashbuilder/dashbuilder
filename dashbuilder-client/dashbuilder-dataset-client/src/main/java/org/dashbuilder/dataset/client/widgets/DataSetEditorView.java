@@ -1,0 +1,199 @@
+/**
+ * Copyright (C) 2014 JBoss Inc
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.dashbuilder.dataset.client.widgets;
+
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.resources.client.CssResource;
+import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.*;
+import org.dashbuilder.dataset.client.validation.DataSetDefEditWorkflow;
+import org.dashbuilder.dataset.client.widgets.editors.DataSetAdvancedAttributesEditor;
+import org.dashbuilder.dataset.client.widgets.editors.DataSetBasicAttributesEditor;
+import org.dashbuilder.dataset.client.widgets.editors.DataSetColumnsAndFilterEditor;
+import org.dashbuilder.dataset.client.widgets.editors.DataSetProviderTypeEditor;
+import org.dashbuilder.dataset.client.widgets.editors.sql.SQLDataSetDefAttributesEditor;
+import org.dashbuilder.dataset.def.DataSetDef;
+import org.dashbuilder.dataset.def.SQLDataSetDef;
+
+import javax.enterprise.context.Dependent;
+
+/**
+ * <p>Default view for DataSetEditor presenter view.</p> 
+ */
+@Dependent
+public class DataSetEditorView extends Composite implements DataSetEditor.View {
+
+    interface DataSetEditorViewBinder extends UiBinder<Widget, DataSetEditorView> {}
+    private static DataSetEditorViewBinder uiBinder = GWT.create(DataSetEditorViewBinder.class);
+
+    interface DataSetEditorViewStyle extends CssResource {
+        String mainPanel();
+    }
+    
+    @UiField
+    FlowPanel mainPanel;
+
+    @UiField
+    FlowPanel initialViewPanel;
+
+    @UiField
+    Hyperlink newDataSetLink;
+
+    @UiField
+    VerticalPanel basicAttributesEditionViewPanel;
+
+    @UiField
+    DataSetBasicAttributesEditor dataSetBasicAttributesEditor;
+
+    @UiField
+    DataSetProviderTypeEditor dataSetProviderTypeEditor;
+
+    @UiField
+    VerticalPanel advancedAttributesEditionView;
+
+    @UiField
+    DataSetAdvancedAttributesEditor dataSetAdvancedAttributesEditor;
+    
+    @UiField
+    VerticalPanel sqlAttributesEditionView;
+
+    @UiField
+    SQLDataSetDefAttributesEditor sqlDataSetDefAttributesEditor;
+    
+    @UiField
+    VerticalPanel columnsAndFilterEditionViewPanel;
+
+    @UiField
+    DataSetColumnsAndFilterEditor dataSetColumnsAndFilterEditor;
+    
+    @UiField
+    HorizontalPanel buttonsPanel;
+
+    @UiField
+    com.github.gwtbootstrap.client.ui.Button cancelButton;
+
+    @UiField
+    com.github.gwtbootstrap.client.ui.Button backButton;
+
+    @UiField
+    com.github.gwtbootstrap.client.ui.Button nextButton;
+
+    private DataSetDef dataSetDef = null;
+    
+    private boolean isEditMode = true;
+    private DataSetDefEditWorkflow workflow;
+    
+    public DataSetEditorView() {
+        initWidget(uiBinder.createAndBindUi(this));
+    }
+
+    @Override
+    public DataSetEditor.View edit(DataSetDef dataSetDef, DataSetDefEditWorkflow workflow) {
+        this.dataSetDef = dataSetDef;
+        this.workflow = workflow;
+        
+        return this;
+    }
+
+    @Override
+    public DataSetEditor.View setEditMode(final boolean editMode) {
+        this.isEditMode = editMode;
+        
+        return this;
+    }
+
+    public DataSetEditor.View showInitialView() {
+        initialViewPanel.setVisible(true);
+        basicAttributesEditionViewPanel.setVisible(false);
+        advancedAttributesEditionView.setVisible(false);
+        sqlAttributesEditionView.setVisible(false);
+        columnsAndFilterEditionViewPanel.setVisible(false);
+        buttonsPanel.setVisible(false);
+
+        return this;
+    }
+
+    @Override
+    public DataSetEditor.View showBasicAttributesEditionView(final ClickHandler nextHandler, final ClickHandler backHandler, ClickHandler cancelHandler) {
+        workflow.clear().edit(dataSetBasicAttributesEditor, dataSetDef).edit(dataSetProviderTypeEditor, dataSetDef);
+        initialViewPanel.setVisible(false);
+        basicAttributesEditionViewPanel.setVisible(true);
+        dataSetBasicAttributesEditor.setEditMode(true);
+        dataSetProviderTypeEditor.setEditMode(!isEditMode);
+        advancedAttributesEditionView.setVisible(false);
+        sqlAttributesEditionView.setVisible(false);
+        columnsAndFilterEditionViewPanel.setVisible(false);
+        showButtons(nextHandler, backHandler, cancelHandler);
+
+        return this;
+    }
+
+    @Override
+    public DataSetEditor.View showAdvancedAttributesEditionView(final ClickHandler nextHandler, final ClickHandler backHandler, ClickHandler cancelHandler) {
+        workflow.clear().edit(dataSetAdvancedAttributesEditor, dataSetDef);
+        initialViewPanel.setVisible(false);
+        basicAttributesEditionViewPanel.setVisible(false);
+        advancedAttributesEditionView.setVisible(true);
+        dataSetAdvancedAttributesEditor.setEditMode(true);
+        sqlAttributesEditionView.setVisible(false);
+        columnsAndFilterEditionViewPanel.setVisible(false);
+        showButtons(nextHandler, backHandler, cancelHandler);
+
+        return this;
+    }
+
+    @Override
+    public DataSetEditor.View showSQLAttributesEditorView() {
+        workflow.edit(sqlDataSetDefAttributesEditor, (SQLDataSetDef) dataSetDef);
+        sqlAttributesEditionView.setVisible(true);
+        sqlDataSetDefAttributesEditor.setEditMode(true);
+        return this;
+    }
+
+    @Override
+    public DataSetEditor.View showColumnsAndFilterEditionView(final ClickHandler nextHandler, final ClickHandler backHandler, ClickHandler cancelHandler) {
+        initialViewPanel.setVisible(false);
+        basicAttributesEditionViewPanel.setVisible(false);
+        advancedAttributesEditionView.setVisible(false);
+        sqlAttributesEditionView.setVisible(false);
+        columnsAndFilterEditionViewPanel.setVisible(true);
+        dataSetColumnsAndFilterEditor.setEditMode(true);
+        showButtons(nextHandler, backHandler, cancelHandler);
+
+        return this;
+    }
+
+    @Override
+    public DataSetEditor.View clear() {
+        showInitialView();
+        return this;
+    }
+    
+    private void showButtons(ClickHandler nextHandler, final ClickHandler backHandler, ClickHandler cancelHandler) {
+        nextButton.setVisible(nextHandler != null);
+        if (nextHandler != null) nextButton.addClickHandler(nextHandler);
+        backButton.setVisible(backHandler != null);
+        if (backHandler != null) backButton.addClickHandler(backHandler);
+        cancelButton.setVisible(cancelHandler!= null);
+        if (cancelHandler != null) cancelButton.addClickHandler(cancelHandler);
+        buttonsPanel.setVisible(true);
+    }
+        
+
+}

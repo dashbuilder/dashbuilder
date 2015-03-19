@@ -38,7 +38,6 @@ import javax.enterprise.context.Dependent;
 import java.util.LinkedList;
 import java.util.List;
 
-// TODO
 @Dependent
 public class DataSetExplorerView extends Composite implements DataSetExplorer.View {
 

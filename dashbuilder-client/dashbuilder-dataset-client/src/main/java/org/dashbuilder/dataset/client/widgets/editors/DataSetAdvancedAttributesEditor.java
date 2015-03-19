@@ -15,26 +15,15 @@
  */
 package org.dashbuilder.dataset.client.widgets.editors;
 
-import com.github.gwtbootstrap.client.ui.Label;
-import com.github.gwtbootstrap.client.ui.TextBox;
-import com.github.gwtbootstrap.client.ui.constants.LabelType;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.common.client.validation.editors.BooleanSwitchEditorDecorator;
-import org.dashbuilder.common.client.validation.editors.ImageListEditorDecorator;
 import org.dashbuilder.common.client.validation.editors.ValueBoxEditorDecorator;
-import org.dashbuilder.dataprovider.DataSetProviderType;
-import org.dashbuilder.dataset.client.resources.i18n.DataSetEditorConstants;
 import org.dashbuilder.dataset.client.validation.editors.DataSetDefEditor;
-import org.dashbuilder.dataset.client.widgets.DataSetEditor;
-import org.dashbuilder.dataset.def.DataSetDef;
 
 import javax.enterprise.context.Dependent;
 
@@ -42,7 +31,7 @@ import javax.enterprise.context.Dependent;
  * <p>This is the view implementation for Data Set Editor widget for editing data set backend cache policy, client cache policy and the refresh policy settings.</p>
  */
 @Dependent
-public class DataSetAdvancedAttributesEditor extends Composite implements DataSetEditor.View, DataSetDefEditor {
+public class DataSetAdvancedAttributesEditor extends Composite implements DataSetDefEditor {
     
     private static final int DEFAULT_CACHE_MAX_ROWS = -1;
     private static final int DEFAULT_CACHE_MAX_BYTES = -1;
@@ -81,65 +70,17 @@ public class DataSetAdvancedAttributesEditor extends Composite implements DataSe
     @Path("refreshTime")
     ValueBoxEditorDecorator<String> attributeRefreshInterval;
     
-    private DataSetDef dataSetDef;
     private boolean isEditMode;
 
     public DataSetAdvancedAttributesEditor() {
         initWidget(uiBinder.createAndBindUi(this));
     }
 
-    @Override
-    public void set(DataSetDef dataSetDef) {
-        this.dataSetDef = dataSetDef;
+    public boolean isEditMode() {
+        return isEditMode;
     }
 
-    @Override
-    public Widget show(final boolean isEditMode) {
+    public void setEditMode(boolean isEditMode) {
         this.isEditMode = isEditMode;
-
-        // Clear the widget.
-        clearScreen();
-
-        // Backend cache.
-        buildBackendCacheAttributes();
-
-        // Client cache.
-        buildClientCacheAttributes();
-
-        // Refresh policy.
-        buildRefreshPolicyAttributes();
-
-        return asWidget();
     }
-    
-    private void buildBackendCacheAttributes() {
-        // TODO: Check edit mode.
-    }
-
-    private void buildClientCacheAttributes() {
-        // TODO: Check edit mode.
-    }
-
-    private void buildRefreshPolicyAttributes() {
-        // TODO: Check edit mode.
-    }
-
-    @Override
-    public void hide() {
-        advancedAttributesPanel.setVisible(false);
-    }
-
-    @Override
-    public void clear() {
-        clearScreen();
-        clearStatus();
-    }
-    
-    private void clearScreen() {
-    }
-    
-    private void clearStatus() {
-        this.dataSetDef = null;
-    }
-
 }

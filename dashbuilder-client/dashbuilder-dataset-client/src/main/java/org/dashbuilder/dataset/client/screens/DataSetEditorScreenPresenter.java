@@ -57,12 +57,12 @@ public class DataSetEditorScreenPresenter {
     }
 
     public void onNewDataSet(@Observes NewDataSetEvent event) {
-        editorWidget.newDataSet(event.getUuid()).buildBasicAttributesEditionView();
+        editorWidget.newDataSet(event.getUuid());
     }
     
     public void onEditDataSet(@Observes EditDataSetEvent event) {
         try {
-            editorWidget.editDataSet(event.getUuid()).buildBasicAttributesEditionView();
+            editorWidget.editDataSet(event.getUuid());
         } catch (Exception e) {
             error("DataSetEditorScreenPresenter#onEditDataSet - Cannot edit data set with uuid [" + event.getUuid() + "].", e);
         }

@@ -33,7 +33,7 @@ import javax.enterprise.context.Dependent;
  * <p>This is the view implementation for Data Set Editor widget for editing sql provider specific attributes.</p>
  */
 @Dependent
-public class SQLDataSetDefAttributesEditor extends Composite implements DataSetEditor.View, SQLDataSetDefEditor {
+public class SQLDataSetDefAttributesEditor extends Composite implements SQLDataSetDefEditor {
     
     private static final int DEFAULT_CACHE_MAX_ROWS = -1;
     private static final int DEFAULT_CACHE_MAX_BYTES = -1;
@@ -48,51 +48,17 @@ public class SQLDataSetDefAttributesEditor extends Composite implements DataSetE
     @UiField
     ValueBoxEditorDecorator<String> dataSource;
     
-    private SQLDataSetDef dataSetDef;
     private boolean isEditMode;
 
     public SQLDataSetDefAttributesEditor() {
         initWidget(uiBinder.createAndBindUi(this));
     }
 
-    @Override
-    public void set(DataSetDef dataSetDef) {
-        this.dataSetDef = (SQLDataSetDef) dataSetDef;
+    public boolean isEditMode() {
+        return isEditMode;
     }
 
-    @Override
-    public Widget show(final boolean isEditMode) {
+    public void setEditMode(boolean isEditMode) {
         this.isEditMode = isEditMode;
-
-        // Clear the widget.
-        clearScreen();
-
-        // Attributes.
-        buildAtrributes();
-
-        return asWidget();
     }
-    
-    private void buildAtrributes() {
-        // TODO: Check edit mode.
-    }
-
-    @Override
-    public void hide() {
-        sqlAttributesPanel.setVisible(false);
-    }
-
-    @Override
-    public void clear() {
-        clearScreen();
-        clearStatus();
-    }
-    
-    private void clearScreen() {
-    }
-    
-    private void clearStatus() {
-        this.dataSetDef = null;
-    }
-
 }

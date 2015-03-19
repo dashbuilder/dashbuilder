@@ -181,7 +181,6 @@ public class ImageListEditorDecorator<T> extends Composite implements
     }
 
     public void setEditMode(final boolean isEditMode) {
-        // TODO
         this.isEditMode = isEditMode;
     }
     
