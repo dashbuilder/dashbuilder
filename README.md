@@ -11,6 +11,7 @@ Dashbuilder is a general purpose dashboard and reporting web app which allows fo
 * Support for both analytics and real-time dashboards
 
 Licensed under the Apache License, Version 2.0
+
 For further information, please visit the project web site <a href="http://dashbuilder.org" target="_blank">dashbuilder.org</a>
 
 Upcoming features
@@ -29,7 +30,7 @@ Architecture
 
 * Not tied to any chart rendering technology. Pluggable renderers.
 * No tied to any data storage.
-* Ability to read data from: CSV files, Databases, Elastic Search or a Java generator.
+* Ability to read data from: CSV files, Databases, Elastic Search or  Java generators.
 * Decoupled client & server layers. Ability to build pure lightweight client dashboards.
 * Ability to push & handle data sets on client for better performance.
 * Based on <a href="http://www.uberfireframework.org" target="_blank">Uberfire</a>, a framework for building rich workbench styled apps on the web.
