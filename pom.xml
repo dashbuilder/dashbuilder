@@ -8,12 +8,12 @@
     <groupId>org.jboss.integration-platform</groupId>
     <artifactId>jboss-integration-platform-parent</artifactId>
     <!-- Keep in sync with property <version.org.jboss.integration-platform> -->
-    <version>6.0.0.CR25</version>
+    <version>6.0.0.CR26</version>
   </parent>
 
   <groupId>org.dashbuilder</groupId>
   <artifactId>dashbuilder-parent-metadata</artifactId>
-  <version>0.2.2-SNAPSHOT</version>
+  <version>0.2.3-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>Dashbuilder Project</name>
