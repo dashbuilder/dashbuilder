@@ -129,12 +129,12 @@ Here is an example of a DataSet definition for this example:
         "cacheEnabled": false,
         "cacheMaxRows": 1000,
         "columns": [
-                    {"id": "id", "name": "id", "type": "number"},
-                    {"id": "amount", "name": "amount", "type": "number"},
-                    {"id": "department", "name": "department", "type": "label"},
-                    {"id": "employee", "name": "author", "type": "text"},
-                    {"id": "date", "name": "date", "type": "date"},
-                    {"id": "city", "name": "city", "type": "label"},
+                    {"id": "id", "type": "number"},
+                    {"id": "amount", "type": "number"},
+                    {"id": "department", "type": "label"},
+                    {"id": "employee", "type": "text"},
+                    {"id": "date", "type": "date"},
+                    {"id": "city", "type": "label"},
                 ]
     }
 

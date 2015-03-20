@@ -7,24 +7,18 @@ import java.util.GregorianCalendar;
 
 import org.apache.commons.lang.StringUtils;
 import org.dashbuilder.dataset.DataColumn;
+import org.dashbuilder.dataset.group.DateIntervalPattern;
 import org.dashbuilder.dataset.group.DateIntervalType;
 import org.dashbuilder.dataset.group.GroupStrategy;
 
 public class DateUtils {
 
-    public static final String PATTERN_YEAR = "yyyy";
-    public static final String PATTERN_MONTH = "yyyy-MM";
-    public static final String PATTERN_DAY = "yyyy-MM-dd";
-    public static final String PATTERN_HOUR = "yyyy-MM-dd HH";
-    public static final String PATTERN_MINUTE = "yyyy-MM-dd HH:mm";
-    public static final String PATTERN_SECOND = "yyyy-MM-dd HH:mm:ss";
-
-    public static final SimpleDateFormat FORMATTER_YEAR  = new SimpleDateFormat(PATTERN_YEAR);
-    public static final SimpleDateFormat FORMATTER_MONTH = new SimpleDateFormat(PATTERN_MONTH);
-    public static final SimpleDateFormat FORMATTER_DAY = new SimpleDateFormat(PATTERN_DAY);
-    public static final SimpleDateFormat FORMATTER_HOUR = new SimpleDateFormat(PATTERN_HOUR);
-    public static final SimpleDateFormat FORMATTER_MINUTE = new SimpleDateFormat(PATTERN_MINUTE);
-    public static final SimpleDateFormat FORMATTER_SECOND = new SimpleDateFormat(PATTERN_SECOND);
+    public static final SimpleDateFormat FORMATTER_YEAR  = new SimpleDateFormat(DateIntervalPattern.YEAR);
+    public static final SimpleDateFormat FORMATTER_MONTH = new SimpleDateFormat(DateIntervalPattern.MONTH);
+    public static final SimpleDateFormat FORMATTER_DAY = new SimpleDateFormat(DateIntervalPattern.DAY);
+    public static final SimpleDateFormat FORMATTER_HOUR = new SimpleDateFormat(DateIntervalPattern.HOUR);
+    public static final SimpleDateFormat FORMATTER_MINUTE = new SimpleDateFormat(DateIntervalPattern.MINUTE);
+    public static final SimpleDateFormat FORMATTER_SECOND = new SimpleDateFormat(DateIntervalPattern.SECOND);
 
     private static final String MONTH_START = "-M";
     private static final String MONTH_END = "-";

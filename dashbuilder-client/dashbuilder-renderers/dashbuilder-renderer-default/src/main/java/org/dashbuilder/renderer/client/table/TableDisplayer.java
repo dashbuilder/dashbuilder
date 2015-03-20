@@ -43,6 +43,7 @@ import org.dashbuilder.common.client.StringUtils;
 import org.dashbuilder.dataset.DataSetLookupConstraints;
 import org.dashbuilder.dataset.client.DataSetReadyCallback;
 import org.dashbuilder.dataset.group.Interval;
+import org.dashbuilder.displayer.ColumnSettings;
 import org.dashbuilder.displayer.DisplayerAttributeDef;
 import org.dashbuilder.displayer.DisplayerAttributeGroupDef;
 import org.dashbuilder.displayer.DisplayerConstraints;
@@ -181,10 +182,10 @@ public class TableDisplayer extends AbstractDisplayer {
         return new DisplayerConstraints(lookupConstraints)
                    .supportsAttribute( DisplayerAttributeDef.TYPE )
                    .supportsAttribute( DisplayerAttributeDef.RENDERER )
-                   .supportsAttribute( DisplayerAttributeDef.COLUMNS )
-                   .supportsAttribute( DisplayerAttributeGroupDef.FILTER_GROUP)
+                   .supportsAttribute( DisplayerAttributeGroupDef.COLUMNS_GROUP )
+                   .supportsAttribute( DisplayerAttributeGroupDef.FILTER_GROUP )
                    .supportsAttribute( DisplayerAttributeGroupDef.REFRESH_GROUP )
-                   .supportsAttribute( DisplayerAttributeGroupDef.TITLE_GROUP)
+                   .supportsAttribute( DisplayerAttributeGroupDef.TITLE_GROUP )
                    .supportsAttribute( DisplayerAttributeGroupDef.TABLE_GROUP );
     }
 
@@ -206,7 +207,7 @@ public class TableDisplayer extends AbstractDisplayer {
             // Get the sort settings
             if (lastOrderedColumn == null) {
                 String defaultSortColumn = displayerSettings.getTableDefaultSortColumnId();
-                if (defaultSortColumn != null && !"".equals( defaultSortColumn)) {
+                if (!StringUtils.isBlank(defaultSortColumn)) {
                     lastOrderedColumn = defaultSortColumn;
                     lastSortOrder = displayerSettings.getTableDefaultSortOrder();
                 }
@@ -260,7 +261,8 @@ public class TableDisplayer extends AbstractDisplayer {
         List<DataColumn> dataColumns = dataSet.getColumns();
         for ( int i = 0; i < dataColumns.size(); i++ ) {
             DataColumn dataColumn = dataColumns.get(i);
-            String columnName = dataColumn.getName();
+            ColumnSettings columnSettings = displayerSettings.getColumnSettings(dataColumn);
+            String columnName = columnSettings.getColumnName();
 
             Column<Integer, ?> column = createColumn( dataColumn, i );
             if ( column != null ) {

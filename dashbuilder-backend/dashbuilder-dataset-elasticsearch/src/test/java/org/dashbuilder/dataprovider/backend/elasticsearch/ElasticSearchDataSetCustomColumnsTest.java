@@ -101,15 +101,6 @@ public class ElasticSearchDataSetCustomColumnsTest extends ElasticSearchDataSetT
         Assert.assertTrue(result.getColumnByIndex(4).getId().equals(EL_EXAMPLE_COLUMN_EMPLOYEE));
         Assert.assertTrue(result.getColumnByIndex(5).getId().equals(EL_EXAMPLE_COLUMN_ID));
 
-        // Columns name assertion.
-        Assert.assertTrue(result.getColumnByIndex(0).getName().equals(EL_EXAMPLE_COLUMN_AMOUNT));
-        Assert.assertTrue(result.getColumnByIndex(1).getName().equals(EL_EXAMPLE_COLUMN_CITY));
-        Assert.assertTrue(result.getColumnByIndex(2).getName().equals(EL_EXAMPLE_COLUMN_DATE));
-        Assert.assertTrue(result.getColumnByIndex(3).getName().equals(EL_EXAMPLE_COLUMN_DEPT));
-        Assert.assertTrue(result.getColumnByIndex(4).getName().equals(EL_EXAMPLE_COLUMN_EMPLOYEE));
-        Assert.assertTrue(result.getColumnByIndex(5).getName().equals(EL_EXAMPLE_COLUMN_ID));
-
-
         // Columns type assertion.
         Assert.assertTrue(result.getColumnByIndex(0).getColumnType().equals(ColumnType.NUMBER));
         Assert.assertTrue(result.getColumnByIndex(1).getColumnType().equals(ColumnType.LABEL));
@@ -143,15 +134,6 @@ public class ElasticSearchDataSetCustomColumnsTest extends ElasticSearchDataSetT
         Assert.assertTrue(result.getColumnByIndex(4).getId().equals(EL_EXAMPLE_COLUMN_EMPLOYEE));
         Assert.assertTrue(result.getColumnByIndex(5).getId().equals(EL_EXAMPLE_COLUMN_ID));
 
-        // Columns name assertion.
-        Assert.assertTrue(result.getColumnByIndex(0).getName().equals(EL_EXAMPLE_COLUMN_AMOUNT));
-        Assert.assertTrue(result.getColumnByIndex(1).getName().equals(EL_EXAMPLE_COLUMN_CITY));
-        Assert.assertTrue(result.getColumnByIndex(2).getName().equals(EL_EXAMPLE_COLUMN_DATE));
-        Assert.assertTrue(result.getColumnByIndex(3).getName().equals(EL_EXAMPLE_COLUMN_DEPT));
-        Assert.assertTrue(result.getColumnByIndex(4).getName().equals(EL_EXAMPLE_COLUMN_EMPLOYEE));
-        Assert.assertTrue(result.getColumnByIndex(5).getName().equals(EL_EXAMPLE_COLUMN_ID));
-
-
         // Columns type assertion.
         Assert.assertTrue(result.getColumnByIndex(0).getColumnType().equals(ColumnType.NUMBER));
         Assert.assertTrue(result.getColumnByIndex(1).getColumnType().equals(ColumnType.TEXT));
@@ -181,13 +163,6 @@ public class ElasticSearchDataSetCustomColumnsTest extends ElasticSearchDataSetT
         Assert.assertTrue(result.getColumnByIndex(1).getId().equals(EL_EXAMPLE_COLUMN_EMPLOYEE));
         Assert.assertTrue(result.getColumnByIndex(2).getId().equals(EL_EXAMPLE_COLUMN_CITY));
         Assert.assertTrue(result.getColumnByIndex(3).getId().equals(EL_EXAMPLE_COLUMN_AMOUNT));
-
-        // Columns name assertion.
-        Assert.assertTrue(result.getColumnByIndex(0).getName().equals(EL_EXAMPLE_COLUMN_ID));
-        Assert.assertTrue(result.getColumnByIndex(1).getName().equals(EL_EXAMPLE_COLUMN_EMPLOYEE));
-        Assert.assertTrue(result.getColumnByIndex(2).getName().equals(EL_EXAMPLE_COLUMN_CITY));
-        Assert.assertTrue(result.getColumnByIndex(3).getName().equals(EL_EXAMPLE_COLUMN_AMOUNT));
-
 
         // Columns type assertion.
         Assert.assertTrue(result.getColumnByIndex(0).getColumnType().equals(ColumnType.NUMBER));

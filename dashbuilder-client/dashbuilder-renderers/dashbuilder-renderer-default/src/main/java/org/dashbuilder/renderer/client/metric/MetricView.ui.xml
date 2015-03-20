@@ -25,7 +25,7 @@
     <g:FlowPanel ui:field="centerPanel">
       <b:Paragraph ui:field="titlePanel" />
       <g:FlowPanel ui:field="metricPanel">
-        <b:Heading ui:field="metricHeading" size="1" />
+        <b:Heading ui:field="metricHeading" size="2" />
       </g:FlowPanel>
     </g:FlowPanel>
   </b:Hero>

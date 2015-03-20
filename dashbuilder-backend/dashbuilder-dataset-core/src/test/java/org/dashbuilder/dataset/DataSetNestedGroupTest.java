@@ -207,7 +207,7 @@ public class DataSetNestedGroupTest {
         assertThat(result.getRowCount()).isEqualTo(14);
     }
 
-    @Test
+/*    @Test
     public void testGroupJoin() throws Exception {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
@@ -223,7 +223,7 @@ public class DataSetNestedGroupTest {
 
         //printDataSet(result);
     }
-
+*/
     private void printDataSet(DataSet dataSet) {
         System.out.print(dataSetFormatter.formatDataSet(dataSet, "{", "}", ",\n", "\"", "\"", ", ") + "\n\n");
     }

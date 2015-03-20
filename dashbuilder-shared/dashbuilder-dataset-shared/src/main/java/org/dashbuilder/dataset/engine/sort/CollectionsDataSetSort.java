@@ -41,8 +41,7 @@ public class CollectionsDataSetSort implements DataSetSortAlgorithm {
         // Create the comparator.
         DataSetRowComparator comparator = new DataSetRowComparator();
         for (ColumnSort columnSort : columnSortList) {
-            DataColumn column = dataSet.getColumnByName(columnSort.getColumnId());
-            if (column == null) column = dataSet.getColumnById(columnSort.getColumnId());
+            DataColumn column = dataSet.getColumnById(columnSort.getColumnId());
             if (column == null) throw new IllegalArgumentException("Sort column not found: " + columnSort.getColumnId());
 
             comparator.criteria(column, columnSort.getOrder());

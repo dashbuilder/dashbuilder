@@ -97,18 +97,24 @@ public class DataSetLookupJSONMarshaller {
     public JSONObject toJson( DataSetLookup dataSetLookup ) {
         JSONObject json = new JSONObject();
         if ( dataSetLookup != null ) {
-            json.put( UUID, new JSONString( dataSetLookup.getDataSetUUID() ) );
+            String uuid = dataSetLookup.getDataSetUUID();
+
+            if (!StringUtils.isBlank(uuid)) json.put( UUID, new JSONString( uuid ) );
             json.put( ROWCOUNT, new JSONString( Integer.toString(dataSetLookup.getNumberOfRows()) ) );
             json.put( ROWOFFSET, new JSONString( Integer.toString(dataSetLookup.getRowOffset()) ) );
 
             List<DataSetFilter> filterOps = dataSetLookup.getOperationList( DataSetFilter.class );
-            json.put( FILTEROPS, formatFilterOperations( filterOps ) );
-
+            if (!filterOps.isEmpty()) {
+                json.put(FILTEROPS, formatFilterOperations(filterOps));
+            }
             List<DataSetGroup> groupOps = dataSetLookup.getOperationList( DataSetGroup.class );
-            json.put( GROUPOPS, formatGroupOperations( groupOps ) );
-
+            if (!groupOps.isEmpty()) {
+                json.put(GROUPOPS, formatGroupOperations(groupOps));
+            }
             List<DataSetSort> sortOps = dataSetLookup.getOperationList( DataSetSort.class );
-            json.put( SORTOPS, formatSortOperations( sortOps ) );
+            if (!sortOps.isEmpty()) {
+                json.put(SORTOPS, formatSortOperations(sortOps));
+            }
         }
         return json;
     }

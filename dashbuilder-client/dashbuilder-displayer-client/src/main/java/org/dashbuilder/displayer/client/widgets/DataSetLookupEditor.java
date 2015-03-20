@@ -269,12 +269,44 @@ public class DataSetLookupEditor implements IsWidget,
         }
     }
 
-    public void changeGroupFunction(GroupFunction groupFunction, String sourceId, String columnId, AggregateFunctionType function) {
-        groupFunction.setSourceId(sourceId);
-        groupFunction.setColumnId(sourceId);
-        if (!StringUtils.isBlank(columnId)) groupFunction.setColumnId(columnId);
-        groupFunction.setFunction(null);
 
+    protected int getGroupFunctionLastIdx(List<GroupFunction> groupFunctions, String sourceId) {
+        int last = -1;
+        for (GroupFunction gf : groupFunctions) {
+            if (gf.getSourceId().equals(sourceId)) {
+                int idx = getGroupFunctionColumnIdx(gf.getColumnId());
+                if (last == -1 || last < idx) {
+                    last = idx;
+                }
+            }
+        }
+        return last;
+    }
+
+    protected int getGroupFunctionColumnIdx(String columnId) {
+        int sep = columnId.lastIndexOf("_");
+        if (sep != -1) {
+            try {
+                String str = columnId.substring(sep + 1);
+                return Integer.parseInt(str);
+            } catch (Exception e) {
+                // Ignore
+            }
+        }
+        return 1;
+    }
+
+    protected String nextGroupFunctionColumnId(String sourceId, AggregateFunctionType function) {
+        int lastIdx = getGroupFunctionLastIdx(getFirstGroupFunctions(), sourceId);
+        String next = sourceId;
+        if (function != null) next += "_" + function.name().toLowerCase();
+        if (lastIdx != -1) next += "_" + (++lastIdx);
+        return next;
+    }
+
+    public void changeGroupFunction(GroupFunction groupFunction, String sourceId, AggregateFunctionType function) {
+
+        groupFunction.setFunction(null);
         if (function != null) {
             ColumnType columnType = getColumnType(sourceId);
             if (function.supportType(columnType)) {
@@ -287,6 +319,12 @@ public class DataSetLookupEditor implements IsWidget,
                     }
                 }
             }
+        }
+
+        if (!sourceId.equals(groupFunction.getSourceId())) {
+            String newColumnId = nextGroupFunctionColumnId(sourceId, groupFunction.getFunction());
+            groupFunction.setSourceId(sourceId);
+            groupFunction.setColumnId(newColumnId);
         }
 
         if (listener != null) {
@@ -310,8 +348,12 @@ public class DataSetLookupEditor implements IsWidget,
             DataSetGroup op = getFirstGroupOp();
             List<GroupFunction> functionList = op.getGroupFunctions();
             GroupFunction last = functionList.get(functionList.size() - 1);
+
             GroupFunction clone = last.cloneInstance();
+            String newColumnId = nextGroupFunctionColumnId(last.getSourceId(), last.getFunction());
+            clone.setColumnId(newColumnId);
             functionList.add(clone);
+
             if (listener != null) {
                 listener.groupChanged(op);
             }

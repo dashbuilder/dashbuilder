@@ -377,8 +377,8 @@ public class SharedDataSetOpEngine implements DataSetOpEngine {
         protected void checkSortOp(DataSet dataSet, DataSetSort op) {
             for (ColumnSort columnSort : op.getColumnSortList()) {
                 String id = columnSort.getColumnId();
-                if (dataSet.getColumnByName(id) == null && dataSet.getColumnById(id) == null) {
-                    throw new IllegalArgumentException("Sort column specified not found in the data set: " + id);
+                if (dataSet.getColumnById(id) == null) {
+                    throw new IllegalArgumentException("Sort column not found in the data set: " + id);
                 }
             }
         }
@@ -468,31 +468,37 @@ public class SharedDataSetOpEngine implements DataSetOpEngine {
 
             // Data set header.
             DataSet result = DataSetFactory.newEmptyDataSet();
-            for (GroupFunction groupFunction : op.getGroupFunctions()) {
+            for (GroupFunction gf : op.getGroupFunctions()) {
+
+                String sourceId = gf.getSourceId();
+                String columnId = gf.getColumnId() == null ? sourceId : gf.getColumnId();
 
                 // Group columns
-                String columnId = groupFunction.getSourceId();
-                String columnName = groupFunction.getColumnId();
-                AggregateFunctionType columnFunction = groupFunction.getFunction();
-                if (columnId != null && columnId.equals(columnGroup.getColumnId()) && columnFunction == null) {
-                    result.addColumn(columnId, columnName, ColumnType.LABEL);
-                    DataColumnImpl column = (DataColumnImpl) result.getColumnById(columnId);
+                AggregateFunctionType columnFunction = gf.getFunction();
+                if (sourceId != null && sourceId.equals(columnGroup.getSourceId()) && columnFunction == null) {
+                    DataColumnImpl column = new DataColumnImpl(columnId, ColumnType.LABEL);
                     column.setColumnGroup(columnGroup);
                     column.setIntervalType(index.getIntervalType());
                     column.setMinValue(index.getMinValue());
                     column.setMaxValue(index.getMaxValue());
+                    column.setGroupFunction(gf);
+                    result.addColumn(column);
                 } else {
                     // Columns based on aggregation functions
-                    AggregateFunctionType aggF = groupFunction.getFunction();
+                    AggregateFunctionType aggF = gf.getFunction();
                     if (aggF != null) {
-                        result.addColumn(columnId != null ? columnId : columnName,
-                                columnName, ColumnType.NUMBER);
+                        DataColumnImpl column = new DataColumnImpl(columnId, ColumnType.NUMBER);
+                        column.setGroupFunction(gf);
+                        result.addColumn(column);
                     }
                     // Column values selection
                     else {
-                        DataColumn targetColumn = dataSet.getColumnById(columnId);
+                        DataColumn targetColumn = dataSet.getColumnById(sourceId);
                         if (targetColumn == null) throw new IllegalArgumentException("Column not found: " + columnId);
-                        result.addColumn(columnId, columnName, targetColumn.getColumnType());
+
+                        DataColumnImpl column = new DataColumnImpl(columnId, targetColumn.getColumnType());
+                        column.setGroupFunction(gf);
+                        result.addColumn(column);
                     }
                 }
             }
@@ -510,14 +516,14 @@ public class SharedDataSetOpEngine implements DataSetOpEngine {
                 // Add the aggregate calculations.
                 for (int j=0; j< groupFunctions.size(); j++) {
                     GroupFunction groupFunction = groupFunctions.get(j);
-                    String columnId = groupFunction.getSourceId();
+                    String sourceId = groupFunction.getSourceId();
                     AggregateFunctionType columnFunction = groupFunction.getFunction();
 
-                    if (columnId != null && columnId.equals(columnGroup.getColumnId()) && columnFunction == null) {
+                    if (sourceId != null && sourceId.equals(columnGroup.getSourceId()) && columnFunction == null) {
                         result.setValueAt(row, j, intervalIdx.getName());
                     } else {
                         DataColumn dataColumn = dataSet.getColumnByIndex(0);
-                        if (columnId != null) dataColumn = dataSet.getColumnById(columnId);
+                        if (sourceId != null) dataColumn = dataSet.getColumnById(sourceId);
 
                         // Columns based on aggregation functions
                         if (columnFunction != null) {
@@ -545,30 +551,36 @@ public class SharedDataSetOpEngine implements DataSetOpEngine {
         private DataSet _buildDataSet(InternalContext context, List<GroupFunction> groupFunctions, boolean hasAggregations) {
             DataSetIndexNode index = context.index;
             DataSet dataSet = context.dataSet;
-            DataSet result= DataSetFactory.newEmptyDataSet();
+            DataSet result = DataSetFactory.newEmptyDataSet();
 
             if (hasAggregations) {
                 for (int i=0; i< groupFunctions.size(); i++) {
-                    GroupFunction groupFunction = groupFunctions.get(i);
-                    result.addColumn(groupFunction.getSourceId(),
-                            groupFunction.getColumnId(),
-                            ColumnType.NUMBER);
+                    GroupFunction gf = groupFunctions.get(i);
+                    String sourceId = gf.getSourceId();
+                    String columnId = gf.getColumnId() == null ? sourceId : gf.getColumnId();
 
-                    DataColumn dataColumn = dataSet.getColumnById(groupFunction.getSourceId());
+                    DataColumnImpl column = new DataColumnImpl(columnId, ColumnType.NUMBER);
+                    column.setGroupFunction(gf);
+                    result.addColumn(column);
+
+                    DataColumn dataColumn = dataSet.getColumnById(sourceId);
                     if (dataColumn == null) dataColumn = dataSet.getColumnByIndex(0);
 
-                    Double aggValue = _calculateFunction(dataColumn, groupFunction.getFunction(), index);
+                    Double aggValue = _calculateFunction(dataColumn, gf.getFunction(), index);
                     result.setValueAt(0, i, aggValue);
                 }
             } else {
                 DataSet _temp = dataSet.trim(index.getRows());
                 for (int i=0; i< groupFunctions.size(); i++) {
-                    GroupFunction groupFunction = groupFunctions.get(i);
-                    DataColumn targetColumn = _temp.getColumnById(groupFunction.getSourceId());
-                    result.addColumn(groupFunction.getSourceId(),
-                            groupFunction.getColumnId(),
-                            targetColumn.getColumnType(),
-                            targetColumn.getValues());
+                    GroupFunction gf = groupFunctions.get(i);
+                    String sourceId = gf.getSourceId();
+                    String columnId = gf.getColumnId() == null ? sourceId : gf.getColumnId();
+
+                    DataColumn targetColumn = _temp.getColumnById(sourceId);
+                    DataColumnImpl column = new DataColumnImpl(columnId, targetColumn.getColumnType());
+                    column.setGroupFunction(gf);
+                    column.setValues(targetColumn.getValues());
+                    result.addColumn(column);
                 }
             }
             return result;
@@ -577,7 +589,7 @@ public class SharedDataSetOpEngine implements DataSetOpEngine {
         private Double _calculateFunction(DataColumn column, AggregateFunctionType type, DataSetIndexNode index) {
             // Preconditions
             if (type == null) {
-                throw new IllegalArgumentException("No aggregation function specified for the column: " + column.getName());
+                throw new IllegalArgumentException("No aggregation function specified for the column: " + column.getId());
             }
             // Look into the index first
             if (index != null) {

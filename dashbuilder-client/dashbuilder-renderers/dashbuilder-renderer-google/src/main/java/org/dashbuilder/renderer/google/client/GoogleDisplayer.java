@@ -33,6 +33,7 @@ import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.client.DataSetReadyCallback;
+import org.dashbuilder.displayer.ColumnSettings;
 import org.dashbuilder.displayer.client.AbstractDisplayer;
 import org.dashbuilder.renderer.google.client.resources.i18n.GoogleDisplayerConstants;
 
@@ -182,58 +183,57 @@ public abstract class GoogleDisplayer extends AbstractDisplayer {
         List<DataColumn> columns = dataSet.getColumns();
         for (int i = 0; i < columns.size(); i++) {
             DataColumn dataColumn = columns.get(i);
-            List columnValues = dataColumn.getValues();
-            ColumnType columnType = dataColumn.getColumnType();
             String columnId = dataColumn.getId();
-            String columnName = dataColumn.getName();
-            if (columnName == null) columnName = columnId;
+            ColumnType columnType = dataColumn.getColumnType();
+            ColumnSettings columnSettings = displayerSettings.getColumnSettings(dataColumn);
+            googleTable.addColumn(getColumnType(dataColumn), columnSettings.getColumnName(), columnId);
 
-            googleTable.addColumn(getColumnType(dataColumn), columnName, columnId);
+            List columnValues = dataColumn.getValues();
             for (int j = 0; j < columnValues.size(); j++) {
                 Object value = columnValues.get(j);
-                if (ColumnType.LABEL.equals(columnType)) value = super.formatValue(value, dataColumn);
-                setTableValue(googleTable, columnType, value, j, i);
+
+                if (ColumnType.DATE.equals(columnType)) {
+                    if (value == null) googleTable.setValue(j, i, new Date());
+                    else googleTable.setValue(j, i, (Date) value);
+                }
+                else if (ColumnType.NUMBER.equals(columnType)) {
+                    if (value == null) {
+                        googleTable.setValue(j, i, 0d);
+                    } else {
+                        value = super.applyExpression(value.toString(), columnSettings.getValueExpression());
+                        googleTable.setValue(j, i, Double.parseDouble(value.toString()));
+                    }
+                }
+                else {
+                    value = super.formatValue(value, dataColumn);
+                    googleTable.setValue(j, i, value.toString());
+                }
             }
         }
 
         // Format the table values
-        DateFormatOptions dateFormatOptions = DateFormatOptions.create();
-        dateFormatOptions.setFormatType(FormatType.MEDIUM);
-        DateFormat dateFormat = DateFormat.create(dateFormatOptions);
-        NumberFormatOptions numberFormatOptions = NumberFormatOptions.create();
-        numberFormatOptions.setPattern("#,###.##");
-        NumberFormat numberFormat = NumberFormat.create(numberFormatOptions);
-
         for (int i = 0; i < googleTable.getNumberOfColumns(); i++) {
+            DataColumn dataColumn = columns.get(i);
             com.googlecode.gwt.charts.client.ColumnType type = googleTable.getColumnType(i);
+            ColumnSettings columnSettings = displayerSettings.getColumnSettings(dataColumn);
+            String pattern = columnSettings.getValuePattern();
+
             if (com.googlecode.gwt.charts.client.ColumnType.DATE.equals(type)) {
+
+                DateFormatOptions dateFormatOptions = DateFormatOptions.create();
+                dateFormatOptions.setPattern(pattern);
+                DateFormat dateFormat = DateFormat.create(dateFormatOptions);
                 dateFormat.format(googleTable, i);
             }
             else if (com.googlecode.gwt.charts.client.ColumnType.NUMBER.equals(type)) {
+
+                NumberFormatOptions numberFormatOptions = NumberFormatOptions.create();
+                numberFormatOptions.setPattern(pattern);
+                NumberFormat numberFormat = NumberFormat.create(numberFormatOptions);
                 numberFormat.format(googleTable, i);
             }
         }
         return googleTable;
-    }
-
-    protected com.google.gwt.i18n.client.NumberFormat numberFormat = com.google.gwt.i18n.client.NumberFormat.getFormat("#0.00");
-
-    public void setTableValue(DataTable gTable, ColumnType type, Object value, int row, int column) {
-        if (ColumnType.DATE.equals(type)) {
-            if (value == null) gTable.setValue(row, column, new Date());
-            else gTable.setValue(row, column, (Date) value);
-        }
-        else if (ColumnType.NUMBER.equals(type)) {
-            if (value == null) {
-                gTable.setValue(row, column, 0d);
-            } else {
-                String valueStr = numberFormat.format((Number) value);
-                gTable.setValue(row, column, Double.parseDouble(valueStr));
-            }
-        }
-        else {
-            gTable.setValue(row, column, value.toString());
-        }
     }
 
     public com.googlecode.gwt.charts.client.ColumnType getColumnType(DataColumn dataColumn) {

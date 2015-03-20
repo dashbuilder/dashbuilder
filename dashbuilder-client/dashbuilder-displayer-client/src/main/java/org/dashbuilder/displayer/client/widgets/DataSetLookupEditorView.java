@@ -311,8 +311,7 @@ public class DataSetLookupEditorView extends Composite
                     columnTitle, functionsEnabled, canDelete, new ColumnFunctionEditor.Listener() {
 
                         public void columnChanged(ColumnFunctionEditor editor) {
-                            presenter.changeGroupFunction(groupFunction,
-                                    editor.getSourceId(), editor.getColumnId(), editor.getFunction());
+                            presenter.changeGroupFunction(groupFunction, editor.getSourceId(), editor.getFunction());
                             _updateColumnControls();
                         }
                         public void columnDeleted(ColumnFunctionEditor editor) {

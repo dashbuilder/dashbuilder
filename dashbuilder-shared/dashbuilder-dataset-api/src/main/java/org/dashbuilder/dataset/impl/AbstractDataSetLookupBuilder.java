@@ -39,7 +39,7 @@ public abstract class AbstractDataSetLookupBuilder<T> implements DataSetLookupBu
     private static final String SYMBOL_UNDERSCORE = "_";
     private DataSetLookup dataSetLookup = new DataSetLookup();
 
-    private DataSetOp getCurrentOp() {
+    protected DataSetOp getCurrentOp() {
         List<DataSetOp> dataSetOps = dataSetLookup.getOperationList();
         if (dataSetOps.isEmpty()) return null;
         return dataSetOps.get(dataSetOps.size() - 1);
@@ -218,13 +218,6 @@ public abstract class AbstractDataSetLookupBuilder<T> implements DataSetLookupBu
         return this.column(columnId, null, newColumnId);
     }
 
-    /**
-     * <p>In this method, no resulting column identifier is specified by user.</p>
-     * <p>By default, use a naming convention to generate the resulting column identifier by using <code>columnId</code> and <code>function</code> arguments.</p>
-     *
-     * @param columnId The identifier of the source column.
-     * @param function The AggregationFunction for calculating the column values.
-     */
     public T column(String columnId, AggregateFunctionType function) {
         String newColumnId = buildColumnId(columnId, function);
         return this.column(columnId, function, newColumnId);
@@ -249,7 +242,7 @@ public abstract class AbstractDataSetLookupBuilder<T> implements DataSetLookupBu
     }
 
     /**
-     * <p>Builds a column identifier when applying an aggregate function to the column, but no id is specified by user.</p>
+     * <p>Builds a column identifier when applying an aggregate function to the column, but no id is specified.</p>
      * <p>It follows the nomenclature: <code>sourceId_function</code>.</p>
      *
      * @param sourceId The source column identifier.
@@ -257,9 +250,10 @@ public abstract class AbstractDataSetLookupBuilder<T> implements DataSetLookupBu
      * @return A new column identifier.
      */
     protected String buildColumnId(String sourceId, AggregateFunctionType function) {
-        if (sourceId == null && function == null) return null;
-        if (sourceId != null && function == null) return sourceId;
-        if (sourceId == null) return function.name();
-        return sourceId + SYMBOL_UNDERSCORE + function.name();
+        if (sourceId == null || sourceId.trim().length() == 0) {
+            return function.name().toLowerCase();
+        } else {
+            return sourceId + SYMBOL_UNDERSCORE + function.name().toLowerCase();
+        }
     }
 }

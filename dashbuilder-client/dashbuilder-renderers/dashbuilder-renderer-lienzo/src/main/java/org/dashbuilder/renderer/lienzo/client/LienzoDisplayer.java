@@ -201,8 +201,6 @@ public abstract class LienzoDisplayer extends AbstractDisplayer {
                 List columnValues = dataColumn.getValues();
                 ColumnType columnType = dataColumn.getColumnType();
                 String columnId = dataColumn.getId();
-                String columnName = dataColumn.getName();
-                if (columnName == null) columnName = columnId;
 
                 lienzoTable.addColumn(columnId, getColumnType(dataColumn));
                 for (int j = 0; j < columnValues.size(); j++) {

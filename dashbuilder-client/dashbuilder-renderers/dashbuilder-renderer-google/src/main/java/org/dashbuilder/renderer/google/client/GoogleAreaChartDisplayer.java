@@ -63,7 +63,7 @@ public class GoogleAreaChartDisplayer extends GoogleCategoriesDisplayer {
         return new DisplayerConstraints(lookupConstraints)
                 .supportsAttribute(DisplayerAttributeDef.TYPE)
                 .supportsAttribute(DisplayerAttributeDef.RENDERER)
-                .supportsAttribute(DisplayerAttributeDef.COLUMNS)
+                .supportsAttribute(DisplayerAttributeGroupDef.COLUMNS_GROUP)
                 .supportsAttribute( DisplayerAttributeGroupDef.FILTER_GROUP )
                 .supportsAttribute( DisplayerAttributeGroupDef.REFRESH_GROUP )
                 .supportsAttribute( DisplayerAttributeGroupDef.TITLE_GROUP)
@@ -115,7 +115,7 @@ public class GoogleAreaChartDisplayer extends GoogleCategoriesDisplayer {
 
     private AreaChartOptions createOptions() {
         Animation anim = Animation.create();
-        anim.setDuration(500);
+        anim.setDuration(700);
         anim.setEasing(AnimationEasing.IN_AND_OUT);
 
         AreaChartOptions options = AreaChartOptions.create();

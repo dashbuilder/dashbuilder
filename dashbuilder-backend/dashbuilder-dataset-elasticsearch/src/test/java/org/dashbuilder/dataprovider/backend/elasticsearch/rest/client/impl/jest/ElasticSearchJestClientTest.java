@@ -227,7 +227,7 @@ public class ElasticSearchJestClientTest {
         Assert.assertEquals(hit0Fields.get("city").toString(), "Madrid");
         Assert.assertEquals(hit0Fields.get("department").toString(), "Sales");
         Assert.assertEquals(hit0Fields.get("employee").toString(), "Nita Marling");
-        Date date = new SimpleDateFormat(DateUtils.PATTERN_DAY).parse("2012-03-02");
+        Date date = new SimpleDateFormat(DateIntervalPattern.DAY).parse("2012-03-02");
         Assert.assertEquals(hit0Fields.get("date"), date);
         Assert.assertEquals(hit0Fields.get("amount").toString(), "344.9");
 
@@ -245,7 +245,7 @@ public class ElasticSearchJestClientTest {
         Assert.assertEquals(hit7Fields.get("city").toString(), "Westford");
         Assert.assertEquals(hit7Fields.get("department").toString(), "Sales");
         Assert.assertEquals(hit7Fields.get("employee").toString(), "Jerri Preble");
-        date = new SimpleDateFormat(DateUtils.PATTERN_DAY).parse("2010-11-30");
+        date = new SimpleDateFormat(DateIntervalPattern.DAY).parse("2010-11-30");
         Assert.assertEquals(hit7Fields.get("date"), date);
         Assert.assertEquals(hit7Fields.get("amount").toString(), "343.45");
     }

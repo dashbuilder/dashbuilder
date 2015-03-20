@@ -37,7 +37,7 @@
       <b:ListBox ui:field="columnListBox" width="120px" />
       <b:ListBox ui:field="functionListBox" width="80px" />
       <b:Icon type="REMOVE" ui:field="columnDeleteIcon" iconSize="LARGE" visible="false"/>
-      <b:Icon type="ARROW_DOWN" ui:field="columnExpandIcon" iconSize="LARGE"/>
+      <b:Icon type="ARROW_DOWN" ui:field="columnExpandIcon" iconSize="LARGE" visible="false"/>
     </g:HorizontalPanel>
     <g:FlowPanel ui:field="columnDetailsPanel" visible="false" styleName="{style.columnDetailsPanel}">
       <dg:ColumnDetailsEditor ui:field="columnDetailsEditor" />

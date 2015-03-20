@@ -108,17 +108,17 @@ public class DisplayerCoordinator {
             }
         }
 
-        public void onGroupIntervalsSelected(Displayer displayer, DataSetGroup groupOp) {
+        public void onFilterEnabled(Displayer displayer, DataSetGroup groupOp) {
             for (Displayer other : displayerList) {
                 if (other == displayer) continue;
-                other.onGroupIntervalsSelected(displayer, groupOp);
+                other.onFilterEnabled(displayer, groupOp);
             }
         }
 
-        public void onGroupIntervalsReset(Displayer displayer, List<DataSetGroup> groupOps) {
+        public void onFilterReset(Displayer displayer, List<DataSetGroup> groupOps) {
             for (Displayer other : displayerList) {
                 if (other == displayer) continue;
-                other.onGroupIntervalsReset(displayer, groupOps);
+                other.onFilterReset(displayer, groupOps);
             }
         }
     }

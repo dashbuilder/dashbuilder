@@ -15,11 +15,15 @@
  */
 package org.dashbuilder.displayer.client.widgets;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
+import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetLookup;
 import org.dashbuilder.dataset.DataSetLookupConstraints;
@@ -30,6 +34,7 @@ import org.dashbuilder.dataset.client.DataSetMetadataCallback;
 import org.dashbuilder.dataset.filter.DataSetFilter;
 import org.dashbuilder.dataset.group.DataSetGroup;
 import org.dashbuilder.dataset.group.GroupFunction;
+import org.dashbuilder.displayer.ColumnSettings;
 import org.dashbuilder.displayer.DisplayerAttributeDef;
 import org.dashbuilder.displayer.DisplayerAttributeGroupDef;
 import org.dashbuilder.displayer.DisplayerConstraints;
@@ -177,8 +182,8 @@ public class DisplayerEditor implements IsWidget,
         // Create new settings for the selected type
         DisplayerSettings oldSettings = displayerSettings;
         DisplayerSettings newSettings = DisplayerPrototypes.get().getProto(type);
-        DataSet oldDataSet = displayerSettings.getDataSet();
-        DataSetLookup oldDataLookup = displayerSettings.getDataSetLookup();
+        DataSet oldDataSet = oldSettings.getDataSet();
+        DataSetLookup oldDataLookup = oldSettings.getDataSetLookup();
 
         // Check if the current data lookup is compatible with the new displayer type
         if (oldDataSet == null && oldDataLookup != null) {
@@ -211,6 +216,7 @@ public class DisplayerEditor implements IsWidget,
         oldSettings.removeDisplayerSetting(DisplayerAttributeGroupDef.CHART_GROUP);
         oldSettings.removeDisplayerSetting(DisplayerAttributeGroupDef.CHART_MARGIN_GROUP);
         oldSettings.removeDisplayerSetting(DisplayerAttributeGroupDef.CHART_LEGEND_GROUP);
+        oldSettings.removeDisplayerSetting(DisplayerAttributeGroupDef.AXIS_GROUP);
         newSettings.getSettingsFlatMap().putAll(oldSettings.getSettingsFlatMap());
 
         // Ensure the renderer supports the new type
@@ -224,6 +230,7 @@ public class DisplayerEditor implements IsWidget,
 
         // Update the view
         displayerSettings = newSettings;
+        removeStaleSettings();
         view.init(displayerSettings, this);
     }
     @Override
@@ -241,6 +248,8 @@ public class DisplayerEditor implements IsWidget,
                     // Make the view to show the new lookup instance
                     displayerSettings.setDataSet(null);
                     displayerSettings.setDataSetLookup(lookup);
+
+                    removeStaleSettings();
                     view.updateDataSetLookup(constraints, metadata);
                 }
                 public void notFound() {
@@ -255,16 +264,57 @@ public class DisplayerEditor implements IsWidget,
 
     @Override
     public void groupChanged(DataSetGroup groupOp) {
+        removeStaleSettings();
         view.init(displayerSettings, this);
     }
 
     @Override
     public void columnChanged(GroupFunction groupFunction) {
+        removeStaleSettings();
         view.init(displayerSettings, this);
     }
 
     @Override
     public void filterChanged(DataSetFilter filterOp) {
         view.init(displayerSettings, this);
+    }
+
+    public void removeStaleSettings() {
+        List<String> columnIds = getExistingDataColumnIds();
+
+        // Remove the settings for non existing columns
+        Iterator<ColumnSettings> it = displayerSettings.getColumnSettingsList().iterator();
+        while (it.hasNext()) {
+            ColumnSettings columnSettings = it.next();
+            if (!columnIds.contains(columnSettings.getColumnId())) {
+                it.remove();
+            }
+        }
+        // Reset table sort column
+        if (!columnIds.contains(displayerSettings.getTableDefaultSortColumnId())) {
+            displayerSettings.setTableDefaultSortColumnId(null);
+        }
+    }
+
+    public List<String> getExistingDataColumnIds() {
+        DataSet dataSet = displayerSettings.getDataSet();
+        DataSetLookup dataSetLookup = displayerSettings.getDataSetLookup();
+
+        List<String> columnIds = new ArrayList<String>();
+        if (dataSet != null) {
+            for (DataColumn dataColumn : dataSet.getColumns()) {
+                columnIds.add(dataColumn.getId());
+            }
+        }
+        else if (dataSetLookup != null) {
+            int idx = dataSetLookup.getLastGroupOpIndex(0);
+            if (idx != -1) {
+                DataSetGroup groupOp = dataSetLookup.getOperation(idx);
+                for (GroupFunction groupFunction : groupOp.getGroupFunctions()) {
+                    columnIds.add(groupFunction.getColumnId());
+                }
+            }
+        }
+        return columnIds;
     }
 }

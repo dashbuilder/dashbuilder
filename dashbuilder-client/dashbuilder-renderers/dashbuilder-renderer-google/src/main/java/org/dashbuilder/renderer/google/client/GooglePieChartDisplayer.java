@@ -75,9 +75,9 @@ public class GooglePieChartDisplayer extends GoogleCategoriesDisplayer {
                         ColumnType.NUMBER});
 
         return new DisplayerConstraints(lookupConstraints)
-                   .supportsAttribute( DisplayerAttributeDef.TYPE )
+                   .supportsAttribute(DisplayerAttributeDef.TYPE)
                    .supportsAttribute(DisplayerAttributeDef.RENDERER)
-                   .supportsAttribute( DisplayerAttributeDef.COLUMNS )
+                   .supportsAttribute(DisplayerAttributeGroupDef.COLUMNS_GROUP)
                    .supportsAttribute( DisplayerAttributeGroupDef.FILTER_GROUP )
                    .supportsAttribute( DisplayerAttributeGroupDef.REFRESH_GROUP )
                    .supportsAttribute( DisplayerAttributeGroupDef.TITLE_GROUP)

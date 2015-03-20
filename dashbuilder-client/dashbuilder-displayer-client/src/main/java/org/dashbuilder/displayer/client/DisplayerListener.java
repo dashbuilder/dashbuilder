@@ -51,7 +51,7 @@ public interface DisplayerListener {
      * @param displayer The Displayer instance where the interval selection event comes from.
      * @param groupOp The group interval selection operation.
      */
-    void onGroupIntervalsSelected(Displayer displayer, DataSetGroup groupOp);
+    void onFilterEnabled(Displayer displayer, DataSetGroup groupOp);
 
     /**
      * Invoked when a group interval reset request is executed on a given Displayer instance.
@@ -59,5 +59,5 @@ public interface DisplayerListener {
      * @param displayer The Displayer instance where the interval selection event comes from.
      * @param groupOps The set of group interval selection operations reset.
      */
-    void onGroupIntervalsReset(Displayer displayer, List<DataSetGroup> groupOps);
+    void onFilterReset(Displayer displayer, List<DataSetGroup> groupOps);
 }

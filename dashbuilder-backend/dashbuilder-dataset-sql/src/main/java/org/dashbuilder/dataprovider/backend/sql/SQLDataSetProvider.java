@@ -588,35 +588,34 @@ public class SQLDataSetProvider implements DataSetProvider {
             }
             else {
                 ColumnGroup cg = gOp.getColumnGroup();
-                for (GroupFunction gFunc : gOp.getGroupFunctions()) {
+                for (GroupFunction gf : gOp.getGroupFunctions()) {
 
-                    String columnId = gFunc.getSourceId();
-                    String columnName = gFunc.getColumnId();
-                    if (columnId != null) _assertColumnExists(columnId);
-                    else columnId = columnName;
+                    String sourceId = gf.getSourceId();
+                    if (sourceId != null) _assertColumnExists(sourceId);
+                    String columnId = gf.getColumnId() == null ?  sourceId : gf.getColumnId();
 
                     DataColumnImpl column = new DataColumnImpl();
                     column.setId(columnId);
-                    column.setName(columnName);
+                    column.setGroupFunction(gf);
                     result.add(column);
 
                     // Group column
-                    if (cg != null && cg.getSourceId().equals(columnId)) {
+                    if (cg != null && cg.getSourceId().equals(sourceId)) {
                         column.setColumnType(ColumnType.LABEL);
                         column.setColumnGroup(cg);
-                        if (ColumnType.DATE.equals(metadata.getColumnType(columnId))) {
+                        if (ColumnType.DATE.equals(metadata.getColumnType(sourceId))) {
                             column.setIntervalType(dateIntervalType != null ? dateIntervalType.toString() : null);
                             column.setMinValue(dateLimits != null ? dateLimits[0] : null);
                             column.setMaxValue(dateLimits != null ? dateLimits[1] : null);
                         }
                     }
                     // Aggregated column
-                    else if (gFunc.getFunction() != null) {
+                    else if (gf.getFunction() != null) {
                         column.setColumnType(ColumnType.NUMBER);
                     }
                     // Existing Column
                     else {
-                        column.setColumnType(metadata.getColumnType(columnId));
+                        column.setColumnType(metadata.getColumnType(sourceId));
                     }
                 }
             }
@@ -650,9 +649,14 @@ public class SQLDataSetProvider implements DataSetProvider {
             if (isDynamicDateGroup(groupOp)) {
                 ColumnGroup cg = groupOp.getColumnGroup();
                 _jooqQuery.orderBy(_createJooqField(cg).asc());
-                DataSetSort sortOp = new DataSetSort();
-                sortOp.addSortColumn(new ColumnSort(cg.getSourceId(), SortOrder.ASCENDING));
-                postProcessingOps.add(sortOp);
+
+                // If the group column is in the resulting data set then ensure the data set order
+                GroupFunction gf = groupOp.getGroupFunction(cg.getSourceId());
+                if (gf != null) {
+                    DataSetSort sortOp = new DataSetSort();
+                    sortOp.addSortColumn(new ColumnSort(gf.getColumnId(), SortOrder.ASCENDING));
+                    postProcessingOps.add(sortOp);
+                }
             }
         }
 
@@ -739,17 +743,17 @@ public class SQLDataSetProvider implements DataSetProvider {
 
         protected void _appendJooqGroupBy(DataSetGroup groupOp) {
             ColumnGroup cg = groupOp.getColumnGroup();
-            String columnId = cg.getSourceId();
-            ColumnType columnType = metadata.getColumnType(_assertColumnExists(columnId));
+            String sourceId = cg.getSourceId();
+            ColumnType columnType = metadata.getColumnType(_assertColumnExists(sourceId));
             boolean postProcessing = false;
 
             // Group by Number => not supported
             if (ColumnType.NUMBER.equals(columnType)) {
-                throw new IllegalArgumentException("Group by number '" + columnId + "' not supported");
+                throw new IllegalArgumentException("Group by number '" + sourceId + "' not supported");
             }
             // Group by Text => not supported
             if (ColumnType.TEXT.equals(columnType)) {
-                throw new IllegalArgumentException("Group by text '" + columnId + "' not supported");
+                throw new IllegalArgumentException("Group by text '" + sourceId + "' not supported");
             }
             // Group by Date
             else if (ColumnType.DATE.equals(columnType)) {
@@ -759,7 +763,7 @@ public class SQLDataSetProvider implements DataSetProvider {
             }
             // Group by Label
             else {
-                _jooqQuery.groupBy(_createJooqField(columnId));
+                _jooqQuery.groupBy(_createJooqField(sourceId));
             }
 
             // Also add any non-aggregated column (columns pick up) to the group statement
@@ -771,10 +775,15 @@ public class SQLDataSetProvider implements DataSetProvider {
             // The group operation might require post processing
             if (postProcessing) {
                 DataSetGroup postGroup = groupOp.cloneInstance();
+                GroupFunction gf = postGroup.getGroupFunction(sourceId);
+                if (gf != null) {
+                    postGroup.getColumnGroup().setSourceId(gf.getColumnId());
+                    postGroup.getColumnGroup().setColumnId(gf.getColumnId());
+                }
                 for (GroupFunction pgf : postGroup.getGroupFunctions()) {
                     AggregateFunctionType pft = pgf.getFunction();
+                    pgf.setSourceId(pgf.getColumnId());
                     if (pft != null && (AggregateFunctionType.DISTINCT.equals(pft) || AggregateFunctionType.COUNT.equals(pft))) {
-                        pgf.setSourceId(pgf.getColumnId());
                         pgf.setFunction(AggregateFunctionType.SUM);
                     }
                 }
@@ -827,11 +836,14 @@ public class SQLDataSetProvider implements DataSetProvider {
             // Some operations requires some in-memory post-processing
             if (!postProcessingOps.isEmpty()) {
                 DataSet tempSet = opEngine.execute(dataSet, postProcessingOps);
-                dataSet = DataSetFactory.newEmptyDataSet();
-                dataSet.setColumns(columns);
+                dataSet = dataSet.cloneEmpty();
                 for (int i=0; i<columns.size(); i++) {
                     DataColumn source = tempSet.getColumnByIndex(i);
                     DataColumn target = dataSet.getColumnByIndex(i);
+                    target.setColumnType(source.getColumnType());
+                    target.setIntervalType(source.getIntervalType());
+                    target.setMinValue(target.getMinValue());
+                    target.setMaxValue(target.getMaxValue());
                     target.setValues(new ArrayList(source.getValues()));
                 }
             }

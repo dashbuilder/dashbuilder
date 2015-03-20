@@ -9,11 +9,11 @@
     "cacheEnabled": false,
     "cacheMaxRows": 1000,
     "columns": [
-        {"id": "id", "name": "id", "type": "number"},
-        {"id": "city", "name": "city", "type": "label"},
-        {"id": "department", "name": "dept", "type": "label"},
-        {"id": "employee", "name": "author", "type": "label"},
-        {"id": "amount", "name": "amount", "type": "number"},
-        {"id": "date", "name": "date", "type": "date"}
+        {"id": "id", "type": "number"},
+        {"id": "city", "type": "label"},
+        {"id": "department", "type": "label"},
+        {"id": "employee", "type": "label"},
+        {"id": "amount", "type": "number"},
+        {"id": "date", "type": "date"}
     ]
 }

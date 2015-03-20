@@ -31,14 +31,17 @@ import org.dashbuilder.common.client.StringUtils;
 import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.dataset.ValidationError;
-import org.dashbuilder.dataset.client.date.DateUtils;
+import org.dashbuilder.dataset.client.resources.i18n.DayOfWeekConstants;
+import org.dashbuilder.dataset.client.resources.i18n.MonthConstants;
+import org.dashbuilder.dataset.date.DayOfWeek;
+import org.dashbuilder.dataset.date.Month;
+import org.dashbuilder.dataset.group.DateIntervalPattern;
+import org.dashbuilder.displayer.ColumnSettings;
 import org.dashbuilder.dataset.group.ColumnGroup;
 import org.dashbuilder.dataset.group.DataSetGroup;
 import org.dashbuilder.dataset.group.DateIntervalType;
 import org.dashbuilder.dataset.group.GroupStrategy;
 import org.dashbuilder.dataset.group.Interval;
-import org.dashbuilder.dataset.sort.ColumnSort;
-import org.dashbuilder.dataset.sort.DataSetSort;
 import org.dashbuilder.dataset.sort.SortOrder;
 import org.dashbuilder.displayer.DisplayerConstraints;
 import org.dashbuilder.displayer.DisplayerSettings;
@@ -178,14 +181,14 @@ public abstract class AbstractDisplayer extends Composite implements Displayer {
         // Do nothing
     }
 
-    public void onGroupIntervalsSelected(Displayer displayer, DataSetGroup groupOp) {
+    public void onFilterEnabled(Displayer displayer, DataSetGroup groupOp) {
         if (displayerSettings.isFilterListeningEnabled()) {
             dataSetHandler.filter(groupOp);
             redraw();
         }
     }
 
-    public void onGroupIntervalsReset(Displayer displayer, List<DataSetGroup> groupOps) {
+    public void onFilterReset(Displayer displayer, List<DataSetGroup> groupOps) {
         if (displayerSettings.isFilterListeningEnabled()) {
             for (DataSetGroup groupOp : groupOps) {
                 dataSetHandler.unfilter(groupOp);
@@ -291,28 +294,19 @@ public abstract class AbstractDisplayer extends Composite implements Displayer {
     protected void filterApply(String columnId, List<Interval> intervalList) {
         if (!displayerSettings.isFilterEnabled()) return;
 
-        // For string column filters, create and notify a group interval selection operation.
+        // For string column filters, init the group interval selection operation.
         DataSetGroup groupOp = dataSetHandler.getGroupOperation(columnId);
-        DataSetGroup _groupSelect = null;
-        if (groupOp != null && groupOp.getColumnGroup() != null) {
-            _groupSelect = groupOp.cloneInstance();
-            _groupSelect.setSelectedIntervalList(intervalList);
+        groupOp.setSelectedIntervalList(intervalList);
 
-        } else {
-            _groupSelect = new DataSetGroup();
-            _groupSelect.setDataSetUUID(displayerSettings.getDataSetLookup().getDataSetUUID());
-            _groupSelect.setSelectedIntervalList(intervalList);
-            _groupSelect.setColumnGroup(new ColumnGroup(columnId, columnId, GroupStrategy.DYNAMIC));
-        }
         // Notify to those interested parties the selection event.
         if (displayerSettings.isFilterNotificationEnabled()) {
             for (DisplayerListener listener : listenerList) {
-                listener.onGroupIntervalsSelected(this, _groupSelect);
+                listener.onFilterEnabled(this, groupOp);
             }
         }
         // Drill-down support
         if (displayerSettings.isFilterSelfApplyEnabled()) {
-            dataSetHandler.drillDown(_groupSelect);
+            dataSetHandler.drillDown(groupOp);
             redraw();
         }
     }
@@ -327,14 +321,11 @@ public abstract class AbstractDisplayer extends Composite implements Displayer {
 
         columnSelectionMap.remove(columnId);
         DataSetGroup groupOp = dataSetHandler.getGroupOperation(columnId);
-        if (groupOp == null || groupOp.getColumnGroup() == null) {
-            groupOp = new DataSetGroup();
-            groupOp.setColumnGroup(new ColumnGroup(columnId, columnId, GroupStrategy.DYNAMIC));
-        }
+
         // Notify to those interested parties the reset event.
         if (displayerSettings.isFilterNotificationEnabled()) {
             for (DisplayerListener listener : listenerList) {
-                listener.onGroupIntervalsReset(this, Arrays.asList(groupOp));
+                listener.onFilterReset(this, Arrays.asList(groupOp));
             }
         }
         // Apply the selection to this displayer
@@ -353,10 +344,6 @@ public abstract class AbstractDisplayer extends Composite implements Displayer {
         List<DataSetGroup> groupOpList = new ArrayList<DataSetGroup>();
         for (String columnId : columnSelectionMap.keySet()) {
             DataSetGroup groupOp = dataSetHandler.getGroupOperation(columnId);
-            if (groupOp == null || groupOp.getColumnGroup() == null) {
-                groupOp = new DataSetGroup();
-                groupOp.setColumnGroup(new ColumnGroup(columnId, columnId, GroupStrategy.DYNAMIC));
-            }
             groupOpList.add(groupOp);
 
         }
@@ -365,7 +352,7 @@ public abstract class AbstractDisplayer extends Composite implements Displayer {
         // Notify to those interested parties the reset event.
         if (displayerSettings.isFilterNotificationEnabled()) {
             for (DisplayerListener listener : listenerList) {
-                listener.onGroupIntervalsReset(this, groupOpList);
+                listener.onFilterReset(this, groupOpList);
             }
         }
         // Apply the selection to this displayer
@@ -386,9 +373,7 @@ public abstract class AbstractDisplayer extends Composite implements Displayer {
      * @param sortOrder The sort order.
      */
     protected void sortApply(String columnId, SortOrder sortOrder) {
-        DataSetSort sortOp = new DataSetSort();
-        sortOp.addSortColumn(new ColumnSort(columnId, sortOrder));
-        dataSetHandler.sort(sortOp);
+        dataSetHandler.sort(columnId, sortOrder);
     }
 
     // DATA FORMATTING
@@ -402,11 +387,23 @@ public abstract class AbstractDisplayer extends Composite implements Displayer {
         // Date interval
         String type = interval.getType();
         if (StringUtils.isBlank(type)) type = column.getIntervalType();
+        if (StringUtils.isBlank(type)) type = column.getColumnGroup().getIntervalSize();
         DateIntervalType intervalType = DateIntervalType.getByName(type);
         if (intervalType != null) {
-            return DateUtils.formatDate(intervalType,
+            ColumnSettings columnSettings = displayerSettings.getColumnSettings(column.getId());
+            String pattern = columnSettings != null ? columnSettings.getValuePattern() : ColumnSettings.getDatePattern(intervalType);
+            String expression = columnSettings != null ? columnSettings.getValueExpression() : null;
+
+            if (pattern == null) {
+                pattern = ColumnSettings.getDatePattern(intervalType);
+            }
+            if (expression == null && column.getColumnGroup().getStrategy().equals(GroupStrategy.FIXED)) {
+                expression = ColumnSettings.getFixedExpression(intervalType);
+            }
+
+            return formatDate(intervalType,
                     column.getColumnGroup().getStrategy(),
-                    interval.getName());
+                    interval.getName(), pattern, expression);
         }
         // Label interval
         return interval.getName();
@@ -414,41 +411,137 @@ public abstract class AbstractDisplayer extends Composite implements Displayer {
 
     protected String formatValue(Object value, DataColumn column) {
 
-        // TODO: support for displayer settings column format
-        // For example: .format("amount", "{value} profit in $", "---", "#,###.##")
+        ColumnSettings columnSettings = displayerSettings.getColumnSettings(column);
+        String pattern = columnSettings.getValuePattern();
+        String empty = columnSettings.getEmptyTemplate();
+        String expression = columnSettings.getValueExpression();
 
         if (value == null) {
-            return formatValue(null, column != null ? column.getColumnType() : ColumnType.LABEL);
+            return empty;
         }
-        if (column == null) {
-            return value.toString();
-        }
-        // Aggregations and raw values
-        ColumnGroup cg = column.getColumnGroup();
-        if (cg == null) {
-            return formatValue(value, column.getColumnType());
-        }
-        // Date group
+
+        // Date grouped columns
         DateIntervalType intervalType = DateIntervalType.getByName(column.getIntervalType());
         if (intervalType != null) {
-            return DateUtils.formatDate(intervalType, cg.getStrategy(), value.toString());
+            ColumnGroup columnGroup = column.getColumnGroup();
+            return formatDate(intervalType,
+                    columnGroup.getStrategy(),
+                    value.toString(), pattern, expression);
         }
-        // Label group
-        return value.toString();
+        // Label grouped columns, aggregations & raw values
+        else {
+            ColumnType columnType = column.getColumnType();
+            if (ColumnType.DATE.equals(columnType)) {
+                Date d = (Date) value;
+                return getDateFormat(pattern).format(d);
+            }
+            else if (ColumnType.NUMBER.equals(columnType)) {
+                double d = ((Number) value).doubleValue();
+                if (!StringUtils.isBlank(expression)) d = Double.parseDouble(applyExpression(value.toString(), expression));
+                return getNumberFormat(pattern).format(d);
+            }
+            else {
+                if (StringUtils.isBlank(expression)) return value.toString();
+                return applyExpression(value.toString(), expression);
+            }
+        }
     }
 
-    protected String formatValue(Object value, ColumnType columnType) {
 
-        if (ColumnType.DATE.equals(columnType)) {
-            if (value == null) return "---";
-            Date d = (Date) value;
-            return DateTimeFormat.getFormat(DateTimeFormat.PredefinedFormat.DATE_TIME_MEDIUM).format(d);
-        }
-        if (ColumnType.NUMBER.equals(columnType)) {
-            Double d = (value == null ? 0d : ((Number) value).doubleValue());
-            return NumberFormat.getDecimalFormat().format(d);
-        }
+    public static final String[] _jsMalicious = {"document.", "window.", "alert(", "eval(", ".innerHTML"};
 
-        return (value == null ? "---" : value.toString());
+    protected String applyExpression(String val, String expr) {
+        if (StringUtils.isBlank(expr)) {
+            return val;
+        }
+        for (String keyword : _jsMalicious) {
+            if (expr.contains(keyword)) {
+                throw new RuntimeException("Not allowed ( " + expr + " )");
+            }
+        }
+        try {
+            return evalExpression(val, expr);
+        } catch (Exception e) {
+            throw new RuntimeException("Invalid syntax ( " + expr + " )");
+        }
+    }
+
+    protected native String evalExpression(String val, String expr) /*-{
+        value = val;
+        return eval(expr) + '';
+    }-*/;
+
+    // NUMBER FORMATTING
+
+    private static Map<String,NumberFormat> numberPatternMap = new HashMap<String, NumberFormat>();
+
+    protected NumberFormat getNumberFormat(String pattern) {
+        if (StringUtils.isBlank(pattern)) {
+            return getNumberFormat(ColumnSettings.NUMBER_PATTERN);
+        }
+        NumberFormat format = numberPatternMap.get(pattern);
+        if (format == null) {
+            numberPatternMap.put(pattern, format = NumberFormat.getFormat(pattern));
+        }
+        return format;
+    }
+
+    // DATE FORMATTING
+
+    protected String formatDate(DateIntervalType type, GroupStrategy strategy, String date, String pattern, String expression) {
+        if (date == null) return null;
+
+        String str = GroupStrategy.FIXED.equals(strategy) ? formatDateFixed(type, date) : formatDateDynamic(type, date, pattern);
+        if (StringUtils.isBlank(expression)) return str;
+        return applyExpression(str, expression);
+    }
+
+    protected String formatDateFixed(DateIntervalType type, String date) {
+        if (date == null) return null;
+
+        int index = Integer.parseInt(date);
+        if (DateIntervalType.DAY_OF_WEEK.equals(type)) {
+            DayOfWeek dayOfWeek = DayOfWeek.getByIndex(index);
+            return DayOfWeekConstants.INSTANCE.getString(dayOfWeek.name());
+        }
+        if (DateIntervalType.MONTH.equals(type)) {
+            Month month = Month.getByIndex(index);
+            return MonthConstants.INSTANCE.getString(month.name());
+        }
+        return date;
+    }
+
+    protected String formatDateDynamic(DateIntervalType type, String date, String pattern) {
+        if (date == null) return null;
+        Date d = parseDynamicGroupDate(type, date);
+        DateTimeFormat format = getDateFormat(pattern);
+
+        /*if (DateIntervalType.QUARTER.equals(type)) {
+            String result = format.format(d);
+            int endMonth = d.getMonth() + 2;
+            d.setMonth(endMonth % 12);
+            if (endMonth > 11) d.setYear(d.getYear() + 1);
+            return result + " - " + format.format(d);
+        }*/
+        return format.format(d);
+    }
+
+    protected Date parseDynamicGroupDate(DateIntervalType type, String date) {
+        String pattern = DateIntervalPattern.getPattern(type);
+        DateTimeFormat format = getDateFormat(pattern);
+        return format.parse(date);
+    }
+
+    private static Map<String,DateTimeFormat> datePatternMap = new HashMap<String, DateTimeFormat>();
+
+    protected DateTimeFormat getDateFormat(String pattern) {
+        if (StringUtils.isBlank(pattern)) {
+            return getDateFormat(ColumnSettings.DATE_PATTERN);
+        }
+        DateTimeFormat format = datePatternMap.get(pattern);
+        if (format == null) {
+            datePatternMap.put(pattern, format = DateTimeFormat.getFormat(pattern));
+        }
+        return format;
     }
 }

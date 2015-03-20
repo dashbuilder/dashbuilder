@@ -236,7 +236,7 @@ public class AggregationSerializer extends AbstractAdapter<AggregationSerializer
                 }
                 
                 String interval = ElasticSearchJestClient.getInterval(dateIntervalType);
-                String returnFormat = DateUtils.PATTERN_DAY;
+                String returnFormat = DateIntervalPattern.DAY;
                 switch (dateIntervalType) {
                     case MILLISECOND:
                         break;
@@ -245,29 +245,29 @@ public class AggregationSerializer extends AbstractAdapter<AggregationSerializer
                     case TENTH:
                         break;
                     case SECOND:
-                        returnFormat = DateUtils.PATTERN_SECOND;
+                        returnFormat = DateIntervalPattern.SECOND;
                         break;
                     case MINUTE:
-                        returnFormat = DateUtils.PATTERN_MINUTE;
+                        returnFormat = DateIntervalPattern.MINUTE;
                         break;
                     case HOUR:
-                        returnFormat = DateUtils.PATTERN_HOUR;
+                        returnFormat = DateIntervalPattern.HOUR;
                         break;
                     case DAY:
-                        returnFormat = DateUtils.PATTERN_DAY;
+                        returnFormat = DateIntervalPattern.DAY;
                         break;
                     case DAY_OF_WEEK:
-                        returnFormat = DateUtils.PATTERN_DAY;
+                        returnFormat = DateIntervalPattern.DAY;
                         break;
                     case WEEK:
                         break;
                     case MONTH:
-                        returnFormat = DateUtils.PATTERN_MONTH;
+                        returnFormat = DateIntervalPattern.MONTH;
                         break;
                     case QUARTER:
                         break;
                     case YEAR:
-                        returnFormat = DateUtils.PATTERN_YEAR;
+                        returnFormat = DateIntervalPattern.YEAR;
                         break;
                     case DECADE:
                         break;

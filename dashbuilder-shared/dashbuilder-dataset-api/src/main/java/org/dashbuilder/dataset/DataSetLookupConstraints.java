@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.dashbuilder.dataset.group.AggregateFunctionType;
+import org.dashbuilder.dataset.group.ColumnGroup;
 import org.dashbuilder.dataset.group.DataSetGroup;
 import org.dashbuilder.dataset.group.GroupFunction;
 import org.dashbuilder.dataset.impl.DataSetLookupBuilderImpl;
@@ -155,7 +156,7 @@ public class DataSetLookupConstraints extends DataSetConstraints<DataSetLookupCo
                 ValidationError error = null;
                 for (ColumnType[] types : columnTypeList) {
                     if (currentColumns < 0 || currentColumns < types.length) currentColumns = types.length;
-                    error = checkTypes(metadata, groupFunctions, types);
+                    error = checkTypes(metadata, groupOp, types);
                     if (!ok && error == null) ok = true;
                 }
                 if (!ok) return error;
@@ -176,12 +177,16 @@ public class DataSetLookupConstraints extends DataSetConstraints<DataSetLookupCo
         return null;
     }
 
-    private ValidationError checkTypes(DataSetMetadata metadata, List<GroupFunction> groupFunctions, ColumnType[] types) {
+    private ValidationError checkTypes(DataSetMetadata metadata, DataSetGroup groupOp, ColumnType[] types) {
+        ColumnGroup columnGroup = groupOp.getColumnGroup();
+        List<GroupFunction> groupFunctions = groupOp.getGroupFunctions();
         for (int i = 0; i < groupFunctions.size(); i++) {
             GroupFunction gf = groupFunctions.get(i);
             ColumnType columnType = metadata.getColumnType(gf.getSourceId());
             if (i < types.length && !columnType.equals(types[i])) {
-                return super.createValidationError(ERROR_COLUMN_TYPE, i, types[i], columnType);
+                if (columnGroup == null || (columnGroup.getSourceId().equals(gf.getSourceId()) && columnType.equals(ColumnType.LABEL))) {
+                    return super.createValidationError(ERROR_COLUMN_TYPE, i, types[i], columnType);
+                }
             }
         }
         return null;

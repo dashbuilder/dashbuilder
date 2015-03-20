@@ -5,10 +5,10 @@
   "dbTable": "expense_reports",
   "allColumns": false,
   "columns": [
-    {"id": "department", "name": "Dept", "type": "label"},
-    {"id": "employee", "name": "Author", "type": "label"},
-    {"id": "amount", "name": "Amount", "type": "number"},
-    {"id": "date", "name": "Date", "type": "date"}
+    {"id": "department", "type": "label"},
+    {"id": "employee", "type": "label"},
+    {"id": "amount", "type": "number"},
+    {"id": "date", "type": "date"}
   ],
   "filters": [
     {"column": "city", "function": "EQUALS_TO", "args": ["Barcelona"]}

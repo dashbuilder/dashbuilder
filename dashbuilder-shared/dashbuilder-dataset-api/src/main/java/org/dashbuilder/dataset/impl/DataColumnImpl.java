@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.dataset.group.ColumnGroup;
+import org.dashbuilder.dataset.group.GroupFunction;
 import org.jboss.errai.common.client.api.annotations.Portable;
 
 @Portable
@@ -28,20 +29,19 @@ public class DataColumnImpl implements DataColumn {
 
     protected DataSetImpl dataSet = null;
     protected String id = null;
-    protected String name = null;
     protected ColumnType columnType = ColumnType.LABEL;
     protected List values = new ArrayList();
     protected ColumnGroup columnGroup;
     protected String intervalType;
     protected Object minValue;
     protected Object maxValue;
+    protected GroupFunction groupFunction;
 
     public DataColumnImpl() {
     }
 
     public DataColumnImpl(String id, ColumnType columnType) {
         this.id = id;
-        this.name = id;
         this.columnType = columnType;
     }
 
@@ -59,15 +59,6 @@ public class DataColumnImpl implements DataColumn {
 
     public void setId(String id) {
         this.id = id;
-        if (name == null) name = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public ColumnType getColumnType() {
@@ -118,15 +109,23 @@ public class DataColumnImpl implements DataColumn {
         this.maxValue = maxValue;
     }
 
+    public GroupFunction getGroupFunction() {
+        return groupFunction;
+    }
+
+    public void setGroupFunction(GroupFunction groupFunction) {
+        this.groupFunction = groupFunction;
+    }
+
     public DataColumn cloneEmpty() {
         DataColumnImpl otherCol = new DataColumnImpl();
         otherCol.setId(getId());
-        otherCol.setName(getName());
         otherCol.setColumnType(getColumnType());
         if (columnGroup != null) otherCol.setColumnGroup(columnGroup.cloneInstance());
         otherCol.setIntervalType(getIntervalType());
         otherCol.setMinValue(getMinValue());
         otherCol.setMaxValue(getMaxValue());
+        if (groupFunction != null) otherCol.setGroupFunction(groupFunction.cloneInstance());
         return otherCol;
     }
 
@@ -138,9 +137,8 @@ public class DataColumnImpl implements DataColumn {
 
     public String toString() {
         StringBuilder out = new StringBuilder();
-        if (id != null) out.append(" id=").append(id);
-        if (name != null) out.append(" name=").append(name);
-        if (columnType != null) out.append(" type=").append(columnType);
+        if (id != null) out.append(id).append(" ");
+        if (columnType != null) out.append(columnType);
         return out.toString();
     }
 }

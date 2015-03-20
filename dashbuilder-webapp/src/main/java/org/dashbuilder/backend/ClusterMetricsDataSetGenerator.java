@@ -49,18 +49,18 @@ public class ClusterMetricsDataSetGenerator implements DataSetGenerator {
 
     public ClusterMetricsDataSetGenerator() {
         dataSet = DataSetFactory.newDataSetBuilder()
-                .column(COLUMN_SERVER, "Server", ColumnType.LABEL)
-                .column(COLUMN_TIMESTAMP, "Time", ColumnType.DATE)
-                .column(COLUMN_CPU0, "CPU0 %", ColumnType.NUMBER)
-                .column(COLUMN_CPU1, "CPU1 %", ColumnType.NUMBER)
-                .column(COLUMN_MEMORY_FREE, "Mem (Gb)", ColumnType.NUMBER)
-                .column(COLUMN_MEMORY_USED, "Mem (Gb)", ColumnType.NUMBER)
-                .column(COLUMN_NETWORK_TX, "Upstream (Kbps)", ColumnType.NUMBER)
-                .column(COLUMN_NETWORK_RX, "Downstream (Kbps)", ColumnType.NUMBER)
-                .column(COLUMN_PROCESSES_RUNNING, "Running processes", ColumnType.NUMBER)
-                .column(COLUMN_PROCESSES_SLEEPING, "Sleeping processes", ColumnType.NUMBER)
-                .column(COLUMN_DISK_FREE, "Free disk space (Gb)", ColumnType.NUMBER)
-                .column(COLUMN_DISK_USED, "Used disk space (Gb)", ColumnType.NUMBER)
+                .column(COLUMN_SERVER, ColumnType.LABEL)
+                .column(COLUMN_TIMESTAMP, ColumnType.DATE)
+                .column(COLUMN_CPU0, ColumnType.NUMBER)
+                .column(COLUMN_CPU1, ColumnType.NUMBER)
+                .column(COLUMN_MEMORY_FREE, ColumnType.NUMBER)
+                .column(COLUMN_MEMORY_USED, ColumnType.NUMBER)
+                .column(COLUMN_NETWORK_TX, ColumnType.NUMBER)
+                .column(COLUMN_NETWORK_RX, ColumnType.NUMBER)
+                .column(COLUMN_PROCESSES_RUNNING, ColumnType.NUMBER)
+                .column(COLUMN_PROCESSES_SLEEPING, ColumnType.NUMBER)
+                .column(COLUMN_DISK_FREE, ColumnType.NUMBER)
+                .column(COLUMN_DISK_USED, ColumnType.NUMBER)
                 .buildDataSet();
     }
 

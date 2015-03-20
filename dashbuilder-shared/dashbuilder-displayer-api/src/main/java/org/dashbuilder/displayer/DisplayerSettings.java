@@ -16,9 +16,13 @@
 package org.dashbuilder.displayer;
 
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ArrayList;
 import java.util.Map;
 
 import org.dashbuilder.common.client.StringUtils;
+import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetLookup;
 import org.dashbuilder.dataset.sort.SortOrder;
@@ -32,6 +36,7 @@ public class DisplayerSettings {
     protected String UUID;
     protected DataSet dataSet;
     protected DataSetLookup dataSetLookup;
+    protected List<ColumnSettings> columnSettingsList = new ArrayList<ColumnSettings>();
 
     public DisplayerSettings() {
     }
@@ -39,18 +44,81 @@ public class DisplayerSettings {
     public DisplayerSettings( DisplayerType displayerType ) {
         this();
         setType(displayerType);
-        if ( DisplayerType.PIECHART.equals( displayerType ) ) {
-        }
-        settings.put( getSettingPath( DisplayerAttributeDef.CHART_3D ), "true");
     }
 
     public DisplayerSettings cloneInstance() {
         DisplayerSettings clone = new DisplayerSettings();
         clone.UUID = UUID;
         clone.settings = new HashMap(settings);
+        clone.columnSettingsList = new ArrayList();
+        for (ColumnSettings columnSettings : columnSettingsList) {
+            clone.columnSettingsList.add(columnSettings.cloneInstance());
+        }
         if (dataSet != null) clone.dataSet = dataSet.cloneInstance();
         if (dataSetLookup != null) clone.dataSetLookup = dataSetLookup.cloneInstance();
         return clone;
+    }
+
+    public List<ColumnSettings> getColumnSettingsList() {
+        return columnSettingsList;
+    }
+
+    public void setColumnSettingsList(List<ColumnSettings> columnSettingsList) {
+        if (columnSettingsList != null) {
+            this.columnSettingsList = columnSettingsList;
+        } else {
+            this.columnSettingsList.clear();
+        }
+    }
+
+    public void removeColumnSettings(String columnId) {
+        Iterator<ColumnSettings> it = columnSettingsList.iterator();
+        while (it.hasNext()) {
+            ColumnSettings columnSettings = it.next();
+            if (columnSettings.getColumnId().equals(columnId)) {
+                it.remove();
+            }
+        }
+    }
+
+    public ColumnSettings getColumnSettings(String columnId) {
+        for (ColumnSettings columnSettings : columnSettingsList) {
+            if (columnSettings.getColumnId().equals(columnId)) return columnSettings;
+        }
+        return null;
+    }
+
+    public ColumnSettings getColumnSettings(DataColumn column) {
+        ColumnSettings sourceSettings = getColumnSettings(column.getId());
+        return ColumnSettings.cloneWithDefaults(sourceSettings, column);
+    }
+
+    public void setColumnName(String columnId, String name) {
+        ColumnSettings columnSettings = getColumnSettings(columnId);
+        if (columnSettings == null) columnSettingsList.add(columnSettings = new ColumnSettings(columnId));
+
+        columnSettings.setColumnName(name);
+    }
+
+    public void setColumnValueExpression(String columnId, String expression) {
+        ColumnSettings columnSettings = getColumnSettings(columnId);
+        if (columnSettings == null) columnSettingsList.add(columnSettings = new ColumnSettings(columnId));
+
+        columnSettings.setValueExpression(expression);
+    }
+
+    public void setColumnValuePattern(String columnId, String pattern) {
+        ColumnSettings columnSettings = getColumnSettings(columnId);
+        if (columnSettings == null) columnSettingsList.add(columnSettings = new ColumnSettings(columnId));
+
+        columnSettings.setValuePattern(pattern);
+    }
+
+    public void setColumnEmptyTemplate(String columnId, String template) {
+        ColumnSettings columnSettings = getColumnSettings(columnId);
+        if (columnSettings == null) columnSettingsList.add(columnSettings = new ColumnSettings(columnId));
+
+        columnSettings.setEmptyTemplate(template);
     }
 
     private String getSettingPath( DisplayerAttributeDef displayerAttributeDef ) {
@@ -91,7 +159,6 @@ public class DisplayerSettings {
 
     public void setDataSet( DataSet dataSet ) {
         this.dataSet = dataSet;
-        clearDataSetRelatedSettings();
     }
 
     public DataSetLookup getDataSetLookup() {
@@ -100,11 +167,6 @@ public class DisplayerSettings {
 
     public void setDataSetLookup( DataSetLookup dataSetLookup ) {
         this.dataSetLookup = dataSetLookup;
-        clearDataSetRelatedSettings();
-    }
-
-    private void clearDataSetRelatedSettings() {
-        setTableDefaultSortColumnId(null);
     }
 
     // 'Generic' getter method
@@ -261,7 +323,7 @@ public class DisplayerSettings {
     }
 
     public int getChartMarginBottom() {
-        return parseInt( settings.get( getSettingPath( DisplayerAttributeDef.CHART_MARGIN_BOTTOM ) ), 10 );
+        return parseInt(settings.get(getSettingPath(DisplayerAttributeDef.CHART_MARGIN_BOTTOM)), 10);
     }
 
     public void setChartMarginBottom( int chartMarginBottom ) {

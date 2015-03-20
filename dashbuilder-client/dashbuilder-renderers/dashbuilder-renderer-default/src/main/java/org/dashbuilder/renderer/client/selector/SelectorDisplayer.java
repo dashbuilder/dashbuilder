@@ -33,6 +33,7 @@ import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetLookupConstraints;
 import org.dashbuilder.dataset.client.DataSetReadyCallback;
 import org.dashbuilder.dataset.group.DataSetGroup;
+import org.dashbuilder.displayer.ColumnSettings;
 import org.dashbuilder.displayer.DisplayerAttributeDef;
 import org.dashbuilder.displayer.DisplayerAttributeGroupDef;
 import org.dashbuilder.displayer.DisplayerConstraints;
@@ -138,7 +139,7 @@ public class SelectorDisplayer extends AbstractDisplayer {
 
         return new DisplayerConstraints(lookupConstraints)
                 .supportsAttribute( DisplayerAttributeDef.TYPE )
-                .supportsAttribute( DisplayerAttributeDef.COLUMNS )
+                .supportsAttribute( DisplayerAttributeGroupDef.COLUMNS_GROUP )
                 .supportsAttribute( DisplayerAttributeGroupDef.FILTER_GROUP )
                 .supportsAttribute( DisplayerAttributeGroupDef.REFRESH_GROUP )
                 .supportsAttribute( DisplayerAttributeGroupDef.TITLE_GROUP );
@@ -182,7 +183,9 @@ public class SelectorDisplayer extends AbstractDisplayer {
         listBox.clear();
         final DataColumn firstColumn = dataSet.getColumnByIndex(0);
         final String firstColumnId = firstColumn.getId();
-        final String firstColumnName = firstColumn.getName();
+        ColumnSettings columnSettings = displayerSettings.getColumnSettings(firstColumn);
+        final String firstColumnName = columnSettings.getColumnName();
+
         listBox.addItem("- Select " + firstColumnName + " -");
         SelectElement selectElement = SelectElement.as(listBox.getElement());
         NodeList<OptionElement> options = selectElement.getOptions();
@@ -205,8 +208,9 @@ public class SelectorDisplayer extends AbstractDisplayer {
             if (ncolumns > 1) {
                 StringBuilder out = new StringBuilder();
                 for (int j = 1; j < ncolumns; j++) {
-                    final DataColumn extraColumn = dataSet.getColumnByIndex(j);
-                    String extraColumnName = extraColumn.getName();
+                    DataColumn extraColumn = dataSet.getColumnByIndex(j);
+                    columnSettings = displayerSettings.getColumnSettings(extraColumn);
+                    String extraColumnName = columnSettings.getColumnName();
                     Object extraValue = dataSet.getValueAt(i, j);
 
                     if (extraValue != null) {
@@ -227,21 +231,21 @@ public class SelectorDisplayer extends AbstractDisplayer {
 
     // KEEP IN SYNC THE CURRENT SELECTION WITH ANY EXTERNAL FILTER
 
-    public void onGroupIntervalsSelected(Displayer displayer, DataSetGroup groupOp) {
+    public void onFilterEnabled(Displayer displayer, DataSetGroup groupOp) {
         String firstColumnId = dataSet.getColumnByIndex(0).getId();
         if (firstColumnId.equals(groupOp.getColumnGroup().getColumnId())) {
             columnSelectionMap.put(groupOp.getColumnGroup().getColumnId(), groupOp.getSelectedIntervalList());
         }
-        super.onGroupIntervalsSelected(displayer, groupOp);
+        super.onFilterEnabled(displayer, groupOp);
     }
 
-    public void onGroupIntervalsReset(Displayer displayer, List<DataSetGroup> groupOps) {
+    public void onFilterReset(Displayer displayer, List<DataSetGroup> groupOps) {
         String firstColumnId = dataSet.getColumnByIndex(0).getId();
         for (DataSetGroup groupOp : groupOps) {
             if (firstColumnId.equals(groupOp.getColumnGroup().getColumnId())) {
                 columnSelectionMap.remove(groupOp.getColumnGroup().getColumnId());
             }
         }
-        super.onGroupIntervalsReset(displayer, groupOps);
+        super.onFilterReset(displayer, groupOps);
     }
 }

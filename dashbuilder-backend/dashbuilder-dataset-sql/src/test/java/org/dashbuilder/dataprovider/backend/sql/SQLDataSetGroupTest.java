@@ -79,10 +79,10 @@ public class SQLDataSetGroupTest extends SQLDataSetTestBase {
                         .buildLookup());
 
         assertThat(result.getRowCount()).isEqualTo(50);
-        assertThat(result.getColumnByIndex(0).getName()).isEqualTo("City");
-        assertThat(result.getColumnByIndex(1).getName()).isEqualTo("Department");
-        assertThat(result.getColumnByIndex(2).getName()).isEqualTo("Employee");
-        assertThat(result.getColumnByIndex(3).getName()).isEqualTo("Amount");
+        assertThat(result.getColumnByIndex(0).getId()).isEqualTo("City");
+        assertThat(result.getColumnByIndex(1).getId()).isEqualTo("Department");
+        assertThat(result.getColumnByIndex(2).getId()).isEqualTo("Employee");
+        assertThat(result.getColumnByIndex(3).getId()).isEqualTo("Amount");
         assertThat(result.getColumnByIndex(0).getColumnType()).isEqualTo(ColumnType.LABEL);
         assertThat(result.getColumnByIndex(1).getColumnType()).isEqualTo(ColumnType.LABEL);
         assertThat(result.getColumnByIndex(2).getColumnType()).isEqualTo(ColumnType.LABEL);

@@ -18,6 +18,7 @@ package org.dashbuilder.dataset;
 import java.util.List;
 
 import org.dashbuilder.dataset.group.ColumnGroup;
+import org.dashbuilder.dataset.group.GroupFunction;
 
 /**
  * A data set is a matrix of values composed by a fixed number of columns.
@@ -35,12 +36,6 @@ public interface DataColumn {
      */
     String getId();
     void setId(String id);
-
-    /**
-     * @return The name of this DataColumn
-     */
-    String getName();
-    void setName(String name);
 
     /**
      * @return The column's type.
@@ -86,6 +81,14 @@ public interface DataColumn {
      */
     List getValues();
     void setValues(List values);
+
+    /**
+     * The group function settings
+     *
+     * @return null if this column is not the result of a group operation.
+     */
+    GroupFunction getGroupFunction();
+    void setGroupFunction(GroupFunction groupFunction);
 
     /**
      * Only clone the column definition.

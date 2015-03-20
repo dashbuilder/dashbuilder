@@ -12,6 +12,6 @@
     "cacheMaxRows": 1000,
     "allColumns": true,
     "columns": [
-            {"id": "city", "name": "city", "type": "text"},
+            {"id": "city", "type": "text"}
         ]
 }

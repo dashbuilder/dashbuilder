@@ -80,8 +80,9 @@ public class GoogleTableDisplayer extends GoogleDisplayer {
 
         return new DisplayerConstraints(lookupConstraints)
                    .supportsAttribute( DisplayerAttributeDef.TYPE )
-                   .supportsAttribute( DisplayerAttributeDef.RENDERER )
-                   .supportsAttribute( DisplayerAttributeDef.COLUMNS )
+                   .supportsAttribute(DisplayerAttributeDef.RENDERER)
+                   .supportsAttribute(DisplayerAttributeGroupDef.COLUMNS_GROUP)
+                   .supportsAttribute(DisplayerAttributeDef.COLUMN_EMPTY)
                    .supportsAttribute( DisplayerAttributeGroupDef.FILTER_GROUP )
                    .supportsAttribute( DisplayerAttributeGroupDef.REFRESH_GROUP )
                    .supportsAttribute( DisplayerAttributeGroupDef.TITLE_GROUP)
@@ -124,17 +125,17 @@ public class GoogleTableDisplayer extends GoogleDisplayer {
     }
 
     @Override
-    public void onGroupIntervalsSelected(Displayer displayer, DataSetGroup groupOp) {
+    public void onFilterEnabled(Displayer displayer, DataSetGroup groupOp) {
         // Reset the current navigation status on filter requests from external displayers.
         currentPage = 1;
-        super.onGroupIntervalsSelected(displayer, groupOp);
+        super.onFilterEnabled(displayer, groupOp);
     }
 
     @Override
-    public void onGroupIntervalsReset(Displayer displayer, List<DataSetGroup> groupOps) {
+    public void onFilterReset(Displayer displayer, List<DataSetGroup> groupOps) {
         // Reset the current navigation status on filter requests from external displayers.
         currentPage = 1;
-        super.onGroupIntervalsReset(displayer, groupOps);
+        super.onFilterReset(displayer, groupOps);
     }
 
     @Override

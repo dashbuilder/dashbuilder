@@ -34,6 +34,7 @@ import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.client.DataSetReadyCallback;
 import org.dashbuilder.dataset.sort.SortOrder;
+import org.dashbuilder.displayer.ColumnSettings;
 import org.dashbuilder.displayer.DisplayerAttributeDef;
 import org.dashbuilder.displayer.DisplayerAttributeGroupDef;
 import org.dashbuilder.displayer.DisplayerConstraints;
@@ -77,6 +78,7 @@ public class DisplayerSettingsEditor extends Composite {
     private Set<DisplayerAttributeDef> supportedAttributes;
 
     public static final String PROPERTY_EDITOR_ID = "displayerSettingsEditor";
+    public static final String COLUMNS_PREFFIX = "columns.";
 
     public DisplayerSettingsEditor() {
         initWidget(uiBinder.createAndBindUi(this));
@@ -132,7 +134,7 @@ public class DisplayerSettingsEditor extends Composite {
         final List<PropertyEditorCategory> categories = new ArrayList<PropertyEditorCategory>();
 
         if (isSupported(TITLE_GROUP)) {
-            PropertyEditorCategory category = new PropertyEditorCategory("Title");
+            PropertyEditorCategory category = new PropertyEditorCategory(DisplayerSettingsEditorConstants.INSTANCE.common_title());
             categories.add(category);
 
             if (isSupported(TITLE)) {
@@ -150,7 +152,7 @@ public class DisplayerSettingsEditor extends Composite {
         }
 
         if (isSupported(RENDERER)) {
-            PropertyEditorCategory category = new PropertyEditorCategory("Renderer");
+            PropertyEditorCategory category = new PropertyEditorCategory(DisplayerSettingsEditorConstants.INSTANCE.common_renderer());
             categories.add(category);
 
             List<String> optionList = new ArrayList<String>();
@@ -171,7 +173,7 @@ public class DisplayerSettingsEditor extends Composite {
 
 
         if (isSupported(CHART_GROUP)) {
-            PropertyEditorCategory category = new PropertyEditorCategory("Chart");
+            PropertyEditorCategory category = new PropertyEditorCategory(DisplayerSettingsEditorConstants.INSTANCE.chart_group());
             categories.add(category);
 
             if (isSupported(CHART_WIDTH)) {
@@ -200,9 +202,17 @@ public class DisplayerSettingsEditor extends Composite {
                         PropertyEditorType.BOOLEAN)
                         .withKey(CHART_3D.getFullId()));
             }
+            if (isSupported(BARCHART_GROUP)) {
+                if (isSupported(BARCHART_HORIZONTAL)) {
+                    category.withField(new PropertyEditorFieldInfo(DisplayerSettingsEditorConstants.INSTANCE.barchart_horizontal(),
+                            Boolean.toString(displayerSettings.isBarchartHorizontal()),
+                            PropertyEditorType.BOOLEAN)
+                            .withKey(BARCHART_HORIZONTAL.getFullId()));
+                }
+            }
         }
         if (isSupported(CHART_MARGIN_GROUP)) {
-            PropertyEditorCategory category = new PropertyEditorCategory("Margins");
+            PropertyEditorCategory category = new PropertyEditorCategory(DisplayerSettingsEditorConstants.INSTANCE.chart_marginGroup());
             categories.add(category);
 
             if (isSupported(CHART_MARGIN_TOP)) {
@@ -235,7 +245,7 @@ public class DisplayerSettingsEditor extends Composite {
             }
         }
         if (isSupported(CHART_LEGEND_GROUP)) {
-            PropertyEditorCategory category = new PropertyEditorCategory("Legend");
+            PropertyEditorCategory category = new PropertyEditorCategory(DisplayerSettingsEditorConstants.INSTANCE.chart_legendGroup());
             categories.add(category);
 
             if (isSupported(CHART_SHOWLEGEND)) {
@@ -262,7 +272,7 @@ public class DisplayerSettingsEditor extends Composite {
             }
         }
         if (isSupported(XAXIS_GROUP) || isSupported(YAXIS_GROUP)) {
-            PropertyEditorCategory category = new PropertyEditorCategory("Axis");
+            PropertyEditorCategory category = new PropertyEditorCategory(DisplayerSettingsEditorConstants.INSTANCE.axis_group());
             categories.add(category);
 
             if (isSupported(XAXIS_SHOWLABELS)) {
@@ -288,19 +298,8 @@ public class DisplayerSettingsEditor extends Composite {
                         PropertyEditorType.TEXT).withKey(YAXIS_TITLE.getFullId()));
             }
         }
-        if (isSupported(BARCHART_GROUP)) {
-            PropertyEditorCategory category = new PropertyEditorCategory("Bar");
-            categories.add(category);
-
-            if (isSupported(BARCHART_HORIZONTAL)) {
-                category.withField(new PropertyEditorFieldInfo(DisplayerSettingsEditorConstants.INSTANCE.barchart_horizontal(),
-                        Boolean.toString(displayerSettings.isBarchartHorizontal()),
-                        PropertyEditorType.BOOLEAN)
-                        .withKey(BARCHART_HORIZONTAL.getFullId()));
-            }
-        }
         if (isSupported(TABLE_GROUP)) {
-            PropertyEditorCategory category = new PropertyEditorCategory("Table");
+            PropertyEditorCategory category = new PropertyEditorCategory(DisplayerSettingsEditorConstants.INSTANCE.table_group());
             categories.add(category);
 
             if (isSupported(TABLE_PAGESIZE)) {
@@ -327,6 +326,7 @@ public class DisplayerSettingsEditor extends Composite {
                 final List<String> optionList = new ArrayList<String>();
                 DataSet dataSet = displayer.getDataSetHandler().getLastDataSet();
                 List<DataColumn> dsColumns = dataSet.getColumns();
+                optionList.add("");
                 for (DataColumn column : dsColumns) optionList.add(column.getId());
 
                 category.withField(new PropertyEditorFieldInfo(DisplayerSettingsEditorConstants.INSTANCE.table_sortColumn(),
@@ -345,7 +345,7 @@ public class DisplayerSettingsEditor extends Composite {
             }
         }
         if (isSupported(METER_GROUP)) {
-            PropertyEditorCategory category = new PropertyEditorCategory("Meter");
+            PropertyEditorCategory category = new PropertyEditorCategory(DisplayerSettingsEditorConstants.INSTANCE.meter_group());
             categories.add(category);
 
             if (isSupported(METER_START)) {
@@ -379,7 +379,7 @@ public class DisplayerSettingsEditor extends Composite {
 
         }
         if (isSupported(FILTER_GROUP)) {
-            PropertyEditorCategory category = new PropertyEditorCategory("Filter");
+            PropertyEditorCategory category = new PropertyEditorCategory(DisplayerSettingsEditorConstants.INSTANCE.filter_group());
             categories.add(category);
 
             if (isSupported(FILTER_ENABLED)) {
@@ -408,7 +408,7 @@ public class DisplayerSettingsEditor extends Composite {
             }
         }
         if (isSupported(REFRESH_GROUP)) {
-            PropertyEditorCategory category = new PropertyEditorCategory("Refresh");
+            PropertyEditorCategory category = new PropertyEditorCategory(DisplayerSettingsEditorConstants.INSTANCE.refresh_group());
             categories.add(category);
 
             if (isSupported(REFRESH_INTERVAL)) {
@@ -425,6 +425,46 @@ public class DisplayerSettingsEditor extends Composite {
                         .withKey(REFRESH_STALE_DATA.getFullId()));
             }
         }
+        if (isSupported(COLUMNS_GROUP)) {
+            PropertyEditorCategory category = new PropertyEditorCategory(DisplayerSettingsEditorConstants.INSTANCE.common_columns());
+            categories.add(category);
+
+            DataSet dataSet = displayer.getDataSetHandler().getLastDataSet();
+            for (int i=0; i<dataSet.getColumns().size(); i++) {
+
+                DataColumn dataColumn = dataSet.getColumnByIndex(i);
+                ColumnSettings cs = displayerSettings.getColumnSettings(dataColumn);
+                String fieldSuffix = COLUMNS_PREFFIX + cs.getColumnId() + ".";
+                String expression = cs.getValueExpression();
+                String pattern = cs.getValuePattern();
+
+                category.withField(new PropertyEditorFieldInfo("\u25fe " + DisplayerSettingsEditorConstants.INSTANCE.columns_name() + (i+1),
+                        cs.getColumnName(),
+                        PropertyEditorType.TEXT)
+                        .withKey(fieldSuffix + "name"));
+
+                if (expression != null) {
+                    category.withField(new PropertyEditorFieldInfo("     " + DisplayerSettingsEditorConstants.INSTANCE.columns_expression(),
+                            expression,
+                            PropertyEditorType.TEXT)
+                            .withKey(fieldSuffix + "expression"));
+                }
+                if (pattern != null) {
+                    category.withField(new PropertyEditorFieldInfo("     " + DisplayerSettingsEditorConstants.INSTANCE.columns_pattern(),
+                            pattern,
+                            PropertyEditorType.TEXT)
+                            .withKey(fieldSuffix + "pattern"));
+                }
+                /* Non-critical. Disable for the time being.
+                if (isSupported(COLUMN_EMPTY)) {
+                    String empty = cs.getEmptyTemplate();
+                    category.withField(new PropertyEditorFieldInfo("     " + DisplayerSettingsEditorConstants.INSTANCE.columns_emptyvalue(),
+                            empty,
+                            PropertyEditorType.TEXT)
+                            .withKey(fieldSuffix + "empty"));
+                }*/
+            }
+        }
         return categories;
     }
 
@@ -436,7 +476,20 @@ public class DisplayerSettingsEditor extends Composite {
         if (property.getEventId().equalsIgnoreCase(PROPERTY_EDITOR_ID)) {
             String attrKey = property.getKey();
             String attrValue = event.getNewValue();
-            displayerSettings.setDisplayerSetting(attrKey, attrValue);
+
+            if (attrKey.startsWith(COLUMNS_PREFFIX)) {
+                String[] strings = attrKey.split("\\.");
+                if (strings.length == 3) {
+                    String columnId = strings[1];
+                    String setting = strings[2];
+                    if ("name".equals(setting)) displayerSettings.setColumnName(columnId, attrValue);
+                    else if ("empty".equals(setting)) displayerSettings.setColumnEmptyTemplate(columnId, attrValue);
+                    else if ("pattern".equals(setting)) displayerSettings.setColumnValuePattern(columnId, attrValue);
+                    else if ("expression".equals(setting)) displayerSettings.setColumnValueExpression(columnId, attrValue);
+                }
+            } else {
+                displayerSettings.setDisplayerSetting(attrKey, attrValue);
+            }
 
             if (listener != null) {
                 listener.displayerSettingsChanged(displayerSettings);

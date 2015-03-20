@@ -71,10 +71,10 @@ public class GoogleMeterChartDisplayer extends GoogleChartDisplayer {
                         new ColumnType[] {ColumnType.LABEL, ColumnType.NUMBER});
 
         return new DisplayerConstraints(lookupConstraints)
-                   .supportsAttribute( DisplayerAttributeDef.TYPE )
-                   .supportsAttribute(DisplayerAttributeDef.COLUMNS)
+                   .supportsAttribute(DisplayerAttributeDef.TYPE)
                    .supportsAttribute(DisplayerAttributeDef.RENDERER)
-                   .supportsAttribute( DisplayerAttributeGroupDef.FILTER_GROUP )
+                   .supportsAttribute(DisplayerAttributeGroupDef.COLUMNS_GROUP)
+                   .supportsAttribute(DisplayerAttributeGroupDef.FILTER_GROUP)
                    .supportsAttribute( DisplayerAttributeGroupDef.REFRESH_GROUP )
                    .supportsAttribute( DisplayerAttributeGroupDef.TITLE_GROUP)
                    .supportsAttribute( DisplayerAttributeDef.CHART_WIDTH )
@@ -89,7 +89,7 @@ public class GoogleMeterChartDisplayer extends GoogleChartDisplayer {
 
     private GaugeOptions createOptions() {
         Animation anim = Animation.create();
-        anim.setDuration(500);
+        anim.setDuration(700);
         anim.setEasing(AnimationEasing.IN_AND_OUT);
 
         GaugeOptions options = GaugeOptions.create();

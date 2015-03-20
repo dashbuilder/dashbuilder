@@ -51,17 +51,31 @@ public interface DisplayerSettingsEditorConstants extends ConstantsWithLookup {
 
     String common_columns();
 
+    String columns_name();
+
+    String columns_pattern();
+
+    String columns_expression();
+
+    String columns_emptyvalue();
+
     String common_columns_placeholder();
+
+    String refresh_group();
 
     String refresh_interval();
 
     String refresh_stale_data();
+
+    String chart_group();
 
     String chart_width();
 
     String chart_height();
     
     String chart_bgColor();
+
+    String chart_marginGroup();
 
     String chart_topMargin();
 
@@ -71,11 +85,15 @@ public interface DisplayerSettingsEditorConstants extends ConstantsWithLookup {
 
     String chart_rightMargin();
 
+    String chart_legendGroup();
+
     String chart_legendShow();
 
     String chart_legendPosition();
 
     String chart_3d();
+
+    String table_group();
 
     String table_pageSize();
 
@@ -93,6 +111,8 @@ public interface DisplayerSettingsEditorConstants extends ConstantsWithLookup {
 
     String table_descSortOrder();
 
+    String axis_group();
+
     String xaxis_showLabels();
 
     String xaxis_angle();
@@ -109,6 +129,8 @@ public interface DisplayerSettingsEditorConstants extends ConstantsWithLookup {
 
     String yaxis_title_placeholder();
 
+    String meter_group();
+
     String meter_start();
 
     String meter_warning();
@@ -117,11 +139,15 @@ public interface DisplayerSettingsEditorConstants extends ConstantsWithLookup {
 
     String meter_end();
 
+    String barchart_group();
+
     String barchart_orientation();
 
     String barchart_horizontal();
 
     String barchart_vertical();
+
+    String filter_group();
 
     String filter_enabled();
 
