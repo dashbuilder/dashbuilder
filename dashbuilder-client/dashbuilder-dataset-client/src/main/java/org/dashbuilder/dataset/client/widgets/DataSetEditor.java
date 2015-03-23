@@ -73,6 +73,7 @@ public class DataSetEditor implements IsWidget {
         View showNextButton(ClickHandler nextHandler);
         View showBackButton(ClickHandler backHandler);
         View showCancelButton(ClickHandler cancelHandler);
+        View onSave(Set<ConstraintViolation<? extends DataSetDef>> violations);
         View clear();
     }
 
@@ -148,7 +149,7 @@ public class DataSetEditor implements IsWidget {
                     public void onClick(ClickEvent event) {
                         // Save basic attributes (name and uuid) and provider type attribute.
                         // Check if exist validation violations.
-                        final Set<ConstraintViolation<? extends DataSetDef>> violations = workflow.save();
+                        final Set<ConstraintViolation<? extends DataSetDef>> violations = save();
                         if (isValid(violations)) {
                             // Build the data set class instance for the given provider type.
                             final DataSetDef _dataSetDef = DataSetProviderType.createDataSetDef(dataSetDef.getProvider());
@@ -186,7 +187,7 @@ public class DataSetEditor implements IsWidget {
             public void onClick(ClickEvent event) {
                 // Save basic attributes (name and uuid) and provider type attribute.
                 // Check if exist validation violations.
-                final Set<ConstraintViolation<? extends DataSetDef>> violations = workflow.save();
+                final Set<ConstraintViolation<? extends DataSetDef>> violations = save();
                 if (isValid(violations)) {
                     buildColumnsAndFilterEditionView();
                 }
@@ -225,7 +226,7 @@ public class DataSetEditor implements IsWidget {
             @Override
             public void onClick(ClickEvent event) {
                 // Validate and save attributes.
-                final Set<ConstraintViolation<? extends DataSetDef>> violations = workflow.save();
+                final Set<ConstraintViolation<? extends DataSetDef>> violations = save();
                 if (isValid(violations)) {
                     // Valid
                     buildColumnsAndFilterEditionView();
@@ -241,6 +242,12 @@ public class DataSetEditor implements IsWidget {
                 buildColumnsAndFilterEditionView();
             }
         });
+    }
+    
+    private Set<ConstraintViolation<? extends DataSetDef>> save() {
+        final Set<ConstraintViolation<? extends DataSetDef>> violations = workflow.save();
+        view.onSave(violations);
+        return violations;
     }
     
     private final ClickHandler cancelHandler = new ClickHandler() {

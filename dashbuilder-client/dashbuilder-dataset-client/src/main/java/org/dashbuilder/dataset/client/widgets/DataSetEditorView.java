@@ -23,6 +23,7 @@ import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.*;
+import org.dashbuilder.dataprovider.DataSetProviderType;
 import org.dashbuilder.dataset.client.resources.i18n.DataSetEditorConstants;
 import org.dashbuilder.dataset.client.resources.i18n.DataSetEditorMessages;
 import org.dashbuilder.dataset.client.validation.DataSetDefEditWorkflow;
@@ -37,6 +38,8 @@ import org.dashbuilder.dataset.client.widgets.editors.sql.SQLDataSetDefAttribute
 import org.dashbuilder.dataset.def.*;
 
 import javax.enterprise.context.Dependent;
+import javax.validation.ConstraintViolation;
+import java.util.Set;
 
 /**
  * <p>Default view for DataSetEditor presenter view.</p> 
@@ -166,7 +169,7 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
         clearView();
         
         // View title.
-        setEditorTitle("");
+        showTitle();
         
         // TODO: Obtain data set count from a backend service.
         dataSetCountText.setText(DataSetEditorMessages.INSTANCE.dataSetCount(0));
@@ -198,7 +201,7 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
         workflow.clear().edit(dataSetProviderTypeEditor, dataSetDef);
 
         // View title.
-        setEditorTitle(DataSetEditorMessages.INSTANCE.newDataSet(""));
+        showTitle();
         
         providerSelectionViewPanel.setVisible(true);
         dataSetProviderTypeEditor.setEditMode(!isEditMode);
@@ -212,7 +215,7 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
         workflow.clear().edit(dataSetBasicAttributesEditor, dataSetDef);
 
         // View title.
-        setEditorTitle(DataSetEditorMessages.INSTANCE.newDataSet(dataSetDef.getProvider().name()));
+        showTitle();
         
         basicAttributesEditionViewPanel.setVisible(true);
         dataSetBasicAttributesEditor.setEditMode(true);
@@ -264,6 +267,9 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
     public DataSetEditor.View showColumnsAndFilterEditionView() {
         // TODO: workflow.clear().edit(dataSetBasicAttributesEditor, dataSetDef);
 
+        // View title.
+        showTitle();
+        
         dataSetColumnsAndFilterEditor.setVisible(true);
         dataSetColumnsAndFilterEditor.setEditMode(true);
         showTab(dataConfigurationTab);
@@ -275,6 +281,9 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
     @Override
     public DataSetEditor.View showAdvancedAttributesEditionView() {
         workflow.clear().edit(dataSetAdvancedAttributesEditor, dataSetDef);
+
+        // View title.
+        showTitle();
         
         advancedAttributesEditionViewPanel.setVisible(true);
         dataSetAdvancedAttributesEditor.setEditMode(true);
@@ -309,8 +318,13 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
         return this;
     }
 
-    private void setEditorTitle(String  text) {
-        title.setText(text);
+    @Override
+    public DataSetEditor.View onSave(Set<ConstraintViolation<? extends DataSetDef>> violations) {
+        
+        // Update title if necessary.
+        showTitle();
+        
+        return this;
     }
 
     @Override
@@ -322,6 +336,7 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
     }
     
     private void clearView() {
+        title.setVisible(false);
         initialViewPanel.setVisible(false);
         providerSelectionViewPanel.setVisible(false);
         tabViewPanel.setVisible(false);
@@ -339,6 +354,41 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
         backButton.setVisible(false);
         cancelButton.setVisible(false);
         buttonsPanel.setVisible(false);
+    }
+    
+    private void showTitle() {
+
+        String _name = null;
+        DataSetProviderType _provider = null;
+        
+        if (dataSetDef != null) {
+            
+            if (dataSetDef.getName() != null && dataSetDef.getName().length() > 0) {
+                _name = dataSetDef.getName();
+            }
+            
+            if (dataSetDef.getProvider() != null) {
+                _provider =  dataSetDef.getProvider();
+            }
+            
+            if (_name == null && _provider == null) {
+                title.setText(DataSetEditorMessages.INSTANCE.newDataSet(""));
+            } else if (_provider != null && _name == null) {
+                title.setText(DataSetEditorMessages.INSTANCE.newDataSet(_provider.name()));
+            } else if (_provider == null) {
+                title.setText(_name);
+            } else {
+                title.setText(_name + " (" + _provider.name() + ")");
+            }
+            
+            title.setVisible(true);
+
+        } else {
+
+            title.setVisible(false);
+
+        }
+        
     }
     
     private void showTab(Tab tab) {
