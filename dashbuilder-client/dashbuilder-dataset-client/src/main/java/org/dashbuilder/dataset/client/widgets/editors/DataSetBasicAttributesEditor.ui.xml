@@ -25,7 +25,7 @@
       <b:Column size="3">
           <dash-client:ValueBoxEditorDecorator errorLabelPosition="TOOLTIP" ui:field="attributeUUID">
             <dash-client:valuebox>
-              <g:TextBox enabled="false" />
+              <b:TextBox enabled="false" placeholder="{i18n.attributeUUID}" />
             </dash-client:valuebox>
           </dash-client:ValueBoxEditorDecorator>  
       </b:Column>
@@ -37,7 +37,7 @@
       <b:Column size="3">
           <dash-client:ValueBoxEditorDecorator errorLabelPosition="TOOLTIP" ui:field="name">
             <dash-client:valuebox>
-              <g:TextBox /> <!-- TODO:  placeholder="{i18n.attributeName}" -->
+              <b:TextBox placeholder="{i18n.attributeName}" />
             </dash-client:valuebox>
           </dash-client:ValueBoxEditorDecorator>
       </b:Column>

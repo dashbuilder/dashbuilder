@@ -23,7 +23,7 @@
       <b:Column size="3">
         <dash-client:ValueBoxEditorDecorator errorLabelPosition="TOOLTIP" ui:field="dataSource">
           <dash-client:valuebox>
-            <g:TextBox /> <!-- TODO:  placeholder. -->
+            <b:TextBox placeholder="{i18n.sql_datasource_placeHolder}" />
           </dash-client:valuebox>
         </dash-client:ValueBoxEditorDecorator>
       </b:Column>
@@ -38,7 +38,7 @@
       <b:Column size="3">
         <dash-client:ValueBoxEditorDecorator errorLabelPosition="TOOLTIP" ui:field="dbSchema">
           <dash-client:valuebox>
-            <g:TextBox /> <!-- TODO:  placeholder. -->
+            <b:TextBox placeholder="{i18n.sql_schema_placeHolder}" />
           </dash-client:valuebox>
         </dash-client:ValueBoxEditorDecorator>
       </b:Column>
@@ -53,7 +53,7 @@
       <b:Column size="3">
         <dash-client:ValueBoxEditorDecorator errorLabelPosition="TOOLTIP" ui:field="dbTable">
           <dash-client:valuebox>
-            <g:TextBox /> <!-- TODO:  placeholder. -->
+            <b:TextBox placeholder="{i18n.sql_table_placeHolder}" />
           </dash-client:valuebox>
         </dash-client:ValueBoxEditorDecorator>
       </b:Column>

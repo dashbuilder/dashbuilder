@@ -56,7 +56,7 @@
         <b:ControlLabel><ui:text from="{i18n.attributeRefreshInterval}"/></b:ControlLabel>
         <dash-client:ValueBoxEditorDecorator errorLabelPosition="TOOLTIP" ui:field="attributeRefreshInterval">
           <dash-client:valuebox>
-            <g:TextBox /> <!-- TODO:  placeholder="{i18n.attributeRefreshInterval}" -->
+            <b:TextBox placeholder="{i18n.attributeRefreshInterval}" />
           </dash-client:valuebox>
         </dash-client:ValueBoxEditorDecorator>
       </b:ControlGroup>
