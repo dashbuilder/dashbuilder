@@ -14,53 +14,100 @@
   <ui:style type="org.dashbuilder.dataset.client.widgets.DataSetEditorView.DataSetEditorViewStyle">
     .mainPanel {
       font-size: 12pt;
-      float: left;
+      margin: 10px;
+    }
+    .titlePanel {
+      vertical-align: middle;
+      text-align:center;
+      margin-bottom: 50px;
+    }
+    .title {
+      font-size: 14pt;
+      font-weight: bold;
+    }
+    .editorPanel {
+      
+    }
+    .buttonsPanel {
+      margin-top: 50px;
     }
     .dataSetCountLabel {
       
     }
   </ui:style>
   
-  <g:FlowPanel addStyleNames="{style.mainPanel} " ui:field="mainPanel" >
+  <g:FlowPanel addStyleNames="{style.mainPanel} well" ui:field="mainPanel" >
     
-    <g:FlowPanel ui:field="initialViewPanel">
-      <b:Label addStyleNames="{style.dataSetCountLabel}" ui:field="dataSetCountLabel"/>
-      <g:Hyperlink text="{i18n.newDataSet}" ui:field="newDataSetLink"/>
+    <g:FlowPanel addStyleNames="{style.titlePanel}">
+      <!-- TODO: Replace by bootstrap heading widget? -->
+      <g:HTML text="" ui:field="title" addStyleNames="{style.title}"/>  
     </g:FlowPanel>
     
-    <g:VerticalPanel ui:field="providerSelectionViewPanel">
+    
+    <g:FlowPanel ui:field="initialViewPanel">
+      <g:HTML addStyleNames="{style.dataSetCountLabel}" ui:field="dataSetCountText"/>
+      <g:Hyperlink text="{i18n.createNewDataSetText}" ui:field="newDataSetLink"/>
+    </g:FlowPanel>
+    
+    <g:FlowPanel ui:field="providerSelectionViewPanel" addStyleNames="{style.editorPanel}">
       <dash-dset-editors:DataSetProviderTypeEditor editMode="true" ui:field="dataSetProviderTypeEditor"/>
-    </g:VerticalPanel>
-    
-    <g:VerticalPanel ui:field="basicAttributesEditionViewPanel">
+    </g:FlowPanel>
+
+    <g:FlowPanel ui:field="basicAttributesEditionViewPanel" addStyleNames="{style.editorPanel}">
       <dash-dset-editors:DataSetBasicAttributesEditor editMode="true" ui:field="dataSetBasicAttributesEditor"/>
-    </g:VerticalPanel>
+    </g:FlowPanel>
 
-    <g:VerticalPanel ui:field="sqlAttributesEditionViewPanel">
-      <dash-dset-editors-sql:SQLDataSetDefAttributesEditor editMode="true" ui:field="sqlDataSetDefAttributesEditor"/>
-    </g:VerticalPanel>
+    <g:FlowPanel ui:field="tabViewPanel" addStyleNames="{style.editorPanel}">
+      
+      <b:TabPanel tabPosition="above" ui:field="tabPanel">
+  
+        <!-- Data configuration. -->
+        <b:Tab heading="{i18n.tab_dataConfiguration}" active="true" ui:field="dataConfigurationTab">
+          <!--<b:customTab>
+            <g:Image addStyleNames="{style.icon}" resource="{res.logo}"/>
+          </b:customTab>-->
+  
+          <g:FlowPanel ui:field="sqlAttributesEditionViewPanel" addStyleNames="{style.editorPanel}">
+            <dash-dset-editors-sql:SQLDataSetDefAttributesEditor editMode="true" ui:field="sqlDataSetDefAttributesEditor"/>
+          </g:FlowPanel>
+  
+          <g:FlowPanel ui:field="csvAttributesEditionViewPanel" addStyleNames="{style.editorPanel}">
+            <dash-dset-editors-csv:CSVDataSetDefAttributesEditor editMode="true" ui:field="csvDataSetDefAttributesEditor"/>
+          </g:FlowPanel>
+  
+          <g:FlowPanel ui:field="beanAttributesEditionViewPanel" addStyleNames="{style.editorPanel}">
+            <dash-dset-editors-static:BeanDataSetDefAttributesEditor editMode="true" ui:field="beanDataSetDefAttributesEditor"/>
+          </g:FlowPanel>
+  
+          <g:FlowPanel ui:field="elAttributesEditionViewPanel" addStyleNames="{style.editorPanel}">
+            <dash-dset-editors-el:ELDataSetDefAttributesEditor editMode="true" ui:field="elDataSetDefAttributesEditor"/>
+          </g:FlowPanel>
+  
+        </b:Tab>
 
-    <g:VerticalPanel ui:field="csvAttributesEditionViewPanel">
-      <dash-dset-editors-csv:CSVDataSetDefAttributesEditor editMode="true" ui:field="csvDataSetDefAttributesEditor"/>
-    </g:VerticalPanel>
+        <!-- Columns, filter & preview. -->
+        <b:Tab heading="{i18n.tab_dataPreview}" active="false" ui:field="dataPreviewTab">
 
-    <g:VerticalPanel ui:field="beanAttributesEditionViewPanel">
-      <dash-dset-editors-static:BeanDataSetDefAttributesEditor editMode="true" ui:field="beanDataSetDefAttributesEditor"/>
-    </g:VerticalPanel>
+          <g:FlowPanel ui:field="columnsAndFilterEditionViewPanel" addStyleNames="{style.editorPanel}">
+            <dash-dset-editors:DataSetColumnsAndFilterEditor editMode="true" ui:field="dataSetColumnsAndFilterEditor"/>
+          </g:FlowPanel>
+          
+        </b:Tab>
 
-    <g:VerticalPanel ui:field="elAttributesEditionViewPanel">
-      <dash-dset-editors-el:ELDataSetDefAttributesEditor editMode="true" ui:field="elDataSetDefAttributesEditor"/>
-    </g:VerticalPanel>
+        <!-- Advanced configuration. -->
+        <b:Tab heading="{i18n.tab_advancedConfiguration}" active="false" ui:field="dataAdvancedConfigurationTab">
 
-    <g:VerticalPanel ui:field="columnsAndFilterEditionViewPanel">
-      <dash-dset-editors:DataSetColumnsAndFilterEditor editMode="true" ui:field="dataSetColumnsAndFilterEditor"/>
-    </g:VerticalPanel>
-
-    <g:VerticalPanel ui:field="advancedAttributesEditionViewPanel">
-      <dash-dset-editors:DataSetAdvancedAttributesEditor editMode="true" ui:field="dataSetAdvancedAttributesEditor"/>
-    </g:VerticalPanel>
+          <g:FlowPanel ui:field="advancedAttributesEditionViewPanel" addStyleNames="{style.editorPanel}">
+            <dash-dset-editors:DataSetAdvancedAttributesEditor editMode="true" ui:field="dataSetAdvancedAttributesEditor"/>
+          </g:FlowPanel>
+          
+        </b:Tab>
+        
+      </b:TabPanel>
+      
+    </g:FlowPanel>
     
-    <g:HorizontalPanel spacing="10" ui:field="buttonsPanel">
+    <g:FlowPanel ui:field="buttonsPanel" addStyleNames="{style.buttonsPanel}">
       
       <b:Button text="{i18n.cancel}" ui:field="cancelButton"/>
 
@@ -68,8 +115,8 @@
 
       <b:Button text="{i18n.next}" ui:field="nextButton"/>
       
-    </g:HorizontalPanel>
-    
+    </g:FlowPanel>
+
   </g:FlowPanel>
   
 </ui:UiBinder>

@@ -168,16 +168,16 @@ public class DataSetEditor implements IsWidget {
 
         switch (dataSetDef.getProvider()) {
             case SQL:
-                view.edit(dataSetDef, workflow).showSQLAttributesEditorView();
+                view.showSQLAttributesEditorView();
                 break;
             case CSV:
-                view.edit(dataSetDef, workflow).showCSVAttributesEditorView();
+                view.showCSVAttributesEditorView();
                 break;
             case BEAN:
-                view.edit(dataSetDef, workflow).showBeanAttributesEditorView();
+                view.showBeanAttributesEditorView();
                 break;
             case ELASTICSEARCH:
-                view.edit(dataSetDef, workflow).showELAttributesEditorView();
+                view.showELAttributesEditorView();
                 break;
         }
         

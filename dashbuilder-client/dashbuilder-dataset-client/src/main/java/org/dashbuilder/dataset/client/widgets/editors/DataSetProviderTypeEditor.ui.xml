@@ -7,16 +7,15 @@
 
   <ui:with field="i18n" type="org.dashbuilder.dataset.client.resources.i18n.DataSetEditorConstants"/>
 
-  <g:HorizontalPanel>
-
-    <!-- Common attributes. -->
-    <b:Fieldset>
-    <b:Legend title="{i18n.providerType}"><ui:text from="{i18n.providerType}"/></b:Legend>
-
-      <dash-client:ImageListEditorDecorator ui:field="provider" />
+  <ui:style >
+    .mainPanel {
       
-    </b:Fieldset>
-
-  </g:HorizontalPanel>
+    }
+  </ui:style>
+  
+  <g:FlowPanel addStyleNames="{style.mainPanel}">
+    <g:HTML text="{i18n.selectType}:"/>
+    <dash-client:ImageListEditorDecorator ui:field="provider" />
+  </g:FlowPanel>
   
 </ui:UiBinder>

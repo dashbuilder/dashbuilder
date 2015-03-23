@@ -19,6 +19,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.EditorError;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.common.client.validation.editors.ValueBoxEditorDecorator;
@@ -37,7 +38,7 @@ public class DataSetBasicAttributesEditor extends AbstractDataSetDefEditor imple
     private static DataSetBasicAttributesEditorBinder uiBinder = GWT.create(DataSetBasicAttributesEditorBinder.class);
 
     @UiField
-    HorizontalPanel basicAttributesPanel;
+    FlowPanel basicAttributesPanel;
     
     @UiField
     @Path("UUID")
