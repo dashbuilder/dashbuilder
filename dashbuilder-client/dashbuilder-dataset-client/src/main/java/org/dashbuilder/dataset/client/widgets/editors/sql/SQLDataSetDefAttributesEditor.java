@@ -16,24 +16,23 @@
 package org.dashbuilder.dataset.client.widgets.editors.sql;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.editor.client.EditorError;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.common.client.validation.editors.ValueBoxEditorDecorator;
 import org.dashbuilder.dataset.client.validation.editors.SQLDataSetDefEditor;
-import org.dashbuilder.dataset.client.widgets.DataSetEditor;
-import org.dashbuilder.dataset.def.DataSetDef;
-import org.dashbuilder.dataset.def.SQLDataSetDef;
+import org.dashbuilder.dataset.client.widgets.editors.AbstractDataSetDefEditor;
 
 import javax.enterprise.context.Dependent;
+import java.util.List;
 
 /**
  * <p>This is the view implementation for Data Set Editor widget for editing sql provider specific attributes.</p>
  */
 @Dependent
-public class SQLDataSetDefAttributesEditor extends Composite implements SQLDataSetDefEditor {
+public class SQLDataSetDefAttributesEditor extends AbstractDataSetDefEditor implements SQLDataSetDefEditor {
     
     interface SQLDataSetDefAttributesEditorBinder extends UiBinder<Widget, SQLDataSetDefAttributesEditor> {}
     private static SQLDataSetDefAttributesEditorBinder uiBinder = GWT.create(SQLDataSetDefAttributesEditorBinder.class);
@@ -65,5 +64,10 @@ public class SQLDataSetDefAttributesEditor extends Composite implements SQLDataS
 
     public void setEditMode(boolean isEditMode) {
         this.isEditMode = isEditMode;
+    }
+
+    @Override
+    public void showErrors(List<EditorError> errors) {
+        consumeErrors(errors);
     }
 }

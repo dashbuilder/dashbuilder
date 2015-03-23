@@ -16,20 +16,22 @@
 package org.dashbuilder.dataset.client.widgets.editors.elasticsearch;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.editor.client.EditorError;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.dataset.client.validation.editors.ELDataSetDefEditor;
+import org.dashbuilder.dataset.client.widgets.editors.AbstractDataSetDefEditor;
 
 import javax.enterprise.context.Dependent;
+import java.util.List;
 
 /**
  * <p>This is the view implementation for Data Set Editor widget for editing ElasticSearch provider specific attributes.</p>
  */
 @Dependent
-public class ELDataSetDefAttributesEditor extends Composite implements ELDataSetDefEditor {
+public class ELDataSetDefAttributesEditor extends AbstractDataSetDefEditor implements ELDataSetDefEditor {
     
     interface ELDataSetDefAttributesEditorBinder extends UiBinder<Widget, ELDataSetDefAttributesEditor> {}
     private static ELDataSetDefAttributesEditorBinder uiBinder = GWT.create(ELDataSetDefAttributesEditorBinder.class);
@@ -49,5 +51,10 @@ public class ELDataSetDefAttributesEditor extends Composite implements ELDataSet
 
     public void setEditMode(boolean isEditMode) {
         this.isEditMode = isEditMode;
+    }
+
+    @Override
+    public void showErrors(List<EditorError> errors) {
+        consumeErrors(errors);
     }
 }

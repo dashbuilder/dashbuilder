@@ -16,20 +16,22 @@
 package org.dashbuilder.dataset.client.widgets.editors.bean;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.editor.client.EditorError;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.dataset.client.validation.editors.BeanDataSetDefEditor;
+import org.dashbuilder.dataset.client.widgets.editors.AbstractDataSetDefEditor;
 
 import javax.enterprise.context.Dependent;
+import java.util.List;
 
 /**
  * <p>This is the view implementation for Data Set Editor widget for editing bean provider specific attributes.</p>
  */
 @Dependent
-public class BeanDataSetDefAttributesEditor extends Composite implements BeanDataSetDefEditor {
+public class BeanDataSetDefAttributesEditor extends AbstractDataSetDefEditor implements BeanDataSetDefEditor {
     
     interface BeanDataSetDefAttributesEditorBinder extends UiBinder<Widget, BeanDataSetDefAttributesEditor> {}
     private static BeanDataSetDefAttributesEditorBinder uiBinder = GWT.create(BeanDataSetDefAttributesEditorBinder.class);
@@ -49,5 +51,10 @@ public class BeanDataSetDefAttributesEditor extends Composite implements BeanDat
 
     public void setEditMode(boolean isEditMode) {
         this.isEditMode = isEditMode;
+    }
+
+    @Override
+    public void showErrors(List<EditorError> errors) {
+        consumeErrors(errors);
     }
 }

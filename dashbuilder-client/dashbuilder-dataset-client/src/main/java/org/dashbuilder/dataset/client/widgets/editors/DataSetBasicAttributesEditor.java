@@ -16,21 +16,22 @@
 package org.dashbuilder.dataset.client.widgets.editors;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.editor.client.EditorError;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.common.client.validation.editors.ValueBoxEditorDecorator;
 import org.dashbuilder.dataset.client.validation.editors.DataSetDefEditor;
 
 import javax.enterprise.context.Dependent;
+import java.util.List;
 
 /**
  * <p>This is the view implementation for Data Set Editor widget for editing data set UUID and name attributes.</p>
  */
 @Dependent
-public class DataSetBasicAttributesEditor extends Composite implements DataSetDefEditor {
+public class DataSetBasicAttributesEditor extends AbstractDataSetDefEditor implements DataSetDefEditor {
 
     interface DataSetBasicAttributesEditorBinder extends UiBinder<Widget, DataSetBasicAttributesEditor> {}
     private static DataSetBasicAttributesEditorBinder uiBinder = GWT.create(DataSetBasicAttributesEditorBinder.class);
@@ -58,5 +59,10 @@ public class DataSetBasicAttributesEditor extends Composite implements DataSetDe
 
     public void setEditMode(boolean isEditMode) {
         this.isEditMode = isEditMode;
+    }
+
+    @Override
+    public void showErrors(List<EditorError> errors) {
+        consumeErrors(errors);
     }
 }

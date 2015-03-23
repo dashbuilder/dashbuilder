@@ -16,20 +16,22 @@
 package org.dashbuilder.dataset.client.widgets.editors.csv;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.editor.client.EditorError;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.dataset.client.validation.editors.CSVDataSetDefEditor;
+import org.dashbuilder.dataset.client.widgets.editors.AbstractDataSetDefEditor;
 
 import javax.enterprise.context.Dependent;
+import java.util.List;
 
 /**
  * <p>This is the view implementation for Data Set Editor widget for editing CSV provider specific attributes.</p>
  */
 @Dependent
-public class CSVDataSetDefAttributesEditor extends Composite implements CSVDataSetDefEditor {
+public class CSVDataSetDefAttributesEditor extends AbstractDataSetDefEditor implements CSVDataSetDefEditor {
     
     interface CSVDataSetDefAttributesEditorBinder extends UiBinder<Widget, CSVDataSetDefAttributesEditor> {}
     private static CSVDataSetDefAttributesEditorBinder uiBinder = GWT.create(CSVDataSetDefAttributesEditorBinder.class);
@@ -49,5 +51,10 @@ public class CSVDataSetDefAttributesEditor extends Composite implements CSVDataS
 
     public void setEditMode(boolean isEditMode) {
         this.isEditMode = isEditMode;
+    }
+
+    @Override
+    public void showErrors(List<EditorError> errors) {
+        consumeErrors(errors);
     }
 }

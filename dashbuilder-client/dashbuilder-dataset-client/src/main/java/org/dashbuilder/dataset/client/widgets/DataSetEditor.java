@@ -45,11 +45,12 @@ import java.util.Set;
  *     <li>Column, filter and table results editor view - @see <code>org.dashbuilder.dataset.client.widgets.editors.DataSetColumnsAndFilterEditor</code></li>     
  * </ul>
  * 
- * <p>This editor provides three screens:</p>
+ * <p>This editor provides four edition screens:</p>
  * <ul>
- *     <li>Basic data set attributes edition.</li>     
- *     <li>Advanced data set attributes edition + provider specific attributes.</li>
- *     <li>Data set columns and initial filter edition.</li>     
+ *     <li>Provider selection (Only if creating new data set).</li>
+ *     <li>Basic data set attributes & Provider specific attributes.</li>     
+ *     <li>Basic data set attributes & Data set columns and initial filter edition.</li>     
+ *     <li>Basic data set attributes & Advanced data set attributes edition.</li>
  * </ul> 
  */
 @Dependent
@@ -60,15 +61,18 @@ public class DataSetEditor implements IsWidget {
     public interface View extends IsWidget, HasHandlers {
         View edit(DataSetDef dataSetDef, DataSetDefEditWorkflow workflow);
         View setEditMode(boolean editMode);
-        View showInitialView();
-        View showBasicAttributesEditionView(ClickHandler nextHandler, ClickHandler backHandler, ClickHandler cancelHandler);
-        View showAdvancedAttributesEditionView(ClickHandler nextHandler, ClickHandler backHandler, ClickHandler cancelHandler);
+        View showInitialView(ClickHandler newDataSetHandler);
+        View showProviderSelectionView();
+        View showBasicAttributesEditionView();
         View showSQLAttributesEditorView();
         View showBeanAttributesEditorView();
         View showCSVAttributesEditorView();
         View showELAttributesEditorView();
-        View showColumnsAndFilterEditionView(ClickHandler nextHandler, ClickHandler backHandler, ClickHandler cancelHandler);
-        View removeButtonsHandler();
+        View showColumnsAndFilterEditionView();
+        View showAdvancedAttributesEditionView();
+        View showNextButton(ClickHandler nextHandler);
+        View showBackButton(ClickHandler backHandler);
+        View showCancelButton(ClickHandler cancelHandler);
         View clear();
     }
 
@@ -78,7 +82,7 @@ public class DataSetEditor implements IsWidget {
     private boolean isEdit;
     
     public DataSetEditor() {
-        view.showInitialView();
+        view.showInitialView(newDataSetHandler);
     }
     
     public DataSetEditor newDataSet(String uuid) {
@@ -97,7 +101,7 @@ public class DataSetEditor implements IsWidget {
         this.dataSetDef = dataSetDef;
 
         view.setEditMode(isEdit);
-        buildBasicAttributesEditionView();
+        buildProviderSelectionView();
                 
         return this;
     }
@@ -134,57 +138,34 @@ public class DataSetEditor implements IsWidget {
         return view.asWidget();
     }
 
-    private void buildBasicAttributesEditionView() {
-        // Remove any handler for view buttons.
-        view.removeButtonsHandler();
-        
-        view.edit(dataSetDef, workflow).showBasicAttributesEditionView(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                // Save basic attributes (name and uuid) and provider type attribute.
-                // Check if exist validation violations.
-                final Set<ConstraintViolation<? extends DataSetDef>> violations = workflow.save();
-                if (isValid(violations)) {
-                    // Build the data set class instance for the given provider type.
-                    final DataSetDef _dataSetDef = DataSetProviderType.createDataSetDef(dataSetDef.getProvider());
-                    _dataSetDef.setUUID(dataSetDef.getUUID());
-                    _dataSetDef.setName(dataSetDef.getName());
-                    DataSetEditor.this.dataSetDef = _dataSetDef;
-                    buildAdvancedAttributesEditionView();
-                }
-                saveLog(violations, violations);
-            }
-        }, null, new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                clear();
-            }
-        });
+    private void buildProviderSelectionView() {
+        view.edit(dataSetDef, workflow)
+                // Show provider selection widget.
+                .showProviderSelectionView()
+                // Show next button.
+                .showNextButton(new ClickHandler() {
+                    @Override
+                    public void onClick(ClickEvent event) {
+                        // Save basic attributes (name and uuid) and provider type attribute.
+                        // Check if exist validation violations.
+                        final Set<ConstraintViolation<? extends DataSetDef>> violations = workflow.save();
+                        if (isValid(violations)) {
+                            // Build the data set class instance for the given provider type.
+                            final DataSetDef _dataSetDef = DataSetProviderType.createDataSetDef(dataSetDef.getProvider());
+                            _dataSetDef.setUUID(dataSetDef.getUUID());
+                            DataSetEditor.this.dataSetDef = _dataSetDef;
+                            buildBasicAttributesEditionView();
+                        }
+                        saveLog(violations, violations);
+                    }
+                })
+                // Show cancel button.
+                .showCancelButton(cancelHandler);
     }
+    
+    private void buildBasicAttributesEditionView() {
+        view.edit(dataSetDef, workflow).showBasicAttributesEditionView();
 
-    private void buildAdvancedAttributesEditionView() {
-        // Remove any handler for view buttons.
-        view.removeButtonsHandler();
-        
-        view.edit(dataSetDef, workflow).showAdvancedAttributesEditionView(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                // Validate and save attributes.
-                final Set<ConstraintViolation<? extends DataSetDef>> violations = workflow.save();
-                if (isValid(violations)) {
-                    // Valid
-                    buildColumnsAndFilterEditionView();
-                }
-                saveLog(violations);
-            }
-        }, null, new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                clear();
-            }
-        });
-        
-        
         switch (dataSetDef.getProvider()) {
             case SQL:
                 view.edit(dataSetDef, workflow).showSQLAttributesEditorView();
@@ -199,35 +180,89 @@ public class DataSetEditor implements IsWidget {
                 view.edit(dataSetDef, workflow).showELAttributesEditorView();
                 break;
         }
+        
+        view.showNextButton(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                // Save basic attributes (name and uuid) and provider type attribute.
+                // Check if exist validation violations.
+                final Set<ConstraintViolation<? extends DataSetDef>> violations = workflow.save();
+                if (isValid(violations)) {
+                    buildColumnsAndFilterEditionView();
+                }
+                saveLog(violations, violations);
+            }
+        });
+        view.showCancelButton(cancelHandler);
     }
 
     private void buildColumnsAndFilterEditionView() {
-        // Remove any handler for view buttons.
-        view.removeButtonsHandler();
+        view.edit(dataSetDef, workflow)
+            .showBasicAttributesEditionView()
+            .showColumnsAndFilterEditionView();
 
-        view.edit(dataSetDef, workflow).showColumnsAndFilterEditionView(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                // TODO
-            }
-        }, new ClickHandler() {
+        view.showNextButton(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 buildAdvancedAttributesEditionView();
             }
-        }, new ClickHandler() {
+        });
+        view.showCancelButton(cancelHandler);
+        view.showBackButton(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                clear();
+                buildBasicAttributesEditionView();
             }
         });
     }
     
+    private void buildAdvancedAttributesEditionView() {
+        view.edit(dataSetDef, workflow)
+            .showBasicAttributesEditionView()
+            .showAdvancedAttributesEditionView();
+        
+        view.showNextButton(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                // Validate and save attributes.
+                final Set<ConstraintViolation<? extends DataSetDef>> violations = workflow.save();
+                if (isValid(violations)) {
+                    // Valid
+                    buildColumnsAndFilterEditionView();
+                }
+                saveLog(violations);
+            }
+        });
+        
+        view.showCancelButton(cancelHandler);
+        view.showBackButton(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                buildColumnsAndFilterEditionView();
+            }
+        });
+    }
+    
+    private final ClickHandler cancelHandler = new ClickHandler() {
+        @Override
+        public void onClick(ClickEvent event) {
+            clear();
+        }
+    };
+    private final ClickHandler newDataSetHandler = new ClickHandler() {
+        @Override
+        public void onClick(ClickEvent event) {
+            // TODO: Generate uuid using the backend uuid generator. Perform a RPC call.
+            newDataSet("new-uuid");;
+        }
+    };
+    
     private void clear() {
         this.dataSetDef = null;
         view.clear();
-                
+        view.showInitialView(newDataSetHandler);
     }
+    
     private boolean isValid(Set<ConstraintViolation<? extends  DataSetDef>> violations) {
         return violations == null || (violations != null && violations.isEmpty());
     }

@@ -17,30 +17,29 @@ package org.dashbuilder.dataset.client.widgets.editors;
 
 import com.github.gwtbootstrap.client.ui.Image;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.editor.client.EditorError;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.common.client.validation.editors.ImageListEditorDecorator;
 import org.dashbuilder.dataprovider.DataSetProviderType;
 import org.dashbuilder.dataset.client.resources.bundles.DataSetClientResources;
 import org.dashbuilder.dataset.client.resources.i18n.DataSetExplorerConstants;
 import org.dashbuilder.dataset.client.validation.editors.DataSetDefEditor;
-import org.dashbuilder.dataset.def.DataSetDef;
 
 import javax.enterprise.context.Dependent;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
  * <p>This is the view implementation for Data Set Editor widget for editing the data set provider type.</p>
  */
 @Dependent
-public class DataSetProviderTypeEditor extends Composite implements DataSetDefEditor {
+public class DataSetProviderTypeEditor extends AbstractDataSetDefEditor implements DataSetDefEditor {
 
     private static final int ICONS_SIZE = 250;
-    private static final double ALPHA_ICON_NOT_SELECTED = 0.2;
-    
+
     interface DataSetProviderTypeEditorBinder extends UiBinder<Widget, DataSetProviderTypeEditor> {}
     private static DataSetProviderTypeEditorBinder uiBinder = GWT.create(DataSetProviderTypeEditorBinder.class);
 
@@ -48,6 +47,11 @@ public class DataSetProviderTypeEditor extends Composite implements DataSetDefEd
     ImageListEditorDecorator<DataSetProviderType> provider;
 
     private  boolean isEditMode;
+
+    @Override
+    public void showErrors(List<EditorError> errors) {
+        consumeErrors(errors);
+    }
     
     public DataSetProviderTypeEditor() {
         initWidget(uiBinder.createAndBindUi(this));
@@ -97,4 +101,5 @@ public class DataSetProviderTypeEditor extends Composite implements DataSetDefEd
         this.isEditMode = isEditMode;
         provider.setEditMode(isEditMode);
     }
+
 }

@@ -16,9 +16,9 @@
 package org.dashbuilder.dataset.client.widgets.editors;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.editor.client.EditorError;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.common.client.validation.editors.BooleanSwitchEditorDecorator;
@@ -26,12 +26,13 @@ import org.dashbuilder.common.client.validation.editors.ValueBoxEditorDecorator;
 import org.dashbuilder.dataset.client.validation.editors.DataSetDefEditor;
 
 import javax.enterprise.context.Dependent;
+import java.util.List;
 
 /**
  * <p>This is the view implementation for Data Set Editor widget for editing data set backend cache policy, client cache policy and the refresh policy settings.</p>
  */
 @Dependent
-public class DataSetAdvancedAttributesEditor extends Composite implements DataSetDefEditor {
+public class DataSetAdvancedAttributesEditor extends AbstractDataSetDefEditor implements DataSetDefEditor {
     
     private static final int DEFAULT_CACHE_MAX_ROWS = -1;
     private static final int DEFAULT_CACHE_MAX_BYTES = -1;
@@ -82,5 +83,10 @@ public class DataSetAdvancedAttributesEditor extends Composite implements DataSe
 
     public void setEditMode(boolean isEditMode) {
         this.isEditMode = isEditMode;
+    }
+
+    @Override
+    public void showErrors(List<EditorError> errors) {
+        consumeErrors(errors);
     }
 }

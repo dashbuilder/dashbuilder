@@ -52,4 +52,5 @@ public interface DataSetEditorConstants extends ConstantsWithLookup {
     String beanAttributes();
     String csvAttributes();
     String elAttributes();
+    String dataSetCount();
 }

@@ -16,22 +16,22 @@
 package org.dashbuilder.dataset.client.widgets.editors;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.editor.client.EditorError;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.dataset.client.validation.editors.DataSetDefEditor;
-import org.dashbuilder.dataset.def.DataSetDef;
 
 import javax.enterprise.context.Dependent;
+import java.util.List;
 
 
 /**
- * <p>This is the view implementation for Data Set Editor widget for editing data set columns, intial filter and testing the results in a table.</p>
+ * <p>This is the view implementation widget for Data Set Editor widget for editing data set columns, initial filter and testing the checking in a table displayer.</p>
  */
 @Dependent
-public class DataSetColumnsAndFilterEditor extends Composite implements DataSetDefEditor {
+public class DataSetColumnsAndFilterEditor extends AbstractDataSetDefEditor implements DataSetDefEditor {
 
     interface DataSetColumnsAndFilterEditorBinder extends UiBinder<Widget, DataSetColumnsAndFilterEditor> {}
     private static DataSetColumnsAndFilterEditorBinder uiBinder = GWT.create(DataSetColumnsAndFilterEditorBinder.class);
@@ -51,5 +51,14 @@ public class DataSetColumnsAndFilterEditor extends Composite implements DataSetD
 
     public void setEditMode(boolean isEditMode) {
         this.isEditMode = isEditMode;
+    }
+
+    @Override
+    public void showErrors(List<EditorError> errors) {
+        consumeErrors(errors);
+    }
+    
+    private void buildLookup() {
+        
     }
 }

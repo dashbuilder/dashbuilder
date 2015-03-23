@@ -16,41 +16,48 @@
       font-size: 12pt;
       float: left;
     }
+    .dataSetCountLabel {
+      
+    }
   </ui:style>
   
   <g:FlowPanel addStyleNames="{style.mainPanel} " ui:field="mainPanel" >
     
     <g:FlowPanel ui:field="initialViewPanel">
+      <b:Label addStyleNames="{style.dataSetCountLabel}" ui:field="dataSetCountLabel"/>
       <g:Hyperlink text="{i18n.newDataSet}" ui:field="newDataSetLink"/>
     </g:FlowPanel>
     
-    <g:VerticalPanel ui:field="basicAttributesEditionViewPanel">
-      <dash-dset-editors:DataSetBasicAttributesEditor editMode="true" ui:field="dataSetBasicAttributesEditor"/>
+    <g:VerticalPanel ui:field="providerSelectionViewPanel">
       <dash-dset-editors:DataSetProviderTypeEditor editMode="true" ui:field="dataSetProviderTypeEditor"/>
     </g:VerticalPanel>
     
-    <g:VerticalPanel ui:field="advancedAttributesEditionView">
-      <dash-dset-editors:DataSetAdvancedAttributesEditor editMode="true" ui:field="dataSetAdvancedAttributesEditor"/>
+    <g:VerticalPanel ui:field="basicAttributesEditionViewPanel">
+      <dash-dset-editors:DataSetBasicAttributesEditor editMode="true" ui:field="dataSetBasicAttributesEditor"/>
     </g:VerticalPanel>
 
-    <g:VerticalPanel ui:field="sqlAttributesEditionView">
+    <g:VerticalPanel ui:field="sqlAttributesEditionViewPanel">
       <dash-dset-editors-sql:SQLDataSetDefAttributesEditor editMode="true" ui:field="sqlDataSetDefAttributesEditor"/>
     </g:VerticalPanel>
 
-    <g:VerticalPanel ui:field="csvAttributesEditionView">
+    <g:VerticalPanel ui:field="csvAttributesEditionViewPanel">
       <dash-dset-editors-csv:CSVDataSetDefAttributesEditor editMode="true" ui:field="csvDataSetDefAttributesEditor"/>
     </g:VerticalPanel>
 
-    <g:VerticalPanel ui:field="beanAttributesEditionView">
+    <g:VerticalPanel ui:field="beanAttributesEditionViewPanel">
       <dash-dset-editors-static:BeanDataSetDefAttributesEditor editMode="true" ui:field="beanDataSetDefAttributesEditor"/>
     </g:VerticalPanel>
 
-    <g:VerticalPanel ui:field="elAttributesEditionView">
+    <g:VerticalPanel ui:field="elAttributesEditionViewPanel">
       <dash-dset-editors-el:ELDataSetDefAttributesEditor editMode="true" ui:field="elDataSetDefAttributesEditor"/>
     </g:VerticalPanel>
 
     <g:VerticalPanel ui:field="columnsAndFilterEditionViewPanel">
       <dash-dset-editors:DataSetColumnsAndFilterEditor editMode="true" ui:field="dataSetColumnsAndFilterEditor"/>
+    </g:VerticalPanel>
+
+    <g:VerticalPanel ui:field="advancedAttributesEditionViewPanel">
+      <dash-dset-editors:DataSetAdvancedAttributesEditor editMode="true" ui:field="dataSetAdvancedAttributesEditor"/>
     </g:VerticalPanel>
     
     <g:HorizontalPanel spacing="10" ui:field="buttonsPanel">
