@@ -23,6 +23,10 @@ public interface DataSetEditorConstants extends ConstantsWithLookup {
     public static final DataSetEditorConstants INSTANCE = GWT.create( DataSetEditorConstants.class );
 
     String selectType();
+    String bean();
+    String csv();
+    String sql();
+    String elasticSearch();
     String next();
     String cancel();
     String back();
@@ -54,6 +58,22 @@ public interface DataSetEditorConstants extends ConstantsWithLookup {
     String staticAttributes();
     String beanAttributes();
     String csvAttributes();
+    String csv_filePath();
+    String csv_filePath_placeholder();
+    String csv_URL();
+    String csv_URL_placeholder();
+    String csv_useFilePath();
+    String csv_useFileURL();
+    String csv_sepChar();
+    String csv_sepChar_placeholder();
+    String csv_quoteChar();
+    String csv_quoteChar_placeholder();
+    String csv_escapeChar();
+    String csv_escapeChar_placeholder();
+    String csv_datePattern();
+    String csv_datePattern_placeholder();
+    String csv_numberPattern();
+    String csv_numberPattern_placeholder();
     String elAttributes();
     String tab_dataConfiguration();
     String tab_dataPreview();

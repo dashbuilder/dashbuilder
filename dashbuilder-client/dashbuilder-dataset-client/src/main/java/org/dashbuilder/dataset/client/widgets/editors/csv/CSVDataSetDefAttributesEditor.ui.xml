@@ -2,6 +2,7 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
              xmlns:g="urn:import:com.google.gwt.user.client.ui"
              xmlns:b="urn:import:com.github.gwtbootstrap.client.ui"
+             xmlns:dash-client="urn:import:org.dashbuilder.common.client.validation.editors"
     >
 
   <ui:with field="i18n" type="org.dashbuilder.dataset.client.resources.i18n.DataSetEditorConstants"/>
@@ -9,19 +10,129 @@
   <ui:style>
     .mainPanel {
     }
+    .leftFloatPanel {
+      float: left;
+    }
   </ui:style>
 
-  <g:HorizontalPanel spacing="10" ui:field="csvAttributesPanel" addStyleNames="{style.mainPanel}">
+  <!-- CSV attributes. -->
+  <g:FlowPanel ui:field="csvAttributesPanel" addStyleNames="{style.mainPanel}">
 
-    <!-- CSV attributes. -->
-    <b:Fieldset>
-      <b:Legend title="{i18n.csvAttributes}"><ui:text from="{i18n.csvAttributes}"/></b:Legend>
-      
-      
-      
-    </b:Fieldset>
+    <!-- File path. -->
+    <b:Row ui:field="filePathRow">
+      <b:Column size="2">
+        <g:HTML text="{i18n.csv_filePath}"/>
+      </b:Column>
+      <b:Column size="4">
 
-  </g:HorizontalPanel>
+        <b:InputAddOn addStyleNames="{style.leftFloatPanel}">
+          
+          <dash-client:ValueBoxEditorDecorator errorLabelPosition="TOOLTIP" ui:field="filePath">
+            <dash-client:valuebox>
+              <b:TextBox placeholder="{i18n.csv_filePath_placeholder}" />
+            </dash-client:valuebox>
+          </dash-client:ValueBoxEditorDecorator>
+
+          <b:appendWidget>
+            <b:Tooltip text="{i18n.csv_useFileURL}">
+              <b:Button icon="CLOUD_UPLOAD" ui:field="useFileURLButton" />
+            </b:Tooltip>
+          </b:appendWidget>
+          
+        </b:InputAddOn>
+       
+      </b:Column>
+    </b:Row>
+
+    <!-- File URL. -->
+    <b:Row ui:field="fileURLRow">
+      <b:Column size="2">
+        <g:HTML text="{i18n.csv_URL}"/>
+      </b:Column>
+      <b:Column size="3">
+        <dash-client:ValueBoxEditorDecorator errorLabelPosition="TOOLTIP" ui:field="fileURL">
+          <dash-client:valuebox>
+            <b:TextBox placeholder="{i18n.csv_URL_placeholder}" />
+          </dash-client:valuebox>
+        </dash-client:ValueBoxEditorDecorator>
+        <b:Tooltip text="{i18n.csv_useFilePath}">
+          <b:Button icon="FILE" ui:field="useFilePathButton"/>
+        </b:Tooltip>
+      </b:Column>
+    </b:Row>
+
+    <!-- Separator char. -->
+    <b:Row>
+      <b:Column size="2">
+        <g:HTML text="{i18n.csv_sepChar}"/>
+      </b:Column>
+      <b:Column size="3">
+        <dash-client:ValueBoxEditorDecorator errorLabelPosition="TOOLTIP" ui:field="separatorChar">
+          <dash-client:valuebox>
+            <b:TextBox placeholder="{i18n.csv_sepChar_placeholder}" />
+          </dash-client:valuebox>
+        </dash-client:ValueBoxEditorDecorator>
+      </b:Column>
+    </b:Row>
+
+    <!-- Quote char. -->
+    <b:Row>
+      <b:Column size="2">
+        <g:HTML text="{i18n.csv_quoteChar}"/>
+      </b:Column>
+      <b:Column size="3">
+        <dash-client:ValueBoxEditorDecorator errorLabelPosition="TOOLTIP" ui:field="quoteChar">
+          <dash-client:valuebox>
+            <b:TextBox placeholder="{i18n.csv_quoteChar_placeholder}" />
+          </dash-client:valuebox>
+        </dash-client:ValueBoxEditorDecorator>
+      </b:Column>
+    </b:Row>
+
+    <!-- Escape char. -->
+    <b:Row>
+      <b:Column size="2">
+        <g:HTML text="{i18n.csv_escapeChar}"/>
+      </b:Column>
+      <b:Column size="3">
+        <dash-client:ValueBoxEditorDecorator errorLabelPosition="TOOLTIP" ui:field="escapeChar">
+          <dash-client:valuebox>
+            <b:TextBox placeholder="{i18n.csv_escapeChar_placeholder}" />
+          </dash-client:valuebox>
+        </dash-client:ValueBoxEditorDecorator>
+      </b:Column>
+    </b:Row>
+
+    <!-- Date pattern. -->
+    <b:Row>
+      <b:Column size="2">
+        <g:HTML text="{i18n.csv_datePattern}"/>
+      </b:Column>
+      <b:Column size="3">
+        <dash-client:ValueBoxEditorDecorator errorLabelPosition="TOOLTIP" ui:field="datePattern">
+          <dash-client:valuebox>
+            <b:TextBox placeholder="{i18n.csv_datePattern_placeholder}" />
+          </dash-client:valuebox>
+        </dash-client:ValueBoxEditorDecorator>
+      </b:Column>
+    </b:Row>
+
+    <!-- Number pattern. -->
+    <b:Row>
+      <b:Column size="2">
+        <g:HTML text="{i18n.csv_numberPattern}"/>
+      </b:Column>
+      <b:Column size="3">
+        <dash-client:ValueBoxEditorDecorator errorLabelPosition="TOOLTIP" ui:field="numberPattern">
+          <dash-client:valuebox>
+            <b:TextBox placeholder="{i18n.csv_numberPattern_placeholder}" />
+          </dash-client:valuebox>
+        </dash-client:ValueBoxEditorDecorator>
+      </b:Column>
+    </b:Row>
+    
+
+  </g:FlowPanel>
 
 
 </ui:UiBinder>

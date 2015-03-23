@@ -24,7 +24,7 @@ import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.common.client.validation.editors.ImageListEditorDecorator;
 import org.dashbuilder.dataprovider.DataSetProviderType;
 import org.dashbuilder.dataset.client.resources.bundles.DataSetClientResources;
-import org.dashbuilder.dataset.client.resources.i18n.DataSetExplorerConstants;
+import org.dashbuilder.dataset.client.resources.i18n.DataSetEditorConstants;
 import org.dashbuilder.dataset.client.validation.editors.DataSetDefEditor;
 
 import javax.enterprise.context.Dependent;
@@ -71,23 +71,23 @@ public class DataSetProviderTypeEditor extends AbstractDataSetDefEditor implemen
         switch (type) {
             case BEAN:
                 typeIcon = new Image(DataSetClientResources.INSTANCE.images().javaIconLarge().getSafeUri());
-                typeIcon.setAltText(DataSetExplorerConstants.INSTANCE.bean());
-                typeIcon.setTitle(DataSetExplorerConstants.INSTANCE.bean());
+                typeIcon.setAltText(DataSetEditorConstants.INSTANCE.bean());
+                typeIcon.setTitle(DataSetEditorConstants.INSTANCE.bean());
                 break;
             case CSV:
                 typeIcon = new Image(DataSetClientResources.INSTANCE.images().csvIconLarge().getSafeUri());
-                typeIcon.setAltText(DataSetExplorerConstants.INSTANCE.csv());
-                typeIcon.setTitle(DataSetExplorerConstants.INSTANCE.csv());
+                typeIcon.setAltText(DataSetEditorConstants.INSTANCE.csv());
+                typeIcon.setTitle(DataSetEditorConstants.INSTANCE.csv());
                 break;
             case SQL:
                 typeIcon = new Image(DataSetClientResources.INSTANCE.images().sqlIconLarge().getSafeUri());
-                typeIcon.setAltText(DataSetExplorerConstants.INSTANCE.sql());
-                typeIcon.setTitle(DataSetExplorerConstants.INSTANCE.sql());
+                typeIcon.setAltText(DataSetEditorConstants.INSTANCE.sql());
+                typeIcon.setTitle(DataSetEditorConstants.INSTANCE.sql());
                 break;
             case ELASTICSEARCH:
                 typeIcon = new Image(DataSetClientResources.INSTANCE.images().elIconLarge().getSafeUri());
-                typeIcon.setAltText(DataSetExplorerConstants.INSTANCE.el());
-                typeIcon.setTitle(DataSetExplorerConstants.INSTANCE.el());
+                typeIcon.setAltText(DataSetEditorConstants.INSTANCE.elasticSearch());
+                typeIcon.setTitle(DataSetEditorConstants.INSTANCE.elasticSearch());
                 break;
         }
         return typeIcon;

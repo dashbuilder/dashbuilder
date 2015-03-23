@@ -16,6 +16,7 @@
 package org.dashbuilder.dataset.client.widgets;
 
 import com.github.gwtbootstrap.client.ui.*;
+import com.github.gwtbootstrap.client.ui.Image;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
@@ -24,6 +25,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.*;
 import org.dashbuilder.dataprovider.DataSetProviderType;
+import org.dashbuilder.dataset.client.resources.bundles.DataSetClientResources;
 import org.dashbuilder.dataset.client.resources.i18n.DataSetEditorConstants;
 import org.dashbuilder.dataset.client.resources.i18n.DataSetEditorMessages;
 import org.dashbuilder.dataset.client.validation.DataSetDefEditWorkflow;
@@ -374,11 +376,11 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
             if (_name == null && _provider == null) {
                 title.setText(DataSetEditorMessages.INSTANCE.newDataSet(""));
             } else if (_provider != null && _name == null) {
-                title.setText(DataSetEditorMessages.INSTANCE.newDataSet(_provider.name()));
+                title.setText(DataSetEditorMessages.INSTANCE.newDataSet(getProviderName(_provider)));
             } else if (_provider == null) {
                 title.setText(_name);
             } else {
-                title.setText(_name + " (" + _provider.name() + ")");
+                title.setText(_name + " (" + getProviderName(_provider) + ")");
             }
             
             title.setVisible(true);
@@ -389,6 +391,25 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
 
         }
         
+    }
+    
+    private static String getProviderName(DataSetProviderType type) {
+        String s = null;
+        switch (type) {
+            case BEAN:
+                s = DataSetEditorConstants.INSTANCE.bean();
+                break;
+            case CSV:
+                s = DataSetEditorConstants.INSTANCE.csv();
+                break;
+            case SQL:
+                s = DataSetEditorConstants.INSTANCE.sql();
+                break;
+            case ELASTICSEARCH:
+                s = DataSetEditorConstants.INSTANCE.elasticSearch();
+                break;
+        }
+        return s;
     }
     
     private void showTab(Tab tab) {

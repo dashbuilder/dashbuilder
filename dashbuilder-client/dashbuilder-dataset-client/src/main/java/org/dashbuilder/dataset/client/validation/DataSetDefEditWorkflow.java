@@ -14,6 +14,7 @@ import org.dashbuilder.dataset.validation.groups.DataSetDefCacheRowsValidation;
 import org.dashbuilder.dataset.validation.groups.DataSetDefPushSizeValidation;
 import org.dashbuilder.dataset.validation.groups.DataSetDefRefreshIntervalValidation;
 import org.dashbuilder.validations.ValidatorFactory;
+
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
 import java.util.LinkedHashSet;
@@ -134,7 +135,8 @@ public final class DataSetDefEditWorkflow {
         if (saveProviderTypeAttribute) saveProviderTypeAttribute();
         if (saveAdvancedAttributes) saveAdvancedAttributes();
         if (saveSQLAttributes) saveSQLAttributes();
-        
+        if (saveCSVAttributes) saveCSVAttributes();
+
         return violations;
     }
 
@@ -181,9 +183,28 @@ public final class DataSetDefEditWorkflow {
         return validateSQL(edited, sqlAttributesDriver);
     }
 
+    /**
+     * <p>Saves CSV data set definition attributes.</p> 
+     */
+    private DataSetDefEditWorkflow saveCSVAttributes() {
+        CSVDataSetDef edited = csvAttributesDriver.flush();
+        return validateCSV(edited, csvAttributesDriver);
+    }
+
     private DataSetDefEditWorkflow validateSQL(final SQLDataSetDef def, final SimpleBeanEditorDriver driver) {
         Validator validator = ValidatorFactory.getSQLDataSetDefValidator();
         Set<ConstraintViolation<SQLDataSetDef>> violations = validator.validate(def);
+        Set<?> test = violations;
+        driver.setConstraintViolations(test);
+        if (driver.hasErrors()) {
+            this.violations.addAll(violations);
+        }
+        return this;
+    }
+
+    private DataSetDefEditWorkflow validateCSV(final CSVDataSetDef def, final SimpleBeanEditorDriver driver) {
+        Validator validator = ValidatorFactory.getCSVDataSetDefValidator();
+        Set<ConstraintViolation<CSVDataSetDef>> violations = validator.validate(def);
         Set<?> test = violations;
         driver.setConstraintViolations(test);
         if (driver.hasErrors()) {

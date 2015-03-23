@@ -19,6 +19,11 @@ public final class ValidatorFactory {
         AbstractGwtValidator validator = GWT.create(DashbuilderValidationFactory.SQLDataSetDefValidator.class);
         return getValidator(validator);
     }
+
+    public static Validator getCSVDataSetDefValidator() {
+        AbstractGwtValidator validator = GWT.create(DashbuilderValidationFactory.CSVDataSetDefValidator.class);
+        return getValidator(validator);
+    }
     
     private static Validator getValidator(AbstractGwtValidator validator) {
         AbstractGwtValidatorFactory validationFactory = (AbstractGwtValidatorFactory) com.google.gwt.validation.client.impl.Validation.buildDefaultValidatorFactory();

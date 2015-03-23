@@ -15,12 +15,18 @@
  */
 package org.dashbuilder.dataset.client.widgets.editors.csv;
 
+import com.github.gwtbootstrap.client.ui.Button;
+import com.github.gwtbootstrap.client.ui.Row;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.EditorError;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import org.dashbuilder.common.client.validation.editors.ValueBoxEditorDecorator;
 import org.dashbuilder.dataset.client.validation.editors.CSVDataSetDefEditor;
 import org.dashbuilder.dataset.client.widgets.editors.AbstractDataSetDefEditor;
 
@@ -37,12 +43,64 @@ public class CSVDataSetDefAttributesEditor extends AbstractDataSetDefEditor impl
     private static CSVDataSetDefAttributesEditorBinder uiBinder = GWT.create(CSVDataSetDefAttributesEditorBinder.class);
 
     @UiField
-    HorizontalPanel csvAttributesPanel;
+    FlowPanel csvAttributesPanel;
+    
+    @UiField
+    Row filePathRow;
+    
+    @UiField
+    ValueBoxEditorDecorator<String> filePath;
+
+    @UiField
+    Row fileURLRow;
+
+    @UiField
+    ValueBoxEditorDecorator<String> fileURL;
+    
+    @UiField
+    Button useFilePathButton;
+
+    @UiField
+    Button useFileURLButton;
+    
+    @UiField
+    ValueBoxEditorDecorator<Character> separatorChar;
+
+    @UiField
+    ValueBoxEditorDecorator<Character> quoteChar;
+
+    @UiField
+    ValueBoxEditorDecorator<Character> escapeChar;
+
+    @UiField
+    ValueBoxEditorDecorator<String> datePattern;
+
+    @UiField
+    ValueBoxEditorDecorator<String> numberPattern;
 
     private boolean isEditMode;
 
     public CSVDataSetDefAttributesEditor() {
         initWidget(uiBinder.createAndBindUi(this));
+
+        // Switch file or URL.
+        final ClickHandler useFilePathButtonHandler = new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                showFilePath();
+            }
+        };
+        final ClickHandler useFileURLButtonHandler = new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                showFileURL();
+            }
+        };
+        useFilePathButton.addClickHandler(useFilePathButtonHandler);
+        useFileURLButton.addClickHandler(useFileURLButtonHandler);
+        
+        // By default use file URL
+        showFileURL();
     }
 
     public boolean isEditMode() {
@@ -57,4 +115,15 @@ public class CSVDataSetDefAttributesEditor extends AbstractDataSetDefEditor impl
     public void showErrors(List<EditorError> errors) {
         consumeErrors(errors);
     }
+    
+    private void showFilePath() {
+        fileURLRow.setVisible(false);
+        filePathRow.setVisible(true);
+    }
+
+    private void showFileURL() {
+        fileURLRow.setVisible(true);
+        filePathRow.setVisible(false);
+    }
+    
 }

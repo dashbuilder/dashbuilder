@@ -18,17 +18,31 @@ package org.dashbuilder.dataset.def;
 import org.dashbuilder.dataprovider.DataSetProviderType;
 import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.DataColumn;
+import org.hibernate.validator.constraints.NotEmpty;
 import org.jboss.errai.common.client.api.annotations.Portable;
+
+import javax.validation.constraints.NotNull;
 
 @Portable
 public class CSVDataSetDef extends DataSetDef {
 
+    @NotNull(message = "{dataSetApi_csvDataSetDef_fileURL_notNull}")
+    @NotEmpty(message = "{dataSetApi_csvDataSetDef_fileURL_notNull}")
     protected String fileURL;
+    @NotNull(message = "{dataSetApi_csvDataSetDef_filePath_notNull}")
+    @NotEmpty(message = "{dataSetApi_csvDataSetDef_filePath_notNull}")
     protected String filePath;
-    protected char separatorChar;
-    protected char quoteChar;
-    protected char escapeChar;
+    @NotNull(message = "{dataSetApi_csvDataSetDef_sepChar_notNull}")
+    protected Character separatorChar;
+    @NotNull(message = "{dataSetApi_csvDataSetDef_quoteChar_notNull}")
+    protected Character quoteChar;
+    @NotNull(message = "{dataSetApi_csvDataSetDef_escapeChar_notNull}")
+    protected Character escapeChar;
+    @NotNull(message = "{dataSetApi_csvDataSetDef_datePattern_notNull}")
+    @NotEmpty(message = "{dataSetApi_csvDataSetDef_datePattern_notNull}")
     protected String datePattern = "MM-dd-yyyy HH:mm:ss";
+    @NotNull(message = "{dataSetApi_csvDataSetDef_numberPattern_notNull}")
+    @NotEmpty(message = "{dataSetApi_csvDataSetDef_numberPattern_notNull}")
     protected String numberPattern = "#,###.##";
 
     public CSVDataSetDef() {
@@ -51,27 +65,27 @@ public class CSVDataSetDef extends DataSetDef {
         this.filePath = filePath;
     }
 
-    public char getSeparatorChar() {
+    public Character getSeparatorChar() {
         return separatorChar;
     }
 
-    public void setSeparatorChar(char separatorChar) {
+    public void setSeparatorChar(Character separatorChar) {
         this.separatorChar = separatorChar;
     }
 
-    public char getQuoteChar() {
+    public Character getQuoteChar() {
         return quoteChar;
     }
 
-    public void setQuoteChar(char quoteChar) {
+    public void setQuoteChar(Character quoteChar) {
         this.quoteChar = quoteChar;
     }
 
-    public char getEscapeChar() {
+    public Character getEscapeChar() {
         return escapeChar;
     }
 
-    public void setEscapeChar(char escapeChar) {
+    public void setEscapeChar(Character escapeChar) {
         this.escapeChar = escapeChar;
     }
 
