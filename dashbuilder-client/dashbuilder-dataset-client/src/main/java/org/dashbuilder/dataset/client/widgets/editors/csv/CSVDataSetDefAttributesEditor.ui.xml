@@ -35,7 +35,7 @@
 
           <b:appendWidget>
             <b:Tooltip text="{i18n.csv_useFileURL}">
-              <b:Button icon="CLOUD_UPLOAD" ui:field="useFileURLButton" />
+              <b:Button icon="CLOUD_UPLOAD" ui:field="useFileURLButton" size="MINI" />
             </b:Tooltip>
           </b:appendWidget>
           
@@ -56,7 +56,7 @@
           </dash-client:valuebox>
         </dash-client:ValueBoxEditorDecorator>
         <b:Tooltip text="{i18n.csv_useFilePath}">
-          <b:Button icon="FILE" ui:field="useFilePathButton"/>
+          <b:Button icon="FILE" ui:field="useFilePathButton" size="MINI" />
         </b:Tooltip>
       </b:Column>
     </b:Row>

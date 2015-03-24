@@ -26,7 +26,7 @@
       font-weight: bold;
     }
     .editorPanel {
-      
+      margin: 25px;
     }
     .buttonsPanel {
       margin-top: 50px;
@@ -59,27 +59,27 @@
 
     <g:FlowPanel ui:field="tabViewPanel" addStyleNames="{style.editorPanel}">
       
-      <b:TabPanel tabPosition="above" ui:field="tabPanel">
+      <b:TabPanel tabPosition="above" ui:field="tabPanel" >
   
         <!-- Data configuration. -->
-        <b:Tab heading="{i18n.tab_dataConfiguration}" active="true" ui:field="dataConfigurationTab">
+        <b:Tab heading="{i18n.tab_dataConfiguration}" active="true" ui:field="dataConfigurationTab" >
           <!--<b:customTab>
             <g:Image addStyleNames="{style.icon}" resource="{res.logo}"/>
           </b:customTab>-->
   
-          <g:FlowPanel ui:field="sqlAttributesEditionViewPanel" addStyleNames="{style.editorPanel}">
+          <g:FlowPanel ui:field="sqlAttributesEditionViewPanel" >
             <dash-dset-editors-sql:SQLDataSetDefAttributesEditor editMode="true" ui:field="sqlDataSetDefAttributesEditor"/>
           </g:FlowPanel>
   
-          <g:FlowPanel ui:field="csvAttributesEditionViewPanel" addStyleNames="{style.editorPanel}">
+          <g:FlowPanel ui:field="csvAttributesEditionViewPanel" >
             <dash-dset-editors-csv:CSVDataSetDefAttributesEditor editMode="true" ui:field="csvDataSetDefAttributesEditor"/>
           </g:FlowPanel>
   
-          <g:FlowPanel ui:field="beanAttributesEditionViewPanel" addStyleNames="{style.editorPanel}">
+          <g:FlowPanel ui:field="beanAttributesEditionViewPanel" >
             <dash-dset-editors-static:BeanDataSetDefAttributesEditor editMode="true" ui:field="beanDataSetDefAttributesEditor"/>
           </g:FlowPanel>
   
-          <g:FlowPanel ui:field="elAttributesEditionViewPanel" addStyleNames="{style.editorPanel}">
+          <g:FlowPanel ui:field="elAttributesEditionViewPanel" >
             <dash-dset-editors-el:ELDataSetDefAttributesEditor editMode="true" ui:field="elDataSetDefAttributesEditor"/>
           </g:FlowPanel>
   
@@ -111,9 +111,9 @@
       
       <b:Button text="{i18n.cancel}" ui:field="cancelButton"/>
 
-      <b:Button text="{i18n.back}" ui:field="backButton"/>
+      <b:Button text="{i18n.back}" ui:field="backButton" type="INVERSE"/>
 
-      <b:Button text="{i18n.next}" ui:field="nextButton"/>
+      <b:Button text="{i18n.next}" ui:field="nextButton" type="SUCCESS"/>
       
     </g:FlowPanel>
 
