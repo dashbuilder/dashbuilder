@@ -73,7 +73,8 @@ public class DataSetEditor implements IsWidget {
         View showAdvancedAttributesEditionView();
         View showNextButton(ClickHandler nextHandler);
         View showCancelButton(ClickHandler cancelHandler);
-        View onSave(Set<ConstraintViolation<? extends DataSetDef>> violations);
+        View onSave();
+        Set getViolations();
         View clear();
     }
 
@@ -134,7 +135,7 @@ public class DataSetEditor implements IsWidget {
                         public void onClick(ClickEvent event) {
                             // Save basic attributes (name and uuid) and provider type attribute.
                             // Check if exist validation violations.
-                            final Set<ConstraintViolation<? extends DataSetDef>> violations = save();
+                            final Set violations = save();
                             if (isValid(violations)) {
 
                                 // Restart workflow.
@@ -148,7 +149,7 @@ public class DataSetEditor implements IsWidget {
                                 view.showNextButton(new ClickHandler() {
                                     @Override
                                     public void onClick(ClickEvent event) {
-                                        final Set<ConstraintViolation<? extends DataSetDef>> violations = save();
+                                        final Set violations = save();
                                         if (isValid(violations)) {
                                             // Valid
                                             
@@ -248,10 +249,10 @@ public class DataSetEditor implements IsWidget {
         return view.edit(dataSetDef, workflow).showCancelButton(cancelHandler);
     }
     
-    private Set<ConstraintViolation<? extends DataSetDef>> save() {
-        final Set<ConstraintViolation<? extends DataSetDef>> violations = workflow.save();
-        view.onSave(violations);
-        return violations;
+    private Set save() {
+        workflow.save();
+        view.onSave();
+        return view.getViolations();
     }
     
     private final ClickHandler cancelHandler = new ClickHandler() {
@@ -274,7 +275,7 @@ public class DataSetEditor implements IsWidget {
         view.showInitialView(newDataSetHandler);
     }
     
-    private boolean isValid(Set<ConstraintViolation<? extends  DataSetDef>> violations) {
+    private boolean isValid(Set violations) {
         return violations == null || (violations != null && violations.isEmpty());
     }
 

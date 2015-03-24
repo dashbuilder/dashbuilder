@@ -18,6 +18,8 @@ package org.dashbuilder.dataset.client.widgets;
 import com.github.gwtbootstrap.client.ui.*;
 import com.github.gwtbootstrap.client.ui.Image;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.Node;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.resources.client.CssResource;
@@ -38,6 +40,8 @@ import org.dashbuilder.dataset.def.*;
 
 import javax.enterprise.context.Dependent;
 import javax.validation.ConstraintViolation;
+import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
@@ -309,7 +313,7 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
     }
 
     @Override
-    public DataSetEditor.View onSave(Set<ConstraintViolation<? extends DataSetDef>> violations) {
+    public DataSetEditor.View onSave() {
         
         // Update title if necessary.
         showTitle();
@@ -338,6 +342,18 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
         if (dataSetAdvancedAttributesEditor.getViolations() != null) tabErrors(dataAdvancedConfigurationTab);
         
         return this;
+    }
+    
+    public Set getViolations() {
+        final Set violations = new LinkedHashSet<ConstraintViolation<? extends DataSetDef>>();
+        if (beanDataSetDefAttributesEditor.getViolations() != null) violations.addAll((Collection) beanDataSetDefAttributesEditor.getViolations());
+        if (csvDataSetDefAttributesEditor.getViolations() != null) violations.addAll((Collection) csvDataSetDefAttributesEditor.getViolations());
+        
+        if (sqlDataSetDefAttributesEditor.getViolations() != null) violations.addAll((Collection) sqlDataSetDefAttributesEditor.getViolations());
+        if (elDataSetDefAttributesEditor.getViolations() != null) violations.addAll((Collection) elDataSetDefAttributesEditor.getViolations());
+        if (dataSetColumnsAndFilterEditor.getViolations() != null) violations.addAll((Collection) dataSetColumnsAndFilterEditor.getViolations());
+        if (dataSetAdvancedAttributesEditor.getViolations() != null) violations.addAll((Collection) dataSetAdvancedAttributesEditor.getViolations());
+        return violations;
     }
 
     @Override
@@ -444,13 +460,23 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
     }
     
     private void tabErrors(final Tab tab) {
-        if (tab != null) tab.asWidget().getElement().getStyle().setBackgroundColor("red");
+        if (tab != null) {
+            Node first = tab.asWidget().getElement().getFirstChild();
+            if (first.getNodeType() == Node.ELEMENT_NODE) {
+                Element anchor =(Element)first;
+                anchor.getStyle().setColor("red");
+            }
+        }
     }
 
     private void tabNoErrors(final Tab tab) {
         if (tab != null) {
             final boolean isActive = tab.isActive();
-            tab.asWidget().getElement().getStyle().setBackgroundColor(isActive ? "white" : "whitesmoke");
+            Node first = tab.asWidget().getElement().getFirstChild();
+            if (first.getNodeType() == Node.ELEMENT_NODE) { 
+                Element anchor =(Element)first;
+                anchor.getStyle().setColor("#0088CC");
+            }
         }
     }
     

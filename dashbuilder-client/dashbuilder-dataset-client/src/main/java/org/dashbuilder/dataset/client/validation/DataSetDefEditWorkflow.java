@@ -20,10 +20,8 @@ import java.util.*;
 
 public final class DataSetDefEditWorkflow {
 
-    private final Set<ConstraintViolation<? extends DataSetDef>> violations;
-
     public DataSetDefEditWorkflow() {
-        violations = new LinkedHashSet<ConstraintViolation<? extends DataSetDef>>();
+        
     }
 
     interface BasicAttributesDriver extends SimpleBeanEditorDriver<DataSetDef, DataSetBasicAttributesEditor> {}
@@ -125,15 +123,14 @@ public final class DataSetDefEditWorkflow {
         return this;
     }
     
-    public Set<ConstraintViolation<? extends DataSetDef>> save() {
-        this.violations.clear();
+    public DataSetDefEditWorkflow save() {
         if (basicAttributesEditor != null) saveBasicAttributes();
         if (providerTypeAttributeEditor != null) saveProviderTypeAttribute();
         if (advancedAttributesEditor != null) saveAdvancedAttributes();
         if (sqlAttributesEditor != null) saveSQLAttributes();
         if (csvAttributesEditor != null) saveCSVAttributes();
 
-        return violations;
+        return this;
     }
 
     /**
@@ -225,7 +222,6 @@ public final class DataSetDefEditWorkflow {
         driver.setConstraintViolations(violations);
         if (driver.hasErrors()) {
             editor.setViolations(violations);
-            this.violations.addAll((Collection<? extends ConstraintViolation<? extends DataSetDef>>) violations);
         } else {
             editor.setViolations(null);
         }
@@ -238,7 +234,6 @@ public final class DataSetDefEditWorkflow {
         advancedAttributesEditor = null;
         sqlAttributesEditor = null;
         csvAttributesEditor = null;
-        violations.clear();
         return this;
     }
 }
