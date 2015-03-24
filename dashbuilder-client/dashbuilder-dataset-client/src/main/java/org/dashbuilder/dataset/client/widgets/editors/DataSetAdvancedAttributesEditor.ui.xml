@@ -10,59 +10,78 @@
   <ui:style>
     .mainPanel {
     }
+    .sectionTitle {
+        font-weight: bold;      
+    }
+    .editor {
+      float: left;
+      margin: 10px;
+      margin-left: 0px;
+    }
   </ui:style>
 
-  <g:HorizontalPanel spacing="10" ui:field="advancedAttributesPanel" addStyleNames="{style.mainPanel}">
+  <g:FlowPanel ui:field="advancedAttributesPanel" addStyleNames="{style.mainPanel}">
 
-    <!-- Backend cache policy attributes. -->
-    <b:Fieldset>
-      <b:Legend title="{i18n.backendCacheAttributes}"><ui:text from="{i18n.backendCacheAttributes}"/></b:Legend>
-      <b:ControlGroup>
-        <dash-client:BooleanSwitchEditorDecorator ui:field="attributeBackendCacheStatus" />
-      </b:ControlGroup>
-      <b:ControlGroup>
-        <b:ControlLabel><ui:text from="{i18n.attributeMaxRows}"/></b:ControlLabel>
-        <dash-client:ValueBoxEditorDecorator errorLabelPosition="TOOLTIP" ui:field="attributeMaxRows">
-          <dash-client:valuebox>
-            <g:IntegerBox /> <!-- TODO:  placeholder="{i18n.attributeMaxRows}" -->
-          </dash-client:valuebox>
-        </dash-client:ValueBoxEditorDecorator>
-      </b:ControlGroup>
-    </b:Fieldset>
 
-    <!-- Client cache policy attributes. -->
-    <b:Fieldset>
-      <b:Legend title="{i18n.clientCacheAttributes}"><ui:text from="{i18n.clientCacheAttributes}"/></b:Legend>
-      <b:ControlGroup>
-        <dash-client:BooleanSwitchEditorDecorator ui:field="attributeClientCacheStatus" />
-      </b:ControlGroup>
-      <b:ControlGroup>
-        <b:ControlLabel><ui:text from="{i18n.attributeMaxBytes}"/></b:ControlLabel>
-        <dash-client:ValueBoxEditorDecorator errorLabelPosition="TOOLTIP" ui:field="attributeMaxBytes">
-          <dash-client:valuebox>
-            <g:IntegerBox />  <!-- TODO:  placeholder="{i18n.attributeMaxBytes}" -->
-          </dash-client:valuebox>
-        </dash-client:ValueBoxEditorDecorator>
-      </b:ControlGroup>
-    </b:Fieldset>
+    <b:Row>
 
-    <!-- Refresh policy attributes. -->
-    <b:Fieldset>
-      <b:Legend title="{i18n.refreshPolicyAttributes}"><ui:text from="{i18n.refreshPolicyAttributes}"/></b:Legend>
-      <b:ControlGroup>
-        <dash-client:BooleanSwitchEditorDecorator ui:field="attributeRefreshStatus" />
-      </b:ControlGroup>
-      <b:ControlGroup>
-        <b:ControlLabel><ui:text from="{i18n.attributeRefreshInterval}"/></b:ControlLabel>
-        <dash-client:ValueBoxEditorDecorator errorLabelPosition="TOOLTIP" ui:field="attributeRefreshInterval">
-          <dash-client:valuebox>
-            <b:TextBox placeholder="{i18n.attributeRefreshInterval}" />
-          </dash-client:valuebox>
-        </dash-client:ValueBoxEditorDecorator>
-      </b:ControlGroup>
-    </b:Fieldset>
+      <!-- Backend cache policy attributes. -->
+      <b:Column size="4">
+        <g:HTML text="{i18n.backendCacheAttributes}" addStyleNames="{style.sectionTitle} "/>
+      </b:Column>
 
-  </g:HorizontalPanel>
+      <!-- Client cache policy attributes. -->
+      <b:Column size="4">
+        <g:HTML text="{i18n.clientCacheAttributes}" addStyleNames="{style.sectionTitle} "/>
+      </b:Column>      
 
+      <!-- Refresh policy attributes. -->
+      <b:Column size="4">
+        <g:HTML text="{i18n.refreshPolicyAttributes}" addStyleNames="{style.sectionTitle} "/>
+      </b:Column>
+      
+    </b:Row>
+
+    <b:Row >
+
+      <!-- Cache policy attributes. -->
+      <b:Column size="4">
+        <g:FlowPanel>
+          <dash-client:BooleanSwitchEditorDecorator ui:field="attributeBackendCacheStatus"  addStyleNames="{style.editor} "/>
+          <dash-client:ValueBoxEditorDecorator errorLabelPosition="TOOLTIP" ui:field="attributeMaxRows"  addStyleNames="{style.editor} ">
+            <dash-client:valuebox>
+              <g:IntegerBox /> <!-- TODO:  placeholder="{i18n.attributeMaxRows}" -->
+            </dash-client:valuebox>
+          </dash-client:ValueBoxEditorDecorator>
+        </g:FlowPanel>
+      </b:Column>
+
+      <!-- Client cache policy attributes. -->
+      <b:Column size="4">
+        <g:FlowPanel>
+          <dash-client:BooleanSwitchEditorDecorator ui:field="attributeClientCacheStatus" addStyleNames="{style.editor} "/>
+          <dash-client:ValueBoxEditorDecorator errorLabelPosition="TOOLTIP" ui:field="attributeMaxBytes" addStyleNames="{style.editor} ">
+            <dash-client:valuebox>
+              <g:IntegerBox /> <!-- TODO:  placeholder="{i18n.attributeMaxBytes}" -->
+            </dash-client:valuebox>
+          </dash-client:ValueBoxEditorDecorator>
+        </g:FlowPanel>
+      </b:Column>
+
+      <!-- Refresh policy attributes. -->
+      <b:Column size="4">
+        <g:FlowPanel>
+          <dash-client:BooleanSwitchEditorDecorator ui:field="attributeRefreshStatus" addStyleNames="{style.editor} "/>
+          <dash-client:ValueBoxEditorDecorator errorLabelPosition="TOOLTIP" ui:field="attributeRefreshInterval" addStyleNames="{style.editor} ">
+            <dash-client:valuebox>
+              <b:TextBox placeholder="{i18n.attributeRefreshInterval}" />
+            </dash-client:valuebox>
+          </dash-client:ValueBoxEditorDecorator>
+        </g:FlowPanel>
+      </b:Column>
+
+    </b:Row>
+
+  </g:FlowPanel>
 
 </ui:UiBinder>

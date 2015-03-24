@@ -27,6 +27,13 @@
     }
     .editorPanel {
       margin: 25px;
+      background-color: ghostwhite;
+      border: 1px solid #E3E3E3;
+      border-radius: 4px 4px 4px 4px;
+      box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05) inset;
+      margin-bottom: 20px;
+      min-height: 20px;
+      padding: 19px;
     }
     .buttonsPanel {
       margin-top: 50px;
@@ -34,9 +41,18 @@
     .dataSetCountLabel {
       
     }
+    .well {
+      background-color: #F5F5F5;
+      border: 1px solid #E3E3E3;
+      border-radius: 4px 4px 4px 4px;
+      box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05) inset;
+      margin-bottom: 20px;
+      min-height: 20px;
+      padding: 19px;
+    }
   </ui:style>
   
-  <g:FlowPanel addStyleNames="{style.mainPanel} well" ui:field="mainPanel" >
+  <g:FlowPanel addStyleNames="{style.mainPanel} {style.well} " ui:field="mainPanel" >
     
     <g:FlowPanel addStyleNames="{style.titlePanel}">
       <!-- TODO: Replace by bootstrap heading widget? -->
@@ -57,7 +73,7 @@
       <dash-dset-editors:DataSetBasicAttributesEditor editMode="true" ui:field="dataSetBasicAttributesEditor"/>
     </g:FlowPanel>
 
-    <g:FlowPanel ui:field="tabViewPanel" addStyleNames="{style.editorPanel}">
+    <g:FlowPanel ui:field="tabViewPanel" >
       
       <b:TabPanel tabPosition="above" ui:field="tabPanel" >
   
@@ -67,20 +83,24 @@
             <g:Image addStyleNames="{style.icon}" resource="{res.logo}"/>
           </b:customTab>-->
   
-          <g:FlowPanel ui:field="sqlAttributesEditionViewPanel" >
-            <dash-dset-editors-sql:SQLDataSetDefAttributesEditor editMode="true" ui:field="sqlDataSetDefAttributesEditor"/>
-          </g:FlowPanel>
-  
-          <g:FlowPanel ui:field="csvAttributesEditionViewPanel" >
-            <dash-dset-editors-csv:CSVDataSetDefAttributesEditor editMode="true" ui:field="csvDataSetDefAttributesEditor"/>
-          </g:FlowPanel>
-  
-          <g:FlowPanel ui:field="beanAttributesEditionViewPanel" >
-            <dash-dset-editors-static:BeanDataSetDefAttributesEditor editMode="true" ui:field="beanDataSetDefAttributesEditor"/>
-          </g:FlowPanel>
-  
-          <g:FlowPanel ui:field="elAttributesEditionViewPanel" >
-            <dash-dset-editors-el:ELDataSetDefAttributesEditor editMode="true" ui:field="elDataSetDefAttributesEditor"/>
+          <g:FlowPanel addStyleNames="{style.editorPanel} ">
+
+            <g:FlowPanel ui:field="sqlAttributesEditionViewPanel" >
+              <dash-dset-editors-sql:SQLDataSetDefAttributesEditor editMode="true" ui:field="sqlDataSetDefAttributesEditor"/>
+            </g:FlowPanel>
+
+            <g:FlowPanel ui:field="csvAttributesEditionViewPanel" >
+              <dash-dset-editors-csv:CSVDataSetDefAttributesEditor editMode="true" ui:field="csvDataSetDefAttributesEditor"/>
+            </g:FlowPanel>
+
+            <g:FlowPanel ui:field="beanAttributesEditionViewPanel" >
+              <dash-dset-editors-static:BeanDataSetDefAttributesEditor editMode="true" ui:field="beanDataSetDefAttributesEditor"/>
+            </g:FlowPanel>
+
+            <g:FlowPanel ui:field="elAttributesEditionViewPanel" >
+              <dash-dset-editors-el:ELDataSetDefAttributesEditor editMode="true" ui:field="elDataSetDefAttributesEditor"/>
+            </g:FlowPanel>
+            
           </g:FlowPanel>
   
         </b:Tab>

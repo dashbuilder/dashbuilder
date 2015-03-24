@@ -19,6 +19,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.EditorError;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.common.client.validation.editors.BooleanSwitchEditorDecorator;
@@ -42,7 +43,7 @@ public class DataSetAdvancedAttributesEditor extends AbstractDataSetDefEditor im
     private static DataSetAdvancedAttributesEditorBinder uiBinder = GWT.create(DataSetAdvancedAttributesEditorBinder.class);
 
     @UiField
-    HorizontalPanel advancedAttributesPanel;
+    FlowPanel advancedAttributesPanel;
 
     /* **************** BACKEND CACHE *************** */
     @UiField
