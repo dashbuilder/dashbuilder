@@ -194,13 +194,16 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
         // Remove current handler for view buttons.
         removeButtonsHandler();
 
+        // Clear current workflow state.
+        this.workflow.clear();
+        
         return this;
     }
 
 
     @Override
     public DataSetEditor.View showProviderSelectionView() {
-        workflow.clear().edit(dataSetProviderTypeEditor, dataSetDef);
+        workflow.edit(dataSetProviderTypeEditor, dataSetDef);
 
         // View title.
         showTitle();
@@ -214,7 +217,7 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
 
     @Override
     public DataSetEditor.View showBasicAttributesEditionView() {
-        workflow.clear().edit(dataSetBasicAttributesEditor, dataSetDef);
+        workflow.edit(dataSetBasicAttributesEditor, dataSetDef);
 
         // View title.
         showTitle();
@@ -267,7 +270,7 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
 
     @Override
     public DataSetEditor.View showColumnsAndFilterEditionView() {
-        // TODO: workflow.clear().edit(dataSetBasicAttributesEditor, dataSetDef);
+        // TODO: workflow.edit(dataSetBasicAttributesEditor, dataSetDef);
 
         // View title.
         showTitle();
@@ -282,7 +285,7 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
 
     @Override
     public DataSetEditor.View showAdvancedAttributesEditionView() {
-        workflow.clear().edit(dataSetAdvancedAttributesEditor, dataSetDef);
+        workflow.edit(dataSetAdvancedAttributesEditor, dataSetDef);
 
         // View title.
         showTitle();
@@ -346,9 +349,9 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
     
     public Set getViolations() {
         final Set violations = new LinkedHashSet<ConstraintViolation<? extends DataSetDef>>();
+        if (dataSetProviderTypeEditor.getViolations() != null) violations.addAll((Collection) dataSetProviderTypeEditor.getViolations());
         if (beanDataSetDefAttributesEditor.getViolations() != null) violations.addAll((Collection) beanDataSetDefAttributesEditor.getViolations());
         if (csvDataSetDefAttributesEditor.getViolations() != null) violations.addAll((Collection) csvDataSetDefAttributesEditor.getViolations());
-        
         if (sqlDataSetDefAttributesEditor.getViolations() != null) violations.addAll((Collection) sqlDataSetDefAttributesEditor.getViolations());
         if (elDataSetDefAttributesEditor.getViolations() != null) violations.addAll((Collection) elDataSetDefAttributesEditor.getViolations());
         if (dataSetColumnsAndFilterEditor.getViolations() != null) violations.addAll((Collection) dataSetColumnsAndFilterEditor.getViolations());

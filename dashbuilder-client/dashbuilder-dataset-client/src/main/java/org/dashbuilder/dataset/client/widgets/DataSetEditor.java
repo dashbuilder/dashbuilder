@@ -276,7 +276,7 @@ public class DataSetEditor implements IsWidget {
     }
     
     private boolean isValid(Set violations) {
-        return violations == null || (violations != null && violations.isEmpty());
+        return violations.isEmpty();
     }
 
     // TODO: Display message to user.
