@@ -29,10 +29,7 @@ import org.dashbuilder.dataset.client.resources.bundles.DataSetClientResources;
 import org.dashbuilder.dataset.client.resources.i18n.DataSetEditorConstants;
 import org.dashbuilder.dataset.client.resources.i18n.DataSetEditorMessages;
 import org.dashbuilder.dataset.client.validation.DataSetDefEditWorkflow;
-import org.dashbuilder.dataset.client.widgets.editors.DataSetAdvancedAttributesEditor;
-import org.dashbuilder.dataset.client.widgets.editors.DataSetBasicAttributesEditor;
-import org.dashbuilder.dataset.client.widgets.editors.DataSetColumnsAndFilterEditor;
-import org.dashbuilder.dataset.client.widgets.editors.DataSetProviderTypeEditor;
+import org.dashbuilder.dataset.client.widgets.editors.*;
 import org.dashbuilder.dataset.client.widgets.editors.bean.BeanDataSetDefAttributesEditor;
 import org.dashbuilder.dataset.client.widgets.editors.csv.CSVDataSetDefAttributesEditor;
 import org.dashbuilder.dataset.client.widgets.editors.elasticsearch.ELDataSetDefAttributesEditor;
@@ -56,6 +53,9 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
         String mainPanel();
         String dataSetCountLabel();
     }
+
+    /*@UiField
+    DataSetEditorViewStyle style;*/
     
     @UiField
     FlowPanel mainPanel;
@@ -314,6 +314,29 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
         // Update title if necessary.
         showTitle();
         
+        // Check editor errors. If any, mark error in parent Tab.
+        resetTabErrors();
+        DataSetProviderType type = dataSetDef.getProvider();
+        if (type != null) {
+            switch (type) {
+                case BEAN:
+                    if (beanDataSetDefAttributesEditor.getViolations() != null) tabErrors(dataConfigurationTab);
+                    break;
+                case CSV:
+                    if (csvDataSetDefAttributesEditor.getViolations() != null) tabErrors(dataConfigurationTab);
+                    break;
+                case SQL:
+                    if (sqlDataSetDefAttributesEditor.getViolations() != null) tabErrors(dataConfigurationTab);
+                    break;
+                case ELASTICSEARCH:
+                    if (elDataSetDefAttributesEditor.getViolations() != null) tabErrors(dataConfigurationTab);
+                    break;
+            }
+        }
+
+        if (dataSetColumnsAndFilterEditor.getViolations() != null) tabErrors(dataPreviewTab);
+        if (dataSetAdvancedAttributesEditor.getViolations() != null) tabErrors(dataAdvancedConfigurationTab);
+        
         return this;
     }
 
@@ -418,6 +441,23 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
 
     private void removeCancelButtonHandler() {
         if (cancelButtonHandlerRegistration != null) cancelButtonHandlerRegistration.removeHandler();;
+    }
+    
+    private void tabErrors(final Tab tab) {
+        if (tab != null) tab.asWidget().getElement().getStyle().setBackgroundColor("red");
+    }
+
+    private void tabNoErrors(final Tab tab) {
+        if (tab != null) {
+            final boolean isActive = tab.isActive();
+            tab.asWidget().getElement().getStyle().setBackgroundColor(isActive ? "white" : "whitesmoke");
+        }
+    }
+    
+    private void resetTabErrors() {
+        tabNoErrors(dataConfigurationTab);
+        tabNoErrors(dataPreviewTab);
+        tabNoErrors(dataAdvancedConfigurationTab);
     }
 
 }

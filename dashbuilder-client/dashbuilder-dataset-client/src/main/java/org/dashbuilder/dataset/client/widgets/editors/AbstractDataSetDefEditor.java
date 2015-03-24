@@ -2,13 +2,19 @@ package org.dashbuilder.dataset.client.widgets.editors;
 
 import com.google.gwt.editor.client.EditorError;
 import com.google.gwt.user.client.ui.Composite;
+import org.dashbuilder.dataset.def.DataSetDef;
+
+import javax.validation.ConstraintViolation;
 import java.util.List;
+import java.util.Set;
 
 /**
  * <p>This is the default view implementation for Data Set definition Editor widgets .</p>
  */
 public class AbstractDataSetDefEditor extends Composite {
 
+    private Iterable<ConstraintViolation<?>> violations = null;
+    
     /**
      * <p>Helper method to consume validation errors that do not belong to this editor.</p>
      * <p>Provided for using it in editors that implement <code>HasEditorErrors</code> interface. It consumes
@@ -18,11 +24,18 @@ public class AbstractDataSetDefEditor extends Composite {
      * @param errors The list or editor's errors to consume.
      */
     protected void consumeErrors(List<EditorError> errors) {
-        StringBuilder sb = new StringBuilder();
         for (EditorError error : errors) {
             if (error.getEditor().equals(this)) {
                 error.setConsumed(true);
             }
         }
+    }
+
+    public Iterable<ConstraintViolation<?>> getViolations() {
+        return violations;
+    }
+
+    public void setViolations(Iterable<ConstraintViolation<?>> violations) {
+        this.violations = violations;
     }
 }
