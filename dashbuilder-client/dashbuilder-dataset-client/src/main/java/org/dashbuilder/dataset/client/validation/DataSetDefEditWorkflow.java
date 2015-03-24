@@ -10,9 +10,7 @@ import org.dashbuilder.dataset.client.widgets.editors.csv.CSVDataSetDefAttribute
 import org.dashbuilder.dataset.client.widgets.editors.elasticsearch.ELDataSetDefAttributesEditor;
 import org.dashbuilder.dataset.client.widgets.editors.sql.SQLDataSetDefAttributesEditor;
 import org.dashbuilder.dataset.def.*;
-import org.dashbuilder.dataset.validation.groups.DataSetDefCacheRowsValidation;
-import org.dashbuilder.dataset.validation.groups.DataSetDefPushSizeValidation;
-import org.dashbuilder.dataset.validation.groups.DataSetDefRefreshIntervalValidation;
+import org.dashbuilder.dataset.validation.groups.*;
 import org.dashbuilder.validations.ValidatorFactory;
 
 import javax.validation.ConstraintViolation;
@@ -77,7 +75,7 @@ public final class DataSetDefEditWorkflow {
     private boolean saveAdvancedAttributes = false;
     private boolean saveSQLAttributes = false;
     private boolean saveBeanAttributes = false;
-    private boolean saveCSVAttributes = false;
+    private CSVDataSetDefAttributesEditor csvView = null;
     private boolean saveELAttributes = false;
     
     public DataSetDefEditWorkflow edit(final DataSetBasicAttributesEditor view, final DataSetDef p) {
@@ -111,7 +109,7 @@ public final class DataSetDefEditWorkflow {
     public DataSetDefEditWorkflow edit(final CSVDataSetDefAttributesEditor view, final CSVDataSetDef p) {
         csvAttributesDriver.initialize(view);
         csvAttributesDriver.edit(p);
-        saveCSVAttributes = true;
+        csvView = view;
         return this;
     }
 
@@ -135,7 +133,7 @@ public final class DataSetDefEditWorkflow {
         if (saveProviderTypeAttribute) saveProviderTypeAttribute();
         if (saveAdvancedAttributes) saveAdvancedAttributes();
         if (saveSQLAttributes) saveSQLAttributes();
-        if (saveCSVAttributes) saveCSVAttributes();
+        if (csvView != null) saveCSVAttributes();
 
         return violations;
     }
@@ -188,7 +186,9 @@ public final class DataSetDefEditWorkflow {
      */
     private DataSetDefEditWorkflow saveCSVAttributes() {
         CSVDataSetDef edited = csvAttributesDriver.flush();
-        return validateCSV(edited, csvAttributesDriver);
+        if (csvView.isUsingFilePath()) return validateCSV(edited, csvAttributesDriver, CSVDataSetDefFilePathValidation.class);
+        else if (csvView.isUsingFileURL()) return validateCSV(edited, csvAttributesDriver, CSVDataSetDefFileURLValidation.class);
+        return this;
     }
 
     private DataSetDefEditWorkflow validateSQL(final SQLDataSetDef def, final SimpleBeanEditorDriver driver) {
@@ -202,9 +202,9 @@ public final class DataSetDefEditWorkflow {
         return this;
     }
 
-    private DataSetDefEditWorkflow validateCSV(final CSVDataSetDef def, final SimpleBeanEditorDriver driver) {
+    private DataSetDefEditWorkflow validateCSV(final CSVDataSetDef def, final SimpleBeanEditorDriver driver, final Class<?>... groups) {
         Validator validator = ValidatorFactory.getCSVDataSetDefValidator();
-        Set<ConstraintViolation<CSVDataSetDef>> violations = validator.validate(def);
+        Set<ConstraintViolation<CSVDataSetDef>> violations = validator.validate(def, groups);
         Set<?> test = violations;
         driver.setConstraintViolations(test);
         if (driver.hasErrors()) {

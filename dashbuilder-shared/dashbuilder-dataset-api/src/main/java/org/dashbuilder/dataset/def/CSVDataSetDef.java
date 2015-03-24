@@ -18,6 +18,8 @@ package org.dashbuilder.dataset.def;
 import org.dashbuilder.dataprovider.DataSetProviderType;
 import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.DataColumn;
+import org.dashbuilder.dataset.validation.groups.CSVDataSetDefFilePathValidation;
+import org.dashbuilder.dataset.validation.groups.CSVDataSetDefFileURLValidation;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.jboss.errai.common.client.api.annotations.Portable;
 
@@ -26,11 +28,11 @@ import javax.validation.constraints.NotNull;
 @Portable
 public class CSVDataSetDef extends DataSetDef {
 
-    @NotNull(message = "{dataSetApi_csvDataSetDef_fileURL_notNull}")
-    @NotEmpty(message = "{dataSetApi_csvDataSetDef_fileURL_notNull}")
+    @NotNull(message = "{dataSetApi_csvDataSetDef_fileURL_notNull}", groups = CSVDataSetDefFileURLValidation.class)
+    @NotEmpty(message = "{dataSetApi_csvDataSetDef_fileURL_notNull}", groups = CSVDataSetDefFileURLValidation.class)
     protected String fileURL;
-    @NotNull(message = "{dataSetApi_csvDataSetDef_filePath_notNull}")
-    @NotEmpty(message = "{dataSetApi_csvDataSetDef_filePath_notNull}")
+    @NotNull(message = "{dataSetApi_csvDataSetDef_filePath_notNull}", groups = CSVDataSetDefFilePathValidation.class)
+    @NotEmpty(message = "{dataSetApi_csvDataSetDef_filePath_notNull}", groups = CSVDataSetDefFilePathValidation.class)
     protected String filePath;
     @NotNull(message = "{dataSetApi_csvDataSetDef_sepChar_notNull}")
     protected Character separatorChar;
@@ -47,6 +49,9 @@ public class CSVDataSetDef extends DataSetDef {
 
     public CSVDataSetDef() {
         super.setProvider(DataSetProviderType.CSV);
+        separatorChar = ';';
+        quoteChar = '\\';
+        escapeChar = '\\';
     }
 
     public String getFileURL() {

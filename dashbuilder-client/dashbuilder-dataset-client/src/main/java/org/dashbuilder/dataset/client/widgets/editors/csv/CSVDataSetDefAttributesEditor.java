@@ -126,4 +126,12 @@ public class CSVDataSetDefAttributesEditor extends AbstractDataSetDefEditor impl
         filePathRow.setVisible(false);
     }
     
+    public boolean isUsingFilePath() {
+        return filePathRow.isVisible();   
+    }
+
+    public boolean isUsingFileURL() {
+        return fileURLRow.isVisible();
+    }
+    
 }

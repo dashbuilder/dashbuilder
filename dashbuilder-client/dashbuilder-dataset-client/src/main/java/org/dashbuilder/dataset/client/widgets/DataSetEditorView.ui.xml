@@ -111,8 +111,6 @@
       
       <b:Button text="{i18n.cancel}" ui:field="cancelButton"/>
 
-      <b:Button text="{i18n.back}" ui:field="backButton" type="INVERSE"/>
-
       <b:Button text="{i18n.next}" ui:field="nextButton" type="SUCCESS"/>
       
     </g:FlowPanel>

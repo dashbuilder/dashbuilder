@@ -72,7 +72,6 @@ public class DataSetEditor implements IsWidget {
         View showColumnsAndFilterEditionView();
         View showAdvancedAttributesEditionView();
         View showNextButton(ClickHandler nextHandler);
-        View showBackButton(ClickHandler backHandler);
         View showCancelButton(ClickHandler cancelHandler);
         View onSave(Set<ConstraintViolation<? extends DataSetDef>> violations);
         View clear();
@@ -103,7 +102,71 @@ public class DataSetEditor implements IsWidget {
         this.dataSetDef = dataSetDef;
 
         view.setEditMode(isEdit);
-        buildProviderSelectionView();
+
+        // Restart workflow.
+        edit();
+        
+        // Build provider selection view.
+        showProviderSelectionView();
+
+        // Next button.
+        view.showNextButton(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                // Save basic attributes (name and uuid) and provider type attribute.
+                // Check if exist validation violations.
+                final Set<ConstraintViolation<? extends DataSetDef>> violations = save();
+                if (isValid(violations)) {
+                    // Build the data set class instance for the given provider type.
+                    final DataSetDef _dataSetDef = DataSetProviderType.createDataSetDef(dataSetDef.getProvider());
+                    _dataSetDef.setUUID(dataSetDef.getUUID());
+                    DataSetEditor.this.dataSetDef = _dataSetDef;
+
+                    // Restart workflow.
+                    edit();
+
+                    // Build basic attributes view.
+                    showBasicAttributesEditionView();
+                    
+                    // Next button.
+                    view.showNextButton(new ClickHandler() {
+                        @Override
+                        public void onClick(ClickEvent event) {
+                            // Save basic attributes (name and uuid) and provider type attribute.
+                            // Check if exist validation violations.
+                            final Set<ConstraintViolation<? extends DataSetDef>> violations = save();
+                            if (isValid(violations)) {
+
+                                // Restart workflow.
+                                edit();
+
+                                // Build views.
+                                showBasicAttributesEditionView();
+                                showColumnsAndFilterEditionView();
+                                showAdvancedAttributesEditionView();
+                                
+                                view.showNextButton(new ClickHandler() {
+                                    @Override
+                                    public void onClick(ClickEvent event) {
+                                        final Set<ConstraintViolation<? extends DataSetDef>> violations = save();
+                                        if (isValid(violations)) {
+                                            // Valid
+                                            
+                                            // TODO
+                                            GWT.log("Data set edition finished.");
+                                        }
+                                        saveLog(violations);
+
+                                    }
+                                });
+                            }
+                            saveLog(violations, violations);
+                        }
+                    });
+                }
+                saveLog(violations, violations);
+            }
+        });
                 
         return this;
     }
@@ -123,7 +186,14 @@ public class DataSetEditor implements IsWidget {
             public void callback(DataSetMetadata metatada)
             {
                 DataSetEditor.this.dataSetDef = metatada.getDefinition();
-                buildBasicAttributesEditionView();
+                showBasicAttributesEditionView();
+                
+                view.showNextButton(new ClickHandler() {
+                    @Override
+                    public void onClick(ClickEvent event) {
+                        // TODO: Workflow for edit mode.
+                    }
+                });
             }
 
             @Override
@@ -140,33 +210,13 @@ public class DataSetEditor implements IsWidget {
         return view.asWidget();
     }
 
-    private void buildProviderSelectionView() {
-        view.edit(dataSetDef, workflow)
-                // Show provider selection widget.
-                .showProviderSelectionView()
-                // Show next button.
-                .showNextButton(new ClickHandler() {
-                    @Override
-                    public void onClick(ClickEvent event) {
-                        // Save basic attributes (name and uuid) and provider type attribute.
-                        // Check if exist validation violations.
-                        final Set<ConstraintViolation<? extends DataSetDef>> violations = save();
-                        if (isValid(violations)) {
-                            // Build the data set class instance for the given provider type.
-                            final DataSetDef _dataSetDef = DataSetProviderType.createDataSetDef(dataSetDef.getProvider());
-                            _dataSetDef.setUUID(dataSetDef.getUUID());
-                            DataSetEditor.this.dataSetDef = _dataSetDef;
-                            buildBasicAttributesEditionView();
-                        }
-                        saveLog(violations, violations);
-                    }
-                })
-                // Show cancel button.
-                .showCancelButton(cancelHandler);
+    private void showProviderSelectionView() {
+        // Show provider selection widget.
+        view.showProviderSelectionView();
     }
     
-    private void buildBasicAttributesEditionView() {
-        view.edit(dataSetDef, workflow).showBasicAttributesEditionView();
+    private void showBasicAttributesEditionView() {
+        view.showBasicAttributesEditionView();
 
         switch (dataSetDef.getProvider()) {
             case SQL:
@@ -182,67 +232,20 @@ public class DataSetEditor implements IsWidget {
                 view.showELAttributesEditorView();
                 break;
         }
-        
-        view.showNextButton(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                // Save basic attributes (name and uuid) and provider type attribute.
-                // Check if exist validation violations.
-                final Set<ConstraintViolation<? extends DataSetDef>> violations = save();
-                if (isValid(violations)) {
-                    buildColumnsAndFilterEditionView();
-                }
-                saveLog(violations, violations);
-            }
-        });
-        view.showCancelButton(cancelHandler);
     }
 
-    private void buildColumnsAndFilterEditionView() {
-        view.edit(dataSetDef, workflow)
-            .showBasicAttributesEditionView()
+    private void showColumnsAndFilterEditionView() {
+        view.showBasicAttributesEditionView()
             .showColumnsAndFilterEditionView();
-
-        view.showNextButton(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                buildAdvancedAttributesEditionView();
-            }
-        });
-        view.showCancelButton(cancelHandler);
-        view.showBackButton(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                buildBasicAttributesEditionView();
-            }
-        });
     }
     
-    private void buildAdvancedAttributesEditionView() {
-        view.edit(dataSetDef, workflow)
-            .showBasicAttributesEditionView()
+    private void showAdvancedAttributesEditionView() {
+        view.showBasicAttributesEditionView()
             .showAdvancedAttributesEditionView();
-        
-        view.showNextButton(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                // Validate and save attributes.
-                final Set<ConstraintViolation<? extends DataSetDef>> violations = save();
-                if (isValid(violations)) {
-                    // Valid
-                    buildColumnsAndFilterEditionView();
-                }
-                saveLog(violations);
-            }
-        });
-        
-        view.showCancelButton(cancelHandler);
-        view.showBackButton(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                buildColumnsAndFilterEditionView();
-            }
-        });
+    }
+    
+    private View edit() {
+        return view.edit(dataSetDef, workflow).showCancelButton(cancelHandler);
     }
     
     private Set<ConstraintViolation<? extends DataSetDef>> save() {
@@ -316,7 +319,6 @@ public class DataSetEditor implements IsWidget {
                 GWT.log("CSVDataSetDef date pattern: " + ((CSVDataSetDef)dataSetDef).getDatePattern());
                 GWT.log("CSVDataSetDef number pattern: " + ((CSVDataSetDef)dataSetDef).getNumberPattern());
             }
-            // TODO: Print data set's attributes for other types
         }
     }
 

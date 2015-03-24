@@ -142,9 +142,6 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
     com.github.gwtbootstrap.client.ui.Button cancelButton;
 
     @UiField
-    com.github.gwtbootstrap.client.ui.Button backButton;
-
-    @UiField
     com.github.gwtbootstrap.client.ui.Button nextButton;
 
     private DataSetDef dataSetDef = null;
@@ -153,7 +150,6 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
     private DataSetDefEditWorkflow workflow;
     
     private HandlerRegistration nextButtonHandlerRegistration = null;
-    private HandlerRegistration backButtonHandlerRegistration = null;
     private HandlerRegistration cancelButtonHandlerRegistration = null;
     
     public DataSetEditorView() {
@@ -305,14 +301,6 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
     }
 
     @Override
-    public DataSetEditor.View showBackButton(final ClickHandler backHandler) {
-        backButton.setVisible(backHandler != null);
-        if (backHandler != null) backButtonHandlerRegistration = backButton.addClickHandler(backHandler);
-        buttonsPanel.setVisible(true);
-        return this;
-    }
-
-    @Override
     public DataSetEditor.View showCancelButton(final ClickHandler cancelHandler) {
         cancelButton.setVisible(cancelHandler!= null);
         if (cancelHandler != null) cancelButtonHandlerRegistration = cancelButton.addClickHandler(cancelHandler);
@@ -353,7 +341,6 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
         elAttributesEditionViewPanel.setVisible(false);
         columnsAndFilterEditionViewPanel.setVisible(false);
         nextButton.setVisible(false);
-        backButton.setVisible(false);
         cancelButton.setVisible(false);
         buttonsPanel.setVisible(false);
     }
@@ -422,16 +409,11 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
     
     private void removeButtonsHandler() {
         removeNextButtonHandler();
-        removeBackButtonHandler();
         removeCancelButtonHandler();
     }
     
     private void removeNextButtonHandler() {
         if (nextButtonHandlerRegistration != null) nextButtonHandlerRegistration.removeHandler();;
-    }
-
-    private void removeBackButtonHandler() {
-        if (backButtonHandlerRegistration != null)         backButtonHandlerRegistration.removeHandler();;
     }
 
     private void removeCancelButtonHandler() {
