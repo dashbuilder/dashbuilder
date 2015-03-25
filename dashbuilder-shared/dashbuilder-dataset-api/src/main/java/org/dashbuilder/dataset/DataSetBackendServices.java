@@ -27,6 +27,12 @@ import org.jboss.errai.bus.server.annotations.Remote;
 public interface DataSetBackendServices {
 
     /**
+     * Register a data set definition. 
+     * @param definition The data set definition.
+     */
+    void registerDataSetDef(DataSetDef definition);
+    
+    /**
      * Apply a sequence of operations (filter, sort, group, ...) on a remote data set.
      *
      * @return A brand new data set with all the calculations applied.

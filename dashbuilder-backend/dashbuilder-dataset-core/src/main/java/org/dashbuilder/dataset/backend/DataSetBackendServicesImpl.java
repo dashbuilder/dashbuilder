@@ -54,6 +54,10 @@ public class DataSetBackendServicesImpl implements DataSetBackendServices {
         }
     }
 
+    public void registerDataSetDef(DataSetDef definition) {
+        dataSetDefRegistry.registerDataSetDef(definition);
+    }
+
     public DataSet lookupDataSet(DataSetLookup lookup) throws Exception {
         return dataSetManager.lookupDataSet(lookup);
     }
@@ -65,4 +69,5 @@ public class DataSetBackendServicesImpl implements DataSetBackendServices {
     public List<DataSetDef> getPublicDataSetDefs() {
         return dataSetDefRegistry.getDataSetDefs(true);
     }
+    
 }

@@ -14,6 +14,11 @@ import java.util.Set;
 public class AbstractDataSetDefEditor extends Composite {
 
     private Iterable<ConstraintViolation<?>> violations = null;
+    protected DataSetDef dataSetDef;
+    
+    public void set(DataSetDef dataSetDef) {
+        this.dataSetDef = dataSetDef;
+    }
     
     /**
      * <p>Helper method to consume validation errors that do not belong to this editor.</p>

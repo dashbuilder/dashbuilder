@@ -236,6 +236,13 @@ public class DataSetEditor implements IsWidget {
     }
 
     private void showColumnsAndFilterEditionView() {
+        
+        /*if (dataSetDef != null) {
+            // Register the data set in backend as non public.
+            dataSetDef.setPublic(false);
+            DataSetClientServices.get().registerDataSetDef(dataSetDef);
+        }*/
+        
         view.showBasicAttributesEditionView()
             .showColumnsAndFilterEditionView();
     }

@@ -302,4 +302,8 @@ public class DataSetClientServices {
         // In this case the notification is always send, no matter whether the data set is pushed to the client or not.
         dataSetModifiedEvent.fire(new DataSetModifiedEvent(event.getDataSetDef()));
     }
+    
+    public void registerDataSetDef(DataSetDef dataSetDef) {
+        dataSetBackendServices.call().registerDataSetDef(dataSetDef);
+    }
 }

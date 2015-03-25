@@ -194,6 +194,9 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
         // Clear current workflow state.
         this.workflow.clear();
         
+        // Set the definition to be edited in to sub-editors.
+        setDataSetDefIntoEditor();
+        
         return this;
     }
 
@@ -368,14 +371,7 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
         clearView();
         
         // Clear violations.
-        dataSetProviderTypeEditor.setViolations(null);
-        dataSetBasicAttributesEditor.setViolations(null);
-        beanDataSetDefAttributesEditor.setViolations(null);
-        csvDataSetDefAttributesEditor.setViolations(null);
-        sqlDataSetDefAttributesEditor.setViolations(null);
-        elDataSetDefAttributesEditor.setViolations(null);
-        dataSetColumnsAndFilterEditor.setViolations(null);
-        dataSetAdvancedAttributesEditor.setViolations(null);
+        clearEditorViolations();
         
         this.dataSetDef = null;
         this.workflow = null;
@@ -400,6 +396,28 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
         nextButton.setVisible(false);
         cancelButton.setVisible(false);
         buttonsPanel.setVisible(false);
+    }
+    
+    private void clearEditorViolations() {
+        dataSetProviderTypeEditor.setViolations(null);
+        dataSetBasicAttributesEditor.setViolations(null);
+        beanDataSetDefAttributesEditor.setViolations(null);
+        csvDataSetDefAttributesEditor.setViolations(null);
+        sqlDataSetDefAttributesEditor.setViolations(null);
+        elDataSetDefAttributesEditor.setViolations(null);
+        dataSetColumnsAndFilterEditor.setViolations(null);
+        dataSetAdvancedAttributesEditor.setViolations(null);
+    }
+
+    private void setDataSetDefIntoEditor() {
+        dataSetProviderTypeEditor.set(dataSetDef);
+        dataSetBasicAttributesEditor.set(dataSetDef);
+        beanDataSetDefAttributesEditor.set(dataSetDef);
+        csvDataSetDefAttributesEditor.set(dataSetDef);
+        sqlDataSetDefAttributesEditor.set(dataSetDef);
+        elDataSetDefAttributesEditor.set(dataSetDef);
+        dataSetColumnsAndFilterEditor.set(dataSetDef);
+        dataSetAdvancedAttributesEditor.set(dataSetDef);
     }
     
     private void showTitle() {

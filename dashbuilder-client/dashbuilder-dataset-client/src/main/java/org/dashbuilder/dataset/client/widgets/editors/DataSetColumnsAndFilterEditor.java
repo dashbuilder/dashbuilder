@@ -19,7 +19,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.EditorError;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.dataset.client.validation.editors.DataSetDefEditor;
 
@@ -37,7 +37,10 @@ public class DataSetColumnsAndFilterEditor extends AbstractDataSetDefEditor impl
     private static DataSetColumnsAndFilterEditorBinder uiBinder = GWT.create(DataSetColumnsAndFilterEditorBinder.class);
 
     @UiField
-    HorizontalPanel columnFilterTablePanel;
+    FlowPanel columnFilterTablePanel;
+
+    @UiField
+    FlowPanel tablePanel;
 
     private boolean isEditMode;
 
@@ -59,6 +62,8 @@ public class DataSetColumnsAndFilterEditor extends AbstractDataSetDefEditor impl
     }
     
     private void buildLookup() {
-        
+        if (dataSetDef != null) {
+            
+        }
     }
 }
