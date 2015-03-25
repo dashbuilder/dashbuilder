@@ -28,6 +28,8 @@ public interface DataSetEditorConstants extends ConstantsWithLookup {
     String sql();
     String elasticSearch();
     String next();
+    String test();
+    String save();
     String cancel();
     String back();
     String providerType();

@@ -14,7 +14,7 @@
   <g:FlowPanel ui:field="columnFilterTablePanel" addStyleNames="{style.mainPanel} ">
 
     <g:FlowPanel ui:field="tablePanel">
-      <!--<displayer-client:Displayer ui:field="tableDisplayer"/>-->
+      
     </g:FlowPanel>
     
   </g:FlowPanel>

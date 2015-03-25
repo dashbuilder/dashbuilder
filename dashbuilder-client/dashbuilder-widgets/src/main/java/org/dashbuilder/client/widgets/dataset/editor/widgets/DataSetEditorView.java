@@ -276,6 +276,7 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
         
         dataSetColumnsAndFilterEditor.setVisible(true);
         dataSetColumnsAndFilterEditor.setEditMode(true);
+        dataSetColumnsAndFilterEditor.showTableDisplayer();
         showTab(dataConfigurationTab);
         showTab(dataPreviewTab);
         tabViewPanel.setVisible(true);
@@ -299,8 +300,12 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
     }
 
     @Override
-    public DataSetEditor.View showNextButton(final ClickHandler nextHandler) {
+    public DataSetEditor.View showNextButton(final String title, final ClickHandler nextHandler) {
         nextButton.setVisible(nextHandler != null);
+        if (title != null) {
+            nextButton.setText(title);
+            nextButton.setTitle(title);
+        }
         if (nextHandler != null) {
             removeNextButtonHandler();
             nextButtonHandlerRegistration = nextButton.addClickHandler(nextHandler);

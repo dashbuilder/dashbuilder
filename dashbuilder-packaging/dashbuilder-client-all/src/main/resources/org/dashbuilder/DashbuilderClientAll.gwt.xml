@@ -33,5 +33,6 @@
   <inherits name="org.dashbuilder.DisplayerEditor"/>
 
   <inherits name="org.dashbuilder.renderer.DefaultRenderer"/>
+  <inherits name="org.dashbuilder.DashbuilderWidgets"/>
 
 </module>

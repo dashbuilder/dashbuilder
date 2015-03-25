@@ -50,7 +50,7 @@ public class CSVDataSetDef extends DataSetDef {
     public CSVDataSetDef() {
         super.setProvider(DataSetProviderType.CSV);
         separatorChar = ';';
-        quoteChar = '\\';
+        quoteChar = '\'';
         escapeChar = '\\';
     }
 

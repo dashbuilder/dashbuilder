@@ -22,6 +22,7 @@ import com.google.gwt.event.shared.HasHandlers;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.client.widgets.dataset.editor.DataSetDefEditWorkflow;
+import org.dashbuilder.client.widgets.resources.i18n.DataSetEditorConstants;
 import org.dashbuilder.dataprovider.DataSetProviderType;
 import org.dashbuilder.dataset.DataSetMetadata;
 import org.dashbuilder.dataset.client.DataSetClientServices;
@@ -71,7 +72,7 @@ public class DataSetEditor implements IsWidget {
         View showELAttributesEditorView();
         View showColumnsAndFilterEditionView();
         View showAdvancedAttributesEditionView();
-        View showNextButton(ClickHandler nextHandler);
+        View showNextButton(String title, ClickHandler nextHandler);
         View showCancelButton(ClickHandler cancelHandler);
         View onSave();
         Set getViolations();
@@ -111,7 +112,7 @@ public class DataSetEditor implements IsWidget {
         showProviderSelectionView();
 
         // Next button.
-        view.showNextButton(new ClickHandler() {
+        view.showNextButton(DataSetEditorConstants.INSTANCE.next(), new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 // Save basic attributes (name and uuid) and provider type attribute.
@@ -130,7 +131,7 @@ public class DataSetEditor implements IsWidget {
                     showBasicAttributesEditionView();
                     
                     // Next button.
-                    view.showNextButton(new ClickHandler() {
+                    view.showNextButton(DataSetEditorConstants.INSTANCE.test(), new ClickHandler() {
                         @Override
                         public void onClick(ClickEvent event) {
                             // Save basic attributes (name and uuid) and provider type attribute.
@@ -146,7 +147,7 @@ public class DataSetEditor implements IsWidget {
                                 showColumnsAndFilterEditionView();
                                 showAdvancedAttributesEditionView();
                                 
-                                view.showNextButton(new ClickHandler() {
+                                view.showNextButton(DataSetEditorConstants.INSTANCE.save(),new ClickHandler() {
                                     @Override
                                     public void onClick(ClickEvent event) {
                                         final Set violations = save();
@@ -189,7 +190,7 @@ public class DataSetEditor implements IsWidget {
                 DataSetEditor.this.dataSetDef = metatada.getDefinition();
                 showBasicAttributesEditionView();
                 
-                view.showNextButton(new ClickHandler() {
+                view.showNextButton(DataSetEditorConstants.INSTANCE.test(), new ClickHandler() {
                     @Override
                     public void onClick(ClickEvent event) {
                         // TODO: Workflow for edit mode.
@@ -237,11 +238,11 @@ public class DataSetEditor implements IsWidget {
 
     private void showColumnsAndFilterEditionView() {
         
-        /*if (dataSetDef != null) {
+        if (dataSetDef != null) {
             // Register the data set in backend as non public.
             dataSetDef.setPublic(false);
             DataSetClientServices.get().registerDataSetDef(dataSetDef);
-        }*/
+        }
         
         view.showBasicAttributesEditionView()
             .showColumnsAndFilterEditionView();
