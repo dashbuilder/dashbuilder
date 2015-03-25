@@ -26,22 +26,16 @@
       </b:Column>
       <b:Column size="4">
 
-        <b:InputAddOn addStyleNames="{style.leftFloatPanel}">
-          
-          <dash-client-editors:ValueBoxEditorDecorator errorLabelPosition="TOOLTIP" ui:field="filePath">
-            <dash-client-editors:valuebox>
-              <b:TextBox placeholder="{i18n.csv_filePath_placeholder}" />
-            </dash-client-editors:valuebox>
-          </dash-client-editors:ValueBoxEditorDecorator>
+        <b:Tooltip text="{i18n.csv_useFileURL}">
+          <b:Button icon="CLOUD_UPLOAD" ui:field="useFileURLButton" size="MINI" addStyleNames="{style.leftFloatPanel}"/>
+        </b:Tooltip>
+        
+        <dash-client-editors:ValueBoxEditorDecorator errorLabelPosition="TOOLTIP" ui:field="filePath" addStyleNames="{style.leftFloatPanel}">
+          <dash-client-editors:valuebox>
+            <b:TextBox placeholder="{i18n.csv_filePath_placeholder}" />
+          </dash-client-editors:valuebox>
+        </dash-client-editors:ValueBoxEditorDecorator>
 
-          <b:appendWidget>
-            <b:Tooltip text="{i18n.csv_useFileURL}">
-              <b:Button icon="CLOUD_UPLOAD" ui:field="useFileURLButton" size="MINI" />
-            </b:Tooltip>
-          </b:appendWidget>
-          
-        </b:InputAddOn>
-       
       </b:Column>
     </b:Row>
 
@@ -51,14 +45,14 @@
         <g:HTML text="{i18n.csv_URL}"/>
       </b:Column>
       <b:Column size="3">
-        <dash-client-editors:ValueBoxEditorDecorator errorLabelPosition="TOOLTIP" ui:field="fileURL">
+        <b:Tooltip text="{i18n.csv_useFilePath}">
+          <b:Button icon="FILE" ui:field="useFilePathButton" size="MINI" addStyleNames="{style.leftFloatPanel}"/>
+        </b:Tooltip>
+        <dash-client-editors:ValueBoxEditorDecorator errorLabelPosition="TOOLTIP" ui:field="fileURL" addStyleNames="{style.leftFloatPanel}">
           <dash-client-editors:valuebox>
             <b:TextBox placeholder="{i18n.csv_URL_placeholder}" />
           </dash-client-editors:valuebox>
         </dash-client-editors:ValueBoxEditorDecorator>
-        <b:Tooltip text="{i18n.csv_useFilePath}">
-          <b:Button icon="FILE" ui:field="useFilePathButton" size="MINI" />
-        </b:Tooltip>
       </b:Column>
     </b:Row>
 

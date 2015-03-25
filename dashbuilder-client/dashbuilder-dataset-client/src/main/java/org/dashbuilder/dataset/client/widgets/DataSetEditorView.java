@@ -191,9 +191,6 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
         // Reset current view.
         clearView();
         
-        // Remove current handler for view buttons.
-        removeButtonsHandler();
-
         // Clear current workflow state.
         this.workflow.clear();
         
@@ -302,7 +299,10 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
     @Override
     public DataSetEditor.View showNextButton(final ClickHandler nextHandler) {
         nextButton.setVisible(nextHandler != null);
-        if (nextHandler != null) nextButtonHandlerRegistration = nextButton.addClickHandler(nextHandler);
+        if (nextHandler != null) {
+            removeNextButtonHandler();
+            nextButtonHandlerRegistration = nextButton.addClickHandler(nextHandler);
+        }
         buttonsPanel.setVisible(true);
         return this;
     }
@@ -310,7 +310,10 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
     @Override
     public DataSetEditor.View showCancelButton(final ClickHandler cancelHandler) {
         cancelButton.setVisible(cancelHandler!= null);
-        if (cancelHandler != null) cancelButtonHandlerRegistration = cancelButton.addClickHandler(cancelHandler);
+        if (cancelHandler != null) {
+            removeCancelButtonHandler();
+            cancelButtonHandlerRegistration = cancelButton.addClickHandler(cancelHandler);
+        }
         buttonsPanel.setVisible(true);
         return this;
     }
@@ -350,6 +353,7 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
     public Set getViolations() {
         final Set violations = new LinkedHashSet<ConstraintViolation<? extends DataSetDef>>();
         if (dataSetProviderTypeEditor.getViolations() != null) violations.addAll((Collection) dataSetProviderTypeEditor.getViolations());
+        if (dataSetBasicAttributesEditor.getViolations() != null) violations.addAll((Collection) dataSetBasicAttributesEditor.getViolations());
         if (beanDataSetDefAttributesEditor.getViolations() != null) violations.addAll((Collection) beanDataSetDefAttributesEditor.getViolations());
         if (csvDataSetDefAttributesEditor.getViolations() != null) violations.addAll((Collection) csvDataSetDefAttributesEditor.getViolations());
         if (sqlDataSetDefAttributesEditor.getViolations() != null) violations.addAll((Collection) sqlDataSetDefAttributesEditor.getViolations());
@@ -362,6 +366,17 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
     @Override
     public DataSetEditor.View clear() {
         clearView();
+        
+        // Clear violations.
+        dataSetProviderTypeEditor.setViolations(null);
+        dataSetBasicAttributesEditor.setViolations(null);
+        beanDataSetDefAttributesEditor.setViolations(null);
+        csvDataSetDefAttributesEditor.setViolations(null);
+        sqlDataSetDefAttributesEditor.setViolations(null);
+        elDataSetDefAttributesEditor.setViolations(null);
+        dataSetColumnsAndFilterEditor.setViolations(null);
+        dataSetAdvancedAttributesEditor.setViolations(null);
+        
         this.dataSetDef = null;
         this.workflow = null;
         return this;
