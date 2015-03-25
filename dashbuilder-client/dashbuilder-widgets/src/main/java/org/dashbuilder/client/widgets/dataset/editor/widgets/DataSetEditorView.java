@@ -223,7 +223,7 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
         
         basicAttributesEditionViewPanel.setVisible(true);
         dataSetBasicAttributesEditor.setEditMode(true);
-
+        activeDataConfigurationTab();
         return this;
     }
 
@@ -279,6 +279,8 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
         dataSetColumnsAndFilterEditor.showTableDisplayer();
         showTab(dataConfigurationTab);
         showTab(dataPreviewTab);
+        columnsAndFilterEditionViewPanel.setVisible(true);
+        activeDataPreviewTab();
         tabViewPanel.setVisible(true);
         return this;
     }
@@ -295,6 +297,7 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
         showTab(dataConfigurationTab);
         showTab(dataPreviewTab);
         showTab(dataAdvancedConfigurationTab);
+        activeDataAdvancedConfigurationTab();
         tabViewPanel.setVisible(true);
         return this;
     }
@@ -380,6 +383,24 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
         this.dataSetDef = null;
         this.workflow = null;
         return this;
+    }
+    
+    private void activeDataConfigurationTab() {
+        dataConfigurationTab.setActive(true);
+        dataPreviewTab.setActive(false);
+        dataAdvancedConfigurationTab.setActive(false);
+    }
+
+    private void activeDataPreviewTab() {
+        dataConfigurationTab.setActive(false);
+        dataPreviewTab.setActive(true);
+        dataAdvancedConfigurationTab.setActive(false);
+    }
+
+    private void activeDataAdvancedConfigurationTab() {
+        dataConfigurationTab.setActive(false);
+        dataPreviewTab.setActive(false);
+        dataAdvancedConfigurationTab.setActive(true);
     }
     
     private void clearView() {

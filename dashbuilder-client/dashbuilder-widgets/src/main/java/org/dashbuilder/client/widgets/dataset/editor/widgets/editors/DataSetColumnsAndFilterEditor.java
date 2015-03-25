@@ -20,11 +20,15 @@ import com.google.gwt.editor.client.EditorError;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
+import org.dashbuilder.dataset.client.DataSetClientServices;
 import org.dashbuilder.dataset.client.validation.editors.DataSetDefEditor;
 import org.dashbuilder.dataset.def.DataSetDef;
 import org.dashbuilder.displayer.DisplayerSettingsFactory;
 import org.dashbuilder.displayer.client.Displayer;
+import org.dashbuilder.displayer.client.DisplayerCoordinator;
 import org.dashbuilder.displayer.client.DisplayerHelper;
 
 import javax.enterprise.context.Dependent;
@@ -50,7 +54,7 @@ public class DataSetColumnsAndFilterEditor extends AbstractDataSetDefEditor impl
     @UiField
     FlowPanel tablePanel;
     
-    Displayer tableDisplayer;
+    Displayer tableDisplayer = null;
 
     private boolean isEditMode;
 
@@ -85,8 +89,10 @@ public class DataSetColumnsAndFilterEditor extends AbstractDataSetDefEditor impl
         // Build the table displayer.
         tableDisplayer = buildTableDisplayer();
         if (tableDisplayer != null) {
+            final DisplayerCoordinator coordinator = new DisplayerCoordinator();
+            coordinator.addDisplayer(tableDisplayer);
             tablePanel.add(tableDisplayer);
-            tableDisplayer.draw();
+            coordinator.drawAll();
         }
     }
 
@@ -95,8 +101,7 @@ public class DataSetColumnsAndFilterEditor extends AbstractDataSetDefEditor impl
             return  DisplayerHelper.lookupDisplayer(
                     DisplayerSettingsFactory.newTableSettings()
                             .dataset(dataSetDef.getUUID())
-                            .title(dataSetDef.getName())
-                            .titleVisible(true)
+                            .titleVisible(false)
                             .tablePageSize(10)
                             .tableOrderEnabled(false)
                             .filterOn(false, false, false)
@@ -105,7 +110,7 @@ public class DataSetColumnsAndFilterEditor extends AbstractDataSetDefEditor impl
         
         return null;
     }
-    
+
     private void clearView() {
         tablePanel.clear();
     }

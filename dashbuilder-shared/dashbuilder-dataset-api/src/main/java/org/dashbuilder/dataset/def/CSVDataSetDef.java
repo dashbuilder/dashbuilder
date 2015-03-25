@@ -33,7 +33,7 @@ public class CSVDataSetDef extends DataSetDef {
     protected String fileURL;
     @NotNull(message = "{dataSetApi_csvDataSetDef_filePath_notNull}", groups = CSVDataSetDefFilePathValidation.class)
     @NotEmpty(message = "{dataSetApi_csvDataSetDef_filePath_notNull}", groups = CSVDataSetDefFilePathValidation.class)
-    protected String filePath;
+    protected String filePath = "/home/romartin/Desktop/roger.csv";
     @NotNull(message = "{dataSetApi_csvDataSetDef_sepChar_notNull}")
     protected Character separatorChar;
     @NotNull(message = "{dataSetApi_csvDataSetDef_quoteChar_notNull}")

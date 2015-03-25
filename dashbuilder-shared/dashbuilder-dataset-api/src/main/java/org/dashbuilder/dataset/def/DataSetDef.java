@@ -42,7 +42,7 @@ public class DataSetDef {
     protected String UUID;
     @NotNull(message = "{dataSetApi_dataSetDef_name_notNull}")
     @NotEmpty(message = "{dataSetApi_dataSetDef_name_notNull}")
-    protected String name;
+    protected String name = "TestDataSet";
     protected String defFilePath;
     @NotNull(message = "{dataSetApi_dataSetDef_provider_notNull}")
     protected DataSetProviderType provider;
