@@ -1,0 +1,28 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+             xmlns:g="urn:import:com.google.gwt.user.client.ui"
+             xmlns:b="urn:import:com.github.gwtbootstrap.client.ui"
+             xmlns:dash-client="urn:import:org.dashbuilder.common.client.validation.editors"
+    >
+
+  <ui:with field="i18n" type="org.dashbuilder.client.widgets.resources.i18n.DataSetEditorConstants"/>
+
+  <ui:style>
+    .mainPanel {
+    }
+  </ui:style>
+
+  <g:HorizontalPanel spacing="10" ui:field="beanAttributesPanel" addStyleNames="{style.mainPanel}">
+
+    <!-- Bean attributes. -->
+    <b:Fieldset>
+      <b:Legend title="{i18n.beanAttributes}"><ui:text from="{i18n.beanAttributes}"/></b:Legend>
+      
+      
+      
+    </b:Fieldset>
+
+  </g:HorizontalPanel>
+
+
+</ui:UiBinder>
