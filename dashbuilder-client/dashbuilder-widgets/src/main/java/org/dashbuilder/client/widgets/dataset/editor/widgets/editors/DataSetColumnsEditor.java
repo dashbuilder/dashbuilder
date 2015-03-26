@@ -70,7 +70,7 @@ public class DataSetColumnsEditor extends AbstractEditor {
         this.isEditMode = isEditMode;
     }
 
-    private final List<DataColumnEditor> columnEditors = new LinkedList<DataColumnEditor>();
+    private final Map<DataColumn, DataColumnEditor> columnEditors = new LinkedHashMap<DataColumn, DataColumnEditor>();
     
     public void build(final DataSet dataSet, final DataSetDefEditWorkflow workflow) {
         clear();
@@ -83,16 +83,24 @@ public class DataSetColumnsEditor extends AbstractEditor {
                     DataColumnImpl columnImpl = (DataColumnImpl) column;
                     DataColumnEditor columnEditor = new DataColumnEditor();
                     workflow.edit(columnEditor, columnImpl);
-                    addColumnEditor(columnEditor);
-                    addColumnEditor(columnEditor);
+                    addColumnEditor(column, columnEditor);
                 }
             }
         }
         
     }
     
-    private void addColumnEditor(final DataColumnEditor editor) {
-        columnEditors.add(editor);
+    public DataSetColumnsEditor edit(final DataSetDefEditWorkflow workflow) {
+        for (Map.Entry<DataColumn, DataColumnEditor> entry : columnEditors.entrySet()) {
+            DataColumnImpl column = (DataColumnImpl) entry.getKey();
+            DataColumnEditor editor = entry.getValue();
+            workflow.edit(editor, column);
+        }
+        return this;
+    }
+    
+    private void addColumnEditor(final DataColumn column, final DataColumnEditor editor) {
+        columnEditors.put(column, editor);
         columnsPanel.add(editor);
     }
 
@@ -100,7 +108,7 @@ public class DataSetColumnsEditor extends AbstractEditor {
     public Iterable<ConstraintViolation<?>> getViolations() {
         Set<ConstraintViolation<?>> violations = new LinkedHashSet<ConstraintViolation<?>>();
         if (!columnEditors.isEmpty()) {
-            for (DataColumnEditor editor : columnEditors) {
+            for (DataColumnEditor editor : columnEditors.values()) {
                 Iterable<ConstraintViolation<?>> editorViolations = editor.getViolations();
                 if (editorViolations != null) {
                     for (ConstraintViolation<?> violation : editorViolations) {
@@ -111,6 +119,17 @@ public class DataSetColumnsEditor extends AbstractEditor {
         }
         
         return violations;
+    }
+
+    @Override
+    public void setViolations(Iterable<ConstraintViolation<?>> violations) {
+        super.setViolations(violations);
+
+        if (!columnEditors.isEmpty()) {
+            for (DataColumnEditor editor : columnEditors.values()) {
+                editor.setViolations(violations);
+            }
+        }
     }
 
     private void clear() {

@@ -51,7 +51,7 @@ public final class DataSetDefEditWorkflow {
     /**
      * <p>Handles a data set column.</p> 
      */
-    public final Stack<DataColumnDriver> columnDrivers = new Stack<DataColumnDriver>();
+    public final List<DataColumnDriver> columnDrivers = new LinkedList<DataColumnDriver>();
     
     /**
      * <p>Handles SQL specific data set definition attributes.</p> 
@@ -76,7 +76,7 @@ public final class DataSetDefEditWorkflow {
     private DataSetBasicAttributesEditor basicAttributesEditor = null;
     private DataSetProviderTypeEditor providerTypeAttributeEditor = null;
     private DataSetAdvancedAttributesEditor advancedAttributesEditor = null;
-    final private Stack<DataColumnEditor> columnEditors = new Stack<DataColumnEditor>();
+    final private List<DataColumnEditor> columnEditors = new LinkedList<DataColumnEditor>();
     private SQLDataSetDefAttributesEditor sqlAttributesEditor = null;
     private BeanDataSetDefAttributesEditor beanAttributesEditor = null;
     private CSVDataSetDefAttributesEditor csvAttributesEditor = null;
@@ -104,11 +104,13 @@ public final class DataSetDefEditWorkflow {
     }
 
     public DataSetDefEditWorkflow edit(final DataColumnEditor view, final DataColumnImpl d) {
-        final DataColumnDriver driver = GWT.create(DataColumnDriver.class);
-        driver.initialize(view);
-        driver.edit(d);
-        columnDrivers.add(driver);
-        columnEditors.add(view);
+        if (!columnEditors.contains(view)) {
+            final DataColumnDriver driver = GWT.create(DataColumnDriver.class);
+            driver.initialize(view);
+            driver.edit(d);
+            columnDrivers.add(driver);
+            columnEditors.add(view);
+        }
         
         return this;
     }
@@ -192,12 +194,13 @@ public final class DataSetDefEditWorkflow {
      */
     private DataSetDefEditWorkflow saveColumns() {
         
-        for (DataColumnDriver driver : columnDrivers) {
-            final DataColumnEditor editor = columnEditors.peek();
+        for (int x = 0; x < columnDrivers.size(); x++) {
+            final DataColumnDriver driver = columnDrivers.get(x);
+            final DataColumnEditor editor = columnEditors.get(x);
             final DataColumnImpl edited = driver.flush();
             validateDataColumn(edited, editor, driver);
         }
-        
+
         return this;
     }
 

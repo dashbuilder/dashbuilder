@@ -481,8 +481,6 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
         sqlDataSetDefAttributesEditor.setViolations(null);
         elDataSetDefAttributesEditor.setViolations(null);
         previewTableEditor.setViolations(null);
-        // columnsEditor.setViolations(null);
-        // filterEditor.setViolations(null);
         dataSetAdvancedAttributesEditor.setViolations(null);
     }
 
@@ -494,8 +492,6 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
         sqlDataSetDefAttributesEditor.set(dataSetDef);
         elDataSetDefAttributesEditor.set(dataSetDef);
         previewTableEditor.set(dataSetDef);
-        // columnsEditor.set(dataSetDef);
-        // filterEditor.set(dataSetDef);
         dataSetAdvancedAttributesEditor.set(dataSetDef);
     }
     

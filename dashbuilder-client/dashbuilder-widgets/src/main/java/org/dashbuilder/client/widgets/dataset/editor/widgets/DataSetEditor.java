@@ -156,8 +156,6 @@ public class DataSetEditor implements IsWidget {
                                 showBasicAttributesEditionView();
                                 showAdvancedAttributesEditionView();
                                 showPreviewTableEditionView();
-                                showColumnsEditionView();
-                                showFilterEditionView();
                                 
                                 view.showNextButton(DataSetEditorConstants.INSTANCE.save(),new ClickHandler() {
                                     @Override
