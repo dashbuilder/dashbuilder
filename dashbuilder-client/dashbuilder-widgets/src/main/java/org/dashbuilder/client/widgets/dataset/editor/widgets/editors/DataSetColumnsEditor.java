@@ -34,10 +34,8 @@ import org.dashbuilder.dataset.filter.DataSetFilter;
 import org.dashbuilder.dataset.impl.DataColumnImpl;
 
 import javax.enterprise.context.Dependent;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import javax.validation.ConstraintViolation;
+import java.util.*;
 
 /**
  * <p>This is a widget for editing data set's columns.</p>
@@ -72,7 +70,7 @@ public class DataSetColumnsEditor extends AbstractEditor {
         this.isEditMode = isEditMode;
     }
 
-    private final Map<DataColumnImpl ,DataColumnEditor> columnEditors = new LinkedHashMap<DataColumnImpl, DataColumnEditor>();
+    private final List<DataColumnEditor> columnEditors = new LinkedList<DataColumnEditor>();
     
     public void build(final DataSet dataSet, final DataSetDefEditWorkflow workflow) {
         clear();
@@ -85,7 +83,7 @@ public class DataSetColumnsEditor extends AbstractEditor {
                     DataColumnImpl columnImpl = (DataColumnImpl) column;
                     DataColumnEditor columnEditor = new DataColumnEditor();
                     workflow.edit(columnEditor, columnImpl);
-                    columnEditors.put(columnImpl, columnEditor);
+                    addColumnEditor(columnEditor);
                     addColumnEditor(columnEditor);
                 }
             }
@@ -94,9 +92,27 @@ public class DataSetColumnsEditor extends AbstractEditor {
     }
     
     private void addColumnEditor(final DataColumnEditor editor) {
+        columnEditors.add(editor);
         columnsPanel.add(editor);
     }
-    
+
+    @Override
+    public Iterable<ConstraintViolation<?>> getViolations() {
+        Set<ConstraintViolation<?>> violations = new LinkedHashSet<ConstraintViolation<?>>();
+        if (!columnEditors.isEmpty()) {
+            for (DataColumnEditor editor : columnEditors) {
+                Iterable<ConstraintViolation<?>> editorViolations = editor.getViolations();
+                if (editorViolations != null) {
+                    for (ConstraintViolation<?> violation : editorViolations) {
+                        violations.add(violation);
+                    }
+                }
+            }
+        }
+        
+        return violations;
+    }
+
     private void clear() {
         columnEditors.clear();
     }

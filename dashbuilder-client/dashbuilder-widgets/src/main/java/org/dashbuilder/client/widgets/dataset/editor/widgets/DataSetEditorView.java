@@ -382,23 +382,24 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
         if (type != null) {
             switch (type) {
                 case BEAN:
-                    if (beanDataSetDefAttributesEditor.getViolations() != null) tabErrors(dataConfigurationTab);
+                    if (hasViolations(beanDataSetDefAttributesEditor.getViolations())) tabErrors(dataConfigurationTab);
                     break;
                 case CSV:
-                    if (csvDataSetDefAttributesEditor.getViolations() != null) tabErrors(dataConfigurationTab);
+                    if (hasViolations(csvDataSetDefAttributesEditor.getViolations())) tabErrors(dataConfigurationTab);
                     break;
                 case SQL:
-                    if (sqlDataSetDefAttributesEditor.getViolations() != null) tabErrors(dataConfigurationTab);
+                    if (hasViolations(sqlDataSetDefAttributesEditor.getViolations())) tabErrors(dataConfigurationTab);
                     break;
                 case ELASTICSEARCH:
-                    if (elDataSetDefAttributesEditor.getViolations() != null) tabErrors(dataConfigurationTab);
+                    if (hasViolations(elDataSetDefAttributesEditor.getViolations())) tabErrors(dataConfigurationTab);
                     break;
             }
         }
 
-        if (previewTableEditor.getViolations() != null) tabErrors(dataPreviewTab);
-        if (dataSetAdvancedAttributesEditor.getViolations() != null) tabErrors(dataAdvancedConfigurationTab);
-        
+        if (hasViolations(previewTableEditor.getViolations())) tabErrors(dataPreviewTab);
+        if (hasViolations(dataSetAdvancedAttributesEditor.getViolations())) tabErrors(dataAdvancedConfigurationTab);
+        if (hasViolations(columnsEditor.getViolations())) tabErrors(dataPreviewTab);
+
         return this;
     }
     
@@ -412,7 +413,12 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
         if (elDataSetDefAttributesEditor.getViolations() != null) violations.addAll((Collection) elDataSetDefAttributesEditor.getViolations());
         if (dataSetAdvancedAttributesEditor.getViolations() != null) violations.addAll((Collection) dataSetAdvancedAttributesEditor.getViolations());
         if (previewTableEditor.getViolations() != null) violations.addAll((Collection) previewTableEditor.getViolations());
+        if (columnsEditor.getViolations() != null) violations.addAll((Collection) columnsEditor.getViolations());
         return violations;
+    }
+    
+    private boolean hasViolations(Iterable<ConstraintViolation<?>> violations) {
+        return violations != null && violations.iterator().hasNext();
     }
 
     @Override
