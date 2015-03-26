@@ -15,16 +15,28 @@
  */
 package org.dashbuilder.displayer.client;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
+import com.github.gwtbootstrap.client.ui.DropdownButton;
+import com.github.gwtbootstrap.client.ui.NavLink;
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.http.client.URL;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.IsWidget;
 import org.dashbuilder.common.client.StringUtils;
+import org.dashbuilder.dataset.DataSetLookup;
+import org.dashbuilder.dataset.client.DataSetClientServices;
+import org.dashbuilder.dataset.client.DataSetExportReadyCallback;
 import org.dashbuilder.dataset.uuid.UUIDGenerator;
 import org.dashbuilder.displayer.DisplayerSettings;
 import org.dashbuilder.displayer.client.json.DisplayerSettingsJSONMarshaller;
+import org.dashbuilder.displayer.client.resources.i18n.Constants;
 import org.dashbuilder.displayer.client.widgets.DisplayerEditor;
 import org.dashbuilder.displayer.client.widgets.DisplayerEditorPopup;
 import org.dashbuilder.displayer.client.widgets.DisplayerView;
@@ -41,10 +53,16 @@ import org.uberfire.mvp.impl.DefaultPlaceRequest;
 import org.uberfire.workbench.model.menu.MenuFactory;
 import org.uberfire.workbench.model.menu.MenuItem;
 import org.uberfire.workbench.model.menu.Menus;
+import org.uberfire.workbench.model.menu.impl.BaseMenuCustom;
+
+import static com.github.gwtbootstrap.client.ui.resources.ButtonSize.MINI;
 
 @WorkbenchScreen(identifier = "DisplayerScreen")
 @Dependent
 public class DisplayerScreenPresenter {
+
+    @Inject
+    private DataSetClientServices dataSetClientServices;
 
     private DisplayerView displayerView;
     DisplayerEditorPopup displayerEditor;
@@ -57,6 +75,9 @@ public class DisplayerScreenPresenter {
     private Menus menu = null;
     private boolean editEnabled = false;
     private boolean cloneEnabled = false;
+    private boolean csvExportAllowed = false;
+
+    private DropdownButton menuActionsButton;
 
     @Inject
     public DisplayerScreenPresenter(UUIDGenerator uuidGenerator,
@@ -71,6 +92,7 @@ public class DisplayerScreenPresenter {
         this.perspectiveCoordinator = perspectiveCoordinator;
         this.jsonMarshaller = jsonMarshaller;
         this.displayerEditor =  new DisplayerEditorPopup();
+        this.menuActionsButton = getMenuActionsButton();
     }
 
     @OnStartup
@@ -97,7 +119,9 @@ public class DisplayerScreenPresenter {
         String clone = placeRequest.getParameter("clone", "false");
         editEnabled = Boolean.parseBoolean(edit);
         cloneEnabled = Boolean.parseBoolean(clone);
+        csvExportAllowed = displayerSettings.isCSVExportAllowed();
         this.menu = makeMenuBar();
+        adjustMenuActions( this.displayerSettings );
     }
 
     @OnClose
@@ -121,29 +145,43 @@ public class DisplayerScreenPresenter {
     }
 
     private Menus makeMenuBar() {
-        if (editEnabled && !cloneEnabled) {
-            return MenuFactory
-                    .newTopLevelMenu("Edit")
-                    .respondsWith(getEditCommand())
-                    .endMenu().build();
-        }
-        if (!editEnabled && cloneEnabled) {
-            return MenuFactory
-                    .newTopLevelMenu("Clone")
-                    .respondsWith(getCloneCommand())
-                    .endMenu().build();
-        }
-        if (editEnabled && cloneEnabled) {
-            return MenuFactory
-                    .newTopLevelMenu("Edit")
-                    .respondsWith(getEditCommand())
-                    .endMenu()
-                    .newTopLevelMenu("Clone")
-                    .respondsWith(getCloneCommand())
-                    .endMenu()
-                    .build();
-        }
-        return null;
+        return MenuFactory
+                .newTopLevelCustomMenu( new MenuFactory.CustomMenuBuilder() {
+                    @Override
+                    public void push( MenuFactory.CustomMenuBuilder element ) {
+                    }
+
+                    @Override
+                    public MenuItem build() {
+                        return new BaseMenuCustom<IsWidget>() {
+                            @Override
+                            public IsWidget build() {
+                                return menuActionsButton;
+                            }
+
+                            @Override
+                            public boolean isEnabled() {
+                                return editEnabled || cloneEnabled || csvExportAllowed;
+                            }
+
+                            @Override
+                            public void setEnabled( boolean enabled ) {
+                            }
+
+                            @Override
+                            public Collection<String> getRoles() {
+                                return null;
+                            }
+
+                            @Override
+                            public String getSignatureId() {
+                                return null;
+                            }
+
+                        };
+                    }
+                } ).endMenu()
+                .build();
     }
 
     private Command getEditCommand() {
@@ -159,6 +197,7 @@ public class DisplayerScreenPresenter {
 
                     public void onSave(DisplayerEditor editor) {
                         perspectiveCoordinator.editOff();
+                        adjustMenuActions(editor.getDisplayerSettings());
                         updateDisplayer(editor.getDisplayerSettings());
                     }
                 });
@@ -188,6 +227,44 @@ public class DisplayerScreenPresenter {
         };
     }
 
+    private Command getExportCsvCommand() {
+        return new Command() {
+            public void execute() {
+                // Get all the data set rows with a maximun of 10000
+                DataSetLookup currentLookup = displayerView.getDisplayer().getDataSetHandler().getCurrentDataSetLookup();
+                if (currentLookup.getNumberOfRows() > 0) {
+                    // TODO: ask the user ....
+                    currentLookup = currentLookup.cloneInstance();
+                    currentLookup.setRowOffset(0);
+                    currentLookup.setNumberOfRows(10000);
+                }
+
+                try {
+                    dataSetClientServices.exportDataSetCSV( currentLookup, new DataSetExportReadyCallback() {
+                        @Override
+                        public void exportReady( String exportFilePath ) {
+                            Window.open( getDownloadUrl( exportFilePath ),
+                                            "downloading",
+                                            "resizable=no,scrollbars=yes,status=no" );
+                        }
+                    } );
+                } catch ( Exception e ) {
+                    throw new RuntimeException( e );
+                }
+            }
+        };
+    }
+
+    public String getServletUrl() {
+        return GWT.getModuleBaseURL() + "dataset/export";
+    }
+
+    public String getDownloadUrl( String path ) {
+        final StringBuilder sb = new StringBuilder( getServletUrl() );
+        sb.append( "?" ).append( "path" ).append( "=" ).append( "file://" ).append( URL.encode(path) );
+        return sb.toString();
+    }
+
     private void updateDisplayer(DisplayerSettings settings) {
         this.removeDisplayer();
 
@@ -213,5 +290,43 @@ public class DisplayerScreenPresenter {
         params.put("edit", "true");
         params.put("clone", "true");
         return new DefaultPlaceRequest("DisplayerScreen", params);
+    }
+
+    private void adjustMenuActions( DisplayerSettings displayerSettings ) {
+        menuActionsButton.getMenuWiget().getWidget( 2 ).setVisible( displayerSettings.isCSVExportAllowed() );
+    }
+
+    private DropdownButton getMenuActionsButton() {
+        return new DropdownButton( Constants.INSTANCE.menu_button_actions() ) {{
+            setSize( MINI );
+            setRightDropdown( true );
+
+            add( new NavLink( Constants.INSTANCE.menu_edit() ) {{
+                    addClickHandler( new ClickHandler() {
+                        @Override
+                        public void onClick( ClickEvent event ) {
+                            getEditCommand().execute();
+                        }
+                    } );
+            }} );
+
+            add( new NavLink( Constants.INSTANCE.menu_clone() ) {{
+                addClickHandler( new ClickHandler() {
+                    @Override
+                    public void onClick( ClickEvent event ) {
+                        getCloneCommand().execute();
+                    }
+                } );
+            }} );
+
+            add( new NavLink( Constants.INSTANCE.menu_export_csv() ) {{
+                addClickHandler( new ClickHandler() {
+                    @Override
+                    public void onClick( ClickEvent event ) {
+                        getExportCsvCommand().execute();
+                    }
+                } );
+            }} );
+        }};
     }
 }

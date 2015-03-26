@@ -150,6 +150,45 @@ public class DataSetClientServices {
     }
 
     /**
+     * TODO
+     *
+     * @param request The data set lookup request
+     * @return ...
+     * @throws Exception It there is an unexpected error trying to execute the lookup request.
+     */
+    public void exportDataSetCSV(final DataSetLookup request, final DataSetExportReadyCallback listener) throws Exception {
+
+        if (dataSetBackendServices != null) {
+            // Look always into the client data set manager.
+            if (clientDataSetManager.getDataSet(request.getDataSetUUID()) != null) {
+                DataSet dataSet = clientDataSetManager.lookupDataSet(request);
+                try {
+                    dataSetBackendServices.call(
+                            new RemoteCallback<String>() {
+                                public void callback(String csvFilePath) {
+                                    listener.exportReady(csvFilePath);
+                                }}).exportDataSetCSV( dataSet );
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            // Data set not found on client.
+            else {
+                // If the data set is not in client, then look up remotely (only if the remote access is available).
+                try {
+                    dataSetBackendServices.call(
+                            new RemoteCallback<String>() {
+                                public void callback(String csvFilePath) {
+                                    listener.exportReady(csvFilePath);
+                                }}).exportDataSetCSV( request );
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        } else throw new RuntimeException( "Client-side export is not available" );
+    }
+
+    /**
      * Process the specified data set lookup request.
      *
      * @param request The data set lookup request

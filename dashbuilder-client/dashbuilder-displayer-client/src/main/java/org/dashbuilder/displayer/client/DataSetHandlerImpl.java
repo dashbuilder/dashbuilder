@@ -57,6 +57,11 @@ public class DataSetHandlerImpl implements DataSetHandler {
         return lastLookedUpDataSet;
     }
 
+    @Override
+    public DataSetLookup getCurrentDataSetLookup() {
+        return lookupCurrent;
+    }
+
     public void resetAllOperations() {
         this.lookupCurrent = lookupBase.cloneInstance();
     }

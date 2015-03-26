@@ -242,6 +242,14 @@ public class DisplayerSettings {
         settings.put( getSettingPath( DisplayerAttributeDef.TITLE_VISIBLE ), Boolean.toString( titleVisible ) );
     }
 
+    public boolean isCSVExportAllowed() {
+        return parseBoolean(settings.get(getSettingPath(DisplayerAttributeDef.ALLOW_EXPORT_CSV)));
+    }
+
+    public void setCSVExportAllowed(boolean csvExportAllowed) {
+        settings.put(getSettingPath(DisplayerAttributeDef.ALLOW_EXPORT_CSV), Boolean.toString(csvExportAllowed));
+    }
+
     public int getRefreshInterval() {
         return parseInt(settings.get(getSettingPath(DisplayerAttributeDef.REFRESH_INTERVAL)), -1);
     }

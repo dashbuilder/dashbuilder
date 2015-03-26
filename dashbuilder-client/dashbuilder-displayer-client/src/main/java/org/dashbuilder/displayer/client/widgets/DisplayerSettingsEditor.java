@@ -133,8 +133,8 @@ public class DisplayerSettingsEditor extends Composite {
     protected List<PropertyEditorCategory> getPropertyEditorCategories() {
         final List<PropertyEditorCategory> categories = new ArrayList<PropertyEditorCategory>();
 
-        if (isSupported(TITLE_GROUP)) {
-            PropertyEditorCategory category = new PropertyEditorCategory(DisplayerSettingsEditorConstants.INSTANCE.common_title());
+        if (isSupported(GENERAL_GROUP)) {
+            PropertyEditorCategory category = new PropertyEditorCategory("General");
             categories.add(category);
 
             if (isSupported(TITLE)) {
@@ -148,6 +148,12 @@ public class DisplayerSettingsEditor extends Composite {
                         Boolean.toString(displayerSettings.isTitleVisible()),
                         PropertyEditorType.BOOLEAN)
                         .withKey(TITLE_VISIBLE.getFullId()));
+            }
+            if (isSupported(ALLOW_EXPORT_CSV)) {
+                category.withField(new PropertyEditorFieldInfo(DisplayerSettingsEditorConstants.INSTANCE.common_allowCSV(),
+                        Boolean.toString(displayerSettings.isCSVExportAllowed()),
+                        PropertyEditorType.BOOLEAN)
+                        .withKey(ALLOW_EXPORT_CSV.getFullId()));
             }
         }
 

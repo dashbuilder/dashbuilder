@@ -16,6 +16,7 @@
 package org.dashbuilder.displayer.client;
 
 import org.dashbuilder.dataset.DataSet;
+import org.dashbuilder.dataset.DataSetLookup;
 import org.dashbuilder.dataset.client.DataSetReadyCallback;
 import org.dashbuilder.dataset.group.DataSetGroup;
 import org.dashbuilder.dataset.group.Interval;
@@ -123,4 +124,9 @@ public interface DataSetHandler {
      * Get the data set get on the last lookup call (if any)
      */
     DataSet getLastDataSet();
+
+    /**
+     * Get the current data set lookup (if any)
+     */
+    DataSetLookup getCurrentDataSetLookup();
 }

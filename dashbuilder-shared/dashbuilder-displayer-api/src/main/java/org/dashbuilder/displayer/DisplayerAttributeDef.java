@@ -24,8 +24,9 @@ public class DisplayerAttributeDef {
     public static final DisplayerAttributeDef COLUMN_PATTERN = new DisplayerAttributeDef("pattern", DisplayerAttributeGroupDef.COLUMNS_GROUP);
     public static final DisplayerAttributeDef COLUMN_EMPTY = new DisplayerAttributeDef("empty", DisplayerAttributeGroupDef.COLUMNS_GROUP);
 
-    public static final DisplayerAttributeDef TITLE = new DisplayerAttributeDef("title", DisplayerAttributeGroupDef.TITLE_GROUP);
-    public static final DisplayerAttributeDef TITLE_VISIBLE = new DisplayerAttributeDef("visible", DisplayerAttributeGroupDef.TITLE_GROUP);
+    public static final DisplayerAttributeDef TITLE = new DisplayerAttributeDef("title", DisplayerAttributeGroupDef.GENERAL_GROUP);
+    public static final DisplayerAttributeDef TITLE_VISIBLE = new DisplayerAttributeDef("visible", DisplayerAttributeGroupDef.GENERAL_GROUP);
+    public static final DisplayerAttributeDef ALLOW_EXPORT_CSV = new DisplayerAttributeDef("allow_csv", DisplayerAttributeGroupDef.GENERAL_GROUP);
 
     public static final DisplayerAttributeDef REFRESH_STALE_DATA = new DisplayerAttributeDef("staleData", DisplayerAttributeGroupDef.REFRESH_GROUP);
     public static final DisplayerAttributeDef REFRESH_INTERVAL = new DisplayerAttributeDef("interval", DisplayerAttributeGroupDef.REFRESH_GROUP);

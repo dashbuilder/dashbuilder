@@ -142,7 +142,7 @@ public class SelectorDisplayer extends AbstractDisplayer {
                 .supportsAttribute( DisplayerAttributeGroupDef.COLUMNS_GROUP )
                 .supportsAttribute( DisplayerAttributeGroupDef.FILTER_GROUP )
                 .supportsAttribute( DisplayerAttributeGroupDef.REFRESH_GROUP )
-                .supportsAttribute( DisplayerAttributeGroupDef.TITLE_GROUP );
+                .supportsAttribute( DisplayerAttributeGroupDef.GENERAL_GROUP );
     }
 
     /**

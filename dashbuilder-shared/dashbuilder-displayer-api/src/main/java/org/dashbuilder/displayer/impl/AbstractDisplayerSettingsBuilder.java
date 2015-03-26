@@ -54,6 +54,11 @@ public abstract class AbstractDisplayerSettingsBuilder<T> extends AbstractDataSe
         return (T) this;
     }
 
+    public T allowCsvExport(boolean allowCsvExport) {
+        displayerSettings.setCSVExportAllowed( allowCsvExport );
+        return (T) this;
+    }
+
     public T backgroundColor(String backgroundColor) {
         displayerSettings.setChartBackgroundColor(backgroundColor);
         return (T) this;

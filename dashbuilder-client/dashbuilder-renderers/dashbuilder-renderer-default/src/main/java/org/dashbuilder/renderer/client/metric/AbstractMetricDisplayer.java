@@ -58,7 +58,7 @@ public abstract class AbstractMetricDisplayer extends AbstractDisplayer {
                 .supportsAttribute(DisplayerAttributeGroupDef.COLUMNS_GROUP)
                 .supportsAttribute(DisplayerAttributeGroupDef.FILTER_GROUP)
                 .supportsAttribute(DisplayerAttributeGroupDef.REFRESH_GROUP)
-                .supportsAttribute(DisplayerAttributeGroupDef.TITLE_GROUP)
+                .supportsAttribute(DisplayerAttributeGroupDef.GENERAL_GROUP)
                 .supportsAttribute(DisplayerAttributeDef.CHART_WIDTH)
                 .supportsAttribute(DisplayerAttributeDef.CHART_HEIGHT)
                 .supportsAttribute(DisplayerAttributeDef.CHART_BGCOLOR)

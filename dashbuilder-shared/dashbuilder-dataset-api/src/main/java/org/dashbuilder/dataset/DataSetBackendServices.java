@@ -44,4 +44,8 @@ public interface DataSetBackendServices {
      * Get those public (shareable) data set definition (those with the public flag set to true)
      */
     List<DataSetDef> getPublicDataSetDefs();
+
+    String exportDataSetCSV(DataSetLookup dataSetLookup);
+
+    String exportDataSetCSV(DataSet dataSet);
 }
