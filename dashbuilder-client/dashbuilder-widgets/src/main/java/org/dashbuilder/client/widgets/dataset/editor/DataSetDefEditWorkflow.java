@@ -8,12 +8,16 @@ import org.dashbuilder.client.widgets.dataset.editor.widgets.editors.csv.CSVData
 import org.dashbuilder.client.widgets.dataset.editor.widgets.editors.elasticsearch.ELDataSetDefAttributesEditor;
 import org.dashbuilder.client.widgets.dataset.editor.widgets.editors.sql.SQLDataSetDefAttributesEditor;
 import org.dashbuilder.dataset.def.*;
+import org.dashbuilder.dataset.impl.DataColumnImpl;
 import org.dashbuilder.dataset.validation.groups.*;
 import org.dashbuilder.validations.ValidatorFactory;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+import java.util.Stack;
 
 public final class DataSetDefEditWorkflow {
 
@@ -24,7 +28,7 @@ public final class DataSetDefEditWorkflow {
     interface BasicAttributesDriver extends SimpleBeanEditorDriver<DataSetDef, DataSetBasicAttributesEditor> {}
     interface ProviderTypeAttributesDriver extends SimpleBeanEditorDriver<DataSetDef, DataSetProviderTypeEditor> {}
     interface AdvancedAttributesDriver extends SimpleBeanEditorDriver<DataSetDef, DataSetAdvancedAttributesEditor> {}
-    interface FilterColumnsDriver extends SimpleBeanEditorDriver<DataSetDef, DataSetFilterColumnsEditor> {}
+    interface DataColumnDriver extends SimpleBeanEditorDriver<DataColumnImpl, DataColumnEditor> {}
     interface SQLAttributesDriver extends SimpleBeanEditorDriver<SQLDataSetDef, SQLDataSetDefAttributesEditor> {}
     interface CSVAttributesDriver extends SimpleBeanEditorDriver<CSVDataSetDef, CSVDataSetDefAttributesEditor> {}
     interface BeanAttributesDriver extends SimpleBeanEditorDriver<BeanDataSetDef, BeanDataSetDefAttributesEditor> {}
@@ -45,9 +49,9 @@ public final class DataSetDefEditWorkflow {
     public final AdvancedAttributesDriver advancedAttributesDriver = GWT.create(AdvancedAttributesDriver.class);
 
     /**
-     * <p>Handles initial filter and columns for the data set.</p> 
+     * <p>Handles a data set column.</p> 
      */
-    public final FilterColumnsDriver filterColumnsDriver = GWT.create(FilterColumnsDriver.class);
+    public final Stack<DataColumnDriver> columnDrivers = new Stack<DataColumnDriver>();
     
     /**
      * <p>Handles SQL specific data set definition attributes.</p> 
@@ -72,7 +76,7 @@ public final class DataSetDefEditWorkflow {
     private DataSetBasicAttributesEditor basicAttributesEditor = null;
     private DataSetProviderTypeEditor providerTypeAttributeEditor = null;
     private DataSetAdvancedAttributesEditor advancedAttributesEditor = null;
-    private DataSetFilterColumnsEditor filterColumnsEditor = null;
+    final private Stack<DataColumnEditor> columnEditors = new Stack<DataColumnEditor>();
     private SQLDataSetDefAttributesEditor sqlAttributesEditor = null;
     private BeanDataSetDefAttributesEditor beanAttributesEditor = null;
     private CSVDataSetDefAttributesEditor csvAttributesEditor = null;
@@ -99,10 +103,13 @@ public final class DataSetDefEditWorkflow {
         return this;
     }
 
-    public DataSetDefEditWorkflow edit(final DataSetFilterColumnsEditor view, final DataSetDef p) {
-        filterColumnsDriver.initialize(view);
-        filterColumnsDriver.edit(p);
-        filterColumnsEditor = view;
+    public DataSetDefEditWorkflow edit(final DataColumnEditor view, final DataColumnImpl d) {
+        final DataColumnDriver driver = GWT.create(DataColumnDriver.class);
+        driver.initialize(view);
+        driver.edit(d);
+        columnDrivers.add(driver);
+        columnEditors.add(view);
+        
         return this;
     }
 
@@ -140,7 +147,8 @@ public final class DataSetDefEditWorkflow {
         if (advancedAttributesEditor != null) saveAdvancedAttributes();
         if (sqlAttributesEditor != null) saveSQLAttributes();
         if (csvAttributesEditor != null) saveCSVAttributes();
-        if (filterColumnsEditor != null) saveFilterColumns();
+        if (!columnEditors.isEmpty()) saveColumns();
+        
         return this;
     }
 
@@ -180,11 +188,17 @@ public final class DataSetDefEditWorkflow {
     }
 
     /**
-     * <p>Handles initial filter and columns for the data set.</p> 
+     * <p>Handles s data set column.</p> 
      */
-    private DataSetDefEditWorkflow saveFilterColumns() {
-        DataSetDef edited = (DataSetDef) filterColumnsDriver.flush();
-        return validate(edited, filterColumnsEditor, filterColumnsDriver);
+    private DataSetDefEditWorkflow saveColumns() {
+        
+        for (DataColumnDriver driver : columnDrivers) {
+            final DataColumnEditor editor = columnEditors.peek();
+            final DataColumnImpl edited = driver.flush();
+            validateDataColumn(edited, editor, driver);
+        }
+        
+        return this;
     }
 
     /**
@@ -204,8 +218,17 @@ public final class DataSetDefEditWorkflow {
         else if (csvAttributesEditor.isUsingFileURL()) return validateCSV(edited, csvAttributesEditor, csvAttributesDriver, CSVDataSetDefFileURLValidation.class);
         return this;
     }
+    
+    private DataSetDefEditWorkflow validateDataColumn(final DataColumnImpl dataColumn, final AbstractEditor editor, final SimpleBeanEditorDriver driver) {
+        final Validator validator = ValidatorFactory.getDataColumnValidator();
+        final Set<ConstraintViolation<DataColumnImpl>> violations = validator.validate(dataColumn);
+        final Set<?> test = violations;
+        setViolations(editor, driver, (Iterable<ConstraintViolation<?>>) test);
+        return this;
 
-    private DataSetDefEditWorkflow validateSQL(final SQLDataSetDef def, final AbstractDataSetDefEditor editor, final SimpleBeanEditorDriver driver) {
+    }
+
+    private DataSetDefEditWorkflow validateSQL(final SQLDataSetDef def, final AbstractEditor editor, final SimpleBeanEditorDriver driver) {
         final Validator validator = ValidatorFactory.getSQLDataSetDefValidator();
         final Set<ConstraintViolation<SQLDataSetDef>> violations = validator.validate(def);
         final Set<?> test = violations;
@@ -213,7 +236,7 @@ public final class DataSetDefEditWorkflow {
         return this;
     }
 
-    private DataSetDefEditWorkflow validateCSV(final CSVDataSetDef def, final AbstractDataSetDefEditor editor, final SimpleBeanEditorDriver driver, final Class<?>... groups) {
+    private DataSetDefEditWorkflow validateCSV(final CSVDataSetDef def, final AbstractEditor editor, final SimpleBeanEditorDriver driver, final Class<?>... groups) {
         final Validator validator = ValidatorFactory.getCSVDataSetDefValidator();
         final Set<ConstraintViolation<CSVDataSetDef>> violations = validator.validate(def, groups);
         final Set<?> test = violations;
@@ -221,7 +244,7 @@ public final class DataSetDefEditWorkflow {
         return this;
     }
     
-    private DataSetDefEditWorkflow validate(final DataSetDef def, final AbstractDataSetDefEditor editor, final SimpleBeanEditorDriver driver) {
+    private DataSetDefEditWorkflow validate(final DataSetDef def, final AbstractEditor editor, final SimpleBeanEditorDriver driver) {
         final Validator validator = ValidatorFactory.getDataSetDefValidator();
         final Set<ConstraintViolation<DataSetDef>> violations = validator.validate(def);
         final Set<?> test = violations;
@@ -229,7 +252,7 @@ public final class DataSetDefEditWorkflow {
         return null;
     }
     
-    private DataSetDefEditWorkflow validate(final DataSetDef def, final AbstractDataSetDefEditor editor, final SimpleBeanEditorDriver driver,  final Class<?>... groups) {
+    private DataSetDefEditWorkflow validate(final DataSetDef def, final AbstractEditor editor, final SimpleBeanEditorDriver driver,  final Class<?>... groups) {
         final Validator validator = ValidatorFactory.getDataSetDefValidator();
         final Set<ConstraintViolation<DataSetDef>> violations = validator.validate(def, groups);
         final Set<?> test = violations;
@@ -237,14 +260,13 @@ public final class DataSetDefEditWorkflow {
         return this;
     }
     
-    private void setViolations(final AbstractDataSetDefEditor editor, final SimpleBeanEditorDriver driver, final Iterable<ConstraintViolation<?>> violations) {
+    private void setViolations(final AbstractEditor editor, final SimpleBeanEditorDriver driver, final Iterable<ConstraintViolation<?>> violations) {
         driver.setConstraintViolations(violations);
         if (driver.hasErrors()) {
             editor.setViolations(violations);
         } else {
             editor.setViolations(null);
         }
-        
     }
     
     public DataSetDefEditWorkflow clear() {
@@ -253,6 +275,8 @@ public final class DataSetDefEditWorkflow {
         advancedAttributesEditor = null;
         sqlAttributesEditor = null;
         csvAttributesEditor = null;
+        columnEditors.clear();;
+        columnDrivers.clear();
         return this;
     }
 }

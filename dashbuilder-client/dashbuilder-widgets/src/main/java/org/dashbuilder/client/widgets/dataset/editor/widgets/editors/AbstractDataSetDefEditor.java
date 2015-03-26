@@ -10,36 +10,12 @@ import java.util.List;
 /**
  * <p>This is the default view implementation for Data Set definition Editor widgets .</p>
  */
-public class AbstractDataSetDefEditor extends Composite {
+public class AbstractDataSetDefEditor extends AbstractEditor {
 
-    private Iterable<ConstraintViolation<?>> violations = null;
     protected DataSetDef dataSetDef;
     
     public void set(DataSetDef dataSetDef) {
         this.dataSetDef = dataSetDef;
     }
     
-    /**
-     * <p>Helper method to consume validation errors that do not belong to this editor.</p>
-     * <p>Provided for using it in editors that implement <code>HasEditorErrors</code> interface. It consumes
-     *      the unconsumed errors collected by children editors producing that this editor's driver 
-     *      will not handle errors not validated by this editor's properties.</p> 
-     *
-     * @param errors The list or editor's errors to consume.
-     */
-    protected void consumeErrors(List<EditorError> errors) {
-        for (EditorError error : errors) {
-            if (error.getEditor().equals(this)) {
-                error.setConsumed(true);
-            }
-        }
-    }
-
-    public Iterable<ConstraintViolation<?>> getViolations() {
-        return violations;
-    }
-
-    public void setViolations(Iterable<ConstraintViolation<?>> violations) {
-        this.violations = violations;
-    }
 }

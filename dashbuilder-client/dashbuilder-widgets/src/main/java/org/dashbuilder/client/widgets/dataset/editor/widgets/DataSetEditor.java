@@ -78,7 +78,8 @@ public class DataSetEditor implements IsWidget {
         View showCSVAttributesEditorView();
         View showELAttributesEditorView();
         View showPreviewTableEditionView(DisplayerListener tableListener);
-        View showFilterColumnsEditionView();
+        View showColumnsEditionView(DataSet dataSet);
+        View showFilterEditionView(DataSet dataSet);
         View showAdvancedAttributesEditionView();
         View showNextButton(String title, ClickHandler nextHandler);
         View showCancelButton(ClickHandler cancelHandler);
@@ -90,6 +91,7 @@ public class DataSetEditor implements IsWidget {
     final View view = new DataSetEditorView();
 
     private DataSetDef dataSetDef;
+    private DataSet dataSet;
     private boolean isEdit;
     
     public DataSetEditor() {
@@ -154,7 +156,8 @@ public class DataSetEditor implements IsWidget {
                                 showBasicAttributesEditionView();
                                 showAdvancedAttributesEditionView();
                                 showPreviewTableEditionView();
-                                showFilterColumnsEditionView();
+                                showColumnsEditionView();
+                                showFilterEditionView();
                                 
                                 view.showNextButton(DataSetEditorConstants.INSTANCE.save(),new ClickHandler() {
                                     @Override
@@ -244,11 +247,15 @@ public class DataSetEditor implements IsWidget {
                 break;
         }
     }
-
-    private void showFilterColumnsEditionView() {
-        view.showFilterColumnsEditionView();
-    }
     
+    
+    private void showColumnsEditionView() {
+        view.showColumnsEditionView(dataSet);
+    }
+
+    private void showFilterEditionView() {
+        view.showFilterEditionView(dataSet);
+    }
     
     private void showPreviewTableEditionView() {
         
@@ -300,13 +307,15 @@ public class DataSetEditor implements IsWidget {
 
             if (displayer != null) {
                 final DataSet dataSet = displayer.getDataSetHandler().getLastDataSet();
-
+                DataSetEditor.this.dataSet = dataSet;
+                
                 if (dataSet != null) {
                     // Register data set on client.
                     ClientDataSetManager.get().registerDataSet(dataSet);
 
                     // Show initial filter and columns edition view.
-                    showFilterColumnsEditionView();
+                    showColumnsEditionView();
+                    showFilterEditionView();
                 }
             }
         }
@@ -334,6 +343,7 @@ public class DataSetEditor implements IsWidget {
     
     private void clear() {
         this.dataSetDef = null;
+        this.dataSet = null;
         view.clear();
         view.showInitialView(newDataSetHandler);
     }

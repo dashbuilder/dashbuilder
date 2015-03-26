@@ -25,14 +25,23 @@ import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetMetadata;
 import org.dashbuilder.dataset.def.DataSetDef;
+import org.hibernate.validator.constraints.NotEmpty;
 import org.jboss.errai.common.client.api.annotations.Portable;
+
+import javax.validation.constraints.NotNull;
 
 @Portable
 public class DataSetImpl implements DataSet {
 
     protected DataSetDef definition;
+
+    @NotNull(message = "{dataSetApi_dataSetImpl_uuid_notNull}")
+    @NotEmpty(message = "{dataSetApi_dataSetImpl_uuid_notNull}")
     protected String uuid = null;
+
+    @NotNull(message = "{dataSetApi_dataSetImpl_creationDate_notNull}")
     protected Date creationDate = new Date();
+
     protected List<DataColumnImpl> columns = new ArrayList<DataColumnImpl>();
     protected int rowCountNonTrimmed = -1;
 

@@ -37,6 +37,7 @@ public interface DataSetEditorConstants extends ConstantsWithLookup {
     String backendCacheAttributes();
     String clientCacheAttributes();
     String refreshPolicyAttributes();
+    String attributeId();
     String attributeUUID();
     String attributeName();
     String attributeMaxBytes();

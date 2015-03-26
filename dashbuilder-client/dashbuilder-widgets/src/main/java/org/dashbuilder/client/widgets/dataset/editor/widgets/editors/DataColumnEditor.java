@@ -19,32 +19,38 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.EditorError;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
-import org.dashbuilder.dataset.DataSet;
-import org.dashbuilder.dataset.client.validation.editors.DataSetDefEditor;
-import org.dashbuilder.dataset.def.DataSetDef;
+import org.dashbuilder.common.client.validation.editors.ValueBoxEditorDecorator;
+import org.dashbuilder.dataset.DataColumn;
+import org.dashbuilder.dataset.impl.DataColumnImpl;
 
 import javax.enterprise.context.Dependent;
 import java.util.List;
 
 /**
- * <p>This is the view implementation widget for Data Set Editor widget for editing initial filter and data set's columns.</p>
+ * <p>This is the view implementation widget for Data Set Editor widget for editing data a given set's column.</p>
+ * 
  */
 @Dependent
-public class DataSetFilterColumnsEditor extends AbstractDataSetDefEditor implements DataSetDefEditor {
+public class DataColumnEditor extends AbstractEditor implements org.dashbuilder.dataset.client.validation.editors.DataColumnEditor {
 
-    interface DataSetFilterColumnsEditorBinder extends UiBinder<Widget, DataSetFilterColumnsEditor> {}
-    private static DataSetFilterColumnsEditorBinder uiBinder = GWT.create(DataSetFilterColumnsEditorBinder.class);
+    interface DataColumnEditorBinder extends UiBinder<Widget, DataColumnEditor> {}
+    private static DataColumnEditorBinder uiBinder = GWT.create(DataColumnEditorBinder.class);
 
     @UiField
-    FlowPanel columnFilterPanel;
+    FlowPanel columnPanel;
 
-    private DataSet dataSet = null;
+    @UiField
+    ValueBoxEditorDecorator<String> id;
 
+    @UiField
+    ValueBoxEditorDecorator<String> name;
+    
     private boolean isEditMode;
 
-    public DataSetFilterColumnsEditor() {
+    public DataColumnEditor() {
         // Initialize the widget.
         initWidget(uiBinder.createAndBindUi(this));
     }
@@ -62,9 +68,12 @@ public class DataSetFilterColumnsEditor extends AbstractDataSetDefEditor impleme
         consumeErrors(errors);
     }
 
-    @Override
-    public void set(DataSetDef dataSetDef) {
-        super.set(dataSetDef);
+    protected void consumeErrors(List<EditorError> errors) {
+        for (EditorError error : errors) {
+            if (error.getEditor().equals(this)) {
+                error.setConsumed(true);
+            }
+        }
     }
-    
+
 }

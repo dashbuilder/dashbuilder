@@ -7,12 +7,21 @@ import com.google.gwt.validation.client.impl.AbstractGwtValidator;
 import org.dashbuilder.dataset.def.CSVDataSetDef;
 import org.dashbuilder.dataset.def.DataSetDef;
 import org.dashbuilder.dataset.def.SQLDataSetDef;
+import org.dashbuilder.dataset.impl.DataColumnImpl;
 import org.dashbuilder.dataset.validation.groups.*;
 
 import javax.validation.Validator;
 
 public class DashbuilderValidationFactory extends AbstractGwtValidatorFactory {
 
+    @GwtValidation(value = DataSetDef.class)
+    public interface DataSetValidator extends Validator {
+    }
+
+    @GwtValidation(value = DataColumnImpl.class)
+    public interface DataColumnValidator extends Validator {
+    }
+    
     @GwtValidation(value = SQLDataSetDef.class)
     public interface SQLDataSetDefValidator extends DataSetDefValidator {
     }

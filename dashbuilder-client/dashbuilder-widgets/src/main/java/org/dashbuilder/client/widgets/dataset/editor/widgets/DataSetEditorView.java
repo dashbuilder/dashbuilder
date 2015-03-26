@@ -34,6 +34,7 @@ import org.dashbuilder.client.widgets.dataset.editor.widgets.editors.bean.BeanDa
 import org.dashbuilder.client.widgets.dataset.editor.widgets.editors.csv.CSVDataSetDefAttributesEditor;
 import org.dashbuilder.client.widgets.dataset.editor.widgets.editors.elasticsearch.ELDataSetDefAttributesEditor;
 import org.dashbuilder.client.widgets.dataset.editor.widgets.editors.sql.SQLDataSetDefAttributesEditor;
+import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.def.*;
 import org.dashbuilder.displayer.client.DisplayerListener;
 
@@ -115,10 +116,13 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
     DataSetPreviewEditor previewTableEditor;
 
     @UiField
-    FlowPanel filterColumnsEditionViewPanel;
+    FlowPanel filterEditionViewPanel;
 
     @UiField
-    DataSetFilterColumnsEditor filterColumnsEditor;
+    FlowPanel columnsEditionViewPanel;
+
+    @UiField
+    DataSetColumnsEditor columnsEditor;
 
     @UiField
     FlowPanel csvAttributesEditionViewPanel;
@@ -276,7 +280,7 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
     @Override
     public DataSetEditor.View showPreviewTableEditionView(final DisplayerListener tableListener) {
         // Table is not a data set editor component, just a preview data set widget.
-        // So not necessary to use the editor workflow instance.
+        // So not necessary to use the editor workflow this instance.
         
         // View title.
         showTitle();
@@ -294,17 +298,34 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
     }
 
     @Override
-    public DataSetEditor.View showFilterColumnsEditionView() {
-        // TODO: has to wait for table listener to be ready??
+    public DataSetEditor.View showColumnsEditionView(final DataSet dataSet) {
+        // Columns editor is not a data set editor component, just a widget to handle DataColumnEditor instances.
+        // So not necessary to use the editor workflow this instance.
 
-        filterColumnsEditor.setVisible(true);
-        filterColumnsEditor.setEditMode(true);
-        filterColumnsEditionViewPanel.setVisible(true);
+        columnsEditor.setVisible(true);
+        columnsEditor.setEditMode(true);
+        columnsEditor.build(dataSet, workflow);
+        columnsEditionViewPanel.setVisible(true);
         activeDataPreviewTab();
         tabViewPanel.setVisible(true);
         
         return this;
     }
+
+    @Override
+    public DataSetEditor.View showFilterEditionView(final DataSet dataSet) {
+        // workflow.edit(filterEditor, dataSetDef);
+
+        // filterEditor.setVisible(true);
+        // filterEditor.setEditMode(true);
+        filterEditionViewPanel.setVisible(true);
+        activeDataPreviewTab();
+        tabViewPanel.setVisible(true);
+
+        return this;
+    }
+
+    
 
     @Override
     public DataSetEditor.View showAdvancedAttributesEditionView() {
@@ -439,7 +460,8 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
         beanAttributesEditionViewPanel.setVisible(false);
         elAttributesEditionViewPanel.setVisible(false);
         previewTableEditionViewPanel.setVisible(false);
-        filterColumnsEditionViewPanel.setVisible(false);
+        filterEditionViewPanel.setVisible(false);
+        columnsEditionViewPanel.setVisible(false);
         nextButton.setVisible(false);
         cancelButton.setVisible(false);
         buttonsPanel.setVisible(false);
@@ -453,7 +475,8 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
         sqlDataSetDefAttributesEditor.setViolations(null);
         elDataSetDefAttributesEditor.setViolations(null);
         previewTableEditor.setViolations(null);
-        filterColumnsEditor.setViolations(null);
+        // columnsEditor.setViolations(null);
+        // filterEditor.setViolations(null);
         dataSetAdvancedAttributesEditor.setViolations(null);
     }
 
@@ -465,7 +488,8 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
         sqlDataSetDefAttributesEditor.set(dataSetDef);
         elDataSetDefAttributesEditor.set(dataSetDef);
         previewTableEditor.set(dataSetDef);
-        filterColumnsEditor.set(dataSetDef);
+        // columnsEditor.set(dataSetDef);
+        // filterEditor.set(dataSetDef);
         dataSetAdvancedAttributesEditor.set(dataSetDef);
     }
     

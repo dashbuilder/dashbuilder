@@ -9,6 +9,16 @@ import org.dashbuilder.validations.factory.DashbuilderValidationFactory;
 import javax.validation.Validator;
 
 public final class ValidatorFactory {
+
+    public static Validator getDataSetValidator() {
+        AbstractGwtValidator validator = GWT.create(DashbuilderValidationFactory.DataSetValidator.class);
+        return getValidator(validator);
+    }
+
+    public static Validator getDataColumnValidator() {
+        AbstractGwtValidator validator = GWT.create(DashbuilderValidationFactory.DataColumnValidator.class);
+        return getValidator(validator);
+    }
     
     public static Validator getDataSetDefValidator() {
         AbstractGwtValidator validator = GWT.create(DashbuilderValidationFactory.DataSetDefValidator.class);
