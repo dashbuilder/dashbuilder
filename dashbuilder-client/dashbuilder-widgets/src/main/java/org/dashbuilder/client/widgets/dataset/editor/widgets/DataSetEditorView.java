@@ -276,7 +276,7 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
         
         dataSetColumnsAndFilterEditor.setVisible(true);
         dataSetColumnsAndFilterEditor.setEditMode(true);
-        dataSetColumnsAndFilterEditor.showTableDisplayer();
+        dataSetColumnsAndFilterEditor.build();
         showTab(dataConfigurationTab);
         showTab(dataPreviewTab);
         columnsAndFilterEditionViewPanel.setVisible(true);

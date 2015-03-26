@@ -25,6 +25,7 @@ import org.dashbuilder.client.widgets.dataset.editor.DataSetDefEditWorkflow;
 import org.dashbuilder.client.widgets.resources.i18n.DataSetEditorConstants;
 import org.dashbuilder.dataprovider.DataSetProviderType;
 import org.dashbuilder.dataset.DataSetMetadata;
+import org.dashbuilder.dataset.client.ClientDataSetManager;
 import org.dashbuilder.dataset.client.DataSetClientServices;
 import org.dashbuilder.dataset.client.DataSetMetadataCallback;
 import org.dashbuilder.dataset.def.CSVDataSetDef;
@@ -242,6 +243,9 @@ public class DataSetEditor implements IsWidget {
             // Register the data set in backend as non public.
             dataSetDef.setPublic(false);
             DataSetClientServices.get().registerDataSetDef(dataSetDef);
+            
+            // Register data set on client.
+            ClientDataSetManager.get().registerDataSet(dataSetDef.getDataSet());
         }
         
         view.showBasicAttributesEditionView()

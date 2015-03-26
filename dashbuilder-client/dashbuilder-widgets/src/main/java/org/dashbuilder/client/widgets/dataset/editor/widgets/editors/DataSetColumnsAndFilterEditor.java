@@ -20,24 +20,20 @@ import com.google.gwt.editor.client.EditorError;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
-import org.dashbuilder.dataset.client.DataSetClientServices;
+import org.dashbuilder.dataset.DataColumn;
+import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.client.validation.editors.DataSetDefEditor;
 import org.dashbuilder.dataset.def.DataSetDef;
+import org.dashbuilder.dataset.group.DataSetGroup;
 import org.dashbuilder.displayer.DisplayerSettingsFactory;
 import org.dashbuilder.displayer.client.Displayer;
 import org.dashbuilder.displayer.client.DisplayerCoordinator;
 import org.dashbuilder.displayer.client.DisplayerHelper;
+import org.dashbuilder.displayer.client.DisplayerListener;
 
 import javax.enterprise.context.Dependent;
 import java.util.List;
-
-import static org.dashbuilder.dataset.group.AggregateFunctionType.*;
-import static org.dashbuilder.dataset.group.AggregateFunctionType.SUM;
-import static org.dashbuilder.dataset.sort.SortOrder.DESCENDING;
-
 
 /**
  * <p>This is the view implementation widget for Data Set Editor widget for editing data set columns, initial filter and testing the checking in a table displayer.</p>
@@ -55,6 +51,7 @@ public class DataSetColumnsAndFilterEditor extends AbstractDataSetDefEditor impl
     FlowPanel tablePanel;
     
     Displayer tableDisplayer = null;
+    private DataSet dataSet = null;
 
     private boolean isEditMode;
 
@@ -81,7 +78,15 @@ public class DataSetColumnsAndFilterEditor extends AbstractDataSetDefEditor impl
         super.set(dataSetDef);
     }
     
-    public void showTableDisplayer() {
+    public void build() {
+        
+        showTableDisplayer();
+        
+        // TODO: Show loading screen...
+       
+    }
+    
+    private void showTableDisplayer() {
         
         // Clear current view.
         clearView();
@@ -89,11 +94,33 @@ public class DataSetColumnsAndFilterEditor extends AbstractDataSetDefEditor impl
         // Build the table displayer.
         tableDisplayer = buildTableDisplayer();
         if (tableDisplayer != null) {
+
+            // Create and draw the preview table.
             final DisplayerCoordinator coordinator = new DisplayerCoordinator();
             coordinator.addDisplayer(tableDisplayer);
             tablePanel.add(tableDisplayer);
             coordinator.drawAll();
+
+            final TableListener tableListener = new TableListener();
+            tableDisplayer.addListener(tableListener);
         }
+
+    }
+    
+    private void showColumnsView() {
+        if (dataSet != null) {
+            List<DataColumn> columns = dataSet.getColumns();
+            if (columns != null) {
+                for (DataColumn column : columns) {
+                    GWT.log("Found column");
+                    GWT.log("************");
+                    GWT.log("id="+column.getId());
+                    GWT.log("name="+column.getName());
+                    GWT.log("type="+column.getColumnType());
+                }
+            }
+        }
+        
     }
 
     private Displayer buildTableDisplayer() {
@@ -113,5 +140,31 @@ public class DataSetColumnsAndFilterEditor extends AbstractDataSetDefEditor impl
 
     private void clearView() {
         tablePanel.clear();
+    }
+
+    private class TableListener implements DisplayerListener {
+
+        public void onDraw(Displayer displayer) {
+            DataSetColumnsAndFilterEditor.this.dataSet = displayer.getDataSetHandler().getLastDataSet();
+            if (DataSetColumnsAndFilterEditor.this.dataSet != null) {
+                showColumnsView();
+            }
+        }
+
+        public void onRedraw(Displayer displayer) {
+
+        }
+
+        public void onClose(Displayer displayer) {
+
+        }
+
+        public void onGroupIntervalsSelected(Displayer displayer, DataSetGroup groupOp) {
+
+        }
+
+        public void onGroupIntervalsReset(Displayer displayer, List<DataSetGroup> groupOps) {
+
+        }
     }
 }
