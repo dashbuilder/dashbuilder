@@ -45,7 +45,17 @@ public interface DataSetBackendServices {
      */
     List<DataSetDef> getPublicDataSetDefs();
 
+    /**
+     * Export a dataset, specified by a DataSetLookup, to CSV format.
+     * @param dataSetLookup The dataSetLookup that defines the dataset to be exported.
+     * @return A String with the relative url to the exported data.
+     */
     String exportDataSetCSV(DataSetLookup dataSetLookup);
 
+    /**
+     * Export a dataset to CSV format.
+     * @param dataSet The dataset to export.
+     * @return A String with the relative url to the exported data.
+     */
     String exportDataSetCSV(DataSet dataSet);
 }

@@ -150,11 +150,10 @@ public class DataSetClientServices {
     }
 
     /**
-     * TODO
+     * Export a data set, specified by a data set lookup request, to CSV format.
      *
      * @param request The data set lookup request
-     * @return ...
-     * @throws Exception It there is an unexpected error trying to execute the lookup request.
+     * @throws Exception It there is an unexpected error during the export.
      */
     public void exportDataSetCSV(final DataSetLookup request, final DataSetExportReadyCallback listener) throws Exception {
 

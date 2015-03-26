@@ -124,7 +124,7 @@ public class DataSetBackendServicesImpl implements DataSetBackendServices {
         String[] line = new String[columnCount];
         for (int cc = 0; cc < columnCount; cc++) {
             DataColumn dc = dataSet.getColumnByIndex(cc);
-            line[cc] = dc.getName();
+            line[cc] = dc.getId();
         }
         lines.add(line);
 
