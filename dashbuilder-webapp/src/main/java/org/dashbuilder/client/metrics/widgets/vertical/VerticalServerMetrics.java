@@ -24,7 +24,6 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.*;
-import org.dashbuilder.backend.ClusterMetricsDataSetGenerator;
 import org.dashbuilder.client.metrics.RealTimeMetricsDashboard;
 import org.dashbuilder.displayer.DisplayerSettingsFactory;
 import org.dashbuilder.displayer.client.Displayer;
@@ -33,9 +32,9 @@ import org.dashbuilder.displayer.client.DisplayerHelper;
 
 import static org.dashbuilder.dataset.filter.FilterFactory.equalsTo;
 import static org.dashbuilder.dataset.filter.FilterFactory.timeFrame;
-import static org.dashbuilder.dataset.group.AggregateFunctionType.MAX;
+import static org.dashbuilder.dataset.group.AggregateFunctionType.*;
 import static org.dashbuilder.dataset.group.DateIntervalType.*;
-import static org.dashbuilder.backend.ClusterMetricsDataSetGenerator.*;
+import static org.dashbuilder.backend.ClusterMetricsGenerator.*;
 import static org.dashbuilder.client.metrics.RealTimeMetricsDashboard.*;
 
 public class VerticalServerMetrics extends Composite {
@@ -86,22 +85,51 @@ public class VerticalServerMetrics extends Composite {
         serverName.setText(server);
         toolTipDefaultText();
 
-        Displayer serverCPU = DisplayerHelper.lookupDisplayer(
-                DisplayerSettingsFactory.newLineChartSettings()
+
+
+/*        Displayer serverMetrics = DisplayerHelper.lookupDisplayer(
+                DisplayerSettingsFactory.newMetricSettings()
+                        .dataset(METRICS_DATASET_UUID)
+                        .filter(COLUMN_TIMESTAMP, timeFrame("-2second"))
+                        .group(COLUMN_SERVER)
+                        .column(COLUMN_SERVER)
+                        .column(COLUMN_CPU0, AVERAGE, "CPU 1 %").format("{value} %", "#,###")
+                        .column(COLUMN_CPU1, AVERAGE, "CPU 2 %").format("{value} %", "#,###")
+                        .column(COLUMN_DISK_FREE, AVERAGE, "Free Disk").format("{value} Mb", "#,###")
+                        .format(COLUMN_CPU0, "")
+                        .title("{group} - {column}").titleVisible(true)
+                        .metricsLayout(true, 3, 5, 5, 5, 5)
+                        .backgroundColor(BACKGROUND_COLOR)
+                        .width(165).height(70)
+                        .margins(5, 5, 30, 5)
+                        .buildSettings());   */
+
+        Displayer serverCPU0 = DisplayerHelper.lookupDisplayer(
+                DisplayerSettingsFactory.newMetricSettings()
                         .dataset(METRICS_DATASET_UUID)
                         .filter(COLUMN_SERVER, equalsTo(server))
-                        .filter(COLUMN_TIMESTAMP, timeFrame("begin[minute] till now"))
-                        .group(COLUMN_TIMESTAMP).fixed(SECOND, true)
-                        .column(COLUMN_TIMESTAMP)
-                        .column(COLUMN_CPU0, MAX, "CPU0")
-                        .column(COLUMN_CPU1, MAX, "CPU1")
-                        .title("CPU usage")
-                        .titleVisible(false)
+                        .filter(COLUMN_TIMESTAMP, timeFrame("-2second"))
+                        .column(COLUMN_CPU0, AVERAGE, "CPU0")
+                        .title("CPU 1 %")
+                        .titleVisible(true)
                         .backgroundColor(BACKGROUND_COLOR)
-                        .width(165).height(80)
+                        .width(165).height(70)
                         .margins(5, 5, 30, 5)
-                        .legendOff()
                         .buildSettings());
+
+        Displayer serverCPU1 = DisplayerHelper.lookupDisplayer(
+                DisplayerSettingsFactory.newMetricSettings()
+                        .dataset(METRICS_DATASET_UUID)
+                        .filter(COLUMN_SERVER, equalsTo(server))
+                        .filter(COLUMN_TIMESTAMP, timeFrame("-2second"))
+                        .column(COLUMN_CPU1, AVERAGE, "CPU0")
+                        .title("CPU 2 %")
+                        .titleVisible(true)
+                        .backgroundColor(BACKGROUND_COLOR)
+                        .width(165).height(70)
+                        .margins(5, 5, 30, 5)
+                        .buildSettings());
+
 
         // Used memory
         Displayer serverMemory = DisplayerHelper.lookupDisplayer(
@@ -152,6 +180,7 @@ public class VerticalServerMetrics extends Composite {
                         .title("Running/Sleepping processes")
                         .titleVisible(false)
                         .backgroundColor(BACKGROUND_COLOR)
+                        .horizontal()
                         .legendOff()
                         .width(165).height(80)
                         .margins(5, 5, 30, 5)
@@ -171,7 +200,8 @@ public class VerticalServerMetrics extends Composite {
                         .tableWidth(180)
                         .buildSettings());
 
-        addDisplayer(serverCPU, TOOLTIP_CPU);
+        addDisplayer(serverCPU0, TOOLTIP_CPU);
+        addDisplayer(serverCPU1, TOOLTIP_CPU);
         addDisplayer(serverMemory, TOOLTIP_USED_MEMORY);
         addDisplayer(serverNetwork, TOOLTIP_NET_BW);
         addDisplayer(serverProcessesRunning, TOOLTIP_PROCESSES);

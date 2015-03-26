@@ -20,6 +20,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
+import org.dashbuilder.client.gallery.GalleryWidget;
 import org.dashbuilder.displayer.DisplayerSettingsFactory;
 import org.dashbuilder.displayer.client.Displayer;
 import org.dashbuilder.displayer.client.DisplayerCoordinator;
@@ -34,7 +35,7 @@ import static org.dashbuilder.dataset.group.AggregateFunctionType.*;
  * A composite widget that represents an entire dashboard sample composed using an UI binder template.
  * <p>The dashboard itself is composed by a set of Displayer instances.</p>
  */
-public class SalesTableReports extends Composite {
+public class SalesTableReports extends Composite implements GalleryWidget {
 
     interface SalesDashboardBinder extends UiBinder<Widget, SalesTableReports>{}
     private static final SalesDashboardBinder uiBinder = GWT.create(SalesDashboardBinder.class);
@@ -56,8 +57,24 @@ public class SalesTableReports extends Composite {
 
     DisplayerCoordinator displayerCoordinator = new DisplayerCoordinator();
 
+    @Override
     public String getTitle() {
         return "Sales reports";
+    }
+
+    @Override
+    public void onClose() {
+        displayerCoordinator.closeAll();
+    }
+
+    @Override
+    public boolean feedsFrom(String dataSetId) {
+        return SALES_OPPS.equals(dataSetId);
+    }
+
+    @Override
+    public void redrawAll() {
+        displayerCoordinator.redrawAll();
     }
 
     public SalesTableReports() {
@@ -168,9 +185,5 @@ public class SalesTableReports extends Composite {
 
         // Draw the charts
         displayerCoordinator.drawAll();
-    }
-
-    public void redrawAll() {
-        displayerCoordinator.redrawAll();
     }
 }

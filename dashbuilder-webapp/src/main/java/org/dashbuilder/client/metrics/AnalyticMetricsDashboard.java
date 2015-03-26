@@ -21,6 +21,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.Widget;
+import org.dashbuilder.client.gallery.GalleryWidget;
 import org.dashbuilder.displayer.DisplayerSettingsFactory;
 import org.dashbuilder.displayer.client.Displayer;
 import org.dashbuilder.displayer.client.DisplayerCoordinator;
@@ -29,9 +30,9 @@ import org.dashbuilder.displayer.client.DisplayerHelper;
 import static org.dashbuilder.dataset.filter.FilterFactory.*;
 import static org.dashbuilder.dataset.group.AggregateFunctionType.*;
 import static org.dashbuilder.dataset.group.DateIntervalType.*;
-import static org.dashbuilder.backend.ClusterMetricsDataSetGenerator.*;
+import static org.dashbuilder.backend.ClusterMetricsGenerator.*;
 
-public class AnalyticMetricsDashboard extends Composite {
+public class AnalyticMetricsDashboard extends Composite implements GalleryWidget {
 
     interface AnalyticMetricsDashboardBinder extends UiBinder<Widget, AnalyticMetricsDashboard>{}
     private static final AnalyticMetricsDashboardBinder uiBinder = GWT.create(AnalyticMetricsDashboardBinder.class);
@@ -78,8 +79,24 @@ public class AnalyticMetricsDashboard extends Composite {
     
     DisplayerCoordinator displayerCoordinator = new DisplayerCoordinator();
 
+    @Override
     public String getTitle() {
         return "System Metrics (Analytic)";
+    }
+
+    @Override
+    public void onClose() {
+        displayerCoordinator.closeAll();
+    }
+
+    @Override
+    public boolean feedsFrom(String dataSetId) {
+        return METRICS_DATASET_UUID.equals(dataSetId);
+    }
+
+    @Override
+    public void redrawAll() {
+        displayerCoordinator.redrawAll();
     }
 
     public AnalyticMetricsDashboard() {

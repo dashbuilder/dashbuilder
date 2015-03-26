@@ -51,6 +51,7 @@ import org.uberfire.mvp.Command;
 import org.uberfire.mvp.PlaceRequest;
 import org.uberfire.mvp.impl.DefaultPlaceRequest;
 import org.uberfire.workbench.model.menu.MenuFactory;
+import org.uberfire.workbench.model.menu.MenuItem;
 import org.uberfire.workbench.model.menu.Menus;
 import org.uberfire.workbench.model.menu.impl.BaseMenuCustom;
 
@@ -289,7 +290,7 @@ public class DisplayerScreenPresenter {
     }
 
     private void adjustMenuActions( DisplayerSettings displayerSettings ) {
-        menuActionsButton.getMenuWiget().getWidget( 2 ).setVisible( displayerSettings.isCSVExportAllowed() );
+        menuActionsButton.getMenuWiget().getWidget( 2 ).setVisible(displayerSettings.isCSVExportAllowed());
     }
 
     private DropdownButton getMenuActionsButton() {

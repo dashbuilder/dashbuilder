@@ -20,7 +20,8 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.*;
-import org.dashbuilder.backend.ClusterMetricsDataSetGenerator;
+import org.dashbuilder.backend.ClusterMetricsGenerator;
+import org.dashbuilder.client.gallery.GalleryWidget;
 import org.dashbuilder.client.metrics.widgets.details.DetailedServerMetrics;
 import org.dashbuilder.client.metrics.widgets.vertical.VerticalServerMetrics;
 import org.dashbuilder.dataset.DataSet;
@@ -35,7 +36,7 @@ import java.util.List;
 
 import static org.dashbuilder.dataset.filter.FilterFactory.timeFrame;
 
-public class RealTimeMetricsDashboard extends Composite {
+public class RealTimeMetricsDashboard extends Composite implements GalleryWidget {
 
     interface RealTimeMetricsDashboardBinder extends UiBinder<Widget, RealTimeMetricsDashboard>{}
     private static final RealTimeMetricsDashboardBinder uiBinder = GWT.create(RealTimeMetricsDashboardBinder.class);
@@ -72,8 +73,23 @@ public class RealTimeMetricsDashboard extends Composite {
     Timer dataSetLookupTimer;
     Timer refreshTimer;
 
+    @Override
     public String getTitle() {
         return "System Metrics (Real-time)";
+    }
+
+    @Override
+    public void onClose() {
+        dispose();
+    }
+
+    @Override
+    public boolean feedsFrom(String dataSetId) {
+        return METRICS_DATASET_UUID.equals(dataSetId);
+    }
+
+    @Override
+    public void redrawAll() {
     }
 
     public RealTimeMetricsDashboard() {
@@ -258,9 +274,9 @@ public class RealTimeMetricsDashboard extends Composite {
 
         final DataSetLookup lookup = DataSetFactory.newDataSetLookupBuilder()
             .dataset(METRICS_DATASET_UUID)
-            .filter(ClusterMetricsDataSetGenerator.COLUMN_TIMESTAMP, timeFrame("-1second"))
-            .group(ClusterMetricsDataSetGenerator.COLUMN_SERVER)
-            .column(ClusterMetricsDataSetGenerator.COLUMN_SERVER)
+            .filter(ClusterMetricsGenerator.COLUMN_TIMESTAMP, timeFrame("-1second"))
+            .group(ClusterMetricsGenerator.COLUMN_SERVER)
+            .column(ClusterMetricsGenerator.COLUMN_SERVER)
             .buildLookup();
 
         try {

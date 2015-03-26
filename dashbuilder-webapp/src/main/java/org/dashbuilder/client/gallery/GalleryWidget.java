@@ -13,22 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbuilder.displayer;
+package org.dashbuilder.client.gallery;
 
-/**
- * A common base interface for al charts that are axis-based.
- */
-public interface XAxisChartSettingsBuilder<T extends XAxisChartSettingsBuilder> extends ChartSettingsBuilder<T> {
+import com.google.gwt.user.client.ui.IsWidget;
 
-    /**
-     * Set the X axis title.
-     * @return The DisplayerSettingsBuilder instance that is being used to configure a DisplayerSettings.
-     */
-    T xAxisTitle(String title);
+public interface GalleryWidget extends IsWidget {
 
-    /**
-     * Set the Y axis title.
-     * @return The DisplayerSettingsBuilder instance that is being used to configure a DisplayerSettings.
-     */
-    T yAxisTitle(String title);
+    String getTitle();
+    void onClose();
+    boolean feedsFrom(String dataSetId);
+    void redrawAll();
 }

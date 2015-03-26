@@ -17,7 +17,6 @@ package org.dashbuilder.client.metrics.widgets.details;
 
 import com.github.gwtbootstrap.client.ui.Tooltip;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -37,7 +36,7 @@ import static org.dashbuilder.dataset.filter.FilterFactory.timeFrame;
 import static org.dashbuilder.dataset.group.AggregateFunctionType.*;
 import static org.dashbuilder.dataset.group.DateIntervalType.MINUTE;
 import static org.dashbuilder.dataset.group.DateIntervalType.SECOND;
-import static org.dashbuilder.backend.ClusterMetricsDataSetGenerator.*;
+import static org.dashbuilder.backend.ClusterMetricsGenerator.*;
 import static org.dashbuilder.client.metrics.RealTimeMetricsDashboard.*;
 
 public class DetailedServerMetrics extends Composite {
@@ -149,29 +148,27 @@ public class DetailedServerMetrics extends Composite {
 
     protected void buildServerDetailsDisplayers(RealTimeMetricsDashboard metricsDashboard, String server) {
         serverCPU0 = DisplayerHelper.lookupDisplayer(
-                DisplayerSettingsFactory.newMeterChartSettings()
+                DisplayerSettingsFactory.newMetricSettings()
                         .dataset(METRICS_DATASET_UUID)
                         .filter(COLUMN_SERVER, equalsTo(server))
                         .filter(COLUMN_TIMESTAMP, timeFrame("-1second"))
                         .column(COLUMN_CPU0, MAX, "CPU0")
-                        .title("CPU0")
-                        .titleVisible(false)
+                        .title("CPU 1 %")
+                        .titleVisible(true)
                         .backgroundColor(BACKGROUND_COLOR)
                         .width(200).height(200)
-                        .meter(0, 50, 80, 100)
                         .buildSettings());
 
         serverCPU1 = DisplayerHelper.lookupDisplayer(
-                DisplayerSettingsFactory.newMeterChartSettings()
+                DisplayerSettingsFactory.newMetricSettings()
                         .dataset(METRICS_DATASET_UUID)
                         .filter(COLUMN_SERVER, equalsTo(server))
                         .filter(COLUMN_TIMESTAMP, timeFrame("-1second"))
                         .column(COLUMN_CPU1, MAX, "CPU1")
-                        .title("CPU1")
-                        .titleVisible(false)
+                        .title("CPU 2 %")
+                        .titleVisible(true)
                         .backgroundColor(BACKGROUND_COLOR)
                         .width(200).height(200)
-                        .meter(0, 50, 80, 100)
                         .buildSettings());
 
         serverMemory = DisplayerHelper.lookupDisplayer(
@@ -207,20 +204,17 @@ public class DetailedServerMetrics extends Composite {
                         .buildSettings());
 
         serverDisk = DisplayerHelper.lookupDisplayer(
-                DisplayerSettingsFactory.newPieChartSettings()
+                DisplayerSettingsFactory.newTableSettings()
                         .dataset(METRICS_DATASET_UUID)
                         .filter(COLUMN_SERVER, equalsTo(server))
-                        .filter(COLUMN_TIMESTAMP, timeFrame("-10second"))
-                        .group(COLUMN_TIMESTAMP).dynamic(1, SECOND, true)
-                        .column(COLUMN_TIMESTAMP)
+                        .filter(COLUMN_TIMESTAMP, timeFrame("-2second"))
+                        .group(COLUMN_TIMESTAMP)
                         .column(COLUMN_DISK_FREE, MAX, "Free disk space")
                         .column(COLUMN_DISK_USED, MAX, "Used disk space")
                         .title("Disk usage")
                         .titleVisible(false)
                         .backgroundColor(BACKGROUND_COLOR)
-                        .legendOff()
-                        .width(170).height(170)
-                        .margins(0, 0, 0, 0)
+                        .tableWidth(170)
                         .buildSettings());
 
         serverProcessesRunning = DisplayerHelper.lookupDisplayer(

@@ -20,6 +20,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
+import org.dashbuilder.client.gallery.GalleryWidget;
 import org.dashbuilder.displayer.DisplayerSettingsFactory;
 import org.dashbuilder.displayer.client.Displayer;
 import org.dashbuilder.displayer.client.DisplayerCoordinator;
@@ -36,7 +37,7 @@ import static org.dashbuilder.dataset.group.AggregateFunctionType.*;
  * <p>The data set that feeds this dashboard is a CSV file stored into an specific server folder so
  * that is auto-deployed during server start up: <code>dashbuilder-webapp/src/main/webapp/datasets/expenseReports.csv</code></p>
  */
-public class ExpensesDashboard extends Composite {
+public class ExpensesDashboard extends Composite implements GalleryWidget {
 
     interface ExpensesDashboardBinder extends UiBinder<Widget, ExpensesDashboard>{}
     private static final ExpensesDashboardBinder uiBinder = GWT.create(ExpensesDashboardBinder.class);
@@ -58,8 +59,19 @@ public class ExpensesDashboard extends Composite {
 
     DisplayerCoordinator displayerCoordinator = new DisplayerCoordinator();
 
+    @Override
     public String getTitle() {
         return "Expense reports";
+    }
+
+    @Override
+    public void onClose() {
+        displayerCoordinator.closeAll();
+    }
+
+    @Override
+    public boolean feedsFrom(String dataSetId) {
+        return EXPENSES.equals(dataSetId);
     }
 
     public ExpensesDashboard() {

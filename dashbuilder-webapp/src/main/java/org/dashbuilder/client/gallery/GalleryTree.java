@@ -531,7 +531,8 @@ public class GalleryTree {
         nodeList.add(new GalleryPlaceRequest("Sales per country", createPlaceRequest("salesPerCountry")));
         nodeList.add(new GalleryPlaceRequest("Sales reports", createPlaceRequest("salesReports")));
         nodeList.add(new GalleryPlaceRequest("Expense reports", createPlaceRequest("expenseReports")));
-        nodeList.add(new GalleryPlaceRequest("System metrics (real-time)", createPlaceRequest("metrics_realtime")));
-        nodeList.add(new GalleryPlaceRequest("System metrics (historic)", createPlaceRequest("metrics_analytic")));
+        nodeList.add(new GalleryPlaceRequest("Cluster metrics", createPlaceRequest("clusterMetrics")));
+        /*nodeList.add(new GalleryPlaceRequest("System metrics (real-time)", createPlaceRequest("metrics_realtime")));
+        nodeList.add(new GalleryPlaceRequest("System metrics (historic)", createPlaceRequest("metrics_analytic")));*/
     }
 }
