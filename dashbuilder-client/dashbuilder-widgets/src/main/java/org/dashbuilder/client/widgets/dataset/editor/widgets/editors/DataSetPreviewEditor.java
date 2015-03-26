@@ -16,14 +16,12 @@
 package org.dashbuilder.client.widgets.dataset.editor.widgets.editors;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.editor.client.EditorError;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.dataset.DataSet;
-import org.dashbuilder.dataset.client.validation.editors.DataSetDefEditor;
 import org.dashbuilder.dataset.def.DataSetDef;
 import org.dashbuilder.dataset.group.DataSetGroup;
 import org.dashbuilder.displayer.DisplayerSettingsFactory;
@@ -36,13 +34,15 @@ import javax.enterprise.context.Dependent;
 import java.util.List;
 
 /**
- * <p>This is the view implementation widget for Data Set Editor widget for editing data set columns, initial filter and testing the checking in a table displayer.</p>
+ * <p>This is the view implementation widget for Data Set Editor widget for previewing the data set in a table displayer.</p>
+ * 
+ * <p>Consider that this widget is not a GWT Data Set editor component, as it does not edit any dataset attributes. It's just for previewing the results.</p> 
  */
 @Dependent
-public class DataSetColumnsAndFilterEditor extends AbstractDataSetDefEditor implements DataSetDefEditor {
+public class DataSetPreviewEditor extends AbstractDataSetDefEditor {
 
-    interface DataSetColumnsAndFilterEditorBinder extends UiBinder<Widget, DataSetColumnsAndFilterEditor> {}
-    private static DataSetColumnsAndFilterEditorBinder uiBinder = GWT.create(DataSetColumnsAndFilterEditorBinder.class);
+    interface DataSetPreviewEditorBinder extends UiBinder<Widget, DataSetPreviewEditor> {}
+    private static DataSetPreviewEditorBinder uiBinder = GWT.create(DataSetPreviewEditorBinder.class);
 
     @UiField
     FlowPanel columnFilterTablePanel;
@@ -55,7 +55,7 @@ public class DataSetColumnsAndFilterEditor extends AbstractDataSetDefEditor impl
 
     private boolean isEditMode;
 
-    public DataSetColumnsAndFilterEditor() {
+    public DataSetPreviewEditor() {
         // Initialize the widget.
         initWidget(uiBinder.createAndBindUi(this));
     }
@@ -69,20 +69,17 @@ public class DataSetColumnsAndFilterEditor extends AbstractDataSetDefEditor impl
     }
 
     @Override
-    public void showErrors(List<EditorError> errors) {
-        consumeErrors(errors);
-    }
-
-    @Override
     public void set(DataSetDef dataSetDef) {
         super.set(dataSetDef);
     }
     
-    public void build() {
+    public void build(final DisplayerListener listener) {
         
         showTableDisplayer();
         
         // TODO: Show loading screen...
+        
+        if (tableDisplayer != null && listener != null) tableDisplayer.addListener(listener); 
        
     }
     
@@ -145,8 +142,8 @@ public class DataSetColumnsAndFilterEditor extends AbstractDataSetDefEditor impl
     private class TableListener implements DisplayerListener {
 
         public void onDraw(Displayer displayer) {
-            DataSetColumnsAndFilterEditor.this.dataSet = displayer.getDataSetHandler().getLastDataSet();
-            if (DataSetColumnsAndFilterEditor.this.dataSet != null) {
+            DataSetPreviewEditor.this.dataSet = displayer.getDataSetHandler().getLastDataSet();
+            if (DataSetPreviewEditor.this.dataSet != null) {
                 showColumnsView();
             }
         }

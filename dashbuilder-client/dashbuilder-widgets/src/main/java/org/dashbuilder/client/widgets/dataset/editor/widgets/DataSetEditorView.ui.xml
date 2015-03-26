@@ -105,11 +105,15 @@
   
         </b:Tab>
 
-        <!-- Columns, filter & preview. -->
+        <!-- Preview table. -->
         <b:Tab heading="{i18n.tab_dataPreview}" active="false" ui:field="dataPreviewTab">
 
-          <g:FlowPanel ui:field="columnsAndFilterEditionViewPanel" addStyleNames="{style.editorPanel}">
-            <dash-dset-editors:DataSetColumnsAndFilterEditor editMode="true" ui:field="dataSetColumnsAndFilterEditor"/>
+          <g:FlowPanel ui:field="filterColumnsEditionViewPanel" addStyleNames="{style.editorPanel}">
+            <dash-dset-editors:DataSetFilterColumnsEditor editMode="true" ui:field="filterColumnsEditor"/>
+          </g:FlowPanel>
+          
+          <g:FlowPanel ui:field="previewTableEditionViewPanel" addStyleNames="{style.editorPanel}">
+            <dash-dset-editors:DataSetPreviewEditor editMode="true" ui:field="previewTableEditor"/>
           </g:FlowPanel>
           
         </b:Tab>

@@ -16,7 +16,6 @@
 package org.dashbuilder.client.widgets.dataset.editor.widgets;
 
 import com.github.gwtbootstrap.client.ui.*;
-import com.github.gwtbootstrap.client.ui.Image;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Node;
@@ -36,6 +35,7 @@ import org.dashbuilder.client.widgets.dataset.editor.widgets.editors.csv.CSVData
 import org.dashbuilder.client.widgets.dataset.editor.widgets.editors.elasticsearch.ELDataSetDefAttributesEditor;
 import org.dashbuilder.client.widgets.dataset.editor.widgets.editors.sql.SQLDataSetDefAttributesEditor;
 import org.dashbuilder.dataset.def.*;
+import org.dashbuilder.displayer.client.DisplayerListener;
 
 import javax.enterprise.context.Dependent;
 import javax.validation.ConstraintViolation;
@@ -109,10 +109,16 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
     SQLDataSetDefAttributesEditor sqlDataSetDefAttributesEditor;
     
     @UiField
-    FlowPanel columnsAndFilterEditionViewPanel;
+    FlowPanel previewTableEditionViewPanel;
 
     @UiField
-    DataSetColumnsAndFilterEditor dataSetColumnsAndFilterEditor;
+    DataSetPreviewEditor previewTableEditor;
+
+    @UiField
+    FlowPanel filterColumnsEditionViewPanel;
+
+    @UiField
+    DataSetFilterColumnsEditor filterColumnsEditor;
 
     @UiField
     FlowPanel csvAttributesEditionViewPanel;
@@ -268,20 +274,35 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
     }
 
     @Override
-    public DataSetEditor.View showColumnsAndFilterEditionView() {
-        // TODO: workflow.edit(dataSetBasicAttributesEditor, dataSetDef);
-
+    public DataSetEditor.View showPreviewTableEditionView(final DisplayerListener tableListener) {
+        // Table is not a data set editor component, just a preview data set widget.
+        // So not necessary to use the editor workflow instance.
+        
         // View title.
         showTitle();
         
-        dataSetColumnsAndFilterEditor.setVisible(true);
-        dataSetColumnsAndFilterEditor.setEditMode(true);
-        dataSetColumnsAndFilterEditor.build();
+        // Configure tabs and visibility.
+        previewTableEditor.setVisible(true);
+        previewTableEditor.setEditMode(true);
+        previewTableEditor.build(tableListener);
         showTab(dataConfigurationTab);
         showTab(dataPreviewTab);
-        columnsAndFilterEditionViewPanel.setVisible(true);
+        previewTableEditionViewPanel.setVisible(true);
         activeDataPreviewTab();
         tabViewPanel.setVisible(true);
+        return this;
+    }
+
+    @Override
+    public DataSetEditor.View showFilterColumnsEditionView() {
+        // TODO: has to wait for table listener to be ready??
+
+        filterColumnsEditor.setVisible(true);
+        filterColumnsEditor.setEditMode(true);
+        filterColumnsEditionViewPanel.setVisible(true);
+        activeDataPreviewTab();
+        tabViewPanel.setVisible(true);
+        
         return this;
     }
 
@@ -354,7 +375,7 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
             }
         }
 
-        if (dataSetColumnsAndFilterEditor.getViolations() != null) tabErrors(dataPreviewTab);
+        if (previewTableEditor.getViolations() != null) tabErrors(dataPreviewTab);
         if (dataSetAdvancedAttributesEditor.getViolations() != null) tabErrors(dataAdvancedConfigurationTab);
         
         return this;
@@ -368,8 +389,8 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
         if (csvDataSetDefAttributesEditor.getViolations() != null) violations.addAll((Collection) csvDataSetDefAttributesEditor.getViolations());
         if (sqlDataSetDefAttributesEditor.getViolations() != null) violations.addAll((Collection) sqlDataSetDefAttributesEditor.getViolations());
         if (elDataSetDefAttributesEditor.getViolations() != null) violations.addAll((Collection) elDataSetDefAttributesEditor.getViolations());
-        if (dataSetColumnsAndFilterEditor.getViolations() != null) violations.addAll((Collection) dataSetColumnsAndFilterEditor.getViolations());
         if (dataSetAdvancedAttributesEditor.getViolations() != null) violations.addAll((Collection) dataSetAdvancedAttributesEditor.getViolations());
+        if (previewTableEditor.getViolations() != null) violations.addAll((Collection) previewTableEditor.getViolations());
         return violations;
     }
 
@@ -417,7 +438,8 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
         csvAttributesEditionViewPanel.setVisible(false);
         beanAttributesEditionViewPanel.setVisible(false);
         elAttributesEditionViewPanel.setVisible(false);
-        columnsAndFilterEditionViewPanel.setVisible(false);
+        previewTableEditionViewPanel.setVisible(false);
+        filterColumnsEditionViewPanel.setVisible(false);
         nextButton.setVisible(false);
         cancelButton.setVisible(false);
         buttonsPanel.setVisible(false);
@@ -430,7 +452,8 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
         csvDataSetDefAttributesEditor.setViolations(null);
         sqlDataSetDefAttributesEditor.setViolations(null);
         elDataSetDefAttributesEditor.setViolations(null);
-        dataSetColumnsAndFilterEditor.setViolations(null);
+        previewTableEditor.setViolations(null);
+        filterColumnsEditor.setViolations(null);
         dataSetAdvancedAttributesEditor.setViolations(null);
     }
 
@@ -441,7 +464,8 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
         csvDataSetDefAttributesEditor.set(dataSetDef);
         sqlDataSetDefAttributesEditor.set(dataSetDef);
         elDataSetDefAttributesEditor.set(dataSetDef);
-        dataSetColumnsAndFilterEditor.set(dataSetDef);
+        previewTableEditor.set(dataSetDef);
+        filterColumnsEditor.set(dataSetDef);
         dataSetAdvancedAttributesEditor.set(dataSetDef);
     }
     

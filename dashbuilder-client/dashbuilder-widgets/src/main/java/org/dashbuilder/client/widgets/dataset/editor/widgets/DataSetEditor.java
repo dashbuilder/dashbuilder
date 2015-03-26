@@ -24,6 +24,7 @@ import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.client.widgets.dataset.editor.DataSetDefEditWorkflow;
 import org.dashbuilder.client.widgets.resources.i18n.DataSetEditorConstants;
 import org.dashbuilder.dataprovider.DataSetProviderType;
+import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetMetadata;
 import org.dashbuilder.dataset.client.ClientDataSetManager;
 import org.dashbuilder.dataset.client.DataSetClientServices;
@@ -31,9 +32,13 @@ import org.dashbuilder.dataset.client.DataSetMetadataCallback;
 import org.dashbuilder.dataset.def.CSVDataSetDef;
 import org.dashbuilder.dataset.def.DataSetDef;
 import org.dashbuilder.dataset.def.SQLDataSetDef;
+import org.dashbuilder.dataset.group.DataSetGroup;
+import org.dashbuilder.displayer.client.Displayer;
+import org.dashbuilder.displayer.client.DisplayerListener;
 
 import javax.enterprise.context.Dependent;
 import javax.validation.ConstraintViolation;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -45,7 +50,8 @@ import java.util.Set;
  *     <li>Provider type editor view - @see <code>org.dashbuilder.client.widgets.dataset.editor.widgets.editors.DataSetProviderTypeEditor</code></li>     
  *     <li>Basic attributes editor view - @see <code>org.dashbuilder.client.widgets.dataset.editor.widgets.editors.DataSetBasicAttributesEditor</code></li>     
  *     <li>Advanced attributes editor view - @see <code>org.dashbuilder.client.widgets.dataset.editor.widgets.editors.DataSetAdvancedAttributesEditor</code></li>     
- *     <li>Column, filter and table results editor view - @see <code>org.dashbuilder.client.widgets.dataset.editor.widgets.editors.DataSetColumnsAndFilterEditor</code></li>     
+ *     <li>Table preview editor view - @see <code>org.dashbuilder.client.widgets.dataset.editor.widgets.editors.DataSetPreviewEditor</code></li>
+ *     <li>Columns and initial filter editor view - @see <code>org.dashbuilder.client.widgets.dataset.editor.widgets.editors.TODO</code></li>*     
  * </ul>
  * 
  * <p>This editor provides four edition screens:</p>
@@ -71,7 +77,8 @@ public class DataSetEditor implements IsWidget {
         View showBeanAttributesEditorView();
         View showCSVAttributesEditorView();
         View showELAttributesEditorView();
-        View showColumnsAndFilterEditionView();
+        View showPreviewTableEditionView(DisplayerListener tableListener);
+        View showFilterColumnsEditionView();
         View showAdvancedAttributesEditionView();
         View showNextButton(String title, ClickHandler nextHandler);
         View showCancelButton(ClickHandler cancelHandler);
@@ -146,7 +153,8 @@ public class DataSetEditor implements IsWidget {
                                 // Build views.
                                 showBasicAttributesEditionView();
                                 showAdvancedAttributesEditionView();
-                                showColumnsAndFilterEditionView();
+                                showPreviewTableEditionView();
+                                showFilterColumnsEditionView();
                                 
                                 view.showNextButton(DataSetEditorConstants.INSTANCE.save(),new ClickHandler() {
                                     @Override
@@ -237,19 +245,21 @@ public class DataSetEditor implements IsWidget {
         }
     }
 
-    private void showColumnsAndFilterEditionView() {
+    private void showFilterColumnsEditionView() {
+        view.showFilterColumnsEditionView();
+    }
+    
+    
+    private void showPreviewTableEditionView() {
         
         if (dataSetDef != null) {
             // Register the data set in backend as non public.
             dataSetDef.setPublic(false);
             DataSetClientServices.get().registerDataSetDef(dataSetDef);
-            
-            // Register data set on client.
-            ClientDataSetManager.get().registerDataSet(dataSetDef.getDataSet());
         }
         
         view.showBasicAttributesEditionView()
-            .showColumnsAndFilterEditionView();
+            .showPreviewTableEditionView(tablePreviewListener);
     }
     
     private void showAdvancedAttributesEditionView() {
@@ -278,6 +288,47 @@ public class DataSetEditor implements IsWidget {
         public void onClick(ClickEvent event) {
             // TODO: Generate uuid using the backend uuid generator. Perform a RPC call.
             newDataSet("new-uuid");;
+        }
+    };
+
+    /**
+     * <p>When creating the table preview screen, this listener waits for data set available and then performs other operations.</p> 
+     */
+    private final DisplayerListener tablePreviewListener = new DisplayerListener() {
+        @Override
+        public void onDraw(Displayer displayer) {
+
+            if (displayer != null) {
+                final DataSet dataSet = displayer.getDataSetHandler().getLastDataSet();
+
+                if (dataSet != null) {
+                    // Register data set on client.
+                    ClientDataSetManager.get().registerDataSet(dataSet);
+
+                    // Show initial filter and columns edition view.
+                    showFilterColumnsEditionView();
+                }
+            }
+        }
+
+        @Override
+        public void onRedraw(Displayer displayer) {
+
+        }
+
+        @Override
+        public void onClose(Displayer displayer) {
+
+        }
+
+        @Override
+        public void onGroupIntervalsSelected(Displayer displayer, DataSetGroup groupOp) {
+
+        }
+
+        @Override
+        public void onGroupIntervalsReset(Displayer displayer, List<DataSetGroup> groupOps) {
+
         }
     };
     

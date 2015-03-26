@@ -11,12 +11,8 @@
     }
   </ui:style>
   
-  <g:FlowPanel ui:field="columnFilterTablePanel" addStyleNames="{style.mainPanel} ">
-
-    <g:FlowPanel ui:field="tablePanel">
-      
-    </g:FlowPanel>
-    
+  <g:FlowPanel ui:field="columnFilterPanel" addStyleNames="{style.mainPanel} ">
+    <b:Label text="Filter and columns editor"/>    
   </g:FlowPanel>
 
 </ui:UiBinder>

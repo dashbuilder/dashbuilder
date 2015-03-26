@@ -2,10 +2,7 @@ package org.dashbuilder.client.widgets.dataset.editor;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
-import org.dashbuilder.client.widgets.dataset.editor.widgets.editors.AbstractDataSetDefEditor;
-import org.dashbuilder.client.widgets.dataset.editor.widgets.editors.DataSetAdvancedAttributesEditor;
-import org.dashbuilder.client.widgets.dataset.editor.widgets.editors.DataSetBasicAttributesEditor;
-import org.dashbuilder.client.widgets.dataset.editor.widgets.editors.DataSetProviderTypeEditor;
+import org.dashbuilder.client.widgets.dataset.editor.widgets.editors.*;
 import org.dashbuilder.client.widgets.dataset.editor.widgets.editors.bean.BeanDataSetDefAttributesEditor;
 import org.dashbuilder.client.widgets.dataset.editor.widgets.editors.csv.CSVDataSetDefAttributesEditor;
 import org.dashbuilder.client.widgets.dataset.editor.widgets.editors.elasticsearch.ELDataSetDefAttributesEditor;
@@ -27,6 +24,7 @@ public final class DataSetDefEditWorkflow {
     interface BasicAttributesDriver extends SimpleBeanEditorDriver<DataSetDef, DataSetBasicAttributesEditor> {}
     interface ProviderTypeAttributesDriver extends SimpleBeanEditorDriver<DataSetDef, DataSetProviderTypeEditor> {}
     interface AdvancedAttributesDriver extends SimpleBeanEditorDriver<DataSetDef, DataSetAdvancedAttributesEditor> {}
+    interface FilterColumnsDriver extends SimpleBeanEditorDriver<DataSetDef, DataSetFilterColumnsEditor> {}
     interface SQLAttributesDriver extends SimpleBeanEditorDriver<SQLDataSetDef, SQLDataSetDefAttributesEditor> {}
     interface CSVAttributesDriver extends SimpleBeanEditorDriver<CSVDataSetDef, CSVDataSetDefAttributesEditor> {}
     interface BeanAttributesDriver extends SimpleBeanEditorDriver<BeanDataSetDef, BeanDataSetDefAttributesEditor> {}
@@ -47,6 +45,11 @@ public final class DataSetDefEditWorkflow {
     public final AdvancedAttributesDriver advancedAttributesDriver = GWT.create(AdvancedAttributesDriver.class);
 
     /**
+     * <p>Handles initial filter and columns for the data set.</p> 
+     */
+    public final FilterColumnsDriver filterColumnsDriver = GWT.create(FilterColumnsDriver.class);
+    
+    /**
      * <p>Handles SQL specific data set definition attributes.</p> 
      */
     public final SQLAttributesDriver sqlAttributesDriver = GWT.create(SQLAttributesDriver.class);
@@ -65,10 +68,11 @@ public final class DataSetDefEditWorkflow {
      * <p>Handles ElasticSearch specific data set definition attributes.</p> 
      */
     public final ELAttributesDriver elAttributesDriver = GWT.create(ELAttributesDriver.class);
-    
+
     private DataSetBasicAttributesEditor basicAttributesEditor = null;
     private DataSetProviderTypeEditor providerTypeAttributeEditor = null;
     private DataSetAdvancedAttributesEditor advancedAttributesEditor = null;
+    private DataSetFilterColumnsEditor filterColumnsEditor = null;
     private SQLDataSetDefAttributesEditor sqlAttributesEditor = null;
     private BeanDataSetDefAttributesEditor beanAttributesEditor = null;
     private CSVDataSetDefAttributesEditor csvAttributesEditor = null;
@@ -92,6 +96,13 @@ public final class DataSetDefEditWorkflow {
         advancedAttributesDriver.initialize(view);
         advancedAttributesDriver.edit(p);
         advancedAttributesEditor = view;
+        return this;
+    }
+
+    public DataSetDefEditWorkflow edit(final DataSetFilterColumnsEditor view, final DataSetDef p) {
+        filterColumnsDriver.initialize(view);
+        filterColumnsDriver.edit(p);
+        filterColumnsEditor = view;
         return this;
     }
 
@@ -129,7 +140,7 @@ public final class DataSetDefEditWorkflow {
         if (advancedAttributesEditor != null) saveAdvancedAttributes();
         if (sqlAttributesEditor != null) saveSQLAttributes();
         if (csvAttributesEditor != null) saveCSVAttributes();
-
+        if (filterColumnsEditor != null) saveFilterColumns();
         return this;
     }
 
@@ -166,6 +177,14 @@ public final class DataSetDefEditWorkflow {
         }
 
         return this;
+    }
+
+    /**
+     * <p>Handles initial filter and columns for the data set.</p> 
+     */
+    private DataSetDefEditWorkflow saveFilterColumns() {
+        DataSetDef edited = (DataSetDef) filterColumnsDriver.flush();
+        return validate(edited, filterColumnsEditor, filterColumnsDriver);
     }
 
     /**
