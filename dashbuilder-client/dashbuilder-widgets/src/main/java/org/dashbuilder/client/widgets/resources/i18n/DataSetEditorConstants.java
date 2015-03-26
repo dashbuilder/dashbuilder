@@ -81,4 +81,6 @@ public interface DataSetEditorConstants extends ConstantsWithLookup {
     String tab_dataConfiguration();
     String tab_dataPreview();
     String tab_advancedConfiguration();
+    String filter();
+    String dataColumns();
 }

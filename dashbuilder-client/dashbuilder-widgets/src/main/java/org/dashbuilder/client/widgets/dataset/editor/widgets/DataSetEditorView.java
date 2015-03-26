@@ -116,6 +116,18 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
     DataSetPreviewEditor previewTableEditor;
 
     @UiField
+    FlowPanel filterAndColumnsEditionViewPanel;
+
+    @UiField
+    com.github.gwtbootstrap.client.ui.TabPanel filterAndColumnsTabPanel;
+
+    @UiField
+    Tab columnsTab;
+
+    @UiField
+    Tab filterTab;
+    
+    @UiField
     FlowPanel filterEditionViewPanel;
 
     @UiField
@@ -298,34 +310,25 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
     }
 
     @Override
-    public DataSetEditor.View showColumnsEditionView(final DataSet dataSet) {
+    public DataSetEditor.View showColumnsAndFilterEditionView(final DataSet dataSet) {
         // Columns editor is not a data set editor component, just a widget to handle DataColumnEditor instances.
         // So not necessary to use the editor workflow this instance.
 
         columnsEditor.setVisible(true);
         columnsEditor.setEditMode(true);
         columnsEditor.build(dataSet, workflow);
+        // filterEditor.setVisible(true);
+        // filterEditor.setEditMode(true);
+
+        filterAndColumnsEditionViewPanel.setVisible(true);
+        filterAndColumnsTabPanel.setVisible(true);
         columnsEditionViewPanel.setVisible(true);
+        filterEditionViewPanel.setVisible(true);
         activeDataPreviewTab();
         tabViewPanel.setVisible(true);
         
         return this;
     }
-
-    @Override
-    public DataSetEditor.View showFilterEditionView(final DataSet dataSet) {
-        // workflow.edit(filterEditor, dataSetDef);
-
-        // filterEditor.setVisible(true);
-        // filterEditor.setEditMode(true);
-        filterEditionViewPanel.setVisible(true);
-        activeDataPreviewTab();
-        tabViewPanel.setVisible(true);
-
-        return this;
-    }
-
-    
 
     @Override
     public DataSetEditor.View showAdvancedAttributesEditionView() {
@@ -466,6 +469,7 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
         beanAttributesEditionViewPanel.setVisible(false);
         elAttributesEditionViewPanel.setVisible(false);
         previewTableEditionViewPanel.setVisible(false);
+        filterAndColumnsEditionViewPanel.setVisible(false);
         filterEditionViewPanel.setVisible(false);
         columnsEditionViewPanel.setVisible(false);
         nextButton.setVisible(false);

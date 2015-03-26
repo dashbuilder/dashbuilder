@@ -107,16 +107,31 @@
 
         <b:Tab heading="{i18n.tab_dataPreview}" active="false" ui:field="dataPreviewTab">
 
-          <!-- Filter. -->
-          <g:FlowPanel ui:field="filterEditionViewPanel" addStyleNames="{style.editorPanel}">
-            <b:Label text="Filter panel"/>
-          </g:FlowPanel>
 
-          <!-- Columns. -->
-          <g:FlowPanel ui:field="columnsEditionViewPanel" addStyleNames="{style.editorPanel}">
-            <dash-dset-editors:DataSetColumnsEditor editMode="true" ui:field="columnsEditor"/>
-          </g:FlowPanel>
+          <!-- Columns and filter tab . -->
+          <g:FlowPanel ui:field="filterAndColumnsEditionViewPanel" addStyleNames="{style.editorPanel}">
 
+            <b:TabPanel tabPosition="above" ui:field="filterAndColumnsTabPanel" >
+
+              <!-- Columns. -->
+              <b:Tab heading="{i18n.dataColumns}" active="true" ui:field="columnsTab" >
+                <g:FlowPanel ui:field="columnsEditionViewPanel" addStyleNames="{style.editorPanel}">
+                  <dash-dset-editors:DataSetColumnsEditor editMode="true" ui:field="columnsEditor"/>
+                </g:FlowPanel>
+              </b:Tab>
+              
+              <!-- Filter. -->
+              <b:Tab heading="{i18n.filter}" active="false" ui:field="filterTab" >
+                <g:FlowPanel ui:field="filterEditionViewPanel" addStyleNames="{style.editorPanel}">
+                  <b:Label text="Filter panel"/>
+                </g:FlowPanel>
+              </b:Tab>
+
+            </b:TabPanel>
+            
+          </g:FlowPanel>
+          
+          
           <!-- Preview table. -->
           <g:FlowPanel ui:field="previewTableEditionViewPanel" addStyleNames="{style.editorPanel}">
             <dash-dset-editors:DataSetPreviewEditor editMode="true" ui:field="previewTableEditor"/>

@@ -15,18 +15,6 @@
 
     <b:Row>
 
-      <!-- Id. -->
-      <b:Column size="1">
-        <g:HTML text="{i18n.attributeId}"/>
-      </b:Column>
-      <b:Column size="3">
-        <dash-client:ValueBoxEditorDecorator errorLabelPosition="TOOLTIP" ui:field="id">
-          <dash-client:valuebox>
-            <b:TextBox enabled="false" placeholder="{i18n.attributeUUID}" />
-          </dash-client:valuebox>
-        </dash-client:ValueBoxEditorDecorator>
-      </b:Column>
-
       <!-- Name. -->
       <b:Column size="1">
         <g:HTML text="{i18n.attributeName}"/>

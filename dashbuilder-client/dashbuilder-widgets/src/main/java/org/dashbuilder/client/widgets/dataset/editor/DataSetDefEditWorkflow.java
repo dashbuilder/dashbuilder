@@ -5,6 +5,7 @@ import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import org.dashbuilder.client.widgets.dataset.editor.widgets.editors.*;
 import org.dashbuilder.client.widgets.dataset.editor.widgets.editors.bean.BeanDataSetDefAttributesEditor;
 import org.dashbuilder.client.widgets.dataset.editor.widgets.editors.csv.CSVDataSetDefAttributesEditor;
+import org.dashbuilder.client.widgets.dataset.editor.widgets.editors.datacolumn.DataColumnBasicEditor;
 import org.dashbuilder.client.widgets.dataset.editor.widgets.editors.elasticsearch.ELDataSetDefAttributesEditor;
 import org.dashbuilder.client.widgets.dataset.editor.widgets.editors.sql.SQLDataSetDefAttributesEditor;
 import org.dashbuilder.dataset.def.*;
@@ -17,7 +18,6 @@ import javax.validation.Validator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-import java.util.Stack;
 
 public final class DataSetDefEditWorkflow {
 
@@ -28,7 +28,7 @@ public final class DataSetDefEditWorkflow {
     interface BasicAttributesDriver extends SimpleBeanEditorDriver<DataSetDef, DataSetBasicAttributesEditor> {}
     interface ProviderTypeAttributesDriver extends SimpleBeanEditorDriver<DataSetDef, DataSetProviderTypeEditor> {}
     interface AdvancedAttributesDriver extends SimpleBeanEditorDriver<DataSetDef, DataSetAdvancedAttributesEditor> {}
-    interface DataColumnDriver extends SimpleBeanEditorDriver<DataColumnImpl, DataColumnEditor> {}
+    interface DataColumnDriver extends SimpleBeanEditorDriver<DataColumnImpl, DataColumnBasicEditor> {}
     interface SQLAttributesDriver extends SimpleBeanEditorDriver<SQLDataSetDef, SQLDataSetDefAttributesEditor> {}
     interface CSVAttributesDriver extends SimpleBeanEditorDriver<CSVDataSetDef, CSVDataSetDefAttributesEditor> {}
     interface BeanAttributesDriver extends SimpleBeanEditorDriver<BeanDataSetDef, BeanDataSetDefAttributesEditor> {}
@@ -76,7 +76,7 @@ public final class DataSetDefEditWorkflow {
     private DataSetBasicAttributesEditor basicAttributesEditor = null;
     private DataSetProviderTypeEditor providerTypeAttributeEditor = null;
     private DataSetAdvancedAttributesEditor advancedAttributesEditor = null;
-    final private List<DataColumnEditor> columnEditors = new LinkedList<DataColumnEditor>();
+    final private List<DataColumnBasicEditor> columnEditors = new LinkedList<DataColumnBasicEditor>();
     private SQLDataSetDefAttributesEditor sqlAttributesEditor = null;
     private BeanDataSetDefAttributesEditor beanAttributesEditor = null;
     private CSVDataSetDefAttributesEditor csvAttributesEditor = null;
@@ -103,7 +103,7 @@ public final class DataSetDefEditWorkflow {
         return this;
     }
 
-    public DataSetDefEditWorkflow edit(final DataColumnEditor view, final DataColumnImpl d) {
+    public DataSetDefEditWorkflow edit(final DataColumnBasicEditor view, final DataColumnImpl d) {
         if (!columnEditors.contains(view)) {
             final DataColumnDriver driver = GWT.create(DataColumnDriver.class);
             driver.initialize(view);
@@ -196,7 +196,7 @@ public final class DataSetDefEditWorkflow {
         
         for (int x = 0; x < columnDrivers.size(); x++) {
             final DataColumnDriver driver = columnDrivers.get(x);
-            final DataColumnEditor editor = columnEditors.get(x);
+            final DataColumnBasicEditor editor = columnEditors.get(x);
             final DataColumnImpl edited = driver.flush();
             validateDataColumn(edited, editor, driver);
         }

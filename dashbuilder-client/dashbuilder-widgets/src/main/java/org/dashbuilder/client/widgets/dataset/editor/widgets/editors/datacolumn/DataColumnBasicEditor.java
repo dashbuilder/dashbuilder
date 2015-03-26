@@ -13,44 +13,39 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbuilder.client.widgets.dataset.editor.widgets.editors;
+package org.dashbuilder.client.widgets.dataset.editor.widgets.editors.datacolumn;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.EditorError;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
+import org.dashbuilder.client.widgets.dataset.editor.widgets.editors.AbstractEditor;
 import org.dashbuilder.common.client.validation.editors.ValueBoxEditorDecorator;
-import org.dashbuilder.dataset.DataColumn;
-import org.dashbuilder.dataset.impl.DataColumnImpl;
 
 import javax.enterprise.context.Dependent;
 import java.util.List;
 
 /**
- * <p>This is the view implementation widget for Data Set Editor widget for editing data a given set's column.</p>
+ * <p>This is the view implementation widget for editing data a given set column's name and type.</p>
  * 
  */
 @Dependent
-public class DataColumnEditor extends AbstractEditor implements org.dashbuilder.dataset.client.validation.editors.DataColumnEditor {
+public class DataColumnBasicEditor extends AbstractEditor implements org.dashbuilder.dataset.client.validation.editors.DataColumnEditor {
 
-    interface DataColumnEditorBinder extends UiBinder<Widget, DataColumnEditor> {}
-    private static DataColumnEditorBinder uiBinder = GWT.create(DataColumnEditorBinder.class);
+    interface DataColumnBasicEditorBinder extends UiBinder<Widget, DataColumnBasicEditor> {}
+    private static DataColumnBasicEditorBinder uiBinder = GWT.create(DataColumnBasicEditorBinder.class);
 
     @UiField
     FlowPanel columnPanel;
-
-    @UiField
-    ValueBoxEditorDecorator<String> id;
 
     @UiField
     ValueBoxEditorDecorator<String> name;
     
     private boolean isEditMode;
 
-    public DataColumnEditor() {
+    public DataColumnBasicEditor() {
         // Initialize the widget.
         initWidget(uiBinder.createAndBindUi(this));
     }

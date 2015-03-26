@@ -15,22 +15,15 @@
  */
 package org.dashbuilder.client.widgets.dataset.editor.widgets.editors;
 
-import com.github.gwtbootstrap.client.ui.Accordion;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.editor.client.EditorError;
-import com.google.gwt.editor.client.adapters.EditorSource;
-import com.google.gwt.editor.client.adapters.ListEditor;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.client.widgets.dataset.editor.DataSetDefEditWorkflow;
+import org.dashbuilder.client.widgets.dataset.editor.widgets.editors.datacolumn.DataColumnBasicEditor;
 import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.dataset.DataSet;
-import org.dashbuilder.dataset.client.validation.editors.DataSetDefEditor;
-import org.dashbuilder.dataset.def.DataSetDef;
-import org.dashbuilder.dataset.filter.DataSetFilter;
 import org.dashbuilder.dataset.impl.DataColumnImpl;
 
 import javax.enterprise.context.Dependent;
@@ -40,7 +33,7 @@ import java.util.*;
 /**
  * <p>This is a widget for editing data set's columns.</p>
  * 
- * <p>NOTE that this widget is not a GWT editor component.</p>
+ * <p>NOTE that this widget is NOT a GWT editor component for Data Set class.</p>
  *  
  */
 @Dependent
@@ -70,7 +63,7 @@ public class DataSetColumnsEditor extends AbstractEditor {
         this.isEditMode = isEditMode;
     }
 
-    private final Map<DataColumn, DataColumnEditor> columnEditors = new LinkedHashMap<DataColumn, DataColumnEditor>();
+    private final Map<DataColumn, DataColumnBasicEditor> columnEditors = new LinkedHashMap<DataColumn, DataColumnBasicEditor>();
     
     public void build(final DataSet dataSet, final DataSetDefEditWorkflow workflow) {
         clear();
@@ -81,7 +74,7 @@ public class DataSetColumnsEditor extends AbstractEditor {
             if (columns != null) {
                 for (DataColumn column : columns) {
                     DataColumnImpl columnImpl = (DataColumnImpl) column;
-                    DataColumnEditor columnEditor = new DataColumnEditor();
+                    DataColumnBasicEditor columnEditor = new DataColumnBasicEditor();
                     workflow.edit(columnEditor, columnImpl);
                     addColumnEditor(column, columnEditor);
                 }
@@ -91,15 +84,15 @@ public class DataSetColumnsEditor extends AbstractEditor {
     }
     
     public DataSetColumnsEditor edit(final DataSetDefEditWorkflow workflow) {
-        for (Map.Entry<DataColumn, DataColumnEditor> entry : columnEditors.entrySet()) {
+        for (Map.Entry<DataColumn, DataColumnBasicEditor> entry : columnEditors.entrySet()) {
             DataColumnImpl column = (DataColumnImpl) entry.getKey();
-            DataColumnEditor editor = entry.getValue();
+            DataColumnBasicEditor editor = entry.getValue();
             workflow.edit(editor, column);
         }
         return this;
     }
     
-    private void addColumnEditor(final DataColumn column, final DataColumnEditor editor) {
+    private void addColumnEditor(final DataColumn column, final DataColumnBasicEditor editor) {
         columnEditors.put(column, editor);
         columnsPanel.add(editor);
     }
@@ -108,7 +101,7 @@ public class DataSetColumnsEditor extends AbstractEditor {
     public Iterable<ConstraintViolation<?>> getViolations() {
         Set<ConstraintViolation<?>> violations = new LinkedHashSet<ConstraintViolation<?>>();
         if (!columnEditors.isEmpty()) {
-            for (DataColumnEditor editor : columnEditors.values()) {
+            for (DataColumnBasicEditor editor : columnEditors.values()) {
                 Iterable<ConstraintViolation<?>> editorViolations = editor.getViolations();
                 if (editorViolations != null) {
                     for (ConstraintViolation<?> violation : editorViolations) {
@@ -126,7 +119,7 @@ public class DataSetColumnsEditor extends AbstractEditor {
         super.setViolations(violations);
 
         if (!columnEditors.isEmpty()) {
-            for (DataColumnEditor editor : columnEditors.values()) {
+            for (DataColumnBasicEditor editor : columnEditors.values()) {
                 editor.setViolations(violations);
             }
         }

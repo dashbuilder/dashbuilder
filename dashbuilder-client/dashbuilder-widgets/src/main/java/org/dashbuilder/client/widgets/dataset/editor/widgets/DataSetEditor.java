@@ -78,8 +78,7 @@ public class DataSetEditor implements IsWidget {
         View showCSVAttributesEditorView();
         View showELAttributesEditorView();
         View showPreviewTableEditionView(DisplayerListener tableListener);
-        View showColumnsEditionView(DataSet dataSet);
-        View showFilterEditionView(DataSet dataSet);
+        View showColumnsAndFilterEditionView(DataSet dataSet);
         View showAdvancedAttributesEditionView();
         View showNextButton(String title, ClickHandler nextHandler);
         View showCancelButton(ClickHandler cancelHandler);
@@ -247,14 +246,10 @@ public class DataSetEditor implements IsWidget {
     }
     
     
-    private void showColumnsEditionView() {
-        view.showColumnsEditionView(dataSet);
+    private void showColumnsAndFilterEditionView() {
+        view.showColumnsAndFilterEditionView(dataSet);
     }
 
-    private void showFilterEditionView() {
-        view.showFilterEditionView(dataSet);
-    }
-    
     private void showPreviewTableEditionView() {
         
         if (dataSetDef != null) {
@@ -312,8 +307,7 @@ public class DataSetEditor implements IsWidget {
                     ClientDataSetManager.get().registerDataSet(dataSet);
 
                     // Show initial filter and columns edition view.
-                    showColumnsEditionView();
-                    showFilterEditionView();
+                    showColumnsAndFilterEditionView();
                 }
             }
         }
