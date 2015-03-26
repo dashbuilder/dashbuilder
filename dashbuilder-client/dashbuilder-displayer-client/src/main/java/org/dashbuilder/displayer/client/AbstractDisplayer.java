@@ -61,12 +61,9 @@ public abstract class AbstractDisplayer extends Composite implements Displayer {
     protected DisplayerConstraints displayerConstraints;
     protected List<DisplayerListener> listenerList = new ArrayList<DisplayerListener>();
     protected Map<String,List<Interval>> columnSelectionMap = new HashMap<String,List<Interval>>();
-    protected boolean refreshOn = false;
-    protected Timer refreshTimer = new Timer() {
-        public void run() {
-            redraw();
-        }
-    };
+    protected boolean refreshEnabled = true;
+    protected boolean drawn = false;
+    protected Timer refreshTimer = null;
 
     public abstract DisplayerConstraints createDisplayerConstraints();
 
@@ -120,48 +117,64 @@ public abstract class AbstractDisplayer extends Composite implements Displayer {
         return null;
     }
 
-    // REFRESH TIMER
-
-    public boolean isRefreshOn() {
-        return refreshOn;
+    public boolean isDrawn() {
+        return drawn;
     }
 
-    public void refreshOn() {
-        int seconds = displayerSettings.getRefreshInterval();
-        if (seconds > 0) {
-            refreshOn = true;
-            refreshTimer.schedule(seconds * 1000);
-        } else {
-            refreshTimer.cancel();
+    // REFRESH TIMER
+
+    public void setRefreshOn(boolean enabled) {
+        boolean changed = enabled != refreshEnabled;
+        refreshEnabled = enabled;
+        if (changed) {
+            updateRefreshTimer();
         }
     }
 
-    public void refreshOff() {
-        // Cancel timer
-        refreshTimer.cancel();
+    public boolean isRefreshOn() {
+        return refreshTimer != null;
+    }
+
+
+    protected void updateRefreshTimer() {
+        int seconds = displayerSettings.getRefreshInterval();
+        if (refreshEnabled && seconds > 0) {
+            if (refreshTimer == null) {
+                refreshTimer = new Timer() {
+                    public void run() {
+                        if (isDrawn()) {
+                            redraw();
+                        }
+                    }
+                };
+            }
+            refreshTimer.schedule(seconds * 1000);
+        }
+        else if (refreshTimer != null) {
+            refreshTimer.cancel();
+        }
     }
 
     // LIFECYCLE CALLBACKS
 
     protected void afterDraw() {
+        drawn = true;
+        updateRefreshTimer();
         for (DisplayerListener listener : listenerList) {
             listener.onDraw(this);
         }
     }
 
     protected void afterRedraw() {
-        if (refreshOn) {
-            refreshOn();
-        }
+        updateRefreshTimer();
         for (DisplayerListener listener : listenerList) {
             listener.onRedraw(this);
         }
     }
 
     protected void afterClose() {
-        if (refreshOn) {
-            refreshOff();
-        }
+        setRefreshOn(false);
+
         for (DisplayerListener listener : listenerList) {
             listener.onClose(this);
         }

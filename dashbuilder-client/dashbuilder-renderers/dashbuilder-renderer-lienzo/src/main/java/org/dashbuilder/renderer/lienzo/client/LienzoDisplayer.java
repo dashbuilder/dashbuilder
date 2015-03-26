@@ -42,7 +42,6 @@ public abstract class LienzoDisplayer extends AbstractDisplayer {
     private static final int PANEL_MARGIN = 50;
     private static final String PIXEL = "px";
     
-    protected boolean drawn = false;
     protected FlowPanel mainPanel = new FlowPanel();
     protected FlowPanel filterPanel = new FlowPanel();
     final protected LienzoPanel panel = new LienzoPanel();
@@ -63,9 +62,7 @@ public abstract class LienzoDisplayer extends AbstractDisplayer {
      * Ensure the displayer is also ready for display, which means the Google Visualization API has been loaded.
      */
     public void draw() {
-        if (!drawn) {
-            drawn = true;
-
+        if (!isDrawn()) {
             if (displayerSettings == null) {
                 GWT.log("ERROR: DisplayerSettings property not set");
             }
@@ -120,7 +117,7 @@ public abstract class LienzoDisplayer extends AbstractDisplayer {
      * Just reload the data set and make the current Google Displayer redraw.
      */
     public void redraw() {
-        if (!drawn) {
+        if (!isDrawn()) {
             draw();
         } else {
             try {

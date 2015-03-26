@@ -115,8 +115,8 @@ public interface DisplayerSettingsBuilder<T> extends DataSetLookupBuilder<T> {
     /**
      * Force the displayer to redraw every time interval.
      *
-     * @param seconds The refresh time frame in seconds.
-     * @param onStale Refresh also when the data becomes stale.
+     * @param seconds The refresh time frame in seconds. If < 0 then periodic refresh is disabled.
+     * @param onStale Refresh when the data becomes stale.
      *
      * @return The DisplayerSettingsBuilder instance that is being used to configure a DisplayerSettings.
      */

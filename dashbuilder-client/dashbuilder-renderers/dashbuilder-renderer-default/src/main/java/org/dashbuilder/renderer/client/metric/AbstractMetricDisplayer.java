@@ -32,7 +32,6 @@ import org.dashbuilder.renderer.client.resources.i18n.MetricConstants;
 public abstract class AbstractMetricDisplayer extends AbstractDisplayer {
 
     protected FlowPanel panel = new FlowPanel();
-    protected boolean drawn = false;
     protected DataSet dataSet = null;
 
     public AbstractMetricDisplayer() {
@@ -67,9 +66,7 @@ public abstract class AbstractMetricDisplayer extends AbstractDisplayer {
 
     @Override
     public void draw() {
-        if ( !drawn ) {
-            drawn = true;
-
+        if (!isDrawn()) {
             if ( displayerSettings == null ) {
                 displayMessage( "ERROR: DisplayerSettings property not set" );
             } else if ( dataSetHandler == null ) {
@@ -108,7 +105,7 @@ public abstract class AbstractMetricDisplayer extends AbstractDisplayer {
 
     @Override
     public void redraw() {
-        if (!drawn) {
+        if (!isDrawn()) {
             draw();
         } else {
             try {

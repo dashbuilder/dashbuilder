@@ -63,20 +63,20 @@ public interface Displayer extends DisplayerListener, IsWidget {
     void redraw();
 
     /**
+     * Check if the displayer is completely drawn.
+     */
+    boolean isDrawn();
+
+    /**
+     * Enables or disables the automatic refresh capability (enabled by default).
+     * @see DisplayerSettings#getRefreshInterval()
+     */
+    void setRefreshOn(boolean enabled);
+
+    /**
      * Check if the automatic refresh is on.
      */
     boolean isRefreshOn();
-
-    /**
-     * Turns on the automatic refresh. If not automatic refresh is enabled then this method does nothing.
-     * @see DisplayerSettings#getRefreshInterval()
-     */
-    void refreshOn();
-
-    /**
-     * Turns off the automatic refresh. If not automatic refresh is enabled then this method does nothing.
-     */
-    void refreshOff();
 
     /**
      * Frees any resource the displayer is consuming.

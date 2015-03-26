@@ -51,7 +51,6 @@ import org.uberfire.mvp.Command;
 import org.uberfire.mvp.PlaceRequest;
 import org.uberfire.mvp.impl.DefaultPlaceRequest;
 import org.uberfire.workbench.model.menu.MenuFactory;
-import org.uberfire.workbench.model.menu.MenuItem;
 import org.uberfire.workbench.model.menu.Menus;
 import org.uberfire.workbench.model.menu.impl.BaseMenuCustom;
 
@@ -109,7 +108,6 @@ public class DisplayerScreenPresenter {
         if (StringUtils.isBlank(displayerSettings.getUUID())) displayerSettings.setUUID(uuidGenerator.newUuid());
         displayerView.setDisplayerSettings(displayerSettings);
         Displayer displayer = displayerView.draw();
-        displayer.refreshOn();
 
         // Register the Displayer into the coordinator.
         perspectiveCoordinator.addDisplayer(displayer);
@@ -270,16 +268,14 @@ public class DisplayerScreenPresenter {
 
         this.displayerSettings = settings;
         this.displayerView.setDisplayerSettings(settings);
-        Displayer newDisplayer = this.displayerView.draw();
-        newDisplayer.refreshOn();
 
+        Displayer newDisplayer = this.displayerView.draw();
         this.perspectiveCoordinator.addDisplayer(newDisplayer);
     }
 
     protected void removeDisplayer() {
         Displayer displayer = displayerView.getDisplayer();
         perspectiveCoordinator.removeDisplayer(displayer);
-        displayer.refreshOff();
         displayer.close();
     }
 

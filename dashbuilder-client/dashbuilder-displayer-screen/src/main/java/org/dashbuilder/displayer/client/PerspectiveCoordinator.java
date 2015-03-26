@@ -70,7 +70,7 @@ public class PerspectiveCoordinator {
 
         // Turns off the automatic refresh of all the displayers.
         for (Displayer displayer : coordinator.getDisplayerList()) {
-            displayer.refreshOff();
+            displayer.setRefreshOn(false);
         }
     }
 
@@ -80,9 +80,9 @@ public class PerspectiveCoordinator {
     public void editOff() {
         editOn = false;
 
-        // Turns on the automatic refresh of all the displayers.
+        // Resumes the automatic refresh on all the displayers.
         for (Displayer displayer : coordinator.getDisplayerList()) {
-            displayer.refreshOn();
+            displayer.setRefreshOn(true);
         }
     }
 
@@ -103,8 +103,11 @@ public class PerspectiveCoordinator {
         for (Displayer displayer : coordinator.getDisplayerList()) {
             DisplayerSettings settings = displayer.getDisplayerSettings();
 
-            // If a displayer is handling the refresh by itself then do nothing.
-            if (!settings.isRefreshStaleData() || displayer.isRefreshOn()) {
+            // Do nothing if the displayer:
+            // - Is not drawn
+            // - Is handling the refresh by itself
+            // - Is not configured to be updated on stale data
+            if (!displayer.isDrawn() || displayer.isRefreshOn() || !settings.isRefreshStaleData()) {
                 continue;
             }
 

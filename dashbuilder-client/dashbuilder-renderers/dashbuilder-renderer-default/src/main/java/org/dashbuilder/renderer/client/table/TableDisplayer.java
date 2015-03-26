@@ -66,8 +66,6 @@ public class TableDisplayer extends AbstractDisplayer {
     protected String lastOrderedColumn = null;
     protected SortOrder lastSortOrder = null;
 
-    protected boolean drawn = false;
-
     protected FlowPanel panel = new FlowPanel();
     protected Label label = new Label();
 
@@ -81,9 +79,7 @@ public class TableDisplayer extends AbstractDisplayer {
     }
 
     public void draw() {
-        if ( !drawn ) {
-            drawn = true;
-
+        if (!isDrawn()) {
             if ( displayerSettings == null ) {
                 displayMessage( "ERROR: DisplayerSettings property not set" );
             } else if ( dataSetHandler == null ) {

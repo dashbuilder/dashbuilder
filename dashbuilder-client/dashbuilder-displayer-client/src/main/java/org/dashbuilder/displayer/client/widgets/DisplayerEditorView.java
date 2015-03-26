@@ -227,11 +227,13 @@ public class DisplayerEditorView extends Composite
                 tableSettings.setTablePageSize(8);
                 tableSettings.setTableWidth(-1);
                 displayer = DisplayerLocator.get().lookupDisplayer(tableSettings);
+                displayer.setRefreshOn(false);
                 centerPanel.clear();
                 centerPanel.add(displayer);
                 DisplayerHelper.draw(displayer);
             } else {
                 displayer = DisplayerLocator.get().lookupDisplayer(settings);
+                displayer.setRefreshOn(false);
                 centerPanel.clear();
                 centerPanel.add(displayer);
                 DisplayerHelper.draw(displayer);

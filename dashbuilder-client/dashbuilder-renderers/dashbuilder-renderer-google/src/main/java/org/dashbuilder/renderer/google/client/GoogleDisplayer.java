@@ -39,7 +39,6 @@ import org.dashbuilder.renderer.google.client.resources.i18n.GoogleDisplayerCons
 
 public abstract class GoogleDisplayer extends AbstractDisplayer {
 
-    protected boolean drawn = false;
     protected FlowPanel panel = new FlowPanel();
     protected Label label = new Label();
 
@@ -55,8 +54,7 @@ public abstract class GoogleDisplayer extends AbstractDisplayer {
      * Ensure the displayer is also ready for display, which means the Google Visualization API has been loaded.
      */
     public void draw() {
-        if (!drawn) {
-            drawn = true;
+        if (!super.isDrawn()) {
 
             if (displayerSettings == null) {
                 displayMessage("ERROR: DisplayerSettings property not set");
@@ -103,7 +101,7 @@ public abstract class GoogleDisplayer extends AbstractDisplayer {
      * Just reload the data set and make the current Google Displayer redraw.
      */
     public void redraw() {
-        if (!drawn) {
+        if (!isDrawn()) {
             draw();
         } else {
             try {

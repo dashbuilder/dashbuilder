@@ -45,7 +45,6 @@ public class SelectorDisplayer extends AbstractDisplayer {
 
     protected FlowPanel panel = new FlowPanel();
     ListBox listBox = null;
-    protected boolean drawn = false;
     protected DataSet dataSet = null;
 
     public SelectorDisplayer() {
@@ -53,9 +52,7 @@ public class SelectorDisplayer extends AbstractDisplayer {
     }
 
     public void draw() {
-        if ( !drawn ) {
-            drawn = true;
-
+        if (!isDrawn()) {
             if ( displayerSettings == null ) {
                 displayMessage( "ERROR: DisplayerSettings property not set" );
             } else if ( dataSetHandler == null ) {
@@ -94,7 +91,7 @@ public class SelectorDisplayer extends AbstractDisplayer {
     }
 
     public void redraw() {
-        if (!drawn) {
+        if (!isDrawn()) {
             draw();
         } else {
             try {

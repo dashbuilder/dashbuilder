@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.google.gwt.core.client.Callback;
 import org.dashbuilder.dataset.group.DataSetGroup;
 
 /**
@@ -31,7 +32,7 @@ public class DisplayerCoordinator {
 
     protected List<Displayer> displayerList = new ArrayList<Displayer>();
     protected Map<RendererLibrary,List<Displayer>> rendererMap = new HashMap<RendererLibrary,List<Displayer>>();
-    protected DisplayerListener displayerListener = new CoordinatorListener();
+    protected CoordinatorListener displayerListener = new CoordinatorListener();
 
     public void addDisplayer(Displayer displayer) {
         displayerList.add(displayer);
@@ -57,28 +58,32 @@ public class DisplayerCoordinator {
     }
 
     public void drawAll() {
+        drawAll(null);
+    }
+
+    public void redrawAll() {
+        redrawAll(null);
+    }
+
+    public void drawAll(Callback callback) {
+        displayerListener.init(callback, displayerList.size(), true);
         for (RendererLibrary renderer : rendererMap.keySet()) {
             List<Displayer> rendererGroup = rendererMap.get(renderer);
             renderer.draw(rendererGroup);
         }
     }
 
-    public void redrawAll() {
+    public void redrawAll(Callback callback) {
+        displayerListener.init(callback, displayerList.size(), false);
         for (RendererLibrary renderer : rendererMap.keySet()) {
             List<Displayer> rendererGroup = rendererMap.get(renderer);
             renderer.redraw(rendererGroup);
         }
     }
 
-    public void refreshOnAll() {
-        for (Displayer displayer : displayerList) {
-            displayer.refreshOn();
-        }
-    }
-
     public void closeAll() {
         for (Displayer displayer : displayerList) {
-            displayer.close();;
+            displayer.close();
         }
     }
 
@@ -87,7 +92,27 @@ public class DisplayerCoordinator {
      */
     private class CoordinatorListener implements DisplayerListener {
 
+        int count = 0;
+        int total = 0;
+        Callback callback;
+        boolean draw;
+
+        protected void init(Callback callback, int total, boolean draw) {
+            count = 0;
+            this.callback= callback;
+            this.draw = draw;
+            this.total = total;
+        }
+
+        protected void count() {
+            count++;
+            if (count == total && callback != null) {
+                callback.onSuccess(null);
+            }
+        }
+
         public void onDraw(Displayer displayer) {
+            if (draw) count();
             for (Displayer other : displayerList) {
                 if (other == displayer) continue;
                 other.onDraw(displayer);
@@ -95,6 +120,7 @@ public class DisplayerCoordinator {
         }
 
         public void onRedraw(Displayer displayer) {
+            if (!draw) count();
             for (Displayer other : displayerList) {
                 if (other == displayer) continue;
                 other.onRedraw(displayer);
