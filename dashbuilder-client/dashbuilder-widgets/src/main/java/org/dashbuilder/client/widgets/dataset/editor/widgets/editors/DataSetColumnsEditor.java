@@ -83,15 +83,6 @@ public class DataSetColumnsEditor extends AbstractEditor {
         
     }
     
-    public DataSetColumnsEditor edit(final DataSetDefEditWorkflow workflow) {
-        for (Map.Entry<DataColumn, DataColumnBasicEditor> entry : columnEditors.entrySet()) {
-            DataColumnImpl column = (DataColumnImpl) entry.getKey();
-            DataColumnBasicEditor editor = entry.getValue();
-            workflow.edit(editor, column);
-        }
-        return this;
-    }
-    
     private void addColumnEditor(final DataColumn column, final DataColumnBasicEditor editor) {
         columnEditors.put(column, editor);
         columnsPanel.add(editor);
@@ -127,5 +118,6 @@ public class DataSetColumnsEditor extends AbstractEditor {
 
     private void clear() {
         columnEditors.clear();
+        columnsPanel.clear();
     }
 }

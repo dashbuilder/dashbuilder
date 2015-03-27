@@ -24,6 +24,7 @@ import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.client.widgets.dataset.editor.DataSetDefEditWorkflow;
 import org.dashbuilder.client.widgets.resources.i18n.DataSetEditorConstants;
 import org.dashbuilder.dataprovider.DataSetProviderType;
+import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetMetadata;
 import org.dashbuilder.dataset.client.ClientDataSetManager;
@@ -38,6 +39,7 @@ import org.dashbuilder.displayer.client.DisplayerListener;
 
 import javax.enterprise.context.Dependent;
 import javax.validation.ConstraintViolation;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -78,6 +80,7 @@ public class DataSetEditor implements IsWidget {
         View showCSVAttributesEditorView();
         View showELAttributesEditorView();
         View showPreviewTableEditionView(DisplayerListener tableListener);
+        View updatePreviewTableEditionView(DisplayerListener tableListener);
         View showColumnsAndFilterEditionView(DataSet dataSet);
         View showAdvancedAttributesEditionView();
         View showNextButton(String title, ClickHandler nextHandler);
@@ -162,9 +165,10 @@ public class DataSetEditor implements IsWidget {
                                         final Set violations = save();
                                         if (isValid(violations)) {
                                             // Valid
-                                            
-                                            // TODO
                                             GWT.log("Data set edition finished.");
+                                            update();
+
+                                            // TODO
                                         }
                                         saveLog(violations);
 
@@ -180,6 +184,30 @@ public class DataSetEditor implements IsWidget {
         });
                 
         return this;
+    }
+    
+    private void update() {
+
+        // Clear data set columns.
+        dataSetDef.getDataSet().setColumns(new ArrayList<DataColumn>());
+        // Update data set columns.
+        if (this.dataSet != null) {
+            final List<DataColumn> newColumns = dataSet.getColumns();
+            if (newColumns != null && !newColumns.isEmpty()) {
+                for (DataColumn newColumn : newColumns) {
+                    dataSetDef.getDataSet().addColumn(newColumn);
+                }
+            } 
+        }
+
+        // Remove the current data set definition.
+        removeDataSetDef();
+        
+        // Register new data set definition.
+        registerDataSetDef();
+        
+        // Update preview table.
+        updatePreviewTableEditionView();
     }
 
     public DataSetEditor editDataSet(final String uuid) throws Exception{
@@ -252,14 +280,17 @@ public class DataSetEditor implements IsWidget {
 
     private void showPreviewTableEditionView() {
         
-        if (dataSetDef != null) {
-            // Register the data set in backend as non public.
-            dataSetDef.setPublic(false);
-            DataSetClientServices.get().registerDataSetDef(dataSetDef);
-        }
-        
+        // Register the data set definition.
+        registerDataSetDef();
+
+        // Show attributes and table preview preview.
         view.showBasicAttributesEditionView()
             .showPreviewTableEditionView(tablePreviewListener);
+    }
+    
+    private void updatePreviewTableEditionView() {
+        // Update table preview.
+        view.updatePreviewTableEditionView(tablePreviewListener);
     }
     
     private void showAdvancedAttributesEditionView() {
@@ -277,6 +308,23 @@ public class DataSetEditor implements IsWidget {
         return view.getViolations();
     }
     
+    private void removeDataSetDef() {
+        if (dataSetDef != null) {
+            final DataSetClientServices clientServices = DataSetClientServices.get();
+            clientServices.removeDataSetDef(dataSetDef);
+            clientServices.removeDataSet(dataSetDef.getUUID());
+        }
+    }
+    
+    private void registerDataSetDef() {
+        if (dataSetDef != null) {
+            // Register the data set in backend as non public.
+            dataSetDef.setPublic(false);
+            final DataSetClientServices clientServices = DataSetClientServices.get();
+            clientServices.registerDataSetDef(dataSetDef);
+        }
+    }
+    
     private final ClickHandler cancelHandler = new ClickHandler() {
         @Override
         public void onClick(ClickEvent event) {
@@ -288,6 +336,21 @@ public class DataSetEditor implements IsWidget {
         public void onClick(ClickEvent event) {
             // TODO: Generate uuid using the backend uuid generator. Perform a RPC call.
             newDataSet("new-uuid");;
+        }
+    };
+    
+    private final ClickHandler testClickHandler = new ClickHandler() {
+        @Override
+        public void onClick(ClickEvent event) {
+            final Set violations = save();
+            if (isValid(violations)) {
+                // Valid
+                GWT.log("Data set edition finished.");
+                update();
+
+                // TODO
+            }
+            saveLog(violations);
         }
     };
 
@@ -384,6 +447,12 @@ public class DataSetEditor implements IsWidget {
                 GWT.log("CSVDataSetDef escape char: " + ((CSVDataSetDef)dataSetDef).getEscapeChar());
                 GWT.log("CSVDataSetDef date pattern: " + ((CSVDataSetDef)dataSetDef).getDatePattern());
                 GWT.log("CSVDataSetDef number pattern: " + ((CSVDataSetDef)dataSetDef).getNumberPattern());
+            }
+            
+            if (dataSet != null && dataSet.getColumns() != null) {
+                for (DataColumn column : dataSet.getColumns()) {
+                    GWT.log("DataColumn name: " + column.getName());
+                }
             }
         }
     }

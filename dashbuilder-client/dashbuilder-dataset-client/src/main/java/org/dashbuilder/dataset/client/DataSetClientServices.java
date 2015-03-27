@@ -303,7 +303,15 @@ public class DataSetClientServices {
         dataSetModifiedEvent.fire(new DataSetModifiedEvent(event.getDataSetDef()));
     }
     
-    public void registerDataSetDef(DataSetDef dataSetDef) {
+    public void registerDataSetDef(final DataSetDef dataSetDef) {
         dataSetBackendServices.call().registerDataSetDef(dataSetDef);
+    }
+
+    public void removeDataSetDef(final DataSetDef dataSetDef) {
+        dataSetBackendServices.call().removeDataSetDef(dataSetDef);
+    }
+
+    public void removeDataSet(final String uuid) {
+        clientDataSetManager.removeDataSet(uuid);
     }
 }

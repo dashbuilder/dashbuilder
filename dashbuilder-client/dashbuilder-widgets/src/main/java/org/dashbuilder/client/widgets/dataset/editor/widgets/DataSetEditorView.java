@@ -310,6 +310,27 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
     }
 
     @Override
+    public DataSetEditor.View updatePreviewTableEditionView(final DisplayerListener tableListener) {
+        // Table is not a data set editor component, just a preview data set widget.
+        // So not necessary to use the editor workflow this instance.
+
+        // View title.
+        showTitle();
+
+        // Configure tabs and visibility.
+        previewTableEditor.setVisible(true);
+        previewTableEditor.setEditMode(true);
+        previewTableEditor.update(tableListener);
+        showTab(dataConfigurationTab);
+        showTab(dataPreviewTab);
+        previewTableEditionViewPanel.setVisible(true);
+        activeDataPreviewTab();
+        tabViewPanel.setVisible(true);
+        return this;
+    }
+    
+
+    @Override
     public DataSetEditor.View showColumnsAndFilterEditionView(final DataSet dataSet) {
         // Columns editor is not a data set editor component, just a widget to handle DataColumnEditor instances.
         // So not necessary to use the editor workflow this instance.
@@ -559,11 +580,6 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
 
     private void hideTab(Tab tab) {
         tab.asWidget().setVisible(false);
-    }
-    
-    private void removeButtonsHandler() {
-        removeNextButtonHandler();
-        removeCancelButtonHandler();
     }
     
     private void removeNextButtonHandler() {

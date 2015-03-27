@@ -31,6 +31,12 @@ public interface DataSetBackendServices {
      * @param definition The data set definition.
      */
     void registerDataSetDef(DataSetDef definition);
+
+    /**
+     * Removes a data set definition. 
+     * @param definition The data set definition.
+     */
+    void removeDataSetDef(DataSetDef definition);
     
     /**
      * Apply a sequence of operations (filter, sort, group, ...) on a remote data set.

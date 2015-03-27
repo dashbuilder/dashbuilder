@@ -58,6 +58,11 @@ public class DataSetBackendServicesImpl implements DataSetBackendServices {
         dataSetDefRegistry.registerDataSetDef(definition);
     }
 
+    @Override
+    public void removeDataSetDef(DataSetDef definition) {
+        dataSetDefRegistry.removeDataSetDef(definition.getUUID());
+    }
+
     public DataSet lookupDataSet(DataSetLookup lookup) throws Exception {
         return dataSetManager.lookupDataSet(lookup);
     }

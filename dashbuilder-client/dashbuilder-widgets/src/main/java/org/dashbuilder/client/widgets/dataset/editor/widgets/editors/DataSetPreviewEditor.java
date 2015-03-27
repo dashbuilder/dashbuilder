@@ -25,6 +25,7 @@ import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.def.DataSetDef;
 import org.dashbuilder.dataset.group.DataSetGroup;
 import org.dashbuilder.displayer.DisplayerSettingsFactory;
+import org.dashbuilder.displayer.TableDisplayerSettingsBuilder;
 import org.dashbuilder.displayer.client.Displayer;
 import org.dashbuilder.displayer.client.DisplayerCoordinator;
 import org.dashbuilder.displayer.client.DisplayerHelper;
@@ -49,7 +50,8 @@ public class DataSetPreviewEditor extends AbstractDataSetDefEditor {
 
     @UiField
     FlowPanel tablePanel;
-    
+
+    final DisplayerCoordinator coordinator = new DisplayerCoordinator();
     Displayer tableDisplayer = null;
     private DataSet dataSet = null;
 
@@ -82,6 +84,15 @@ public class DataSetPreviewEditor extends AbstractDataSetDefEditor {
         if (tableDisplayer != null && listener != null) tableDisplayer.addListener(listener); 
        
     }
+
+    public void update(final DisplayerListener listener) {
+        this.dataSet = null;
+        this.coordinator.removeDisplayer(tableDisplayer);
+        this.tableDisplayer = null;
+
+        tablePanel.clear();
+        build(listener);
+    }
     
     private void showTableDisplayer() {
         
@@ -93,13 +104,13 @@ public class DataSetPreviewEditor extends AbstractDataSetDefEditor {
         if (tableDisplayer != null) {
 
             // Create and draw the preview table.
-            final DisplayerCoordinator coordinator = new DisplayerCoordinator();
             coordinator.addDisplayer(tableDisplayer);
             tablePanel.add(tableDisplayer);
-            coordinator.drawAll();
 
             final TableListener tableListener = new TableListener();
             tableDisplayer.addListener(tableListener);
+
+            coordinator.drawAll();
         }
 
     }
