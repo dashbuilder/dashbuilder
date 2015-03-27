@@ -22,7 +22,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.client.widgets.resources.i18n.DataSetEditorConstants;
-import org.dashbuilder.common.client.validation.editors.ImageListEditorDecorator;
+import org.dashbuilder.common.client.validation.editors.ImageListEditor;
 import org.dashbuilder.dataprovider.DataSetProviderType;
 import org.dashbuilder.dataset.client.resources.bundles.DataSetClientResources;
 import org.dashbuilder.dataset.client.validation.editors.DataSetDefEditor;
@@ -44,7 +44,7 @@ public class DataSetProviderTypeEditor extends AbstractDataSetDefEditor implemen
     private static DataSetProviderTypeEditorBinder uiBinder = GWT.create(DataSetProviderTypeEditorBinder.class);
 
     @UiField
-    ImageListEditorDecorator<DataSetProviderType> provider;
+    ImageListEditor<DataSetProviderType> provider;
 
     private  boolean isEditMode;
 

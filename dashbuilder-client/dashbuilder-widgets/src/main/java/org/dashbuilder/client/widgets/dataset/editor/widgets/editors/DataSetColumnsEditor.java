@@ -15,10 +15,15 @@
  */
 package org.dashbuilder.client.widgets.dataset.editor.widgets.editors;
 
+import com.github.gwtbootstrap.client.ui.CheckBox;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.client.widgets.dataset.editor.DataSetDefEditWorkflow;
 import org.dashbuilder.client.widgets.dataset.editor.widgets.editors.datacolumn.DataColumnBasicEditor;
@@ -42,12 +47,17 @@ public class DataSetColumnsEditor extends AbstractEditor {
     interface DataSetColumnsEditorBinder extends UiBinder<Widget, DataSetColumnsEditor> {}
     private static DataSetColumnsEditorBinder uiBinder = GWT.create(DataSetColumnsEditorBinder.class);
 
+    interface DataSetColumnsEditorStyle extends CssResource {
+        String mainPanel();
+        String left();
+    }
+
+    @UiField
+    DataSetColumnsEditorStyle style;
+    
     @UiField
     FlowPanel columnsPanel;
 
-    @UiField
-    FlowPanel columnsListPanel;
-    
     private boolean isEditMode;
 
     public DataSetColumnsEditor() {
@@ -63,31 +73,60 @@ public class DataSetColumnsEditor extends AbstractEditor {
         this.isEditMode = isEditMode;
     }
 
+    private DataSet dataSet = null;
     private final Map<DataColumn, DataColumnBasicEditor> columnEditors = new LinkedHashMap<DataColumn, DataColumnBasicEditor>();
     
     public void build(final DataSet dataSet, final DataSetDefEditWorkflow workflow) {
         clear();
 
+        this.dataSet = dataSet;
+        
         if (dataSet != null && workflow != null) {
-
+            
             List<DataColumn> columns = dataSet.getColumns();
             if (columns != null) {
                 for (DataColumn column : columns) {
                     DataColumnImpl columnImpl = (DataColumnImpl) column;
                     DataColumnBasicEditor columnEditor = new DataColumnBasicEditor();
                     workflow.edit(columnEditor, columnImpl);
-                    addColumnEditor(column, columnEditor);
+                    columnEditors.put(column, columnEditor);
+                    Panel columnPanel = createColumn(column, columnEditor);
+                    columnsPanel.add(columnPanel);
                 }
             }
         }
         
     }
     
-    private void addColumnEditor(final DataColumn column, final DataColumnBasicEditor editor) {
-        columnEditors.put(column, editor);
-        columnsPanel.add(editor);
-    }
+    private Panel createColumn(final DataColumn column, final DataColumnBasicEditor editor) {
+        final FlowPanel columnPanel = new FlowPanel();
+        columnPanel.addStyleName(style.left());
+        
+        // Checkbox.
+        final CheckBox columnStatus = new CheckBox();
+        columnStatus.setValue(Boolean.TRUE);
+        columnStatus.addStyleName(style.left());
+        columnStatus.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+            @Override
+            public void onValueChange(ValueChangeEvent<Boolean> event) {
+                boolean isChecked = event.getValue();
+                
+                /*
+                TODO
+                if (isChecked) addColumn(column, editor);
+                else removeColumn(column, columnPanel);
+                */
+            }
+        });
+        columnPanel.add(columnStatus);
 
+        // Name editor.
+        editor.addStyleName(style.left());
+        columnPanel.add(editor);
+
+        return columnPanel;
+    }
+    
     @Override
     public Iterable<ConstraintViolation<?>> getViolations() {
         Set<ConstraintViolation<?>> violations = new LinkedHashSet<ConstraintViolation<?>>();
@@ -117,6 +156,7 @@ public class DataSetColumnsEditor extends AbstractEditor {
     }
 
     private void clear() {
+        this.dataSet = null;
         columnEditors.clear();
         columnsPanel.clear();
     }

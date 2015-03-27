@@ -52,4 +52,20 @@ public interface DataSetClientImages extends ClientBundle {
     /* NOTE: Use DataResource instead of ImageResource in order to set a custom size to the image when creating it. **/
     @Source("images/el_icon_large.png")
     DataResource elIconLarge();
+
+    /* NOTE: Use DataResource instead of ImageResource in order to set a custom size to the image when creating it. **/
+    @Source("images/label_icon_small.png")
+    DataResource labelIconSmall();
+
+    /* NOTE: Use DataResource instead of ImageResource in order to set a custom size to the image when creating it. **/
+    @Source("images/number_icon_small.png")
+    DataResource numberIconSmall();
+
+    /* NOTE: Use DataResource instead of ImageResource in order to set a custom size to the image when creating it. **/
+    @Source("images/text_icon_small.png")
+    DataResource textIconSmall();
+
+    /* NOTE: Use DataResource instead of ImageResource in order to set a custom size to the image when creating it. **/
+    @Source("images/date_icon_small.png")
+    DataResource dateIconSmall();
 }

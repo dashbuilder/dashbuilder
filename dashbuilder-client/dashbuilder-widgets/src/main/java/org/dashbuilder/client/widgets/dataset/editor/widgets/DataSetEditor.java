@@ -346,9 +346,7 @@ public class DataSetEditor implements IsWidget {
             if (isValid(violations)) {
                 // Valid
                 GWT.log("Data set edition finished.");
-                update();
-
-                // TODO
+                // TODO: update();
             }
             saveLog(violations);
         }

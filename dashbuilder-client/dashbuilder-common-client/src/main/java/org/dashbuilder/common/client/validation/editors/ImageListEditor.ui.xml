@@ -4,7 +4,7 @@
              xmlns:b="urn:import:com.github.gwtbootstrap.client.ui"
     >
 
-  <ui:style type="org.dashbuilder.common.client.validation.editors.ImageListEditorDecorator.ImageListEditorDecoratorStyle">
+  <ui:style type="org.dashbuilder.common.client.validation.editors.ImageListEditor.ImageListEditorStyle">
     .errorPanel {
       border: none;
     }

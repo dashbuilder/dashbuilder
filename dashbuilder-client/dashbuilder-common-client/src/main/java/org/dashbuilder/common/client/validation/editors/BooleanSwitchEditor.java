@@ -4,13 +4,10 @@ import com.github.gwtbootstrap.client.ui.Label;
 import com.github.gwtbootstrap.client.ui.Tooltip;
 import com.github.gwtbootstrap.client.ui.constants.LabelType;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.Style;
 import com.google.gwt.editor.client.EditorError;
 import com.google.gwt.editor.client.HasEditorErrors;
 import com.google.gwt.editor.client.IsEditor;
-import com.google.gwt.editor.client.LeafValueEditor;
 import com.google.gwt.editor.client.adapters.TakesValueEditor;
-import com.google.gwt.editor.ui.client.adapters.ValueBoxEditor;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -22,12 +19,10 @@ import com.google.gwt.uibinder.client.UiConstructor;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.*;
 
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 
 /**
- * <p>Editor component decorator for boolean values.</p>
+ * <p>Editor component for boolean values.</p>
  * <p>It displays a label:</p>
  * <ul>
  *     <li>Using the text <code>ON</code> and green background color for <code>true</code> value.</li>     
@@ -36,23 +31,24 @@ import java.util.List;
  * <p>The boolean value that this editor handles is switched when clicking on the label.</p> 
  * <p>If validation fails, the validation error messages are displayed by changing border color to RED and showing the message using a tooltip.</p>
  */
-public class BooleanSwitchEditorDecorator extends Composite implements
+public class BooleanSwitchEditor extends Composite implements
         HasValue<Boolean>, HasEditorErrors<Boolean>, IsEditor<TakesValueEditor<Boolean>> {
 
     public static final String ON = "ON";
     public static final String OFF = "OFF";
 
-    interface Binder extends UiBinder<Widget, BooleanSwitchEditorDecorator> {
+    interface Binder extends UiBinder<Widget, BooleanSwitchEditor> {
         Binder BINDER = GWT.create(Binder.class);
     }
 
-    interface BooleanSwitchEditorDecoratorStyle extends CssResource {
+    interface BooleanSwitchEditorStyle extends CssResource {
         String mainPanel();
         String mainPanelError();
         String label();
     }
 
-    @UiField BooleanSwitchEditorDecoratorStyle style;
+    @UiField
+    BooleanSwitchEditorStyle style;
 
     @UiField
     HTMLPanel mainPanel;
@@ -69,7 +65,7 @@ public class BooleanSwitchEditorDecorator extends Composite implements
     private Boolean value;
 
     @UiConstructor
-    public BooleanSwitchEditorDecorator() {
+    public BooleanSwitchEditor() {
         initWidget(Binder.BINDER.createAndBindUi(this));
         
         // setAcceptableValues((Collection<T>) Arrays.asList(true, false));

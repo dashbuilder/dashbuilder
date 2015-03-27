@@ -3,7 +3,6 @@ package org.dashbuilder.common.client.validation.editors;
 import com.github.gwtbootstrap.client.ui.Image;
 import com.github.gwtbootstrap.client.ui.Tooltip;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.Style;
 import com.google.gwt.editor.client.EditorError;
 import com.google.gwt.editor.client.HasEditorErrors;
 import com.google.gwt.editor.client.IsEditor;
@@ -22,20 +21,20 @@ import com.google.gwt.user.client.ui.*;
 import java.util.*;
 
 /**
- * <p>Editor component decorator that accepts multiple values and display each one using a given image.</p>
+ * <p>Editor component that accepts multiple values and display each one using a given image.</p>
  * <p>The validation error messages are displayed by changing border color to RED and showing the message using a tooltip.</p>
  * <p>This component is ideal for handling enums.</p>
  *  
  * @param <T> The type of the value that contains the editor widget
  */
-public class ImageListEditorDecorator<T> extends Composite implements
+public class ImageListEditor<T> extends Composite implements
         HasConstrainedValue<T>, HasEditorErrors<T>, IsEditor<TakesValueEditor<T>> {
 
-    interface Binder extends UiBinder<Widget, ImageListEditorDecorator> {
+    interface Binder extends UiBinder<Widget, ImageListEditor> {
         Binder BINDER = GWT.create(Binder.class);
     }
 
-    interface ImageListEditorDecoratorStyle extends CssResource {
+    interface ImageListEditorStyle extends CssResource {
         String errorPanel();
         String errorPanelError();
         String imagePointer();
@@ -50,7 +49,8 @@ public class ImageListEditorDecorator<T> extends Composite implements
     private int width = -1;
     private int height = -1;
 
-    @UiField ImageListEditorDecoratorStyle style;
+    @UiField
+    ImageListEditorStyle style;
 
     @UiField
     HTMLPanel errorPanel;
@@ -62,7 +62,7 @@ public class ImageListEditorDecorator<T> extends Composite implements
     Tooltip errorTooltip;
     
     @UiConstructor
-    public ImageListEditorDecorator() {
+    public ImageListEditor() {
         initWidget(Binder.BINDER.createAndBindUi(this));
     }
 

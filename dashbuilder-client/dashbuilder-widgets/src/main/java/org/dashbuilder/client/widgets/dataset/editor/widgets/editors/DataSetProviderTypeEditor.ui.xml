@@ -15,7 +15,7 @@
   
   <g:FlowPanel addStyleNames="{style.mainPanel}">
     <g:HTML text="{i18n.selectType}:"/>
-    <dash-client:ImageListEditorDecorator ui:field="provider" />
+    <dash-client:ImageListEditor ui:field="provider" />
   </g:FlowPanel>
   
 </ui:UiBinder>

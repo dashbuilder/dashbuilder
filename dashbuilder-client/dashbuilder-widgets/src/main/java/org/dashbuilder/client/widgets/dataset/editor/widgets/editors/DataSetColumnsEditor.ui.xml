@@ -6,18 +6,16 @@
 
   <ui:with field="i18n" type="org.dashbuilder.client.widgets.resources.i18n.DataSetEditorConstants"/>
 
-  <ui:style>
+  <ui:style type="org.dashbuilder.client.widgets.dataset.editor.widgets.editors.DataSetColumnsEditor.DataSetColumnsEditorStyle">
     .mainPanel {
+    }
+    .left {
+      float: left;
     }
   </ui:style>
   
   <g:FlowPanel ui:field="columnsPanel" addStyleNames="{style.mainPanel} ">
 
-    <!-- The columns list. -->
-    <g:FlowPanel ui:field="columnsListPanel">
-      
-    </g:FlowPanel>
-    
   </g:FlowPanel>
 
 </ui:UiBinder>

@@ -20,9 +20,8 @@ import com.google.gwt.editor.client.EditorError;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import org.dashbuilder.common.client.validation.editors.BooleanSwitchEditorDecorator;
+import org.dashbuilder.common.client.validation.editors.BooleanSwitchEditor;
 import org.dashbuilder.common.client.validation.editors.ValueBoxEditorDecorator;
 import org.dashbuilder.dataset.client.validation.editors.DataSetDefEditor;
 
@@ -48,7 +47,7 @@ public class DataSetAdvancedAttributesEditor extends AbstractDataSetDefEditor im
     /* **************** BACKEND CACHE *************** */
     @UiField
     @Path("cacheEnabled")
-    BooleanSwitchEditorDecorator attributeBackendCacheStatus;
+    BooleanSwitchEditor attributeBackendCacheStatus;
 
     @UiField
     @Path("cacheMaxRows")
@@ -57,7 +56,7 @@ public class DataSetAdvancedAttributesEditor extends AbstractDataSetDefEditor im
     /* **************** CLIENT CACHE *************** */
     @UiField
     @Path("pushEnabled")
-    BooleanSwitchEditorDecorator attributeClientCacheStatus;
+    BooleanSwitchEditor attributeClientCacheStatus;
 
     @UiField
     @Path("pushMaxSize")
@@ -66,7 +65,7 @@ public class DataSetAdvancedAttributesEditor extends AbstractDataSetDefEditor im
     /* **************** REFRESH POLICY *************** */
     @UiField
     @Path("refreshAlways")
-    BooleanSwitchEditorDecorator attributeRefreshStatus;
+    BooleanSwitchEditor attributeRefreshStatus;
 
     @UiField
     @Path("refreshTime")

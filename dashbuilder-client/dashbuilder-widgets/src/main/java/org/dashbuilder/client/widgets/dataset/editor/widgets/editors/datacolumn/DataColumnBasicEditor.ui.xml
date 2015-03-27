@@ -17,7 +17,7 @@
 
       <!-- Name. -->
       <b:Column size="1">
-        <g:HTML text="{i18n.attributeName}"/>
+        <dash-client:DropDownImageListEditor ui:field="columnType" />
       </b:Column>
       <b:Column size="3">
         <dash-client:ValueBoxEditorDecorator errorLabelPosition="TOOLTIP" ui:field="name">
