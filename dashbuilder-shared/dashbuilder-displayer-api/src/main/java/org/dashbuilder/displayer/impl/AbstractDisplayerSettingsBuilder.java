@@ -55,7 +55,12 @@ public abstract class AbstractDisplayerSettingsBuilder<T> extends AbstractDataSe
     }
 
     public T allowCsvExport(boolean allowCsvExport) {
-        displayerSettings.setCSVExportAllowed( allowCsvExport );
+        displayerSettings.setCSVExportAllowed(allowCsvExport);
+        return (T) this;
+    }
+
+    public T allowExcelExport(boolean allowExcelExport) {
+        displayerSettings.setExcelExportAllowed(allowExcelExport);
         return (T) this;
     }
 

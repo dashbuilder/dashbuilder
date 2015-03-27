@@ -49,6 +49,8 @@ public interface DisplayerSettingsEditorConstants extends ConstantsWithLookup {
 
     String common_allowCSV();
 
+    String common_allowExcel();
+
     String common_renderer();
 
     String common_columns();

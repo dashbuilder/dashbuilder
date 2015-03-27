@@ -30,4 +30,6 @@ public interface Constants extends Messages {
 
     String menu_export_csv();
 
+    String menu_export_excel();
+
 }

@@ -31,6 +31,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.IsWidget;
 import org.dashbuilder.common.client.StringUtils;
 import org.dashbuilder.dataset.DataSetLookup;
+import org.dashbuilder.dataset.DataSetMetadata;
 import org.dashbuilder.dataset.client.DataSetClientServices;
 import org.dashbuilder.dataset.client.DataSetExportReadyCallback;
 import org.dashbuilder.dataset.uuid.UUIDGenerator;
@@ -76,8 +77,12 @@ public class DisplayerScreenPresenter {
     private boolean editEnabled = false;
     private boolean cloneEnabled = false;
     private boolean csvExportAllowed = false;
+    private boolean excelExportAllowed = false;
 
     private DropdownButton menuActionsButton;
+
+    // TODO allow configuration of this through a custom system property?
+    private static final int MAX_EXPORT_LIMIT = 100000;
 
     @Inject
     public DisplayerScreenPresenter(UUIDGenerator uuidGenerator,
@@ -96,7 +101,7 @@ public class DisplayerScreenPresenter {
     }
 
     @OnStartup
-    public void onStartup( final PlaceRequest placeRequest) {
+    public void onStartup(final PlaceRequest placeRequest) {
         String json = placeRequest.getParameter("json", "");
         if (!StringUtils.isBlank(json)) this.displayerSettings = jsonMarshaller.fromJsonString(json);
         if (displayerSettings == null) throw new IllegalArgumentException("Displayer settings not found.");
@@ -119,6 +124,7 @@ public class DisplayerScreenPresenter {
         editEnabled = Boolean.parseBoolean(edit);
         cloneEnabled = Boolean.parseBoolean(clone);
         csvExportAllowed = displayerSettings.isCSVExportAllowed();
+        excelExportAllowed = displayerSettings.isExcelExportAllowed();
         this.menu = makeMenuBar();
         adjustMenuActions( this.displayerSettings );
     }
@@ -145,9 +151,9 @@ public class DisplayerScreenPresenter {
 
     private Menus makeMenuBar() {
         return MenuFactory
-                .newTopLevelCustomMenu( new MenuFactory.CustomMenuBuilder() {
+                .newTopLevelCustomMenu(new MenuFactory.CustomMenuBuilder() {
                     @Override
-                    public void push( MenuFactory.CustomMenuBuilder element ) {
+                    public void push(MenuFactory.CustomMenuBuilder element) {
                     }
 
                     @Override
@@ -160,11 +166,11 @@ public class DisplayerScreenPresenter {
 
                             @Override
                             public boolean isEnabled() {
-                                return editEnabled || cloneEnabled || csvExportAllowed;
+                                return editEnabled || cloneEnabled || csvExportAllowed || excelExportAllowed;
                             }
 
                             @Override
-                            public void setEnabled( boolean enabled ) {
+                            public void setEnabled(boolean enabled) {
                             }
 
                             @Override
@@ -179,7 +185,7 @@ public class DisplayerScreenPresenter {
 
                         };
                     }
-                } ).endMenu()
+                }).endMenu()
                 .build();
     }
 
@@ -230,28 +236,58 @@ public class DisplayerScreenPresenter {
         return new Command() {
             public void execute() {
                 // Get all the data set rows with a maximun of 10000
-                DataSetLookup currentLookup = displayerView.getDisplayer().getDataSetHandler().getCurrentDataSetLookup();
-                if (currentLookup.getNumberOfRows() > 0) {
-                    // TODO: ask the user ....
-                    currentLookup = currentLookup.cloneInstance();
-                    currentLookup.setRowOffset(0);
-                    currentLookup.setNumberOfRows(10000);
-                }
+                DataSetLookup currentLookup = getConstrainedDataSetLookup( displayerView.getDisplayer().getDataSetHandler().getCurrentDataSetLookup() );
 
                 try {
-                    dataSetClientServices.exportDataSetCSV( currentLookup, new DataSetExportReadyCallback() {
+                    dataSetClientServices.exportDataSetCSV(currentLookup, new DataSetExportReadyCallback() {
                         @Override
-                        public void exportReady( String exportFilePath ) {
-                            Window.open( getDownloadUrl( exportFilePath ),
+                        public void exportReady(String exportFilePath) {
+                            Window.open(getDownloadUrl( exportFilePath),
                                             "downloading",
-                                            "resizable=no,scrollbars=yes,status=no" );
+                                            "resizable=no,scrollbars=yes,status=no");
                         }
-                    } );
+                    });
                 } catch ( Exception e ) {
                     throw new RuntimeException( e );
                 }
             }
         };
+    }
+
+    private Command getExportExcelCommand() {
+        return new Command() {
+            public void execute() {
+                // Get all the data set rows with a maximun of 10000
+                DataSetLookup currentLookup = getConstrainedDataSetLookup(displayerView.getDisplayer().getDataSetHandler().getCurrentDataSetLookup());
+
+                try {
+                    dataSetClientServices.exportDataSetExcel(currentLookup, new DataSetExportReadyCallback() {
+                        @Override
+                        public void exportReady(String exportFilePath) {
+                            Window.open(getDownloadUrl(exportFilePath),
+                                    "downloading",
+                                    "resizable=no,scrollbars=yes,status=no");
+                        }
+                    });
+                } catch (Exception e) {
+                    throw new RuntimeException( e );
+                }
+            }
+        };
+    }
+
+    private DataSetLookup getConstrainedDataSetLookup(DataSetLookup dataSetLookup) {
+        DataSetLookup _dataSetLookup = dataSetLookup.cloneInstance();
+        if (dataSetLookup.getNumberOfRows() > 0) {
+            // TODO: ask the user ....
+            DataSetMetadata metadata = DataSetClientServices.get().getMetadata(dataSetLookup.getDataSetUUID());
+            if (metadata.getNumberOfRows() > MAX_EXPORT_LIMIT) {
+                Window.alert( "The data set about to be exported might be large,  no more than 100K rows will be exported." );
+            }
+            _dataSetLookup.setRowOffset(0);
+            _dataSetLookup.setNumberOfRows(MAX_EXPORT_LIMIT);
+        }
+        return _dataSetLookup;
     }
 
     public String getServletUrl() {
@@ -276,7 +312,7 @@ public class DisplayerScreenPresenter {
 
     protected void removeDisplayer() {
         Displayer displayer = displayerView.getDisplayer();
-        perspectiveCoordinator.removeDisplayer(displayer);
+        perspectiveCoordinator.removeDisplayer( displayer );
         displayer.close();
     }
 
@@ -290,40 +326,50 @@ public class DisplayerScreenPresenter {
     }
 
     private void adjustMenuActions( DisplayerSettings displayerSettings ) {
-        menuActionsButton.getMenuWiget().getWidget( 2 ).setVisible(displayerSettings.isCSVExportAllowed());
+        menuActionsButton.getMenuWiget().getWidget(2).setVisible(displayerSettings.isCSVExportAllowed());
+        menuActionsButton.getMenuWiget().getWidget(3).setVisible(displayerSettings.isExcelExportAllowed());
     }
 
     private DropdownButton getMenuActionsButton() {
-        return new DropdownButton( Constants.INSTANCE.menu_button_actions() ) {{
-            setSize( MINI );
-            setRightDropdown( true );
+        return new DropdownButton(Constants.INSTANCE.menu_button_actions()) {{
+            setSize(MINI);
+            setRightDropdown(true);
 
-            add( new NavLink( Constants.INSTANCE.menu_edit() ) {{
-                    addClickHandler( new ClickHandler() {
-                        @Override
-                        public void onClick( ClickEvent event ) {
-                            getEditCommand().execute();
-                        }
-                    } );
-            }} );
-
-            add( new NavLink( Constants.INSTANCE.menu_clone() ) {{
+            add( new NavLink(Constants.INSTANCE.menu_edit()) {{
                 addClickHandler( new ClickHandler() {
                     @Override
-                    public void onClick( ClickEvent event ) {
+                    public void onClick(ClickEvent event) {
+                        getEditCommand().execute();
+                    }
+                });
+            }});
+
+            add( new NavLink(Constants.INSTANCE.menu_clone()) {{
+                addClickHandler(new ClickHandler() {
+                    @Override
+                    public void onClick(ClickEvent event) {
                         getCloneCommand().execute();
                     }
-                } );
-            }} );
+                });
+            }});
 
-            add( new NavLink( Constants.INSTANCE.menu_export_csv() ) {{
+            add( new NavLink(Constants.INSTANCE.menu_export_csv()) {{
                 addClickHandler( new ClickHandler() {
                     @Override
                     public void onClick( ClickEvent event ) {
                         getExportCsvCommand().execute();
                     }
-                } );
-            }} );
+                });
+            }});
+
+            add( new NavLink(Constants.INSTANCE.menu_export_excel()) {{
+                addClickHandler(new ClickHandler() {
+                    @Override
+                    public void onClick(ClickEvent event) {
+                        getExportExcelCommand().execute();
+                    }
+                });
+            }});
         }};
     }
 }

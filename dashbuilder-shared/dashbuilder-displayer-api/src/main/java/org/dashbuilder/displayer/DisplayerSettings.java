@@ -250,6 +250,14 @@ public class DisplayerSettings {
         settings.put(getSettingPath(DisplayerAttributeDef.ALLOW_EXPORT_CSV), Boolean.toString(csvExportAllowed));
     }
 
+    public boolean isExcelExportAllowed() {
+        return parseBoolean(settings.get(getSettingPath(DisplayerAttributeDef.ALLOW_EXPORT_EXCEL)));
+    }
+
+    public void setExcelExportAllowed(boolean excelExportAllowed) {
+        settings.put(getSettingPath(DisplayerAttributeDef.ALLOW_EXPORT_EXCEL), Boolean.toString(excelExportAllowed));
+    }
+
     public int getRefreshInterval() {
         return parseInt(settings.get(getSettingPath(DisplayerAttributeDef.REFRESH_INTERVAL)), -1);
     }

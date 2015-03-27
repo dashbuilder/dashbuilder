@@ -166,7 +166,7 @@ public class DataSetClientServices {
                             new RemoteCallback<String>() {
                                 public void callback(String csvFilePath) {
                                     listener.exportReady(csvFilePath);
-                                }}).exportDataSetCSV( dataSet );
+                                }}).exportDataSetCSV(dataSet);
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
@@ -179,7 +179,45 @@ public class DataSetClientServices {
                             new RemoteCallback<String>() {
                                 public void callback(String csvFilePath) {
                                     listener.exportReady(csvFilePath);
-                                }}).exportDataSetCSV( request );
+                                }}).exportDataSetCSV(request);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        } else throw new RuntimeException( "Client-side export is not available" );
+    }
+
+    /**
+     * Export a data set, specified by a data set lookup request, to Excel format.
+     *
+     * @param request The data set lookup request
+     * @throws Exception It there is an unexpected error during the export.
+     */
+    public void exportDataSetExcel(final DataSetLookup request, final DataSetExportReadyCallback listener) throws Exception {
+
+        if (dataSetBackendServices != null) {
+            // Look always into the client data set manager.
+            if (clientDataSetManager.getDataSet(request.getDataSetUUID()) != null) {
+                DataSet dataSet = clientDataSetManager.lookupDataSet(request);
+                try {
+                    dataSetBackendServices.call(
+                            new RemoteCallback<String>() {
+                                public void callback(String excelFilePath) {
+                                    listener.exportReady(excelFilePath);
+                                }}).exportDataSetExcel(dataSet);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            // Data set not found on client.
+            else {
+                // If the data set is not in client, then look up remotely (only if the remote access is available).
+                try {
+                    dataSetBackendServices.call(
+                            new RemoteCallback<String>() {
+                                public void callback(String excelFilePath) {
+                                    listener.exportReady(excelFilePath);
+                                }}).exportDataSetExcel(request);
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }

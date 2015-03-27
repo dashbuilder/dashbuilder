@@ -155,6 +155,12 @@ public class DisplayerSettingsEditor extends Composite {
                         PropertyEditorType.BOOLEAN)
                         .withKey(ALLOW_EXPORT_CSV.getFullId()));
             }
+            if (isSupported(ALLOW_EXPORT_EXCEL)) {
+                category.withField(new PropertyEditorFieldInfo(DisplayerSettingsEditorConstants.INSTANCE.common_allowExcel(),
+                        Boolean.toString(displayerSettings.isExcelExportAllowed()),
+                        PropertyEditorType.BOOLEAN)
+                        .withKey(ALLOW_EXPORT_EXCEL.getFullId()));
+            }
         }
 
         if (isSupported(RENDERER)) {
