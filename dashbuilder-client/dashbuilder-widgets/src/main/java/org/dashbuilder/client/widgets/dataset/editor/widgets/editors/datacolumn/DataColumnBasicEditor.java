@@ -62,6 +62,8 @@ public class DataColumnBasicEditor extends AbstractEditor implements org.dashbui
         // Initialize the widget.
         initWidget(uiBinder.createAndBindUi(this));
 
+        setEditMode(true);
+        
         // Initialize the dropdown editor with image for each column type.
         final Map<ColumnType, Image> providerEditorValues = new LinkedHashMap<ColumnType, Image>();
         for (final ColumnType type : ColumnType.values()) {

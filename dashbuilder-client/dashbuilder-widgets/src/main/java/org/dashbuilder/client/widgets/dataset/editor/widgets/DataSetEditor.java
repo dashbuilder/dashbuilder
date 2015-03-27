@@ -450,6 +450,7 @@ public class DataSetEditor implements IsWidget {
             if (dataSet != null && dataSet.getColumns() != null) {
                 for (DataColumn column : dataSet.getColumns()) {
                     GWT.log("DataColumn name: " + column.getName());
+                    GWT.log("DataColumn type: " + column.getColumnType().name());
                 }
             }
         }
