@@ -21,7 +21,7 @@
     <dependency>
       <groupId>com.google.gwt</groupId>
       <artifactId>gwt-user</artifactId>
-      <scope>compile</scope>
+      <scope>provided</scope>
     </dependency>
   </dependencies>
 
@@ -31,7 +31,7 @@
       <resource>
         <directory>src/main/java</directory>
       </resource>
-      <!-- Include module descriptors from src/main/resources in order not to 
+      <!-- Include module descriptors from src/main/resources in order not to
         break the Intellij GWT plug-in -->
       <resource>
         <directory>src/main/resources</directory>
