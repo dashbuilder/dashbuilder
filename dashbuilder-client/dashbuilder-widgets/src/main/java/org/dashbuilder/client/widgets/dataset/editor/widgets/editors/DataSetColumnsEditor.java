@@ -100,7 +100,6 @@ public class DataSetColumnsEditor extends AbstractEditor {
     
     private Panel createColumn(final DataColumn column, final DataColumnBasicEditor editor) {
         final FlowPanel columnPanel = new FlowPanel();
-        columnPanel.addStyleName(style.left());
         
         // Checkbox.
         final CheckBox columnStatus = new CheckBox();

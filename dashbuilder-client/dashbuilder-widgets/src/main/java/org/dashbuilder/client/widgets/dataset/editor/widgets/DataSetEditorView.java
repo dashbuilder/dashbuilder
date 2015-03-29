@@ -36,7 +36,9 @@ import org.dashbuilder.client.widgets.dataset.editor.widgets.editors.elasticsear
 import org.dashbuilder.client.widgets.dataset.editor.widgets.editors.sql.SQLDataSetDefAttributesEditor;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.def.*;
+import org.dashbuilder.dataset.filter.DataSetFilter;
 import org.dashbuilder.displayer.client.DisplayerListener;
+import org.dashbuilder.displayer.client.widgets.filter.DataSetFilterEditor;
 
 import javax.enterprise.context.Dependent;
 import javax.validation.ConstraintViolation;
@@ -127,12 +129,6 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
     @UiField
     Tab filterTab;
     
-    @UiField
-    FlowPanel filterEditionViewPanel;
-
-    @UiField
-    FlowPanel columnsEditionViewPanel;
-
     @UiField
     DataSetColumnsEditor columnsEditor;
 
@@ -335,16 +331,25 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
         // Columns editor is not a data set editor component, just a widget to handle DataColumnEditor instances.
         // So not necessary to use the editor workflow this instance.
 
+        // Data Set Columns editor.
         columnsEditor.setVisible(true);
         columnsEditor.setEditMode(true);
         columnsEditor.build(dataSet, workflow);
-        // filterEditor.setVisible(true);
-        // filterEditor.setEditMode(true);
+        
+        // Data Set Filter editor.
+        final DataSetFilterEditor filterEditor = new DataSetFilterEditor();
+        filterEditor.init(dataSet.getMetadata(), dataSetDef.getDataSetFilter(), new DataSetFilterEditor.Listener() {
+            @Override
+            public void filterChanged(DataSetFilter filter) {
+                // TODO
+                GWT.log("Filter changed.");
+            }
+        });
+        filterTab.add(filterEditor);
 
+        // Panels and tab visibility.
         filterAndColumnsEditionViewPanel.setVisible(true);
         filterAndColumnsTabPanel.setVisible(true);
-        columnsEditionViewPanel.setVisible(true);
-        filterEditionViewPanel.setVisible(true);
         activeDataPreviewTab();
         tabViewPanel.setVisible(true);
         
@@ -491,8 +496,6 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
         elAttributesEditionViewPanel.setVisible(false);
         previewTableEditionViewPanel.setVisible(false);
         filterAndColumnsEditionViewPanel.setVisible(false);
-        filterEditionViewPanel.setVisible(false);
-        columnsEditionViewPanel.setVisible(false);
         nextButton.setVisible(false);
         cancelButton.setVisible(false);
         buttonsPanel.setVisible(false);
