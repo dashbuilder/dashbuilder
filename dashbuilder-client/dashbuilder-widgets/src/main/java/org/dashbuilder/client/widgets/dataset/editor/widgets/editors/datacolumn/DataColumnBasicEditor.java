@@ -42,7 +42,7 @@ import java.util.Map;
 @Dependent
 public class DataColumnBasicEditor extends AbstractEditor implements org.dashbuilder.dataset.client.validation.editors.DataColumnEditor {
 
-    private static final int ICONS_SIZE = 32;
+    private static final int ICONS_SIZE = 16;
     
     interface DataColumnBasicEditorBinder extends UiBinder<Widget, DataColumnBasicEditor> {}
     private static DataColumnBasicEditorBinder uiBinder = GWT.create(DataColumnBasicEditorBinder.class);

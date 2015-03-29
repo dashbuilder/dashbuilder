@@ -17,9 +17,10 @@
   </ui:style>
 
   <g:HTMLPanel ui:field="errorPanel" addStyleNames="{style.errorPanel} ">
+    <b:Image ui:field="currentTypeImage"/>
     <b:Tooltip text="" ui:field="errorTooltip">
       <b:ButtonGroup>
-        <b:DropdownButton text="3" ui:field="dropDownButton">
+        <b:DropdownButton text="" ui:field="dropDownButton">
 
         </b:DropdownButton>
       </b:ButtonGroup>

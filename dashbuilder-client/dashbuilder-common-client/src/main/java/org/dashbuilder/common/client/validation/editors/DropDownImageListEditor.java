@@ -3,6 +3,7 @@ package org.dashbuilder.common.client.validation.editors;
 import com.github.gwtbootstrap.client.ui.DropdownButton;
 import com.github.gwtbootstrap.client.ui.Image;
 import com.github.gwtbootstrap.client.ui.Tooltip;
+import com.github.gwtbootstrap.client.ui.constants.ButtonType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.EditorError;
 import com.google.gwt.editor.client.HasEditorErrors;
@@ -56,6 +57,9 @@ public class DropDownImageListEditor<T> extends Composite implements
     HTMLPanel errorPanel;
     
     @UiField
+    Image currentTypeImage;
+    
+    @UiField
     DropdownButton dropDownButton;
 
     @UiField
@@ -64,6 +68,10 @@ public class DropDownImageListEditor<T> extends Composite implements
     @UiConstructor
     public DropDownImageListEditor() {
         initWidget(Binder.BINDER.createAndBindUi(this));
+        
+        // Configure the dropdown button.
+        dropDownButton.setType(ButtonType.LINK);
+        dropDownButton.addCustomTrigger(currentTypeImage);
     }
 
     public HandlerRegistration addValueChangeHandler(final ValueChangeHandler<T> handler) {
@@ -140,7 +148,11 @@ public class DropDownImageListEditor<T> extends Composite implements
 
         for (T entry : values) {
             final Image image = images.get(entry);
-            if (entry.equals(value)) dropDownButton.setText(value.toString()); 
+            // if (entry.equals(value)) dropDownButton.setText(value.toString()); 
+            if (entry.equals(value)) {
+                currentTypeImage.setUrl(image.getUrl());
+                currentTypeImage.setSize("16px", "16px");
+            }
         }
 
         if (fireEvents) {
