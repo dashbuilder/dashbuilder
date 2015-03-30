@@ -17,29 +17,29 @@
   <g:FlowPanel ui:field="basicAttributesPanel" addStyleNames="{style.mainPanel} ">
 
     <b:Row>
-      
-      <!-- UUID. -->
-      <b:Column size="1">
-          <g:HTML text="{i18n.attributeUUID}"/>
-      </b:Column>
-      <b:Column size="3">
-          <dash-client:ValueBoxEditorDecorator errorLabelPosition="TOOLTIP" ui:field="attributeUUID">
-            <dash-client:valuebox>
-              <b:TextBox enabled="false" placeholder="{i18n.attributeUUID}" />
-            </dash-client:valuebox>
-          </dash-client:ValueBoxEditorDecorator>  
-      </b:Column>
 
       <!-- Name. -->
       <b:Column size="1">
         <g:HTML text="{i18n.attributeName}"/>
       </b:Column>
-      <b:Column size="3">
+      <b:Column size="5">
           <dash-client:ValueBoxEditorDecorator errorLabelPosition="TOOLTIP" ui:field="name">
             <dash-client:valuebox>
               <b:TextBox placeholder="{i18n.attributeName}" />
             </dash-client:valuebox>
           </dash-client:ValueBoxEditorDecorator>
+      </b:Column>
+
+      <!-- UUID. -->
+      <b:Column size="1">
+        <g:HTML text="{i18n.attributeUUID}"/>
+      </b:Column>
+      <b:Column size="3">
+        <dash-client:ValueBoxEditorDecorator errorLabelPosition="TOOLTIP" ui:field="attributeUUID">
+          <dash-client:valuebox>
+            <b:TextBox enabled="false" placeholder="{i18n.attributeUUID}" />
+          </dash-client:valuebox>
+        </dash-client:ValueBoxEditorDecorator>
       </b:Column>
 
     </b:Row>
