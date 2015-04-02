@@ -47,6 +47,8 @@ public class DataColumnBasicEditor extends AbstractEditor implements org.dashbui
     interface DataColumnBasicEditorBinder extends UiBinder<Widget, DataColumnBasicEditor> {}
     private static DataColumnBasicEditorBinder uiBinder = GWT.create(DataColumnBasicEditorBinder.class);
 
+    private String editorId;
+    
     @UiField
     FlowPanel columnPanel;
 
@@ -81,6 +83,10 @@ public class DataColumnBasicEditor extends AbstractEditor implements org.dashbui
     public void setEditMode(boolean isEditMode) {
         this.isEditMode = isEditMode;
          columnType.setEditMode(isEditMode);
+    }
+
+    public void setEditorId(String editorId) {
+        this.editorId = editorId;
     }
 
     @Override
@@ -123,4 +129,15 @@ public class DataColumnBasicEditor extends AbstractEditor implements org.dashbui
         return typeIcon;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) return false;
+        
+        try {
+            DataColumnBasicEditor e  = (DataColumnBasicEditor) obj;
+            return (this.editorId.equals(e.editorId));
+        } catch (ClassCastException e) {
+            return false;
+        }
+    }
 }

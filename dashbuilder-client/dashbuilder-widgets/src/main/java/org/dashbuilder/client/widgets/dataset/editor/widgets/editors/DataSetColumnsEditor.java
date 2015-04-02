@@ -31,6 +31,7 @@ import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.client.widgets.dataset.editor.DataSetDefEditWorkflow;
 import org.dashbuilder.client.widgets.dataset.editor.widgets.editors.datacolumn.DataColumnBasicEditor;
 import org.dashbuilder.dataset.DataColumn;
+import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.impl.DataColumnImpl;
 
 import javax.enterprise.context.Dependent;
@@ -112,28 +113,37 @@ public class DataSetColumnsEditor extends AbstractEditor {
         return addHandler(handler, ColumnsChangedEvent.TYPE);
     }
 
-    public void build(final List<DataColumn> columns, final DataSetDefEditWorkflow workflow) {
+    public void build(final List<DataColumn> columns, final DataSet dataSet, final DataSetDefEditWorkflow workflow) {
         clear();
 
         if (columns != null && workflow != null) {
             for (DataColumn column : columns) {
                 DataColumnImpl columnImpl = (DataColumnImpl) column;
+                
+                // Create the editor for each column.
                 DataColumnBasicEditor columnEditor = new DataColumnBasicEditor();
-                workflow.edit(columnEditor, columnImpl);
+                columnEditor.setEditorId(column.getId());
                 columnEditors.put(column, columnEditor);
-                Panel columnPanel = createColumn(column, columnEditor, workflow);
+
+                // Link the column editor with workflow driver.
+                workflow.edit(columnEditor, columnImpl);
+                
+                // Create the UI panel for the column.
+                final boolean enabled = dataSet != null && dataSet.getColumns().contains(column);
+                final boolean canRemove = dataSet != null && dataSet.getColumns().size() > 1;
+                Panel columnPanel = createColumn(column, columnEditor, workflow, enabled, canRemove);
                 columnsPanel.add(columnPanel);
             }
         }
         
     }
     
-    private Panel createColumn(final DataColumn column, final DataColumnBasicEditor editor, final DataSetDefEditWorkflow workflow) {
+    private Panel createColumn(final DataColumn column, final DataColumnBasicEditor editor, final DataSetDefEditWorkflow workflow, final boolean enabled, final boolean canRemove) {
         final FlowPanel columnPanel = new FlowPanel();
         
         // Checkbox.
         final CheckBox columnStatus = new CheckBox();
-        columnStatus.setValue(Boolean.TRUE);
+        columnStatus.setValue(enabled);
         columnStatus.addStyleName(style.left());
         columnStatus.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
             @Override
@@ -141,7 +151,7 @@ public class DataSetColumnsEditor extends AbstractEditor {
                 boolean isChecked = event.getValue();
                 
                 if (isChecked) addColumn(column,workflow);
-                else removeColumn(column, workflow);
+                else if (canRemove) removeColumn(editor, column, workflow);
             }
         });
         columnPanel.add(columnStatus);
@@ -153,15 +163,15 @@ public class DataSetColumnsEditor extends AbstractEditor {
         return columnPanel;
     }
 
-    private void removeColumn(final DataColumn column, final DataSetDefEditWorkflow workflow) {
-        DataColumnBasicEditor columnEditor = new DataColumnBasicEditor();
-        workflow.remove(columnEditor, (DataColumnImpl) column);
+    private void removeColumn(final DataColumnBasicEditor editor, final DataColumn column, final DataSetDefEditWorkflow workflow) {
+        workflow.remove(editor, (DataColumnImpl) column);
         columnEditors.remove(column);
         fireColumnsChanged();
     }
 
     private void addColumn(final DataColumn column, final DataSetDefEditWorkflow workflow) {
         DataColumnBasicEditor columnEditor = new DataColumnBasicEditor();
+        columnEditor.setEditorId(column.getId());
         workflow.edit(columnEditor, (DataColumnImpl) column);
         columnEditors.put(column, columnEditor);
         fireColumnsChanged();

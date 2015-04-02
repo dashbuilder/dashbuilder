@@ -34,6 +34,7 @@ import org.dashbuilder.client.widgets.dataset.editor.widgets.editors.bean.BeanDa
 import org.dashbuilder.client.widgets.dataset.editor.widgets.editors.csv.CSVDataSetDefAttributesEditor;
 import org.dashbuilder.client.widgets.dataset.editor.widgets.editors.elasticsearch.ELDataSetDefAttributesEditor;
 import org.dashbuilder.client.widgets.dataset.editor.widgets.editors.sql.SQLDataSetDefAttributesEditor;
+import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.def.*;
 import org.dashbuilder.dataset.filter.DataSetFilter;
@@ -44,6 +45,7 @@ import javax.enterprise.context.Dependent;
 import javax.validation.ConstraintViolation;
 import java.util.Collection;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -306,25 +308,30 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
     }
 
     @Override
-    public DataSetEditor.View showColumnsAndFilterEditionView(final DataSet dataSet, final DataSetColumnsEditor.ColumnsChangedEventHandler columnsChangedEventHandler) {
+    public DataSetEditor.View showColumnsEditorView(final List<DataColumn> columns, final DataSet dataSet, final DataSetColumnsEditor.ColumnsChangedEventHandler columnsChangedEventHandler) {
         // Columns editor is not a data set editor component, just a widget to handle DataColumnEditor instances.
         // So not necessary to use the editor workflow this instance.
 
         // Data Set Columns editor.
         columnsEditor.setVisible(true);
         columnsEditor.setEditMode(true);
-        columnsEditor.build(dataSet.getColumns(), workflow);
+        columnsEditor.build(columns, dataSet, workflow);
         columnsEditor.addColumnsChangeHandler(columnsChangedEventHandler);
+
+        // Panels and tab visibility.
+        filterAndColumnsEditionViewPanel.setVisible(true);
+        filterAndColumnsTabPanel.setVisible(true);
+        activeDataPreviewTab();
+        tabViewPanel.setVisible(true);
         
+        return this;
+    }
+
+    @Override
+    public DataSetEditor.View showFilterEditionView(final DataSet dataSet, final DataSetFilterEditor.Listener filterListener) {
         // Data Set Filter editor.
         final DataSetFilterEditor filterEditor = new DataSetFilterEditor();
-        filterEditor.init(dataSet.getMetadata(), dataSetDef.getDataSetFilter(), new DataSetFilterEditor.Listener() {
-            @Override
-            public void filterChanged(DataSetFilter filter) {
-                // TODO
-                GWT.log("Filter changed.");
-            }
-        });
+        filterEditor.init(dataSet.getMetadata(), dataSetDef.getDataSetFilter(), filterListener);
         filterTab.add(filterEditor);
 
         // Panels and tab visibility.
