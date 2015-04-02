@@ -37,6 +37,7 @@ import org.dashbuilder.dataset.filter.CoreFunctionFilter;
 import org.dashbuilder.dataset.filter.CoreFunctionType;
 import org.dashbuilder.dataset.filter.DataSetFilter;
 import org.dashbuilder.dataset.filter.FilterFactory;
+import org.dashbuilder.displayer.client.resources.i18n.CommonConstants;
 
 @Dependent
 public class DataSetFilterEditor extends Composite implements ColumnFilterEditor.Listener {
@@ -97,7 +98,7 @@ public class DataSetFilterEditor extends Composite implements ColumnFilterEditor
 
     protected void initNewFilterListBox() {
         newFilterListBox.clear();
-        newFilterListBox.addItem("- Select column -");
+        newFilterListBox.addItem( CommonConstants.INSTANCE.filter_editor_selectcolumn());
 
         if (metadata != null) {
             for (int i = 0; i < metadata.getNumberOfColumns(); i++) {

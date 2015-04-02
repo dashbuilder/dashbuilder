@@ -57,10 +57,10 @@ public abstract class GoogleDisplayer extends AbstractDisplayer {
         if (!super.isDrawn()) {
 
             if (displayerSettings == null) {
-                displayMessage("ERROR: DisplayerSettings property not set");
+                displayMessage(GoogleDisplayerConstants.INSTANCE.googleDisplayer_error() + GoogleDisplayerConstants.INSTANCE.googleDisplayer_error_settings_unset());
             }
             else if (dataSetHandler == null) {
-                displayMessage("ERROR: DataSetHandler property not set");
+                displayMessage(GoogleDisplayerConstants.INSTANCE.googleDisplayer_error() + GoogleDisplayerConstants.INSTANCE.googleDisplayer_error_handler_unset());
             }
             else {
                 try {
@@ -87,11 +87,11 @@ public abstract class GoogleDisplayer extends AbstractDisplayer {
                             afterDraw();
                         }
                         public void notFound() {
-                            displayMessage("ERROR: Data set not found.");
+                            displayMessage(GoogleDisplayerConstants.INSTANCE.googleDisplayer_error() + GoogleDisplayerConstants.INSTANCE.googleDisplayer_error_dataset_notfound());
                         }
                     });
                 } catch (Exception e) {
-                    displayMessage("ERROR: " + e.getMessage());
+                    displayMessage(GoogleDisplayerConstants.INSTANCE.googleDisplayer_error() + e.getMessage());
                 }
             }
         }
@@ -116,11 +116,11 @@ public abstract class GoogleDisplayer extends AbstractDisplayer {
                         afterRedraw();
                     }
                     public void notFound() {
-                        displayMessage("ERROR: Data set not found.");
+                        displayMessage(GoogleDisplayerConstants.INSTANCE.googleDisplayer_error() + GoogleDisplayerConstants.INSTANCE.googleDisplayer_error_dataset_notfound());
                     }
                 });
             } catch (Exception e) {
-                displayMessage("ERROR: " + e.getMessage());
+                displayMessage(GoogleDisplayerConstants.INSTANCE.googleDisplayer_error() + e.getMessage());
             }
         }
     }

@@ -21,6 +21,8 @@
              xmlns:g='urn:import:com.google.gwt.user.client.ui'
              xmlns:b="urn:import:com.github.gwtbootstrap.client.ui">
 
+  <ui:with field="i18n" type="org.dashbuilder.displayer.client.resources.i18n.CommonConstants"/>
+
   <ui:style>
     .cellPaddingPanel {
       padding: 10px;
@@ -30,26 +32,26 @@
   <g:VerticalPanel styleName="{style.cellPaddingPanel}">
     <g:HorizontalPanel styleName="{style.cellPaddingPanel}">
       <b:CheckBox ui:field="fixedStrategyCheckBox" />
-      <g:Label>Fixed intervals</g:Label>
+      <g:Label text="{i18n.dataset_groupdate_fixed_intervals}"/>
     </g:HorizontalPanel>
     <g:HorizontalPanel styleName="{style.cellPaddingPanel}">
       <b:CheckBox ui:field="emptyIntervalsCheckBox" />
-      <g:Label>Empty intervals</g:Label>
+      <g:Label text="{i18n.dataset_groupdate_empty_intervals}"/>
     </g:HorizontalPanel>
     <g:VerticalPanel>
-      <g:Label>Interval type</g:Label>
+      <g:Label text="{i18n.dataset_groupdate_interval_type}"/>
       <b:ListBox ui:field="intervalTypeListBox" width="130px" />
     </g:VerticalPanel>
     <g:VerticalPanel ui:field="maxIntervalsGroup" visible="false">
-      <g:Label>Max. intervals</g:Label>
+      <g:Label text="{i18n.dataset_groupdate_max_intervals}"/>
       <b:TextBox ui:field="maxIntervalsTextBox" width="130px" />
     </g:VerticalPanel>
     <g:VerticalPanel ui:field="firstDayPanel" visible="false">
-      <g:Label>First Day</g:Label>
+      <g:Label text="{i18n.dataset_groupdate_firstday}"/>
       <b:ListBox ui:field="firstDayListBox" width="130px"/>
     </g:VerticalPanel>
     <g:VerticalPanel ui:field="firstMonthPanel" visible="false">
-      <g:Label>First Month</g:Label>
+      <g:Label text="{i18n.dataset_groupdate_firstmonth}"/>
       <b:ListBox ui:field="firstMonthListBox" width="130px"/>
     </g:VerticalPanel>
   </g:VerticalPanel>

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbuilder.displayer.client.resources.i18n;
+package org.dashbuilder.client.editor.resources.i18n;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.i18n.client.Messages;
@@ -22,18 +22,5 @@ public interface Constants extends Messages {
 
     public static final Constants INSTANCE = GWT.create( Constants.class );
 
-    String menu_button_actions();
-
-    String menu_edit();
-
-    String menu_clone();
-
-    String menu_export_csv();
-
-    String menu_export_excel();
-
-    String displayer_presenter_displayer_notfound();
-
-    String displayer_presenter_export_large_dataset();
-
+    String displayer_perspective_editor_title();
 }

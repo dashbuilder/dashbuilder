@@ -43,7 +43,8 @@ import org.dashbuilder.displayer.Position;
 import org.dashbuilder.displayer.client.Displayer;
 import org.dashbuilder.displayer.client.DisplayerHelper;
 import org.dashbuilder.displayer.client.RendererLibLocator;
-import org.dashbuilder.displayer.client.resources.i18n.DisplayerSettingsEditorConstants;
+import org.dashbuilder.displayer.client.resources.i18n.CommonConstants;
+import org.dashbuilder.displayer.client.resources.i18n.PositionLiterals;
 import org.uberfire.ext.properties.editor.client.PropertyEditorWidget;
 import org.uberfire.ext.properties.editor.model.PropertyEditorCategory;
 import org.uberfire.ext.properties.editor.model.PropertyEditorChangeEvent;
@@ -103,11 +104,11 @@ public class DisplayerSettingsEditor extends Composite {
                     propertyEditor.handle(new PropertyEditorEvent(PROPERTY_EDITOR_ID, getPropertyEditorCategories()));
                 }
                 public void notFound() {
-                    mainPanel.add(new Label(LabelType.WARNING, "ERROR: Data set not found"));
+                    mainPanel.add(new Label(LabelType.WARNING, CommonConstants.INSTANCE.error() + CommonConstants.INSTANCE.displayer_editor_dataset_notfound()));
                 }
             });
         } catch (Exception e) {
-            mainPanel.add(new Label(LabelType.WARNING, "ERROR: " + e.toString()));
+            mainPanel.add(new Label(LabelType.WARNING, CommonConstants.INSTANCE.error() + e.toString()));
         }
     }
 
@@ -134,29 +135,29 @@ public class DisplayerSettingsEditor extends Composite {
         final List<PropertyEditorCategory> categories = new ArrayList<PropertyEditorCategory>();
 
         if (isSupported(GENERAL_GROUP)) {
-            PropertyEditorCategory category = new PropertyEditorCategory("General");
+            PropertyEditorCategory category = new PropertyEditorCategory(CommonConstants.INSTANCE.common_group());
             categories.add(category);
 
             if (isSupported(TITLE)) {
-                category.withField(new PropertyEditorFieldInfo(DisplayerSettingsEditorConstants.INSTANCE.common_title(),
+                category.withField(new PropertyEditorFieldInfo( CommonConstants.INSTANCE.common_title(),
                         displayerSettings.getTitle(),
                         PropertyEditorType.TEXT)
                         .withKey(TITLE.getFullId()));
             }
             if (isSupported(TITLE_VISIBLE)) {
-                category.withField(new PropertyEditorFieldInfo(DisplayerSettingsEditorConstants.INSTANCE.common_showTitle(),
+                category.withField(new PropertyEditorFieldInfo( CommonConstants.INSTANCE.common_showTitle(),
                         Boolean.toString(displayerSettings.isTitleVisible()),
                         PropertyEditorType.BOOLEAN)
                         .withKey(TITLE_VISIBLE.getFullId()));
             }
             if (isSupported(ALLOW_EXPORT_CSV)) {
-                category.withField(new PropertyEditorFieldInfo(DisplayerSettingsEditorConstants.INSTANCE.common_allowCSV(),
+                category.withField(new PropertyEditorFieldInfo( CommonConstants.INSTANCE.common_allowCSV(),
                         Boolean.toString(displayerSettings.isCSVExportAllowed()),
                         PropertyEditorType.BOOLEAN)
                         .withKey(ALLOW_EXPORT_CSV.getFullId()));
             }
             if (isSupported(ALLOW_EXPORT_EXCEL)) {
-                category.withField(new PropertyEditorFieldInfo(DisplayerSettingsEditorConstants.INSTANCE.common_allowExcel(),
+                category.withField(new PropertyEditorFieldInfo( CommonConstants.INSTANCE.common_allowExcel(),
                         Boolean.toString(displayerSettings.isExcelExportAllowed()),
                         PropertyEditorType.BOOLEAN)
                         .withKey(ALLOW_EXPORT_EXCEL.getFullId()));
@@ -164,7 +165,7 @@ public class DisplayerSettingsEditor extends Composite {
         }
 
         if (isSupported(RENDERER)) {
-            PropertyEditorCategory category = new PropertyEditorCategory(DisplayerSettingsEditorConstants.INSTANCE.common_renderer());
+            PropertyEditorCategory category = new PropertyEditorCategory( CommonConstants.INSTANCE.common_renderer());
             categories.add(category);
 
             List<String> optionList = new ArrayList<String>();
@@ -176,7 +177,7 @@ public class DisplayerSettingsEditor extends Composite {
                 if (renderer == null) {
                     renderer = RendererLibLocator.get().getDefaultRenderer(displayerSettings.getType());
                 }
-                category.withField(new PropertyEditorFieldInfo(DisplayerSettingsEditorConstants.INSTANCE.common_renderer(),
+                category.withField(new PropertyEditorFieldInfo( CommonConstants.INSTANCE.common_renderer(),
                         renderer,
                         PropertyEditorType.COMBO).withComboValues(optionList)
                         .withKey(RENDERER.getFullId()));
@@ -185,38 +186,38 @@ public class DisplayerSettingsEditor extends Composite {
 
 
         if (isSupported(CHART_GROUP)) {
-            PropertyEditorCategory category = new PropertyEditorCategory(DisplayerSettingsEditorConstants.INSTANCE.chart_group());
+            PropertyEditorCategory category = new PropertyEditorCategory( CommonConstants.INSTANCE.chart_group());
             categories.add(category);
 
             if (isSupported(CHART_WIDTH)) {
-                category.withField(new PropertyEditorFieldInfo(DisplayerSettingsEditorConstants.INSTANCE.chart_width(),
+                category.withField(new PropertyEditorFieldInfo( CommonConstants.INSTANCE.chart_width(),
                         Integer.toString(displayerSettings.getChartWidth()),
                         PropertyEditorType.TEXT)
                         .withKey(CHART_WIDTH.getFullId())
                         .withValidators(new LongValidator()));
             }
             if (isSupported(CHART_HEIGHT)) {
-                category.withField(new PropertyEditorFieldInfo(DisplayerSettingsEditorConstants.INSTANCE.chart_height(),
+                category.withField(new PropertyEditorFieldInfo( CommonConstants.INSTANCE.chart_height(),
                         Integer.toString(displayerSettings.getChartHeight()),
                         PropertyEditorType.TEXT)
                         .withKey(CHART_HEIGHT.getFullId())
                         .withValidators(new LongValidator()));
             }
             if (isSupported(CHART_BGCOLOR)) {
-                category.withField(new PropertyEditorFieldInfo(DisplayerSettingsEditorConstants.INSTANCE.chart_bgColor(),
+                category.withField(new PropertyEditorFieldInfo( CommonConstants.INSTANCE.chart_bgColor(),
                         displayerSettings.getChartBackgroundColor(),
                         PropertyEditorType.COLOR)
                         .withKey(CHART_BGCOLOR.getFullId()));
             }
             if (isSupported(CHART_3D)) {
-                category.withField(new PropertyEditorFieldInfo(DisplayerSettingsEditorConstants.INSTANCE.chart_3d(),
+                category.withField(new PropertyEditorFieldInfo( CommonConstants.INSTANCE.chart_3d(),
                         Boolean.toString(displayerSettings.isChart3D()),
                         PropertyEditorType.BOOLEAN)
                         .withKey(CHART_3D.getFullId()));
             }
             if (isSupported(BARCHART_GROUP)) {
                 if (isSupported(BARCHART_HORIZONTAL)) {
-                    category.withField(new PropertyEditorFieldInfo(DisplayerSettingsEditorConstants.INSTANCE.barchart_horizontal(),
+                    category.withField(new PropertyEditorFieldInfo( CommonConstants.INSTANCE.barchart_horizontal(),
                             Boolean.toString(displayerSettings.isBarchartHorizontal()),
                             PropertyEditorType.BOOLEAN)
                             .withKey(BARCHART_HORIZONTAL.getFullId()));
@@ -224,32 +225,32 @@ public class DisplayerSettingsEditor extends Composite {
             }
         }
         if (isSupported(CHART_MARGIN_GROUP)) {
-            PropertyEditorCategory category = new PropertyEditorCategory(DisplayerSettingsEditorConstants.INSTANCE.chart_marginGroup());
+            PropertyEditorCategory category = new PropertyEditorCategory( CommonConstants.INSTANCE.chart_marginGroup());
             categories.add(category);
 
             if (isSupported(CHART_MARGIN_TOP)) {
-                category.withField(new PropertyEditorFieldInfo(DisplayerSettingsEditorConstants.INSTANCE.chart_topMargin(),
+                category.withField(new PropertyEditorFieldInfo( CommonConstants.INSTANCE.chart_topMargin(),
                         Integer.toString(displayerSettings.getChartMarginTop()),
                         PropertyEditorType.TEXT)
                         .withKey(CHART_MARGIN_TOP.getFullId())
                         .withValidators(new LongValidator()));
             }
             if (isSupported(CHART_MARGIN_BOTTOM)) {
-                category.withField(new PropertyEditorFieldInfo(DisplayerSettingsEditorConstants.INSTANCE.chart_bottomMargin(),
+                category.withField(new PropertyEditorFieldInfo( CommonConstants.INSTANCE.chart_bottomMargin(),
                         Integer.toString(displayerSettings.getChartMarginBottom()),
                         PropertyEditorType.TEXT)
                         .withKey(CHART_MARGIN_BOTTOM.getFullId())
                         .withValidators(new LongValidator()));
             }
             if (isSupported(CHART_MARGIN_LEFT)) {
-                category.withField(new PropertyEditorFieldInfo(DisplayerSettingsEditorConstants.INSTANCE.chart_leftMargin(),
+                category.withField(new PropertyEditorFieldInfo( CommonConstants.INSTANCE.chart_leftMargin(),
                         Integer.toString(displayerSettings.getChartMarginLeft()),
                         PropertyEditorType.TEXT)
                         .withKey(CHART_MARGIN_LEFT.getFullId())
                         .withValidators(new LongValidator()));
             }
             if (isSupported(CHART_MARGIN_RIGHT)) {
-                category.withField(new PropertyEditorFieldInfo(DisplayerSettingsEditorConstants.INSTANCE.chart_rightMargin(),
+                category.withField(new PropertyEditorFieldInfo( CommonConstants.INSTANCE.chart_rightMargin(),
                         Integer.toString(displayerSettings.getChartMarginRight()),
                         PropertyEditorType.TEXT)
                         .withKey(CHART_MARGIN_RIGHT.getFullId())
@@ -257,11 +258,11 @@ public class DisplayerSettingsEditor extends Composite {
             }
         }
         if (isSupported(CHART_LEGEND_GROUP)) {
-            PropertyEditorCategory category = new PropertyEditorCategory(DisplayerSettingsEditorConstants.INSTANCE.chart_legendGroup());
+            PropertyEditorCategory category = new PropertyEditorCategory( CommonConstants.INSTANCE.chart_legendGroup());
             categories.add(category);
 
             if (isSupported(CHART_SHOWLEGEND)) {
-                category.withField(new PropertyEditorFieldInfo(DisplayerSettingsEditorConstants.INSTANCE.chart_legendShow(),
+                category.withField(new PropertyEditorFieldInfo( CommonConstants.INSTANCE.chart_legendShow(),
                         Boolean.toString(displayerSettings.isChartShowLegend()),
                         PropertyEditorType.BOOLEAN)
                         .withKey(CHART_SHOWLEGEND.getFullId()));
@@ -270,13 +271,13 @@ public class DisplayerSettingsEditor extends Composite {
                 List<String> optionList = new ArrayList<String>();
                 for (Position position : Position.values()) {
                     String positionKey = position.toString();
-                    String positionLabel = DisplayerSettingsEditorConstants.INSTANCE.getString("POSITION_" + positionKey );
+                    String positionLabel = PositionLiterals.INSTANCE.getString("POSITION_" + positionKey );
                     optionList.add(positionLabel);
                 }
                 if (optionList.size() > 1) {
                     String positionKey = displayerSettings.getChartLegendPosition().toString();
-                    String positionLabel = DisplayerSettingsEditorConstants.INSTANCE.getString("POSITION_" + positionKey);
-                    category.withField(new PropertyEditorFieldInfo(DisplayerSettingsEditorConstants.INSTANCE.chart_legendPosition(),
+                    String positionLabel = PositionLiterals.INSTANCE.getString("POSITION_" + positionKey);
+                    category.withField(new PropertyEditorFieldInfo( CommonConstants.INSTANCE.chart_legendPosition(),
                             positionLabel,
                             PropertyEditorType.COMBO).withComboValues(optionList)
                             .withKey(CHART_LEGENDPOSITION.getFullId()));
@@ -284,52 +285,52 @@ public class DisplayerSettingsEditor extends Composite {
             }
         }
         if (isSupported(XAXIS_GROUP) || isSupported(YAXIS_GROUP)) {
-            PropertyEditorCategory category = new PropertyEditorCategory(DisplayerSettingsEditorConstants.INSTANCE.axis_group());
+            PropertyEditorCategory category = new PropertyEditorCategory( CommonConstants.INSTANCE.axis_group());
             categories.add(category);
 
             if (isSupported(XAXIS_SHOWLABELS)) {
-                category.withField(new PropertyEditorFieldInfo(DisplayerSettingsEditorConstants.INSTANCE.xaxis_showLabels(),
+                category.withField(new PropertyEditorFieldInfo( CommonConstants.INSTANCE.xaxis_showLabels(),
                         Boolean.toString(displayerSettings.isXAxisShowLabels()),
                         PropertyEditorType.BOOLEAN)
                         .withKey(XAXIS_SHOWLABELS.getFullId()));
             }
             if (isSupported(XAXIS_TITLE)) {
-                category.withField(new PropertyEditorFieldInfo(DisplayerSettingsEditorConstants.INSTANCE.xaxis_title(),
+                category.withField(new PropertyEditorFieldInfo( CommonConstants.INSTANCE.xaxis_title(),
                         displayerSettings.getXAxisTitle(),
                         PropertyEditorType.TEXT).withKey(XAXIS_TITLE.getFullId()));
             }
             if (isSupported(YAXIS_SHOWLABELS)) {
-                category.withField(new PropertyEditorFieldInfo(DisplayerSettingsEditorConstants.INSTANCE.yaxis_showLabels(),
+                category.withField(new PropertyEditorFieldInfo( CommonConstants.INSTANCE.yaxis_showLabels(),
                         Boolean.toString(displayerSettings.isYAxisShowLabels()),
                         PropertyEditorType.BOOLEAN)
                         .withKey(YAXIS_SHOWLABELS.getFullId()));
             }
             if (isSupported(YAXIS_TITLE)) {
-                category.withField(new PropertyEditorFieldInfo(DisplayerSettingsEditorConstants.INSTANCE.yaxis_title(),
+                category.withField(new PropertyEditorFieldInfo( CommonConstants.INSTANCE.yaxis_title(),
                         displayerSettings.getYAxisTitle(),
                         PropertyEditorType.TEXT).withKey(YAXIS_TITLE.getFullId()));
             }
         }
         if (isSupported(TABLE_GROUP)) {
-            PropertyEditorCategory category = new PropertyEditorCategory(DisplayerSettingsEditorConstants.INSTANCE.table_group());
+            PropertyEditorCategory category = new PropertyEditorCategory( CommonConstants.INSTANCE.table_group());
             categories.add(category);
 
             if (isSupported(TABLE_PAGESIZE)) {
-                category.withField(new PropertyEditorFieldInfo(DisplayerSettingsEditorConstants.INSTANCE.table_pageSize(),
+                category.withField(new PropertyEditorFieldInfo( CommonConstants.INSTANCE.table_pageSize(),
                         Integer.toString(displayerSettings.getTablePageSize()),
                         PropertyEditorType.TEXT)
                         .withKey(TABLE_PAGESIZE.getFullId())
                         .withValidators(new LongValidator()));
             }
             if (isSupported(TABLE_WIDTH)) {
-                category.withField(new PropertyEditorFieldInfo(DisplayerSettingsEditorConstants.INSTANCE.table_width(),
+                category.withField(new PropertyEditorFieldInfo( CommonConstants.INSTANCE.table_width(),
                         Integer.toString(displayerSettings.getTableWidth()),
                         PropertyEditorType.TEXT)
                         .withKey(TABLE_WIDTH.getFullId())
                         .withValidators(new LongValidator()));
             }
             if (isSupported(TABLE_SORTENABLED)) {
-                category.withField(new PropertyEditorFieldInfo(DisplayerSettingsEditorConstants.INSTANCE.table_sortEnabled(),
+                category.withField(new PropertyEditorFieldInfo( CommonConstants.INSTANCE.table_sortEnabled(),
                         Boolean.toString(displayerSettings.isTableSortEnabled()),
                         PropertyEditorType.BOOLEAN)
                         .withKey(TABLE_SORTENABLED.getFullId()));
@@ -341,7 +342,7 @@ public class DisplayerSettingsEditor extends Composite {
                 optionList.add("");
                 for (DataColumn column : dsColumns) optionList.add(column.getId());
 
-                category.withField(new PropertyEditorFieldInfo(DisplayerSettingsEditorConstants.INSTANCE.table_sortColumn(),
+                category.withField(new PropertyEditorFieldInfo( CommonConstants.INSTANCE.table_sortColumn(),
                         displayerSettings.getTableDefaultSortColumnId(),
                         PropertyEditorType.COMBO).withComboValues(optionList)
                         .withKey(TABLE_SORTCOLUMNID.getFullId()));
@@ -350,39 +351,39 @@ public class DisplayerSettingsEditor extends Composite {
                 List<String> optionList = new ArrayList<String>();
                 optionList.add(SortOrder.ASCENDING.toString());
                 optionList.add(SortOrder.DESCENDING.toString());
-                category.withField(new PropertyEditorFieldInfo(DisplayerSettingsEditorConstants.INSTANCE.table_sortOrder(),
+                category.withField(new PropertyEditorFieldInfo( CommonConstants.INSTANCE.table_sortOrder(),
                         displayerSettings.getTableDefaultSortOrder().toString(),
                         PropertyEditorType.COMBO).withComboValues(optionList)
                         .withKey(TABLE_SORTORDER.getFullId()));
             }
         }
         if (isSupported(METER_GROUP)) {
-            PropertyEditorCategory category = new PropertyEditorCategory(DisplayerSettingsEditorConstants.INSTANCE.meter_group());
+            PropertyEditorCategory category = new PropertyEditorCategory( CommonConstants.INSTANCE.meter_group());
             categories.add(category);
 
             if (isSupported(METER_START)) {
-                category.withField(new PropertyEditorFieldInfo(DisplayerSettingsEditorConstants.INSTANCE.meter_start(),
+                category.withField(new PropertyEditorFieldInfo( CommonConstants.INSTANCE.meter_start(),
                         Long.toString(displayerSettings.getMeterStart()),
                         PropertyEditorType.TEXT)
                         .withKey(METER_START.getFullId())
                         .withValidators(new MeterValidator(displayerSettings, 0)));
             }
             if (isSupported(METER_WARNING)) {
-                category.withField(new PropertyEditorFieldInfo(DisplayerSettingsEditorConstants.INSTANCE.meter_warning(),
+                category.withField(new PropertyEditorFieldInfo( CommonConstants.INSTANCE.meter_warning(),
                         Long.toString(displayerSettings.getMeterWarning()),
                         PropertyEditorType.TEXT)
                         .withKey(METER_WARNING.getFullId())
                         .withValidators(new MeterValidator(displayerSettings, 1)));
             }
             if (isSupported(METER_CRITICAL)) {
-                category.withField(new PropertyEditorFieldInfo(DisplayerSettingsEditorConstants.INSTANCE.meter_critical(),
+                category.withField(new PropertyEditorFieldInfo( CommonConstants.INSTANCE.meter_critical(),
                         Long.toString(displayerSettings.getMeterCritical()),
                         PropertyEditorType.TEXT)
                         .withKey(METER_CRITICAL.getFullId())
                         .withValidators(new MeterValidator(displayerSettings, 2)));
             }
             if (isSupported(METER_END)) {
-                category.withField(new PropertyEditorFieldInfo(DisplayerSettingsEditorConstants.INSTANCE.meter_end(),
+                category.withField(new PropertyEditorFieldInfo( CommonConstants.INSTANCE.meter_end(),
                         Long.toString(displayerSettings.getMeterEnd()),
                         PropertyEditorType.TEXT)
                         .withKey(METER_END.getFullId())
@@ -391,54 +392,54 @@ public class DisplayerSettingsEditor extends Composite {
 
         }
         if (isSupported(FILTER_GROUP)) {
-            PropertyEditorCategory category = new PropertyEditorCategory(DisplayerSettingsEditorConstants.INSTANCE.filter_group());
+            PropertyEditorCategory category = new PropertyEditorCategory( CommonConstants.INSTANCE.filter_group());
             categories.add(category);
 
             if (isSupported(FILTER_ENABLED)) {
-                category.withField(new PropertyEditorFieldInfo(DisplayerSettingsEditorConstants.INSTANCE.filter_enabled(),
+                category.withField(new PropertyEditorFieldInfo( CommonConstants.INSTANCE.filter_enabled(),
                         Boolean.toString(displayerSettings.isFilterEnabled()),
                         PropertyEditorType.BOOLEAN)
                         .withKey(FILTER_ENABLED.getFullId()));
             }
             if (isSupported(FILTER_SELFAPPLY_ENABLED)) {
-                category.withField(new PropertyEditorFieldInfo(DisplayerSettingsEditorConstants.INSTANCE.filter_self(),
+                category.withField(new PropertyEditorFieldInfo( CommonConstants.INSTANCE.filter_self(),
                         Boolean.toString(displayerSettings.isFilterSelfApplyEnabled()),
                         PropertyEditorType.BOOLEAN)
                         .withKey(FILTER_SELFAPPLY_ENABLED.getFullId()));
             }
             if (isSupported(FILTER_LISTENING_ENABLED)) {
-                category.withField(new PropertyEditorFieldInfo(DisplayerSettingsEditorConstants.INSTANCE.filter_listening(),
+                category.withField(new PropertyEditorFieldInfo( CommonConstants.INSTANCE.filter_listening(),
                         Boolean.toString(displayerSettings.isFilterListeningEnabled()),
                         PropertyEditorType.BOOLEAN)
                         .withKey(FILTER_LISTENING_ENABLED.getFullId()));
             }
             if (isSupported(FILTER_NOTIFICATION_ENABLED)) {
-                category.withField(new PropertyEditorFieldInfo(DisplayerSettingsEditorConstants.INSTANCE.filter_notifications(),
+                category.withField(new PropertyEditorFieldInfo( CommonConstants.INSTANCE.filter_notifications(),
                         Boolean.toString(displayerSettings.isFilterNotificationEnabled()),
                         PropertyEditorType.BOOLEAN)
                         .withKey(FILTER_NOTIFICATION_ENABLED.getFullId()));
             }
         }
         if (isSupported(REFRESH_GROUP)) {
-            PropertyEditorCategory category = new PropertyEditorCategory(DisplayerSettingsEditorConstants.INSTANCE.refresh_group());
+            PropertyEditorCategory category = new PropertyEditorCategory( CommonConstants.INSTANCE.refresh_group());
             categories.add(category);
 
             if (isSupported(REFRESH_INTERVAL)) {
-                category.withField(new PropertyEditorFieldInfo(DisplayerSettingsEditorConstants.INSTANCE.refresh_interval(),
+                category.withField(new PropertyEditorFieldInfo( CommonConstants.INSTANCE.refresh_interval(),
                         Integer.toString(displayerSettings.getRefreshInterval()),
                         PropertyEditorType.TEXT)
                         .withKey(REFRESH_INTERVAL.getFullId())
                         .withValidators(new LongValidator()));
             }
             if (isSupported(REFRESH_STALE_DATA)) {
-                category.withField(new PropertyEditorFieldInfo(DisplayerSettingsEditorConstants.INSTANCE.refresh_stale_data(),
+                category.withField(new PropertyEditorFieldInfo( CommonConstants.INSTANCE.refresh_stale_data(),
                         Boolean.toString(displayerSettings.isRefreshStaleData()),
                         PropertyEditorType.BOOLEAN)
                         .withKey(REFRESH_STALE_DATA.getFullId()));
             }
         }
         if (isSupported(COLUMNS_GROUP)) {
-            PropertyEditorCategory category = new PropertyEditorCategory(DisplayerSettingsEditorConstants.INSTANCE.common_columns());
+            PropertyEditorCategory category = new PropertyEditorCategory( CommonConstants.INSTANCE.common_columns());
             categories.add(category);
 
             DataSet dataSet = displayer.getDataSetHandler().getLastDataSet();
@@ -450,19 +451,19 @@ public class DisplayerSettingsEditor extends Composite {
                 String expression = cs.getValueExpression();
                 String pattern = cs.getValuePattern();
 
-                category.withField(new PropertyEditorFieldInfo("\u25fe " + DisplayerSettingsEditorConstants.INSTANCE.columns_name() + (i+1),
+                category.withField(new PropertyEditorFieldInfo("\u25fe " + CommonConstants.INSTANCE.columns_name() + (i+1),
                         cs.getColumnName(),
                         PropertyEditorType.TEXT)
                         .withKey(fieldSuffix + "name"));
 
                 if (expression != null) {
-                    category.withField(new PropertyEditorFieldInfo("     " + DisplayerSettingsEditorConstants.INSTANCE.columns_expression(),
+                    category.withField(new PropertyEditorFieldInfo("     " + CommonConstants.INSTANCE.columns_expression(),
                             expression,
                             PropertyEditorType.TEXT)
                             .withKey(fieldSuffix + "expression"));
                 }
                 if (pattern != null) {
-                    category.withField(new PropertyEditorFieldInfo("     " + DisplayerSettingsEditorConstants.INSTANCE.columns_pattern(),
+                    category.withField(new PropertyEditorFieldInfo("     " + CommonConstants.INSTANCE.columns_pattern(),
                             pattern,
                             PropertyEditorType.TEXT)
                             .withKey(fieldSuffix + "pattern"));
@@ -470,7 +471,7 @@ public class DisplayerSettingsEditor extends Composite {
                 /* Non-critical. Disable for the time being.
                 if (isSupported(COLUMN_EMPTY)) {
                     String empty = cs.getEmptyTemplate();
-                    category.withField(new PropertyEditorFieldInfo("     " + DisplayerSettingsEditorConstants.INSTANCE.columns_emptyvalue(),
+                    category.withField(new PropertyEditorFieldInfo("     " + CommonConstants.INSTANCE.columns_emptyvalue(),
                             empty,
                             PropertyEditorType.TEXT)
                             .withKey(fieldSuffix + "empty"));
@@ -526,7 +527,7 @@ public class DisplayerSettingsEditor extends Composite {
 
         @Override
         public String getValidatorErrorMessage() {
-            return "Value must be an integer number.";
+            return CommonConstants.INSTANCE.settings_validation_integer();
         }
     }
 
@@ -547,7 +548,7 @@ public class DisplayerSettingsEditor extends Composite {
 
         @Override
         public String getValidatorErrorMessage() {
-            return "Value must be a double.";
+            return CommonConstants.INSTANCE.settings_validation_double();
         }
     }
 
@@ -578,12 +579,12 @@ public class DisplayerSettingsEditor extends Composite {
 
         private String getLevelDescr(int level) {
             switch (level) {
-                case 0: return DisplayerSettingsEditorConstants.INSTANCE.meter_start();
-                case 1: return DisplayerSettingsEditorConstants.INSTANCE.meter_warning();
-                case 2: return DisplayerSettingsEditorConstants.INSTANCE.meter_critical();
-                case 3: return DisplayerSettingsEditorConstants.INSTANCE.meter_end();
+                case 0: return CommonConstants.INSTANCE.meter_start();
+                case 1: return CommonConstants.INSTANCE.meter_warning();
+                case 2: return CommonConstants.INSTANCE.meter_critical();
+                case 3: return CommonConstants.INSTANCE.meter_end();
             }
-            return "Unknown";
+            return CommonConstants.INSTANCE.settings_validation_meter_unknown();
         }
 
         @Override
@@ -601,9 +602,9 @@ public class DisplayerSettingsEditor extends Composite {
 
         @Override
         public String getValidatorErrorMessage() {
-            if (!lowerOk) return "Must be higher than the " + getLevelDescr(level-1) + " value.";
-            if (!upperOk) return "Must be lower than the " + getLevelDescr(level+1) + " value.";
-            return "Invalid value";
+            if (!lowerOk) return CommonConstants.INSTANCE.settings_validation_meter_higher(getLevelDescr(level-1));
+            if (!upperOk) return CommonConstants.INSTANCE.settings_validation_meter_lower(getLevelDescr(level+1));
+            return CommonConstants.INSTANCE.settings_validation_meter_invalid();
         }
     }
 }

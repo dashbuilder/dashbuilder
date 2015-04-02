@@ -41,6 +41,7 @@ import org.dashbuilder.displayer.DisplayerType;
 import org.dashbuilder.displayer.client.Displayer;
 import org.dashbuilder.displayer.client.DisplayerHelper;
 import org.dashbuilder.displayer.client.DisplayerLocator;
+import org.dashbuilder.displayer.client.resources.i18n.CommonConstants;
 
 @Dependent
 public class DisplayerEditorView extends Composite
@@ -172,7 +173,7 @@ public class DisplayerEditorView extends Composite
     @Override
     public void showTypeChangedWarning(DisplayerSettings oldSettings, DisplayerSettings newSettings) {
 
-        if (Window.confirm("Data settings are not compatible. The current settings will be lost. Continue?")) {
+        if (Window.confirm(CommonConstants.INSTANCE.displayer_editor_incompatible_settings())) {
             presenter.changeSettings(oldSettings, newSettings);
         } else {
             typeSelector.select(oldSettings.getType());

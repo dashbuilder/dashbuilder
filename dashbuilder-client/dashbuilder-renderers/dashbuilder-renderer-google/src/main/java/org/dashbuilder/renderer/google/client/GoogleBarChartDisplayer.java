@@ -35,6 +35,7 @@ import org.dashbuilder.dataset.DataSetLookupConstraints;
 import org.dashbuilder.displayer.DisplayerAttributeDef;
 import org.dashbuilder.displayer.DisplayerAttributeGroupDef;
 import org.dashbuilder.displayer.DisplayerConstraints;
+import org.dashbuilder.renderer.google.client.resources.i18n.GoogleDisplayerConstants;
 
 public class GoogleBarChartDisplayer extends GoogleCategoriesDisplayer {
 
@@ -72,12 +73,12 @@ public class GoogleBarChartDisplayer extends GoogleCategoriesDisplayer {
         DataSetLookupConstraints lookupConstraints = new DataSetLookupConstraints()
                 .setGroupRequired(true)
                 .setGroupColumn(true)
-                .setMaxColumns(10)
-                .setMinColumns(2)
-                .setExtraColumnsAllowed(true)
-                .setExtraColumnsType(ColumnType.NUMBER)
-                .setGroupsTitle("Categories")
-                .setColumnsTitle("Series")
+                .setMaxColumns( 10 )
+                .setMinColumns( 2 )
+                .setExtraColumnsAllowed( true )
+                .setExtraColumnsType( ColumnType.NUMBER )
+                .setGroupsTitle(GoogleDisplayerConstants.INSTANCE.common_Categories())
+                .setColumnsTitle(GoogleDisplayerConstants.INSTANCE.common_Series())
                 .setColumnTypes(new ColumnType[]{
                         ColumnType.LABEL,
                         ColumnType.NUMBER});

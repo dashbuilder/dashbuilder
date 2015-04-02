@@ -21,6 +21,8 @@
              xmlns:g='urn:import:com.google.gwt.user.client.ui'
              xmlns:b="urn:import:com.github.gwtbootstrap.client.ui" xmlns:Sg="urn:import:com.github.gwtbootstrap.client.ui">
 
+  <ui:with field="i18n" type="org.dashbuilder.displayer.client.resources.i18n.CommonConstants"/>
+
   <ui:style>
     .leftPanel {
       font-size: 12pt;
@@ -50,14 +52,14 @@
 
   <g:HTMLPanel>
     <b:TabPanel ui:field="optionsPanel">
-      <b:Tab ui:field="optionType" heading="Type" />
-      <b:Tab ui:field="optionData" heading="Data " />
-      <b:Tab ui:field="optionSettings" heading="Display" />
+      <b:Tab ui:field="optionType" heading="{i18n.displayer_editor_tab_type}" />
+      <b:Tab ui:field="optionData" heading="{i18n.displayer_editor_tab_data}" />
+      <b:Tab ui:field="optionSettings" heading="{i18n.displayer_editor_tab_display}" />
     </b:TabPanel>
     <g:HorizontalPanel>
       <g:VerticalPanel>
         <g:HorizontalPanel ui:field="dataTablePanel" styleName="{style.dataTablePanel}" visible="false">
-          <g:Label>View as table</g:Label>
+          <g:Label text="{i18n.displayer_editor_view_as_table}"/>
           <b:CheckBox ui:field="viewAsTable" />
         </g:HorizontalPanel>
         <g:SimplePanel ui:field="leftPanel" styleName="{style.leftPanel}" />

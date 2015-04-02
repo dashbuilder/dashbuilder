@@ -45,6 +45,7 @@ import org.dashbuilder.dataset.group.Interval;
 import org.dashbuilder.dataset.sort.SortOrder;
 import org.dashbuilder.displayer.DisplayerConstraints;
 import org.dashbuilder.displayer.DisplayerSettings;
+import org.dashbuilder.displayer.client.resources.i18n.CommonConstants;
 
 /**
  * Base class for implementing custom displayers.
@@ -469,13 +470,13 @@ public abstract class AbstractDisplayer extends Composite implements Displayer {
         }
         for (String keyword : _jsMalicious) {
             if (expr.contains(keyword)) {
-                throw new RuntimeException("Not allowed ( " + expr + " )");
+                throw new RuntimeException(CommonConstants.INSTANCE.displayer_keyword_not_allowed(expr));
             }
         }
         try {
             return evalExpression(val, expr);
         } catch (Exception e) {
-            throw new RuntimeException("Invalid syntax ( " + expr + " )");
+            throw new RuntimeException(CommonConstants.INSTANCE.displayer_expr_invalid_syntax(expr));
         }
     }
 

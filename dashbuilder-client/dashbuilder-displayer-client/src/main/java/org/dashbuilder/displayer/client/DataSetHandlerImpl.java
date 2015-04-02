@@ -40,8 +40,9 @@ import org.dashbuilder.dataset.group.Interval;
 import org.dashbuilder.dataset.sort.ColumnSort;
 import org.dashbuilder.dataset.sort.DataSetSort;
 import org.dashbuilder.dataset.sort.SortOrder;
+import org.dashbuilder.displayer.client.resources.i18n.CommonConstants;
 
-public class DataSetHandlerImpl implements DataSetHandler {
+    public class DataSetHandlerImpl implements DataSetHandler {
 
     protected DataSetClientServices dataSetLookupClient = DataSetClientServices.get();
     protected DataSetLookup lookupBase;
@@ -96,8 +97,8 @@ public class DataSetHandlerImpl implements DataSetHandler {
 
     public boolean filter(DataSetGroup op) {
         ColumnGroup cg = op.getColumnGroup();
-        if (cg == null) throw new RuntimeException("Group ops requires to specify a pivot column.");
-        if (!op.isSelect()) throw new RuntimeException("Group intervals not specified");
+        if (cg == null) throw new RuntimeException(CommonConstants.INSTANCE.datasethandler_groupops_no_pivotcolumn());
+        if (!op.isSelect()) throw new RuntimeException(CommonConstants.INSTANCE.datasethandler_groupops_no_groupintervals());
 
         // Avoid duplicates
         for (DataSetGroup next : lookupCurrent.getOperationList(DataSetGroup.class)) {
@@ -115,8 +116,8 @@ public class DataSetHandlerImpl implements DataSetHandler {
 
     public boolean drillDown(DataSetGroup op) {
         ColumnGroup cg = op.getColumnGroup();
-        if (cg == null) throw new RuntimeException("Group ops requires to specify a pivot column.");
-        if (!op.isSelect()) throw new RuntimeException("Group intervals not specified");
+        if (cg == null) throw new RuntimeException(CommonConstants.INSTANCE.datasethandler_groupops_no_pivotcolumn());
+        if (!op.isSelect()) throw new RuntimeException(CommonConstants.INSTANCE.datasethandler_groupops_no_groupintervals());
 
         // Avoid duplicates
         for (DataSetGroup next : lookupCurrent.getOperationList(DataSetGroup.class)) {

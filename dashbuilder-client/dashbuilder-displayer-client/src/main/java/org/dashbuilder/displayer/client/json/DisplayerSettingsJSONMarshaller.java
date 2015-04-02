@@ -32,6 +32,7 @@ import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetLookup;
 import org.dashbuilder.displayer.ColumnSettings;
 import org.dashbuilder.displayer.DisplayerSettings;
+import org.dashbuilder.displayer.client.resources.i18n.CommonConstants;
 
 public class DisplayerSettingsJSONMarshaller {
 
@@ -92,7 +93,7 @@ public class DisplayerSettingsJSONMarshaller {
                     parseResult.put(DATASET_LOOKUP_PREFIX, null);
                 }
                 else {
-                    throw new RuntimeException( "Either a DataSet or a DataSetLookup should be specified" );
+                    throw new RuntimeException( CommonConstants.INSTANCE.json_displayersettings_dataset_lookup_notspecified());
                 }
 
                 // Parse the columns settings
@@ -136,7 +137,7 @@ public class DisplayerSettingsJSONMarshaller {
             json.put(DATASET_LOOKUP_PREFIX, dataSetLookupJSONMarshaller.toJson( dataSetLookup ) );
         }
         else {
-            throw new RuntimeException( "Either a DataSet or a DataSetLookup should be specified" );
+            throw new RuntimeException( CommonConstants.INSTANCE.json_displayersettings_dataset_lookup_notspecified());
         }
 
         // Column settings
@@ -224,7 +225,7 @@ public class DisplayerSettingsJSONMarshaller {
             columnSettingsList.add(columnSettings);
 
             JSONValue value = columnJson.get(COLUMN_ID);
-            if (value == null) throw new RuntimeException("The column id reference of a column settings cannot be null");
+            if (value == null) throw new RuntimeException( CommonConstants.INSTANCE.json_columnsettings_null_columnid());
             columnSettings.setColumnId(value.isString().stringValue());
 
             value = columnJson.get(COLUMN_NAME);

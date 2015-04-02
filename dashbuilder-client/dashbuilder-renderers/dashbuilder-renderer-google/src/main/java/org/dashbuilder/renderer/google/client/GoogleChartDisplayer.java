@@ -57,7 +57,7 @@ public abstract class GoogleChartDisplayer extends GoogleDisplayer {
     }
 
     protected Widget createNoDataMsgPanel() {
-        return new Label("NO DATA");
+        return new Label(GoogleDisplayerConstants.INSTANCE.common_noData());
     }
 
     protected Widget createCurrentSelectionWidget() {

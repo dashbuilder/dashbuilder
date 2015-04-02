@@ -30,6 +30,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.displayer.DisplayerType;
+import org.dashbuilder.displayer.client.resources.i18n.CommonConstants;
 
 @Dependent
 public class DisplayerTypeSelector extends Composite {
@@ -52,15 +53,15 @@ public class DisplayerTypeSelector extends Composite {
     TabPanel optionsPanel;
 
     public DisplayerTypeSelector() {
-        tabList.add(new DisplayerTab("Bar", DisplayerType.BARCHART));
-        tabList.add(new DisplayerTab("Pie", DisplayerType.PIECHART));
-        tabList.add(new DisplayerTab("Line", DisplayerType.LINECHART));
-        tabList.add(new DisplayerTab("Area", DisplayerType.AREACHART));
-        tabList.add(new DisplayerTab("Bubble", DisplayerType.BUBBLECHART));
-        tabList.add(new DisplayerTab("Meter", DisplayerType.METERCHART));
-        tabList.add(new DisplayerTab("Metric", DisplayerType.METRIC));
-        tabList.add(new DisplayerTab("Map", DisplayerType.MAP));
-        tabList.add(new DisplayerTab("Table", DisplayerType.TABLE));
+        tabList.add(new DisplayerTab(CommonConstants.INSTANCE.displayer_type_selector_tab_bar(), DisplayerType.BARCHART));
+        tabList.add(new DisplayerTab(CommonConstants.INSTANCE.displayer_type_selector_tab_pie(), DisplayerType.PIECHART));
+        tabList.add(new DisplayerTab(CommonConstants.INSTANCE.displayer_type_selector_tab_line(), DisplayerType.LINECHART));
+        tabList.add(new DisplayerTab(CommonConstants.INSTANCE.displayer_type_selector_tab_area(), DisplayerType.AREACHART));
+        tabList.add(new DisplayerTab(CommonConstants.INSTANCE.displayer_type_selector_tab_bubble(), DisplayerType.BUBBLECHART));
+        tabList.add(new DisplayerTab(CommonConstants.INSTANCE.displayer_type_selector_tab_meter(), DisplayerType.METERCHART));
+        tabList.add(new DisplayerTab(CommonConstants.INSTANCE.displayer_type_selector_tab_metric(), DisplayerType.METRIC));
+        tabList.add(new DisplayerTab(CommonConstants.INSTANCE.displayer_type_selector_tab_map(), DisplayerType.MAP));
+        tabList.add(new DisplayerTab(CommonConstants.INSTANCE.displayer_type_selector_tab_table(), DisplayerType.TABLE));
 
         optionsPanel = new TabPanel(Bootstrap.Tabs.LEFT);
         for (DisplayerTab tab : tabList) optionsPanel.add(tab);

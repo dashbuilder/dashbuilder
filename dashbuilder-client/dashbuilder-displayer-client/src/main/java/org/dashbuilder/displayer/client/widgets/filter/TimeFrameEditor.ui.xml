@@ -22,12 +22,14 @@
              xmlns:b="urn:import:com.github.gwtbootstrap.client.ui"
              xmlns:df="urn:import:org.dashbuilder.displayer.client.widgets.filter">
 
+  <ui:with field="i18n" type="org.dashbuilder.displayer.client.resources.i18n.CommonConstants"/>
+
     <g:VerticalPanel>
-      <g:Label text="From" />
+      <g:Label text="{i18n.timeframe_from}" />
       <df:TimeInstantEditor ui:field="fromEditor" />
-      <g:Label text="To" />
+      <g:Label text="{i18n.timeframe_to}" />
       <df:TimeInstantEditor ui:field="toEditor" />
-      <g:Label text="First month of year" ui:field="firstMonthLabel" visible="false"/>
+      <g:Label text="{i18n.timeframe_first_month_year}" ui:field="firstMonthLabel" visible="false"/>
       <b:ListBox ui:field="firstMonthList" width="80px" visible="false" />
     </g:VerticalPanel>
 </ui:UiBinder>

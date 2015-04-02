@@ -25,6 +25,7 @@ import javax.inject.Inject;
 
 import org.dashbuilder.displayer.DisplayerSettings;
 import org.dashbuilder.displayer.DisplayerType;
+import org.dashbuilder.displayer.client.resources.i18n.CommonConstants;
 import org.jboss.errai.ioc.client.container.IOC;
 import org.jboss.errai.ioc.client.container.IOCBeanDef;
 import org.jboss.errai.ioc.client.container.SyncBeanManager;
@@ -83,8 +84,8 @@ public class RendererLibLocator {
         // Lookup the renderer library.
         String beanName = renderer + "_renderer";
         Collection<IOCBeanDef> beans = beanManager.lookupBeans(beanName);
-        if (beans == null || beans.isEmpty()) throw new RuntimeException(renderer + " renderer not found.");
-        if (beans.size() > 1) throw new RuntimeException("Multiple renderer implementations found for: " + renderer);
+        if (beans == null || beans.isEmpty()) throw new RuntimeException(CommonConstants.INSTANCE.rendererliblocator_renderer_not_found(renderer));
+        if (beans.size() > 1) throw new RuntimeException(CommonConstants.INSTANCE.rendererliblocator_multiple_renderers_found(renderer));
 
         IOCBeanDef beanDef = beans.iterator().next();
         return (RendererLibrary) beanDef.getInstance();

@@ -22,6 +22,7 @@ import javax.enterprise.context.Dependent;
 
 import com.github.gwtbootstrap.client.ui.Modal;
 import com.google.gwt.user.client.ui.IsWidget;
+import org.dashbuilder.client.editor.resources.i18n.Constants;
 import org.dashbuilder.displayer.DisplayerSettings;
 import org.dashbuilder.displayer.client.json.DisplayerSettingsJSONMarshaller;
 import org.dashbuilder.displayer.client.widgets.DisplayerEditor;
@@ -74,6 +75,6 @@ public class DisplayerPerspectiveEditorComponent implements ExternalPerspectiveE
     public void modalSettings(Modal popup) {
         popup.setWidth(900);
         popup.setMaxHeigth("500px");
-        popup.setTitle("Edit Displayer");
+        popup.setTitle(Constants.INSTANCE.displayer_perspective_editor_title());
     }
 }

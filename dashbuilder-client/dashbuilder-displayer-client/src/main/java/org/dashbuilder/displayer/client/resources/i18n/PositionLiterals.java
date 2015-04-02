@@ -16,24 +16,22 @@
 package org.dashbuilder.displayer.client.resources.i18n;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.i18n.client.Messages;
+import com.google.gwt.i18n.client.ConstantsWithLookup;
 
-public interface Constants extends Messages {
+public interface PositionLiterals extends ConstantsWithLookup {
 
-    public static final Constants INSTANCE = GWT.create( Constants.class );
+    public static final PositionLiterals INSTANCE = GWT.create(PositionLiterals.class);
 
-    String menu_button_actions();
+    // Position enum literals
 
-    String menu_edit();
+    String POSITION_BOTTOM();
 
-    String menu_clone();
+    String POSITION_TOP();
 
-    String menu_export_csv();
+    String POSITION_LEFT();
 
-    String menu_export_excel();
+    String POSITION_RIGHT();
 
-    String displayer_presenter_displayer_notfound();
-
-    String displayer_presenter_export_large_dataset();
+    String POSITION_IN();
 
 }

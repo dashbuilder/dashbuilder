@@ -15,7 +15,6 @@
  */
 package org.dashbuilder.displayer.client.json;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -28,6 +27,7 @@ import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetFactory;
+import org.dashbuilder.displayer.client.resources.i18n.CommonConstants;
 
 public class DataSetJSONMarshaller {
 
@@ -97,7 +97,7 @@ public class DataSetJSONMarshaller {
             JSONString columnId = columnJson.get( DATASET_COLUMN_ID ).isString();
             JSONString columnType = columnJson.get( DATASET_COLUMN_TYPE ).isString();
 
-            if ( columnId == null || columnType == null ) throw new RuntimeException( "Column id / type need to be specified" );
+            if ( columnId == null || columnType == null ) throw new RuntimeException( CommonConstants.INSTANCE.json_dataset_column_id_type_not_specified());
 
             dataSet.addColumn(columnId.stringValue(), ColumnType.valueOf(columnType.stringValue()));
             DataColumn dataColumn = dataSet.getColumnById( columnId.stringValue() );

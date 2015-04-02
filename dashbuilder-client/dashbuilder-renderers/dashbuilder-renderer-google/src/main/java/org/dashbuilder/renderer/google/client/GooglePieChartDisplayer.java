@@ -29,6 +29,7 @@ import org.dashbuilder.dataset.DataSetLookupConstraints;
 import org.dashbuilder.displayer.DisplayerAttributeDef;
 import org.dashbuilder.displayer.DisplayerAttributeGroupDef;
 import org.dashbuilder.displayer.DisplayerConstraints;
+import org.dashbuilder.renderer.google.client.resources.i18n.GoogleDisplayerConstants;
 
 public class GooglePieChartDisplayer extends GoogleCategoriesDisplayer {
 
@@ -68,8 +69,8 @@ public class GooglePieChartDisplayer extends GoogleCategoriesDisplayer {
                 .setMaxColumns(2)
                 .setMinColumns(2)
                 .setExtraColumnsAllowed(false)
-                .setGroupsTitle("Categories")
-                .setColumnsTitle("Values")
+                .setGroupsTitle(GoogleDisplayerConstants.INSTANCE.common_Categories())
+                .setColumnsTitle(GoogleDisplayerConstants.INSTANCE.common_Values())
                 .setColumnTypes(new ColumnType[] {
                         ColumnType.LABEL,
                         ColumnType.NUMBER});

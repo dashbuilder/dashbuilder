@@ -75,8 +75,8 @@ public class GoogleTableDisplayer extends GoogleDisplayer {
                 .setMaxColumns(-1)
                 .setMinColumns(1)
                 .setExtraColumnsAllowed(true)
-                .setGroupsTitle("Rows")
-                .setColumnsTitle("Columns");
+                .setGroupsTitle(GoogleDisplayerConstants.INSTANCE.common_Rows())
+                .setColumnsTitle(GoogleDisplayerConstants.INSTANCE.common_Columns());
 
         return new DisplayerConstraints(lookupConstraints)
                    .supportsAttribute( DisplayerAttributeDef.TYPE )
@@ -292,7 +292,7 @@ public class GoogleTableDisplayer extends GoogleDisplayer {
         }
         Label totalRows = null;
         if ( numberOfRows == 0) {
-            Label noData = new Label( GoogleDisplayerConstants.INSTANCE.googleTableDisplayer_noData() );
+            Label noData = new Label(GoogleDisplayerConstants.INSTANCE.common_noData());
             pagerPanel.add(noData);
         }
         else if ( showTotalRowsHint ) {

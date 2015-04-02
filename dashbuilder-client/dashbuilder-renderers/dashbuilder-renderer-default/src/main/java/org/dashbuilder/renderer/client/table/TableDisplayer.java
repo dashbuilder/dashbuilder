@@ -52,6 +52,7 @@ import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.dataset.DataSet;
 
 import org.dashbuilder.dataset.sort.SortOrder;
+import org.dashbuilder.renderer.client.resources.i18n.CommonConstants;
 import org.dashbuilder.renderer.client.resources.i18n.TableConstants;
 
 import org.uberfire.ext.widgets.common.client.tables.PagedTable;
@@ -81,9 +82,9 @@ public class TableDisplayer extends AbstractDisplayer {
     public void draw() {
         if (!isDrawn()) {
             if ( displayerSettings == null ) {
-                displayMessage( "ERROR: DisplayerSettings property not set" );
+                displayMessage( CommonConstants.INSTANCE.error() + CommonConstants.INSTANCE.error_settings_unset());
             } else if ( dataSetHandler == null ) {
-                displayMessage( "ERROR: DataSetHandler property not set" );
+                displayMessage(CommonConstants.INSTANCE.error() + CommonConstants.INSTANCE.error_handler_unset());
             } else {
                 try {
                     String initMsg = TableConstants.INSTANCE.tableDisplayer_initializing();
@@ -111,11 +112,11 @@ public class TableDisplayer extends AbstractDisplayer {
                             afterDraw();
                         }
                         public void notFound() {
-                            displayMessage( "ERROR: Data set not found." );
+                            displayMessage(CommonConstants.INSTANCE.error() + CommonConstants.INSTANCE.error_dataset_notfound());
                         }
                     });
                 } catch ( Exception e ) {
-                    displayMessage( "ERROR: " + e.getMessage() );
+                    displayMessage(CommonConstants.INSTANCE.error() + e.getMessage());
                 }
             }
         }
@@ -140,7 +141,7 @@ public class TableDisplayer extends AbstractDisplayer {
                 afterRedraw();
             }
             public void notFound() {
-                displayMessage( "ERROR: Data set not found." );
+                displayMessage(CommonConstants.INSTANCE.error() + CommonConstants.INSTANCE.error_dataset_notfound());
             }
         } );
     }
@@ -172,8 +173,8 @@ public class TableDisplayer extends AbstractDisplayer {
                 .setMaxColumns(-1)
                 .setMinColumns(1)
                 .setExtraColumnsAllowed(true)
-                .setGroupsTitle("Rows")
-                .setColumnsTitle("Columns");
+                .setGroupsTitle(TableConstants.INSTANCE.tableDisplayer_groupsTitle())
+                .setColumnsTitle(TableConstants.INSTANCE.tableDisplayer_columnsTitle());
 
         return new DisplayerConstraints(lookupConstraints)
                    .supportsAttribute( DisplayerAttributeDef.TYPE )
@@ -230,7 +231,7 @@ public class TableDisplayer extends AbstractDisplayer {
                     }
             );
         } catch ( Exception e ) {
-            displayMessage("ERROR: " + e.getMessage());
+            displayMessage(CommonConstants.INSTANCE.error() + e.getMessage());
         }
     }
 
@@ -330,7 +331,7 @@ public class TableDisplayer extends AbstractDisplayer {
             }
         }
 
-        Anchor anchor = new Anchor("reset");
+        Anchor anchor = new Anchor(TableConstants.INSTANCE.tableDisplayer_reset());
         panel.add(anchor);
         anchor.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
@@ -434,7 +435,7 @@ public class TableDisplayer extends AbstractDisplayer {
                                 updateRowData(lastOffset, rows);
                             }
                             public void notFound() {
-                                displayMessage("ERROR: Data set not found.");
+                                displayMessage(CommonConstants.INSTANCE.error() + CommonConstants.INSTANCE.error_dataset_notfound());
                             }
                         }
                 );

@@ -40,10 +40,23 @@ import org.dashbuilder.renderer.google.client.resources.i18n.GoogleDisplayerCons
 
 public abstract class GoogleCategoriesDisplayer extends GoogleChartDisplayer {
 
-    public static final String[] COLOR_ARRAY = new String[] {"blue", "red", "orange", "brown", "coral", "aqua", "fuchsia", "gold",
-            "green", "lime", "magenta", "pink", "silver", "yellow"};
+    public static final String[] COLOR_ARRAY = new String[] {
+            GoogleDisplayerConstants.INSTANCE.googleCategoriesDisplayer_color_blue(),
+            GoogleDisplayerConstants.INSTANCE.googleCategoriesDisplayer_color_red(),
+            GoogleDisplayerConstants.INSTANCE.googleCategoriesDisplayer_color_orange(),
+            GoogleDisplayerConstants.INSTANCE.googleCategoriesDisplayer_color_brown(),
+            GoogleDisplayerConstants.INSTANCE.googleCategoriesDisplayer_color_coral(),
+            GoogleDisplayerConstants.INSTANCE.googleCategoriesDisplayer_color_aqua(),
+            GoogleDisplayerConstants.INSTANCE.googleCategoriesDisplayer_color_fuchsia(),
+            GoogleDisplayerConstants.INSTANCE.googleCategoriesDisplayer_color_gold(),
+            GoogleDisplayerConstants.INSTANCE.googleCategoriesDisplayer_color_green(),
+            GoogleDisplayerConstants.INSTANCE.googleCategoriesDisplayer_color_lime(),
+            GoogleDisplayerConstants.INSTANCE.googleCategoriesDisplayer_color_magenta(),
+            GoogleDisplayerConstants.INSTANCE.googleCategoriesDisplayer_color_pink(),
+            GoogleDisplayerConstants.INSTANCE.googleCategoriesDisplayer_color_silver(),
+            GoogleDisplayerConstants.INSTANCE.googleCategoriesDisplayer_color_yellow() };
 
-    public static final String COLOR_NOT_SELECTED = "grey";
+    public static final String COLOR_NOT_SELECTED = GoogleDisplayerConstants.INSTANCE.googleCategoriesDisplayer_color_grey();
 
     public String[] createColorArray(DataTable table) {
         String[] colorArray = new String[table.getNumberOfRows()];

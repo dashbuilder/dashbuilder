@@ -32,6 +32,7 @@ import org.dashbuilder.dataset.DataSetLookupConstraints;
 import org.dashbuilder.displayer.DisplayerAttributeDef;
 import org.dashbuilder.displayer.DisplayerAttributeGroupDef;
 import org.dashbuilder.displayer.DisplayerConstraints;
+import org.dashbuilder.renderer.google.client.resources.i18n.GoogleDisplayerConstants;
 
 public class GoogleBubbleChartDisplayer extends GoogleCategoriesDisplayer {
 
@@ -65,17 +66,17 @@ public class GoogleBubbleChartDisplayer extends GoogleCategoriesDisplayer {
     public DisplayerConstraints createDisplayerConstraints() {
 
         DataSetLookupConstraints lookupConstraints = new DataSetLookupConstraints()
-                .setGroupRequired(true)
-                .setGroupColumn(true)
-                .setMaxColumns(5)
-                .setMinColumns(5)
-                .setExtraColumnsAllowed(false)
-                .setGroupsTitle("Categories")
-                .setColumnsTitle("Values")
-                .setColumnTitle(1, "X Axis")
-                .setColumnTitle(2, "Y Axis")
-                .setColumnTitle(3, "Bubble color")
-                .setColumnTitle(4, "Bubble size")
+                .setGroupRequired( true )
+                .setGroupColumn( true )
+                .setMaxColumns( 5 )
+                .setMinColumns( 5 )
+                .setExtraColumnsAllowed( false )
+                .setGroupsTitle( GoogleDisplayerConstants.INSTANCE.common_Categories())
+                .setColumnsTitle(GoogleDisplayerConstants.INSTANCE.common_Values())
+                .setColumnTitle(1, GoogleDisplayerConstants.INSTANCE.googleBubbleDisplayer_XAxis())
+                .setColumnTitle(2, GoogleDisplayerConstants.INSTANCE.googleBubbleDisplayer_YAxis())
+                .setColumnTitle(3, GoogleDisplayerConstants.INSTANCE.googleBubbleDisplayer_BubbleColor())
+                .setColumnTitle(4, GoogleDisplayerConstants.INSTANCE.googleBubbleDisplayer_BubbleSize())
                 .setColumnTypes(new ColumnType[] {
                         ColumnType.LABEL,
                         ColumnType.NUMBER,

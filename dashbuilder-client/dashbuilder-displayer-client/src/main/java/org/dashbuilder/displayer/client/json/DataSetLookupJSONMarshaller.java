@@ -46,10 +46,9 @@ import org.dashbuilder.dataset.group.Interval;
 import org.dashbuilder.dataset.sort.ColumnSort;
 import org.dashbuilder.dataset.sort.DataSetSort;
 import org.dashbuilder.dataset.sort.SortOrder;
+import org.dashbuilder.displayer.client.resources.i18n.CommonConstants;
 
 public class DataSetLookupJSONMarshaller {
-
-    private static final String JSON_VALIDATION_ERROR = "JSON validation error: ";
 
     private static final String UUID = "dataSetUuid";
     private static final String ROWCOUNT = "rowCount";
@@ -158,7 +157,7 @@ public class DataSetLookupJSONMarshaller {
             colFilterJson.put( FUNCTION_TERMS, paramsJsonArray );
 
         } else {
-            GWT.log( "Unsupported ColumnFilter" );
+            GWT.log( CommonConstants.INSTANCE.json_datasetlookup_unsupported_column_filter());
         }
         return colFilterJson;
     }
@@ -312,12 +311,12 @@ public class DataSetLookupJSONMarshaller {
         String functionType = null;
 
         JSONValue value = columnFilterJson.get( COLUMNID );
-        if ( checkNotNull( value, false, "the column id field of a column filter cannot be null." ) ) {
+        if ( checkNotNull(value, false, CommonConstants.INSTANCE.json_datasetlookup_columnfilter_null_columnid())) {
             columnId = value.isString() != null ? value.isString().stringValue() : null;
         }
 
         value = columnFilterJson.get( FUNCTION_TYPE );
-        if ( checkNotNull( value, false, "the function type field of a column filter cannot be null." ) ) {
+        if ( checkNotNull(value, false, CommonConstants.INSTANCE.json_datasetlookup_columnfilter_null_functiontype())) {
             functionType = value.isString() != null ? value.isString().stringValue() : null;
         }
 
@@ -328,7 +327,7 @@ public class DataSetLookupJSONMarshaller {
             cff.setColumnId( columnId );
             cff.setType( CoreFunctionType.getByName( functionType ) );
 
-            if ( checkNotNull( value, false, "the parameters of a core function filter cannot be null." ) ) {
+            if ( checkNotNull(value, false, CommonConstants.INSTANCE.json_datasetlookup_corefunction_null_params())) {
                 cff.setParameters( parseCoreFunctionParameters( value.isArray() ).toArray( new Comparable[]{} ) );
             }
 
@@ -339,14 +338,14 @@ public class DataSetLookupJSONMarshaller {
             lef.setColumnId( columnId );
             lef.setLogicalOperator( LogicalExprType.getByName( functionType ) );
 
-            if ( checkNotNull( value, false, "the parameters of a logical expression filter cannot be null." ) ) {
+            if ( checkNotNull(value, false, CommonConstants.INSTANCE.json_datasetlookup_logexpr_null_params())) {
                 // Logical expression terms are an an array of column filters
                 lef.setLogicalTerms( parseColumnFilters( value.isArray() ) );
             }
 
             return lef;
         }
-        else throw new RuntimeException( "Wrong type of column filter has been specified." );
+        else throw new RuntimeException( CommonConstants.INSTANCE.json_datasetlookup_columnfilter_wrong_type());
     }
 
     private List<Comparable> parseCoreFunctionParameters( JSONArray paramsJsonArray ) {
@@ -481,7 +480,7 @@ public class DataSetLookupJSONMarshaller {
         if ( nullable ) return value != null;
         else {
             if ( value !=null ) return true;
-            else  throw new RuntimeException( JSON_VALIDATION_ERROR + ( !StringUtils.isBlank( errorMessage ) ? errorMessage : "") );
+            else  throw new RuntimeException(CommonConstants.INSTANCE.json_datasetlookup_validation_error() + (!StringUtils.isBlank(errorMessage) ? errorMessage : ""));
         }
     }
 }

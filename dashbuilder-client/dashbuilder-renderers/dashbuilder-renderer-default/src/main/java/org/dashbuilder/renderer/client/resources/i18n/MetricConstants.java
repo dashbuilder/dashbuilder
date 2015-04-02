@@ -23,8 +23,10 @@ public interface MetricConstants extends Messages {
 
     public static final MetricConstants INSTANCE = GWT.create( MetricConstants.class );
 
-    public String metricDisplayer_initializing();
+    String metricDisplayer_initializing();
 
-    public String metricDisplayer_noDataAvailable();
+    String metricDisplayer_noDataAvailable();
+
+    String metricDisplayer_columnsTitle();
 
 }

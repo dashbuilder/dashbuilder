@@ -27,6 +27,7 @@ import org.dashbuilder.displayer.DisplayerAttributeDef;
 import org.dashbuilder.displayer.DisplayerAttributeGroupDef;
 import org.dashbuilder.displayer.DisplayerConstraints;
 import org.dashbuilder.displayer.client.AbstractDisplayer;
+import org.dashbuilder.renderer.client.resources.i18n.CommonConstants;
 import org.dashbuilder.renderer.client.resources.i18n.MetricConstants;
 
 public abstract class AbstractMetricDisplayer extends AbstractDisplayer {
@@ -47,7 +48,7 @@ public abstract class AbstractMetricDisplayer extends AbstractDisplayer {
                 .setMinColumns(1)
                 .setFunctionRequired(true)
                 .setExtraColumnsAllowed(false)
-                .setColumnsTitle("Metric")
+                .setColumnsTitle(MetricConstants.INSTANCE.metricDisplayer_columnsTitle())
                 .setColumnTypes(new ColumnType[] {
                         ColumnType.NUMBER});
 
@@ -68,9 +69,9 @@ public abstract class AbstractMetricDisplayer extends AbstractDisplayer {
     public void draw() {
         if (!isDrawn()) {
             if ( displayerSettings == null ) {
-                displayMessage( "ERROR: DisplayerSettings property not set" );
+                displayMessage( CommonConstants.INSTANCE.error() + CommonConstants.INSTANCE.error_settings_unset() );
             } else if ( dataSetHandler == null ) {
-                displayMessage( "ERROR: DataSetHandler property not set" );
+                displayMessage(CommonConstants.INSTANCE.error() + CommonConstants.INSTANCE.error_handler_unset());
             } else {
                 try {
                     String initMsg = MetricConstants.INSTANCE.metricDisplayer_initializing();
@@ -93,11 +94,11 @@ public abstract class AbstractMetricDisplayer extends AbstractDisplayer {
                             afterDraw();
                         }
                         public void notFound() {
-                            displayMessage("ERROR: Data set not found.");
+                            displayMessage(CommonConstants.INSTANCE.error() + CommonConstants.INSTANCE.error_dataset_notfound());
                         }
                     });
                 } catch ( Exception e ) {
-                    displayMessage( "ERROR: " + e.getMessage() );
+                    displayMessage(CommonConstants.INSTANCE.error() + e.getMessage() );
                 }
             }
         }
@@ -118,11 +119,11 @@ public abstract class AbstractMetricDisplayer extends AbstractDisplayer {
                         afterRedraw();
                     }
                     public void notFound() {
-                        displayMessage("ERROR: Data set not found.");
+                        displayMessage(CommonConstants.INSTANCE.error() + CommonConstants.INSTANCE.error_dataset_notfound());
                     }
                 });
             } catch ( Exception e ) {
-                displayMessage( "ERROR: " + e.getMessage() );
+                displayMessage(CommonConstants.INSTANCE.error() + e.getMessage() );
             }
         }
     }

@@ -13,27 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbuilder.displayer.client.resources.i18n;
+package org.dashbuilder.dataset.client.resources.i18n;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.i18n.client.Messages;
 
-public interface Constants extends Messages {
+public interface CommonConstants extends Messages {
 
-    public static final Constants INSTANCE = GWT.create( Constants.class );
+    public static final CommonConstants INSTANCE = GWT.create( CommonConstants.class );
 
-    String menu_button_actions();
+    String weeks();
 
-    String menu_edit();
+    String exc_text_columns_no_grouping();
 
-    String menu_clone();
-
-    String menu_export_csv();
-
-    String menu_export_excel();
-
-    String displayer_presenter_displayer_notfound();
-
-    String displayer_presenter_export_large_dataset();
+    String exc_no_client_side_data_export();
 
 }

@@ -32,6 +32,7 @@ import org.dashbuilder.dataset.DataSetLookupConstraints;
 import org.dashbuilder.displayer.DisplayerAttributeDef;
 import org.dashbuilder.displayer.DisplayerAttributeGroupDef;
 import org.dashbuilder.displayer.DisplayerConstraints;
+import org.dashbuilder.renderer.google.client.resources.i18n.GoogleDisplayerConstants;
 
 public class GoogleMapDisplayer extends GoogleChartDisplayer {
 
@@ -88,8 +89,8 @@ public class GoogleMapDisplayer extends GoogleChartDisplayer {
                 .setMinColumns(2)
                 .setMaxColumns(3)
                 .setExtraColumnsAllowed(true)
-                .setGroupsTitle("Locations")
-                .setColumnsTitle("Series")
+                .setGroupsTitle(GoogleDisplayerConstants.INSTANCE.common_Locations())
+                .setColumnsTitle(GoogleDisplayerConstants.INSTANCE.common_Series())
                 .setColumnTypes(new ColumnType[] {
                         ColumnType.LABEL,
                         ColumnType.NUMBER});

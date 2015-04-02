@@ -104,7 +104,7 @@ public class DisplayerScreenPresenter {
     public void onStartup(final PlaceRequest placeRequest) {
         String json = placeRequest.getParameter("json", "");
         if (!StringUtils.isBlank(json)) this.displayerSettings = jsonMarshaller.fromJsonString(json);
-        if (displayerSettings == null) throw new IllegalArgumentException("Displayer settings not found.");
+        if (displayerSettings == null) throw new IllegalArgumentException(Constants.INSTANCE.displayer_presenter_displayer_notfound());
 
         // Check if display renderer selector component.
         Boolean showRendererSelector = Boolean.parseBoolean(placeRequest.getParameter("showRendererSelector","false"));
@@ -282,7 +282,7 @@ public class DisplayerScreenPresenter {
             // TODO: ask the user ....
             DataSetMetadata metadata = DataSetClientServices.get().getMetadata(dataSetLookup.getDataSetUUID());
             if (metadata.getNumberOfRows() > MAX_EXPORT_LIMIT) {
-                Window.alert( "The data set about to be exported might be large,  no more than 100K rows will be exported." );
+                Window.alert(Constants.INSTANCE.displayer_presenter_export_large_dataset());
             }
             _dataSetLookup.setRowOffset(0);
             _dataSetLookup.setNumberOfRows(MAX_EXPORT_LIMIT);

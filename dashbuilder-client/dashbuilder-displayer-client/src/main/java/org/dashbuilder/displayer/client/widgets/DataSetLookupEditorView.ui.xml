@@ -23,6 +23,8 @@
              xmlns:df="urn:import:org.dashbuilder.displayer.client.widgets.filter"
              xmlns:dg="urn:import:org.dashbuilder.displayer.client.widgets.group">
 
+  <ui:with field="i18n" type="org.dashbuilder.displayer.client.resources.i18n.CommonConstants"/>
+
   <ui:style>
     .sectionLabel {
       font-weight: bold;
@@ -41,15 +43,15 @@
   <g:FlowPanel>
     <g:FlowPanel styleName="{style.cellPaddingPanel}">
       <b:Label ui:field="statusLabel" visible="false" />
-      <g:Label styleName="{style.sectionLabel}">Data set</g:Label>
+      <g:Label styleName="{style.sectionLabel}" text="{i18n.dataset_dataset}"/>
       <b:ListBox ui:field="dataSetListBox" width="200px" />
     </g:FlowPanel>
     <g:FlowPanel ui:field="filtersControlPanel" visible="false" styleName="{style.cellPaddingPanel}">
-      <b:Label styleName="{style.sectionLabel}">Filters</b:Label>
+      <b:Label styleName="{style.sectionLabel}" text="{i18n.dataset_filters}"/>
       <df:DataSetFilterEditor ui:field="filterEditor" />
     </g:FlowPanel>
     <g:FlowPanel ui:field="groupControlPanel" visible="false" styleName="{style.cellPaddingPanel}">
-      <g:Label ui:field="groupControlLabel" styleName="{style.sectionLabel}">Rows</g:Label>
+      <g:Label ui:field="groupControlLabel" styleName="{style.sectionLabel}" text="{i18n.dataset_rows}"/>
       <g:HorizontalPanel styleName="{style.cellPaddingPanel}">
         <b:ListBox ui:field="groupColumnListBox" width="200px" />
         <b:Icon type="ARROW_DOWN" ui:field="groupDetailsIcon" iconSize="LARGE"/>
@@ -59,9 +61,9 @@
       </g:FlowPanel>
     </g:FlowPanel>
     <g:FlowPanel ui:field="columnsControlPanel" visible="false" styleName="{style.cellPaddingPanel}">
-        <g:Label ui:field="columnsControlLabel" styleName="{style.sectionLabel}">Columns</g:Label>
+        <g:Label ui:field="columnsControlLabel" styleName="{style.sectionLabel}" text="{i18n.dataset_columns}"/>
         <g:FlowPanel ui:field="columnsPanel"/>
-        <b:Button ui:field="addColumnButton" type="LINK" visible="false">Add New</b:Button>
+        <b:Button ui:field="addColumnButton" type="LINK" visible="false" text="{i18n.common_button_addnew}"/>
     </g:FlowPanel>
   </g:FlowPanel>
 </ui:UiBinder>

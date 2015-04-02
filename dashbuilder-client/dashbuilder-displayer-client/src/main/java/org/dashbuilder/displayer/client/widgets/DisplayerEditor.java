@@ -44,6 +44,7 @@ import org.dashbuilder.displayer.client.Displayer;
 import org.dashbuilder.displayer.client.DisplayerHelper;
 import org.dashbuilder.displayer.client.DisplayerLocator;
 import org.dashbuilder.displayer.client.prototypes.DisplayerPrototypes;
+import org.dashbuilder.displayer.client.resources.i18n.CommonConstants;
 import org.jboss.errai.ioc.client.container.IOC;
 import org.jboss.errai.ioc.client.container.IOCBeanDef;
 import org.jboss.errai.ioc.client.container.SyncBeanManager;
@@ -110,7 +111,7 @@ public class DisplayerEditor implements IsWidget,
         } else {
             brandNewDisplayer = true;
             displayerSettings = DisplayerPrototypes.get().getProto(DisplayerType.BARCHART);
-            displayerSettings.setTitle("- New displayer - ");
+            displayerSettings.setTitle("- " + CommonConstants.INSTANCE.displayer_editor_new() + " -");
             view.init(displayerSettings, this);
             view.gotoTypeSelection();
         }
@@ -160,11 +161,11 @@ public class DisplayerEditor implements IsWidget,
                 }
                 public void notFound() {
                     // Very unlikely since this data set has been selected from a list provided by the backend.
-                    view.error("Selected data set not found", null);
+                    view.error(CommonConstants.INSTANCE.displayer_editor_dataset_notfound(), null);
                 }
             });
         } catch (Exception e) {
-            view.error("Error fetching the data set metadata", e);
+            view.error(CommonConstants.INSTANCE.displayer_editor_datasetmetadata_fetcherror(), e);
         }
     }
 
@@ -243,7 +244,7 @@ public class DisplayerEditor implements IsWidget,
                     Displayer displayer = DisplayerLocator.get().lookupDisplayer(displayerSettings);
                     DataSetLookupConstraints constraints = displayer.getDisplayerConstraints().getDataSetLookupConstraints();
                     DataSetLookup lookup = constraints.newDataSetLookup(metadata);
-                    if (lookup == null) view.error("Is not possible to create a data lookup request for the selected data set", null);
+                    if (lookup == null) view.error(CommonConstants.INSTANCE.displayer_editor_dataset_nolookuprequest(), null);
 
                     // Make the view to show the new lookup instance
                     displayerSettings.setDataSet(null);
@@ -254,11 +255,11 @@ public class DisplayerEditor implements IsWidget,
                 }
                 public void notFound() {
                     // Very unlikely since this data set has been selected from a list provided by the backend.
-                    view.error("Selected data set not found", null);
+                    view.error(CommonConstants.INSTANCE.displayer_editor_dataset_notfound(), null);
                 }
             });
         } catch (Exception e) {
-            view.error("Error fetching the data set metadata", e);
+            view.error(CommonConstants.INSTANCE.displayer_editor_datasetmetadata_fetcherror(), e);
         }
     }
 

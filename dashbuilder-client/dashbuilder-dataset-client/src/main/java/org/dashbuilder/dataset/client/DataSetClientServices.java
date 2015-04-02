@@ -29,6 +29,7 @@ import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetBackendServices;
 import org.dashbuilder.dataset.DataSetLookup;
 import org.dashbuilder.dataset.DataSetMetadata;
+import org.dashbuilder.dataset.client.resources.i18n.CommonConstants;
 import org.dashbuilder.dataset.def.DataSetDef;
 import org.dashbuilder.dataset.engine.group.IntervalBuilderLocator;
 import org.dashbuilder.dataset.events.DataSetStaleEvent;
@@ -184,7 +185,7 @@ public class DataSetClientServices {
                     throw new RuntimeException(e);
                 }
             }
-        } else throw new RuntimeException( "Client-side export is not available" );
+        } else throw new RuntimeException( CommonConstants.INSTANCE.exc_no_client_side_data_export());
     }
 
     /**
@@ -222,7 +223,7 @@ public class DataSetClientServices {
                     throw new RuntimeException(e);
                 }
             }
-        } else throw new RuntimeException( "Client-side export is not available" );
+        } else throw new RuntimeException(CommonConstants.INSTANCE.exc_no_client_side_data_export());
     }
 
     /**
