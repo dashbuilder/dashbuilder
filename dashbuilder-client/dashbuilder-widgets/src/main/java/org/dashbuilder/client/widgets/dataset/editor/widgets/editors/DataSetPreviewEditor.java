@@ -24,12 +24,14 @@ import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.def.DataSetDef;
 import org.dashbuilder.dataset.group.DataSetGroup;
+import org.dashbuilder.displayer.DisplayerSettings;
 import org.dashbuilder.displayer.DisplayerSettingsFactory;
 import org.dashbuilder.displayer.TableDisplayerSettingsBuilder;
 import org.dashbuilder.displayer.client.Displayer;
 import org.dashbuilder.displayer.client.DisplayerCoordinator;
 import org.dashbuilder.displayer.client.DisplayerHelper;
 import org.dashbuilder.displayer.client.DisplayerListener;
+import org.dashbuilder.displayer.impl.TableDisplayerSettingsBuilderImpl;
 
 import javax.enterprise.context.Dependent;
 import java.util.List;
@@ -87,10 +89,7 @@ public class DataSetPreviewEditor extends AbstractDataSetDefEditor {
 
     public void update(final DisplayerListener listener) {
         this.dataSet = null;
-        this.coordinator.removeDisplayer(tableDisplayer);
-        this.tableDisplayer = null;
 
-        tablePanel.clear();
         build(listener);
     }
     
@@ -133,14 +132,22 @@ public class DataSetPreviewEditor extends AbstractDataSetDefEditor {
 
     private Displayer buildTableDisplayer() {
         if (dataSetDef != null) {
-            return  DisplayerHelper.lookupDisplayer(
-                    DisplayerSettingsFactory.newTableSettings()
-                            .dataset(dataSetDef.getUUID())
-                            .titleVisible(false)
-                            .tablePageSize(10)
-                            .tableOrderEnabled(false)
-                            .filterOn(false, false, false)
-                            .buildSettings());
+            TableDisplayerSettingsBuilder<TableDisplayerSettingsBuilderImpl> tableDisplayerSettingsBuilder = DisplayerSettingsFactory.newTableSettings()
+                    .dataset(dataSetDef.getUUID())
+                    .titleVisible(false)
+                    .tablePageSize(10)
+                    .tableOrderEnabled(false)
+                    .filterOn(false, false, false);
+            
+            List<DataColumn> columns =  dataSetDef.getDataSet().getColumns();
+            if (columns != null && !columns.isEmpty()) {
+                for (DataColumn column : columns) {
+                    tableDisplayerSettingsBuilder.column(column.getId());
+                }
+            }
+
+            DisplayerSettings settings = tableDisplayerSettingsBuilder.buildSettings();
+            return DisplayerHelper.lookupDisplayer(settings);
         }
         
         return null;

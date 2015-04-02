@@ -19,6 +19,9 @@ import com.github.gwtbootstrap.client.ui.CheckBox;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.event.shared.EventHandler;
+import com.google.gwt.event.shared.GwtEvent;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -28,7 +31,6 @@ import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.client.widgets.dataset.editor.DataSetDefEditWorkflow;
 import org.dashbuilder.client.widgets.dataset.editor.widgets.editors.datacolumn.DataColumnBasicEditor;
 import org.dashbuilder.dataset.DataColumn;
-import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.impl.DataColumnImpl;
 
 import javax.enterprise.context.Dependent;
@@ -73,32 +75,60 @@ public class DataSetColumnsEditor extends AbstractEditor {
         this.isEditMode = isEditMode;
     }
 
-    private DataSet dataSet = null;
     private final Map<DataColumn, DataColumnBasicEditor> columnEditors = new LinkedHashMap<DataColumn, DataColumnBasicEditor>();
+
+    public interface ColumnsChangedEventHandler extends EventHandler
+    {
+        void onColumnsChanged(ColumnsChangedEvent event);
+    }
     
-    public void build(final DataSet dataSet, final DataSetDefEditWorkflow workflow) {
+    public static class ColumnsChangedEvent extends GwtEvent<ColumnsChangedEventHandler> {
+
+        public static Type<ColumnsChangedEventHandler> TYPE = new Type<ColumnsChangedEventHandler>();
+
+        private List<DataColumn> columns;
+        
+        public ColumnsChangedEvent(List<DataColumn> columns) {
+            super();
+            this.columns = columns;
+        }
+
+        @Override
+        public Type getAssociatedType() {
+            return TYPE;
+        }
+
+        @Override
+        protected void dispatch(ColumnsChangedEventHandler handler) {
+            handler.onColumnsChanged(this);
+        }
+
+        public List<DataColumn> getColumns() {
+            return columns;
+        }
+    }
+    
+    public HandlerRegistration addColumnsChangeHandler(final ColumnsChangedEventHandler handler) {
+        return addHandler(handler, ColumnsChangedEvent.TYPE);
+    }
+
+    public void build(final List<DataColumn> columns, final DataSetDefEditWorkflow workflow) {
         clear();
 
-        this.dataSet = dataSet;
-        
-        if (dataSet != null && workflow != null) {
-            
-            List<DataColumn> columns = dataSet.getColumns();
-            if (columns != null) {
-                for (DataColumn column : columns) {
-                    DataColumnImpl columnImpl = (DataColumnImpl) column;
-                    DataColumnBasicEditor columnEditor = new DataColumnBasicEditor();
-                    workflow.edit(columnEditor, columnImpl);
-                    columnEditors.put(column, columnEditor);
-                    Panel columnPanel = createColumn(column, columnEditor);
-                    columnsPanel.add(columnPanel);
-                }
+        if (columns != null && workflow != null) {
+            for (DataColumn column : columns) {
+                DataColumnImpl columnImpl = (DataColumnImpl) column;
+                DataColumnBasicEditor columnEditor = new DataColumnBasicEditor();
+                workflow.edit(columnEditor, columnImpl);
+                columnEditors.put(column, columnEditor);
+                Panel columnPanel = createColumn(column, columnEditor, workflow);
+                columnsPanel.add(columnPanel);
             }
         }
         
     }
     
-    private Panel createColumn(final DataColumn column, final DataColumnBasicEditor editor) {
+    private Panel createColumn(final DataColumn column, final DataColumnBasicEditor editor, final DataSetDefEditWorkflow workflow) {
         final FlowPanel columnPanel = new FlowPanel();
         
         // Checkbox.
@@ -110,11 +140,8 @@ public class DataSetColumnsEditor extends AbstractEditor {
             public void onValueChange(ValueChangeEvent<Boolean> event) {
                 boolean isChecked = event.getValue();
                 
-                /*
-                TODO
-                if (isChecked) addColumn(column, editor);
-                else removeColumn(column, columnPanel);
-                */
+                if (isChecked) addColumn(column,workflow);
+                else removeColumn(column, workflow);
             }
         });
         columnPanel.add(columnStatus);
@@ -124,6 +151,24 @@ public class DataSetColumnsEditor extends AbstractEditor {
         columnPanel.add(editor);
 
         return columnPanel;
+    }
+
+    private void removeColumn(final DataColumn column, final DataSetDefEditWorkflow workflow) {
+        DataColumnBasicEditor columnEditor = new DataColumnBasicEditor();
+        workflow.remove(columnEditor, (DataColumnImpl) column);
+        columnEditors.remove(column);
+        fireColumnsChanged();
+    }
+
+    private void addColumn(final DataColumn column, final DataSetDefEditWorkflow workflow) {
+        DataColumnBasicEditor columnEditor = new DataColumnBasicEditor();
+        workflow.edit(columnEditor, (DataColumnImpl) column);
+        columnEditors.put(column, columnEditor);
+        fireColumnsChanged();
+    }
+    
+    private void fireColumnsChanged() {
+        this.fireEvent(new ColumnsChangedEvent(new ArrayList<DataColumn>(columnEditors.keySet())));
     }
     
     @Override
@@ -155,7 +200,6 @@ public class DataSetColumnsEditor extends AbstractEditor {
     }
 
     private void clear() {
-        this.dataSet = null;
         columnEditors.clear();
         columnsPanel.clear();
     }

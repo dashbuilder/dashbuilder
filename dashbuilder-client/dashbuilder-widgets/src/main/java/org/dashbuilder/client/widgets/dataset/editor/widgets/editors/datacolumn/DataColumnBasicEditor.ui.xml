@@ -8,26 +8,22 @@
 
   <ui:style>
     .mainPanel {
+      
+    }
+    .left {
+      float: left;
     }
   </ui:style>
   
   <g:FlowPanel ui:field="columnPanel" addStyleNames="{style.mainPanel} ">
 
-    <b:Row>
+    <dash-client:DropDownImageListEditor ui:field="columnType" addStyleNames="{style.left}"/>
 
-      <!-- Name. -->
-      <b:Column size="1">
-        <dash-client:DropDownImageListEditor ui:field="columnType" />
-      </b:Column>
-      <b:Column size="3">
-        <dash-client:ValueBoxEditorDecorator errorLabelPosition="TOOLTIP" ui:field="name">
-          <dash-client:valuebox>
-            <b:TextBox placeholder="{i18n.attributeName}" />
-          </dash-client:valuebox>
-        </dash-client:ValueBoxEditorDecorator>
-      </b:Column>
-
-    </b:Row>
+    <dash-client:ValueBoxEditorDecorator errorLabelPosition="TOOLTIP" ui:field="id" addStyleNames="{style.left}">
+      <dash-client:valuebox>
+        <b:TextBox enabled="false" placeholder="{i18n.attributeId}" />
+      </dash-client:valuebox>
+    </dash-client:ValueBoxEditorDecorator>
     
   </g:FlowPanel>
 

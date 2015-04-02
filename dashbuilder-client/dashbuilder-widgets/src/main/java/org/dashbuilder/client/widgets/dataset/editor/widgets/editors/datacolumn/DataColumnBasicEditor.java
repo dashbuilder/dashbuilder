@@ -51,7 +51,7 @@ public class DataColumnBasicEditor extends AbstractEditor implements org.dashbui
     FlowPanel columnPanel;
 
     @UiField
-    ValueBoxEditorDecorator<String> name;
+    ValueBoxEditorDecorator<String> id;
 
     @UiField
     DropDownImageListEditor<ColumnType> columnType;

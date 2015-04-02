@@ -115,6 +115,16 @@ public final class DataSetDefEditWorkflow {
         return this;
     }
 
+    public DataSetDefEditWorkflow remove(final DataColumnBasicEditor view, final DataColumnImpl d) {
+        final int i = columnEditors.indexOf(view);
+        if (i > -1) {
+            columnEditors.remove(i);
+            columnDrivers.remove(i);
+        }
+        
+        return this;
+    }
+
     public DataSetDefEditWorkflow edit(final SQLDataSetDefAttributesEditor view, final SQLDataSetDef p) {
         sqlAttributesDriver.initialize(view);
         sqlAttributesDriver.edit(p);

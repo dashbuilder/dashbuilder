@@ -22,6 +22,7 @@ import com.google.gwt.event.shared.HasHandlers;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.client.widgets.dataset.editor.DataSetDefEditWorkflow;
+import org.dashbuilder.client.widgets.dataset.editor.widgets.editors.DataSetColumnsEditor;
 import org.dashbuilder.client.widgets.resources.i18n.DataSetEditorConstants;
 import org.dashbuilder.dataprovider.DataSetProviderType;
 import org.dashbuilder.dataset.DataColumn;
@@ -81,7 +82,7 @@ public class DataSetEditor implements IsWidget {
         View showELAttributesEditorView();
         View showPreviewTableEditionView(DisplayerListener tableListener);
         View updatePreviewTableEditionView(DisplayerListener tableListener);
-        View showColumnsAndFilterEditionView(DataSet dataSet);
+        View showColumnsAndFilterEditionView(DataSet dataSet, final DataSetColumnsEditor.ColumnsChangedEventHandler columnsChangedEventHandler);
         View showAdvancedAttributesEditionView();
         View showNextButton(String title, ClickHandler nextHandler);
         View showCancelButton(ClickHandler cancelHandler);
@@ -188,18 +189,6 @@ public class DataSetEditor implements IsWidget {
     
     private void update() {
 
-        // Clear data set columns.
-        dataSetDef.getDataSet().setColumns(new ArrayList<DataColumn>());
-        // Update data set columns.
-        if (this.dataSet != null) {
-            final List<DataColumn> newColumns = dataSet.getColumns();
-            if (newColumns != null && !newColumns.isEmpty()) {
-                for (DataColumn newColumn : newColumns) {
-                    dataSetDef.getDataSet().addColumn(newColumn);
-                }
-            } 
-        }
-
         // Remove the current data set definition.
         removeDataSetDef();
         
@@ -275,7 +264,13 @@ public class DataSetEditor implements IsWidget {
     
     
     private void showColumnsAndFilterEditionView() {
-        view.showColumnsAndFilterEditionView(dataSet);
+        view.showColumnsAndFilterEditionView(dataSet, new DataSetColumnsEditor.ColumnsChangedEventHandler() {
+            @Override
+            public void onColumnsChanged(DataSetColumnsEditor.ColumnsChangedEvent event) {
+                DataSetEditor.this.dataSetDef.getDataSet().setColumns(event.getColumns());
+                update();
+            }
+        });
     }
 
     private void showPreviewTableEditionView() {
@@ -361,6 +356,7 @@ public class DataSetEditor implements IsWidget {
 
             if (displayer != null) {
                 final DataSet dataSet = displayer.getDataSetHandler().getLastDataSet();
+                final boolean isNew = DataSetEditor.this.dataSet == null;
                 DataSetEditor.this.dataSet = dataSet;
                 
                 if (dataSet != null) {
@@ -368,14 +364,14 @@ public class DataSetEditor implements IsWidget {
                     ClientDataSetManager.get().registerDataSet(dataSet);
 
                     // Show initial filter and columns edition view.
-                    showColumnsAndFilterEditionView();
+                    if (isNew) showColumnsAndFilterEditionView();
                 }
             }
         }
 
         @Override
         public void onRedraw(Displayer displayer) {
-
+            
         }
 
         @Override
