@@ -329,6 +329,8 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
 
     @Override
     public DataSetEditor.View showFilterEditionView(final DataSet dataSet, final DataSetFilterEditor.Listener filterListener) {
+        filterTab.clear();
+        
         // Data Set Filter editor.
         final DataSetFilterEditor filterEditor = new DataSetFilterEditor();
         filterEditor.init(dataSet.getMetadata(), dataSetDef.getDataSetFilter(), filterListener);

@@ -398,6 +398,7 @@ public class DataSetEditor implements IsWidget {
     
     private void clear() {
         this.dataSetDef = null;
+        this.columns = null;
         view.clear();
         view.showInitialView(newDataSetHandler);
     }
