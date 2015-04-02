@@ -55,7 +55,6 @@ public class DataSetPreviewEditor extends AbstractDataSetDefEditor {
 
     final DisplayerCoordinator coordinator = new DisplayerCoordinator();
     Displayer tableDisplayer = null;
-    private DataSet dataSet = null;
 
     private boolean isEditMode;
 
@@ -87,12 +86,6 @@ public class DataSetPreviewEditor extends AbstractDataSetDefEditor {
        
     }
 
-    public void update(final DisplayerListener listener) {
-        this.dataSet = null;
-
-        build(listener);
-    }
-    
     private void showTableDisplayer() {
         
         // Clear current view.
@@ -114,22 +107,6 @@ public class DataSetPreviewEditor extends AbstractDataSetDefEditor {
 
     }
     
-    private void showColumnsView() {
-        if (dataSet != null) {
-            List<DataColumn> columns = dataSet.getColumns();
-            if (columns != null) {
-                for (DataColumn column : columns) {
-                    GWT.log("Found column");
-                    GWT.log("************");
-                    GWT.log("id="+column.getId());
-                    GWT.log("name="+column.getName());
-                    GWT.log("type="+column.getColumnType());
-                }
-            }
-        }
-        
-    }
-
     private Displayer buildTableDisplayer() {
         if (dataSetDef != null) {
             TableDisplayerSettingsBuilder<TableDisplayerSettingsBuilderImpl> tableDisplayerSettingsBuilder = DisplayerSettingsFactory.newTableSettings()
@@ -160,9 +137,18 @@ public class DataSetPreviewEditor extends AbstractDataSetDefEditor {
     private class TableListener implements DisplayerListener {
 
         public void onDraw(Displayer displayer) {
-            DataSetPreviewEditor.this.dataSet = displayer.getDataSetHandler().getLastDataSet();
-            if (DataSetPreviewEditor.this.dataSet != null) {
-                showColumnsView();
+            DataSet dataSet = displayer.getDataSetHandler().getLastDataSet();
+            if (dataSet != null) {
+                List<DataColumn> columns = dataSet.getColumns();
+                if (columns != null) {
+                    for (DataColumn column : columns) {
+                        GWT.log("Found column");
+                        GWT.log("************");
+                        GWT.log("id="+column.getId());
+                        GWT.log("name="+column.getName());
+                        GWT.log("type="+column.getColumnType());
+                    }
+                }
             }
         }
 

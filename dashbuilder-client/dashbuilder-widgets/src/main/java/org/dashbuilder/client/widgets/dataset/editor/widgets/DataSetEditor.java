@@ -81,7 +81,6 @@ public class DataSetEditor implements IsWidget {
         View showCSVAttributesEditorView();
         View showELAttributesEditorView();
         View showPreviewTableEditionView(DisplayerListener tableListener);
-        View updatePreviewTableEditionView(DisplayerListener tableListener);
         View showColumnsAndFilterEditionView(DataSet dataSet, final DataSetColumnsEditor.ColumnsChangedEventHandler columnsChangedEventHandler);
         View showAdvancedAttributesEditionView();
         View showNextButton(String title, ClickHandler nextHandler);
@@ -196,7 +195,7 @@ public class DataSetEditor implements IsWidget {
         registerDataSetDef();
         
         // Update preview table.
-        updatePreviewTableEditionView();
+        showPreviewTableEditionView();
     }
 
     public DataSetEditor editDataSet(final String uuid) throws Exception{
@@ -264,13 +263,7 @@ public class DataSetEditor implements IsWidget {
     
     
     private void showColumnsAndFilterEditionView() {
-        view.showColumnsAndFilterEditionView(dataSet, new DataSetColumnsEditor.ColumnsChangedEventHandler() {
-            @Override
-            public void onColumnsChanged(DataSetColumnsEditor.ColumnsChangedEvent event) {
-                DataSetEditor.this.dataSetDef.getDataSet().setColumns(event.getColumns());
-                update();
-            }
-        });
+        view.showColumnsAndFilterEditionView(dataSet, columnsChangedEventHandler);
     }
 
     private void showPreviewTableEditionView() {
@@ -281,11 +274,6 @@ public class DataSetEditor implements IsWidget {
         // Show attributes and table preview preview.
         view.showBasicAttributesEditionView()
             .showPreviewTableEditionView(tablePreviewListener);
-    }
-    
-    private void updatePreviewTableEditionView() {
-        // Update table preview.
-        view.updatePreviewTableEditionView(tablePreviewListener);
     }
     
     private void showAdvancedAttributesEditionView() {
@@ -334,19 +322,14 @@ public class DataSetEditor implements IsWidget {
         }
     };
     
-    private final ClickHandler testClickHandler = new ClickHandler() {
+    private final DataSetColumnsEditor.ColumnsChangedEventHandler columnsChangedEventHandler = new DataSetColumnsEditor.ColumnsChangedEventHandler() {
         @Override
-        public void onClick(ClickEvent event) {
-            final Set violations = save();
-            if (isValid(violations)) {
-                // Valid
-                GWT.log("Data set edition finished.");
-                // TODO: update();
-            }
-            saveLog(violations);
+        public void onColumnsChanged(DataSetColumnsEditor.ColumnsChangedEvent event) {
+            DataSetEditor.this.dataSetDef.getDataSet().setColumns(event.getColumns());
+            update();
         }
     };
-
+    
     /**
      * <p>When creating the table preview screen, this listener waits for data set available and then performs other operations.</p> 
      */
