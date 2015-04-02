@@ -23,6 +23,10 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.common.client.validation.editors.BooleanSwitchEditor;
 import org.dashbuilder.common.client.validation.editors.ValueBoxEditorDecorator;
+import org.dashbuilder.common.client.widgets.slider.HorizontalSlider;
+import org.dashbuilder.common.client.widgets.slider.TriangleSlider;
+import org.dashbuilder.common.client.widgets.slider.event.BarValueChangedEvent;
+import org.dashbuilder.common.client.widgets.slider.event.BarValueChangedHandler;
 import org.dashbuilder.dataset.client.validation.editors.DataSetDefEditor;
 
 import javax.enterprise.context.Dependent;
@@ -43,6 +47,9 @@ public class DataSetAdvancedAttributesEditor extends AbstractDataSetDefEditor im
 
     @UiField
     FlowPanel advancedAttributesPanel;
+
+    @UiField
+    FlowPanel backendCachePanel;
 
     /* **************** BACKEND CACHE *************** */
     @UiField
@@ -75,6 +82,9 @@ public class DataSetAdvancedAttributesEditor extends AbstractDataSetDefEditor im
 
     public DataSetAdvancedAttributesEditor() {
         initWidget(uiBinder.createAndBindUi(this));
+
+        TriangleSlider backendCacheSlider = createSlider(10000, "300px");
+        backendCachePanel.add(backendCacheSlider);
     }
 
     public boolean isEditMode() {
@@ -88,5 +98,20 @@ public class DataSetAdvancedAttributesEditor extends AbstractDataSetDefEditor im
     @Override
     public void showErrors(List<EditorError> errors) {
         consumeErrors(errors);
+    }
+
+    private TriangleSlider createSlider(final int maxValue, final String width) {
+        TriangleSlider slider = new TriangleSlider(maxValue, width, true);
+        slider.addBarValueChangedHandler(new BarValueChangedHandler() {
+            @Override
+            public void onBarValueChanged(BarValueChangedEvent event) {
+                GWT.log("slider value = " + event.getValue());
+            }
+        });
+        slider.drawMarks("white", 6);
+        slider.setMinMarkStep(3);
+        slider.setNotSelectedInFocus();
+
+        return slider;
     }
 }

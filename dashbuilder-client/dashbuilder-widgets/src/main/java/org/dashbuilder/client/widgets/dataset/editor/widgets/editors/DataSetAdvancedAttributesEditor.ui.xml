@@ -46,7 +46,7 @@
 
       <!-- Cache policy attributes. -->
       <b:Column size="4">
-        <g:FlowPanel>
+        <g:FlowPanel ui:field="backendCachePanel">
           <dash-client:BooleanSwitchEditor ui:field="attributeBackendCacheStatus"  addStyleNames="{style.editor} "/>
           <dash-client:ValueBoxEditorDecorator errorLabelPosition="TOOLTIP" ui:field="attributeMaxRows"  addStyleNames="{style.editor} ">
             <dash-client:valuebox>

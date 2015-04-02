@@ -26,28 +26,43 @@ import com.google.gwt.resources.client.ImageResource;
  */
 public interface DashbuilderCommonImages extends ClientBundle {
 
-    @Source("images/lessh.png")
+    /*
+            DEFAULT SLIDER
+     */
+    @Source("images/slider/default/lessh.png")
     ImageResource lessh();
 
-    @Source("images/lessv.png")
+    @Source("images/slider/default/lessv.png")
     ImageResource lessv();
     
-    @Source("images/moreh.png")
+    @Source("images/slider/default/moreh.png")
     ImageResource moreh();
 
-    @Source("images/morev.png")
+    @Source("images/slider/default/morev.png")
     ImageResource morev();
 
-    @Source("images/scaleh.png")
+    @Source("images/slider/default/scaleh.png")
     DataResource scaleh();
 
-    @Source("images/scalev.png")
+    @Source("images/slider/default/scalev.png")
     DataResource scalev();
 
-    @Source("images/dragh.png")
+    @Source("images/slider/default/dragh.png")
     ImageResource dragh();
 
-    @Source("images/dragv.png")
+    @Source("images/slider/default/dragv.png")
     ImageResource dragv();
 
+    /*
+            TRIANGLE SLIDER
+     */
+
+    @Source("images/slider/triangle/drag.png")
+    ImageResource dragt();
+
+    @Source("images/slider/triangle/line.png")
+    DataResource linet();
+
+    @Source("images/slider/triangle/more_less.png")
+    ImageResource moreLesst();
 }
