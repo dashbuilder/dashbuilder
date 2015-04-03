@@ -59,7 +59,7 @@ public class DataSetDef {
     protected Integer cacheMaxRows = 1000;
     @NotNull(message = "{dataSetApi_dataSetDef_refreshTime_notNull}", groups = DataSetDefRefreshIntervalValidation.class)
     @NotEmpty(message = "{dataSetApi_dataSetDef_refreshTime_notEmpty}", groups = DataSetDefRefreshIntervalValidation.class)
-    @IsTimeInterval(message = "{dataSetApi_dataSetDef_refreshTime_intervalInvalid}")
+    @IsTimeInterval(message = "{dataSetApi_dataSetDef_refreshTime_intervalInvalid}", groups = DataSetDefRefreshIntervalValidation.class)
     protected String refreshTime = null;
     protected boolean refreshAlways = false;
 

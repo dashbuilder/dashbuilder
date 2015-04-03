@@ -29,6 +29,9 @@
     .editorBox {
       width: 50px;
     }
+    .refreshIntervalBox {
+      width: 100px;
+    }
     .sliderPanel {
       vertical-align: middle;
       margin-top: 10px;
@@ -128,11 +131,11 @@
 
           <dash-client:ValueBoxEditorDecorator errorLabelPosition="TOOLTIP" ui:field="attributeRefreshInterval" addStyleNames="{style.editor} ">
             <dash-client:valuebox>
-              <b:TextBox placeholder="{i18n.attributeRefreshInterval}" addStyleNames="{style.editorBox} "/>
+              <b:TextBox placeholder="{i18n.attributeRefreshInterval}" addStyleNames="{style.refreshIntervalBox} "/>
             </dash-client:valuebox>
           </dash-client:ValueBoxEditorDecorator>
 
-          <b:DropdownButton ui:field="intervalType" addStyleNames="{style.editorBox} "/>
+          <b:DropdownButton ui:field="intervalType" addStyleNames="{style.sliderPanel} "/>
           
         </g:FlowPanel>
 

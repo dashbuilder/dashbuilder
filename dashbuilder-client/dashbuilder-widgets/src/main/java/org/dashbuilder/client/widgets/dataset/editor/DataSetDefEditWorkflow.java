@@ -189,7 +189,7 @@ public final class DataSetDefEditWorkflow {
         List<Class<?>> groups = new LinkedList<Class<?>>();
         if (edited.isCacheEnabled()) groups.add(DataSetDefCacheRowsValidation.class);
         if (edited.isPushEnabled()) groups.add(DataSetDefPushSizeValidation.class);
-        if (edited.isRefreshAlways()) groups.add(DataSetDefRefreshIntervalValidation.class);
+        if (edited.getRefreshTime() != null) groups.add(DataSetDefRefreshIntervalValidation.class);
 
         // Validate custom groups, if necessary.
         if (!groups.isEmpty()) {

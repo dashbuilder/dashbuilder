@@ -20,6 +20,8 @@ import com.github.gwtbootstrap.client.ui.DropdownButton;
 import com.github.gwtbootstrap.client.ui.NavLink;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.EditorError;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -32,6 +34,7 @@ import org.dashbuilder.common.client.widgets.slider.TriangleSlider;
 import org.dashbuilder.common.client.widgets.slider.event.BarValueChangedEvent;
 import org.dashbuilder.common.client.widgets.slider.event.BarValueChangedHandler;
 import org.dashbuilder.dataset.client.validation.editors.DataSetDefEditor;
+import org.dashbuilder.dataset.date.TimeAmount;
 import org.dashbuilder.dataset.def.DataSetDef;
 import org.dashbuilder.dataset.group.DateIntervalType;
 
@@ -44,9 +47,8 @@ import java.util.List;
 @Dependent
 public class DataSetAdvancedAttributesEditor extends AbstractDataSetDefEditor implements DataSetDefEditor {
     
-    private static final int DEFAULT_CACHE_MAX_ROWS = -1;
-    private static final int DEFAULT_CACHE_MAX_BYTES = -1;
-    private static final long DEFAULT_REFRESH_INTERVAL = -1;
+    private static final String DEFAULT_REFRESH_TIME = "1hour";
+    private static final DateIntervalType DEFAULT_INTERVAL_TYPE = DateIntervalType.HOUR;
 
     interface DataSetAdvancedAttributesEditorBinder extends UiBinder<Widget, DataSetAdvancedAttributesEditor> {}
     private static DataSetAdvancedAttributesEditorBinder uiBinder = GWT.create(DataSetAdvancedAttributesEditorBinder.class);
@@ -104,9 +106,27 @@ public class DataSetAdvancedAttributesEditor extends AbstractDataSetDefEditor im
         // Refresh interval type button values.
         final DateIntervalType[] dateIntervals = DateIntervalType.values();
         for (DateIntervalType dateInterval : dateIntervals) {
-            final NavLink link = new NavLink(dateInterval.name());
+            final String s = getIntervalTypeText(dateInterval);
+            final NavLink link = new NavLink(s);
+            link.addClickHandler(new ClickHandler() {
+                @Override
+                public void onClick(ClickEvent event) {
+                    intervalType.setText(s);
+                    final String ri = attributeRefreshInterval.asEditor().getValue();
+                    long q = 1;
+                    try {
+                        final TimeAmount ta = TimeAmount.parse(ri);
+                        q = ta.getQuantity();
+                    } catch (IllegalArgumentException e) {
+                        e.printStackTrace();
+                    }
+                    final String newValue = q + s;
+                    attributeRefreshInterval.asEditor().setValue(newValue);
+                }
+            });
             intervalType.add(link);
         }
+        intervalType.setText(getIntervalTypeText(DEFAULT_INTERVAL_TYPE));
                 
         // Configure and add sliders.
         attributeMaxRowsSliderPanel.add(backendCacheSlider);
@@ -213,6 +233,16 @@ public class DataSetAdvancedAttributesEditor extends AbstractDataSetDefEditor im
         attributeRefreshInterval.setEnabled(enabled);
         // intervalType.setEnabled(enabled);
         refreshAlways.setEnabled(enabled);
+        
+        if (enabled && attributeRefreshInterval.asEditor().getValue() == null) {
+            attributeRefreshInterval.asEditor().setValue(DEFAULT_REFRESH_TIME);
+            intervalType.setText(getIntervalTypeText(DEFAULT_INTERVAL_TYPE));
+        }
+    }
+    
+    private String getIntervalTypeText(final DateIntervalType type) {
+        if (type == null) return null;
+        return type.name();
     }
 
     private TriangleSlider createSlider(final int maxValue, final String width) {
