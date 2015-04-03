@@ -120,15 +120,32 @@ public class DataSetAdvancedAttributesEditor extends AbstractDataSetDefEditor im
         attributeMaxBytes.addValueChangeHandler(attributeMaxBytesChangeHandler);
 
         // Enable or disable editors based on status editor.
-        attributeClientCacheStatus.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
-            @Override
-            public void onValueChange(ValueChangeEvent<Boolean> event) {
-                // TODO: not working.. and move as a private final class member.
-                attributeMaxBytes.setEnabled(event.getValue());
-            }
-        });
+        attributeClientCacheStatus.addValueChangeHandler(attributeClientCacheStatusHandler);
+        attributeBackendCacheStatus.addValueChangeHandler(attributeBackendCacheStatusHandler);
+        attributeRefreshStatus.addValueChangeHandler(refreshStatusHandler);
         
     }
+    
+    private final ValueChangeHandler<Boolean> attributeClientCacheStatusHandler = new ValueChangeHandler<Boolean>() {
+        @Override
+        public void onValueChange(ValueChangeEvent<Boolean> event) {
+            attributeMaxBytes.setEnabled(event.getValue());
+        }
+    };
+
+    private final ValueChangeHandler<Boolean> attributeBackendCacheStatusHandler = new ValueChangeHandler<Boolean>() {
+        @Override
+        public void onValueChange(ValueChangeEvent<Boolean> event) {
+            attributeMaxRows.setEnabled(event.getValue());
+        }
+    };
+
+    private final ValueChangeHandler<Boolean> refreshStatusHandler = new ValueChangeHandler<Boolean>() {
+        @Override
+        public void onValueChange(ValueChangeEvent<Boolean> event) {
+            setRefreshEnabled(event.getValue());
+        }
+    };
     
     private final BarValueChangedHandler backendCacheSliderHandler = new BarValueChangedHandler() {
         @Override
@@ -184,7 +201,18 @@ public class DataSetAdvancedAttributesEditor extends AbstractDataSetDefEditor im
         backendCacheSlider.setValue(dataSetDef.getCacheMaxRows());
         clientCacheSlider.setValue(dataSetDef.getPushMaxSize());
 
+        // Values for boolean editors.
+        attributeMaxRows.setEnabled(dataSetDef.isCacheEnabled());
         attributeMaxBytes.setEnabled(dataSetDef.isPushEnabled());
+        final boolean isRefreshOn = dataSetDef.getRefreshTime() != null;
+        attributeRefreshStatus.setValue(isRefreshOn);
+        setRefreshEnabled(isRefreshOn);
+    }
+    
+    private void setRefreshEnabled(final boolean enabled) {
+        attributeRefreshInterval.setEnabled(enabled);
+        // intervalType.setEnabled(enabled);
+        refreshAlways.setEnabled(enabled);
     }
 
     private TriangleSlider createSlider(final int maxValue, final String width) {

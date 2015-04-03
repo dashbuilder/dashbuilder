@@ -111,14 +111,14 @@ public class BooleanSwitchEditor extends Composite implements
         
         // Disable current error markers, if present.
         disableError();
-        
+
+        final Boolean before = this.value;
         this.value = value;
 
         if (this.value) labelON();
         else labelOFF();
         
         if (fireEvents) {
-            Boolean before = this.value;
             ValueChangeEvent.fireIfNotEqual(this, before, value);
         }
     }
@@ -167,8 +167,8 @@ public class BooleanSwitchEditor extends Composite implements
     }
 
     private void labelSwitchValue() {
-        if (isLabelON()) setValue(false);
-        else setValue(true);
+        if (isLabelON()) setValue(false, true);
+        else setValue(true, true);
     }
 
     private void labelON() {
