@@ -10,17 +10,16 @@ import com.google.gwt.editor.client.IsEditor;
 import com.google.gwt.editor.ui.client.adapters.ValueBoxEditor;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
+import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiChild;
 import com.google.gwt.uibinder.client.UiConstructor;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.SimplePanel;
-import com.google.gwt.user.client.ui.ValueBoxBase;
-import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.*;
 
 import java.util.List;
 
@@ -34,10 +33,15 @@ import java.util.List;
  * @param <T> The type of the value that contains the editor widget.
  */
 public class ValueBoxEditorDecorator<T> extends Composite implements
-        HasEditorErrors<T>, IsEditor<ValueBoxEditor<T>> {
+        HasValueChangeHandlers<T>, HasEditorErrors<T>, IsEditor<ValueBoxEditor<T>> {
     
     // The GWT bootstrap styles for error panels.
     private static final String STYLE_ERROR = " control-group error ";
+
+    @Override
+    public HandlerRegistration addValueChangeHandler(ValueChangeHandler<T> handler) {
+        return addHandler(handler, ValueChangeEvent.getType());
+    }
 
     interface Binder extends UiBinder<Widget, ValueBoxEditorDecorator<?>> {
         Binder BINDER = GWT.create(Binder.class);
@@ -93,7 +97,7 @@ public class ValueBoxEditorDecorator<T> extends Composite implements
         this.editor = editor;
         listenToValueBoxBaseChangeEvent(widget);
     }
-
+    
     /**
      * Returns the associated {@link com.google.gwt.editor.ui.client.adapters.ValueBoxEditor}.
      *
@@ -127,8 +131,13 @@ public class ValueBoxEditorDecorator<T> extends Composite implements
         setEditor(widget.asEditor());
     }
     
+    public void setEnabled(final boolean enabled) {
+        ((ValueBoxBase)contents.getWidget()).setEnabled(enabled);
+    }
+    
     private void listenToValueBoxBaseChangeEvent(final ValueBoxBase<T> widget) {
         if (widget != null) {
+            final T before = widget.getValue();
             widget.addChangeHandler(new ChangeHandler() {
                 @Override
                 public void onChange(ChangeEvent event) {
@@ -139,6 +148,7 @@ public class ValueBoxEditorDecorator<T> extends Composite implements
                 @Override
                 public void onValueChange(ValueChangeEvent<T> event) {
                     disableError();
+                    ValueChangeEvent.fireIfNotEqual(ValueBoxEditorDecorator.this, before, event.getValue());
                 }
             });
         }
