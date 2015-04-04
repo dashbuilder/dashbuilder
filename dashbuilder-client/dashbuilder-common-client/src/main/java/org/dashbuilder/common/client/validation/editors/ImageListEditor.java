@@ -128,9 +128,15 @@ public class ImageListEditor<T> extends Composite implements
     }
 
     public void setValue(final T value, final boolean fireEvents) {
-        if (value == this.value || (this.value != null && this.value.equals(value))) {
+        if (value == this.value) {
+            for (T entry : values) {
+                final Image image = images.get(entry);
+                applyAlpha(image, 1);
+            }
             return;
         }
+        
+        if (this.value != null && this.value.equals(value)) return;
 
         // Disable current error markers, if present.
         disableError();
