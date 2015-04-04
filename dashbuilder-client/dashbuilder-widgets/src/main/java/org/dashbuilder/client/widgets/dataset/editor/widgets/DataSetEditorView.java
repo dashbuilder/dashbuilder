@@ -58,16 +58,18 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
     private static DataSetEditorViewBinder uiBinder = GWT.create(DataSetEditorViewBinder.class);
 
     interface DataSetEditorViewStyle extends CssResource {
-        String mainPanel();
-        String dataSetCountLabel();
+        String well_ghostwhite();
     }
 
-    /*@UiField
-    DataSetEditorViewStyle style;*/
+    @UiField
+    DataSetEditorViewStyle style;
     
     @UiField
     FlowPanel mainPanel;
 
+    @UiField
+    FlowPanel titlePanel;
+    
     @UiField
     HTML title;
     
@@ -186,16 +188,16 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
         return this;
     }
 
-    public DataSetEditor.View showInitialView(final ClickHandler newDataSetHandler) {
+    public DataSetEditor.View showHomeView(final int dsetCount, final ClickHandler newDataSetHandler) {
         clearView();
         
         // View title.
         showTitle();
         
-        // TODO: Obtain data set count from a backend service.
-        dataSetCountText.setText(DataSetEditorMessages.INSTANCE.dataSetCount(0));
+        dataSetCountText.setText(DataSetEditorMessages.INSTANCE.dataSetCount(dsetCount));
         newDataSetLink.addClickHandler(newDataSetHandler);
         initialViewPanel.setVisible(true);
+        mainPanel.addStyleName(style.well_ghostwhite());
 
         return this;
     }
@@ -229,6 +231,7 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
         
         providerSelectionViewPanel.setVisible(true);
         dataSetProviderTypeEditor.setEditMode(!isEditMode);
+        mainPanel.removeStyleName(style.well_ghostwhite());
 
         return this;
     }
@@ -470,6 +473,7 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
     }
     
     private void clearView() {
+        titlePanel.setVisible(false);
         title.setVisible(false);
         initialViewPanel.setVisible(false);
         providerSelectionViewPanel.setVisible(false);
@@ -538,11 +542,12 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
             }
             
             title.setVisible(true);
+            titlePanel.setVisible(true);
 
         } else {
 
             title.setVisible(false);
-
+            titlePanel.setVisible(false);
         }
         
     }

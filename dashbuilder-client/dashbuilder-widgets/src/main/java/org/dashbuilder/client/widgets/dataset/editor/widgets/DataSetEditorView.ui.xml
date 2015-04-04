@@ -25,6 +25,9 @@
       font-size: 14pt;
       font-weight: bold;
     }
+    .initialViewPanel {
+      margin: 50px;
+    }
     .editorPanel {
       margin: 25px;
       background-color: ghostwhite;
@@ -39,7 +42,7 @@
       margin-top: 50px;
     }
     .dataSetCountLabel {
-      
+      margin-bottom: 20px;
     }
     .well {
       background-color: white;
@@ -50,28 +53,56 @@
       min-height: 20px;
       padding: 19px;
     }
-    .left {
+    .well_ghostwhite {
+      background-color: ghostwhite;
+    }
+    .newDataSet {
       float: left;
+      margin-left: 5px;
+    }
+    .nextStep {
+      margin: 5px;
     }
     .columnsFilterPanel {
+      float: left;
       width: 300px;
     }
     .previewTablePanel {
+      float: left;
       margin: 15px;
+    }
+    .clear {
+      clear: both;
     }
   </ui:style>
   
   <g:FlowPanel addStyleNames="{style.mainPanel} {style.well} " ui:field="mainPanel" >
     
-    <g:FlowPanel addStyleNames="{style.titlePanel}">
+    <g:FlowPanel addStyleNames="{style.titlePanel}" ui:field="titlePanel">
       <!-- TODO: Replace by bootstrap heading widget? -->
       <g:HTML text="" ui:field="title" addStyleNames="{style.title}"/>  
     </g:FlowPanel>
     
     
-    <g:FlowPanel ui:field="initialViewPanel">
+    <g:FlowPanel ui:field="initialViewPanel" addStyleNames="{style.initialViewPanel}">
+
       <g:HTML addStyleNames="{style.dataSetCountLabel}" ui:field="dataSetCountText"/>
-      <g:Hyperlink text="{i18n.createNewDataSetText}" ui:field="newDataSetLink"/>
+
+      <g:FlowPanel addStyleNames="{style.clear} "/>
+
+      <g:HTML text="{i18n.nextSteps}:" addStyleNames="{style.nextStep} "/>
+      <g:HTML text="1.- {i18n.defineA} " addStyleNames="{style.newDataSet} "/>
+      <g:Hyperlink text="{i18n.newDataSet} " ui:field="newDataSetLink" addStyleNames="{style.newDataSet} "/>
+      <g:HTML text="{i18n.toFetchYourDataFromExtSystem}" addStyleNames="{style.newDataSet} "/>
+
+      <g:FlowPanel addStyleNames="{style.clear} "/>
+      
+      <g:HTML text="2.- {i18n.configureColumnsAndInitialFilter}" addStyleNames="{style.nextStep} "/>
+
+      <g:HTML text="3.- {i18n.configureCacheAndRefreshSettings}" addStyleNames="{style.nextStep} "/>
+
+      <g:HTML text="4.- {i18n.createDataDisplayersToVisualizeYourData}" addStyleNames="{style.nextStep} "/>
+      
     </g:FlowPanel>
     
     <g:FlowPanel ui:field="providerSelectionViewPanel" addStyleNames="{style.editorPanel}">
@@ -118,7 +149,7 @@
 
 
           <!-- Columns and filter tab . -->
-          <g:FlowPanel ui:field="filterAndColumnsEditionViewPanel" addStyleNames="{style.left} {style.columnsFilterPanel} ">
+          <g:FlowPanel ui:field="filterAndColumnsEditionViewPanel" addStyleNames="{style.columnsFilterPanel} ">
 
             <b:TabPanel tabPosition="above" ui:field="filterAndColumnsTabPanel" >
 
@@ -138,7 +169,7 @@
           
           
           <!-- Preview table. -->
-          <g:FlowPanel ui:field="previewTableEditionViewPanel" addStyleNames="{style.left} {style.previewTablePanel} ">
+          <g:FlowPanel ui:field="previewTableEditionViewPanel" addStyleNames="{style.previewTablePanel} ">
             <dash-dset-editors:DataSetPreviewEditor editMode="true" ui:field="previewTableEditor"/>
           </g:FlowPanel>
           

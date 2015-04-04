@@ -39,10 +39,10 @@ import org.dashbuilder.dataset.group.DataSetGroup;
 import org.dashbuilder.displayer.client.Displayer;
 import org.dashbuilder.displayer.client.DisplayerListener;
 import org.dashbuilder.displayer.client.widgets.filter.DataSetFilterEditor;
+import org.jboss.errai.common.client.api.RemoteCallback;
 
 import javax.enterprise.context.Dependent;
 import javax.validation.ConstraintViolation;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -76,7 +76,7 @@ public class DataSetEditor implements IsWidget {
     public interface View extends IsWidget, HasHandlers {
         View edit(final DataSetDef dataSetDef, final DataSetDefEditWorkflow workflow);
         View setEditMode(final boolean editMode);
-        View showInitialView(final ClickHandler newDataSetHandler);
+        View showHomeView(final int dsetCount, final ClickHandler newDataSetHandler);
         View showProviderSelectionView();
         View showBasicAttributesEditionView();
         View showSQLAttributesEditorView();
@@ -101,7 +101,7 @@ public class DataSetEditor implements IsWidget {
     private boolean isEdit;
     
     public DataSetEditor() {
-        view.showInitialView(newDataSetHandler);
+        showHomeView();
     }
     
     public DataSetEditor newDataSet(String uuid) {
@@ -247,6 +247,15 @@ public class DataSetEditor implements IsWidget {
 
         // Update preview table.
         showPreviewTableEditionView();
+    }
+    
+    private void showHomeView() {
+        DataSetClientServices.get().getRemoteSharedDataSetDefs(new RemoteCallback<List<DataSetDef>>() {
+            public void callback(List<DataSetDef> dataSetDefs) {
+                final int i = dataSetDefs != null ? dataSetDefs.size() : 0;
+                view.showHomeView(i, newDataSetHandler);
+            }
+        });
     }
     
     private void showProviderSelectionView() {
@@ -408,7 +417,7 @@ public class DataSetEditor implements IsWidget {
         this.dataSetDef = null;
         this.columns = null;
         view.clear();
-        view.showInitialView(newDataSetHandler);
+        showHomeView();
     }
     
     private boolean isValid(Set violations) {
