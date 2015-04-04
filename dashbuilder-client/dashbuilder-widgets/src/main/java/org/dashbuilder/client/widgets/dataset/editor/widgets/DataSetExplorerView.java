@@ -18,6 +18,7 @@ package org.dashbuilder.client.widgets.dataset.editor.widgets;
 import com.github.gwtbootstrap.client.ui.*;
 import com.github.gwtbootstrap.client.ui.Button;
 import com.github.gwtbootstrap.client.ui.CheckBox;
+import com.github.gwtbootstrap.client.ui.base.Style;
 import com.github.gwtbootstrap.client.ui.constants.ButtonType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -30,6 +31,8 @@ import com.google.gwt.user.client.ui.*;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import org.dashbuilder.client.widgets.resources.i18n.DataSetExplorerConstants;
+import org.dashbuilder.dataset.DataSetMetadata;
+import org.dashbuilder.dataset.client.resources.bundles.DataSetClientImages;
 import org.dashbuilder.dataset.client.resources.bundles.DataSetClientResources;
 import org.dashbuilder.client.widgets.dataset.editor.widgets.events.*;
 import org.dashbuilder.dataset.def.DataSetDef;
@@ -41,14 +44,20 @@ import java.util.List;
 @Dependent
 public class DataSetExplorerView extends Composite implements DataSetExplorer.View {
 
+    private final static String WHITESPACE = " ";
+    
     interface DataSetExplorerViewBinder extends UiBinder<Widget, DataSetExplorerView> {}
     private static DataSetExplorerViewBinder uiBinder = GWT.create(DataSetExplorerViewBinder.class);
 
     interface DataSetExplorerViewStyle extends CssResource {
-        
+        String columnsPanel();
+        String statusPanel();
+        String statusIcon();
+        String statusText();
+        String estimationsPanel();
+        String buttonsPanel();
+        String button();
     }
-    
-    private List<DataSetDef> dataSets;
 
     @UiField
     DataSetExplorerViewStyle style;
@@ -58,6 +67,8 @@ public class DataSetExplorerView extends Composite implements DataSetExplorer.Vi
     
     @UiField
     Label label;
+    
+    private List<DataSetDef> dataSets;
     
     public DataSetExplorerView() {
         initWidget(uiBinder.createAndBindUi(this));
@@ -87,6 +98,7 @@ public class DataSetExplorerView extends Composite implements DataSetExplorer.Vi
     
     private void clearView() {
         label.setText("");
+        label.setVisible(false);
         dataSetsAccordion.clear();
     }
     
@@ -95,7 +107,7 @@ public class DataSetExplorerView extends Composite implements DataSetExplorer.Vi
         clearView();
 
         if (!dataSets.isEmpty()) {
-            label.setText(DataSetExplorerConstants.INSTANCE.availableDataSets());
+            label.setVisible(false);
             for (DataSetDef dataSetDef : dataSets) {
                 final AccordionGroup accordionGroup = buildDataSetAccordionGroup(dataSetDef);
                 dataSetsAccordion.add(accordionGroup);
@@ -103,6 +115,7 @@ public class DataSetExplorerView extends Composite implements DataSetExplorer.Vi
             
         } else {
             label.setText(DataSetExplorerConstants.INSTANCE.noDataSets());
+            label.setVisible(true);
         }
         dataSetsAccordion.setVisible(true);
     }
@@ -153,24 +166,85 @@ public class DataSetExplorerView extends Composite implements DataSetExplorer.Vi
     
     private void buildDescription(final DataSetDef dataSetDef, final Panel parent) {
         if (parent != null) {
-            // Checks.
-            CheckBox cacheEnabled = new CheckBox(DataSetExplorerConstants.INSTANCE.cache());
-            cacheEnabled.setEnabled(false);
-            cacheEnabled.setValue(dataSetDef.isCacheEnabled());
-            CheckBox pushEnabled = new CheckBox(DataSetExplorerConstants.INSTANCE.push());
-            pushEnabled.setEnabled(false);
-            pushEnabled.setValue(dataSetDef.isPushEnabled());
-            CheckBox refreshEnabled = new CheckBox(DataSetExplorerConstants.INSTANCE.refresh());
-            refreshEnabled.setEnabled(false);
-            refreshEnabled.setValue(dataSetDef.isRefreshAlways());
+            final DataSetClientImages images = DataSetClientResources.INSTANCE.images(); 
             
-            // Buttons.
-            com.github.gwtbootstrap.client.ui.Button editButton = new Button(DataSetExplorerConstants.INSTANCE.edit());
-            com.github.gwtbootstrap.client.ui.Button deleteButton = new Button(DataSetExplorerConstants.INSTANCE.delete());
+            // Caches and refresh.
+            final boolean isCacheEnabled = dataSetDef.isCacheEnabled();
+            final FlowPanel cachePanel = new FlowPanel();
+            final com.github.gwtbootstrap.client.ui.Image cacheEnabled = new com.github.gwtbootstrap.client.ui.Image(
+                    isCacheEnabled ? images.okIconSmall() : images.cancelIconSmall());
+            final String _cache = isCacheEnabled ? DataSetExplorerConstants.INSTANCE.enabled() : DataSetExplorerConstants.INSTANCE.disabled();
+            cacheEnabled.setTitle(_cache);
+            cacheEnabled.setAltText(_cache);
+            cacheEnabled.addStyleName(style.statusIcon());
+            final HTML cacheText = new HTML(DataSetExplorerConstants.INSTANCE.cache());
+            cacheText.addStyleName(style.statusText());
+            cachePanel.add(cacheEnabled);
+            cachePanel.add(cacheText);
+            
+            final boolean isPushEnabled = dataSetDef.isPushEnabled();
+            final FlowPanel pushPanel = new FlowPanel();
+            final com.github.gwtbootstrap.client.ui.Image pushEnabled = new com.github.gwtbootstrap.client.ui.Image(
+                    isPushEnabled ? images.okIconSmall() : images.cancelIconSmall());
+            final String _push = isPushEnabled ? DataSetExplorerConstants.INSTANCE.enabled() : DataSetExplorerConstants.INSTANCE.disabled();
+            pushEnabled.setTitle(_push);
+            pushEnabled.setAltText(_push);
+            pushEnabled.addStyleName(style.statusIcon());
+            final HTML pushText = new HTML(DataSetExplorerConstants.INSTANCE.push());
+            pushText.addStyleName(style.statusText());
+            pushPanel.add(pushEnabled);
+            pushPanel.add(pushText);
+
+            final boolean isRefreshEnabled = dataSetDef.getRefreshTime() != null;
+            final FlowPanel refreshPanel = new FlowPanel();
+            final com.github.gwtbootstrap.client.ui.Image refreshEnabled = new com.github.gwtbootstrap.client.ui.Image(
+                    isRefreshEnabled ? images.okIconSmall() : images.cancelIconSmall());
+            final String _refresh = isRefreshEnabled ? DataSetExplorerConstants.INSTANCE.enabled() : DataSetExplorerConstants.INSTANCE.disabled();
+            refreshEnabled.setTitle(_refresh);
+            refreshEnabled.setAltText(_refresh);
+            refreshEnabled.addStyleName(style.statusIcon());
+            final HTML refreshText = new HTML(DataSetExplorerConstants.INSTANCE.refresh());
+            refreshText.addStyleName(style.statusText());
+            refreshPanel.add(refreshEnabled);
+            refreshPanel.add(refreshText);
+
+            final FlowPanel statusPanel = new FlowPanel();
+            statusPanel.addStyleName(style.statusPanel());
+            statusPanel.add(cachePanel);
+            statusPanel.add(pushPanel);
+            statusPanel.add(refreshPanel);
+
+            // Estimated rows and size.
+            final FlowPanel estimationsPanel = new FlowPanel();
+            estimationsPanel.addStyleName(style.estimationsPanel());
+            final DataSetMetadata metadata = dataSetDef.getDataSet().getMetadata();
+            final int estimatedSize = metadata.getEstimatedSize();
+            final int rowCount = metadata.getNumberOfRows();
+            
+            final HTML estimatedSizeText = new HTML(estimatedSize + WHITESPACE + DataSetExplorerConstants.INSTANCE.bytes());
+            estimatedSizeText.addStyleName(style.statusText());
+            final HTML estimatedRowsText = new HTML(rowCount + WHITESPACE + DataSetExplorerConstants.INSTANCE.rows());
+            estimatedRowsText.addStyleName(style.statusText());
+            
+            // Add into parent container.
+            estimationsPanel.add(estimatedRowsText);
+            estimationsPanel.add(estimatedSizeText);
+
+            final FlowPanel columnsPanel = new FlowPanel();
+            columnsPanel.addStyleName(style.columnsPanel());
+            columnsPanel.add(statusPanel);
+            columnsPanel.add(estimationsPanel);
+            parent.add(columnsPanel);
+
+            // Edit and cancel buttons.
+            final com.github.gwtbootstrap.client.ui.Button editButton = new Button(DataSetExplorerConstants.INSTANCE.edit());
+            final com.github.gwtbootstrap.client.ui.Button deleteButton = new Button(DataSetExplorerConstants.INSTANCE.delete());
             final boolean isPublic = dataSetDef.isPublic();
             editButton.setEnabled(isPublic);
+            editButton.addStyleName(style.button());
             deleteButton.setEnabled(isPublic);
             deleteButton.setType(ButtonType.DANGER);
+            deleteButton.addStyleName(style.button());
             
             editButton.addClickHandler(new ClickHandler() {
                 @Override
@@ -178,20 +252,19 @@ public class DataSetExplorerView extends Composite implements DataSetExplorer.Vi
                     fireEvent(new EditDataSetEvent(dataSetDef.getUUID()));
                 }
             });
-            
+
             deleteButton.addClickHandler(new ClickHandler() {
                 @Override
                 public void onClick(ClickEvent event) {
                     fireEvent(new DeleteDataSetEvent(dataSetDef.getUUID()));
                 }
             });
-            
-            // Add into parent container.
-            parent.add(cacheEnabled);
-            parent.add(pushEnabled);
-            parent.add(refreshEnabled);
-            parent.add(editButton);
-            parent.add(deleteButton);
+
+            final FlowPanel buttonsPanel = new FlowPanel();
+            buttonsPanel.addStyleName(style.buttonsPanel());
+            buttonsPanel.add(editButton);
+            buttonsPanel.add(deleteButton);
+            parent.add(buttonsPanel);
 
         }
     }

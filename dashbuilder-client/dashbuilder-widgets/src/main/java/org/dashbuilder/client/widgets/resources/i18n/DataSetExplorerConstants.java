@@ -33,5 +33,9 @@ public interface DataSetExplorerConstants extends ConstantsWithLookup {
     String csv();
     String sql();
     String el();
+    String enabled();
+    String disabled();
+    String bytes();
+    String rows();
     
 }

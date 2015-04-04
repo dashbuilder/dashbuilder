@@ -8,14 +8,42 @@
 
   <ui:style type="org.dashbuilder.client.widgets.dataset.editor.widgets.DataSetExplorerView.DataSetExplorerViewStyle">
     .mainPanel {
+      width: 100%;
       font-size: 12pt;
+    }
+    .columnsPanel {
       float: left;
+      width: 100%;
+    }
+    .statusPanel {
+      float: left;
+      width: 60%;
+    }
+    .statusIcon {
+      float: left;
+      margin-right: 10px;
+    }
+    .statusText {
+      font-size: small;      
+    }
+    .estimationsPanel {
+      float: left;
+      width: 40%;
+    }
+    .buttonsPanel {
+      float:left;
+      width: 100%;
+      margin: 10px;
+      text-align: center;
+    }
+    .button {
+      margin-right: 10px;
     }
   </ui:style>
   
   <g:HTMLPanel addStyleNames="{style.mainPanel} ">
     
-    <g:Label ui:field="label"/>
+    <g:Label visible="false" ui:field="label"/>
 
     <g:FlowPanel>
       <b:Accordion ui:field="dataSetsAccordion">
