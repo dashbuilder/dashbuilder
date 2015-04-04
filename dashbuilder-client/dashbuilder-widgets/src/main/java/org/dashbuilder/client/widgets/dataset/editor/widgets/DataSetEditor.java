@@ -103,6 +103,16 @@ public class DataSetEditor implements IsWidget {
     public DataSetEditor() {
         showHomeView();
     }
+
+    public DataSetEditor(final String width) {
+        showHomeView();
+        setWidth(width);
+    }
+    
+    public DataSetEditor setWidth(final String w) {
+        ((DataSetEditorView)view).setWidth(w);
+        return this;
+    }
     
     public DataSetEditor newDataSet(String uuid) {
         

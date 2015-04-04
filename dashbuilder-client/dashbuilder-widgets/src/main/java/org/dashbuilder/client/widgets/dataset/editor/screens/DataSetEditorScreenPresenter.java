@@ -38,7 +38,7 @@ public class DataSetEditorScreenPresenter {
     
     @OnStartup
     public void onStartup( final PlaceRequest placeRequest) {
-        editorWidget = new DataSetEditor();
+        editorWidget = new DataSetEditor("800px");
     }
 
     @OnClose

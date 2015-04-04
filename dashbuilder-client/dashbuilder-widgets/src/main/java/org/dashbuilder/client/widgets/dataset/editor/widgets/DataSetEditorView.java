@@ -74,7 +74,7 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
     HTML title;
     
     @UiField
-    FlowPanel initialViewPanel;
+    HTMLPanel initialViewPanel;
 
     @UiField
     HTML dataSetCountText;
@@ -179,6 +179,7 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
     
     public DataSetEditorView() {
         initWidget(uiBinder.createAndBindUi(this));
+        showEmptyView();
     }
 
     @Override
@@ -188,6 +189,10 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
         return this;
     }
 
+    private void showEmptyView() {
+        clearView();
+    }
+    
     public DataSetEditor.View showHomeView(final int dsetCount, final ClickHandler newDataSetHandler) {
         clearView();
         
