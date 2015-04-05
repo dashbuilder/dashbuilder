@@ -164,8 +164,8 @@ public class DataSetEditor implements IsWidget {
 
                 // Build views.
                 showBasicAttributesEditionView();
-                showAdvancedAttributesEditionView();
                 showPreviewTableEditionView();
+                showAdvancedAttributesEditionView();
                 
                 view.showNextButton(DataSetEditorConstants.INSTANCE.save(), saveButtonHandler);
             }
@@ -217,8 +217,29 @@ public class DataSetEditor implements IsWidget {
 
                 // Build views.
                 showBasicAttributesEditionView();
-                showAdvancedAttributesEditionView();
                 showPreviewTableEditionView();
+
+                view.showNextButton(DataSetEditorConstants.INSTANCE.next(), advancedAttrsButtonHandler);
+            }
+            saveLog(violations, violations);
+        }
+    };
+
+    private final ClickHandler advancedAttrsButtonHandler = new ClickHandler() {
+        @Override
+        public void onClick(ClickEvent event) {
+            // Save basic attributes (name and uuid) and provider type attribute.
+            // Check if exist validation violations.
+            final Set violations = save();
+            if (isValid(violations)) {
+
+                // Restart workflow.
+                edit();
+
+                // Build views.
+                showBasicAttributesEditionView();
+                showPreviewTableEditionView();
+                showAdvancedAttributesEditionView();
 
                 view.showNextButton(DataSetEditorConstants.INSTANCE.save(), saveButtonHandler);
             }
@@ -312,8 +333,7 @@ public class DataSetEditor implements IsWidget {
     }
     
     private void showAdvancedAttributesEditionView() {
-        view.showBasicAttributesEditionView()
-            .showAdvancedAttributesEditionView();
+        view.showAdvancedAttributesEditionView();
     }
     
     private View edit() {

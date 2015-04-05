@@ -60,6 +60,14 @@ public interface DataSetEditorConstants extends ConstantsWithLookup {
     String defineA();
     String newDataSet();
     String toFetchYourDataFromExtSystem();
+    String connector();
+    String colsAndFilter();
+    String cacheAndRefresh();
+    String configureConnector();
+    String configureColumns();
+    String configureInitialFilter();
+    String configureCacheAndRefreshSettings();
+    String saveAndDeployDataSet();
     String createDataDisplayers();
     String createDashboards();
     String defaultDataSetName();

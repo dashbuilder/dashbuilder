@@ -38,7 +38,7 @@ import java.util.Map;
 @Dependent
 public class DataSetProviderTypeEditor extends AbstractDataSetDefEditor implements DataSetDefEditor {
 
-    private static final int ICONS_SIZE = 250;
+    private static final int ICONS_SIZE = 150;
 
     interface DataSetProviderTypeEditorBinder extends UiBinder<Widget, DataSetProviderTypeEditor> {}
     private static DataSetProviderTypeEditorBinder uiBinder = GWT.create(DataSetProviderTypeEditorBinder.class);

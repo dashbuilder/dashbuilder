@@ -11,10 +11,13 @@
     .mainPanel {
       
     }
+    .text {
+      margin: 10px;
+    }
   </ui:style>
   
   <g:FlowPanel addStyleNames="{style.mainPanel}">
-    <g:HTML text="{i18n.selectType}:"/>
+    <g:HTML text="{i18n.selectType}:" addStyleNames="{style.text}"/>
     <dash-client:ImageListEditor ui:field="provider" />
   </g:FlowPanel>
   

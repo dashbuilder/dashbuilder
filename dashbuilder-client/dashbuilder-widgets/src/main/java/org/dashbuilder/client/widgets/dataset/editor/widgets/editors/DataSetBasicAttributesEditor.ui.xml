@@ -9,43 +9,52 @@
 
   <ui:style>
     .mainPanel {
-      
+      float: left;
+      width: 100%;
+    }
+    .namePanel {
+      float: left;
+      width: 50%;
+    }
+    .uuidPanel {
+      float: left;
+      width: 50%;
+    }
+    .label {
+      float: left;
+      margin-top: 3px;
+      margin-right: 10px;
+    }
+    .input {
     }
   </ui:style>
 
   <!-- Common attributes. -->
   <g:FlowPanel ui:field="basicAttributesPanel" addStyleNames="{style.mainPanel} ">
 
-    <b:Row>
+    <g:FlowPanel addStyleNames="{style.namePanel}">
+      
+      <g:HTML text="{i18n.attributeName}" addStyleNames="{style.label}"/>
+      <dash-client:ValueBoxEditorDecorator errorLabelPosition="TOOLTIP" ui:field="name" addStyleNames="{style.input}">
+        <dash-client:valuebox>
+          <b:TextBox placeholder="{i18n.attributeName}" />
+        </dash-client:valuebox>
+      </dash-client:ValueBoxEditorDecorator>
+      
+      
+    </g:FlowPanel>
+    
+    <g:FlowPanel addStyleNames="{style.uuidPanel}">
 
-      <!-- Name. -->
-      <b:Column size="1">
-        <g:HTML text="{i18n.attributeName}"/>
-      </b:Column>
-      <b:Column size="5">
-          <dash-client:ValueBoxEditorDecorator errorLabelPosition="TOOLTIP" ui:field="name">
-            <dash-client:valuebox>
-              <b:TextBox placeholder="{i18n.attributeName}" />
-            </dash-client:valuebox>
-          </dash-client:ValueBoxEditorDecorator>
-      </b:Column>
+      <g:HTML text="{i18n.attributeUUID}" addStyleNames="{style.label}"/>
+      <dash-client:ValueBoxEditorDecorator errorLabelPosition="TOOLTIP" ui:field="attributeUUID" addStyleNames="{style.input}">
+        <dash-client:valuebox>
+          <b:TextBox enabled="false" placeholder="{i18n.attributeUUID}"/>
+        </dash-client:valuebox>
+      </dash-client:ValueBoxEditorDecorator>
 
-      <!-- UUID. -->
-      <b:Column size="1">
-        <g:HTML text="{i18n.attributeUUID}"/>
-      </b:Column>
-      <b:Column size="3">
-        <dash-client:ValueBoxEditorDecorator errorLabelPosition="TOOLTIP" ui:field="attributeUUID">
-          <dash-client:valuebox>
-            <b:TextBox enabled="false" placeholder="{i18n.attributeUUID}" />
-          </dash-client:valuebox>
-        </dash-client:ValueBoxEditorDecorator>
-      </b:Column>
-
-    </b:Row>
-
+    </g:FlowPanel>
 
   </g:FlowPanel>
-
 
 </ui:UiBinder>

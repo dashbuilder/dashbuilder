@@ -19,24 +19,21 @@
     .titlePanel {
       vertical-align: middle;
       text-align:center;
-      margin-bottom: 50px;
+      margin-bottom: 10px;
     }
     .title {
-      font-size: 14pt;
-      font-weight: bold;
+    }
+    .progressBar {
+        width: 100%;      
+    }
+    .disabledBar {
+      filter: alpha(opacity=5);opacity: 0.2;
     }
     .initialViewPanel {
       margin: 50px;
     }
     .editorPanel {
       margin: 25px;
-      background-color: ghostwhite;
-      border: 1px solid #E3E3E3;
-      border-radius: 4px 4px 4px 4px;
-      box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05) inset;
-      margin-bottom: 20px;
-      min-height: 20px;
-      padding: 19px;
     }
     .buttonsPanel {
       margin-top: 50px;
@@ -78,11 +75,23 @@
   
   <g:FlowPanel addStyleNames="{style.mainPanel} {style.well} " ui:field="mainPanel" >
     
+    <!-- Title. -->
     <g:FlowPanel addStyleNames="{style.titlePanel}" ui:field="titlePanel">
-      <!-- TODO: Replace by bootstrap heading widget? -->
-      <g:HTML text="" ui:field="title" addStyleNames="{style.title}"/>  
+      <b:PageHeader text="" ui:field="title" addStyleNames="{style.title}"/>  
     </g:FlowPanel>
-    
+
+    <!-- Navigation. -->
+    <b:StackProgressBar type="STRIPED" addStyleNames="{style.progressBar}" ui:field="progressBar">
+      <b:Tooltip text="{i18n.configureConnector}">
+        <b:Bar color="DEFAULT" text="{i18n.connector}" percent="33" title="{i18n.connector}" ui:field="connectorBar"/>
+      </b:Tooltip>
+      <b:Tooltip text="{i18n.configureColumns} {i18n.configureInitialFilter}">
+        <b:Bar color="INFO" text="{i18n.colsAndFilter}" percent="34" title="{i18n.colsAndFilter}" ui:field="columnsFilterBar" addStyleNames="{style.disabledBar}"/>
+      </b:Tooltip>
+      <b:Tooltip text="{i18n.configureCacheAndRefreshSettings}">
+        <b:Bar color="SUCCESS" text="{i18n.cacheAndRefresh}" percent="33" title="{i18n.cacheAndRefresh}" ui:field="advancedAttrsBar" addStyleNames="{style.disabledBar}"/>
+      </b:Tooltip>
+    </b:StackProgressBar>
     
     <g:HTMLPanel ui:field="initialViewPanel" addStyleNames="{style.initialViewPanel}">
 
@@ -113,6 +122,7 @@
 
     <g:FlowPanel ui:field="basicAttributesEditionViewPanel" addStyleNames="{style.editorPanel}">
       <dash-dset-editors:DataSetBasicAttributesEditor editMode="true" ui:field="dataSetBasicAttributesEditor"/>
+      <g:FlowPanel addStyleNames="{style.clear} "/>
     </g:FlowPanel>
 
     <g:FlowPanel ui:field="tabViewPanel" >
