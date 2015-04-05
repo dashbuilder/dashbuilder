@@ -229,7 +229,8 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
 
         // Reset current view.
         clearView();
-        
+        mainPanel.removeStyleName(style.well_ghostwhite());
+
         // Clear current workflow state.
         this.workflow.clear();
         
@@ -249,10 +250,9 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
         
         // Progress bar.
         progressStep1();
-        
+
         providerSelectionViewPanel.setVisible(true);
         dataSetProviderTypeEditor.setEditMode(!isEditMode);
-        mainPanel.removeStyleName(style.well_ghostwhite());
 
         return this;
     }
@@ -267,7 +267,7 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
 
         // Progress bar.
         progressStep1();
-        
+
         basicAttributesEditionViewPanel.setVisible(true);
         dataSetBasicAttributesEditor.setEditMode(true);
         activeDataConfigurationTab();
