@@ -4,9 +4,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.validation.client.AbstractGwtValidatorFactory;
 import com.google.gwt.validation.client.GwtValidation;
 import com.google.gwt.validation.client.impl.AbstractGwtValidator;
-import org.dashbuilder.dataset.def.CSVDataSetDef;
-import org.dashbuilder.dataset.def.DataSetDef;
-import org.dashbuilder.dataset.def.SQLDataSetDef;
+import org.dashbuilder.dataset.def.*;
 import org.dashbuilder.dataset.impl.DataColumnImpl;
 import org.dashbuilder.dataset.validation.groups.*;
 
@@ -28,6 +26,14 @@ public class DashbuilderValidationFactory extends AbstractGwtValidatorFactory {
 
     @GwtValidation(value = CSVDataSetDef.class, groups = {CSVDataSetDefFilePathValidation.class, CSVDataSetDefFileURLValidation.class})
     public interface CSVDataSetDefValidator extends DataSetDefValidator {
+    }
+
+    @GwtValidation(value = BeanDataSetDef.class)
+    public interface BeanDataSetDefValidator extends DataSetDefValidator {
+    }
+
+    @GwtValidation(value = ElasticSearchDataSetDef.class)
+    public interface ELDataSetDefValidator extends DataSetDefValidator {
     }
     
     @GwtValidation(value = DataSetDef.class,  groups = {DataSetDefRefreshIntervalValidation.class, DataSetDefPushSizeValidation.class, DataSetDefCacheRowsValidation.class})

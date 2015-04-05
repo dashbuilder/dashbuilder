@@ -73,7 +73,24 @@ public interface DataSetValidationMessages extends
     @Key("dataSetApi_csvDataSetDef_numberPattern_notNull")
     String dataSetApi_csvDataSetDef_numberPattern_notNull();
 
+    
+    @Key("dataSetApi_beanDataSetDef_generatorClass_notNull")
+    String dataSetApi_beanDataSetDef_generatorClass_notNull();
 
+
+    @Key("dataSetApi_elDataSetDef_serverURL_notNull")
+    String dataSetApi_elDataSetDef_serverURL_notNull();
+
+    @Key("dataSetApi_elDataSetDef_clusterName_notNull")
+    String dataSetApi_elDataSetDef_clusterName_notNull();
+
+    @Key("dataSetApi_elDataSetDef_index_notNull")
+    String dataSetApi_elDataSetDef_index_notNull();
+
+    @Key("dataSetApi_elDataSetDef_type_notNull")
+    String dataSetApi_elDataSetDef_type_notNull();
+    
+    
     @Key("dataSetApi_dataSetImpl_uuid_notNull")
     String dataSetApi_dataSetImpl_uuid_notNull();
 

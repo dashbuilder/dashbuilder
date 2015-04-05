@@ -2,7 +2,10 @@ package org.dashbuilder.client.widgets.dataset.editor;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
-import org.dashbuilder.client.widgets.dataset.editor.widgets.editors.*;
+import org.dashbuilder.client.widgets.dataset.editor.widgets.editors.AbstractEditor;
+import org.dashbuilder.client.widgets.dataset.editor.widgets.editors.DataSetAdvancedAttributesEditor;
+import org.dashbuilder.client.widgets.dataset.editor.widgets.editors.DataSetBasicAttributesEditor;
+import org.dashbuilder.client.widgets.dataset.editor.widgets.editors.DataSetProviderTypeEditor;
 import org.dashbuilder.client.widgets.dataset.editor.widgets.editors.bean.BeanDataSetDefAttributesEditor;
 import org.dashbuilder.client.widgets.dataset.editor.widgets.editors.csv.CSVDataSetDefAttributesEditor;
 import org.dashbuilder.client.widgets.dataset.editor.widgets.editors.datacolumn.DataColumnBasicEditor;
@@ -159,6 +162,8 @@ public final class DataSetDefEditWorkflow {
         if (advancedAttributesEditor != null) saveAdvancedAttributes();
         if (sqlAttributesEditor != null) saveSQLAttributes();
         if (csvAttributesEditor != null) saveCSVAttributes();
+        if (beanAttributesEditor != null) saveBeanAttributes();
+        if (elasticSearchAttributesEditor!= null) saveELAttributes();
         if (!columnEditors.isEmpty()) saveColumns();
         
         return this;
@@ -231,6 +236,24 @@ public final class DataSetDefEditWorkflow {
         else if (csvAttributesEditor.isUsingFileURL()) return validateCSV(edited, csvAttributesEditor, csvAttributesDriver, CSVDataSetDefFileURLValidation.class);
         return this;
     }
+
+    /**
+     * <p>Saves EL data set definition attributes.</p> 
+     */
+    private DataSetDefEditWorkflow saveELAttributes() {
+        ElasticSearchDataSetDef edited = elAttributesDriver.flush();
+        return validateEL(edited, elasticSearchAttributesEditor, elAttributesDriver);
+    }
+
+    /**
+     * <p>Saves Bean
+     * * data set definition attributes.</p> 
+     */
+    private DataSetDefEditWorkflow saveBeanAttributes() {
+        BeanDataSetDef edited = beanAttributesDriver.flush();
+        return validateBean(edited, beanAttributesEditor, beanAttributesDriver);
+    }
+    
     
     private DataSetDefEditWorkflow validateDataColumn(final DataColumnImpl dataColumn, final AbstractEditor editor, final SimpleBeanEditorDriver driver) {
         final Validator validator = ValidatorFactory.getDataColumnValidator();
@@ -252,6 +275,22 @@ public final class DataSetDefEditWorkflow {
     private DataSetDefEditWorkflow validateCSV(final CSVDataSetDef def, final AbstractEditor editor, final SimpleBeanEditorDriver driver, final Class<?>... groups) {
         final Validator validator = ValidatorFactory.getCSVDataSetDefValidator();
         final Set<ConstraintViolation<CSVDataSetDef>> violations = validator.validate(def, groups);
+        final Set<?> test = violations;
+        setViolations(editor, driver, (Iterable<ConstraintViolation<?>>) test);
+        return this;
+    }
+
+    private DataSetDefEditWorkflow validateEL(final ElasticSearchDataSetDef def, final AbstractEditor editor, final SimpleBeanEditorDriver driver) {
+        final Validator validator = ValidatorFactory.getELDataSetDefValidator();
+        final Set<ConstraintViolation<ElasticSearchDataSetDef>> violations = validator.validate(def);
+        final Set<?> test = violations;
+        setViolations(editor, driver, (Iterable<ConstraintViolation<?>>) test);
+        return this;
+    }
+
+    private DataSetDefEditWorkflow validateBean(final BeanDataSetDef def, final AbstractEditor editor, final SimpleBeanEditorDriver driver) {
+        final Validator validator = ValidatorFactory.getBeanDataSetDefValidator();
+        final Set<ConstraintViolation<BeanDataSetDef>> violations = validator.validate(def);
         final Set<?> test = violations;
         setViolations(editor, driver, (Iterable<ConstraintViolation<?>>) test);
         return this;
@@ -288,6 +327,8 @@ public final class DataSetDefEditWorkflow {
         advancedAttributesEditor = null;
         sqlAttributesEditor = null;
         csvAttributesEditor = null;
+        beanAttributesEditor = null;
+        elasticSearchAttributesEditor = null;
         columnEditors.clear();;
         columnDrivers.clear();
         return this;

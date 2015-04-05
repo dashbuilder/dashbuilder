@@ -72,7 +72,7 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
     FlowPanel titlePanel;
     
     @UiField
-    PageHeader title;
+    Heading title;
     
     @UiField
     StackProgressBar progressBar;

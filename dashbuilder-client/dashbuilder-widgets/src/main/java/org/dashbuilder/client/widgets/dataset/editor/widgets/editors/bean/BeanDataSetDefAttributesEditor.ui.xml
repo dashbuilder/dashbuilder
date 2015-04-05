@@ -12,17 +12,28 @@
     }
   </ui:style>
 
-  <g:HorizontalPanel spacing="10" ui:field="beanAttributesPanel" addStyleNames="{style.mainPanel}">
+  <g:FlowPanel ui:field="beanAttributesPanel" addStyleNames="{style.mainPanel}">
 
-    <!-- Bean attributes. -->
-    <b:Fieldset>
-      <b:Legend title="{i18n.beanAttributes}"><ui:text from="{i18n.beanAttributes}"/></b:Legend>
-      
-      
-      
-    </b:Fieldset>
+    <!-- Generator class. -->
+    <b:Row>
+      <b:Column size="2">
+        <g:HTML text="{i18n.bean_generator_class}"/>
+      </b:Column>
+      <b:Column size="3">
+        <b:Popover text="{i18n.bean_generator_class_description}" heading="{i18n.bean_generator_class}">
+          <dash-client:ValueBoxEditorDecorator errorLabelPosition="TOOLTIP" ui:field="generatorClass">
+            <dash-client:valuebox>
+              <b:TextBox placeholder="{i18n.bean_generator_class_placeholder}" />
+            </dash-client:valuebox>
+          </dash-client:ValueBoxEditorDecorator>
+        </b:Popover>
+      </b:Column>
+    </b:Row>
 
-  </g:HorizontalPanel>
+    <!-- Generator parameters. -->
+    <!-- TODO -->
+
+  </g:FlowPanel>
 
 
 </ui:UiBinder>

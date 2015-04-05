@@ -1,6 +1,7 @@
 package org.dashbuilder.common.client.validation.editors;
 
 import com.github.gwtbootstrap.client.ui.Image;
+import com.github.gwtbootstrap.client.ui.Popover;
 import com.github.gwtbootstrap.client.ui.Tooltip;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.EditorError;
@@ -43,7 +44,7 @@ public class ImageListEditor<T> extends Composite implements
     private static final double ALPHA_ICON_NOT_SELECTED = 0.2;
     private final List<T> values = new ArrayList<T>();
     private TakesValueEditor<T> editor;
-    private final Map<T ,Image> images = new LinkedHashMap<T, Image>();
+    private final Map<T ,Entry> entries = new LinkedHashMap<T, Entry>();
     private T value;
     private  boolean isEditMode;
     private int width = -1;
@@ -61,6 +62,22 @@ public class ImageListEditor<T> extends Composite implements
     @UiField
     Tooltip errorTooltip;
     
+    public static final class Entry {
+        Image image;
+        String heading;
+        String text;
+
+        public Entry(Image image) {
+            this.image = image;
+        }
+        
+        public Entry(Image image, String heading, String text) {
+            this.image = image;
+            this.heading = heading;
+            this.text = text;
+        }
+        
+    }
     @UiConstructor
     public ImageListEditor() {
         initWidget(Binder.BINDER.createAndBindUi(this));
@@ -84,15 +101,16 @@ public class ImageListEditor<T> extends Composite implements
         return value;
     }
 
-    public void setAcceptableValues(Map<T, Image> newValues) {
+    public void setAcceptableValues(Map<T, Entry> newValues) {
         values.clear();
-        images.clear();
+        entries.clear();
 
         if (newValues != null) {
-            for (Map.Entry<T, Image> entry : newValues.entrySet()) {
+            for (Map.Entry<T, Entry> entry : newValues.entrySet()) {
                 final T _value = entry.getKey();
-                final Image _image = entry.getValue();
-
+                final Entry _entry = entry.getValue();
+                final Image _image = _entry.image;
+                
                 if (width > 0 && height > 0) _image.setSize(width+"px", height+"px");
                 _image.addStyleName(style.imagePointer());
                 _image.addClickHandler(new ClickHandler() {
@@ -102,8 +120,19 @@ public class ImageListEditor<T> extends Composite implements
                     }
                 });
                 values.add(_value);
-                images.put(_value, _image);
-                mainPanel.add(_image);
+                
+                final String heading = _entry.heading;
+                final String text = _entry.text;
+                if (heading != null && text != null) {
+                    final Popover popover = new Popover();
+                    popover.setHeading(heading);
+                    popover.setText(text);
+                    popover.setWidget(_image);
+                    mainPanel.add(popover);
+                } else {
+                    mainPanel.add(_image);
+                }
+                entries.put(_value, _entry);
             }
         }
 
@@ -130,7 +159,7 @@ public class ImageListEditor<T> extends Composite implements
     public void setValue(final T value, final boolean fireEvents) {
         if (value == this.value) {
             for (T entry : values) {
-                final Image image = images.get(entry);
+                final Image image = entries.get(entry).image;
                 applyAlpha(image, 1);
             }
             return;
@@ -146,7 +175,7 @@ public class ImageListEditor<T> extends Composite implements
 
         
         for (T entry : values) {
-            final Image image = images.get(entry);
+            final Image image = entries.get(entry).image;
             if (entry.equals(value)) applyAlpha(image, 1);
             else applyAlpha(image, ALPHA_ICON_NOT_SELECTED);
         }

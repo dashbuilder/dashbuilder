@@ -19,11 +19,17 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.dashbuilder.dataprovider.DataSetProviderType;
+import org.dashbuilder.dataset.validation.groups.CSVDataSetDefFileURLValidation;
+import org.hibernate.validator.constraints.NotEmpty;
 import org.jboss.errai.common.client.api.annotations.Portable;
+
+import javax.validation.constraints.NotNull;
 
 @Portable
 public class BeanDataSetDef extends DataSetDef {
 
+    @NotNull(message = "{dataSetApi_beanDataSetDef_generatorClass_notNull}")
+    @NotEmpty(message = "{dataSetApi_beanDataSetDef_generatorClass_notNull}")
     protected String generatorClass;
     protected Map<String,String> paramaterMap = new HashMap<String,String>();
 

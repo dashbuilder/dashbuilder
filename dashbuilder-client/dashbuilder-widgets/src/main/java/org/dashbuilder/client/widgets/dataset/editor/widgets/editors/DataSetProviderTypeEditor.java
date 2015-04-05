@@ -57,15 +57,40 @@ public class DataSetProviderTypeEditor extends AbstractDataSetDefEditor implemen
         initWidget(uiBinder.createAndBindUi(this));
         
         // Initialize the ImageListEditorDecorator with image for each data provider type.
-        final Map<DataSetProviderType, Image> providerEditorValues = new LinkedHashMap<DataSetProviderType, Image>();
+        final Map<DataSetProviderType, ImageListEditor.Entry> providerEditorValues = new LinkedHashMap<DataSetProviderType, ImageListEditor.Entry>();
         for (final DataSetProviderType type : DataSetProviderType.values()) {
             final Image _image = buildTypeSelectorWidget(type);
-            if (_image != null) providerEditorValues.put(type, _image);
+            final String _heading = buildTypeSelectorHeading(type);
+            final String _text = buildTypeSelectorText(type);
+            if (_image != null) providerEditorValues.put(type, new ImageListEditor.Entry(_image, _heading, _text));
         }
         provider.setSize(ICONS_SIZE, ICONS_SIZE);
         provider.setAcceptableValues(providerEditorValues);
     }
 
+    private String buildTypeSelectorHeading(DataSetProviderType type) {
+        return type.name();
+    }
+
+    private String buildTypeSelectorText(DataSetProviderType type) {
+        String description = null;
+        switch (type) {
+            case BEAN:
+                description = DataSetEditorConstants.INSTANCE.bean_description();
+                break;
+            case CSV:
+                description = DataSetEditorConstants.INSTANCE.csv_description();
+                break;
+            case SQL:
+                description = DataSetEditorConstants.INSTANCE.sql_description();
+                break;
+            case ELASTICSEARCH:
+                description = DataSetEditorConstants.INSTANCE.elasticSearch_description();
+                break;
+        }
+        return description;
+    }
+    
     private Image buildTypeSelectorWidget(DataSetProviderType type) {
         Image typeIcon = null;
         switch (type) {

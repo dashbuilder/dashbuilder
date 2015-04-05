@@ -17,8 +17,10 @@ package org.dashbuilder.dataset.def;
 
 import org.dashbuilder.dataprovider.DataSetProviderType;
 import org.dashbuilder.dataset.sort.ColumnSort;
+import org.hibernate.validator.constraints.NotEmpty;
 import org.jboss.errai.common.client.api.annotations.Portable;
 
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -71,10 +73,20 @@ public class ElasticSearchDataSetDef extends DataSetDef {
     }
 
     // Data Set user parameters.
+    @NotNull(message = "{dataSetApi_elDataSetDef_serverURL_notNull}")
+    @NotEmpty(message = "{dataSetApi_elDataSetDef_serverURL_notNull}")
     protected String serverURL;
+
+    @NotNull(message = "{dataSetApi_elDataSetDef_clusterName_notNull}")
+    @NotEmpty(message = "{dataSetApi_elDataSetDef_clusterName_notNull}")
     protected String clusterName;
+
+    @NotNull(message = "{dataSetApi_elDataSetDef_index_notNull}")
     protected List<String> index;
+
+    @NotNull(message = "{dataSetApi_elDataSetDef_type_notNull}")
     protected List<String> type;
+
     protected String query;
     protected String relevance;
     protected ColumnSort columnSort;

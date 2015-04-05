@@ -19,8 +19,10 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.EditorError;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import org.dashbuilder.common.client.validation.editors.ValueBoxEditorDecorator;
 import org.dashbuilder.dataset.client.validation.editors.ELDataSetDefEditor;
 import org.dashbuilder.client.widgets.dataset.editor.widgets.editors.AbstractDataSetDefEditor;
 
@@ -37,7 +39,21 @@ public class ELDataSetDefAttributesEditor extends AbstractDataSetDefEditor imple
     private static ELDataSetDefAttributesEditorBinder uiBinder = GWT.create(ELDataSetDefAttributesEditorBinder.class);
 
     @UiField
-    HorizontalPanel elAttributesPanel;
+    FlowPanel elAttributesPanel;
+
+    @UiField
+    ValueBoxEditorDecorator<String> serverURL;
+
+    @UiField
+    ValueBoxEditorDecorator<String> clusterName;
+
+    @UiField
+    @Ignore
+    ValueBoxEditorDecorator<String> index;
+
+    @UiField
+    @Ignore
+    ValueBoxEditorDecorator<String> type;
 
     private boolean isEditMode;
 

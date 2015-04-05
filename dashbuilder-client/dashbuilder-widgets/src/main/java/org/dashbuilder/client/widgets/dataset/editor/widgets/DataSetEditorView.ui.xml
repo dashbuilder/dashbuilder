@@ -18,7 +18,6 @@
     }
     .titlePanel {
       vertical-align: middle;
-      text-align:center;
       margin-bottom: 10px;
     }
     .title {
@@ -74,25 +73,25 @@
   </ui:style>
   
   <g:FlowPanel addStyleNames="{style.mainPanel} {style.well} " ui:field="mainPanel" >
-    
-    <!-- Title. -->
-    <g:FlowPanel addStyleNames="{style.titlePanel}" ui:field="titlePanel">
-      <b:PageHeader text="" ui:field="title" addStyleNames="{style.title}"/>  
-    </g:FlowPanel>
 
     <!-- Navigation. -->
     <b:StackProgressBar type="STRIPED" addStyleNames="{style.progressBar}" ui:field="progressBar">
-      <b:Tooltip text="{i18n.configureConnector}">
+      <b:Tooltip text="{i18n.configureConnector}" placement="BOTTOM">
         <b:Bar color="DEFAULT" text="{i18n.connector}" percent="33" title="{i18n.connector}" ui:field="connectorBar"/>
       </b:Tooltip>
-      <b:Tooltip text="{i18n.configureColumns} {i18n.configureInitialFilter}">
+      <b:Tooltip text="{i18n.configureColumns} {i18n.configureInitialFilter}" placement="BOTTOM">
         <b:Bar color="INFO" text="{i18n.colsAndFilter}" percent="34" title="{i18n.colsAndFilter}" ui:field="columnsFilterBar" addStyleNames="{style.disabledBar}"/>
       </b:Tooltip>
-      <b:Tooltip text="{i18n.configureCacheAndRefreshSettings}">
+      <b:Tooltip text="{i18n.configureCacheAndRefreshSettings}" placement="BOTTOM">
         <b:Bar color="SUCCESS" text="{i18n.cacheAndRefresh}" percent="33" title="{i18n.cacheAndRefresh}" ui:field="advancedAttrsBar" addStyleNames="{style.disabledBar}"/>
       </b:Tooltip>
     </b:StackProgressBar>
     
+    <!-- Title. -->
+    <g:FlowPanel addStyleNames="{style.titlePanel}" ui:field="titlePanel">
+      <b:Heading size="1" text="" ui:field="title" addStyleNames="{style.title}"/>  
+    </g:FlowPanel>
+
     <g:HTMLPanel ui:field="initialViewPanel" addStyleNames="{style.initialViewPanel}">
 
       <g:HTML addStyleNames="{style.dataSetCountLabel}" ui:field="dataSetCountText"/>

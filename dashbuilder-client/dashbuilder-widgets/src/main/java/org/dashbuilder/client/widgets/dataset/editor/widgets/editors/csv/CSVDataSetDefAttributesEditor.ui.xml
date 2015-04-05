@@ -29,12 +29,14 @@
         <b:Tooltip text="{i18n.csv_useFileURL}">
           <b:Button icon="CLOUD_UPLOAD" ui:field="useFileURLButton" size="MINI" addStyleNames="{style.leftFloatPanel}"/>
         </b:Tooltip>
-        
-        <dash-client-editors:ValueBoxEditorDecorator errorLabelPosition="TOOLTIP" ui:field="filePath" addStyleNames="{style.leftFloatPanel}">
-          <dash-client-editors:valuebox>
-            <b:TextBox placeholder="{i18n.csv_filePath_placeholder}" />
-          </dash-client-editors:valuebox>
-        </dash-client-editors:ValueBoxEditorDecorator>
+
+        <b:Popover text="{i18n.csv_filePath_description}" heading="{i18n.csv_filePath}">
+          <dash-client-editors:ValueBoxEditorDecorator errorLabelPosition="TOOLTIP" ui:field="filePath" addStyleNames="{style.leftFloatPanel}">
+            <dash-client-editors:valuebox>
+              <b:TextBox placeholder="{i18n.csv_filePath_placeholder}" />
+            </dash-client-editors:valuebox>
+          </dash-client-editors:ValueBoxEditorDecorator>
+        </b:Popover>
 
       </b:Column>
     </b:Row>
@@ -48,11 +50,13 @@
         <b:Tooltip text="{i18n.csv_useFilePath}">
           <b:Button icon="FILE" ui:field="useFilePathButton" size="MINI" addStyleNames="{style.leftFloatPanel}"/>
         </b:Tooltip>
-        <dash-client-editors:ValueBoxEditorDecorator errorLabelPosition="TOOLTIP" ui:field="fileURL" addStyleNames="{style.leftFloatPanel}">
-          <dash-client-editors:valuebox>
-            <b:TextBox placeholder="{i18n.csv_URL_placeholder}" />
-          </dash-client-editors:valuebox>
-        </dash-client-editors:ValueBoxEditorDecorator>
+        <b:Popover text="{i18n.csv_URL_description}" heading="{i18n.csv_URL}">
+          <dash-client-editors:ValueBoxEditorDecorator errorLabelPosition="TOOLTIP" ui:field="fileURL" addStyleNames="{style.leftFloatPanel}">
+            <dash-client-editors:valuebox>
+              <b:TextBox placeholder="{i18n.csv_URL_placeholder}" />
+            </dash-client-editors:valuebox>
+          </dash-client-editors:ValueBoxEditorDecorator>
+        </b:Popover>
       </b:Column>
     </b:Row>
 
@@ -62,11 +66,13 @@
         <g:HTML text="{i18n.csv_sepChar}"/>
       </b:Column>
       <b:Column size="3">
-        <dash-client-editors:ValueBoxEditorDecorator errorLabelPosition="TOOLTIP" ui:field="separatorChar">
-          <dash-client-editors:valuebox>
-            <dash-client-widgets:CharacterBox  /> <!-- TODO: placeholder="{i18n.csv_sepChar_placeholder}" -->
-          </dash-client-editors:valuebox>
-        </dash-client-editors:ValueBoxEditorDecorator>
+        <b:Popover text="{i18n.csv_sepChar_description}" heading="{i18n.csv_sepChar}">
+          <dash-client-editors:ValueBoxEditorDecorator errorLabelPosition="TOOLTIP" ui:field="separatorChar">
+            <dash-client-editors:valuebox>
+              <dash-client-widgets:CharacterBox  /> <!-- TODO: placeholder="{i18n.csv_sepChar_placeholder}" -->
+            </dash-client-editors:valuebox>
+          </dash-client-editors:ValueBoxEditorDecorator>
+        </b:Popover>
       </b:Column>
     </b:Row>
 
@@ -76,11 +82,13 @@
         <g:HTML text="{i18n.csv_quoteChar}"/>
       </b:Column>
       <b:Column size="3">
-        <dash-client-editors:ValueBoxEditorDecorator errorLabelPosition="TOOLTIP" ui:field="quoteChar">
-          <dash-client-editors:valuebox>
-            <dash-client-widgets:CharacterBox  /> <!-- TODO: placeholder="{i18n.csv_quoteChar_placeholder}" -->
-          </dash-client-editors:valuebox>
-        </dash-client-editors:ValueBoxEditorDecorator>
+        <b:Popover text="{i18n.csv_quoteChar_description}" heading="{i18n.csv_quoteChar}">
+          <dash-client-editors:ValueBoxEditorDecorator errorLabelPosition="TOOLTIP" ui:field="quoteChar">
+            <dash-client-editors:valuebox>
+              <dash-client-widgets:CharacterBox  /> <!-- TODO: placeholder="{i18n.csv_quoteChar_placeholder}" -->
+            </dash-client-editors:valuebox>
+          </dash-client-editors:ValueBoxEditorDecorator>
+        </b:Popover>
       </b:Column>
     </b:Row>
 
@@ -90,11 +98,13 @@
         <g:HTML text="{i18n.csv_escapeChar}"/>
       </b:Column>
       <b:Column size="3">
-        <dash-client-editors:ValueBoxEditorDecorator errorLabelPosition="TOOLTIP" ui:field="escapeChar">
-          <dash-client-editors:valuebox>
-            <dash-client-widgets:CharacterBox  /> <!-- TODO: placeholder="{i18n.csv_escapeChar_placeholder}" -->
-          </dash-client-editors:valuebox>
-        </dash-client-editors:ValueBoxEditorDecorator>
+        <b:Popover text="{i18n.csv_escapeChar_description}" heading="{i18n.csv_escapeChar}">
+          <dash-client-editors:ValueBoxEditorDecorator errorLabelPosition="TOOLTIP" ui:field="escapeChar">
+            <dash-client-editors:valuebox>
+              <dash-client-widgets:CharacterBox  /> <!-- TODO: placeholder="{i18n.csv_escapeChar_placeholder}" -->
+            </dash-client-editors:valuebox>
+          </dash-client-editors:ValueBoxEditorDecorator>
+        </b:Popover>
       </b:Column>
     </b:Row>
 
@@ -104,11 +114,13 @@
         <g:HTML text="{i18n.csv_datePattern}"/>
       </b:Column>
       <b:Column size="3">
-        <dash-client-editors:ValueBoxEditorDecorator errorLabelPosition="TOOLTIP" ui:field="datePattern">
-          <dash-client-editors:valuebox>
-            <b:TextBox placeholder="{i18n.csv_datePattern_placeholder}" />
-          </dash-client-editors:valuebox>
-        </dash-client-editors:ValueBoxEditorDecorator>
+        <b:Popover text="{i18n.csv_datePattern_description}" heading="{i18n.csv_datePattern}">
+          <dash-client-editors:ValueBoxEditorDecorator errorLabelPosition="TOOLTIP" ui:field="datePattern">
+            <dash-client-editors:valuebox>
+              <b:TextBox placeholder="{i18n.csv_datePattern_placeholder}" />
+            </dash-client-editors:valuebox>
+          </dash-client-editors:ValueBoxEditorDecorator>
+        </b:Popover>
       </b:Column>
     </b:Row>
 
@@ -118,11 +130,13 @@
         <g:HTML text="{i18n.csv_numberPattern}"/>
       </b:Column>
       <b:Column size="3">
-        <dash-client-editors:ValueBoxEditorDecorator errorLabelPosition="TOOLTIP" ui:field="numberPattern">
-          <dash-client-editors:valuebox>
-            <b:TextBox placeholder="{i18n.csv_numberPattern_placeholder}" />
-          </dash-client-editors:valuebox>
-        </dash-client-editors:ValueBoxEditorDecorator>
+        <b:Popover text="{i18n.csv_numberPattern_description}" heading="{i18n.csv_numberPattern}">
+          <dash-client-editors:ValueBoxEditorDecorator errorLabelPosition="TOOLTIP" ui:field="numberPattern">
+            <dash-client-editors:valuebox>
+              <b:TextBox placeholder="{i18n.csv_numberPattern_placeholder}" />
+            </dash-client-editors:valuebox>
+          </dash-client-editors:ValueBoxEditorDecorator>
+        </b:Popover>
       </b:Column>
     </b:Row>
     

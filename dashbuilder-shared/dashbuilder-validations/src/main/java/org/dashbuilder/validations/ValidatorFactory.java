@@ -34,6 +34,16 @@ public final class ValidatorFactory {
         AbstractGwtValidator validator = GWT.create(DashbuilderValidationFactory.CSVDataSetDefValidator.class);
         return getValidator(validator);
     }
+
+    public static Validator getBeanDataSetDefValidator() {
+        AbstractGwtValidator validator = GWT.create(DashbuilderValidationFactory.BeanDataSetDefValidator.class);
+        return getValidator(validator);
+    }
+
+    public static Validator getELDataSetDefValidator() {
+        AbstractGwtValidator validator = GWT.create(DashbuilderValidationFactory.ELDataSetDefValidator.class);
+        return getValidator(validator);
+    }
     
     private static Validator getValidator(AbstractGwtValidator validator) {
         AbstractGwtValidatorFactory validationFactory = (AbstractGwtValidatorFactory) com.google.gwt.validation.client.impl.Validation.buildDefaultValidatorFactory();
