@@ -113,7 +113,7 @@ public class DataColumnBasicEditor extends AbstractEditor implements org.dashbui
             case TEXT:
                 typeIcon = new Image(DataSetClientResources.INSTANCE.images().textIconSmall().getSafeUri());
                 typeIcon.setAltText(DataSetEditorConstants.INSTANCE.text());
-                typeIcon.setTitle(DataSetEditorConstants.INSTANCE.test());
+                typeIcon.setTitle(DataSetEditorConstants.INSTANCE.text());
                 break;
             case NUMBER:
                 typeIcon = new Image(DataSetClientResources.INSTANCE.images().numberIconSmall().getSafeUri());

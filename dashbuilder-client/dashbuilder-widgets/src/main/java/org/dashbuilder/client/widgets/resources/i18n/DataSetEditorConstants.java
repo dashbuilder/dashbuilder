@@ -50,6 +50,8 @@ public interface DataSetEditorConstants extends ConstantsWithLookup {
     String rows();
     String attributeId();
     String attributeId_description();
+    String attributeColumnType();
+    String attributeColumnType_description();
     String attributeUUID();
     String attributeUUID_description();
     String attributeName();
@@ -68,10 +70,10 @@ public interface DataSetEditorConstants extends ConstantsWithLookup {
     String defineA();
     String newDataSet();
     String toFetchYourDataFromExtSystem();
-    String connector();
+    String provider();
     String colsAndFilter();
     String cacheAndRefresh();
-    String configureConnector();
+    String configureProvider();
     String configureColumns();
     String configureInitialFilter();
     String configureCacheAndRefreshSettings();

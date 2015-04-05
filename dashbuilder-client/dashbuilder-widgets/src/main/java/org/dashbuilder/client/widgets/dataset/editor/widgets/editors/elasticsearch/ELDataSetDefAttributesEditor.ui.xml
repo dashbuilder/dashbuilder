@@ -20,7 +20,7 @@
         <g:HTML text="{i18n.el_server_url}"/>
       </b:Column>
       <b:Column size="3">
-        <b:Popover text="{i18n.el_server_url_description}" heading="{i18n.el_server_url}">
+        <b:Popover showDelay="2000" text="{i18n.el_server_url_description}" heading="{i18n.el_server_url}">
           <dash-client:ValueBoxEditorDecorator errorLabelPosition="TOOLTIP" ui:field="serverURL">
             <dash-client:valuebox>
               <b:TextBox placeholder="{i18n.el_server_url_placeholder}" />
@@ -36,7 +36,7 @@
         <g:HTML text="{i18n.el_cluster_name}"/>
       </b:Column>
       <b:Column size="3">
-        <b:Popover text="{i18n.el_cluster_name_description}" heading="{i18n.el_cluster_name}">
+        <b:Popover showDelay="2000" text="{i18n.el_cluster_name_description}" heading="{i18n.el_cluster_name}">
           <dash-client:ValueBoxEditorDecorator errorLabelPosition="TOOLTIP" ui:field="clusterName">
             <dash-client:valuebox>
               <b:TextBox placeholder="{i18n.el_cluster_name_placeholder}" />
@@ -52,7 +52,7 @@
         <g:HTML text="{i18n.el_index}"/>
       </b:Column>
       <b:Column size="3">
-        <b:Popover text="{i18n.el_index_description}" heading="{i18n.el_index}">
+        <b:Popover showDelay="2000" text="{i18n.el_index_description}" heading="{i18n.el_index}">
           <dash-client:ValueBoxEditorDecorator errorLabelPosition="TOOLTIP" ui:field="index">
             <dash-client:valuebox>
               <b:TextBox placeholder="{i18n.el_index_placeholder}" />
@@ -68,7 +68,7 @@
         <g:HTML text="{i18n.el_type}"/>
       </b:Column>
       <b:Column size="3">
-        <b:Popover text="{i18n.el_type_description}" heading="{i18n.el_type}">
+        <b:Popover showDelay="2000" text="{i18n.el_type_description}" heading="{i18n.el_type}">
           <dash-client:ValueBoxEditorDecorator errorLabelPosition="TOOLTIP" ui:field="type">
             <dash-client:valuebox>
               <b:TextBox placeholder="{i18n.el_type_placeholder}" />

@@ -31,6 +31,8 @@ import java.util.*;
 public class ImageListEditor<T> extends Composite implements
         HasConstrainedValue<T>, HasEditorErrors<T>, IsEditor<TakesValueEditor<T>> {
 
+    public static final int POPOVER_SHOW_DELAY = 2000;
+
     interface Binder extends UiBinder<Widget, ImageListEditor> {
         Binder BINDER = GWT.create(Binder.class);
     }
@@ -128,6 +130,7 @@ public class ImageListEditor<T> extends Composite implements
                     popover.setHeading(heading);
                     popover.setText(text);
                     popover.setWidget(_image);
+                    popover.setShowDelay(POPOVER_SHOW_DELAY);
                     mainPanel.add(popover);
                 } else {
                     mainPanel.add(_image);

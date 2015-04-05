@@ -13,13 +13,17 @@
     }
     .imagePointer {
       cursor: pointer;
+      margin: 5px;
+    }
+    .dropDown ul {
+        min-width: 0;
     }
   </ui:style>
 
   <g:HTMLPanel ui:field="errorPanel" addStyleNames="{style.errorPanel} ">
     <b:Image ui:field="currentTypeImage"/>
     <b:Tooltip text="" ui:field="errorTooltip">
-      <b:ButtonGroup>
+      <b:ButtonGroup addStyleNames="{style.dropDown} ">
         <b:DropdownButton text="" ui:field="dropDownButton">
 
         </b:DropdownButton>

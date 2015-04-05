@@ -18,12 +18,12 @@
     }
     .titlePanel {
       vertical-align: middle;
-      margin-bottom: 10px;
+      margin-bottom: 30px;
     }
     .title {
     }
     .progressBar {
-        width: 100%;      
+      width: 100%;
     }
     .disabledBar {
       filter: alpha(opacity=5);opacity: 0.2;
@@ -33,6 +33,9 @@
     }
     .editorPanel {
       margin: 25px;
+    }
+    .tabPanel {
+        margin: 15px;      
     }
     .buttonsPanel {
       margin-top: 50px;
@@ -76,8 +79,8 @@
 
     <!-- Navigation. -->
     <b:StackProgressBar type="STRIPED" addStyleNames="{style.progressBar}" ui:field="progressBar">
-      <b:Tooltip text="{i18n.configureConnector}" placement="BOTTOM">
-        <b:Bar color="DEFAULT" text="{i18n.connector}" percent="33" title="{i18n.connector}" ui:field="connectorBar"/>
+      <b:Tooltip text="{i18n.configureProvider}" placement="BOTTOM">
+        <b:Bar color="DEFAULT" text="{i18n.provider}" percent="33" ui:field="providerBar"/>
       </b:Tooltip>
       <b:Tooltip text="{i18n.configureColumns} {i18n.configureInitialFilter}" placement="BOTTOM">
         <b:Bar color="INFO" text="{i18n.colsAndFilter}" percent="34" title="{i18n.colsAndFilter}" ui:field="columnsFilterBar" addStyleNames="{style.disabledBar}"/>
@@ -126,7 +129,7 @@
 
     <g:FlowPanel ui:field="tabViewPanel" >
       
-      <b:TabPanel tabPosition="above" ui:field="tabPanel" addStyleNames="{style.editorPanel}">
+      <b:TabPanel tabPosition="above" ui:field="tabPanel" addStyleNames="{style.tabPanel} {style.editorPanel}">
   
         <!-- Data configuration. -->
         <b:Tab heading="{i18n.tab_dataConfiguration}" active="true" ui:field="dataConfigurationTab" >
@@ -162,7 +165,7 @@
           <!-- Columns and filter tab . -->
           <g:FlowPanel ui:field="filterAndColumnsEditionViewPanel" addStyleNames="{style.columnsFilterPanel} ">
 
-            <b:TabPanel tabPosition="above" ui:field="filterAndColumnsTabPanel" >
+            <b:TabPanel tabPosition="above" ui:field="filterAndColumnsTabPanel" addStyleNames="{style.tabPanel} ">
 
               <!-- Columns. -->
               <b:Tab heading="{i18n.dataColumns}" active="true" ui:field="columnsTab" >

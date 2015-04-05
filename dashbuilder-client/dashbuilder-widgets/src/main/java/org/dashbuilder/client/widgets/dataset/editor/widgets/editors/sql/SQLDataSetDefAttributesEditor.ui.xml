@@ -21,7 +21,7 @@
         <g:HTML text="{i18n.sql_datasource}"/>
       </b:Column>
       <b:Column size="3">
-        <b:Popover text="{i18n.sql_datasource_description}" heading="{i18n.sql_datasource}">
+        <b:Popover showDelay="2000" text="{i18n.sql_datasource_description}" heading="{i18n.sql_datasource}">
           <dash-client:ValueBoxEditorDecorator errorLabelPosition="TOOLTIP" ui:field="dataSource">
             <dash-client:valuebox>
               <b:TextBox placeholder="{i18n.sql_datasource_placeHolder}" />
@@ -38,7 +38,7 @@
         <g:HTML text="{i18n.sql_schema}"/>
       </b:Column>
       <b:Column size="3">
-        <b:Popover text="{i18n.sql_schema_description}" heading="{i18n.sql_schema}">
+        <b:Popover showDelay="2000" text="{i18n.sql_schema_description}" heading="{i18n.sql_schema}">
           <dash-client:ValueBoxEditorDecorator errorLabelPosition="TOOLTIP" ui:field="dbSchema">
             <dash-client:valuebox>
               <b:TextBox placeholder="{i18n.sql_schema_placeHolder}" />
@@ -55,7 +55,7 @@
         <g:HTML text="{i18n.sql_table}"/>
       </b:Column>
       <b:Column size="3">
-        <b:Popover text="{i18n.sql_table_description}" heading="{i18n.sql_table}">
+        <b:Popover showDelay="2000" text="{i18n.sql_table_description}" heading="{i18n.sql_table}">
           <dash-client:ValueBoxEditorDecorator errorLabelPosition="TOOLTIP" ui:field="dbTable">
             <dash-client:valuebox>
               <b:TextBox placeholder="{i18n.sql_table_placeHolder}" />

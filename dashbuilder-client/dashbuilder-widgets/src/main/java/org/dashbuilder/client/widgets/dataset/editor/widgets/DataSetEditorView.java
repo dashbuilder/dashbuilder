@@ -78,7 +78,7 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
     StackProgressBar progressBar;
     
     @UiField
-    Bar connectorBar;
+    Bar providerBar;
     
     @UiField
     Bar columnsFilterBar;
@@ -503,20 +503,20 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
     }
     
     private void progressStep1() {
-        connectorBar.removeStyleName(style.disabledBar());
+        providerBar.removeStyleName(style.disabledBar());
         columnsFilterBar.addStyleName(style.disabledBar());
         advancedAttrsBar.addStyleName(style.disabledBar());
     }
 
     private void progressStep2() {
-        connectorBar.removeStyleName(style.disabledBar());
+        providerBar.removeStyleName(style.disabledBar());
         columnsFilterBar.removeStyleName(style.disabledBar());
         advancedAttrsBar.addStyleName(style.disabledBar());
     }
 
 
     private void progressStep3() {
-        connectorBar.removeStyleName(style.disabledBar());
+        providerBar.removeStyleName(style.disabledBar());
         columnsFilterBar.removeStyleName(style.disabledBar());
         advancedAttrsBar.removeStyleName(style.disabledBar());
     }
