@@ -31,9 +31,7 @@ import org.dashbuilder.dataset.DataSetMetadata;
 import org.dashbuilder.dataset.client.ClientDataSetManager;
 import org.dashbuilder.dataset.client.DataSetClientServices;
 import org.dashbuilder.dataset.client.DataSetMetadataCallback;
-import org.dashbuilder.dataset.def.CSVDataSetDef;
-import org.dashbuilder.dataset.def.DataSetDef;
-import org.dashbuilder.dataset.def.SQLDataSetDef;
+import org.dashbuilder.dataset.def.*;
 import org.dashbuilder.dataset.filter.DataSetFilter;
 import org.dashbuilder.dataset.group.DataSetGroup;
 import org.dashbuilder.displayer.client.Displayer;
@@ -43,9 +41,7 @@ import org.jboss.errai.common.client.api.RemoteCallback;
 
 import javax.enterprise.context.Dependent;
 import javax.validation.ConstraintViolation;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * <p>Data Set Definition editor widget.</p>
@@ -191,6 +187,13 @@ public class DataSetEditor implements IsWidget {
                 _dataSetDef.setUUID(dataSetDef.getUUID());
                 DataSetEditor.this.dataSetDef = _dataSetDef;
 
+                // TODO: Remove
+                if (_dataSetDef instanceof BeanDataSetDef) {
+                    Map<String, String> params = new LinkedHashMap<String, String>();
+                    params.put("p1", "v1");
+                    ((BeanDataSetDef)_dataSetDef).setParamaterMap(params);    
+                }
+                
                 // Restart workflow.
                 edit();
 
@@ -494,6 +497,26 @@ public class DataSetEditor implements IsWidget {
                 GWT.log("CSVDataSetDef escape char: " + ((CSVDataSetDef)dataSetDef).getEscapeChar());
                 GWT.log("CSVDataSetDef date pattern: " + ((CSVDataSetDef)dataSetDef).getDatePattern());
                 GWT.log("CSVDataSetDef number pattern: " + ((CSVDataSetDef)dataSetDef).getNumberPattern());
+            }
+            if (dataSetDef instanceof ElasticSearchDataSetDef) {
+                GWT.log("ElasticSearchDataSetDef server URL: " + ((ElasticSearchDataSetDef)dataSetDef).getServerURL());
+                GWT.log("ElasticSearchDataSetDef cluster name: " + ((ElasticSearchDataSetDef)dataSetDef).getClusterName());
+                String[] _index = ((ElasticSearchDataSetDef)dataSetDef).getIndex();
+                String[] _type  = ((ElasticSearchDataSetDef)dataSetDef).getType();
+                GWT.log("ElasticSearchDataSetDef index: " + _index);
+                GWT.log("ElasticSearchDataSetDef type: " + _type);
+                if (_index != null && _index.length > 0 ) GWT.log("ElasticSearchDataSetDef index[0]: " + _index[0]);
+                if (_type != null && _type.length > 0 ) GWT.log("ElasticSearchDataSetDef type[0]: " + _type[0]);
+            }
+            if (dataSetDef instanceof BeanDataSetDef) {
+                GWT.log("BeanDataSetDef generator class: " + ((BeanDataSetDef)dataSetDef).getGeneratorClass());
+
+                Map<String, String> params = ((BeanDataSetDef)dataSetDef).getParamaterMap();
+                if (params != null && !params.isEmpty()) {
+                    for (Map.Entry<String, String> entry : params.entrySet()) {
+                        GWT.log("BeanDataSetDef parameter - key: " + entry.getKey() + " / value: " + entry.getValue());
+                    }
+                }
             }
         }
     }

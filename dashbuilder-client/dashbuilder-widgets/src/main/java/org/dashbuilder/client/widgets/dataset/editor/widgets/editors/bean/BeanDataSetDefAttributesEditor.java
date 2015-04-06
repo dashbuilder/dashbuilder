@@ -22,6 +22,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import org.dashbuilder.common.client.validation.editors.MapEditor;
 import org.dashbuilder.common.client.validation.editors.ValueBoxEditorDecorator;
 import org.dashbuilder.dataset.client.validation.editors.BeanDataSetDefEditor;
 import org.dashbuilder.client.widgets.dataset.editor.widgets.editors.AbstractDataSetDefEditor;
@@ -43,6 +44,9 @@ public class BeanDataSetDefAttributesEditor extends AbstractDataSetDefEditor imp
 
     @UiField
     ValueBoxEditorDecorator<String> generatorClass;
+
+    @UiField
+    MapEditor<String, String> paramaterMap;
 
     private boolean isEditMode;
 

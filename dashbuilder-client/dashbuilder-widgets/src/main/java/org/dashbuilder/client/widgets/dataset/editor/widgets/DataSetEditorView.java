@@ -442,6 +442,11 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
                     if (hasViolations(sqlDataSetDefAttributesEditor.getViolations())) tabErrors(dataConfigurationTab);
                     break;
                 case ELASTICSEARCH:
+                    
+                    // Save attributes not handled by editor framework.
+                    elDataSetDefAttributesEditor.save();
+                    
+                    // Check violations.
                     if (hasViolations(elDataSetDefAttributesEditor.getViolations())) tabErrors(dataConfigurationTab);
                     break;
             }

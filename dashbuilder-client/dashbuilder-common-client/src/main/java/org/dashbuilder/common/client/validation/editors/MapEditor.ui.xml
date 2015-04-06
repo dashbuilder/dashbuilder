@@ -1,0 +1,39 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+             xmlns:g="urn:import:com.google.gwt.user.client.ui"
+             xmlns:b="urn:import:com.github.gwtbootstrap.client.ui"
+             xmlns:c="urn:import:com.google.gwt.user.cellview.client"
+    >
+
+  <ui:style type="org.dashbuilder.common.client.validation.editors.MapEditor.MapEditorStyle">
+    .mainPanel {
+      
+    }
+    .errorPanel {
+      
+    }
+    .errorPanelError {
+      border: 1px solid red;
+    }
+    .gridPanel {
+      
+    }
+    .grid {
+      
+    }
+  </ui:style>
+  
+  <g:HTMLPanel ui:field="errorPanel" addStyleNames="{style.errorPanel} ">
+
+    <g:FlowPanel ui:field="gridPanel" addStyleNames="{style.gridPanel} ">
+      <b:DataGrid ui:field="grid" addStyleNames="{style.grid} ">
+      </b:DataGrid>
+    </g:FlowPanel>
+    
+    <b:Tooltip text="" ui:field="errorTooltip">
+      <g:FlowPanel ui:field="mainPanel" addStyleNames="{style.mainPanel} ">
+      </g:FlowPanel>
+    </b:Tooltip>
+  </g:HTMLPanel>
+  
+</ui:UiBinder>

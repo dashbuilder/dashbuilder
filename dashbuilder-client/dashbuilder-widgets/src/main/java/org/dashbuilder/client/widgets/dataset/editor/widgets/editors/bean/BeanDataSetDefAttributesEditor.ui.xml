@@ -31,7 +31,16 @@
     </b:Row>
 
     <!-- Generator parameters. -->
-    <!-- TODO -->
+    <b:Row>
+      <b:Column size="2">
+        <g:HTML text="{i18n.bean_generator_params}"/>
+      </b:Column>
+      <b:Column size="3">
+        <b:Popover showDelay="1000" text="{i18n.bean_generator_params_description}" heading="{i18n.bean_generator_params}">
+          <dash-client:MapEditor ui:field="paramaterMap"/>
+        </b:Popover>
+      </b:Column>
+    </b:Row>
 
   </g:FlowPanel>
 

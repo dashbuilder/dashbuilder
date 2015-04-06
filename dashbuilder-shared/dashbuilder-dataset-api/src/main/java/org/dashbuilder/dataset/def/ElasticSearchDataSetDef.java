@@ -77,8 +77,6 @@ public class ElasticSearchDataSetDef extends DataSetDef {
     @NotEmpty(message = "{dataSetApi_elDataSetDef_serverURL_notNull}")
     protected String serverURL;
 
-    @NotNull(message = "{dataSetApi_elDataSetDef_clusterName_notNull}")
-    @NotEmpty(message = "{dataSetApi_elDataSetDef_clusterName_notNull}")
     protected String clusterName;
 
     @NotNull(message = "{dataSetApi_elDataSetDef_index_notNull}")
@@ -135,6 +133,10 @@ public class ElasticSearchDataSetDef extends DataSetDef {
         return index.size() > 0 ? index.toArray(new String[index.size()]) : new String[] { ElasticSearchKeywords.ALL.toString() };
     }
 
+    public void setIndex(List<String> index) {
+        this.index = index;
+    }
+
     /**
      * <p>Returns the type/s specified by dataset user parameters.</p>
      * <p>If not specified, returns <code>null</code></p>
@@ -145,6 +147,9 @@ public class ElasticSearchDataSetDef extends DataSetDef {
         return type.size() > 0 ? type.toArray(new String[type.size()]) : null;
     }
 
+    public void setType(List<String> type) {
+        this.type = type;
+    }
     public String getQuery() {
         return query;
     }
