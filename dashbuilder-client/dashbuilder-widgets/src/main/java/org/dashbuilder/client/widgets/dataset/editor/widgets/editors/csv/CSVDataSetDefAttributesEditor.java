@@ -15,12 +15,14 @@
  */
 package org.dashbuilder.client.widgets.dataset.editor.widgets.editors.csv;
 
-import com.github.gwtbootstrap.client.ui.Button;
-import com.github.gwtbootstrap.client.ui.Row;
+import com.github.gwtbootstrap.client.ui.*;
+import com.github.gwtbootstrap.client.ui.base.StyleHelper;
+import com.github.gwtbootstrap.client.ui.constants.ControlGroupType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.EditorError;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -47,9 +49,15 @@ public class CSVDataSetDefAttributesEditor extends AbstractDataSetDefEditor impl
     
     @UiField
     Row filePathRow;
+
+    @UiField
+    ControlGroup filePathErrorPanel;
     
     @UiField
-    ValueBoxEditorDecorator<String> filePath;
+    Tooltip filePathErrorTooltip;
+    
+    @UiField(provided = true)
+    FileUpload filePath;
 
     @UiField
     Row fileURLRow;
@@ -81,8 +89,33 @@ public class CSVDataSetDefAttributesEditor extends AbstractDataSetDefEditor impl
     private boolean isEditMode;
 
     public CSVDataSetDefAttributesEditor() {
+
+        filePath = new FileUpload() {
+            @Override
+            public void showErrors(List<EditorError> errors) {
+                super.showErrors(errors);
+                if(errors != null && !errors.isEmpty()) {
+                    for (EditorError error : errors) {
+                        if(error.getEditor() == this) {
+                            error.setConsumed(false);
+                        }
+                    }
+                }
+            }
+
+            @Override
+            protected void setErrorLabelText(String errorMessage) {
+                filePathErrorTooltip.setText(errorMessage);
+                filePathErrorTooltip.reconfigure();
+            }
+        };
+        
         initWidget(uiBinder.createAndBindUi(this));
 
+        // Configure file upload error displaying.
+        filePath.setControlGroup(filePathErrorPanel);
+        filePath.setErrorLabel(filePathErrorTooltip.asWidget());
+        
         // Switch file or URL.
         final ClickHandler useFilePathButtonHandler = new ClickHandler() {
             @Override

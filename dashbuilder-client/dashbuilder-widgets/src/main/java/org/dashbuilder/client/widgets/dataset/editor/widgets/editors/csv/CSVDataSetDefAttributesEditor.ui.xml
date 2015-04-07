@@ -31,11 +31,11 @@
         </b:Tooltip>
 
         <b:Popover showDelay="1000" text="{i18n.csv_filePath_description}" heading="{i18n.csv_filePath}">
-          <dash-client-editors:ValueBoxEditorDecorator errorLabelPosition="TOOLTIP" ui:field="filePath" addStyleNames="{style.leftFloatPanel}">
-            <dash-client-editors:valuebox>
-              <b:TextBox placeholder="{i18n.csv_filePath_placeholder}" />
-            </dash-client-editors:valuebox>
-          </dash-client-editors:ValueBoxEditorDecorator>
+          <b:ControlGroup ui:field="filePathErrorPanel">
+            <b:Tooltip text="" ui:field="filePathErrorTooltip">
+              <b:FileUpload ui:field="filePath" addStyleNames="{style.leftFloatPanel}"/>
+            </b:Tooltip>
+          </b:ControlGroup>
         </b:Popover>
 
       </b:Column>
