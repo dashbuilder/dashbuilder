@@ -187,13 +187,6 @@ public class DataSetEditor implements IsWidget {
                 _dataSetDef.setUUID(dataSetDef.getUUID());
                 DataSetEditor.this.dataSetDef = _dataSetDef;
 
-                // TODO: Remove
-                if (_dataSetDef instanceof BeanDataSetDef) {
-                    Map<String, String> params = new LinkedHashMap<String, String>();
-                    params.put("p1", "v1");
-                    ((BeanDataSetDef)_dataSetDef).setParamaterMap(params);    
-                }
-                
                 // Restart workflow.
                 edit();
 
