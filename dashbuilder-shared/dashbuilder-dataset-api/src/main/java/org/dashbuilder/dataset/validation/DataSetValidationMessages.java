@@ -15,9 +15,13 @@
  */
 package org.dashbuilder.dataset.validation;
 
+import com.google.gwt.core.client.GWT;
+
 public interface DataSetValidationMessages extends
     com.google.gwt.i18n.client.ConstantsWithLookup {
 
+    public static final DataSetValidationMessages INSTANCE = GWT.create(DataSetValidationMessages.class);
+    
     @Key("dataSetApi_dataSetDef_uuid_notNull")
     String dataSetApi_dataSetDef_uuid_notNull();
 

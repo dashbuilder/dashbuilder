@@ -219,8 +219,10 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
 
         return this;
     }
-
-
+    
+    private boolean isHomeViewVisible() {
+        return initialViewPanel.isVisible();
+    }
 
     @Override
     public DataSetEditor.View edit(final DataSetDef dataSetDef, final DataSetDefEditWorkflow workflow) {
@@ -257,6 +259,10 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
         return this;
     }
 
+    private boolean isProviderSelectionViewVisible() {
+        return providerSelectionViewPanel.isVisible();
+    }
+
 
     @Override
     public DataSetEditor.View showBasicAttributesEditionView() {
@@ -274,6 +280,10 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
         return this;
     }
 
+    private boolean isBasicAttributesEditionViewVisible() {
+        return basicAttributesEditionViewPanel.isVisible();
+    }
+
     @Override
     public DataSetEditor.View showSQLAttributesEditorView() {
         workflow.edit(sqlDataSetDefAttributesEditor, (SQLDataSetDef) dataSetDef);
@@ -282,6 +292,10 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
         showTab(dataConfigurationTab);
         tabViewPanel.setVisible(true);
         return this;
+    }
+
+    private boolean isSQLAttributesEditorViewVisible() {
+        return sqlAttributesEditionViewPanel.isVisible();
     }
 
     @Override
@@ -294,6 +308,10 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
         return this;
     }
 
+    private boolean isBeanAttributesEditorViewVisible() {
+        return beanAttributesEditionViewPanel.isVisible();
+    }
+
     @Override
     public DataSetEditor.View showCSVAttributesEditorView() {
         workflow.edit(csvDataSetDefAttributesEditor, (CSVDataSetDef) dataSetDef);
@@ -302,6 +320,10 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
         showTab(dataConfigurationTab);
         tabViewPanel.setVisible(true);
         return this;
+    }
+
+    private boolean isCSVAttributesEditorViewVisible() {
+        return csvAttributesEditionViewPanel.isVisible();
     }
 
     @Override
@@ -314,6 +336,9 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
         return this;
     }
 
+    private boolean isELAttributesEditorViewVisible() {
+        return elAttributesEditionViewPanel.isVisible();
+    }
     @Override
     public DataSetEditor.View showPreviewTableEditionView(final DisplayerListener tableListener) {
         // Table is not a data set editor component, just a preview data set widget.
@@ -337,6 +362,10 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
         return this;
     }
 
+    private boolean isPreviewTableEditionViewVisible() {
+        return previewTableEditionViewPanel.isVisible();
+    }
+
     @Override
     public DataSetEditor.View showColumnsEditorView(final List<DataColumn> columns, final DataSet dataSet, final DataSetColumnsEditor.ColumnsChangedEventHandler columnsChangedEventHandler) {
         // Columns editor is not a data set editor component, just a widget to handle DataColumnEditor instances.
@@ -357,6 +386,10 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
         return this;
     }
 
+    private boolean isColumnsEditorViewVisible() {
+        return filterAndColumnsEditionViewPanel.isVisible();
+    }
+
     @Override
     public DataSetEditor.View showFilterEditionView(final DataSet dataSet, final DataSetFilterEditor.Listener filterListener) {
         filterTab.clear();
@@ -375,6 +408,10 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
         return this;
     }
 
+    private boolean isFilterEditorViewVisible() {
+        return filterAndColumnsEditionViewPanel.isVisible();
+    }
+    
     @Override
     public DataSetEditor.View showAdvancedAttributesEditionView() {
         workflow.edit(dataSetAdvancedAttributesEditor, dataSetDef);
@@ -393,6 +430,10 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
         activeDataAdvancedConfigurationTab();
         tabViewPanel.setVisible(true);
         return this;
+    }
+
+    private boolean isAdvancedAttributesEditionViewVisible() {
+        return advancedAttributesEditionViewPanel.isVisible();
     }
 
     @Override
@@ -433,21 +474,22 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
         if (type != null) {
             switch (type) {
                 case BEAN:
-                    if (hasViolations(beanDataSetDefAttributesEditor.getViolations())) tabErrors(dataConfigurationTab);
+                    if (isBeanAttributesEditorViewVisible() && hasViolations(beanDataSetDefAttributesEditor.getViolations())) tabErrors(dataConfigurationTab);
                     break;
                 case CSV:
-                    if (hasViolations(csvDataSetDefAttributesEditor.getViolations())) tabErrors(dataConfigurationTab);
+                    if (isCSVAttributesEditorViewVisible() && hasViolations(csvDataSetDefAttributesEditor.getViolations())) tabErrors(dataConfigurationTab);
                     break;
                 case SQL:
-                    if (hasViolations(sqlDataSetDefAttributesEditor.getViolations())) tabErrors(dataConfigurationTab);
+                    if (isSQLAttributesEditorViewVisible() && hasViolations(sqlDataSetDefAttributesEditor.getViolations())) tabErrors(dataConfigurationTab);
                     break;
                 case ELASTICSEARCH:
-                    
-                    // Save attributes not handled by editor framework.
-                    elDataSetDefAttributesEditor.save();
-                    
-                    // Check violations.
-                    if (hasViolations(elDataSetDefAttributesEditor.getViolations())) tabErrors(dataConfigurationTab);
+                    if (isELAttributesEditorViewVisible()) {
+                        // Save attributes not handled by editor framework.
+                        elDataSetDefAttributesEditor.save();
+
+                        // Check violations.
+                        if (hasViolations(elDataSetDefAttributesEditor.getViolations())) tabErrors(dataConfigurationTab);
+                    }
                     break;
             }
         }

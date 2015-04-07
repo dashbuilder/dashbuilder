@@ -25,12 +25,17 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.validation.client.impl.ConstraintViolationImpl;
+import com.google.gwt.validation.client.impl.PathImpl;
 import org.dashbuilder.common.client.validation.editors.ValueBoxEditorDecorator;
 import org.dashbuilder.dataset.client.validation.editors.ELDataSetDefEditor;
 import org.dashbuilder.client.widgets.dataset.editor.widgets.editors.AbstractDataSetDefEditor;
 import org.dashbuilder.dataset.def.ElasticSearchDataSetDef;
+import org.dashbuilder.dataset.validation.DataSetValidationMessages;
 
 import javax.enterprise.context.Dependent;
+import javax.validation.ConstraintViolation;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -107,7 +112,9 @@ public class ELDataSetDefAttributesEditor extends AbstractDataSetDefEditor imple
     private final void saveIndex(final String _index) {
         if (_index == null || _index.trim().length() == 0) {
             // Show errors.
-            index.showErrors(createErrorList("index","test index null", index.asEditor()));
+            index.showErrors(createErrorList("index", DataSetValidationMessages.INSTANCE.dataSetApi_elDataSetDef_index_notNull(), index.asEditor()));
+            // Add violation.
+            createViolation("index", DataSetValidationMessages.INSTANCE.dataSetApi_elDataSetDef_index_notNull(), index.asEditor());
         } else {
             // Set index value.
             final List<String> l = new LinkedList<String>();
@@ -115,6 +122,18 @@ public class ELDataSetDefAttributesEditor extends AbstractDataSetDefEditor imple
             getDataSetDef().setIndex(l);
         }
         
+    }
+    
+    private void createViolation(final String path, final String message, final Editor<?> editor) {
+        final Collection<ConstraintViolation<?>> violations = getViolations();
+        final ConstraintViolation<?> violation = ConstraintViolationImpl.builder().setPropertyPath(new PathImpl().append(path)).setMessage(message).build();
+        violations.add(violation);
+    }
+
+    @Override
+    public Collection<ConstraintViolation<?>> getViolations() {
+        if (super.getViolations() == null) this.violations = new LinkedList<ConstraintViolation<?>>();
+        return (Collection<ConstraintViolation<?>>) this.violations;
     }
 
     private final void saveType() {
@@ -124,7 +143,9 @@ public class ELDataSetDefAttributesEditor extends AbstractDataSetDefEditor imple
     private final void saveType(final String _type) {
         if (_type == null || _type.trim().length() == 0) {
             // Show errors.
-            type.showErrors(createErrorList("type","test type is null", type.asEditor()));
+            type.showErrors(createErrorList("type", DataSetValidationMessages.INSTANCE.dataSetApi_elDataSetDef_type_notNull(), type.asEditor()));
+            // Create the violation.
+            createViolation("type", DataSetValidationMessages.INSTANCE.dataSetApi_elDataSetDef_type_notNull(), type.asEditor());
         } else {
             // Set index value.
             final List<String> l = new LinkedList<String>();
