@@ -64,8 +64,48 @@ public class BeanDataSetDefAttributesEditor extends AbstractDataSetDefEditor imp
                 parameterMap = new LinkedHashMap<String, String>();
                 getDataSetDef().setParamaterMap(parameterMap);
             }
+            // Update the parameter map.
             parameterMap.put(key, value);
             
+            // Redraw the editor.
+            BeanDataSetDefAttributesEditor.this.paramaterMap.redraw();
+        }
+    };
+
+    private final MapEditor.KeyModifiedEventHandler parameterMapKeyModifiedHandler = new MapEditor.KeyModifiedEventHandler() {
+        @Override
+        public void onKeyModified(MapEditor.KeyModifiedEvent event) {
+            final String last = event.getLast();
+            final String value = event.getValue();
+            final int index = event.getIndex();
+
+            // If key has changed, remove old value pair.
+            String newValue = "";
+            if (last != null) {
+                newValue = getDataSetDef().getParamaterMap().remove(last);
+            }
+
+            // Update the parameter map.
+            getDataSetDef().getParamaterMap().put(value, newValue);
+
+            // Redraw the editor.
+            BeanDataSetDefAttributesEditor.this.paramaterMap.redraw();
+        }
+    };
+    
+    private final MapEditor.ValueModifiedEventHandler parameterMapValueModifiedHandler = new MapEditor.ValueModifiedEventHandler() {
+        @Override
+        public void onValueModified(MapEditor.ValueModifiedEvent event) {
+            final String last = event.getLast();
+            final String value = event.getValue();
+            final int index = event.getIndex();
+            
+            // Look for the key object.
+            final String key = getKeyParameter(index);
+            
+            // Update the parameter map.
+            getDataSetDef().getParamaterMap().put(key, value);
+
             // Redraw the editor.
             BeanDataSetDefAttributesEditor.this.paramaterMap.redraw();
         }
@@ -75,9 +115,23 @@ public class BeanDataSetDefAttributesEditor extends AbstractDataSetDefEditor imp
         return (BeanDataSetDef) dataSetDef;
     }
     
+    private String getKeyParameter(final int index) {
+        if (getDataSetDef().getParamaterMap() != null && !getDataSetDef().getParamaterMap().isEmpty() && index > -1) {
+            int x = 0;
+            for (Map.Entry<String, String> entry : getDataSetDef().getParamaterMap().entrySet()) {
+                if (index == x) return entry.getKey();
+                x++;
+            }
+            
+        }
+        return null;        
+    }
+    
     public BeanDataSetDefAttributesEditor() {
         initWidget(uiBinder.createAndBindUi(this));
         paramaterMap.addValueAddEventHandler(parameterMapAddHandler);
+        paramaterMap.addKeyModifiedEventHandler(parameterMapKeyModifiedHandler);
+        paramaterMap.addValueModifiedEventHandler(parameterMapValueModifiedHandler);
     }
 
     public boolean isEditMode() {

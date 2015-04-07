@@ -90,8 +90,8 @@ public class MapEditor<T, K> extends Composite implements
     private final ClickHandler addClickHandler = new ClickHandler() {
         @Override
         public void onClick(ClickEvent event) {
-            String key = keyBox.getValue();
-            String value = valueBox.getValue();
+            final String key = keyBox.getValue();
+            final String value = valueBox.getValue();
             fireEvent(new ValueAddEvent(key, value));
         }
     };
@@ -101,6 +101,22 @@ public class MapEditor<T, K> extends Composite implements
         public void update(int index, Map.Entry<T, K> object, String value) {
             removeEntry(object.getKey());
             redraw();
+        }
+    };
+
+    private final FieldUpdater keyModifiedEventHandler = new FieldUpdater<Map.Entry<T, K>, String>() {
+        @Override
+        public void update(int index, Map.Entry<T, K> object, String value) {
+            final String _key = keyBox.getValue();
+            fireEvent(new KeyModifiedEvent(index, _key, value));
+        }
+    };
+    
+    private final FieldUpdater valueModifiedEventHandler = new FieldUpdater<Map.Entry<T, K>, String>() {
+        @Override
+        public void update(int index, Map.Entry<T, K> object, String value) {
+            final String _value = valueBox.getValue();
+            fireEvent(new ValueModifiedEvent(index, _value, value));
         }
     };
 
@@ -169,16 +185,7 @@ public class MapEditor<T, K> extends Composite implements
         keyColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_LEFT);
         grid.addColumn(keyColumn, DashbuilderCommonConstants.INSTANCE.key());
         grid.setColumnWidth(keyColumn, 20, Style.Unit.PCT);
-        
-        // TODO: Column update handlers.
-        /*firstNameColumn.setFieldUpdater(new FieldUpdater<ContactInfo, String>() {
-            @Override
-            public void update(int index, ContactInfo object, String value) {
-                // Called when the user changes the value.
-                object.setFirstName(value);
-                ContactDatabase.get().refreshDisplays();
-            }
-        });*/
+        keyColumn.setFieldUpdater(keyModifiedEventHandler);
 
         // Create Value column.
         final com.google.gwt.user.cellview.client.Column<Map.Entry<T, K>, String> valueColumn =
@@ -192,7 +199,7 @@ public class MapEditor<T, K> extends Composite implements
         valueColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_LEFT);
         grid.addColumn(valueColumn, DashbuilderCommonConstants.INSTANCE.value());
         grid.setColumnWidth(valueColumn, 20, Style.Unit.PCT);
-        // TODO: Column update handlers.
+        valueColumn.setFieldUpdater(valueModifiedEventHandler);
 
         // Create remove button column.
         final com.google.gwt.user.cellview.client.Column<Map.Entry<T, K>, String> removeColumn =
@@ -276,6 +283,16 @@ public class MapEditor<T, K> extends Composite implements
     {
         return this.addHandler(handler, ValueAddEvent.TYPE);
     }
+
+    public HandlerRegistration addValueModifiedEventHandler(ValueModifiedEventHandler handler)
+    {
+        return this.addHandler(handler, ValueModifiedEvent.TYPE);
+    }
+
+    public HandlerRegistration addKeyModifiedEventHandler(KeyModifiedEventHandler handler)
+    {
+        return this.addHandler(handler, KeyModifiedEvent.TYPE);
+    }
     
     public static class ValueAddEvent extends GwtEvent<ValueAddEventHandler> {
 
@@ -312,5 +329,80 @@ public class MapEditor<T, K> extends Composite implements
     public interface ValueAddEventHandler extends EventHandler
     {
         void onValueAdd(ValueAddEvent event);
+    }
+
+    public abstract static class AbstractValueModifiedEvent<T extends EventHandler> extends GwtEvent<T> {
+
+        private int index;
+        private String last;
+        private String value;
+
+        public AbstractValueModifiedEvent(int index, String last, String value) {
+            this.index = index;
+            this.last = last;
+            this.value = value;
+        }
+
+        public int getIndex() {
+            return index;
+        }
+
+        public String getLast() {
+            return last;
+        }
+
+        public String getValue() {
+            return value;
+        }
+    }
+    
+    public static class ValueModifiedEvent extends AbstractValueModifiedEvent<ValueModifiedEventHandler> {
+
+        public static GwtEvent.Type<ValueModifiedEventHandler> TYPE = new GwtEvent.Type<ValueModifiedEventHandler>();
+
+        public ValueModifiedEvent(int index, String last, String value) {
+            super(index, last, value);
+        }
+
+
+        @Override
+        public Type<ValueModifiedEventHandler> getAssociatedType() {
+            return TYPE;
+        }
+
+        @Override
+        protected void dispatch(ValueModifiedEventHandler handler) {
+            handler.onValueModified(this);
+        }
+    }
+
+    public static class KeyModifiedEvent extends AbstractValueModifiedEvent<KeyModifiedEventHandler> {
+
+        public static GwtEvent.Type<KeyModifiedEventHandler> TYPE = new GwtEvent.Type<KeyModifiedEventHandler>();
+
+        public KeyModifiedEvent(int index, String last, String value) {
+            super(index, last, value);
+        }
+
+
+        @Override
+        public Type<KeyModifiedEventHandler> getAssociatedType() {
+            return TYPE;
+        }
+
+        @Override
+        protected void dispatch(KeyModifiedEventHandler handler) {
+            handler.onKeyModified(this);
+        }
+    }
+
+    public interface KeyModifiedEventHandler extends EventHandler
+    {
+        void onKeyModified(KeyModifiedEvent event);
+    }
+
+    public interface ValueModifiedEventHandler extends EventHandler
+    {
+        void onValueModified(ValueModifiedEvent event);
     }
 }
