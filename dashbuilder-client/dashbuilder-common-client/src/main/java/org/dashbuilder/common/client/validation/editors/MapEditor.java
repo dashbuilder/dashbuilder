@@ -2,10 +2,8 @@ package org.dashbuilder.common.client.validation.editors;
 
 import com.github.gwtbootstrap.client.ui.*;
 import com.github.gwtbootstrap.client.ui.Button;
-import com.github.gwtbootstrap.client.ui.Column;
-import com.github.gwtbootstrap.client.ui.DataGrid;
 import com.github.gwtbootstrap.client.ui.constants.IconType;
-import com.google.gwt.cell.client.Cell;
+import com.github.gwtbootstrap.client.ui.resources.ButtonSize;
 import com.google.gwt.cell.client.EditTextCell;
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
@@ -18,16 +16,20 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.event.shared.EventHandler;
+import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.cellview.client.*;
 import com.google.gwt.user.client.ui.*;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.TextBox;
+import org.dashbuilder.common.client.resources.i18n.DashbuilderCommonConstants;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 public class MapEditor<T, K> extends Composite implements
         HasValue<Map<T,K>>, HasEditorErrors<Map<T,K>>, IsEditor<TakesValueEditor<Map<T,K>>> {
@@ -47,25 +49,60 @@ public class MapEditor<T, K> extends Composite implements
     MapEditorStyle style;
     
     @UiField
-    HTMLPanel errorPanel;
+    HTMLPanel mainPanel;
     
     @UiField
-    FlowPanel gridPanel;
+    ScrollPanel gridPanel;
     
     @UiField
     DataGrid<Map.Entry<T, K>> grid;
     
     @UiField
-    Tooltip errorTooltip;
+    Tooltip keyErrorTooltip;
     
     @UiField
-    FlowPanel mainPanel;
+    FlowPanel keyPanel;
+    
+    @UiField
+    @Ignore
+    com.github.gwtbootstrap.client.ui.TextBox keyBox;
 
+    @UiField
+    Tooltip valueErrorTooltip;
+
+    @UiField
+    FlowPanel valuePanel;
+
+    @UiField
+    @Ignore
+    com.github.gwtbootstrap.client.ui.TextBox valueBox;
+    
+    @UiField
+    @Ignore
+    Button addButton;
+    
     public MapEditor() {
         initWidget(Binder.BINDER.createAndBindUi(this));
         createGrid();
-        createMainPanel();
+        addButton.addClickHandler(addClickHandler);
     }
+    
+    private final ClickHandler addClickHandler = new ClickHandler() {
+        @Override
+        public void onClick(ClickEvent event) {
+            String key = keyBox.getValue();
+            String value = valueBox.getValue();
+            fireEvent(new ValueAddEvent(key, value));
+        }
+    };
+    
+    private final FieldUpdater removeButtonHandler = new FieldUpdater<Map.Entry<T, K>, String>() {
+        @Override
+        public void update(int index, Map.Entry<T, K> object, String value) {
+            removeEntry(object.getKey());
+            redraw();
+        }
+    };
 
     @Override
     public void showErrors(List<EditorError> errors) {
@@ -95,7 +132,7 @@ public class MapEditor<T, K> extends Composite implements
         this.value = value;
 
         // Fill grid values.
-        fillGrid();
+        redraw();
 
         // Fire events, if necessary.
         if (fireEvents) {
@@ -118,10 +155,10 @@ public class MapEditor<T, K> extends Composite implements
 
     private void createGrid() {
 
-        grid.setEmptyTableWidget(new Label("No value pairs."));
+        grid.setEmptyTableWidget(new Label(DashbuilderCommonConstants.INSTANCE.noData()));
         
         // Create KEY column.
-        com.google.gwt.user.cellview.client.Column<Map.Entry<T, K>, String> keyColumn =
+        final com.google.gwt.user.cellview.client.Column<Map.Entry<T, K>, String> keyColumn =
                 new com.google.gwt.user.cellview.client.Column<Map.Entry<T, K>, String>(new EditTextCell()) {
                     @Override
                     public String getValue(Map.Entry<T, K> object) {
@@ -129,9 +166,11 @@ public class MapEditor<T, K> extends Composite implements
                     }
                 };
         keyColumn.setSortable(false);
-        grid.addColumn(keyColumn, "Key");
+        keyColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_LEFT);
+        grid.addColumn(keyColumn, DashbuilderCommonConstants.INSTANCE.key());
         grid.setColumnWidth(keyColumn, 20, Style.Unit.PCT);
         
+        // TODO: Column update handlers.
         /*firstNameColumn.setFieldUpdater(new FieldUpdater<ContactInfo, String>() {
             @Override
             public void update(int index, ContactInfo object, String value) {
@@ -142,7 +181,7 @@ public class MapEditor<T, K> extends Composite implements
         });*/
 
         // Create Value column.
-        com.google.gwt.user.cellview.client.Column<Map.Entry<T, K>, String> valueColumn =
+        final com.google.gwt.user.cellview.client.Column<Map.Entry<T, K>, String> valueColumn =
                 new com.google.gwt.user.cellview.client.Column<Map.Entry<T, K>, String>(new EditTextCell()) {
                     @Override
                     public String getValue(Map.Entry<T, K> object) {
@@ -150,83 +189,128 @@ public class MapEditor<T, K> extends Composite implements
                     }
                 };
         valueColumn.setSortable(false);
-        grid.addColumn(valueColumn, "Value");
+        valueColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_LEFT);
+        grid.addColumn(valueColumn, DashbuilderCommonConstants.INSTANCE.value());
         grid.setColumnWidth(valueColumn, 20, Style.Unit.PCT);
+        // TODO: Column update handlers.
 
-        // Remove entry button.
-        final com.github.gwtbootstrap.client.ui.Button removeButton = new Button("Remove", IconType.MINUS, new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                // TODO
-            }
-        });
-        // TODO: add remove button as a grid column.
+        // Create remove button column.
+        final com.google.gwt.user.cellview.client.Column<Map.Entry<T, K>, String> removeColumn =
+                new com.google.gwt.user.cellview.client.Column<Map.Entry<T, K>, String>(new ButtonCell(IconType.MINUS, ButtonSize.MINI)) {
+
+                    @Override
+                    public String getValue(Map.Entry<T, K> object) {
+                        // return DashbuilderCommonConstants.INSTANCE.remove();
+                        return null;
+                    }
+                };
+        
+        /*final com.google.gwt.user.cellview.client.Column<Map.Entry<T, K>, Void> removeColumn =
+            new com.google.gwt.user.cellview.client.Column<Map.Entry<T, K>, Void>(new IconCell(IconType.MINUS)) {
+    
+                @Override
+                public Void getValue(Map.Entry<T, K> object) {
+                    return null;
+                }
+            };*/
+        removeColumn.setFieldUpdater(removeButtonHandler);
+        removeColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+        grid.addColumn(removeColumn, DashbuilderCommonConstants.INSTANCE.actions());
+        grid.setColumnWidth(removeColumn, 20, Style.Unit.PCT);
     }
     
-    private void fillGrid() {
+    private K removeEntry(T key) {
+        return this.value.remove(key);
+    }
+    
+    public void redraw() {
         grid.setRowCount(value != null ? value.size() : 0);
         grid.setRowData(value != null ? new LinkedList<Map.Entry<T, K>>(value.entrySet()) : new LinkedList<Map.Entry<T, K>>());
+        grid.setVisible(true);
+        grid.redraw();
     }
     
-    private void createMainPanel() {
-
-        // Clear current widgets.
-        mainPanel.clear();;
-        
-        final Panel newPairPanel = createValuePairEditors();
-        mainPanel.add(newPairPanel);
-        
-        // Add entry button.
-        final com.github.gwtbootstrap.client.ui.Button addButton = new Button("Add", IconType.PLUS, new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                // TODO
-            }
-        });
-        mainPanel.add(addButton);
-    }
-    
-    private Panel createValuePairEditors() {
-        final FlowPanel result = new FlowPanel();
-        final TextBox keyBox = new TextBox();
-        final TextBox valueBox = new TextBox();
-        
-        result.add(keyBox);
-        result.add(valueBox);
-        return result;
-    }
-
-    private void enableError(String text) {
-        setTooltipText(text);
-        markErrorPanel(true);
+    private void enableError(final Tooltip tooltip, final Panel panel, String text) {
+        setTooltipText(tooltip, text);
+        markErrorPanel(panel, true);
     }
 
     private void disableError() {
-        setTooltipText(null);
-        markErrorPanel(false);
+        disableError(keyErrorTooltip, keyPanel);
+        disableError(valueErrorTooltip, valuePanel);
+    }
+    
+    private void disableError(final Tooltip tooltip, final Panel panel) {
+        setTooltipText(tooltip, null);
+        markErrorPanel(panel, false);
     }
 
     public void clear() {
         setValue(null);
     }
 
-    private void markErrorPanel(boolean error) {
+    private void markErrorPanel(final Panel panel, boolean error) {
         if (error) {
-            errorPanel.addStyleName(style.errorPanelError());
+            panel.addStyleName(style.errorPanelError());
         } else {
-            errorPanel.removeStyleName(style.errorPanelError());
+            panel.removeStyleName(style.errorPanelError());
         }
 
     }
 
-    private void setTooltipText(String text) {
+    private void setTooltipText(final Tooltip tooltip, final String text) {
         if (text == null || text.trim().length() == 0) {
-            errorTooltip.setText("");
+            tooltip.setText("");
         } else {
-            errorTooltip.setText(text);
+            tooltip.setText(text);
         }
         // See issue https://github.com/gwtbootstrap/gwt-bootstrap/issues/287
-        errorTooltip.reconfigure();
+        tooltip.reconfigure();
     }
+
+    /*
+        EVENTS
+     */
+    
+    public HandlerRegistration addValueAddEventHandler(ValueAddEventHandler handler)
+    {
+        return this.addHandler(handler, ValueAddEvent.TYPE);
+    }
+    
+    public static class ValueAddEvent extends GwtEvent<ValueAddEventHandler> {
+
+        public static GwtEvent.Type<ValueAddEventHandler> TYPE = new GwtEvent.Type<ValueAddEventHandler>();
         
+        private String key;
+        private String value;
+
+        public ValueAddEvent(String key, String value) {
+            this.key = key;
+            this.value = value;
+        }
+
+        public String getKey() {
+            return key;
+        }
+
+        public String getValue() {
+            return value;
+        }
+
+
+        @Override
+        public Type<ValueAddEventHandler> getAssociatedType() {
+            return TYPE;
+        }
+
+        @Override
+        protected void dispatch(ValueAddEventHandler handler) {
+            handler.onValueAdd(this);
+        }
+    }
+
+    public interface ValueAddEventHandler extends EventHandler
+    {
+        void onValueAdd(ValueAddEvent event);
+    }
 }

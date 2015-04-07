@@ -22,13 +22,17 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import org.codehaus.jackson.map.deser.BeanDeserializerFactory;
 import org.dashbuilder.common.client.validation.editors.MapEditor;
 import org.dashbuilder.common.client.validation.editors.ValueBoxEditorDecorator;
 import org.dashbuilder.dataset.client.validation.editors.BeanDataSetDefEditor;
 import org.dashbuilder.client.widgets.dataset.editor.widgets.editors.AbstractDataSetDefEditor;
+import org.dashbuilder.dataset.def.BeanDataSetDef;
 
 import javax.enterprise.context.Dependent;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>This is the view implementation for Data Set Editor widget for editing bean provider specific attributes.</p>
@@ -50,8 +54,30 @@ public class BeanDataSetDefAttributesEditor extends AbstractDataSetDefEditor imp
 
     private boolean isEditMode;
 
+    private final MapEditor.ValueAddEventHandler parameterMapAddHandler = new MapEditor.ValueAddEventHandler() {
+        @Override
+        public void onValueAdd(MapEditor.ValueAddEvent event) {
+            final String key = event.getKey();
+            final String value = event.getValue();
+            Map<String, String> parameterMap = getDataSetDef().getParamaterMap();
+            if (parameterMap == null) {
+                parameterMap = new LinkedHashMap<String, String>();
+                getDataSetDef().setParamaterMap(parameterMap);
+            }
+            parameterMap.put(key, value);
+            
+            // Redraw the editor.
+            BeanDataSetDefAttributesEditor.this.paramaterMap.redraw();
+        }
+    };
+    
+    private BeanDataSetDef getDataSetDef() {
+        return (BeanDataSetDef) dataSetDef;
+    }
+    
     public BeanDataSetDefAttributesEditor() {
         initWidget(uiBinder.createAndBindUi(this));
+        paramaterMap.addValueAddEventHandler(parameterMapAddHandler);
     }
 
     public boolean isEditMode() {

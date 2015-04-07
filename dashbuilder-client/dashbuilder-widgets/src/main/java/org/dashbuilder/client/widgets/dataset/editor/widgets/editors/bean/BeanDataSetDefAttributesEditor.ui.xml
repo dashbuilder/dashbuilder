@@ -10,6 +10,15 @@
   <ui:style>
     .mainPanel {
     }
+    .well {
+      background-color: ghostwhite;
+      border: 1px solid #E3E3E3;
+      border-radius: 4px 4px 4px 4px;
+      box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05) inset;
+      margin-bottom: 20px;
+      min-height: 20px;
+      padding: 19px;
+    }
   </ui:style>
 
   <g:FlowPanel ui:field="beanAttributesPanel" addStyleNames="{style.mainPanel}">
@@ -35,7 +44,7 @@
       <b:Column size="2">
         <g:HTML text="{i18n.bean_generator_params}"/>
       </b:Column>
-      <b:Column size="3">
+      <b:Column size="3" addStyleNames="{style.well} ">
         <b:Popover showDelay="1000" text="{i18n.bean_generator_params_description}" heading="{i18n.bean_generator_params}">
           <dash-client:MapEditor ui:field="paramaterMap"/>
         </b:Popover>

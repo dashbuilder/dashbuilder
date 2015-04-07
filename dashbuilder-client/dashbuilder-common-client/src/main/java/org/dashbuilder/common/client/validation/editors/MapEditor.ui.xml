@@ -5,35 +5,69 @@
              xmlns:c="urn:import:com.google.gwt.user.cellview.client"
     >
 
+  <ui:with field="i18n" type="org.dashbuilder.common.client.resources.i18n.DashbuilderCommonConstants"/>
+
   <ui:style type="org.dashbuilder.common.client.validation.editors.MapEditor.MapEditorStyle">
     .mainPanel {
-      
-    }
-    .errorPanel {
       
     }
     .errorPanelError {
       border: 1px solid red;
     }
     .gridPanel {
-      
+      width: 100%;
     }
     .grid {
-      
+      width: 100%;
+      height: 200px;
+      font-size: small;
+    }
+    .keyValuePanel {
+      width: 100%;      
+    }
+    .keyPanel {
+
+    }
+    .valuePanel {
+
+    }
+    .label {
+      float: left;
+      font-size: small;
+      margin-right: 10px;
+    }
+    .input {
+      font-size: small;
     }
   </ui:style>
   
-  <g:HTMLPanel ui:field="errorPanel" addStyleNames="{style.errorPanel} ">
+  <g:HTMLPanel ui:field="mainPanel" addStyleNames="{style.mainPanel} ">
 
-    <g:FlowPanel ui:field="gridPanel" addStyleNames="{style.gridPanel} ">
+    <g:FlowPanel addStyleNames="{style.keyValuePanel} ">
+      
+      <b:Tooltip text="" ui:field="keyErrorTooltip">
+        <g:FlowPanel ui:field="keyPanel" addStyleNames="{style.keyPanel} ">
+          <g:Label text="{i18n.key}" addStyleNames="{style.label} "/>
+          <b:TextBox ui:field="keyBox" addStyleNames="{style.input} "/>
+        </g:FlowPanel>
+      </b:Tooltip>
+
+      <b:Tooltip text="" ui:field="valueErrorTooltip">
+        <g:FlowPanel ui:field="valuePanel" addStyleNames="{style.valuePanel} ">
+          <g:Label text="{i18n.value}" addStyleNames="{style.label} "/>
+          <b:TextBox ui:field="valueBox" addStyleNames="{style.input} "/>
+        </g:FlowPanel>
+      </b:Tooltip>
+      
+      <b:Button ui:field="addButton" text="{i18n.add}" icon="PLUS" title="{i18n.add}"/>
+      
+    </g:FlowPanel>
+
+    <g:ScrollPanel ui:field="gridPanel" addStyleNames="{style.gridPanel} ">
       <b:DataGrid ui:field="grid" addStyleNames="{style.grid} ">
       </b:DataGrid>
-    </g:FlowPanel>
+    </g:ScrollPanel>
     
-    <b:Tooltip text="" ui:field="errorTooltip">
-      <g:FlowPanel ui:field="mainPanel" addStyleNames="{style.mainPanel} ">
-      </g:FlowPanel>
-    </b:Tooltip>
   </g:HTMLPanel>
   
 </ui:UiBinder>
