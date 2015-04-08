@@ -16,7 +16,8 @@
       margin: 5px;
     }
     .dropDown ul {
-        min-width: 0;
+      min-width: 0;
+      left: -50px;
     }
   </ui:style>
 

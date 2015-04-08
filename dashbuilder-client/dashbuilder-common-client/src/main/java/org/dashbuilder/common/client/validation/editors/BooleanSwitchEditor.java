@@ -178,7 +178,7 @@ public class BooleanSwitchEditor extends Composite implements
 
     private void labelOFF() {
         label.setText(OFF);
-        label.setType(LabelType.WARNING);
+        label.setType(LabelType.DEFAULT);
     }
 
     private boolean isLabelON() {

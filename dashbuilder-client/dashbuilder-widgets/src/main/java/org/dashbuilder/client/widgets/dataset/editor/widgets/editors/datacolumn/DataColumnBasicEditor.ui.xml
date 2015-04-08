@@ -17,16 +17,16 @@
   
   <g:FlowPanel ui:field="columnPanel" addStyleNames="{style.mainPanel} ">
 
-    <b:Popover showDelay="1000" text="{i18n.attributeColumnType_description}" heading="{i18n.attributeColumnType}">
-      <dash-client:DropDownImageListEditor ui:field="columnType" addStyleNames="{style.left}"/>
-    </b:Popover>
-
     <b:Popover showDelay="1000" text="{i18n.attributeId}" heading="{i18n.attributeId_description}">
       <dash-client:ValueBoxEditorDecorator errorLabelPosition="TOOLTIP" ui:field="id" addStyleNames="{style.left}">
         <dash-client:valuebox>
           <b:TextBox enabled="false" placeholder="{i18n.attributeId}" />
         </dash-client:valuebox>
       </dash-client:ValueBoxEditorDecorator>
+    </b:Popover>
+
+    <b:Popover showDelay="1000" text="{i18n.attributeColumnType_description}" heading="{i18n.attributeColumnType}">
+      <dash-client:DropDownImageListEditor ui:field="columnType" addStyleNames="{style.left}"/>
     </b:Popover>
     
   </g:FlowPanel>

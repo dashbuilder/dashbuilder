@@ -65,10 +65,12 @@
     .columnsFilterPanel {
       float: left;
       width: 300px;
+      overflow: hidden;
     }
     .previewTablePanel {
-      float: left;
       margin: 15px;
+      overflow: auto;
+      padding: 50px;
     }
     .clear {
       clear: both;

@@ -144,7 +144,7 @@
             </dash-client:ValueBoxEditorDecorator>
           </b:Popover>
 
-          <b:DropdownButton ui:field="intervalType" addStyleNames="{style.sliderPanel} "/>
+          <b:DropdownButton ui:field="intervalType" height="100px" addStyleNames="{style.sliderPanel} "/>
           
         </g:FlowPanel>
 

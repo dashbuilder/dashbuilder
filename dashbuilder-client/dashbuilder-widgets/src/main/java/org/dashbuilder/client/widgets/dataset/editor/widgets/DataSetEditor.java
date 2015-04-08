@@ -190,6 +190,13 @@ public class DataSetEditor implements IsWidget {
                 // Restart workflow.
                 edit();
 
+                // TODO: For testing
+                dataSetDef.setName("TestDataSet");
+                if (dataSetDef instanceof SQLDataSetDef) {
+                    ((SQLDataSetDef) dataSetDef).setDataSource("jdbc/mysqlDS");
+                    ((SQLDataSetDef) dataSetDef).setDbTable("taula2");
+                }
+                
                 // Build basic attributes view.
                 showBasicAttributesEditionView();
 
