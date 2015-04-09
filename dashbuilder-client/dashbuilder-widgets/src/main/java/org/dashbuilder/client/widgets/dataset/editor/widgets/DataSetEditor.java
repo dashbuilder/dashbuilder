@@ -196,6 +196,9 @@ public class DataSetEditor implements IsWidget {
                     ((SQLDataSetDef) dataSetDef).setDataSource("jdbc/mysqlDS");
                     ((SQLDataSetDef) dataSetDef).setDbTable("taula2");
                 }
+                else if (dataSetDef instanceof CSVDataSetDef) {
+                    ((CSVDataSetDef) dataSetDef).setFilePath("/home/romartin/Desktop/roger.csv");
+                }
                 
                 // Build basic attributes view.
                 showBasicAttributesEditionView();

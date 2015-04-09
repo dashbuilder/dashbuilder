@@ -23,51 +23,25 @@
       font-size: small;
       overflow: auto;
     }
-    .keyValuePanel {
-      width: 100%;      
-    }
-    .keyPanel {
-
-    }
-    .valuePanel {
-
-    }
-    .label {
-      float: left;
-      font-size: small;
-      margin-right: 10px;
-    }
-    .input {
-      font-size: small;
+    .addButtonPanel {
+      width: 100%;   
+      text-align: right;
     }
   </ui:style>
   
   <g:HTMLPanel ui:field="mainPanel" addStyleNames="{style.mainPanel} ">
 
-    <g:FlowPanel addStyleNames="{style.keyValuePanel} ">
-      
-      <b:Tooltip text="" ui:field="keyErrorTooltip">
-        <g:FlowPanel ui:field="keyPanel" addStyleNames="{style.keyPanel} ">
-          <g:Label text="{i18n.key}" addStyleNames="{style.label} "/>
-          <b:TextBox ui:field="keyBox" addStyleNames="{style.input} "/>
-        </g:FlowPanel>
-      </b:Tooltip>
-
-      <b:Tooltip text="" ui:field="valueErrorTooltip">
-        <g:FlowPanel ui:field="valuePanel" addStyleNames="{style.valuePanel} ">
-          <g:Label text="{i18n.value}" addStyleNames="{style.label} "/>
-          <b:TextBox ui:field="valueBox" addStyleNames="{style.input} "/>
-        </g:FlowPanel>
-      </b:Tooltip>
-      
-      <b:Button ui:field="addButton" text="{i18n.add}" icon="PLUS" title="{i18n.add}"/>
-      
-    </g:FlowPanel>
-
+    <b:Label ui:field="errorLabel" visible="false"/>
     <g:ScrollPanel ui:field="gridPanel" addStyleNames="{style.gridPanel} ">
       <b:DataGrid ui:field="grid" addStyleNames="{style.grid} ">
       </b:DataGrid>
     </g:ScrollPanel>
+
+    <g:FlowPanel addStyleNames="{style.addButtonPanel} ">
+
+      <b:Button ui:field="addButton" text="{i18n.add}" icon="PLUS" title="{i18n.add}"/>
+
+    </g:FlowPanel>
     
   </g:HTMLPanel>
   

@@ -24,6 +24,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.*;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.view.client.ListDataProvider;
 import org.dashbuilder.common.client.resources.i18n.DashbuilderCommonConstants;
 
 import java.util.HashMap;
@@ -58,28 +59,14 @@ public class MapEditor<T, K> extends Composite implements
     DataGrid<Map.Entry<T, K>> grid;
     
     @UiField
-    Tooltip keyErrorTooltip;
-    
-    @UiField
-    FlowPanel keyPanel;
-    
-    @UiField
-    @Ignore
-    com.github.gwtbootstrap.client.ui.TextBox keyBox;
-
-    @UiField
-    Tooltip valueErrorTooltip;
-
-    @UiField
-    FlowPanel valuePanel;
-
-    @UiField
-    @Ignore
-    com.github.gwtbootstrap.client.ui.TextBox valueBox;
-    
-    @UiField
     @Ignore
     Button addButton;
+    
+    @UiField
+    @Ignore
+    com.github.gwtbootstrap.client.ui.Label errorLabel;
+
+    private final ListDataProvider<Map.Entry<T, K>> model = new ListDataProvider<Map.Entry<T, K>>(new LinkedList<Map.Entry<T, K>>());
     
     public MapEditor() {
         initWidget(Binder.BINDER.createAndBindUi(this));
@@ -90,9 +77,7 @@ public class MapEditor<T, K> extends Composite implements
     private final ClickHandler addClickHandler = new ClickHandler() {
         @Override
         public void onClick(ClickEvent event) {
-            final String key = keyBox.getValue();
-            final String value = valueBox.getValue();
-            fireEvent(new ValueAddEvent(key, value));
+            fireEvent(new ValueAddEvent(DashbuilderCommonConstants.INSTANCE.newValue(), DashbuilderCommonConstants.INSTANCE.newValue()));
         }
     };
     
@@ -107,16 +92,14 @@ public class MapEditor<T, K> extends Composite implements
     private final FieldUpdater keyModifiedEventHandler = new FieldUpdater<Map.Entry<T, K>, String>() {
         @Override
         public void update(int index, Map.Entry<T, K> object, String value) {
-            final String _key = keyBox.getValue();
-            fireEvent(new KeyModifiedEvent(index, _key, value));
+            fireEvent(new KeyModifiedEvent(index, object.getKey().toString(), value));
         }
     };
     
     private final FieldUpdater valueModifiedEventHandler = new FieldUpdater<Map.Entry<T, K>, String>() {
         @Override
         public void update(int index, Map.Entry<T, K> object, String value) {
-            final String _value = valueBox.getValue();
-            fireEvent(new ValueModifiedEvent(index, _value, value));
+            fireEvent(new ValueModifiedEvent(index, object.getValue().toString(), value));
         }
     };
 
@@ -170,7 +153,7 @@ public class MapEditor<T, K> extends Composite implements
     }
 
     private void createGrid() {
-
+        
         grid.setEmptyTableWidget(new Label(DashbuilderCommonConstants.INSTANCE.noData()));
         
         // Create KEY column.
@@ -212,18 +195,14 @@ public class MapEditor<T, K> extends Composite implements
                     }
                 };
         
-        /*final com.google.gwt.user.cellview.client.Column<Map.Entry<T, K>, Void> removeColumn =
-            new com.google.gwt.user.cellview.client.Column<Map.Entry<T, K>, Void>(new IconCell(IconType.MINUS)) {
-    
-                @Override
-                public Void getValue(Map.Entry<T, K> object) {
-                    return null;
-                }
-            };*/
         removeColumn.setFieldUpdater(removeButtonHandler);
         removeColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
         grid.addColumn(removeColumn, DashbuilderCommonConstants.INSTANCE.actions());
         grid.setColumnWidth(removeColumn, 20, Style.Unit.PCT);
+
+        // Link model to grid.
+        // model.addDataDisplay(grid);
+
     }
     
     private K removeEntry(T key) {
@@ -231,48 +210,38 @@ public class MapEditor<T, K> extends Composite implements
     }
     
     public void redraw() {
-        grid.setRowCount(value != null ? value.size() : 0);
-        grid.setRowData(value != null ? new LinkedList<Map.Entry<T, K>>(value.entrySet()) : new LinkedList<Map.Entry<T, K>>());
-        grid.setVisible(true);
-        grid.redraw();
+        // NOTE: If not removing and re-adding columns, grid tow data refresh is not well done. 
+        grid.removeColumn(0);
+        grid.removeColumn(0);
+        grid.removeColumn(0);
+        createGrid();
+        
+        final int count = value != null ? value.size() : 0;
+        final List<Map.Entry<T, K>> list = value != null ? new LinkedList<Map.Entry<T, K>>(value.entrySet()) : new LinkedList<Map.Entry<T, K>>(); 
+        grid.setRowCount(count);
+        grid.setRowData(0, list);
     }
     
-    private void enableError(final Tooltip tooltip, final Panel panel, String text) {
-        setTooltipText(tooltip, text);
-        markErrorPanel(panel, true);
+    private void enableError(String text) {
+        setLabelText(text);
+        errorLabel.setVisible(true);
     }
 
     private void disableError() {
-        disableError(keyErrorTooltip, keyPanel);
-        disableError(valueErrorTooltip, valuePanel);
+        setLabelText(null);
+        errorLabel.setVisible(false);
     }
     
-    private void disableError(final Tooltip tooltip, final Panel panel) {
-        setTooltipText(tooltip, null);
-        markErrorPanel(panel, false);
-    }
-
     public void clear() {
         setValue(null);
     }
 
-    private void markErrorPanel(final Panel panel, boolean error) {
-        if (error) {
-            panel.addStyleName(style.errorPanelError());
-        } else {
-            panel.removeStyleName(style.errorPanelError());
-        }
-
-    }
-
-    private void setTooltipText(final Tooltip tooltip, final String text) {
+    private void setLabelText(final String text) {
         if (text == null || text.trim().length() == 0) {
-            tooltip.setText("");
+            errorLabel.setText("");
         } else {
-            tooltip.setText(text);
+            errorLabel.setText(text);
         }
-        // See issue https://github.com/gwtbootstrap/gwt-bootstrap/issues/287
-        tooltip.reconfigure();
     }
 
     /*
