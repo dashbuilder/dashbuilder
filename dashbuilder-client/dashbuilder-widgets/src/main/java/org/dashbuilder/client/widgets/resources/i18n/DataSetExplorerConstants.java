@@ -22,6 +22,8 @@ public interface DataSetExplorerConstants extends ConstantsWithLookup {
 
     public static final DataSetExplorerConstants INSTANCE = GWT.create( DataSetExplorerConstants.class );
 
+    String title();
+    String newDataSet();
     String noDataSets();
     String availableDataSets();
     String cache();

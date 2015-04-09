@@ -311,6 +311,11 @@ public class DataSetClientServices {
         dataSetBackendServices.call().removeDataSetDef(dataSetDef);
     }
 
+    public void removeDataSetDef(final String uuid) {
+        final DataSetDef dataSetDef = clientDataSetManager.getDataSet(uuid).getDefinition();
+        removeDataSetDef(dataSetDef);
+    }
+
     public void removeDataSet(final String uuid) {
         clientDataSetManager.removeDataSet(uuid);
     }

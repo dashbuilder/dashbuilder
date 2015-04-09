@@ -19,6 +19,8 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.IsWidget;
 import org.dashbuilder.client.widgets.dataset.editor.widgets.DataSetExplorer;
 import org.dashbuilder.client.widgets.dataset.editor.widgets.events.*;
+import org.dashbuilder.client.widgets.resources.i18n.DataSetExplorerConstants;
+import org.dashbuilder.dataset.client.DataSetClientServices;
 import org.dashbuilder.dataset.uuid.UUIDGenerator;
 import org.uberfire.client.annotations.WorkbenchMenu;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
@@ -75,10 +77,9 @@ public class DataSetExplorerScreenPresenter {
         // TODO: Close editor widget.
     }
 
-    // TODO: i18n.
     @WorkbenchPartTitle
     public String getTitle() {
-        return "Data Set Explorer Screen";
+        return DataSetExplorerConstants.INSTANCE.title();
     }
 
     @WorkbenchPartView
@@ -93,8 +94,7 @@ public class DataSetExplorerScreenPresenter {
 
     private Menus makeMenuBar() {
         return MenuFactory
-                // TODO: i18n.
-                .newTopLevelMenu("New data set")
+                .newTopLevelMenu(DataSetExplorerConstants.INSTANCE.newDataSet())
                 .respondsWith(getNewCommand())
                 .endMenu()
                 .build();
@@ -109,15 +109,12 @@ public class DataSetExplorerScreenPresenter {
     }
     
     void newDataSet() {
-        // TODO: Generate uuid using the backend uuid generator. Perform a RPC call.
         String uuid = uuidGenerator.newUuid();
-        GWT.log("Create data set " + uuid);
         NewDataSetEvent event = new NewDataSetEvent(uuid);
         newDataSetEvent.fire(event);
     }
     
     void editDataSet(EditDataSetEvent event) {
-        GWT.log("Edit data set " + event.getUuid());
         editDataSetEvent.fire(event);
     }
 
@@ -126,7 +123,6 @@ public class DataSetExplorerScreenPresenter {
     }
     
     public void deleteDataSet(String uuid) {
-        GWT.log("Delete data set " + uuid);
-        // TODO
+        DataSetClientServices.get().removeDataSetDef(uuid);
     }
 }

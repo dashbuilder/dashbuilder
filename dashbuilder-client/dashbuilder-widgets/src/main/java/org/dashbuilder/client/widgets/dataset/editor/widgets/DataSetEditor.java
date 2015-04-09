@@ -31,6 +31,7 @@ import org.dashbuilder.dataset.DataSetMetadata;
 import org.dashbuilder.dataset.client.ClientDataSetManager;
 import org.dashbuilder.dataset.client.DataSetClientServices;
 import org.dashbuilder.dataset.client.DataSetMetadataCallback;
+import org.dashbuilder.dataset.client.uuid.ClientUUIDGenerator;
 import org.dashbuilder.dataset.def.*;
 import org.dashbuilder.dataset.filter.DataSetFilter;
 import org.dashbuilder.dataset.group.DataSetGroup;
@@ -378,8 +379,7 @@ public class DataSetEditor implements IsWidget {
     private final ClickHandler newDataSetHandler = new ClickHandler() {
         @Override
         public void onClick(ClickEvent event) {
-            // TODO: Generate uuid using the backend uuid generator. Perform a RPC call.
-            newDataSet("new-uuid");;
+            newDataSet(ClientUUIDGenerator.get().newUuid());
         }
     };
     
