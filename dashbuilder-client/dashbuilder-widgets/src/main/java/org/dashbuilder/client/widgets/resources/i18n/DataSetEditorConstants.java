@@ -91,6 +91,10 @@ public interface DataSetEditorConstants extends ConstantsWithLookup {
     String sql_table();
     String sql_table_description();
     String sql_table_placeHolder();
+    String sql_source();
+    String sql_query();
+    String sql_query_description();
+    String sql_query_placeHolder();
     String staticAttributes();
     String beanAttributes();
     String csvAttributes();

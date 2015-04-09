@@ -17,12 +17,7 @@ package org.dashbuilder.dataprovider.backend.sql;
 
 import java.sql.Connection;
 import java.sql.Timestamp;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Map;
+import java.util.*;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -292,6 +287,24 @@ public class SQLDataSetProvider implements DataSetProvider {
         return result;
     }
 
+    /**
+     * <p>Given a data source connection (database and schema), list existing tables.</p> 
+     * @param def The SQL data set definiton.
+     * @param conn The connection.
+     * @return The tables for the database and schema's connection.
+     */
+    public List<String> getTables(SQLDataSetDef def, Connection conn) {
+        List<Table<?>> tables = using(conn).meta().getTables();
+        if (tables != null && !tables.isEmpty()) {
+            List<String> result = new LinkedList<String>();
+            for (Table<?> table : tables) {
+                result.add(tables.get(0).getName());
+            }
+            return result;
+        }
+        return null;
+    }
+    
     protected int _getRowCount(SQLDataSetDef def, Connection conn) throws Exception {
         DataSetFilter filterOp = def.getDataSetFilter();
         if (filterOp == null) {

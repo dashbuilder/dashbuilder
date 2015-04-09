@@ -10,6 +10,10 @@
   <ui:style>
     .mainPanel {
     }
+    .radioButton {
+      float: left;
+      margin-right: 10px;
+    }
   </ui:style>
 
   <!-- SQL attributes. -->
@@ -49,19 +53,44 @@
     </b:Row>
 
 
+
+    <!-- Source. -->
+    <b:Row>
+      <b:Column size="2">
+        <g:HTML text="{i18n.sql_source}"/>
+      </b:Column>
+      <b:Column size="3">
+        <g:FlowPanel>
+          <b:RadioButton ui:field='tableButton' name="{i18n.sql_table}" text="{i18n.sql_table}" addStyleNames="{style.radioButton} "/>
+          <b:RadioButton ui:field='queryButton' name="{i18n.sql_query}" text="{i18n.sql_query}" addStyleNames="{style.radioButton} "/>
+        </g:FlowPanel>
+      </b:Column>
+    </b:Row>
+    
+    
+
     <!-- Table. -->
     <b:Row>
       <b:Column size="2">
-        <g:HTML text="{i18n.sql_table}"/>
+        
       </b:Column>
       <b:Column size="3">
-        <b:Popover showDelay="1000" text="{i18n.sql_table_description}" heading="{i18n.sql_table}">
-          <dash-client:ValueBoxEditorDecorator errorLabelPosition="TOOLTIP" ui:field="dbTable">
-            <dash-client:valuebox>
-              <b:TextBox placeholder="{i18n.sql_table_placeHolder}" />
-            </dash-client:valuebox>
-          </dash-client:ValueBoxEditorDecorator>
-        </b:Popover>
+        
+        <g:FlowPanel>
+          <b:Popover showDelay="1000" text="{i18n.sql_table_description}" heading="{i18n.sql_table}">
+            <dash-client:ValueBoxEditorDecorator errorLabelPosition="TOOLTIP" ui:field="dbTable">
+              <dash-client:valuebox>
+                <b:TextBox placeholder="{i18n.sql_table_placeHolder}" />
+              </dash-client:valuebox>
+            </dash-client:ValueBoxEditorDecorator>
+          </b:Popover>
+
+          <b:Popover showDelay="1000" text="{i18n.sql_query_description}" heading="{i18n.sql_query}">
+            <b:TextArea placeholder="{i18n.sql_query_placeHolder}" ui:field="dbQuery"/>
+          </b:Popover>
+
+        </g:FlowPanel>
+        
       </b:Column>
     </b:Row>
 

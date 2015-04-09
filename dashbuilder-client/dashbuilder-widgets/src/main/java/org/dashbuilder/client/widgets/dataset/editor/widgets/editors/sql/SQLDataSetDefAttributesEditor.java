@@ -15,16 +15,23 @@
  */
 package org.dashbuilder.client.widgets.dataset.editor.widgets.editors.sql;
 
+import com.github.gwtbootstrap.client.ui.RadioButton;
+import com.github.gwtbootstrap.client.ui.TextArea;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.EditorError;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.common.client.validation.editors.ValueBoxEditorDecorator;
+import org.dashbuilder.dataset.client.DataSetClientServices;
 import org.dashbuilder.dataset.client.validation.editors.SQLDataSetDefEditor;
 import org.dashbuilder.client.widgets.dataset.editor.widgets.editors.AbstractDataSetDefEditor;
+import org.dashbuilder.dataset.def.DataSetDef;
+import org.dashbuilder.dataset.def.SQLDataSetDef;
 
 import javax.enterprise.context.Dependent;
 import java.util.List;
@@ -50,13 +57,42 @@ public class SQLDataSetDefAttributesEditor extends AbstractDataSetDefEditor impl
     ValueBoxEditorDecorator<String> dbSchema;
 
     @UiField
+    @Ignore
+    RadioButton tableButton;
+    
+    @UiField
     @Path("dbTable")
     ValueBoxEditorDecorator<String> dbTable;
+
+    @UiField
+    @Ignore
+    RadioButton queryButton;
+
+    @UiField
+    @Ignore
+    TextArea dbQuery;
 
     private boolean isEditMode;
 
     public SQLDataSetDefAttributesEditor() {
         initWidget(uiBinder.createAndBindUi(this));
+        
+        // Configure radio buttons.
+        tableButton.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+            @Override
+            public void onValueChange(ValueChangeEvent<Boolean> event) {
+                if (event.getValue()) enableTable();
+                else enableQuery();
+            }
+        });
+
+        queryButton.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+            @Override
+            public void onValueChange(ValueChangeEvent<Boolean> event) {
+                if (event.getValue()) enableQuery();
+                else enableTable();
+            }
+        });
     }
 
     public boolean isEditMode() {
@@ -70,5 +106,35 @@ public class SQLDataSetDefAttributesEditor extends AbstractDataSetDefEditor impl
     @Override
     public void showErrors(List<EditorError> errors) {
         consumeErrors(errors);
+    }
+
+    private SQLDataSetDef getDataSetDef() {
+        return (SQLDataSetDef) dataSetDef;
+    }
+    
+    @Override
+    public void set(DataSetDef dataSetDef) {
+        super.set(dataSetDef);
+        
+        // Enable table by default.
+        enableTable();
+    }
+
+    private void enableTable() {
+        dbTable.setEnabled(true);
+        dbTable.setVisible(true);
+        dbQuery.setEnabled(false);
+        dbQuery.setVisible(false);
+        tableButton.setValue(true);
+        queryButton.setValue(false);
+    }
+
+    private void enableQuery() {
+        dbTable.setEnabled(false);
+        dbTable.setVisible(false);
+        dbQuery.setEnabled(true);
+        dbQuery.setVisible(true);
+        tableButton.setValue(false);
+        queryButton.setValue(true);
     }
 }
