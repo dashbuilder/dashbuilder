@@ -15,7 +15,6 @@
  */
 package org.dashbuilder.client.widgets.dataset.editor.widgets.editors.datacolumn;
 
-import com.github.gwtbootstrap.client.ui.Image;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.EditorError;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -23,17 +22,10 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.client.widgets.dataset.editor.widgets.editors.AbstractEditor;
-import org.dashbuilder.client.widgets.resources.i18n.DataSetEditorConstants;
-import org.dashbuilder.common.client.validation.editors.BooleanSwitchEditor;
-import org.dashbuilder.common.client.validation.editors.DropDownImageListEditor;
 import org.dashbuilder.common.client.validation.editors.ValueBoxEditorDecorator;
-import org.dashbuilder.dataset.ColumnType;
-import org.dashbuilder.dataset.client.resources.bundles.DataSetClientResources;
 
 import javax.enterprise.context.Dependent;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * <p>This is the view implementation widget for editing data a given set column's name and type.</p>
@@ -56,7 +48,7 @@ public class DataColumnBasicEditor extends AbstractEditor implements org.dashbui
     ValueBoxEditorDecorator<String> id;
 
     @UiField
-    DropDownImageListEditor<ColumnType> columnType;
+    DataColumnTypeEditor columnType;
     
     private boolean isEditMode;
 
@@ -66,14 +58,7 @@ public class DataColumnBasicEditor extends AbstractEditor implements org.dashbui
 
         setEditMode(true);
         
-        // Initialize the dropdown editor with image for each column type.
-        final Map<ColumnType, Image> providerEditorValues = new LinkedHashMap<ColumnType, Image>();
-        for (final ColumnType type : ColumnType.values()) {
-            final Image _image = buildTypeSelectorWidget(type);
-            if (_image != null) providerEditorValues.put(type, _image);
-        }
         columnType.setSize(ICONS_SIZE, ICONS_SIZE);
-        columnType.setAcceptableValues(providerEditorValues);
     }
 
     public boolean isEditMode() {
@@ -100,33 +85,6 @@ public class DataColumnBasicEditor extends AbstractEditor implements org.dashbui
                 error.setConsumed(true);
             }
         }
-    }
-
-    private Image buildTypeSelectorWidget(ColumnType type) {
-        Image typeIcon = null;
-        switch (type) {
-            case LABEL:
-                typeIcon = new Image(DataSetClientResources.INSTANCE.images().labelIconSmall().getSafeUri());
-                typeIcon.setAltText(DataSetEditorConstants.INSTANCE.label());
-                typeIcon.setTitle(DataSetEditorConstants.INSTANCE.label());
-                break;
-            case TEXT:
-                typeIcon = new Image(DataSetClientResources.INSTANCE.images().textIconSmall().getSafeUri());
-                typeIcon.setAltText(DataSetEditorConstants.INSTANCE.text());
-                typeIcon.setTitle(DataSetEditorConstants.INSTANCE.text());
-                break;
-            case NUMBER:
-                typeIcon = new Image(DataSetClientResources.INSTANCE.images().numberIconSmall().getSafeUri());
-                typeIcon.setAltText(DataSetEditorConstants.INSTANCE.number());
-                typeIcon.setTitle(DataSetEditorConstants.INSTANCE.number());
-                break;
-            case DATE:
-                typeIcon = new Image(DataSetClientResources.INSTANCE.images().dateIconSmall().getSafeUri());
-                typeIcon.setAltText(DataSetEditorConstants.INSTANCE.date());
-                typeIcon.setTitle(DataSetEditorConstants.INSTANCE.date());
-                break;
-        }
-        return typeIcon;
     }
 
     @Override

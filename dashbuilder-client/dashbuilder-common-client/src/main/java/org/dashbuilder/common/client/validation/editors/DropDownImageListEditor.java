@@ -71,7 +71,6 @@ public class DropDownImageListEditor<T> extends Composite implements
         
         // Configure the dropdown button.
         dropDownButton.setType(ButtonType.LINK);
-        dropDownButton.addCustomTrigger(currentTypeImage);
     }
 
     public HandlerRegistration addValueChangeHandler(final ValueChangeHandler<T> handler) {
@@ -95,8 +94,8 @@ public class DropDownImageListEditor<T> extends Composite implements
     public void setAcceptableValues(Map<T, Image> newValues) {
         values.clear();
         images.clear();
-
-        if (newValues != null) {
+        
+        if (newValues != null && !newValues.isEmpty()) {
             for (Map.Entry<T, Image> entry : newValues.entrySet()) {
                 final T _value = entry.getKey();
                 final Image _image = entry.getValue();
@@ -111,10 +110,23 @@ public class DropDownImageListEditor<T> extends Composite implements
                 });
                 values.add(_value);
                 images.put(_value, _image);
-                dropDownButton.add(_image);
             }
         }
-
+        
+    }
+    
+    private void buildUIDropDown() {
+        dropDownButton.clear();
+        dropDownButton.addCustomTrigger(currentTypeImage);
+        dropDownButton.getMenuWiget().setVisible(false);   
+        
+        if (images!= null && images.size() > 1) {
+            dropDownButton.getMenuWiget().setVisible(true);
+            for (Map.Entry<T, Image> entry : images.entrySet()) {
+                if (this.value != null && !this.value.equals(entry.getKey())) dropDownButton.add(entry.getValue());
+            }
+        }
+        
     }
     
     public void setAcceptableValues(final Collection<T> newValues) {
@@ -154,6 +166,9 @@ public class DropDownImageListEditor<T> extends Composite implements
                 currentTypeImage.setSize("16px", "16px");
             }
         }
+
+        // Build the drop down button.
+        buildUIDropDown();
 
         if (fireEvents) {
             ValueChangeEvent.fireIfNotEqual(this, before, value);
