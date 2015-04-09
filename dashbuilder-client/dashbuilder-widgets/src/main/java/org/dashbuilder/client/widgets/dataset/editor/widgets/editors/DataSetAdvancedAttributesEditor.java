@@ -24,6 +24,8 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.regexp.shared.MatchResult;
+import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -47,6 +49,7 @@ import java.util.List;
 @Dependent
 public class DataSetAdvancedAttributesEditor extends AbstractDataSetDefEditor implements DataSetDefEditor {
     
+    private static final String NUMBER_PATTERN = "(\\d*).*";
     private static final String DEFAULT_REFRESH_TIME = "1hour";
     private static final DateIntervalType DEFAULT_INTERVAL_TYPE = DateIntervalType.HOUR;
 
@@ -113,13 +116,7 @@ public class DataSetAdvancedAttributesEditor extends AbstractDataSetDefEditor im
                 public void onClick(ClickEvent event) {
                     intervalType.setText(s);
                     final String ri = attributeRefreshInterval.asEditor().getValue();
-                    long q = 1;
-                    try {
-                        final TimeAmount ta = TimeAmount.parse(ri);
-                        q = ta.getQuantity();
-                    } catch (IllegalArgumentException e) {
-                        e.printStackTrace();
-                    }
+                    final long q = parseNumber(ri);
                     final String newValue = q + s;
                     attributeRefreshInterval.asEditor().setValue(newValue);
                 }
@@ -144,6 +141,18 @@ public class DataSetAdvancedAttributesEditor extends AbstractDataSetDefEditor im
         attributeBackendCacheStatus.addValueChangeHandler(attributeBackendCacheStatusHandler);
         attributeRefreshStatus.addValueChangeHandler(refreshStatusHandler);
         
+    }
+    
+    private long parseNumber(String s) {
+        RegExp regExp = RegExp.compile(NUMBER_PATTERN);
+        MatchResult matcher = regExp.exec(s);
+        boolean matchFound = matcher != null; // equivalent to regExp.test(inputStr); 
+
+        String groupStr = "";
+        if (matchFound) {
+            groupStr = matcher.getGroup(1);;
+        }
+        return groupStr.length() > 0 ? Long.parseLong(groupStr) : 1;
     }
     
     private final ValueChangeHandler<Boolean> attributeClientCacheStatusHandler = new ValueChangeHandler<Boolean>() {
