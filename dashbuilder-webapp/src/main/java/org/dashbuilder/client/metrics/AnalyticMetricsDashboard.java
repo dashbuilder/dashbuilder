@@ -22,6 +22,7 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.client.gallery.GalleryWidget;
+import org.dashbuilder.client.resources.i18n.AppConstants;
 import org.dashbuilder.displayer.DisplayerSettingsFactory;
 import org.dashbuilder.displayer.client.Displayer;
 import org.dashbuilder.displayer.client.DisplayerCoordinator;
@@ -81,7 +82,7 @@ public class AnalyticMetricsDashboard extends Composite implements GalleryWidget
 
     @Override
     public String getTitle() {
-        return "System Metrics (Analytic)";
+        return AppConstants.INSTANCE.metrics_analytic_title();
     }
 
     @Override
@@ -133,12 +134,12 @@ public class AnalyticMetricsDashboard extends Composite implements GalleryWidget
                 .column(COLUMN_TIMESTAMP, "Minute")
                 .column(COLUMN_CPU0, AVERAGE, "CPU0 (%)")
                 .column(COLUMN_CPU1, AVERAGE, "CPU1 (%)")
-                .title("CPU usage")
+                .title(AppConstants.INSTANCE.metrics_analytic_cpu_usage_title())
                 .titleVisible(true)
                 .width(900).height(400)
                 .margins(20, 30, 80, 120)
                 .legendOn("right")
-                .yAxisTitle("CPU %")
+                .yAxisTitle(AppConstants.INSTANCE.metrics_analytic_cpu_usage_y())
                 .backgroundColor(BACKGROUND_COLOR)
                 .buildSettings());
 
@@ -154,12 +155,12 @@ public class AnalyticMetricsDashboard extends Composite implements GalleryWidget
                 .column(COLUMN_TIMESTAMP, "Minute")
                 .column(COLUMN_MEMORY_USED, AVERAGE, "Used memory (Gb)")
                 .column(COLUMN_MEMORY_FREE, AVERAGE, "Free memory (Gb)")
-                .title("Memory usage")
+                .title(AppConstants.INSTANCE.metrics_analytic_mem_usage_title())
                 .titleVisible(true)
                 .width(900).height(400)
                 .margins(20, 30, 80, 120)
                 .legendOn("right")
-                .yAxisTitle("Gigabytes")
+                .yAxisTitle(AppConstants.INSTANCE.metrics_analytic_mem_usage_y())
                 .backgroundColor(BACKGROUND_COLOR)
                 .buildSettings());
 
@@ -175,12 +176,12 @@ public class AnalyticMetricsDashboard extends Composite implements GalleryWidget
                 .column(COLUMN_TIMESTAMP, "Minute")
                 .column(COLUMN_NETWORK_TX, AVERAGE, "Upstream (kbps)")
                 .column(COLUMN_NETWORK_RX, AVERAGE, "Downstream (kbps)")
-                .title("Network usage")
+                .title(AppConstants.INSTANCE.metrics_analytic_net_usage_title())
                 .titleVisible(true)
                 .width(900).height(400)
                 .margins(20, 30, 80, 120)
                 .legendOn("right")
-                .yAxisTitle("Kbps")
+                .yAxisTitle(AppConstants.INSTANCE.metrics_analytic_net_usage_y())
                 .backgroundColor(BACKGROUND_COLOR)
                 .buildSettings());
 
@@ -196,12 +197,12 @@ public class AnalyticMetricsDashboard extends Composite implements GalleryWidget
                 .column(COLUMN_TIMESTAMP, "Minute")
                 .column(COLUMN_PROCESSES_RUNNING, AVERAGE, "Running")
                 .column(COLUMN_PROCESSES_SLEEPING, AVERAGE, "Sleeping")
-                .title("Process usage")
+                .title(AppConstants.INSTANCE.metrics_analytic_proc_usage_title())
                 .titleVisible(true)
                 .width(900).height(400)
                 .margins(20, 30, 80, 120)
                 .legendOn("right")
-                .yAxisTitle("Number of processes")
+                .yAxisTitle(AppConstants.INSTANCE.metrics_analytic_proc_usage_y())
                 .backgroundColor(BACKGROUND_COLOR)
                 .buildSettings());
 
@@ -217,12 +218,12 @@ public class AnalyticMetricsDashboard extends Composite implements GalleryWidget
                 .column(COLUMN_TIMESTAMP, "Minute")
                 .column(COLUMN_DISK_USED, AVERAGE, "Used disk (Mb)")
                 .column(COLUMN_DISK_FREE, AVERAGE, "Free disk (Mb)")
-                .title("Disk usage")
+                .title(AppConstants.INSTANCE.metrics_analytic_disk_usage_title())
                 .titleVisible(true)
                 .width(900).height(400)
                 .margins(20, 30, 80, 120)
                 .legendOn("right")
-                .yAxisTitle("Megabytes")
+                .yAxisTitle(AppConstants.INSTANCE.metrics_analytic_disk_usage_y())
                 .backgroundColor(BACKGROUND_COLOR)
                 .buildSettings());
 
@@ -236,12 +237,12 @@ public class AnalyticMetricsDashboard extends Composite implements GalleryWidget
                 .column(COLUMN_SERVER, "Server")
                 .column(COLUMN_CPU0, MAX, "CPU0 Max")
                 .column(COLUMN_CPU1, MAX, "CPU1 Max")
-                .title("Max CPU usage")
+                .title(AppConstants.INSTANCE.metrics_analytic_max_cpu_usage_title())
                 .titleVisible(true)
                 .width(500).height(200)
                 .legendOn("right")
                 .margins(10, 30, 60, 100)
-                .yAxisTitle("CPU %")
+                .yAxisTitle(AppConstants.INSTANCE.metrics_analytic_max_cpu_usage_y())
                 .backgroundColor(BACKGROUND_COLOR)
                 .vertical()
                 .buildSettings());
@@ -252,12 +253,12 @@ public class AnalyticMetricsDashboard extends Composite implements GalleryWidget
                 .column(COLUMN_SERVER, "Server")
                 .column(COLUMN_MEMORY_USED, MAX, "Max used memory")
                 .column(COLUMN_MEMORY_FREE, MAX, "Max free memory")
-                .title("Max Memory usage")
+                .title(AppConstants.INSTANCE.metrics_analytic_max_mem_usage_title())
                 .titleVisible(true)
                 .width(500).height(200)
                 .legendOn("right")
                 .margins(10, 30, 60, 100)
-                .yAxisTitle("Megabytes")
+                .yAxisTitle(AppConstants.INSTANCE.metrics_analytic_max_mem_usage_y())
                 .backgroundColor(BACKGROUND_COLOR)
                 .vertical()
                 .buildSettings());
@@ -268,12 +269,12 @@ public class AnalyticMetricsDashboard extends Composite implements GalleryWidget
                 .column(COLUMN_SERVER, "Server")
                 .column(COLUMN_PROCESSES_RUNNING, MAX, "Max running")
                 .column(COLUMN_PROCESSES_SLEEPING, MAX, "Max sleeping")
-                .title("Max processes usage")
+                .title(AppConstants.INSTANCE.metrics_analytic_max_proc_usage_title())
                 .titleVisible(true)
                 .width(500).height(200)
                 .legendOn("right")
                 .margins(10, 30, 60, 100)
-                .yAxisTitle("Number of processes")
+                .yAxisTitle(AppConstants.INSTANCE.metrics_analytic_max_proc_usage_y())
                 .backgroundColor(BACKGROUND_COLOR)
                 .vertical()
                 .buildSettings());
@@ -284,12 +285,12 @@ public class AnalyticMetricsDashboard extends Composite implements GalleryWidget
                 .column(COLUMN_SERVER, "Server")
                 .column(COLUMN_NETWORK_TX, MAX, "Max upstream speed")
                 .column(COLUMN_NETWORK_RX, MAX, "Max downstream speed")
-                .title("Max network speed")
+                .title(AppConstants.INSTANCE.metrics_analytic_max_net_speed_title())
                 .titleVisible(true)
                 .width(500).height(200)
                 .legendOn("right")
                 .margins(10, 30, 60, 100)
-                .yAxisTitle("Kbps")
+                .yAxisTitle(AppConstants.INSTANCE.metrics_analytic_max_net_speed_y())
                 .backgroundColor(BACKGROUND_COLOR)
                 .vertical()
                 .buildSettings());

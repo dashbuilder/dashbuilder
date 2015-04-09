@@ -21,6 +21,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.client.gallery.GalleryWidget;
+import org.dashbuilder.client.resources.i18n.AppConstants;
 import org.dashbuilder.displayer.DisplayerSettingsFactory;
 import org.dashbuilder.displayer.client.Displayer;
 import org.dashbuilder.displayer.client.DisplayerCoordinator;
@@ -61,7 +62,7 @@ public class ExpensesDashboard extends Composite implements GalleryWidget {
 
     @Override
     public String getTitle() {
-        return "Expense reports";
+        return AppConstants.INSTANCE.expensesdb_title();
     }
 
     @Override
@@ -84,16 +85,16 @@ public class ExpensesDashboard extends Composite implements GalleryWidget {
                         .group(OFFICE)
                         .column(OFFICE)
                         .column(AMOUNT, SUM, "sum1")
-                        .format("Office", "$ #,##0.00")
+                        .format(AppConstants.INSTANCE.expensesdb_pie_column1(), "$ #,##0.00")
                         .group(DEPARTMENT)
                         .column(DEPARTMENT)
                         .column(AMOUNT, SUM, "sum2")
-                        .format("Department", "$ #,##0.00")
+                        .format(AppConstants.INSTANCE.expensesdb_pie_column2(), "$ #,##0.00")
                         .group(EMPLOYEE)
                         .column(EMPLOYEE)
                         .column(AMOUNT, SUM, "sum3")
-                        .format("Employee", "$ #,##0.00")
-                        .title("Expenses by Office")
+                        .format(AppConstants.INSTANCE.expensesdb_pie_column3(), "$ #,##0.00")
+                        .title(AppConstants.INSTANCE.expensesdb_pie_title())
                         .width(400).height(250)
                         .margins(10, 10, 10, 0)
                         .filterOn(true, true, true)
@@ -104,8 +105,8 @@ public class ExpensesDashboard extends Composite implements GalleryWidget {
                         .dataset(EXPENSES)
                         .group(DEPARTMENT)
                         .column(DEPARTMENT)
-                        .column(AMOUNT, SUM).format("Total Amount", "$ #,##0.00")
-                        .title("Expenses by Department")
+                        .column(AMOUNT, SUM).format(AppConstants.INSTANCE.expensesdb_bar_column1(), "$ #,##0.00")
+                        .title(AppConstants.INSTANCE.expensesdb_bar_title())
                         .width(400).height(250)
                         .margins(10, 50, 50, 20)
                         .filterOn(false, true, true)
@@ -116,11 +117,11 @@ public class ExpensesDashboard extends Composite implements GalleryWidget {
                         .dataset(EXPENSES)
                         .group(EMPLOYEE)
                         .column(EMPLOYEE)
-                        .column(AMOUNT, SUM).format("Total", "$ #,##0.00")
-                        .column(AMOUNT, AVERAGE).format("Average", "$ #,##0.00")
-                        .column(EMPLOYEE, "Employee")
-                        .column(COUNT, "Number of expense reports")
-                        .title("Expenses by Employee")
+                        .column(AMOUNT, SUM).format(AppConstants.INSTANCE.expensesdb_bubble_column1(), "$ #,##0.00")
+                        .column(AMOUNT, AVERAGE).format(AppConstants.INSTANCE.expensesdb_bubble_column2(), "$ #,##0.00")
+                        .column(EMPLOYEE, AppConstants.INSTANCE.expensesdb_bubble_column3())
+                        .column(COUNT, AppConstants.INSTANCE.expensesdb_bubble_column4())
+                        .title(AppConstants.INSTANCE.expensesdb_bubble_title())
                         .titleVisible(false)
                         .width(600).height(280)
                         .margins(10, 50, 80, 0)
@@ -133,8 +134,8 @@ public class ExpensesDashboard extends Composite implements GalleryWidget {
                         .group(DATE).dynamic(8, DAY_OF_WEEK, true)
                         .column(DATE)
                         .column(AMOUNT, SUM)
-                        .format("Total Amount", "$ #,##0.00")
-                        .title("Expenses evolution")
+                        .format(AppConstants.INSTANCE.expensesdb_line_column1(), "$ #,##0.00")
+                        .title(AppConstants.INSTANCE.expensesdb_line_title())
                         .titleVisible(false)
                         .width(500).height(250)
                         .margins(10, 50, 50, 50)
@@ -144,16 +145,16 @@ public class ExpensesDashboard extends Composite implements GalleryWidget {
         tableAll = DisplayerHelper.lookupDisplayer(
                 DisplayerSettingsFactory.newTableSettings()
                         .dataset(EXPENSES)
-                        .title("List of expense reports")
+                        .title(AppConstants.INSTANCE.expensesdb_table_title())
                         .titleVisible(false)
                         .tablePageSize(8)
                         .tableOrderEnabled(true)
                         .tableOrderDefault(AMOUNT, DESCENDING)
-                        .column(OFFICE).format("Office")
-                        .column(DEPARTMENT).format("Department")
-                        .column(EMPLOYEE).format("Employee")
-                        .column(AMOUNT).format("Amount", "$ #,##0.00")
-                        .column(DATE).format("Date", "MMM E dd, yyyy")
+                        .column(OFFICE).format(AppConstants.INSTANCE.expensesdb_table_column1())
+                        .column(DEPARTMENT).format(AppConstants.INSTANCE.expensesdb_table_column2())
+                        .column(EMPLOYEE).format(AppConstants.INSTANCE.expensesdb_table_column3())
+                        .column(AMOUNT).format(AppConstants.INSTANCE.expensesdb_table_column4(), "$ #,##0.00")
+                        .column(DATE).format(AppConstants.INSTANCE.expensesdb_table_column5(), "MMM E dd, yyyy")
                         .filterOn(true, true, true)
                         .tableWidth(600)
                         .buildSettings());

@@ -18,6 +18,7 @@ package org.dashbuilder.client.gallery;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
+import org.dashbuilder.client.resources.i18n.AppConstants;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
 import org.uberfire.client.annotations.WorkbenchPartView;
 import org.uberfire.client.annotations.WorkbenchScreen;
@@ -41,7 +42,7 @@ public class GalleryTreePresenter {
 
     @WorkbenchPartTitle
     public String getTitle() {
-        return "Gallery Tree";
+        return AppConstants.INSTANCE.gallerytree_title();
     }
 
     @WorkbenchPartView

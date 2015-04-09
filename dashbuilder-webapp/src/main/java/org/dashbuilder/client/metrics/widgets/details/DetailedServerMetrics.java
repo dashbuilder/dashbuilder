@@ -25,6 +25,7 @@ import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.*;
 import org.dashbuilder.client.metrics.RealTimeMetricsDashboard;
 import org.dashbuilder.client.metrics.MetricsDashboardClientBundle;
+import org.dashbuilder.client.resources.i18n.AppConstants;
 import org.dashbuilder.dataset.sort.SortOrder;
 import org.dashbuilder.displayer.DisplayerSettingsFactory;
 import org.dashbuilder.displayer.client.Displayer;
@@ -90,7 +91,7 @@ public class DetailedServerMetrics extends Composite {
     Timer refreshTimer;
 
     public String getTitle() {
-        return "Server metrics (Vertical)";
+        return AppConstants.INSTANCE.metrics_server_detail_title();
     }
 
     public DetailedServerMetrics(final RealTimeMetricsDashboard metricsDashboard, String server) {
@@ -153,7 +154,7 @@ public class DetailedServerMetrics extends Composite {
                         .filter(COLUMN_SERVER, equalsTo(server))
                         .filter(COLUMN_TIMESTAMP, timeFrame("-1second"))
                         .column(COLUMN_CPU0, MAX, "CPU0")
-                        .title("CPU 1 %")
+                        .title(AppConstants.INSTANCE.metrics_server_detail_cpu1_title())
                         .titleVisible(true)
                         .backgroundColor(BACKGROUND_COLOR)
                         .width(200).height(200)
@@ -165,7 +166,7 @@ public class DetailedServerMetrics extends Composite {
                         .filter(COLUMN_SERVER, equalsTo(server))
                         .filter(COLUMN_TIMESTAMP, timeFrame("-1second"))
                         .column(COLUMN_CPU1, MAX, "CPU1")
-                        .title("CPU 2 %")
+                        .title(AppConstants.INSTANCE.metrics_server_detail_cpu2_title())
                         .titleVisible(true)
                         .backgroundColor(BACKGROUND_COLOR)
                         .width(200).height(200)
@@ -180,7 +181,7 @@ public class DetailedServerMetrics extends Composite {
                         .column(COLUMN_TIMESTAMP)
                         .column(COLUMN_MEMORY_USED, MAX, "Used memory")
                         .column(COLUMN_MEMORY_FREE, MAX, "Free memory")
-                        .title("Memory consumption")
+                        .title(AppConstants.INSTANCE.metrics_server_detail_mem_title())
                         .titleVisible(false)
                         .backgroundColor(BACKGROUND_COLOR)
                         .width(650).height(190)
@@ -196,7 +197,7 @@ public class DetailedServerMetrics extends Composite {
                         .column(COLUMN_TIMESTAMP)
                         .column(COLUMN_NETWORK_RX, MAX, "Downstream")
                         .column(COLUMN_NETWORK_TX, MAX, "Upstream")
-                        .title("Network bandwidth")
+                        .title(AppConstants.INSTANCE.metrics_server_detail_netw_title())
                         .titleVisible(false)
                         .backgroundColor(BACKGROUND_COLOR)
                         .width(300).height(190)
@@ -209,9 +210,9 @@ public class DetailedServerMetrics extends Composite {
                         .filter(COLUMN_SERVER, equalsTo(server))
                         .filter(COLUMN_TIMESTAMP, timeFrame("-2second"))
                         .group(COLUMN_TIMESTAMP)
-                        .column(COLUMN_DISK_FREE, MAX, "Free disk space")
-                        .column(COLUMN_DISK_USED, MAX, "Used disk space")
-                        .title("Disk usage")
+                        .column(COLUMN_DISK_FREE, MAX, AppConstants.INSTANCE.metrics_server_detail_disk_column1())
+                        .column(COLUMN_DISK_USED, MAX, AppConstants.INSTANCE.metrics_server_detail_disk_column2())
+                        .title(AppConstants.INSTANCE.metrics_server_detail_disk_title())
                         .titleVisible(false)
                         .backgroundColor(BACKGROUND_COLOR)
                         .tableWidth(170)
@@ -222,8 +223,8 @@ public class DetailedServerMetrics extends Composite {
                         .dataset(METRICS_DATASET_UUID)
                         .filter(COLUMN_SERVER, equalsTo(server))
                         .filter(COLUMN_TIMESTAMP, timeFrame("-2second"))
-                        .column(COLUMN_PROCESSES_RUNNING, AVERAGE, "Running")
-                        .title("Running processes")
+                        .column(COLUMN_PROCESSES_RUNNING, AVERAGE, AppConstants.INSTANCE.metrics_server_detail_procs_running_column1())
+                        .title(AppConstants.INSTANCE.metrics_server_detail_procs_running_title())
                         .titleVisible(false)
                         .tableWidth(100)
                         .refreshOn(this.refreshInterval, false)
@@ -234,8 +235,8 @@ public class DetailedServerMetrics extends Composite {
                         .dataset(METRICS_DATASET_UUID)
                         .filter(COLUMN_SERVER, equalsTo(server))
                         .filter(COLUMN_TIMESTAMP, timeFrame("-2second"))
-                        .column(COLUMN_PROCESSES_SLEEPING, AVERAGE, "Sleeping")
-                        .title("Sleeping processes")
+                        .column(COLUMN_PROCESSES_SLEEPING, AVERAGE, AppConstants.INSTANCE.metrics_server_detail_procs_sleeping_column1())
+                        .title(AppConstants.INSTANCE.metrics_server_detail_procs_sleeping_title())
                         .titleVisible(false)
                         .tableWidth(100)
                         .buildSettings());
@@ -246,19 +247,19 @@ public class DetailedServerMetrics extends Composite {
                         .filter(COLUMN_SERVER, equalsTo(server))
                         .filter(COLUMN_TIMESTAMP, timeFrame("-60minute"))
                         .group(COLUMN_TIMESTAMP).dynamic(1000, MINUTE, true)
-                        .column(COLUMN_TIMESTAMP, "Minute")
-                        .column(COLUMN_CPU0, "CPU0")
-                        .column(COLUMN_CPU1, "CPU1")
-                        .column(COLUMN_MEMORY_USED, "Used memory (Gb)")
-                        .column(COLUMN_MEMORY_FREE, "Free memory (Gb)")
-                        .column(COLUMN_NETWORK_TX, "Upstream (kbps)")
-                        .column(COLUMN_NETWORK_RX, "Downstream (kbps)")
-                        .column(COLUMN_PROCESSES_RUNNING, "Running processes")
-                        .column(COLUMN_PROCESSES_SLEEPING, "Sleeping processes")
-                        .column(COLUMN_DISK_USED, "Used disk (Mb)")
-                        .column(COLUMN_DISK_FREE, "Free disk (Mb)")
+                        .column(COLUMN_TIMESTAMP, AppConstants.INSTANCE.metrics_server_detail_rt_table_column1())
+                        .column(COLUMN_CPU0, AppConstants.INSTANCE.metrics_server_detail_rt_table_column2())
+                        .column(COLUMN_CPU1, AppConstants.INSTANCE.metrics_server_detail_rt_table_column3())
+                        .column(COLUMN_MEMORY_USED, AppConstants.INSTANCE.metrics_server_detail_rt_table_column4())
+                        .column(COLUMN_MEMORY_FREE, AppConstants.INSTANCE.metrics_server_detail_rt_table_column5())
+                        .column(COLUMN_NETWORK_TX, AppConstants.INSTANCE.metrics_server_detail_rt_table_column6())
+                        .column(COLUMN_NETWORK_RX, AppConstants.INSTANCE.metrics_server_detail_rt_table_column7())
+                        .column(COLUMN_PROCESSES_RUNNING, AppConstants.INSTANCE.metrics_server_detail_rt_table_column8())
+                        .column(COLUMN_PROCESSES_SLEEPING, AppConstants.INSTANCE.metrics_server_detail_rt_table_column9())
+                        .column(COLUMN_DISK_USED, AppConstants.INSTANCE.metrics_server_detail_rt_table_column10())
+                        .column(COLUMN_DISK_FREE, AppConstants.INSTANCE.metrics_server_detail_rt_table_column11())
                         .sort(COLUMN_TIMESTAMP, SortOrder.DESCENDING)
-                        .title("Real-time " + server + " metrics")
+                        .title(AppConstants.INSTANCE.metrics_server_detail_rt_table_title(server))
                         .titleVisible(false)
                         .tableWidth(1020)
                         .buildSettings());
@@ -278,7 +279,7 @@ public class DetailedServerMetrics extends Composite {
         chartsArea.setVisible(true);
         tableArea.setVisible(false);
         modeIcon.setResource(MetricsDashboardClientBundle.INSTANCE.tableIcon());
-        modeIconTooltip.setText("View as table");
+        modeIconTooltip.setText(AppConstants.INSTANCE.metrics_server_detail_modebutton_tt_viewtable());
     }
 
     private void enableTableMode() {
@@ -286,7 +287,7 @@ public class DetailedServerMetrics extends Composite {
         chartsArea.setVisible(false);
         tableArea.setVisible(true);
         modeIcon.setResource(MetricsDashboardClientBundle.INSTANCE.chartIcon());
-        modeIconTooltip.setText("View as charts");
+        modeIconTooltip.setText(AppConstants.INSTANCE.metrics_server_detail_modebutton_tt_viewcharts());
     }
 
 }

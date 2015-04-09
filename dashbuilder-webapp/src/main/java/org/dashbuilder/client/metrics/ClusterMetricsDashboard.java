@@ -33,6 +33,7 @@ import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.client.gallery.GalleryWidget;
+import org.dashbuilder.client.resources.i18n.AppConstants;
 import org.dashbuilder.dataset.DataSetBuilder;
 import org.dashbuilder.displayer.BarChartSettingsBuilder;
 import org.dashbuilder.displayer.DisplayerSettings;
@@ -103,7 +104,7 @@ public class ClusterMetricsDashboard extends Composite implements GalleryWidget 
 
     @Override
     public String getTitle() {
-        return "Cluster metrics";
+        return AppConstants.INSTANCE.metrics_cluster_title();
     }
 
     @Override
@@ -142,23 +143,23 @@ public class ClusterMetricsDashboard extends Composite implements GalleryWidget 
         }
     }
 
-    public static final String CPU = "CPU %";
-    public static final String MEMORY = "Memory";
-    public static final String DISK = "Disk";
-    public static final String NETWORK = "Network";
+    public static final String CPU = AppConstants.INSTANCE.metrics_cluster_metricselector_cpu();
+    public static final String MEMORY = AppConstants.INSTANCE.metrics_cluster_metricselector_mem();
+    public static final String DISK = AppConstants.INSTANCE.metrics_cluster_metricselector_disk();
+    public static final String NETWORK = AppConstants.INSTANCE.metrics_cluster_metricselector_netw();
 
     public ClusterMetricsDashboard() {
 
         // Create the metric definitions
-        metricDefList.add(new ClusterMetric(COLUMN_CPU0, "CPU %", "#,##0", null, "84ADF4", true, "CPU %"));
-        metricDefList.add(new ClusterMetric(COLUMN_DISK_FREE, "Disk free", "#,##0 Gb", null, "BCF3EE", false, "Gigabytes"));
-        metricDefList.add(new ClusterMetric(COLUMN_DISK_USED, "Disk used", "#,##0 Gb", null, "BCF3EE", true, "Gigabytes"));
-        metricDefList.add(new ClusterMetric(COLUMN_MEMORY_FREE, "Mem. free", "#,##0.00 Gb", null, "F9AEAF", false, "Gigabytes"));
-        metricDefList.add(new ClusterMetric(COLUMN_MEMORY_USED, "Mem. used", "#,##0.00 Gb", null, "F9AEAF", true, "Gigabytes"));
-        metricDefList.add(new ClusterMetric(COLUMN_PROCESSES_RUNNING, "Proc. running", "#,##0", null, "A4EEC8", false, "Processes"));
-        metricDefList.add(new ClusterMetric(COLUMN_PROCESSES_SLEEPING, "Proc. sleeping", "#,##0", null, "A4EEC8", true, "Processes"));
-        metricDefList.add(new ClusterMetric(COLUMN_NETWORK_RX, "Net. Rx", "#,##0 Kb/s", null, "F5AC47", false, "Kb / s"));
-        metricDefList.add(new ClusterMetric(COLUMN_NETWORK_TX, "Net. Tx", "#,##0 Kb/s", null, "F5AC47", true, "Kb / s"));
+        metricDefList.add(new ClusterMetric(COLUMN_CPU0, AppConstants.INSTANCE.metrics_cluster_column_cpu(), "#,##0", null, "84ADF4", true, AppConstants.INSTANCE.metrics_cluster_column_cpu_y()));
+        metricDefList.add(new ClusterMetric(COLUMN_DISK_FREE, AppConstants.INSTANCE.metrics_cluster_column_df(), "#,##0 Gb", null, "BCF3EE", false, AppConstants.INSTANCE.metrics_cluster_column_df_y()));
+        metricDefList.add(new ClusterMetric(COLUMN_DISK_USED, AppConstants.INSTANCE.metrics_cluster_column_du(), "#,##0 Gb", null, "BCF3EE", true, AppConstants.INSTANCE.metrics_cluster_column_du_y()));
+        metricDefList.add(new ClusterMetric(COLUMN_MEMORY_FREE, AppConstants.INSTANCE.metrics_cluster_column_memf(), "#,##0.00 Gb", null, "F9AEAF", false, AppConstants.INSTANCE.metrics_cluster_column_memf_y()));
+        metricDefList.add(new ClusterMetric(COLUMN_MEMORY_USED, AppConstants.INSTANCE.metrics_cluster_column_memu(), "#,##0.00 Gb", null, "F9AEAF", true, AppConstants.INSTANCE.metrics_cluster_column_memu_y()));
+        metricDefList.add(new ClusterMetric(COLUMN_PROCESSES_RUNNING, AppConstants.INSTANCE.metrics_cluster_column_procsrn(), "#,##0", null, "A4EEC8", false, AppConstants.INSTANCE.metrics_cluster_column_procsrn_y()));
+        metricDefList.add(new ClusterMetric(COLUMN_PROCESSES_SLEEPING, AppConstants.INSTANCE.metrics_cluster_column_procssl(), "#,##0", null, "A4EEC8", true, AppConstants.INSTANCE.metrics_cluster_column_procssl_y()));
+        metricDefList.add(new ClusterMetric(COLUMN_NETWORK_RX, AppConstants.INSTANCE.metrics_cluster_column_netrx(), "#,##0 Kb/s", null, "F5AC47", false, AppConstants.INSTANCE.metrics_cluster_column_netrx_y()));
+        metricDefList.add(new ClusterMetric(COLUMN_NETWORK_TX, AppConstants.INSTANCE.metrics_cluster_column_nettx(), "#,##0 Kb/s", null, "F5AC47", true, AppConstants.INSTANCE.metrics_cluster_column_nettx_y()));
 
         metricChartDef.put(CPU, Arrays.asList(0));
         metricChartDef.put(DISK, Arrays.asList(1,2));
@@ -175,7 +176,7 @@ public class ClusterMetricsDashboard extends Composite implements GalleryWidget 
                 .filter(COLUMN_TIMESTAMP, timeFrame("now -2second till now"))
                 .group(COLUMN_SERVER)
                 .column(COLUMN_SERVER).format("Server")
-                .column(COLUMN_TIMESTAMP).format("Time", "HH:mm:ss");
+                .column(COLUMN_TIMESTAMP).format(AppConstants.INSTANCE.metrics_cluster_column_time(), "HH:mm:ss");
 
         for (ClusterMetric metric : metricDefList) {
             if (metric.tableVisible) {
@@ -217,16 +218,16 @@ public class ClusterMetricsDashboard extends Composite implements GalleryWidget 
 
         // Init the metric selector
         metricSelector.clear();
-        metricSelector.addItem("CPU %");
-        metricSelector.addItem("Memory");
-        metricSelector.addItem("Disk");
-        metricSelector.addItem("Network");
+        metricSelector.addItem(CPU);
+        metricSelector.addItem(MEMORY);
+        metricSelector.addItem(DISK);
+        metricSelector.addItem(NETWORK);
 
         // Init the chart type selector
         chartTypeSelector.clear();
-        chartTypeSelector.addItem("Bar");
-        chartTypeSelector.addItem("Line");
-        chartTypeSelector.addItem("Area");
+        chartTypeSelector.addItem(AppConstants.INSTANCE.metrics_cluster_chartselector_bar());
+        chartTypeSelector.addItem(AppConstants.INSTANCE.metrics_cluster_chartselector_line());
+        chartTypeSelector.addItem(AppConstants.INSTANCE.metrics_cluster_chartselector_area());
 
         // Init the metric chart
         currentMetricChart = createChartMetric(CPU);
@@ -267,11 +268,11 @@ public class ClusterMetricsDashboard extends Composite implements GalleryWidget 
         if (DisplayerType.BARCHART.equals(type)) {
             builder.filter(COLUMN_TIMESTAMP, timeFrame("begin[minute] till end[minute]"));
             builder.group(COLUMN_TIMESTAMP).fixed(SECOND, true);
-            builder.column(COLUMN_TIMESTAMP).format("Time");
+            builder.column(COLUMN_TIMESTAMP).format(AppConstants.INSTANCE.metrics_cluster_column_time());
         } else {
             builder.filter(COLUMN_TIMESTAMP, timeFrame("-60second till now"));
             builder.group(COLUMN_TIMESTAMP).dynamic(60, SECOND, true);
-            builder.column(COLUMN_TIMESTAMP).format("Time");
+            builder.column(COLUMN_TIMESTAMP).format(AppConstants.INSTANCE.metrics_cluster_column_time());
         }
 
         List<Integer> metricIdxs = metricChartDef.get(group);

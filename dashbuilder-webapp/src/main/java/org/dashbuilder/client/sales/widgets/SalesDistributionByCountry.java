@@ -21,6 +21,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.client.gallery.GalleryWidget;
+import org.dashbuilder.client.resources.i18n.AppConstants;
 import org.dashbuilder.displayer.client.Displayer;
 import org.dashbuilder.displayer.client.DisplayerCoordinator;
 import org.dashbuilder.displayer.client.DisplayerHelper;
@@ -53,7 +54,7 @@ public class SalesDistributionByCountry extends Composite implements GalleryWidg
 
     @Override
     public String getTitle() {
-        return "Sales by country";
+        return AppConstants.INSTANCE.sales_bycountry_title();
     }
 
     @Override
@@ -80,11 +81,11 @@ public class SalesDistributionByCountry extends Composite implements GalleryWidg
                 .dataset(SALES_OPPS)
                 .group(COUNTRY)
                 .column(COUNTRY, "Country")
-                .column(COUNT, "count").format("Number of opportunities", "#,##0")
-                .column(PROBABILITY, AVERAGE).format("Average probability", "#,##0")
+                .column(COUNT, "count").format(AppConstants.INSTANCE.sales_bycountry_bubble_column1(), "#,##0")
+                .column(PROBABILITY, AVERAGE).format(AppConstants.INSTANCE.sales_bycountry_bubble_column2(), "#,##0")
                 .column(COUNTRY, "Country")
-                .column(EXPECTED_AMOUNT, SUM).expression("value/1000").format("Expected amount", "$ #,##0 K")
-                .title("Opportunities distribution by Country ")
+                .column(EXPECTED_AMOUNT, SUM).expression("value/1000").format(AppConstants.INSTANCE.sales_bycountry_bubble_column3(), "$ #,##0 K")
+                .title(AppConstants.INSTANCE.sales_bycountry_bubble_title())
                 .width(450).height(300)
                 .margins(20, 50, 50, 0)
                 .filterOn(false, true, true)
@@ -96,8 +97,8 @@ public class SalesDistributionByCountry extends Composite implements GalleryWidg
                 .group(COUNTRY)
                 .column(COUNTRY, "Country")
                 .column(COUNT, "Number of opportunities")
-                .column(EXPECTED_AMOUNT, SUM).expression("value/1000").format("Total amount", "$ #,##0 K")
-                .title("By Country")
+                .column(EXPECTED_AMOUNT, SUM).expression("value/1000").format(AppConstants.INSTANCE.sales_bycountry_map_column1(), "$ #,##0 K")
+                .title(AppConstants.INSTANCE.sales_bycountry_map_title())
                 .width(450).height(290)
                 .margins(10, 10, 10, 10)
                 .filterOn(false, true, true)
@@ -106,20 +107,20 @@ public class SalesDistributionByCountry extends Composite implements GalleryWidg
         tableAll = DisplayerHelper.lookupDisplayer(
                 DisplayerSettingsFactory.newTableSettings()
                 .dataset(SALES_OPPS)
-                .title("List of Opportunities")
+                .title(AppConstants.INSTANCE.sales_bycountry_table_title())
                 .titleVisible(true)
                 .tablePageSize(8)
                 .tableOrderEnabled(true)
                 .tableOrderDefault(AMOUNT, DESCENDING)
-                .column(COUNTRY, "Country")
-                .column(CUSTOMER, "Customer")
-                .column(PRODUCT, "Product")
-                .column(SALES_PERSON, "Salesman")
-                .column(STATUS, "Status")
-                .column(CREATION_DATE, "Creation")
-                .column(EXPECTED_AMOUNT, "Expected")
-                .column(CLOSING_DATE, "Closing")
-                .column(AMOUNT).expression("value/1000").format("Amount", "$ #,##0 K")
+                .column(COUNTRY, AppConstants.INSTANCE.sales_bycountry_table_column1())
+                .column(CUSTOMER, AppConstants.INSTANCE.sales_bycountry_table_column2())
+                .column(PRODUCT, AppConstants.INSTANCE.sales_bycountry_table_column3())
+                .column(SALES_PERSON, AppConstants.INSTANCE.sales_bycountry_table_column4())
+                .column(STATUS, AppConstants.INSTANCE.sales_bycountry_table_column5())
+                .column(CREATION_DATE, AppConstants.INSTANCE.sales_bycountry_table_column6())
+                .column(EXPECTED_AMOUNT, AppConstants.INSTANCE.sales_bycountry_table_column7())
+                .column(CLOSING_DATE, AppConstants.INSTANCE.sales_bycountry_table_column8())
+                .column(AMOUNT).expression("value/1000").format(AppConstants.INSTANCE.sales_bycountry_table_column9(), "$ #,##0 K")
                 .filterOn(true, true, true)
                 .tableWidth(900)
                 .renderer(DefaultRenderer.UUID)

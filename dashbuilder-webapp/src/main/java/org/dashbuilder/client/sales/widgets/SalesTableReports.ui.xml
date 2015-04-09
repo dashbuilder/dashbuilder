@@ -4,27 +4,29 @@
              xmlns:b="urn:import:com.github.gwtbootstrap.client.ui"
              xmlns:my="urn:import:org.dashbuilder.displayer.client">
 
+  <ui:with field="i18n" type="org.dashbuilder.client.resources.i18n.AppConstants"/>
+
   <g:VerticalPanel spacing="10">
     <g:HorizontalPanel spacing="10">
       <my:Displayer ui:field="tableAll"/>
     </g:HorizontalPanel>
     <b:TabPanel>
-      <b:Tab heading="By year" active="true">
+      <b:Tab heading="{i18n.sales_tablereports_tab_byyear}" active="true">
         <g:FlowPanel>
           <my:Displayer ui:field="tableByYear"/>
         </g:FlowPanel>
       </b:Tab>
-      <b:Tab heading="By country">
+      <b:Tab heading="{i18n.sales_tablereports_tab_bycountry}">
         <g:FlowPanel>
           <my:Displayer ui:field="tableByCountry"/>
         </g:FlowPanel>
       </b:Tab>
-      <b:Tab heading="By product">
+      <b:Tab heading="{i18n.sales_tablereports_tab_byproduct}">
         <g:FlowPanel>
           <my:Displayer ui:field="tableByProduct"/>
         </g:FlowPanel>
       </b:Tab>
-      <b:Tab heading="By sales person">
+      <b:Tab heading="{i18n.sales_tablereports_tab_bysalesman}">
         <g:FlowPanel>
           <my:Displayer ui:field="tableBySalesman"/>
         </g:FlowPanel>

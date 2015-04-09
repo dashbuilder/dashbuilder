@@ -24,6 +24,7 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
+import org.dashbuilder.client.resources.i18n.AppConstants;
 import org.dashbuilder.dataset.filter.FilterFactory;
 import org.dashbuilder.displayer.DisplayerSettings;
 import org.dashbuilder.displayer.DisplayerSettingsFactory;
@@ -84,18 +85,18 @@ public class GalleryTree {
     }
 
     private void initBarChartCategory() {
-        GalleryTreeNodeList nodeList = new GalleryTreeNodeList("Bar Chart");
+        GalleryTreeNodeList nodeList = new GalleryTreeNodeList(AppConstants.INSTANCE.gallerytree_bar());
         mainNodes.add(nodeList);
 
-        nodeList.add(new GalleryPlaceRequest("Horizontal", createPlaceRequest(
+        nodeList.add(new GalleryPlaceRequest(AppConstants.INSTANCE.gallerytree_bar_horiz(), createPlaceRequest(
                 DisplayerSettingsFactory.newBarChartSettings()
                         .dataset(SALES_OPPS)
                         .group(PRODUCT)
                         .column(PRODUCT, "Product")
                         .column(AMOUNT, SUM)
                         .expression("value/1000")
-                        .format("Total amount", "$ #,### K")
-                        .title("By Product")
+                        .format(AppConstants.INSTANCE.gallerytree_bar_horiz_column1(), "$ #,### K")
+                        .title(AppConstants.INSTANCE.gallerytree_bar_horiz_title())
                         .horizontal()
                         .width(600).height(400)
                         .resizableOn(1200, 800)
@@ -103,19 +104,19 @@ public class GalleryTree {
                         .filterOn(false, true, true)
                         .buildSettings()
         )));
-        nodeList.add(new GalleryPlaceRequest("Horizontal (Drill-down)", createPlaceRequest(
+        nodeList.add(new GalleryPlaceRequest(AppConstants.INSTANCE.gallerytree_bar_horiz_dd(), createPlaceRequest(
                 DisplayerSettingsFactory.newBarChartSettings()
                         .dataset(SALES_OPPS)
                         .group(PIPELINE)
                         .column(PIPELINE, "Pipeline")
-                        .column(AMOUNT, SUM).format("Total amount", "$ #,###")
+                        .column(AMOUNT, SUM).format(AppConstants.INSTANCE.gallerytree_bar_horiz_column1(), "$ #,###")
                         .group(STATUS)
                         .column(STATUS, "Status")
-                        .column(AMOUNT, SUM).format("Total amount", "$ #,###")
+                        .column(AMOUNT, SUM).format(AppConstants.INSTANCE.gallerytree_bar_horiz_dd_column2(), "$ #,###")
                         .group(SALES_PERSON)
                         .column(SALES_PERSON, "Sales person")
-                        .column(AMOUNT, SUM).format("Total amount", "$ #,###")
-                        .title("By Pipeline/Status/Sales person")
+                        .column(AMOUNT, SUM).format(AppConstants.INSTANCE.gallerytree_bar_horiz_dd_column3(), "$ #,###")
+                        .title(AppConstants.INSTANCE.gallerytree_bar_horiz_dd_title())
                         .width(600).height(400)
                         .resizableOn(1200, 800)
                         .margins(50, 80, 120, 120)
@@ -123,13 +124,13 @@ public class GalleryTree {
                         .filterOn(true, false, false)
                         .buildSettings()
         )));
-        nodeList.add(new GalleryPlaceRequest("Vertical", createPlaceRequest(
+        nodeList.add(new GalleryPlaceRequest(AppConstants.INSTANCE.gallerytree_bar_vert(), createPlaceRequest(
                 DisplayerSettingsFactory.newBarChartSettings()
                         .dataset(SALES_OPPS)
                         .group(PRODUCT)
                         .column(PRODUCT, "Product")
-                        .column(AMOUNT, SUM).format("Total amount", "$ #,###")
-                        .title("By Product")
+                        .column(AMOUNT, SUM).format(AppConstants.INSTANCE.gallerytree_bar_vert_column1(), "$ #,###")
+                        .title(AppConstants.INSTANCE.gallerytree_bar_vert_title())
                         .vertical().set3d(true)
                         .width(600).height(400)
                         .resizableOn(1200, 800)
@@ -137,19 +138,19 @@ public class GalleryTree {
                         .filterOn(false, true, true)
                         .buildSettings()
         )));
-        nodeList.add(new GalleryPlaceRequest("Vertical (Drill-down)", createPlaceRequest(
+        nodeList.add(new GalleryPlaceRequest(AppConstants.INSTANCE.gallerytree_bar_vert_dd(), createPlaceRequest(
                 DisplayerSettingsFactory.newBarChartSettings()
                         .dataset(SALES_OPPS)
                         .group(PIPELINE)
                         .column(PIPELINE, "Pipeline")
-                        .column(AMOUNT, SUM).format("Total amount", "$ #,###")
+                        .column(AMOUNT, SUM).format(AppConstants.INSTANCE.gallerytree_bar_vert_dd_column1(), "$ #,###")
                         .group(STATUS)
                         .column(STATUS, "Status")
-                        .column(AMOUNT, SUM).format("Total amount", "$ #,###")
+                        .column(AMOUNT, SUM).format(AppConstants.INSTANCE.gallerytree_bar_vert_dd_column2(), "$ #,###")
                         .group(SALES_PERSON)
                         .column(SALES_PERSON, "Sales person")
-                        .column(AMOUNT, SUM).format("Total amount", "$ #,###")
-                        .title("By Pipeline/Status/Sales person")
+                        .column(AMOUNT, SUM).format(AppConstants.INSTANCE.gallerytree_bar_vert_dd_column3(), "$ #,###")
+                        .title(AppConstants.INSTANCE.gallerytree_bar_vert_dd_title())
                         .width(600).height(400)
                         .resizableOn(1200, 800)
                         .margins(50, 80, 120, 120)
@@ -157,15 +158,15 @@ public class GalleryTree {
                         .filterOn(true, false, false)
                         .buildSettings()
         )));
-        nodeList.add(new GalleryPlaceRequest("Multiple", createPlaceRequest(
+        nodeList.add(new GalleryPlaceRequest(AppConstants.INSTANCE.gallerytree_bar_multi(), createPlaceRequest(
                 DisplayerSettingsFactory.newBarChartSettings()
                         .dataset(SALES_OPPS)
                         .group(COUNTRY)
                         .column(COUNTRY, "Country")
-                        .column(AMOUNT, MIN).format("Min", "$ #,###")
-                        .column(AMOUNT, MAX).format("Max", "$ #,###")
-                        .column(AMOUNT, AVERAGE).format("Avg", "$ #,###")
-                        .title("By Country (min/max/avg)")
+                        .column(AMOUNT, MIN).format(AppConstants.INSTANCE.gallerytree_bar_multi_column1(), "$ #,###")
+                        .column(AMOUNT, MAX).format(AppConstants.INSTANCE.gallerytree_bar_multi_column2(), "$ #,###")
+                        .column(AMOUNT, AVERAGE).format(AppConstants.INSTANCE.gallerytree_bar_multi_column3(), "$ #,###")
+                        .title(AppConstants.INSTANCE.gallerytree_bar_multi_title())
                         .width(700).height(600)
                         .resizableOn(1200, 800)
                         .margins(50, 80, 120, 120)
@@ -176,35 +177,35 @@ public class GalleryTree {
     }
 
     private void initPieChartCategory() {
-        GalleryTreeNodeList nodeList = new GalleryTreeNodeList("Pie Chart");
+        GalleryTreeNodeList nodeList = new GalleryTreeNodeList(AppConstants.INSTANCE.gallerytree_pie());
         mainNodes.add(nodeList);
 
-        nodeList.add(new GalleryPlaceRequest("Basic", createPlaceRequest(
+        nodeList.add(new GalleryPlaceRequest(AppConstants.INSTANCE.gallerytree_pie_basic(), createPlaceRequest(
                 DisplayerSettingsFactory.newPieChartSettings()
                         .dataset(SALES_OPPS)
                         .group(STATUS)
                         .column(STATUS)
-                        .column(AMOUNT, SUM).format("Total amount", "$ #,###")
-                        .title("By Status")
+                        .column(AMOUNT, SUM).format(AppConstants.INSTANCE.gallerytree_pie_basic_column1(), "$ #,###")
+                        .title(AppConstants.INSTANCE.gallerytree_pie_basic_title())
                         .margins(10, 10, 10, 10)
                         .resizableOn(1200, 800)
                         .filterOn(false, true, true)
                         .buildSettings()
         )));
 
-        nodeList.add(new GalleryPlaceRequest("Drill-down", createPlaceRequest(
+        nodeList.add(new GalleryPlaceRequest(AppConstants.INSTANCE.gallerytree_pie_dd(), createPlaceRequest(
                 DisplayerSettingsFactory.newPieChartSettings()
                         .dataset(SALES_OPPS)
                         .group(PIPELINE)
                         .column(PIPELINE, "Pipeline")
-                        .column(AMOUNT, SUM).format("Total amount", "$ #,###")
+                        .column(AMOUNT, SUM).format(AppConstants.INSTANCE.gallerytree_pie_dd_column1(), "$ #,###")
                         .group(STATUS)
                         .column(STATUS, "Status")
-                        .column(AMOUNT, SUM).format("Total amount", "$ #,###")
+                        .column(AMOUNT, SUM).format(AppConstants.INSTANCE.gallerytree_pie_dd_column2(), "$ #,###")
                         .group(SALES_PERSON)
                         .column(SALES_PERSON, "Sales person")
-                        .column(AMOUNT, SUM).format("Total amount", "$ #,###")
-                        .title("By Pipeline/Status/Sales person")
+                        .column(AMOUNT, SUM).format(AppConstants.INSTANCE.gallerytree_pie_dd_column3(), "$ #,###")
+                        .title(AppConstants.INSTANCE.gallerytree_pie_dd_title())
                         .margins(10, 10, 10, 10)
                         .resizableOn(1200, 800)
                         .filterOn(true, false, false)
@@ -213,41 +214,41 @@ public class GalleryTree {
     }
 
     private void initLineChartCategory() {
-        GalleryTreeNodeList nodeList = new GalleryTreeNodeList("Line Chart");
+        GalleryTreeNodeList nodeList = new GalleryTreeNodeList(AppConstants.INSTANCE.gallerytree_line());
         mainNodes.add(nodeList);
 
-        nodeList.add(new GalleryPlaceRequest("Basic", createPlaceRequest(
+        nodeList.add(new GalleryPlaceRequest(AppConstants.INSTANCE.gallerytree_line_basic(), createPlaceRequest(
                 DisplayerSettingsFactory.newLineChartSettings()
                         .dataset(SALES_OPPS)
                         .group(CLOSING_DATE).dynamic(12, MONTH, true)
-                        .column(CLOSING_DATE).format("Closing date", "MMM dd, yyyy")
-                        .column(AMOUNT, SUM).format("Total amount", "$ #,###")
-                        .title("Sales opportunities evolution")
+                        .column(CLOSING_DATE).format(AppConstants.INSTANCE.gallerytree_line_basic_column1(), "MMM dd, yyyy")
+                        .column(AMOUNT, SUM).format(AppConstants.INSTANCE.gallerytree_line_basic_column2(), "$ #,###")
+                        .title(AppConstants.INSTANCE.gallerytree_line_basic_title())
                         .margins(20, 50, 100, 120)
                         .filterOn(false, true, true)
                         .buildSettings()
         )));
-        nodeList.add(new GalleryPlaceRequest("Multiple", createPlaceRequest(
+        nodeList.add(new GalleryPlaceRequest(AppConstants.INSTANCE.gallerytree_line_multi(), createPlaceRequest(
                 DisplayerSettingsFactory.newLineChartSettings()
                         .dataset(SALES_OPPS)
                         .group(COUNTRY)
                         .column(COUNTRY, "Country")
-                        .column(AMOUNT, MIN).format("Min", "$ #,###")
-                        .column(AMOUNT, MAX).format("Max", "$ #,###")
-                        .column(AMOUNT, AVERAGE).format("Avg", "$ #,###")
-                        .title("By Country (min/max/avg)")
+                        .column(AMOUNT, MIN).format(AppConstants.INSTANCE.gallerytree_line_multi_column1(), "$ #,###")
+                        .column(AMOUNT, MAX).format(AppConstants.INSTANCE.gallerytree_line_multi_column2(), "$ #,###")
+                        .column(AMOUNT, AVERAGE).format(AppConstants.INSTANCE.gallerytree_line_multi_column3(), "$ #,###")
+                        .title(AppConstants.INSTANCE.gallerytree_line_multi_title())
                         .margins(30, 100, 80, 80)
                         .filterOn(false, true, true)
                         .buildSettings()
         )));
-        nodeList.add(new GalleryPlaceRequest("Multiple (static)", createPlaceRequest(
+        nodeList.add(new GalleryPlaceRequest(AppConstants.INSTANCE.gallerytree_line_multi_static(), createPlaceRequest(
                 DisplayerSettingsFactory.newLineChartSettings()
-                        .title("Sales Evolution Per Year")
+                        .title(AppConstants.INSTANCE.gallerytree_line_multi_static_title())
                         .margins(20, 80, 50, 120)
                         .column("month", "Month")
-                        .column("2014").format("Sales in 2014", "$ #,###")
-                        .column("2015").format("Sales in 2015", "$ #,###")
-                        .column("2016").format("Sales in 2016", "$ #,###")
+                        .column("2014").format(AppConstants.INSTANCE.gallerytree_line_multi_static_column1(), "$ #,###")
+                        .column("2015").format(AppConstants.INSTANCE.gallerytree_line_multi_static_column2(), "$ #,###")
+                        .column("2016").format(AppConstants.INSTANCE.gallerytree_line_multi_static_column3(), "$ #,###")
                         .dataset(DataSetFactory.newDataSetBuilder()
                                 .label("month")
                                 .number("2014")
@@ -273,39 +274,39 @@ public class GalleryTree {
     }
 
     private void initAreaChartCategory() {
-        GalleryTreeNodeList nodeList = new GalleryTreeNodeList("Area Chart");
+        GalleryTreeNodeList nodeList = new GalleryTreeNodeList(AppConstants.INSTANCE.gallerytree_area());
         mainNodes.add(nodeList);
 
-        nodeList.add(new GalleryPlaceRequest("Basic", createPlaceRequest(
+        nodeList.add(new GalleryPlaceRequest(AppConstants.INSTANCE.gallerytree_area_basic(), createPlaceRequest(
                 DisplayerSettingsFactory.newAreaChartSettings()
                         .dataset(SALES_OPPS)
                         .group(CLOSING_DATE).dynamic(24, MONTH, true)
                         .column(CLOSING_DATE, "Closing date")
-                        .column(EXPECTED_AMOUNT, SUM).format("Expected amount", "$ #,###")
-                        .title("Expected Pipeline")
+                        .column(EXPECTED_AMOUNT, SUM).format(AppConstants.INSTANCE.gallerytree_area_basic_column1(), "$ #,###")
+                        .title(AppConstants.INSTANCE.gallerytree_area_basic_title())
                         .width(700).height(300)
                         .margins(20, 50, 100, 120)
                         .filterOn(false, true, true)
                         .buildSettings()
         )));
-        nodeList.add(new GalleryPlaceRequest("Fixed (per month)", createPlaceRequest(
+        nodeList.add(new GalleryPlaceRequest(AppConstants.INSTANCE.gallerytree_area_fixed(), createPlaceRequest(
                 DisplayerSettingsFactory.newAreaChartSettings()
                         .dataset(SALES_OPPS)
                         .group(CLOSING_DATE).fixed(MONTH, true).firstMonth(JANUARY).asc()
-                        .column(CLOSING_DATE).format("Closing date")
-                        .column(EXPECTED_AMOUNT, SUM).format("Expected amount per month", "$ #,###")
-                        .title("Pipeline (best month)")
+                        .column(CLOSING_DATE).format(AppConstants.INSTANCE.gallerytree_area_fixed_column1())
+                        .column(EXPECTED_AMOUNT, SUM).format(AppConstants.INSTANCE.gallerytree_area_fixed_column2(), "$ #,###")
+                        .title(AppConstants.INSTANCE.gallerytree_area_fixed_title())
                         .margins(20, 80, 100, 100)
                         .filterOn(false, true, true)
                         .buildSettings()
         )));
-        nodeList.add(new GalleryPlaceRequest("Drill-down", createPlaceRequest(
+        nodeList.add(new GalleryPlaceRequest(AppConstants.INSTANCE.gallerytree_area_dd(), createPlaceRequest(
                 DisplayerSettingsFactory.newAreaChartSettings()
                         .dataset(SALES_OPPS)
                         .group(CLOSING_DATE).dynamic(12, true)
-                        .column(CLOSING_DATE).format("Closing date")
-                        .column(EXPECTED_AMOUNT, SUM).format("Expected amount", "$ #,###")
-                        .title("Expected Pipeline")
+                        .column(CLOSING_DATE).format(AppConstants.INSTANCE.gallerytree_area_dd_column1())
+                        .column(EXPECTED_AMOUNT, SUM).format(AppConstants.INSTANCE.gallerytree_area_dd_column2(), "$ #,###")
+                        .title(AppConstants.INSTANCE.gallerytree_area_dd_title())
                         .margins(20, 70, 100, 120)
                         .filterOn(true, true, true)
                         .buildSettings()
@@ -313,19 +314,19 @@ public class GalleryTree {
     }
 
     private void initBubbleChartCategory() {
-        GalleryTreeNodeList nodeList = new GalleryTreeNodeList("Bubble Chart");
+        GalleryTreeNodeList nodeList = new GalleryTreeNodeList(AppConstants.INSTANCE.gallerytree_bubble());
         mainNodes.add(nodeList);
 
-        nodeList.add(new GalleryPlaceRequest("Basic", createPlaceRequest(
+        nodeList.add(new GalleryPlaceRequest(AppConstants.INSTANCE.gallerytree_bubble_basic(), createPlaceRequest(
                 DisplayerSettingsFactory.newBubbleChartSettings()
                         .dataset(SALES_OPPS)
                         .group(COUNTRY)
                         .column(COUNTRY, "Country")
-                        .column(COUNT, "#opps").format("Number of opportunities", "#,###")
-                        .column(PROBABILITY, AVERAGE).format("Average probability", "#,###")
-                        .column(COUNTRY, "Country")
-                        .column(EXPECTED_AMOUNT, SUM).format("Expected amount", "$ #,###")
-                        .title("Opportunities distribution by Country ")
+                        .column(COUNT, "#opps").format(AppConstants.INSTANCE.gallerytree_bubble_basic_column1(), "#,###")
+                        .column(PROBABILITY, AVERAGE).format(AppConstants.INSTANCE.gallerytree_bubble_basic_column2(), "#,###")
+                        .column(COUNTRY, AppConstants.INSTANCE.gallerytree_bubble_basic_column4())
+                        .column(EXPECTED_AMOUNT, SUM).format(AppConstants.INSTANCE.gallerytree_bubble_basic_column3(), "$ #,###")
+                        .title(AppConstants.INSTANCE.gallerytree_bubble_basic_title())
                         .width(700).height(400)
                         .margins(20, 50, 50, 0)
                         .filterOn(false, true, true)
@@ -334,42 +335,42 @@ public class GalleryTree {
     }
 
     private void initMeterChartCategory() {
-        GalleryTreeNodeList nodeList = new GalleryTreeNodeList("Meter Chart");
+        GalleryTreeNodeList nodeList = new GalleryTreeNodeList(AppConstants.INSTANCE.gallerytree_meter());
         mainNodes.add(nodeList);
 
-        nodeList.add(new GalleryPlaceRequest("Basic", createPlaceRequest(
+        nodeList.add(new GalleryPlaceRequest(AppConstants.INSTANCE.gallerytree_meter_basic(), createPlaceRequest(
                 DisplayerSettingsFactory.newMeterChartSettings()
-                        .title("Sales goal")
+                        .title(AppConstants.INSTANCE.gallerytree_meter_basic_title())
                         .dataset(SALES_OPPS)
                         .column(AMOUNT, SUM)
                         .expression("value/1000")
-                        .format("Total amount", "$ #,### K")
+                        .format(AppConstants.INSTANCE.gallerytree_meter_basic_column1(), "$ #,### K")
                         .width(400).height(200)
                         .meter(0, 15000, 25000, 35000)
                         .filterOn(false, true, true)
                         .buildSettings()
         )));
-        nodeList.add(new GalleryPlaceRequest("Multiple", createPlaceRequest(
+        nodeList.add(new GalleryPlaceRequest(AppConstants.INSTANCE.gallerytree_meter_multi(), createPlaceRequest(
                 DisplayerSettingsFactory.newMeterChartSettings()
-                        .title("Expected amount per year")
+                        .title(AppConstants.INSTANCE.gallerytree_meter_multi_title())
                         .dataset(SALES_OPPS)
                         .group(CREATION_DATE).dynamic(12, YEAR, true)
                         .column(CREATION_DATE, "Year")
                         .column(AMOUNT, SUM)
                         .expression("value/1000")
-                        .format("Total amount", "$ #,###")
+                        .format(AppConstants.INSTANCE.gallerytree_meter_multi_column1(), "$ #,###")
                         .width(600).height(200)
                         .meter(0, 1000, 3000, 5000)
                         .filterOn(false, true, true)
                         .buildSettings()
         )));
-        nodeList.add(new GalleryPlaceRequest("Multiple (static)", createPlaceRequest(
+        nodeList.add(new GalleryPlaceRequest(AppConstants.INSTANCE.gallerytree_meter_multi_static(), createPlaceRequest(
                 DisplayerSettingsFactory.newMeterChartSettings()
-                        .title("Heart rate")
+                        .title(AppConstants.INSTANCE.gallerytree_meter_multi_static_title())
                         .width(500).height(200)
                         .meter(30, 160, 190, 220)
-                        .column("person").format("Person")
-                        .column("heartRate").format("Heart rate", "#,### bpm")
+                        .column("person").format(AppConstants.INSTANCE.gallerytree_meter_multi_static_column1())
+                        .column("heartRate").format(AppConstants.INSTANCE.gallerytree_meter_multi_static_column2(), "#,### bpm")
                         .dataset(DataSetFactory.newDataSetBuilder()
                                 .label("person")
                                 .number("heartRate")
@@ -386,16 +387,16 @@ public class GalleryTree {
     }
 
     private void initMetricCategory() {
-        GalleryTreeNodeList nodeList = new GalleryTreeNodeList("Metrics");
+        GalleryTreeNodeList nodeList = new GalleryTreeNodeList(AppConstants.INSTANCE.gallerytree_metrics());
         mainNodes.add(nodeList);
 
-        nodeList.add(new GalleryPlaceRequest("Basic", createPlaceRequest(
+        nodeList.add(new GalleryPlaceRequest(AppConstants.INSTANCE.gallerytree_metrics_basic(), createPlaceRequest(
                 DisplayerSettingsFactory.newMetricSettings()
-                        .title("Sales (current quarter)")
+                        .title(AppConstants.INSTANCE.gallerytree_metrics_basic_title())
                         .titleVisible(true)
                         .dataset(SALES_OPPS)
                         .filter(CLOSING_DATE, timeFrame("begin[quarter February] till now"))
-                        .column(AMOUNT, SUM).expression("value/1000").format("Sales (current quarter)", "$ #,### K")
+                        .column(AMOUNT, SUM).expression("value/1000").format(AppConstants.INSTANCE.gallerytree_metrics_basic_column1(), "$ #,### K")
                         .width(300).height(200)
                         .margins(50, 50, 50, 50)
                         .backgroundColor("FDE8D4")
@@ -403,11 +404,11 @@ public class GalleryTree {
                         .buildSettings()
         )));
 
-        nodeList.add(new GalleryPlaceRequest("Basic (static)", createPlaceRequest(
+        nodeList.add(new GalleryPlaceRequest(AppConstants.INSTANCE.gallerytree_metrics_basic_static(), createPlaceRequest(
                 DisplayerSettingsFactory.newMetricSettings()
-                        .title("Tweets!")
+                        .title(AppConstants.INSTANCE.gallerytree_metrics_basic_static_title())
                         .titleVisible(true)
-                        .column("tweets").format("Tweets", "#,###")
+                        .column("tweets").format(AppConstants.INSTANCE.gallerytree_metrics_basic_static_column1(), "#,###")
                         .width(300).height(200)
                         .margins(50, 50, 50, 50)
                         .backgroundColor("ADE8D4")
@@ -421,16 +422,16 @@ public class GalleryTree {
     }
 
     private void initMapChartCategory() {
-        GalleryTreeNodeList nodeList = new GalleryTreeNodeList("Map");
+        GalleryTreeNodeList nodeList = new GalleryTreeNodeList(AppConstants.INSTANCE.gallerytree_map());
         mainNodes.add(nodeList);
 
-        nodeList.add(new GalleryPlaceRequest("GeoMap", createPlaceRequest(
+        nodeList.add(new GalleryPlaceRequest(AppConstants.INSTANCE.gallerytree_map_geo(), createPlaceRequest(
                 DisplayerSettingsFactory.newMapChartSettings()
                         .dataset(SALES_OPPS)
                         .group(COUNTRY)
                         .column(COUNTRY, "Country")
-                        .column(AMOUNT, SUM).format("Total amount", "$ #,###")
-                        .title("By Country")
+                        .column(AMOUNT, SUM).format(AppConstants.INSTANCE.gallerytree_map_geo_column1(), "$ #,###")
+                        .title(AppConstants.INSTANCE.gallerytree_map_geo_title())
                         .width(700).height(500)
                         .margins(10, 10, 10, 10)
                         .filterOn(false, true, true)
@@ -439,80 +440,80 @@ public class GalleryTree {
     }
 
     private void initTableReportCategory() {
-        GalleryTreeNodeList nodeList = new GalleryTreeNodeList("Table report");
+        GalleryTreeNodeList nodeList = new GalleryTreeNodeList(AppConstants.INSTANCE.gallerytree_table());
         mainNodes.add(nodeList);
 
-        nodeList.add(new GalleryPlaceRequest("Basic", createPlaceRequest(
+        nodeList.add(new GalleryPlaceRequest(AppConstants.INSTANCE.gallerytree_table_basic(), createPlaceRequest(
                 DisplayerSettingsFactory.newTableSettings()
                         .dataset(SALES_OPPS)
-                        .column(COUNTRY, "Country")
-                        .column(CUSTOMER, "Customer")
-                        .column(PRODUCT, "Product")
-                        .column(SALES_PERSON, "Salesman")
-                        .column(STATUS, "Status")
-                        .column(SOURCE, "Source")
-                        .column(CREATION_DATE, "Creation")
-                        .column(EXPECTED_AMOUNT, "Expected")
-                        .column(CLOSING_DATE).format("Closing", "MMM dd, yyyy")
-                        .column(AMOUNT).format("Amount", "$ #,##0.00")
-                        .title("List of Opportunities")
+                        .column(COUNTRY, AppConstants.INSTANCE.gallerytree_table_basic_column1())
+                        .column(CUSTOMER, AppConstants.INSTANCE.gallerytree_table_basic_column2())
+                        .column(PRODUCT, AppConstants.INSTANCE.gallerytree_table_basic_column3())
+                        .column(SALES_PERSON, AppConstants.INSTANCE.gallerytree_table_basic_column4())
+                        .column(STATUS, AppConstants.INSTANCE.gallerytree_table_basic_column5())
+                        .column(SOURCE, AppConstants.INSTANCE.gallerytree_table_basic_column6())
+                        .column(CREATION_DATE, AppConstants.INSTANCE.gallerytree_table_basic_column7())
+                        .column(EXPECTED_AMOUNT, AppConstants.INSTANCE.gallerytree_table_basic_column8())
+                        .column(CLOSING_DATE).format(AppConstants.INSTANCE.gallerytree_table_basic_column9(), "MMM dd, yyyy")
+                        .column(AMOUNT).format(AppConstants.INSTANCE.gallerytree_table_basic_column10(), "$ #,##0.00")
+                        .title(AppConstants.INSTANCE.gallerytree_table_basic_title())
                         .tablePageSize(10)
                         .tableOrderEnabled(true)
                         .tableOrderDefault(AMOUNT, DESCENDING)
                         .filterOn(false, true, true)
                         .buildSettings()
         )));
-        nodeList.add(new GalleryPlaceRequest("Filtered", createPlaceRequest(
+        nodeList.add(new GalleryPlaceRequest(AppConstants.INSTANCE.gallerytree_table_filtered(), createPlaceRequest(
                 DisplayerSettingsFactory.newTableSettings()
                         .dataset(SALES_OPPS)
-                        .column(CUSTOMER, "Customer")
-                        .column(PRODUCT, "Product")
-                        .column(STATUS, "Status")
-                        .column(SOURCE, "Source")
-                        .column(CREATION_DATE, "Creation")
-                        .column(EXPECTED_AMOUNT).format("Expected", "$ #,##0.00")
-                        .column(CLOSING_DATE).format("Closing", "MMM dd, yyyy")
-                        .column(AMOUNT).format("Amount", "$ #,##0.00")
+                        .column(CUSTOMER, AppConstants.INSTANCE.gallerytree_table_filtered_column1())
+                        .column(PRODUCT, AppConstants.INSTANCE.gallerytree_table_filtered_column2())
+                        .column(STATUS, AppConstants.INSTANCE.gallerytree_table_filtered_column3())
+                        .column(SOURCE, AppConstants.INSTANCE.gallerytree_table_filtered_column4())
+                        .column(CREATION_DATE, AppConstants.INSTANCE.gallerytree_table_filtered_column5())
+                        .column(EXPECTED_AMOUNT).format(AppConstants.INSTANCE.gallerytree_table_filtered_column6(), "$ #,##0.00")
+                        .column(CLOSING_DATE).format(AppConstants.INSTANCE.gallerytree_table_filtered_column7(), "MMM dd, yyyy")
+                        .column(AMOUNT).format(AppConstants.INSTANCE.gallerytree_table_filtered_column8(), "$ #,##0.00")
                         .filter(COUNTRY, OR(equalsTo("United States"), equalsTo("Brazil")))
-                        .title("Opportunities in USA & Brazil")
+                        .title(AppConstants.INSTANCE.gallerytree_table_filtered_title())
                         .tablePageSize(10)
                         .tableOrderEnabled(true)
                         .tableOrderDefault(AMOUNT, DESCENDING)
                         .filterOn(false, true, true)
                         .buildSettings()
         )));
-        nodeList.add(new GalleryPlaceRequest("Grouped", createPlaceRequest(
+        nodeList.add(new GalleryPlaceRequest(AppConstants.INSTANCE.gallerytree_table_grouped(), createPlaceRequest(
                 DisplayerSettingsFactory.newTableSettings()
                         .dataset(SALES_OPPS)
                         .group(COUNTRY)
-                        .column(COUNTRY, "Country")
-                        .column(COUNT, "#Opps").format("#Opps", "#,##0")
-                        .column(AMOUNT, MIN).format("Min", "$ #,###")
-                        .column(AMOUNT, MAX).format("Max", "$ #,###")
-                        .column(AMOUNT, AVERAGE).format("Average", "$ #,###")
-                        .column(AMOUNT, SUM).format("Total", "$ #,###")
+                        .column(COUNTRY, AppConstants.INSTANCE.gallerytree_table_grouped_column1())
+                        .column(COUNT, "#Opps").format(AppConstants.INSTANCE.gallerytree_table_grouped_column2(), "#,##0")
+                        .column(AMOUNT, MIN).format(AppConstants.INSTANCE.gallerytree_table_grouped_column3(), "$ #,###")
+                        .column(AMOUNT, MAX).format(AppConstants.INSTANCE.gallerytree_table_grouped_column4(), "$ #,###")
+                        .column(AMOUNT, AVERAGE).format(AppConstants.INSTANCE.gallerytree_table_grouped_column5(), "$ #,###")
+                        .column(AMOUNT, SUM).format(AppConstants.INSTANCE.gallerytree_table_grouped_column6(), "$ #,###")
                         .sort("Total", DESCENDING)
-                        .title("Country Summary")
+                        .title(AppConstants.INSTANCE.gallerytree_table_grouped_title())
                         .tablePageSize(10)
                         .tableOrderEnabled(true)
                         .tableOrderDefault("Country", DESCENDING)
                         .filterOn(false, true, true)
                         .buildSettings()
         )));
-        nodeList.add(new GalleryPlaceRequest("Default (drill-down)", createPlaceRequest(
+        nodeList.add(new GalleryPlaceRequest(AppConstants.INSTANCE.gallerytree_table_default_dd(), createPlaceRequest(
                 DisplayerSettingsFactory.newTableSettings()
                         .dataset(SALES_OPPS)
-                        .column(COUNTRY, "Country")
-                        .column(CUSTOMER, "Customer")
-                        .column(PRODUCT, "Product")
-                        .column(SALES_PERSON, "Salesman")
-                        .column(STATUS, "Status")
-                        .column(SOURCE, "Source")
-                        .column(CREATION_DATE, "Creation")
-                        .column(EXPECTED_AMOUNT).format("Expected", "$ #,###")
-                        .column(CLOSING_DATE).format("Closing", "MMM dd, yyyy")
-                        .column(AMOUNT).format("Amount", "$ #,###")
-                        .title("List of Opportunities")
+                        .column(COUNTRY, AppConstants.INSTANCE.gallerytree_table_default_dd_column1())
+                        .column(CUSTOMER, AppConstants.INSTANCE.gallerytree_table_default_dd_column2())
+                        .column(PRODUCT, AppConstants.INSTANCE.gallerytree_table_default_dd_column3())
+                        .column(SALES_PERSON, AppConstants.INSTANCE.gallerytree_table_default_dd_column4())
+                        .column(STATUS, AppConstants.INSTANCE.gallerytree_table_default_dd_column5())
+                        .column(SOURCE, AppConstants.INSTANCE.gallerytree_table_default_dd_column6())
+                        .column(CREATION_DATE, AppConstants.INSTANCE.gallerytree_table_default_dd_column7())
+                        .column(EXPECTED_AMOUNT).format(AppConstants.INSTANCE.gallerytree_table_default_dd_column8(), "$ #,###")
+                        .column(CLOSING_DATE).format(AppConstants.INSTANCE.gallerytree_table_default_dd_column9(), "MMM dd, yyyy")
+                        .column(AMOUNT).format(AppConstants.INSTANCE.gallerytree_table_default_dd_column10(), "$ #,###")
+                        .title(AppConstants.INSTANCE.gallerytree_table_default_dd_title())
                         .tablePageSize(10)
                         .tableOrderEnabled(true)
                         .tableOrderDefault(AMOUNT, DESCENDING)
@@ -523,15 +524,15 @@ public class GalleryTree {
     }
 
     private void initDashboardCategory() {
-        GalleryTreeNodeList nodeList = new GalleryTreeNodeList("Dashboards");
+        GalleryTreeNodeList nodeList = new GalleryTreeNodeList(AppConstants.INSTANCE.gallerytree_db());
         mainNodes.add(nodeList);
 
-        nodeList.add(new GalleryPlaceRequest("Sales goals", createPlaceRequest("salesGoal")));
-        nodeList.add(new GalleryPlaceRequest("Sales pipeline", createPlaceRequest("salesPipeline")));
-        nodeList.add(new GalleryPlaceRequest("Sales per country", createPlaceRequest("salesPerCountry")));
-        nodeList.add(new GalleryPlaceRequest("Sales reports", createPlaceRequest("salesReports")));
-        nodeList.add(new GalleryPlaceRequest("Expense reports", createPlaceRequest("expenseReports")));
-        nodeList.add(new GalleryPlaceRequest("Cluster metrics", createPlaceRequest("clusterMetrics")));
+        nodeList.add(new GalleryPlaceRequest(AppConstants.INSTANCE.gallerytree_db_salesgoals(), createPlaceRequest("salesGoal")));
+        nodeList.add(new GalleryPlaceRequest(AppConstants.INSTANCE.gallerytree_db_salespipe(), createPlaceRequest("salesPipeline")));
+        nodeList.add(new GalleryPlaceRequest(AppConstants.INSTANCE.gallerytree_db_salespcountry(), createPlaceRequest("salesPerCountry")));
+        nodeList.add(new GalleryPlaceRequest(AppConstants.INSTANCE.gallerytree_db_salesreps(), createPlaceRequest("salesReports")));
+        nodeList.add(new GalleryPlaceRequest(AppConstants.INSTANCE.gallerytree_db_expreps(), createPlaceRequest("expenseReports")));
+        nodeList.add(new GalleryPlaceRequest(AppConstants.INSTANCE.gallerytree_db_clustermetrics(), createPlaceRequest("clusterMetrics")));
         /*nodeList.add(new GalleryPlaceRequest("System metrics (real-time)", createPlaceRequest("metrics_realtime")));
         nodeList.add(new GalleryPlaceRequest("System metrics (historic)", createPlaceRequest("metrics_analytic")));*/
     }

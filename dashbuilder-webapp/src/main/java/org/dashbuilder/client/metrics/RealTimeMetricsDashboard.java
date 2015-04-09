@@ -24,6 +24,7 @@ import org.dashbuilder.backend.ClusterMetricsGenerator;
 import org.dashbuilder.client.gallery.GalleryWidget;
 import org.dashbuilder.client.metrics.widgets.details.DetailedServerMetrics;
 import org.dashbuilder.client.metrics.widgets.vertical.VerticalServerMetrics;
+import org.dashbuilder.client.resources.i18n.AppConstants;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetFactory;
 import org.dashbuilder.dataset.DataSetLookup;
@@ -75,7 +76,7 @@ public class RealTimeMetricsDashboard extends Composite implements GalleryWidget
 
     @Override
     public String getTitle() {
-        return "System Metrics (Real-time)";
+        return AppConstants.INSTANCE.metrics_rt_title();
     }
 
     @Override

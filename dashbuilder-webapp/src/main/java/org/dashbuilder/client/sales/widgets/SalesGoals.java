@@ -21,6 +21,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.client.gallery.GalleryWidget;
+import org.dashbuilder.client.resources.i18n.AppConstants;
 import org.dashbuilder.displayer.DisplayerSettingsFactory;
 import org.dashbuilder.displayer.client.Displayer;
 import org.dashbuilder.displayer.client.DisplayerCoordinator;
@@ -59,7 +60,7 @@ public class SalesGoals extends Composite implements GalleryWidget {
 
     @Override
     public String getTitle() {
-        return "Sales goals";
+        return AppConstants.INSTANCE.sales_goals_title();
     }
 
     @Override
@@ -86,8 +87,8 @@ public class SalesGoals extends Composite implements GalleryWidget {
                 .dataset(SALES_OPPS)
                 .column(AMOUNT, SUM)
                 .expression("value/1000")
-                .format("Total amount", "$ #,### K")
-                .title("Sales goal")
+                .format(AppConstants.INSTANCE.sales_goals_meter_column1(), "$ #,### K")
+                .title(AppConstants.INSTANCE.sales_goals_meter_title())
                 .titleVisible(true)
                 .width(200).height(200)
                 .meter(0, 15000, 25000, 35000)
@@ -98,10 +99,10 @@ public class SalesGoals extends Composite implements GalleryWidget {
                 DisplayerSettingsFactory.newLineChartSettings()
                 .dataset(SALES_OPPS)
                 .group(CLOSING_DATE).dynamic(80, MONTH, true)
-                .column(CLOSING_DATE).format("Closing date")
-                .column(AMOUNT, SUM).format("Total amount", "$ #,### K").expression("value/1000")
-                .column(EXPECTED_AMOUNT, SUM).format("Expected amount", "$ #,### K").expression("value/1000")
-                .title("Expected pipeline")
+                .column(CLOSING_DATE).format(AppConstants.INSTANCE.sales_goals_line_column1())
+                .column(AMOUNT, SUM).format(AppConstants.INSTANCE.sales_goals_line_column2(), "$ #,### K").expression("value/1000")
+                .column(EXPECTED_AMOUNT, SUM).format(AppConstants.INSTANCE.sales_goals_line_column3(), "$ #,### K").expression("value/1000")
+                .title(AppConstants.INSTANCE.sales_goals_line_title())
                 .titleVisible(true)
                 .width(800).height(200)
                 .margins(10, 80, 80, 100)
@@ -112,10 +113,10 @@ public class SalesGoals extends Composite implements GalleryWidget {
                 DisplayerSettingsFactory.newBarChartSettings()
                 .dataset(SALES_OPPS)
                 .group(PRODUCT)
-                .column(PRODUCT).format("Product")
-                .column(AMOUNT, SUM).format("Total", "$ #,### K").expression("value/1000")
-                .column(EXPECTED_AMOUNT, SUM).format("Expected", "$ #,### K").expression("value/1000")
-                .title("By product")
+                .column(PRODUCT).format(AppConstants.INSTANCE.sales_goals_bar_byproduct_column1())
+                .column(AMOUNT, SUM).format(AppConstants.INSTANCE.sales_goals_bar_byproduct_column2(), "$ #,### K").expression("value/1000")
+                .column(EXPECTED_AMOUNT, SUM).format(AppConstants.INSTANCE.sales_goals_bar_byproduct_column3(), "$ #,### K").expression("value/1000")
+                .title(AppConstants.INSTANCE.sales_goals_bar_byproduct_title())
                 .titleVisible(true)
                 .width(400).height(150)
                 .margins(10, 80, 80, 10)
@@ -127,10 +128,10 @@ public class SalesGoals extends Composite implements GalleryWidget {
                 DisplayerSettingsFactory.newBarChartSettings()
                 .dataset(SALES_OPPS)
                 .group(SALES_PERSON)
-                .column(SALES_PERSON).format("Employee")
-                .column(AMOUNT, SUM).format("Amount", "$ #,### K").expression("value/1000")
+                .column(SALES_PERSON).format(AppConstants.INSTANCE.sales_goals_bar_byempl_column1())
+                .column(AMOUNT, SUM).format(AppConstants.INSTANCE.sales_goals_bar_byempl_column2(), "$ #,### K").expression("value/1000")
                 .sort(AMOUNT, DESCENDING)
-                .title("By employee")
+                .title(AppConstants.INSTANCE.sales_goals_bar_byempl_title())
                 .titleVisible(true)
                 .width(400).height(150)
                 .margins(10, 80, 80, 10)
@@ -143,11 +144,11 @@ public class SalesGoals extends Composite implements GalleryWidget {
                 .dataset(SALES_OPPS)
                 .group(COUNTRY)
                 .column(COUNTRY, "Country")
-                .column(COUNT, "#opps").format("Number of opportunities", "#,###")
-                .column(PROBABILITY, AVERAGE).format("Average probability", "#,###")
+                .column(COUNT, "#opps").format(AppConstants.INSTANCE.sales_goals_bubble_column1(), "#,###")
+                .column(PROBABILITY, AVERAGE).format(AppConstants.INSTANCE.sales_goals_bubble_column2(), "#,###")
                 .column(COUNTRY, "Country")
-                .column(EXPECTED_AMOUNT, SUM).expression("value/1000").format("Expected amount", "$ #,##0.00 K")
-                .title("Opportunities distribution by Country ")
+                .column(EXPECTED_AMOUNT, SUM).expression("value/1000").format(AppConstants.INSTANCE.sales_goals_bubble_column3(), "$ #,##0.00 K")
+                .title(AppConstants.INSTANCE.sales_goals_bubble_title())
                 .width(550).height(250)
                 .margins(10, 30, 50, 0)
                 .filterOn(false, true, true)

@@ -21,6 +21,7 @@ import org.dashbuilder.client.expenses.ExpensesDashboard;
 import org.dashbuilder.client.metrics.AnalyticMetricsDashboard;
 import org.dashbuilder.client.metrics.ClusterMetricsDashboard;
 import org.dashbuilder.client.metrics.RealTimeMetricsDashboard;
+import org.dashbuilder.client.resources.i18n.AppConstants;
 import org.dashbuilder.client.sales.widgets.SalesDistributionByCountry;
 import org.dashbuilder.client.sales.widgets.SalesExpectedByDate;
 import org.dashbuilder.client.sales.widgets.SalesGoals;
@@ -87,7 +88,7 @@ public class GalleryWidgetPresenter {
         if ("metrics_realtime".equals(widgetId)) return new RealTimeMetricsDashboard(RealTimeMetricsDashboard.METRICS_DATASET_DEFAULT_SERVERS);
         if ("metrics_analytic".equals(widgetId)) return new AnalyticMetricsDashboard();
 
-        throw new IllegalArgumentException("Unknown gallery widget: " + widgetId);
+        throw new IllegalArgumentException(AppConstants.INSTANCE.gallerywidget_unknown() + widgetId);
     }
 
     // Catch some data set related events and display workbench notifications only and only if:
@@ -103,7 +104,7 @@ public class GalleryWidgetPresenter {
         boolean noRealTime = timeFrame == null || timeFrame.toMillis() > 60000;
 
         if ((!def.isRefreshAlways() || noRealTime) && widget.feedsFrom(targetUUID)) {
-            workbenchNotification.fire(new NotificationEvent("The data set has been modified. Refreshing the view ...", INFO));
+            workbenchNotification.fire(new NotificationEvent(AppConstants.INSTANCE.gallerywidget_dataset_modif(), INFO));
         }
     }
 
@@ -115,7 +116,7 @@ public class GalleryWidgetPresenter {
         DataSetDef def = metadata.getDefinition();
         TimeAmount timeFrame = def.getRefreshTimeAmount();
         if (timeFrame == null || timeFrame.toMillis() > 60000) {
-            workbenchNotification.fire(new NotificationEvent("Data set loaded from server [" + def.getProvider() + ", " + event.getDataSetMetadata().getEstimatedSize() + " Kb]", INFO));
+            workbenchNotification.fire(new NotificationEvent(AppConstants.INSTANCE.gallerywidget_dataset_loaded(def.getProvider().toString(), event.getDataSetMetadata().getEstimatedSize()), INFO));
         }
     }
 }

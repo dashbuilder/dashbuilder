@@ -17,6 +17,7 @@ package org.dashbuilder.client.perspectives;
 
 import javax.enterprise.context.ApplicationScoped;
 
+import org.dashbuilder.client.resources.i18n.AppConstants;
 import org.uberfire.client.annotations.Perspective;
 import org.uberfire.client.annotations.WorkbenchPerspective;
 import org.uberfire.client.workbench.panels.impl.MultiTabWorkbenchPanelPresenter;
@@ -45,7 +46,7 @@ public class DisplayerGalleryPerspective {
         west.addPart("GalleryTreeScreen");
 
         PerspectiveDefinition perspective = new PerspectiveDefinitionImpl(MultiTabWorkbenchPanelPresenter.class.getName());
-        perspective.setName("Gallery");
+        perspective.setName(AppConstants.INSTANCE.menu_gallery());
         perspective.getRoot().insertChild(CompassPosition.WEST, west);
         perspective.getRoot().addPart("GalleryHomeScreen");
         return perspective;

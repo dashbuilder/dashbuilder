@@ -4,6 +4,8 @@
              xmlns:b="urn:import:com.github.gwtbootstrap.client.ui"
              xmlns:d="urn:import:org.dashbuilder.displayer.client">
 
+  <ui:with field="i18n" type="org.dashbuilder.client.resources.i18n.AppConstants"/>
+
   <ui:style>
     .panel {
       padding: 5px;
@@ -16,7 +18,7 @@
   <g:FlowPanel>
     <g:FlowPanel ui:field="messagePanel">
       <b:Hero>
-        <b:Heading text="Initializing dashboard..." size="2" />
+        <b:Heading text="{i18n.metrics_cluster_messages_heading}" size="2" />
       </b:Hero>
     </g:FlowPanel>
     <g:HorizontalPanel ui:field="mainPanel" visible="false">
@@ -24,11 +26,11 @@
       <g:FlowPanel styleName="{style.panel}">
         <g:HorizontalPanel>
           <g:FlowPanel styleName="{style.panel}" ui:field="centerPanel" >
-            <g:Label>Metric</g:Label>
+            <g:Label text="{i18n.metrics_cluster_metricselector_label}"/>
             <g:ListBox ui:field="metricSelector" styleName="{style.listBox}"/>
           </g:FlowPanel>
           <g:FlowPanel styleName="{style.panel}">
-            <g:Label>Chart type</g:Label>
+            <g:Label text="{i18n.metrics_cluster_chartselector_label}"/>
             <g:ListBox ui:field="chartTypeSelector" styleName="{style.listBox}"/>
           </g:FlowPanel>
         </g:HorizontalPanel>
