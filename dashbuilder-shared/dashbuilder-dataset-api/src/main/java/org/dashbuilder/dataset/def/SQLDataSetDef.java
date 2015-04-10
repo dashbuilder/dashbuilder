@@ -24,6 +24,7 @@ public class SQLDataSetDef extends DataSetDef {
     protected String dataSource;
     protected String dbSchema;
     protected String dbTable;
+    protected String dbSQL;
     protected boolean allColumnsEnabled = true;
 
     public SQLDataSetDef() {
@@ -52,6 +53,14 @@ public class SQLDataSetDef extends DataSetDef {
 
     public void setDbSchema(String dbSchema) {
         this.dbSchema = dbSchema;
+    }
+
+    public String getDbSQL() {
+        return dbSQL;
+    }
+
+    public void setDbSQL(String dbSQL) {
+        this.dbSQL = dbSQL;
     }
 
     public boolean isAllColumnsEnabled() {
@@ -92,6 +101,7 @@ public class SQLDataSetDef extends DataSetDef {
         out.append("Data source=").append(dataSource).append("\n");
         if (dbSchema != null) out.append("DB Schema=").append(dbSchema).append("\n");
         out.append("DB Table=").append(dbTable).append("\n");
+        out.append("DB SQL=").append(dbSQL).append("\n");
         out.append("Get all columns=").append(allColumnsEnabled).append("\n");
         out.append("Cache enabled=").append(cacheEnabled).append("\n");
         out.append("Cache max rows=").append(cacheMaxRows).append(" Kb\n");

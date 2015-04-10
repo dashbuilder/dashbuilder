@@ -56,6 +56,7 @@ public class DataSetDefJSONMarshaller {
     public static final String DATA_SOURCE = "dataSource";
     public static final String DB_SCHEMA = "dbSchema";
     public static final String DB_TABLE = "dbTable";
+    public static final String DB_SQL = "dbSQL";
     public static final String ALL_COLUMNS = "allColumns";
     public static final String CACHE_ENABLED = "cacheEnabled";
     public static final String CACHE_MAXROWS = "cacheMaxRows";
@@ -290,11 +291,13 @@ public class DataSetDefJSONMarshaller {
         String dataSource = json.has(DATA_SOURCE) ? json.getString(DATA_SOURCE) : null;
         String dbTable = json.has(DB_TABLE) ? json.getString(DB_TABLE) : null;
         String dbSchema = json.has(DB_SCHEMA) ? json.getString(DB_SCHEMA) : null;
+        String dbSQL = json.has(DB_SQL) ? json.getString(DB_SQL) : null;
         String allColumns = json.has(ALL_COLUMNS) ? json.getString(ALL_COLUMNS) : null;
 
         if (!StringUtils.isBlank(dataSource)) def.setDataSource(dataSource);
         if (!StringUtils.isBlank(dbSchema)) def.setDbSchema(dbSchema);
         if (!StringUtils.isBlank(dbTable)) def.setDbTable(dbTable);
+        if (!StringUtils.isBlank(dbSQL)) def.setDbSQL(dbSQL);
         if (!StringUtils.isBlank(allColumns)) def.setAllColumnsEnabled(Boolean.parseBoolean(allColumns));
 
         return def;

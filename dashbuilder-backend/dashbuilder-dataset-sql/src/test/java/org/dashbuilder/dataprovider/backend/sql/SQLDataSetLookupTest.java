@@ -27,7 +27,7 @@ import static org.dashbuilder.dataset.group.AggregateFunctionType.*;
 import static org.dashbuilder.dataset.filter.FilterFactory.*;
 import static org.fest.assertions.api.Assertions.*;
 
-public class SQLDataSetGroupTest extends SQLDataSetTestBase {
+public class SQLDataSetLookupTest extends SQLDataSetTestBase {
 
     @Test
     public void testDataSetTrim() throws Exception {
@@ -134,5 +134,9 @@ public class SQLDataSetGroupTest extends SQLDataSetTestBase {
         subTest.testFilterByNumber();
         subTest.testFilterMultiple();
         subTest.testFilterUntilToday();
+        subTest.testANDExpression();
+        subTest.testNOTExpression();
+        subTest.testORExpression();
+        subTest.testCombinedExpression();
     }
 }

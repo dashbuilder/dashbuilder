@@ -47,10 +47,24 @@ public interface SQLDataSetDefBuilder<T extends DataSetDefBuilder> extends DataS
     /**
      * Set the database table holding all the data set rows.
      *
+     * <p>NOTE: You can either specify a DB table containing all the rows or provide a custom SQL
+     * (see the <i>dbSQL</i> method). The SQL settings has preference over the DB table. Therefore,
+     * calling to this method will have no effect if the method <i>dbSQL</i> has been previously invoked.</p>
+     *
      * @param dbTable the table name
      * @param allColumns If true then all the DB table columns will be part of the data set.
      * If false then only the columns defined (see the DataSetDefBuilder column definition methods)
      * @return The DataSetDefBuilder instance that is being used to configure a DataSetDef.
      */
     T dbTable(String dbTable, boolean allColumns);
+
+    /**
+     * Specifies a custom SQL for the retrieval of the data set rows.
+     *
+     * @param dbSQL the data retrieval SQL
+     * @param allColumns If true then all the column returned by the SQL will be part of the data set.
+     * If false then only the columns defined (see the DataSetDefBuilder column definition methods)
+     * @return The DataSetDefBuilder instance that is being used to configure a DataSetDef.
+     */
+    T dbSQL(String dbSQL, boolean allColumns);
 }

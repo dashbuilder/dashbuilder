@@ -40,4 +40,10 @@ public class SQLDataSetDefBuilderImpl extends AbstractDataSetDefBuilder<SQLDataS
         ((SQLDataSetDef) def).setAllColumnsEnabled(allColumns);
         return this;
     }
+
+    public SQLDataSetDefBuilderImpl dbSQL(String dbSQL, boolean allColumns) {
+        ((SQLDataSetDef) def).setDbSQL(dbSQL);
+        ((SQLDataSetDef) def).setAllColumnsEnabled(allColumns);
+        return this;
+    }
 }
