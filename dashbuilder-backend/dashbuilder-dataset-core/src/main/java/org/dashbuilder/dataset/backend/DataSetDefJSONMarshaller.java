@@ -15,8 +15,7 @@
  */
 package org.dashbuilder.dataset.backend;
 
-import javax.inject.Inject;
-
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.dashbuilder.dataprovider.DataSetProviderRegistry;
 import org.dashbuilder.dataprovider.DataSetProviderType;
@@ -24,7 +23,11 @@ import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.def.*;
 import org.dashbuilder.dataset.filter.DataSetFilter;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
+
+import javax.inject.Inject;
+import java.util.Map;
 
 /**
  * DataSetDef from/to JSON utilities
@@ -308,4 +311,131 @@ public class DataSetDefJSONMarshaller {
 
         return def;
     }
+
+    public String toJsonString(final DataSetDef dataSetDef) throws JSONException {
+        return toJsonObject( dataSetDef ).toString(1);
+    }
+
+    public JSONObject toJsonObject(final DataSetDef dataSetDef ) throws JSONException{
+        JSONObject json = new JSONObject(  );
+
+        // UUID.
+        json.put( UUID, dataSetDef.getUUID());
+
+        // Name.
+        json.put( NAME, dataSetDef.getName());
+
+        // Provider.
+        json.put( PROVIDER, dataSetDef.getProvider().name());
+
+        // Public.
+        json.put( ISPUBLIC, dataSetDef.isPublic());
+        
+        // Backend cache.
+        json.put( CACHE_ENABLED, dataSetDef.isCacheEnabled());
+        json.put( CACHE_MAXROWS, dataSetDef.getCacheMaxRows());
+
+        // Client cache.
+        json.put( PUSH_ENABLED, dataSetDef.isPushEnabled());
+        json.put( PUSH_MAXSIZE, dataSetDef.getPushMaxSize());
+
+        // Refresh.
+        json.put( REFRESH_ALWAYS, dataSetDef.isRefreshAlways());
+        json.put( REFRESH_TIME, dataSetDef.getRefreshTime());
+
+        // TODO: Filter.
+        // TODO: Columns.
+        
+        // Specific provider.
+        if (dataSetDef instanceof BeanDataSetDef) {
+            toJsonObject(((BeanDataSetDef)dataSetDef), json);
+        } else if (dataSetDef instanceof CSVDataSetDef) {
+            toJsonObject(((CSVDataSetDef)dataSetDef), json);
+        } else if (dataSetDef instanceof SQLDataSetDef) {
+            toJsonObject(((SQLDataSetDef)dataSetDef), json);
+        } else if (dataSetDef instanceof ElasticSearchDataSetDef) {
+            toJsonObject(((ElasticSearchDataSetDef)dataSetDef), json);
+        }
+        
+        return json;
+    }
+
+    private void toJsonObject(final BeanDataSetDef dataSetDef, final JSONObject json ) throws JSONException {
+
+        // Generator class.
+        json.put( GENERATOR_CLASS, dataSetDef.getGeneratorClass());
+
+        // Generator parameters.
+        Map<String, String> parameters = dataSetDef.getParamaterMap();
+        if (parameters != null && !parameters.isEmpty()) {
+            final JSONArray array = new JSONArray();
+            for (Map.Entry<String, String> param : parameters.entrySet()) {
+                final JSONObject paramObject = toJSONParameter(param.getKey(), param.getValue());
+                array.put(paramObject);
+            }
+            json.put( GENERATOR_PARAMS, array);
+        }
+    }
+
+    private void toJsonObject(final CSVDataSetDef dataSetDef, final JSONObject json ) throws JSONException {
+
+        // File.
+        if (dataSetDef.getFilePath() != null) json.put( FILEPATH, dataSetDef.getFilePath());
+        if (dataSetDef.getFileURL() != null) json.put( FILEURL, dataSetDef.getFileURL());
+
+        // Separator.
+        json.put( SEPARATORCHAR, dataSetDef.getSeparatorChar());
+
+        // Quote.
+        json.put( QUOTECHAR, dataSetDef.getQuoteChar());
+
+        // Escape.
+        json.put( ESCAPECHAR, dataSetDef.getEscapeChar());
+
+        // Date pattern.
+        json.put( DATEPATTERN, dataSetDef.getDatePattern());
+
+        // Number pattern.
+        json.put( NUMBERPATTERN, dataSetDef.getNumberPattern());
+    }
+
+    private void toJsonObject(final SQLDataSetDef dataSetDef, final JSONObject json ) throws JSONException {
+
+        // Data source.
+        json.put( DATA_SOURCE, dataSetDef.getDataSource());
+
+        // Schema.
+        json.put( DB_SCHEMA, dataSetDef.getDbSchema());
+
+        // Table.
+        json.put( DB_TABLE, dataSetDef.getDbTable());
+    }
+
+    private void toJsonObject(final ElasticSearchDataSetDef dataSetDef, final JSONObject json ) throws JSONException {
+
+        // Server URL.
+        json.put( SERVER_URL, dataSetDef.getServerURL());
+
+        // Cluster name.
+        json.put( CLUSTER_NAME, dataSetDef.getClusterName());
+
+        // Index.
+        json.put( INDEX, ArrayUtils.toString(dataSetDef.getIndex()));
+
+        // Type.
+        json.put( TYPE, ArrayUtils.toString(dataSetDef.getType()));
+    }
+    
+    private JSONObject toJSONParameter(final String key, final String value) throws JSONException {
+        JSONObject json = new JSONObject(  );
+
+        // Param.
+        json.put( PARAM, key);
+
+        // Value.
+        json.put( VALUE, value);
+        
+        return json;
+    }
+
 }
