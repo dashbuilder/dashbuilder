@@ -15,9 +15,7 @@
  */
 package org.dashbuilder.dataset.backend;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.FilenameFilter;
+import java.io.*;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -32,6 +30,7 @@ import org.dashbuilder.config.Config;
 import org.dashbuilder.dataprovider.DataSetProviderRegistry;
 import org.dashbuilder.dataset.def.DataSetDef;
 import org.dashbuilder.dataset.def.DataSetDefRegistry;
+import org.json.JSONException;
 import org.slf4j.Logger;
 import org.uberfire.commons.services.cdi.Startup;
 
@@ -193,4 +192,26 @@ public class DataSetDefDeployer {
             return defFile.lastModified() > regTime;
         }
     }
+    
+    public void persist(final DataSetDef dataSetDef) throws IOException, JSONException {
+        if (dataSetDef != null) 
+        {
+            final String uuid = dataSetDef.getUUID();
+            final String json = dataSetDefJSONMarshaller.toJsonString(dataSetDef);
+            FileWriter writer = null;
+            try {
+                writer = new FileWriter(new File(directory, uuid + ".json"));
+                writer.write(json);
+            } catch (IOException e) {
+                throw e;
+            } finally {
+                if (writer != null)
+                {
+                    writer.flush();
+                    writer.close();
+                }
+            }
+        }
+    }
+    
 }

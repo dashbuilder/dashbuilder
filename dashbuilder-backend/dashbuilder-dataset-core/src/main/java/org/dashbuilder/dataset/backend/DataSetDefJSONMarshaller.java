@@ -20,6 +20,8 @@ import org.apache.commons.lang.StringUtils;
 import org.dashbuilder.dataprovider.DataSetProviderRegistry;
 import org.dashbuilder.dataprovider.DataSetProviderType;
 import org.dashbuilder.dataset.ColumnType;
+import org.dashbuilder.dataset.DataColumn;
+import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.def.*;
 import org.dashbuilder.dataset.filter.DataSetFilter;
 import org.json.JSONArray;
@@ -27,6 +29,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import javax.inject.Inject;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -343,9 +346,6 @@ public class DataSetDefJSONMarshaller {
         json.put( REFRESH_ALWAYS, dataSetDef.isRefreshAlways());
         json.put( REFRESH_TIME, dataSetDef.getRefreshTime());
 
-        // TODO: Filter.
-        // TODO: Columns.
-        
         // Specific provider.
         if (dataSetDef instanceof BeanDataSetDef) {
             toJsonObject(((BeanDataSetDef)dataSetDef), json);
@@ -357,7 +357,41 @@ public class DataSetDefJSONMarshaller {
             toJsonObject(((ElasticSearchDataSetDef)dataSetDef), json);
         }
         
+        // Data columns.
+        final DataSet dataSet = dataSetDef.getDataSet();
+        if (dataSet != null)
+        {
+            final List<DataColumn> columns = dataSet.getColumns();
+            final JSONArray columnsArray = toJsonObject(columns);
+            if (columnsArray != null)
+            {
+                json.put(COLUMNS, columnsArray);
+            }
+        }
+
+
+        // TODO: Filter.
+        
         return json;
+    }
+    
+    private JSONArray toJsonObject(final List<DataColumn> columnList) throws JSONException {
+        JSONArray result = null;
+        if (columnList != null && !columnList.isEmpty()) {
+            result = new JSONArray();
+            for (final DataColumn column : columnList) {
+                final String id = column.getId();
+                final String name = column.getName();
+                final ColumnType type = column.getColumnType();
+                final JSONObject columnObject = new JSONObject();
+                columnObject.put(COLUMN_ID, id);
+                columnObject.put(COLUMN_NAME, name);
+                columnObject.put(COLUMN_TYPE, type.name().toLowerCase());
+                result.put(columnObject);
+            }
+        }
+        
+        return result;
     }
 
     private void toJsonObject(final BeanDataSetDef dataSetDef, final JSONObject json ) throws JSONException {
