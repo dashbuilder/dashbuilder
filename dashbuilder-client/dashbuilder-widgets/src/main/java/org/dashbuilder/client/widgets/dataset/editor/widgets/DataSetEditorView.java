@@ -16,9 +16,11 @@
 package org.dashbuilder.client.widgets.dataset.editor.widgets;
 
 import com.github.gwtbootstrap.client.ui.*;
+import com.github.gwtbootstrap.client.ui.Button;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Node;
+import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.resources.client.CssResource;
@@ -37,7 +39,6 @@ import org.dashbuilder.client.widgets.dataset.editor.widgets.editors.sql.SQLData
 import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.def.*;
-import org.dashbuilder.dataset.filter.DataSetFilter;
 import org.dashbuilder.displayer.client.DisplayerListener;
 import org.dashbuilder.displayer.client.widgets.filter.DataSetFilterEditor;
 
@@ -111,9 +112,6 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
     Tab dataConfigurationTab;
 
     @UiField
-    Tab dataPreviewTab;
-
-    @UiField
     Tab dataAdvancedConfigurationTab;
     
     @UiField
@@ -123,10 +121,28 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
     DataSetBasicAttributesEditor dataSetBasicAttributesEditor;
 
     @UiField
+    FlowPanel specificProviderAttributesPanel;
+    
+    @UiField
     FlowPanel sqlAttributesEditionViewPanel;
 
     @UiField
     SQLDataSetDefAttributesEditor sqlDataSetDefAttributesEditor;
+    
+    @UiField
+    FlowPanel testButtonPanel;
+    
+    @UiField
+    Button testButton;
+    
+    @UiField
+    FlowPanel filterColumnsPreviewTablePanel;
+    
+    @UiField
+    FlowPanel backToSpecificAttrsButtonPanel;
+    
+    @UiField
+    Button backToSpecificAttrsEditionButton;
     
     @UiField
     FlowPanel previewTableEditionViewPanel;
@@ -177,11 +193,14 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
     FlowPanel buttonsPanel;
 
     @UiField
-    com.github.gwtbootstrap.client.ui.Button cancelButton;
+    Button cancelButton;
 
     @UiField
-    com.github.gwtbootstrap.client.ui.Button nextButton;
-
+    Button nextButton;
+    
+    @UiField
+    Popover nextButtonPopover;
+    
     private DataSetDef dataSetDef = null;
     
     private boolean isEditMode = true;
@@ -189,9 +208,23 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
     
     private HandlerRegistration nextButtonHandlerRegistration = null;
     private HandlerRegistration cancelButtonHandlerRegistration = null;
+    private HandlerRegistration testButtonHandlerRegistration = null;
+    
+    
+    private final ClickHandler backToSpecificAttrsEditionButtonHandler = new ClickHandler() {
+        @Override
+        public void onClick(ClickEvent event) {
+            specificProviderAttributesPanel.setVisible(true);
+            filterColumnsPreviewTablePanel.setVisible(false);
+        }
+    };
     
     public DataSetEditorView() {
         initWidget(uiBinder.createAndBindUi(this));
+
+        // Configure back to provider settings button's click handler.
+        backToSpecificAttrsEditionButton.addClickHandler(backToSpecificAttrsEditionButtonHandler);
+        
         showEmptyView();
     }
 
@@ -285,10 +318,12 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
     }
 
     @Override
-    public DataSetEditor.View showSQLAttributesEditorView() {
+    public DataSetEditor.View showSQLAttributesEditorView(final ClickHandler testHandler) {
         workflow.edit(sqlDataSetDefAttributesEditor, (SQLDataSetDef) dataSetDef);
         sqlAttributesEditionViewPanel.setVisible(true);
         sqlDataSetDefAttributesEditor.setEditMode(true);
+        specificProviderAttributesPanel.setVisible(true);
+        addTestButtonHandler(testHandler);
         showTab(dataConfigurationTab);
         tabViewPanel.setVisible(true);
         return this;
@@ -299,10 +334,12 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
     }
 
     @Override
-    public DataSetEditor.View showBeanAttributesEditorView() {
+    public DataSetEditor.View showBeanAttributesEditorView(final ClickHandler testHandler) {
         workflow.edit(beanDataSetDefAttributesEditor, (BeanDataSetDef) dataSetDef);
         beanAttributesEditionViewPanel.setVisible(true);
         beanDataSetDefAttributesEditor.setEditMode(true);
+        specificProviderAttributesPanel.setVisible(true);
+        addTestButtonHandler(testHandler);
         showTab(dataConfigurationTab);
         tabViewPanel.setVisible(true);
         return this;
@@ -313,10 +350,12 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
     }
 
     @Override
-    public DataSetEditor.View showCSVAttributesEditorView() {
+    public DataSetEditor.View showCSVAttributesEditorView(final ClickHandler testHandler) {
         workflow.edit(csvDataSetDefAttributesEditor, (CSVDataSetDef) dataSetDef);
         csvAttributesEditionViewPanel.setVisible(true);
         csvDataSetDefAttributesEditor.setEditMode(true);
+        specificProviderAttributesPanel.setVisible(true);
+        addTestButtonHandler(testHandler);
         showTab(dataConfigurationTab);
         tabViewPanel.setVisible(true);
         return this;
@@ -327,10 +366,12 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
     }
 
     @Override
-    public DataSetEditor.View showELAttributesEditorView() {
+    public DataSetEditor.View showELAttributesEditorView(final ClickHandler testHandler) {
         workflow.edit(elDataSetDefAttributesEditor, (ElasticSearchDataSetDef) dataSetDef);
         elAttributesEditionViewPanel.setVisible(true);
         elDataSetDefAttributesEditor.setEditMode(true);
+        specificProviderAttributesPanel.setVisible(true);
+        addTestButtonHandler(testHandler);
         showTab(dataConfigurationTab);
         tabViewPanel.setVisible(true);
         return this;
@@ -339,6 +380,15 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
     private boolean isELAttributesEditorViewVisible() {
         return elAttributesEditionViewPanel.isVisible();
     }
+    
+    private void addTestButtonHandler(final ClickHandler testHandler) {
+        if (testHandler != null)
+        {
+            removetestButtonHandler();
+            testButtonHandlerRegistration = testButton.addClickHandler(testHandler);
+        }
+    }
+
     @Override
     public DataSetEditor.View showPreviewTableEditionView(final DisplayerListener tableListener) {
         // Table is not a data set editor component, just a preview data set widget.
@@ -355,9 +405,10 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
         previewTableEditor.setEditMode(true);
         previewTableEditor.build(tableListener);
         showTab(dataConfigurationTab);
-        showTab(dataPreviewTab);
         previewTableEditionViewPanel.setVisible(true);
-        activeDataPreviewTab();
+        specificProviderAttributesPanel.setVisible(false);
+        filterColumnsPreviewTablePanel.setVisible(true);
+        activeDataConfigurationTab();
         tabViewPanel.setVisible(true);
         return this;
     }
@@ -380,7 +431,8 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
         // Panels and tab visibility.
         filterAndColumnsEditionViewPanel.setVisible(true);
         filterAndColumnsTabPanel.setVisible(true);
-        activeDataPreviewTab();
+        filterColumnsPreviewTablePanel.setVisible(true);
+        activeDataConfigurationTab();
         tabViewPanel.setVisible(true);
         
         return this;
@@ -402,7 +454,8 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
         // Panels and tab visibility.
         filterAndColumnsEditionViewPanel.setVisible(true);
         filterAndColumnsTabPanel.setVisible(true);
-        activeDataPreviewTab();
+        filterColumnsPreviewTablePanel.setVisible(true);
+        activeDataConfigurationTab();
         tabViewPanel.setVisible(true);
         
         return this;
@@ -425,7 +478,6 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
         advancedAttributesEditionViewPanel.setVisible(true);
         dataSetAdvancedAttributesEditor.setEditMode(true);
         showTab(dataConfigurationTab);
-        showTab(dataPreviewTab);
         showTab(dataAdvancedConfigurationTab);
         activeDataAdvancedConfigurationTab();
         tabViewPanel.setVisible(true);
@@ -437,11 +489,13 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
     }
 
     @Override
-    public DataSetEditor.View showNextButton(final String title, final ClickHandler nextHandler) {
+    public DataSetEditor.View showNextButton(final String title, final String helpText, final ClickHandler nextHandler) {
         nextButton.setVisible(nextHandler != null);
         if (title != null) {
             nextButton.setText(title);
             nextButton.setTitle(title);
+            nextButtonPopover.setHeading(title);
+            nextButtonPopover.setText(helpText != null ? helpText : "");
         }
         if (nextHandler != null) {
             removeNextButtonHandler();
@@ -494,9 +548,9 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
             }
         }
 
-        if (hasViolations(previewTableEditor.getViolations())) tabErrors(dataPreviewTab);
+        if (hasViolations(previewTableEditor.getViolations())) tabErrors(dataAdvancedConfigurationTab);
         if (hasViolations(dataSetAdvancedAttributesEditor.getViolations())) tabErrors(dataAdvancedConfigurationTab);
-        if (hasViolations(columnsEditor.getViolations())) tabErrors(dataPreviewTab);
+        if (hasViolations(columnsEditor.getViolations())) tabErrors(dataAdvancedConfigurationTab);
 
         return this;
     }
@@ -533,19 +587,11 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
     
     private void activeDataConfigurationTab() {
         dataConfigurationTab.setActive(true);
-        dataPreviewTab.setActive(false);
-        dataAdvancedConfigurationTab.setActive(false);
-    }
-
-    private void activeDataPreviewTab() {
-        dataConfigurationTab.setActive(false);
-        dataPreviewTab.setActive(true);
         dataAdvancedConfigurationTab.setActive(false);
     }
 
     private void activeDataAdvancedConfigurationTab() {
         dataConfigurationTab.setActive(false);
-        dataPreviewTab.setActive(false);
         dataAdvancedConfigurationTab.setActive(true);
     }
     
@@ -577,17 +623,20 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
         providerSelectionViewPanel.setVisible(false);
         tabViewPanel.setVisible(false);
         hideTab(dataConfigurationTab);
-        hideTab(dataPreviewTab);
         hideTab(dataAdvancedConfigurationTab);
         basicAttributesEditionViewPanel.setVisible(false);
         advancedAttributesEditionViewPanel.setVisible(false);
         sqlAttributesEditionViewPanel.setVisible(false);
+        specificProviderAttributesPanel.setVisible(false);
+        filterColumnsPreviewTablePanel.setVisible(false);
         csvAttributesEditionViewPanel.setVisible(false);
         beanAttributesEditionViewPanel.setVisible(false);
         elAttributesEditionViewPanel.setVisible(false);
         previewTableEditionViewPanel.setVisible(false);
         // filterAndColumnsEditionViewPanel.setVisible(false);
         nextButton.setVisible(false);
+        nextButtonPopover.setHeading("");
+        nextButtonPopover.setText("");
         cancelButton.setVisible(false);
         buttonsPanel.setVisible(false);
     }
@@ -685,6 +734,10 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
     private void removeCancelButtonHandler() {
         if (cancelButtonHandlerRegistration != null) cancelButtonHandlerRegistration.removeHandler();;
     }
+
+    private void removetestButtonHandler() {
+        if (testButtonHandlerRegistration != null) testButtonHandlerRegistration.removeHandler();;
+    }
     
     private void tabErrors(final Tab tab) {
         if (tab != null) {
@@ -709,7 +762,6 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
     
     private void resetTabErrors() {
         tabNoErrors(dataConfigurationTab);
-        tabNoErrors(dataPreviewTab);
         tabNoErrors(dataAdvancedConfigurationTab);
     }
 

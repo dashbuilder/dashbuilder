@@ -76,15 +76,15 @@ public class DataSetEditor implements IsWidget {
         View showHomeView(final int dsetCount, final ClickHandler newDataSetHandler);
         View showProviderSelectionView();
         View showBasicAttributesEditionView();
-        View showSQLAttributesEditorView();
-        View showBeanAttributesEditorView();
-        View showCSVAttributesEditorView();
-        View showELAttributesEditorView();
+        View showSQLAttributesEditorView(ClickHandler testHandler);
+        View showBeanAttributesEditorView(ClickHandler testHandler);
+        View showCSVAttributesEditorView(ClickHandler testHandler);
+        View showELAttributesEditorView(ClickHandler testHandler);
         View showPreviewTableEditionView(final DisplayerListener tableListener);
         View showColumnsEditorView(final List<DataColumn> columns, final DataSet dataSet, final DataSetColumnsEditor.ColumnsChangedEventHandler columnsChangedEventHandler);
         View showFilterEditionView(final DataSet dataSet, final DataSetFilterEditor.Listener filterListener);
         View showAdvancedAttributesEditionView();
-        View showNextButton(String title, ClickHandler nextHandler);
+        View showNextButton(String title, String helpText, ClickHandler nextHandler);
         View showCancelButton(ClickHandler cancelHandler);
         View onSave();
         Set getViolations();
@@ -134,7 +134,9 @@ public class DataSetEditor implements IsWidget {
         showProviderSelectionView();
 
         // Next button.
-        view.showNextButton(DataSetEditorConstants.INSTANCE.next(), providerScreenNextButtonHandler);
+        view.showNextButton(DataSetEditorConstants.INSTANCE.next(),
+                DataSetEditorConstants.INSTANCE.next_description(), 
+                providerScreenNextButtonHandler);
                 
         return this;
     }
@@ -161,10 +163,13 @@ public class DataSetEditor implements IsWidget {
 
                 // Build views.
                 showBasicAttributesEditionView();
+                showProviderSpecificAttributesEditionView();
                 showPreviewTableEditionView();
                 showAdvancedAttributesEditionView();
                 
-                view.showNextButton(DataSetEditorConstants.INSTANCE.save(), saveButtonHandler);
+                view.showNextButton(DataSetEditorConstants.INSTANCE.save(),
+                        DataSetEditorConstants.INSTANCE.save_description(),
+                        saveButtonHandler);
             }
 
             @Override
@@ -203,9 +208,8 @@ public class DataSetEditor implements IsWidget {
                 
                 // Build basic attributes view.
                 showBasicAttributesEditionView();
+                showProviderSpecificAttributesEditionView();
 
-                // Next button.
-                view.showNextButton(DataSetEditorConstants.INSTANCE.test(), testButtonHandler);
             }
             saveLog(violations, violations);
         }
@@ -224,9 +228,12 @@ public class DataSetEditor implements IsWidget {
 
                 // Build views.
                 showBasicAttributesEditionView();
+                showProviderSpecificAttributesEditionView();
                 showPreviewTableEditionView();
 
-                view.showNextButton(DataSetEditorConstants.INSTANCE.next(), advancedAttrsButtonHandler);
+                view.showNextButton(DataSetEditorConstants.INSTANCE.next(),
+                        DataSetEditorConstants.INSTANCE.next_description(),
+                        advancedAttrsButtonHandler);
             }
             saveLog(violations, violations);
         }
@@ -245,10 +252,13 @@ public class DataSetEditor implements IsWidget {
 
                 // Build views.
                 showBasicAttributesEditionView();
+                showProviderSpecificAttributesEditionView();
                 showPreviewTableEditionView();
                 showAdvancedAttributesEditionView();
 
-                view.showNextButton(DataSetEditorConstants.INSTANCE.save(), saveButtonHandler);
+                view.showNextButton(DataSetEditorConstants.INSTANCE.save(),
+                        DataSetEditorConstants.INSTANCE.save_description(),
+                        saveButtonHandler);
             }
             saveLog(violations, violations);
         }
@@ -322,19 +332,21 @@ public class DataSetEditor implements IsWidget {
     
     private void showBasicAttributesEditionView() {
         view.showBasicAttributesEditionView();
-
+    }
+    
+    private void showProviderSpecificAttributesEditionView() {
         switch (dataSetDef.getProvider()) {
             case SQL:
-                view.showSQLAttributesEditorView();
+                view.showSQLAttributesEditorView(testButtonHandler);
                 break;
             case CSV:
-                view.showCSVAttributesEditorView();
+                view.showCSVAttributesEditorView(testButtonHandler);
                 break;
             case BEAN:
-                view.showBeanAttributesEditorView();
+                view.showBeanAttributesEditorView(testButtonHandler);
                 break;
             case ELASTICSEARCH:
-                view.showELAttributesEditorView();
+                view.showELAttributesEditorView(testButtonHandler);
                 break;
         }
     }
@@ -350,9 +362,11 @@ public class DataSetEditor implements IsWidget {
 
     private void showPreviewTableEditionView() {
         
-        // Show attributes and table preview preview.
-        view.showBasicAttributesEditionView()
-            .showPreviewTableEditionView(tablePreviewListener);
+        // TODO: Remove method this call here?
+        registerDataSetDef();
+        
+        // Show table preview preview.
+        view.showPreviewTableEditionView(tablePreviewListener);
     }
     
     private void showAdvancedAttributesEditionView() {

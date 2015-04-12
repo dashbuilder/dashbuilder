@@ -62,6 +62,29 @@
     .nextStep {
       margin: 5px;
     }
+    .testButtonPanel {
+      margin: 15px;
+    }
+    .testButton {
+      
+    }
+    .testText {
+      float: left;
+      margin-right: 10px;
+      font-size: small;
+    }
+    .providerSetupButtonPanel {
+      float: left;
+      margin: 15px;
+    }
+    .providerSetupButton {
+      float: left;
+    }
+    .providerSetupText {
+      float: left;
+      margin-left: 10px;
+      font-size: small;
+    }
     .columnsFilterPanel {
       float: left;
       width: 300px;
@@ -135,13 +158,10 @@
   
         <!-- Data configuration. -->
         <b:Tab heading="{i18n.tab_dataConfiguration}" active="true" ui:field="dataConfigurationTab" >
-          <!--<b:customTab>
-            <g:Image addStyleNames="{style.icon}" resource="{res.logo}"/>
-          </b:customTab>-->
   
-          <g:FlowPanel addStyleNames="{style.editorPanel} ">
+          <g:FlowPanel ui:field="specificProviderAttributesPanel" addStyleNames="{style.editorPanel} ">
 
-            <g:FlowPanel ui:field="sqlAttributesEditionViewPanel" >
+              <g:FlowPanel ui:field="sqlAttributesEditionViewPanel" >
               <dash-dset-editors-sql:SQLDataSetDefAttributesEditor editMode="true" ui:field="sqlDataSetDefAttributesEditor"/>
             </g:FlowPanel>
 
@@ -156,37 +176,63 @@
             <g:FlowPanel ui:field="elAttributesEditionViewPanel" >
               <dash-dset-editors-el:ELDataSetDefAttributesEditor editMode="true" ui:field="elDataSetDefAttributesEditor"/>
             </g:FlowPanel>
+
+            <!-- Test provider settings button. -->
+            <g:FlowPanel ui:field="testButtonPanel" addStyleNames="{style.testButtonPanel} ">
+
+              <b:Popover showDelay="1000" text="{i18n.test_description}" heading="{i18n.test}">
+                <b:Button ui:field="testButton" title="{i18n.test}"
+                          text="{i18n.test}" size="SMALL" icon="CHEVRON_RIGHT"
+                          addStyleNames="{style.testButton} " type="SUCCESS"/>
+              </b:Popover>
+
+              <g:HTML text="{i18n.test_description}" addStyleNames="{style.testText} "/>
+
+            </g:FlowPanel>
             
           </g:FlowPanel>
-  
-        </b:Tab>
 
-        <b:Tab heading="{i18n.tab_dataPreview}" active="false" ui:field="dataPreviewTab">
+          <g:FlowPanel ui:field="filterColumnsPreviewTablePanel" addStyleNames="{style.editorPanel} ">
+          
+            <!-- Back to specific provider attributes edition. -->
+            <g:FlowPanel ui:field="backToSpecificAttrsButtonPanel" addStyleNames="{style.providerSetupButtonPanel} ">
 
-
-          <!-- Columns and filter tab . -->
-          <g:FlowPanel ui:field="filterAndColumnsEditionViewPanel" addStyleNames="{style.columnsFilterPanel} ">
-
-            <b:TabPanel tabPosition="above" ui:field="filterAndColumnsTabPanel" addStyleNames="{style.tabPanel} ">
-
-              <!-- Columns. -->
-              <b:Tab heading="{i18n.dataColumns}" active="true" ui:field="columnsTab" >
-                  <dash-dset-editors:DataSetColumnsEditor editMode="true" ui:field="columnsEditor"/>
-              </b:Tab>
+              <b:Popover showDelay="1000" text="{i18n.providerSetup_description}" heading="{i18n.providerSetup}">
+                <b:Button ui:field="backToSpecificAttrsEditionButton" title="{i18n.providerSetup}" 
+                          text="{i18n.providerSetup}" size="SMALL" icon="CHEVRON_LEFT"
+                          addStyleNames="{style.providerSetupButton} "/>
+              </b:Popover>
               
-              <!-- Filter. -->
-              <b:Tab heading="{i18n.filter}" active="false" ui:field="filterTab" >
-                  
-              </b:Tab>
+              <g:HTML text="{i18n.providerSetup_description}" addStyleNames="{style.providerSetupText} "/>
+              
+            </g:FlowPanel>
 
-            </b:TabPanel>
+            <g:FlowPanel addStyleNames="{style.clear} "/>
+
+            <!-- Columns and filter panel . -->
+            <g:FlowPanel ui:field="filterAndColumnsEditionViewPanel" addStyleNames="{style.columnsFilterPanel} ">
+
+              <b:TabPanel tabPosition="above" ui:field="filterAndColumnsTabPanel" addStyleNames="{style.tabPanel} ">
+
+                <!-- Columns. -->
+                <b:Tab heading="{i18n.dataColumns}" active="true" ui:field="columnsTab" >
+                  <dash-dset-editors:DataSetColumnsEditor editMode="true" ui:field="columnsEditor"/>
+                </b:Tab>
+
+                <!-- Filter. -->
+                <b:Tab heading="{i18n.filter}" active="false" ui:field="filterTab" >
+
+                </b:Tab>
+
+              </b:TabPanel>
+
+            </g:FlowPanel>
+
+            <!-- Preview table. -->
+            <g:FlowPanel ui:field="previewTableEditionViewPanel" addStyleNames="{style.previewTablePanel} ">
+              <dash-dset-editors:DataSetPreviewEditor editMode="true" ui:field="previewTableEditor"/>
+            </g:FlowPanel>
             
-          </g:FlowPanel>
-          
-          
-          <!-- Preview table. -->
-          <g:FlowPanel ui:field="previewTableEditionViewPanel" addStyleNames="{style.previewTablePanel} ">
-            <dash-dset-editors:DataSetPreviewEditor editMode="true" ui:field="previewTableEditor"/>
           </g:FlowPanel>
           
         </b:Tab>
@@ -205,11 +251,15 @@
     </g:FlowPanel>
     
     <g:FlowPanel ui:field="buttonsPanel" addStyleNames="{style.buttonsPanel}">
-      
-      <b:Button text="{i18n.cancel}" ui:field="cancelButton"/>
 
-      <b:Button text="{i18n.next}" ui:field="nextButton" type="SUCCESS"/>
-      
+      <b:Popover showDelay="1000" text="{i18n.cancel_description}" heading="{i18n.cancel}">
+        <b:Button text="{i18n.cancel}" ui:field="cancelButton"/>
+      </b:Popover>
+
+      <b:Popover ui:field="nextButtonPopover" showDelay="1000" text="" heading="">
+        <b:Button text="{i18n.next}" ui:field="nextButton" type="SUCCESS"/>
+      </b:Popover>
+
     </g:FlowPanel>
 
   </g:FlowPanel>

@@ -32,10 +32,13 @@ public interface DataSetEditorConstants extends ConstantsWithLookup {
     String sql_description();
     String elasticSearch_description();
     String next();
+    String next_description();
     String test();
+    String test_description();
     String save();
+    String save_description();
     String cancel();
-    String back();
+    String cancel_description();
     String providerType();
     String commonAttributes();
     String maxCacheSize();
@@ -147,8 +150,9 @@ public interface DataSetEditorConstants extends ConstantsWithLookup {
     String bean_generator_param_value_description();
     String bean_generator_param_value_placeholder();
     String tab_dataConfiguration();
-    String tab_dataPreview();
     String tab_advancedConfiguration();
+    String providerSetup();
+    String providerSetup_description();
     String filter();
     String dataColumns();
     String label();
