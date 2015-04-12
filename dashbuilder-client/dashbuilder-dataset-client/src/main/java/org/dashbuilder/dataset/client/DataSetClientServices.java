@@ -306,6 +306,10 @@ public class DataSetClientServices {
     public void registerDataSetDef(final DataSetDef dataSetDef) {
         dataSetBackendServices.call().registerDataSetDef(dataSetDef);
     }
+    
+    public void persist(final DataSetDef dataSetDef) throws Exception {
+        dataSetBackendServices.call().persist(dataSetDef);
+    }
 
     public void removeDataSetDef(final DataSetDef dataSetDef) {
         dataSetBackendServices.call().removeDataSetDef(dataSetDef);

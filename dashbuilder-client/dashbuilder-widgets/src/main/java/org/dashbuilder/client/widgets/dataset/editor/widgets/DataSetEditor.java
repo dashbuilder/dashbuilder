@@ -286,7 +286,26 @@ public class DataSetEditor implements IsWidget {
         // Update preview table.
         showPreviewTableEditionView();
     }
+
+    private void removeDataSetDef() {
+        if (dataSetDef != null) {
+            final DataSetClientServices clientServices = DataSetClientServices.get();
+            clientServices.removeDataSetDef(dataSetDef);
+            clientServices.removeDataSet(dataSetDef.getUUID());
+        }
+    }
+
+    private void registerDataSetDef() {
+        if (dataSetDef != null) {
+            // Register the data set in backend as non public.
+            dataSetDef.setPublic(false);
+            final DataSetClientServices clientServices = DataSetClientServices.get();
+            clientServices.registerDataSetDef(dataSetDef);
+        }
+    }
+
     
+
     private void showHomeView() {
         DataSetClientServices.get().getRemoteSharedDataSetDefs(new RemoteCallback<List<DataSetDef>>() {
             public void callback(List<DataSetDef> dataSetDefs) {
@@ -331,9 +350,6 @@ public class DataSetEditor implements IsWidget {
 
     private void showPreviewTableEditionView() {
         
-        // Register the data set definition.
-        registerDataSetDef();
-
         // Show attributes and table preview preview.
         view.showBasicAttributesEditionView()
             .showPreviewTableEditionView(tablePreviewListener);
@@ -351,23 +367,6 @@ public class DataSetEditor implements IsWidget {
         workflow.save();
         view.onSave();
         return view.getViolations();
-    }
-    
-    private void removeDataSetDef() {
-        if (dataSetDef != null) {
-            final DataSetClientServices clientServices = DataSetClientServices.get();
-            clientServices.removeDataSetDef(dataSetDef);
-            clientServices.removeDataSet(dataSetDef.getUUID());
-        }
-    }
-    
-    private void registerDataSetDef() {
-        if (dataSetDef != null) {
-            // Register the data set in backend as non public.
-            dataSetDef.setPublic(false);
-            final DataSetClientServices clientServices = DataSetClientServices.get();
-            clientServices.registerDataSetDef(dataSetDef);
-        }
     }
     
     private final ClickHandler cancelHandler = new ClickHandler() {

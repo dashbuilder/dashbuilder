@@ -56,4 +56,11 @@ public interface DataSetBackendServices {
      * Get those public (shareable) data set definition (those with the public flag set to true)
      */
     List<DataSetDef> getPublicDataSetDefs();
+
+    /**
+     * Persist the data set definition. 
+     * @param dataSetDef The data set definition.
+     * @throws Exception
+     */
+    void persist(final DataSetDef dataSetDef) throws Exception;
 }
