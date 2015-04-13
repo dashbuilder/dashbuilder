@@ -62,5 +62,5 @@ public interface DataSetBackendServices {
      * @param dataSetDef The data set definition.
      * @throws Exception
      */
-    void persist(final DataSetDef dataSetDef) throws Exception;
+    void persistDataSetDef(final DataSetDef dataSetDef) throws Exception;
 }

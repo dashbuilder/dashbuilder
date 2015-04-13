@@ -95,7 +95,7 @@ public class DataSetEditor implements IsWidget {
 
     private DataSetDef dataSetDef;
     private List<DataColumn> columns;
-    private boolean isEdit;
+    private DataSetDef edit;
     
     public DataSetEditor() {
         showHomeView();
@@ -124,8 +124,8 @@ public class DataSetEditor implements IsWidget {
         dataSetDef.setUUID(uuid);
         this.dataSetDef = dataSetDef;
 
-        isEdit = false;
-        view.setEditMode(isEdit);
+        edit = null;
+        view.setEditMode(edit != null);
 
         // Restart workflow.
         edit();
@@ -148,16 +148,24 @@ public class DataSetEditor implements IsWidget {
             return this;
         }
 
-        isEdit = true;
-        view.setEditMode(isEdit);
+        
 
         
         DataSetClientServices.get().fetchMetadata(uuid, new DataSetMetadataCallback() {
             @Override
             public void callback(DataSetMetadata metatada)
             {
-                DataSetEditor.this.dataSetDef = metatada.getDefinition();
+                final DataSetDef def = metatada.getDefinition();
+                final String uuid = def.getUUID();
+                
+                // Clone the definition in order to edit the cloned copy.
+                DataSetEditor.this.dataSetDef = def.clone();
+                DataSetEditor.this.dataSetDef.setUUID(uuid + "_edit");
+                DataSetEditor.this.dataSetDef.setPublic(false);
 
+                edit = def;
+                view.setEditMode(edit != null);
+                
                 // Restart workflow.
                 edit();
 
@@ -273,7 +281,14 @@ public class DataSetEditor implements IsWidget {
                 GWT.log("Data set edition finished.");
                 update();
 
-                // TODO
+                try {
+                    persist();
+                    clear();
+                } catch (Exception e) {
+                    // TODO: Display error.
+                    e.printStackTrace();
+                    GWT.log("Error persisting data set defintion with uuid [" + dataSetDef.getUUID() + "]. Message: " + e.getMessage());
+                }
             }
             saveLog(violations);
 
@@ -285,6 +300,24 @@ public class DataSetEditor implements IsWidget {
         return view.asWidget();
     }
 
+    private void persist() throws Exception {
+        if (edit == null) 
+        {
+            // If creating a new data set, just persist it.
+            dataSetDef.setPublic(true);
+            DataSetClientServices.get().persistDataSetDef(dataSetDef);
+        }
+        else {
+            // If editing an existing data set, remove original data set and persist the new edited one.
+            final DataSetClientServices clientServices = DataSetClientServices.get();
+            clientServices.removeDataSetDef(edit);
+            this.dataSetDef.setUUID(edit.getUUID());
+            this.dataSetDef.setPublic(true);
+            registerDataSetDef();
+            DataSetClientServices.get().persistDataSetDef(dataSetDef);
+        }
+    }
+    
     private void update() {
 
         // Remove the current data set definition.
@@ -298,10 +331,14 @@ public class DataSetEditor implements IsWidget {
     }
 
     private void removeDataSetDef() {
-        if (dataSetDef != null) {
+       removeDataSetDef(dataSetDef);
+    }
+
+    private void removeDataSetDef(final DataSetDef def) {
+        if (def != null) {
             final DataSetClientServices clientServices = DataSetClientServices.get();
-            clientServices.removeDataSetDef(dataSetDef);
-            clientServices.removeDataSet(dataSetDef.getUUID());
+            clientServices.removeDataSetDef(def);
+            clientServices.removeDataSet(def.getUUID());
         }
     }
 
@@ -386,6 +423,7 @@ public class DataSetEditor implements IsWidget {
     private final ClickHandler cancelHandler = new ClickHandler() {
         @Override
         public void onClick(ClickEvent event) {
+            removeDataSetDef();
             clear();
         }
     };

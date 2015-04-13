@@ -53,6 +53,15 @@ public class BeanDataSetDef extends DataSetDef {
         this.paramaterMap = paramaterMap;
     }
 
+    @Override
+    public DataSetDef clone() {
+        BeanDataSetDef def = new BeanDataSetDef();
+        clone(def);
+        def.setGeneratorClass(getGeneratorClass());
+        def.setParamaterMap(getParamaterMap());
+        return def;
+    }
+    
     public String toString() {
         StringBuilder out = new StringBuilder();
         out.append("UUID=").append(UUID).append("\n");

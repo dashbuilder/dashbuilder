@@ -39,5 +39,8 @@ public interface DataSetExplorerConstants extends ConstantsWithLookup {
     String disabled();
     String bytes();
     String rows();
+    String areYouSure();
+    String yes();
+    String no();
     
 }

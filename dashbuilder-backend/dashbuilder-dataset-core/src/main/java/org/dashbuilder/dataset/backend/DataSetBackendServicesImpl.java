@@ -75,7 +75,7 @@ public class DataSetBackendServicesImpl implements DataSetBackendServices {
         return dataSetDefRegistry.getDataSetDefs(true);
     }
     
-    public void persist(final DataSetDef dataSetDef) throws Exception {
+    public void persistDataSetDef(final DataSetDef dataSetDef) throws Exception {
         dataSetDefDeployer.persist(dataSetDef);
     }
     

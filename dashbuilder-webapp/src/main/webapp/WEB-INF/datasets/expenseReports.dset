@@ -11,6 +11,8 @@
     "separatorChar": ";",
     "quoteChar": "\"",
     "escapeChar": "\\",
+    "datePattern": "MM-dd-yyyy",
+    "numberPattern": "#,###.##",
     "columns": [
       {"id": "office", "type": "label"},
       {"id": "department", "type": "label"},

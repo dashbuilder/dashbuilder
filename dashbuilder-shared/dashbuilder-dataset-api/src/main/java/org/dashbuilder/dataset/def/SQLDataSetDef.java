@@ -24,7 +24,6 @@ import javax.validation.constraints.NotNull;
 @Portable
 public class SQLDataSetDef extends DataSetDef {
 
-    // TODO: Validate data source expression using Pattern annotation.
     @NotNull(message = "{dataSetApi_sqlDataSetDef_dataSource_notNull}")
     @NotEmpty(message = "{dataSetApi_sqlDataSetDef_dataSource_notNull}")
     protected String dataSource;
@@ -87,6 +86,17 @@ public class SQLDataSetDef extends DataSetDef {
 
     public void setCacheMaxRows(Integer cacheMaxRows) {
         this.cacheMaxRows = cacheMaxRows;
+    }
+
+    @Override
+    public DataSetDef clone() {
+        SQLDataSetDef def = new SQLDataSetDef();
+        clone(def);
+        def.setDataSource(getDataSource());
+        def.setDbSchema(getDbSchema());
+        def.setDbTable(getDbTable());
+        def.setAllColumnsEnabled(isAllColumnsEnabled());
+        return def;
     }
 
     public String toString() {

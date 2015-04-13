@@ -184,4 +184,29 @@ public class DataSetDef {
     public void setPattern(String columnId, String pattern) {
         patternMap.put(columnId, pattern);
     }
+
+    public DataSetDef clone() {
+        DataSetDef def = new DataSetDef();
+        clone(def);
+        return def;
+    }
+    
+    protected void clone(final DataSetDef def) {
+        def.setUUID(getUUID());
+        def.setName(getName());
+        def.setProvider(getProvider());
+        def.setDefFilePath(getDefFilePath());
+        def.setPublic(isPublic);
+        def.setDataSetFilter(getDataSetFilter());
+        def.setCacheEnabled(isCacheEnabled());
+        def.setCacheMaxRows(getCacheMaxRows());
+        def.setPushEnabled(isPushEnabled());
+        def.setPushMaxSize(getPushMaxSize());
+        def.setRefreshAlways(isRefreshAlways());
+        def.setRefreshTime(getRefreshTime());
+        final DataSet dataSet = getDataSet();
+        if (dataSet != null && dataSet.getColumns() != null) {
+            def.getDataSet().setColumns(dataSet.getColumns());
+        }
+    }
 }

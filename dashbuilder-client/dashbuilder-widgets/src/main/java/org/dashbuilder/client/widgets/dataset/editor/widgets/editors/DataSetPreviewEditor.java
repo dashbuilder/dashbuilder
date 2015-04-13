@@ -85,6 +85,11 @@ public class DataSetPreviewEditor extends AbstractDataSetDefEditor {
         if (tableDisplayer != null && listener != null) tableDisplayer.addListener(listener); 
        
     }
+    
+    public void clear() {
+        coordinator.removeDisplayer(tableDisplayer);
+        tableDisplayer = null;
+    }
 
     private void showTableDisplayer() {
         

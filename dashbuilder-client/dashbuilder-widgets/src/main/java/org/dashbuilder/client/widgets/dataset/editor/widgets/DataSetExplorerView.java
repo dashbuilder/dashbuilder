@@ -236,7 +236,10 @@ public class DataSetExplorerView extends Composite implements DataSetExplorer.Vi
             columnsPanel.add(estimationsPanel);
             parent.add(columnsPanel);
 
-            // Edit and cancel buttons.
+            // Edit, cancel and confirmation buttons.
+            final FlowPanel buttonsPanel = new FlowPanel();
+            final FlowPanel deleteConfirmPanel = new FlowPanel();
+
             final com.github.gwtbootstrap.client.ui.Button editButton = new Button(DataSetExplorerConstants.INSTANCE.edit());
             final com.github.gwtbootstrap.client.ui.Button deleteButton = new Button(DataSetExplorerConstants.INSTANCE.delete());
             final boolean isPublic = dataSetDef.isPublic();
@@ -256,16 +259,45 @@ public class DataSetExplorerView extends Composite implements DataSetExplorer.Vi
             deleteButton.addClickHandler(new ClickHandler() {
                 @Override
                 public void onClick(ClickEvent event) {
-                    fireEvent(new DeleteDataSetEvent(dataSetDef.getUUID()));
+                    deleteConfirmPanel.setVisible(true);
+                    buttonsPanel.setVisible(false);
                 }
             });
 
-            final FlowPanel buttonsPanel = new FlowPanel();
             buttonsPanel.addStyleName(style.buttonsPanel());
             buttonsPanel.add(editButton);
             buttonsPanel.add(deleteButton);
             parent.add(buttonsPanel);
+            
+            final HTML deleteText = new HTML(DataSetExplorerConstants.INSTANCE.areYouSure());
+            final com.github.gwtbootstrap.client.ui.Button yesButton = new Button(DataSetExplorerConstants.INSTANCE.yes());
+            yesButton.setType(ButtonType.SUCCESS);
+            yesButton.addStyleName(style.button());
+            final com.github.gwtbootstrap.client.ui.Button noButton = new Button(DataSetExplorerConstants.INSTANCE.no());
+            noButton.setType(ButtonType.DANGER);
+            noButton.addStyleName(style.button());
+            
+            yesButton.addClickHandler(new ClickHandler() {
+                @Override
+                public void onClick(ClickEvent event) {
+                    fireEvent(new DeleteDataSetEvent(dataSetDef.getUUID()));
+                }
+            });
+            
+            noButton.addClickHandler(new ClickHandler() {
+                @Override
+                public void onClick(ClickEvent event) {
+                    deleteConfirmPanel.setVisible(false);
+                    buttonsPanel.setVisible(true);
+                }
+            });
 
+            deleteConfirmPanel.addStyleName(style.buttonsPanel());
+            deleteConfirmPanel.setVisible(false);
+            deleteConfirmPanel.add(deleteText);
+            deleteConfirmPanel.add(noButton);
+            deleteConfirmPanel.add(yesButton);
+            parent.add(deleteConfirmPanel);
         }
     }
 

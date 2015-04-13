@@ -31,7 +31,6 @@ import org.jboss.errai.common.client.api.RemoteCallback;
 import javax.enterprise.context.Dependent;
 import java.util.List;
 
-// TODO
 @Dependent
 public class DataSetExplorer implements IsWidget {
 

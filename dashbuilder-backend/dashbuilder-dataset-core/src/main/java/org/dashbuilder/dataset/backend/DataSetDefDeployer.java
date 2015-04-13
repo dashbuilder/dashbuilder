@@ -200,7 +200,7 @@ public class DataSetDefDeployer {
             final String json = dataSetDefJSONMarshaller.toJsonString(dataSetDef);
             FileWriter writer = null;
             try {
-                writer = new FileWriter(new File(directory, uuid + ".json"));
+                writer = new FileWriter(new File(directory, uuid + ".dset"));
                 writer.write(json);
             } catch (IOException e) {
                 throw e;

@@ -134,6 +134,20 @@ public class CSVDataSetDef extends DataSetDef {
         else return pattern.charAt(5);
     }
 
+    @Override
+    public DataSetDef clone() {
+        CSVDataSetDef def = new CSVDataSetDef();
+        clone(def);
+        def.setFilePath(getFilePath());
+        def.setFileURL(getFileURL());
+        def.setSeparatorChar(getSeparatorChar());
+        def.setQuoteChar(getQuoteChar());
+        def.setEscapeChar(getEscapeChar());
+        def.setDatePattern(getDatePattern());
+        def.setNumberPattern(getNumberPattern());
+        return def;
+    }
+    
     public String toString() {
         StringBuilder out = new StringBuilder();
         out.append("File=");

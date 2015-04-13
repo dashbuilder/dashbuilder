@@ -22,6 +22,7 @@ import org.jboss.errai.common.client.api.annotations.Portable;
 
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -206,6 +207,16 @@ public class ElasticSearchDataSetDef extends DataSetDef {
         this.allColumnsEnabled = allColumnsEnabled;
     }
 
+    @Override
+    public DataSetDef clone() {
+        ElasticSearchDataSetDef def = new ElasticSearchDataSetDef();
+        clone(def);
+        def.setServerURL(getServerURL());
+        def.setClusterName(getClusterName());
+        def.setIndex(getIndex() != null ? Arrays.asList(getIndex()) : null);
+        def.setType(getType() != null ? Arrays.asList(getType()) : null);
+        return def;
+    }
     public String toString() {
         StringBuilder out = new StringBuilder();
         out.append("UUID=").append(UUID).append("\n");
