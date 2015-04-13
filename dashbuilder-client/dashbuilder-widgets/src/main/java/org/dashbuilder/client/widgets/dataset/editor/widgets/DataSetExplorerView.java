@@ -30,6 +30,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.*;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
+import org.dashbuilder.client.widgets.SlidingPanel;
 import org.dashbuilder.client.widgets.resources.i18n.DataSetExplorerConstants;
 import org.dashbuilder.dataset.DataSetMetadata;
 import org.dashbuilder.dataset.client.resources.bundles.DataSetClientImages;
@@ -57,6 +58,8 @@ public class DataSetExplorerView extends Composite implements DataSetExplorer.Vi
         String estimationsPanel();
         String buttonsPanel();
         String button();
+        String slidingPanel();
+        String deleteText();
     }
 
     @UiField
@@ -237,6 +240,8 @@ public class DataSetExplorerView extends Composite implements DataSetExplorer.Vi
             parent.add(columnsPanel);
 
             // Edit, cancel and confirmation buttons.
+            final SlidingPanel slidingPanel = new SlidingPanel();
+            slidingPanel.addStyleName(style.slidingPanel());
             final FlowPanel buttonsPanel = new FlowPanel();
             final FlowPanel deleteConfirmPanel = new FlowPanel();
 
@@ -259,17 +264,17 @@ public class DataSetExplorerView extends Composite implements DataSetExplorer.Vi
             deleteButton.addClickHandler(new ClickHandler() {
                 @Override
                 public void onClick(ClickEvent event) {
-                    deleteConfirmPanel.setVisible(true);
-                    buttonsPanel.setVisible(false);
+                    slidingPanel.setWidget(deleteConfirmPanel);
                 }
             });
 
             buttonsPanel.addStyleName(style.buttonsPanel());
             buttonsPanel.add(editButton);
             buttonsPanel.add(deleteButton);
-            parent.add(buttonsPanel);
+            slidingPanel.add(buttonsPanel);
             
             final HTML deleteText = new HTML(DataSetExplorerConstants.INSTANCE.areYouSure());
+            deleteText.addStyleName(style.deleteText());
             final com.github.gwtbootstrap.client.ui.Button yesButton = new Button(DataSetExplorerConstants.INSTANCE.yes());
             yesButton.setType(ButtonType.SUCCESS);
             yesButton.addStyleName(style.button());
@@ -287,17 +292,18 @@ public class DataSetExplorerView extends Composite implements DataSetExplorer.Vi
             noButton.addClickHandler(new ClickHandler() {
                 @Override
                 public void onClick(ClickEvent event) {
-                    deleteConfirmPanel.setVisible(false);
-                    buttonsPanel.setVisible(true);
+                    slidingPanel.setWidget(buttonsPanel);
                 }
             });
 
             deleteConfirmPanel.addStyleName(style.buttonsPanel());
-            deleteConfirmPanel.setVisible(false);
             deleteConfirmPanel.add(deleteText);
             deleteConfirmPanel.add(noButton);
             deleteConfirmPanel.add(yesButton);
-            parent.add(deleteConfirmPanel);
+            slidingPanel.add(deleteConfirmPanel);
+            
+            slidingPanel.setWidget(buttonsPanel);
+            parent.add(slidingPanel);
         }
     }
 

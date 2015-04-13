@@ -310,7 +310,7 @@ public class DataSetEditor implements IsWidget {
         else {
             // If editing an existing data set, remove original data set and persist the new edited one.
             final DataSetClientServices clientServices = DataSetClientServices.get();
-            clientServices.removeDataSetDef(edit);
+            clientServices.removeDataSetDef(edit.getUUID());
             this.dataSetDef.setUUID(edit.getUUID());
             this.dataSetDef.setPublic(true);
             registerDataSetDef();
@@ -337,8 +337,7 @@ public class DataSetEditor implements IsWidget {
     private void removeDataSetDef(final DataSetDef def) {
         if (def != null) {
             final DataSetClientServices clientServices = DataSetClientServices.get();
-            clientServices.removeDataSetDef(def);
-            clientServices.removeDataSet(def.getUUID());
+            clientServices.removeDataSetDef(def.getUUID());
         }
     }
 

@@ -59,8 +59,8 @@ public class DataSetBackendServicesImpl implements DataSetBackendServices {
     }
 
     @Override
-    public void removeDataSetDef(DataSetDef definition) {
-        dataSetDefRegistry.removeDataSetDef(definition.getUUID());
+    public void removeDataSetDef(final String uuid) {
+        dataSetDefRegistry.removeDataSetDef(uuid);
     }
 
     public DataSet lookupDataSet(DataSetLookup lookup) throws Exception {

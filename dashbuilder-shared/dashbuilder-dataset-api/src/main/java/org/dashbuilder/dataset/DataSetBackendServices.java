@@ -34,9 +34,9 @@ public interface DataSetBackendServices {
 
     /**
      * Removes a data set definition. 
-     * @param definition The data set definition.
+     * @param uuid The data set definition identifier.
      */
-    void removeDataSetDef(DataSetDef definition);
+    void removeDataSetDef(String uuid);
     
     /**
      * Apply a sequence of operations (filter, sort, group, ...) on a remote data set.

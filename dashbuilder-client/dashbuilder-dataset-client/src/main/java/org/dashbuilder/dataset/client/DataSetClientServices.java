@@ -284,13 +284,9 @@ public class DataSetClientServices {
         dataSetBackendServices.call().persistDataSetDef(dataSetDef);
     }
 
-    public void removeDataSetDef(final DataSetDef dataSetDef) {
-        dataSetBackendServices.call().removeDataSetDef(dataSetDef);
-    }
-
     public void removeDataSetDef(final String uuid) {
-        final DataSetDef dataSetDef = clientDataSetManager.getDataSet(uuid).getDefinition();
-        removeDataSetDef(dataSetDef);
+        dataSetBackendServices.call().removeDataSetDef(uuid);
+        removeDataSet(uuid);
     }
 
     public void removeDataSet(final String uuid) {

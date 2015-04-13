@@ -27,7 +27,7 @@ import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.*;
-import org.dashbuilder.client.widgets.animations.PanelsSwitchVisibilityAnimation;
+import org.dashbuilder.client.widgets.SlidingPanel;
 import org.dashbuilder.client.widgets.dataset.editor.DataSetDefEditWorkflow;
 import org.dashbuilder.client.widgets.dataset.editor.widgets.editors.*;
 import org.dashbuilder.client.widgets.dataset.editor.widgets.editors.bean.BeanDataSetDefAttributesEditor;
@@ -42,6 +42,7 @@ import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.def.*;
 import org.dashbuilder.displayer.client.DisplayerListener;
 import org.dashbuilder.displayer.client.widgets.filter.DataSetFilterEditor;
+
 import javax.enterprise.context.Dependent;
 import javax.validation.ConstraintViolation;
 import java.util.Collection;
@@ -55,7 +56,7 @@ import java.util.Set;
 @Dependent
 public class DataSetEditorView extends Composite implements DataSetEditor.View {
 
-    private static final int ANIMATION_DURATION = 2000;
+    private static final int ANIMATION_DURATION = 500;
     
     interface DataSetEditorViewBinder extends UiBinder<Widget, DataSetEditorView> {}
     private static DataSetEditorViewBinder uiBinder = GWT.create(DataSetEditorViewBinder.class);
@@ -63,6 +64,7 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
     interface DataSetEditorViewStyle extends CssResource {
         String well_ghostwhite();
         String disabledBar();
+        String slidingPanel();
     }
 
     @UiField
@@ -122,6 +124,8 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
     @UiField
     DataSetBasicAttributesEditor dataSetBasicAttributesEditor;
 
+    SlidingPanel slidingPanel;
+    
     @UiField
     FlowPanel specificProviderAttributesPanel;
     
@@ -212,11 +216,6 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
     private HandlerRegistration cancelButtonHandlerRegistration = null;
     private HandlerRegistration testButtonHandlerRegistration = null;
 
-    /**
-     * <p>The animation for switching between specific provider edition view and filter, columns and table preview view.</p> 
-     */
-    private PanelsSwitchVisibilityAnimation animation;
-    
     private final ClickHandler backToSpecificAttrsEditionButtonHandler = new ClickHandler() {
         @Override
         public void onClick(ClickEvent event) {
@@ -227,12 +226,16 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
     public DataSetEditorView() {
         initWidget(uiBinder.createAndBindUi(this));
 
+        // Create the sliding panel for data configuration tab.
+        slidingPanel = new SlidingPanel();
+        slidingPanel.addStyleName(style.slidingPanel());
+        slidingPanel.add(specificProviderAttributesPanel);
+        slidingPanel.add(filterColumnsPreviewTablePanel);
+        dataConfigurationTab.clear();
+        dataConfigurationTab.add(slidingPanel);
+        
         // Configure back to provider settings button's click handler.
         backToSpecificAttrsEditionButton.addClickHandler(backToSpecificAttrsEditionButtonHandler);
-        
-        // Configure animations.
-        animation = new PanelsSwitchVisibilityAnimation(specificProviderAttributesPanel,
-                filterColumnsPreviewTablePanel);
         
         showEmptyView();
     }
@@ -295,8 +298,8 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
         // Progress bar.
         progressStep1();
 
-        providerSelectionViewPanel.setVisible(true);
         dataSetProviderTypeEditor.setEditMode(!isEditMode);
+        providerSelectionViewPanel.setVisible(true);
 
         return this;
     }
@@ -391,7 +394,8 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
         showTab(dataConfigurationTab);
         tabViewPanel.setVisible(true);
         addTestButtonHandler(testHandler);
-        animation.showA(ANIMATION_DURATION);
+        slidingPanel.setWidget(specificProviderAttributesPanel);
+        // animation.run(ANIMATION_DURATION);
     }
 
     @Override
@@ -465,7 +469,7 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
     {
         activeDataConfigurationTab();
         tabViewPanel.setVisible(true);
-        animation.showB(ANIMATION_DURATION);
+        slidingPanel.setWidget(filterColumnsPreviewTablePanel);
     }
     
     @Override
@@ -633,13 +637,10 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
         basicAttributesEditionViewPanel.setVisible(false);
         advancedAttributesEditionViewPanel.setVisible(false);
         sqlAttributesEditionViewPanel.setVisible(false);
-        specificProviderAttributesPanel.setVisible(false);
-        filterColumnsPreviewTablePanel.setVisible(false);
         csvAttributesEditionViewPanel.setVisible(false);
         beanAttributesEditionViewPanel.setVisible(false);
         elAttributesEditionViewPanel.setVisible(false);
         previewTableEditionViewPanel.setVisible(false);
-        // filterAndColumnsEditionViewPanel.setVisible(false);
         nextButton.setVisible(false);
         nextButtonPopover.setHeading("");
         nextButtonPopover.setText("");

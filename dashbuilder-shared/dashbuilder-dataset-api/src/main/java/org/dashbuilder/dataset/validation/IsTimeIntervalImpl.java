@@ -1,6 +1,5 @@
 package org.dashbuilder.dataset.validation;
 
-import org.dashbuilder.common.shared.validation.IsNumber;
 import org.dashbuilder.dataset.date.TimeAmount;
 
 import javax.validation.ConstraintValidator;
