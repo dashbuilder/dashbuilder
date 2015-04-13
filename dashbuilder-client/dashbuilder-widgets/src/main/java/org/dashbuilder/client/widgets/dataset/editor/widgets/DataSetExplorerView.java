@@ -143,26 +143,27 @@ public class DataSetExplorerView extends Composite implements DataSetExplorer.Vi
         Image typeIcon = null;
         switch (dataSetDef.getProvider()) {
             case BEAN:
-                typeIcon = new Image(DataSetClientResources.INSTANCE.images().javaIconSmall());
+                typeIcon = new Image(DataSetClientResources.INSTANCE.images().javaIconLarge().getSafeUri());
                 typeIcon.setAltText(DataSetExplorerConstants.INSTANCE.bean());
                 typeIcon.setTitle(DataSetExplorerConstants.INSTANCE.bean());
                 break;
             case CSV:
-                typeIcon = new Image(DataSetClientResources.INSTANCE.images().csvIconSmall());
+                typeIcon = new Image(DataSetClientResources.INSTANCE.images().csvIconLarge().getSafeUri());
                 typeIcon.setAltText(DataSetExplorerConstants.INSTANCE.csv());
                 typeIcon.setTitle(DataSetExplorerConstants.INSTANCE.csv());
                 break;
             case SQL:
-                typeIcon = new Image(DataSetClientResources.INSTANCE.images().sqlIconSmall());
+                typeIcon = new Image(DataSetClientResources.INSTANCE.images().sqlIconLarge().getSafeUri());
                 typeIcon.setAltText(DataSetExplorerConstants.INSTANCE.sql());
                 typeIcon.setTitle(DataSetExplorerConstants.INSTANCE.sql());
                 break;
             case ELASTICSEARCH:
-                typeIcon = new Image(DataSetClientResources.INSTANCE.images().elIconSmall());
+                typeIcon = new Image(DataSetClientResources.INSTANCE.images().elIconLarge().getSafeUri());
                 typeIcon.setAltText(DataSetExplorerConstants.INSTANCE.el());
                 typeIcon.setTitle(DataSetExplorerConstants.INSTANCE.el());
                 break;
         }
+        typeIcon.setSize("15px", "15px");
         return typeIcon;
         
     }

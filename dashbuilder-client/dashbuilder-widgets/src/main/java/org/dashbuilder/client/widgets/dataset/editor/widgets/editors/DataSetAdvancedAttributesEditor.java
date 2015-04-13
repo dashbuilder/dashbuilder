@@ -236,6 +236,14 @@ public class DataSetAdvancedAttributesEditor extends AbstractDataSetDefEditor im
         final boolean isRefreshOn = dataSetDef.getRefreshTime() != null;
         attributeRefreshStatus.setValue(isRefreshOn);
         setRefreshEnabled(isRefreshOn);
+        
+        // Interval type drop down.
+        if (dataSetDef.getRefreshTime() != null) {
+            final DateIntervalType dType = dataSetDef.getRefreshTimeAmount().getType();
+            intervalType.setText(getIntervalTypeText(dType));
+        } else {
+            intervalType.setText(getIntervalTypeText(DEFAULT_INTERVAL_TYPE));
+        }
     }
     
     private void setRefreshEnabled(final boolean enabled) {
