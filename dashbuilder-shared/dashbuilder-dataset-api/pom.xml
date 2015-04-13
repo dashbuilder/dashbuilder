@@ -31,11 +31,6 @@
 
   <dependencies>
 
-    <dependency>
-      <groupId>org.dashbuilder</groupId>
-      <artifactId>dashbuilder-common-shared</artifactId>
-    </dependency>
-
     <!-- GWT & Errai Bean Validation (JSR303) required artifacts. -->
     <dependency>
       <groupId>com.google.gwt</groupId>

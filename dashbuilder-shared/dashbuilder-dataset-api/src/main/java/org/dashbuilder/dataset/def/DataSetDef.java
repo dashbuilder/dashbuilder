@@ -196,7 +196,7 @@ public class DataSetDef {
         def.setName(getName());
         def.setProvider(getProvider());
         def.setDefFilePath(getDefFilePath());
-        def.setPublic(isPublic);
+        def.setPublic(isPublic());
         def.setDataSetFilter(getDataSetFilter());
         def.setCacheEnabled(isCacheEnabled());
         def.setCacheMaxRows(getCacheMaxRows());

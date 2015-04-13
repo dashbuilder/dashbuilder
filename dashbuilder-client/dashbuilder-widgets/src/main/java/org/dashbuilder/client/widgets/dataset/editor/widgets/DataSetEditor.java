@@ -344,7 +344,6 @@ public class DataSetEditor implements IsWidget {
     private void registerDataSetDef() {
         if (dataSetDef != null) {
             // Register the data set in backend as non public.
-            dataSetDef.setPublic(false);
             final DataSetClientServices clientServices = DataSetClientServices.get();
             clientServices.registerDataSetDef(dataSetDef);
         }

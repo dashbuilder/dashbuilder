@@ -22,7 +22,6 @@
 
   <!-- GWT & Errai Bean Validation (JSR303) -->
   <inherits name="org.jboss.errai.bus.ErraiBus"/>
-  <inherits name="org.dashbuilder.CommonShared"/>
   
   <inherits name="org.jboss.errai.validation.Validation" />
   <inherits name="org.hibernate.validator.HibernateValidator" />
