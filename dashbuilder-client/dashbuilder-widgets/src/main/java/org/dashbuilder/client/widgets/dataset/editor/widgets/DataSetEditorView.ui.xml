@@ -33,7 +33,8 @@
       margin: 50px;
     }
     .editorPanel {
-      margin: 25px;
+      margin: 15px;
+      overflow-y: auto;
     }
     .tabPanel {
         margin: 15px;      
@@ -69,22 +70,12 @@
     .testButton {
       
     }
-    .testText {
-      float: left;
-      margin-right: 10px;
-      font-size: small;
-    }
     .providerSetupButtonPanel {
       float: left;
-      margin: 15px;
+      margin-bottom: 10px;
     }
     .providerSetupButton {
       float: left;
-    }
-    .providerSetupText {
-      float: left;
-      margin-left: 10px;
-      font-size: small;
     }
     .columnsFilterPanel {
       float: left;
@@ -92,13 +83,13 @@
       overflow: hidden;
     }
     .previewTablePanel {
-      margin: 15px;
+      margin-left: 15px;
       overflow: auto;
       padding: 50px;
     }
     .slidingPanel {
       width: 100%;
-      height: 300px;
+      height: 400px;
       overflow: hidden;
     }
     .clear {
@@ -194,8 +185,6 @@
                           addStyleNames="{style.testButton} " type="SUCCESS"/>
               </b:Popover>
 
-              <g:HTML text="{i18n.test_description}" addStyleNames="{style.testText} "/>
-
             </g:FlowPanel>
 
           </g:FlowPanel>
@@ -210,8 +199,6 @@
                           text="{i18n.providerSetup}" size="SMALL" icon="CHEVRON_LEFT"
                           addStyleNames="{style.providerSetupButton} "/>
               </b:Popover>
-
-              <g:HTML text="{i18n.providerSetup_description}" addStyleNames="{style.providerSetupText} "/>
 
             </g:FlowPanel>
 
