@@ -15,10 +15,9 @@
  */
 package org.dashbuilder.client.widgets.dataset.editor.widgets;
 
-import com.github.gwtbootstrap.client.ui.*;
+import com.github.gwtbootstrap.client.ui.Accordion;
+import com.github.gwtbootstrap.client.ui.AccordionGroup;
 import com.github.gwtbootstrap.client.ui.Button;
-import com.github.gwtbootstrap.client.ui.CheckBox;
-import com.github.gwtbootstrap.client.ui.base.Style;
 import com.github.gwtbootstrap.client.ui.constants.ButtonType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -28,17 +27,19 @@ import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.*;
-import com.google.gwt.user.client.ui.Image;
-import com.google.gwt.user.client.ui.Label;
 import org.dashbuilder.client.widgets.SlidingPanel;
+import org.dashbuilder.client.widgets.dataset.editor.widgets.events.DeleteDataSetEvent;
+import org.dashbuilder.client.widgets.dataset.editor.widgets.events.DeleteDataSetEventHandler;
+import org.dashbuilder.client.widgets.dataset.editor.widgets.events.EditDataSetEvent;
+import org.dashbuilder.client.widgets.dataset.editor.widgets.events.EditDataSetEventHandler;
 import org.dashbuilder.client.widgets.resources.i18n.DataSetExplorerConstants;
 import org.dashbuilder.dataset.DataSetMetadata;
 import org.dashbuilder.dataset.client.resources.bundles.DataSetClientImages;
 import org.dashbuilder.dataset.client.resources.bundles.DataSetClientResources;
-import org.dashbuilder.client.widgets.dataset.editor.widgets.events.*;
 import org.dashbuilder.dataset.def.DataSetDef;
 
 import javax.enterprise.context.Dependent;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -91,6 +92,24 @@ public class DataSetExplorerView extends Composite implements DataSetExplorer.Vi
     @Override
     public boolean remove(DataSetDef dataSetDef) {
         return dataSets.remove(dataSetDef);
+    }
+
+    @Override
+    public boolean update(final DataSetDef oldDataSetDef, final DataSetDef newDataSetDef) {
+        dataSets.remove(oldDataSetDef.getUUID());
+        return dataSets.add(newDataSetDef);
+    }
+    
+    private void remove(final String uuid) {
+        if (dataSets != null )
+        {
+            final Iterator<DataSetDef> it = dataSets.iterator();
+            while (it.hasNext())
+            {
+                DataSetDef def = it.next();
+                if (def.getUUID().equals(uuid)) it.remove();
+            }
+        }
     }
 
     @Override

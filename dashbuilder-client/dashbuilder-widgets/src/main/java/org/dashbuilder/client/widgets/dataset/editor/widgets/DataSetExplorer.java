@@ -15,37 +15,49 @@
  */
 package org.dashbuilder.client.widgets.dataset.editor.widgets;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.event.shared.HasHandlers;
-import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.user.client.ui.*;
+import com.google.gwt.user.client.ui.IsWidget;
+import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
-import org.dashbuilder.dataset.DataSet;
+import org.dashbuilder.client.widgets.dataset.editor.widgets.events.DeleteDataSetEventHandler;
+import org.dashbuilder.client.widgets.dataset.editor.widgets.events.EditDataSetEventHandler;
 import org.dashbuilder.dataset.client.DataSetClientServices;
-import org.dashbuilder.client.widgets.dataset.editor.widgets.events.*;
 import org.dashbuilder.dataset.def.DataSetDef;
-import org.dashbuilder.dataset.uuid.UUIDGenerator;
+import org.dashbuilder.dataset.events.DataSetDefModifiedEvent;
+import org.dashbuilder.dataset.events.DataSetDefRegisteredEvent;
+import org.dashbuilder.dataset.events.DataSetDefRemovedEvent;
 import org.jboss.errai.common.client.api.RemoteCallback;
 
 import javax.enterprise.context.Dependent;
+import javax.enterprise.event.Observes;
 import java.util.List;
+
+import static org.uberfire.commons.validation.PortablePreconditions.checkNotNull;
 
 @Dependent
 public class DataSetExplorer implements IsWidget {
 
     public interface View extends IsWidget, HasHandlers {
         void set(List<DataSetDef> dataSetDefs);
+
         boolean add(DataSetDef dataSetDef);
+
         boolean remove(DataSetDef dataSetDef);
+
+        boolean update(DataSetDef oldDataSetDef, DataSetDef newDataSetDef);
+
         void show();
+
         void clear();
+
         HandlerRegistration addEditDataSetEventHandler(EditDataSetEventHandler handler);
+
         HandlerRegistration addDeleteDataSetEventHandler(DeleteDataSetEventHandler handler);
     }
 
     View view;
-    
+
     @Inject
     public DataSetExplorer() {
         view = new DataSetExplorerView();
@@ -56,7 +68,7 @@ public class DataSetExplorer implements IsWidget {
     public Widget asWidget() {
         return view.asWidget();
     }
-    
+
     private void init() {
         DataSetClientServices.get().getRemoteSharedDataSetDefs(new RemoteCallback<List<DataSetDef>>() {
             public void callback(List<DataSetDef> dataSetDefs) {
@@ -65,16 +77,37 @@ public class DataSetExplorer implements IsWidget {
             }
         });
     }
-    
+
+    // Be aware of data set lifecycle events
+
+    private void onDataSetDefRegisteredEvent(@Observes DataSetDefRegisteredEvent event) {
+        checkNotNull("event", event);
+
+        view.add(event.getDataSetDef());
+        view.show();
+    }
+
+    private void onDataSetDefModifiedEvent(@Observes DataSetDefModifiedEvent event) {
+        checkNotNull("event", event);
+
+        view.update(event.getOldDataSetDef(), event.getNewDataSetDef());
+        view.show();
+    }
+
+    private void onDataSetDefRemovedEvent(@Observes DataSetDefRemovedEvent event) {
+        checkNotNull("event", event);
+
+        view.remove(event.getDataSetDef());
+        view.show();
+    }
+
     // **************** EVENT HANDLER REGISTRATIONS ****************************
 
-    public HandlerRegistration addEditDataSetEventHandler(EditDataSetEventHandler handler)
-    {
+    public HandlerRegistration addEditDataSetEventHandler(EditDataSetEventHandler handler) {
         return view.addEditDataSetEventHandler(handler);
     }
 
-    public HandlerRegistration addDeleteDataSetEventHandler(DeleteDataSetEventHandler handler)
-    {
+    public HandlerRegistration addDeleteDataSetEventHandler(DeleteDataSetEventHandler handler) {
         return view.addDeleteDataSetEventHandler(handler);
     }
 }
