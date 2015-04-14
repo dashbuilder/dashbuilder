@@ -8,6 +8,9 @@ import org.dashbuilder.validations.factory.DashbuilderValidationFactory;
 
 import javax.validation.Validator;
 
+/**
+ * @since 0.3.0
+ */
 public final class ValidatorFactory {
 
     public static Validator getDataSetValidator() {

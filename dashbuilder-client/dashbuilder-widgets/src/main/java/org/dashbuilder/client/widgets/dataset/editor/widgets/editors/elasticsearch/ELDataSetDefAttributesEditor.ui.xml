@@ -20,7 +20,7 @@
         <g:HTML text="{i18n.el_server_url}"/>
       </b:Column>
       <b:Column size="3">
-        <b:Popover showDelay="1000" text="{i18n.el_server_url_description}" heading="{i18n.el_server_url}">
+        <b:Popover showDelay="1000" text="{i18n.el_server_url_description}" heading="{i18n.el_server_url}" placement="BOTTOM">
           <dash-client:ValueBoxEditorDecorator errorLabelPosition="TOOLTIP" ui:field="serverURL">
             <dash-client:valuebox>
               <b:TextBox placeholder="{i18n.el_server_url_placeholder}" />

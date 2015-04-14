@@ -45,6 +45,8 @@ import java.util.List;
  * <p>NOTE:</p>
  * <p>The members <code>index</code> and <code>type</code> are considered an array, but currently the EL provider implementation just support one value for index and type.</p>
  * <p>So <code>index</code> and <code>type</code> are not bind directly with the editor driver, these fields are edited in a manual way.</p> 
+ *
+ * @since 0.3.0 
  */
 @Dependent
 public class ELDataSetDefAttributesEditor extends AbstractDataSetDefEditor implements ELDataSetDefEditor {

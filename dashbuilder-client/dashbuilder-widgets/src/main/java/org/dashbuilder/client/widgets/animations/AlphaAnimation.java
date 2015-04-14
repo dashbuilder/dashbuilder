@@ -6,6 +6,8 @@ import com.google.gwt.user.client.ui.Widget;
 
 /**
  * <p>Animation for switching widget visibility by applying a linear alpha animation.</p> 
+ *
+ * @since 0.3.0 
  */
 public class AlphaAnimation extends Animation {
     

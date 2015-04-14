@@ -18,6 +18,11 @@ package org.dashbuilder.client.widgets.resources.i18n;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.i18n.client.ConstantsWithLookup;
 
+/**
+ * <p>Data set editor constants.</p>
+ *
+ * @since 0.3.0 
+ */
 public interface DataSetEditorConstants extends ConstantsWithLookup {
 
     public static final DataSetEditorConstants INSTANCE = GWT.create( DataSetEditorConstants.class );

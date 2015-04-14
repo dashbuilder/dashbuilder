@@ -10,6 +10,9 @@ import org.dashbuilder.dataset.validation.groups.*;
 
 import javax.validation.Validator;
 
+/**
+ * @since 0.3.0
+ */
 public class DashbuilderValidationFactory extends AbstractGwtValidatorFactory {
 
     @GwtValidation(value = DataSetDef.class)

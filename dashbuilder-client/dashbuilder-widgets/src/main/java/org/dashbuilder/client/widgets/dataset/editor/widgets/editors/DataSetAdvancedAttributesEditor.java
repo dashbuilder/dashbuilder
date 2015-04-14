@@ -45,6 +45,8 @@ import java.util.List;
 
 /**
  * <p>This is the view implementation for Data Set Editor widget for editing data set backend cache policy, client cache policy and the refresh policy settings.</p>
+ *
+ * @since 0.3.0 
  */
 @Dependent
 public class DataSetAdvancedAttributesEditor extends AbstractDataSetDefEditor implements DataSetDefEditor {

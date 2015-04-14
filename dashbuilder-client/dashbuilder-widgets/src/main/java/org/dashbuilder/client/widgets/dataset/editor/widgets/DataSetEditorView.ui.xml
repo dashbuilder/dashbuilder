@@ -37,7 +37,7 @@
       overflow-y: auto;
     }
     .tabPanel {
-        margin: 15px;      
+        margin: 0px;      
     }
     .buttonsPanel {
       margin-top: 50px;
@@ -81,6 +81,9 @@
       float: left;
       width: 300px;
       overflow: hidden;
+    }
+    .specificProviderAttributesPanel {
+        margin-top: 0px;      
     }
     .previewTablePanel {
       margin-left: 15px;
@@ -158,7 +161,7 @@
 
           <!-- NOTE: In view Java class, those two panels are handled by a SlidingPanel not bind here. -->
           
-          <g:FlowPanel ui:field="specificProviderAttributesPanel" addStyleNames="{style.editorPanel} ">
+          <g:FlowPanel ui:field="specificProviderAttributesPanel" addStyleNames="{style.editorPanel} {style.specificProviderAttributesPanel} ">
 
             <g:FlowPanel ui:field="sqlAttributesEditionViewPanel" >
               <dash-dset-editors-sql:SQLDataSetDefAttributesEditor editMode="true" ui:field="sqlDataSetDefAttributesEditor"/>

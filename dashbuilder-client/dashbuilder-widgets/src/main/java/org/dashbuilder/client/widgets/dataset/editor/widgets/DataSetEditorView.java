@@ -51,7 +51,8 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * <p>Default view for DataSetEditor presenter view.</p> 
+ * <p>Default view for DataSetEditor presenter.</p> 
+ * @since 0.3.0 
  */
 @Dependent
 public class DataSetEditorView extends Composite implements DataSetEditor.View {

@@ -42,6 +42,8 @@ import java.util.*;
  * <p>This is a widget for editing data set's columns.</p>
  * 
  * <p>NOTE that this widget is NOT a GWT editor component for Data Set class.</p>
+ *
+ * @since 0.3.0 
  *  
  */
 @Dependent

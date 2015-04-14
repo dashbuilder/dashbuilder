@@ -40,6 +40,8 @@ import java.util.List;
  * <p>This is the view implementation widget for Data Set Editor widget for previewing the data set in a table displayer.</p>
  * 
  * <p>Consider that this widget is not a GWT Data Set editor component, as it does not edit any dataset attributes. It's just for previewing the results.</p> 
+ *
+ * @since 0.3.0 
  */
 @Dependent
 public class DataSetPreviewEditor extends AbstractDataSetDefEditor {

@@ -70,6 +70,7 @@ import static org.uberfire.commons.validation.PortablePreconditions.checkNotNull
  *     <li>Basic data set attributes & Data set columns and initial filter edition.</li>     
  *     <li>Basic data set attributes & Advanced data set attributes edition.</li>
  * </ul> 
+ * @since 0.3.0 
  */
 @Dependent
 public class DataSetEditor implements IsWidget {
@@ -79,6 +80,7 @@ public class DataSetEditor implements IsWidget {
     
     public interface View extends IsWidget, HasHandlers {
         View edit(final DataSetDef dataSetDef, final DataSetDefEditWorkflow workflow);
+        Set getViolations();
         View setEditMode(final boolean editMode);
         View showHomeView(final int dsetCount, final ClickHandler newDataSetHandler);
         View showProviderSelectionView();
@@ -94,7 +96,6 @@ public class DataSetEditor implements IsWidget {
         View showNextButton(String title, String helpText, ClickHandler nextHandler);
         View showCancelButton(ClickHandler cancelHandler);
         View onSave();
-        Set getViolations();
         View clear();
     }
 

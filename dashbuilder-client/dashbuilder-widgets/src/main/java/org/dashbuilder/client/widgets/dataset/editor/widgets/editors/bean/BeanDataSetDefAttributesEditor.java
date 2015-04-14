@@ -36,6 +36,8 @@ import java.util.Map;
 
 /**
  * <p>This is the view implementation for Data Set Editor widget for editing bean provider specific attributes.</p>
+ *
+ * @since 0.3.0 
  */
 @Dependent
 public class BeanDataSetDefAttributesEditor extends AbstractDataSetDefEditor implements BeanDataSetDefEditor {

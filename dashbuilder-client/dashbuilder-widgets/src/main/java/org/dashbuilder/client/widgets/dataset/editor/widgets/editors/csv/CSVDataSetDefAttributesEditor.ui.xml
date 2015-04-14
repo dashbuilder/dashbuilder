@@ -30,7 +30,7 @@
           <b:Button icon="CLOUD_UPLOAD" ui:field="useFileURLButton" size="MINI" addStyleNames="{style.leftFloatPanel}"/>
         </b:Tooltip>
 
-        <b:Popover showDelay="1000" text="{i18n.csv_filePath_description}" heading="{i18n.csv_filePath}">
+        <b:Popover showDelay="1000" text="{i18n.csv_filePath_description}" heading="{i18n.csv_filePath}" placement="BOTTOM">
           <b:ControlGroup ui:field="filePathErrorPanel">
             <b:Tooltip text="" ui:field="filePathErrorTooltip">
               <b:FileUpload ui:field="filePath" addStyleNames="{style.leftFloatPanel}"/>
@@ -50,7 +50,7 @@
         <b:Tooltip text="{i18n.csv_useFilePath}">
           <b:Button icon="FILE" ui:field="useFilePathButton" size="MINI" addStyleNames="{style.leftFloatPanel}"/>
         </b:Tooltip>
-        <b:Popover showDelay="1000" text="{i18n.csv_URL_description}" heading="{i18n.csv_URL}">
+        <b:Popover showDelay="1000" text="{i18n.csv_URL_description}" heading="{i18n.csv_URL}" placement="BOTTOM">
           <dash-client-editors:ValueBoxEditorDecorator errorLabelPosition="TOOLTIP" ui:field="fileURL" addStyleNames="{style.leftFloatPanel}">
             <dash-client-editors:valuebox>
               <b:TextBox placeholder="{i18n.csv_URL_placeholder}" />

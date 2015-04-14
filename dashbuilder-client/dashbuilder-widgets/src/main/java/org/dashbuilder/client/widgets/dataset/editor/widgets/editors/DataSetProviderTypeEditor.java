@@ -34,6 +34,8 @@ import java.util.Map;
 
 /**
  * <p>This is the view implementation for Data Set Editor widget for editing the data set provider type.</p>
+ *
+ * @since 0.3.0 
  */
 @Dependent
 public class DataSetProviderTypeEditor extends AbstractDataSetDefEditor implements DataSetDefEditor {

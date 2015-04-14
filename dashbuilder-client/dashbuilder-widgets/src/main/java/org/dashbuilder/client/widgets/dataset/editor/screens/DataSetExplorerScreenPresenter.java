@@ -37,6 +37,9 @@ import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
+/**
+ * @since 0.3.0
+ */
 @WorkbenchScreen(identifier = "DataSetExplorer")
 @Dependent
 public class DataSetExplorerScreenPresenter {

@@ -37,6 +37,8 @@ import javax.enterprise.context.ApplicationScoped;
  *     <li>The Data Set Explorer widget on the left area.</li>     
  *     <li>The Data Set Editor widget on the center area.</li> 
  * </ul>
+ *
+ * @since 0.3.0 
  */
 @ApplicationScoped
 @WorkbenchPerspective(identifier = "DataSetAuthoringPerspective")

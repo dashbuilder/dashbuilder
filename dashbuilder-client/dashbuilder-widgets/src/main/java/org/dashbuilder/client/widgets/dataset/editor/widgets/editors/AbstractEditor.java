@@ -8,6 +8,8 @@ import java.util.List;
 
 /**
  * <p>This is the default view implementation for Editor widgets .</p>
+ *
+ * @since 0.3.0 
  */
 public abstract class AbstractEditor extends Composite {
 

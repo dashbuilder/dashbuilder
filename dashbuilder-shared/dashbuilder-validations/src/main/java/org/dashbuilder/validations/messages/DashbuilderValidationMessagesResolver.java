@@ -21,6 +21,9 @@ import com.google.gwt.validation.client.AbstractValidationMessageResolver;
 import com.google.gwt.validation.client.UserValidationMessagesResolver;
 import org.dashbuilder.dataset.validation.DataSetValidationMessages;
 
+/**
+ * @since 0.3.0
+ */
 // TODO: Delegate to different bundles by a given prefix?
 public class DashbuilderValidationMessagesResolver extends AbstractValidationMessageResolver
     implements UserValidationMessagesResolver {

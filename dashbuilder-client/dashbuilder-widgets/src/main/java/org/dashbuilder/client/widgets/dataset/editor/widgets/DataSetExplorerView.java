@@ -41,6 +41,10 @@ import org.dashbuilder.dataset.def.DataSetDef;
 import javax.enterprise.context.Dependent;
 import java.util.*;
 
+/**
+ * <p>Default view for DataSetExplorer presenter.</p> 
+ * @since 0.3.0
+ */
 @Dependent
 public class DataSetExplorerView extends Composite implements DataSetExplorer.View {
 

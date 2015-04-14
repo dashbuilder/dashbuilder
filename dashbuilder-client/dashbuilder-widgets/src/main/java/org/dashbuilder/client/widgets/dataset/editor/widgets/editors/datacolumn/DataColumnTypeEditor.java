@@ -12,6 +12,8 @@ import java.util.Map;
 
 /**
  * <p>Drop down column types editor specific for data columns. Provider the acceptable values for each column type.</p>
+ *
+ * @since 0.3.0 
  */
 public class DataColumnTypeEditor extends DropDownImageListEditor<ColumnType> {
 

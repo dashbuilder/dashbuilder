@@ -20,6 +20,8 @@ import java.util.Iterator;
  *     slidingPanel.setWidget(panel2);
  * </code>
  * <p>NOTE: You must set the <code>height</code> CSS attribute for this sliding panel in order to be displayed.</p> 
+ *
+ * @since 0.3.0 
  */
 public class SlidingPanel extends ResizeComposite implements HasWidgets, HasOneWidget {
     private final LayoutPanel layoutPanel = new LayoutPanel();

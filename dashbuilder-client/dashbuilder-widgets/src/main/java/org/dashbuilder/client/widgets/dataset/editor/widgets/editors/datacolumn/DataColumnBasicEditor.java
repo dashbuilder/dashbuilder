@@ -29,6 +29,8 @@ import java.util.List;
 
 /**
  * <p>This is the view implementation widget for editing data a given set column's name and type.</p>
+ *
+ * @since 0.3.0 
  * 
  */
 @Dependent

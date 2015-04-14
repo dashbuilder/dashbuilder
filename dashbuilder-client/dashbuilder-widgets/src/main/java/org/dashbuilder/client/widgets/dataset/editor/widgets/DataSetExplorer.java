@@ -36,6 +36,10 @@ import java.util.List;
 
 import static org.uberfire.commons.validation.PortablePreconditions.checkNotNull;
 
+/**
+ * <p>Data Set Explorer widget</p>
+ * @since 0.3.0 
+ */
 @Dependent
 public class DataSetExplorer implements IsWidget {
 
