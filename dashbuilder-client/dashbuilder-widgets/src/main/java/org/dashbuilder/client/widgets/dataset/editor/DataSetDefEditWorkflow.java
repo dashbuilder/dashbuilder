@@ -228,7 +228,7 @@ public final class DataSetDefEditWorkflow {
         // Validate common attributes.
         validateSQL(edited, sqlAttributesEditor, sqlAttributesDriver, null);
         
-        // Validate table or query
+        // Validate either table or query.
         if (sqlAttributesEditor.isUsingTable()) return validateSQL(edited, sqlAttributesEditor, sqlAttributesDriver, SQLDataSetDefDbTableValidation.class);
         else return validateSQL(edited, sqlAttributesEditor, sqlAttributesDriver, SQLDataSetDefDbSQLValidation.class);
     }
@@ -238,6 +238,11 @@ public final class DataSetDefEditWorkflow {
      */
     private DataSetDefEditWorkflow saveCSVAttributes() {
         CSVDataSetDef edited = csvAttributesDriver.flush();
+        
+        // Validate common attributes.
+        validateCSV(edited, csvAttributesEditor, csvAttributesDriver, null);
+        
+        // Validate either file path or file URL.
         if (csvAttributesEditor.isUsingFilePath()) return validateCSV(edited, csvAttributesEditor, csvAttributesDriver, CSVDataSetDefFilePathValidation.class);
         else if (csvAttributesEditor.isUsingFileURL()) return validateCSV(edited, csvAttributesEditor, csvAttributesDriver, CSVDataSetDefFileURLValidation.class);
         return this;
