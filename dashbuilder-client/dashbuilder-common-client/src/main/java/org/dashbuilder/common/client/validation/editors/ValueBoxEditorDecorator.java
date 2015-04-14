@@ -1,6 +1,7 @@
 package org.dashbuilder.common.client.validation.editors;
 
 import com.github.gwtbootstrap.client.ui.Tooltip;
+import com.github.gwtbootstrap.client.ui.constants.Placement;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.DivElement;
 import com.google.gwt.dom.client.Style;
@@ -67,7 +68,7 @@ public class ValueBoxEditorDecorator<T> extends Composite implements
     Tooltip errorTooltip;
     
     public enum ErrorLabelPosition {
-        LEFT, RIGHT, TOOLTIP;
+        LEFT, RIGHT, TOOLTIP_TOP, TOOLTIP_BOTTOM;
     }    
 
     private ValueBoxEditor<T> editor;
@@ -79,7 +80,7 @@ public class ValueBoxEditorDecorator<T> extends Composite implements
     @UiConstructor
     public ValueBoxEditorDecorator() {
         // By default, show errors using tooltips.
-        errorLabelPosition = ErrorLabelPosition.TOOLTIP;
+        errorLabelPosition = ErrorLabelPosition.TOOLTIP_TOP;
         initWidget(Binder.BINDER.createAndBindUi(this));
     }
     
@@ -202,8 +203,7 @@ public class ValueBoxEditorDecorator<T> extends Composite implements
         } else {
             errorTooltip.setText(text);
         }
-        // See issue https://github.com/gwtbootstrap/gwt-bootstrap/issues/287
-        errorTooltip.reconfigure();
+        reconfigureTooltip();
     }
     
     private void setErrorLabelText(String text) {
@@ -217,11 +217,11 @@ public class ValueBoxEditorDecorator<T> extends Composite implements
     }
     
     private boolean isUsingErrorLabel() {
-        return !ErrorLabelPosition.TOOLTIP.equals(getErrorLabelPosition());
+        return !isUsingErrorTooltip();
     }
 
     private boolean isUsingErrorTooltip() {
-        return ErrorLabelPosition.TOOLTIP.equals(getErrorLabelPosition());
+        return ErrorLabelPosition.TOOLTIP_TOP.equals(getErrorLabelPosition()) || ErrorLabelPosition.TOOLTIP_BOTTOM.equals(getErrorLabelPosition());
     }
 
     public ErrorLabelPosition getErrorLabelPosition() {
@@ -235,7 +235,13 @@ public class ValueBoxEditorDecorator<T> extends Composite implements
 
     private void positionErrorLabel() {
         switch (errorLabelPosition) {
-            case TOOLTIP:
+            case TOOLTIP_TOP:
+                errorTooltip.setPlacement(Placement.TOP);
+                reconfigureTooltip();
+                break;
+            case TOOLTIP_BOTTOM:
+                errorTooltip.setPlacement(Placement.BOTTOM);
+                reconfigureTooltip();
                 break;
             case LEFT:
                 errorLabel.addClassName(style.errorLabelLeft());
@@ -244,6 +250,11 @@ public class ValueBoxEditorDecorator<T> extends Composite implements
                 errorLabel.addClassName(style.errorLabelRight());
                 break;
         }
+    }
+
+    // See issue https://github.com/gwtbootstrap/gwt-bootstrap/issues/287
+    private void reconfigureTooltip() {
+        errorTooltip.reconfigure();
     }
 
 }

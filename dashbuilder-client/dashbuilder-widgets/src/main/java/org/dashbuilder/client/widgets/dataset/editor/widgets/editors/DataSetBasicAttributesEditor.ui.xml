@@ -36,7 +36,7 @@
       
       <g:HTML text="{i18n.attributeName}" addStyleNames="{style.label}"/>
       <b:Popover showDelay="1000" text="{i18n.attributeName_description}" heading="{i18n.attributeName}">
-        <dash-client:ValueBoxEditorDecorator errorLabelPosition="TOOLTIP" ui:field="name" addStyleNames="{style.input}">
+        <dash-client:ValueBoxEditorDecorator errorLabelPosition="TOOLTIP_TOP" ui:field="name" addStyleNames="{style.input}">
           <dash-client:valuebox>
             <b:TextBox placeholder="{i18n.attributeName}" />
           </dash-client:valuebox>
@@ -50,7 +50,7 @@
 
       <g:HTML text="{i18n.attributeUUID}" addStyleNames="{style.label}"/>
       <b:Popover showDelay="1000" text="{i18n.attributeUUID_description}" heading="{i18n.attributeUUID}">
-        <dash-client:ValueBoxEditorDecorator errorLabelPosition="TOOLTIP" ui:field="attributeUUID" addStyleNames="{style.input}">
+        <dash-client:ValueBoxEditorDecorator errorLabelPosition="TOOLTIP_TOP" ui:field="attributeUUID" addStyleNames="{style.input}">
           <dash-client:valuebox>
             <b:TextBox enabled="false" placeholder="{i18n.attributeUUID}"/>
           </dash-client:valuebox>

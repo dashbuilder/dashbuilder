@@ -21,7 +21,7 @@
       </b:Column>
       <b:Column size="3">
         <b:Popover showDelay="1000" text="{i18n.el_server_url_description}" heading="{i18n.el_server_url}" placement="BOTTOM">
-          <dash-client:ValueBoxEditorDecorator errorLabelPosition="TOOLTIP" ui:field="serverURL">
+          <dash-client:ValueBoxEditorDecorator errorLabelPosition="TOOLTIP_BOTTOM" ui:field="serverURL">
             <dash-client:valuebox>
               <b:TextBox placeholder="{i18n.el_server_url_placeholder}" />
             </dash-client:valuebox>
@@ -37,7 +37,7 @@
       </b:Column>
       <b:Column size="3">
         <b:Popover showDelay="1000" text="{i18n.el_cluster_name_description}" heading="{i18n.el_cluster_name}">
-          <dash-client:ValueBoxEditorDecorator errorLabelPosition="TOOLTIP" ui:field="clusterName">
+          <dash-client:ValueBoxEditorDecorator errorLabelPosition="TOOLTIP_TOP" ui:field="clusterName">
             <dash-client:valuebox>
               <b:TextBox placeholder="{i18n.el_cluster_name_placeholder}" />
             </dash-client:valuebox>
@@ -53,7 +53,7 @@
       </b:Column>
       <b:Column size="3">
         <b:Popover showDelay="1000" text="{i18n.el_index_description}" heading="{i18n.el_index}">
-          <dash-client:ValueBoxEditorDecorator errorLabelPosition="TOOLTIP" ui:field="index">
+          <dash-client:ValueBoxEditorDecorator errorLabelPosition="TOOLTIP_TOP" ui:field="index">
             <dash-client:valuebox>
               <b:TextBox placeholder="{i18n.el_index_placeholder}" />
             </dash-client:valuebox>
@@ -69,7 +69,7 @@
       </b:Column>
       <b:Column size="3">
         <b:Popover showDelay="1000" text="{i18n.el_type_description}" heading="{i18n.el_type}">
-          <dash-client:ValueBoxEditorDecorator errorLabelPosition="TOOLTIP" ui:field="type">
+          <dash-client:ValueBoxEditorDecorator errorLabelPosition="TOOLTIP_TOP" ui:field="type">
             <dash-client:valuebox>
               <b:TextBox placeholder="{i18n.el_type_placeholder}" />
             </dash-client:valuebox>
