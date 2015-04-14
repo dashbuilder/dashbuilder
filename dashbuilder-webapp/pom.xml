@@ -216,7 +216,6 @@
           <compileSourcesArtifacts>
 
             <!-- Dashbuilder -->
-            <!-- TODO: Need to compile sources for hibernate-validator? -->
             <compileSourcesArtifact>org.hibernate:hibernate-validator</compileSourcesArtifact>
             <compileSourcesArtifact>org.dashbuilder:dashbuilder-validations</compileSourcesArtifact>
             <compileSourcesArtifact>org.dashbuilder:dashbuilder-dataset-api</compileSourcesArtifact>
