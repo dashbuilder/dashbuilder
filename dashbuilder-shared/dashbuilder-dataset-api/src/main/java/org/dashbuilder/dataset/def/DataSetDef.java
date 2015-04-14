@@ -209,4 +209,16 @@ public class DataSetDef {
             def.getDataSet().setColumns(dataSet.getColumns());
         }
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) return false;
+        
+        try {
+            DataSetDef d = (DataSetDef) obj;
+            return getUUID().equals(d.getUUID());
+        } catch (ClassCastException e) {
+            return false;
+        }
+    }
 }

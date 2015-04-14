@@ -83,15 +83,21 @@ public class DataSetExplorer implements IsWidget {
     private void onDataSetDefRegisteredEvent(@Observes DataSetDefRegisteredEvent event) {
         checkNotNull("event", event);
 
-        view.add(event.getDataSetDef());
-        view.show();
+        final DataSetDef def = event.getDataSetDef();
+        if (def != null && def.isPublic()) {
+            view.add(event.getDataSetDef());
+            view.show();
+        }
     }
 
     private void onDataSetDefModifiedEvent(@Observes DataSetDefModifiedEvent event) {
         checkNotNull("event", event);
 
-        view.update(event.getOldDataSetDef(), event.getNewDataSetDef());
-        view.show();
+        final DataSetDef def = event.getNewDataSetDef();
+        if (def != null && def.isPublic()) {
+            view.update(event.getOldDataSetDef(), event.getNewDataSetDef());
+            view.show();
+        }
     }
 
     private void onDataSetDefRemovedEvent(@Observes DataSetDefRemovedEvent event) {

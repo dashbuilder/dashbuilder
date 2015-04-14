@@ -29,16 +29,18 @@ import org.uberfire.mvp.PlaceRequest;
 
 import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Observes;
+import javax.inject.Inject;
 
 @WorkbenchScreen(identifier = "DataSetEditor")
 @Dependent
 public class DataSetEditorScreenPresenter {
 
+    @Inject
     private DataSetEditor editorWidget;
     
     @OnStartup
     public void onStartup( final PlaceRequest placeRequest) {
-        editorWidget = new DataSetEditor("900px");
+        editorWidget.setWidth("900px");
     }
 
     @OnClose

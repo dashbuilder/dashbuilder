@@ -33,6 +33,9 @@ import org.dashbuilder.dataset.client.DataSetClientServices;
 import org.dashbuilder.dataset.client.DataSetMetadataCallback;
 import org.dashbuilder.dataset.client.uuid.ClientUUIDGenerator;
 import org.dashbuilder.dataset.def.*;
+import org.dashbuilder.dataset.events.DataSetDefModifiedEvent;
+import org.dashbuilder.dataset.events.DataSetDefRegisteredEvent;
+import org.dashbuilder.dataset.events.DataSetDefRemovedEvent;
 import org.dashbuilder.dataset.filter.DataSetFilter;
 import org.dashbuilder.dataset.group.DataSetGroup;
 import org.dashbuilder.displayer.client.Displayer;
@@ -41,8 +44,11 @@ import org.dashbuilder.displayer.client.widgets.filter.DataSetFilterEditor;
 import org.jboss.errai.common.client.api.RemoteCallback;
 
 import javax.enterprise.context.Dependent;
+import javax.enterprise.event.Observes;
 import javax.validation.ConstraintViolation;
 import java.util.*;
+
+import static org.uberfire.commons.validation.PortablePreconditions.checkNotNull;
 
 /**
  * <p>Data Set Definition editor widget.</p>
@@ -68,6 +74,7 @@ import java.util.*;
 @Dependent
 public class DataSetEditor implements IsWidget {
 
+    private static final String EDIT_SUFFIX = "_edit";
     final DataSetDefEditWorkflow workflow = new DataSetDefEditWorkflow();
     
     public interface View extends IsWidget, HasHandlers {
@@ -96,6 +103,7 @@ public class DataSetEditor implements IsWidget {
     private DataSetDef dataSetDef;
     private List<DataColumn> columns;
     private DataSetDef edit;
+    private boolean isHomeViewVisible;
     
     public DataSetEditor() {
         showHomeView();
@@ -120,12 +128,10 @@ public class DataSetEditor implements IsWidget {
 
         
         // Create a new data set def.
-        final DataSetDef dataSetDef = new DataSetDef();
-        dataSetDef.setUUID(uuid);
-        this.dataSetDef = dataSetDef;
+        this.dataSetDef = createDataSetDef(uuid, null);
 
         edit = null;
-        view.setEditMode(edit != null);
+        view.setEditMode(false);
 
         // Restart workflow.
         edit();
@@ -148,9 +154,6 @@ public class DataSetEditor implements IsWidget {
             return this;
         }
 
-        
-
-        
         DataSetClientServices.get().fetchMetadata(uuid, new DataSetMetadataCallback() {
             @Override
             public void callback(DataSetMetadata metatada)
@@ -160,11 +163,11 @@ public class DataSetEditor implements IsWidget {
                 
                 // Clone the definition in order to edit the cloned copy.
                 DataSetEditor.this.dataSetDef = def.clone();
-                DataSetEditor.this.dataSetDef.setUUID(uuid + "_edit");
+                DataSetEditor.this.dataSetDef.setUUID(uuid + EDIT_SUFFIX);
                 DataSetEditor.this.dataSetDef.setPublic(false);
 
                 edit = def;
-                view.setEditMode(edit != null);
+                view.setEditMode(true);
                 
                 // Restart workflow.
                 edit();
@@ -188,6 +191,14 @@ public class DataSetEditor implements IsWidget {
         });
         return this;
     }
+    
+    private DataSetDef createDataSetDef(final String uuid, final DataSetProviderType type) {
+        DataSetDef result = new DataSetDef();
+        if (type != null) result = DataSetProviderType.createDataSetDef(dataSetDef.getProvider());
+        result.setUUID(uuid);
+        result.setPublic(false);
+        return result;
+    }
 
     private final ClickHandler providerScreenNextButtonHandler = new ClickHandler() {
         @Override
@@ -197,9 +208,7 @@ public class DataSetEditor implements IsWidget {
             final Set<ConstraintViolation<? extends DataSetDef>> violations = save();
             if (isValid(violations)) {
                 // Build the data set class instance for the given provider type.
-                final DataSetDef _dataSetDef = DataSetProviderType.createDataSetDef(dataSetDef.getProvider());
-                _dataSetDef.setUUID(dataSetDef.getUUID());
-                DataSetEditor.this.dataSetDef = _dataSetDef;
+                DataSetEditor.this.dataSetDef = createDataSetDef(dataSetDef.getUUID(), dataSetDef.getProvider());
 
                 // Restart workflow.
                 edit();
@@ -346,6 +355,7 @@ public class DataSetEditor implements IsWidget {
             public void callback(List<DataSetDef> dataSetDefs) {
                 final int i = dataSetDefs != null ? dataSetDefs.size() : 0;
                 view.showHomeView(i, newDataSetHandler);
+                isHomeViewVisible = true;
             }
         });
     }
@@ -353,13 +363,16 @@ public class DataSetEditor implements IsWidget {
     private void showProviderSelectionView() {
         // Show provider selection widget.
         view.showProviderSelectionView();
+        isHomeViewVisible = false;
     }
     
     private void showBasicAttributesEditionView() {
         view.showBasicAttributesEditionView();
+        isHomeViewVisible = false;
     }
     
     private void showProviderSpecificAttributesEditionView() {
+        isHomeViewVisible = false;
         switch (dataSetDef.getProvider()) {
             case SQL:
                 view.showSQLAttributesEditorView(testButtonHandler);
@@ -378,16 +391,17 @@ public class DataSetEditor implements IsWidget {
     
     
     private void showColumnsEditorView(final DataSet dataSet) {
+        isHomeViewVisible = false;
         view.showColumnsEditorView(this.columns, dataSet, columnsChangedEventHandler);
     }
 
     private void showFilterEditorView(final DataSet dataSet) {
+        isHomeViewVisible = false;
         view.showFilterEditionView(dataSet, filterListener);
     }
 
     private void showPreviewTableEditionView() {
-        
-        // TODO: Remove method this call here?
+        isHomeViewVisible = false;
         registerDataSetDef();
         
         // Show table preview preview.
@@ -395,6 +409,7 @@ public class DataSetEditor implements IsWidget {
     }
     
     private void showAdvancedAttributesEditionView() {
+        isHomeViewVisible = false;
         view.showAdvancedAttributesEditionView();
     }
     
@@ -501,6 +516,27 @@ public class DataSetEditor implements IsWidget {
         return violations.isEmpty();
     }
 
+    // Be aware of data set lifecycle events
+
+    private void onDataSetDefRegisteredEvent(@Observes DataSetDefRegisteredEvent event) {
+        checkNotNull("event", event);
+
+        final DataSetDef def = event.getDataSetDef();
+        if (isHomeViewVisible && def != null && def.isPublic()) {
+            // Reload home view with new data set count value.
+            this.showHomeView();
+        }
+    }
+
+    private void onDataSetDefRemovedEvent(@Observes DataSetDefRemovedEvent event) {
+        checkNotNull("event", event);
+
+        if(isHomeViewVisible) {
+            // Reload home view with new data set count value.
+            this.showHomeView();
+        }
+    }
+    
     // TODO: Display message to user.
     private void error(String message) {
         GWT.log(message);

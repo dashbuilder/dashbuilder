@@ -41,10 +41,12 @@ import javax.inject.Inject;
 @Dependent
 public class DataSetExplorerScreenPresenter {
 
-    private DataSetExplorer explorerWidget;
     
     private Menus menu = null;
-    
+
+    @Inject
+    DataSetExplorer explorerWidget;
+
     @Inject
     Event<NewDataSetEvent> newDataSetEvent;
 
@@ -56,7 +58,6 @@ public class DataSetExplorerScreenPresenter {
 
     @OnStartup
     public void onStartup( final PlaceRequest placeRequest) {
-        explorerWidget = new DataSetExplorer();
         explorerWidget.addEditDataSetEventHandler(new EditDataSetEventHandler() {
             @Override
             public void onEditDataSet(EditDataSetEvent event) {
