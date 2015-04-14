@@ -20,7 +20,7 @@ public class DashbuilderValidationFactory extends AbstractGwtValidatorFactory {
     public interface DataColumnValidator extends Validator {
     }
     
-    @GwtValidation(value = SQLDataSetDef.class)
+    @GwtValidation(value = SQLDataSetDef.class, groups = {SQLDataSetDefDbTableValidation.class, SQLDataSetDefDbSQLValidation.class})
     public interface SQLDataSetDefValidator extends DataSetDefValidator {
     }
 

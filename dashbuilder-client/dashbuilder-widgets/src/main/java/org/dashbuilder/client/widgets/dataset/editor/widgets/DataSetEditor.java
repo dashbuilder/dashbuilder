@@ -204,22 +204,12 @@ public class DataSetEditor implements IsWidget {
                 // Restart workflow.
                 edit();
 
-                // TODO: For testing
-                dataSetDef.setName("TestDataSet");
-                if (dataSetDef instanceof SQLDataSetDef) {
-                    ((SQLDataSetDef) dataSetDef).setDataSource("jdbc/mysqlDS");
-                    ((SQLDataSetDef) dataSetDef).setDbTable("taula2");
-                }
-                else if (dataSetDef instanceof CSVDataSetDef) {
-                    ((CSVDataSetDef) dataSetDef).setFilePath("/home/romartin/Desktop/roger.csv");
-                }
-                
                 // Build basic attributes view.
                 showBasicAttributesEditionView();
                 showProviderSpecificAttributesEditionView();
 
             }
-            saveLog(violations, violations);
+            log(violations, violations);
         }
     };
 
@@ -243,7 +233,7 @@ public class DataSetEditor implements IsWidget {
                         DataSetEditorConstants.INSTANCE.next_description(),
                         advancedAttrsButtonHandler);
             }
-            saveLog(violations, violations);
+            log(violations, violations);
         }
     };
 
@@ -268,7 +258,7 @@ public class DataSetEditor implements IsWidget {
                         DataSetEditorConstants.INSTANCE.save_description(),
                         saveButtonHandler);
             }
-            saveLog(violations, violations);
+            log(violations, violations);
         }
     };
 
@@ -290,7 +280,7 @@ public class DataSetEditor implements IsWidget {
                     GWT.log("Error persisting data set defintion with uuid [" + dataSetDef.getUUID() + "]. Message: " + e.getMessage());
                 }
             }
-            saveLog(violations);
+            log(violations);
 
         }
     };
@@ -488,14 +478,15 @@ public class DataSetEditor implements IsWidget {
         }
 
         @Override
-        public void onGroupIntervalsSelected(Displayer displayer, DataSetGroup groupOp) {
-
+        public void onFilterEnabled(Displayer displayer, DataSetGroup groupOp) {
+            
         }
 
         @Override
-        public void onGroupIntervalsReset(Displayer displayer, List<DataSetGroup> groupOps) {
+        public void onFilterReset(Displayer displayer, List<DataSetGroup> groupOps) {
 
         }
+
     };
     
     private void clear() {
@@ -515,8 +506,8 @@ public class DataSetEditor implements IsWidget {
         GWT.log(message);
     }
 
-    // TODO: For testing.
-    private void saveLog(Set<ConstraintViolation<? extends DataSetDef>>... violations) {
+    private void log(Set<ConstraintViolation<? extends DataSetDef>>... violations) {
+        if (true) return;
         if (violations != null && violations.length > 0) {
             for (int x = 0; x < violations.length; x++) {
                 Set<ConstraintViolation<? extends DataSetDef>> driverViolation = violations[x];

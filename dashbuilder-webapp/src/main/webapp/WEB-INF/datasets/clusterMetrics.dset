@@ -1,5 +1,6 @@
 {
     "uuid": "clusterMetrics",
+    "name": "Cluster Metrics",
     "provider": "BEAN",
     "isPublic": true,
     "pushEnabled": false,

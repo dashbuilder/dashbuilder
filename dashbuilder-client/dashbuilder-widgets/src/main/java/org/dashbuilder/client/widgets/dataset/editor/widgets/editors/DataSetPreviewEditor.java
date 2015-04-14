@@ -142,19 +142,6 @@ public class DataSetPreviewEditor extends AbstractDataSetDefEditor {
     private class TableListener implements DisplayerListener {
 
         public void onDraw(Displayer displayer) {
-            DataSet dataSet = displayer.getDataSetHandler().getLastDataSet();
-            if (dataSet != null) {
-                List<DataColumn> columns = dataSet.getColumns();
-                if (columns != null) {
-                    for (DataColumn column : columns) {
-                        GWT.log("Found column");
-                        GWT.log("************");
-                        GWT.log("id="+column.getId());
-                        GWT.log("name="+column.getName());
-                        GWT.log("type="+column.getColumnType());
-                    }
-                }
-            }
         }
 
         public void onRedraw(Displayer displayer) {
@@ -165,12 +152,15 @@ public class DataSetPreviewEditor extends AbstractDataSetDefEditor {
 
         }
 
-        public void onGroupIntervalsSelected(Displayer displayer, DataSetGroup groupOp) {
+        @Override
+        public void onFilterEnabled(Displayer displayer, DataSetGroup groupOp) {
+            
+        }
+
+        @Override
+        public void onFilterReset(Displayer displayer, List<DataSetGroup> groupOps) {
 
         }
 
-        public void onGroupIntervalsReset(Displayer displayer, List<DataSetGroup> groupOps) {
-
-        }
     }
 }

@@ -378,11 +378,9 @@ public class DataSetDefJSONMarshaller {
             result = new JSONArray();
             for (final DataColumn column : columnList) {
                 final String id = column.getId();
-                final String name = column.getName();
                 final ColumnType type = column.getColumnType();
                 final JSONObject columnObject = new JSONObject();
                 columnObject.put(COLUMN_ID, id);
-                columnObject.put(COLUMN_NAME, name);
                 columnObject.put(COLUMN_TYPE, type.name().toLowerCase());
                 result.put(columnObject);
             }

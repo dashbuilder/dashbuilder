@@ -119,7 +119,7 @@ public class SQLDataSetDefAttributesEditor extends AbstractDataSetDefEditor impl
         // Enable table by default.
         enableTable();
     }
-
+    
     private void enableTable() {
         dbTable.setEnabled(true);
         dbTable.setVisible(true);
@@ -137,4 +137,9 @@ public class SQLDataSetDefAttributesEditor extends AbstractDataSetDefEditor impl
         tableButton.setValue(false);
         queryButton.setValue(true);
     }
+
+    public boolean isUsingTable() {
+        return dbTable.isVisible();
+    }
+
 }
