@@ -16,10 +16,12 @@
 package org.dashbuilder.displayer.client;
 
 import org.dashbuilder.dataset.DataSet;
+import org.dashbuilder.dataset.DataSetLookup;
 import org.dashbuilder.dataset.client.DataSetReadyCallback;
 import org.dashbuilder.dataset.group.DataSetGroup;
 import org.dashbuilder.dataset.group.Interval;
 import org.dashbuilder.dataset.sort.DataSetSort;
+import org.dashbuilder.dataset.sort.SortOrder;
 
 /**
  * Interface addressed to issue lookup requests over a data set instance.
@@ -28,8 +30,7 @@ public interface DataSetHandler {
 
     /**
      * Retrieves any group operation present in the current data set lookup for the target column specified.
-     * @param columnId The column id. to look for. It can be either the column used to group the data set or
-     * the column id. assigned to the grouped column.
+     * @param columnId The column id. to look for.
      *
      * @return The group operation that matches the given column id. Or null if no operation is found.
      */
@@ -92,11 +93,12 @@ public interface DataSetHandler {
     boolean drillUp(DataSetGroup op);
 
     /**
-     * Set the sort operation for the current data set lookup instance.
+     * Set the sort order operation to apply to the data set.
      *
-     * @param op The operation to set.
+     * @param columnId The name of the column to sort.
+     * @param sortOrder The sort order.
      */
-    void sort(DataSetSort op);
+    void sort(String columnId, SortOrder sortOrder);
 
     /**
      * Forces the next data set lookup request to retrieve only the specified row sub set.
@@ -122,4 +124,9 @@ public interface DataSetHandler {
      * Get the data set get on the last lookup call (if any)
      */
     DataSet getLastDataSet();
+
+    /**
+     * Get the current data set lookup (if any)
+     */
+    DataSetLookup getCurrentDataSetLookup();
 }

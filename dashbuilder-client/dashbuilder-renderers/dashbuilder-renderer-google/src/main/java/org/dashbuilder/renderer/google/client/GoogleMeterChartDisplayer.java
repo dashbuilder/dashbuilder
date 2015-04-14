@@ -28,6 +28,7 @@ import org.dashbuilder.dataset.DataSetLookupConstraints;
 import org.dashbuilder.displayer.DisplayerAttributeDef;
 import org.dashbuilder.displayer.DisplayerAttributeGroupDef;
 import org.dashbuilder.displayer.DisplayerConstraints;
+import org.dashbuilder.renderer.google.client.resources.i18n.GoogleDisplayerConstants;
 
 public class GoogleMeterChartDisplayer extends GoogleChartDisplayer {
 
@@ -64,19 +65,19 @@ public class GoogleMeterChartDisplayer extends GoogleChartDisplayer {
                 .setMaxColumns(2)
                 .setMinColumns(1)
                 .setExtraColumnsAllowed(false)
-                .setGroupsTitle("Categories")
-                .setColumnsTitle("Value")
+                .setGroupsTitle(GoogleDisplayerConstants.INSTANCE.common_Categories())
+                .setColumnsTitle(GoogleDisplayerConstants.INSTANCE.common_Value())
                 .setFunctionRequired(true)
                 .setColumnTypes(new ColumnType[] {ColumnType.NUMBER},
                         new ColumnType[] {ColumnType.LABEL, ColumnType.NUMBER});
 
         return new DisplayerConstraints(lookupConstraints)
-                   .supportsAttribute( DisplayerAttributeDef.TYPE )
-                   .supportsAttribute(DisplayerAttributeDef.COLUMNS)
+                   .supportsAttribute(DisplayerAttributeDef.TYPE)
                    .supportsAttribute(DisplayerAttributeDef.RENDERER)
-                   .supportsAttribute( DisplayerAttributeGroupDef.FILTER_GROUP )
+                   .supportsAttribute(DisplayerAttributeGroupDef.COLUMNS_GROUP)
+                   .supportsAttribute(DisplayerAttributeGroupDef.FILTER_GROUP)
                    .supportsAttribute( DisplayerAttributeGroupDef.REFRESH_GROUP )
-                   .supportsAttribute( DisplayerAttributeGroupDef.TITLE_GROUP)
+                   .supportsAttribute( DisplayerAttributeGroupDef.GENERAL_GROUP)
                    .supportsAttribute( DisplayerAttributeDef.CHART_WIDTH )
                    .supportsAttribute( DisplayerAttributeDef.CHART_HEIGHT )
                    .supportsAttribute( DisplayerAttributeGroupDef.CHART_MARGIN_GROUP )
@@ -89,7 +90,7 @@ public class GoogleMeterChartDisplayer extends GoogleChartDisplayer {
 
     private GaugeOptions createOptions() {
         Animation anim = Animation.create();
-        anim.setDuration(500);
+        anim.setDuration(700);
         anim.setEasing(AnimationEasing.IN_AND_OUT);
 
         GaugeOptions options = GaugeOptions.create();

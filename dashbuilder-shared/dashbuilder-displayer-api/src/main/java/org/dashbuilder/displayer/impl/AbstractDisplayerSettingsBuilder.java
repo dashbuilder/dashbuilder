@@ -15,7 +15,12 @@
  */
 package org.dashbuilder.displayer.impl;
 
+import java.util.List;
+
 import org.dashbuilder.dataset.DataSet;
+import org.dashbuilder.dataset.DataSetOp;
+import org.dashbuilder.dataset.group.DataSetGroup;
+import org.dashbuilder.dataset.group.GroupFunction;
 import org.dashbuilder.dataset.impl.AbstractDataSetLookupBuilder;
 import org.dashbuilder.displayer.DisplayerSettings;
 import org.dashbuilder.displayer.DisplayerSettingsBuilder;
@@ -46,6 +51,16 @@ public abstract class AbstractDisplayerSettingsBuilder<T> extends AbstractDataSe
 
     public T titleVisible(boolean visible) {
         displayerSettings.setTitleVisible(visible);
+        return (T) this;
+    }
+
+    public T allowCsvExport(boolean allowCsvExport) {
+        displayerSettings.setCSVExportAllowed(allowCsvExport);
+        return (T) this;
+    }
+
+    public T allowExcelExport(boolean allowExcelExport) {
+        displayerSettings.setExcelExportAllowed(allowExcelExport);
         return (T) this;
     }
 
@@ -99,6 +114,49 @@ public abstract class AbstractDisplayerSettingsBuilder<T> extends AbstractDataSe
 
     public T refreshOff() {
         displayerSettings.setRefreshInterval(-1);
+        return (T) this;
+    }
+
+    public T format(String name) {
+        return format(name, null);
+    }
+
+    public T format(String name, String pattern) {
+        DataSetOp op = getCurrentOp();
+        if (op == null || !(op instanceof DataSetGroup)) {
+            throw new RuntimeException("column(...) must be called first.");
+        }
+        DataSetGroup gOp = (DataSetGroup) getCurrentOp();
+        List<GroupFunction> columns = gOp.getGroupFunctions();
+        if (columns.isEmpty()) {
+            throw new RuntimeException("column(...) must be called first.");
+        }
+        GroupFunction lastColumn = columns.get(columns.size() - 1);
+        return format(lastColumn.getColumnId(), name, pattern);
+    }
+
+    public T format(String columnId, String name, String pattern) {
+        displayerSettings.setColumnName(columnId, name);
+        displayerSettings.setColumnValuePattern(columnId, pattern);
+        return (T) this;
+    }
+
+    public T expression(String expression) {
+        DataSetOp op = getCurrentOp();
+        if (op == null || !(op instanceof DataSetGroup)) {
+            throw new RuntimeException("column(...) must be called first.");
+        }
+        DataSetGroup gOp = (DataSetGroup) getCurrentOp();
+        List<GroupFunction> columns = gOp.getGroupFunctions();
+        if (columns.isEmpty()) {
+            throw new RuntimeException("column(...) must be called first.");
+        }
+        GroupFunction lastColumn = columns.get(columns.size() - 1);
+        return expression(lastColumn.getColumnId(), expression);
+    }
+
+    public T expression(String columnId, String expression) {
+        displayerSettings.setColumnValueExpression(columnId, expression);
         return (T) this;
     }
 

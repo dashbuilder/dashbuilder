@@ -6,6 +6,7 @@
     >
 
   <ui:with field='resources' type='org.dashbuilder.client.metrics.MetricsDashboardClientBundle'/>
+  <ui:with field='i18n' type='org.dashbuilder.client.resources.i18n.AppConstants'/>
 
   <ui:style>
 
@@ -105,16 +106,16 @@
     <!-- Mode icon. -->
     <g:HorizontalPanel addStyleNames="{style.icons_area}">
 
-        <g:cell horizontalAlignment="ALIGN_LEFT">
-          <!-- Back button -->
-          <b:Tooltip text='Go back' placement="BOTTOM">
-            <g:Image resource='{resources.backIcon}' addStyleNames="{style.back_icon}" ui:field="backIcon"/>
-          </b:Tooltip>
-        </g:cell>
+      <g:cell horizontalAlignment="ALIGN_LEFT">
+        <!-- Back button -->
+        <b:Tooltip text='{i18n.metrics_server_detail_backbutton_tt}' placement="BOTTOM">
+          <g:Image resource='{resources.backIcon}' addStyleNames="{style.back_icon}" ui:field="backIcon"/>
+        </b:Tooltip>
+      </g:cell>
 
       <g:cell horizontalAlignment="ALIGN_LEFT">
         <!-- Mode button.-->
-        <b:Tooltip text='Mode icon' placement="BOTTOM" ui:field="modeIconTooltip">
+        <b:Tooltip text='{i18n.metrics_server_detail_modebutton_tt_viewtable}' placement="BOTTOM" ui:field="modeIconTooltip">
           <g:Image resource='{resources.tableIcon}' addStyleNames="{style.mode_icon}" ui:field="modeIcon"/>
         </b:Tooltip>
       </g:cell>
@@ -122,7 +123,7 @@
 
     <g:VerticalPanel spacing="10" addStyleNames="{style.server_details_area} {style.metrics_dashboard_panel}" ui:field="tableArea">
       <g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
-        <g:HTML text="Last hour summary"/>
+        <g:HTML text="{i18n.metrics_server_detail_lasthour_summary}"/>
       </g:cell>
       <g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
         <dashbuilder:Displayer ui:field="serverTable"/>
@@ -135,7 +136,7 @@
       <g:VerticalPanel spacing="10" addStyleNames="{style.server_cpu_area} {style.metrics_dashboard_panel}">
 
         <g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
-          <g:HTML text="CPU usage (%)"/>
+          <g:HTML text="{i18n.metrics_server_detail_cpu_usage}"/>
         </g:cell>
 
         <g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
@@ -154,7 +155,7 @@
         <!-- Memory usage area. -->
         <g:VerticalPanel spacing="10" addStyleNames="{style.server_memory_area} {style.metrics_dashboard_panel}">
           <g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
-            <g:HTML text="Memory usage (Gb)"/>
+            <g:HTML text="{i18n.metrics_server_detail_mem_usage}"/>
           </g:cell>
           <g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
             <dashbuilder:Displayer ui:field="serverMemory"/>
@@ -167,7 +168,7 @@
           <!-- Network usage area. -->
           <g:VerticalPanel spacing="10" addStyleNames="{style.server_network_area} {style.metrics_dashboard_panel}">
             <g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
-              <g:HTML text="Network usage (kbps)"/>
+              <g:HTML text="{i18n.metrics_server_detail_netw_usage}"/>
             </g:cell>
             <g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
               <dashbuilder:Displayer ui:field="serverNetwork"/>
@@ -177,7 +178,7 @@
           <!-- Disk usage area. -->
           <g:VerticalPanel spacing="10" addStyleNames="{style.server_disk_area} {style.metrics_dashboard_panel}">
             <g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
-              <g:HTML text="Disk usage (Mb)"/>
+              <g:HTML text="{i18n.metrics_server_detail_disk_usage}"/>
             </g:cell>
             <g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
               <dashbuilder:Displayer ui:field="serverDisk"/>
@@ -187,7 +188,7 @@
           <!-- Processes usage area. -->
           <g:VerticalPanel spacing="10" addStyleNames="{style.server_processes_area} {style.metrics_dashboard_panel}">
             <g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
-              <g:HTML text="Processes alive"/>
+              <g:HTML text="{i18n.metrics_server_detail_live_procs}"/>
             </g:cell>
             <g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
               <dashbuilder:Displayer ui:field="serverProcessesRunning"/>

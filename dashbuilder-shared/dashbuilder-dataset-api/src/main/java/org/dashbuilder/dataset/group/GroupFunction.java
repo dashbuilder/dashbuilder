@@ -83,7 +83,7 @@ public class GroupFunction {
     public String toString() {
         StringBuilder out = new StringBuilder();
         if (sourceId != null) out.append(" column=").append(sourceId);
-        if (columnId != null) out.append(" result=").append(columnId);
+        if (columnId != null) out.append(" newColumn=").append(columnId);
         if (function != null) out.append(" function=").append(function);
         return out.toString();
     }

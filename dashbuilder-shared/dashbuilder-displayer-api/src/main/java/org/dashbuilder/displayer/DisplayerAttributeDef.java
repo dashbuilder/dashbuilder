@@ -19,10 +19,15 @@ public class DisplayerAttributeDef {
 
     public static final DisplayerAttributeDef TYPE = new DisplayerAttributeDef("type");
     public static final DisplayerAttributeDef RENDERER = new DisplayerAttributeDef("renderer");
-    public static final DisplayerAttributeDef COLUMNS = new DisplayerAttributeDef("columns");
 
-    public static final DisplayerAttributeDef TITLE = new DisplayerAttributeDef("title", DisplayerAttributeGroupDef.TITLE_GROUP);
-    public static final DisplayerAttributeDef TITLE_VISIBLE = new DisplayerAttributeDef("visible", DisplayerAttributeGroupDef.TITLE_GROUP);
+    public static final DisplayerAttributeDef COLUMN_EXPRESSION = new DisplayerAttributeDef("expression", DisplayerAttributeGroupDef.COLUMNS_GROUP);
+    public static final DisplayerAttributeDef COLUMN_PATTERN = new DisplayerAttributeDef("pattern", DisplayerAttributeGroupDef.COLUMNS_GROUP);
+    public static final DisplayerAttributeDef COLUMN_EMPTY = new DisplayerAttributeDef("empty", DisplayerAttributeGroupDef.COLUMNS_GROUP);
+
+    public static final DisplayerAttributeDef TITLE = new DisplayerAttributeDef("title", DisplayerAttributeGroupDef.GENERAL_GROUP);
+    public static final DisplayerAttributeDef TITLE_VISIBLE = new DisplayerAttributeDef("visible", DisplayerAttributeGroupDef.GENERAL_GROUP);
+    public static final DisplayerAttributeDef ALLOW_EXPORT_CSV = new DisplayerAttributeDef("allow_csv", DisplayerAttributeGroupDef.GENERAL_GROUP);
+    public static final DisplayerAttributeDef ALLOW_EXPORT_EXCEL = new DisplayerAttributeDef("allow_excel", DisplayerAttributeGroupDef.GENERAL_GROUP);
 
     public static final DisplayerAttributeDef REFRESH_STALE_DATA = new DisplayerAttributeDef("staleData", DisplayerAttributeGroupDef.REFRESH_GROUP);
     public static final DisplayerAttributeDef REFRESH_INTERVAL = new DisplayerAttributeDef("interval", DisplayerAttributeGroupDef.REFRESH_GROUP);

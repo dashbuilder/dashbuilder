@@ -27,7 +27,7 @@ import static org.dashbuilder.dataset.group.AggregateFunctionType.*;
 import static org.dashbuilder.dataset.filter.FilterFactory.*;
 import static org.fest.assertions.api.Assertions.*;
 
-public class SQLDataSetGroupTest extends SQLDataSetTestBase {
+public class SQLDataSetLookupTest extends SQLDataSetTestBase {
 
     @Test
     public void testDataSetTrim() throws Exception {
@@ -79,10 +79,10 @@ public class SQLDataSetGroupTest extends SQLDataSetTestBase {
                         .buildLookup());
 
         assertThat(result.getRowCount()).isEqualTo(50);
-        assertThat(result.getColumnByIndex(0).getName()).isEqualTo("City");
-        assertThat(result.getColumnByIndex(1).getName()).isEqualTo("Department");
-        assertThat(result.getColumnByIndex(2).getName()).isEqualTo("Employee");
-        assertThat(result.getColumnByIndex(3).getName()).isEqualTo("Amount");
+        assertThat(result.getColumnByIndex(0).getId()).isEqualTo("City");
+        assertThat(result.getColumnByIndex(1).getId()).isEqualTo("Department");
+        assertThat(result.getColumnByIndex(2).getId()).isEqualTo("Employee");
+        assertThat(result.getColumnByIndex(3).getId()).isEqualTo("Amount");
         assertThat(result.getColumnByIndex(0).getColumnType()).isEqualTo(ColumnType.LABEL);
         assertThat(result.getColumnByIndex(1).getColumnType()).isEqualTo(ColumnType.LABEL);
         assertThat(result.getColumnByIndex(2).getColumnType()).isEqualTo(ColumnType.LABEL);
@@ -134,5 +134,9 @@ public class SQLDataSetGroupTest extends SQLDataSetTestBase {
         subTest.testFilterByNumber();
         subTest.testFilterMultiple();
         subTest.testFilterUntilToday();
+        subTest.testANDExpression();
+        subTest.testNOTExpression();
+        subTest.testORExpression();
+        subTest.testCombinedExpression();
     }
 }

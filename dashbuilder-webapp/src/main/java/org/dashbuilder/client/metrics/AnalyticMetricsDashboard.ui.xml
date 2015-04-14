@@ -5,6 +5,7 @@
     >
   
   <ui:with field='resources' type='org.dashbuilder.client.metrics.MetricsDashboardClientBundle'/>
+  <ui:with field='i18n' type='org.dashbuilder.client.resources.i18n.AppConstants'/>
 
   <ui:style>
     
@@ -57,7 +58,7 @@
 
   <g:TabPanel ui:field="tabPanel" addStyleNames="{style.main_panel}">
     
-    <g:Tab text="Overall">
+    <g:Tab text="{i18n.metrics_analytic_max_tab_overall}">
 
       <!-- Summary area. -->
       <g:HorizontalPanel spacing="10" >
@@ -91,7 +92,7 @@
       
     </g:Tab>
     
-    <g:Tab text="CPU">
+    <g:Tab text="{i18n.metrics_analytic_max_tab_cpu}">
       
       <g:VerticalPanel spacing="10">
         
@@ -107,7 +108,7 @@
       
     </g:Tab>
 
-    <g:Tab text="Memory">
+    <g:Tab text="{i18n.metrics_analytic_max_tab_mem}">
 
       <g:VerticalPanel spacing="10">
 
@@ -123,7 +124,7 @@
 
     </g:Tab>
 
-    <g:Tab text="Network">
+    <g:Tab text="{i18n.metrics_analytic_max_tab_netw}">
 
       <g:VerticalPanel spacing="10">
 
@@ -139,7 +140,7 @@
 
     </g:Tab>
 
-    <g:Tab text="Processes">
+    <g:Tab text="{i18n.metrics_analytic_max_tab_procs}">
 
       <g:VerticalPanel spacing="10">
 
@@ -155,7 +156,7 @@
 
     </g:Tab>
 
-    <g:Tab text="Disk">
+    <g:Tab text="{i18n.metrics_analytic_max_tab_disk}">
 
       <g:VerticalPanel spacing="10">
 
@@ -170,10 +171,7 @@
       </g:VerticalPanel>
 
     </g:Tab>
-    
-    
+
   </g:TabPanel>
 
-  
-  
 </ui:UiBinder>

@@ -20,6 +20,8 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
+import org.dashbuilder.client.gallery.GalleryWidget;
+import org.dashbuilder.client.resources.i18n.AppConstants;
 import org.dashbuilder.displayer.DisplayerSettingsFactory;
 import org.dashbuilder.displayer.client.Displayer;
 import org.dashbuilder.displayer.client.DisplayerCoordinator;
@@ -35,7 +37,7 @@ import static org.dashbuilder.dataset.group.AggregateFunctionType.*;
  * A composite widget that represents an entire dashboard sample composed using an UI binder template.
  * <p>The dashboard itself is composed by a set of Displayer instances.</p>
  */
-public class SalesExpectedByDate extends Composite {
+public class SalesExpectedByDate extends Composite implements GalleryWidget {
 
     interface SalesDashboardBinder extends UiBinder<Widget, SalesExpectedByDate>{}
     private static final SalesDashboardBinder uiBinder = GWT.create(SalesDashboardBinder.class);
@@ -69,8 +71,24 @@ public class SalesExpectedByDate extends Composite {
 
     DisplayerCoordinator displayerCoordinator = new DisplayerCoordinator();
 
+    @Override
     public String getTitle() {
-        return "Sales pipeline";
+        return AppConstants.INSTANCE.sales_bydate_title();
+    }
+
+    @Override
+    public void onClose() {
+        displayerCoordinator.closeAll();
+    }
+
+    @Override
+    public boolean feedsFrom(String dataSetId) {
+        return SALES_OPPS.equals(dataSetId);
+    }
+
+    @Override
+    public void redrawAll() {
+        displayerCoordinator.redrawAll();
     }
 
     public SalesExpectedByDate() {
@@ -82,8 +100,8 @@ public class SalesExpectedByDate extends Composite {
                 .dataset(SALES_OPPS)
                 .group(CREATION_DATE).dynamic(80, DAY, true)
                 .column(CREATION_DATE, "Creation date")
-                .column(EXPECTED_AMOUNT, SUM, "Amount")
-                .title("Expected pipeline")
+                .column(EXPECTED_AMOUNT, SUM).format(AppConstants.INSTANCE.sales_bydate_area_column1(), "$ #,###")
+                .title(AppConstants.INSTANCE.sales_bydate_area_title())
                 .titleVisible(true)
                 .width(600).height(200)
                 .margins(10, 80, 80, 100)
@@ -95,8 +113,8 @@ public class SalesExpectedByDate extends Composite {
                 .dataset(SALES_OPPS)
                 .group(CREATION_DATE).dynamic(YEAR, true)
                 .column(CREATION_DATE, "Year")
-                .column(COUNT, "Occurrences")
-                .title("Year")
+                .column(COUNT, "#occs").format(AppConstants.INSTANCE.sales_bydate_pie_years_column1(), "#,###")
+                .title(AppConstants.INSTANCE.sales_bydate_pie_years_title())
                 .titleVisible(true)
                 .width(200).height(150)
                 .margins(0, 0, 0, 0)
@@ -108,8 +126,8 @@ public class SalesExpectedByDate extends Composite {
                 .dataset(SALES_OPPS)
                 .group(CREATION_DATE).fixed(QUARTER, true)
                 .column(CREATION_DATE, "Creation date")
-                .column(COUNT, "Occurrences")
-                .title("Quarter")
+                .column(COUNT, "#occs").format(AppConstants.INSTANCE.sales_bydate_pie_quarters_column1(), "#,###")
+                .title(AppConstants.INSTANCE.sales_bydate_pie_quarters_title())
                 .titleVisible(true)
                 .width(200).height(150)
                 .margins(0, 0, 0, 0)
@@ -121,8 +139,8 @@ public class SalesExpectedByDate extends Composite {
                 .dataset(SALES_OPPS)
                 .group(CREATION_DATE).fixed(DAY_OF_WEEK, true).firstDay(SUNDAY)
                 .column(CREATION_DATE, "Creation date")
-                .column(COUNT, "Occurrences")
-                .title("Day of week")
+                .column(COUNT, "#occs").format(AppConstants.INSTANCE.sales_bydate_bar_weekday_column1(), "#,###")
+                .title(AppConstants.INSTANCE.sales_bydate_bar_weekday_title())
                 .titleVisible(true)
                 .width(200).height(150)
                 .margins(0, 20, 80, 0)
@@ -133,71 +151,71 @@ public class SalesExpectedByDate extends Composite {
 
         pieChartByPipeline = DisplayerHelper.lookupDisplayer(
                 DisplayerSettingsFactory.newPieChartSettings()
-                .dataset(SALES_OPPS)
-                .group(PIPELINE)
-                .column(PIPELINE, "Pipeline")
-                .column(COUNT, "Number of opps")
-                .title("Pipeline")
-                .titleVisible(true)
-                .width(200).height(150)
-                .margins(0, 0, 0, 0)
-                .filterOn(false, true, true)
-                .buildSettings());
+                        .dataset(SALES_OPPS)
+                        .group(PIPELINE)
+                        .column(PIPELINE, "Pipeline")
+                        .column(COUNT, "#opps").format(AppConstants.INSTANCE.sales_bydate_pie_pipe_column1(), "#,###")
+                        .title(AppConstants.INSTANCE.sales_bydate_pie_pipe_title())
+                        .titleVisible(true)
+                        .width(200).height(150)
+                        .margins(0, 0, 0, 0)
+                        .filterOn(false, true, true)
+                        .buildSettings());
 
         tableAll = DisplayerHelper.lookupDisplayer(
                 DisplayerSettingsFactory.newTableSettings()
-                .dataset(SALES_OPPS)
-                .title("List of Opportunities")
-                .titleVisible(true)
-                .tablePageSize(5)
-                .tableOrderEnabled(true)
-                .tableOrderDefault(AMOUNT, DESCENDING)
-                .column(COUNTRY, "Country")
-                .column(CUSTOMER, "Customer")
-                .column(PRODUCT, "Product")
-                .column(SALES_PERSON, "Salesman")
-                .column(STATUS, "Status")
-                .column(AMOUNT, "Amount")
-                .column(EXPECTED_AMOUNT, "Expected")
-                .column(CREATION_DATE, "Creation")
-                .column(CLOSING_DATE, "Closing")
-                .filterOn(false, true, true)
-                .buildSettings());
+                        .dataset(SALES_OPPS)
+                        .title(AppConstants.INSTANCE.sales_bydate_title())
+                        .titleVisible(true)
+                        .tablePageSize(5)
+                        .tableOrderEnabled(true)
+                        .tableOrderDefault(AMOUNT, DESCENDING)
+                        .column(COUNTRY, AppConstants.INSTANCE.sales_bydate_table_column1())
+                        .column(CUSTOMER, AppConstants.INSTANCE.sales_bydate_table_column2())
+                        .column(PRODUCT, AppConstants.INSTANCE.sales_bydate_table_column3())
+                        .column(SALES_PERSON, AppConstants.INSTANCE.sales_bydate_table_column4())
+                        .column(STATUS, AppConstants.INSTANCE.sales_bydate_table_column5())
+                        .column(AMOUNT).format(AppConstants.INSTANCE.sales_bydate_table_column6(), "$ #,###")
+                        .column(EXPECTED_AMOUNT).format(AppConstants.INSTANCE.sales_bydate_table_column7(), "$ #,###")
+                        .column(CREATION_DATE).format(AppConstants.INSTANCE.sales_bydate_table_column8(), "MMM dd, yyyy")
+                        .column(CLOSING_DATE).format(AppConstants.INSTANCE.sales_bydate_table_column9(), "MMM dd, yyyy")
+                        .filterOn(false, true, true)
+                        .buildSettings());
 
         // Create the selectors
 
         countrySelector = DisplayerHelper.lookupDisplayer(
                 DisplayerSettingsFactory.newSelectorSettings()
-                .dataset(SALES_OPPS)
-                .group(COUNTRY)
-                .column(COUNTRY, "Country")
-                .column(COUNT, "#Opps")
-                .column(AMOUNT, SUM, "Total")
-                .sort(COUNTRY, ASCENDING)
-                .filterOn(false, true, true)
-                .buildSettings());
+                        .dataset(SALES_OPPS)
+                        .group(COUNTRY)
+                        .column(COUNTRY, "Country")
+                        .column(COUNT, "#Opps").format("#,###")
+                        .column(AMOUNT, SUM).format(AppConstants.INSTANCE.sales_bydate_selector_total(), "$ #,##0.00")
+                        .sort(COUNTRY, ASCENDING)
+                        .filterOn(false, true, true)
+                        .buildSettings());
 
         salesmanSelector = DisplayerHelper.lookupDisplayer(
                 DisplayerSettingsFactory.newSelectorSettings()
-                .dataset(SALES_OPPS)
-                .group(SALES_PERSON)
-                .column(SALES_PERSON, "Employee")
-                .column(COUNT, "#Opps")
-                .column(AMOUNT, SUM, "Total")
-                .sort(SALES_PERSON, ASCENDING)
-                .filterOn(false, true, true)
-                .buildSettings());
+                        .dataset(SALES_OPPS)
+                        .group(SALES_PERSON)
+                        .column(SALES_PERSON, "Employee")
+                        .column(COUNT, "#Opps").format("#,###")
+                        .column(AMOUNT, SUM).format(AppConstants.INSTANCE.sales_bydate_selector_total(), "$ #,##0.00")
+                        .sort(SALES_PERSON, ASCENDING)
+                        .filterOn(false, true, true)
+                        .buildSettings());
 
         customerSelector = DisplayerHelper.lookupDisplayer(
                 DisplayerSettingsFactory.newSelectorSettings()
-                .dataset(SALES_OPPS)
-                .group(CUSTOMER)
-                .column(CUSTOMER, "Customer")
-                .column(COUNT, "#Opps")
-                .column(AMOUNT, SUM, "Total")
-                .sort(CUSTOMER, ASCENDING)
-                .filterOn(false, true, true)
-                .buildSettings());
+                        .dataset(SALES_OPPS)
+                        .group(CUSTOMER)
+                        .column(CUSTOMER, "Customer")
+                        .column(COUNT, "#Opps").format("#,###")
+                        .column(AMOUNT, SUM).format(AppConstants.INSTANCE.sales_bydate_selector_total(), "$ #,##0.00")
+                        .sort(CUSTOMER, ASCENDING)
+                        .filterOn(false, true, true)
+                        .buildSettings());
 
         // Make the displayers interact among them
         displayerCoordinator.addDisplayer(areaChartByDate);
@@ -215,9 +233,5 @@ public class SalesExpectedByDate extends Composite {
 
         // Draw the charts
         displayerCoordinator.drawAll();
-    }
-
-    public void redrawAll() {
-        displayerCoordinator.redrawAll();
     }
 }

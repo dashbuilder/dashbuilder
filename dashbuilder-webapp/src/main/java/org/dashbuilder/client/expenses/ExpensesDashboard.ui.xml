@@ -4,23 +4,25 @@
              xmlns:b="urn:import:com.github.gwtbootstrap.client.ui"
              xmlns:my="urn:import:org.dashbuilder.displayer.client">
 
+  <ui:with field="i18n" type="org.dashbuilder.client.resources.i18n.AppConstants"/>
+
   <g:VerticalPanel spacing="10">
     <g:HorizontalPanel spacing="10">
       <my:Displayer ui:field="pieByOffice"/>
       <my:Displayer ui:field="barByDepartment"/>
     </g:HorizontalPanel>
     <b:TabPanel>
-      <b:Tab heading="Expenses evolution">
+      <b:Tab heading="{i18n.expensesdb_tab_exp_evolution}">
         <g:FlowPanel width="550px" height="300px">
           <my:Displayer ui:field="lineByDate"/>
         </g:FlowPanel>
       </b:Tab>
-      <b:Tab heading="By employee">
+      <b:Tab heading="{i18n.expensesdb_tab_by_employee}">
         <g:FlowPanel width="650px" height="300px">
           <my:Displayer ui:field="bubbleByEmployee"/>
         </g:FlowPanel>
       </b:Tab>
-      <b:Tab heading="All expenses" active="true">
+      <b:Tab heading="{i18n.expensesdb_tab_all_exp}" active="true">
         <g:FlowPanel>
           <my:Displayer ui:field="tableAll"/>
         </g:FlowPanel>

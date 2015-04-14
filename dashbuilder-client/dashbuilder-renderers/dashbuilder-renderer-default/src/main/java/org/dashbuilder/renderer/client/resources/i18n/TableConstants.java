@@ -23,8 +23,13 @@ public interface TableConstants extends Messages {
 
     public static final TableConstants INSTANCE = GWT.create( TableConstants.class );
 
-    public String tableDisplayer_initializing();
+    String tableDisplayer_initializing();
 
-    public String tableDisplayer_noDataAvailable();
+    String tableDisplayer_noDataAvailable();
 
+    String tableDisplayer_groupsTitle();
+
+    String tableDisplayer_columnsTitle();
+
+    String tableDisplayer_reset();
 }

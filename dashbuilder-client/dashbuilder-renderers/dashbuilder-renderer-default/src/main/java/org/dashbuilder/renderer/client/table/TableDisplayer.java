@@ -43,6 +43,7 @@ import org.dashbuilder.common.client.StringUtils;
 import org.dashbuilder.dataset.DataSetLookupConstraints;
 import org.dashbuilder.dataset.client.DataSetReadyCallback;
 import org.dashbuilder.dataset.group.Interval;
+import org.dashbuilder.displayer.ColumnSettings;
 import org.dashbuilder.displayer.DisplayerAttributeDef;
 import org.dashbuilder.displayer.DisplayerAttributeGroupDef;
 import org.dashbuilder.displayer.DisplayerConstraints;
@@ -51,6 +52,7 @@ import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.dataset.DataSet;
 
 import org.dashbuilder.dataset.sort.SortOrder;
+import org.dashbuilder.renderer.client.resources.i18n.CommonConstants;
 import org.dashbuilder.renderer.client.resources.i18n.TableConstants;
 
 import org.uberfire.ext.widgets.common.client.tables.PagedTable;
@@ -65,8 +67,6 @@ public class TableDisplayer extends AbstractDisplayer {
     protected String lastOrderedColumn = null;
     protected SortOrder lastSortOrder = null;
 
-    protected boolean drawn = false;
-
     protected FlowPanel panel = new FlowPanel();
     protected Label label = new Label();
 
@@ -80,13 +80,11 @@ public class TableDisplayer extends AbstractDisplayer {
     }
 
     public void draw() {
-        if ( !drawn ) {
-            drawn = true;
-
+        if (!isDrawn()) {
             if ( displayerSettings == null ) {
-                displayMessage( "ERROR: DisplayerSettings property not set" );
+                displayMessage( CommonConstants.INSTANCE.error() + CommonConstants.INSTANCE.error_settings_unset());
             } else if ( dataSetHandler == null ) {
-                displayMessage( "ERROR: DataSetHandler property not set" );
+                displayMessage(CommonConstants.INSTANCE.error() + CommonConstants.INSTANCE.error_handler_unset());
             } else {
                 try {
                     String initMsg = TableConstants.INSTANCE.tableDisplayer_initializing();
@@ -114,11 +112,11 @@ public class TableDisplayer extends AbstractDisplayer {
                             afterDraw();
                         }
                         public void notFound() {
-                            displayMessage( "ERROR: Data set not found." );
+                            displayMessage(CommonConstants.INSTANCE.error() + CommonConstants.INSTANCE.error_dataset_notfound());
                         }
                     });
                 } catch ( Exception e ) {
-                    displayMessage( "ERROR: " + e.getMessage() );
+                    displayMessage(CommonConstants.INSTANCE.error() + e.getMessage());
                 }
             }
         }
@@ -143,7 +141,7 @@ public class TableDisplayer extends AbstractDisplayer {
                 afterRedraw();
             }
             public void notFound() {
-                displayMessage( "ERROR: Data set not found." );
+                displayMessage(CommonConstants.INSTANCE.error() + CommonConstants.INSTANCE.error_dataset_notfound());
             }
         } );
     }
@@ -175,16 +173,16 @@ public class TableDisplayer extends AbstractDisplayer {
                 .setMaxColumns(-1)
                 .setMinColumns(1)
                 .setExtraColumnsAllowed(true)
-                .setGroupsTitle("Rows")
-                .setColumnsTitle("Columns");
+                .setGroupsTitle(TableConstants.INSTANCE.tableDisplayer_groupsTitle())
+                .setColumnsTitle(TableConstants.INSTANCE.tableDisplayer_columnsTitle());
 
         return new DisplayerConstraints(lookupConstraints)
                    .supportsAttribute( DisplayerAttributeDef.TYPE )
                    .supportsAttribute( DisplayerAttributeDef.RENDERER )
-                   .supportsAttribute( DisplayerAttributeDef.COLUMNS )
-                   .supportsAttribute( DisplayerAttributeGroupDef.FILTER_GROUP)
+                   .supportsAttribute( DisplayerAttributeGroupDef.COLUMNS_GROUP )
+                   .supportsAttribute( DisplayerAttributeGroupDef.FILTER_GROUP )
                    .supportsAttribute( DisplayerAttributeGroupDef.REFRESH_GROUP )
-                   .supportsAttribute( DisplayerAttributeGroupDef.TITLE_GROUP)
+                   .supportsAttribute( DisplayerAttributeGroupDef.GENERAL_GROUP)
                    .supportsAttribute( DisplayerAttributeGroupDef.TABLE_GROUP );
     }
 
@@ -206,7 +204,7 @@ public class TableDisplayer extends AbstractDisplayer {
             // Get the sort settings
             if (lastOrderedColumn == null) {
                 String defaultSortColumn = displayerSettings.getTableDefaultSortColumnId();
-                if (defaultSortColumn != null && !"".equals( defaultSortColumn)) {
+                if (!StringUtils.isBlank(defaultSortColumn)) {
                     lastOrderedColumn = defaultSortColumn;
                     lastSortOrder = displayerSettings.getTableDefaultSortOrder();
                 }
@@ -233,7 +231,7 @@ public class TableDisplayer extends AbstractDisplayer {
                     }
             );
         } catch ( Exception e ) {
-            displayMessage("ERROR: " + e.getMessage());
+            displayMessage(CommonConstants.INSTANCE.error() + e.getMessage());
         }
     }
 
@@ -260,7 +258,8 @@ public class TableDisplayer extends AbstractDisplayer {
         List<DataColumn> dataColumns = dataSet.getColumns();
         for ( int i = 0; i < dataColumns.size(); i++ ) {
             DataColumn dataColumn = dataColumns.get(i);
-            String columnName = dataColumn.getName();
+            ColumnSettings columnSettings = displayerSettings.getColumnSettings(dataColumn);
+            String columnName = columnSettings.getColumnName();
 
             Column<Integer, ?> column = createColumn( dataColumn, i );
             if ( column != null ) {
@@ -332,7 +331,7 @@ public class TableDisplayer extends AbstractDisplayer {
             }
         }
 
-        Anchor anchor = new Anchor("reset");
+        Anchor anchor = new Anchor(TableConstants.INSTANCE.tableDisplayer_reset());
         panel.add(anchor);
         anchor.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
@@ -436,7 +435,7 @@ public class TableDisplayer extends AbstractDisplayer {
                                 updateRowData(lastOffset, rows);
                             }
                             public void notFound() {
-                                displayMessage("ERROR: Data set not found.");
+                                displayMessage(CommonConstants.INSTANCE.error() + CommonConstants.INSTANCE.error_dataset_notfound());
                             }
                         }
                 );

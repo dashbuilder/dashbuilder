@@ -32,6 +32,7 @@ import org.dashbuilder.dataset.DataSetLookupConstraints;
 import org.dashbuilder.displayer.DisplayerAttributeDef;
 import org.dashbuilder.displayer.DisplayerAttributeGroupDef;
 import org.dashbuilder.displayer.DisplayerConstraints;
+import org.dashbuilder.renderer.google.client.resources.i18n.GoogleDisplayerConstants;
 
 public class GoogleMapDisplayer extends GoogleChartDisplayer {
 
@@ -88,19 +89,19 @@ public class GoogleMapDisplayer extends GoogleChartDisplayer {
                 .setMinColumns(2)
                 .setMaxColumns(3)
                 .setExtraColumnsAllowed(true)
-                .setGroupsTitle("Locations")
-                .setColumnsTitle("Series")
+                .setGroupsTitle(GoogleDisplayerConstants.INSTANCE.common_Locations())
+                .setColumnsTitle(GoogleDisplayerConstants.INSTANCE.common_Series())
                 .setColumnTypes(new ColumnType[] {
                         ColumnType.LABEL,
                         ColumnType.NUMBER});
 
         return new DisplayerConstraints(lookupConstraints)
-                   .supportsAttribute( DisplayerAttributeDef.TYPE )
+                   .supportsAttribute(DisplayerAttributeDef.TYPE)
                    .supportsAttribute(DisplayerAttributeDef.RENDERER)
-                   .supportsAttribute( DisplayerAttributeDef.COLUMNS )
+                   .supportsAttribute(DisplayerAttributeGroupDef.COLUMNS_GROUP)
                    .supportsAttribute( DisplayerAttributeGroupDef.FILTER_GROUP )
                    .supportsAttribute( DisplayerAttributeGroupDef.REFRESH_GROUP )
-                   .supportsAttribute( DisplayerAttributeGroupDef.TITLE_GROUP)
+                   .supportsAttribute( DisplayerAttributeGroupDef.GENERAL_GROUP)
                    .supportsAttribute( DisplayerAttributeDef.CHART_WIDTH )
                    .supportsAttribute( DisplayerAttributeDef.CHART_HEIGHT )
                    .supportsAttribute( DisplayerAttributeGroupDef.CHART_MARGIN_GROUP );

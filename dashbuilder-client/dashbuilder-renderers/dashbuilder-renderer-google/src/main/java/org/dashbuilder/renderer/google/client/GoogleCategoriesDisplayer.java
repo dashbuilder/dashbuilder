@@ -40,20 +40,36 @@ import org.dashbuilder.renderer.google.client.resources.i18n.GoogleDisplayerCons
 
 public abstract class GoogleCategoriesDisplayer extends GoogleChartDisplayer {
 
-    public static final String[] COLOR_ARRAY = new String[] {"aqua", "red", "orange", "brown", "coral", "blue", "fuchsia", "gold",
-            "green", "lime", "magenta", "pink", "silver", "yellow"};
+    public static final String[] COLOR_ARRAY = new String[] {
+            GoogleDisplayerConstants.INSTANCE.googleCategoriesDisplayer_color_blue(),
+            GoogleDisplayerConstants.INSTANCE.googleCategoriesDisplayer_color_red(),
+            GoogleDisplayerConstants.INSTANCE.googleCategoriesDisplayer_color_orange(),
+            GoogleDisplayerConstants.INSTANCE.googleCategoriesDisplayer_color_brown(),
+            GoogleDisplayerConstants.INSTANCE.googleCategoriesDisplayer_color_coral(),
+            GoogleDisplayerConstants.INSTANCE.googleCategoriesDisplayer_color_aqua(),
+            GoogleDisplayerConstants.INSTANCE.googleCategoriesDisplayer_color_fuchsia(),
+            GoogleDisplayerConstants.INSTANCE.googleCategoriesDisplayer_color_gold(),
+            GoogleDisplayerConstants.INSTANCE.googleCategoriesDisplayer_color_green(),
+            GoogleDisplayerConstants.INSTANCE.googleCategoriesDisplayer_color_lime(),
+            GoogleDisplayerConstants.INSTANCE.googleCategoriesDisplayer_color_magenta(),
+            GoogleDisplayerConstants.INSTANCE.googleCategoriesDisplayer_color_pink(),
+            GoogleDisplayerConstants.INSTANCE.googleCategoriesDisplayer_color_silver(),
+            GoogleDisplayerConstants.INSTANCE.googleCategoriesDisplayer_color_yellow() };
 
-    public static final String COLOR_NOT_SELECTED = "grey";
+    public static final String COLOR_NOT_SELECTED = GoogleDisplayerConstants.INSTANCE.googleCategoriesDisplayer_color_grey();
 
     public String[] createColorArray(DataTable table) {
         String[] colorArray = new String[table.getNumberOfRows()];
         for (int i = 0, j = 0; i < table.getNumberOfRows(); i++, j++) {
             if (j >= COLOR_ARRAY.length) j = 0;
+            colorArray[i] = COLOR_ARRAY[j];
+
             List<Integer> selectedIdxs = filterIndexes(googleTable.getColumnId(0));
-            if (selectedIdxs != null && !selectedIdxs.isEmpty() && !selectedIdxs.contains(i)) {
+            if (!displayerSettings.isFilterSelfApplyEnabled()
+                    && selectedIdxs != null
+                    && !selectedIdxs.isEmpty() && !selectedIdxs.contains(i)) {
+
                 colorArray[i] = COLOR_NOT_SELECTED;
-            } else {
-                colorArray[i] = COLOR_ARRAY[j];
             }
         }
         return colorArray;
@@ -72,8 +88,11 @@ public abstract class GoogleCategoriesDisplayer extends GoogleChartDisplayer {
                     Integer maxSelections = displayerSettings.isFilterSelfApplyEnabled() ? null : googleTable.getNumberOfRows();
                     filterUpdate(googleTable.getColumnId(0), row, maxSelections);
                 }
-                // Redraw the char in order to reflect the current selection
-                updateVisualization();
+                // Update the chart view in order to reflect the current selection
+                // (only if not has already been redrawn in the previous filterUpdate() call)
+                if (!displayerSettings.isFilterSelfApplyEnabled()) {
+                    updateVisualization();
+                }
             }
         };
     }

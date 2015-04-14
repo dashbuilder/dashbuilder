@@ -57,7 +57,7 @@ public abstract class GoogleChartDisplayer extends GoogleDisplayer {
     }
 
     protected Widget createNoDataMsgPanel() {
-        return new Label("NO DATA");
+        return new Label(GoogleDisplayerConstants.INSTANCE.common_noData());
     }
 
     protected Widget createCurrentSelectionWidget() {
@@ -83,7 +83,12 @@ public abstract class GoogleChartDisplayer extends GoogleDisplayer {
         anchor.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
                 filterReset();
-                updateVisualization();
+
+                // Update the chart view in order to reflect the current selection
+                // (only if not has already been redrawn in the previous filterUpdate() call)
+                if (!displayerSettings.isFilterSelfApplyEnabled()) {
+                    updateVisualization();
+                }
             }
         });
         return panel;

@@ -26,6 +26,7 @@ import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetMetadata;
 import org.dashbuilder.dataset.def.DataSetDef;
 import org.hibernate.validator.constraints.NotEmpty;
+import org.dashbuilder.dataset.group.GroupFunction;
 import org.jboss.errai.common.client.api.annotations.Portable;
 
 import javax.validation.constraints.NotNull;
@@ -87,13 +88,10 @@ public class DataSetImpl implements DataSet {
     public DataColumn getColumnById(String id) {
         for (DataColumn column : columns) {
             if (column.getId().equals(id)) return column;
-        }
-        return null;
-    }
-
-    public DataColumn getColumnByName(String name) {
-        for (DataColumn column : columns) {
-            if (column.getName() != null && column.getName().equals(name)) return column;
+            GroupFunction gf = column.getGroupFunction();
+            if (gf != null && gf.getSourceId() != null && gf.getSourceId().equals(id)) {
+                return column;
+            }
         }
         return null;
     }
@@ -123,19 +121,10 @@ public class DataSetImpl implements DataSet {
         return addColumn(id, type, null);
     }
 
-    public DataSet addColumn(String id, String name, ColumnType type) {
-        return addColumn(id, name, type, null);
-    }
-
     public DataSet addColumn(String id, ColumnType type, List values) {
-        return addColumn(id, id, type, values);
-    }
-
-    public DataSet addColumn(String id, String name, ColumnType type, List values) {
         DataColumnImpl c = new DataColumnImpl();
         c.setDataSet(this);
         c.setId(id);
-        c.setName(name);
         c.setColumnType(type);
         if (values != null) c.setValues(values);
         columns.add(c);

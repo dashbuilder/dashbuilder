@@ -20,6 +20,7 @@ import java.util.Map;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
+import org.dashbuilder.client.resources.i18n.AppConstants;
 import org.dashbuilder.displayer.DisplayerSettings;
 import org.dashbuilder.displayer.client.json.DisplayerSettingsJSONMarshaller;
 import org.uberfire.client.annotations.Perspective;
@@ -47,7 +48,7 @@ public class SalesReportsPerspective {
     public PerspectiveDefinition buildPerspective() {
 
         PerspectiveDefinition perspective = new PerspectiveDefinitionImpl(MultiTabWorkbenchPanelPresenter.class.getName());
-        perspective.setName("Sales reports");
+        perspective.setName(AppConstants.INSTANCE.salesreportspersp_salesreports());
 
         perspective.getRoot().addPart(new PartDefinitionImpl(createPlaceRequest(OPPS_ALLOPPS_LISTING)));
         perspective.getRoot().addPart(new PartDefinitionImpl(createPlaceRequest(OPPS_COUNTRY_SUMMARY)));

@@ -20,6 +20,8 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
+import org.dashbuilder.client.gallery.GalleryWidget;
+import org.dashbuilder.client.resources.i18n.AppConstants;
 import org.dashbuilder.displayer.DisplayerSettingsFactory;
 import org.dashbuilder.displayer.client.Displayer;
 import org.dashbuilder.displayer.client.DisplayerCoordinator;
@@ -34,7 +36,7 @@ import static org.dashbuilder.dataset.group.AggregateFunctionType.*;
  * A composite widget that represents an entire dashboard sample composed using an UI binder template.
  * <p>The dashboard itself is composed by a set of Displayer instances.</p>
  */
-public class SalesTableReports extends Composite {
+public class SalesTableReports extends Composite implements GalleryWidget {
 
     interface SalesDashboardBinder extends UiBinder<Widget, SalesTableReports>{}
     private static final SalesDashboardBinder uiBinder = GWT.create(SalesDashboardBinder.class);
@@ -56,8 +58,24 @@ public class SalesTableReports extends Composite {
 
     DisplayerCoordinator displayerCoordinator = new DisplayerCoordinator();
 
+    @Override
     public String getTitle() {
-        return "Sales reports";
+        return AppConstants.INSTANCE.sales_tablereports_title();
+    }
+
+    @Override
+    public void onClose() {
+        displayerCoordinator.closeAll();
+    }
+
+    @Override
+    public boolean feedsFrom(String dataSetId) {
+        return SALES_OPPS.equals(dataSetId);
+    }
+
+    @Override
+    public void redrawAll() {
+        displayerCoordinator.redrawAll();
     }
 
     public SalesTableReports() {
@@ -67,20 +85,20 @@ public class SalesTableReports extends Composite {
         tableAll = DisplayerHelper.lookupDisplayer(
                 DisplayerSettingsFactory.newTableSettings()
                 .dataset(SALES_OPPS)
-                .title("List of Opportunities")
+                .title(AppConstants.INSTANCE.sales_tablereports_all_title())
                 .titleVisible(true)
                 .tablePageSize(8)
                 .tableOrderEnabled(true)
                 .tableOrderDefault(AMOUNT, DESCENDING)
-                .column(COUNTRY, "Country")
-                .column(CUSTOMER, "Customer")
-                .column(PRODUCT, "Product")
-                .column(SALES_PERSON, "Salesman")
-                .column(STATUS, "Status")
-                .column(CREATION_DATE, "Creation")
-                .column(EXPECTED_AMOUNT, "Expected")
-                .column(CLOSING_DATE, "Closing")
-                .column(AMOUNT, "Amount")
+                .column(COUNTRY, AppConstants.INSTANCE.sales_tablereports_all_column1())
+                .column(CUSTOMER, AppConstants.INSTANCE.sales_tablereports_all_column2())
+                .column(PRODUCT, AppConstants.INSTANCE.sales_tablereports_all_column3())
+                .column(SALES_PERSON, AppConstants.INSTANCE.sales_tablereports_all_column4())
+                .column(STATUS, AppConstants.INSTANCE.sales_tablereports_all_column5())
+                .column(CREATION_DATE, AppConstants.INSTANCE.sales_tablereports_all_column6())
+                .column(EXPECTED_AMOUNT, AppConstants.INSTANCE.sales_tablereports_all_column7())
+                .column(CLOSING_DATE, AppConstants.INSTANCE.sales_tablereports_all_column8())
+                .column(AMOUNT, AppConstants.INSTANCE.sales_tablereports_all_column9())
                 .filterOn(false, true, true)
                 .buildSettings());
 
@@ -88,13 +106,13 @@ public class SalesTableReports extends Composite {
                 DisplayerSettingsFactory.newTableSettings()
                 .dataset(SALES_OPPS)
                 .group(COUNTRY)
-                .column(COUNTRY, "Country")
-                .column(COUNT, "#Opps")
-                .column(AMOUNT, MIN, "Min")
-                .column(AMOUNT, MAX, "Max")
-                .column(AMOUNT, AVERAGE, "Average")
-                .column(AMOUNT, SUM, "Total")
-                .title("Country summary")
+                .column(COUNTRY, AppConstants.INSTANCE.sales_tablereports_bycountry_column1())
+                .column(COUNT, AppConstants.INSTANCE.sales_tablereports_bycountry_column2())
+                .column(AMOUNT, MIN, AppConstants.INSTANCE.sales_tablereports_bycountry_column3())
+                .column(AMOUNT, MAX, AppConstants.INSTANCE.sales_tablereports_bycountry_column4())
+                .column(AMOUNT, AVERAGE, AppConstants.INSTANCE.sales_tablereports_bycountry_column5())
+                .column(AMOUNT, SUM, AppConstants.INSTANCE.sales_tablereports_bycountry_column6())
+                .title(AppConstants.INSTANCE.sales_tablereports_bycountry_title())
                 .titleVisible(false)
                 .tablePageSize(8)
                 .tableOrderEnabled(true)
@@ -106,13 +124,13 @@ public class SalesTableReports extends Composite {
                 DisplayerSettingsFactory.newTableSettings()
                 .dataset(SALES_OPPS)
                 .group(PRODUCT)
-                .column(PRODUCT, "Product")
-                .column(COUNT, "#Opps")
-                .column(AMOUNT, MIN, "Min")
-                .column(AMOUNT, MAX, "Max")
-                .column(AMOUNT, AVERAGE, "Average")
-                .column(AMOUNT, SUM, "Total")
-                .title("Product summary")
+                .column(PRODUCT, AppConstants.INSTANCE.sales_tablereports_byproduct_column1())
+                .column(COUNT, AppConstants.INSTANCE.sales_tablereports_byproduct_column2())
+                .column(AMOUNT, MIN, AppConstants.INSTANCE.sales_tablereports_byproduct_column3())
+                .column(AMOUNT, MAX, AppConstants.INSTANCE.sales_tablereports_byproduct_column4())
+                .column(AMOUNT, AVERAGE, AppConstants.INSTANCE.sales_tablereports_byproduct_column5())
+                .column(AMOUNT, SUM, AppConstants.INSTANCE.sales_tablereports_byproduct_column6())
+                .title(AppConstants.INSTANCE.sales_tablereports_byproduct_title())
                 .titleVisible(false)
                 .tablePageSize(8)
                 .tableOrderEnabled(true)
@@ -124,13 +142,13 @@ public class SalesTableReports extends Composite {
                 DisplayerSettingsFactory.newTableSettings()
                 .dataset(SALES_OPPS)
                 .group(SALES_PERSON)
-                .column(SALES_PERSON, "Sales person")
-                .column(COUNT, "#Opps")
-                .column(AMOUNT, MIN, "Min")
-                .column(AMOUNT, MAX, "Max")
-                .column(AMOUNT, AVERAGE, "Average")
-                .column(AMOUNT, SUM, "Total")
-                .title("Sales by person")
+                .column(SALES_PERSON, AppConstants.INSTANCE.sales_tablereports_bysalesman_column1())
+                .column(COUNT, AppConstants.INSTANCE.sales_tablereports_bysalesman_column2())
+                .column(AMOUNT, MIN, AppConstants.INSTANCE.sales_tablereports_bysalesman_column3())
+                .column(AMOUNT, MAX, AppConstants.INSTANCE.sales_tablereports_bysalesman_column4())
+                .column(AMOUNT, AVERAGE, AppConstants.INSTANCE.sales_tablereports_bysalesman_column5())
+                .column(AMOUNT, SUM, AppConstants.INSTANCE.sales_tablereports_bysalesman_column6())
+                .title(AppConstants.INSTANCE.sales_tablereports_bysalesman_title())
                 .titleVisible(false)
                 .tablePageSize(8)
                 .tableOrderEnabled(true)
@@ -142,13 +160,13 @@ public class SalesTableReports extends Composite {
                 DisplayerSettingsFactory.newTableSettings()
                 .dataset(SALES_OPPS)
                 .group(CREATION_DATE).dynamic(DateIntervalType.YEAR, true)
-                .column(CREATION_DATE, "Creation date")
-                .column(COUNT, "#Opps")
-                .column(AMOUNT, MIN, "Min")
-                .column(AMOUNT, MAX, "Max")
-                .column(AMOUNT, AVERAGE, "Average")
-                .column(AMOUNT, SUM, "Total")
-                .title("Year summary")
+                .column(CREATION_DATE, AppConstants.INSTANCE.sales_tablereports_byyear_column1())
+                .column(COUNT, AppConstants.INSTANCE.sales_tablereports_byyear_column2())
+                .column(AMOUNT, MIN, AppConstants.INSTANCE.sales_tablereports_byyear_column3())
+                .column(AMOUNT, MAX, AppConstants.INSTANCE.sales_tablereports_byyear_column4())
+                .column(AMOUNT, AVERAGE, AppConstants.INSTANCE.sales_tablereports_byyear_column5())
+                .column(AMOUNT, SUM, AppConstants.INSTANCE.sales_tablereports_byyear_column6())
+                .title(AppConstants.INSTANCE.sales_tablereports_byyear_title())
                 .titleVisible(false)
                 .tablePageSize(8)
                 .tableOrderEnabled(true)
@@ -168,9 +186,5 @@ public class SalesTableReports extends Composite {
 
         // Draw the charts
         displayerCoordinator.drawAll();
-    }
-
-    public void redrawAll() {
-        displayerCoordinator.redrawAll();
     }
 }

@@ -57,12 +57,12 @@ public class DataSetGroup extends AbstractDataSetOp {
 
     public GroupFunction getGroupFunction(String columnId) {
         for (GroupFunction gf : groupFunctionList) {
-            if (columnId != null && !columnId.equals(gf.getColumnId())) {
+            if (columnId != null && columnId.equals(gf.getColumnId())) {
                 return gf;
             }
         }
         for (GroupFunction gf : groupFunctionList) {
-            if (columnId != null && !columnId.equals(gf.getSourceId())) {
+            if (columnId != null && columnId.equals(gf.getSourceId())) {
                 return gf;
             }
         }

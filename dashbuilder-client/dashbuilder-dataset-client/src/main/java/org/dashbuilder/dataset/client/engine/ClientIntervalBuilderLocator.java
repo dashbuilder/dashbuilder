@@ -19,6 +19,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import org.dashbuilder.dataset.ColumnType;
+import org.dashbuilder.dataset.client.resources.i18n.CommonConstants;
 import org.dashbuilder.dataset.engine.group.IntervalBuilder;
 import org.dashbuilder.dataset.engine.group.IntervalBuilderDynamicLabel;
 import org.dashbuilder.dataset.engine.group.IntervalBuilderFixedDate;
@@ -46,7 +47,7 @@ public class ClientIntervalBuilderLocator implements IntervalBuilderLocator {
             // TODO
         }
         if (ColumnType.TEXT.equals(columnType)) {
-            throw new IllegalArgumentException("TEXT columns do not support grouping.");
+            throw new IllegalArgumentException( CommonConstants.INSTANCE.exc_text_columns_no_grouping());
         }
         return null;
     }

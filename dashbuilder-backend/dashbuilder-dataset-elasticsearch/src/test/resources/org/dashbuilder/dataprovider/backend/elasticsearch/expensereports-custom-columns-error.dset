@@ -11,9 +11,9 @@
     "cacheEnabled": false,
     "cacheMaxRows": 1000,
     "columns": [
-            {"id": "id", "name": "id", "type": "number"},
-            {"id": "employee", "name": "author", "type": "label"},
-            {"id": "city", "name": "city", "type": "text"},
-            {"id": "amount", "name": "amount", "type": "number"},
+            {"id": "id", "type": "number"},
+            {"id": "employee", "type": "label"},
+            {"id": "city", "type": "text"},
+            {"id": "amount", "type": "number"}
         ]
 }

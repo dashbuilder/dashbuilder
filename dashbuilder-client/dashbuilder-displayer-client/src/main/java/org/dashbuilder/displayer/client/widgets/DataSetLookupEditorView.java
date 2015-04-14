@@ -40,6 +40,7 @@ import org.dashbuilder.dataset.DataSetLookupConstraints;
 import org.dashbuilder.dataset.def.DataSetDef;
 import org.dashbuilder.dataset.group.ColumnGroup;
 import org.dashbuilder.dataset.group.GroupFunction;
+import org.dashbuilder.displayer.client.resources.i18n.CommonConstants;
 import org.dashbuilder.displayer.client.widgets.filter.DataSetFilterEditor;
 import org.dashbuilder.displayer.client.widgets.group.ColumnFunctionEditor;
 import org.dashbuilder.displayer.client.widgets.group.DataSetGroupDateEditor;
@@ -143,7 +144,7 @@ public class DataSetLookupEditorView extends Composite
 
         int offset = 0;
         if (StringUtils.isBlank(selectedUUID)) {
-            dataSetListBox.addItem("- Select -");
+            dataSetListBox.addItem( CommonConstants.INSTANCE.common_dropdown_select());
             offset++;
         }
 
@@ -164,15 +165,15 @@ public class DataSetLookupEditorView extends Composite
     @Override
     public void errorDataSetNotFound(String dataSetUUID) {
         statusLabel.setVisible(true);
-        statusLabel.setText("Data set '" + dataSetUUID + "' not found");
-        statusLabel.setType(LabelType.WARNING);
+        statusLabel.setText( CommonConstants.INSTANCE.dataset_lookup_dataset_notfound(dataSetUUID));
+        statusLabel.setType( LabelType.WARNING );
     }
 
     @Override
     public void errorOnInit(Exception e) {
         statusLabel.setVisible(true);
-        statusLabel.setText("Initialization error");
-        statusLabel.setType(LabelType.WARNING);
+        statusLabel.setText( CommonConstants.INSTANCE.dataset_lookup_init_error());
+        statusLabel.setType( LabelType.WARNING );
         GWT.log(e.getMessage(), e);
     }
 
@@ -195,7 +196,7 @@ public class DataSetLookupEditorView extends Composite
     @UiHandler(value = "groupColumnListBox")
     public void onRowColumnChanged(ChangeEvent changeEvent) {
         String columnId = groupColumnListBox.getValue(groupColumnListBox.getSelectedIndex());
-        if ("- All - ".equals(columnId)) columnId = null;
+        if ( CommonConstants.INSTANCE.dataset_lookup_group_columns_all().equals( columnId )) columnId = null;
         presenter.changeGroupColumn(columnId);
 
         _updateColumnControls();
@@ -252,7 +253,7 @@ public class DataSetLookupEditorView extends Composite
 
             int offset = 0;
             if (!constraints.isGroupRequired()) {
-                groupColumnListBox.addItem("- All - ");
+                groupColumnListBox.addItem( CommonConstants.INSTANCE.dataset_lookup_group_columns_all());
                 offset++;
             }
             for (int i = 0; i < groupColumnIdxs.size(); i++) {
@@ -311,8 +312,7 @@ public class DataSetLookupEditorView extends Composite
                     columnTitle, functionsEnabled, canDelete, new ColumnFunctionEditor.Listener() {
 
                         public void columnChanged(ColumnFunctionEditor editor) {
-                            presenter.changeGroupFunction(groupFunction,
-                                    editor.getSourceId(), editor.getColumnId(), editor.getFunction());
+                            presenter.changeGroupFunction(groupFunction, editor.getSourceId(), editor.getFunction());
                             _updateColumnControls();
                         }
                         public void columnDeleted(ColumnFunctionEditor editor) {

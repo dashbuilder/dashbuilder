@@ -31,6 +31,7 @@ import org.dashbuilder.dataset.DataSetLookupConstraints;
 import org.dashbuilder.displayer.DisplayerAttributeDef;
 import org.dashbuilder.displayer.DisplayerAttributeGroupDef;
 import org.dashbuilder.displayer.DisplayerConstraints;
+import org.dashbuilder.renderer.google.client.resources.i18n.GoogleDisplayerConstants;
 
 public class GoogleAreaChartDisplayer extends GoogleCategoriesDisplayer {
 
@@ -54,8 +55,8 @@ public class GoogleAreaChartDisplayer extends GoogleCategoriesDisplayer {
                 .setMaxColumns(10)
                 .setExtraColumnsAllowed(true)
                 .setExtraColumnsType(ColumnType.NUMBER)
-                .setGroupsTitle("Categories")
-                .setColumnsTitle("Series")
+                .setGroupsTitle(GoogleDisplayerConstants.INSTANCE.common_Categories())
+                .setColumnsTitle(GoogleDisplayerConstants.INSTANCE.common_Series())
                 .setColumnTypes(new ColumnType[] {
                         ColumnType.LABEL,
                         ColumnType.NUMBER});
@@ -63,10 +64,10 @@ public class GoogleAreaChartDisplayer extends GoogleCategoriesDisplayer {
         return new DisplayerConstraints(lookupConstraints)
                 .supportsAttribute(DisplayerAttributeDef.TYPE)
                 .supportsAttribute(DisplayerAttributeDef.RENDERER)
-                .supportsAttribute(DisplayerAttributeDef.COLUMNS)
+                .supportsAttribute(DisplayerAttributeGroupDef.COLUMNS_GROUP)
                 .supportsAttribute( DisplayerAttributeGroupDef.FILTER_GROUP )
                 .supportsAttribute( DisplayerAttributeGroupDef.REFRESH_GROUP )
-                .supportsAttribute( DisplayerAttributeGroupDef.TITLE_GROUP)
+                .supportsAttribute( DisplayerAttributeGroupDef.GENERAL_GROUP)
                 .supportsAttribute( DisplayerAttributeDef.CHART_WIDTH )
                 .supportsAttribute( DisplayerAttributeDef.CHART_HEIGHT )
                 .supportsAttribute(DisplayerAttributeDef.CHART_BGCOLOR)
@@ -115,7 +116,7 @@ public class GoogleAreaChartDisplayer extends GoogleCategoriesDisplayer {
 
     private AreaChartOptions createOptions() {
         Animation anim = Animation.create();
-        anim.setDuration(500);
+        anim.setDuration(700);
         anim.setEasing(AnimationEasing.IN_AND_OUT);
 
         AreaChartOptions options = AreaChartOptions.create();

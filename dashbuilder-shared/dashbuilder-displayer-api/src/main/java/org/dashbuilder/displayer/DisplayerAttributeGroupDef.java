@@ -21,7 +21,9 @@ import java.util.Set;
 public class DisplayerAttributeGroupDef extends DisplayerAttributeDef {
 
     // ROOT-GROUPS
-    public static final DisplayerAttributeGroupDef TITLE_GROUP = new DisplayerAttributeGroupDef( "title" );
+    public static final DisplayerAttributeGroupDef GENERAL_GROUP = new DisplayerAttributeGroupDef( "general" );
+
+    public static final DisplayerAttributeGroupDef COLUMNS_GROUP = new DisplayerAttributeGroupDef( "columns" );
 
     public static final DisplayerAttributeGroupDef REFRESH_GROUP = new DisplayerAttributeGroupDef( "refresh" );
 

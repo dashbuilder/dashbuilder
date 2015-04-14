@@ -16,11 +16,12 @@
 package org.dashbuilder.client.gallery;
 
 import com.google.gwt.user.client.ui.IsWidget;
-import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.client.expenses.ExpenseConstants;
 import org.dashbuilder.client.expenses.ExpensesDashboard;
 import org.dashbuilder.client.metrics.AnalyticMetricsDashboard;
+import org.dashbuilder.client.metrics.ClusterMetricsDashboard;
 import org.dashbuilder.client.metrics.RealTimeMetricsDashboard;
+import org.dashbuilder.client.resources.i18n.AppConstants;
 import org.dashbuilder.client.sales.widgets.SalesDistributionByCountry;
 import org.dashbuilder.client.sales.widgets.SalesExpectedByDate;
 import org.dashbuilder.client.sales.widgets.SalesGoals;
@@ -34,6 +35,7 @@ import org.dashbuilder.shared.sales.SalesConstants;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
 import org.uberfire.client.annotations.WorkbenchPartView;
 import org.uberfire.client.annotations.WorkbenchScreen;
+import org.uberfire.lifecycle.OnClose;
 import org.uberfire.lifecycle.OnStartup;
 import org.uberfire.mvp.PlaceRequest;
 import org.uberfire.workbench.events.NotificationEvent;
@@ -50,14 +52,7 @@ import static org.uberfire.workbench.events.NotificationEvent.NotificationType.I
 @ApplicationScoped
 public class GalleryWidgetPresenter {
 
-    private Widget widget;
-    private SalesGoals salesGoalsWidget;
-    private SalesExpectedByDate salesByDateWidget;
-    private SalesDistributionByCountry salesByCountryWidget;
-    private SalesTableReports salesReportsWidget;
-    private ExpensesDashboard expensesDashboardWidget;
-    private RealTimeMetricsDashboard realTimeMetricsDashboard;
-    private AnalyticMetricsDashboard analyticMetricsDashboard;
+    private GalleryWidget widget;
 
     @Inject
     private Event<NotificationEvent> workbenchNotification;
@@ -78,36 +73,22 @@ public class GalleryWidgetPresenter {
         widget = getWidget(widgetId);
     }
 
-    private Widget getWidget(String widgetId) {
-        if ("salesGoal".equals(widgetId)) {
-            if (salesGoalsWidget == null) salesGoalsWidget = new SalesGoals();
-            return salesGoalsWidget;
-        }
-        if ("salesPipeline".equals(widgetId)) {
-            if (salesByDateWidget == null) salesByDateWidget = new SalesExpectedByDate();
-            return salesByDateWidget;
-        }
-        if ("salesPerCountry".equals(widgetId)) {
-            if (salesByCountryWidget == null) salesByCountryWidget = new SalesDistributionByCountry();
-            return salesByCountryWidget;
-        }
-        if ("salesReports".equals(widgetId)) {
-            if (salesReportsWidget == null) salesReportsWidget = new SalesTableReports();
-            return salesReportsWidget;
-        }
-        if ("expenseReports".equals(widgetId)) {
-            if (expensesDashboardWidget == null) expensesDashboardWidget = new ExpensesDashboard();
-            return expensesDashboardWidget;
-        }
-        if ("metrics_realtime".equals(widgetId)) {
-            if (realTimeMetricsDashboard == null) realTimeMetricsDashboard = new RealTimeMetricsDashboard(RealTimeMetricsDashboard.METRICS_DATASET_DEFAULT_SERVERS);
-            return realTimeMetricsDashboard;
-        }
-        if ("metrics_analytic".equals(widgetId)) {
-            if (analyticMetricsDashboard == null) analyticMetricsDashboard = new AnalyticMetricsDashboard();
-            return analyticMetricsDashboard;
-        }
-        throw new IllegalArgumentException("Unknown gallery widget: " + widgetId);
+    @OnClose
+    public void onClose() {
+        widget.onClose();
+    }
+
+    private GalleryWidget getWidget(String widgetId) {
+        if ("salesGoal".equals(widgetId)) return new SalesGoals();
+        if ("salesPipeline".equals(widgetId)) return new SalesExpectedByDate();
+        if ("salesPerCountry".equals(widgetId)) return new SalesDistributionByCountry();
+        if ("salesReports".equals(widgetId)) return new SalesTableReports();
+        if ("expenseReports".equals(widgetId)) return new ExpensesDashboard();
+        if ("clusterMetrics".equals(widgetId)) return new ClusterMetricsDashboard();
+        if ("metrics_realtime".equals(widgetId)) return new RealTimeMetricsDashboard(RealTimeMetricsDashboard.METRICS_DATASET_DEFAULT_SERVERS);
+        if ("metrics_analytic".equals(widgetId)) return new AnalyticMetricsDashboard();
+
+        throw new IllegalArgumentException(AppConstants.INSTANCE.gallerywidget_unknown() + widgetId);
     }
 
     // Catch some data set related events and display workbench notifications only and only if:
@@ -122,20 +103,8 @@ public class GalleryWidgetPresenter {
         TimeAmount timeFrame = def.getRefreshTimeAmount();
         boolean noRealTime = timeFrame == null || timeFrame.toMillis() > 60000;
 
-        if (SalesConstants.SALES_OPPS.equals(targetUUID)) {
-            if (!def.isRefreshAlways() || noRealTime) {
-                workbenchNotification.fire(new NotificationEvent("The sales data set has been modified. Refreshing the view ...", INFO));
-            }
-            if (salesGoalsWidget != null) salesGoalsWidget.redrawAll();
-            if (salesByCountryWidget != null) salesByCountryWidget.redrawAll();
-            if (salesByDateWidget != null) salesByDateWidget.redrawAll();
-            if (salesReportsWidget != null) salesReportsWidget.redrawAll();
-        }
-        if (ExpenseConstants.EXPENSES.equals(targetUUID)) {
-            if (!def.isRefreshAlways() || noRealTime) {
-                workbenchNotification.fire(new NotificationEvent("The expense reports data set has been modified. Refreshing the view...", INFO));
-            }
-            if (expensesDashboardWidget != null) expensesDashboardWidget.redrawAll();
+        if ((!def.isRefreshAlways() || noRealTime) && widget.feedsFrom(targetUUID)) {
+            workbenchNotification.fire(new NotificationEvent(AppConstants.INSTANCE.gallerywidget_dataset_modif(), INFO));
         }
     }
 
@@ -147,7 +116,7 @@ public class GalleryWidgetPresenter {
         DataSetDef def = metadata.getDefinition();
         TimeAmount timeFrame = def.getRefreshTimeAmount();
         if (timeFrame == null || timeFrame.toMillis() > 60000) {
-            workbenchNotification.fire(new NotificationEvent("Data set loaded from server [" + def.getProvider() + ", " + event.getDataSetMetadata().getEstimatedSize() + " Kb]", INFO));
+            workbenchNotification.fire(new NotificationEvent(AppConstants.INSTANCE.gallerywidget_dataset_loaded(def.getProvider().toString(), event.getDataSetMetadata().getEstimatedSize()), INFO));
         }
     }
 }

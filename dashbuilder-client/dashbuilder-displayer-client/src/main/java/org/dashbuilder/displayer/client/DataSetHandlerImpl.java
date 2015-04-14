@@ -15,7 +15,6 @@
  */
 package org.dashbuilder.displayer.client;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -36,10 +35,14 @@ import org.dashbuilder.dataset.engine.group.IntervalBuilderLocator;
 import org.dashbuilder.dataset.group.ColumnGroup;
 import org.dashbuilder.dataset.group.DataSetGroup;
 import org.dashbuilder.dataset.group.GroupFunction;
+import org.dashbuilder.dataset.group.GroupStrategy;
 import org.dashbuilder.dataset.group.Interval;
+import org.dashbuilder.dataset.sort.ColumnSort;
 import org.dashbuilder.dataset.sort.DataSetSort;
+import org.dashbuilder.dataset.sort.SortOrder;
+import org.dashbuilder.displayer.client.resources.i18n.CommonConstants;
 
-public class DataSetHandlerImpl implements DataSetHandler {
+    public class DataSetHandlerImpl implements DataSetHandler {
 
     protected DataSetClientServices dataSetLookupClient = DataSetClientServices.get();
     protected DataSetLookup lookupBase;
@@ -53,6 +56,11 @@ public class DataSetHandlerImpl implements DataSetHandler {
 
     public DataSet getLastDataSet() {
         return lastLookedUpDataSet;
+    }
+
+    @Override
+    public DataSetLookup getCurrentDataSetLookup() {
+        return lookupCurrent;
     }
 
     public void resetAllOperations() {
@@ -76,15 +84,21 @@ public class DataSetHandlerImpl implements DataSetHandler {
     }
 
     public DataSetGroup getGroupOperation(String columnId) {
-        int index = lookupCurrent.getLastGroupOpIndex(0, columnId, false);
-        if (index == -1) return null;
-        return lookupCurrent.getOperation(index);
+        String sourceId = _getSourceColumnId(columnId);
+        int index = lookupCurrent.getLastGroupOpIndex(0, sourceId, false);
+        if (index != -1) {
+            return (DataSetGroup) lookupCurrent.getOperation(index).cloneInstance();
+        }
+
+        DataSetGroup result = new DataSetGroup();
+        result.setColumnGroup(new ColumnGroup(sourceId, sourceId, GroupStrategy.DYNAMIC));
+        return result;
     }
 
     public boolean filter(DataSetGroup op) {
         ColumnGroup cg = op.getColumnGroup();
-        if (cg == null) throw new RuntimeException("Group ops requires to specify a pivot column.");
-        if (!op.isSelect()) throw new RuntimeException("Group intervals not specified");
+        if (cg == null) throw new RuntimeException(CommonConstants.INSTANCE.datasethandler_groupops_no_pivotcolumn());
+        if (!op.isSelect()) throw new RuntimeException(CommonConstants.INSTANCE.datasethandler_groupops_no_groupintervals());
 
         // Avoid duplicates
         for (DataSetGroup next : lookupCurrent.getOperationList(DataSetGroup.class)) {
@@ -94,7 +108,7 @@ public class DataSetHandlerImpl implements DataSetHandler {
         }
         // The interval selection op. must be added right before the first existing group op.
         DataSetGroup clone = op.cloneInstance();
-        clone.getGroupFunctions().clear();
+        //clone.getGroupFunctions().clear();
         int idx = lookupCurrent.getFirstGroupOpIndex(0, null, null);
         _filter(idx, clone, false);
         return true;
@@ -102,8 +116,8 @@ public class DataSetHandlerImpl implements DataSetHandler {
 
     public boolean drillDown(DataSetGroup op) {
         ColumnGroup cg = op.getColumnGroup();
-        if (cg == null) throw new RuntimeException("Group ops requires to specify a pivot column.");
-        if (!op.isSelect()) throw new RuntimeException("Group intervals not specified");
+        if (cg == null) throw new RuntimeException(CommonConstants.INSTANCE.datasethandler_groupops_no_pivotcolumn());
+        if (!op.isSelect()) throw new RuntimeException(CommonConstants.INSTANCE.datasethandler_groupops_no_groupintervals());
 
         // Avoid duplicates
         for (DataSetGroup next : lookupCurrent.getOperationList(DataSetGroup.class)) {
@@ -118,7 +132,7 @@ public class DataSetHandlerImpl implements DataSetHandler {
         // If the selection does not exists just add it.
         if (targetGroup == -1) {
             DataSetGroup clone = op.cloneInstance();
-            clone.getGroupFunctions().clear();
+            //clone.getGroupFunctions().clear();
             _filter(lastSelection, clone, true);
             return true;
         }
@@ -142,9 +156,12 @@ public class DataSetHandlerImpl implements DataSetHandler {
         return _unfilter(op, true);
     }
 
-    public void sort(DataSetSort op) {
+    public void sort(String columnId, SortOrder sortOrder) {
         unsort();
-        lookupCurrent.addOperation(op);
+        String sourceId = _getSourceColumnId(columnId);
+        DataSetSort sortOp = new DataSetSort();
+        sortOp.addSortColumn(new ColumnSort(sourceId, sortOrder));
+        lookupCurrent.addOperation(sortOp);
     }
 
     public boolean unsort() {
@@ -229,7 +246,7 @@ public class DataSetHandlerImpl implements DataSetHandler {
         GroupOpFilter groupOpFilter = new GroupOpFilter(op, true);
 
         op.setSelectedIntervalList(intervalList);
-        op.getGroupFunctions().clear();
+        //op.getGroupFunctions().clear();
 
         String columnId = op.getColumnGroup().getColumnId();
         if (!_groupOpsSelected.containsKey(columnId)) {
@@ -281,6 +298,22 @@ public class DataSetHandlerImpl implements DataSetHandler {
             }
         }
         return opFound;
+    }
+
+    protected String _getSourceColumnId(String columnId) {
+        if (lastLookedUpDataSet != null) {
+            DataColumn column = lastLookedUpDataSet.getColumnById(columnId);
+            if (column != null && column.getGroupFunction() != null) {
+                return column.getGroupFunction().getSourceId();
+            }
+        }
+        for (List<GroupOpFilter> currentSelections : _groupOpsSelected.values()) {
+            for (GroupOpFilter groupOpFilter : currentSelections) {
+                GroupFunction gf = groupOpFilter.groupOp.getGroupFunction(columnId);
+                if (gf != null) return gf.getSourceId();
+            }
+        }
+        return columnId;
     }
 
     protected static class GroupOpFilter {

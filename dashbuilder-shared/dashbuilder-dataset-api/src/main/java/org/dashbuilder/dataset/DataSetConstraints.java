@@ -100,10 +100,10 @@ public class DataSetConstraints<T> {
 
     private void _checkSizes(int min, int max, ColumnType[] types) {
         if (min == 0) {
-            throw new IllegalArgumentException("Minimum data set columns must be greater or equals than 1. Actual=" + min);
+            throw new IllegalArgumentException("Minimum data set columns must be greater than or equal to 1. Actual=" + min);
         }
         if (max == 0) {
-            throw new IllegalArgumentException("Maximum data set columns must be greater or equals than 1. Actual=" + min);
+            throw new IllegalArgumentException("Maximum data set columns must be greater than or equal to 1. Actual=" + max);
         }
         if (min != -1 & max != -1 && min > max) {
             throw new IllegalArgumentException("Min=" + min + " data set columns cannot be greater than the max=" + max);

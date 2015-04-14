@@ -20,4 +20,15 @@ package org.dashbuilder.displayer;
  */
 public interface XAxisChartSettingsBuilder<T extends XAxisChartSettingsBuilder> extends ChartSettingsBuilder<T> {
 
+    /**
+     * Set the X axis title.
+     * @return The DisplayerSettingsBuilder instance that is being used to configure a DisplayerSettings.
+     */
+    T xAxisTitle(String title);
+
+    /**
+     * Set the Y axis title.
+     * @return The DisplayerSettingsBuilder instance that is being used to configure a DisplayerSettings.
+     */
+    T yAxisTitle(String title);
 }

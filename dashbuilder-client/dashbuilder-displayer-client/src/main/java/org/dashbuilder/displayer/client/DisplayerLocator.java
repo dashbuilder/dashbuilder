@@ -25,6 +25,7 @@ import org.dashbuilder.dataset.DataSetLookup;
 import org.dashbuilder.dataset.client.ClientDataSetManager;
 import org.dashbuilder.dataset.engine.group.IntervalBuilderLocator;
 import org.dashbuilder.displayer.DisplayerSettings;
+import org.dashbuilder.displayer.client.resources.i18n.CommonConstants;
 import org.jboss.errai.ioc.client.container.IOC;
 import org.jboss.errai.ioc.client.container.IOCBeanDef;
 
@@ -50,8 +51,8 @@ public class DisplayerLocator {
         Displayer displayer = renderer.lookupDisplayer(target);
         if (displayer == null) {
             String rendererUuid = target.getRenderer();
-            if (StringUtils.isBlank(rendererUuid)) throw new RuntimeException(target.getType() + " displayer default renderer not declared");
-            throw new RuntimeException(target.getType() + " displayer not supported in the " + rendererUuid + " renderer");
+            if (StringUtils.isBlank(rendererUuid)) throw new RuntimeException(CommonConstants.INSTANCE.displayerlocator_default_renderer_undeclared(target.getType().toString()));
+            throw new RuntimeException(CommonConstants.INSTANCE.displayerlocator_unsupported_displayer_renderer(target.getType().toString(), rendererUuid));
         }
         displayer.setDisplayerSettings( target );
 

@@ -82,7 +82,7 @@ public class SalesDataSetGenerator implements DataSetGenerator {
                 .label(PRODUCT)
                 .label(SALES_PERSON)
                 .number(PROBABILITY)
-                .text(SOURCE)
+                .label(SOURCE)
                 .number(EXPECTED_AMOUNT)
                 .label(COLOR);
 

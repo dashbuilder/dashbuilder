@@ -27,6 +27,8 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.*;
 import org.dashbuilder.displayer.DisplayerType;
 import org.dashbuilder.displayer.client.RendererLibLocator;
+import org.dashbuilder.displayer.client.resources.i18n.CommonConstants;
+
 import java.util.Set;
 
 public class RendererSelector extends Composite {
@@ -49,7 +51,7 @@ public class RendererSelector extends Composite {
     ListBox listBox;
     
     public String getTitle() {
-        return "Renderer selector";
+        return CommonConstants.INSTANCE.renderer_selector_title();
     }
 
     public RendererSelector(DisplayerType displayerType, String currentValue, SelectorType selectorType, final RendererSelectorEventHandler handler) {

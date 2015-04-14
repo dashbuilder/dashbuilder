@@ -97,6 +97,18 @@
       <scope>test</scope>
     </dependency>
 
+    <!-- CSV Export. -->
+    <dependency>
+      <groupId>net.sf.opencsv</groupId>
+      <artifactId>opencsv</artifactId>
+    </dependency>
+
+    <!-- Excel Export. -->
+    <dependency>
+      <groupId>org.apache.poi</groupId>
+      <artifactId>poi-ooxml</artifactId>
+    </dependency>
+
   </dependencies>
 
 </project>

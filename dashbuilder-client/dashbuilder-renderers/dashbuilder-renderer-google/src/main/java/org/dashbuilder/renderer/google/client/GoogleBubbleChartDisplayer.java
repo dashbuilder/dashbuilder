@@ -32,6 +32,7 @@ import org.dashbuilder.dataset.DataSetLookupConstraints;
 import org.dashbuilder.displayer.DisplayerAttributeDef;
 import org.dashbuilder.displayer.DisplayerAttributeGroupDef;
 import org.dashbuilder.displayer.DisplayerConstraints;
+import org.dashbuilder.renderer.google.client.resources.i18n.GoogleDisplayerConstants;
 
 public class GoogleBubbleChartDisplayer extends GoogleCategoriesDisplayer {
 
@@ -65,17 +66,17 @@ public class GoogleBubbleChartDisplayer extends GoogleCategoriesDisplayer {
     public DisplayerConstraints createDisplayerConstraints() {
 
         DataSetLookupConstraints lookupConstraints = new DataSetLookupConstraints()
-                .setGroupRequired(true)
-                .setGroupColumn(true)
-                .setMaxColumns(5)
-                .setMinColumns(5)
-                .setExtraColumnsAllowed(false)
-                .setGroupsTitle("Categories")
-                .setColumnsTitle("Values")
-                .setColumnTitle(1, "X Axis")
-                .setColumnTitle(2, "Y Axis")
-                .setColumnTitle(3, "Bubble color")
-                .setColumnTitle(4, "Bubble size")
+                .setGroupRequired( true )
+                .setGroupColumn( true )
+                .setMaxColumns( 5 )
+                .setMinColumns( 5 )
+                .setExtraColumnsAllowed( false )
+                .setGroupsTitle( GoogleDisplayerConstants.INSTANCE.common_Categories())
+                .setColumnsTitle(GoogleDisplayerConstants.INSTANCE.common_Values())
+                .setColumnTitle(1, GoogleDisplayerConstants.INSTANCE.googleBubbleDisplayer_XAxis())
+                .setColumnTitle(2, GoogleDisplayerConstants.INSTANCE.googleBubbleDisplayer_YAxis())
+                .setColumnTitle(3, GoogleDisplayerConstants.INSTANCE.googleBubbleDisplayer_BubbleColor())
+                .setColumnTitle(4, GoogleDisplayerConstants.INSTANCE.googleBubbleDisplayer_BubbleSize())
                 .setColumnTypes(new ColumnType[] {
                         ColumnType.LABEL,
                         ColumnType.NUMBER,
@@ -84,12 +85,12 @@ public class GoogleBubbleChartDisplayer extends GoogleCategoriesDisplayer {
                         ColumnType.NUMBER});
 
         return new DisplayerConstraints(lookupConstraints)
-                   .supportsAttribute( DisplayerAttributeDef.TYPE )
+                   .supportsAttribute(DisplayerAttributeDef.TYPE)
                    .supportsAttribute(DisplayerAttributeDef.RENDERER)
-                   .supportsAttribute(DisplayerAttributeDef.COLUMNS)
+                   .supportsAttribute(DisplayerAttributeGroupDef.COLUMNS_GROUP)
                    .supportsAttribute( DisplayerAttributeGroupDef.FILTER_GROUP )
                    .supportsAttribute( DisplayerAttributeGroupDef.REFRESH_GROUP )
-                   .supportsAttribute( DisplayerAttributeGroupDef.TITLE_GROUP)
+                   .supportsAttribute( DisplayerAttributeGroupDef.GENERAL_GROUP)
                    .supportsAttribute( DisplayerAttributeDef.CHART_WIDTH )
                    .supportsAttribute( DisplayerAttributeDef.CHART_HEIGHT )
                    .supportsAttribute(DisplayerAttributeDef.CHART_BGCOLOR)
@@ -108,7 +109,7 @@ public class GoogleBubbleChartDisplayer extends GoogleCategoriesDisplayer {
 
     private BubbleChartOptions createOptions() {
         Animation anim = Animation.create();
-        anim.setDuration(500);
+        anim.setDuration(700);
         anim.setEasing(AnimationEasing.IN_AND_OUT);
 
         BubbleChartOptions options = BubbleChartOptions.create();

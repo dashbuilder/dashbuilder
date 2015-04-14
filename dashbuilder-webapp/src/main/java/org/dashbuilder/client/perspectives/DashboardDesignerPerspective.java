@@ -20,6 +20,7 @@ import java.util.Map;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
+import org.dashbuilder.client.resources.i18n.AppConstants;
 import org.dashbuilder.displayer.DisplayerSettings;
 import org.dashbuilder.displayer.client.PerspectiveCoordinator;
 import org.dashbuilder.displayer.client.json.DisplayerSettingsJSONMarshaller;
@@ -57,14 +58,14 @@ public class DashboardDesignerPerspective {
     @Perspective
     public PerspectiveDefinition buildPerspective() {
         PerspectiveDefinition perspective = new PerspectiveDefinitionImpl(MultiListWorkbenchPanelPresenter.class.getName());
-        perspective.setName("Designer");
+        perspective.setName(AppConstants.INSTANCE.dbdesignerpersp_name());
         return perspective;
     }
 
     @WorkbenchMenu
     public Menus buildMenuBar() {
         return MenuFactory
-                .newTopLevelMenu("New displayer")
+                .newTopLevelMenu(AppConstants.INSTANCE.dbdesignerpersp_newdisplayer())
                 .respondsWith(getNewDisplayerCommand())
                 .endMenu().build();
     }

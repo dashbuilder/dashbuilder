@@ -35,6 +35,7 @@ import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.dataset.DataSetLookupConstraints;
+import org.dashbuilder.displayer.ColumnSettings;
 import org.dashbuilder.displayer.DisplayerAttributeDef;
 import org.dashbuilder.displayer.DisplayerAttributeGroupDef;
 import org.dashbuilder.displayer.DisplayerConstraints;
@@ -153,8 +154,8 @@ public class LienzoBarChartDisplayer extends LienzoDisplayer {
                 for (int i = 0; i < valuesColumns.length; i++) {
                     DataColumn dataColumn = valuesColumns[i];
                     String columnId = dataColumn.getId();
-                    String columnName = dataColumn.getName();
-                    if (columnName == null) columnName = columnId;
+                    ColumnSettings columnSettings = displayerSettings.getColumnSettings(dataColumn);
+                    String columnName = columnSettings.getColumnName();
 
                     XYChartSerie series = new XYChartSerie(columnName, getSeriesColor(i), columnId);
                     chartData.addSerie(series);
@@ -187,10 +188,10 @@ public class LienzoBarChartDisplayer extends LienzoDisplayer {
         return new DisplayerConstraints(lookupConstraints)
                    .supportsAttribute( DisplayerAttributeDef.TYPE )
                    .supportsAttribute(DisplayerAttributeDef.RENDERER)
-                   .supportsAttribute(DisplayerAttributeDef.COLUMNS)
+                   .supportsAttribute( DisplayerAttributeGroupDef.COLUMNS_GROUP )
                    .supportsAttribute( DisplayerAttributeGroupDef.FILTER_GROUP )
                    .supportsAttribute( DisplayerAttributeGroupDef.REFRESH_GROUP)
-                   .supportsAttribute( DisplayerAttributeGroupDef.TITLE_GROUP)
+                   .supportsAttribute( DisplayerAttributeGroupDef.GENERAL_GROUP)
                    .supportsAttribute( DisplayerAttributeDef.CHART_WIDTH )
                    .supportsAttribute( DisplayerAttributeDef.CHART_HEIGHT )
                    .supportsAttribute(DisplayerAttributeDef.CHART_RESIZABLE)

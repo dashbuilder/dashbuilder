@@ -5,6 +5,7 @@
     >
   
   <ui:with field='resources' type='org.dashbuilder.client.metrics.MetricsDashboardClientBundle'/>
+  <ui:with field='i18n' type='org.dashbuilder.client.resources.i18n.AppConstants'/>
 
   <ui:style>
 
@@ -70,7 +71,7 @@
   <g:FlowPanel >
 
     <g:FocusPanel ui:field="serverIcon" >
-      <b:Tooltip text='Show server details' placement="BOTTOM" ui:field="tooltip">
+      <b:Tooltip text='{i18n.metrics_server_vert_default_tt}' placement="BOTTOM" ui:field="tooltip">
         <g:VerticalPanel addStyleNames="{style.icon_panel} {style.metrics_dashboard_panel}">
           <g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
             <g:Image resource='{resources.computerIcon}' addStyleNames="{style.server_icon}"/>

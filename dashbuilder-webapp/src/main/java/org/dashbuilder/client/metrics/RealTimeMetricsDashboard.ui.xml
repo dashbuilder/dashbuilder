@@ -5,6 +5,7 @@
     >
   
   <ui:with field='resources' type='org.dashbuilder.client.metrics.MetricsDashboardClientBundle'/>
+  <ui:with field='i18n' type='org.dashbuilder.client.resources.i18n.AppConstants'/>
 
   <ui:style>
     
@@ -32,7 +33,7 @@
 
     <g:FlowPanel ui:field="notificationsLabelPanel" visible="false">
       <g:HorizontalPanel addStyleNames="{style.notifications_label_area}" horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
-        <b:Label ui:field="notificationsLabel" text="server become down"
+        <b:Label ui:field="notificationsLabel" text="{i18n.metrics_rt_serverdown}"
                  addStyleNames="{style.notifications_label}" />
       </g:HorizontalPanel>
     </g:FlowPanel>

@@ -27,6 +27,7 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.displayer.DisplayerSettings;
+import org.dashbuilder.displayer.client.resources.i18n.CommonConstants;
 import org.uberfire.ext.widgets.common.client.common.popups.BaseModal;
 
 @Dependent
@@ -55,8 +56,8 @@ public class DisplayerEditorPopup extends Composite {
 
     public void init(DisplayerSettings settings, DisplayerEditor.Listener editorListener) {
         editor.init(settings, editorListener);
-        popup.setTitle("Displayer Editor");
-        if (editor.isBrandNewDisplayer()) popup.setTitle("New Displayer");
+        popup.setTitle(CommonConstants.INSTANCE.displayer_editor_title());
+        if (editor.isBrandNewDisplayer()) popup.setTitle(CommonConstants.INSTANCE.displayer_editor_new());
         popup.show();
     }
 

@@ -115,8 +115,8 @@ public interface DisplayerSettingsBuilder<T> extends DataSetLookupBuilder<T> {
     /**
      * Force the displayer to redraw every time interval.
      *
-     * @param seconds The refresh time frame in seconds.
-     * @param onStale Refresh also when the data becomes stale.
+     * @param seconds The refresh time frame in seconds. If < 0 then periodic refresh is disabled.
+     * @param onStale Refresh when the data becomes stale.
      *
      * @return The DisplayerSettingsBuilder instance that is being used to configure a DisplayerSettings.
      */
@@ -129,6 +129,87 @@ public interface DisplayerSettingsBuilder<T> extends DataSetLookupBuilder<T> {
      * @return The DisplayerSettingsBuilder instance that is being used to configure a DisplayerSettings.
      */
     T refreshOff();
+
+    /**
+     * Defines the display name for the last specified data set column.
+     *
+     * NOTE: This method can only be called right after a call to <i>DataSetLookupBuilder#column(...)</i>.
+     *
+     * @param name The column display name.
+     * @return The DisplayerSettingsBuilder instance that is being used to configure a DisplayerSettings.
+     */
+    T format(String name);
+
+    /**
+     * Defines the display format for the last specified data set column.Every data set value will be formatted
+     * according to the specified <i>pattern</i> parameter which defines the string format of the data set value.
+     * Examples:
+     * <ul>
+     *     <li>format("Amount", "$ #,###.##") => "$ 10,450.5"</li>
+     *     <li>format("Amount", "$ #,### K") => "$ 450 K"</li>
+     * </ul>
+     *
+     * NOTE: This method can only be called right after a call to <i>DataSetLookupBuilder#column(...)</i>.
+     *
+     * @param name The column display name.
+     * @param pattern The standard java <i>DecimalFormat</i> and <i>DateFormat</i> can be used used for both number and date columns.
+     * @see java.text.DecimalFormat
+     * @see java.text.SimpleDateFormat
+     * @return The DisplayerSettingsBuilder instance that is being used to configure a DisplayerSettings.
+     */
+    T format(String name, String pattern);
+
+    /**
+     * Defines the display format for the specified data set column. Every data set value will be formatted
+     * according to the specified <i>pattern</i> parameter which defines the string format of the data set value.
+     * Examples:
+     * <ul>
+     *     <li>format("Amount", "$ #,###.##") => "$ 10,450.5"</li>
+     *     <li>format("Amount", "$ #,### K") => "$ 450 K"</li>
+     * </ul>
+     *
+     * @param columnId The column identifier.
+     * @param name The column display name.
+     * @param pattern The standard java <i>DecimalFormat</i> and <i>DateFormat</i> are used for both number and date columns.
+     * @see java.text.DecimalFormat
+     * @see java.text.SimpleDateFormat
+     * @return The DisplayerSettingsBuilder instance that is being used to configure a DisplayerSettings.
+     */
+    T format(String columnId, String name, String pattern);
+
+    /**
+     * Defines a mathematical expression used to calculate the real values to display for the last specified data set
+     * column.
+     *
+     * <p>For numeric columns the expression can be any basic math expression where the <i>value</i> keyword represent
+     * the source data set value and any of the basic math operators "/ * + -" are allowed. Examples:
+     * <ul>
+     *     <li>format("Amount", "$ #,###.##").expression("value") => "$ 10,450.5"</li>
+     *     <li>format("Amount", "$ #,###.##").expression("value-1") => "$ 10,449.5"</li>
+     *     <li>format("Amount", "$ #,##0.00 K").expression("value/1000") => "$ 10.45 K"</li>
+     * </ul>
+     *
+     * <p> For text columns you can manipulate the string using any javascript statement: Examples</p>
+     * <ul>
+     *     <li>format("Quarter").expression("["1st Q", "2nd Q", "3rd Q", "4th Q"][value+1]") => "3rd Q" (value=1 in a date fixed grouped column)</li>
+     *     <li>format("3 chars").expression("value.substring(0, 3) + "...") => "Dav..." it takes the first 3 chars only</li>
+     * </ul>
+     *
+     * NOTE: This method can only be called right after a call to <i>DataSetLookupBuilder#column(...)</i>
+     *
+     * @param expression The expression used to calculate the value to display
+     * @return The DisplayerSettingsBuilder instance that is being used to configure a DisplayerSettings.
+     */
+    T expression(String expression);
+
+    /**
+     * Sames as <i>expression(String expression)</i> but using the specified column.
+     *
+     * @param columnId The column identifier.
+     * @param expression The expression used to calculate the value to display
+     * @return The DisplayerSettingsBuilder instance that is being used to configure a DisplayerSettings.
+     */
+    T expression(String columnId, String expression);
 
     /**
      * @return The DisplayerSettings instance that has been configured.

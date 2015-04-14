@@ -20,6 +20,8 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
+import org.dashbuilder.client.gallery.GalleryWidget;
+import org.dashbuilder.client.resources.i18n.AppConstants;
 import org.dashbuilder.displayer.DisplayerSettingsFactory;
 import org.dashbuilder.displayer.client.Displayer;
 import org.dashbuilder.displayer.client.DisplayerCoordinator;
@@ -34,7 +36,7 @@ import static org.dashbuilder.dataset.group.AggregateFunctionType.*;
  * A composite widget that represents an entire dashboard sample composed using an UI binder template.
  * <p>The dashboard itself is composed by a set of Displayer instances.</p>
  */
-public class SalesGoals extends Composite {
+public class SalesGoals extends Composite implements GalleryWidget {
 
     interface SalesDashboardBinder extends UiBinder<Widget, SalesGoals>{}
     private static final SalesDashboardBinder uiBinder = GWT.create(SalesDashboardBinder.class);
@@ -56,8 +58,24 @@ public class SalesGoals extends Composite {
 
     DisplayerCoordinator displayerCoordinator = new DisplayerCoordinator();
 
+    @Override
     public String getTitle() {
-        return "Sales goals";
+        return AppConstants.INSTANCE.sales_goals_title();
+    }
+
+    @Override
+    public void onClose() {
+        displayerCoordinator.closeAll();
+    }
+
+    @Override
+    public boolean feedsFrom(String dataSetId) {
+        return SALES_OPPS.equals(dataSetId);
+    }
+
+    @Override
+    public void redrawAll() {
+        displayerCoordinator.redrawAll();
     }
 
     public SalesGoals() {
@@ -67,11 +85,13 @@ public class SalesGoals extends Composite {
         meterChartAmount = DisplayerHelper.lookupDisplayer(
                 DisplayerSettingsFactory.newMeterChartSettings()
                 .dataset(SALES_OPPS)
-                .column(AMOUNT, SUM, "Total amount")
-                .title("Sales goal")
+                .column(AMOUNT, SUM)
+                .expression("value/1000")
+                .format(AppConstants.INSTANCE.sales_goals_meter_column1(), "$ #,### K")
+                .title(AppConstants.INSTANCE.sales_goals_meter_title())
                 .titleVisible(true)
                 .width(200).height(200)
-                .meter(0, 15000000, 25000000, 35000000)
+                .meter(0, 15000, 25000, 35000)
                 .filterOn(false, true, true)
                 .buildSettings());
 
@@ -79,10 +99,10 @@ public class SalesGoals extends Composite {
                 DisplayerSettingsFactory.newLineChartSettings()
                 .dataset(SALES_OPPS)
                 .group(CLOSING_DATE).dynamic(80, MONTH, true)
-                .column(CLOSING_DATE, "Closing date")
-                .column(AMOUNT, SUM, "Total amount")
-                .column(EXPECTED_AMOUNT, SUM, "Expected amount")
-                .title("Expected pipeline")
+                .column(CLOSING_DATE).format(AppConstants.INSTANCE.sales_goals_line_column1())
+                .column(AMOUNT, SUM).format(AppConstants.INSTANCE.sales_goals_line_column2(), "$ #,### K").expression("value/1000")
+                .column(EXPECTED_AMOUNT, SUM).format(AppConstants.INSTANCE.sales_goals_line_column3(), "$ #,### K").expression("value/1000")
+                .title(AppConstants.INSTANCE.sales_goals_line_title())
                 .titleVisible(true)
                 .width(800).height(200)
                 .margins(10, 80, 80, 100)
@@ -93,10 +113,10 @@ public class SalesGoals extends Composite {
                 DisplayerSettingsFactory.newBarChartSettings()
                 .dataset(SALES_OPPS)
                 .group(PRODUCT)
-                .column(PRODUCT, "Product")
-                .column(AMOUNT, SUM, "Amount")
-                .column(EXPECTED_AMOUNT, SUM, "Expected")
-                .title("By product")
+                .column(PRODUCT).format(AppConstants.INSTANCE.sales_goals_bar_byproduct_column1())
+                .column(AMOUNT, SUM).format(AppConstants.INSTANCE.sales_goals_bar_byproduct_column2(), "$ #,### K").expression("value/1000")
+                .column(EXPECTED_AMOUNT, SUM).format(AppConstants.INSTANCE.sales_goals_bar_byproduct_column3(), "$ #,### K").expression("value/1000")
+                .title(AppConstants.INSTANCE.sales_goals_bar_byproduct_title())
                 .titleVisible(true)
                 .width(400).height(150)
                 .margins(10, 80, 80, 10)
@@ -108,10 +128,10 @@ public class SalesGoals extends Composite {
                 DisplayerSettingsFactory.newBarChartSettings()
                 .dataset(SALES_OPPS)
                 .group(SALES_PERSON)
-                .column(SALES_PERSON, "Employee")
-                .column(AMOUNT, SUM, "Amount")
+                .column(SALES_PERSON).format(AppConstants.INSTANCE.sales_goals_bar_byempl_column1())
+                .column(AMOUNT, SUM).format(AppConstants.INSTANCE.sales_goals_bar_byempl_column2(), "$ #,### K").expression("value/1000")
                 .sort(AMOUNT, DESCENDING)
-                .title("By employee")
+                .title(AppConstants.INSTANCE.sales_goals_bar_byempl_title())
                 .titleVisible(true)
                 .width(400).height(150)
                 .margins(10, 80, 80, 10)
@@ -124,11 +144,11 @@ public class SalesGoals extends Composite {
                 .dataset(SALES_OPPS)
                 .group(COUNTRY)
                 .column(COUNTRY, "Country")
-                .column(COUNT, "Number of opportunities")
-                .column(PROBABILITY, AVERAGE, "Average probability")
+                .column(COUNT, "#opps").format(AppConstants.INSTANCE.sales_goals_bubble_column1(), "#,###")
+                .column(PROBABILITY, AVERAGE).format(AppConstants.INSTANCE.sales_goals_bubble_column2(), "#,###")
                 .column(COUNTRY, "Country")
-                .column(EXPECTED_AMOUNT, SUM, "Expected amount")
-                .title("Opportunities distribution by Country ")
+                .column(EXPECTED_AMOUNT, SUM).expression("value/1000").format(AppConstants.INSTANCE.sales_goals_bubble_column3(), "$ #,##0.00 K")
+                .title(AppConstants.INSTANCE.sales_goals_bubble_title())
                 .width(550).height(250)
                 .margins(10, 30, 50, 0)
                 .filterOn(false, true, true)
@@ -146,9 +166,5 @@ public class SalesGoals extends Composite {
 
         // Draw the charts
         displayerCoordinator.drawAll();
-    }
-
-    public void redrawAll() {
-        displayerCoordinator.redrawAll();
     }
 }

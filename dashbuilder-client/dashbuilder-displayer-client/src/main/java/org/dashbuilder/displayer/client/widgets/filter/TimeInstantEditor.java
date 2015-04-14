@@ -19,30 +19,20 @@ import java.util.Arrays;
 import java.util.List;
 import javax.enterprise.context.Dependent;
 
-import com.github.gwtbootstrap.client.ui.Icon;
 import com.github.gwtbootstrap.client.ui.ListBox;
-import com.github.gwtbootstrap.client.ui.constants.IconType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.dataset.client.resources.i18n.DateIntervalTypeConstants;
-import org.dashbuilder.dataset.client.resources.i18n.MonthConstants;
 import org.dashbuilder.dataset.client.resources.i18n.TimeModeConstants;
-import org.dashbuilder.dataset.date.Month;
 import org.dashbuilder.dataset.date.TimeAmount;
-import org.dashbuilder.dataset.date.TimeFrame;
 import org.dashbuilder.dataset.date.TimeInstant;
 import org.dashbuilder.dataset.group.DateIntervalType;
-import org.uberfire.ext.widgets.common.client.common.NumericLongTextBox;
+import org.dashbuilder.displayer.client.resources.i18n.CommonConstants;
 
 @Dependent
 public class TimeInstantEditor extends Composite {
@@ -110,7 +100,7 @@ public class TimeInstantEditor extends Composite {
     protected void initTimeModeListBox() {
         timeModeList.clear();
         if (!timeModeRequired) {
-            timeModeList.addItem("- Select - ");
+            timeModeList.addItem(CommonConstants.INSTANCE.common_dropdown_select());
         }
         TimeInstant.TimeMode current = timeInstant.getTimeMode();
         TimeInstant.TimeMode[] modes = TimeInstant.TimeMode.values();

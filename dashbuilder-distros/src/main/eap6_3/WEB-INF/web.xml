@@ -69,6 +69,16 @@
     <url-pattern>*.erraiBus</url-pattern>
   </servlet-mapping>
 
+  <servlet>
+    <servlet-name>UberfireFileDownloadServlet</servlet-name>
+    <servlet-class>org.uberfire.server.FileDownloadServlet</servlet-class>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>UberfireFileDownloadServlet</servlet-name>
+    <url-pattern>/org.dashbuilder.DashbuilderShowcase/dataset/export/*</url-pattern>
+  </servlet-mapping>
+
   <welcome-file-list>
     <welcome-file>login.jsp</welcome-file>
   </welcome-file-list>

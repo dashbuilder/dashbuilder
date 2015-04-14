@@ -25,6 +25,7 @@ import com.google.gwt.animation.client.Animation;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.user.client.ui.RootPanel;
+import org.dashbuilder.client.resources.i18n.AppConstants;
 import org.jboss.errai.ioc.client.api.EntryPoint;
 import org.uberfire.client.mvp.PlaceManager;
 import org.uberfire.client.workbench.events.ApplicationReadyEvent;
@@ -55,23 +56,23 @@ public class ShowcaseEntryPoint {
     private void setupMenu( @Observes final ApplicationReadyEvent event ) {
 
         menubar.addMenus(
-                newTopLevelMenu("Home").respondsWith(new Command() {
+                newTopLevelMenu(AppConstants.INSTANCE.menu_home()).respondsWith(new Command() {
                     public void execute() {
                         placeManager.goTo("HomePerspective");
                     }
                 }).endMenu().
-                newTopLevelMenu("Gallery").respondsWith(new Command() {
+                newTopLevelMenu(AppConstants.INSTANCE.menu_gallery()).respondsWith(new Command() {
                     public void execute() {
                         placeManager.goTo("DisplayerGalleryPerspective");
                     }
                 }).endMenu().
-                newTopLevelMenu("Authoring")
+                newTopLevelMenu(AppConstants.INSTANCE.menu_authoring())
                 .withItems(getAuthoringMenuItems())
                 .endMenu().
-                newTopLevelMenu("Dashboards")
+                newTopLevelMenu(AppConstants.INSTANCE.menu_dashboards())
                 .withItems(getDashboardMenuItems())
                 .endMenu().
-                newTopLevelMenu("Extensions")
+                newTopLevelMenu(AppConstants.INSTANCE.menu_extensions())
                 .withItems(getExtensionsMenuItems())
                 .endMenu().
                 build()
@@ -93,19 +94,19 @@ public class ShowcaseEntryPoint {
     private List<? extends MenuItem> getDashboardMenuItems() {
         final List<MenuItem> result = new ArrayList<MenuItem>(2);
 
-        result.add(MenuFactory.newSimpleItem("Sales Dashboard").respondsWith(new Command() {
+        result.add(MenuFactory.newSimpleItem(AppConstants.INSTANCE.menu_dashboards_salesdb()).respondsWith(new Command() {
             public void execute() {
                 placeManager.goTo("SalesDashboardPerspective");
             }
         }).endMenu().build().getItems().get(0));
 
-        result.add(MenuFactory.newSimpleItem("Sales Reports").respondsWith(new Command() {
+        result.add(MenuFactory.newSimpleItem(AppConstants.INSTANCE.menu_dashboards_salesreports()).respondsWith(new Command() {
             public void execute() {
                 placeManager.goTo("SalesReportsPerspective");
             }
         }).endMenu().build().getItems().get(0));
 
-        result.add(MenuFactory.newSimpleItem("- New -").respondsWith(new Command() {
+        result.add(MenuFactory.newSimpleItem(AppConstants.INSTANCE.menu_dashboards_new()).respondsWith(new Command() {
             public void execute() {
                 placeManager.goTo("DashboardDesignerPerspective");
             }
@@ -117,13 +118,13 @@ public class ShowcaseEntryPoint {
     private List<? extends MenuItem> getExtensionsMenuItems() {
         final List<MenuItem> result = new ArrayList<MenuItem>(2);
 
-        result.add(MenuFactory.newSimpleItem("Plugins").respondsWith(new Command() {
+        result.add(MenuFactory.newSimpleItem(AppConstants.INSTANCE.menu_extensions_plugins()).respondsWith(new Command() {
             public void execute() {
                 placeManager.goTo("PlugInAuthoringPerspective");
             }
         }).endMenu().build().getItems().get(0));
 
-        result.add(MenuFactory.newSimpleItem("Apps").respondsWith(new Command() {
+        result.add(MenuFactory.newSimpleItem(AppConstants.INSTANCE.menu_extensions_apps()).respondsWith(new Command() {
             public void execute() {
                 placeManager.goTo("AppsPerspective");
             }
@@ -134,7 +135,7 @@ public class ShowcaseEntryPoint {
 
     // Fade out the "Loading application" pop-up
     private void hideLoadingPopup() {
-        final Element e = RootPanel.get( "loading" ).getElement();
+        final Element e = RootPanel.get(AppConstants.INSTANCE.loading()).getElement();
 
         new Animation() {
 

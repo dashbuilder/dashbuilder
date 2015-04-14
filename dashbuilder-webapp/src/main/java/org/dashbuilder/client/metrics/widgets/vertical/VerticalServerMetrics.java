@@ -24,8 +24,8 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.*;
-import org.dashbuilder.backend.ClusterMetricsDataSetGenerator;
 import org.dashbuilder.client.metrics.RealTimeMetricsDashboard;
+import org.dashbuilder.client.resources.i18n.AppConstants;
 import org.dashbuilder.displayer.DisplayerSettingsFactory;
 import org.dashbuilder.displayer.client.Displayer;
 import org.dashbuilder.displayer.client.DisplayerCoordinator;
@@ -33,21 +33,15 @@ import org.dashbuilder.displayer.client.DisplayerHelper;
 
 import static org.dashbuilder.dataset.filter.FilterFactory.equalsTo;
 import static org.dashbuilder.dataset.filter.FilterFactory.timeFrame;
-import static org.dashbuilder.dataset.group.AggregateFunctionType.MAX;
+import static org.dashbuilder.dataset.group.AggregateFunctionType.*;
 import static org.dashbuilder.dataset.group.DateIntervalType.*;
-import static org.dashbuilder.backend.ClusterMetricsDataSetGenerator.*;
+import static org.dashbuilder.backend.ClusterMetricsGenerator.*;
 import static org.dashbuilder.client.metrics.RealTimeMetricsDashboard.*;
 
 public class VerticalServerMetrics extends Composite {
 
     interface VerticalServerMetricsBinder extends UiBinder<Widget, VerticalServerMetrics>{}
     private static final VerticalServerMetricsBinder uiBinder = GWT.create(VerticalServerMetricsBinder.class);
-    
-    private static final String TOOLTIP_CPU = "CPU usage (%)";
-    private static final String TOOLTIP_USED_MEMORY = "Used memory (Gb)";
-    private static final String TOOLTIP_NET_BW = "Network BW (kbps)";
-    private static final String TOOLTIP_PROCESSES = "Running/Sleeping processes";
-    private static final String TOOLTIP_DISK = "Disk usage (Mb)";
     
     @UiField
     Panel mainPanel;
@@ -68,7 +62,7 @@ public class VerticalServerMetrics extends Composite {
     private boolean isOff = false;
     
     public String getTitle() {
-        return "Server metrics (Vertical)";
+        return AppConstants.INSTANCE.metrics_server_vert_title();
     }
 
     public VerticalServerMetrics(final RealTimeMetricsDashboard metricsDashboard, final String server) {
@@ -86,22 +80,51 @@ public class VerticalServerMetrics extends Composite {
         serverName.setText(server);
         toolTipDefaultText();
 
-        Displayer serverCPU = DisplayerHelper.lookupDisplayer(
-                DisplayerSettingsFactory.newLineChartSettings()
+
+
+/*        Displayer serverMetrics = DisplayerHelper.lookupDisplayer(
+                DisplayerSettingsFactory.newMetricSettings()
+                        .dataset(METRICS_DATASET_UUID)
+                        .filter(COLUMN_TIMESTAMP, timeFrame("-2second"))
+                        .group(COLUMN_SERVER)
+                        .column(COLUMN_SERVER)
+                        .column(COLUMN_CPU0, AVERAGE, "CPU 1 %").format("{value} %", "#,###")
+                        .column(COLUMN_CPU1, AVERAGE, "CPU 2 %").format("{value} %", "#,###")
+                        .column(COLUMN_DISK_FREE, AVERAGE, "Free Disk").format("{value} Mb", "#,###")
+                        .format(COLUMN_CPU0, "")
+                        .title("{group} - {column}").titleVisible(true)
+                        .metricsLayout(true, 3, 5, 5, 5, 5)
+                        .backgroundColor(BACKGROUND_COLOR)
+                        .width(165).height(70)
+                        .margins(5, 5, 30, 5)
+                        .buildSettings());   */
+
+        Displayer serverCPU0 = DisplayerHelper.lookupDisplayer(
+                DisplayerSettingsFactory.newMetricSettings()
                         .dataset(METRICS_DATASET_UUID)
                         .filter(COLUMN_SERVER, equalsTo(server))
-                        .filter(COLUMN_TIMESTAMP, timeFrame("begin[minute] till now"))
-                        .group(COLUMN_TIMESTAMP).fixed(SECOND, true)
-                        .column(COLUMN_TIMESTAMP)
-                        .column(COLUMN_CPU0, MAX, "CPU0")
-                        .column(COLUMN_CPU1, MAX, "CPU1")
-                        .title("CPU usage")
-                        .titleVisible(false)
+                        .filter(COLUMN_TIMESTAMP, timeFrame("-2second"))
+                        .column(COLUMN_CPU0, AVERAGE, "CPU0")
+                        .title(AppConstants.INSTANCE.metrics_server_vert_cpu1_title())
+                        .titleVisible(true)
                         .backgroundColor(BACKGROUND_COLOR)
-                        .width(165).height(80)
+                        .width(165).height(70)
                         .margins(5, 5, 30, 5)
-                        .legendOff()
                         .buildSettings());
+
+        Displayer serverCPU1 = DisplayerHelper.lookupDisplayer(
+                DisplayerSettingsFactory.newMetricSettings()
+                        .dataset(METRICS_DATASET_UUID)
+                        .filter(COLUMN_SERVER, equalsTo(server))
+                        .filter(COLUMN_TIMESTAMP, timeFrame("-2second"))
+                        .column(COLUMN_CPU1, AVERAGE, "CPU0")
+                        .title(AppConstants.INSTANCE.metrics_server_vert_cpu2_title())
+                        .titleVisible(true)
+                        .backgroundColor(BACKGROUND_COLOR)
+                        .width(165).height(70)
+                        .margins(5, 5, 30, 5)
+                        .buildSettings());
+
 
         // Used memory
         Displayer serverMemory = DisplayerHelper.lookupDisplayer(
@@ -112,7 +135,7 @@ public class VerticalServerMetrics extends Composite {
                         .group(COLUMN_TIMESTAMP).fixed(SECOND, true)
                         .column(COLUMN_TIMESTAMP)
                         .column(COLUMN_MEMORY_USED, MAX, "Used memory")
-                        .title("Memory consumption")
+                        .title(AppConstants.INSTANCE.metrics_server_vert_memconsumption_title())
                         .titleVisible(false)
                         .backgroundColor(BACKGROUND_COLOR)
                         .width(165).height(80)
@@ -130,7 +153,7 @@ public class VerticalServerMetrics extends Composite {
                         .column(COLUMN_TIMESTAMP)
                         .column(COLUMN_NETWORK_RX, MAX, "Downstream")
                         .column(COLUMN_NETWORK_TX, MAX, "Upstream")
-                        .title("Network bandwidth")
+                        .title(AppConstants.INSTANCE.metrics_server_vert_netbw_title())
                         .titleVisible(false)
                         .backgroundColor(BACKGROUND_COLOR)
                         .legendOff()
@@ -148,10 +171,11 @@ public class VerticalServerMetrics extends Composite {
                         .group(COLUMN_TIMESTAMP).dynamic(1, SECOND, true)
                         .column(COLUMN_TIMESTAMP)
                         .column(COLUMN_PROCESSES_RUNNING, MAX, "Running processes")
-                        .column(COLUMN_PROCESSES_SLEEPING, MAX, "Slepping processes")
-                        .title("Running/Sleepping processes")
+                        .column(COLUMN_PROCESSES_SLEEPING, MAX, "Sleeping processes")
+                        .title(AppConstants.INSTANCE.metrics_server_vert_procs_title())
                         .titleVisible(false)
                         .backgroundColor(BACKGROUND_COLOR)
+                        .horizontal()
                         .legendOff()
                         .width(165).height(80)
                         .margins(5, 5, 30, 5)
@@ -163,19 +187,20 @@ public class VerticalServerMetrics extends Composite {
                         .dataset(METRICS_DATASET_UUID)
                         .filter(COLUMN_SERVER, equalsTo(server))
                         .filter(COLUMN_TIMESTAMP, timeFrame("-2second"))
-                        .column(COLUMN_DISK_FREE, "Free disk (Mb)")
-                        .column(COLUMN_DISK_USED, "Used disk (Mb)")
+                        .column(COLUMN_DISK_FREE, AppConstants.INSTANCE.metrics_server_vert_du_free())
+                        .column(COLUMN_DISK_USED, AppConstants.INSTANCE.metrics_server_vert_du_used())
                         .rowNumber(1)
-                        .title("Disk usage")
+                        .title(AppConstants.INSTANCE.metrics_server_vert_du_title())
                         .titleVisible(false)
                         .tableWidth(180)
                         .buildSettings());
 
-        addDisplayer(serverCPU, TOOLTIP_CPU);
-        addDisplayer(serverMemory, TOOLTIP_USED_MEMORY);
-        addDisplayer(serverNetwork, TOOLTIP_NET_BW);
-        addDisplayer(serverProcessesRunning, TOOLTIP_PROCESSES);
-        addDisplayer(serverDisk, TOOLTIP_DISK);
+        addDisplayer(serverCPU0, AppConstants.INSTANCE.metrics_server_vert_cpu_tt());
+        addDisplayer(serverCPU1, AppConstants.INSTANCE.metrics_server_vert_cpu_tt());
+        addDisplayer(serverMemory, AppConstants.INSTANCE.metrics_server_vert_usedmem_tt());
+        addDisplayer(serverNetwork, AppConstants.INSTANCE.metrics_server_vert_netbw_tt());
+        addDisplayer(serverProcessesRunning, AppConstants.INSTANCE.metrics_server_vert_procs_tt());
+        addDisplayer(serverDisk, AppConstants.INSTANCE.metrics_server_vert_disk_tt());
 
         // Add the click handler for server details action.
         serverIcon.addClickHandler(new ClickHandler() {
@@ -211,7 +236,7 @@ public class VerticalServerMetrics extends Composite {
     public VerticalServerMetrics off() {
         serverIcon.getElement().getStyle().setOpacity(0.3);
         mainPanel.getElement().getStyle().setOpacity(0.3);
-        tooltip.setText(server + " is down");
+        tooltip.setText(AppConstants.INSTANCE.metrics_server_vert_serverdown(server));
         isOff = true;
         return this;
     }
@@ -241,7 +266,7 @@ public class VerticalServerMetrics extends Composite {
     }
 
     private void toolTipDefaultText() {
-        tooltip.setText("Click to get more details");
+        tooltip.setText(AppConstants.INSTANCE.metrics_server_vert_default_tt());
     }
 
     public String getServer() {

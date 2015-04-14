@@ -15,11 +15,10 @@
  */
 package org.dashbuilder.dataset.client.engine;
 
-import java.util.HashMap;
-import java.util.Map;
 import javax.enterprise.context.Dependent;
 
 import com.google.gwt.core.client.Duration;
+import org.dashbuilder.dataset.client.resources.i18n.CommonConstants;
 import org.dashbuilder.dataset.engine.Chronometer;
 
 @Dependent
@@ -54,7 +53,7 @@ public final class ClientChronometer implements Chronometer {
         double secondsd = (double) (seconds * 1000 + milliseconds) / 1000;
 
         StringBuffer buf = new StringBuffer();
-        if (weeks > 0) buf.append(weeks).append(" weeks ");
+        if (weeks > 0) buf.append(weeks).append(" ").append( CommonConstants.INSTANCE.weeks()).append(" ");
         if (days > 0) buf.append(days).append("d ");
         if (hours > 0) buf.append(hours).append("h ");
         if (minutes > 0) buf.append(minutes).append("m ");
