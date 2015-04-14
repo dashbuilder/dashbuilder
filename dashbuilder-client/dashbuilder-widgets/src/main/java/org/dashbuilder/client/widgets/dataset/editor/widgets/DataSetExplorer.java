@@ -31,6 +31,7 @@ import org.jboss.errai.common.client.api.RemoteCallback;
 
 import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Observes;
+import java.util.Collection;
 import java.util.List;
 
 import static org.uberfire.commons.validation.PortablePreconditions.checkNotNull;
@@ -39,7 +40,7 @@ import static org.uberfire.commons.validation.PortablePreconditions.checkNotNull
 public class DataSetExplorer implements IsWidget {
 
     public interface View extends IsWidget, HasHandlers {
-        void set(List<DataSetDef> dataSetDefs);
+        void set(Collection<DataSetDef> dataSetDefs);
 
         boolean add(DataSetDef dataSetDef);
 

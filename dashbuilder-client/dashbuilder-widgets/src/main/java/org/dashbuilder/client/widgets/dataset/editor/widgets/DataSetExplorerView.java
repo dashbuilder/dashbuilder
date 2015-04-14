@@ -39,9 +39,7 @@ import org.dashbuilder.dataset.client.resources.bundles.DataSetClientResources;
 import org.dashbuilder.dataset.def.DataSetDef;
 
 import javax.enterprise.context.Dependent;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 @Dependent
 public class DataSetExplorerView extends Composite implements DataSetExplorer.View {
@@ -72,16 +70,16 @@ public class DataSetExplorerView extends Composite implements DataSetExplorer.Vi
     @UiField
     Label label;
     
-    private List<DataSetDef> dataSets;
+    private Set<DataSetDef> dataSets;
     
     public DataSetExplorerView() {
         initWidget(uiBinder.createAndBindUi(this));
-        dataSets = new LinkedList<DataSetDef>();
+        dataSets = new LinkedHashSet<DataSetDef>();
     }
 
     @Override
-    public void set(List<DataSetDef> dataSetDefs) {
-        this.dataSets = dataSetDefs;
+    public void set(Collection<DataSetDef> dataSetDefs) {
+        this.dataSets = new LinkedHashSet<DataSetDef>(dataSetDefs);
     }
 
     @Override
@@ -96,7 +94,7 @@ public class DataSetExplorerView extends Composite implements DataSetExplorer.Vi
 
     @Override
     public boolean update(final DataSetDef oldDataSetDef, final DataSetDef newDataSetDef) {
-        dataSets.remove(oldDataSetDef.getUUID());
+        remove(oldDataSetDef.getUUID());
         return dataSets.add(newDataSetDef);
     }
     
