@@ -103,7 +103,7 @@ public class GalleryWidgetPresenter {
         TimeAmount timeFrame = def.getRefreshTimeAmount();
         boolean noRealTime = timeFrame == null || timeFrame.toMillis() > 60000;
 
-        if ((!def.isRefreshAlways() || noRealTime) && widget.feedsFrom(targetUUID)) {
+        if ((!def.isRefreshAlways() || noRealTime) && widget != null && widget.feedsFrom(targetUUID)) {
             workbenchNotification.fire(new NotificationEvent(AppConstants.INSTANCE.gallerywidget_dataset_modif(), INFO));
         }
     }
