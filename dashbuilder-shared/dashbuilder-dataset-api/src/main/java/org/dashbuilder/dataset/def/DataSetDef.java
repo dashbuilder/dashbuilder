@@ -24,7 +24,6 @@ import org.dashbuilder.dataset.validation.IsTimeInterval;
 import org.dashbuilder.dataset.validation.groups.DataSetDefCacheRowsValidation;
 import org.dashbuilder.dataset.validation.groups.DataSetDefPushSizeValidation;
 import org.dashbuilder.dataset.validation.groups.DataSetDefRefreshIntervalValidation;
-import org.hibernate.validator.constraints.NotEmpty;
 import org.jboss.errai.common.client.api.annotations.Portable;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.NotNull;
@@ -38,10 +37,10 @@ import java.util.Map;
 public class DataSetDef {
 
     @NotNull(message = "{dataSetApi_dataSetDef_uuid_notNull}")
-    @NotEmpty(message = "{dataSetApi_dataSetDef_uuid_notNull}")
+    // @NotEmpty(message = "{dataSetApi_dataSetDef_uuid_notNull}")
     protected String UUID;
     @NotNull(message = "{dataSetApi_dataSetDef_name_notNull}")
-    @NotEmpty(message = "{dataSetApi_dataSetDef_name_notNull}")
+    // @NotEmpty(message = "{dataSetApi_dataSetDef_name_notNull}")
     protected String name;
     protected String defFilePath;
     @NotNull(message = "{dataSetApi_dataSetDef_provider_notNull}")
@@ -58,7 +57,7 @@ public class DataSetDef {
     @Max(value = 10000)
     protected Integer cacheMaxRows = 1000;
     @NotNull(message = "{dataSetApi_dataSetDef_refreshTime_notNull}", groups = DataSetDefRefreshIntervalValidation.class)
-    @NotEmpty(message = "{dataSetApi_dataSetDef_refreshTime_notEmpty}", groups = DataSetDefRefreshIntervalValidation.class)
+    // @NotEmpty(message = "{dataSetApi_dataSetDef_refreshTime_notEmpty}", groups = DataSetDefRefreshIntervalValidation.class)
     @IsTimeInterval(message = "{dataSetApi_dataSetDef_refreshTime_intervalInvalid}", groups = DataSetDefRefreshIntervalValidation.class)
     protected String refreshTime = null;
     protected boolean refreshAlways = false;

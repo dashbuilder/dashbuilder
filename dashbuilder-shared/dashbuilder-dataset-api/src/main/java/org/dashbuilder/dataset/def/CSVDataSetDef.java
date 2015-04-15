@@ -20,7 +20,6 @@ import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.dataset.validation.groups.CSVDataSetDefFilePathValidation;
 import org.dashbuilder.dataset.validation.groups.CSVDataSetDefFileURLValidation;
-import org.hibernate.validator.constraints.NotEmpty;
 import org.jboss.errai.common.client.api.annotations.Portable;
 
 import javax.validation.constraints.NotNull;
@@ -29,10 +28,10 @@ import javax.validation.constraints.NotNull;
 public class CSVDataSetDef extends DataSetDef {
 
     @NotNull(message = "{dataSetApi_csvDataSetDef_fileURL_notNull}", groups = CSVDataSetDefFileURLValidation.class)
-    @NotEmpty(message = "{dataSetApi_csvDataSetDef_fileURL_notNull}", groups = CSVDataSetDefFileURLValidation.class)
+    // @NotEmpty(message = "{dataSetApi_csvDataSetDef_fileURL_notNull}", groups = CSVDataSetDefFileURLValidation.class)
     protected String fileURL;
     @NotNull(message = "{dataSetApi_csvDataSetDef_filePath_notNull}", groups = CSVDataSetDefFilePathValidation.class)
-    @NotEmpty(message = "{dataSetApi_csvDataSetDef_filePath_notNull}", groups = CSVDataSetDefFilePathValidation.class)
+    // @NotEmpty(message = "{dataSetApi_csvDataSetDef_filePath_notNull}", groups = CSVDataSetDefFilePathValidation.class)
     protected String filePath;
     @NotNull(message = "{dataSetApi_csvDataSetDef_sepChar_notNull}")
     protected Character separatorChar;
@@ -41,10 +40,10 @@ public class CSVDataSetDef extends DataSetDef {
     @NotNull(message = "{dataSetApi_csvDataSetDef_escapeChar_notNull}")
     protected Character escapeChar;
     @NotNull(message = "{dataSetApi_csvDataSetDef_datePattern_notNull}")
-    @NotEmpty(message = "{dataSetApi_csvDataSetDef_datePattern_notNull}")
+    // @NotEmpty(message = "{dataSetApi_csvDataSetDef_datePattern_notNull}")
     protected String datePattern = "MM-dd-yyyy HH:mm:ss";
     @NotNull(message = "{dataSetApi_csvDataSetDef_numberPattern_notNull}")
-    @NotEmpty(message = "{dataSetApi_csvDataSetDef_numberPattern_notNull}")
+    // @NotEmpty(message = "{dataSetApi_csvDataSetDef_numberPattern_notNull}")
     protected String numberPattern = "#,###.##";
 
     public CSVDataSetDef() {
