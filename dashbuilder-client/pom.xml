@@ -32,7 +32,6 @@
   <modules>
     <module>dashbuilder-common-client</module>
     <module>dashbuilder-dataset-client</module>
-    <module>dashbuilder-dataset-editor</module>
     <module>dashbuilder-displayer-client</module>
     <module>dashbuilder-displayer-screen</module>
     <module>dashbuilder-displayer-editor</module>
