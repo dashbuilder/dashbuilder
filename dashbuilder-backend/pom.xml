@@ -21,6 +21,7 @@
     <module>dashbuilder-dataset-sql</module>
     <module>dashbuilder-dataset-csv</module>
     <module>dashbuilder-dataset-elasticsearch</module>
+    <module>dashbuilder-services</module>
   </modules>
 
   <dependencies>

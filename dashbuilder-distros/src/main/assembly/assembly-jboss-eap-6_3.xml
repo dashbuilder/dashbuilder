@@ -62,8 +62,9 @@
           <exclude>WEB-INF/lib/dashbuilder-displayer-client-*.jar</exclude>
           <exclude>WEB-INF/lib/dashbuilder-displayer-screen-*.jar</exclude>
           <exclude>WEB-INF/lib/dashbuilder-displayer-editor-*.jar</exclude>
-          <exclude>WEB-INF/lib/dashbuilder-renderer-google-*.jar</exclude>
           <exclude>WEB-INF/lib/dashbuilder-renderer-default-*.jar</exclude>
+          <exclude>WEB-INF/lib/dashbuilder-renderer-google-*.jar</exclude>
+          <exclude>WEB-INF/lib/dashbuilder-renderer-lienzo-*.jar</exclude>
 
           <!-- GWT Client Related -->
           <exclude>WEB-INF/lib/gwt-bootstrap-*.jar</exclude>

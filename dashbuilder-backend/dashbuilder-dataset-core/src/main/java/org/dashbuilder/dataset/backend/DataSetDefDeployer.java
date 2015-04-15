@@ -32,13 +32,11 @@ import org.dashbuilder.dataset.def.DataSetDef;
 import org.dashbuilder.dataset.def.DataSetDefRegistry;
 import org.json.JSONException;
 import org.slf4j.Logger;
-import org.uberfire.commons.services.cdi.Startup;
 
 /**
  * This class looks for Data set definition files within an specific server directory and deploys them.
  */
 @ApplicationScoped
-@Startup
 public class DataSetDefDeployer {
 
     @Inject @Config("")
