@@ -34,14 +34,42 @@ import java.util.List;
  * @param <T> The type of the value that contains the editor widget.
  */
 public class ValueBoxEditorDecorator<T> extends Composite implements
-        HasValueChangeHandlers<T>, HasEditorErrors<T>, IsEditor<ValueBoxEditor<T>> {
+        HasValue<T>, HasEditorErrors<T>, IsEditor<ValueBoxEditor<T>> {
     
     // The GWT bootstrap styles for error panels.
     private static final String STYLE_ERROR = " control-group error ";
-
+    private T value;
+    
     @Override
     public HandlerRegistration addValueChangeHandler(ValueChangeHandler<T> handler) {
         return addHandler(handler, ValueChangeEvent.getType());
+    }
+
+    @Override
+    public T getValue() {
+        return value;
+    }
+
+    @Override
+    public void setValue(T value) {
+        setValue(value, false);
+    }
+
+    @Override
+    public void setValue(T value, boolean fireEvents) {
+        // Disable current error markers, if present.
+        disableError();
+        
+        if (value == this.value || (this.value != null && this.value.equals(value))) {
+            return;
+        }
+
+        T before = this.value;
+        this.value = value;
+
+        if (fireEvents) {
+            ValueChangeEvent.fireIfNotEqual(this, before, value);
+        }
     }
 
     interface Binder extends UiBinder<Widget, ValueBoxEditorDecorator<?>> {

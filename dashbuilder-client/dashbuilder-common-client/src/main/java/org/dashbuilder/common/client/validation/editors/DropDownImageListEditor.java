@@ -148,12 +148,13 @@ public class DropDownImageListEditor<T> extends Composite implements
     }
 
     public void setValue(final T value, final boolean fireEvents) {
-        if (value == this.value || (this.value != null && this.value.equals(value))) {
-            return;
-        }
 
         // Disable current error markers, if present.
         disableError();
+
+        if (value == this.value || (this.value != null && this.value.equals(value))) {
+            return;
+        }
         
         T before = this.value;
         this.value = value;
