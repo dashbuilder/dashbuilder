@@ -6,7 +6,7 @@ The slider widget implementation located at this package is a copy of the [gwt-s
 Usage
 ------
 
-Check offical wiki at [GWT slide bar - Usage](http://code.google.com/p/gwt-slider-bar/wiki/Usage) and [GWT slide bar - Information](http://code.google.com/p/gwt-slider-bar/wiki/CommonInformation)
+Check official wiki at [GWT slide bar - Usage](http://code.google.com/p/gwt-slider-bar/wiki/Usage) and [GWT slide bar - Information](http://code.google.com/p/gwt-slider-bar/wiki/CommonInformation)
 
 **Horizontal slider**
 
