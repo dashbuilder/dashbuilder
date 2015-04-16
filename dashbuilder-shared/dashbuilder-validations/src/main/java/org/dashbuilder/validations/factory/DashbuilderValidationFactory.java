@@ -1,11 +1,21 @@
 package org.dashbuilder.validations.factory;
 
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.validation.client.AbstractGwtValidatorFactory;
+import com.google.gwt.validation.client.GwtValidation;
+import com.google.gwt.validation.client.impl.AbstractGwtValidator;
+import org.dashbuilder.dataset.def.*;
+import org.dashbuilder.dataset.impl.DataColumnImpl;
+import org.dashbuilder.dataset.validation.groups.*;
+
+import javax.validation.Validator;
+
 /**
  * @since 0.3.0
  */
-public class DashbuilderValidationFactory /*extends AbstractGwtValidatorFactory*/ {
+public class DashbuilderValidationFactory extends AbstractGwtValidatorFactory {
 
-    /*@GwtValidation(value = DataSetDef.class)
+    @GwtValidation(value = DataSetDef.class)
     public interface DataSetValidator extends Validator {
     }
 
@@ -36,5 +46,5 @@ public class DashbuilderValidationFactory /*extends AbstractGwtValidatorFactory*
     @Override
     public AbstractGwtValidator createValidator() {
         return GWT.create(DataSetDefValidator.class);
-    }*/
+    }
 }

@@ -37,10 +37,8 @@ import java.util.Map;
 public class DataSetDef {
 
     @NotNull(message = "{dataSetApi_dataSetDef_uuid_notNull}")
-    // @NotEmpty(message = "{dataSetApi_dataSetDef_uuid_notNull}")
     protected String UUID;
     @NotNull(message = "{dataSetApi_dataSetDef_name_notNull}")
-    // @NotEmpty(message = "{dataSetApi_dataSetDef_name_notNull}")
     protected String name;
     protected String defFilePath;
     @NotNull(message = "{dataSetApi_dataSetDef_provider_notNull}")
@@ -57,7 +55,6 @@ public class DataSetDef {
     @Max(value = 10000)
     protected Integer cacheMaxRows = 1000;
     @NotNull(message = "{dataSetApi_dataSetDef_refreshTime_notNull}", groups = DataSetDefRefreshIntervalValidation.class)
-    // @NotEmpty(message = "{dataSetApi_dataSetDef_refreshTime_notEmpty}", groups = DataSetDefRefreshIntervalValidation.class)
     @IsTimeInterval(message = "{dataSetApi_dataSetDef_refreshTime_intervalInvalid}", groups = DataSetDefRefreshIntervalValidation.class)
     protected String refreshTime = null;
     protected boolean refreshAlways = false;

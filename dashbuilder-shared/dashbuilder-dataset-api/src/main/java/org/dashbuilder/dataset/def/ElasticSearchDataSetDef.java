@@ -74,7 +74,6 @@ public class ElasticSearchDataSetDef extends DataSetDef {
 
     // Data Set user parameters.
     @NotNull(message = "{dataSetApi_elDataSetDef_serverURL_notNull}")
-    // @NotEmpty(message = "{dataSetApi_elDataSetDef_serverURL_notNull}")
     protected String serverURL;
 
     protected String clusterName;

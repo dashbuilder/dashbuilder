@@ -271,59 +271,59 @@ public final class DataSetDefEditWorkflow {
     
     
     private DataSetDefEditWorkflow validateDataColumn(final DataColumnImpl dataColumn, final AbstractEditor editor, final SimpleBeanEditorDriver driver) {
-        /*final Validator validator = ValidatorFactory.getDataColumnValidator();
+        final Validator validator = ValidatorFactory.getDataColumnValidator();
         final Set<ConstraintViolation<DataColumnImpl>> violations = validator.validate(dataColumn);
         final Set<?> test = violations;
-        setViolations(editor, driver, (Iterable<ConstraintViolation<?>>) test);*/
+        setViolations(editor, driver, (Iterable<ConstraintViolation<?>>) test);
         return this;
 
     }
 
     private DataSetDefEditWorkflow validateSQL(final SQLDataSetDef def, final AbstractEditor editor, final SimpleBeanEditorDriver driver, final Class<?>... groups) {
-        /*final Validator validator = ValidatorFactory.getSQLDataSetDefValidator();
+        final Validator validator = ValidatorFactory.getSQLDataSetDefValidator();
         final Set<ConstraintViolation<SQLDataSetDef>> violations = groups != null ? validator.validate(def, groups) : validator.validate(def);
         final Set<?> test = violations;
-        setViolations(editor, driver, (Iterable<ConstraintViolation<?>>) test);*/
+        setViolations(editor, driver, (Iterable<ConstraintViolation<?>>) test);
         return this;
     }
 
     private DataSetDefEditWorkflow validateCSV(final CSVDataSetDef def, final AbstractEditor editor, final SimpleBeanEditorDriver driver, final Class<?>... groups) {
-        /*final Validator validator = ValidatorFactory.getCSVDataSetDefValidator();
+        final Validator validator = ValidatorFactory.getCSVDataSetDefValidator();
         final Set<ConstraintViolation<CSVDataSetDef>> violations = groups != null ? validator.validate(def, groups) : validator.validate(def);
         final Set<?> test = violations;
-        setViolations(editor, driver, (Iterable<ConstraintViolation<?>>) test);*/
+        setViolations(editor, driver, (Iterable<ConstraintViolation<?>>) test);
         return this;
     }
 
     private DataSetDefEditWorkflow validateEL(final ElasticSearchDataSetDef def, final AbstractEditor editor, final SimpleBeanEditorDriver driver) {
-        /*final Validator validator = ValidatorFactory.getELDataSetDefValidator();
+        final Validator validator = ValidatorFactory.getELDataSetDefValidator();
         final Set<ConstraintViolation<ElasticSearchDataSetDef>> violations = validator.validate(def);
         final Set<?> test = violations;
-        setViolations(editor, driver, (Iterable<ConstraintViolation<?>>) test);*/
+        setViolations(editor, driver, (Iterable<ConstraintViolation<?>>) test);
         return this;
     }
 
     private DataSetDefEditWorkflow validateBean(final BeanDataSetDef def, final AbstractEditor editor, final SimpleBeanEditorDriver driver) {
-        /*final Validator validator = ValidatorFactory.getBeanDataSetDefValidator();
+        final Validator validator = ValidatorFactory.getBeanDataSetDefValidator();
         final Set<ConstraintViolation<BeanDataSetDef>> violations = validator.validate(def);
         final Set<?> test = violations;
-        setViolations(editor, driver, (Iterable<ConstraintViolation<?>>) test);*/
+        setViolations(editor, driver, (Iterable<ConstraintViolation<?>>) test);
         return this;
     }
     
     private DataSetDefEditWorkflow validate(final DataSetDef def, final AbstractEditor editor, final SimpleBeanEditorDriver driver) {
-        /*final Validator validator = ValidatorFactory.getDataSetDefValidator();
+        final Validator validator = ValidatorFactory.getDataSetDefValidator();
         final Set<ConstraintViolation<DataSetDef>> violations = validator.validate(def);
         final Set<?> test = violations;
-        setViolations(editor, driver, (Iterable<ConstraintViolation<?>>) test);*/
+        setViolations(editor, driver, (Iterable<ConstraintViolation<?>>) test);
         return null;
     }
     
     private DataSetDefEditWorkflow validate(final DataSetDef def, final AbstractEditor editor, final SimpleBeanEditorDriver driver,  final Class<?>... groups) {
-        /*final Validator validator = ValidatorFactory.getDataSetDefValidator();
+        final Validator validator = ValidatorFactory.getDataSetDefValidator();
         final Set<ConstraintViolation<DataSetDef>> violations = groups != null ? validator.validate(def, groups) : validator.validate(def);
         final Set<?> test = violations;
-        setViolations(editor, driver, (Iterable<ConstraintViolation<?>>) test);*/
+        setViolations(editor, driver, (Iterable<ConstraintViolation<?>>) test);
         return this;
     }
     

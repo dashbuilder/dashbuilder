@@ -31,7 +31,6 @@
 
   <dependencies>
 
-    <!-- GWT & Errai Bean Validation (JSR303) required artifacts. -->
     <dependency>
       <groupId>com.google.gwt</groupId>
       <artifactId>gwt-user</artifactId>
@@ -46,6 +45,11 @@
     <dependency>
       <groupId>log4j</groupId>
       <artifactId>log4j</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.jboss.errai</groupId>
+      <artifactId>errai-validation</artifactId>
     </dependency>
 
     <dependency>

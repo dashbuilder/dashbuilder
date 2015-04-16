@@ -27,7 +27,6 @@ import javax.validation.constraints.NotNull;
 public class BeanDataSetDef extends DataSetDef {
 
     @NotNull(message = "{dataSetApi_beanDataSetDef_generatorClass_notNull}")
-    // @NotEmpty(message = "{dataSetApi_beanDataSetDef_generatorClass_notNull}")
     protected String generatorClass;
     protected Map<String,String> paramaterMap = new HashMap<String,String>();
 

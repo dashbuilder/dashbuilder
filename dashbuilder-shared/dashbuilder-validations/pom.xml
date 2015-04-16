@@ -41,6 +41,11 @@
     </dependency>
 
     <dependency>
+      <groupId>org.dashbuilder</groupId>
+      <artifactId>dashbuilder-hibernate-validator</artifactId>
+    </dependency>
+
+    <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>
     </dependency>
@@ -48,6 +53,11 @@
     <dependency>
       <groupId>log4j</groupId>
       <artifactId>log4j</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.jboss.errai</groupId>
+      <artifactId>errai-validation</artifactId>
     </dependency>
 
     <dependency>

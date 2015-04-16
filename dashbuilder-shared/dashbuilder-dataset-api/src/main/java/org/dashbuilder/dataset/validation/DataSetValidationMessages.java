@@ -16,6 +16,7 @@
 package org.dashbuilder.dataset.validation;
 
 import com.google.gwt.core.client.GWT;
+import org.jboss.errai.marshalling.client.api.annotations.Key;
 
 public interface DataSetValidationMessages extends
     com.google.gwt.i18n.client.ConstantsWithLookup {

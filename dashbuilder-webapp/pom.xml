@@ -17,12 +17,26 @@
   <name>Dashbuilder WebApp</name>
   <description>Dashbuilder WebApp</description>
 
-
   <dependencies>
     <!-- Dashbuilder -->
     <dependency>
       <groupId>org.dashbuilder</groupId>
       <artifactId>dashbuilder-all</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.dashbuilder</groupId>
+      <artifactId>dashbuilder-hibernate-validator</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.dashbuilder</groupId>
+      <artifactId>dashbuilder-validations</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.dashbuilder</groupId>
+      <artifactId>dashbuilder-widgets</artifactId>
     </dependency>
 
     <dependency>
@@ -221,6 +235,7 @@
           <compileSourcesArtifacts>
 
             <!-- Dashbuilder -->
+            <compileSourcesArtifact>org.dashbuilder:dashbuilder-hibernate-validator</compileSourcesArtifact>
             <compileSourcesArtifact>org.dashbuilder:dashbuilder-validations</compileSourcesArtifact>
             <compileSourcesArtifact>org.dashbuilder:dashbuilder-dataset-api</compileSourcesArtifact>
             <compileSourcesArtifact>org.dashbuilder:dashbuilder-dataset-shared</compileSourcesArtifact>

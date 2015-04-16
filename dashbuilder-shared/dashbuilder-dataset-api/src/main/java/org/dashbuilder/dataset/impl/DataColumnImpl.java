@@ -32,11 +32,9 @@ public class DataColumnImpl implements DataColumn {
     protected DataSetImpl dataSet = null;
 
     @NotNull(message = "{dataSetApi_dataColumnImpl_id_notNull}")
-    // @NotEmpty(message = "{dataSetApi_dataColumnImpl_id_notNull}")
     protected String id = null;
 
     @NotNull(message = "{dataSetApi_dataColumnImpl_name_notNull}")
-    // @NotEmpty(message = "{dataSetApi_dataColumnImpl_name_notNull}")
     protected String name = null;
 
     @NotNull(message = "{dataSetApi_dataColumnImpl_columnType_notNull}")

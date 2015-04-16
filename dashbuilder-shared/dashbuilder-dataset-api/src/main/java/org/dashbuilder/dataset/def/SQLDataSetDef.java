@@ -16,7 +16,6 @@
 package org.dashbuilder.dataset.def;
 
 import org.dashbuilder.dataprovider.DataSetProviderType;
-import org.dashbuilder.dataset.validation.groups.SQLDataSetDefDbSQLValidation;
 import org.dashbuilder.dataset.validation.groups.SQLDataSetDefDbTableValidation;
 import org.jboss.errai.common.client.api.annotations.Portable;
 
@@ -26,17 +25,14 @@ import javax.validation.constraints.NotNull;
 public class SQLDataSetDef extends DataSetDef {
 
     @NotNull(message = "{dataSetApi_sqlDataSetDef_dataSource_notNull}")
-    // @NotEmpty(message = "{dataSetApi_sqlDataSetDef_dataSource_notNull}")
     protected String dataSource;
 
     protected String dbSchema;
 
     @NotNull(message = "{dataSetApi_sqlDataSetDef_dbTable_notNull}", groups = SQLDataSetDefDbTableValidation.class)
-    // @NotEmpty(message = "{dataSetApi_sqlDataSetDef_dbTable_notNull}", groups = SQLDataSetDefDbSQLValidation.class)
     protected String dbTable;
 
     @NotNull(message = "{dataSetApi_sqlDataSetDef_dbSQL_notNull}")
-    // @NotEmpty(message = "{dataSetApi_sqlDataSetDef_dbSQL_notNull}")
     protected String dbSQL;
     
     protected boolean allColumnsEnabled = true;

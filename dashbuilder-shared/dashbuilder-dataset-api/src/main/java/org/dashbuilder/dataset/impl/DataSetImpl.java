@@ -36,7 +36,6 @@ public class DataSetImpl implements DataSet {
     protected DataSetDef definition;
 
     @NotNull(message = "{dataSetApi_dataSetImpl_uuid_notNull}")
-    // @NotEmpty(message = "{dataSetApi_dataSetImpl_uuid_notNull}")
     protected String uuid = null;
 
     @NotNull(message = "{dataSetApi_dataSetImpl_creationDate_notNull}")
