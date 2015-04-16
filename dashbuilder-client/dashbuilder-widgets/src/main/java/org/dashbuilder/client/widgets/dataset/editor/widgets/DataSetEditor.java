@@ -84,7 +84,7 @@ public class DataSetEditor implements IsWidget {
         View setEditMode(final boolean editMode);
         View showHomeView(final int dsetCount, final ClickHandler newDataSetHandler);
         View showProviderSelectionView();
-        View showBasicAttributesEditionView();
+        View showBasicAttributesEditionView(final String uuid);
         View showSQLAttributesEditorView(ClickHandler testHandler);
         View showBeanAttributesEditorView(ClickHandler testHandler);
         View showCSVAttributesEditorView(ClickHandler testHandler);
@@ -164,7 +164,8 @@ public class DataSetEditor implements IsWidget {
                 
                 // Clone the definition in order to edit the cloned copy.
                 DataSetEditor.this.dataSetDef = def.clone();
-                DataSetEditor.this.dataSetDef.setUUID(uuid + EDIT_SUFFIX);
+                final String editionUUID = getEditionUUID(def);
+                DataSetEditor.this.dataSetDef.setUUID(editionUUID);
                 DataSetEditor.this.dataSetDef.setPublic(false);
 
                 edit = def;
@@ -199,6 +200,24 @@ public class DataSetEditor implements IsWidget {
         result.setUUID(uuid);
         result.setPublic(false);
         return result;
+    }
+    
+    private String getEditionUUID(final DataSetDef def) {
+        String uuid = null;
+        if (def != null) {
+            final String _uuid = def.getUUID();
+            return _uuid + EDIT_SUFFIX;            
+        }
+        
+        return uuid;
+    }
+    
+    private String getOriginalUUID(final String editionUUID) {
+        if (editionUUID == null) return null;
+        
+        final int suffix_length = EDIT_SUFFIX.length();
+        if (editionUUID.trim().length() < suffix_length) return editionUUID;
+        return editionUUID.substring(0, editionUUID.length() - suffix_length);
     }
 
     private final ClickHandler providerScreenNextButtonHandler = new ClickHandler() {
@@ -368,7 +387,8 @@ public class DataSetEditor implements IsWidget {
     }
     
     private void showBasicAttributesEditionView() {
-        view.showBasicAttributesEditionView();
+        final String _uuid = edit != null ? edit.getUUID() : dataSetDef.getUUID();
+        view.showBasicAttributesEditionView(_uuid);
         isHomeViewVisible = false;
     }
     
@@ -544,7 +564,7 @@ public class DataSetEditor implements IsWidget {
     }
 
     private void log(Set<ConstraintViolation<? extends DataSetDef>>... violations) {
-        if (true) return;
+        // if (true) return;
         if (violations != null && violations.length > 0) {
             for (int x = 0; x < violations.length; x++) {
                 Set<ConstraintViolation<? extends DataSetDef>> driverViolation = violations[x];

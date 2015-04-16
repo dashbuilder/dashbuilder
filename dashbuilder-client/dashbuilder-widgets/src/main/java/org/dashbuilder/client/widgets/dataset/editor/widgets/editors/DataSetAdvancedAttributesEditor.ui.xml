@@ -139,7 +139,7 @@
           <b:Popover showDelay="1000" text="{i18n.attributeRefreshInterval_description}" heading="{i18n.attributeRefreshInterval}">
             <dash-client:ValueBoxEditorDecorator errorLabelPosition="TOOLTIP_TOP" ui:field="attributeRefreshInterval" addStyleNames="{style.editor} ">
               <dash-client:valuebox>
-                <b:TextBox placeholder="{i18n.attributeRefreshInterval}" addStyleNames="{style.refreshIntervalBox} "/>
+                <g:IntegerBox addStyleNames="{style.refreshIntervalBox} "/> <!-- TODO:  placeholder="{i18n.attributeMaxBytes}" -->
               </dash-client:valuebox>
             </dash-client:ValueBoxEditorDecorator>
           </b:Popover>

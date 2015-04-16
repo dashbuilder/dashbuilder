@@ -311,8 +311,11 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
 
 
     @Override
-    public DataSetEditor.View showBasicAttributesEditionView() {
+    public DataSetEditor.View showBasicAttributesEditionView(final String uuid) {
         workflow.edit(dataSetBasicAttributesEditor, dataSetDef);
+        
+        // The uuid of the data set, if is the cloned instance for editing, is not the original one.
+        dataSetBasicAttributesEditor.setUUID(uuid);
 
         // View title.
         showTitle();

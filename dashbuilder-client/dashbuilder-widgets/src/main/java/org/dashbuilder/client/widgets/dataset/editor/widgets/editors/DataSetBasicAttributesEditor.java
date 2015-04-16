@@ -17,10 +17,11 @@ package org.dashbuilder.client.widgets.dataset.editor.widgets.editors;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.EditorError;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.common.client.validation.editors.ValueBoxEditorDecorator;
 import org.dashbuilder.dataset.client.validation.editors.DataSetDefEditor;
@@ -30,6 +31,8 @@ import java.util.List;
 
 /**
  * <p>This is the view implementation for Data Set Editor widget for editing data set UUID and name attributes.</p>
+ *
+ * <p>NOTE: The <code>uuid</code> is not bind directly to the data set definiton instance, as when editing a data set def, the instance is cloned temporary for editing it and the uuid is different than the original one, so it must be set programatically.</p>
  *
  * @since 0.3.0 
  */
@@ -43,18 +46,29 @@ public class DataSetBasicAttributesEditor extends AbstractDataSetDefEditor imple
     FlowPanel basicAttributesPanel;
     
     @UiField
-    @Path("UUID")
+    @Ignore
     ValueBoxEditorDecorator<String> attributeUUID;
 
     @UiField
     ValueBoxEditorDecorator<String> name;
-
+    
     private  boolean isEditMode;
 
+    private final ValueChangeHandler<String> uuidValueChangeHandler = new ValueChangeHandler<String>() {
+        @Override
+        public void onValueChange(ValueChangeEvent<String> event) {
+            dataSetDef.setUUID(event.getValue());
+        }
+    };
+    
     public DataSetBasicAttributesEditor() {
         initWidget(uiBinder.createAndBindUi(this));
+        attributeUUID.addValueChangeHandler(uuidValueChangeHandler);
     }
 
+    public void setUUID(final String uuid) {
+        this.attributeUUID.asEditor().setValue(uuid);
+    }
 
     public boolean isEditMode() {
         return isEditMode;
