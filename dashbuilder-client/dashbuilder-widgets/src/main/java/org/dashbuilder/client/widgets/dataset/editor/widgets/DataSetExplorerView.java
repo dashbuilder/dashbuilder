@@ -23,6 +23,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -49,7 +50,8 @@ import java.util.*;
 public class DataSetExplorerView extends Composite implements DataSetExplorer.View {
 
     private final static String WHITESPACE = " ";
-    
+    private final static NumberFormat rowsFormat = NumberFormat.getFormat("##0");
+
     interface DataSetExplorerViewBinder extends UiBinder<Widget, DataSetExplorerView> {}
     private static DataSetExplorerViewBinder uiBinder = GWT.create(DataSetExplorerViewBinder.class);
 
@@ -58,6 +60,7 @@ public class DataSetExplorerView extends Composite implements DataSetExplorer.Vi
         String statusPanel();
         String statusIcon();
         String statusText();
+        String statusTextTitle();
         String estimationsPanel();
         String buttonsPanel();
         String button();
@@ -193,6 +196,9 @@ public class DataSetExplorerView extends Composite implements DataSetExplorer.Vi
         if (parent != null) {
             final DataSetClientImages images = DataSetClientResources.INSTANCE.images(); 
             
+            final HTML statusText = new HTML(DataSetExplorerConstants.INSTANCE.currentStatus());
+            statusText.addStyleName(style.statusTextTitle());
+            
             // Caches and refresh.
             final boolean isCacheEnabled = dataSetDef.isCacheEnabled();
             final FlowPanel cachePanel = new FlowPanel();
@@ -232,9 +238,10 @@ public class DataSetExplorerView extends Composite implements DataSetExplorer.Vi
             refreshText.addStyleName(style.statusText());
             refreshPanel.add(refreshEnabled);
             refreshPanel.add(refreshText);
-
+        
             final FlowPanel statusPanel = new FlowPanel();
             statusPanel.addStyleName(style.statusPanel());
+            statusPanel.add(statusText);
             statusPanel.add(cachePanel);
             statusPanel.add(pushPanel);
             statusPanel.add(refreshPanel);
@@ -246,12 +253,15 @@ public class DataSetExplorerView extends Composite implements DataSetExplorer.Vi
             final int estimatedSize = metadata.getEstimatedSize();
             final int rowCount = metadata.getNumberOfRows();
             
+            final HTML currentSizeText = new HTML(DataSetExplorerConstants.INSTANCE.currentSize());
+            currentSizeText.addStyleName(style.statusTextTitle());
             final HTML estimatedSizeText = new HTML(estimatedSize + WHITESPACE + DataSetExplorerConstants.INSTANCE.bytes());
             estimatedSizeText.addStyleName(style.statusText());
-            final HTML estimatedRowsText = new HTML(rowCount + WHITESPACE + DataSetExplorerConstants.INSTANCE.rows());
+            final HTML estimatedRowsText = new HTML(getEstimatedRowsFormattedValue(rowCount) + WHITESPACE + DataSetExplorerConstants.INSTANCE.rows());
             estimatedRowsText.addStyleName(style.statusText());
             
             // Add into parent container.
+            estimationsPanel.add(currentSizeText);
             estimationsPanel.add(estimatedRowsText);
             estimationsPanel.add(estimatedSizeText);
 
@@ -329,6 +339,15 @@ public class DataSetExplorerView extends Composite implements DataSetExplorer.Vi
         }
     }
 
+    private String getEstimatedRowsFormattedValue(final int rows) {
+        if (rows / 1000000 > 0) {
+            return rowsFormat.format(rows / 1000000) + "M";
+        }
+        if (rows / 1000 > 0) {
+            return rowsFormat.format(rows / 1000) + "K";
+        }
+        return rowsFormat.format(rows);
+    }
 
     // **************** EVENT HANDLER REGISTRATIONS ****************************
 
