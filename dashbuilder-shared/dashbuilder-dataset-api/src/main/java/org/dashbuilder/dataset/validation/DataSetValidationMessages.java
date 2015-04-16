@@ -57,6 +57,9 @@ public interface DataSetValidationMessages extends
     @Key("dataSetApi_sqlDataSetDef_dbTable_notNull")
     String dataSetApi_sqlDataSetDef_dbTable_notNull();
 
+    @Key("dataSetApi_sqlDataSetDef_dbSQL_notNull")
+    String dataSetApi_sqlDataSetDef_dbSQL_notNull();
+
     @Key("dataSetApi_csvDataSetDef_fileURL_notNull")
     String dataSetApi_csvDataSetDef_fileURL_notNull();
 

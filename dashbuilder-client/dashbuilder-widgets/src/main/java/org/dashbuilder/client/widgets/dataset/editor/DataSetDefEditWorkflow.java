@@ -194,7 +194,7 @@ public final class DataSetDefEditWorkflow {
      */
     private DataSetDefEditWorkflow saveAdvancedAttributes() {
         DataSetDef edited = (DataSetDef) advancedAttributesDriver.flush();
-        validate(edited, advancedAttributesEditor, advancedAttributesDriver);
+        
         List<Class<?>> groups = new LinkedList<Class<?>>();
         if (edited.isCacheEnabled()) groups.add(DataSetDefCacheRowsValidation.class);
         if (edited.isPushEnabled()) groups.add(DataSetDefPushSizeValidation.class);
@@ -202,7 +202,10 @@ public final class DataSetDefEditWorkflow {
 
         // Validate custom groups, if necessary.
         if (!groups.isEmpty()) {
+            groups.add(javax.validation.groups.Default.class);
             validate(edited, advancedAttributesEditor, advancedAttributesDriver, groups.toArray(new Class[groups.size()]));
+        } else {
+            validate(edited, advancedAttributesEditor, advancedAttributesDriver);
         }
 
         return this;
@@ -229,12 +232,25 @@ public final class DataSetDefEditWorkflow {
     private DataSetDefEditWorkflow saveSQLAttributes() {
         SQLDataSetDef edited = sqlAttributesDriver.flush();
         
-        // Validate common attributes.
-        validateSQL(edited, sqlAttributesEditor, sqlAttributesDriver, null);
-        
         // Validate either table or query.
-        if (sqlAttributesEditor.isUsingTable()) return validateSQL(edited, sqlAttributesEditor, sqlAttributesDriver, SQLDataSetDefDbTableValidation.class);
-        else return validateSQL(edited, sqlAttributesEditor, sqlAttributesDriver, SQLDataSetDefDbSQLValidation.class);
+        List<Class<?>> groups = new LinkedList<Class<?>>();
+        if (sqlAttributesEditor.isUsingTable()) {
+            // Save using table attribute.
+            edited.setDbSQL(null);
+            groups.add(SQLDataSetDefDbTableValidation.class);
+        } else {
+            // Save using query attribute.
+            edited.setDbTable(null);
+            groups.add(SQLDataSetDefDbSQLValidation.class);
+        }
+
+        // Validate custom groups, if necessary.
+        if (!groups.isEmpty()) {
+            groups.add(javax.validation.groups.Default.class);
+            return validateSQL(edited, sqlAttributesEditor, sqlAttributesDriver, groups.toArray(new Class[groups.size()]));
+        } else {
+            return validateSQL(edited, sqlAttributesEditor, sqlAttributesDriver);
+        }
     }
 
     /**
@@ -243,12 +259,9 @@ public final class DataSetDefEditWorkflow {
     private DataSetDefEditWorkflow saveCSVAttributes() {
         CSVDataSetDef edited = csvAttributesDriver.flush();
         
-        // Validate common attributes.
-        validateCSV(edited, csvAttributesEditor, csvAttributesDriver, null);
-        
         // Validate either file path or file URL.
-        if (csvAttributesEditor.isUsingFilePath()) return validateCSV(edited, csvAttributesEditor, csvAttributesDriver, CSVDataSetDefFilePathValidation.class);
-        else if (csvAttributesEditor.isUsingFileURL()) return validateCSV(edited, csvAttributesEditor, csvAttributesDriver, CSVDataSetDefFileURLValidation.class);
+        if (csvAttributesEditor.isUsingFilePath()) return validateCSV(edited, csvAttributesEditor, csvAttributesDriver, CSVDataSetDefFilePathValidation.class, javax.validation.groups.Default.class);
+        else if (csvAttributesEditor.isUsingFileURL()) return validateCSV(edited, csvAttributesEditor, csvAttributesDriver, CSVDataSetDefFileURLValidation.class, javax.validation.groups.Default.class);
         return this;
     }
 

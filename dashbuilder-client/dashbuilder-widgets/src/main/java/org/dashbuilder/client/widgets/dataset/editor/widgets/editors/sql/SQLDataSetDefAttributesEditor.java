@@ -71,8 +71,8 @@ public class SQLDataSetDefAttributesEditor extends AbstractDataSetDefEditor impl
     RadioButton queryButton;
 
     @UiField
-    @Ignore
-    TextArea dbQuery;
+    @Path("dbSQL")
+    ValueBoxEditorDecorator<String> dbQuery;
 
     private boolean isEditMode;
 

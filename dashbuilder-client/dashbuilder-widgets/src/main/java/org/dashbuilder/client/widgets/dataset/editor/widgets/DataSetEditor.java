@@ -563,8 +563,9 @@ public class DataSetEditor implements IsWidget {
         GWT.log(message);
     }
 
+    // TODO: Remove, just for testing.
     private void log(Set<ConstraintViolation<? extends DataSetDef>>... violations) {
-        // if (true) return;
+        if (true) return;
         if (violations != null && violations.length > 0) {
             for (int x = 0; x < violations.length; x++) {
                 Set<ConstraintViolation<? extends DataSetDef>> driverViolation = violations[x];
