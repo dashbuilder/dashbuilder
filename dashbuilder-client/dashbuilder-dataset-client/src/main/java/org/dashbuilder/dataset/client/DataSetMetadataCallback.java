@@ -24,5 +24,5 @@ public interface DataSetMetadataCallback {
 
     void callback(DataSetMetadata metatada);
     void notFound();
-
+    boolean onError(DataSetClientServiceError error);
 }

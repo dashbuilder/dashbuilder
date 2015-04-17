@@ -24,5 +24,6 @@ public interface DataSetReadyCallback {
 
     void callback(DataSet dataSet);
     void notFound();
+    boolean onError(DataSetClientServiceError error);
 
 }

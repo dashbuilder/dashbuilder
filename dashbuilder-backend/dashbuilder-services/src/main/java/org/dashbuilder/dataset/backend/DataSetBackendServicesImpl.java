@@ -52,6 +52,8 @@ import org.dashbuilder.dataset.DataSetBackendServices;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetLookup;
 import org.dashbuilder.dataset.DataSetMetadata;
+import org.dashbuilder.dataset.backend.exception.DataSetLookupException;
+import org.dashbuilder.dataset.backend.exception.ExceptionManager;
 import org.dashbuilder.dataset.def.DataSetDef;
 import org.dashbuilder.dataset.def.DataSetDefRegistry;
 import org.dashbuilder.dataset.group.Interval;
@@ -72,6 +74,9 @@ public class DataSetBackendServicesImpl implements DataSetBackendServices {
     @Inject
     private Logger log;
 
+    @Inject
+    private ExceptionManager exceptionManager;
+    
     @Inject BackendDataSetManager dataSetManager;
     @Inject DataSetDefDeployer dataSetDefDeployer;
     @Inject DataSetDefRegistry dataSetDefRegistry;
@@ -123,11 +128,25 @@ public class DataSetBackendServicesImpl implements DataSetBackendServices {
     }
 
     public DataSet lookupDataSet(DataSetLookup lookup) throws Exception {
-        return dataSetManager.lookupDataSet(lookup);
+        DataSet _d = null;
+        try {
+            _d = dataSetManager.lookupDataSet(lookup);
+        } catch (DataSetLookupException e) {
+            throw exceptionManager.handleException(e);
+        }
+        
+        return _d;
     }
 
     public DataSetMetadata lookupDataSetMetadata(String uuid) throws Exception {
-        return dataSetManager.getDataSetMetadata( uuid );
+        DataSetMetadata _d = null;
+        try {
+            _d = dataSetManager.getDataSetMetadata(uuid );
+        } catch (DataSetLookupException e) {
+            throw exceptionManager.handleException(e);
+        }
+
+        return _d;
     }
 
     public List<DataSetDef> getPublicDataSetDefs() {

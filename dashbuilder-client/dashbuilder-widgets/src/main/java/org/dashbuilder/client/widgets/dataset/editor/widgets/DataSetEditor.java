@@ -31,9 +31,9 @@ import org.dashbuilder.dataset.DataSetMetadata;
 import org.dashbuilder.dataset.client.ClientDataSetManager;
 import org.dashbuilder.dataset.client.DataSetClientServices;
 import org.dashbuilder.dataset.client.DataSetMetadataCallback;
+import org.dashbuilder.dataset.client.DataSetClientServiceError;
 import org.dashbuilder.dataset.client.uuid.ClientUUIDGenerator;
 import org.dashbuilder.dataset.def.*;
-import org.dashbuilder.dataset.events.DataSetDefModifiedEvent;
 import org.dashbuilder.dataset.events.DataSetDefRegisteredEvent;
 import org.dashbuilder.dataset.events.DataSetDefRemovedEvent;
 import org.dashbuilder.dataset.filter.DataSetFilter;
@@ -189,6 +189,13 @@ public class DataSetEditor implements IsWidget {
             public void notFound() {
                 error("Data set definition with uuid [" + uuid + "] not found.");
                 // TODO: Show error popup?
+            }
+
+            @Override
+            public boolean onError(DataSetClientServiceError error) {
+                // TODO
+                GWT.log("Error occurred in DataSetEditor#editDataSet!");
+                return false;
             }
         });
         return this;
@@ -521,6 +528,11 @@ public class DataSetEditor implements IsWidget {
         @Override
         public void onFilterReset(Displayer displayer, List<DataSetGroup> groupOps) {
 
+        }
+
+        @Override
+        public void onError(Displayer displayer, DataSetClientServiceError error) {
+            GWT.log("DataSetEditor#onError: " + error.getThrowable().getMessage());
         }
 
     };

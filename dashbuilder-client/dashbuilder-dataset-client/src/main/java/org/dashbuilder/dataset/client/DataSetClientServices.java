@@ -15,16 +15,6 @@
  */
 package org.dashbuilder.dataset.client;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Map;
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.event.Event;
-import javax.enterprise.event.Observes;
-import javax.inject.Inject;
-
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetBackendServices;
 import org.dashbuilder.dataset.DataSetLookup;
@@ -32,15 +22,23 @@ import org.dashbuilder.dataset.DataSetMetadata;
 import org.dashbuilder.dataset.client.resources.i18n.CommonConstants;
 import org.dashbuilder.dataset.def.DataSetDef;
 import org.dashbuilder.dataset.engine.group.IntervalBuilderLocator;
-import org.dashbuilder.dataset.events.DataSetStaleEvent;
+import org.dashbuilder.dataset.events.DataSetModifiedEvent;
 import org.dashbuilder.dataset.events.DataSetPushOkEvent;
 import org.dashbuilder.dataset.events.DataSetPushingEvent;
-import org.dashbuilder.dataset.events.DataSetModifiedEvent;
+import org.dashbuilder.dataset.events.DataSetStaleEvent;
 import org.dashbuilder.dataset.group.AggregateFunctionManager;
+import org.jboss.errai.bus.client.api.messaging.Message;
 import org.jboss.errai.common.client.api.Caller;
+import org.jboss.errai.common.client.api.ErrorCallback;
 import org.jboss.errai.common.client.api.RemoteCallback;
 import org.jboss.errai.ioc.client.container.IOC;
 import org.jboss.errai.ioc.client.container.IOCBeanDef;
+
+import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.event.Event;
+import javax.enterprise.event.Observes;
+import javax.inject.Inject;
+import java.util.*;
 
 import static org.uberfire.commons.validation.PortablePreconditions.checkNotNull;
 
@@ -130,7 +128,13 @@ public class DataSetClientServices {
                             remoteMetadataMap.put(uuid, result);
                             listener.callback(result);
                         }
-                    }}).lookupDataSetMetadata(uuid);
+                    }}, new ErrorCallback<Message>() {
+                            @Override
+                            public boolean error(Message message, Throwable throwable) {
+                                listener.onError(new DataSetClientServiceError(message, throwable));
+                                return true;
+                            }
+                        }).lookupDataSetMetadata(uuid);
             }
         }
         else {
@@ -275,6 +279,11 @@ public class DataSetClientServices {
                 public void notFound() {
                     listener.notFound();
                 }
+                
+                @Override
+                public boolean onError(final DataSetClientServiceError error) {
+                    return listener.onError(error);
+                }
             });
         }
         // Data set not found on client.
@@ -285,12 +294,21 @@ public class DataSetClientServices {
 
     private void _lookupDataSet(DataSetLookup request, final DataSetReadyCallback listener) {
         try {
+            
             dataSetBackendServices.call(
-                new RemoteCallback<DataSet>() {
-                    public void callback(DataSet result) {
-                        if (result == null) listener.notFound();
-                        else listener.callback(result);
-                    }}).lookupDataSet(request);
+                    new RemoteCallback<DataSet>() {
+                        public void callback(DataSet result) {
+                            if (result == null) listener.notFound();
+                            else listener.callback(result);
+                        }
+                    }, new ErrorCallback<Message>() {
+                        @Override
+                        public boolean error(Message message, Throwable throwable) {
+                            return listener.onError(new DataSetClientServiceError(message, throwable));
+                        }
+                    })
+                    .lookupDataSet(request);
+            
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -350,6 +368,15 @@ public class DataSetClientServices {
             for (DataSetLookupListenerPair pair : listenerList) {
                 pair.listener.notFound();
             }
+        }
+
+        @Override
+        public boolean onError(final DataSetClientServiceError error) {
+            boolean t = false;
+            for (DataSetLookupListenerPair pair : listenerList) {
+                if (pair.listener.onError(error)) t = true;
+            }
+            return t;
         }
     }
 

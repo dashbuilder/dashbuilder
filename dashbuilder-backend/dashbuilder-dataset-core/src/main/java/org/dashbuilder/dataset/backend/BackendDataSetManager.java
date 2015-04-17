@@ -29,6 +29,7 @@ import org.dashbuilder.dataset.DataSetFactory;
 import org.dashbuilder.dataset.DataSetLookup;
 import org.dashbuilder.dataset.DataSetManager;
 import org.dashbuilder.dataset.DataSetMetadata;
+import org.dashbuilder.dataset.backend.exception.DataSetLookupException;
 import org.dashbuilder.dataset.def.DataSetDef;
 import org.dashbuilder.dataset.def.DataSetDefRegistry;
 import org.dashbuilder.dataset.def.StaticDataSetDef;
@@ -112,7 +113,7 @@ public class BackendDataSetManager implements DataSetManager {
             return resolveProvider(dataSetDef)
                     .lookupDataSet(dataSetDef, lookup);
         } catch (Exception e) {
-            throw new RuntimeException("Can't lookup on specified data set: " + lookup.getDataSetUUID(), e);
+            throw new DataSetLookupException(uuid, "Can't lookup on specified data set: " + lookup.getDataSetUUID(), e);
         }
     }
 
@@ -134,7 +135,7 @@ public class BackendDataSetManager implements DataSetManager {
             return resolveProvider(dataSetDef)
                     .getDataSetMetadata(dataSetDef);
         } catch (Exception e) {
-            throw new RuntimeException("Can't get metadata on specified data set: " + uuid, e);
+            throw new DataSetLookupException(uuid, "Can't get metadata on specified data set: " + uuid, e);
         }
     }
 

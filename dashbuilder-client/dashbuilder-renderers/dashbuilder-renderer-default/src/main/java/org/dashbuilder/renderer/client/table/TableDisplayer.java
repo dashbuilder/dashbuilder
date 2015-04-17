@@ -22,6 +22,7 @@ import java.util.Set;
 
 import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.cell.client.ValueUpdater;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -41,6 +42,7 @@ import com.google.gwt.view.client.AsyncDataProvider;
 import com.google.gwt.view.client.HasData;
 import org.dashbuilder.common.client.StringUtils;
 import org.dashbuilder.dataset.DataSetLookupConstraints;
+import org.dashbuilder.dataset.client.DataSetClientServiceError;
 import org.dashbuilder.dataset.client.DataSetReadyCallback;
 import org.dashbuilder.dataset.group.Interval;
 import org.dashbuilder.displayer.ColumnSettings;
@@ -114,6 +116,12 @@ public class TableDisplayer extends AbstractDisplayer {
                         public void notFound() {
                             displayMessage(CommonConstants.INSTANCE.error() + CommonConstants.INSTANCE.error_dataset_notfound());
                         }
+
+                        @Override
+                        public boolean onError(final DataSetClientServiceError error) {
+                            afterError(TableDisplayer.this, error);
+                            return false;
+                        }
                     });
                 } catch ( Exception e ) {
                     displayMessage(CommonConstants.INSTANCE.error() + e.getMessage());
@@ -142,6 +150,12 @@ public class TableDisplayer extends AbstractDisplayer {
             }
             public void notFound() {
                 displayMessage(CommonConstants.INSTANCE.error() + CommonConstants.INSTANCE.error_dataset_notfound());
+            }
+
+            @Override
+            public boolean onError(DataSetClientServiceError error) {
+                afterError(TableDisplayer.this, error);
+                return false;
             }
         } );
     }
@@ -227,6 +241,12 @@ public class TableDisplayer extends AbstractDisplayer {
                         }
                         public void notFound() {
                             callback.notFound();
+                        }
+
+                        @Override
+                        public boolean onError(DataSetClientServiceError error) {
+                            callback.onError(error);
+                            return false;
                         }
                     }
             );
@@ -439,6 +459,13 @@ public class TableDisplayer extends AbstractDisplayer {
                             }
                             public void notFound() {
                                 displayMessage(CommonConstants.INSTANCE.error() + CommonConstants.INSTANCE.error_dataset_notfound());
+                            }
+
+                            @Override
+                            public boolean onError(DataSetClientServiceError error) {
+                                // TODO
+                                GWT.log("Error occurred in TableDisplayer.TableProvider#onRangeChanged!");                                
+                                return false;
                             }
                         }
                 );

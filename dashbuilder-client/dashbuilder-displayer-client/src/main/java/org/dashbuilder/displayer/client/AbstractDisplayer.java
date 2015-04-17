@@ -31,6 +31,7 @@ import org.dashbuilder.common.client.StringUtils;
 import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.dataset.ValidationError;
+import org.dashbuilder.dataset.client.DataSetClientServiceError;
 import org.dashbuilder.dataset.client.resources.i18n.DayOfWeekConstants;
 import org.dashbuilder.dataset.client.resources.i18n.MonthConstants;
 import org.dashbuilder.dataset.date.DayOfWeek;
@@ -181,6 +182,12 @@ public abstract class AbstractDisplayer extends Composite implements Displayer {
         }
     }
 
+    protected void afterError(final Displayer displayer, final DataSetClientServiceError error) {
+        for (DisplayerListener listener : listenerList) {
+            listener.onError(displayer, error);
+        }
+    }
+
     // CAPTURE EVENTS RECEIVED FROM OTHER DISPLAYERS
 
     public void onDraw(Displayer displayer) {
@@ -193,6 +200,11 @@ public abstract class AbstractDisplayer extends Composite implements Displayer {
 
     public void onClose(Displayer displayer) {
         // Do nothing
+    }
+
+    @Override
+    public void onError(final Displayer displayer, final DataSetClientServiceError error) {
+        afterError(displayer, error);
     }
 
     public void onFilterEnabled(Displayer displayer, DataSetGroup groupOp) {

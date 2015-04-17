@@ -21,9 +21,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.dataset.DataColumn;
-import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.def.DataSetDef;
-import org.dashbuilder.dataset.group.DataSetGroup;
 import org.dashbuilder.displayer.DisplayerSettings;
 import org.dashbuilder.displayer.DisplayerSettingsFactory;
 import org.dashbuilder.displayer.TableDisplayerSettingsBuilder;
@@ -107,9 +105,6 @@ public class DataSetPreviewEditor extends AbstractDataSetDefEditor {
             coordinator.addDisplayer(tableDisplayer);
             tablePanel.add(tableDisplayer);
 
-            final TableListener tableListener = new TableListener();
-            tableDisplayer.addListener(tableListener);
-
             coordinator.drawAll();
         }
 
@@ -143,28 +138,4 @@ public class DataSetPreviewEditor extends AbstractDataSetDefEditor {
         tablePanel.clear();
     }
 
-    private class TableListener implements DisplayerListener {
-
-        public void onDraw(Displayer displayer) {
-        }
-
-        public void onRedraw(Displayer displayer) {
-
-        }
-
-        public void onClose(Displayer displayer) {
-
-        }
-
-        @Override
-        public void onFilterEnabled(Displayer displayer, DataSetGroup groupOp) {
-            
-        }
-
-        @Override
-        public void onFilterReset(Displayer displayer, List<DataSetGroup> groupOps) {
-
-        }
-
-    }
 }

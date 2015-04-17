@@ -33,6 +33,7 @@ import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.client.DataSetReadyCallback;
+import org.dashbuilder.dataset.client.DataSetClientServiceError;
 import org.dashbuilder.dataset.sort.SortOrder;
 import org.dashbuilder.displayer.ColumnSettings;
 import org.dashbuilder.displayer.DisplayerAttributeDef;
@@ -105,6 +106,13 @@ public class DisplayerSettingsEditor extends Composite {
                 }
                 public void notFound() {
                     mainPanel.add(new Label(LabelType.WARNING, CommonConstants.INSTANCE.error() + CommonConstants.INSTANCE.displayer_editor_dataset_notfound()));
+                }
+
+                @Override
+                public boolean onError(final DataSetClientServiceError error) {
+                    // TODO
+                    GWT.log("Error occurred in DisplayerSettingsEditor#init!");
+                    return false;
                 }
             });
         } catch (Exception e) {

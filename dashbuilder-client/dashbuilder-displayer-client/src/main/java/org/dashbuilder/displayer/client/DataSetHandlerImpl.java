@@ -15,32 +15,19 @@
  */
 package org.dashbuilder.displayer.client;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Map;
+    import org.dashbuilder.dataset.*;
+    import org.dashbuilder.dataset.client.DataSetClientServices;
+    import org.dashbuilder.dataset.client.DataSetReadyCallback;
+    import org.dashbuilder.dataset.client.DataSetClientServiceError;
+    import org.dashbuilder.dataset.engine.group.IntervalBuilder;
+    import org.dashbuilder.dataset.engine.group.IntervalBuilderLocator;
+    import org.dashbuilder.dataset.group.*;
+    import org.dashbuilder.dataset.sort.ColumnSort;
+    import org.dashbuilder.dataset.sort.DataSetSort;
+    import org.dashbuilder.dataset.sort.SortOrder;
+    import org.dashbuilder.displayer.client.resources.i18n.CommonConstants;
 
-import org.dashbuilder.dataset.ColumnType;
-import org.dashbuilder.dataset.DataColumn;
-import org.dashbuilder.dataset.DataSet;
-import org.dashbuilder.dataset.DataSetMetadata;
-import org.dashbuilder.dataset.DataSetOp;
-import org.dashbuilder.dataset.client.DataSetClientServices;
-import org.dashbuilder.dataset.client.DataSetReadyCallback;
-import org.dashbuilder.dataset.DataSetLookup;
-import org.dashbuilder.dataset.DataSetOpType;
-import org.dashbuilder.dataset.engine.group.IntervalBuilder;
-import org.dashbuilder.dataset.engine.group.IntervalBuilderLocator;
-import org.dashbuilder.dataset.group.ColumnGroup;
-import org.dashbuilder.dataset.group.DataSetGroup;
-import org.dashbuilder.dataset.group.GroupFunction;
-import org.dashbuilder.dataset.group.GroupStrategy;
-import org.dashbuilder.dataset.group.Interval;
-import org.dashbuilder.dataset.sort.ColumnSort;
-import org.dashbuilder.dataset.sort.DataSetSort;
-import org.dashbuilder.dataset.sort.SortOrder;
-import org.dashbuilder.displayer.client.resources.i18n.CommonConstants;
+    import java.util.*;
 
     public class DataSetHandlerImpl implements DataSetHandler {
 
@@ -177,6 +164,11 @@ import org.dashbuilder.displayer.client.resources.i18n.CommonConstants;
             }
             public void notFound() {
                 callback.notFound();
+            }
+
+            @Override
+            public boolean onError(final DataSetClientServiceError error) {
+                return callback.onError(error);
             }
         });
     }

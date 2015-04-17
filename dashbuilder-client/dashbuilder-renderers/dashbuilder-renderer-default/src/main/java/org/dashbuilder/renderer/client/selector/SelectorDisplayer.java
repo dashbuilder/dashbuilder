@@ -15,8 +15,6 @@
  */
 package org.dashbuilder.renderer.client.selector;
 
-import java.util.List;
-
 import com.google.gwt.dom.client.NodeList;
 import com.google.gwt.dom.client.OptionElement;
 import com.google.gwt.dom.client.SelectElement;
@@ -32,6 +30,7 @@ import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetLookupConstraints;
 import org.dashbuilder.dataset.client.DataSetReadyCallback;
+import org.dashbuilder.dataset.client.DataSetClientServiceError;
 import org.dashbuilder.dataset.group.DataSetGroup;
 import org.dashbuilder.displayer.ColumnSettings;
 import org.dashbuilder.displayer.DisplayerAttributeDef;
@@ -41,6 +40,8 @@ import org.dashbuilder.displayer.client.AbstractDisplayer;
 import org.dashbuilder.displayer.client.Displayer;
 import org.dashbuilder.renderer.client.resources.i18n.CommonConstants;
 import org.dashbuilder.renderer.client.resources.i18n.SelectorConstants;
+
+import java.util.List;
 
 public class SelectorDisplayer extends AbstractDisplayer {
 
@@ -83,6 +84,12 @@ public class SelectorDisplayer extends AbstractDisplayer {
                         public void notFound() {
                             displayMessage(CommonConstants.INSTANCE.error() + CommonConstants.INSTANCE.error_dataset_notfound());
                         }
+
+                        @Override
+                        public boolean onError(final DataSetClientServiceError error) {
+                            afterError(SelectorDisplayer.this, error);
+                            return false;
+                        }
                     });
                 } catch ( Exception e ) {
                     displayMessage(CommonConstants.INSTANCE.error() + e.getMessage());
@@ -106,6 +113,12 @@ public class SelectorDisplayer extends AbstractDisplayer {
                     }
                     public void notFound() {
                         displayMessage(CommonConstants.INSTANCE.error() + CommonConstants.INSTANCE.error_dataset_notfound());
+                    }
+
+                    @Override
+                    public boolean onError(final DataSetClientServiceError error) {
+                        afterError(SelectorDisplayer.this, error);
+                        return false;
                     }
                 });
             } catch ( Exception e ) {

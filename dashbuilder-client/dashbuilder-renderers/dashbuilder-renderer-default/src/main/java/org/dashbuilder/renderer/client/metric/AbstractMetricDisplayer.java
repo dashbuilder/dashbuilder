@@ -15,6 +15,7 @@
  */
 package org.dashbuilder.renderer.client.metric;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
@@ -23,6 +24,7 @@ import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetLookupConstraints;
 import org.dashbuilder.dataset.client.DataSetReadyCallback;
+import org.dashbuilder.dataset.client.DataSetClientServiceError;
 import org.dashbuilder.displayer.DisplayerAttributeDef;
 import org.dashbuilder.displayer.DisplayerAttributeGroupDef;
 import org.dashbuilder.displayer.DisplayerConstraints;
@@ -96,6 +98,12 @@ public abstract class AbstractMetricDisplayer extends AbstractDisplayer {
                         public void notFound() {
                             displayMessage(CommonConstants.INSTANCE.error() + CommonConstants.INSTANCE.error_dataset_notfound());
                         }
+
+                        @Override
+                        public boolean onError(final DataSetClientServiceError error) {
+                            afterError(AbstractMetricDisplayer.this, error);
+                            return false;
+                        }
                     });
                 } catch ( Exception e ) {
                     displayMessage(CommonConstants.INSTANCE.error() + e.getMessage() );
@@ -120,6 +128,12 @@ public abstract class AbstractMetricDisplayer extends AbstractDisplayer {
                     }
                     public void notFound() {
                         displayMessage(CommonConstants.INSTANCE.error() + CommonConstants.INSTANCE.error_dataset_notfound());
+                    }
+
+                    @Override
+                    public boolean onError(final DataSetClientServiceError error) {
+                        afterError(AbstractMetricDisplayer.this, error);
+                        return false;
                     }
                 });
             } catch ( Exception e ) {

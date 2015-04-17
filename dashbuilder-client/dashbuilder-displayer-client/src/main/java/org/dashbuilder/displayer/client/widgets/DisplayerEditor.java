@@ -21,6 +21,7 @@ import java.util.List;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.dataset.DataColumn;
@@ -29,6 +30,7 @@ import org.dashbuilder.dataset.DataSetLookup;
 import org.dashbuilder.dataset.DataSetLookupConstraints;
 import org.dashbuilder.dataset.DataSetMetadata;
 import org.dashbuilder.dataset.ValidationError;
+import org.dashbuilder.dataset.client.DataSetClientServiceError;
 import org.dashbuilder.dataset.client.DataSetClientServices;
 import org.dashbuilder.dataset.client.DataSetMetadataCallback;
 import org.dashbuilder.dataset.filter.DataSetFilter;
@@ -163,6 +165,13 @@ public class DisplayerEditor implements IsWidget,
                     // Very unlikely since this data set has been selected from a list provided by the backend.
                     view.error(CommonConstants.INSTANCE.displayer_editor_dataset_notfound(), null);
                 }
+
+                @Override
+                public boolean onError(DataSetClientServiceError error) {
+                    // TODO
+                    GWT.log("Error occurred in DisplayerEditor#fetchDataSetLookup!");
+                    return false;
+                }
             });
         } catch (Exception e) {
             view.error(CommonConstants.INSTANCE.displayer_editor_datasetmetadata_fetcherror(), e);
@@ -258,6 +267,13 @@ public class DisplayerEditor implements IsWidget,
                 public void notFound() {
                     // Very unlikely since this data set has been selected from a list provided by the backend.
                     view.error(CommonConstants.INSTANCE.displayer_editor_dataset_notfound(), null);
+                }
+
+                @Override
+                public boolean onError(DataSetClientServiceError error) {
+                    // TODO
+                    GWT.log("Error occurred in DisplayerEditor#dataSetChanged!");
+                    return false;
                 }
             });
         } catch (Exception e) {

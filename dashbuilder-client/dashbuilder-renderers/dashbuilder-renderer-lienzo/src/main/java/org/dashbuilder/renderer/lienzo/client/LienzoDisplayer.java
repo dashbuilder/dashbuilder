@@ -20,9 +20,7 @@ import com.ait.lienzo.charts.client.model.DataTable;
 import com.ait.lienzo.charts.client.model.DataTableColumn;
 import com.ait.lienzo.client.core.shape.Layer;
 import com.ait.lienzo.client.widget.LienzoPanel;
-import com.ait.lienzo.shared.core.types.ColorName;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.*;
@@ -30,6 +28,7 @@ import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.client.DataSetReadyCallback;
+import org.dashbuilder.dataset.client.DataSetClientServiceError;
 import org.dashbuilder.dataset.group.Interval;
 import org.dashbuilder.displayer.client.AbstractDisplayer;
 
@@ -105,6 +104,12 @@ public abstract class LienzoDisplayer extends AbstractDisplayer {
                         public void notFound() {
                             GWT.log("ERROR: Data set not found.");
                         }
+
+                        @Override
+                        public boolean onError(final DataSetClientServiceError error) {
+                            afterError(LienzoDisplayer.this, error);
+                            return false;
+                        }
                     });
                 } catch (Exception e) {
                     GWT.log("ERROR: " + e.getMessage());
@@ -134,6 +139,12 @@ public abstract class LienzoDisplayer extends AbstractDisplayer {
                     }
                     public void notFound() {
                         GWT.log("ERROR: Data set not found.");
+                    }
+
+                    @Override
+                    public boolean onError(final DataSetClientServiceError error) {
+                        afterError(LienzoDisplayer.this, error);
+                        return false;
                     }
                 });
             } catch (Exception e) {

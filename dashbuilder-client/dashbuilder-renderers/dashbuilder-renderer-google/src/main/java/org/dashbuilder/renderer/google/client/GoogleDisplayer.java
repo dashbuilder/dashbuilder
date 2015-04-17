@@ -27,12 +27,12 @@ import com.googlecode.gwt.charts.client.format.DateFormat;
 import com.googlecode.gwt.charts.client.format.DateFormatOptions;
 import com.googlecode.gwt.charts.client.format.NumberFormat;
 import com.googlecode.gwt.charts.client.format.NumberFormatOptions;
-import com.googlecode.gwt.charts.client.options.FormatType;
 import org.dashbuilder.common.client.StringUtils;
 import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.client.DataSetReadyCallback;
+import org.dashbuilder.dataset.client.DataSetClientServiceError;
 import org.dashbuilder.displayer.ColumnSettings;
 import org.dashbuilder.displayer.client.AbstractDisplayer;
 import org.dashbuilder.renderer.google.client.resources.i18n.GoogleDisplayerConstants;
@@ -89,6 +89,12 @@ public abstract class GoogleDisplayer extends AbstractDisplayer {
                         public void notFound() {
                             displayMessage(GoogleDisplayerConstants.INSTANCE.googleDisplayer_error() + GoogleDisplayerConstants.INSTANCE.googleDisplayer_error_dataset_notfound());
                         }
+
+                        @Override
+                        public boolean onError(final DataSetClientServiceError error) {
+                            afterError(GoogleDisplayer.this, error);
+                            return false;
+                        }
                     });
                 } catch (Exception e) {
                     displayMessage(GoogleDisplayerConstants.INSTANCE.googleDisplayer_error() + e.getMessage());
@@ -117,6 +123,12 @@ public abstract class GoogleDisplayer extends AbstractDisplayer {
                     }
                     public void notFound() {
                         displayMessage(GoogleDisplayerConstants.INSTANCE.googleDisplayer_error() + GoogleDisplayerConstants.INSTANCE.googleDisplayer_error_dataset_notfound());
+                    }
+
+                    @Override
+                    public boolean onError(final DataSetClientServiceError error) {
+                        afterError(GoogleDisplayer.this, error);
+                        return false;
                     }
                 });
             } catch (Exception e) {

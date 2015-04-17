@@ -17,6 +17,7 @@ package org.dashbuilder.displayer.client;
 
 import java.util.List;
 
+import org.dashbuilder.dataset.client.DataSetClientServiceError;
 import org.dashbuilder.dataset.group.DataSetGroup;
 
 /**
@@ -60,4 +61,11 @@ public interface DisplayerListener {
      * @param groupOps The set of group interval selection operations reset.
      */
     void onFilterReset(Displayer displayer, List<DataSetGroup> groupOps);
+
+    /**
+     * Invoked when some error on the backend side occurs. 
+     * @param displayer The Displayer instance event comes from.
+     * @param error The error instance.
+     */
+    void onError(final Displayer displayer, DataSetClientServiceError error);
 }
