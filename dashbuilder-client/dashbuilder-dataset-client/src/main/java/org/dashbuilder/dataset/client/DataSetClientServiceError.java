@@ -16,7 +16,7 @@ public class DataSetClientServiceError {
         this.throwable = throwable;
     }
 
-    public Message getErrorMessage() {
+    public Object getMessage() {
         return errorMessage;
     }
 
