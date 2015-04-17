@@ -32,6 +32,7 @@ import org.dashbuilder.displayer.client.DisplayerCoordinator;
 import org.dashbuilder.displayer.client.DisplayerHelper;
 import org.dashbuilder.displayer.client.DisplayerListener;
 import org.dashbuilder.displayer.impl.TableDisplayerSettingsBuilderImpl;
+import org.dashbuilder.renderer.client.DefaultRenderer;
 
 import javax.enterprise.context.Dependent;
 import java.util.List;
@@ -118,6 +119,7 @@ public class DataSetPreviewEditor extends AbstractDataSetDefEditor {
         if (dataSetDef != null) {
             TableDisplayerSettingsBuilder<TableDisplayerSettingsBuilderImpl> tableDisplayerSettingsBuilder = DisplayerSettingsFactory.newTableSettings()
                     .dataset(dataSetDef.getUUID())
+                    .renderer(DefaultRenderer.UUID)
                     .titleVisible(false)
                     .tablePageSize(10)
                     .tableOrderEnabled(false)

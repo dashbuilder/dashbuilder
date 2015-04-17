@@ -13,8 +13,7 @@
   <inherits name="org.dashbuilder.DatasetShared"/>
   <inherits name="org.dashbuilder.DisplayerClient"/>
   <inherits name="org.dashbuilder.renderer.DefaultRenderer"/>
-  <inherits name="org.dashbuilder.renderer.GChartsRenderer"/>
-  
+
   <source path='client'/>
 
 </module>

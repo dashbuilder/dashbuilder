@@ -30,6 +30,7 @@
   <inherits name="org.dashbuilder.DisplayerAPI"/>
   <inherits name="org.dashbuilder.DisplayerClient"/>
   <inherits name="org.dashbuilder.DisplayerScreen"/>
+  <inherits name="org.dashbuilder.DashbuilderWidgets"/>
 
   <inherits name="org.dashbuilder.renderer.DefaultRenderer"/>
 
