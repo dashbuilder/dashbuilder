@@ -481,6 +481,7 @@ public class SQLDataSetProvider implements DataSetProvider {
 
                     // Row limits
                     if (trim) {
+                        totalRows = using(conn).fetchCount(_jooqQuery);
                         _jooqQuery.limit(lookup.getNumberOfRows()).offset(lookup.getRowOffset());
                     }
 
@@ -496,7 +497,6 @@ public class SQLDataSetProvider implements DataSetProvider {
                     DataSetGroup groupOp = null;
                     int groupIdx = lookup.getFirstGroupOpIndex(0, null, false);
                     if (groupIdx != -1) groupOp = lookup.getOperation(groupIdx);
-                    boolean totalRowsChanged = false;
 
                     // Prepare the jOOQ query
                     _jooqQuery = using(conn).select(_createJooqFields(groupOp));
@@ -506,14 +506,12 @@ public class SQLDataSetProvider implements DataSetProvider {
                     DataSetFilter filterOp = lookup.getFirstFilterOp();
                     if (filterOp != null) {
                         _appendJooqFilterBy(def, filterOp, _jooqQuery);
-                        totalRowsChanged = true;
                     }
 
                     // Append the interval selections
                     List<DataSetGroup> intervalSelects = lookup.getFirstGroupOpSelections();
                     for (DataSetGroup intervalSelect : intervalSelects) {
                         _appendJooqIntervalSelection(intervalSelect, _jooqQuery);
-                        totalRowsChanged = true;
                     }
 
                     // ... the group by clauses
@@ -522,7 +520,6 @@ public class SQLDataSetProvider implements DataSetProvider {
                         cg = groupOp.getColumnGroup();
                         if (cg != null) {
                             _appendJooqGroupBy(groupOp);
-                            totalRowsChanged = true;
                         }
                     }
 
@@ -538,7 +535,7 @@ public class SQLDataSetProvider implements DataSetProvider {
 
                     // ... and the row limits
                     if (trim) {
-                        if (totalRowsChanged) totalRows = using(conn).fetchCount(_jooqQuery);
+                        totalRows = using(conn).fetchCount(_jooqQuery);
                         _jooqQuery.limit(lookup.getNumberOfRows()).offset(lookup.getRowOffset());
                     }
 
