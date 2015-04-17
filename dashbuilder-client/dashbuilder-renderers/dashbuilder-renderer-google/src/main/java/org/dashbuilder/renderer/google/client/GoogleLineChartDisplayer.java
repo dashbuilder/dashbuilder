@@ -26,11 +26,13 @@ import com.googlecode.gwt.charts.client.corechart.LineChart;
 import com.googlecode.gwt.charts.client.corechart.LineChartOptions;
 import com.googlecode.gwt.charts.client.options.Animation;
 import com.googlecode.gwt.charts.client.options.AnimationEasing;
+import com.googlecode.gwt.charts.client.options.CurveType;
 import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.DataSetLookupConstraints;
 import org.dashbuilder.displayer.DisplayerAttributeDef;
 import org.dashbuilder.displayer.DisplayerAttributeGroupDef;
 import org.dashbuilder.displayer.DisplayerConstraints;
+import org.dashbuilder.displayer.DisplayerType;
 import org.dashbuilder.renderer.google.client.resources.i18n.GoogleDisplayerConstants;
 
 public class GoogleLineChartDisplayer extends GoogleCategoriesDisplayer {
@@ -118,7 +120,10 @@ public class GoogleLineChartDisplayer extends GoogleCategoriesDisplayer {
         anim.setDuration(700);
         anim.setEasing(AnimationEasing.IN_AND_OUT);
 
+        boolean isLine = DisplayerType.DisplayerSubType.LINE.equals(displayerSettings.getSubtype());
+
         LineChartOptions options = LineChartOptions.create();
+        options.setCurveType(isLine ? CurveType.NONE : CurveType.FUNCTION);
         options.setWidth(displayerSettings.getChartWidth());
         options.setHeight(displayerSettings.getChartHeight());
         options.setBackgroundColor(displayerSettings.getChartBackgroundColor());

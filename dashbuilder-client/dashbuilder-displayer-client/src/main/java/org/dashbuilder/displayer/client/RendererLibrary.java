@@ -18,10 +18,12 @@ package org.dashbuilder.displayer.client;
 import java.util.List;
 
 import org.dashbuilder.displayer.DisplayerSettings;
+import org.dashbuilder.displayer.DisplayerType;
 
 public interface RendererLibrary {
 
     String getUUID();
+    DisplayerType.DisplayerSubType[] getSupportedDisplayerSubtypes(DisplayerType displayerType);
     Displayer lookupDisplayer(DisplayerSettings displayer);
     void draw(List<Displayer> displayerList);
     void redraw(List<Displayer> displayerList);

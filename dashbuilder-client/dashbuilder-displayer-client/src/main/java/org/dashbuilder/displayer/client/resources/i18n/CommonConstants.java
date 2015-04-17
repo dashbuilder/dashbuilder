@@ -257,24 +257,6 @@ public interface CommonConstants extends Messages {
 
     String displayer_editor_view_as_table();
 
-    String displayer_type_selector_tab_bar();
-
-    String displayer_type_selector_tab_pie();
-
-    String displayer_type_selector_tab_line();
-
-    String displayer_type_selector_tab_area();
-
-    String displayer_type_selector_tab_bubble();
-
-    String displayer_type_selector_tab_meter();
-
-    String displayer_type_selector_tab_metric();
-
-    String displayer_type_selector_tab_map();
-
-    String displayer_type_selector_tab_table();
-
     String renderer_selector_title();
 
     String displayer_keyword_not_allowed(String expr);

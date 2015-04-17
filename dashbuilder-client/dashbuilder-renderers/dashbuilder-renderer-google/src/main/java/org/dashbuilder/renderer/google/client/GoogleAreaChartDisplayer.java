@@ -31,6 +31,7 @@ import org.dashbuilder.dataset.DataSetLookupConstraints;
 import org.dashbuilder.displayer.DisplayerAttributeDef;
 import org.dashbuilder.displayer.DisplayerAttributeGroupDef;
 import org.dashbuilder.displayer.DisplayerConstraints;
+import org.dashbuilder.displayer.DisplayerType;
 import org.dashbuilder.renderer.google.client.resources.i18n.GoogleDisplayerConstants;
 
 public class GoogleAreaChartDisplayer extends GoogleCategoriesDisplayer {
@@ -129,6 +130,7 @@ public class GoogleAreaChartDisplayer extends GoogleCategoriesDisplayer {
         options.setAnimation(anim);
         options.setChartArea(createChartArea());
         options.setColors(createColorArray(googleTable));
+        options.setIsStacked(DisplayerType.DisplayerSubType.STACKED.equals(displayerSettings.getSubtype()));
         return options;
     }
 }

@@ -40,6 +40,12 @@ public class LienzoRenderer extends AbstractRendererLibrary {
         RendererLibLocator.get().registerRenderer(DisplayerType.PIECHART, UUID, false);
     }
 
+    // TODO complete
+    @Override
+    public DisplayerType.DisplayerSubType[] getSupportedDisplayerSubtypes(DisplayerType displayerType) {
+        return null;
+    }
+
     @Override
     public String getUUID() {
         return UUID;

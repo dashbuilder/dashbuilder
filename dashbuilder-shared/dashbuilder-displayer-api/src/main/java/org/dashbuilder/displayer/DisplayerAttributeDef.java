@@ -18,6 +18,7 @@ package org.dashbuilder.displayer;
 public class DisplayerAttributeDef {
 
     public static final DisplayerAttributeDef TYPE = new DisplayerAttributeDef("type");
+    public static final DisplayerAttributeDef SUBTYPE = new DisplayerAttributeDef("subtype");
     public static final DisplayerAttributeDef RENDERER = new DisplayerAttributeDef("renderer");
 
     public static final DisplayerAttributeDef COLUMN_EXPRESSION = new DisplayerAttributeDef("expression", DisplayerAttributeGroupDef.COLUMNS_GROUP);

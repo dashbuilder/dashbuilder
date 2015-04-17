@@ -218,6 +218,16 @@ public class DisplayerSettings {
         settings.put( getSettingPath( DisplayerAttributeDef.TYPE ), displayerType.toString() );
     }
 
+    public DisplayerType.DisplayerSubType getSubtype() {
+        String strSubtype = settings.get(getSettingPath(DisplayerAttributeDef.SUBTYPE));
+        return DisplayerType.DisplayerSubType.getByName(strSubtype);
+    }
+
+    public void setSubtype(DisplayerType.DisplayerSubType subtype) {
+        if (subtype != null) settings.put(getSettingPath(DisplayerAttributeDef.SUBTYPE), subtype.toString());
+        else settings.remove(getSettingPath(DisplayerAttributeDef.SUBTYPE));
+    }
+
     public String getRenderer() {
         return settings.get(getSettingPath(DisplayerAttributeDef.RENDERER));
     }

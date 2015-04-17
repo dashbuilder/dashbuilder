@@ -21,5 +21,10 @@
              xmlns:g='urn:import:com.google.gwt.user.client.ui'
              xmlns:b="urn:import:com.github.gwtbootstrap.client.ui">
 
-  <b:TabPanel ui:field="optionsPanel" />
+  <g:HorizontalPanel>
+    <b:TabPanel ui:field="optionsPanel"/>
+    <g:VerticalPanel ui:field="subtypePanel"/>
+  </g:HorizontalPanel>
+
+
 </ui:UiBinder>

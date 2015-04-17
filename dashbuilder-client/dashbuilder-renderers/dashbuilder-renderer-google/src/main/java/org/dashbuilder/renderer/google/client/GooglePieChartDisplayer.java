@@ -29,6 +29,7 @@ import org.dashbuilder.dataset.DataSetLookupConstraints;
 import org.dashbuilder.displayer.DisplayerAttributeDef;
 import org.dashbuilder.displayer.DisplayerAttributeGroupDef;
 import org.dashbuilder.displayer.DisplayerConstraints;
+import org.dashbuilder.displayer.DisplayerType;
 import org.dashbuilder.renderer.google.client.resources.i18n.GoogleDisplayerConstants;
 
 public class GooglePieChartDisplayer extends GoogleCategoriesDisplayer {
@@ -82,7 +83,14 @@ public class GooglePieChartDisplayer extends GoogleCategoriesDisplayer {
                    .supportsAttribute( DisplayerAttributeGroupDef.FILTER_GROUP )
                    .supportsAttribute( DisplayerAttributeGroupDef.REFRESH_GROUP )
                    .supportsAttribute( DisplayerAttributeGroupDef.GENERAL_GROUP)
-                   .supportsAttribute( DisplayerAttributeGroupDef.CHART_GROUP );
+                   .supportsAttribute(DisplayerAttributeGroupDef.CHART_WIDTH)
+                   .supportsAttribute(DisplayerAttributeGroupDef.CHART_HEIGHT)
+                   .supportsAttribute(DisplayerAttributeGroupDef.CHART_RESIZABLE)
+                   .supportsAttribute(DisplayerAttributeGroupDef.CHART_MAX_WIDTH)
+                   .supportsAttribute(DisplayerAttributeGroupDef.CHART_MAX_HEIGHT)
+                   .supportsAttribute(DisplayerAttributeGroupDef.CHART_BGCOLOR)
+                   .supportsAttribute(DisplayerAttributeGroupDef.CHART_MARGIN_GROUP)
+                   .supportsAttribute( DisplayerAttributeGroupDef.CHART_LEGEND_GROUP );
     }
 
 
@@ -91,7 +99,7 @@ public class GooglePieChartDisplayer extends GoogleCategoriesDisplayer {
         if (dataSet.getRowCount() == 0) {
             chartPanel.add(super.createNoDataMsgPanel());
         } else {
-            chart.draw(createTable(), createOptions());
+            chart.draw(createTable(), createOptions().get());
             chartPanel.add(chart);
         }
     }
@@ -104,15 +112,17 @@ public class GooglePieChartDisplayer extends GoogleCategoriesDisplayer {
         updateChartPanel();
     }
 
-    private PieChartOptions createOptions() {
-        PieChartOptions options = PieChartOptions.create();
+    private PieChartOptionsWrapper createOptions() {
+        DisplayerType.DisplayerSubType displayerSubType = displayerSettings.getSubtype();
+        PieChartOptionsWrapper options = PieChartOptionsWrapper.newInstance();
         options.setWidth(displayerSettings.getChartWidth());
         options.setHeight(displayerSettings.getChartHeight());
         options.setBackgroundColor(displayerSettings.getChartBackgroundColor());
-        options.setIs3D(displayerSettings.isChart3D());
-        options.setLegend( createChartLegend() );
+        options.setLegend(createChartLegend());
         options.setColors(createColorArray(googleTable));
         options.setChartArea(createChartArea());
+        options.setIs3D(DisplayerType.DisplayerSubType.PIE_3D.equals(displayerSubType));
+        options.setHole(DisplayerType.DisplayerSubType.DONUT.equals(displayerSubType) ? 0.4d : 0);
         return options;
     }
 }

@@ -49,6 +49,12 @@ public class DefaultRenderer extends AbstractRendererLibrary {
         return UUID;
     }
 
+    // TODO complete
+    @Override
+    public DisplayerType.DisplayerSubType[] getSupportedDisplayerSubtypes(DisplayerType displayerType) {
+        return null;
+    }
+
     @Override
     public Displayer lookupDisplayer(DisplayerSettings displayerSettings) {
         DisplayerType type = displayerSettings.getType();

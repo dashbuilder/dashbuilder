@@ -137,7 +137,7 @@ public class DisplayerEditorView extends Composite
         saveLastTab(0);
 
         typeSelector.init(presenter);
-        typeSelector.select(settings.getType());
+        typeSelector.select(settings.getRenderer(), settings.getType(), settings.getSubtype());
         leftPanel.clear();
         leftPanel.add(typeSelector);
 
@@ -176,7 +176,7 @@ public class DisplayerEditorView extends Composite
         if (Window.confirm(CommonConstants.INSTANCE.displayer_editor_incompatible_settings())) {
             presenter.changeSettings(oldSettings, newSettings);
         } else {
-            typeSelector.select(oldSettings.getType());
+            typeSelector.select(oldSettings.getRenderer(), oldSettings.getType(), oldSettings.getSubtype());
         }
     }
 

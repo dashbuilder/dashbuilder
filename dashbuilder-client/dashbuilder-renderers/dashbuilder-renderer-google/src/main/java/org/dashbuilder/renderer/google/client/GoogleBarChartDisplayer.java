@@ -35,6 +35,7 @@ import org.dashbuilder.dataset.DataSetLookupConstraints;
 import org.dashbuilder.displayer.DisplayerAttributeDef;
 import org.dashbuilder.displayer.DisplayerAttributeGroupDef;
 import org.dashbuilder.displayer.DisplayerConstraints;
+import org.dashbuilder.displayer.DisplayerType;
 import org.dashbuilder.renderer.google.client.resources.i18n.GoogleDisplayerConstants;
 
 public class GoogleBarChartDisplayer extends GoogleCategoriesDisplayer {
@@ -122,12 +123,15 @@ public class GoogleBarChartDisplayer extends GoogleCategoriesDisplayer {
         anim.setDuration(700);
         anim.setEasing(AnimationEasing.IN_AND_OUT);
 
+        boolean isStacked = DisplayerType.DisplayerSubType.STACKED.equals(displayerSettings.getSubtype());
+
         if (displayerSettings.isBarchartHorizontal()) {
             BarChartOptions options = BarChartOptions.create();
             options.setWidth(displayerSettings.getChartWidth());
             options.setHeight( displayerSettings.getChartHeight() );
             options.setBackgroundColor(displayerSettings.getChartBackgroundColor());
             options.setLegend( createChartLegend() );
+            options.setIsStacked(isStacked);
             if ( displayerSettings.isXAxisShowLabels() ) options.setHAxis( createHAxis() );
             if ( displayerSettings.isYAxisShowLabels() ) options.setVAxis( createVAxis() );
             options.setAnimation( anim );
@@ -139,7 +143,8 @@ public class GoogleBarChartDisplayer extends GoogleCategoriesDisplayer {
             options.setWidth(displayerSettings.getChartWidth());
             options.setHeight(displayerSettings.getChartHeight());
             options.setBackgroundColor(displayerSettings.getChartBackgroundColor());
-            options.setLegend( createChartLegend() );
+            options.setLegend(createChartLegend());
+            options.setIsStacked(isStacked);
             if ( displayerSettings.isXAxisShowLabels() ) options.setHAxis( createHAxis() );
             if ( displayerSettings.isYAxisShowLabels() ) options.setVAxis( createVAxis() );
             options.setAnimation(anim);

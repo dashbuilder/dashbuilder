@@ -23,58 +23,92 @@ public enum DisplayerType {
     /**
      * Bar Chart
      */
-    BARCHART,
+    BARCHART(DisplayerSubType.BAR, DisplayerSubType.STACKED/*, DisplayerSubType.HISTOGRAM*/),
 
     /**
      * Pie Chart
      */
-    PIECHART,
+    PIECHART(DisplayerSubType.PIE, DisplayerSubType.PIE_3D, DisplayerSubType.DONUT),
 
     /**
      * Area Chart
      */
-    AREACHART,
+    AREACHART(DisplayerSubType.AREA, DisplayerSubType.STACKED/*, DisplayerSubType.STEPPED*/),
 
     /**
      * Line Chart
      */
-    LINECHART,
+    LINECHART(DisplayerSubType.LINE, DisplayerSubType.SMOOTH),
 
     /**
      * Bubble Chart
      */
-    BUBBLECHART,
+    BUBBLECHART(),
 
     /**
      * Meter Chart
      */
-    METERCHART,
+    METERCHART(),
 
     /**
      * Table reports
      */
-    TABLE,
+    TABLE(),
 
     /**
      * Map
      */
-    MAP,
+    MAP(DisplayerSubType.MAP_REGIONS, DisplayerSubType.MAP_MARKERS),
 
     /**
      * Selector
      */
-    SELECTOR,
+    SELECTOR(),
 
     /**
      * Metric
      */
-    METRIC;
+    METRIC();
+
+    private DisplayerType(DisplayerSubType ... subtypes) {
+        this.subtypes = subtypes;
+    }
+
+    private DisplayerSubType[] subtypes;
 
     public static DisplayerType getByName(String str) {
         try {
             return valueOf(str.toUpperCase());
         } catch (Exception e) {
             return null;
+        }
+    }
+
+    public DisplayerSubType[] getSubTypes() {
+        return subtypes;
+    }
+
+    public enum DisplayerSubType {
+        LINE,
+        SMOOTH,
+        AREA,
+        STACKED,
+//        STEPPED,
+        BAR,
+        COLUMN,
+//        HISTOGRAM,
+        PIE,
+        PIE_3D,
+        DONUT,
+        MAP_REGIONS,
+        MAP_MARKERS;
+
+        public static DisplayerSubType getByName(String str) {
+            try {
+                return valueOf(str.toUpperCase());
+            } catch (Exception e) {
+                return null;
+            }
         }
     }
 }

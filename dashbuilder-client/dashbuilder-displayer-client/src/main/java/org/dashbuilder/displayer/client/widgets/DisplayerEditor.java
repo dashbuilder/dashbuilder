@@ -178,11 +178,12 @@ public class DisplayerEditor implements IsWidget,
     }
 
     @Override
-    public void displayerTypeChanged(DisplayerType type) {
+    public void displayerTypeChanged(DisplayerType type, DisplayerType.DisplayerSubType displayerSubType) {
 
         // Create new settings for the selected type
         DisplayerSettings oldSettings = displayerSettings;
         DisplayerSettings newSettings = DisplayerPrototypes.get().getProto(type);
+        newSettings.setSubtype(displayerSubType);
         DataSet oldDataSet = oldSettings.getDataSet();
         DataSetLookup oldDataLookup = oldSettings.getDataSetLookup();
 
@@ -214,6 +215,7 @@ public class DisplayerEditor implements IsWidget,
     public void changeSettings(DisplayerSettings oldSettings, DisplayerSettings newSettings) {
         // Remove the non supported attributes
         oldSettings.removeDisplayerSetting(DisplayerAttributeGroupDef.TYPE);
+        oldSettings.removeDisplayerSetting(DisplayerAttributeGroupDef.SUBTYPE);
         oldSettings.removeDisplayerSetting(DisplayerAttributeGroupDef.CHART_GROUP);
         oldSettings.removeDisplayerSetting(DisplayerAttributeGroupDef.CHART_MARGIN_GROUP);
         oldSettings.removeDisplayerSetting(DisplayerAttributeGroupDef.CHART_LEGEND_GROUP);

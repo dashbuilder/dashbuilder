@@ -18,6 +18,7 @@ package org.dashbuilder.displayer.client.widgets;
 import java.util.List;
 import java.util.ArrayList;
 import javax.enterprise.context.Dependent;
+import javax.inject.Inject;
 
 import com.github.gwtbootstrap.client.ui.Tab;
 import com.github.gwtbootstrap.client.ui.TabPanel;
@@ -27,16 +28,21 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.displayer.DisplayerType;
-import org.dashbuilder.displayer.client.resources.i18n.CommonConstants;
+import org.dashbuilder.displayer.client.RendererLibLocator;
+import org.dashbuilder.displayer.client.RendererLibrary;
+import org.dashbuilder.displayer.client.resources.i18n.DisplayerTypeLiterals;
 
 @Dependent
 public class DisplayerTypeSelector extends Composite {
 
     public interface Listener {
-        void displayerTypeChanged(DisplayerType type);
+        void displayerTypeChanged(DisplayerType type, DisplayerType.DisplayerSubType subtype);
     }
 
     interface ViewBinder extends
@@ -47,21 +53,30 @@ public class DisplayerTypeSelector extends Composite {
 
     Listener listener = null;
     DisplayerType selectedType = DisplayerType.BARCHART;
+    DisplayerType.DisplayerSubType selectedSubType = null;
     List<DisplayerTab> tabList = new ArrayList<DisplayerTab>();
+
+    FlexTable subtypes = new FlexTable();
+
+    @Inject
+    RendererLibLocator rendererLibLocator;
 
     @UiField(provided = true)
     TabPanel optionsPanel;
 
+    @UiField
+    VerticalPanel subtypePanel;
+
     public DisplayerTypeSelector() {
-        tabList.add(new DisplayerTab(CommonConstants.INSTANCE.displayer_type_selector_tab_bar(), DisplayerType.BARCHART));
-        tabList.add(new DisplayerTab(CommonConstants.INSTANCE.displayer_type_selector_tab_pie(), DisplayerType.PIECHART));
-        tabList.add(new DisplayerTab(CommonConstants.INSTANCE.displayer_type_selector_tab_line(), DisplayerType.LINECHART));
-        tabList.add(new DisplayerTab(CommonConstants.INSTANCE.displayer_type_selector_tab_area(), DisplayerType.AREACHART));
-        tabList.add(new DisplayerTab(CommonConstants.INSTANCE.displayer_type_selector_tab_bubble(), DisplayerType.BUBBLECHART));
-        tabList.add(new DisplayerTab(CommonConstants.INSTANCE.displayer_type_selector_tab_meter(), DisplayerType.METERCHART));
-        tabList.add(new DisplayerTab(CommonConstants.INSTANCE.displayer_type_selector_tab_metric(), DisplayerType.METRIC));
-        tabList.add(new DisplayerTab(CommonConstants.INSTANCE.displayer_type_selector_tab_map(), DisplayerType.MAP));
-        tabList.add(new DisplayerTab(CommonConstants.INSTANCE.displayer_type_selector_tab_table(), DisplayerType.TABLE));
+        tabList.add(new DisplayerTab(DisplayerTypeLiterals.INSTANCE.displayer_type_selector_tab_bar(), DisplayerType.BARCHART));
+        tabList.add(new DisplayerTab(DisplayerTypeLiterals.INSTANCE.displayer_type_selector_tab_pie(), DisplayerType.PIECHART));
+        tabList.add(new DisplayerTab(DisplayerTypeLiterals.INSTANCE.displayer_type_selector_tab_line(), DisplayerType.LINECHART));
+        tabList.add(new DisplayerTab(DisplayerTypeLiterals.INSTANCE.displayer_type_selector_tab_area(), DisplayerType.AREACHART));
+        tabList.add(new DisplayerTab(DisplayerTypeLiterals.INSTANCE.displayer_type_selector_tab_bubble(), DisplayerType.BUBBLECHART));
+        tabList.add(new DisplayerTab(DisplayerTypeLiterals.INSTANCE.displayer_type_selector_tab_meter(), DisplayerType.METERCHART));
+        tabList.add(new DisplayerTab(DisplayerTypeLiterals.INSTANCE.displayer_type_selector_tab_metric(), DisplayerType.METRIC));
+        tabList.add(new DisplayerTab(DisplayerTypeLiterals.INSTANCE.displayer_type_selector_tab_map(), DisplayerType.MAP));
+        tabList.add(new DisplayerTab(DisplayerTypeLiterals.INSTANCE.displayer_type_selector_tab_table(), DisplayerType.TABLE));
 
         optionsPanel = new TabPanel(Bootstrap.Tabs.LEFT);
         for (DisplayerTab tab : tabList) optionsPanel.add(tab);
@@ -89,9 +104,29 @@ public class DisplayerTypeSelector extends Composite {
             }
         }
     }
-
-    public void select(DisplayerType type) {
+// TODO ensure a subtype is always set to the displayersettings (select default if none was indicated in the settings, and select first one of the list in the selector
+    public void select(String renderer, final DisplayerType type, final DisplayerType.DisplayerSubType displayerSubType) {
         selectedType = type;
+        selectedSubType = displayerSubType;
+        subtypes.removeAllRows();
+
+        if (renderer == null || renderer.length() == 0) renderer = rendererLibLocator.getDefaultRenderer(type);
+        RendererLibrary rendererLibrary = rendererLibLocator.lookupRenderer(renderer);
+        if (rendererLibrary != null) {
+            DisplayerType.DisplayerSubType[] supportedSubTypes = rendererLibrary.getSupportedDisplayerSubtypes(type);
+            for (int i = 0; i < supportedSubTypes.length; i++) {
+                final DisplayerType.DisplayerSubType subtype = supportedSubTypes[i];
+                final Anchor subtypeLink = new Anchor(DisplayerTypeLiterals.INSTANCE.getString(DisplayerTypeLiterals.DST_PREFIX + subtype.toString()));
+                subtypeLink.addClickHandler(new ClickHandler() {
+                    @Override
+                    public void onClick(ClickEvent event) {
+                        listener.displayerTypeChanged(type, subtype);
+                    }
+                } );
+                subtypes.setWidget(i, 0, subtypeLink);
+            }
+        }
+        subtypePanel.add( subtypes );
         draw();
     }
 
@@ -113,7 +148,7 @@ public class DisplayerTypeSelector extends Composite {
                     boolean change = !selectedType.equals(type);
                     selectedType = type;
                     if (change && listener != null) {
-                        listener.displayerTypeChanged(type);
+                        listener.displayerTypeChanged(type, null);
                     }
                 }
             });

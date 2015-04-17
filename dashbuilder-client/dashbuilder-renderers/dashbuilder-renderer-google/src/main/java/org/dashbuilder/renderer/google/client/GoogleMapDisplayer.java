@@ -27,11 +27,13 @@ import com.googlecode.gwt.charts.client.event.SelectEvent;
 import com.googlecode.gwt.charts.client.event.SelectHandler;
 import com.googlecode.gwt.charts.client.geochart.GeoChart;
 import com.googlecode.gwt.charts.client.geochart.GeoChartOptions;
+import com.googlecode.gwt.charts.client.options.DisplayMode;
 import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.DataSetLookupConstraints;
 import org.dashbuilder.displayer.DisplayerAttributeDef;
 import org.dashbuilder.displayer.DisplayerAttributeGroupDef;
 import org.dashbuilder.displayer.DisplayerConstraints;
+import org.dashbuilder.displayer.DisplayerType;
 import org.dashbuilder.renderer.google.client.resources.i18n.GoogleDisplayerConstants;
 
 public class GoogleMapDisplayer extends GoogleChartDisplayer {
@@ -119,6 +121,7 @@ public class GoogleMapDisplayer extends GoogleChartDisplayer {
         GeoChartOptions options = GeoChartOptions.create();
         options.setWidth(displayerSettings.getChartWidth());
         options.setHeight(displayerSettings.getChartHeight());
+        options.setDisplayMode(DisplayerType.DisplayerSubType.MAP_REGIONS.equals(displayerSettings.getSubtype()) ? DisplayMode.REGIONS : DisplayMode.MARKERS);
         // TODO legend?
         return options;
     }

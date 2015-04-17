@@ -56,6 +56,26 @@ public class GoogleRenderer extends AbstractRendererLibrary {
         return UUID;
     }
 
+    @Override
+    public DisplayerType.DisplayerSubType[] getSupportedDisplayerSubtypes(DisplayerType displayerType) {
+        switch (displayerType) {
+            case BARCHART: return new DisplayerType.DisplayerSubType[]{ DisplayerType.DisplayerSubType.BAR,
+                                                                        DisplayerType.DisplayerSubType.STACKED/*,
+                                                                        DisplayerType.DisplayerSubType.HISTOGRAM*/};
+            case PIECHART: return new DisplayerType.DisplayerSubType[]{ DisplayerType.DisplayerSubType.PIE,
+                                                                        DisplayerType.DisplayerSubType.PIE_3D,
+                                                                        DisplayerType.DisplayerSubType.DONUT};
+            case AREACHART: return new DisplayerType.DisplayerSubType[]{DisplayerType.DisplayerSubType.AREA,
+                                                                        DisplayerType.DisplayerSubType.STACKED/*,
+                                                                        DisplayerType.DisplayerSubType.STEPPED*/};
+            case LINECHART: return new DisplayerType.DisplayerSubType[]{DisplayerType.DisplayerSubType.LINE,
+                                                                        DisplayerType.DisplayerSubType.SMOOTH};
+            case MAP: return new DisplayerType.DisplayerSubType[]{  DisplayerType.DisplayerSubType.MAP_REGIONS,
+                                                                    DisplayerType.DisplayerSubType.MAP_MARKERS};
+            default: return new DisplayerType.DisplayerSubType[]{};
+        }
+    }
+
     public Displayer lookupDisplayer(DisplayerSettings displayerSettings) {
         DisplayerType displayerType = displayerSettings.getType();
         if ( DisplayerType.BARCHART.equals(displayerType)) return new GoogleBarChartDisplayer();

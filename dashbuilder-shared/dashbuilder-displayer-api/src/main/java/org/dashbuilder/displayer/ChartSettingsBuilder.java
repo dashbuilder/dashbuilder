@@ -21,6 +21,14 @@ package org.dashbuilder.displayer;
 public interface ChartSettingsBuilder<T extends ChartSettingsBuilder> extends DisplayerSettingsBuilder<T> {
 
     /**
+     * Set the DisplayerSettings' subtype.
+     *
+     * @param displayerSubType The displayer's subtype.
+     * @return The DisplayerSettingsBuilder instance that is being used to configure a DisplayerSettings.
+     */
+    T subtype(DisplayerType.DisplayerSubType displayerSubType);
+
+    /**
      * Sets the width of the chart.
      * @param width The width of the chart.
      * @return The DisplayerSettingsBuilder instance that is being used to configure a Chart data displayer.
