@@ -1,0 +1,175 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+             xmlns:g="urn:import:com.google.gwt.user.client.ui"
+             xmlns:b="urn:import:com.github.gwtbootstrap.client.ui"
+             xmlns:dash-client="urn:import:org.dashbuilder.common.client.validation.editors"
+    >
+
+  <ui:with field="i18n" type="org.dashbuilder.client.widgets.resources.i18n.DataSetEditorConstants"/>
+
+  <ui:style>
+    .mainPanel {
+    }
+    .sectionTitle {
+        font-weight: bold;      
+    }
+    .editorPanel {
+      float: left;
+    }
+    .editor {
+      float: left;
+      margin: 10px;
+      margin-left: 0px;
+    }
+    .editorText {
+      float: left;
+      margin: 10px;
+      margin-left: 0px;
+    }
+    .editorBox {
+      width: 50px;
+    }
+    .refreshIntervalBox {
+      width: 100px;
+    }
+    .dataRefreshPanel {
+      margin-top: 10px;
+    }
+    .sliderPanel {
+      vertical-align: middle;
+      margin-top: 10px;
+      margin-left: 30px;
+    }
+  </ui:style>
+
+  <g:FlowPanel ui:field="advancedAttributesPanel" addStyleNames="{style.mainPanel}">
+
+
+    <!-- Max cache size title. -->
+    <b:Row>
+      <b:Column size="6">
+        <g:HTML text="{i18n.maxCacheSize}" addStyleNames="{style.sectionTitle} "/>
+      </b:Column>
+    </b:Row>
+    
+    <!-- Client cache. -->
+    <b:Row>
+
+      <b:Column size="2">
+        <g:FlowPanel addStyleNames="{style.editorPanel} ">
+          <dash-client:BooleanSwitchEditor ui:field="attributeClientCacheStatus" addStyleNames="{style.editor} "/>
+          <g:HTML text="{i18n.clientCache}" addStyleNames="{style.editorText} "/>
+        </g:FlowPanel>
+      </b:Column>
+
+      <b:Column size="4">
+        
+        <g:FlowPanel addStyleNames="{style.editorPanel} ">
+
+          <b:Popover showDelay="1000" text="{i18n.attributeMaxBytes_description}" heading="{i18n.attributeMaxBytes}">
+            <dash-client:ValueBoxEditorDecorator errorLabelPosition="TOOLTIP_TOP" ui:field="attributeMaxBytes" addStyleNames="{style.editor} ">
+              <dash-client:valuebox>
+                <g:IntegerBox addStyleNames="{style.editorBox} "/> <!-- TODO:  placeholder="{i18n.attributeMaxBytes}" -->
+              </dash-client:valuebox>
+            </dash-client:ValueBoxEditorDecorator>
+          </b:Popover>
+          <g:HTML text="{i18n.bytes}" addStyleNames="{style.editorText} "/>
+
+          <g:FlowPanel ui:field="attributeMaxBytesSliderPanel" addStyleNames="{style.editorPanel} {style.sliderPanel} "></g:FlowPanel>
+          
+        </g:FlowPanel>
+        
+      </b:Column>
+
+    </b:Row>
+
+
+    <!-- Backend cache. -->
+    <b:Row>
+
+      <b:Column size="2">
+        <g:FlowPanel addStyleNames="{style.editorPanel} ">
+          <dash-client:BooleanSwitchEditor ui:field="attributeBackendCacheStatus" addStyleNames="{style.editor} "/>
+          <g:HTML text="{i18n.backendCache}" addStyleNames="{style.editorText} "/>
+        </g:FlowPanel>
+      </b:Column>
+          
+      <b:Column size="4">
+
+        <g:FlowPanel addStyleNames="{style.editorPanel} ">
+
+          <b:Popover showDelay="1000" text="{i18n.attributeMaxRows_description}" heading="{i18n.attributeMaxRows}">
+            <dash-client:ValueBoxEditorDecorator errorLabelPosition="TOOLTIP_TOP" ui:field="attributeMaxRows" addStyleNames="{style.editor} ">
+              <dash-client:valuebox>
+                <g:IntegerBox addStyleNames="{style.editorBox} "/> <!-- TODO:  placeholder="{i18n.attributeMaxBytes}" -->
+              </dash-client:valuebox>
+            </dash-client:ValueBoxEditorDecorator>
+          </b:Popover>
+          <g:HTML text="{i18n.rows}" addStyleNames="{style.editorText} "/>
+
+          <g:FlowPanel ui:field="attributeMaxRowsSliderPanel" addStyleNames="{style.editorPanel} {style.sliderPanel} "></g:FlowPanel>
+
+        </g:FlowPanel>
+
+      </b:Column>
+
+    </b:Row>
+    
+    <!-- Refresh policy title. -->
+    <b:Row>
+      <b:Column size="6">
+        <g:HTML text="{i18n.dataRefresh}" addStyleNames="{style.sectionTitle} {style.dataRefreshPanel}"/>
+      </b:Column>
+    </b:Row>
+
+    <!-- Refresh policy. -->
+    <b:Row>
+
+      <b:Column size="2">
+        <g:FlowPanel addStyleNames="{style.editorPanel} ">
+          <dash-client:BooleanSwitchEditor ui:field="attributeRefreshStatus" addStyleNames="{style.editor} "/>
+          <g:HTML text="{i18n.refreshEvery}" addStyleNames="{style.editorText} "/>
+        </g:FlowPanel>
+      </b:Column>
+      
+      <b:Column size="4">
+
+        <g:FlowPanel addStyleNames="{style.editorPanel} ">
+
+          <b:Popover showDelay="1000" text="{i18n.attributeRefreshInterval_description}" heading="{i18n.attributeRefreshInterval}">
+            <dash-client:ValueBoxEditorDecorator errorLabelPosition="TOOLTIP_TOP" ui:field="attributeRefreshInterval" addStyleNames="{style.editor} ">
+              <dash-client:valuebox>
+                <g:IntegerBox addStyleNames="{style.refreshIntervalBox} "/> <!-- TODO:  placeholder="{i18n.attributeMaxBytes}" -->
+              </dash-client:valuebox>
+            </dash-client:ValueBoxEditorDecorator>
+          </b:Popover>
+
+          <b:DropdownButton ui:field="intervalType" addStyleNames="{style.sliderPanel} "/>
+          
+        </g:FlowPanel>
+
+      </b:Column>
+
+    </b:Row>
+
+    <!-- Refresh on stale data. -->
+    <b:Row>
+
+      <b:Column size="2">
+        
+      </b:Column>
+
+      <b:Column size="4">
+
+        <g:FlowPanel addStyleNames="{style.editorPanel} ">
+          <b:CheckBox ui:field="refreshAlways" addStyleNames="{style.editor} "/>
+          <g:HTML text="{i18n.refreshOnStaleData}" addStyleNames="{style.editorText} "/>
+        </g:FlowPanel>
+
+      </b:Column>
+
+    </b:Row>
+    
+  </g:FlowPanel>
+
+</ui:UiBinder>

@@ -15,15 +15,20 @@
  */
 package org.dashbuilder.dataset.def;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.dashbuilder.dataprovider.DataSetProviderType;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetFactory;
 import org.dashbuilder.dataset.date.TimeAmount;
 import org.dashbuilder.dataset.filter.DataSetFilter;
+import org.dashbuilder.dataset.validation.IsTimeInterval;
+import org.dashbuilder.dataset.validation.groups.DataSetDefCacheRowsValidation;
+import org.dashbuilder.dataset.validation.groups.DataSetDefPushSizeValidation;
+import org.dashbuilder.dataset.validation.groups.DataSetDefRefreshIntervalValidation;
 import org.jboss.errai.common.client.api.annotations.Portable;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.NotNull;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * This class is used to define the origin, structure and runtime behaviour of a data set instance.
@@ -31,16 +36,26 @@ import org.jboss.errai.common.client.api.annotations.Portable;
 @Portable
 public class DataSetDef {
 
+    @NotNull(message = "{dataSetApi_dataSetDef_uuid_notNull}")
     protected String UUID;
+    @NotNull(message = "{dataSetApi_dataSetDef_name_notNull}")
+    protected String name;
     protected String defFilePath;
+    @NotNull(message = "{dataSetApi_dataSetDef_provider_notNull}")
     protected DataSetProviderType provider;
     protected DataSet dataSet = DataSetFactory.newEmptyDataSet();
     protected DataSetFilter dataSetFilter = null;
     protected boolean isPublic = true;
     protected boolean pushEnabled = false;
-    protected int pushMaxSize = 1024;
+    @NotNull(message = "{dataSetApi_dataSetDef_pushMaxSize_notNull}", groups = DataSetDefPushSizeValidation.class)
+    @Max(value = 4096)
+    protected Integer pushMaxSize = 1024;
     protected boolean cacheEnabled = false;
-    protected int cacheMaxRows = 1000;
+    @NotNull(message = "{dataSetApi_dataSetDef_cacheMaxRows_notNull}", groups = DataSetDefCacheRowsValidation.class)
+    @Max(value = 10000)
+    protected Integer cacheMaxRows = 1000;
+    @NotNull(message = "{dataSetApi_dataSetDef_refreshTime_notNull}", groups = DataSetDefRefreshIntervalValidation.class)
+    @IsTimeInterval(message = "{dataSetApi_dataSetDef_refreshTime_intervalInvalid}", groups = DataSetDefRefreshIntervalValidation.class)
     protected String refreshTime = null;
     protected boolean refreshAlways = false;
 
@@ -52,6 +67,14 @@ public class DataSetDef {
 
     public void setUUID(String UUID) {
         this.UUID = UUID;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getDefFilePath() {
@@ -103,11 +126,11 @@ public class DataSetDef {
         this.pushEnabled = pushEnabled;
     }
 
-    public int getPushMaxSize() {
+    public Integer getPushMaxSize() {
         return pushMaxSize;
     }
 
-    public void setPushMaxSize(int pushMaxSize) {
+    public void setPushMaxSize(Integer pushMaxSize) {
         this.pushMaxSize = pushMaxSize;
     }
 
@@ -119,11 +142,11 @@ public class DataSetDef {
         this.cacheEnabled = cacheEnabled;
     }
 
-    public int getCacheMaxRows() {
+    public Integer getCacheMaxRows() {
         return cacheMaxRows;
     }
 
-    public void setCacheMaxRows(int cacheMaxRows) {
+    public void setCacheMaxRows(Integer cacheMaxRows) {
         this.cacheMaxRows = cacheMaxRows;
     }
 
@@ -132,9 +155,6 @@ public class DataSetDef {
     }
 
     public void setRefreshTime(String refreshTime) {
-        if (refreshTime != null && refreshTime.trim().length() > 0) {
-            TimeAmount.parse(refreshTime);
-        }
         this.refreshTime = refreshTime;
     }
 
@@ -159,5 +179,42 @@ public class DataSetDef {
 
     public void setPattern(String columnId, String pattern) {
         patternMap.put(columnId, pattern);
+    }
+
+    public DataSetDef clone() {
+        DataSetDef def = new DataSetDef();
+        clone(def);
+        return def;
+    }
+    
+    protected void clone(final DataSetDef def) {
+        def.setUUID(getUUID());
+        def.setName(getName());
+        def.setProvider(getProvider());
+        def.setDefFilePath(getDefFilePath());
+        def.setPublic(isPublic());
+        def.setDataSetFilter(getDataSetFilter());
+        def.setCacheEnabled(isCacheEnabled());
+        def.setCacheMaxRows(getCacheMaxRows());
+        def.setPushEnabled(isPushEnabled());
+        def.setPushMaxSize(getPushMaxSize());
+        def.setRefreshAlways(isRefreshAlways());
+        def.setRefreshTime(getRefreshTime());
+        final DataSet dataSet = getDataSet();
+        if (dataSet != null && dataSet.getColumns() != null) {
+            def.getDataSet().setColumns(dataSet.getColumns());
+        }
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) return false;
+        
+        try {
+            DataSetDef d = (DataSetDef) obj;
+            return getUUID().equals(d.getUUID());
+        } catch (ClassCastException e) {
+            return false;
+        }
     }
 }

@@ -22,6 +22,8 @@ import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetFactory;
 import org.dashbuilder.dataset.DataSetMetadata;
 import org.dashbuilder.dataset.def.SQLDataSetDef;
+import org.dashbuilder.dataset.filter.FilterFactory;
+import org.dashbuilder.dataset.group.AggregateFunctionType;
 import org.junit.Test;
 
 import static org.dashbuilder.dataset.Assertions.*;
@@ -40,6 +42,34 @@ public class SQLDataSetDefTest extends SQLDataSetTestBase {
         DataSetMetadata metadata = dataSetManager.getDataSetMetadata("expense_reports_allcolumns");
         assertThat(metadata.getNumberOfColumns()).isEqualTo(6);
         assertThat(metadata.getEstimatedSize()).isEqualTo(6350);
+    }
+
+    @Test
+    public void testSQLDataSet() throws Exception {
+
+        URL fileURL = Thread.currentThread().getContextClassLoader().getResource("expenseReports_sql.dset");
+        String json = IOUtils.toString(fileURL);
+        SQLDataSetDef def = (SQLDataSetDef) jsonMarshaller.fromJson(json);
+        dataSetDefRegistry.registerDataSetDef(def);
+
+        DataSetMetadata metadata = dataSetManager.getDataSetMetadata("expense_reports_sql");
+        assertThat(metadata.getNumberOfColumns()).isEqualTo(3);
+        assertThat(metadata.getNumberOfRows()).isEqualTo(6);
+
+        DataSet dataSet = dataSetManager.lookupDataSet(
+                DataSetFactory.newDataSetLookupBuilder()
+                        .dataset("expense_reports_sql")
+                        .filter("amount", FilterFactory.lowerThan(1000))
+                        .group("employee")
+                        .column("employee")
+                        .column("amount", AggregateFunctionType.SUM)
+                        .buildLookup());
+
+        //printDataSet(dataSet);
+        assertDataSetValues(dataSet, dataSetFormatter, new String[][]{
+                {"Jamie Gilbeau", "792.59"},
+                {"Roxie Foraker", "1,020.45"}
+        }, 0);
     }
 
     @Test

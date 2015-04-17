@@ -1,0 +1,25 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+             xmlns:g="urn:import:com.google.gwt.user.client.ui"
+             xmlns:b="urn:import:com.github.gwtbootstrap.client.ui"
+    >
+
+  <ui:style type="org.dashbuilder.common.client.validation.editors.ImageListEditor.ImageListEditorStyle">
+    .errorPanel {
+      border: none;
+    }
+    .errorPanelError {
+      border: 1px solid red;
+    }
+    .imagePointer {
+      cursor: pointer;
+    }
+  </ui:style>
+  <g:HTMLPanel ui:field="errorPanel" addStyleNames="{style.errorPanel} ">
+    <b:Tooltip text="" ui:field="errorTooltip">
+      <g:HorizontalPanel spacing="10" ui:field="mainPanel" >
+      </g:HorizontalPanel>
+    </b:Tooltip>
+  </g:HTMLPanel>
+  
+</ui:UiBinder>

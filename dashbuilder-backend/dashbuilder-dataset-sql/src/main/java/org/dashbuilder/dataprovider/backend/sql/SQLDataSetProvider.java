@@ -17,12 +17,7 @@ package org.dashbuilder.dataprovider.backend.sql;
 
 import java.sql.Connection;
 import java.sql.Timestamp;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Map;
+import java.util.*;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -69,9 +64,11 @@ import org.dashbuilder.dataset.impl.MemSizeEstimator;
 import org.dashbuilder.dataset.sort.ColumnSort;
 import org.dashbuilder.dataset.sort.DataSetSort;
 import org.dashbuilder.dataset.sort.SortOrder;
+import org.jooq.Condition;
 import org.jooq.DataType;
 import org.jooq.Field;
 import org.jooq.Result;
+import org.jooq.SelectSelectStep;
 import org.jooq.SelectWhereStep;
 import org.jooq.SortField;
 import org.jooq.Table;
@@ -91,7 +88,6 @@ import static org.jooq.impl.DSL.*;
  *
  *  <p>
  *      Pending stuff:
- *      - Logical expressions filter
  *      - Filter on foreign data sets
  *      - Group (fixed) by date of week
  *  </p>
@@ -126,8 +122,8 @@ public class SQLDataSetProvider implements DataSetProvider {
         if (StringUtils.isBlank(sqlDef.getDataSource())) {
             throw new IllegalArgumentException("Missing data source in SQL data set definition: " + sqlDef);
         }
-        if (StringUtils.isBlank(sqlDef.getDbTable())) {
-            throw new IllegalArgumentException("Missing data table in SQL data set definition: " + sqlDef);
+        if (StringUtils.isBlank(sqlDef.getDbSQL()) && StringUtils.isBlank(sqlDef.getDbTable())) {
+            throw new IllegalArgumentException("Missing DB table or SQL in the data set definition: " + sqlDef);
         }
 
         // Look first into the static data set provider cache.
@@ -158,21 +154,18 @@ public class SQLDataSetProvider implements DataSetProvider {
     }
 
     public boolean isDataSetOutdated(DataSetDef def) {
+
+        // Non fetched data sets can't get outdated.
+        DataSetMetadata last = _metadataMap.remove(def.getUUID());
+        if (last == null) return false;
+
+        // Check if the metadata has changed since the last time it was fetched.
         try {
-            // If cache is disabled then no way for a data set to get outdated
-            SQLDataSetDef sqlDef = (SQLDataSetDef) def;
-            if (!sqlDef.isCacheEnabled()) return false;
-
-            // ... for non cached data sets either.
-            DataSet dataSet = staticDataSetProvider.lookupDataSet(def, null);
-            if (dataSet == null) return false;
-
-            // Compare the cached vs database rows.
-            int rows = getRowCount(sqlDef);
-            return rows != dataSet.getRowCount();
+            DataSetMetadata current = getDataSetMetadata(def);
+            return !current.equals(last);
         }
         catch (Exception e) {
-            e.printStackTrace();
+            log.error("Error fetching metadata: " + def, e);
             return false;
         }
     }
@@ -204,7 +197,6 @@ public class SQLDataSetProvider implements DataSetProvider {
         DataSetDef def = event.getDataSetDef();
         if (DataSetProviderType.SQL.equals(def.getProvider())) {
             String uuid = def.getUUID();
-            _metadataMap.remove(uuid);
             staticDataSetProvider.removeDataSet(uuid);
         }
     }
@@ -227,60 +219,49 @@ public class SQLDataSetProvider implements DataSetProvider {
             columnTypes.add(column.getColumnType());
         }
 
-        boolean tableFound = false;
-        List<Table<?>> _jooqTables = using(conn).meta().getTables();
-        for (Table<?> _jooqTable : _jooqTables) {
+        Field[] _jooqFields = _getFields(def, conn);
+        for (Field _jooqField : _jooqFields) {
 
-            if (_jooqTable.getName().toLowerCase().equals(def.getDbTable().toLowerCase())) {
-                tableFound = true;
+            String columnId = _jooqField.getName();
+            int columnIdx = columnIds.indexOf(columnId);
+            boolean columnExists  = columnIdx != -1;
 
-                for (Field _jooqField : _jooqTable.fields()) {
-                    String columnId = _jooqField.getName();
-                    int columnIdx = columnIds.indexOf(columnId);
-                    boolean columnExists  = columnIdx != -1;
+            // Add or skip non-existing columns depending on the data set definition.
+            if (!columnExists) {
 
-                    // Add or skip non-existing columns depending on the data set definition.
-                    if (!columnExists) {
+                // Add any table column
+                if (def.isAllColumnsEnabled()) {
+                    columnIds.add(columnId);
+                    columnIdx = columnIds.size()-1;
 
-                        // Add any table column
-                        if (def.isAllColumnsEnabled()) {
-                            columnIds.add(columnId);
-                            columnIdx = columnIds.size()-1;
-
-                            if (Number.class.isAssignableFrom(_jooqField.getType())) {
-                                columnTypes.add(ColumnType.NUMBER);
-                            }
-                            else if (Date.class.isAssignableFrom(_jooqField.getType())) {
-                                columnTypes.add(ColumnType.DATE);
-                            }
-                            else {
-                                columnTypes.add(ColumnType.LABEL);
-                            }
-                        }
-                        // Skip non existing columns
-                        else {
-                            continue;
-                        }
+                    if (Number.class.isAssignableFrom(_jooqField.getType())) {
+                        columnTypes.add(ColumnType.NUMBER);
                     }
-
-                    // Calculate the estimated size
-                    ColumnType cType = columnTypes.get(columnIdx);
-                    if (ColumnType.DATE.equals(cType)) {
-                        estimatedSize += MemSizeEstimator.sizeOf(Date.class) * rowCount;
-                    }
-                    else if (ColumnType.NUMBER.equals(cType)) {
-                        estimatedSize += MemSizeEstimator.sizeOf(Double.class) * rowCount;
+                    else if (Date.class.isAssignableFrom(_jooqField.getType())) {
+                        columnTypes.add(ColumnType.DATE);
                     }
                     else {
-                        int length = _jooqField.getDataType().length();
-                        estimatedSize += length/2 * rowCount;
+                        columnTypes.add(ColumnType.LABEL);
                     }
                 }
+                // Skip non existing columns
+                else {
+                    continue;
+                }
             }
-        }
-        if (!tableFound) {
-            throw new IllegalArgumentException("Table '" + def.getDbTable() + "'not found " +
-                    "in database '" + def.getDataSource()+ "'");
+
+            // Calculate the estimated size
+            ColumnType cType = columnTypes.get(columnIdx);
+            if (ColumnType.DATE.equals(cType)) {
+                estimatedSize += MemSizeEstimator.sizeOf(Date.class) * rowCount;
+            }
+            else if (ColumnType.NUMBER.equals(cType)) {
+                estimatedSize += MemSizeEstimator.sizeOf(Double.class) * rowCount;
+            }
+            else {
+                int length = _jooqField.getDataType().length();
+                estimatedSize += length/2 * rowCount;
+            }
         }
         if (columnIds.isEmpty()) {
             throw new IllegalArgumentException("No data set columns defined for the table '" + def.getDbTable() +
@@ -292,20 +273,55 @@ public class SQLDataSetProvider implements DataSetProvider {
         return result;
     }
 
-    protected int _getRowCount(SQLDataSetDef def, Connection conn) throws Exception {
-        DataSetFilter filterOp = def.getDataSetFilter();
-        if (filterOp == null) {
-            /* jOOQ 3.1.0 style => return using(conn).selectFrom(_getJooqTable(def, def.getDbTable())).fetchCount(); */
-            return using(conn).fetchCount(_getJooqTable(def, def.getDbTable()));
+    /**
+     * <p>Given a data source connection (database and schema), list existing tables.</p> 
+     * @param def The SQL data set definiton.
+     * @param conn The connection.
+     * @return The tables for the database and schema's connection.
+     */
+    public List<String> getTables(SQLDataSetDef def, Connection conn) {
+        List<Table<?>> tables = using(conn).meta().getTables();
+        if (tables != null && !tables.isEmpty()) {
+            List<String> result = new LinkedList<String>();
+            for (Table<?> table : tables) {
+                result.add(tables.get(0).getName());
+            }
+            return result;
         }
+        return null;
+    }
 
-        SelectWhereStep _jooqQuery = using(conn)
-                .selectCount()
-                .from(_getJooqTable(def, def.getDbTable()));
+    protected Field[] _getFields(SQLDataSetDef def, Connection conn) throws Exception {
+        if (!StringUtils.isBlank(def.getDbSQL())) {
+            return using(conn).select()
+                    .from("(" + def.getDbSQL() + ")")
+                    .limit(1).fetch().fields();
+        }
+        else {
+            List<Table<?>> _jooqTables = using(conn).meta().getTables();
+            for (Table<?> _jooqTable : _jooqTables) {
+                if (_jooqTable.getName().toLowerCase().equals(def.getDbTable().toLowerCase())) {
+                    return _jooqTable.fields();
+                }
+            }
+            throw new IllegalArgumentException("Table '" + def.getDbTable() + "'not found " +
+                    "in database '" + def.getDataSource()+ "'");
+        }
+    }
 
-        List<ColumnFilter> filterList = filterOp.getColumnFilterList();
-        for (ColumnFilter filter : filterList) {
-            _appendJooqFilterBy(def, filter, _jooqQuery);
+    protected int _getRowCount(SQLDataSetDef def, Connection conn) throws Exception {
+
+        // Count rows, either on an SQL or a DB table
+        SelectSelectStep _jooqQuery = using(conn).selectCount();
+        _appendJooqFrom(def, _jooqQuery);
+
+        // Filters set must be taken into account
+        DataSetFilter filterOp = def.getDataSetFilter();
+        if (filterOp != null) {
+            List<ColumnFilter> filterList = filterOp.getColumnFilterList();
+            for (ColumnFilter filter : filterList) {
+                _appendJooqFilterBy(def, filter, _jooqQuery);
+            }
         }
         return ((Number) _jooqQuery.fetch().getValue(0 ,0)).intValue();
     }
@@ -315,9 +331,9 @@ public class SQLDataSetProvider implements DataSetProvider {
         return processor.run();
     }
 
-    protected Table _getJooqTable(SQLDataSetDef def, String name) {
-        if (def.getDbSchema() == null) return table(name);
-        else return tableByName(def.getDbSchema(), name);
+    protected Table _getJooqTable(SQLDataSetDef def) {
+        if (StringUtils.isBlank(def.getDbSchema())) return table(def.getDbTable());
+        else return tableByName(def.getDbSchema(), def.getDbTable());
     }
 
     protected Field _getJooqField(SQLDataSetDef def, String name) {
@@ -335,6 +351,11 @@ public class SQLDataSetProvider implements DataSetProvider {
         else return fieldByName(clazz, def.getDbTable(), name);
     }
 
+    protected void _appendJooqFrom(SQLDataSetDef def, SelectSelectStep _jooqQuery) {
+        if (!StringUtils.isBlank(def.getDbSQL())) _jooqQuery.from("(" + def.getDbSQL() + ")");
+        else _jooqQuery.from(_getJooqTable(def));
+    }
+
     protected void _appendJooqFilterBy(SQLDataSetDef def, DataSetFilter filterOp, SelectWhereStep _jooqQuery) {
         List<ColumnFilter> filterList = filterOp.getColumnFilterList();
         for (ColumnFilter filter : filterList) {
@@ -343,6 +364,10 @@ public class SQLDataSetProvider implements DataSetProvider {
     }
 
     protected void _appendJooqFilterBy(SQLDataSetDef def, ColumnFilter filter, SelectWhereStep _jooqQuery) {
+        _jooqQuery.where(_jooqCondition(def, filter));
+    }
+
+    protected Condition _jooqCondition(SQLDataSetDef def, ColumnFilter filter) {
         String filterId = filter.getColumnId();
         Field _jooqField = _getJooqField(def, filterId);
 
@@ -352,56 +377,67 @@ public class SQLDataSetProvider implements DataSetProvider {
             List params = f.getParameters();
 
             if (CoreFunctionType.IS_NULL.equals(type)) {
-                _jooqQuery.where(_jooqField.isNull());
+                return _jooqField.isNull();
             }
-            else if (CoreFunctionType.NOT_NULL.equals(type)) {
-                _jooqQuery.where(_jooqField.isNotNull());
+            if (CoreFunctionType.NOT_NULL.equals(type)) {
+                return _jooqField.isNotNull();
             }
-            else if (CoreFunctionType.EQUALS_TO.equals(type)) {
-                if (params.size() == 1) _jooqQuery.where(_jooqField.equal(params.get(0)));
-                else _jooqQuery.where(_jooqField.in(params));
+            if (CoreFunctionType.EQUALS_TO.equals(type)) {
+                if (params.size() == 1) return _jooqField.equal(params.get(0));
+                return _jooqField.in(params);
             }
-            else if (CoreFunctionType.NOT_EQUALS_TO.equals(type)) {
-                _jooqQuery.where(_jooqField.notEqual(params.get(0)));
+            if (CoreFunctionType.NOT_EQUALS_TO.equals(type)) {
+                return _jooqField.notEqual(params.get(0));
             }
-            else if (CoreFunctionType.LOWER_THAN.equals(type)) {
-                _jooqQuery.where(_jooqField.lessThan(params.get(0)));
+            if (CoreFunctionType.LOWER_THAN.equals(type)) {
+                return _jooqField.lessThan(params.get(0));
             }
-            else if (CoreFunctionType.LOWER_OR_EQUALS_TO.equals(type)) {
-                _jooqQuery.where(_jooqField.lessOrEqual(params.get(0)));
+            if (CoreFunctionType.LOWER_OR_EQUALS_TO.equals(type)) {
+                return _jooqField.lessOrEqual(params.get(0));
             }
-            else if (CoreFunctionType.GREATER_THAN.equals(type)) {
-                _jooqQuery.where(_jooqField.greaterThan(params.get(0)));
+            if (CoreFunctionType.GREATER_THAN.equals(type)) {
+                return _jooqField.greaterThan(params.get(0));
             }
-            else if (CoreFunctionType.GREATER_OR_EQUALS_TO.equals(type)) {
-                _jooqQuery.where(_jooqField.greaterOrEqual(params.get(0)));
+            if (CoreFunctionType.GREATER_OR_EQUALS_TO.equals(type)) {
+                return _jooqField.greaterOrEqual(params.get(0));
             }
-            else if (CoreFunctionType.BETWEEN.equals(type)) {
-                _jooqQuery.where(_jooqField.between(params.get(0), params.get(1)));
+            if (CoreFunctionType.BETWEEN.equals(type)) {
+                return _jooqField.between(params.get(0), params.get(1));
             }
-            else if (CoreFunctionType.TIME_FRAME.equals(type)) {
+            if (CoreFunctionType.TIME_FRAME.equals(type)) {
                 TimeFrame timeFrame = TimeFrame.parse(params.get(0).toString());
                 if (timeFrame != null) {
                     java.sql.Date past = new java.sql.Date(timeFrame.getFrom().getTimeInstant().getTime());
                     java.sql.Date future = new java.sql.Date(timeFrame.getTo().getTimeInstant().getTime());
-                    _jooqQuery.where(_jooqField.between(past, future));
+                    return _jooqField.between(past, future);
                 }
-            }
-            else {
-                throw new IllegalArgumentException("Core function type not supported: " + type);
             }
         }
         if (filter instanceof LogicalExprFilter) {
             LogicalExprFilter f = (LogicalExprFilter) filter;
             LogicalExprType type = f.getLogicalOperator();
 
-            if (LogicalExprType.AND.equals(type)) {
+            Condition condition = null;
+            List<ColumnFilter> logicalTerms = f.getLogicalTerms();
+            for (int i=0; i<logicalTerms.size(); i++) {
+                Condition next = _jooqCondition(def, logicalTerms.get(i));
+
+                if (LogicalExprType.AND.equals(type)) {
+                    if (condition == null) condition = next;
+                    else condition = condition.and(next);
+                }
+                if (LogicalExprType.OR.equals(type)) {
+                    if (condition == null) condition = next;
+                    else condition = condition.or(next);
+                }
+                if (LogicalExprType.NOT.equals(type)) {
+                    if (condition == null) condition = next.not();
+                    else condition = condition.andNot(next);
+                }
             }
-            if (LogicalExprType.OR.equals(type)) {
-            }
-            if (LogicalExprType.NOT.equals(type)) {
-            }
+            return condition;
         }
+        throw new IllegalArgumentException("Filter not supported: " + filter);
     }
 
     /**
@@ -412,8 +448,7 @@ public class SQLDataSetProvider implements DataSetProvider {
         SQLDataSetDef def;
         DataSetLookup lookup;
         DataSetMetadata metadata;
-        Table _jooqTable;
-        SelectWhereStep _jooqQuery;
+        SelectSelectStep _jooqQuery;
         Connection conn;
         Date[] dateLimits;
         DateIntervalType dateIntervalType;
@@ -427,7 +462,6 @@ public class SQLDataSetProvider implements DataSetProvider {
                 if (lookup == null) this.lookup = new DataSetLookup(def.getUUID(), dataSetFilter);
                 else this.lookup.addOperation(0, dataSetFilter);
             }
-            _jooqTable = _createJooqTable(def.getDbTable());
         }
 
         public DataSet run() throws Exception {
@@ -442,12 +476,12 @@ public class SQLDataSetProvider implements DataSetProvider {
                 if (lookup == null || lookup.getOperationList().isEmpty()) {
 
                     // Prepare the jOOQ query
-                    _jooqQuery = using(conn)
-                            .select(_createAllJooqFields())
-                            .from(_jooqTable);
+                    _jooqQuery = using(conn).select(_createAllJooqFields());
+                    _appendJooqFrom(def, _jooqQuery);
 
                     // Row limits
                     if (trim) {
+                        totalRows = using(conn).fetchCount(_jooqQuery);
                         _jooqQuery.limit(lookup.getNumberOfRows()).offset(lookup.getRowOffset());
                     }
 
@@ -463,26 +497,21 @@ public class SQLDataSetProvider implements DataSetProvider {
                     DataSetGroup groupOp = null;
                     int groupIdx = lookup.getFirstGroupOpIndex(0, null, false);
                     if (groupIdx != -1) groupOp = lookup.getOperation(groupIdx);
-                    boolean totalRowsChanged = false;
 
                     // Prepare the jOOQ query
-                    _jooqQuery = using(conn)
-                            .select(_createJooqFields(groupOp))
-                            .from(_jooqTable);
-
+                    _jooqQuery = using(conn).select(_createJooqFields(groupOp));
+                    _appendJooqFrom(def, _jooqQuery);
 
                     // Append the filter clauses
                     DataSetFilter filterOp = lookup.getFirstFilterOp();
                     if (filterOp != null) {
                         _appendJooqFilterBy(def, filterOp, _jooqQuery);
-                        totalRowsChanged = true;
                     }
 
                     // Append the interval selections
                     List<DataSetGroup> intervalSelects = lookup.getFirstGroupOpSelections();
                     for (DataSetGroup intervalSelect : intervalSelects) {
                         _appendJooqIntervalSelection(intervalSelect, _jooqQuery);
-                        totalRowsChanged = true;
                     }
 
                     // ... the group by clauses
@@ -491,7 +520,6 @@ public class SQLDataSetProvider implements DataSetProvider {
                         cg = groupOp.getColumnGroup();
                         if (cg != null) {
                             _appendJooqGroupBy(groupOp);
-                            totalRowsChanged = true;
                         }
                     }
 
@@ -507,7 +535,7 @@ public class SQLDataSetProvider implements DataSetProvider {
 
                     // ... and the row limits
                     if (trim) {
-                        if (totalRowsChanged) totalRows = using(conn).fetchCount(_jooqQuery);
+                        totalRows = using(conn).fetchCount(_jooqQuery);
                         _jooqQuery.limit(lookup.getNumberOfRows()).offset(lookup.getRowOffset());
                     }
 
@@ -548,9 +576,8 @@ public class SQLDataSetProvider implements DataSetProvider {
         protected Date calculateDateLimit(String dateColumnId, boolean min) {
 
             Field _jooqDate = _createJooqField(dateColumnId);
-            SelectWhereStep _jooqLimits = using(conn)
-                    .select(_jooqDate)
-                    .from(_jooqTable);
+            SelectSelectStep _jooqLimits = using(conn).select(_jooqDate);
+            _appendJooqFrom(def, _jooqLimits);
 
             // Append the filter clauses
             DataSetFilter filterOp = lookup.getFirstFilterOp();
@@ -867,10 +894,6 @@ public class SQLDataSetProvider implements DataSetProvider {
                 }
             }
             return dataSet;
-        }
-
-        protected Table _createJooqTable(String name) {
-            return _getJooqTable(def, name);
         }
 
         protected Field _createJooqField(String name) {

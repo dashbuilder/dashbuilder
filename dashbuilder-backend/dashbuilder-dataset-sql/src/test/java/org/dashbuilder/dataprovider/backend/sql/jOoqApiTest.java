@@ -105,6 +105,16 @@ public class jOoqApiTest {
     }
 
     @Test
+    public void testNestedSelect() throws Exception {
+        Result result= DSL.using(conn, new Settings().withRenderFormatted(true))
+                .select(ID)
+                .from("(select * from " + EXPENSES + ")")
+                .fetch();
+        assertThat(result.getValue(0, ID)).isEqualTo(new Integer(1));
+        assertThat(result.getValue(49, ID)).isEqualTo(new Integer(50));
+    }
+
+    @Test
     public void testSelectAllColumns() throws Exception {
         Result result= DSL.using(conn, new Settings().withRenderFormatted(true))
                 .selectFrom(EXPENSES)

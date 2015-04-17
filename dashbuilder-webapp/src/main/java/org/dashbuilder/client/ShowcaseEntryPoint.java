@@ -66,6 +66,9 @@ public class ShowcaseEntryPoint {
                         placeManager.goTo("DisplayerGalleryPerspective");
                     }
                 }).endMenu().
+                newTopLevelMenu(AppConstants.INSTANCE.menu_authoring())
+                .withItems(getAuthoringMenuItems())
+                .endMenu().
                 newTopLevelMenu(AppConstants.INSTANCE.menu_dashboards())
                 .withItems(getDashboardMenuItems())
                 .endMenu().
@@ -76,6 +79,18 @@ public class ShowcaseEntryPoint {
         );
     }
 
+    private List<? extends MenuItem> getAuthoringMenuItems() {
+        final List<MenuItem> result = new ArrayList<MenuItem>(2);
+
+        result.add(MenuFactory.newSimpleItem("Data Set Authoring").respondsWith(new Command() {
+            public void execute() {
+                placeManager.goTo("DataSetAuthoringPerspective");
+            }
+        }).endMenu().build().getItems().get(0));
+
+        return result;
+    }
+    
     private List<? extends MenuItem> getDashboardMenuItems() {
         final List<MenuItem> result = new ArrayList<MenuItem>(2);
 

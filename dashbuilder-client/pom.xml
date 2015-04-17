@@ -37,6 +37,7 @@
     <module>dashbuilder-displayer-editor</module>
     <module>dashbuilder-lienzo</module>
     <module>dashbuilder-renderers</module>
+    <module>dashbuilder-widgets</module>
   </modules>
 
   <dependencies>

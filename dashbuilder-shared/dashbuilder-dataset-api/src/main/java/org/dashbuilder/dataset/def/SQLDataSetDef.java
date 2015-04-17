@@ -16,14 +16,26 @@
 package org.dashbuilder.dataset.def;
 
 import org.dashbuilder.dataprovider.DataSetProviderType;
+import org.dashbuilder.dataset.validation.groups.SQLDataSetDefDbSQLValidation;
+import org.dashbuilder.dataset.validation.groups.SQLDataSetDefDbTableValidation;
 import org.jboss.errai.common.client.api.annotations.Portable;
+
+import javax.validation.constraints.NotNull;
 
 @Portable
 public class SQLDataSetDef extends DataSetDef {
 
+    @NotNull(message = "{dataSetApi_sqlDataSetDef_dataSource_notNull}")
     protected String dataSource;
+
     protected String dbSchema;
+
+    @NotNull(message = "{dataSetApi_sqlDataSetDef_dbTable_notNull}", groups = SQLDataSetDefDbTableValidation.class)
     protected String dbTable;
+
+    @NotNull(message = "{dataSetApi_sqlDataSetDef_dbSQL_notNull}", groups = SQLDataSetDefDbSQLValidation.class)
+    protected String dbSQL;
+    
     protected boolean allColumnsEnabled = true;
 
     public SQLDataSetDef() {
@@ -54,6 +66,14 @@ public class SQLDataSetDef extends DataSetDef {
         this.dbSchema = dbSchema;
     }
 
+    public String getDbSQL() {
+        return dbSQL;
+    }
+
+    public void setDbSQL(String dbSQL) {
+        this.dbSQL = dbSQL;
+    }
+
     public boolean isAllColumnsEnabled() {
         return allColumnsEnabled;
     }
@@ -70,12 +90,23 @@ public class SQLDataSetDef extends DataSetDef {
         this.cacheEnabled = cacheEnabled;
     }
 
-    public int getCacheMaxRows() {
+    public Integer getCacheMaxRows() {
         return cacheMaxRows;
     }
 
-    public void setCacheMaxRows(int cacheMaxRows) {
+    public void setCacheMaxRows(Integer cacheMaxRows) {
         this.cacheMaxRows = cacheMaxRows;
+    }
+
+    @Override
+    public DataSetDef clone() {
+        SQLDataSetDef def = new SQLDataSetDef();
+        clone(def);
+        def.setDataSource(getDataSource());
+        def.setDbSchema(getDbSchema());
+        def.setDbTable(getDbTable());
+        def.setAllColumnsEnabled(isAllColumnsEnabled());
+        return def;
     }
 
     public String toString() {
@@ -92,6 +123,7 @@ public class SQLDataSetDef extends DataSetDef {
         out.append("Data source=").append(dataSource).append("\n");
         if (dbSchema != null) out.append("DB Schema=").append(dbSchema).append("\n");
         out.append("DB Table=").append(dbTable).append("\n");
+        out.append("DB SQL=").append(dbSQL).append("\n");
         out.append("Get all columns=").append(allColumnsEnabled).append("\n");
         out.append("Cache enabled=").append(cacheEnabled).append("\n");
         out.append("Cache max rows=").append(cacheMaxRows).append(" Kb\n");

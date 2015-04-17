@@ -1,0 +1,32 @@
+<!DOCTYPE Configure PUBLIC "-//Mort Bay Consulting//DTD Configure//EN"
+    "http://jetty.mortbay.org/configure.dtd">
+<Configure id="sample-weld" class="org.mortbay.jetty.webapp.WebAppContext">
+
+  <!-- Bug fix for Jetty to properly handle login config in a per-project setup -->
+  <Set name="serverClasses">
+    <Array type="java.lang.String">
+      <Item>-org.mortbay.jetty.plus.jaas.</Item>
+      <Item>org.mortbay.jetty</Item>
+      <Item>org.slf4j.</Item>
+    </Array>
+  </Set>
+
+  <Array id="plusConfig" type="java.lang.String">
+    <Item>org.mortbay.jetty.webapp.WebInfConfiguration</Item>
+    <Item>org.mortbay.jetty.plus.webapp.EnvConfiguration</Item>
+    <Item>org.mortbay.jetty.plus.webapp.Configuration</Item>
+    <Item>org.mortbay.jetty.webapp.JettyWebXmlConfiguration</Item>
+  </Array>
+  
+  <New id="BeanManager" class="org.mortbay.jetty.plus.naming.Resource">
+    <Arg>java:comp/BeanManager</Arg>
+    <Arg>
+      <New class="javax.naming.Reference">
+        <Arg>javax.enterprise.inject.spi.BeanManager</Arg>
+        <Arg>org.jboss.weld.resources.ManagerObjectFactory</Arg>
+        <Arg/>
+      </New>
+    </Arg>
+  </New>
+  
+</Configure>

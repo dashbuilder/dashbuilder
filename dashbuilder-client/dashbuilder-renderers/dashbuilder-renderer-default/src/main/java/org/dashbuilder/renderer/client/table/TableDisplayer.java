@@ -61,7 +61,7 @@ import static com.google.gwt.dom.client.BrowserEvents.CLICK;
 
 public class TableDisplayer extends AbstractDisplayer {
 
-    private Widget currentSelectionWidget = null;
+    protected Widget currentSelectionWidget = null;
 
     protected int numberOfRows = 0;
     protected String lastOrderedColumn = null;
@@ -149,7 +149,7 @@ public class TableDisplayer extends AbstractDisplayer {
     /**
      * If only exists one page, do not show table pager.  
      */
-    private void handleTablePager() {
+    protected void handleTablePager() {
         if (table.getPageSize() >= table.getRowCount()) table.pager.setVisible(false);
         else table.pager.setVisible(true);
     }
@@ -288,7 +288,7 @@ public class TableDisplayer extends AbstractDisplayer {
         return pagedTable;
     }
 
-    private Column<Integer, ?> createColumn( final DataColumn column, final int columnNumber ) {
+    protected Column<Integer, ?> createColumn( final DataColumn column, final int columnNumber ) {
 
         switch ( column.getColumnType() ) {
             case LABEL: return new Column<Integer, String>(
@@ -342,13 +342,13 @@ public class TableDisplayer extends AbstractDisplayer {
         return panel;
     }
 
-    private void redrawColumnSelectionWidget() {
+    protected void redrawColumnSelectionWidget() {
         if ( currentSelectionWidget != null ) table.getLeftToolbar().remove( currentSelectionWidget );
         currentSelectionWidget = createCurrentSelectionWidget();
         if ( currentSelectionWidget != null ) table.getLeftToolbar().add( currentSelectionWidget );
     }
 
-    private class DataColumnCell extends TextCell {
+    protected class DataColumnCell extends TextCell {
 
         private String columnId;
         private boolean selectable = false;
@@ -367,12 +367,15 @@ public class TableDisplayer extends AbstractDisplayer {
 
         @Override
         public void onBrowserEvent( Context context, Element parent, String value, NativeEvent event, ValueUpdater<String> valueUpdater ) {
-
-            if ( !selectable || !displayerSettings.isFilterEnabled() ) return;
-
-            filterUpdate( columnId, context.getIndex() );
-            redrawColumnSelectionWidget();
+            onCellSelected(columnId, selectable, context.getIndex());
         }
+    }
+
+    protected void onCellSelected(String columnId, boolean selectable, int rowIndex) {
+        if ( !selectable || !displayerSettings.isFilterEnabled() ) return;
+
+        filterUpdate( columnId, rowIndex );
+        redrawColumnSelectionWidget();
     }
 
     /**

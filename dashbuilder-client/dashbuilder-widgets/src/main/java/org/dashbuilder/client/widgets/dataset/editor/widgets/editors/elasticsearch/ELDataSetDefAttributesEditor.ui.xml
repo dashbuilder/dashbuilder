@@ -1,0 +1,85 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+             xmlns:g="urn:import:com.google.gwt.user.client.ui"
+             xmlns:b="urn:import:com.github.gwtbootstrap.client.ui"
+             xmlns:dash-client="urn:import:org.dashbuilder.common.client.validation.editors"
+    >
+
+  <ui:with field="i18n" type="org.dashbuilder.client.widgets.resources.i18n.DataSetEditorConstants"/>
+
+  <ui:style>
+    .mainPanel {
+    }
+  </ui:style>
+
+  <g:FlowPanel ui:field="elAttributesPanel" addStyleNames="{style.mainPanel}">
+
+    <!-- Server URL. -->
+    <b:Row>
+      <b:Column size="2">
+        <g:HTML text="{i18n.el_server_url}"/>
+      </b:Column>
+      <b:Column size="3">
+        <b:Popover showDelay="1000" text="{i18n.el_server_url_description}" heading="{i18n.el_server_url}" placement="BOTTOM">
+          <dash-client:ValueBoxEditorDecorator errorLabelPosition="TOOLTIP_BOTTOM" ui:field="serverURL">
+            <dash-client:valuebox>
+              <b:TextBox placeholder="{i18n.el_server_url_placeholder}" />
+            </dash-client:valuebox>
+          </dash-client:ValueBoxEditorDecorator>
+        </b:Popover>
+      </b:Column>
+    </b:Row>
+
+    <!-- Cluster name. -->
+    <b:Row>
+      <b:Column size="2">
+        <g:HTML text="{i18n.el_cluster_name}"/>
+      </b:Column>
+      <b:Column size="3">
+        <b:Popover showDelay="1000" text="{i18n.el_cluster_name_description}" heading="{i18n.el_cluster_name}">
+          <dash-client:ValueBoxEditorDecorator errorLabelPosition="TOOLTIP_TOP" ui:field="clusterName">
+            <dash-client:valuebox>
+              <b:TextBox placeholder="{i18n.el_cluster_name_placeholder}" />
+            </dash-client:valuebox>
+          </dash-client:ValueBoxEditorDecorator>
+        </b:Popover>
+      </b:Column>
+    </b:Row>
+
+    <!-- Index. -->
+    <b:Row>
+      <b:Column size="2">
+        <g:HTML text="{i18n.el_index}"/>
+      </b:Column>
+      <b:Column size="3">
+        <b:Popover showDelay="1000" text="{i18n.el_index_description}" heading="{i18n.el_index}">
+          <dash-client:ValueBoxEditorDecorator errorLabelPosition="TOOLTIP_TOP" ui:field="index">
+            <dash-client:valuebox>
+              <b:TextBox placeholder="{i18n.el_index_placeholder}" />
+            </dash-client:valuebox>
+          </dash-client:ValueBoxEditorDecorator>
+        </b:Popover>
+      </b:Column>
+    </b:Row>
+
+    <!-- Type. -->
+    <b:Row>
+      <b:Column size="2">
+        <g:HTML text="{i18n.el_type}"/>
+      </b:Column>
+      <b:Column size="3">
+        <b:Popover showDelay="1000" text="{i18n.el_type_description}" heading="{i18n.el_type}">
+          <dash-client:ValueBoxEditorDecorator errorLabelPosition="TOOLTIP_TOP" ui:field="type">
+            <dash-client:valuebox>
+              <b:TextBox placeholder="{i18n.el_type_placeholder}" />
+            </dash-client:valuebox>
+          </dash-client:ValueBoxEditorDecorator>
+        </b:Popover>
+      </b:Column>
+    </b:Row>
+    
+
+  </g:FlowPanel>
+
+
+</ui:UiBinder>

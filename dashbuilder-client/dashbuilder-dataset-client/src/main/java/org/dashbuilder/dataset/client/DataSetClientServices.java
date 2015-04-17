@@ -353,6 +353,23 @@ public class DataSetClientServices {
         }
     }
 
+    public void registerDataSetDef(final DataSetDef dataSetDef) {
+        dataSetBackendServices.call().registerDataSetDef(dataSetDef);
+    }
+
+    public void persistDataSetDef(final DataSetDef dataSetDef) throws Exception {
+        dataSetBackendServices.call().persistDataSetDef(dataSetDef);
+    }
+
+    public void removeDataSetDef(final String uuid) {
+        dataSetBackendServices.call().removeDataSetDef(uuid);
+        removeDataSet(uuid);
+    }
+
+    public void removeDataSet(final String uuid) {
+        clientDataSetManager.removeDataSet(uuid);
+    }
+
     private class DataSetLookupListenerPair {
 
         DataSetLookup lookup;
@@ -379,4 +396,5 @@ public class DataSetClientServices {
         // In this case the notification is always send, no matter whether the data set is pushed to the client or not.
         dataSetModifiedEvent.fire(new DataSetModifiedEvent(event.getDataSetDef()));
     }
+    
 }

@@ -25,6 +25,8 @@ public interface AppConstants extends Messages {
     String menu_home();
 
     String menu_gallery();
+    
+    String menu_authoring();
 
     String menu_dashboards();
 

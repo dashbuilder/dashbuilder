@@ -31,22 +31,14 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import org.dashbuilder.config.Config;
-import org.jboss.errai.ioc.client.container.IOC;
-import org.jboss.errai.ioc.client.container.IOCBeanDef;
 import org.slf4j.Logger;
-import org.uberfire.commons.services.cdi.Startup;
 
 /**
- * Task scheduler component. Implementation details:
- * <ul>
- * <li>It uses internally an instance of java.util.concurrent.ScheduledThreadPoolExecutor
- * which provides a thread pool and the delayed task execution capability.
- * <li>Fully transactional. Because it's integrated with the Hibernate transaction manager. So all the scheduler
- * operations are committed only if the underlying transaction completes successfully.
- * </ul>
+ * Task scheduler component.
+ * <p>It uses internally an instance of java.util.concurrent.ScheduledThreadPoolExecutor
+ * which provides a thread pool and the delayed task execution capability.</p>
  */
 @ApplicationScoped
-@Startup
 public class Scheduler {
 
     @Inject
@@ -59,12 +51,6 @@ public class Scheduler {
     @Inject @Config("10")
     protected int maxThreadPoolSize;
 
-    public static Scheduler get() {
-        Collection<IOCBeanDef<Scheduler>> beans = IOC.getBeanManager().lookupBeans(Scheduler.class);
-        IOCBeanDef<Scheduler> beanDef = beans.iterator().next();
-        return beanDef.getInstance();
-    }
-    
     @PostConstruct
     public void init() {
         scheduledTasks = Collections.synchronizedMap(new HashMap<Object,SchedulerTask>());
@@ -286,7 +272,6 @@ public class Scheduler {
                 .append(" (Queue size=").append(executor.getQueue().size()).append(") -----------------------------\n");
         for (Map.Entry<Object, SchedulerTask> entry : temp.entrySet()) {
             SchedulerTask task = entry.getValue();
-            // Sample entry: WAITING - [Firing in 0h 0m 8s] - [task=5365, BPM Trigger 5365 firing task]
             buf.append("\n");
             if (task.isRunning()) buf.append("RUNNING - ");
             else if (task.isCancelled()) buf.append("CANCELL - ");

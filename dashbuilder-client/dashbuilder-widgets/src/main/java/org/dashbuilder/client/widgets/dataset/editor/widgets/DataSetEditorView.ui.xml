@@ -1,0 +1,265 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+             xmlns:g="urn:import:com.google.gwt.user.client.ui"
+             xmlns:b="urn:import:com.github.gwtbootstrap.client.ui"
+             xmlns:dash-widgets="urn:import:org.dashbuilder.client.widgets"
+             xmlns:dash-dset-editors="urn:import:org.dashbuilder.client.widgets.dataset.editor.widgets.editors"
+             xmlns:dash-dset-editors-sql="urn:import:org.dashbuilder.client.widgets.dataset.editor.widgets.editors.sql"
+             xmlns:dash-dset-editors-csv="urn:import:org.dashbuilder.client.widgets.dataset.editor.widgets.editors.csv"
+             xmlns:dash-dset-editors-static="urn:import:org.dashbuilder.client.widgets.dataset.editor.widgets.editors.bean"
+             xmlns:dash-dset-editors-el="urn:import:org.dashbuilder.client.widgets.dataset.editor.widgets.editors.elasticsearch"
+    >
+
+  <ui:with field="i18n" type="org.dashbuilder.client.widgets.resources.i18n.DataSetEditorConstants"/>
+
+  <ui:style type="org.dashbuilder.client.widgets.dataset.editor.widgets.DataSetEditorView.DataSetEditorViewStyle">
+    .mainPanel {
+      font-size: 12pt;
+      margin: 10px;
+    }
+    .titlePanel {
+      vertical-align: middle;
+      margin-bottom: 30px;
+    }
+    .title {
+    }
+    .progressBar {
+      width: 100%;
+    }
+    .disabledBar {
+      filter: alpha(opacity=5);opacity: 0.2;
+    }
+    .initialViewPanel {
+      margin: 50px;
+    }
+    .editorPanel {
+      margin: 15px;
+      overflow-y: auto;
+    }
+    .tabPanel {
+        margin: 0px;      
+    }
+    .buttonsPanel {
+      margin-top: 50px;
+    }
+    .dataSetCountLabel {
+      margin-bottom: 20px;
+    }
+    .well {
+      background-color: white;
+      border: 1px solid #E3E3E3;
+      border-radius: 4px 4px 4px 4px;
+      box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05) inset;
+      margin-bottom: 20px;
+      min-height: 20px;
+      padding: 19px;
+    }
+    .well_ghostwhite {
+      background-color: ghostwhite;
+    }
+    .newDataSet {
+      float: left;
+      margin-left: 5px;
+    }
+    .nextStep {
+      margin: 5px;
+    }
+    .testButtonPanel {
+      margin: 15px;
+    }
+    .testButton {
+      
+    }
+    .providerSetupButtonPanel {
+      float: left;
+      margin-bottom: 10px;
+    }
+    .providerSetupButton {
+      float: left;
+    }
+    .columnsFilterPanel {
+      float: left;
+      width: 300px;
+      overflow: hidden;
+    }
+    .specificProviderAttributesPanel {
+        margin-top: 0px;      
+    }
+    .previewTablePanel {
+      margin-left: 15px;
+      overflow: auto;
+      padding: 50px;
+    }
+    .slidingPanel {
+      width: 100%;
+      height: 400px;
+      overflow: hidden;
+    }
+    .clear {
+      clear: both;
+    }
+  </ui:style>
+  
+  <g:FlowPanel addStyleNames="{style.mainPanel} {style.well} " ui:field="mainPanel" >
+
+    <!-- Navigation. -->
+    <b:StackProgressBar type="STRIPED" addStyleNames="{style.progressBar}" ui:field="progressBar">
+      <b:Tooltip text="{i18n.configureProvider}" placement="BOTTOM">
+        <b:Bar color="DEFAULT" text="{i18n.provider}" percent="33" ui:field="providerBar"/>
+      </b:Tooltip>
+      <b:Tooltip text="{i18n.configureColumns} {i18n.configureInitialFilter}" placement="BOTTOM">
+        <b:Bar color="INFO" text="{i18n.colsAndFilter}" percent="34" title="{i18n.colsAndFilter}" ui:field="columnsFilterBar" addStyleNames="{style.disabledBar}"/>
+      </b:Tooltip>
+      <b:Tooltip text="{i18n.configureCacheAndRefreshSettings}" placement="BOTTOM">
+        <b:Bar color="SUCCESS" text="{i18n.cacheAndRefresh}" percent="33" title="{i18n.cacheAndRefresh}" ui:field="advancedAttrsBar" addStyleNames="{style.disabledBar}"/>
+      </b:Tooltip>
+    </b:StackProgressBar>
+    
+    <!-- Title. -->
+    <g:FlowPanel addStyleNames="{style.titlePanel}" ui:field="titlePanel">
+      <b:Heading size="1" text="" ui:field="title" addStyleNames="{style.title}"/>  
+    </g:FlowPanel>
+
+    <g:HTMLPanel ui:field="initialViewPanel" addStyleNames="{style.initialViewPanel}">
+
+      <g:HTML addStyleNames="{style.dataSetCountLabel}" ui:field="dataSetCountText"/>
+
+      <g:FlowPanel addStyleNames="{style.clear} "/>
+
+      <g:HTML text="{i18n.nextSteps}:" addStyleNames="{style.nextStep} "/>
+      <ol>
+        <li>
+          <g:HTML text="{i18n.defineA} " addStyleNames="{style.newDataSet} "/>
+          <g:Hyperlink text="{i18n.newDataSet} " ui:field="newDataSetLink" addStyleNames="{style.newDataSet} "/>
+          <g:HTML text="{i18n.toFetchYourDataFromExtSystem}" addStyleNames="{style.newDataSet} "/>    
+        </li>
+        <li>
+          <g:HTML text="{i18n.createDataDisplayers}" addStyleNames="{style.nextStep} "/>
+        </li>
+        <li>
+          <g:HTML text="{i18n.createDashboards}" addStyleNames="{style.nextStep} "/>
+        </li>
+      </ol>
+      
+    </g:HTMLPanel>
+    
+    <g:FlowPanel ui:field="providerSelectionViewPanel" addStyleNames="{style.editorPanel}">
+      <dash-dset-editors:DataSetProviderTypeEditor editMode="true" ui:field="dataSetProviderTypeEditor"/>
+    </g:FlowPanel>
+
+    <g:FlowPanel ui:field="basicAttributesEditionViewPanel" addStyleNames="{style.editorPanel}">
+      <dash-dset-editors:DataSetBasicAttributesEditor editMode="true" ui:field="dataSetBasicAttributesEditor"/>
+      <g:FlowPanel addStyleNames="{style.clear} "/>
+    </g:FlowPanel>
+
+    <g:FlowPanel ui:field="tabViewPanel" >
+      
+      <b:TabPanel tabPosition="above" ui:field="tabPanel" addStyleNames="{style.tabPanel} {style.editorPanel}">
+  
+        <!-- Data configuration. -->
+        <b:Tab heading="{i18n.tab_dataConfiguration}" active="true" ui:field="dataConfigurationTab" >
+
+          <!-- NOTE: In view Java class, those two panels are handled by a SlidingPanel not bind here. -->
+          
+          <g:FlowPanel ui:field="specificProviderAttributesPanel" addStyleNames="{style.editorPanel} {style.specificProviderAttributesPanel} ">
+
+            <g:FlowPanel ui:field="sqlAttributesEditionViewPanel" >
+              <dash-dset-editors-sql:SQLDataSetDefAttributesEditor editMode="true" ui:field="sqlDataSetDefAttributesEditor"/>
+            </g:FlowPanel>
+
+            <g:FlowPanel ui:field="csvAttributesEditionViewPanel" >
+              <dash-dset-editors-csv:CSVDataSetDefAttributesEditor editMode="true" ui:field="csvDataSetDefAttributesEditor"/>
+            </g:FlowPanel>
+
+            <g:FlowPanel ui:field="beanAttributesEditionViewPanel" >
+              <dash-dset-editors-static:BeanDataSetDefAttributesEditor editMode="true" ui:field="beanDataSetDefAttributesEditor"/>
+            </g:FlowPanel>
+
+            <g:FlowPanel ui:field="elAttributesEditionViewPanel" >
+              <dash-dset-editors-el:ELDataSetDefAttributesEditor editMode="true" ui:field="elDataSetDefAttributesEditor"/>
+            </g:FlowPanel>
+
+            <!-- Test provider settings button. -->
+            <g:FlowPanel ui:field="testButtonPanel" addStyleNames="{style.testButtonPanel} ">
+
+              <b:Popover showDelay="1000" text="{i18n.test_description}" heading="{i18n.test}">
+                <b:Button ui:field="testButton" title="{i18n.test}"
+                          text="{i18n.test}" size="SMALL" icon="CHEVRON_RIGHT"
+                          addStyleNames="{style.testButton} " type="SUCCESS"/>
+              </b:Popover>
+
+            </g:FlowPanel>
+
+          </g:FlowPanel>
+
+          <g:FlowPanel ui:field="filterColumnsPreviewTablePanel" addStyleNames="{style.editorPanel} ">
+
+            <!-- Back to specific provider attributes edition. -->
+            <g:FlowPanel ui:field="backToSpecificAttrsButtonPanel" addStyleNames="{style.providerSetupButtonPanel} ">
+
+              <b:Popover showDelay="1000" text="{i18n.providerSetup_description}" heading="{i18n.providerSetup}">
+                <b:Button ui:field="backToSpecificAttrsEditionButton" title="{i18n.providerSetup}"
+                          text="{i18n.providerSetup}" size="SMALL" icon="CHEVRON_LEFT"
+                          addStyleNames="{style.providerSetupButton} "/>
+              </b:Popover>
+
+            </g:FlowPanel>
+
+            <g:FlowPanel addStyleNames="{style.clear} "/>
+
+            <!-- Columns and filter panel . -->
+            <g:FlowPanel ui:field="filterAndColumnsEditionViewPanel" addStyleNames="{style.columnsFilterPanel} ">
+
+              <b:TabPanel tabPosition="above" ui:field="filterAndColumnsTabPanel" addStyleNames="{style.tabPanel} ">
+
+                <!-- Columns. -->
+                <b:Tab heading="{i18n.dataColumns}" active="true" ui:field="columnsTab" >
+                  <dash-dset-editors:DataSetColumnsEditor editMode="true" ui:field="columnsEditor"/>
+                </b:Tab>
+
+                <!-- Filter. -->
+                <b:Tab heading="{i18n.filter}" active="false" ui:field="filterTab" >
+
+                </b:Tab>
+
+              </b:TabPanel>
+
+            </g:FlowPanel>
+
+            <!-- Preview table. -->
+            <g:FlowPanel ui:field="previewTableEditionViewPanel" addStyleNames="{style.previewTablePanel} ">
+              <dash-dset-editors:DataSetPreviewEditor editMode="true" ui:field="previewTableEditor"/>
+            </g:FlowPanel>
+
+          </g:FlowPanel>
+            
+        </b:Tab>
+
+        <!-- Advanced configuration. -->
+        <b:Tab heading="{i18n.tab_advancedConfiguration}" active="false" ui:field="dataAdvancedConfigurationTab">
+
+          <g:FlowPanel ui:field="advancedAttributesEditionViewPanel" addStyleNames="{style.editorPanel}">
+            <dash-dset-editors:DataSetAdvancedAttributesEditor editMode="true" ui:field="dataSetAdvancedAttributesEditor"/>
+          </g:FlowPanel>
+          
+        </b:Tab>
+        
+      </b:TabPanel>
+      
+    </g:FlowPanel>
+    
+    <g:FlowPanel ui:field="buttonsPanel" addStyleNames="{style.buttonsPanel}">
+
+      <b:Popover showDelay="1000" text="{i18n.cancel_description}" heading="{i18n.cancel}">
+        <b:Button text="{i18n.cancel}" ui:field="cancelButton"/>
+      </b:Popover>
+
+      <b:Popover ui:field="nextButtonPopover" showDelay="1000" text="" heading="">
+        <b:Button text="{i18n.next}" ui:field="nextButton" type="SUCCESS"/>
+      </b:Popover>
+
+    </g:FlowPanel>
+
+  </g:FlowPanel>
+  
+</ui:UiBinder>

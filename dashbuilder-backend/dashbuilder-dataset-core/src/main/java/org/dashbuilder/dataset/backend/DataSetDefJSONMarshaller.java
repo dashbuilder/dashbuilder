@@ -15,16 +15,22 @@
  */
 package org.dashbuilder.dataset.backend;
 
-import javax.inject.Inject;
-
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.dashbuilder.dataprovider.DataSetProviderRegistry;
 import org.dashbuilder.dataprovider.DataSetProviderType;
 import org.dashbuilder.dataset.ColumnType;
+import org.dashbuilder.dataset.DataColumn;
+import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.def.*;
 import org.dashbuilder.dataset.filter.DataSetFilter;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
+
+import javax.inject.Inject;
+import java.util.List;
+import java.util.Map;
 
 /**
  * DataSetDef from/to JSON utilities
@@ -33,6 +39,7 @@ public class DataSetDefJSONMarshaller {
 
     // General settings
     public static final String UUID = "uuid";
+    public static final String NAME = "name";
     public static final String PROVIDER = "provider";
     public static final String ISPUBLIC = "isPublic";
     public static final String PUSH_ENABLED = "pushEnabled";
@@ -56,6 +63,7 @@ public class DataSetDefJSONMarshaller {
     public static final String DATA_SOURCE = "dataSource";
     public static final String DB_SCHEMA = "dbSchema";
     public static final String DB_TABLE = "dbTable";
+    public static final String DB_SQL = "dbSQL";
     public static final String ALL_COLUMNS = "allColumns";
     public static final String CACHE_ENABLED = "cacheEnabled";
     public static final String CACHE_MAXROWS = "cacheMaxRows";
@@ -194,6 +202,7 @@ public class DataSetDefJSONMarshaller {
 
     public DataSetDef readGeneralSettings(DataSetDef def, JSONObject json) throws Exception {
         String uuid = json.has(UUID) ? json.getString(UUID) : null;
+        String name = json.has(NAME) ? json.getString(NAME) : null;
         String isPublic = json.has(ISPUBLIC) ? json.getString(ISPUBLIC) : null;
         String pushEnabled = json.has(PUSH_ENABLED) ? json.getString(PUSH_ENABLED) : null;
         String pushMaxSize = json.has(PUSH_MAXSIZE) ? json.getString(PUSH_MAXSIZE) : null;
@@ -203,6 +212,7 @@ public class DataSetDefJSONMarshaller {
         String refreshAlways = json.has(REFRESH_ALWAYS) ? json.getString(REFRESH_ALWAYS) : null;
 
         if (!StringUtils.isBlank(uuid)) def.setUUID(uuid);
+        if (!StringUtils.isBlank(name)) def.setName(name);
         if (!StringUtils.isBlank(isPublic)) def.setPublic(Boolean.parseBoolean(isPublic));
         if (!StringUtils.isBlank(pushEnabled)) def.setPushEnabled(Boolean.parseBoolean(pushEnabled));
         if (!StringUtils.isBlank(pushMaxSize)) def.setPushMaxSize(Integer.parseInt(pushMaxSize));
@@ -290,13 +300,171 @@ public class DataSetDefJSONMarshaller {
         String dataSource = json.has(DATA_SOURCE) ? json.getString(DATA_SOURCE) : null;
         String dbTable = json.has(DB_TABLE) ? json.getString(DB_TABLE) : null;
         String dbSchema = json.has(DB_SCHEMA) ? json.getString(DB_SCHEMA) : null;
+        String dbSQL = json.has(DB_SQL) ? json.getString(DB_SQL) : null;
         String allColumns = json.has(ALL_COLUMNS) ? json.getString(ALL_COLUMNS) : null;
 
         if (!StringUtils.isBlank(dataSource)) def.setDataSource(dataSource);
         if (!StringUtils.isBlank(dbSchema)) def.setDbSchema(dbSchema);
         if (!StringUtils.isBlank(dbTable)) def.setDbTable(dbTable);
+        if (!StringUtils.isBlank(dbSQL)) def.setDbSQL(dbSQL);
         if (!StringUtils.isBlank(allColumns)) def.setAllColumnsEnabled(Boolean.parseBoolean(allColumns));
 
         return def;
     }
+
+    public String toJsonString(final DataSetDef dataSetDef) throws JSONException {
+        return toJsonObject( dataSetDef ).toString(1);
+    }
+
+    public JSONObject toJsonObject(final DataSetDef dataSetDef ) throws JSONException{
+        JSONObject json = new JSONObject(  );
+
+        // UUID.
+        json.put( UUID, dataSetDef.getUUID());
+
+        // Name.
+        json.put( NAME, dataSetDef.getName());
+
+        // Provider.
+        json.put( PROVIDER, dataSetDef.getProvider().name());
+
+        // Public.
+        json.put( ISPUBLIC, dataSetDef.isPublic());
+        
+        // Backend cache.
+        json.put( CACHE_ENABLED, dataSetDef.isCacheEnabled());
+        json.put( CACHE_MAXROWS, dataSetDef.getCacheMaxRows());
+
+        // Client cache.
+        json.put( PUSH_ENABLED, dataSetDef.isPushEnabled());
+        json.put( PUSH_MAXSIZE, dataSetDef.getPushMaxSize());
+
+        // Refresh.
+        json.put( REFRESH_ALWAYS, dataSetDef.isRefreshAlways());
+        json.put( REFRESH_TIME, dataSetDef.getRefreshTime());
+
+        // Specific provider.
+        if (dataSetDef instanceof BeanDataSetDef) {
+            toJsonObject(((BeanDataSetDef)dataSetDef), json);
+        } else if (dataSetDef instanceof CSVDataSetDef) {
+            toJsonObject(((CSVDataSetDef)dataSetDef), json);
+        } else if (dataSetDef instanceof SQLDataSetDef) {
+            toJsonObject(((SQLDataSetDef)dataSetDef), json);
+        } else if (dataSetDef instanceof ElasticSearchDataSetDef) {
+            toJsonObject(((ElasticSearchDataSetDef)dataSetDef), json);
+        }
+        
+        // Data columns.
+        final DataSet dataSet = dataSetDef.getDataSet();
+        if (dataSet != null)
+        {
+            final List<DataColumn> columns = dataSet.getColumns();
+            final JSONArray columnsArray = toJsonObject(columns);
+            if (columnsArray != null)
+            {
+                json.put(COLUMNS, columnsArray);
+            }
+        }
+
+
+        // TODO: Filter.
+        
+        return json;
+    }
+    
+    private JSONArray toJsonObject(final List<DataColumn> columnList) throws JSONException {
+        JSONArray result = null;
+        if (columnList != null && !columnList.isEmpty()) {
+            result = new JSONArray();
+            for (final DataColumn column : columnList) {
+                final String id = column.getId();
+                final ColumnType type = column.getColumnType();
+                final JSONObject columnObject = new JSONObject();
+                columnObject.put(COLUMN_ID, id);
+                columnObject.put(COLUMN_TYPE, type.name().toLowerCase());
+                result.put(columnObject);
+            }
+        }
+        
+        return result;
+    }
+
+    private void toJsonObject(final BeanDataSetDef dataSetDef, final JSONObject json ) throws JSONException {
+
+        // Generator class.
+        json.put( GENERATOR_CLASS, dataSetDef.getGeneratorClass());
+
+        // Generator parameters.
+        Map<String, String> parameters = dataSetDef.getParamaterMap();
+        if (parameters != null && !parameters.isEmpty()) {
+            final JSONArray array = new JSONArray();
+            for (Map.Entry<String, String> param : parameters.entrySet()) {
+                final JSONObject paramObject = toJSONParameter(param.getKey(), param.getValue());
+                array.put(paramObject);
+            }
+            json.put( GENERATOR_PARAMS, array);
+        }
+    }
+
+    private void toJsonObject(final CSVDataSetDef dataSetDef, final JSONObject json ) throws JSONException {
+
+        // File.
+        if (dataSetDef.getFilePath() != null) json.put( FILEPATH, dataSetDef.getFilePath());
+        if (dataSetDef.getFileURL() != null) json.put( FILEURL, dataSetDef.getFileURL());
+
+        // Separator.
+        json.put( SEPARATORCHAR, dataSetDef.getSeparatorChar());
+
+        // Quote.
+        json.put( QUOTECHAR, dataSetDef.getQuoteChar());
+
+        // Escape.
+        json.put( ESCAPECHAR, dataSetDef.getEscapeChar());
+
+        // Date pattern.
+        json.put( DATEPATTERN, dataSetDef.getDatePattern());
+
+        // Number pattern.
+        json.put( NUMBERPATTERN, dataSetDef.getNumberPattern());
+    }
+
+    private void toJsonObject(final SQLDataSetDef dataSetDef, final JSONObject json ) throws JSONException {
+
+        // Data source.
+        json.put( DATA_SOURCE, dataSetDef.getDataSource());
+
+        // Schema.
+        json.put( DB_SCHEMA, dataSetDef.getDbSchema());
+
+        // Table.
+        json.put( DB_TABLE, dataSetDef.getDbTable());
+    }
+
+    private void toJsonObject(final ElasticSearchDataSetDef dataSetDef, final JSONObject json ) throws JSONException {
+
+        // Server URL.
+        json.put( SERVER_URL, dataSetDef.getServerURL());
+
+        // Cluster name.
+        json.put( CLUSTER_NAME, dataSetDef.getClusterName());
+
+        // Index.
+        json.put( INDEX, ArrayUtils.toString(dataSetDef.getIndex()));
+
+        // Type.
+        json.put( TYPE, ArrayUtils.toString(dataSetDef.getType()));
+    }
+    
+    private JSONObject toJSONParameter(final String key, final String value) throws JSONException {
+        JSONObject json = new JSONObject(  );
+
+        // Param.
+        json.put( PARAM, key);
+
+        // Value.
+        json.put( VALUE, value);
+        
+        return json;
+    }
+
 }

@@ -19,7 +19,9 @@ import org.dashbuilder.dataprovider.DataSetProviderType;
 import org.dashbuilder.dataset.sort.ColumnSort;
 import org.jboss.errai.common.client.api.annotations.Portable;
 
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -71,15 +73,22 @@ public class ElasticSearchDataSetDef extends DataSetDef {
     }
 
     // Data Set user parameters.
+    @NotNull(message = "{dataSetApi_elDataSetDef_serverURL_notNull}")
     protected String serverURL;
+
     protected String clusterName;
+
+    @NotNull(message = "{dataSetApi_elDataSetDef_index_notNull}")
     protected List<String> index;
+
+    @NotNull(message = "{dataSetApi_elDataSetDef_type_notNull}")
     protected List<String> type;
+
     protected String query;
     protected String relevance;
     protected ColumnSort columnSort;
     protected boolean cacheEnabled = false;
-    protected int cacheMaxRows = 1000;
+    protected Integer cacheMaxRows = 1000;
     protected boolean cacheSynced = false;
     protected boolean allColumnsEnabled = true;
 
@@ -123,6 +132,10 @@ public class ElasticSearchDataSetDef extends DataSetDef {
         return index.size() > 0 ? index.toArray(new String[index.size()]) : new String[] { ElasticSearchKeywords.ALL.toString() };
     }
 
+    public void setIndex(List<String> index) {
+        this.index = index;
+    }
+
     /**
      * <p>Returns the type/s specified by dataset user parameters.</p>
      * <p>If not specified, returns <code>null</code></p>
@@ -133,6 +146,9 @@ public class ElasticSearchDataSetDef extends DataSetDef {
         return type.size() > 0 ? type.toArray(new String[type.size()]) : null;
     }
 
+    public void setType(List<String> type) {
+        this.type = type;
+    }
     public String getQuery() {
         return query;
     }
@@ -157,11 +173,11 @@ public class ElasticSearchDataSetDef extends DataSetDef {
         this.cacheEnabled = cacheEnabled;
     }
 
-    public int getCacheMaxRows() {
+    public Integer getCacheMaxRows() {
         return cacheMaxRows;
     }
 
-    public void setCacheMaxRows(int cacheMaxRows) {
+    public void setCacheMaxRows(Integer cacheMaxRows) {
         this.cacheMaxRows = cacheMaxRows;
     }
 
@@ -189,6 +205,16 @@ public class ElasticSearchDataSetDef extends DataSetDef {
         this.allColumnsEnabled = allColumnsEnabled;
     }
 
+    @Override
+    public DataSetDef clone() {
+        ElasticSearchDataSetDef def = new ElasticSearchDataSetDef();
+        clone(def);
+        def.setServerURL(getServerURL());
+        def.setClusterName(getClusterName());
+        def.setIndex(getIndex() != null ? Arrays.asList(getIndex()) : null);
+        def.setType(getType() != null ? Arrays.asList(getType()) : null);
+        return def;
+    }
     public String toString() {
         StringBuilder out = new StringBuilder();
         out.append("UUID=").append(UUID).append("\n");

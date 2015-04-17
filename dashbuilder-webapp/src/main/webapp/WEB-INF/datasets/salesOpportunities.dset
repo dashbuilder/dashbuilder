@@ -1,5 +1,6 @@
 {
     "uuid": "salesOpportunities",
+    "name": "Sales Opportunities",
     "provider": "BEAN",
     "pushEnabled": false,
     "pushMaxSize": 2048,

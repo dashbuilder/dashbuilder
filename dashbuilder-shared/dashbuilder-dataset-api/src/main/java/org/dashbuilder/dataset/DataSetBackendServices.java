@@ -27,6 +27,18 @@ import org.jboss.errai.bus.server.annotations.Remote;
 public interface DataSetBackendServices {
 
     /**
+     * Register a data set definition. 
+     * @param definition The data set definition.
+     */
+    void registerDataSetDef(DataSetDef definition);
+
+    /**
+     * Removes a data set definition. 
+     * @param uuid The data set definition identifier.
+     */
+    void removeDataSetDef(String uuid);
+    
+    /**
      * Apply a sequence of operations (filter, sort, group, ...) on a remote data set.
      *
      * @return A brand new data set with all the calculations applied.
@@ -45,6 +57,13 @@ public interface DataSetBackendServices {
      */
     List<DataSetDef> getPublicDataSetDefs();
 
+    /**
+     * Persist the data set definition. 
+     * @param dataSetDef The data set definition.
+     * @throws Exception
+     */
+    void persistDataSetDef(final DataSetDef dataSetDef) throws Exception;
+    
     /**
      * Export a dataset, specified by a DataSetLookup, to CSV format.
      * @param dataSetLookup The dataSetLookup that defines the dataset to be exported.

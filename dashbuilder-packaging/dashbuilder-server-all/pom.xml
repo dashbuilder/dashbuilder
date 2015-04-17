@@ -66,6 +66,11 @@
       <artifactId>dashbuilder-dataset-elasticsearch</artifactId>
     </dependency>
 
+    <dependency>
+      <groupId>org.dashbuilder</groupId>
+      <artifactId>dashbuilder-services</artifactId>
+    </dependency>
+
   </dependencies>
 
 </project>

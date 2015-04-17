@@ -18,21 +18,35 @@ package org.dashbuilder.dataset.def;
 import org.dashbuilder.dataprovider.DataSetProviderType;
 import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.DataColumn;
+import org.dashbuilder.dataset.validation.groups.CSVDataSetDefFilePathValidation;
+import org.dashbuilder.dataset.validation.groups.CSVDataSetDefFileURLValidation;
 import org.jboss.errai.common.client.api.annotations.Portable;
+
+import javax.validation.constraints.NotNull;
 
 @Portable
 public class CSVDataSetDef extends DataSetDef {
 
+    @NotNull(message = "{dataSetApi_csvDataSetDef_fileURL_notNull}", groups = CSVDataSetDefFileURLValidation.class)
     protected String fileURL;
+    @NotNull(message = "{dataSetApi_csvDataSetDef_filePath_notNull}", groups = CSVDataSetDefFilePathValidation.class)
     protected String filePath;
-    protected char separatorChar;
-    protected char quoteChar;
-    protected char escapeChar;
+    @NotNull(message = "{dataSetApi_csvDataSetDef_sepChar_notNull}")
+    protected Character separatorChar;
+    @NotNull(message = "{dataSetApi_csvDataSetDef_quoteChar_notNull}")
+    protected Character quoteChar;
+    @NotNull(message = "{dataSetApi_csvDataSetDef_escapeChar_notNull}")
+    protected Character escapeChar;
+    @NotNull(message = "{dataSetApi_csvDataSetDef_datePattern_notNull}")
     protected String datePattern = "MM-dd-yyyy HH:mm:ss";
+    @NotNull(message = "{dataSetApi_csvDataSetDef_numberPattern_notNull}")
     protected String numberPattern = "#,###.##";
 
     public CSVDataSetDef() {
         super.setProvider(DataSetProviderType.CSV);
+        separatorChar = ';';
+        quoteChar = '\'';
+        escapeChar = '\\';
     }
 
     public String getFileURL() {
@@ -51,27 +65,27 @@ public class CSVDataSetDef extends DataSetDef {
         this.filePath = filePath;
     }
 
-    public char getSeparatorChar() {
+    public Character getSeparatorChar() {
         return separatorChar;
     }
 
-    public void setSeparatorChar(char separatorChar) {
+    public void setSeparatorChar(Character separatorChar) {
         this.separatorChar = separatorChar;
     }
 
-    public char getQuoteChar() {
+    public Character getQuoteChar() {
         return quoteChar;
     }
 
-    public void setQuoteChar(char quoteChar) {
+    public void setQuoteChar(Character quoteChar) {
         this.quoteChar = quoteChar;
     }
 
-    public char getEscapeChar() {
+    public Character getEscapeChar() {
         return escapeChar;
     }
 
-    public void setEscapeChar(char escapeChar) {
+    public void setEscapeChar(Character escapeChar) {
         this.escapeChar = escapeChar;
     }
 
@@ -115,6 +129,20 @@ public class CSVDataSetDef extends DataSetDef {
         else return pattern.charAt(5);
     }
 
+    @Override
+    public DataSetDef clone() {
+        CSVDataSetDef def = new CSVDataSetDef();
+        clone(def);
+        def.setFilePath(getFilePath());
+        def.setFileURL(getFileURL());
+        def.setSeparatorChar(getSeparatorChar());
+        def.setQuoteChar(getQuoteChar());
+        def.setEscapeChar(getEscapeChar());
+        def.setDatePattern(getDatePattern());
+        def.setNumberPattern(getNumberPattern());
+        return def;
+    }
+    
     public String toString() {
         StringBuilder out = new StringBuilder();
         out.append("File=");
