@@ -106,4 +106,36 @@ public class DataSetMetadataImpl implements DataSetMetadata {
     public void setDefinition(DataSetDef definition) {
         this.definition = definition;
     }
+
+    public boolean equals(Object obj) {
+        try {
+            if (obj == null) return false;
+            if (obj == this) return true;
+            DataSetMetadataImpl other = (DataSetMetadataImpl) obj;
+
+            if (numberOfColumns != other.numberOfColumns) {
+                return false;
+            }
+            if (numberOfRows != other.numberOfRows) {
+                return false;
+            }
+            if (estimatedSize != other.estimatedSize) {
+                return false;
+            }
+            for (int i=0; i<columnIds.size(); i++) {
+                if (!columnIds.get(i).equals(other.columnIds.get(i))) {
+                    return false;
+                }
+            }
+            for (int i=0; i<columnTypes.size(); i++) {
+                if (!columnTypes.get(i).equals(other.columnTypes.get(i))) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        catch (ClassCastException e) {
+            return false;
+        }
+    }
 }

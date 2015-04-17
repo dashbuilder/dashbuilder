@@ -154,21 +154,18 @@ public class SQLDataSetProvider implements DataSetProvider {
     }
 
     public boolean isDataSetOutdated(DataSetDef def) {
-        // If cache is disabled then no way for a data set to get outdated
-        SQLDataSetDef sqlDef = (SQLDataSetDef) def;
-        if (!sqlDef.isCacheEnabled()) return false;
 
-        // ... for non cached data sets either.
-        DataSet dataSet = staticDataSetProvider.lookupDataSet(def, null);
-        if (dataSet == null) return false;
+        // Non fetched data sets can't get outdated.
+        DataSetMetadata last = _metadataMap.remove(def.getUUID());
+        if (last == null) return false;
 
-        // Compare the cached vs database rows.
+        // Check if the metadata has changed since the last time it was fetched.
         try {
-            int rows = getRowCount(sqlDef);
-            return rows != dataSet.getRowCount();
+            DataSetMetadata current = getDataSetMetadata(def);
+            return !current.equals(last);
         }
         catch (Exception e) {
-            log.error("Error getting the row count: " + def, e);
+            log.error("Error fetching metadata: " + def, e);
             return false;
         }
     }
@@ -200,7 +197,6 @@ public class SQLDataSetProvider implements DataSetProvider {
         DataSetDef def = event.getDataSetDef();
         if (DataSetProviderType.SQL.equals(def.getProvider())) {
             String uuid = def.getUUID();
-            _metadataMap.remove(uuid);
             staticDataSetProvider.removeDataSet(uuid);
         }
     }
