@@ -70,6 +70,10 @@
     .testButton {
       
     }
+    .loadingScreenPanel {
+      font-size: medium;
+      font-weight: bold;
+    }
     .providerSetupButtonPanel {
       float: left;
       margin-bottom: 10px;
@@ -106,12 +110,11 @@
     <b:Modal ui:field="errorPanel" title="{i18n.error}" backdrop="STATIC" keyboard="true" animation="true">
       <g:HTML ui:field="errorMessageLabel"></g:HTML>
     </b:Modal>
-    
+
     <!-- Loading screen. -->
-    <g:FlowPanel ui:field="loadingPanel" visible="false">
-      <b:Icon type="REFRESH" title="{i18n.loading}"/>
-      <g:HTML text="{i18n.loading}"/>
-    </g:FlowPanel>
+    <g:PopupPanel ui:field="loadingPopupPanel" autoHideEnabled="false" modal="true" glassEnabled="true" addStyleNames="{style.loadingScreenPanel} ">
+      <g:HTML text="{i18n.loading}..."/>
+    </g:PopupPanel>
     
     <!-- Navigation. -->
     <b:StackProgressBar type="STRIPED" addStyleNames="{style.progressBar}" ui:field="progressBar">

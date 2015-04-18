@@ -259,7 +259,10 @@ public class DataSetEditor implements IsWidget {
             // Wait for displayer listener callbacks.
             if (DataSetEditor.this.tableDisplayer != null) DataSetEditor.this.tableDisplayer.draw();
             
-            // Show a loading screen while performing the backend service call.
+            // Show basic views and the loading screen while performing the backend service call.
+            edit();
+            showBasicAttributesEditionView();
+            showProviderSpecificAttributesEditionView();
             view.showLoadingView();
         }
     }

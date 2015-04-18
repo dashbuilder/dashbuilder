@@ -89,7 +89,7 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
     HTML errorMessageLabel;
     
     @UiField
-    FlowPanel loadingPanel;
+    PopupPanel loadingPopupPanel;
     
     @UiField
     StackProgressBar progressBar;
@@ -248,7 +248,11 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
         
         // Configure back to provider settings button's click handler.
         backToSpecificAttrsEditionButton.addClickHandler(backToSpecificAttrsEditionButtonHandler);
+
+        // Hide loading popup at startup.
+        hideLoadingView();
         
+        // Show home view by default.
         showEmptyView();
     }
 
@@ -581,12 +585,15 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
 
     @Override
     public DataSetEditor.View showLoadingView() {
-        loadingPanel.setVisible(true);
+        loadingPopupPanel.center();
+        loadingPopupPanel.setVisible(true);
+        loadingPopupPanel.show();
         return this;
     }
     
     private void hideLoadingView() {
-        loadingPanel.setVisible(false);
+        loadingPopupPanel.setVisible(false);
+        loadingPopupPanel.hide();
     }
 
     @Override
