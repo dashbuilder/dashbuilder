@@ -20,20 +20,11 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
-import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.dataset.def.DataSetDef;
-import org.dashbuilder.displayer.DisplayerSettings;
-import org.dashbuilder.displayer.DisplayerSettingsFactory;
-import org.dashbuilder.displayer.TableDisplayerSettingsBuilder;
 import org.dashbuilder.displayer.client.Displayer;
 import org.dashbuilder.displayer.client.DisplayerCoordinator;
-import org.dashbuilder.displayer.client.DisplayerHelper;
-import org.dashbuilder.displayer.client.DisplayerListener;
-import org.dashbuilder.displayer.impl.TableDisplayerSettingsBuilderImpl;
-import org.dashbuilder.renderer.client.DefaultRenderer;
 
 import javax.enterprise.context.Dependent;
-import java.util.List;
 
 /**
  * <p>This is the view implementation widget for Data Set Editor widget for previewing the data set in a table displayer.</p>
@@ -54,7 +45,6 @@ public class DataSetPreviewEditor extends AbstractDataSetDefEditor {
     @UiField
     FlowPanel tablePanel;
 
-    final DisplayerCoordinator coordinator = new DisplayerCoordinator();
     Displayer tableDisplayer = null;
 
     private boolean isEditMode;
@@ -77,18 +67,12 @@ public class DataSetPreviewEditor extends AbstractDataSetDefEditor {
         super.set(dataSetDef);
     }
     
-    public void build(final DisplayerListener listener) {
-        
+    public void build(final Displayer displayer) {
+        this.tableDisplayer = displayer;
         showTableDisplayer();
-        
-        // TODO: Show loading screen...
-        
-        if (tableDisplayer != null && listener != null) tableDisplayer.addListener(listener); 
-       
     }
     
     public void clear() {
-        coordinator.removeDisplayer(tableDisplayer);
         tableDisplayer = null;
     }
 
@@ -98,42 +82,15 @@ public class DataSetPreviewEditor extends AbstractDataSetDefEditor {
         clearView();
         
         // Build the table displayer.
-        tableDisplayer = buildTableDisplayer();
         if (tableDisplayer != null) {
 
             // Create and draw the preview table.
-            coordinator.addDisplayer(tableDisplayer);
             tablePanel.add(tableDisplayer);
-
-            coordinator.drawAll();
+            tableDisplayer.draw();
         }
 
     }
     
-    private Displayer buildTableDisplayer() {
-        if (dataSetDef != null) {
-            TableDisplayerSettingsBuilder<TableDisplayerSettingsBuilderImpl> tableDisplayerSettingsBuilder = DisplayerSettingsFactory.newTableSettings()
-                    .dataset(dataSetDef.getUUID())
-                    .renderer(DefaultRenderer.UUID)
-                    .titleVisible(false)
-                    .tablePageSize(10)
-                    .tableOrderEnabled(false)
-                    .filterOn(false, false, false);
-            
-            List<DataColumn> columns =  dataSetDef.getDataSet().getColumns();
-            if (columns != null && !columns.isEmpty()) {
-                for (DataColumn column : columns) {
-                    tableDisplayerSettingsBuilder.column(column.getId());
-                }
-            }
-
-            DisplayerSettings settings = tableDisplayerSettingsBuilder.buildSettings();
-            return DisplayerHelper.lookupDisplayer(settings);
-        }
-        
-        return null;
-    }
-
     private void clearView() {
         tablePanel.clear();
     }

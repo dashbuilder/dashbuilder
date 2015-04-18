@@ -27,6 +27,9 @@ public interface DataSetEditorConstants extends ConstantsWithLookup {
 
     public static final DataSetEditorConstants INSTANCE = GWT.create( DataSetEditorConstants.class );
 
+    String error();
+    String ok();
+    String loading();
     String selectType();
     String bean();
     String csv();

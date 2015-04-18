@@ -17,6 +17,7 @@ package org.dashbuilder.client.widgets.dataset.editor.widgets;
 
 import com.github.gwtbootstrap.client.ui.*;
 import com.github.gwtbootstrap.client.ui.Button;
+import com.github.gwtbootstrap.client.ui.Label;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Node;
@@ -40,6 +41,7 @@ import org.dashbuilder.dataprovider.DataSetProviderType;
 import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.def.*;
+import org.dashbuilder.displayer.client.Displayer;
 import org.dashbuilder.displayer.client.DisplayerListener;
 import org.dashbuilder.displayer.client.widgets.filter.DataSetFilterEditor;
 
@@ -79,6 +81,15 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
     
     @UiField
     Heading title;
+    
+    @UiField
+    Modal errorPanel;
+    
+    @UiField
+    HTML errorMessageLabel;
+    
+    @UiField
+    FlowPanel loadingPanel;
     
     @UiField
     StackProgressBar progressBar;
@@ -403,11 +414,13 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
     }
 
     @Override
-    public DataSetEditor.View showPreviewTableEditionView(final DisplayerListener tableListener) {
+    public DataSetEditor.View showPreviewTableEditionView(final Displayer tableDisplayer) {
         // Table is not a data set editor component, just a preview data set widget.
         // So not necessary to use the editor workflow this instance.
-        
+
+
         // View title.
+        hideLoadingView();
         showTitle();
 
         // Progress bar.
@@ -416,7 +429,7 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
         // Configure tabs and visibility.
         previewTableEditor.setVisible(true);
         previewTableEditor.setEditMode(true);
-        previewTableEditor.build(tableListener);
+        previewTableEditor.build(tableDisplayer);
         showTab(dataConfigurationTab);
         previewTableEditionViewPanel.setVisible(true);
         showFilterColumnsPreviewEditionView();
@@ -565,7 +578,24 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
 
         return this;
     }
+
+    @Override
+    public DataSetEditor.View showLoadingView() {
+        loadingPanel.setVisible(true);
+        return this;
+    }
     
+    private void hideLoadingView() {
+        loadingPanel.setVisible(false);
+    }
+
+    @Override
+    public DataSetEditor.View showError(String message) {
+        errorMessageLabel.setText(message);
+        errorPanel.show();
+        return this;
+    }
+
     public Set getViolations() {
         final Set violations = new LinkedHashSet<ConstraintViolation<? extends DataSetDef>>();
         if (dataSetProviderTypeEditor.getViolations() != null) violations.addAll((Collection) dataSetProviderTypeEditor.getViolations());

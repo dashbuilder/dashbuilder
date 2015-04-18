@@ -143,10 +143,12 @@ public class DataSetAdvancedAttributesEditor extends AbstractDataSetDefEditor im
         
     }
     
-    private void setRefreshTime(final boolean enabled, final double quantity, final DateIntervalType type) {
+    private void setRefreshTime(final boolean enabled, final Integer quantity, final DateIntervalType type) {
         if (enabled && dataSetDef != null) {
-            final String rTime = (int) quantity + type.name();
-            dataSetDef.setRefreshTime(rTime);
+            if (quantity != null) {
+                final String rTime = (int) quantity + type.name();
+                dataSetDef.setRefreshTime(rTime);
+            }
             setRefreshUIValues(true);
         }
     }

@@ -29,24 +29,33 @@ import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetMetadata;
 import org.dashbuilder.dataset.client.ClientDataSetManager;
+import org.dashbuilder.dataset.client.DataSetClientServiceError;
 import org.dashbuilder.dataset.client.DataSetClientServices;
 import org.dashbuilder.dataset.client.DataSetMetadataCallback;
-import org.dashbuilder.dataset.client.DataSetClientServiceError;
 import org.dashbuilder.dataset.client.uuid.ClientUUIDGenerator;
 import org.dashbuilder.dataset.def.*;
 import org.dashbuilder.dataset.events.DataSetDefRegisteredEvent;
 import org.dashbuilder.dataset.events.DataSetDefRemovedEvent;
 import org.dashbuilder.dataset.filter.DataSetFilter;
 import org.dashbuilder.dataset.group.DataSetGroup;
+import org.dashbuilder.displayer.DisplayerSettings;
+import org.dashbuilder.displayer.DisplayerSettingsFactory;
+import org.dashbuilder.displayer.TableDisplayerSettingsBuilder;
 import org.dashbuilder.displayer.client.Displayer;
+import org.dashbuilder.displayer.client.DisplayerHelper;
 import org.dashbuilder.displayer.client.DisplayerListener;
 import org.dashbuilder.displayer.client.widgets.filter.DataSetFilterEditor;
+import org.dashbuilder.displayer.impl.TableDisplayerSettingsBuilderImpl;
+import org.dashbuilder.renderer.client.DefaultRenderer;
 import org.jboss.errai.common.client.api.RemoteCallback;
 
 import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Observes;
 import javax.validation.ConstraintViolation;
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import static org.uberfire.commons.validation.PortablePreconditions.checkNotNull;
 
@@ -60,16 +69,18 @@ import static org.uberfire.commons.validation.PortablePreconditions.checkNotNull
  *     <li>Basic attributes editor view - @see <code>org.dashbuilder.client.widgets.dataset.editor.widgets.editors.DataSetBasicAttributesEditor</code></li>     
  *     <li>Advanced attributes editor view - @see <code>org.dashbuilder.client.widgets.dataset.editor.widgets.editors.DataSetAdvancedAttributesEditor</code></li>     
  *     <li>Table preview editor view - @see <code>org.dashbuilder.client.widgets.dataset.editor.widgets.editors.DataSetPreviewEditor</code></li>
- *     <li>Columns and initial filter editor view - @see <code>org.dashbuilder.client.widgets.dataset.editor.widgets.editors.TODO</code></li>*     
+ *     <li>Columns editor view - @see <code>org.dashbuilder.client.widgets.dataset.editor.widgets.editors.DataSetColumnsEditor</code></li>
+ *     <li>Initial filter editor - @see <code>org.dashbuilder.displayer.client.widgets.filter.DataSetFilterEditor</code></li>
  * </ul>
  * 
- * <p>This editor provides four edition screens:</p>
+ * <p>This editor provides 4 edition screens:</p>
  * <ul>
  *     <li>Provider selection (Only if creating new data set).</li>
  *     <li>Basic data set attributes & Provider specific attributes.</li>     
  *     <li>Basic data set attributes & Data set columns and initial filter edition.</li>     
  *     <li>Basic data set attributes & Advanced data set attributes edition.</li>
  * </ul> 
+ *  
  * @since 0.3.0 
  */
 @Dependent
@@ -89,14 +100,20 @@ public class DataSetEditor implements IsWidget {
         View showBeanAttributesEditorView(ClickHandler testHandler);
         View showCSVAttributesEditorView(ClickHandler testHandler);
         View showELAttributesEditorView(ClickHandler testHandler);
-        View showPreviewTableEditionView(final DisplayerListener tableListener);
+        View showPreviewTableEditionView(final Displayer tableDisplayer);
         View showColumnsEditorView(final List<DataColumn> columns, final DataSet dataSet, final DataSetColumnsEditor.ColumnsChangedEventHandler columnsChangedEventHandler);
         View showFilterEditionView(final DataSet dataSet, final DataSetFilterEditor.Listener filterListener);
         View showAdvancedAttributesEditionView();
         View showNextButton(String title, String helpText, ClickHandler nextHandler);
         View showCancelButton(ClickHandler cancelHandler);
         View onSave();
+        View showLoadingView();
+        View showError(final String message);
         View clear();
+    }
+    
+    private enum WorkflowView {
+        HOME, PROVIDER_SELECTION, DATA_CONF, PREVIEW, ADVANCED        
     }
 
     final View view = new DataSetEditorView();
@@ -104,7 +121,8 @@ public class DataSetEditor implements IsWidget {
     private DataSetDef dataSetDef;
     private List<DataColumn> columns;
     private DataSetDef edit;
-    private boolean isHomeViewVisible;
+    private Displayer tableDisplayer;
+    private WorkflowView currentWfView;
     
     public DataSetEditor() {
         showHomeView();
@@ -123,10 +141,11 @@ public class DataSetEditor implements IsWidget {
     public DataSetEditor newDataSet(String uuid) {
         
         if (uuid == null || uuid.trim().length() == 0) {
-            error("DataSetEditor#newDataSet - No UUID specified.");
+            showError("DataSetEditor#newDataSet - No UUID specified.");
             return this;
         }
 
+        clear();
         
         // Create a new data set def.
         this.dataSetDef = createDataSetDef(uuid, null);
@@ -151,9 +170,11 @@ public class DataSetEditor implements IsWidget {
     public DataSetEditor editDataSet(final String uuid) throws Exception{
 
         if (uuid == null || uuid.trim().length() == 0) {
-            error("DataSetEditor#editDataSet - No UUID specified.");
+            showError("DataSetEditor#editDataSet - No UUID specified.");
             return this;
         }
+        
+        clear();
 
         DataSetClientServices.get().fetchMetadata(uuid, new DataSetMetadataCallback() {
             @Override
@@ -171,30 +192,19 @@ public class DataSetEditor implements IsWidget {
                 edit = def;
                 view.setEditMode(true);
                 
-                // Restart workflow.
-                edit();
+                // Update the displayer & Restart workflow.
+                updateTableDisplayer();
 
-                // Build views.
-                showBasicAttributesEditionView();
-                showProviderSpecificAttributesEditionView();
-                showPreviewTableEditionView();
-                showAdvancedAttributesEditionView();
-                
-                view.showNextButton(DataSetEditorConstants.INSTANCE.save(),
-                        DataSetEditorConstants.INSTANCE.save_description(),
-                        saveButtonHandler);
             }
 
             @Override
             public void notFound() {
-                error("Data set definition with uuid [" + uuid + "] not found.");
-                // TODO: Show error popup?
+                showError("Data set definition with uuid [" + uuid + "] not found.");
             }
 
             @Override
             public boolean onError(DataSetClientServiceError error) {
-                // TODO
-                GWT.log("Error occurred in DataSetEditor#editDataSet!");
+                showError(error);
                 return false;
             }
         });
@@ -219,17 +229,44 @@ public class DataSetEditor implements IsWidget {
         return uuid;
     }
     
-    private String getOriginalUUID(final String editionUUID) {
-        if (editionUUID == null) return null;
-        
-        final int suffix_length = EDIT_SUFFIX.length();
-        if (editionUUID.trim().length() < suffix_length) return editionUUID;
-        return editionUUID.substring(0, editionUUID.length() - suffix_length);
-    }
+    private void updateTableDisplayer() {
+        if (dataSetDef != null) {
+            // Register changes or new definition on backend in order to use the table displayer 
+            // for previewing data on next screen.
+            if (tableDisplayer == null) registerDataSetDef();
+            else updateDataSetDef();
 
+            // Build the displayer, so perform the lookup.
+            TableDisplayerSettingsBuilder<TableDisplayerSettingsBuilderImpl> tableDisplayerSettingsBuilder = DisplayerSettingsFactory.newTableSettings()
+                    .dataset(dataSetDef.getUUID())
+                    .renderer(DefaultRenderer.UUID)
+                    .titleVisible(false)
+                    .tablePageSize(10)
+                    .tableOrderEnabled(false)
+                    .filterOn(false, false, false);
+
+            List<DataColumn> columns =  dataSetDef.getDataSet().getColumns();
+            if (columns != null && !columns.isEmpty()) {
+                for (DataColumn column : columns) {
+                    tableDisplayerSettingsBuilder.column(column.getId());
+                }
+            }
+
+            DisplayerSettings settings = tableDisplayerSettingsBuilder.buildSettings();
+            tableDisplayer  =  DisplayerHelper.lookupDisplayer(settings);
+            tableDisplayer .addListener(tablePreviewListener);
+
+            // Wait for displayer listener callbacks.
+            if (DataSetEditor.this.tableDisplayer != null) DataSetEditor.this.tableDisplayer.draw();
+            
+            // Show a loading screen while performing the backend service call.
+            view.showLoadingView();
+        }
+    }
+    
     private final ClickHandler providerScreenNextButtonHandler = new ClickHandler() {
         @Override
-        public void onClick(ClickEvent event) {
+        public void onClick(final ClickEvent event) {
             // Save basic attributes (name and uuid) and provider type attribute.
             // Check if exist validation violations.
             final Set<ConstraintViolation<? extends DataSetDef>> violations = save();
@@ -251,23 +288,13 @@ public class DataSetEditor implements IsWidget {
 
     private final ClickHandler testButtonHandler = new ClickHandler() {
         @Override
-        public void onClick(ClickEvent event) {
+        public void onClick(final ClickEvent event) {
             // Save basic attributes (name and uuid) and provider type attribute.
             // Check if exist validation violations.
             final Set violations = save();
             if (isValid(violations)) {
+                updateTableDisplayer();
 
-                // Restart workflow.
-                edit();
-
-                // Build views.
-                showBasicAttributesEditionView();
-                showProviderSpecificAttributesEditionView();
-                showPreviewTableEditionView();
-
-                view.showNextButton(DataSetEditorConstants.INSTANCE.next(),
-                        DataSetEditorConstants.INSTANCE.next_description(),
-                        advancedAttrsButtonHandler);
             }
             log(violations, violations);
         }
@@ -275,7 +302,7 @@ public class DataSetEditor implements IsWidget {
 
     private final ClickHandler advancedAttrsButtonHandler = new ClickHandler() {
         @Override
-        public void onClick(ClickEvent event) {
+        public void onClick(final ClickEvent event) {
             // Save basic attributes (name and uuid) and provider type attribute.
             // Check if exist validation violations.
             final Set violations = save();
@@ -300,20 +327,18 @@ public class DataSetEditor implements IsWidget {
 
     private final ClickHandler saveButtonHandler = new ClickHandler() {
         @Override
-        public void onClick(ClickEvent event) {
+        public void onClick(final ClickEvent event) {
             final Set violations = save();
             if (isValid(violations)) {
-                // Valid
-                GWT.log("Data set edition finished.");
-                update();
-
                 try {
+                    // Valid
                     persist();
-                    clear();
+
                 } catch (Exception e) {
-                    // TODO: Display error.
-                    e.printStackTrace();
-                    GWT.log("Error persisting data set defintion with uuid [" + dataSetDef.getUUID() + "]. Message: " + e.getMessage());
+                    showError("Error persisting data set defintion with uuid [" + dataSetDef.getUUID() + "]. Message: " + e.getMessage());
+                } finally {
+                    clear();
+                    showHomeView();
                 }
             }
             log(violations);
@@ -344,7 +369,7 @@ public class DataSetEditor implements IsWidget {
         }
     }
     
-    private void update() {
+    private void updateDataSetDef() {
 
         // Remove the current data set definition.
         removeDataSetDef();
@@ -352,8 +377,6 @@ public class DataSetEditor implements IsWidget {
         // Register new data set definition.
         registerDataSetDef();
 
-        // Update preview table.
-        showPreviewTableEditionView();
     }
 
     private void removeDataSetDef() {
@@ -375,32 +398,40 @@ public class DataSetEditor implements IsWidget {
         }
     }
 
-    
-
     private void showHomeView() {
         DataSetClientServices.get().getRemoteSharedDataSetDefs(new RemoteCallback<List<DataSetDef>>() {
             public void callback(List<DataSetDef> dataSetDefs) {
                 final int i = dataSetDefs != null ? dataSetDefs.size() : 0;
                 view.showHomeView(i, newDataSetHandler);
-                isHomeViewVisible = true;
+                currentWfView = WorkflowView.HOME;
             }
         });
+    }
+
+    private void showError(final DataSetClientServiceError error) {
+        final String message = error.getThrowable() != null ? error.getThrowable().getMessage() : error.getMessage().toString();
+        showError(message);
+    }
+
+    private void showError(final String message) {
+        GWT.log("Error: " + message);
+        view.showError(message);
     }
     
     private void showProviderSelectionView() {
         // Show provider selection widget.
         view.showProviderSelectionView();
-        isHomeViewVisible = false;
+        currentWfView = WorkflowView.PROVIDER_SELECTION;
     }
     
     private void showBasicAttributesEditionView() {
         final String _uuid = edit != null ? edit.getUUID() : dataSetDef.getUUID();
         view.showBasicAttributesEditionView(_uuid);
-        isHomeViewVisible = false;
+        currentWfView = WorkflowView.DATA_CONF;
     }
     
     private void showProviderSpecificAttributesEditionView() {
-        isHomeViewVisible = false;
+        currentWfView = WorkflowView.DATA_CONF;
         switch (dataSetDef.getProvider()) {
             case SQL:
                 view.showSQLAttributesEditorView(testButtonHandler);
@@ -419,25 +450,23 @@ public class DataSetEditor implements IsWidget {
     
     
     private void showColumnsEditorView(final DataSet dataSet) {
-        isHomeViewVisible = false;
+        currentWfView = WorkflowView.PREVIEW;
         view.showColumnsEditorView(this.columns, dataSet, columnsChangedEventHandler);
     }
 
     private void showFilterEditorView(final DataSet dataSet) {
-        isHomeViewVisible = false;
+        currentWfView = WorkflowView.PREVIEW;
         view.showFilterEditionView(dataSet, filterListener);
     }
 
     private void showPreviewTableEditionView() {
-        isHomeViewVisible = false;
-        registerDataSetDef();
-        
+        currentWfView = WorkflowView.PREVIEW;
         // Show table preview preview.
-        view.showPreviewTableEditionView(tablePreviewListener);
+        view.showPreviewTableEditionView(tableDisplayer);
     }
     
     private void showAdvancedAttributesEditionView() {
-        isHomeViewVisible = false;
+        currentWfView = WorkflowView.ADVANCED;
         view.showAdvancedAttributesEditionView();
     }
     
@@ -456,6 +485,7 @@ public class DataSetEditor implements IsWidget {
         public void onClick(ClickEvent event) {
             removeDataSetDef();
             clear();
+            showHomeView();
         }
     };
     private final ClickHandler newDataSetHandler = new ClickHandler() {
@@ -469,7 +499,7 @@ public class DataSetEditor implements IsWidget {
         @Override
         public void onColumnsChanged(DataSetColumnsEditor.ColumnsChangedEvent event) {
             DataSetEditor.this.dataSetDef.getDataSet().setColumns(event.getColumns());
-            update();
+            updateTableDisplayer();
         }
     };
     
@@ -477,7 +507,7 @@ public class DataSetEditor implements IsWidget {
         @Override
         public void filterChanged(DataSetFilter filter) {
             DataSetEditor.this.dataSetDef.setDataSetFilter(filter);
-            update();
+            updateTableDisplayer();
         }
     };
     
@@ -485,27 +515,48 @@ public class DataSetEditor implements IsWidget {
      * <p>When creating the table preview screen, this listener waits for data set available and then performs other operations.</p> 
      */
     private final DisplayerListener tablePreviewListener = new DisplayerListener() {
+        
         @Override
         public void onDraw(Displayer displayer) {
 
             if (displayer != null) {
                 final DataSet dataSet = displayer.getDataSetHandler().getLastDataSet();
-                final boolean isNew = DataSetEditor.this.columns == null;
                 
                 if (dataSet != null) {
-                    // Register data set on client.
+                    // Rezgister data set on client.
                     ClientDataSetManager.get().registerDataSet(dataSet);
                     
-                    if (isNew) {
+                    // Original columns.
+                    final boolean isEdit = edit != null;
+                    final boolean mustEdit = DataSetEditor.this.columns == null; 
+                    DataSetEditor.this.columns = new LinkedList<DataColumn>(dataSet.getColumns());
+                    DataSetEditor.this.dataSetDef.getDataSet().setColumns(DataSetEditor.this.columns);
 
-                        // Original columns.
-                        DataSetEditor.this.columns = new LinkedList<DataColumn>(dataSet.getColumns());
-                        DataSetEditor.this.dataSetDef.getDataSet().setColumns(DataSetEditor.this.columns);
-                        
-                        // Show initial filter and columns edition view.
+                    // Restart workflow.
+                    if (mustEdit) edit();
+                    
+                    // Build views.
+                    showBasicAttributesEditionView();
+                    showProviderSpecificAttributesEditionView();
+                    if (isEdit) showAdvancedAttributesEditionView();
+                    showPreviewTableEditionView();
+                    
+                    // Show initial filter and columns edition view.
+                    if (mustEdit) {
                         showColumnsEditorView(dataSet);
                         showFilterEditorView(dataSet);
                     }
+
+                    if (isEdit) {
+                        view.showNextButton(DataSetEditorConstants.INSTANCE.save(),
+                                DataSetEditorConstants.INSTANCE.save_description(),
+                                saveButtonHandler);
+                    } else {
+                        view.showNextButton(DataSetEditorConstants.INSTANCE.next(),
+                                DataSetEditorConstants.INSTANCE.next_description(),
+                                advancedAttrsButtonHandler);
+                    }
+
                 }
             }
         }
@@ -532,7 +583,7 @@ public class DataSetEditor implements IsWidget {
 
         @Override
         public void onError(Displayer displayer, DataSetClientServiceError error) {
-            GWT.log("DataSetEditor#onError: " + error.getThrowable().getMessage());
+            showError(error);
         }
 
     };
@@ -541,21 +592,25 @@ public class DataSetEditor implements IsWidget {
         this.dataSetDef = null;
         this.columns = null;
         this.edit = null;
+        this.tableDisplayer = null;
         view.clear();
-        showHomeView();
     }
     
     private boolean isValid(Set violations) {
         return violations.isEmpty();
     }
 
+    private boolean isHomeViewVisible() {
+        return WorkflowView.HOME.equals(currentWfView);
+    }
+    
     // Be aware of data set lifecycle events
 
     private void onDataSetDefRegisteredEvent(@Observes DataSetDefRegisteredEvent event) {
         checkNotNull("event", event);
 
         final DataSetDef def = event.getDataSetDef();
-        if (isHomeViewVisible && def != null && def.isPublic()) {
+        if (isHomeViewVisible() && def != null && def.isPublic()) {
             // Reload home view with new data set count value.
             this.showHomeView();
         }
@@ -564,17 +619,12 @@ public class DataSetEditor implements IsWidget {
     private void onDataSetDefRemovedEvent(@Observes DataSetDefRemovedEvent event) {
         checkNotNull("event", event);
 
-        if(isHomeViewVisible) {
+        if(isHomeViewVisible()) {
             // Reload home view with new data set count value.
             this.showHomeView();
         }
     }
     
-    // TODO: Display message to user.
-    private void error(String message) {
-        GWT.log(message);
-    }
-
     // TODO: Remove, just for testing.
     private void log(Set<ConstraintViolation<? extends DataSetDef>>... violations) {
         if (true) return;
