@@ -16,13 +16,19 @@
 package org.dashbuilder.dataset.validation;
 
 import com.google.gwt.core.client.GWT;
-import org.jboss.errai.marshalling.client.api.annotations.Key;
 
+/**
+ * <p>The data set validation messages for the client side.</p>
+ * <p>The properties file for these messages is located at <code>dashbuilder-dataset-api</code>, 
+ * as they've to be shared across server and client side.</p>
+ *
+ * @see <code>dashbuilder-dataset-api/src/main/resources/org/dashbuilder/dataset/validation/DataSetValidationMessages.properties</code>
+ */
 public interface DataSetValidationMessages extends
-    com.google.gwt.i18n.client.ConstantsWithLookup {
+        com.google.gwt.i18n.client.ConstantsWithLookup {
 
     public static final DataSetValidationMessages INSTANCE = GWT.create(DataSetValidationMessages.class);
-    
+
     @Key("dataSetApi_dataSetDef_uuid_notNull")
     String dataSetApi_dataSetDef_uuid_notNull();
 
@@ -74,14 +80,14 @@ public interface DataSetValidationMessages extends
 
     @Key("dataSetApi_csvDataSetDef_escapeChar_notNull")
     String dataSetApi_csvDataSetDef_escapeChar_notNull();
-    
+
     @Key("dataSetApi_csvDataSetDef_datePattern_notNull")
     String dataSetApi_csvDataSetDef_datePattern_notNull();
 
     @Key("dataSetApi_csvDataSetDef_numberPattern_notNull")
     String dataSetApi_csvDataSetDef_numberPattern_notNull();
 
-    
+
     @Key("dataSetApi_beanDataSetDef_generatorClass_notNull")
     String dataSetApi_beanDataSetDef_generatorClass_notNull();
 
@@ -97,8 +103,8 @@ public interface DataSetValidationMessages extends
 
     @Key("dataSetApi_elDataSetDef_type_notNull")
     String dataSetApi_elDataSetDef_type_notNull();
-    
-    
+
+
     @Key("dataSetApi_dataSetImpl_uuid_notNull")
     String dataSetApi_dataSetImpl_uuid_notNull();
 
