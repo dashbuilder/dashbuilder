@@ -51,6 +51,12 @@
     </dependency>
 
     <dependency>
+      <groupId>org.dashbuilder</groupId>
+      <artifactId>dashbuilder-hibernate-validator</artifactId>
+      <classifier>sources</classifier>
+    </dependency>
+
+    <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>
     </dependency>
@@ -72,5 +78,56 @@
     </dependency>
 
   </dependencies>
+  
+  <build>
+
+    <resources>
+      <!-- Include src/main/java in order not to break the Eclipse GWT plug-in -->
+      <resource>
+        <directory>src/main/java</directory>
+      </resource>
+      <!-- Include module descriptors from src/main/resources in order not to break the Intellij GWT plug-in -->
+      <resource>
+        <directory>src/main/resources</directory>
+      </resource>
+    </resources>
+    
+    <plugins>
+      
+      <!-- Add dashbuilder-hibernate-validator classes and sources into this module classpath. -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>unpack-hibernate-validator</id>
+            <phase>process-resources</phase>
+            <goals>
+              <goal>unpack</goal>
+            </goals>
+            <configuration>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>org.dashbuilder</groupId>
+                  <artifactId>dashbuilder-hibernate-validator</artifactId>
+                  <type>jar</type>
+                </artifactItem>
+                <artifactItem>
+                  <groupId>org.dashbuilder</groupId>
+                  <artifactId>dashbuilder-hibernate-validator</artifactId>
+                  <type>jar</type>
+                  <classifier>sources</classifier>
+                </artifactItem>
+              </artifactItems>
+              <outputDirectory>${project.build.outputDirectory}</outputDirectory>
+              <overWriteReleases>true</overWriteReleases>
+              <overWriteSnapshots>true</overWriteSnapshots>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      
+    </plugins>
+  </build>
 
 </project>

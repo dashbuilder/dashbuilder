@@ -26,16 +26,6 @@
 
     <dependency>
       <groupId>org.dashbuilder</groupId>
-      <artifactId>dashbuilder-hibernate-validator</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.dashbuilder</groupId>
-      <artifactId>dashbuilder-validations</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.dashbuilder</groupId>
       <artifactId>dashbuilder-displayer-editor</artifactId>
     </dependency>
 
@@ -230,20 +220,10 @@
           <compileSourcesArtifacts>
 
             <!-- Dashbuilder -->
-            <compileSourcesArtifact>org.dashbuilder:dashbuilder-hibernate-validator</compileSourcesArtifact>
-            <compileSourcesArtifact>org.dashbuilder:dashbuilder-validations</compileSourcesArtifact>
-            <compileSourcesArtifact>org.dashbuilder:dashbuilder-dataset-api</compileSourcesArtifact>
-            <compileSourcesArtifact>org.dashbuilder:dashbuilder-dataset-shared</compileSourcesArtifact>
-            <compileSourcesArtifact>org.dashbuilder:dashbuilder-displayer-api</compileSourcesArtifact>
-            <compileSourcesArtifact>org.dashbuilder:dashbuilder-common-client</compileSourcesArtifact>
-            <compileSourcesArtifact>org.dashbuilder:dashbuilder-dataset-client</compileSourcesArtifact>
-            <compileSourcesArtifact>org.dashbuilder:dashbuilder-displayer-client</compileSourcesArtifact>
+            <compileSourcesArtifact>org.dashbuilder:dashbuilder-client-all</compileSourcesArtifact>
             <compileSourcesArtifact>org.dashbuilder:dashbuilder-displayer-editor</compileSourcesArtifact>
-            <compileSourcesArtifact>org.dashbuilder:dashbuilder-displayer-screen</compileSourcesArtifact>
-            <compileSourcesArtifact>org.dashbuilder:dashbuilder-renderer-default</compileSourcesArtifact>
             <compileSourcesArtifact>org.dashbuilder:dashbuilder-renderer-google</compileSourcesArtifact>
             <compileSourcesArtifact>org.dashbuilder:dashbuilder-renderer-lienzo</compileSourcesArtifact>
-            <compileSourcesArtifact>org.dashbuilder:dashbuilder-widgets</compileSourcesArtifact>
 
             <!-- Uberfire ext -->
             <compileSourcesArtifact>org.uberfire:uberfire-runtime-plugins-client</compileSourcesArtifact>

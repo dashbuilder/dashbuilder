@@ -78,6 +78,7 @@
         <groupId>org.dashbuilder</groupId>
         <artifactId>dashbuilder-hibernate-validator</artifactId>
         <version>${project.version}</version>
+        <scope>provided</scope>
       </dependency>
 
       <dependency>
@@ -85,6 +86,7 @@
         <artifactId>dashbuilder-hibernate-validator</artifactId>
         <version>${project.version}</version>
         <classifier>sources</classifier>
+        <scope>provided</scope>
       </dependency>
       
       <dependency>
