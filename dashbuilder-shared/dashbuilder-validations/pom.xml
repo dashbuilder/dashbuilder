@@ -92,42 +92,6 @@
       </resource>
     </resources>
     
-    <plugins>
-      
-      <!-- Add dashbuilder-hibernate-validator classes and sources into this module classpath. -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-dependency-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>unpack-hibernate-validator</id>
-            <phase>process-resources</phase>
-            <goals>
-              <goal>unpack</goal>
-            </goals>
-            <configuration>
-              <artifactItems>
-                <artifactItem>
-                  <groupId>org.dashbuilder</groupId>
-                  <artifactId>dashbuilder-hibernate-validator</artifactId>
-                  <type>jar</type>
-                </artifactItem>
-                <artifactItem>
-                  <groupId>org.dashbuilder</groupId>
-                  <artifactId>dashbuilder-hibernate-validator</artifactId>
-                  <type>jar</type>
-                  <classifier>sources</classifier>
-                </artifactItem>
-              </artifactItems>
-              <outputDirectory>${project.build.outputDirectory}</outputDirectory>
-              <overWriteReleases>true</overWriteReleases>
-              <overWriteSnapshots>true</overWriteSnapshots>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      
-    </plugins>
   </build>
 
 </project>
