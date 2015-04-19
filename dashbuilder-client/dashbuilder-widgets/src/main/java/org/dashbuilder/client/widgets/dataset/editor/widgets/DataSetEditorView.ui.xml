@@ -99,6 +99,16 @@
       height: 400px;
       overflow: hidden;
     }
+    .errorPanel {
+      margin: 25px;
+    }
+    .errorRow {
+        margin-bottom: 10px;      
+    }
+    .errorLabel {
+      font-weight: bold;
+      
+    }
     .clear {
       clear: both;
     }
@@ -108,7 +118,38 @@
 
     <!-- Error panel. -->
     <b:Modal ui:field="errorPanel" title="{i18n.error}" backdrop="STATIC" keyboard="true" animation="true">
-      <g:HTML ui:field="errorMessageLabel"></g:HTML>
+      
+      <g:FlowPanel addStyleNames="{style.errorPanel}">
+        <b:Row ui:field="errorTypeRow" addStyleNames="{style.errorRow}">
+          <b:Column size="1">
+            <g:Label text="{i18n.type}" addStyleNames="{style.errorLabel}"/>
+          </b:Column>
+          <b:Column size="3">
+            <g:HTML ui:field="errorType" text=""/>
+          </b:Column>
+        </b:Row>
+        <b:Row ui:field="errorMessageRow" addStyleNames="{style.errorRow}">
+          <b:Column size="1">
+            <g:Label text="{i18n.message}" addStyleNames="{style.errorLabel}"/>
+          </b:Column>
+          <b:Column size="3">
+            <g:HTML ui:field="errorMessage" text=""/>
+          </b:Column>
+        </b:Row>
+        <b:Row ui:field="errorCauseRow" addStyleNames="{style.errorRow}">
+          <b:Column size="1">
+            <g:Label text="{i18n.cause}" addStyleNames="{style.errorLabel}"/>
+          </b:Column>
+          <b:Column size="3">
+            <g:HTML ui:field="errorCause" text=""/>
+          </b:Column>
+        </b:Row>
+      </g:FlowPanel>
+
+      <b:ModalFooter>
+        <b:Button ui:field="errorPanelButton" icon="OK" type="PRIMARY" text="{i18n.ok}"/>
+      </b:ModalFooter>
+      
     </b:Modal>
 
     <!-- Loading screen. -->

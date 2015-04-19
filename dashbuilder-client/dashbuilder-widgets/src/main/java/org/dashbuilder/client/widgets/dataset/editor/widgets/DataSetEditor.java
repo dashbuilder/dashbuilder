@@ -108,7 +108,7 @@ public class DataSetEditor implements IsWidget {
         View showCancelButton(ClickHandler cancelHandler);
         View onSave();
         View showLoadingView();
-        View showError(final String message);
+        View showError(final String type, final String message, final String cause);
         View clear();
     }
     
@@ -412,13 +412,21 @@ public class DataSetEditor implements IsWidget {
     }
 
     private void showError(final DataSetClientServiceError error) {
+        final String type = error.getThrowable() != null ? error.getThrowable().getClass().getName() : null;
         final String message = error.getThrowable() != null ? error.getThrowable().getMessage() : error.getMessage().toString();
-        showError(message);
+        final String cause = error.getThrowable() != null ? error.getThrowable().getCause().getMessage() : null;
+        showError(type, message, cause);
     }
 
     private void showError(final String message) {
-        GWT.log("Error: " + message);
-        view.showError(message);
+        showError(null, message, null);
+    }
+    
+    private void showError(final String type, final String message, final String cause) {
+        if (type != null) GWT.log("Error type: " + type);
+        if (message != null) GWT.log("Error message: " + message);
+        if (cause != null) GWT.log("Error cause: " + cause);
+        view.showError(type, message, cause);
     }
     
     private void showProviderSelectionView() {

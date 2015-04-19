@@ -86,7 +86,25 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
     Modal errorPanel;
     
     @UiField
-    HTML errorMessageLabel;
+    Button errorPanelButton;
+    
+    @UiField
+    HTML errorType;
+
+    @UiField
+    HTML errorMessage;
+
+    @UiField
+    HTML errorCause;
+
+    @UiField
+    Row errorTypeRow;
+
+    @UiField
+    Row errorMessageRow;
+
+    @UiField
+    Row errorCauseRow;
     
     @UiField
     PopupPanel loadingPopupPanel;
@@ -251,7 +269,14 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
 
         // Hide loading popup at startup.
         hideLoadingView();
-        
+
+        errorPanelButton.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                hideError();
+            }
+        });
+
         // Show home view by default.
         showEmptyView();
     }
@@ -597,10 +622,20 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
     }
 
     @Override
-    public DataSetEditor.View showError(String message) {
-        errorMessageLabel.setText(message);
+    public DataSetEditor.View showError(final String type, final String message, final String cause) {
+        errorType.setText(type != null ? type : "");
+        errorTypeRow.setVisible(type != null);
+        errorMessage.setText(message != null ? message : "");
+        errorMessageRow.setVisible(message != null);
+        errorCause.setText(cause != null ? cause : "");
+        errorCauseRow.setVisible(cause != null);
         errorPanel.show();
+        hideLoadingView();
         return this;
+    }
+    
+    private void hideError() {
+        errorPanel.hide();
     }
 
     public Set getViolations() {
