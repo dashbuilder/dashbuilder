@@ -270,16 +270,18 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
         // Hide loading popup at startup.
         hideLoadingView();
 
-        errorPanelButton.addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                hideError();
-            }
-        });
+        errorPanelButton.addClickHandler(errorPanelButtonHandler);
 
         // Show home view by default.
         showEmptyView();
     }
+    
+    private final ClickHandler errorPanelButtonHandler = new ClickHandler() {
+        @Override
+        public void onClick(ClickEvent event) {
+            hideError();
+        }
+    };
 
     @Override
     public DataSetEditor.View setEditMode(final boolean editMode) {
