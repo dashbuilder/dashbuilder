@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbuilder.client.widgets.dataset.editor.screens;
+package org.dashbuilder.dataset.editor.client.screens;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.IsWidget;
@@ -77,6 +77,4 @@ public class DataSetEditorScreenPresenter {
     private void error(String message, Exception e) {
         GWT.log(message + "\n Exception: " + e.getMessage());
     }
-
-    
 }

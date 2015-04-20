@@ -29,7 +29,7 @@ import org.dashbuilder.dataset.DataSetFactory;
 import org.dashbuilder.dataset.DataSetLookup;
 import org.dashbuilder.dataset.DataSetManager;
 import org.dashbuilder.dataset.DataSetMetadata;
-import org.dashbuilder.dataset.backend.exception.DataSetLookupException;
+import org.dashbuilder.dataset.exception.DataSetLookupException;
 import org.dashbuilder.dataset.def.DataSetDef;
 import org.dashbuilder.dataset.def.DataSetDefRegistry;
 import org.dashbuilder.dataset.def.StaticDataSetDef;

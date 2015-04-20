@@ -1,4 +1,4 @@
-package org.dashbuilder.dataset.backend.exception;
+package org.dashbuilder.dataset.exception;
 
 import org.jboss.errai.common.client.api.annotations.Portable;
 

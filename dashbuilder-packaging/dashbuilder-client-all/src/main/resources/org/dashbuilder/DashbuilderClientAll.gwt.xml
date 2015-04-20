@@ -22,15 +22,16 @@
   <inherits name='com.google.gwt.user.User'/>
 
   <inherits name="org.dashbuilder.CommonClient"/>
+  <inherits name="org.dashbuilder.CommonWidgets"/>
 
   <inherits name="org.dashbuilder.DatasetAPI"/>
   <inherits name="org.dashbuilder.DatasetShared"/>
   <inherits name="org.dashbuilder.DatasetClient"/>
+  <inherits name="org.dashbuilder.DataSetEditor"/>
 
   <inherits name="org.dashbuilder.DisplayerAPI"/>
   <inherits name="org.dashbuilder.DisplayerClient"/>
   <inherits name="org.dashbuilder.DisplayerScreen"/>
-  <inherits name="org.dashbuilder.DashbuilderWidgets"/>
 
   <inherits name="org.dashbuilder.renderer.DefaultRenderer"/>
 

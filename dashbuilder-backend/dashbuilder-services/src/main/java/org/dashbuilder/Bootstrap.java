@@ -25,7 +25,7 @@ import org.slf4j.Logger;
 import org.uberfire.commons.services.cdi.Startup;
 
 /**
- *
+ * Class in charge of bootstrapping some of the dashbuilder services
  */
 @ApplicationScoped
 @Startup

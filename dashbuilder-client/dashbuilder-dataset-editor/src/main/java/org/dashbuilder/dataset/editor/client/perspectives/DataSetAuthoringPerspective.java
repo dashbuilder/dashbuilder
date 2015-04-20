@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbuilder.client.widgets.dataset.editor.perspectives;
+package org.dashbuilder.dataset.editor.client.perspectives;
 
 import org.uberfire.client.annotations.Perspective;
 import org.uberfire.client.annotations.WorkbenchPerspective;
@@ -28,7 +28,6 @@ import org.uberfire.workbench.model.impl.PartDefinitionImpl;
 import org.uberfire.workbench.model.impl.PerspectiveDefinitionImpl;
 
 import javax.enterprise.context.ApplicationScoped;
-
 
 /**
  * <p>The authoring perspective for the management of data sets using the UI.</p>
@@ -58,10 +57,4 @@ public class DataSetAuthoringPerspective {
         perspective.getRoot().insertChild( CompassPosition.WEST, west );
         return perspective;
     }
-
-    /*private PlaceRequest createPlaceRequest(DisplayerSettings displayerSettings) {
-        Map<String,String> params = new HashMap<String,String>();
-        params.put("edit", "false");
-        return new DefaultPlaceRequest("DisplayerScreen", params);
-    }*/
 }

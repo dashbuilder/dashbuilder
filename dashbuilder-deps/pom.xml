@@ -33,9 +33,7 @@
     <version.io.searchbox.jest>0.1.3</version.io.searchbox.jest>
     <version.com.ahomeit.lienzo.charts>1.0.56-gwt2-SNAPSHOT</version.com.ahomeit.lienzo.charts>
     <version.com.googlecode.jtype>0.1.1</version.com.googlecode.jtype>
-    
-    <!-- temporary: makes the enforcerRule (illegal-transitive-dependency-check) not to break the build -->
-    <illegaltransitivereportonly>true</illegaltransitivereportonly>
+
   </properties>
 
   <dependencyManagement>
@@ -266,6 +264,12 @@
         <version>${version.io.searchbox.jest}</version>
       </dependency>
       
+      <dependency>
+        <groupId>io.searchbox</groupId>
+        <artifactId>jest-common</artifactId>
+        <version>${version.io.searchbox.jest}</version>
+      </dependency>
+
       <!-- ElasticSearch requires Lucene version 4.10 instead of 3.X used by IP BOM. -->
       <dependency>
         <groupId>org.apache.lucene</groupId>

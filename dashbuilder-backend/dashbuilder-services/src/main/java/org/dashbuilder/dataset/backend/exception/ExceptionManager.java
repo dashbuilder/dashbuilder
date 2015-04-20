@@ -23,14 +23,10 @@ public class ExceptionManager {
      * @param e The exception that caused the error.
      * @return The portable exception to send to the client side.
      */
-    public RuntimeException handleException( final Exception e ) {
+    public Exception handleException( final Exception e ) {
         log.error("An Exception has occurred and has been handled and sent to the client.", e);
         if ( EnvUtil.isPortableType(e.getClass()) ) {
-            if ( e instanceof RuntimeException ) {
-                return (RuntimeException) e;
-            } else {
-                return new GenericPortableException( e.getMessage(), e );
-            }
+            return e;
         }
         return new GenericPortableException( e.getMessage(), e );
     }
