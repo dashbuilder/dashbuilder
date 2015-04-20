@@ -38,6 +38,7 @@ import org.dashbuilder.dataset.events.DataSetDefRegisteredEvent;
 import org.dashbuilder.dataset.events.DataSetDefRemovedEvent;
 import org.dashbuilder.dataset.filter.DataSetFilter;
 import org.dashbuilder.dataset.group.DataSetGroup;
+import org.dashbuilder.dataset.impl.DataColumnImpl;
 import org.dashbuilder.displayer.DisplayerSettings;
 import org.dashbuilder.displayer.DisplayerSettingsFactory;
 import org.dashbuilder.displayer.TableDisplayerSettingsBuilder;
@@ -189,11 +190,17 @@ public class DataSetEditor implements IsWidget {
                     final String editionUUID = getEditionUUID(def);
                     DataSetEditor.this.dataSetDef.setUUID(editionUUID);
                     DataSetEditor.this.dataSetDef.setPublic(false);
-    
+                    final int cn = metatada.getNumberOfColumns();
+                    DataSetEditor.this.columns = new LinkedList<DataColumn>();
+                    for (int x = 0; x < cn; x++) {
+                        DataColumnImpl c = new DataColumnImpl(metatada.getColumnId(x), metatada.getColumnType(x));
+                        DataSetEditor.this.columns.add(c);
+                    }
                     edit = def;
                     view.setEditMode(true);
                     
                     // Update the displayer & Restart workflow.
+                    edit();
                     showBasicAttributesEditionView();
                     showProviderSpecificAttributesEditionView();
                     updateTableDisplayer();
@@ -266,7 +273,6 @@ public class DataSetEditor implements IsWidget {
             if (DataSetEditor.this.tableDisplayer != null) DataSetEditor.this.tableDisplayer.draw();
             
             // Show basic views and the loading screen while performing the backend service call.
-            edit();
             view.showLoadingView();
         }
     }
@@ -543,21 +549,17 @@ public class DataSetEditor implements IsWidget {
                     
                     // Original columns.
                     final boolean isEdit = edit != null;
-                    final boolean mustEdit = DataSetEditor.this.columns == null; 
-                    DataSetEditor.this.columns = new LinkedList<DataColumn>(dataSet.getColumns());
-                    DataSetEditor.this.dataSetDef.getDataSet().setColumns(DataSetEditor.this.columns);
-
-                    // Restart workflow.
-                    if (mustEdit) edit();
+                    final WorkflowView v = currentWfView;
+                    if (DataSetEditor.this.columns == null) {
+                        DataSetEditor.this.columns = new LinkedList<DataColumn>(dataSet.getColumns());
+                    }
                     
                     // Build views.
-                    showBasicAttributesEditionView();
-                    showProviderSpecificAttributesEditionView();
-                    if (isEdit) showAdvancedAttributesEditionView();
+                    if (isEdit && !v.equals(WorkflowView.ADVANCED)) showAdvancedAttributesEditionView();
                     showPreviewTableEditionView();
                     
                     // Show initial filter and columns edition view.
-                    if (mustEdit) {
+                    if (!v.equals(WorkflowView.PREVIEW)) {
                         showColumnsEditorView(dataSet);
                         showFilterEditorView(dataSet);
                     }

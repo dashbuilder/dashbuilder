@@ -151,4 +151,17 @@ public class DataColumnImpl implements DataColumn {
         if (columnType != null) out.append(columnType);
         return out.toString();
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) return false;
+
+        try {
+            DataColumn d = (DataColumn) obj;
+            return getId().equals(d.getId());
+        } catch (ClassCastException e) {
+            return false;
+        }
+    }
+    
 }
