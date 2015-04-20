@@ -19,6 +19,8 @@ import com.github.gwtbootstrap.client.ui.Accordion;
 import com.github.gwtbootstrap.client.ui.AccordionGroup;
 import com.github.gwtbootstrap.client.ui.Button;
 import com.github.gwtbootstrap.client.ui.constants.ButtonType;
+import com.github.gwtbootstrap.client.ui.event.ShowEvent;
+import com.github.gwtbootstrap.client.ui.event.ShowHandler;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -35,6 +37,9 @@ import org.dashbuilder.client.widgets.dataset.editor.widgets.events.EditDataSetE
 import org.dashbuilder.client.widgets.dataset.editor.widgets.events.EditDataSetEventHandler;
 import org.dashbuilder.client.widgets.resources.i18n.DataSetExplorerConstants;
 import org.dashbuilder.dataset.DataSetMetadata;
+import org.dashbuilder.dataset.client.DataSetClientServiceError;
+import org.dashbuilder.dataset.client.DataSetClientServices;
+import org.dashbuilder.dataset.client.DataSetMetadataCallback;
 import org.dashbuilder.dataset.client.resources.bundles.DataSetClientImages;
 import org.dashbuilder.dataset.client.resources.bundles.DataSetClientResources;
 import org.dashbuilder.dataset.def.DataSetDef;
@@ -147,7 +152,7 @@ public class DataSetExplorerView extends Composite implements DataSetExplorer.Vi
         dataSetsAccordion.setVisible(true);
     }
     
-    private AccordionGroup buildDataSetAccordionGroup(DataSetDef dataSetDef) {
+    private AccordionGroup buildDataSetAccordionGroup(final DataSetDef dataSetDef) {
         final AccordionGroup accordionGroup = new AccordionGroup();
 
         // Heading.
@@ -158,7 +163,12 @@ public class DataSetExplorerView extends Composite implements DataSetExplorer.Vi
         final Image typeIcon = buildTypeIcon(dataSetDef);
         if (typeIcon != null) accordionGroup.addCustomTrigger(typeIcon);
         
-        buildDescription(dataSetDef, accordionGroup);
+        accordionGroup.addShowHandler(new ShowHandler() {
+            @Override
+            public void onShow(ShowEvent showEvent) {
+                buildDescription(dataSetDef, accordionGroup);
+            }
+        });
         
         return accordionGroup;
     } 
@@ -194,6 +204,7 @@ public class DataSetExplorerView extends Composite implements DataSetExplorer.Vi
     
     private void buildDescription(final DataSetDef dataSetDef, final Panel parent) {
         if (parent != null) {
+            GWT.log("Building description for data set def " + dataSetDef.getUUID());
             final DataSetClientImages images = DataSetClientResources.INSTANCE.images(); 
             
             final HTML statusText = new HTML(DataSetExplorerConstants.INSTANCE.currentStatus());
@@ -249,96 +260,129 @@ public class DataSetExplorerView extends Composite implements DataSetExplorer.Vi
             // Estimated rows and size.
             final FlowPanel estimationsPanel = new FlowPanel();
             estimationsPanel.addStyleName(style.estimationsPanel());
-            final DataSetMetadata metadata = dataSetDef.getDataSet().getMetadata();
-            final int estimatedSize = metadata.getEstimatedSize();
-            final int rowCount = metadata.getNumberOfRows();
-            
-            final HTML currentSizeText = new HTML(DataSetExplorerConstants.INSTANCE.currentSize());
-            currentSizeText.addStyleName(style.statusTextTitle());
-            final HTML estimatedSizeText = new HTML(estimatedSize + WHITESPACE + DataSetExplorerConstants.INSTANCE.bytes());
-            estimatedSizeText.addStyleName(style.statusText());
-            final HTML estimatedRowsText = new HTML(getEstimatedRowsFormattedValue(rowCount) + WHITESPACE + DataSetExplorerConstants.INSTANCE.rows());
-            estimatedRowsText.addStyleName(style.statusText());
-            
-            // Add into parent container.
-            estimationsPanel.add(currentSizeText);
-            estimationsPanel.add(estimatedRowsText);
-            estimationsPanel.add(estimatedSizeText);
 
-            final FlowPanel columnsPanel = new FlowPanel();
-            columnsPanel.addStyleName(style.columnsPanel());
-            columnsPanel.add(statusPanel);
-            columnsPanel.add(estimationsPanel);
-            parent.add(columnsPanel);
+            try {
+                DataSetClientServices.get().fetchMetadata(dataSetDef.getUUID(), new DataSetMetadataCallback() {
+                    @Override
+                    public void callback(DataSetMetadata metadata) {
+                        final int estimatedSize = metadata.getEstimatedSize();
+                        final int rowCount = metadata.getNumberOfRows();
 
-            // Edit, cancel and confirmation buttons.
-            final SlidingPanel slidingPanel = new SlidingPanel();
-            slidingPanel.addStyleName(style.slidingPanel());
-            final FlowPanel buttonsPanel = new FlowPanel();
-            final FlowPanel deleteConfirmPanel = new FlowPanel();
+                        final HTML currentSizeText = new HTML(DataSetExplorerConstants.INSTANCE.currentSize());
+                        currentSizeText.addStyleName(style.statusTextTitle());
+                        final HTML estimatedSizeText = new HTML(estimatedSize + WHITESPACE + DataSetExplorerConstants.INSTANCE.bytes());
+                        estimatedSizeText.addStyleName(style.statusText());
+                        final HTML estimatedRowsText = new HTML(getEstimatedRowsFormattedValue(rowCount) + WHITESPACE + DataSetExplorerConstants.INSTANCE.rows());
+                        estimatedRowsText.addStyleName(style.statusText());
 
-            final com.github.gwtbootstrap.client.ui.Button editButton = new Button(DataSetExplorerConstants.INSTANCE.edit());
-            final com.github.gwtbootstrap.client.ui.Button deleteButton = new Button(DataSetExplorerConstants.INSTANCE.delete());
-            final boolean isPublic = dataSetDef.isPublic();
-            editButton.setEnabled(isPublic);
-            editButton.addStyleName(style.button());
-            deleteButton.setEnabled(isPublic);
-            deleteButton.setType(ButtonType.DANGER);
-            deleteButton.addStyleName(style.button());
-            
-            editButton.addClickHandler(new ClickHandler() {
-                @Override
-                public void onClick(ClickEvent event) {
-                    fireEvent(new EditDataSetEvent(dataSetDef.getUUID()));
-                }
-            });
+                        // Add into parent container.
+                        estimationsPanel.add(currentSizeText);
+                        estimationsPanel.add(estimatedRowsText);
+                        estimationsPanel.add(estimatedSizeText);
 
-            deleteButton.addClickHandler(new ClickHandler() {
-                @Override
-                public void onClick(ClickEvent event) {
-                    slidingPanel.setWidget(deleteConfirmPanel);
-                }
-            });
+                        final FlowPanel columnsPanel = new FlowPanel();
+                        columnsPanel.addStyleName(style.columnsPanel());
+                        columnsPanel.add(statusPanel);
+                        columnsPanel.add(estimationsPanel);
+                        parent.add(columnsPanel);
 
-            buttonsPanel.addStyleName(style.buttonsPanel());
-            buttonsPanel.add(editButton);
-            buttonsPanel.add(deleteButton);
-            slidingPanel.add(buttonsPanel);
-            
-            final HTML deleteText = new HTML(DataSetExplorerConstants.INSTANCE.areYouSure());
-            deleteText.addStyleName(style.deleteText());
-            final com.github.gwtbootstrap.client.ui.Button yesButton = new Button(DataSetExplorerConstants.INSTANCE.yes());
-            yesButton.setType(ButtonType.SUCCESS);
-            yesButton.addStyleName(style.button());
-            final com.github.gwtbootstrap.client.ui.Button noButton = new Button(DataSetExplorerConstants.INSTANCE.no());
-            noButton.setType(ButtonType.DANGER);
-            noButton.addStyleName(style.button());
-            
-            yesButton.addClickHandler(new ClickHandler() {
-                @Override
-                public void onClick(ClickEvent event) {
-                    fireEvent(new DeleteDataSetEvent(dataSetDef.getUUID()));
-                }
-            });
-            
-            noButton.addClickHandler(new ClickHandler() {
-                @Override
-                public void onClick(ClickEvent event) {
-                    slidingPanel.setWidget(buttonsPanel);
-                }
-            });
+                        // Edit, cancel and confirmation buttons.
+                        final SlidingPanel slidingPanel = new SlidingPanel();
+                        slidingPanel.addStyleName(style.slidingPanel());
+                        final FlowPanel buttonsPanel = new FlowPanel();
+                        final FlowPanel deleteConfirmPanel = new FlowPanel();
 
-            deleteConfirmPanel.addStyleName(style.buttonsPanel());
-            deleteConfirmPanel.add(deleteText);
-            deleteConfirmPanel.add(noButton);
-            deleteConfirmPanel.add(yesButton);
-            slidingPanel.add(deleteConfirmPanel);
+                        final com.github.gwtbootstrap.client.ui.Button editButton = new Button(DataSetExplorerConstants.INSTANCE.edit());
+                        final com.github.gwtbootstrap.client.ui.Button deleteButton = new Button(DataSetExplorerConstants.INSTANCE.delete());
+                        final boolean isPublic = dataSetDef.isPublic();
+                        editButton.setEnabled(isPublic);
+                        editButton.addStyleName(style.button());
+                        deleteButton.setEnabled(isPublic);
+                        deleteButton.setType(ButtonType.DANGER);
+                        deleteButton.addStyleName(style.button());
+
+                        editButton.addClickHandler(new ClickHandler() {
+                            @Override
+                            public void onClick(ClickEvent event) {
+                                fireEvent(new EditDataSetEvent(dataSetDef.getUUID()));
+                            }
+                        });
+
+                        deleteButton.addClickHandler(new ClickHandler() {
+                            @Override
+                            public void onClick(ClickEvent event) {
+                                slidingPanel.setWidget(deleteConfirmPanel);
+                            }
+                        });
+
+                        buttonsPanel.addStyleName(style.buttonsPanel());
+                        buttonsPanel.add(editButton);
+                        buttonsPanel.add(deleteButton);
+                        slidingPanel.add(buttonsPanel);
+
+                        final HTML deleteText = new HTML(DataSetExplorerConstants.INSTANCE.areYouSure());
+                        deleteText.addStyleName(style.deleteText());
+                        final com.github.gwtbootstrap.client.ui.Button yesButton = new Button(DataSetExplorerConstants.INSTANCE.yes());
+                        yesButton.setType(ButtonType.SUCCESS);
+                        yesButton.addStyleName(style.button());
+                        final com.github.gwtbootstrap.client.ui.Button noButton = new Button(DataSetExplorerConstants.INSTANCE.no());
+                        noButton.setType(ButtonType.DANGER);
+                        noButton.addStyleName(style.button());
+
+                        yesButton.addClickHandler(new ClickHandler() {
+                            @Override
+                            public void onClick(ClickEvent event) {
+                                fireEvent(new DeleteDataSetEvent(dataSetDef.getUUID()));
+                            }
+                        });
+
+                        noButton.addClickHandler(new ClickHandler() {
+                            @Override
+                            public void onClick(ClickEvent event) {
+                                slidingPanel.setWidget(buttonsPanel);
+                            }
+                        });
+
+                        deleteConfirmPanel.addStyleName(style.buttonsPanel());
+                        deleteConfirmPanel.add(deleteText);
+                        deleteConfirmPanel.add(noButton);
+                        deleteConfirmPanel.add(yesButton);
+                        slidingPanel.add(deleteConfirmPanel);
+
+                        slidingPanel.setWidget(buttonsPanel);
+                        parent.add(slidingPanel);
+                    }
+    
+                    @Override
+                    public void notFound() {
+    
+                    }
+    
+                    @Override
+                    public boolean onError(DataSetClientServiceError error) {
+                        showError(error);
+                        return false;
+                    }
+                });
+            } catch (Exception e) {
+                showError(e);
+            }
+
             
-            slidingPanel.setWidget(buttonsPanel);
-            parent.add(slidingPanel);
         }
     }
 
+    private void showError(final Exception e) {
+        // TODO
+        GWT.log("DataSetExplorerView#showError(final Exception e)");
+    }
+    
+    private void showError(final DataSetClientServiceError error) {
+        // TODO
+        GWT.log("DataSetExplorerView#showError(final DataSetClientServiceError error)");
+    }
+    
+    // TODO: Improve
     private String getEstimatedRowsFormattedValue(final int rows) {
         if (rows / 1000000 > 0) {
             return rowsFormat.format(rows / 1000000) + "M";

@@ -107,6 +107,7 @@ public enum DateIntervalType {
     }
 
     public static DateIntervalType getByName(String interval) {
+        if (interval == null) return null;
         try {
             return valueOf(interval.toUpperCase());
         } catch (Exception e) {
