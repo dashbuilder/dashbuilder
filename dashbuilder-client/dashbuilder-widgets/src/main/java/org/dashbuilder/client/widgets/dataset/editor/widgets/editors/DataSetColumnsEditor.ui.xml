@@ -8,9 +8,13 @@
 
   <ui:style type="org.dashbuilder.client.widgets.dataset.editor.widgets.editors.DataSetColumnsEditor.DataSetColumnsEditorStyle">
     .mainPanel {
+      
     }
     .left {
       float: left;
+    }
+    .clear {
+      clear: both;
     }
   </ui:style>
   

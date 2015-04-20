@@ -43,7 +43,7 @@ public class DataSetEditorScreenPresenter {
     
     @OnStartup
     public void onStartup( final PlaceRequest placeRequest) {
-        editorWidget.setWidth("900px");
+        editorWidget.setWidth("1200px");
     }
 
     @OnClose
@@ -66,15 +66,7 @@ public class DataSetEditorScreenPresenter {
     }
     
     public void onEditDataSet(@Observes EditDataSetEvent event) {
-        try {
-            editorWidget.editDataSet(event.getUuid());
-        } catch (Exception e) {
-            error("DataSetEditorScreenPresenter#onEditDataSet - Cannot edit data set with uuid [" + event.getUuid() + "].", e);
-        }
+        editorWidget.editDataSet(event.getUuid());
     }
 
-    // TODO: Display message to user.
-    private void error(String message, Exception e) {
-        GWT.log(message + "\n Exception: " + e.getMessage());
-    }
 }

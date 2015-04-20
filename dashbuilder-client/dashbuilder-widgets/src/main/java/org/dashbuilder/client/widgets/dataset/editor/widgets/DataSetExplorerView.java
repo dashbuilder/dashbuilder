@@ -324,7 +324,7 @@ public class DataSetExplorerView extends Composite implements DataSetExplorer.Vi
                     currentSizeText.addStyleName(style.statusTextTitle());
                     
                     // Add estimation values.
-                    final HTML estimatedSizeText = new HTML(humanReadableByteCount(estimatedSize, false) + WHITESPACE + "(" + DataSetExplorerConstants.INSTANCE.bytes() + ")");
+                    final HTML estimatedSizeText = new HTML(humanReadableByteCount(estimatedSize, true));
                     estimatedSizeText.addStyleName(style.statusText());
                     final HTML estimatedRowsText = new HTML(humanReadableRowCount(rowCount) + WHITESPACE + "(" + DataSetExplorerConstants.INSTANCE.rows() + ")");
                     estimatedRowsText.addStyleName(style.statusText());

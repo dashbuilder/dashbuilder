@@ -167,7 +167,7 @@ public class DataSetEditor implements IsWidget {
         return this;
     }
     
-    public DataSetEditor editDataSet(final String uuid) throws Exception{
+    public DataSetEditor editDataSet(final String uuid) {
 
         if (uuid == null || uuid.trim().length() == 0) {
             showError("DataSetEditor#editDataSet - No UUID specified.");
@@ -176,38 +176,44 @@ public class DataSetEditor implements IsWidget {
         
         clear();
 
-        DataSetClientServices.get().fetchMetadata(uuid, new DataSetMetadataCallback() {
-            @Override
-            public void callback(DataSetMetadata metatada)
-            {
-                final DataSetDef def = metatada.getDefinition();
-                final String uuid = def.getUUID();
-                
-                // Clone the definition in order to edit the cloned copy.
-                DataSetEditor.this.dataSetDef = def.clone();
-                final String editionUUID = getEditionUUID(def);
-                DataSetEditor.this.dataSetDef.setUUID(editionUUID);
-                DataSetEditor.this.dataSetDef.setPublic(false);
-
-                edit = def;
-                view.setEditMode(true);
-                
-                // Update the displayer & Restart workflow.
-                updateTableDisplayer();
-
-            }
-
-            @Override
-            public void notFound() {
-                showError("Data set definition with uuid [" + uuid + "] not found.");
-            }
-
-            @Override
-            public boolean onError(DataSetClientServiceError error) {
-                showError(error);
-                return false;
-            }
-        });
+        try {
+            DataSetClientServices.get().fetchMetadata(uuid, new DataSetMetadataCallback() {
+                @Override
+                public void callback(DataSetMetadata metatada)
+                {
+                    final DataSetDef def = metatada.getDefinition();
+                    final String uuid = def.getUUID();
+                    
+                    // Clone the definition in order to edit the cloned copy.
+                    DataSetEditor.this.dataSetDef = def.clone();
+                    final String editionUUID = getEditionUUID(def);
+                    DataSetEditor.this.dataSetDef.setUUID(editionUUID);
+                    DataSetEditor.this.dataSetDef.setPublic(false);
+    
+                    edit = def;
+                    view.setEditMode(true);
+                    
+                    // Update the displayer & Restart workflow.
+                    showBasicAttributesEditionView();
+                    showProviderSpecificAttributesEditionView();
+                    updateTableDisplayer();
+    
+                }
+    
+                @Override
+                public void notFound() {
+                    showError("Data set definition with uuid [" + uuid + "] not found.");
+                }
+    
+                @Override
+                public boolean onError(DataSetClientServiceError error) {
+                    showError(error);
+                    return false;
+                }
+            });
+        } catch (Exception e) {
+            showError(e.getMessage());
+        }
         return this;
     }
     
@@ -242,8 +248,8 @@ public class DataSetEditor implements IsWidget {
                     .renderer(DefaultRenderer.UUID)
                     .titleVisible(false)
                     .tablePageSize(10)
-                    .tableOrderEnabled(false)
-                    .filterOn(false, false, false);
+                    .tableOrderEnabled(true)
+                    .filterOn(true, false, false);
 
             List<DataColumn> columns =  dataSetDef.getDataSet().getColumns();
             if (columns != null && !columns.isEmpty()) {
@@ -261,8 +267,6 @@ public class DataSetEditor implements IsWidget {
             
             // Show basic views and the loading screen while performing the backend service call.
             edit();
-            showBasicAttributesEditionView();
-            showProviderSpecificAttributesEditionView();
             view.showLoadingView();
         }
     }

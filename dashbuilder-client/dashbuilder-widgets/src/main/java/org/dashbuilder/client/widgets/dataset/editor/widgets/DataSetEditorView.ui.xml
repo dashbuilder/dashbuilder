@@ -17,34 +17,48 @@
       font-size: 12pt;
       margin: 10px;
     }
+
     .titlePanel {
       vertical-align: middle;
       margin-bottom: 30px;
     }
+
     .title {
     }
+
     .progressBar {
       width: 100%;
     }
+
     .disabledBar {
-      filter: alpha(opacity=5);opacity: 0.2;
+      filter: alpha(opacity=5);
+      opacity: 0.2;
     }
+
     .initialViewPanel {
       margin: 50px;
     }
+
     .editorPanel {
       margin: 15px;
       overflow-y: auto;
     }
+
     .tabPanel {
-        margin: 0px;      
+      margin: 0px;
+    }
+    .columnsEditor {
+      overflow: auto;
+      height: 600px;
     }
     .buttonsPanel {
       margin-top: 50px;
     }
+
     .dataSetCountLabel {
       margin-bottom: 20px;
     }
+
     .well {
       background-color: white;
       border: 1px solid #E3E3E3;
@@ -54,61 +68,112 @@
       min-height: 20px;
       padding: 19px;
     }
+
     .well_ghostwhite {
       background-color: ghostwhite;
     }
+
     .newDataSet {
       float: left;
       margin-left: 5px;
     }
+
     .nextStep {
       margin: 5px;
     }
+
     .testButtonPanel {
       margin: 15px;
     }
+
     .testButton {
-      
+
     }
+
     .loadingScreenPanel {
       font-size: medium;
       font-weight: bold;
     }
+
     .providerSetupButtonPanel {
       float: left;
-      margin-bottom: 10px;
+      margin-bottom: 20px;
+      margin-left: 10px;
+      position: absolute;
     }
+
     .providerSetupButton {
       float: left;
     }
+
+    .columnsFilterDisclosurePanel {
+      float: left;
+      margin-right: 20px;
+    }
+    .columnsFilterDisclosurePanelHeader {
+      width: 15px;
+      background-color: ghostwhite;
+      position: absolute;
+      border-radius: 0px 4px 4px 0px;
+      border: 1px solid lavender;
+      border-left-width: 0px;
+      cursor: hand;
+      top: 41px;
+      height: 558px;
+      left: 0px;
+    }
+    .columnsFilterDisclosurePanelHeaderOpen {
+      left: 356px;
+    }
+    .columnsFilterDisclosurePanelButton {
+      margin-left: 4px;
+      margin-top: 5px;
+      filter: alpha(opacity=5);
+      opacity: 0.5;
+    }
+    @external .gwt-DisclosurePanel .content;
+    .gwt-DisclosurePanel .content {
+      border: 0px;
+    }
     .columnsFilterPanel {
       float: left;
-      width: 300px;
+      width: 350px;
       overflow: hidden;
+      height: 600px;
     }
+
     .specificProviderAttributesPanel {
-        margin-top: 0px;      
+      margin-top: 0px;
     }
+
     .previewTablePanel {
       margin-left: 15px;
+      overflow: hidden;
+      height: 600px;
+    }
+    .previewTable {
       overflow: auto;
-      padding: 50px;
+      height: 600px;
     }
     .slidingPanel {
       width: 100%;
-      height: 400px;
+      height: 650px;
       overflow: hidden;
     }
+
     .errorPanel {
       margin: 25px;
     }
+
     .errorRow {
-        margin-bottom: 10px;      
+      margin-bottom: 10px;
     }
+
     .errorLabel {
       font-weight: bold;
-      
+
     }
+
     .clear {
       clear: both;
     }
@@ -247,43 +312,52 @@
 
           </g:FlowPanel>
 
-          <g:FlowPanel ui:field="filterColumnsPreviewTablePanel" addStyleNames="{style.editorPanel} ">
-
-            <!-- Back to specific provider attributes edition. -->
-            <g:FlowPanel ui:field="backToSpecificAttrsButtonPanel" addStyleNames="{style.providerSetupButtonPanel} ">
-
-              <b:Popover showDelay="1000" text="{i18n.providerSetup_description}" heading="{i18n.providerSetup}">
-                <b:Button ui:field="backToSpecificAttrsEditionButton" title="{i18n.providerSetup}"
-                          text="{i18n.providerSetup}" size="SMALL" icon="CHEVRON_LEFT"
-                          addStyleNames="{style.providerSetupButton} "/>
-              </b:Popover>
-
-            </g:FlowPanel>
-
-            <g:FlowPanel addStyleNames="{style.clear} "/>
+          <g:FlowPanel ui:field="filterColumnsPreviewTablePanel" >
 
             <!-- Columns and filter panel . -->
-            <g:FlowPanel ui:field="filterAndColumnsEditionViewPanel" addStyleNames="{style.columnsFilterPanel} ">
-
-              <b:TabPanel tabPosition="above" ui:field="filterAndColumnsTabPanel" addStyleNames="{style.tabPanel} ">
-
-                <!-- Columns. -->
-                <b:Tab heading="{i18n.dataColumns}" active="true" ui:field="columnsTab" >
-                  <dash-dset-editors:DataSetColumnsEditor editMode="true" ui:field="columnsEditor"/>
-                </b:Tab>
-
-                <!-- Filter. -->
-                <b:Tab heading="{i18n.filter}" active="false" ui:field="filterTab" >
-
-                </b:Tab>
-
-              </b:TabPanel>
-
+            <g:FlowPanel addStyleNames="{style.columnsFilterDisclosurePanel} ">
+              <g:DisclosurePanel ui:field="filterAndColumnsEditionDisclosurePanel" open="true">
+                <g:customHeader>
+                  <g:FlowPanel ui:field="columnsFilterDisclosurePanelHeader" addStyleNames="{style.columnsFilterDisclosurePanelHeader} {style.columnsFilterDisclosurePanelHeaderOpen} ">
+                    <b:Icon type="STEP_BACKWARD" ui:field="columnsFilterDisclosurePanelButton" title="{i18n.hideColumnsAndFilter}"  addStyleNames="{style.columnsFilterDisclosurePanelButton} "/>
+                  </g:FlowPanel>
+                </g:customHeader>
+                <g:FlowPanel ui:field="filterAndColumnsEditionViewPanel" addStyleNames="{style.columnsFilterPanel} ">
+    
+                  <b:TabPanel tabPosition="above" ui:field="filterAndColumnsTabPanel" addStyleNames="{style.tabPanel} ">
+    
+                    <!-- Columns. -->
+                    <b:Tab heading="{i18n.dataColumns}" active="true" ui:field="columnsTab" >
+                      <dash-dset-editors:DataSetColumnsEditor editMode="true" ui:field="columnsEditor" addStyleNames="{style.columnsEditor}"/>
+                    </b:Tab>
+    
+                    <!-- Filter. -->
+                    <b:Tab heading="{i18n.filter}" active="false" ui:field="filterTab" >
+    
+                    </b:Tab>
+    
+                  </b:TabPanel>
+    
+                </g:FlowPanel>
+              </g:DisclosurePanel>
             </g:FlowPanel>
 
-            <!-- Preview table. -->
             <g:FlowPanel ui:field="previewTableEditionViewPanel" addStyleNames="{style.previewTablePanel} ">
-              <dash-dset-editors:DataSetPreviewEditor editMode="true" ui:field="previewTableEditor"/>
+
+              <!-- Back to specific provider attributes edition. -->
+              <g:FlowPanel ui:field="backToSpecificAttrsButtonPanel" addStyleNames="{style.providerSetupButtonPanel} ">
+
+                <b:Popover showDelay="1000" text="{i18n.providerSetup_description}" heading="{i18n.providerSetup}">
+                  <b:Button ui:field="backToSpecificAttrsEditionButton" title="{i18n.providerSetup}"
+                            text="{i18n.providerSetup}" size="SMALL" icon="CHEVRON_LEFT"
+                            addStyleNames="{style.providerSetupButton} "/>
+                </b:Popover>
+
+              </g:FlowPanel>
+
+              <!-- Preview table . -->
+              <dash-dset-editors:DataSetPreviewEditor editMode="true" ui:field="previewTableEditor" addStyleNames="{style.previewTable}"/>
+
             </g:FlowPanel>
 
           </g:FlowPanel>

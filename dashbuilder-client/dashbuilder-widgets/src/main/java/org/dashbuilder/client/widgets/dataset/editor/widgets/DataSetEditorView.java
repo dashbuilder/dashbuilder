@@ -18,11 +18,16 @@ package org.dashbuilder.client.widgets.dataset.editor.widgets;
 import com.github.gwtbootstrap.client.ui.*;
 import com.github.gwtbootstrap.client.ui.Button;
 import com.github.gwtbootstrap.client.ui.Label;
+import com.github.gwtbootstrap.client.ui.constants.IconType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Node;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.logical.shared.CloseEvent;
+import com.google.gwt.event.logical.shared.CloseHandler;
+import com.google.gwt.event.logical.shared.OpenEvent;
+import com.google.gwt.event.logical.shared.OpenHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -68,6 +73,7 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
         String well_ghostwhite();
         String disabledBar();
         String slidingPanel();
+        String columnsFilterDisclosurePanelHeaderOpen();
     }
 
     @UiField
@@ -187,6 +193,15 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
     DataSetPreviewEditor previewTableEditor;
 
     @UiField
+    DisclosurePanel filterAndColumnsEditionDisclosurePanel;
+    
+    @UiField
+    FlowPanel columnsFilterDisclosurePanelHeader;
+    
+    @UiField
+    Icon columnsFilterDisclosurePanelButton;
+    
+    @UiField
     FlowPanel filterAndColumnsEditionViewPanel;
 
     @UiField
@@ -263,6 +278,10 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
         slidingPanel.add(filterColumnsPreviewTablePanel);
         dataConfigurationTab.clear();
         dataConfigurationTab.add(slidingPanel);
+
+        filterAndColumnsEditionDisclosurePanel.addOpenHandler(openColumnsFilterPanelHandler);
+
+        filterAndColumnsEditionDisclosurePanel.addCloseHandler(closeColumnsFilterPanelHandler);
         
         // Configure back to provider settings button's click handler.
         backToSpecificAttrsEditionButton.addClickHandler(backToSpecificAttrsEditionButtonHandler);
@@ -275,6 +294,26 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
         // Show home view by default.
         showEmptyView();
     }
+    
+    private final OpenHandler<DisclosurePanel> openColumnsFilterPanelHandler = new OpenHandler<DisclosurePanel>() {
+        @Override
+        public void onOpen(OpenEvent<DisclosurePanel> event) {
+            columnsFilterDisclosurePanelHeader.setTitle(DataSetEditorConstants.INSTANCE.hideColumnsAndFilter());
+            columnsFilterDisclosurePanelHeader.addStyleName(style.columnsFilterDisclosurePanelHeaderOpen());
+            columnsFilterDisclosurePanelButton.setType(IconType.STEP_BACKWARD);
+            columnsFilterDisclosurePanelButton.setTitle(DataSetEditorConstants.INSTANCE.hideColumnsAndFilter());
+        }
+    };
+
+    private final CloseHandler<DisclosurePanel> closeColumnsFilterPanelHandler = new CloseHandler<DisclosurePanel>() {
+        @Override
+        public void onClose(CloseEvent<DisclosurePanel> event) {
+            columnsFilterDisclosurePanelHeader.setTitle(DataSetEditorConstants.INSTANCE.showColumnsAndFilter());
+            columnsFilterDisclosurePanelHeader.removeStyleName(style.columnsFilterDisclosurePanelHeaderOpen());
+            columnsFilterDisclosurePanelButton.setType(IconType.STEP_FORWARD);
+            columnsFilterDisclosurePanelButton.setTitle(DataSetEditorConstants.INSTANCE.showColumnsAndFilter());
+        }
+    };
     
     private final ClickHandler errorPanelButtonHandler = new ClickHandler() {
         @Override

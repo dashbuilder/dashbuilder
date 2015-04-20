@@ -55,6 +55,7 @@ public class DataSetColumnsEditor extends AbstractEditor {
     interface DataSetColumnsEditorStyle extends CssResource {
         String mainPanel();
         String left();
+        String clear();
     }
 
     @UiField
@@ -135,6 +136,9 @@ public class DataSetColumnsEditor extends AbstractEditor {
                 final boolean canRemove = dataSet != null && dataSet.getColumns().size() > 1;
                 Panel columnPanel = createColumn(column, columnEditor, workflow, enabled, canRemove);
                 columnsPanel.add(columnPanel);
+                final FlowPanel separator = new FlowPanel();
+                separator.addStyleName(style.clear());
+                columnsPanel.add(separator);
             }
         }
         
