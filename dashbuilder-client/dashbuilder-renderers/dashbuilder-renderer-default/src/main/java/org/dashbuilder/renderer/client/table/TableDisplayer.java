@@ -387,7 +387,8 @@ public class TableDisplayer extends AbstractDisplayer {
 
         @Override
         public void onBrowserEvent( Context context, Element parent, String value, NativeEvent event, ValueUpdater<String> valueUpdater ) {
-            onCellSelected(columnId, selectable, context.getIndex());
+            int rowIndexInPage = context.getIndex() - table.getPageStart();
+            onCellSelected(columnId, selectable, rowIndexInPage);
         }
     }
 
@@ -460,11 +461,8 @@ public class TableDisplayer extends AbstractDisplayer {
                             public void notFound() {
                                 displayMessage(CommonConstants.INSTANCE.error() + CommonConstants.INSTANCE.error_dataset_notfound());
                             }
-
-                            @Override
                             public boolean onError(DataSetClientServiceError error) {
-                                // TODO
-                                GWT.log("Error occurred in TableDisplayer.TableProvider#onRangeChanged!");                                
+                                displayMessage(CommonConstants.INSTANCE.error() + error.getThrowable().getMessage());
                                 return false;
                             }
                         }
