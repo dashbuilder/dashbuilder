@@ -122,7 +122,9 @@ public class DataSetLookupEditorView extends Composite
 
     @Override
     public void addDataSetDef(DataSetDef def) {
-        dataSetListBox.addItem(def.getUUID() + " (" + def.getProvider() + ")", def.getUUID());
+        String name = def.getName();
+        if (StringUtils.isBlank(name)) name = def.getUUID();
+        dataSetListBox.addItem(name, def.getUUID());
     }
 
     @Override

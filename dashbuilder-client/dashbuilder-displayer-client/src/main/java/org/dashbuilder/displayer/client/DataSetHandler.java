@@ -43,7 +43,7 @@ public interface DataSetHandler {
      * related to the group operation. For instance, for a data set grouped
      * by month, will return an interval containing the min/max dates of such month.</p>
      *
-     * <p>For non-grouped data set or grouped by label data set will
+     * <p>For non-grouped or grouped by label data sets, will
      * return only an interval with the value of the row/column selected.</p>
      *
      * The interval information is useful for filtering purposes as the data provider needs
