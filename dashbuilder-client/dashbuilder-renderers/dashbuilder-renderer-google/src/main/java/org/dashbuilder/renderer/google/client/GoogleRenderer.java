@@ -25,6 +25,7 @@ import javax.inject.Named;
 import com.googlecode.gwt.charts.client.ChartLoader;
 import com.googlecode.gwt.charts.client.ChartPackage;
 import org.dashbuilder.displayer.DisplayerSettings;
+import org.dashbuilder.displayer.DisplayerSubType;
 import org.dashbuilder.displayer.DisplayerType;
 import org.dashbuilder.displayer.client.AbstractRendererLibrary;
 import org.dashbuilder.displayer.client.Displayer;
@@ -57,22 +58,22 @@ public class GoogleRenderer extends AbstractRendererLibrary {
     }
 
     @Override
-    public DisplayerType.DisplayerSubType[] getSupportedDisplayerSubtypes(DisplayerType displayerType) {
+    public DisplayerSubType[] getSupportedSubtypes(DisplayerType displayerType) {
         switch (displayerType) {
-            case BARCHART: return new DisplayerType.DisplayerSubType[]{ DisplayerType.DisplayerSubType.BAR,
-                                                                        DisplayerType.DisplayerSubType.STACKED/*,
-                                                                        DisplayerType.DisplayerSubType.HISTOGRAM*/};
-            case PIECHART: return new DisplayerType.DisplayerSubType[]{ DisplayerType.DisplayerSubType.PIE,
-                                                                        DisplayerType.DisplayerSubType.PIE_3D,
-                                                                        DisplayerType.DisplayerSubType.DONUT};
-            case AREACHART: return new DisplayerType.DisplayerSubType[]{DisplayerType.DisplayerSubType.AREA,
-                                                                        DisplayerType.DisplayerSubType.STACKED/*,
-                                                                        DisplayerType.DisplayerSubType.STEPPED*/};
-            case LINECHART: return new DisplayerType.DisplayerSubType[]{DisplayerType.DisplayerSubType.LINE,
-                                                                        DisplayerType.DisplayerSubType.SMOOTH};
-            case MAP: return new DisplayerType.DisplayerSubType[]{  DisplayerType.DisplayerSubType.MAP_REGIONS,
-                                                                    DisplayerType.DisplayerSubType.MAP_MARKERS};
-            default: return new DisplayerType.DisplayerSubType[]{};
+            case BARCHART: return new DisplayerSubType[]{   DisplayerSubType.BAR,
+                                                            DisplayerSubType.STACKED/*,
+                                                            DisplayerSubType.HISTOGRAM*/};
+            case PIECHART: return new DisplayerSubType[]{   DisplayerSubType.PIE,
+                                                            DisplayerSubType.PIE_3D,
+                                                            DisplayerSubType.DONUT};
+            case AREACHART: return new DisplayerSubType[]{  DisplayerSubType.AREA,
+                                                            DisplayerSubType.STACKED/*,
+                                                            DisplayerSubType.STEPPED*/};
+            case LINECHART: return new DisplayerSubType[]{  DisplayerSubType.LINE,
+                                                            DisplayerSubType.SMOOTH};
+            case MAP: return new DisplayerSubType[]{        DisplayerSubType.MAP_REGIONS,
+                                                            DisplayerSubType.MAP_MARKERS};
+            default: return new DisplayerSubType[]{};
         }
     }
 

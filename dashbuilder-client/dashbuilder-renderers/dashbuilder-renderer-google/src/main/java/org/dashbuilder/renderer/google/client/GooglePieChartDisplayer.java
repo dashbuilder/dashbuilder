@@ -29,6 +29,7 @@ import org.dashbuilder.dataset.DataSetLookupConstraints;
 import org.dashbuilder.displayer.DisplayerAttributeDef;
 import org.dashbuilder.displayer.DisplayerAttributeGroupDef;
 import org.dashbuilder.displayer.DisplayerConstraints;
+import org.dashbuilder.displayer.DisplayerSubType;
 import org.dashbuilder.displayer.DisplayerType;
 import org.dashbuilder.renderer.google.client.resources.i18n.GoogleDisplayerConstants;
 
@@ -113,7 +114,7 @@ public class GooglePieChartDisplayer extends GoogleCategoriesDisplayer {
     }
 
     private PieChartOptionsWrapper createOptions() {
-        DisplayerType.DisplayerSubType displayerSubType = displayerSettings.getSubtype();
+        DisplayerSubType displayerSubType = displayerSettings.getSubtype();
         PieChartOptionsWrapper options = PieChartOptionsWrapper.newInstance();
         options.setWidth(displayerSettings.getChartWidth());
         options.setHeight(displayerSettings.getChartHeight());
@@ -121,8 +122,8 @@ public class GooglePieChartDisplayer extends GoogleCategoriesDisplayer {
         options.setLegend(createChartLegend());
         options.setColors(createColorArray(googleTable));
         options.setChartArea(createChartArea());
-        options.setIs3D(DisplayerType.DisplayerSubType.PIE_3D.equals(displayerSubType));
-        options.setHole(DisplayerType.DisplayerSubType.DONUT.equals(displayerSubType) ? 0.4d : 0);
+        options.setIs3D(DisplayerSubType.PIE_3D.equals(displayerSubType));
+        options.setHole(DisplayerSubType.DONUT.equals(displayerSubType) ? 0.4d : 0);
         return options;
     }
 }

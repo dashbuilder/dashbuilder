@@ -26,7 +26,7 @@ public interface ChartSettingsBuilder<T extends ChartSettingsBuilder> extends Di
      * @param displayerSubType The displayer's subtype.
      * @return The DisplayerSettingsBuilder instance that is being used to configure a DisplayerSettings.
      */
-    T subtype(DisplayerType.DisplayerSubType displayerSubType);
+    T subtype(DisplayerSubType displayerSubType);
 
     /**
      * Sets the width of the chart.

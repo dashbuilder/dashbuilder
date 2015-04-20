@@ -41,6 +41,7 @@ import org.dashbuilder.displayer.DisplayerAttributeDef;
 import org.dashbuilder.displayer.DisplayerAttributeGroupDef;
 import org.dashbuilder.displayer.DisplayerConstraints;
 import org.dashbuilder.displayer.DisplayerSettings;
+import org.dashbuilder.displayer.DisplayerSubType;
 import org.dashbuilder.displayer.DisplayerType;
 import org.dashbuilder.displayer.client.Displayer;
 import org.dashbuilder.displayer.client.DisplayerHelper;
@@ -187,7 +188,7 @@ public class DisplayerEditor implements IsWidget,
     }
 
     @Override
-    public void displayerTypeChanged(DisplayerType type, DisplayerType.DisplayerSubType displayerSubType) {
+    public void displayerTypeChanged(DisplayerType type, DisplayerSubType displayerSubType) {
 
         // Create new settings for the selected type
         DisplayerSettings oldSettings = displayerSettings;

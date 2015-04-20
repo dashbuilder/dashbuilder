@@ -83,32 +83,4 @@ public enum DisplayerType {
             return null;
         }
     }
-
-    public DisplayerSubType[] getSubTypes() {
-        return subtypes;
-    }
-
-    public enum DisplayerSubType {
-        LINE,
-        SMOOTH,
-        AREA,
-        STACKED,
-//        STEPPED,
-        BAR,
-        COLUMN,
-//        HISTOGRAM,
-        PIE,
-        PIE_3D,
-        DONUT,
-        MAP_REGIONS,
-        MAP_MARKERS;
-
-        public static DisplayerSubType getByName(String str) {
-            try {
-                return valueOf(str.toUpperCase());
-            } catch (Exception e) {
-                return null;
-            }
-        }
-    }
 }

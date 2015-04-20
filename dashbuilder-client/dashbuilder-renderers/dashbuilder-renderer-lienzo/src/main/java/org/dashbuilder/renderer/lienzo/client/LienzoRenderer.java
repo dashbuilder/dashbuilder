@@ -16,6 +16,7 @@
 package org.dashbuilder.renderer.lienzo.client;
 
 import org.dashbuilder.displayer.DisplayerSettings;
+import org.dashbuilder.displayer.DisplayerSubType;
 import org.dashbuilder.displayer.DisplayerType;
 import org.dashbuilder.displayer.client.AbstractRendererLibrary;
 import org.dashbuilder.displayer.client.Displayer;
@@ -42,7 +43,7 @@ public class LienzoRenderer extends AbstractRendererLibrary {
 
     // TODO complete
     @Override
-    public DisplayerType.DisplayerSubType[] getSupportedDisplayerSubtypes(DisplayerType displayerType) {
+    public DisplayerSubType[] getSupportedSubtypes(DisplayerType displayerType) {
         return null;
     }
 

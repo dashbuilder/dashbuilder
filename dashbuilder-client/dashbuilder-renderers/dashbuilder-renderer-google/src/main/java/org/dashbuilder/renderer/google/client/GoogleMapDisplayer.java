@@ -33,6 +33,7 @@ import org.dashbuilder.dataset.DataSetLookupConstraints;
 import org.dashbuilder.displayer.DisplayerAttributeDef;
 import org.dashbuilder.displayer.DisplayerAttributeGroupDef;
 import org.dashbuilder.displayer.DisplayerConstraints;
+import org.dashbuilder.displayer.DisplayerSubType;
 import org.dashbuilder.displayer.DisplayerType;
 import org.dashbuilder.renderer.google.client.resources.i18n.GoogleDisplayerConstants;
 
@@ -121,7 +122,7 @@ public class GoogleMapDisplayer extends GoogleChartDisplayer {
         GeoChartOptions options = GeoChartOptions.create();
         options.setWidth(displayerSettings.getChartWidth());
         options.setHeight(displayerSettings.getChartHeight());
-        options.setDisplayMode(DisplayerType.DisplayerSubType.MAP_REGIONS.equals(displayerSettings.getSubtype()) ? DisplayMode.REGIONS : DisplayMode.MARKERS);
+        options.setDisplayMode(DisplayerSubType.MAP_REGIONS.equals(displayerSettings.getSubtype()) ? DisplayMode.REGIONS : DisplayMode.MARKERS);
         // TODO legend?
         return options;
     }

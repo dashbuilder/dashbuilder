@@ -33,6 +33,7 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import org.dashbuilder.displayer.DisplayerSubType;
 import org.dashbuilder.displayer.DisplayerType;
 import org.dashbuilder.displayer.client.RendererLibLocator;
 import org.dashbuilder.displayer.client.RendererLibrary;
@@ -42,7 +43,7 @@ import org.dashbuilder.displayer.client.resources.i18n.DisplayerTypeLiterals;
 public class DisplayerTypeSelector extends Composite {
 
     public interface Listener {
-        void displayerTypeChanged(DisplayerType type, DisplayerType.DisplayerSubType subtype);
+        void displayerTypeChanged(DisplayerType type, DisplayerSubType subtype);
     }
 
     interface ViewBinder extends
@@ -53,7 +54,7 @@ public class DisplayerTypeSelector extends Composite {
 
     Listener listener = null;
     DisplayerType selectedType = DisplayerType.BARCHART;
-    DisplayerType.DisplayerSubType selectedSubType = null;
+    DisplayerSubType selectedSubType = null;
     List<DisplayerTab> tabList = new ArrayList<DisplayerTab>();
 
     FlexTable subtypes = new FlexTable();
@@ -105,7 +106,7 @@ public class DisplayerTypeSelector extends Composite {
         }
     }
 // TODO ensure a subtype is always set to the displayersettings (select default if none was indicated in the settings, and select first one of the list in the selector
-    public void select(String renderer, final DisplayerType type, final DisplayerType.DisplayerSubType displayerSubType) {
+    public void select(String renderer, final DisplayerType type, final DisplayerSubType displayerSubType) {
         selectedType = type;
         selectedSubType = displayerSubType;
         subtypes.removeAllRows();
@@ -113,17 +114,19 @@ public class DisplayerTypeSelector extends Composite {
         if (renderer == null || renderer.length() == 0) renderer = rendererLibLocator.getDefaultRenderer(type);
         RendererLibrary rendererLibrary = rendererLibLocator.lookupRenderer(renderer);
         if (rendererLibrary != null) {
-            DisplayerType.DisplayerSubType[] supportedSubTypes = rendererLibrary.getSupportedDisplayerSubtypes(type);
-            for (int i = 0; i < supportedSubTypes.length; i++) {
-                final DisplayerType.DisplayerSubType subtype = supportedSubTypes[i];
-                final Anchor subtypeLink = new Anchor(DisplayerTypeLiterals.INSTANCE.getString(DisplayerTypeLiterals.DST_PREFIX + subtype.toString()));
-                subtypeLink.addClickHandler(new ClickHandler() {
-                    @Override
-                    public void onClick(ClickEvent event) {
-                        listener.displayerTypeChanged(type, subtype);
-                    }
-                } );
-                subtypes.setWidget(i, 0, subtypeLink);
+            DisplayerSubType[] supportedSubTypes = rendererLibrary.getSupportedSubtypes(type);
+            if (supportedSubTypes != null) {
+                for (int i = 0; i < supportedSubTypes.length; i++) {
+                    final DisplayerSubType subtype = supportedSubTypes[ i ];
+                    final Anchor subtypeLink = new Anchor(DisplayerTypeLiterals.INSTANCE.getString(DisplayerTypeLiterals.DST_PREFIX + subtype.toString()));
+                    subtypeLink.addClickHandler(new ClickHandler() {
+                        @Override
+                        public void onClick(ClickEvent event) {
+                            listener.displayerTypeChanged(type, subtype);
+                        }
+                    });
+                    subtypes.setWidget(i, 0, subtypeLink);
+                }
             }
         }
         subtypePanel.add( subtypes );

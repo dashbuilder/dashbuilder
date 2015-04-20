@@ -32,6 +32,7 @@ import org.dashbuilder.dataset.DataSetLookupConstraints;
 import org.dashbuilder.displayer.DisplayerAttributeDef;
 import org.dashbuilder.displayer.DisplayerAttributeGroupDef;
 import org.dashbuilder.displayer.DisplayerConstraints;
+import org.dashbuilder.displayer.DisplayerSubType;
 import org.dashbuilder.displayer.DisplayerType;
 import org.dashbuilder.renderer.google.client.resources.i18n.GoogleDisplayerConstants;
 
@@ -120,7 +121,7 @@ public class GoogleLineChartDisplayer extends GoogleCategoriesDisplayer {
         anim.setDuration(700);
         anim.setEasing(AnimationEasing.IN_AND_OUT);
 
-        boolean isLine = DisplayerType.DisplayerSubType.LINE.equals(displayerSettings.getSubtype());
+        boolean isLine = DisplayerSubType.LINE.equals(displayerSettings.getSubtype());
 
         LineChartOptions options = LineChartOptions.create();
         options.setCurveType(isLine ? CurveType.NONE : CurveType.FUNCTION);
