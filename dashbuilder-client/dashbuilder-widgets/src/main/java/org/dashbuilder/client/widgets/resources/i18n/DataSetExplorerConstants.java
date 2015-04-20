@@ -48,5 +48,12 @@ public interface DataSetExplorerConstants extends ConstantsWithLookup {
     String yes();
     String no();
     String currentStatus();
-    String currentSize();    
+    String currentSize();
+    String notFound();
+    String loading();
+    String error();
+    String type();
+    String message();
+    String cause();
+    String ok();
 }

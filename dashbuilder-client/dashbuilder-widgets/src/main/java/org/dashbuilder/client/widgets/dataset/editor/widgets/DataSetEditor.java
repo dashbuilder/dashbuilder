@@ -414,7 +414,7 @@ public class DataSetEditor implements IsWidget {
     private void showError(final DataSetClientServiceError error) {
         final String type = error.getThrowable() != null ? error.getThrowable().getClass().getName() : null;
         final String message = error.getThrowable() != null ? error.getThrowable().getMessage() : error.getMessage().toString();
-        final String cause = error.getThrowable() != null ? error.getThrowable().getCause().getMessage() : null;
+        final String cause = error.getThrowable() != null && error.getThrowable().getCause() != null ? error.getThrowable().getCause().getMessage() : null;
         showError(type, message, cause);
     }
 

@@ -62,4 +62,7 @@ public interface DataSetClientImages extends ClientBundle {
 
     @Source("images/cancel_icon_small.gif")
     ImageResource cancelIconSmall();
+
+    @Source("images/loading_icon.gif")
+    ImageResource loadingIcon();
 }

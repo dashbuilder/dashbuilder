@@ -15,13 +15,18 @@
  */
 package org.dashbuilder.client.widgets.dataset.editor.widgets;
 
+import com.github.gwtbootstrap.client.ui.event.ShowHandler;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.event.shared.HasHandlers;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.client.widgets.dataset.editor.widgets.events.DeleteDataSetEventHandler;
 import org.dashbuilder.client.widgets.dataset.editor.widgets.events.EditDataSetEventHandler;
+import org.dashbuilder.dataset.DataSetMetadata;
+import org.dashbuilder.dataset.client.DataSetClientServiceError;
 import org.dashbuilder.dataset.client.DataSetClientServices;
+import org.dashbuilder.dataset.client.DataSetMetadataCallback;
 import org.dashbuilder.dataset.def.DataSetDef;
 import org.dashbuilder.dataset.events.DataSetDefModifiedEvent;
 import org.dashbuilder.dataset.events.DataSetDefRegisteredEvent;
@@ -46,21 +51,29 @@ public class DataSetExplorer implements IsWidget {
     public interface View extends IsWidget, HasHandlers {
         void set(Collection<DataSetDef> dataSetDefs);
 
-        boolean add(DataSetDef dataSetDef);
+        boolean add(final DataSetDef dataSetDef);
 
-        boolean remove(DataSetDef dataSetDef);
+        boolean remove(final DataSetDef dataSetDef);
 
-        boolean update(DataSetDef oldDataSetDef, DataSetDef newDataSetDef);
+        boolean update(final DataSetDef oldDataSetDef, DataSetDef newDataSetDef);
 
-        void show();
-
+        void show(final ShowDataSetDefCallback callback);
+        
         void clear();
+        
+        void showError(String type, String message, String cause);
 
-        HandlerRegistration addEditDataSetEventHandler(EditDataSetEventHandler handler);
+        HandlerRegistration addEditDataSetEventHandler(final EditDataSetEventHandler handler);
 
-        HandlerRegistration addDeleteDataSetEventHandler(DeleteDataSetEventHandler handler);
+        HandlerRegistration addDeleteDataSetEventHandler(final DeleteDataSetEventHandler handler);
     }
 
+    public interface ShowDataSetDefCallback {
+
+        void getMetadata(final DataSetDef def, final DataSetMetadataCallback callback);
+
+    }
+    
     View view;
 
     @Inject
@@ -78,7 +91,7 @@ public class DataSetExplorer implements IsWidget {
         DataSetClientServices.get().getRemoteSharedDataSetDefs(new RemoteCallback<List<DataSetDef>>() {
             public void callback(List<DataSetDef> dataSetDefs) {
                 view.set(dataSetDefs);
-                view.show();
+                view.show(showDataSetDefCallback);
             }
         });
     }
@@ -91,7 +104,7 @@ public class DataSetExplorer implements IsWidget {
         final DataSetDef def = event.getDataSetDef();
         if (def != null && def.isPublic()) {
             view.add(event.getDataSetDef());
-            view.show();
+            view.show(showDataSetDefCallback);
         }
     }
 
@@ -101,7 +114,7 @@ public class DataSetExplorer implements IsWidget {
         final DataSetDef def = event.getNewDataSetDef();
         if (def != null && def.isPublic()) {
             view.update(event.getOldDataSetDef(), event.getNewDataSetDef());
-            view.show();
+            view.show(showDataSetDefCallback);
         }
     }
 
@@ -109,9 +122,31 @@ public class DataSetExplorer implements IsWidget {
         checkNotNull("event", event);
 
         view.remove(event.getDataSetDef());
-        view.show();
+        view.show(showDataSetDefCallback);
     }
 
+    private final ShowDataSetDefCallback showDataSetDefCallback = new ShowDataSetDefCallback() {
+        @Override
+        public void getMetadata(final DataSetDef def, final DataSetMetadataCallback callback) {
+            try {
+                DataSetClientServices.get().fetchMetadata(def.getUUID(), callback);
+            } catch (Exception e) {
+                showError(e);
+            }
+        }
+    };
+
+    private void showError(final Exception e) {
+        showError(null, e.getMessage(), null);
+    }
+
+    private void showError(final String type, final String message, final String cause) {
+        if (type != null) GWT.log("Error type: " + type);
+        if (message != null) GWT.log("Error message: " + message);
+        if (cause != null) GWT.log("Error cause: " + cause);
+        view.showError(type, message, cause);
+    }
+    
     // **************** EVENT HANDLER REGISTRATIONS ****************************
 
     public HandlerRegistration addEditDataSetEventHandler(EditDataSetEventHandler handler) {
