@@ -32,6 +32,31 @@ package org.dashbuilder.dataset.def;
 public interface CSVDataSetDefBuilder<T extends DataSetDefBuilder> extends DataSetDefBuilder<T> {
 
     /**
+     * A valid CSV stream URL
+     *
+     * @param url A valid URL to a CSV stream
+     * @return The DataSetDefBuilder instance that is being used to configure a DataSetDef.
+     */
+    T fileURL(String url);
+
+    /**
+     * The CSV file path
+     *
+     * @param path A valid path to a local file.
+     * @return The DataSetDefBuilder instance that is being used to configure a DataSetDef.
+     */
+    T filePath(String path);
+
+    /**
+     * It tells the CSV provider whether to include all the columns in the CSV defintion or
+     * only those columns explicitly declared into the data set definition.
+     *
+     * @param all If tru all the CSV columns will be part of the data set (default true).
+     * @return The DataSetDefBuilder instance that is being used to configure a DataSetDef.
+     */
+    T allColumns(boolean all);
+
+    /**
      * Set the CSV column separator char.
      *
      * @param separator An string for separating columns
@@ -59,15 +84,37 @@ public interface CSVDataSetDefBuilder<T extends DataSetDefBuilder> extends DataS
      * Set the pattern for the specified date column.
      *
      * @param columnId The id of the column
-     * @return numberPattern The date pattern of the column values
+     * @param pattern The pattern of the column values. (See <i>java.text.DateFormat</i>)
+     * @see java.text.SimpleDateFormat
+     * @return The DataSetDefBuilder instance that is being used to configure a DataSetDef.
      */
-    T date(String columnId, String datePattern);
+    T date(String columnId, String pattern);
 
     /**
      * Set the pattern for the specified numeric column.
      *
      * @param columnId The id of the column
-     * @return numberPattern The numeric pattern of the column values
+     * @param pattern The pattern of the column values. (See <i>java.text.DecimalFormat</i>)
+     * @see java.text.DecimalFormat
+     * @return The DataSetDefBuilder instance that is being used to configure a DataSetDef.
      */
-    T number(String columnId, String numberPattern);
+    T number(String columnId, String pattern);
+
+    /**
+     * Set the overall pattern used to read date columns.
+     *
+     * @param pattern The pattern of the column values. (See <i>java.text.DateFormat</i>)
+     * @see java.text.SimpleDateFormat
+     * @return The DataSetDefBuilder instance that is being used to configure a DataSetDef.
+     */
+    T datePattern(String pattern);
+
+    /**
+     * Set the overall pattern used to read numeric columns.
+     *
+     * @param pattern The pattern of the column values. (See <i>java.text.DecimalFormat</i>)
+     * @see java.text.DecimalFormat
+     * @return The DataSetDefBuilder instance that is being used to configure a DataSetDef.
+     */
+    T numberPattern(String pattern);
 }

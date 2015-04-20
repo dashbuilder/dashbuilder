@@ -29,6 +29,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
+import java.util.ArrayList;
 import java.util.Map;
 
 import au.com.bytecode.opencsv.CSVReader;
@@ -52,6 +54,12 @@ public class CSVParser {
         this.dataSetDef = def;
     }
 
+    protected boolean isColumnIncluded(String columnId) {
+        if (dataSetDef.isAllColumnsEnabled()) return true;
+        if (dataSetDef.getDataSet() == null) return false;
+        return dataSetDef.getDataSet().getColumnById(columnId) != null;
+    }
+
     protected DataSet load() throws Exception {
         InputStream is = getCSVInputStream();
         try {
@@ -65,23 +73,28 @@ public class CSVParser {
             if (firstRow == null || firstRow.length < header.length) firstRow = null;
 
             // Build the data set structure
+            List<Integer> _columnIdxs = new ArrayList<Integer>();
             DataSet dataSet = DataSetFactory.newEmptyDataSet();
             for (int i = 0; i < header.length; i++) {
                 String columnId = header[i];
-                ColumnType type = ColumnType.LABEL;
-                if (firstRow != null) type = calculateType(columnId, firstRow[i]);
-                dataSet.addColumn(columnId, type);
+                if (isColumnIncluded(columnId)) {
+                    ColumnType type = ColumnType.LABEL;
+                    if (firstRow != null) type = calculateType(columnId, firstRow[i]);
+                    dataSet.addColumn(columnId, type);
+                    _columnIdxs.add(i);
+                }
             }
 
             // Load & insert the CSV rows
             if (firstRow != null) {
-                Object[] row = processLine(dataSet, firstRow);
-                dataSet.setValuesAt(dataSet.getRowCount(), row);
-                String[] line = csvReader.readNext();
-                while (line != null && line.length == header.length) {
-                    row = processLine(dataSet, line);
-                    dataSet.setValuesAt(dataSet.getRowCount(), row);
-                    line = csvReader.readNext();
+                Object[] _rowArray = new Object[dataSet.getColumns().size()];
+                _processLine(dataSet, _rowArray, firstRow, _columnIdxs);
+                dataSet.setValuesAt(dataSet.getRowCount(), _rowArray);
+                String[] _line = csvReader.readNext();
+                while (_line != null && _line.length == header.length) {
+                    _processLine(dataSet,_rowArray, _line, _columnIdxs);
+                    dataSet.setValuesAt(dataSet.getRowCount(), _rowArray);
+                    _line = csvReader.readNext();
                 }
             }
             return dataSet;
@@ -142,18 +155,18 @@ public class CSVParser {
         }
     }
 
-    protected Object[] processLine(DataSet dataSet, String[] line) throws Exception {
-        Object[] row = new Object[line.length];
-        for (int j=0; j<line.length; j++) {
-            String valueStr = line[j];
-            DataColumn column = dataSet.getColumnByIndex(j);
+    protected void _processLine(DataSet dataSet, Object[] row, String[] line, List<Integer> columnIdxs) throws Exception {
+        List<DataColumn> columns = dataSet.getColumns();
+        for (int i=0; i<columns.size(); i++) {
+            DataColumn column = dataSet.getColumnByIndex(i);
+            int columnIdx = columnIdxs.get(i);
+            String valueStr = line[columnIdx];
             if (!StringUtils.isBlank(valueStr)){
-                row[j] = parseValue(column, valueStr);
+                row[i] = parseValue(column, valueStr);
             } else {
-                row[j] = null;
+                row[i] = null;
             }
         }
-        return row;
     }
 
     protected Object parseValue(DataColumn column, String value) throws Exception {

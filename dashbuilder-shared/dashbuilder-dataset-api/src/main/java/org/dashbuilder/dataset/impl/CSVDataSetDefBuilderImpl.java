@@ -35,6 +35,11 @@ public class CSVDataSetDefBuilderImpl extends AbstractDataSetDefBuilder<CSVDataS
         return this;
     }
 
+    public CSVDataSetDefBuilderImpl allColumns(boolean all) {
+        ((CSVDataSetDef) def).setAllColumnsEnabled(all);
+        return this;
+    }
+
     public CSVDataSetDefBuilderImpl separatorChar(char separator) {
         ((CSVDataSetDef) def).setSeparatorChar(separator);
         return this;

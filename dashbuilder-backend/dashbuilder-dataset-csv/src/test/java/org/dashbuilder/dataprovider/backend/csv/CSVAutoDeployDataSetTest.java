@@ -82,4 +82,22 @@ public class CSVAutoDeployDataSetTest {
         assertThat(result.getRowCount()).isGreaterThan(100);
         assertThat(result.getColumns().size()).isEqualTo(5);
     }
+
+
+    @Test
+    public void testExpenseReportsTrimmed() throws Exception {
+        DataSet dataSet = dataSetManager.lookupDataSet(
+                DataSetFactory.newDataSetLookupBuilder()
+                        .dataset("expenseReports_trimmed")
+                        .buildLookup());
+
+        assertThat(dataSet.getColumns().size()).isEqualTo(4);
+        assertThat(dataSet.getColumnById("office")).isNotNull();
+        assertThat(dataSet.getColumnById("author")).isNotNull();
+        assertThat(dataSet.getColumnById("amount")).isNotNull();
+        assertThat(dataSet.getColumnById("date")).isNotNull();
+
+        assertThat(dataSet.getColumnById("id")).isNull();
+        assertThat(dataSet.getColumnById("department")).isNull();
+    }
 }

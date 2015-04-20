@@ -49,6 +49,7 @@ public class DataSetDefJSONMarshaller {
     public static final String COLUMN_TYPE = "type";
     public static final String COLUMN_PATTERN = "pattern";
     public static final String FILTERS = "filters";
+    public static final String ALL_COLUMNS = "allColumns";
 
     // CSV related
     public static final String FILEURL = "fileURL";
@@ -64,7 +65,6 @@ public class DataSetDefJSONMarshaller {
     public static final String DB_SCHEMA = "dbSchema";
     public static final String DB_TABLE = "dbTable";
     public static final String DB_SQL = "dbSQL";
-    public static final String ALL_COLUMNS = "allColumns";
     public static final String CACHE_ENABLED = "cacheEnabled";
     public static final String CACHE_MAXROWS = "cacheMaxRows";
     public static final String REFRESH_TIME = "refreshTime";
@@ -284,6 +284,7 @@ public class DataSetDefJSONMarshaller {
         String escapeChar = json.has(ESCAPECHAR) ? json.getString(ESCAPECHAR) : null;
         String datePattern = json.has(DATEPATTERN) ? json.getString(DATEPATTERN) : null;
         String numberPattern = json.has(NUMBERPATTERN) ? json.getString(NUMBERPATTERN) : null;
+        String allColumns = json.has(ALL_COLUMNS) ? json.getString(ALL_COLUMNS) : null;
 
         if (!StringUtils.isBlank(fileURL)) def.setFileURL(fileURL);
         if (!StringUtils.isBlank(filePath)) def.setFilePath(filePath);
@@ -292,6 +293,7 @@ public class DataSetDefJSONMarshaller {
         if (!StringUtils.isBlank(escapeChar)) def.setEscapeChar(escapeChar.charAt(0));
         if (!StringUtils.isBlank(numberPattern)) def.setNumberPattern(numberPattern);
         if (!StringUtils.isBlank(datePattern)) def.setDatePattern(datePattern);
+        if (!StringUtils.isBlank(allColumns)) def.setAllColumnsEnabled(Boolean.parseBoolean(allColumns));
 
         return def;
     }
