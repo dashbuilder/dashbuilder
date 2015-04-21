@@ -311,8 +311,8 @@ public class TimeInstant {
 
         // Look for braces limits "begin[year March]"
         String example = begin ? "begin[year March]" : "end[year March]";
-        int bracesBegin = expr.indexOf("[");
-        int bracesEnd = expr.indexOf("]");
+        int bracesBegin = expr.indexOf('[');
+        int bracesEnd = expr.indexOf(']');
         if (bracesBegin == -1 || bracesEnd == -1 || bracesBegin >= bracesEnd) {
             throw new IllegalArgumentException("Missing braces (ex '" + example + "'):  " + timeInstantExpr);
         }
