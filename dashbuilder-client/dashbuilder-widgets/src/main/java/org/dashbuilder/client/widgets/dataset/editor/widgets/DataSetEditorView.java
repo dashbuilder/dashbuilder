@@ -286,7 +286,8 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
         @Override
         public void exportReady(String exportFilePath) {
             final String s = DataSetClientServices.get().getExportServletUrl();
-            final String u = DataSetClientServices.get().getDownloadUrl(s, exportFilePath);
+            final String u = DataSetClientServices.get().getDownloadFileUrl(s, exportFilePath);
+            GWT.log("Export URL: " + u);
             Window.open(u,
                     "downloading",
                     "resizable=no,scrollbars=yes,status=no");
@@ -495,10 +496,11 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
     }
 
     @Override
-    public DataSetEditor.View showCSVAttributesEditorView(final ClickHandler testHandler) {
+    public DataSetEditor.View showCSVAttributesEditorView(final FormPanel.SubmitCompleteHandler submitCompleteHandler, final ClickHandler testHandler) {
         workflow.edit(csvDataSetDefAttributesEditor, (CSVDataSetDef) dataSetDef);
         csvAttributesEditionViewPanel.setVisible(true);
         csvDataSetDefAttributesEditor.setEditMode(true);
+        csvDataSetDefAttributesEditor.setSubmitCompleteHandler(submitCompleteHandler);
         showSpecificProviderAttrsEditionView(testHandler);
         return this;
     }

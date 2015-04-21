@@ -16,17 +16,23 @@
 package org.dashbuilder.client.widgets.dataset.editor.widgets.editors.csv;
 
 import com.github.gwtbootstrap.client.ui.*;
+import com.github.gwtbootstrap.client.ui.Button;
+import com.github.gwtbootstrap.client.ui.FileUpload;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.EditorError;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.*;
 import org.dashbuilder.client.widgets.dataset.editor.widgets.editors.AbstractDataSetDefEditor;
 import org.dashbuilder.common.client.validation.editors.ValueBoxEditorDecorator;
+import org.dashbuilder.dataset.client.DataSetClientServices;
+import org.dashbuilder.dataset.client.uuid.ClientUUIDGenerator;
 import org.dashbuilder.dataset.client.validation.editors.CSVDataSetDefEditor;
+import org.dashbuilder.dataset.uuid.UUIDGenerator;
 
 import javax.enterprise.context.Dependent;
 import java.util.List;
@@ -50,6 +56,10 @@ public class CSVDataSetDefAttributesEditor extends AbstractDataSetDefEditor impl
 
     @UiField
     ControlGroup filePathErrorPanel;
+    
+    @UiField
+    @Ignore
+    FormPanel csvFileFormPanel;
     
     @UiField
     Tooltip filePathErrorTooltip;
@@ -130,10 +140,31 @@ public class CSVDataSetDefAttributesEditor extends AbstractDataSetDefEditor impl
         useFilePathButton.addClickHandler(useFilePathButtonHandler);
         useFileURLButton.addClickHandler(useFileURLButtonHandler);
         
+        // File upload form.
+        filePath.addChangeHandler(filePathChangeHandler);
+        
         // By default use file URL
         showFileURL();
     }
+    
+    public void setSubmitCompleteHandler(FormPanel.SubmitCompleteHandler submitCompleteHandler) {
+        csvFileFormPanel.addSubmitCompleteHandler(submitCompleteHandler);
+    }
 
+    private final ChangeHandler filePathChangeHandler = new ChangeHandler() {
+        @Override
+        public void onChange(ChangeEvent event) {
+            csvFileFormPanel.setAction(getUploadFormAction());
+            // csvFileFormPanel.submit();
+        }
+    };
+    
+    private String getUploadFormAction() {
+        final String uploadFileUrl = DataSetClientServices.get().getUploadServletUrl()+"?scheme=file&path=";
+        final String filePath = DataSetClientServices.get().getTempFilePath(ClientUUIDGenerator.get().newUuid() + ".csv");
+        return uploadFileUrl + filePath;
+    }
+    
     public boolean isEditMode() {
         return isEditMode;
     }

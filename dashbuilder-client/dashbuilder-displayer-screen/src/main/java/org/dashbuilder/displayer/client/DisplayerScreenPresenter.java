@@ -23,10 +23,8 @@ import javax.inject.Inject;
 
 import com.github.gwtbootstrap.client.ui.DropdownButton;
 import com.github.gwtbootstrap.client.ui.NavLink;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.IsWidget;
 import org.dashbuilder.common.client.StringUtils;
@@ -236,14 +234,14 @@ public class DisplayerScreenPresenter {
         return new Command() {
             public void execute() {
                 // Get all the data set rows with a maximun of 10000
-                DataSetLookup currentLookup = getConstrainedDataSetLookup( displayerView.getDisplayer().getDataSetHandler().getCurrentDataSetLookup() );
+                DataSetLookup currentLookup = getConstrainedDataSetLookup(displayerView.getDisplayer().getDataSetHandler().getCurrentDataSetLookup());
 
                 try {
                     dataSetClientServices.exportDataSetCSV(currentLookup, new DataSetExportReadyCallback() {
                         @Override
                         public void exportReady(String exportFilePath) {
                             final String s = DataSetClientServices.get().getExportServletUrl();
-                            final String u = DataSetClientServices.get().getDownloadUrl(s, exportFilePath);
+                            final String u = DataSetClientServices.get().getDownloadFileUrl(s, exportFilePath);
                             Window.open(u,
                                             "downloading",
                                             "resizable=no,scrollbars=yes,status=no");
@@ -267,7 +265,7 @@ public class DisplayerScreenPresenter {
                         @Override
                         public void exportReady(String exportFilePath) {
                             final String s = DataSetClientServices.get().getExportServletUrl();
-                            final String u = DataSetClientServices.get().getDownloadUrl(s, exportFilePath);
+                            final String u = DataSetClientServices.get().getDownloadFileUrl(s, exportFilePath);
                             Window.open(u,
                                     "downloading",
                                     "resizable=no,scrollbars=yes,status=no");

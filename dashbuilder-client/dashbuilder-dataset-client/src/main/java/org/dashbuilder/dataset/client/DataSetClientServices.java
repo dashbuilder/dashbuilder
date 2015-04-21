@@ -51,6 +51,10 @@ import static org.uberfire.commons.validation.PortablePreconditions.checkNotNull
 @ApplicationScoped
 public class DataSetClientServices {
 
+    private static final String UPLOAD_SERVLET_URL = "upload";
+    private static final String EXPORT_SERVLER_URL = "dataset/export";
+    private static final String TEMP_PATH = "/tmp/";
+
     public static DataSetClientServices get() {
         Collection<IOCBeanDef<DataSetClientServices>> beans = IOC.getBeanManager().lookupBeans(DataSetClientServices.class);
         IOCBeanDef<DataSetClientServices> beanDef = beans.iterator().next();
@@ -449,10 +453,17 @@ public class DataSetClientServices {
 
 
     /**
+     * <p>Returns the servlet URL for uploading files.</p>
+     */
+    public String getUploadServletUrl() {
+        return GWT.getModuleBaseURL() + UPLOAD_SERVLET_URL;
+    }
+    
+    /**
      * <p>Returns the servlet URL for the exported files.</p>
      */
     public String getExportServletUrl() {
-        return GWT.getModuleBaseURL() + "dataset/export";
+        return GWT.getModuleBaseURL() + EXPORT_SERVLER_URL;
     }
 
     /**
@@ -460,11 +471,30 @@ public class DataSetClientServices {
      * <p>It uses the <code>FILE</code> protocol.</p>
      * @param servletUrl The servlet URL.
      * @param path The path for the file.
-     * @return
      */
-    public String getDownloadUrl( final String servletUrl, final String path ) {
+    public String getDownloadFileUrl(final String servletUrl, final String path) {
         final StringBuilder sb = new StringBuilder( servletUrl );
         sb.append( "?" ).append( "path" ).append( "=" ).append( "file://" ).append( URL.encode(path) );
         return sb.toString();
     }
+
+    /**
+     * <p>Returns the URL for an upload file widget action.</p>
+     * <p>It uses the <code>FILE</code> protocol.</p>
+     * @param filename The filename for the file to upload.
+     */
+    public String getUploadFileUrl(final String filename) {
+        final StringBuilder sb = new StringBuilder( getUploadServletUrl() );
+        sb.append("?").append( "path" ).append( "=file://" ).append( URL.encode(TEMP_PATH + filename) );
+        return sb.toString();
+    }
+
+    /**
+     * <p>Returns the Path for a temp file.</p>
+     * @param filename The filename.
+     */
+    public String getTempFilePath(final String filename) {
+        return URL.encode(TEMP_PATH + filename);
+    }
+    
 }

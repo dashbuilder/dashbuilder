@@ -19,6 +19,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.HasHandlers;
+import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.client.widgets.dataset.editor.DataSetDefEditWorkflow;
@@ -98,7 +99,7 @@ public class DataSetEditor implements IsWidget {
         View showBasicAttributesEditionView(final String uuid);
         View showSQLAttributesEditorView(ClickHandler testHandler);
         View showBeanAttributesEditorView(ClickHandler testHandler);
-        View showCSVAttributesEditorView(ClickHandler testHandler);
+        View showCSVAttributesEditorView(FormPanel.SubmitCompleteHandler submitCompleteHandler, ClickHandler testHandler);
         View showELAttributesEditorView(ClickHandler testHandler);
         View showPreviewTableEditionView(final Displayer tableDisplayer);
         View showColumnsEditorView(final List<DataColumn> columns, final DataSet dataSet, final DataSetColumnsEditor.ColumnsChangedEventHandler columnsChangedEventHandler);
@@ -461,7 +462,7 @@ public class DataSetEditor implements IsWidget {
                 view.showSQLAttributesEditorView(testButtonHandler);
                 break;
             case CSV:
-                view.showCSVAttributesEditorView(testButtonHandler);
+                view.showCSVAttributesEditorView(submitCompleteHandler, testButtonHandler);
                 break;
             case BEAN:
                 view.showBeanAttributesEditorView(testButtonHandler);
@@ -472,6 +473,12 @@ public class DataSetEditor implements IsWidget {
         }
     }
     
+    private final FormPanel.SubmitCompleteHandler submitCompleteHandler = new FormPanel.SubmitCompleteHandler() {
+        @Override
+        public void onSubmitComplete(FormPanel.SubmitCompleteEvent event) {
+            GWT.log("DataSetEditor#submitCompleteHandler: " + event.getResults());
+        }
+    };
     
     private void showColumnsEditorView(final DataSet dataSet) {
         currentWfView = WorkflowView.PREVIEW;

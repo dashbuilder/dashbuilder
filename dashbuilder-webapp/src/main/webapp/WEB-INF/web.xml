@@ -62,6 +62,15 @@
   </servlet-mapping>
 
   <servlet>
+    <servlet-name>FileUploadServlet</servlet-name>
+    <servlet-class>org.uberfire.server.FileUploadServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>FileUploadServlet</servlet-name>
+    <url-pattern>/org.dashbuilder.DashbuilderShowcase/upload/*</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
     <servlet-name>UberfireFileDownloadServlet</servlet-name>
     <servlet-class>org.uberfire.server.FileDownloadServlet</servlet-class>
   </servlet>
