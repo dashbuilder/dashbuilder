@@ -34,10 +34,7 @@ import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.DataSetMetadata;
-import org.dashbuilder.dataset.client.DataSetClientServices;
 import org.dashbuilder.dataset.client.resources.i18n.AggregateFunctionTypeConstants;
-import org.dashbuilder.dataset.filter.CoreFunctionFilter;
-import org.dashbuilder.dataset.group.AggregateFunction;
 import org.dashbuilder.dataset.group.AggregateFunctionType;
 import org.dashbuilder.dataset.group.GroupFunction;
 
@@ -185,8 +182,9 @@ public class ColumnFunctionEditor extends Composite implements ColumnDetailsEdit
         for (int i=0; i<metadata.getNumberOfColumns(); i++) {
             String columnId = metadata.getColumnId(i);
             ColumnType columnType = metadata.getColumnType(i);
-
-            if (columnType == null || isColumnNumeric() || columnType.equals(columnType)) {
+            // Only add columns that match the target type
+            // When the target is not specified or is numeric then all the columns are eligible
+            if (columnType == null || isColumnNumeric() || this.columnType.equals(columnType)) {
                 columnListBox.addItem(columnId, columnId);
                 if (columnId != null && columnId.equals(column.getSourceId())) {
                     columnListBox.setSelectedIndex(i);
