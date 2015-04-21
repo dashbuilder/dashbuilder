@@ -17,6 +17,7 @@ package org.dashbuilder.client.widgets.dataset.editor.widgets;
 
 import com.github.gwtbootstrap.client.ui.*;
 import com.github.gwtbootstrap.client.ui.Button;
+import com.github.gwtbootstrap.client.ui.Image;
 import com.github.gwtbootstrap.client.ui.Label;
 import com.github.gwtbootstrap.client.ui.constants.IconType;
 import com.google.gwt.core.client.GWT;
@@ -32,6 +33,7 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.*;
 import org.dashbuilder.client.widgets.SlidingPanel;
 import org.dashbuilder.client.widgets.dataset.editor.DataSetDefEditWorkflow;
@@ -45,6 +47,11 @@ import org.dashbuilder.client.widgets.resources.i18n.DataSetEditorMessages;
 import org.dashbuilder.dataprovider.DataSetProviderType;
 import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.dataset.DataSet;
+import org.dashbuilder.dataset.DataSetLookup;
+import org.dashbuilder.dataset.client.DataSetClientServices;
+import org.dashbuilder.dataset.client.DataSetExportReadyCallback;
+import org.dashbuilder.dataset.client.resources.bundles.DataSetClientImages;
+import org.dashbuilder.dataset.client.resources.bundles.DataSetClientResources;
 import org.dashbuilder.dataset.def.*;
 import org.dashbuilder.displayer.client.Displayer;
 import org.dashbuilder.displayer.client.DisplayerListener;
@@ -64,7 +71,7 @@ import java.util.Set;
 @Dependent
 public class DataSetEditorView extends Composite implements DataSetEditor.View {
 
-    private static final int ANIMATION_DURATION = 500;
+    private static final String EXPORT_ICON_SIZE = "25px";
     
     interface DataSetEditorViewBinder extends UiBinder<Widget, DataSetEditorView> {}
     private static DataSetEditorViewBinder uiBinder = GWT.create(DataSetEditorViewBinder.class);
@@ -187,6 +194,15 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
     Button backToSpecificAttrsEditionButton;
     
     @UiField
+    FlowPanel exportButtonsPanel;
+    
+    @UiField
+    Image exportToExcelButton;
+
+    @UiField
+    Image exportToCSVButton;
+
+    @UiField
     FlowPanel previewTableEditionViewPanel;
 
     @UiField
@@ -253,6 +269,7 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
     Popover nextButtonPopover;
     
     private DataSetDef dataSetDef = null;
+    private DataSetLookup lastDataSetLookup = null;
     
     private boolean isEditMode = true;
     private DataSetDefEditWorkflow workflow;
@@ -267,6 +284,40 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
             showSpecificProviderAttrsEditionView(null);
         }
     };
+
+    private final DataSetExportReadyCallback exportReadyCallback = new DataSetExportReadyCallback() {
+        @Override
+        public void exportReady(String exportFilePath) {
+            final String s = DataSetClientServices.get().getExportServletUrl();
+            final String u = DataSetClientServices.get().getDownloadUrl(s, exportFilePath);
+            Window.open(u,
+                    "downloading",
+                    "resizable=no,scrollbars=yes,status=no");
+        }
+    };
+    
+    private final ClickHandler exportToExcelButtonHandler = new ClickHandler() {
+        @Override
+        public void onClick(ClickEvent event) {
+            try {
+                DataSetClientServices.get().exportDataSetExcel(lastDataSetLookup, exportReadyCallback);
+            } catch (Exception e) {
+                showError(e);
+            }
+        }
+    };
+
+    private final ClickHandler exportToCSVButtonHandler = new ClickHandler() {
+        @Override
+        public void onClick(ClickEvent event) {
+            try {
+                DataSetClientServices.get().exportDataSetCSV(lastDataSetLookup, exportReadyCallback);
+            } catch (Exception e) {
+                showError(e);
+            }
+        }
+    };
+    
 
     public DataSetEditorView() {
         initWidget(uiBinder.createAndBindUi(this));
@@ -283,9 +334,15 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
 
         filterAndColumnsEditionDisclosurePanel.addCloseHandler(closeColumnsFilterPanelHandler);
         
-        // Configure back to provider settings button's click handler.
+        // Configure buttons' click handlers.
         backToSpecificAttrsEditionButton.addClickHandler(backToSpecificAttrsEditionButtonHandler);
-
+        exportToExcelButton.setUrl(DataSetClientResources.INSTANCE.images().excelIcon().getSafeUri());
+        exportToExcelButton.setSize(EXPORT_ICON_SIZE, EXPORT_ICON_SIZE);
+        exportToExcelButton.addClickHandler(exportToExcelButtonHandler);
+        exportToCSVButton.setUrl(DataSetClientResources.INSTANCE.images().csvIcon().getSafeUri());
+        exportToCSVButton.setSize(EXPORT_ICON_SIZE, EXPORT_ICON_SIZE);
+        exportToCSVButton.addClickHandler(exportToCSVButtonHandler);
+        
         // Hide loading popup at startup.
         hideLoadingView();
 
@@ -487,7 +544,7 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
     public DataSetEditor.View showPreviewTableEditionView(final Displayer tableDisplayer) {
         // Table is not a data set editor component, just a preview data set widget.
         // So not necessary to use the editor workflow this instance.
-
+        this.lastDataSetLookup = tableDisplayer.getDisplayerSettings().getDataSetLookup();
 
         // View title.
         hideLoadingView();
@@ -662,6 +719,18 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
         loadingPopupPanel.hide();
     }
 
+    private void showError(final Exception e) {
+        if (e != null) {
+            String type = null;
+            String message = null;
+            String cause = null;
+            type = e.getClass().getName();
+            if (e.getMessage() != null) message = e.getMessage();
+            if (e.getCause() != null) cause = e.getCause().getMessage();
+            showError(type, message, cause);
+        }
+    }
+    
     @Override
     public DataSetEditor.View showError(final String type, final String message, final String cause) {
         errorType.setText(type != null ? type : "");
@@ -708,6 +777,7 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
         previewTableEditor.clear();
 
         this.dataSetDef = null;
+        this.lastDataSetLookup = null;
         this.workflow = null;
         return this;
     }

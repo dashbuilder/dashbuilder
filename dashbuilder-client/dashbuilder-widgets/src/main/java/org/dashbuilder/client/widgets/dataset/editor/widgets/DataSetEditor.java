@@ -522,7 +522,7 @@ public class DataSetEditor implements IsWidget {
     private final DataSetColumnsEditor.ColumnsChangedEventHandler columnsChangedEventHandler = new DataSetColumnsEditor.ColumnsChangedEventHandler() {
         @Override
         public void onColumnsChanged(DataSetColumnsEditor.ColumnsChangedEvent event) {
-            saveColumns(event.getColumns());
+            updateDataSetDefColumns(event.getColumns());
             updateTableDisplayer();
         }
     };
@@ -536,7 +536,7 @@ public class DataSetEditor implements IsWidget {
     };
     
     // Saves columns and update "allColumns" flag for types that support it.
-    private void saveColumns(final List<DataColumn> columns) {
+    private void updateDataSetDefColumns(final List<DataColumn> columns) {
         final SQLDataSetDef sql = getSQLDefinition();
         final CSVDataSetDef csv = getCSVDefinition();
         final ElasticSearchDataSetDef el = getELDefinition();

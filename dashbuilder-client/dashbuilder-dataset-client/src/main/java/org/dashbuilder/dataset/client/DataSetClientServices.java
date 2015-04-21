@@ -15,6 +15,8 @@
  */
 package org.dashbuilder.dataset.client;
 
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.http.client.URL;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetBackendServices;
 import org.dashbuilder.dataset.DataSetLookup;
@@ -444,5 +446,25 @@ public class DataSetClientServices {
         // In this case the notification is always send, no matter whether the data set is pushed to the client or not.
         dataSetModifiedEvent.fire(new DataSetModifiedEvent(event.getDataSetDef()));
     }
-    
+
+
+    /**
+     * <p>Returns the servlet URL for the exported files.</p>
+     */
+    public String getExportServletUrl() {
+        return GWT.getModuleBaseURL() + "dataset/export";
+    }
+
+    /**
+     * <p>Returns the URL for a given file provided by a servlet method.</p>
+     * <p>It uses the <code>FILE</code> protocol.</p>
+     * @param servletUrl The servlet URL.
+     * @param path The path for the file.
+     * @return
+     */
+    public String getDownloadUrl( final String servletUrl, final String path ) {
+        final StringBuilder sb = new StringBuilder( servletUrl );
+        sb.append( "?" ).append( "path" ).append( "=" ).append( "file://" ).append( URL.encode(path) );
+        return sb.toString();
+    }
 }

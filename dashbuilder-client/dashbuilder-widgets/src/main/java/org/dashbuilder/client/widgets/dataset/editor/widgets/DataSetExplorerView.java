@@ -55,6 +55,7 @@ import java.util.*;
 public class DataSetExplorerView extends Composite implements DataSetExplorer.View {
 
     private final static String WHITESPACE = " ";
+    private final static String BYTE = "B";
     private final static NumberFormat rowsFormat = NumberFormat.getFormat("##0");
 
     interface DataSetExplorerViewBinder extends UiBinder<Widget, DataSetExplorerView> {}
@@ -457,9 +458,9 @@ public class DataSetExplorerView extends Composite implements DataSetExplorer.Vi
 
     public String humanReadableByteCount(long bytes, boolean si) {
         int unit = si ? 1000 : 1024;
-        if (bytes < unit) return Long.toString(bytes) + "B";
+        if (bytes < unit) return Long.toString(bytes) + BYTE;
         int exp = (int) (Math.log(bytes) / Math.log(unit));
-        String pre = (si ? "kMGTPE" : "KMGTPE").charAt(exp-1) + (si ? "" : "i");
+        String pre = (si ? "kMGTPE" : "KMGTPE").charAt(exp-1) + (si ? BYTE : "i" + BYTE);
         return NumberFormat.getFormat("#.0").format(bytes / Math.pow(unit, exp)) + pre;
     }
 

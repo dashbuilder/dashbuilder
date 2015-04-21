@@ -103,11 +103,21 @@
       margin-left: 10px;
       position: absolute;
     }
+    .exportButtonsPanel {
+      float: left;
+      margin-bottom: 20px;
+      position: absolute;
+      right: 615px;
+    }
 
     .providerSetupButton {
       float: left;
     }
-
+    .exportButton {
+      float: left;
+      margin-right: 5px;
+      cursor: hand;
+    }
     .columnsFilterDisclosurePanel {
       float: left;
       margin-right: 20px;
@@ -353,6 +363,23 @@
                   <b:Button ui:field="backToSpecificAttrsEditionButton" title="{i18n.providerSetup}"
                             text="{i18n.providerSetup}" size="SMALL" icon="CHEVRON_LEFT"
                             addStyleNames="{style.providerSetupButton} "/>
+                </b:Popover>
+
+              </g:FlowPanel>
+
+              <!-- Export buttons panel. -->
+              <g:FlowPanel ui:field="exportButtonsPanel" addStyleNames="{style.exportButtonsPanel} ">
+
+                <!-- Export to Excel button. -->
+                <b:Popover showDelay="1000" text="{i18n.exportToExcel}" heading="{i18n.export}" placement="BOTTOM">
+                  <b:Image ui:field="exportToExcelButton" title="{i18n.exportToExcel}"
+                           addStyleNames="{style.exportButton} "/>
+                </b:Popover>
+
+                <!-- Export to CSV button. -->
+                <b:Popover showDelay="1000" text="{i18n.exportToCSV}" heading="{i18n.export}" placement="BOTTOM">
+                  <b:Image ui:field="exportToCSVButton" title="{i18n.exportToCSV}"
+                            addStyleNames="{style.exportButton} "/>
                 </b:Popover>
 
               </g:FlowPanel>

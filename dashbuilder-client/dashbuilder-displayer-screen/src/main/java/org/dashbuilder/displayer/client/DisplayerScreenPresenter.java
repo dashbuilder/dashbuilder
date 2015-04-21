@@ -242,7 +242,9 @@ public class DisplayerScreenPresenter {
                     dataSetClientServices.exportDataSetCSV(currentLookup, new DataSetExportReadyCallback() {
                         @Override
                         public void exportReady(String exportFilePath) {
-                            Window.open(getDownloadUrl( exportFilePath),
+                            final String s = DataSetClientServices.get().getExportServletUrl();
+                            final String u = DataSetClientServices.get().getDownloadUrl(s, exportFilePath);
+                            Window.open(u,
                                             "downloading",
                                             "resizable=no,scrollbars=yes,status=no");
                         }
@@ -264,7 +266,9 @@ public class DisplayerScreenPresenter {
                     dataSetClientServices.exportDataSetExcel(currentLookup, new DataSetExportReadyCallback() {
                         @Override
                         public void exportReady(String exportFilePath) {
-                            Window.open(getDownloadUrl(exportFilePath),
+                            final String s = DataSetClientServices.get().getExportServletUrl();
+                            final String u = DataSetClientServices.get().getDownloadUrl(s, exportFilePath);
+                            Window.open(u,
                                     "downloading",
                                     "resizable=no,scrollbars=yes,status=no");
                         }
@@ -288,16 +292,6 @@ public class DisplayerScreenPresenter {
             _dataSetLookup.setNumberOfRows(MAX_EXPORT_LIMIT);
         }
         return _dataSetLookup;
-    }
-
-    public String getServletUrl() {
-        return GWT.getModuleBaseURL() + "dataset/export";
-    }
-
-    public String getDownloadUrl( String path ) {
-        final StringBuilder sb = new StringBuilder( getServletUrl() );
-        sb.append( "?" ).append( "path" ).append( "=" ).append( "file://" ).append( URL.encode(path) );
-        return sb.toString();
     }
 
     private void updateDisplayer(DisplayerSettings settings) {
