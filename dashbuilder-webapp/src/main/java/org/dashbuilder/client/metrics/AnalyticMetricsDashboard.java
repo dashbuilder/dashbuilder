@@ -231,7 +231,7 @@ public class AnalyticMetricsDashboard extends Composite implements GalleryWidget
     }
 
     protected void buildSummary() {
-        maxCPUxServer = DisplayerHelper.lookupDisplayer(DisplayerSettingsFactory.newBarChartSettings()
+        maxCPUxServer = DisplayerHelper.lookupDisplayer(DisplayerSettingsFactory.newColumnChartSettings()
                 .dataset(METRICS_DATASET_UUID)
                 .group(COLUMN_SERVER)
                 .column(COLUMN_SERVER, "Server")
@@ -244,10 +244,9 @@ public class AnalyticMetricsDashboard extends Composite implements GalleryWidget
                 .margins(10, 30, 60, 100)
                 .yAxisTitle(AppConstants.INSTANCE.metrics_analytic_max_cpu_usage_y())
                 .backgroundColor(BACKGROUND_COLOR)
-                .vertical()
                 .buildSettings());
 
-        maxMemxServerSettings = DisplayerHelper.lookupDisplayer(DisplayerSettingsFactory.newBarChartSettings()
+        maxMemxServerSettings = DisplayerHelper.lookupDisplayer(DisplayerSettingsFactory.newColumnChartSettings()
                 .dataset(METRICS_DATASET_UUID)
                 .group(COLUMN_SERVER)
                 .column(COLUMN_SERVER, "Server")
@@ -260,10 +259,9 @@ public class AnalyticMetricsDashboard extends Composite implements GalleryWidget
                 .margins(10, 30, 60, 100)
                 .yAxisTitle(AppConstants.INSTANCE.metrics_analytic_max_mem_usage_y())
                 .backgroundColor(BACKGROUND_COLOR)
-                .vertical()
                 .buildSettings());
 
-        maxProcessesxServerSettings = DisplayerHelper.lookupDisplayer(DisplayerSettingsFactory.newBarChartSettings()
+        maxProcessesxServerSettings = DisplayerHelper.lookupDisplayer(DisplayerSettingsFactory.newColumnChartSettings()
                 .dataset(METRICS_DATASET_UUID)
                 .group(COLUMN_SERVER)
                 .column(COLUMN_SERVER, "Server")
@@ -276,10 +274,9 @@ public class AnalyticMetricsDashboard extends Composite implements GalleryWidget
                 .margins(10, 30, 60, 100)
                 .yAxisTitle(AppConstants.INSTANCE.metrics_analytic_max_proc_usage_y())
                 .backgroundColor(BACKGROUND_COLOR)
-                .vertical()
                 .buildSettings());
 
-        maxNetworkxServerSettings = DisplayerHelper.lookupDisplayer(DisplayerSettingsFactory.newBarChartSettings()
+        maxNetworkxServerSettings = DisplayerHelper.lookupDisplayer(DisplayerSettingsFactory.newColumnChartSettings()
                 .dataset(METRICS_DATASET_UUID)
                 .group(COLUMN_SERVER)
                 .column(COLUMN_SERVER, "Server")
@@ -292,7 +289,6 @@ public class AnalyticMetricsDashboard extends Composite implements GalleryWidget
                 .margins(10, 30, 60, 100)
                 .yAxisTitle(AppConstants.INSTANCE.metrics_analytic_max_net_speed_y())
                 .backgroundColor(BACKGROUND_COLOR)
-                .vertical()
                 .buildSettings());
 
         // TODO: Disk (pie)

@@ -543,12 +543,4 @@ public class DisplayerSettings {
     public void setChart3D( boolean barchartThreeDimension ) {
         settings.put( getSettingPath( DisplayerAttributeDef.CHART_3D ), Boolean.toString( barchartThreeDimension ) );
     }
-
-    public boolean isBarchartHorizontal() {
-        return parseBoolean( settings.get( getSettingPath( DisplayerAttributeDef.BARCHART_HORIZONTAL ) ) );
-    }
-
-    public void setBarchartHorizontal( boolean barchartHorizontal ) {
-        settings.put( getSettingPath( DisplayerAttributeDef.BARCHART_HORIZONTAL ), Boolean.toString( barchartHorizontal ) );
-    }
 }

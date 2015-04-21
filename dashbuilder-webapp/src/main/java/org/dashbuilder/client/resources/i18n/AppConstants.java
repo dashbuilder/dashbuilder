@@ -102,37 +102,21 @@ public interface AppConstants extends Messages {
 
     String gallerytree_bar();
 
-    String gallerytree_bar_horiz();
+    String gallerytree_bar_bar();
 
-    String gallerytree_bar_horiz_title();
+    String gallerytree_bar_title();
 
-    String gallerytree_bar_horiz_column1();
+    String gallerytree_bar_column1();
 
-    String gallerytree_bar_horiz_dd();
+    String gallerytree_bar_dd();
 
-    String gallerytree_bar_horiz_dd_title();
+    String gallerytree_bar_dd_title();
 
-    String gallerytree_bar_horiz_dd_column1();
+    String gallerytree_bar_dd_column1();
 
-    String gallerytree_bar_horiz_dd_column2();
+    String gallerytree_bar_dd_column2();
 
-    String gallerytree_bar_horiz_dd_column3();
-
-    String gallerytree_bar_vert();
-
-    String gallerytree_bar_vert_title();
-
-    String gallerytree_bar_vert_column1();
-
-    String gallerytree_bar_vert_dd();
-
-    String gallerytree_bar_vert_dd_title();
-
-    String gallerytree_bar_vert_dd_column1();
-
-    String gallerytree_bar_vert_dd_column2();
-
-    String gallerytree_bar_vert_dd_column3();
+    String gallerytree_bar_dd_column3();
 
     String gallerytree_bar_multi();
 
@@ -143,6 +127,34 @@ public interface AppConstants extends Messages {
     String gallerytree_bar_multi_column2();
 
     String gallerytree_bar_multi_column3();
+
+    String gallerytree_col();
+
+    String gallerytree_col_col();
+
+    String gallerytree_col_title();
+
+    String gallerytree_col_column1();
+
+    String gallerytree_col_dd();
+
+    String gallerytree_col_dd_title();
+
+    String gallerytree_col_dd_column1();
+
+    String gallerytree_col_dd_column2();
+
+    String gallerytree_col_dd_column3();
+
+    String gallerytree_col_multi();
+
+    String gallerytree_col_multi_title();
+
+    String gallerytree_col_multi_column1();
+
+    String gallerytree_col_multi_column2();
+
+    String gallerytree_col_multi_column3();
 
     String gallerytree_pie();
 
@@ -545,6 +557,8 @@ public interface AppConstants extends Messages {
     String metrics_cluster_metricselector_netw();
 
     String metrics_cluster_chartselector_bar();
+
+    String metrics_cluster_chartselector_column();
 
     String metrics_cluster_chartselector_line();
 

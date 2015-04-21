@@ -26,6 +26,8 @@ public interface DisplayerTypeLiterals extends ConstantsWithLookup {
 
     String displayer_type_selector_tab_bar();
 
+    String displayer_type_selector_tab_column();
+
     String displayer_type_selector_tab_pie();
 
     String displayer_type_selector_tab_line();

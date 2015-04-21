@@ -167,14 +167,6 @@ public interface CommonConstants extends Messages {
 
     String meter_end();
 
-    String barchart_group();
-
-    String barchart_orientation();
-
-    String barchart_horizontal();
-
-    String barchart_vertical();
-
     String filter_group();
 
     String filter_enabled();

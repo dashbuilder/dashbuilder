@@ -22,8 +22,8 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.googlecode.gwt.charts.client.ChartPackage;
-import com.googlecode.gwt.charts.client.corechart.BarChart;
-import com.googlecode.gwt.charts.client.corechart.BarChartOptions;
+import com.googlecode.gwt.charts.client.corechart.ColumnChart;
+import com.googlecode.gwt.charts.client.corechart.ColumnChartOptions;
 import com.googlecode.gwt.charts.client.corechart.CoreChartWidget;
 import com.googlecode.gwt.charts.client.options.Animation;
 import com.googlecode.gwt.charts.client.options.AnimationEasing;
@@ -36,7 +36,7 @@ import org.dashbuilder.displayer.DisplayerConstraints;
 import org.dashbuilder.displayer.DisplayerSubType;
 import org.dashbuilder.renderer.google.client.resources.i18n.GoogleDisplayerConstants;
 
-public class GoogleBarChartDisplayer extends GoogleCategoriesDisplayer {
+public class GoogleColumnChartDisplayer extends GoogleCategoriesDisplayer {
 
     protected Panel chartPanel = new FlowPanel();
     protected CoreChartWidget chart;
@@ -59,7 +59,7 @@ public class GoogleBarChartDisplayer extends GoogleCategoriesDisplayer {
         verticalPanel.add(filterPanel);
         verticalPanel.add(chartPanel);
 
-        chart = new BarChart();
+        chart = new ColumnChart();
         chart.addSelectHandler(createSelectHandler(chart));
 
         updateChartPanel();
@@ -122,16 +122,18 @@ public class GoogleBarChartDisplayer extends GoogleCategoriesDisplayer {
 
         boolean isStacked = DisplayerSubType.STACKED.equals(displayerSettings.getSubtype());
 
-        BarChartOptions options = BarChartOptions.create();
+        ColumnChartOptions options = ColumnChartOptions.create();
         options.setWidth(displayerSettings.getChartWidth());
-        options.setHeight( displayerSettings.getChartHeight() );
+        options.setHeight(displayerSettings.getChartHeight());
         options.setBackgroundColor(displayerSettings.getChartBackgroundColor());
-        options.setLegend( createChartLegend() );
+        options.setLegend(createChartLegend());
         options.setIsStacked(isStacked);
         if ( displayerSettings.isXAxisShowLabels() ) options.setHAxis( createHAxis() );
         if ( displayerSettings.isYAxisShowLabels() ) options.setVAxis( createVAxis() );
-        options.setAnimation( anim );
+        options.setAnimation(anim);
+        // TODO: options.set3D(displayerSettings.is3d());
         options.setChartArea(createChartArea());
+        options.setColors(createColorArray(googleTable));
         return options;
     }
 }

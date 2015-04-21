@@ -226,6 +226,7 @@ public class ClusterMetricsDashboard extends Composite implements GalleryWidget 
         // Init the chart type selector
         chartTypeSelector.clear();
         chartTypeSelector.addItem(AppConstants.INSTANCE.metrics_cluster_chartselector_bar());
+        chartTypeSelector.addItem(AppConstants.INSTANCE.metrics_cluster_chartselector_column());
         chartTypeSelector.addItem(AppConstants.INSTANCE.metrics_cluster_chartselector_line());
         chartTypeSelector.addItem(AppConstants.INSTANCE.metrics_cluster_chartselector_area());
 
@@ -252,8 +253,9 @@ public class ClusterMetricsDashboard extends Composite implements GalleryWidget 
 
         DisplayerType type = DisplayerType.BARCHART;
         switch (chartTypeSelector.getSelectedIndex()) {
-            case 1: type = DisplayerType.LINECHART; break;
-            case 2: type = DisplayerType.AREACHART; break;
+            case 1: type = DisplayerType.COLUMNCHART; break;
+            case 2: type = DisplayerType.LINECHART; break;
+            case 3: type = DisplayerType.AREACHART; break;
         }
 
         BarChartSettingsBuilder<BarChartSettingsBuilderImpl> builder = DisplayerSettingsFactory.newBarChartSettings()
@@ -265,7 +267,7 @@ public class ClusterMetricsDashboard extends Composite implements GalleryWidget 
                 .filterOff(true)
                 .dataset("clusterMetrics");
 
-        if (DisplayerType.BARCHART.equals(type)) {
+        if (DisplayerType.BARCHART.equals(type) || DisplayerType.COLUMNCHART.equals(type)) {
             builder.filter(COLUMN_TIMESTAMP, timeFrame("begin[minute] till end[minute]"));
             builder.group(COLUMN_TIMESTAMP).fixed(SECOND, true);
             builder.column(COLUMN_TIMESTAMP).format(AppConstants.INSTANCE.metrics_cluster_column_time());

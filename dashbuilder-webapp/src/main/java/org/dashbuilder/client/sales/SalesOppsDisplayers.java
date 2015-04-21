@@ -88,7 +88,6 @@ public class SalesOppsDisplayers {
             .title(AppConstants.INSTANCE.salesopps_displayers_by_product_title())
             .titleVisible(false)
             .margins(10, 50, 100, 100)
-            .horizontal()
             .filterOn(false, true, true)
             .buildSettings();
 
@@ -101,7 +100,6 @@ public class SalesOppsDisplayers {
             .title(AppConstants.INSTANCE.salesopps_displayers_by_country_title())
             .titleVisible(false)
             .margins(10, 80, 100, 100)
-            .horizontal()
             .filterOn(false, true, true)
             .buildSettings();
 

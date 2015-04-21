@@ -15,17 +15,17 @@
  */
 package org.dashbuilder.displayer.impl;
 
-import org.dashbuilder.displayer.BarChartSettingsBuilder;
+import org.dashbuilder.displayer.ColumnChartSettingsBuilder;
 import org.dashbuilder.displayer.DisplayerSettings;
 import org.dashbuilder.displayer.DisplayerType;
 
-public class BarChartSettingsBuilderImpl extends AbstractXAxisChartSettingsBuilder<BarChartSettingsBuilderImpl> implements BarChartSettingsBuilder<BarChartSettingsBuilderImpl> {
+public class ColumnChartSettingsBuilderImpl extends AbstractXAxisChartSettingsBuilder<ColumnChartSettingsBuilderImpl> implements ColumnChartSettingsBuilder<ColumnChartSettingsBuilderImpl> {
 
     protected DisplayerSettings createDisplayerSettings() {
-        return new DisplayerSettings( DisplayerType.BARCHART );
+        return new DisplayerSettings( DisplayerType.COLUMNCHART );
     }
 
-    public BarChartSettingsBuilderImpl set3d( boolean b ) {
+    public ColumnChartSettingsBuilderImpl set3d( boolean b ) {
         displayerSettings.setChart3D( b );
         return this;
     }

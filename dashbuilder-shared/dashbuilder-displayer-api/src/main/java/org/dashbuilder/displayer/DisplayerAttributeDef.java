@@ -69,8 +69,6 @@ public class DisplayerAttributeDef {
     public static final DisplayerAttributeDef METER_CRITICAL = new DisplayerAttributeDef("critical", DisplayerAttributeGroupDef.METER_GROUP);
     public static final DisplayerAttributeDef METER_END = new DisplayerAttributeDef("end", DisplayerAttributeGroupDef.METER_GROUP);
 
-    public static final DisplayerAttributeDef BARCHART_HORIZONTAL = new DisplayerAttributeDef("bar_horizontal", DisplayerAttributeGroupDef.BARCHART_GROUP);
-
     protected String id;
     protected DisplayerAttributeGroupDef parent;
 

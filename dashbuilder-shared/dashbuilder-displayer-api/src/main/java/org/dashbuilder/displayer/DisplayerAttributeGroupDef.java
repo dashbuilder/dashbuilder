@@ -37,8 +37,6 @@ public class DisplayerAttributeGroupDef extends DisplayerAttributeDef {
 
     public static final DisplayerAttributeGroupDef METER_GROUP = new DisplayerAttributeGroupDef( "meter" );
 
-    public static final DisplayerAttributeGroupDef BARCHART_GROUP = new DisplayerAttributeGroupDef( "barChart" );
-
 
     // SUBGROUPS
     public static final DisplayerAttributeGroupDef CHART_MARGIN_GROUP =

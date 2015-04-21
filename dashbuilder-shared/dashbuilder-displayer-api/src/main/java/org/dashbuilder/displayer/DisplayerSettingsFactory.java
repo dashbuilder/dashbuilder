@@ -18,6 +18,7 @@ package org.dashbuilder.displayer;
 import org.dashbuilder.displayer.impl.AreaChartSettingsBuilderImpl;
 import org.dashbuilder.displayer.impl.BarChartSettingsBuilderImpl;
 import org.dashbuilder.displayer.impl.BubbleChartSettingsBuilderImpl;
+import org.dashbuilder.displayer.impl.ColumnChartSettingsBuilderImpl;
 import org.dashbuilder.displayer.impl.LineChartSettingsBuilderImpl;
 import org.dashbuilder.displayer.impl.MapChartSettingsBuilderImpl;
 import org.dashbuilder.displayer.impl.MeterChartSettingsBuilderImpl;
@@ -33,6 +34,10 @@ public final class DisplayerSettingsFactory {
 
     public static BarChartSettingsBuilder<BarChartSettingsBuilderImpl> newBarChartSettings() {
         return new BarChartSettingsBuilderImpl();
+    }
+
+    public static ColumnChartSettingsBuilder<ColumnChartSettingsBuilderImpl> newColumnChartSettings() {
+        return new ColumnChartSettingsBuilderImpl();
     }
 
     public static PieChartSettingsBuilder<PieChartSettingsBuilderImpl> newPieChartSettings() {

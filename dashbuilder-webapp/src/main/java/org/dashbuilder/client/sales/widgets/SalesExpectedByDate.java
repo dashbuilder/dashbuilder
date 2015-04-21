@@ -144,7 +144,6 @@ public class SalesExpectedByDate extends Composite implements GalleryWidget {
                 .titleVisible(true)
                 .width(200).height(150)
                 .margins(0, 20, 80, 0)
-                .horizontal()
                 .filterOn(false, true, true)
                 .buildSettings());
 

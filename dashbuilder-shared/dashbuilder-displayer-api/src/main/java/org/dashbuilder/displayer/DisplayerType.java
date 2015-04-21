@@ -15,6 +15,8 @@
  */
 package org.dashbuilder.displayer;
 
+import static org.dashbuilder.displayer.DisplayerSubType.*;
+
 /**
  * An enumeration for the different types of displayers.
  */
@@ -23,22 +25,27 @@ public enum DisplayerType {
     /**
      * Bar Chart
      */
-    BARCHART(DisplayerSubType.BAR, DisplayerSubType.STACKED/*, DisplayerSubType.HISTOGRAM*/),
+    BARCHART(BAR, STACKED),
+
+    /**
+     * Column Chart
+     */
+    COLUMNCHART(COLUMN, STACKED/*, HISTOGRAM*/),
 
     /**
      * Pie Chart
      */
-    PIECHART(DisplayerSubType.PIE, DisplayerSubType.PIE_3D, DisplayerSubType.DONUT),
+    PIECHART(PIE, PIE_3D, DONUT),
 
     /**
      * Area Chart
      */
-    AREACHART(DisplayerSubType.AREA, DisplayerSubType.STACKED/*, DisplayerSubType.STEPPED*/),
+    AREACHART(AREA, STACKED/*, STEPPED*/),
 
     /**
      * Line Chart
      */
-    LINECHART(DisplayerSubType.LINE, DisplayerSubType.SMOOTH),
+    LINECHART(LINE, SMOOTH),
 
     /**
      * Bubble Chart
@@ -58,7 +65,7 @@ public enum DisplayerType {
     /**
      * Map
      */
-    MAP(DisplayerSubType.MAP_REGIONS, DisplayerSubType.MAP_MARKERS),
+    MAP(MAP_REGIONS, MAP_MARKERS),
 
     /**
      * Selector

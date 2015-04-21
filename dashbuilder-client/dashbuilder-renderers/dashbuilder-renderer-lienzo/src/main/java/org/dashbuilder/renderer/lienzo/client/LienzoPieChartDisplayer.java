@@ -66,9 +66,6 @@ public class LienzoPieChartDisplayer extends LienzoDisplayer {
     
     private void configurePieChart(PieChart chart) {
         if (isConfigured) return;
-        
-        if (displayerSettings.isBarchartHorizontal()) chart.setOrientation(ChartOrientation.HORIZNONAL);
-        else chart.setOrientation(ChartOrientation.VERTICAL);
 
         chart.setX(0).setY(0);
         chart.setName(displayerSettings.getTitle());

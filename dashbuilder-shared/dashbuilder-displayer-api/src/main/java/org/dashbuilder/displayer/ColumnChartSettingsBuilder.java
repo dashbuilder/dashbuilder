@@ -16,21 +16,21 @@
 package org.dashbuilder.displayer;
 
 /**
- * A displayer settings builder for bar charts
+ * A displayer settings builder for column charts
  *
  * <pre>
- *   DisplayerSettingsFactory.newBarChartSettings()
+ *   DisplayerSettingsFactory.newColumnChartSettings()
  *   .title("By Product")
  *   .column("Product")
  *   .column("Total amount")
  *   .buildSettings()
  * </pre>
  */
-public interface BarChartSettingsBuilder<T extends BarChartSettingsBuilder> extends XAxisChartSettingsBuilder<T> {
+public interface ColumnChartSettingsBuilder<T extends ColumnChartSettingsBuilder> extends XAxisChartSettingsBuilder<T> {
 
     /**
-     * @param b True if the bars of this bar chart are to be shown in 3D, false if they are to be shown flat.
-     * @return The DisplayerSettingsBuilder instance that is being used to configure a Bar chart data displayer.
+     * @param b True if the columns of this column chart are to be shown in 3D, false if they are to be shown flat.
+     * @return The DisplayerSettingsBuilder instance that is being used to configure a Column chart data displayer.
      */
     T set3d(boolean b);
 

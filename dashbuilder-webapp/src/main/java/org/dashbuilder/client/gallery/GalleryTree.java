@@ -59,6 +59,7 @@ public class GalleryTree {
     @PostConstruct
     private void init() {
         initBarChartCategory();
+        initColumnChartCategory();
         initPieChartCategory();
         initLineChartCategory();
         initAreaChartCategory();
@@ -89,73 +90,37 @@ public class GalleryTree {
         GalleryTreeNodeList nodeList = new GalleryTreeNodeList(AppConstants.INSTANCE.gallerytree_bar());
         mainNodes.add(nodeList);
 
-        nodeList.add(new GalleryPlaceRequest(AppConstants.INSTANCE.gallerytree_bar_horiz(), createPlaceRequest(
+        nodeList.add(new GalleryPlaceRequest(AppConstants.INSTANCE.gallerytree_bar_bar(), createPlaceRequest(
                 DisplayerSettingsFactory.newBarChartSettings()
                         .dataset(SALES_OPPS)
                         .group(PRODUCT)
                         .column(PRODUCT, "Product")
                         .column(AMOUNT, SUM)
                         .expression("value/1000")
-                        .format(AppConstants.INSTANCE.gallerytree_bar_horiz_column1(), "$ #,### K")
-                        .title(AppConstants.INSTANCE.gallerytree_bar_horiz_title())
-                        .horizontal()
+                        .format(AppConstants.INSTANCE.gallerytree_bar_column1(), "$ #,### K")
+                        .title(AppConstants.INSTANCE.gallerytree_bar_title())
                         .width(600).height(400)
                         .resizableOn(1200, 800)
                         .margins(50, 80, 120, 120)
                         .filterOn(false, true, true)
                         .buildSettings()
         )));
-        nodeList.add(new GalleryPlaceRequest(AppConstants.INSTANCE.gallerytree_bar_horiz_dd(), createPlaceRequest(
+        nodeList.add(new GalleryPlaceRequest(AppConstants.INSTANCE.gallerytree_bar_dd(), createPlaceRequest(
                 DisplayerSettingsFactory.newBarChartSettings()
                         .dataset(SALES_OPPS)
                         .group(PIPELINE)
                         .column(PIPELINE, "Pipeline")
-                        .column(AMOUNT, SUM).format(AppConstants.INSTANCE.gallerytree_bar_horiz_column1(), "$ #,###")
+                        .column(AMOUNT, SUM).format(AppConstants.INSTANCE.gallerytree_bar_column1(), "$ #,###")
                         .group(STATUS)
                         .column(STATUS, "Status")
-                        .column(AMOUNT, SUM).format(AppConstants.INSTANCE.gallerytree_bar_horiz_dd_column2(), "$ #,###")
+                        .column(AMOUNT, SUM).format(AppConstants.INSTANCE.gallerytree_bar_dd_column2(), "$ #,###")
                         .group(SALES_PERSON)
                         .column(SALES_PERSON, "Sales person")
-                        .column(AMOUNT, SUM).format(AppConstants.INSTANCE.gallerytree_bar_horiz_dd_column3(), "$ #,###")
-                        .title(AppConstants.INSTANCE.gallerytree_bar_horiz_dd_title())
+                        .column(AMOUNT, SUM).format(AppConstants.INSTANCE.gallerytree_bar_dd_column3(), "$ #,###")
+                        .title(AppConstants.INSTANCE.gallerytree_bar_dd_title())
                         .width(600).height(400)
                         .resizableOn(1200, 800)
                         .margins(50, 80, 120, 120)
-                        .horizontal()
-                        .filterOn(true, false, false)
-                        .buildSettings()
-        )));
-        nodeList.add(new GalleryPlaceRequest(AppConstants.INSTANCE.gallerytree_bar_vert(), createPlaceRequest(
-                DisplayerSettingsFactory.newBarChartSettings()
-                        .dataset(SALES_OPPS)
-                        .group(PRODUCT)
-                        .column(PRODUCT, "Product")
-                        .column(AMOUNT, SUM).format(AppConstants.INSTANCE.gallerytree_bar_vert_column1(), "$ #,###")
-                        .title(AppConstants.INSTANCE.gallerytree_bar_vert_title())
-                        .vertical().set3d(true)
-                        .width(600).height(400)
-                        .resizableOn(1200, 800)
-                        .margins(50, 80, 120, 120)
-                        .filterOn(false, true, true)
-                        .buildSettings()
-        )));
-        nodeList.add(new GalleryPlaceRequest(AppConstants.INSTANCE.gallerytree_bar_vert_dd(), createPlaceRequest(
-                DisplayerSettingsFactory.newBarChartSettings()
-                        .dataset(SALES_OPPS)
-                        .group(PIPELINE)
-                        .column(PIPELINE, "Pipeline")
-                        .column(AMOUNT, SUM).format(AppConstants.INSTANCE.gallerytree_bar_vert_dd_column1(), "$ #,###")
-                        .group(STATUS)
-                        .column(STATUS, "Status")
-                        .column(AMOUNT, SUM).format(AppConstants.INSTANCE.gallerytree_bar_vert_dd_column2(), "$ #,###")
-                        .group(SALES_PERSON)
-                        .column(SALES_PERSON, "Sales person")
-                        .column(AMOUNT, SUM).format(AppConstants.INSTANCE.gallerytree_bar_vert_dd_column3(), "$ #,###")
-                        .title(AppConstants.INSTANCE.gallerytree_bar_vert_dd_title())
-                        .width(600).height(400)
-                        .resizableOn(1200, 800)
-                        .margins(50, 80, 120, 120)
-                        .vertical()
                         .filterOn(true, false, false)
                         .buildSettings()
         )));
@@ -171,7 +136,60 @@ public class GalleryTree {
                         .width(700).height(600)
                         .resizableOn(1200, 800)
                         .margins(50, 80, 120, 120)
-                        .horizontal()
+                        .filterOn(false, true, true)
+                        .buildSettings()
+        )));
+    }
+
+    private void initColumnChartCategory() {
+        GalleryTreeNodeList nodeList = new GalleryTreeNodeList(AppConstants.INSTANCE.gallerytree_col());
+        mainNodes.add(nodeList);
+
+        nodeList.add(new GalleryPlaceRequest(AppConstants.INSTANCE.gallerytree_col_col(), createPlaceRequest(
+                DisplayerSettingsFactory.newColumnChartSettings()
+                        .dataset(SALES_OPPS)
+                        .group(PRODUCT)
+                        .column(PRODUCT, "Product")
+                        .column(AMOUNT, SUM).format(AppConstants.INSTANCE.gallerytree_col_column1(), "$ #,###")
+                        .title(AppConstants.INSTANCE.gallerytree_col_title())
+                        .set3d(true)
+                        .width(600).height(400)
+                        .resizableOn(1200, 800)
+                        .margins(50, 80, 120, 120)
+                        .filterOn(false, true, true)
+                        .buildSettings()
+        )));
+        nodeList.add(new GalleryPlaceRequest(AppConstants.INSTANCE.gallerytree_col_dd(), createPlaceRequest(
+                DisplayerSettingsFactory.newColumnChartSettings()
+                        .dataset(SALES_OPPS)
+                        .group(PIPELINE)
+                        .column(PIPELINE, "Pipeline")
+                        .column(AMOUNT, SUM).format(AppConstants.INSTANCE.gallerytree_col_dd_column1(), "$ #,###")
+                        .group(STATUS)
+                        .column(STATUS, "Status")
+                        .column(AMOUNT, SUM).format(AppConstants.INSTANCE.gallerytree_col_dd_column2(), "$ #,###")
+                        .group(SALES_PERSON)
+                        .column(SALES_PERSON, "Sales person")
+                        .column(AMOUNT, SUM).format(AppConstants.INSTANCE.gallerytree_col_dd_column3(), "$ #,###")
+                        .title(AppConstants.INSTANCE.gallerytree_col_dd_title())
+                        .width(600).height(400)
+                        .resizableOn(1200, 800)
+                        .margins(50, 80, 120, 120)
+                        .filterOn(true, false, false)
+                        .buildSettings()
+        )));
+        nodeList.add(new GalleryPlaceRequest(AppConstants.INSTANCE.gallerytree_col_multi(), createPlaceRequest(
+                DisplayerSettingsFactory.newColumnChartSettings()
+                        .dataset(SALES_OPPS)
+                        .group(COUNTRY)
+                        .column(COUNTRY, "Country")
+                        .column(AMOUNT, MIN).format(AppConstants.INSTANCE.gallerytree_col_multi_column1(), "$ #,###")
+                        .column(AMOUNT, MAX).format(AppConstants.INSTANCE.gallerytree_col_multi_column2(), "$ #,###")
+                        .column(AMOUNT, AVERAGE).format(AppConstants.INSTANCE.gallerytree_col_multi_column3(), "$ #,###")
+                        .title(AppConstants.INSTANCE.gallerytree_col_multi_title())
+                        .width(700).height(600)
+                        .resizableOn(1200, 800)
+                        .margins(50, 80, 120, 120)
                         .filterOn(false, true, true)
                         .buildSettings()
         )));

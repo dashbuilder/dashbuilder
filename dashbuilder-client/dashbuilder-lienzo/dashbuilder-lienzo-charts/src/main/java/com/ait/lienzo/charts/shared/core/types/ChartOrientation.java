@@ -23,7 +23,7 @@ import com.ait.lienzo.shared.core.types.EnumWithValue;
 
 public enum ChartOrientation implements EnumWithValue
 {
-    HORIZNONAL("horizontal"), VERTICAL("vertical");
+    HORIZONTAL("horizontal"), VERTICAL("vertical");
 
     private final String                                  m_value;
 

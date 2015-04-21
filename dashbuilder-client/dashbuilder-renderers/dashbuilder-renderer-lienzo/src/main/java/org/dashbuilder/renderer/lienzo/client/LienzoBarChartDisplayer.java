@@ -73,8 +73,7 @@ public class LienzoBarChartDisplayer extends LienzoDisplayer {
     private void configureBarChart(BarChart chart) {
         if (isConfigured) return;
         
-        if (displayerSettings.isBarchartHorizontal()) chart.setOrientation(ChartOrientation.HORIZNONAL);
-        else chart.setOrientation(ChartOrientation.VERTICAL);
+        chart.setOrientation(isHorizontal() ? ChartOrientation.HORIZONTAL : ChartOrientation.VERTICAL);
 
         chart.setX(0).setY(0).setName(displayerSettings.getTitle());
         chart.setWidth(getChartWidth());
@@ -121,6 +120,10 @@ public class LienzoBarChartDisplayer extends LienzoDisplayer {
         chart.build();
         
         isConfigured=true;
+    }
+
+    protected boolean isHorizontal() {
+        return true;
     }
 
     @Override
@@ -200,8 +203,7 @@ public class LienzoBarChartDisplayer extends LienzoDisplayer {
                    .supportsAttribute(DisplayerAttributeDef.CHART_BGCOLOR)
                    .supportsAttribute(DisplayerAttributeGroupDef.CHART_MARGIN_GROUP)
                    .supportsAttribute( DisplayerAttributeGroupDef.CHART_LEGEND_GROUP )
-                   .supportsAttribute( DisplayerAttributeGroupDef.AXIS_GROUP )
-                   .supportsAttribute( DisplayerAttributeGroupDef.BARCHART_GROUP );
+                   .supportsAttribute( DisplayerAttributeGroupDef.AXIS_GROUP );
     }
     
     private IColor getSeriesColor(int index) {

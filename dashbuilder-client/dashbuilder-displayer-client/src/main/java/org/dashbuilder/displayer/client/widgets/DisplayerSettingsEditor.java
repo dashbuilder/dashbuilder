@@ -223,14 +223,6 @@ public class DisplayerSettingsEditor extends Composite {
                         PropertyEditorType.BOOLEAN)
                         .withKey(CHART_3D.getFullId()));
             }
-            if (isSupported(BARCHART_GROUP)) {
-                if (isSupported(BARCHART_HORIZONTAL)) {
-                    category.withField(new PropertyEditorFieldInfo( CommonConstants.INSTANCE.barchart_horizontal(),
-                            Boolean.toString(displayerSettings.isBarchartHorizontal()),
-                            PropertyEditorType.BOOLEAN)
-                            .withKey(BARCHART_HORIZONTAL.getFullId()));
-                }
-            }
         }
         if (isSupported(CHART_MARGIN_GROUP)) {
             PropertyEditorCategory category = new PropertyEditorCategory( CommonConstants.INSTANCE.chart_marginGroup());
