@@ -437,6 +437,10 @@ public class DataSetDefJSONMarshaller {
 
         // Number pattern.
         json.put( NUMBERPATTERN, dataSetDef.getNumberPattern());
+
+        // All columns flag.
+        json.put( ALL_COLUMNS, dataSetDef.isAllColumnsEnabled());
+
     }
 
     private void toJsonObject(final SQLDataSetDef dataSetDef, final JSONObject json ) throws JSONException {
@@ -449,6 +453,10 @@ public class DataSetDefJSONMarshaller {
 
         // Table.
         json.put( DB_TABLE, dataSetDef.getDbTable());
+
+        // All columns flag.
+        json.put( ALL_COLUMNS, dataSetDef.isAllColumnsEnabled());
+
     }
 
     private void toJsonObject(final ElasticSearchDataSetDef dataSetDef, final JSONObject json ) throws JSONException {
@@ -464,6 +472,10 @@ public class DataSetDefJSONMarshaller {
 
         // Type.
         json.put( TYPE, ArrayUtils.toString(dataSetDef.getType()));
+
+        // All columns flag.
+        json.put( ALL_COLUMNS, dataSetDef.isAllColumnsEnabled());
+
     }
     
     private JSONObject toJSONParameter(final String key, final String value) throws JSONException {
