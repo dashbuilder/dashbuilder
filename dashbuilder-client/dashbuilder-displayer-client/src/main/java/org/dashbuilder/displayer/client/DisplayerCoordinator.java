@@ -36,6 +36,8 @@ public class DisplayerCoordinator {
     protected CoordinatorListener displayerListener = new CoordinatorListener();
 
     public void addDisplayer(Displayer displayer) {
+        if (displayer == null) return;
+
         displayerList.add(displayer);
         displayer.addListener(displayerListener);
 
