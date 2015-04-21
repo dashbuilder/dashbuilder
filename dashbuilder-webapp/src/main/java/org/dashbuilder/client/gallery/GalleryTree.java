@@ -22,6 +22,7 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
 import org.dashbuilder.client.resources.i18n.AppConstants;
@@ -44,7 +45,7 @@ import static org.dashbuilder.dataset.group.AggregateFunctionType.*;
 /**
  * The Gallery tree.
  */
-@ApplicationScoped
+@Dependent
 public class GalleryTree {
 
     private List<GalleryTreeNode> mainNodes = new ArrayList<GalleryTreeNode>();

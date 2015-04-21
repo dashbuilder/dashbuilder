@@ -16,6 +16,7 @@
 package org.dashbuilder.client.gallery;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
 import org.dashbuilder.client.resources.i18n.AppConstants;
@@ -27,7 +28,7 @@ import org.uberfire.client.mvp.UberView;
 import org.uberfire.mvp.PlaceRequest;
 
 @WorkbenchScreen(identifier = "GalleryTreeScreen")
-@ApplicationScoped
+@Dependent
 public class GalleryTreePresenter {
 
     public interface GalleryTreeView extends UberView<GalleryTreePresenter> {
