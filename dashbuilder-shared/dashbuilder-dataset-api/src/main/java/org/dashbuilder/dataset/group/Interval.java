@@ -125,11 +125,20 @@ public class Interval {
         return clone;
     }
 
-    public boolean equals(Object other) {
-        if (name == null) return other == null;
-        return name == other || name.equals(other);
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+        Interval other = (Interval) obj;
+        if (name == null) {
+            return other.name == null;
+        } else {
+            return name.equals(other.name);
+        }
     }
 
+    @Override
     public int hashCode() {
         if (name == null) return 0;
         return name.hashCode();
