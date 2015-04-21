@@ -4,6 +4,7 @@ import com.github.gwtbootstrap.client.ui.Image;
 import com.github.gwtbootstrap.client.ui.Popover;
 import com.github.gwtbootstrap.client.ui.Tooltip;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style;
 import com.google.gwt.editor.client.EditorError;
 import com.google.gwt.editor.client.HasEditorErrors;
 import com.google.gwt.editor.client.IsEditor;
@@ -51,6 +52,7 @@ public class ImageListEditor<T> extends Composite implements
     private  boolean isEditMode;
     private int width = -1;
     private int height = -1;
+    private String imageStyle = null;
 
     @UiField
     ImageListEditorStyle style;
@@ -113,8 +115,9 @@ public class ImageListEditor<T> extends Composite implements
                 final Entry _entry = entry.getValue();
                 final Image _image = _entry.image;
                 
-                if (width > 0 && height > 0) _image.setSize(width+"px", height+"px");
+                if (width > 0 && height > 0) _image.setSize(width + "px", height + "px");
                 _image.addStyleName(style.imagePointer());
+                if (imageStyle != null) _image.addStyleName(imageStyle);
                 _image.addClickHandler(new ClickHandler() {
                     @Override
                     public void onClick(ClickEvent event) {
@@ -225,6 +228,10 @@ public class ImageListEditor<T> extends Composite implements
     public void setSize(final int w, final int h) {
         this.width = w;
         this.height = h;
+    }
+
+    public void setImageStyle(final String imageStyle) {
+        this.imageStyle = imageStyle;
     }
 
     private void applyAlpha(final Image image, final double alpha) {

@@ -39,7 +39,6 @@ import org.dashbuilder.client.widgets.dataset.editor.widgets.events.EditDataSetE
 import org.dashbuilder.client.widgets.resources.i18n.DataSetExplorerConstants;
 import org.dashbuilder.dataset.DataSetMetadata;
 import org.dashbuilder.dataset.client.DataSetClientServiceError;
-import org.dashbuilder.dataset.client.DataSetClientServices;
 import org.dashbuilder.dataset.client.DataSetMetadataCallback;
 import org.dashbuilder.dataset.client.resources.bundles.DataSetClientImages;
 import org.dashbuilder.dataset.client.resources.bundles.DataSetClientResources;
@@ -210,22 +209,22 @@ public class DataSetExplorerView extends Composite implements DataSetExplorer.Vi
         Image typeIcon = null;
         switch (dataSetDef.getProvider()) {
             case BEAN:
-                typeIcon = new Image(DataSetClientResources.INSTANCE.images().javaIconLarge().getSafeUri());
+                typeIcon = new Image(DataSetClientResources.INSTANCE.images().javaIcon().getSafeUri());
                 typeIcon.setAltText(DataSetExplorerConstants.INSTANCE.bean());
                 typeIcon.setTitle(DataSetExplorerConstants.INSTANCE.bean());
                 break;
             case CSV:
-                typeIcon = new Image(DataSetClientResources.INSTANCE.images().csvIconLarge().getSafeUri());
+                typeIcon = new Image(DataSetClientResources.INSTANCE.images().csvIcon().getSafeUri());
                 typeIcon.setAltText(DataSetExplorerConstants.INSTANCE.csv());
                 typeIcon.setTitle(DataSetExplorerConstants.INSTANCE.csv());
                 break;
             case SQL:
-                typeIcon = new Image(DataSetClientResources.INSTANCE.images().sqlIconLarge().getSafeUri());
+                typeIcon = new Image(DataSetClientResources.INSTANCE.images().sqlIcon().getSafeUri());
                 typeIcon.setAltText(DataSetExplorerConstants.INSTANCE.sql());
                 typeIcon.setTitle(DataSetExplorerConstants.INSTANCE.sql());
                 break;
             case ELASTICSEARCH:
-                typeIcon = new Image(DataSetClientResources.INSTANCE.images().elIconLarge().getSafeUri());
+                typeIcon = new Image(DataSetClientResources.INSTANCE.images().elIcon().getSafeUri());
                 typeIcon.setAltText(DataSetExplorerConstants.INSTANCE.el());
                 typeIcon.setTitle(DataSetExplorerConstants.INSTANCE.el());
                 break;
@@ -458,7 +457,7 @@ public class DataSetExplorerView extends Composite implements DataSetExplorer.Vi
 
     public String humanReadableByteCount(long bytes, boolean si) {
         int unit = si ? 1000 : 1024;
-        if (bytes < unit) return Long.toString(bytes);
+        if (bytes < unit) return Long.toString(bytes) + "B";
         int exp = (int) (Math.log(bytes) / Math.log(unit));
         String pre = (si ? "kMGTPE" : "KMGTPE").charAt(exp-1) + (si ? "" : "i");
         return NumberFormat.getFormat("#.0").format(bytes / Math.pow(unit, exp)) + pre;

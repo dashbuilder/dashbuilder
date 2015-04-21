@@ -26,20 +26,20 @@ import com.google.gwt.resources.client.ImageResource;
 public interface DataSetClientImages extends ClientBundle {
 
     /* NOTE: Use DataResource instead of ImageResource in order to set a custom size to the image when creating it. **/
-    @Source("images/csv_icon_large.png")
-    DataResource csvIconLarge();
+    @Source("images/csv_icon.png")
+    DataResource csvIcon();
 
     /* NOTE: Use DataResource instead of ImageResource in order to set a custom size to the image when creating it. **/
-    @Source("images/java_icon_large.png")
-    DataResource javaIconLarge();
+    @Source("images/java_icon.png")
+    DataResource javaIcon();
 
     /* NOTE: Use DataResource instead of ImageResource in order to set a custom size to the image when creating it. **/
-    @Source("images/sql_icon_large.png")
-    DataResource sqlIconLarge();
+    @Source("images/sql_icon.png")
+    DataResource sqlIcon();
 
     /* NOTE: Use DataResource instead of ImageResource in order to set a custom size to the image when creating it. **/
-    @Source("images/el_icon_large.png")
-    DataResource elIconLarge();
+    @Source("images/el_icon.png")
+    DataResource elIcon();
 
     /* NOTE: Use DataResource instead of ImageResource in order to set a custom size to the image when creating it. **/
     @Source("images/label_icon_small.png")

@@ -43,7 +43,9 @@
       margin: 15px;
       overflow-y: auto;
     }
-
+    .providerTypeEditor {
+        width: 100%;      
+    }
     .tabPanel {
       margin: 0px;
     }
@@ -264,7 +266,7 @@
     </g:HTMLPanel>
     
     <g:FlowPanel ui:field="providerSelectionViewPanel" addStyleNames="{style.editorPanel}">
-      <dash-dset-editors:DataSetProviderTypeEditor editMode="true" ui:field="dataSetProviderTypeEditor"/>
+      <dash-dset-editors:DataSetProviderTypeEditor editMode="true" ui:field="dataSetProviderTypeEditor" addStyleNames="{style.providerTypeEditor}"/>
     </g:FlowPanel>
 
     <g:FlowPanel ui:field="basicAttributesEditionViewPanel" addStyleNames="{style.editorPanel}">

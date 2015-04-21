@@ -7,12 +7,15 @@
 
   <ui:with field="i18n" type="org.dashbuilder.client.widgets.resources.i18n.DataSetEditorConstants"/>
 
-  <ui:style >
+  <ui:style type="org.dashbuilder.client.widgets.dataset.editor.widgets.editors.DataSetProviderTypeEditor.DataSetProviderTypeEditorStyle">
     .mainPanel {
-      
+      width: 100%;
     }
     .text {
       margin: 10px;
+    }
+    .providerIcon {
+      margin-right: 50px;
     }
   </ui:style>
   

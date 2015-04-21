@@ -17,7 +17,9 @@ package org.dashbuilder.client.widgets.dataset.editor.widgets.editors;
 
 import com.github.gwtbootstrap.client.ui.Image;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style;
 import com.google.gwt.editor.client.EditorError;
+import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Widget;
@@ -40,7 +42,7 @@ import java.util.Map;
 @Dependent
 public class DataSetProviderTypeEditor extends AbstractDataSetDefEditor implements DataSetDefEditor {
 
-    private static final int ICONS_SIZE = 150;
+    private static final int ICONS_SIZE = 200;
 
     interface DataSetProviderTypeEditorBinder extends UiBinder<Widget, DataSetProviderTypeEditor> {}
     private static DataSetProviderTypeEditorBinder uiBinder = GWT.create(DataSetProviderTypeEditorBinder.class);
@@ -48,6 +50,12 @@ public class DataSetProviderTypeEditor extends AbstractDataSetDefEditor implemen
     @UiField
     ImageListEditor<DataSetProviderType> provider;
 
+    interface DataSetProviderTypeEditorStyle extends CssResource {
+        String providerIcon();
+    }
+    @UiField
+    DataSetProviderTypeEditorStyle style;
+    
     private  boolean isEditMode;
 
     @Override
@@ -67,6 +75,7 @@ public class DataSetProviderTypeEditor extends AbstractDataSetDefEditor implemen
             if (_image != null) providerEditorValues.put(type, new ImageListEditor.Entry(_image, _heading, _text));
         }
         provider.setSize(ICONS_SIZE, ICONS_SIZE);
+        provider.setImageStyle(style.providerIcon());
         provider.setAcceptableValues(providerEditorValues);
     }
 
@@ -97,22 +106,22 @@ public class DataSetProviderTypeEditor extends AbstractDataSetDefEditor implemen
         Image typeIcon = null;
         switch (type) {
             case BEAN:
-                typeIcon = new Image(DataSetClientResources.INSTANCE.images().javaIconLarge().getSafeUri());
+                typeIcon = new Image(DataSetClientResources.INSTANCE.images().javaIcon().getSafeUri());
                 typeIcon.setAltText(DataSetEditorConstants.INSTANCE.bean());
                 typeIcon.setTitle(DataSetEditorConstants.INSTANCE.bean());
                 break;
             case CSV:
-                typeIcon = new Image(DataSetClientResources.INSTANCE.images().csvIconLarge().getSafeUri());
+                typeIcon = new Image(DataSetClientResources.INSTANCE.images().csvIcon().getSafeUri());
                 typeIcon.setAltText(DataSetEditorConstants.INSTANCE.csv());
                 typeIcon.setTitle(DataSetEditorConstants.INSTANCE.csv());
                 break;
             case SQL:
-                typeIcon = new Image(DataSetClientResources.INSTANCE.images().sqlIconLarge().getSafeUri());
+                typeIcon = new Image(DataSetClientResources.INSTANCE.images().sqlIcon().getSafeUri());
                 typeIcon.setAltText(DataSetEditorConstants.INSTANCE.sql());
                 typeIcon.setTitle(DataSetEditorConstants.INSTANCE.sql());
                 break;
             case ELASTICSEARCH:
-                typeIcon = new Image(DataSetClientResources.INSTANCE.images().elIconLarge().getSafeUri());
+                typeIcon = new Image(DataSetClientResources.INSTANCE.images().elIcon().getSafeUri());
                 typeIcon.setAltText(DataSetEditorConstants.INSTANCE.elasticSearch());
                 typeIcon.setTitle(DataSetEditorConstants.INSTANCE.elasticSearch());
                 break;
