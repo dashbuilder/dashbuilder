@@ -369,6 +369,7 @@ public class DataSetEditor implements IsWidget {
         {
             // If creating a new data set, just persist it.
             dataSetDef.setPublic(true);
+            updateDataSetDef();
             DataSetClientServices.get().persistDataSetDef(dataSetDef);
         }
         else {
@@ -393,13 +394,9 @@ public class DataSetEditor implements IsWidget {
     }
 
     private void removeDataSetDef() {
-       removeDataSetDef(dataSetDef);
-    }
-
-    private void removeDataSetDef(final DataSetDef def) {
-        if (def != null) {
+        if (dataSetDef != null) {
             final DataSetClientServices clientServices = DataSetClientServices.get();
-            clientServices.removeDataSetDef(def.getUUID());
+            clientServices.removeDataSetDef(dataSetDef.getUUID());
         }
     }
 
@@ -519,7 +516,7 @@ public class DataSetEditor implements IsWidget {
     private final DataSetColumnsEditor.ColumnsChangedEventHandler columnsChangedEventHandler = new DataSetColumnsEditor.ColumnsChangedEventHandler() {
         @Override
         public void onColumnsChanged(DataSetColumnsEditor.ColumnsChangedEvent event) {
-            DataSetEditor.this.dataSetDef.getDataSet().setColumns(event.getColumns());
+            saveColumns(event.getColumns());
             updateTableDisplayer();
         }
     };
@@ -531,6 +528,41 @@ public class DataSetEditor implements IsWidget {
             updateTableDisplayer();
         }
     };
+    
+    // Saves columns and update "allColumns" flag for types that support it.
+    private void saveColumns(final List<DataColumn> columns) {
+        final SQLDataSetDef sql = getSQLDefinition();
+        final CSVDataSetDef csv = getCSVDefinition();
+        final ElasticSearchDataSetDef el = getELDefinition();
+        if (sql != null) sql.setAllColumnsEnabled(false);
+        if (csv != null) csv.setAllColumnsEnabled(false);
+        if (el != null) el.setAllColumnsEnabled(false);
+        dataSetDef.getDataSet().setColumns(columns);
+    }
+    
+    private SQLDataSetDef getSQLDefinition() {
+        try {
+            return (SQLDataSetDef) dataSetDef;
+        } catch (ClassCastException e) {
+            return null;
+        }
+    }
+
+    private CSVDataSetDef getCSVDefinition() {
+        try {
+            return (CSVDataSetDef) dataSetDef;
+        } catch (ClassCastException e) {
+            return null;
+        }
+    }
+
+    private ElasticSearchDataSetDef getELDefinition() {
+        try {
+            return (ElasticSearchDataSetDef) dataSetDef;
+        } catch (ClassCastException e) {
+            return null;
+        }
+    }
     
     /**
      * <p>When creating the table preview screen, this listener waits for data set available and then performs other operations.</p> 

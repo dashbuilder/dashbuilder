@@ -318,7 +318,7 @@ public class DataSetDefJSONMarshaller {
         return toJsonObject( dataSetDef ).toString(1);
     }
 
-    public JSONObject toJsonObject(final DataSetDef dataSetDef ) throws JSONException{
+    public JSONObject toJsonObject(final DataSetDef dataSetDef ) throws JSONException {
         JSONObject json = new JSONObject(  );
 
         // UUID.
@@ -368,8 +368,17 @@ public class DataSetDefJSONMarshaller {
             }
         }
 
-
-        // TODO: Filter.
+        final DataSetFilter filter = dataSetDef.getDataSetFilter();
+        if (filter != null) {
+            try {
+                final JSONArray filters = dataSetLookupJSONMarshaller.toJson(filter);
+                if (filters != null) {
+                    json.put(FILTERS, filters);
+                }
+            } catch (Exception e) {
+                throw new JSONException(e);
+            }
+        }
         
         return json;
     }

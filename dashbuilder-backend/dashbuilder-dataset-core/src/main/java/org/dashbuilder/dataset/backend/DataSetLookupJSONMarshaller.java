@@ -16,11 +16,14 @@
 package org.dashbuilder.dataset.backend;
 
 import org.apache.commons.lang.StringUtils;
+import org.dashbuilder.dataset.filter.ColumnFilter;
 import org.dashbuilder.dataset.filter.CoreFunctionFilter;
 import org.dashbuilder.dataset.filter.CoreFunctionType;
 import org.dashbuilder.dataset.filter.DataSetFilter;
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import java.util.List;
 
 /**
  * DataSetLookup from/to JSON utilities
@@ -56,5 +59,36 @@ public class DataSetLookupJSONMarshaller {
             }
         }
         return dataSetFilter;
+    }
+    
+    public JSONArray toJson(final DataSetFilter filter) throws Exception {
+        JSONArray result = null;
+        
+        final List<ColumnFilter> columnFilters = filter.getColumnFilterList();
+        if (columnFilters != null && !columnFilters.isEmpty()) {
+            for (final ColumnFilter columnFilter : columnFilters) {
+                if (columnFilter instanceof CoreFunctionFilter) {
+                    final CoreFunctionFilter coreFunctionFilter = (CoreFunctionFilter) columnFilter;
+                    if (result == null) result = new JSONArray();
+                    final JSONObject filterObj = new JSONObject();
+                    final String columnId = columnFilter.getColumnId();
+                    filterObj.put(FILTER_COLUMN, columnId);
+                    final CoreFunctionType type = coreFunctionFilter.getType();
+                    filterObj.put(FILTER_FUNCTION, type.name().toUpperCase());
+                    final List arguments = coreFunctionFilter.getParameters();
+                    if (arguments != null && !arguments.isEmpty()) {
+                        final JSONArray args = new JSONArray();
+                        for (final Object value : arguments) {
+                            final String s = valueFormatter.formatValue(value);
+                            args.put(s);
+                        }
+                        filterObj.put(FILTER_ARGS, args);
+                    }
+                    result.put(filterObj);
+                    
+                }
+            }
+        }
+        return result;
     }
 }

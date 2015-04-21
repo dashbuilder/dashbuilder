@@ -1,6 +1,6 @@
 {
-    "uuid": "test-uuid",
-    "name": "data set name",
+    "uuid": "bean-test-uuid",
+    "name": "bean data set name",
     "provider": "BEAN",
     "pushEnabled": false,
     "pushMaxSize": 10,
