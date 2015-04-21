@@ -15,13 +15,11 @@
  */
 package org.dashbuilder.dataset.editor.client.screens;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.IsWidget;
 import org.dashbuilder.client.widgets.dataset.editor.widgets.DataSetExplorer;
 import org.dashbuilder.client.widgets.dataset.editor.widgets.events.*;
 import org.dashbuilder.client.widgets.resources.i18n.DataSetExplorerConstants;
 import org.dashbuilder.dataset.client.DataSetClientServices;
-import org.dashbuilder.dataset.uuid.UUIDGenerator;
 import org.uberfire.client.annotations.WorkbenchMenu;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
 import org.uberfire.client.annotations.WorkbenchPartView;
@@ -55,9 +53,6 @@ public class DataSetExplorerScreenPresenter {
 
     @Inject
     Event<EditDataSetEvent> editDataSetEvent;
-
-    @Inject
-    private UUIDGenerator uuidGenerator;
 
     @OnStartup
     public void onStartup( final PlaceRequest placeRequest) {
@@ -113,8 +108,7 @@ public class DataSetExplorerScreenPresenter {
     }
     
     void newDataSet() {
-        String uuid = uuidGenerator.newUuid();
-        NewDataSetEvent event = new NewDataSetEvent(uuid);
+        NewDataSetEvent event = new NewDataSetEvent();
         newDataSetEvent.fire(event);
     }
     

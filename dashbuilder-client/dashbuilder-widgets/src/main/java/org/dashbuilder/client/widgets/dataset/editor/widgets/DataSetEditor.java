@@ -32,7 +32,6 @@ import org.dashbuilder.dataset.client.ClientDataSetManager;
 import org.dashbuilder.dataset.client.DataSetClientServiceError;
 import org.dashbuilder.dataset.client.DataSetClientServices;
 import org.dashbuilder.dataset.client.DataSetMetadataCallback;
-import org.dashbuilder.dataset.client.uuid.ClientUUIDGenerator;
 import org.dashbuilder.dataset.def.*;
 import org.dashbuilder.dataset.events.DataSetDefRegisteredEvent;
 import org.dashbuilder.dataset.events.DataSetDefRemovedEvent;
@@ -139,17 +138,12 @@ public class DataSetEditor implements IsWidget {
         return this;
     }
     
-    public DataSetEditor newDataSet(String uuid) {
+    public DataSetEditor newDataSet() {
         
-        if (uuid == null || uuid.trim().length() == 0) {
-            showError("DataSetEditor#newDataSet - No UUID specified.");
-            return this;
-        }
-
         clear();
         
         // Create a new data set def.
-        this.dataSetDef = createDataSetDef(uuid, null);
+        this.dataSetDef = createDataSetDef(null);
 
         edit = null;
         view.setEditMode(false);
@@ -224,10 +218,9 @@ public class DataSetEditor implements IsWidget {
         return this;
     }
     
-    private DataSetDef createDataSetDef(final String uuid, final DataSetProviderType type) {
+    private DataSetDef createDataSetDef(final DataSetProviderType type) {
         DataSetDef result = new DataSetDef();
         if (type != null) result = DataSetProviderType.createDataSetDef(dataSetDef.getProvider());
-        result.setUUID(uuid);
         result.setPublic(false);
         return result;
     }
@@ -244,36 +237,45 @@ public class DataSetEditor implements IsWidget {
     
     private void updateTableDisplayer() {
         if (dataSetDef != null) {
+            
+            final RemoteCallback<String> callback = new RemoteCallback<String>() {
+                @Override
+                public void callback(final String s) {
+                    // If creating a new data set def, the UUID is set on first time registering the data set.
+                    dataSetDef.setUUID(s);
+                    
+                    // Build the displayer, so perform the lookup.
+                    TableDisplayerSettingsBuilder<TableDisplayerSettingsBuilderImpl> tableDisplayerSettingsBuilder = DisplayerSettingsFactory.newTableSettings()
+                            .dataset(dataSetDef.getUUID())
+                            .renderer(DefaultRenderer.UUID)
+                            .titleVisible(false)
+                            .tablePageSize(10)
+                            .tableOrderEnabled(true)
+                            .filterOn(true, false, false);
+
+                    List<DataColumn> columns =  dataSetDef.getDataSet().getColumns();
+                    if (columns != null && !columns.isEmpty()) {
+                        for (DataColumn column : columns) {
+                            tableDisplayerSettingsBuilder.column(column.getId());
+                        }
+                    }
+
+                    DisplayerSettings settings = tableDisplayerSettingsBuilder.buildSettings();
+                    tableDisplayer = DisplayerHelper.lookupDisplayer(settings);
+                    tableDisplayer.addListener(tablePreviewListener);
+
+                    // Wait for displayer listener callbacks.
+                    if (DataSetEditor.this.tableDisplayer != null) DataSetEditor.this.tableDisplayer.draw();
+
+                    // Show basic views and the loading screen while performing the backend service call.
+                    view.showLoadingView();
+                }
+            };
+
             // Register changes or new definition on backend in order to use the table displayer 
             // for previewing data on next screen.
-            if (tableDisplayer == null) registerDataSetDef();
-            else updateDataSetDef();
-
-            // Build the displayer, so perform the lookup.
-            TableDisplayerSettingsBuilder<TableDisplayerSettingsBuilderImpl> tableDisplayerSettingsBuilder = DisplayerSettingsFactory.newTableSettings()
-                    .dataset(dataSetDef.getUUID())
-                    .renderer(DefaultRenderer.UUID)
-                    .titleVisible(false)
-                    .tablePageSize(10)
-                    .tableOrderEnabled(true)
-                    .filterOn(true, false, false);
-
-            List<DataColumn> columns =  dataSetDef.getDataSet().getColumns();
-            if (columns != null && !columns.isEmpty()) {
-                for (DataColumn column : columns) {
-                    tableDisplayerSettingsBuilder.column(column.getId());
-                }
-            }
-
-            DisplayerSettings settings = tableDisplayerSettingsBuilder.buildSettings();
-            tableDisplayer  =  DisplayerHelper.lookupDisplayer(settings);
-            tableDisplayer .addListener(tablePreviewListener);
-
-            // Wait for displayer listener callbacks.
-            if (DataSetEditor.this.tableDisplayer != null) DataSetEditor.this.tableDisplayer.draw();
-            
-            // Show basic views and the loading screen while performing the backend service call.
-            view.showLoadingView();
+            if (tableDisplayer == null) registerDataSetDef(callback);
+            else updateDataSetDef(callback);
         }
     }
     
@@ -285,7 +287,7 @@ public class DataSetEditor implements IsWidget {
             final Set<ConstraintViolation<? extends DataSetDef>> violations = save();
             if (isValid(violations)) {
                 // Build the data set class instance for the given provider type.
-                DataSetEditor.this.dataSetDef = createDataSetDef(dataSetDef.getUUID(), dataSetDef.getProvider());
+                DataSetEditor.this.dataSetDef = createDataSetDef(dataSetDef.getProvider());
 
                 // Restart workflow.
                 edit();
@@ -345,17 +347,21 @@ public class DataSetEditor implements IsWidget {
             if (isValid(violations)) {
                 try {
                     // Valid
-                    persist();
+                    persist(new RemoteCallback<String>() {
+                        @Override
+                        public void callback(String s) {
+                            clear();
+                            showHomeView();
+                        }
+                    });
 
                 } catch (Exception e) {
                     showError("Error persisting data set defintion with uuid [" + dataSetDef.getUUID() + "]. Message: " + e.getMessage());
-                } finally {
                     clear();
                     showHomeView();
                 }
             }
             log(violations);
-
         }
     };
 
@@ -364,12 +370,12 @@ public class DataSetEditor implements IsWidget {
         return view.asWidget();
     }
 
-    private void persist() throws Exception {
-        if (edit == null) 
+    private void persist(final RemoteCallback<String> registerCallback) throws Exception {
+        if (edit ==     null) 
         {
-            // If creating a new data set, just persist it.
+            // If creati    ng a new data set, just persist it.
             dataSetDef.setPublic(true);
-            updateDataSetDef();
+            updateDataSetDef(registerCallback);
             DataSetClientServices.get().persistDataSetDef(dataSetDef);
         }
         else {
@@ -378,18 +384,18 @@ public class DataSetEditor implements IsWidget {
             clientServices.removeDataSetDef(edit.getUUID());
             this.dataSetDef.setUUID(edit.getUUID());
             this.dataSetDef.setPublic(true);
-            registerDataSetDef();
+            registerDataSetDef(registerCallback);
             DataSetClientServices.get().persistDataSetDef(dataSetDef);
         }
     }
     
-    private void updateDataSetDef() {
+    private void updateDataSetDef(final RemoteCallback<String> callback) {
 
         // Remove the current data set definition.
         removeDataSetDef();
 
         // Register new data set definition.
-        registerDataSetDef();
+        registerDataSetDef(callback);
 
     }
 
@@ -400,11 +406,11 @@ public class DataSetEditor implements IsWidget {
         }
     }
 
-    private void registerDataSetDef() {
+    private void registerDataSetDef(final RemoteCallback<String> callback) {
         if (dataSetDef != null) {
             // Register the data set in backend as non public.
             final DataSetClientServices clientServices = DataSetClientServices.get();
-            clientServices.registerDataSetDef(dataSetDef);
+            clientServices.registerDataSetDef(dataSetDef, callback);
         }
     }
 
@@ -509,7 +515,7 @@ public class DataSetEditor implements IsWidget {
     private final ClickHandler newDataSetHandler = new ClickHandler() {
         @Override
         public void onClick(ClickEvent event) {
-            newDataSet(ClientUUIDGenerator.get().newUuid());
+            newDataSet();
         }
     };
     
@@ -587,6 +593,7 @@ public class DataSetEditor implements IsWidget {
                     }
                     
                     // Build views.
+                    showBasicAttributesEditionView();
                     if (isEdit && !v.equals(WorkflowView.ADVANCED)) showAdvancedAttributesEditionView();
                     showPreviewTableEditionView();
                     

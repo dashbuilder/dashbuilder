@@ -15,7 +15,6 @@
  */
 package org.dashbuilder.dataset.editor.client.screens;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.IsWidget;
 import org.dashbuilder.client.widgets.dataset.editor.widgets.DataSetEditor;
 import org.dashbuilder.client.widgets.dataset.editor.widgets.events.EditDataSetEvent;
@@ -62,7 +61,7 @@ public class DataSetEditorScreenPresenter {
     }
 
     public void onNewDataSet(@Observes NewDataSetEvent event) {
-        editorWidget.newDataSet(event.getUuid());
+        editorWidget.newDataSet();
     }
     
     public void onEditDataSet(@Observes EditDataSetEvent event) {

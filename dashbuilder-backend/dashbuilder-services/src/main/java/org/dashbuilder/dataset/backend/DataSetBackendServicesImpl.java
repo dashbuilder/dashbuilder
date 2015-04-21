@@ -80,6 +80,7 @@ public class DataSetBackendServicesImpl implements DataSetBackendServices {
     @Inject BackendDataSetManager dataSetManager;
     @Inject DataSetDefDeployer dataSetDefDeployer;
     @Inject DataSetDefRegistry dataSetDefRegistry;
+    @Inject BackendUUIDGenerator backendUUIDGenerator;
 
 /*
     @Inject
@@ -118,8 +119,14 @@ public class DataSetBackendServicesImpl implements DataSetBackendServices {
         }
     }
 
-    public void registerDataSetDef(DataSetDef definition) {
+    public String registerDataSetDef(DataSetDef definition) {
+        // Data sets registered from the UI does not contain a UUID.
+        if (definition.getUUID() == null) {
+            final String uuid = backendUUIDGenerator.newUuid();
+            definition.setUUID(uuid);
+        }
         dataSetDefRegistry.registerDataSetDef(definition);
+        return definition.getUUID();
     }
 
     @Override

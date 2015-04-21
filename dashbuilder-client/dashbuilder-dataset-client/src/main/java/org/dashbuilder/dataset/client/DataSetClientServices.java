@@ -380,21 +380,42 @@ public class DataSetClientServices {
         }
     }
 
-    public void registerDataSetDef(final DataSetDef dataSetDef) {
-        dataSetBackendServices.call().registerDataSetDef(dataSetDef);
+    /**
+     * <p>Register a data set definition on backend.</p> 
+     * @param dataSetDef The data set definition to register.
+     * @param callback The callback when data set definition has been registered. It returns the UUID of the data set definition.
+     */
+    public void registerDataSetDef(final DataSetDef dataSetDef, RemoteCallback<String> callback) {
+        dataSetBackendServices.call(callback).registerDataSetDef(dataSetDef);
     }
 
+    /**
+     * <p>Persists a data set definition on backend.</p> 
+     * @param dataSetDef The data set definition to persist.
+     */
     public void persistDataSetDef(final DataSetDef dataSetDef) throws Exception {
         dataSetBackendServices.call().persistDataSetDef(dataSetDef);
     }
 
+    /**
+     * <p>Removes a data set definition on backend.</p> 
+     * @param uuid The data set definition UUID to remove.
+     */
     public void removeDataSetDef(final String uuid) {
-        dataSetBackendServices.call().removeDataSetDef(uuid);
-        removeDataSet(uuid);
+        if (uuid != null) {
+            dataSetBackendServices.call().removeDataSetDef(uuid);
+            removeDataSet(uuid);
+        }
     }
 
+    /**
+     * <p>Removes a registered data set from the index.</p> 
+     * @param uuid The data set UUID to remove.
+     */
     public void removeDataSet(final String uuid) {
-        clientDataSetManager.removeDataSet(uuid);
+        if (uuid != null) {
+            clientDataSetManager.removeDataSet(uuid);
+        }
     }
 
     private class DataSetLookupListenerPair {

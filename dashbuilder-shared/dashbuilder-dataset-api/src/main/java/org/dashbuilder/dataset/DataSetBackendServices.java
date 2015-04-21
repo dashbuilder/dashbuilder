@@ -29,8 +29,9 @@ public interface DataSetBackendServices {
     /**
      * Register a data set definition. 
      * @param definition The data set definition.
+     * @return The registered data set definition UUID. If UUID not present on the definition from the argument <code>definition</code>, the UUID will be generated.
      */
-    void registerDataSetDef(DataSetDef definition);
+    String registerDataSetDef(DataSetDef definition);
 
     /**
      * Removes a data set definition. 
