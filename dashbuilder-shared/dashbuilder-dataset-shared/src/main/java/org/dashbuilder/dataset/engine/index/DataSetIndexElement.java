@@ -16,8 +16,8 @@
 package org.dashbuilder.dataset.engine.index;
 
 import org.dashbuilder.dataset.engine.index.stats.MemSizeFormatter;
-import org.dashbuilder.dataset.impl.MemSizeEstimator;
 import org.dashbuilder.dataset.engine.index.visitor.DataSetIndexVisitor;
+import org.dashbuilder.dataset.impl.MemSizeEstimator;
 
 /**
  * A DataSet index element
@@ -69,8 +69,8 @@ public abstract class DataSetIndexElement {
     public String toString() {
         StringBuilder out = new StringBuilder();
         String simpleName = this.getClass().getName();
-        int dot = simpleName.lastIndexOf(".");
-        if (dot != -1) simpleName = simpleName.substring(simpleName.lastIndexOf(".")+1);
+        int dotIdx = simpleName.lastIndexOf('.');
+        if (dotIdx != -1) simpleName = simpleName.substring(dotIdx + 1);
         out.append(simpleName).append(" ");
         out.append(MemSizeFormatter.formatSize(getEstimatedSize())).append(" ");
         out.append((double) getBuildTime() / 1000000).append(" secs (").append(getReuseHits()).append(")");
