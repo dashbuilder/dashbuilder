@@ -180,7 +180,7 @@ public class DisplayerSettingsJSONMarshaller {
         if ( parent == null ) return null;
         if ( StringUtils.isBlank( path ) ) return parent;
 
-        int separatorIndex = path.indexOf(".");
+        int separatorIndex = path.indexOf('.');
         String strChildNode = separatorIndex > 0 ? path.substring( 0, separatorIndex ) : path;
         String remainingNodes = separatorIndex > 0 ? path.substring( separatorIndex + 1 ) : "";
 
