@@ -73,4 +73,33 @@ public interface DisplayerTypeLiterals extends ConstantsWithLookup {
 
     String DISPLAYER_SUBTYPE_MAP_MARKERS();
 
+
+    // Subtype selector tooltips
+
+    String BARCHART_BAR_tt();
+
+    String BARCHART_STACKED_tt();
+
+    String COLUMNCHART_COLUMN_tt();
+
+    String COLUMNCHART_STACKED_tt();
+
+    String PIECHART_PIE_tt();
+
+    String PIECHART_PIE_3D_tt();
+
+    String PIECHART_DONUT_tt();
+
+    String AREACHART_AREA_tt();
+
+    String AREACHART_STACKED_tt();
+
+    String LINECHART_LINE_tt();
+
+    String LINECHART_SMOOTH_tt();
+
+    String MAP_MAP_REGIONS_tt();
+
+    String MAP_MAP_MARKERS_tt();
+
 }

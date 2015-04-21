@@ -18,7 +18,6 @@ package org.dashbuilder.displayer.client.widgets;
 import java.util.List;
 import java.util.ArrayList;
 import javax.enterprise.context.Dependent;
-import javax.inject.Inject;
 
 import com.github.gwtbootstrap.client.ui.Tab;
 import com.github.gwtbootstrap.client.ui.TabPanel;
@@ -28,19 +27,15 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.displayer.DisplayerSubType;
 import org.dashbuilder.displayer.DisplayerType;
-import org.dashbuilder.displayer.client.RendererLibLocator;
-import org.dashbuilder.displayer.client.RendererLibrary;
 import org.dashbuilder.displayer.client.resources.i18n.DisplayerTypeLiterals;
 
 @Dependent
-public class DisplayerTypeSelector extends Composite {
+public class DisplayerTypeSelector extends Composite implements DisplayerSubtypeSelector.SubTypeChangeListener {
 
     public interface Listener {
         void displayerTypeChanged(DisplayerType type, DisplayerSubType subtype);
@@ -57,16 +52,13 @@ public class DisplayerTypeSelector extends Composite {
     DisplayerSubType selectedSubType = null;
     List<DisplayerTab> tabList = new ArrayList<DisplayerTab>();
 
-    FlexTable subtypes = new FlexTable();
-
-    @Inject
-    RendererLibLocator rendererLibLocator;
-
     @UiField(provided = true)
     TabPanel optionsPanel;
 
     @UiField
     VerticalPanel subtypePanel;
+
+    private DisplayerSubtypeSelector subtypeSelector;
 
     public DisplayerTypeSelector() {
         tabList.add(new DisplayerTab(DisplayerTypeLiterals.INSTANCE.displayer_type_selector_tab_bar(), DisplayerType.BARCHART));
@@ -84,6 +76,9 @@ public class DisplayerTypeSelector extends Composite {
         for (DisplayerTab tab : tabList) optionsPanel.add(tab);
 
         initWidget(uiBinder.createAndBindUi(this));
+
+        subtypeSelector = new DisplayerSubtypeSelector(this);
+        subtypePanel.add(subtypeSelector);
     }
 
     public void init(Listener listener) {
@@ -106,32 +101,20 @@ public class DisplayerTypeSelector extends Composite {
             }
         }
     }
-// TODO ensure a subtype is always set to the displayersettings (select default if none was indicated in the settings, and select first one of the list in the selector
-    public void select(String renderer, final DisplayerType type, final DisplayerSubType displayerSubType) {
-        selectedType = type;
-        selectedSubType = displayerSubType;
-        subtypes.removeAllRows();
 
-        if (renderer == null || renderer.length() == 0) renderer = rendererLibLocator.getDefaultRenderer(type);
-        RendererLibrary rendererLibrary = rendererLibLocator.lookupRenderer(renderer);
-        if (rendererLibrary != null) {
-            DisplayerSubType[] supportedSubTypes = rendererLibrary.getSupportedSubtypes(type);
-            if (supportedSubTypes != null) {
-                for (int i = 0; i < supportedSubTypes.length; i++) {
-                    final DisplayerSubType subtype = supportedSubTypes[ i ];
-                    final Anchor subtypeLink = new Anchor(DisplayerTypeLiterals.INSTANCE.getString(DisplayerTypeLiterals.DST_PREFIX + subtype.toString()));
-                    subtypeLink.addClickHandler(new ClickHandler() {
-                        @Override
-                        public void onClick(ClickEvent event) {
-                            listener.displayerTypeChanged(type, subtype);
-                        }
-                    });
-                    subtypes.setWidget(i, 0, subtypeLink);
-                }
-            }
-        }
-        subtypePanel.add( subtypes );
+    public void select(String renderer, final DisplayerType type, final DisplayerSubType subtype) {
+        selectedType = type;
+        selectedSubType = subtype;
+        subtypeSelector.select(renderer, type, subtype);
         draw();
+    }
+
+    @Override
+    public void displayerSubtypeChanged(DisplayerSubType displayerSubType) {
+        if (displayerSubType != selectedSubType) {
+            selectedSubType = displayerSubType;
+            listener.displayerTypeChanged(selectedType, displayerSubType);
+        }
     }
 
     private class DisplayerTab extends Tab {

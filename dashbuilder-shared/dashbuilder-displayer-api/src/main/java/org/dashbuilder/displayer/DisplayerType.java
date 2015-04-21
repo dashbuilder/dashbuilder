@@ -15,6 +15,9 @@
  */
 package org.dashbuilder.displayer;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.dashbuilder.displayer.DisplayerSubType.*;
 
 /**
@@ -78,10 +81,10 @@ public enum DisplayerType {
     METRIC();
 
     private DisplayerType(DisplayerSubType ... subtypes) {
-        this.subtypes = subtypes;
+        for (DisplayerSubType displayerSubType : subtypes) this.subtypes.add(displayerSubType);
     }
 
-    private DisplayerSubType[] subtypes;
+    private List<DisplayerSubType> subtypes = new ArrayList<DisplayerSubType>(5);
 
     public static DisplayerType getByName(String str) {
         try {
@@ -89,5 +92,9 @@ public enum DisplayerType {
         } catch (Exception e) {
             return null;
         }
+    }
+
+    public List<DisplayerSubType> getSubTypes() {
+        return subtypes;
     }
 }
