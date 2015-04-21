@@ -18,7 +18,6 @@ package org.dashbuilder.client.widgets.dataset.editor.widgets;
 import com.github.gwtbootstrap.client.ui.*;
 import com.github.gwtbootstrap.client.ui.Button;
 import com.github.gwtbootstrap.client.ui.Image;
-import com.github.gwtbootstrap.client.ui.Label;
 import com.github.gwtbootstrap.client.ui.constants.IconType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
@@ -50,11 +49,9 @@ import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetLookup;
 import org.dashbuilder.dataset.client.DataSetClientServices;
 import org.dashbuilder.dataset.client.DataSetExportReadyCallback;
-import org.dashbuilder.dataset.client.resources.bundles.DataSetClientImages;
 import org.dashbuilder.dataset.client.resources.bundles.DataSetClientResources;
 import org.dashbuilder.dataset.def.*;
 import org.dashbuilder.displayer.client.Displayer;
-import org.dashbuilder.displayer.client.DisplayerListener;
 import org.dashbuilder.displayer.client.widgets.filter.DataSetFilterEditor;
 
 import javax.enterprise.context.Dependent;
@@ -71,7 +68,7 @@ import java.util.Set;
 @Dependent
 public class DataSetEditorView extends Composite implements DataSetEditor.View {
 
-    private static final String EXPORT_ICON_SIZE = "25px";
+    private static final String EXPORT_ICON_SIZE = "20px";
     
     interface DataSetEditorViewBinder extends UiBinder<Widget, DataSetEditorView> {}
     private static DataSetEditorViewBinder uiBinder = GWT.create(DataSetEditorViewBinder.class);
