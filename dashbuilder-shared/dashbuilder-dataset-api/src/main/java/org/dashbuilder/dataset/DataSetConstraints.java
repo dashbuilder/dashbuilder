@@ -105,7 +105,7 @@ public class DataSetConstraints<T> {
         if (max == 0) {
             throw new IllegalArgumentException("Maximum data set columns must be greater than or equal to 1. Actual=" + max);
         }
-        if (min != -1 & max != -1 && min > max) {
+        if (min != -1 && max != -1 && min > max) {
             throw new IllegalArgumentException("Min=" + min + " data set columns cannot be greater than the max=" + max);
         }
         if (types != null) {
