@@ -47,7 +47,7 @@ public final class XYChartData implements Iterable<XYChartSerie>
     }
 
     public final XYChartData setCategoryAxisProperty(String categoryAxisProperty) {
-        if (categoryAxisProperty != null || categoryAxisProperty.trim().length() != 0) {
+        if (categoryAxisProperty != null && categoryAxisProperty.trim().length() != 0) {
             if (getDataTable().getColumn(categoryAxisProperty) != null) m_jso.setCategoryAxisProperty(categoryAxisProperty);
             else throw new RuntimeException("The data model property [" + categoryAxisProperty + "] does not exist in the model.");
         }
