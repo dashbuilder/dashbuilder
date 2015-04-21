@@ -190,9 +190,8 @@ public class ElasticSearchQueryBuilderImpl implements ElasticSearchQueryBuilder<
             Query filter = null;
             if (subFilters.size() == 1) {
                 filter = subFilters.get(0);
-            }
-            else {
-                new Query(filterOperator);
+            } else {
+                filter = new Query(filterOperator);
                 filter.setParam(Query.Parameter.FILTERS.name(), subFilters);
             }
 
