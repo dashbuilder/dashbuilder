@@ -253,7 +253,7 @@ public class DisplayerSettingsJSONMarshaller {
     }
 
     private void fillRecursive( String parentPath, JSONObject json, Map<String, String> settings ) {
-        String sb = new String( StringUtils.isBlank( parentPath ) ? "" : parentPath + ".");
+        String sb = StringUtils.isBlank(parentPath) ? "" : parentPath + ".";
         for ( String key : json.keySet() ) {
             String path = sb + key;
             JSONValue value = json.get( key );
