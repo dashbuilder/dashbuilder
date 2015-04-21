@@ -152,7 +152,7 @@ public class DisplayerSettingsJSONMarshaller {
     private void setNodeValue( JSONObject node, String path, String value ) {
         if ( node == null || StringUtils.isBlank( path ) || value == null ) return;
 
-        int separatorIndex = path.lastIndexOf(".");
+        int separatorIndex = path.lastIndexOf('.');
         String nodesPath = separatorIndex > 0 ? path.substring( 0, separatorIndex ) : "";
         String leaf = separatorIndex > 0 ? path.substring( separatorIndex + 1 ) : path;
 
@@ -163,7 +163,7 @@ public class DisplayerSettingsJSONMarshaller {
     private String getNodeValue( JSONObject node, String path ) {
         if ( node == null || StringUtils.isBlank( path ) ) return null;
 
-        int separatorIndex = path.lastIndexOf(".");
+        int separatorIndex = path.lastIndexOf('.');
         String subNodesPath = separatorIndex > 0 ? path.substring( 0, separatorIndex ) : "";
         String leaf = separatorIndex > 0 ? path.substring( separatorIndex + 1 ) : path;
 

@@ -284,7 +284,7 @@ public class DataSetLookupEditor implements IsWidget,
     }
 
     protected int getGroupFunctionColumnIdx(String columnId) {
-        int sep = columnId.lastIndexOf("_");
+        int sep = columnId.lastIndexOf('_');
         if (sep != -1) {
             try {
                 String str = columnId.substring(sep + 1);
