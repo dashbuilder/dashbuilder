@@ -326,7 +326,7 @@ public class DataSetExplorerView extends Composite implements DataSetExplorer.Vi
                     // Add estimation values.
                     final HTML estimatedSizeText = new HTML(humanReadableByteCount(estimatedSize, true));
                     estimatedSizeText.addStyleName(style.statusText());
-                    final HTML estimatedRowsText = new HTML(humanReadableRowCount(rowCount) + WHITESPACE + "(" + DataSetExplorerConstants.INSTANCE.rows() + ")");
+                    final HTML estimatedRowsText = new HTML(humanReadableRowCount(rowCount) + WHITESPACE + DataSetExplorerConstants.INSTANCE.rows());
                     estimatedRowsText.addStyleName(style.statusText());
 
                     // Add into parent container.
@@ -469,7 +469,7 @@ public class DataSetExplorerView extends Composite implements DataSetExplorer.Vi
         if (rows < unit) return Long.toString(rows);
         int exp = (int) (Math.log(rows) / Math.log(unit));
         String pre = ("kMGTPE" ).charAt(exp-1) + ("");
-        return NumberFormat.getFormat("#.0").format(rows / Math.pow(unit, exp)) + pre;
+        return NumberFormat.getFormat("#").format(rows / Math.pow(unit, exp)) + pre;
     }
 
     // **************** EVENT HANDLER REGISTRATIONS ****************************

@@ -209,6 +209,7 @@ public class DataSetDef {
     @Override
     public boolean equals(Object obj) {
         if (obj == null) return false;
+        if (getUUID() == null) return false;
         
         try {
             DataSetDef d = (DataSetDef) obj;
