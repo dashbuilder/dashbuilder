@@ -32,7 +32,7 @@
     <!-- Dashbuilder -->
     <dependency>
       <groupId>org.dashbuilder</groupId>
-      <artifactId>dashbuilder-client-all</artifactId>
+      <artifactId>dashbuilder-all</artifactId>
     </dependency>
 
     <dependency>
@@ -85,6 +85,11 @@
     </dependency>
 
     <!-- UberFire -->
+
+    <dependency>
+      <groupId>org.uberfire</groupId>
+      <artifactId>uberfire-server-all</artifactId>
+    </dependency>
 
     <dependency>
       <groupId>org.uberfire</groupId>
@@ -256,6 +261,26 @@
       <artifactId>jboss-logging</artifactId>
       <scope>runtime</scope>
     </dependency>
+
+    <!-- Jetty -->
+
+    <dependency>
+      <groupId>org.mortbay.jetty</groupId>
+      <artifactId>jetty</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.mortbay.jetty</groupId>
+      <artifactId>jetty-plus</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.mortbay.jetty</groupId>
+      <artifactId>jetty-naming</artifactId>
+      <scope>runtime</scope>
+      </dependency>
 
   </dependencies>
 

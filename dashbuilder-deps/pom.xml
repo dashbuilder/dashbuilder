@@ -20,11 +20,11 @@
 
   <properties>
     <version.org.jboss.integration-platform>6.0.0.CR26</version.org.jboss.integration-platform>
-    <version.org.uberfire.ext>0.5.2.Final</version.org.uberfire.ext>
-    <version.org.uberfire>0.5.2.Final</version.org.uberfire>
+    <version.org.uberfire>0.7.0-SNAPSHOT</version.org.uberfire>
     <version.org.jboss.errai>3.0.4.Final</version.org.jboss.errai>
     <version.org.picketlink>2.6.0.Final</version.org.picketlink>
     <version.org.jboss.logging.jboss-logging>3.1.4.GA</version.org.jboss.logging.jboss-logging>
+    <version.org.mortbay.jetty>6.1.25</version.org.mortbay.jetty>
     <version.org.owasp.encoder>1.1</version.org.owasp.encoder>
     <version.org.owasp.encoder>1.1</version.org.owasp.encoder>
     <version.org.jooq>3.4.3</version.org.jooq>
@@ -71,7 +71,7 @@
         <groupId>org.uberfire</groupId>
         <artifactId>uberfire-extensions-bom</artifactId>
         <type>pom</type>
-        <version>${version.org.uberfire.ext}</version>
+        <version>${version.org.uberfire}</version>
         <scope>import</scope>
       </dependency>
 
@@ -252,6 +252,32 @@
         <groupId>org.picketlink</groupId>
         <artifactId>picketlink-idm-api</artifactId>
         <version>${version.org.picketlink}</version>
+      </dependency>
+
+      <!-- Jetty -->
+
+      <dependency>
+        <groupId>org.mortbay.jetty</groupId>
+        <artifactId>jetty</artifactId>
+        <version>${version.org.mortbay.jetty}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.mortbay.jetty</groupId>
+        <artifactId>jetty-plus</artifactId>
+        <version>${version.org.mortbay.jetty}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.mortbay.jetty</groupId>
+        <artifactId>jetty-naming</artifactId>
+        <version>${version.org.mortbay.jetty}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.mortbay.jetty</groupId>
+        <artifactId>jetty-embedded</artifactId>
+        <version>${version.org.mortbay.jetty}</version>
       </dependency>
 
       <!-- jOOQ -->
