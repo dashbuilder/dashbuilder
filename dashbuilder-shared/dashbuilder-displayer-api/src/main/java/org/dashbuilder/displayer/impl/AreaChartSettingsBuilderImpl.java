@@ -17,11 +17,24 @@ package org.dashbuilder.displayer.impl;
 
 import org.dashbuilder.displayer.AreaChartSettingsBuilder;
 import org.dashbuilder.displayer.DisplayerSettings;
+import org.dashbuilder.displayer.DisplayerSubType;
 import org.dashbuilder.displayer.DisplayerType;
 
 public class AreaChartSettingsBuilderImpl extends AbstractXAxisChartSettingsBuilder<AreaChartSettingsBuilderImpl> implements AreaChartSettingsBuilder<AreaChartSettingsBuilderImpl> {
 
     protected DisplayerSettings createDisplayerSettings() {
         return new DisplayerSettings( DisplayerType.AREACHART );
+    }
+
+    @Override
+    public AreaChartSettingsBuilderImpl subType_Area() {
+        displayerSettings.setSubtype(DisplayerSubType.AREA);
+        return this;
+    }
+
+    @Override
+    public AreaChartSettingsBuilderImpl subType_StackedArea() {
+        displayerSettings.setSubtype(DisplayerSubType.AREA_STACKED);
+        return this;
     }
 }

@@ -70,23 +70,8 @@ public class DisplayerPrototypes {
 
         prototypeMap.put(DisplayerType.BARCHART, DisplayerSettingsFactory
                 .newBarChartSettings()
+                .subType_Bar()
                 .uuid("barChartPrototype")
-                .dataset(dataSetPrototypes.getContinentPopulation())
-                .title("Population per Continent")
-                .titleVisible(false)
-                .column(POPULATION)
-                .expression("value/1000000")
-                .format("Population", "#,### M")
-                .width(500).height(250)
-                .margins(10, 40, 90, 50)
-                .set3d(false)
-                .legendOff()
-                .filterOn(false, true, true)
-                .buildSettings());
-
-        prototypeMap.put(DisplayerType.COLUMNCHART, DisplayerSettingsFactory
-                .newColumnChartSettings()
-                .uuid("columnChartPrototype")
                 .dataset(dataSetPrototypes.getContinentPopulation())
                 .title("Population per Continent")
                 .titleVisible(false)

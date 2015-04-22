@@ -15,6 +15,7 @@
  */
 package org.dashbuilder.displayer.impl;
 
+import org.dashbuilder.displayer.DisplayerSubType;
 import org.dashbuilder.displayer.DisplayerType;
 import org.dashbuilder.displayer.LineChartSettingsBuilder;
 import org.dashbuilder.displayer.DisplayerSettings;
@@ -23,5 +24,17 @@ public class LineChartSettingsBuilderImpl extends AbstractXAxisChartSettingsBuil
 
     protected DisplayerSettings createDisplayerSettings() {
         return new DisplayerSettings( DisplayerType.LINECHART );
+    }
+
+    @Override
+    public LineChartSettingsBuilderImpl subType_Line() {
+        displayerSettings.setSubtype(DisplayerSubType.LINE);
+        return this;
+    }
+
+    @Override
+    public LineChartSettingsBuilderImpl subType_SmoothLine() {
+        displayerSettings.setSubtype(DisplayerSubType.SMOOTH);
+        return this;
     }
 }

@@ -136,6 +136,7 @@ public class SalesExpectedByDate extends Composite implements GalleryWidget {
 
         barChartDayOfWeek = DisplayerHelper.lookupDisplayer(
                 DisplayerSettingsFactory.newBarChartSettings()
+                .subType_Bar()
                 .dataset(SALES_OPPS)
                 .group(CREATION_DATE).fixed(DAY_OF_WEEK, true).firstDay(SUNDAY)
                 .column(CREATION_DATE, "Creation date")

@@ -16,6 +16,7 @@
 package org.dashbuilder.displayer.impl;
 
 import org.dashbuilder.displayer.DisplayerSettings;
+import org.dashbuilder.displayer.DisplayerSubType;
 import org.dashbuilder.displayer.DisplayerType;
 import org.dashbuilder.displayer.MapChartSettingsBuilder;
 
@@ -23,5 +24,17 @@ public class MapChartSettingsBuilderImpl extends AbstractXAxisChartSettingsBuild
 
     protected DisplayerSettings createDisplayerSettings() {
         return new DisplayerSettings( DisplayerType.MAP );
+    }
+
+    @Override
+    public MapChartSettingsBuilderImpl subType_Region_Map() {
+        displayerSettings.setSubtype(DisplayerSubType.MAP_REGIONS);
+        return this;
+    }
+
+    @Override
+    public MapChartSettingsBuilderImpl subType_Marker_Map() {
+        displayerSettings.setSubtype(DisplayerSubType.MAP_MARKERS);
+        return this;
     }
 }

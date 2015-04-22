@@ -110,7 +110,8 @@ public class SalesGoals extends Composite implements GalleryWidget {
                 .buildSettings());
 
         barChartByProduct = DisplayerHelper.lookupDisplayer(
-                DisplayerSettingsFactory.newColumnChartSettings()
+                DisplayerSettingsFactory.newBarChartSettings()
+                .subType_Column()
                 .dataset(SALES_OPPS)
                 .group(PRODUCT)
                 .column(PRODUCT).format(AppConstants.INSTANCE.sales_goals_bar_byproduct_column1())
@@ -124,7 +125,8 @@ public class SalesGoals extends Composite implements GalleryWidget {
                 .buildSettings());
 
         barChartByEmployee = DisplayerHelper.lookupDisplayer(
-                DisplayerSettingsFactory.newColumnChartSettings()
+                DisplayerSettingsFactory.newBarChartSettings()
+                .subType_Column()
                 .dataset(SALES_OPPS)
                 .group(SALES_PERSON)
                 .column(SALES_PERSON).format(AppConstants.INSTANCE.sales_goals_bar_byempl_column1())

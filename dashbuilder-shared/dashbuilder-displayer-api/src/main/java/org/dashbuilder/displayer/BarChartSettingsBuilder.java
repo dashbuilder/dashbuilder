@@ -34,4 +34,27 @@ public interface BarChartSettingsBuilder<T extends BarChartSettingsBuilder> exte
      */
     T set3d(boolean b);
 
+    /**
+     * Set this bar chart's subtype to a simple bar chart (i.e. horizontal non-stacked bars)
+     * @return The DisplayerSettingsBuilder instance that is being used to configure a Bar chart data displayer.
+     */
+    T subType_Bar();
+
+    /**
+     * Set this bar chart's subtype to a stacked bar chart (i.e. horizontal stacked bars)
+     * @return The DisplayerSettingsBuilder instance that is being used to configure a Bar chart data displayer.
+     */
+    T subType_StackedBar();
+
+    /**
+     * Set this bar chart's subtype to a simple column chart (i.e. vertical non-stacked bars)
+     * @return The DisplayerSettingsBuilder instance that is being used to configure a Bar chart data displayer.
+     */
+    T subType_Column();
+
+    /**
+     * Set this bar chart's subtype to a stacked column chart (i.e. vertical stacked bars)
+     * @return The DisplayerSettingsBuilder instance that is being used to configure a Bar chart data displayer.
+     */
+    T subType_StackedColumn();
 }

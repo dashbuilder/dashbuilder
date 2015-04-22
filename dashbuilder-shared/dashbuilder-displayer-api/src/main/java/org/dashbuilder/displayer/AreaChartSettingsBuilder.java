@@ -27,4 +27,16 @@ package org.dashbuilder.displayer;
  */
 public interface AreaChartSettingsBuilder<T extends AreaChartSettingsBuilder> extends XAxisChartSettingsBuilder<T> {
 
+    /**
+     * Set this area chart's subtype to a simple area chart (i.e. normal non-stacked areas)
+     * @return The DisplayerSettingsBuilder instance that is being used to configure an Area chart data displayer.
+     */
+    T subType_Area();
+
+    /**
+     * Set this area chart's subtype to a stacked area chart (i.e. stacked areas)
+     * @return The DisplayerSettingsBuilder instance that is being used to configure an Area chart data displayer.
+     */
+    T subType_StackedArea();
+
 }

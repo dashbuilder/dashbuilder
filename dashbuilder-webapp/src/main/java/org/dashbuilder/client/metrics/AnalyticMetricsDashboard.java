@@ -231,7 +231,8 @@ public class AnalyticMetricsDashboard extends Composite implements GalleryWidget
     }
 
     protected void buildSummary() {
-        maxCPUxServer = DisplayerHelper.lookupDisplayer(DisplayerSettingsFactory.newColumnChartSettings()
+        maxCPUxServer = DisplayerHelper.lookupDisplayer(DisplayerSettingsFactory.newBarChartSettings()
+                .subType_Column()
                 .dataset(METRICS_DATASET_UUID)
                 .group(COLUMN_SERVER)
                 .column(COLUMN_SERVER, "Server")
@@ -246,7 +247,8 @@ public class AnalyticMetricsDashboard extends Composite implements GalleryWidget
                 .backgroundColor(BACKGROUND_COLOR)
                 .buildSettings());
 
-        maxMemxServerSettings = DisplayerHelper.lookupDisplayer(DisplayerSettingsFactory.newColumnChartSettings()
+        maxMemxServerSettings = DisplayerHelper.lookupDisplayer(DisplayerSettingsFactory.newBarChartSettings()
+                .subType_Column()
                 .dataset(METRICS_DATASET_UUID)
                 .group(COLUMN_SERVER)
                 .column(COLUMN_SERVER, "Server")
@@ -261,7 +263,8 @@ public class AnalyticMetricsDashboard extends Composite implements GalleryWidget
                 .backgroundColor(BACKGROUND_COLOR)
                 .buildSettings());
 
-        maxProcessesxServerSettings = DisplayerHelper.lookupDisplayer(DisplayerSettingsFactory.newColumnChartSettings()
+        maxProcessesxServerSettings = DisplayerHelper.lookupDisplayer(DisplayerSettingsFactory.newBarChartSettings()
+                .subType_Column()
                 .dataset(METRICS_DATASET_UUID)
                 .group(COLUMN_SERVER)
                 .column(COLUMN_SERVER, "Server")
@@ -276,7 +279,8 @@ public class AnalyticMetricsDashboard extends Composite implements GalleryWidget
                 .backgroundColor(BACKGROUND_COLOR)
                 .buildSettings());
 
-        maxNetworkxServerSettings = DisplayerHelper.lookupDisplayer(DisplayerSettingsFactory.newColumnChartSettings()
+        maxNetworkxServerSettings = DisplayerHelper.lookupDisplayer(DisplayerSettingsFactory.newBarChartSettings()
+                .subType_Column()
                 .dataset(METRICS_DATASET_UUID)
                 .group(COLUMN_SERVER)
                 .column(COLUMN_SERVER, "Server")

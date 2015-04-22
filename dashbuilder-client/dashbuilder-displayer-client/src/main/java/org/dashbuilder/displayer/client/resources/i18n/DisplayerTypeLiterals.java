@@ -26,8 +26,6 @@ public interface DisplayerTypeLiterals extends ConstantsWithLookup {
 
     String displayer_type_selector_tab_bar();
 
-    String displayer_type_selector_tab_column();
-
     String displayer_type_selector_tab_pie();
 
     String displayer_type_selector_tab_line();
@@ -59,7 +57,11 @@ public interface DisplayerTypeLiterals extends ConstantsWithLookup {
 
     String DISPLAYER_SUBTYPE_BAR();
 
+    String DISPLAYER_SUBTYPE_BAR_STACKED();
+
     String DISPLAYER_SUBTYPE_COLUMN();
+
+    String DISPLAYER_SUBTYPE_COLUMN_STACKED();
 
     String DISPLAYER_SUBTYPE_HISTOGRAM();
 
@@ -78,11 +80,11 @@ public interface DisplayerTypeLiterals extends ConstantsWithLookup {
 
     String BARCHART_BAR_tt();
 
-    String BARCHART_STACKED_tt();
+    String BARCHART_BAR_STACKED_tt();
 
-    String COLUMNCHART_COLUMN_tt();
+    String BARCHART_COLUMN_tt();
 
-    String COLUMNCHART_STACKED_tt();
+    String BARCHART_COLUMN_STACKED_tt();
 
     String PIECHART_PIE_tt();
 
@@ -92,7 +94,7 @@ public interface DisplayerTypeLiterals extends ConstantsWithLookup {
 
     String AREACHART_AREA_tt();
 
-    String AREACHART_STACKED_tt();
+    String AREACHART_AREA_STACKED_tt();
 
     String LINECHART_LINE_tt();
 

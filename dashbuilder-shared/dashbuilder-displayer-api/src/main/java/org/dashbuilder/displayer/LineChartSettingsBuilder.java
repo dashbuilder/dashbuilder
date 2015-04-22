@@ -27,4 +27,16 @@ package org.dashbuilder.displayer;
  */
 public interface LineChartSettingsBuilder<T extends LineChartSettingsBuilder> extends XAxisChartSettingsBuilder<T> {
 
+    /**
+     * Set this line chart's subtype to a simple line chart
+     * @return The DisplayerSettingsBuilder instance that is being used to configure a Line chart data displayer.
+     */
+    T subType_Line();
+
+    /**
+     * Set this line chart's subtype to a smooth line chart (i.e. a line chart without sharp edges)
+     * @return The DisplayerSettingsBuilder instance that is being used to configure a Line chart data displayer.
+     */
+    T subType_SmoothLine();
+
 }

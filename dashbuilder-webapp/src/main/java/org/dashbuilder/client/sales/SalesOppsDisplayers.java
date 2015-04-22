@@ -80,6 +80,7 @@ public class SalesOppsDisplayers {
             .buildSettings();
 
     public static final DisplayerSettings OPPS_BY_PRODUCT = DisplayerSettingsFactory.newBarChartSettings()
+            .subType_Bar()
             .uuid("opps-by-product")
             .dataset(SALES_OPPS)
             .group(PRODUCT)
@@ -92,6 +93,7 @@ public class SalesOppsDisplayers {
             .buildSettings();
 
     public static final DisplayerSettings OPPS_BY_COUNTRY = DisplayerSettingsFactory.newBarChartSettings()
+            .subType_Bar()
             .uuid("opps-by-country")
             .dataset(SALES_OPPS)
             .group(COUNTRY)

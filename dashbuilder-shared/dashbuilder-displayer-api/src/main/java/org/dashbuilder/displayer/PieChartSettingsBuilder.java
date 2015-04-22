@@ -27,4 +27,22 @@ package org.dashbuilder.displayer;
  */
 public interface PieChartSettingsBuilder<T extends PieChartSettingsBuilder> extends XAxisChartSettingsBuilder<T> {
 
+    /**
+     * Set this pie chart's subtype to a simple pie chart
+     * @return The DisplayerSettingsBuilder instance that is being used to configure a Pie chart data displayer.
+     */
+    T subType_Pie();
+
+    /**
+     * Set this pie chart's subtype to a 3D pie chart
+     * @return The DisplayerSettingsBuilder instance that is being used to configure a Pie chart data displayer.
+     */
+    T subType_Pie_3d();
+
+    /**
+     * Set this pie chart's subtype to a donut-like simple pie chart (i.e. a pie chart with a hole in its center)
+     * @return The DisplayerSettingsBuilder instance that is being used to configure a Pie chart data displayer.
+     */
+    T subType_Donut();
+
 }

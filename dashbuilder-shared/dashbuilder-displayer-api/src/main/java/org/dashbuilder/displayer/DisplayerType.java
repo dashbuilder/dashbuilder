@@ -28,12 +28,7 @@ public enum DisplayerType {
     /**
      * Bar Chart
      */
-    BARCHART(BAR, STACKED),
-
-    /**
-     * Column Chart
-     */
-    COLUMNCHART(COLUMN, STACKED/*, HISTOGRAM*/),
+    BARCHART(BAR, BAR_STACKED, COLUMN, COLUMN_STACKED),
 
     /**
      * Pie Chart
@@ -43,7 +38,7 @@ public enum DisplayerType {
     /**
      * Area Chart
      */
-    AREACHART(AREA, STACKED/*, STEPPED*/),
+    AREACHART(AREA, AREA_STACKED/*, STEPPED*/),
 
     /**
      * Line Chart

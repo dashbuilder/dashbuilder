@@ -27,4 +27,16 @@ package org.dashbuilder.displayer;
  */
 public interface MapChartSettingsBuilder<T extends MapChartSettingsBuilder> extends XAxisChartSettingsBuilder<T> {
 
+    /**
+     * Set this map chart's subtype to a region map chart (i.e. a Map chart that highlights certain regions)
+     * @return The DisplayerSettingsBuilder instance that is being used to configure a Map chart data displayer.
+     */
+    T subType_Region_Map();
+
+    /**
+     * Set this map chart's subtype to a marker map chart (i.e. a Map chart that shows a magnitude indication for certain regions)
+     * @return The DisplayerSettingsBuilder instance that is being used to configure a Map chart data displayer.
+     */
+    T subType_Marker_Map();
+
 }

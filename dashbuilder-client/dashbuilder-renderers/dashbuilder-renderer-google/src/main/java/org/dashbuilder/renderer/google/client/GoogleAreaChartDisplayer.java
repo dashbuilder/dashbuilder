@@ -131,7 +131,7 @@ public class GoogleAreaChartDisplayer extends GoogleCategoriesDisplayer {
         options.setAnimation(anim);
         options.setChartArea(createChartArea());
         options.setColors(createColorArray(googleTable));
-        options.setIsStacked(DisplayerSubType.STACKED.equals(displayerSettings.getSubtype()));
+        options.setIsStacked(DisplayerSubType.AREA_STACKED.equals(displayerSettings.getSubtype()));
         return options;
     }
 }

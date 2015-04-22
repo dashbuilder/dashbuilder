@@ -145,7 +145,8 @@ public class VerticalServerMetrics extends Composite {
 
         // TX/RX
         Displayer serverNetwork = DisplayerHelper.lookupDisplayer(
-                DisplayerSettingsFactory.newColumnChartSettings()
+                DisplayerSettingsFactory.newBarChartSettings()
+                        .subType_Column()
                         .dataset(METRICS_DATASET_UUID)
                         .filter(COLUMN_SERVER, equalsTo(server))
                         .filter(COLUMN_TIMESTAMP, timeFrame("-10second"))
@@ -164,6 +165,7 @@ public class VerticalServerMetrics extends Composite {
         // Processes
         Displayer serverProcessesRunning = DisplayerHelper.lookupDisplayer(
                 DisplayerSettingsFactory.newBarChartSettings()
+                        .subType_Bar()
                         .dataset(METRICS_DATASET_UUID)
                         .filter(COLUMN_SERVER, equalsTo(server))
                         .filter(COLUMN_TIMESTAMP, timeFrame("-2second"))

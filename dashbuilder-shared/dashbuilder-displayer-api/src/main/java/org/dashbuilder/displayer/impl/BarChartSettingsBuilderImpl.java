@@ -17,6 +17,7 @@ package org.dashbuilder.displayer.impl;
 
 import org.dashbuilder.displayer.BarChartSettingsBuilder;
 import org.dashbuilder.displayer.DisplayerSettings;
+import org.dashbuilder.displayer.DisplayerSubType;
 import org.dashbuilder.displayer.DisplayerType;
 
 public class BarChartSettingsBuilderImpl extends AbstractXAxisChartSettingsBuilder<BarChartSettingsBuilderImpl> implements BarChartSettingsBuilder<BarChartSettingsBuilderImpl> {
@@ -26,7 +27,31 @@ public class BarChartSettingsBuilderImpl extends AbstractXAxisChartSettingsBuild
     }
 
     public BarChartSettingsBuilderImpl set3d( boolean b ) {
-        displayerSettings.setChart3D( b );
+        displayerSettings.setChart3D(b);
+        return this;
+    }
+
+    @Override
+    public BarChartSettingsBuilderImpl subType_Bar() {
+        displayerSettings.setSubtype(DisplayerSubType.BAR);
+        return this;
+    }
+
+    @Override
+    public BarChartSettingsBuilderImpl subType_StackedBar() {
+        displayerSettings.setSubtype(DisplayerSubType.BAR_STACKED);
+        return this;
+    }
+
+    @Override
+    public BarChartSettingsBuilderImpl subType_Column() {
+        displayerSettings.setSubtype(DisplayerSubType.COLUMN);
+        return this;
+    }
+
+    @Override
+    public BarChartSettingsBuilderImpl subType_StackedColumn() {
+        displayerSettings.setSubtype(DisplayerSubType.COLUMN_STACKED);
         return this;
     }
 }

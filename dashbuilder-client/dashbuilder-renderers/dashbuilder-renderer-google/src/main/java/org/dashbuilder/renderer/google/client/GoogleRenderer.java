@@ -44,7 +44,6 @@ public class GoogleRenderer extends AbstractRendererLibrary {
     private void init() {
         RendererLibLocator rll = RendererLibLocator.get();
         rll.registerRenderer(DisplayerType.BARCHART, UUID, true);
-        rll.registerRenderer(DisplayerType.COLUMNCHART, UUID, true);
         rll.registerRenderer(DisplayerType.PIECHART, UUID, true);
         rll.registerRenderer(DisplayerType.AREACHART, UUID, true);
         rll.registerRenderer(DisplayerType.LINECHART, UUID, true);
@@ -62,15 +61,14 @@ public class GoogleRenderer extends AbstractRendererLibrary {
     public DisplayerSubType[] getSupportedSubtypes(DisplayerType displayerType) {
         switch (displayerType) {
             case BARCHART: return new DisplayerSubType[]{   DisplayerSubType.BAR,
-                                                            DisplayerSubType.STACKED};
-            case COLUMNCHART: return new DisplayerSubType[]{DisplayerSubType.COLUMN,
-                                                            DisplayerSubType.STACKED,
-                                                            /*DisplayerSubType.HISTOGRAM*/};
+                                                            DisplayerSubType.BAR_STACKED,
+                                                            DisplayerSubType.COLUMN,
+                                                            DisplayerSubType.COLUMN_STACKED};
             case PIECHART: return new DisplayerSubType[]{   DisplayerSubType.PIE,
                                                             DisplayerSubType.PIE_3D,
                                                             DisplayerSubType.DONUT};
             case AREACHART: return new DisplayerSubType[]{  DisplayerSubType.AREA,
-                                                            DisplayerSubType.STACKED/*,
+                                                            DisplayerSubType.AREA_STACKED/*,
                                                             DisplayerSubType.STEPPED*/};
             case LINECHART: return new DisplayerSubType[]{  DisplayerSubType.LINE,
                                                             DisplayerSubType.SMOOTH};
@@ -83,7 +81,6 @@ public class GoogleRenderer extends AbstractRendererLibrary {
     public Displayer lookupDisplayer(DisplayerSettings displayerSettings) {
         DisplayerType displayerType = displayerSettings.getType();
         if ( DisplayerType.BARCHART.equals(displayerType)) return new GoogleBarChartDisplayer();
-        if ( DisplayerType.COLUMNCHART.equals(displayerType)) return new GoogleColumnChartDisplayer();
         if ( DisplayerType.PIECHART.equals(displayerType)) return new GooglePieChartDisplayer();
         if ( DisplayerType.AREACHART.equals(displayerType)) return new GoogleAreaChartDisplayer();
         if ( DisplayerType.LINECHART.equals(displayerType)) return new GoogleLineChartDisplayer();

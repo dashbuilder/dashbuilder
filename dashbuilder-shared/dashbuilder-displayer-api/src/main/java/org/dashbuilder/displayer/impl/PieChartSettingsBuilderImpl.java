@@ -15,6 +15,7 @@
  */
 package org.dashbuilder.displayer.impl;
 
+import org.dashbuilder.displayer.DisplayerSubType;
 import org.dashbuilder.displayer.DisplayerType;
 import org.dashbuilder.displayer.DisplayerSettings;
 import org.dashbuilder.displayer.PieChartSettingsBuilder;
@@ -27,6 +28,24 @@ public class PieChartSettingsBuilderImpl extends AbstractXAxisChartSettingsBuild
 
     public PieChartSettingsBuilderImpl set3d( boolean b ) {
         displayerSettings.setChart3D( b );
+        return this;
+    }
+
+    @Override
+    public PieChartSettingsBuilderImpl subType_Pie() {
+        displayerSettings.setSubtype(DisplayerSubType.PIE);
+        return this;
+    }
+
+    @Override
+    public PieChartSettingsBuilderImpl subType_Pie_3d() {
+        displayerSettings.setSubtype(DisplayerSubType.PIE_3D);
+        return this;
+    }
+
+    @Override
+    public PieChartSettingsBuilderImpl subType_Donut() {
+        displayerSettings.setSubtype(DisplayerSubType.DONUT);
         return this;
     }
 }

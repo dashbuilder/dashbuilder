@@ -37,22 +37,22 @@ public interface DisplayerImagesResources extends ClientBundleWithLookup {
     ImageResource BARCHART_BAR_unselected();
 
     @Source("bar_stacked_selected.png")
-    ImageResource BARCHART_STACKED_selected();
+    ImageResource BARCHART_BAR_STACKED_selected();
 
     @Source("bar_stacked_unselected.png")
-    ImageResource BARCHART_STACKED_unselected();
+    ImageResource BARCHART_BAR_STACKED_unselected();
 
     @Source("column_selected.png")
-    ImageResource COLUMNCHART_COLUMN_selected();
+    ImageResource BARCHART_COLUMN_selected();
 
     @Source("column_unselected.png")
-    ImageResource COLUMNCHART_COLUMN_unselected();
+    ImageResource BARCHART_COLUMN_unselected();
 
     @Source("column_stacked_selected.png")
-    ImageResource COLUMNCHART_STACKED_selected();
+    ImageResource BARCHART_COLUMN_STACKED_selected();
 
     @Source("column_stacked_unselected.png")
-    ImageResource COLUMNCHART_STACKED_unselected();
+    ImageResource BARCHART_COLUMN_STACKED_unselected();
 
     @Source("pie_selected.png")
     ImageResource PIECHART_PIE_selected();
@@ -79,10 +79,10 @@ public interface DisplayerImagesResources extends ClientBundleWithLookup {
     ImageResource AREACHART_AREA_unselected();
 
     @Source("area_stacked_selected.png")
-    ImageResource AREACHART_STACKED_selected();
+    ImageResource AREACHART_AREA_STACKED_selected();
 
     @Source("area_stacked_unselected.png")
-    ImageResource AREACHART_STACKED_unselected();
+    ImageResource AREACHART_AREA_STACKED_unselected();
 
     @Source("line_selected.png")
     ImageResource LINECHART_LINE_selected();
