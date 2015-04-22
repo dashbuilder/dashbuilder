@@ -18,15 +18,60 @@
   <description>Dashbuilder WebApp</description>
 
   <dependencies>
+
+    <dependency>
+      <groupId>commons-lang</groupId>
+      <artifactId>commons-lang</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>com.github.gwtbootstrap</groupId>
+      <artifactId>gwt-bootstrap</artifactId>
+    </dependency>
+
     <!-- Dashbuilder -->
     <dependency>
       <groupId>org.dashbuilder</groupId>
-      <artifactId>dashbuilder-all</artifactId>
+      <artifactId>dashbuilder-client-all</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.dashbuilder</groupId>
+      <artifactId>dashbuilder-common</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.dashbuilder</groupId>
+      <artifactId>dashbuilder-dataset-api</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.dashbuilder</groupId>
+      <artifactId>dashbuilder-dataset-client</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.dashbuilder</groupId>
+      <artifactId>dashbuilder-displayer-api</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.dashbuilder</groupId>
+      <artifactId>dashbuilder-displayer-client</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.dashbuilder</groupId>
+      <artifactId>dashbuilder-displayer-screen</artifactId>
     </dependency>
 
     <dependency>
       <groupId>org.dashbuilder</groupId>
       <artifactId>dashbuilder-displayer-editor</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.dashbuilder</groupId>
+      <artifactId>dashbuilder-renderer-default</artifactId>
     </dependency>
 
     <dependency>
@@ -40,9 +85,40 @@
     </dependency>
 
     <!-- UberFire -->
+
     <dependency>
       <groupId>org.uberfire</groupId>
-      <artifactId>uberfire-all</artifactId>
+      <artifactId>uberfire-commons</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.uberfire</groupId>
+      <artifactId>uberfire-api</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.uberfire</groupId>
+      <artifactId>uberfire-client-api</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.uberfire</groupId>
+      <artifactId>uberfire-io</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.uberfire</groupId>
+      <artifactId>uberfire-backend-server</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.uberfire</groupId>
+      <artifactId>uberfire-nio2-api</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.uberfire</groupId>
+      <artifactId>uberfire-workbench-client</artifactId>
     </dependency>
 
     <dependency>
@@ -101,13 +177,38 @@
       <artifactId>cdi-api</artifactId>
     </dependency>
 
-    <!-- Errai Security -->
+    <!-- Errai -->
+
+    <dependency>
+      <groupId>org.jboss.errai</groupId>
+      <artifactId>errai-ui</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.jboss.errai</groupId>
+      <artifactId>errai-ioc</artifactId>
+    </dependency>
+
     <dependency>
       <groupId>org.jboss.errai</groupId>
       <artifactId>errai-security-picketlink</artifactId>
     </dependency>
 
-    <!-- Errai AS -->
+    <dependency>
+      <groupId>org.jboss.errai</groupId>
+      <artifactId>errai-security-server</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.picketlink</groupId>
+      <artifactId>picketlink-api</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.picketlink</groupId>
+      <artifactId>picketlink-idm-api</artifactId>
+    </dependency>
+
     <dependency>
       <groupId>org.jboss.errai</groupId>
       <artifactId>errai-jboss-as-support</artifactId>

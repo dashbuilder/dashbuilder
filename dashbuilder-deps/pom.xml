@@ -23,6 +23,7 @@
     <version.org.uberfire.ext>0.5.2.Final</version.org.uberfire.ext>
     <version.org.uberfire>0.5.2.Final</version.org.uberfire>
     <version.org.jboss.errai>3.0.4.Final</version.org.jboss.errai>
+    <version.org.picketlink>2.6.0.Final</version.org.picketlink>
     <version.org.jboss.logging.jboss-logging>3.1.4.GA</version.org.jboss.logging.jboss-logging>
     <version.org.owasp.encoder>1.1</version.org.owasp.encoder>
     <version.org.owasp.encoder>1.1</version.org.owasp.encoder>
@@ -239,6 +240,18 @@
         <groupId>org.jboss.logging</groupId>
         <artifactId>jboss-logging</artifactId>
         <version>${version.org.jboss.logging.jboss-logging}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.picketlink</groupId>
+        <artifactId>picketlink-api</artifactId>
+        <version>${version.org.picketlink}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.picketlink</groupId>
+        <artifactId>picketlink-idm-api</artifactId>
+        <version>${version.org.picketlink}</version>
       </dependency>
 
       <!-- jOOQ -->
