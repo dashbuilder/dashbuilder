@@ -31,13 +31,7 @@
         </b:Tooltip>
 
         <b:Popover showDelay="1000" text="{i18n.csv_filePath_description}" heading="{i18n.csv_filePath}" placement="BOTTOM">
-          <b:ControlGroup ui:field="filePathErrorPanel">
-            <g:FormPanel ui:field="csvFileFormPanel" encoding="multipart/form-data" method="POST">
-                <b:Tooltip text="" ui:field="filePathErrorTooltip">
-                  <b:FileUpload ui:field="filePath" addStyleNames="{style.leftFloatPanel}"/>
-                </b:Tooltip>
-            </g:FormPanel>
-          </b:ControlGroup>
+          <dash-client-editors:FileUploadEditor ui:field="filePath" addStyleNames="{style.leftFloatPanel}"/>
         </b:Popover>
 
       </b:Column>

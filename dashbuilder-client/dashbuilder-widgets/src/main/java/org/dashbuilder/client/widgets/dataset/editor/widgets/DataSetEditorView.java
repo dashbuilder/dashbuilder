@@ -500,7 +500,7 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
         workflow.edit(csvDataSetDefAttributesEditor, (CSVDataSetDef) dataSetDef);
         csvAttributesEditionViewPanel.setVisible(true);
         csvDataSetDefAttributesEditor.setEditMode(true);
-        csvDataSetDefAttributesEditor.setSubmitCompleteHandler(submitCompleteHandler);
+        csvDataSetDefAttributesEditor.addSubmitCompleteHandler(submitCompleteHandler);
         showSpecificProviderAttrsEditionView(testHandler);
         return this;
     }

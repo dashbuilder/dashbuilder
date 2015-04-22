@@ -1,0 +1,17 @@
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder' xmlns:g='urn:import:com.google.gwt.user.client.ui'
+             xmlns:b="urn:import:com.github.gwtbootstrap.client.ui">
+  <ui:style type="org.dashbuilder.common.client.validation.editors.FileUploadEditor.FileUploadEditorStyle">
+    
+  </ui:style>
+
+  <g:FlowPanel ui:field="mainPanel">
+
+    <g:FormPanel ui:field="formPanel" >
+        <b:Tooltip text="" ui:field="errorTooltip">
+          <b:FileUpload name="file" ui:field="fileUpload"/>
+        </b:Tooltip>
+    </g:FormPanel>
+    
+  </g:FlowPanel>
+
+</ui:UiBinder>
