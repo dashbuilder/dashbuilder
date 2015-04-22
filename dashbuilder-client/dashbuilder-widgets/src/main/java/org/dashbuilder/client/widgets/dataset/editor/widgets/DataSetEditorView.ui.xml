@@ -166,6 +166,7 @@
     .previewTable {
       overflow: auto;
       height: 600px;
+      margin-top: 30px;
     }
     .slidingPanel {
       width: 100%;

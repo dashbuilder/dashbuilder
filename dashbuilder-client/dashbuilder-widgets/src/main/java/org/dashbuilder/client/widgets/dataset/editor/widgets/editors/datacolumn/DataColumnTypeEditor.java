@@ -62,7 +62,7 @@ public class DataColumnTypeEditor extends DropDownImageListEditor<ColumnType> {
         Image typeIcon = null;
         switch (type) {
             case LABEL:
-                typeIcon = new Image(DataSetClientResources.INSTANCE.images().labelIconSmall().getSafeUri());
+                typeIcon = new Image(DataSetClientResources.INSTANCE.images().labelIcon32().getSafeUri());
                 typeIcon.setAltText(DataSetEditorConstants.INSTANCE.label());
                 typeIcon.setTitle(DataSetEditorConstants.INSTANCE.label());
                 break;
@@ -77,7 +77,7 @@ public class DataColumnTypeEditor extends DropDownImageListEditor<ColumnType> {
                 typeIcon.setTitle(DataSetEditorConstants.INSTANCE.number());
                 break;
             case DATE:
-                typeIcon = new Image(DataSetClientResources.INSTANCE.images().dateIconSmall().getSafeUri());
+                typeIcon = new Image(DataSetClientResources.INSTANCE.images().dateIcon32().getSafeUri());
                 typeIcon.setAltText(DataSetEditorConstants.INSTANCE.date());
                 typeIcon.setTitle(DataSetEditorConstants.INSTANCE.date());
                 break;

@@ -46,8 +46,12 @@ public interface DataSetClientImages extends ClientBundle {
     DataResource excelIcon();
 
     /* NOTE: Use DataResource instead of ImageResource in order to set a custom size to the image when creating it. **/
-    @Source("images/label_icon_small.png")
-    DataResource labelIconSmall();
+    @Source("images/label_icon_16.png")
+    DataResource labelIcon16();
+
+    /* NOTE: Use DataResource instead of ImageResource in order to set a custom size to the image when creating it. **/
+    @Source("images/label_icon_32.png")
+    DataResource labelIcon32();
 
     /* NOTE: Use DataResource instead of ImageResource in order to set a custom size to the image when creating it. **/
     @Source("images/number_icon_small.png")
@@ -58,8 +62,12 @@ public interface DataSetClientImages extends ClientBundle {
     DataResource textIconSmall();
 
     /* NOTE: Use DataResource instead of ImageResource in order to set a custom size to the image when creating it. **/
-    @Source("images/date_icon_small.png")
-    DataResource dateIconSmall();
+    @Source("images/date_icon_16.png")
+    DataResource dateIcon16();
+
+    /* NOTE: Use DataResource instead of ImageResource in order to set a custom size to the image when creating it. **/
+    @Source("images/date_icon_16.png")
+    DataResource dateIcon32();
 
     @Source("images/ok_icon_small.gif")
     ImageResource okIconSmall();
