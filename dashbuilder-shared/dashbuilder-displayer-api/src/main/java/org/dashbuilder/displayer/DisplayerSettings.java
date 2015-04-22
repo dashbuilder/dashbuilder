@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
 
-import org.dashbuilder.common.client.StringUtils;
 import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetLookup;
@@ -126,22 +125,22 @@ public class DisplayerSettings {
     }
 
     private int parseInt(String value, int defaultValue) {
-        if (StringUtils.isBlank(value)) return defaultValue;
+        if (value == null || value.trim().length() == 0) return defaultValue;
         return Integer.parseInt(value);
     }
 
     private long parseLong(String value, long defaultValue) {
-        if (StringUtils.isBlank(value)) return defaultValue;
+        if (value == null || value.trim().length() == 0) return defaultValue;
         return Long.parseLong(value);
     }
 
     private boolean parseBoolean(String value) {
-        if (StringUtils.isBlank(value)) return false;
+        if (value == null || value.trim().length() == 0) return false;
         return Boolean.parseBoolean(value);
     }
 
     private String parseString(String value) {
-        if (StringUtils.isBlank(value)) return "";
+        if (value == null || value.trim().length() == 0) return "";
         return value;
     }
 
