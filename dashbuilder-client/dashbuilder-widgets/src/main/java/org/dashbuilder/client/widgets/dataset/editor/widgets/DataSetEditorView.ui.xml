@@ -54,7 +54,7 @@
       height: 600px;
     }
     .buttonsPanel {
-      margin-top: 50px;
+      margin-top: 0px;
     }
 
     .dataSetCountLabel {
@@ -165,7 +165,8 @@
     }
     .previewTable {
       overflow: auto;
-      height: 600px;
+      height: 570px;
+      width: 100%;
       margin-top: 30px;
     }
     .slidingPanel {
