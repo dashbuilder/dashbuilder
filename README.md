@@ -40,10 +40,17 @@ Change log
 
 0.3.0
 
+* New provider for the definition of data sets stored into SQL databases.
+* New provider for the retrieval of data stored into Elastic Search nodes.
 * New displayer for showing single value metrics.
-* SQL provider for the definition of data sets stored into external databases.
-* Elastic Search integration for the retrieval of data stored into Elastic Search nodes.
+* Added new displayer subtypes: bar (stacked), pie (3d, donut), line (smooth)
 * Support for real-time dashboards. Displayer refresh settings.
+
+* New data set editor UI module:
+    - Creation of SQL, Bean, CSV & elastic search data set definitions
+    - Data set retrieval testing and preview
+    - Filter, sort and export the data previews
+
 * Displayer editor data set lookup enhancements:
   - Filter editor for retrieving only a data subset.
   - Time frame function for the retrieval of time series data in real-time.
