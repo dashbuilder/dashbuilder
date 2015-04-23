@@ -41,10 +41,7 @@ public class DisplayerTypeSelector extends Composite implements DisplayerSubtype
         void displayerTypeChanged(DisplayerType type, DisplayerSubType subtype);
     }
 
-    interface ViewBinder extends
-            UiBinder<Widget, DisplayerTypeSelector> {
-
-    }
+    interface ViewBinder extends UiBinder<Widget, DisplayerTypeSelector> {}
     private static ViewBinder uiBinder = GWT.create(ViewBinder.class);
 
     Listener listener = null;
@@ -53,10 +50,10 @@ public class DisplayerTypeSelector extends Composite implements DisplayerSubtype
     List<DisplayerTab> tabList = new ArrayList<DisplayerTab>();
 
     @UiField(provided = true)
-    TabPanel optionsPanel;
+    TabPanel displayerTypePanel;
 
     @UiField
-    VerticalPanel subtypePanel;
+    VerticalPanel displayerSubtypePanel;
 
     private DisplayerSubtypeSelector subtypeSelector;
 
@@ -71,13 +68,15 @@ public class DisplayerTypeSelector extends Composite implements DisplayerSubtype
         tabList.add(new DisplayerTab(DisplayerTypeLiterals.INSTANCE.displayer_type_selector_tab_map(), DisplayerType.MAP));
         tabList.add(new DisplayerTab(DisplayerTypeLiterals.INSTANCE.displayer_type_selector_tab_table(), DisplayerType.TABLE));
 
-        optionsPanel = new TabPanel(Bootstrap.Tabs.LEFT);
-        for (DisplayerTab tab : tabList) optionsPanel.add(tab);
+        displayerTypePanel = new TabPanel(Bootstrap.Tabs.LEFT);
+        displayerTypePanel.getElement().setId("dispTypes"); //for selenium
+        for (DisplayerTab tab : tabList) displayerTypePanel.add(tab);
 
         initWidget(uiBinder.createAndBindUi(this));
 
         subtypeSelector = new DisplayerSubtypeSelector(this);
-        subtypePanel.add(subtypeSelector);
+        displayerSubtypePanel.add(subtypeSelector);
+        displayerSubtypePanel.getElement().setId("dispSubtypes"); //for selenium
     }
 
     public void init(Listener listener) {
@@ -87,16 +86,16 @@ public class DisplayerTypeSelector extends Composite implements DisplayerSubtype
 
 
     protected void draw() {
-        optionsPanel.clear();
+        displayerTypePanel.clear();
 
         for (int i = 0; i < tabList.size(); i++) {
             DisplayerTab tab = tabList.get(i);
             tab.setActive(false);
-            optionsPanel.add(tab);
+            displayerTypePanel.add(tab);
 
             if (tab.type.equals(selectedType)) {
                 tab.setActive(true);
-                optionsPanel.selectTab(i);
+                displayerTypePanel.selectTab(i);
             }
         }
     }

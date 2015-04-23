@@ -22,8 +22,8 @@
              xmlns:b="urn:import:com.github.gwtbootstrap.client.ui">
 
   <g:HorizontalPanel>
-    <b:TabPanel ui:field="optionsPanel"/>
-    <g:VerticalPanel ui:field="subtypePanel"/>
+    <b:TabPanel ui:field="displayerTypePanel"/>
+    <g:VerticalPanel ui:field="displayerSubtypePanel"/>
   </g:HorizontalPanel>
 
 
