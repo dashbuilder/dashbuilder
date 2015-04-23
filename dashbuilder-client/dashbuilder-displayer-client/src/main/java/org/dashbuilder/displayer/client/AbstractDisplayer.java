@@ -435,7 +435,7 @@ public abstract class AbstractDisplayer extends Composite implements Displayer {
         return interval.getName();
     }
 
-    protected String formatValue(Object value, DataColumn column) {
+    public String formatValue(Object value, DataColumn column) {
 
         ColumnSettings columnSettings = displayerSettings.getColumnSettings(column);
         String pattern = columnSettings.getValuePattern();

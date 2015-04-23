@@ -370,7 +370,22 @@
         <version>${project.version}</version>
         <classifier>sources</classifier>
       </dependency>
-      
+
+      <!-- Chart JS -->
+
+      <dependency>
+        <groupId>org.dashbuilder</groupId>
+        <artifactId>dashbuilder-renderer-chartjs</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.dashbuilder</groupId>
+        <artifactId>dashbuilder-renderer-chartjs</artifactId>
+        <version>${project.version}</version>
+        <classifier>sources</classifier>
+      </dependency>
+
       <!-- Dashbuilder Packaging -->
       <dependency>
         <groupId>org.dashbuilder</groupId>

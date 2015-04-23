@@ -33,6 +33,7 @@
   <modules>
     <module>dashbuilder-renderer-default</module>
     <module>dashbuilder-renderer-google</module>
+    <module>dashbuilder-renderer-chartjs</module>
     <module>dashbuilder-renderer-lienzo</module>
   </modules>
 </project>

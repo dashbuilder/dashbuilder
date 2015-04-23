@@ -10,6 +10,7 @@
   <inherits name="org.dashbuilder.DisplayerEditor"/>
   <inherits name="org.dashbuilder.renderer.GChartsRenderer"/>
   <inherits name="org.dashbuilder.renderer.LienzoChartsRenderer"/>
+  <inherits name="org.dashbuilder.renderer.ChartJsRenderer"/>
 
   <source path='client'/>
   <source path='shared'/>
