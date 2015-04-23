@@ -65,6 +65,7 @@ public class GoogleAreaChartDisplayer extends GoogleCategoriesDisplayer {
 
         return new DisplayerConstraints(lookupConstraints)
                 .supportsAttribute(DisplayerAttributeDef.TYPE)
+                .supportsAttribute(DisplayerAttributeDef.SUBTYPE)
                 .supportsAttribute(DisplayerAttributeDef.RENDERER)
                 .supportsAttribute(DisplayerAttributeGroupDef.COLUMNS_GROUP)
                 .supportsAttribute( DisplayerAttributeGroupDef.FILTER_GROUP )
