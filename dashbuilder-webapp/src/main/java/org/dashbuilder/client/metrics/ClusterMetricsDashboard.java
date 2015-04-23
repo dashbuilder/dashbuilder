@@ -269,6 +269,7 @@ public class ClusterMetricsDashboard extends Composite implements GalleryWidget 
             builder.filter(COLUMN_TIMESTAMP, timeFrame("begin[minute] till end[minute]"));
             builder.group(COLUMN_TIMESTAMP).fixed(SECOND, true);
             builder.column(COLUMN_TIMESTAMP).format(AppConstants.INSTANCE.metrics_cluster_column_time());
+            builder.subType_StackedColumn();
         } else {
             builder.filter(COLUMN_TIMESTAMP, timeFrame("-60second till now"));
             builder.group(COLUMN_TIMESTAMP).dynamic(60, SECOND, true);
