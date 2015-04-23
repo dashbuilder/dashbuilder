@@ -17,8 +17,7 @@ For further information, please visit the project web site <a href="http://dashb
 Upcoming features
 =================
 
-* New renderers based on D3 JS & Lienzo GWT
-* UI editor for the creation of data sets definitions
+* New renderers based on D3 JS, Lienzo GWT & Chart JS
 * Hierarchical (nested group) displayer types: Tree & Pie
 * Support for multiple dynamic data series
 * Rich mobility support
