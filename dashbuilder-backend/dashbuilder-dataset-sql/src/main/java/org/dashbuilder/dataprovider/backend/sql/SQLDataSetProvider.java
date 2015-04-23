@@ -18,6 +18,7 @@ package org.dashbuilder.dataprovider.backend.sql;
 import java.sql.Connection;
 import java.sql.Timestamp;
 import java.util.*;
+import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -42,6 +43,7 @@ import org.dashbuilder.dataset.def.SQLDataSetDef;
 import org.dashbuilder.dataset.engine.group.IntervalBuilder;
 import org.dashbuilder.dataset.engine.group.IntervalBuilderLocator;
 import org.dashbuilder.dataset.engine.group.IntervalList;
+import org.dashbuilder.dataset.events.DataSetDefRemovedEvent;
 import org.dashbuilder.dataset.events.DataSetStaleEvent;
 import org.dashbuilder.dataset.filter.ColumnFilter;
 import org.dashbuilder.dataset.filter.CoreFunctionFilter;
@@ -92,6 +94,7 @@ import static org.jooq.impl.DSL.*;
  *      - Group (fixed) by date of week
  *  </p>
  */
+@ApplicationScoped 
 @Named("sql")
 public class SQLDataSetProvider implements DataSetProvider {
 
@@ -201,6 +204,15 @@ public class SQLDataSetProvider implements DataSetProvider {
         }
     }
 
+    protected void onDataSetDefRemovedEvent(@Observes DataSetDefRemovedEvent  event) {
+        DataSetDef def = event.getDataSetDef();
+        if (DataSetProviderType.SQL.equals(def.getProvider())) {
+            String uuid = def.getUUID();
+            _metadataMap.remove(uuid);
+            staticDataSetProvider.removeDataSet(uuid);
+        }
+    }
+    
     // Internal implementation logic
 
     protected transient Map<String,DataSetMetadata> _metadataMap = new HashMap<String,DataSetMetadata>();

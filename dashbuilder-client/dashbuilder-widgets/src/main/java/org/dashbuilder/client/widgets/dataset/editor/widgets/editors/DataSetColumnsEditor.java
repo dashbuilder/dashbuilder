@@ -30,6 +30,7 @@ import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.client.widgets.dataset.editor.DataSetDefEditWorkflow;
 import org.dashbuilder.client.widgets.dataset.editor.widgets.editors.datacolumn.DataColumnBasicEditor;
+import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.impl.DataColumnImpl;
@@ -121,10 +122,17 @@ public class DataSetColumnsEditor extends AbstractEditor {
 
         if (columns != null && workflow != null) {
             for (DataColumn column : columns) {
-                DataColumnImpl columnImpl = (DataColumnImpl) column;
+                final DataColumnImpl columnImpl = (DataColumnImpl) column;
                 
                 // Create the editor for each column.
                 DataColumnBasicEditor columnEditor = new DataColumnBasicEditor();
+                columnEditor.addValueChangeHandler(new ValueChangeHandler<ColumnType>() {
+                    @Override
+                    public void onValueChange(ValueChangeEvent<ColumnType> event) {
+                        DataSetColumnsEditor.this.fireEvent(new ColumnsChangedEvent(new ArrayList<DataColumn>(columnEditors.keySet())));
+                    }
+                });
+                
                 columnEditor.setEditorId(column.getId());
                 columnEditors.put(column, columnEditor);
 

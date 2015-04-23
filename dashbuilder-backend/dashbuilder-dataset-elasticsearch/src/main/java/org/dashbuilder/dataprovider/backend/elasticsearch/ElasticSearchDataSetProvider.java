@@ -25,6 +25,7 @@ import org.dashbuilder.dataset.*;
 import org.dashbuilder.dataset.def.DataSetDef;
 import org.dashbuilder.dataset.def.DataSetDefRegistry;
 import org.dashbuilder.dataset.def.ElasticSearchDataSetDef;
+import org.dashbuilder.dataset.events.DataSetDefRemovedEvent;
 import org.dashbuilder.dataset.events.DataSetStaleEvent;
 import org.dashbuilder.dataset.filter.ColumnFilter;
 import org.dashbuilder.dataset.filter.DataSetFilter;
@@ -37,6 +38,7 @@ import org.dashbuilder.dataset.sort.DataSetSort;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
 
+import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -101,6 +103,7 @@ import java.util.*;
  * @since 0.3.0
  * 
  */
+@ApplicationScoped
 @Named("elasticsearch")
 public class ElasticSearchDataSetProvider implements DataSetProvider {
 
@@ -583,12 +586,22 @@ public class ElasticSearchDataSetProvider implements DataSetProvider {
 
     // Listen to changes on the data set definition registry
 
-    protected void onDataSetStaleEvent(@Observes DataSetStaleEvent event) {
+    private void onDataSetStaleEvent(@Observes DataSetStaleEvent event) {
         DataSetDef def = event.getDataSetDef();
         if (DataSetProviderType.ELASTICSEARCH.equals(def.getProvider())) {
-            String uuid = def.getUUID();
-            _metadataMap.remove(uuid);
-            staticDataSetProvider.removeDataSet(uuid);
+            remove(def.getUUID());
         }
+    }
+
+    private void onDataSetDefRemovedEvent(@Observes DataSetDefRemovedEvent event) {
+        DataSetDef def = event.getDataSetDef();
+        if (DataSetProviderType.ELASTICSEARCH.equals(def.getProvider())) {
+            remove(def.getUUID());
+        }
+    }
+    
+    private void remove(final String uuid) {
+        _metadataMap.remove(uuid);
+        staticDataSetProvider.removeDataSet(uuid);
     }
 }

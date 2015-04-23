@@ -106,8 +106,9 @@
     .exportButtonsPanel {
       float: left;
       margin-bottom: 20px;
+      margin-left: 130px;
+      margin-top: 3px;
       position: absolute;
-      right: 615px;
     }
 
     .providerSetupButton {

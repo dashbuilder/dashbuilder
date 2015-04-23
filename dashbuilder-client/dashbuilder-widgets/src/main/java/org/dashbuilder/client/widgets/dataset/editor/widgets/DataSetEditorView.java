@@ -571,6 +571,8 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
         // Columns editor is not a data set editor component, just a widget to handle DataColumnEditor instances.
         // So not necessary to use the editor workflow this instance.
 
+        hideLoadingView();
+        
         // Data Set Columns editor.
         columnsEditor.setVisible(true);
         columnsEditor.setEditMode(true);
@@ -591,6 +593,8 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
     @Override
     public DataSetEditor.View showFilterEditionView(final DataSet dataSet, final DataSetFilterEditor.Listener filterListener) {
         filterTab.clear();
+
+        hideLoadingView();
         
         // Data Set Filter editor.
         final DataSetFilterEditor filterEditor = new DataSetFilterEditor();

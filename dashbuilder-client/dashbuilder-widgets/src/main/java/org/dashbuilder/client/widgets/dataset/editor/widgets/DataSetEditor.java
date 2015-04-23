@@ -29,10 +29,7 @@ import org.dashbuilder.dataprovider.DataSetProviderType;
 import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetMetadata;
-import org.dashbuilder.dataset.client.ClientDataSetManager;
-import org.dashbuilder.dataset.client.DataSetClientServiceError;
-import org.dashbuilder.dataset.client.DataSetClientServices;
-import org.dashbuilder.dataset.client.DataSetMetadataCallback;
+import org.dashbuilder.dataset.client.*;
 import org.dashbuilder.dataset.def.*;
 import org.dashbuilder.dataset.events.DataSetDefRegisteredEvent;
 import org.dashbuilder.dataset.events.DataSetDefRemovedEvent;
@@ -178,7 +175,7 @@ public class DataSetEditor implements IsWidget {
                 public void callback(DataSetMetadata metatada)
                 {
                     final DataSetDef def = metatada.getDefinition();
-                    final String uuid = def.getUUID();
+                    edit = def;
                     
                     // Clone the definition in order to edit the cloned copy.
                     DataSetEditor.this.dataSetDef = def.clone();
@@ -191,11 +188,10 @@ public class DataSetEditor implements IsWidget {
                         DataColumnImpl c = new DataColumnImpl(metatada.getColumnId(x), metatada.getColumnType(x));
                         DataSetEditor.this.columns.add(c);
                     }
-                    edit = def;
-                    view.setEditMode(true);
                     
-                    // Update the displayer & Restart workflow.
+                    // Update the screens, displayers & restart the workflow.
                     edit();
+                    view.setEditMode(true);
                     showBasicAttributesEditionView();
                     showProviderSpecificAttributesEditionView();
                     updateTableDisplayer();
@@ -238,16 +234,16 @@ public class DataSetEditor implements IsWidget {
     
     private void updateTableDisplayer() {
         if (dataSetDef != null) {
-            
-            final RemoteCallback<String> callback = new RemoteCallback<String>() {
+
+            final DataSetDefRegisterCallback callback = new DataSetDefRegisterCallback() {
                 @Override
-                public void callback(final String s) {
+                public void success(final String s) {
                     // If creating a new data set def, the UUID is set on first time registering the data set.
                     dataSetDef.setUUID(s);
                     
                     // Build the displayer, so perform the lookup.
                     TableDisplayerSettingsBuilder<TableDisplayerSettingsBuilderImpl> tableDisplayerSettingsBuilder = DisplayerSettingsFactory.newTableSettings()
-                            .dataset(dataSetDef.getUUID())
+                            .dataset(edit != null ? edit.getUUID() : dataSetDef.getUUID())
                             .renderer(DefaultRenderer.UUID)
                             .titleVisible(false)
                             .tablePageSize(10)
@@ -270,6 +266,12 @@ public class DataSetEditor implements IsWidget {
 
                     // Show basic views and the loading screen while performing the backend service call.
                     view.showLoadingView();
+                }
+
+                @Override
+                public boolean onError(DataSetClientServiceError error) {
+                    showError(error);
+                    return false;
                 }
             };
 
@@ -346,23 +348,9 @@ public class DataSetEditor implements IsWidget {
         public void onClick(final ClickEvent event) {
             final Set violations = save();
             if (isValid(violations)) {
-                try {
                     // Valid
-                    persist(new RemoteCallback<String>() {
-                        @Override
-                        public void callback(String s) {
-                            clear();
-                            showHomeView();
-                        }
-                    });
-
-                } catch (Exception e) {
-                    showError("Error persisting data set defintion with uuid [" + dataSetDef.getUUID() + "]. Message: " + e.getMessage());
-                    clear();
-                    showHomeView();
-                }
+                    persist();
             }
-            log(violations);
         }
     };
 
@@ -371,43 +359,123 @@ public class DataSetEditor implements IsWidget {
         return view.asWidget();
     }
 
-    private void persist(final RemoteCallback<String> registerCallback) throws Exception {
+    private void persist() {
         if (edit ==     null) 
         {
             // If creati    ng a new data set, just persist it.
             dataSetDef.setPublic(true);
-            updateDataSetDef(registerCallback);
-            DataSetClientServices.get().persistDataSetDef(dataSetDef);
+            updateDataSetDef(new DataSetDefRegisterCallback() {
+                @Override
+                public void success(String uuid) {
+                    try {
+                        DataSetClientServices.get().persistDataSetDef(dataSetDef, persistCallback);
+                    } catch (Exception e) {
+                        showError(e);
+                    }
+                }
+
+                @Override
+                public boolean onError(DataSetClientServiceError error) {
+                    showError(error);
+                    return false;
+                }
+            });
         }
         else {
             // If editing an existing data set, remove original data set and persist the new edited one.
             final DataSetClientServices clientServices = DataSetClientServices.get();
-            clientServices.removeDataSetDef(edit.getUUID());
-            this.dataSetDef.setUUID(edit.getUUID());
-            this.dataSetDef.setPublic(true);
-            registerDataSetDef(registerCallback);
-            DataSetClientServices.get().persistDataSetDef(dataSetDef);
+
+            final String editUUID = edit.getUUID();
+            final String originalUUID = dataSetDef.getUUID();
+            clientServices.removeDataSetDef(originalUUID, new DataSetDefRemoveCallback() {
+                @Override
+                public void success() {
+                    clientServices.removeDataSetDef(editUUID, new DataSetDefRemoveCallback() {
+                        @Override
+                        public void success() {
+                            DataSetEditor.this.dataSetDef.setUUID(edit.getUUID());
+                            DataSetEditor.this.dataSetDef.setPublic(true);
+                            registerDataSetDef(new DataSetDefRegisterCallback() {
+                                @Override
+                                public void success(String uuid) {
+                                    try {
+                                        DataSetClientServices.get().persistDataSetDef(dataSetDef, persistCallback);
+                                    } catch (Exception e) {
+                                        showError(e);
+                                    }
+
+                                }
+
+                                @Override
+                                public boolean onError(DataSetClientServiceError error) {
+                                    showError(error);
+                                    return false;
+                                }
+                            });
+                        }
+
+                        @Override
+                        public boolean onError(DataSetClientServiceError error) {
+                            showError(error);
+                            return false;
+                        }
+                    });
+                }
+
+                @Override
+                public boolean onError(DataSetClientServiceError error) {
+                    showError(error);
+                    return false;
+                }
+            });
+            
+            
+            
         }
     }
     
-    private void updateDataSetDef(final RemoteCallback<String> callback) {
+    private final DataSetDefPersistCallback persistCallback = new DataSetDefPersistCallback() {
+        @Override
+        public void success() {
+            clear();
+            showHomeView();
+        }
+
+        @Override
+        public boolean onError(DataSetClientServiceError error) {
+            showError(error);
+            return false;
+        }
+    };
+    
+    private void updateDataSetDef(final DataSetDefRegisterCallback callback) {
 
         // Remove the current data set definition.
-        removeDataSetDef();
+        removeDataSetDef(new DataSetDefRemoveCallback() {
+            @Override
+            public void success() {
+                // Register new data set definition.
+                registerDataSetDef(callback);
+            }
 
-        // Register new data set definition.
-        registerDataSetDef(callback);
+            @Override
+            public boolean onError(DataSetClientServiceError error) {
+                showError(error);
+                return false;
+            }
+        });
+
 
     }
 
-    private void removeDataSetDef() {
-        if (dataSetDef != null) {
+    private void removeDataSetDef(final DataSetDefRemoveCallback callback) {
+        if (dataSetDef != null && dataSetDef.getUUID() != null) {
             final DataSetClientServices clientServices = DataSetClientServices.get();
-            clientServices.removeDataSetDef(dataSetDef.getUUID());
+            clientServices.removeDataSetDef(dataSetDef.getUUID(), callback);
         }
     }
 
-    private void registerDataSetDef(final RemoteCallback<String> callback) {
+    private void registerDataSetDef(final DataSetDefRegisterCallback callback) {
         if (dataSetDef != null) {
             // Register the data set in backend as non public.
             final DataSetClientServices clientServices = DataSetClientServices.get();
@@ -434,6 +502,18 @@ public class DataSetEditor implements IsWidget {
 
     private void showError(final String message) {
         showError(null, message, null);
+    }
+
+    private void showError(final Exception e) {
+        if (e != null) {
+            String type = null;
+            String message = null;
+            String cause = null;
+            type = e.getClass().getName();
+            if (e.getMessage() != null) message = e.getMessage();
+            if (e.getCause() != null) cause = e.getCause().getMessage();
+            showError(type, message, cause);
+        }
     }
     
     private void showError(final String type, final String message, final String cause) {
@@ -476,6 +556,7 @@ public class DataSetEditor implements IsWidget {
     private final FormPanel.SubmitCompleteHandler submitCompleteHandler = new FormPanel.SubmitCompleteHandler() {
         @Override
         public void onSubmitComplete(FormPanel.SubmitCompleteEvent event) {
+            // TODO: Check successful result.
             GWT.log("DataSetEditor#submitCompleteHandler: " + event.getResults());
         }
     };
@@ -514,9 +595,20 @@ public class DataSetEditor implements IsWidget {
     private final ClickHandler cancelHandler = new ClickHandler() {
         @Override
         public void onClick(ClickEvent event) {
-            removeDataSetDef();
-            clear();
-            showHomeView();
+            removeDataSetDef(new DataSetDefRemoveCallback() {
+                @Override
+                public void success() {
+                    clear();
+                    showHomeView();
+                }
+
+                @Override
+                public boolean onError(DataSetClientServiceError error) {
+                    showError(error);
+                    return false;
+                }
+            });
+            
         }
     };
     private final ClickHandler newDataSetHandler = new ClickHandler() {
@@ -690,7 +782,7 @@ public class DataSetEditor implements IsWidget {
     
     // TODO: Remove, just for testing.
     private void log(Set<ConstraintViolation<? extends DataSetDef>>... violations) {
-        // if (true) return;
+        if (true) return;
         if (violations != null && violations.length > 0) {
             for (int x = 0; x < violations.length; x++) {
                 Set<ConstraintViolation<? extends DataSetDef>> driverViolation = violations[x];

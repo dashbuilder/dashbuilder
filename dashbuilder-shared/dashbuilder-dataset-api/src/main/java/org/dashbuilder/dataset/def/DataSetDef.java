@@ -193,6 +193,12 @@ public class DataSetDef {
         def.setProvider(getProvider());
         def.setDefFilePath(getDefFilePath());
         def.setPublic(isPublic());
+        final DataSetFilter currentFilter = getDataSetFilter();
+        if (currentFilter != null) {
+            final DataSetFilter nFilter = currentFilter.cloneInstance();
+            nFilter.setDataSetUUID(getUUID());
+            def.setDataSetFilter(nFilter);
+        }
         def.setDataSetFilter(getDataSetFilter());
         def.setCacheEnabled(isCacheEnabled());
         def.setCacheMaxRows(getCacheMaxRows());

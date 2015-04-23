@@ -19,7 +19,9 @@ import com.google.gwt.user.client.ui.IsWidget;
 import org.dashbuilder.client.widgets.dataset.editor.widgets.DataSetExplorer;
 import org.dashbuilder.client.widgets.dataset.editor.widgets.events.*;
 import org.dashbuilder.client.widgets.resources.i18n.DataSetExplorerConstants;
+import org.dashbuilder.dataset.client.DataSetClientServiceError;
 import org.dashbuilder.dataset.client.DataSetClientServices;
+import org.dashbuilder.dataset.client.DataSetDefRemoveCallback;
 import org.uberfire.client.annotations.WorkbenchMenu;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
 import org.uberfire.client.annotations.WorkbenchPartView;
@@ -121,6 +123,17 @@ public class DataSetExplorerScreenPresenter {
     }
     
     public void deleteDataSet(String uuid) {
-        DataSetClientServices.get().removeDataSetDef(uuid);
+        DataSetClientServices.get().removeDataSetDef(uuid, new DataSetDefRemoveCallback() {
+            @Override
+            public void success() {
+                // TODO
+            }
+
+            @Override
+            public boolean onError(DataSetClientServiceError error) {
+                // TODO
+                return false;
+            }
+        });
     }
 }

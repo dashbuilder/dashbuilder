@@ -24,10 +24,7 @@ import org.dashbuilder.dataset.DataSetMetadata;
 import org.dashbuilder.dataset.client.resources.i18n.CommonConstants;
 import org.dashbuilder.dataset.def.DataSetDef;
 import org.dashbuilder.dataset.engine.group.IntervalBuilderLocator;
-import org.dashbuilder.dataset.events.DataSetModifiedEvent;
-import org.dashbuilder.dataset.events.DataSetPushOkEvent;
-import org.dashbuilder.dataset.events.DataSetPushingEvent;
-import org.dashbuilder.dataset.events.DataSetStaleEvent;
+import org.dashbuilder.dataset.events.*;
 import org.dashbuilder.dataset.group.AggregateFunctionManager;
 import org.jboss.errai.bus.client.api.messaging.Message;
 import org.jboss.errai.common.client.api.Caller;
@@ -389,27 +386,60 @@ public class DataSetClientServices {
     /**
      * <p>Register a data set definition on backend.</p> 
      * @param dataSetDef The data set definition to register.
-     * @param callback The callback when data set definition has been registered. It returns the UUID of the data set definition.
+     * @param registerCallback The callback when data set definition has been registered. It returns the UUID of the data set definition.
      */
-    public void registerDataSetDef(final DataSetDef dataSetDef, RemoteCallback<String> callback) {
-        dataSetBackendServices.call(callback).registerDataSetDef(dataSetDef);
+    public void registerDataSetDef(final DataSetDef dataSetDef, final DataSetDefRegisterCallback registerCallback) {
+        dataSetBackendServices.call(new RemoteCallback<String>() {
+            @Override
+            public void callback(String o) {
+                registerCallback.success(o);
+            }
+        }, new ErrorCallback<Message>() {
+            @Override
+            public boolean error(Message o, Throwable throwable) {
+                return registerCallback.onError(new DataSetClientServiceError(o, throwable));
+            }
+        }).registerDataSetDef(dataSetDef);
     }
 
     /**
      * <p>Persists a data set definition on backend.</p> 
      * @param dataSetDef The data set definition to persist.
+     * @param persistCallback The callback when data set definition has been persisted.                   
      */
-    public void persistDataSetDef(final DataSetDef dataSetDef) throws Exception {
-        dataSetBackendServices.call().persistDataSetDef(dataSetDef);
+    public void persistDataSetDef(final DataSetDef dataSetDef, final DataSetDefPersistCallback persistCallback) throws Exception {
+        dataSetBackendServices.call(new RemoteCallback<Void>() {
+            @Override
+            public void callback(Void o) {
+                persistCallback.success();
+                ;
+            }
+        }, new ErrorCallback<Message>() {
+            @Override
+            public boolean error(Message message, Throwable throwable) {
+                return persistCallback.onError(new DataSetClientServiceError(message, throwable));
+            }
+        }).persistDataSetDef(dataSetDef);
     }
 
     /**
      * <p>Removes a data set definition on backend.</p> 
      * @param uuid The data set definition UUID to remove.
+     * @param removeCallback The callback when data set definition has been removed.             
      */
-    public void removeDataSetDef(final String uuid) {
+    public void removeDataSetDef(final String uuid, final DataSetDefRemoveCallback removeCallback) {
         if (uuid != null) {
-            dataSetBackendServices.call().removeDataSetDef(uuid);
+            dataSetBackendServices.call(new RemoteCallback<Void>() {
+                @Override
+                public void callback(Void aVoid) {
+                    removeCallback.success();
+                }
+            }, new ErrorCallback<Message>() {
+                @Override
+                public boolean error(Message message, Throwable throwable) {
+                    return removeCallback.onError(new DataSetClientServiceError(message, throwable));
+                }
+            }).removeDataSetDef(uuid);
             removeDataSet(uuid);
         }
     }
@@ -452,6 +482,18 @@ public class DataSetClientServices {
     }
 
 
+    
+    private void onDataSetRemovedEvent(@Observes DataSetDefRemovedEvent event) {
+        checkNotNull("event", event);
+        String uuid = event.getDataSetDef().getUUID();
+        clientDataSetManager.removeDataSet(uuid);
+        remoteMetadataMap.remove(uuid);
+
+        // If a data set has been updated on the sever then fire an event.
+        // In this case the notification is always send, no matter whether the data set is pushed to the client or not.
+        dataSetModifiedEvent.fire(new DataSetModifiedEvent(event.getDataSetDef()));
+    }
+    
     /**
      * <p>Returns the servlet URL for uploading files.</p>
      */

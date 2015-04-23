@@ -17,18 +17,22 @@ package org.dashbuilder.client.widgets.dataset.editor.widgets.editors.datacolumn
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.EditorError;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.client.widgets.dataset.editor.widgets.editors.AbstractEditor;
 import org.dashbuilder.common.client.validation.editors.ValueBoxEditorDecorator;
+import org.dashbuilder.dataset.ColumnType;
 
 import javax.enterprise.context.Dependent;
 import java.util.List;
 
 /**
- * <p>This is the view implementation widget for editing data a given set column's name and type.</p>
+ * <p>This is the view implementation widget for editing data a given set column's id and type.</p>
  *
  * @since 0.3.0 
  * 
@@ -76,6 +80,10 @@ public class DataColumnBasicEditor extends AbstractEditor implements org.dashbui
         this.editorId = editorId;
     }
 
+    public HandlerRegistration addValueChangeHandler(final ValueChangeHandler<ColumnType> handler) {
+        return columnType.addHandler(handler, ValueChangeEvent.getType());
+    }
+    
     @Override
     public void showErrors(List<EditorError> errors) {
         consumeErrors(errors);

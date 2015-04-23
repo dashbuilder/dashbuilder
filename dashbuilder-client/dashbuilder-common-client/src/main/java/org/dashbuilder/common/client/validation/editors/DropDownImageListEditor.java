@@ -1,8 +1,8 @@
 package org.dashbuilder.common.client.validation.editors;
 
-import com.github.gwtbootstrap.client.ui.DropdownButton;
+import com.github.gwtbootstrap.client.ui.*;
 import com.github.gwtbootstrap.client.ui.Image;
-import com.github.gwtbootstrap.client.ui.Tooltip;
+import com.github.gwtbootstrap.client.ui.base.IconAnchor;
 import com.github.gwtbootstrap.client.ui.constants.ButtonType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.EditorError;
@@ -49,6 +49,7 @@ public class DropDownImageListEditor<T> extends Composite implements
     private  boolean isEditMode;
     private int width = -1;
     private int height = -1;
+    protected boolean fireEvents = false;
 
     @UiField
     DropDownImageListEditorStyle style;
@@ -59,18 +60,30 @@ public class DropDownImageListEditor<T> extends Composite implements
     @UiField
     Image currentTypeImage;
     
-    @UiField
+    @UiField(provided = true)
     DropdownButton dropDownButton;
 
     @UiField
     Tooltip errorTooltip;
+
+    private IconAnchor trigger;
     
     @UiConstructor
     public DropDownImageListEditor() {
+
+        // Create and configure the dropdown button.
+        dropDownButton = new DropdownButton() {
+            @Override
+            protected IconAnchor createTrigger() {
+                DropDownImageListEditor.this.trigger =  super.createTrigger();
+                return DropDownImageListEditor.this.trigger;
+            }
+        };
+        dropDownButton.setType(ButtonType.LINK);
+        
+        // UI binding.
         initWidget(Binder.BINDER.createAndBindUi(this));
         
-        // Configure the dropdown button.
-        dropDownButton.setType(ButtonType.LINK);
     }
 
     public HandlerRegistration addValueChangeHandler(final ValueChangeHandler<T> handler) {
@@ -105,12 +118,18 @@ public class DropDownImageListEditor<T> extends Composite implements
                 _image.addClickHandler(new ClickHandler() {
                     @Override
                     public void onClick(ClickEvent event) {
-                        if (isEditMode) setValue(_value);
+                        if (isEditMode) setValue(_value, fireEvents);
                     }
                 });
                 values.add(_value);
                 images.put(_value, _image);
             }
+        }
+        
+        // Configure drop down button trigger.
+        if (values.size() == 1) {
+            trigger.setActive(false);
+            trigger.setCaret(false);
         }
         
     }
@@ -237,5 +256,5 @@ public class DropDownImageListEditor<T> extends Composite implements
         // See issue https://github.com/gwtbootstrap/gwt-bootstrap/issues/287
         errorTooltip.reconfigure();
     }
-    
+
 }

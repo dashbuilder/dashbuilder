@@ -29,6 +29,7 @@ import org.dashbuilder.dataset.DataSetLookup;
 import org.dashbuilder.dataset.DataSetMetadata;
 import org.dashbuilder.dataset.def.CSVDataSetDef;
 import org.dashbuilder.dataset.def.DataSetDef;
+import org.dashbuilder.dataset.events.DataSetDefRemovedEvent;
 import org.dashbuilder.dataset.events.DataSetStaleEvent;
 import org.slf4j.Logger;
 
@@ -99,8 +100,18 @@ public class CSVDataSetProvider implements DataSetProvider {
     protected void onDataSetStaleEvent(@Observes DataSetStaleEvent event) {
         DataSetDef def = event.getDataSetDef();
         if (DataSetProviderType.CSV.equals(def.getProvider())) {
-            String uuid = def.getUUID();
-            staticDataSetProvider.removeDataSet(uuid);
+            remove(def.getUUID());
         }
+    }
+
+    protected void onDataSetDefRemovedEvent(@Observes DataSetDefRemovedEvent  event) {
+        DataSetDef def = event.getDataSetDef();
+        if (DataSetProviderType.CSV.equals(def.getProvider())) {
+            remove(def.getUUID());
+        }
+    }
+
+    private void remove(final String uuid) {
+        staticDataSetProvider.removeDataSet(uuid);
     }
 }
