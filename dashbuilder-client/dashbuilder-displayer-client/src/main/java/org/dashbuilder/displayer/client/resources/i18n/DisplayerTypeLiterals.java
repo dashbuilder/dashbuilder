@@ -104,4 +104,12 @@ public interface DisplayerTypeLiterals extends ConstantsWithLookup {
 
     String MAP_MAP_MARKERS_tt();
 
+    String BUBBLECHART_default_tt();
+
+    String METERCHART_default_tt();
+
+    String METRIC_default_tt();
+
+    String TABLE_default_tt();
+
 }

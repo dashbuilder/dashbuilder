@@ -23,6 +23,7 @@ public interface DisplayerImagesResources extends ClientBundleWithLookup {
 
     public static final DisplayerImagesResources INSTANCE = GWT.create(DisplayerImagesResources.class);
 
+    public static final String DEFAULT_SUFFIX = "_default";
     public static final String SELECTED_SUFFIX = "_selected";
     public static final String UNSELECTED_SUFFIX = "_unselected";
 
@@ -107,5 +108,17 @@ public interface DisplayerImagesResources extends ClientBundleWithLookup {
 
     @Source("map_markers_unselected.png")
     ImageResource MAP_MAP_MARKERS_unselected();
+
+    @Source("bubble_default.png")
+    ImageResource BUBBLECHART_default();
+
+    @Source("meter_default.png")
+    ImageResource METERCHART_default();
+
+    @Source("metric_default.png")
+    ImageResource METRIC_default();
+
+    @Source("table_default.png")
+    ImageResource TABLE_default();
 
 }

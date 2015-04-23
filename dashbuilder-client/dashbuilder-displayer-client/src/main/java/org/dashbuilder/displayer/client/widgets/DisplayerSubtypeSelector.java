@@ -60,12 +60,13 @@ public class DisplayerSubtypeSelector extends Composite {
 
     public void select(String renderer, DisplayerType type, DisplayerSubType selectedSubType) {
         subtypes.removeAllRows();
+        imageWidgetList.clear();
 
         if (renderer == null || renderer.length() == 0) renderer = rendererLibLocator.getDefaultRenderer(type);
         RendererLibrary rendererLibrary = rendererLibLocator.lookupRenderer(renderer);
         if (rendererLibrary != null) {
             DisplayerSubType[] supportedSubTypes = rendererLibrary.getSupportedSubtypes(type);
-            if (supportedSubTypes != null) {
+            if (supportedSubTypes != null && supportedSubTypes.length > 0) {
                 for (int i = 0; i < supportedSubTypes.length; i++) {
                     final DisplayerSubType subtype = supportedSubTypes[ i ];
 
@@ -96,6 +97,17 @@ public class DisplayerSubtypeSelector extends Composite {
 
                     subtypes.setWidget(i, 0, dstiw);
                 }
+            } else {
+                // Show a default image for those chart types that don't have any subtypes
+                ImageResource selectedIR = (ImageResource)DisplayerImagesResources.INSTANCE.getResource(type.toString() + DisplayerImagesResources.DEFAULT_SUFFIX );
+                String tooltip = DisplayerTypeLiterals.INSTANCE.getString(type.toString() + DisplayerImagesResources.DEFAULT_SUFFIX + "_tt");
+
+                DisplayerSubTypeImageWidget dstiw = new DisplayerSubTypeImageWidget(  selectedIR,
+                        null,
+                        tooltip,
+                        true);
+
+                subtypes.setWidget(0, 0, dstiw);
             }
         }
     }
@@ -124,18 +136,21 @@ public class DisplayerSubtypeSelector extends Composite {
 
             isSelected = initiallySelected;
 
-            selected = new Image(selectedImage);
-            selected.setType(ImageType.POLAROID);
-            selected.setTitle(tooltip);
+            if (selectedImage != null) {
+                selected = new Image(selectedImage);
+                selected.setType(ImageType.POLAROID);
+                selected.setTitle(tooltip);
+                container.setWidget(0, 0, selected);
+                selected.setVisible(isSelected);
+            }
 
-            unselected = new Image(unselectedImage);
-            unselected.setType(ImageType.POLAROID);
-            unselected.setTitle(tooltip);
-
-            container.setWidget(0, 0, selected);
-            container.setWidget(0, 1, unselected);
-            selected.setVisible(isSelected);
-            unselected.setVisible(!isSelected);
+            if (unselectedImage != null) {
+                unselected = new Image(unselectedImage);
+                unselected.setType(ImageType.POLAROID);
+                unselected.setTitle(tooltip);
+                container.setWidget(0, 1, unselected);
+                unselected.setVisible(!isSelected);
+            }
         }
 
         public HandlerRegistration setSelectClickHandler(ClickHandler selectedClickHandler) {
