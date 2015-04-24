@@ -11,7 +11,9 @@
           <b:FileUpload name="file" ui:field="fileUpload"/>
         </b:Tooltip>
     </g:FormPanel>
-    
+
+    <b:Image ui:field="loadingImage"/>
+
   </g:FlowPanel>
 
 </ui:UiBinder>

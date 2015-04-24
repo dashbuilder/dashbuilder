@@ -31,6 +31,7 @@ import org.dashbuilder.client.widgets.dataset.editor.widgets.editors.AbstractDat
 import org.dashbuilder.common.client.validation.editors.FileUploadEditor;
 import org.dashbuilder.common.client.validation.editors.ValueBoxEditorDecorator;
 import org.dashbuilder.dataset.client.DataSetClientServices;
+import org.dashbuilder.dataset.client.resources.bundles.DataSetClientResources;
 import org.dashbuilder.dataset.client.uuid.ClientUUIDGenerator;
 import org.dashbuilder.dataset.client.validation.editors.CSVDataSetDefEditor;
 
@@ -106,6 +107,7 @@ public class CSVDataSetDefAttributesEditor extends AbstractDataSetDefEditor impl
         useFileURLButton.addClickHandler(useFileURLButtonHandler);
 
         // File editor.
+        filePath.setLoadingImageUri(DataSetClientResources.INSTANCE.images().loadingIcon().getSafeUri());
         filePath.setCallback(new FileUploadEditor.FileUploadEditorCallback() {
             @Override
             public String getServletUrl() {

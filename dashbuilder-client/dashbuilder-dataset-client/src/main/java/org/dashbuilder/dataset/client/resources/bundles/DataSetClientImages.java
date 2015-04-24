@@ -25,55 +25,42 @@ import com.google.gwt.resources.client.ImageResource;
  */
 public interface DataSetClientImages extends ClientBundle {
 
-    /* NOTE: Use DataResource instead of ImageResource in order to set a custom size to the image when creating it. **/
     @Source("images/csv_icon.png")
     DataResource csvIcon();
 
-    /* NOTE: Use DataResource instead of ImageResource in order to set a custom size to the image when creating it. **/
     @Source("images/java_icon.png")
     DataResource javaIcon();
 
-    /* NOTE: Use DataResource instead of ImageResource in order to set a custom size to the image when creating it. **/
     @Source("images/sql_icon.png")
     DataResource sqlIcon();
 
-    /* NOTE: Use DataResource instead of ImageResource in order to set a custom size to the image when creating it. **/
     @Source("images/el_icon.png")
     DataResource elIcon();
 
-    /* NOTE: Use DataResource instead of ImageResource in order to set a custom size to the image when creating it. **/
     @Source("images/excel_icon.png")
     DataResource excelIcon();
 
-    /* NOTE: Use DataResource instead of ImageResource in order to set a custom size to the image when creating it. **/
     @Source("images/label_icon_16.png")
     DataResource labelIcon16();
 
-    /* NOTE: Use DataResource instead of ImageResource in order to set a custom size to the image when creating it. **/
     @Source("images/label_icon_32.png")
     DataResource labelIcon32();
 
-    /* NOTE: Use DataResource instead of ImageResource in order to set a custom size to the image when creating it. **/
     @Source("images/number_icon_16.png")
     DataResource numberIcon16();
 
-    /* NOTE: Use DataResource instead of ImageResource in order to set a custom size to the image when creating it. **/
     @Source("images/number_icon_32.png")
     DataResource numberIcon32();
 
-    /* NOTE: Use DataResource instead of ImageResource in order to set a custom size to the image when creating it. **/
     @Source("images/text_icon_16.png")
     DataResource textIcon16();
 
-    /* NOTE: Use DataResource instead of ImageResource in order to set a custom size to the image when creating it. **/
     @Source("images/text_icon_32.png")
     DataResource textIcon32();
 
-    /* NOTE: Use DataResource instead of ImageResource in order to set a custom size to the image when creating it. **/
     @Source("images/date_icon_16.png")
     DataResource dateIcon16();
 
-    /* NOTE: Use DataResource instead of ImageResource in order to set a custom size to the image when creating it. **/
     @Source("images/date_icon_16.png")
     DataResource dateIcon32();
 
@@ -84,5 +71,5 @@ public interface DataSetClientImages extends ClientBundle {
     ImageResource cancelIconSmall();
 
     @Source("images/loading_icon.gif")
-    ImageResource loadingIcon();
+    DataResource loadingIcon();
 }

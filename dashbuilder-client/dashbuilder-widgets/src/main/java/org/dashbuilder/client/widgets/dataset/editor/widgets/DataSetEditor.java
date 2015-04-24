@@ -472,7 +472,7 @@ public class DataSetEditor implements IsWidget {
         if (dataSetDef != null && dataSetDef.getUUID() != null) {
             final DataSetClientServices clientServices = DataSetClientServices.get();
             clientServices.removeDataSetDef(dataSetDef.getUUID(), callback);
-        }
+        } 
     }
 
     private void registerDataSetDef(final DataSetDefRegisterCallback callback) {
@@ -595,20 +595,24 @@ public class DataSetEditor implements IsWidget {
     private final ClickHandler cancelHandler = new ClickHandler() {
         @Override
         public void onClick(ClickEvent event) {
-            removeDataSetDef(new DataSetDefRemoveCallback() {
-                @Override
-                public void success() {
-                    clear();
-                    showHomeView();
-                }
+            if (dataSetDef != null && dataSetDef.getUUID() != null) {
+                removeDataSetDef(new DataSetDefRemoveCallback() {
+                    @Override
+                    public void success() {
+                        clear();
+                        showHomeView();
+                    }
 
-                @Override
-                public boolean onError(DataSetClientServiceError error) {
-                    showError(error);
-                    return false;
-                }
-            });
-            
+                    @Override
+                    public boolean onError(DataSetClientServiceError error) {
+                        showError(error);
+                        return false;
+                    }
+                });
+            } else {
+                clear();
+                showHomeView();
+            }
         }
     };
     private final ClickHandler newDataSetHandler = new ClickHandler() {

@@ -1,7 +1,7 @@
 package org.dashbuilder.common.client.validation.editors;
 
+import com.github.gwtbootstrap.client.ui.*;
 import com.github.gwtbootstrap.client.ui.FileUpload;
-import com.github.gwtbootstrap.client.ui.Tooltip;
 import com.github.gwtbootstrap.client.ui.base.HasId;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.EditorError;
@@ -14,6 +14,7 @@ import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.resources.client.CssResource;
+import com.google.gwt.safehtml.shared.SafeUri;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiConstructor;
 import com.google.gwt.uibinder.client.UiField;
@@ -46,6 +47,7 @@ public class FileUploadEditor extends Composite implements
         HasId, HasText, IsEditor<HasTextEditor>, HasEditorErrors<String> {
 
     private static final String SCHEME = "file://";
+    private static final String LOADING_IMAGE_SIZE[] = new String[] {"16px", "16px"};
     
     interface Binder extends UiBinder<Widget, FileUploadEditor> {
         Binder BINDER = GWT.create(Binder.class);
@@ -70,10 +72,14 @@ public class FileUploadEditor extends Composite implements
     @Ignore
     com.github.gwtbootstrap.client.ui.FileUpload fileUpload;
 
+    @UiField
+    com.github.gwtbootstrap.client.ui.Image loadingImage;
+    
     private String id;
     private String value;
     private HasTextEditor editor;
     private FileUploadEditorCallback callback;
+    private SafeUri loadingImageUri;
     
     public interface FileUploadEditorCallback {
         String getServletUrl();
@@ -112,14 +118,32 @@ public class FileUploadEditor extends Composite implements
         fileUpload.setControlGroup(mainPanel);
         fileUpload.setErrorLabel(errorTooltip.asWidget());
         fileUpload.addChangeHandler(filePathChangeHandler);
+        loadingImage.setVisible(false);
         
         formPanel.setEncoding(FormPanel.ENCODING_MULTIPART);
         formPanel.setMethod(FormPanel.METHOD_POST);
         formPanel.setWidget(fileUpload);
+        formPanel.addSubmitCompleteHandler(formSubmitCompleteHandler);
     }
+    
+    private final FormPanel.SubmitCompleteHandler formSubmitCompleteHandler = new FormPanel.SubmitCompleteHandler() {
+        @Override
+        public void onSubmitComplete(FormPanel.SubmitCompleteEvent event) {
+            if (loadingImage != null) {
+                fileUpload.setVisible(true);
+                loadingImage.setVisible(false);
+            }
+        }
+    };
 
     public HandlerRegistration addSubmitCompleteHandler(final FormPanel.SubmitCompleteHandler submitCompleteHandler) {
         return formPanel.addSubmitCompleteHandler(submitCompleteHandler);
+    }
+
+    public void setLoadingImageUri(SafeUri loadingImageUri) {
+        this.loadingImageUri = loadingImageUri;
+        loadingImage.setUrl(loadingImageUri);
+        loadingImage.setSize(LOADING_IMAGE_SIZE[0], LOADING_IMAGE_SIZE[1]);
     }
 
     public void setCallback(final FileUploadEditorCallback callback) {
@@ -133,6 +157,10 @@ public class FileUploadEditor extends Composite implements
             final String _a = callback.getServletUrl() + "?path=" + SCHEME + _f;
             setText(_f);
             formPanel.setAction(_a);
+            if (loadingImage != null) {
+                fileUpload.setVisible(false);
+                loadingImage.setVisible(true);
+            }
             formPanel.submit();
         }
     };

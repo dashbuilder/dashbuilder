@@ -304,7 +304,7 @@ public class DataSetExplorerView extends Composite implements DataSetExplorer.Vi
             estimationsPanel.add(currentSizeText);
             
             // Add the loading icon while performing the backend call to fetch metadata.
-            final com.github.gwtbootstrap.client.ui.Image loadingIcon = new com.github.gwtbootstrap.client.ui.Image(DataSetClientResources.INSTANCE.images().loadingIcon());
+            final com.github.gwtbootstrap.client.ui.Image loadingIcon = new com.github.gwtbootstrap.client.ui.Image(DataSetClientResources.INSTANCE.images().loadingIcon().getSafeUri());
             loadingIcon.setTitle(DataSetExplorerConstants.INSTANCE.loading());
             loadingIcon.setAltText(DataSetExplorerConstants.INSTANCE.loading());
             estimationsPanel.add(loadingIcon);
