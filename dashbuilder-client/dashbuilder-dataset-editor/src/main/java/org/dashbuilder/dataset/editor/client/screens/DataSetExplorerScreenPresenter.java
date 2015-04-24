@@ -75,7 +75,7 @@ public class DataSetExplorerScreenPresenter {
 
     @OnClose
     public void onClose() {
-        // TODO: Close editor widget.
+        
     }
 
     @WorkbenchPartTitle
@@ -126,12 +126,12 @@ public class DataSetExplorerScreenPresenter {
         DataSetClientServices.get().removeDataSetDef(uuid, new DataSetDefRemoveCallback() {
             @Override
             public void success() {
-                // TODO
+                // Data set definition removed from the list by the fired remove event.
             }
 
             @Override
             public boolean onError(DataSetClientServiceError error) {
-                // TODO
+                explorerWidget.showError(error);
                 return false;
             }
         });

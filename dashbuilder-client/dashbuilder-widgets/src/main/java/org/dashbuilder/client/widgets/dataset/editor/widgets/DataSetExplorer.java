@@ -53,7 +53,7 @@ public class DataSetExplorer implements IsWidget {
 
         boolean add(final DataSetDef dataSetDef);
 
-        boolean remove(final DataSetDef dataSetDef);
+        void remove(final DataSetDef dataSetDef);
 
         boolean update(final DataSetDef oldDataSetDef, DataSetDef newDataSetDef);
 
@@ -136,6 +136,13 @@ public class DataSetExplorer implements IsWidget {
         }
     };
 
+    public void showError(final DataSetClientServiceError error) {
+        final String type = error.getThrowable() != null ? error.getThrowable().getClass().getName() : null;
+        final String message = error.getThrowable() != null ? error.getThrowable().getMessage() : error.getMessage().toString();
+        final String cause = error.getThrowable() != null && error.getThrowable().getCause() != null ? error.getThrowable().getCause().getMessage() : null;
+        showError(type, message, cause);
+    }
+    
     private void showError(final Exception e) {
         showError(null, e.getMessage(), null);
     }

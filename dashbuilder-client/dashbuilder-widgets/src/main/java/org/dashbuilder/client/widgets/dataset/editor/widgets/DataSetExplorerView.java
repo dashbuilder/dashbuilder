@@ -133,10 +133,12 @@ public class DataSetExplorerView extends Composite implements DataSetExplorer.Vi
     }
 
     @Override
-    public boolean remove(DataSetDef dataSetDef) {
-        return dataSets.remove(dataSetDef);
+    public void remove(DataSetDef dataSetDef) {
+        if (dataSets != null && dataSetDef != null && dataSetDef.getUUID() != null) {
+            remove(dataSetDef.getUUID());
+        }
     }
-
+    
     @Override
     public boolean update(final DataSetDef oldDataSetDef, final DataSetDef newDataSetDef) {
         remove(oldDataSetDef.getUUID());

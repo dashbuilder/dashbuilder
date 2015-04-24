@@ -211,5 +211,8 @@ public class DataSetDefDeployer {
             }
         }
     }
-    
+
+    public boolean delete(final DataSetDef def) {
+        return def.getDefFilePath() != null && new File(def.getDefFilePath()).delete();
+    }
 }
