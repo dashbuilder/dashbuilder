@@ -23,8 +23,16 @@
     <errai.jboss.home>${project.build.directory}/wildfly-${as.version}</errai.jboss.home>
   </properties>
 
+  <!-- NOTE: GWT client deps are needed for GWT compilation purposes (scope=provided) -->
   <dependencies>
+
+    <dependency>
+      <groupId>commons-lang</groupId>
+      <artifactId>commons-lang</artifactId>
+    </dependency>
+
     <!-- Dashbuilder -->
+
     <dependency>
       <groupId>org.dashbuilder</groupId>
       <artifactId>dashbuilder-server-all</artifactId>
@@ -32,12 +40,17 @@
 
     <dependency>
       <groupId>org.dashbuilder</groupId>
-      <artifactId>dashbuilder-dataset-shared</artifactId>
+      <artifactId>dashbuilder-common</artifactId>
     </dependency>
 
     <dependency>
       <groupId>org.dashbuilder</groupId>
-      <artifactId>dashbuilder-common-client</artifactId>
+      <artifactId>dashbuilder-dataset-api</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.dashbuilder</groupId>
+      <artifactId>dashbuilder-client-all</artifactId>
       <scope>provided</scope>
     </dependency>
 
@@ -45,6 +58,11 @@
       <groupId>org.dashbuilder</groupId>
       <artifactId>dashbuilder-dataset-client</artifactId>
       <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.dashbuilder</groupId>
+      <artifactId>dashbuilder-displayer-api</artifactId>
     </dependency>
 
     <dependency>
@@ -80,20 +98,21 @@
     <dependency>
       <groupId>org.dashbuilder</groupId>
       <artifactId>dashbuilder-renderer-lienzo</artifactId>
+      <scope>provided</scope>
     </dependency>
 
     <dependency>
       <groupId>org.dashbuilder</groupId>
       <artifactId>dashbuilder-renderer-chartjs</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.dashbuilder</groupId>
-      <artifactId>dashbuilder-widgets</artifactId>
       <scope>provided</scope>
     </dependency>
 
     <!-- UberFire -->
+
+    <dependency>
+      <groupId>org.uberfire</groupId>
+      <artifactId>uberfire-server-all</artifactId>
+    </dependency>
 
     <dependency>
       <groupId>org.uberfire</groupId>
@@ -106,27 +125,28 @@
     </dependency>
 
     <dependency>
-      <groupId>org.dashbuilder</groupId>
-      <artifactId>dashbuilder-lienzo-core</artifactId>
-      <scope>provided</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.dashbuilder</groupId>
-      <artifactId>dashbuilder-lienzo-charts</artifactId>
-      <scope>provided</scope>
-    </dependency>
-
-    <!-- UberFire -->
-    <dependency>
       <groupId>org.uberfire</groupId>
-      <artifactId>uberfire-server-all</artifactId>
+      <artifactId>uberfire-client-api</artifactId>
     </dependency>
 
     <dependency>
       <groupId>org.uberfire</groupId>
-      <artifactId>uberfire-client-all</artifactId>
-      <scope>provided</scope>
+      <artifactId>uberfire-io</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.uberfire</groupId>
+      <artifactId>uberfire-backend-server</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.uberfire</groupId>
+      <artifactId>uberfire-nio2-api</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.uberfire</groupId>
+      <artifactId>uberfire-workbench-client</artifactId>
     </dependency>
 
     <dependency>
@@ -168,7 +188,14 @@
       <artifactId>uberfire-widgets-properties-editor-backend</artifactId>
     </dependency>
 
+    <dependency>
+      <groupId>org.uberfire</groupId>
+      <artifactId>uberfire-workbench-client-views-bs2</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
     <!-- Log -->
+
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
@@ -186,13 +213,38 @@
       <artifactId>log4j-over-slf4j</artifactId>
     </dependency>
 
-    <!-- Errai Security -->
+    <!-- Errai -->
+
+    <dependency>
+      <groupId>org.jboss.errai</groupId>
+      <artifactId>errai-ui</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.jboss.errai</groupId>
+      <artifactId>errai-ioc</artifactId>
+    </dependency>
+
     <dependency>
       <groupId>org.jboss.errai</groupId>
       <artifactId>errai-security-picketlink</artifactId>
     </dependency>
 
-    <!-- Errai AS -->
+    <dependency>
+      <groupId>org.jboss.errai</groupId>
+      <artifactId>errai-security-server</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.picketlink</groupId>
+      <artifactId>picketlink-api</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.picketlink</groupId>
+      <artifactId>picketlink-idm-api</artifactId>
+    </dependency>
+
     <dependency>
       <groupId>org.jboss.errai</groupId>
       <artifactId>errai-jboss-as-support</artifactId>
@@ -215,18 +267,13 @@
     </dependency>
 
     <dependency>
-      <groupId>org.uberfire</groupId>
-      <artifactId>uberfire-workbench-client-views-bs2</artifactId>
-      <scope>provided</scope>
-    </dependency>
-
-    <dependency>
       <groupId>org.jboss.errai</groupId>
       <artifactId>errai-codegen-gwt</artifactId>
       <scope>provided</scope>
     </dependency>
 
     <!-- Container provided dependencies -->
+
     <dependency>
       <groupId>javax.enterprise</groupId>
       <artifactId>cdi-api</artifactId>
@@ -263,18 +310,30 @@
       <scope>provided</scope>
     </dependency>
 
+    <dependency>
+      <groupId>org.picketlink</groupId>
+      <artifactId>picketlink-api</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.picketlink</groupId>
+      <artifactId>picketlink-idm-api</artifactId>
+    </dependency>
+
     <!-- GWT and GWT Extensions -->
+
     <dependency>
       <groupId>com.google.gwt</groupId>
       <artifactId>gwt-user</artifactId>
       <scope>provided</scope>
     </dependency>
 
-    <!-- TODO: Remove. Just for testing. -->
     <dependency>
-      <groupId>mysql</groupId>
-      <artifactId>mysql-connector-java</artifactId>
+      <groupId>com.github.gwtbootstrap</groupId>
+      <artifactId>gwt-bootstrap</artifactId>
+      <scope>provided</scope>
     </dependency>
+
   </dependencies>
 
   <build>
@@ -293,22 +352,24 @@
           <logLevel>INFO</logLevel>
           <strict>true</strict>
           <compileSourcesArtifacts>
-            <!-- Dashbuilder -->
-            <compileSourcesArtifact>org.dashbuilder:dashbuilder-lienzo-core</compileSourcesArtifact>
-            <compileSourcesArtifact>org.dashbuilder:dashbuilder-lienzo-charts</compileSourcesArtifact>
 
+            <!-- Dashbuilder -->
             <compileSourcesArtifact>org.dashbuilder:dashbuilder-widgets</compileSourcesArtifact>
             <compileSourcesArtifact>org.dashbuilder:dashbuilder-validations</compileSourcesArtifact>
+            <compileSourcesArtifact>org.dashbuilder:dashbuilder-common-client</compileSourcesArtifact>
             <compileSourcesArtifact>org.dashbuilder:dashbuilder-dataset-api</compileSourcesArtifact>
             <compileSourcesArtifact>org.dashbuilder:dashbuilder-dataset-shared</compileSourcesArtifact>
-            <compileSourcesArtifact>org.dashbuilder:dashbuilder-displayer-api</compileSourcesArtifact>
-            <compileSourcesArtifact>org.dashbuilder:dashbuilder-common-client</compileSourcesArtifact>
             <compileSourcesArtifact>org.dashbuilder:dashbuilder-dataset-client</compileSourcesArtifact>
+            <compileSourcesArtifact>org.dashbuilder:dashbuilder-displayer-api</compileSourcesArtifact>
             <compileSourcesArtifact>org.dashbuilder:dashbuilder-displayer-client</compileSourcesArtifact>
             <compileSourcesArtifact>org.dashbuilder:dashbuilder-displayer-screen</compileSourcesArtifact>
             <compileSourcesArtifact>org.dashbuilder:dashbuilder-displayer-editor</compileSourcesArtifact>
+            <compileSourcesArtifact>org.dashbuilder:dashbuilder-renderer-default</compileSourcesArtifact>
             <compileSourcesArtifact>org.dashbuilder:dashbuilder-renderer-google</compileSourcesArtifact>
+            <compileSourcesArtifact>org.dashbuilder:dashbuilder-renderer-chartjs</compileSourcesArtifact>
             <compileSourcesArtifact>org.dashbuilder:dashbuilder-renderer-lienzo</compileSourcesArtifact>
+            <compileSourcesArtifact>org.dashbuilder:dashbuilder-lienzo-core</compileSourcesArtifact>
+            <compileSourcesArtifact>org.dashbuilder:dashbuilder-lienzo-charts</compileSourcesArtifact>
 
             <!-- Uberfire ext -->
             <compileSourcesArtifact>org.uberfire:uberfire-runtime-plugins-api</compileSourcesArtifact>
@@ -335,6 +396,7 @@
             <compileSourcesArtifact>org.uberfire:uberfire-workbench-client-backend</compileSourcesArtifact>
             <compileSourcesArtifact>org.uberfire:uberfire-workbench-client-views-bs2</compileSourcesArtifact>
             <compileSourcesArtifact>org.uberfire:uberfire-backend-api</compileSourcesArtifact>
+
           </compileSourcesArtifacts>
           <runTarget>dashbuilder.html</runTarget>
           <extraJvmArgs>-Xmx2024m -XX:CompileThreshold=7000 -XX:MaxPermSize=512M -Derrai.jboss.home=${errai.jboss.home}</extraJvmArgs>

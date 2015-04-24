@@ -20,7 +20,6 @@
 
   <properties>
     <version.org.jboss.integration-platform>6.0.0.CR26</version.org.jboss.integration-platform>
-    <version.org.uberfire.ext>0.7.0-SNAPSHOT</version.org.uberfire.ext>
     <version.org.uberfire>0.7.0-SNAPSHOT</version.org.uberfire>
     <version.org.jboss.errai>3.2.0-SNAPSHOT</version.org.jboss.errai>
     <version.org.picketlink>2.6.0.Final</version.org.picketlink>
@@ -36,9 +35,6 @@
     <version.io.searchbox.jest>0.1.3</version.io.searchbox.jest>
     <version.com.ahomeit.lienzo.charts>1.0.56-gwt2-SNAPSHOT</version.com.ahomeit.lienzo.charts>
     <version.com.googlecode.jtype>0.1.1</version.com.googlecode.jtype>
-
-    <!-- temporary: makes the enforcerRule (illegal-transitive-dependency-check) not to break the build -->
-    <illegaltransitivereportonly>true</illegaltransitivereportonly>
   </properties>
 
   <dependencyManagement>
@@ -134,32 +130,6 @@
         <groupId>org.picketlink</groupId>
         <artifactId>picketlink-idm-api</artifactId>
         <version>${version.org.picketlink}</version>
-      </dependency>
-
-      <!-- Jetty -->
-
-      <dependency>
-        <groupId>org.mortbay.jetty</groupId>
-        <artifactId>jetty</artifactId>
-        <version>${version.org.mortbay.jetty}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.mortbay.jetty</groupId>
-        <artifactId>jetty-plus</artifactId>
-        <version>${version.org.mortbay.jetty}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.mortbay.jetty</groupId>
-        <artifactId>jetty-naming</artifactId>
-        <version>${version.org.mortbay.jetty}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.mortbay.jetty</groupId>
-        <artifactId>jetty-embedded</artifactId>
-        <version>${version.org.mortbay.jetty}</version>
       </dependency>
 
       <!-- jOOQ -->

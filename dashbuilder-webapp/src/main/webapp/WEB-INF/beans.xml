@@ -1,19 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://xmlns.jcp.org/xml/ns/javaee" bean-discovery-mode="all">
+<beans xmlns="http://xmlns.jcp.org/xml/ns/javaee">
   <scan>
-    <exclude name="org.dashbuilder.client.**"/>
-    <exclude name="org.dashbuilder.common.client.**"/>
-    <exclude name="org.dashbuilder.dataset.client.**"/>
-    <exclude name="org.dashbuilder.displayer.client.**"/>
-    <exclude name="org.dashbuilder.client.editor.**"/>
-    <exclude name="org.dashbuilder.displayer.client.**"/>
-    <exclude name="org.dashbuilder.renderer.google.client.**"/>
-    <exclude name="org.dashbuilder.renderer.selector.client.**"/>
-    <exclude name="org.dashbuilder.renderer.table.client.**"/>
-    <exclude name="org.dashbuilder.renderer.lienzo.client.**"/>
-    <exclude name="org.dashbuilder.client.widgets.**"/>
-    <exclude name="org.dashbuilder.renderer.client.**"/>
-    <exclude name="com.ait.lienzo.charts.client.**"/>
-    <exclude name="com.ait.lienzo.client.core.**"/>
+    <!-- These exclusions were added by Errai to avoid deploying client-side classes to the server -->
+    <!-- End of Errai exclusions -->
+
   </scan>
 </beans>
