@@ -452,7 +452,10 @@ public class DataSetDefJSONMarshaller {
         json.put( DB_SCHEMA, dataSetDef.getDbSchema());
 
         // Table.
-        json.put( DB_TABLE, dataSetDef.getDbTable());
+        if (dataSetDef.getDbTable() != null) json.put( DB_TABLE, dataSetDef.getDbTable());
+
+        // Query.
+        if (dataSetDef.getDbSQL() != null) json.put( DB_SQL, dataSetDef.getDbSQL());
 
         // All columns flag.
         json.put( ALL_COLUMNS, dataSetDef.isAllColumnsEnabled());

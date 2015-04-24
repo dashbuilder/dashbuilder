@@ -40,6 +40,9 @@
       margin-top: 10px;
       margin-left: 30px;
     }
+    .intervalTypeDrowDown {
+      margin-top: 10px;
+    }
   </ui:style>
 
   <g:FlowPanel ui:field="advancedAttributesPanel" addStyleNames="{style.mainPanel}">
@@ -144,7 +147,7 @@
             </dash-client:ValueBoxEditorDecorator>
           </b:Popover>
 
-          <b:DropdownButton ui:field="intervalType" addStyleNames="{style.sliderPanel} "/>
+          <b:DropdownButton ui:field="intervalType" addStyleNames="{style.intervalTypeDrowDown} "/>
           
         </g:FlowPanel>
 

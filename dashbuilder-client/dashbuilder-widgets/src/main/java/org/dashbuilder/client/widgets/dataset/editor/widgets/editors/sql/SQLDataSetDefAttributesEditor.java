@@ -111,15 +111,23 @@ public class SQLDataSetDefAttributesEditor extends AbstractDataSetDefEditor impl
     }
 
     private SQLDataSetDef getDataSetDef() {
-        return (SQLDataSetDef) dataSetDef;
+        try {
+            return (SQLDataSetDef) dataSetDef;
+        } catch (ClassCastException e) {
+            return null;
+        }
     }
     
     @Override
     public void set(DataSetDef dataSetDef) {
         super.set(dataSetDef);
         
-        // Enable table by default.
-        enableTable();
+        // Enable table or query inputs.
+        SQLDataSetDef sqlDef = getDataSetDef();
+        if (sqlDef != null) {
+            if (getDataSetDef().getDbTable() != null) enableTable();
+            else enableQuery();
+        }
     }
     
     private void enableTable() {

@@ -689,6 +689,7 @@ public class DataSetEditor implements IsWidget {
                     final WorkflowView v = currentWfView;
                     if (DataSetEditor.this.columns == null) {
                         DataSetEditor.this.columns = new LinkedList<DataColumn>(dataSet.getColumns());
+                        updateDataSetDefColumns(dataSet.getColumns());
                     }
                     
                     // Build views.
