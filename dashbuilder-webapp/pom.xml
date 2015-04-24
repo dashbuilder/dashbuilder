@@ -10,73 +10,71 @@
     <relativePath>../dashbuilder-deps/pom.xml</relativePath>
   </parent>
 
-
   <artifactId>dashbuilder-webapp</artifactId>
   <packaging>war</packaging>
 
   <name>Dashbuilder WebApp</name>
   <description>Dashbuilder WebApp</description>
 
+  <properties>
+    <errai.version>${version.org.jboss.errai}</errai.version>
+    <as.version>8.1.0.Final</as.version>
+    <!-- Add the absolute path for $JBOSS_HOME below to manage another instance -->
+    <errai.jboss.home>${project.build.directory}/wildfly-${as.version}</errai.jboss.home>
+  </properties>
+
   <dependencies>
-
-    <dependency>
-      <groupId>commons-lang</groupId>
-      <artifactId>commons-lang</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>com.github.gwtbootstrap</groupId>
-      <artifactId>gwt-bootstrap</artifactId>
-    </dependency>
-
     <!-- Dashbuilder -->
     <dependency>
       <groupId>org.dashbuilder</groupId>
-      <artifactId>dashbuilder-all</artifactId>
+      <artifactId>dashbuilder-server-all</artifactId>
     </dependency>
 
     <dependency>
       <groupId>org.dashbuilder</groupId>
-      <artifactId>dashbuilder-common</artifactId>
+      <artifactId>dashbuilder-dataset-shared</artifactId>
     </dependency>
 
     <dependency>
       <groupId>org.dashbuilder</groupId>
-      <artifactId>dashbuilder-dataset-api</artifactId>
+      <artifactId>dashbuilder-common-client</artifactId>
+      <scope>provided</scope>
     </dependency>
 
     <dependency>
       <groupId>org.dashbuilder</groupId>
       <artifactId>dashbuilder-dataset-client</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.dashbuilder</groupId>
-      <artifactId>dashbuilder-displayer-api</artifactId>
+      <scope>provided</scope>
     </dependency>
 
     <dependency>
       <groupId>org.dashbuilder</groupId>
       <artifactId>dashbuilder-displayer-client</artifactId>
+      <scope>provided</scope>
     </dependency>
+
     <dependency>
       <groupId>org.dashbuilder</groupId>
       <artifactId>dashbuilder-displayer-screen</artifactId>
+      <scope>provided</scope>
     </dependency>
 
     <dependency>
       <groupId>org.dashbuilder</groupId>
       <artifactId>dashbuilder-displayer-editor</artifactId>
+      <scope>provided</scope>
     </dependency>
 
     <dependency>
       <groupId>org.dashbuilder</groupId>
       <artifactId>dashbuilder-renderer-default</artifactId>
+      <scope>provided</scope>
     </dependency>
 
     <dependency>
       <groupId>org.dashbuilder</groupId>
       <artifactId>dashbuilder-renderer-google</artifactId>
+      <scope>provided</scope>
     </dependency>
 
     <dependency>
@@ -89,12 +87,13 @@
       <artifactId>dashbuilder-renderer-chartjs</artifactId>
     </dependency>
 
-    <!-- UberFire -->
-
     <dependency>
-      <groupId>org.uberfire</groupId>
-      <artifactId>uberfire-server-all</artifactId>
+      <groupId>org.dashbuilder</groupId>
+      <artifactId>dashbuilder-widgets</artifactId>
+      <scope>provided</scope>
     </dependency>
+
+    <!-- UberFire -->
 
     <dependency>
       <groupId>org.uberfire</groupId>
@@ -107,28 +106,27 @@
     </dependency>
 
     <dependency>
+      <groupId>org.dashbuilder</groupId>
+      <artifactId>dashbuilder-lienzo-core</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.dashbuilder</groupId>
+      <artifactId>dashbuilder-lienzo-charts</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+    <!-- UberFire -->
+    <dependency>
       <groupId>org.uberfire</groupId>
-      <artifactId>uberfire-client-api</artifactId>
+      <artifactId>uberfire-server-all</artifactId>
     </dependency>
 
     <dependency>
       <groupId>org.uberfire</groupId>
-      <artifactId>uberfire-io</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.uberfire</groupId>
-      <artifactId>uberfire-backend-server</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.uberfire</groupId>
-      <artifactId>uberfire-nio2-api</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.uberfire</groupId>
-      <artifactId>uberfire-workbench-client</artifactId>
+      <artifactId>uberfire-client-all</artifactId>
+      <scope>provided</scope>
     </dependency>
 
     <dependency>
@@ -140,7 +138,9 @@
     <dependency>
       <groupId>org.uberfire</groupId>
       <artifactId>uberfire-runtime-plugins-client</artifactId>
+      <scope>provided</scope>
     </dependency>
+
     <dependency>
       <groupId>org.uberfire</groupId>
       <artifactId>uberfire-runtime-plugins-backend</artifactId>
@@ -149,6 +149,7 @@
     <dependency>
       <groupId>org.uberfire</groupId>
       <artifactId>uberfire-apps-client</artifactId>
+      <scope>provided</scope>
     </dependency>
 
     <dependency>
@@ -159,6 +160,7 @@
     <dependency>
       <groupId>org.uberfire</groupId>
       <artifactId>uberfire-widgets-properties-editor-client</artifactId>
+      <scope>provided</scope>
     </dependency>
 
     <dependency>
@@ -170,55 +172,27 @@
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
+      <scope>provided</scope>
     </dependency>
 
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-ext</artifactId>
+      <scope>provided</scope>
     </dependency>
 
     <dependency>
-      <groupId>ch.qos.logback</groupId>
-      <artifactId>logback-classic</artifactId>
+      <groupId>org.slf4j</groupId>
+      <artifactId>log4j-over-slf4j</artifactId>
     </dependency>
 
-    <dependency>
-      <groupId>javax.enterprise</groupId>
-      <artifactId>cdi-api</artifactId>
-    </dependency>
-
-    <!-- Errai -->
-
-    <dependency>
-      <groupId>org.jboss.errai</groupId>
-      <artifactId>errai-ui</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.jboss.errai</groupId>
-      <artifactId>errai-ioc</artifactId>
-    </dependency>
-
+    <!-- Errai Security -->
     <dependency>
       <groupId>org.jboss.errai</groupId>
       <artifactId>errai-security-picketlink</artifactId>
     </dependency>
 
-    <dependency>
-      <groupId>org.jboss.errai</groupId>
-      <artifactId>errai-security-server</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.picketlink</groupId>
-      <artifactId>picketlink-api</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.picketlink</groupId>
-      <artifactId>picketlink-idm-api</artifactId>
-    </dependency>
-
+    <!-- Errai AS -->
     <dependency>
       <groupId>org.jboss.errai</groupId>
       <artifactId>errai-jboss-as-support</artifactId>
@@ -240,15 +214,53 @@
       <artifactId>encoder</artifactId>
     </dependency>
 
-    <!-- Weld Modules -->
     <dependency>
-      <groupId>org.jboss.weld.se</groupId>
-      <artifactId>weld-se-core</artifactId>
+      <groupId>org.uberfire</groupId>
+      <artifactId>uberfire-workbench-client-views-bs2</artifactId>
+      <scope>provided</scope>
     </dependency>
 
     <dependency>
-      <groupId>org.jboss.weld.servlet</groupId>
-      <artifactId>weld-servlet-core</artifactId>
+      <groupId>org.jboss.errai</groupId>
+      <artifactId>errai-codegen-gwt</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+    <!-- Container provided dependencies -->
+    <dependency>
+      <groupId>javax.enterprise</groupId>
+      <artifactId>cdi-api</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>javax.inject</groupId>
+      <artifactId>javax.inject</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.jboss.errai</groupId>
+      <artifactId>errai-cdi-jboss</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>xml-apis</groupId>
+      <artifactId>xml-apis</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>com.sun.xml.bind</groupId>
+      <artifactId>jaxb-impl</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.jboss.resteasy</groupId>
+      <artifactId>jaxrs-api</artifactId>
+      <scope>provided</scope>
     </dependency>
 
     <!-- GWT and GWT Extensions -->
@@ -258,49 +270,16 @@
       <scope>provided</scope>
     </dependency>
 
-    <!-- PicketLink has a hard dependency on JBoss Logging.
-     Since this app deploys to Jetty, we include this as a runtime-scoped dependency.
-     If deploying to JBoss AS or WildFly, you would set this to provided scope. -->
+    <!-- TODO: Remove. Just for testing. -->
     <dependency>
-      <groupId>org.jboss.logging</groupId>
-      <artifactId>jboss-logging</artifactId>
-      <scope>runtime</scope>
+      <groupId>mysql</groupId>
+      <artifactId>mysql-connector-java</artifactId>
     </dependency>
-
-    <!-- Jetty -->
-
-    <dependency>
-      <groupId>org.mortbay.jetty</groupId>
-      <artifactId>jetty</artifactId>
-      <scope>runtime</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.mortbay.jetty</groupId>
-      <artifactId>jetty-plus</artifactId>
-      <scope>runtime</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.mortbay.jetty</groupId>
-      <artifactId>jetty-naming</artifactId>
-      <scope>runtime</scope>
-      </dependency>
-
   </dependencies>
 
   <build>
-
-    <resources>
-      <!-- Include src/main/java in order not to break the Eclipse GWT plug-in -->
-      <resource>
-        <directory>src/main/java</directory>
-      </resource>
-      <!-- Include module descriptors from src/main/resources in order not to break the Intellij GWT plug-in -->
-      <resource>
-        <directory>src/main/resources</directory>
-      </resource>
-    </resources>
+    <finalName>${project.artifactId}</finalName>
+    <outputDirectory>src/main/webapp/WEB-INF/classes</outputDirectory>
 
     <plugins>
 
@@ -314,23 +293,55 @@
           <logLevel>INFO</logLevel>
           <strict>true</strict>
           <compileSourcesArtifacts>
-
             <!-- Dashbuilder -->
-            <compileSourcesArtifact>org.dashbuilder:dashbuilder-client-all</compileSourcesArtifact>
+            <compileSourcesArtifact>org.dashbuilder:dashbuilder-lienzo-core</compileSourcesArtifact>
+            <compileSourcesArtifact>org.dashbuilder:dashbuilder-lienzo-charts</compileSourcesArtifact>
+
+            <compileSourcesArtifact>org.dashbuilder:dashbuilder-widgets</compileSourcesArtifact>
+            <compileSourcesArtifact>org.dashbuilder:dashbuilder-validations</compileSourcesArtifact>
+            <compileSourcesArtifact>org.dashbuilder:dashbuilder-dataset-api</compileSourcesArtifact>
+            <compileSourcesArtifact>org.dashbuilder:dashbuilder-dataset-shared</compileSourcesArtifact>
+            <compileSourcesArtifact>org.dashbuilder:dashbuilder-displayer-api</compileSourcesArtifact>
+            <compileSourcesArtifact>org.dashbuilder:dashbuilder-common-client</compileSourcesArtifact>
+            <compileSourcesArtifact>org.dashbuilder:dashbuilder-dataset-client</compileSourcesArtifact>
+            <compileSourcesArtifact>org.dashbuilder:dashbuilder-displayer-client</compileSourcesArtifact>
+            <compileSourcesArtifact>org.dashbuilder:dashbuilder-displayer-screen</compileSourcesArtifact>
             <compileSourcesArtifact>org.dashbuilder:dashbuilder-displayer-editor</compileSourcesArtifact>
             <compileSourcesArtifact>org.dashbuilder:dashbuilder-renderer-google</compileSourcesArtifact>
             <compileSourcesArtifact>org.dashbuilder:dashbuilder-renderer-lienzo</compileSourcesArtifact>
 
             <!-- Uberfire ext -->
+            <compileSourcesArtifact>org.uberfire:uberfire-runtime-plugins-api</compileSourcesArtifact>
             <compileSourcesArtifact>org.uberfire:uberfire-runtime-plugins-client</compileSourcesArtifact>
+            <compileSourcesArtifact>org.uberfire:uberfire-commons-editor-api</compileSourcesArtifact>
             <compileSourcesArtifact>org.uberfire:uberfire-commons-editor-client</compileSourcesArtifact>
+            <compileSourcesArtifact>org.uberfire:uberfire-apps-api</compileSourcesArtifact>
             <compileSourcesArtifact>org.uberfire:uberfire-apps-client</compileSourcesArtifact>
+            <compileSourcesArtifact>org.uberfire:uberfire-widgets-service-api</compileSourcesArtifact>
+            <compileSourcesArtifact>org.uberfire:uberfire-widgets-commons</compileSourcesArtifact>
+            <compileSourcesArtifact>org.uberfire:uberfire-widgets-properties-editor-api</compileSourcesArtifact>
             <compileSourcesArtifact>org.uberfire:uberfire-widgets-properties-editor-client</compileSourcesArtifact>
 
+            <!-- UberFire -->
+            <compileSourcesArtifact>org.uberfire:uberfire-commons</compileSourcesArtifact>
+            <compileSourcesArtifact>org.uberfire:uberfire-nio2-model</compileSourcesArtifact>
+            <compileSourcesArtifact>org.uberfire:uberfire-io</compileSourcesArtifact>
+            <compileSourcesArtifact>org.uberfire:uberfire-api</compileSourcesArtifact>
+            <compileSourcesArtifact>org.uberfire:uberfire-js</compileSourcesArtifact>
+            <compileSourcesArtifact>org.uberfire:uberfire-security-api</compileSourcesArtifact>
+            <compileSourcesArtifact>org.uberfire:uberfire-security-client</compileSourcesArtifact>
+            <compileSourcesArtifact>org.uberfire:uberfire-client-api</compileSourcesArtifact>
+            <compileSourcesArtifact>org.uberfire:uberfire-workbench-client</compileSourcesArtifact>
+            <compileSourcesArtifact>org.uberfire:uberfire-workbench-client-backend</compileSourcesArtifact>
+            <compileSourcesArtifact>org.uberfire:uberfire-workbench-client-views-bs2</compileSourcesArtifact>
+            <compileSourcesArtifact>org.uberfire:uberfire-backend-api</compileSourcesArtifact>
           </compileSourcesArtifacts>
           <runTarget>dashbuilder.html</runTarget>
-          <extraJvmArgs>-Xmx1024m -XX:MaxPermSize=256m</extraJvmArgs>
-          <gwtSdkFirstInClasspath>true</gwtSdkFirstInClasspath>
+          <extraJvmArgs>-Xmx2024m -XX:CompileThreshold=7000 -XX:MaxPermSize=512M -Derrai.jboss.home=${errai.jboss.home}</extraJvmArgs>
+          <noServer>false</noServer>
+          <server>org.jboss.errai.cdi.server.gwt.EmbeddedWildFlyLauncher</server>
+          <hostedWebapp>src/main/webapp</hostedWebapp>
+          <disableCastChecking>true</disableCastChecking>
         </configuration>
         <executions>
           <execution>
@@ -349,26 +360,6 @@
           </execution>
         </executions>
       </plugin>
-      <plugin>
-        <artifactId>maven-war-plugin</artifactId>
-        <configuration>
-          <warName>${project.artifactId}</warName>
-          <outputFileNameMapping>@{artifactId}@-@{baseVersion}@@{dashClassifier?}@.@{extension}@</outputFileNameMapping>
-          <packagingExcludes>**/javax/**/*.*,**/client/**/*.class,**/*.symbolMap</packagingExcludes>
-          <archive>
-            <addMavenDescriptor>false</addMavenDescriptor>
-          </archive>
-        </configuration>
-      </plugin>
-
-      <!-- Tests are skipped by default because they require additional GWT dependencies. Run mvn with
-        -Pintegration-test to enable testing. -->
-      <plugin>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-          <skipTests>true</skipTests>
-        </configuration>
-      </plugin>
 
       <plugin>
         <artifactId>maven-clean-plugin</artifactId>
@@ -385,6 +376,32 @@
             </fileset>
           </filesets>
         </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>unpack</id>
+            <phase>process-resources</phase>
+            <goals>
+              <goal>unpack</goal>
+            </goals>
+            <configuration>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>org.wildfly</groupId>
+                  <artifactId>wildfly-dist</artifactId>
+                  <version>${as.version}</version>
+                  <type>zip</type>
+                  <overWrite>false</overWrite>
+                  <outputDirectory>${project.build.directory}</outputDirectory>
+                </artifactItem>
+              </artifactItems>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
 

@@ -33,11 +33,13 @@
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
+      <scope>provided</scope>
     </dependency>
 
     <dependency>
       <groupId>javax.enterprise</groupId>
       <artifactId>cdi-api</artifactId>
+      <scope>provided</scope>
     </dependency>
 
     <dependency>
@@ -83,6 +85,12 @@
       <groupId>org.dashbuilder</groupId>
       <artifactId>dashbuilder-common</artifactId>
       <type>test-jar</type>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>com.google.gwt</groupId>
+      <artifactId>gwt-user</artifactId>
       <scope>test</scope>
     </dependency>
 
