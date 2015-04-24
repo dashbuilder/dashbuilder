@@ -73,9 +73,10 @@ public class DisplayerSubtypeSelector extends Composite {
                     // Double check the renderer library for invalid subtypes for this type
                     if (!type.getSubTypes().contains(subtype)) throw new RuntimeException("Wrong subtype (" + subtype + ") indicated for type " + type + " by renderer library " + rendererLibrary.getUUID());
 
-                    ImageResource selectedIR = (ImageResource)DisplayerImagesResources.INSTANCE.getResource(type.toString() + "_" + subtype.toString() + DisplayerImagesResources.SELECTED_SUFFIX);
-                    ImageResource unselectedIR = (ImageResource)DisplayerImagesResources.INSTANCE.getResource(type.toString() + "_" + subtype.toString() + DisplayerImagesResources.UNSELECTED_SUFFIX);
-                    String tooltip = DisplayerTypeLiterals.INSTANCE.getString(type.toString() + "_" + subtype.toString() + "_tt");
+                    String resourcePrefix = type.toString() + "_" + subtype.toString();
+                    ImageResource selectedIR = (ImageResource) DisplayerImagesResources.INSTANCE.getResource(resourcePrefix + DisplayerImagesResources.SELECTED_SUFFIX);
+                    ImageResource unselectedIR = (ImageResource) DisplayerImagesResources.INSTANCE.getResource(resourcePrefix + DisplayerImagesResources.UNSELECTED_SUFFIX);
+                    String tooltip = DisplayerTypeLiterals.INSTANCE.getString(resourcePrefix + "_tt");
 
                     boolean initiallySelected = selectedSubType != null? subtype == selectedSubType : i == 0;
                     final DisplayerSubTypeImageWidget dstiw = new DisplayerSubTypeImageWidget(  selectedIR,
@@ -140,16 +141,17 @@ public class DisplayerSubtypeSelector extends Composite {
                 selected = new Image(selectedImage);
                 selected.setType(ImageType.POLAROID);
                 selected.setTitle(tooltip);
-                container.setWidget(0, 0, selected);
                 selected.setVisible(isSelected);
+                selected.addStyleName("selDispSubtype"); //for selenium
+                container.setWidget(0, 0, selected);
             }
 
             if (unselectedImage != null) {
                 unselected = new Image(unselectedImage);
                 unselected.setType(ImageType.POLAROID);
                 unselected.setTitle(tooltip);
-                container.setWidget(0, 1, unselected);
                 unselected.setVisible(!isSelected);
+                container.setWidget(0, 1, unselected);
             }
         }
 
