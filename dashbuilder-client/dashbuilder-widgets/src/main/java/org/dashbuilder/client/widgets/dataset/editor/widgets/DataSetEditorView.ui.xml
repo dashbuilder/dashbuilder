@@ -2,7 +2,7 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
              xmlns:g="urn:import:com.google.gwt.user.client.ui"
              xmlns:b="urn:import:com.github.gwtbootstrap.client.ui"
-             xmlns:dash-widgets="urn:import:org.dashbuilder.client.widgets"
+             xmlns:dash-client-widgets="urn:import:org.dashbuilder.common.client.widgets"
              xmlns:dash-dset-editors="urn:import:org.dashbuilder.client.widgets.dataset.editor.widgets.editors"
              xmlns:dash-dset-editors-sql="urn:import:org.dashbuilder.client.widgets.dataset.editor.widgets.editors.sql"
              xmlns:dash-dset-editors-csv="urn:import:org.dashbuilder.client.widgets.dataset.editor.widgets.editors.csv"
@@ -80,6 +80,9 @@
       margin-left: 5px;
     }
 
+    .nextStepPanel {
+      display: inline-flex;
+    }
     .nextStep {
       margin: 5px;
     }
@@ -95,6 +98,12 @@
     .loadingScreenPanel {
       font-size: medium;
       font-weight: bold;
+    }
+    .loadingImage {
+      float: left;
+    }
+    .loadingText {
+      float: right;
     }
 
     .providerSetupButtonPanel {
@@ -233,9 +242,10 @@
     </b:Modal>
 
     <!-- Loading screen. -->
-    <g:PopupPanel ui:field="loadingPopupPanel" autoHideEnabled="false" modal="true" glassEnabled="true" addStyleNames="{style.loadingScreenPanel} ">
-      <g:HTML text="{i18n.loading}..."/>
-    </g:PopupPanel>
+    <dash-client-widgets:TimeoutPopupPanel ui:field="loadingPopupPanel" autoHideEnabled="false" modal="true" glassEnabled="true" addStyleNames="{style.loadingScreenPanel} ">
+      <b:Image ui:field="loadingImage" addStyleNames="{style.loadingImage}"/>
+      <g:HTML text="{i18n.loading}..." addStyleNames="{style.loadingText}"/>
+    </dash-client-widgets:TimeoutPopupPanel>
     
     <!-- Navigation. -->
     <b:StackProgressBar type="STRIPED" addStyleNames="{style.progressBar}" ui:field="progressBar">
@@ -264,9 +274,11 @@
       <g:HTML text="{i18n.nextSteps}:" addStyleNames="{style.nextStep} "/>
       <ol>
         <li>
-          <g:HTML text="{i18n.defineA} " addStyleNames="{style.newDataSet} "/>
-          <g:Hyperlink text="{i18n.newDataSet} " ui:field="newDataSetLink" addStyleNames="{style.newDataSet} "/>
-          <g:HTML text="{i18n.toFetchYourDataFromExtSystem}" addStyleNames="{style.newDataSet} "/>    
+          <g:FlowPanel addStyleNames="{style.nextStepPanel}">
+            <g:HTML text="{i18n.defineA} " addStyleNames="{style.newDataSet} "/>
+            <g:Hyperlink text="{i18n.newDataSet} " ui:field="newDataSetLink" addStyleNames="{style.newDataSet} "/>
+            <g:HTML text="{i18n.toFetchYourDataFromExtSystem}" addStyleNames="{style.newDataSet} "/>
+          </g:FlowPanel>
         </li>
         <li>
           <g:HTML text="{i18n.createDataDisplayers}" addStyleNames="{style.nextStep} "/>
@@ -320,7 +332,7 @@
               <b:Popover showDelay="1000" text="{i18n.test_description}" heading="{i18n.test}">
                 <b:Button ui:field="testButton" title="{i18n.test}"
                           text="{i18n.test}" size="SMALL" icon="CHEVRON_RIGHT"
-                          addStyleNames="{style.testButton} " type="SUCCESS"/>
+                          addStyleNames="{style.testButton} " type="PRIMARY"/>
               </b:Popover>
 
             </g:FlowPanel>
@@ -416,7 +428,7 @@
       </b:Popover>
 
       <b:Popover ui:field="nextButtonPopover" showDelay="1000" text="" heading="">
-        <b:Button text="{i18n.next}" ui:field="nextButton" type="SUCCESS"/>
+        <b:Button text="{i18n.next}" ui:field="nextButton" type="PRIMARY"/>
       </b:Popover>
 
     </g:FlowPanel>

@@ -31,12 +31,12 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.*;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
-import org.dashbuilder.client.widgets.SlidingPanel;
 import org.dashbuilder.client.widgets.dataset.editor.widgets.events.DeleteDataSetEvent;
 import org.dashbuilder.client.widgets.dataset.editor.widgets.events.DeleteDataSetEventHandler;
 import org.dashbuilder.client.widgets.dataset.editor.widgets.events.EditDataSetEvent;
 import org.dashbuilder.client.widgets.dataset.editor.widgets.events.EditDataSetEventHandler;
 import org.dashbuilder.client.widgets.resources.i18n.DataSetExplorerConstants;
+import org.dashbuilder.common.client.widgets.SlidingPanel;
 import org.dashbuilder.dataset.DataSetMetadata;
 import org.dashbuilder.dataset.client.DataSetClientServiceError;
 import org.dashbuilder.dataset.client.DataSetMetadataCallback;
@@ -326,7 +326,7 @@ public class DataSetExplorerView extends Composite implements DataSetExplorer.Vi
                     currentSizeText.addStyleName(style.statusTextTitle());
                     
                     // Add estimation values.
-                    final HTML estimatedSizeText = new HTML(humanReadableByteCount(estimatedSize, true));
+                    final HTML estimatedSizeText = new HTML(humanReadableByteCount(estimatedSize));
                     estimatedSizeText.addStyleName(style.statusText());
                     final HTML estimatedRowsText = new HTML(humanReadableRowCount(rowCount) + WHITESPACE + DataSetExplorerConstants.INSTANCE.rows());
                     estimatedRowsText.addStyleName(style.statusText());
@@ -458,12 +458,12 @@ public class DataSetExplorerView extends Composite implements DataSetExplorer.Vi
         errorPanel.hide();
     }
 
-    public String humanReadableByteCount(long bytes, boolean si) {
+    public String humanReadableByteCount(long bytes) {
         final String _b = DataSetExplorerConstants.INSTANCE.bytes();
-        int unit = si ? 1000 : 1024;
-        if (bytes < unit) return Long.toString(bytes) + _b;
+        int unit = 1024;
+        if (bytes < unit) return Long.toString(bytes) + " " + _b;
         int exp = (int) (Math.log(bytes) / Math.log(unit));
-        String pre = (si ? "kMGTPE" : "KMGTPE").charAt(exp-1) + (si ? _b : "i" + _b);
+        String pre = (" KMGTPE").charAt(exp-1) + _b;
         return NumberFormat.getFormat("#.0").format(bytes / Math.pow(unit, exp)) + pre;
     }
 

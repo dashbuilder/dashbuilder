@@ -34,7 +34,6 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.*;
-import org.dashbuilder.client.widgets.SlidingPanel;
 import org.dashbuilder.client.widgets.dataset.editor.DataSetDefEditWorkflow;
 import org.dashbuilder.client.widgets.dataset.editor.widgets.editors.*;
 import org.dashbuilder.client.widgets.dataset.editor.widgets.editors.bean.BeanDataSetDefAttributesEditor;
@@ -43,6 +42,8 @@ import org.dashbuilder.client.widgets.dataset.editor.widgets.editors.elasticsear
 import org.dashbuilder.client.widgets.dataset.editor.widgets.editors.sql.SQLDataSetDefAttributesEditor;
 import org.dashbuilder.client.widgets.resources.i18n.DataSetEditorConstants;
 import org.dashbuilder.client.widgets.resources.i18n.DataSetEditorMessages;
+import org.dashbuilder.common.client.widgets.SlidingPanel;
+import org.dashbuilder.common.client.widgets.TimeoutPopupPanel;
 import org.dashbuilder.dataprovider.DataSetProviderType;
 import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.dataset.DataSet;
@@ -69,6 +70,8 @@ import java.util.Set;
 public class DataSetEditorView extends Composite implements DataSetEditor.View {
 
     private static final String EXPORT_ICON_SIZE = "20px";
+    private static final String LOADING_IMAGE_SIZE = "16px";
+    private static final int LOADING_SCREEN_TIMEOUT = 60000;
     
     interface DataSetEditorViewBinder extends UiBinder<Widget, DataSetEditorView> {}
     private static DataSetEditorViewBinder uiBinder = GWT.create(DataSetEditorViewBinder.class);
@@ -117,7 +120,10 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
     Row errorCauseRow;
     
     @UiField
-    PopupPanel loadingPopupPanel;
+    TimeoutPopupPanel loadingPopupPanel;
+    
+    @UiField
+    Image loadingImage;
     
     @UiField
     StackProgressBar progressBar;
@@ -342,6 +348,9 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
         exportToCSVButton.addClickHandler(exportToCSVButtonHandler);
         
         // Hide loading popup at startup.
+        loadingPopupPanel.setTimeout(LOADING_SCREEN_TIMEOUT);
+        loadingImage.setUrl(DataSetClientResources.INSTANCE.images().loadingIcon().getSafeUri());
+        loadingImage.setSize(LOADING_IMAGE_SIZE, LOADING_IMAGE_SIZE);
         hideLoadingView();
 
         errorPanelButton.addClickHandler(errorPanelButtonHandler);

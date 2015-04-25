@@ -1,4 +1,4 @@
-package org.dashbuilder.client.widgets;
+package org.dashbuilder.common.client.widgets;
 
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.user.client.ui.*;
