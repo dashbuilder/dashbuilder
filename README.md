@@ -51,10 +51,10 @@ Change log
     - Filter, sort and export the data previews
 
 * Displayer editor data set lookup enhancements:
-  - Filter editor for retrieving only a data subset.
-  - Time frame function for the retrieval of time series data in real-time.
-  - Different strategies for grouping time series data.
-  - Ability to add/remove the columns/series to display.
+    - Filter editor for retrieving only a data subset.
+    - Time frame function for the retrieval of time series data in real-time.
+    - Different strategies for grouping time series data.
+    - Ability to add/remove the columns/series to display.
 
 0.2.0
 
@@ -107,7 +107,6 @@ Development mode allows a user to develop with the framework by compiling classe
 Dashbuilder is currently built using GWT 2.7, so you are forced to use [SuperDevMode](http://www.gwtproject.org/articles/superdevmode.html) to run the application.
 
 Super development mode is the new way to work in GWT since version <code>2.5</code> (Native support & the default mode in GWT <code>2.7</code>).
-
 It works in most new browsers and it's based on [Source Map](https://docs.google.com/document/d/1U1RGAehQwRypUTovF1KRlpiOFze0b-_2gc6fAH0KY0k/edit?hl=en_US&pli=1&pli=1) spec. It's faster and more efficient than the old hosted mode. There are lots of benefits and other important reasons to use it, you can find more information [here](http://www.gwtproject.org/articles/superdevmode.html).             
 
 Dashbuilder supports and it's configured by default to use SuperDevMode.                 
@@ -128,6 +127,8 @@ Login:
 
     admin / admin
 
+
+(If you are an IntelliJ fan, we also provide a setup for running the application under this fantastic IDE. Details [here](https://groups.google.com/forum/#!topic/dashbuilder-development/tRa6AAMb8fM))
 
 Production mode
 ---------------
