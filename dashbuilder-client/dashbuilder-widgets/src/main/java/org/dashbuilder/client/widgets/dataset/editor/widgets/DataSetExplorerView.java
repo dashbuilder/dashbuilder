@@ -339,13 +339,21 @@ public class DataSetExplorerView extends Composite implements DataSetExplorer.Vi
 
                 @Override
                 public void notFound() {
+                    error();
                     showError(DataSetExplorerConstants.INSTANCE.notFound());
                 }
 
                 @Override
                 public boolean onError(DataSetClientServiceError error) {
+                    error();
                     showError(error);
                     return false;
+                }
+                
+                private void error() {
+                    loadingIcon.setUrl(DataSetClientResources.INSTANCE.images().cancelIconSmall().getSafeUri());
+                    loadingIcon.setTitle(DataSetExplorerConstants.INSTANCE.error());
+                    loadingIcon.setAltText(DataSetExplorerConstants.INSTANCE.error());
                 }
             });
 
