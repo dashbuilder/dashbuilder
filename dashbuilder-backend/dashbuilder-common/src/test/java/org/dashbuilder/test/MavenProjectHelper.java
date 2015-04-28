@@ -43,7 +43,7 @@ public class MavenProjectHelper {
 
     public static File getRootDir() {
         File rootDir = new File(System.getProperty("user.dir"));
-        while (rootDir != null && !ROOT_DIR.equals(rootDir.getName())) {
+        while (rootDir != null && !rootDir.getName().startsWith(ROOT_DIR)) {
             rootDir = rootDir.getParentFile();
         }
         return rootDir;
