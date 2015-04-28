@@ -34,7 +34,7 @@ public interface DataSetBackendServices {
     String registerDataSetDef(DataSetDef definition);
 
     /**
-     * Removes a data set definition. 
+     * Removes a data set definition from the registry. 
      * @param uuid The data set definition identifier.
      */
     void removeDataSetDef(String uuid);
@@ -64,6 +64,13 @@ public interface DataSetBackendServices {
      * @throws Exception
      */
     void persistDataSetDef(final DataSetDef dataSetDef) throws Exception;
+
+    /**
+     * Deletes the data set definition. 
+     * @param uuid The data set definition UUID.
+     * @throws Exception
+     */
+    void deleteDataSetDef(final String uuid);
     
     /**
      * Export a dataset, specified by a DataSetLookup, to CSV format.

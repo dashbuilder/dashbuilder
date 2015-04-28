@@ -3,7 +3,6 @@ package org.dashbuilder.validations;
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.validation.client.AbstractGwtValidatorFactory;
 import com.google.gwt.validation.client.impl.AbstractGwtValidator;
-import org.dashbuilder.dataset.def.DataSetDef;
 import org.dashbuilder.validations.factory.DashbuilderValidationFactory;
 
 import javax.validation.Validator;

@@ -42,4 +42,11 @@ package org.dashbuilder.dataset.def;
  */
 public interface StaticDataSetDefBuilder<T extends DataSetDefBuilder> extends DataSetDefBuilder<T> {
 
+    /**
+     * Add a row with the given values at the end of the data set.
+     *
+     * @return The DataSetDefBuilder instance that is being used to configure a DataSetDef.
+     */
+    T row(Object... values);
+
 }

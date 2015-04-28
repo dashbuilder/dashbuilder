@@ -21,6 +21,15 @@ import org.dashbuilder.dataset.def.StaticDataSetDefBuilder;
 
 public class StaticDataSetDefBuilderImpl extends AbstractDataSetDefBuilder<StaticDataSetDefBuilderImpl> implements StaticDataSetDefBuilder<StaticDataSetDefBuilderImpl> {
 
+    public StaticDataSetDefBuilderImpl row(Object... values) {
+        getDefinition().getDataSet().setValuesAt(getDefinition().getDataSet().getRowCount(), values);
+        return this;
+    }
+
+    private StaticDataSetDef getDefinition() {
+        return (StaticDataSetDef) def;
+    }
+
     protected DataSetDef createDataSetDef() {
         return new StaticDataSetDef();
     }

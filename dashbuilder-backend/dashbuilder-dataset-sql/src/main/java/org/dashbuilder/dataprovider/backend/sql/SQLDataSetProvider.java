@@ -38,6 +38,7 @@ import org.dashbuilder.dataset.DataSetOp;
 import org.dashbuilder.dataset.DataSetOpEngine;
 import org.dashbuilder.dataset.backend.BackendIntervalBuilderDynamicDate;
 import org.dashbuilder.dataset.backend.date.DateUtils;
+import org.dashbuilder.dataset.def.DataColumnDef;
 import org.dashbuilder.dataset.def.DataSetDef;
 import org.dashbuilder.dataset.def.SQLDataSetDef;
 import org.dashbuilder.dataset.engine.group.IntervalBuilder;
@@ -226,9 +227,11 @@ public class SQLDataSetProvider implements DataSetProvider {
 
         List<String> columnIds = new ArrayList<String>();
         List<ColumnType> columnTypes = new ArrayList<ColumnType>();
-        for (DataColumn column : def.getDataSet().getColumns()) {
-            columnIds.add(column.getId());
-            columnTypes.add(column.getColumnType());
+        if (def.getColumns() != null) {
+            for (DataColumnDef column : def.getColumns()) {
+                columnIds.add(column.getId());
+                columnTypes.add(column.getColumnType());
+            }
         }
 
         Field[] _jooqFields = _getFields(def, conn);

@@ -42,8 +42,6 @@ public class CSVDataSetDef extends DataSetDef {
     @NotNull(message = "{dataSetApi_csvDataSetDef_numberPattern_notNull}")
     protected String numberPattern = "#,###.##";
 
-    protected boolean allColumnsEnabled = true;
-
     public CSVDataSetDef() {
         super.setProvider(DataSetProviderType.CSV);
         separatorChar = ';';
@@ -95,7 +93,7 @@ public class CSVDataSetDef extends DataSetDef {
         String p = super.getPattern(columnId);
         if (p != null) return p;
 
-        DataColumn c = getDataSet().getColumnById(columnId);
+        DataColumnDef c = getColumnById(columnId);
         if (c == null) return null;
 
         if (c.getColumnType().equals(ColumnType.NUMBER)) return numberPattern;
@@ -131,14 +129,6 @@ public class CSVDataSetDef extends DataSetDef {
         else return pattern.charAt(5);
     }
 
-    public boolean isAllColumnsEnabled() {
-        return allColumnsEnabled;
-    }
-
-    public void setAllColumnsEnabled(boolean allColumnsEnabled) {
-        this.allColumnsEnabled = allColumnsEnabled;
-    }
-
     @Override
     public DataSetDef clone() {
         CSVDataSetDef def = new CSVDataSetDef();
@@ -150,7 +140,6 @@ public class CSVDataSetDef extends DataSetDef {
         def.setEscapeChar(getEscapeChar());
         def.setDatePattern(getDatePattern());
         def.setNumberPattern(getNumberPattern());
-        def.setAllColumnsEnabled(isAllColumnsEnabled());
         return def;
     }
     

@@ -29,6 +29,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import javax.inject.Inject;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -241,7 +242,7 @@ public class DataSetDefJSONMarshaller {
                 else if (columnType.equals("date")) type = ColumnType.DATE;
                 else if (columnType.equals("number")) type = ColumnType.NUMBER;
 
-                def.getDataSet().addColumn(columnId, type);
+                def.addColumn(columnId, type);
 
                 if (!StringUtils.isBlank(columnPattern)) {
                     def.setPattern(columnId, columnPattern);
@@ -357,10 +358,9 @@ public class DataSetDefJSONMarshaller {
         }
         
         // Data columns.
-        final DataSet dataSet = dataSetDef.getDataSet();
-        if (dataSet != null)
+        final Collection<DataColumnDef> columns = dataSetDef.getColumns();
+        if (columns != null)
         {
-            final List<DataColumn> columns = dataSet.getColumns();
             final JSONArray columnsArray = toJsonObject(columns);
             if (columnsArray != null)
             {
@@ -383,11 +383,11 @@ public class DataSetDefJSONMarshaller {
         return json;
     }
     
-    private JSONArray toJsonObject(final List<DataColumn> columnList) throws JSONException {
+    private JSONArray toJsonObject(final Collection<DataColumnDef> columnList) throws JSONException {
         JSONArray result = null;
         if (columnList != null && !columnList.isEmpty()) {
             result = new JSONArray();
-            for (final DataColumn column : columnList) {
+            for (final DataColumnDef column : columnList) {
                 final String id = column.getId();
                 final ColumnType type = column.getColumnType();
                 final JSONObject columnObject = new JSONObject();

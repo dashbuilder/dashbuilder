@@ -22,6 +22,7 @@ import org.dashbuilder.dataprovider.DataSetProviderType;
 import org.dashbuilder.dataprovider.backend.StaticDataSetProvider;
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.model.*;
 import org.dashbuilder.dataset.*;
+import org.dashbuilder.dataset.def.DataColumnDef;
 import org.dashbuilder.dataset.def.DataSetDef;
 import org.dashbuilder.dataset.def.DataSetDefRegistry;
 import org.dashbuilder.dataset.def.ElasticSearchDataSetDef;
@@ -387,7 +388,7 @@ public class ElasticSearchDataSetProvider implements DataSetProvider {
         if (columns == null || columns.isEmpty()) throw new RuntimeException("There are no column for index [" + index[0] + "] and type [" + ArrayUtils.toString(type) + "].");
 
         boolean isAllColumns = elasticSearchDataSetDef.isAllColumnsEnabled();
-        List<DataColumn> dataSetColumns = elasticSearchDataSetDef.getDataSet().getColumns();
+        Collection<DataColumnDef> dataSetColumns = elasticSearchDataSetDef.getColumns();
         
         if (isAllColumns) {
             // Use colmns given from EL index mapping.
@@ -396,7 +397,7 @@ public class ElasticSearchDataSetProvider implements DataSetProvider {
                 ColumnType columnType = (ColumnType) entry.getValue()[0];
 
                 // Check if there is any column definition override.
-                DataColumn definitionColumn = getColumn(dataSetColumns, columnId);
+                final DataColumnDef definitionColumn = elasticSearchDataSetDef.getColumnById(columnId);
                 if (definitionColumn != null) {
                     ColumnType definitionColumnType = definitionColumn.getColumnType();
                     if (columnType.equals(ColumnType.TEXT) && definitionColumnType.equals(ColumnType.LABEL)) throw new IllegalArgumentException("The column [" + columnId + "] is defined in dataset definition as LABEL, but the column in the index [" + index[0] + "] and type [" + ArrayUtils.toString(type) + "] is using ANALYZED index, you cannot use it as a label.");
@@ -411,7 +412,7 @@ public class ElasticSearchDataSetProvider implements DataSetProvider {
             
             // Use given columns from dataset definition.
             if (dataSetColumns != null && !dataSetColumns.isEmpty()) {
-                for (DataColumn column : dataSetColumns) {
+                for (final DataColumnDef column : dataSetColumns) {
                     String columnId = column.getId();
                     ColumnType columnType = column.getColumnType();
 
@@ -467,16 +468,6 @@ public class ElasticSearchDataSetProvider implements DataSetProvider {
         return estimatedSize;
     }
     
-    private DataColumn getColumn(List<DataColumn> dataSetColumns, String columnId) {
-        if (dataSetColumns != null && !dataSetColumns.isEmpty()) {
-            for (DataColumn column : dataSetColumns) {
-                String id = column.getId();
-                if (id.equals(columnId)) return column;
-            }
-        }
-        return null;
-    }
-
     /**
      * Parse a given index' field definitions from EL index mappings response.
      * 

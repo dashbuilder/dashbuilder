@@ -12,7 +12,6 @@ import org.dashbuilder.client.widgets.dataset.editor.widgets.editors.datacolumn.
 import org.dashbuilder.client.widgets.dataset.editor.widgets.editors.elasticsearch.ELDataSetDefAttributesEditor;
 import org.dashbuilder.client.widgets.dataset.editor.widgets.editors.sql.SQLDataSetDefAttributesEditor;
 import org.dashbuilder.dataset.def.*;
-import org.dashbuilder.dataset.impl.DataColumnImpl;
 import org.dashbuilder.dataset.validation.groups.*;
 import org.dashbuilder.validations.ValidatorFactory;
 
@@ -35,7 +34,7 @@ public final class DataSetDefEditWorkflow {
     interface BasicAttributesDriver extends SimpleBeanEditorDriver<DataSetDef, DataSetBasicAttributesEditor> {}
     interface ProviderTypeAttributesDriver extends SimpleBeanEditorDriver<DataSetDef, DataSetProviderTypeEditor> {}
     interface AdvancedAttributesDriver extends SimpleBeanEditorDriver<DataSetDef, DataSetAdvancedAttributesEditor> {}
-    interface DataColumnDriver extends SimpleBeanEditorDriver<DataColumnImpl, DataColumnBasicEditor> {}
+    interface DataColumnDriver extends SimpleBeanEditorDriver<DataColumnDef, DataColumnBasicEditor> {}
     interface SQLAttributesDriver extends SimpleBeanEditorDriver<SQLDataSetDef, SQLDataSetDefAttributesEditor> {}
     interface CSVAttributesDriver extends SimpleBeanEditorDriver<CSVDataSetDef, CSVDataSetDefAttributesEditor> {}
     interface BeanAttributesDriver extends SimpleBeanEditorDriver<BeanDataSetDef, BeanDataSetDefAttributesEditor> {}
@@ -110,7 +109,7 @@ public final class DataSetDefEditWorkflow {
         return this;
     }
 
-    public DataSetDefEditWorkflow edit(final DataColumnBasicEditor view, final DataColumnImpl d) {
+    public DataSetDefEditWorkflow edit(final DataColumnBasicEditor view, final DataColumnDef d) {
         if (!columnEditors.contains(view)) {
             final DataColumnDriver driver = GWT.create(DataColumnDriver.class);
             driver.initialize(view);
@@ -122,7 +121,7 @@ public final class DataSetDefEditWorkflow {
         return this;
     }
 
-    public DataSetDefEditWorkflow remove(final DataColumnBasicEditor view, final DataColumnImpl d) {
+    public DataSetDefEditWorkflow remove(final DataColumnBasicEditor view, final DataColumnDef d) {
         final int i = columnEditors.indexOf(view);
         if (i > -1) {
             columnEditors.remove(i);
@@ -219,7 +218,7 @@ public final class DataSetDefEditWorkflow {
         for (int x = 0; x < columnDrivers.size(); x++) {
             final DataColumnDriver driver = columnDrivers.get(x);
             final DataColumnBasicEditor editor = columnEditors.get(x);
-            final DataColumnImpl edited = driver.flush();
+            final DataColumnDef edited = driver.flush();
             validateDataColumn(edited, editor, driver);
         }
 
@@ -283,9 +282,9 @@ public final class DataSetDefEditWorkflow {
     }
     
     
-    private DataSetDefEditWorkflow validateDataColumn(final DataColumnImpl dataColumn, final AbstractEditor editor, final SimpleBeanEditorDriver driver) {
+    private DataSetDefEditWorkflow validateDataColumn(final DataColumnDef dataColumn, final AbstractEditor editor, final SimpleBeanEditorDriver driver) {
         final Validator validator = ValidatorFactory.getDataColumnValidator();
-        final Set<ConstraintViolation<DataColumnImpl>> violations = validator.validate(dataColumn);
+        final Set<ConstraintViolation<DataColumnDef>> violations = validator.validate(dataColumn);
         final Set<?> test = violations;
         setViolations(editor, driver, (Iterable<ConstraintViolation<?>>) test);
         return this;

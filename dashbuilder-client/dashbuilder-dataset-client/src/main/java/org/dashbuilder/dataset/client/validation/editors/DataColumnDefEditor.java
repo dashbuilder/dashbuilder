@@ -2,8 +2,8 @@ package org.dashbuilder.dataset.client.validation.editors;
 
 import com.google.gwt.editor.client.Editor;
 import com.google.gwt.editor.client.HasEditorErrors;
-import org.dashbuilder.dataset.impl.DataColumnImpl;
+import org.dashbuilder.dataset.def.DataColumnDef;
 
-public interface DataColumnEditor extends Editor<DataColumnImpl>, HasEditorErrors<DataColumnImpl> {
+public interface DataColumnDefEditor extends Editor<DataColumnDef>, HasEditorErrors<DataColumnDef> {
     
 }

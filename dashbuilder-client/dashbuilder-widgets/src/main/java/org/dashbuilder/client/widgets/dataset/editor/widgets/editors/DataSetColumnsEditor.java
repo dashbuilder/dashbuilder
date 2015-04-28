@@ -33,6 +33,7 @@ import org.dashbuilder.client.widgets.dataset.editor.widgets.editors.datacolumn.
 import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.dataset.DataSet;
+import org.dashbuilder.dataset.def.DataColumnDef;
 import org.dashbuilder.dataset.impl.DataColumnImpl;
 
 import javax.enterprise.context.Dependent;
@@ -80,7 +81,8 @@ public class DataSetColumnsEditor extends AbstractEditor {
         this.isEditMode = isEditMode;
     }
 
-    private final Map<DataColumn, DataColumnBasicEditor> columnEditors = new LinkedHashMap<DataColumn, DataColumnBasicEditor>();
+    private final Map<DataColumnDef, DataColumnBasicEditor> columnEditors = new LinkedHashMap<DataColumnDef, DataColumnBasicEditor>();
+    private final List<DataColumnDef> columns = new LinkedList<DataColumnDef>();
 
     public interface ColumnsChangedEventHandler extends EventHandler
     {
@@ -91,9 +93,9 @@ public class DataSetColumnsEditor extends AbstractEditor {
 
         public static Type<ColumnsChangedEventHandler> TYPE = new Type<ColumnsChangedEventHandler>();
 
-        private List<DataColumn> columns;
+        private List<DataColumnDef> columns;
         
-        public ColumnsChangedEvent(List<DataColumn> columns) {
+        public ColumnsChangedEvent(List<DataColumnDef> columns) {
             super();
             this.columns = columns;
         }
@@ -108,7 +110,7 @@ public class DataSetColumnsEditor extends AbstractEditor {
             handler.onColumnsChanged(this);
         }
 
-        public List<DataColumn> getColumns() {
+        public List<DataColumnDef> getColumns() {
             return columns;
         }
     }
@@ -117,19 +119,18 @@ public class DataSetColumnsEditor extends AbstractEditor {
         return addHandler(handler, ColumnsChangedEvent.TYPE);
     }
 
-    public void build(final List<DataColumn> columns, final DataSet dataSet, final DataSetDefEditWorkflow workflow) {
+    public void build(final List<DataColumnDef> columns, final DataSet dataSet, final DataSetDefEditWorkflow workflow) {
         clear();
 
         if (columns != null && workflow != null) {
-            for (DataColumn column : columns) {
-                final DataColumnImpl columnImpl = (DataColumnImpl) column;
+            for (final DataColumnDef column : columns) {
                 
                 // Create the editor for each column.
                 DataColumnBasicEditor columnEditor = new DataColumnBasicEditor();
                 columnEditor.addValueChangeHandler(new ValueChangeHandler<ColumnType>() {
                     @Override
                     public void onValueChange(ValueChangeEvent<ColumnType> event) {
-                        DataSetColumnsEditor.this.fireEvent(new ColumnsChangedEvent(new ArrayList<DataColumn>(columnEditors.keySet())));
+                        fireColumnsChanged();
                     }
                 });
                 
@@ -137,12 +138,13 @@ public class DataSetColumnsEditor extends AbstractEditor {
                 columnEditors.put(column, columnEditor);
 
                 // Link the column editor with workflow driver.
-                workflow.edit(columnEditor, columnImpl);
+                workflow.edit(columnEditor, column);
                 
                 // Create the UI panel for the column.
-                final boolean enabled = dataSet != null && dataSet.getColumns().contains(column);
+                final boolean enabled = hasColumn(column, dataSet.getColumns());
                 final boolean canRemove = dataSet != null && dataSet.getColumns().size() > 1;
                 Panel columnPanel = createColumn(column, columnEditor, workflow, enabled, canRemove);
+                if (enabled) this.columns.add(column);
                 columnsPanel.add(columnPanel);
                 final FlowPanel separator = new FlowPanel();
                 separator.addStyleName(style.clear());
@@ -152,7 +154,15 @@ public class DataSetColumnsEditor extends AbstractEditor {
         
     }
     
-    private Panel createColumn(final DataColumn column, final DataColumnBasicEditor editor, final DataSetDefEditWorkflow workflow, final boolean enabled, final boolean canRemove) {
+    private boolean hasColumn(final DataColumnDef def, final List<DataColumn> columns) {
+        if (columns == null || def == null) return false;
+        for (final DataColumn c : columns) {
+            if (c.getId().equals(def.getId())) return true;
+        }
+        return false;
+    }
+    
+    private Panel createColumn(final DataColumnDef column, final DataColumnBasicEditor editor, final DataSetDefEditWorkflow workflow, final boolean enabled, final boolean canRemove) {
         final FlowPanel columnPanel = new FlowPanel();
         
         // Checkbox.
@@ -177,22 +187,24 @@ public class DataSetColumnsEditor extends AbstractEditor {
         return columnPanel;
     }
 
-    private void removeColumn(final DataColumnBasicEditor editor, final DataColumn column, final DataSetDefEditWorkflow workflow) {
-        workflow.remove(editor, (DataColumnImpl) column);
+    private void removeColumn(final DataColumnBasicEditor editor, final DataColumnDef column, final DataSetDefEditWorkflow workflow) {
+        workflow.remove(editor, column);
         columnEditors.remove(column);
+        columns.remove(column);
         fireColumnsChanged();
     }
 
-    private void addColumn(final DataColumn column, final DataSetDefEditWorkflow workflow) {
+    private void addColumn(final DataColumnDef column, final DataSetDefEditWorkflow workflow) {
         DataColumnBasicEditor columnEditor = new DataColumnBasicEditor();
         columnEditor.setEditorId(column.getId());
-        workflow.edit(columnEditor, (DataColumnImpl) column);
+        workflow.edit(columnEditor, column);
         columnEditors.put(column, columnEditor);
+        columns.add(column);
         fireColumnsChanged();
     }
     
     private void fireColumnsChanged() {
-        this.fireEvent(new ColumnsChangedEvent(new ArrayList<DataColumn>(columnEditors.keySet())));
+        this.fireEvent(new ColumnsChangedEvent(new LinkedList<DataColumnDef>(columns)));
     }
     
     @Override
@@ -226,5 +238,6 @@ public class DataSetColumnsEditor extends AbstractEditor {
     private void clear() {
         columnEditors.clear();
         columnsPanel.clear();
+        columns.clear();
     }
 }

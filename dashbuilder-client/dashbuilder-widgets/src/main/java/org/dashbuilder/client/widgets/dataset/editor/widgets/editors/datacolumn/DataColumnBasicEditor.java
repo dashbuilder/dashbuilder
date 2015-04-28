@@ -27,6 +27,7 @@ import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.client.widgets.dataset.editor.widgets.editors.AbstractEditor;
 import org.dashbuilder.common.client.validation.editors.ValueBoxEditorDecorator;
 import org.dashbuilder.dataset.ColumnType;
+import org.dashbuilder.dataset.client.validation.editors.DataColumnDefEditor;
 
 import javax.enterprise.context.Dependent;
 import java.util.List;
@@ -38,7 +39,7 @@ import java.util.List;
  * 
  */
 @Dependent
-public class DataColumnBasicEditor extends AbstractEditor implements org.dashbuilder.dataset.client.validation.editors.DataColumnEditor {
+public class DataColumnBasicEditor extends AbstractEditor implements DataColumnDefEditor {
 
     private static final int ICONS_SIZE = 16;
     

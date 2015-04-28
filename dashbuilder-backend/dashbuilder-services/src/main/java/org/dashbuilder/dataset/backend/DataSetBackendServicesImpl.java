@@ -134,7 +134,6 @@ public class DataSetBackendServicesImpl implements DataSetBackendServices {
         final DataSetDef def = dataSetDefRegistry.getDataSetDef(uuid);
         if (def != null) {
             dataSetDefRegistry.removeDataSetDef(uuid);
-            dataSetDefDeployer.delete(def);
         }
     }
 
@@ -152,7 +151,7 @@ public class DataSetBackendServicesImpl implements DataSetBackendServices {
     public DataSetMetadata lookupDataSetMetadata(String uuid) throws Exception {
         DataSetMetadata _d = null;
         try {
-            _d = dataSetManager.getDataSetMetadata(uuid );
+            _d = dataSetManager.getDataSetMetadata(uuid);
         } catch (DataSetLookupException e) {
             throw exceptionManager.handleException(e);
         }
@@ -166,7 +165,7 @@ public class DataSetBackendServicesImpl implements DataSetBackendServices {
 
     public String exportDataSetCSV(DataSetLookup lookup) {
         DataSet dataSet = dataSetManager.lookupDataSet( lookup );
-        return exportDataSetCSV( dataSet );
+        return exportDataSetCSV(dataSet);
     }
 
     public String exportDataSetCSV(DataSet dataSet) {
@@ -366,5 +365,13 @@ public class DataSetBackendServicesImpl implements DataSetBackendServices {
     public void persistDataSetDef(final DataSetDef dataSetDef) throws Exception {
         dataSetDefDeployer.persist(dataSetDef);
     }
-    
+
+    @Override
+    public void deleteDataSetDef(final String uuid) {
+        final DataSetDef def = dataSetDefRegistry.getDataSetDef(uuid);
+        if (def != null) {
+            dataSetDefRegistry.removeDataSetDef(uuid);
+            dataSetDefDeployer.delete(def);
+        }
+    }
 }

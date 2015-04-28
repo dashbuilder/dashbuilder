@@ -24,22 +24,13 @@ import org.dashbuilder.dataset.group.ColumnGroup;
 import org.dashbuilder.dataset.group.GroupFunction;
 import org.jboss.errai.common.client.api.annotations.Portable;
 
-import javax.validation.constraints.NotNull;
-
 @Portable
 public class DataColumnImpl implements DataColumn {
 
     protected DataSetImpl dataSet = null;
-
-    @NotNull(message = "{dataSetApi_dataColumnImpl_id_notNull}")
     protected String id = null;
-
-    @NotNull(message = "{dataSetApi_dataColumnImpl_name_notNull}")
     protected String name = null;
-
-    @NotNull(message = "{dataSetApi_dataColumnImpl_columnType_notNull}")
     protected ColumnType columnType = ColumnType.LABEL;
-    
     protected List values = new ArrayList();
     protected ColumnGroup columnGroup;
     protected String intervalType;

@@ -142,10 +142,4 @@ public interface DataSetDefBuilder<T> {
      */
     T column(String columnId, ColumnType type);
 
-    /**
-     * Add a row with the given values at the end of the data set.
-     *
-     * @return The DataSetDefBuilder instance that is being used to configure a DataSetDef.
-     */
-    T row(Object... values);
 }

@@ -90,7 +90,6 @@ public class ElasticSearchDataSetDef extends DataSetDef {
     protected boolean cacheEnabled = false;
     protected Integer cacheMaxRows = 1000;
     protected boolean cacheSynced = false;
-    protected boolean allColumnsEnabled = true;
 
     public ElasticSearchDataSetDef() {
         super.setProvider(DataSetProviderType.ELASTICSEARCH);
@@ -195,14 +194,6 @@ public class ElasticSearchDataSetDef extends DataSetDef {
 
     public void setColumnSort(ColumnSort columnSort) {
         this.columnSort = columnSort;
-    }
-
-    public boolean isAllColumnsEnabled() {
-        return allColumnsEnabled;
-    }
-
-    public void setAllColumnsEnabled(boolean allColumnsEnabled) {
-        this.allColumnsEnabled = allColumnsEnabled;
     }
 
     @Override

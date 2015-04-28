@@ -423,7 +423,7 @@ public class DataSetClientServices {
     }
 
     /**
-     * <p>Removes a data set definition on backend.</p> 
+     * <p>Removes a data set definition on the backend registry.</p> 
      * @param uuid The data set definition UUID to remove.
      * @param removeCallback The callback when data set definition has been removed.             
      */
@@ -440,6 +440,28 @@ public class DataSetClientServices {
                     return removeCallback.onError(new DataSetClientServiceError(message, throwable));
                 }
             }).removeDataSetDef(uuid);
+            removeDataSet(uuid);
+        }
+    }
+
+    /**
+     * <p>Removes a data set definition on the backend registry.</p> 
+     * @param uuid The data set definition UUID to remove.
+     * @param removeCallback The callback when data set definition has been removed.             
+     */
+    public void deleteDataSetDef(final String uuid, final DataSetDefRemoveCallback removeCallback) {
+        if (uuid != null) {
+            dataSetBackendServices.call(new RemoteCallback<Void>() {
+                @Override
+                public void callback(Void aVoid) {
+                    removeCallback.success();
+                }
+            }, new ErrorCallback<Message>() {
+                @Override
+                public boolean error(Message message, Throwable throwable) {
+                    return removeCallback.onError(new DataSetClientServiceError(message, throwable));
+                }
+            }).deleteDataSetDef(uuid);
             removeDataSet(uuid);
         }
     }

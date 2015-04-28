@@ -69,35 +69,30 @@ public abstract class AbstractDataSetDefBuilder<T> implements DataSetDefBuilder<
     }
 
     public T label(String columnId) {
-        def.getDataSet().addColumn(columnId, ColumnType.LABEL);
+        def.addColumn(columnId, ColumnType.LABEL);
         return (T) this;
     }
 
     public T text(String columnId) {
-        def.getDataSet().addColumn(columnId, ColumnType.TEXT);
+        def.addColumn(columnId, ColumnType.TEXT);
         return (T) this;
     }
 
     public T number(String columnId) {
-        def.getDataSet().addColumn(columnId, ColumnType.NUMBER);
+        def.addColumn(columnId, ColumnType.NUMBER);
         return (T) this;
     }
 
     public T date(String columnId) {
-        def.getDataSet().addColumn(columnId, ColumnType.DATE);
+        def.addColumn(columnId, ColumnType.DATE);
         return (T) this;
     }
 
     public T column(String columnId, ColumnType type) {
-        def.getDataSet().addColumn(columnId, type);
+        def.addColumn(columnId, type);
         return (T) this;
     }
 
-    public T row(Object... values) {
-        def.getDataSet().setValuesAt(def.getDataSet().getRowCount(), values);
-        return (T) this;
-    }
-    
     public DataSetDef buildDef() {
         return def;
     }

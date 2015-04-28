@@ -40,6 +40,7 @@ import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetFactory;
 import org.dashbuilder.dataset.def.CSVDataSetDef;
+import org.dashbuilder.dataset.def.DataColumnDef;
 
 public class CSVParser {
 
@@ -56,8 +57,8 @@ public class CSVParser {
 
     protected boolean isColumnIncluded(String columnId) {
         if (dataSetDef.isAllColumnsEnabled()) return true;
-        if (dataSetDef.getDataSet() == null) return false;
-        return dataSetDef.getDataSet().getColumnById(columnId) != null;
+        if (dataSetDef.getColumns() == null) return false;
+        return dataSetDef.getColumnById(columnId) != null;
     }
 
     protected DataSet load() throws Exception {
@@ -137,7 +138,7 @@ public class CSVParser {
     }
 
     protected ColumnType calculateType(String columnId, String value) {
-        DataColumn column = dataSetDef.getDataSet().getColumnById(columnId);
+        DataColumnDef column = dataSetDef.getColumnById(columnId);
         if (column != null) return column.getColumnType();
 
         try {

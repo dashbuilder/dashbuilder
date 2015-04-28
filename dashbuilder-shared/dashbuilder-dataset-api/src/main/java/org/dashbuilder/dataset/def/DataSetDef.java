@@ -16,6 +16,7 @@
 package org.dashbuilder.dataset.def;
 
 import org.dashbuilder.dataprovider.DataSetProviderType;
+import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetFactory;
 import org.dashbuilder.dataset.date.TimeAmount;
@@ -27,8 +28,7 @@ import org.dashbuilder.dataset.validation.groups.DataSetDefRefreshIntervalValida
 import org.jboss.errai.common.client.api.annotations.Portable;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.NotNull;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * This class is used to define the origin, structure and runtime behaviour of a data set instance.
@@ -43,7 +43,7 @@ public class DataSetDef {
     protected String defFilePath;
     @NotNull(message = "{dataSetApi_dataSetDef_provider_notNull}")
     protected DataSetProviderType provider;
-    protected DataSet dataSet = DataSetFactory.newEmptyDataSet();
+    protected List<DataColumnDef> columns;
     protected DataSetFilter dataSetFilter = null;
     protected boolean isPublic = true;
     protected boolean pushEnabled = false;
@@ -58,6 +58,7 @@ public class DataSetDef {
     @IsTimeInterval(message = "{dataSetApi_dataSetDef_refreshTime_intervalInvalid}", groups = DataSetDefRefreshIntervalValidation.class)
     protected String refreshTime = null;
     protected boolean refreshAlways = false;
+    protected boolean allColumnsEnabled = true;
 
     protected Map<String,String> patternMap = new HashMap<String,String>();
 
@@ -83,14 +84,6 @@ public class DataSetDef {
 
     public void setDefFilePath(String defFilePath) {
         this.defFilePath = defFilePath;
-    }
-
-    public DataSet getDataSet() {
-        return dataSet;
-    }
-
-    public void setDataSet(DataSet dataSet) {
-        this.dataSet = dataSet;
     }
 
     public DataSetFilter getDataSetFilter() {
@@ -181,6 +174,36 @@ public class DataSetDef {
         patternMap.put(columnId, pattern);
     }
 
+    public boolean isAllColumnsEnabled() {
+        return allColumnsEnabled;
+    }
+
+    public void setAllColumnsEnabled(boolean allColumnsEnabled) {
+        this.allColumnsEnabled = allColumnsEnabled;
+    }
+
+    public List<DataColumnDef> getColumns() {
+        return columns;
+    }
+
+    public void setColumns(List<DataColumnDef> columns) {
+        this.columns = columns;
+    }
+    
+    public DataColumnDef getColumnById(final String id) {
+        if (id != null && columns != null && !columns.isEmpty()) {
+            for (final DataColumnDef columnDef : columns) {
+                if (columnDef.getId().equals(id)) return  columnDef;
+            }
+        }
+        return  null;
+    }
+
+    public boolean addColumn(final String id, final ColumnType type) {
+        if (columns == null) columns = new LinkedList<DataColumnDef>();
+        return columns.add(new DataColumnDef(id, type));
+    }
+
     public DataSetDef clone() {
         DataSetDef def = new DataSetDef();
         clone(def);
@@ -206,9 +229,16 @@ public class DataSetDef {
         def.setPushMaxSize(getPushMaxSize());
         def.setRefreshAlways(isRefreshAlways());
         def.setRefreshTime(getRefreshTime());
-        final DataSet dataSet = getDataSet();
-        if (dataSet != null && dataSet.getColumns() != null) {
-            def.getDataSet().setColumns(dataSet.getColumns());
+        def.setAllColumnsEnabled(isAllColumnsEnabled());
+
+        final List<DataColumnDef> columns = getColumns();
+        if (columns != null && !columns.isEmpty()) {
+            final List<DataColumnDef> c = new LinkedList<DataColumnDef>();
+            for (final DataColumnDef columnDef : columns) {
+                final DataColumnDef _c = columnDef.clone();
+                c.add(_c);
+            }
+            def.setColumns(c);
         }
     }
 

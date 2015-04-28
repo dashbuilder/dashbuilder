@@ -123,7 +123,7 @@ public class DataSetExplorerScreenPresenter {
     }
     
     public void deleteDataSet(String uuid) {
-        DataSetClientServices.get().removeDataSetDef(uuid, new DataSetDefRemoveCallback() {
+        DataSetClientServices.get().deleteDataSetDef(uuid, new DataSetDefRemoveCallback() {
             @Override
             public void success() {
                 // Data set definition removed from the list by the fired remove event.

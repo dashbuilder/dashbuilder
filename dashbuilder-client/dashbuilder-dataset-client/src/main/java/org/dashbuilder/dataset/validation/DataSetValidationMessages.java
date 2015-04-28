@@ -111,13 +111,10 @@ public interface DataSetValidationMessages extends
     @Key("dataSetApi_dataSetImpl_creationDate_notNull")
     String dataSetApi_dataSetImpl_creationDate_notNull();
 
-    @Key("dataSetApi_dataColumnImpl_id_notNull")
-    String dataSetApi_dataColumnImpl_id_notNull();
+    @Key("dataSetApi_dataColumnDef_id_notNull")
+    String dataSetApi_dataColumnDef_id_notNull();
 
-    @Key("dataSetApi_dataColumnImpl_name_notNull")
-    String dataSetApi_dataColumnImpl_name_notNull();
-
-    @Key("dataSetApi_dataColumnImpl_columnType_notNull")
-    String dataSetApi_dataColumnImpl_columnType_notNull();
+    @Key("dataSetApi_dataColumnDef_columnType_notNull")
+    String dataSetApi_dataColumnDef_columnType_notNull();
 
 }

@@ -71,8 +71,8 @@ public class CSVDataSetDefJSONTest {
         assertThat(csvDef.getPattern("date")).isEqualTo("MM-dd-yyyy");
         assertThat(csvDef.getPattern("amount")).isEqualTo("#,###.##");
 
-        assertThat(csvDef.getDataSet().getColumnById("id").getColumnType()).isEqualTo(ColumnType.LABEL);
-        assertThat(csvDef.getDataSet().getColumnById("amount").getColumnType()).isEqualTo(ColumnType.NUMBER);
-        assertThat(csvDef.getDataSet().getColumnById("date").getColumnType()).isEqualTo(ColumnType.DATE);
+        assertThat(csvDef.getColumnById("id").getColumnType()).isEqualTo(ColumnType.LABEL);
+        assertThat(csvDef.getColumnById("amount").getColumnType()).isEqualTo(ColumnType.NUMBER);
+        assertThat(csvDef.getColumnById("date").getColumnType()).isEqualTo(ColumnType.DATE);
     }
 }

@@ -16,10 +16,22 @@
 package org.dashbuilder.dataset.def;
 
 import org.dashbuilder.dataprovider.DataSetProviderType;
+import org.dashbuilder.dataset.DataSet;
+import org.dashbuilder.dataset.DataSetFactory;
 import org.jboss.errai.common.client.api.annotations.Portable;
 
 @Portable
 public class StaticDataSetDef extends DataSetDef {
+
+    protected DataSet dataSet = DataSetFactory.newEmptyDataSet();
+
+    public DataSet getDataSet() {
+        return dataSet;
+    }
+
+    public void setDataSet(DataSet dataSet) {
+        this.dataSet = dataSet;
+    }
 
     public StaticDataSetDef() {
         super.setProvider(DataSetProviderType.STATIC);

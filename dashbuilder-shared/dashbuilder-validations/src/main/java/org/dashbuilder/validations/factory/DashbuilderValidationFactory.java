@@ -5,7 +5,6 @@ import com.google.gwt.validation.client.AbstractGwtValidatorFactory;
 import com.google.gwt.validation.client.GwtValidation;
 import com.google.gwt.validation.client.impl.AbstractGwtValidator;
 import org.dashbuilder.dataset.def.*;
-import org.dashbuilder.dataset.impl.DataColumnImpl;
 import org.dashbuilder.dataset.validation.groups.*;
 
 import javax.validation.Validator;
@@ -19,7 +18,7 @@ public class DashbuilderValidationFactory extends AbstractGwtValidatorFactory {
     public interface DataSetValidator extends Validator {
     }
 
-    @GwtValidation(value = DataColumnImpl.class)
+    @GwtValidation(value = DataColumnDef.class)
     public interface DataColumnValidator extends Validator {
     }
     

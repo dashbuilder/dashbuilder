@@ -36,8 +36,6 @@ public class SQLDataSetDef extends DataSetDef {
     @NotNull(message = "{dataSetApi_sqlDataSetDef_dbSQL_notNull}", groups = SQLDataSetDefDbSQLValidation.class)
     protected String dbSQL;
     
-    protected boolean allColumnsEnabled = true;
-
     public SQLDataSetDef() {
         super.setProvider(DataSetProviderType.SQL);
     }
@@ -74,14 +72,6 @@ public class SQLDataSetDef extends DataSetDef {
         this.dbSQL = dbSQL;
     }
 
-    public boolean isAllColumnsEnabled() {
-        return allColumnsEnabled;
-    }
-
-    public void setAllColumnsEnabled(boolean allColumnsEnabled) {
-        this.allColumnsEnabled = allColumnsEnabled;
-    }
-
     public boolean isCacheEnabled() {
         return cacheEnabled;
     }
@@ -105,7 +95,6 @@ public class SQLDataSetDef extends DataSetDef {
         def.setDataSource(getDataSource());
         def.setDbSchema(getDbSchema());
         def.setDbTable(getDbTable());
-        def.setAllColumnsEnabled(isAllColumnsEnabled());
         return def;
     }
 
