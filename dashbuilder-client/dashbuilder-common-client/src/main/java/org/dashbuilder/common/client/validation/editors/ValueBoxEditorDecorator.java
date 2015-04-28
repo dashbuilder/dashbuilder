@@ -284,5 +284,10 @@ public class ValueBoxEditorDecorator<T> extends Composite implements
     private void reconfigureTooltip() {
         errorTooltip.reconfigure();
     }
+    
+    public void clear() {
+        setValue(null);
+        disableError();
+    }
 
 }

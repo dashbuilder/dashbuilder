@@ -189,6 +189,7 @@ public class FileUploadEditor extends Composite implements
     @Override
     public void setText(String text) {
         this.value = text;
+        fileUpload.setText(text);
     }
 
     @Override
@@ -197,5 +198,9 @@ public class FileUploadEditor extends Composite implements
             editor = HasTextEditor.of(this);
         }
         return editor;
+    }
+    public void clear() {
+        formPanel.reset();
+        setText(null);
     }
 }

@@ -226,4 +226,12 @@ public class ELDataSetDefAttributesEditor extends AbstractDataSetDefEditor imple
     public void showErrors(List<EditorError> errors) {
         consumeErrors(errors);
     }
+
+    public void clear() {
+        super.clear();
+        serverURL.clear();
+        clusterName.clear();
+        index.clear();
+        type.clear();
+    }
 }

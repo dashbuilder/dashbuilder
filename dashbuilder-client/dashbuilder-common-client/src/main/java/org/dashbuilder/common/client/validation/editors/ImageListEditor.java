@@ -241,6 +241,7 @@ public class ImageListEditor<T> extends Composite implements
 
     public void clear() {
         setValue(null);
+        disableError();
     }
 
     private void markErrorPanel(boolean error) {

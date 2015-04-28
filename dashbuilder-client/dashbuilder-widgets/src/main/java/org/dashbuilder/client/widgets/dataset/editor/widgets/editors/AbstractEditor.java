@@ -38,4 +38,11 @@ public abstract class AbstractEditor extends Composite {
     public void setViolations(Iterable<ConstraintViolation<?>> violations) {
         this.violations = violations;
     }
+
+    /**
+     * <p>Clears the state and the errors for the editor instance.</p>
+     */
+    public void clear() {
+        violations = null;
+    }
 }

@@ -138,4 +138,9 @@ public class DataSetProviderTypeEditor extends AbstractDataSetDefEditor implemen
         provider.setEditMode(isEditMode);
     }
 
+    public void clear() {
+        super.clear();
+        provider.clear();
+    }
+
 }

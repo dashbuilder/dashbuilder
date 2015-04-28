@@ -234,6 +234,7 @@ public class MapEditor<T, K> extends Composite implements
     
     public void clear() {
         setValue(null);
+        disableError();
     }
 
     private void setLabelText(final String text) {

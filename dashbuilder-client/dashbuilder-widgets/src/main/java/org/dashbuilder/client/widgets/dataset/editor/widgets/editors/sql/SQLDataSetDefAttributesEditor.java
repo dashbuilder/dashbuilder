@@ -152,4 +152,12 @@ public class SQLDataSetDefAttributesEditor extends AbstractDataSetDefEditor impl
         return dbTable.isVisible();
     }
 
+    public void clear() {
+        super.clear();
+        dataSource.clear();
+        dbSchema.clear();
+        dbTable.clear();
+        dbQuery.clear();
+    }
+
 }

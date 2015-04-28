@@ -148,4 +148,11 @@ public class BeanDataSetDefAttributesEditor extends AbstractDataSetDefEditor imp
     public void showErrors(List<EditorError> errors) {
         consumeErrors(errors);
     }
+
+    @Override
+    public void clear() {
+        super.clear();
+        generatorClass.clear();
+        paramaterMap.clear();
+    }
 }

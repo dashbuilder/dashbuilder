@@ -235,7 +235,8 @@ public class DataSetColumnsEditor extends AbstractEditor {
         }
     }
 
-    private void clear() {
+    public void clear() {
+        super.clear();
         columnEditors.clear();
         columnsPanel.clear();
         columns.clear();

@@ -159,4 +159,15 @@ public class CSVDataSetDefAttributesEditor extends AbstractDataSetDefEditor impl
         return fileURLRow.isVisible();
     }
     
+    public void clear() {
+        super.clear();
+        filePath.clear();
+        fileURL.clear();
+        separatorChar.clear();
+        quoteChar.clear();
+        escapeChar.clear();
+        datePattern.clear();
+        numberPattern.clear();
+    }
+    
 }

@@ -195,4 +195,9 @@ public class BooleanSwitchEditor extends Composite implements
         errorTooltip.reconfigure();
     }
     
+    public void clear() {
+        setValue(false);
+        disableError();
+    }
+    
 }

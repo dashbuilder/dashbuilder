@@ -277,4 +277,13 @@ public class DataSetAdvancedAttributesEditor extends AbstractDataSetDefEditor im
 
         return slider;
     }
+
+    public void clear() {
+        super.clear();
+        attributeBackendCacheStatus.clear();
+        attributeMaxRows.clear();
+        attributeClientCacheStatus.clear();
+        attributeMaxBytes.clear();
+        attributeRefreshStatus.clear();
+    }
 }

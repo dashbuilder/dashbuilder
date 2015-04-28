@@ -782,11 +782,16 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
     public DataSetEditor.View clear() {
         clearView();
                 
-        // Clear violations.
-        clearEditorViolations();
-        
-        // Remove current table displayer.
+        // Clear editors.
+        dataSetProviderTypeEditor.clear();
+        dataSetBasicAttributesEditor.clear();
+        beanDataSetDefAttributesEditor.clear();
+        csvDataSetDefAttributesEditor.clear();
+        sqlDataSetDefAttributesEditor.clear();
+        elDataSetDefAttributesEditor.clear();
+        columnsEditor.clear();
         previewTableEditor.clear();
+        dataSetAdvancedAttributesEditor.clear();
 
         this.dataSetDef = null;
         this.lastDataSetLookup = null;
@@ -847,17 +852,6 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
         buttonsPanel.setVisible(false);
     }
     
-    private void clearEditorViolations() {
-        dataSetProviderTypeEditor.setViolations(null);
-        dataSetBasicAttributesEditor.setViolations(null);
-        beanDataSetDefAttributesEditor.setViolations(null);
-        csvDataSetDefAttributesEditor.setViolations(null);
-        sqlDataSetDefAttributesEditor.setViolations(null);
-        elDataSetDefAttributesEditor.setViolations(null);
-        previewTableEditor.setViolations(null);
-        dataSetAdvancedAttributesEditor.setViolations(null);
-    }
-
     private void setDataSetDefIntoEditor() {
         dataSetProviderTypeEditor.set(dataSetDef);
         dataSetBasicAttributesEditor.set(dataSetDef);

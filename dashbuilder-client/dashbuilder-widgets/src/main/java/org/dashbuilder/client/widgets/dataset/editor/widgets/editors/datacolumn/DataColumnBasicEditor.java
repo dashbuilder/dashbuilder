@@ -109,4 +109,10 @@ public class DataColumnBasicEditor extends AbstractEditor implements DataColumnD
             return false;
         }
     }
+    
+    public void clear() {
+        super.clear();
+        id.clear();
+        columnType.clear();
+    }
 }

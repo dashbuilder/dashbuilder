@@ -82,4 +82,10 @@ public class DataSetBasicAttributesEditor extends AbstractDataSetDefEditor imple
     public void showErrors(List<EditorError> errors) {
         consumeErrors(errors);
     }
+
+    public void clear() {
+        super.clear();
+        attributeUUID.clear();
+        name.clear();
+    }
 }
