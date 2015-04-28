@@ -29,7 +29,6 @@ import org.apache.commons.lang.StringUtils;
 public class MavenProjectHelper {
 
     public static final String JAVA_FOLDER = "java";
-    public static final String ROOT_DIR = "dashbuilder";
 
     public static File getModuleDir(String moduleName) {
         File rootDir = MavenProjectHelper.getRootDir();
@@ -43,8 +42,10 @@ public class MavenProjectHelper {
 
     public static File getRootDir() {
         File rootDir = new File(System.getProperty("user.dir"));
-        while (rootDir != null && !rootDir.getName().startsWith(ROOT_DIR)) {
+        File parentPom = new File(rootDir.getParent(), "pom.xml");
+        while (parentPom.exists()) {
             rootDir = rootDir.getParentFile();
+            parentPom = new File(rootDir.getParent(), "pom.xml");
         }
         return rootDir;
     }
