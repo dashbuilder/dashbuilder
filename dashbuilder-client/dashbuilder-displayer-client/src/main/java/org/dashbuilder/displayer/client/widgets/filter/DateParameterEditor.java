@@ -54,6 +54,7 @@ public class DateParameterEditor extends Composite {
                 listener.valueChanged(event.getValue());
             }
         });
+        input.setAutoClose(true); // hide datepicker when time selected
     }
 
     public DateTimeBox getInput() {
