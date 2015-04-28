@@ -25,11 +25,12 @@ import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.*;
-import org.dashbuilder.displayer.DisplayerType;
-import org.dashbuilder.displayer.client.RendererLibLocator;
+import org.dashbuilder.displayer.DisplayerSettings;
+import org.dashbuilder.displayer.client.RendererManager;
+import org.dashbuilder.displayer.client.RendererLibrary;
 import org.dashbuilder.displayer.client.resources.i18n.CommonConstants;
 
-import java.util.Set;
+import java.util.List;
 
 public class RendererSelector extends Composite {
 
@@ -49,13 +50,9 @@ public class RendererSelector extends Composite {
     
     @UiField
     ListBox listBox;
-    
-    public String getTitle() {
-        return CommonConstants.INSTANCE.renderer_selector_title();
-    }
 
-    public RendererSelector(DisplayerType displayerType, String currentValue, SelectorType selectorType, final RendererSelectorEventHandler handler) {
-        
+    public RendererSelector(DisplayerSettings displayerSettings, SelectorType selectorType, final RendererSelectorEventHandler handler) {
+
         // Init the widget with the view binding.
         initWidget(uiBinder.createAndBindUi(this));
 
@@ -64,23 +61,22 @@ public class RendererSelector extends Composite {
             addHandler(handler, RendererSelectorEvent.TYPE);
         }
 
-        RendererLibLocator rendererLibLocator = RendererLibLocator.get();
-        Set<String> renderers = rendererLibLocator.getAvailableRenderers(displayerType);
+        RendererManager rendererManager = RendererManager.get();
+        RendererLibrary rendererLibrary = rendererManager.getRendererForDisplayer(displayerSettings);
+        List<RendererLibrary> renderers = rendererManager.getRenderersForType(displayerSettings.getType(), displayerSettings.getSubtype());
         if (renderers != null && renderers.size() > 1) {
 
-            if (currentValue == null) currentValue = rendererLibLocator.getDefaultRenderer(displayerType);
-            
             // Build the selector.
             switch (selectorType) {
                 case LIST:
-                    buildListType(renderers, currentValue);
+                    buildListType(renderers, rendererLibrary);
                     break;
                 case RADIO:
-                    buildRadioButtonsType(renderers, currentValue);
+                    buildRadioButtonsType(renderers, rendererLibrary);
                     break;
             }
-            
-        } 
+
+        }
         // If there is only one renderer in the list, do not show the selector.
         else {
             listPanel.setVisible(false);
@@ -88,54 +84,60 @@ public class RendererSelector extends Composite {
             mainPanel.setVisible(false);
         }
     }
-    
-    private void buildListType(Set<String> renderers, String selectedValue) {
-        
+
+    public String getTitle() {
+        return CommonConstants.INSTANCE.renderer_selector_title();
+    }
+
+    private void buildListType(List<RendererLibrary> renderers, RendererLibrary currentLib) {
+
         listBox.clear();
         listPanel.setVisible(true);
         radioButtonsPanel.setVisible(false);
-        
+
         // Add listbox contents.
         int index = 0;
         int selectedIndex = 0;
-        for (String renderer : renderers) {
-            if (renderer.equalsIgnoreCase(selectedValue)) selectedIndex = index; 
-            listBox.addItem(renderer);
+        for (RendererLibrary rendererLib : renderers) {
+            if (currentLib != null && rendererLib.equals(currentLib)) selectedIndex = index;
+            listBox.addItem(rendererLib.getName());
             index++;
         }
         listBox.setSelectedIndex(selectedIndex);
-        
+
         // The click event handler.
         listBox.addChangeHandler(new ChangeHandler() {
             @Override
             public void onChange(ChangeEvent event) {
                 int index = listBox.getSelectedIndex();
                 String value = listBox.getValue(index);
-                fireEvent(new RendererSelectorEvent(value));
+                RendererLibrary lib = RendererManager.get().getRendererByName(value);
+                fireEvent(new RendererSelectorEvent(lib.getUUID()));
             }
         });
-        
+
     }
 
-    private void buildRadioButtonsType(Set<String> renderers, String selectedValue) {
+    private void buildRadioButtonsType(List<RendererLibrary> renderers, RendererLibrary currentLib) {
 
         radioButtonsPanel.setVisible(true);
         listPanel.setVisible(false);
 
         // Add listbox contents.
-        for (String renderer : renderers) {
-            
-            final com.github.gwtbootstrap.client.ui.RadioButton rb = new com.github.gwtbootstrap.client.ui.RadioButton(RENDERER_KEY, renderer);
-            rb.setValue(renderer.equalsIgnoreCase(selectedValue));
-            
+        for (RendererLibrary rendererLib : renderers) {
+
+            final com.github.gwtbootstrap.client.ui.RadioButton rb = new com.github.gwtbootstrap.client.ui.RadioButton(RENDERER_KEY, rendererLib.getName());
+            rb.setValue(rendererLib.equals(currentLib));
+
             rb.addClickHandler(new ClickHandler() {
                 @Override
                 public void onClick(ClickEvent event) {
-                    String renderer = rb.getText();
-                    fireEvent(new RendererSelectorEvent(renderer));
+                    String value = rb.getText();
+                    RendererLibrary lib = RendererManager.get().getRendererByName(value);
+                    fireEvent(new RendererSelectorEvent(lib.getUUID()));
                 }
             });
-            
+
             radioButtonsPanel.add(rb);
         }
     }

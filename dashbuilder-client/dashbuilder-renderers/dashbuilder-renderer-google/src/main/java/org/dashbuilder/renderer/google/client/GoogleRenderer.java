@@ -15,12 +15,13 @@
  */
 package org.dashbuilder.renderer.google.client;
 
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Named;
 
 import com.googlecode.gwt.charts.client.ChartLoader;
 import com.googlecode.gwt.charts.client.ChartPackage;
@@ -29,65 +30,76 @@ import org.dashbuilder.displayer.DisplayerSubType;
 import org.dashbuilder.displayer.DisplayerType;
 import org.dashbuilder.displayer.client.AbstractRendererLibrary;
 import org.dashbuilder.displayer.client.Displayer;
-import org.dashbuilder.displayer.client.RendererLibLocator;
+import org.dashbuilder.displayer.client.RendererManager;
+
+import static org.dashbuilder.displayer.DisplayerType.*;
+import static org.dashbuilder.displayer.DisplayerSubType.*;
 
 /**
  * Google's Visualization API based renderer.
  */
 @ApplicationScoped
-@Named(GoogleRenderer.UUID + "_renderer")
 public class GoogleRenderer extends AbstractRendererLibrary {
 
-    public static final String UUID = "GWT Charts";
+    public static final String UUID = "gwtcharts";
 
-    @PostConstruct
-    private void init() {
-        RendererLibLocator rll = RendererLibLocator.get();
-        rll.registerRenderer(DisplayerType.BARCHART, UUID, true);
-        rll.registerRenderer(DisplayerType.PIECHART, UUID, true);
-        rll.registerRenderer(DisplayerType.AREACHART, UUID, true);
-        rll.registerRenderer(DisplayerType.LINECHART, UUID, true);
-        rll.registerRenderer(DisplayerType.BUBBLECHART, UUID, true);
-        rll.registerRenderer(DisplayerType.METERCHART, UUID, true);
-        rll.registerRenderer(DisplayerType.MAP, UUID, true);
-        rll.registerRenderer(DisplayerType.TABLE, UUID, true);
-    }
+    private List<DisplayerType> _supportedTypes = Arrays.asList(
+            BARCHART,
+            PIECHART,
+            AREACHART,
+            LINECHART,
+            BUBBLECHART,
+            METERCHART,
+            TABLE,
+            MAP);
 
     public String getUUID() {
         return UUID;
     }
 
     @Override
-    public DisplayerSubType[] getSupportedSubtypes(DisplayerType displayerType) {
+    public String getName() {
+        return "GWT Charts";
+    }
+
+    @Override
+    public boolean isDefault(DisplayerType type) {
+        return _supportedTypes.contains(type);
+    }
+
+    @Override
+    public List<DisplayerType> getSupportedTypes() {
+        return _supportedTypes;
+    }
+    
+    @Override
+    public List<DisplayerSubType> getSupportedSubtypes(DisplayerType displayerType) {
         switch (displayerType) {
-            case BARCHART: return new DisplayerSubType[]{   DisplayerSubType.BAR,
-                                                            DisplayerSubType.BAR_STACKED,
-                                                            DisplayerSubType.COLUMN,
-                                                            DisplayerSubType.COLUMN_STACKED};
-            case PIECHART: return new DisplayerSubType[]{   DisplayerSubType.PIE,
-                                                            DisplayerSubType.PIE_3D,
-                                                            DisplayerSubType.DONUT};
-            case AREACHART: return new DisplayerSubType[]{  DisplayerSubType.AREA,
-                                                            DisplayerSubType.AREA_STACKED/*,
-                                                            DisplayerSubType.STEPPED*/};
-            case LINECHART: return new DisplayerSubType[]{  DisplayerSubType.LINE,
-                                                            DisplayerSubType.SMOOTH};
-            case MAP: return new DisplayerSubType[]{        DisplayerSubType.MAP_REGIONS,
-                                                            DisplayerSubType.MAP_MARKERS};
-            default: return new DisplayerSubType[]{};
+            case BARCHART: 
+                return Arrays.asList(BAR, BAR_STACKED, COLUMN, COLUMN_STACKED);
+            case PIECHART: 
+                return Arrays.asList(PIE, PIE_3D, DONUT);
+            case AREACHART: 
+                return Arrays.asList(AREA, AREA_STACKED /*,STEPPED*/);
+            case LINECHART: 
+                return Arrays.asList(LINE, SMOOTH);
+            case MAP: 
+                return Arrays.asList(MAP_REGIONS, MAP_MARKERS);
+            default: 
+                return Arrays.asList();
         }
     }
 
     public Displayer lookupDisplayer(DisplayerSettings displayerSettings) {
         DisplayerType displayerType = displayerSettings.getType();
-        if ( DisplayerType.BARCHART.equals(displayerType)) return new GoogleBarChartDisplayer();
-        if ( DisplayerType.PIECHART.equals(displayerType)) return new GooglePieChartDisplayer();
-        if ( DisplayerType.AREACHART.equals(displayerType)) return new GoogleAreaChartDisplayer();
-        if ( DisplayerType.LINECHART.equals(displayerType)) return new GoogleLineChartDisplayer();
-        if ( DisplayerType.BUBBLECHART.equals(displayerType)) return new GoogleBubbleChartDisplayer();
-        if ( DisplayerType.METERCHART.equals(displayerType)) return new GoogleMeterChartDisplayer();
-        if ( DisplayerType.TABLE.equals(displayerType)) return new GoogleTableDisplayer();
-        if ( DisplayerType.MAP.equals(displayerType)) return new GoogleMapDisplayer();
+        if (BARCHART.equals(displayerType)) return new GoogleBarChartDisplayer();
+        if (PIECHART.equals(displayerType)) return new GooglePieChartDisplayer();
+        if (AREACHART.equals(displayerType)) return new GoogleAreaChartDisplayer();
+        if (LINECHART.equals(displayerType)) return new GoogleLineChartDisplayer();
+        if (BUBBLECHART.equals(displayerType)) return new GoogleBubbleChartDisplayer();
+        if (METERCHART.equals(displayerType)) return new GoogleMeterChartDisplayer();
+        if (TABLE.equals(displayerType)) return new GoogleTableDisplayer();
+        if (MAP.equals(displayerType)) return new GoogleMapDisplayer();
 
         return null;
     }

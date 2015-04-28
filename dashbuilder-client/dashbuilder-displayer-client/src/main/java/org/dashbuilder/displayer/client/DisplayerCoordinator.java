@@ -41,7 +41,7 @@ public class DisplayerCoordinator {
         displayerList.add(displayer);
         displayer.addListener(displayerListener);
 
-        RendererLibrary renderer = RendererLibLocator.get().lookupRenderer(displayer.getDisplayerSettings());
+        RendererLibrary renderer = RendererManager.get().getRendererForDisplayer(displayer.getDisplayerSettings());
         List<Displayer> rendererGroup = rendererMap.get(renderer);
         if (rendererGroup == null) rendererMap.put(renderer, rendererGroup = new ArrayList<Displayer>());
         rendererGroup.add(displayer);
@@ -53,7 +53,7 @@ public class DisplayerCoordinator {
 
     public boolean removeDisplayer(Displayer displayer) {
         if (displayer == null) return false;
-        RendererLibrary renderer = RendererLibLocator.get().lookupRenderer(displayer.getDisplayerSettings());
+        RendererLibrary renderer = RendererManager.get().getRendererForDisplayer(displayer.getDisplayerSettings());
         List<Displayer> rendererGroup = rendererMap.get(renderer);
         if (rendererGroup != null) rendererGroup.remove(displayer);
 

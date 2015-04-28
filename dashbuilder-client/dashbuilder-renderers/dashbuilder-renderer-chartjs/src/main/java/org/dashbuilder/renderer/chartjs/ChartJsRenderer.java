@@ -15,39 +15,35 @@
  */
 package org.dashbuilder.renderer.chartjs;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Named;
 
 import org.dashbuilder.dataset.DataColumn;
+import org.dashbuilder.displayer.ColumnSettings;
 import org.dashbuilder.displayer.DisplayerSettings;
 import org.dashbuilder.displayer.DisplayerSubType;
 import org.dashbuilder.displayer.DisplayerType;
 import org.dashbuilder.displayer.client.AbstractRendererLibrary;
 import org.dashbuilder.displayer.client.Displayer;
-import org.dashbuilder.displayer.client.RendererLibLocator;
 import org.dashbuilder.renderer.chartjs.lib.ChartJs;
+
+import static org.dashbuilder.displayer.DisplayerSubType.*;
+import static org.dashbuilder.displayer.DisplayerType.*;
 
 /**
  * Chart JS renderer
- *
- * <p>Pending stuff:
- * <ul>
- *     <li>Values format</li>
- * </ul>
- * </p>
  */
 @ApplicationScoped
-@Named(ChartJsRenderer.UUID + "_renderer")
 public class ChartJsRenderer extends AbstractRendererLibrary {
 
-    public static final String UUID = "Chart JS";
+    public static final String UUID = "chartjs";
 
     @PostConstruct
     private void init() {
-        RendererLibLocator.get().registerRenderer(DisplayerType.BARCHART, UUID, false);
         publishChartJsFunctions();
     }
 
@@ -57,27 +53,28 @@ public class ChartJsRenderer extends AbstractRendererLibrary {
     }
 
     @Override
-    public DisplayerSubType[] getSupportedSubtypes(DisplayerType displayerType) {
+    public String getName() {
+        return "Chart JS";
+    }
+
+    @Override
+    public List<DisplayerType> getSupportedTypes() {
+        return Arrays.asList(BARCHART);
+    }
+
+    @Override
+    public List<DisplayerSubType> getSupportedSubtypes(DisplayerType displayerType) {
         switch (displayerType) {
             case BARCHART:
-                return new DisplayerSubType[] {
-                        DisplayerSubType.COLUMN
-                };
+                return Arrays.asList(COLUMN);
             case PIECHART:
-                return new DisplayerSubType[] {
-                        DisplayerSubType.PIE,
-                        DisplayerSubType.DONUT
-                };
+                return Arrays.asList(PIE, DONUT);
             case AREACHART:
-                return new DisplayerSubType[] {
-                        DisplayerSubType.AREA
-                };
+                return Arrays.asList(AREA);
             case LINECHART:
-                return new DisplayerSubType[] {
-                        DisplayerSubType.LINE
-                };
+                return Arrays.asList(LINE);
             default:
-                return new DisplayerSubType[] {};
+                return Arrays.asList();
         }
     }
 

@@ -73,7 +73,7 @@ public class DisplayerView extends Composite {
 
             // Add the renderer selector (if enabled)
             if (isShowRendererSelector) {
-                RendererSelector rendererSelector = new RendererSelector(displayerSettings.getType(), displayerSettings.getRenderer(), RendererSelector.SelectorType.RADIO, new RendererSelector.RendererSelectorEventHandler() {
+                RendererSelector rendererSelector = new RendererSelector(displayerSettings, RendererSelector.SelectorType.RADIO, new RendererSelector.RendererSelectorEventHandler() {
 
                     public void onRendererSelected(RendererSelector.RendererSelectorEvent event) {
                         displayerSettings.setRenderer(event.getRenderer());

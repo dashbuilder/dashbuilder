@@ -27,7 +27,7 @@ import org.dashbuilder.displayer.DisplayerType;
 @ApplicationScoped
 public class ClientSettings {
 
-    @Inject RendererLibLocator rendererLibLocator;
+    @Inject RendererManager rendererManager;
     @Inject DataSetClientServices dataSetClientServices;
 
     /**
@@ -46,6 +46,6 @@ public class ClientSettings {
      * @param rendererLib The UUID of the renderer library.
      */
     public void setDefaultRenderer(DisplayerType displayerType, String rendererLib) {
-        rendererLibLocator.setDefaultRenderer( displayerType, rendererLib );
+        rendererManager.setDefaultRenderer(displayerType, rendererLib);
     }
 }

@@ -15,37 +15,27 @@
  */
 package org.dashbuilder.renderer.lienzo.client;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.dashbuilder.displayer.DisplayerSettings;
 import org.dashbuilder.displayer.DisplayerSubType;
 import org.dashbuilder.displayer.DisplayerType;
 import org.dashbuilder.displayer.client.AbstractRendererLibrary;
 import org.dashbuilder.displayer.client.Displayer;
-import org.dashbuilder.displayer.client.RendererLibLocator;
 
-import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Named;
+
+import static org.dashbuilder.displayer.DisplayerSubType.*;
+import static org.dashbuilder.displayer.DisplayerType.*;
 
 /**
  * Lienzo renderer.
  */
 @ApplicationScoped
-@Named(LienzoRenderer.UUID + "_renderer")
 public class LienzoRenderer extends AbstractRendererLibrary {
 
-    public static final String UUID = "Lienzo";
-
-    @PostConstruct
-    private void init() {
-        RendererLibLocator.get().registerRenderer(DisplayerType.BARCHART, UUID, false);
-        RendererLibLocator.get().registerRenderer(DisplayerType.PIECHART, UUID, false);
-    }
-
-    // TODO complete
-    @Override
-    public DisplayerSubType[] getSupportedSubtypes(DisplayerType displayerType) {
-        return null;
-    }
+    public static final String UUID = "lienzo";
 
     @Override
     public String getUUID() {
@@ -53,10 +43,34 @@ public class LienzoRenderer extends AbstractRendererLibrary {
     }
 
     @Override
+    public String getName() {
+        return "Lienzo";
+    }
+
+    @Override
+    public List<DisplayerType> getSupportedTypes() {
+        return Arrays.asList(
+                BARCHART,
+                PIECHART);
+    }
+
+    @Override
+    public List<DisplayerSubType> getSupportedSubtypes(DisplayerType displayerType) {
+        switch (displayerType) {
+            case BARCHART:
+                return Arrays.asList(BAR, COLUMN);
+            case PIECHART:
+                return Arrays.asList(PIE);
+            default:
+                return Arrays.asList();
+        }
+    }
+
+    @Override
     public Displayer lookupDisplayer(DisplayerSettings displayerSettings) {
         DisplayerType type = displayerSettings.getType();
-        if ( DisplayerType.BARCHART.equals(type)) return new LienzoBarChartDisplayer();
-        if ( DisplayerType.PIECHART.equals(type)) return new LienzoPieChartDisplayer();
+        if (BARCHART.equals(type)) return new LienzoBarChartDisplayer();
+        if (PIECHART.equals(type)) return new LienzoPieChartDisplayer();
         return null;
     }
 }

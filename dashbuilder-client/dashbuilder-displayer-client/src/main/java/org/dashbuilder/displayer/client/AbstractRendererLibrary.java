@@ -17,17 +17,26 @@ package org.dashbuilder.displayer.client;
 
 import java.util.List;
 
+import org.dashbuilder.displayer.DisplayerType;
+
 /**
  * Base class for implementing custom renderer libraries.
  */
 public abstract class AbstractRendererLibrary implements RendererLibrary {
 
+    @Override
+    public boolean isDefault(DisplayerType type) {
+        return false;
+    }
+
+    @Override
     public void draw(List<Displayer> displayerList) {
         for (Displayer displayer : displayerList) {
             displayer.draw();
         }
     }
 
+    @Override
     public void redraw(List<Displayer> displayerList) {
         for (Displayer displayer : displayerList) {
             displayer.redraw();

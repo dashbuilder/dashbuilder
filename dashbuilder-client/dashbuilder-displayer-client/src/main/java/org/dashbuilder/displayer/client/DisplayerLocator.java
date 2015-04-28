@@ -23,7 +23,6 @@ import org.dashbuilder.common.client.StringUtils;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetLookup;
 import org.dashbuilder.dataset.client.ClientDataSetManager;
-import org.dashbuilder.dataset.engine.group.IntervalBuilderLocator;
 import org.dashbuilder.displayer.DisplayerSettings;
 import org.dashbuilder.displayer.client.resources.i18n.CommonConstants;
 import org.jboss.errai.ioc.client.container.IOC;
@@ -47,7 +46,7 @@ public class DisplayerLocator {
      * Get the displayer component for the specified data displayer (with no data set attached).
      */
     public Displayer lookupDisplayer(DisplayerSettings target) {
-        RendererLibrary renderer = RendererLibLocator.get().lookupRenderer(target);
+        RendererLibrary renderer = RendererManager.get().getRendererForDisplayer(target);
         Displayer displayer = renderer.lookupDisplayer(target);
         if (displayer == null) {
             String rendererUuid = target.getRenderer();

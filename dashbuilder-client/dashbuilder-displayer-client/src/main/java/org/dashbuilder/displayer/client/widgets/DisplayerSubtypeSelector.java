@@ -27,9 +27,10 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.web.bindery.event.shared.HandlerRegistration;
+import org.dashbuilder.common.client.StringUtils;
 import org.dashbuilder.displayer.DisplayerSubType;
 import org.dashbuilder.displayer.DisplayerType;
-import org.dashbuilder.displayer.client.RendererLibLocator;
+import org.dashbuilder.displayer.client.RendererManager;
 import org.dashbuilder.displayer.client.RendererLibrary;
 import org.dashbuilder.displayer.client.resources.i18n.DisplayerTypeLiterals;
 import org.dashbuilder.displayer.client.resources.images.DisplayerImagesResources;
@@ -42,14 +43,14 @@ public class DisplayerSubtypeSelector extends Composite {
 
     private SubTypeChangeListener listener;
     private List<DisplayerSubTypeImageWidget> imageWidgetList;
-    RendererLibLocator rendererLibLocator;
+    RendererManager rendererManager;
 
     private FlexTable subtypes;
     private VerticalPanel subtypePanel;
 
     public DisplayerSubtypeSelector(SubTypeChangeListener subTypeChangeListener) {
         listener = subTypeChangeListener;
-        rendererLibLocator = RendererLibLocator.get();
+        rendererManager = RendererManager.get();
         imageWidgetList = new ArrayList<DisplayerSubTypeImageWidget>(5);
 
         subtypes = new FlexTable();
@@ -62,13 +63,15 @@ public class DisplayerSubtypeSelector extends Composite {
         subtypes.removeAllRows();
         imageWidgetList.clear();
 
-        if (renderer == null || renderer.length() == 0) renderer = rendererLibLocator.getDefaultRenderer(type);
-        RendererLibrary rendererLibrary = rendererLibLocator.lookupRenderer(renderer);
+        RendererLibrary rendererLibrary = null;
+        if (!StringUtils.isBlank(renderer)) rendererLibrary = rendererManager.getRendererByUUID(renderer);
+        else rendererLibrary = rendererManager.getRendererForType(type);
+
         if (rendererLibrary != null) {
-            DisplayerSubType[] supportedSubTypes = rendererLibrary.getSupportedSubtypes(type);
-            if (supportedSubTypes != null && supportedSubTypes.length > 0) {
-                for (int i = 0; i < supportedSubTypes.length; i++) {
-                    final DisplayerSubType subtype = supportedSubTypes[ i ];
+            List<DisplayerSubType> supportedSubTypes = rendererLibrary.getSupportedSubtypes(type);
+            if (supportedSubTypes != null && supportedSubTypes.size() > 0) {
+                for (int i = 0; i < supportedSubTypes.size(); i++) {
+                    final DisplayerSubType subtype = supportedSubTypes.get(i);
 
                     // Double check the renderer library for invalid subtypes for this type
                     if (!type.getSubTypes().contains(subtype)) throw new RuntimeException("Wrong subtype (" + subtype + ") indicated for type " + type + " by renderer library " + rendererLibrary.getUUID());

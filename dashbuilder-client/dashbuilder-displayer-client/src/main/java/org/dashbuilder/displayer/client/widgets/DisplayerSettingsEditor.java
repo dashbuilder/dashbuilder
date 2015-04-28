@@ -43,7 +43,8 @@ import org.dashbuilder.displayer.DisplayerSettings;
 import org.dashbuilder.displayer.Position;
 import org.dashbuilder.displayer.client.Displayer;
 import org.dashbuilder.displayer.client.DisplayerHelper;
-import org.dashbuilder.displayer.client.RendererLibLocator;
+import org.dashbuilder.displayer.client.RendererLibrary;
+import org.dashbuilder.displayer.client.RendererManager;
 import org.dashbuilder.displayer.client.resources.i18n.CommonConstants;
 import org.dashbuilder.displayer.client.resources.i18n.PositionLiterals;
 import org.uberfire.ext.properties.editor.client.PropertyEditorWidget;
@@ -177,16 +178,13 @@ public class DisplayerSettingsEditor extends Composite {
             categories.add(category);
 
             List<String> optionList = new ArrayList<String>();
-            for (String option : RendererLibLocator.get().getAvailableRenderers(displayerSettings.getType())) {
-                optionList.add(option);
+            for (RendererLibrary option : RendererManager.get().getRenderersForType(displayerSettings.getType())) {
+                optionList.add(option.getUUID());
             }
             if (optionList.size() > 1) {
-                String renderer = displayerSettings.getRenderer();
-                if (renderer == null) {
-                    renderer = RendererLibLocator.get().getDefaultRenderer(displayerSettings.getType());
-                }
+                RendererLibrary renderer = RendererManager.get().getRendererForDisplayer(displayerSettings);
                 category.withField(new PropertyEditorFieldInfo( CommonConstants.INSTANCE.common_renderer(),
-                        renderer,
+                        renderer.getUUID(),
                         PropertyEditorType.COMBO).withComboValues(optionList)
                         .withKey(RENDERER.getFullId()));
             }

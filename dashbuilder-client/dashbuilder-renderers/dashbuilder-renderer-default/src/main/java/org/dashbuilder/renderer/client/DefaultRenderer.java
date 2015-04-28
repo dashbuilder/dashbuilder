@@ -15,53 +15,66 @@
  */
 package org.dashbuilder.renderer.client;
 
-import javax.annotation.PostConstruct;
+import java.util.Arrays;
+import java.util.List;
 import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Named;
 
 import org.dashbuilder.displayer.DisplayerSettings;
 import org.dashbuilder.displayer.DisplayerSubType;
 import org.dashbuilder.displayer.DisplayerType;
 import org.dashbuilder.displayer.client.AbstractRendererLibrary;
 import org.dashbuilder.displayer.client.Displayer;
-import org.dashbuilder.displayer.client.RendererLibLocator;
 import org.dashbuilder.renderer.client.metric.MetricDisplayer;
 import org.dashbuilder.renderer.client.selector.SelectorDisplayer;
 import org.dashbuilder.renderer.client.table.TableDisplayer;
+
+import static org.dashbuilder.displayer.DisplayerType.*;
 
 /**
  * Default renderer
  */
 @ApplicationScoped
-@Named(DefaultRenderer.UUID + "_renderer")
 public class DefaultRenderer extends AbstractRendererLibrary {
 
-    public static final String UUID = "Default";
-
-    @PostConstruct
-    private void init() {
-        RendererLibLocator.get().registerRenderer(DisplayerType.TABLE, UUID, false);
-        RendererLibLocator.get().registerRenderer(DisplayerType.SELECTOR, UUID, true);
-        RendererLibLocator.get().registerRenderer(DisplayerType.METRIC, UUID, true);
-    }
+    public static final String UUID = "default";
 
     @Override
     public String getUUID() {
         return UUID;
     }
 
-    // TODO complete
     @Override
-    public DisplayerSubType[] getSupportedSubtypes(DisplayerType displayerType) {
+    public String getName() {
+        return "GWT Core";
+    }
+
+    @Override
+    public boolean isDefault(DisplayerType type) {
+        if (SELECTOR.equals(type)) return true;
+        if (METRIC.equals(type)) return true;
+        return false;
+    }
+
+    @Override
+    public List<DisplayerType> getSupportedTypes() {
+        return Arrays.asList(
+                TABLE,
+                SELECTOR,
+                METRIC);
+    }
+
+    @Override
+    public List<DisplayerSubType> getSupportedSubtypes(DisplayerType displayerType) {
+        // No subtypes yet
         return null;
     }
 
     @Override
     public Displayer lookupDisplayer(DisplayerSettings displayerSettings) {
         DisplayerType type = displayerSettings.getType();
-        if (DisplayerType.TABLE.equals(type)) return new TableDisplayer();
-        if (DisplayerType.SELECTOR.equals(type)) return new SelectorDisplayer();
-        if (DisplayerType.METRIC.equals(type)) return new MetricDisplayer();
+        if (TABLE.equals(type)) return new TableDisplayer();
+        if (SELECTOR.equals(type)) return new SelectorDisplayer();
+        if (METRIC.equals(type)) return new MetricDisplayer();
 
         return null;
     }
