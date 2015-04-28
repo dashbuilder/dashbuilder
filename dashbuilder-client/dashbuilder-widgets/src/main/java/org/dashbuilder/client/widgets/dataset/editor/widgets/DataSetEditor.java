@@ -365,6 +365,7 @@ public class DataSetEditor implements IsWidget {
                         buildColumns(new DataSetMetadataCallback() {
                             @Override
                             public void callback(DataSetMetadata metatada) {
+                                if (edit == null) updateDataSetDefColumns(DataSetEditor.this.columns);
                                 updateTableDisplayer();
                             }
 
@@ -439,9 +440,9 @@ public class DataSetEditor implements IsWidget {
     }
 
     private void persist() {
-        if (edit ==     null) 
+        if (edit == null) 
         {
-            // If creati    ng a new data set, just persist it.
+            // If creating a new data set, just persist it.
             dataSetDef.setPublic(true);
             dataSetDef.setAllColumnsEnabled(false);
             
