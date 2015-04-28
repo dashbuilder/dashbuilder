@@ -467,11 +467,11 @@ public class DataSetExplorerView extends Composite implements DataSetExplorer.Vi
     }
 
     public String humanReadableByteCount(long bytes) {
-        final String _b = DataSetExplorerConstants.INSTANCE.bytes();
+        final String _b = " " + DataSetExplorerConstants.INSTANCE.bytes();
         int unit = 1024;
-        if (bytes < unit) return Long.toString(bytes) + " " + _b;
+        if (bytes < unit) return Long.toString(bytes) + _b;
         int exp = (int) (Math.log(bytes) / Math.log(unit));
-        String pre = (" KMGTPE").charAt(exp-1) + _b;
+        String pre = ("KMGTPE").charAt(exp-1) + _b;
         return NumberFormat.getFormat("#.0").format(bytes / Math.pow(unit, exp)) + pre;
     }
 

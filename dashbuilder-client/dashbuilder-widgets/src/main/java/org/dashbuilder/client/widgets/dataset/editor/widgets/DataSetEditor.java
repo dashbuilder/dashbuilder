@@ -568,6 +568,7 @@ public class DataSetEditor implements IsWidget {
     }
 
     private void showHomeView() {
+        clear();
         DataSetClientServices.get().getRemoteSharedDataSetDefs(new RemoteCallback<List<DataSetDef>>() {
             public void callback(List<DataSetDef> dataSetDefs) {
                 final int i = dataSetDefs != null ? dataSetDefs.size() : 0;
@@ -858,7 +859,7 @@ public class DataSetEditor implements IsWidget {
     private void onDataSetDefRemovedEvent(@Observes DataSetDefRemovedEvent event) {
         checkNotNull("event", event);
 
-        if(isHomeViewVisible()) {
+        if(isHomeViewVisible() || (edit !=null && edit.getUUID().equals(event.getDataSetDef().getUUID()))) {
             // Reload home view with new data set count value.
             this.showHomeView();
         }
