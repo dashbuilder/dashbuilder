@@ -129,8 +129,6 @@ public class DataSetDefJSONMarshaller {
         String cacheEnabled = json.has(CACHE_ENABLED) ? json.getString(CACHE_ENABLED) : null;
         String cacheMaxRows = json.has(CACHE_MAXROWS) ? json.getString(CACHE_MAXROWS) : null;
         String cacheSynced = json.has(CACHE_SYNCED) ? json.getString(CACHE_SYNCED) : null;
-        String allColumns = json.has(ALL_COLUMNS) ? json.getString(ALL_COLUMNS) : null;
-
 
         // ServerURL parameter.
         if (StringUtils.isBlank(serverURL)) {
@@ -183,9 +181,6 @@ public class DataSetDefJSONMarshaller {
         // Cache synced parameter.
         if (!StringUtils.isBlank(cacheSynced)) dataSetDef.setCacheSynced(Boolean.parseBoolean(cacheSynced));
 
-        // All columns flag.
-        if (!StringUtils.isBlank(allColumns)) dataSetDef.setAllColumnsEnabled(Boolean.parseBoolean(allColumns));
-
         return dataSetDef;
     }
 
@@ -211,6 +206,7 @@ public class DataSetDefJSONMarshaller {
         String cacheMaxRows = json.has(CACHE_MAXROWS) ? json.getString(CACHE_MAXROWS) : null;
         String refreshTime  = json.has(REFRESH_TIME) ? json.getString(REFRESH_TIME) : null;
         String refreshAlways = json.has(REFRESH_ALWAYS) ? json.getString(REFRESH_ALWAYS) : null;
+        String allColumns = json.has(ALL_COLUMNS) ? json.getString(ALL_COLUMNS) : null;
 
         if (!StringUtils.isBlank(uuid)) def.setUUID(uuid);
         if (!StringUtils.isBlank(name)) def.setName(name);
@@ -221,6 +217,7 @@ public class DataSetDefJSONMarshaller {
         if (!StringUtils.isBlank(cacheMaxRows)) def.setCacheMaxRows(Integer.parseInt(cacheMaxRows));
         if (!StringUtils.isBlank(refreshTime)) def.setRefreshTime(refreshTime);
         if (!StringUtils.isBlank(refreshAlways)) def.setRefreshAlways(Boolean.parseBoolean(refreshAlways));
+        if (!StringUtils.isBlank(allColumns)) def.setAllColumnsEnabled(Boolean.parseBoolean(allColumns));
 
         if (json.has(COLUMNS)) {
             JSONArray array = json.getJSONArray(COLUMNS);
@@ -285,7 +282,6 @@ public class DataSetDefJSONMarshaller {
         String escapeChar = json.has(ESCAPECHAR) ? json.getString(ESCAPECHAR) : null;
         String datePattern = json.has(DATEPATTERN) ? json.getString(DATEPATTERN) : null;
         String numberPattern = json.has(NUMBERPATTERN) ? json.getString(NUMBERPATTERN) : null;
-        String allColumns = json.has(ALL_COLUMNS) ? json.getString(ALL_COLUMNS) : null;
 
         if (!StringUtils.isBlank(fileURL)) def.setFileURL(fileURL);
         if (!StringUtils.isBlank(filePath)) def.setFilePath(filePath);
@@ -294,7 +290,6 @@ public class DataSetDefJSONMarshaller {
         if (!StringUtils.isBlank(escapeChar)) def.setEscapeChar(escapeChar.charAt(0));
         if (!StringUtils.isBlank(numberPattern)) def.setNumberPattern(numberPattern);
         if (!StringUtils.isBlank(datePattern)) def.setDatePattern(datePattern);
-        if (!StringUtils.isBlank(allColumns)) def.setAllColumnsEnabled(Boolean.parseBoolean(allColumns));
 
         return def;
     }
@@ -304,13 +299,11 @@ public class DataSetDefJSONMarshaller {
         String dbTable = json.has(DB_TABLE) ? json.getString(DB_TABLE) : null;
         String dbSchema = json.has(DB_SCHEMA) ? json.getString(DB_SCHEMA) : null;
         String dbSQL = json.has(DB_SQL) ? json.getString(DB_SQL) : null;
-        String allColumns = json.has(ALL_COLUMNS) ? json.getString(ALL_COLUMNS) : null;
 
         if (!StringUtils.isBlank(dataSource)) def.setDataSource(dataSource);
         if (!StringUtils.isBlank(dbSchema)) def.setDbSchema(dbSchema);
         if (!StringUtils.isBlank(dbTable)) def.setDbTable(dbTable);
         if (!StringUtils.isBlank(dbSQL)) def.setDbSQL(dbSQL);
-        if (!StringUtils.isBlank(allColumns)) def.setAllColumnsEnabled(Boolean.parseBoolean(allColumns));
 
         return def;
     }

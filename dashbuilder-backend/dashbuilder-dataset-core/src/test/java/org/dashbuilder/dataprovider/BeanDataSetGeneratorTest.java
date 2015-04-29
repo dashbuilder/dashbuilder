@@ -57,25 +57,16 @@ public class BeanDataSetGeneratorTest {
     @Inject
     DataSetFormatter dataSetFormatter;
 
-    @Before
-    public void setUp() throws Exception {
+    @Test
+    public void testGenerateDataSet() throws Exception {
         URL fileURL = Thread.currentThread().getContextClassLoader().getResource("salesPerYear.dset");
         String json = IOUtils.toString(fileURL);
         DataSetDef def = jsonMarshaller.fromJson(json);
         dataSetDefRegistry.registerDataSetDef(def);
-
-        fileURL = Thread.currentThread().getContextClassLoader().getResource("salesPerYearAdjusted.dset");
-        json = IOUtils.toString(fileURL);
-        def = jsonMarshaller.fromJson(json);
-        dataSetDefRegistry.registerDataSetDef(def);
-    }
-
-    @Test
-    public void testGenerateDataSet() throws Exception {
         DataSet result = dataSetManager.getDataSet("salesPerYear");
 
         //printDataSet(result);
-        assertDataSetValues(result, dataSetFormatter, new String[][] {
+        assertDataSetValues(result, dataSetFormatter, new String[][]{
                 {"JANUARY", "1,000.00", "2,000.00", "3,000.00"},
                 {"FEBRUARY", "1,400.00", "2,300.00", "2,000.00"},
                 {"MARCH", "1,300.00", "2,000.00", "1,400.00"},
@@ -93,6 +84,10 @@ public class BeanDataSetGeneratorTest {
 
     @Test
     public void testGenerateDataSetAdjusted() throws Exception {
+        URL fileURL = Thread.currentThread().getContextClassLoader().getResource("salesPerYearAdjusted.dset");
+        String json = IOUtils.toString(fileURL);
+        DataSetDef def = jsonMarshaller.fromJson(json);
+        dataSetDefRegistry.registerDataSetDef(def);
         DataSet result = dataSetManager.getDataSet("salesPerYearAdjusted");
 
         //printDataSet(result);
@@ -109,6 +104,31 @@ public class BeanDataSetGeneratorTest {
                 {"OCTOBER", "1,080.00", "1,980.00", "2,790.00"},
                 {"NOVEMBER", "1,260.00", "1,890.00", "2,790.00"},
                 {"DECEMBER", "990.00", "1,890.00", "3,780.00"}
+        }, 0);
+    }
+
+    @Test
+    public void testRetrieveColumnSubset() throws Exception {
+        URL fileURL = Thread.currentThread().getContextClassLoader().getResource("salesYear2014.dset");
+        String json = IOUtils.toString(fileURL);
+        DataSetDef def = jsonMarshaller.fromJson(json);
+        dataSetDefRegistry.registerDataSetDef(def);
+        DataSet result = dataSetManager.getDataSet("salesYear2014");
+
+        //printDataSet(result);
+        assertDataSetValues(result, dataSetFormatter, new String[][] {
+                {"JANUARY", "3,000.00"},
+                {"FEBRUARY", "2,000.00"},
+                {"MARCH", "1,400.00"},
+                {"APRIL", "1,500.00"},
+                {"MAY", "1,600.00"},
+                {"JUNE", "1,500.00"},
+                {"JULY", "3,000.00"},
+                {"AUGUST", "3,200.00"},
+                {"SEPTEMBER", "3,000.00"},
+                {"OCTOBER", "3,100.00"},
+                {"NOVEMBER", "3,100.00"},
+                {"DECEMBER", "4,200.00"}
         }, 0);
     }
 

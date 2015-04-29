@@ -24,6 +24,7 @@ import javax.inject.Named;
 
 import org.dashbuilder.dataprovider.DataSetProvider;
 import org.dashbuilder.dataprovider.DataSetProviderType;
+import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetGenerator;
 import org.dashbuilder.dataset.DataSetLookup;
@@ -72,6 +73,14 @@ public class BeanDataSetProvider implements DataSetProvider {
             dataSet.setUUID(def.getUUID());
             dataSet.setDefinition(def);
 
+            // Remove non declared columns
+            if (!def.isAllColumnsEnabled()) {
+                for (DataColumn column : dataSet.getColumns()) {
+                    if (def.getColumnById(column.getId()) == null) {
+                        dataSet.removeColumn(column.getId());
+                    }
+                }
+            }
             // Register the data set before return
             staticDataSetProvider.registerDataSet(dataSet);
 

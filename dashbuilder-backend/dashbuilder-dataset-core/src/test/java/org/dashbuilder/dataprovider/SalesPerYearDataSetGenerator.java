@@ -27,7 +27,7 @@ public class SalesPerYearDataSetGenerator implements DataSetGenerator {
 
     public DataSet buildDataSet(Map<String,String> params) {
 
-        double multiplier = Double.parseDouble(params.get("multiplier"));
+        double multiplier = params.get("multiplier") == null ? 1 : Double.parseDouble(params.get("multiplier"));
 
         return DataSetFactory.newDataSetBuilder()
                 .label("month")
