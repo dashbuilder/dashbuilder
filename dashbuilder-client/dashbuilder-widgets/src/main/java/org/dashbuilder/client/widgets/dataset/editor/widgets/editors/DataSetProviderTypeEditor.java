@@ -42,7 +42,7 @@ import java.util.Map;
 @Dependent
 public class DataSetProviderTypeEditor extends AbstractDataSetDefEditor implements DataSetDefEditor {
 
-    private static final int ICONS_SIZE = 200;
+    private static final int ICONS_SIZE = 160;
 
     interface DataSetProviderTypeEditorBinder extends UiBinder<Widget, DataSetProviderTypeEditor> {}
     private static DataSetProviderTypeEditorBinder uiBinder = GWT.create(DataSetProviderTypeEditorBinder.class);
@@ -106,22 +106,22 @@ public class DataSetProviderTypeEditor extends AbstractDataSetDefEditor implemen
         Image typeIcon = null;
         switch (type) {
             case BEAN:
-                typeIcon = new Image(DataSetClientResources.INSTANCE.images().javaIcon().getSafeUri());
+                typeIcon = new Image(DataSetClientResources.INSTANCE.images().javaIcon160().getSafeUri());
                 typeIcon.setAltText(DataSetEditorConstants.INSTANCE.bean());
                 typeIcon.setTitle(DataSetEditorConstants.INSTANCE.bean());
                 break;
             case CSV:
-                typeIcon = new Image(DataSetClientResources.INSTANCE.images().csvIcon().getSafeUri());
+                typeIcon = new Image(DataSetClientResources.INSTANCE.images().csvIcon160().getSafeUri());
                 typeIcon.setAltText(DataSetEditorConstants.INSTANCE.csv());
                 typeIcon.setTitle(DataSetEditorConstants.INSTANCE.csv());
                 break;
             case SQL:
-                typeIcon = new Image(DataSetClientResources.INSTANCE.images().sqlIcon().getSafeUri());
+                typeIcon = new Image(DataSetClientResources.INSTANCE.images().sqlIcon160().getSafeUri());
                 typeIcon.setAltText(DataSetEditorConstants.INSTANCE.sql());
                 typeIcon.setTitle(DataSetEditorConstants.INSTANCE.sql());
                 break;
             case ELASTICSEARCH:
-                typeIcon = new Image(DataSetClientResources.INSTANCE.images().elIcon().getSafeUri());
+                typeIcon = new Image(DataSetClientResources.INSTANCE.images().elIcon160().getSafeUri());
                 typeIcon.setAltText(DataSetEditorConstants.INSTANCE.elasticSearch());
                 typeIcon.setTitle(DataSetEditorConstants.INSTANCE.elasticSearch());
                 break;

@@ -55,6 +55,8 @@ import java.util.*;
 public class DataSetExplorerView extends Composite implements DataSetExplorer.View {
 
     private final static String WHITESPACE = " ";
+    private final static String ICONS_SIZE = "16px";
+    private final static String ESTIMATIONS_FORMAT = "#,###.0";
     
     private final static NumberFormat rowsFormat = NumberFormat.getFormat("##0");
 
@@ -212,27 +214,27 @@ public class DataSetExplorerView extends Composite implements DataSetExplorer.Vi
         Image typeIcon = null;
         switch (dataSetDef.getProvider()) {
             case BEAN:
-                typeIcon = new Image(DataSetClientResources.INSTANCE.images().javaIcon().getSafeUri());
+                typeIcon = new Image(DataSetClientResources.INSTANCE.images().javaIcon32().getSafeUri());
                 typeIcon.setAltText(DataSetExplorerConstants.INSTANCE.bean());
                 typeIcon.setTitle(DataSetExplorerConstants.INSTANCE.bean());
                 break;
             case CSV:
-                typeIcon = new Image(DataSetClientResources.INSTANCE.images().csvIcon().getSafeUri());
+                typeIcon = new Image(DataSetClientResources.INSTANCE.images().csvIcon32().getSafeUri());
                 typeIcon.setAltText(DataSetExplorerConstants.INSTANCE.csv());
                 typeIcon.setTitle(DataSetExplorerConstants.INSTANCE.csv());
                 break;
             case SQL:
-                typeIcon = new Image(DataSetClientResources.INSTANCE.images().sqlIcon().getSafeUri());
+                typeIcon = new Image(DataSetClientResources.INSTANCE.images().sqlIcon32().getSafeUri());
                 typeIcon.setAltText(DataSetExplorerConstants.INSTANCE.sql());
                 typeIcon.setTitle(DataSetExplorerConstants.INSTANCE.sql());
                 break;
             case ELASTICSEARCH:
-                typeIcon = new Image(DataSetClientResources.INSTANCE.images().elIcon().getSafeUri());
+                typeIcon = new Image(DataSetClientResources.INSTANCE.images().elIcon32().getSafeUri());
                 typeIcon.setAltText(DataSetExplorerConstants.INSTANCE.el());
                 typeIcon.setTitle(DataSetExplorerConstants.INSTANCE.el());
                 break;
         }
-        typeIcon.setSize("15px", "15px");
+        typeIcon.setSize(ICONS_SIZE, ICONS_SIZE);
         return typeIcon;
         
     }
@@ -472,15 +474,15 @@ public class DataSetExplorerView extends Composite implements DataSetExplorer.Vi
         if (bytes < unit) return Long.toString(bytes) + _b;
         int exp = (int) (Math.log(bytes) / Math.log(unit));
         String pre = ("KMGTPE").charAt(exp-1) + _b;
-        return NumberFormat.getFormat("#.0").format(bytes / Math.pow(unit, exp)) + pre;
+        return NumberFormat.getFormat(ESTIMATIONS_FORMAT).format(bytes / Math.pow(unit, exp)) + pre;
     }
 
     public String humanReadableRowCount(long rows) {
         int unit = 1000;
         if (rows < unit) return Long.toString(rows);
         int exp = (int) (Math.log(rows) / Math.log(unit));
-        String pre = ("kMGTPE" ).charAt(exp-1) + ("");
-        return NumberFormat.getFormat("#").format(rows / Math.pow(unit, exp)) + pre;
+        String pre = ("KMGTPE" ).charAt(exp-1) + ("");
+        return NumberFormat.getFormat(ESTIMATIONS_FORMAT).format(rows / Math.pow(unit, exp)) + pre;
     }
 
     // **************** EVENT HANDLER REGISTRATIONS ****************************

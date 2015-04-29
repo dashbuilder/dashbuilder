@@ -343,7 +343,7 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
         exportToExcelButton.setUrl(DataSetClientResources.INSTANCE.images().excelIcon().getSafeUri());
         exportToExcelButton.setSize(EXPORT_ICON_SIZE, EXPORT_ICON_SIZE);
         exportToExcelButton.addClickHandler(exportToExcelButtonHandler);
-        exportToCSVButton.setUrl(DataSetClientResources.INSTANCE.images().csvIcon().getSafeUri());
+        exportToCSVButton.setUrl(DataSetClientResources.INSTANCE.images().csvIcon32().getSafeUri());
         exportToCSVButton.setSize(EXPORT_ICON_SIZE, EXPORT_ICON_SIZE);
         exportToCSVButton.addClickHandler(exportToCSVButtonHandler);
         

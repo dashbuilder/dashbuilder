@@ -25,18 +25,30 @@ import com.google.gwt.resources.client.ImageResource;
  */
 public interface DataSetClientImages extends ClientBundle {
 
-    @Source("images/csv_icon.png")
-    DataResource csvIcon();
+    @Source("images/csv_icon_160.png")
+    DataResource csvIcon160();
 
-    @Source("images/java_icon.png")
-    DataResource javaIcon();
+    @Source("images/csv_icon_32.png")
+    DataResource csvIcon32();
+    
+    @Source("images/java_icon_160.png")
+    DataResource javaIcon160();
 
-    @Source("images/sql_icon.png")
-    DataResource sqlIcon();
+    @Source("images/java_icon_32.png")
+    DataResource javaIcon32();
+    
+    @Source("images/sql_icon_160.png")
+    DataResource sqlIcon160();
 
-    @Source("images/el_icon.png")
-    DataResource elIcon();
+    @Source("images/sql_icon_32.png")
+    DataResource sqlIcon32();
 
+    @Source("images/el_icon_160.png")
+    DataResource elIcon160();
+
+    @Source("images/el_icon_32.png")
+    DataResource elIcon32();
+    
     @Source("images/excel_icon.png")
     DataResource excelIcon();
 
@@ -46,12 +58,15 @@ public interface DataSetClientImages extends ClientBundle {
     @Source("images/label_icon_32.png")
     DataResource labelIcon32();
 
-    @Source("images/number_icon_16.png")
-    DataResource numberIcon16();
+    @Source("images/number_icon_32_V1.png")
+    DataResource numberIcon32V1();
 
-    @Source("images/number_icon_32.png")
-    DataResource numberIcon32();
+    @Source("images/number_icon_32_V2.png")
+    DataResource numberIcon32V2();
 
+    @Source("images/number_icon_32_V3.png")
+    DataResource numberIcon32V3();
+    
     @Source("images/text_icon_16.png")
     DataResource textIcon16();
 

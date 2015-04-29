@@ -73,7 +73,7 @@ public class DataColumnTypeEditor extends DropDownImageListEditor<ColumnType> {
                 typeIcon.setTitle(DataSetEditorConstants.INSTANCE.text());
                 break;
             case NUMBER:
-                typeIcon = new Image(DataSetClientResources.INSTANCE.images().numberIcon32().getSafeUri());
+                typeIcon = new Image(DataSetClientResources.INSTANCE.images().numberIcon32V3().getSafeUri());
                 typeIcon.setAltText(DataSetEditorConstants.INSTANCE.number());
                 typeIcon.setTitle(DataSetEditorConstants.INSTANCE.number());
                 break;
