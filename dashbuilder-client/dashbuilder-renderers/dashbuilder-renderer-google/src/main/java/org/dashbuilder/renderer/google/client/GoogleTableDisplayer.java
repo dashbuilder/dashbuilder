@@ -29,6 +29,7 @@ import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Event;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -158,12 +159,12 @@ public class GoogleTableDisplayer extends GoogleDisplayer {
             titleHtml.setText(displayerSettings.getTitle());
         }
 
-        VerticalPanel verticalPanel = new VerticalPanel();
-        verticalPanel.add(titleHtml);
-        verticalPanel.add(table);
-        verticalPanel.add(pagerPanel);
+        FlowPanel container = new FlowPanel();
+        container.add(titleHtml);
+        container.add(table);
+        container.add(pagerPanel);
         createTablePager();
-        return verticalPanel;
+        return container;
     }
 
     @Override

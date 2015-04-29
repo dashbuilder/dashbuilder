@@ -16,6 +16,7 @@
 package org.dashbuilder.renderer.google.client;
 
 import com.google.gwt.core.client.JsArray;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.SimplePanel;
@@ -77,11 +78,11 @@ public class GoogleMapDisplayer extends GoogleChartDisplayer {
             titleHtml.setText(displayerSettings.getTitle());
         }
 
-        VerticalPanel verticalPanel = new VerticalPanel();
-        verticalPanel.add(titleHtml);
-        verticalPanel.add(filterPanel);
-        verticalPanel.add(chart);
-        return verticalPanel;
+        FlowPanel container = new FlowPanel();
+        container.add(titleHtml);
+        container.add(filterPanel);
+        container.add(chart);
+        return container;
     }
 
     @Override

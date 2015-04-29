@@ -45,10 +45,10 @@ public class ChartJsBarChartDisplayer extends ChartJsDisplayer {
             titleHtml.setText(displayerSettings.getTitle());
         }
 
-        VerticalPanel verticalPanel = new VerticalPanel();
-        verticalPanel.add(titleHtml);
-        verticalPanel.add(filterPanel);
-        verticalPanel.add(chartPanel);
+        FlowPanel container = new FlowPanel();
+        container.add(titleHtml);
+        container.add(filterPanel);
+        container.add(chartPanel);
 
         BarChart barChart = new BarChart();
         barChart.setTitle(displayerSettings.getTitle());
@@ -64,7 +64,7 @@ public class ChartJsBarChartDisplayer extends ChartJsDisplayer {
         });
         chart = barChart;
         updateChartPanel();
-        return verticalPanel;
+        return container;
     }
 
     @Override

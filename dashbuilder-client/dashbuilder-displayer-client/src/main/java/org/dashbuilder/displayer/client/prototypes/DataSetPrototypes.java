@@ -32,6 +32,8 @@ public class DataSetPrototypes {
 
     public static final String CITY = "City / Urban area";
     public static final String COUNTRY = "Country";
+    public static final String GDP_2014 = "GDP 2014";
+    public static final String GDP_2013 = "GDP 2013";
     public static final String CONTINENT = "Continent";
     public static final String AREA_SIZE = "Area size (km2)";
     public static final String DENSITY = "Density (people / km2)";
@@ -59,6 +61,10 @@ public class DataSetPrototypes {
         return dataSetManager.getDataSet("countryPopulation");
     }
 
+    public DataSet getTopRichCountries() {
+        return dataSetManager.getDataSet("topRichCountries");
+    }
+
     public DataSet getContinentPopulation() {
         return dataSetManager.getDataSet("continentPopulation");
     }
@@ -69,6 +75,21 @@ public class DataSetPrototypes {
 
     @PostConstruct
     private void init() {
+
+        dataSetManager.registerDataSet(DataSetFactory
+                .newDataSetBuilder()
+                .uuid("topRichCountries")
+                .label(COUNTRY)
+                .number(GDP_2013)
+                .number(GDP_2014)
+                .row("United States", 16768100L, 17418925L)
+                .row("China", 9240270L, 1038080L)
+                .row("Japan", 4919563L, 4616335L)
+                .row("Germany", 3730261L, 3859547L)
+                .row("United Kingdom", 2678455L, 2945146L)
+                .row("France", 2806428L, 2846889L)
+                .row("Brazil", 2245673L, 2353025L)
+                .buildDataSet());
 
         dataSetManager.registerDataSet(DataSetFactory
                 .newDataSetBuilder()

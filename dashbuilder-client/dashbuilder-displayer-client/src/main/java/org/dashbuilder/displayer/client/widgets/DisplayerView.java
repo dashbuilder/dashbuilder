@@ -69,11 +69,10 @@ public class DisplayerView extends Composite {
             container.clear();
             final FlowPanel displayerContainer = new FlowPanel();
             displayerContainer.add(displayer);
-            container.add(displayerContainer);
 
             // Add the renderer selector (if enabled)
             if (isShowRendererSelector) {
-                RendererSelector rendererSelector = new RendererSelector(displayerSettings, RendererSelector.SelectorType.RADIO, new RendererSelector.RendererSelectorEventHandler() {
+                RendererSelector rendererSelector = new RendererSelector(displayerSettings, RendererSelector.SelectorType.TAB, new RendererSelector.RendererSelectorEventHandler() {
 
                     public void onRendererSelected(RendererSelector.RendererSelectorEvent event) {
                         displayerSettings.setRenderer(event.getRenderer());
@@ -88,6 +87,7 @@ public class DisplayerView extends Composite {
                 rendererSelector.setWidth(RENDERER_SELECTOR_WIDTH);
                 container.add(rendererSelector);
             }
+            container.add(displayerContainer);
         } catch (Exception e) {
             displayMessage(e.getMessage());
         }

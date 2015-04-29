@@ -15,6 +15,8 @@
  */
 package org.dashbuilder.displayer.client.widgets;
 
+import com.github.gwtbootstrap.client.ui.RadioButton;
+import com.github.gwtbootstrap.client.ui.Tab;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
@@ -24,7 +26,10 @@ import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.*;
+import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.Panel;
+import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.displayer.DisplayerSettings;
 import org.dashbuilder.displayer.client.RendererManager;
 import org.dashbuilder.displayer.client.RendererLibrary;
@@ -40,14 +45,17 @@ public class RendererSelector extends Composite {
     private static final RendererSelectorBinder uiBinder = GWT.create(RendererSelectorBinder.class);
     
     @UiField
-    FlowPanel mainPanel;
+    Panel mainPanel;
 
     @UiField
-    FlowPanel listPanel;
+    Panel listPanel;
 
     @UiField
-    HorizontalPanel radioButtonsPanel;
+    Panel radioButtonsPanel;
     
+    @UiField
+    Panel tabPanel;
+
     @UiField
     ListBox listBox;
 
@@ -69,10 +77,13 @@ public class RendererSelector extends Composite {
             // Build the selector.
             switch (selectorType) {
                 case LIST:
-                    buildListType(renderers, rendererLibrary);
+                    buildDropdown(renderers, rendererLibrary);
                     break;
                 case RADIO:
-                    buildRadioButtonsType(renderers, rendererLibrary);
+                    buildRadioList(renderers, rendererLibrary);
+                    break;
+                case TAB:
+                    buildTabList(renderers, rendererLibrary);
                     break;
             }
 
@@ -89,11 +100,12 @@ public class RendererSelector extends Composite {
         return CommonConstants.INSTANCE.renderer_selector_title();
     }
 
-    private void buildListType(List<RendererLibrary> renderers, RendererLibrary currentLib) {
+    private void buildDropdown(List<RendererLibrary> renderers, RendererLibrary currentLib) {
 
         listBox.clear();
         listPanel.setVisible(true);
         radioButtonsPanel.setVisible(false);
+        tabPanel.setVisible(false);
 
         // Add listbox contents.
         int index = 0;
@@ -107,7 +119,6 @@ public class RendererSelector extends Composite {
 
         // The click event handler.
         listBox.addChangeHandler(new ChangeHandler() {
-            @Override
             public void onChange(ChangeEvent event) {
                 int index = listBox.getSelectedIndex();
                 String value = listBox.getValue(index);
@@ -118,27 +129,50 @@ public class RendererSelector extends Composite {
 
     }
 
-    private void buildRadioButtonsType(List<RendererLibrary> renderers, RendererLibrary currentLib) {
+    private void buildRadioList(List<RendererLibrary> renderers, RendererLibrary currentLib) {
 
         radioButtonsPanel.setVisible(true);
         listPanel.setVisible(false);
+        tabPanel.setVisible(false);
 
-        // Add listbox contents.
         for (RendererLibrary rendererLib : renderers) {
-
-            final com.github.gwtbootstrap.client.ui.RadioButton rb = new com.github.gwtbootstrap.client.ui.RadioButton(RENDERER_KEY, rendererLib.getName());
+            final RadioButton rb = new RadioButton(RENDERER_KEY, rendererLib.getName());
             rb.setValue(rendererLib.equals(currentLib));
-
             rb.addClickHandler(new ClickHandler() {
-                @Override
                 public void onClick(ClickEvent event) {
                     String value = rb.getText();
                     RendererLibrary lib = RendererManager.get().getRendererByName(value);
                     fireEvent(new RendererSelectorEvent(lib.getUUID()));
                 }
             });
-
             radioButtonsPanel.add(rb);
+            if (currentLib != null && rendererLib.equals(currentLib)) {
+                rb.setValue(true);
+            }
+        }
+    }
+
+    private void buildTabList(List<RendererLibrary> renderers, RendererLibrary currentLib) {
+
+        tabPanel.clear();
+        tabPanel.setVisible(true);
+        radioButtonsPanel.setVisible(false);
+        listPanel.setVisible(false);
+
+        for (RendererLibrary rendererLib : renderers) {
+            final Tab tab = new Tab();
+            tab.setHeading(rendererLib.getName());
+            tab.addClickHandler(new ClickHandler() {
+                public void onClick(ClickEvent event) {
+                    String value = tab.getHeading().trim();
+                    RendererLibrary lib = RendererManager.get().getRendererByName(value);
+                    fireEvent(new RendererSelectorEvent(lib.getUUID()));
+                }
+            });
+            tabPanel.add(tab.asWidget());
+            if (currentLib != null && rendererLib.equals(currentLib)) {
+                tab.setActive(true);
+            }
         }
     }
 
@@ -148,6 +182,7 @@ public class RendererSelector extends Composite {
         mainPanel.setWidth(width);
         listPanel.setWidth(width);
         radioButtonsPanel.setWidth(width);
+        tabPanel.setWidth(width);
     }
 
     @Override
@@ -156,6 +191,7 @@ public class RendererSelector extends Composite {
         mainPanel.setHeight(height);
         listPanel.setHeight(height);
         radioButtonsPanel.setHeight(height);
+        tabPanel.setHeight(height);
     }
 
     /**
@@ -192,6 +228,6 @@ public class RendererSelector extends Composite {
     }
     
     public enum SelectorType {
-        LIST, RADIO;
+        LIST, RADIO, TAB;
     }
 }

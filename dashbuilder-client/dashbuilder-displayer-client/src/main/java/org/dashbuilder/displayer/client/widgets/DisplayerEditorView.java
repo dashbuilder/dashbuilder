@@ -31,6 +31,7 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.dataset.DataSetLookup;
@@ -73,10 +74,10 @@ public class DisplayerEditorView extends Composite
     Displayer displayer;
 
     @UiField
-    SimplePanel leftPanel;
+    Panel leftPanel;
 
     @UiField
-    SimplePanel centerPanel;
+    Panel centerPanel;
 
     @UiField
     TabPanel optionsPanel;
@@ -91,7 +92,7 @@ public class DisplayerEditorView extends Composite
     Tab optionSettings;
 
     @UiField
-    HorizontalPanel dataTablePanel;
+    Panel dataTablePanel;
 
     @UiField
     CheckBox viewAsTable;

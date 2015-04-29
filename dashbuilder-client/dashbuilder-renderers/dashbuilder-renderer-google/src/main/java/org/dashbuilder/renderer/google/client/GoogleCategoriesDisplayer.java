@@ -118,7 +118,6 @@ public abstract class GoogleCategoriesDisplayer extends GoogleChartDisplayer {
 
     protected HAxis createHAxis() {
         HAxis hAxis = HAxis.create( displayerSettings.getXAxisTitle() );
-        hAxis.setSlantedText( false );
         return hAxis;
     }
 

@@ -105,26 +105,6 @@ public class GalleryTree {
                         .filterOn(false, true, true)
                         .buildSettings()
         )));
-        nodeList.add(new GalleryPlaceRequest(AppConstants.INSTANCE.gallerytree_bar_horiz_dd(), createPlaceRequest(
-                DisplayerSettingsFactory.newBarChartSettings()
-                        .subType_Bar()
-                        .dataset(SALES_OPPS)
-                        .group(PIPELINE)
-                        .column(PIPELINE, "Pipeline")
-                        .column(AMOUNT, SUM).format(AppConstants.INSTANCE.gallerytree_bar_horiz_column1(), "$ #,###")
-                        .group(STATUS)
-                        .column(STATUS, "Status")
-                        .column(AMOUNT, SUM).format(AppConstants.INSTANCE.gallerytree_bar_horiz_dd_column2(), "$ #,###")
-                        .group(SALES_PERSON)
-                        .column(SALES_PERSON, "Sales person")
-                        .column(AMOUNT, SUM).format(AppConstants.INSTANCE.gallerytree_bar_horiz_dd_column3(), "$ #,###")
-                        .title(AppConstants.INSTANCE.gallerytree_bar_horiz_dd_title())
-                        .width(600).height(400)
-                        .resizableOn(1200, 800)
-                        .margins(50, 80, 120, 120)
-                        .filterOn(true, false, false)
-                        .buildSettings()
-        )));
         nodeList.add(new GalleryPlaceRequest(AppConstants.INSTANCE.gallerytree_bar_vert(), createPlaceRequest(
                 DisplayerSettingsFactory.newBarChartSettings()
                         .subType_Column()
@@ -137,6 +117,38 @@ public class GalleryTree {
                         .width(600).height(400)
                         .resizableOn(1200, 800)
                         .margins(50, 80, 120, 120)
+                        .filterOn(false, true, true)
+                        .buildSettings()
+        )));
+        nodeList.add(new GalleryPlaceRequest(AppConstants.INSTANCE.gallerytree_bar_multi(), createPlaceRequest(
+                DisplayerSettingsFactory.newBarChartSettings()
+                        .subType_Bar()
+                        .dataset(SALES_OPPS)
+                        .group(COUNTRY)
+                        .column(COUNTRY, "Country")
+                        .column(AMOUNT, MIN).format(AppConstants.INSTANCE.gallerytree_bar_multi_column1(), "$ #,###")
+                        .column(AMOUNT, MAX).format(AppConstants.INSTANCE.gallerytree_bar_multi_column2(), "$ #,###")
+                        .column(AMOUNT, AVERAGE).format(AppConstants.INSTANCE.gallerytree_bar_multi_column3(), "$ #,###")
+                        .title(AppConstants.INSTANCE.gallerytree_bar_multi_title())
+                        .width(700).height(600)
+                        .resizableOn(1200, 800)
+                        .margins(50, 80, 120, 120)
+                        .filterOn(false, true, true)
+                        .buildSettings()
+        )));
+        nodeList.add(new GalleryPlaceRequest(AppConstants.INSTANCE.gallerytree_bar_stacked(), createPlaceRequest(
+                DisplayerSettingsFactory.newBarChartSettings()
+                        .subType_StackedColumn()
+                        .dataset(SALES_OPPS)
+                        .group(COUNTRY)
+                        .column(COUNTRY, "Country")
+                        .column(AMOUNT, MIN).format(AppConstants.INSTANCE.gallerytree_bar_multi_column1(), "$ #,###")
+                        .column(AMOUNT, MAX).format(AppConstants.INSTANCE.gallerytree_bar_multi_column2(), "$ #,###")
+                        .column(AMOUNT, AVERAGE).format(AppConstants.INSTANCE.gallerytree_bar_multi_column3(), "$ #,###")
+                        .title(AppConstants.INSTANCE.gallerytree_bar_multi_title())
+                        .width(800).height(400)
+                        .margins(50, 80, 120, 120)
+                        .legendOn("top")
                         .filterOn(false, true, true)
                         .buildSettings()
         )));
@@ -160,22 +172,6 @@ public class GalleryTree {
                         .filterOn(true, false, false)
                         .buildSettings()
         )));
-        nodeList.add(new GalleryPlaceRequest(AppConstants.INSTANCE.gallerytree_bar_multi(), createPlaceRequest(
-                DisplayerSettingsFactory.newBarChartSettings()
-                        .subType_Bar()
-                        .dataset(SALES_OPPS)
-                        .group(COUNTRY)
-                        .column(COUNTRY, "Country")
-                        .column(AMOUNT, MIN).format(AppConstants.INSTANCE.gallerytree_bar_multi_column1(), "$ #,###")
-                        .column(AMOUNT, MAX).format(AppConstants.INSTANCE.gallerytree_bar_multi_column2(), "$ #,###")
-                        .column(AMOUNT, AVERAGE).format(AppConstants.INSTANCE.gallerytree_bar_multi_column3(), "$ #,###")
-                        .title(AppConstants.INSTANCE.gallerytree_bar_multi_title())
-                        .width(700).height(600)
-                        .resizableOn(1200, 800)
-                        .margins(50, 80, 120, 120)
-                        .filterOn(false, true, true)
-                        .buildSettings()
-        )));
     }
 
     private void initPieChartCategory() {
@@ -189,6 +185,42 @@ public class GalleryTree {
                         .column(STATUS)
                         .column(AMOUNT, SUM).format(AppConstants.INSTANCE.gallerytree_pie_basic_column1(), "$ #,###")
                         .title(AppConstants.INSTANCE.gallerytree_pie_basic_title())
+                        .width(500)
+                        .margins(10, 10, 10, 150)
+                        .subType_Pie()
+                        .legendOn("right")
+                        .resizableOn(1200, 800)
+                        .filterOn(false, true, true)
+                        .buildSettings()
+        )));
+
+        nodeList.add(new GalleryPlaceRequest(AppConstants.INSTANCE.gallerytree_pie_3d(), createPlaceRequest(
+                DisplayerSettingsFactory.newPieChartSettings()
+                        .dataset(SALES_OPPS)
+                        .group(STATUS)
+                        .column(STATUS)
+                        .column(AMOUNT, SUM).format(AppConstants.INSTANCE.gallerytree_pie_3d_column1(), "$ #,###")
+                        .title(AppConstants.INSTANCE.gallerytree_pie_3d_title())
+                        .width(500)
+                        .margins(10, 10, 10, 150)
+                        .subType_Pie_3d()
+                        .legendOn("right")
+                        .resizableOn(1200, 800)
+                        .filterOn(false, true, true)
+                        .buildSettings()
+        )));
+
+        nodeList.add(new GalleryPlaceRequest(AppConstants.INSTANCE.gallerytree_pie_donut(), createPlaceRequest(
+                DisplayerSettingsFactory.newPieChartSettings()
+                        .dataset(SALES_OPPS)
+                        .group(STATUS)
+                        .column(STATUS)
+                        .column(AMOUNT, SUM).format(AppConstants.INSTANCE.gallerytree_pie_donut_column1(), "$ #,###")
+                        .title(AppConstants.INSTANCE.gallerytree_pie_donut_title())
+                        .width(500)
+                        .margins(10, 10, 10, 150)
+                        .subType_Donut()
+                        .legendOn("right")
                         .margins(10, 10, 10, 10)
                         .resizableOn(1200, 800)
                         .filterOn(false, true, true)
@@ -427,13 +459,27 @@ public class GalleryTree {
         GalleryTreeNodeList nodeList = new GalleryTreeNodeList(AppConstants.INSTANCE.gallerytree_map());
         mainNodes.add(nodeList);
 
-        nodeList.add(new GalleryPlaceRequest(AppConstants.INSTANCE.gallerytree_map_geo(), createPlaceRequest(
+        nodeList.add(new GalleryPlaceRequest(AppConstants.INSTANCE.gallerytree_map_region(), createPlaceRequest(
                 DisplayerSettingsFactory.newMapChartSettings()
                         .dataset(SALES_OPPS)
                         .group(COUNTRY)
                         .column(COUNTRY, "Country")
-                        .column(AMOUNT, SUM).format(AppConstants.INSTANCE.gallerytree_map_geo_column1(), "$ #,###")
-                        .title(AppConstants.INSTANCE.gallerytree_map_geo_title())
+                        .column(AMOUNT, SUM).format(AppConstants.INSTANCE.gallerytree_map_region_column1(), "$ #,###")
+                        .title(AppConstants.INSTANCE.gallerytree_map_region_title())
+                        .subType_Region_Map()
+                        .width(700).height(500)
+                        .margins(10, 10, 10, 10)
+                        .filterOn(false, true, true)
+                        .buildSettings()
+        )));
+        nodeList.add(new GalleryPlaceRequest(AppConstants.INSTANCE.gallerytree_map_marker(), createPlaceRequest(
+                DisplayerSettingsFactory.newMapChartSettings()
+                        .dataset(SALES_OPPS)
+                        .group(COUNTRY)
+                        .column(COUNTRY, "Country")
+                        .column(AMOUNT, SUM).format(AppConstants.INSTANCE.gallerytree_map_marker_column1(), "$ #,###")
+                        .title(AppConstants.INSTANCE.gallerytree_map_marker_title())
+                        .subType_Marker_Map()
                         .width(700).height(500)
                         .margins(10, 10, 10, 10)
                         .filterOn(false, true, true)

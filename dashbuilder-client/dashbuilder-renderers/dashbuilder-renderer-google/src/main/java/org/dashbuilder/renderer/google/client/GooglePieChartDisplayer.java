@@ -51,16 +51,16 @@ public class GooglePieChartDisplayer extends GoogleCategoriesDisplayer {
             titleHtml.setText(displayerSettings.getTitle());
         }
 
-        VerticalPanel verticalPanel = new VerticalPanel();
-        verticalPanel.add(titleHtml);
-        verticalPanel.add(filterPanel);
-        verticalPanel.add(chartPanel);
+        FlowPanel container = new FlowPanel();
+        container.add(titleHtml);
+        container.add(filterPanel);
+        container.add(chartPanel);
 
         chart = new PieChart();
         chart.addSelectHandler(createSelectHandler(chart));
 
         updateChartPanel();
-        return verticalPanel;
+        return container;
     }
 
     @Override

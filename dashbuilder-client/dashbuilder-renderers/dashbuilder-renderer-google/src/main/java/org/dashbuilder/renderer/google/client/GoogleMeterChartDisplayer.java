@@ -15,6 +15,7 @@
  */
 package org.dashbuilder.renderer.google.client;
 
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -49,10 +50,10 @@ public class GoogleMeterChartDisplayer extends GoogleChartDisplayer {
             titleHtml.setText(displayerSettings.getTitle());
         }
 
-        VerticalPanel verticalPanel = new VerticalPanel();
-        verticalPanel.add(titleHtml);
-        verticalPanel.add(chart);
-        return verticalPanel;
+        FlowPanel container = new FlowPanel();
+        container.add(titleHtml);
+        container.add(chart);
+        return container;
     }
 
     @Override

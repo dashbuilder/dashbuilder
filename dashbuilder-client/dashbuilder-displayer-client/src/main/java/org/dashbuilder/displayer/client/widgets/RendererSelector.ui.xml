@@ -1,14 +1,13 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-             xmlns:g="urn:import:com.google.gwt.user.client.ui">
+             xmlns:g="urn:import:com.google.gwt.user.client.ui"
+             xmlns:b="urn:import:com.github.gwtbootstrap.client.ui">
 
   <ui:with field="i18n" type="org.dashbuilder.displayer.client.resources.i18n.CommonConstants"/>
 
   <ui:style>
     .mainPanelStyle {
-      border: 1px solid;
       margin: 10px;
-      padding: 10px;
     }
   </ui:style>
   
@@ -20,8 +19,11 @@
     </g:FlowPanel>
 
     <!-- Radio buttons selector widget. -->
-  <g:HorizontalPanel ui:field="radioButtonsPanel" visible="false" spacing="10" ></g:HorizontalPanel>
-    
+    <g:HorizontalPanel ui:field="radioButtonsPanel" visible="false" spacing="10" />
+
+    <!-- Tab list selector widget. -->
+    <b:TabPanel ui:field="tabPanel" visible="false" tabPosition="bottom"/>
+
   </g:FlowPanel>
   
 </ui:UiBinder>

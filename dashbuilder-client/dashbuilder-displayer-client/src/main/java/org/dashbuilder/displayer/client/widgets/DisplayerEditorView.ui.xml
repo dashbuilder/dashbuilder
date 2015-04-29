@@ -19,7 +19,7 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
              xmlns:g='urn:import:com.google.gwt.user.client.ui'
-             xmlns:b="urn:import:com.github.gwtbootstrap.client.ui" xmlns:Sg="urn:import:com.github.gwtbootstrap.client.ui">
+             xmlns:b="urn:import:com.github.gwtbootstrap.client.ui">
 
   <ui:with field="i18n" type="org.dashbuilder.displayer.client.resources.i18n.CommonConstants"/>
 
@@ -38,10 +38,10 @@
       font-size: 12pt;
       float: left;
       margin-right: 25px;
-      width: 570px;
+      width: 630px;
       height: 400px;
-      max-width: 570px;
-      max-height: 400px;
+      max-width: 620px;
+      max-height: 390px;
       overflow: auto;
     }
     .dataTablePanel {
@@ -64,7 +64,7 @@
         </g:HorizontalPanel>
         <g:SimplePanel ui:field="leftPanel" styleName="{style.leftPanel}" />
       </g:VerticalPanel>
-      <g:SimplePanel ui:field="centerPanel" styleName="{style.centerPanel}" />
+      <g:FlowPanel ui:field="centerPanel" styleName="{style.centerPanel}" />
     </g:HorizontalPanel>
   </g:HTMLPanel>
 </ui:UiBinder>

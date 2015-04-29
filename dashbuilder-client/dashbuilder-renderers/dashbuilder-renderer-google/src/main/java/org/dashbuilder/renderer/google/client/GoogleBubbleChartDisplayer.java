@@ -15,6 +15,7 @@
  */
 package org.dashbuilder.renderer.google.client;
 
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.SimplePanel;
@@ -55,11 +56,11 @@ public class GoogleBubbleChartDisplayer extends GoogleCategoriesDisplayer {
             titleHtml.setText(displayerSettings.getTitle());
         }
 
-        VerticalPanel verticalPanel = new VerticalPanel();
-        verticalPanel.add(titleHtml);
-        verticalPanel.add(filterPanel);
-        verticalPanel.add(chart);
-        return verticalPanel;
+        FlowPanel container = new FlowPanel();
+        container.add(titleHtml);
+        container.add(filterPanel);
+        container.add(chart);
+        return container;
     }
 
     @Override
@@ -116,8 +117,8 @@ public class GoogleBubbleChartDisplayer extends GoogleCategoriesDisplayer {
         options.setWidth(displayerSettings.getChartWidth());
         options.setHeight(displayerSettings.getChartHeight());
         options.setBackgroundColor(displayerSettings.getChartBackgroundColor());
-        options.setHAxis(HAxis.create(googleTable.getColumnLabel(1)));
-        options.setVAxis(VAxis.create(googleTable.getColumnLabel(2)));
+        if ( displayerSettings.isXAxisShowLabels() ) options.setHAxis( createHAxis() );
+        if ( displayerSettings.isYAxisShowLabels() ) options.setVAxis( createVAxis() );
         options.setChartArea(createChartArea());
         options.setLegend( createChartLegend() );
         options.setAnimation(anim);

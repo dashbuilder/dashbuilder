@@ -60,10 +60,10 @@ public class GoogleBarChartDisplayer extends GoogleCategoriesDisplayer {
             titleHtml.setText(displayerSettings.getTitle());
         }
 
-        VerticalPanel verticalPanel = new VerticalPanel();
-        verticalPanel.add(titleHtml);
-        verticalPanel.add(filterPanel);
-        verticalPanel.add(chartPanel);
+        FlowPanel container = new FlowPanel();
+        container.add(titleHtml);
+        container.add(filterPanel);
+        container.add(chartPanel);
 
         isBarChart = DisplayerSubType.BAR.equals(displayerSettings.getSubtype()) ||
                      DisplayerSubType.BAR_STACKED.equals(displayerSettings.getSubtype());
@@ -74,7 +74,7 @@ public class GoogleBarChartDisplayer extends GoogleCategoriesDisplayer {
         chart.addSelectHandler(createSelectHandler(chart));
 
         updateChartPanel();
-        return verticalPanel;
+        return container;
     }
 
     @Override
@@ -135,7 +135,7 @@ public class GoogleBarChartDisplayer extends GoogleCategoriesDisplayer {
         if (isBarChart) {
             BarChartOptions options = BarChartOptions.create();
             options.setWidth(displayerSettings.getChartWidth());
-            options.setHeight( displayerSettings.getChartHeight() );
+            options.setHeight(displayerSettings.getChartHeight());
             options.setBackgroundColor(displayerSettings.getChartBackgroundColor());
             options.setLegend( createChartLegend() );
             options.setIsStacked(isStacked);

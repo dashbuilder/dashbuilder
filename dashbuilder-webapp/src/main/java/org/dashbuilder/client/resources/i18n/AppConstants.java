@@ -108,16 +108,6 @@ public interface AppConstants extends Messages {
 
     String gallerytree_bar_horiz_column1();
 
-    String gallerytree_bar_horiz_dd();
-
-    String gallerytree_bar_horiz_dd_title();
-
-    String gallerytree_bar_horiz_dd_column1();
-
-    String gallerytree_bar_horiz_dd_column2();
-
-    String gallerytree_bar_horiz_dd_column3();
-
     String gallerytree_bar_vert();
 
     String gallerytree_bar_vert_title();
@@ -136,6 +126,8 @@ public interface AppConstants extends Messages {
 
     String gallerytree_bar_multi();
 
+    String gallerytree_bar_stacked();
+
     String gallerytree_bar_multi_title();
 
     String gallerytree_bar_multi_column1();
@@ -151,6 +143,18 @@ public interface AppConstants extends Messages {
     String gallerytree_pie_basic_title();
 
     String gallerytree_pie_basic_column1();
+
+    String gallerytree_pie_3d();
+
+    String gallerytree_pie_3d_title();
+
+    String gallerytree_pie_3d_column1();
+
+    String gallerytree_pie_donut();
+
+    String gallerytree_pie_donut_title();
+
+    String gallerytree_pie_donut_column1();
 
     String gallerytree_pie_dd();
 
@@ -268,11 +272,17 @@ public interface AppConstants extends Messages {
 
     String gallerytree_map();
 
-    String gallerytree_map_geo();
+    String gallerytree_map_region();
 
-    String gallerytree_map_geo_title();
+    String gallerytree_map_region_title();
 
-    String gallerytree_map_geo_column1();
+    String gallerytree_map_region_column1();
+
+    String gallerytree_map_marker();
+
+    String gallerytree_map_marker_title();
+
+    String gallerytree_map_marker_column1();
 
     String gallerytree_table();
 
