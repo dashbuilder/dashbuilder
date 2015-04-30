@@ -127,6 +127,7 @@
     <dependency>
       <groupId>org.uberfire</groupId>
       <artifactId>uberfire-client-api</artifactId>
+      <scope>provided</scope>
     </dependency>
 
     <dependency>
@@ -147,6 +148,13 @@
     <dependency>
       <groupId>org.uberfire</groupId>
       <artifactId>uberfire-workbench-client</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.uberfire</groupId>
+      <artifactId>uberfire-security-client</artifactId>
+      <scope>provided</scope>
     </dependency>
 
     <dependency>
@@ -216,8 +224,15 @@
     <!-- Errai -->
 
     <dependency>
+      <groupId>de.benediktmeurer.gwt-slf4j</groupId>
+      <artifactId>gwt-slf4j</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
       <groupId>org.jboss.errai</groupId>
       <artifactId>errai-ui</artifactId>
+      <scope>provided</scope>
     </dependency>
 
     <dependency>
@@ -308,6 +323,18 @@
     <dependency>
       <groupId>org.picketlink</groupId>
       <artifactId>picketlink-idm-api</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.jboss.resteasy</groupId>
+      <artifactId>resteasy-cdi</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.jboss.resteasy</groupId>
+      <artifactId>resteasy-jaxrs</artifactId>
+      <scope>provided</scope>
     </dependency>
 
     <!-- GWT and GWT Extensions -->
@@ -411,6 +438,16 @@
             </goals>
           </execution>
         </executions>
+      </plugin>
+
+      <plugin>
+        <artifactId>maven-war-plugin</artifactId>
+        <configuration>
+          <packagingExcludes>**/javax/**/*.*,**/client/**/*.class,**/*.symbolMap</packagingExcludes>
+          <archive>
+            <addMavenDescriptor>false</addMavenDescriptor>
+          </archive>
+        </configuration>
       </plugin>
 
       <plugin>

@@ -98,7 +98,12 @@
       <artifactId>validation-api</artifactId>
       <scope>provided</scope>
     </dependency>
-    
+
+    <dependency>
+      <groupId>org.jboss.errai</groupId>
+      <artifactId>errai-validation</artifactId>
+    </dependency>
+
   </dependencies>
 
 </project>

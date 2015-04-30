@@ -140,6 +140,6 @@ In order to build the production mode:
     cd dashbuilder
     mvn clean install -DskipTests -Dfull
 
-Once build is finished, you'll find the WAR distributions for JBoss EAP/Wildfly and Tomcat into <code>dashbuilder/dashbuilder-distros/target/</code>.                
+Once build is finished, you'll find the WAR distributions for Wildfly and Tomcat into <code>dashbuilder/dashbuilder-distros/target/</code>.
    
 Just deploy the WAR file into your application server!                          

@@ -52,6 +52,8 @@
     <module>dashbuilder-client</module>
     <module>dashbuilder-packaging</module>
     <module>dashbuilder-webapp</module>
+    <module>dashbuilder-distros</module>
+    <module>dashbuilder-distros-cdi1.0</module>
   </modules>
 
   <profiles>
@@ -64,6 +66,7 @@
       </activation>
       <modules>
         <module>dashbuilder-distros</module>
+        <module>dashbuilder-distros-cdi1.0</module>
       </modules>
     </profile>
   </profiles>

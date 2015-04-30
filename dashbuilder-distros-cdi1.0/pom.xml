@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.dashbuilder</groupId>
+    <artifactId>dashbuilder-deps</artifactId>
+    <version>0.3.0-SNAPSHOT</version>
+    <relativePath>../dashbuilder-deps/pom.xml</relativePath>
+  </parent>
+
+  <artifactId>dashbuilder-distros-cdi1.0</artifactId>
+  <packaging>pom</packaging>
+
+  <name>Dashbuilder Distribution WARs for CDI 1.0 Containers</name>
+  <description>
+    This module builds the download wars for different application servers.
+  </description>
+
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <finalName>dashbuilder-${project.version}</finalName>
+          <descriptors>
+            <descriptor>src/main/assembly/assembly-jboss-eap-6_4.xml</descriptor>
+          </descriptors>
+          <archive>
+            <addMavenDescriptor>false</addMavenDescriptor>
+          </archive>
+        </configuration>
+      </plugin>
+      <!-- disable enforcer -->
+      <plugin>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>no-managed-deps</id>
+            <phase>none</phase>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.dashbuilder</groupId>
+      <artifactId>dashbuilder-webapp</artifactId>
+      <type>war</type>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.errai</groupId>
+      <artifactId>errai-weld-integration</artifactId>
+      <version>3.0.4.Final</version>
+    </dependency>
+  </dependencies>
+
+</project>
