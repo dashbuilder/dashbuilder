@@ -5,6 +5,10 @@
 		  http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
          version="2.5">
 
+  <listener>
+    <listener-class>org.jboss.weld.environment.servlet.Listener</listener-class>
+  </listener>
+
   <filter>
     <filter-name>Security Filter</filter-name>
 
@@ -55,18 +59,26 @@
   </servlet-mapping>
 
   <servlet>
+    <servlet-name>FileUploadServlet</servlet-name>
+    <servlet-class>org.uberfire.server.FileUploadServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>FileUploadServlet</servlet-name>
+    <url-pattern>/org.dashbuilder.DashbuilderShowcase/upload/*</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
     <servlet-name>UberfireFileDownloadServlet</servlet-name>
     <servlet-class>org.uberfire.server.FileDownloadServlet</servlet-class>
   </servlet>
-
   <servlet-mapping>
     <servlet-name>UberfireFileDownloadServlet</servlet-name>
     <url-pattern>/org.dashbuilder.DashbuilderShowcase/dataset/export/*</url-pattern>
   </servlet-mapping>
 
-  <listener>
-    <listener-class>org.jboss.weld.environment.servlet.Listener</listener-class>
-  </listener>
+  <welcome-file-list>
+    <welcome-file>login.jsp</welcome-file>
+  </welcome-file-list>
 
   <resource-env-ref>
     <description>Object factory for the CDI Bean Manager</description>
@@ -80,7 +92,4 @@
     <resource-env-ref-type>org.jboss.errai.bus.server.service.ErraiService</resource-env-ref-type>
   </resource-env-ref>
 
-  <welcome-file-list>
-    <welcome-file>login.jsp</welcome-file>
-  </welcome-file-list>
 </web-app>

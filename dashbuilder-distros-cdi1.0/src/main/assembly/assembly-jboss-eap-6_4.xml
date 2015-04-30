@@ -19,19 +19,20 @@
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2 http://maven.apache.org/xsd/assembly-1.1.2.xsd">
 
-  <id>eap6_3</id>
+  <id>eap6.4</id>
   <formats>
     <format>war</format>
   </formats>
 
   <includeBaseDirectory>false</includeBaseDirectory>
-  <fileSets>
-    <fileSet>
-      <directory>${project.basedir}/src/main/eap6_3</directory>
-      <outputDirectory>.</outputDirectory>
-    </fileSet>
-  </fileSets>
   <dependencySets>
+    <dependencySet>
+      <includes>
+        <include>org.jboss.errai:errai-weld-integration:jar</include>
+      </includes>
+      <unpack>false</unpack>
+      <outputDirectory>WEB-INF/lib</outputDirectory>
+    </dependencySet>
     <dependencySet>
       <includes>
         <include>org.dashbuilder:dashbuilder-webapp:war</include>
@@ -40,8 +41,8 @@
       <unpack>true</unpack>
       <unpackOptions>
         <excludes>
-          <!-- General -->
-          <exclude>WEB-INF/lib/resteasy-*.jar</exclude>
+          <!-- Errai 1.1+ CDI Compat -->
+          <exclude>WEB-INF/lib/errai-weld-integration-*.jar</exclude>
         </excludes>
       </unpackOptions>
       <useStrictFiltering>true</useStrictFiltering>
