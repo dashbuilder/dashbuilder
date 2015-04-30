@@ -62,10 +62,12 @@ public class DateUtils {
             }
             if (DateIntervalType.MONTH.equals(type)) {
                 c.set(Calendar.MONTH, ((Integer) date)-1);
+                c.set(Calendar.DAY_OF_MONTH, 1);
                 return c.getTime();
             }
             if (DateIntervalType.QUARTER.equals(type)) {
                 c.set(Calendar.MONTH, ((Integer) date)-1);
+                c.set(Calendar.DAY_OF_MONTH, 1);
                 return c.getTime();
             }
             throw new IllegalArgumentException("Interval size '" + type + "' not supported for " +
