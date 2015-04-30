@@ -51,7 +51,7 @@ public class ColumnFunctionEditor extends Composite implements ColumnDetailsEdit
 
     Listener listener = null;
     GroupFunction column = null;
-    ColumnType columnType = null;
+    ColumnType targetType = null;
     DataSetMetadata metadata = null;
 
     @UiField
@@ -94,7 +94,7 @@ public class ColumnFunctionEditor extends Composite implements ColumnDetailsEdit
             final Listener listener) {
 
         this.column = groupFunction;
-        this.columnType = targetType;
+        this.targetType = targetType;
         this.listener = listener;
         this.metadata = metadata;
 
@@ -103,7 +103,7 @@ public class ColumnFunctionEditor extends Composite implements ColumnDetailsEdit
         columnListBox.setTitle(columnTitle);
         initColumnListBox();
 
-        if (functionsEnabled && (columnType == null || isColumnNumeric())) {
+        if (functionsEnabled && (targetType == null || isColumnNumeric())) {
             columnListBox.setWidth("120px");
             functionListBox.setVisible(true);
             initFunctionListBox();
@@ -173,7 +173,7 @@ public class ColumnFunctionEditor extends Composite implements ColumnDetailsEdit
     // Internals
 
     protected boolean isColumnNumeric() {
-        return columnType != null && columnType.equals(ColumnType.NUMBER);
+        return targetType != null && targetType.equals(ColumnType.NUMBER);
     }
 
     protected void initColumnListBox() {
@@ -182,9 +182,10 @@ public class ColumnFunctionEditor extends Composite implements ColumnDetailsEdit
         for (int i=0; i<metadata.getNumberOfColumns(); i++) {
             String columnId = metadata.getColumnId(i);
             ColumnType columnType = metadata.getColumnType(i);
-            // Only add columns that match the target type
+
+            // Only add columns that match the target type.
             // When the target is not specified or is numeric then all the columns are eligible
-            if (columnType == null || isColumnNumeric() || this.columnType.equals(columnType)) {
+            if (targetType == null || columnType == null || isColumnNumeric() || targetType.equals(columnType)) {
                 columnListBox.addItem(columnId, columnId);
                 if (columnId != null && columnId.equals(column.getSourceId())) {
                     columnListBox.setSelectedIndex(i);

@@ -145,8 +145,8 @@ public class GoogleTableDisplayer extends GoogleDisplayer {
         table = new Table();
         if (displayerSettings.isTableSortEnabled()) {
             table.addSortHandler( new SortHandler() {
-                @Override public void onSort( SortEvent sortEvent ) {
-                    lastOrderedColumn = dataTable.getColumnLabel(sortEvent.getColumn());
+                public void onSort( SortEvent sortEvent ) {
+                    lastOrderedColumn = dataTable.getColumnId(sortEvent.getColumn());
                     lastSortOrder = lastSortOrder != null ? lastSortOrder.reverse() : SortOrder.ASCENDING;
                     redraw();
                 }
