@@ -240,7 +240,7 @@ public abstract class AbstractDisplayer extends Composite implements Displayer {
      */
     protected List<Interval> filterIntervals(String columnId) {
         List<Interval> selected = columnSelectionMap.get(columnId);
-        if (selected == null) return new ArrayList<Interval>();;
+        if (selected == null) return new ArrayList<Interval>();
         return selected;
     }
 

@@ -679,7 +679,7 @@ public class BarChart extends AbstractChart<BarChart>
                         @Override
                         public void onClose(IAnimation animation, IAnimationHandle handle) {
                             super.onClose(animation, handle);
-                            animateRectangle(rectanglesAttrs, initialX, initialY, new Integer(index) + 1, duration);
+                            animateRectangle(rectanglesAttrs, initialX, initialY, index + 1, duration);
                         }
                     });
         }
