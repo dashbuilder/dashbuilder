@@ -113,7 +113,7 @@ public abstract class SchedulerTask implements Runnable {
      }
 
     public String toString() {
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         buf.append("key=").append(getKey()).append(", ");
         buf.append(getDescription());
         return buf.toString();
