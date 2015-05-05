@@ -17,6 +17,7 @@ package org.dashbuilder.dataset.engine.index;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -103,7 +104,10 @@ public abstract class DataSetIndexNode extends DataSetIndexElement {
         if (functionIndexes == null) functionIndexes = new HashMap<String, Map<AggregateFunctionType, DataSetFunctionIndex>>();
 
         Map<AggregateFunctionType,DataSetFunctionIndex> columnAggFunctions = functionIndexes.get(columnId);
-        if (columnAggFunctions == null) functionIndexes.put(columnId, columnAggFunctions = new HashMap<AggregateFunctionType,DataSetFunctionIndex>());
+        if (columnAggFunctions == null) {
+            functionIndexes.put(columnId, columnAggFunctions
+                    = new EnumMap<AggregateFunctionType, DataSetFunctionIndex>(AggregateFunctionType.class));
+        }
 
         DataSetFunctionIndex index = new DataSetFunctionIndex(value, buildTime);
         columnAggFunctions.put(type, index);

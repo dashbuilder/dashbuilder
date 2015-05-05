@@ -1,13 +1,12 @@
 package org.dashbuilder.client.widgets.dataset.editor.widgets.editors.datacolumn;
 
 import com.github.gwtbootstrap.client.ui.Image;
+import java.util.EnumMap;
 import org.dashbuilder.client.widgets.resources.i18n.DataSetEditorConstants;
 import org.dashbuilder.common.client.validation.editors.DropDownImageListEditor;
 import org.dashbuilder.dataset.ColumnType;
-import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.dataset.client.resources.bundles.DataSetClientResources;
 
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -34,7 +33,7 @@ public class DataColumnTypeEditor extends DropDownImageListEditor<ColumnType> {
     }
 
     private Map<ColumnType, Image> buildAcceptableValues(final ColumnType type) {
-        final Map<ColumnType, Image> providerEditorValues = new LinkedHashMap<ColumnType, Image>();
+        final Map<ColumnType, Image> providerEditorValues = new EnumMap<ColumnType, Image>(ColumnType.class);
         if (type != null) {
             if (ColumnType.DATE.equals(type)) {
                 final Image dateImage = buildTypeSelectorWidget(ColumnType.DATE);

@@ -16,13 +16,12 @@
 package org.dashbuilder.displayer.client.prototypes;
 
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
-import org.dashbuilder.dataset.group.AggregateFunctionType;
 import org.dashbuilder.dataset.sort.SortOrder;
 import org.dashbuilder.dataset.uuid.UUIDGenerator;
 import org.dashbuilder.displayer.DisplayerSettings;
@@ -48,7 +47,7 @@ public class DisplayerPrototypes {
     @Inject
     UUIDGenerator uuidGenerator;
 
-    private Map<DisplayerType,DisplayerSettings> prototypeMap = new HashMap<DisplayerType,DisplayerSettings>();
+    private Map<DisplayerType,DisplayerSettings> prototypeMap = new EnumMap<DisplayerType,DisplayerSettings>(DisplayerType.class);
 
     @PostConstruct
     private void init() {

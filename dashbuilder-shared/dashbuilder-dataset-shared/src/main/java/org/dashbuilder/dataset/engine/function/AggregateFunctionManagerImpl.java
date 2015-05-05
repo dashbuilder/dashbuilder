@@ -16,7 +16,7 @@
 package org.dashbuilder.dataset.engine.function;
 
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
@@ -31,7 +31,8 @@ public class AggregateFunctionManagerImpl implements AggregateFunctionManager {
     /**
      * The built-in aggregate function registry.
      */
-    protected Map<AggregateFunctionType,AggregateFunction> functionMap = new HashMap<AggregateFunctionType,AggregateFunction>();
+    protected Map<AggregateFunctionType, AggregateFunction> functionMap
+            = new EnumMap<AggregateFunctionType, AggregateFunction>(AggregateFunctionType.class);
 
     @PostConstruct
     protected void init() {
