@@ -51,8 +51,8 @@ public class PieChart extends AbstractChart<PieChart>
     
     private static final ColorName[] DEFAULT_SLICE_COLORS = new ColorName[] {
         ColorName.DEEPPINK, ColorName.YELLOW, ColorName.SALMON, ColorName.CORNFLOWERBLUE,
-            ColorName.AQUA, ColorName.DEEPSKYBLUE.GREENYELLOW, ColorName.BLUEVIOLET,
-            ColorName.FUCHSIA, ColorName.MAGENTA, ColorName.MAROON
+        ColorName.AQUA, ColorName.DEEPSKYBLUE, ColorName.GREENYELLOW, ColorName.BLUEVIOLET,
+        ColorName.FUCHSIA, ColorName.MAGENTA, ColorName.MAROON
     };
 
     protected PieChart(JSONObject node, ValidationContext ctx) throws ValidationException
