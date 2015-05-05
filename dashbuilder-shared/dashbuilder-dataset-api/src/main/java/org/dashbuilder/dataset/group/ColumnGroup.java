@@ -162,8 +162,8 @@ public class ColumnGroup {
         StringBuilder out = new StringBuilder();
         out.append("column=").append(sourceId).append(" ");
         out.append("strategy=").append(strategy).append(" ");
-        if (intervalSize != null) out.append("intervalSize=").append(intervalSize).append(" ");;
-        out.append("emptyIntervals=").append(emptyIntervals).append(" ");;
+        if (intervalSize != null) out.append("intervalSize=").append(intervalSize).append(" ");
+        out.append("emptyIntervals=").append(emptyIntervals).append(" ");
         out.append("maxIntervals=").append(maxIntervals);
         return out.toString();
     }

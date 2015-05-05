@@ -356,7 +356,7 @@ public final class DataSetDefEditWorkflow {
         csvAttributesEditor = null;
         beanAttributesEditor = null;
         elasticSearchAttributesEditor = null;
-        columnEditors.clear();;
+        columnEditors.clear();
         columnDrivers.clear();
         return this;
     }

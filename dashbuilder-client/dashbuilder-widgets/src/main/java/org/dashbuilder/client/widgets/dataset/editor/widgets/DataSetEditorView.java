@@ -928,15 +928,15 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
     }
     
     private void removeNextButtonHandler() {
-        if (nextButtonHandlerRegistration != null) nextButtonHandlerRegistration.removeHandler();;
+        if (nextButtonHandlerRegistration != null) nextButtonHandlerRegistration.removeHandler();
     }
 
     private void removeCancelButtonHandler() {
-        if (cancelButtonHandlerRegistration != null) cancelButtonHandlerRegistration.removeHandler();;
+        if (cancelButtonHandlerRegistration != null) cancelButtonHandlerRegistration.removeHandler();
     }
 
     private void removetestButtonHandler() {
-        if (testButtonHandlerRegistration != null) testButtonHandlerRegistration.removeHandler();;
+        if (testButtonHandlerRegistration != null) testButtonHandlerRegistration.removeHandler();
     }
     
     private void tabErrors(final Tab tab) {
