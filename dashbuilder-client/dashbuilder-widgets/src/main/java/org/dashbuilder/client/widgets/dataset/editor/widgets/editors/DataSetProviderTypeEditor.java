@@ -17,12 +17,12 @@ package org.dashbuilder.client.widgets.dataset.editor.widgets.editors;
 
 import com.github.gwtbootstrap.client.ui.Image;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.Style;
 import com.google.gwt.editor.client.EditorError;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Widget;
+import java.util.EnumMap;
 import org.dashbuilder.client.widgets.resources.i18n.DataSetEditorConstants;
 import org.dashbuilder.common.client.validation.editors.ImageListEditor;
 import org.dashbuilder.dataprovider.DataSetProviderType;
@@ -30,7 +30,6 @@ import org.dashbuilder.dataset.client.resources.bundles.DataSetClientResources;
 import org.dashbuilder.dataset.client.validation.editors.DataSetDefEditor;
 
 import javax.enterprise.context.Dependent;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -67,7 +66,8 @@ public class DataSetProviderTypeEditor extends AbstractDataSetDefEditor implemen
         initWidget(uiBinder.createAndBindUi(this));
         
         // Initialize the ImageListEditorDecorator with image for each data provider type.
-        final Map<DataSetProviderType, ImageListEditor.Entry> providerEditorValues = new LinkedHashMap<DataSetProviderType, ImageListEditor.Entry>();
+        final Map<DataSetProviderType, ImageListEditor.Entry> providerEditorValues
+                = new EnumMap<DataSetProviderType, ImageListEditor.Entry>(DataSetProviderType.class);
         for (final DataSetProviderType type : DataSetProviderType.values()) {
             final Image _image = buildTypeSelectorWidget(type);
             final String _heading = buildTypeSelectorHeading(type);

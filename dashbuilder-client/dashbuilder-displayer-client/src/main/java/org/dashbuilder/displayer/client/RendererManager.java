@@ -16,11 +16,11 @@
 package org.dashbuilder.displayer.client;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.ArrayList;
+import java.util.EnumMap;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -49,9 +49,9 @@ public class RendererManager {
     @Inject SyncBeanManager beanManager;
 
     private List<RendererLibrary> renderersList = new ArrayList<RendererLibrary>();
-    private Map<DisplayerType, RendererLibrary> renderersDefault = new HashMap<DisplayerType, RendererLibrary>();
-    private Map<DisplayerType, List<RendererLibrary>> renderersByType = new HashMap<DisplayerType, List<RendererLibrary>>();
-    private Map<DisplayerSubType, List<RendererLibrary>> renderersBySubType = new HashMap<DisplayerSubType, List<RendererLibrary>>();
+    private Map<DisplayerType, RendererLibrary> renderersDefault = new EnumMap<DisplayerType, RendererLibrary>(DisplayerType.class);
+    private Map<DisplayerType, List<RendererLibrary>> renderersByType = new EnumMap<DisplayerType, List<RendererLibrary>>(DisplayerType.class);
+    private Map<DisplayerSubType, List<RendererLibrary>> renderersBySubType = new EnumMap<DisplayerSubType, List<RendererLibrary>>(DisplayerSubType.class);
 
     @PostConstruct
     private void init() {
