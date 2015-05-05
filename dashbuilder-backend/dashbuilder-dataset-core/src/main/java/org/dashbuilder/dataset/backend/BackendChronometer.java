@@ -50,7 +50,7 @@ public final class BackendChronometer implements Chronometer {
         long weeks = days / 7; days %= 7;
         double secondsd = (double) (seconds * 1000 + milliseconds) / 1000;
 
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         if (weeks > 0) buf.append(weeks).append(" weeks ");
         if (days > 0) buf.append(days).append("d ");
         if (hours > 0) buf.append(hours).append("h ");
