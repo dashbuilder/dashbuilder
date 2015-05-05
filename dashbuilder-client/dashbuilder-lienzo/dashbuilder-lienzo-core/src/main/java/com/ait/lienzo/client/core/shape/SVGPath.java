@@ -121,7 +121,7 @@ public class SVGPath extends Shape<SVGPath>
 
             for (int i = beg, z = pts.length; i < z; i++)
             {
-                source.push(Double.valueOf(pts[i]).doubleValue());
+                source.push(Double.parseDouble(pts[i]));
             }
             PathPartEntryJSO prev;
 
