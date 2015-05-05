@@ -193,10 +193,9 @@ public class ElasticSearchDataSetTestBase {
             new Thread("test_ELserver") {
                 @Override
                 public void run() {
-                    super.run();
                     Bootstrap.main(new String[] {});
                 }
-            }.run();
+            }.start();
         }
         
         if (populateServer) {
