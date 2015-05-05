@@ -21,6 +21,7 @@ import java.lang.annotation.ElementType;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -76,13 +77,8 @@ public class ElementDescriptorImpl implements ElementDescriptor {
 		private Set<ElementType> elementTypes;
 
 		ConstraintFinderImpl() {
-			elementTypes = new HashSet<ElementType>();
-			elementTypes.add( ElementType.TYPE );
-			elementTypes.add( ElementType.METHOD );
-			elementTypes.add( ElementType.FIELD );
-			definedInSet = new HashSet<ConstraintOrigin>();
-			definedInSet.add( ConstraintOrigin.DEFINED_LOCALLY );
-			definedInSet.add( ConstraintOrigin.DEFINED_IN_HIERARCHY );
+			elementTypes = EnumSet.of(ElementType.TYPE, ElementType.METHOD, ElementType.FIELD);
+			definedInSet = EnumSet.of(ConstraintOrigin.DEFINED_LOCALLY, ConstraintOrigin.DEFINED_IN_HIERARCHY);
 			groups = Collections.emptyList();
 		}
 

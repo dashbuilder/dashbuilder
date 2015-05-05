@@ -16,11 +16,8 @@
 package org.dashbuilder.renderer.google.client;
 
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 
 import com.googlecode.gwt.charts.client.ChartLoader;
@@ -30,10 +27,11 @@ import org.dashbuilder.displayer.DisplayerSubType;
 import org.dashbuilder.displayer.DisplayerType;
 import org.dashbuilder.displayer.client.AbstractRendererLibrary;
 import org.dashbuilder.displayer.client.Displayer;
-import org.dashbuilder.displayer.client.RendererManager;
 
 import static org.dashbuilder.displayer.DisplayerType.*;
 import static org.dashbuilder.displayer.DisplayerSubType.*;
+
+import java.util.EnumSet;
 
 /**
  * Google's Visualization API based renderer.
@@ -109,7 +107,7 @@ public class GoogleRenderer extends AbstractRendererLibrary {
      */
     public void draw(final List<Displayer> displayerList) {
         // Get the modules to load.
-        Set<ChartPackage> packageList = new HashSet<ChartPackage>();
+        Set<ChartPackage> packageList = EnumSet.noneOf(ChartPackage.class);
         for (Displayer displayer : displayerList) {
             try {
                 GoogleDisplayer googleDisplayer = (GoogleDisplayer ) displayer;
