@@ -419,7 +419,7 @@
           <extraJvmArgs>-Xmx2024m -XX:CompileThreshold=7000 -XX:MaxPermSize=512M -Derrai.jboss.home=${errai.jboss.home}</extraJvmArgs>
           <noServer>false</noServer>
           <server>org.jboss.errai.cdi.server.gwt.EmbeddedWildFlyLauncher</server>
-          <hostedWebapp>src/main/webapp</hostedWebapp>
+          <webappDirectory>${project.build.directory}/${project.build.finalName}</webappDirectory>
           <disableCastChecking>true</disableCastChecking>
         </configuration>
         <executions>
@@ -513,6 +513,7 @@
               <!-- Build all GWT permutations and optimize them -->
               <module>org.dashbuilder.DashbuilderShowcase</module>
               <draftCompile>false</draftCompile>
+              <force>true</force>
             </configuration>
           </plugin>
         </plugins>

@@ -41,6 +41,9 @@
       <unpack>true</unpack>
       <unpackOptions>
         <excludes>
+          <!-- GWT DevMode related. -->
+          <exclude>**/*devmode.js</exclude>
+          
           <!-- Errai 1.1+ CDI Compat -->
           <exclude>WEB-INF/lib/errai-weld-integration-*.jar</exclude>
         </excludes>

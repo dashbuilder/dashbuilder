@@ -16,6 +16,12 @@
       </includes>
       <outputDirectory>.</outputDirectory>
       <unpack>true</unpack>
+      <unpackOptions>
+        <excludes>
+          <!-- GWT DevMode related. -->
+          <exclude>**/*devmode.js</exclude>
+        </excludes>
+      </unpackOptions>
     </dependencySet>
   </dependencySets>
 
