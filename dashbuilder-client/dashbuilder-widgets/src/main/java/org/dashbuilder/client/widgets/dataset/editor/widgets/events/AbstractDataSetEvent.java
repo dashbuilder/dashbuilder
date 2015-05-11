@@ -4,6 +4,7 @@ import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.event.shared.GwtEvent;
 
 /**
+ * @param <H> handler type
  * @since 0.3.0
  */
 public abstract class AbstractDataSetEvent<H extends EventHandler> extends GwtEvent<H> {

@@ -6,13 +6,13 @@ package org.dashbuilder.client.widgets.dataset.editor.widgets.events;
 public class DeleteDataSetEvent extends AbstractDataSetEvent<DeleteDataSetEventHandler> {
 
     public static Type<DeleteDataSetEventHandler> TYPE = new Type<DeleteDataSetEventHandler>();
-    
+
     public DeleteDataSetEvent(String uuid) {
         super(uuid);
     }
 
     @Override
-    public Type getAssociatedType() {
+    public Type<DeleteDataSetEventHandler> getAssociatedType() {
         return TYPE;
     }
 
@@ -20,5 +20,4 @@ public class DeleteDataSetEvent extends AbstractDataSetEvent<DeleteDataSetEventH
     protected void dispatch(DeleteDataSetEventHandler handler) {
         handler.onDeleteDataSet(this);
     }
-
 }
