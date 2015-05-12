@@ -18,6 +18,7 @@ package org.dashbuilder.client;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.PostConstruct;
+import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
@@ -26,14 +27,22 @@ import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.user.client.ui.RootPanel;
 import org.dashbuilder.client.resources.i18n.AppConstants;
+import org.dashbuilder.client.dashboard.DashboardManager;
+import org.dashbuilder.client.dashboard.events.DashboardCreatedEvent;
+import org.dashbuilder.client.dashboard.events.DashboardDeletedEvent;
+import org.dashbuilder.client.dashboard.widgets.NewDashboardForm;
 import org.jboss.errai.ioc.client.api.EntryPoint;
+import org.uberfire.client.mvp.PerspectiveActivity;
 import org.uberfire.client.mvp.PlaceManager;
 import org.uberfire.client.workbench.events.ApplicationReadyEvent;
 import org.uberfire.client.workbench.widgets.menu.WorkbenchMenuBar;
 import org.uberfire.mvp.Command;
+import org.uberfire.workbench.events.NotificationEvent;
 import org.uberfire.workbench.model.menu.MenuFactory;
 import org.uberfire.workbench.model.menu.MenuItem;
+import org.uberfire.workbench.model.menu.Menus;
 
+import static org.uberfire.workbench.events.NotificationEvent.NotificationType.INFO;
 import static org.uberfire.workbench.model.menu.MenuFactory.*;
 
 /**
@@ -48,24 +57,33 @@ public class ShowcaseEntryPoint {
     @Inject
     private PlaceManager placeManager;
 
+    @Inject
+    private DashboardManager dashboardManager;
+
+    @Inject
+    private NewDashboardForm newDashboardForm;
+
+    @Inject
+    private Event<NotificationEvent> workbenchNotification;
+
     @PostConstruct
     public void startApp() {
         hideLoadingPopup();
     }
 
     private void setupMenu( @Observes final ApplicationReadyEvent event ) {
+        menubar.addMenus(createMenuBar());
+    }
 
-        menubar.addMenus(
-                newTopLevelMenu(AppConstants.INSTANCE.menu_home()).respondsWith(new Command() {
-                    public void execute() {
-                        placeManager.goTo("HomePerspective");
-                    }
-                }).endMenu().
+    private Menus createMenuBar() {
+        return newTopLevelMenu(AppConstants.INSTANCE.menu_home()).respondsWith(new Command() {
+                public void execute() {
+                    placeManager.goTo("HomePerspective");
+                }}).endMenu().
                 newTopLevelMenu(AppConstants.INSTANCE.menu_gallery()).respondsWith(new Command() {
-                    public void execute() {
-                        placeManager.goTo("DisplayerGalleryPerspective");
-                    }
-                }).endMenu().
+                public void execute() {
+                    placeManager.goTo("DisplayerGalleryPerspective");
+                }}).endMenu().
                 newTopLevelMenu(AppConstants.INSTANCE.menu_authoring())
                 .withItems(getAuthoringMenuItems())
                 .endMenu().
@@ -75,62 +93,75 @@ public class ShowcaseEntryPoint {
                 newTopLevelMenu(AppConstants.INSTANCE.menu_extensions())
                 .withItems(getExtensionsMenuItems())
                 .endMenu().
-                build()
-        );
+                build();
     }
 
     private List<? extends MenuItem> getAuthoringMenuItems() {
         final List<MenuItem> result = new ArrayList<MenuItem>(2);
-
-        result.add(MenuFactory.newSimpleItem("Data Set Authoring").respondsWith(new Command() {
-            public void execute() {
-                placeManager.goTo("DataSetAuthoringPerspective");
-            }
-        }).endMenu().build().getItems().get(0));
-
+        result.add(newMenuItem(AppConstants.INSTANCE.menu_dataset_authoring(), "DataSetAuthoringPerspective"));
         return result;
     }
-    
+
     private List<? extends MenuItem> getDashboardMenuItems() {
         final List<MenuItem> result = new ArrayList<MenuItem>(2);
 
-        result.add(MenuFactory.newSimpleItem(AppConstants.INSTANCE.menu_dashboards_salesdb()).respondsWith(new Command() {
-            public void execute() {
-                placeManager.goTo("SalesDashboardPerspective");
-            }
-        }).endMenu().build().getItems().get(0));
+        // Add the new dashboard creation link
+        result.add(MenuFactory.newSimpleItem(AppConstants.INSTANCE.menu_dashboards_new())
+                .respondsWith(getNewDashboardCommand())
+                .endMenu().build().getItems().get(0));
 
-        result.add(MenuFactory.newSimpleItem(AppConstants.INSTANCE.menu_dashboards_salesreports()).respondsWith(new Command() {
-            public void execute() {
-                placeManager.goTo("SalesReportsPerspective");
-            }
-        }).endMenu().build().getItems().get(0));
+        // Add hard-coded dashboard samples
+        result.add(newMenuItem(AppConstants.INSTANCE.menu_dashboards_salesdb(), "SalesDashboardPerspective"));
+        result.add(newMenuItem(AppConstants.INSTANCE.menu_dashboards_salesreports(), "SalesReportsPerspective"));
 
-        result.add(MenuFactory.newSimpleItem(AppConstants.INSTANCE.menu_dashboards_new()).respondsWith(new Command() {
-            public void execute() {
-                placeManager.goTo("DashboardDesignerPerspective");
-            }
-        }).endMenu().build().getItems().get(0));
+        // Add dashboards created in runtime
+        for (PerspectiveActivity activity : dashboardManager.getDashboards()) {
+            result.add(newMenuItem(activity.getIdentifier(), activity.getIdentifier()));
+        }
 
         return result;
+    }
+
+    private Command getNewDashboardCommand() {
+        return new Command() {
+            public void execute() {
+                newDashboardForm.init(new NewDashboardForm.Listener() {
+
+                    public void onOk(String name) {
+                        dashboardManager.newDashboard(name);
+                    }
+                    public void onCancel() {
+                    }
+                });
+            }
+        };
+    }
+
+    private void onDashboardCreatedEvent(@Observes DashboardCreatedEvent event) {
+        menubar.clear();
+        menubar.addMenus(createMenuBar());
+        workbenchNotification.fire(new NotificationEvent(AppConstants.INSTANCE.notification_dashboard_created(event.getDashboardId()), INFO));
+    }
+
+    private void onDashboardDeletedEvent(@Observes DashboardDeletedEvent event) {
+        menubar.clear();
+        menubar.addMenus(createMenuBar());
+        workbenchNotification.fire(new NotificationEvent(AppConstants.INSTANCE.notification_dashboard_deleted(event.getDashboardId()), INFO));
     }
 
     private List<? extends MenuItem> getExtensionsMenuItems() {
         final List<MenuItem> result = new ArrayList<MenuItem>(2);
-
-        result.add(MenuFactory.newSimpleItem(AppConstants.INSTANCE.menu_extensions_plugins()).respondsWith(new Command() {
-            public void execute() {
-                placeManager.goTo("PlugInAuthoringPerspective");
-            }
-        }).endMenu().build().getItems().get(0));
-
-        result.add(MenuFactory.newSimpleItem(AppConstants.INSTANCE.menu_extensions_apps()).respondsWith(new Command() {
-            public void execute() {
-                placeManager.goTo("AppsPerspective");
-            }
-        }).endMenu().build().getItems().get(0));
-
+        result.add(newMenuItem(AppConstants.INSTANCE.menu_extensions_plugins(), "PlugInAuthoringPerspective"));
+        result.add(newMenuItem(AppConstants.INSTANCE.menu_extensions_apps(), "AppsPerspective"));
         return result;
+    }
+    
+    private MenuItem newMenuItem(String caption, final String activityId) {
+        return MenuFactory.newSimpleItem(caption).respondsWith(new Command() {
+            public void execute() {
+                placeManager.goTo(activityId);
+            }
+        }).endMenu().build().getItems().get(0);
     }
 
     // Fade out the "Loading application" pop-up

@@ -19,6 +19,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import javax.enterprise.context.Dependent;
+import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
 import com.github.gwtbootstrap.client.ui.DropdownButton;
@@ -43,12 +44,16 @@ import org.uberfire.client.annotations.WorkbenchMenu;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
 import org.uberfire.client.annotations.WorkbenchPartView;
 import org.uberfire.client.annotations.WorkbenchScreen;
+import org.uberfire.client.mvp.PerspectiveManager;
 import org.uberfire.client.mvp.PlaceManager;
+import org.uberfire.client.workbench.PanelManager;
+import org.uberfire.client.workbench.events.ChangeTitleWidgetEvent;
 import org.uberfire.lifecycle.OnClose;
 import org.uberfire.lifecycle.OnStartup;
 import org.uberfire.mvp.Command;
 import org.uberfire.mvp.PlaceRequest;
 import org.uberfire.mvp.impl.DefaultPlaceRequest;
+import org.uberfire.workbench.model.PanelDefinition;
 import org.uberfire.workbench.model.menu.MenuFactory;
 import org.uberfire.workbench.model.menu.MenuItem;
 import org.uberfire.workbench.model.menu.Menus;
@@ -66,11 +71,15 @@ public class DisplayerScreenPresenter {
     private DisplayerView displayerView;
     DisplayerEditorPopup displayerEditor;
     private PerspectiveCoordinator perspectiveCoordinator;
+    private PerspectiveManager perspectiveManager;
+    private PanelManager panelManager;
     private DisplayerSettingsJSONMarshaller jsonMarshaller;
     private DisplayerSettings displayerSettings;
     private PlaceManager placeManager;
     private UUIDGenerator uuidGenerator;
 
+
+    private PlaceRequest placeRequest;
     private Menus menu = null;
     private boolean editEnabled = false;
     private boolean cloneEnabled = false;
@@ -83,15 +92,22 @@ public class DisplayerScreenPresenter {
     private static final int MAX_EXPORT_LIMIT = 100000;
 
     @Inject
+    private Event<ChangeTitleWidgetEvent> changeTitleEvent;
+
+    @Inject
     public DisplayerScreenPresenter(UUIDGenerator uuidGenerator,
+            PerspectiveManager perspectiveManager,
             PlaceManager placeManager,
             DisplayerView displayerView,
+            PanelManager panelManager,
             PerspectiveCoordinator perspectiveCoordinator,
             DisplayerSettingsJSONMarshaller jsonMarshaller) {
 
         this.uuidGenerator = uuidGenerator;
         this.placeManager = placeManager;
+        this.perspectiveManager = perspectiveManager;
         this.displayerView = displayerView;
+        this.panelManager = panelManager;
         this.perspectiveCoordinator = perspectiveCoordinator;
         this.jsonMarshaller = jsonMarshaller;
         this.displayerEditor =  new DisplayerEditorPopup();
@@ -100,6 +116,7 @@ public class DisplayerScreenPresenter {
 
     @OnStartup
     public void onStartup(final PlaceRequest placeRequest) {
+        this.placeRequest = placeRequest;
         String json = placeRequest.getParameter("json", "");
         if (!StringUtils.isBlank(json)) this.displayerSettings = jsonMarshaller.fromJsonString(json);
         if (displayerSettings == null) throw new IllegalArgumentException(Constants.INSTANCE.displayer_presenter_displayer_notfound());
@@ -191,17 +208,29 @@ public class DisplayerScreenPresenter {
         return new Command() {
             public void execute() {
                 perspectiveCoordinator.editOn();
-                DisplayerSettings clonedSettings = displayerSettings.cloneInstance();
-                displayerEditor.init(clonedSettings, new DisplayerEditor.Listener() {
+
+                final String currentTitle = displayerSettings.getTitle();
+                DisplayerEditorPopup displayerEditor =  new DisplayerEditorPopup();
+                displayerEditor.init(displayerSettings, new DisplayerEditor.Listener() {
 
                     public void onClose(DisplayerEditor editor) {
                         perspectiveCoordinator.editOff();
                     }
 
-                    public void onSave(DisplayerEditor editor) {
+                    public void onSave(final DisplayerEditor editor) {
                         perspectiveCoordinator.editOff();
                         adjustMenuActions(editor.getDisplayerSettings());
                         updateDisplayer(editor.getDisplayerSettings());
+
+                        String newTitle = editor.getDisplayerSettings().getTitle();
+                        if (!currentTitle.equals(newTitle)) {
+                            changeTitleEvent.fire(new ChangeTitleWidgetEvent(placeRequest, editor.getDisplayerSettings().getTitle()));
+                        }
+
+                        PanelDefinition panelDefinition = panelManager.getPanelForPlace(placeRequest);
+                        placeManager.goTo(createPlaceRequest(editor.getDisplayerSettings()), panelDefinition);
+                        placeManager.closePlace(placeRequest);
+                        perspectiveManager.savePerspectiveState(new Command() {public void execute() {}});
                     }
                 });
             }
@@ -212,18 +241,23 @@ public class DisplayerScreenPresenter {
         return new Command() {
             public void execute() {
                 perspectiveCoordinator.editOn();
-                DisplayerEditorPopup displayerEditor = new DisplayerEditorPopup();
+
                 DisplayerSettings clonedSettings = displayerSettings.cloneInstance();
                 clonedSettings.setUUID(uuidGenerator.newUuid());
+                clonedSettings.setTitle("Copy of " + clonedSettings.getTitle());
+
+                DisplayerEditorPopup displayerEditor = new DisplayerEditorPopup();
                 displayerEditor.init(clonedSettings, new DisplayerEditor.Listener() {
 
                     public void onClose(DisplayerEditor editor) {
                         perspectiveCoordinator.editOff();
                     }
 
-                    public void onSave(DisplayerEditor editor) {
+                    public void onSave(final DisplayerEditor editor) {
                         perspectiveCoordinator.editOff();
-                        placeManager.goTo(createPlaceRequest(editor.getDisplayerSettings()));
+                        PanelDefinition panelDefinition = panelManager.getPanelForPlace(placeRequest);
+                        placeManager.goTo(createPlaceRequest(editor.getDisplayerSettings()), panelDefinition);
+                        perspectiveManager.savePerspectiveState(new Command() {public void execute() {}});
                     }
                 });
             }
@@ -233,7 +267,7 @@ public class DisplayerScreenPresenter {
     private Command getExportCsvCommand() {
         return new Command() {
             public void execute() {
-                // Get all the data set rows with a maximun of 10000
+                // Get all the data set rows with a maximum of 10000
                 DataSetLookup currentLookup = getConstrainedDataSetLookup(displayerView.getDisplayer().getDataSetHandler().getCurrentDataSetLookup());
 
                 try {
@@ -257,7 +291,7 @@ public class DisplayerScreenPresenter {
     private Command getExportExcelCommand() {
         return new Command() {
             public void execute() {
-                // Get all the data set rows with a maximun of 10000
+                // Get all the data set rows with a maximum of 10000
                 DataSetLookup currentLookup = getConstrainedDataSetLookup(displayerView.getDisplayer().getDataSetHandler().getCurrentDataSetLookup());
 
                 try {

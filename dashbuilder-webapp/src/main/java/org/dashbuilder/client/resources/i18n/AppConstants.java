@@ -28,6 +28,8 @@ public interface AppConstants extends Messages {
     
     String menu_authoring();
 
+    String menu_dataset_authoring();
+
     String menu_dashboards();
 
     String menu_extensions();
@@ -41,6 +43,10 @@ public interface AppConstants extends Messages {
     String menu_extensions_plugins();
 
     String menu_extensions_apps();
+
+    String notification_dashboard_created(String id);
+
+    String notification_dashboard_deleted(String id);
 
     String loading();
 

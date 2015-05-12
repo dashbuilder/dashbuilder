@@ -208,6 +208,12 @@
       <scope>provided</scope>
     </dependency>
 
+    <dependency>
+      <groupId>org.uberfire</groupId>
+      <artifactId>uberfire-widgets-commons</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
     <!-- Log -->
 
     <dependency>
@@ -228,6 +234,11 @@
     </dependency>
 
     <!-- Errai -->
+
+    <dependency>
+      <groupId>org.jboss.errai</groupId>
+      <artifactId>errai-common</artifactId>
+    </dependency>
 
     <dependency>
       <groupId>de.benediktmeurer.gwt-slf4j</groupId>
