@@ -32,6 +32,7 @@ public enum DisplayerSubType {
     MAP_MARKERS;
 
     public static DisplayerSubType getByName(String str) {
+        if (str == null) return null;
         try {
             return valueOf(str.toUpperCase());
         } catch (Exception e) {
