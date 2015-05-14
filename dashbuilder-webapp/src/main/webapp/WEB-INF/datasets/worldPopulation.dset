@@ -1,5 +1,5 @@
 {
-    "uuid": "worldPopulation",
+    "uuid": "worldResidents",
     "name": "World Population",
     "provider": "CSV",
     "isPublic": true,

@@ -175,4 +175,5 @@ public interface DataSetEditorConstants extends ConstantsWithLookup {
     String export();
     String exportToExcel();
     String exportToCSV();
+    String defNotFound();
 }
