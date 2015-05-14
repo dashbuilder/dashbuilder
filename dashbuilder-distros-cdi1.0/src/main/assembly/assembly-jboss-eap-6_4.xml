@@ -22,6 +22,7 @@
   <id>eap6_4</id>
   <formats>
     <format>war</format>
+    <format>dir</format>
   </formats>
 
   <includeBaseDirectory>false</includeBaseDirectory>
