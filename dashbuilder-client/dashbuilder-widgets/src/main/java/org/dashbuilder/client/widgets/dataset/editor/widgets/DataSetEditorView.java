@@ -280,13 +280,7 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
     private HandlerRegistration nextButtonHandlerRegistration = null;
     private HandlerRegistration cancelButtonHandlerRegistration = null;
     private HandlerRegistration testButtonHandlerRegistration = null;
-
-    private final ClickHandler backToSpecificAttrsEditionButtonHandler = new ClickHandler() {
-        @Override
-        public void onClick(ClickEvent event) {
-            showSpecificProviderAttrsEditionView(null);
-        }
-    };
+    private HandlerRegistration backToProviderConfButtonHandlerRegistration = null;
 
     private final DataSetExportReadyCallback exportReadyCallback = new DataSetExportReadyCallback() {
         @Override
@@ -335,11 +329,9 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
         dataConfigurationTab.add(slidingPanel);
 
         filterAndColumnsEditionDisclosurePanel.addOpenHandler(openColumnsFilterPanelHandler);
-
         filterAndColumnsEditionDisclosurePanel.addCloseHandler(closeColumnsFilterPanelHandler);
         
         // Configure buttons' click handlers.
-        backToSpecificAttrsEditionButton.addClickHandler(backToSpecificAttrsEditionButtonHandler);
         exportToExcelButton.setUrl(DataSetClientResources.INSTANCE.images().excelIcon().getSafeUri());
         exportToExcelButton.setSize(EXPORT_ICON_SIZE, EXPORT_ICON_SIZE);
         exportToExcelButton.addClickHandler(exportToExcelButtonHandler);
@@ -479,11 +471,11 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
     }
 
     @Override
-    public DataSetEditor.View showSQLAttributesEditorView(final ClickHandler testHandler) {
+    public DataSetEditor.View showSQLAttributesEditorView() {
         workflow.edit(sqlDataSetDefAttributesEditor, (SQLDataSetDef) dataSetDef);
         sqlAttributesEditionViewPanel.setVisible(true);
         sqlDataSetDefAttributesEditor.setEditMode(true);
-        showSpecificProviderAttrsEditionView(testHandler);
+        showSpecificProviderAttrsEditionView();
         return this;
     }
 
@@ -492,11 +484,11 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
     }
 
     @Override
-    public DataSetEditor.View showBeanAttributesEditorView(final ClickHandler testHandler) {
+    public DataSetEditor.View showBeanAttributesEditorView() {
         workflow.edit(beanDataSetDefAttributesEditor, (BeanDataSetDef) dataSetDef);
         beanAttributesEditionViewPanel.setVisible(true);
         beanDataSetDefAttributesEditor.setEditMode(true);
-        showSpecificProviderAttrsEditionView(testHandler);
+        showSpecificProviderAttrsEditionView();
         return this;
     }
 
@@ -505,12 +497,12 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
     }
 
     @Override
-    public DataSetEditor.View showCSVAttributesEditorView(final FormPanel.SubmitCompleteHandler submitCompleteHandler, final ClickHandler testHandler) {
+    public DataSetEditor.View showCSVAttributesEditorView(final FormPanel.SubmitCompleteHandler submitCompleteHandler) {
         workflow.edit(csvDataSetDefAttributesEditor, (CSVDataSetDef) dataSetDef);
         csvAttributesEditionViewPanel.setVisible(true);
         csvDataSetDefAttributesEditor.setEditMode(true);
         csvDataSetDefAttributesEditor.addSubmitCompleteHandler(submitCompleteHandler);
-        showSpecificProviderAttrsEditionView(testHandler);
+        showSpecificProviderAttrsEditionView();
         return this;
     }
 
@@ -519,11 +511,11 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
     }
 
     @Override
-    public DataSetEditor.View showELAttributesEditorView(final ClickHandler testHandler) {
+    public DataSetEditor.View showELAttributesEditorView() {
         workflow.edit(elDataSetDefAttributesEditor, (ElasticSearchDataSetDef) dataSetDef);
         elAttributesEditionViewPanel.setVisible(true);
         elDataSetDefAttributesEditor.setEditMode(true);
-        showSpecificProviderAttrsEditionView(testHandler);
+        showSpecificProviderAttrsEditionView();
         return this;
     }
 
@@ -531,21 +523,31 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
         return elAttributesEditionViewPanel.isVisible();
     }
     
-    private void addTestButtonHandler(final ClickHandler testHandler) {
+    @Override
+    public DataSetEditor.View addTestButtonHandler(final ClickHandler testHandler) {
+        if (testButtonHandlerRegistration != null) testButtonHandlerRegistration.removeHandler();
         if (testHandler != null)
         {
-            removetestButtonHandler();
             testButtonHandlerRegistration = testButton.addClickHandler(testHandler);
         }
+        return this;
+    }
+
+    @Override
+    public DataSetEditor.View addBackToProviderConfButtonHandler(final ClickHandler testHandler) {
+        if (backToProviderConfButtonHandlerRegistration != null) backToProviderConfButtonHandlerRegistration.removeHandler();
+        if (testHandler != null)
+        {
+            backToProviderConfButtonHandlerRegistration = backToSpecificAttrsEditionButton.addClickHandler(testHandler);
+        }
+        return this;
     }
     
-    private void showSpecificProviderAttrsEditionView(final ClickHandler testHandler) 
+    private void showSpecificProviderAttrsEditionView() 
     {
         showTab(dataConfigurationTab);
         tabViewPanel.setVisible(true);
-        addTestButtonHandler(testHandler);
         slidingPanel.setWidget(specificProviderAttributesPanel);
-        // animation.run(ANIMATION_DURATION);
     }
 
     @Override
@@ -935,10 +937,6 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
         if (cancelButtonHandlerRegistration != null) cancelButtonHandlerRegistration.removeHandler();
     }
 
-    private void removetestButtonHandler() {
-        if (testButtonHandlerRegistration != null) testButtonHandlerRegistration.removeHandler();
-    }
-    
     private void tabErrors(final Tab tab) {
         if (tab != null) {
             Node first = tab.asWidget().getElement().getFirstChild();
