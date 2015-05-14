@@ -66,36 +66,36 @@ public class DisplayerEditorView extends Composite
         this.settingsEditor = settingsEditor;
     }
 
-    DisplayerEditor presenter;
-    DisplayerSettings settings;
-    DisplayerTypeSelector typeSelector;
-    DataSetLookupEditor lookupEditor;
-    DisplayerSettingsEditor settingsEditor;
-    Displayer displayer;
+    protected DisplayerEditor presenter;
+    protected DisplayerSettings settings;
+    protected DisplayerTypeSelector typeSelector;
+    protected DataSetLookupEditor lookupEditor;
+    protected DisplayerSettingsEditor settingsEditor;
+    protected Displayer displayer;
 
     @UiField
-    Panel leftPanel;
+    protected Panel leftPanel;
 
     @UiField
-    Panel centerPanel;
+    protected Panel centerPanel;
 
     @UiField
-    TabPanel optionsPanel;
+    protected TabPanel optionsPanel;
 
     @UiField
-    Tab optionType;
+    protected Tab optionType;
 
     @UiField
-    Tab optionData;
+    protected Tab optionData;
 
     @UiField
-    Tab optionSettings;
+    protected Tab optionSettings;
 
     @UiField
-    Panel dataTablePanel;
+    protected Panel dataTablePanel;
 
     @UiField
-    CheckBox viewAsTable;
+    protected CheckBox viewAsTable;
 
     @Override
     public void init(DisplayerSettings settings, DisplayerEditor presenter) {

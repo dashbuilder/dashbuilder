@@ -75,11 +75,10 @@ public class DisplayerEditor implements IsWidget,
         void close();
     }
 
-    View view = null;
-    Listener listener = null;
-
-    DisplayerSettings displayerSettings = null;
-    boolean brandNewDisplayer = true;
+    protected View view = null;
+    protected Listener listener = null;
+    protected DisplayerSettings displayerSettings = null;
+    protected boolean brandNewDisplayer = true;
 
     public DisplayerEditor() {
         SyncBeanManager beanManager = IOC.getBeanManager();

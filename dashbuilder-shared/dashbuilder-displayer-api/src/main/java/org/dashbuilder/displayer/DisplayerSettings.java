@@ -30,12 +30,11 @@ import org.jboss.errai.common.client.api.annotations.Portable;
 @Portable
 public class DisplayerSettings {
 
-    private Map<String, String> settings = new HashMap<String, String>( 30 );
-
     protected String UUID;
     protected DataSet dataSet;
     protected DataSetLookup dataSetLookup;
     protected List<ColumnSettings> columnSettingsList = new ArrayList<ColumnSettings>();
+    protected Map<String,String> settings = new HashMap<String,String>(30);
 
     public DisplayerSettings() {
     }
