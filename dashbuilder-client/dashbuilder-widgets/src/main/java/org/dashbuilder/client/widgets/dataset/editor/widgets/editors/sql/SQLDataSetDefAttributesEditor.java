@@ -130,7 +130,7 @@ public class SQLDataSetDefAttributesEditor extends AbstractDataSetDefEditor impl
         }
     }
     
-    private void enableTable() {
+    void enableTable() {
         dbTable.setEnabled(true);
         dbTable.setVisible(true);
         dbQuery.setEnabled(false);
@@ -139,7 +139,7 @@ public class SQLDataSetDefAttributesEditor extends AbstractDataSetDefEditor impl
         queryButton.setValue(false);
     }
 
-    private void enableQuery() {
+    void enableQuery() {
         dbTable.setEnabled(false);
         dbTable.setVisible(false);
         dbQuery.setEnabled(true);
