@@ -52,8 +52,6 @@
     <module>dashbuilder-client</module>
     <module>dashbuilder-packaging</module>
     <module>dashbuilder-webapp</module>
-    <module>dashbuilder-distros</module>
-    <module>dashbuilder-distros-cdi1.0</module>
   </modules>
 
   <profiles>
