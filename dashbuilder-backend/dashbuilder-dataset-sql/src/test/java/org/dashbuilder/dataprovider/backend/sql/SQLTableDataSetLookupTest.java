@@ -23,11 +23,11 @@ import org.dashbuilder.dataset.DataSetGroupTest;
 import org.dashbuilder.dataset.DataSetNestedGroupTest;
 import org.junit.Test;
 
-import static org.dashbuilder.dataset.group.AggregateFunctionType.*;
 import static org.dashbuilder.dataset.filter.FilterFactory.*;
+import static org.dashbuilder.dataset.group.AggregateFunctionType.*;
 import static org.fest.assertions.api.Assertions.*;
 
-public class SQLDataSetLookupTest extends SQLDataSetTestBase {
+public class SQLTableDataSetLookupTest extends SQLDataSetTestBase {
 
     @Test
     public void testDataSetTrim() throws Exception {

@@ -66,6 +66,8 @@ public class SQLDataSetTestBase {
     @Inject
     SQLDataSourceLocator dataSourceLocator;
 
+    String expenseReportsDsetFile = "expenseReports.dset";
+
     public static final String CREATE_TABLE = "CREATE TABLE expense_reports (\n" +
             "  id INTEGER NOT NULL,\n" +
             "  city VARCHAR(50),\n" +
@@ -75,6 +77,8 @@ public class SQLDataSetTestBase {
             "  amount NUMERIC(28,2),\n" +
             "  PRIMARY KEY(id)\n" +
             ")";
+
+    public static final String DROP_TABLE = "DROP TABLE expense_reports";
 
     Connection conn;
     Table EXPENSES = table("expense_reports");
@@ -88,8 +92,29 @@ public class SQLDataSetTestBase {
     @Before
     public void setUp() throws Exception {
 
+        // H2 in-memory
+        DataSourceLocatorMock.TYPE = "h2";
+        DataSourceLocatorMock.URL = "jdbc:h2:mem:test;DATABASE_TO_UPPER=FALSE";
+
+        // H2 local
+        //DataSourceLocatorMock.TYPE = "h2";
+        //DataSourceLocatorMock.URL = "jdbc:h2:~/test;DATABASE_TO_UPPER=FALSE";
+
+        // MySQL
+        //DataSourceLocatorMock.TYPE = "mysql";
+        //DataSourceLocatorMock.URL = "jdbc:mysql://localhost:3306/dashbuilder";
+        //DataSourceLocatorMock.USER = "root";
+
+        // Postgres
+        //DataSourceLocatorMock.TYPE = "postgres";
+        //DataSourceLocatorMock.SERVER = "localhost";
+        //DataSourceLocatorMock.DB = "dashbuilder";
+        //DataSourceLocatorMock.PORT = 5432;
+        //DataSourceLocatorMock.USER = "dashbuilder";
+        //DataSourceLocatorMock.PASSWORD = "dashbuilder";
+
         // Register the SQL data set
-        URL fileURL = Thread.currentThread().getContextClassLoader().getResource("expenseReports.dset");
+        URL fileURL = Thread.currentThread().getContextClassLoader().getResource(expenseReportsDsetFile);
         String json = IOUtils.toString(fileURL);
         SQLDataSetDef def = (SQLDataSetDef) jsonMarshaller.fromJson(json);
         dataSetDefRegistry.registerDataSetDef(def);
@@ -107,6 +132,9 @@ public class SQLDataSetTestBase {
 
     @After
     public void tearDown() throws Exception {
+        // Drop the expense reports table
+        using(conn).execute(DROP_TABLE);
+
         conn.close();
     }
 

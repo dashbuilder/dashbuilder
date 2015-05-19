@@ -24,6 +24,7 @@ import org.dashbuilder.dataset.DataSetMetadata;
 import org.dashbuilder.dataset.def.SQLDataSetDef;
 import org.dashbuilder.dataset.filter.FilterFactory;
 import org.dashbuilder.dataset.group.AggregateFunctionType;
+import org.dashbuilder.dataset.sort.SortOrder;
 import org.junit.Test;
 
 import static org.dashbuilder.dataset.Assertions.*;
@@ -63,6 +64,7 @@ public class SQLDataSetDefTest extends SQLDataSetTestBase {
                         .group("employee")
                         .column("employee")
                         .column("amount", AggregateFunctionType.SUM)
+                        .sort("employee", SortOrder.ASCENDING)
                         .buildLookup());
 
         //printDataSet(dataSet);

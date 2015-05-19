@@ -160,7 +160,7 @@ public class SQLDataSetProvider implements DataSetProvider {
     public boolean isDataSetOutdated(DataSetDef def) {
 
         // Non fetched data sets can't get outdated.
-        DataSetMetadata last = _metadataMap.remove(def.getUUID());
+        MetadataHolder last = _metadataMap.remove(def.getUUID());
         if (last == null) return false;
 
         // Check if the metadata has changed since the last time it was fetched.
@@ -216,11 +216,26 @@ public class SQLDataSetProvider implements DataSetProvider {
     
     // Internal implementation logic
 
-    protected transient Map<String,DataSetMetadata> _metadataMap = new HashMap<String,DataSetMetadata>();
+    protected class MetadataHolder {
+
+        DataSetMetadata metadata;
+        Field[] jooqFields;
+
+        public Field getField(String name) {
+            for (Field jooqField : jooqFields) {
+                if (jooqField.getName().equals(name)) {
+                    return jooqField;
+                }
+            }
+            return null;
+        }
+    }
+
+    protected transient Map<String,MetadataHolder> _metadataMap = new HashMap<String,MetadataHolder>();
 
     protected DataSetMetadata _getDataSetMetadata(SQLDataSetDef def, Connection conn) throws Exception {
-        DataSetMetadata result = _metadataMap.get(def.getUUID());
-        if (result != null) return result;
+        MetadataHolder result = _metadataMap.get(def.getUUID());
+        if (result != null) return result.metadata;
 
         int estimatedSize = 0;
         int rowCount = _getRowCount(def, conn);
@@ -282,34 +297,17 @@ public class SQLDataSetProvider implements DataSetProvider {
             throw new IllegalArgumentException("No data set columns defined for the table '" + def.getDbTable() +
                     " in database '" + def.getDataSource()+ "'");
         }
-        _metadataMap.put(def.getUUID(), result =
-                new DataSetMetadataImpl(def, def.getUUID(), rowCount,
-                        columnIds.size(), columnIds, columnTypes, estimatedSize));
-        return result;
-    }
-
-    /**
-     * <p>Given a data source connection (database and schema), list existing tables.</p> 
-     * @param def The SQL data set definiton.
-     * @param conn The connection.
-     * @return The tables for the database and schema's connection.
-     */
-    public List<String> getTables(SQLDataSetDef def, Connection conn) {
-        List<Table<?>> tables = using(conn).meta().getTables();
-        if (tables != null && !tables.isEmpty()) {
-            List<String> result = new LinkedList<String>();
-            for (Table<?> table : tables) {
-                result.add(tables.get(0).getName());
-            }
-            return result;
-        }
-        return null;
+        result = new MetadataHolder();
+        result.jooqFields = _jooqFields;
+        result.metadata = new DataSetMetadataImpl(def, def.getUUID(), rowCount, columnIds.size(), columnIds, columnTypes, estimatedSize);
+        _metadataMap.put(def.getUUID(), result);
+        return result.metadata;
     }
 
     protected Field[] _getFields(SQLDataSetDef def, Connection conn) throws Exception {
         if (!StringUtils.isBlank(def.getDbSQL())) {
             return using(conn).select()
-                    .from("(" + def.getDbSQL() + ")")
+                    .from("(" + def.getDbSQL() + ") as dbSQL")
                     .limit(1).fetch().fields();
         }
         else {
@@ -352,8 +350,15 @@ public class SQLDataSetProvider implements DataSetProvider {
     }
 
     protected Field _getJooqField(SQLDataSetDef def, String name) {
-        if (def.getDbSchema() == null) return field(name);
-        else return fieldByName(def.getDbTable(), name);
+        MetadataHolder metadataHolder = _metadataMap.get(def.getUUID());
+        if (metadataHolder == null) {
+            if (def.getDbSchema() == null) return field(name);
+            else return fieldByName(def.getDbTable(), name);
+        } else {
+            Field jooqField = metadataHolder.getField(name);
+            if (def.getDbSchema() == null) return field(name, jooqField.getDataType());
+            else return fieldByName(jooqField.getDataType(), def.getDbTable(), name);
+        }
     }
 
     protected Field _getJooqField(SQLDataSetDef def, String name, DataType type) {
@@ -367,7 +372,7 @@ public class SQLDataSetProvider implements DataSetProvider {
     }
 
     protected void _appendJooqFrom(SQLDataSetDef def, SelectSelectStep _jooqQuery) {
-        if (!StringUtils.isBlank(def.getDbSQL())) _jooqQuery.from("(" + def.getDbSQL() + ")");
+        if (!StringUtils.isBlank(def.getDbSQL())) _jooqQuery.from("(" + def.getDbSQL() + ") as dbSQL");
         else _jooqQuery.from(_getJooqTable(def));
     }
 

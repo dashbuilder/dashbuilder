@@ -31,6 +31,8 @@
     <version.com.allen-sauer.gwt.dnd>3.3.3</version.com.allen-sauer.gwt.dnd>
 
     <version.org.jooq>3.4.3</version.org.jooq>
+    <version.org.mysql-driver>5.1.6</version.org.mysql-driver>
+    <version.org.postgres-driver>9.1-901.jdbc4</version.org.postgres-driver>
     <version.org.elasticsearch>1.4.2</version.org.elasticsearch>
     <version.org.apache.lucene>4.10.2</version.org.apache.lucene>
     <version.com.googlecode.jsonsimple>1.1.1</version.com.googlecode.jsonsimple>
@@ -209,6 +211,22 @@
         <groupId>org.assertj</groupId>
         <artifactId>assertj-core</artifactId>
         <version>${version.org.assertj}</version>
+      </dependency>
+
+      <!-- Mysql testing -->
+      <dependency>
+        <groupId>mysql</groupId>
+        <artifactId>mysql-connector-java</artifactId>
+        <version>${version.org.mysql-driver}</version>
+        <scope>test</scope>
+      </dependency>
+
+      <!-- Postgres testing -->
+      <dependency>
+        <groupId>postgresql</groupId>
+        <artifactId>postgresql</artifactId>
+        <version>${version.org.postgres-driver}</version>
+        <scope>test</scope>
       </dependency>
 
     </dependencies>
