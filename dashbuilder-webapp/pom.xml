@@ -82,7 +82,7 @@
       <artifactId>dashbuilder-dataset-editor</artifactId>
       <scope>provided</scope>
     </dependency>
-    
+
     <dependency>
       <groupId>org.dashbuilder</groupId>
       <artifactId>dashbuilder-displayer-editor</artifactId>
@@ -383,6 +383,7 @@
           <deploy>${project.build.directory}/gwt-symbols-deploy</deploy>
           <localWorkers>4</localWorkers>
           <module>org.dashbuilder.FastCompiledDashbuilderShowcase</module>
+          <draftCompile>true</draftCompile>
           <logLevel>INFO</logLevel>
           <strict>true</strict>
           <compileSourcesArtifacts>
