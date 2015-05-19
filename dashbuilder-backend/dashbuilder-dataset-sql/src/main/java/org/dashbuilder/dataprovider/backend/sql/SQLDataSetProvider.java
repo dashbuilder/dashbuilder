@@ -351,11 +351,11 @@ public class SQLDataSetProvider implements DataSetProvider {
 
     protected Field _getJooqField(SQLDataSetDef def, String name) {
         MetadataHolder metadataHolder = _metadataMap.get(def.getUUID());
-        if (metadataHolder == null) {
+        Field jooqField = metadataHolder != null ? metadataHolder.getField(name) : null;
+        if (jooqField == null) {
             if (def.getDbSchema() == null) return field(name);
             else return fieldByName(def.getDbTable(), name);
         } else {
-            Field jooqField = metadataHolder.getField(name);
             if (def.getDbSchema() == null) return field(name, jooqField.getDataType());
             else return fieldByName(jooqField.getDataType(), def.getDbTable(), name);
         }
