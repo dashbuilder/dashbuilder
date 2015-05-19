@@ -56,10 +56,10 @@ public class DisplayerEditorView extends Composite
         dataTablePanel.getElement().setAttribute("cellpadding", "5");
     }
 
-    @Inject
     public DisplayerEditorView(DisplayerTypeSelector typeSelector,
             DataSetLookupEditor lookupEditor,
             DisplayerSettingsEditor settingsEditor) {
+
         this();
         this.typeSelector = typeSelector;
         this.lookupEditor = lookupEditor;
@@ -74,28 +74,28 @@ public class DisplayerEditorView extends Composite
     protected Displayer displayer;
 
     @UiField
-    protected Panel leftPanel;
+    public Panel leftPanel;
 
     @UiField
-    protected Panel centerPanel;
+    public Panel centerPanel;
 
     @UiField
-    protected TabPanel optionsPanel;
+    public TabPanel optionsPanel;
 
     @UiField
-    protected Tab optionType;
+    public Tab optionType;
 
     @UiField
-    protected Tab optionData;
+    public Tab optionData;
 
     @UiField
-    protected Tab optionSettings;
+    public Tab optionSettings;
 
     @UiField
-    protected Panel dataTablePanel;
+    public Panel dataTablePanel;
 
     @UiField
-    protected CheckBox viewAsTable;
+    public CheckBox viewAsTable;
 
     @Override
     public void init(DisplayerSettings settings, DisplayerEditor presenter) {

@@ -94,11 +94,6 @@ public class DisplayerEditor implements IsWidget,
         this.view = new DisplayerEditorView(typeSelector, lookupEditor, settingsEditor);
     }
 
-    @Inject
-    public DisplayerEditor(View view) {
-        this.view = view;
-    }
-
     public Widget asWidget() {
         return view.asWidget();
     }

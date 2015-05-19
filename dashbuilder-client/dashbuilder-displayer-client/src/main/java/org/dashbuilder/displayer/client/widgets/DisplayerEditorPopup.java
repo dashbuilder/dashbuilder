@@ -18,26 +18,21 @@ package org.dashbuilder.displayer.client.widgets;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
-import com.github.gwtbootstrap.client.ui.Modal;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.displayer.DisplayerSettings;
 import org.dashbuilder.displayer.client.resources.i18n.CommonConstants;
 import org.uberfire.ext.widgets.common.client.common.popups.BaseModal;
 
 @Dependent
-public class DisplayerEditorPopup extends Composite {
+public class DisplayerEditorPopup extends BaseModal {
 
     interface Binder extends UiBinder<Widget, DisplayerEditorPopup> {}
     private static Binder uiBinder = GWT.create(Binder.class);
-
-    @UiField(provided = true)
-    BaseModal popup = new BaseModal();
 
     @UiField(provided = true)
     DisplayerEditor editor;
@@ -46,30 +41,29 @@ public class DisplayerEditorPopup extends Composite {
         this(new DisplayerEditor());
     }
 
-    @Inject
     public DisplayerEditorPopup(DisplayerEditor editor) {
         this.editor = editor;
-        initWidget(uiBinder.createAndBindUi(this));
-        popup.setMaxHeigth("500px");
-        popup.setWidth(950);
+        add(uiBinder.createAndBindUi(this));
+        setMaxHeigth("550px");
+        setWidth(950);
     }
 
     public void init(DisplayerSettings settings, DisplayerEditor.Listener editorListener) {
         editor.init(settings, editorListener);
-        popup.setTitle(CommonConstants.INSTANCE.displayer_editor_title());
-        if (editor.isBrandNewDisplayer()) popup.setTitle(CommonConstants.INSTANCE.displayer_editor_new());
-        popup.show();
+        setTitle(CommonConstants.INSTANCE.displayer_editor_title());
+        if (editor.isBrandNewDisplayer()) setTitle(CommonConstants.INSTANCE.displayer_editor_new());
+        show();
     }
 
     @UiHandler("cancelButton")
     void cancel(final ClickEvent event) {
-        popup.hide();
+        hide();
         editor.close();
     }
 
     @UiHandler("okButton")
     void ok(final ClickEvent event) {
-        popup.hide();
+        hide();
         editor.save();
     }
 }

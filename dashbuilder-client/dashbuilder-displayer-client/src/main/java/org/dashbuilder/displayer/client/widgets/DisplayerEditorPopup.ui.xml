@@ -24,16 +24,12 @@
 
   <ui:with field="i18n" type="org.dashbuilder.displayer.client.resources.i18n.CommonConstants"/>
 
-  <g:HTMLPanel>
-    <b:Modal ui:field="popup">
-      <g:FlowPanel>
-        <dashb:DisplayerEditor ui:field="editor" />
-      </g:FlowPanel>
-      <b:ModalFooter>
-        <b:Button ui:field="okButton" icon="PLUS_SIGN" type="PRIMARY" text="{i18n.ok}"></b:Button>
-        <b:Button ui:field="cancelButton" type="DEFAULT" text="{i18n.cancel}"></b:Button>
-      </b:ModalFooter>
-    </b:Modal>
-  </g:HTMLPanel>
+  <g:FlowPanel>
+    <dashb:DisplayerEditor ui:field="editor" />
+    <b:ModalFooter>
+      <b:Button ui:field="okButton" icon="PLUS_SIGN" type="PRIMARY" text="{i18n.ok}"></b:Button>
+      <b:Button ui:field="cancelButton" type="DEFAULT" text="{i18n.cancel}"></b:Button>
+    </b:ModalFooter>
+  </g:FlowPanel>
 
 </ui:UiBinder>
