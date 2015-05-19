@@ -21,8 +21,8 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
-import org.dashbuilder.client.dashboard.events.DashboardCreatedEvent;
-import org.dashbuilder.client.dashboard.events.DashboardDeletedEvent;
+import org.dashbuilder.shared.dashboard.events.DashboardCreatedEvent;
+import org.dashbuilder.shared.dashboard.events.DashboardDeletedEvent;
 import org.dashbuilder.displayer.client.PerspectiveCoordinator;
 import org.dashbuilder.displayer.client.json.DisplayerSettingsJSONMarshaller;
 import org.jboss.errai.ioc.client.api.AfterInitialization;
