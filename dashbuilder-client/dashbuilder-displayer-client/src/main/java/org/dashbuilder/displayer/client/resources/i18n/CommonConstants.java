@@ -29,6 +29,8 @@ public interface CommonConstants extends Messages {
 
     String error();
 
+    String cause();
+
     // JSON marshalling literals
 
     String json_dataset_column_id_type_not_specified();

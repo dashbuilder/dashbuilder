@@ -71,7 +71,8 @@ public class DisplayerEditor implements IsWidget,
         void gotoDisplaySettings();
         void updateDataSetLookup(DataSetLookupConstraints constraints, DataSetMetadata metadata);
         void showTypeChangedWarning(DisplayerSettings oldSettings, DisplayerSettings newSettings);
-        void error(String msg, Exception e);
+        void error(String msg, Throwable e);
+        void error(DataSetClientServiceError error);
         void close();
     }
 
@@ -163,8 +164,7 @@ public class DisplayerEditor implements IsWidget,
 
                 @Override
                 public boolean onError(DataSetClientServiceError error) {
-                    // TODO
-                    GWT.log("Error occurred in DisplayerEditor#fetchDataSetLookup!");
+                    view.error(error);
                     return false;
                 }
             });
@@ -266,8 +266,7 @@ public class DisplayerEditor implements IsWidget,
 
                 @Override
                 public boolean onError(DataSetClientServiceError error) {
-                    // TODO
-                    GWT.log("Error occurred in DisplayerEditor#dataSetChanged!");
+                    view.error(error);
                     return false;
                 }
             });
