@@ -16,7 +16,6 @@
 package org.dashbuilder.dataprovider.backend.sql;
 
 import java.sql.Connection;
-import java.sql.Timestamp;
 import java.util.*;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
@@ -638,8 +637,7 @@ public class SQLDataSetProvider implements DataSetProvider {
                 for (GroupFunction gf : gOp.getGroupFunctions()) {
 
                     String sourceId = gf.getSourceId();
-                    if (sourceId != null) _assertColumnExists(sourceId);
-                    String columnId = gf.getColumnId() == null ?  sourceId : gf.getColumnId();
+                    String columnId = _getTargetColumnId(gf);
 
                     DataColumnImpl column = new DataColumnImpl();
                     column.setId(columnId);
@@ -701,7 +699,8 @@ public class SQLDataSetProvider implements DataSetProvider {
                 GroupFunction gf = groupOp.getGroupFunction(cg.getSourceId());
                 if (gf != null) {
                     DataSetSort sortOp = new DataSetSort();
-                    sortOp.addSortColumn(new ColumnSort(gf.getColumnId(), SortOrder.ASCENDING));
+                    String targetId = _getTargetColumnId(gf);
+                    sortOp.addSortColumn(new ColumnSort(targetId, SortOrder.ASCENDING));
                     postProcessingOps.add(sortOp);
                 }
             }
@@ -824,12 +823,13 @@ public class SQLDataSetProvider implements DataSetProvider {
                 DataSetGroup postGroup = groupOp.cloneInstance();
                 GroupFunction gf = postGroup.getGroupFunction(sourceId);
                 if (gf != null) {
-                    postGroup.getColumnGroup().setSourceId(gf.getColumnId());
-                    postGroup.getColumnGroup().setColumnId(gf.getColumnId());
+                    String targetId = _getTargetColumnId(gf);
+                    postGroup.getColumnGroup().setSourceId(targetId);
+                    postGroup.getColumnGroup().setColumnId(targetId);
                 }
                 for (GroupFunction pgf : postGroup.getGroupFunctions()) {
                     AggregateFunctionType pft = pgf.getFunction();
-                    pgf.setSourceId(pgf.getColumnId());
+                    pgf.setSourceId(_getTargetColumnId(pgf));
                     if (pft != null && (AggregateFunctionType.DISTINCT.equals(pft) || AggregateFunctionType.COUNT.equals(pft))) {
                         pgf.setFunction(AggregateFunctionType.SUM);
                     }
@@ -969,23 +969,24 @@ public class SQLDataSetProvider implements DataSetProvider {
         }
 
         protected Field _createJooqField(GroupFunction gf) {
-            String columnId = gf.getSourceId();
-            if (columnId == null) columnId = metadata.getColumnId(0);
-            else _assertColumnExists(columnId);
+            String sourceId = gf.getSourceId();
+            String targetId = gf.getColumnId();
+            if (sourceId == null) sourceId = metadata.getColumnId(0);
+            if (targetId == null) targetId = sourceId;
 
             // Raw column
             AggregateFunctionType ft = gf.getFunction();
-            Field _jooqField = _createJooqField(columnId);
-            if (ft == null) return _jooqField;
+            Field _jooqField = _createJooqField(sourceId);
+            if (ft == null) return _jooqField.as(targetId);
 
             // Aggregation function
-            if (AggregateFunctionType.SUM.equals(ft)) return _jooqField.sum();
-            if (AggregateFunctionType.MAX.equals(ft)) return _jooqField.max();
-            if (AggregateFunctionType.MIN.equals(ft)) return _jooqField.min();
-            if (AggregateFunctionType.AVERAGE.equals(ft)) return _jooqField.avg();
-            if (AggregateFunctionType.DISTINCT.equals(ft)) return _jooqField.countDistinct();
-            if (AggregateFunctionType.COUNT.equals(ft)) return _jooqField.count();
-            return _jooqField;
+            if (AggregateFunctionType.SUM.equals(ft)) return _jooqField.sum().as(targetId);
+            if (AggregateFunctionType.MAX.equals(ft)) return _jooqField.max().as(targetId);
+            if (AggregateFunctionType.MIN.equals(ft)) return _jooqField.min().as(targetId);
+            if (AggregateFunctionType.AVERAGE.equals(ft)) return _jooqField.avg().as(targetId);
+            if (AggregateFunctionType.DISTINCT.equals(ft)) return _jooqField.countDistinct().as(targetId);
+            if (AggregateFunctionType.COUNT.equals(ft)) return _jooqField.count().as(targetId);
+            return _jooqField.as(targetId);
         }
 
         protected Field _createJooqField(ColumnGroup cg) {
@@ -1101,6 +1102,12 @@ public class SQLDataSetProvider implements DataSetProvider {
             }
             throw new RuntimeException("Column '" + columnId +
                     "' not found in data set: " + metadata.getUUID());
+        }
+
+        protected String _getTargetColumnId(GroupFunction gf) {
+            String sourceId = gf.getSourceId();
+            if (sourceId != null) _assertColumnExists(sourceId);
+            return gf.getColumnId() == null ?  sourceId : gf.getColumnId();
         }
     }
 }
