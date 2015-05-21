@@ -17,6 +17,7 @@ package org.dashbuilder.dataset;
 
 import java.util.List;
 
+import org.dashbuilder.dataset.backend.EditDataSetDef;
 import org.dashbuilder.dataset.def.DataSetDef;
 import org.jboss.errai.bus.server.annotations.Remote;
 
@@ -34,6 +35,14 @@ public interface DataSetBackendServices {
     String registerDataSetDef(DataSetDef definition);
 
     /**
+     * Updates a data set definition.
+     * @param uuid The UUID of the data set definition to update.
+     * @param definition The updated data set definition attributes.
+     * @return The registered data set definition UUID.
+     */
+    String updateDataSetDef(String uuid, DataSetDef definition);
+    
+    /**
      * Removes a data set definition from the registry. 
      * @param uuid The data set definition identifier.
      */
@@ -47,11 +56,25 @@ public interface DataSetBackendServices {
     DataSet lookupDataSet(DataSetLookup lookup) throws Exception;
 
     /**
+     * Load a data set and apply several operations (filter, sort, group, ...) on top of it for a given definition.
+     * Index and cache are not used.
+     * @return null, if the data set can be retrieved.
+     */
+    DataSet lookupDataSet(DataSetDef def, DataSetLookup lookup);
+
+    /**
      * Same as lookupDataSet but only retrieves the metadata of the resulting data set.
      *
      * @return A DataSetMetadata instance containing general information about the data set.
      */
     DataSetMetadata lookupDataSetMetadata(String uuid) throws Exception;
+
+    /**
+     * Prepare a DataSetDef for edition.
+     *
+     * @return A cloned definition and the original column deifnition list.
+     */
+    EditDataSetDef prepareEdit(String uuid) throws Exception;
 
     /**
      * Get those public (shareable) data set definition (those with the public flag set to true)

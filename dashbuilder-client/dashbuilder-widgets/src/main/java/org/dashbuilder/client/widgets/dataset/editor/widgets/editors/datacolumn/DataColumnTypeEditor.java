@@ -16,29 +16,31 @@ import java.util.Map;
  */
 public class DataColumnTypeEditor extends DropDownImageListEditor<ColumnType> {
 
+    private ColumnType originalType;
+    
     public DataColumnTypeEditor() {
         super();
         fireEvents = true;
         setAcceptableValues(buildAcceptableValues(null));
     }
 
-    @Override
-    public void setValue(ColumnType value, boolean fireEvents) {
-        // Build available column type selector widgets based on current column type.
-        final Map<ColumnType, Image> acceptableValues = buildAcceptableValues(value);
+    public void setOriginalType(ColumnType originalType) {
+        this.originalType = originalType;
+        // Build available column type selector widgets based on original column type.
+        final Map<ColumnType, Image> acceptableValues = buildAcceptableValues(originalType);
         setAcceptableValues(acceptableValues);
-        
-        // Set editor's value.
-        super.setValue(value, fireEvents);
     }
 
+    /**
+     * Allowed:
+     * LABEL -> TEXT
+     * NUMBER -> LABEL
+     */
     private Map<ColumnType, Image> buildAcceptableValues(final ColumnType type) {
         final Map<ColumnType, Image> providerEditorValues = new EnumMap<ColumnType, Image>(ColumnType.class);
         if (type != null) {
             if (ColumnType.DATE.equals(type)) {
                 final Image dateImage = buildTypeSelectorWidget(ColumnType.DATE);
-                final Image labelImage = buildTypeSelectorWidget(ColumnType.LABEL);
-                providerEditorValues.put(ColumnType.LABEL, labelImage);
                 providerEditorValues.put(ColumnType.DATE, dateImage);
             } else if (ColumnType.LABEL.equals(type)) {
                 final Image textImage = buildTypeSelectorWidget(ColumnType.TEXT);
@@ -46,13 +48,13 @@ public class DataColumnTypeEditor extends DropDownImageListEditor<ColumnType> {
                 providerEditorValues.put(ColumnType.TEXT, textImage);
                 providerEditorValues.put(ColumnType.LABEL, labelImage);
             } else if (ColumnType.TEXT.equals(type)) {
-                final Image labelImage = buildTypeSelectorWidget(ColumnType.LABEL);
                 final Image textImage = buildTypeSelectorWidget(ColumnType.TEXT);
-                providerEditorValues.put(ColumnType.LABEL, labelImage);
                 providerEditorValues.put(ColumnType.TEXT, textImage);
             } else if (ColumnType.NUMBER.equals(type)) {
                 final Image numberImage = buildTypeSelectorWidget(ColumnType.NUMBER);
+                final Image labelImage = buildTypeSelectorWidget(ColumnType.LABEL);
                 providerEditorValues.put(ColumnType.NUMBER, numberImage);
+                providerEditorValues.put(ColumnType.LABEL, labelImage);
             }
         } 
         return providerEditorValues;

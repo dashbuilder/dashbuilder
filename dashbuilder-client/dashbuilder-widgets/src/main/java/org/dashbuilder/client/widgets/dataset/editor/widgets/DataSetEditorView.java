@@ -22,6 +22,7 @@ import com.github.gwtbootstrap.client.ui.constants.IconType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Node;
+import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.CloseEvent;
@@ -78,9 +79,9 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
 
     interface DataSetEditorViewStyle extends CssResource {
         String well_ghostwhite();
-        String disabledBar();
         String slidingPanel();
         String columnsFilterDisclosurePanelHeaderOpen();
+        String with100pc();
     }
 
     @UiField
@@ -126,18 +127,6 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
     Image loadingImage;
     
     @UiField
-    StackProgressBar progressBar;
-    
-    @UiField
-    Bar providerBar;
-    
-    @UiField
-    Bar columnsFilterBar;
-
-    @UiField
-    Bar advancedAttrsBar;
-    
-    @UiField
     HTMLPanel initialViewPanel;
 
     @UiField
@@ -163,6 +152,9 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
 
     @UiField
     Tab dataAdvancedConfigurationTab;
+    
+    @UiField
+    FlowPanel dataConfigurationPanel;
     
     @UiField
     FlowPanel basicAttributesEditionViewPanel;
@@ -323,7 +315,7 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
         // Create the sliding panel for data configuration tab.
         slidingPanel = new SlidingPanel();
         slidingPanel.addStyleName(style.slidingPanel());
-        slidingPanel.add(specificProviderAttributesPanel);
+        slidingPanel.add(dataConfigurationPanel);
         slidingPanel.add(filterColumnsPreviewTablePanel);
         dataConfigurationTab.clear();
         dataConfigurationTab.add(slidingPanel);
@@ -358,6 +350,7 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
             columnsFilterDisclosurePanelHeader.addStyleName(style.columnsFilterDisclosurePanelHeaderOpen());
             columnsFilterDisclosurePanelButton.setType(IconType.STEP_BACKWARD);
             columnsFilterDisclosurePanelButton.setTitle(DataSetEditorConstants.INSTANCE.hideColumnsAndFilter());
+            previewTableEditionViewPanel.removeStyleName(style.with100pc());
         }
     };
 
@@ -368,6 +361,7 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
             columnsFilterDisclosurePanelHeader.removeStyleName(style.columnsFilterDisclosurePanelHeaderOpen());
             columnsFilterDisclosurePanelButton.setType(IconType.STEP_FORWARD);
             columnsFilterDisclosurePanelButton.setTitle(DataSetEditorConstants.INSTANCE.showColumnsAndFilter());
+            previewTableEditionViewPanel.addStyleName(style.with100pc());
         }
     };
     
@@ -433,9 +427,6 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
         // View title.
         showTitle();
         
-        // Progress bar.
-        progressStep1();
-
         dataSetProviderTypeEditor.setEditMode(!isEditMode);
         providerSelectionViewPanel.setVisible(true);
 
@@ -457,17 +448,10 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
         // View title.
         showTitle();
 
-        // Progress bar.
-        progressStep1();
-
         basicAttributesEditionViewPanel.setVisible(true);
         dataSetBasicAttributesEditor.setEditMode(true);
-        activeDataConfigurationTab();
+        showSpecificProviderAttrsEditionView();
         return this;
-    }
-
-    private boolean isBasicAttributesEditionViewVisible() {
-        return basicAttributesEditionViewPanel.isVisible();
     }
 
     @Override
@@ -547,7 +531,7 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
     {
         showTab(dataConfigurationTab);
         tabViewPanel.setVisible(true);
-        slidingPanel.setWidget(specificProviderAttributesPanel);
+        slidingPanel.setWidget(dataConfigurationPanel);
     }
 
     @Override
@@ -560,9 +544,6 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
         hideLoadingView();
         showTitle();
 
-        // Progress bar.
-        progressStep2();
-        
         // Configure tabs and visibility.
         previewTableEditor.setVisible(true);
         previewTableEditor.setEditMode(true);
@@ -636,9 +617,6 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
 
         // View title.
         showTitle();
-
-        // Progress bar.
-        progressStep3();
 
         advancedAttributesEditionViewPanel.setVisible(true);
         dataSetAdvancedAttributesEditor.setEditMode(true);
@@ -724,12 +702,14 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
     public DataSetEditor.View showLoadingView() {
         loadingPopupPanel.center();
         loadingPopupPanel.setVisible(true);
+        loadingPopupPanel.getElement().getStyle().setDisplay(Style.Display.BLOCK);
         loadingPopupPanel.show();
         return this;
     }
     
     private void hideLoadingView() {
         loadingPopupPanel.setVisible(false);
+        loadingPopupPanel.getElement().getStyle().setDisplay(Style.Display.NONE);
         loadingPopupPanel.hide();
     }
 
@@ -811,36 +791,14 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
         dataAdvancedConfigurationTab.setActive(true);
     }
     
-    private void progressStep1() {
-        providerBar.removeStyleName(style.disabledBar());
-        columnsFilterBar.addStyleName(style.disabledBar());
-        advancedAttrsBar.addStyleName(style.disabledBar());
-    }
-
-    private void progressStep2() {
-        providerBar.removeStyleName(style.disabledBar());
-        columnsFilterBar.removeStyleName(style.disabledBar());
-        advancedAttrsBar.addStyleName(style.disabledBar());
-    }
-
-
-    private void progressStep3() {
-        providerBar.removeStyleName(style.disabledBar());
-        columnsFilterBar.removeStyleName(style.disabledBar());
-        advancedAttrsBar.removeStyleName(style.disabledBar());
-    }
-
-
     private void clearView() {
         titlePanel.setVisible(false);
         title.setVisible(false);
-        progressBar.setVisible(false);
         initialViewPanel.setVisible(false);
         providerSelectionViewPanel.setVisible(false);
         tabViewPanel.setVisible(false);
         hideTab(dataConfigurationTab);
         hideTab(dataAdvancedConfigurationTab);
-        basicAttributesEditionViewPanel.setVisible(false);
         advancedAttributesEditionViewPanel.setVisible(false);
         sqlAttributesEditionViewPanel.setVisible(false);
         csvAttributesEditionViewPanel.setVisible(false);
@@ -892,7 +850,6 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
             
             title.setVisible(true);
             titlePanel.setVisible(true);
-            if (!isEditMode) progressBar.setVisible(true);
 
         } else {
 

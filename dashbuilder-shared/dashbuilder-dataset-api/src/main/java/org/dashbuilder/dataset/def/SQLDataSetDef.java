@@ -95,6 +95,7 @@ public class SQLDataSetDef extends DataSetDef {
         def.setDataSource(getDataSource());
         def.setDbSchema(getDbSchema());
         def.setDbTable(getDbTable());
+        def.setDbSQL(getDbSQL());
         return def;
     }
 

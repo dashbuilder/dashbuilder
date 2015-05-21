@@ -21,6 +21,7 @@ import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetBackendServices;
 import org.dashbuilder.dataset.DataSetLookup;
 import org.dashbuilder.dataset.DataSetMetadata;
+import org.dashbuilder.dataset.backend.EditDataSetDef;
 import org.dashbuilder.dataset.client.resources.i18n.CommonConstants;
 import org.dashbuilder.dataset.def.DataSetDef;
 import org.dashbuilder.dataset.engine.group.IntervalBuilderLocator;
@@ -146,6 +147,34 @@ public class DataSetClientServices {
     }
 
     /**
+     * Obtain the data set defintion edition instance .
+     *
+     * @param uuid The UUID of the data set to edit.
+     * @throws Exception It there is an unexpected error trying to execute the lookup request.
+     */
+    public void prepareEdit(final String uuid, final DataSetEditCallback listener) throws Exception {
+        if (dataSetBackendServices != null) {
+            dataSetBackendServices.call(
+                new RemoteCallback<EditDataSetDef>() {
+                    public void callback(EditDataSetDef result) {
+                        if (result == null) listener.notFound();
+                        else {
+                            listener.callback(result);
+                        }
+                    }}, new ErrorCallback<Message>() {
+                    @Override
+                    public boolean error(Message message, Throwable throwable) {
+                        listener.onError(new DataSetClientServiceError(message, throwable));
+                        return true;
+                    }
+                    }).prepareEdit(uuid);
+        }
+        else {
+            listener.notFound();
+        }
+    }
+
+    /**
      * Get the cached metadata instance for the specified data set.
      *
      * @param uuid The UUID of the data set. Null if the metadata is not stored on client yet.
@@ -231,6 +260,42 @@ public class DataSetClientServices {
                 }
             }
         } else throw new RuntimeException(CommonConstants.INSTANCE.exc_no_client_side_data_export());
+    }
+
+    /**
+     * Process the specified data set lookup request for a given definition.
+     * @param def The data set definition
+     * @param request The data set lookup request
+     * @throws Exception It there is an unexpected error trying to execute the lookup request.
+     */
+    public void lookupDataSet(final DataSetDef def, final DataSetLookup request, final DataSetReadyCallback listener) throws Exception {
+
+        if (dataSetBackendServices != null) {
+
+            try {
+                dataSetBackendServices.call(
+                        new RemoteCallback<DataSet>() {
+                            public void callback(DataSet result) {
+                                if (result == null) listener.notFound();
+                                else listener.callback(result);
+                            }
+                        }, new ErrorCallback<Message>() {
+                            @Override
+                            public boolean error(Message message, Throwable throwable) {
+                                return listener.onError(new DataSetClientServiceError(message, throwable));
+                            }
+                        })
+                        .lookupDataSet(def, request);
+
+            } catch (Exception e) {
+                listener.onError(new DataSetClientServiceError(null, e));
+            }
+            
+        }
+        // Data set not found on client.
+        else {
+            listener.notFound();
+        }
     }
 
     /**
@@ -400,6 +465,26 @@ public class DataSetClientServices {
                 return registerCallback.onError(new DataSetClientServiceError(o, throwable));
             }
         }).registerDataSetDef(dataSetDef);
+    }
+
+    /**
+     * <p>Updates a data set definition on backend.</p> 
+     * @param originalUUID The UUID of the data set definition to update.
+     * @param dataSetDef The updated data set definition attributes.
+     * @param registerCallback The callback when data set definition has been updated. It returns the UUID of the original data set definition that will be updated.
+     */
+    public void updateDataSetDef(final String originalUUID, final DataSetDef dataSetDef, final DataSetDefRegisterCallback registerCallback) {
+        dataSetBackendServices.call(new RemoteCallback<String>() {
+            @Override
+            public void callback(String o) {
+                registerCallback.success(o);
+            }
+        }, new ErrorCallback<Message>() {
+            @Override
+            public boolean error(Message o, Throwable throwable) {
+                return registerCallback.onError(new DataSetClientServiceError(o, throwable));
+            }
+        }).updateDataSetDef(originalUUID, dataSetDef);
     }
 
     /**

@@ -235,9 +235,9 @@ public class DataSetDefJSONMarshaller {
                 }
 
                 ColumnType type = ColumnType.TEXT;
-                if (columnType.equals("label")) type = ColumnType.LABEL;
-                else if (columnType.equals("date")) type = ColumnType.DATE;
-                else if (columnType.equals("number")) type = ColumnType.NUMBER;
+                if (columnType.equalsIgnoreCase("label")) type = ColumnType.LABEL;
+                else if (columnType.equalsIgnoreCase("date")) type = ColumnType.DATE;
+                else if (columnType.equalsIgnoreCase("number")) type = ColumnType.NUMBER;
 
                 def.addColumn(columnId, type);
 

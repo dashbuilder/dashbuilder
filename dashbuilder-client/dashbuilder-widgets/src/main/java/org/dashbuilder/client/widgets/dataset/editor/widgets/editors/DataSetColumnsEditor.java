@@ -119,29 +119,41 @@ public class DataSetColumnsEditor extends AbstractEditor {
         return addHandler(handler, ColumnsChangedEvent.TYPE);
     }
 
+    private final ValueChangeHandler<ColumnType> columnTypeChangeHandler = new ValueChangeHandler<ColumnType>() {
+        @Override
+        public void onValueChange(ValueChangeEvent<ColumnType> event) {
+            fireColumnsChanged();
+        }
+    };
+    
     public void build(final List<DataColumnDef> columns, final DataSet dataSet, final DataSetDefEditWorkflow workflow) {
         clear();
 
         if (columns != null && workflow != null) {
-            for (final DataColumnDef column : columns) {
-                
+            
+            // Remove workflow column status.
+            workflow.removeAllColumns();
+            
+            for (final DataColumnDef _column : columns) {
+                final DataColumnDef column = _column.clone();
+                final DataColumn dataSetColumn = hasColumn(column, dataSet.getColumns());
+                final  boolean enabled = dataSetColumn != null;
+                if (enabled) {
+                    column.setColumnType(dataSetColumn.getColumnType());
+                }
                 // Create the editor for each column.
                 DataColumnBasicEditor columnEditor = new DataColumnBasicEditor();
-                columnEditor.addValueChangeHandler(new ValueChangeHandler<ColumnType>() {
-                    @Override
-                    public void onValueChange(ValueChangeEvent<ColumnType> event) {
-                        fireColumnsChanged();
-                    }
-                });
-                
+                columnEditor.setEditMode(enabled);
+                columnEditor.addValueChangeHandler(columnTypeChangeHandler);
+
                 columnEditor.setEditorId(column.getId());
+                columnEditor.setOriginalType(_column.getColumnType());
                 columnEditors.put(column, columnEditor);
 
                 // Link the column editor with workflow driver.
                 workflow.edit(columnEditor, column);
                 
                 // Create the UI panel for the column.
-                final boolean enabled = hasColumn(column, dataSet.getColumns());
                 final boolean canRemove = dataSet != null && dataSet.getColumns().size() > 1;
                 Panel columnPanel = createColumn(column, columnEditor, workflow, enabled, canRemove);
                 if (enabled) this.columns.add(column);
@@ -154,12 +166,12 @@ public class DataSetColumnsEditor extends AbstractEditor {
         
     }
     
-    private boolean hasColumn(final DataColumnDef def, final List<DataColumn> columns) {
-        if (columns == null || def == null) return false;
+    private DataColumn hasColumn(final DataColumnDef def, final List<DataColumn> columns) {
+        if (columns == null || def == null) return null;
         for (final DataColumn c : columns) {
-            if (c.getId().equals(def.getId())) return true;
+            if (c.getId().equals(def.getId())) return c;
         }
-        return false;
+        return null;
     }
     
     private Panel createColumn(final DataColumnDef column, final DataColumnBasicEditor editor, final DataSetDefEditWorkflow workflow, final boolean enabled, final boolean canRemove) {
@@ -188,6 +200,7 @@ public class DataSetColumnsEditor extends AbstractEditor {
     }
 
     private void removeColumn(final DataColumnBasicEditor editor, final DataColumnDef column, final DataSetDefEditWorkflow workflow) {
+        editor.setEditMode(false);
         workflow.remove(editor, column);
         columnEditors.remove(column);
         columns.remove(column);
@@ -196,6 +209,7 @@ public class DataSetColumnsEditor extends AbstractEditor {
 
     private void addColumn(final DataColumnDef column, final DataSetDefEditWorkflow workflow) {
         DataColumnBasicEditor columnEditor = new DataColumnBasicEditor();
+        columnEditor.setEditMode(true);
         columnEditor.setEditorId(column.getId());
         workflow.edit(columnEditor, column);
         columnEditors.put(column, columnEditor);

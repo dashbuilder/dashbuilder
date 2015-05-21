@@ -16,23 +16,16 @@
     .mainPanel {
       font-size: 12pt;
       margin: 10px;
+      padding-top: 5px;
     }
 
     .titlePanel {
       vertical-align: middle;
-      margin-bottom: 30px;
+      margin-bottom: 10px;
     }
 
     .title {
-    }
-
-    .progressBar {
-      width: 100%;
-    }
-
-    .disabledBar {
-      filter: alpha(opacity=5);
-      opacity: 0.2;
+      margin: 0px;
     }
 
     .initialViewPanel {
@@ -51,7 +44,7 @@
     }
     .columnsEditor {
       overflow: auto;
-      height: 600px;
+      height: 400px;
     }
     .buttonsPanel {
       margin-top: 0px;
@@ -68,7 +61,7 @@
       box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05) inset;
       margin-bottom: 20px;
       min-height: 20px;
-      padding: 19px;
+      padding: 10px;
     }
 
     .well_ghostwhite {
@@ -78,6 +71,7 @@
     .newDataSet {
       float: left;
       margin-left: 5px;
+      font-size: medium;
     }
 
     .nextStepPanel {
@@ -159,9 +153,9 @@
     }
     .columnsFilterPanel {
       float: left;
-      width: 350px;
+      width: 340px;
       overflow: hidden;
-      height: 600px;
+      height: 450px;
     }
 
     .specificProviderAttributesPanel {
@@ -171,17 +165,17 @@
     .previewTablePanel {
       margin-left: 15px;
       overflow: hidden;
-      height: 600px;
+      height: 500px;
     }
     .previewTable {
       overflow: auto;
-      height: 570px;
+      height: 470px;
       width: 100%;
       margin-top: 30px;
     }
     .slidingPanel {
       width: 100%;
-      height: 650px;
+      height: 500px;
       overflow: hidden;
     }
 
@@ -200,6 +194,9 @@
 
     .clear {
       clear: both;
+    }
+    .with100pc {
+      width: 100%;
     }
   </ui:style>
   
@@ -247,22 +244,9 @@
       <g:HTML text="{i18n.loading}..." addStyleNames="{style.loadingText}"/>
     </dash-client-widgets:TimeoutPopupPanel>
     
-    <!-- Navigation. -->
-    <b:StackProgressBar type="STRIPED" addStyleNames="{style.progressBar}" ui:field="progressBar">
-      <b:Tooltip text="{i18n.configureProvider}" placement="BOTTOM">
-        <b:Bar color="DEFAULT" text="{i18n.provider}" percent="33" ui:field="providerBar"/>
-      </b:Tooltip>
-      <b:Tooltip text="{i18n.configureColumns} {i18n.configureInitialFilter}" placement="BOTTOM">
-        <b:Bar color="INFO" text="{i18n.colsAndFilter}" percent="34" title="{i18n.colsAndFilter}" ui:field="columnsFilterBar" addStyleNames="{style.disabledBar}"/>
-      </b:Tooltip>
-      <b:Tooltip text="{i18n.configureCacheAndRefreshSettings}" placement="BOTTOM">
-        <b:Bar color="SUCCESS" text="{i18n.cacheAndRefresh}" percent="33" title="{i18n.cacheAndRefresh}" ui:field="advancedAttrsBar" addStyleNames="{style.disabledBar}"/>
-      </b:Tooltip>
-    </b:StackProgressBar>
-    
     <!-- Title. -->
     <g:FlowPanel addStyleNames="{style.titlePanel}" ui:field="titlePanel">
-      <b:Heading size="1" text="" ui:field="title" addStyleNames="{style.title}"/>  
+      <b:Heading size="3" text="" ui:field="title" addStyleNames="{style.title}"/>  
     </g:FlowPanel>
 
     <g:HTMLPanel ui:field="initialViewPanel" addStyleNames="{style.initialViewPanel}">
@@ -274,11 +258,11 @@
       <g:HTML text="{i18n.nextSteps}:" addStyleNames="{style.nextStep} "/>
       <ol>
         <li>
-          <g:FlowPanel addStyleNames="{style.nextStepPanel}">
-            <g:HTML text="{i18n.defineA} " addStyleNames="{style.newDataSet} "/>
-            <g:Hyperlink text="{i18n.newDataSet} " ui:field="newDataSetLink" addStyleNames="{style.newDataSet} "/>
-            <g:HTML text="{i18n.toFetchYourDataFromExtSystem}" addStyleNames="{style.newDataSet} "/>
-          </g:FlowPanel>
+          <g:HorizontalPanel addStyleNames="{style.nextStepPanel}">
+              <g:HTML text="{i18n.defineA} " addStyleNames="{style.newDataSet} "/>
+              <g:Hyperlink text="{i18n.newDataSet} " ui:field="newDataSetLink" addStyleNames="{style.newDataSet} "/>
+              <g:HTML text="{i18n.toFetchYourDataFromExtSystem}" addStyleNames="{style.newDataSet} "/>
+          </g:HorizontalPanel>
         </li>
         <li>
           <g:HTML text="{i18n.createDataDisplayers}" addStyleNames="{style.nextStep} "/>
@@ -294,11 +278,6 @@
       <dash-dset-editors:DataSetProviderTypeEditor editMode="true" ui:field="dataSetProviderTypeEditor" addStyleNames="{style.providerTypeEditor}"/>
     </g:FlowPanel>
 
-    <g:FlowPanel ui:field="basicAttributesEditionViewPanel" addStyleNames="{style.editorPanel}">
-      <dash-dset-editors:DataSetBasicAttributesEditor editMode="true" ui:field="dataSetBasicAttributesEditor"/>
-      <g:FlowPanel addStyleNames="{style.clear} "/>
-    </g:FlowPanel>
-
     <g:FlowPanel ui:field="tabViewPanel" >
       
       <b:TabPanel tabPosition="above" ui:field="tabPanel" addStyleNames="{style.tabPanel} {style.editorPanel}">
@@ -307,36 +286,44 @@
         <b:Tab heading="{i18n.tab_dataConfiguration}" active="true" ui:field="dataConfigurationTab" >
 
           <!-- NOTE: In view Java class, those two panels are handled by a SlidingPanel not bind here. -->
-          
-          <g:FlowPanel ui:field="specificProviderAttributesPanel" addStyleNames="{style.editorPanel} {style.specificProviderAttributesPanel} ">
 
-            <g:FlowPanel ui:field="sqlAttributesEditionViewPanel" >
-              <dash-dset-editors-sql:SQLDataSetDefAttributesEditor editMode="true" ui:field="sqlDataSetDefAttributesEditor"/>
+          <g:FlowPanel ui:field="dataConfigurationPanel" >
+
+            <g:FlowPanel ui:field="basicAttributesEditionViewPanel" addStyleNames="{style.editorPanel}">
+              <dash-dset-editors:DataSetBasicAttributesEditor editMode="true" ui:field="dataSetBasicAttributesEditor"/>
             </g:FlowPanel>
 
-            <g:FlowPanel ui:field="csvAttributesEditionViewPanel" >
-              <dash-dset-editors-csv:CSVDataSetDefAttributesEditor editMode="true" ui:field="csvDataSetDefAttributesEditor"/>
+            <g:FlowPanel ui:field="specificProviderAttributesPanel" addStyleNames="{style.editorPanel} {style.specificProviderAttributesPanel} ">
+
+              <g:FlowPanel ui:field="sqlAttributesEditionViewPanel" >
+                <dash-dset-editors-sql:SQLDataSetDefAttributesEditor editMode="true" ui:field="sqlDataSetDefAttributesEditor"/>
+              </g:FlowPanel>
+
+              <g:FlowPanel ui:field="csvAttributesEditionViewPanel" >
+                <dash-dset-editors-csv:CSVDataSetDefAttributesEditor editMode="true" ui:field="csvDataSetDefAttributesEditor"/>
+              </g:FlowPanel>
+
+              <g:FlowPanel ui:field="beanAttributesEditionViewPanel" >
+                <dash-dset-editors-static:BeanDataSetDefAttributesEditor editMode="true" ui:field="beanDataSetDefAttributesEditor"/>
+              </g:FlowPanel>
+
+              <g:FlowPanel ui:field="elAttributesEditionViewPanel" >
+                <dash-dset-editors-el:ELDataSetDefAttributesEditor editMode="true" ui:field="elDataSetDefAttributesEditor"/>
+              </g:FlowPanel>
+
+              <!-- Test provider settings button. -->
+              <g:FlowPanel ui:field="testButtonPanel" addStyleNames="{style.testButtonPanel} ">
+
+                <b:Popover showDelay="1000" text="{i18n.test_description}" heading="{i18n.test}">
+                  <b:Button ui:field="testButton" title="{i18n.test}"
+                            text="{i18n.test}" size="SMALL" icon="CHEVRON_RIGHT"
+                            addStyleNames="{style.testButton} " type="PRIMARY"/>
+                </b:Popover>
+
+              </g:FlowPanel>
+
             </g:FlowPanel>
-
-            <g:FlowPanel ui:field="beanAttributesEditionViewPanel" >
-              <dash-dset-editors-static:BeanDataSetDefAttributesEditor editMode="true" ui:field="beanDataSetDefAttributesEditor"/>
-            </g:FlowPanel>
-
-            <g:FlowPanel ui:field="elAttributesEditionViewPanel" >
-              <dash-dset-editors-el:ELDataSetDefAttributesEditor editMode="true" ui:field="elDataSetDefAttributesEditor"/>
-            </g:FlowPanel>
-
-            <!-- Test provider settings button. -->
-            <g:FlowPanel ui:field="testButtonPanel" addStyleNames="{style.testButtonPanel} ">
-
-              <b:Popover showDelay="1000" text="{i18n.test_description}" heading="{i18n.test}">
-                <b:Button ui:field="testButton" title="{i18n.test}"
-                          text="{i18n.test}" size="SMALL" icon="CHEVRON_RIGHT"
-                          addStyleNames="{style.testButton} " type="PRIMARY"/>
-              </b:Popover>
-
-            </g:FlowPanel>
-
+            
           </g:FlowPanel>
 
           <g:FlowPanel ui:field="filterColumnsPreviewTablePanel" >

@@ -131,6 +131,12 @@ public final class DataSetDefEditWorkflow {
         return this;
     }
 
+    public DataSetDefEditWorkflow removeAllColumns() {
+        columnEditors.clear();
+        columnDrivers.clear();
+        return this;
+    }
+
     public DataSetDefEditWorkflow edit(final SQLDataSetDefAttributesEditor view, final SQLDataSetDef p) {
         sqlAttributesDriver.initialize(view);
         sqlAttributesDriver.edit(p);

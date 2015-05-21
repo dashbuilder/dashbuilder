@@ -195,10 +195,12 @@ public class DataSetDefDeployer {
         if (dataSetDef != null) 
         {
             final String uuid = dataSetDef.getUUID();
+            String fName = dataSetDef.getDefFilePath();
+            final File f =  (fName == null || fName.trim().length() == 0) ? new File(directory, uuid + ".dset") : new File(fName);
             final String json = dataSetDefJSONMarshaller.toJsonString(dataSetDef);
             FileWriter writer = null;
             try {
-                writer = new FileWriter(new File(directory, uuid + ".dset"));
+                writer = new FileWriter(f);
                 writer.write(json);
             } catch (IOException e) {
                 throw e;

@@ -26,9 +26,8 @@ import org.dashbuilder.client.widgets.dataset.editor.DataSetDefEditWorkflow;
 import org.dashbuilder.client.widgets.dataset.editor.widgets.editors.DataSetColumnsEditor;
 import org.dashbuilder.client.widgets.resources.i18n.DataSetEditorConstants;
 import org.dashbuilder.dataprovider.DataSetProviderType;
-import org.dashbuilder.dataset.ColumnType;
-import org.dashbuilder.dataset.DataSet;
-import org.dashbuilder.dataset.DataSetMetadata;
+import org.dashbuilder.dataset.*;
+import org.dashbuilder.dataset.backend.EditDataSetDef;
 import org.dashbuilder.dataset.client.*;
 import org.dashbuilder.dataset.def.*;
 import org.dashbuilder.dataset.events.DataSetDefRegisteredEvent;
@@ -38,6 +37,7 @@ import org.dashbuilder.dataset.group.DataSetGroup;
 import org.dashbuilder.displayer.DisplayerSettings;
 import org.dashbuilder.displayer.DisplayerSettingsFactory;
 import org.dashbuilder.displayer.TableDisplayerSettingsBuilder;
+import org.dashbuilder.displayer.client.DataSetHandlerImpl;
 import org.dashbuilder.displayer.client.Displayer;
 import org.dashbuilder.displayer.client.DisplayerHelper;
 import org.dashbuilder.displayer.client.DisplayerListener;
@@ -115,8 +115,8 @@ public class DataSetEditor implements IsWidget {
     final View view = new DataSetEditorView();
 
     private DataSetDef dataSetDef; 
-    private List<DataColumnDef> columns;
-    private DataSetDef edited; 
+    private List<DataColumnDef> originalColumns;
+    private String originalUUID; 
     private Displayer tableDisplayer;
     private WorkflowView currentWfView;
     
@@ -141,7 +141,8 @@ public class DataSetEditor implements IsWidget {
         // Create a new data set def.
         this.dataSetDef = createDataSetDef(null);
 
-        edited = null;
+        originalUUID = null;
+        originalColumns = null;
         view.setEditMode(false);
 
         // Restart workflow.
@@ -166,83 +167,43 @@ public class DataSetEditor implements IsWidget {
         }
 
         try {
-            DataSetClientServices.get().fetchMetadata(uuid, new DataSetMetadataCallback() {
+            
+            DataSetClientServices.get().prepareEdit(uuid, new DataSetEditCallback() {
                 @Override
-                public void callback(DataSetMetadata metatada)
-                {
-                    final DataSetDef def = metatada.getDefinition();
-                    
-                    if (def == null) {
+                public void callback(final EditDataSetDef editDataSetDef) {
+
+                    clear();
+
+                    DataSetEditor.this.originalUUID = uuid;
+                    DataSetEditor.this.dataSetDef = editDataSetDef.getDefinition();
+                    DataSetEditor.this.originalColumns = editDataSetDef.getColumns();
+
+                    if (dataSetDef == null) {
                         showError(DataSetEditorConstants.INSTANCE.defNotFound());
                         return;
                     }
 
-                    clear();
-                    edited = def;
-
-                    // Clone the definition in order to edited the cloned copy.
-                    DataSetEditor.this.dataSetDef = def.clone();
-                    final String editionUUID = getEditionUUID(def);
-                    DataSetEditor.this.dataSetDef.setUUID(editionUUID);
-                    DataSetEditor.this.dataSetDef.setPublic(false);
-                    DataSetEditor.this.dataSetDef.setAllColumnsEnabled(true);
-
-                    // Register the cloned definition.
-                    final DataSetDefRegisterCallback callback = new DataSetDefRegisterCallback() {
-                        @Override
-                        public void success(final String s) {
-
-                            // Obtain the available columns for the cloned definition.
-                            buildColumns(new DataSetMetadataCallback() {
-                                @Override
-                                public void callback(DataSetMetadata metatada) {
-                                    // Special case - If allColumns enabled and not columns defined, add all of the retrieved available columns and add into the definition column's list. 
-                                    if (def.isAllColumnsEnabled() && def.getColumns() == null) updateDataSetDefColumns(DataSetEditor.this.columns);
-
-                                    // Update the screens, displayers & restart the workflow.
-                                    edit();
-                                    view.setEditMode(true);
-                                    showBasicAttributesEditionView();
-                                    showProviderSpecificAttributesEditionView();
-                                    updateTableDisplayer();
-                                }
-
-                                @Override
-                                public void notFound() {
-                                    showError("Data set definition with uuid [" + s + "] not found.");
-                                }
-
-                                @Override
-                                public boolean onError(DataSetClientServiceError error) {
-                                    showError(error);
-                                    return false;
-                                }
-                            });
-
-                        }
-
-                        @Override
-                        public boolean onError(DataSetClientServiceError error) {
-                            showError(error);
-                            return false;
-                        }
-                    };
-                    
-                    registerDataSetDef(callback);
+                    // Update the screens, displayers & restart the workflow.
+                    edit();
+                    view.setEditMode(true);
+                    showBasicAttributesEditionView();
+                    showProviderSpecificAttributesEditionView();
+                    updateTableDisplayer();
                     
                 }
-    
+
                 @Override
                 public void notFound() {
                     showError("Data set definition with uuid [" + uuid + "] not found.");
                 }
-    
+
                 @Override
                 public boolean onError(DataSetClientServiceError error) {
                     showError(error);
                     return false;
                 }
             });
+
         } catch (Exception e) {
             showError(e.getMessage());
         }
@@ -254,17 +215,37 @@ public class DataSetEditor implements IsWidget {
         if (type != null) result = DataSetProviderType.createDataSetDef(dataSetDef.getProvider());
         result.setPublic(false);
         result.setAllColumnsEnabled(true);
+        result.setColumns(null);
         return result;
     }
     
-    private String getEditionUUID(final DataSetDef def) {
-        String uuid = null;
-        if (def != null) {
-            final String _uuid = def.getUUID();
-            return _uuid + EDIT_SUFFIX;            
+    private class DataSetHandlerForEdit extends DataSetHandlerImpl {
+
+        private DataSetDef defEdit;
+
+        public DataSetHandlerForEdit(DataSetLookup lookup, DataSetDef defEdit) {
+            super(lookup);
+            this.defEdit = defEdit;
         }
-        
-        return uuid;
+
+        @Override
+        public void lookupDataSet(final DataSetReadyCallback callback) throws Exception {
+            DataSetClientServices.get().lookupDataSet(defEdit, lookupCurrent, new DataSetReadyCallback() {
+                public void callback(DataSet dataSet) {
+                    lastLookedUpDataSet = dataSet;
+                    callback.callback(dataSet);
+                }
+
+                public void notFound() {
+                    callback.notFound();
+                }
+
+                @Override
+                public boolean onError(final DataSetClientServiceError error) {
+                    return callback.onError(error);
+                }
+            });
+        }
     }
     
     private void updateTableDisplayer() {
@@ -286,8 +267,12 @@ public class DataSetEditor implements IsWidget {
                 }
             }
 
+            DataSetDef editCloneWithoutCacheSettings = dataSetDef.clone();
+            editCloneWithoutCacheSettings.setCacheEnabled(false);
+
             DisplayerSettings settings = tableDisplayerSettingsBuilder.buildSettings();
             tableDisplayer = DisplayerHelper.lookupDisplayer(settings);
+            tableDisplayer.setDataSetHandler(new DataSetHandlerForEdit(settings.getDataSetLookup(), editCloneWithoutCacheSettings));
             tableDisplayer.addListener(tablePreviewListener);
 
             // Wait for displayer listener callbacks.
@@ -298,39 +283,7 @@ public class DataSetEditor implements IsWidget {
         }
     }
     
-    private void buildColumns(final DataSetMetadataCallback callback) {
-        final String uuid = dataSetDef.getUUID();
-
-        try {
-            DataSetClientServices.get().fetchMetadata(uuid, new DataSetMetadataCallback() {
-                @Override
-                public void callback(final DataSetMetadata metatada) {
-                    final int n = metatada.getNumberOfColumns();
-                    DataSetEditor.this.columns = new LinkedList<DataColumnDef>();
-                    for (int x = 0; x < n; x++) {
-                        final String cId = metatada.getColumnId(x);
-                        final ColumnType type = metatada.getColumnType(x);
-                        final DataColumnDef cDef = new DataColumnDef(cId, type);
-                        DataSetEditor.this.columns.add(cDef);
-                    }
-                    
-                    callback.callback(metatada);
-                    
-                }
-
-                public void notFound() {
-                    callback.notFound();
-                }
-
-                @Override
-                public boolean onError(DataSetClientServiceError error) {
-                    return callback.onError(error);
-                }
-            });
-        } catch (Exception e) {
-            showError(e);
-        }
-    }
+    
     
     private final ClickHandler providerScreenNextButtonHandler = new ClickHandler() {
         @Override
@@ -361,43 +314,7 @@ public class DataSetEditor implements IsWidget {
             // Check if exist validation violations.
             final Set violations = save();
             if (isValid(violations)) {
-
-                final DataSetDefRegisterCallback callback = new DataSetDefRegisterCallback() {
-                    @Override
-                    public void success(final String s) {
-                        dataSetDef.setUUID(s);
-                        
-                        buildColumns(new DataSetMetadataCallback() {
-                            @Override
-                            public void callback(DataSetMetadata metatada) {
-                                if (edited == null) updateDataSetDefColumns(DataSetEditor.this.columns);
-                                updateTableDisplayer();
-                            }
-
-                            @Override
-                            public void notFound() {
-                                showError("Data set definition with uuid [" + s + "] not found.");
-                            }
-
-                            @Override
-                            public boolean onError(DataSetClientServiceError error) {
-                                showError(error);
-                                return false;
-                            }
-                        });
-                    }
-
-                    @Override
-                    public boolean onError(DataSetClientServiceError error) {
-                        showError(error);
-                        return false;
-                    }
-                };
-                
-                if (tableDisplayer == null) registerDataSetDef(callback);
-                else updateDataSetDef(callback);
-                
-
+                updateTableDisplayer();
             }
             log(violations, violations);
         }
@@ -407,6 +324,13 @@ public class DataSetEditor implements IsWidget {
 
         @Override
         public void onClick(ClickEvent clickEvent) {
+            // Reset columns and filter configuration.
+            dataSetDef.setAllColumnsEnabled(true);
+            dataSetDef.setColumns(null);
+            dataSetDef.setDataSetFilter(null);
+            originalColumns = null;
+            
+            // Show views.
             showBasicAttributesEditionView();
             showProviderSpecificAttributesEditionView();
         }
@@ -454,16 +378,18 @@ public class DataSetEditor implements IsWidget {
     }
 
     private void persist() {
-        if (edited == null) 
-        {
-            // If creating a new data set, just persist it.
-            dataSetDef.setPublic(true);
-            dataSetDef.setAllColumnsEnabled(false);
-            
-            updateDataSetDef(new DataSetDefRegisterCallback() {
+        final DataSetClientServices clientServices = DataSetClientServices.get();
+
+        dataSetDef.setPublic(true);
+        dataSetDef.setAllColumnsEnabled(false);
+        
+        if (originalUUID == null) {
+            // Register and persist the definition.
+            clientServices.registerDataSetDef(dataSetDef, new DataSetDefRegisterCallback() {
                 @Override
-                public void success(String uuid) {
+                public void success(final String uuid) {
                     try {
+                        dataSetDef.setUUID(uuid);
                         DataSetClientServices.get().persistDataSetDef(dataSetDef, persistCallback);
                     } catch (Exception e) {
                         showError(e);
@@ -476,48 +402,18 @@ public class DataSetEditor implements IsWidget {
                     return false;
                 }
             });
-        }
-        else {
-            // If editing an existing data set, remove original data set and persist the new edited one.
-            final DataSetClientServices clientServices = DataSetClientServices.get();
-
-            final String editUUID = edited.getUUID();
-            final String originalUUID = dataSetDef.getUUID();
-            clientServices.removeDataSetDef(originalUUID, new DataSetDefRemoveCallback() {
+            
+        } else {
+            // Update and persist the definition.
+            clientServices.updateDataSetDef(originalUUID, dataSetDef, new DataSetDefRegisterCallback() {
                 @Override
-                public void success() {
-                    clientServices.removeDataSetDef(editUUID, new DataSetDefRemoveCallback() {
-                        @Override
-                        public void success() {
-                            dataSetDef.setUUID(edited.getUUID());
-                            dataSetDef.setPublic(true);
-                            dataSetDef.setAllColumnsEnabled(false);
-                            
-                            registerDataSetDef(new DataSetDefRegisterCallback() {
-                                @Override
-                                public void success(String uuid) {
-                                    try {
-                                        DataSetClientServices.get().persistDataSetDef(dataSetDef, persistCallback);
-                                    } catch (Exception e) {
-                                        showError(e);
-                                    }
-
-                                }
-
-                                @Override
-                                public boolean onError(DataSetClientServiceError error) {
-                                    showError(error);
-                                    return false;
-                                }
-                            });
-                        }
-
-                        @Override
-                        public boolean onError(DataSetClientServiceError error) {
-                            showError(error);
-                            return false;
-                        }
-                    });
+                public void success(final String uuid) {
+                    try {
+                        DataSetEditor.this.dataSetDef.setUUID(uuid);
+                        DataSetClientServices.get().persistDataSetDef(DataSetEditor.this.dataSetDef, persistCallback);
+                    } catch (Exception e) {
+                        showError(e);
+                    }
                 }
 
                 @Override
@@ -526,8 +422,6 @@ public class DataSetEditor implements IsWidget {
                     return false;
                 }
             });
-            
-            
             
         }
     }
@@ -545,34 +439,7 @@ public class DataSetEditor implements IsWidget {
         }
     };
     
-    private void updateDataSetDef(final DataSetDefRegisterCallback callback) {
-
-        // Remove the current data set definition.
-        removeDataSetDef(new DataSetDefRemoveCallback() {
-            @Override
-            public void success() {
-                // Register new data set definition.
-                registerDataSetDef(callback);
-            }
-
-            @Override
-            public boolean onError(DataSetClientServiceError error) {
-                showError(error);
-                return false;
-            }
-        });
-
-
-    }
-
-    private void removeDataSetDef(final DataSetDefRemoveCallback callback) {
-        if (dataSetDef != null && dataSetDef.getUUID() != null) {
-            final DataSetClientServices clientServices = DataSetClientServices.get();
-            clientServices.removeDataSetDef(dataSetDef.getUUID(), callback);
-        } 
-    }
-
-    private void registerDataSetDef(final DataSetDefRegisterCallback callback) {
+    private void DOregisterDataSetDef(final DataSetDefRegisterCallback callback) {
         if (dataSetDef != null) {
             // Register the data set in backend as non public.
             final DataSetClientServices clientServices = DataSetClientServices.get();
@@ -629,7 +496,7 @@ public class DataSetEditor implements IsWidget {
     
     private void showBasicAttributesEditionView() {
         currentWfView = WorkflowView.DATA_CONF;
-        final String _uuid = edited != null ? edited.getUUID() : dataSetDef.getUUID();
+        final String _uuid = originalUUID != null ? originalUUID : dataSetDef.getUUID();
         view.showBasicAttributesEditionView(_uuid);
     }
     
@@ -662,7 +529,7 @@ public class DataSetEditor implements IsWidget {
     
     private void showColumnsEditorView(final DataSet dataSet) {
         currentWfView = WorkflowView.PREVIEW;
-        view.showColumnsEditorView(this.columns, dataSet, columnsChangedEventHandler);
+        view.showColumnsEditorView(this.originalColumns, dataSet, columnsChangedEventHandler);
     }
 
     private void showFilterEditorView(final DataSet dataSet) {
@@ -696,23 +563,8 @@ public class DataSetEditor implements IsWidget {
     private final ClickHandler cancelHandler = new ClickHandler() {
         @Override
         public void onClick(ClickEvent event) {
-            if (dataSetDef != null && dataSetDef.getUUID() != null) {
-                removeDataSetDef(new DataSetDefRemoveCallback() {
-                    @Override
-                    public void success() {
-                        showHomeView();
-                    }
-
-                    @Override
-                    public boolean onError(DataSetClientServiceError error) {
-                        showError(error);
-                        return false;
-                    }
-                });
-            } else {
-                showHomeView();
+            showHomeView();
             }
-        }
     };
     private final ClickHandler newDataSetHandler = new ClickHandler() {
         @Override
@@ -725,22 +577,7 @@ public class DataSetEditor implements IsWidget {
         @Override
         public void onColumnsChanged(DataSetColumnsEditor.ColumnsChangedEvent event) {
             updateDataSetDefColumns(event.getColumns());
-
-            final DataSetDefRegisterCallback callback = new DataSetDefRegisterCallback() {
-                @Override
-                public void success(final String s) {
-                    updateTableDisplayer();
-                }
-
-                @Override
-                public boolean onError(DataSetClientServiceError error) {
-                    showError(error);
-                    return false;
-                }
-            };
-            
-            updateDataSetDef(callback);
-            
+            updateTableDisplayer();
         }
     };
     
@@ -748,26 +585,13 @@ public class DataSetEditor implements IsWidget {
         @Override
         public void filterChanged(DataSetFilter filter) {
             DataSetEditor.this.dataSetDef.setDataSetFilter(filter);
-            final DataSetDefRegisterCallback callback = new DataSetDefRegisterCallback() {
-                @Override
-                public void success(final String s) {
-                    updateTableDisplayer();
-                }
-
-                @Override
-                public boolean onError(DataSetClientServiceError error) {
-                    showError(error);
-                    return false;
-                }
-            };
-
-            updateDataSetDef(callback);
+            updateTableDisplayer();
         }
     };
     
     // Saves columns and update "allColumns" flag for types that support it.
     private void updateDataSetDefColumns(final List<DataColumnDef> columns) {
-        dataSetDef.setAllColumnsEnabled(true);
+        dataSetDef.setAllColumnsEnabled(false);
         dataSetDef.setColumns(columns);
     }
     
@@ -783,12 +607,24 @@ public class DataSetEditor implements IsWidget {
                 final DataSet dataSet = displayer.getDataSetHandler().getLastDataSet();
                 
                 if (dataSet != null) {
-                    // Rezgister data set on client.
-                    ClientDataSetManager.get().registerDataSet(dataSet);
+
                     
-                    // Original columns.
-                    final boolean isEdit = edited != null;
+                    final boolean isEdit = originalUUID != null;
                     final WorkflowView v = currentWfView;
+
+                    // Original columns.
+                    if (DataSetEditor.this.originalColumns == null) {
+                        final List<DataColumn> dataSetColumns = dataSet.getColumns();
+                        if (dataSetColumns != null) {
+                            final List<DataColumnDef> cDefs = new LinkedList<DataColumnDef>();
+                            for (final DataColumn column : dataSetColumns) {
+                                final DataColumnDef cDef = new DataColumnDef(column.getId(), column.getColumnType());
+                                cDefs.add(cDef);
+                            }
+                            DataSetEditor.this.originalColumns = new LinkedList<DataColumnDef>(cDefs);
+                            updateDataSetDefColumns(cDefs);
+                        }
+                    }
                     
                     // Build views.
                     showBasicAttributesEditionView();
@@ -846,8 +682,8 @@ public class DataSetEditor implements IsWidget {
     
     private void clear() {
         this.dataSetDef = null;
-        this.columns = null;
-        this.edited = null;
+        this.originalColumns = null;
+        this.originalUUID = null;
         this.tableDisplayer = null;
         view.clear();
     }
@@ -875,7 +711,7 @@ public class DataSetEditor implements IsWidget {
     private void onDataSetDefRemovedEvent(@Observes DataSetDefRemovedEvent event) {
         checkNotNull("event", event);
 
-        if(isHomeViewVisible() || (edited !=null && edited.getUUID().equals(event.getDataSetDef().getUUID()))) {
+        if(isHomeViewVisible()) {
             // Reload home view with new data set count value.
             this.showHomeView();
         }

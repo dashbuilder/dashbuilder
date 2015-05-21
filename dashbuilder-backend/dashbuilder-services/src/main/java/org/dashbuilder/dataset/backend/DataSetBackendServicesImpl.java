@@ -47,11 +47,8 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.DateFormatConverter;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
-import org.dashbuilder.dataset.DataColumn;
-import org.dashbuilder.dataset.DataSetBackendServices;
-import org.dashbuilder.dataset.DataSet;
-import org.dashbuilder.dataset.DataSetLookup;
-import org.dashbuilder.dataset.DataSetMetadata;
+import org.dashbuilder.dataset.*;
+import org.dashbuilder.dataset.def.DataColumnDef;
 import org.dashbuilder.dataset.exception.DataSetLookupException;
 import org.dashbuilder.dataset.backend.exception.ExceptionManager;
 import org.dashbuilder.dataset.def.DataSetDef;
@@ -129,6 +126,17 @@ public class DataSetBackendServicesImpl implements DataSetBackendServices {
         return definition.getUUID();
     }
 
+    public String updateDataSetDef(String uuid, DataSetDef definition) {
+        // Data sets registered from the UI does not contain a UUID.
+        final DataSetDef def = dataSetDefRegistry.getDataSetDef(uuid);
+        if (def != null) {
+            dataSetDefRegistry.removeDataSetDef(uuid);
+        }
+        definition.setUUID(uuid);
+        dataSetDefRegistry.registerDataSetDef(definition);
+        return definition.getUUID();
+    }
+
     @Override
     public void removeDataSetDef(final String uuid) {
         final DataSetDef def = dataSetDefRegistry.getDataSetDef(uuid);
@@ -148,6 +156,15 @@ public class DataSetBackendServicesImpl implements DataSetBackendServices {
         return _d;
     }
 
+    public DataSet lookupDataSet(DataSetDef def, DataSetLookup lookup) {
+        try {
+            return dataSetManager.resolveProvider(def)
+                    .lookupDataSet(def, lookup);
+        } catch (Exception e) {
+            throw new DataSetLookupException(def.getUUID(), "Can't lookup on specified data set: " + lookup.getDataSetUUID(), e);
+        }
+    }
+
     public DataSetMetadata lookupDataSetMetadata(String uuid) throws Exception {
         DataSetMetadata _d = null;
         try {
@@ -157,6 +174,51 @@ public class DataSetBackendServicesImpl implements DataSetBackendServices {
         }
 
         return _d;
+    }
+
+    @Override
+    public EditDataSetDef prepareEdit(String uuid) throws Exception {
+        DataSetMetadata _d = null;
+        try {
+            _d = dataSetManager.getDataSetMetadata(uuid);
+            DataSetDef def = _d.getDefinition();
+            
+            // Clone the definition.
+            DataSetDef cloned = def.clone();
+            String newUuid = backendUUIDGenerator.newUuid();
+            cloned.setUUID(newUuid);
+            
+            // Enable all columns and set columns to null, force to obtain metadata with all original columns 
+            // and all original column types.
+            boolean clonedAllColumns = cloned.isAllColumnsEnabled();
+            List<DataColumnDef> clonedColumns = cloned.getColumns();
+            cloned.setAllColumnsEnabled(true);
+            cloned.setColumns(null);
+            cloned.setPublic(false);
+            
+            // Obtain all original columns and all original column types.
+            DataSetMetadata _cd = dataSetManager.resolveProvider(cloned)
+                    .getDataSetMetadata(cloned);
+
+            // Return the list of original columns and its types.
+            List<DataColumnDef> columns = new ArrayList<DataColumnDef>();
+            if (_cd.getNumberOfColumns() > 0) {
+                for (int x = 0; x < _cd.getNumberOfColumns(); x++) {
+                    String cId = _cd.getColumnId(x);
+                    ColumnType cType = _cd.getColumnType(x);
+                    DataColumnDef cdef = new DataColumnDef(cId, cType);
+                    columns.add(cdef);
+                }
+            }
+            
+            // Set columns attributes as initialy were. 
+            cloned.setAllColumnsEnabled(clonedAllColumns);
+            cloned.setColumns(clonedColumns);
+            return new EditDataSetDef(cloned, columns);
+            
+        } catch (DataSetLookupException e) {
+            throw exceptionManager.handleException(e);
+        }
     }
 
     public List<DataSetDef> getPublicDataSetDefs() {

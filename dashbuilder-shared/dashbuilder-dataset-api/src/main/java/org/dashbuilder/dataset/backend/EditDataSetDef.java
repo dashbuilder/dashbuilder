@@ -1,0 +1,36 @@
+package org.dashbuilder.dataset.backend;
+
+import org.dashbuilder.dataset.def.DataColumnDef;
+import org.dashbuilder.dataset.def.DataSetDef;
+import org.jboss.errai.common.client.api.annotations.Portable;
+
+import java.util.List;
+
+/**
+ * <p>Response model for a DataSetDef edition.</p>
+ * <p>Provides a cloned DataSetDef instance from the original one and the original column definition list.</p>
+ */
+@Portable
+public class EditDataSetDef {
+
+    private DataSetDef definition;
+    private List<DataColumnDef> columns;
+
+    public EditDataSetDef() {
+        
+    }
+
+    public EditDataSetDef(DataSetDef definition, List<DataColumnDef> columns) {
+        this.definition = definition;
+        this.columns = columns;
+    }
+
+    public DataSetDef getDefinition() {
+        return definition;
+    }
+
+    public List<DataColumnDef> getColumns() {
+        return columns;
+    }
+    
+}

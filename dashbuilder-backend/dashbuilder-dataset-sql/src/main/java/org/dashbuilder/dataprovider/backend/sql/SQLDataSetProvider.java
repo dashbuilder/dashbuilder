@@ -39,6 +39,7 @@ import org.dashbuilder.dataset.backend.BackendIntervalBuilderDynamicDate;
 import org.dashbuilder.dataset.backend.date.DateUtils;
 import org.dashbuilder.dataset.def.DataColumnDef;
 import org.dashbuilder.dataset.def.DataSetDef;
+import org.dashbuilder.dataset.def.DataSetDefRegistry;
 import org.dashbuilder.dataset.def.SQLDataSetDef;
 import org.dashbuilder.dataset.engine.group.IntervalBuilder;
 import org.dashbuilder.dataset.engine.group.IntervalBuilderLocator;
@@ -112,6 +113,9 @@ public class SQLDataSetProvider implements DataSetProvider {
 
     @Inject
     protected BackendIntervalBuilderDynamicDate intervalBuilderDynamicDate;
+
+    @Inject
+    protected DataSetDefRegistry dataSetDefRegistry;
 
     @Inject
     protected DataSetOpEngine opEngine;
@@ -299,7 +303,8 @@ public class SQLDataSetProvider implements DataSetProvider {
         result = new MetadataHolder();
         result.jooqFields = _jooqFields;
         result.metadata = new DataSetMetadataImpl(def, def.getUUID(), rowCount, columnIds.size(), columnIds, columnTypes, estimatedSize);
-        _metadataMap.put(def.getUUID(), result);
+        final boolean isDefRegistered = def.getUUID() != null && dataSetDefRegistry.getDataSetDef(def.getUUID()) != null;
+        if (isDefRegistered) _metadataMap.put(def.getUUID(), result);
         return result.metadata;
     }
 

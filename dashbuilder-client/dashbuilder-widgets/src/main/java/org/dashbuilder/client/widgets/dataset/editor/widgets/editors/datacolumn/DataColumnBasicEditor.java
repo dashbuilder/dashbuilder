@@ -27,6 +27,7 @@ import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.client.widgets.dataset.editor.widgets.editors.AbstractEditor;
 import org.dashbuilder.common.client.validation.editors.ValueBoxEditorDecorator;
 import org.dashbuilder.dataset.ColumnType;
+import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.dataset.client.validation.editors.DataColumnDefEditor;
 
 import javax.enterprise.context.Dependent;
@@ -57,7 +58,7 @@ public class DataColumnBasicEditor extends AbstractEditor implements DataColumnD
     @UiField
     DataColumnTypeEditor columnType;
     
-    private boolean isEditMode;
+    private boolean isEditMode = true;
 
     public DataColumnBasicEditor() {
         // Initialize the widget.
@@ -68,13 +69,19 @@ public class DataColumnBasicEditor extends AbstractEditor implements DataColumnD
         columnType.setSize(ICONS_SIZE, ICONS_SIZE);
     }
 
+    public void setOriginalType(ColumnType originalType) {
+        columnType.setOriginalType(originalType);
+    }
+
     public boolean isEditMode() {
         return isEditMode;
     }
 
     public void setEditMode(boolean isEditMode) {
         this.isEditMode = isEditMode;
-         columnType.setEditMode(isEditMode);
+        if (!isEditMode) columnType.setVisible(false);
+        else columnType.setVisible(true);
+        columnType.setEditMode(isEditMode);
     }
 
     public void setEditorId(String editorId) {
