@@ -15,6 +15,10 @@
     .left {
       float: left;
     }
+    .image {
+      margin-left: 15px;
+      margin-top: 5px;
+    }
   </ui:style>
   
   <g:FlowPanel ui:field="columnPanel" addStyleNames="{style.mainPanel} ">
@@ -29,6 +33,10 @@
 
     <b:Popover showDelay="1000" text="{i18n.attributeColumnType_description}" heading="{i18n.attributeColumnType}">
       <dash-client-column:DataColumnTypeEditor ui:field="columnType" addStyleNames="{style.left}"/>
+    </b:Popover>
+
+    <b:Popover showDelay="1000" text="{i18n.attributeColumnType_description}" heading="{i18n.attributeColumnType}">
+      <b:Image ui:field="columnTypeImage" addStyleNames="{style.left} {style.image}"/>
     </b:Popover>
     
   </g:FlowPanel>

@@ -104,6 +104,7 @@ public class DataSetEditor implements IsWidget {
         View showCancelButton(ClickHandler cancelHandler);
         View onSave();
         View showLoadingView();
+        View hideLoadingView();
         View showError(final String type, final String message, final String cause);
         View clear();
     }
@@ -237,11 +238,13 @@ public class DataSetEditor implements IsWidget {
                 }
 
                 public void notFound() {
+                    showError("Not found.");
                     callback.notFound();
                 }
 
                 @Override
                 public boolean onError(final DataSetClientServiceError error) {
+                    showError(error);
                     return callback.onError(error);
                 }
             });
@@ -607,10 +610,12 @@ public class DataSetEditor implements IsWidget {
                 final DataSet dataSet = displayer.getDataSetHandler().getLastDataSet();
                 
                 if (dataSet != null) {
-
                     
                     final boolean isEdit = originalUUID != null;
                     final WorkflowView v = currentWfView;
+
+                    // UUID for new datasets are generated on backend side.
+                    if (dataSetDef.getUUID() == null) dataSetDef.setUUID(dataSet.getUUID());
 
                     // Original columns.
                     if (DataSetEditor.this.originalColumns == null) {

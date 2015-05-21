@@ -31,12 +31,16 @@ public class DataColumnTypeEditor extends DropDownImageListEditor<ColumnType> {
         setAcceptableValues(acceptableValues);
     }
 
+    public ColumnType getOriginalType() {
+        return originalType;
+    }
+
     /**
      * Allowed:
      * LABEL -> TEXT
      * NUMBER -> LABEL
      */
-    private Map<ColumnType, Image> buildAcceptableValues(final ColumnType type) {
+    public static Map<ColumnType, Image> buildAcceptableValues(final ColumnType type) {
         final Map<ColumnType, Image> providerEditorValues = new EnumMap<ColumnType, Image>(ColumnType.class);
         if (type != null) {
             if (ColumnType.DATE.equals(type)) {

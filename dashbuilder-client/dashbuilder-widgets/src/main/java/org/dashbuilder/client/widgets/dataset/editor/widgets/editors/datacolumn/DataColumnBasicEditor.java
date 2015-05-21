@@ -15,7 +15,9 @@
  */
 package org.dashbuilder.client.widgets.dataset.editor.widgets.editors.datacolumn;
 
+import com.github.gwtbootstrap.client.ui.Image;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.editor.client.Editor;
 import com.google.gwt.editor.client.EditorError;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
@@ -58,14 +60,18 @@ public class DataColumnBasicEditor extends AbstractEditor implements DataColumnD
     @UiField
     DataColumnTypeEditor columnType;
     
-    private boolean isEditMode = true;
+    @UiField
+    @Ignore
+    Image columnTypeImage;
+    
+    private boolean isEditMode;
 
     public DataColumnBasicEditor() {
         // Initialize the widget.
         initWidget(uiBinder.createAndBindUi(this));
 
         setEditMode(true);
-        
+        columnTypeImage.setVisible(false);
         columnType.setSize(ICONS_SIZE, ICONS_SIZE);
     }
 
@@ -79,9 +85,30 @@ public class DataColumnBasicEditor extends AbstractEditor implements DataColumnD
 
     public void setEditMode(boolean isEditMode) {
         this.isEditMode = isEditMode;
-        if (!isEditMode) columnType.setVisible(false);
-        else columnType.setVisible(true);
         columnType.setEditMode(isEditMode);
+        draw();
+    }
+    
+    private void draw() {
+        Image image = null;
+        if (!isEditMode && columnType.getValue() != null) {
+            // Read only.
+            image = DataColumnTypeEditor.buildTypeSelectorWidget(columnType.getValue());
+        } else if (!isEditMode && columnType.getOriginalType() != null){
+            // Not used in dataset..
+            image = DataColumnTypeEditor.buildTypeSelectorWidget(columnType.getOriginalType());
+        }
+        
+        if (image != null) {
+            columnTypeImage.setUrl(image.getUrl());
+            columnTypeImage.setTitle(image.getTitle());
+            columnTypeImage.setSize(ICONS_SIZE + "px", ICONS_SIZE + "px");
+            columnTypeImage.setVisible(true);
+            columnType.setVisible(false);
+        } else {
+            columnType.setVisible(true);
+            columnTypeImage.setVisible(false);
+        }
     }
 
     public void setEditorId(String editorId) {

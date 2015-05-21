@@ -707,10 +707,11 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
         return this;
     }
     
-    private void hideLoadingView() {
+    public DataSetEditor.View hideLoadingView() {
         loadingPopupPanel.setVisible(false);
         loadingPopupPanel.getElement().getStyle().setDisplay(Style.Display.NONE);
         loadingPopupPanel.hide();
+        return this;
     }
 
     private void showError(final Exception e) {

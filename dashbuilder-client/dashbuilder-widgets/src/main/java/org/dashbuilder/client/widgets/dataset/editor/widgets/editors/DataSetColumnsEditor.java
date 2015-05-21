@@ -143,7 +143,6 @@ public class DataSetColumnsEditor extends AbstractEditor {
                 }
                 // Create the editor for each column.
                 DataColumnBasicEditor columnEditor = new DataColumnBasicEditor();
-                columnEditor.setEditMode(enabled);
                 columnEditor.addValueChangeHandler(columnTypeChangeHandler);
 
                 columnEditor.setEditorId(column.getId());
@@ -152,6 +151,7 @@ public class DataSetColumnsEditor extends AbstractEditor {
 
                 // Link the column editor with workflow driver.
                 workflow.edit(columnEditor, column);
+                columnEditor.setEditMode(enabled);
                 
                 // Create the UI panel for the column.
                 final boolean canRemove = dataSet != null && dataSet.getColumns().size() > 1;
@@ -201,20 +201,25 @@ public class DataSetColumnsEditor extends AbstractEditor {
 
     private void removeColumn(final DataColumnBasicEditor editor, final DataColumnDef column, final DataSetDefEditWorkflow workflow) {
         editor.setEditMode(false);
-        workflow.remove(editor, column);
-        columnEditors.remove(column);
         columns.remove(column);
         fireColumnsChanged();
     }
 
     private void addColumn(final DataColumnDef column, final DataSetDefEditWorkflow workflow) {
-        DataColumnBasicEditor columnEditor = new DataColumnBasicEditor();
+        final DataColumnBasicEditor columnEditor = getEditor(column);
         columnEditor.setEditMode(true);
-        columnEditor.setEditorId(column.getId());
-        workflow.edit(columnEditor, column);
-        columnEditors.put(column, columnEditor);
         columns.add(column);
         fireColumnsChanged();
+    }
+    
+    private DataColumnBasicEditor getEditor(final DataColumnDef columnDef) {
+        if (!columnEditors.isEmpty()) {
+            for (Map.Entry<DataColumnDef, DataColumnBasicEditor> entry : columnEditors.entrySet()) {
+                final DataColumnDef _c = entry.getKey();
+                if (_c != null && _c.equals(columnDef)) return entry.getValue();
+            }
+        }
+        return null;
     }
     
     private void fireColumnsChanged() {

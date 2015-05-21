@@ -158,6 +158,12 @@ public class DataSetBackendServicesImpl implements DataSetBackendServices {
 
     public DataSet lookupDataSet(DataSetDef def, DataSetLookup lookup) {
         try {
+            // Although if using a not registered definition, it must have an uuid set for performing lookups.
+            if (def.getUUID() == null) {
+                final String uuid = backendUUIDGenerator.newUuid();
+                def.setUUID(uuid);
+                lookup.setDataSetUUID(uuid);
+            }
             return dataSetManager.resolveProvider(def)
                     .lookupDataSet(def, lookup);
         } catch (Exception e) {
