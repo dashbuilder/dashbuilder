@@ -61,8 +61,8 @@
       </b:Column>
       <b:Column size="3">
         <g:FlowPanel>
-          <b:RadioButton ui:field='tableButton' name="{i18n.sql_table}" text="{i18n.sql_table}" addStyleNames="{style.radioButton} "/>
-          <b:RadioButton ui:field='queryButton' name="{i18n.sql_query}" text="{i18n.sql_query}" addStyleNames="{style.radioButton} "/>
+          <b:RadioButton ui:field='tableButton' name="sourceType" text="{i18n.sql_table}" addStyleNames="{style.radioButton} "/>
+          <b:RadioButton ui:field='queryButton' name="sourceType" text="{i18n.sql_query}" addStyleNames="{style.radioButton} "/>
         </g:FlowPanel>
       </b:Column>
     </b:Row>

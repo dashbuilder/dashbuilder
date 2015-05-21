@@ -16,18 +16,15 @@
 package org.dashbuilder.client.widgets.dataset.editor.widgets.editors.sql;
 
 import com.github.gwtbootstrap.client.ui.RadioButton;
-import com.github.gwtbootstrap.client.ui.TextArea;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.EditorError;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.common.client.validation.editors.ValueBoxEditorDecorator;
-import org.dashbuilder.dataset.client.DataSetClientServices;
 import org.dashbuilder.dataset.client.validation.editors.SQLDataSetDefEditor;
 import org.dashbuilder.client.widgets.dataset.editor.widgets.editors.AbstractDataSetDefEditor;
 import org.dashbuilder.dataset.def.DataSetDef;
@@ -37,13 +34,13 @@ import javax.enterprise.context.Dependent;
 import java.util.List;
 
 /**
- * <p>This is the view implementation for Data Set Editor widget for editing sql provider specific attributes.</p>
+ * This is the view implementation for Data Set Editor widget for editing sql provider specific attributes.
  *
- * @since 0.3.0 
+ * @since 0.3.0
  */
 @Dependent
 public class SQLDataSetDefAttributesEditor extends AbstractDataSetDefEditor implements SQLDataSetDefEditor {
-    
+
     interface SQLDataSetDefAttributesEditorBinder extends UiBinder<Widget, SQLDataSetDefAttributesEditor> {}
     private static SQLDataSetDefAttributesEditorBinder uiBinder = GWT.create(SQLDataSetDefAttributesEditorBinder.class);
 
@@ -61,7 +58,7 @@ public class SQLDataSetDefAttributesEditor extends AbstractDataSetDefEditor impl
     @UiField
     @Ignore
     RadioButton tableButton;
-    
+
     @UiField
     @Path("dbTable")
     ValueBoxEditorDecorator<String> dbTable;
@@ -78,23 +75,17 @@ public class SQLDataSetDefAttributesEditor extends AbstractDataSetDefEditor impl
 
     public SQLDataSetDefAttributesEditor() {
         initWidget(uiBinder.createAndBindUi(this));
-        
-        // Configure radio buttons.
-        tableButton.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
-            @Override
-            public void onValueChange(ValueChangeEvent<Boolean> event) {
-                if (event.getValue()) enableTable();
-                else enableQuery();
-            }
-        });
+        enableQuery(); //Initial selection
+    }
 
-        queryButton.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
-            @Override
-            public void onValueChange(ValueChangeEvent<Boolean> event) {
-                if (event.getValue()) enableQuery();
-                else enableTable();
-            }
-        });
+    @UiHandler("tableButton")
+    void handleTableRadioClick(ClickEvent e) {
+        enableTable();
+    }
+
+    @UiHandler("queryButton")
+    void handleQueryRadioClick(ClickEvent e) {
+        enableQuery();
     }
 
     public boolean isEditMode() {
@@ -117,19 +108,19 @@ public class SQLDataSetDefAttributesEditor extends AbstractDataSetDefEditor impl
             return null;
         }
     }
-    
+
     @Override
     public void set(DataSetDef dataSetDef) {
         super.set(dataSetDef);
-        
+
         // Enable table or query inputs.
         SQLDataSetDef sqlDef = getDataSetDef();
         if (sqlDef != null) {
-            if (getDataSetDef().getDbTable() != null) enableTable();
+            if (sqlDef.getDbTable() != null) enableTable();
             else enableQuery();
         }
     }
-    
+
     void enableTable() {
         dbTable.setEnabled(true);
         dbTable.setVisible(true);
@@ -152,6 +143,7 @@ public class SQLDataSetDefAttributesEditor extends AbstractDataSetDefEditor impl
         return dbTable.isVisible();
     }
 
+    @Override
     public void clear() {
         super.clear();
         dataSource.clear();
@@ -159,5 +151,4 @@ public class SQLDataSetDefAttributesEditor extends AbstractDataSetDefEditor impl
         dbTable.clear();
         dbQuery.clear();
     }
-
 }
