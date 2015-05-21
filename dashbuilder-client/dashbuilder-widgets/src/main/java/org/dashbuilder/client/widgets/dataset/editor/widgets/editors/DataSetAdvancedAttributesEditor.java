@@ -101,8 +101,8 @@ public class DataSetAdvancedAttributesEditor extends AbstractDataSetDefEditor im
     @UiField
     CheckBox refreshAlways;
 
-    final TriangleSlider backendCacheSlider = createSlider(10000, "200px");
-    final TriangleSlider clientCacheSlider = createSlider(4096, "200px");
+    final TriangleSlider backendCacheSlider = createSlider(10000, 200);
+    final TriangleSlider clientCacheSlider = createSlider(4096, 200);
     private boolean isEditMode;
 
     public DataSetAdvancedAttributesEditor() {
@@ -269,7 +269,7 @@ public class DataSetAdvancedAttributesEditor extends AbstractDataSetDefEditor im
         return DateIntervalTypeConstants.INSTANCE.getString(type.name());
     }
 
-    private TriangleSlider createSlider(final int maxValue, final String width) {
+    private TriangleSlider createSlider(final int maxValue, final int width) {
         TriangleSlider slider = new TriangleSlider(maxValue, width, true);
         slider.drawMarks("white", 6);
         slider.setMinMarkStep(3);

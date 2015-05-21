@@ -123,11 +123,10 @@ public class SliderBarHorizontal extends SliderBar {
 		super.setHeight(getBarHeight() + "px");
 	}
 
-	@Override
-	public void setWidth(String width) {
-		super.setWidth(width);
+	public void setWidth(int width) {
+		super.setWidth(width + "px");
 		if (isAttached()) {
-			presenter.setBarPixelSize(getW(getElement()));
+			presenter.setBarPixelSize(width);
 			presenter.processParams();
 			reDrawMarks();
 			setValue(getValue());

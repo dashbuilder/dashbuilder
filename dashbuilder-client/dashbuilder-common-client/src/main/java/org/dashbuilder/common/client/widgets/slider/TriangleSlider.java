@@ -20,13 +20,16 @@ import org.dashbuilder.common.client.widgets.slider.view.SliderBarHorizontal;
  */
 public class TriangleSlider extends SliderBarHorizontal {
 
-    public TriangleSlider(final int maxValue, final String width, final boolean showRows) {
+    public TriangleSlider(final int maxValue, final int width, final boolean showRows) {
         
         // Scale icon.
         final Image scaleImage = new Image(DashbuilderCommonResources.IMAGES.linet().getSafeUri());
         final Image lessImage = new Image(DashbuilderCommonResources.IMAGES.moreLesst());
+        lessImage.setSize("1px","10px");
         final Image moreImage = new Image(DashbuilderCommonResources.IMAGES.moreLesst());
+        moreImage.setSize("1px","10px");
         final Image dragImage= new Image(DashbuilderCommonResources.IMAGES.dragt());
+        dragImage.setSize("20px","17px");
         
         if (showRows){
             setLessWidget(lessImage);
