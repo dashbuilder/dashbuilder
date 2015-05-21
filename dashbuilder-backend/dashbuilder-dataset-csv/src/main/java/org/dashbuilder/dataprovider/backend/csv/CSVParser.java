@@ -34,7 +34,7 @@ import java.util.ArrayList;
 import java.util.Map;
 
 import au.com.bytecode.opencsv.CSVReader;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.dataset.DataSet;

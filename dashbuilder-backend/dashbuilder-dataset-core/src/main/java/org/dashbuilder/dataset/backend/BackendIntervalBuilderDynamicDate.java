@@ -25,7 +25,7 @@ import java.util.Locale;
 
 import javax.enterprise.context.ApplicationScoped;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.date.Month;

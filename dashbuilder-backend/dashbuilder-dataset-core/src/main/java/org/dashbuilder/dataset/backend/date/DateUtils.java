@@ -5,7 +5,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.dataset.group.DateIntervalPattern;
 import org.dashbuilder.dataset.group.DateIntervalType;

@@ -16,7 +16,7 @@
 package org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.impl;
 
 import org.apache.commons.collections.ListUtils;
-import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.ElasticSearchRestClient;
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.exception.ElasticSearchRestClientGenericException;
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.model.*;

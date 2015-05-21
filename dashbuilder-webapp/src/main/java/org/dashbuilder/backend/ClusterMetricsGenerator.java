@@ -15,7 +15,7 @@
  */
 package org.dashbuilder.backend;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.dashbuilder.dataset.*;
 import org.dashbuilder.dataset.date.TimeAmount;
 
