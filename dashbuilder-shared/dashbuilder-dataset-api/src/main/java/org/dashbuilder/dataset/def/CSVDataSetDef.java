@@ -117,14 +117,26 @@ public class CSVDataSetDef extends DataSetDef {
         this.datePattern = datePattern;
     }
 
+    public String getDatePattern(String columnId) {
+        String pattern = getPattern(columnId);
+        return (pattern == null) ? datePattern : pattern;
+    }
+
+    public String getNumberPattern(String columnId) {
+        String pattern = getPattern(columnId);
+        return (pattern == null) ? numberPattern : pattern;
+    }
+
     public char getNumberGroupSeparator(String columnId) {
         String pattern = getPattern(columnId);
+        if (pattern == null) pattern = numberPattern;
         if (pattern.length() < 2) return ',';
         else return pattern.charAt(1);
     }
 
     public char getNumberDecimalSeparator(String columnId) {
         String pattern = getPattern(columnId);
+        if (pattern == null) pattern = numberPattern;
         if (pattern.length() < 6) return '.';
         else return pattern.charAt(5);
     }

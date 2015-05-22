@@ -29,6 +29,7 @@ import org.dashbuilder.dataset.DataSetLookup;
 import org.dashbuilder.dataset.DataSetMetadata;
 import org.dashbuilder.dataset.def.CSVDataSetDef;
 import org.dashbuilder.dataset.def.DataSetDef;
+import org.dashbuilder.dataset.def.DataSetDefRegistry;
 import org.dashbuilder.dataset.events.DataSetDefRemovedEvent;
 import org.dashbuilder.dataset.events.DataSetStaleEvent;
 import org.slf4j.Logger;
@@ -39,6 +40,9 @@ public class CSVDataSetProvider implements DataSetProvider {
 
     @Inject
     protected StaticDataSetProvider staticDataSetProvider;
+
+    @Inject
+    protected DataSetDefRegistry dataSetDefRegistry;
 
     @Inject
     protected Logger log;
@@ -61,7 +65,6 @@ public class CSVDataSetProvider implements DataSetProvider {
         CSVDataSetDef csvDef = (CSVDataSetDef) def;
         CSVParser csvParser = new CSVParser(csvDef);
         File csvFile = csvParser.getCSVFile();
-
         if (dataSet == null || hasCSVFileChanged(dataSet, csvFile)) {
             dataSet = csvParser.load();
             dataSet.setUUID(def.getUUID());
@@ -69,10 +72,19 @@ public class CSVDataSetProvider implements DataSetProvider {
 
             // Make the data set static before return
             staticDataSetProvider.registerDataSet(dataSet);
-
         }
-        // Always do the lookup on the statically registered data set.
-        return staticDataSetProvider.lookupDataSet(def, lookup);
+        try {
+            // Always do the lookup on the statically registered data set.
+            dataSet = staticDataSetProvider.lookupDataSet(def, lookup);
+        } finally {
+            // Remove transient data sets
+            // f.i: for those definitions created from the data set editor UI
+            if (def.getUUID() != null && dataSetDefRegistry.getDataSetDef(def.getUUID()) == null) {
+                staticDataSetProvider.removeDataSet(def.getUUID());
+            }
+        }
+        // Return the lookup results
+        return dataSet;
     }
 
     public boolean isDataSetOutdated(DataSetDef def) {

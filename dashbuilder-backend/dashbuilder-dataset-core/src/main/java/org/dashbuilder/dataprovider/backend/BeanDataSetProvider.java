@@ -31,6 +31,7 @@ import org.dashbuilder.dataset.DataSetLookup;
 import org.dashbuilder.dataset.DataSetMetadata;
 import org.dashbuilder.dataset.def.BeanDataSetDef;
 import org.dashbuilder.dataset.def.DataSetDef;
+import org.dashbuilder.dataset.def.DataSetDefRegistry;
 import org.dashbuilder.dataset.events.DataSetDefRemovedEvent;
 import org.dashbuilder.dataset.events.DataSetStaleEvent;
 import org.slf4j.Logger;
@@ -41,6 +42,9 @@ public class BeanDataSetProvider implements DataSetProvider {
 
     @Inject
     protected StaticDataSetProvider staticDataSetProvider;
+
+    @Inject
+    protected DataSetDefRegistry dataSetDefRegistry;
 
     protected Map<String,DataSetGenerator> beanMap = new HashMap<String, DataSetGenerator>();
 
@@ -83,10 +87,19 @@ public class BeanDataSetProvider implements DataSetProvider {
             }
             // Register the data set before return
             staticDataSetProvider.registerDataSet(dataSet);
-
         }
-        // Always do the lookup over the static data set registry.
-        return staticDataSetProvider.lookupDataSet(def, lookup);
+        try {
+            // Always do the lookup over the static data set registry.
+            dataSet = staticDataSetProvider.lookupDataSet(def, lookup);
+        } finally {
+            // Remove transient data sets
+            // f.i: for those definitions created from the data set editor UI
+            if (def.getUUID() != null && dataSetDefRegistry.getDataSetDef(def.getUUID()) == null) {
+                staticDataSetProvider.removeDataSet(def.getUUID());
+            }
+        }
+        // Return the lookup results
+        return dataSet;
     }
 
     public boolean isDataSetOutdated(DataSetDef def) {
