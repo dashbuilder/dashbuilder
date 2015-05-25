@@ -65,11 +65,10 @@ public class SalesDataSetGenerator implements DataSetGenerator {
     private Random random = new Random(System.currentTimeMillis());
 
     public DataSet buildDataSet(Map<String,String> params) {
-
         int currentYear =  Calendar.getInstance().get(Calendar.YEAR);
-        int startYear = currentYear + Integer.parseInt(params.get("startYear"));
-        int endYear = currentYear + Integer.parseInt(params.get("endYear"));
-        int opportunitiesPerMonth = Integer.parseInt(params.get("oppsPerMonth"));
+        int startYear = currentYear + parseParam(params.get("startYear"), -2);
+        int endYear = currentYear + parseParam(params.get("endYear"), 2);
+        int opportunitiesPerMonth = parseParam(params.get("oppsPerMonth"), 30);
 
         DataSetBuilder builder = DataSetFactory.newDataSetBuilder()
                 .number(AMOUNT)
@@ -115,6 +114,14 @@ public class SalesDataSetGenerator implements DataSetGenerator {
             }
         }
         return builder.buildDataSet();
+    }
+
+    protected int parseParam(String param, int defaultValue) {
+        try {
+            return Integer.parseInt(param);
+        } catch (NumberFormatException e) {
+            return defaultValue;
+        }
     }
 
     private Date buildDate(int month, int year) {
