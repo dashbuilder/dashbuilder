@@ -26,6 +26,7 @@ import com.google.gwt.animation.client.Animation;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.user.client.ui.RootPanel;
+import org.dashbuilder.client.dashboard.DashboardPerspectiveActivity;
 import org.dashbuilder.client.resources.i18n.AppConstants;
 import org.dashbuilder.client.dashboard.DashboardManager;
 import org.dashbuilder.shared.dashboard.events.DashboardCreatedEvent;
@@ -115,8 +116,8 @@ public class ShowcaseEntryPoint {
         result.add(newMenuItem(AppConstants.INSTANCE.menu_dashboards_salesreports(), "SalesReportsPerspective"));
 
         // Add dashboards created in runtime
-        for (PerspectiveActivity activity : dashboardManager.getDashboards()) {
-            result.add(newMenuItem(activity.getIdentifier(), activity.getIdentifier()));
+        for (DashboardPerspectiveActivity activity : dashboardManager.getDashboards()) {
+            result.add(newMenuItem(activity.getDisplayName(), activity.getIdentifier()));
         }
 
         return result;
@@ -140,13 +141,13 @@ public class ShowcaseEntryPoint {
     private void onDashboardCreatedEvent(@Observes DashboardCreatedEvent event) {
         menubar.clear();
         menubar.addMenus(createMenuBar());
-        workbenchNotification.fire(new NotificationEvent(AppConstants.INSTANCE.notification_dashboard_created(event.getDashboardId()), INFO));
+        //workbenchNotification.fire(new NotificationEvent(AppConstants.INSTANCE.notification_dashboard_created(event.getDashboardName()), INFO));
     }
 
     private void onDashboardDeletedEvent(@Observes DashboardDeletedEvent event) {
         menubar.clear();
         menubar.addMenus(createMenuBar());
-        workbenchNotification.fire(new NotificationEvent(AppConstants.INSTANCE.notification_dashboard_deleted(event.getDashboardId()), INFO));
+        workbenchNotification.fire(new NotificationEvent(AppConstants.INSTANCE.notification_dashboard_deleted(event.getDashboardName()), INFO));
     }
 
     private List<? extends MenuItem> getExtensionsMenuItems() {

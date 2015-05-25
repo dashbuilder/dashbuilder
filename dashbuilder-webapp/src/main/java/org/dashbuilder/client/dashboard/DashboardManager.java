@@ -72,7 +72,10 @@ public class DashboardManager {
         perspectiveManager.loadPerspectiveStates(new ParameterizedCommand<Set<PerspectiveDefinition>>() {
             public void execute(Set<PerspectiveDefinition> list) {
                 for (PerspectiveDefinition p : list) {
-                    registerPerspective(p.getName());
+                    String id = p.getName();
+                    if (id.startsWith("dashboard-")) {
+                        registerPerspective(id);
+                    }
                 }
             }
         });
@@ -91,30 +94,37 @@ public class DashboardManager {
         return activity;
     }
 
-    public DashboardPerspectiveActivity newDashboard(final String id) {
-        DashboardPerspectiveActivity activity = registerPerspective(id);
-        placeManager.goTo(id);
+    public DashboardPerspectiveActivity newDashboard(final String name) {
+        final DashboardPerspectiveActivity activity = registerPerspective("dashboard-" + name);
+        placeManager.goTo(activity.getIdentifier());
         perspectiveManager.savePerspectiveState(new Command() {
             public void execute() {
-                dashboardCreatedEvent.fire(new DashboardCreatedEvent(id));
+                dashboardCreatedEvent.fire(new DashboardCreatedEvent(activity.getIdentifier(), activity.getDisplayName()));
             }
         });
         return activity;
     }
 
-    public DashboardPerspectiveActivity getDashboard(String id) {
+    public DashboardPerspectiveActivity getDashboardById(String id) {
         for (DashboardPerspectiveActivity d : getDashboards()) {
             if (d.getIdentifier().equals(id)) return d;
         }
         return null;
     }
 
+    public DashboardPerspectiveActivity getDashboardByName(String name) {
+        for (DashboardPerspectiveActivity d : getDashboards()) {
+            if (d.getDisplayName().equals(name)) return d;
+        }
+        return null;
+    }
+
     public void removeDashboard(String id) {
-        DashboardPerspectiveActivity activity = getDashboard(id);
+        DashboardPerspectiveActivity activity = getDashboardById(id);
         if (activity != null) {
             activity.setPersistent(false);
             activityBeansCache.removeActivity(id);
-            dashboardDeletedEvent.fire(new DashboardDeletedEvent(id));
+            dashboardDeletedEvent.fire(new DashboardDeletedEvent(activity.getIdentifier(), activity.getDisplayName()));
         }
     }
 

@@ -98,7 +98,7 @@ public class NewDashboardForm extends BaseModal {
             nameGroup.setType(ControlGroupType.ERROR);
             nameHelpInline.setText("Name is mandatory");
         }
-        else if (dashboardManager.getDashboard(name) != null) {
+        else if (dashboardManager.getDashboardByName(name) != null) {
             nameGroup.setType(ControlGroupType.ERROR);
             nameHelpInline.setText("Already exists");
         }

@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.dashbuilder.client.resources.i18n.AppConstants;
 import org.dashbuilder.displayer.DisplayerSettings;
 import org.dashbuilder.displayer.client.PerspectiveCoordinator;
 import org.dashbuilder.displayer.client.json.DisplayerSettingsJSONMarshaller;
@@ -33,6 +34,7 @@ import org.uberfire.client.mvp.PerspectiveActivity;
 import org.uberfire.client.mvp.PerspectiveManager;
 import org.uberfire.client.mvp.PlaceManager;
 import org.uberfire.client.workbench.panels.impl.MultiListWorkbenchPanelPresenter;
+import org.uberfire.ext.widgets.common.client.common.popups.YesNoCancelPopup;
 import org.uberfire.mvp.Command;
 import org.uberfire.mvp.PlaceRequest;
 import org.uberfire.mvp.impl.DefaultPlaceRequest;
@@ -74,6 +76,10 @@ public class DashboardPerspectiveActivity  implements PerspectiveActivity {
         this.placeManager = placeManager;
         this.perspectiveCoordinator = perspectiveCoordinator;
         this.jsonMarshaller = jsonMarshaller;
+    }
+
+    public String getDisplayName() {
+        return id.substring(10);
     }
 
     @Override
@@ -123,11 +129,11 @@ public class DashboardPerspectiveActivity  implements PerspectiveActivity {
     @Override
     public Menus getMenus() {
         return MenuFactory
-                .newTopLevelMenu("New displayer")
+                .newTopLevelMenu(AppConstants.INSTANCE.dashboard_new_displayer())
                 .respondsWith(getNewDisplayerCommand())
                 .endMenu()
-                .newTopLevelMenu("Delete dashboard")
-                .respondsWith(getDeletePerspectiveCommand())
+                .newTopLevelMenu(AppConstants.INSTANCE.dashboard_delete_dashboard())
+                .respondsWith(getShowDeletePopupCommand())
                 .endMenu().build();
     }
 
@@ -161,7 +167,31 @@ public class DashboardPerspectiveActivity  implements PerspectiveActivity {
         this.persistent = persistent;
     }
 
-    private Command getDeletePerspectiveCommand() {
+    protected YesNoCancelPopup deleteDashboardPopup;
+
+    private Command getShowDeletePopupCommand() {
+        return new Command() {
+            public void execute() {
+                deleteDashboardPopup = YesNoCancelPopup.newYesNoCancelPopup(
+                        AppConstants.INSTANCE.dashboard_delete_popup_title(),
+                        AppConstants.INSTANCE.dashboard_delete_popup_content(),
+                        getDoDeleteCommand(),
+                        getCancelDeleteCommand(),
+                        null);
+                deleteDashboardPopup.show();
+            }
+        };
+    }
+
+    private Command getCancelDeleteCommand() {
+        return new Command() {
+            public void execute() {
+                deleteDashboardPopup.hide();
+            }
+        };
+    }
+
+    private Command getDoDeleteCommand() {
         return new Command() {
             public void execute() {
                 perspectiveManager.removePerspectiveState(id, new Command() {

@@ -21,15 +21,21 @@ import org.jboss.errai.common.client.api.annotations.Portable;
 public class DashboardDeletedEvent {
 
     private String dashboardId;
+    private String dashboardName;
 
     public DashboardDeletedEvent() {
     }
 
-    public DashboardDeletedEvent(String dashboardId) {
+    public DashboardDeletedEvent(String dashboardId, String dashboardName) {
         this.dashboardId = dashboardId;
+        this.dashboardName = dashboardName;
     }
 
     public String getDashboardId() {
         return dashboardId;
+    }
+
+    public String getDashboardName() {
+        return dashboardName;
     }
 }

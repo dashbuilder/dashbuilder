@@ -30,8 +30,7 @@
       margin-right: 25px;
       width: 250px;
       max-width: 250px;
-      height: 400px;
-      max-height: 400px;
+      max-height: 390px;
       overflow-y: auto;
     }
     .centerPanel {
@@ -39,7 +38,7 @@
       float: left;
       margin-right: 25px;
       width: 630px;
-      height: 400px;
+      height: 390px;
       max-width: 620px;
       max-height: 390px;
       overflow: auto;

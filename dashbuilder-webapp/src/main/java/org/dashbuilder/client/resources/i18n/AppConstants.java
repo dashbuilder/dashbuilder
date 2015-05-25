@@ -50,9 +50,10 @@ public interface AppConstants extends Messages {
 
     String loading();
 
-    String dbdesignerpersp_name();
-
-    String dbdesignerpersp_newdisplayer();
+    String dashboard_new_displayer();
+    String dashboard_delete_dashboard();
+    String dashboard_delete_popup_title();
+    String dashboard_delete_popup_content();
 
     String salesdbpersp_salessummary();
 
