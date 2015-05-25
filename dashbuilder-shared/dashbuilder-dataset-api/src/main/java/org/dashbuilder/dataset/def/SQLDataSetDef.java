@@ -21,6 +21,7 @@ import org.dashbuilder.dataset.validation.groups.SQLDataSetDefDbTableValidation;
 import org.jboss.errai.common.client.api.annotations.Portable;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.groups.Default;
 
 @Portable
 public class SQLDataSetDef extends DataSetDef {
@@ -30,10 +31,10 @@ public class SQLDataSetDef extends DataSetDef {
 
     protected String dbSchema;
 
-    @NotNull(message = "{dataSetApi_sqlDataSetDef_dbTable_notNull}", groups = SQLDataSetDefDbTableValidation.class)
+    @NotNull(message = "{dataSetApi_sqlDataSetDef_dbTable_notNull}", groups = {SQLDataSetDefDbTableValidation.class})
     protected String dbTable;
 
-    @NotNull(message = "{dataSetApi_sqlDataSetDef_dbSQL_notNull}", groups = SQLDataSetDefDbSQLValidation.class)
+    @NotNull(message = "{dataSetApi_sqlDataSetDef_dbSQL_notNull}", groups = {SQLDataSetDefDbSQLValidation.class})
     protected String dbSQL;
     
     public SQLDataSetDef() {

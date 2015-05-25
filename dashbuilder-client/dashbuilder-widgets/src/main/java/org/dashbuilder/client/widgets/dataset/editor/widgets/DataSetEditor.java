@@ -15,6 +15,7 @@
  */
 package org.dashbuilder.client.widgets.dataset.editor.widgets;
 
+import com.github.gwtbootstrap.client.ui.constants.ButtonType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -92,16 +93,15 @@ public class DataSetEditor implements IsWidget {
         View showBasicAttributesEditionView(final String uuid);
         View showSQLAttributesEditorView();
         View showBeanAttributesEditorView();
-        View showCSVAttributesEditorView(FormPanel.SubmitCompleteHandler submitCompleteHandler);
+        View showCSVAttributesEditorView(final FormPanel.SubmitCompleteHandler submitCompleteHandler);
         View showELAttributesEditorView();
         View showPreviewTableEditionView(final Displayer tableDisplayer);
         View showColumnsEditorView(final List<DataColumnDef> columns, final DataSet dataSet, final DataSetColumnsEditor.ColumnsChangedEventHandler columnsChangedEventHandler);
         View showFilterEditionView(final DataSet dataSet, final DataSetFilterEditor.Listener filterListener);
         View showAdvancedAttributesEditionView();
-        View addTestButtonHandler(final ClickHandler testHandler);
-        View addBackToProviderConfButtonHandler(final ClickHandler testHandler);
-        View showNextButton(String title, String helpText, ClickHandler nextHandler);
-        View showCancelButton(ClickHandler cancelHandler);
+        View showTestButton(final ClickHandler testHandler);
+        View showNextButton(final String title, final String helpText, final ButtonType type, final ClickHandler nextHandler);
+        View showCancelButton(final ClickHandler cancelHandler);
         View onSave();
         View showLoadingView();
         View hideLoadingView();
@@ -150,11 +150,13 @@ public class DataSetEditor implements IsWidget {
         edit();
         
         // Build provider selection view.
+        currentWfView = WorkflowView.PROVIDER_SELECTION;
         showProviderSelectionView();
 
         // Next button.
         view.showNextButton(DataSetEditorConstants.INSTANCE.next(),
                 DataSetEditorConstants.INSTANCE.next_description(),
+                ButtonType.PRIMARY,
                 providerScreenNextButtonHandler);
                 
         return this;
@@ -187,8 +189,9 @@ public class DataSetEditor implements IsWidget {
                     // Update the screens, displayers & restart the workflow.
                     edit();
                     view.setEditMode(true);
+                    currentWfView = WorkflowView.ADVANCED;
                     showBasicAttributesEditionView();
-                    showProviderSpecificAttributesEditionView();
+                    showProviderSpecificAttributesEditionView(true);
                     updateTableDisplayer();
                     
                 }
@@ -302,8 +305,9 @@ public class DataSetEditor implements IsWidget {
                 edit();
 
                 // Build basic attributes view.
+                currentWfView = WorkflowView.DATA_CONF;
                 showBasicAttributesEditionView();
-                showProviderSpecificAttributesEditionView();
+                showProviderSpecificAttributesEditionView(false);
 
             }
             log(violations, violations);
@@ -317,25 +321,18 @@ public class DataSetEditor implements IsWidget {
             // Check if exist validation violations.
             final Set violations = save();
             if (isValid(violations)) {
+                if (WorkflowView.DATA_CONF.equals(currentWfView)) currentWfView = WorkflowView.PREVIEW;
+                
+                // Reset columns and filter configuration.
+                dataSetDef.setAllColumnsEnabled(true);
+                dataSetDef.setColumns(null);
+                dataSetDef.setDataSetFilter(null);
+                originalColumns = null;
+                
+                // Update the preview table.
                 updateTableDisplayer();
             }
             log(violations, violations);
-        }
-    };
-
-    private final ClickHandler backProviderConfButtonHandler = new ClickHandler() {
-
-        @Override
-        public void onClick(ClickEvent clickEvent) {
-            // Reset columns and filter configuration.
-            dataSetDef.setAllColumnsEnabled(true);
-            dataSetDef.setColumns(null);
-            dataSetDef.setDataSetFilter(null);
-            originalColumns = null;
-            
-            // Show views.
-            showBasicAttributesEditionView();
-            showProviderSpecificAttributesEditionView();
         }
     };
 
@@ -351,13 +348,15 @@ public class DataSetEditor implements IsWidget {
                 edit();
 
                 // Build views.
+                currentWfView = WorkflowView.ADVANCED;
                 showBasicAttributesEditionView();
-                showProviderSpecificAttributesEditionView();
+                showProviderSpecificAttributesEditionView(true);
                 showPreviewTableEditionView();
                 showAdvancedAttributesEditionView();
 
                 view.showNextButton(DataSetEditorConstants.INSTANCE.save(),
                         DataSetEditorConstants.INSTANCE.save_description(),
+                        ButtonType.SUCCESS,
                         saveButtonHandler);
             }
             log(violations, violations);
@@ -494,18 +493,19 @@ public class DataSetEditor implements IsWidget {
     private void showProviderSelectionView() {
         // Show provider selection widget.
         view.showProviderSelectionView();
-        currentWfView = WorkflowView.PROVIDER_SELECTION;
     }
     
     private void showBasicAttributesEditionView() {
-        currentWfView = WorkflowView.DATA_CONF;
         final String _uuid = originalUUID != null ? originalUUID : dataSetDef.getUUID();
         view.showBasicAttributesEditionView(_uuid);
     }
     
-    private void showProviderSpecificAttributesEditionView() {
-        currentWfView = WorkflowView.DATA_CONF;
-        view.addTestButtonHandler(testButtonHandler);
+    private void showProviderSpecificAttributesEditionView(final boolean isEdit) {
+        if (isEdit) view.showTestButton(testButtonHandler);
+        else view.showNextButton(DataSetEditorConstants.INSTANCE.test(), 
+                DataSetEditorConstants.INSTANCE.test_description(),
+                ButtonType.PRIMARY,
+                testButtonHandler);
         switch (dataSetDef.getProvider()) {
             case SQL:
                 view.showSQLAttributesEditorView();
@@ -531,25 +531,20 @@ public class DataSetEditor implements IsWidget {
     };
     
     private void showColumnsEditorView(final DataSet dataSet) {
-        currentWfView = WorkflowView.PREVIEW;
         view.showColumnsEditorView(this.originalColumns, dataSet, columnsChangedEventHandler);
     }
 
     private void showFilterEditorView(final DataSet dataSet) {
-        currentWfView = WorkflowView.PREVIEW;
         view.showFilterEditionView(dataSet, filterListener);
     }
 
     private void showPreviewTableEditionView() {
-        currentWfView = WorkflowView.PREVIEW;
         
         // Show table preview preview.
-        view.addBackToProviderConfButtonHandler(backProviderConfButtonHandler);
         view.showPreviewTableEditionView(tableDisplayer);
     }
     
     private void showAdvancedAttributesEditionView() {
-        currentWfView = WorkflowView.ADVANCED;
         view.showAdvancedAttributesEditionView();
     }
     
@@ -612,13 +607,13 @@ public class DataSetEditor implements IsWidget {
                 if (dataSet != null) {
                     
                     final boolean isEdit = originalUUID != null;
-                    final WorkflowView v = currentWfView;
 
                     // UUID for new datasets are generated on backend side.
                     if (dataSetDef.getUUID() == null) dataSetDef.setUUID(dataSet.getUUID());
 
                     // Original columns.
-                    if (DataSetEditor.this.originalColumns == null) {
+                    final boolean columnsUpdated = DataSetEditor.this.originalColumns == null;
+                    if (columnsUpdated) {
                         final List<DataColumn> dataSetColumns = dataSet.getColumns();
                         if (dataSetColumns != null) {
                             final List<DataColumnDef> cDefs = new LinkedList<DataColumnDef>();
@@ -630,27 +625,33 @@ public class DataSetEditor implements IsWidget {
                             updateDataSetDefColumns(cDefs);
                         }
                     }
+
+                    view.showTestButton(testButtonHandler);
                     
                     // Build views.
                     showBasicAttributesEditionView();
-                    if (isEdit && !v.equals(WorkflowView.ADVANCED)) showAdvancedAttributesEditionView();
-                    
-                    // Show initial filter and columns edition view.
-                    if (!v.equals(WorkflowView.PREVIEW)) {
-                        showColumnsEditorView(dataSet);
-                        showFilterEditorView(dataSet);
-                    }
-                    
+
+                    final boolean isAdvaencedView = currentWfView.equals(WorkflowView.ADVANCED);
+                    if (isAdvaencedView) showAdvancedAttributesEditionView();
+
                     // Reload table preview.
                     showPreviewTableEditionView();
 
-                    if (isEdit) {
+                    // Show initial filter and columns edition view.
+                    if (isEdit || columnsUpdated) {
+                        showColumnsEditorView(dataSet);
+                        showFilterEditorView(dataSet);
+                    }
+
+                    if (isAdvaencedView) {
                         view.showNextButton(DataSetEditorConstants.INSTANCE.save(),
                                 DataSetEditorConstants.INSTANCE.save_description(),
+                                ButtonType.SUCCESS,
                                 saveButtonHandler);
                     } else {
                         view.showNextButton(DataSetEditorConstants.INSTANCE.next(),
                                 DataSetEditorConstants.INSTANCE.next_description(),
+                                ButtonType.PRIMARY,
                                 advancedAttrsButtonHandler);
                     }
 

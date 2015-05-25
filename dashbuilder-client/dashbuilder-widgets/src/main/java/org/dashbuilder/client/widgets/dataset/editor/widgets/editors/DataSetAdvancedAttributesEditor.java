@@ -16,6 +16,7 @@
 package org.dashbuilder.client.widgets.dataset.editor.widgets.editors;
 
 import com.github.gwtbootstrap.client.ui.CheckBox;
+import com.github.gwtbootstrap.client.ui.Column;
 import com.github.gwtbootstrap.client.ui.DropdownButton;
 import com.github.gwtbootstrap.client.ui.NavLink;
 import com.google.gwt.core.client.GWT;
@@ -33,6 +34,7 @@ import org.dashbuilder.common.client.validation.editors.ValueBoxEditorDecorator;
 import org.dashbuilder.common.client.widgets.slider.TriangleSlider;
 import org.dashbuilder.common.client.widgets.slider.event.BarValueChangedEvent;
 import org.dashbuilder.common.client.widgets.slider.event.BarValueChangedHandler;
+import org.dashbuilder.dataprovider.DataSetProviderType;
 import org.dashbuilder.dataset.client.resources.i18n.DateIntervalTypeConstants;
 import org.dashbuilder.dataset.client.validation.editors.DataSetDefEditor;
 import org.dashbuilder.dataset.def.DataSetDef;
@@ -61,6 +63,10 @@ public class DataSetAdvancedAttributesEditor extends AbstractDataSetDefEditor im
     FlowPanel advancedAttributesPanel;
     
     /* **************** BACKEND CACHE *************** */
+    
+    @UiField
+    Column backendCacheColumn;
+    
     @UiField
     @Path("cacheEnabled")
     BooleanSwitchEditor attributeBackendCacheStatus;
@@ -152,6 +158,12 @@ public class DataSetAdvancedAttributesEditor extends AbstractDataSetDefEditor im
             setRefreshUIValues(true);
         }
     }
+
+    public boolean isShowBackendCache(final DataSetDef def) {
+        return def != null && def.getProvider() != null
+                && ( !DataSetProviderType.BEAN.equals(def.getProvider())
+                && !DataSetProviderType.CSV.equals(def.getProvider() ));
+    }
     
     private final ValueChangeHandler<Integer> refreshTimeQuantityValueChangeHandler = new ValueChangeHandler<Integer>() {
         @Override
@@ -235,6 +247,10 @@ public class DataSetAdvancedAttributesEditor extends AbstractDataSetDefEditor im
         backendCacheSlider.setValue(dataSetDef.getCacheMaxRows());
         clientCacheSlider.setValue(dataSetDef.getPushMaxSize());
 
+        // Special handling for BEAN and CSV types, they do not support disabling the backend cache.
+        if (isShowBackendCache(dataSetDef)) backendCacheColumn.setVisible(true);
+        else backendCacheColumn.setVisible(false);
+        
         // Values for boolean editors.
         attributeMaxRows.setEnabled(dataSetDef.isCacheEnabled());
         attributeMaxBytes.setEnabled(dataSetDef.isPushEnabled());

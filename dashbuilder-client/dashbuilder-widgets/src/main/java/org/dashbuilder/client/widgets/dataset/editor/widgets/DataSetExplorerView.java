@@ -250,18 +250,24 @@ public class DataSetExplorerView extends Composite implements DataSetExplorer.Vi
             statusText.addStyleName(style.statusTextTitle());
             
             // Caches and refresh.
+            
             final boolean isCacheEnabled = dataSetDef.isCacheEnabled();
-            final FlowPanel cachePanel = new FlowPanel();
-            final com.github.gwtbootstrap.client.ui.Image cacheEnabled = new com.github.gwtbootstrap.client.ui.Image(
-                    isCacheEnabled ? images.okIconSmall() : images.cancelIconSmall());
-            final String _cache = isCacheEnabled ? DataSetExplorerConstants.INSTANCE.enabled() : DataSetExplorerConstants.INSTANCE.disabled();
-            cacheEnabled.setTitle(_cache);
-            cacheEnabled.setAltText(_cache);
-            cacheEnabled.addStyleName(style.statusIcon());
-            final HTML cacheText = new HTML(DataSetExplorerConstants.INSTANCE.cache());
-            cacheText.addStyleName(style.statusText());
-            cachePanel.add(cacheEnabled);
-            cachePanel.add(cacheText);
+            FlowPanel cachePanel = null;
+            
+            if (callback.isShowBackendCache(dataSetDef)) {
+                cachePanel = new FlowPanel();
+                final com.github.gwtbootstrap.client.ui.Image cacheEnabled = new com.github.gwtbootstrap.client.ui.Image(
+                        isCacheEnabled ? images.okIconSmall() : images.cancelIconSmall());
+                final String _cache = isCacheEnabled ? DataSetExplorerConstants.INSTANCE.enabled() : DataSetExplorerConstants.INSTANCE.disabled();
+                cacheEnabled.setTitle(_cache);
+                cacheEnabled.setAltText(_cache);
+                cacheEnabled.addStyleName(style.statusIcon());
+                final HTML cacheText = new HTML(DataSetExplorerConstants.INSTANCE.cache());
+                cacheText.addStyleName(style.statusText());
+                cachePanel.add(cacheEnabled);
+                cachePanel.add(cacheText);
+            }
+
             
             final boolean isPushEnabled = dataSetDef.isPushEnabled();
             final FlowPanel pushPanel = new FlowPanel();
@@ -292,7 +298,7 @@ public class DataSetExplorerView extends Composite implements DataSetExplorer.Vi
             final FlowPanel statusPanel = new FlowPanel();
             statusPanel.addStyleName(style.statusPanel());
             statusPanel.add(statusText);
-            statusPanel.add(cachePanel);
+            if (cachePanel != null) statusPanel.add(cachePanel);
             statusPanel.add(pushPanel);
             statusPanel.add(refreshPanel);
 

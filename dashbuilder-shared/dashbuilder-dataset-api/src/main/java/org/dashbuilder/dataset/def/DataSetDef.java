@@ -47,15 +47,15 @@ public class DataSetDef {
     protected DataSetFilter dataSetFilter = null;
     protected boolean isPublic = true;
     protected boolean pushEnabled = false;
-    @NotNull(message = "{dataSetApi_dataSetDef_pushMaxSize_notNull}", groups = DataSetDefPushSizeValidation.class)
+    @NotNull(message = "{dataSetApi_dataSetDef_pushMaxSize_notNull}", groups = {DataSetDefPushSizeValidation.class})
     @Max(value = 4096)
     protected Integer pushMaxSize = 1024;
     protected boolean cacheEnabled = false;
-    @NotNull(message = "{dataSetApi_dataSetDef_cacheMaxRows_notNull}", groups = DataSetDefCacheRowsValidation.class)
+    @NotNull(message = "{dataSetApi_dataSetDef_cacheMaxRows_notNull}", groups = {DataSetDefCacheRowsValidation.class})
     @Max(value = 10000)
     protected Integer cacheMaxRows = 1000;
-    @NotNull(message = "{dataSetApi_dataSetDef_refreshTime_notNull}", groups = DataSetDefRefreshIntervalValidation.class)
-    @IsTimeInterval(message = "{dataSetApi_dataSetDef_refreshTime_intervalInvalid}", groups = DataSetDefRefreshIntervalValidation.class)
+    @NotNull(message = "{dataSetApi_dataSetDef_refreshTime_notNull}", groups = {DataSetDefRefreshIntervalValidation.class})
+    @IsTimeInterval(message = "{dataSetApi_dataSetDef_refreshTime_intervalInvalid}", groups = {DataSetDefRefreshIntervalValidation.class})
     protected String refreshTime = null;
     protected boolean refreshAlways = false;
     protected boolean allColumnsEnabled = true;

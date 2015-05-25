@@ -151,7 +151,7 @@ public class DataSetColumnsEditor extends AbstractEditor {
 
                 // Link the column editor with workflow driver.
                 workflow.edit(columnEditor, column);
-                columnEditor.setEditMode(enabled);
+                columnEditor.setEditMode(isEditMode() && enabled);
                 
                 // Create the UI panel for the column.
                 final boolean canRemove = dataSet != null && dataSet.getColumns().size() > 1;
@@ -207,7 +207,8 @@ public class DataSetColumnsEditor extends AbstractEditor {
 
     private void addColumn(final DataColumnDef column, final DataSetDefEditWorkflow workflow) {
         final DataColumnBasicEditor columnEditor = getEditor(column);
-        columnEditor.setEditMode(true);
+        assert columnEditor != null;
+        columnEditor.setEditMode(isEditMode());
         columns.add(column);
         fireColumnsChanged();
     }

@@ -122,18 +122,14 @@ public class SQLDataSetDefAttributesEditor extends AbstractDataSetDefEditor impl
     }
 
     void enableTable() {
-        dbTable.setEnabled(true);
         dbTable.setVisible(true);
-        dbQuery.setEnabled(false);
         dbQuery.setVisible(false);
         tableButton.setValue(true);
         queryButton.setValue(false);
     }
 
     void enableQuery() {
-        dbTable.setEnabled(false);
         dbTable.setVisible(false);
-        dbQuery.setEnabled(true);
         dbQuery.setVisible(true);
         tableButton.setValue(false);
         queryButton.setValue(true);

@@ -95,7 +95,7 @@ public class DataColumnBasicEditor extends AbstractEditor implements DataColumnD
             // Read only.
             image = DataColumnTypeEditor.buildTypeSelectorWidget(columnType.getValue());
         } else if (!isEditMode && columnType.getOriginalType() != null){
-            // Not used in dataset..
+            // Not present in resulting dataset, use the original one..
             image = DataColumnTypeEditor.buildTypeSelectorWidget(columnType.getOriginalType());
         }
         

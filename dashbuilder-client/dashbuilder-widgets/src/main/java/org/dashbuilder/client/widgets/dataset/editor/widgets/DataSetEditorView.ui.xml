@@ -82,11 +82,11 @@
     }
 
     .testButtonPanel {
-      margin: 15px;
+      margin-top: 15px;
     }
 
     .testButton {
-
+        width: 100px;
     }
 
     .loadingScreenPanel {
@@ -100,22 +100,12 @@
       float: right;
     }
 
-    .providerSetupButtonPanel {
-      float: left;
-      margin-bottom: 20px;
-      margin-left: 10px;
-      position: absolute;
-    }
     .exportButtonsPanel {
       float: left;
       margin-bottom: 20px;
-      margin-left: 130px;
+      margin-left: 15px;
       margin-top: 3px;
       position: absolute;
-    }
-
-    .providerSetupButton {
-      float: left;
     }
     .exportButton {
       float: left;
@@ -134,8 +124,8 @@
       border: 1px solid lavender;
       border-left-width: 0px;
       cursor: hand;
-      top: 41px;
-      height: 558px;
+      margin-top: 40px;
+      height: 450px;
       left: 0px;
     }
     .columnsFilterDisclosurePanelHeaderOpen {
@@ -159,6 +149,7 @@
     }
 
     .specificProviderAttributesPanel {
+      height: 100%;
       margin-top: 0px;
     }
 
@@ -173,7 +164,7 @@
       width: 100%;
       margin-top: 30px;
     }
-    .slidingPanel {
+    .tabInnerPanel {
       width: 100%;
       height: 500px;
       overflow: hidden;
@@ -206,14 +197,6 @@
     <b:Modal ui:field="errorPanel" title="{i18n.error}" backdrop="STATIC" keyboard="true" animation="true">
       
       <g:FlowPanel addStyleNames="{style.errorPanel}">
-        <b:Row ui:field="errorTypeRow" addStyleNames="{style.errorRow}">
-          <b:Column size="1">
-            <g:Label text="{i18n.type}" addStyleNames="{style.errorLabel}"/>
-          </b:Column>
-          <b:Column size="3">
-            <g:HTML ui:field="errorType" text=""/>
-          </b:Column>
-        </b:Row>
         <b:Row ui:field="errorMessageRow" addStyleNames="{style.errorRow}">
           <b:Column size="1">
             <g:Label text="{i18n.message}" addStyleNames="{style.errorLabel}"/>
@@ -281,13 +264,11 @@
     <g:FlowPanel ui:field="tabViewPanel" >
       
       <b:TabPanel tabPosition="above" ui:field="tabPanel" addStyleNames="{style.tabPanel} {style.editorPanel}">
-  
-        <!-- Data configuration. -->
-        <b:Tab heading="{i18n.tab_dataConfiguration}" active="true" ui:field="dataConfigurationTab" >
 
-          <!-- NOTE: In view Java class, those two panels are handled by a SlidingPanel not bind here. -->
+        <!-- Preview & columns & filter. -->
+        <b:Tab heading="{i18n.tab_configguration}" active="true" ui:field="configurationTab" >
 
-          <g:FlowPanel ui:field="dataConfigurationPanel" >
+          <g:FlowPanel ui:field="dataConfigurationPanel" addStyleNames="{style.tabInnerPanel} ">
 
             <g:FlowPanel ui:field="basicAttributesEditionViewPanel" addStyleNames="{style.editorPanel}">
               <dash-dset-editors:DataSetBasicAttributesEditor editMode="true" ui:field="dataSetBasicAttributesEditor"/>
@@ -314,19 +295,24 @@
               <!-- Test provider settings button. -->
               <g:FlowPanel ui:field="testButtonPanel" addStyleNames="{style.testButtonPanel} ">
 
-                <b:Popover showDelay="1000" text="{i18n.test_description}" heading="{i18n.test}">
-                  <b:Button ui:field="testButton" title="{i18n.test}"
-                            text="{i18n.test}" size="SMALL" icon="CHEVRON_RIGHT"
+                <b:Popover showDelay="1000" text="{i18n.updateTest_description}" heading="{i18n.test}">
+                  <b:Button ui:field="testButton" title="{i18n.updateTest}"
+                            text="{i18n.updateTest}" size="SMALL" icon="CHEVRON_RIGHT"
                             addStyleNames="{style.testButton} " type="PRIMARY"/>
                 </b:Popover>
 
               </g:FlowPanel>
 
             </g:FlowPanel>
-            
-          </g:FlowPanel>
 
-          <g:FlowPanel ui:field="filterColumnsPreviewTablePanel" >
+          </g:FlowPanel>
+          
+        </b:Tab>
+        
+        <!-- Preview & columns & filter. -->
+        <b:Tab heading="{i18n.tab_preview}" active="false" ui:field="previewTab" >
+
+          <g:FlowPanel ui:field="filterColumnsPreviewTablePanel" addStyleNames="{style.tabInnerPanel} ">
 
             <!-- Columns and filter panel . -->
             <g:FlowPanel addStyleNames="{style.columnsFilterDisclosurePanel} ">
@@ -358,17 +344,6 @@
 
             <g:FlowPanel ui:field="previewTableEditionViewPanel" addStyleNames="{style.previewTablePanel} ">
 
-              <!-- Back to specific provider attributes edition. -->
-              <g:FlowPanel ui:field="backToSpecificAttrsButtonPanel" addStyleNames="{style.providerSetupButtonPanel} ">
-
-                <b:Popover showDelay="1000" text="{i18n.providerSetup_description}" heading="{i18n.providerSetup}">
-                  <b:Button ui:field="backToSpecificAttrsEditionButton" title="{i18n.providerSetup}"
-                            text="{i18n.providerSetup}" size="SMALL" icon="CHEVRON_LEFT"
-                            addStyleNames="{style.providerSetupButton} "/>
-                </b:Popover>
-
-              </g:FlowPanel>
-
               <!-- Export buttons panel. -->
               <g:FlowPanel ui:field="exportButtonsPanel" addStyleNames="{style.exportButtonsPanel} ">
 
@@ -396,7 +371,7 @@
         </b:Tab>
 
         <!-- Advanced configuration. -->
-        <b:Tab heading="{i18n.tab_advancedConfiguration}" active="false" ui:field="dataAdvancedConfigurationTab">
+        <b:Tab heading="{i18n.tab_advancedConfiguration}" active="false" ui:field="advancedConfigurationTab">
 
           <g:FlowPanel ui:field="advancedAttributesEditionViewPanel" addStyleNames="{style.editorPanel}">
             <dash-dset-editors:DataSetAdvancedAttributesEditor editMode="true" ui:field="dataSetAdvancedAttributesEditor"/>
@@ -414,9 +389,7 @@
         <b:Button text="{i18n.cancel}" ui:field="cancelButton"/>
       </b:Popover>
 
-      <b:Popover ui:field="nextButtonPopover" showDelay="1000" text="" heading="">
-        <b:Button text="{i18n.next}" ui:field="nextButton" type="PRIMARY"/>
-      </b:Popover>
+      <b:Button text="{i18n.next}" ui:field="nextButton" type="PRIMARY"/>
 
     </g:FlowPanel>
 

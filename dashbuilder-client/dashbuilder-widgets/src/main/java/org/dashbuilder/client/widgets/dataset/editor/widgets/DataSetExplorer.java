@@ -23,6 +23,7 @@ import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.client.widgets.dataset.editor.widgets.events.DeleteDataSetEventHandler;
 import org.dashbuilder.client.widgets.dataset.editor.widgets.events.EditDataSetEventHandler;
+import org.dashbuilder.dataprovider.DataSetProviderType;
 import org.dashbuilder.dataset.DataSetMetadata;
 import org.dashbuilder.dataset.client.DataSetClientServiceError;
 import org.dashbuilder.dataset.client.DataSetClientServices;
@@ -72,6 +73,7 @@ public class DataSetExplorer implements IsWidget {
 
         void getMetadata(final DataSetDef def, final DataSetMetadataCallback callback);
 
+        boolean isShowBackendCache(final DataSetDef def);
     }
     
     View view;
@@ -133,6 +135,13 @@ public class DataSetExplorer implements IsWidget {
             } catch (Exception e) {
                 showError(e);
             }
+        }
+
+        @Override
+        public boolean isShowBackendCache(DataSetDef def) {
+            return def != null && def.getProvider() != null 
+                    && ( !DataSetProviderType.BEAN.equals(def.getProvider()) 
+                    && !DataSetProviderType.CSV.equals(def.getProvider() ));
         }
     };
 

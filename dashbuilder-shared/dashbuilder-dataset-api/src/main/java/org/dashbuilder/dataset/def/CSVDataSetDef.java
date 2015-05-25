@@ -27,9 +27,9 @@ import javax.validation.constraints.NotNull;
 @Portable
 public class CSVDataSetDef extends DataSetDef {
 
-    @NotNull(message = "{dataSetApi_csvDataSetDef_fileURL_notNull}", groups = CSVDataSetDefFileURLValidation.class)
+    @NotNull(message = "{dataSetApi_csvDataSetDef_fileURL_notNull}", groups = {CSVDataSetDefFileURLValidation.class})
     protected String fileURL;
-    @NotNull(message = "{dataSetApi_csvDataSetDef_filePath_notNull}", groups = CSVDataSetDefFilePathValidation.class)
+    @NotNull(message = "{dataSetApi_csvDataSetDef_filePath_notNull}", groups = {CSVDataSetDefFilePathValidation.class})
     protected String filePath;
     @NotNull(message = "{dataSetApi_csvDataSetDef_sepChar_notNull}")
     protected Character separatorChar;
