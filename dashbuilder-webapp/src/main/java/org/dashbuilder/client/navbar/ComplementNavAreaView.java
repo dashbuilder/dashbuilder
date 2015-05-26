@@ -69,4 +69,14 @@ public class ComplementNavAreaView
 //        panel.setPixelSize( width, height );
     }
 
+    @Override
+    public void hide() {
+        this.setVisible(false);
+    }
+
+    @Override
+    public void show(boolean showLogo) {
+        this.setVisible(true);
+        logo.setVisible(showLogo);
+    }
 }

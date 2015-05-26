@@ -28,7 +28,8 @@ import com.google.gwt.user.client.ui.Widget;
 public class ComplementNavAreaPresenter implements Header {
 
     public interface View extends IsWidget {
-
+        void hide();
+        void show(boolean showLogo);
     }
 
     @Inject
@@ -50,4 +51,11 @@ public class ComplementNavAreaPresenter implements Header {
         return null;
     }
 
+    public void hide() {
+        view.hide();
+    }
+
+    public void show(boolean showLogo) {
+        view.show(showLogo);
+    }
 }

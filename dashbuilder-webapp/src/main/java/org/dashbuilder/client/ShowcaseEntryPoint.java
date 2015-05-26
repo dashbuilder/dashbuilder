@@ -27,6 +27,7 @@ import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.user.client.ui.RootPanel;
 import org.dashbuilder.client.dashboard.DashboardPerspectiveActivity;
+import org.dashbuilder.client.navbar.ComplementNavAreaPresenter;
 import org.dashbuilder.client.resources.i18n.AppConstants;
 import org.dashbuilder.client.dashboard.DashboardManager;
 import org.dashbuilder.shared.dashboard.events.DashboardCreatedEvent;
@@ -56,6 +57,9 @@ public class ShowcaseEntryPoint {
     private WorkbenchMenuBar menubar;
 
     @Inject
+    private ComplementNavAreaPresenter subMenubar;
+
+    @Inject
     private PlaceManager placeManager;
 
     @Inject
@@ -79,10 +83,12 @@ public class ShowcaseEntryPoint {
     private Menus createMenuBar() {
         return newTopLevelMenu(AppConstants.INSTANCE.menu_home()).respondsWith(new Command() {
                 public void execute() {
+                    subMenubar.show(true);
                     placeManager.goTo("HomePerspective");
                 }}).endMenu().
                 newTopLevelMenu(AppConstants.INSTANCE.menu_gallery()).respondsWith(new Command() {
                 public void execute() {
+                    subMenubar.show(true);
                     placeManager.goTo("DisplayerGalleryPerspective");
                 }}).endMenu().
                 newTopLevelMenu(AppConstants.INSTANCE.menu_authoring())
@@ -117,7 +123,7 @@ public class ShowcaseEntryPoint {
 
         // Add dashboards created in runtime
         for (DashboardPerspectiveActivity activity : dashboardManager.getDashboards()) {
-            result.add(newMenuItem(activity.getDisplayName(), activity.getIdentifier()));
+            result.add(newMenuItem(activity.getDisplayName(), activity.getIdentifier(), true, false));
         }
 
         return result;
@@ -129,6 +135,7 @@ public class ShowcaseEntryPoint {
                 newDashboardForm.init(new NewDashboardForm.Listener() {
 
                     public void onOk(String name) {
+                        subMenubar.show(false);
                         dashboardManager.newDashboard(name);
                     }
                     public void onCancel() {
@@ -158,8 +165,14 @@ public class ShowcaseEntryPoint {
     }
     
     private MenuItem newMenuItem(String caption, final String activityId) {
+        return newMenuItem(caption, activityId, false, false);
+    }
+
+    private MenuItem newMenuItem(String caption, final String activityId, final boolean showSubMenu, final boolean showLogo) {
         return MenuFactory.newSimpleItem(caption).respondsWith(new Command() {
             public void execute() {
+                if (showSubMenu) subMenubar.show(showLogo);
+                else subMenubar.hide();
                 placeManager.goTo(activityId);
             }
         }).endMenu().build().getItems().get(0);
