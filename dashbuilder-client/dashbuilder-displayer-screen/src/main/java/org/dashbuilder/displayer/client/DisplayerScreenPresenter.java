@@ -68,6 +68,9 @@ public class DisplayerScreenPresenter {
     @Inject
     private DataSetClientServices dataSetClientServices;
 
+    @Inject
+    private DisplayerScreenConfigurator screenConfigurator;
+
     private DisplayerView displayerView;
     DisplayerEditorPopup displayerEditor;
     private PerspectiveCoordinator perspectiveCoordinator;
@@ -124,7 +127,7 @@ public class DisplayerScreenPresenter {
         // Check if display renderer selector component.
         Boolean showRendererSelector = Boolean.parseBoolean(placeRequest.getParameter("showRendererSelector","false"));
         displayerView.setIsShowRendererSelector(showRendererSelector);
-        
+
         // Draw the Displayer.
         if (StringUtils.isBlank(displayerSettings.getUUID())) displayerSettings.setUUID(uuidGenerator.newUuid());
         displayerView.setDisplayerSettings(displayerSettings);
@@ -132,6 +135,9 @@ public class DisplayerScreenPresenter {
 
         // Register the Displayer into the coordinator.
         perspectiveCoordinator.addDisplayer(displayer);
+
+        // Init the screen configurator
+        screenConfigurator.init(displayerView);
 
         // Check edit mode
         String edit = placeRequest.getParameter("edit", "false");
@@ -141,7 +147,7 @@ public class DisplayerScreenPresenter {
         csvExportAllowed = displayerSettings.isCSVExportAllowed();
         excelExportAllowed = displayerSettings.isExcelExportAllowed();
         this.menu = makeMenuBar();
-        adjustMenuActions( this.displayerSettings );
+        adjustMenuActions(this.displayerSettings);
     }
 
     @OnClose
@@ -155,8 +161,8 @@ public class DisplayerScreenPresenter {
     }
 
     @WorkbenchPartView
-    public IsWidget getView() {
-        return displayerView;
+    public DisplayerScreenConfigurator getView() {
+        return screenConfigurator;
     }
 
     @WorkbenchMenu

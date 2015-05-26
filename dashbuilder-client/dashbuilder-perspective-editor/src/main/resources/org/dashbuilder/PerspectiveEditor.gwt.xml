@@ -4,9 +4,6 @@
 <module>
   <inherits name="org.uberfire.UberfireClientAll"/>
 
-  <inherits name="org.dashbuilder.DisplayerClient"/>
-  <inherits name="org.dashbuilder.PerspectiveEditor"/>
-
-  <source path='displayer'/>
+  <source path='client'/>
 
 </module>
