@@ -66,6 +66,7 @@ public class DataSetColumnsEditor extends AbstractEditor {
     @UiField
     FlowPanel columnsPanel;
 
+    private List<DataColumnDef> originalColumns;
     private boolean isEditMode;
 
     public DataSetColumnsEditor() {
@@ -130,6 +131,7 @@ public class DataSetColumnsEditor extends AbstractEditor {
         clear();
 
         if (columns != null && workflow != null) {
+            originalColumns = new LinkedList<DataColumnDef>(columns);
             
             // Remove workflow column status.
             workflow.removeAllColumns();
@@ -224,7 +226,18 @@ public class DataSetColumnsEditor extends AbstractEditor {
     }
     
     private void fireColumnsChanged() {
-        this.fireEvent(new ColumnsChangedEvent(new LinkedList<DataColumnDef>(columns)));
+        // Return the columns in same order as the original ones.
+        if (columns != null) {
+            final List<DataColumnDef> result = new ArrayList<DataColumnDef>();
+            for (final DataColumnDef column : originalColumns) {
+                final int _ci = columns.indexOf(column);
+                if (_ci > -1) {
+                    final DataColumnDef _c = columns.get(_ci);
+                    result.add(_c);
+                }
+            }
+            this.fireEvent(new ColumnsChangedEvent(new LinkedList<DataColumnDef>(result)));
+        }
     }
     
     @Override
@@ -260,5 +273,6 @@ public class DataSetColumnsEditor extends AbstractEditor {
         columnEditors.clear();
         columnsPanel.clear();
         columns.clear();
+        originalColumns = null;
     }
 }

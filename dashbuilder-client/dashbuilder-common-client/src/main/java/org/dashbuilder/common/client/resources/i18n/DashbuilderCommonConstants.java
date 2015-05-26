@@ -29,4 +29,5 @@ public interface DashbuilderCommonConstants extends ConstantsWithLookup {
     String value();
     String actions();
     String newValue();
+    String currentFilePath();
 }

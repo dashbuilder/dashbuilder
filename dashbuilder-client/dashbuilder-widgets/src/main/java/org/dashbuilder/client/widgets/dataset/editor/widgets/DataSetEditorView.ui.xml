@@ -80,15 +80,6 @@
     .nextStep {
       margin: 5px;
     }
-
-    .testButtonPanel {
-      margin-top: 15px;
-    }
-
-    .testButton {
-        width: 100px;
-    }
-
     .loadingScreenPanel {
       font-size: medium;
       font-weight: bold;
@@ -165,9 +156,14 @@
       margin-top: 30px;
     }
     .tabInnerPanel {
-      width: 100%;
+      width: 95%;
       height: 500px;
       overflow: hidden;
+    }
+    .advancedTabInnerPanel {
+      width: 95%;
+      height: 470px;
+      overflow-y: auto;
     }
 
     .errorPanel {
@@ -292,17 +288,6 @@
                 <dash-dset-editors-el:ELDataSetDefAttributesEditor editMode="true" ui:field="elDataSetDefAttributesEditor"/>
               </g:FlowPanel>
 
-              <!-- Test provider settings button. -->
-              <g:FlowPanel ui:field="testButtonPanel" addStyleNames="{style.testButtonPanel} ">
-
-                <b:Popover showDelay="1000" text="{i18n.updateTest_description}" heading="{i18n.test}">
-                  <b:Button ui:field="testButton" title="{i18n.updateTest}"
-                            text="{i18n.updateTest}" size="SMALL" icon="CHEVRON_RIGHT"
-                            addStyleNames="{style.testButton} " type="PRIMARY"/>
-                </b:Popover>
-
-              </g:FlowPanel>
-
             </g:FlowPanel>
 
           </g:FlowPanel>
@@ -373,7 +358,7 @@
         <!-- Advanced configuration. -->
         <b:Tab heading="{i18n.tab_advancedConfiguration}" active="false" ui:field="advancedConfigurationTab">
 
-          <g:FlowPanel ui:field="advancedAttributesEditionViewPanel" addStyleNames="{style.editorPanel}">
+          <g:FlowPanel ui:field="advancedAttributesEditionViewPanel" addStyleNames="{style.editorPanel} {style.advancedTabInnerPanel} ">
             <dash-dset-editors:DataSetAdvancedAttributesEditor editMode="true" ui:field="dataSetAdvancedAttributesEditor"/>
           </g:FlowPanel>
           
@@ -383,15 +368,18 @@
       
     </g:FlowPanel>
     
-    <g:FlowPanel ui:field="buttonsPanel" addStyleNames="{style.buttonsPanel}">
+    <g:HorizontalPanel ui:field="buttonsPanel" addStyleNames="{style.buttonsPanel}">
 
       <b:Popover showDelay="1000" text="{i18n.cancel_description}" heading="{i18n.cancel}">
         <b:Button text="{i18n.cancel}" ui:field="cancelButton"/>
       </b:Popover>
 
+      <!-- Test provider settings button. -->
+      <b:Button ui:field="testButton" title="{i18n.updateTest}" text="{i18n.test}" type="PRIMARY"/>
+
       <b:Button text="{i18n.next}" ui:field="nextButton" type="PRIMARY"/>
 
-    </g:FlowPanel>
+    </g:HorizontalPanel>
 
   </g:FlowPanel>
   

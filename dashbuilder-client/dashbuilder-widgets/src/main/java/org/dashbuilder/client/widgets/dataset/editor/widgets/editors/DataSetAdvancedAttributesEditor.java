@@ -15,10 +15,7 @@
  */
 package org.dashbuilder.client.widgets.dataset.editor.widgets.editors;
 
-import com.github.gwtbootstrap.client.ui.CheckBox;
-import com.github.gwtbootstrap.client.ui.Column;
-import com.github.gwtbootstrap.client.ui.DropdownButton;
-import com.github.gwtbootstrap.client.ui.NavLink;
+import com.github.gwtbootstrap.client.ui.*;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.EditorError;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -65,7 +62,7 @@ public class DataSetAdvancedAttributesEditor extends AbstractDataSetDefEditor im
     /* **************** BACKEND CACHE *************** */
     
     @UiField
-    Column backendCacheColumn;
+    Row backendCacheRow;
     
     @UiField
     @Path("cacheEnabled")
@@ -155,8 +152,8 @@ public class DataSetAdvancedAttributesEditor extends AbstractDataSetDefEditor im
                 final String rTime = (int) quantity + type.name();
                 dataSetDef.setRefreshTime(rTime);
             }
-            setRefreshUIValues(true);
         }
+        setRefreshUIValues(true);
     }
 
     public boolean isShowBackendCache(final DataSetDef def) {
@@ -248,8 +245,8 @@ public class DataSetAdvancedAttributesEditor extends AbstractDataSetDefEditor im
         clientCacheSlider.setValue(dataSetDef.getPushMaxSize());
 
         // Special handling for BEAN and CSV types, they do not support disabling the backend cache.
-        if (isShowBackendCache(dataSetDef)) backendCacheColumn.setVisible(true);
-        else backendCacheColumn.setVisible(false);
+        if (isShowBackendCache(dataSetDef)) backendCacheRow.setVisible(true);
+        else backendCacheRow.setVisible(false);
         
         // Values for boolean editors.
         attributeMaxRows.setEnabled(dataSetDef.isCacheEnabled());
@@ -263,19 +260,21 @@ public class DataSetAdvancedAttributesEditor extends AbstractDataSetDefEditor im
         attributeRefreshInterval.setEnabled(refreshEnabled);
         // intervalType.setEnabled(enabled);
         refreshAlways.setEnabled(refreshEnabled);
-        
-        if (refreshEnabled) {
-            // Interval quantity and type drop down.
-            if (dataSetDef.getRefreshTime() != null) {
-                final double quantity = dataSetDef.getRefreshTimeAmount().getQuantity();
-                final DateIntervalType dType = dataSetDef.getRefreshTimeAmount().getType();
-                attributeRefreshInterval.asEditor().setValue((int) quantity);
-                dateIntervalType = dType;
-                intervalType.setText(getIntervalTypeText(dType));
-            } else {
-                attributeRefreshInterval.asEditor().setValue((int) DEFAULT_REFRESH_QUANTITY);
-                dateIntervalType = DEFAULT_INTERVAL_TYPE;
-                intervalType.setText(getIntervalTypeText(DEFAULT_INTERVAL_TYPE));
+
+        if (dataSetDef != null) {
+            if (refreshEnabled) {
+                // Interval quantity and type drop down.
+                if (dataSetDef.getRefreshTime() != null) {
+                    final double quantity = dataSetDef.getRefreshTimeAmount().getQuantity();
+                    final DateIntervalType dType = dataSetDef.getRefreshTimeAmount().getType();
+                    attributeRefreshInterval.asEditor().setValue((int) quantity);
+                    dateIntervalType = dType;
+                    intervalType.setText(getIntervalTypeText(dType));
+                } else {
+                    attributeRefreshInterval.asEditor().setValue((int) DEFAULT_REFRESH_QUANTITY);
+                    dateIntervalType = DEFAULT_INTERVAL_TYPE;
+                    intervalType.setText(getIntervalTypeText(DEFAULT_INTERVAL_TYPE));
+                }
             }
         }
     }

@@ -2,6 +2,7 @@ package org.dashbuilder.common.client.validation.editors;
 
 import com.github.gwtbootstrap.client.ui.*;
 import com.github.gwtbootstrap.client.ui.FileUpload;
+import com.github.gwtbootstrap.client.ui.Label;
 import com.github.gwtbootstrap.client.ui.base.HasId;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.EditorError;
@@ -72,6 +73,10 @@ public class FileUploadEditor extends Composite implements
     @Ignore
     com.github.gwtbootstrap.client.ui.FileUpload fileUpload;
 
+    @UiField
+    @Ignore
+    Label fileLabel;
+    
     @UiField
     com.github.gwtbootstrap.client.ui.Image loadingImage;
     
@@ -161,6 +166,7 @@ public class FileUploadEditor extends Composite implements
                 fileUpload.setVisible(false);
                 loadingImage.setVisible(true);
             }
+            fileLabel.setVisible(false);
             formPanel.submit();
         }
     };
@@ -189,7 +195,16 @@ public class FileUploadEditor extends Composite implements
     @Override
     public void setText(String text) {
         this.value = text;
-        fileUpload.setText(text);
+        if (!isEmpty(fileUpload.asEditor().getValue())) {
+            fileLabel.setVisible(false);
+        } else if (!isEmpty(text)) {
+            fileLabel.setText(text);
+            fileLabel.setVisible(true);
+        }
+    }
+    
+    private boolean isEmpty(final String s) {
+        return s == null || s.trim().length() == 0;
     }
 
     @Override
@@ -202,5 +217,6 @@ public class FileUploadEditor extends Composite implements
     public void clear() {
         formPanel.reset();
         setText(null);
+        fileLabel.setVisible(false);
     }
 }

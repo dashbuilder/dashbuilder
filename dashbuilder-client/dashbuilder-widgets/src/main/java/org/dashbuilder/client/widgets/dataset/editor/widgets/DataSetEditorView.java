@@ -170,9 +170,6 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
     SQLDataSetDefAttributesEditor sqlDataSetDefAttributesEditor;
     
     @UiField
-    FlowPanel testButtonPanel;
-    
-    @UiField
     Button testButton;
     
     @UiField
@@ -242,7 +239,7 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
     DataSetAdvancedAttributesEditor dataSetAdvancedAttributesEditor;
 
     @UiField
-    FlowPanel buttonsPanel;
+    HorizontalPanel buttonsPanel;
 
     @UiField
     Button cancelButton;
@@ -259,6 +256,11 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
     private HandlerRegistration nextButtonHandlerRegistration = null;
     private HandlerRegistration cancelButtonHandlerRegistration = null;
     private HandlerRegistration testButtonHandlerRegistration = null;
+
+    private HandlerRegistration newDatasetHandlerRegistration = null;
+    private HandlerRegistration submitCompleteHandlerRegistration = null;
+    private HandlerRegistration columnsChangeHandlerRegistration = null;
+    
 
     private final DataSetExportReadyCallback exportReadyCallback = new DataSetExportReadyCallback() {
         @Override
@@ -293,7 +295,18 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
             }
         }
     };
-    
+
+    public HandlerRegistration addConfigurationTabClickHandler(final ClickHandler handler) {
+        return configurationTab.addClickHandler(handler);
+    }
+
+    public HandlerRegistration addPreviewTabClickHandler(final ClickHandler handler) {
+        return previewTab.addClickHandler(handler);
+    }
+
+    public HandlerRegistration addAdvancedConfigurationTabClickHandler(final ClickHandler handler) {
+        return advancedConfigurationTab.addClickHandler(handler);
+    }
 
     public DataSetEditorView() {
         initWidget(uiBinder.createAndBindUi(this));
@@ -316,6 +329,7 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
         loadingImage.setSize(LOADING_IMAGE_SIZE, LOADING_IMAGE_SIZE);
         hideLoadingView();
 
+        // Error panel button handler.
         errorPanelButton.addClickHandler(errorPanelButtonHandler);
 
         // Show home view by default.
@@ -369,7 +383,8 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
         showTitle();
         
         dataSetCountText.setText(DataSetEditorMessages.INSTANCE.dataSetCount(dsetCount));
-        newDataSetLink.addClickHandler(newDataSetHandler);
+        if (newDatasetHandlerRegistration != null) newDatasetHandlerRegistration.removeHandler();
+        newDatasetHandlerRegistration = newDataSetLink.addClickHandler(newDataSetHandler);
         initialViewPanel.setVisible(true);
         mainPanel.addStyleName(style.well_ghostwhite());
 
@@ -464,7 +479,8 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
         workflow.edit(csvDataSetDefAttributesEditor, (CSVDataSetDef) dataSetDef);
         csvAttributesEditionViewPanel.setVisible(true);
         csvDataSetDefAttributesEditor.setEditMode(true);
-        csvDataSetDefAttributesEditor.addSubmitCompleteHandler(submitCompleteHandler);
+        if (submitCompleteHandlerRegistration != null) submitCompleteHandlerRegistration.removeHandler();
+        submitCompleteHandlerRegistration = csvDataSetDefAttributesEditor.addSubmitCompleteHandler(submitCompleteHandler);
         showSpecificProviderAttrsEditionView();
         return this;
     }
@@ -485,15 +501,26 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
     private boolean isELAttributesEditorViewVisible() {
         return elAttributesEditionViewPanel.isVisible();
     }
-    
+
     @Override
-    public DataSetEditor.View showTestButton(final ClickHandler testHandler) {
+    public DataSetEditor.View showTestButton(final String title, final String helpText, final ClickHandler testHandler) {
+        if (title != null) {
+            testButton.setText(title);
+            testButton.setTitle(helpText != null ? helpText : "");
+        }
         if (testButtonHandlerRegistration != null) testButtonHandlerRegistration.removeHandler();
         if (testHandler != null)
         {
             testButtonHandlerRegistration = testButton.addClickHandler(testHandler);
         }
-        testButtonPanel.setVisible(true);
+        testButton.setVisible(true);
+        buttonsPanel.setVisible(true);
+        return this;
+    }
+
+    @Override
+    public DataSetEditor.View hideTestButton() {
+        testButton.setVisible(false);
         return this;
     }
 
@@ -545,7 +572,8 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
         final boolean isBeanType = DataSetProviderType.BEAN.equals(dataSetDef.getProvider());
         columnsEditor.setEditMode(!isBeanType);
         columnsEditor.build(columns, dataSet, workflow);
-        columnsEditor.addColumnsChangeHandler(columnsChangedEventHandler);
+        if (columnsChangeHandlerRegistration != null) columnsChangeHandlerRegistration.removeHandler();
+        columnsChangeHandlerRegistration = columnsEditor.addColumnsChangeHandler(columnsChangedEventHandler);
 
         // Panels and tab visibility.
         filterAndColumnsEditionViewPanel.setVisible(true);
@@ -624,6 +652,12 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
             nextButtonHandlerRegistration = nextButton.addClickHandler(nextHandler);
         }
         buttonsPanel.setVisible(true);
+        return this;
+    }
+
+    @Override
+    public DataSetEditor.View enableNextButton(boolean enabled) {
+        nextButton.setEnabled(enabled);
         return this;
     }
 
@@ -794,7 +828,7 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
         previewTableEditionViewPanel.setVisible(false);
         dataConfigurationPanel.setVisible(false);
         filterColumnsPreviewTablePanel.setVisible(false);
-        testButtonPanel.setVisible(false);
+        testButton.setVisible(false);
         nextButton.setVisible(false);
         cancelButton.setVisible(false);
         buttonsPanel.setVisible(false);

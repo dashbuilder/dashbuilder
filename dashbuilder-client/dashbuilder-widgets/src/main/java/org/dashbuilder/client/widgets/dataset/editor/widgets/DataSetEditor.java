@@ -19,6 +19,7 @@ import com.github.gwtbootstrap.client.ui.constants.ButtonType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.event.shared.HasHandlers;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.IsWidget;
@@ -81,7 +82,7 @@ import static org.uberfire.commons.validation.PortablePreconditions.checkNotNull
 @Dependent
 public class DataSetEditor implements IsWidget {
 
-    private static final String EDIT_SUFFIX = "_edit";
+    private static final int PREVIEW_TABLE_PAGE_SIZE = 6; // Scroll is not visible using this size.
     final DataSetDefEditWorkflow workflow = new DataSetDefEditWorkflow();
     
     public interface View extends IsWidget, HasHandlers {
@@ -99,9 +100,14 @@ public class DataSetEditor implements IsWidget {
         View showColumnsEditorView(final List<DataColumnDef> columns, final DataSet dataSet, final DataSetColumnsEditor.ColumnsChangedEventHandler columnsChangedEventHandler);
         View showFilterEditionView(final DataSet dataSet, final DataSetFilterEditor.Listener filterListener);
         View showAdvancedAttributesEditionView();
-        View showTestButton(final ClickHandler testHandler);
+        View showTestButton(final String title, final String helpText, final ClickHandler testHandler);
+        View hideTestButton();
         View showNextButton(final String title, final String helpText, final ButtonType type, final ClickHandler nextHandler);
+        View enableNextButton(final boolean enabled);
         View showCancelButton(final ClickHandler cancelHandler);
+        HandlerRegistration addConfigurationTabClickHandler(final ClickHandler handler);
+        HandlerRegistration addPreviewTabClickHandler(final ClickHandler handler);
+        HandlerRegistration addAdvancedConfigurationTabClickHandler(final ClickHandler handler);
         View onSave();
         View showLoadingView();
         View hideLoadingView();
@@ -117,17 +123,27 @@ public class DataSetEditor implements IsWidget {
 
     private DataSetDef dataSetDef; 
     private List<DataColumnDef> originalColumns;
+    private boolean updateColumnsView = false;
     private String originalUUID; 
     private Displayer tableDisplayer;
     private WorkflowView currentWfView;
     
     public DataSetEditor() {
         showHomeView();
+        init();
     }
 
     public DataSetEditor(final String width) {
         showHomeView();
         setWidth(width);
+        init();
+    }
+    
+    private void init() {
+        // Init view handlers.
+        view.addConfigurationTabClickHandler(configurationTabClickHandler);
+        view.addPreviewTabClickHandler(previewTabClickHandler);
+        view.addAdvancedConfigurationTabClickHandler(advancedConfigurationTabClickHandler);
     }
     
     public DataSetEditor setWidth(final String w) {
@@ -144,6 +160,7 @@ public class DataSetEditor implements IsWidget {
 
         originalUUID = null;
         originalColumns = null;
+        updateColumnsView = true;
         view.setEditMode(false);
 
         // Restart workflow.
@@ -158,6 +175,7 @@ public class DataSetEditor implements IsWidget {
                 DataSetEditorConstants.INSTANCE.next_description(),
                 ButtonType.PRIMARY,
                 providerScreenNextButtonHandler);
+        view.enableNextButton(true);
                 
         return this;
     }
@@ -180,6 +198,7 @@ public class DataSetEditor implements IsWidget {
                     DataSetEditor.this.originalUUID = uuid;
                     DataSetEditor.this.dataSetDef = editDataSetDef.getDefinition();
                     DataSetEditor.this.originalColumns = editDataSetDef.getColumns();
+                    DataSetEditor.this.updateColumnsView = true;
 
                     if (dataSetDef == null) {
                         showError(DataSetEditorConstants.INSTANCE.defNotFound());
@@ -192,6 +211,7 @@ public class DataSetEditor implements IsWidget {
                     currentWfView = WorkflowView.ADVANCED;
                     showBasicAttributesEditionView();
                     showProviderSpecificAttributesEditionView(true);
+                    view.hideTestButton();
                     updateTableDisplayer();
                     
                 }
@@ -262,7 +282,7 @@ public class DataSetEditor implements IsWidget {
                     .dataset(dataSetDef.getUUID())
                     .renderer(DefaultRenderer.UUID)
                     .titleVisible(false)
-                    .tablePageSize(10)
+                    .tablePageSize(PREVIEW_TABLE_PAGE_SIZE)
                     .tableOrderEnabled(true)
                     .filterOn(true, false, false);
 
@@ -307,6 +327,7 @@ public class DataSetEditor implements IsWidget {
                 // Build basic attributes view.
                 currentWfView = WorkflowView.DATA_CONF;
                 showBasicAttributesEditionView();
+                view.showTestButton(DataSetEditorConstants.INSTANCE.test(), DataSetEditorConstants.INSTANCE.test_description(), testButtonHandler);
                 showProviderSpecificAttributesEditionView(false);
 
             }
@@ -328,6 +349,10 @@ public class DataSetEditor implements IsWidget {
                 dataSetDef.setColumns(null);
                 dataSetDef.setDataSetFilter(null);
                 originalColumns = null;
+                updateColumnsView = true;
+
+                view.hideTestButton();
+                view.enableNextButton(true);
                 
                 // Update the preview table.
                 updateTableDisplayer();
@@ -336,30 +361,27 @@ public class DataSetEditor implements IsWidget {
         }
     };
 
-    private final ClickHandler advancedAttrsButtonHandler = new ClickHandler() {
+    private final ClickHandler configurationTabClickHandler = new ClickHandler() {
         @Override
-        public void onClick(final ClickEvent event) {
-            // Save basic attributes (name and uuid) and provider type attribute.
-            // Check if exist validation violations.
-            final Set violations = save();
-            if (isValid(violations)) {
+        public void onClick(ClickEvent event) {
+            view.showTestButton(DataSetEditorConstants.INSTANCE.test(), DataSetEditorConstants.INSTANCE.updateTest_description(), testButtonHandler);
+            view.enableNextButton(false);
+        }
+    };
 
-                // Restart workflow.
-                edit();
+    private final ClickHandler previewTabClickHandler = new ClickHandler() {
+        @Override
+        public void onClick(ClickEvent event) {
+            view.hideTestButton();
+            view.enableNextButton(true);
+        }
+    };
 
-                // Build views.
-                currentWfView = WorkflowView.ADVANCED;
-                showBasicAttributesEditionView();
-                showProviderSpecificAttributesEditionView(true);
-                showPreviewTableEditionView();
-                showAdvancedAttributesEditionView();
-
-                view.showNextButton(DataSetEditorConstants.INSTANCE.save(),
-                        DataSetEditorConstants.INSTANCE.save_description(),
-                        ButtonType.SUCCESS,
-                        saveButtonHandler);
-            }
-            log(violations, violations);
+    private final ClickHandler advancedConfigurationTabClickHandler = new ClickHandler() {
+        @Override
+        public void onClick(ClickEvent event) {
+            view.hideTestButton();
+            view.enableNextButton(true);
         }
     };
 
@@ -501,11 +523,6 @@ public class DataSetEditor implements IsWidget {
     }
     
     private void showProviderSpecificAttributesEditionView(final boolean isEdit) {
-        if (isEdit) view.showTestButton(testButtonHandler);
-        else view.showNextButton(DataSetEditorConstants.INSTANCE.test(), 
-                DataSetEditorConstants.INSTANCE.test_description(),
-                ButtonType.PRIMARY,
-                testButtonHandler);
         switch (dataSetDef.getProvider()) {
             case SQL:
                 view.showSQLAttributesEditorView();
@@ -532,6 +549,7 @@ public class DataSetEditor implements IsWidget {
     
     private void showColumnsEditorView(final DataSet dataSet) {
         view.showColumnsEditorView(this.originalColumns, dataSet, columnsChangedEventHandler);
+        this.updateColumnsView = false;
     }
 
     private void showFilterEditorView(final DataSet dataSet) {
@@ -612,8 +630,8 @@ public class DataSetEditor implements IsWidget {
                     if (dataSetDef.getUUID() == null) dataSetDef.setUUID(dataSet.getUUID());
 
                     // Original columns.
-                    final boolean columnsUpdated = DataSetEditor.this.originalColumns == null;
-                    if (columnsUpdated) {
+                    final boolean isFillColumns = DataSetEditor.this.originalColumns == null;
+                    if (isFillColumns) {
                         final List<DataColumn> dataSetColumns = dataSet.getColumns();
                         if (dataSetColumns != null) {
                             final List<DataColumnDef> cDefs = new LinkedList<DataColumnDef>();
@@ -626,34 +644,25 @@ public class DataSetEditor implements IsWidget {
                         }
                     }
 
-                    view.showTestButton(testButtonHandler);
-                    
                     // Build views.
                     showBasicAttributesEditionView();
 
-                    final boolean isAdvaencedView = currentWfView.equals(WorkflowView.ADVANCED);
-                    if (isAdvaencedView) showAdvancedAttributesEditionView();
+                    showAdvancedAttributesEditionView();
 
                     // Reload table preview.
                     showPreviewTableEditionView();
 
                     // Show initial filter and columns edition view.
-                    if (isEdit || columnsUpdated) {
+                    if (updateColumnsView) {
                         showColumnsEditorView(dataSet);
                         showFilterEditorView(dataSet);
                     }
 
-                    if (isAdvaencedView) {
-                        view.showNextButton(DataSetEditorConstants.INSTANCE.save(),
-                                DataSetEditorConstants.INSTANCE.save_description(),
-                                ButtonType.SUCCESS,
-                                saveButtonHandler);
-                    } else {
-                        view.showNextButton(DataSetEditorConstants.INSTANCE.next(),
-                                DataSetEditorConstants.INSTANCE.next_description(),
-                                ButtonType.PRIMARY,
-                                advancedAttrsButtonHandler);
-                    }
+                    view.showNextButton(DataSetEditorConstants.INSTANCE.save(),
+                            DataSetEditorConstants.INSTANCE.save_description(),
+                            ButtonType.SUCCESS,
+                            saveButtonHandler);
+                    view.enableNextButton(true);
 
                 }
             }
@@ -689,6 +698,7 @@ public class DataSetEditor implements IsWidget {
     private void clear() {
         this.dataSetDef = null;
         this.originalColumns = null;
+        this.updateColumnsView = false;
         this.originalUUID = null;
         this.tableDisplayer = null;
         view.clear();

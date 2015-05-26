@@ -53,6 +53,6 @@ public class DataColumnDef {
     }
     
     public DataColumnDef clone() {
-        return  new DataColumnDef(id, columnType);
+        return  new DataColumnDef(id, ColumnType.getByName(columnType.name()));
     }
 }

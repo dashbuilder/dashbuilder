@@ -34,6 +34,8 @@ import org.dashbuilder.dataset.client.DataSetClientServices;
 import org.dashbuilder.dataset.client.resources.bundles.DataSetClientResources;
 import org.dashbuilder.dataset.client.uuid.ClientUUIDGenerator;
 import org.dashbuilder.dataset.client.validation.editors.CSVDataSetDefEditor;
+import org.dashbuilder.dataset.def.CSVDataSetDef;
+import org.dashbuilder.dataset.def.DataSetDef;
 
 import javax.enterprise.context.Dependent;
 import java.util.List;
@@ -120,8 +122,8 @@ public class CSVDataSetDefAttributesEditor extends AbstractDataSetDefEditor impl
             }
         });
         
-        // By default use file URL
-        showFileURL();
+        // By default use file path.
+        showFilePath();
     }
     
     public HandlerRegistration addSubmitCompleteHandler(final FormPanel.SubmitCompleteHandler submitCompleteHandler) {
@@ -134,6 +136,24 @@ public class CSVDataSetDefAttributesEditor extends AbstractDataSetDefEditor impl
 
     public void setEditMode(boolean isEditMode) {
         this.isEditMode = isEditMode;
+    }
+
+    @Override
+    public void set(DataSetDef dataSetDef) {
+        super.set(dataSetDef);
+        if (getDefinition() != null && getDefinition().getFileURL() != null) {
+            showFileURL();
+        } else {
+            showFilePath();
+        }
+    }
+    
+    private CSVDataSetDef getDefinition() {
+        try {
+            return (CSVDataSetDef) dataSetDef;
+        } catch (ClassCastException e) {
+            return null;
+        }
     }
 
     @Override

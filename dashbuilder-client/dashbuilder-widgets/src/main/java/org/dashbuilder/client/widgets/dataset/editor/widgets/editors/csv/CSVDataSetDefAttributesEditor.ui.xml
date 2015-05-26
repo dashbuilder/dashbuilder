@@ -13,6 +13,10 @@
     }
     .leftFloatPanel {
       float: left;
+      margin-right: 2px;
+    }
+    .button {
+      margin-top: 3px;
     }
   </ui:style>
 
@@ -27,7 +31,7 @@
       <b:Column size="4">
 
         <b:Tooltip text="{i18n.csv_useFileURL}">
-          <b:Button icon="CLOUD_UPLOAD" ui:field="useFileURLButton" size="MINI" addStyleNames="{style.leftFloatPanel}"/>
+          <b:Button icon="CLOUD_UPLOAD" ui:field="useFileURLButton" size="MINI" addStyleNames="{style.leftFloatPanel} {style.button} "/>
         </b:Tooltip>
 
         <b:Popover showDelay="1000" text="{i18n.csv_filePath_description}" heading="{i18n.csv_filePath}" placement="BOTTOM">
@@ -44,7 +48,7 @@
       </b:Column>
       <b:Column size="3">
         <b:Tooltip text="{i18n.csv_useFilePath}">
-          <b:Button icon="FILE" ui:field="useFilePathButton" size="MINI" addStyleNames="{style.leftFloatPanel}"/>
+          <b:Button icon="FILE" ui:field="useFilePathButton" size="MINI" addStyleNames="{style.leftFloatPanel} {style.button} "/>
         </b:Tooltip>
         <b:Popover showDelay="1000" text="{i18n.csv_URL_description}" heading="{i18n.csv_URL}" placement="BOTTOM">
           <dash-client-editors:ValueBoxEditorDecorator errorLabelPosition="TOOLTIP_BOTTOM" ui:field="fileURL" addStyleNames="{style.leftFloatPanel}">
