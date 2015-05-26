@@ -19,7 +19,7 @@ import javax.enterprise.context.Dependent;
 
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Label;
-import org.dasbuilder.client.perspective.editor.ScreenConfigurator;
+import org.dashbuilder.client.perspective.editor.ScreenConfigurator;
 
 @Dependent
 public class DisplayerScreenConfigurator extends ScreenConfigurator {
