@@ -73,9 +73,17 @@ import static org.uberfire.commons.validation.PortablePreconditions.checkNotNull
  * <ul>
  *     <li>Provider selection (Only if creating new data set).</li>
  *     <li>Basic data set attributes & Provider specific attributes.</li>     
- *     <li>Basic data set attributes & Data set columns and initial filter edition.</li>     
- *     <li>Basic data set attributes & Advanced data set attributes edition.</li>
+ *     <li>Data set columns and initial filter edition.</li>     
+ *     <li>Advanced data set attributes edition.</li>
  * </ul> 
+ *
+ * <p>This editor a three step workflow:</p>
+ * <ul>
+ *     <li>STEP 1 - Provider selection (Only if creating new data set).</li>
+ *     <li>STEP 2 - Basic data set attributes & Provider specific attributes.</li>     
+ *     <li>STEP 3 - Data set columns and initial filter edition & Advanced data set attributes edition.</li>
+ * </ul> 
+
  *  
  * @since 0.3.0 
  */
@@ -116,7 +124,7 @@ public class DataSetEditor implements IsWidget {
     }
     
     private enum WorkflowView {
-        HOME, PROVIDER_SELECTION, DATA_CONF, PREVIEW, ADVANCED        
+        HOME, PROVIDER_SELECTION, DATA_CONF, PREVIEW_AND_ADVANCED        
     }
 
     final View view = new DataSetEditorView();
@@ -171,11 +179,7 @@ public class DataSetEditor implements IsWidget {
         showProviderSelectionView();
 
         // Next button.
-        view.showNextButton(DataSetEditorConstants.INSTANCE.next(),
-                DataSetEditorConstants.INSTANCE.next_description(),
-                ButtonType.PRIMARY,
-                providerScreenNextButtonHandler);
-        view.enableNextButton(true);
+       showNextButton();
                 
         return this;
     }
@@ -208,10 +212,9 @@ public class DataSetEditor implements IsWidget {
                     // Update the screens, displayers & restart the workflow.
                     edit();
                     view.setEditMode(true);
-                    currentWfView = WorkflowView.ADVANCED;
                     showBasicAttributesEditionView();
                     showProviderSpecificAttributesEditionView(true);
-                    view.hideTestButton();
+                    hideTestButton();
                     updateTableDisplayer();
                     
                 }
@@ -224,6 +227,7 @@ public class DataSetEditor implements IsWidget {
                 @Override
                 public boolean onError(DataSetClientServiceError error) {
                     showError(error);
+                    showHomeView();
                     return false;
                 }
             });
@@ -327,11 +331,10 @@ public class DataSetEditor implements IsWidget {
                 // Build basic attributes view.
                 currentWfView = WorkflowView.DATA_CONF;
                 showBasicAttributesEditionView();
-                view.showTestButton(DataSetEditorConstants.INSTANCE.test(), DataSetEditorConstants.INSTANCE.test_description(), testButtonHandler);
+                showTestButton();
                 showProviderSpecificAttributesEditionView(false);
 
             }
-            log(violations, violations);
         }
     };
 
@@ -342,8 +345,6 @@ public class DataSetEditor implements IsWidget {
             // Check if exist validation violations.
             final Set violations = save();
             if (isValid(violations)) {
-                if (WorkflowView.DATA_CONF.equals(currentWfView)) currentWfView = WorkflowView.PREVIEW;
-                
                 // Reset columns and filter configuration.
                 dataSetDef.setAllColumnsEnabled(true);
                 dataSetDef.setColumns(null);
@@ -351,20 +352,19 @@ public class DataSetEditor implements IsWidget {
                 originalColumns = null;
                 updateColumnsView = true;
 
-                view.hideTestButton();
+                hideTestButton();
                 view.enableNextButton(true);
                 
                 // Update the preview table.
                 updateTableDisplayer();
             }
-            log(violations, violations);
         }
     };
 
     private final ClickHandler configurationTabClickHandler = new ClickHandler() {
         @Override
         public void onClick(ClickEvent event) {
-            view.showTestButton(DataSetEditorConstants.INSTANCE.test(), DataSetEditorConstants.INSTANCE.updateTest_description(), testButtonHandler);
+            showTestButton();
             view.enableNextButton(false);
         }
     };
@@ -372,7 +372,7 @@ public class DataSetEditor implements IsWidget {
     private final ClickHandler previewTabClickHandler = new ClickHandler() {
         @Override
         public void onClick(ClickEvent event) {
-            view.hideTestButton();
+            hideTestButton();
             view.enableNextButton(true);
         }
     };
@@ -380,7 +380,7 @@ public class DataSetEditor implements IsWidget {
     private final ClickHandler advancedConfigurationTabClickHandler = new ClickHandler() {
         @Override
         public void onClick(ClickEvent event) {
-            view.hideTestButton();
+            hideTestButton();
             view.enableNextButton(true);
         }
     };
@@ -459,6 +459,8 @@ public class DataSetEditor implements IsWidget {
         @Override
         public boolean onError(DataSetClientServiceError error) {
             showError(error);
+            showSaveButton();
+            view.enableNextButton(true);
             return false;
         }
     };
@@ -623,13 +625,14 @@ public class DataSetEditor implements IsWidget {
                 final DataSet dataSet = displayer.getDataSetHandler().getLastDataSet();
                 
                 if (dataSet != null) {
-                    
-                    final boolean isEdit = originalUUID != null;
 
-                    // UUID for new datasets are generated on backend side.
+                    currentWfView = WorkflowView.PREVIEW_AND_ADVANCED;
+
+                    // If creating a new data set, its UUID for the client side instance is not present yet, as it's generated on backend side.
                     if (dataSetDef.getUUID() == null) dataSetDef.setUUID(dataSet.getUUID());
 
-                    // Original columns.
+                    // If creating a data set, use the columns information for first dataset lookup result as the original columns,
+                    // If editing an existing data set, this condition evaluates to false, as originalColumns have been provided by the backend call to prepareEdit., 
                     final boolean isFillColumns = DataSetEditor.this.originalColumns == null;
                     if (isFillColumns) {
                         final List<DataColumn> dataSetColumns = dataSet.getColumns();
@@ -647,23 +650,20 @@ public class DataSetEditor implements IsWidget {
                     // Build views.
                     showBasicAttributesEditionView();
 
+                    // Build advanved view.
                     showAdvancedAttributesEditionView();
 
                     // Reload table preview.
                     showPreviewTableEditionView();
 
-                    // Show initial filter and columns edition view.
+                    // Show initial filter and columns edition views only if the current lookup has been updated. 
+                    // If not, do not refresh columns and filter views.
                     if (updateColumnsView) {
                         showColumnsEditorView(dataSet);
                         showFilterEditorView(dataSet);
                     }
-
-                    view.showNextButton(DataSetEditorConstants.INSTANCE.save(),
-                            DataSetEditorConstants.INSTANCE.save_description(),
-                            ButtonType.SUCCESS,
-                            saveButtonHandler);
-                    view.enableNextButton(true);
-
+                    
+                    showSaveButton();
                 }
             }
         }
@@ -691,9 +691,38 @@ public class DataSetEditor implements IsWidget {
         @Override
         public void onError(Displayer displayer, DataSetClientServiceError error) {
             showError(error);
+            showTestButton();
+            if (WorkflowView.PREVIEW_AND_ADVANCED.equals(currentWfView)) {
+                showSaveButton();
+                view.enableNextButton(false);
+            }
         }
 
     };
+    
+    private void showNextButton() {
+        view.showNextButton(DataSetEditorConstants.INSTANCE.next(),
+                DataSetEditorConstants.INSTANCE.next_description(),
+                ButtonType.PRIMARY,
+                providerScreenNextButtonHandler);
+        view.enableNextButton(true);
+    }
+
+    private void showSaveButton() {
+        view.showNextButton(DataSetEditorConstants.INSTANCE.save(),
+                DataSetEditorConstants.INSTANCE.save_description(),
+                ButtonType.SUCCESS,
+                saveButtonHandler);
+        view.enableNextButton(true);
+    }
+
+    private void showTestButton() {
+        view.showTestButton(DataSetEditorConstants.INSTANCE.test(), DataSetEditorConstants.INSTANCE.updateTest_description(), testButtonHandler);
+    }
+
+    private void hideTestButton() {
+        view.hideTestButton();
+    }
     
     private void clear() {
         this.dataSetDef = null;
@@ -730,66 +759,6 @@ public class DataSetEditor implements IsWidget {
         if(isHomeViewVisible()) {
             // Reload home view with new data set count value.
             this.showHomeView();
-        }
-    }
-    
-    // TODO: Remove, just for testing.
-    private void log(Set<ConstraintViolation<? extends DataSetDef>>... violations) {
-        if (true) return;
-        if (violations != null && violations.length > 0) {
-            for (int x = 0; x < violations.length; x++) {
-                Set<ConstraintViolation<? extends DataSetDef>> driverViolation = violations[x];
-                if (driverViolation != null) {
-                    for (ConstraintViolation<? extends DataSetDef> violation : driverViolation) {
-                        GWT.log("Validation error - " + violation.getMessage());
-                    }
-                }
-            }
-        }
-        if (dataSetDef != null) {
-            GWT.log("DataSetDef uuid: " + dataSetDef.getUUID());
-            GWT.log("DataSetDef name: " + dataSetDef.getName());
-            GWT.log("DataSetDef provider: " + dataSetDef.getProvider());
-            GWT.log("DataSetDef backend cache enabled: " + dataSetDef.isCacheEnabled());
-            GWT.log("DataSetDef backend cache max rows: " + dataSetDef.getCacheMaxRows());
-            GWT.log("DataSetDef client cache enabled: " + dataSetDef.isPushEnabled());
-            GWT.log("DataSetDef client cache max rows: " + dataSetDef.getPushMaxSize());
-            GWT.log("DataSetDef refresh always: " + dataSetDef.isRefreshAlways());
-            GWT.log("DataSetDef refresh interval: " + dataSetDef.getRefreshTime());
-            if (dataSetDef instanceof SQLDataSetDef) {
-                GWT.log("SQLDataSetDef data source: " + ((SQLDataSetDef)dataSetDef).getDataSource());
-                GWT.log("SQLDataSetDef schema: " + ((SQLDataSetDef)dataSetDef).getDbSchema());
-                GWT.log("SQLDataSetDef table: " + ((SQLDataSetDef)dataSetDef).getDbTable());
-            }
-            if (dataSetDef instanceof CSVDataSetDef) {
-                GWT.log("CSVDataSetDef file path: " + ((CSVDataSetDef)dataSetDef).getFilePath());
-                GWT.log("CSVDataSetDef file URL: " + ((CSVDataSetDef)dataSetDef).getFileURL());
-                GWT.log("CSVDataSetDef sep char: " + ((CSVDataSetDef)dataSetDef).getSeparatorChar());
-                GWT.log("CSVDataSetDef quote char: " + ((CSVDataSetDef)dataSetDef).getQuoteChar());
-                GWT.log("CSVDataSetDef escape char: " + ((CSVDataSetDef)dataSetDef).getEscapeChar());
-                GWT.log("CSVDataSetDef date pattern: " + ((CSVDataSetDef)dataSetDef).getDatePattern());
-                GWT.log("CSVDataSetDef number pattern: " + ((CSVDataSetDef)dataSetDef).getNumberPattern());
-            }
-            if (dataSetDef instanceof ElasticSearchDataSetDef) {
-                GWT.log("ElasticSearchDataSetDef server URL: " + ((ElasticSearchDataSetDef)dataSetDef).getServerURL());
-                GWT.log("ElasticSearchDataSetDef cluster name: " + ((ElasticSearchDataSetDef)dataSetDef).getClusterName());
-                String[] _index = ((ElasticSearchDataSetDef)dataSetDef).getIndex();
-                String[] _type  = ((ElasticSearchDataSetDef)dataSetDef).getType();
-                GWT.log("ElasticSearchDataSetDef index: " + _index);
-                GWT.log("ElasticSearchDataSetDef type: " + _type);
-                if (_index != null && _index.length > 0 ) GWT.log("ElasticSearchDataSetDef index[0]: " + _index[0]);
-                if (_type != null && _type.length > 0 ) GWT.log("ElasticSearchDataSetDef type[0]: " + _type[0]);
-            }
-            if (dataSetDef instanceof BeanDataSetDef) {
-                GWT.log("BeanDataSetDef generator class: " + ((BeanDataSetDef)dataSetDef).getGeneratorClass());
-
-                Map<String, String> params = ((BeanDataSetDef)dataSetDef).getParamaterMap();
-                if (params != null && !params.isEmpty()) {
-                    for (Map.Entry<String, String> entry : params.entrySet()) {
-                        GWT.log("BeanDataSetDef parameter - key: " + entry.getKey() + " / value: " + entry.getValue());
-                    }
-                }
-            }
         }
     }
 

@@ -14,6 +14,9 @@
       float: left;
       margin-right: 10px;
     }
+    .queryTextArea {
+      height: 200px;
+    }
   </ui:style>
 
   <!-- SQL attributes. -->
@@ -88,7 +91,7 @@
           <b:Popover showDelay="1000" text="{i18n.sql_query_description}" heading="{i18n.sql_query}">
             <dash-client:ValueBoxEditorDecorator errorLabelPosition="TOOLTIP_TOP" ui:field="dbQuery">
               <dash-client:valuebox>
-                <b:TextArea placeholder="{i18n.sql_query_placeHolder}" />
+                <b:TextArea placeholder="{i18n.sql_query_placeHolder}" size="8" addStyleNames="{style.queryTextArea}"/>
               </dash-client:valuebox>
             </dash-client:ValueBoxEditorDecorator>
           </b:Popover>

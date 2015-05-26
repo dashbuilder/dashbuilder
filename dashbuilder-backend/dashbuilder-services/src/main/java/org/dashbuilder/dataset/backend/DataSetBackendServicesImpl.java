@@ -156,7 +156,7 @@ public class DataSetBackendServicesImpl implements DataSetBackendServices {
         return _d;
     }
 
-    public DataSet lookupDataSet(DataSetDef def, DataSetLookup lookup) {
+    public DataSet lookupDataSet(DataSetDef def, DataSetLookup lookup) throws Exception {
         try {
             // Although if using a not registered definition, it must have an uuid set for performing lookups.
             if (def.getUUID() == null) {
@@ -167,7 +167,7 @@ public class DataSetBackendServicesImpl implements DataSetBackendServices {
             return dataSetManager.resolveProvider(def)
                     .lookupDataSet(def, lookup);
         } catch (Exception e) {
-            throw new DataSetLookupException(def.getUUID(), "Can't lookup on specified data set: " + lookup.getDataSetUUID(), e);
+            throw exceptionManager.handleException(e);
         }
     }
 

@@ -266,9 +266,16 @@ public final class DataSetDefEditWorkflow {
         CSVDataSetDef edited = csvAttributesDriver.flush();
         
         // Validate either file path or file URL.
-        if (csvAttributesEditor.isUsingFilePath()) return validateCSV(edited, csvAttributesEditor, csvAttributesDriver, CSVDataSetDefFilePathValidation.class, javax.validation.groups.Default.class);
-        else if (csvAttributesEditor.isUsingFileURL()) return validateCSV(edited, csvAttributesEditor, csvAttributesDriver, CSVDataSetDefFileURLValidation.class, javax.validation.groups.Default.class);
-        return this;
+        List<Class<?>> groups = new LinkedList<Class<?>>();
+        if (csvAttributesEditor.isUsingFilePath()) {
+            edited.setFileURL(null);
+            groups.add(CSVDataSetDefFilePathValidation.class);
+        } else if (csvAttributesEditor.isUsingFileURL()) {
+            edited.setFilePath(null);
+            groups.add(CSVDataSetDefFileURLValidation.class);
+        }
+
+        return validateCSV(edited, csvAttributesEditor, csvAttributesDriver, groups.toArray(new Class[groups.size()]));
     }
 
     /**

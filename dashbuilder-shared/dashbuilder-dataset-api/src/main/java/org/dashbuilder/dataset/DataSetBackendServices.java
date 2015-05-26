@@ -60,7 +60,7 @@ public interface DataSetBackendServices {
      * Index and cache are not used.
      * @return null, if the data set can be retrieved.
      */
-    DataSet lookupDataSet(DataSetDef def, DataSetLookup lookup);
+    DataSet lookupDataSet(DataSetDef def, DataSetLookup lookup) throws Exception;
 
     /**
      * Same as lookupDataSet but only retrieves the metadata of the resulting data set.
