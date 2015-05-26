@@ -26,9 +26,9 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Widget;
 
 @Dependent
-public class DisplayerEditorError extends Composite {
+public class DisplayerError extends Composite {
 
-    interface Binder extends UiBinder<Widget, DisplayerEditorError> {}
+    interface Binder extends UiBinder<Widget, DisplayerError> {}
     private static Binder uiBinder = GWT.create(Binder.class);
 
     @UiField
@@ -43,7 +43,7 @@ public class DisplayerEditorError extends Composite {
     @UiField
     Row errorCauseRow;
 
-    public DisplayerEditorError() {
+    public DisplayerError() {
         initWidget(uiBinder.createAndBindUi(this));
     }
 

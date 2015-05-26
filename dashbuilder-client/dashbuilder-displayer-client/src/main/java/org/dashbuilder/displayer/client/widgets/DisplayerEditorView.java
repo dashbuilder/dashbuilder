@@ -71,7 +71,7 @@ public class DisplayerEditorView extends Composite
     protected DataSetLookupEditor lookupEditor;
     protected DisplayerSettingsEditor settingsEditor;
     protected Displayer displayer;
-    protected DisplayerEditorError errorWidget = new DisplayerEditorError();
+    protected DisplayerError errorWidget = new DisplayerError();
 
     DisplayerListener displayerListener = new AbstractDisplayerListener() {
         public void onError(Displayer displayer, DataSetClientServiceError error) {

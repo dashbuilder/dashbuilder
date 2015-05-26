@@ -15,10 +15,14 @@
  */
 package org.dashbuilder.displayer.client.widgets;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.*;
+import org.dashbuilder.dataset.client.DataSetClientServiceError;
 import org.dashbuilder.displayer.DisplayerSettings;
+import org.dashbuilder.displayer.client.AbstractDisplayerListener;
 import org.dashbuilder.displayer.client.Displayer;
 import org.dashbuilder.displayer.client.DisplayerHelper;
+import org.dashbuilder.displayer.client.DisplayerListener;
 
 import static org.uberfire.commons.validation.PortablePreconditions.checkNotNull;
 
@@ -31,6 +35,13 @@ public class DisplayerView extends Composite {
     protected Label label = new Label();
     protected Displayer displayer;
     protected Boolean isShowRendererSelector = false;
+    protected DisplayerError errorWidget = new DisplayerError();
+
+    DisplayerListener displayerListener = new AbstractDisplayerListener() {
+        public void onError(Displayer displayer, DataSetClientServiceError error) {
+            error(error);
+        }
+    };
 
     public DisplayerView() {
         initWidget(container);
@@ -63,6 +74,7 @@ public class DisplayerView extends Composite {
             
             // Lookup the displayer.
             displayer = DisplayerHelper.lookupDisplayer(displayerSettings);
+            displayer.addListener(displayerListener);
             DisplayerHelper.draw(displayer);
 
             // Add the displayer into a container
@@ -89,7 +101,7 @@ public class DisplayerView extends Composite {
             }
             container.add(displayerContainer);
         } catch (Exception e) {
-            displayMessage(e.getMessage());
+            error(e.getMessage(), e);
         }
         return displayer;
     }
@@ -103,14 +115,26 @@ public class DisplayerView extends Composite {
 
             DisplayerHelper.redraw( displayer );
         } catch (Exception e) {
-            displayMessage(e.getMessage());
+            error(e.getMessage(), e);
         }
         return displayer;
     }
 
-    private void displayMessage(String msg) {
+    public void error(String message, Throwable e) {
+        String cause = e != null ? e.getMessage() : null;
+
         container.clear();
-        container.add(label);
-        label.setText(msg);
+        container.add(errorWidget);
+        errorWidget.show(message, cause);
+
+        if (e != null) GWT.log(message, e);
+        else GWT.log(message);
+    }
+
+    public void error(final DataSetClientServiceError error) {
+        String message = error.getThrowable() != null ? error.getThrowable().getMessage() : error.getMessage().toString();
+        Throwable e = error.getThrowable();
+        if (e.getCause() != null) e = e.getCause();
+        error(message, e);
     }
 }
