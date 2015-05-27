@@ -184,6 +184,7 @@ public class DropDownImageListEditor<T> extends Composite implements
             if (entry.equals(value)) {
                 currentTypeImage.setUrl(image.getUrl());
                 currentTypeImage.setSize("16px", "16px");
+                currentTypeImage.setAltText(image.getAltText()); //discriminator for selenium
             }
         }
 
