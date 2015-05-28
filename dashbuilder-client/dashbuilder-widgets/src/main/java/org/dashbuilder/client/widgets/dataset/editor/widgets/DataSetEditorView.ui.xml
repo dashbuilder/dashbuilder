@@ -90,19 +90,6 @@
     .loadingText {
       float: right;
     }
-
-    .exportButtonsPanel {
-      float: left;
-      margin-bottom: 20px;
-      margin-left: 15px;
-      margin-top: 3px;
-      position: absolute;
-    }
-    .exportButton {
-      float: left;
-      margin-right: 5px;
-      cursor: hand;
-    }
     .columnsFilterDisclosurePanel {
       float: left;
       margin-right: 20px;
@@ -114,7 +101,7 @@
       border-radius: 0px 4px 4px 0px;
       border: 1px solid lavender;
       border-left-width: 0px;
-      cursor: hand;
+      cursor: pointer;
       margin-top: 40px;
       height: 450px;
       left: 0px;
@@ -162,7 +149,6 @@
     }
     .advancedTabInnerPanel {
       width: 95%;
-      height: 470px;
       overflow-y: auto;
     }
 
@@ -328,23 +314,6 @@
             </g:FlowPanel>
 
             <g:FlowPanel ui:field="previewTableEditionViewPanel" addStyleNames="{style.previewTablePanel} ">
-
-              <!-- Export buttons panel. -->
-              <g:FlowPanel ui:field="exportButtonsPanel" addStyleNames="{style.exportButtonsPanel} ">
-
-                <!-- Export to Excel button. -->
-                <b:Popover showDelay="1000" text="{i18n.exportToExcel}" heading="{i18n.export}" placement="BOTTOM">
-                  <b:Image ui:field="exportToExcelButton" title="{i18n.exportToExcel}"
-                           addStyleNames="{style.exportButton} "/>
-                </b:Popover>
-
-                <!-- Export to CSV button. -->
-                <b:Popover showDelay="1000" text="{i18n.exportToCSV}" heading="{i18n.export}" placement="BOTTOM">
-                  <b:Image ui:field="exportToCSVButton" title="{i18n.exportToCSV}"
-                            addStyleNames="{style.exportButton} "/>
-                </b:Popover>
-
-              </g:FlowPanel>
 
               <!-- Preview table . -->
               <dash-dset-editors:DataSetPreviewEditor editMode="true" ui:field="previewTableEditor" addStyleNames="{style.previewTable}"/>

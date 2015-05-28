@@ -54,11 +54,11 @@ public interface DataSetEditorConstants extends ConstantsWithLookup {
     String cancel_description();
     String providerType();
     String commonAttributes();
-    String maxCacheSize();
+    String performance();
     String backendCache();
     String backendCacheDisabledForType();
     String clientCache();
-    String dataRefresh();
+    String refreshPolicy();
     String none();
     String scheduledInterval();
     String refreshOnStaleData();

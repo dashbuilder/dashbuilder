@@ -15,8 +15,8 @@
  */
 package org.dashbuilder.client.widgets.dataset.editor.widgets;
 
-import com.github.gwtbootstrap.client.ui.*;
 import com.github.gwtbootstrap.client.ui.Button;
+import com.github.gwtbootstrap.client.ui.*;
 import com.github.gwtbootstrap.client.ui.Image;
 import com.github.gwtbootstrap.client.ui.constants.ButtonType;
 import com.github.gwtbootstrap.client.ui.constants.IconType;
@@ -44,10 +44,8 @@ import org.dashbuilder.client.widgets.dataset.editor.widgets.editors.elasticsear
 import org.dashbuilder.client.widgets.dataset.editor.widgets.editors.sql.SQLDataSetDefAttributesEditor;
 import org.dashbuilder.client.widgets.resources.i18n.DataSetEditorConstants;
 import org.dashbuilder.client.widgets.resources.i18n.DataSetEditorMessages;
-import org.dashbuilder.common.client.widgets.SlidingPanel;
 import org.dashbuilder.common.client.widgets.TimeoutPopupPanel;
 import org.dashbuilder.dataprovider.DataSetProviderType;
-import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetLookup;
 import org.dashbuilder.dataset.client.DataSetClientServices;
@@ -71,7 +69,6 @@ import java.util.Set;
 @Dependent
 public class DataSetEditorView extends Composite implements DataSetEditor.View {
 
-    private static final String EXPORT_ICON_SIZE = "20px";
     private static final String LOADING_IMAGE_SIZE = "16px";
     private static final int LOADING_SCREEN_TIMEOUT = 60000;
     
@@ -174,15 +171,6 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
     
     @UiField
     FlowPanel filterColumnsPreviewTablePanel;
-    
-    @UiField
-    FlowPanel exportButtonsPanel;
-    
-    @UiField
-    Image exportToExcelButton;
-
-    @UiField
-    Image exportToCSVButton;
 
     @UiField
     FlowPanel previewTableEditionViewPanel;
@@ -274,28 +262,6 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
         }
     };
     
-    private final ClickHandler exportToExcelButtonHandler = new ClickHandler() {
-        @Override
-        public void onClick(ClickEvent event) {
-            try {
-                DataSetClientServices.get().exportDataSetExcel(lastDataSetLookup, exportReadyCallback);
-            } catch (Exception e) {
-                showError(e);
-            }
-        }
-    };
-
-    private final ClickHandler exportToCSVButtonHandler = new ClickHandler() {
-        @Override
-        public void onClick(ClickEvent event) {
-            try {
-                DataSetClientServices.get().exportDataSetCSV(lastDataSetLookup, exportReadyCallback);
-            } catch (Exception e) {
-                showError(e);
-            }
-        }
-    };
-
     public HandlerRegistration addConfigurationTabClickHandler(final ClickHandler handler) {
         return configurationTab.addClickHandler(handler);
     }
@@ -314,14 +280,6 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
         // Configure handlers.
         filterAndColumnsEditionDisclosurePanel.addOpenHandler(openColumnsFilterPanelHandler);
         filterAndColumnsEditionDisclosurePanel.addCloseHandler(closeColumnsFilterPanelHandler);
-        
-        // Configure buttons' click handlers.
-        exportToExcelButton.setUrl(DataSetClientResources.INSTANCE.images().excelIcon().getSafeUri());
-        exportToExcelButton.setSize(EXPORT_ICON_SIZE, EXPORT_ICON_SIZE);
-        exportToExcelButton.addClickHandler(exportToExcelButtonHandler);
-        exportToCSVButton.setUrl(DataSetClientResources.INSTANCE.images().csvIcon32().getSafeUri());
-        exportToCSVButton.setSize(EXPORT_ICON_SIZE, EXPORT_ICON_SIZE);
-        exportToCSVButton.addClickHandler(exportToCSVButtonHandler);
         
         // Hide loading popup at startup.
         loadingPopupPanel.setTimeout(LOADING_SCREEN_TIMEOUT);
