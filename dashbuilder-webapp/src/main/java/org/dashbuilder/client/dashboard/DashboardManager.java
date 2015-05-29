@@ -21,6 +21,9 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
+import org.dashbuilder.client.perspective.editor.PerspectiveEditorSettings;
+import org.dashbuilder.client.perspective.editor.events.PerspectiveEditOffEvent;
+import org.dashbuilder.client.perspective.editor.events.PerspectiveEditOnEvent;
 import org.dashbuilder.shared.dashboard.events.DashboardCreatedEvent;
 import org.dashbuilder.shared.dashboard.events.DashboardDeletedEvent;
 import org.dashbuilder.displayer.client.PerspectiveCoordinator;
@@ -62,6 +65,15 @@ public class DashboardManager {
     private ActivityBeansCache activityBeansCache;
 
     @Inject
+    protected PerspectiveEditorSettings perspectiveEditorSettings;
+
+    @Inject
+    protected Event<PerspectiveEditOnEvent> perspectiveEditOnEvent;
+
+    @Inject
+    protected Event<PerspectiveEditOffEvent> perspectiveEditOffEvent;
+
+    @Inject
     private Event<DashboardCreatedEvent> dashboardCreatedEvent;
 
     @Inject
@@ -86,7 +98,10 @@ public class DashboardManager {
                 perspectiveManager,
                 placeManager,
                 perspectiveCoordinator,
-                jsonMarshaller);
+                jsonMarshaller,
+                perspectiveEditorSettings,
+                perspectiveEditOnEvent,
+                perspectiveEditOffEvent);
 
         SyncBeanManagerImpl beanManager = (SyncBeanManagerImpl) IOC.getBeanManager();
         beanManager.addBean((Class) PerspectiveActivity.class, DashboardPerspectiveActivity.class, null, activity, DEFAULT_QUALIFIERS, id, true, null);

@@ -21,6 +21,12 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import javax.enterprise.event.Event;
+
+import org.dashbuilder.client.perspective.editor.MultiListWorkbenchPanelPresenterExt;
+import org.dashbuilder.client.perspective.editor.PerspectiveEditorSettings;
+import org.dashbuilder.client.perspective.editor.events.PerspectiveEditOffEvent;
+import org.dashbuilder.client.perspective.editor.events.PerspectiveEditOnEvent;
 import org.dashbuilder.client.resources.i18n.AppConstants;
 import org.dashbuilder.displayer.DisplayerSettings;
 import org.dashbuilder.displayer.client.PerspectiveCoordinator;
@@ -49,15 +55,18 @@ import org.uberfire.workbench.model.toolbar.ToolBar;
  */
 public class DashboardPerspectiveActivity  implements PerspectiveActivity {
 
-    private DashboardManager dashboardManager;
-    private PerspectiveManager perspectiveManager;
-    private PlaceManager placeManager;
-    private DisplayerSettingsJSONMarshaller jsonMarshaller;
-    private PerspectiveCoordinator perspectiveCoordinator;
+    protected DashboardManager dashboardManager;
+    protected PerspectiveManager perspectiveManager;
+    protected PlaceManager placeManager;
+    protected DisplayerSettingsJSONMarshaller jsonMarshaller;
+    protected PerspectiveCoordinator perspectiveCoordinator;
+    protected PerspectiveEditorSettings perspectiveEditorSettings;
+    protected Event<PerspectiveEditOnEvent> perspectiveEditOnEvent;
+    protected Event<PerspectiveEditOffEvent> perspectiveEditOffEvent;
 
-    private PlaceRequest place;
-    private String id;
-    private boolean persistent;
+    protected PlaceRequest place;
+    protected String id;
+    protected boolean persistent;
 
     public DashboardPerspectiveActivity() {
     }
@@ -67,7 +76,10 @@ public class DashboardPerspectiveActivity  implements PerspectiveActivity {
             PerspectiveManager perspectiveManager,
             PlaceManager placeManager,
             PerspectiveCoordinator perspectiveCoordinator,
-            DisplayerSettingsJSONMarshaller jsonMarshaller) {
+            DisplayerSettingsJSONMarshaller jsonMarshaller,
+            PerspectiveEditorSettings perspectiveEditorSettings,
+            Event<PerspectiveEditOnEvent> perspectiveEditOnEvent,
+            Event<PerspectiveEditOffEvent> perspectiveEditOffEvent) {
 
         this.id = id;
         this.persistent = true;
@@ -76,6 +88,9 @@ public class DashboardPerspectiveActivity  implements PerspectiveActivity {
         this.placeManager = placeManager;
         this.perspectiveCoordinator = perspectiveCoordinator;
         this.jsonMarshaller = jsonMarshaller;
+        this.perspectiveEditorSettings = perspectiveEditorSettings;
+        this.perspectiveEditOnEvent = perspectiveEditOnEvent;
+        this.perspectiveEditOffEvent = perspectiveEditOffEvent;
     }
 
     public String getDisplayName() {
@@ -106,7 +121,7 @@ public class DashboardPerspectiveActivity  implements PerspectiveActivity {
 
     @Override
     public PerspectiveDefinition getDefaultPerspectiveLayout() {
-        PerspectiveDefinition perspective = new PerspectiveDefinitionImpl(MultiListWorkbenchPanelPresenter.class.getName());
+        PerspectiveDefinition perspective = new PerspectiveDefinitionImpl(MultiListWorkbenchPanelPresenterExt.class.getName());
         perspective.setName(id);
         return perspective;
     }
@@ -128,7 +143,12 @@ public class DashboardPerspectiveActivity  implements PerspectiveActivity {
 
     @Override
     public Menus getMenus() {
+
+        String editStatus = "Edit " + (perspectiveEditorSettings.isEditOn() ? "off" : "on");
         return MenuFactory
+                .newTopLevelMenu(editStatus)
+                .respondsWith(getChangeEditStatusCommand())
+                .endMenu()
                 .newTopLevelMenu(AppConstants.INSTANCE.dashboard_new_displayer())
                 .respondsWith(getNewDisplayerCommand())
                 .endMenu()
@@ -168,6 +188,21 @@ public class DashboardPerspectiveActivity  implements PerspectiveActivity {
     }
 
     protected YesNoCancelPopup deleteDashboardPopup;
+
+    private Command getChangeEditStatusCommand() {
+        return new Command() {
+            public void execute() {
+                PerspectiveActivity currentPerspective = perspectiveManager.getCurrentPerspective();
+                if (perspectiveEditorSettings.isEditOn()) {
+                    perspectiveEditorSettings.setEditOn(false);
+                    perspectiveEditOffEvent.fire(new PerspectiveEditOffEvent(currentPerspective));
+                } else {
+                    perspectiveEditorSettings.setEditOn(true);
+                    perspectiveEditOnEvent.fire(new PerspectiveEditOnEvent(currentPerspective));
+                }
+            }
+        };
+    }
 
     private Command getShowDeletePopupCommand() {
         return new Command() {
@@ -230,8 +265,6 @@ public class DashboardPerspectiveActivity  implements PerspectiveActivity {
         String json = jsonMarshaller.toJsonString(displayerSettings);
         Map<String,String> params = new HashMap<String,String>();
         params.put("json", json);
-        params.put("edit", "true");
-        params.put("clone", "true");
         return new DefaultPlaceRequest("DisplayerScreen", params);
     }
 

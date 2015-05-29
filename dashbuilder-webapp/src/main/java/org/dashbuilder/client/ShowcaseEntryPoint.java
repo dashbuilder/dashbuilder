@@ -28,13 +28,13 @@ import com.google.gwt.dom.client.Style;
 import com.google.gwt.user.client.ui.RootPanel;
 import org.dashbuilder.client.dashboard.DashboardPerspectiveActivity;
 import org.dashbuilder.client.navbar.ComplementNavAreaPresenter;
+import org.dashbuilder.client.perspective.editor.PerspectiveEditorSettings;
 import org.dashbuilder.client.resources.i18n.AppConstants;
 import org.dashbuilder.client.dashboard.DashboardManager;
 import org.dashbuilder.shared.dashboard.events.DashboardCreatedEvent;
 import org.dashbuilder.shared.dashboard.events.DashboardDeletedEvent;
 import org.dashbuilder.client.dashboard.widgets.NewDashboardForm;
 import org.jboss.errai.ioc.client.api.EntryPoint;
-import org.uberfire.client.mvp.PerspectiveActivity;
 import org.uberfire.client.mvp.PlaceManager;
 import org.uberfire.client.workbench.events.ApplicationReadyEvent;
 import org.uberfire.client.workbench.widgets.menu.WorkbenchMenuBar;
@@ -52,6 +52,9 @@ import static org.uberfire.workbench.model.menu.MenuFactory.*;
  */
 @EntryPoint
 public class ShowcaseEntryPoint {
+
+    @Inject
+    private PerspectiveEditorSettings perspectiveEditorSettings;
 
     @Inject
     private WorkbenchMenuBar menubar;
@@ -78,6 +81,10 @@ public class ShowcaseEntryPoint {
 
     private void setupMenu( @Observes final ApplicationReadyEvent event ) {
         menubar.addMenus(createMenuBar());
+
+        // Set the roles with the perspective edit permission granted
+        // TODO: backend configuration
+        perspectiveEditorSettings.setEditAllowedRoles("admin");
     }
 
     private Menus createMenuBar() {

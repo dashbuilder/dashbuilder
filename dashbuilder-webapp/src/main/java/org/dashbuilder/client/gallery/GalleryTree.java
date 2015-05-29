@@ -74,7 +74,6 @@ public class GalleryTree {
         String json = jsonHelper.toJsonString(displayerSettings);
         Map<String,String> params = new HashMap<String,String>();
         params.put("json", json);
-        params.put("edit", "false");
         params.put("showRendererSelector", "true");
         return new DefaultPlaceRequest("DisplayerScreen", params);
     }

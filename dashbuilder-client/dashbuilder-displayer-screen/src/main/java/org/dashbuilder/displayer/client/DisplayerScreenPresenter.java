@@ -15,19 +15,24 @@
  */
 package org.dashbuilder.displayer.client;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
+import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
-import com.github.gwtbootstrap.client.ui.DropdownButton;
-import com.github.gwtbootstrap.client.ui.NavLink;
+import com.github.gwtbootstrap.client.ui.Button;
+import com.github.gwtbootstrap.client.ui.constants.IconType;
+import com.github.gwtbootstrap.client.ui.resources.ButtonSize;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.IsWidget;
+import org.dashbuilder.client.perspective.editor.MultiTabWorkbenchPanelViewExt;
+import org.dashbuilder.client.perspective.editor.PerspectiveEditorSettings;
+import org.dashbuilder.client.perspective.editor.events.PerspectiveEditOffEvent;
+import org.dashbuilder.client.perspective.editor.events.PerspectiveEditOnEvent;
 import org.dashbuilder.common.client.StringUtils;
 import org.dashbuilder.dataset.DataSetLookup;
 import org.dashbuilder.dataset.DataSetMetadata;
@@ -59,43 +64,37 @@ import org.uberfire.workbench.model.menu.MenuItem;
 import org.uberfire.workbench.model.menu.Menus;
 import org.uberfire.workbench.model.menu.impl.BaseMenuCustom;
 
-import static com.github.gwtbootstrap.client.ui.resources.ButtonSize.MINI;
-
 @WorkbenchScreen(identifier = "DisplayerScreen")
 @Dependent
 public class DisplayerScreenPresenter {
 
     @Inject
-    private DataSetClientServices dataSetClientServices;
+    protected DataSetClientServices dataSetClientServices;
 
     @Inject
-    private DisplayerScreenConfigurator screenConfigurator;
+    protected PerspectiveEditorSettings perspectiveEditorSettings;
 
-    private DisplayerView displayerView;
+    @Inject
+    protected Event<ChangeTitleWidgetEvent> changeTitleEvent;
+
+    protected DisplayerView displayerView;
     DisplayerEditorPopup displayerEditor;
-    private PerspectiveCoordinator perspectiveCoordinator;
-    private PerspectiveManager perspectiveManager;
-    private PanelManager panelManager;
-    private DisplayerSettingsJSONMarshaller jsonMarshaller;
-    private DisplayerSettings displayerSettings;
-    private PlaceManager placeManager;
-    private UUIDGenerator uuidGenerator;
+    protected PerspectiveCoordinator perspectiveCoordinator;
+    protected PerspectiveManager perspectiveManager;
+    protected PanelManager panelManager;
+    protected DisplayerSettingsJSONMarshaller jsonMarshaller;
+    protected DisplayerSettings displayerSettings;
+    protected PlaceManager placeManager;
+    protected UUIDGenerator uuidGenerator;
+    protected PlaceRequest placeRequest;
 
-
-    private PlaceRequest placeRequest;
-    private Menus menu = null;
-    private boolean editEnabled = false;
-    private boolean cloneEnabled = false;
-    private boolean csvExportAllowed = false;
-    private boolean excelExportAllowed = false;
-
-    private DropdownButton menuActionsButton;
+    protected Button editButton;
+    protected Button cloneButton;
+    protected Button csvExportButton;
+    protected Button xlsExportButton;
 
     // TODO allow configuration of this through a custom system property?
-    private static final int MAX_EXPORT_LIMIT = 100000;
-
-    @Inject
-    private Event<ChangeTitleWidgetEvent> changeTitleEvent;
+    protected static final int MAX_EXPORT_LIMIT = 100000;
 
     @Inject
     public DisplayerScreenPresenter(UUIDGenerator uuidGenerator,
@@ -114,7 +113,6 @@ public class DisplayerScreenPresenter {
         this.perspectiveCoordinator = perspectiveCoordinator;
         this.jsonMarshaller = jsonMarshaller;
         this.displayerEditor =  new DisplayerEditorPopup();
-        this.menuActionsButton = getMenuActionsButton();
     }
 
     @OnStartup
@@ -136,18 +134,7 @@ public class DisplayerScreenPresenter {
         // Register the Displayer into the coordinator.
         perspectiveCoordinator.addDisplayer(displayer);
 
-        // Init the screen configurator
-        screenConfigurator.init(displayerView);
-
-        // Check edit mode
-        String edit = placeRequest.getParameter("edit", "false");
-        String clone = placeRequest.getParameter("clone", "false");
-        editEnabled = Boolean.parseBoolean(edit);
-        cloneEnabled = Boolean.parseBoolean(clone);
-        csvExportAllowed = displayerSettings.isCSVExportAllowed();
-        excelExportAllowed = displayerSettings.isExcelExportAllowed();
-        this.menu = makeMenuBar();
-        adjustMenuActions(this.displayerSettings);
+        buildMenuActionsButton();
     }
 
     @OnClose
@@ -161,56 +148,93 @@ public class DisplayerScreenPresenter {
     }
 
     @WorkbenchPartView
-    public DisplayerScreenConfigurator getView() {
-        return screenConfigurator;
+    public IsWidget getView() {
+        return displayerView;
     }
 
     @WorkbenchMenu
-    public Menus getMenu() {
-        return menu;
-    }
-
-    private Menus makeMenuBar() {
+    public Menus getMenus() {
         return MenuFactory
-                .newTopLevelCustomMenu(new MenuFactory.CustomMenuBuilder() {
-                    @Override
-                    public void push(MenuFactory.CustomMenuBuilder element) {
-                    }
-
-                    @Override
-                    public MenuItem build() {
-                        return new BaseMenuCustom<IsWidget>() {
-                            @Override
-                            public IsWidget build() {
-                                return menuActionsButton;
-                            }
-
-                            @Override
-                            public boolean isEnabled() {
-                                return editEnabled || cloneEnabled || csvExportAllowed || excelExportAllowed;
-                            }
-
-                            @Override
-                            public void setEnabled(boolean enabled) {
-                            }
-
-                            @Override
-                            public Collection<String> getRoles() {
-                                return null;
-                            }
-
-                            @Override
-                            public String getSignatureId() {
-                                return null;
-                            }
-
-                        };
-                    }
-                }).endMenu()
-                .build();
+            .newTopLevelCustomMenu(newButtonBuilder(editButton)).endMenu()
+            .newTopLevelCustomMenu(newButtonBuilder(cloneButton)).endMenu()
+            .newTopLevelCustomMenu(newButtonBuilder(csvExportButton)).endMenu()
+            .newTopLevelCustomMenu(newButtonBuilder(xlsExportButton)).endMenu()
+            .build();
     }
 
-    private Command getEditCommand() {
+    @WorkbenchMenu
+    public MenuFactory.CustomMenuBuilder newButtonBuilder(final Button button) {
+        return new MenuFactory.CustomMenuBuilder() {
+            public void push(MenuFactory.CustomMenuBuilder element) {
+                throw new UnsupportedOperationException("Not implemented.");
+            }
+
+            public MenuItem build() {
+                return new BaseMenuCustom<IsWidget>() {
+                    public IsWidget build() {
+                        return button;
+                    }
+                };
+            }
+        };
+    }
+    
+    protected void buildMenuActionsButton() {
+        editButton = new Button(new ClickHandler() {
+            public void onClick(ClickEvent event) {
+                getEditCommand().execute();
+            }
+        });
+        editButton.setTitle(Constants.INSTANCE.menu_edit());
+        editButton.setIcon(IconType.EDIT);
+        editButton.setSize(ButtonSize.MINI);
+
+        cloneButton = new Button(new ClickHandler() {
+            public void onClick(ClickEvent event) {
+                getCloneCommand().execute();
+            }
+        });
+        cloneButton.setTitle(Constants.INSTANCE.menu_clone());
+        cloneButton.setIcon(IconType.COPY);
+        cloneButton.setSize(ButtonSize.MINI);
+
+        csvExportButton = new Button(new ClickHandler() {
+            public void onClick(ClickEvent event) {
+                getExportCsvCommand().execute();
+            }
+        });
+        csvExportButton.setTitle(Constants.INSTANCE.menu_export_csv());
+        csvExportButton.setIcon(IconType.FILE);
+        csvExportButton.setSize(ButtonSize.MINI);
+
+        xlsExportButton = new Button(new ClickHandler() {
+            public void onClick(ClickEvent event) {
+                getExportExcelCommand().execute();
+            }
+        });
+        xlsExportButton.setTitle(Constants.INSTANCE.menu_export_excel());
+        xlsExportButton.setIcon(IconType.TH_LIST);
+        xlsExportButton.setSize(ButtonSize.MINI);
+
+        updateMenuVisibleFlags();
+    }
+
+    protected void updateMenuVisibleFlags() {
+        editButton.setVisible(perspectiveEditorSettings.isEditOn());
+        cloneButton.setVisible(perspectiveEditorSettings.isEditOn());
+        csvExportButton.setVisible(displayerSettings.isCSVExportAllowed());
+        xlsExportButton.setVisible(displayerSettings.isExcelExportAllowed());
+    }
+
+    protected void onPerspectiveEditOn(@Observes PerspectiveEditOnEvent event) {
+        updateMenuVisibleFlags();
+    }
+
+    protected void onPerspectiveEditOff(@Observes PerspectiveEditOffEvent event) {
+        updateMenuVisibleFlags();
+    }
+
+    protected Command getEditCommand() {
         return new Command() {
             public void execute() {
                 perspectiveCoordinator.editOn();
@@ -225,7 +249,6 @@ public class DisplayerScreenPresenter {
 
                     public void onSave(final DisplayerEditor editor) {
                         perspectiveCoordinator.editOff();
-                        adjustMenuActions(editor.getDisplayerSettings());
                         updateDisplayer(editor.getDisplayerSettings());
 
                         String newTitle = editor.getDisplayerSettings().getTitle();
@@ -243,7 +266,7 @@ public class DisplayerScreenPresenter {
         };
     }
 
-    private Command getCloneCommand() {
+    protected Command getCloneCommand() {
         return new Command() {
             public void execute() {
                 perspectiveCoordinator.editOn();
@@ -270,7 +293,7 @@ public class DisplayerScreenPresenter {
         };
     }
 
-    private Command getExportCsvCommand() {
+    protected Command getExportCsvCommand() {
         return new Command() {
             public void execute() {
                 // Get all the data set rows with a maximum of 10000
@@ -294,7 +317,7 @@ public class DisplayerScreenPresenter {
         };
     }
 
-    private Command getExportExcelCommand() {
+    protected Command getExportExcelCommand() {
         return new Command() {
             public void execute() {
                 // Get all the data set rows with a maximum of 10000
@@ -318,7 +341,7 @@ public class DisplayerScreenPresenter {
         };
     }
 
-    private DataSetLookup getConstrainedDataSetLookup(DataSetLookup dataSetLookup) {
+    protected DataSetLookup getConstrainedDataSetLookup(DataSetLookup dataSetLookup) {
         DataSetLookup _dataSetLookup = dataSetLookup.cloneInstance();
         if (dataSetLookup.getNumberOfRows() > 0) {
             // TODO: ask the user ....
@@ -332,7 +355,7 @@ public class DisplayerScreenPresenter {
         return _dataSetLookup;
     }
 
-    private void updateDisplayer(DisplayerSettings settings) {
+    protected void updateDisplayer(DisplayerSettings settings) {
         this.removeDisplayer();
 
         this.displayerSettings = settings;
@@ -348,60 +371,10 @@ public class DisplayerScreenPresenter {
         displayer.close();
     }
 
-    private PlaceRequest createPlaceRequest(DisplayerSettings displayerSettings) {
+    protected PlaceRequest createPlaceRequest(DisplayerSettings displayerSettings) {
         String json = jsonMarshaller.toJsonString(displayerSettings);
         Map<String,String> params = new HashMap<String, String>();
         params.put("json", json);
-        params.put("edit", "true");
-        params.put("clone", "true");
         return new DefaultPlaceRequest("DisplayerScreen", params);
-    }
-
-    private void adjustMenuActions( DisplayerSettings displayerSettings ) {
-        menuActionsButton.getMenuWiget().getWidget(2).setVisible(displayerSettings.isCSVExportAllowed());
-        menuActionsButton.getMenuWiget().getWidget(3).setVisible(displayerSettings.isExcelExportAllowed());
-    }
-
-    private DropdownButton getMenuActionsButton() {
-        return new DropdownButton(Constants.INSTANCE.menu_button_actions()) {{
-            setSize(MINI);
-            setRightDropdown(true);
-
-            add( new NavLink(Constants.INSTANCE.menu_edit()) {{
-                addClickHandler( new ClickHandler() {
-                    @Override
-                    public void onClick(ClickEvent event) {
-                        getEditCommand().execute();
-                    }
-                });
-            }});
-
-            add( new NavLink(Constants.INSTANCE.menu_clone()) {{
-                addClickHandler(new ClickHandler() {
-                    @Override
-                    public void onClick(ClickEvent event) {
-                        getCloneCommand().execute();
-                    }
-                });
-            }});
-
-            add( new NavLink(Constants.INSTANCE.menu_export_csv()) {{
-                addClickHandler( new ClickHandler() {
-                    @Override
-                    public void onClick( ClickEvent event ) {
-                        getExportCsvCommand().execute();
-                    }
-                });
-            }});
-
-            add( new NavLink(Constants.INSTANCE.menu_export_excel()) {{
-                addClickHandler(new ClickHandler() {
-                    @Override
-                    public void onClick(ClickEvent event) {
-                        getExportExcelCommand().execute();
-                    }
-                });
-            }});
-        }};
     }
 }
