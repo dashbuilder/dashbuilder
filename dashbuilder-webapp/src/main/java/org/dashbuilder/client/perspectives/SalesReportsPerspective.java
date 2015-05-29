@@ -59,7 +59,6 @@ public class SalesReportsPerspective {
         String json = jsonHelper.toJsonString(displayerSettings);
         Map<String,String> params = new HashMap<String,String>();
         params.put("json", json);
-        params.put("edit", "false");
         return new DefaultPlaceRequest("DisplayerScreen", params);
     }
 }
