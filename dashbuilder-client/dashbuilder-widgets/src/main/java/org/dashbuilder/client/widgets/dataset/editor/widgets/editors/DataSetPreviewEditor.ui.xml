@@ -14,7 +14,7 @@
   <g:FlowPanel ui:field="columnFilterTablePanel" addStyleNames="{style.mainPanel} ">
 
     <!-- Contains preview table displayer added in the Java View implementation. -->
-    <g:FlowPanel ui:field="tablePanel">
+    <g:FlowPanel ui:field="tablePanel" addStyleNames="dataPreviewTable">
       
     </g:FlowPanel>
     
