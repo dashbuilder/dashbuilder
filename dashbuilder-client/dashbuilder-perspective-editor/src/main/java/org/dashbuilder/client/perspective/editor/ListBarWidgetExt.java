@@ -399,9 +399,7 @@ public class ListBarWidgetExt
             for ( final MenuItem menuItem : part.getPresenter().getMenus().getItems() ) {
                 final Widget result = menuWidgetFactory.makeItem( menuItem, true );
                 if ( result != null ) {
-                    final ButtonGroup bg = new ButtonGroup();
-                    bg.add( result );
-                    contextMenu.add( bg );
+                    contextMenu.add( result );
                 }
             }
         }

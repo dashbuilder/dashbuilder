@@ -32,6 +32,11 @@
       margin-right: 10px;
     }
 
+    .context-menu {
+      display: inline;
+      margin-right: 5px;
+    }
+
     .pull-right {
       float: right;
     }
@@ -54,7 +59,7 @@
       <g:FlowPanel styleName="{res.CSS.listbar}" ui:field="header">
 
         <g:FlowPanel styleName="{style.pull-right} {style.better_margin}" ui:field="menuArea">
-          <g:FlowPanel styleName="{style.inline} {style.better_margin}" ui:field="contextMenu"/>
+          <g:FlowPanel styleName="{style.context-menu}" ui:field="contextMenu"/>
           <tb:ButtonGroup ui:field="changeTypeButtonContainer">
             <tb:Button ui:field="changeTypeButton" size="MINI" icon="ASTERISK" title="Show as tabs"/>
           </tb:ButtonGroup>
