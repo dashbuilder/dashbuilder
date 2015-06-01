@@ -25,6 +25,7 @@ import org.uberfire.client.mvp.PerspectiveManager;
 import org.uberfire.client.mvp.PlaceManager;
 import org.uberfire.client.util.Layouts;
 import org.uberfire.client.views.bs2.maximize.MaximizeToggleButton;
+import org.uberfire.client.workbench.events.PerspectiveChange;
 import org.uberfire.client.workbench.panels.MaximizeToggleButtonPresenter;
 import org.uberfire.client.workbench.panels.MultiPartWidget;
 import org.uberfire.client.workbench.panels.impl.AbstractMultiPartWorkbenchPanelView;
@@ -61,10 +62,15 @@ public class MultiTabWorkbenchPanelViewExt
     protected PerspectiveEditorSettings perspectiveEditorSettings;
 
     protected MaximizeToggleButtonPresenter maximizeButtonPresenter;
-    protected Button changeTypeButton;
-    protected Button closeButton;
+    protected ButtonGroup changeTypeButtonGroup;
+    protected ButtonGroup closeButtonGroup;
     protected FlowPanel headerMenu = new FlowPanel();
     protected FlowPanel contextMenu = new FlowPanel();
+
+    @PostConstruct
+    protected void init() {
+        tabPanel.setView(this);
+    }
 
     @Override
     protected MultiPartWidget setupWidget() {
@@ -89,18 +95,12 @@ public class MultiTabWorkbenchPanelViewExt
         headerMenuStyle.setZIndex(2); // otherwise, clicks don't make it through the tab area
         headerMenuStyle.setPosition(Style.Position.ABSOLUTE);
         headerMenuStyle.setRight(0, Style.Unit.PX);
-        //headerMenuStyle.setProperty("display", "inline-flex");
 
         Style contextMenuStyle = contextMenu.getElement().getStyle();
-        contextMenuStyle.setMarginRight(10, Style.Unit.PX);
         contextMenuStyle.setDisplay(Style.Display.INLINE);
+        contextMenuStyle.setMarginRight(5, Style.Unit.PX);
 
-        ButtonGroup changeTypeButtonGroup = new ButtonGroup();
-        changeTypeButtonGroup.add(changeTypeButton);
         headerMenu.add(changeTypeButtonGroup);
-
-        ButtonGroup closeButtonGroup = new ButtonGroup();
-        closeButtonGroup.add(closeButton);
         headerMenu.add(closeButtonGroup);
 
         ButtonGroup maximizeButtonGroup = new ButtonGroup();
@@ -133,7 +133,7 @@ public class MultiTabWorkbenchPanelViewExt
     }
 
     protected void setupChangeTypeButton() {
-        changeTypeButton = new Button();
+        Button changeTypeButton = new Button();
         changeTypeButton.setTitle("Show as list");
         changeTypeButton.setIcon(IconType.ASTERISK);
         changeTypeButton.setSize(ButtonSize.MINI);
@@ -142,14 +142,19 @@ public class MultiTabWorkbenchPanelViewExt
                 // TODO: move this logic to a more appropriate place
                 getPresenter().getDefinition().setPanelType(MultiListWorkbenchPanelPresenterExt.class.getName());
                 PerspectiveActivity currentPerspective = perspectiveManager.getCurrentPerspective();
-                perspectiveManager.savePerspectiveState(new Command() {public void execute() {}});
+                perspectiveManager.savePerspectiveState(new Command() {
+                    public void execute() {
+                    }
+                });
                 placeManager.goTo(new ForcedPlaceRequest(currentPerspective.getIdentifier()));
             }
         });
+        changeTypeButtonGroup = new ButtonGroup();
+        changeTypeButtonGroup.add(changeTypeButton);
     }
 
     protected void setupCloseButton() {
-        closeButton = new Button();
+        Button closeButton = new Button();
         closeButton.setTitle("Close");
         closeButton.setIcon(IconType.REMOVE);
         closeButton.setSize(ButtonSize.MINI);
@@ -159,6 +164,8 @@ public class MultiTabWorkbenchPanelViewExt
                 panelManager.closePart(partToDeselect.getPresenter().getDefinition());
             }
         });
+        closeButtonGroup = new ButtonGroup();
+        closeButtonGroup.add(closeButton);
     }
 
     protected void setupContextMenu() {
@@ -168,9 +175,7 @@ public class MultiTabWorkbenchPanelViewExt
             for ( final MenuItem menuItem : part.getPresenter().getMenus().getItems() ) {
                 final Widget result = menuWidgetFactory.makeItem( menuItem, true );
                 if ( result != null ) {
-                    final ButtonGroup bg = new ButtonGroup();
-                    bg.add( result );
-                    contextMenu.add( bg );
+                    contextMenu.add(result);
                 }
             }
         }
@@ -214,8 +219,8 @@ public class MultiTabWorkbenchPanelViewExt
     }
 
     protected void updateHeaderStatus() {
-        changeTypeButton.setVisible(perspectiveEditorSettings.isEditOn());
-        closeButton.setVisible(perspectiveEditorSettings.isEditOn());
+        changeTypeButtonGroup.setVisible(perspectiveEditorSettings.isEditOn());
+        closeButtonGroup.setVisible(perspectiveEditorSettings.isEditOn());
         setupContextMenu();
     }
 }

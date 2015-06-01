@@ -23,13 +23,14 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
 import com.github.gwtbootstrap.client.ui.Button;
+import com.github.gwtbootstrap.client.ui.ButtonGroup;
 import com.github.gwtbootstrap.client.ui.constants.IconType;
 import com.github.gwtbootstrap.client.ui.resources.ButtonSize;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.IsWidget;
-import org.dashbuilder.client.perspective.editor.MultiTabWorkbenchPanelViewExt;
+import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.client.perspective.editor.PerspectiveEditorSettings;
 import org.dashbuilder.client.perspective.editor.events.PerspectiveEditOffEvent;
 import org.dashbuilder.client.perspective.editor.events.PerspectiveEditOnEvent;
@@ -88,10 +89,10 @@ public class DisplayerScreenPresenter {
     protected UUIDGenerator uuidGenerator;
     protected PlaceRequest placeRequest;
 
-    protected Button editButton;
-    protected Button cloneButton;
-    protected Button csvExportButton;
-    protected Button xlsExportButton;
+    protected ButtonGroup editButtonGroup;
+    protected ButtonGroup cloneButtonGroup;
+    protected ButtonGroup csvExportButtonGroup;
+    protected ButtonGroup xlsExportButtonGroup;
 
     // TODO allow configuration of this through a custom system property?
     protected static final int MAX_EXPORT_LIMIT = 100000;
@@ -155,15 +156,15 @@ public class DisplayerScreenPresenter {
     @WorkbenchMenu
     public Menus getMenus() {
         return MenuFactory
-            .newTopLevelCustomMenu(newButtonBuilder(editButton)).endMenu()
-            .newTopLevelCustomMenu(newButtonBuilder(cloneButton)).endMenu()
-            .newTopLevelCustomMenu(newButtonBuilder(csvExportButton)).endMenu()
-            .newTopLevelCustomMenu(newButtonBuilder(xlsExportButton)).endMenu()
+            .newTopLevelCustomMenu(newMenuItemBuilder(editButtonGroup)).endMenu()
+            .newTopLevelCustomMenu(newMenuItemBuilder(cloneButtonGroup)).endMenu()
+            .newTopLevelCustomMenu(newMenuItemBuilder(csvExportButtonGroup)).endMenu()
+            .newTopLevelCustomMenu(newMenuItemBuilder(xlsExportButtonGroup)).endMenu()
             .build();
     }
 
     @WorkbenchMenu
-    public MenuFactory.CustomMenuBuilder newButtonBuilder(final Button button) {
+    public MenuFactory.CustomMenuBuilder newMenuItemBuilder(final Widget widget) {
         return new MenuFactory.CustomMenuBuilder() {
             public void push(MenuFactory.CustomMenuBuilder element) {
                 throw new UnsupportedOperationException("Not implemented.");
@@ -172,7 +173,7 @@ public class DisplayerScreenPresenter {
             public MenuItem build() {
                 return new BaseMenuCustom<IsWidget>() {
                     public IsWidget build() {
-                        return button;
+                        return widget;
                     }
                 };
             }
@@ -180,7 +181,7 @@ public class DisplayerScreenPresenter {
     }
     
     protected void buildMenuActionsButton() {
-        editButton = new Button(new ClickHandler() {
+        Button editButton = new Button(new ClickHandler() {
             public void onClick(ClickEvent event) {
                 getEditCommand().execute();
             }
@@ -188,8 +189,10 @@ public class DisplayerScreenPresenter {
         editButton.setTitle(Constants.INSTANCE.menu_edit());
         editButton.setIcon(IconType.EDIT);
         editButton.setSize(ButtonSize.MINI);
+        editButtonGroup = new ButtonGroup();
+        editButtonGroup.add(editButton);
 
-        cloneButton = new Button(new ClickHandler() {
+        Button cloneButton = new Button(new ClickHandler() {
             public void onClick(ClickEvent event) {
                 getCloneCommand().execute();
             }
@@ -197,8 +200,10 @@ public class DisplayerScreenPresenter {
         cloneButton.setTitle(Constants.INSTANCE.menu_clone());
         cloneButton.setIcon(IconType.COPY);
         cloneButton.setSize(ButtonSize.MINI);
+        cloneButtonGroup = new ButtonGroup();
+        cloneButtonGroup.add(cloneButton);
 
-        csvExportButton = new Button(new ClickHandler() {
+        Button csvExportButton = new Button(new ClickHandler() {
             public void onClick(ClickEvent event) {
                 getExportCsvCommand().execute();
             }
@@ -206,8 +211,10 @@ public class DisplayerScreenPresenter {
         csvExportButton.setTitle(Constants.INSTANCE.menu_export_csv());
         csvExportButton.setIcon(IconType.FILE);
         csvExportButton.setSize(ButtonSize.MINI);
+        csvExportButtonGroup = new ButtonGroup();
+        csvExportButtonGroup.add(csvExportButton);
 
-        xlsExportButton = new Button(new ClickHandler() {
+        Button xlsExportButton = new Button(new ClickHandler() {
             public void onClick(ClickEvent event) {
                 getExportExcelCommand().execute();
             }
@@ -215,15 +222,17 @@ public class DisplayerScreenPresenter {
         xlsExportButton.setTitle(Constants.INSTANCE.menu_export_excel());
         xlsExportButton.setIcon(IconType.TH_LIST);
         xlsExportButton.setSize(ButtonSize.MINI);
+        xlsExportButtonGroup = new ButtonGroup();
+        xlsExportButtonGroup.add(xlsExportButton);
 
         updateMenuVisibleFlags();
     }
 
     protected void updateMenuVisibleFlags() {
-        editButton.setVisible(perspectiveEditorSettings.isEditOn());
-        cloneButton.setVisible(perspectiveEditorSettings.isEditOn());
-        csvExportButton.setVisible(displayerSettings.isCSVExportAllowed());
-        xlsExportButton.setVisible(displayerSettings.isExcelExportAllowed());
+        editButtonGroup.setVisible(perspectiveEditorSettings.isEditOn());
+        cloneButtonGroup.setVisible(perspectiveEditorSettings.isEditOn());
+        csvExportButtonGroup.setVisible(displayerSettings.isCSVExportAllowed());
+        xlsExportButtonGroup.setVisible(displayerSettings.isExcelExportAllowed());
     }
 
     protected void onPerspectiveEditOn(@Observes PerspectiveEditOnEvent event) {

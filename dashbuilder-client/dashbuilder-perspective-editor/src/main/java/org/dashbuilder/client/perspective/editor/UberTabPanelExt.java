@@ -73,6 +73,7 @@ public class UberTabPanelExt extends ResizeComposite implements MultiPartWidget,
 
     private static final int MARGIN = 20;
 
+    protected MultiTabWorkbenchPanelViewExt view;
     protected ResizeTabPanel tabPanel;
     protected DropdownTab dropdownTab;
 
@@ -261,13 +262,18 @@ public class UberTabPanelExt extends ResizeComposite implements MultiPartWidget,
         // not needed
     }
 
+    public void setView( final MultiTabWorkbenchPanelViewExt view ) {
+        this.view = view;
+    }
+
     @Override
-    public void addPart( final WorkbenchPartPresenter.View view ) {
-        if ( !tabIndex.containsKey( view ) ) {
-            final Tab newTab = createTab( view, false, 0, 0 );
-            parts.add( view.getPresenter() );
-            tabIndex.put( view, newTab.asTabLink() );
+    public void addPart( final WorkbenchPartPresenter.View partView ) {
+        if ( !tabIndex.containsKey( partView ) ) {
+            final Tab newTab = createTab( partView, false, 0, 0 );
+            parts.add(partView.getPresenter());
+            tabIndex.put( partView, newTab.asTabLink() );
             updateDisplayedTabs();
+            view.updateHeaderStatus();
         }
     }
 
