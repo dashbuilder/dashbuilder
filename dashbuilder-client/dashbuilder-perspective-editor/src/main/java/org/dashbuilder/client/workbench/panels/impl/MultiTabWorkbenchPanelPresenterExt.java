@@ -1,4 +1,4 @@
-package org.dashbuilder.client.perspective.editor;
+package org.dashbuilder.client.workbench.panels.impl;
 
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
@@ -15,17 +15,18 @@ import org.uberfire.client.workbench.panels.impl.AbstractMultiPartWorkbenchPanel
  * the entire available space not used up by the title bar.
  */
 @Dependent
-public class MultiListWorkbenchPanelPresenterExt extends AbstractMultiPartWorkbenchPanelPresenter<MultiListWorkbenchPanelPresenterExt> {
+public class MultiTabWorkbenchPanelPresenterExt extends AbstractMultiPartWorkbenchPanelPresenter<MultiTabWorkbenchPanelPresenterExt> {
 
     @Inject
-    public MultiListWorkbenchPanelPresenterExt(@Named("MultiListWorkbenchPanelViewExt") final WorkbenchPanelView<MultiListWorkbenchPanelPresenterExt> view,
+    public MultiTabWorkbenchPanelPresenterExt( @Named("MultiTabWorkbenchPanelViewExt") final WorkbenchPanelView<MultiTabWorkbenchPanelPresenterExt> view,
             final ActivityManager activityManager,
-            final PerspectiveManager perspectiveManager) {
+            final PerspectiveManager perspectiveManager ) {
         super( view, activityManager, perspectiveManager );
     }
 
     @Override
-    protected MultiListWorkbenchPanelPresenterExt asPresenterType() {
+    protected MultiTabWorkbenchPanelPresenterExt asPresenterType() {
         return this;
     }
+
 }

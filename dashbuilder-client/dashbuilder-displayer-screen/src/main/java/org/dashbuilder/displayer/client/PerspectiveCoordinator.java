@@ -19,6 +19,8 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
 
+import org.dashbuilder.client.perspective.editor.events.PerspectiveEditOffEvent;
+import org.dashbuilder.client.perspective.editor.events.PerspectiveEditOnEvent;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetLookup;
 import org.dashbuilder.dataset.events.DataSetModifiedEvent;
@@ -89,14 +91,28 @@ public class PerspectiveCoordinator {
     /**
      * Reset the coordinator every time the perspective is changed.
      */
-    private void onPerspectiveChanged(@Observes final PerspectiveChange event) {
+    protected void onPerspectiveChanged(@Observes final PerspectiveChange event) {
         init();
+    }
+
+    /**
+     * Listen to the perspective edit on event
+     */
+    protected void onPerspectiveEditOn(@Observes PerspectiveEditOnEvent event) {
+        editOn();
+    }
+
+    /**
+     * Listen to the perspective edit off event
+     */
+    public void onPerspectiveEditOff(@Observes PerspectiveEditOffEvent event) {
+        editOff();
     }
 
     /**
      * Listen to modifications on any of the data set being used in this perspective.
      */
-    private void onDataSetModifiedEvent(@Observes DataSetModifiedEvent event) {
+    protected  void onDataSetModifiedEvent(@Observes DataSetModifiedEvent event) {
         if (editOn) return;
 
         String targetUUID = event.getDataSetDef().getUUID();

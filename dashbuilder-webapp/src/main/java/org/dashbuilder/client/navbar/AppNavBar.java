@@ -24,7 +24,7 @@ public class AppNavBar extends Composite implements Header {
 
     @Override
     public int getOrder() {
-        return MAX_VALUE;
+        return 2;
     }
 
     @Override

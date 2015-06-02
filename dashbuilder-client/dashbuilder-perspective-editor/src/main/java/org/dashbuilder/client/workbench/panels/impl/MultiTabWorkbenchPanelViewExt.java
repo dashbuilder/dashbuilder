@@ -1,4 +1,4 @@
-package org.dashbuilder.client.perspective.editor;
+package org.dashbuilder.client.workbench.panels.impl;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
@@ -18,20 +18,16 @@ import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
+import org.dashbuilder.client.perspective.editor.PerspectiveEditor;
 import org.dashbuilder.client.perspective.editor.events.PerspectiveEditOffEvent;
 import org.dashbuilder.client.perspective.editor.events.PerspectiveEditOnEvent;
-import org.uberfire.client.mvp.PerspectiveActivity;
-import org.uberfire.client.mvp.PerspectiveManager;
-import org.uberfire.client.mvp.PlaceManager;
 import org.uberfire.client.util.Layouts;
 import org.uberfire.client.views.bs2.maximize.MaximizeToggleButton;
-import org.uberfire.client.workbench.events.PerspectiveChange;
 import org.uberfire.client.workbench.panels.MaximizeToggleButtonPresenter;
 import org.uberfire.client.workbench.panels.MultiPartWidget;
 import org.uberfire.client.workbench.panels.impl.AbstractMultiPartWorkbenchPanelView;
 import org.uberfire.client.workbench.part.WorkbenchPartPresenter;
 import org.uberfire.mvp.Command;
-import org.uberfire.mvp.impl.ForcedPlaceRequest;
 import org.uberfire.workbench.model.PartDefinition;
 import org.uberfire.workbench.model.menu.MenuItem;
 
@@ -53,13 +49,7 @@ public class MultiTabWorkbenchPanelViewExt
     protected UberTabPanelExt tabPanel;
 
     @Inject
-    protected PlaceManager placeManager;
-
-    @Inject
-    protected PerspectiveManager perspectiveManager;
-
-    @Inject
-    protected PerspectiveEditorSettings perspectiveEditorSettings;
+    protected PerspectiveEditor perspectiveEditor;
 
     protected MaximizeToggleButtonPresenter maximizeButtonPresenter;
     protected ButtonGroup changeTypeButtonGroup;
@@ -138,15 +128,8 @@ public class MultiTabWorkbenchPanelViewExt
         changeTypeButton.setIcon(IconType.ASTERISK);
         changeTypeButton.setSize(ButtonSize.MINI);
         changeTypeButton.addClickHandler(new ClickHandler() {
-            @Override public void onClick(ClickEvent clickEvent) {
-                // TODO: move this logic to a more appropriate place
-                getPresenter().getDefinition().setPanelType(MultiListWorkbenchPanelPresenterExt.class.getName());
-                PerspectiveActivity currentPerspective = perspectiveManager.getCurrentPerspective();
-                perspectiveManager.savePerspectiveState(new Command() {
-                    public void execute() {
-                    }
-                });
-                placeManager.goTo(new ForcedPlaceRequest(currentPerspective.getIdentifier()));
+            public void onClick(ClickEvent clickEvent) {
+                perspectiveEditor.changePanelType(getPresenter(), MultiListWorkbenchPanelPresenterExt.class.getName());
             }
         });
         changeTypeButtonGroup = new ButtonGroup();
@@ -219,8 +202,8 @@ public class MultiTabWorkbenchPanelViewExt
     }
 
     protected void updateHeaderStatus() {
-        changeTypeButtonGroup.setVisible(perspectiveEditorSettings.isEditOn());
-        closeButtonGroup.setVisible(perspectiveEditorSettings.isEditOn());
+        changeTypeButtonGroup.setVisible(perspectiveEditor.isEditOn());
+        closeButtonGroup.setVisible(perspectiveEditor.isEditOn());
         setupContextMenu();
     }
 }
