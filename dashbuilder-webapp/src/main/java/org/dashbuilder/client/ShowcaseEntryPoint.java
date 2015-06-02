@@ -26,14 +26,13 @@ import com.google.gwt.animation.client.Animation;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.user.client.ui.RootPanel;
-import org.dashbuilder.client.dashboard.DashboardPerspectiveActivity;
 import org.dashbuilder.client.navbar.ComplementNavAreaPresenter;
-import org.dashbuilder.client.perspective.editor.PerspectiveEditorSettings;
+import org.dashbuilder.client.perspective.editor.EditablePerspectiveActivity;
+import org.dashbuilder.client.perspective.editor.PerspectiveEditor;
+import org.dashbuilder.client.perspective.editor.events.PerspectiveCreatedEvent;
+import org.dashbuilder.client.perspective.editor.events.PerspectiveDeletedEvent;
+import org.dashbuilder.client.perspective.editor.events.PerspectiveRenamedEvent;
 import org.dashbuilder.client.resources.i18n.AppConstants;
-import org.dashbuilder.client.dashboard.DashboardManager;
-import org.dashbuilder.shared.dashboard.events.DashboardCreatedEvent;
-import org.dashbuilder.shared.dashboard.events.DashboardDeletedEvent;
-import org.dashbuilder.client.dashboard.widgets.NewDashboardForm;
 import org.jboss.errai.ioc.client.api.EntryPoint;
 import org.uberfire.client.mvp.PlaceManager;
 import org.uberfire.client.workbench.events.ApplicationReadyEvent;
@@ -54,7 +53,7 @@ import static org.uberfire.workbench.model.menu.MenuFactory.*;
 public class ShowcaseEntryPoint {
 
     @Inject
-    private PerspectiveEditorSettings perspectiveEditorSettings;
+    private PerspectiveEditor perspectiveEditor;
 
     @Inject
     private WorkbenchMenuBar menubar;
@@ -64,12 +63,6 @@ public class ShowcaseEntryPoint {
 
     @Inject
     private PlaceManager placeManager;
-
-    @Inject
-    private DashboardManager dashboardManager;
-
-    @Inject
-    private NewDashboardForm newDashboardForm;
 
     @Inject
     private Event<NotificationEvent> workbenchNotification;
@@ -84,7 +77,7 @@ public class ShowcaseEntryPoint {
 
         // Set the roles with the perspective edit permission granted
         // TODO: backend configuration
-        perspectiveEditorSettings.setEditAllowedRoles("admin");
+        perspectiveEditor.setAllowedRoles("admin");
     }
 
     private Menus createMenuBar() {
@@ -119,49 +112,33 @@ public class ShowcaseEntryPoint {
     private List<? extends MenuItem> getDashboardMenuItems() {
         final List<MenuItem> result = new ArrayList<MenuItem>(2);
 
-        // Add the new dashboard creation link
-        result.add(MenuFactory.newSimpleItem(AppConstants.INSTANCE.menu_dashboards_new())
-                .respondsWith(getNewDashboardCommand())
-                .endMenu().build().getItems().get(0));
-
         // Add hard-coded dashboard samples
         result.add(newMenuItem(AppConstants.INSTANCE.menu_dashboards_salesdb(), "SalesDashboardPerspective"));
         result.add(newMenuItem(AppConstants.INSTANCE.menu_dashboards_salesreports(), "SalesReportsPerspective"));
 
-        // Add dashboards created in runtime
-        for (DashboardPerspectiveActivity activity : dashboardManager.getDashboards()) {
+        // Add perspectives created in runtime
+        for (EditablePerspectiveActivity activity : perspectiveEditor.getEditablePerspectives()) {
             result.add(newMenuItem(activity.getDisplayName(), activity.getIdentifier(), true, false));
         }
 
         return result;
     }
 
-    private Command getNewDashboardCommand() {
-        return new Command() {
-            public void execute() {
-                newDashboardForm.init(new NewDashboardForm.Listener() {
-
-                    public void onOk(String name) {
-                        subMenubar.show(false);
-                        dashboardManager.newDashboard(name);
-                    }
-                    public void onCancel() {
-                    }
-                });
-            }
-        };
-    }
-
-    private void onDashboardCreatedEvent(@Observes DashboardCreatedEvent event) {
+    private void onPerspectiveCreatedEvent(@Observes PerspectiveCreatedEvent event) {
         menubar.clear();
         menubar.addMenus(createMenuBar());
         //workbenchNotification.fire(new NotificationEvent(AppConstants.INSTANCE.notification_dashboard_created(event.getDashboardName()), INFO));
     }
 
-    private void onDashboardDeletedEvent(@Observes DashboardDeletedEvent event) {
+    private void onPerspectiveDeletedEvent(@Observes PerspectiveDeletedEvent event) {
         menubar.clear();
         menubar.addMenus(createMenuBar());
-        workbenchNotification.fire(new NotificationEvent(AppConstants.INSTANCE.notification_dashboard_deleted(event.getDashboardName()), INFO));
+        workbenchNotification.fire(new NotificationEvent(AppConstants.INSTANCE.notification_dashboard_deleted(event.getPerspectiveName()), INFO));
+    }
+
+    private void onPerspectiveRenamedEvent(@Observes PerspectiveRenamedEvent event) {
+        menubar.clear();
+        menubar.addMenus(createMenuBar());
     }
 
     private List<? extends MenuItem> getExtensionsMenuItems() {

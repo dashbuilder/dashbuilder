@@ -18,7 +18,6 @@ package org.dashbuilder.displayer.client;
 import java.util.HashMap;
 import java.util.Map;
 import javax.enterprise.context.Dependent;
-import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
@@ -31,7 +30,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
-import org.dashbuilder.client.perspective.editor.PerspectiveEditorSettings;
+import org.dashbuilder.client.perspective.editor.PerspectiveEditor;
 import org.dashbuilder.client.perspective.editor.events.PerspectiveEditOffEvent;
 import org.dashbuilder.client.perspective.editor.events.PerspectiveEditOnEvent;
 import org.dashbuilder.common.client.StringUtils;
@@ -50,16 +49,11 @@ import org.uberfire.client.annotations.WorkbenchMenu;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
 import org.uberfire.client.annotations.WorkbenchPartView;
 import org.uberfire.client.annotations.WorkbenchScreen;
-import org.uberfire.client.mvp.PerspectiveManager;
-import org.uberfire.client.mvp.PlaceManager;
-import org.uberfire.client.workbench.PanelManager;
-import org.uberfire.client.workbench.events.ChangeTitleWidgetEvent;
 import org.uberfire.lifecycle.OnClose;
 import org.uberfire.lifecycle.OnStartup;
 import org.uberfire.mvp.Command;
 import org.uberfire.mvp.PlaceRequest;
 import org.uberfire.mvp.impl.DefaultPlaceRequest;
-import org.uberfire.workbench.model.PanelDefinition;
 import org.uberfire.workbench.model.menu.MenuFactory;
 import org.uberfire.workbench.model.menu.MenuItem;
 import org.uberfire.workbench.model.menu.Menus;
@@ -69,23 +63,13 @@ import org.uberfire.workbench.model.menu.impl.BaseMenuCustom;
 @Dependent
 public class DisplayerScreenPresenter {
 
-    @Inject
     protected DataSetClientServices dataSetClientServices;
-
-    @Inject
-    protected PerspectiveEditorSettings perspectiveEditorSettings;
-
-    @Inject
-    protected Event<ChangeTitleWidgetEvent> changeTitleEvent;
-
+    protected PerspectiveEditor perspectiveEditor;
     protected DisplayerView displayerView;
-    DisplayerEditorPopup displayerEditor;
+    protected DisplayerEditorPopup displayerEditor;
     protected PerspectiveCoordinator perspectiveCoordinator;
-    protected PerspectiveManager perspectiveManager;
-    protected PanelManager panelManager;
     protected DisplayerSettingsJSONMarshaller jsonMarshaller;
     protected DisplayerSettings displayerSettings;
-    protected PlaceManager placeManager;
     protected UUIDGenerator uuidGenerator;
     protected PlaceRequest placeRequest;
 
@@ -98,19 +82,18 @@ public class DisplayerScreenPresenter {
     protected static final int MAX_EXPORT_LIMIT = 100000;
 
     @Inject
-    public DisplayerScreenPresenter(UUIDGenerator uuidGenerator,
-            PerspectiveManager perspectiveManager,
-            PlaceManager placeManager,
+    public DisplayerScreenPresenter(
+            DataSetClientServices dataSetClientServices,
+            PerspectiveEditor perspectiveEditor,
+            UUIDGenerator uuidGenerator,
             DisplayerView displayerView,
-            PanelManager panelManager,
             PerspectiveCoordinator perspectiveCoordinator,
             DisplayerSettingsJSONMarshaller jsonMarshaller) {
 
+        this.dataSetClientServices = dataSetClientServices;
+        this.perspectiveEditor = perspectiveEditor;
         this.uuidGenerator = uuidGenerator;
-        this.placeManager = placeManager;
-        this.perspectiveManager = perspectiveManager;
         this.displayerView = displayerView;
-        this.panelManager = panelManager;
         this.perspectiveCoordinator = perspectiveCoordinator;
         this.jsonMarshaller = jsonMarshaller;
         this.displayerEditor =  new DisplayerEditorPopup();
@@ -179,7 +162,7 @@ public class DisplayerScreenPresenter {
             }
         };
     }
-    
+
     protected void buildMenuActionsButton() {
         Button editButton = new Button(new ClickHandler() {
             public void onClick(ClickEvent event) {
@@ -229,8 +212,8 @@ public class DisplayerScreenPresenter {
     }
 
     protected void updateMenuVisibleFlags() {
-        editButtonGroup.setVisible(perspectiveEditorSettings.isEditOn());
-        cloneButtonGroup.setVisible(perspectiveEditorSettings.isEditOn());
+        editButtonGroup.setVisible(perspectiveEditor.isEditOn());
+        cloneButtonGroup.setVisible(perspectiveEditor.isEditOn());
         csvExportButtonGroup.setVisible(displayerSettings.isCSVExportAllowed());
         xlsExportButtonGroup.setVisible(displayerSettings.isExcelExportAllowed());
     }
@@ -246,29 +229,22 @@ public class DisplayerScreenPresenter {
     protected Command getEditCommand() {
         return new Command() {
             public void execute() {
-                perspectiveCoordinator.editOn();
-
                 final String currentTitle = displayerSettings.getTitle();
                 DisplayerEditorPopup displayerEditor =  new DisplayerEditorPopup();
                 displayerEditor.init(displayerSettings, new DisplayerEditor.Listener() {
 
                     public void onClose(DisplayerEditor editor) {
-                        perspectiveCoordinator.editOff();
                     }
 
                     public void onSave(final DisplayerEditor editor) {
-                        perspectiveCoordinator.editOff();
                         updateDisplayer(editor.getDisplayerSettings());
 
                         String newTitle = editor.getDisplayerSettings().getTitle();
                         if (!currentTitle.equals(newTitle)) {
-                            changeTitleEvent.fire(new ChangeTitleWidgetEvent(placeRequest, editor.getDisplayerSettings().getTitle()));
+                            perspectiveEditor.changePlaceTitle(placeRequest, editor.getDisplayerSettings().getTitle());
                         }
-
-                        PanelDefinition panelDefinition = panelManager.getPanelForPlace(placeRequest);
-                        placeManager.goTo(createPlaceRequest(editor.getDisplayerSettings()), panelDefinition);
-                        placeManager.closePlace(placeRequest);
-                        perspectiveManager.savePerspectiveState(new Command() {public void execute() {}});
+                        perspectiveEditor.updatePlace(placeRequest, createPlaceRequest(editor.getDisplayerSettings()));
+                        perspectiveEditor.saveCurrentPerspective();
                     }
                 });
             }
@@ -278,8 +254,6 @@ public class DisplayerScreenPresenter {
     protected Command getCloneCommand() {
         return new Command() {
             public void execute() {
-                perspectiveCoordinator.editOn();
-
                 DisplayerSettings clonedSettings = displayerSettings.cloneInstance();
                 clonedSettings.setUUID(uuidGenerator.newUuid());
                 clonedSettings.setTitle("Copy of " + clonedSettings.getTitle());
@@ -288,14 +262,11 @@ public class DisplayerScreenPresenter {
                 displayerEditor.init(clonedSettings, new DisplayerEditor.Listener() {
 
                     public void onClose(DisplayerEditor editor) {
-                        perspectiveCoordinator.editOff();
                     }
 
                     public void onSave(final DisplayerEditor editor) {
-                        perspectiveCoordinator.editOff();
-                        PanelDefinition panelDefinition = panelManager.getPanelForPlace(placeRequest);
-                        placeManager.goTo(createPlaceRequest(editor.getDisplayerSettings()), panelDefinition);
-                        perspectiveManager.savePerspectiveState(new Command() {public void execute() {}});
+                        perspectiveEditor.updatePlace(placeRequest, createPlaceRequest(editor.getDisplayerSettings()));
+                        perspectiveEditor.saveCurrentPerspective();
                     }
                 });
             }
@@ -320,7 +291,7 @@ public class DisplayerScreenPresenter {
                         }
                     });
                 } catch ( Exception e ) {
-                    throw new RuntimeException( e );
+                    displayerView.error("Export to CSV failed", e);
                 }
             }
         };
@@ -344,7 +315,7 @@ public class DisplayerScreenPresenter {
                         }
                     });
                 } catch (Exception e) {
-                    throw new RuntimeException( e );
+                    displayerView.error("Export to Excel failed", e);
                 }
             }
         };

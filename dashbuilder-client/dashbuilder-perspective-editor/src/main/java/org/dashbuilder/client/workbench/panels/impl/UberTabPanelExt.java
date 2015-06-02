@@ -1,4 +1,4 @@
-package org.dashbuilder.client.perspective.editor;
+package org.dashbuilder.client.workbench.panels.impl;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
-import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
 import com.github.gwtbootstrap.client.ui.DropdownTab;
@@ -30,6 +29,7 @@ import com.google.gwt.user.client.ui.ProvidesResize;
 import com.google.gwt.user.client.ui.RequiresResize;
 import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.Widget;
+import org.dashbuilder.client.perspective.editor.PerspectiveEditor;
 import org.uberfire.client.resources.WorkbenchResources;
 import org.uberfire.client.util.Layouts;
 import org.uberfire.client.workbench.PanelManager;
@@ -93,7 +93,7 @@ public class UberTabPanelExt extends ResizeComposite implements MultiPartWidget,
     protected PanelManager panelManager;
 
     @Inject
-    protected PerspectiveEditorSettings perspectiveEditorSettings;
+    protected PerspectiveEditor perspectiveEditor;
 
     @Inject
     protected WorkbenchDragAndDropManager dndManager;
@@ -101,7 +101,7 @@ public class UberTabPanelExt extends ResizeComposite implements MultiPartWidget,
     @PostConstruct
     protected void setup() {
         this.panelManager = checkNotNull( "panelManager", panelManager );
-        this.perspectiveEditorSettings = checkNotNull( "perspectiveEditorSettings", perspectiveEditorSettings );
+        this.perspectiveEditor = checkNotNull( "perspectiveEditorSettings", perspectiveEditor);
         this.dropdownTab = new DropdownTab( "More..." );
         tabPanel = new ResizeTabPanel( ABOVE );
         tabPanel.addShownHandler( new TabPanel.ShownEvent.Handler() {

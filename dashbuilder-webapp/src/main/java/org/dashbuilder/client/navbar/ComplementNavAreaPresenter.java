@@ -13,16 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.dashbuilder.client.navbar;
 
+import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
+import org.dashbuilder.client.perspective.editor.PerspectiveEditor;
 import org.uberfire.client.workbench.Header;
 
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
+import org.uberfire.client.workbench.events.PerspectiveChange;
 
 @ApplicationScoped
 public class ComplementNavAreaPresenter implements Header {
@@ -34,6 +37,9 @@ public class ComplementNavAreaPresenter implements Header {
 
     @Inject
     public View view;
+
+    @Inject
+    public PerspectiveEditor perspectiveEditor;
 
     @Override
     public int getOrder() {
@@ -57,5 +63,14 @@ public class ComplementNavAreaPresenter implements Header {
 
     public void show(boolean showLogo) {
         view.show(showLogo);
+    }
+
+    /**
+     * Hide the perspective context toolbar for editable perspectives
+     */
+    protected void onPerspectiveChanged(@Observes final PerspectiveChange event) {
+        if (perspectiveEditor.isEditable()) {
+            view.hide();
+        }
     }
 }

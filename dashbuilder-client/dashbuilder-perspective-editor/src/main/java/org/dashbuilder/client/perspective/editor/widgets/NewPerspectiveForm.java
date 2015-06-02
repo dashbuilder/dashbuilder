@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.dashbuilder.client.dashboard.widgets;
+package org.dashbuilder.client.perspective.editor.widgets;
 
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
@@ -28,19 +28,19 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.Widget;
-import org.dashbuilder.client.dashboard.DashboardManager;
+import org.dashbuilder.client.perspective.editor.PerspectiveEditor;
 import org.uberfire.ext.widgets.common.client.common.popups.BaseModal;
 import org.uberfire.ext.widgets.common.client.common.popups.footers.ModalFooterOKCancelButtons;
 
 @Dependent
-public class NewDashboardForm extends BaseModal {
+public class NewPerspectiveForm extends BaseModal {
 
     public interface Listener {
         void onCancel();
         void onOk(String name);
     }
 
-    interface Binder extends UiBinder<Widget, NewDashboardForm> {}
+    interface Binder extends UiBinder<Widget, NewPerspectiveForm> {}
     private static Binder uiBinder = GWT.create(Binder.class);
 
     @UiField
@@ -53,11 +53,11 @@ public class NewDashboardForm extends BaseModal {
     HelpInline nameHelpInline;
 
     @Inject
-    DashboardManager dashboardManager;
+    PerspectiveEditor perspectiveEditor;
 
     Listener listener;
 
-    public NewDashboardForm() {
+    public NewPerspectiveForm() {
         add(uiBinder.createAndBindUi(this));
 
         ModalFooterOKCancelButtons footer = new ModalFooterOKCancelButtons(
@@ -72,7 +72,7 @@ public class NewDashboardForm extends BaseModal {
                     }
                 } );
 
-        setTitle("Create new Dashboard");
+        setTitle("Create new perspective");
         footer.enableOkButton(true);
         add(footer);
     }
@@ -98,7 +98,7 @@ public class NewDashboardForm extends BaseModal {
             nameGroup.setType(ControlGroupType.ERROR);
             nameHelpInline.setText("Name is mandatory");
         }
-        else if (dashboardManager.getDashboardByName(name) != null) {
+        else if (perspectiveEditor.getEditablePerspectiveByName(name) != null) {
             nameGroup.setType(ControlGroupType.ERROR);
             nameHelpInline.setText("Already exists");
         }

@@ -1,4 +1,4 @@
-package org.dashbuilder.client.perspective.editor;
+package org.dashbuilder.client.workbench.panels.impl;
 
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -37,10 +37,10 @@ import com.google.gwt.user.client.ui.RequiresResize;
 import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
+import org.dashbuilder.client.perspective.editor.PerspectiveEditor;
 import org.dashbuilder.client.perspective.editor.events.PerspectiveEditOffEvent;
 import org.dashbuilder.client.perspective.editor.events.PerspectiveEditOnEvent;
 import org.jboss.errai.ioc.client.container.IOCResolutionException;
-import org.uberfire.client.mvp.PerspectiveActivity;
 import org.uberfire.client.mvp.PerspectiveManager;
 import org.uberfire.client.mvp.PlaceManager;
 import org.uberfire.client.util.Layouts;
@@ -57,7 +57,6 @@ import org.uberfire.client.workbench.widgets.listbar.ResizeFlowPanel;
 import org.uberfire.client.workbench.widgets.listbar.ResizeFocusPanel;
 import org.uberfire.commons.data.Pair;
 import org.uberfire.mvp.Command;
-import org.uberfire.mvp.impl.ForcedPlaceRequest;
 import org.uberfire.workbench.model.PartDefinition;
 import org.uberfire.workbench.model.menu.MenuItem;
 
@@ -104,7 +103,7 @@ public class ListBarWidgetExt
     protected PerspectiveManager perspectiveManager;
 
     @Inject
-    private PerspectiveEditorSettings perspectiveEditorSettings;
+    private PerspectiveEditor perspectiveEditor;
 
     @Inject
     private MenuWidgetFactory menuWidgetFactory;
@@ -172,7 +171,7 @@ public class ListBarWidgetExt
         initWidget( uiBinder.createAndBindUi( this ) );
         maximizeButton.setVisible( false );
         maximizeButtonPresenter = new MaximizeToggleButtonPresenter( maximizeButton );
-        isEditable = perspectiveEditorSettings.isEditOn();
+        isEditable = perspectiveEditor.isEditOn();
         setup();
         Layouts.setToFillParent(this);
         scheduleResize();
@@ -210,11 +209,7 @@ public class ListBarWidgetExt
         changeTypeButton.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                // TODO: move this logic to a more appropriate place
-                presenter.getDefinition().setPanelType(MultiTabWorkbenchPanelPresenterExt.class.getName());
-                final PerspectiveActivity currentPerspective = perspectiveManager.getCurrentPerspective();
-                perspectiveManager.savePerspectiveState(new Command() {public void execute() {}});
-                placeManager.goTo(new ForcedPlaceRequest(currentPerspective.getIdentifier()));
+                perspectiveEditor.changePanelType(presenter, MultiTabWorkbenchPanelPresenterExt.class.getName());
             }
         });
 
@@ -394,12 +389,14 @@ public class ListBarWidgetExt
 
     private void setupContextMenu() {
         contextMenu.clear();
-        final WorkbenchPartPresenter.View part = (WorkbenchPartPresenter.View) currentPart.getK2().getWidget( 0 );
-        if ( part.getPresenter().getMenus() != null && part.getPresenter().getMenus().getItems().size() > 0 ) {
-            for ( final MenuItem menuItem : part.getPresenter().getMenus().getItems() ) {
-                final Widget result = menuWidgetFactory.makeItem( menuItem, true );
-                if ( result != null ) {
-                    contextMenu.add( result );
+        if (currentPart != null) {
+            final WorkbenchPartPresenter.View part = (WorkbenchPartPresenter.View) currentPart.getK2().getWidget(0);
+            if (part != null && part.getPresenter().getMenus() != null && part.getPresenter().getMenus().getItems().size() > 0) {
+                for (final MenuItem menuItem : part.getPresenter().getMenus().getItems()) {
+                    final Widget result = menuWidgetFactory.makeItem(menuItem, true);
+                    if (result != null) {
+                        contextMenu.add(result);
+                    }
                 }
             }
         }

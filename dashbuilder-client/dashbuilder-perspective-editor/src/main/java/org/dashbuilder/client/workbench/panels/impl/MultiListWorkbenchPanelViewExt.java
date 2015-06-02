@@ -1,4 +1,4 @@
-package org.dashbuilder.client.perspective.editor;
+package org.dashbuilder.client.workbench.panels.impl;
 
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
@@ -7,7 +7,6 @@ import javax.inject.Named;
 import org.uberfire.client.workbench.panels.MaximizeToggleButtonPresenter;
 import org.uberfire.client.workbench.panels.MultiPartWidget;
 import org.uberfire.client.workbench.panels.impl.AbstractMultiPartWorkbenchPanelView;
-import org.uberfire.client.workbench.widgets.listbar.ListBarWidget;
 import org.uberfire.mvp.Command;
 
 /**
