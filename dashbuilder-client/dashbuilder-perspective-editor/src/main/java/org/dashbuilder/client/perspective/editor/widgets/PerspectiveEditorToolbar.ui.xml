@@ -20,7 +20,7 @@
 
   <ui:style>
     .dialog {
-      width: 200px;
+      width: 180px;
       border-radius: 5px;
       border-width: 5px;
       border-style: solid;
@@ -31,17 +31,24 @@
       padding: 10px;
     }
     .box {
-      width: 150px;
+      margin: 2px;
+      width: 135px;
+    }
+    .namePanel {
+      margin: 2px;
     }
   </ui:style>
 
   <g:DialogBox ui:field="toolbarDialog" autoHide="false" modal="false" styleName="{style.dialog}">
-    <g:caption><b>Perspective Toolbar</b></g:caption>
+    <g:caption><b>Perspective Editor</b></g:caption>
     <g:FlowPanel styleName="{style.content}">
-      <g:TextBox ui:field="perspectiveNameBox" styleName="{style.box}" />
-      <g:Button ui:field="newPerspectiveButton">New Perspective</g:Button>
-      <g:FlowPanel ui:field="newComponentsPanel" />
-      <g:Button ui:field="deletePerspectiveButton">Delete Perspective</g:Button>
+      <g:FlowPanel styleName="{style.namePanel}" ui:field="namePanel">
+        <g:Label>Name</g:Label>
+        <g:TextBox ui:field="nameBox" styleName="{style.box}" />
+      </g:FlowPanel>
+      <g:Button ui:field="deleteButton">Delete Perspective</g:Button>
+      <g:Button ui:field="createButton">New Perspective</g:Button>
+      <g:FlowPanel ui:field="componentsPanel" />
       <g:Button ui:field="closeButton">Close</g:Button>
     </g:FlowPanel>
   </g:DialogBox>

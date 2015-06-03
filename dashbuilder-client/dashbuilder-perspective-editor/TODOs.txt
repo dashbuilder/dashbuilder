@@ -1,0 +1,20 @@
+Urgent
+------------------------------
+
+* Static screen
+* Add panel type drop down selector: tabs, list, static (for single parts)
+* PerspectiveEditOn/Off events not captured by the toolbar nor the ComplementNavBar
+* Delete .perspective file
+* HTML Screen (WYSIWYG editor, ACE? )
+* Menu Screen (vertical/horizontal arrangement, permissions, listen to delete perspective events)
+* ACL editor for mapping roles to perspectives
+* Tab panel: fix context menu not shown on editOn
+* Toolbar look&feel
+
+Non-urgent
+-------------------------------
+
+* Disable panel drag&drop on editOff
+* Persistence of perspectives on master branch
+* List panel: hide part dropdown selector when only 1 part
+* Toolbar disappears on maximize panel

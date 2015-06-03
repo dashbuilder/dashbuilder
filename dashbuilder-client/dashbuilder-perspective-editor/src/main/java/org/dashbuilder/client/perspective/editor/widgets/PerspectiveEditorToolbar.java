@@ -27,8 +27,6 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.MouseOverEvent;
-import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -57,19 +55,22 @@ public class PerspectiveEditorToolbar extends DialogBox {
     protected DialogBox toolbarDialog;
 
     @UiField
-    protected TextBox perspectiveNameBox;
+    protected Panel namePanel;
 
     @UiField
-    protected Button newPerspectiveButton;
+    protected TextBox nameBox;
 
     @UiField
-    protected Button deletePerspectiveButton;
+    protected Button createButton;
+
+    @UiField
+    protected Button deleteButton;
 
     @UiField
     protected Button closeButton;
 
     @UiField
-    protected Panel newComponentsPanel;
+    protected Panel componentsPanel;
 
     @Inject
     protected PerspectiveEditor perspectiveEditor;
@@ -82,10 +83,10 @@ public class PerspectiveEditorToolbar extends DialogBox {
     protected YesNoCancelPopup deletePerspectivePopup;
 
     @PostConstruct
-    protected void init() {
+    public void init() {
         setWidget(uiBinder.createAndBindUi(this));
-        setButtonStyle(deletePerspectiveButton);
-        setButtonStyle(newPerspectiveButton);
+        setButtonStyle(deleteButton);
+        setButtonStyle(createButton);
         setButtonStyle(closeButton);
 
         // Register the perspective editor components
@@ -98,19 +99,13 @@ public class PerspectiveEditorToolbar extends DialogBox {
                 }
             });
             setButtonStyle(button);
-            newComponentsPanel.add(button);
+            componentsPanel.add(button);
         }
-
-        // Show when moving the mouse over
-        toolbarDialog.addDomHandler(new MouseOverHandler() {
-            public void onMouseOver(MouseOverEvent mouseOverEvent) {
-                show();
-            }
-        }, MouseOverEvent.getType());
     }
 
     protected void setButtonStyle(Button button) {
-        button.getElement().getStyle().setWidth(170, Style.Unit.PX);
+        button.getElement().getStyle().setMargin(1, Style.Unit.PX);
+        button.getElement().getStyle().setWidth(150, Style.Unit.PX);
         button.getElement().getStyle().setTextAlign(Style.TextAlign.LEFT);
     }
     protected List<PerspectiveEditorComponent> lookupPerspectiveComponents() {
@@ -135,30 +130,30 @@ public class PerspectiveEditorToolbar extends DialogBox {
         toolbarOn = false;
     }
 
-    @UiHandler("perspectiveNameBox")
+    @UiHandler("nameBox")
     protected void onPerspectiveNameChanged(ValueChangeEvent<String> event) {
-        String name = perspectiveNameBox.getText();
+        String name = nameBox.getText();
         if (!StringUtils.isBlank(name)) {
             perspectiveEditor.changePerspectiveName(name);
         } else {
-            perspectiveNameBox.setText(perspectiveEditor.getPerspectiveName());
+            nameBox.setText(perspectiveEditor.getPerspectiveName());
         }
     }
 
-    @UiHandler("newPerspectiveButton")
+    @UiHandler("createButton")
     protected void onNewPerspective(ClickEvent event) {
         newPerspectiveForm.init(new NewPerspectiveForm.Listener() {
 
             public void onOk(String name) {
                 perspectiveEditor.newEditablePerspective(name);
-                perspectiveNameBox.setText(name);
+                nameBox.setText(name);
             }
             public void onCancel() {
             }
         });
     }
 
-    @UiHandler("deletePerspectiveButton")
+    @UiHandler("deleteButton")
     protected void onDeletePerspective(ClickEvent event) {
         deletePerspectivePopup = YesNoCancelPopup.newYesNoCancelPopup(
                 "Delete perspective",
@@ -191,13 +186,13 @@ public class PerspectiveEditorToolbar extends DialogBox {
         close();
     }
 
-    protected void updateView() {
-        perspectiveNameBox.setVisible(perspectiveEditor.isEditable());
-        deletePerspectiveButton.setVisible(perspectiveEditor.isEditable());
-        newComponentsPanel.setVisible(perspectiveEditor.isEditable());
+    public void updateView() {
+        namePanel.setVisible(perspectiveEditor.isEditable());
+        deleteButton.setVisible(perspectiveEditor.isEditable());
+        componentsPanel.setVisible(perspectiveEditor.isEditable());
 
         if (perspectiveEditor.isEditable()) {
-            perspectiveNameBox.setText(perspectiveEditor.getPerspectiveName());
+            nameBox.setText(perspectiveEditor.getPerspectiveName());
             perspectiveEditor.editOn();
         }
     }

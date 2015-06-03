@@ -18,9 +18,11 @@ package org.dashbuilder.displayer.client;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
+import javax.inject.Inject;
 
 import org.dashbuilder.client.perspective.editor.events.PerspectiveEditOffEvent;
 import org.dashbuilder.client.perspective.editor.events.PerspectiveEditOnEvent;
+import org.dashbuilder.client.perspective.editor.widgets.PerspectiveEditorToolbar;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetLookup;
 import org.dashbuilder.dataset.events.DataSetModifiedEvent;
@@ -44,6 +46,9 @@ public class PerspectiveCoordinator {
      * Flag indicating if the perspective is on edit mode.
      */
     boolean editOn = false;
+
+    @Inject
+    PerspectiveEditorToolbar perspectiveEditorToolbar;
 
     @PostConstruct
     public void init() {
@@ -93,6 +98,8 @@ public class PerspectiveCoordinator {
      */
     protected void onPerspectiveChanged(@Observes final PerspectiveChange event) {
         init();
+        // TODO: fix events capture on PerspectiveEditorToolbar
+        perspectiveEditorToolbar.updateView();
     }
 
     /**
