@@ -1,9 +1,7 @@
 package org.dashbuilder.client.perspective.editor;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
+import java.util.*;
+import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
@@ -13,10 +11,10 @@ import org.dashbuilder.client.perspective.editor.events.PerspectiveDeletedEvent;
 import org.dashbuilder.client.perspective.editor.events.PerspectiveEditOffEvent;
 import org.dashbuilder.client.perspective.editor.events.PerspectiveEditOnEvent;
 import org.dashbuilder.client.perspective.editor.events.PerspectiveRenamedEvent;
-import org.dashbuilder.client.workbench.panels.impl.MultiListWorkbenchPanelPresenterExt;
 import org.jboss.errai.ioc.client.api.AfterInitialization;
 import org.jboss.errai.ioc.client.container.IOC;
 import org.jboss.errai.ioc.client.container.IOCBeanDef;
+import org.jboss.errai.ioc.client.container.SyncBeanManager;
 import org.jboss.errai.ioc.client.container.SyncBeanManagerImpl;
 import org.uberfire.client.mvp.Activity;
 import org.uberfire.client.mvp.ActivityBeansCache;
@@ -38,6 +36,9 @@ import static org.jboss.errai.ioc.client.QualifierUtil.DEFAULT_QUALIFIERS;
 @ApplicationScoped
 public class PerspectiveEditor {
 
+    @Inject
+    protected SyncBeanManager beanManager;
+    
     @Inject
     protected PlaceManager placeManager;
 
@@ -116,6 +117,17 @@ public class PerspectiveEditor {
 
     public boolean isEditable() {
         return perspectiveManager.getCurrentPerspective() instanceof EditablePerspectiveActivity;
+    }
+
+    public Collection<PerspectiveActivity> getPerspectiveActivities() {
+        // Load system's perspectives
+        final Collection<PerspectiveActivity> perspectiveActivities = new ArrayList<PerspectiveActivity>();
+        Collection<IOCBeanDef<PerspectiveActivity>> beanDefs = beanManager.lookupBeans(PerspectiveActivity.class);
+        for (IOCBeanDef<PerspectiveActivity> beanDef : beanDefs) {
+            PerspectiveActivity p = beanDef.getInstance();
+            perspectiveActivities.add(p);
+        }
+        return perspectiveActivities;
     }
 
     public EditablePerspectiveActivity newEditablePerspective(String perspectiveName) {

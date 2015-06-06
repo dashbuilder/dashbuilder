@@ -1,0 +1,100 @@
+<!--
+  ~ Copyright 2012 JBoss Inc
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~       http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+             xmlns:g="urn:import:com.google.gwt.user.client.ui"
+             xmlns:base="urn:import:com.github.gwtbootstrap.client.ui.base"
+             xmlns:b="urn:import:com.github.gwtbootstrap.client.ui">
+
+  <ui:with field="i18n" type="org.dashbuilder.client.perspective.editor.resources.i18n.PerspectiveEditorConstants"/>
+
+  <ui:style type="org.dashbuilder.client.perspective.editor.widgets.menu.EditableWorkbenchMenuBarView.EditableWorkbenchMenuBarViewStyle">
+    .mainPanel {
+      width: 100%;
+    }
+    .editButton {
+      float: right;
+      color: white;
+      margin-right: 20px;
+      margin-top: 10px;
+    }
+    .addButton {
+      float: left;
+      color: white;
+      margin-top: 10px;
+    }
+    .menuItemModalPanel {
+      
+    }
+    .menuItemForm {
+      height: 99%;
+    }
+    .okButton {
+      
+    }
+  </ui:style>
+  <g:FlowPanel addStyleNames="{style.mainPanel} ">
+
+    <!-- Edition or creation panel for a menu item. -->
+    <b:Modal ui:field="menuItemModalPanel" title="{i18n.newMenuItem}" addStyleNames="{style.menuItemModalPanel}"
+             backdrop="STATIC" keyboard="true" animation="true" closeVisible="true">
+      <b:WellForm ui:field="menuItemForm" addStyleNames="{style.menuItemForm}">
+        <!-- Name title. -->
+        <b:ControlLabel>
+          <font color="red">*</font>
+          <base:InlineLabel text="{i18n.name}"/>
+        </b:ControlLabel>
+        <!-- Name text box. -->
+        <b:Controls>
+          <b:TextBox ui:field="menuItemName" placeholder="{i18n.name_placeholder}"/>
+          <b:HelpInline ui:field="menuItemNameHelpInline" text=""/>
+        </b:Controls>
+        <!-- Perspective title. -->
+        <b:ControlLabel>
+          <font color="red">*</font>
+          <base:InlineLabel text="{i18n.perspective}"/>
+        </b:ControlLabel>
+        <!-- Perspective drop down. -->
+        <b:Controls>
+          <b:DropdownButton ui:field="menuItemPerspectives" title="{i18n.perspective_placeholder}"/>
+        </b:Controls>
+        <!-- The confirm button. -->
+        <b:Button ui:field="menuItemOkButton" title="{i18n.ok}"
+                  text="{i18n.ok}" addStyleNames="{style.okButton} "/>
+      </b:WellForm>
+    </b:Modal>
+    
+    <b:Button ui:field="editButton" title="{i18n.editMenu}" stylePrimaryName="{style.editButton}"
+              icon="PENCIL" type="LINK"/>
+    
+    <b:ResponsiveNavbar position="TOP" inverse="true">
+      <b:NavCollapse>
+        <b:Nav alignment="LEFT" ui:field="menuBarLeft">
+        </b:Nav>
+        <b:Nav ui:field="menuBarCenter">
+        </b:Nav>
+        <b:Nav alignment="RIGHT" ui:field="menuBarRight">
+        </b:Nav>
+        <b:NavForm ui:field="barForm" alignment="NONE" visible="false">
+          <b:Button ui:field="addButton" title="{i18n.addMenuItem}"
+                    icon="PLUS" type="LINK" stylePrimaryName="{style.addButton} "/>
+        </b:NavForm>
+      </b:NavCollapse>
+    </b:ResponsiveNavbar>
+  </g:FlowPanel>
+
+</ui:UiBinder> 
