@@ -78,7 +78,7 @@
       </b:WellForm>
     </b:Modal>
     
-    <b:Button ui:field="editButton" title="{i18n.editMenu}" stylePrimaryName="{style.editButton}"
+    <b:Button ui:field="editButton" title="{i18n.enableEditMenu}" stylePrimaryName="{style.editButton}"
               icon="PENCIL" type="LINK"/>
     
     <b:ResponsiveNavbar position="TOP" inverse="true">
