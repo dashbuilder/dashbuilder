@@ -28,7 +28,8 @@ public interface PerspectiveEditorConstants extends ConstantsWithLookup {
     public static final PerspectiveEditorConstants INSTANCE = GWT.create( PerspectiveEditorConstants.class );
 
     String addMenuItem();
-    String editMenu();
+    String enableEditMenu();
+    String disableEditMenu();
     String newMenuItem();
     String name();
     String name_placeholder();

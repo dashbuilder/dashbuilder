@@ -183,7 +183,7 @@ public class EditableWorkbenchMenuBarView extends Composite
     
     public void enableEdit() {
         isEdit = true;
-        resetMenuItemForm();
+        editButton.setTitle(PerspectiveEditorConstants.INSTANCE.disableEditMenu());
         barForm.setVisible(true);
     }
 
@@ -192,10 +192,12 @@ public class EditableWorkbenchMenuBarView extends Composite
         selectedPerspective = null;
         resetMenuItemForm();
         hideMenuItemModalPanel();
+        editButton.setTitle(PerspectiveEditorConstants.INSTANCE.enableEditMenu());
         barForm.setVisible(false);
     }
     
     private void showMenuItemModalPanel() {
+        resetMenuItemForm();
         buildPerspectivesDropDown();
         menuItemModalPanel.show();
     }
@@ -205,8 +207,10 @@ public class EditableWorkbenchMenuBarView extends Composite
     }
     
     private void resetMenuItemForm() {
-        menuItemForm.reset();
+        menuItemName.setText("");
+        menuItemNameHelpInline.setText("");
         selectedPerspective = null;
+        menuItemForm.reset();
     }
     
     private void buildPerspectivesDropDown() {
