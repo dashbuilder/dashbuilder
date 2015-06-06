@@ -16,7 +16,7 @@
 package org.dashbuilder.client.perspective.editor.widgets.menu;
 
 import com.github.gwtbootstrap.client.ui.*;
-import com.github.gwtbootstrap.client.ui.constants.ButtonType;
+import com.github.gwtbootstrap.client.ui.base.InlineLabel;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -25,7 +25,6 @@ import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Panel;
@@ -34,13 +33,10 @@ import org.dashbuilder.client.perspective.editor.PerspectiveEditor;
 import org.dashbuilder.client.perspective.editor.resources.i18n.PerspectiveEditorConstants;
 import org.jboss.errai.security.shared.api.identity.User;
 import org.uberfire.client.mvp.PerspectiveActivity;
-import org.uberfire.client.mvp.PerspectiveManager;
 import org.uberfire.client.mvp.PlaceManager;
 import org.uberfire.client.workbench.widgets.menu.WorkbenchMenuBarPresenter;
 import org.uberfire.mvp.Command;
-import org.uberfire.mvp.ParameterizedCommand;
 import org.uberfire.security.authz.AuthorizationManager;
-import org.uberfire.workbench.model.PerspectiveDefinition;
 import org.uberfire.workbench.model.menu.*;
 
 import javax.enterprise.inject.Alternative;
@@ -69,6 +65,7 @@ public class EditableWorkbenchMenuBarView extends Composite
     interface EditableWorkbenchMenuBarViewStyle extends CssResource {
         String mainPanel();
         String editButton();
+        String labelError();
     }
 
     @Inject
@@ -111,11 +108,14 @@ public class EditableWorkbenchMenuBarView extends Composite
     WellForm menuItemForm;
     
     @UiField
-    TextBox menuItemName;
+    InlineLabel nameLabel;
     
     @UiField
-    HelpInline menuItemNameHelpInline;
-    
+    TextBox menuItemName;
+
+    @UiField
+    InlineLabel perspectiveLabel;
+
     @UiField
     DropdownButton menuItemPerspectives;
     
@@ -149,14 +149,16 @@ public class EditableWorkbenchMenuBarView extends Composite
         // Menu item's name input validations.
         final String name = menuItemName.getText();
         if (isEmpry(name)) {
-            menuItemNameHelpInline.setText(PerspectiveEditorConstants.INSTANCE.name_mandatory());
+            nameLabel.addStyleName(style.labelError());
             isValid = false;
         } else {
-            menuItemNameHelpInline.setText("");
+            nameLabel.removeStyleName(style.labelError());
         }
         if (selectedPerspective == null) {
-            // TODO: Show drop down validation error.
+            perspectiveLabel.addStyleName(style.labelError());
             isValid = false;
+        } else {
+            perspectiveLabel.removeStyleName(style.labelError());
         }
         
         if (isValid) {
@@ -207,8 +209,9 @@ public class EditableWorkbenchMenuBarView extends Composite
     }
     
     private void resetMenuItemForm() {
+        nameLabel.removeStyleName(style.labelError());
+        perspectiveLabel.removeStyleName(style.labelError());
         menuItemName.setText("");
-        menuItemNameHelpInline.setText("");
         selectedPerspective = null;
         menuItemForm.reset();
     }

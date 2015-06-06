@@ -20,16 +20,35 @@
              xmlns:b="urn:import:com.github.gwtbootstrap.client.ui"
              xmlns:base="urn:import:com.github.gwtbootstrap.client.ui.base">
 
+  <ui:with field="i18n" type="org.dashbuilder.client.perspective.editor.resources.i18n.PerspectiveEditorConstants"/>
+
   <ui:style>
     .hidden-header {
       width: 100%;
       height: 15px;
-      opacity: 0;
       float: left;
       position: absolute;
     }
+    .editButtonPanel {
+      background-color: grey;
+      width: 50px;
+      height: 25px;
+      border-radius: 0px 0px 5px 5px;
+      box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05) inset;
+    }
+    .editButton {
+      color: white;
+      margin-top: 5px;
+    }
   </ui:style>
 
-  <g:FlowPanel ui:field="headerPanel" styleName="{style.hidden-header}" />
+  <g:HorizontalPanel ui:field="headerPanel" styleName="{style.hidden-header}">
+    <g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
+      <g:FlowPanel ui:field="editButtonPanel" addStyleNames="{style.editButtonPanel}" visible="false">
+        <b:Button ui:field="editButton" title="{i18n.enableEditMenu}" stylePrimaryName="{style.editButton}"
+                  icon="PENCIL" type="LINK" />  
+      </g:FlowPanel>
+    </g:cell>
+  </g:HorizontalPanel>
 
 </ui:UiBinder>

@@ -12,7 +12,7 @@ import com.google.gwt.user.client.ui.Widget;
 public class AlphaAnimation extends Animation {
     
     private Widget widget;
-    private boolean showing;
+    private Boolean showing;
 
     public AlphaAnimation(Widget widget) {
         this.widget = widget;
@@ -22,12 +22,24 @@ public class AlphaAnimation extends Animation {
         super(scheduler);
         this.widget = widget;
     }
+    
+    public void show(final int duration) {
+        showing = true;
+        run(duration);
+    }
+    
+    public void hide(final int duration) {
+        showing = false;
+        run(duration);
+    }
 
     @Override
     protected void onStart() {
         super.onStart();
-        if (widget.isVisible()) showing = false;
-        else showing = true;
+        if (showing == null) {
+            if (widget.isVisible()) showing = false;
+            else showing = true;
+        }
     }
 
     @Override
@@ -40,6 +52,7 @@ public class AlphaAnimation extends Animation {
     protected void onComplete() {
         super.onComplete();
         widget.setVisible(showing);
+        showing = null;
     }
 
     private void applyAlpha(final Widget panel, final double alpha) {

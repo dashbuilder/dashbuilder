@@ -33,9 +33,10 @@ public interface PerspectiveEditorConstants extends ConstantsWithLookup {
     String newMenuItem();
     String name();
     String name_placeholder();
-    String name_mandatory();
     String perspective();
     String perspective_placeholder();
-    String perspective_mandatory();
     String ok();
+    String create();
+    String enableEdit();
+    String disableEdit();
 }

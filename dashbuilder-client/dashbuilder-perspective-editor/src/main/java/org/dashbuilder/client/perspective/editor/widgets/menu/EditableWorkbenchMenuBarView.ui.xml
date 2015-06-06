@@ -43,8 +43,14 @@
     .menuItemForm {
       height: 99%;
     }
+    .menuItemOkButtonPanel {
+      width: 100%;
+    }
     .okButton {
       
+    }
+    .labelError {
+      color: red;
     }
   </ui:style>
   <g:FlowPanel addStyleNames="{style.mainPanel} ">
@@ -56,25 +62,29 @@
         <!-- Name title. -->
         <b:ControlLabel>
           <font color="red">*</font>
-          <base:InlineLabel text="{i18n.name}"/>
+          <base:InlineLabel ui:field="nameLabel" text="{i18n.name}"/>
         </b:ControlLabel>
         <!-- Name text box. -->
         <b:Controls>
           <b:TextBox ui:field="menuItemName" placeholder="{i18n.name_placeholder}"/>
-          <b:HelpInline ui:field="menuItemNameHelpInline" text=""/>
         </b:Controls>
         <!-- Perspective title. -->
         <b:ControlLabel>
           <font color="red">*</font>
-          <base:InlineLabel text="{i18n.perspective}"/>
+          <base:InlineLabel ui:field="perspectiveLabel" text="{i18n.perspective}"/>
         </b:ControlLabel>
         <!-- Perspective drop down. -->
         <b:Controls>
           <b:DropdownButton ui:field="menuItemPerspectives" title="{i18n.perspective_placeholder}"/>
         </b:Controls>
         <!-- The confirm button. -->
-        <b:Button ui:field="menuItemOkButton" title="{i18n.ok}"
-                  text="{i18n.ok}" addStyleNames="{style.okButton} "/>
+        <g:HorizontalPanel styleName="{style.menuItemOkButtonPanel}">
+          <g:cell horizontalAlignment="ALIGN_RIGHT" verticalAlignment="ALIGN_MIDDLE">
+            <b:Button ui:field="menuItemOkButton" title="{i18n.ok}" type="SUCCESS"
+                      text="{i18n.create}" addStyleNames="{style.okButton} "/>
+          </g:cell>
+        </g:HorizontalPanel>
+        
       </b:WellForm>
     </b:Modal>
     
