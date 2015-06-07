@@ -37,7 +37,6 @@ import org.uberfire.client.workbench.Header;
 public class PerspectiveEditorHeader extends Composite implements Header {
 
     private static final int ALPHA_ANIMATION_DURATION = 500;
-    private static final int TIMER_DURATION = 5000;
 
     @Override
     public String getId() {
