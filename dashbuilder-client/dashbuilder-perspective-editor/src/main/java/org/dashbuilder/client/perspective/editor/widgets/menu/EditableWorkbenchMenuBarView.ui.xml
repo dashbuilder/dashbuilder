@@ -26,16 +26,44 @@
     .mainPanel {
       width: 100%;
     }
+    .editButtonTriggerPanel {
+      float: right;
+      width: 100px;
+      height: 30px;
+    }
+    .editButtonPanel {
+      float: right;
+      background-color: grey;
+      width: 20px;
+      height: 25px;
+      padding: 5px;
+      margin-top: 3px;
+      border-radius: 5px 0px 0px 5px;
+      box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05) inset;
+    }
     .editButton {
       float: right;
       color: white;
-      margin-right: 20px;
-      margin-top: 10px;
     }
     .addButton {
       float: left;
       color: white;
       margin-top: 10px;
+    }
+    .removeButtonPanel {
+      float: left;
+      margin-top: 10px;
+      padding-left: 10px;
+      padding-right: 10px;
+    }
+    .removeButtonPanelDragOver {
+      background-color: red;
+      border-radius: 5px 5px 5px 5px;
+      box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05) inset;
+    }
+    .removeButton {
+      float: left;
+      color: white;
     }
     .menuItemModalPanel {
       
@@ -87,9 +115,13 @@
         
       </b:WellForm>
     </b:Modal>
-    
-    <b:Button ui:field="editButton" title="{i18n.enableEditMenu}" stylePrimaryName="{style.editButton}"
-              icon="PENCIL" type="LINK"/>
+
+    <g:FlowPanel ui:field="editButtonTriggerPanel" addStyleNames="{style.editButtonTriggerPanel}">
+      <g:FlowPanel ui:field="editButtonPanel" addStyleNames="{style.editButtonPanel}" visible="false">
+        <b:Button ui:field="editButton" title="{i18n.enableEditMenu}" stylePrimaryName="{style.editButton}"
+                  icon="PENCIL" type="LINK"/>
+      </g:FlowPanel>
+    </g:FlowPanel>
     
     <b:ResponsiveNavbar position="TOP" inverse="true">
       <b:NavCollapse>
@@ -102,6 +134,10 @@
         <b:NavForm ui:field="barForm" alignment="NONE" visible="false">
           <b:Button ui:field="addButton" title="{i18n.addMenuItem}"
                     icon="PLUS" type="LINK" stylePrimaryName="{style.addButton} "/>
+          <g:FlowPanel ui:field="removeButtonPanel" addStyleNames="{style.removeButtonPanel}">
+            <b:Button ui:field="removeButton" title="{i18n.addMenuItem}"
+                      icon="TRASH" type="LINK" stylePrimaryName="{style.removeButton} "/>  
+          </g:FlowPanel>
         </b:NavForm>
       </b:NavCollapse>
     </b:ResponsiveNavbar>
