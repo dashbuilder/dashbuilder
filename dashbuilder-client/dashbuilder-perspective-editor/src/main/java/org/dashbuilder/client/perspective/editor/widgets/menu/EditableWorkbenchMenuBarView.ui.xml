@@ -64,6 +64,7 @@
     .removeButton {
       float: left;
       color: white;
+      cursor: default;
     }
     .menuItemModalPanel {
       
@@ -135,7 +136,7 @@
           <b:Button ui:field="addButton" title="{i18n.addMenuItem}"
                     icon="PLUS" type="LINK" stylePrimaryName="{style.addButton} "/>
           <g:FlowPanel ui:field="removeButtonPanel" addStyleNames="{style.removeButtonPanel}">
-            <b:Button ui:field="removeButton" title="{i18n.addMenuItem}"
+            <b:Button ui:field="removeButton" title="{i18n.removeMenuItem}"
                       icon="TRASH" type="LINK" stylePrimaryName="{style.removeButton} "/>  
           </g:FlowPanel>
         </b:NavForm>
