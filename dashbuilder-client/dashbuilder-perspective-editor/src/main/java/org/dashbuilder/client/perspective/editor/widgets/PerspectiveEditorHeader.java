@@ -19,18 +19,24 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
+import com.github.gwtbootstrap.client.ui.Button;
+import com.github.gwtbootstrap.client.ui.constants.IconType;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.MouseOverEvent;
-import com.google.gwt.event.dom.client.MouseOverHandler;
+import com.google.gwt.event.dom.client.*;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
+import org.dashbuilder.client.perspective.editor.resources.i18n.PerspectiveEditorConstants;
+import org.dashbuilder.client.widgets.animations.AlphaAnimation;
 import org.uberfire.client.workbench.Header;
 
 @ApplicationScoped
 public class PerspectiveEditorHeader extends Composite implements Header {
+
+    private static final int ALPHA_ANIMATION_DURATION = 500;
 
     @Override
     public String getId() {
@@ -47,9 +53,17 @@ public class PerspectiveEditorHeader extends Composite implements Header {
 
     @UiField
     protected Panel headerPanel;
+    
+    @UiField
+    Panel editButtonPanel;
+    
+    @UiField
+    Button editButton;
 
     @Inject
     protected PerspectiveEditorToolbar editorToolbar;
+    
+    private boolean isEditVisible = false;
 
     @PostConstruct
     protected void init() {
@@ -58,8 +72,47 @@ public class PerspectiveEditorHeader extends Composite implements Header {
         // Show when moving the mouse over
         headerPanel.addDomHandler(new MouseOverHandler() {
             public void onMouseOver(MouseOverEvent mouseOverEvent) {
-                editorToolbar.show();
+                showEditButtonPanel();
             }
         }, MouseOverEvent.getType());
+        
+        headerPanel.addDomHandler(new MouseOutHandler() {
+            public void onMouseOut(MouseOutEvent mouseOverEvent) {
+                hideEditButtonPanel();
+            }
+        }, MouseOutEvent.getType());
+
     }
+    
+    private void showEditButtonPanel() {
+        if (!isEditVisible) {
+            isEditVisible = true;
+            editButtonPanel.setVisible(false);
+            final AlphaAnimation alphaAnimation = new AlphaAnimation(editButtonPanel);
+            alphaAnimation.show(ALPHA_ANIMATION_DURATION);
+        }
+    }
+
+    private void hideEditButtonPanel() {
+        if (isEditVisible) {
+            isEditVisible = false;
+            final AlphaAnimation alphaAnimation = new AlphaAnimation(editButtonPanel);
+            alphaAnimation.hide(ALPHA_ANIMATION_DURATION);
+        }
+    }
+
+    @UiHandler(value = "editButton")
+    public void onEdit(final ClickEvent clickEvent) {
+        if (editorToolbar.isToolbarOn()) {
+            editorToolbar.close();
+            editButton.setIcon(IconType.PENCIL);
+            editButton.setTitle(PerspectiveEditorConstants.INSTANCE.enableEdit());
+        } else {
+            editorToolbar.show();
+            editButton.setIcon(IconType.EYE_OPEN);
+            editButton.setTitle(PerspectiveEditorConstants.INSTANCE.disableEdit());
+        }
+    }
+
+
 }

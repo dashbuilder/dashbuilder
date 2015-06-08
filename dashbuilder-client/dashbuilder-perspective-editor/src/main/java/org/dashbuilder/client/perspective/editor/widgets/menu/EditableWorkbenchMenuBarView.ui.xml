@@ -1,0 +1,147 @@
+<!--
+  ~ Copyright 2012 JBoss Inc
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~       http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+             xmlns:g="urn:import:com.google.gwt.user.client.ui"
+             xmlns:base="urn:import:com.github.gwtbootstrap.client.ui.base"
+             xmlns:b="urn:import:com.github.gwtbootstrap.client.ui">
+
+  <ui:with field="i18n" type="org.dashbuilder.client.perspective.editor.resources.i18n.PerspectiveEditorConstants"/>
+
+  <ui:style type="org.dashbuilder.client.perspective.editor.widgets.menu.EditableWorkbenchMenuBarView.EditableWorkbenchMenuBarViewStyle">
+    .mainPanel {
+      width: 100%;
+    }
+    .editButtonTriggerPanel {
+      float: right;
+      width: 100px;
+      height: 30px;
+    }
+    .editButtonPanel {
+      float: right;
+      background-color: grey;
+      width: 20px;
+      height: 25px;
+      padding: 5px;
+      margin-top: 3px;
+      border-radius: 5px 0px 0px 5px;
+      box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05) inset;
+    }
+    .editButton {
+      float: right;
+      color: white;
+    }
+    .addButton {
+      float: left;
+      color: white;
+      margin-top: 10px;
+    }
+    .removeButtonPanel {
+      float: left;
+      margin-top: 10px;
+      padding-left: 10px;
+      padding-right: 10px;
+    }
+    .removeButtonPanelDragOver {
+      background-color: red;
+      border-radius: 5px 5px 5px 5px;
+      box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05) inset;
+    }
+    .removeButton {
+      float: left;
+      color: white;
+      cursor: default;
+    }
+    .menuItemModalPanel {
+      
+    }
+    .menuItemForm {
+      height: 99%;
+    }
+    .menuItemOkButtonPanel {
+      width: 100%;
+    }
+    .okButton {
+      
+    }
+    .labelError {
+      color: red;
+    }
+  </ui:style>
+  <g:FlowPanel addStyleNames="{style.mainPanel} ">
+
+    <!-- Edition or creation panel for a menu item. -->
+    <b:Modal ui:field="menuItemModalPanel" title="{i18n.newMenuItem}" addStyleNames="{style.menuItemModalPanel}"
+             backdrop="STATIC" keyboard="true" animation="true" closeVisible="true">
+      <b:WellForm ui:field="menuItemForm" addStyleNames="{style.menuItemForm}">
+        <!-- Name title. -->
+        <b:ControlLabel>
+          <font color="red">*</font>
+          <base:InlineLabel ui:field="nameLabel" text="{i18n.name}"/>
+        </b:ControlLabel>
+        <!-- Name text box. -->
+        <b:Controls>
+          <b:TextBox ui:field="menuItemName" placeholder="{i18n.name_placeholder}"/>
+        </b:Controls>
+        <!-- Perspective title. -->
+        <b:ControlLabel>
+          <font color="red">*</font>
+          <base:InlineLabel ui:field="perspectiveLabel" text="{i18n.perspective}"/>
+        </b:ControlLabel>
+        <!-- Perspective drop down. -->
+        <b:Controls>
+          <b:DropdownButton ui:field="menuItemPerspectives" title="{i18n.perspective_placeholder}"/>
+        </b:Controls>
+        <!-- The confirm button. -->
+        <g:HorizontalPanel styleName="{style.menuItemOkButtonPanel}">
+          <g:cell horizontalAlignment="ALIGN_RIGHT" verticalAlignment="ALIGN_MIDDLE">
+            <b:Button ui:field="menuItemOkButton" title="{i18n.ok}" type="SUCCESS"
+                      text="{i18n.create}" addStyleNames="{style.okButton} "/>
+          </g:cell>
+        </g:HorizontalPanel>
+        
+      </b:WellForm>
+    </b:Modal>
+
+    <g:FlowPanel ui:field="editButtonTriggerPanel" addStyleNames="{style.editButtonTriggerPanel}">
+      <g:FlowPanel ui:field="editButtonPanel" addStyleNames="{style.editButtonPanel}" visible="false">
+        <b:Button ui:field="editButton" title="{i18n.enableEditMenu}" stylePrimaryName="{style.editButton}"
+                  icon="PENCIL" type="LINK"/>
+      </g:FlowPanel>
+    </g:FlowPanel>
+    
+    <b:ResponsiveNavbar position="TOP" inverse="true">
+      <b:NavCollapse>
+        <b:Nav alignment="LEFT" ui:field="menuBarLeft">
+        </b:Nav>
+        <b:Nav ui:field="menuBarCenter">
+        </b:Nav>
+        <b:Nav alignment="RIGHT" ui:field="menuBarRight">
+        </b:Nav>
+        <b:NavForm ui:field="barForm" alignment="NONE" visible="false">
+          <b:Button ui:field="addButton" title="{i18n.addMenuItem}"
+                    icon="PLUS" type="LINK" stylePrimaryName="{style.addButton} "/>
+          <g:FlowPanel ui:field="removeButtonPanel" addStyleNames="{style.removeButtonPanel}">
+            <b:Button ui:field="removeButton" title="{i18n.removeMenuItem}"
+                      icon="TRASH" type="LINK" stylePrimaryName="{style.removeButton} "/>  
+          </g:FlowPanel>
+        </b:NavForm>
+      </b:NavCollapse>
+    </b:ResponsiveNavbar>
+  </g:FlowPanel>
+
+</ui:UiBinder> 

@@ -1,0 +1,566 @@
+/*
+ * Copyright 2012 JBoss Inc
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package org.dashbuilder.client.perspective.editor.widgets.menu;
+
+import com.github.gwtbootstrap.client.ui.Button;
+import com.github.gwtbootstrap.client.ui.*;
+import com.github.gwtbootstrap.client.ui.TextBox;
+import com.github.gwtbootstrap.client.ui.base.InlineLabel;
+import com.github.gwtbootstrap.client.ui.constants.IconType;
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Element;
+import com.google.gwt.event.dom.client.*;
+import com.google.gwt.resources.client.CssResource;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
+import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.ui.*;
+import org.dashbuilder.client.perspective.editor.PerspectiveEditor;
+import org.dashbuilder.client.perspective.editor.resources.i18n.PerspectiveEditorConstants;
+import org.dashbuilder.client.widgets.animations.AlphaAnimation;
+import org.jboss.errai.security.shared.api.identity.User;
+import org.uberfire.client.mvp.PerspectiveActivity;
+import org.uberfire.client.mvp.PlaceManager;
+import org.uberfire.client.workbench.widgets.menu.WorkbenchMenuBarPresenter;
+import org.uberfire.mvp.Command;
+import org.uberfire.security.authz.AuthorizationManager;
+import org.uberfire.workbench.model.menu.*;
+import org.uberfire.workbench.model.menu.MenuItem;
+
+import javax.enterprise.inject.Alternative;
+import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+
+/**
+ * The Menu Bar widget with editable capabilities for menu items.
+ * @since 0.3.0
+ */
+@Alternative
+public class EditableWorkbenchMenuBarView extends Composite
+        implements
+        WorkbenchMenuBarPresenter.View {
+
+    private static final String POINTS = "...";
+    private static final int ALPHA_ANIMATION_DURATION = 500;
+
+    interface EditableWorkbenchMenuBarViewBinder
+            extends
+            UiBinder<Panel, EditableWorkbenchMenuBarView> {
+
+    }
+
+    private static EditableWorkbenchMenuBarViewBinder uiBinder = GWT.create( EditableWorkbenchMenuBarViewBinder.class );
+
+    interface EditableWorkbenchMenuBarViewStyle extends CssResource {
+        String mainPanel();
+        String editButton();
+        String labelError();
+        String removeButtonPanelDragOver();
+    }
+
+    @Inject
+    private AuthorizationManager authzManager;
+
+    @Inject
+    private User identity;
+
+    @Inject
+    protected PerspectiveEditor perspectiveEditor;
+
+    @Inject
+    private PlaceManager placeManager;
+
+    @UiField
+    public Nav menuBarLeft;
+
+    @UiField
+    public Nav menuBarCenter;
+
+    @UiField
+    public Nav menuBarRight;
+
+    @UiField
+    EditableWorkbenchMenuBarViewStyle style;
+    
+    @UiField
+    FlowPanel editButtonTriggerPanel;
+    
+    @UiField
+    FlowPanel editButtonPanel;
+    
+    @UiField
+    Button editButton;
+    
+    @UiField
+    NavForm barForm;
+    
+    @UiField
+    Button addButton;
+    
+    @UiField
+    FlowPanel removeButtonPanel;
+    
+    @UiField
+    Button removeButton;
+    
+    @UiField
+    Modal menuItemModalPanel;
+    
+    @UiField
+    WellForm menuItemForm;
+    
+    @UiField
+    InlineLabel nameLabel;
+    
+    @UiField
+    TextBox menuItemName;
+
+    @UiField
+    InlineLabel perspectiveLabel;
+
+    @UiField
+    DropdownButton menuItemPerspectives;
+    
+    @UiField
+    Button menuItemOkButton;
+
+    private boolean isEdit;
+    private boolean isEditTriggerOn;
+    private PerspectiveActivity selectedPerspective;
+    
+    public EditableWorkbenchMenuBarView() {
+        initWidget( uiBinder.createAndBindUi( this ) );
+        isEdit = false;
+        isEditTriggerOn = false;
+        barForm.getTextBox().setVisible(false);
+        
+        // Edit trigger panel DOM event handlers.
+        // Show when moving the mouse over
+        editButtonTriggerPanel.addDomHandler(new MouseOverHandler() {
+            public void onMouseOver(MouseOverEvent mouseOverEvent) {
+                showEditButtonPanel();
+            }
+        }, MouseOverEvent.getType());
+
+        editButtonTriggerPanel.addDomHandler(new MouseOutHandler() {
+            public void onMouseOut(MouseOutEvent mouseOverEvent) {
+                hideEditButtonPanel();
+            }
+        }, MouseOutEvent.getType());
+        
+        // Enable remove button drop feature.
+        removeButtonPanel.getElement().setDraggable(Element.DRAGGABLE_TRUE);
+        removeButtonPanel.addDomHandler(new DragOverHandler() {
+            @Override
+            public void onDragOver(final DragOverEvent event) {
+                removeButtonPanel.addStyleName(style.removeButtonPanelDragOver());
+            }
+        }, DragOverEvent.getType());
+        removeButtonPanel.addDomHandler(new DragLeaveHandler() {
+            @Override
+            public void onDragLeave(final DragLeaveEvent event) {
+                removeButtonPanel.removeStyleName(style.removeButtonPanelDragOver());
+            }
+        }, DragLeaveEvent.getType());
+        removeButtonPanel.addDomHandler(new DropHandler() {
+            @Override
+            public void onDrop(final DropEvent event) {
+                event.preventDefault();
+                removeButtonPanel.removeStyleName(style.removeButtonPanelDragOver());
+                final String itemTextToRemove = event.getData("text");
+                if (itemTextToRemove != null) {
+                    removeMenuItem(itemTextToRemove);
+                }
+            }
+        }, DropEvent.getType());
+    }
+    
+    @UiHandler(value = "editButton")
+    public void onEdit(final ClickEvent clickEvent) {
+        if (isEdit) disableEdit();
+        else enableEdit();
+    }
+
+    @UiHandler(value = "addButton")
+    public void onAdd(final ClickEvent clickEvent) {
+        showMenuItemModalPanel();
+    }
+
+    @UiHandler(value = "menuItemOkButton")
+    public void onMenuItemConfirm(final ClickEvent clickEvent) {
+        boolean isValid = true;
+        
+        // Menu item's name input validations.
+        final String name = menuItemName.getText();
+        if (isEmpry(name)) {
+            nameLabel.addStyleName(style.labelError());
+            isValid = false;
+        } else {
+            nameLabel.removeStyleName(style.labelError());
+        }
+        if (selectedPerspective == null) {
+            perspectiveLabel.addStyleName(style.labelError());
+            isValid = false;
+        } else {
+            perspectiveLabel.removeStyleName(style.labelError());
+        }
+        
+        if (isValid) {
+            final String pId = selectedPerspective.getIdentifier();
+            createMenuItem(pId, name);
+            selectedPerspective = null;
+            hideMenuItemModalPanel();
+        }
+    }
+
+    private void showEditButtonPanel() {
+        if (!isEditTriggerOn) {
+            isEditTriggerOn= true;
+            final AlphaAnimation alphaAnimation = new AlphaAnimation(editButtonPanel);
+            alphaAnimation.show(ALPHA_ANIMATION_DURATION);
+        }
+    }
+
+    private void hideEditButtonPanel() {
+        if (isEditTriggerOn) {
+            isEditTriggerOn= false;
+            final AlphaAnimation alphaAnimation = new AlphaAnimation(editButtonPanel);
+            alphaAnimation.hide(ALPHA_ANIMATION_DURATION);
+        }
+    }
+    
+    private boolean isEmpry(final String text) {
+        return text == null || text.trim().length() == 0;
+    }
+
+    private void createMenuItem(final String activityId, final String name) {
+        final MenuItem menuItem = MenuFactory.newSimpleItem(name).respondsWith(new Command() {
+            public void execute() {
+                placeManager.goTo(activityId);
+            }
+        }).endMenu().build().getItems().get(0);
+
+        addMenuItem(menuItem);
+    }
+
+    private void removeMenuItem(final String text) {
+        if (text != null && text.trim().length() > 0) {
+            if (!removeMenuItem(menuBarLeft, text)) {
+                if (!removeMenuItem(menuBarCenter, text)) {
+                    removeMenuItem(menuBarRight, text);
+                }
+            }
+        }
+    }
+
+    private boolean removeMenuItem(final Nav nav, final String text) {
+        final int leftCount = nav.getWidgetCount();
+        boolean removed = false;
+        for (int x = 0; x < leftCount; x++) {
+            final Widget w = nav.getWidget(x);
+
+            try {
+                final HasWidgets hasWidgets = ((HasWidgets) w);
+                final Iterator<Widget> childrenIt = hasWidgets.iterator();
+                while (childrenIt.hasNext()) {
+                    final Widget child = childrenIt.next();
+                    if (removeMenuItem(child, text)) {
+                        return true;
+                    }
+                }
+            } catch (ClassCastException e) {
+                return removeMenuItem(w, text);
+            }
+        }
+        return false;
+    }
+    
+    // TODO: If element is a dropdown item and has no children as the result of the remove operation, change it to a regular menu link.
+    private boolean removeMenuItem(final Widget w, final String text) {
+        final String itemTextToRemove = getMenuItemUUID(w);
+        if (itemTextToRemove != null && itemTextToRemove.equals(text)) {
+            w.removeFromParent();
+            return true;
+        }
+        return false;
+    }
+    
+    public void enableEdit() {
+        isEdit = true;
+        editButton.setIcon(IconType.EYE_OPEN);
+        editButton.setTitle(PerspectiveEditorConstants.INSTANCE.disableEditMenu());
+        barForm.setVisible(true);
+    }
+
+    public void disableEdit() {
+        isEdit = false;
+        selectedPerspective = null;
+        resetMenuItemForm();
+        hideMenuItemModalPanel();
+        editButton.setIcon(IconType.PENCIL);
+        editButton.setTitle(PerspectiveEditorConstants.INSTANCE.enableEditMenu());
+        barForm.setVisible(false);
+        hideEditButtonPanel();
+    }
+    
+    private void showMenuItemModalPanel() {
+        resetMenuItemForm();
+        buildPerspectivesDropDown();
+        menuItemModalPanel.show();
+    }
+
+    private void hideMenuItemModalPanel() {
+        menuItemModalPanel.hide();
+    }
+    
+    private void resetMenuItemForm() {
+        nameLabel.removeStyleName(style.labelError());
+        perspectiveLabel.removeStyleName(style.labelError());
+        menuItemName.setText("");
+        selectedPerspective = null;
+        menuItemForm.reset();
+    }
+    
+    private void buildPerspectivesDropDown() {
+
+        // Load perspectives and build the drop down.
+        final Collection<PerspectiveActivity> perspectives = perspectiveEditor.getPerspectiveActivities();
+
+        menuItemPerspectives.clear();
+        menuItemPerspectives.setText(PerspectiveEditorConstants.INSTANCE.perspective_placeholder() + POINTS);
+        for (final PerspectiveActivity perspective : perspectives) {
+            final String pName = perspective.getDefaultPerspectiveLayout().getName();
+            final String name = getSafeHtml(pName);
+            final NavLink link = new NavLink(name);
+            link.addClickHandler(new ClickHandler() {
+                @Override
+                public void onClick(final ClickEvent event) {
+                    selectedPerspective = perspective;
+                    menuItemPerspectives.setText(name);
+                }
+            });
+            menuItemPerspectives.add(link);
+        }
+    }
+    
+    private String getSafeHtml(final String text) {
+        return new SafeHtmlBuilder().appendEscaped(text).toSafeHtml().asString();
+    }
+    
+    /**
+     * Add a Presenter Menu item to the view. This simply converts Presenter
+     * Menu items to GWT MenuItems. Filtering of menu items for permissions is
+     * conducted by the Presenter.
+     */
+    @Override
+    public void addMenuItems( final Menus menus ) {
+        for ( final MenuItem activeMenu : menus.getItems() ) {
+            addMenuItem(activeMenu);
+        }
+    }
+
+    private void addMenuItem( final MenuItem menuItem ) {
+        final Widget result = makeItem( menuItem );
+        if ( result != null ) {
+            final Widget gwtItem = makeItem( menuItem );
+            configureDnd(gwtItem);
+            if ( menuItem.getPosition().equals( MenuPosition.LEFT ) ) {
+                menuBarLeft.add( gwtItem );
+            } else if ( menuItem.getPosition().equals( MenuPosition.CENTER ) ) {
+                menuBarCenter.add( gwtItem );
+            } else if ( menuItem.getPosition().equals( MenuPosition.RIGHT ) ) {
+                menuBarRight.add( gwtItem );
+            }
+        }
+    }
+
+    private void configureDnd(final Widget gwtItem) {
+        if (gwtItem != null) {
+            try {
+                final HasWidgets hasWidgets = ((HasWidgets) gwtItem);
+                final Iterator<Widget> childrenIt = hasWidgets.iterator();
+                while (childrenIt.hasNext()) {
+                    final Widget w = childrenIt.next();
+                    configureWidgetDnd(w);
+                }
+            } catch (ClassCastException e) {
+                configureWidgetDnd(gwtItem);
+            }
+           
+        }
+    }
+    
+    private void configureWidgetDnd(final Widget gwtItem) {
+        if (gwtItem != null) {
+            final String text = getMenuItemUUID(gwtItem);
+            
+            // Enable GWT native Dnd.
+            gwtItem.getElement().setDraggable(Element.DRAGGABLE_TRUE);
+
+            // Drag start handler.
+            gwtItem.addDomHandler(new DragStartHandler() {
+                @Override
+                public void onDragStart(final DragStartEvent event) {
+                    event.setData("text", text);
+                    GWT.log("Drag start for " + text);
+                }
+            }, DragStartEvent.getType());
+
+            // Drag over handler.
+            gwtItem.addDomHandler(new DragOverHandler() {
+                @Override
+                public void onDragOver(final DragOverEvent event) {
+                    GWT.log("Drag over " + text);
+                }
+            }, DragOverEvent.getType());
+
+            // Drop handler.
+            gwtItem.addDomHandler(new DropHandler() {
+                @Override
+                public void onDrop(final DropEvent event) {
+                    GWT.log("Drop on  " + text);
+                }
+            }, DropEvent.getType());
+        }
+    }
+    
+    // TODO: Use a different string than the item text (id?)
+    private static String getMenuItemUUID(final Widget w) {
+        String _text = null;
+        try {
+            final HasText hasText = ((HasText) w);
+            _text = hasText.getText();
+        } catch (ClassCastException e) {
+        }
+        if (_text == null) {
+            try {
+                final HasValue hasValue = ((HasValue) w);
+                if (hasValue.getValue() != null) _text = hasValue.getValue().toString();
+            } catch (ClassCastException e) {
+            }
+        }
+        
+        if (_text == null) {
+            return w.getElement().getInnerText();
+        }
+        
+        return  _text;
+    }
+
+    Widget makeItem( final MenuItem item ) {
+        if ( notHavePermissionToMakeThis( item ) ) {
+            return null;
+        }
+
+        if ( item instanceof MenuItemCommand ) {
+
+            return makeMenuItemCommand( item );
+
+        } else if ( item instanceof MenuGroup ) {
+
+            return makeMenuGroup( (MenuGroup) item );
+
+        } else if ( item instanceof MenuCustom ) {
+
+            return makeMenuCustom( (MenuCustom) item );
+
+        }
+        return makeNavLink( item );
+    }
+
+    Widget makeNavLink( final MenuItem item ) {
+        final NavLink gwtItem = new NavLink( item.getCaption() ) {{
+            setDisabled( !item.isEnabled() );
+        }};
+        item.addEnabledStateChangeListener( new EnabledStateChangeListener() {
+            @Override
+            public void enabledStateChanged( final boolean enabled ) {
+                gwtItem.setDisabled( !enabled );
+            }
+        } );
+
+        return gwtItem;
+    }
+
+    Widget makeMenuCustom( MenuCustom item ) {
+        final MenuCustom custom = item;
+
+        return ( (IsWidget) item.build() ).asWidget();
+    }
+
+    Widget makeMenuGroup( final MenuGroup groups ) {
+        final List<Widget> widgetList = new ArrayList<Widget>();
+        for ( final MenuItem _item : groups.getItems() ) {
+            final Widget result = makeItem( _item );
+            if ( result != null ) {
+                widgetList.add( result );
+            }
+        }
+
+        if ( widgetList.isEmpty() ) {
+            return null;
+        }
+
+        return new Dropdown( groups.getCaption() ) {{
+            for ( final Widget widget : widgetList ) {
+                add( widget );
+            }
+        }};
+    }
+
+    Widget makeMenuItemCommand( final MenuItem item ) {
+        final MenuItemCommand cmdItem = (MenuItemCommand) item;
+        final Widget gwtItem;
+
+        gwtItem = new NavLink( cmdItem.getCaption() ) {{
+            setDisabled( !item.isEnabled() );
+            addClickHandler( new ClickHandler() {
+                @Override
+                public void onClick( final ClickEvent event ) {
+                    cmdItem.getCommand().execute();
+                }
+            } );
+        }};
+        item.addEnabledStateChangeListener( new EnabledStateChangeListener() {
+            @Override
+            public void enabledStateChanged( final boolean enabled ) {
+                ( (NavLink) gwtItem ).setDisabled( !enabled );
+            }
+        } );
+
+        return gwtItem;
+    }
+
+    boolean notHavePermissionToMakeThis( MenuItem item ) {
+        return !authzManager.authorize( item, identity );
+    }
+
+    @Override
+    public void clear() {
+        menuBarLeft.clear();
+        menuBarCenter.clear();
+        menuBarRight.clear();
+        disableEdit();
+        selectedPerspective = null;
+        isEdit = false;
+        isEditTriggerOn = false;
+    }
+
+}

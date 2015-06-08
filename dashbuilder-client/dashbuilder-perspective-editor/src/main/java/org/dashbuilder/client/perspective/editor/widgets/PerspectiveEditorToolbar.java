@@ -119,8 +119,10 @@ public class PerspectiveEditorToolbar extends DialogBox {
     }
 
     public void show() {
+        toolbarDialog.center();
         toolbarDialog.show();
         updateView();
+        toolbarOn = true;
     }
 
     public void close() {
@@ -128,6 +130,14 @@ public class PerspectiveEditorToolbar extends DialogBox {
 
         perspectiveEditor.editOff();
         toolbarOn = false;
+    }
+
+    public boolean isToolbarOn() {
+        return toolbarOn;
+    }
+
+    public void setToolbarOn(boolean toolbarOn) {
+        this.toolbarOn = toolbarOn;
     }
 
     @UiHandler("nameBox")
