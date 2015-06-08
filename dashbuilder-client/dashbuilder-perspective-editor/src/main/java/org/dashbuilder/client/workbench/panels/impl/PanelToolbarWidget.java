@@ -160,9 +160,9 @@ public class PanelToolbarWidget extends ResizeComposite {
     }
 
     public void updateView() {
-        toolbarPanel.setVisible(true);
-        changeTypeButtonContainer.setVisible(editEnabled);
-        closeButtonContainer.setVisible(editEnabled);
+        this.setVisible(currentPartView != null);
+        changeTypeButtonContainer.setVisible(currentPartView != null && editEnabled);
+        closeButtonContainer.setVisible(currentPartView != null && editEnabled);
         updateContextMenu();
         updateDropdown();
         updateTypeSelector();

@@ -29,6 +29,7 @@ import org.uberfire.mvp.ParameterizedCommand;
 import org.uberfire.mvp.PlaceRequest;
 import org.uberfire.mvp.impl.ForcedPlaceRequest;
 import org.uberfire.workbench.model.PanelDefinition;
+import org.uberfire.workbench.model.PartDefinition;
 import org.uberfire.workbench.model.PerspectiveDefinition;
 
 import static org.jboss.errai.ioc.client.QualifierUtil.DEFAULT_QUALIFIERS;
@@ -168,10 +169,13 @@ public class PerspectiveEditor {
         });
     }
 
+    public void closePart(PartDefinition partDefinition) {
+        panelManager.closePart(partDefinition);
+    }
+
     public void changePanelType(WorkbenchPanelPresenter panelPresenter, String newType) {
         panelPresenter.getDefinition().setPanelType(newType);
         PerspectiveActivity currentPerspective = perspectiveManager.getCurrentPerspective();
-        saveCurrentPerspective();
         placeManager.goTo(new ForcedPlaceRequest(currentPerspective.getIdentifier()));
     }
 
@@ -255,7 +259,8 @@ public class PerspectiveEditor {
         perspectiveManager.removePerspectiveState(id, new Command() {
             public void execute() {
                 activityBeansCache.removeActivity(id);
-                perspectiveDeletedEvent.fire(new PerspectiveDeletedEvent(activity.getIdentifier(), activity.getDisplayName()));
+                activity.setPersistent(false);
+                perspectiveDeletedEvent.fire(new PerspectiveDeletedEvent(id, activity.getDisplayName()));
                 placeManager.goTo(getDefaultPerspective().getIdentifier());
             }
         });

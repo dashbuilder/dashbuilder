@@ -159,8 +159,8 @@ public class ListBarWidgetExt extends ResizeComposite
         // Init the panel toolbar
         panelToolbarWidget.setPresenter(this);
         panelToolbarWidget.setEditEnabled(perspectiveEditor.isEditOn());
-        updatePanelToolbar();
         panelToolbar.add(panelToolbarWidget);
+        updatePanelToolbar();
     }
 
     boolean isPropertyListbarContextDisable() {
@@ -293,6 +293,8 @@ public class ListBarWidgetExt extends ResizeComposite
         updateBreadcrumb( part );
         parts.remove( currentPart.getK1() );
 
+        container.setVisible(true);
+
         updatePanelToolbar();
 
         scheduleResize();
@@ -309,6 +311,7 @@ public class ListBarWidgetExt extends ResizeComposite
                 presenter.selectPart( parts.iterator().next() );
             } else {
                 clear();
+                container.setVisible(false);
             }
         }
 
@@ -425,12 +428,14 @@ public class ListBarWidgetExt extends ResizeComposite
 
     @Override
     public void closePart(WorkbenchPartPresenter.View partView) {
-        panelManager.closePart(partView.getPresenter().getDefinition());
+        perspectiveEditor.closePart(partView.getPresenter().getDefinition());
+        perspectiveEditor.saveCurrentPerspective();
     }
 
     @Override
     public void changePanelType(String panelType) {
         perspectiveEditor.changePanelType(presenter, panelType);
+        perspectiveEditor.saveCurrentPerspective();
     }
 
     @Override
