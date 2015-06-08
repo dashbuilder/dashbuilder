@@ -75,6 +75,15 @@
     .menuItemOkButtonPanel {
       width: 100%;
     }
+    .menuItemDropOver_b {
+      border-bottom: 2px solid blue;
+    }
+    .menuItemDropOver_l {
+      border-left: 2px solid blue;
+    }
+    .menuItemDropOver_r {
+      border-right: 2px solid blue;
+    }
     .okButton {
       
     }

@@ -40,4 +40,5 @@ public interface PerspectiveEditorConstants extends ConstantsWithLookup {
     String create();
     String enableEdit();
     String disableEdit();
+    String editableWorkbenchMenuBar();
 }
