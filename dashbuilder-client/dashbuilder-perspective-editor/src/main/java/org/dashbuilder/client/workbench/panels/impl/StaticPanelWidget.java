@@ -58,8 +58,6 @@ public class StaticPanelWidget extends ResizeComposite
     interface StaticPanelWidgetBinder extends UiBinder<ResizeFocusPanel, StaticPanelWidget> {}
     static StaticPanelWidgetBinder uiBinder = GWT.create(StaticPanelWidgetBinder.class);
 
-    protected static final int MARGIN = 20;
-
     @Inject
     protected PanelManager panelManager;
 
@@ -146,12 +144,14 @@ public class StaticPanelWidget extends ResizeComposite
 
     @Override
     public void closePart(WorkbenchPartPresenter.View partView) {
-        panelManager.closePart(partView.getPresenter().getDefinition());
+        perspectiveEditor.closePart(partView.getPresenter().getDefinition());
+        perspectiveEditor.saveCurrentPerspective();
     }
 
     @Override
     public void changePanelType(String panelType) {
         perspectiveEditor.changePanelType(presenter, panelType);
+        perspectiveEditor.saveCurrentPerspective();
     }
 
     @Override

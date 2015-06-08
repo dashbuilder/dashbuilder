@@ -48,7 +48,7 @@
     }
   </ui:style>
 
-  <uf:ResizeFocusPanel ui:field="container">
+  <uf:ResizeFocusPanel ui:field="container" visible="false">
     <g:FlowPanel styleName="{style.fill-parent}">
       <g:FlowPanel styleName="{res.CSS.listbar}" ui:field="header">
 
