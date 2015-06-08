@@ -21,9 +21,9 @@
   <ui:style>
     .dialog {
       width: 180px;
-      border-radius: 5px;
-      border-width: 5px;
-      border-style: solid;
+      border-radius: 10px;
+      border-width: 1px;
+      border-style: groove;
       background-color: #d3d3d3;
       padding: 5px;
     }

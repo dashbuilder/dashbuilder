@@ -1,6 +1,7 @@
 package org.dashbuilder.client.workbench.panels.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -14,7 +15,7 @@ import com.github.gwtbootstrap.client.ui.Tab;
 import com.github.gwtbootstrap.client.ui.TabLink;
 import com.github.gwtbootstrap.client.ui.TabPane;
 import com.github.gwtbootstrap.client.ui.TabPanel;
-import com.github.gwtbootstrap.client.ui.resources.Bootstrap;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.BeforeSelectionEvent;
@@ -22,72 +23,38 @@ import com.google.gwt.event.logical.shared.BeforeSelectionHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.ComplexPanel;
-import com.google.gwt.user.client.ui.HasWidgets;
+import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.IsWidget;
-import com.google.gwt.user.client.ui.ProvidesResize;
+import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.RequiresResize;
-import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.client.perspective.editor.PerspectiveEditor;
 import org.uberfire.client.resources.WorkbenchResources;
 import org.uberfire.client.util.Layouts;
+import org.uberfire.client.views.bs2.maximize.MaximizeToggleButton;
 import org.uberfire.client.workbench.PanelManager;
+import org.uberfire.client.workbench.panels.MaximizeToggleButtonPresenter;
 import org.uberfire.client.workbench.panels.MultiPartWidget;
 import org.uberfire.client.workbench.panels.WorkbenchPanelPresenter;
 import org.uberfire.client.workbench.part.WorkbenchPartPresenter;
 import org.uberfire.client.workbench.widgets.dnd.WorkbenchDragAndDropManager;
+import org.uberfire.client.workbench.widgets.listbar.ResizeFocusPanel;
 import org.uberfire.mvp.Command;
 import org.uberfire.workbench.model.PartDefinition;
 
-import static com.github.gwtbootstrap.client.ui.resources.Bootstrap.Tabs.ABOVE;
 import static org.uberfire.commons.validation.PortablePreconditions.checkNotNull;
 
 @Dependent
-public class UberTabPanelExt extends ResizeComposite implements MultiPartWidget, ClickHandler {
+public class TabPanelWidget extends Composite
+        implements MultiPartWidget, PanelToolbarWidget.Presenter, ClickHandler {
 
-    static class ResizeTabPanel extends TabPanel implements RequiresResize, ProvidesResize {
+    interface TabPanelWidgetBinder extends UiBinder<ResizeFocusPanel, TabPanelWidget> {}
+    static TabPanelWidgetBinder uiBinder = GWT.create(TabPanelWidgetBinder.class);
 
-        public ResizeTabPanel( Bootstrap.Tabs tabPosition ) {
-            super( tabPosition );
-        }
-
-        @Override
-        public void onResize() {
-            // there are two layers of children in a TabPanel: the TabContent and the TabPane.
-            // TabContent is just a container for all the TabPane divs, one of which is made visible at a time.
-            // For compatibility with GWT LayoutPanel, we have to set both layers of children to fill their parents.
-            // We do it in onResize() to get to the TabPanes no matter how they were added.
-            for ( Widget child : getChildren() ) {
-                Layouts.setToFillParent(child);
-                if ( child instanceof RequiresResize ) {
-                    ((RequiresResize) child).onResize();
-                }
-                for( Widget grandChild : (HasWidgets) child ) {
-                    Layouts.setToFillParent( grandChild );
-                }
-            }
-        }
-
-    }
-
-    private static final int MARGIN = 20;
-
-    protected MultiTabWorkbenchPanelViewExt view;
-    protected ResizeTabPanel tabPanel;
-    protected DropdownTab dropdownTab;
-
-    /**
-     * Flag protecting {@link #updateDisplayedTabs()} from recursively invoking itself through events that it causes.
-     */
-    protected  boolean updating;
-
-    protected List<WorkbenchPartPresenter> parts = new ArrayList<WorkbenchPartPresenter>();
-    protected Map<WorkbenchPartPresenter.View, TabLink> tabIndex = new HashMap<WorkbenchPartPresenter.View, TabLink>();
-    protected Map<TabLink, WorkbenchPartPresenter.View> tabInvertedIndex = new HashMap<TabLink, WorkbenchPartPresenter.View>();
-    protected Map<PartDefinition, TabLink> partTabIndex = new HashMap<PartDefinition, TabLink>();
-    protected boolean hasFocus = false;
-    protected List<Command> focusGainedHandlers = new ArrayList<Command>();
+    protected static final int MARGIN = 20;
 
     @Inject
     protected PanelManager panelManager;
@@ -98,35 +65,70 @@ public class UberTabPanelExt extends ResizeComposite implements MultiPartWidget,
     @Inject
     protected WorkbenchDragAndDropManager dndManager;
 
+    @Inject
+    protected PanelToolbarWidget panelToolbarWidget;
+
+    @UiField
+    protected Panel panelToolbar;
+
+    @UiField
+    protected ResizeTabPanel tabPanel;
+
+    protected WorkbenchPanelPresenter presenter;
+    protected DropdownTab dropdownTab;
+    protected List<WorkbenchPartPresenter> parts = new ArrayList<WorkbenchPartPresenter>();
+    protected Map<WorkbenchPartPresenter.View, TabLink> tabIndex = new HashMap<WorkbenchPartPresenter.View, TabLink>();
+    protected Map<TabLink, WorkbenchPartPresenter.View> tabInvertedIndex = new HashMap<TabLink, WorkbenchPartPresenter.View>();
+    protected Map<PartDefinition, TabLink> partTabIndex = new HashMap<PartDefinition, TabLink>();
+    protected boolean hasFocus = false;
+    protected List<Command> focusGainedHandlers = new ArrayList<Command>();
+
+    /**
+     * Flag protecting {@link #updateDisplayedTabs()} from recursively invoking itself through events that it causes.
+     */
+    protected boolean updating;
+
     @PostConstruct
+    void postConstruct() {
+        initWidget(uiBinder.createAndBindUi(this));
+        setup();
+        Layouts.setToFillParent(this);
+    }
+
     protected void setup() {
-        this.panelManager = checkNotNull( "panelManager", panelManager );
-        this.perspectiveEditor = checkNotNull( "perspectiveEditorSettings", perspectiveEditor);
-        this.dropdownTab = new DropdownTab( "More..." );
-        tabPanel = new ResizeTabPanel( ABOVE );
+        dropdownTab = new DropdownTab( "More..." );
+
         tabPanel.addShownHandler( new TabPanel.ShownEvent.Handler() {
             @Override
             public void onShow( final TabPanel.ShownEvent e ) {
                 onResize();
                 if ( e.getRelatedTarget() != null ) {
-                    BeforeSelectionEvent.fire(UberTabPanelExt.this, tabInvertedIndex.get(e.getRelatedTarget()).getPresenter().getDefinition());
+                    BeforeSelectionEvent.fire(TabPanelWidget.this, tabInvertedIndex.get(e.getRelatedTarget()).getPresenter().getDefinition());
                 }
             }
         } );
 
-        tabPanel.addShowHandler( new TabPanel.ShowEvent.Handler() {
+        tabPanel.addShowHandler(new TabPanel.ShowEvent.Handler() {
             @Override
-            public void onShow( final TabPanel.ShowEvent e ) {
-                if ( e.getTarget() == null ) {
+            public void onShow(final TabPanel.ShowEvent e) {
+                if (e.getTarget() == null) {
                     return;
                 }
-                SelectionEvent.fire(UberTabPanelExt.this, tabInvertedIndex.get(e.getTarget()).getPresenter().getDefinition());
+                SelectionEvent.fire(TabPanelWidget.this, tabInvertedIndex.get(e.getTarget()).getPresenter().getDefinition());
             }
-        } );
+        });
 
-        tabPanel.addDomHandler( UberTabPanelExt.this, ClickEvent.getType() );
+        tabPanel.addDomHandler( TabPanelWidget.this, ClickEvent.getType() );
 
-        initWidget( tabPanel );
+        // Init the panel toolbar
+        panelToolbarWidget.setPresenter(this);
+        panelToolbarWidget.setEditEnabled(perspectiveEditor.isEditOn());
+        panelToolbar.add(panelToolbarWidget);
+    }
+
+    @Override
+    public void setPresenter( final WorkbenchPanelPresenter presenter ) {
+        this.presenter = presenter;
     }
 
     @Override
@@ -137,6 +139,7 @@ public class UberTabPanelExt extends ResizeComposite implements MultiPartWidget,
         partTabIndex.clear();
         tabIndex.clear();
         tabInvertedIndex.clear();
+        panelToolbar.clear();
     }
 
     /**
@@ -199,6 +202,7 @@ public class UberTabPanelExt extends ResizeComposite implements MultiPartWidget,
             }
 
             selectedTab.show();
+            updatePanelToolbar();
 
         } finally {
             updating = false;
@@ -229,6 +233,7 @@ public class UberTabPanelExt extends ResizeComposite implements MultiPartWidget,
         partTabIndex.remove( id );
 
         updateDisplayedTabs();
+        updatePanelToolbar();
 
         if ( removedTabIndex >= 0 && wasActive && getTabs().getWidgetCount() > 0 ) {
             tabPanel.selectTab( removedTabIndex <= 0 ? 0 : removedTabIndex - 1 );
@@ -258,32 +263,20 @@ public class UberTabPanelExt extends ResizeComposite implements MultiPartWidget,
     }
 
     @Override
-    public void setPresenter( final WorkbenchPanelPresenter presenter ) {
-        // not needed
-    }
-
-    public void setView( final MultiTabWorkbenchPanelViewExt view ) {
-        this.view = view;
-    }
-
-    @Override
     public void addPart( final WorkbenchPartPresenter.View partView ) {
         if ( !tabIndex.containsKey( partView ) ) {
             final Tab newTab = createTab( partView, false, 0, 0 );
             parts.add(partView.getPresenter());
-            tabIndex.put( partView, newTab.asTabLink() );
+            tabIndex.put(partView, newTab.asTabLink());
             updateDisplayedTabs();
-            view.updateHeaderStatus();
+            updatePanelToolbar();
         }
-    }
-
-    boolean isFirstWidget() {
-        return getTabs().getWidgetCount() == 1;
     }
 
     /**
      * The GwtBootstrap TabPanel doesn't support the RequiresResize/ProvidesResize contract, and UberTabPanel fills in
-     * the gap. This helper method allows us to call onResize() on the widgets that need it.
+     * the gap. This helper method allows us to call ok
+     * () on the widgets that need it.
      *
      * @param widget the widget that has just been resized
      */
@@ -334,7 +327,7 @@ public class UberTabPanelExt extends ResizeComposite implements MultiPartWidget,
         return new ClickHandler() {
             @Override
             public void onClick( final ClickEvent event ) {
-                UberTabPanelExt.this.onClick( event );
+                TabPanelWidget.this.onClick( event );
             }
         };
     }
@@ -396,7 +389,7 @@ public class UberTabPanelExt extends ResizeComposite implements MultiPartWidget,
             fireFocusGained();
             WorkbenchPartPresenter.View view = getSelectedPart();
             if ( view != null ) {
-                SelectionEvent.fire( UberTabPanelExt.this, view.getPresenter().getDefinition() );
+                SelectionEvent.fire( TabPanelWidget.this, view.getPresenter().getDefinition() );
             }
         }
     }
@@ -431,5 +424,69 @@ public class UberTabPanelExt extends ResizeComposite implements MultiPartWidget,
     @Override
     public int getPartsSize() {
         return partTabIndex.size();
+    }
+
+    /**
+     * Returns the toggle button, which is initially hidden, that can be used to trigger maximizing and unmaximizing
+     * of the panel containing this list bar. Make the button visible by calling {@link Widget#setVisible(boolean)}
+     * and set its maximize and unmaximize actions with {@link MaximizeToggleButton#setMaximizeCommand(Command)} and
+     * {@link MaximizeToggleButton#setUnmaximizeCommand(Command)}.
+     */
+    public MaximizeToggleButtonPresenter getMaximizeButton() {
+        return panelToolbarWidget.getMaximizeButton();
+    }
+
+    // Panel Toolbar stuff
+
+    protected WorkbenchPartPresenter.View getCurrentPart() {
+        TabLink selectedTab = null;
+        for ( int i = 0; i < parts.size(); i++ ) {
+            WorkbenchPartPresenter part = parts.get( i );
+            TabLink tabWidget = partTabIndex.get( part.getDefinition() );
+            if ( tabWidget.isActive() ) {
+                selectedTab = tabWidget;
+            }
+        }
+        if ( selectedTab == null ) {
+            TabLink firstTab = (TabLink) getTabs().getWidget( 0 );
+            selectedTab = firstTab;
+        }
+        return tabInvertedIndex.get(selectedTab);
+    }
+
+    protected void updatePanelToolbar() {
+        panelToolbarWidget.setCurrentPart(getCurrentPart());
+        panelToolbarWidget.setAvailableParts(null);
+        panelToolbarWidget.updateView();
+    }
+
+    @Override
+    public void selectPart(WorkbenchPartPresenter.View partView) {
+        this.selectPart(partView.getPresenter().getDefinition());
+    }
+
+    @Override
+    public void closePart(WorkbenchPartPresenter.View partView) {
+        panelManager.closePart(partView.getPresenter().getDefinition());
+    }
+
+    @Override
+    public void changePanelType(String panelType) {
+        perspectiveEditor.changePanelType(presenter, panelType);
+    }
+
+    @Override
+    public String getPanelType() {
+        return presenter.getDefinition().getPanelType();
+    }
+
+    @Override
+    public Map<String,String> getAvailablePanelTypes() {
+        Map<String,String> result = new HashMap<String, String>();
+        result.put(MultiListWorkbenchPanelPresenterExt.class.getName(), "List");
+        if (tabIndex.size() == 1) {
+            result.put(StaticWorkbenchPanelPresenterExt.class.getName(), "Static");
+        }
+        return result;
     }
 }

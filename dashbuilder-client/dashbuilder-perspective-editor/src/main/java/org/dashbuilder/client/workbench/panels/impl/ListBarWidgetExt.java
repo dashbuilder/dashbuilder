@@ -1,8 +1,11 @@
 package org.dashbuilder.client.workbench.panels.impl;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.ArrayList;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Observes;
@@ -10,9 +13,6 @@ import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
 import com.github.gwtbootstrap.client.ui.Button;
-import com.github.gwtbootstrap.client.ui.ButtonGroup;
-import com.github.gwtbootstrap.client.ui.DropdownButton;
-import com.github.gwtbootstrap.client.ui.NavLink;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Document;
@@ -33,6 +33,7 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.IsWidget;
+import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.RequiresResize;
 import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.SimplePanel;
@@ -53,12 +54,10 @@ import org.uberfire.client.workbench.part.WorkbenchPartPresenter;
 import org.uberfire.client.workbench.widgets.dnd.DragArea;
 import org.uberfire.client.workbench.widgets.dnd.WorkbenchDragAndDropManager;
 import org.uberfire.client.workbench.widgets.listbar.ListbarPreferences;
-import org.uberfire.client.workbench.widgets.listbar.ResizeFlowPanel;
 import org.uberfire.client.workbench.widgets.listbar.ResizeFocusPanel;
 import org.uberfire.commons.data.Pair;
 import org.uberfire.mvp.Command;
 import org.uberfire.workbench.model.PartDefinition;
-import org.uberfire.workbench.model.menu.MenuItem;
 
 import static com.google.gwt.dom.client.Style.Display.*;
 
@@ -66,8 +65,8 @@ import static com.google.gwt.dom.client.Style.Display.*;
  * Implementation of ListBarWidget based on GWTBootstrap 2 components.
  */
 @Dependent
-public class ListBarWidgetExt
-        extends ResizeComposite implements MultiPartWidget {
+public class ListBarWidgetExt extends ResizeComposite
+        implements MultiPartWidget, PanelToolbarWidget.Presenter {
 
     /**
      * When a part is added to the list bar, a special title widget is created for it. This title widget is draggable.
@@ -79,22 +78,17 @@ public class ListBarWidgetExt
      */
     public static final String DEBUG_TITLE_PREFIX = "ListBar-title-";
 
-    interface ListBarWidgetBinder
-            extends
-            UiBinder<ResizeFocusPanel, ListBarWidgetExt> {
-
-    }
-
-    private static ListBarWidgetBinder uiBinder = GWT.create(ListBarWidgetBinder.class);
+    interface ListBarWidgetBinder extends UiBinder<ResizeFocusPanel, ListBarWidgetExt> {}
+    static ListBarWidgetBinder uiBinder = GWT.create(ListBarWidgetBinder.class);
 
     /**
      * Preferences bean that applications can optionally provide. If this injection is unsatisfied, default settings are used.
      */
     @Inject
-    Instance<ListbarPreferences> optionalListBarPrefs;
+    protected Instance<ListbarPreferences> optionalListBarPrefs;
 
     @Inject
-    PanelManager panelManager;
+    protected PanelManager panelManager;
 
     @Inject
     protected PlaceManager placeManager;
@@ -103,116 +97,45 @@ public class ListBarWidgetExt
     protected PerspectiveManager perspectiveManager;
 
     @Inject
-    private PerspectiveEditor perspectiveEditor;
+    protected PerspectiveEditor perspectiveEditor;
 
     @Inject
-    private MenuWidgetFactory menuWidgetFactory;
+    protected PanelToolbarWidget panelToolbarWidget;
 
     @UiField
-    FocusPanel container;
+    protected Panel panelToolbar;
 
     @UiField
-    SimplePanel title;
+    protected FocusPanel container;
 
     @UiField
-    Button contextDisplay;
+    protected SimplePanel title;
 
     @UiField
-    FlowPanel header;
+    protected Button contextDisplay;
 
     @UiField
-    FlowPanel contextMenu;
+    protected FlowPanel header;
 
     @UiField
-    ButtonGroup changeTypeButtonContainer;
+    protected FlowPanel content;
 
-    @UiField
-    ButtonGroup dropdownCaretContainer;
-
-    @UiField
-    ButtonGroup closeButtonContainer;
-
-    @UiField
-    Button changeTypeButton;
-
-    @UiField
-    Button closeButton;
-
-    @UiField
-    DropdownButton dropdownCaret;
-
-    @UiField
-    MaximizeToggleButton maximizeButton;
-
-    /** Wraps maximizeButton, which is the view. */
-    MaximizeToggleButtonPresenter maximizeButtonPresenter;
-
-    @UiField
-    FlowPanel content;
-
-    @UiField
-    FlowPanel menuArea;
-
-    PartChooserList partChooserList = null;
-
-    WorkbenchPanelPresenter presenter;
-
-    private WorkbenchDragAndDropManager dndManager;
-
-    private final Map<PartDefinition, FlowPanel> partContentView = new HashMap<PartDefinition, FlowPanel>();
-    private final Map<PartDefinition, Widget> partTitle = new HashMap<PartDefinition, Widget>();
-    LinkedHashSet<PartDefinition> parts = new LinkedHashSet<PartDefinition>();
-
-    boolean isEditable = false;
-    Pair<PartDefinition, FlowPanel> currentPart;
+    protected WorkbenchPanelPresenter presenter;
+    protected WorkbenchDragAndDropManager dndManager;
+    protected final Map<PartDefinition, FlowPanel> partContentView = new HashMap<PartDefinition, FlowPanel>();
+    protected final Map<PartDefinition, Widget> partTitle = new HashMap<PartDefinition, Widget>();
+    protected LinkedHashSet<PartDefinition> parts = new LinkedHashSet<PartDefinition>();
+    protected Pair<PartDefinition, FlowPanel> currentPart;
 
     @PostConstruct
     void postConstruct() {
         initWidget( uiBinder.createAndBindUi( this ) );
-        maximizeButton.setVisible( false );
-        maximizeButtonPresenter = new MaximizeToggleButtonPresenter( maximizeButton );
-        isEditable = perspectiveEditor.isEditOn();
         setup();
         Layouts.setToFillParent(this);
         scheduleResize();
     }
 
-    public void onPerspectiveEditOn(@Observes PerspectiveEditOnEvent event) {
-        changeTypeButtonContainer.setVisible(true);
-        closeButtonContainer.setVisible(true);
-        setupContextMenu();
-        setupDropdown();
-    }
-
-    public void onPerspectiveEditOff(@Observes PerspectiveEditOffEvent event) {
-        changeTypeButtonContainer.setVisible(false);
-        closeButtonContainer.setVisible(false);
-        setupContextMenu();
-        setupDropdown();
-    }
-
     public void setup() {
-        this.menuArea.setVisible( false );
-
-        changeTypeButtonContainer.setVisible(isEditable);
-        closeButtonContainer.setVisible(isEditable);
-
-        closeButton.addClickHandler( new ClickHandler() {
-            @Override
-            public void onClick( ClickEvent event ) {
-                if ( currentPart != null ) {
-                    panelManager.closePart(currentPart.getK1());
-                }
-            }
-        } );
-
-        changeTypeButton.addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                perspectiveEditor.changePanelType(presenter, MultiTabWorkbenchPanelPresenterExt.class.getName());
-            }
-        });
-
 
         container.addFocusHandler( new FocusHandler() {
             @Override
@@ -227,11 +150,17 @@ public class ListBarWidgetExt
             contextDisplay.removeFromParent();
         }
 
-        content.getElement().getStyle().setPosition( Style.Position.RELATIVE );
-        content.getElement().getStyle().setTop( 0.0, Style.Unit.PX );
-        content.getElement().getStyle().setLeft( 0.0, Style.Unit.PX );
+        content.getElement().getStyle().setPosition(Style.Position.RELATIVE );
+        content.getElement().getStyle().setTop(0.0, Style.Unit.PX );
+        content.getElement().getStyle().setLeft(0.0, Style.Unit.PX );
         content.getElement().getStyle().setWidth( 100.0, Style.Unit.PCT );
         // height is calculated and set in onResize()
+
+        // Init the panel toolbar
+        panelToolbarWidget.setPresenter(this);
+        panelToolbarWidget.setEditEnabled(perspectiveEditor.isEditOn());
+        updatePanelToolbar();
+        panelToolbar.add(panelToolbarWidget);
     }
 
     boolean isPropertyListbarContextDisable() {
@@ -270,18 +199,14 @@ public class ListBarWidgetExt
 
     @Override
     public void clear() {
-        contextMenu.clear();
-        menuArea.setVisible( false );
         title.clear();
         content.clear();
+        panelToolbarWidget.clear();
 
         parts.clear();
         partContentView.clear();
         partTitle.clear();
         currentPart = null;
-        if ( partChooserList != null ) {
-            partChooserList.clear();
-        }
     }
 
     @Override
@@ -292,7 +217,6 @@ public class ListBarWidgetExt
             return;
         }
 
-        menuArea.setVisible( true );
         parts.add( partDefinition );
 
         final FlowPanel panel = new FlowPanel();
@@ -318,14 +242,14 @@ public class ListBarWidgetExt
         this.title.clear();
 
         final Widget title = partTitle.get( partDefinition );
-        this.title.add( title );
+        this.title.add(title );
     }
 
     private Widget buildTitle( final String title, final IsWidget titleDecoration ) {
         final SpanElement spanElement = Document.get().createSpanElement();
-        spanElement.getStyle().setWhiteSpace( Style.WhiteSpace.NOWRAP );
+        spanElement.getStyle().setWhiteSpace(Style.WhiteSpace.NOWRAP );
         spanElement.getStyle().setOverflow( Style.Overflow.HIDDEN );
-        spanElement.getStyle().setTextOverflow( Style.TextOverflow.ELLIPSIS );
+        spanElement.getStyle().setTextOverflow(Style.TextOverflow.ELLIPSIS );
         spanElement.getStyle().setDisplay( BLOCK );
         final String titleWidget = (titleDecoration instanceof Image) ? titleDecoration.toString() : "";
         spanElement.setInnerHTML(titleWidget + " " + title.replaceAll( " ", "\u00a0" ) );
@@ -341,10 +265,9 @@ public class ListBarWidgetExt
             final IsWidget titleDecoration ) {
         final Widget _title = buildTitle( title, titleDecoration );
         partTitle.put( part, _title );
-        if ( isEditable ) {
-            dndManager.makeDraggable( partContentView.get( part ), _title );
-        }
-        setupDropdown();
+        //if ( isEditable ) {
+            dndManager.makeDraggable(partContentView.get(part), _title);
+        //}
         if ( currentPart != null && currentPart.getK1().equals( part ) ) {
             updateBreadcrumb( part );
         }
@@ -366,40 +289,17 @@ public class ListBarWidgetExt
         }
 
         currentPart = Pair.newPair( part, partContentView.get( part ) );
-        currentPart.getK2().getElement().getStyle().setDisplay( BLOCK );
+        currentPart.getK2().getElement().getStyle().setDisplay(BLOCK );
         updateBreadcrumb( part );
         parts.remove( currentPart.getK1() );
 
-        setupDropdown();
-        setupContextMenu();
+        updatePanelToolbar();
 
         scheduleResize();
 
         SelectionEvent.fire(ListBarWidgetExt.this, part);
 
         return true;
-    }
-
-    private void setupDropdown() {
-        dropdownCaret.setRightDropdown(true);
-        dropdownCaret.clear();
-        partChooserList = new PartChooserList();
-        dropdownCaret.add(partChooserList);
-    }
-
-    private void setupContextMenu() {
-        contextMenu.clear();
-        if (currentPart != null) {
-            final WorkbenchPartPresenter.View part = (WorkbenchPartPresenter.View) currentPart.getK2().getWidget(0);
-            if (part != null && part.getPresenter().getMenus() != null && part.getPresenter().getMenus().getItems().size() > 0) {
-                for (final MenuItem menuItem : part.getPresenter().getMenus().getItems()) {
-                    final Widget result = menuWidgetFactory.makeItem(menuItem, true);
-                    if (result != null) {
-                        contextMenu.add(result);
-                    }
-                }
-            }
-        }
     }
 
     @Override
@@ -419,7 +319,8 @@ public class ListBarWidgetExt
             content.remove( view );
         }
         partTitle.remove( part );
-        setupDropdown();
+
+        updatePanelToolbar();
 
         scheduleResize();
 
@@ -479,54 +380,7 @@ public class ListBarWidgetExt
                 ( (RequiresResize) containedWidget ).onResize();
             }
         }
-        if ( partChooserList != null ) {
-            partChooserList.onResize();
-        }
-    }
-
-    /**
-     * This is the list that appears when you click the down-arrow button in the header (dropdownCaret). It lists all
-     * the available parts. Clicking on a list item selects its associated part, making it visible, and hiding all other
-     * parts.
-     */
-    class PartChooserList extends ResizeComposite {
-
-        final ResizeFlowPanel panel = new ResizeFlowPanel();
-
-        PartChooserList() {
-            initWidget( panel );
-            if ( currentPart != null ) {
-                final String ctitle = ( (WorkbenchPartPresenter.View) partContentView.get( currentPart.getK1() ).getWidget( 0 ) ).getPresenter().getTitle();
-                panel.add( new NavLink( ctitle ) );
-
-                for ( final PartDefinition part : parts ) {
-                    final String title = ( (WorkbenchPartPresenter.View) partContentView.get( part ).getWidget( 0 ) ).getPresenter().getTitle();
-                    panel.add( new NavLink( title ) {{
-                        addClickHandler( new ClickHandler() {
-                            @Override
-                            public void onClick( final ClickEvent event ) {
-                                selectPart( part );
-                            }
-                        } );
-                    }} );
-                }
-            }
-            onResize();
-        }
-
-        @Override
-        public void onResize() {
-            int contentAbsoluteRight = content.getAbsoluteLeft() + content.getOffsetWidth();
-            int caretAbsoluteRight = dropdownCaret.getAbsoluteLeft() + dropdownCaret.getOffsetWidth();
-            int width = content.getOffsetWidth() - ( contentAbsoluteRight - caretAbsoluteRight );
-            if ( width > 0 ) {
-                setWidth( width + "px" );
-            }
-        }
-
-        public void clear() {
-            panel.clear();
-        }
+        panelToolbarWidget.onResize();
     }
 
     private void scheduleResize() {
@@ -545,6 +399,52 @@ public class ListBarWidgetExt
      * {@link MaximizeToggleButton#setUnmaximizeCommand(Command)}.
      */
     public MaximizeToggleButtonPresenter getMaximizeButton() {
-        return maximizeButtonPresenter;
+        return panelToolbarWidget.getMaximizeButton();
+    }
+
+    // Panel Toolbar stuff
+
+    protected List<WorkbenchPartPresenter.View> getAvailablePartViews() {
+        List<WorkbenchPartPresenter.View> availableParts = new ArrayList<WorkbenchPartPresenter.View>();
+        for (FlowPanel flowPanel : partContentView.values()) {
+            availableParts.add((WorkbenchPartPresenter.View) flowPanel.getWidget(0));
+        }
+        return availableParts;
+    }
+
+    protected void updatePanelToolbar() {
+        panelToolbarWidget.setCurrentPart(currentPart != null ? (WorkbenchPartPresenter.View) currentPart.getK2().getWidget(0) : null);
+        panelToolbarWidget.setAvailableParts(getAvailablePartViews());
+        panelToolbarWidget.updateView();
+    }
+
+    @Override
+    public void selectPart(WorkbenchPartPresenter.View partView) {
+        this.selectPart(partView.getPresenter().getDefinition());
+    }
+
+    @Override
+    public void closePart(WorkbenchPartPresenter.View partView) {
+        panelManager.closePart(partView.getPresenter().getDefinition());
+    }
+
+    @Override
+    public void changePanelType(String panelType) {
+        perspectiveEditor.changePanelType(presenter, panelType);
+    }
+
+    @Override
+    public String getPanelType() {
+        return presenter.getDefinition().getPanelType();
+    }
+
+    @Override
+    public Map<String,String> getAvailablePanelTypes() {
+        Map<String,String> result = new HashMap<String, String>();
+        result.put(MultiTabWorkbenchPanelPresenterExt.class.getName(), "Tabs");
+        if (partContentView.size() == 1) {
+            result.put(StaticWorkbenchPanelPresenterExt.class.getName(), "Static");
+        }
+        return result;
     }
 }

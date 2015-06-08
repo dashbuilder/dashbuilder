@@ -40,147 +40,49 @@ public class MultiTabWorkbenchPanelViewExt
         extends AbstractMultiPartWorkbenchPanelView<MultiTabWorkbenchPanelPresenterExt> {
 
     @Inject
-    private MenuWidgetFactory menuWidgetFactory;
-
-    @Inject
-    protected MaximizeToggleButton maximizeButton;
-
-    @Inject
-    protected UberTabPanelExt tabPanel;
-
-    @Inject
-    protected PerspectiveEditor perspectiveEditor;
-
-    protected MaximizeToggleButtonPresenter maximizeButtonPresenter;
-    protected ButtonGroup changeTypeButtonGroup;
-    protected ButtonGroup closeButtonGroup;
-    protected FlowPanel headerMenu = new FlowPanel();
-    protected FlowPanel contextMenu = new FlowPanel();
-
-    @PostConstruct
-    protected void init() {
-        tabPanel.setView(this);
-    }
+    protected TabPanelWidget tabPanel;
 
     @Override
     protected MultiPartWidget setupWidget() {
-        Layouts.setToFillParent(tabPanel);
         addOnFocusHandler(tabPanel);
         addSelectionHandler(tabPanel);
+
+        final MaximizeToggleButtonPresenter maximizeButton = tabPanel.getMaximizeButton();
+        maximizeButton.setVisible( true );
+        maximizeButton.setMaximizeCommand( new Command() {
+            @Override
+            public void execute() {
+                maximize();
+            }
+        } );
+        maximizeButton.setUnmaximizeCommand( new Command() {
+            @Override
+            public void execute() {
+                unmaximize();
+            }
+        } );
 
         return tabPanel;
     }
 
     @Override
-    protected void populatePartViewContainer() {
-
-        setupMaximizeButton();
-        setupCloseButton();
-        setupChangeTypeButton();
-        setupContextMenu();
-
-        Style headerMenuStyle = headerMenu.getElement().getStyle();
-        headerMenuStyle.setMarginRight(10, Style.Unit.PX);
-        headerMenuStyle.setMarginTop(5, Style.Unit.PX);
-        headerMenuStyle.setZIndex(2); // otherwise, clicks don't make it through the tab area
-        headerMenuStyle.setPosition(Style.Position.ABSOLUTE);
-        headerMenuStyle.setRight(0, Style.Unit.PX);
-
-        Style contextMenuStyle = contextMenu.getElement().getStyle();
-        contextMenuStyle.setDisplay(Style.Display.INLINE);
-        contextMenuStyle.setMarginRight(5, Style.Unit.PX);
-
-        headerMenu.add(changeTypeButtonGroup);
-        headerMenu.add(closeButtonGroup);
-
-        ButtonGroup maximizeButtonGroup = new ButtonGroup();
-        maximizeButtonGroup.add(maximizeButton);
-        headerMenu.add(maximizeButtonGroup);
-
-        headerMenu.add(contextMenu);
-        headerMenu.add(changeTypeButtonGroup);
-        headerMenu.add(closeButtonGroup);
-        headerMenu.add(maximizeButtonGroup);
-        getPartViewContainer().add( headerMenu );
-
-        super.populatePartViewContainer();
-    }
-
-    protected void setupMaximizeButton() {
-        maximizeButtonPresenter = new MaximizeToggleButtonPresenter(maximizeButton);
-        maximizeButtonPresenter.setMaximizeCommand(new Command() {
-            @Override
-            public void execute() {
-                maximize();
-            }
-        });
-        maximizeButtonPresenter.setUnmaximizeCommand(new Command() {
-            @Override
-            public void execute() {
-                unmaximize();
-            }
-        });
-    }
-
-    protected void setupChangeTypeButton() {
-        Button changeTypeButton = new Button();
-        changeTypeButton.setTitle("Show as list");
-        changeTypeButton.setIcon(IconType.ASTERISK);
-        changeTypeButton.setSize(ButtonSize.MINI);
-        changeTypeButton.addClickHandler(new ClickHandler() {
-            public void onClick(ClickEvent clickEvent) {
-                perspectiveEditor.changePanelType(getPresenter(), MultiListWorkbenchPanelPresenterExt.class.getName());
-            }
-        });
-        changeTypeButtonGroup = new ButtonGroup();
-        changeTypeButtonGroup.add(changeTypeButton);
-    }
-
-    protected void setupCloseButton() {
-        Button closeButton = new Button();
-        closeButton.setTitle("Close");
-        closeButton.setIcon(IconType.REMOVE);
-        closeButton.setSize(ButtonSize.MINI);
-        closeButton.addClickHandler(new ClickHandler() {
-            @Override public void onClick(ClickEvent clickEvent) {
-                final WorkbenchPartPresenter.View partToDeselect = tabPanel.getSelectedPart();
-                panelManager.closePart(partToDeselect.getPresenter().getDefinition());
-            }
-        });
-        closeButtonGroup = new ButtonGroup();
-        closeButtonGroup.add(closeButton);
-    }
-
-    protected void setupContextMenu() {
-        contextMenu.clear();
-        final WorkbenchPartPresenter.View part = tabPanel.getSelectedPart();
-        if ( part != null && part.getPresenter().getMenus() != null && part.getPresenter().getMenus().getItems().size() > 0 ) {
-            for ( final MenuItem menuItem : part.getPresenter().getMenus().getItems() ) {
-                final Widget result = menuWidgetFactory.makeItem( menuItem, true );
-                if ( result != null ) {
-                    contextMenu.add(result);
-                }
-            }
-        }
-    }
-
-    @Override
     public void maximize() {
         super.maximize();
-        maximizeButton.setMaximized(true);
+        tabPanel.getMaximizeButton().setMaximized( true );
     }
 
     @Override
     public void unmaximize() {
         super.unmaximize();
-        maximizeButton.setMaximized(false);
+        tabPanel.getMaximizeButton().setMaximized( false );
     }
 
     @Override
     public void setElementId( String elementId ) {
-        super.setElementId(elementId);
-        maximizeButton.ensureDebugId(elementId + "-maximizeButton");
+        super.setElementId( elementId );
+        tabPanel.getMaximizeButton().getView().asWidget().ensureDebugId( elementId + "-maximizeButton" );
     }
+
 
     protected void addSelectionHandler( HasSelectionHandlers<PartDefinition> widget ) {
         widget.addSelectionHandler(new SelectionHandler<PartDefinition>() {
@@ -188,22 +90,7 @@ public class MultiTabWorkbenchPanelViewExt
             public void onSelection(final SelectionEvent<PartDefinition> event) {
                 panelManager.onPartLostFocus();
                 panelManager.onPartFocus(event.getSelectedItem());
-                updateHeaderStatus();
             }
         });
-    }
-
-    protected void onPerspectiveEditOn(@Observes PerspectiveEditOnEvent event) {
-        updateHeaderStatus();
-    }
-
-    protected void onPerspectiveEditOff(@Observes PerspectiveEditOffEvent event) {
-        updateHeaderStatus();
-    }
-
-    protected void updateHeaderStatus() {
-        changeTypeButtonGroup.setVisible(perspectiveEditor.isEditOn());
-        closeButtonGroup.setVisible(perspectiveEditor.isEditOn());
-        setupContextMenu();
     }
 }

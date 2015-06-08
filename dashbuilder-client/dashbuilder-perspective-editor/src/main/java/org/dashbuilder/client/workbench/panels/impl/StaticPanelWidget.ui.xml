@@ -17,26 +17,19 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
              xmlns:g="urn:import:com.google.gwt.user.client.ui"
-             xmlns:tb="urn:import:com.github.gwtbootstrap.client.ui"
-             xmlns:uf="urn:import:org.uberfire.client.workbench.widgets.listbar">
+             xmlns:uf="urn:import:org.uberfire.client.workbench.widgets.listbar"
+             xmlns:my="urn:import:org.uberfire.client.workbench.widgets.panel">
 
   <ui:with field="res" type="org.uberfire.client.resources.WorkbenchResources"/>
 
   <ui:style>
-    .title {
-      font-size: 18px;
-    }
-
     .better_margin {
+      margin-top: 5px;
       margin-right: 10px;
     }
 
     .pull-right {
       float: right;
-    }
-
-    .inline {
-      display: inline;
     }
 
     .fill-parent {
@@ -48,19 +41,12 @@
     }
   </ui:style>
 
-  <uf:ResizeFocusPanel ui:field="container">
+  <uf:ResizeFocusPanel>
     <g:FlowPanel styleName="{style.fill-parent}">
-      <g:FlowPanel styleName="{res.CSS.listbar}" ui:field="header">
 
-        <g:FlowPanel styleName="{style.pull-right} {style.better_margin}" ui:field="panelToolbar" />
+      <g:FlowPanel styleName="{style.pull-right} {style.better_margin}" ui:field="panelToolbar" />
+      <my:StaticFocusedResizePanel ui:field="staticPanel" />
 
-        <g:FlowPanel styleName="{style.inline}">
-          <tb:Button ui:field="contextDisplay" size="MINI" icon="REORDER"/>
-          <g:SimplePanel styleName="{style.inline} {style.title}" ui:field="title"/>
-        </g:FlowPanel>
-
-      </g:FlowPanel>
-      <g:FlowPanel ui:field="content"/>
     </g:FlowPanel>
   </uf:ResizeFocusPanel>
 
