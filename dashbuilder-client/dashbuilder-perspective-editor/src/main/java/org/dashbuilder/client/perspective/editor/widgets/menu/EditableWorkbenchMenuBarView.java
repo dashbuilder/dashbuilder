@@ -28,37 +28,32 @@ import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.*;
-import org.dashbuilder.client.perspective.editor.PerspectiveEditor;
+import org.dashbuilder.client.perspective.editor.menu.MenuUtils;
 import org.dashbuilder.client.perspective.editor.resources.i18n.PerspectiveEditorConstants;
 import org.dashbuilder.client.widgets.animations.AlphaAnimation;
-import org.jboss.errai.security.shared.api.identity.User;
 import org.uberfire.client.mvp.PerspectiveActivity;
-import org.uberfire.client.mvp.PlaceManager;
-import org.uberfire.client.workbench.widgets.menu.WorkbenchMenuBarPresenter;
-import org.uberfire.mvp.Command;
-import org.uberfire.security.authz.AuthorizationManager;
 import org.uberfire.workbench.model.menu.*;
 import org.uberfire.workbench.model.menu.MenuItem;
 
-import javax.enterprise.inject.Alternative;
-import javax.inject.Inject;
+import javax.enterprise.context.ApplicationScoped;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 
 /**
  * The Menu Bar widget with editable capabilities for menu items.
  * @since 0.3.0
  */
-@Alternative
+@ApplicationScoped
 public class EditableWorkbenchMenuBarView extends Composite
         implements
-        WorkbenchMenuBarPresenter.View {
+        EditableWorkbenchMenuBarPresenter.View {
 
     private static final String POINTS = "...";
     private static final int ALPHA_ANIMATION_DURATION = 500;
+    private static final int MENU_TIMER_DURATION = 1000;
 
     interface EditableWorkbenchMenuBarViewBinder
             extends
@@ -73,19 +68,12 @@ public class EditableWorkbenchMenuBarView extends Composite
         String editButton();
         String labelError();
         String removeButtonPanelDragOver();
+        String menuItemDropOver_b();
+        String menuItemDropOver_l();
+        String menuItemDropOver_r();
     }
 
-    @Inject
-    private AuthorizationManager authzManager;
-
-    @Inject
-    private User identity;
-
-    @Inject
-    protected PerspectiveEditor perspectiveEditor;
-
-    @Inject
-    private PlaceManager placeManager;
+    
 
     @UiField
     public Nav menuBarLeft;
@@ -141,27 +129,34 @@ public class EditableWorkbenchMenuBarView extends Composite
     @UiField
     Button menuItemOkButton;
 
+    private boolean canEdit;
     private boolean isEdit;
     private boolean isEditTriggerOn;
+    private Timer timer;
+    private boolean isTimerRunning;
     private PerspectiveActivity selectedPerspective;
+    private EditableWorkbenchMenuBarPresenter.ViewCallback viewCallback;
     
     public EditableWorkbenchMenuBarView() {
         initWidget( uiBinder.createAndBindUi( this ) );
+        enableEdition();
         isEdit = false;
         isEditTriggerOn = false;
+        timer = null;
+        isTimerRunning = false;
         barForm.getTextBox().setVisible(false);
         
         // Edit trigger panel DOM event handlers.
         // Show when moving the mouse over
         editButtonTriggerPanel.addDomHandler(new MouseOverHandler() {
             public void onMouseOver(MouseOverEvent mouseOverEvent) {
-                showEditButtonPanel();
+                if (canEdit) showEditButtonPanel();
             }
         }, MouseOverEvent.getType());
 
         editButtonTriggerPanel.addDomHandler(new MouseOutHandler() {
             public void onMouseOut(MouseOutEvent mouseOverEvent) {
-                hideEditButtonPanel();
+                if (canEdit) hideEditButtonPanel();
             }
         }, MouseOutEvent.getType());
         
@@ -170,28 +165,37 @@ public class EditableWorkbenchMenuBarView extends Composite
         removeButtonPanel.addDomHandler(new DragOverHandler() {
             @Override
             public void onDragOver(final DragOverEvent event) {
-                removeButtonPanel.addStyleName(style.removeButtonPanelDragOver());
+                if (canEdit) removeButtonPanel.addStyleName(style.removeButtonPanelDragOver());
             }
         }, DragOverEvent.getType());
         removeButtonPanel.addDomHandler(new DragLeaveHandler() {
             @Override
             public void onDragLeave(final DragLeaveEvent event) {
-                removeButtonPanel.removeStyleName(style.removeButtonPanelDragOver());
+                if (canEdit) removeButtonPanel.removeStyleName(style.removeButtonPanelDragOver());
             }
         }, DragLeaveEvent.getType());
         removeButtonPanel.addDomHandler(new DropHandler() {
             @Override
             public void onDrop(final DropEvent event) {
-                event.preventDefault();
-                removeButtonPanel.removeStyleName(style.removeButtonPanelDragOver());
-                final String itemTextToRemove = event.getData("text");
-                if (itemTextToRemove != null) {
-                    removeMenuItem(itemTextToRemove);
+                if (canEdit) {
+                    removeButtonPanel.removeStyleName(style.removeButtonPanelDragOver());
+                    final String id = event.getData("text");
+                    if (id != null) {
+                        viewCallback.removeItem(id);
+
+                    }    
                 }
             }
         }, DropEvent.getType());
     }
-    
+
+    @Override
+    public void build(final Menus menus, final EditableWorkbenchMenuBarPresenter.ViewCallback callback) {
+        this.viewCallback = callback;
+        clearMenuBars();
+        buildMenuItems(menus);
+    }
+
     @UiHandler(value = "editButton")
     public void onEdit(final ClickEvent clickEvent) {
         if (isEdit) disableEdit();
@@ -229,7 +233,7 @@ public class EditableWorkbenchMenuBarView extends Composite
             hideMenuItemModalPanel();
         }
     }
-
+    
     private void showEditButtonPanel() {
         if (!isEditTriggerOn) {
             isEditTriggerOn= true;
@@ -251,57 +255,9 @@ public class EditableWorkbenchMenuBarView extends Composite
     }
 
     private void createMenuItem(final String activityId, final String name) {
-        final MenuItem menuItem = MenuFactory.newSimpleItem(name).respondsWith(new Command() {
-            public void execute() {
-                placeManager.goTo(activityId);
-            }
-        }).endMenu().build().getItems().get(0);
-
-        addMenuItem(menuItem);
+        viewCallback.createItem(name, activityId);
     }
 
-    private void removeMenuItem(final String text) {
-        if (text != null && text.trim().length() > 0) {
-            if (!removeMenuItem(menuBarLeft, text)) {
-                if (!removeMenuItem(menuBarCenter, text)) {
-                    removeMenuItem(menuBarRight, text);
-                }
-            }
-        }
-    }
-
-    private boolean removeMenuItem(final Nav nav, final String text) {
-        final int leftCount = nav.getWidgetCount();
-        boolean removed = false;
-        for (int x = 0; x < leftCount; x++) {
-            final Widget w = nav.getWidget(x);
-
-            try {
-                final HasWidgets hasWidgets = ((HasWidgets) w);
-                final Iterator<Widget> childrenIt = hasWidgets.iterator();
-                while (childrenIt.hasNext()) {
-                    final Widget child = childrenIt.next();
-                    if (removeMenuItem(child, text)) {
-                        return true;
-                    }
-                }
-            } catch (ClassCastException e) {
-                return removeMenuItem(w, text);
-            }
-        }
-        return false;
-    }
-    
-    // TODO: If element is a dropdown item and has no children as the result of the remove operation, change it to a regular menu link.
-    private boolean removeMenuItem(final Widget w, final String text) {
-        final String itemTextToRemove = getMenuItemUUID(w);
-        if (itemTextToRemove != null && itemTextToRemove.equals(text)) {
-            w.removeFromParent();
-            return true;
-        }
-        return false;
-    }
-    
     public void enableEdit() {
         isEdit = true;
         editButton.setIcon(IconType.EYE_OPEN);
@@ -341,7 +297,7 @@ public class EditableWorkbenchMenuBarView extends Composite
     private void buildPerspectivesDropDown() {
 
         // Load perspectives and build the drop down.
-        final Collection<PerspectiveActivity> perspectives = perspectiveEditor.getPerspectiveActivities();
+        final Collection<PerspectiveActivity> perspectives = viewCallback.getPerspectiveActivities();
 
         menuItemPerspectives.clear();
         menuItemPerspectives.setText(PerspectiveEditorConstants.INSTANCE.perspective_placeholder() + POINTS);
@@ -364,23 +320,18 @@ public class EditableWorkbenchMenuBarView extends Composite
         return new SafeHtmlBuilder().appendEscaped(text).toSafeHtml().asString();
     }
     
-    /**
-     * Add a Presenter Menu item to the view. This simply converts Presenter
-     * Menu items to GWT MenuItems. Filtering of menu items for permissions is
-     * conducted by the Presenter.
-     */
-    @Override
-    public void addMenuItems( final Menus menus ) {
-        for ( final MenuItem activeMenu : menus.getItems() ) {
-            addMenuItem(activeMenu);
+    private void buildMenuItems(final Menus menus) {
+        if (menus != null) {
+            for ( final MenuItem activeMenu : menus.getItems() ) {
+                buildMenuItem(activeMenu);
+            }
         }
     }
 
-    private void addMenuItem( final MenuItem menuItem ) {
+    private void buildMenuItem(final MenuItem menuItem) {
         final Widget result = makeItem( menuItem );
         if ( result != null ) {
             final Widget gwtItem = makeItem( menuItem );
-            configureDnd(gwtItem);
             if ( menuItem.getPosition().equals( MenuPosition.LEFT ) ) {
                 menuBarLeft.add( gwtItem );
             } else if ( menuItem.getPosition().equals( MenuPosition.CENTER ) ) {
@@ -391,25 +342,8 @@ public class EditableWorkbenchMenuBarView extends Composite
         }
     }
 
-    private void configureDnd(final Widget gwtItem) {
+    private void configureWidgetDnd(final Widget gwtItem, final String uuid) {
         if (gwtItem != null) {
-            try {
-                final HasWidgets hasWidgets = ((HasWidgets) gwtItem);
-                final Iterator<Widget> childrenIt = hasWidgets.iterator();
-                while (childrenIt.hasNext()) {
-                    final Widget w = childrenIt.next();
-                    configureWidgetDnd(w);
-                }
-            } catch (ClassCastException e) {
-                configureWidgetDnd(gwtItem);
-            }
-           
-        }
-    }
-    
-    private void configureWidgetDnd(final Widget gwtItem) {
-        if (gwtItem != null) {
-            final String text = getMenuItemUUID(gwtItem);
             
             // Enable GWT native Dnd.
             gwtItem.getElement().setDraggable(Element.DRAGGABLE_TRUE);
@@ -418,8 +352,9 @@ public class EditableWorkbenchMenuBarView extends Composite
             gwtItem.addDomHandler(new DragStartHandler() {
                 @Override
                 public void onDragStart(final DragStartEvent event) {
-                    event.setData("text", text);
-                    GWT.log("Drag start for " + text);
+                    event.stopPropagation();
+                    onMenuItemDragStart(event, uuid, gwtItem);
+                    
                 }
             }, DragStartEvent.getType());
 
@@ -427,43 +362,158 @@ public class EditableWorkbenchMenuBarView extends Composite
             gwtItem.addDomHandler(new DragOverHandler() {
                 @Override
                 public void onDragOver(final DragOverEvent event) {
-                    GWT.log("Drag over " + text);
+                    event.stopPropagation();
+                    onMenuItemDragOver(event, uuid, gwtItem);
                 }
             }, DragOverEvent.getType());
+
+            // Drag over handler.
+            gwtItem.addDomHandler(new DragLeaveHandler() {
+                @Override
+                public void onDragLeave(final DragLeaveEvent event) {
+                    event.stopPropagation();
+                    onMenuItemDragLeave(event, uuid, gwtItem);
+                }
+            }, DragLeaveEvent.getType());
 
             // Drop handler.
             gwtItem.addDomHandler(new DropHandler() {
                 @Override
                 public void onDrop(final DropEvent event) {
-                    GWT.log("Drop on  " + text);
+                    event.stopPropagation();
+                    onMenuItemDrop(event, uuid, gwtItem);
                 }
             }, DropEvent.getType());
         }
     }
+
+    private void onMenuItemDragStart(final DragStartEvent event, final String uuid, final Widget gwtItem) {
+        if (canEdit) {
+            event.setData("text", uuid);
+            GWT.log("onMenuItemDragStart - uuid: " + uuid);
+            startTimer();    
+        }
+    }
     
-    // TODO: Use a different string than the item text (id?)
-    private static String getMenuItemUUID(final Widget w) {
-        String _text = null;
-        try {
-            final HasText hasText = ((HasText) w);
-            _text = hasText.getText();
-        } catch (ClassCastException e) {
-        }
-        if (_text == null) {
-            try {
-                final HasValue hasValue = ((HasValue) w);
-                if (hasValue.getValue() != null) _text = hasValue.getValue().toString();
-            } catch (ClassCastException e) {
+    private void onMenuItemDragOver(final DragOverEvent event, final String uuid, final Widget gwtItem) {
+        if (canEdit && !isTimerRunning) {
+            
+            if (isDropDownMenuItem(gwtItem)) {
+                GWT.log("onMenuItemDragOver - isDropDown with uuid: " + uuid);
+                gwtItem.getElement().addClassName("open");
+            } else {
+                GWT.log("onMenuItemDragOver - uuid: " + uuid);
+                removeMenuItemDragStyles(gwtItem);
+                final boolean isMouseOnBottom = isMouseOnBottomOfWidget(event, gwtItem);
+                final boolean isMouseOnRight = isMouseOnRightOfWidget(event, gwtItem);
+                if (isMouseOnBottom) {
+                    gwtItem.addStyleName(style.menuItemDropOver_b());
+                } else if (isMouseOnRight) {
+                    gwtItem.addStyleName(style.menuItemDropOver_r());
+                } else {
+                    gwtItem.addStyleName(style.menuItemDropOver_l());
+                }
             }
+            startTimer();
         }
-        
-        if (_text == null) {
-            return w.getElement().getInnerText();
-        }
-        
-        return  _text;
+    }
+    
+    private boolean isMouseOnBottomOfWidget(final DomEvent event, final Widget w) {
+        final int mouseY = event.getNativeEvent().getClientY();
+        final int itemY0 = w.getAbsoluteTop();
+        final int itemY1 = itemY0 + w.getElement().getOffsetHeight();
+        final int itemY = itemY0 + ( (itemY1 - itemY0) / 2 );
+        final boolean isMouseOnBottom = mouseY > itemY;
+        return isMouseOnBottom;
     }
 
+    private boolean isMouseOnRightOfWidget(final DomEvent event, final Widget w) {
+        final int mouseX = event.getNativeEvent().getClientX();
+        final int itemX0 = w.getAbsoluteLeft();
+        final int itemX1 = itemX0 + w.getElement().getOffsetWidth();
+        final int itemX = itemX0 + ( (itemX1 - itemX0) / 2 );
+        final boolean isMouseOnRight = mouseX > itemX;
+        return isMouseOnRight;
+    }
+
+    private void onMenuItemDragLeave(final DragLeaveEvent event, final String id, final Widget gwtItem) {
+        if (canEdit && !isTimerRunning) {
+            if (isDropDownMenuItem(gwtItem)) {
+                gwtItem.getElement().removeClassName("open");
+            } else {
+                removeMenuItemDragStyles(gwtItem);
+            }
+            startTimer();
+        }
+    }
+
+    private void onMenuItemDrop(final DropEvent event, final String targetUUID, final Widget gwtItem) {
+        if (canEdit) {
+            final String sourceUUID = event.getData("text");
+            GWT.log("Drop from '" + sourceUUID + "' on  '" + targetUUID + "'");
+            if (sourceUUID != null && targetUUID != null) {
+
+                if (isDropDownMenuItem(gwtItem)) {
+                    // TODO
+                } else {
+                    removeMenuItemDragStyles(gwtItem);
+                    final boolean isMouseOnBottom = isMouseOnBottomOfWidget(event, gwtItem);
+                    final boolean isMouseOnRight = isMouseOnRightOfWidget(event, gwtItem);
+                    if (isMouseOnBottom) {
+                        gwtItem.addStyleName(style.menuItemDropOver_b());
+                    } else if (isMouseOnRight) {
+                        gwtItem.addStyleName(style.menuItemDropOver_r());
+                    } else {
+                        gwtItem.addStyleName(style.menuItemDropOver_l());
+                    }
+                    final boolean before = !isMouseOnBottom && !isMouseOnRight;
+                    viewCallback.moveItem(sourceUUID, targetUUID, before);
+                }
+            }
+            removeMenuItemDragStyles(gwtItem);
+            endTimer();
+        }
+    }
+    
+    private boolean isDropDownMenuItem(final Widget gwtItem) {
+        try {
+            final Dropdown dropdown = (Dropdown) gwtItem;
+            return true;
+        } catch (ClassCastException e) {
+            return false;
+        }
+    }
+    
+    private void removeMenuItemDragStyles(final Widget gwtItem) {
+        gwtItem.removeStyleName(style.menuItemDropOver_b());
+        gwtItem.removeStyleName(style.menuItemDropOver_l());
+        gwtItem.removeStyleName(style.menuItemDropOver_r());
+    }
+
+    private void startTimer() {
+        if (timer != null) endTimer();
+
+        // TODO: Working????
+        EditableWorkbenchMenuBarView.this.isTimerRunning = true;
+        timer = new Timer() {
+            @Override
+            public void run() {
+                EditableWorkbenchMenuBarView.this.isTimerRunning = false;
+            }
+        };
+
+        // Schedule the timer to run once in 5 seconds.
+        timer.schedule(MENU_TIMER_DURATION);
+    }
+
+    private void endTimer() {
+        if (timer != null) {
+            timer.cancel();
+            timer = null;
+            isTimerRunning = false;
+        }
+    }
+    
     Widget makeItem( final MenuItem item ) {
         if ( notHavePermissionToMakeThis( item ) ) {
             return null;
@@ -495,14 +545,15 @@ public class EditableWorkbenchMenuBarView extends Composite
                 gwtItem.setDisabled( !enabled );
             }
         } );
-
+        configureWidgetDnd(gwtItem, item.getSignatureId());
         return gwtItem;
     }
 
     Widget makeMenuCustom( MenuCustom item ) {
         final MenuCustom custom = item;
-
-        return ( (IsWidget) item.build() ).asWidget();
+        final Widget w =((IsWidget) item.build()).asWidget();
+        configureWidgetDnd(w, item.getSignatureId());
+        return w;
     }
 
     Widget makeMenuGroup( final MenuGroup groups ) {
@@ -518,11 +569,14 @@ public class EditableWorkbenchMenuBarView extends Composite
             return null;
         }
 
-        return new Dropdown( groups.getCaption() ) {{
+        final Dropdown dropdown = new Dropdown( groups.getCaption() ) {{
             for ( final Widget widget : widgetList ) {
                 add( widget );
             }
         }};
+
+        configureWidgetDnd(dropdown, groups.getSignatureId());
+        return dropdown;
     }
 
     Widget makeMenuItemCommand( final MenuItem item ) {
@@ -544,23 +598,39 @@ public class EditableWorkbenchMenuBarView extends Composite
                 ( (NavLink) gwtItem ).setDisabled( !enabled );
             }
         } );
-
+        configureWidgetDnd(gwtItem, item.getSignatureId());
         return gwtItem;
     }
 
     boolean notHavePermissionToMakeThis( MenuItem item ) {
-        return !authzManager.authorize( item, identity );
+        return viewCallback.notHavePermissionToMakeThis(item);
     }
 
-    @Override
-    public void clear() {
+    private void clearMenuBars() {
         menuBarLeft.clear();
         menuBarCenter.clear();
         menuBarRight.clear();
+    }
+    
+    @Override
+    public void clear() {
+        clearMenuBars();
         disableEdit();
         selectedPerspective = null;
         isEdit = false;
         isEditTriggerOn = false;
+        endTimer();
+    }
+
+    @Override
+    public void enableEdition() {
+        canEdit = true;
+    }
+
+    @Override
+    public void disableEdition() {
+        canEdit = false;
+        disableEdit();
     }
 
 }
