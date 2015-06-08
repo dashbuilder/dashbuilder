@@ -98,8 +98,6 @@ public class PerspectiveCoordinator {
      */
     protected void onPerspectiveChanged(@Observes final PerspectiveChange event) {
         init();
-        // TODO: fix events capture on PerspectiveEditorToolbar
-        perspectiveEditorToolbar.updateView();
     }
 
     /**

@@ -34,7 +34,7 @@ public class MultiListWorkbenchPanelViewExt
         addSelectionHandler( listBar );
 
         final MaximizeToggleButtonPresenter maximizeButton = listBar.getMaximizeButton();
-        maximizeButton.setVisible( true );
+        maximizeButton.setVisible(true);
         maximizeButton.setMaximizeCommand( new Command() {
             @Override
             public void execute() {
