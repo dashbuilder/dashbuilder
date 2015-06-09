@@ -38,6 +38,8 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.client.perspective.editor.PerspectiveEditor;
 import org.dashbuilder.client.perspective.editor.PerspectiveEditorComponent;
+import org.dashbuilder.client.perspective.editor.events.PerspectiveEditOffEvent;
+import org.dashbuilder.client.perspective.editor.events.PerspectiveEditOnEvent;
 import org.dashbuilder.common.client.StringUtils;
 import org.jboss.errai.ioc.client.container.IOC;
 import org.jboss.errai.ioc.client.container.IOCBeanDef;
@@ -126,9 +128,13 @@ public class PerspectiveEditorToolbar extends DialogBox {
     }
 
     public void close() {
+        close(true);
+    }
+
+    private void close(final boolean fireEvent) {
         toolbarDialog.hide();
 
-        perspectiveEditor.editOff();
+        if (fireEvent) perspectiveEditor.editOff();
         toolbarOn = false;
     }
 
@@ -213,6 +219,18 @@ public class PerspectiveEditorToolbar extends DialogBox {
     protected void onPerspectiveChanged(@Observes final PerspectiveChange event) {
         if (toolbarOn) {
             updateView();
+        }
+    }
+
+    protected void onPerspectiveEditOn(@Observes final PerspectiveEditOnEvent event) {
+        if (!toolbarOn) {
+            show();
+        }
+    }
+
+    protected void onPerspectiveEditOff(@Observes final PerspectiveEditOffEvent event) {
+        if (toolbarOn) {
+            close();
         }
     }
 }

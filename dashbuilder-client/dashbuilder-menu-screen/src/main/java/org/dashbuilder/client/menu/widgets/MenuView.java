@@ -64,15 +64,12 @@ public class MenuView extends Composite
 
     interface MenuViewStyle extends CssResource {
         String mainPanel();
-        String editButton();
         String labelError();
         String removeButtonPanelDragOver();
         String menuItemDropOver_b();
         String menuItemDropOver_l();
         String menuItemDropOver_r();
     }
-
-    
 
     @UiField
     public Nav menuBarLeft;
@@ -85,15 +82,6 @@ public class MenuView extends Composite
 
     @UiField
     MenuViewStyle style;
-    
-    @UiField
-    FlowPanel editButtonTriggerPanel;
-    
-    @UiField
-    FlowPanel editButtonPanel;
-    
-    @UiField
-    Button editButton;
     
     @UiField
     NavForm barForm;
@@ -128,9 +116,7 @@ public class MenuView extends Composite
     @UiField
     Button menuItemOkButton;
 
-    private boolean canEdit;
     private boolean isEdit;
-    private boolean isEditTriggerOn;
     private Timer timer;
     private boolean isTimerRunning;
     private PerspectiveActivity selectedPerspective;
@@ -140,43 +126,28 @@ public class MenuView extends Composite
         initWidget( uiBinder.createAndBindUi( this ) );
         enableEdition();
         isEdit = false;
-        isEditTriggerOn = false;
         timer = null;
         isTimerRunning = false;
         barForm.getTextBox().setVisible(false);
-        
-        // Edit trigger panel DOM event handlers.
-        // Show when moving the mouse over
-        editButtonTriggerPanel.addDomHandler(new MouseOverHandler() {
-            public void onMouseOver(MouseOverEvent mouseOverEvent) {
-                if (canEdit) showEditButtonPanel();
-            }
-        }, MouseOverEvent.getType());
-
-        editButtonTriggerPanel.addDomHandler(new MouseOutHandler() {
-            public void onMouseOut(MouseOutEvent mouseOverEvent) {
-                if (canEdit) hideEditButtonPanel();
-            }
-        }, MouseOutEvent.getType());
         
         // Enable remove button drop feature.
         removeButtonPanel.getElement().setDraggable(Element.DRAGGABLE_TRUE);
         removeButtonPanel.addDomHandler(new DragOverHandler() {
             @Override
             public void onDragOver(final DragOverEvent event) {
-                if (canEdit) removeButtonPanel.addStyleName(style.removeButtonPanelDragOver());
+                if (isEdit) removeButtonPanel.addStyleName(style.removeButtonPanelDragOver());
             }
         }, DragOverEvent.getType());
         removeButtonPanel.addDomHandler(new DragLeaveHandler() {
             @Override
             public void onDragLeave(final DragLeaveEvent event) {
-                if (canEdit) removeButtonPanel.removeStyleName(style.removeButtonPanelDragOver());
+                if (isEdit) removeButtonPanel.removeStyleName(style.removeButtonPanelDragOver());
             }
         }, DragLeaveEvent.getType());
         removeButtonPanel.addDomHandler(new DropHandler() {
             @Override
             public void onDrop(final DropEvent event) {
-                if (canEdit) {
+                if (isEdit) {
                     removeButtonPanel.removeStyleName(style.removeButtonPanelDragOver());
                     final String id = event.getData("text");
                     if (id != null) {
@@ -193,12 +164,6 @@ public class MenuView extends Composite
         this.viewCallback = callback;
         clearMenuBars();
         buildMenuItems(menus);
-    }
-
-    @UiHandler(value = "editButton")
-    public void onEdit(final ClickEvent clickEvent) {
-        if (isEdit) disableEdit();
-        else enableEdit();
     }
 
     @UiHandler(value = "addButton")
@@ -233,22 +198,6 @@ public class MenuView extends Composite
         }
     }
     
-    private void showEditButtonPanel() {
-        if (!isEditTriggerOn) {
-            isEditTriggerOn= true;
-            final AlphaAnimation alphaAnimation = new AlphaAnimation(editButtonPanel);
-            alphaAnimation.show(ALPHA_ANIMATION_DURATION);
-        }
-    }
-
-    private void hideEditButtonPanel() {
-        if (isEditTriggerOn) {
-            isEditTriggerOn= false;
-            final AlphaAnimation alphaAnimation = new AlphaAnimation(editButtonPanel);
-            alphaAnimation.hide(ALPHA_ANIMATION_DURATION);
-        }
-    }
-    
     private boolean isEmpry(final String text) {
         return text == null || text.trim().length() == 0;
     }
@@ -257,22 +206,17 @@ public class MenuView extends Composite
         viewCallback.createItem(name, activityId);
     }
 
-    public void enableEdit() {
+    public void enableEdition() {
         isEdit = true;
-        editButton.setIcon(IconType.EYE_OPEN);
-        editButton.setTitle(MenusConstants.INSTANCE.disableEditMenu());
         barForm.setVisible(true);
     }
 
-    public void disableEdit() {
+    public void disableEdition() {
         isEdit = false;
         selectedPerspective = null;
         resetMenuItemForm();
         hideMenuItemModalPanel();
-        editButton.setIcon(IconType.PENCIL);
-        editButton.setTitle(MenusConstants.INSTANCE.enableEditMenu());
         barForm.setVisible(false);
-        hideEditButtonPanel();
     }
     
     private void showMenuItemModalPanel() {
@@ -387,7 +331,7 @@ public class MenuView extends Composite
     }
 
     private void onMenuItemDragStart(final DragStartEvent event, final String uuid, final Widget gwtItem) {
-        if (canEdit) {
+        if (isEdit) {
             event.setData("text", uuid);
             GWT.log("onMenuItemDragStart - uuid: " + uuid);
             startTimer();    
@@ -395,7 +339,7 @@ public class MenuView extends Composite
     }
     
     private void onMenuItemDragOver(final DragOverEvent event, final String uuid, final Widget gwtItem) {
-        if (canEdit && !isTimerRunning) {
+        if (isEdit && !isTimerRunning) {
             
             if (isDropDownMenuItem(gwtItem)) {
                 GWT.log("onMenuItemDragOver - isDropDown with uuid: " + uuid);
@@ -436,7 +380,7 @@ public class MenuView extends Composite
     }
 
     private void onMenuItemDragLeave(final DragLeaveEvent event, final String id, final Widget gwtItem) {
-        if (canEdit && !isTimerRunning) {
+        if (isEdit && !isTimerRunning) {
             if (isDropDownMenuItem(gwtItem)) {
                 gwtItem.getElement().removeClassName("open");
             } else {
@@ -447,7 +391,7 @@ public class MenuView extends Composite
     }
 
     private void onMenuItemDrop(final DropEvent event, final String targetUUID, final Widget gwtItem) {
-        if (canEdit) {
+        if (isEdit) {
             final String sourceUUID = event.getData("text");
             GWT.log("Drop from '" + sourceUUID + "' on  '" + targetUUID + "'");
             if (sourceUUID != null && targetUUID != null) {
@@ -614,22 +558,10 @@ public class MenuView extends Composite
     @Override
     public void clear() {
         clearMenuBars();
-        disableEdit();
+        disableEdition();
         selectedPerspective = null;
         isEdit = false;
-        isEditTriggerOn = false;
         endTimer();
-    }
-
-    @Override
-    public void enableEdition() {
-        canEdit = true;
-    }
-
-    @Override
-    public void disableEdition() {
-        canEdit = false;
-        disableEdit();
     }
 
 }

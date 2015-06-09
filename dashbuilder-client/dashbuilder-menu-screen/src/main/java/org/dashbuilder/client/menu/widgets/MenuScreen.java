@@ -20,6 +20,8 @@ import com.google.gwt.user.client.ui.IsWidget;
 import org.dashbuilder.client.menu.MenuUtils;
 import org.dashbuilder.client.menu.json.MenusJSONMarshaller;
 import org.dashbuilder.client.perspective.editor.PerspectiveEditor;
+import org.dashbuilder.client.perspective.editor.events.PerspectiveEditOffEvent;
+import org.dashbuilder.client.perspective.editor.events.PerspectiveEditOnEvent;
 import org.dashbuilder.common.client.StringUtils;
 import org.jboss.errai.security.shared.api.identity.User;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
@@ -27,6 +29,7 @@ import org.uberfire.client.annotations.WorkbenchPartView;
 import org.uberfire.client.annotations.WorkbenchScreen;
 import org.uberfire.client.mvp.PerspectiveActivity;
 import org.uberfire.client.mvp.PlaceManager;
+import org.uberfire.client.workbench.events.PerspectiveChange;
 import org.uberfire.lifecycle.OnClose;
 import org.uberfire.lifecycle.OnStartup;
 import org.uberfire.mvp.PlaceRequest;
@@ -36,6 +39,7 @@ import org.uberfire.workbench.model.menu.MenuItem;
 import org.uberfire.workbench.model.menu.Menus;
 
 import javax.enterprise.context.Dependent;
+import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import java.util.Collection;
 import java.util.HashMap;
@@ -203,5 +207,16 @@ public class MenuScreen {
     public void clear() {
         view.clear();
     }
-    
+
+    protected void onPerspectiveEditOn(@Observes final PerspectiveEditOnEvent event) {
+        enableEdition();
+    }
+
+    protected void onPerspectiveEditOff(@Observes final PerspectiveEditOffEvent event) {
+        disableEdition();
+    }
+
+    protected void onPerspectiveChanged(@Observes final PerspectiveChange event) {
+        disableEdition();
+    }
 }

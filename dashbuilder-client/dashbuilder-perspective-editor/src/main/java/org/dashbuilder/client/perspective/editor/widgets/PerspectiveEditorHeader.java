@@ -17,6 +17,7 @@ package org.dashbuilder.client.perspective.editor.widgets;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
 import com.github.gwtbootstrap.client.ui.Button;
@@ -29,9 +30,13 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
+import org.dashbuilder.client.perspective.editor.PerspectiveEditor;
+import org.dashbuilder.client.perspective.editor.events.PerspectiveEditOffEvent;
+import org.dashbuilder.client.perspective.editor.events.PerspectiveEditOnEvent;
 import org.dashbuilder.client.perspective.editor.resources.i18n.PerspectiveEditorConstants;
 import org.dashbuilder.client.widgets.animations.AlphaAnimation;
 import org.uberfire.client.workbench.Header;
+import org.uberfire.client.workbench.events.PerspectiveChange;
 
 @ApplicationScoped
 public class PerspectiveEditorHeader extends Composite implements Header {
@@ -59,6 +64,9 @@ public class PerspectiveEditorHeader extends Composite implements Header {
     
     @UiField
     Button editButton;
+
+    @Inject
+    protected PerspectiveEditor perspectiveEditor;
 
     @Inject
     protected PerspectiveEditorToolbar editorToolbar;
@@ -103,16 +111,35 @@ public class PerspectiveEditorHeader extends Composite implements Header {
 
     @UiHandler(value = "editButton")
     public void onEdit(final ClickEvent clickEvent) {
-        if (editorToolbar.isToolbarOn()) {
-            editorToolbar.close();
-            editButton.setIcon(IconType.PENCIL);
-            editButton.setTitle(PerspectiveEditorConstants.INSTANCE.enableEdit());
+        if (perspectiveEditor.isEditOn()) {
+            perspectiveEditor.editOff();
+            showEditIcon();
         } else {
-            editorToolbar.show();
-            editButton.setIcon(IconType.EYE_OPEN);
-            editButton.setTitle(PerspectiveEditorConstants.INSTANCE.disableEdit());
+            perspectiveEditor.editOn();
+            showViewIcon();
         }
     }
+    
+    private void showEditIcon() {
+        editButton.setIcon(IconType.PENCIL);
+        editButton.setTitle(PerspectiveEditorConstants.INSTANCE.enableEdit());
+    }
 
+    private void showViewIcon() {
+        editButton.setIcon(IconType.EYE_OPEN);
+        editButton.setTitle(PerspectiveEditorConstants.INSTANCE.disableEdit());
+    }
+
+    protected void onPerspectiveEditOn(@Observes final PerspectiveEditOnEvent event) {
+        showViewIcon();
+    }
+    
+    protected void onPerspectiveEditOff(@Observes final PerspectiveEditOffEvent event) {
+        showEditIcon();
+    }
+
+    protected void onPerspectiveChanged(@Observes final PerspectiveChange event) {
+        showEditIcon();
+    }
 
 }

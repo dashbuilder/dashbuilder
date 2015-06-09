@@ -29,8 +29,6 @@ public interface MenusConstants extends ConstantsWithLookup {
 
     String addMenuItem();
     String removeMenuItem();
-    String enableEditMenu();
-    String disableEditMenu();
     String newMenuItem();
     String name();
     String name_placeholder();

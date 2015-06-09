@@ -92,14 +92,14 @@ public class PerspectiveEditor {
     }
 
     public void editOn() {
-        if (isEditable() && !editOn) {
+        if (!editOn) {
             this.editOn = true;
             perspectiveEditOnEvent.fire(new PerspectiveEditOnEvent());
         }
     }
 
     public void editOff() {
-        if (isEditable() && editOn) {
+        if (editOn) {
             this.editOn = false;
             perspectiveEditOffEvent.fire(new PerspectiveEditOffEvent());
         }
