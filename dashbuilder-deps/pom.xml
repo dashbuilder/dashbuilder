@@ -40,6 +40,7 @@
     <version.com.ahomeit.lienzo.charts>1.0.56-gwt2-SNAPSHOT</version.com.ahomeit.lienzo.charts>
     <version.com.googlecode.jtype>0.1.1</version.com.googlecode.jtype>
     <version.org.assertj>1.7.1</version.org.assertj>
+    <version.org.eclipse.jgit>3.7.1.201504261725-r</version.org.eclipse.jgit>
   </properties>
 
   <dependencyManagement>
@@ -93,6 +94,12 @@
         <artifactId>encoder</artifactId>
         <version>${version.org.owasp.encoder}</version>
       </dependency>
+
+      <dependency>
+          <groupId>org.eclipse.jgit</groupId>
+          <artifactId>org.eclipse.jgit</artifactId>
+          <version>${version.org.eclipse.jgit}</version>
+        </dependency>
 
       <!-- Override needed by Errai Embedded WildFly -->
       <dependency>
