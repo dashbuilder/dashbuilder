@@ -13,18 +13,14 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.dashbuilder.client.perspective.editor.widgets.menu;
+package org.dashbuilder.client.menu.widgets;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.shared.EventHandler;
-import com.google.gwt.event.shared.GwtEvent;
-import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.IsWidget;
+import org.dashbuilder.client.menu.MenuUtils;
+import org.dashbuilder.client.menu.json.MenusJSONMarshaller;
 import org.dashbuilder.client.perspective.editor.PerspectiveEditor;
-import org.dashbuilder.client.perspective.editor.json.MenusJSONMarshaller;
-import org.dashbuilder.client.perspective.editor.menu.MenuUtils;
 import org.dashbuilder.common.client.StringUtils;
-import org.dashbuilder.displayer.DisplayerSettings;
 import org.jboss.errai.security.shared.api.identity.User;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
 import org.uberfire.client.annotations.WorkbenchPartView;
@@ -47,7 +43,7 @@ import java.util.Map;
 
 @WorkbenchScreen(identifier = "EditableWorkbenchMenuBar")
 @Dependent
-public class EditableWorkbenchMenuBarPresenter {
+public class MenuScreen {
     
     protected PlaceRequest placeRequest;
     protected Menus menus;
@@ -139,10 +135,10 @@ public class EditableWorkbenchMenuBarPresenter {
     
     interface ViewCallback {
         Collection<PerspectiveActivity> getPerspectiveActivities();
-        boolean notHavePermissionToMakeThis( final MenuItem item );
+        boolean notHavePermissionToMakeThis(final MenuItem item);
         void removeItem(final String itemUUID);
         void createItem(final String caption, final String activityId);
-        void moveItem(final String sourceUUID, final String targetUUID,final boolean before);
+        void moveItem(final String sourceUUID, final String targetUUID, final boolean before);
     }
     
     private final ViewCallback viewCallback = new ViewCallback() {

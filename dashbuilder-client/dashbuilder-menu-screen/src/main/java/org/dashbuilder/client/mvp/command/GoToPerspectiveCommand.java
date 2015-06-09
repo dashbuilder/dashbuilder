@@ -1,4 +1,4 @@
-package org.dashbuilder.client.perspective.editor.command;
+package org.dashbuilder.client.mvp.command;
 
 import com.google.gwt.core.client.GWT;
 import org.jboss.errai.ioc.client.container.IOC;

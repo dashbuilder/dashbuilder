@@ -45,7 +45,7 @@
   <g:HorizontalPanel ui:field="headerPanel" styleName="{style.hidden-header}">
     <g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
       <g:FlowPanel ui:field="editButtonPanel" addStyleNames="{style.editButtonPanel}" visible="false">
-        <b:Button ui:field="editButton" title="{i18n.enableEditMenu}" stylePrimaryName="{style.editButton}"
+        <b:Button ui:field="editButton" title="{i18n.enableEdit}" stylePrimaryName="{style.editButton}"
                   icon="PENCIL" type="LINK" />  
       </g:FlowPanel>
     </g:cell>

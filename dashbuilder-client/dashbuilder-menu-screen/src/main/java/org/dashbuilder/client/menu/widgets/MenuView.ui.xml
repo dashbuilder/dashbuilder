@@ -20,9 +20,9 @@
              xmlns:base="urn:import:com.github.gwtbootstrap.client.ui.base"
              xmlns:b="urn:import:com.github.gwtbootstrap.client.ui">
 
-  <ui:with field="i18n" type="org.dashbuilder.client.perspective.editor.resources.i18n.PerspectiveEditorConstants"/>
+  <ui:with field="i18n" type="org.dashbuilder.client.resources.i18n.MenusConstants"/>
 
-  <ui:style type="org.dashbuilder.client.perspective.editor.widgets.menu.EditableWorkbenchMenuBarView.EditableWorkbenchMenuBarViewStyle">
+  <ui:style type="org.dashbuilder.client.menu.widgets.MenuView.MenuViewStyle">
     .mainPanel {
       width: 100%;
     }

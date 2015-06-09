@@ -31,6 +31,7 @@
   <inherits name="org.dashbuilder.DisplayerClient"/>
   <inherits name="org.dashbuilder.DisplayerScreen"/>
   <inherits name="org.dashbuilder.PerspectiveEditor"/>
+  <inherits name="org.dashbuilder.DashbuilderMenu"/>
 
   <inherits name="org.dashbuilder.renderer.DefaultRenderer"/>
 

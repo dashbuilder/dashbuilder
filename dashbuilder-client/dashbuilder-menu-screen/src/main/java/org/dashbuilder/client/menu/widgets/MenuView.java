@@ -13,10 +13,10 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.dashbuilder.client.perspective.editor.widgets.menu;
+package org.dashbuilder.client.menu.widgets;
 
-import com.github.gwtbootstrap.client.ui.Button;
 import com.github.gwtbootstrap.client.ui.*;
+import com.github.gwtbootstrap.client.ui.Button;
 import com.github.gwtbootstrap.client.ui.TextBox;
 import com.github.gwtbootstrap.client.ui.base.InlineLabel;
 import com.github.gwtbootstrap.client.ui.constants.IconType;
@@ -30,8 +30,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.*;
-import org.dashbuilder.client.perspective.editor.menu.MenuUtils;
-import org.dashbuilder.client.perspective.editor.resources.i18n.PerspectiveEditorConstants;
+import org.dashbuilder.client.resources.i18n.MenusConstants;
 import org.dashbuilder.client.widgets.animations.AlphaAnimation;
 import org.uberfire.client.mvp.PerspectiveActivity;
 import org.uberfire.workbench.model.menu.*;
@@ -47,23 +46,23 @@ import java.util.List;
  * @since 0.3.0
  */
 @ApplicationScoped
-public class EditableWorkbenchMenuBarView extends Composite
+public class MenuView extends Composite
         implements
-        EditableWorkbenchMenuBarPresenter.View {
+        MenuScreen.View {
 
     private static final String POINTS = "...";
     private static final int ALPHA_ANIMATION_DURATION = 500;
     private static final int MENU_TIMER_DURATION = 1000;
 
-    interface EditableWorkbenchMenuBarViewBinder
+    interface MenuViewBinder
             extends
-            UiBinder<Panel, EditableWorkbenchMenuBarView> {
+            UiBinder<Panel, MenuView> {
 
     }
 
-    private static EditableWorkbenchMenuBarViewBinder uiBinder = GWT.create( EditableWorkbenchMenuBarViewBinder.class );
+    private static MenuViewBinder uiBinder = GWT.create( MenuViewBinder.class );
 
-    interface EditableWorkbenchMenuBarViewStyle extends CssResource {
+    interface MenuViewStyle extends CssResource {
         String mainPanel();
         String editButton();
         String labelError();
@@ -85,7 +84,7 @@ public class EditableWorkbenchMenuBarView extends Composite
     public Nav menuBarRight;
 
     @UiField
-    EditableWorkbenchMenuBarViewStyle style;
+    MenuViewStyle style;
     
     @UiField
     FlowPanel editButtonTriggerPanel;
@@ -135,9 +134,9 @@ public class EditableWorkbenchMenuBarView extends Composite
     private Timer timer;
     private boolean isTimerRunning;
     private PerspectiveActivity selectedPerspective;
-    private EditableWorkbenchMenuBarPresenter.ViewCallback viewCallback;
+    private MenuScreen.ViewCallback viewCallback;
     
-    public EditableWorkbenchMenuBarView() {
+    public MenuView() {
         initWidget( uiBinder.createAndBindUi( this ) );
         enableEdition();
         isEdit = false;
@@ -190,7 +189,7 @@ public class EditableWorkbenchMenuBarView extends Composite
     }
 
     @Override
-    public void build(final Menus menus, final EditableWorkbenchMenuBarPresenter.ViewCallback callback) {
+    public void build(final Menus menus, final MenuScreen.ViewCallback callback) {
         this.viewCallback = callback;
         clearMenuBars();
         buildMenuItems(menus);
@@ -261,7 +260,7 @@ public class EditableWorkbenchMenuBarView extends Composite
     public void enableEdit() {
         isEdit = true;
         editButton.setIcon(IconType.EYE_OPEN);
-        editButton.setTitle(PerspectiveEditorConstants.INSTANCE.disableEditMenu());
+        editButton.setTitle(MenusConstants.INSTANCE.disableEditMenu());
         barForm.setVisible(true);
     }
 
@@ -271,7 +270,7 @@ public class EditableWorkbenchMenuBarView extends Composite
         resetMenuItemForm();
         hideMenuItemModalPanel();
         editButton.setIcon(IconType.PENCIL);
-        editButton.setTitle(PerspectiveEditorConstants.INSTANCE.enableEditMenu());
+        editButton.setTitle(MenusConstants.INSTANCE.enableEditMenu());
         barForm.setVisible(false);
         hideEditButtonPanel();
     }
@@ -300,7 +299,7 @@ public class EditableWorkbenchMenuBarView extends Composite
         final Collection<PerspectiveActivity> perspectives = viewCallback.getPerspectiveActivities();
 
         menuItemPerspectives.clear();
-        menuItemPerspectives.setText(PerspectiveEditorConstants.INSTANCE.perspective_placeholder() + POINTS);
+        menuItemPerspectives.setText(MenusConstants.INSTANCE.perspective_placeholder() + POINTS);
         for (final PerspectiveActivity perspective : perspectives) {
             final String pName = perspective.getDefaultPerspectiveLayout().getName();
             final String name = getSafeHtml(pName);
@@ -494,11 +493,11 @@ public class EditableWorkbenchMenuBarView extends Composite
         if (timer != null) endTimer();
 
         // TODO: Working????
-        EditableWorkbenchMenuBarView.this.isTimerRunning = true;
+        MenuView.this.isTimerRunning = true;
         timer = new Timer() {
             @Override
             public void run() {
-                EditableWorkbenchMenuBarView.this.isTimerRunning = false;
+                MenuView.this.isTimerRunning = false;
             }
         };
 
@@ -519,7 +518,7 @@ public class EditableWorkbenchMenuBarView extends Composite
             return null;
         }
 
-        if ( item instanceof MenuItemCommand ) {
+        if ( item instanceof MenuItemCommand) {
 
             return makeMenuItemCommand( item );
 

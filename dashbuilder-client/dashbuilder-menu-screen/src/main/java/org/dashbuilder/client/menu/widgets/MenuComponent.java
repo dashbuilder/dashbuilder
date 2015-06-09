@@ -13,13 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbuilder.client.perspective.editor.widgets.menu;
+package org.dashbuilder.client.menu.widgets;
 
+import org.dashbuilder.client.menu.MenuUtils;
+import org.dashbuilder.client.menu.json.MenusJSONMarshaller;
 import org.dashbuilder.client.perspective.editor.PerspectiveEditor;
 import org.dashbuilder.client.perspective.editor.PerspectiveEditorComponent;
-import org.dashbuilder.client.perspective.editor.json.MenusJSONMarshaller;
-import org.dashbuilder.client.perspective.editor.menu.MenuUtils;
-import org.dashbuilder.client.perspective.editor.resources.i18n.PerspectiveEditorConstants;
+import org.dashbuilder.client.resources.i18n.MenusConstants;
 import org.uberfire.mvp.PlaceRequest;
 import org.uberfire.mvp.impl.DefaultPlaceRequest;
 import org.uberfire.workbench.model.menu.MenuItem;
@@ -34,7 +34,7 @@ import java.util.Map;
 
 // TODO: Use of EditableWorkbenchMenuBarListener to persist the perspective (and menus)
 @ApplicationScoped
-public class EditableWorkbenchMenuBarComponent implements PerspectiveEditorComponent {
+public class MenuComponent implements PerspectiveEditorComponent {
 
     @Inject
     protected PerspectiveEditor perspectiveEditor;
@@ -44,7 +44,7 @@ public class EditableWorkbenchMenuBarComponent implements PerspectiveEditorCompo
 
     @Override
     public String getComponentName() {
-        return PerspectiveEditorConstants.INSTANCE.editableWorkbenchMenuBar();
+        return MenusConstants.INSTANCE.editableWorkbenchMenuBar();
     }
 
     @Override

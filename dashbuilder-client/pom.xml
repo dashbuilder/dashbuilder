@@ -40,6 +40,7 @@
     <module>dashbuilder-lienzo</module>
     <module>dashbuilder-renderers</module>
     <module>dashbuilder-perspective-editor</module>
+    <module>dashbuilder-menu-screen</module>
   </modules>
 
   <dependencies>

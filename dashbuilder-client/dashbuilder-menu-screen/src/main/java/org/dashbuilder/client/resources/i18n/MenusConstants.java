@@ -13,20 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbuilder.client.perspective.editor.resources.i18n;
+package org.dashbuilder.client.resources.i18n;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.i18n.client.ConstantsWithLookup;
 
 /**
- * <p>Perspective editor related widget's constants.</p>
+ * <p>Editable menu widget's constants.</p>
  *
- * @since 0.3.0 
+ * @since 0.3.0 Editable menu
  */
-public interface PerspectiveEditorConstants extends ConstantsWithLookup {
+public interface MenusConstants extends ConstantsWithLookup {
 
-    public static final PerspectiveEditorConstants INSTANCE = GWT.create( PerspectiveEditorConstants.class );
+    public static final MenusConstants INSTANCE = GWT.create( MenusConstants.class );
 
-    String enableEdit();
-    String disableEdit();
+    String addMenuItem();
+    String removeMenuItem();
+    String enableEditMenu();
+    String disableEditMenu();
+    String newMenuItem();
+    String name();
+    String name_placeholder();
+    String perspective();
+    String perspective_placeholder();
+    String ok();
+    String create();
+    String editableWorkbenchMenuBar();
 }

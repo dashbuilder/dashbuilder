@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbuilder.client.perspective.editor.json;
+package org.dashbuilder.client.menu.json;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.json.client.*;
-import org.dashbuilder.client.perspective.editor.command.GoToPerspectiveCommand;
-import org.dashbuilder.client.perspective.editor.menu.MenuUtils;
+import org.dashbuilder.client.menu.MenuUtils;
+import org.dashbuilder.client.mvp.command.GoToPerspectiveCommand;
 import org.uberfire.workbench.model.menu.*;
 
 import java.util.ArrayList;

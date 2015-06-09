@@ -1,7 +1,7 @@
-package org.dashbuilder.client.perspective.editor.menu;
+package org.dashbuilder.client.menu;
 
 import com.google.gwt.core.client.GWT;
-import org.dashbuilder.client.perspective.editor.command.GoToPerspectiveCommand;
+import org.dashbuilder.client.mvp.command.GoToPerspectiveCommand;
 import org.uberfire.workbench.model.menu.*;
 
 import java.util.*;
