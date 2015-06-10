@@ -18,7 +18,7 @@ package org.dashbuilder.client.perspective.editor;
 import java.util.Collection;
 import java.util.Collections;
 
-import org.dashbuilder.client.workbench.panels.impl.MultiListWorkbenchPanelPresenterExt;
+import org.dashbuilder.client.workbench.panels.impl.ListBarWorkbenchPanelPresenter;
 import org.uberfire.client.mvp.PerspectiveActivity;
 import org.uberfire.mvp.PlaceRequest;
 import org.uberfire.workbench.model.PerspectiveDefinition;
@@ -74,7 +74,7 @@ public class EditablePerspectiveActivity implements PerspectiveActivity {
 
     @Override
     public PerspectiveDefinition getDefaultPerspectiveLayout() {
-        PerspectiveDefinition perspective = new PerspectiveDefinitionImpl(MultiListWorkbenchPanelPresenterExt.class.getName());
+        PerspectiveDefinition perspective = new PerspectiveDefinitionImpl(ListBarWorkbenchPanelPresenter.class.getName());
         perspective.setName(id);
         return perspective;
     }

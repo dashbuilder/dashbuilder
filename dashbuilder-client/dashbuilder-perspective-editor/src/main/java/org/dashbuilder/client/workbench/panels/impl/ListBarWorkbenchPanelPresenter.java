@@ -15,18 +15,17 @@ import org.uberfire.client.workbench.panels.impl.AbstractMultiPartWorkbenchPanel
  * the entire available space not used up by the title bar.
  */
 @Dependent
-public class MultiTabWorkbenchPanelPresenterExt extends AbstractMultiPartWorkbenchPanelPresenter<MultiTabWorkbenchPanelPresenterExt> {
+public class ListBarWorkbenchPanelPresenter extends AbstractMultiPartWorkbenchPanelPresenter<ListBarWorkbenchPanelPresenter> {
 
     @Inject
-    public MultiTabWorkbenchPanelPresenterExt( @Named("MultiTabWorkbenchPanelViewExt") final WorkbenchPanelView<MultiTabWorkbenchPanelPresenterExt> view,
+    public ListBarWorkbenchPanelPresenter(@Named("ListBarWorkbenchPanelView") final WorkbenchPanelView<ListBarWorkbenchPanelPresenter> view,
             final ActivityManager activityManager,
-            final PerspectiveManager perspectiveManager ) {
+            final PerspectiveManager perspectiveManager) {
         super( view, activityManager, perspectiveManager );
     }
 
     @Override
-    protected MultiTabWorkbenchPanelPresenterExt asPresenterType() {
+    protected ListBarWorkbenchPanelPresenter asPresenterType() {
         return this;
     }
-
 }

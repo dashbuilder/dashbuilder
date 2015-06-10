@@ -1,4 +1,4 @@
-package org.dashbuilder.client.workbench.panels.impl;
+package org.dashbuilder.client.perspective.editor.widgets;
 
 import java.util.ArrayList;
 import java.util.List;

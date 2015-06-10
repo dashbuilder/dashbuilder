@@ -23,12 +23,9 @@
   <ui:with field="res" type="org.uberfire.client.resources.WorkbenchResources"/>
 
   <ui:style>
-    .better_margin {
+    .toolbar {
       margin-top: 5px;
       margin-right: 10px;
-    }
-
-    .pull-right {
       float: right;
     }
 
@@ -44,7 +41,7 @@
   <uf:ResizeFocusPanel>
     <g:FlowPanel styleName="{style.fill-parent}">
 
-      <g:FlowPanel styleName="{style.pull-right} {style.better_margin}" ui:field="panelToolbar" />
+      <g:FlowPanel styleName="{style.toolbar}" ui:field="toolbarContainer" />
       <my:ResizeTabPanel ui:field="tabPanel" tabPosition="ABOVE"/>
 
     </g:FlowPanel>

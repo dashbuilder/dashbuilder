@@ -1,0 +1,67 @@
+/* Styles prefixed with uf- are not obfuscated and can be overridden in application stylesheets. */
+@external .uf-*;
+
+.uf-listbar {
+    -moz-box-shadow: rgba(255, 255, 255, 0.2) 0px 1px 0px 0px inset, rgba(0, 0, 0, 0.0470588) 0px 1px 2px 0px;
+    -webkit-box-shadow: rgba(255, 255, 255, 0.2) 0px 1px 0px 0px inset, rgba(0, 0, 0, 0.0470588) 0px 1px 2px 0px;
+    background: rgb(245, 245, 245) linear-gradient(rgb(255, 255, 255), rgb(230, 230, 230)) repeat-x;
+    border-image-outset: 0px;
+    border-image-repeat: stretch;
+    border-image-slice: 100%;
+    border-image-source: none;
+    border-image-width: 1;
+    border: 1px solid rgba(0, 0, 0, 0.0980392);
+    border-top-width: 0px;
+    border-bottom-color: rgb(179, 179, 179);
+    box-shadow: rgba(255, 255, 255, 0.2) 0px 1px 0px 0px inset, rgba(0, 0, 0, 0.0470588) 0px 1px 2px 0px;
+    box-sizing: border-box;
+    color: rgb(51, 51, 51);
+    padding-left: 6px;
+    padding-top: 5px;
+    text-shadow: rgba(255, 255, 255, 0.74902) 0px 1px 1px;
+    height: 32px;
+}
+
+.uf-listpopover {
+    background: rgb(255, 255, 255) linear-gradient(rgb(255, 255, 255), rgb(255, 255, 255)) repeat-x;
+    border-image-outset: 0px;
+    border-image-repeat: stretch;
+    border-image-slice: 100%;
+    border-image-source: none;
+    border-image-width: 1;
+    border-top-width: 0px;
+    box-sizing: border-box;
+    color: rgb(51, 51, 51);
+    padding-left: 6px;
+    padding-top: 5px;
+    text-shadow: rgba(255, 255, 255, 0.74902) 0px 1px 1px;
+    height: 32px;
+    width: 100%;
+    position: absolute;
+    z-index: 1;
+}
+
+.uf-listpopoveredit {
+    -moz-box-shadow: rgba(255, 255, 255, 0.2) 0px 1px 0px 0px inset, rgba(0, 0, 0, 0.0470588) 0px 1px 2px 0px;
+    -webkit-box-shadow: rgba(255, 255, 255, 0.2) 0px 1px 0px 0px inset, rgba(0, 0, 0, 0.0470588) 0px 1px 2px 0px;
+    background: rgb(245, 245, 245) linear-gradient(rgb(255, 255, 255), rgb(230, 230, 230)) repeat-x;
+    border-image-outset: 0px;
+    border-image-repeat: stretch;
+    border-image-slice: 100%;
+    border-image-source: none;
+    border-image-width: 1;
+    border: 1px solid rgba(0, 0, 0, 0.0980392);
+    border-top-width: 0px;
+    border-bottom-color: rgb(179, 179, 179);
+    box-shadow: rgba(255, 255, 255, 0.2) 0px 1px 0px 0px inset, rgba(0, 0, 0, 0.0470588) 0px 1px 2px 0px;
+    box-sizing: border-box;
+    color: rgb(51, 51, 51);
+    padding-left: 6px;
+    padding-top: 5px;
+    text-shadow: rgba(255, 255, 255, 0.74902) 0px 1px 1px;
+    height: 32px;
+    width: 100%;
+    position: absolute;
+    z-index: 1;
+}
+

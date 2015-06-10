@@ -38,22 +38,15 @@ public interface AppConstants extends Messages {
 
     String menu_dashboards_salesreports();
 
-    String menu_dashboards_new();
-
     String menu_extensions_plugins();
 
     String menu_extensions_apps();
 
-    String notification_dashboard_created(String id);
+    String notification_perspective_created(String id);
 
-    String notification_dashboard_deleted(String id);
+    String notification_perspective_deleted(String id);
 
     String loading();
-
-    String dashboard_new_displayer();
-    String dashboard_delete_dashboard();
-    String dashboard_delete_popup_title();
-    String dashboard_delete_popup_content();
 
     String salesdbpersp_salessummary();
 

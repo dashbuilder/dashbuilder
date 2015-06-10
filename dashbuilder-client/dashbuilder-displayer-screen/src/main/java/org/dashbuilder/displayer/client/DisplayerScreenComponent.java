@@ -50,7 +50,6 @@ public class DisplayerScreenComponent implements PerspectiveEditorComponent {
         displayerEditor.init(null, new DisplayerEditor.Listener() {
 
             public void onClose(final DisplayerEditor editor) {
-                perspectiveEditor.editOff();
             }
 
             public void onSave(final DisplayerEditor editor) {

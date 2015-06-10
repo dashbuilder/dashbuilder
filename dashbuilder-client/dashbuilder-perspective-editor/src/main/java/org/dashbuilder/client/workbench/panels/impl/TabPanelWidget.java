@@ -1,7 +1,6 @@
 package org.dashbuilder.client.workbench.panels.impl;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -32,6 +31,7 @@ import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.RequiresResize;
 import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.client.perspective.editor.PerspectiveEditor;
+import org.dashbuilder.client.perspective.editor.widgets.PanelToolbarWidget;
 import org.uberfire.client.resources.WorkbenchResources;
 import org.uberfire.client.util.Layouts;
 import org.uberfire.client.views.bs2.maximize.MaximizeToggleButton;
@@ -49,18 +49,12 @@ import static org.uberfire.commons.validation.PortablePreconditions.checkNotNull
 
 @Dependent
 public class TabPanelWidget extends Composite
-        implements MultiPartWidget, PanelToolbarWidget.Presenter, ClickHandler {
+        implements MultiPartWidget, ClickHandler {
 
     interface TabPanelWidgetBinder extends UiBinder<ResizeFocusPanel, TabPanelWidget> {}
     static TabPanelWidgetBinder uiBinder = GWT.create(TabPanelWidgetBinder.class);
 
     protected static final int MARGIN = 20;
-
-    @Inject
-    protected PanelManager panelManager;
-
-    @Inject
-    protected PerspectiveEditor perspectiveEditor;
 
     @Inject
     protected WorkbenchDragAndDropManager dndManager;
@@ -69,7 +63,7 @@ public class TabPanelWidget extends Composite
     protected PanelToolbarWidget panelToolbarWidget;
 
     @UiField
-    protected Panel panelToolbar;
+    protected Panel toolbarContainer;
 
     @UiField
     protected ResizeTabPanel tabPanel;
@@ -82,6 +76,7 @@ public class TabPanelWidget extends Composite
     protected Map<PartDefinition, TabLink> partTabIndex = new HashMap<PartDefinition, TabLink>();
     protected boolean hasFocus = false;
     protected List<Command> focusGainedHandlers = new ArrayList<Command>();
+    protected boolean editEnabled = false;
 
     /**
      * Flag protecting {@link #updateDisplayedTabs()} from recursively invoking itself through events that it causes.
@@ -120,10 +115,7 @@ public class TabPanelWidget extends Composite
 
         tabPanel.addDomHandler( TabPanelWidget.this, ClickEvent.getType() );
 
-        // Init the panel toolbar
-        panelToolbarWidget.setPresenter(this);
-        panelToolbarWidget.setEditEnabled(perspectiveEditor.isEditOn());
-        panelToolbar.add(panelToolbarWidget);
+        toolbarContainer.add(panelToolbarWidget);
     }
 
     @Override
@@ -139,7 +131,21 @@ public class TabPanelWidget extends Composite
         partTabIndex.clear();
         tabIndex.clear();
         tabInvertedIndex.clear();
-        panelToolbar.clear();
+        toolbarContainer.clear();
+    }
+
+    public boolean isEditEnabled() {
+        return editEnabled;
+    }
+
+    public void setEditEnabled(boolean editEnabled) {
+        this.editEnabled = editEnabled;
+        panelToolbarWidget.setEditEnabled(editEnabled);
+        panelToolbarWidget.updateView();
+    }
+
+    public PanelToolbarWidget getPanelToolbarWidget() {
+        return panelToolbarWidget;
     }
 
     /**
@@ -306,7 +312,9 @@ public class TabPanelWidget extends Composite
         tabInvertedIndex.put( tab.asTabLink(), view );
         partTabIndex.put( view.getPresenter().getDefinition(), tab.asTabLink() );
 
-        dndManager.makeDraggable(view, tab.asTabLink().getWidget( 0 ) );
+        if (isEditEnabled()) {
+            dndManager.makeDraggable(view, tab.asTabLink().getWidget(0));
+        }
         return tab;
     }
 
@@ -426,19 +434,10 @@ public class TabPanelWidget extends Composite
         return partTabIndex.size();
     }
 
-    /**
-     * Returns the toggle button, which is initially hidden, that can be used to trigger maximizing and unmaximizing
-     * of the panel containing this list bar. Make the button visible by calling {@link Widget#setVisible(boolean)}
-     * and set its maximize and unmaximize actions with {@link MaximizeToggleButton#setMaximizeCommand(Command)} and
-     * {@link MaximizeToggleButton#setUnmaximizeCommand(Command)}.
-     */
-    public MaximizeToggleButtonPresenter getMaximizeButton() {
-        return panelToolbarWidget.getMaximizeButton();
-    }
-
-    // Panel Toolbar stuff
-
     protected WorkbenchPartPresenter.View getCurrentPart() {
+        if (parts.size() == 0) {
+            return null;
+        }
         TabLink selectedTab = null;
         for ( int i = 0; i < parts.size(); i++ ) {
             WorkbenchPartPresenter part = parts.get( i );
@@ -447,7 +446,7 @@ public class TabPanelWidget extends Composite
                 selectedTab = tabWidget;
             }
         }
-        if ( selectedTab == null ) {
+        if ( selectedTab == null && getTabs().getWidgetCount() > 0) {
             TabLink firstTab = (TabLink) getTabs().getWidget( 0 );
             selectedTab = firstTab;
         }
@@ -458,37 +457,5 @@ public class TabPanelWidget extends Composite
         panelToolbarWidget.setCurrentPart(getCurrentPart());
         panelToolbarWidget.setAvailableParts(null);
         panelToolbarWidget.updateView();
-    }
-
-    @Override
-    public void selectPart(WorkbenchPartPresenter.View partView) {
-        this.selectPart(partView.getPresenter().getDefinition());
-    }
-
-    @Override
-    public void closePart(WorkbenchPartPresenter.View partView) {
-        perspectiveEditor.closePart(partView.getPresenter().getDefinition());
-        perspectiveEditor.saveCurrentPerspective();
-    }
-
-    @Override
-    public void changePanelType(String panelType) {
-        perspectiveEditor.changePanelType(presenter, panelType);
-        perspectiveEditor.saveCurrentPerspective();
-    }
-
-    @Override
-    public String getPanelType() {
-        return presenter.getDefinition().getPanelType();
-    }
-
-    @Override
-    public Map<String,String> getAvailablePanelTypes() {
-        Map<String,String> result = new HashMap<String, String>();
-        result.put(MultiListWorkbenchPanelPresenterExt.class.getName(), "List");
-        if (tabIndex.size() == 1) {
-            result.put(StaticWorkbenchPanelPresenterExt.class.getName(), "Static");
-        }
-        return result;
     }
 }

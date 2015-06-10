@@ -18,50 +18,40 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
              xmlns:g="urn:import:com.google.gwt.user.client.ui"
              xmlns:tb="urn:import:com.github.gwtbootstrap.client.ui"
+             xmlns:ufm="urn:import:org.uberfire.client.views.bs2.maximize"
              xmlns:uf="urn:import:org.uberfire.client.workbench.widgets.listbar">
 
-  <ui:with field="res" type="org.uberfire.client.resources.WorkbenchResources"/>
+<ui:with field="res" type="org.uberfire.client.resources.WorkbenchResources"/>
 
   <ui:style>
-    .title {
-      font-size: 18px;
-    }
-
-    .better_margin {
-      margin-right: 10px;
-    }
-
-    .pull-right {
-      float: right;
-    }
-
-    .inline {
+    .toolbar {
       display: inline;
     }
-
-    .fill-parent {
-      position: relative;
-      top: 0;
-      bottom: 0;
-      width: 100%;
-      height: 100%;
+    .context-menu {
+      display: inline;
+      margin-right: 5px;
     }
   </ui:style>
 
-  <uf:ResizeFocusPanel ui:field="container" visible="false">
-    <g:FlowPanel styleName="{style.fill-parent}">
-      <g:FlowPanel styleName="{res.CSS.listbar}" ui:field="header">
+  <uf:ResizeFocusPanel ui:field="toolbarPanel">
+    <g:FlowPanel>
 
-        <g:FlowPanel styleName="{style.pull-right} {style.better_margin}" ui:field="panelToolbar" />
+      <g:FlowPanel styleName="{style.context-menu}" ui:field="contextMenu"/>
+      <tb:ButtonGroup ui:field="changeTypeButtonContainer" title="Show as...">
+        <tb:DropdownButton  ui:field="changeTypeButton" size="MINI" icon="ASTERISK" />
+      </tb:ButtonGroup>
+      <tb:ButtonGroup ui:field="closeButtonContainer">
+        <tb:Button ui:field="closeButton" size="MINI" icon="REMOVE" />
+      </tb:ButtonGroup>
+      <tb:ButtonGroup ui:field="dropdownCaretContainer">
+        <tb:DropdownButton ui:field="dropdownCaret" size="MINI"/>
+      </tb:ButtonGroup>
+      <tb:ButtonGroup ui:field="maximizeButtonContainer">
+        <ufm:MaximizeToggleButton ui:field="maximizeButton"/>
+      </tb:ButtonGroup>
 
-        <g:FlowPanel styleName="{style.inline}">
-          <tb:Button ui:field="contextDisplay" size="MINI" icon="REORDER"/>
-          <g:SimplePanel styleName="{style.inline} {style.title}" ui:field="title"/>
-        </g:FlowPanel>
-
-      </g:FlowPanel>
-      <g:FlowPanel ui:field="content"/>
     </g:FlowPanel>
+
   </uf:ResizeFocusPanel>
 
 </ui:UiBinder>

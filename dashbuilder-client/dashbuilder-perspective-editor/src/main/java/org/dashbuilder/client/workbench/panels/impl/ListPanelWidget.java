@@ -1,6 +1,5 @@
 package org.dashbuilder.client.workbench.panels.impl;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -8,7 +7,6 @@ import java.util.Map;
 import java.util.ArrayList;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
-import javax.enterprise.event.Observes;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
@@ -22,6 +20,10 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.FocusEvent;
 import com.google.gwt.event.dom.client.FocusHandler;
+import com.google.gwt.event.dom.client.MouseOutEvent;
+import com.google.gwt.event.dom.client.MouseOutHandler;
+import com.google.gwt.event.dom.client.MouseOverEvent;
+import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.event.logical.shared.BeforeSelectionEvent;
 import com.google.gwt.event.logical.shared.BeforeSelectionHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
@@ -39,14 +41,11 @@ import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.client.perspective.editor.PerspectiveEditor;
-import org.dashbuilder.client.perspective.editor.events.PerspectiveEditOffEvent;
-import org.dashbuilder.client.perspective.editor.events.PerspectiveEditOnEvent;
+import org.dashbuilder.client.perspective.editor.resources.WorkbenchResources;
+import org.dashbuilder.client.perspective.editor.widgets.PanelToolbarWidget;
 import org.jboss.errai.ioc.client.container.IOCResolutionException;
-import org.uberfire.client.mvp.PerspectiveManager;
-import org.uberfire.client.mvp.PlaceManager;
 import org.uberfire.client.util.Layouts;
 import org.uberfire.client.views.bs2.maximize.MaximizeToggleButton;
-import org.uberfire.client.workbench.PanelManager;
 import org.uberfire.client.workbench.panels.MaximizeToggleButtonPresenter;
 import org.uberfire.client.workbench.panels.MultiPartWidget;
 import org.uberfire.client.workbench.panels.WorkbenchPanelPresenter;
@@ -65,8 +64,7 @@ import static com.google.gwt.dom.client.Style.Display.*;
  * Implementation of ListBarWidget based on GWTBootstrap 2 components.
  */
 @Dependent
-public class ListBarWidgetExt extends ResizeComposite
-        implements MultiPartWidget, PanelToolbarWidget.Presenter {
+public class ListPanelWidget extends ResizeComposite implements MultiPartWidget {
 
     /**
      * When a part is added to the list bar, a special title widget is created for it. This title widget is draggable.
@@ -78,7 +76,7 @@ public class ListBarWidgetExt extends ResizeComposite
      */
     public static final String DEBUG_TITLE_PREFIX = "ListBar-title-";
 
-    interface ListBarWidgetBinder extends UiBinder<ResizeFocusPanel, ListBarWidgetExt> {}
+    interface ListBarWidgetBinder extends UiBinder<ResizeFocusPanel, ListPanelWidget> {}
     static ListBarWidgetBinder uiBinder = GWT.create(ListBarWidgetBinder.class);
 
     /**
@@ -88,22 +86,10 @@ public class ListBarWidgetExt extends ResizeComposite
     protected Instance<ListbarPreferences> optionalListBarPrefs;
 
     @Inject
-    protected PanelManager panelManager;
-
-    @Inject
-    protected PlaceManager placeManager;
-
-    @Inject
-    protected PerspectiveManager perspectiveManager;
-
-    @Inject
-    protected PerspectiveEditor perspectiveEditor;
-
-    @Inject
     protected PanelToolbarWidget panelToolbarWidget;
 
     @UiField
-    protected Panel panelToolbar;
+    protected Panel toolbarContainer;
 
     @UiField
     protected FocusPanel container;
@@ -127,6 +113,9 @@ public class ListBarWidgetExt extends ResizeComposite
     protected LinkedHashSet<PartDefinition> parts = new LinkedHashSet<PartDefinition>();
     protected Pair<PartDefinition, FlowPanel> currentPart;
 
+    protected boolean editEnabled = false;
+    protected boolean popoverEnabled = false;
+
     @PostConstruct
     void postConstruct() {
         initWidget( uiBinder.createAndBindUi( this ) );
@@ -146,6 +135,19 @@ public class ListBarWidgetExt extends ResizeComposite
             }
         } );
 
+        // Show when moving the mouse over
+        container.addDomHandler(new MouseOverHandler() {
+            public void onMouseOver(MouseOverEvent mouseOverEvent) {
+                showHeader();
+            }
+        }, MouseOverEvent.getType());
+
+        container.addDomHandler(new MouseOutHandler() {
+            public void onMouseOut(MouseOutEvent mouseOverEvent) {
+                hideHeader();
+            }
+        }, MouseOutEvent.getType());
+
         if ( isPropertyListbarContextDisable() ) {
             contextDisplay.removeFromParent();
         }
@@ -157,10 +159,25 @@ public class ListBarWidgetExt extends ResizeComposite
         // height is calculated and set in onResize()
 
         // Init the panel toolbar
-        panelToolbarWidget.setPresenter(this);
-        panelToolbarWidget.setEditEnabled(perspectiveEditor.isEditOn());
-        panelToolbar.add(panelToolbarWidget);
         updatePanelToolbar();
+        updateHeaderStyle();
+        toolbarContainer.add(panelToolbarWidget);
+    }
+
+    public void showHeader() {
+        if (popoverEnabled) {
+            header.setVisible(true);
+        }
+    }
+
+    public void hideHeader() {
+        if (popoverEnabled) {
+            header.setVisible(false);
+        }
+    }
+
+    public PanelToolbarWidget getPanelToolbarWidget() {
+        return panelToolbarWidget;
     }
 
     boolean isPropertyListbarContextDisable() {
@@ -184,6 +201,47 @@ public class ListBarWidgetExt extends ResizeComposite
                     command.execute();
                 }
             } );
+        }
+    }
+
+    public boolean isEditEnabled() {
+        return editEnabled;
+    }
+
+    public void setEditEnabled(boolean editEnabled) {
+        this.editEnabled = editEnabled;
+        panelToolbarWidget.setEditEnabled(editEnabled);
+        panelToolbarWidget.updateView();
+        updateHeaderStyle();
+    }
+
+    public boolean isPopoverEnabled() {
+        return popoverEnabled;
+    }
+
+    public void setPopoverEnabled(boolean popoverEnabled) {
+        this.popoverEnabled = popoverEnabled;
+        updateHeaderStyle();
+    }
+
+    protected void updateHeaderStyle() {
+        header.getElement().removeClassName(WorkbenchResources.INSTANCE.CSS().listBar());
+        header.getElement().removeClassName(WorkbenchResources.INSTANCE.CSS().listPopover());
+        header.getElement().removeClassName(WorkbenchResources.INSTANCE.CSS().listPopoverEdit());
+        header.setVisible(!popoverEnabled);
+        title.setVisible(true);
+
+        if (!isPopoverEnabled()) {
+            header.getElement().addClassName(WorkbenchResources.INSTANCE.CSS().listBar());
+        }
+        else {
+            if (isEditEnabled()) {
+                header.getElement().addClassName(WorkbenchResources.INSTANCE.CSS().listPopoverEdit());
+            }
+            else {
+                header.getElement().addClassName(WorkbenchResources.INSTANCE.CSS().listPopover());
+                title.setVisible(false);
+            }
         }
     }
 
@@ -231,9 +289,9 @@ public class ListBarWidgetExt extends ResizeComposite
         partTitle.put( partDefinition, title );
         title.ensureDebugId( DEBUG_TITLE_PREFIX + view.getPresenter().getTitle() );
 
-        //if ( isEditable ) {
+        if (isEditEnabled()) {
             dndManager.makeDraggable( view, title );
-        //}
+        }
 
         scheduleResize();
     }
@@ -242,12 +300,12 @@ public class ListBarWidgetExt extends ResizeComposite
         this.title.clear();
 
         final Widget title = partTitle.get( partDefinition );
-        this.title.add(title );
+        this.title.add(title);
     }
 
     private Widget buildTitle( final String title, final IsWidget titleDecoration ) {
         final SpanElement spanElement = Document.get().createSpanElement();
-        spanElement.getStyle().setWhiteSpace(Style.WhiteSpace.NOWRAP );
+        spanElement.getStyle().setWhiteSpace(Style.WhiteSpace.NOWRAP);
         spanElement.getStyle().setOverflow( Style.Overflow.HIDDEN );
         spanElement.getStyle().setTextOverflow(Style.TextOverflow.ELLIPSIS );
         spanElement.getStyle().setDisplay( BLOCK );
@@ -265,9 +323,9 @@ public class ListBarWidgetExt extends ResizeComposite
             final IsWidget titleDecoration ) {
         final Widget _title = buildTitle( title, titleDecoration );
         partTitle.put( part, _title );
-        //if ( isEditable ) {
+        if (isEditEnabled()) {
             dndManager.makeDraggable(partContentView.get(part), _title);
-        //}
+        }
         if ( currentPart != null && currentPart.getK1().equals( part ) ) {
             updateBreadcrumb( part );
         }
@@ -299,7 +357,7 @@ public class ListBarWidgetExt extends ResizeComposite
 
         scheduleResize();
 
-        SelectionEvent.fire(ListBarWidgetExt.this, part);
+        SelectionEvent.fire(ListPanelWidget.this, part);
 
         return true;
     }
@@ -386,7 +444,7 @@ public class ListBarWidgetExt extends ResizeComposite
         panelToolbarWidget.onResize();
     }
 
-    private void scheduleResize() {
+    protected void scheduleResize() {
         Scheduler.get().scheduleDeferred( new Scheduler.ScheduledCommand() {
             @Override
             public void execute() {
@@ -394,18 +452,6 @@ public class ListBarWidgetExt extends ResizeComposite
             }
         } );
     }
-
-    /**
-     * Returns the toggle button, which is initially hidden, that can be used to trigger maximizing and unmaximizing
-     * of the panel containing this list bar. Make the button visible by calling {@link Widget#setVisible(boolean)}
-     * and set its maximize and unmaximize actions with {@link MaximizeToggleButton#setMaximizeCommand(Command)} and
-     * {@link MaximizeToggleButton#setUnmaximizeCommand(Command)}.
-     */
-    public MaximizeToggleButtonPresenter getMaximizeButton() {
-        return panelToolbarWidget.getMaximizeButton();
-    }
-
-    // Panel Toolbar stuff
 
     protected List<WorkbenchPartPresenter.View> getAvailablePartViews() {
         List<WorkbenchPartPresenter.View> availableParts = new ArrayList<WorkbenchPartPresenter.View>();
@@ -419,37 +465,5 @@ public class ListBarWidgetExt extends ResizeComposite
         panelToolbarWidget.setCurrentPart(currentPart != null ? (WorkbenchPartPresenter.View) currentPart.getK2().getWidget(0) : null);
         panelToolbarWidget.setAvailableParts(getAvailablePartViews());
         panelToolbarWidget.updateView();
-    }
-
-    @Override
-    public void selectPart(WorkbenchPartPresenter.View partView) {
-        this.selectPart(partView.getPresenter().getDefinition());
-    }
-
-    @Override
-    public void closePart(WorkbenchPartPresenter.View partView) {
-        perspectiveEditor.closePart(partView.getPresenter().getDefinition());
-        perspectiveEditor.saveCurrentPerspective();
-    }
-
-    @Override
-    public void changePanelType(String panelType) {
-        perspectiveEditor.changePanelType(presenter, panelType);
-        perspectiveEditor.saveCurrentPerspective();
-    }
-
-    @Override
-    public String getPanelType() {
-        return presenter.getDefinition().getPanelType();
-    }
-
-    @Override
-    public Map<String,String> getAvailablePanelTypes() {
-        Map<String,String> result = new HashMap<String, String>();
-        result.put(MultiTabWorkbenchPanelPresenterExt.class.getName(), "Tabs");
-        if (partContentView.size() == 1) {
-            result.put(StaticWorkbenchPanelPresenterExt.class.getName(), "Static");
-        }
-        return result;
     }
 }

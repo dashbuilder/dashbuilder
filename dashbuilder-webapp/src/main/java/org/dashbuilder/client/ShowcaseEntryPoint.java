@@ -127,13 +127,13 @@ public class ShowcaseEntryPoint {
     private void onPerspectiveCreatedEvent(@Observes PerspectiveCreatedEvent event) {
         menubar.clear();
         menubar.addMenus(createMenuBar());
-        //workbenchNotification.fire(new NotificationEvent(AppConstants.INSTANCE.notification_dashboard_created(event.getDashboardName()), INFO));
+        //workbenchNotification.fire(new NotificationEvent(AppConstants.INSTANCE.notification_perspective_created(event.getDashboardName()), INFO));
     }
 
     private void onPerspectiveDeletedEvent(@Observes PerspectiveDeletedEvent event) {
         menubar.clear();
         menubar.addMenus(createMenuBar());
-        workbenchNotification.fire(new NotificationEvent(AppConstants.INSTANCE.notification_dashboard_deleted(event.getPerspectiveName()), INFO));
+        workbenchNotification.fire(new NotificationEvent(AppConstants.INSTANCE.notification_perspective_deleted(event.getPerspectiveName()), INFO));
     }
 
     private void onPerspectiveRenamedEvent(@Observes PerspectiveRenamedEvent event) {

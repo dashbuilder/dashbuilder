@@ -1,9 +1,7 @@
-package org.dashbuilder.client.workbench.panels.impl;
+package org.dashbuilder.client.perspective.editor.widgets;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
-import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
@@ -15,6 +13,9 @@ import com.github.gwtbootstrap.client.ui.NavLink;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.shared.EventHandler;
+import com.google.gwt.event.shared.GwtEvent;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -36,14 +37,6 @@ import org.uberfire.workbench.model.menu.MenuItem;
  */
 @Dependent
 public class PanelToolbarWidget extends ResizeComposite {
-
-    public interface Presenter {
-        void selectPart(WorkbenchPartPresenter.View partView);
-        void closePart(WorkbenchPartPresenter.View partView);
-        void changePanelType(String panelType);
-        String getPanelType();
-        Map<String,String> getAvailablePanelTypes();
-    }
 
     interface Binder extends UiBinder<ResizeFocusPanel, PanelToolbarWidget> {}
     private static Binder uiBinder = GWT.create(Binder.class);
@@ -81,9 +74,10 @@ public class PanelToolbarWidget extends ResizeComposite {
     /** Wraps maximizeButton, which is the view. */
     protected MaximizeToggleButtonPresenter maximizeButtonPresenter;
 
-    protected Presenter presenter = null;
     protected MenuWidgetFactory menuWidgetFactory;
     protected boolean editEnabled = false;
+    protected boolean maximizeEnabled = true;
+    protected  Map<String,String> availablePanelTypes = null;
     protected WorkbenchPartPresenter.View currentPartView = null;
     protected Collection<WorkbenchPartPresenter.View> availablePartViews = null;
     protected PartChooserList partChooserList = null;
@@ -99,18 +93,25 @@ public class PanelToolbarWidget extends ResizeComposite {
         closeButton.addClickHandler( new ClickHandler() {
             @Override
             public void onClick( ClickEvent event ) {
-                if (currentPartView != null && presenter != null) {
-                    presenter.closePart(currentPartView);
+                if (currentPartView != null) {
+                    PanelToolbarWidget.this.fireEvent(new PartCloseEvent(currentPartView));
                 }
             }
         } );
-
+        maximizeButtonPresenter.setMaximizeCommand(new Command() {
+            @Override
+            public void execute() {
+                PanelToolbarWidget.this.fireEvent(new MaximizeClickEvent(maximizeButton.isMaximized()));
+            }
+        });
+        maximizeButtonPresenter.setUnmaximizeCommand(new Command() {
+            @Override
+            public void execute() {
+                PanelToolbarWidget.this.fireEvent(new MaximizeClickEvent(maximizeButton.isMaximized()));
+            }
+        });
 
         clear();
-    }
-
-    public void setPresenter(Presenter presenter) {
-        this.presenter = presenter;
     }
 
     public void setCurrentPart(WorkbenchPartPresenter.View partView) {
@@ -125,18 +126,16 @@ public class PanelToolbarWidget extends ResizeComposite {
         editEnabled = enabled;
     }
 
+    public void setMaximizeEnabled(boolean maximizeEnabled) {
+        this.maximizeEnabled = maximizeEnabled;
+    }
+
     public MaximizeToggleButtonPresenter getMaximizeButton() {
         return maximizeButtonPresenter;
     }
 
-    protected void onPerspectiveEditOn(@Observes PerspectiveEditOnEvent event) {
-        setEditEnabled(true);
-        updateView();
-    }
-
-    protected void onPerspectiveEditOff(@Observes PerspectiveEditOffEvent event) {
-        setEditEnabled(false);
-        updateView();
+    public void setAvailablePanelTypes(Map<String, String> availablePanelTypes) {
+        this.availablePanelTypes = availablePanelTypes;
     }
 
     public void clear() {
@@ -157,12 +156,15 @@ public class PanelToolbarWidget extends ResizeComposite {
         if (panelTypeChooserList != null) {
             panelTypeChooserList.clear();
         }
+
+        maximizeButtonContainer.setVisible(false);
     }
 
     public void updateView() {
         this.setVisible(currentPartView != null);
         changeTypeButtonContainer.setVisible(currentPartView != null && editEnabled);
         closeButtonContainer.setVisible(currentPartView != null && editEnabled);
+        maximizeButtonContainer.setVisible(maximizeEnabled);
         updateContextMenu();
         updateDropdown();
         updateTypeSelector();
@@ -204,7 +206,7 @@ public class PanelToolbarWidget extends ResizeComposite {
         changeTypeButton.setRightDropdown(true);
         changeTypeButton.clear();
 
-        if (editEnabled && !presenter.getAvailablePanelTypes().isEmpty()) {
+        if (editEnabled && availablePanelTypes != null) {
             changeTypeButtonContainer.setVisible(true);
             panelTypeChooserList = new PanelTypeChooserList();
             changeTypeButton.add(panelTypeChooserList);
@@ -246,9 +248,7 @@ public class PanelToolbarWidget extends ResizeComposite {
                             addClickHandler(new ClickHandler() {
                                 @Override
                                 public void onClick(final ClickEvent event) {
-                                    if (presenter != null) {
-                                        presenter.selectPart(partView);
-                                    }
+                                    PanelToolbarWidget.this.fireEvent(new PartSelectEvent(partView));
                                 }
                             });
                         }});
@@ -272,17 +272,14 @@ public class PanelToolbarWidget extends ResizeComposite {
 
         PanelTypeChooserList() {
             initWidget(panel);
-            Map<String,String> types = presenter.getAvailablePanelTypes();
-            for (final String type : types.keySet()) {
-                String descr = types.get(type);
+            for (final String type : availablePanelTypes.keySet()) {
+                String descr = availablePanelTypes.get(type);
 
                 panel.add(new NavLink(descr) {{
                     addClickHandler(new ClickHandler() {
                         @Override
                         public void onClick(final ClickEvent event) {
-                            if (presenter != null) {
-                                presenter.changePanelType(type);
-                            }
+                            PanelToolbarWidget.this.fireEvent(new PanelTypeChangeEvent(currentPartView, type));
                         }
                     });
                 }});
@@ -293,5 +290,149 @@ public class PanelToolbarWidget extends ResizeComposite {
         public void clear() {
             panel.clear();
         }
+    }
+
+    // Event handlers
+
+    public interface PartSelectHandler extends EventHandler {
+        void onPartSelect(PartSelectEvent event);
+    }
+
+    public interface PartCloseHandler extends EventHandler {
+        void onPartClose(PartCloseEvent event);
+    }
+
+    public interface PanelTypeChangeHandler extends EventHandler {
+        void onPanelTypeChange(PanelTypeChangeEvent event);
+    }
+
+    public interface MaximizeClickHandler extends EventHandler {
+        void onMaximize();
+        void onMinimize();
+    }
+
+    public static class PartSelectEvent extends GwtEvent<PartSelectHandler> {
+
+        public static GwtEvent.Type<PartSelectHandler> TYPE = new GwtEvent.Type<PartSelectHandler>();
+
+        private WorkbenchPartPresenter.View partView;
+
+        public PartSelectEvent(WorkbenchPartPresenter.View partView) {
+            this.partView = partView;
+        }
+
+        public WorkbenchPartPresenter.View getPartView() {
+            return partView;
+        }
+
+        @Override
+        public Type<PartSelectHandler> getAssociatedType() {
+            return TYPE;
+        }
+
+        @Override
+        protected void dispatch(PartSelectHandler handler) {
+            handler.onPartSelect(this);
+        }
+    }
+
+    public static class PartCloseEvent extends GwtEvent<PartCloseHandler> {
+
+        public static GwtEvent.Type<PartCloseHandler> TYPE = new GwtEvent.Type<PartCloseHandler>();
+
+        private WorkbenchPartPresenter.View partView;
+
+        public PartCloseEvent(WorkbenchPartPresenter.View partView) {
+            this.partView = partView;
+        }
+
+        public WorkbenchPartPresenter.View getPartView() {
+            return partView;
+        }
+
+        @Override
+        public Type<PartCloseHandler> getAssociatedType() {
+            return TYPE;
+        }
+
+        @Override
+        protected void dispatch(PartCloseHandler handler) {
+            handler.onPartClose(this);
+        }
+    }
+
+    public static class PanelTypeChangeEvent extends GwtEvent<PanelTypeChangeHandler> {
+
+        public static GwtEvent.Type<PanelTypeChangeHandler> TYPE = new GwtEvent.Type<PanelTypeChangeHandler>();
+
+        private WorkbenchPartPresenter.View partView;
+        private String newPanelType;
+
+        public PanelTypeChangeEvent(WorkbenchPartPresenter.View partView, String newPanelType) {
+            this.partView = partView;
+            this.newPanelType = newPanelType;
+        }
+
+        public WorkbenchPartPresenter.View getPartView() {
+            return partView;
+        }
+
+        public String getNewPanelType() {
+            return newPanelType;
+        }
+
+        @Override
+        public Type<PanelTypeChangeHandler> getAssociatedType() {
+            return TYPE;
+        }
+
+        @Override
+        protected void dispatch(PanelTypeChangeHandler handler) {
+            handler.onPanelTypeChange(this);
+        }
+    }
+    public static class MaximizeClickEvent extends GwtEvent<MaximizeClickHandler> {
+
+        public static GwtEvent.Type<MaximizeClickHandler> TYPE = new GwtEvent.Type<MaximizeClickHandler>();
+
+        private boolean maximized;
+
+        public MaximizeClickEvent(boolean maximized) {
+            this.maximized = maximized;
+        }
+
+        public boolean isMaximized() {
+            return maximized;
+        }
+
+        @Override
+        public Type<MaximizeClickHandler> getAssociatedType() {
+            return TYPE;
+        }
+
+        @Override
+        protected void dispatch(MaximizeClickHandler handler) {
+            if (maximized) {
+                handler.onMaximize();
+            } else {
+                handler.onMinimize();
+            }
+        }
+    }
+
+    public HandlerRegistration addPartSelectHandler(PartSelectHandler handler) {
+        return this.addHandler(handler, PartSelectEvent.TYPE);
+    }
+
+    public HandlerRegistration addPartCloseHandler(PartCloseHandler handler) {
+        return this.addHandler(handler, PartCloseEvent.TYPE);
+    }
+
+    public HandlerRegistration addPanelTypeChangeHandler(PanelTypeChangeHandler handler) {
+        return this.addHandler(handler, PanelTypeChangeEvent.TYPE);
+    }
+
+    public HandlerRegistration addMaximizeClickHandler(MaximizeClickHandler handler) {
+        return this.addHandler(handler, MaximizeClickEvent.TYPE);
     }
 }

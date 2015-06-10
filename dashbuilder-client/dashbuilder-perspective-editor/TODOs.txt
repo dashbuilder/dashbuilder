@@ -1,15 +1,18 @@
 Urgent
 ------------------------------
 
-* Static screen
 * HTML Screen (WYSIWYG editor, ACE? )
 * Menu Screen (vertical/horizontal arrangement, permissions, listen to delete perspective events)
 * ACL editor for mapping roles to perspectives
 * Toolbar look&feel
+* Tab panel dropdown is shown too early
+* List header style
 
 Non-urgent
 -------------------------------
 
+* Component reuse
 * Disable panel drag&drop & sliders on editOff
+* Enable/Disable drag on edit on/off
 * Persist perspectives on master branch
 * Toolbar disappears on maximize panel

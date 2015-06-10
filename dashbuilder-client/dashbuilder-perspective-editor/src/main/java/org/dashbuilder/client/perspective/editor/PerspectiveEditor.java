@@ -14,6 +14,7 @@ import org.dashbuilder.client.perspective.editor.events.PerspectiveRenamedEvent;
 import org.jboss.errai.ioc.client.api.AfterInitialization;
 import org.jboss.errai.ioc.client.container.IOC;
 import org.jboss.errai.ioc.client.container.IOCBeanDef;
+import org.jboss.errai.ioc.client.container.IOCSingletonBean;
 import org.jboss.errai.ioc.client.container.SyncBeanManager;
 import org.jboss.errai.ioc.client.container.SyncBeanManagerImpl;
 import org.uberfire.client.mvp.Activity;
@@ -173,8 +174,10 @@ public class PerspectiveEditor {
         panelManager.closePart(partDefinition);
     }
 
-    public void changePanelType(WorkbenchPanelPresenter panelPresenter, String newType) {
+    public void changePanelTypeAndSave(WorkbenchPanelPresenter panelPresenter, String newType) {
         panelPresenter.getDefinition().setPanelType(newType);
+        saveCurrentPerspective();
+
         PerspectiveActivity currentPerspective = perspectiveManager.getCurrentPerspective();
         placeManager.goTo(new ForcedPlaceRequest(currentPerspective.getIdentifier()));
     }
@@ -197,8 +200,9 @@ public class PerspectiveEditor {
         EditablePerspectiveActivity activity = new EditablePerspectiveActivity(id);
 
         SyncBeanManagerImpl beanManager = (SyncBeanManagerImpl) IOC.getBeanManager();
-        beanManager.addBean((Class) PerspectiveActivity.class, EditablePerspectiveActivity.class, null, activity, DEFAULT_QUALIFIERS, id, true, null);
-        activityBeansCache.addNewPerspectiveActivity(beanManager.lookupBeans(id).iterator().next());
+        IOCBeanDef<Activity> beanDef = IOCSingletonBean.newBean(beanManager, Activity.class, EditablePerspectiveActivity.class, null, id, true, null, activity, null);
+        beanManager.registerBean(beanDef);
+        activityBeansCache.addNewPerspectiveActivity(beanDef);
         return activity;
     }
 
