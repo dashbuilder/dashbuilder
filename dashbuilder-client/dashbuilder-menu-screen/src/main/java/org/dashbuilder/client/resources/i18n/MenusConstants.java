@@ -34,7 +34,13 @@ public interface MenusConstants extends ConstantsWithLookup {
     String name_placeholder();
     String perspective();
     String perspective_placeholder();
+    String menuItemTypeLabel();
+    String menuItemTypeCommand();
+    String menuItemTypeGroup();
+    String editMe();
     String ok();
     String create();
     String editableWorkbenchMenuBar();
+    String moveAndRemoveInfo();
+    String moveAndRemoveInfoDescription();
 }

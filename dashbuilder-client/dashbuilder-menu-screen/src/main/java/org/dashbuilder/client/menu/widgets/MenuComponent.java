@@ -15,21 +15,15 @@
  */
 package org.dashbuilder.client.menu.widgets;
 
-import org.dashbuilder.client.menu.MenuUtils;
 import org.dashbuilder.client.menu.json.MenusJSONMarshaller;
 import org.dashbuilder.client.perspective.editor.PerspectiveEditor;
 import org.dashbuilder.client.perspective.editor.PerspectiveEditorComponent;
 import org.dashbuilder.client.resources.i18n.MenusConstants;
 import org.uberfire.mvp.PlaceRequest;
 import org.uberfire.mvp.impl.DefaultPlaceRequest;
-import org.uberfire.workbench.model.menu.MenuItem;
-import org.uberfire.workbench.model.menu.Menus;
-
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 // TODO: Use of EditableWorkbenchMenuBarListener to persist the perspective (and menus)
@@ -47,25 +41,19 @@ public class MenuComponent implements PerspectiveEditorComponent {
         return MenusConstants.INSTANCE.editableWorkbenchMenuBar();
     }
 
-    @Override
+    public enum MenuItemTypes {
+        COMMAND, GROUP;
+    }
+        @Override
     public void createNewInstance() {
-        // TODO: Obtain json string for persisted menus.
-        final Menus emptyMenus = createEmptyMenus();
-        perspectiveEditor.openPlace(createPlaceRequest(emptyMenus));
+        perspectiveEditor.openPlace(createPlaceRequest());
         perspectiveEditor.saveCurrentPerspective();
     }
 
-    protected PlaceRequest createPlaceRequest(final Menus menus) {
-        String json = jsonMarshaller.toJsonString(menus);
+    protected PlaceRequest createPlaceRequest() {
         Map<String,String> params = new HashMap<String, String>();
-        params.put("json", json);
+        params.put("json", "");
         return new DefaultPlaceRequest("EditableWorkbenchMenuBar", params);
     }
     
-    private Menus createEmptyMenus() {
-        final MenuItem homeItem = MenuUtils.createMenuItemCommand("home", "HomePerspective");
-        final List<MenuItem> items = new ArrayList<MenuItem>();
-        items.add(homeItem);
-        return MenuUtils.buildEditableMenusModel(items);
-    }
 }

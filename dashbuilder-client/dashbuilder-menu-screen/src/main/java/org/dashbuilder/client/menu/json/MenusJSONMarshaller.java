@@ -18,6 +18,7 @@ package org.dashbuilder.client.menu.json;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.json.client.*;
 import org.dashbuilder.client.menu.MenuUtils;
+import org.dashbuilder.client.menu.widgets.MenuComponent;
 import org.dashbuilder.client.mvp.command.GoToPerspectiveCommand;
 import org.uberfire.workbench.model.menu.*;
 
@@ -39,10 +40,6 @@ public class MenusJSONMarshaller {
     public static final String MENU_ITEM_NAME = "name";
     public static final String MENU_ITEM_COMMAND_ACTIVITYID = "activityId";
     
-    public enum MenusJSONTypes {
-        COMMAND, GROUP;
-    }
-    
     public MenusJSONMarshaller() {
     }
 
@@ -60,9 +57,7 @@ public class MenusJSONMarshaller {
                         if (item != null) itemList.add(item);
                     }
 
-                    if (!itemList.isEmpty()) {
-                        return MenuUtils.buildEditableMenusModel(itemList);
-                    }
+                    return MenuUtils.buildEditableMenusModel(itemList);
                 }
             }
         }
@@ -72,7 +67,7 @@ public class MenusJSONMarshaller {
     private MenuItem deserializeMenuItem(final JSONObject itemObject) {
         if (itemObject != null) {
             final String typeStr = itemObject.get(MENU_ITEM_TYPE).isString().stringValue();
-            final MenusJSONTypes type = MenusJSONTypes.valueOf(typeStr);
+            final MenuComponent.MenuItemTypes type = MenuComponent.MenuItemTypes.valueOf(typeStr);
             switch (type) {
                 case COMMAND:
                     return deserializeMenuItemCommand(itemObject);
@@ -100,7 +95,6 @@ public class MenusJSONMarshaller {
             final JSONArray items = itemObject.get( MENU_ITEMS ).isArray();
             if (items != null) {
                 final List<MenuItem> result = new ArrayList<MenuItem>();
-                final List<MenuItem> itemList = new ArrayList<MenuItem>();
                 for (int x = 0; x < items.size(); x++) {
                     JSONObject columnJson = items.get(x).isObject();
                     final MenuItem i = deserializeMenuItem(columnJson.isObject());
@@ -163,8 +157,8 @@ public class MenusJSONMarshaller {
                 final String activityId = goToPerspectiveCommand.getActivityId();
                 final JSONObject itemObject = serializeItemBasicAttributes(menuItemCommand);
                 if (itemObject != null && activityId != null) {
-                    itemObject.put(MENU_ITEM_TYPE, new JSONString(MenusJSONTypes.COMMAND.name()));
-                    itemObject.put(MENU_ITEM_TYPE, new JSONString(MenusJSONTypes.COMMAND.name()));
+                    itemObject.put(MENU_ITEM_TYPE, new JSONString(MenuComponent.MenuItemTypes.COMMAND.name()));
+                    itemObject.put(MENU_ITEM_TYPE, new JSONString(MenuComponent.MenuItemTypes.COMMAND.name()));
                     itemObject.put(MENU_ITEM_COMMAND_ACTIVITYID, new JSONString(activityId));
                     return itemObject;
                 }
@@ -179,7 +173,7 @@ public class MenusJSONMarshaller {
         if (menuGroup != null) {
             final JSONObject itemObject = serializeItemBasicAttributes(menuGroup);
             if (itemObject != null) {
-                itemObject.put(MENU_ITEM_TYPE, new JSONString(MenusJSONTypes.GROUP.name()));
+                itemObject.put(MENU_ITEM_TYPE, new JSONString(MenuComponent.MenuItemTypes.GROUP.name()));
                 final List<MenuItem> items = menuGroup.getItems();
                 if (items != null && !items.isEmpty()) {
                     JSONArray itemsArray = new JSONArray();

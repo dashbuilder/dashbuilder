@@ -1,7 +1,11 @@
 package org.dashbuilder.client.menu;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
+import org.dashbuilder.client.menu.widgets.MenuComponent;
 import org.dashbuilder.client.mvp.command.GoToPerspectiveCommand;
+import org.dashbuilder.client.resources.i18n.MenusConstants;
 import org.uberfire.workbench.model.menu.*;
 
 import java.util.*;
@@ -9,6 +13,11 @@ import java.util.*;
 // TODO: Replace some of this class methods by use of UF MenusFactory methods?
 public class MenuUtils {
 
+    public static Menus buildEmptyEditableMenusModel() {
+        final List<MenuItem> items = new ArrayList<MenuItem>();
+        return buildEditableMenusModel(items);
+    }
+    
     public static Menus buildEditableMenusModel(final List<MenuItem> items) {
         return new Menus() {
 
@@ -16,7 +25,7 @@ public class MenuUtils {
 
             @Override
             public List<MenuItem> getItems() {
-                if (menuItems == null) menuItems = new ArrayList<MenuItem>(items);
+                if (menuItems == null) menuItems = items;
                 return menuItems;
             }
 
@@ -46,8 +55,21 @@ public class MenuUtils {
     public static MenuItem createMenuItemCommand(final String name, final String activityId) {
         return MenuFactory.newSimpleItem(name).respondsWith(new GoToPerspectiveCommand(activityId)).endMenu().build().getItems().get(0);
     }
+
+    public static MenuItem createMenuItemGroup(final String name) {
+        return createMenuItemGroup(name, null);
+    }
     
     public static MenuItem createMenuItemGroup(final String name, final List<? extends MenuItem> items) {
+        if (name == null || name.trim().length() == 0) return null;
+        
+        if (items == null || items.isEmpty()) {
+            final List<MenuItem> l = new ArrayList<MenuItem>();
+            // TODO: Get default perspective activity.
+            final MenuItem emptyItem = createMenuItemCommand(MenusConstants.INSTANCE.editMe(), "HomePerspective");
+            l.add(emptyItem);
+            return MenuFactory.newSimpleItem(name).withItems(l).endMenu().build().getItems().get(0);
+        }
         return MenuFactory.newSimpleItem(name).withItems(items).endMenu().build().getItems().get(0);
     }
 
@@ -77,10 +99,11 @@ public class MenuUtils {
             final MenuItemLocation itemLocation = getItemLocation(menu, targetSignatureId);
             if (itemLocation != null) {
                 final MenuGroup parent = itemLocation.getParent();
+                final String parentSignatureId = parent != null ? parent.getSignatureId() : "root";
                 final int position = itemLocation.getPosition();
                 final List<MenuItem> items  = parent != null ? parent.getItems() : menu.getItems();
                 final int targetPosition = before ? position : position + 1;
-                GWT.log("Adding '" + signatureId + "' to '" + targetSignatureId + "' / position: '" + targetPosition + "' / before '" + before + "'");
+                GWT.log("Adding '" + signatureId + "' to '" + parentSignatureId + "' / position: '" + targetPosition + "' / before '" + before + "'");
                 items.add(targetPosition, removedItem);
                 return true;
             }
@@ -101,7 +124,9 @@ public class MenuUtils {
                 int pos = 0;
                 for (final MenuItem i : items) {
                     final MenuItemLocation result = getItemLocation(null, pos, i, signatureId);
-                    if (result != null) return result;
+                    if (result != null) {
+                        return result;
+                    }
                     pos++;
                 }
             }
@@ -111,38 +136,51 @@ public class MenuUtils {
     }
 
     private static MenuItemLocation getItemLocation(final MenuGroup parent, final int position, final MenuItem item, final String signatureId) {
-        if (item == null) return null;
-
-        if (item.getSignatureId().equals(signatureId)) return new MenuItemLocation() {
-            @Override
-            public MenuItem getItem() {
-                return item;
-            }
-
-            @Override
-            public MenuGroup getParent() {
-                return parent;
-            }
-
-            @Override
-            public int getPosition() {
-                return position;
-            }
-        };
-        
-        try {
-            final MenuGroup menuGroup = (MenuGroup) item;
-            final List<MenuItem> items = menuGroup.getItems();
-            if (items != null) {
-                int pos = 0;
-                for (final MenuItem i : items) {
-                    final MenuItemLocation result = getItemLocation(menuGroup, pos, i, signatureId);
-                    if (result != null) return result;
-                    pos++;
+        if (item != null && item.getSignatureId().equals(signatureId)) {
+            return new MenuItemLocation() {
+                @Override
+                public MenuItem getItem() {
+                    return item;
                 }
+
+                @Override
+                public MenuGroup getParent() {
+                    return parent;
+                }
+
+                @Override
+                public int getPosition() {
+                    return position;
+                }
+            };
+        } else if (item != null) {
+            try {
+                final MenuGroup menuGroup = (MenuGroup) item;
+                final List<MenuItem> items = menuGroup.getItems();
+                if (items != null) {
+                    int pos = 0;
+                    for (final MenuItem i : items) {
+                        final MenuItemLocation result = getItemLocation(menuGroup, pos, i, signatureId);
+                        if (result != null) return result;
+                        pos++;
+                    }
+                }
+            } catch (ClassCastException e) {
+                // Not a menu group.
             }
-        } catch (ClassCastException e) {
-            
+        }
+        
+        return null;
+    }
+    
+    public static SafeHtml getItemTypeName(final MenuComponent.MenuItemTypes type) {
+        if (type != null) {
+            switch (type) {
+                case COMMAND:
+                    return new SafeHtmlBuilder().appendEscaped(MenusConstants.INSTANCE.menuItemTypeCommand()).toSafeHtml();
+                case GROUP:
+                    return new SafeHtmlBuilder().appendEscaped(MenusConstants.INSTANCE.menuItemTypeGroup()).toSafeHtml();
+            }
         }
         return null;
     }

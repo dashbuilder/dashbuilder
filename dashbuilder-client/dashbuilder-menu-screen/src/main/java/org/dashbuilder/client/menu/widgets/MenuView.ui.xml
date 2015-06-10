@@ -31,6 +31,13 @@
       color: white;
       margin-top: 10px;
     }
+    .infoButton {
+      float: left;
+      margin-top: 10px;
+      margin-left: 10px;
+      color: white;
+      cursor: default;
+    }
     .removeButtonPanel {
       float: left;
       margin-top: 10px;
@@ -52,6 +59,9 @@
     }
     .menuItemForm {
       height: 99%;
+    }
+    .menuItemTypeRadioButton {
+      margin-left: 20px;
     }
     .menuItemOkButtonPanel {
       width: 100%;
@@ -85,17 +95,28 @@
         </b:ControlLabel>
         <!-- Name text box. -->
         <b:Controls>
-          <b:TextBox ui:field="menuItemName" placeholder="{i18n.name_placeholder}"/>
+          <b:TextBox ui:field="menuItemName" placeholder="{i18n.name_placeholder}" tabIndex="0"/>
         </b:Controls>
-        <!-- Perspective title. -->
+        <!-- Item type title. -->
         <b:ControlLabel>
           <font color="red">*</font>
-          <base:InlineLabel ui:field="perspectiveLabel" text="{i18n.perspective}"/>
+          <base:InlineLabel ui:field="menuItemTypeLabel" text="{i18n.menuItemTypeLabel}"/>
         </b:ControlLabel>
-        <!-- Perspective drop down. -->
+        <!-- Item type radio buttons. -->
         <b:Controls>
-          <b:DropdownButton ui:field="menuItemPerspectives" title="{i18n.perspective_placeholder}"/>
+          <g:FlowPanel ui:field="menuItemTypesPanel"/>
         </b:Controls>
+        <g:FlowPanel ui:field="perspectivesPanel">
+          <!-- Perspective title. -->
+          <b:ControlLabel>
+            <font color="red">*</font>
+            <base:InlineLabel ui:field="perspectiveLabel" text="{i18n.perspective}"/>
+          </b:ControlLabel>
+          <!-- Perspective drop down. -->
+          <b:Controls>
+            <b:DropdownButton ui:field="menuItemPerspectives" title="{i18n.perspective_placeholder}"/>
+          </b:Controls>
+        </g:FlowPanel>
         <!-- The confirm button. -->
         <g:HorizontalPanel styleName="{style.menuItemOkButtonPanel}">
           <g:cell horizontalAlignment="ALIGN_RIGHT" verticalAlignment="ALIGN_MIDDLE">
@@ -118,6 +139,9 @@
         <b:NavForm ui:field="barForm" alignment="NONE" visible="false">
           <b:Button ui:field="addButton" title="{i18n.addMenuItem}"
                     icon="PLUS" type="LINK" stylePrimaryName="{style.addButton} "/>
+          <b:Popover hideDelay="1000" showDelay="1000" animation="true" placement="BOTTOM" text="{i18n.moveAndRemoveInfoDescription}" heading="{i18n.moveAndRemoveInfo}">
+            <b:Button icon="QUESTION_SIGN" type="LINK" stylePrimaryName="{style.infoButton} "/>
+          </b:Popover>
           <g:FlowPanel ui:field="removeButtonPanel" addStyleNames="{style.removeButtonPanel}">
             <b:Button ui:field="removeButton" title="{i18n.removeMenuItem}"
                       icon="TRASH" type="LINK" stylePrimaryName="{style.removeButton} "/>  

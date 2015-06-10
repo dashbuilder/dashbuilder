@@ -76,7 +76,7 @@ public class MenuScreen {
         this.placeRequest = placeRequest;
         String json = placeRequest.getParameter("json", "");
         if (!StringUtils.isBlank(json)) this.menus = jsonMarshaller.fromJsonString(json);
-        if (menus == null) throw new IllegalArgumentException("Menus not found");
+        if (menus == null) menus = MenuUtils.buildEmptyEditableMenusModel();
         GWT.log("EditableWorkbenchMenuBarPresenter - startup: " + json);
         enableEdition();
         // TODO: Move menuBarListener to EditableWorkbenchMenuBarComponent.
@@ -85,7 +85,7 @@ public class MenuScreen {
 
     @OnClose
     public void onClose() {
-        clear();
+        
     }
 
     // TODO: Editable title.
@@ -141,7 +141,8 @@ public class MenuScreen {
         Collection<PerspectiveActivity> getPerspectiveActivities();
         boolean notHavePermissionToMakeThis(final MenuItem item);
         void removeItem(final String itemUUID);
-        void createItem(final String caption, final String activityId);
+        void createItemCommand(final String caption, final String activityId);
+        void createItemGroup(final String caption);
         void moveItem(final String sourceUUID, final String targetUUID, final boolean before);
     }
     
@@ -161,16 +162,23 @@ public class MenuScreen {
         public void removeItem(final String itemUUID) {
             MenuUtils.removeItem(menus, itemUUID);
             fireMenusUpdated();
-            buildView();
         }
 
         @Override
-        public void createItem(final String caption, final String activityId) {
+        public void createItemCommand(final String caption, final String activityId) {
             final MenuItem item = MenuUtils.createMenuItemCommand(caption, activityId);
             if (item != null) {
                 MenuUtils.addItem(menus, item);
                 fireMenusUpdated();
-                buildView();
+            }
+        }
+
+        @Override
+        public void createItemGroup(final String caption) {
+            final MenuItem item = MenuUtils.createMenuItemGroup(caption);
+            if (item != null) {
+                MenuUtils.addItem(menus, item);
+                fireMenusUpdated();
             }
         }
 
@@ -178,7 +186,6 @@ public class MenuScreen {
         public void moveItem(final String sourceUUID, final String targetUUID, final boolean before) {
             MenuUtils.moveItem(menus, sourceUUID, targetUUID, before);
             fireMenusUpdated();
-            buildView();
         }
     };
 
@@ -191,7 +198,7 @@ public class MenuScreen {
     }
 
     public void init( final Menus menus, final EditableWorkbenchMenuBarListener listener) {
-        this.menus = MenuUtils.buildEditableMenusModel(menus.getItems());
+        this.menus = menus;
         this.listener = listener;
         buildView();
     }

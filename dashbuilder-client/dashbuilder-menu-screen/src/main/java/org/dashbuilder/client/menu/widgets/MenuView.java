@@ -15,12 +15,13 @@
  */
 package org.dashbuilder.client.menu.widgets;
 
-import com.github.gwtbootstrap.client.ui.*;
 import com.github.gwtbootstrap.client.ui.Button;
+import com.github.gwtbootstrap.client.ui.*;
+import com.github.gwtbootstrap.client.ui.RadioButton;
 import com.github.gwtbootstrap.client.ui.TextBox;
 import com.github.gwtbootstrap.client.ui.base.InlineLabel;
-import com.github.gwtbootstrap.client.ui.constants.IconType;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.*;
 import com.google.gwt.resources.client.CssResource;
@@ -30,6 +31,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.*;
+import org.dashbuilder.client.menu.MenuUtils;
 import org.dashbuilder.client.resources.i18n.MenusConstants;
 import org.dashbuilder.client.widgets.animations.AlphaAnimation;
 import org.uberfire.client.mvp.PerspectiveActivity;
@@ -50,9 +52,11 @@ public class MenuView extends Composite
         implements
         MenuScreen.View {
 
-    private static final String POINTS = "...";
     private static final int ALPHA_ANIMATION_DURATION = 500;
-    private static final int MENU_TIMER_DURATION = 1000;
+    private static final String POINTS = "...";
+    private static final String MENU_ITEM_TYPE_GROUP = "MENU_ITEM_TYPE_GROUP";
+    private static final String DROPDOWN_OPEN_STYLE = "open";
+    final MenuComponent.MenuItemTypes ITEM_TYPE_COMMAND = MenuComponent.MenuItemTypes.COMMAND;
 
     interface MenuViewBinder
             extends
@@ -69,6 +73,7 @@ public class MenuView extends Composite
         String menuItemDropOver_b();
         String menuItemDropOver_l();
         String menuItemDropOver_r();
+        String menuItemTypeRadioButton();
     }
 
     @UiField
@@ -108,8 +113,17 @@ public class MenuView extends Composite
     TextBox menuItemName;
 
     @UiField
+    FlowPanel perspectivesPanel;
+    
+    @UiField
     InlineLabel perspectiveLabel;
 
+    @UiField
+    InlineLabel menuItemTypeLabel;
+    
+    @UiField
+    FlowPanel menuItemTypesPanel;
+    
     @UiField
     DropdownButton menuItemPerspectives;
     
@@ -117,21 +131,19 @@ public class MenuView extends Composite
     Button menuItemOkButton;
 
     private boolean isEdit;
-    private Timer timer;
-    private boolean isTimerRunning;
     private PerspectiveActivity selectedPerspective;
+    private MenuComponent.MenuItemTypes selectedItemType;
     private MenuScreen.ViewCallback viewCallback;
+    private Timer menuGroupTimer;
     
     public MenuView() {
         initWidget( uiBinder.createAndBindUi( this ) );
         enableEdition();
         isEdit = false;
-        timer = null;
-        isTimerRunning = false;
         barForm.getTextBox().setVisible(false);
         
         // Enable remove button drop feature.
-        removeButtonPanel.getElement().setDraggable(Element.DRAGGABLE_TRUE);
+        disableRemove();
         removeButtonPanel.addDomHandler(new DragOverHandler() {
             @Override
             public void onDragOver(final DragOverEvent event) {
@@ -164,6 +176,7 @@ public class MenuView extends Composite
         this.viewCallback = callback;
         clearMenuBars();
         buildMenuItems(menus);
+        disableRemove();
     }
 
     @UiHandler(value = "addButton")
@@ -183,16 +196,31 @@ public class MenuView extends Composite
         } else {
             nameLabel.removeStyleName(style.labelError());
         }
-        if (selectedPerspective == null) {
-            perspectiveLabel.addStyleName(style.labelError());
+        
+        if (selectedItemType == null) {
+            menuItemTypeLabel.addStyleName(style.labelError());
             isValid = false;
         } else {
-            perspectiveLabel.removeStyleName(style.labelError());
+            menuItemTypeLabel.removeStyleName(style.labelError());
+            if (ITEM_TYPE_COMMAND.equals(selectedItemType) && selectedPerspective == null) {
+                perspectiveLabel.addStyleName(style.labelError());
+                isValid = false;
+            } else {
+                perspectiveLabel.removeStyleName(style.labelError());
+            }
         }
         
         if (isValid) {
-            final String pId = selectedPerspective.getIdentifier();
-            createMenuItem(pId, name);
+            switch (selectedItemType) {
+                case COMMAND:
+                    final String pId = selectedPerspective.getIdentifier();
+                    createMenuItemCommand(pId, name);
+                    break;
+                case GROUP:
+                    createMenuItemGroup(name);
+                    break;
+            }
+            selectedItemType = null;
             selectedPerspective = null;
             hideMenuItemModalPanel();
         }
@@ -202,8 +230,12 @@ public class MenuView extends Composite
         return text == null || text.trim().length() == 0;
     }
 
-    private void createMenuItem(final String activityId, final String name) {
-        viewCallback.createItem(name, activityId);
+    private void createMenuItemCommand(final String activityId, final String name) {
+        viewCallback.createItemCommand(name, activityId);
+    }
+
+    private void createMenuItemGroup(final String name) {
+        viewCallback.createItemGroup(name);
     }
 
     public void enableEdition() {
@@ -213,6 +245,7 @@ public class MenuView extends Composite
 
     public void disableEdition() {
         isEdit = false;
+        selectedItemType = null;
         selectedPerspective = null;
         resetMenuItemForm();
         hideMenuItemModalPanel();
@@ -221,8 +254,15 @@ public class MenuView extends Composite
     
     private void showMenuItemModalPanel() {
         resetMenuItemForm();
+        buildItemTypes();
         buildPerspectivesDropDown();
         menuItemModalPanel.show();
+        Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+            @Override
+            public void execute() {
+                menuItemName.setFocus(true);
+            }
+        });
     }
 
     private void hideMenuItemModalPanel() {
@@ -233,8 +273,51 @@ public class MenuView extends Composite
         nameLabel.removeStyleName(style.labelError());
         perspectiveLabel.removeStyleName(style.labelError());
         menuItemName.setText("");
+        selectedItemType = null;
         selectedPerspective = null;
         menuItemForm.reset();
+        enablePerspectivesDropDown();
+    }
+    
+    private void enableRemove() {
+        removeButtonPanel.getElement().setDraggable(Element.DRAGGABLE_TRUE);
+        final AlphaAnimation alphaAnimation = new AlphaAnimation(removeButtonPanel);
+        alphaAnimation.show(ALPHA_ANIMATION_DURATION);
+    }
+
+    private void disableRemove() {
+        removeButtonPanel.getElement().setDraggable(Element.DRAGGABLE_FALSE);
+        final AlphaAnimation alphaAnimation = new AlphaAnimation(removeButtonPanel);
+        alphaAnimation.hide(ALPHA_ANIMATION_DURATION);
+    }
+
+    private void buildItemTypes() {
+        final MenuComponent.MenuItemTypes[] itemTypes = MenuComponent.MenuItemTypes.values();
+        
+        menuItemTypesPanel.clear();
+        selectedItemType = ITEM_TYPE_COMMAND;
+        for (final MenuComponent.MenuItemTypes type: itemTypes) {
+            final String name = MenuUtils.getItemTypeName(type).asString();
+            final RadioButton button = new RadioButton(MENU_ITEM_TYPE_GROUP, name);
+            button.addStyleName(style.menuItemTypeRadioButton());
+            if (ITEM_TYPE_COMMAND.equals(type)) {
+                button.setValue(true);
+            } else {
+                button.setValue(false);
+            }
+            button.addClickHandler(new ClickHandler() {
+                @Override
+                public void onClick(final ClickEvent event) {
+                    if (ITEM_TYPE_COMMAND.equals(type)) {
+                        enablePerspectivesDropDown();
+                    } else {
+                        disablePerspectivesDropDown();
+                    }
+                    selectedItemType = type;
+                }
+            });
+            menuItemTypesPanel.add(button);
+        }
     }
     
     private void buildPerspectivesDropDown() {
@@ -257,6 +340,16 @@ public class MenuView extends Composite
             });
             menuItemPerspectives.add(link);
         }
+    }
+
+    private void enablePerspectivesDropDown() {
+        final AlphaAnimation alphaAnimation = new AlphaAnimation(perspectivesPanel);
+        alphaAnimation.show(ALPHA_ANIMATION_DURATION);
+    }
+
+    private void disablePerspectivesDropDown() {
+        final AlphaAnimation alphaAnimation = new AlphaAnimation(perspectivesPanel);
+        alphaAnimation.hide(ALPHA_ANIMATION_DURATION);
     }
     
     private String getSafeHtml(final String text) {
@@ -310,7 +403,7 @@ public class MenuView extends Composite
                 }
             }, DragOverEvent.getType());
 
-            // Drag over handler.
+            // Drag leave handler.
             gwtItem.addDomHandler(new DragLeaveHandler() {
                 @Override
                 public void onDragLeave(final DragLeaveEvent event) {
@@ -319,6 +412,15 @@ public class MenuView extends Composite
                 }
             }, DragLeaveEvent.getType());
 
+            // Drag end handler.
+            gwtItem.addDomHandler(new DragEndHandler() {
+                @Override
+                public void onDragEnd(final DragEndEvent event) {
+                    event.stopPropagation();
+                    onMenuItemDragEnd(event, uuid, gwtItem);
+                }
+            }, DragEndEvent.getType());
+            
             // Drop handler.
             gwtItem.addDomHandler(new DropHandler() {
                 @Override
@@ -334,30 +436,26 @@ public class MenuView extends Composite
         if (isEdit) {
             event.setData("text", uuid);
             GWT.log("onMenuItemDragStart - uuid: " + uuid);
-            startTimer();    
+            enableRemove();
         }
     }
     
     private void onMenuItemDragOver(final DragOverEvent event, final String uuid, final Widget gwtItem) {
-        if (isEdit && !isTimerRunning) {
-            
-            if (isDropDownMenuItem(gwtItem)) {
-                GWT.log("onMenuItemDragOver - isDropDown with uuid: " + uuid);
-                gwtItem.getElement().addClassName("open");
-            } else {
-                GWT.log("onMenuItemDragOver - uuid: " + uuid);
-                removeMenuItemDragStyles(gwtItem);
-                final boolean isMouseOnBottom = isMouseOnBottomOfWidget(event, gwtItem);
-                final boolean isMouseOnRight = isMouseOnRightOfWidget(event, gwtItem);
-                if (isMouseOnBottom) {
-                    gwtItem.addStyleName(style.menuItemDropOver_b());
-                } else if (isMouseOnRight) {
-                    gwtItem.addStyleName(style.menuItemDropOver_r());
-                } else {
-                    gwtItem.addStyleName(style.menuItemDropOver_l());
-                }
+        if (isEdit) {
+            removeMenuItemDragStyles(gwtItem);
+            final boolean isMenuGroup = isMenuGroup(gwtItem); 
+            if (isMenuGroup) {
+                openMenuGroup(gwtItem);
             }
-            startTimer();
+            final boolean isMouseOnRight = isMouseOnRightOfWidget(event, gwtItem);
+            final boolean isMouseOnBottom = isMouseOnBottomOfWidget(event, gwtItem);
+            if (isMouseOnBottom && !isMenuGroup) {
+                gwtItem.addStyleName(style.menuItemDropOver_b());
+            } else if (isMouseOnRight) {
+                gwtItem.addStyleName(style.menuItemDropOver_r());
+            } else {
+                gwtItem.addStyleName(style.menuItemDropOver_l());
+            }
         }
     }
     
@@ -380,50 +478,79 @@ public class MenuView extends Composite
     }
 
     private void onMenuItemDragLeave(final DragLeaveEvent event, final String id, final Widget gwtItem) {
-        if (isEdit && !isTimerRunning) {
-            if (isDropDownMenuItem(gwtItem)) {
-                gwtItem.getElement().removeClassName("open");
-            } else {
-                removeMenuItemDragStyles(gwtItem);
-            }
-            startTimer();
+        if (isEdit) {
+            removeMenuItemDragStyles(gwtItem);
+            disableRemove();
+        }
+    }
+
+    private void onMenuItemDragEnd(final DragEndEvent event, final String id, final Widget gwtItem) {
+        if (isEdit) {
+            removeMenuItemDragStyles(gwtItem);
+            disableRemove();
         }
     }
 
     private void onMenuItemDrop(final DropEvent event, final String targetUUID, final Widget gwtItem) {
         if (isEdit) {
+            removeMenuItemDragStyles(gwtItem);
+            disableRemove();
+
             final String sourceUUID = event.getData("text");
             GWT.log("Drop from '" + sourceUUID + "' on  '" + targetUUID + "'");
-            if (sourceUUID != null && targetUUID != null) {
-
-                if (isDropDownMenuItem(gwtItem)) {
-                    // TODO
+            if (sourceUUID != null && targetUUID != null && !sourceUUID.equals(targetUUID)) {
+                final boolean isMouseOnBottom = isMouseOnBottomOfWidget(event, gwtItem);
+                final boolean isMouseOnRight = isMouseOnRightOfWidget(event, gwtItem);
+                if (isMouseOnBottom && !isMenuGroup(gwtItem)) {
+                    gwtItem.addStyleName(style.menuItemDropOver_b());
+                } else if (isMouseOnRight) {
+                    gwtItem.addStyleName(style.menuItemDropOver_r());
                 } else {
-                    removeMenuItemDragStyles(gwtItem);
-                    final boolean isMouseOnBottom = isMouseOnBottomOfWidget(event, gwtItem);
-                    final boolean isMouseOnRight = isMouseOnRightOfWidget(event, gwtItem);
-                    if (isMouseOnBottom) {
-                        gwtItem.addStyleName(style.menuItemDropOver_b());
-                    } else if (isMouseOnRight) {
-                        gwtItem.addStyleName(style.menuItemDropOver_r());
-                    } else {
-                        gwtItem.addStyleName(style.menuItemDropOver_l());
-                    }
-                    final boolean before = !isMouseOnBottom && !isMouseOnRight;
-                    viewCallback.moveItem(sourceUUID, targetUUID, before);
+                    gwtItem.addStyleName(style.menuItemDropOver_l());
                 }
+                final boolean before = !isMouseOnBottom && !isMouseOnRight;
+                viewCallback.moveItem(sourceUUID, targetUUID, before);
             }
-            removeMenuItemDragStyles(gwtItem);
-            endTimer();
         }
     }
     
-    private boolean isDropDownMenuItem(final Widget gwtItem) {
+    private void openMenuGroup(final Widget gwtItem) {
+        gwtItem.getElement().addClassName(DROPDOWN_OPEN_STYLE);
+        startTimer(gwtItem);
+    }
+
+    private void closeMenuGroup(final Widget gwtItem) {
+        gwtItem.getElement().removeClassName(DROPDOWN_OPEN_STYLE);
+    }
+    
+    private boolean isMenuGroup(final Widget gwtItem) {
         try {
             final Dropdown dropdown = (Dropdown) gwtItem;
             return true;
         } catch (ClassCastException e) {
             return false;
+        }
+    }
+
+    private void startTimer(final Widget menuGroup) {
+        if (menuGroupTimer == null) {
+            menuGroupTimer = new Timer() {
+                @Override
+                public void run() {
+                    removeMenuItemDragStyles(menuGroup);
+                    closeMenuGroup(menuGroup);
+                    menuGroupTimer = null;
+                }
+            };
+
+            menuGroupTimer.schedule(2000);
+        }
+    }
+
+    private void endTimer() {
+        if (menuGroupTimer != null) {
+            menuGroupTimer.run();
+            menuGroupTimer.cancel();
         }
     }
     
@@ -433,30 +560,6 @@ public class MenuView extends Composite
         gwtItem.removeStyleName(style.menuItemDropOver_r());
     }
 
-    private void startTimer() {
-        if (timer != null) endTimer();
-
-        // TODO: Working????
-        MenuView.this.isTimerRunning = true;
-        timer = new Timer() {
-            @Override
-            public void run() {
-                MenuView.this.isTimerRunning = false;
-            }
-        };
-
-        // Schedule the timer to run once in 5 seconds.
-        timer.schedule(MENU_TIMER_DURATION);
-    }
-
-    private void endTimer() {
-        if (timer != null) {
-            timer.cancel();
-            timer = null;
-            isTimerRunning = false;
-        }
-    }
-    
     Widget makeItem( final MenuItem item ) {
         if ( notHavePermissionToMakeThis( item ) ) {
             return null;
@@ -558,7 +661,7 @@ public class MenuView extends Composite
     @Override
     public void clear() {
         clearMenuBars();
-        disableEdition();
+        selectedItemType = null;
         selectedPerspective = null;
         isEdit = false;
         endTimer();
