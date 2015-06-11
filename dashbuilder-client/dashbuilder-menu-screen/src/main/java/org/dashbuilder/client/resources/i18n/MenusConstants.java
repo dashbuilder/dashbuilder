@@ -30,6 +30,7 @@ public interface MenusConstants extends ConstantsWithLookup {
     String addMenuItem();
     String removeMenuItem();
     String newMenuItem();
+    String editMenuItem();
     String name();
     String name_placeholder();
     String perspective();
@@ -40,7 +41,13 @@ public interface MenusConstants extends ConstantsWithLookup {
     String editMe();
     String ok();
     String create();
-    String editableWorkbenchMenuBar();
+    String save();
+    String editableMenuBar();
     String moveAndRemoveInfo();
     String moveAndRemoveInfoDescription();
+    String opFailed();
+    String menuGroupEmptyError();
+    String menuGroupSingleLevelError();
+    String menuItemNotFound();
+    String authzFailed();
 }

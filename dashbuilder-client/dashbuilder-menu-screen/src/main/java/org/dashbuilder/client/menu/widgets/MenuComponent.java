@@ -21,12 +21,13 @@ import org.dashbuilder.client.perspective.editor.PerspectiveEditorComponent;
 import org.dashbuilder.client.resources.i18n.MenusConstants;
 import org.uberfire.mvp.PlaceRequest;
 import org.uberfire.mvp.impl.DefaultPlaceRequest;
+
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import java.util.HashMap;
 import java.util.Map;
 
-// TODO: Use of EditableWorkbenchMenuBarListener to persist the perspective (and menus)
+// TODO: Use of MenuScreenListener to persist the perspective (and menus)?
 @ApplicationScoped
 public class MenuComponent implements PerspectiveEditorComponent {
 
@@ -38,7 +39,7 @@ public class MenuComponent implements PerspectiveEditorComponent {
 
     @Override
     public String getComponentName() {
-        return MenusConstants.INSTANCE.editableWorkbenchMenuBar();
+        return MenusConstants.INSTANCE.editableMenuBar();
     }
 
     public enum MenuItemTypes {
@@ -53,7 +54,7 @@ public class MenuComponent implements PerspectiveEditorComponent {
     protected PlaceRequest createPlaceRequest() {
         Map<String,String> params = new HashMap<String, String>();
         params.put("json", "");
-        return new DefaultPlaceRequest("EditableWorkbenchMenuBar", params);
+        return new DefaultPlaceRequest(MenuScreen.SCREEN_ID, params);
     }
     
 }

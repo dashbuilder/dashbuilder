@@ -18,7 +18,9 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
              xmlns:g="urn:import:com.google.gwt.user.client.ui"
              xmlns:base="urn:import:com.github.gwtbootstrap.client.ui.base"
-             xmlns:b="urn:import:com.github.gwtbootstrap.client.ui">
+             xmlns:b="urn:import:com.github.gwtbootstrap.client.ui"
+             xmlns:uf="urn:import:org.uberfire.ext.widgets.common.client.common.popups"
+    >
 
   <ui:with field="i18n" type="org.dashbuilder.client.resources.i18n.MenusConstants"/>
 
@@ -63,6 +65,9 @@
     .menuItemTypeRadioButton {
       margin-left: 20px;
     }
+    .menuItemPerspectives {
+      position: absolute;
+    }
     .menuItemOkButtonPanel {
       width: 100%;
     }
@@ -85,8 +90,7 @@
   <g:FlowPanel addStyleNames="{style.mainPanel} ">
 
     <!-- Edition or creation panel for a menu item. -->
-    <b:Modal ui:field="menuItemModalPanel" title="{i18n.newMenuItem}" addStyleNames="{style.menuItemModalPanel}"
-             backdrop="STATIC" keyboard="true" animation="true" closeVisible="true">
+    <uf:BaseModal ui:field="menuItemModalPanel">
       <b:WellForm ui:field="menuItemForm" addStyleNames="{style.menuItemForm}">
         <!-- Name title. -->
         <b:ControlLabel>
@@ -97,15 +101,17 @@
         <b:Controls>
           <b:TextBox ui:field="menuItemName" placeholder="{i18n.name_placeholder}" tabIndex="0"/>
         </b:Controls>
-        <!-- Item type title. -->
-        <b:ControlLabel>
-          <font color="red">*</font>
-          <base:InlineLabel ui:field="menuItemTypeLabel" text="{i18n.menuItemTypeLabel}"/>
-        </b:ControlLabel>
-        <!-- Item type radio buttons. -->
-        <b:Controls>
-          <g:FlowPanel ui:field="menuItemTypesPanel"/>
-        </b:Controls>
+        <g:FlowPanel ui:field="menuItemTypesWrapperPanel">
+          <!-- Item type title. -->
+          <b:ControlLabel>
+            <font color="red">*</font>
+            <base:InlineLabel ui:field="menuItemTypeLabel" text="{i18n.menuItemTypeLabel}"/>
+          </b:ControlLabel>
+          <!-- Item type radio buttons. -->
+          <b:Controls>
+            <g:FlowPanel ui:field="menuItemTypesPanel"/>
+          </b:Controls>
+        </g:FlowPanel>
         <g:FlowPanel ui:field="perspectivesPanel">
           <!-- Perspective title. -->
           <b:ControlLabel>
@@ -114,19 +120,23 @@
           </b:ControlLabel>
           <!-- Perspective drop down. -->
           <b:Controls>
-            <b:DropdownButton ui:field="menuItemPerspectives" title="{i18n.perspective_placeholder}"/>
+            <b:DropdownButton ui:field="menuItemPerspectives" title="{i18n.perspective_placeholder}" addStyleNames="{style.menuItemPerspectives}"/>
           </b:Controls>
         </g:FlowPanel>
         <!-- The confirm button. -->
         <g:HorizontalPanel styleName="{style.menuItemOkButtonPanel}">
           <g:cell horizontalAlignment="ALIGN_RIGHT" verticalAlignment="ALIGN_MIDDLE">
-            <b:Button ui:field="menuItemOkButton" title="{i18n.ok}" type="SUCCESS"
-                      text="{i18n.create}" addStyleNames="{style.okButton} "/>
+            <b:ModalFooter>
+              <b:Button ui:field="menuItemCreateButton" title="{i18n.ok}" type="SUCCESS"
+                        text="{i18n.create}" addStyleNames="{style.okButton} "/>
+              <b:Button ui:field="menuItemEditButton" title="{i18n.ok}" type="SUCCESS"
+                        text="{i18n.save}" addStyleNames="{style.okButton} "/>
+            </b:ModalFooter>
           </g:cell>
         </g:HorizontalPanel>
         
       </b:WellForm>
-    </b:Modal>
+    </uf:BaseModal>
 
     <b:ResponsiveNavbar position="TOP" inverse="true">
       <b:NavCollapse>

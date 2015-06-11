@@ -15,13 +15,15 @@
  */
 package org.dashbuilder.client.menu.json;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.json.client.*;
-import org.dashbuilder.client.menu.MenuUtils;
+import org.dashbuilder.client.menu.ClientMenuUtils;
 import org.dashbuilder.client.menu.widgets.MenuComponent;
-import org.dashbuilder.client.mvp.command.GoToPerspectiveCommand;
+import org.dashbuilder.shared.menu.MenuHandler;
+import org.dashbuilder.shared.menu.exception.MenuSecurityException;
+import org.dashbuilder.shared.mvp.command.GoToPerspectiveCommand;
 import org.uberfire.workbench.model.menu.*;
 
+import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -29,6 +31,9 @@ import java.util.List;
 // TODO: Roles and other MenuItem attributes deserialization.
 public class MenusJSONMarshaller {
 
+    @Inject
+    MenuHandler menuHandler;
+    
     public static final String MENU_ITEMS = "items";
     public static final String MENU_ITEM_TYPE = "itemType";
     public static final String MENU_ITEM_CAPTION = "caption";
@@ -57,7 +62,7 @@ public class MenusJSONMarshaller {
                         if (item != null) itemList.add(item);
                     }
 
-                    return MenuUtils.buildEditableMenusModel(itemList);
+                    return MenuHandler.buildEditableMenusModel(itemList);
                 }
             }
         }
@@ -74,7 +79,7 @@ public class MenusJSONMarshaller {
                 case GROUP:
                     return deserializeMenuGroup(itemObject);
                 default:
-                    GWT.log("Menu item with type '" + typeStr + "' not supported.");
+                    ClientMenuUtils.doDebugLog("Menu item with type '" + typeStr + "' not supported.");
             }
         }
         return null;
@@ -84,7 +89,11 @@ public class MenusJSONMarshaller {
         if (itemObject != null) {
             final String caption = itemObject.get(MENU_ITEM_CAPTION).isString().stringValue();
             final String activityId = itemObject.get(MENU_ITEM_COMMAND_ACTIVITYID).isString().stringValue();
-            return MenuUtils.createMenuItemCommand(caption, activityId);
+            try {
+                return menuHandler.createMenuItemCommand(caption, activityId);
+            } catch (MenuSecurityException e) {
+                e.printStackTrace();
+            }
         }
         return null;
     }
@@ -100,7 +109,11 @@ public class MenusJSONMarshaller {
                     final MenuItem i = deserializeMenuItem(columnJson.isObject());
                     if (i != null) result.add(i);
                 }
-                return MenuUtils.createMenuItemGroup(caption, result);
+                try {
+                    return menuHandler.createMenuItemGroup(caption, result);
+                } catch (MenuSecurityException e) {
+                    e.printStackTrace();
+                }
             }
         }
         return null;
@@ -145,7 +158,7 @@ public class MenusJSONMarshaller {
             } catch (final ClassCastException e) {
 
             }
-            GWT.log("ERROR: Unsupported serialization for menu item type: " + menuItem.getClass().getName());
+            ClientMenuUtils.doDebugLog("ERROR: Unsupported serialization for menu item type: " + menuItem.getClass().getName());
         }
         return null;
     }
@@ -163,7 +176,7 @@ public class MenusJSONMarshaller {
                     return itemObject;
                 }
             } catch (final ClassCastException e) {
-                GWT.log("Only menu items with command [GoToPerspectiveCommand] are supported.");
+                ClientMenuUtils.doDebugLog("Only menu items with command [GoToPerspectiveCommand] are supported.");
             }
         }
         return null;

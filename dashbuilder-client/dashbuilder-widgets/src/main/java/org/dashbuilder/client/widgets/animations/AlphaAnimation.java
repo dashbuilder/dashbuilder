@@ -10,15 +10,28 @@ import com.google.gwt.user.client.ui.Widget;
  * @since 0.3.0 
  */
 public class AlphaAnimation extends Animation {
-    
+
+    private static final String STYLE_ATTRIBUTE = "style";
     private Widget widget;
+    private String staticStyle;
     private Boolean showing;
 
-    public AlphaAnimation(Widget widget) {
+    public AlphaAnimation(final Widget widget, final String staticStyle) {
+        this.widget = widget;
+        this.staticStyle = staticStyle;
+    }
+
+    public AlphaAnimation(final Widget widget) {
         this.widget = widget;
     }
 
-    public AlphaAnimation(AnimationScheduler scheduler, Widget widget) {
+    public AlphaAnimation(final AnimationScheduler scheduler, final Widget widget, final String staticStyle) {
+        super(scheduler);
+        this.widget = widget;
+        this.staticStyle = staticStyle;
+    }
+
+    public AlphaAnimation(final AnimationScheduler scheduler, final Widget widget) {
         super(scheduler);
         this.widget = widget;
     }
@@ -31,6 +44,10 @@ public class AlphaAnimation extends Animation {
     public void hide(final int duration) {
         showing = false;
         run(duration);
+    }
+
+    public void setStaticStyle(String style) {
+        this.staticStyle = style;
     }
 
     @Override
@@ -52,12 +69,12 @@ public class AlphaAnimation extends Animation {
     protected void onComplete() {
         super.onComplete();
         widget.setVisible(showing);
-        showing = null;
     }
 
     private void applyAlpha(final Widget panel, final double alpha) {
         if (alpha <= 1 && alpha >= 0) {
-            panel.getElement().setAttribute("style", "filter: alpha(opacity=5);opacity: " + alpha);
+            final String style = this.staticStyle != null ? this.staticStyle + ";": "";
+            panel.getElement().setAttribute(STYLE_ATTRIBUTE, style + " filter: alpha(opacity=5);opacity: " + alpha);
         }
     }
     
