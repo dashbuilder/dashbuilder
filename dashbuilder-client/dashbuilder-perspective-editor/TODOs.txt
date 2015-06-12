@@ -17,3 +17,34 @@ Non-urgent
 * Enable/Disable drag on edit on/off
 * Persist perspectives on master branch
 * Toolbar disappears on maximize panel
+
+Menu widget
+-----------
+- maven
+    - module is in "client" parent module but contains shared resources (still not used on backend side, just client side)
+- orientation
+- duplicated caption for menu items -> if duplicaten caption -> signatureId is the same! ERROR
+- menu group - empty items support
+- security
+    - Menu item creation/edition - support for adding/removing roles for the item?
+    - sending menu model via json in url to the menu screen -> security issue? as roles are in menu model
+    - show only perspectives that user have permission
+- unit testing for shared classes (MenuHandler)
+- CDI strange error
+    - MenuHandler 
+        - is shared -> no use of client classes inside -> placeManager it's client side and it's not used, so should be
+        removed, but if I remove it -> wildfly startup fails with unsatisfied dependencies for AuthorizationManager!!!
+        - to reproduce (check no PlaceManager imports in class!):
+            
+            @ApplicationScoped
+            public class MenuHandler {
+            
+                @Inject
+                private AuthorizationManager authzManager;
+            
+                @Inject
+                private User identity;
+                
+                ....
+            }
+
