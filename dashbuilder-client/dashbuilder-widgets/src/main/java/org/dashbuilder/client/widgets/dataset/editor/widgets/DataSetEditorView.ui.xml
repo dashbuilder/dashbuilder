@@ -102,12 +102,12 @@
       border: 1px solid lavender;
       border-left-width: 0px;
       cursor: pointer;
-      margin-top: 40px;
+      margin-top: 41px;
       height: 450px;
-      left: 0px;
+      left: 10px;
     }
     .columnsFilterDisclosurePanelHeaderOpen {
-      left: 356px;
+      left: 376px;
     }
     .columnsFilterDisclosurePanelButton {
       margin-left: 4px;
