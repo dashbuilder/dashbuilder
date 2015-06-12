@@ -18,6 +18,8 @@ import java.util.Map;
 @ApplicationScoped
 public class MenuHandler {
 
+    // TODO: PlaceManager is a client side class and it's not used, so should not be used here, but
+    // if removing it, the injection of AuthorizationManager fails
     @Inject
     private PlaceManager placeManager;
 
@@ -79,32 +81,37 @@ public class MenuHandler {
         }
     }
 
-    public MenuItem createMenuItemCommand(final String name, final String activityId) throws MenuSecurityException {
-        final MenuItem item = MenuFactory.newSimpleItem(name).respondsWith(new GoToPerspectiveCommand(placeManager, activityId)).endMenu().build().getItems().get(0);
+    public MenuItem createMenuItemCommand(final String name, final GoToPerspectiveCommand goToPerspectiveCommand) throws MenuSecurityException {
+        final MenuItem item = MenuFactory.newSimpleItem(name).respondsWith(goToPerspectiveCommand).endMenu().build().getItems().get(0);
         failIfNotHavePermissionToMakeThis(item);
         return item;        
     }
 
-    public MenuItem createMenuItemGroup(final String name) throws MenuSecurityException {
-        final MenuItem item = createMenuItemGroup(name, null);
+    public MenuItem createMenuItemGroup(final String name, final GoToPerspectiveCommand goToPerspectiveCommand) throws MenuSecurityException {
+        final MenuItem item = createMenuItemGroup(name, null, goToPerspectiveCommand);
+        failIfNotHavePermissionToMakeThis(item);
+        return item;
+    }
+
+    public MenuItem createMenuItemGroup(final String name, final List<? extends MenuItem> items) throws MenuSecurityException {
+        final MenuItem item = createMenuItemGroup(name, items, null);
         failIfNotHavePermissionToMakeThis(item);
         return item;
     }
     
-    public MenuItem createMenuItemGroup(final String name, final List<? extends MenuItem> items) throws MenuSecurityException {
+    private MenuItem createMenuItemGroup(final String name, final List<? extends MenuItem> items, final GoToPerspectiveCommand goToPerspectiveCommand) throws MenuSecurityException {
         if (name == null || name.trim().length() == 0) return null;
         
         if (items == null || items.isEmpty()) {
             final List<MenuItem> l = new ArrayList<MenuItem>();
-            // TODO: Get default perspective activity.
-            final MenuItem emptyItem = createMenuItemCommand("Edit me..", "HomePerspective");
+            final MenuItem emptyItem = createMenuItemCommand("Edit me..", goToPerspectiveCommand);
             failIfNotHavePermissionToMakeThis(emptyItem);
             l.add(emptyItem);
             return MenuFactory.newSimpleItem(name).withItems(l).endMenu().build().getItems().get(0);
         }
         return MenuFactory.newSimpleItem(name).withItems(items).endMenu().build().getItems().get(0);
     }
-
+    
     public boolean addItem(final MenuItem item) throws MenuSecurityException {
         failIfNotHavePermissionToMakeThis(item);
         return menus.getItems().add(item);

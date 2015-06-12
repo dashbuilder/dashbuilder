@@ -26,6 +26,7 @@ public class ClientMenuUtils {
         return null;
     }
     
+    // TODO: remove, just for testing..
     public static void doDebugLog(final String log) {
         // GWT.log(log);
     }

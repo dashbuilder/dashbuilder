@@ -15,7 +15,7 @@
  */
 package org.dashbuilder.client.menu.widgets;
 
-import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.IsWidget;
 import org.dashbuilder.client.menu.ClientMenuUtils;
 import org.dashbuilder.client.menu.exception.MenuExceptionMessages;
@@ -28,6 +28,7 @@ import org.dashbuilder.common.client.StringUtils;
 import org.dashbuilder.shared.menu.MenuHandler;
 import org.dashbuilder.shared.menu.exception.AbstractMenuException;
 import org.dashbuilder.shared.menu.exception.MenuSecurityException;
+import org.dashbuilder.shared.mvp.command.GoToPerspectiveCommand;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
 import org.uberfire.client.annotations.WorkbenchPartView;
 import org.uberfire.client.annotations.WorkbenchScreen;
@@ -84,8 +85,15 @@ public class MenuScreen {
     
     private void init() {
         String json = placeRequest.getParameter("json", "");
-        if (!StringUtils.isBlank(json)) this.menus = jsonMarshaller.fromJsonString(json);
-        if (menus == null) menus = menuHandler.buildEmptyEditableMenusModel();
+        if (!StringUtils.isBlank(json)) {
+            ClientMenuUtils.doDebugLog("Unmarshall json instance to a Menus one...");
+            this.menus = jsonMarshaller.fromJsonString(json);
+            ClientMenuUtils.doDebugLog("Unmarshall of json instance to a Menus finished");
+        }
+        if (menus == null) {
+            ClientMenuUtils.doDebugLog("No JSON serializen for screen found. Creating emtpy model.");
+            menus = menuHandler.buildEmptyEditableMenusModel();
+        }
         menuHandler.setMenus(menus);
         ClientMenuUtils.doDebugLog("MenuScreen - startup: " + json);
         init(menus, menuBarListener);
@@ -121,7 +129,7 @@ public class MenuScreen {
 
         void build(final Menus menus, final ViewCallback callback);
 
-        void showError(final String msg);
+        void showError(final String msg, final Command afterCloseCommand);
         
         void clear();
 
@@ -191,55 +199,55 @@ public class MenuScreen {
                     fireMenusUpdated();
                 }
             } catch (final AbstractMenuException e) {
-                final String m = menuExceptionMessages.getMessage(e);
-                view.showError(m);
+                showError(e);
             }
         }
 
         @Override
         public void createItemCommand(final String caption, final String activityId) {
             try {
-                final MenuItem item = menuHandler.createMenuItemCommand(caption, activityId);
+                final GoToPerspectiveCommand c = new GoToPerspectiveCommand(placeManager, activityId);
+                final MenuItem item = menuHandler.createMenuItemCommand(caption, c);
                 if (item != null) {
                     menuHandler.addItem(item);
                     fireMenusUpdated();
                 }
             } catch (MenuSecurityException e) {
-                view.showError(MenusConstants.INSTANCE.authzFailed());
+                showError(MenusConstants.INSTANCE.authzFailed());
             }
         }
 
         @Override
         public void createItemGroup(final String caption) {
             try {
-                final MenuItem item = menuHandler.createMenuItemGroup(caption);
+                final MenuItem item = menuHandler.createMenuItemGroup(caption, getDefatultPerspectiveGoToCommand());
                 if (item != null) {
                     menuHandler.addItem(item);
                     fireMenusUpdated();
                 }
             } catch (MenuSecurityException e) {
-                view.showError(MenusConstants.INSTANCE.authzFailed());
+                showError(MenusConstants.INSTANCE.authzFailed());
             }
         }
 
         @Override
         public void editItemCommand(final String itemUUID, final String caption, final String activityId) {
-            MenuItem newItem = null;
             try {
-                newItem = menuHandler.createMenuItemCommand(caption, activityId);
+                final GoToPerspectiveCommand c = new GoToPerspectiveCommand(placeManager, activityId);
+                final MenuItem newItem = menuHandler.createMenuItemCommand(caption, c);
                 replaceItem(itemUUID, menus, newItem);    
             } catch (MenuSecurityException e) {
-                view.showError(MenusConstants.INSTANCE.authzFailed());
+                showError(MenusConstants.INSTANCE.authzFailed());
             }
         }
 
         @Override
         public void editeItemGroup(final String itemUUID, final String caption) {
             try {
-                final MenuItem newItem = menuHandler.createMenuItemGroup(caption);
+                final MenuItem newItem = menuHandler.createMenuItemGroup(caption, getDefatultPerspectiveGoToCommand());
                 replaceItem(itemUUID, menus, newItem);
             } catch (MenuSecurityException e) {
-                view.showError(MenusConstants.INSTANCE.authzFailed());
+                showError(MenusConstants.INSTANCE.authzFailed());
             }
         }
         
@@ -249,29 +257,50 @@ public class MenuScreen {
                     menuHandler.replaceItem(itemUUID, newItem);
                     fireMenusUpdated();
                 } catch (MenuSecurityException e) {
-                    view.showError(MenusConstants.INSTANCE.authzFailed());
+                    showError(MenusConstants.INSTANCE.authzFailed());
                 }
             }
         }
 
         @Override
         public void moveItem(final String sourceUUID, final String targetUUID, final boolean before) {
-            
             try {
                 final boolean moved = menuHandler.moveItem(sourceUUID, targetUUID, before);
                 if (moved) {
                     fireMenusUpdated();
                 }
             } catch (AbstractMenuException e) {
-                final String m = menuExceptionMessages.getMessage(e);
-                view.showError(m);
+                showError(e);
             }
         }
     };
 
+    private GoToPerspectiveCommand getDefatultPerspectiveGoToCommand() {
+        final PerspectiveActivity defaultPerspective = perspectiveEditor.getDefaultPerspective();
+        return new GoToPerspectiveCommand(placeManager, defaultPerspective.getIdentifier());    
+    }
+    
     private void buildView() {
         view.build(menus, viewCallback);
     }
+
+    private void showError(final AbstractMenuException e) {
+        final String m = menuExceptionMessages.getMessage(e);
+        showError(m);
+    }
+    
+    private void showError(final String message) {
+        view.showError(message, afterCloseErrorCommand);
+    }
+    
+    private final Command afterCloseErrorCommand = new Command() {
+        @Override
+        public void execute() {
+            ClientMenuUtils.doDebugLog("Rebuilding menu screen after an error.");
+            // Rebuild the screen view.
+            buildView();
+        }
+    };
 
     private void fireMenusUpdated() {
         ClientMenuUtils.doDebugLog("fireMenusUpdated");

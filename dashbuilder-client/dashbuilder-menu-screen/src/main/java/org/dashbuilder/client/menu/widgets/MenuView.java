@@ -35,6 +35,7 @@ import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.*;
 import org.dashbuilder.client.menu.ClientMenuUtils;
@@ -66,7 +67,6 @@ public class MenuView extends Composite
     private static final String POINTS = "...";
     private static final String MENU_ITEM_TYPE_GROUP = "MENU_ITEM_TYPE_GROUP";
     private static final String DROPDOWN_OPEN_STYLE = "open";
-    public static final String DRAG_DATA_TEXT = "text";
     final MenuComponent.MenuItemTypes ITEM_TYPE_COMMAND = MenuComponent.MenuItemTypes.COMMAND;
 
     interface MenuViewBinder
@@ -154,7 +154,7 @@ public class MenuView extends Composite
     private MenuComponent.MenuItemTypes selectedItemType;
     private MenuScreen.ViewCallback viewCallback;
     private Timer menuGroupTimer;
-    private HandlerRegistration editMenuItemButtonHandlerRegistration;
+    private String uuidToRemove;
     
     public MenuView() {
 
@@ -213,9 +213,9 @@ public class MenuView extends Composite
                 event.stopPropagation();
                 if (isEdit) {
                     removeButtonPanel.removeStyleName(style.removeButtonPanelDragOver());
-                    final String id = event.getData(DRAG_DATA_TEXT);
-                    if (id != null) {
-                        viewCallback.removeItem(id);
+                    if (uuidToRemove != null) {
+                        viewCallback.removeItem(uuidToRemove);
+                        uuidToRemove = null;
                     }    
                 }
             }
@@ -232,10 +232,10 @@ public class MenuView extends Composite
     }
 
     @Override
-    public void showError(String msg) {
-        ErrorPopup.showMessage("MenuView error: " + msg);
+    public void showError(final String msg, final Command afterCloseCommand) {
+        ErrorPopup.showMessage(msg, null, afterCloseCommand);
     }
-
+    
     @UiHandler(value = "addButton")
     public void onAdd(final ClickEvent clickEvent) {
         createMenuItem();
@@ -581,7 +581,7 @@ public class MenuView extends Composite
     
     private void onMenuItemDragStart(final DragStartEvent event, final MenuComponent.MenuItemTypes type, final String uuid, final Widget gwtItem) {
         if (isEdit) {
-            event.setData(DRAG_DATA_TEXT, uuid);
+            uuidToRemove = uuid;
             ClientMenuUtils.doDebugLog("onMenuItemDragStart - uuid: " + uuid);
             enableRemove();
         }
@@ -639,8 +639,7 @@ public class MenuView extends Composite
             removeMenuItemDragStyles(gwtItem);
             disableRemove();
 
-            final String sourceUUID = event.getData("text");
-            if (sourceUUID != null && targetUUID != null && !sourceUUID.equals(targetUUID)) {
+            if (uuidToRemove != null && targetUUID != null && !uuidToRemove.equals(targetUUID)) {
                 final MenuHandler.MenuItemLocation location = viewCallback.getItemLocation(targetUUID);
                 if (location != null) {
                     final boolean isItemHorizontal = location.getParent() == null;
@@ -652,8 +651,8 @@ public class MenuView extends Composite
                         final boolean isLeft = MenuViewDragPosition.LEFT.equals(dragPosition);
                         final boolean before = (!isBottom && isItemVertical) || isLeft;
                         applyDragPositionStyles(gwtItem, dragPosition, isMenuGroup, isItemHorizontal);
-                        ClientMenuUtils.doDebugLog("Drop from '" + sourceUUID + "' on  '" + targetUUID + "' using before=" + before);
-                        viewCallback.moveItem(sourceUUID, targetUUID, before);
+                        ClientMenuUtils.doDebugLog("Drop from '" + uuidToRemove + "' on  '" + targetUUID + "' using before=" + before);
+                        viewCallback.moveItem(uuidToRemove, targetUUID, before);
                     }
                 }
             }
@@ -906,7 +905,7 @@ public class MenuView extends Composite
         isEdit = false;
         endTimer();
         viewCallback = null;
-        editMenuItemButtonHandlerRegistration = null;
+        uuidToRemove = null;
     }
 
 }

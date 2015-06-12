@@ -21,6 +21,7 @@ import org.dashbuilder.client.menu.widgets.MenuComponent;
 import org.dashbuilder.shared.menu.MenuHandler;
 import org.dashbuilder.shared.menu.exception.MenuSecurityException;
 import org.dashbuilder.shared.mvp.command.GoToPerspectiveCommand;
+import org.uberfire.client.mvp.PlaceManager;
 import org.uberfire.workbench.model.menu.*;
 
 import javax.inject.Inject;
@@ -33,6 +34,9 @@ public class MenusJSONMarshaller {
 
     @Inject
     MenuHandler menuHandler;
+
+    @Inject
+    private PlaceManager placeManager;
     
     public static final String MENU_ITEMS = "items";
     public static final String MENU_ITEM_TYPE = "itemType";
@@ -90,7 +94,8 @@ public class MenusJSONMarshaller {
             final String caption = itemObject.get(MENU_ITEM_CAPTION).isString().stringValue();
             final String activityId = itemObject.get(MENU_ITEM_COMMAND_ACTIVITYID).isString().stringValue();
             try {
-                return menuHandler.createMenuItemCommand(caption, activityId);
+                final GoToPerspectiveCommand c = new GoToPerspectiveCommand(placeManager, activityId);
+                return menuHandler.createMenuItemCommand(caption, c);
             } catch (MenuSecurityException e) {
                 e.printStackTrace();
             }
