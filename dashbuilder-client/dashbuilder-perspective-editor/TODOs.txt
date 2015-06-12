@@ -4,13 +4,14 @@ Urgent
 * HTML Screen (WYSIWYG editor, ACE? )
 * Menu Screen (vertical/horizontal arrangement, permissions, listen to delete perspective events)
 * ACL editor for mapping roles to perspectives
-* Toolbar look&feel
-* Tab panel dropdown is shown too early
-* List header style
+* List panel header style
+* Main Toolbar: look&feel
+* Main Toolbar: perspective selector
 
 Non-urgent
 -------------------------------
 
+* Tab panel dropdown is shown too early
 * Component reuse
 * Disable panel drag&drop & sliders on editOff
 * Enable/Disable drag on edit on/off
