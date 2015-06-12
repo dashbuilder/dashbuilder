@@ -41,6 +41,7 @@
     <module>dashbuilder-renderers</module>
     <module>dashbuilder-perspective-editor</module>
     <module>dashbuilder-menu-screen</module>
+    <module>dashbuilder-html-screen</module>
   </modules>
 
   <dependencies>

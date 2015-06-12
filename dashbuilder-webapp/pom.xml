@@ -91,6 +91,12 @@
 
     <dependency>
       <groupId>org.dashbuilder</groupId>
+      <artifactId>dashbuilder-html-screen</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.dashbuilder</groupId>
       <artifactId>dashbuilder-dataset-editor</artifactId>
       <scope>provided</scope>
     </dependency>
@@ -414,6 +420,7 @@
             <compileSourcesArtifact>org.dashbuilder:dashbuilder-dataset-editor</compileSourcesArtifact>
             <compileSourcesArtifact>org.dashbuilder:dashbuilder-perspective-editor</compileSourcesArtifact>
             <compileSourcesArtifact>org.dashbuilder:dashbuilder-menu-screen</compileSourcesArtifact>
+            <compileSourcesArtifact>org.dashbuilder:dashbuilder-html-screen</compileSourcesArtifact>
             <compileSourcesArtifact>org.dashbuilder:dashbuilder-renderer-default</compileSourcesArtifact>
             <compileSourcesArtifact>org.dashbuilder:dashbuilder-renderer-google</compileSourcesArtifact>
             <compileSourcesArtifact>org.dashbuilder:dashbuilder-renderer-chartjs</compileSourcesArtifact>
