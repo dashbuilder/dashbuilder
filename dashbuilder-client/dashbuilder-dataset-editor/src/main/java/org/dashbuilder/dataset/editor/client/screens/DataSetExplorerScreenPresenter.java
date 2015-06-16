@@ -48,6 +48,9 @@ public class DataSetExplorerScreenPresenter {
     private Menus menu = null;
 
     @Inject
+    DataSetClientServices clientServices;
+
+    @Inject
     DataSetExplorer explorerWidget;
 
     @Inject
@@ -119,11 +122,7 @@ public class DataSetExplorerScreenPresenter {
     }
 
     void deleteDataSet(DeleteDataSetEvent event) {
-        deleteDataSet(event.getUuid());
-    }
-    
-    public void deleteDataSet(String uuid) {
-        DataSetClientServices.get().deleteDataSetDef(uuid, new DataSetDefRemoveCallback() {
+        clientServices.removeDataSetDef(event.getUuid(), new DataSetDefRemoveCallback() {
             @Override
             public void success() {
                 // Data set definition removed from the list by the fired remove event.

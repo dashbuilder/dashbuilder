@@ -63,7 +63,7 @@ public interface DataSetMetadata {
     List<ColumnType> getColumnTypes();
 
     /**
-     * Get the estimated size in kilobytes.
+     * Get the estimated size in bytes.
      */
     int getEstimatedSize();
 

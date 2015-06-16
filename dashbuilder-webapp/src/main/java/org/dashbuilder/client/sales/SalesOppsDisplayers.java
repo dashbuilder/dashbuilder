@@ -40,6 +40,7 @@ public class SalesOppsDisplayers {
             .width(500).height(300)
             .margins(10, 10, 10, 10)
             .filterOn(false, true, true)
+            .refreshOn()
             .buildSettings();
 
     public static final DisplayerSettings OPPS_BY_STATUS = DisplayerSettingsFactory.newPieChartSettings()
@@ -52,6 +53,7 @@ public class SalesOppsDisplayers {
             .titleVisible(false)
             .margins(10, 10, 10, 10)
             .filterOn(false, true, true)
+            .refreshOn()
             .buildSettings();
 
     public static final DisplayerSettings OPPS_BY_SALESMAN = DisplayerSettingsFactory.newPieChartSettings()
@@ -64,6 +66,7 @@ public class SalesOppsDisplayers {
             .titleVisible(false)
             .margins(10, 10, 10, 10)
             .filterOn(false, true, true)
+            .refreshOn()
             .buildSettings();
 
     public static final DisplayerSettings OPPS_EXPECTED_PIPELINE = DisplayerSettingsFactory.newAreaChartSettings()
@@ -77,6 +80,7 @@ public class SalesOppsDisplayers {
             .width(500).height(300)
             .margins(20, 50, 100, 100)
             .filterOn(true, true, true)
+            .refreshOn()
             .buildSettings();
 
     public static final DisplayerSettings OPPS_BY_PRODUCT = DisplayerSettingsFactory.newBarChartSettings()
@@ -90,6 +94,7 @@ public class SalesOppsDisplayers {
             .titleVisible(false)
             .margins(10, 50, 100, 100)
             .filterOn(false, true, true)
+            .refreshOn()
             .buildSettings();
 
     public static final DisplayerSettings OPPS_BY_COUNTRY = DisplayerSettingsFactory.newBarChartSettings()
@@ -103,6 +108,7 @@ public class SalesOppsDisplayers {
             .titleVisible(false)
             .margins(10, 80, 100, 100)
             .filterOn(false, true, true)
+            .refreshOn()
             .buildSettings();
 
     public static final DisplayerSettings OPPS_COUNTRY_SUMMARY = DisplayerSettingsFactory.newTableSettings()
@@ -119,6 +125,7 @@ public class SalesOppsDisplayers {
             .titleVisible(false)
             .tablePageSize(20)
             .filterOff(true)
+            .refreshOn()
             .buildSettings();
 
     public static final DisplayerSettings OPPS_ALLOPPS_LISTING = DisplayerSettingsFactory.newTableSettings()
@@ -130,5 +137,6 @@ public class SalesOppsDisplayers {
             .tableOrderEnabled(true)
             .tableOrderDefault(AMOUNT, DESCENDING)
             .filterOn(true, true, true)
+            .refreshOn()
             .buildSettings();
 }
