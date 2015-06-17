@@ -15,9 +15,9 @@
  */
 package org.dashbuilder.renderer.lienzo.client;
 
-import com.ait.lienzo.charts.client.AbstractChart;
-import com.ait.lienzo.charts.client.model.DataTable;
-import com.ait.lienzo.charts.client.model.DataTableColumn;
+import com.ait.lienzo.charts.client.core.AbstractChart;
+import com.ait.lienzo.charts.client.core.model.DataTable;
+import com.ait.lienzo.charts.client.core.model.DataTableColumn;
 import com.ait.lienzo.client.core.shape.Layer;
 import com.ait.lienzo.client.widget.LienzoPanel;
 import com.google.gwt.core.client.GWT;
@@ -27,8 +27,8 @@ import com.google.gwt.user.client.ui.*;
 import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.dataset.DataSet;
-import org.dashbuilder.dataset.client.DataSetReadyCallback;
 import org.dashbuilder.dataset.client.DataSetClientServiceError;
+import org.dashbuilder.dataset.client.DataSetReadyCallback;
 import org.dashbuilder.dataset.group.Interval;
 import org.dashbuilder.displayer.client.AbstractDisplayer;
 
@@ -40,7 +40,7 @@ public abstract class LienzoDisplayer extends AbstractDisplayer {
 
     private static final int PANEL_MARGIN = 50;
     private static final String PIXEL = "px";
-    
+    public static final int ANIMATION_DURATION = 500;
     protected FlowPanel mainPanel = new FlowPanel();
     protected FlowPanel filterPanel = new FlowPanel();
     final protected LienzoPanel panel = new LienzoPanel();

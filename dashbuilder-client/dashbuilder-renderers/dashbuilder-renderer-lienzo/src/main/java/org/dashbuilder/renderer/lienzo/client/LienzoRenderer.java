@@ -15,9 +15,6 @@
  */
 package org.dashbuilder.renderer.lienzo.client;
 
-import java.util.Arrays;
-import java.util.List;
-
 import org.dashbuilder.displayer.DisplayerSettings;
 import org.dashbuilder.displayer.DisplayerSubType;
 import org.dashbuilder.displayer.DisplayerType;
@@ -25,6 +22,8 @@ import org.dashbuilder.displayer.client.AbstractRendererLibrary;
 import org.dashbuilder.displayer.client.Displayer;
 
 import javax.enterprise.context.ApplicationScoped;
+import java.util.Arrays;
+import java.util.List;
 
 import static org.dashbuilder.displayer.DisplayerSubType.*;
 import static org.dashbuilder.displayer.DisplayerType.*;
@@ -51,7 +50,8 @@ public class LienzoRenderer extends AbstractRendererLibrary {
     public List<DisplayerType> getSupportedTypes() {
         return Arrays.asList(
                 BARCHART,
-                PIECHART);
+                PIECHART,
+                LINECHART);
     }
 
     @Override
@@ -61,6 +61,8 @@ public class LienzoRenderer extends AbstractRendererLibrary {
                 return Arrays.asList(BAR, COLUMN);
             case PIECHART:
                 return Arrays.asList(PIE);
+            case LINECHART:
+                return Arrays.asList(LINE);
             default:
                 return Arrays.asList();
         }
@@ -71,6 +73,7 @@ public class LienzoRenderer extends AbstractRendererLibrary {
         DisplayerType type = displayerSettings.getType();
         if (BARCHART.equals(type)) return new LienzoBarChartDisplayer();
         if (PIECHART.equals(type)) return new LienzoPieChartDisplayer();
+        if (LINECHART.equals(type)) return new LienzoLineChartDisplayer();
         return null;
     }
 }

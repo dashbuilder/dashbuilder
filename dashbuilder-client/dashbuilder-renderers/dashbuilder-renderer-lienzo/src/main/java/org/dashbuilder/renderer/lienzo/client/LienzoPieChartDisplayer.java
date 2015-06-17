@@ -15,16 +15,14 @@
  */
 package org.dashbuilder.renderer.lienzo.client;
 
-import com.ait.lienzo.charts.client.AbstractChart;
-import com.ait.lienzo.charts.client.pie.PieChart;
-import com.ait.lienzo.charts.client.pie.PieChartData;
-import com.ait.lienzo.charts.client.pie.event.DataReloadedEvent;
-import com.ait.lienzo.charts.client.pie.event.DataReloadedEventHandler;
-import com.ait.lienzo.charts.client.pie.event.ValueSelectedEvent;
-import com.ait.lienzo.charts.client.pie.event.ValueSelectedHandler;
-import com.ait.lienzo.charts.client.resizer.ChartResizeEvent;
-import com.ait.lienzo.charts.client.resizer.ChartResizeEventHandler;
-import com.ait.lienzo.charts.shared.core.types.ChartOrientation;
+import com.ait.lienzo.charts.client.core.AbstractChart;
+import com.ait.lienzo.charts.client.core.model.PieChartData;
+import com.ait.lienzo.charts.client.core.pie.PieChart;
+import com.ait.lienzo.charts.client.core.pie.event.ValueSelectedEvent;
+import com.ait.lienzo.charts.client.core.pie.event.ValueSelectedHandler;
+import com.ait.lienzo.charts.client.core.resizer.ChartResizeEvent;
+import com.ait.lienzo.charts.client.core.resizer.ChartResizeEventHandler;
+import com.ait.lienzo.client.core.animation.AnimationTweener;
 import com.ait.lienzo.shared.core.types.ColorName;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Widget;
@@ -42,7 +40,6 @@ public class LienzoPieChartDisplayer extends LienzoDisplayer {
     };
     
     protected PieChart chart = null;
-    private boolean isConfigured = false;
 
     @Override
     public AbstractChart createVisualization() {
@@ -51,21 +48,18 @@ public class LienzoPieChartDisplayer extends LienzoDisplayer {
         PieChartData chartData = createChartData();
 
         // Create the BarChart instance.
-        chart = new PieChart(new DataReloadedEventHandler() {
-            @Override
-            public void onDataReloaded(DataReloadedEvent event) {
-                configurePieChart(event.getChart());
-            }
-        });
+        chart = new PieChart();
         
         // Data.
         chart.setData(chartData);
         
+        // Configure other chart setttings.
+        configurePieChart();
+        
         return chart;
     }
     
-    private void configurePieChart(PieChart chart) {
-        if (isConfigured) return;
+    private void configurePieChart() {
 
         chart.setX(0).setY(0);
         chart.setName(displayerSettings.getTitle());
@@ -74,13 +68,14 @@ public class LienzoPieChartDisplayer extends LienzoDisplayer {
         chart.setMarginLeft(displayerSettings.getChartMarginLeft());
         chart.setMarginRight(displayerSettings.getChartMarginRight());
         chart.setMarginTop(displayerSettings.getChartMarginTop());
-        chart.setMarginBotom(displayerSettings.getChartMarginBottom());
+        chart.setMarginBottom(displayerSettings.getChartMarginBottom());
         chart.setFontFamily("Verdana");
         chart.setFontStyle("bold");
         chart.setFontSize(8);
-        chart.setShowTitle(displayerSettings.isTitleVisible());
+        // TODO: Bug in Lienzo charting -> If title not visible -> javascript error (nullpointer)
+        chart.setShowTitle(true);
+        // chart.setShowTitle(displayerSettings.isTitleVisible());
         chart.setResizable(displayerSettings.isResizable());
-        chart.setAnimated(true); // TODO: Custom displayer parameter.
 
         // Filtering event.
         if (displayerSettings.isFilterEnabled()) {
@@ -97,10 +92,11 @@ public class LienzoPieChartDisplayer extends LienzoDisplayer {
             });
         }
 
+        // Draw the elements.
+        chart.draw();
 
-        chart.build();
-        
-        isConfigured=true;
+        // Create the Pie Chart using animations.
+        chart.init(AnimationTweener.LINEAR, ANIMATION_DURATION);
     }
 
     @Override
@@ -114,7 +110,7 @@ public class LienzoPieChartDisplayer extends LienzoDisplayer {
             chart = null;
         } else {
             PieChartData newData = createChartData();
-            chart.setData(newData);
+            chart.reload(newData, AnimationTweener.LINEAR, ANIMATION_DURATION);
         }
     }
 

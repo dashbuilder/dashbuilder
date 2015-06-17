@@ -16,20 +16,21 @@
 package org.dashbuilder.renderer.lienzo.client;
 
 import com.ait.lienzo.charts.client.core.xy.XYChartData;
-import com.ait.lienzo.charts.client.core.xy.bar.BarChart;
+import com.ait.lienzo.charts.client.core.xy.line.LineChart;
 import com.ait.lienzo.client.core.animation.AnimationTweener;
 import com.ait.lienzo.shared.core.types.ColorName;
+import org.dashbuilder.renderer.lienzo.client.LienzoXYChartDisplayer;
 
-public class LienzoBarChartDisplayer extends LienzoXYChartDisplayer<BarChart> {
+public class LienzoLineChartDisplayer extends LienzoXYChartDisplayer<LineChart> {
 
     private static final ColorName[] DEFAULT_SERIE_COLORS = new ColorName[] {
             ColorName.DEEPSKYBLUE, ColorName.RED, ColorName.YELLOWGREEN            
     };
     
     @Override
-    public BarChart createChart() {
-        // Create the BarChart instance.
-        return new BarChart();
+    public LineChart createChart() {
+        // Create the LineChart instance.
+        return new LineChart();
     }
 
     @Override

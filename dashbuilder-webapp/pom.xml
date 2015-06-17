@@ -404,8 +404,6 @@
             <compileSourcesArtifact>org.dashbuilder:dashbuilder-renderer-google</compileSourcesArtifact>
             <compileSourcesArtifact>org.dashbuilder:dashbuilder-renderer-chartjs</compileSourcesArtifact>
             <compileSourcesArtifact>org.dashbuilder:dashbuilder-renderer-lienzo</compileSourcesArtifact>
-            <compileSourcesArtifact>org.dashbuilder:dashbuilder-lienzo-core</compileSourcesArtifact>
-            <compileSourcesArtifact>org.dashbuilder:dashbuilder-lienzo-charts</compileSourcesArtifact>
 
             <!-- Uberfire ext -->
             <compileSourcesArtifact>org.uberfire:uberfire-runtime-plugins-api</compileSourcesArtifact>

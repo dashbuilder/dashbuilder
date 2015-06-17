@@ -18,13 +18,13 @@
   <dependencies>
 
     <dependency>
-      <groupId>org.dashbuilder</groupId>
-      <artifactId>dashbuilder-lienzo-charts</artifactId>
+      <groupId>com.ahome-it</groupId>
+      <artifactId>lienzo-core</artifactId>
     </dependency>
-
+    
     <dependency>
-      <groupId>org.dashbuilder</groupId>
-      <artifactId>dashbuilder-lienzo-core</artifactId>
+      <groupId>com.ahome-it</groupId>
+      <artifactId>lienzo-charts</artifactId>
     </dependency>
 
     <dependency>
