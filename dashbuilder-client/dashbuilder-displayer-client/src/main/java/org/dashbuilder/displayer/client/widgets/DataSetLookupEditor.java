@@ -23,6 +23,7 @@ import javax.inject.Inject;
 
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
+import org.dashbuilder.common.client.StringUtils;
 import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetLookup;
@@ -69,7 +70,6 @@ public class DataSetLookupEditor implements IsWidget,
 
     Listener listener;
     View view;
-    DataSetClientServices clientServices;
 
     DataSet dataSet = null;
     DataSetLookup dataSetLookup = null;
@@ -78,14 +78,11 @@ public class DataSetLookupEditor implements IsWidget,
 
     public DataSetLookupEditor() {
         this.view = new DataSetLookupEditorView();
-        this.clientServices = DataSetClientServices.get();
     }
 
     @Inject
-    public DataSetLookupEditor(DataSetLookupEditorView view,
-            DataSetClientServices clientServices) {
+    public DataSetLookupEditor(DataSetLookupEditorView view) {
         this.view = view;
-        this.clientServices = clientServices;
     }
 
     public Widget asWidget() {
@@ -99,7 +96,7 @@ public class DataSetLookupEditor implements IsWidget,
         this.dataSetMetadata = null;
         view.init(this);
 
-        clientServices.getPublicDataSetDefs(new RemoteCallback<List<DataSetDef>>() {
+        DataSetClientServices.get().getRemoteSharedDataSetDefs(new RemoteCallback<List<DataSetDef>>() {
             public void callback(List<DataSetDef> dataSetDefs) {
                 view.showDataSetDefs(dataSetDefs);
             }
@@ -117,7 +114,7 @@ public class DataSetLookupEditor implements IsWidget,
         this.dataSetMetadata = metadata;
         view.init(this);
 
-        clientServices.getPublicDataSetDefs(new RemoteCallback<List<DataSetDef>>() {
+        DataSetClientServices.get().getRemoteSharedDataSetDefs(new RemoteCallback<List<DataSetDef>>() {
             public void callback(List<DataSetDef> dataSetDefs) {
                 view.showDataSetDefs(dataSetDefs);
                 view.updateDataSetLookup();

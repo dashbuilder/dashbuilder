@@ -20,32 +20,28 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import org.dashbuilder.dataset.backend.DataSetDefDeployer;
-import org.dashbuilder.dataset.def.DataSetDefRegistry;
+import org.dashbuilder.scheduler.Scheduler;
 import org.slf4j.Logger;
 import org.uberfire.commons.services.cdi.Startup;
 
 /**
- * Class in charge of bootstrapping the Dashbuilder core services
+ * Class in charge of bootstrapping some of the dashbuilder services
  */
 @ApplicationScoped
 @Startup
 public class Bootstrap {
 
     @Inject
-    protected Logger log;
+    private Logger log;
 
     @Inject
-    protected DataSetDefRegistry registry;
+    private Scheduler scheduler;
 
     @Inject
-    protected DataSetDefDeployer deployer;
+    private DataSetDefDeployer datasetDeployer;
 
     @PostConstruct
-    protected void init() {
-        // Force CDI managed beans to initialize.
-        registry.toString();
-        deployer.toString();
-
+    private void init() {
         log.info("Dashbuilder initialized");
     }
 }

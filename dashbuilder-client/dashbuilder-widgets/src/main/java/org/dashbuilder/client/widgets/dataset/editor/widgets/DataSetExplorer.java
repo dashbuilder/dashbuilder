@@ -15,6 +15,7 @@
  */
 package org.dashbuilder.client.widgets.dataset.editor.widgets;
 
+import com.github.gwtbootstrap.client.ui.event.ShowHandler;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.event.shared.HasHandlers;
@@ -23,6 +24,7 @@ import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.client.widgets.dataset.editor.widgets.events.DeleteDataSetEventHandler;
 import org.dashbuilder.client.widgets.dataset.editor.widgets.events.EditDataSetEventHandler;
 import org.dashbuilder.dataprovider.DataSetProviderType;
+import org.dashbuilder.dataset.DataSetMetadata;
 import org.dashbuilder.dataset.client.DataSetClientServiceError;
 import org.dashbuilder.dataset.client.DataSetClientServices;
 import org.dashbuilder.dataset.client.DataSetMetadataCallback;
@@ -73,14 +75,12 @@ public class DataSetExplorer implements IsWidget {
 
         boolean isShowBackendCache(final DataSetDef def);
     }
-
-    DataSetClientServices clientServices;
+    
     View view;
 
     @Inject
-    public DataSetExplorer(DataSetClientServices clientServices) {
-        this.view = new DataSetExplorerView();
-        this.clientServices = clientServices;
+    public DataSetExplorer() {
+        view = new DataSetExplorerView();
         init();
     }
 
@@ -90,7 +90,7 @@ public class DataSetExplorer implements IsWidget {
     }
 
     private void init() {
-        clientServices.getPublicDataSetDefs(new RemoteCallback<List<DataSetDef>>() {
+        DataSetClientServices.get().getRemoteSharedDataSetDefs(new RemoteCallback<List<DataSetDef>>() {
             public void callback(List<DataSetDef> dataSetDefs) {
                 view.set(dataSetDefs);
                 view.show(showDataSetDefCallback);

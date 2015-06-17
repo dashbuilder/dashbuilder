@@ -31,16 +31,6 @@
   <dependencies>
 
     <dependency>
-      <groupId>commons-io</groupId>
-      <artifactId>commons-io</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.dashbuilder</groupId>
-      <artifactId>dashbuilder-common</artifactId>
-    </dependency>
-
-    <dependency>
       <groupId>org.dashbuilder</groupId>
       <artifactId>dashbuilder-scheduler</artifactId>
     </dependency>
@@ -68,11 +58,6 @@
     <dependency>
       <groupId>org.jboss.errai</groupId>
       <artifactId>errai-config</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.jboss.errai</groupId>
-      <artifactId>errai-security-server</artifactId>
     </dependency>
 
     <dependency>

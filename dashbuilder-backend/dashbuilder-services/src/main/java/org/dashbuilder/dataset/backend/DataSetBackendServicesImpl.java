@@ -15,6 +15,7 @@
  */
 package org.dashbuilder.dataset.backend;
 
+import java.io.File;
 import java.io.OutputStream;
 import java.io.StringWriter;
 import java.math.BigDecimal;
@@ -32,6 +33,7 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
+import javax.servlet.ServletContext;
 
 import au.com.bytecode.opencsv.CSVWriter;
 import org.apache.poi.ss.usermodel.BuiltinFormats;
@@ -45,12 +47,15 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.DateFormatConverter;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
-import org.dashbuilder.dataset.DataColumn;
-import org.dashbuilder.dataset.DataSet;
-import org.dashbuilder.dataset.DataSetLookup;
+import org.dashbuilder.dataset.*;
+import org.dashbuilder.dataset.def.DataColumnDef;
+import org.dashbuilder.dataset.exception.DataSetLookupException;
+import org.dashbuilder.dataset.backend.exception.ExceptionManager;
+import org.dashbuilder.dataset.def.DataSetDef;
+import org.dashbuilder.dataset.def.DataSetDefRegistry;
 import org.dashbuilder.dataset.group.Interval;
-import org.dashbuilder.dataset.service.DataSetExportServices;
 import org.jboss.errai.bus.server.annotations.Service;
+import org.jboss.errai.bus.server.api.RpcContext;
 import org.slf4j.Logger;
 import org.uberfire.io.IOService;
 import org.uberfire.java.nio.file.Files;
@@ -61,13 +66,18 @@ import org.uberfire.java.nio.file.Path;
  */
 @ApplicationScoped
 @Service
-public class DataSetExportServicesImpl implements DataSetExportServices {
+public class DataSetBackendServicesImpl implements DataSetBackendServices {
 
     @Inject
-    protected Logger log;
+    private Logger log;
 
     @Inject
-    protected BackendDataSetManager dataSetManager;
+    private ExceptionManager exceptionManager;
+    
+    @Inject BackendDataSetManager dataSetManager;
+    @Inject DataSetDefDeployer dataSetDefDeployer;
+    @Inject DataSetDefRegistry dataSetDefRegistry;
+    @Inject BackendUUIDGenerator backendUUIDGenerator;
 
 /*
     @Inject
@@ -95,6 +105,130 @@ public class DataSetExportServicesImpl implements DataSetExportServices {
         for ( IOService s : ioServices ) {
             ioService = s;
         }
+
+        ServletContext servletContext = RpcContext.getHttpSession().getServletContext();
+        if (!dataSetDefDeployer.isRunning() && servletContext != null) {
+            String dir = servletContext.getRealPath("WEB-INF/datasets");
+            if (dir != null && new File(dir).exists()) {
+                dir = dir.replaceAll("\\\\", "/");
+                dataSetDefDeployer.deploy(dir);
+            }
+        }
+    }
+
+    public String registerDataSetDef(DataSetDef definition) {
+        // Data sets registered from the UI does not contain a UUID.
+        if (definition.getUUID() == null) {
+            final String uuid = backendUUIDGenerator.newUuid();
+            definition.setUUID(uuid);
+        }
+        dataSetDefRegistry.registerDataSetDef(definition);
+        return definition.getUUID();
+    }
+
+    public String updateDataSetDef(String uuid, DataSetDef definition) {
+        // Data sets registered from the UI does not contain a UUID.
+        final DataSetDef def = dataSetDefRegistry.getDataSetDef(uuid);
+        if (def != null) {
+            dataSetDefRegistry.removeDataSetDef(uuid);
+        }
+        definition.setUUID(uuid);
+        dataSetDefRegistry.registerDataSetDef(definition);
+        return definition.getUUID();
+    }
+
+    @Override
+    public void removeDataSetDef(final String uuid) {
+        final DataSetDef def = dataSetDefRegistry.getDataSetDef(uuid);
+        if (def != null) {
+            dataSetDefRegistry.removeDataSetDef(uuid);
+        }
+    }
+
+    public DataSet lookupDataSet(DataSetLookup lookup) throws Exception {
+        DataSet _d = null;
+        try {
+            _d = dataSetManager.lookupDataSet(lookup);
+        } catch (DataSetLookupException e) {
+            throw exceptionManager.handleException(e);
+        }
+        
+        return _d;
+    }
+
+    public DataSet lookupDataSet(DataSetDef def, DataSetLookup lookup) throws Exception {
+        try {
+            // Although if using a not registered definition, it must have an uuid set for performing lookups.
+            if (def.getUUID() == null) {
+                final String uuid = backendUUIDGenerator.newUuid();
+                def.setUUID(uuid);
+                lookup.setDataSetUUID(uuid);
+            }
+            return dataSetManager.resolveProvider(def)
+                    .lookupDataSet(def, lookup);
+        } catch (Exception e) {
+            throw exceptionManager.handleException(e);
+        }
+    }
+
+    public DataSetMetadata lookupDataSetMetadata(String uuid) throws Exception {
+        DataSetMetadata _d = null;
+        try {
+            _d = dataSetManager.getDataSetMetadata(uuid);
+        } catch (DataSetLookupException e) {
+            throw exceptionManager.handleException(e);
+        }
+
+        return _d;
+    }
+
+    @Override
+    public EditDataSetDef prepareEdit(String uuid) throws Exception {
+        DataSetMetadata _d = null;
+        try {
+            _d = dataSetManager.getDataSetMetadata(uuid);
+            DataSetDef def = _d.getDefinition();
+            
+            // Clone the definition.
+            DataSetDef cloned = def.clone();
+            String newUuid = backendUUIDGenerator.newUuid();
+            cloned.setUUID(newUuid);
+            
+            // Enable all columns and set columns to null, force to obtain metadata with all original columns 
+            // and all original column types.
+            boolean clonedAllColumns = cloned.isAllColumnsEnabled();
+            List<DataColumnDef> clonedColumns = cloned.getColumns();
+            cloned.setAllColumnsEnabled(true);
+            cloned.setColumns(null);
+            cloned.setPublic(false);
+            
+            // Obtain all original columns and all original column types.
+            DataSetMetadata _cd = dataSetManager.resolveProvider(cloned)
+                    .getDataSetMetadata(cloned);
+
+            // Return the list of original columns and its types.
+            List<DataColumnDef> columns = new ArrayList<DataColumnDef>();
+            if (_cd.getNumberOfColumns() > 0) {
+                for (int x = 0; x < _cd.getNumberOfColumns(); x++) {
+                    String cId = _cd.getColumnId(x);
+                    ColumnType cType = _cd.getColumnType(x);
+                    DataColumnDef cdef = new DataColumnDef(cId, cType);
+                    columns.add(cdef);
+                }
+            }
+            
+            // Set columns attributes as initialy were. 
+            cloned.setAllColumnsEnabled(clonedAllColumns);
+            cloned.setColumns(clonedColumns);
+            return new EditDataSetDef(cloned, columns);
+            
+        } catch (DataSetLookupException e) {
+            throw exceptionManager.handleException(e);
+        }
+    }
+
+    public List<DataSetDef> getPublicDataSetDefs() {
+        return dataSetDefRegistry.getDataSetDefs( true );
     }
 
     public String exportDataSetCSV(DataSetLookup lookup) {
@@ -294,5 +428,18 @@ public class DataSetExportServicesImpl implements DataSetExportServices {
         style.setDataFormat(wb.createDataFormat().getFormat( DateFormatConverter.convert( Locale.getDefault(), dateFormatPattern )));
         styles.put("date_cell", style);
         return styles;
+    }
+    
+    public void persistDataSetDef(final DataSetDef dataSetDef) throws Exception {
+        dataSetDefDeployer.persist(dataSetDef);
+    }
+
+    @Override
+    public void deleteDataSetDef(final String uuid) {
+        final DataSetDef def = dataSetDefRegistry.getDataSetDef(uuid);
+        if (def != null) {
+            dataSetDefRegistry.removeDataSetDef(uuid);
+            dataSetDefDeployer.delete(def);
+        }
     }
 }

@@ -105,7 +105,6 @@ public class GalleryWidgetPresenter {
 
         if ((!def.isRefreshAlways() || noRealTime) && widget != null && widget.feedsFrom(targetUUID)) {
             workbenchNotification.fire(new NotificationEvent(AppConstants.INSTANCE.gallerywidget_dataset_modif(), INFO));
-            widget.redrawAll();
         }
     }
 
@@ -117,10 +116,7 @@ public class GalleryWidgetPresenter {
         DataSetDef def = metadata.getDefinition();
         TimeAmount timeFrame = def.getRefreshTimeAmount();
         if (timeFrame == null || timeFrame.toMillis() > 60000) {
-            int estimazedSizeKbs = event.getDataSetMetadata().getEstimatedSize()/1000;
-            workbenchNotification.fire(new NotificationEvent(
-                    AppConstants.INSTANCE.gallerywidget_dataset_loaded(def.getProvider().toString(),
-                            estimazedSizeKbs), INFO));
+            workbenchNotification.fire(new NotificationEvent(AppConstants.INSTANCE.gallerywidget_dataset_loaded(def.getProvider().toString(), event.getDataSetMetadata().getEstimatedSize()), INFO));
         }
     }
 }

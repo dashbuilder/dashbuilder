@@ -30,6 +30,7 @@ import org.dashbuilder.config.Config;
 import org.dashbuilder.dataprovider.DataSetProviderRegistry;
 import org.dashbuilder.dataset.def.DataSetDef;
 import org.dashbuilder.dataset.def.DataSetDefRegistry;
+import org.json.JSONException;
 import org.slf4j.Logger;
 
 /**
@@ -44,14 +45,14 @@ public class DataSetDefDeployer {
     @Inject @Config("3000")
     protected int pollingTime;
 
-    @Inject
+     @Inject
     protected DataSetDefRegistry dataSetDefRegistry;
 
-    @Inject
+     @Inject
     protected DataSetProviderRegistry dataSetProviderRegistry;
 
     @Inject
-    protected DataSetDefJSONMarshaller jsonMarshaller;
+    protected DataSetDefJSONMarshaller dataSetDefJSONMarshaller;
 
     @Inject
     protected Logger log;
@@ -140,28 +141,15 @@ public class DataSetDefDeployer {
                 // Read & Parse the definition file
                 FileReader fileReader = new FileReader(f);
                 String json = IOUtils.toString(fileReader);
-                DataSetDef def = jsonMarshaller.fromJson(json);
+                DataSetDef def = dataSetDefJSONMarshaller.fromJson(json);
+
+                // Register the data set
                 if (StringUtils.isBlank(def.getUUID())) def.setUUID(f.getName());
                 def.setDefFilePath(f.getAbsolutePath());
-
-                // Check if the data set really needs to be registered.
-                DataSetDef existingDef = dataSetDefRegistry.getDataSetDef(def.getUUID());
-                if (existingDef == null || !jsonMarshaller.toJsonString(existingDef).equals(jsonMarshaller.toJsonString(def))) {
-
-                    // Register the data set
-                    deployed.put(f.getName(), new DataSetDefRecord(def, f));
-                    if (r == null) {
-                        dataSetDefRegistry.registerDataSetDef(def, "---", "Data set definition initial deployment: " + def.getUUID());
-                        log.info("Data set definition deployed: " + def.getUUID());
-                    } else {
-                        dataSetDefRegistry.registerDataSetDef(def, "---", "Data set definition deployment updated: " + def.getUUID());
-                        log.info("Data set definition updated: " + def.getUUID());
-                    }
-                }
-                else {
-                    deployed.put(f.getName(), new DataSetDefRecord(existingDef, f));
-                    log.info("Data set definition found: " + def.getUUID());
-                }
+                dataSetDefRegistry.registerDataSetDef(def);
+                deployed.put(f.getName(), new DataSetDefRecord(def, f));
+                if (r == null) log.info("Data set definition deployed: " + def.getUUID());
+                else log.info("Data set definition updated: " + def.getUUID());
 
             }
             catch (Exception e) {
@@ -201,5 +189,32 @@ public class DataSetDefDeployer {
         boolean isOutdated() {
             return defFile.lastModified() > regTime;
         }
+    }
+    
+    public void persist(final DataSetDef dataSetDef) throws IOException, JSONException {
+        if (dataSetDef != null) 
+        {
+            final String uuid = dataSetDef.getUUID();
+            String fName = dataSetDef.getDefFilePath();
+            final File f =  (fName == null || fName.trim().length() == 0) ? new File(directory, uuid + ".dset") : new File(fName);
+            final String json = dataSetDefJSONMarshaller.toJsonString(dataSetDef);
+            FileWriter writer = null;
+            try {
+                writer = new FileWriter(f);
+                writer.write(json);
+            } catch (IOException e) {
+                throw e;
+            } finally {
+                if (writer != null)
+                {
+                    writer.flush();
+                    writer.close();
+                }
+            }
+        }
+    }
+
+    public boolean delete(final DataSetDef def) {
+        return def.getDefFilePath() != null && new File(def.getDefFilePath()).delete();
     }
 }

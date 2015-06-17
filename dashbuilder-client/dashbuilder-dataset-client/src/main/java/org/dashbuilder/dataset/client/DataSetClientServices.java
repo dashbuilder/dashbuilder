@@ -18,7 +18,7 @@ package org.dashbuilder.dataset.client;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.URL;
 import org.dashbuilder.dataset.DataSet;
-import org.dashbuilder.dataset.service.DataSetLookupServices;
+import org.dashbuilder.dataset.DataSetBackendServices;
 import org.dashbuilder.dataset.DataSetLookup;
 import org.dashbuilder.dataset.DataSetMetadata;
 import org.dashbuilder.dataset.backend.EditDataSetDef;
@@ -27,8 +27,6 @@ import org.dashbuilder.dataset.def.DataSetDef;
 import org.dashbuilder.dataset.engine.group.IntervalBuilderLocator;
 import org.dashbuilder.dataset.events.*;
 import org.dashbuilder.dataset.group.AggregateFunctionManager;
-import org.dashbuilder.dataset.service.DataSetDefServices;
-import org.dashbuilder.dataset.service.DataSetExportServices;
 import org.jboss.errai.bus.client.api.messaging.Message;
 import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.common.client.api.ErrorCallback;
@@ -83,19 +81,7 @@ public class DataSetClientServices {
      * The service caller used to lookup data sets from the backend.
      */
     @Inject
-    private Caller<DataSetLookupServices> dataSetLookupServices;
-
-    /**
-     * The service caller used to lookup data sets from the backend.
-     */
-    @Inject
-    private Caller<DataSetDefServices> dataSetDefServices;
-
-    /**
-     * The service caller used to lookup data sets from the backend.
-     */
-    @Inject
-    private Caller<DataSetExportServices> dataSetExportServices;
+    private Caller<DataSetBackendServices> dataSetBackendServices;
 
     /**
      * A cache of DataSetMetadata instances
@@ -134,20 +120,19 @@ public class DataSetClientServices {
         if (metadata != null) {
             listener.callback(metadata);
         }
-        else if (dataSetLookupServices != null) {
+        else if (dataSetBackendServices != null) {
             if (remoteMetadataMap.containsKey(uuid)) {
                 listener.callback(remoteMetadataMap.get(uuid));
             } else {
-                dataSetLookupServices.call(
-                        new RemoteCallback<DataSetMetadata>() {
-                            public void callback(DataSetMetadata result) {
-                                if (result == null) listener.notFound();
-                                else {
-                                    remoteMetadataMap.put(uuid, result);
-                                    listener.callback(result);
-                                }
-                            }
-                        }, new ErrorCallback<Message>() {
+                dataSetBackendServices.call(
+                    new RemoteCallback<DataSetMetadata>() {
+                    public void callback(DataSetMetadata result) {
+                        if (result == null) listener.notFound();
+                        else {
+                            remoteMetadataMap.put(uuid, result);
+                            listener.callback(result);
+                        }
+                    }}, new ErrorCallback<Message>() {
                             @Override
                             public boolean error(Message message, Throwable throwable) {
                                 listener.onError(new DataSetClientServiceError(message, throwable));
@@ -162,14 +147,14 @@ public class DataSetClientServices {
     }
 
     /**
-     * Obtain the data set definition edition instance
+     * Obtain the data set defintion edition instance .
      *
      * @param uuid The UUID of the data set to edit.
      * @throws Exception It there is an unexpected error trying to execute the lookup request.
      */
     public void prepareEdit(final String uuid, final DataSetEditCallback listener) throws Exception {
-        if (dataSetDefServices != null) {
-            dataSetDefServices.call(
+        if (dataSetBackendServices != null) {
+            dataSetBackendServices.call(
                 new RemoteCallback<EditDataSetDef>() {
                     public void callback(EditDataSetDef result) {
                         if (result == null) listener.notFound();
@@ -209,12 +194,12 @@ public class DataSetClientServices {
      */
     public void exportDataSetCSV(final DataSetLookup request, final DataSetExportReadyCallback listener) throws Exception {
 
-        if (dataSetLookupServices != null) {
+        if (dataSetBackendServices != null) {
             // Look always into the client data set manager.
             if (clientDataSetManager.getDataSet(request.getDataSetUUID()) != null) {
                 DataSet dataSet = clientDataSetManager.lookupDataSet(request);
                 try {
-                    dataSetExportServices.call(
+                    dataSetBackendServices.call(
                             new RemoteCallback<String>() {
                                 public void callback(String csvFilePath) {
                                     listener.exportReady(csvFilePath);
@@ -227,7 +212,7 @@ public class DataSetClientServices {
             else {
                 // If the data set is not in client, then look up remotely (only if the remote access is available).
                 try {
-                    dataSetExportServices.call(
+                    dataSetBackendServices.call(
                             new RemoteCallback<String>() {
                                 public void callback(String csvFilePath) {
                                     listener.exportReady(csvFilePath);
@@ -247,12 +232,12 @@ public class DataSetClientServices {
      */
     public void exportDataSetExcel(final DataSetLookup request, final DataSetExportReadyCallback listener) throws Exception {
 
-        if (dataSetLookupServices != null) {
+        if (dataSetBackendServices != null) {
             // Look always into the client data set manager.
             if (clientDataSetManager.getDataSet(request.getDataSetUUID()) != null) {
                 DataSet dataSet = clientDataSetManager.lookupDataSet(request);
                 try {
-                    dataSetExportServices.call(
+                    dataSetBackendServices.call(
                             new RemoteCallback<String>() {
                                 public void callback(String excelFilePath) {
                                     listener.exportReady(excelFilePath);
@@ -265,7 +250,7 @@ public class DataSetClientServices {
             else {
                 // If the data set is not in client, then look up remotely (only if the remote access is available).
                 try {
-                    dataSetExportServices.call(
+                    dataSetBackendServices.call(
                             new RemoteCallback<String>() {
                                 public void callback(String excelFilePath) {
                                     listener.exportReady(excelFilePath);
@@ -285,10 +270,10 @@ public class DataSetClientServices {
      */
     public void lookupDataSet(final DataSetDef def, final DataSetLookup request, final DataSetReadyCallback listener) throws Exception {
 
-        if (dataSetLookupServices != null) {
+        if (dataSetBackendServices != null) {
 
             try {
-                dataSetLookupServices.call(
+                dataSetBackendServices.call(
                         new RemoteCallback<DataSet>() {
                             public void callback(DataSet result) {
                                 if (result == null) listener.notFound();
@@ -327,7 +312,7 @@ public class DataSetClientServices {
             listener.callback(dataSet);
         }
         // If the data set is not in client, then look up remotely (only if the remote access is available).
-        else if (dataSetLookupServices != null) {
+        else if (dataSetBackendServices != null) {
 
             // First of all, get the target data set estimated size.
             fetchMetadata(request.getDataSetUUID(), new DataSetMetadataCallback() {
@@ -336,8 +321,7 @@ public class DataSetClientServices {
                     // Push the data set to client if and only if the push feature is enabled, the data set is
                     // pushable & the data set is smaller than the max push size defined.
                     DataSetDef dsetDef = metatada.getDefinition();
-                    int estimatedSize = metatada.getEstimatedSize() / 1000;
-                    boolean isPushable = dsetDef != null && dsetDef.isPushEnabled() &&  estimatedSize < dsetDef.getPushMaxSize();
+                    boolean isPushable = dsetDef != null && dsetDef.isPushEnabled() && metatada.getEstimatedSize() < dsetDef.getPushMaxSize();
                     if (pushRemoteDataSetEnabled && isPushable) {
 
                         // Check if a push is already in progress.
@@ -379,7 +363,7 @@ public class DataSetClientServices {
     private void _lookupDataSet(DataSetLookup request, final DataSetReadyCallback listener) {
         try {
             
-            dataSetLookupServices.call(
+            dataSetBackendServices.call(
                     new RemoteCallback<DataSet>() {
                         public void callback(DataSet result) {
                             if (result == null) listener.notFound();
@@ -398,9 +382,9 @@ public class DataSetClientServices {
         }
     }
 
-    public void getPublicDataSetDefs(RemoteCallback<List<DataSetDef>> callback) {
+    public void getRemoteSharedDataSetDefs(RemoteCallback<List<DataSetDef>> callback) {
         try {
-            dataSetDefServices.call(callback).getPublicDataSetDefs();
+            dataSetBackendServices.call(callback).getPublicDataSetDefs();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -470,7 +454,7 @@ public class DataSetClientServices {
      * @param registerCallback The callback when data set definition has been registered. It returns the UUID of the data set definition.
      */
     public void registerDataSetDef(final DataSetDef dataSetDef, final DataSetDefRegisterCallback registerCallback) {
-        dataSetDefServices.call(new RemoteCallback<String>() {
+        dataSetBackendServices.call(new RemoteCallback<String>() {
             @Override
             public void callback(String o) {
                 registerCallback.success(o);
@@ -484,13 +468,53 @@ public class DataSetClientServices {
     }
 
     /**
+     * <p>Updates a data set definition on backend.</p> 
+     * @param originalUUID The UUID of the data set definition to update.
+     * @param dataSetDef The updated data set definition attributes.
+     * @param registerCallback The callback when data set definition has been updated. It returns the UUID of the original data set definition that will be updated.
+     */
+    public void updateDataSetDef(final String originalUUID, final DataSetDef dataSetDef, final DataSetDefRegisterCallback registerCallback) {
+        dataSetBackendServices.call(new RemoteCallback<String>() {
+            @Override
+            public void callback(String o) {
+                registerCallback.success(o);
+            }
+        }, new ErrorCallback<Message>() {
+            @Override
+            public boolean error(Message o, Throwable throwable) {
+                return registerCallback.onError(new DataSetClientServiceError(o, throwable));
+            }
+        }).updateDataSetDef(originalUUID, dataSetDef);
+    }
+
+    /**
+     * <p>Persists a data set definition on backend.</p> 
+     * @param dataSetDef The data set definition to persist.
+     * @param persistCallback The callback when data set definition has been persisted.                   
+     */
+    public void persistDataSetDef(final DataSetDef dataSetDef, final DataSetDefPersistCallback persistCallback) throws Exception {
+        dataSetBackendServices.call(new RemoteCallback<Void>() {
+            @Override
+            public void callback(Void o) {
+                persistCallback.success();
+                ;
+            }
+        }, new ErrorCallback<Message>() {
+            @Override
+            public boolean error(Message message, Throwable throwable) {
+                return persistCallback.onError(new DataSetClientServiceError(message, throwable));
+            }
+        }).persistDataSetDef(dataSetDef);
+    }
+
+    /**
      * <p>Removes a data set definition on the backend registry.</p> 
      * @param uuid The data set definition UUID to remove.
      * @param removeCallback The callback when data set definition has been removed.             
      */
     public void removeDataSetDef(final String uuid, final DataSetDefRemoveCallback removeCallback) {
         if (uuid != null) {
-            dataSetDefServices.call(new RemoteCallback<Void>() {
+            dataSetBackendServices.call(new RemoteCallback<Void>() {
                 @Override
                 public void callback(Void aVoid) {
                     removeCallback.success();
@@ -501,6 +525,28 @@ public class DataSetClientServices {
                     return removeCallback.onError(new DataSetClientServiceError(message, throwable));
                 }
             }).removeDataSetDef(uuid);
+            removeDataSet(uuid);
+        }
+    }
+
+    /**
+     * <p>Removes a data set definition on the backend registry.</p> 
+     * @param uuid The data set definition UUID to remove.
+     * @param removeCallback The callback when data set definition has been removed.             
+     */
+    public void deleteDataSetDef(final String uuid, final DataSetDefRemoveCallback removeCallback) {
+        if (uuid != null) {
+            dataSetBackendServices.call(new RemoteCallback<Void>() {
+                @Override
+                public void callback(Void aVoid) {
+                    removeCallback.success();
+                }
+            }, new ErrorCallback<Message>() {
+                @Override
+                public boolean error(Message message, Throwable throwable) {
+                    return removeCallback.onError(new DataSetClientServiceError(message, throwable));
+                }
+            }).deleteDataSetDef(uuid);
             removeDataSet(uuid);
         }
     }
@@ -542,6 +588,8 @@ public class DataSetClientServices {
         dataSetModifiedEvent.fire(new DataSetModifiedEvent(event.getDataSetDef()));
     }
 
+
+    
     private void onDataSetRemovedEvent(@Observes DataSetDefRemovedEvent event) {
         checkNotNull("event", event);
         String uuid = event.getDataSetDef().getUUID();

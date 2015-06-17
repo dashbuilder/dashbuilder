@@ -38,22 +38,6 @@ public interface DataSetDefRegistry {
     DataSetDef getDataSetDef(String uuid);
 
     /**
-     * Add a data set definition to the registry.
-     *
-     * @param dataSetDef The data set definition
-     */
-    void registerDataSetDef(DataSetDef dataSetDef);
-
-    /**
-     * Add a data set definition to the registry.
-     *
-     * @param dataSetDef The data set definition
-     * @param subjectId, The identifier of the subject making the request. If null is ignored.
-     * @param message, A message top store along the registration request. If null is ignored.
-     */
-    void registerDataSetDef(DataSetDef dataSetDef, String subjectId, String message);
-
-    /**
      * Removes the specified data set definition.
      *
      * @param uuid The unique universal identifier of the data set
@@ -62,12 +46,9 @@ public interface DataSetDefRegistry {
     DataSetDef removeDataSetDef(String uuid);
 
     /**
-     * Removes the specified data set definition.
+     * Add a data set definition to the registry.
      *
-     * @param uuid The unique universal identifier of the data set
-     * @param subjectId, The identifier of the subject making the request. If null is ignored.
-     * @param message, A message top store along the registration request. If null is ignored.
-     * @return The removed data set definition or null if the definition does not exist.
+     * @param dataSetDef The data set definition
      */
-    DataSetDef removeDataSetDef(String uuid, String subjectId, String message);
+    void registerDataSetDef(DataSetDef dataSetDef);
 }

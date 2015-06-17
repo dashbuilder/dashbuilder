@@ -50,7 +50,6 @@ import org.jboss.errai.common.client.api.RemoteCallback;
 
 import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Observes;
-import javax.inject.Inject;
 import javax.validation.ConstraintViolation;
 import java.util.*;
 
@@ -130,20 +129,24 @@ public class DataSetEditor implements IsWidget {
 
     final View view = new DataSetEditorView();
 
-    private DataSetClientServices clientServices;
-    private DataSetDef dataSetDef;
+    private DataSetDef dataSetDef; 
     private List<DataColumnDef> originalColumns;
     private boolean updateColumnsView = false;
+    private String originalUUID; 
     private Displayer tableDisplayer;
     private WorkflowView currentWfView;
-
-    @Inject
-    public DataSetEditor(DataSetClientServices clientServices) {
-        this.clientServices = clientServices;
+    
+    public DataSetEditor() {
         showHomeView();
         init();
     }
 
+    public DataSetEditor(final String width) {
+        showHomeView();
+        setWidth(width);
+        init();
+    }
+    
     private void init() {
         // Init view handlers.
         view.addConfigurationTabClickHandler(configurationTabClickHandler);
@@ -163,6 +166,7 @@ public class DataSetEditor implements IsWidget {
         // Create a new data set def.
         this.dataSetDef = createDataSetDef(null);
 
+        originalUUID = null;
         originalColumns = null;
         updateColumnsView = true;
         view.setEditMode(false);
@@ -189,12 +193,13 @@ public class DataSetEditor implements IsWidget {
 
         try {
             
-            clientServices.prepareEdit(uuid, new DataSetEditCallback() {
+            DataSetClientServices.get().prepareEdit(uuid, new DataSetEditCallback() {
                 @Override
                 public void callback(final EditDataSetDef editDataSetDef) {
 
                     clear();
 
+                    DataSetEditor.this.originalUUID = uuid;
                     DataSetEditor.this.dataSetDef = editDataSetDef.getDefinition();
                     DataSetEditor.this.originalColumns = editDataSetDef.getColumns();
                     DataSetEditor.this.updateColumnsView = true;
@@ -211,7 +216,7 @@ public class DataSetEditor implements IsWidget {
                     showProviderSpecificAttributesEditionView(true);
                     hideTestButton();
                     updateTableDisplayer();
-
+                    
                 }
 
                 @Override
@@ -253,7 +258,7 @@ public class DataSetEditor implements IsWidget {
 
         @Override
         public void lookupDataSet(final DataSetReadyCallback callback) throws Exception {
-            clientServices.lookupDataSet(defEdit, lookupCurrent, new DataSetReadyCallback() {
+            DataSetClientServices.get().lookupDataSet(defEdit, lookupCurrent, new DataSetReadyCallback() {
                 public void callback(DataSet dataSet) {
                     lastLookedUpDataSet = dataSet;
                     callback.callback(dataSet);
@@ -397,29 +402,80 @@ public class DataSetEditor implements IsWidget {
     }
 
     private void persist() {
+        final DataSetClientServices clientServices = DataSetClientServices.get();
 
         dataSetDef.setPublic(true);
         dataSetDef.setAllColumnsEnabled(false);
         
-        // Register the definition
-        clientServices.registerDataSetDef(dataSetDef, new DataSetDefRegisterCallback() {
-            @Override
-            public void success(final String uuid) {
-                dataSetDef.setUUID(uuid);
-                showHomeView();
-            }
+        if (originalUUID == null) {
+            // Register and persist the definition.
+            clientServices.registerDataSetDef(dataSetDef, new DataSetDefRegisterCallback() {
+                @Override
+                public void success(final String uuid) {
+                    try {
+                        dataSetDef.setUUID(uuid);
+                        DataSetClientServices.get().persistDataSetDef(dataSetDef, persistCallback);
+                    } catch (Exception e) {
+                        showError(e);
+                    }
+                }
 
-            @Override
-            public boolean onError(DataSetClientServiceError error) {
-                showError(error);
-                return false;
-            }
-        });
+                @Override
+                public boolean onError(DataSetClientServiceError error) {
+                    showError(error);
+                    return false;
+                }
+            });
+            
+        } else {
+            // Update and persist the definition.
+            clientServices.updateDataSetDef(originalUUID, dataSetDef, new DataSetDefRegisterCallback() {
+                @Override
+                public void success(final String uuid) {
+                    try {
+                        DataSetEditor.this.dataSetDef.setUUID(uuid);
+                        DataSetClientServices.get().persistDataSetDef(DataSetEditor.this.dataSetDef, persistCallback);
+                    } catch (Exception e) {
+                        showError(e);
+                    }
+                }
+
+                @Override
+                public boolean onError(DataSetClientServiceError error) {
+                    showError(error);
+                    return false;
+                }
+            });
+            
+        }
     }
     
+    private final DataSetDefPersistCallback persistCallback = new DataSetDefPersistCallback() {
+        @Override
+        public void success() {
+            showHomeView();
+        }
+
+        @Override
+        public boolean onError(DataSetClientServiceError error) {
+            showError(error);
+            showSaveButton();
+            view.enableNextButton(true);
+            return false;
+        }
+    };
+    
+    private void DOregisterDataSetDef(final DataSetDefRegisterCallback callback) {
+        if (dataSetDef != null) {
+            // Register the data set in backend as non public.
+            final DataSetClientServices clientServices = DataSetClientServices.get();
+            clientServices.registerDataSetDef(dataSetDef, callback);
+        }
+    }
+
     private void showHomeView() {
         clear();
-        clientServices.getPublicDataSetDefs(new RemoteCallback<List<DataSetDef>>() {
+        DataSetClientServices.get().getRemoteSharedDataSetDefs(new RemoteCallback<List<DataSetDef>>() {
             public void callback(List<DataSetDef> dataSetDefs) {
                 final int i = dataSetDefs != null ? dataSetDefs.size() : 0;
                 view.showHomeView(i, newDataSetHandler);
@@ -464,7 +520,7 @@ public class DataSetEditor implements IsWidget {
     }
     
     private void showBasicAttributesEditionView() {
-        final String _uuid = dataSetDef.getUUID();
+        final String _uuid = originalUUID != null ? originalUUID : dataSetDef.getUUID();
         view.showBasicAttributesEditionView(_uuid);
     }
     
@@ -672,6 +728,7 @@ public class DataSetEditor implements IsWidget {
         this.dataSetDef = null;
         this.originalColumns = null;
         this.updateColumnsView = false;
+        this.originalUUID = null;
         this.tableDisplayer = null;
         view.clear();
     }

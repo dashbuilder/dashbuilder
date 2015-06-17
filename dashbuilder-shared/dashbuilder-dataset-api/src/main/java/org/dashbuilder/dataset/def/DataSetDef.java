@@ -26,8 +26,6 @@ import org.dashbuilder.dataset.validation.groups.DataSetDefCacheRowsValidation;
 import org.dashbuilder.dataset.validation.groups.DataSetDefPushSizeValidation;
 import org.dashbuilder.dataset.validation.groups.DataSetDefRefreshIntervalValidation;
 import org.jboss.errai.common.client.api.annotations.Portable;
-import org.uberfire.backend.vfs.Path;
-
 import javax.validation.constraints.Max;
 import javax.validation.constraints.NotNull;
 import java.util.*;
@@ -43,7 +41,6 @@ public class DataSetDef {
     @NotNull(message = "{dataSetApi_dataSetDef_name_notNull}")
     protected String name;
     protected String defFilePath;
-    protected Path vfsPath;
     @NotNull(message = "{dataSetApi_dataSetDef_provider_notNull}")
     protected DataSetProviderType provider;
     protected List<DataColumnDef> columns;
@@ -87,14 +84,6 @@ public class DataSetDef {
 
     public void setDefFilePath(String defFilePath) {
         this.defFilePath = defFilePath;
-    }
-
-    public Path getVfsPath() {
-        return vfsPath;
-    }
-
-    public void setVfsPath(Path vfsPath) {
-        this.vfsPath = vfsPath;
     }
 
     public DataSetFilter getDataSetFilter() {
@@ -226,7 +215,6 @@ public class DataSetDef {
         def.setName(getName());
         def.setProvider(getProvider());
         def.setDefFilePath(getDefFilePath());
-        def.setVfsPath(getVfsPath());
         def.setPublic(isPublic());
         final DataSetFilter currentFilter = getDataSetFilter();
         if (currentFilter != null) {
