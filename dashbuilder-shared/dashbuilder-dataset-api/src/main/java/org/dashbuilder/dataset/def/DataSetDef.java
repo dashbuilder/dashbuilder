@@ -17,8 +17,6 @@ package org.dashbuilder.dataset.def;
 
 import org.dashbuilder.dataprovider.DataSetProviderType;
 import org.dashbuilder.dataset.ColumnType;
-import org.dashbuilder.dataset.DataSet;
-import org.dashbuilder.dataset.DataSetFactory;
 import org.dashbuilder.dataset.date.TimeAmount;
 import org.dashbuilder.dataset.filter.DataSetFilter;
 import org.dashbuilder.dataset.validation.IsTimeInterval;
@@ -26,6 +24,8 @@ import org.dashbuilder.dataset.validation.groups.DataSetDefCacheRowsValidation;
 import org.dashbuilder.dataset.validation.groups.DataSetDefPushSizeValidation;
 import org.dashbuilder.dataset.validation.groups.DataSetDefRefreshIntervalValidation;
 import org.jboss.errai.common.client.api.annotations.Portable;
+import org.uberfire.backend.vfs.Path;
+
 import javax.validation.constraints.Max;
 import javax.validation.constraints.NotNull;
 import java.util.*;
@@ -40,7 +40,7 @@ public class DataSetDef {
     protected String UUID;
     @NotNull(message = "{dataSetApi_dataSetDef_name_notNull}")
     protected String name;
-    protected String defFilePath;
+    protected Path vfsPath;
     @NotNull(message = "{dataSetApi_dataSetDef_provider_notNull}")
     protected DataSetProviderType provider;
     protected List<DataColumnDef> columns;
@@ -78,12 +78,12 @@ public class DataSetDef {
         this.name = name;
     }
 
-    public String getDefFilePath() {
-        return defFilePath;
+    public Path getVfsPath() {
+        return vfsPath;
     }
 
-    public void setDefFilePath(String defFilePath) {
-        this.defFilePath = defFilePath;
+    public void setVfsPath(Path vfsPath) {
+        this.vfsPath = vfsPath;
     }
 
     public DataSetFilter getDataSetFilter() {
@@ -214,7 +214,7 @@ public class DataSetDef {
         def.setUUID(getUUID());
         def.setName(getName());
         def.setProvider(getProvider());
-        def.setDefFilePath(getDefFilePath());
+        def.setVfsPath(getVfsPath());
         def.setPublic(isPublic());
         final DataSetFilter currentFilter = getDataSetFilter();
         if (currentFilter != null) {

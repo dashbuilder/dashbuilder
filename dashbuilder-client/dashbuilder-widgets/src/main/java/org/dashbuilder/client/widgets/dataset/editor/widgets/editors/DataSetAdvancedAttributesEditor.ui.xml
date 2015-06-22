@@ -42,6 +42,7 @@
     }
     .intervalTypeDrowDown {
       margin-top: 10px;
+      width: 120px;
     }
   </ui:style>
 
@@ -132,7 +133,7 @@
             </dash-client:ValueBoxEditorDecorator>
           </b:Popover>
 
-          <b:DropdownButton ui:field="intervalType" addStyleNames="{style.intervalTypeDrowDown} "/>
+          <b:ListBox ui:field="intervalType" addStyleNames="{style.intervalTypeDrowDown} "/>
           
         </g:FlowPanel>
 
@@ -150,7 +151,7 @@
       <b:Column size="4">
 
         <g:FlowPanel addStyleNames="{style.editorPanel} ">
-          <b:CheckBox ui:field="refreshAlways" addStyleNames="{style.editor} "/>
+          <b:CheckBox ui:field="onStaleCheckbox" addStyleNames="{style.editor} "/>
           <g:HTML text="{i18n.refreshOnStaleData}" addStyleNames="{style.editorText} "/>
         </g:FlowPanel>
 

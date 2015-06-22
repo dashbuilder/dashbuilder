@@ -46,14 +46,14 @@ public class Scheduler {
 
     protected PausableThreadPoolExecutor executor;
     protected ThreadFactory threadFactory;
-    protected Map<Object, SchedulerTask> scheduledTasks;
+    protected Map<String,SchedulerTask> scheduledTasks;
 
     @Inject @Config("10")
     protected int maxThreadPoolSize;
 
     @PostConstruct
     public void init() {
-        scheduledTasks = Collections.synchronizedMap(new HashMap<Object,SchedulerTask>());
+        scheduledTasks = Collections.synchronizedMap(new HashMap<String,SchedulerTask>());
         threadFactory = new SchedulerThreadFactory();
         executor = new PausableThreadPoolExecutor(maxThreadPoolSize, threadFactory);
         executor.setContinueExistingPeriodicTasksAfterShutdownPolicy(false);
@@ -95,6 +95,15 @@ public class Scheduler {
 
     public int getNumberOfScheduledTasksInQueue() {
         return executor.getQueue().size();
+    }
+
+    public SchedulerTask getTaskByKey(String key) {
+        for (SchedulerTask task : scheduledTasks.values()) {
+            if (task.getKey().equals(key)) {
+                return task;
+            }
+        }
+        return null;
     }
 
     public List<SchedulerTask> getScheduledTasks() {

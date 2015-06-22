@@ -38,6 +38,7 @@ import org.dashbuilder.dataset.def.DataSetDef;
 import org.dashbuilder.dataset.group.DateIntervalType;
 
 import javax.enterprise.context.Dependent;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -52,6 +53,14 @@ public class DataSetAdvancedAttributesEditor extends AbstractDataSetDefEditor im
     
     private static final double DEFAULT_REFRESH_QUANTITY = 1;
     private static final DateIntervalType DEFAULT_INTERVAL_TYPE = DateIntervalType.HOUR;
+
+    private static List<DateIntervalType> ALLOWED_TYPES = Arrays.asList(
+            DateIntervalType.SECOND,
+            DateIntervalType.MINUTE,
+            DateIntervalType.HOUR,
+            DateIntervalType.DAY,
+            DateIntervalType.MONTH,
+            DateIntervalType.YEAR);
 
     interface DataSetAdvancedAttributesEditorBinder extends UiBinder<Widget, DataSetAdvancedAttributesEditor> {}
     private static DataSetAdvancedAttributesEditorBinder uiBinder = GWT.create(DataSetAdvancedAttributesEditorBinder.class);
@@ -98,11 +107,11 @@ public class DataSetAdvancedAttributesEditor extends AbstractDataSetDefEditor im
 
     @UiField
     @Ignore
-    DropdownButton intervalType;
-    private DateIntervalType dateIntervalType;
-    
+    ListBox intervalType;
+
     @UiField
-    CheckBox refreshAlways;
+    @Ignore
+    CheckBox onStaleCheckbox;
 
     final TriangleSlider backendCacheSlider = createSlider(10000, 200);
     final TriangleSlider clientCacheSlider = createSlider(4096, 200);
@@ -115,17 +124,15 @@ public class DataSetAdvancedAttributesEditor extends AbstractDataSetDefEditor im
         attributeRefreshInterval.addValueChangeHandler(refreshTimeQuantityValueChangeHandler);
         
         // Refresh interval type button values.
-        final DateIntervalType[] dateIntervals = DateIntervalType.values();
-        for (final DateIntervalType dateInterval : dateIntervals) {
+        for (final DateIntervalType dateInterval : ALLOWED_TYPES) {
             final String s = getIntervalTypeText(dateInterval);
-            final NavLink link = new NavLink(s);
-            link.addClickHandler(new ClickHandler() {
+            intervalType.addClickHandler(new ClickHandler() {
                 @Override
                 public void onClick(ClickEvent event) {
-                    setRefreshTime(true, attributeRefreshInterval.asEditor().getValue(), dateInterval);
+                    switchRefresh(true);
                 }
             });
-            intervalType.add(link);
+            intervalType.addItem(s);
         }
                 
         // Configure and add sliders.
@@ -146,14 +153,21 @@ public class DataSetAdvancedAttributesEditor extends AbstractDataSetDefEditor im
         
     }
     
-    private void setRefreshTime(final boolean enabled, final Integer quantity, final DateIntervalType type) {
-        if (enabled && dataSetDef != null) {
-            if (quantity != null) {
-                final String rTime = (int) quantity + type.name();
-                dataSetDef.setRefreshTime(rTime);
+    private void switchRefresh(final boolean on) {
+        if (dataSetDef != null) {
+            if (on) {
+                Integer quantity = attributeRefreshInterval.asEditor().getValue();
+                if (quantity != null) {
+                    DateIntervalType type = getSelectedIntervalType();
+                    String rTime = (int) quantity + type.name();
+                    dataSetDef.setRefreshTime(rTime);
+                }
+                dataSetDef.setRefreshAlways(!onStaleCheckbox.getValue());
+            } else {
+                dataSetDef.setRefreshTime(null);
             }
         }
-        setRefreshUIValues(true);
+        setRefreshUIValues(on);
     }
 
     public boolean isShowBackendCache(final DataSetDef def) {
@@ -161,11 +175,24 @@ public class DataSetAdvancedAttributesEditor extends AbstractDataSetDefEditor im
                 && ( !DataSetProviderType.BEAN.equals(def.getProvider())
                 && !DataSetProviderType.CSV.equals(def.getProvider() ));
     }
-    
+
+    private DateIntervalType getSelectedIntervalType() {
+        return ALLOWED_TYPES.get(intervalType.getSelectedIndex());
+    }
+
+    private int getIntervalTypeIndex(DateIntervalType type) {
+        for (int i=0; i<ALLOWED_TYPES.size(); i++) {
+            if (ALLOWED_TYPES.get(i).equals(type)) {
+                return i;
+            }
+        }
+        return 0;
+    }
+
     private final ValueChangeHandler<Integer> refreshTimeQuantityValueChangeHandler = new ValueChangeHandler<Integer>() {
         @Override
         public void onValueChange(ValueChangeEvent<Integer> event) {
-            setRefreshTime(true, attributeRefreshInterval.asEditor().getValue(), dateIntervalType);
+            switchRefresh(true);
         }
     };
     
@@ -186,7 +213,7 @@ public class DataSetAdvancedAttributesEditor extends AbstractDataSetDefEditor im
     private final ValueChangeHandler<Boolean> refreshStatusHandler = new ValueChangeHandler<Boolean>() {
         @Override
         public void onValueChange(ValueChangeEvent<Boolean> event) {
-            setRefreshTime(event.getValue(), attributeRefreshInterval.asEditor().getValue(), dateIntervalType);
+            switchRefresh(event.getValue());
         }
     };
     
@@ -258,23 +285,21 @@ public class DataSetAdvancedAttributesEditor extends AbstractDataSetDefEditor im
     
     private void setRefreshUIValues(final boolean refreshEnabled) {
         attributeRefreshInterval.setEnabled(refreshEnabled);
-        // intervalType.setEnabled(enabled);
-        refreshAlways.setEnabled(refreshEnabled);
+        intervalType.setEnabled(refreshEnabled);
+        onStaleCheckbox.setEnabled(refreshEnabled);
 
-        if (dataSetDef != null) {
-            if (refreshEnabled) {
-                // Interval quantity and type drop down.
-                if (dataSetDef.getRefreshTime() != null) {
-                    final double quantity = dataSetDef.getRefreshTimeAmount().getQuantity();
-                    final DateIntervalType dType = dataSetDef.getRefreshTimeAmount().getType();
-                    attributeRefreshInterval.asEditor().setValue((int) quantity);
-                    dateIntervalType = dType;
-                    intervalType.setText(getIntervalTypeText(dType));
-                } else {
-                    attributeRefreshInterval.asEditor().setValue((int) DEFAULT_REFRESH_QUANTITY);
-                    dateIntervalType = DEFAULT_INTERVAL_TYPE;
-                    intervalType.setText(getIntervalTypeText(DEFAULT_INTERVAL_TYPE));
-                }
+        if (dataSetDef != null && refreshEnabled) {
+            // Interval quantity and type drop down.
+            if (dataSetDef.getRefreshTime() != null) {
+                final double quantity = dataSetDef.getRefreshTimeAmount().getQuantity();
+                final DateIntervalType dType = dataSetDef.getRefreshTimeAmount().getType();
+                attributeRefreshInterval.asEditor().setValue((int) quantity);
+                intervalType.setSelectedIndex(getIntervalTypeIndex(dType));
+                onStaleCheckbox.setValue(!dataSetDef.isRefreshAlways());
+            } else {
+                attributeRefreshInterval.asEditor().setValue((int) DEFAULT_REFRESH_QUANTITY);
+                intervalType.setSelectedIndex(getIntervalTypeIndex(DEFAULT_INTERVAL_TYPE));
+                onStaleCheckbox.setValue(!dataSetDef.isRefreshAlways());
             }
         }
     }

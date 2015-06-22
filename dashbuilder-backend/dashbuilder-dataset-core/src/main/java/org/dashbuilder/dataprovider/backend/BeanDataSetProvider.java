@@ -17,8 +17,13 @@ package org.dashbuilder.dataprovider.backend;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.event.Observes;
+import javax.enterprise.inject.spi.Bean;
+import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -46,10 +51,23 @@ public class BeanDataSetProvider implements DataSetProvider {
     @Inject
     protected DataSetDefRegistry dataSetDefRegistry;
 
-    protected Map<String,DataSetGenerator> beanMap = new HashMap<String, DataSetGenerator>();
+    @Inject
+    protected BeanManager beanManager;
+
+    protected Map<String,DataSetGenerator> generatorMap = new HashMap<String, DataSetGenerator>();
 
     @Inject
     protected Logger log;
+
+    @PostConstruct
+    protected void init() {
+        Set<Bean<?>> beans = beanManager.getBeans(DataSetGenerator.class);
+        for (Bean<?> bean : beans) {
+            CreationalContext<?> ctx = beanManager.createCreationalContext(bean);
+            DataSetGenerator generator = (DataSetGenerator) beanManager.getReference(bean, DataSetGenerator.class, ctx);
+            generatorMap.put(bean.getBeanClass().getName(), generator);
+        }
+    }
 
     public DataSetProviderType getType() {
         return DataSetProviderType.BEAN;
@@ -61,18 +79,20 @@ public class BeanDataSetProvider implements DataSetProvider {
         return dataSet.getMetadata();
     }
 
+    public DataSetGenerator lookupGenerator(DataSetDef def) {
+        BeanDataSetDef beanDef = (BeanDataSetDef) def;
+        String beanName = beanDef.getGeneratorClass();
+        return generatorMap.get(beanName);
+    }
+
     public DataSet lookupDataSet(DataSetDef def, DataSetLookup lookup) throws Exception {
         // Look first into the static data set provider since BEAN data sets are statically registered once loaded.
         DataSet dataSet = staticDataSetProvider.lookupDataSet(def.getUUID(), null);
-        if (dataSet == null) {
-            // If not exists then invoke the BEAN generator class
+
+        // If test mode or not exists then invoke the BEAN generator class
+        if ((lookup != null && lookup.testMode()) || dataSet == null) {
             BeanDataSetDef beanDef = (BeanDataSetDef) def;
-            String beanName = beanDef.getGeneratorClass();
-            DataSetGenerator dataSetGenerator = beanMap.get(beanName);
-            if (dataSetGenerator == null) {
-                Class generatorClass = Class.forName(beanName);
-                beanMap.put(beanName, dataSetGenerator = (DataSetGenerator) generatorClass.newInstance());
-            }
+            DataSetGenerator dataSetGenerator = lookupGenerator(def);
             dataSet = dataSetGenerator.buildDataSet(beanDef.getParamaterMap());
             dataSet.setUUID(def.getUUID());
             dataSet.setDefinition(def);
@@ -92,9 +112,8 @@ public class BeanDataSetProvider implements DataSetProvider {
             // Always do the lookup over the static data set registry.
             dataSet = staticDataSetProvider.lookupDataSet(def, lookup);
         } finally {
-            // Remove transient data sets
-            // f.i: for those definitions created from the data set editor UI
-            if (def.getUUID() != null && dataSetDefRegistry.getDataSetDef(def.getUUID()) == null) {
+            if (lookup != null && lookup.testMode()) {
+                // In test mode remove the data set from cache
                 staticDataSetProvider.removeDataSet(def.getUUID());
             }
         }

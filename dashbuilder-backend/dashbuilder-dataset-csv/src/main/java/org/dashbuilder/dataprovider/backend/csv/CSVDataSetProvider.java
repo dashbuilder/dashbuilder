@@ -21,6 +21,7 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.apache.commons.lang3.StringUtils;
 import org.dashbuilder.dataprovider.DataSetProvider;
 import org.dashbuilder.dataprovider.DataSetProviderType;
 import org.dashbuilder.dataprovider.backend.StaticDataSetProvider;
@@ -45,6 +46,9 @@ public class CSVDataSetProvider implements DataSetProvider {
     protected DataSetDefRegistry dataSetDefRegistry;
 
     @Inject
+    protected CSVFileStorage csvStorage;
+
+    @Inject
     protected Logger log;
 
     public DataSetProviderType getType() {
@@ -61,25 +65,23 @@ public class CSVDataSetProvider implements DataSetProvider {
         // Look first into the static data set provider since CSV data set are statically registered once loaded.
         DataSet dataSet = staticDataSetProvider.lookupDataSet(def.getUUID(), null);
 
-        // If not exists or is outdated then load from the CSV file
+        // If the lookup request is in test mode or the data set not exists or is outdated then load from the CSV file
         CSVDataSetDef csvDef = (CSVDataSetDef) def;
-        CSVParser csvParser = new CSVParser(csvDef);
-        File csvFile = csvParser.getCSVFile();
-        if (dataSet == null || hasCSVFileChanged(dataSet, csvFile)) {
+        if ((lookup != null && lookup.testMode()) || dataSet == null || hasCSVFileChanged(dataSet, csvDef)) {
+            CSVParser csvParser = new CSVParser(csvDef, csvStorage);
             dataSet = csvParser.load();
             dataSet.setUUID(def.getUUID());
             dataSet.setDefinition(def);
 
-            // Make the data set static before return
+            // Register the CSV data set available into the static provider
             staticDataSetProvider.registerDataSet(dataSet);
         }
         try {
             // Always do the lookup on the statically registered data set.
             dataSet = staticDataSetProvider.lookupDataSet(def, lookup);
         } finally {
-            // Remove transient data sets
-            // f.i: for those definitions created from the data set editor UI
-            if (def.getUUID() != null && dataSetDefRegistry.getDataSetDef(def.getUUID()) == null) {
+            if (lookup != null && lookup.testMode()) {
+                // In test mode remove the data set form cache
                 staticDataSetProvider.removeDataSet(def.getUUID());
             }
         }
@@ -93,18 +95,15 @@ public class CSVDataSetProvider implements DataSetProvider {
         if (dataSet == null) return false;
 
         // Check if the CSV file has changed.
-        try {
-            CSVDataSetDef csvDef = (CSVDataSetDef) def;
-            File csvFile = new CSVParser(csvDef).getCSVFile();
-            return hasCSVFileChanged(dataSet, csvFile);
-        } catch (Exception e) {
-            log.error("Problems reading CSV file: " + def, e);
-            return false;
-        }
+        return hasCSVFileChanged(dataSet, (CSVDataSetDef) def);
     }
 
-    protected boolean hasCSVFileChanged(DataSet dataSet, File csvFile) {
-        return csvFile != null && csvFile.lastModified() > dataSet.getCreationDate().getTime();
+    protected boolean hasCSVFileChanged(DataSet dataSet, CSVDataSetDef def) {
+        if (StringUtils.isBlank(def.getFilePath())) {
+            return false;
+        }
+        File f = new File(def.getFilePath());
+        return f.exists() && f.lastModified() > dataSet.getCreationDate().getTime();
     }
 
     // Listen to changes on the data set definition registry

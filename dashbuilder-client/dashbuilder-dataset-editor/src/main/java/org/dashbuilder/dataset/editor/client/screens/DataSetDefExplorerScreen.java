@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2014 JBoss Inc
+ * Copyright (C) 2015 JBoss Inc
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,16 +20,28 @@ import org.dashbuilder.client.widgets.dataset.editor.widgets.DataSetExplorer;
 import org.dashbuilder.client.widgets.dataset.editor.widgets.events.*;
 import org.dashbuilder.client.widgets.resources.i18n.DataSetExplorerConstants;
 import org.dashbuilder.dataset.client.DataSetClientServiceError;
-import org.dashbuilder.dataset.client.DataSetClientServices;
-import org.dashbuilder.dataset.client.DataSetDefRemoveCallback;
+import org.dashbuilder.dataset.def.DataSetDef;
+import org.dashbuilder.dataset.service.DataSetDefVfsServices;
+import org.jboss.errai.bus.client.api.messaging.Message;
+import org.jboss.errai.common.client.api.Caller;
+import org.jboss.errai.common.client.api.ErrorCallback;
+import org.jboss.errai.common.client.api.RemoteCallback;
+import org.uberfire.backend.vfs.Path;
 import org.uberfire.client.annotations.WorkbenchMenu;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
 import org.uberfire.client.annotations.WorkbenchPartView;
 import org.uberfire.client.annotations.WorkbenchScreen;
+import org.uberfire.client.mvp.PlaceManager;
+import org.uberfire.ext.editor.commons.client.resources.i18n.CommonConstants;
+import org.uberfire.ext.widgets.common.client.common.BusyPopup;
+import org.uberfire.ext.editor.commons.client.file.DeletePopup;
 import org.uberfire.lifecycle.OnClose;
 import org.uberfire.lifecycle.OnStartup;
 import org.uberfire.mvp.Command;
+import org.uberfire.mvp.ParameterizedCommand;
 import org.uberfire.mvp.PlaceRequest;
+import org.uberfire.mvp.impl.PathPlaceRequest;
+import org.uberfire.workbench.events.NotificationEvent;
 import org.uberfire.workbench.model.menu.MenuFactory;
 import org.uberfire.workbench.model.menu.Menus;
 
@@ -40,37 +52,34 @@ import javax.inject.Inject;
 /**
  * @since 0.3.0
  */
-@WorkbenchScreen(identifier = "DataSetExplorer")
+@WorkbenchScreen(identifier = "DataSetDefExplorer")
 @Dependent
-public class DataSetExplorerScreenPresenter {
+public class DataSetDefExplorerScreen {
 
     
     private Menus menu = null;
 
     @Inject
+    PlaceManager placeManager;
+
+    @Inject
+    Caller<DataSetDefVfsServices> services;
+
+    @Inject
+    Event<NotificationEvent> notification;
+
+    @Inject
     DataSetExplorer explorerWidget;
 
-    @Inject
-    Event<NewDataSetEvent> newDataSetEvent;
-
-    @Inject
-    Event<EditDataSetEvent> editDataSetEvent;
-
     @OnStartup
-    public void onStartup( final PlaceRequest placeRequest) {
+    public void onStartup(PlaceRequest placeRequest) {
+        this.menu = makeMenuBar();
         explorerWidget.addEditDataSetEventHandler(new EditDataSetEventHandler() {
             @Override
             public void onEditDataSet(EditDataSetEvent event) {
                 editDataSet(event);
             }
         });
-        explorerWidget.addDeleteDataSetEventHandler(new DeleteDataSetEventHandler() {
-            @Override
-            public void onDeleteDataSet(DeleteDataSetEvent event) {
-                deleteDataSet(event);
-            }
-        });
-        this.menu = makeMenuBar();
     }
 
     @OnClose
@@ -110,30 +119,10 @@ public class DataSetExplorerScreenPresenter {
     }
     
     void newDataSet() {
-        NewDataSetEvent event = new NewDataSetEvent();
-        newDataSetEvent.fire(event);
+        placeManager.goTo("DataSetDefWizard");
     }
     
     void editDataSet(EditDataSetEvent event) {
-        editDataSetEvent.fire(event);
-    }
-
-    void deleteDataSet(DeleteDataSetEvent event) {
-        deleteDataSet(event.getUuid());
-    }
-    
-    public void deleteDataSet(String uuid) {
-        DataSetClientServices.get().deleteDataSetDef(uuid, new DataSetDefRemoveCallback() {
-            @Override
-            public void success() {
-                // Data set definition removed from the list by the fired remove event.
-            }
-
-            @Override
-            public boolean onError(DataSetClientServiceError error) {
-                explorerWidget.showError(error);
-                return false;
-            }
-        });
+        placeManager.goTo(new PathPlaceRequest(event.getDataSetDef().getVfsPath()));
     }
 }

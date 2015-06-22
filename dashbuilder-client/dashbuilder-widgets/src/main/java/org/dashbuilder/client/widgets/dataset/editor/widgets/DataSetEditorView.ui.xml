@@ -28,10 +28,6 @@
       margin: 0px;
     }
 
-    .initialViewPanel {
-      margin: 50px;
-    }
-
     .editorPanel {
       margin: 15px;
       overflow-y: auto;
@@ -50,46 +46,13 @@
       margin-top: 0px;
     }
 
-    .dataSetCountLabel {
-      margin-bottom: 20px;
-    }
-
     .well {
       background-color: white;
-      border: 1px solid #E3E3E3;
-      border-radius: 4px 4px 4px 4px;
-      box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05) inset;
       margin-bottom: 20px;
       min-height: 20px;
       padding: 10px;
     }
 
-    .well_ghostwhite {
-      background-color: ghostwhite;
-    }
-
-    .newDataSet {
-      float: left;
-      margin-left: 5px;
-      font-size: medium;
-    }
-
-    .nextStepPanel {
-      display: inline-flex;
-    }
-    .nextStep {
-      margin: 5px;
-    }
-    .loadingScreenPanel {
-      font-size: medium;
-      font-weight: bold;
-    }
-    .loadingImage {
-      float: left;
-    }
-    .loadingText {
-      float: right;
-    }
     .columnsFilterDisclosurePanel {
       float: left;
       margin-right: 20px;
@@ -165,9 +128,6 @@
 
     }
 
-    .clear {
-      clear: both;
-    }
     .with100pc {
       width: 100%;
     }
@@ -203,42 +163,11 @@
       
     </b:Modal>
 
-    <!-- Loading screen. -->
-    <dash-client-widgets:TimeoutPopupPanel ui:field="loadingPopupPanel" autoHideEnabled="false" modal="true" glassEnabled="true" addStyleNames="{style.loadingScreenPanel} ">
-      <b:Image ui:field="loadingImage" addStyleNames="{style.loadingImage}"/>
-      <g:HTML text="{i18n.loading}..." addStyleNames="{style.loadingText}"/>
-    </dash-client-widgets:TimeoutPopupPanel>
-    
     <!-- Title. -->
     <g:FlowPanel addStyleNames="{style.titlePanel}" ui:field="titlePanel">
       <b:Heading size="3" text="" ui:field="title" addStyleNames="{style.title}"/>  
     </g:FlowPanel>
 
-    <g:HTMLPanel ui:field="initialViewPanel" addStyleNames="{style.initialViewPanel}">
-
-      <g:HTML addStyleNames="{style.dataSetCountLabel}" ui:field="dataSetCountText"/>
-
-      <g:FlowPanel addStyleNames="{style.clear} "/>
-
-      <g:HTML text="{i18n.nextSteps}:" addStyleNames="{style.nextStep} "/>
-      <ol>
-        <li>
-          <g:HorizontalPanel addStyleNames="{style.nextStepPanel}">
-              <g:HTML text="{i18n.defineA} " addStyleNames="{style.newDataSet} "/>
-              <g:Hyperlink text="{i18n.newDataSet} " ui:field="newDataSetLink" addStyleNames="{style.newDataSet} "/>
-              <g:HTML text="{i18n.toFetchYourDataFromExtSystem}" addStyleNames="{style.newDataSet} "/>
-          </g:HorizontalPanel>
-        </li>
-        <li>
-          <g:HTML text="{i18n.createDataDisplayers}" addStyleNames="{style.nextStep} "/>
-        </li>
-        <li>
-          <g:HTML text="{i18n.createDashboards}" addStyleNames="{style.nextStep} "/>
-        </li>
-      </ol>
-      
-    </g:HTMLPanel>
-    
     <g:FlowPanel ui:field="providerSelectionViewPanel" addStyleNames="{style.editorPanel}">
       <dash-dset-editors:DataSetProviderTypeEditor editMode="true" ui:field="dataSetProviderTypeEditor" addStyleNames="{style.providerTypeEditor}"/>
     </g:FlowPanel>
@@ -339,14 +268,18 @@
     
     <g:HorizontalPanel ui:field="buttonsPanel" addStyleNames="{style.buttonsPanel}">
 
-      <b:Popover showDelay="1000" text="{i18n.cancel_description}" heading="{i18n.cancel}">
-        <b:Button text="{i18n.cancel}" ui:field="cancelButton"/>
+      <b:Popover showDelay="500" text="{i18n.back_description}" heading="{i18n.back}">
+        <b:Button text="{i18n.back}" ui:field="cancelButton"/>
       </b:Popover>
 
       <!-- Test provider settings button. -->
-      <b:Button ui:field="testButton" title="{i18n.updateTest}" text="{i18n.test}" type="PRIMARY"/>
+      <b:Popover ui:field="testPopover" showDelay="500" text="{i18n.test_description}" heading="{i18n.test}">
+        <b:Button text="{i18n.test}" ui:field="testButton" type="PRIMARY"/>
+      </b:Popover>
 
-      <b:Button text="{i18n.next}" ui:field="nextButton" type="PRIMARY"/>
+      <b:Popover ui:field="nextPopover" showDelay="500" text="{i18n.next_description}" heading="{i18n.next}">
+        <b:Button text="{i18n.next}" ui:field="nextButton" type="PRIMARY"/>
+      </b:Popover>
 
     </g:HorizontalPanel>
 

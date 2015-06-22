@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * <p>Default workflow for editing a data set defintion instance using Data Set Editor component.</p>
+ * <p>Default workflow for editing a data set definition instance using Data Set Editor component.</p>
  * @since 0.3.0 
  */
 public final class DataSetDefEditWorkflow {

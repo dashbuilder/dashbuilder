@@ -43,7 +43,6 @@ import org.dashbuilder.client.widgets.dataset.editor.widgets.editors.csv.CSVData
 import org.dashbuilder.client.widgets.dataset.editor.widgets.editors.elasticsearch.ELDataSetDefAttributesEditor;
 import org.dashbuilder.client.widgets.dataset.editor.widgets.editors.sql.SQLDataSetDefAttributesEditor;
 import org.dashbuilder.client.widgets.resources.i18n.DataSetEditorConstants;
-import org.dashbuilder.client.widgets.resources.i18n.DataSetEditorMessages;
 import org.dashbuilder.common.client.widgets.TimeoutPopupPanel;
 import org.dashbuilder.dataprovider.DataSetProviderType;
 import org.dashbuilder.dataset.DataSet;
@@ -54,6 +53,8 @@ import org.dashbuilder.dataset.client.resources.bundles.DataSetClientResources;
 import org.dashbuilder.dataset.def.*;
 import org.dashbuilder.displayer.client.Displayer;
 import org.dashbuilder.displayer.client.widgets.filter.DataSetFilterEditor;
+import org.uberfire.backend.vfs.Path;
+import org.uberfire.ext.widgets.common.client.common.BusyPopup;
 
 import javax.enterprise.context.Dependent;
 import javax.validation.ConstraintViolation;
@@ -76,7 +77,6 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
     private static DataSetEditorViewBinder uiBinder = GWT.create(DataSetEditorViewBinder.class);
 
     interface DataSetEditorViewStyle extends CssResource {
-        String well_ghostwhite();
         String tabInnerPanel();
         String columnsFilterDisclosurePanelHeaderOpen();
         String with100pc();
@@ -111,21 +111,6 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
 
     @UiField
     Row errorCauseRow;
-    
-    @UiField
-    TimeoutPopupPanel loadingPopupPanel;
-    
-    @UiField
-    Image loadingImage;
-    
-    @UiField
-    HTMLPanel initialViewPanel;
-
-    @UiField
-    HTML dataSetCountText;
-
-    @UiField
-    Hyperlink newDataSetLink;
 
     @UiField
     FlowPanel providerSelectionViewPanel;
@@ -169,6 +154,9 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
     @UiField
     Button testButton;
     
+    @UiField
+    Popover testPopover;
+
     @UiField
     FlowPanel filterColumnsPreviewTablePanel;
 
@@ -235,9 +223,10 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
     @UiField
     Button nextButton;
     
+    @UiField
+    Popover nextPopover;
+
     private DataSetDef dataSetDef = null;
-    private DataSetLookup lastDataSetLookup = null;
-    
     private boolean isEditMode = true;
     private DataSetDefEditWorkflow workflow;
     
@@ -252,9 +241,8 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
 
     private final DataSetExportReadyCallback exportReadyCallback = new DataSetExportReadyCallback() {
         @Override
-        public void exportReady(String exportFilePath) {
-            final String s = DataSetClientServices.get().getExportServletUrl();
-            final String u = DataSetClientServices.get().getDownloadFileUrl(s, exportFilePath);
+        public void exportReady(Path exportFilePath) {
+            final String u = DataSetClientServices.get().getDownloadFileUrl(exportFilePath);
             GWT.log("Export URL: " + u);
             Window.open(u,
                     "downloading",
@@ -282,9 +270,6 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
         filterAndColumnsEditionDisclosurePanel.addCloseHandler(closeColumnsFilterPanelHandler);
         
         // Hide loading popup at startup.
-        loadingPopupPanel.setTimeout(LOADING_SCREEN_TIMEOUT);
-        loadingImage.setUrl(DataSetClientResources.INSTANCE.images().loadingIcon().getSafeUri());
-        loadingImage.setSize(LOADING_IMAGE_SIZE, LOADING_IMAGE_SIZE);
         hideLoadingView();
 
         // Error panel button handler.
@@ -326,31 +311,11 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
     @Override
     public DataSetEditor.View setEditMode(final boolean editMode) {
         this.isEditMode = editMode;
-        
         return this;
     }
 
     private void showEmptyView() {
         clearView();
-    }
-    
-    public DataSetEditor.View showHomeView(final int dsetCount, final ClickHandler newDataSetHandler) {
-        clearView();
-        
-        // View title.
-        showTitle();
-        
-        dataSetCountText.setText(DataSetEditorMessages.INSTANCE.dataSetCount(dsetCount));
-        if (newDatasetHandlerRegistration != null) newDatasetHandlerRegistration.removeHandler();
-        newDatasetHandlerRegistration = newDataSetLink.addClickHandler(newDataSetHandler);
-        initialViewPanel.setVisible(true);
-        mainPanel.addStyleName(style.well_ghostwhite());
-
-        return this;
-    }
-    
-    private boolean isHomeViewVisible() {
-        return initialViewPanel.isVisible();
     }
 
     @Override
@@ -360,7 +325,6 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
 
         // Reset current view.
         clearView();
-        mainPanel.removeStyleName(style.well_ghostwhite());
 
         // Clear current workflow state.
         this.workflow.clear();
@@ -378,7 +342,7 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
 
         // View title.
         showTitle();
-        
+
         dataSetProviderTypeEditor.setEditMode(!isEditMode);
         providerSelectionViewPanel.setVisible(true);
 
@@ -396,9 +360,6 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
         
         // The uuid of the data set, if is the cloned instance for editing, is not the original one.
         dataSetBasicAttributesEditor.setUUID(uuid);
-
-        // View title.
-        showTitle();
 
         basicAttributesEditionViewPanel.setVisible(true);
         dataSetBasicAttributesEditor.setEditMode(true);
@@ -464,7 +425,9 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
     public DataSetEditor.View showTestButton(final String title, final String helpText, final ClickHandler testHandler) {
         if (title != null) {
             testButton.setText(title);
-            testButton.setTitle(helpText != null ? helpText : "");
+            testPopover.setHeading(title);
+            testPopover.setText(helpText != null ? helpText : "");
+            testPopover.reconfigure();
         }
         if (testButtonHandlerRegistration != null) testButtonHandlerRegistration.removeHandler();
         if (testHandler != null)
@@ -482,7 +445,13 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
         return this;
     }
 
-    private void showSpecificProviderAttrsEditionView() 
+    @Override
+    public DataSetEditor.View hideCancelButton() {
+        cancelButton.setVisible(false);
+        return this;
+    }
+
+    private void showSpecificProviderAttrsEditionView()
     {
         showTab(configurationTab);
         activeConfigurationTab();
@@ -492,13 +461,7 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
 
     @Override
     public DataSetEditor.View showPreviewTableEditionView(final Displayer tableDisplayer) {
-        // Table is not a data set editor component, just a preview data set widget.
-        // So not necessary to use the editor workflow this instance.
-        this.lastDataSetLookup = tableDisplayer.getDisplayerSettings().getDataSetLookup();
-
-        // View title.
         hideLoadingView();
-        showTitle();
 
         // Configure tabs and visibility.
         previewTableEditor.setVisible(true);
@@ -522,7 +485,7 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
         // So not necessary to use the editor workflow this instance.
 
         hideLoadingView();
-        
+
         // Data Set Columns editor.
         columnsEditor.setVisible(true);
         
@@ -549,7 +512,7 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
         filterTab.clear();
 
         hideLoadingView();
-        
+
         // Data Set Filter editor.
         final DataSetFilterEditor filterEditor = new DataSetFilterEditor();
         filterEditor.init(dataSet.getMetadata(), dataSetDef.getDataSetFilter(), filterListener);
@@ -579,9 +542,6 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
     public DataSetEditor.View showAdvancedAttributesEditionView() {
         workflow.edit(dataSetAdvancedAttributesEditor, dataSetDef);
 
-        // View title.
-        showTitle();
-
         advancedAttributesEditionViewPanel.setVisible(true);
         dataSetAdvancedAttributesEditor.setEditMode(true);
         showTab(configurationTab);
@@ -601,7 +561,9 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
         nextButton.setVisible(nextHandler != null);
         if (title != null) {
             nextButton.setText(title);
-            nextButton.setTitle(helpText != null ? helpText : "");
+            nextPopover.setHeading(title);
+            nextPopover.setText(helpText != null ? helpText : "");
+            nextPopover.reconfigure();
         }
         ButtonType _type = type != null ? type : ButtonType.PRIMARY;
         nextButton.setType(_type);
@@ -615,7 +577,7 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
 
     @Override
     public DataSetEditor.View enableNextButton(boolean enabled) {
-        nextButton.setEnabled(enabled);
+        nextButton.setVisible(enabled);
         return this;
     }
 
@@ -632,10 +594,7 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
 
     @Override
     public DataSetEditor.View onSave() {
-        
-        // Update title if necessary.
-        showTitle();
-        
+
         // Check editor errors. If any, mark error in parent Tab.
         resetTabErrors();
         DataSetProviderType type = dataSetDef.getProvider();
@@ -671,32 +630,15 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
 
     @Override
     public DataSetEditor.View showLoadingView() {
-        loadingPopupPanel.center();
-        loadingPopupPanel.setVisible(true);
-        loadingPopupPanel.getElement().getStyle().setDisplay(Style.Display.BLOCK);
-        loadingPopupPanel.show();
-        return this;
-    }
-    
-    public DataSetEditor.View hideLoadingView() {
-        loadingPopupPanel.setVisible(false);
-        loadingPopupPanel.getElement().getStyle().setDisplay(Style.Display.NONE);
-        loadingPopupPanel.hide();
+        BusyPopup.showMessage(DataSetEditorConstants.INSTANCE.loading());
         return this;
     }
 
-    private void showError(final Exception e) {
-        if (e != null) {
-            String type = null;
-            String message = null;
-            String cause = null;
-            type = e.getClass().getName();
-            if (e.getMessage() != null) message = e.getMessage();
-            if (e.getCause() != null) cause = e.getCause().getMessage();
-            showError(type, message, cause);
-        }
+    public DataSetEditor.View hideLoadingView() {
+        BusyPopup.close();
+        return this;
     }
-    
+
     @Override
     public DataSetEditor.View showError(final String type, final String message, final String cause) {
         errorMessage.setText(message != null ? message : "");
@@ -746,7 +688,6 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
         dataSetAdvancedAttributesEditor.clear();
 
         this.dataSetDef = null;
-        this.lastDataSetLookup = null;
         this.workflow = null;
         return this;
     }
@@ -772,7 +713,6 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
     private void clearView() {
         titlePanel.setVisible(false);
         title.setVisible(false);
-        initialViewPanel.setVisible(false);
         providerSelectionViewPanel.setVisible(false);
         tabViewPanel.setVisible(false);
         hideTab(configurationTab);
@@ -807,7 +747,7 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
 
         String _name = null;
         DataSetProviderType _provider = null;
-        
+
         if (dataSetDef != null) {
             
             if (dataSetDef.getName() != null && dataSetDef.getName().length() > 0) {
@@ -819,27 +759,18 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
             }
             
             if (_name == null && _provider == null) {
-                title.setText(DataSetEditorMessages.INSTANCE.newDataSet(""));
+                title.setText(DataSetEditorConstants.INSTANCE.newDataSet(""));
             } else if (_provider != null && _name == null) {
-                title.setText(DataSetEditorMessages.INSTANCE.newDataSet(getProviderName(_provider)));
+                title.setText(DataSetEditorConstants.INSTANCE.newDataSet(getProviderName(_provider)));
             } else if (_provider == null) {
                 title.setText(_name);
             } else {
                 title.setText(_name + " (" + getProviderName(_provider) + ")");
             }
-            
-            title.setVisible(true);
-            titlePanel.setVisible(true);
-
-        } else {
-
-            title.setVisible(false);
-            titlePanel.setVisible(false);
         }
-        
     }
     
-    private static String getProviderName(DataSetProviderType type) {
+    public static String getProviderName(DataSetProviderType type) {
         String s = null;
         switch (type) {
             case BEAN:

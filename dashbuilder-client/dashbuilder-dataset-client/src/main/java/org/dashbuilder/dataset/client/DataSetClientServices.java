@@ -17,8 +17,9 @@ package org.dashbuilder.dataset.client;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.URL;
+import org.dashbuilder.dataprovider.DataSetProviderType;
 import org.dashbuilder.dataset.DataSet;
-import org.dashbuilder.dataset.DataSetBackendServices;
+import org.dashbuilder.dataset.service.DataSetLookupServices;
 import org.dashbuilder.dataset.DataSetLookup;
 import org.dashbuilder.dataset.DataSetMetadata;
 import org.dashbuilder.dataset.backend.EditDataSetDef;
@@ -27,12 +28,15 @@ import org.dashbuilder.dataset.def.DataSetDef;
 import org.dashbuilder.dataset.engine.group.IntervalBuilderLocator;
 import org.dashbuilder.dataset.events.*;
 import org.dashbuilder.dataset.group.AggregateFunctionManager;
+import org.dashbuilder.dataset.service.DataSetDefServices;
+import org.dashbuilder.dataset.service.DataSetExportServices;
 import org.jboss.errai.bus.client.api.messaging.Message;
 import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.common.client.api.ErrorCallback;
 import org.jboss.errai.common.client.api.RemoteCallback;
 import org.jboss.errai.ioc.client.container.IOC;
 import org.jboss.errai.ioc.client.container.IOCBeanDef;
+import org.uberfire.backend.vfs.Path;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
@@ -49,9 +53,8 @@ import static org.uberfire.commons.validation.PortablePreconditions.checkNotNull
 @ApplicationScoped
 public class DataSetClientServices {
 
-    private static final String UPLOAD_SERVLET_URL = "upload";
-    private static final String EXPORT_SERVLER_URL = "dataset/export";
-    private static final String TEMP_PATH = "/tmp/";
+    private static final String UPLOAD_SERVLET_URL = "defaulteditor/upload";
+    private static final String EXPORT_SERVLER_URL = "defaulteditor/download";
 
     public static DataSetClientServices get() {
         Collection<IOCBeanDef<DataSetClientServices>> beans = IOC.getBeanManager().lookupBeans(DataSetClientServices.class);
@@ -81,7 +84,19 @@ public class DataSetClientServices {
      * The service caller used to lookup data sets from the backend.
      */
     @Inject
-    private Caller<DataSetBackendServices> dataSetBackendServices;
+    private Caller<DataSetLookupServices> dataSetLookupServices;
+
+    /**
+     * The service caller used to lookup data sets from the backend.
+     */
+    @Inject
+    private Caller<DataSetDefServices> dataSetDefServices;
+
+    /**
+     * The service caller used to lookup data sets from the backend.
+     */
+    @Inject
+    private Caller<DataSetExportServices> dataSetExportServices;
 
     /**
      * A cache of DataSetMetadata instances
@@ -120,19 +135,20 @@ public class DataSetClientServices {
         if (metadata != null) {
             listener.callback(metadata);
         }
-        else if (dataSetBackendServices != null) {
+        else if (dataSetLookupServices != null) {
             if (remoteMetadataMap.containsKey(uuid)) {
                 listener.callback(remoteMetadataMap.get(uuid));
             } else {
-                dataSetBackendServices.call(
-                    new RemoteCallback<DataSetMetadata>() {
-                    public void callback(DataSetMetadata result) {
-                        if (result == null) listener.notFound();
-                        else {
-                            remoteMetadataMap.put(uuid, result);
-                            listener.callback(result);
-                        }
-                    }}, new ErrorCallback<Message>() {
+                dataSetLookupServices.call(
+                        new RemoteCallback<DataSetMetadata>() {
+                            public void callback(DataSetMetadata result) {
+                                if (result == null) listener.notFound();
+                                else {
+                                    remoteMetadataMap.put(uuid, result);
+                                    listener.callback(result);
+                                }
+                            }
+                        }, new ErrorCallback<Message>() {
                             @Override
                             public boolean error(Message message, Throwable throwable) {
                                 listener.onError(new DataSetClientServiceError(message, throwable));
@@ -140,34 +156,6 @@ public class DataSetClientServices {
                             }
                         }).lookupDataSetMetadata(uuid);
             }
-        }
-        else {
-            listener.notFound();
-        }
-    }
-
-    /**
-     * Obtain the data set defintion edition instance .
-     *
-     * @param uuid The UUID of the data set to edit.
-     * @throws Exception It there is an unexpected error trying to execute the lookup request.
-     */
-    public void prepareEdit(final String uuid, final DataSetEditCallback listener) throws Exception {
-        if (dataSetBackendServices != null) {
-            dataSetBackendServices.call(
-                new RemoteCallback<EditDataSetDef>() {
-                    public void callback(EditDataSetDef result) {
-                        if (result == null) listener.notFound();
-                        else {
-                            listener.callback(result);
-                        }
-                    }}, new ErrorCallback<Message>() {
-                    @Override
-                    public boolean error(Message message, Throwable throwable) {
-                        listener.onError(new DataSetClientServiceError(message, throwable));
-                        return true;
-                    }
-                    }).prepareEdit(uuid);
         }
         else {
             listener.notFound();
@@ -194,14 +182,14 @@ public class DataSetClientServices {
      */
     public void exportDataSetCSV(final DataSetLookup request, final DataSetExportReadyCallback listener) throws Exception {
 
-        if (dataSetBackendServices != null) {
+        if (dataSetLookupServices != null) {
             // Look always into the client data set manager.
             if (clientDataSetManager.getDataSet(request.getDataSetUUID()) != null) {
                 DataSet dataSet = clientDataSetManager.lookupDataSet(request);
                 try {
-                    dataSetBackendServices.call(
-                            new RemoteCallback<String>() {
-                                public void callback(String csvFilePath) {
+                    dataSetExportServices.call(
+                            new RemoteCallback<Path>() {
+                                public void callback(Path csvFilePath) {
                                     listener.exportReady(csvFilePath);
                                 }}).exportDataSetCSV(dataSet);
                 } catch (Exception e) {
@@ -212,9 +200,9 @@ public class DataSetClientServices {
             else {
                 // If the data set is not in client, then look up remotely (only if the remote access is available).
                 try {
-                    dataSetBackendServices.call(
-                            new RemoteCallback<String>() {
-                                public void callback(String csvFilePath) {
+                    dataSetExportServices.call(
+                            new RemoteCallback<Path>() {
+                                public void callback(Path csvFilePath) {
                                     listener.exportReady(csvFilePath);
                                 }}).exportDataSetCSV(request);
                 } catch (Exception e) {
@@ -232,14 +220,14 @@ public class DataSetClientServices {
      */
     public void exportDataSetExcel(final DataSetLookup request, final DataSetExportReadyCallback listener) throws Exception {
 
-        if (dataSetBackendServices != null) {
+        if (dataSetLookupServices != null) {
             // Look always into the client data set manager.
             if (clientDataSetManager.getDataSet(request.getDataSetUUID()) != null) {
                 DataSet dataSet = clientDataSetManager.lookupDataSet(request);
                 try {
-                    dataSetBackendServices.call(
-                            new RemoteCallback<String>() {
-                                public void callback(String excelFilePath) {
+                    dataSetExportServices.call(
+                            new RemoteCallback<Path>() {
+                                public void callback(Path excelFilePath) {
                                     listener.exportReady(excelFilePath);
                                 }}).exportDataSetExcel(dataSet);
                 } catch (Exception e) {
@@ -250,9 +238,9 @@ public class DataSetClientServices {
             else {
                 // If the data set is not in client, then look up remotely (only if the remote access is available).
                 try {
-                    dataSetBackendServices.call(
-                            new RemoteCallback<String>() {
-                                public void callback(String excelFilePath) {
+                    dataSetExportServices.call(
+                            new RemoteCallback<Path>() {
+                                public void callback(Path excelFilePath) {
                                     listener.exportReady(excelFilePath);
                                 }}).exportDataSetExcel(request);
                 } catch (Exception e) {
@@ -263,6 +251,15 @@ public class DataSetClientServices {
     }
 
     /**
+     * Creates a brand new data set definition for the provider type specified
+     * @param type The provider type
+     * @return A data set definition instance
+     */
+    public void newDataSet(DataSetProviderType type, RemoteCallback<DataSetDef> callback) throws Exception {
+        dataSetDefServices.call(callback).createDataSetDef(type);
+    }
+
+    /**
      * Process the specified data set lookup request for a given definition.
      * @param def The data set definition
      * @param request The data set lookup request
@@ -270,10 +267,10 @@ public class DataSetClientServices {
      */
     public void lookupDataSet(final DataSetDef def, final DataSetLookup request, final DataSetReadyCallback listener) throws Exception {
 
-        if (dataSetBackendServices != null) {
+        if (dataSetLookupServices != null) {
 
             try {
-                dataSetBackendServices.call(
+                dataSetLookupServices.call(
                         new RemoteCallback<DataSet>() {
                             public void callback(DataSet result) {
                                 if (result == null) listener.notFound();
@@ -312,7 +309,7 @@ public class DataSetClientServices {
             listener.callback(dataSet);
         }
         // If the data set is not in client, then look up remotely (only if the remote access is available).
-        else if (dataSetBackendServices != null) {
+        else if (dataSetLookupServices != null) {
 
             // First of all, get the target data set estimated size.
             fetchMetadata(request.getDataSetUUID(), new DataSetMetadataCallback() {
@@ -321,7 +318,8 @@ public class DataSetClientServices {
                     // Push the data set to client if and only if the push feature is enabled, the data set is
                     // pushable & the data set is smaller than the max push size defined.
                     DataSetDef dsetDef = metatada.getDefinition();
-                    boolean isPushable = dsetDef != null && dsetDef.isPushEnabled() && metatada.getEstimatedSize() < dsetDef.getPushMaxSize();
+                    int estimatedSize = metatada.getEstimatedSize() / 1000;
+                    boolean isPushable = dsetDef != null && dsetDef.isPushEnabled() &&  estimatedSize < dsetDef.getPushMaxSize();
                     if (pushRemoteDataSetEnabled && isPushable) {
 
                         // Check if a push is already in progress.
@@ -363,7 +361,7 @@ public class DataSetClientServices {
     private void _lookupDataSet(DataSetLookup request, final DataSetReadyCallback listener) {
         try {
             
-            dataSetBackendServices.call(
+            dataSetLookupServices.call(
                     new RemoteCallback<DataSet>() {
                         public void callback(DataSet result) {
                             if (result == null) listener.notFound();
@@ -382,9 +380,17 @@ public class DataSetClientServices {
         }
     }
 
+    /**
+     * @deprecated Use <i>getPublicDataSetDefs</i> instead
+     * @since 0.3.0.Final
+     */
     public void getRemoteSharedDataSetDefs(RemoteCallback<List<DataSetDef>> callback) {
+        getPublicDataSetDefs(callback);
+    }
+
+    public void getPublicDataSetDefs(RemoteCallback<List<DataSetDef>> callback) {
         try {
-            dataSetBackendServices.call(callback).getPublicDataSetDefs();
+            dataSetDefServices.call(callback).getPublicDataSetDefs();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -448,119 +454,6 @@ public class DataSetClientServices {
         }
     }
 
-    /**
-     * <p>Register a data set definition on backend.</p> 
-     * @param dataSetDef The data set definition to register.
-     * @param registerCallback The callback when data set definition has been registered. It returns the UUID of the data set definition.
-     */
-    public void registerDataSetDef(final DataSetDef dataSetDef, final DataSetDefRegisterCallback registerCallback) {
-        dataSetBackendServices.call(new RemoteCallback<String>() {
-            @Override
-            public void callback(String o) {
-                registerCallback.success(o);
-            }
-        }, new ErrorCallback<Message>() {
-            @Override
-            public boolean error(Message o, Throwable throwable) {
-                return registerCallback.onError(new DataSetClientServiceError(o, throwable));
-            }
-        }).registerDataSetDef(dataSetDef);
-    }
-
-    /**
-     * <p>Updates a data set definition on backend.</p> 
-     * @param originalUUID The UUID of the data set definition to update.
-     * @param dataSetDef The updated data set definition attributes.
-     * @param registerCallback The callback when data set definition has been updated. It returns the UUID of the original data set definition that will be updated.
-     */
-    public void updateDataSetDef(final String originalUUID, final DataSetDef dataSetDef, final DataSetDefRegisterCallback registerCallback) {
-        dataSetBackendServices.call(new RemoteCallback<String>() {
-            @Override
-            public void callback(String o) {
-                registerCallback.success(o);
-            }
-        }, new ErrorCallback<Message>() {
-            @Override
-            public boolean error(Message o, Throwable throwable) {
-                return registerCallback.onError(new DataSetClientServiceError(o, throwable));
-            }
-        }).updateDataSetDef(originalUUID, dataSetDef);
-    }
-
-    /**
-     * <p>Persists a data set definition on backend.</p> 
-     * @param dataSetDef The data set definition to persist.
-     * @param persistCallback The callback when data set definition has been persisted.                   
-     */
-    public void persistDataSetDef(final DataSetDef dataSetDef, final DataSetDefPersistCallback persistCallback) throws Exception {
-        dataSetBackendServices.call(new RemoteCallback<Void>() {
-            @Override
-            public void callback(Void o) {
-                persistCallback.success();
-                ;
-            }
-        }, new ErrorCallback<Message>() {
-            @Override
-            public boolean error(Message message, Throwable throwable) {
-                return persistCallback.onError(new DataSetClientServiceError(message, throwable));
-            }
-        }).persistDataSetDef(dataSetDef);
-    }
-
-    /**
-     * <p>Removes a data set definition on the backend registry.</p> 
-     * @param uuid The data set definition UUID to remove.
-     * @param removeCallback The callback when data set definition has been removed.             
-     */
-    public void removeDataSetDef(final String uuid, final DataSetDefRemoveCallback removeCallback) {
-        if (uuid != null) {
-            dataSetBackendServices.call(new RemoteCallback<Void>() {
-                @Override
-                public void callback(Void aVoid) {
-                    removeCallback.success();
-                }
-            }, new ErrorCallback<Message>() {
-                @Override
-                public boolean error(Message message, Throwable throwable) {
-                    return removeCallback.onError(new DataSetClientServiceError(message, throwable));
-                }
-            }).removeDataSetDef(uuid);
-            removeDataSet(uuid);
-        }
-    }
-
-    /**
-     * <p>Removes a data set definition on the backend registry.</p> 
-     * @param uuid The data set definition UUID to remove.
-     * @param removeCallback The callback when data set definition has been removed.             
-     */
-    public void deleteDataSetDef(final String uuid, final DataSetDefRemoveCallback removeCallback) {
-        if (uuid != null) {
-            dataSetBackendServices.call(new RemoteCallback<Void>() {
-                @Override
-                public void callback(Void aVoid) {
-                    removeCallback.success();
-                }
-            }, new ErrorCallback<Message>() {
-                @Override
-                public boolean error(Message message, Throwable throwable) {
-                    return removeCallback.onError(new DataSetClientServiceError(message, throwable));
-                }
-            }).deleteDataSetDef(uuid);
-            removeDataSet(uuid);
-        }
-    }
-
-    /**
-     * <p>Removes a registered data set from the index.</p> 
-     * @param uuid The data set UUID to remove.
-     */
-    public void removeDataSet(final String uuid) {
-        if (uuid != null) {
-            clientDataSetManager.removeDataSet(uuid);
-        }
-    }
-
     private class DataSetLookupListenerPair {
 
         DataSetLookup lookup;
@@ -588,8 +481,6 @@ public class DataSetClientServices {
         dataSetModifiedEvent.fire(new DataSetModifiedEvent(event.getDataSetDef()));
     }
 
-
-    
     private void onDataSetRemovedEvent(@Observes DataSetDefRemovedEvent event) {
         checkNotNull("event", event);
         String uuid = event.getDataSetDef().getUUID();
@@ -602,48 +493,22 @@ public class DataSetClientServices {
     }
     
     /**
-     * <p>Returns the servlet URL for uploading files.</p>
+     * <p>Returns the download URL for a given file provided by a servlet method.</p>
+     * @param path The path of the file.
      */
-    public String getUploadServletUrl() {
-        return GWT.getModuleBaseURL() + UPLOAD_SERVLET_URL;
-    }
-    
-    /**
-     * <p>Returns the servlet URL for the exported files.</p>
-     */
-    public String getExportServletUrl() {
-        return GWT.getModuleBaseURL() + EXPORT_SERVLER_URL;
-    }
-
-    /**
-     * <p>Returns the URL for a given file provided by a servlet method.</p>
-     * <p>It uses the <code>FILE</code> protocol.</p>
-     * @param servletUrl The servlet URL.
-     * @param path The path for the file.
-     */
-    public String getDownloadFileUrl(final String servletUrl, final String path) {
-        final StringBuilder sb = new StringBuilder( servletUrl );
-        sb.append( "?" ).append( "path" ).append( "=" ).append( "file://" ).append( URL.encode(path) );
+    public String getDownloadFileUrl(final Path path) {
+        final StringBuilder sb = new StringBuilder(GWT.getModuleBaseURL() + EXPORT_SERVLER_URL);
+        sb.append("?").append("path").append("=").append(URL.encode(path.toURI()));
         return sb.toString();
     }
 
     /**
-     * <p>Returns the URL for an upload file widget action.</p>
-     * <p>It uses the <code>FILE</code> protocol.</p>
-     * @param filename The filename for the file to upload.
+     * <p>Returns the upload URL for a given file provided by a servlet method.</p>
+     * @param path The path of the file.
      */
-    public String getUploadFileUrl(final String filename) {
-        final StringBuilder sb = new StringBuilder( getUploadServletUrl() );
-        sb.append("?").append( "path" ).append( "=file://" ).append( URL.encode(TEMP_PATH + filename) );
+    public String getUploadFileUrl(String path) {
+        final StringBuilder sb = new StringBuilder(GWT.getModuleBaseURL() + UPLOAD_SERVLET_URL);
+        sb.append("?").append("path").append("=").append(URL.encode(path));
         return sb.toString();
     }
-
-    /**
-     * <p>Returns the Path for a temp file.</p>
-     * @param filename The filename.
-     */
-    public String getTempFilePath(final String filename) {
-        return URL.encode(TEMP_PATH + filename);
-    }
-    
 }

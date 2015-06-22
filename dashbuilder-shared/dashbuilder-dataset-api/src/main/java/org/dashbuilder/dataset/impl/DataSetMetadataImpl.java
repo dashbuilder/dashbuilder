@@ -53,7 +53,7 @@ public class DataSetMetadataImpl implements DataSetMetadata {
         this.definition = dataSet.getDefinition();
         this.uuid = dataSet.uuid;
         this.numberOfRows = dataSet.getRowCount();
-        this.estimatedSize = (int) dataSet.getEstimatedSize() / 1000;
+        this.estimatedSize = (int) dataSet.getEstimatedSize();
         this.numberOfColumns = dataSet.getColumns().size();
         for (DataColumn column : dataSet.getColumns()) {
             columnIds.add(column.getId());

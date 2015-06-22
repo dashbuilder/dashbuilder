@@ -38,6 +38,7 @@ import org.dashbuilder.dataset.def.CSVDataSetDef;
 import org.dashbuilder.dataset.def.DataSetDef;
 
 import javax.enterprise.context.Dependent;
+import javax.inject.Inject;
 import java.util.List;
 
 /**
@@ -112,13 +113,13 @@ public class CSVDataSetDefAttributesEditor extends AbstractDataSetDefEditor impl
         filePath.setLoadingImageUri(DataSetClientResources.INSTANCE.images().loadingIcon().getSafeUri());
         filePath.setCallback(new FileUploadEditor.FileUploadEditorCallback() {
             @Override
-            public String getServletUrl() {
-                return DataSetClientServices.get().getUploadServletUrl();
+            public String getUploadFileName() {
+                return dataSetDef.getUUID() + ".csv";
             }
-
             @Override
-            public String getPath() {
-                return DataSetClientServices.get().getTempFilePath(ClientUUIDGenerator.get().newUuid() + ".csv");
+            public String getUploadFileUrl() {
+                String csvPath = "default://master@datasets/tmp/" + dataSetDef.getUUID() + ".csv";
+                return DataSetClientServices.get().getUploadFileUrl(csvPath);
             }
         });
         

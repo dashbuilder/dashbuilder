@@ -47,7 +47,6 @@ import java.util.List;
 public class FileUploadEditor extends Composite implements
         HasId, HasText, IsEditor<HasTextEditor>, HasEditorErrors<String> {
 
-    private static final String SCHEME = "file://";
     private static final String LOADING_IMAGE_SIZE[] = new String[] {"16px", "16px"};
     
     interface Binder extends UiBinder<Widget, FileUploadEditor> {
@@ -87,8 +86,8 @@ public class FileUploadEditor extends Composite implements
     private SafeUri loadingImageUri;
     
     public interface FileUploadEditorCallback {
-        String getServletUrl();
-        String getPath();
+        String getUploadFileName();
+        String getUploadFileUrl();
     }
     
     /**
@@ -158,8 +157,8 @@ public class FileUploadEditor extends Composite implements
     private final ChangeHandler filePathChangeHandler = new ChangeHandler() {
         @Override
         public void onChange(ChangeEvent event) {
-            final String _f = callback.getPath();
-            final String _a = callback.getServletUrl() + "?path=" + SCHEME + _f;
+            final String _f = callback.getUploadFileName();
+            final String _a = callback.getUploadFileUrl();
             setText(_f);
             formPanel.setAction(_a);
             if (loadingImage != null) {
@@ -198,7 +197,14 @@ public class FileUploadEditor extends Composite implements
         if (!isEmpty(fileUpload.asEditor().getValue())) {
             fileLabel.setVisible(false);
         } else if (!isEmpty(text)) {
-            fileLabel.setText(text);
+
+            int slash = text.lastIndexOf("/") != -1 ? text.lastIndexOf("/") : text.lastIndexOf("\\");
+
+            if (slash == -1) {
+                fileLabel.setText(text);
+            } else {
+                fileLabel.setText(text.substring(slash+1));
+            }
             fileLabel.setVisible(true);
         }
     }

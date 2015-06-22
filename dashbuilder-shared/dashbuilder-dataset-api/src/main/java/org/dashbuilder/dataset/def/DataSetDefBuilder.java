@@ -95,12 +95,13 @@ public interface DataSetDefBuilder<T> {
      * Turns on the data set refresh mechanism. Every time the refresh time is met the data set will be forced to refresh.
      * Any cache on the data set will be considered stale from that time on.
      *
-     * @param refreshExpression The refresh expression that sets when the data set has to be refreshed.
-     * @param onlyWhenOutdated In order for the refresh to be performed the data set provider must confirm first the
+     * @param refreshTime The amount of time between refresh intervals {@link org.dashbuilder.dataset.date.TimeAmount}
+     * @param refreshAlways If false then the refresh will be only performed when the underlying data provider determines
+     * that the data set has become stale. Otherwise the data set is always refreshed.
      * data set is outdated. This can be very useful to avoid refreshing unnecessarily.
      * @return The DataSetDefBuilder instance that is being used to configure a DataSetDef.
      */
-    T refreshOn(String refreshExpression, boolean onlyWhenOutdated);
+    T refreshOn(String refreshTime, boolean refreshAlways);
 
     /**
      * Turns of the data set refresh mechanism.

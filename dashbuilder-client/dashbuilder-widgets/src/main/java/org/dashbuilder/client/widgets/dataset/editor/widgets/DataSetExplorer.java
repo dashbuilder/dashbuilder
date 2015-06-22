@@ -15,16 +15,13 @@
  */
 package org.dashbuilder.client.widgets.dataset.editor.widgets;
 
-import com.github.gwtbootstrap.client.ui.event.ShowHandler;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.event.shared.HasHandlers;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
-import org.dashbuilder.client.widgets.dataset.editor.widgets.events.DeleteDataSetEventHandler;
 import org.dashbuilder.client.widgets.dataset.editor.widgets.events.EditDataSetEventHandler;
 import org.dashbuilder.dataprovider.DataSetProviderType;
-import org.dashbuilder.dataset.DataSetMetadata;
 import org.dashbuilder.dataset.client.DataSetClientServiceError;
 import org.dashbuilder.dataset.client.DataSetClientServices;
 import org.dashbuilder.dataset.client.DataSetMetadataCallback;
@@ -59,14 +56,12 @@ public class DataSetExplorer implements IsWidget {
         boolean update(final DataSetDef oldDataSetDef, DataSetDef newDataSetDef);
 
         void show(final ShowDataSetDefCallback callback);
-        
+
         void clear();
         
         void showError(String type, String message, String cause);
 
         HandlerRegistration addEditDataSetEventHandler(final EditDataSetEventHandler handler);
-
-        HandlerRegistration addDeleteDataSetEventHandler(final DeleteDataSetEventHandler handler);
     }
 
     public interface ShowDataSetDefCallback {
@@ -75,12 +70,14 @@ public class DataSetExplorer implements IsWidget {
 
         boolean isShowBackendCache(final DataSetDef def);
     }
-    
+
+    DataSetClientServices clientServices;
     View view;
 
     @Inject
-    public DataSetExplorer() {
-        view = new DataSetExplorerView();
+    public DataSetExplorer(DataSetClientServices clientServices) {
+        this.view = new DataSetExplorerView();
+        this.clientServices = clientServices;
         init();
     }
 
@@ -90,7 +87,7 @@ public class DataSetExplorer implements IsWidget {
     }
 
     private void init() {
-        DataSetClientServices.get().getRemoteSharedDataSetDefs(new RemoteCallback<List<DataSetDef>>() {
+        clientServices.getPublicDataSetDefs(new RemoteCallback<List<DataSetDef>>() {
             public void callback(List<DataSetDef> dataSetDefs) {
                 view.set(dataSetDefs);
                 view.show(showDataSetDefCallback);
@@ -167,9 +164,5 @@ public class DataSetExplorer implements IsWidget {
 
     public HandlerRegistration addEditDataSetEventHandler(EditDataSetEventHandler handler) {
         return view.addEditDataSetEventHandler(handler);
-    }
-
-    public HandlerRegistration addDeleteDataSetEventHandler(DeleteDataSetEventHandler handler) {
-        return view.addDeleteDataSetEventHandler(handler);
     }
 }

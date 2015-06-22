@@ -33,7 +33,6 @@ import org.dashbuilder.dataset.events.DataSetDefModifiedEvent;
 import org.dashbuilder.dataset.events.DataSetDefRegisteredEvent;
 import org.dashbuilder.dataset.events.DataSetDefRemovedEvent;
 import org.dashbuilder.dataset.events.DataSetStaleEvent;
-import org.dashbuilder.dataset.date.TimeFrame;
 import org.dashbuilder.scheduler.Scheduler;
 import org.dashbuilder.scheduler.SchedulerTask;
 import org.slf4j.Logger;
@@ -104,7 +103,7 @@ public class DataSetDefRegistryImpl implements DataSetDefRegistry {
             return System.currentTimeMillis() >= lastRefreshTime + refreshInMillis;
         }
 
-         public void stale() {
+        public void stale() {
             lastRefreshTime = System.currentTimeMillis();
             dataSetStaleEvent.fire(new DataSetStaleEvent(def));
         }
@@ -152,16 +151,15 @@ public class DataSetDefRegistryImpl implements DataSetDefRegistry {
         return record.def;
     }
 
-    public synchronized DataSetDef removeDataSetDef(String uuid) {
-        DataSetDefEntry oldEntry = _removeDataSetDef(uuid);
-        if (oldEntry == null) return null;
-
-        // Notify about the removal
-        dataSetDefRemovedEvent.fire(new DataSetDefRemovedEvent(oldEntry.def));
-        return oldEntry.def;
+    public synchronized void registerDataSetDef(DataSetDef newDef) {
+        registerDataSetDef(newDef, "system", "register(" + newDef.getUUID() + ")");
     }
 
-    public synchronized void registerDataSetDef(DataSetDef newDef) {
+    public synchronized DataSetDef removeDataSetDef(String uuid) {
+        return removeDataSetDef(uuid, "system", "remove(" + uuid + ")");
+    }
+
+    public synchronized void registerDataSetDef(DataSetDef newDef, String subjectId, String message) {
 
         // Register the new entry
         DataSetDefEntry oldEntry = _removeDataSetDef(newDef.getUUID());
@@ -176,6 +174,15 @@ public class DataSetDefRegistryImpl implements DataSetDefRegistry {
         }
         // Register the data set into the scheduler
         newEntry.schedule();
+    }
+
+    public synchronized DataSetDef removeDataSetDef(String uuid, String subjectId, String message) {
+        DataSetDefEntry oldEntry = _removeDataSetDef(uuid);
+        if (oldEntry == null) return null;
+
+        // Notify about the removal
+        dataSetDefRemovedEvent.fire(new DataSetDefRemovedEvent(oldEntry.def));
+        return oldEntry.def;
     }
 
     protected DataSetDefEntry _removeDataSetDef(String uuid) {

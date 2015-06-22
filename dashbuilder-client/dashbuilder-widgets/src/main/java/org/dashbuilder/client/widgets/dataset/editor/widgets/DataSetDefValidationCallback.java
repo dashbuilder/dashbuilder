@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2014 JBoss Inc
+ * Copyright (C) 2015 JBoss Inc
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,14 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbuilder.dataset.client;
+package org.dashbuilder.client.widgets.dataset.editor.widgets;
 
-import org.dashbuilder.dataset.DataSetMetadata;
+import org.dashbuilder.dataset.DataSet;
+import org.dashbuilder.dataset.client.DataSetClientServiceError;
+import org.dashbuilder.dataset.def.DataSetDef;
 
-/**
- * DataSetDefinition register callback
- */
-public interface DataSetDefRegisterCallback {
-    void success(String uuid);
-    boolean onError(DataSetClientServiceError error);
+public interface DataSetDefValidationCallback {
+
+    void valid(DataSetDef def, DataSet dataSet);
+    void invalid(DataSetClientServiceError error);
 }

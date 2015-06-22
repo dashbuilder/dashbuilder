@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2014 JBoss Inc
+ * Copyright (C) 2015 JBoss Inc
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,17 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbuilder.dataset.client;
+package org.dashbuilder.dataset.service;
 
-import org.dashbuilder.dataset.DataSetMetadata;
 import org.dashbuilder.dataset.backend.EditDataSetDef;
+import org.dashbuilder.dataset.def.DataSetDef;
+import org.jboss.errai.bus.server.annotations.Remote;
+import org.uberfire.backend.vfs.Path;
+import org.uberfire.ext.editor.commons.service.support.SupportsCopy;
+import org.uberfire.ext.editor.commons.service.support.SupportsDelete;
 
 /**
- * DataSet edition retrieval callback
+ * Services for the handling the storage of data set definitions
  */
-public interface DataSetEditCallback {
+@Remote
+public interface DataSetDefVfsServices extends SupportsDelete, SupportsCopy {
 
-    void callback(EditDataSetDef editDataSetDef);
-    void notFound();
-    boolean onError(DataSetClientServiceError error);
+    EditDataSetDef load(Path path) throws Exception;
+    Path save(DataSetDef dataSetDef, String commitMessage);
 }

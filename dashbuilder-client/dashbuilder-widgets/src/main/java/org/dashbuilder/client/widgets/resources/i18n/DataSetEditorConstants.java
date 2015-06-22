@@ -17,16 +17,18 @@ package org.dashbuilder.client.widgets.resources.i18n;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.i18n.client.ConstantsWithLookup;
+import com.google.gwt.i18n.client.Messages;
 
 /**
  * <p>Data set editor constants.</p>
  *
  * @since 0.3.0 
  */
-public interface DataSetEditorConstants extends ConstantsWithLookup {
+public interface DataSetEditorConstants extends Messages {
 
     public static final DataSetEditorConstants INSTANCE = GWT.create( DataSetEditorConstants.class );
 
+    String newDataSet(String providerType);
     String error();
     String type();
     String message();
@@ -50,8 +52,8 @@ public interface DataSetEditorConstants extends ConstantsWithLookup {
     String test_description();
     String save();
     String save_description();
-    String cancel();
-    String cancel_description();
+    String back();
+    String back_description();
     String providerType();
     String commonAttributes();
     String performance();
@@ -83,10 +85,6 @@ public interface DataSetEditorConstants extends ConstantsWithLookup {
     String attributeRefreshOnStaleData_description();
     String on();
     String off();
-    String nextSteps();
-    String defineA();
-    String newDataSet();
-    String toFetchYourDataFromExtSystem();
     String provider();
     String colsAndFilter();
     String cacheAndRefresh();
@@ -95,8 +93,6 @@ public interface DataSetEditorConstants extends ConstantsWithLookup {
     String configureInitialFilter();
     String configureCacheAndRefreshSettings();
     String saveAndDeployDataSet();
-    String createDataDisplayers();
-    String createDashboards();
     String defaultDataSetName();
     String sqlAttributes();
     String sql_datasource();

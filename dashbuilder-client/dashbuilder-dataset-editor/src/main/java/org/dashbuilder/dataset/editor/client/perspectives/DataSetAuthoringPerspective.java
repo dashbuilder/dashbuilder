@@ -17,6 +17,7 @@ package org.dashbuilder.dataset.editor.client.perspectives;
 
 import org.uberfire.client.annotations.Perspective;
 import org.uberfire.client.annotations.WorkbenchPerspective;
+import org.uberfire.client.workbench.panels.impl.MultiListWorkbenchPanelPresenter;
 import org.uberfire.client.workbench.panels.impl.MultiTabWorkbenchPanelPresenter;
 import org.uberfire.client.workbench.panels.impl.SimpleWorkbenchPanelPresenter;
 import org.uberfire.mvp.impl.DefaultPlaceRequest;
@@ -34,7 +35,7 @@ import javax.enterprise.context.ApplicationScoped;
  * <p>Provides:</p>
  * <ul>
  *     <li>The Data Set Explorer widget on the left area.</li>     
- *     <li>The Data Set Editor widget on the center area.</li> 
+ *     <li>The Data Set Authoring Home widget on the center area.</li>
  * </ul>
  *
  * @since 0.3.0 
@@ -46,14 +47,14 @@ public class DataSetAuthoringPerspective {
     @Perspective
     public PerspectiveDefinition buildPerspective() {
 
-        PerspectiveDefinition perspective = new PerspectiveDefinitionImpl(MultiTabWorkbenchPanelPresenter.class.getName());
-        perspective.setName("Data Set Authoring"); // TODO: I18n
+        PerspectiveDefinition perspective = new PerspectiveDefinitionImpl(MultiListWorkbenchPanelPresenter.class.getName());
+        perspective.setName("Data Set Authoring");
 
-        perspective.getRoot().addPart( new PartDefinitionImpl( new DefaultPlaceRequest( "DataSetEditor" ) ) );
-        final PanelDefinition west = new PanelDefinitionImpl( SimpleWorkbenchPanelPresenter.class.getName() );
-        west.setWidth( 300 );
-        west.setMinWidth( 200 );
-        west.addPart( new PartDefinitionImpl( new DefaultPlaceRequest( "DataSetExplorer" ) ) );
+        perspective.getRoot().addPart(new PartDefinitionImpl(new DefaultPlaceRequest("DataSetAuthoringHome")));
+        final PanelDefinition west = new PanelDefinitionImpl(MultiListWorkbenchPanelPresenter.class.getName());
+        west.setWidth(350);
+        west.setMinWidth(300);
+        west.addPart(new PartDefinitionImpl(new DefaultPlaceRequest("DataSetDefExplorer")));
         perspective.getRoot().insertChild( CompassPosition.WEST, west );
         return perspective;
     }

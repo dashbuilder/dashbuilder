@@ -40,6 +40,7 @@ import org.dashbuilder.displayer.client.resources.i18n.Constants;
 import org.dashbuilder.displayer.client.widgets.DisplayerEditor;
 import org.dashbuilder.displayer.client.widgets.DisplayerEditorPopup;
 import org.dashbuilder.displayer.client.widgets.DisplayerView;
+import org.uberfire.backend.vfs.Path;
 import org.uberfire.client.annotations.WorkbenchMenu;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
 import org.uberfire.client.annotations.WorkbenchPartView;
@@ -273,9 +274,8 @@ public class DisplayerScreenPresenter {
                 try {
                     dataSetClientServices.exportDataSetCSV(currentLookup, new DataSetExportReadyCallback() {
                         @Override
-                        public void exportReady(String exportFilePath) {
-                            final String s = DataSetClientServices.get().getExportServletUrl();
-                            final String u = DataSetClientServices.get().getDownloadFileUrl(s, exportFilePath);
+                        public void exportReady(Path exportFilePath) {
+                            final String u = DataSetClientServices.get().getDownloadFileUrl(exportFilePath);
                             Window.open(u,
                                             "downloading",
                                             "resizable=no,scrollbars=yes,status=no");
@@ -297,9 +297,8 @@ public class DisplayerScreenPresenter {
                 try {
                     dataSetClientServices.exportDataSetExcel(currentLookup, new DataSetExportReadyCallback() {
                         @Override
-                        public void exportReady(String exportFilePath) {
-                            final String s = DataSetClientServices.get().getExportServletUrl();
-                            final String u = DataSetClientServices.get().getDownloadFileUrl(s, exportFilePath);
+                        public void exportReady(Path exportFilePath) {
+                            final String u = DataSetClientServices.get().getDownloadFileUrl(exportFilePath);
                             Window.open(u,
                                     "downloading",
                                     "resizable=no,scrollbars=yes,status=no");

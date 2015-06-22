@@ -50,9 +50,11 @@ public class CSVParser {
     protected transient Map<String,DateFormat> _dateFormatMap = new HashMap<String,DateFormat>();
     protected transient Map<String,DecimalFormat> _numberFormatMap = new HashMap<String,DecimalFormat>();
     protected CSVDataSetDef dataSetDef;
+    protected CSVFileStorage csvStorage;
 
-    public CSVParser(CSVDataSetDef def) {
+    public CSVParser(CSVDataSetDef def, CSVFileStorage csvFileStorage) {
         this.dataSetDef = def;
+        this.csvStorage = csvFileStorage;
     }
 
     protected boolean isColumnIncluded(String columnId) {
@@ -68,7 +70,7 @@ public class CSVParser {
             CSVReader csvReader = new CSVReader(br, dataSetDef.getSeparatorChar(), dataSetDef.getQuoteChar(), dataSetDef.getEscapeChar());
 
             String[] header = csvReader.readNext();
-            if (header == null) throw new IOException("The CSV has no header: " + dataSetDef);
+            if (header == null) throw new IOException("CSV has no header: " + dataSetDef);
 
             String[] firstRow = csvReader.readNext();
             if (firstRow == null || firstRow.length < header.length) firstRow = null;
@@ -105,36 +107,22 @@ public class CSVParser {
     }
 
     protected InputStream getCSVInputStream() throws Exception {
-        String path = dataSetDef.getFilePath();
-        if (!StringUtils.isBlank(path)) {
-            File f = getCSVFile();
-            if (f != null) return new FileInputStream(f);
-            throw new IllegalArgumentException("CSV file not found: " + dataSetDef.getFilePath());
-        }
-
         String url = dataSetDef.getFileURL();
         if (!StringUtils.isBlank(url)) {
             return new URL(url).openStream();
         }
-        throw new IllegalArgumentException("CSV location not specified. Missing path or URL: " + dataSetDef);
-    }
-
-    public File getCSVFile() throws Exception {
         String path = dataSetDef.getFilePath();
-        if (StringUtils.isBlank(path)) return null;
-
-        File f = new File(path);
-        if (f.exists()) return f;
-
-        String defFilePath = dataSetDef.getDefFilePath();
-        if (!StringUtils.isBlank(defFilePath)) {
-            File defFile = new File(defFilePath);
-            if (defFile.exists()) {
-                f = new File(defFile.getParent(), path);
-                if (f.exists()) return f;
+        if (!StringUtils.isBlank(path)) {
+            File f = new File(path);
+            if (f.exists()) {
+                return new FileInputStream(f);
             }
         }
-        return null;
+        InputStream is = csvStorage.getCSVInputStream(dataSetDef);
+        if (is != null) {
+            return is;
+        }
+        throw new IllegalArgumentException("CSV content not found: " + dataSetDef);
     }
 
     protected ColumnType calculateType(String columnId, String value) {

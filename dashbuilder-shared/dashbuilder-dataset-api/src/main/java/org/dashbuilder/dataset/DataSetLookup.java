@@ -48,11 +48,24 @@ public class DataSetLookup {
     protected int numberOfRows = -1;
 
     /**
+     * Flag indicating this lookup request is in test mode
+     */
+    protected boolean testMode = false;
+
+    /**
      * The list of operations to apply on the target data set as part of the lookup operation.
      */
     protected List<DataSetOp> operationList = new ArrayList<DataSetOp>();
 
     public DataSetLookup() {
+    }
+
+    public boolean testMode() {
+        return testMode;
+    }
+
+    public void setTestMode(boolean testMode) {
+        this.testMode = testMode;
     }
 
     public boolean isEmpty() {

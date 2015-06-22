@@ -29,7 +29,6 @@ public class DataColumnImpl implements DataColumn {
 
     protected DataSetImpl dataSet = null;
     protected String id = null;
-    protected String name = null;
     protected ColumnType columnType = ColumnType.LABEL;
     protected List values = new ArrayList();
     protected ColumnGroup columnGroup;

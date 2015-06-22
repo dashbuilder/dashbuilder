@@ -51,6 +51,10 @@ public abstract class AbstractChartSettingsBuilder<T extends ChartSettingsBuilde
         return (T) this;
     }
 
+    public T legendOn(Position position) {
+        return legendOn(position.name());
+    }
+
     public T legendOn(String position) {
         displayerSettings.setChartShowLegend(true);
         displayerSettings.setChartLegendPosition(Position.getByName(position));

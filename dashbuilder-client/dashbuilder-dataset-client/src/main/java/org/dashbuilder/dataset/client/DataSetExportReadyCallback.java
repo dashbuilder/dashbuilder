@@ -15,8 +15,10 @@
  */
 package org.dashbuilder.dataset.client;
 
+import org.uberfire.backend.vfs.Path;
+
 public interface DataSetExportReadyCallback {
 
-    void exportReady(String exportFilePath);
+    void exportReady(Path exportFilePath);
 
 }
