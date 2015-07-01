@@ -156,7 +156,8 @@ public class DataSetEditor implements IsWidget {
     public DataSetEditor newDataSetDef() {
         
         clear();
-        
+
+        // Clear any old status
         dataSetDef = new DataSetDef();
         originalColumns = null;
         updateColumnsView = true;

@@ -4,17 +4,10 @@
              xmlns:b="urn:import:com.github.gwtbootstrap.client.ui"
              xmlns:displayer-client="urn:import:org.dashbuilder.displayer.client">
 
-  <ui:with field="i18n" type="org.dashbuilder.client.widgets.resources.i18n.DataSetEditorConstants"/>
-
-  <ui:style>
-    .mainPanel {
-    }
-  </ui:style>
-  
-  <g:FlowPanel ui:field="columnFilterTablePanel" addStyleNames="{style.mainPanel} ">
+  <g:FlowPanel ui:field="columnFilterTablePanel">
 
     <!-- Contains preview table displayer added in the Java View implementation. -->
-    <g:FlowPanel ui:field="tablePanel" addStyleNames="dataPreviewTable">
+    <g:FlowPanel ui:field="tablePanel">
       
     </g:FlowPanel>
     

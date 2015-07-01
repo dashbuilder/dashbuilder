@@ -102,11 +102,10 @@ public class SQLDataSetDefAttributesEditor extends AbstractDataSetDefEditor impl
     }
 
     private SQLDataSetDef getDataSetDef() {
-        try {
+        if (dataSetDef instanceof SQLDataSetDef) {
             return (SQLDataSetDef) dataSetDef;
-        } catch (ClassCastException e) {
-            return null;
         }
+        return null;
     }
 
     @Override

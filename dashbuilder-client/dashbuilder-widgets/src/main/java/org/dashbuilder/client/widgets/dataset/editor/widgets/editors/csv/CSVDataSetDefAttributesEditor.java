@@ -150,11 +150,10 @@ public class CSVDataSetDefAttributesEditor extends AbstractDataSetDefEditor impl
     }
     
     private CSVDataSetDef getDefinition() {
-        try {
+        if (dataSetDef instanceof CSVDataSetDef) {
             return (CSVDataSetDef) dataSetDef;
-        } catch (ClassCastException e) {
-            return null;
         }
+        return null;
     }
 
     @Override

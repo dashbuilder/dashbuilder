@@ -82,7 +82,13 @@ public class BeanDataSetProvider implements DataSetProvider {
     public DataSetGenerator lookupGenerator(DataSetDef def) {
         BeanDataSetDef beanDef = (BeanDataSetDef) def;
         String beanName = beanDef.getGeneratorClass();
-        return generatorMap.get(beanName);
+        DataSetGenerator generator = generatorMap.get(beanName);
+
+        if (generator != null ) {
+            return generator;
+        } else {
+            throw new IllegalArgumentException("Data set generator class not found: " + beanName);
+        }
     }
 
     public DataSet lookupDataSet(DataSetDef def, DataSetLookup lookup) throws Exception {
