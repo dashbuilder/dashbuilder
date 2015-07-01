@@ -289,12 +289,13 @@ public class TableDisplayer extends AbstractDisplayer {
             }
         }
 
+        pagedTable.pager.setPageSize(displayerSettings.getTablePageSize());
         pagedTable.setRowCount( numberOfRows, true );
-        int height = 40 * displayerSettings.getTablePageSize() + 20;
+        int height = 42 + 37 * dataSet.getRowCount();
         pagedTable.setHeight( ( height > ( Window.getClientHeight() - this.getAbsoluteTop() ) ? ( Window.getClientHeight() - this.getAbsoluteTop() ) : height ) + "px" );
 
         int tableWidth = displayerSettings.getTableWidth();
-        pagedTable.setWidth( tableWidth == 0 ? dataColumns.size() * 100 + "px" : tableWidth + "px");
+        pagedTable.setWidth( tableWidth == 0 ? dataColumns.size() * 100  + 40 + "px" : tableWidth + "px");
         pagedTable.setEmptyTableCaption( TableConstants.INSTANCE.tableDisplayer_noDataAvailable() );
 
         if (displayerSettings.isTableSortEnabled()) {
@@ -458,6 +459,8 @@ public class TableDisplayer extends AbstractDisplayer {
                         new DataSetReadyCallback() {
                             public void callback(DataSet dataSet) {
                                 updateRowData(lastOffset, rows);
+                                int height = 42 + 37 * dataSet.getRowCount();
+                                table.setHeight(height + "px");
                             }
                             public void notFound() {
                                 displayMessage(CommonConstants.INSTANCE.error() + CommonConstants.INSTANCE.error_dataset_notfound());
