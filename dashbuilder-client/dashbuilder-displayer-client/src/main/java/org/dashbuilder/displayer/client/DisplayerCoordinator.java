@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.gwt.core.client.Callback;
-import org.dashbuilder.dataset.client.DataSetClientServiceError;
+import org.dashbuilder.common.client.error.ClientRuntimeError;
 import org.dashbuilder.dataset.group.DataSetGroup;
 
 /**
@@ -152,7 +152,7 @@ public class DisplayerCoordinator {
         }
 
         @Override
-        public void onError(final Displayer displayer, final DataSetClientServiceError error) {
+        public void onError(final Displayer displayer, ClientRuntimeError error) {
             for (Displayer other : displayerList) {
                 if (other == displayer) continue;
                 other.onError(displayer, error);

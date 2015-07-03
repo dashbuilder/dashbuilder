@@ -17,6 +17,7 @@ package org.dashbuilder.dataset.client;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.URL;
+import org.dashbuilder.common.client.error.ClientRuntimeError;
 import org.dashbuilder.dataprovider.DataSetProviderType;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.service.DataSetLookupServices;
@@ -151,7 +152,7 @@ public class DataSetClientServices {
                         }, new ErrorCallback<Message>() {
                             @Override
                             public boolean error(Message message, Throwable throwable) {
-                                listener.onError(new DataSetClientServiceError(message, throwable));
+                                listener.onError(new ClientRuntimeError(throwable));
                                 return true;
                             }
                         }).lookupDataSetMetadata(uuid);
@@ -186,30 +187,40 @@ public class DataSetClientServices {
             // Look always into the client data set manager.
             if (clientDataSetManager.getDataSet(request.getDataSetUUID()) != null) {
                 DataSet dataSet = clientDataSetManager.lookupDataSet(request);
-                try {
-                    dataSetExportServices.call(
-                            new RemoteCallback<Path>() {
-                                public void callback(Path csvFilePath) {
-                                    listener.exportReady(csvFilePath);
-                                }}).exportDataSetCSV(dataSet);
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
+                dataSetExportServices.call(
+                    new RemoteCallback<Path>() {
+                        public void callback(Path csvFilePath) {
+                            listener.exportReady(csvFilePath);
+                        }}
+                    , new ErrorCallback<Message>() {
+                        public boolean error(Message message, Throwable throwable) {
+                            listener.onError(new ClientRuntimeError(throwable));
+                            return true;
+                        }
+                    }).exportDataSetCSV(dataSet);
             }
             // Data set not found on client.
             else {
                 // If the data set is not in client, then look up remotely (only if the remote access is available).
                 try {
                     dataSetExportServices.call(
-                            new RemoteCallback<Path>() {
-                                public void callback(Path csvFilePath) {
-                                    listener.exportReady(csvFilePath);
-                                }}).exportDataSetCSV(request);
+                        new RemoteCallback<Path>() {
+                            public void callback(Path csvFilePath) {
+                                listener.exportReady(csvFilePath);
+                            }}
+                            , new ErrorCallback<Message>() {
+                                public boolean error(Message message, Throwable throwable) {
+                                    listener.onError(new ClientRuntimeError(throwable));
+                                    return true;
+                                }
+                            }).exportDataSetCSV(request);
                 } catch (Exception e) {
-                    throw new RuntimeException(e);
+                    listener.onError(new ClientRuntimeError(e));
                 }
             }
-        } else throw new RuntimeException( CommonConstants.INSTANCE.exc_no_client_side_data_export());
+        } else {
+            listener.onError(new ClientRuntimeError(CommonConstants.INSTANCE.exc_no_client_side_data_export()));
+        }
     }
 
     /**
@@ -242,12 +253,20 @@ public class DataSetClientServices {
                             new RemoteCallback<Path>() {
                                 public void callback(Path excelFilePath) {
                                     listener.exportReady(excelFilePath);
-                                }}).exportDataSetExcel(request);
+                                }}
+                            , new ErrorCallback<Message>() {
+                                public boolean error(Message message, Throwable throwable) {
+                                    listener.onError(new ClientRuntimeError(throwable));
+                                    return true;
+                                }
+                            }).exportDataSetExcel(request);
                 } catch (Exception e) {
-                    throw new RuntimeException(e);
+                    listener.onError(new ClientRuntimeError(e));
                 }
             }
-        } else throw new RuntimeException(CommonConstants.INSTANCE.exc_no_client_side_data_export());
+        } else {
+            listener.onError(new ClientRuntimeError(CommonConstants.INSTANCE.exc_no_client_side_data_export()));
+        }
     }
 
     /**
@@ -268,7 +287,6 @@ public class DataSetClientServices {
     public void lookupDataSet(final DataSetDef def, final DataSetLookup request, final DataSetReadyCallback listener) throws Exception {
 
         if (dataSetLookupServices != null) {
-
             try {
                 dataSetLookupServices.call(
                         new RemoteCallback<DataSet>() {
@@ -279,15 +297,14 @@ public class DataSetClientServices {
                         }, new ErrorCallback<Message>() {
                             @Override
                             public boolean error(Message message, Throwable throwable) {
-                                return listener.onError(new DataSetClientServiceError(message, throwable));
+                                return listener.onError(new ClientRuntimeError(throwable));
                             }
                         })
                         .lookupDataSet(def, request);
 
             } catch (Exception e) {
-                listener.onError(new DataSetClientServiceError(null, e));
+                listener.onError(new ClientRuntimeError(e));
             }
-            
         }
         // Data set not found on client.
         else {
@@ -347,7 +364,7 @@ public class DataSetClientServices {
                 }
                 
                 @Override
-                public boolean onError(final DataSetClientServiceError error) {
+                public boolean onError(final ClientRuntimeError error) {
                     return listener.onError(error);
                 }
             });
@@ -360,7 +377,6 @@ public class DataSetClientServices {
 
     private void _lookupDataSet(DataSetLookup request, final DataSetReadyCallback listener) {
         try {
-            
             dataSetLookupServices.call(
                     new RemoteCallback<DataSet>() {
                         public void callback(DataSet result) {
@@ -370,13 +386,13 @@ public class DataSetClientServices {
                     }, new ErrorCallback<Message>() {
                         @Override
                         public boolean error(Message message, Throwable throwable) {
-                            return listener.onError(new DataSetClientServiceError(message, throwable));
+                            return listener.onError(new ClientRuntimeError(throwable));
                         }
                     })
                     .lookupDataSet(request);
             
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            listener.onError(new ClientRuntimeError(e));
         }
     }
 
@@ -445,7 +461,7 @@ public class DataSetClientServices {
         }
 
         @Override
-        public boolean onError(final DataSetClientServiceError error) {
+        public boolean onError(final ClientRuntimeError error) {
             boolean t = false;
             for (DataSetLookupListenerPair pair : listenerList) {
                 if (pair.listener.onError(error)) t = true;

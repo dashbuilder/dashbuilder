@@ -15,14 +15,13 @@
  */
 package org.dashbuilder.client.widgets.dataset.editor.widgets;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.event.shared.HasHandlers;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.client.widgets.dataset.editor.widgets.events.EditDataSetEventHandler;
+import org.dashbuilder.common.client.error.ClientRuntimeError;
 import org.dashbuilder.dataprovider.DataSetProviderType;
-import org.dashbuilder.dataset.client.DataSetClientServiceError;
 import org.dashbuilder.dataset.client.DataSetClientServices;
 import org.dashbuilder.dataset.client.DataSetMetadataCallback;
 import org.dashbuilder.dataset.def.DataSetDef;
@@ -59,7 +58,7 @@ public class DataSetExplorer implements IsWidget {
 
         void clear();
         
-        void showError(String type, String message, String cause);
+        void showError(ClientRuntimeError error);
 
         HandlerRegistration addEditDataSetEventHandler(final EditDataSetEventHandler handler);
     }
@@ -130,7 +129,7 @@ public class DataSetExplorer implements IsWidget {
             try {
                 DataSetClientServices.get().fetchMetadata(def.getUUID(), callback);
             } catch (Exception e) {
-                showError(e);
+                view.showError(new ClientRuntimeError(e));
             }
         }
 
@@ -142,24 +141,6 @@ public class DataSetExplorer implements IsWidget {
         }
     };
 
-    public void showError(final DataSetClientServiceError error) {
-        final String type = error.getThrowable() != null ? error.getThrowable().getClass().getName() : null;
-        final String message = error.getThrowable() != null ? error.getThrowable().getMessage() : error.getMessage().toString();
-        final String cause = error.getThrowable() != null && error.getThrowable().getCause() != null ? error.getThrowable().getCause().getMessage() : null;
-        showError(type, message, cause);
-    }
-    
-    private void showError(final Exception e) {
-        showError(null, e.getMessage(), null);
-    }
-
-    private void showError(final String type, final String message, final String cause) {
-        if (type != null) GWT.log("Error type: " + type);
-        if (message != null) GWT.log("Error message: " + message);
-        if (cause != null) GWT.log("Error cause: " + cause);
-        view.showError(type, message, cause);
-    }
-    
     // **************** EVENT HANDLER REGISTRATIONS ****************************
 
     public HandlerRegistration addEditDataSetEventHandler(EditDataSetEventHandler handler) {

@@ -15,21 +15,21 @@
  */
 package org.dashbuilder.displayer.client;
 
-    import org.dashbuilder.dataset.*;
-    import org.dashbuilder.dataset.client.DataSetClientServices;
-    import org.dashbuilder.dataset.client.DataSetReadyCallback;
-    import org.dashbuilder.dataset.client.DataSetClientServiceError;
-    import org.dashbuilder.dataset.engine.group.IntervalBuilder;
-    import org.dashbuilder.dataset.engine.group.IntervalBuilderLocator;
-    import org.dashbuilder.dataset.group.*;
-    import org.dashbuilder.dataset.sort.ColumnSort;
-    import org.dashbuilder.dataset.sort.DataSetSort;
-    import org.dashbuilder.dataset.sort.SortOrder;
-    import org.dashbuilder.displayer.client.resources.i18n.CommonConstants;
+import org.dashbuilder.common.client.error.ClientRuntimeError;
+import org.dashbuilder.dataset.*;
+import org.dashbuilder.dataset.client.DataSetClientServices;
+import org.dashbuilder.dataset.client.DataSetReadyCallback;
+import org.dashbuilder.dataset.engine.group.IntervalBuilder;
+import org.dashbuilder.dataset.engine.group.IntervalBuilderLocator;
+import org.dashbuilder.dataset.group.*;
+import org.dashbuilder.dataset.sort.ColumnSort;
+import org.dashbuilder.dataset.sort.DataSetSort;
+import org.dashbuilder.dataset.sort.SortOrder;
+import org.dashbuilder.displayer.client.resources.i18n.CommonConstants;
 
-    import java.util.*;
+import java.util.*;
 
-    public class DataSetHandlerImpl implements DataSetHandler {
+public class DataSetHandlerImpl implements DataSetHandler {
 
     protected DataSetClientServices dataSetLookupClient = DataSetClientServices.get();
     protected DataSetLookup lookupBase;
@@ -167,7 +167,7 @@ package org.dashbuilder.displayer.client;
             }
 
             @Override
-            public boolean onError(final DataSetClientServiceError error) {
+            public boolean onError(final ClientRuntimeError error) {
                 return callback.onError(error);
             }
         });

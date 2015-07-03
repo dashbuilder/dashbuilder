@@ -22,9 +22,8 @@ import javax.inject.Inject;
 import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.client.widgets.dataset.editor.widgets.DataSetDefValidationCallback;
 import org.dashbuilder.client.widgets.dataset.editor.widgets.DataSetEditor;
+import org.dashbuilder.common.client.error.ClientRuntimeError;
 import org.dashbuilder.dataset.backend.EditDataSetDef;
-import org.dashbuilder.dataset.client.DataSetClientServiceError;
-import org.dashbuilder.dataset.client.DataSetReadyCallback;
 import org.uberfire.ext.editor.commons.client.BaseEditorViewImpl;
 
 @Dependent
@@ -54,7 +53,7 @@ public class DataSetDefEditorView extends BaseEditorViewImpl implements DataSetD
     }
 
     @Override
-    public void showError(DataSetClientServiceError error) {
+    public void showError(ClientRuntimeError error) {
         dataSetEditor.showError(error);
     }
 }

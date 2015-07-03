@@ -30,10 +30,10 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
+import org.dashbuilder.common.client.error.ClientRuntimeError;
 import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.client.DataSetReadyCallback;
-import org.dashbuilder.dataset.client.DataSetClientServiceError;
 import org.dashbuilder.dataset.sort.SortOrder;
 import org.dashbuilder.displayer.ColumnSettings;
 import org.dashbuilder.displayer.DisplayerAttributeDef;
@@ -110,9 +110,8 @@ public class DisplayerSettingsEditor extends Composite {
                 }
 
                 @Override
-                public boolean onError(final DataSetClientServiceError error) {
-                    // TODO
-                    GWT.log("Error occurred in DisplayerSettingsEditor#init!");
+                public boolean onError(final ClientRuntimeError error) {
+                    mainPanel.add(new Label(LabelType.WARNING, CommonConstants.INSTANCE.error() + error.getMessage()));
                     return false;
                 }
             });

@@ -17,7 +17,7 @@ package org.dashbuilder.displayer.client;
 
 import java.util.List;
 
-import org.dashbuilder.dataset.client.DataSetClientServiceError;
+import org.dashbuilder.common.client.error.ClientRuntimeError;
 import org.dashbuilder.dataset.group.DataSetGroup;
 
 /**
@@ -63,9 +63,9 @@ public interface DisplayerListener {
     void onFilterReset(Displayer displayer, List<DataSetGroup> groupOps);
 
     /**
-     * Invoked when some error on the backend side occurs. 
+     * Invoked when some error occurs.
      * @param displayer The Displayer instance event comes from.
      * @param error The error instance.
      */
-    void onError(final Displayer displayer, DataSetClientServiceError error);
+    void onError(final Displayer displayer, ClientRuntimeError error);
 }

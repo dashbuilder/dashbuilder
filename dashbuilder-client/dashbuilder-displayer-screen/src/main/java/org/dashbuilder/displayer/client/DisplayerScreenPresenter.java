@@ -29,6 +29,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.IsWidget;
 import org.dashbuilder.common.client.StringUtils;
+import org.dashbuilder.common.client.error.ClientRuntimeError;
 import org.dashbuilder.dataset.DataSetLookup;
 import org.dashbuilder.dataset.DataSetMetadata;
 import org.dashbuilder.dataset.client.DataSetClientServices;
@@ -268,21 +269,24 @@ public class DisplayerScreenPresenter {
     private Command getExportCsvCommand() {
         return new Command() {
             public void execute() {
-                // Get all the data set rows with a maximum of 10000
-                DataSetLookup currentLookup = getConstrainedDataSetLookup(displayerView.getDisplayer().getDataSetHandler().getCurrentDataSetLookup());
-
                 try {
+                    // Get all the data set rows with a maximum of 10000
+                    DataSetLookup currentLookup = getConstrainedDataSetLookup(displayerView.getDisplayer().getDataSetHandler().getCurrentDataSetLookup());
                     dataSetClientServices.exportDataSetCSV(currentLookup, new DataSetExportReadyCallback() {
                         @Override
                         public void exportReady(Path exportFilePath) {
                             final String u = DataSetClientServices.get().getDownloadFileUrl(exportFilePath);
                             Window.open(u,
-                                            "downloading",
-                                            "resizable=no,scrollbars=yes,status=no");
+                                    "downloading",
+                                    "resizable=no,scrollbars=yes,status=no");
+                        }
+                        @Override
+                        public void onError(ClientRuntimeError error) {
+                            displayerView.error(error);
                         }
                     });
-                } catch ( Exception e ) {
-                    throw new RuntimeException( e );
+                } catch (Exception e) {
+                    displayerView.error(new ClientRuntimeError(e));
                 }
             }
         };
@@ -291,10 +295,9 @@ public class DisplayerScreenPresenter {
     private Command getExportExcelCommand() {
         return new Command() {
             public void execute() {
-                // Get all the data set rows with a maximum of 10000
-                DataSetLookup currentLookup = getConstrainedDataSetLookup(displayerView.getDisplayer().getDataSetHandler().getCurrentDataSetLookup());
-
                 try {
+                    // Get all the data set rows with a maximum of 10000
+                    DataSetLookup currentLookup = getConstrainedDataSetLookup(displayerView.getDisplayer().getDataSetHandler().getCurrentDataSetLookup());
                     dataSetClientServices.exportDataSetExcel(currentLookup, new DataSetExportReadyCallback() {
                         @Override
                         public void exportReady(Path exportFilePath) {
@@ -303,9 +306,13 @@ public class DisplayerScreenPresenter {
                                     "downloading",
                                     "resizable=no,scrollbars=yes,status=no");
                         }
+                        @Override
+                        public void onError(ClientRuntimeError error) {
+                            displayerView.error(error);
+                        }
                     });
                 } catch (Exception e) {
-                    throw new RuntimeException( e );
+                    displayerView.error(new ClientRuntimeError(e));
                 }
             }
         };

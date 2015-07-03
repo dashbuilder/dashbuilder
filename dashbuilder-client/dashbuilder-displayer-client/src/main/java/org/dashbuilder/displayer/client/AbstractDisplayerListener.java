@@ -17,7 +17,7 @@ package org.dashbuilder.displayer.client;
 
 import java.util.List;
 
-import org.dashbuilder.dataset.client.DataSetClientServiceError;
+import org.dashbuilder.common.client.error.ClientRuntimeError;
 import org.dashbuilder.dataset.group.DataSetGroup;
 
 /**
@@ -45,7 +45,7 @@ public abstract class AbstractDisplayerListener implements DisplayerListener {
 
     }
 
-    @Override public void onError(Displayer displayer, DataSetClientServiceError error) {
+    @Override public void onError(Displayer displayer, ClientRuntimeError error) {
 
     }
 }

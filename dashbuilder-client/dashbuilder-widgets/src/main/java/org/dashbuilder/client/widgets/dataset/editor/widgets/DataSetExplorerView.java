@@ -34,9 +34,8 @@ import com.google.gwt.user.client.ui.Label;
 import org.dashbuilder.client.widgets.dataset.editor.widgets.events.EditDataSetEvent;
 import org.dashbuilder.client.widgets.dataset.editor.widgets.events.EditDataSetEventHandler;
 import org.dashbuilder.client.widgets.resources.i18n.DataSetExplorerConstants;
-import org.dashbuilder.common.client.widgets.SlidingPanel;
+import org.dashbuilder.common.client.error.ClientRuntimeError;
 import org.dashbuilder.dataset.DataSetMetadata;
-import org.dashbuilder.dataset.client.DataSetClientServiceError;
 import org.dashbuilder.dataset.client.DataSetMetadataCallback;
 import org.dashbuilder.dataset.client.resources.bundles.DataSetClientImages;
 import org.dashbuilder.dataset.client.resources.bundles.DataSetClientResources;
@@ -346,11 +345,11 @@ public class DataSetExplorerView extends Composite implements DataSetExplorer.Vi
                 @Override
                 public void notFound() {
                     error();
-                    showError(DataSetExplorerConstants.INSTANCE.notFound());
+                    showError(DataSetExplorerConstants.INSTANCE.notFound(), null);
                 }
 
                 @Override
-                public boolean onError(DataSetClientServiceError error) {
+                public boolean onError(ClientRuntimeError error) {
                     error();
                     showError(error);
                     return false;
@@ -390,29 +389,15 @@ public class DataSetExplorerView extends Composite implements DataSetExplorer.Vi
         }
     }
 
-    private void showError(final String message) {
-        showError(null, message, null);
-    }
-    
-    private void showError(final Exception e) {
-        showError(null, e.getMessage(), null);
-    }
-    
-    private void showError(final DataSetClientServiceError error) {
-        final String type = error.getThrowable() != null ? error.getThrowable().getClass().getName() : null;
-        final String message = error.getThrowable() != null ? error.getThrowable().getMessage() : error.getMessage().toString();
-        final String cause = error.getThrowable() != null && error.getThrowable().getCause() != null ? error.getThrowable().getCause().getMessage() : null;
-        showError(type, message, cause);
+    @Override
+    public void showError(final ClientRuntimeError error) {
+        showError(error.getMessage(), error.getCause());
     }
 
-    @Override
-    public void showError(String type, String message, String cause) {
-        if (type != null) GWT.log("Error type: " + type);
+    public void showError(final String message, String cause) {
         if (message != null) GWT.log("Error message: " + message);
         if (cause != null) GWT.log("Error cause: " + cause);
         
-        errorType.setText(type != null ? type : "");
-        errorTypeRow.setVisible(type != null);
         errorMessage.setText(message != null ? message : "");
         errorMessageRow.setVisible(message != null);
         errorCause.setText(cause != null ? cause : "");

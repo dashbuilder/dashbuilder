@@ -15,6 +15,7 @@
  */
 package org.dashbuilder.dataset.client;
 
+import org.dashbuilder.common.client.error.ClientRuntimeError;
 import org.dashbuilder.dataset.DataSet;
 
 /**
@@ -24,6 +25,6 @@ public interface DataSetReadyCallback {
 
     void callback(DataSet dataSet);
     void notFound();
-    boolean onError(DataSetClientServiceError error);
+    boolean onError(ClientRuntimeError error);
 
 }

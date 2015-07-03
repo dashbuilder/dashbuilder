@@ -43,6 +43,7 @@ import org.dashbuilder.client.widgets.dataset.editor.widgets.editors.csv.CSVData
 import org.dashbuilder.client.widgets.dataset.editor.widgets.editors.elasticsearch.ELDataSetDefAttributesEditor;
 import org.dashbuilder.client.widgets.dataset.editor.widgets.editors.sql.SQLDataSetDefAttributesEditor;
 import org.dashbuilder.client.widgets.resources.i18n.DataSetEditorConstants;
+import org.dashbuilder.common.client.error.ClientRuntimeError;
 import org.dashbuilder.common.client.widgets.TimeoutPopupPanel;
 import org.dashbuilder.dataprovider.DataSetProviderType;
 import org.dashbuilder.dataset.DataSet;
@@ -247,6 +248,10 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
             Window.open(u,
                     "downloading",
                     "resizable=no,scrollbars=yes,status=no");
+        }
+        @Override
+        public void onError(ClientRuntimeError error) {
+            showError(error.getMessage(), error.getCause());
         }
     };
     
@@ -640,7 +645,10 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
     }
 
     @Override
-    public DataSetEditor.View showError(final String type, final String message, final String cause) {
+    public DataSetEditor.View showError(final String message, final String cause) {
+        if (message != null) GWT.log("Error message: " + message);
+        if (cause != null) GWT.log("Error cause: " + cause);
+
         errorMessage.setText(message != null ? message : "");
         errorMessageRow.setVisible(message != null);
         errorCause.setText(cause != null ? cause : "");

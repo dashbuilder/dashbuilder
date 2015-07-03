@@ -29,12 +29,11 @@ import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.common.client.StringUtils;
+import org.dashbuilder.common.client.error.ClientRuntimeError;
 import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.dataset.DataSet;
-import org.dashbuilder.dataset.client.DataSetClientServiceError;
 import org.dashbuilder.dataset.client.DataSetReadyCallback;
 import org.dashbuilder.dataset.group.Interval;
 import org.dashbuilder.displayer.ColumnSettings;
@@ -45,7 +44,6 @@ import org.dashbuilder.renderer.chartjs.lib.data.AreaChartDataProvider;
 import org.dashbuilder.renderer.chartjs.lib.data.AreaSeries;
 import org.dashbuilder.renderer.chartjs.lib.data.SeriesBuilder;
 import org.dashbuilder.renderer.chartjs.resources.i18n.ChartJsDisplayerConstants;
-import org.dom4j.tree.AbstractCDATA;
 
 public abstract class ChartJsDisplayer extends AbstractDisplayer {
 
@@ -98,32 +96,38 @@ public abstract class ChartJsDisplayer extends AbstractDisplayer {
                     beforeDataSetLookup();
                     dataSetHandler.lookupDataSet(new DataSetReadyCallback() {
                         public void callback(DataSet result) {
-                            dataSet = result;
-                            afterDataSetLookup(result);
-                            Widget w = createVisualization();
-                            panel.clear();
-                            panel.add(w);
+                            try {
+                                dataSet = result;
+                                afterDataSetLookup(result);
+                                Widget w = createVisualization();
+                                panel.clear();
+                                panel.add(w);
 
-                            // Set the id of the container panel so that the displayer can be easily located
-                            // by testing tools for instance.
-                            String id = getDisplayerId();
-                            if (!StringUtils.isBlank(id)) {
-                                panel.getElement().setId(id);
+                                // Set the id of the container panel so that the displayer can be easily located
+                                // by testing tools for instance.
+                                String id = getDisplayerId();
+                                if (!StringUtils.isBlank(id)) {
+                                    panel.getElement().setId(id);
+                                }
+                                // Draw done
+                                afterDraw();
+                            } catch (Exception e) {
+                                // Give feedback on any initialization error
+                                afterError(e);
                             }
-                            // Draw done
-                            afterDraw();
                         }
                         public void notFound() {
                             displayMessage(ChartJsDisplayerConstants.INSTANCE.chartjsDisplayer_error() + ChartJsDisplayerConstants.INSTANCE.chartjsDisplayer_error_dataset_notfound());
                         }
-                        public boolean onError(DataSetClientServiceError error) {
-                            displayMessage(ChartJsDisplayerConstants.INSTANCE.chartjsDisplayer_error() + error.getThrowable().getMessage());
-                            afterError(ChartJsDisplayer.this, error);
+                        public boolean onError(ClientRuntimeError error) {
+                            displayMessage(ChartJsDisplayerConstants.INSTANCE.chartjsDisplayer_error() + error.getMessage());
+                            afterError(error);
                             return false;
                         }
                     });
                 } catch (Exception e) {
                     displayMessage(ChartJsDisplayerConstants.INSTANCE.chartjsDisplayer_error() + e.getMessage());
+                    afterError(e);
                 }
             }
         }
@@ -140,24 +144,30 @@ public abstract class ChartJsDisplayer extends AbstractDisplayer {
                 beforeDataSetLookup();
                 dataSetHandler.lookupDataSet(new DataSetReadyCallback() {
                     public void callback(DataSet result) {
-                        dataSet = result;
-                        afterDataSetLookup(result);
-                        updateVisualization();
+                        try {
+                            dataSet = result;
+                            afterDataSetLookup(result);
+                            updateVisualization();
 
-                        // Redraw done
-                        afterRedraw();
+                            // Redraw done
+                            afterRedraw();
+                        } catch (Exception e) {
+                            // Give feedback on any initialization error
+                            afterError(e);
+                        }
                     }
                     public void notFound() {
                         displayMessage(ChartJsDisplayerConstants.INSTANCE.chartjsDisplayer_error() + ChartJsDisplayerConstants.INSTANCE.chartjsDisplayer_error_dataset_notfound());
                     }
-                    public boolean onError(DataSetClientServiceError error) {
-                        displayMessage(ChartJsDisplayerConstants.INSTANCE.chartjsDisplayer_error() + error.getThrowable().getMessage());
-                        afterError(ChartJsDisplayer.this, error);
+                    public boolean onError(ClientRuntimeError error) {
+                        displayMessage(ChartJsDisplayerConstants.INSTANCE.chartjsDisplayer_error() + error.getMessage());
+                        afterError(error);
                         return false;
                     }
                 });
             } catch (Exception e) {
-                    displayMessage(ChartJsDisplayerConstants.INSTANCE.chartjsDisplayer_error() + e.getMessage());
+                displayMessage(ChartJsDisplayerConstants.INSTANCE.chartjsDisplayer_error() + e.getMessage());
+                afterError(e);
             }
         }
     }

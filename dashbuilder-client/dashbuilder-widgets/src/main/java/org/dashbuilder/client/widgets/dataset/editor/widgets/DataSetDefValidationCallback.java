@@ -15,12 +15,12 @@
  */
 package org.dashbuilder.client.widgets.dataset.editor.widgets;
 
+import org.dashbuilder.common.client.error.ClientRuntimeError;
 import org.dashbuilder.dataset.DataSet;
-import org.dashbuilder.dataset.client.DataSetClientServiceError;
 import org.dashbuilder.dataset.def.DataSetDef;
 
 public interface DataSetDefValidationCallback {
 
     void valid(DataSetDef def, DataSet dataSet);
-    void invalid(DataSetClientServiceError error);
+    void invalid(ClientRuntimeError error);
 }

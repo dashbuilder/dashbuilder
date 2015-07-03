@@ -15,10 +15,11 @@
  */
 package org.dashbuilder.dataset.client;
 
+import org.dashbuilder.common.client.error.ClientRuntimeError;
 import org.uberfire.backend.vfs.Path;
 
 public interface DataSetExportReadyCallback {
 
     void exportReady(Path exportFilePath);
-
+    void onError(ClientRuntimeError error);
 }

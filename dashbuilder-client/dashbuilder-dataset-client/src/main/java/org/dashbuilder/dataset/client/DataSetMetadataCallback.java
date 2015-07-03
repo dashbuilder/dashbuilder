@@ -15,6 +15,7 @@
  */
 package org.dashbuilder.dataset.client;
 
+import org.dashbuilder.common.client.error.ClientRuntimeError;
 import org.dashbuilder.dataset.DataSetMetadata;
 
 /**
@@ -24,5 +25,5 @@ public interface DataSetMetadataCallback {
 
     void callback(DataSetMetadata metatada);
     void notFound();
-    boolean onError(DataSetClientServiceError error);
+    boolean onError(ClientRuntimeError error);
 }

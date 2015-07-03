@@ -41,8 +41,8 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.AsyncDataProvider;
 import com.google.gwt.view.client.HasData;
 import org.dashbuilder.common.client.StringUtils;
+import org.dashbuilder.common.client.error.ClientRuntimeError;
 import org.dashbuilder.dataset.DataSetLookupConstraints;
-import org.dashbuilder.dataset.client.DataSetClientServiceError;
 import org.dashbuilder.dataset.client.DataSetReadyCallback;
 import org.dashbuilder.dataset.group.Interval;
 import org.dashbuilder.displayer.ColumnSettings;
@@ -96,35 +96,41 @@ public class TableDisplayer extends AbstractDisplayer {
                     lookupDataSet(0, new DataSetReadyCallback() {
 
                         public void callback( DataSet dataSet ) {
-                            Widget w = createWidget();
-                            panel.clear();
-                            panel.add( w );
+                            try {
+                                Widget w = createWidget();
+                                panel.clear();
+                                panel.add( w );
 
-                            // Set the id of the container panel so that the displayer can be easily located
-                            // by testing tools for instance.
-                            String id = getDisplayerId();
-                            if (!StringUtils.isBlank(id)) {
-                                panel.getElement().setId(id);
+                                // Set the id of the container panel so that the displayer can be easily located
+                                // by testing tools for instance.
+                                String id = getDisplayerId();
+                                if (!StringUtils.isBlank(id)) {
+                                    panel.getElement().setId(id);
+                                }
+
+                                // Handle table pager.
+                                handleTablePager();
+
+                                // Draw done
+                                afterDraw();
+                            } catch (Exception e) {
+                                // Give feedback on any initialization error
+                                afterError(e);
                             }
-                            
-                            // Handle table pager.
-                            handleTablePager();                            
-                            
-                            // Draw done
-                            afterDraw();
                         }
                         public void notFound() {
                             displayMessage(CommonConstants.INSTANCE.error() + CommonConstants.INSTANCE.error_dataset_notfound());
                         }
 
                         @Override
-                        public boolean onError(final DataSetClientServiceError error) {
-                            afterError(TableDisplayer.this, error);
+                        public boolean onError(final ClientRuntimeError error) {
+                            afterError(error);
                             return false;
                         }
                     });
-                } catch ( Exception e ) {
+                } catch (Exception e) {
                     displayMessage(CommonConstants.INSTANCE.error() + e.getMessage());
+                    afterError(e);
                 }
             }
         }
@@ -137,24 +143,29 @@ public class TableDisplayer extends AbstractDisplayer {
         lookupDataSet(0, new DataSetReadyCallback() {
 
             public void callback( DataSet dataSet ) {
-                tableProvider.gotoFirstPage();
-                table.setRowCount(numberOfRows, true);
-                table.redraw();
-                redrawColumnSelectionWidget();
+                try {
+                    tableProvider.gotoFirstPage();
+                    table.setRowCount(numberOfRows, true);
+                    table.redraw();
+                    redrawColumnSelectionWidget();
 
-                // Handle table pager.
-                handleTablePager();
+                    // Handle table pager.
+                    handleTablePager();
 
-                // Redraw done
-                afterRedraw();
+                    // Redraw done
+                    afterRedraw();
+                } catch (Exception e) {
+                    // Give feedback on any initialization error
+                    afterError(e);
+                }
             }
             public void notFound() {
                 displayMessage(CommonConstants.INSTANCE.error() + CommonConstants.INSTANCE.error_dataset_notfound());
             }
 
             @Override
-            public boolean onError(DataSetClientServiceError error) {
-                afterError(TableDisplayer.this, error);
+            public boolean onError(ClientRuntimeError error) {
+                afterError(error);
                 return false;
             }
         } );
@@ -244,14 +255,15 @@ public class TableDisplayer extends AbstractDisplayer {
                         }
 
                         @Override
-                        public boolean onError(DataSetClientServiceError error) {
+                        public boolean onError(ClientRuntimeError error) {
                             callback.onError(error);
                             return false;
                         }
                     }
             );
-        } catch ( Exception e ) {
+        } catch (Exception e) {
             displayMessage(CommonConstants.INSTANCE.error() + e.getMessage());
+            afterError(e);
         }
     }
 
@@ -458,15 +470,22 @@ public class TableDisplayer extends AbstractDisplayer {
                 lookupDataSet(lastOffset,
                         new DataSetReadyCallback() {
                             public void callback(DataSet dataSet) {
-                                updateRowData(lastOffset, rows);
-                                int height = 42 + 37 * dataSet.getRowCount();
-                                table.setHeight(height + "px");
+                                try {
+                                    updateRowData(lastOffset, rows);
+                                    int height = 42 + 37 * dataSet.getRowCount();
+                                    table.setHeight(height + "px");
+                                } catch (Exception e) {
+                                    // Give feedback on any initialization error
+                                    afterError(e);
+                                }
                             }
                             public void notFound() {
                                 displayMessage(CommonConstants.INSTANCE.error() + CommonConstants.INSTANCE.error_dataset_notfound());
+                                afterError(new ClientRuntimeError(CommonConstants.INSTANCE.error_dataset_notfound()));
                             }
-                            public boolean onError(DataSetClientServiceError error) {
-                                displayMessage(CommonConstants.INSTANCE.error() + error.getThrowable().getMessage());
+                            public boolean onError(ClientRuntimeError error) {
+                                displayMessage(CommonConstants.INSTANCE.error() + error.getMessage());
+                                afterError(error);
                                 return false;
                             }
                         }
