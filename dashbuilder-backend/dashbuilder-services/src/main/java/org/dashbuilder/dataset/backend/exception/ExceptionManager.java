@@ -24,7 +24,7 @@ public class ExceptionManager {
      * @return The portable exception to send to the client side.
      */
     public RuntimeException handleException(final Exception e) {
-        log.error("An Exception has occurred and has been handled and sent to the client.", e);
+        log.debug(e.getMessage(), e);
         if (e instanceof RuntimeException && EnvUtil.isPortableType(e.getClass()) ) {
             return (RuntimeException) e;
         }

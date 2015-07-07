@@ -23,7 +23,7 @@ import com.google.gwt.user.client.ui.IsWidget;
 import org.dashbuilder.client.widgets.dataset.editor.widgets.DataSetEditor;
 import org.dashbuilder.client.widgets.dataset.editor.widgets.events.SaveDataSetEvent;
 import org.dashbuilder.client.widgets.dataset.editor.widgets.events.SaveDataSetEventHandler;
-import org.dashbuilder.dataset.client.DataSetClientServiceError;
+import org.dashbuilder.common.client.error.ClientRuntimeError;
 import org.dashbuilder.dataset.def.DataSetDef;
 import org.dashbuilder.dataset.editor.client.resources.i18n.DataSetAuthoringConstants;
 import org.dashbuilder.dataset.service.DataSetDefVfsServices;
@@ -37,7 +37,6 @@ import org.uberfire.client.annotations.WorkbenchPartView;
 import org.uberfire.client.annotations.WorkbenchScreen;
 import org.uberfire.client.mvp.PlaceManager;
 import org.uberfire.ext.editor.commons.client.file.SavePopUp;
-import org.uberfire.ext.editor.commons.client.resources.i18n.CommonConstants;
 import org.uberfire.ext.widgets.common.client.common.BusyPopup;
 import org.uberfire.lifecycle.OnStartup;
 import org.uberfire.mvp.ParameterizedCommand;
@@ -104,7 +103,7 @@ public class DataSetDefWizardScreen {
     ErrorCallback<Message> errorCallback = new ErrorCallback<Message>() {
         @Override public boolean error(Message message, Throwable throwable) {
             BusyPopup.close();
-            dataSetEditor.showError(new DataSetClientServiceError(message, throwable));
+            dataSetEditor.showError(new ClientRuntimeError(throwable));
             return false;
         }
     };

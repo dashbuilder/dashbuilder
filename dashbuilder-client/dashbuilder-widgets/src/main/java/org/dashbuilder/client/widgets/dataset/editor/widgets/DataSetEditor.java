@@ -29,6 +29,7 @@ import org.dashbuilder.client.widgets.dataset.editor.widgets.editors.DataSetColu
 import org.dashbuilder.client.widgets.dataset.editor.widgets.events.SaveDataSetEvent;
 import org.dashbuilder.client.widgets.dataset.editor.widgets.events.SaveDataSetEventHandler;
 import org.dashbuilder.client.widgets.resources.i18n.DataSetEditorConstants;
+import org.dashbuilder.common.client.error.ClientRuntimeError;
 import org.dashbuilder.dataset.*;
 import org.dashbuilder.dataset.backend.EditDataSetDef;
 import org.dashbuilder.dataset.client.*;
@@ -116,7 +117,7 @@ public class DataSetEditor implements IsWidget {
         View onSave();
         View showLoadingView();
         View hideLoadingView();
-        View showError(final String type, final String message, final String cause);
+        View showError(final String message, final String cause);
         View clear();
     }
     
@@ -218,13 +219,11 @@ public class DataSetEditor implements IsWidget {
                 }
 
                 public void notFound() {
-                    showError("Not found.");
                     callback.notFound();
                 }
 
                 @Override
-                public boolean onError(final DataSetClientServiceError error) {
-                    showError(error);
+                public boolean onError(final ClientRuntimeError error) {
                     return callback.onError(error);
                 }
             });
@@ -293,7 +292,7 @@ public class DataSetEditor implements IsWidget {
                 try {
                     clientServices.newDataSet(dataSetDef.getProvider(), createBrandNewDataSetDefCallback);
                 } catch (Exception e) {
-                    showError(e.getMessage());
+                    showError(e);
                 }
             }
         }
@@ -351,7 +350,7 @@ public class DataSetEditor implements IsWidget {
                     onSave();
                 }
                 @Override
-                public void invalid(DataSetClientServiceError error) {
+                public void invalid(ClientRuntimeError error) {
                     showError(error);
                 }
             });
@@ -393,24 +392,18 @@ public class DataSetEditor implements IsWidget {
         return view.asWidget();
     }
 
-    public void showError(final DataSetClientServiceError error) {
-        final String type = error.getThrowable() != null ? error.getThrowable().getClass().getName() : null;
-        final String message = error.getThrowable() != null ? error.getThrowable().getMessage() : error.getMessage().toString();
-        final String cause = error.getThrowable() != null && error.getThrowable().getCause() != null ? error.getThrowable().getCause().getMessage() : null;
-        showError(type, message, cause);
+    public void showError(final Throwable e) {
+        showError(new ClientRuntimeError(e));
+    }
+
+    public void showError(final ClientRuntimeError error) {
+        view.showError(error.getMessage(), error.getCause());
     }
 
     public void showError(final String message) {
-        showError(null, message, null);
+        view.showError(message, null);
     }
 
-    public void showError(final String type, final String message, final String cause) {
-        if (type != null) GWT.log("Error type: " + type);
-        if (message != null) GWT.log("Error message: " + message);
-        if (cause != null) GWT.log("Error cause: " + cause);
-        view.showError(type, message, cause);
-    }
-    
     private void showProviderSelectionView() {
         // Show provider selection widget.
         view.showProviderSelectionView();
@@ -567,7 +560,7 @@ public class DataSetEditor implements IsWidget {
         }
 
         @Override
-        public void onError(Displayer displayer, DataSetClientServiceError error) {
+        public void onError(Displayer displayer, ClientRuntimeError error) {
             showError(error);
             if (validationCallback != null) {
                 validationCallback.invalid(error);

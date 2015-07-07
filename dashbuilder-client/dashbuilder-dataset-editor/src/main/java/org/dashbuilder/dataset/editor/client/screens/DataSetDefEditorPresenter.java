@@ -23,16 +23,13 @@ import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.client.widgets.dataset.editor.widgets.DataSetDefValidationCallback;
 import org.dashbuilder.client.widgets.dataset.editor.widgets.DataSetEditorView;
-import org.dashbuilder.client.widgets.resources.i18n.DataSetEditorConstants;
+import org.dashbuilder.common.client.error.ClientRuntimeError;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.backend.EditDataSetDef;
-import org.dashbuilder.dataset.client.DataSetClientServiceError;
-import org.dashbuilder.dataset.client.DataSetReadyCallback;
 import org.dashbuilder.dataset.def.DataSetDef;
 import org.dashbuilder.dataset.editor.client.resources.i18n.DataSetAuthoringConstants;
 import org.dashbuilder.dataset.events.DataSetDefRemovedEvent;
 import org.dashbuilder.dataset.service.DataSetDefVfsServices;
-import org.dashbuilder.dataset.validation.DataSetValidationMessages;
 import org.jboss.errai.bus.client.api.messaging.Message;
 import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.common.client.api.ErrorCallback;
@@ -69,7 +66,7 @@ public class DataSetDefEditorPresenter extends BaseEditor {
         void startEdit(EditDataSetDef editDataSetDef);
         void checkValid(DataSetDefValidationCallback callback);
         void showError(String message);
-        void showError(DataSetClientServiceError error);
+        void showError(ClientRuntimeError error);
     }
 
     @Inject
@@ -142,7 +139,7 @@ public class DataSetDefEditorPresenter extends BaseEditor {
         try {
             services.call(loadCallback, errorCallback).load(versionRecordManager.getCurrentPath());
         } catch (Exception e) {
-            view.showError(e.getMessage());
+            view.showError(new ClientRuntimeError(e));
         }
     }
 
@@ -157,7 +154,7 @@ public class DataSetDefEditorPresenter extends BaseEditor {
                         notification.fire(new NotificationEvent(DataSetAuthoringConstants.INSTANCE.validationOk(), SUCCESS));
                     }
                     @Override
-                    public void invalid(DataSetClientServiceError error) {
+                    public void invalid(ClientRuntimeError error) {
                         notification.fire(new NotificationEvent(DataSetAuthoringConstants.INSTANCE.validationFailed(), ERROR));
                     }
                 });
@@ -173,7 +170,7 @@ public class DataSetDefEditorPresenter extends BaseEditor {
                 _save();
             }
             @Override
-            public void invalid(DataSetClientServiceError error) {
+            public void invalid(ClientRuntimeError error) {
             }
         });
     }
@@ -218,7 +215,7 @@ public class DataSetDefEditorPresenter extends BaseEditor {
         @Override
         public boolean error(Message message, Throwable throwable) {
             view.hideBusyIndicator();
-            view.showError(new DataSetClientServiceError(message, throwable));
+            view.showError(new ClientRuntimeError(throwable));
             return false;
         }
     };

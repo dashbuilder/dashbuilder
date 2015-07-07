@@ -17,7 +17,7 @@ package org.dashbuilder.displayer.client.widgets;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.*;
-import org.dashbuilder.dataset.client.DataSetClientServiceError;
+import org.dashbuilder.common.client.error.ClientRuntimeError;
 import org.dashbuilder.displayer.DisplayerSettings;
 import org.dashbuilder.displayer.client.AbstractDisplayerListener;
 import org.dashbuilder.displayer.client.Displayer;
@@ -38,7 +38,7 @@ public class DisplayerView extends Composite {
     protected DisplayerError errorWidget = new DisplayerError();
 
     DisplayerListener displayerListener = new AbstractDisplayerListener() {
-        public void onError(Displayer displayer, DataSetClientServiceError error) {
+        public void onError(Displayer displayer, ClientRuntimeError error) {
             error(error);
         }
     };
@@ -101,7 +101,7 @@ public class DisplayerView extends Composite {
             }
             container.add(displayerContainer);
         } catch (Exception e) {
-            error(e.getMessage(), e);
+            error(new ClientRuntimeError(e));
         }
         return displayer;
     }
@@ -115,26 +115,16 @@ public class DisplayerView extends Composite {
 
             DisplayerHelper.redraw( displayer );
         } catch (Exception e) {
-            error(e.getMessage(), e);
+            error(new ClientRuntimeError(e));
         }
         return displayer;
     }
 
-    public void error(String message, Throwable e) {
-        String cause = e != null ? e.getMessage() : null;
-
+    public void error(ClientRuntimeError e) {
         container.clear();
         container.add(errorWidget);
-        errorWidget.show(message, cause);
+        errorWidget.show(e.getMessage(), e.getCause());
 
-        if (e != null) GWT.log(message, e);
-        else GWT.log(message);
-    }
-
-    public void error(final DataSetClientServiceError error) {
-        String message = error.getThrowable() != null ? error.getThrowable().getMessage() : error.getMessage().toString();
-        Throwable e = error.getThrowable();
-        if (e.getCause() != null) e = e.getCause();
-        error(message, e);
+        GWT.log(e.getMessage(), e.getThrowable());
     }
 }

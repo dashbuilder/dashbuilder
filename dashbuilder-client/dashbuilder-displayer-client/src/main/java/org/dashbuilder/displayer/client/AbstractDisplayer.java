@@ -23,15 +23,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.Composite;
 import org.dashbuilder.common.client.StringUtils;
+import org.dashbuilder.common.client.error.ClientRuntimeError;
 import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.dataset.ValidationError;
-import org.dashbuilder.dataset.client.DataSetClientServiceError;
 import org.dashbuilder.dataset.client.resources.i18n.DayOfWeekConstants;
 import org.dashbuilder.dataset.client.resources.i18n.MonthConstants;
 import org.dashbuilder.dataset.date.DayOfWeek;
@@ -182,31 +183,51 @@ public abstract class AbstractDisplayer extends Composite implements Displayer {
         }
     }
 
-    protected void afterError(final Displayer displayer, final DataSetClientServiceError error) {
+    protected void afterError(final String message) {
+        afterError(new ClientRuntimeError(message, null));
+    }
+
+    protected void afterError(final String message, final Throwable error) {
+        afterError(new ClientRuntimeError(message, error));
+    }
+    protected void afterError(final Throwable error) {
+        afterError(new ClientRuntimeError(error));
+    }
+
+    protected void afterError(final ClientRuntimeError error) {
+        if (error.getThrowable() != null) {
+            GWT.log("ClientRuntimeError: " + error);
+        } else {
+            GWT.log("ClientRuntimeError: " + error, error.getThrowable());
+        }
         for (DisplayerListener listener : listenerList) {
-            listener.onError(displayer, error);
+            listener.onError(this, error);
         }
     }
 
     // CAPTURE EVENTS RECEIVED FROM OTHER DISPLAYERS
 
+    @Override
     public void onDraw(Displayer displayer) {
         // Do nothing
     }
 
+    @Override
     public void onRedraw(Displayer displayer) {
         // Do nothing
     }
 
+    @Override
     public void onClose(Displayer displayer) {
         // Do nothing
     }
 
     @Override
-    public void onError(final Displayer displayer, final DataSetClientServiceError error) {
-        afterError(displayer, error);
+    public void onError(final Displayer displayer, ClientRuntimeError error) {
+        // Do nothing
     }
 
+    @Override
     public void onFilterEnabled(Displayer displayer, DataSetGroup groupOp) {
         if (displayerSettings.isFilterListeningEnabled()) {
             dataSetHandler.filter(groupOp);
@@ -214,6 +235,7 @@ public abstract class AbstractDisplayer extends Composite implements Displayer {
         }
     }
 
+    @Override
     public void onFilterReset(Displayer displayer, List<DataSetGroup> groupOps) {
         if (displayerSettings.isFilterListeningEnabled()) {
             for (DataSetGroup groupOp : groupOps) {
@@ -482,12 +504,14 @@ public abstract class AbstractDisplayer extends Composite implements Displayer {
         }
         for (String keyword : _jsMalicious) {
             if (expr.contains(keyword)) {
+                afterError(CommonConstants.INSTANCE.displayer_keyword_not_allowed(expr));
                 throw new RuntimeException(CommonConstants.INSTANCE.displayer_keyword_not_allowed(expr));
             }
         }
         try {
             return evalExpression(val, expr);
         } catch (Exception e) {
+            afterError(CommonConstants.INSTANCE.displayer_expr_invalid_syntax(expr), e);
             throw new RuntimeException(CommonConstants.INSTANCE.displayer_expr_invalid_syntax(expr));
         }
     }

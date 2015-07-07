@@ -20,6 +20,7 @@ import java.util.List;
 
 import com.github.gwtbootstrap.client.ui.Image;
 import com.github.gwtbootstrap.client.ui.constants.ImageType;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.resources.client.ImageResource;
@@ -74,7 +75,9 @@ public class DisplayerSubtypeSelector extends Composite {
                     final DisplayerSubType subtype = supportedSubTypes.get(i);
 
                     // Double check the renderer library for invalid subtypes for this type
-                    if (!type.getSubTypes().contains(subtype)) throw new RuntimeException("Wrong subtype (" + subtype + ") indicated for type " + type + " by renderer library " + rendererLibrary.getUUID());
+                    if (!type.getSubTypes().contains(subtype)) {
+                        throw new RuntimeException("Wrong subtype (" + subtype + ") indicated for type " + type + " by renderer library " + rendererLibrary.getUUID());
+                    }
 
                     String resourcePrefix = type.toString() + "_" + subtype.toString();
                     ImageResource selectedIR = (ImageResource) DisplayerImagesResources.INSTANCE.getResource(resourcePrefix + DisplayerImagesResources.SELECTED_SUFFIX);

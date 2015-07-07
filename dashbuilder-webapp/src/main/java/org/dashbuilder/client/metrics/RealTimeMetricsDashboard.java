@@ -25,12 +25,12 @@ import org.dashbuilder.client.gallery.GalleryWidget;
 import org.dashbuilder.client.metrics.widgets.details.DetailedServerMetrics;
 import org.dashbuilder.client.metrics.widgets.vertical.VerticalServerMetrics;
 import org.dashbuilder.client.resources.i18n.AppConstants;
+import org.dashbuilder.common.client.error.ClientRuntimeError;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetFactory;
 import org.dashbuilder.dataset.DataSetLookup;
 import org.dashbuilder.dataset.client.DataSetClientServices;
 import org.dashbuilder.dataset.client.DataSetReadyCallback;
-import org.dashbuilder.dataset.client.DataSetClientServiceError;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -315,7 +315,7 @@ public class RealTimeMetricsDashboard extends Composite implements GalleryWidget
                 }
 
                 @Override
-                public boolean onError(final DataSetClientServiceError error) {
+                public boolean onError(final ClientRuntimeError error) {
                     // TODO
                     GWT.log("Error occurred in RealTimeMetricsDashboard#updateDataSetServers!");
                     return false;

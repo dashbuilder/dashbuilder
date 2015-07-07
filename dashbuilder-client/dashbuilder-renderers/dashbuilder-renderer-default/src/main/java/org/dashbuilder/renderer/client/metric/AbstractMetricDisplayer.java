@@ -20,11 +20,11 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.common.client.StringUtils;
+import org.dashbuilder.common.client.error.ClientRuntimeError;
 import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetLookupConstraints;
 import org.dashbuilder.dataset.client.DataSetReadyCallback;
-import org.dashbuilder.dataset.client.DataSetClientServiceError;
 import org.dashbuilder.displayer.DisplayerAttributeDef;
 import org.dashbuilder.displayer.DisplayerAttributeGroupDef;
 import org.dashbuilder.displayer.DisplayerConstraints;
@@ -81,32 +81,38 @@ public abstract class AbstractMetricDisplayer extends AbstractDisplayer {
 
                     dataSetHandler.lookupDataSet(new DataSetReadyCallback() {
                         public void callback(DataSet result) {
-                            dataSet = result;
-                            Widget w = createMetricWidget();
-                            panel.clear();
-                            panel.add(w);
+                            try {
+                                dataSet = result;
+                                Widget w = createMetricWidget();
+                                panel.clear();
+                                panel.add(w);
 
-                            // Set the id of the container panel so that the displayer can be easily located
-                            // by testing tools for instance.
-                            String id = getDisplayerId();
-                            if (!StringUtils.isBlank(id)) {
-                                panel.getElement().setId(id);
+                                // Set the id of the container panel so that the displayer can be easily located
+                                // by testing tools for instance.
+                                String id = getDisplayerId();
+                                if (!StringUtils.isBlank(id)) {
+                                    panel.getElement().setId(id);
+                                }
+                                // Draw done
+                                afterDraw();
+                            } catch (Exception e) {
+                                // Give feedback on any initialization error
+                                afterError(e);
                             }
-                            // Draw done
-                            afterDraw();
                         }
                         public void notFound() {
                             displayMessage(CommonConstants.INSTANCE.error() + CommonConstants.INSTANCE.error_dataset_notfound());
                         }
 
                         @Override
-                        public boolean onError(final DataSetClientServiceError error) {
-                            afterError(AbstractMetricDisplayer.this, error);
+                        public boolean onError(final ClientRuntimeError error) {
+                            afterError(error);
                             return false;
                         }
                     });
-                } catch ( Exception e ) {
-                    displayMessage(CommonConstants.INSTANCE.error() + e.getMessage() );
+                } catch (Exception e) {
+                    displayMessage(CommonConstants.INSTANCE.error() + e.getMessage());
+                    afterError(e);
                 }
             }
         }
@@ -120,24 +126,30 @@ public abstract class AbstractMetricDisplayer extends AbstractDisplayer {
             try {
                 dataSetHandler.lookupDataSet(new DataSetReadyCallback() {
                     public void callback(DataSet result) {
-                        dataSet = result;
-                        updateMetricWidget();
+                        try {
+                            dataSet = result;
+                            updateMetricWidget();
 
-                        // Redraw done
-                        afterRedraw();
+                            // Redraw done
+                            afterRedraw();
+                        } catch (Exception e) {
+                            // Give feedback on any initialization error
+                            afterError(e);
+                        }
                     }
                     public void notFound() {
                         displayMessage(CommonConstants.INSTANCE.error() + CommonConstants.INSTANCE.error_dataset_notfound());
                     }
 
                     @Override
-                    public boolean onError(final DataSetClientServiceError error) {
-                        afterError(AbstractMetricDisplayer.this, error);
+                    public boolean onError(final ClientRuntimeError error) {
+                        afterError(error);
                         return false;
                     }
                 });
-            } catch ( Exception e ) {
-                displayMessage(CommonConstants.INSTANCE.error() + e.getMessage() );
+            } catch (Exception e) {
+                displayMessage(CommonConstants.INSTANCE.error() + e.getMessage());
+                afterError(e);
             }
         }
     }

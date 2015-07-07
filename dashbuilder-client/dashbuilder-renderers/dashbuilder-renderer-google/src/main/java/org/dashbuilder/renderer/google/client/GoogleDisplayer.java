@@ -28,11 +28,11 @@ import com.googlecode.gwt.charts.client.format.DateFormatOptions;
 import com.googlecode.gwt.charts.client.format.NumberFormat;
 import com.googlecode.gwt.charts.client.format.NumberFormatOptions;
 import org.dashbuilder.common.client.StringUtils;
+import org.dashbuilder.common.client.error.ClientRuntimeError;
 import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.client.DataSetReadyCallback;
-import org.dashbuilder.dataset.client.DataSetClientServiceError;
 import org.dashbuilder.displayer.ColumnSettings;
 import org.dashbuilder.displayer.client.AbstractDisplayer;
 import org.dashbuilder.renderer.google.client.resources.i18n.GoogleDisplayerConstants;
@@ -58,9 +58,11 @@ public abstract class GoogleDisplayer extends AbstractDisplayer {
 
             if (displayerSettings == null) {
                 displayMessage(GoogleDisplayerConstants.INSTANCE.googleDisplayer_error() + GoogleDisplayerConstants.INSTANCE.googleDisplayer_error_settings_unset());
+                afterError(GoogleDisplayerConstants.INSTANCE.googleDisplayer_error_settings_unset());
             }
             else if (dataSetHandler == null) {
                 displayMessage(GoogleDisplayerConstants.INSTANCE.googleDisplayer_error() + GoogleDisplayerConstants.INSTANCE.googleDisplayer_error_handler_unset());
+                afterError(GoogleDisplayerConstants.INSTANCE.googleDisplayer_error_handler_unset());
             }
             else {
                 try {
@@ -71,33 +73,40 @@ public abstract class GoogleDisplayer extends AbstractDisplayer {
                     beforeDataSetLookup();
                     dataSetHandler.lookupDataSet(new DataSetReadyCallback() {
                         public void callback(DataSet result) {
-                            dataSet = result;
-                            afterDataSetLookup(result);
-                            Widget w = createVisualization();
-                            panel.clear();
-                            panel.add(w);
+                            try {
+                                dataSet = result;
+                                afterDataSetLookup(result);
+                                Widget w = createVisualization();
+                                panel.clear();
+                                panel.add(w);
 
-                            // Set the id of the container panel so that the displayer can be easily located
-                            // by testing tools for instance.
-                            String id = getDisplayerId();
-                            if (!StringUtils.isBlank(id)) {
-                                panel.getElement().setId(id);
+                                // Set the id of the container panel so that the displayer can be easily located
+                                // by testing tools for instance.
+                                String id = getDisplayerId();
+                                if (!StringUtils.isBlank(id)) {
+                                    panel.getElement().setId(id);
+                                }
+                                // Draw done
+                                afterDraw();
+                            } catch (Exception e) {
+                                // Give feedback on any initialization error
+                                afterError(e);
                             }
-                            // Draw done
-                            afterDraw();
                         }
                         public void notFound() {
                             displayMessage(GoogleDisplayerConstants.INSTANCE.googleDisplayer_error() + GoogleDisplayerConstants.INSTANCE.googleDisplayer_error_dataset_notfound());
+                            afterError(GoogleDisplayerConstants.INSTANCE.googleDisplayer_error_dataset_notfound());
                         }
 
                         @Override
-                        public boolean onError(final DataSetClientServiceError error) {
-                            afterError(GoogleDisplayer.this, error);
+                        public boolean onError(final ClientRuntimeError error) {
+                            afterError(error);
                             return false;
                         }
                     });
                 } catch (Exception e) {
                     displayMessage(GoogleDisplayerConstants.INSTANCE.googleDisplayer_error() + e.getMessage());
+                    afterError(e);
                 }
             }
         }
@@ -114,25 +123,32 @@ public abstract class GoogleDisplayer extends AbstractDisplayer {
                 beforeDataSetLookup();
                 dataSetHandler.lookupDataSet(new DataSetReadyCallback() {
                     public void callback(DataSet result) {
-                        dataSet = result;
-                        afterDataSetLookup(result);
-                        updateVisualization();
+                        try {
+                            dataSet = result;
+                            afterDataSetLookup(result);
+                            updateVisualization();
 
-                        // Redraw done
-                        afterRedraw();
+                            // Redraw done
+                            afterRedraw();
+                        } catch (Exception e) {
+                            // Give feedback on any initialization error
+                            afterError(e);
+                        }
                     }
                     public void notFound() {
                         displayMessage(GoogleDisplayerConstants.INSTANCE.googleDisplayer_error() + GoogleDisplayerConstants.INSTANCE.googleDisplayer_error_dataset_notfound());
+                        afterError(GoogleDisplayerConstants.INSTANCE.googleDisplayer_error_dataset_notfound());
                     }
 
                     @Override
-                    public boolean onError(final DataSetClientServiceError error) {
-                        afterError(GoogleDisplayer.this, error);
+                    public boolean onError(final ClientRuntimeError error) {
+                        afterError(error);
                         return false;
                     }
                 });
             } catch (Exception e) {
                 displayMessage(GoogleDisplayerConstants.INSTANCE.googleDisplayer_error() + e.getMessage());
+                afterError(e);
             }
         }
     }

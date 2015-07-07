@@ -30,10 +30,10 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
+import org.dashbuilder.common.client.error.ClientRuntimeError;
 import org.dashbuilder.dataset.DataSetLookup;
 import org.dashbuilder.dataset.DataSetLookupConstraints;
 import org.dashbuilder.dataset.DataSetMetadata;
-import org.dashbuilder.dataset.client.DataSetClientServiceError;
 import org.dashbuilder.displayer.DisplayerSettings;
 import org.dashbuilder.displayer.DisplayerType;
 import org.dashbuilder.displayer.client.AbstractDisplayerListener;
@@ -74,7 +74,7 @@ public class DisplayerEditorView extends Composite
     protected DisplayerError errorWidget = new DisplayerError();
 
     DisplayerListener displayerListener = new AbstractDisplayerListener() {
-        public void onError(Displayer displayer, DataSetClientServiceError error) {
+        public void onError(Displayer displayer, ClientRuntimeError error) {
             error(error);
         }
     };
@@ -210,23 +210,22 @@ public class DisplayerEditorView extends Composite
     }
 
     @Override
-    public void error(String message, Throwable e) {
-        String cause = e != null ? e.getMessage() : null;
-
+    public void error(String error) {
         centerPanel.clear();
         centerPanel.add(errorWidget);
-        errorWidget.show(message, cause);
+        errorWidget.show(error, null);
 
-        if (e != null) GWT.log(message, e);
-        else GWT.log(message);
+        GWT.log(error);
     }
 
     @Override
-    public void error(final DataSetClientServiceError error) {
-        String message = error.getThrowable() != null ? error.getThrowable().getMessage() : error.getMessage().toString();
-        Throwable e = error.getThrowable();
-        if (e.getCause() != null) e = e.getCause();
-        error(message, e);
+    public void error(ClientRuntimeError e) {
+        centerPanel.clear();
+        centerPanel.add(errorWidget);
+        errorWidget.show(e.getMessage(), e.getCause());
+
+        if (e.getThrowable() != null) GWT.log(e.getMessage(), e.getThrowable());
+        else GWT.log(e.getMessage());
     }
 
     @Override
@@ -262,7 +261,7 @@ public class DisplayerEditorView extends Composite
                 DisplayerHelper.draw(displayer);
             }
         } catch (Exception e) {
-            error(e.getMessage(), null);
+            error(new ClientRuntimeError(e));
         }
     }
 

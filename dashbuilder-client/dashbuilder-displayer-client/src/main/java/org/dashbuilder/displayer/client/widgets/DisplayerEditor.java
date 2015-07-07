@@ -19,18 +19,16 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import javax.enterprise.context.Dependent;
-import javax.inject.Inject;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
+import org.dashbuilder.common.client.error.ClientRuntimeError;
 import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetLookup;
 import org.dashbuilder.dataset.DataSetLookupConstraints;
 import org.dashbuilder.dataset.DataSetMetadata;
 import org.dashbuilder.dataset.ValidationError;
-import org.dashbuilder.dataset.client.DataSetClientServiceError;
 import org.dashbuilder.dataset.client.DataSetClientServices;
 import org.dashbuilder.dataset.client.DataSetMetadataCallback;
 import org.dashbuilder.dataset.filter.DataSetFilter;
@@ -71,8 +69,8 @@ public class DisplayerEditor implements IsWidget,
         void gotoDisplaySettings();
         void updateDataSetLookup(DataSetLookupConstraints constraints, DataSetMetadata metadata);
         void showTypeChangedWarning(DisplayerSettings oldSettings, DisplayerSettings newSettings);
-        void error(String msg, Throwable e);
-        void error(DataSetClientServiceError error);
+        void error(String error);
+        void error(ClientRuntimeError error);
         void close();
     }
 
@@ -159,17 +157,17 @@ public class DisplayerEditor implements IsWidget,
                 }
                 public void notFound() {
                     // Very unlikely since this data set has been selected from a list provided by the backend.
-                    view.error(CommonConstants.INSTANCE.displayer_editor_dataset_notfound(), null);
+                    view.error(CommonConstants.INSTANCE.displayer_editor_dataset_notfound());
                 }
 
                 @Override
-                public boolean onError(DataSetClientServiceError error) {
+                public boolean onError(ClientRuntimeError error) {
                     view.error(error);
                     return false;
                 }
             });
         } catch (Exception e) {
-            view.error(CommonConstants.INSTANCE.displayer_editor_datasetmetadata_fetcherror(), e);
+            view.error(new ClientRuntimeError(CommonConstants.INSTANCE.displayer_editor_datasetmetadata_fetcherror(), e));
         }
     }
 
@@ -250,7 +248,9 @@ public class DisplayerEditor implements IsWidget,
                     Displayer displayer = DisplayerLocator.get().lookupDisplayer(displayerSettings);
                     DataSetLookupConstraints constraints = displayer.getDisplayerConstraints().getDataSetLookupConstraints();
                     DataSetLookup lookup = constraints.newDataSetLookup(metadata);
-                    if (lookup == null) view.error(CommonConstants.INSTANCE.displayer_editor_dataset_nolookuprequest(), null);
+                    if (lookup == null) {
+                        view.error(CommonConstants.INSTANCE.displayer_editor_dataset_nolookuprequest());
+                    }
 
                     // Make the view to show the new lookup instance
                     displayerSettings.setDataSet(null);
@@ -261,17 +261,17 @@ public class DisplayerEditor implements IsWidget,
                 }
                 public void notFound() {
                     // Very unlikely since this data set has been selected from a list provided by the backend.
-                    view.error(CommonConstants.INSTANCE.displayer_editor_dataset_notfound(), null);
+                    view.error(CommonConstants.INSTANCE.displayer_editor_dataset_notfound());
                 }
 
                 @Override
-                public boolean onError(DataSetClientServiceError error) {
+                public boolean onError(ClientRuntimeError error) {
                     view.error(error);
                     return false;
                 }
             });
         } catch (Exception e) {
-            view.error(CommonConstants.INSTANCE.displayer_editor_datasetmetadata_fetcherror(), e);
+            view.error(new ClientRuntimeError(CommonConstants.INSTANCE.displayer_editor_datasetmetadata_fetcherror(), e));
         }
     }
 
