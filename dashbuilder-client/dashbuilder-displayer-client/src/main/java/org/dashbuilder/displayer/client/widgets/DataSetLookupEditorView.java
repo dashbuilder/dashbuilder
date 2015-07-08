@@ -18,11 +18,6 @@ package org.dashbuilder.displayer.client.widgets;
 import java.util.List;
 import javax.enterprise.context.Dependent;
 
-import com.github.gwtbootstrap.client.ui.Button;
-import com.github.gwtbootstrap.client.ui.Icon;
-import com.github.gwtbootstrap.client.ui.ListBox;
-import com.github.gwtbootstrap.client.ui.constants.IconType;
-import com.github.gwtbootstrap.client.ui.constants.LabelType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -44,6 +39,11 @@ import org.dashbuilder.displayer.client.resources.i18n.CommonConstants;
 import org.dashbuilder.displayer.client.widgets.filter.DataSetFilterEditor;
 import org.dashbuilder.displayer.client.widgets.group.ColumnFunctionEditor;
 import org.dashbuilder.displayer.client.widgets.group.DataSetGroupDateEditor;
+import org.gwtbootstrap3.client.ui.Button;
+import org.gwtbootstrap3.client.ui.Icon;
+import org.gwtbootstrap3.client.ui.ListBox;
+import org.gwtbootstrap3.client.ui.constants.IconType;
+import org.gwtbootstrap3.client.ui.constants.LabelType;
 
 @Dependent
 public class DataSetLookupEditorView extends Composite
@@ -67,7 +67,7 @@ public class DataSetLookupEditorView extends Composite
     ListBox dataSetListBox;
 
     @UiField
-    com.github.gwtbootstrap.client.ui.Label statusLabel;
+    org.gwtbootstrap3.client.ui.Label statusLabel;
 
     @UiField
     Panel groupControlPanel;

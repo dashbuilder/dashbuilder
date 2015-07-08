@@ -195,7 +195,7 @@ public class DataSetDefEditorPresenter extends BaseEditor {
     }
 
     RemoteCallback<EditDataSetDef> loadCallback = new RemoteCallback<EditDataSetDef>() {
-        public void callback(EditDataSetDef result) {
+        public void callback(final EditDataSetDef result) {
             if (result == null) {
                 view.hideBusyIndicator();
                 view.showError(DataSetAuthoringConstants.INSTANCE.dataSetNotFound());

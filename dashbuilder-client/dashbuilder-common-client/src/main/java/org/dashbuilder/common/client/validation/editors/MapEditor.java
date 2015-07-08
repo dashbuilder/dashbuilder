@@ -1,9 +1,9 @@
 package org.dashbuilder.common.client.validation.editors;
 
-import com.github.gwtbootstrap.client.ui.*;
-import com.github.gwtbootstrap.client.ui.Button;
-import com.github.gwtbootstrap.client.ui.constants.IconType;
-import com.github.gwtbootstrap.client.ui.resources.ButtonSize;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
 import com.google.gwt.cell.client.EditTextCell;
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
@@ -22,15 +22,20 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.*;
-import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+import com.google.gwt.user.client.ui.HasValue;
+import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import org.dashbuilder.common.client.resources.i18n.DashbuilderCommonConstants;
-
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import org.gwtbootstrap3.client.ui.Button;
+import org.gwtbootstrap3.client.ui.Label;
+import org.gwtbootstrap3.client.ui.constants.ButtonSize;
+import org.gwtbootstrap3.client.ui.constants.IconType;
+import org.gwtbootstrap3.client.ui.gwt.ButtonCell;
+import org.gwtbootstrap3.client.ui.gwt.DataGrid;
 
 public class MapEditor<T, K> extends Composite implements
         HasValue<Map<T,K>>, HasEditorErrors<Map<T,K>>, IsEditor<TakesValueEditor<Map<T,K>>> {
@@ -64,7 +69,7 @@ public class MapEditor<T, K> extends Composite implements
     
     @UiField
     @Ignore
-    com.github.gwtbootstrap.client.ui.Label errorLabel;
+    Label errorLabel;
 
     private final ListDataProvider<Map.Entry<T, K>> model = new ListDataProvider<Map.Entry<T, K>>(new LinkedList<Map.Entry<T, K>>());
     
@@ -186,7 +191,7 @@ public class MapEditor<T, K> extends Composite implements
 
         // Create remove button column.
         final com.google.gwt.user.cellview.client.Column<Map.Entry<T, K>, String> removeColumn =
-                new com.google.gwt.user.cellview.client.Column<Map.Entry<T, K>, String>(new ButtonCell(IconType.MINUS, ButtonSize.MINI)) {
+                new com.google.gwt.user.cellview.client.Column<Map.Entry<T, K>, String>(new ButtonCell( IconType.MINUS, ButtonSize.EXTRA_SMALL)) {
 
                     @Override
                     public String getValue(Map.Entry<T, K> object) {

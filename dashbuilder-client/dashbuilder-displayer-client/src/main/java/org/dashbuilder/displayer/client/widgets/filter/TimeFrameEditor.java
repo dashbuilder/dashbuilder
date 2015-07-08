@@ -17,7 +17,6 @@ package org.dashbuilder.displayer.client.widgets.filter;
 
 import javax.enterprise.context.Dependent;
 
-import com.github.gwtbootstrap.client.ui.ListBox;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -28,10 +27,10 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.dataset.client.resources.i18n.MonthConstants;
 import org.dashbuilder.dataset.date.Month;
-import org.dashbuilder.dataset.date.TimeAmount;
+import org.dashbuilder.dataset.date.TimeFrame;
 import org.dashbuilder.dataset.date.TimeInstant;
 import org.dashbuilder.dataset.group.DateIntervalType;
-import org.dashbuilder.dataset.date.TimeFrame;
+import org.gwtbootstrap3.client.ui.ListBox;
 
 @Dependent
 public class TimeFrameEditor extends Composite {

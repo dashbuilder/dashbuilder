@@ -17,9 +17,6 @@ package org.dashbuilder.displayer.client.widgets.filter;
 
 import javax.enterprise.context.Dependent;
 
-import com.github.gwtbootstrap.client.ui.Button;
-import com.github.gwtbootstrap.client.ui.Icon;
-import com.github.gwtbootstrap.client.ui.ListBox;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -38,6 +35,9 @@ import org.dashbuilder.dataset.filter.CoreFunctionType;
 import org.dashbuilder.dataset.filter.DataSetFilter;
 import org.dashbuilder.dataset.filter.FilterFactory;
 import org.dashbuilder.displayer.client.resources.i18n.CommonConstants;
+import org.gwtbootstrap3.client.ui.Button;
+import org.gwtbootstrap3.client.ui.Icon;
+import org.gwtbootstrap3.client.ui.ListBox;
 
 @Dependent
 public class DataSetFilterEditor extends Composite implements ColumnFilterEditor.Listener {

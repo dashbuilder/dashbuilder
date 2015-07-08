@@ -15,7 +15,6 @@
  */
 package org.dashbuilder.client.widgets.dataset.editor.widgets.editors.datacolumn;
 
-import com.github.gwtbootstrap.client.ui.Image;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.Editor;
 import com.google.gwt.editor.client.EditorError;
@@ -31,6 +30,7 @@ import org.dashbuilder.common.client.validation.editors.ValueBoxEditorDecorator;
 import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.dataset.client.validation.editors.DataColumnDefEditor;
+import org.gwtbootstrap3.client.ui.Image;
 
 import javax.enterprise.context.Dependent;
 import java.util.List;
@@ -38,19 +38,19 @@ import java.util.List;
 /**
  * <p>This is the view implementation widget for editing data a given set column's id and type.</p>
  *
- * @since 0.3.0 
- * 
+ * @since 0.3.0
+ *
  */
 @Dependent
 public class DataColumnBasicEditor extends AbstractEditor implements DataColumnDefEditor {
 
     private static final int ICONS_SIZE = 16;
-    
+
     interface DataColumnBasicEditorBinder extends UiBinder<Widget, DataColumnBasicEditor> {}
     private static DataColumnBasicEditorBinder uiBinder = GWT.create(DataColumnBasicEditorBinder.class);
 
     private String editorId;
-    
+
     @UiField
     FlowPanel columnPanel;
 
@@ -59,11 +59,11 @@ public class DataColumnBasicEditor extends AbstractEditor implements DataColumnD
 
     @UiField
     DataColumnTypeEditor columnType;
-    
+
     @UiField
     @Ignore
     Image columnTypeImage;
-    
+
     private boolean isEditMode;
 
     public DataColumnBasicEditor() {
@@ -88,7 +88,7 @@ public class DataColumnBasicEditor extends AbstractEditor implements DataColumnD
         columnType.setEditMode(isEditMode);
         draw();
     }
-    
+
     private void draw() {
         Image image = null;
         if (!isEditMode && columnType.getValue() != null) {
@@ -98,7 +98,7 @@ public class DataColumnBasicEditor extends AbstractEditor implements DataColumnD
             // Not present in resulting dataset, use the original one..
             image = DataColumnTypeEditor.buildTypeSelectorWidget(columnType.getOriginalType());
         }
-        
+
         if (image != null) {
             columnTypeImage.setUrl(image.getUrl());
             columnTypeImage.setTitle(image.getTitle());
@@ -118,7 +118,7 @@ public class DataColumnBasicEditor extends AbstractEditor implements DataColumnD
     public HandlerRegistration addValueChangeHandler(final ValueChangeHandler<ColumnType> handler) {
         return columnType.addHandler(handler, ValueChangeEvent.getType());
     }
-    
+
     @Override
     public void showErrors(List<EditorError> errors) {
         consumeErrors(errors);
@@ -135,7 +135,7 @@ public class DataColumnBasicEditor extends AbstractEditor implements DataColumnD
     @Override
     public boolean equals(Object obj) {
         if (obj == null) return false;
-        
+
         try {
             DataColumnBasicEditor e  = (DataColumnBasicEditor) obj;
             return (this.editorId.equals(e.editorId));
@@ -143,7 +143,7 @@ public class DataColumnBasicEditor extends AbstractEditor implements DataColumnD
             return false;
         }
     }
-    
+
     public void clear() {
         super.clear();
         id.clear();

@@ -1,7 +1,6 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
              xmlns:g="urn:import:com.google.gwt.user.client.ui"
-             xmlns:b="urn:import:com.github.gwtbootstrap.client.ui"
              xmlns:dash-client="urn:import:org.dashbuilder.common.client.validation.editors"
     >
 
@@ -18,10 +17,10 @@
       margin-right: 50px;
     }
   </ui:style>
-  
+
   <g:FlowPanel addStyleNames="{style.mainPanel}">
     <g:HTML text="{i18n.selectType}:" addStyleNames="{style.text}"/>
     <dash-client:ImageListEditor ui:field="provider" />
   </g:FlowPanel>
-  
+
 </ui:UiBinder>

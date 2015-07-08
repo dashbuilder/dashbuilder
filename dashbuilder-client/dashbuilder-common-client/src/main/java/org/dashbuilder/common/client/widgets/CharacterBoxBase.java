@@ -1,13 +1,12 @@
 package org.dashbuilder.common.client.widgets;
 
-import com.github.gwtbootstrap.client.ui.base.ValueBoxBase;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.text.shared.AbstractRenderer;
 import com.google.gwt.text.shared.Parser;
 import com.google.gwt.text.shared.Renderer;
 import com.google.gwt.text.shared.testing.PassthroughParser;
 import com.google.gwt.text.shared.testing.PassthroughRenderer;
-
+import org.gwtbootstrap3.client.ui.base.ValueBoxBase;
 
 /**
  * <p>Abstract base class for most character entry widgets. and Support boostrap style.</p>

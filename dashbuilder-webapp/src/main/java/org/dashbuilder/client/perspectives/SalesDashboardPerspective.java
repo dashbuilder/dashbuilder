@@ -63,14 +63,14 @@ public class SalesDashboardPerspective {
         perspective.getRoot().addPart(new PartDefinitionImpl(createPlaceRequest(OPPS_BY_COUNTRY)));
         perspective.getRoot().addPart(new PartDefinitionImpl(createPlaceRequest(OPPS_COUNTRY_SUMMARY)));
 
-        PanelDefinition north = new PanelDefinitionImpl(MultiListWorkbenchPanelPresenter.class.getName());
-        north.setMinWidth(500);
-        north.setWidth(550);
-        north.setMinHeight(350);
-        north.setHeight(350);
-        north.addPart(new PartDefinitionImpl(createPlaceRequest(OPPS_EXPECTED_PIPELINE)));
-
-        perspective.getRoot().insertChild(CompassPosition.NORTH, north);
+//        PanelDefinition north = new PanelDefinitionImpl(MultiListWorkbenchPanelPresenter.class.getName());
+//        north.setMinWidth(500);
+//        north.setWidth(550);
+//        north.setMinHeight(350);
+//        north.setHeight(350);
+//        north.addPart(new PartDefinitionImpl(createPlaceRequest(OPPS_EXPECTED_PIPELINE)));
+//
+//        perspective.getRoot().insertChild(CompassPosition.NORTH, north);
         return perspective;
     }
 

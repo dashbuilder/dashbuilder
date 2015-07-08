@@ -19,9 +19,6 @@ import java.util.List;
 import java.util.ArrayList;
 import javax.enterprise.context.Dependent;
 
-import com.github.gwtbootstrap.client.ui.Icon;
-import com.github.gwtbootstrap.client.ui.ListBox;
-import com.github.gwtbootstrap.client.ui.constants.IconType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -37,6 +34,9 @@ import org.dashbuilder.dataset.DataSetMetadata;
 import org.dashbuilder.dataset.client.resources.i18n.AggregateFunctionTypeConstants;
 import org.dashbuilder.dataset.group.AggregateFunctionType;
 import org.dashbuilder.dataset.group.GroupFunction;
+import org.gwtbootstrap3.client.ui.Icon;
+import org.gwtbootstrap3.client.ui.ListBox;
+import org.gwtbootstrap3.client.ui.constants.IconType;
 
 @Dependent
 public class ColumnFunctionEditor extends Composite implements ColumnDetailsEditor.Listener {
@@ -203,7 +203,17 @@ public class ColumnFunctionEditor extends Composite implements ColumnDetailsEdit
             String functionName = AggregateFunctionTypeConstants.INSTANCE.getString(functionType.name());
             functionListBox.addItem(functionName);
             if (selected != null && functionType.equals(selected)) {
-                functionListBox.setSelectedValue(functionName);
+                setSelectedValue(functionListBox, functionName);
+            }
+        }
+    }
+
+    private void setSelectedValue( final ListBox functionListBox,
+                                   final String functionName ) {
+        for ( int i = 0; i < functionListBox.getItemCount(); i++ ) {
+            if (functionListBox.getValue( i ).equals( functionName )){
+                functionListBox.setSelectedIndex( i );
+                break;
             }
         }
     }

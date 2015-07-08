@@ -15,7 +15,6 @@
  */
 package org.dashbuilder.client.widgets.dataset.editor.widgets;
 
-import com.github.gwtbootstrap.client.ui.constants.ButtonType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -27,7 +26,7 @@ import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.client.widgets.dataset.editor.DataSetDefEditWorkflow;
 import org.dashbuilder.client.widgets.dataset.editor.widgets.editors.DataSetColumnsEditor;
 import org.dashbuilder.client.widgets.dataset.editor.widgets.events.SaveDataSetEvent;
-import org.dashbuilder.client.widgets.dataset.editor.widgets.events.SaveDataSetEventHandler;
+import org.dashbuilder.client.widgets.dataset.editor.widgets.events.UpdateDataSetEvent;
 import org.dashbuilder.client.widgets.resources.i18n.DataSetEditorConstants;
 import org.dashbuilder.common.client.error.ClientRuntimeError;
 import org.dashbuilder.dataset.*;
@@ -46,9 +45,11 @@ import org.dashbuilder.displayer.client.DisplayerListener;
 import org.dashbuilder.displayer.client.widgets.filter.DataSetFilterEditor;
 import org.dashbuilder.displayer.impl.TableDisplayerSettingsBuilderImpl;
 import org.dashbuilder.renderer.client.DefaultRenderer;
+import org.gwtbootstrap3.client.ui.constants.ButtonType;
 import org.jboss.errai.common.client.api.RemoteCallback;
 
 import javax.enterprise.context.Dependent;
+import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.validation.ConstraintViolation;
 import java.util.*;
@@ -125,10 +126,17 @@ public class DataSetEditor implements IsWidget {
         PROVIDER_SELECTION, DATA_CONF, PREVIEW_AND_ADVANCED
     }
 
+    @Inject
+    private Event<SaveDataSetEvent> saveDataSetEvent;
+
+    @Inject
+    private Event<UpdateDataSetEvent> updateDataSetEvent;
+    
     protected final View view = new DataSetEditorView();
 
     protected DataSetClientServices clientServices;
     protected DataSetDef dataSetDef;
+    private String originalUUID;
     protected List<DataColumnDef> originalColumns;
     protected boolean updateColumnsView = false;
     protected Displayer tableDisplayer;
@@ -160,6 +168,7 @@ public class DataSetEditor implements IsWidget {
 
         // Clear any old status
         dataSetDef = new DataSetDef();
+        originalUUID = null;
         originalColumns = null;
         updateColumnsView = true;
         view.setEditMode(editMode = false);
@@ -178,11 +187,12 @@ public class DataSetEditor implements IsWidget {
         return this;
     }
 
-    public void editDataSetDef(EditDataSetDef editDataSetDef) {
+    public void editDataSetDef(final EditDataSetDef editDataSetDef) {
 
         clear();
 
         dataSetDef = editDataSetDef.getDefinition();
+        originalUUID = editDataSetDef.getUuid();
         originalColumns = editDataSetDef.getColumns();
         updateColumnsView = true;
 
@@ -373,20 +383,19 @@ public class DataSetEditor implements IsWidget {
         return violations.isEmpty();
     }
 
-    private SaveDataSetEventHandler saveCallbackHandler = null;
-
     private void onSave() {
 
         dataSetDef.setPublic(true);
         dataSetDef.setAllColumnsEnabled(false);
 
-        if (saveCallbackHandler != null) {
-            saveCallbackHandler.onSaveDataSet(new SaveDataSetEvent(dataSetDef));
+        
+        if (originalUUID == null) {
+            // Is saving a new data set.
+            saveDataSetEvent.fire(new SaveDataSetEvent(this, dataSetDef));
+        } else {
+            // Is updating an existing data set.
+            updateDataSetEvent.fire(new UpdateDataSetEvent(this, originalUUID, dataSetDef));
         }
-    }
-
-    public void addSaveDataSetEventHandler(SaveDataSetEventHandler handler) {
-        saveCallbackHandler = handler;
     }
 
     @Override
@@ -614,6 +623,7 @@ public class DataSetEditor implements IsWidget {
 
     private void clear() {
         this.dataSetDef = null;
+        this.originalUUID = null;
         this.originalColumns = null;
         this.updateColumnsView = false;
         this.tableDisplayer = null;

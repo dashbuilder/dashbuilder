@@ -1,8 +1,5 @@
 package org.dashbuilder.common.client.validation.editors;
 
-import com.github.gwtbootstrap.client.ui.Label;
-import com.github.gwtbootstrap.client.ui.Tooltip;
-import com.github.gwtbootstrap.client.ui.constants.LabelType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.EditorError;
 import com.google.gwt.editor.client.HasEditorErrors;
@@ -17,7 +14,13 @@ import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiConstructor;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.*;
+import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.HasValue;
+import com.google.gwt.user.client.ui.Widget;
+import org.gwtbootstrap3.client.ui.Label;
+import org.gwtbootstrap3.client.ui.Tooltip;
+import org.gwtbootstrap3.client.ui.constants.LabelType;
 
 import java.util.List;
 
@@ -32,7 +35,7 @@ import java.util.List;
  * <p>If validation fails, the validation error messages are displayed by changing border color to RED and showing the message using a tooltip.</p>
  */
 public class BooleanSwitchEditor extends Composite implements
-        HasValue<Boolean>, HasEditorErrors<Boolean>, IsEditor<TakesValueEditor<Boolean>> {
+                                                   HasValue<Boolean>, HasEditorErrors<Boolean>, IsEditor<TakesValueEditor<Boolean>> {
 
     public static final String ON = "ON";
     public static final String OFF = "OFF";
@@ -187,9 +190,9 @@ public class BooleanSwitchEditor extends Composite implements
 
     private void setTooltipText(String text) {
         if (text == null || text.trim().length() == 0) {
-            errorTooltip.setText("");
+            errorTooltip.setTitle( "" );
         } else {
-            errorTooltip.setText(text);
+            errorTooltip.setTitle( text );
         }
         // See issue https://github.com/gwtbootstrap/gwt-bootstrap/issues/287
         errorTooltip.reconfigure();

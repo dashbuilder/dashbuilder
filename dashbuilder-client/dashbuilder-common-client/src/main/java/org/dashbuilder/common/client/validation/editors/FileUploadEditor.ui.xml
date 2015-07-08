@@ -1,5 +1,6 @@
 <ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder' xmlns:g='urn:import:com.google.gwt.user.client.ui'
-             xmlns:b="urn:import:com.github.gwtbootstrap.client.ui">
+             xmlns:uf="urn:import:org.uberfire.ext.widgets.common.client.common"
+             xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
 
   <ui:with field="i18n" type="org.dashbuilder.common.client.resources.i18n.DashbuilderCommonConstants"/>
 
@@ -7,6 +8,7 @@
     .mainPanel {
       margin-bottom: 5px;
     }
+
     .form {
       margin-bottom: -3px;
     }
@@ -15,12 +17,12 @@
   <g:FlowPanel ui:field="mainPanel" addStyleNames="{style.mainPanel}">
 
     <g:FormPanel ui:field="formPanel" addStyleNames="{style.form}">
-        <b:Tooltip text="" ui:field="errorTooltip">
-          <b:FileUpload name="file" ui:field="fileUpload"/>
-        </b:Tooltip>
+      <b:Tooltip title="" ui:field="errorTooltip">
+        <uf:FileUpload ui:field="fileUpload"/>
+      </b:Tooltip>
     </g:FormPanel>
-    <b:Label visible="false" ui:field="fileLabel" title="{i18n.currentFilePath}"/>
 
+    <b:Label visible="false" ui:field="fileLabel" title="{i18n.currentFilePath}"/>
     <b:Image ui:field="loadingImage"/>
 
   </g:FlowPanel>

@@ -19,9 +19,6 @@ import java.util.Map;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
-import com.github.gwtbootstrap.client.ui.Modal;
-import com.github.gwtbootstrap.client.ui.TextBox;
-import com.github.gwtbootstrap.client.ui.constants.AlternateSize;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.AttachEvent;
 import com.google.gwt.user.client.ui.IsWidget;
@@ -32,6 +29,8 @@ import org.dashbuilder.displayer.client.json.DisplayerSettingsJSONMarshaller;
 import org.dashbuilder.displayer.client.widgets.DisplayerEditor;
 import org.dashbuilder.displayer.client.widgets.DisplayerEditorPopup;
 import org.dashbuilder.displayer.client.widgets.DisplayerView;
+import org.gwtbootstrap3.client.ui.Modal;
+import org.gwtbootstrap3.client.ui.TextBox;
 import org.uberfire.client.mvp.PlaceManager;
 import org.uberfire.ext.layout.editor.client.components.HasModalConfiguration;
 import org.uberfire.ext.layout.editor.client.components.ModalConfigurationContext;
@@ -58,7 +57,6 @@ public class DisplayerDragComponent implements PerspectiveEditorDragComponent, H
         TextBox textBox = GWT.create(TextBox.class);
         textBox.setPlaceholder("Displayer Component");
         textBox.setReadOnly(true);
-        textBox.setAlternateSize(AlternateSize.MEDIUM);
         return textBox;
     }
 

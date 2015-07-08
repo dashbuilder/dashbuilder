@@ -19,7 +19,7 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
              xmlns:g='urn:import:com.google.gwt.user.client.ui'
-             xmlns:b="urn:import:com.github.gwtbootstrap.client.ui">
+             xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
 
   <ui:with field="i18n" type="org.dashbuilder.displayer.client.resources.i18n.CommonConstants"/>
 
@@ -31,7 +31,8 @@
       width: 250px;
       max-width: 250px;
       max-height: 390px;
-      overflow-y: auto;
+      overflow-y: hidden;
+      margin-top: 15px;
     }
     .centerPanel {
       font-size: 12pt;
@@ -46,20 +47,20 @@
     .dataTablePanel {
       font-size: 12pt;
       float: left;
+      margin: 10px;
     }
   </ui:style>
 
   <g:HTMLPanel>
-    <b:TabPanel ui:field="optionsPanel">
-      <b:Tab ui:field="optionType" heading="{i18n.displayer_editor_tab_type}" />
-      <b:Tab ui:field="optionData" heading="{i18n.displayer_editor_tab_data}" />
-      <b:Tab ui:field="optionSettings" heading="{i18n.displayer_editor_tab_display}" />
-    </b:TabPanel>
+    <b:NavTabs>
+      <b:TabListItem ui:field="optionType" text="{i18n.displayer_editor_tab_type}" />
+      <b:TabListItem ui:field="optionData" text="{i18n.displayer_editor_tab_data}" />
+      <b:TabListItem ui:field="optionSettings" text="{i18n.displayer_editor_tab_display}" />
+    </b:NavTabs>
     <g:HorizontalPanel>
       <g:VerticalPanel>
         <g:HorizontalPanel ui:field="dataTablePanel" styleName="{style.dataTablePanel}" visible="false">
-          <g:Label text="{i18n.displayer_editor_view_as_table}"/>
-          <b:CheckBox ui:field="viewAsTable" />
+          <b:CheckBox text="{i18n.displayer_editor_view_as_table}" ui:field="viewAsTable" />
         </g:HorizontalPanel>
         <g:SimplePanel ui:field="leftPanel" styleName="{style.leftPanel}" />
       </g:VerticalPanel>

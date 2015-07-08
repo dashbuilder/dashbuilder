@@ -15,7 +15,6 @@
  */
 package org.dashbuilder.client.widgets.dataset.editor.widgets.editors;
 
-import com.github.gwtbootstrap.client.ui.Image;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.EditorError;
 import com.google.gwt.resources.client.CssResource;
@@ -28,6 +27,7 @@ import org.dashbuilder.common.client.validation.editors.ImageListEditor;
 import org.dashbuilder.dataprovider.DataSetProviderType;
 import org.dashbuilder.dataset.client.resources.bundles.DataSetClientResources;
 import org.dashbuilder.dataset.client.validation.editors.DataSetDefEditor;
+import org.gwtbootstrap3.client.ui.Image;
 
 import javax.enterprise.context.Dependent;
 import java.util.List;

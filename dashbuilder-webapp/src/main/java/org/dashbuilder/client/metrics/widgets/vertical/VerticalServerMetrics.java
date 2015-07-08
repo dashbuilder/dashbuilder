@@ -15,8 +15,6 @@
  */
 package org.dashbuilder.client.metrics.widgets.vertical;
 
-import com.github.gwtbootstrap.client.ui.Tooltip;
-import com.github.gwtbootstrap.client.ui.constants.Placement;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -30,6 +28,8 @@ import org.dashbuilder.displayer.DisplayerSettingsFactory;
 import org.dashbuilder.displayer.client.Displayer;
 import org.dashbuilder.displayer.client.DisplayerCoordinator;
 import org.dashbuilder.displayer.client.DisplayerHelper;
+import org.gwtbootstrap3.client.ui.Tooltip;
+import org.gwtbootstrap3.client.ui.constants.Placement;
 
 import static org.dashbuilder.dataset.filter.FilterFactory.equalsTo;
 import static org.dashbuilder.dataset.filter.FilterFactory.timeFrame;
@@ -220,7 +220,7 @@ public class VerticalServerMetrics extends Composite {
         FlowPanel panel = new FlowPanel();
         Tooltip tooltip = new Tooltip(toolTipText);
         tooltip.setPlacement(Placement.TOP);
-        tooltip.add(displayer);
+        tooltip.add(displayer.asWidget());
         panel.add(tooltip);
         panel.getElement().getStyle().setPadding(10, Style.Unit.PX);
         mainPanel.add(panel);
@@ -236,7 +236,7 @@ public class VerticalServerMetrics extends Composite {
     public VerticalServerMetrics off() {
         serverIcon.getElement().getStyle().setOpacity(0.3);
         mainPanel.getElement().getStyle().setOpacity(0.3);
-        tooltip.setText(AppConstants.INSTANCE.metrics_server_vert_serverdown(server));
+        tooltip.setTitle(AppConstants.INSTANCE.metrics_server_vert_serverdown(server));
         isOff = true;
         return this;
     }
@@ -266,7 +266,7 @@ public class VerticalServerMetrics extends Composite {
     }
 
     private void toolTipDefaultText() {
-        tooltip.setText(AppConstants.INSTANCE.metrics_server_vert_default_tt());
+        tooltip.setTitle(AppConstants.INSTANCE.metrics_server_vert_default_tt());
     }
 
     public String getServer() {

@@ -22,8 +22,6 @@ import java.util.Set;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
 
-import com.github.gwtbootstrap.client.ui.Label;
-import com.github.gwtbootstrap.client.ui.constants.LabelType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -47,6 +45,8 @@ import org.dashbuilder.displayer.client.RendererLibrary;
 import org.dashbuilder.displayer.client.RendererManager;
 import org.dashbuilder.displayer.client.resources.i18n.CommonConstants;
 import org.dashbuilder.displayer.client.resources.i18n.PositionLiterals;
+import org.gwtbootstrap3.client.ui.Label;
+import org.gwtbootstrap3.client.ui.constants.LabelType;
 import org.uberfire.ext.properties.editor.client.PropertyEditorWidget;
 import org.uberfire.ext.properties.editor.model.PropertyEditorCategory;
 import org.uberfire.ext.properties.editor.model.PropertyEditorChangeEvent;
@@ -99,7 +99,7 @@ public class DisplayerSettingsEditor extends Composite {
         this.displayerContraints = displayer.getDisplayerConstraints();
         this.supportedAttributes = displayerContraints.getSupportedAttributes();
 
-        propertyEditor.setFilterPanelVisible(false);
+        // propertyEditor.setFilterGroupVisible(false);
         try {
             displayer.getDataSetHandler().lookupDataSet(new DataSetReadyCallback() {
                 public void callback(DataSet dataSet) {
@@ -111,7 +111,7 @@ public class DisplayerSettingsEditor extends Composite {
 
                 @Override
                 public boolean onError(final ClientRuntimeError error) {
-                    mainPanel.add(new Label(LabelType.WARNING, CommonConstants.INSTANCE.error() + error.getMessage()));
+                    mainPanel.add( new Label( LabelType.WARNING, CommonConstants.INSTANCE.error() + error.getMessage() ) );
                     return false;
                 }
             });

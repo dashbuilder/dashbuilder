@@ -3,7 +3,7 @@
 
 <module>
   <inherits name='com.google.gwt.user.User'/>
-  <inherits name="com.github.gwtbootstrap.Bootstrap"/>
+  <inherits name="org.gwtbootstrap3.GwtBootstrap3NoTheme"/>
 
   <inherits name='org.jboss.errai.ioc.Container'/>
 

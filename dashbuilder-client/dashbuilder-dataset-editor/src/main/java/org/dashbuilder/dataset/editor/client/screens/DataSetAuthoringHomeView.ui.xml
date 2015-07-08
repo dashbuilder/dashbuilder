@@ -14,14 +14,20 @@
       margin-bottom: 20px;
     }
 
-    .newDataSet {
+    .defineA {
       float: left;
       margin-left: 5px;
-      font-size: medium;
     }
 
-    .nextStepPanel {
-      display: inline-flex;
+    .newDataSet {
+      float: left;
+      margin-right: 5px;
+      margin-left: 5px;
+      cursor: pointer;
+    }
+    
+    .toFetchYourDataFromExtSystem {
+      margin-left: 5px;
     }
 
     .nextStep {
@@ -31,6 +37,7 @@
     .clear {
       clear: both;
     }
+    
   </ui:style>
   
   <g:HTMLPanel ui:field="initialViewPanel" addStyleNames="{style.initialViewPanel}">
@@ -42,11 +49,11 @@
     <g:HTML text="{i18n.nextSteps}:" addStyleNames="{style.nextStep} "/>
     <ol>
       <li>
-        <g:HorizontalPanel addStyleNames="{style.nextStepPanel}">
-            <g:HTML text="{i18n.defineA} " addStyleNames="{style.newDataSet} "/>
-            <g:Hyperlink text="{i18n.newDataSet} " ui:field="newDataSetLink" addStyleNames="{style.newDataSet} "/>
-            <g:HTML text="{i18n.toFetchYourDataFromExtSystem}" addStyleNames="{style.newDataSet} "/>
-        </g:HorizontalPanel>
+        <g:FlowPanel>
+            <g:HTML text="{i18n.defineA} " addStyleNames="{style.defineA} "/>
+            <g:Hyperlink text="{i18n.newDataSet} " ui:field="newDataSetLink" addStyleNames="{style.newDataSet}"/>
+            <g:HTML text="{i18n.toFetchYourDataFromExtSystem}" addStyleNames="{style.toFetchYourDataFromExtSystem} "/>
+        </g:FlowPanel>
       </li>
       <li>
         <g:HTML text="{i18n.createDataDisplayers}" addStyleNames="{style.nextStep} "/>

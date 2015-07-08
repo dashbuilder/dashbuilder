@@ -18,9 +18,6 @@ package org.dashbuilder.displayer.client.widgets;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.github.gwtbootstrap.client.ui.Image;
-import com.github.gwtbootstrap.client.ui.constants.ImageType;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.resources.client.ImageResource;
@@ -31,10 +28,12 @@ import com.google.web.bindery.event.shared.HandlerRegistration;
 import org.dashbuilder.common.client.StringUtils;
 import org.dashbuilder.displayer.DisplayerSubType;
 import org.dashbuilder.displayer.DisplayerType;
-import org.dashbuilder.displayer.client.RendererManager;
 import org.dashbuilder.displayer.client.RendererLibrary;
+import org.dashbuilder.displayer.client.RendererManager;
 import org.dashbuilder.displayer.client.resources.i18n.DisplayerTypeLiterals;
 import org.dashbuilder.displayer.client.resources.images.DisplayerImagesResources;
+import org.gwtbootstrap3.client.ui.Image;
+import org.gwtbootstrap3.client.ui.constants.ImageType;
 
 public class DisplayerSubtypeSelector extends Composite {
 
@@ -145,7 +144,7 @@ public class DisplayerSubtypeSelector extends Composite {
 
             if (selectedImage != null) {
                 selected = new Image(selectedImage);
-                selected.setType(ImageType.POLAROID);
+                selected.setType(ImageType.THUMBNAIL);
                 selected.setTitle(tooltip);
                 selected.setVisible(isSelected);
                 selected.addStyleName("selDispSubtype"); //for selenium
@@ -154,7 +153,7 @@ public class DisplayerSubtypeSelector extends Composite {
 
             if (unselectedImage != null) {
                 unselected = new Image(unselectedImage);
-                unselected.setType(ImageType.POLAROID);
+                unselected.setType(ImageType.THUMBNAIL);
                 unselected.setTitle(tooltip);
                 unselected.setVisible(!isSelected);
                 container.setWidget(0, 1, unselected);

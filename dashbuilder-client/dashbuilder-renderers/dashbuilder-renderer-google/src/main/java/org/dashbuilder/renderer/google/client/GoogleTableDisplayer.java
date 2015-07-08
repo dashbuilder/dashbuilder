@@ -17,14 +17,6 @@ package org.dashbuilder.renderer.google.client;
 
 import java.util.List;
 
-import com.github.gwtbootstrap.client.ui.Icon;
-import com.github.gwtbootstrap.client.ui.Label;
-import com.github.gwtbootstrap.client.ui.NavLink;
-import com.github.gwtbootstrap.client.ui.Pagination;
-import com.github.gwtbootstrap.client.ui.Tooltip;
-import com.github.gwtbootstrap.client.ui.constants.IconSize;
-import com.github.gwtbootstrap.client.ui.constants.IconType;
-import com.github.gwtbootstrap.client.ui.resources.Bootstrap;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -33,7 +25,6 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.googlecode.gwt.charts.client.ChartPackage;
 import com.googlecode.gwt.charts.client.DataTable;
@@ -52,6 +43,14 @@ import org.dashbuilder.displayer.DisplayerAttributeGroupDef;
 import org.dashbuilder.displayer.DisplayerConstraints;
 import org.dashbuilder.displayer.client.Displayer;
 import org.dashbuilder.renderer.google.client.resources.i18n.GoogleDisplayerConstants;
+import org.gwtbootstrap3.client.ui.AnchorListItem;
+import org.gwtbootstrap3.client.ui.Icon;
+import org.gwtbootstrap3.client.ui.Label;
+import org.gwtbootstrap3.client.ui.Pagination;
+import org.gwtbootstrap3.client.ui.Tooltip;
+import org.gwtbootstrap3.client.ui.constants.IconSize;
+import org.gwtbootstrap3.client.ui.constants.IconType;
+import org.gwtbootstrap3.client.ui.constants.PaginationSize;
 
 public class GoogleTableDisplayer extends GoogleDisplayer {
 
@@ -225,11 +224,10 @@ public class GoogleTableDisplayer extends GoogleDisplayer {
         pagerPanel.getElement().setAttribute("cellpadding", "5");
 
         Pagination pagination = new Pagination();
-        pagination.setSize(Pagination.PaginationSize.NORMAL);
-        pagination.setAlignment(Bootstrap.Pagination.LEFT.toString());
+        pagination.setPaginationSize( PaginationSize.NONE );
 
         for (int i = getLeftMostPageNumber(); i <= getRightMostPageNumber(); i++) {
-            NavLink pageLink = new NavLink(Integer.toString(i));
+            AnchorListItem pageLink = new AnchorListItem(Integer.toString(i));
             final Integer _currentPage = Integer.valueOf(i);
             if (currentPage != i) {
                 pageLink.setActive(false);
@@ -246,7 +244,7 @@ public class GoogleTableDisplayer extends GoogleDisplayer {
         }
 
         Icon leftPageIcon = new Icon(IconType.ANGLE_LEFT);
-        leftPageIcon.setIconSize(IconSize.LARGE);
+        leftPageIcon.setSize(IconSize.LARGE );
         leftPageIcon.getElement().getStyle().setCursor(Style.Cursor.POINTER);
         leftPageIcon.sinkEvents(Event.ONCLICK);
         leftPageIcon.addHandler(new ClickHandler() {
@@ -259,7 +257,7 @@ public class GoogleTableDisplayer extends GoogleDisplayer {
         leftPageTooltip.add(leftPageIcon);
 
         Icon rightPageIcon = new Icon(IconType.ANGLE_RIGHT);
-        rightPageIcon.setIconSize(IconSize.LARGE);
+        rightPageIcon.setSize( IconSize.LARGE );
         rightPageIcon.getElement().getStyle().setCursor(Style.Cursor.POINTER);
         rightPageIcon.sinkEvents(Event.ONCLICK);
         rightPageIcon.addHandler(new ClickHandler() {
@@ -271,8 +269,8 @@ public class GoogleTableDisplayer extends GoogleDisplayer {
         Tooltip rightPageTooltip = new Tooltip( GoogleDisplayerConstants.INSTANCE.googleTableDisplayer_gotoNextPage() );
         rightPageTooltip.add(rightPageIcon);
 
-        Icon firstPageIcon = new Icon(IconType.DOUBLE_ANGLE_LEFT);
-        firstPageIcon.setIconSize(IconSize.LARGE);
+        Icon firstPageIcon = new Icon(IconType.ANGLE_DOUBLE_LEFT);
+        firstPageIcon.setSize( IconSize.LARGE );
         firstPageIcon.getElement().getStyle().setCursor(Style.Cursor.POINTER);
         firstPageIcon.sinkEvents(Event.ONCLICK);
         firstPageIcon.addHandler(new ClickHandler() {
@@ -284,8 +282,8 @@ public class GoogleTableDisplayer extends GoogleDisplayer {
         Tooltip firstPageTooltip = new Tooltip( GoogleDisplayerConstants.INSTANCE.googleTableDisplayer_gotoFirstPage() );
         firstPageTooltip.add(firstPageIcon);
 
-        Icon lastPageIcon = new Icon(IconType.DOUBLE_ANGLE_RIGHT);
-        lastPageIcon.setIconSize(IconSize.LARGE);
+        Icon lastPageIcon = new Icon(IconType.ANGLE_DOUBLE_RIGHT);
+        lastPageIcon.setSize( IconSize.LARGE );
         lastPageIcon.getElement().getStyle().setCursor(Style.Cursor.POINTER);
         lastPageIcon.sinkEvents(Event.ONCLICK);
         lastPageIcon.addHandler(new ClickHandler() {

@@ -15,7 +15,6 @@
  */
 package org.dashbuilder.client.widgets.dataset.editor.widgets.editors;
 
-import com.github.gwtbootstrap.client.ui.*;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.EditorError;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -36,6 +35,9 @@ import org.dashbuilder.dataset.client.resources.i18n.DateIntervalTypeConstants;
 import org.dashbuilder.dataset.client.validation.editors.DataSetDefEditor;
 import org.dashbuilder.dataset.def.DataSetDef;
 import org.dashbuilder.dataset.group.DateIntervalType;
+import org.gwtbootstrap3.client.ui.CheckBox;
+import org.gwtbootstrap3.client.ui.ListBox;
+import org.gwtbootstrap3.client.ui.Row;
 
 import javax.enterprise.context.Dependent;
 import java.util.Arrays;

@@ -19,8 +19,9 @@
     "http://google-web-toolkit.googlecode.com/svn/tags/2.5.0/distro-source/core/src/gwt-module.dtd">
 <module>
   <inherits name='com.google.gwt.user.User'/>
-  <inherits name="com.github.gwtbootstrap.Bootstrap"/>
-  <inherits name="com.github.gwtbootstrap.datetimepicker.Datetimepicker"/>
+  <inherits name="org.gwtbootstrap3.GwtBootstrap3NoTheme"/>
+  <inherits name="org.gwtbootstrap3.extras.positionedtabs.PositionedTabs"/>
+  <inherits name="org.gwtbootstrap3.extras.datetimepicker.DateTimePicker"/>
 
   <inherits name='org.jboss.errai.ioc.Container'/>
 

@@ -15,8 +15,9 @@
  */
 package org.dashbuilder.client.widgets.dataset.editor.widgets.editors.csv;
 
-import com.github.gwtbootstrap.client.ui.Button;
-import com.github.gwtbootstrap.client.ui.Row;
+import java.util.List;
+import javax.enterprise.context.Dependent;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.EditorError;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -32,14 +33,11 @@ import org.dashbuilder.common.client.validation.editors.FileUploadEditor;
 import org.dashbuilder.common.client.validation.editors.ValueBoxEditorDecorator;
 import org.dashbuilder.dataset.client.DataSetClientServices;
 import org.dashbuilder.dataset.client.resources.bundles.DataSetClientResources;
-import org.dashbuilder.dataset.client.uuid.ClientUUIDGenerator;
 import org.dashbuilder.dataset.client.validation.editors.CSVDataSetDefEditor;
 import org.dashbuilder.dataset.def.CSVDataSetDef;
 import org.dashbuilder.dataset.def.DataSetDef;
-
-import javax.enterprise.context.Dependent;
-import javax.inject.Inject;
-import java.util.List;
+import org.gwtbootstrap3.client.ui.Button;
+import org.gwtbootstrap3.client.ui.Row;
 
 /**
  * <p>This is the view implementation for Data Set Editor widget for editing CSV provider specific attributes.</p>

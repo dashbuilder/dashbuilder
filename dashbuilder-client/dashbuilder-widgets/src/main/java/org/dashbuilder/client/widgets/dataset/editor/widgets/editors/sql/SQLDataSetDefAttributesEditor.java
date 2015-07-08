@@ -15,7 +15,6 @@
  */
 package org.dashbuilder.client.widgets.dataset.editor.widgets.editors.sql;
 
-import com.github.gwtbootstrap.client.ui.RadioButton;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.EditorError;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -29,6 +28,7 @@ import org.dashbuilder.dataset.client.validation.editors.SQLDataSetDefEditor;
 import org.dashbuilder.client.widgets.dataset.editor.widgets.editors.AbstractDataSetDefEditor;
 import org.dashbuilder.dataset.def.DataSetDef;
 import org.dashbuilder.dataset.def.SQLDataSetDef;
+import org.gwtbootstrap3.client.ui.RadioButton;
 
 import javax.enterprise.context.Dependent;
 import java.util.List;

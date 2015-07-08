@@ -17,7 +17,6 @@ package org.dashbuilder.displayer.client.widgets.group;
 
 import javax.enterprise.context.Dependent;
 
-import com.github.gwtbootstrap.client.ui.TextBox;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -29,6 +28,7 @@ import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.common.client.StringUtils;
 import org.dashbuilder.dataset.DataSetMetadata;
 import org.dashbuilder.dataset.group.GroupFunction;
+import org.gwtbootstrap3.client.ui.TextBox;
 
 @Dependent
 public class ColumnDetailsEditor extends Composite {

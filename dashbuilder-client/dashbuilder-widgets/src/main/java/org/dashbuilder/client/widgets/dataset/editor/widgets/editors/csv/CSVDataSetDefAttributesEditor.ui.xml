@@ -1,7 +1,7 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
              xmlns:g="urn:import:com.google.gwt.user.client.ui"
-             xmlns:b="urn:import:com.github.gwtbootstrap.client.ui"
+             xmlns:b="urn:import:org.gwtbootstrap3.client.ui"
              xmlns:dash-client-widgets="urn:import:org.dashbuilder.common.client.widgets"
              xmlns:dash-client-editors="urn:import:org.dashbuilder.common.client.validation.editors"
     >
@@ -11,10 +11,12 @@
   <ui:style>
     .mainPanel {
     }
+
     .leftFloatPanel {
       float: left;
       margin-right: 2px;
     }
+
     .button {
       margin-top: 3px;
     }
@@ -25,16 +27,16 @@
 
     <!-- File path. -->
     <b:Row ui:field="filePathRow">
-      <b:Column size="2">
+      <b:Column size="MD_2">
         <g:HTML text="{i18n.csv_filePath}"/>
       </b:Column>
-      <b:Column size="4">
+      <b:Column size="MD_4">
 
-        <b:Tooltip text="{i18n.csv_useFileURL}">
-          <b:Button icon="CLOUD_UPLOAD" ui:field="useFileURLButton" size="MINI" addStyleNames="{style.leftFloatPanel} {style.button} "/>
+        <b:Tooltip title="{i18n.csv_useFileURL}">
+          <b:Button icon="CLOUD_UPLOAD" ui:field="useFileURLButton" size="EXTRA_SMALL" addStyleNames="{style.leftFloatPanel} {style.button} "/>
         </b:Tooltip>
 
-        <b:Popover showDelay="1000" text="{i18n.csv_filePath_description}" heading="{i18n.csv_filePath}" placement="BOTTOM">
+        <b:Popover showDelayMs="1000" content="{i18n.csv_filePath_description}" title="{i18n.csv_filePath}" placement="BOTTOM">
           <dash-client-editors:FileUploadEditor ui:field="filePath" addStyleNames="{style.leftFloatPanel}"/>
         </b:Popover>
 
@@ -43,17 +45,17 @@
 
     <!-- File URL. -->
     <b:Row ui:field="fileURLRow">
-      <b:Column size="2">
+      <b:Column size="MD_2">
         <g:HTML text="{i18n.csv_URL}"/>
       </b:Column>
-      <b:Column size="3">
-        <b:Tooltip text="{i18n.csv_useFilePath}">
-          <b:Button icon="FILE" ui:field="useFilePathButton" size="MINI" addStyleNames="{style.leftFloatPanel} {style.button} "/>
+      <b:Column size="MD_3">
+        <b:Tooltip title="{i18n.csv_useFilePath}">
+          <b:Button icon="FILE" ui:field="useFilePathButton" size="EXTRA_SMALL" addStyleNames="{style.leftFloatPanel} {style.button} "/>
         </b:Tooltip>
-        <b:Popover showDelay="1000" text="{i18n.csv_URL_description}" heading="{i18n.csv_URL}" placement="BOTTOM">
+        <b:Popover showDelayMs="1000" content="{i18n.csv_URL_description}" title="{i18n.csv_URL}" placement="BOTTOM">
           <dash-client-editors:ValueBoxEditorDecorator errorLabelPosition="TOOLTIP_BOTTOM" ui:field="fileURL" addStyleNames="{style.leftFloatPanel}">
             <dash-client-editors:valuebox>
-              <b:TextBox placeholder="{i18n.csv_URL_placeholder}" />
+              <b:TextBox placeholder="{i18n.csv_URL_placeholder}"/>
             </dash-client-editors:valuebox>
           </dash-client-editors:ValueBoxEditorDecorator>
         </b:Popover>
@@ -62,14 +64,15 @@
 
     <!-- Separator char. -->
     <b:Row>
-      <b:Column size="2">
+      <b:Column size="MD_2">
         <g:HTML text="{i18n.csv_sepChar}"/>
       </b:Column>
-      <b:Column size="3">
-        <b:Popover showDelay="1000" text="{i18n.csv_sepChar_description}" heading="{i18n.csv_sepChar}">
+      <b:Column size="MD_3">
+        <b:Popover showDelayMs="1000" content="{i18n.csv_sepChar_description}" title="{i18n.csv_sepChar}">
           <dash-client-editors:ValueBoxEditorDecorator errorLabelPosition="TOOLTIP_TOP" ui:field="separatorChar">
             <dash-client-editors:valuebox>
-              <dash-client-widgets:CharacterBox  /> <!-- TODO: placeholder="{i18n.csv_sepChar_placeholder}" -->
+              <dash-client-widgets:CharacterBox/>
+              <!-- TODO: placeholder="{i18n.csv_sepChar_placeholder}" -->
             </dash-client-editors:valuebox>
           </dash-client-editors:ValueBoxEditorDecorator>
         </b:Popover>
@@ -78,14 +81,15 @@
 
     <!-- Quote char. -->
     <b:Row>
-      <b:Column size="2">
+      <b:Column size="MD_2">
         <g:HTML text="{i18n.csv_quoteChar}"/>
       </b:Column>
-      <b:Column size="3">
-        <b:Popover showDelay="1000" text="{i18n.csv_quoteChar_description}" heading="{i18n.csv_quoteChar}">
+      <b:Column size="MD_3">
+        <b:Popover showDelayMs="1000" content="{i18n.csv_quoteChar_description}" title="{i18n.csv_quoteChar}">
           <dash-client-editors:ValueBoxEditorDecorator errorLabelPosition="TOOLTIP_TOP" ui:field="quoteChar">
             <dash-client-editors:valuebox>
-              <dash-client-widgets:CharacterBox  /> <!-- TODO: placeholder="{i18n.csv_quoteChar_placeholder}" -->
+              <dash-client-widgets:CharacterBox/>
+              <!-- TODO: placeholder="{i18n.csv_quoteChar_placeholder}" -->
             </dash-client-editors:valuebox>
           </dash-client-editors:ValueBoxEditorDecorator>
         </b:Popover>
@@ -94,14 +98,15 @@
 
     <!-- Escape char. -->
     <b:Row>
-      <b:Column size="2">
+      <b:Column size="MD_2">
         <g:HTML text="{i18n.csv_escapeChar}"/>
       </b:Column>
-      <b:Column size="3">
-        <b:Popover showDelay="1000" text="{i18n.csv_escapeChar_description}" heading="{i18n.csv_escapeChar}">
+      <b:Column size="MD_3">
+        <b:Popover showDelayMs="1000" content="{i18n.csv_escapeChar_description}" title="{i18n.csv_escapeChar}">
           <dash-client-editors:ValueBoxEditorDecorator errorLabelPosition="TOOLTIP_TOP" ui:field="escapeChar">
             <dash-client-editors:valuebox>
-              <dash-client-widgets:CharacterBox  /> <!-- TODO: placeholder="{i18n.csv_escapeChar_placeholder}" -->
+              <dash-client-widgets:CharacterBox/>
+              <!-- TODO: placeholder="{i18n.csv_escapeChar_placeholder}" -->
             </dash-client-editors:valuebox>
           </dash-client-editors:ValueBoxEditorDecorator>
         </b:Popover>
@@ -110,14 +115,14 @@
 
     <!-- Date pattern. -->
     <b:Row>
-      <b:Column size="2">
+      <b:Column size="MD_2">
         <g:HTML text="{i18n.csv_datePattern}"/>
       </b:Column>
-      <b:Column size="3">
-        <b:Popover showDelay="1000" text="{i18n.csv_datePattern_description}" heading="{i18n.csv_datePattern}">
+      <b:Column size="MD_3">
+        <b:Popover showDelayMs="1000" content="{i18n.csv_datePattern_description}" title="{i18n.csv_datePattern}">
           <dash-client-editors:ValueBoxEditorDecorator errorLabelPosition="TOOLTIP_TOP" ui:field="datePattern">
             <dash-client-editors:valuebox>
-              <b:TextBox placeholder="{i18n.csv_datePattern_placeholder}" />
+              <b:TextBox placeholder="{i18n.csv_datePattern_placeholder}"/>
             </dash-client-editors:valuebox>
           </dash-client-editors:ValueBoxEditorDecorator>
         </b:Popover>
@@ -126,20 +131,20 @@
 
     <!-- Number pattern. -->
     <b:Row>
-      <b:Column size="2">
+      <b:Column size="MD_2">
         <g:HTML text="{i18n.csv_numberPattern}"/>
       </b:Column>
-      <b:Column size="3">
-        <b:Popover showDelay="1000" text="{i18n.csv_numberPattern_description}" heading="{i18n.csv_numberPattern}">
+      <b:Column size="MD_3">
+        <b:Popover showDelayMs="1000" content="{i18n.csv_numberPattern_description}" title="{i18n.csv_numberPattern}">
           <dash-client-editors:ValueBoxEditorDecorator errorLabelPosition="TOOLTIP_TOP" ui:field="numberPattern">
             <dash-client-editors:valuebox>
-              <b:TextBox placeholder="{i18n.csv_numberPattern_placeholder}" />
+              <b:TextBox placeholder="{i18n.csv_numberPattern_placeholder}"/>
             </dash-client-editors:valuebox>
           </dash-client-editors:ValueBoxEditorDecorator>
         </b:Popover>
       </b:Column>
     </b:Row>
-    
+
 
   </g:FlowPanel>
 

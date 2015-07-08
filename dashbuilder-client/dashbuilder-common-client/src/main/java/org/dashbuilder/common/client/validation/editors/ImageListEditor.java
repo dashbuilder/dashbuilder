@@ -1,10 +1,12 @@
 package org.dashbuilder.common.client.validation.editors;
 
-import com.github.gwtbootstrap.client.ui.Image;
-import com.github.gwtbootstrap.client.ui.Popover;
-import com.github.gwtbootstrap.client.ui.Tooltip;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.Style;
 import com.google.gwt.editor.client.EditorError;
 import com.google.gwt.editor.client.HasEditorErrors;
 import com.google.gwt.editor.client.IsEditor;
@@ -18,9 +20,14 @@ import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiConstructor;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.*;
-
-import java.util.*;
+import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.HasConstrainedValue;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.Widget;
+import org.gwtbootstrap3.client.ui.Popover;
+import org.gwtbootstrap3.client.ui.Tooltip;
 
 /**
  * <p>Editor component that accepts multiple values and display each one using a given image.</p>
@@ -130,10 +137,10 @@ public class ImageListEditor<T> extends Composite implements
                 final String text = _entry.text;
                 if (heading != null && text != null) {
                     final Popover popover = new Popover();
-                    popover.setHeading(heading);
-                    popover.setText(text);
+                    popover.setTitle( heading );
+                    popover.setContent( text );
                     popover.setWidget(_image);
-                    popover.setShowDelay(POPOVER_SHOW_DELAY);
+                    popover.setShowDelayMs( POPOVER_SHOW_DELAY );
                     mainPanel.add(popover);
                 } else {
                     mainPanel.add(_image);
@@ -255,9 +262,9 @@ public class ImageListEditor<T> extends Composite implements
     
     private void setTooltipText(String text) {
         if (text == null || text.trim().length() == 0) {
-            errorTooltip.setText("");
+            errorTooltip.setTitle( "" );
         } else {
-            errorTooltip.setText(text);
+            errorTooltip.setTitle(text);
         }
         // See issue https://github.com/gwtbootstrap/gwt-bootstrap/issues/287
         errorTooltip.reconfigure();

@@ -1,7 +1,7 @@
 package org.dashbuilder.common.client.validation.editors;
 
-import com.github.gwtbootstrap.client.ui.Tooltip;
-import com.github.gwtbootstrap.client.ui.constants.Placement;
+import java.util.List;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.DivElement;
 import com.google.gwt.dom.client.Style;
@@ -11,7 +11,6 @@ import com.google.gwt.editor.client.IsEditor;
 import com.google.gwt.editor.ui.client.adapters.ValueBoxEditor;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
-import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
@@ -20,26 +19,30 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiChild;
 import com.google.gwt.uibinder.client.UiConstructor;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.*;
-
-import java.util.List;
+import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.HasValue;
+import com.google.gwt.user.client.ui.SimplePanel;
+import com.google.gwt.user.client.ui.ValueBoxBase;
+import com.google.gwt.user.client.ui.Widget;
+import org.gwtbootstrap3.client.ui.Tooltip;
+import org.gwtbootstrap3.client.ui.constants.Placement;
 
 /**
  * <p>Editor component decorator that wraps an editor widget and provides displaying of output validation messages.</p>
  * <p>The output validation messages can be displayed as:</p>
  * <ul>
- *     <li>Labels - The validation errors are placed in a label on the RIGHT or LEFT side of the editor widget.</li>     
- *     <li>Tooltip - The validation errors are displayed using a tooltip.</li> 
- * </ul> 
+ *     <li>Labels - The validation errors are placed in a label on the RIGHT or LEFT side of the editor widget.</li>
+ *     <li>Tooltip - The validation errors are displayed using a tooltip.</li>
+ * </ul>
  * @param <T> The type of the value that contains the editor widget.
  */
 public class ValueBoxEditorDecorator<T> extends Composite implements
         HasValue<T>, HasEditorErrors<T>, IsEditor<ValueBoxEditor<T>> {
-    
+
     // The GWT bootstrap styles for error panels.
-    private static final String STYLE_ERROR = " control-group error ";
+    private static final String STYLE_ERROR = " control-group has-error ";
     private T value;
-    
+
     @Override
     public HandlerRegistration addValueChangeHandler(ValueChangeHandler<T> handler) {
         return addHandler(handler, ValueChangeEvent.getType());
@@ -59,7 +62,7 @@ public class ValueBoxEditorDecorator<T> extends Composite implements
     public void setValue(T value, boolean fireEvents) {
         // Disable current error markers, if present.
         disableError();
-        
+
         if (value == this.value || (this.value != null && this.value.equals(value))) {
             return;
         }
@@ -81,27 +84,27 @@ public class ValueBoxEditorDecorator<T> extends Composite implements
         String errorLabel();
         String errorLabelLeft();
         String errorLabelRight();
-        
+
     }
 
     @UiField ValueBoxEditorDecoratorStyle style;
-    
+
     @UiField
     SimplePanel contents;
 
     @UiField
     DivElement errorLabel;
-    
+
     @UiField
     Tooltip errorTooltip;
-    
+
     public enum ErrorLabelPosition {
         LEFT, RIGHT, TOOLTIP_TOP, TOOLTIP_BOTTOM;
-    }    
+    }
 
     private ValueBoxEditor<T> editor;
     private ErrorLabelPosition errorLabelPosition;
-    
+
     /**
      * Constructs a ValueBoxEditorDecorator.
      */
@@ -111,7 +114,7 @@ public class ValueBoxEditorDecorator<T> extends Composite implements
         errorLabelPosition = ErrorLabelPosition.TOOLTIP_TOP;
         initWidget(Binder.BINDER.createAndBindUi(this));
     }
-    
+
     /**
      * Constructs a ValueBoxEditorDecorator using a {@link com.google.gwt.user.client.ui.ValueBoxBase}
      * widget and a {@link com.google.gwt.editor.ui.client.adapters.ValueBoxEditor} editor.
@@ -126,7 +129,7 @@ public class ValueBoxEditorDecorator<T> extends Composite implements
         this.editor = editor;
         listenToValueBoxBaseChangeEvent(widget);
     }
-    
+
     /**
      * Returns the associated {@link com.google.gwt.editor.ui.client.adapters.ValueBoxEditor}.
      *
@@ -159,11 +162,11 @@ public class ValueBoxEditorDecorator<T> extends Composite implements
         listenToValueBoxBaseChangeEvent(widget);
         setEditor(widget.asEditor());
     }
-    
+
     public void setEnabled(final boolean enabled) {
         ((ValueBoxBase)contents.getWidget()).setEnabled(enabled);
     }
-    
+
     private void listenToValueBoxBaseChangeEvent(final ValueBoxBase<T> widget) {
         if (widget != null) {
             final T before = widget.getValue();
@@ -207,7 +210,7 @@ public class ValueBoxEditorDecorator<T> extends Composite implements
         // Show the errors.
         enableError(sb.substring(1));
     }
-    
+
     private void enableError(String text) {
         contents.addStyleName(STYLE_ERROR);
         if (isUsingErrorLabel()) {
@@ -218,22 +221,22 @@ public class ValueBoxEditorDecorator<T> extends Composite implements
             setTooltipText(text);
         }
     }
-    
+
     private void disableError() {
         contents.removeStyleName(STYLE_ERROR);
         setErrorLabelText(null);
         setTooltipText(null);
     }
-    
+
     private void setTooltipText(String text) {
         if (text == null || text.trim().length() == 0) {
-            errorTooltip.setText("");
+            errorTooltip.setTitle( "" );
         } else {
-            errorTooltip.setText(text);
+            errorTooltip.setTitle( text );
         }
         reconfigureTooltip();
     }
-    
+
     private void setErrorLabelText(String text) {
         if (text == null || text.trim().length() == 0) {
             errorLabel.setInnerText("");
@@ -243,7 +246,7 @@ public class ValueBoxEditorDecorator<T> extends Composite implements
             errorLabel.getStyle().setDisplay(Style.Display.INLINE);
         }
     }
-    
+
     private boolean isUsingErrorLabel() {
         return !isUsingErrorTooltip();
     }
@@ -284,7 +287,7 @@ public class ValueBoxEditorDecorator<T> extends Composite implements
     private void reconfigureTooltip() {
         errorTooltip.reconfigure();
     }
-    
+
     public void clear() {
         setValue(null);
         disableError();

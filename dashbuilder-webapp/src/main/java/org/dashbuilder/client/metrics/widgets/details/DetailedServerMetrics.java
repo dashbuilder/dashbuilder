@@ -15,7 +15,6 @@
  */
 package org.dashbuilder.client.metrics.widgets.details;
 
-import com.github.gwtbootstrap.client.ui.Tooltip;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -31,6 +30,7 @@ import org.dashbuilder.displayer.DisplayerSettingsFactory;
 import org.dashbuilder.displayer.client.Displayer;
 import org.dashbuilder.displayer.client.DisplayerCoordinator;
 import org.dashbuilder.displayer.client.DisplayerHelper;
+import org.gwtbootstrap3.client.ui.Tooltip;
 
 import static org.dashbuilder.dataset.filter.FilterFactory.equalsTo;
 import static org.dashbuilder.dataset.filter.FilterFactory.timeFrame;
@@ -279,7 +279,7 @@ public class DetailedServerMetrics extends Composite {
         chartsArea.setVisible(true);
         tableArea.setVisible(false);
         modeIcon.setResource(MetricsDashboardClientBundle.INSTANCE.tableIcon());
-        modeIconTooltip.setText(AppConstants.INSTANCE.metrics_server_detail_modebutton_tt_viewtable());
+        modeIconTooltip.setTitle(AppConstants.INSTANCE.metrics_server_detail_modebutton_tt_viewtable());
     }
 
     private void enableTableMode() {
@@ -287,7 +287,7 @@ public class DetailedServerMetrics extends Composite {
         chartsArea.setVisible(false);
         tableArea.setVisible(true);
         modeIcon.setResource(MetricsDashboardClientBundle.INSTANCE.chartIcon());
-        modeIconTooltip.setText(AppConstants.INSTANCE.metrics_server_detail_modebutton_tt_viewcharts());
+        modeIconTooltip.setTitle(AppConstants.INSTANCE.metrics_server_detail_modebutton_tt_viewcharts());
     }
 
 }

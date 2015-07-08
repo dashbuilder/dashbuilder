@@ -18,7 +18,6 @@ package org.dashbuilder.renderer.google.client;
 import java.util.List;
 import java.util.Set;
 
-import com.github.gwtbootstrap.client.ui.Label;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Anchor;
@@ -29,8 +28,8 @@ import com.googlecode.gwt.charts.client.options.LegendAlignment;
 import com.googlecode.gwt.charts.client.options.LegendPosition;
 import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.dataset.group.Interval;
-import org.dashbuilder.displayer.DisplayerSettings;
 import org.dashbuilder.renderer.google.client.resources.i18n.GoogleDisplayerConstants;
+import org.gwtbootstrap3.client.ui.Label;
 
 /**
  * Base class for all the Google chart like displayers

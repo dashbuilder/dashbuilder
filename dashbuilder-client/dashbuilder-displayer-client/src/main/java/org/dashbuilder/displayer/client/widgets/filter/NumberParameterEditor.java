@@ -15,10 +15,8 @@
  */
 package org.dashbuilder.displayer.client.widgets.filter;
 
-import java.util.Date;
 import javax.enterprise.context.Dependent;
 
-import com.github.gwtbootstrap.datetimepicker.client.ui.DateTimeBox;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;

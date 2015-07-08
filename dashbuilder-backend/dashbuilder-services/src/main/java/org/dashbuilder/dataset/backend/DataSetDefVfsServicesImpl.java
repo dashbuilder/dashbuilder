@@ -47,6 +47,9 @@ public class DataSetDefVfsServicesImpl implements DataSetDefVfsServices {
     @Inject
     protected ExceptionManager exceptionManager;
 
+    @Inject 
+    protected BackendUUIDGenerator backendUUIDGenerator;
+    
     @Override
     public EditDataSetDef load(Path path) {
         try {
@@ -57,6 +60,9 @@ public class DataSetDefVfsServicesImpl implements DataSetDefVfsServices {
 
             // Clone the definition
             DataSetDef cloned = def.clone();
+            String originalUUID = def.getUUID();
+            String newUuid = backendUUIDGenerator.newUuid();
+            cloned.setUUID(newUuid);
 
             // Enable all columns and set columns to null, force to obtain metadata with all original columns
             // and all original column types.
@@ -83,7 +89,7 @@ public class DataSetDefVfsServicesImpl implements DataSetDefVfsServices {
             // Set columns attributes as initially were.
             cloned.setAllColumnsEnabled(clonedAllColumns);
             cloned.setColumns(clonedColumns);
-            return new EditDataSetDef(cloned, columns);
+            return new EditDataSetDef(originalUUID, cloned, columns);
 
         } catch (Exception e) {
             throw exceptionManager.handleException(e);

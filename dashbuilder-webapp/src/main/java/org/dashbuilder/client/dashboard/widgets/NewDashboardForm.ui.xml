@@ -16,22 +16,20 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
              xmlns:g="urn:import:com.google.gwt.user.client.ui"
-             xmlns:b="urn:import:com.github.gwtbootstrap.client.ui"
-             xmlns:base="urn:import:com.github.gwtbootstrap.client.ui.base">
+             xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
 
   <b:Form type="HORIZONTAL">
-    <b:Fieldset>
-      <b:ControlGroup ui:field="nameGroup">
-        <b:ControlLabel>
-          <font color="red">*</font>
-            <base:InlineLabel text="Name"/>
-        </b:ControlLabel>
-        <b:Controls>
-          <b:TextBox ui:field="nameTextBox" placeholder=""/>
-          <b:HelpInline ui:field="nameHelpInline"/>
-        </b:Controls>
-      </b:ControlGroup>
-    </b:Fieldset>
+    <b:FieldSet>
+      <b:FormGroup ui:field="nameGroup">
+        <b:FormLabel for="name" addStyleNames="col-sm-3">
+          <font color="red">*</font>Name
+        </b:FormLabel>
+        <g:FlowPanel addStyleNames="col-sm-9">
+          <b:TextBox b:id="name" ui:field="nameTextBox" placeholder=""/>
+          <b:HelpBlock ui:field="nameHelpInline"/>
+        </g:FlowPanel>
+      </b:FormGroup>
+    </b:FieldSet>
   </b:Form>
 
 </ui:UiBinder>

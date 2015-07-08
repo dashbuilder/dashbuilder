@@ -17,7 +17,6 @@ package org.dashbuilder.displayer.client.widgets;
 
 import javax.enterprise.context.Dependent;
 
-import com.github.gwtbootstrap.client.ui.Row;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -25,6 +24,7 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
+import org.gwtbootstrap3.client.ui.Row;
 
 @Dependent
 public class DisplayerError extends Composite {

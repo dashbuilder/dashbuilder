@@ -15,26 +15,28 @@
  */
 package org.dashbuilder.displayer.client.widgets;
 
-import javax.enterprise.context.Dependent;
-import javax.inject.Inject;
-
-import com.github.gwtbootstrap.client.ui.event.ShownEvent;
-import com.github.gwtbootstrap.client.ui.event.ShownHandler;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.Command;
+import com.google.web.bindery.event.shared.HandlerRegistration;
 import org.dashbuilder.displayer.DisplayerSettings;
 import org.dashbuilder.displayer.client.resources.i18n.CommonConstants;
+import org.gwtbootstrap3.client.shared.event.ModalShownEvent;
+import org.gwtbootstrap3.client.shared.event.ModalShownHandler;
+import org.gwtbootstrap3.client.ui.ModalBody;
 import org.uberfire.ext.widgets.common.client.common.popups.BaseModal;
+import org.uberfire.ext.widgets.common.client.common.popups.footers.ModalFooterOKCancelButtons;
+
+import javax.enterprise.context.Dependent;
+import javax.inject.Inject;
 
 @Dependent
 public class DisplayerEditorPopup extends BaseModal {
 
-    interface Binder extends UiBinder<Widget, DisplayerEditorPopup> {}
+    interface Binder extends UiBinder<ModalBody, DisplayerEditorPopup> {}
     private static Binder uiBinder = GWT.create(Binder.class);
 
     @UiField(provided = true)
@@ -48,43 +50,32 @@ public class DisplayerEditorPopup extends BaseModal {
     public DisplayerEditorPopup(DisplayerEditor editor) {
         this.editor = editor;
         add(uiBinder.createAndBindUi(this));
-        setMaxHeigth("550px");
-        setWidth(950);
+        ModalFooterOKCancelButtons footer = new ModalFooterOKCancelButtons(okCommand, cancelCommand);
+        footer.enableCancelButton(true);
+        footer.enableOkButton(true);
+        add(footer);
+        setWidth(950+"px");
     }
 
     public void init(final DisplayerSettings settings, final DisplayerEditor.Listener editorListener) {
         this.settings = settings;
         this.editorListener = editorListener;
-        show();
         this.showHandlerRegistration = this.addShownHandler(shownHandler);
+        show();
     }
 
     /**
      * <p>The popup must be visible in order that the table can display the different row's values. So after popup is shown, initialize the editor.</p>
      */
-    private final ShownHandler shownHandler = new ShownHandler() {
+    private final ModalShownHandler shownHandler = new ModalShownHandler() {
         @Override
-        public void onShown(final ShownEvent shownEvent) {
+        public void onShown(ModalShownEvent modalShownEvent) {
             editor.init(settings, editorListener);
             setTitle(CommonConstants.INSTANCE.displayer_editor_title());
             if (editor.isBrandNewDisplayer()) setTitle(CommonConstants.INSTANCE.displayer_editor_new());
             removeShownHandler();
         }
     };
-
-    @UiHandler("cancelButton")
-    void cancel(final ClickEvent event) {
-        hide();
-        editor.close();
-        clearSettings();
-    }
-
-    @UiHandler("okButton")
-    void ok(final ClickEvent event) {
-        hide();
-        editor.save();
-        clearSettings();
-    }
 
     private void removeShownHandler() {
         if (this.showHandlerRegistration != null) {
@@ -93,9 +84,20 @@ public class DisplayerEditorPopup extends BaseModal {
         }
     }
 
-    private void clearSettings() {
-        this.settings = null;
-        this.editorListener = null;
-        removeShownHandler();
-    }
+    private final Command cancelCommand = new Command() {
+        @Override
+        public void execute() {
+            hide();
+            editor.close();
+        }
+    };
+
+    private final Command okCommand = new Command() {
+        @Override
+        public void execute() {
+            hide();
+            editor.save();
+        }
+    };
+
 }

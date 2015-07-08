@@ -19,9 +19,6 @@ import java.util.List;
 import java.util.ArrayList;
 import javax.enterprise.context.Dependent;
 
-import com.github.gwtbootstrap.client.ui.Tab;
-import com.github.gwtbootstrap.client.ui.TabPanel;
-import com.github.gwtbootstrap.client.ui.resources.Bootstrap;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -33,6 +30,7 @@ import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.displayer.DisplayerSubType;
 import org.dashbuilder.displayer.DisplayerType;
 import org.dashbuilder.displayer.client.resources.i18n.DisplayerTypeLiterals;
+import org.gwtbootstrap3.client.ui.*;
 
 @Dependent
 public class DisplayerTypeSelector extends Composite implements DisplayerSubtypeSelector.SubTypeChangeListener {
@@ -49,15 +47,15 @@ public class DisplayerTypeSelector extends Composite implements DisplayerSubtype
     DisplayerSubType selectedSubType = null;
     List<DisplayerTab> tabList = new ArrayList<DisplayerTab>();
 
-    @UiField(provided = true)
-    TabPanel displayerTypePanel;
+    @UiField
+    NavTabs navTabs;
 
     @UiField
-    VerticalPanel displayerSubtypePanel;
+    TabPane displayerSubTypePane;
 
     private DisplayerSubtypeSelector subtypeSelector;
 
-    protected void initWidget() {
+    public DisplayerTypeSelector() {
         tabList.add(new DisplayerTab(DisplayerTypeLiterals.INSTANCE.displayer_type_selector_tab_bar(), DisplayerType.BARCHART));
         tabList.add(new DisplayerTab(DisplayerTypeLiterals.INSTANCE.displayer_type_selector_tab_pie(), DisplayerType.PIECHART));
         tabList.add(new DisplayerTab(DisplayerTypeLiterals.INSTANCE.displayer_type_selector_tab_line(), DisplayerType.LINECHART));
@@ -68,38 +66,35 @@ public class DisplayerTypeSelector extends Composite implements DisplayerSubtype
         tabList.add(new DisplayerTab(DisplayerTypeLiterals.INSTANCE.displayer_type_selector_tab_map(), DisplayerType.MAP));
         tabList.add(new DisplayerTab(DisplayerTypeLiterals.INSTANCE.displayer_type_selector_tab_table(), DisplayerType.TABLE));
 
-        displayerTypePanel = new TabPanel(Bootstrap.Tabs.LEFT);
-        displayerTypePanel.getElement().setId("dispTypes"); //for selenium
-        for (DisplayerTab tab : tabList) displayerTypePanel.add(tab);
-
         initWidget(uiBinder.createAndBindUi(this));
 
         subtypeSelector = new DisplayerSubtypeSelector(this);
-        displayerSubtypePanel.add(subtypeSelector);
-        displayerSubtypePanel.getElement().setId("dispSubtypes"); //for selenium
+        displayerSubTypePane.add(subtypeSelector);
+
+        for (DisplayerTab tab : tabList) {
+            addTab(tab);
+        }
+
     }
 
     public void init(Listener listener) {
         this.listener = listener;
-        if (displayerTypePanel == null) {
-            initWidget();
-        }
         draw();
     }
 
     protected void draw() {
-        displayerTypePanel.clear();
+        navTabs.clear();
 
-        for (int i = 0; i < tabList.size(); i++) {
-            DisplayerTab tab = tabList.get(i);
-            tab.setActive(false);
-            displayerTypePanel.add(tab);
-
-            if (tab.type.equals(selectedType)) {
-                tab.setActive(true);
-                displayerTypePanel.selectTab(i);
-            }
+        for ( final DisplayerTab tab : tabList ) {
+            addTab(tab);
+            tab.setActive( tab.type.equals( selectedType ) );
         }
+        displayerSubTypePane.setActive(true);
+    }
+
+    private void addTab(final DisplayerTab tab) {
+        tab.setDataTargetWidget(displayerSubTypePane);
+        navTabs.add(tab);
     }
 
     public void select(String renderer, final DisplayerType type, final DisplayerSubType subtype) {
@@ -117,14 +112,12 @@ public class DisplayerTypeSelector extends Composite implements DisplayerSubtype
         }
     }
 
-    private class DisplayerTab extends Tab {
-
+    private class DisplayerTab extends TabListItem {
         String name;
         DisplayerType type;
 
-        public DisplayerTab(String name, final DisplayerType type) {
-            super();
-            super.setHeading(name);
+        public DisplayerTab(final String name, final DisplayerType type) {
+            super(name);
 
             this.name = name;
             this.type = type;

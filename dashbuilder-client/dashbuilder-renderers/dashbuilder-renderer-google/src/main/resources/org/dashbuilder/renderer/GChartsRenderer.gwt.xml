@@ -6,6 +6,8 @@
 
   <inherits name="com.googlecode.gwt.charts.Charts"/>
 
+  <inherits name="org.gwtbootstrap3.GwtBootstrap3NoTheme"/>
+
   <source path='google'/>
 
 </module>

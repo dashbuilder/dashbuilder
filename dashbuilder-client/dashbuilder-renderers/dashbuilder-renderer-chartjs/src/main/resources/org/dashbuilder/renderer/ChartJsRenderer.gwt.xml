@@ -6,6 +6,8 @@
 
   <inherits name="org.dashbuilder.DisplayerClient"/>
 
+  <inherits name="org.gwtbootstrap3.GwtBootstrap3NoTheme"/>
+
   <source path='chartjs'/>
 
 </module>

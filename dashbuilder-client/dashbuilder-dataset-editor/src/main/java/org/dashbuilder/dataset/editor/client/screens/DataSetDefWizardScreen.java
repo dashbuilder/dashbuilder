@@ -17,12 +17,13 @@ package org.dashbuilder.dataset.editor.client.screens;
 
 import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
+import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
 import com.google.gwt.user.client.ui.IsWidget;
 import org.dashbuilder.client.widgets.dataset.editor.widgets.DataSetEditor;
 import org.dashbuilder.client.widgets.dataset.editor.widgets.events.SaveDataSetEvent;
-import org.dashbuilder.client.widgets.dataset.editor.widgets.events.SaveDataSetEventHandler;
+import org.dashbuilder.client.widgets.dataset.editor.widgets.events.UpdateDataSetEvent;
 import org.dashbuilder.common.client.error.ClientRuntimeError;
 import org.dashbuilder.dataset.def.DataSetDef;
 import org.dashbuilder.dataset.editor.client.resources.i18n.DataSetAuthoringConstants;
@@ -75,11 +76,6 @@ public class DataSetDefWizardScreen {
     public void init(PlaceRequest placeRequest) {
         this.placeRequest = placeRequest;
         dataSetEditor.newDataSetDef();
-        dataSetEditor.addSaveDataSetEventHandler(new SaveDataSetEventHandler() {
-            @Override public void onSaveDataSet(SaveDataSetEvent event) {
-                save(event.getDataSetDef());
-            }
-        });
     }
 
     protected void save(final DataSetDef dataSetDef) {
@@ -107,4 +103,19 @@ public class DataSetDefWizardScreen {
             return false;
         }
     };
+
+    void onDataSetSave(@Observes final SaveDataSetEvent saveDataSetEvent) {
+        if (saveDataSetEvent.getContext().equals(dataSetEditor)) {
+            save(saveDataSetEvent.getDef());
+        }
+    }
+
+    void onDataSetUpdate(@Observes final UpdateDataSetEvent updateDataSetEvent) {
+        if (updateDataSetEvent.getContext().equals(dataSetEditor)) {
+            // Update the def UUID to the original one before saving.
+            final DataSetDef def = updateDataSetEvent.getDef();
+            def.setUUID(updateDataSetEvent.getUuid());
+            save(def);
+        }
+    }
 }

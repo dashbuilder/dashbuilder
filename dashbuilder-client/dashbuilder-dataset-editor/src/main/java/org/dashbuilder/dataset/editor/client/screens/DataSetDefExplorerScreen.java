@@ -16,8 +16,8 @@
 package org.dashbuilder.dataset.editor.client.screens;
 
 import com.google.gwt.user.client.ui.IsWidget;
-import org.dashbuilder.client.widgets.dataset.editor.widgets.DataSetExplorer;
-import org.dashbuilder.client.widgets.dataset.editor.widgets.events.*;
+import org.dashbuilder.client.widgets.dataset.editor.widgets.events.EditDataSetEvent;
+import org.dashbuilder.client.widgets.dataset.editor.widgets.explorer.DataSetExplorer;
 import org.dashbuilder.client.widgets.resources.i18n.DataSetExplorerConstants;
 import org.dashbuilder.dataset.service.DataSetDefVfsServices;
 import org.jboss.errai.common.client.api.Caller;
@@ -37,7 +37,10 @@ import org.uberfire.workbench.model.menu.Menus;
 
 import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
+import javax.enterprise.event.Observes;
 import javax.inject.Inject;
+
+import static org.uberfire.commons.validation.PortablePreconditions.checkNotNull;
 
 /**
  * @since 0.3.0
@@ -64,12 +67,7 @@ public class DataSetDefExplorerScreen {
     @OnStartup
     public void onStartup(PlaceRequest placeRequest) {
         this.menu = makeMenuBar();
-        explorerWidget.addEditDataSetEventHandler(new EditDataSetEventHandler() {
-            @Override
-            public void onEditDataSet(EditDataSetEvent event) {
-                editDataSet(event);
-            }
-        });
+        explorerWidget.show();
     }
 
     @OnClose
@@ -112,7 +110,8 @@ public class DataSetDefExplorerScreen {
         placeManager.goTo("DataSetDefWizard");
     }
     
-    void editDataSet(EditDataSetEvent event) {
-        placeManager.goTo(new PathPlaceRequest(event.getDataSetDef().getVfsPath()));
+    private void onEditDataSetEvent(@Observes EditDataSetEvent event) {
+        checkNotNull("event", event);
+        placeManager.goTo(new PathPlaceRequest(event.getDef().getVfsPath()));
     }
 }

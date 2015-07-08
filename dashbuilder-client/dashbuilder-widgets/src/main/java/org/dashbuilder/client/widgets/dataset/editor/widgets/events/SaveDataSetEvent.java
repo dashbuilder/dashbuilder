@@ -1,25 +1,26 @@
 package org.dashbuilder.client.widgets.dataset.editor.widgets.events;
 
 import org.dashbuilder.dataset.def.DataSetDef;
+import org.uberfire.workbench.events.UberFireEvent;
 
 /**
  * @since 0.3.0
  */
-public class SaveDataSetEvent extends AbstractDataSetEvent<SaveDataSetEventHandler> {
+public class SaveDataSetEvent extends ContextualEvent implements UberFireEvent {
 
-    public static Type<SaveDataSetEventHandler> TYPE = new Type<SaveDataSetEventHandler>();
+    private final DataSetDef def;
 
-    public SaveDataSetEvent(DataSetDef dataSetDef) {
-        super(dataSetDef);
+    public SaveDataSetEvent(Object context, DataSetDef def) {
+        super(context);
+        this.def = def;
+    }
+
+    public DataSetDef getDef() {
+        return def;
     }
 
     @Override
-    public Type<SaveDataSetEventHandler> getAssociatedType() {
-        return TYPE;
-    }
-
-    @Override
-    protected void dispatch(SaveDataSetEventHandler handler) {
-        handler.onSaveDataSet(this);
+    public String toString() {
+        return "SaveDataSetEvent [UUID=" + def.getUUID() + "]";
     }
 }

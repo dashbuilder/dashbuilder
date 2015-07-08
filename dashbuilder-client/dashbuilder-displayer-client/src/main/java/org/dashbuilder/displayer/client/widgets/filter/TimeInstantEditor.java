@@ -19,7 +19,6 @@ import java.util.Arrays;
 import java.util.List;
 import javax.enterprise.context.Dependent;
 
-import com.github.gwtbootstrap.client.ui.ListBox;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -33,6 +32,7 @@ import org.dashbuilder.dataset.date.TimeAmount;
 import org.dashbuilder.dataset.date.TimeInstant;
 import org.dashbuilder.dataset.group.DateIntervalType;
 import org.dashbuilder.displayer.client.resources.i18n.CommonConstants;
+import org.gwtbootstrap3.client.ui.ListBox;
 
 @Dependent
 public class TimeInstantEditor extends Composite {

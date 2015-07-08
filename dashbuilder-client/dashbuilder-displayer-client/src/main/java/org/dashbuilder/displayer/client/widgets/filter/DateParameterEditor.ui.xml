@@ -19,9 +19,9 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
              xmlns:g='urn:import:com.google.gwt.user.client.ui'
-             xmlns:b="urn:import:com.github.gwtbootstrap.datetimepicker.client.ui">
+             xmlns:b2="urn:import:org.gwtbootstrap3.extras.datetimepicker.client.ui">
 
     <g:HorizontalPanel>
-      <b:DateTimeBox ui:field="input" width="150px" />
+      <b2:DateTimePicker ui:field="input" width="150px" />
     </g:HorizontalPanel>
 </ui:UiBinder>

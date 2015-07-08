@@ -16,26 +16,16 @@
 package org.dashbuilder.renderer.google.client;
 
 import java.util.List;
-import java.util.Set;
 
-import com.github.gwtbootstrap.client.ui.Label;
 import com.google.gwt.core.client.JsArray;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.ui.Anchor;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Widget;
 import com.googlecode.gwt.charts.client.DataTable;
 import com.googlecode.gwt.charts.client.Selection;
 import com.googlecode.gwt.charts.client.corechart.CoreChartWidget;
 import com.googlecode.gwt.charts.client.event.SelectEvent;
 import com.googlecode.gwt.charts.client.event.SelectHandler;
-import com.googlecode.gwt.charts.client.geochart.GeoChart;
 import com.googlecode.gwt.charts.client.options.ChartArea;
 import com.googlecode.gwt.charts.client.options.HAxis;
 import com.googlecode.gwt.charts.client.options.VAxis;
-import org.dashbuilder.dataset.DataColumn;
-import org.dashbuilder.dataset.group.Interval;
 import org.dashbuilder.renderer.google.client.resources.i18n.GoogleDisplayerConstants;
 
 public abstract class GoogleCategoriesDisplayer extends GoogleChartDisplayer {

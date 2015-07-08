@@ -1,9 +1,5 @@
 package org.dashbuilder.common.client.widgets;
 
-import com.github.gwtbootstrap.client.ui.Alert;
-import com.github.gwtbootstrap.client.ui.event.ClosedEvent;
-import com.github.gwtbootstrap.client.ui.event.ClosedHandler;
-import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
@@ -11,6 +7,9 @@ import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.*;
 import org.dashbuilder.common.client.resources.i18n.DashbuilderCommonMessages;
+import org.gwtbootstrap3.client.shared.event.AlertClosedEvent;
+import org.gwtbootstrap3.client.shared.event.AlertClosedHandler;
+import org.gwtbootstrap3.client.ui.Alert;
 
 /**
  * <p>A popup panel that provides time out.</p>
@@ -131,9 +130,9 @@ public class TimeoutPopupPanel extends PopupPanel {
         final String m = DashbuilderCommonMessages.INSTANCE.timeout(d);
         
         final Alert alert = new Alert(m);
-        alert.addClosedHandler(new ClosedHandler() {
+        alert.addClosedHandler(new AlertClosedHandler() {
             @Override
-            public void onClosed(ClosedEvent closedEvent) {
+            public void onClosed(AlertClosedEvent closedEvent) {
                 hide();
             }
         });

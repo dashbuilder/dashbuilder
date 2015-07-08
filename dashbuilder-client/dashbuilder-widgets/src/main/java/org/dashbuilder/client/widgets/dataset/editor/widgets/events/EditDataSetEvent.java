@@ -1,25 +1,24 @@
 package org.dashbuilder.client.widgets.dataset.editor.widgets.events;
 
 import org.dashbuilder.dataset.def.DataSetDef;
+import org.jboss.errai.security.shared.api.identity.User;
+import org.uberfire.workbench.events.UberFireEvent;
 
-/**
- * @since 0.3.0
- */
-public class EditDataSetEvent extends AbstractDataSetEvent<EditDataSetEventHandler> {
+public class EditDataSetEvent implements UberFireEvent {
 
-    public static Type<EditDataSetEventHandler> TYPE = new Type<EditDataSetEventHandler>();
+    private final DataSetDef def;
 
-    public EditDataSetEvent(DataSetDef dataSetDef) {
-        super(dataSetDef);
+    public EditDataSetEvent(final DataSetDef def) {
+        this.def = def;
+    }
+
+    public DataSetDef getDef() {
+        return def;
     }
 
     @Override
-    public Type<EditDataSetEventHandler> getAssociatedType() {
-        return TYPE;
+    public String toString() {
+        return "EditDataSetEvent [UUID=" + def.getUUID() + "]";
     }
 
-    @Override
-    protected void dispatch(EditDataSetEventHandler handler) {
-        handler.onEditDataSet(this);
-    }
 }

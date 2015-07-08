@@ -74,6 +74,7 @@ public class GalleryTreeViewImpl extends Composite implements GalleryTreePresent
             TreeItem ti = new TreeItem();
             ti.setText(node.getName());
             ti.setUserObject(node);
+            ti.getElement().getStyle().setCursor(Style.Cursor.POINTER);
             items.addItem(ti);
             populateNavigationTree(node.getChildren(), ti);
         }

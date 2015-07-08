@@ -1,11 +1,11 @@
 package org.dashbuilder.client.widgets.dataset.editor.widgets.editors.datacolumn;
 
-import com.github.gwtbootstrap.client.ui.Image;
 import java.util.EnumMap;
 import org.dashbuilder.client.widgets.resources.i18n.DataSetEditorConstants;
 import org.dashbuilder.common.client.validation.editors.DropDownImageListEditor;
 import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.client.resources.bundles.DataSetClientResources;
+import org.gwtbootstrap3.client.ui.Image;
 
 import java.util.Map;
 
