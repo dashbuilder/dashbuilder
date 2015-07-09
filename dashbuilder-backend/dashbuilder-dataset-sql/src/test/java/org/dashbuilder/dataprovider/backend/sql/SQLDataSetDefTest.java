@@ -114,13 +114,16 @@ public class SQLDataSetDefTest extends SQLDataSetTestBase {
                 DataSetFactory.newDataSetLookupBuilder()
                         .dataset("expense_reports_filtered")
                         .filter("id", FilterFactory.lowerThan("4"))
+                        .group("department")
+                        .column("department")
+                        .column("employee")
+                        .column("amount", AggregateFunctionType.SUM)
+                        .column("date")
                         .buildLookup());
 
         //printDataSet(dataSet);
         assertDataSetValues(dataSet, dataSetFormatter, new String[][]{
-                {"Engineering", "Roxie Foraker", "120.35", "12/11/15 00:00"},
-                {"Engineering", "Roxie Foraker", "1,100.10", "12/01/15 00:00"},
-                {"Engineering", "Roxie Foraker", "900.10", "11/01/15 00:00"},
+                {"Engineering", "Roxie Foraker", "2,120.55", "12/01/15 00:00"}
         }, 0);
     }
 

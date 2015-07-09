@@ -819,6 +819,11 @@ public class SQLDataSetProvider implements DataSetProvider {
             // Group by Label
             else {
                 _jooqQuery.groupBy(_createJooqField(sourceId));
+                for (GroupFunction gf : groupOp.getGroupFunctions()) {
+                    if (!sourceId.equals(gf.getSourceId()) && gf.getFunction() == null) {
+                        postProcessing = true;
+                    }
+                }
             }
 
             // Also add any non-aggregated column (columns pick up) to the group statement
