@@ -483,8 +483,12 @@ public class SQLDataSetProvider implements DataSetProvider {
             this.lookup = lookup;
             DataSetFilter dataSetFilter = def.getDataSetFilter();
             if (dataSetFilter != null) {
-                if (lookup == null) this.lookup = new DataSetLookup(def.getUUID(), dataSetFilter);
-                else this.lookup.addOperation(0, dataSetFilter);
+                if (lookup == null) {
+                    this.lookup = new DataSetLookup(def.getUUID(), dataSetFilter);
+                } else {
+                    DataSetFilter filter = this.lookup.getFirstFilterOp();
+                    filter.getColumnFilterList().addAll(dataSetFilter.getColumnFilterList());
+                }
             }
         }
 

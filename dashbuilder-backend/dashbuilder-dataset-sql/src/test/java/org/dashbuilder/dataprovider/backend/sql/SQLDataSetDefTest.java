@@ -113,6 +113,7 @@ public class SQLDataSetDefTest extends SQLDataSetTestBase {
         DataSet dataSet = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                         .dataset("expense_reports_filtered")
+                        .filter("id", FilterFactory.lowerThan("4"))
                         .buildLookup());
 
         //printDataSet(dataSet);
@@ -120,9 +121,6 @@ public class SQLDataSetDefTest extends SQLDataSetTestBase {
                 {"Engineering", "Roxie Foraker", "120.35", "12/11/15 00:00"},
                 {"Engineering", "Roxie Foraker", "1,100.10", "12/01/15 00:00"},
                 {"Engineering", "Roxie Foraker", "900.10", "11/01/15 00:00"},
-                {"Services", "Jamie Gilbeau", "340.34", "10/12/15 00:00"},
-                {"Services", "Jamie Gilbeau", "300.00", "09/15/15 00:00"},
-                {"Services", "Jamie Gilbeau", "152.25", "08/17/15 00:00"}
         }, 0);
     }
 

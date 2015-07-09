@@ -32,6 +32,12 @@ public class LogicalExprFilter extends ColumnFilter {
     public LogicalExprFilter() {
     }
 
+    public LogicalExprFilter(String columnId, LogicalExprType operator, List<ColumnFilter> terms) {
+        super(columnId);
+        this.logicalOperator = operator;
+        setLogicalTerms(terms);
+    }
+
     public LogicalExprFilter(String columnId, LogicalExprType operator, ColumnFilter... terms) {
         super(columnId);
         this.logicalOperator = operator;

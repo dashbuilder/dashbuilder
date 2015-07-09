@@ -50,10 +50,6 @@ public class FilterFactory {
         return equalsTo(null, allowedValue);
     }
 
-    public static ColumnFilter isEqualsTo(List<Comparable> allowedValues) {
-        return new CoreFunctionFilter(null, CoreFunctionType.EQUALS_TO, allowedValues);
-    }
-
     public static ColumnFilter equalsTo(String columnId, Comparable allowedValue) {
         return new CoreFunctionFilter(columnId, CoreFunctionType.EQUALS_TO, allowedValue);
     }
@@ -134,24 +130,48 @@ public class FilterFactory {
 
     // Boolean operators
 
+    public static ColumnFilter AND(List<ColumnFilter> filters) {
+        return AND(null, filters);
+    }
+
     public static ColumnFilter AND(ColumnFilter... filters) {
         return AND(null, filters);
+    }
+
+    public static ColumnFilter AND(String columnId, List<ColumnFilter> filters) {
+        return new LogicalExprFilter(columnId, LogicalExprType.AND, filters);
     }
 
     public static ColumnFilter AND(String columnId, ColumnFilter... filters) {
         return new LogicalExprFilter(columnId, LogicalExprType.AND, filters);
     }
 
+    public static ColumnFilter OR(List<ColumnFilter> filters) {
+        return OR(null, filters);
+    }
+
     public static ColumnFilter OR(ColumnFilter... filters) {
         return OR(null, filters);
+    }
+
+    public static ColumnFilter OR(String columnId, List<ColumnFilter> filters) {
+        return new LogicalExprFilter(columnId, LogicalExprType.OR, filters);
     }
 
     public static ColumnFilter OR(String columnId, ColumnFilter... filters) {
         return new LogicalExprFilter(columnId, LogicalExprType.OR, filters);
     }
 
+    public static ColumnFilter NOT(List<ColumnFilter> filters) {
+        return NOT(null, filters);
+    }
+
     public static ColumnFilter NOT(ColumnFilter... filters) {
         return NOT(null, filters);
+    }
+
+    public static ColumnFilter NOT(String columnId, List<ColumnFilter> filters) {
+        return new LogicalExprFilter(columnId, LogicalExprType.NOT, filters);
     }
 
     public static ColumnFilter NOT(String columnId, ColumnFilter... filters) {
