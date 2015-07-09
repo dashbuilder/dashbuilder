@@ -49,7 +49,7 @@ public interface Displayer extends DisplayerListener, IsWidget {
     /**
      * Add a listener interested in receive events generated within this displayer component.
      */
-    void addListener(DisplayerListener listener);
+    void addListener(DisplayerListener... listeners);
 
     /**
      * Draw the chart

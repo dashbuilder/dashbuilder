@@ -29,7 +29,7 @@ import static org.uberfire.commons.validation.PortablePreconditions.checkNotNull
 public class DisplayerView extends Composite {
 
     private static final String RENDERER_SELECTOR_WIDTH = "300px";
-    
+
     protected DisplayerSettings displayerSettings;
     protected Panel container = new FlowPanel();
     protected Label label = new Label();
@@ -49,7 +49,7 @@ public class DisplayerView extends Composite {
 
     public DisplayerView(DisplayerSettings settings) {
         this();
-        this.displayerSettings = settings;
+        setDisplayerSettings(settings);
     }
 
     public DisplayerSettings getDisplayerSettings() {
@@ -58,6 +58,7 @@ public class DisplayerView extends Composite {
 
     public void setDisplayerSettings(DisplayerSettings displayerSettings) {
         this.displayerSettings = displayerSettings;
+        init();
     }
 
     public void setIsShowRendererSelector(Boolean isShowRendererSelector) {
@@ -68,14 +69,12 @@ public class DisplayerView extends Composite {
         return displayer;
     }
 
-    public Displayer draw() {
+    public void init() {
         try {
+            // Lookup the displayer
             checkNotNull("displayerSettings", displayerSettings);
-            
-            // Lookup the displayer.
-            displayer = DisplayerHelper.lookupDisplayer(displayerSettings);
-            displayer.addListener(displayerListener);
-            DisplayerHelper.draw(displayer);
+            this.displayer = DisplayerHelper.lookupDisplayer(displayerSettings);
+            this.displayer.addListener(displayerListener);
 
             // Add the displayer into a container
             container.clear();
@@ -89,31 +88,41 @@ public class DisplayerView extends Composite {
                     public void onRendererSelected(RendererSelector.RendererSelectorEvent event) {
                         displayerSettings.setRenderer(event.getRenderer());
                         displayer = DisplayerHelper.lookupDisplayer(displayerSettings);
-                        DisplayerHelper.draw(displayer);
+                        displayer.draw();
 
                         displayerContainer.clear();
                         displayerContainer.add(displayer);
                     }
                 });
-                
+
                 rendererSelector.setWidth(RENDERER_SELECTOR_WIDTH);
                 container.add(rendererSelector);
             }
             container.add(displayerContainer);
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
+            error(new ClientRuntimeError(e));
+        }
+    }
+
+    public Displayer draw() {
+        try {
+            // Draw the displayer
+            displayer.draw();
+        }
+        catch (Exception e) {
             error(new ClientRuntimeError(e));
         }
         return displayer;
     }
-    
+
     public Displayer redraw() {
         try {
             checkNotNull("displayerSettings", displayerSettings);
             checkNotNull("displayer", displayer);
 
             displayer.setDisplayerSettings(displayerSettings);
-
-            DisplayerHelper.redraw( displayer );
+            displayer.redraw();
         } catch (Exception e) {
             error(new ClientRuntimeError(e));
         }

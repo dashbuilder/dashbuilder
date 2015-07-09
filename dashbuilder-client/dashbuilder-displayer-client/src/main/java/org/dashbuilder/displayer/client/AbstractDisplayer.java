@@ -102,8 +102,10 @@ public abstract class AbstractDisplayer extends Composite implements Displayer {
         this.dataSetHandler = dataSetHandler;
     }
 
-    public void addListener(DisplayerListener listener) {
-        listenerList.add(listener);
+    public void addListener(DisplayerListener... listeners) {
+        for (DisplayerListener listener : listeners) {
+            listenerList.add(listener);
+        }
     }
 
     public String getDisplayerId() {
@@ -137,7 +139,6 @@ public abstract class AbstractDisplayer extends Composite implements Displayer {
     public boolean isRefreshOn() {
         return refreshTimer != null;
     }
-
 
     protected void updateRefreshTimer() {
         int seconds = displayerSettings.getRefreshInterval();

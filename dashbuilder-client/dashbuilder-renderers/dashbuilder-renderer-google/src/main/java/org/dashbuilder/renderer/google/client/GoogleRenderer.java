@@ -69,35 +69,35 @@ public class GoogleRenderer extends AbstractRendererLibrary {
     public List<DisplayerType> getSupportedTypes() {
         return _supportedTypes;
     }
-    
+
     @Override
     public List<DisplayerSubType> getSupportedSubtypes(DisplayerType displayerType) {
         switch (displayerType) {
-            case BARCHART: 
+            case BARCHART:
                 return Arrays.asList(BAR, BAR_STACKED, COLUMN, COLUMN_STACKED);
-            case PIECHART: 
+            case PIECHART:
                 return Arrays.asList(PIE, PIE_3D, DONUT);
-            case AREACHART: 
+            case AREACHART:
                 return Arrays.asList(AREA, AREA_STACKED /*,STEPPED*/);
-            case LINECHART: 
+            case LINECHART:
                 return Arrays.asList(LINE, SMOOTH);
-            case MAP: 
+            case MAP:
                 return Arrays.asList(MAP_REGIONS, MAP_MARKERS);
-            default: 
+            default:
                 return Arrays.asList();
         }
     }
 
     public Displayer lookupDisplayer(DisplayerSettings displayerSettings) {
         DisplayerType displayerType = displayerSettings.getType();
-        if (BARCHART.equals(displayerType)) return new GoogleBarChartDisplayer();
-        if (PIECHART.equals(displayerType)) return new GooglePieChartDisplayer();
-        if (AREACHART.equals(displayerType)) return new GoogleAreaChartDisplayer();
-        if (LINECHART.equals(displayerType)) return new GoogleLineChartDisplayer();
-        if (BUBBLECHART.equals(displayerType)) return new GoogleBubbleChartDisplayer();
-        if (METERCHART.equals(displayerType)) return new GoogleMeterChartDisplayer();
-        if (TABLE.equals(displayerType)) return new GoogleTableDisplayer();
-        if (MAP.equals(displayerType)) return new GoogleMapDisplayer();
+        if (BARCHART.equals(displayerType)) return new GoogleBarChartDisplayer().setRenderer(this);
+        if (PIECHART.equals(displayerType)) return new GooglePieChartDisplayer().setRenderer(this);
+        if (AREACHART.equals(displayerType)) return new GoogleAreaChartDisplayer().setRenderer(this);
+        if (LINECHART.equals(displayerType)) return new GoogleLineChartDisplayer().setRenderer(this);
+        if (BUBBLECHART.equals(displayerType)) return new GoogleBubbleChartDisplayer().setRenderer(this);
+        if (METERCHART.equals(displayerType)) return new GoogleMeterChartDisplayer().setRenderer(this);
+        if (TABLE.equals(displayerType)) return new GoogleTableDisplayer().setRenderer(this);
+        if (MAP.equals(displayerType)) return new GoogleMapDisplayer().setRenderer(this);
 
         return null;
     }
@@ -110,7 +110,7 @@ public class GoogleRenderer extends AbstractRendererLibrary {
         Set<ChartPackage> packageList = EnumSet.noneOf(ChartPackage.class);
         for (Displayer displayer : displayerList) {
             try {
-                GoogleDisplayer googleDisplayer = (GoogleDisplayer ) displayer;
+                GoogleDisplayer googleDisplayer = (GoogleDisplayer) displayer;
                 packageList.add( googleDisplayer.getPackage());
             } catch (ClassCastException e) {
                 // Just ignore non Google displayers.
@@ -128,7 +128,14 @@ public class GoogleRenderer extends AbstractRendererLibrary {
 
             // Called when the visualization API has been loaded.
             public void run() {
-                GoogleRenderer.super.draw(displayerList);
+                for (Displayer displayer : displayerList) {
+                    try {
+                        GoogleDisplayer googleDisplayer = (GoogleDisplayer) displayer;
+                        googleDisplayer.ready();
+                    } catch (ClassCastException e) {
+                        // Just ignore non Google displayers.
+                    }
+                }
             }
         });
     }

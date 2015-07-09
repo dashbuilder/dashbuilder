@@ -57,9 +57,9 @@ public abstract class AbstractDataSetDefBuilder<T> implements DataSetDefBuilder<
         return (T) this;
     }
 
-    public T refreshOn(String refreshTime, boolean onlyWhenOutdated) {
+    public T refreshOn(String refreshTime, boolean refreshAlways) {
         def.setRefreshTime(refreshTime);
-        def.setRefreshAlways(!onlyWhenOutdated);
+        def.setRefreshAlways(refreshAlways);
         return (T) this;
     }
 

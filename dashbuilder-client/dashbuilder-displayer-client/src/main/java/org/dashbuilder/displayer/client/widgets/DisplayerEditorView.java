@@ -251,14 +251,14 @@ public class DisplayerEditorView extends Composite
                 displayer.setRefreshOn(false);
                 centerPanel.clear();
                 centerPanel.add(displayer);
-                DisplayerHelper.draw(displayer);
+                displayer.draw();
             } else {
                 displayer = DisplayerLocator.get().lookupDisplayer(settings);
                 displayer.addListener(displayerListener);
                 displayer.setRefreshOn(false);
                 centerPanel.clear();
                 centerPanel.add(displayer);
-                DisplayerHelper.draw(displayer);
+                displayer.draw();
             }
         } catch (Exception e) {
             error(new ClientRuntimeError(e));

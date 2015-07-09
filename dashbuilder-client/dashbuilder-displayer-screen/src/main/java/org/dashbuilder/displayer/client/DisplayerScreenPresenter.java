@@ -71,7 +71,7 @@ public class DisplayerScreenPresenter {
     private DataSetClientServices dataSetClientServices;
 
     private DisplayerView displayerView;
-    DisplayerEditorPopup displayerEditor;
+    private DisplayerEditorPopup displayerEditor;
     private PerspectiveCoordinator perspectiveCoordinator;
     private PerspectiveManager perspectiveManager;
     private PanelManager panelManager;
@@ -79,7 +79,6 @@ public class DisplayerScreenPresenter {
     private DisplayerSettings displayerSettings;
     private PlaceManager placeManager;
     private UUIDGenerator uuidGenerator;
-
 
     private PlaceRequest placeRequest;
     private Menus menu = null;
