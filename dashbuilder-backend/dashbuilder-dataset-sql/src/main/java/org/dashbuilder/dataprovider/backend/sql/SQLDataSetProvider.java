@@ -169,7 +169,7 @@ public class SQLDataSetProvider implements DataSetProvider {
         // Check if the metadata has changed since the last time it was fetched.
         try {
             DataSetMetadata current = getDataSetMetadata(def);
-            return !current.equals(last);
+            return !current.equals(last.metadata);
         }
         catch (Exception e) {
             log.error("Error fetching metadata: " + def, e);
