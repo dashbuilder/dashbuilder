@@ -16,13 +16,13 @@
 package org.dashbuilder.client.widgets.dataset.editor.widgets.editors;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Document;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.dataset.def.DataSetDef;
 import org.dashbuilder.displayer.client.Displayer;
-import org.dashbuilder.displayer.client.DisplayerCoordinator;
 
 import javax.enterprise.context.Dependent;
 
@@ -52,6 +52,9 @@ public class DataSetPreviewEditor extends AbstractDataSetDefEditor {
     public DataSetPreviewEditor() {
         // Initialize the widget.
         initWidget(uiBinder.createAndBindUi(this));
+        // Set id for selenium tests
+        tablePanel.getElement()
+                .setId("ds-preview-editor-" + Document.get().createUniqueId());
     }
 
     public boolean isEditMode() {
