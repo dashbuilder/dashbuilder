@@ -13,7 +13,5 @@
   <exclude name="org.dashbuilder.renderer.google.**"/>
   <exclude name="org.dashbuilder.renderer.chartjs.**"/>
   <exclude name="org.dashbuilder.renderer.lienzo.**"/>
-  <exclude name="com.ait.lienzo.charts.client.**"/>
-  <exclude name="com.ait.lienzo.client.**"/>
 </scan>
 </beans>
