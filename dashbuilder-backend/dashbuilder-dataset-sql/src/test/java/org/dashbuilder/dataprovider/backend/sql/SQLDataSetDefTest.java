@@ -113,6 +113,21 @@ public class SQLDataSetDefTest extends SQLDataSetTestBase {
         DataSet dataSet = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                         .dataset("expense_reports_filtered")
+                        .group("department")
+                        .column("department")
+                        .column("employee")
+                        .column("amount", AggregateFunctionType.SUM)
+                        .column("date")
+                        .buildLookup());
+
+        //printDataSet(dataSet);
+        assertDataSetValues(dataSet, dataSetFormatter, new String[][]{
+                {"Services", "Jamie Gilbeau", "792.59", "09/15/15 00:00"},
+                {"Engineering", "Roxie Foraker", "2,120.55", "12/01/15 00:00"}        }, 0);
+
+        dataSet = dataSetManager.lookupDataSet(
+                DataSetFactory.newDataSetLookupBuilder()
+                        .dataset("expense_reports_filtered")
                         .filter("id", FilterFactory.lowerThan("4"))
                         .group("department")
                         .column("department")
@@ -125,9 +140,5 @@ public class SQLDataSetDefTest extends SQLDataSetTestBase {
         assertDataSetValues(dataSet, dataSetFormatter, new String[][]{
                 {"Engineering", "Roxie Foraker", "2,120.55", "12/01/15 00:00"}
         }, 0);
-    }
-
-    private void printDataSet(DataSet dataSet) {
-        System.out.print(dataSetFormatter.formatDataSet(dataSet, "{", "}", ",\n", "\"", "\"", ", ") + "\n\n");
     }
 }

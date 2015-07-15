@@ -95,7 +95,7 @@ import static org.jooq.impl.DSL.*;
  *      - Group (fixed) by date of week
  *  </p>
  */
-@ApplicationScoped 
+@ApplicationScoped
 @Named("sql")
 public class SQLDataSetProvider implements DataSetProvider {
 
@@ -216,7 +216,7 @@ public class SQLDataSetProvider implements DataSetProvider {
             staticDataSetProvider.removeDataSet(uuid);
         }
     }
-    
+
     // Internal implementation logic
 
     protected class MetadataHolder {
@@ -486,8 +486,7 @@ public class SQLDataSetProvider implements DataSetProvider {
                 if (lookup == null) {
                     this.lookup = new DataSetLookup(def.getUUID(), dataSetFilter);
                 } else {
-                    DataSetFilter filter = this.lookup.getFirstFilterOp();
-                    filter.getColumnFilterList().addAll(dataSetFilter.getColumnFilterList());
+                    this.lookup.addOperation(dataSetFilter);
                 }
             }
         }
@@ -531,8 +530,7 @@ public class SQLDataSetProvider implements DataSetProvider {
                     _appendJooqFrom(def, _jooqQuery);
 
                     // Append the filter clauses
-                    DataSetFilter filterOp = lookup.getFirstFilterOp();
-                    if (filterOp != null) {
+                    for (DataSetFilter filterOp : lookup.getOperationList(DataSetFilter.class)) {
                         _appendJooqFilterBy(def, filterOp, _jooqQuery);
                     }
 
@@ -608,8 +606,7 @@ public class SQLDataSetProvider implements DataSetProvider {
             _appendJooqFrom(def, _jooqLimits);
 
             // Append the filter clauses
-            DataSetFilter filterOp = lookup.getFirstFilterOp();
-            if (filterOp != null) {
+            for (DataSetFilter filterOp : lookup.getOperationList(DataSetFilter.class)) {
                 _appendJooqFilterBy(def, filterOp, _jooqLimits);
             }
 
@@ -852,7 +849,7 @@ public class SQLDataSetProvider implements DataSetProvider {
             }
         }
 
-        protected DataSet _buildDataSet(List<DataColumn> columns, Result _jooqRs) {
+        protected DataSet _buildDataSet(List<DataColumn> columns, Result _jooqRs) throws Exception {
             DataSet dataSet = DataSetFactory.newEmptyDataSet();
             int dateGroupColumnIdx = -1;
             boolean dateIncludeEmptyIntervals = false;
@@ -874,13 +871,8 @@ public class SQLDataSetProvider implements DataSetProvider {
                         column.setColumnType(ColumnType.DATE);
                         for (int j=0; j<values.size(); j++) {
                             Object val = values.remove(j);
-                            try {
-                                Date dateObj = DateUtils.parseDate(column, val);
-                                values.add(j, dateObj);
-                            } catch (Exception e) {
-                                log.error("Error parsing date: " + val);
-                                values.add(j, null);
-                            }
+                            Date dateObj = DateUtils.parseDate(column, val);
+                            values.add(j, dateObj);
                         }
                     }
                 }
@@ -1035,44 +1027,46 @@ public class SQLDataSetProvider implements DataSetProvider {
         protected Field _createJooqGroupDynamicField(ColumnGroup cg, DateIntervalType type) {
             String columnId = cg.getSourceId();
             Field _jooqField = _createJooqField(columnId, SQLDataType.DATE);
-            Field SEPARATOR = field("'-'");
+            Field SEPARATOR_DATE = field("'-'");
+            Field SEPARATOR_EMPTY = field("' '");
+            Field SEPARATOR_TIME = field("':'");
 
             if (DateIntervalType.SECOND.equals(type)) {
-                return concat(year(_jooqField), SEPARATOR,
-                        month(_jooqField), SEPARATOR,
-                        day(_jooqField), SEPARATOR,
-                        hour(_jooqField), SEPARATOR,
-                        minute(_jooqField), SEPARATOR,
+                return concat(year(_jooqField), SEPARATOR_DATE,
+                        month(_jooqField), SEPARATOR_DATE,
+                        day(_jooqField), SEPARATOR_EMPTY,
+                        hour(_jooqField), SEPARATOR_TIME,
+                        minute(_jooqField), SEPARATOR_TIME,
                         second(_jooqField));
             }
             if (DateIntervalType.MINUTE.equals(type)) {
-                return concat(year(_jooqField), SEPARATOR,
-                        month(_jooqField), SEPARATOR,
-                        day(_jooqField), SEPARATOR,
-                        hour(_jooqField), SEPARATOR,
+                return concat(year(_jooqField), SEPARATOR_DATE,
+                        month(_jooqField), SEPARATOR_DATE,
+                        day(_jooqField), SEPARATOR_EMPTY,
+                        hour(_jooqField), SEPARATOR_TIME,
                         minute(_jooqField));
             }
             if (DateIntervalType.HOUR.equals(type)) {
-                return concat(year(_jooqField), SEPARATOR,
-                        month(_jooqField), SEPARATOR,
-                        day(_jooqField), SEPARATOR,
+                return concat(year(_jooqField), SEPARATOR_DATE,
+                        month(_jooqField), SEPARATOR_DATE,
+                        day(_jooqField), SEPARATOR_EMPTY,
                         hour(_jooqField));
             }
             if (DateIntervalType.DAY.equals(type) || DateIntervalType.WEEK.equals(type)) {
-                return concat(year(_jooqField), SEPARATOR,
-                        month(_jooqField), SEPARATOR,
+                return concat(year(_jooqField), SEPARATOR_DATE,
+                        month(_jooqField), SEPARATOR_DATE,
                         day(_jooqField));
             }
             if (DateIntervalType.MONTH.equals(type)
-                || DateIntervalType.QUARTER.equals(type)) {
+                    || DateIntervalType.QUARTER.equals(type)) {
 
-                return concat(year(_jooqField), SEPARATOR,
+                return concat(year(_jooqField), SEPARATOR_DATE,
                         month(_jooqField));
             }
             if (DateIntervalType.YEAR.equals(type)
-                || DateIntervalType.DECADE.equals(type)
-                || DateIntervalType.CENTURY.equals(type)
-                || DateIntervalType.MILLENIUM.equals(type)) {
+                    || DateIntervalType.DECADE.equals(type)
+                    || DateIntervalType.CENTURY.equals(type)
+                    || DateIntervalType.MILLENIUM.equals(type)) {
 
                 return year(_jooqField);
             }

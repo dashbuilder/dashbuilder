@@ -21,6 +21,8 @@ import org.dashbuilder.dataset.DataSetFactory;
 import org.dashbuilder.dataset.DataSetFilterTest;
 import org.dashbuilder.dataset.DataSetGroupTest;
 import org.dashbuilder.dataset.DataSetNestedGroupTest;
+import org.dashbuilder.dataset.filter.FilterFactory;
+import org.dashbuilder.dataset.group.DateIntervalType;
 import org.junit.Test;
 
 import static org.dashbuilder.dataset.filter.FilterFactory.*;
@@ -91,6 +93,22 @@ public class SQLTableDataSetLookupTest extends SQLDataSetTestBase {
         assertThat(result.getValueAt(0, 1)).isEqualTo("Engineering");
         assertThat(result.getValueAt(0, 2)).isEqualTo("Roxie Foraker");
         assertThat(result.getValueAt(0, 3)).isEqualTo(120.35d);
+    }
+
+    @Test
+    public void testDataSetGroupByHour() throws Exception {
+        DataSet result = dataSetManager.lookupDataSet(
+                DataSetFactory.newDataSetLookupBuilder()
+                        .dataset(DataSetGroupTest.EXPENSE_REPORTS)
+                        .filter("id", FilterFactory.OR(
+                                FilterFactory.equalsTo("40"),
+                                FilterFactory.equalsTo("41")))
+                        .group("date").dynamic(9999, DateIntervalType.HOUR, true)
+                        .column("date")
+                        .buildLookup());
+
+        assertThat(result.getRowCount()).isEqualTo(25);
+        assertThat(result.getValueAt(0,0)).isEqualTo("2012-06-12 00");
     }
 
     @Test

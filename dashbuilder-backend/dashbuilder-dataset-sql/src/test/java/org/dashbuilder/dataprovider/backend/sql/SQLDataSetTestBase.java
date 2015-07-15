@@ -154,4 +154,8 @@ public class SQLDataSetTestBase {
                     .execute();
         }
     }
+
+    protected void printDataSet(DataSet dataSet) {
+        System.out.print(dataSetFormatter.formatDataSet(dataSet, "{", "}", ",\n", "\"", "\"", ", ") + "\n\n");
+    }
 }

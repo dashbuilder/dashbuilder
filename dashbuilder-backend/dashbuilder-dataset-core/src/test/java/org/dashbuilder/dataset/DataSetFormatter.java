@@ -49,6 +49,9 @@ public class DataSetFormatter {
 
     public String formatValueAt(DataSet dataSet, int row, int col) {
         Object val = dataSet.getValueAt(row, col);
+        if (val == null) {
+            return "";
+        }
         DataColumn column = dataSet.getColumnByIndex(col);
         if (ColumnType.DATE.equals(column.getColumnType())) {
             return dateFormat.format(val);
@@ -56,7 +59,7 @@ public class DataSetFormatter {
         if (ColumnType.NUMBER.equals(column.getColumnType())) {
             return numberFormat.format(val);
         }
-        return val == null ? null : val.toString();
+        return val.toString();
     }
 
     /**

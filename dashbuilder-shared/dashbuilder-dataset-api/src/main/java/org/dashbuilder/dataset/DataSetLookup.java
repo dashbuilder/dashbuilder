@@ -110,6 +110,14 @@ public class DataSetLookup {
         return (T) operationList.get(index);
     }
 
+    public <T extends DataSetOp> T removeOperation(int index) {
+        return (T) operationList.remove(index);
+    }
+
+    public int getOperationIdx(DataSetOp op) {
+        return operationList.indexOf(op);
+    }
+
     public List<DataSetOp> getOperationList() {
         return operationList;
     }

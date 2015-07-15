@@ -167,11 +167,19 @@ public class BackendIntervalBuilderDynamicDate implements IntervalBuilder {
 
     public DateIntervalType calculateIntervalSize(Date minDate, Date maxDate, ColumnGroup columnGroup) {
 
+        // Catch limit cases
+        if (minDate == null || maxDate == null) {
+            return YEAR;
+        }
+        long millis = (maxDate.getTime() - minDate.getTime());
+        if (millis <= 0) {
+            return YEAR;
+        }
+
         // Calculate the interval type used according to the constraints set.
         int maxIntervals = columnGroup.getMaxIntervals();
         if (maxIntervals < 1) maxIntervals = 15;
         DateIntervalType intervalType = YEAR;
-        long millis = (maxDate.getTime() - minDate.getTime());
         for (DateIntervalType type : values()) {
             long nintervals = millis / getDurationInMillis(type);
             if (nintervals < maxIntervals) {
