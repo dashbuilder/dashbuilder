@@ -1,4 +1,4 @@
-    /**
+/**
  * Copyright (C) 2014 JBoss Inc
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,6 +21,7 @@ import org.dashbuilder.dataset.client.DataSetClientServices;
 import org.dashbuilder.dataset.client.DataSetReadyCallback;
 import org.dashbuilder.dataset.engine.group.IntervalBuilder;
 import org.dashbuilder.dataset.engine.group.IntervalBuilderLocator;
+import org.dashbuilder.dataset.filter.DataSetFilter;
 import org.dashbuilder.dataset.group.*;
 import org.dashbuilder.dataset.sort.ColumnSort;
 import org.dashbuilder.dataset.sort.DataSetSort;
@@ -101,6 +102,20 @@ public class DataSetHandlerImpl implements DataSetHandler {
         return true;
     }
 
+    public boolean filter(DataSetFilter op) {
+        if (op == null) {
+            return false;
+        }
+        // Avoid duplicates
+        for (DataSetFilter next : lookupCurrent.getOperationList(DataSetFilter.class)) {
+            if (op.equals(next)) {
+                return false;
+            }
+        }
+        lookupCurrent.addOperation(0, op);
+        return true;
+    }
+
     public boolean drillDown(DataSetGroup op) {
         ColumnGroup cg = op.getColumnGroup();
         if (cg == null) throw new RuntimeException(CommonConstants.INSTANCE.datasethandler_groupops_no_pivotcolumn());
@@ -137,6 +152,18 @@ public class DataSetHandlerImpl implements DataSetHandler {
 
     public boolean unfilter(DataSetGroup op) {
         return _unfilter(op, false);
+    }
+
+    public boolean unfilter(DataSetFilter op) {
+        if (op == null) {
+            return false;
+        }
+        int idx = lookupCurrent.getOperationIdx(op);
+        if (idx != -1) {
+            lookupCurrent.removeOperation(idx);
+            return true;
+        }
+        return false;
     }
 
     public boolean drillUp(DataSetGroup op) {

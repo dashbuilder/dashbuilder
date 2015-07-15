@@ -20,21 +20,25 @@ import com.github.gwtbootstrap.client.ui.Hero;
 import com.github.gwtbootstrap.client.ui.Paragraph;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.common.client.StringUtils;
 import org.dashbuilder.displayer.DisplayerSettings;
 
-public class MetricView extends Composite {
+public class MetricView extends Composite implements HasClickHandlers {
 
     @UiField
     protected Hero heroPanel;
 
     @UiField
-    protected Panel centerPanel;
+    protected FocusPanel centerPanel;
 
     @UiField
     protected Paragraph titlePanel;
@@ -50,10 +54,12 @@ public class MetricView extends Composite {
     interface Binder extends UiBinder<Widget, MetricView> {}
     private static Binder uiBinder = GWT.create(Binder.class);
 
-    public MetricView(DisplayerSettings displayerSettings) {
-        this.displayerSettings = displayerSettings;
+    public MetricView() {
         initWidget(uiBinder.createAndBindUi(this));
+    }
 
+    public void applySettings(DisplayerSettings displayerSettings) {
+        this.displayerSettings = displayerSettings;
         int w = displayerSettings.getChartWidth();
         int h = displayerSettings.getChartHeight();
         int mtop = displayerSettings.getChartMarginTop();
@@ -91,5 +97,10 @@ public class MetricView extends Composite {
 
     public void updateMetric(String value) {
         metricHeading.setText(value);
+    }
+
+    @Override
+    public HandlerRegistration addClickHandler(ClickHandler clickHandler) {
+        return centerPanel.addClickHandler(clickHandler);
     }
 }

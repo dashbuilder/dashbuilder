@@ -22,6 +22,7 @@ import java.util.Map;
 
 import com.google.gwt.core.client.Callback;
 import org.dashbuilder.common.client.error.ClientRuntimeError;
+import org.dashbuilder.dataset.filter.DataSetFilter;
 import org.dashbuilder.dataset.group.DataSetGroup;
 
 /**
@@ -34,6 +35,19 @@ public class DisplayerCoordinator {
     protected List<Displayer> displayerList = new ArrayList<Displayer>();
     protected Map<RendererLibrary,List<Displayer>> rendererMap = new HashMap<RendererLibrary,List<Displayer>>();
     protected CoordinatorListener displayerListener = new CoordinatorListener();
+    protected Map<Displayer,List<Displayer>> notificationVetoMap = new HashMap<Displayer, List<Displayer>>();
+
+    public void addListener(DisplayerListener... listeners) {
+        for (Displayer displayer : displayerList) {
+            displayer.addListener(listeners);
+        }
+    }
+
+    public void addDisplayers(List<Displayer> displayers) {
+        for (Displayer displayer : displayers) {
+            addDisplayer(displayer);
+        }
+    }
 
     public void addDisplayer(Displayer displayer) {
         if (displayer == null) return;
@@ -90,6 +104,21 @@ public class DisplayerCoordinator {
         }
     }
 
+    public void addNotificationVeto(Displayer target, List<Displayer> vetoedDisplayers) {
+        notificationVetoMap.put(target, vetoedDisplayers);
+    }
+
+    public void addNotificationVeto(List<Displayer> vetoedDisplayers) {
+        for (Displayer target: vetoedDisplayers) {
+            notificationVetoMap.put(target, vetoedDisplayers);
+        }
+    }
+
+    public boolean isNotificationVetoed(Displayer from, Displayer to) {
+        List<Displayer> vetoList = notificationVetoMap.get(to);
+        return vetoList != null && vetoList.contains(from);
+    }
+
     /**
      * Internal class that listens to events raised by any of the Displayer instances handled by this coordinator.
      */
@@ -114,6 +143,7 @@ public class DisplayerCoordinator {
             }
         }
 
+        @Override
         public void onDraw(Displayer displayer) {
             if (draw) count();
             for (Displayer other : displayerList) {
@@ -122,40 +152,66 @@ public class DisplayerCoordinator {
             }
         }
 
+        @Override
         public void onRedraw(Displayer displayer) {
             if (!draw) count();
             for (Displayer other : displayerList) {
-                if (other == displayer) continue;
-                other.onRedraw(displayer);
+                if (other != displayer && !isNotificationVetoed(displayer, other)) {
+                    other.onRedraw(displayer);
+                }
             }
         }
 
         public void onClose(Displayer displayer) {
             for (Displayer other : displayerList) {
-                if (other == displayer) continue;
-                other.onClose(displayer);
+                if (other != displayer && !isNotificationVetoed(displayer, other)) {
+                    other.onClose(displayer);
+                }
             }
         }
 
+        @Override
         public void onFilterEnabled(Displayer displayer, DataSetGroup groupOp) {
             for (Displayer other : displayerList) {
-                if (other == displayer) continue;
-                other.onFilterEnabled(displayer, groupOp);
+                if (other != displayer && !isNotificationVetoed(displayer, other)) {
+                    other.onFilterEnabled(displayer, groupOp);
+                }
             }
         }
 
+        @Override
+        public void onFilterEnabled(Displayer displayer, DataSetFilter filter) {
+            for (Displayer other : displayerList) {
+                if (other != displayer && !isNotificationVetoed(displayer, other)) {
+                    other.onFilterEnabled(displayer, filter);
+                }
+            }
+        }
+
+        @Override
         public void onFilterReset(Displayer displayer, List<DataSetGroup> groupOps) {
             for (Displayer other : displayerList) {
-                if (other == displayer) continue;
-                other.onFilterReset(displayer, groupOps);
+                if (other != displayer && !isNotificationVetoed(displayer, other)) {
+                    other.onFilterReset(displayer, groupOps);
+                }
+            }
+        }
+
+        @Override
+        public void onFilterReset(Displayer displayer, DataSetFilter filter) {
+            for (Displayer other : displayerList) {
+                if (other != displayer && !isNotificationVetoed(displayer, other)) {
+                    other.onFilterReset(displayer, filter);
+                }
             }
         }
 
         @Override
         public void onError(final Displayer displayer, ClientRuntimeError error) {
             for (Displayer other : displayerList) {
-                if (other == displayer) continue;
-                other.onError(displayer, error);
+                if (other != displayer && !isNotificationVetoed(displayer, other)) {
+                    other.onError(displayer, error);
+                }
             }
         }
     }

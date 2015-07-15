@@ -15,17 +15,34 @@
  */
 package org.dashbuilder.renderer.client.metric;
 
+import java.util.List;
+
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Widget;
+import org.dashbuilder.dataset.filter.DataSetFilter;
+import org.dashbuilder.displayer.DisplayerSettings;
 import org.dashbuilder.renderer.client.resources.i18n.MetricConstants;
 
 public class MetricDisplayer extends AbstractMetricDisplayer {
 
     protected MetricView metricView = null;
+    protected boolean filterOn = false;
 
     @Override
     protected Widget createMetricWidget() {
-        metricView = new MetricView(displayerSettings);
+        metricView = new MetricView();
+        metricView.applySettings(displayerSettings);
         updateMetricWidget();
+
+        // Enable filtering
+        if (displayerSettings.isFilterEnabled()) {
+            metricView.addClickHandler(new ClickHandler() {
+                @Override public void onClick(ClickEvent clickEvent) {
+                    updateFilter();
+                }
+            });
+        }
         return metricView;
     }
 
@@ -37,6 +54,55 @@ public class MetricDisplayer extends AbstractMetricDisplayer {
             Number value = (Number) dataSet.getValueAt(0, 0);
             String valueStr = super.formatValue(value, dataSet.getColumnByIndex(0));
             metricView.updateMetric(valueStr);
+        }
+    }
+
+    public boolean isFilterOn() {
+        return filterOn;
+    }
+
+    protected void updateFilter() {
+        if (filterOn) {
+            filterReset();
+        } else {
+            filterApply();
+        }
+    }
+
+    protected DataSetFilter fetchFilter() {
+        List<DataSetFilter> filterOps = displayerSettings.getDataSetLookup().getOperationList(DataSetFilter.class);
+        if (filterOps == null || filterOps.isEmpty()) {
+            return null;
+        }
+        DataSetFilter filter = new DataSetFilter();
+        for (DataSetFilter filterOp : filterOps) {
+            filter.getColumnFilterList().addAll(filterOp.getColumnFilterList());
+        }
+        return filter;
+    }
+
+    public void applySettings(DisplayerSettings displayerSettings) {
+        metricView.applySettings(displayerSettings);
+    }
+
+    public void filterApply() {
+        filterOn = true;
+        DisplayerSettings clone = displayerSettings.cloneInstance();
+        clone.setChartBackgroundColor("DDDDDD");
+        metricView.applySettings(clone);
+
+        DataSetFilter filter = fetchFilter();
+        super.filterApply(filter);
+    }
+
+    @Override
+    public void filterReset() {
+        filterOn = false;
+        metricView.applySettings(displayerSettings);
+
+        DataSetFilter filter = fetchFilter();
+        if (filter != null) {
+            super.filterReset();
         }
     }
 }

@@ -22,11 +22,13 @@
              xmlns:b="urn:import:com.github.gwtbootstrap.client.ui">
 
   <b:Hero ui:field="heroPanel">
-    <g:FlowPanel ui:field="centerPanel">
-      <b:Paragraph ui:field="titlePanel" />
-      <g:FlowPanel ui:field="metricPanel">
-        <b:Heading ui:field="metricHeading" size="2" />
+    <g:FocusPanel ui:field="centerPanel">
+      <g:FlowPanel>
+        <b:Paragraph ui:field="titlePanel" />
+        <g:FlowPanel ui:field="metricPanel">
+          <b:Heading ui:field="metricHeading" size="2" />
+        </g:FlowPanel>
       </g:FlowPanel>
-    </g:FlowPanel>
+    </g:FocusPanel>
   </b:Hero>
 </ui:UiBinder>

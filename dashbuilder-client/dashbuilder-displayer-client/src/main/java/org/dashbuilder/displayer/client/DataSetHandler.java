@@ -18,6 +18,7 @@ package org.dashbuilder.displayer.client;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetLookup;
 import org.dashbuilder.dataset.client.DataSetReadyCallback;
+import org.dashbuilder.dataset.filter.DataSetFilter;
 import org.dashbuilder.dataset.group.DataSetGroup;
 import org.dashbuilder.dataset.group.Interval;
 import org.dashbuilder.dataset.sort.DataSetSort;
@@ -75,6 +76,22 @@ public interface DataSetHandler {
      * @return false, if no filter has been applied for the target operation - true, otherwise.
      */
     boolean unfilter(DataSetGroup op);
+
+    /**
+     * Forces the underlying data set to be updated according the specified filter.
+     *
+     * @param op The filter operation to apply.
+     * @return false, if the filter requested has already been applied - true, otherwise.
+     */
+    boolean filter(DataSetFilter op);
+
+    /**
+     * Reverts the changes applied by a previous <i>filter</i> operation.
+     *
+     * @param op The operation to remove.
+     * @return false, if no filter has been applied for the target operation - true, otherwise.
+     */
+    boolean unfilter(DataSetFilter op);
 
     /**
      * Applies the specified group interval selection operation over the existing group op.

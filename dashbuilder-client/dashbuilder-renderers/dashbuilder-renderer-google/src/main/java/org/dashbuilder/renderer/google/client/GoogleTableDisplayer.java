@@ -44,6 +44,7 @@ import com.googlecode.gwt.charts.client.table.Table;
 import com.googlecode.gwt.charts.client.table.TableOptions;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetLookupConstraints;
+import org.dashbuilder.dataset.filter.DataSetFilter;
 import org.dashbuilder.dataset.group.DataSetGroup;
 import org.dashbuilder.dataset.sort.SortOrder;
 import org.dashbuilder.displayer.DisplayerAttributeDef;
@@ -133,10 +134,24 @@ public class GoogleTableDisplayer extends GoogleDisplayer {
     }
 
     @Override
+    public void onFilterEnabled(Displayer displayer, DataSetFilter filter) {
+        // Reset the current navigation status on filter requests from external displayers.
+        currentPage = 1;
+        super.onFilterEnabled(displayer, filter);
+    }
+
+    @Override
     public void onFilterReset(Displayer displayer, List<DataSetGroup> groupOps) {
         // Reset the current navigation status on filter requests from external displayers.
         currentPage = 1;
         super.onFilterReset(displayer, groupOps);
+    }
+
+    @Override
+    public void onFilterReset(Displayer displayer, DataSetFilter filter) {
+        // Reset the current navigation status on filter requests from external displayers.
+        currentPage = 1;
+        super.onFilterReset(displayer, filter);
     }
 
     @Override

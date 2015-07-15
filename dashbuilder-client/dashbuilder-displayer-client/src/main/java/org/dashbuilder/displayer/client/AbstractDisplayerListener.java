@@ -18,6 +18,7 @@ package org.dashbuilder.displayer.client;
 import java.util.List;
 
 import org.dashbuilder.common.client.error.ClientRuntimeError;
+import org.dashbuilder.dataset.filter.DataSetFilter;
 import org.dashbuilder.dataset.group.DataSetGroup;
 
 /**
@@ -41,7 +42,15 @@ public abstract class AbstractDisplayerListener implements DisplayerListener {
 
     }
 
+    @Override public void onFilterEnabled(Displayer displayer, DataSetFilter filter) {
+
+    }
+
     @Override public void onFilterReset(Displayer displayer, List<DataSetGroup> groupOps) {
+
+    }
+
+    @Override public void onFilterReset(Displayer displayer, DataSetFilter filter) {
 
     }
 

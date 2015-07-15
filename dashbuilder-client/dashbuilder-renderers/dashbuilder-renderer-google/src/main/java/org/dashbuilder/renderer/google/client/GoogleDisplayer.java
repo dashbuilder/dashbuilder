@@ -62,12 +62,13 @@ public abstract class GoogleDisplayer extends AbstractDisplayer {
      * Ensure the displayer is also ready for display, which means the Google Visualization API has been loaded.
      */
     public void draw() {
-        if (googleRenderer != null && !super.isDrawn())  {
+        if (googleRenderer == null)  {
+            afterError("Google renderer not set");
+        }
+        else if (!super.isDrawn())  {
             List<Displayer> displayerList = new ArrayList<Displayer>();
             displayerList.add(this);
             googleRenderer.draw(displayerList);
-        } else {
-            afterError("Google renderer not set");
         }
     }
 

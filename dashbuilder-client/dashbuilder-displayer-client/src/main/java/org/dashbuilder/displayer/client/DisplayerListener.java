@@ -18,6 +18,7 @@ package org.dashbuilder.displayer.client;
 import java.util.List;
 
 import org.dashbuilder.common.client.error.ClientRuntimeError;
+import org.dashbuilder.dataset.filter.DataSetFilter;
 import org.dashbuilder.dataset.group.DataSetGroup;
 
 /**
@@ -55,12 +56,28 @@ public interface DisplayerListener {
     void onFilterEnabled(Displayer displayer, DataSetGroup groupOp);
 
     /**
+     * Invoked when a filter request is executed on a given Displayer instance.
+     *
+     * @param displayer The Displayer instance where the filter request event comes from.
+     * @param filter The filter operation.
+     */
+    void onFilterEnabled(Displayer displayer, DataSetFilter filter);
+
+    /**
      * Invoked when a group interval reset request is executed on a given Displayer instance.
      *
      * @param displayer The Displayer instance where the interval selection event comes from.
      * @param groupOps The set of group interval selection operations reset.
      */
     void onFilterReset(Displayer displayer, List<DataSetGroup> groupOps);
+
+    /**
+     * Invoked when a filter reset request is executed on a given Displayer instance.
+     *
+     * @param displayer The Displayer instance where the filter event comes from.
+     * @param filter The filter operation to reset.
+     */
+    void onFilterReset(Displayer displayer, DataSetFilter filter);
 
     /**
      * Invoked when some error occurs.

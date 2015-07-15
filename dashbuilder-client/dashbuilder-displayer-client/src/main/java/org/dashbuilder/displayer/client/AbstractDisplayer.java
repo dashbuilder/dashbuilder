@@ -37,6 +37,7 @@ import org.dashbuilder.dataset.client.resources.i18n.DayOfWeekConstants;
 import org.dashbuilder.dataset.client.resources.i18n.MonthConstants;
 import org.dashbuilder.dataset.date.DayOfWeek;
 import org.dashbuilder.dataset.date.Month;
+import org.dashbuilder.dataset.filter.DataSetFilter;
 import org.dashbuilder.dataset.group.DateIntervalPattern;
 import org.dashbuilder.displayer.ColumnSettings;
 import org.dashbuilder.dataset.group.ColumnGroup;
@@ -64,6 +65,7 @@ public abstract class AbstractDisplayer extends Composite implements Displayer {
     protected DisplayerConstraints displayerConstraints;
     protected List<DisplayerListener> listenerList = new ArrayList<DisplayerListener>();
     protected Map<String,List<Interval>> columnSelectionMap = new HashMap<String,List<Interval>>();
+    protected DataSetFilter currentFilter = null;
     protected boolean refreshEnabled = true;
     protected boolean drawn = false;
     protected Timer refreshTimer = null;
@@ -237,6 +239,14 @@ public abstract class AbstractDisplayer extends Composite implements Displayer {
     }
 
     @Override
+    public void onFilterEnabled(Displayer displayer, DataSetFilter filter) {
+        if (displayerSettings.isFilterListeningEnabled()) {
+            dataSetHandler.filter(filter);
+            redraw();
+        }
+    }
+
+    @Override
     public void onFilterReset(Displayer displayer, List<DataSetGroup> groupOps) {
         if (displayerSettings.isFilterListeningEnabled()) {
             for (DataSetGroup groupOp : groupOps) {
@@ -246,12 +256,20 @@ public abstract class AbstractDisplayer extends Composite implements Displayer {
         }
     }
 
+    @Override
+    public void onFilterReset(Displayer displayer, DataSetFilter filter) {
+        if (displayerSettings.isFilterListeningEnabled()) {
+            dataSetHandler.unfilter(filter);
+            redraw();
+        }
+    }
+
     // DATA COLUMN VALUES SELECTION, FILTER & NOTIFICATION
 
     /**
      * Get the set of columns being filtered.
      */
-    protected Set<String> filterColumns() {
+    public Set<String> filterColumns() {
         return columnSelectionMap.keySet();
     }
 
@@ -261,7 +279,7 @@ public abstract class AbstractDisplayer extends Composite implements Displayer {
      * @param columnId The column identifier.
      * @return A list of intervals.
      */
-    protected List<Interval> filterIntervals(String columnId) {
+    public List<Interval> filterIntervals(String columnId) {
         List<Interval> selected = columnSelectionMap.get(columnId);
         if (selected == null) return new ArrayList<Interval>();
         return selected;
@@ -273,7 +291,7 @@ public abstract class AbstractDisplayer extends Composite implements Displayer {
      * @param columnId The column identifier.
      * @return A list of interval indexes
      */
-    protected List<Integer> filterIndexes(String columnId) {
+    public List<Integer> filterIndexes(String columnId) {
         List<Integer> result = new ArrayList<Integer>();
         List<Interval> selected = columnSelectionMap.get(columnId);
         if (selected == null) return result;
@@ -290,7 +308,7 @@ public abstract class AbstractDisplayer extends Composite implements Displayer {
      * @param columnId The column to filter for.
      * @param row The row selected.
      */
-    protected void filterUpdate(String columnId, int row) {
+    public void filterUpdate(String columnId, int row) {
         filterUpdate(columnId, row, null);
     }
 
@@ -301,7 +319,7 @@ public abstract class AbstractDisplayer extends Composite implements Displayer {
      * @param row The row selected.
      * @param maxSelections The number of different selectable values available.
      */
-    protected void filterUpdate(String columnId, int row, Integer maxSelections) {
+    public void filterUpdate(String columnId, int row, Integer maxSelections) {
         if (!displayerSettings.isFilterEnabled()) return;
 
         Interval intervalSelected = dataSetHandler.getInterval(columnId, row);
@@ -340,7 +358,7 @@ public abstract class AbstractDisplayer extends Composite implements Displayer {
      * @param columnId The name of the column to filter.
      * @param intervalList A list of interval selections to filter for.
      */
-    protected void filterApply(String columnId, List<Interval> intervalList) {
+    public void filterApply(String columnId, List<Interval> intervalList) {
         if (!displayerSettings.isFilterEnabled()) return;
 
         // For string column filters, init the group interval selection operation.
@@ -361,11 +379,34 @@ public abstract class AbstractDisplayer extends Composite implements Displayer {
     }
 
     /**
+     * Apply the given filter
+     *
+     * @param filter A filter
+     */
+    public void filterApply(DataSetFilter filter) {
+        if (!displayerSettings.isFilterEnabled()) return;
+
+        this.currentFilter = filter;
+
+        // Notify to those interested parties the selection event.
+        if (displayerSettings.isFilterNotificationEnabled()) {
+            for (DisplayerListener listener : listenerList) {
+                listener.onFilterEnabled(this, filter);
+            }
+        }
+        // Drill-down support
+        if (displayerSettings.isFilterSelfApplyEnabled()) {
+            dataSetHandler.filter(filter);
+            redraw();
+        }
+    }
+
+    /**
      * Clear any filter on the given column.
      *
      * @param columnId The name of the column to reset.
      */
-    protected void filterReset(String columnId) {
+    public void filterReset(String columnId) {
         if (!displayerSettings.isFilterEnabled()) return;
 
         columnSelectionMap.remove(columnId);
@@ -387,7 +428,7 @@ public abstract class AbstractDisplayer extends Composite implements Displayer {
     /**
      * Clear any filter.
      */
-    protected void filterReset() {
+    public void filterReset() {
         if (!displayerSettings.isFilterEnabled()) return;
 
         List<DataSetGroup> groupOpList = new ArrayList<DataSetGroup>();
@@ -401,15 +442,24 @@ public abstract class AbstractDisplayer extends Composite implements Displayer {
         // Notify to those interested parties the reset event.
         if (displayerSettings.isFilterNotificationEnabled()) {
             for (DisplayerListener listener : listenerList) {
+                if (currentFilter != null) {
+                    listener.onFilterReset(this, currentFilter);
+                }
                 listener.onFilterReset(this, groupOpList);
             }
         }
         // Apply the selection to this displayer
         if (displayerSettings.isFilterSelfApplyEnabled()) {
+            if (currentFilter != null) {
+                dataSetHandler.unfilter(currentFilter);
+            }
             for (DataSetGroup groupOp : groupOpList) {
                 dataSetHandler.drillUp(groupOp);
             }
             redraw();
+        }
+        if (currentFilter != null) {
+            currentFilter = null;
         }
     }
 
@@ -421,13 +471,13 @@ public abstract class AbstractDisplayer extends Composite implements Displayer {
      * @param columnId The name of the column to sort.
      * @param sortOrder The sort order.
      */
-    protected void sortApply(String columnId, SortOrder sortOrder) {
+    public void sortApply(String columnId, SortOrder sortOrder) {
         dataSetHandler.sort(columnId, sortOrder);
     }
 
     // DATA FORMATTING
 
-    protected String formatInterval(Interval interval, DataColumn column) {
+    public String formatInterval(Interval interval, DataColumn column) {
 
         // Raw values
         if (column == null || column.getColumnGroup() == null) {

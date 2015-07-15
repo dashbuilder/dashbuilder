@@ -229,7 +229,7 @@ public class ColumnFilterEditor extends Composite {
     }
 
     protected Widget createNumberInputWidget(final List paramList, final int paramIndex) {
-        Number param = (Number) paramList.get(paramIndex);
+        Number param = Double.parseDouble(paramList.get(paramIndex).toString());
 
         NumberParameterEditor input = new NumberParameterEditor();
         input.init(param, new NumberParameterEditor.Listener() {
