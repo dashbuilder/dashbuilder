@@ -123,7 +123,8 @@ public class SQLDataSetDefTest extends SQLDataSetTestBase {
         //printDataSet(dataSet);
         assertDataSetValues(dataSet, dataSetFormatter, new String[][]{
                 {"Services", "Jamie Gilbeau", "792.59", "09/15/15 00:00"},
-                {"Engineering", "Roxie Foraker", "2,120.55", "12/01/15 00:00"}        }, 0);
+                {"Engineering", "Roxie Foraker", "2,120.55", "12/01/15 00:00"}
+        }, 0);
 
         dataSet = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()

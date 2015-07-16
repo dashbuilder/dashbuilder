@@ -386,10 +386,6 @@ public class SharedDataSetOpEngine implements DataSetOpEngine {
         protected void sort(DataSetSort op, InternalContext context) {
             checkSortOp(context.dataSet, op);
 
-            if (context.dataSet.getRowCount() < 2) {
-                return;
-            }
-
             // No index => Sort required
             if (context.index == null) {
                 List<Integer> orderedRows = sortAlgorithm.sort(context.getDataSet(), context.getRows(), op.getColumnSortList());

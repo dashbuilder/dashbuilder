@@ -140,6 +140,9 @@ public class BackendIntervalBuilderDynamicDate implements IntervalBuilder {
         Date minDate = (Date) dataColumn.getMinValue();
         Date maxDate = (Date) dataColumn.getMaxValue();
         DateIntervalType intervalType = DateIntervalType.getByName(dataColumn.getIntervalType());
+        if (intervalType == null) {
+            intervalType = DateIntervalType.YEAR;
+        }
 
         IntervalDateRangeList results = new IntervalDateRangeList(columnGroup);
         Calendar c = firstIntervalDate(intervalType, minDate, columnGroup);
@@ -255,35 +258,39 @@ public class BackendIntervalBuilderDynamicDate implements IntervalBuilder {
         if (MILLENIUM.equals(intervalType)) {
             c.add(Calendar.YEAR, 1000 * intervals);
         }
-        if (CENTURY.equals(intervalType)) {
+        else if (CENTURY.equals(intervalType)) {
             c.add(Calendar.YEAR, 100 * intervals);
         }
-        if (DECADE.equals(intervalType)) {
+        else if (DECADE.equals(intervalType)) {
             c.add(Calendar.YEAR, 10 * intervals);
         }
-        if (YEAR.equals(intervalType)) {
+        else if (YEAR.equals(intervalType)) {
             c.add(Calendar.YEAR, intervals);
         }
-        if (QUARTER.equals(intervalType)) {
+        else if (QUARTER.equals(intervalType)) {
             c.add(Calendar.MONTH, 3 * intervals);
         }
-        if (MONTH.equals(intervalType)) {
+        else if (MONTH.equals(intervalType)) {
             c.add(Calendar.MONTH, intervals);
         }
-        if (WEEK.equals(intervalType)) {
+        else if (WEEK.equals(intervalType)) {
             c.add(Calendar.DAY_OF_MONTH, 7 * intervals);
         }
-        if (DAY.equals(intervalType) || DAY_OF_WEEK.equals(intervalType)) {
+        else if (DAY.equals(intervalType) || DAY_OF_WEEK.equals(intervalType)) {
             c.add(Calendar.DAY_OF_MONTH, intervals);
         }
-        if (HOUR.equals(intervalType)) {
+        else if (HOUR.equals(intervalType)) {
             c.add(Calendar.HOUR_OF_DAY, intervals);
         }
-        if (MINUTE.equals(intervalType)) {
+        else if (MINUTE.equals(intervalType)) {
             c.add(Calendar.MINUTE, intervals);
         }
-        if (SECOND.equals(intervalType)) {
+        else if (SECOND.equals(intervalType)) {
             c.add(Calendar.SECOND, intervals);
+        }
+        else {
+            // Default to year to avoid infinite loops
+            c.add(Calendar.YEAR, intervals);
         }
     }
 
@@ -343,7 +350,7 @@ public class BackendIntervalBuilderDynamicDate implements IntervalBuilder {
             super.setMinValue(minDate);
             super.setMaxValue(maxDate);
             super.setIndex(index);
-            super.setType(intervalType.toString());
+            super.setType(intervalType != null ? intervalType.toString() : null);
         }
 
         public Date getMinDate() {
@@ -357,7 +364,7 @@ public class BackendIntervalBuilderDynamicDate implements IntervalBuilder {
 
     public static String calculateName(DateIntervalType intervalType, Date d) {
         if (d == null) return null;
-        
+
         Locale l = Locale.getDefault();
         if (MILLENIUM.equals(intervalType) || CENTURY.equals(intervalType)
             || DECADE.equals(intervalType) || YEAR.equals(intervalType)) {

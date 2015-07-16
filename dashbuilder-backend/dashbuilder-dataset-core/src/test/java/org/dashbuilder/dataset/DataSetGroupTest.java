@@ -17,6 +17,7 @@ package org.dashbuilder.dataset;
 
 import javax.inject.Inject;
 
+import org.dashbuilder.dataset.filter.FilterFactory;
 import org.dashbuilder.dataset.group.DateIntervalType;
 import org.dashbuilder.dataset.date.DayOfWeek;
 import org.dashbuilder.dataset.date.Month;
@@ -379,6 +380,23 @@ public class DataSetGroupTest {
                 {"2", "17.00", "7,678.27"},
                 {"3", "9.00", "3,499.64"},
                 {"4", "10.00", "5,331.03"}
+        }, 0);
+    }
+
+    @Test
+    public void testGroupByDateOneRow() throws Exception {
+        DataSet result = dataSetManager.lookupDataSet(
+                DataSetFactory.newDataSetLookupBuilder()
+                        .dataset(EXPENSE_REPORTS)
+                        .filter("id", FilterFactory.equalsTo(1d))
+                        .group("date").dynamic(16, true)
+                        .column("date")
+                        .column("amount", SUM, "total")
+                        .buildLookup().cloneInstance());
+
+        //printDataSet(result);
+        assertDataSetValues(result, dataSetFormatter, new String[][]{
+            {"2015", "120.35"}
         }, 0);
     }
 

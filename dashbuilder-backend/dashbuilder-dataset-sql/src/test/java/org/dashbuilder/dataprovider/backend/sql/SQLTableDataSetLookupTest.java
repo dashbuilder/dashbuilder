@@ -128,6 +128,7 @@ public class SQLTableDataSetLookupTest extends SQLDataSetTestBase {
         subTest.testGroupByMonthFirstMonth();
         subTest.testGroupByMonthFirstMonthReverse();
         subTest.testGroupByQuarter();
+        subTest.testGroupByDateOneRow();
     }
 
     @Test

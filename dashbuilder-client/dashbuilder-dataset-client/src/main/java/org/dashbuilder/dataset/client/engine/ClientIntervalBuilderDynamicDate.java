@@ -134,6 +134,9 @@ public class ClientIntervalBuilderDynamicDate implements IntervalBuilder {
         Date minDate = (Date) dataColumn.getMinValue();
         Date maxDate = (Date) dataColumn.getMaxValue();
         DateIntervalType intervalType = DateIntervalType.getByName(dataColumn.getIntervalType());
+        if (intervalType == null) {
+            intervalType = DateIntervalType.YEAR;
+        }
 
         IntervalDateRangeList results = new IntervalDateRangeList(columnGroup);
         Date intervalMinDate = firstIntervalDate(intervalType, minDate, columnGroup);
@@ -263,35 +266,39 @@ public class ClientIntervalBuilderDynamicDate implements IntervalBuilder {
         if (MILLENIUM.equals(intervalType)) {
             intervalMaxDate.setYear(intervalMinDate.getYear() + 1000 * intervals);
         }
-        if (CENTURY.equals(intervalType)) {
+        else if (CENTURY.equals(intervalType)) {
             intervalMaxDate.setYear(intervalMinDate.getYear() + 100 * intervals);
         }
-        if (DECADE.equals(intervalType)) {
+        else if (DECADE.equals(intervalType)) {
             intervalMaxDate.setYear(intervalMinDate.getYear() + 10 * intervals);
         }
-        if (YEAR.equals(intervalType)) {
+        else if (YEAR.equals(intervalType)) {
             intervalMaxDate.setYear(intervalMinDate.getYear() +  intervals);
         }
-        if (QUARTER.equals(intervalType)) {
+        else if (QUARTER.equals(intervalType)) {
             intervalMaxDate.setMonth(intervalMinDate.getMonth() + 3 * intervals);
         }
-        if (MONTH.equals(intervalType)) {
+        else if (MONTH.equals(intervalType)) {
             intervalMaxDate.setMonth(intervalMinDate.getMonth() + intervals);
         }
-        if (WEEK.equals(intervalType)) {
+        else if (WEEK.equals(intervalType)) {
             intervalMaxDate.setDate(intervalMinDate.getDate() + 7 * intervals);
         }
-        if (DAY.equals(intervalType) || DAY_OF_WEEK.equals(intervalType)) {
+        else if (DAY.equals(intervalType) || DAY_OF_WEEK.equals(intervalType)) {
             intervalMaxDate.setDate(intervalMinDate.getDate() + intervals);
         }
-        if (HOUR.equals(intervalType)) {
+        else if (HOUR.equals(intervalType)) {
             intervalMaxDate.setHours(intervalMinDate.getHours() + intervals);
         }
-        if (MINUTE.equals(intervalType)) {
+        else if (MINUTE.equals(intervalType)) {
             intervalMaxDate.setMinutes(intervalMinDate.getMinutes() + intervals);
         }
-        if (SECOND.equals(intervalType)) {
+        else if (SECOND.equals(intervalType)) {
             intervalMaxDate.setSeconds(intervalMinDate.getSeconds() + intervals);
+        }
+        else {
+            // Default to year to avoid infinite loops
+            intervalMaxDate.setYear(intervalMinDate.getYear() + intervals);
         }
         return intervalMaxDate;
     }
@@ -327,7 +334,7 @@ public class ClientIntervalBuilderDynamicDate implements IntervalBuilder {
             super.setMinValue(minDate);
             super.setMaxValue(maxDate);
             super.setIndex(index);
-            super.setType(intervalType.toString());
+            super.setType(intervalType != null ? intervalType.toString() : null);
         }
 
         public Date getMinDate() {
