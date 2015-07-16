@@ -46,12 +46,14 @@ public class ClientRuntimeError {
         if (!StringUtils.isBlank(message)) {
             return message;
         }
-        return throwable.getMessage();
+
+        Throwable root = _getRootCause();
+        return root.toString();
     }
 
     public String getCause() {
         Throwable root = _getRootCause();
-        if (root == null || getMessage().equals(root.getMessage())) {
+        if (root == null || getMessage().equals(root.toString())) {
             return null;
         } else {
             return root.getMessage();

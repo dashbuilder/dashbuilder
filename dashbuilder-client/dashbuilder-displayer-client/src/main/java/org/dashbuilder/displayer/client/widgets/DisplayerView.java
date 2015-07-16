@@ -36,8 +36,19 @@ public class DisplayerView extends Composite {
     protected Displayer displayer;
     protected Boolean isShowRendererSelector = false;
     protected DisplayerError errorWidget = new DisplayerError();
+    protected boolean error = true;
 
     DisplayerListener displayerListener = new AbstractDisplayerListener() {
+        public void onDraw(Displayer displayer) {
+            if (error) {
+                show();
+            }
+        }
+        public void onRedraw(Displayer displayer) {
+            if (error) {
+                show();
+            }
+        }
         public void onError(Displayer displayer, ClientRuntimeError error) {
             error(error);
         }
@@ -76,33 +87,39 @@ public class DisplayerView extends Composite {
             this.displayer = DisplayerHelper.lookupDisplayer(displayerSettings);
             this.displayer.addListener(displayerListener);
 
-            // Add the displayer into a container
-            container.clear();
-            final FlowPanel displayerContainer = new FlowPanel();
-            displayerContainer.add(displayer);
-
-            // Add the renderer selector (if enabled)
-            if (isShowRendererSelector) {
-                RendererSelector rendererSelector = new RendererSelector(displayerSettings, RendererSelector.SelectorType.TAB, new RendererSelector.RendererSelectorEventHandler() {
-
-                    public void onRendererSelected(RendererSelector.RendererSelectorEvent event) {
-                        displayerSettings.setRenderer(event.getRenderer());
-                        displayer = DisplayerHelper.lookupDisplayer(displayerSettings);
-                        displayer.draw();
-
-                        displayerContainer.clear();
-                        displayerContainer.add(displayer);
-                    }
-                });
-
-                rendererSelector.setWidth(RENDERER_SELECTOR_WIDTH);
-                container.add(rendererSelector);
-            }
-            container.add(displayerContainer);
+            // Make the displayer visible
+            show();
         }
         catch (Exception e) {
             error(new ClientRuntimeError(e));
         }
+    }
+
+    protected void show() {
+        // Add the displayer into a container
+        container.clear();
+        final FlowPanel displayerContainer = new FlowPanel();
+        displayerContainer.add(displayer);
+
+        // Add the renderer selector (if enabled)
+        if (isShowRendererSelector) {
+            RendererSelector rendererSelector = new RendererSelector(displayerSettings, RendererSelector.SelectorType.TAB, new RendererSelector.RendererSelectorEventHandler() {
+
+                public void onRendererSelected(RendererSelector.RendererSelectorEvent event) {
+                    displayerSettings.setRenderer(event.getRenderer());
+                    displayer = DisplayerHelper.lookupDisplayer(displayerSettings);
+                    displayer.draw();
+
+                    displayerContainer.clear();
+                    displayerContainer.add(displayer);
+                }
+            });
+
+            rendererSelector.setWidth(RENDERER_SELECTOR_WIDTH);
+            container.add(rendererSelector);
+        }
+        container.add(displayerContainer);
+        error = false;
     }
 
     public Displayer draw() {
@@ -134,6 +151,7 @@ public class DisplayerView extends Composite {
         container.add(errorWidget);
         errorWidget.show(e.getMessage(), e.getCause());
 
+        error = true;
         GWT.log(e.getMessage(), e.getThrowable());
     }
 }
