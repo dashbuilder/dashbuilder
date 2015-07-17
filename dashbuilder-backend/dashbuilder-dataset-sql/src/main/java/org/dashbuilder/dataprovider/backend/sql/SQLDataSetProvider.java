@@ -71,10 +71,12 @@ import org.jooq.Condition;
 import org.jooq.DataType;
 import org.jooq.Field;
 import org.jooq.Result;
+import org.jooq.ResultQuery;
 import org.jooq.SelectSelectStep;
 import org.jooq.SelectWhereStep;
 import org.jooq.SortField;
 import org.jooq.Table;
+import org.jooq.conf.ParamType;
 import org.jooq.impl.SQLDataType;
 import org.slf4j.Logger;
 
@@ -310,9 +312,9 @@ public class SQLDataSetProvider implements DataSetProvider {
 
     protected Field[] _getFields(SQLDataSetDef def, Connection conn) throws Exception {
         if (!StringUtils.isBlank(def.getDbSQL())) {
-            return using(conn).select()
+            return logSQL(using(conn).select()
                     .from("(" + def.getDbSQL() + ") as dbSQL")
-                    .limit(1).fetch().fields();
+                    .limit(1)).fetch().fields();
         }
         else {
             List<Table<?>> _jooqTables = using(conn).meta().getTables();
@@ -340,7 +342,7 @@ public class SQLDataSetProvider implements DataSetProvider {
                 _appendJooqFilterBy(def, filter, _jooqQuery);
             }
         }
-        return ((Number) _jooqQuery.fetch().getValue(0 ,0)).intValue();
+        return ((Number) logSQL(_jooqQuery).fetch().getValue(0 ,0)).intValue();
     }
 
     protected DataSet _lookupDataSet(SQLDataSetDef def, DataSetLookup lookup) throws Exception {
@@ -464,6 +466,11 @@ public class SQLDataSetProvider implements DataSetProvider {
         throw new IllegalArgumentException("Filter not supported: " + filter);
     }
 
+    public ResultQuery logSQL(ResultQuery q) {
+        log.debug(q.getSQL(ParamType.INLINED));
+        return q;
+    }
+
     /**
      * Class that provides an isolated context for the processing of a single lookup request.
      */
@@ -513,7 +520,7 @@ public class SQLDataSetProvider implements DataSetProvider {
                     }
 
                     // Fetch the results and build the data set
-                    Result _jooqResults = _jooqQuery.fetch();
+                    Result _jooqResults = logSQL(_jooqQuery).fetch();
                     List<DataColumn> columns = calculateColumns(null);
                     DataSet dataSet = _buildDataSet(columns, _jooqResults);
                     if (trim) dataSet.setRowCountNonTrimmed(totalRows);
@@ -566,7 +573,7 @@ public class SQLDataSetProvider implements DataSetProvider {
                     }
 
                     // Fetch the results and build the data set
-                    Result _jooqResults = _jooqQuery.fetch();
+                    Result _jooqResults = logSQL(_jooqQuery).fetch();
                     List<DataColumn> columns = calculateColumns(groupOp);
                     DataSet dataSet = _buildDataSet(columns, _jooqResults);
                     if (trim) dataSet.setRowCountNonTrimmed(totalRows);
@@ -617,11 +624,10 @@ public class SQLDataSetProvider implements DataSetProvider {
             }
 
             // Fetch the date
-            Result rs = _jooqLimits
+            Result rs = logSQL(_jooqLimits
                     .where(_jooqDate.isNotNull())
                     .orderBy(min ? _jooqDate.asc() : _jooqDate.desc())
-                    .limit(1)
-                    .fetch();
+                    .limit(1)).fetch();
 
             if (rs.isEmpty()) return null;
             return (Date) rs.getValue(0, _jooqDate);
