@@ -25,7 +25,7 @@
 
   <ui:style>
     .errorPanel {
-      margin: 25px;
+      padding: 25px;
     }
 
     .errorRow {
@@ -38,21 +38,13 @@
   </ui:style>
 
   <g:FlowPanel addStyleNames="{style.errorPanel}">
-    <b:Row ui:field="errorMessageRow" addStyleNames="{style.errorRow}">
-      <b:Column size="1">
-        <g:Label text="{i18n.error}" addStyleNames="{style.errorLabel}"/>
-      </b:Column>
-      <b:Column size="3">
-        <g:HTML ui:field="errorMessage" text=""/>
-      </b:Column>
-    </b:Row>
-    <b:Row ui:field="errorCauseRow" addStyleNames="{style.errorRow}">
-      <b:Column size="1">
-        <g:Label text="{i18n.cause}" addStyleNames="{style.errorLabel}"/>
-      </b:Column>
-      <b:Column size="3">
-        <g:HTML ui:field="errorCause" text=""/>
-      </b:Column>
-    </b:Row>
+    <g:FlowPanel ui:field="errorMessageRow" addStyleNames="{style.errorRow}">
+      <g:Label text="{i18n.error}" addStyleNames="{style.errorLabel}"/>
+      <g:HTML ui:field="errorMessage" text=""/>
+    </g:FlowPanel>
+    <g:FlowPanel ui:field="errorCauseRow" addStyleNames="{style.errorRow}">
+      <g:Label text="{i18n.cause}" addStyleNames="{style.errorLabel}"/>
+      <g:HTML ui:field="errorCause" text=""/>
+    </g:FlowPanel>
   </g:FlowPanel>
 </ui:UiBinder>

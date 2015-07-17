@@ -27,9 +27,13 @@ import com.ait.lienzo.charts.client.core.xy.event.ValueSelectedEvent;
 import com.ait.lienzo.charts.client.core.xy.event.ValueSelectedHandler;
 import com.ait.lienzo.charts.shared.core.types.ChartOrientation;
 import com.ait.lienzo.client.core.animation.AnimationTweener;
+import com.ait.lienzo.client.core.shape.Layer;
+import com.ait.lienzo.client.widget.LienzoPanel;
 import com.ait.lienzo.shared.core.types.ColorName;
 import com.ait.lienzo.shared.core.types.IColor;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.DataColumn;
@@ -46,13 +50,75 @@ public abstract class LienzoXYChartDisplayer<T extends XYChart> extends LienzoDi
     };
     
     protected T chart = null;
+    protected FlowPanel filterPanel = new FlowPanel();
+    final protected LienzoPanel chartPanel = new LienzoPanel();
+    final protected Layer layer = new Layer();
 
     public abstract T createChart();
 
     public abstract void reloadChart(final XYChartData newData);
-    
+
     @Override
-    public AbstractChart createVisualization() {
+    public DisplayerConstraints createDisplayerConstraints() {
+
+        DataSetLookupConstraints lookupConstraints = new DataSetLookupConstraints()
+                .setGroupRequired(true)
+                .setGroupColumn(true)
+                .setMaxColumns(10)
+                .setMinColumns(2)
+                .setExtraColumnsAllowed(true)
+                .setExtraColumnsType(ColumnType.NUMBER)
+                .setGroupsTitle("Categories")
+                .setColumnsTitle("Series")
+                .setColumnTypes(new ColumnType[]{
+                        ColumnType.LABEL,
+                        ColumnType.NUMBER});
+
+        return new DisplayerConstraints(lookupConstraints)
+                .supportsAttribute( DisplayerAttributeDef.TYPE )
+                .supportsAttribute(DisplayerAttributeDef.RENDERER)
+                .supportsAttribute( DisplayerAttributeGroupDef.COLUMNS_GROUP )
+                .supportsAttribute( DisplayerAttributeGroupDef.FILTER_GROUP )
+                .supportsAttribute( DisplayerAttributeGroupDef.REFRESH_GROUP)
+                .supportsAttribute( DisplayerAttributeGroupDef.GENERAL_GROUP)
+                .supportsAttribute( DisplayerAttributeDef.CHART_WIDTH )
+                .supportsAttribute( DisplayerAttributeDef.CHART_HEIGHT )
+                .supportsAttribute(DisplayerAttributeDef.CHART_RESIZABLE)
+                .supportsAttribute(DisplayerAttributeDef.CHART_MAX_WIDTH)
+                .supportsAttribute( DisplayerAttributeDef.CHART_MAX_HEIGHT)
+                .supportsAttribute(DisplayerAttributeDef.CHART_BGCOLOR)
+                .supportsAttribute(DisplayerAttributeGroupDef.CHART_MARGIN_GROUP)
+                .supportsAttribute( DisplayerAttributeGroupDef.CHART_LEGEND_GROUP )
+                .supportsAttribute( DisplayerAttributeGroupDef.AXIS_GROUP );
+    }
+
+    @Override
+    protected Widget createVisualization() {
+        HTML titleHtml = new HTML();
+        if (displayerSettings.isTitleVisible()) {
+            titleHtml.setText(displayerSettings.getTitle());
+        }
+
+        FlowPanel container = new FlowPanel();
+        container.add(titleHtml);
+        container.add(filterPanel);
+        container.add(chartPanel);
+
+        if (dataSet.getRowCount() == 0) {
+            container.add(createNoDataMsgPanel());
+        } else {
+            resizePanel(getWidth(), getHeight());
+            layer.setTransformable(true);
+            chartPanel.add(layer);
+            AbstractChart chart = createXYChart();
+            layer.clear();
+            layer.add(chart);
+            layer.draw();
+        }
+        return container;
+    }
+
+    public AbstractChart createXYChart() {
 
         // Create the data for the chart instance.
         XYChartData chartData = createChartData();
@@ -62,15 +128,15 @@ public abstract class LienzoXYChartDisplayer<T extends XYChart> extends LienzoDi
 
         // Data.
         chart.setData(chartData);
-        
+
         // Other chart settings.
         configureXYChart();
-        
+
         return chart;
     }
-    
+
     private void configureXYChart() {
-        
+
         chart.setOrientation(isHorizontal() ? ChartOrientation.HORIZNONAL: ChartOrientation.VERTICAL);
 
         chart.setX(0).setY(0).setName(displayerSettings.getTitle());
@@ -107,7 +173,7 @@ public abstract class LienzoXYChartDisplayer<T extends XYChart> extends LienzoDi
                 }
             });
         }
-        
+
         // TODO: Category and Number types?
         CategoryAxis categoryAxis = new CategoryAxis(displayerSettings.getXAxisTitle());
         NumericAxis numericAxis = new NumericAxis(displayerSettings.getYAxisTitle());
@@ -130,10 +196,12 @@ public abstract class LienzoXYChartDisplayer<T extends XYChart> extends LienzoDi
         final Widget filterReset = super.createCurrentSelectionWidget();
         if (filterReset != null) filterPanel.add(filterReset);
 
+        chartPanel.clear();
         if (dataSet.getRowCount() == 0) {
-            mainPanel.add(super.createNoDataMsgPanel());
+            chartPanel.add(super.createNoDataMsgPanel());
             chart = null;
         } else {
+            chartPanel.add(layer);
             final CategoryAxis categoryAxis = new CategoryAxis(displayerSettings.getXAxisTitle());
             chart.setCategoriesAxis(categoryAxis);
             final XYChartData newData = createChartData();
@@ -148,7 +216,7 @@ public abstract class LienzoXYChartDisplayer<T extends XYChart> extends LienzoDi
         XYChartData chartData = new XYChartData(lienzoTable);
         DataColumn categoriesColumn = getCategoriesColumn();
         DataColumn[] valuesColumns = getValuesColumns();
-        
+
         if (categoriesColumn != null) {
             chartData.setCategoryAxisProperty(categoriesColumn.getId());
             if (valuesColumns != null) {
@@ -170,40 +238,12 @@ public abstract class LienzoXYChartDisplayer<T extends XYChart> extends LienzoDi
         return chartData;
     }
 
-    @Override
-    public DisplayerConstraints createDisplayerConstraints() {
-
-        DataSetLookupConstraints lookupConstraints = new DataSetLookupConstraints()
-                .setGroupRequired(true)
-                .setGroupColumn(true)
-                .setMaxColumns(10)
-                .setMinColumns(2)
-                .setExtraColumnsAllowed(true)
-                .setExtraColumnsType(ColumnType.NUMBER)
-                .setGroupsTitle("Categories")
-                .setColumnsTitle("Series")
-                .setColumnTypes(new ColumnType[]{
-                        ColumnType.LABEL,
-                        ColumnType.NUMBER});
-
-        return new DisplayerConstraints(lookupConstraints)
-                   .supportsAttribute( DisplayerAttributeDef.TYPE )
-                   .supportsAttribute(DisplayerAttributeDef.RENDERER)
-                   .supportsAttribute( DisplayerAttributeGroupDef.COLUMNS_GROUP )
-                   .supportsAttribute( DisplayerAttributeGroupDef.FILTER_GROUP )
-                   .supportsAttribute( DisplayerAttributeGroupDef.REFRESH_GROUP)
-                   .supportsAttribute( DisplayerAttributeGroupDef.GENERAL_GROUP)
-                   .supportsAttribute( DisplayerAttributeDef.CHART_WIDTH )
-                   .supportsAttribute( DisplayerAttributeDef.CHART_HEIGHT )
-                   .supportsAttribute(DisplayerAttributeDef.CHART_RESIZABLE)
-                   .supportsAttribute(DisplayerAttributeDef.CHART_MAX_WIDTH)
-                   .supportsAttribute( DisplayerAttributeDef.CHART_MAX_HEIGHT)
-                   .supportsAttribute(DisplayerAttributeDef.CHART_BGCOLOR)
-                   .supportsAttribute(DisplayerAttributeGroupDef.CHART_MARGIN_GROUP)
-                   .supportsAttribute( DisplayerAttributeGroupDef.CHART_LEGEND_GROUP )
-                   .supportsAttribute( DisplayerAttributeGroupDef.AXIS_GROUP );
+    protected void resizePanel(int w, int h) {
+        String _w = w + PANEL_MARGIN + PIXEL;
+        String _h = h + PANEL_MARGIN + PIXEL;
+        chartPanel.setSize(_w, _h);
     }
-    
+
     protected IColor getSeriesColor(int index) {
         int defaultColorsSize = DEFAULT_SERIE_COLORS.length;
         if (index >= defaultColorsSize) return ColorName.getValues().get(90 + index*2);

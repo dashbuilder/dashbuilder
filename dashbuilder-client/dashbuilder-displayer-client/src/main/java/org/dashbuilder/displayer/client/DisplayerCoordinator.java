@@ -144,6 +144,15 @@ public class DisplayerCoordinator {
         }
 
         @Override
+        public void onDataLookup(Displayer displayer) {
+            for (Displayer other : displayerList) {
+                if (other != displayer && !isNotificationVetoed(displayer, other)) {
+                    other.onDataLookup(displayer);
+                }
+            }
+        }
+
+        @Override
         public void onDraw(Displayer displayer) {
             if (draw) count();
             for (Displayer other : displayerList) {

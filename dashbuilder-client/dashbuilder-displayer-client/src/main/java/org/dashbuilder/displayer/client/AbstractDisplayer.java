@@ -28,11 +28,16 @@ import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.common.client.StringUtils;
 import org.dashbuilder.common.client.error.ClientRuntimeError;
 import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.DataColumn;
+import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.ValidationError;
+import org.dashbuilder.dataset.client.DataSetReadyCallback;
 import org.dashbuilder.dataset.client.resources.i18n.DayOfWeekConstants;
 import org.dashbuilder.dataset.client.resources.i18n.MonthConstants;
 import org.dashbuilder.dataset.date.DayOfWeek;
@@ -48,7 +53,7 @@ import org.dashbuilder.dataset.group.Interval;
 import org.dashbuilder.dataset.sort.SortOrder;
 import org.dashbuilder.displayer.DisplayerConstraints;
 import org.dashbuilder.displayer.DisplayerSettings;
-import org.dashbuilder.displayer.client.resources.i18n.CommonConstants;
+import org.dashbuilder.displayer.client.resources.i18n.DisplayerConstants;
 
 /**
  * Base class for implementing custom displayers.
@@ -60,15 +65,24 @@ import org.dashbuilder.displayer.client.resources.i18n.CommonConstants;
  */
 public abstract class AbstractDisplayer extends Composite implements Displayer {
 
+    protected DataSet dataSet;
     protected DataSetHandler dataSetHandler;
     protected DisplayerSettings displayerSettings;
     protected DisplayerConstraints displayerConstraints;
     protected List<DisplayerListener> listenerList = new ArrayList<DisplayerListener>();
+
+    protected FlowPanel panel = new FlowPanel();
+    protected Label label = new Label();
+
     protected Map<String,List<Interval>> columnSelectionMap = new HashMap<String,List<Interval>>();
     protected DataSetFilter currentFilter = null;
     protected boolean refreshEnabled = true;
     protected boolean drawn = false;
     protected Timer refreshTimer = null;
+
+    public AbstractDisplayer() {
+        initWidget(panel);
+    }
 
     public abstract DisplayerConstraints createDisplayerConstraints();
 
@@ -124,8 +138,148 @@ public abstract class AbstractDisplayer extends Composite implements Displayer {
         return null;
     }
 
+    // DRAW & REDRAW
+
     public boolean isDrawn() {
         return drawn;
+    }
+
+    /**
+     * Draw the displayer by executing first the lookup call to retrieve the target data set
+     */
+    public void draw() {
+        if ( displayerSettings == null ) {
+            displayMessage(DisplayerConstants.INSTANCE.error() + DisplayerConstants.INSTANCE.error_settings_unset());
+        } else if ( dataSetHandler == null ) {
+            displayMessage(DisplayerConstants.INSTANCE.error() + DisplayerConstants.INSTANCE.error_handler_unset());
+        }
+        else {
+            try {
+                String initMsg = DisplayerConstants.INSTANCE.initializing();
+                displayMessage(initMsg);
+
+                beforeLoad();
+                beforeDataSetLookup();
+                dataSetHandler.lookupDataSet(new DataSetReadyCallback() {
+                    public void callback(DataSet result) {
+                        try {
+                            dataSet = result;
+                            afterDataSetLookup(result);
+                            Widget w = createVisualization();
+                            panel.clear();
+                            panel.add(w);
+
+                            // Set the id of the container panel so that the displayer can be easily located
+                            // by testing tools for instance.
+                            String id = getDisplayerId();
+                            if (!StringUtils.isBlank(id)) {
+                                panel.getElement().setId(id);
+                            }
+                            // Draw done
+                            afterDraw();
+                        } catch (Exception e) {
+                            // Give feedback on any initialization error
+                            afterError(e);
+                        }
+                    }
+                    public void notFound() {
+                        displayMessage(DisplayerConstants.INSTANCE.error() + DisplayerConstants.INSTANCE.error_dataset_notfound());
+                    }
+
+                    @Override
+                    public boolean onError(final ClientRuntimeError error) {
+                        afterError(error);
+                        return false;
+                    }
+                });
+            } catch (Exception e) {
+                displayMessage(DisplayerConstants.INSTANCE.error() + e.getMessage());
+                afterError(e);
+            }
+        }
+    }
+
+    /**
+     * Just reload the data set and make the current displayer to redraw.
+     */
+    public void redraw() {
+        if (!isDrawn()) {
+            draw();
+        } else {
+            try {
+                beforeLoad();
+                beforeDataSetLookup();
+                dataSetHandler.lookupDataSet(new DataSetReadyCallback() {
+                    public void callback(DataSet result) {
+                        try {
+                            dataSet = result;
+                            afterDataSetLookup(result);
+                            updateVisualization();
+
+                            // Redraw done
+                            afterRedraw();
+                        } catch (Exception e) {
+                            // Give feedback on any initialization error
+                            afterError(e);
+                        }
+                    }
+                    public void notFound() {
+                        displayMessage(DisplayerConstants.INSTANCE.error() + DisplayerConstants.INSTANCE.error_dataset_notfound());
+                        afterError(DisplayerConstants.INSTANCE.error_dataset_notfound());
+                    }
+
+                    @Override
+                    public boolean onError(final ClientRuntimeError error) {
+                        afterError(error);
+                        return false;
+                    }
+                });
+            } catch (Exception e) {
+                displayMessage(DisplayerConstants.INSTANCE.error() + e.getMessage());
+                afterError(e);
+            }
+        }
+    }
+
+    /**
+     * Close the displayer
+     */
+    public void close() {
+        panel.clear();
+
+        // Close done
+        afterClose();
+    }
+
+    /**
+     * Create the widget used by concrete Google displayer implementation.
+     */
+    protected abstract Widget createVisualization();
+
+    /**
+     * Update the widget used by concrete Google displayer implementation.
+     */
+    protected abstract void updateVisualization();
+
+    /**
+     * Call back method invoked just before the data set lookup is executed.
+     */
+    protected void beforeDataSetLookup() {
+    }
+
+    /**
+     * Call back method invoked just after the data set lookup is executed.
+     */
+    protected void afterDataSetLookup(DataSet dataSet) {
+    }
+
+    /**
+     * Clear the current display and show a notification message.
+     */
+    public void displayMessage(String msg) {
+        panel.clear();
+        panel.add(label);
+        label.setText(msg);
     }
 
     // REFRESH TIMER
@@ -162,6 +316,12 @@ public abstract class AbstractDisplayer extends Composite implements Displayer {
     }
 
     // LIFECYCLE CALLBACKS
+
+    protected void beforeLoad() {
+        for (DisplayerListener listener : listenerList) {
+            listener.onDataLookup(this);
+        }
+    }
 
     protected void afterDraw() {
         drawn = true;
@@ -209,6 +369,11 @@ public abstract class AbstractDisplayer extends Composite implements Displayer {
     }
 
     // CAPTURE EVENTS RECEIVED FROM OTHER DISPLAYERS
+
+    @Override
+    public void onDataLookup(Displayer displayer) {
+        // Do nothing
+    }
 
     @Override
     public void onDraw(Displayer displayer) {
@@ -555,15 +720,15 @@ public abstract class AbstractDisplayer extends Composite implements Displayer {
         }
         for (String keyword : _jsMalicious) {
             if (expr.contains(keyword)) {
-                afterError(CommonConstants.INSTANCE.displayer_keyword_not_allowed(expr));
-                throw new RuntimeException(CommonConstants.INSTANCE.displayer_keyword_not_allowed(expr));
+                afterError(DisplayerConstants.INSTANCE.displayer_keyword_not_allowed(expr));
+                throw new RuntimeException(DisplayerConstants.INSTANCE.displayer_keyword_not_allowed(expr));
             }
         }
         try {
             return evalExpression(val, expr);
         } catch (Exception e) {
-            afterError(CommonConstants.INSTANCE.displayer_expr_invalid_syntax(expr), e);
-            throw new RuntimeException(CommonConstants.INSTANCE.displayer_expr_invalid_syntax(expr));
+            afterError(DisplayerConstants.INSTANCE.displayer_expr_invalid_syntax(expr), e);
+            throw new RuntimeException(DisplayerConstants.INSTANCE.displayer_expr_invalid_syntax(expr));
         }
     }
 

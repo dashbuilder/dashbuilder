@@ -39,35 +39,6 @@ public class ChartJsBarChartDisplayer extends ChartJsDisplayer {
     protected Panel filterPanel = new SimplePanel();
 
     @Override
-    public Widget createVisualization() {
-        HTML titleHtml = new HTML();
-        if (displayerSettings.isTitleVisible()) {
-            titleHtml.setText(displayerSettings.getTitle());
-        }
-
-        FlowPanel container = new FlowPanel();
-        container.add(titleHtml);
-        container.add(filterPanel);
-        container.add(chartPanel);
-
-        BarChart barChart = new BarChart();
-        barChart.setTitle(displayerSettings.getTitle());
-        barChart.setTooltipTemplate("<%= label %>: <%= window.chartJsFormatValue('" + displayerSettings.getUUID() + "', value, 1) %>");
-        barChart.setMultiTooltipTemplate("<%= datasetLabel %>: <%= window.chartJsFormatValue('" + displayerSettings.getUUID() + "', value, 1) %>");
-        barChart.setScaleStepWidth(10);
-        barChart.setLegendTemplate("<ul class=\"<%=name.toLowerCase()%>-legend\"><% for (var i=0; i<datasets.length; i++){%><li><span style=\"background-color:<%=datasets[i].fillColor%>\"></span><%if(datasets[i].label){%><%=datasets[i].label%><%}%></li><%}%></ul>");
-        barChart.setDataProvider(super.createAreaDataProvider());
-        barChart.addDataSelectionHandler(new DataSelectionHandler() {
-            public void onDataSelected(DataSelectionEvent event) {
-                Object o = event.getSource();
-            }
-        });
-        chart = barChart;
-        updateChartPanel();
-        return container;
-    }
-
-    @Override
     public DisplayerConstraints createDisplayerConstraints() {
 
         DataSetLookupConstraints lookupConstraints = new DataSetLookupConstraints()
@@ -96,6 +67,35 @@ public class ChartJsBarChartDisplayer extends ChartJsDisplayer {
                 .supportsAttribute(DisplayerAttributeGroupDef.CHART_MARGIN_GROUP)
                 .supportsAttribute( DisplayerAttributeGroupDef.CHART_LEGEND_GROUP )
                 .supportsAttribute( DisplayerAttributeGroupDef.AXIS_GROUP );
+    }
+
+    @Override
+    public Widget createVisualization() {
+        HTML titleHtml = new HTML();
+        if (displayerSettings.isTitleVisible()) {
+            titleHtml.setText(displayerSettings.getTitle());
+        }
+
+        FlowPanel container = new FlowPanel();
+        container.add(titleHtml);
+        container.add(filterPanel);
+        container.add(chartPanel);
+
+        BarChart barChart = new BarChart();
+        barChart.setTitle(displayerSettings.getTitle());
+        barChart.setTooltipTemplate("<%= label %>: <%= window.chartJsFormatValue('" + displayerSettings.getUUID() + "', value, 1) %>");
+        barChart.setMultiTooltipTemplate("<%= datasetLabel %>: <%= window.chartJsFormatValue('" + displayerSettings.getUUID() + "', value, 1) %>");
+        barChart.setScaleStepWidth(10);
+        barChart.setLegendTemplate("<ul class=\"<%=name.toLowerCase()%>-legend\"><% for (var i=0; i<datasets.length; i++){%><li><span style=\"background-color:<%=datasets[i].fillColor%>\"></span><%if(datasets[i].label){%><%=datasets[i].label%><%}%></li><%}%></ul>");
+        barChart.setDataProvider(super.createAreaDataProvider());
+        barChart.addDataSelectionHandler(new DataSelectionHandler() {
+            public void onDataSelected(DataSelectionEvent event) {
+                Object o = event.getSource();
+            }
+        });
+        chart = barChart;
+        updateChartPanel();
+        return container;
     }
 
     protected void updateVisualization() {

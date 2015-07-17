@@ -30,10 +30,10 @@ public class MetricDisplayer extends AbstractMetricDisplayer {
     protected boolean filterOn = false;
 
     @Override
-    protected Widget createMetricWidget() {
+    protected Widget createVisualization() {
         metricView = new MetricView();
         metricView.applySettings(displayerSettings);
-        updateMetricWidget();
+        updateVisualization();
 
         // Enable filtering
         if (displayerSettings.isFilterEnabled()) {
@@ -47,7 +47,7 @@ public class MetricDisplayer extends AbstractMetricDisplayer {
     }
 
     @Override
-    protected void updateMetricWidget() {
+    protected void updateVisualization() {
         if (dataSet.getRowCount() == 0) {
             metricView.updateMetric(MetricConstants.INSTANCE.metricDisplayer_noDataAvailable());
         } else {

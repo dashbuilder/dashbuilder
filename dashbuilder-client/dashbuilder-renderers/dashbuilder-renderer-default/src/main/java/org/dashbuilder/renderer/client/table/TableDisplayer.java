@@ -54,6 +54,7 @@ import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.dataset.DataSet;
 
 import org.dashbuilder.dataset.sort.SortOrder;
+import org.dashbuilder.displayer.client.resources.i18n.DisplayerConstants;
 import org.dashbuilder.renderer.client.resources.i18n.CommonConstants;
 import org.dashbuilder.renderer.client.resources.i18n.TableConstants;
 
@@ -69,125 +70,8 @@ public class TableDisplayer extends AbstractDisplayer {
     protected String lastOrderedColumn = null;
     protected SortOrder lastSortOrder = null;
 
-    protected FlowPanel panel = new FlowPanel();
-    protected Label label = new Label();
-
-    protected DataSet dataSet;
-
     protected PagedTable<Integer> table;
     protected TableProvider tableProvider = new TableProvider();
-
-    public TableDisplayer() {
-        initWidget( panel );
-    }
-
-    public void draw() {
-        if (!isDrawn()) {
-            if ( displayerSettings == null ) {
-                displayMessage( CommonConstants.INSTANCE.error() + CommonConstants.INSTANCE.error_settings_unset());
-            } else if ( dataSetHandler == null ) {
-                displayMessage(CommonConstants.INSTANCE.error() + CommonConstants.INSTANCE.error_handler_unset());
-            } else {
-                try {
-                    String initMsg = TableConstants.INSTANCE.tableDisplayer_initializing();
-                    //if (!StringUtils.isBlank(displayerSettings.getTitle())) initMsg += " '" + displayerSettings.getTitle() + "'";
-                    displayMessage(initMsg + " ...");
-
-                    lookupDataSet(0, new DataSetReadyCallback() {
-
-                        public void callback( DataSet dataSet ) {
-                            try {
-                                Widget w = createWidget();
-                                panel.clear();
-                                panel.add( w );
-
-                                // Set the id of the container panel so that the displayer can be easily located
-                                // by testing tools for instance.
-                                String id = getDisplayerId();
-                                if (!StringUtils.isBlank(id)) {
-                                    panel.getElement().setId(id);
-                                }
-
-                                // Handle table pager.
-                                handleTablePager();
-
-                                // Draw done
-                                afterDraw();
-                            } catch (Exception e) {
-                                // Give feedback on any initialization error
-                                afterError(e);
-                            }
-                        }
-                        public void notFound() {
-                            displayMessage(CommonConstants.INSTANCE.error() + CommonConstants.INSTANCE.error_dataset_notfound());
-                        }
-
-                        @Override
-                        public boolean onError(final ClientRuntimeError error) {
-                            afterError(error);
-                            return false;
-                        }
-                    });
-                } catch (Exception e) {
-                    displayMessage(CommonConstants.INSTANCE.error() + e.getMessage());
-                    afterError(e);
-                }
-            }
-        }
-    }
-
-    /**
-     * Just reload the data set and make the current Displayer redraw.
-     */
-    public void redraw() {
-        lookupDataSet(0, new DataSetReadyCallback() {
-
-            public void callback( DataSet dataSet ) {
-                try {
-                    tableProvider.gotoFirstPage();
-                    table.setRowCount(numberOfRows, true);
-                    table.redraw();
-                    redrawColumnSelectionWidget();
-
-                    // Handle table pager.
-                    handleTablePager();
-
-                    // Redraw done
-                    afterRedraw();
-                } catch (Exception e) {
-                    // Give feedback on any initialization error
-                    afterError(e);
-                }
-            }
-            public void notFound() {
-                displayMessage(CommonConstants.INSTANCE.error() + CommonConstants.INSTANCE.error_dataset_notfound());
-            }
-
-            @Override
-            public boolean onError(ClientRuntimeError error) {
-                afterError(error);
-                return false;
-            }
-        } );
-    }
-
-    /**
-     * If only exists one page, do not show table pager.  
-     */
-    protected void handleTablePager() {
-        if (table.getPageSize() >= table.getRowCount()) table.pager.setVisible(false);
-        else table.pager.setVisible(true);
-    }
-
-    /**
-     * Close the displayer
-     */
-    public void close() {
-        panel.clear();
-
-        // Close done
-        afterClose();
-    }
 
     @Override
     public DisplayerConstraints createDisplayerConstraints() {
@@ -202,75 +86,44 @@ public class TableDisplayer extends AbstractDisplayer {
                 .setColumnsTitle(TableConstants.INSTANCE.tableDisplayer_columnsTitle());
 
         return new DisplayerConstraints(lookupConstraints)
-                   .supportsAttribute( DisplayerAttributeDef.TYPE )
-                   .supportsAttribute( DisplayerAttributeDef.RENDERER )
-                   .supportsAttribute( DisplayerAttributeGroupDef.COLUMNS_GROUP )
-                   .supportsAttribute( DisplayerAttributeGroupDef.FILTER_GROUP )
-                   .supportsAttribute( DisplayerAttributeGroupDef.REFRESH_GROUP )
-                   .supportsAttribute( DisplayerAttributeGroupDef.GENERAL_GROUP)
-                   .supportsAttribute( DisplayerAttributeGroupDef.TABLE_GROUP );
+                .supportsAttribute( DisplayerAttributeDef.TYPE )
+                .supportsAttribute( DisplayerAttributeDef.RENDERER )
+                .supportsAttribute( DisplayerAttributeGroupDef.COLUMNS_GROUP )
+                .supportsAttribute( DisplayerAttributeGroupDef.FILTER_GROUP )
+                .supportsAttribute( DisplayerAttributeGroupDef.REFRESH_GROUP )
+                .supportsAttribute( DisplayerAttributeGroupDef.GENERAL_GROUP)
+                .supportsAttribute( DisplayerAttributeGroupDef.TABLE_GROUP );
     }
 
-    /**
-     * Clear the current display and show a notification message.
-     */
-    public void displayMessage( String msg ) {
-        panel.clear();
-        panel.add( label );
-        label.setText( msg );
-    }
-
-    /**
-     * Lookup the data
-     */
-    public void lookupDataSet(Integer offset, final DataSetReadyCallback callback) {
-        try {
-
-            // Get the sort settings
-            if (lastOrderedColumn == null) {
-                String defaultSortColumn = displayerSettings.getTableDefaultSortColumnId();
-                if (!StringUtils.isBlank(defaultSortColumn)) {
-                    lastOrderedColumn = defaultSortColumn;
-                    lastSortOrder = displayerSettings.getTableDefaultSortOrder();
-                }
+    @Override
+    protected void beforeDataSetLookup() {
+        // Get the sort settings
+        if (lastOrderedColumn == null) {
+            String defaultSortColumn = displayerSettings.getTableDefaultSortColumnId();
+            if (!StringUtils.isBlank(defaultSortColumn)) {
+                lastOrderedColumn = defaultSortColumn;
+                lastSortOrder = displayerSettings.getTableDefaultSortOrder();
             }
-            // Apply the sort order specified (if any)
-            if (lastOrderedColumn != null) {
-                sortApply(lastOrderedColumn, lastSortOrder);
-            }
-            // Lookup only the target rows
-            dataSetHandler.limitDataSetRows(offset, displayerSettings.getTablePageSize());
-
-            // Do the lookup
-            dataSetHandler.lookupDataSet(
-                    new DataSetReadyCallback() {
-
-                        public void callback( DataSet dataSet ) {
-                            TableDisplayer.this.dataSet = dataSet;
-                            numberOfRows = dataSet.getRowCountNonTrimmed();
-                            callback.callback( dataSet );
-                        }
-                        public void notFound() {
-                            callback.notFound();
-                        }
-
-                        @Override
-                        public boolean onError(ClientRuntimeError error) {
-                            callback.onError(error);
-                            return false;
-                        }
-                    }
-            );
-        } catch (Exception e) {
-            displayMessage(CommonConstants.INSTANCE.error() + e.getMessage());
-            afterError(e);
         }
+        // Apply the sort order specified (if any)
+        if (lastOrderedColumn != null) {
+            sortApply(lastOrderedColumn, lastSortOrder);
+        }
+        // Lookup only the target rows
+        dataSetHandler.limitDataSetRows(tableProvider.lastOffset, displayerSettings.getTablePageSize());
+
     }
 
-    protected Widget createWidget() {
-        table = createTable();
+    @Override
+    protected void afterDataSetLookup(DataSet dataSet) {
+        numberOfRows = dataSet.getRowCountNonTrimmed();
+    }
 
+    @Override
+    protected Widget createVisualization() {
+        table = createTable();
         tableProvider.addDataDisplay(table);
+        updateVisualization();
 
         HTML titleHtml = new HTML();
         if ( displayerSettings.isTitleVisible() ) {
@@ -282,6 +135,23 @@ public class TableDisplayer extends AbstractDisplayer {
         verticalPanel.add(table);
         return verticalPanel;
     }
+
+    @Override
+    protected void updateVisualization() {
+        tableProvider.gotoFirstPage();
+        table.setRowCount(numberOfRows, true);
+
+        int height = 42 + 37 * dataSet.getRowCount();
+        table.setHeight((height > (Window.getClientHeight() - this.getAbsoluteTop()) ? (Window.getClientHeight() - this.getAbsoluteTop()) : height) + "px");
+
+        if (table.getPageSize() >= table.getRowCount()) table.pager.setVisible(false);
+        else table.pager.setVisible(true);
+
+        table.redraw();
+
+        redrawColumnSelectionWidget();
+    }
+
 
     protected PagedTable<Integer> createTable() {
 
@@ -302,10 +172,6 @@ public class TableDisplayer extends AbstractDisplayer {
         }
 
         pagedTable.pager.setPageSize(displayerSettings.getTablePageSize());
-        pagedTable.setRowCount( numberOfRows, true );
-        int height = 42 + 37 * dataSet.getRowCount();
-        pagedTable.setHeight( ( height > ( Window.getClientHeight() - this.getAbsoluteTop() ) ? ( Window.getClientHeight() - this.getAbsoluteTop() ) : height ) + "px" );
-
         int tableWidth = displayerSettings.getTableWidth();
         pagedTable.setWidth( tableWidth == 0 ? dataColumns.size() * 100  + 40 + "px" : tableWidth + "px");
         pagedTable.setEmptyTableCaption( TableConstants.INSTANCE.tableDisplayer_noDataAvailable() );
@@ -409,6 +275,7 @@ public class TableDisplayer extends AbstractDisplayer {
     protected void onCellSelected(String columnId, boolean selectable, int rowIndex) {
         if ( !selectable || !displayerSettings.isFilterEnabled() ) return;
 
+        tableProvider.lastOffset = 0;
         filterUpdate( columnId, rowIndex );
         redrawColumnSelectionWidget();
     }
@@ -418,7 +285,7 @@ public class TableDisplayer extends AbstractDisplayer {
      */
     protected class TableProvider extends AsyncDataProvider<Integer> {
 
-        protected int lastOffset = -1;
+        protected int lastOffset = 0;
 
         protected List<Integer> getCurrentPageRows(HasData<Integer> display) {
             final int start = ((PagedTable) display).getPageStart();
@@ -466,30 +333,36 @@ public class TableDisplayer extends AbstractDisplayer {
                 updateRowData(start, rows);
             }
             else {
-                lastOffset = start;
-                lookupDataSet(lastOffset,
-                        new DataSetReadyCallback() {
-                            public void callback(DataSet dataSet) {
-                                try {
-                                    updateRowData(lastOffset, rows);
-                                    int height = 42 + 37 * dataSet.getRowCount();
-                                    table.setHeight(height + "px");
-                                } catch (Exception e) {
-                                    // Give feedback on any initialization error
-                                    afterError(e);
-                                }
-                            }
-                            public void notFound() {
-                                displayMessage(CommonConstants.INSTANCE.error() + CommonConstants.INSTANCE.error_dataset_notfound());
-                                afterError(new ClientRuntimeError(CommonConstants.INSTANCE.error_dataset_notfound()));
-                            }
-                            public boolean onError(ClientRuntimeError error) {
-                                displayMessage(CommonConstants.INSTANCE.error() + error.getMessage());
-                                afterError(error);
-                                return false;
+                try {
+                    lastOffset = start;
+                    beforeDataSetLookup();
+                    dataSetHandler.lookupDataSet(new DataSetReadyCallback() {
+                        public void callback(DataSet ds) {
+                            try {
+                                dataSet = ds;
+                                afterDataSetLookup(dataSet);
+                                updateRowData(lastOffset, rows);
+                                int height = 42 + 37 * dataSet.getRowCount();
+                                table.setHeight(height + "px");
+                            } catch (Exception e) {
+                                displayMessage(CommonConstants.INSTANCE.error() + e.getMessage());
+                                afterError(e);
                             }
                         }
-                );
+                        public void notFound() {
+                            displayMessage(CommonConstants.INSTANCE.error() + CommonConstants.INSTANCE.error_dataset_notfound());
+                            afterError(new ClientRuntimeError(CommonConstants.INSTANCE.error_dataset_notfound()));
+                        }
+                        public boolean onError(ClientRuntimeError error) {
+                            displayMessage(CommonConstants.INSTANCE.error() + error.getMessage());
+                            afterError(error);
+                            return false;
+                        }
+                    });
+                } catch (Exception e) {
+                    displayMessage(CommonConstants.INSTANCE.error() + e.getMessage());
+                    afterError(e);
+                }
             }
         }
     }

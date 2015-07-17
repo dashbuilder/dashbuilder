@@ -38,166 +38,17 @@ import java.util.Set;
 
 public abstract class LienzoDisplayer extends AbstractDisplayer {
 
-    private static final int PANEL_MARGIN = 50;
-    private static final String PIXEL = "px";
+    public static final int PANEL_MARGIN = 50;
+    public static final String PIXEL = "px";
     public static final int ANIMATION_DURATION = 500;
-    protected FlowPanel mainPanel = new FlowPanel();
-    protected FlowPanel filterPanel = new FlowPanel();
-    final protected LienzoPanel panel = new LienzoPanel();
-    final protected Layer layer = new Layer();
-    final protected Label label = new Label();
 
-    protected DataSet dataSet;
     protected DataTable lienzoTable = null;
     protected DataColumn categoriesColumn = null;
-
-    public LienzoDisplayer() {
-        // Create the main panel.
-        initWidget(mainPanel);
-    }
-
-    /**
-     * Draw the displayer by getting first the underlying data set.
-     * Ensure the displayer is also ready for display, which means the Google Visualization API has been loaded.
-     */
-    public void draw() {
-        if (!isDrawn()) {
-            if (displayerSettings == null) {
-                GWT.log("ERROR: DisplayerSettings property not set");
-            }
-            else if (dataSetHandler == null) {
-                GWT.log("ERROR: DataSetHandler property not set");
-            }
-            else {
-                try {
-                    String initMsg = "Initializing";
-                    GWT.log(initMsg + " ...");
-
-                    mainPanel.clear();
-                    
-                    beforeDataSetLookup();
-                    dataSetHandler.lookupDataSet(new DataSetReadyCallback() {
-                        public void callback(DataSet result) {
-                            try {
-                                dataSet = result;
-                                afterDataSetLookup(result);
-
-                                mainPanel.add(filterPanel);
-
-                                if (dataSet.getRowCount() == 0) {
-                                    mainPanel.add(createNoDataMsgPanel());
-                                } else {
-                                    resizePanel(getWidth(), getHeight());
-                                    layer.setTransformable(true);
-                                    panel.add(layer);
-                                    mainPanel.add(filterPanel);
-                                    mainPanel.add(panel);
-
-                                    AbstractChart chart = createVisualization();
-                                    layer.clear();
-                                    layer.add(chart);
-                                    layer.draw();
-                                }
-
-                                // Draw done
-                                afterDraw();
-                            } catch (Exception e) {
-                                // Give feedback on any initialization error
-                                afterError(e);
-                            }
-                        }
-                        public void notFound() {
-                            GWT.log("ERROR: Data set not found.");
-                        }
-
-                        @Override
-                        public boolean onError(final ClientRuntimeError error) {
-                            afterError(error);
-                            return false;
-                        }
-                    });
-                } catch (Exception e) {
-                    afterError(e.getMessage());
-                }
-            }
-        }
-    }
-
-    /**
-     * Just reload the data set and make the current Google Displayer redraw.
-     */
-    public void redraw() {
-        if (!isDrawn()) {
-            draw();
-        } else {
-            try {
-                beforeDataSetLookup();
-                dataSetHandler.lookupDataSet(new DataSetReadyCallback() {
-                    public void callback(DataSet result) {
-                        try {
-                            dataSet = result;
-                            afterDataSetLookup(result);
-
-                            updateVisualization();
-
-                            // Redraw done
-                            afterRedraw();
-                        } catch (Exception e) {
-                            // Give feedback on any initialization error
-                            afterError(e);
-                        }
-                    }
-                    public void notFound() {
-                        GWT.log("ERROR: Data set not found.");
-                    }
-
-                    @Override
-                    public boolean onError(final ClientRuntimeError error) {
-                        afterError(error);
-                        return false;
-                    }
-                });
-            } catch (Exception e) {
-                afterError(e);
-            }
-        }
-    }
-
-    /**
-     * Close the displayer
-     */
-    public void close() {
-        mainPanel.clear();
-
-        // Close done
-        afterClose();
-    }
-    
-    protected void resizePanel(int w, int h) {
-        String _w = w + PANEL_MARGIN + PIXEL;
-        String _h = h + PANEL_MARGIN + PIXEL;
-        panel.setSize(_w, _h);
-    }
-
-    /**
-     * Create the widget used by concrete Google displayer implementation.
-     */
-    protected abstract AbstractChart createVisualization();
-
-    /**
-     * Update the widget used by concrete Google displayer implementation.
-     */
-    protected abstract void updateVisualization();
-
-    /**
-     * Call back method invoked just before the data set lookup is executed.
-     */
-    protected void beforeDataSetLookup() {
-    }
 
     /**
      * Call back method invoked just after the data set lookup is executed.
      */
+    @Override
     protected void afterDataSetLookup(DataSet dataSet) {
         
         // Ensure data model instance is created.
@@ -205,8 +56,6 @@ public abstract class LienzoDisplayer extends AbstractDisplayer {
 
         // Update the categories column.
         categoriesColumn = getCategoriesColumn();
-
-
     }
 
     protected DataTable createTable() {
@@ -287,7 +136,7 @@ public abstract class LienzoDisplayer extends AbstractDisplayer {
         return  displayerSettings.getChartHeight();
     }
 
-    private int getWidth() {
+    protected int getWidth() {
         int width = displayerSettings.isResizable() ? displayerSettings.getChartMaxWidth() : displayerSettings.getChartWidth();
         int left = displayerSettings.getChartMarginLeft();
         int right = displayerSettings.getChartMarginRight();
@@ -295,7 +144,7 @@ public abstract class LienzoDisplayer extends AbstractDisplayer {
 
     }
 
-    private int getHeight() {
+    protected int getHeight() {
         int height = displayerSettings.isResizable() ? displayerSettings.getChartMaxHeight() : displayerSettings.getChartHeight();
         int top = displayerSettings.getChartMarginTop();
         int bottom = displayerSettings.getChartMarginBottom();

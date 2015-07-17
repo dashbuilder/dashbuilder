@@ -23,8 +23,6 @@ public interface SelectorConstants extends Messages {
 
     public static final SelectorConstants INSTANCE = GWT.create( SelectorConstants.class );
 
-    String selectorDisplayer_initializing();
-
     String selectorDisplayer_noDataAvailable();
 
     String selectorDisplayer_groupsTitle();

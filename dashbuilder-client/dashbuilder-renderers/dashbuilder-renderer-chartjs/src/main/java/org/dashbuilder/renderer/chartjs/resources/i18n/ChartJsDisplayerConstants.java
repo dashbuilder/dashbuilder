@@ -39,17 +39,7 @@ public interface ChartJsDisplayerConstants extends Messages {
 
     String common_noData();
 
-    String chartjsDisplayer_initalizing();
-
     String chartjsDisplayer_resetAnchor();
-
-    String chartjsDisplayer_error();
-
-    String chartjsDisplayer_error_settings_unset();
-
-    String chartjsDisplayer_error_handler_unset();
-
-    String chartjsDisplayer_error_dataset_notfound();
 
     String chartjsCategoriesDisplayer_color_blue();
 

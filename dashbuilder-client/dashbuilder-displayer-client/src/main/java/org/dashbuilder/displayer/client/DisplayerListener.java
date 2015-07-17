@@ -27,6 +27,13 @@ import org.dashbuilder.dataset.group.DataSetGroup;
 public interface DisplayerListener {
 
     /**
+     * Invoked just before the data lookup operation has been started,
+     *
+     * @param displayer The Displayer instance where the interval selection event comes from.
+     */
+    void onDataLookup(Displayer displayer);
+
+    /**
      * Invoked just after the displayer has been drawn.
      *
      * @param displayer The Displayer instance where the interval selection event comes from.

@@ -26,6 +26,10 @@ import org.dashbuilder.dataset.group.DataSetGroup;
  */
 public abstract class AbstractDisplayerListener implements DisplayerListener {
 
+    @Override public void onDataLookup(Displayer displayer) {
+
+    }
+
     @Override public void onDraw(Displayer displayer) {
 
     }

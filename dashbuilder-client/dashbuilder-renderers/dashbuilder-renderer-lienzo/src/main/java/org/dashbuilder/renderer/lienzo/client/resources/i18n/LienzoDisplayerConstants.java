@@ -23,6 +23,4 @@ public interface LienzoDisplayerConstants extends Messages {
 
     public static final LienzoDisplayerConstants INSTANCE = GWT.create( LienzoDisplayerConstants.class );
 
-    // public String googleDisplayer_initalizing();
-    
 }

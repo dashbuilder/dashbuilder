@@ -19,38 +19,22 @@ import java.util.Date;
 import java.util.List;
 import java.util.ArrayList;
 
-import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.Widget;
 import com.googlecode.gwt.charts.client.ChartPackage;
 import com.googlecode.gwt.charts.client.DataTable;
 import com.googlecode.gwt.charts.client.format.DateFormat;
 import com.googlecode.gwt.charts.client.format.DateFormatOptions;
 import com.googlecode.gwt.charts.client.format.NumberFormat;
 import com.googlecode.gwt.charts.client.format.NumberFormatOptions;
-import org.dashbuilder.common.client.StringUtils;
-import org.dashbuilder.common.client.error.ClientRuntimeError;
 import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.DataColumn;
-import org.dashbuilder.dataset.DataSet;
-import org.dashbuilder.dataset.client.DataSetReadyCallback;
 import org.dashbuilder.displayer.ColumnSettings;
 import org.dashbuilder.displayer.client.AbstractDisplayer;
 import org.dashbuilder.displayer.client.Displayer;
-import org.dashbuilder.renderer.google.client.resources.i18n.GoogleDisplayerConstants;
 
 public abstract class GoogleDisplayer extends AbstractDisplayer {
 
-    protected FlowPanel panel = new FlowPanel();
-    protected Label label = new Label();
-
     protected GoogleRenderer googleRenderer;
-    protected DataSet dataSet;
     protected DataTable googleTable = null;
-
-    public GoogleDisplayer() {
-        initWidget(panel);
-    }
 
     public GoogleDisplayer setRenderer(GoogleRenderer googleRenderer) {
         this.googleRenderer = googleRenderer;
@@ -58,14 +42,14 @@ public abstract class GoogleDisplayer extends AbstractDisplayer {
     }
 
     /**
-     * Draw the displayer by getting first the underlying data set.
-     * Ensure the displayer is also ready for display, which means the Google Visualization API has been loaded.
+     * GCharts drawing is done asynchronously via its renderer (see ready() method below)
      */
+    @Override
     public void draw() {
         if (googleRenderer == null)  {
             afterError("Google renderer not set");
         }
-        else if (!super.isDrawn())  {
+        else if (!isDrawn())  {
             List<Displayer> displayerList = new ArrayList<Displayer>();
             displayerList.add(this);
             googleRenderer.draw(displayerList);
@@ -76,110 +60,7 @@ public abstract class GoogleDisplayer extends AbstractDisplayer {
      * Invoked asynchronously by the GoogleRenderer when the displayer is ready for being displayed
      */
     void ready() {
-        if (displayerSettings == null) {
-            displayMessage(GoogleDisplayerConstants.INSTANCE.googleDisplayer_error() + GoogleDisplayerConstants.INSTANCE.googleDisplayer_error_settings_unset());
-            afterError(GoogleDisplayerConstants.INSTANCE.googleDisplayer_error_settings_unset());
-        }
-        else if (dataSetHandler == null) {
-            displayMessage(GoogleDisplayerConstants.INSTANCE.googleDisplayer_error() + GoogleDisplayerConstants.INSTANCE.googleDisplayer_error_handler_unset());
-            afterError(GoogleDisplayerConstants.INSTANCE.googleDisplayer_error_handler_unset());
-        }
-        else {
-            try {
-                String initMsg = GoogleDisplayerConstants.INSTANCE.googleDisplayer_initalizing();
-                //if (!StringUtils.isBlank(displayerSettings.getTitle())) initMsg += " '" + displayerSettings.getTitle() + "'";
-                displayMessage(initMsg + " ...");
-
-                beforeDataSetLookup();
-                dataSetHandler.lookupDataSet(new DataSetReadyCallback() {
-                    public void callback(DataSet result) {
-                        try {
-                            dataSet = result;
-                            afterDataSetLookup(result);
-                            Widget w = createVisualization();
-                            panel.clear();
-                            panel.add(w);
-
-                            // Set the id of the container panel so that the displayer can be easily located
-                            // by testing tools for instance.
-                            String id = getDisplayerId();
-                            if (!StringUtils.isBlank(id)) {
-                                panel.getElement().setId(id);
-                            }
-                            // Draw done
-                            afterDraw();
-                        } catch (Exception e) {
-                            // Give feedback on any initialization error
-                            afterError(e);
-                        }
-                    }
-                    public void notFound() {
-                        displayMessage(GoogleDisplayerConstants.INSTANCE.googleDisplayer_error() + GoogleDisplayerConstants.INSTANCE.googleDisplayer_error_dataset_notfound());
-                        afterError(GoogleDisplayerConstants.INSTANCE.googleDisplayer_error_dataset_notfound());
-                    }
-
-                    @Override
-                    public boolean onError(final ClientRuntimeError error) {
-                        afterError(error);
-                        return false;
-                    }
-                });
-            } catch (Exception e) {
-                displayMessage(GoogleDisplayerConstants.INSTANCE.googleDisplayer_error() + e.getMessage());
-                afterError(e);
-            }
-        }
-    }
-
-    /**
-     * Just reload the data set and make the current Google Displayer redraw.
-     */
-    public void redraw() {
-        if (!isDrawn()) {
-            draw();
-        } else {
-            try {
-                beforeDataSetLookup();
-                dataSetHandler.lookupDataSet(new DataSetReadyCallback() {
-                    public void callback(DataSet result) {
-                        try {
-                            dataSet = result;
-                            afterDataSetLookup(result);
-                            updateVisualization();
-
-                            // Redraw done
-                            afterRedraw();
-                        } catch (Exception e) {
-                            // Give feedback on any initialization error
-                            afterError(e);
-                        }
-                    }
-                    public void notFound() {
-                        displayMessage(GoogleDisplayerConstants.INSTANCE.googleDisplayer_error() + GoogleDisplayerConstants.INSTANCE.googleDisplayer_error_dataset_notfound());
-                        afterError(GoogleDisplayerConstants.INSTANCE.googleDisplayer_error_dataset_notfound());
-                    }
-
-                    @Override
-                    public boolean onError(final ClientRuntimeError error) {
-                        afterError(error);
-                        return false;
-                    }
-                });
-            } catch (Exception e) {
-                displayMessage(GoogleDisplayerConstants.INSTANCE.googleDisplayer_error() + e.getMessage());
-                afterError(e);
-            }
-        }
-    }
-
-    /**
-     * Close the displayer
-     */
-    public void close() {
-        panel.clear();
-
-        // Close done
-        afterClose();
+        super.draw();
     }
 
     /**
@@ -187,36 +68,6 @@ public abstract class GoogleDisplayer extends AbstractDisplayer {
      */
     protected abstract ChartPackage getPackage();
 
-    /**
-     * Create the widget used by concrete Google displayer implementation.
-     */
-    protected abstract Widget createVisualization();
-
-    /**
-     * Update the widget used by concrete Google displayer implementation.
-     */
-    protected abstract void updateVisualization();
-
-    /**
-     * Call back method invoked just before the data set lookup is executed.
-     */
-    protected void beforeDataSetLookup() {
-    }
-
-    /**
-     * Call back method invoked just after the data set lookup is executed.
-     */
-    protected void afterDataSetLookup(DataSet dataSet) {
-    }
-
-    /**
-     * Clear the current display and show a notification message.
-     */
-    public void displayMessage(String msg) {
-        panel.clear();
-        panel.add(label);
-        label.setText(msg);
-    }
 
     // Google DataTable manipulation methods
 

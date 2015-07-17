@@ -23,8 +23,12 @@ import com.ait.lienzo.charts.client.core.pie.event.ValueSelectedHandler;
 import com.ait.lienzo.charts.client.core.resizer.ChartResizeEvent;
 import com.ait.lienzo.charts.client.core.resizer.ChartResizeEventHandler;
 import com.ait.lienzo.client.core.animation.AnimationTweener;
+import com.ait.lienzo.client.core.shape.Layer;
+import com.ait.lienzo.client.widget.LienzoPanel;
 import com.ait.lienzo.shared.core.types.ColorName;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.DataColumn;
@@ -40,9 +44,38 @@ public class LienzoPieChartDisplayer extends LienzoDisplayer {
     };
     
     protected PieChart chart = null;
+    protected FlowPanel filterPanel = new FlowPanel();
+    final protected LienzoPanel chartPanel = new LienzoPanel();
+    final protected Layer layer = new Layer();
+
 
     @Override
-    public AbstractChart createVisualization() {
+    protected Widget createVisualization() {
+        HTML titleHtml = new HTML();
+        if (displayerSettings.isTitleVisible()) {
+            titleHtml.setText(displayerSettings.getTitle());
+        }
+
+        FlowPanel container = new FlowPanel();
+        container.add(titleHtml);
+        container.add(filterPanel);
+        container.add(chartPanel);
+
+        if (dataSet.getRowCount() == 0) {
+            container.add(createNoDataMsgPanel());
+        } else {
+            resizePanel(getWidth(), getHeight());
+            layer.setTransformable(true);
+            chartPanel.add(layer);
+            AbstractChart chart = createPieChart();
+            layer.clear();
+            layer.add(chart);
+            layer.draw();
+        }
+        return container;
+    }
+
+    public AbstractChart createPieChart() {
 
         // Create the data for the chart instance.
         PieChartData chartData = createChartData();
@@ -105,10 +138,12 @@ public class LienzoPieChartDisplayer extends LienzoDisplayer {
         Widget filterReset = super.createCurrentSelectionWidget();
         if (filterReset != null) filterPanel.add(filterReset);
 
+        chartPanel.clear();
         if (dataSet.getRowCount() == 0) {
-            mainPanel.add(super.createNoDataMsgPanel());
+            chartPanel.add(super.createNoDataMsgPanel());
             chart = null;
         } else {
+            chartPanel.add(layer);
             PieChartData newData = createChartData();
             chart.reload(newData, AnimationTweener.LINEAR, ANIMATION_DURATION);
         }
@@ -122,6 +157,12 @@ public class LienzoPieChartDisplayer extends LienzoDisplayer {
         PieChartData chartData = new PieChartData(lienzoTable, categoriesColumn.getId(), valuesColumns[0].getId());
         
         return chartData;
+    }
+
+    protected void resizePanel(int w, int h) {
+        String _w = w + PANEL_MARGIN + PIXEL;
+        String _h = h + PANEL_MARGIN + PIXEL;
+        chartPanel.setSize(_w, _h);
     }
 
     @Override
@@ -155,6 +196,5 @@ public class LienzoPieChartDisplayer extends LienzoDisplayer {
             GWT.log("filtering by column [" + event.getColumn() + "], row [" + event.getRow() + "]");
             filterUpdate(event.getColumn(), event.getRow());
         }
-        
     }
 }

@@ -39,17 +39,7 @@ public interface GoogleDisplayerConstants extends Messages {
 
     String common_noData();
 
-    String googleDisplayer_initalizing();
-
     String googleDisplayer_resetAnchor();
-
-    String googleDisplayer_error();
-
-    String googleDisplayer_error_settings_unset();
-
-    String googleDisplayer_error_handler_unset();
-
-    String googleDisplayer_error_dataset_notfound();
 
     String googleBubbleDisplayer_XAxis();
 

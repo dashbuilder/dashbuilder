@@ -1,11 +1,11 @@
-/**
- * Copyright (C) 2015 JBoss Inc
+/*
+ * Copyright 2015 JBoss Inc
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -13,18 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package org.dashbuilder.renderer.client.resources.i18n;
+package org.dashbuilder.displayer.client.resources.i18n;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.i18n.client.Messages;
 
-public interface MetricConstants extends Messages {
+public interface DisplayerConstants extends Messages {
 
-    public static final MetricConstants INSTANCE = GWT.create( MetricConstants.class );
+    public static final DisplayerConstants INSTANCE = GWT.create(DisplayerConstants.class);
 
-    String metricDisplayer_noDataAvailable();
+    public String initializing();
 
-    String metricDisplayer_columnsTitle();
+    public String error();
+
+    public String error_settings_unset();
+
+    public String error_handler_unset();
+
+    public String error_dataset_notfound();
+
+    String displayer_keyword_not_allowed(String expr);
+
+    String displayer_expr_invalid_syntax(String expr);
 
 }

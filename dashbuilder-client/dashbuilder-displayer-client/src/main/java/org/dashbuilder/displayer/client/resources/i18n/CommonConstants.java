@@ -253,10 +253,6 @@ public interface CommonConstants extends Messages {
 
     String renderer_selector_title();
 
-    String displayer_keyword_not_allowed(String expr);
-
-    String displayer_expr_invalid_syntax(String expr);
-
     String datasethandler_groupops_no_pivotcolumn();
 
     String datasethandler_groupops_no_groupintervals();

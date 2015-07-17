@@ -23,6 +23,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
 
 @Dependent
@@ -38,10 +39,10 @@ public class DisplayerError extends Composite {
     HTML errorCause;
 
     @UiField
-    Row errorMessageRow;
+    Panel errorMessageRow;
 
     @UiField
-    Row errorCauseRow;
+    Panel errorCauseRow;
 
     public DisplayerError() {
         initWidget(uiBinder.createAndBindUi(this));
