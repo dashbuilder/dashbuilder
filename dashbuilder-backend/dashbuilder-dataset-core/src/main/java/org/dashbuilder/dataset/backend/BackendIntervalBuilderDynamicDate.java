@@ -139,12 +139,15 @@ public class BackendIntervalBuilderDynamicDate implements IntervalBuilder {
         ColumnGroup columnGroup = dataColumn.getColumnGroup();
         Date minDate = (Date) dataColumn.getMinValue();
         Date maxDate = (Date) dataColumn.getMaxValue();
+
+        IntervalDateRangeList results = new IntervalDateRangeList(columnGroup);
+        if (minDate == null || maxDate == null) {
+            return results;
+        }
         DateIntervalType intervalType = DateIntervalType.getByName(dataColumn.getIntervalType());
         if (intervalType == null) {
             intervalType = DateIntervalType.YEAR;
         }
-
-        IntervalDateRangeList results = new IntervalDateRangeList(columnGroup);
         Calendar c = firstIntervalDate(intervalType, minDate, columnGroup);
         int counter = 0;
         while (c.getTime().compareTo(maxDate) <= 0) {
@@ -367,7 +370,7 @@ public class BackendIntervalBuilderDynamicDate implements IntervalBuilder {
 
         Locale l = Locale.getDefault();
         if (MILLENIUM.equals(intervalType) || CENTURY.equals(intervalType)
-            || DECADE.equals(intervalType) || YEAR.equals(intervalType)) {
+                || DECADE.equals(intervalType) || YEAR.equals(intervalType)) {
             SimpleDateFormat format  = new SimpleDateFormat("yyyy", l);
             return format.format(d);
         }
