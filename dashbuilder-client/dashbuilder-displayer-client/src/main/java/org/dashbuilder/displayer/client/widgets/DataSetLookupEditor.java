@@ -47,8 +47,8 @@ import static org.uberfire.commons.validation.PortablePreconditions.checkNotNull
 
 @Dependent
 public class DataSetLookupEditor implements IsWidget,
-                                DataSetFilterEditor.Listener,
-                                DataSetGroupDateEditor.Listener {
+        DataSetFilterEditor.Listener,
+        DataSetGroupDateEditor.Listener {
 
     public interface Listener {
         void dataSetChanged(String uuid);
@@ -71,15 +71,9 @@ public class DataSetLookupEditor implements IsWidget,
     View view;
     DataSetClientServices clientServices;
 
-    DataSet dataSet = null;
     DataSetLookup dataSetLookup = null;
     DataSetLookupConstraints lookupConstraints = null;
     DataSetMetadata dataSetMetadata = null;
-
-    public DataSetLookupEditor() {
-        this.view = new DataSetLookupEditorView();
-        this.clientServices = DataSetClientServices.get();
-    }
 
     @Inject
     public DataSetLookupEditor(DataSetLookupEditorView view,

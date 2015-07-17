@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import javax.enterprise.context.Dependent;
+import javax.inject.Inject;
 
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
@@ -46,9 +47,6 @@ import org.dashbuilder.displayer.client.DisplayerHelper;
 import org.dashbuilder.displayer.client.DisplayerLocator;
 import org.dashbuilder.displayer.client.prototypes.DisplayerPrototypes;
 import org.dashbuilder.displayer.client.resources.i18n.CommonConstants;
-import org.jboss.errai.ioc.client.container.IOC;
-import org.jboss.errai.ioc.client.container.IOCBeanDef;
-import org.jboss.errai.ioc.client.container.SyncBeanManager;
 
 @Dependent
 public class DisplayerEditor implements IsWidget,
@@ -79,18 +77,9 @@ public class DisplayerEditor implements IsWidget,
     protected DisplayerSettings displayerSettings = null;
     protected boolean brandNewDisplayer = true;
 
-    public DisplayerEditor() {
-        SyncBeanManager beanManager = IOC.getBeanManager();
-        IOCBeanDef iocBeanDef = beanManager.lookupBean(DisplayerSettingsEditor.class);
-        DisplayerSettingsEditor settingsEditor = (DisplayerSettingsEditor) iocBeanDef.getInstance();
-
-        iocBeanDef = beanManager.lookupBean(DisplayerTypeSelector.class);
-        DisplayerTypeSelector typeSelector = (DisplayerTypeSelector) iocBeanDef.getInstance();
-
-        iocBeanDef = beanManager.lookupBean(DataSetLookupEditor.class);
-        DataSetLookupEditor lookupEditor = (DataSetLookupEditor) iocBeanDef.getInstance();
-
-        this.view = new DisplayerEditorView(typeSelector, lookupEditor, settingsEditor);
+    @Inject
+    public DisplayerEditor(View view) {
+        this.view = view;
     }
 
     public Widget asWidget() {

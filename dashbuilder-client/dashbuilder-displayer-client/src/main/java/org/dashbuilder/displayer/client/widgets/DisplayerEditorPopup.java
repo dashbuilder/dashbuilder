@@ -37,10 +37,7 @@ public class DisplayerEditorPopup extends BaseModal {
     @UiField(provided = true)
     DisplayerEditor editor;
 
-    public DisplayerEditorPopup() {
-        this(new DisplayerEditor());
-    }
-
+    @Inject
     public DisplayerEditorPopup(DisplayerEditor editor) {
         this.editor = editor;
         add(uiBinder.createAndBindUi(this));

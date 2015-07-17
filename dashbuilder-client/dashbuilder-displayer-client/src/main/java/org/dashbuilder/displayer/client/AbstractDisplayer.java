@@ -148,13 +148,15 @@ public abstract class AbstractDisplayer extends Composite implements Displayer {
      * Draw the displayer by executing first the lookup call to retrieve the target data set
      */
     public void draw() {
-        if ( displayerSettings == null ) {
+        if (displayerSettings == null) {
             displayMessage(DisplayerConstants.INSTANCE.error() + DisplayerConstants.INSTANCE.error_settings_unset());
-        } else if ( dataSetHandler == null ) {
+        }
+        else if (dataSetHandler == null) {
             displayMessage(DisplayerConstants.INSTANCE.error() + DisplayerConstants.INSTANCE.error_handler_unset());
         }
-        else {
+        else if (!isDrawn()) {
             try {
+                drawn = true;
                 String initMsg = DisplayerConstants.INSTANCE.initializing();
                 displayMessage(initMsg);
 
@@ -324,7 +326,6 @@ public abstract class AbstractDisplayer extends Composite implements Displayer {
     }
 
     protected void afterDraw() {
-        drawn = true;
         updateRefreshTimer();
         for (DisplayerListener listener : listenerList) {
             listener.onDraw(this);

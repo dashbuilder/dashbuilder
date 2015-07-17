@@ -258,7 +258,9 @@ public class DataSetEditor implements IsWidget {
             tableDisplayer.addListener(tablePreviewListener);
 
             // Wait for displayer listener callbacks.
-            if (DataSetEditor.this.tableDisplayer != null) DataSetEditor.this.tableDisplayer.draw();
+            if (DataSetEditor.this.tableDisplayer != null) {
+                DataSetEditor.this.tableDisplayer.draw();
+            }
 
             // Show basic views and the loading screen while performing the backend service call.
             view.showLoadingView();
@@ -513,7 +515,9 @@ public class DataSetEditor implements IsWidget {
                     currentWfView = WorkflowView.PREVIEW_AND_ADVANCED;
 
                     // If creating a new data set, its UUID for the client side instance is not present yet, as it's generated on backend side.
-                    if (dataSetDef.getUUID() == null) dataSetDef.setUUID(dataSet.getUUID());
+                    if (dataSetDef.getUUID() == null) {
+                        dataSetDef.setUUID(dataSet.getUUID());
+                    }
 
                     // If creating a data set, use the columns information for first dataset lookup result as the original columns,
                     // If editing an existing data set, this condition evaluates to false, as originalColumns have been provided by the backend call to prepareEdit., 
@@ -534,7 +538,7 @@ public class DataSetEditor implements IsWidget {
                     // Build views.
                     showBasicAttributesEditionView();
 
-                    // Build advanved view.
+                    // Build advanced view.
                     showAdvancedAttributesEditionView();
 
                     // Reload table preview.

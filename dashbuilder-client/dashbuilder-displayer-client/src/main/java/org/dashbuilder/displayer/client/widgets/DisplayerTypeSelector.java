@@ -57,7 +57,7 @@ public class DisplayerTypeSelector extends Composite implements DisplayerSubtype
 
     private DisplayerSubtypeSelector subtypeSelector;
 
-    public DisplayerTypeSelector() {
+    protected void initWidget() {
         tabList.add(new DisplayerTab(DisplayerTypeLiterals.INSTANCE.displayer_type_selector_tab_bar(), DisplayerType.BARCHART));
         tabList.add(new DisplayerTab(DisplayerTypeLiterals.INSTANCE.displayer_type_selector_tab_pie(), DisplayerType.PIECHART));
         tabList.add(new DisplayerTab(DisplayerTypeLiterals.INSTANCE.displayer_type_selector_tab_line(), DisplayerType.LINECHART));
@@ -81,9 +81,11 @@ public class DisplayerTypeSelector extends Composite implements DisplayerSubtype
 
     public void init(Listener listener) {
         this.listener = listener;
+        if (displayerTypePanel == null) {
+            initWidget();
+        }
         draw();
     }
-
 
     protected void draw() {
         displayerTypePanel.clear();
@@ -116,7 +118,7 @@ public class DisplayerTypeSelector extends Composite implements DisplayerSubtype
     }
 
     private class DisplayerTab extends Tab {
-        
+
         String name;
         DisplayerType type;
 
@@ -126,7 +128,7 @@ public class DisplayerTypeSelector extends Composite implements DisplayerSubtype
 
             this.name = name;
             this.type = type;
-            
+
             super.addClickHandler(new ClickHandler() {
                 public void onClick(ClickEvent event) {
                     event.stopPropagation();

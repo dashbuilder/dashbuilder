@@ -16,6 +16,7 @@
 package org.dashbuilder.displayer.client.widgets;
 
 import javax.enterprise.context.Dependent;
+import javax.inject.Inject;
 
 import com.github.gwtbootstrap.client.ui.CheckBox;
 import com.github.gwtbootstrap.client.ui.Tab;
@@ -50,19 +51,17 @@ public class DisplayerEditorView extends Composite
     interface Binder extends UiBinder<Widget, DisplayerEditorView> {}
     private static Binder uiBinder = GWT.create(Binder.class);
 
-    public DisplayerEditorView() {
-        initWidget(uiBinder.createAndBindUi(this));
-        dataTablePanel.getElement().setAttribute("cellpadding", "5");
-    }
-
+    @Inject
     public DisplayerEditorView(DisplayerTypeSelector typeSelector,
             DataSetLookupEditor lookupEditor,
             DisplayerSettingsEditor settingsEditor) {
 
-        this();
         this.typeSelector = typeSelector;
         this.lookupEditor = lookupEditor;
         this.settingsEditor = settingsEditor;
+
+        initWidget(uiBinder.createAndBindUi(this));
+        dataTablePanel.getElement().setAttribute("cellpadding", "5");
     }
 
     protected DisplayerEditor presenter;

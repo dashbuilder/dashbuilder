@@ -209,7 +209,7 @@ public class DashboardPerspectiveActivity  implements PerspectiveActivity {
             public void execute() {
                 /* Displayer settings == null => Create a brand new displayer */
                 perspectiveCoordinator.editOn();
-                DisplayerEditorPopup displayerEditor = new DisplayerEditorPopup();
+                DisplayerEditorPopup displayerEditor = getDisplayerEditorPopup();
                 displayerEditor.init(null, new DisplayerEditor.Listener() {
 
                     public void onClose(final DisplayerEditor editor) {
@@ -224,6 +224,12 @@ public class DashboardPerspectiveActivity  implements PerspectiveActivity {
                 });
             }
         };
+    }
+
+    protected DisplayerEditorPopup getDisplayerEditorPopup() {
+        Collection<IOCBeanDef<DisplayerEditorPopup>> beans = IOC.getBeanManager().lookupBeans(DisplayerEditorPopup.class);
+        IOCBeanDef<DisplayerEditorPopup> beanDef = beans.iterator().next();
+        return beanDef.getInstance();
     }
 
     private PlaceRequest createPlaceRequest(DisplayerSettings displayerSettings) {

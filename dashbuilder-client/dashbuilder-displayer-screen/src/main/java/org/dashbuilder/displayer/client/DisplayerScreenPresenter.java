@@ -101,6 +101,7 @@ public class DisplayerScreenPresenter {
             PlaceManager placeManager,
             DisplayerView displayerView,
             PanelManager panelManager,
+            DisplayerEditorPopup displayerEditor,
             PerspectiveCoordinator perspectiveCoordinator,
             DisplayerSettingsJSONMarshaller jsonMarshaller) {
 
@@ -111,7 +112,7 @@ public class DisplayerScreenPresenter {
         this.panelManager = panelManager;
         this.perspectiveCoordinator = perspectiveCoordinator;
         this.jsonMarshaller = jsonMarshaller;
-        this.displayerEditor =  new DisplayerEditorPopup();
+        this.displayerEditor =  displayerEditor;
         this.menuActionsButton = getMenuActionsButton();
     }
 
@@ -125,7 +126,7 @@ public class DisplayerScreenPresenter {
         // Check if display renderer selector component.
         Boolean showRendererSelector = Boolean.parseBoolean(placeRequest.getParameter("showRendererSelector","false"));
         displayerView.setIsShowRendererSelector(showRendererSelector);
-        
+
         // Draw the Displayer.
         if (StringUtils.isBlank(displayerSettings.getUUID())) displayerSettings.setUUID(uuidGenerator.newUuid());
         displayerView.setDisplayerSettings(displayerSettings);
@@ -211,7 +212,6 @@ public class DisplayerScreenPresenter {
                 perspectiveCoordinator.editOn();
 
                 final String currentTitle = displayerSettings.getTitle();
-                DisplayerEditorPopup displayerEditor =  new DisplayerEditorPopup();
                 displayerEditor.init(displayerSettings, new DisplayerEditor.Listener() {
 
                     public void onClose(DisplayerEditor editor) {
@@ -247,7 +247,6 @@ public class DisplayerScreenPresenter {
                 clonedSettings.setUUID(uuidGenerator.newUuid());
                 clonedSettings.setTitle("Copy of " + clonedSettings.getTitle());
 
-                DisplayerEditorPopup displayerEditor = new DisplayerEditorPopup();
                 displayerEditor.init(clonedSettings, new DisplayerEditor.Listener() {
 
                     public void onClose(DisplayerEditor editor) {

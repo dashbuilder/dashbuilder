@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
+import javax.inject.Inject;
 
 import com.github.gwtbootstrap.client.ui.Modal;
 import com.google.gwt.user.client.ui.IsWidget;
@@ -32,8 +33,11 @@ import org.uberfire.ext.plugin.client.perspective.editor.api.ExternalPerspective
 @Dependent
 public class DisplayerPerspectiveEditorComponent implements ExternalPerspectiveEditorComponent {
 
-    private DisplayerEditor editor = new DisplayerEditor();
-    DisplayerSettingsJSONMarshaller jsonMarshaller = new DisplayerSettingsJSONMarshaller();
+    @Inject
+    DisplayerEditor editor;
+
+    @Inject
+    DisplayerSettingsJSONMarshaller jsonMarshaller;
 
     @PostConstruct
     public void setup() {
