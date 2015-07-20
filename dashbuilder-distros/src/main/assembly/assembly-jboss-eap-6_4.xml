@@ -26,14 +26,12 @@
   </formats>
 
   <includeBaseDirectory>false</includeBaseDirectory>
+
+  <componentDescriptors>
+    <componentDescriptor>src/main/assembly/component-cdi1.0-libs.xml</componentDescriptor>
+  </componentDescriptors>
+
   <dependencySets>
-    <dependencySet>
-      <includes>
-        <include>org.jboss.errai:errai-weld-integration:jar</include>
-      </includes>
-      <unpack>false</unpack>
-      <outputDirectory>WEB-INF/lib</outputDirectory>
-    </dependencySet>
     <dependencySet>
       <includes>
         <include>org.dashbuilder:dashbuilder-webapp:war</include>
@@ -44,7 +42,7 @@
         <excludes>
           <!-- GWT DevMode related. -->
           <exclude>**/*devmode.js</exclude>
-          
+
           <!-- Errai 1.1+ CDI Compat -->
           <exclude>WEB-INF/lib/errai-weld-integration-*.jar</exclude>
         </excludes>
