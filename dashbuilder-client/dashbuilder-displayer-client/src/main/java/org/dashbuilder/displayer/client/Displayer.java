@@ -18,6 +18,7 @@ package org.dashbuilder.displayer.client;
 import com.google.gwt.user.client.ui.IsWidget;
 import org.dashbuilder.displayer.DisplayerConstraints;
 import org.dashbuilder.displayer.DisplayerSettings;
+import org.dashbuilder.displayer.client.formatter.ValueFormatter;
 
 /**
  * A Displayer takes care of drawing a DisplayerSettings instance.
@@ -50,6 +51,11 @@ public interface Displayer extends DisplayerListener, IsWidget {
      * Add a listener interested in receive events generated within this displayer component.
      */
     void addListener(DisplayerListener... listeners);
+
+    /**
+     * Registers a custom formatter for the given column
+     */
+    void addFormatter(String columnId, ValueFormatter formatter);
 
     /**
      * Draw the chart

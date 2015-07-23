@@ -43,16 +43,17 @@ import org.dashbuilder.dataset.client.resources.i18n.MonthConstants;
 import org.dashbuilder.dataset.date.DayOfWeek;
 import org.dashbuilder.dataset.date.Month;
 import org.dashbuilder.dataset.filter.DataSetFilter;
-import org.dashbuilder.dataset.group.DateIntervalPattern;
-import org.dashbuilder.displayer.ColumnSettings;
 import org.dashbuilder.dataset.group.ColumnGroup;
 import org.dashbuilder.dataset.group.DataSetGroup;
+import org.dashbuilder.dataset.group.DateIntervalPattern;
 import org.dashbuilder.dataset.group.DateIntervalType;
 import org.dashbuilder.dataset.group.GroupStrategy;
 import org.dashbuilder.dataset.group.Interval;
 import org.dashbuilder.dataset.sort.SortOrder;
+import org.dashbuilder.displayer.ColumnSettings;
 import org.dashbuilder.displayer.DisplayerConstraints;
 import org.dashbuilder.displayer.DisplayerSettings;
+import org.dashbuilder.displayer.client.formatter.ValueFormatter;
 import org.dashbuilder.displayer.client.resources.i18n.DisplayerConstants;
 
 /**
@@ -399,34 +400,42 @@ public abstract class AbstractDisplayer extends Composite implements Displayer {
     @Override
     public void onFilterEnabled(Displayer displayer, DataSetGroup groupOp) {
         if (displayerSettings.isFilterListeningEnabled()) {
-            dataSetHandler.filter(groupOp);
-            redraw();
+            if (dataSetHandler.filter(groupOp)) {
+                redraw();
+            }
         }
     }
 
     @Override
     public void onFilterEnabled(Displayer displayer, DataSetFilter filter) {
         if (displayerSettings.isFilterListeningEnabled()) {
-            dataSetHandler.filter(filter);
-            redraw();
+            if (dataSetHandler.filter(filter)) {
+                redraw();
+            }
         }
     }
 
     @Override
     public void onFilterReset(Displayer displayer, List<DataSetGroup> groupOps) {
         if (displayerSettings.isFilterListeningEnabled()) {
+            boolean applied = false;
             for (DataSetGroup groupOp : groupOps) {
-                dataSetHandler.unfilter(groupOp);
+                if (dataSetHandler.unfilter(groupOp)) {
+                    applied = true;
+                }
             }
-            redraw();
+            if (applied) {
+                redraw();
+            }
         }
     }
 
     @Override
     public void onFilterReset(Displayer displayer, DataSetFilter filter) {
         if (displayerSettings.isFilterListeningEnabled()) {
-            dataSetHandler.unfilter(filter);
-            redraw();
+            if (dataSetHandler.unfilter(filter)) {
+                redraw();
+            }
         }
     }
 
@@ -595,7 +604,9 @@ public abstract class AbstractDisplayer extends Composite implements Displayer {
      * Clear any filter.
      */
     public void filterReset() {
-        if (!displayerSettings.isFilterEnabled()) return;
+        if (!displayerSettings.isFilterEnabled()) {
+            return;
+        }
 
         List<DataSetGroup> groupOpList = new ArrayList<DataSetGroup>();
         for (String columnId : columnSelectionMap.keySet()) {
@@ -616,13 +627,21 @@ public abstract class AbstractDisplayer extends Composite implements Displayer {
         }
         // Apply the selection to this displayer
         if (displayerSettings.isFilterSelfApplyEnabled()) {
+            boolean applied = false;
+
             if (currentFilter != null) {
-                dataSetHandler.unfilter(currentFilter);
+                if (dataSetHandler.unfilter(currentFilter)) {
+                    applied = true;
+                }
             }
             for (DataSetGroup groupOp : groupOpList) {
-                dataSetHandler.drillUp(groupOp);
+                if (dataSetHandler.drillUp(groupOp)) {
+                    applied = true;
+                }
             }
-            redraw();
+            if (applied) {
+                redraw();
+            }
         }
         if (currentFilter != null) {
             currentFilter = null;
@@ -671,10 +690,28 @@ public abstract class AbstractDisplayer extends Composite implements Displayer {
                     interval.getName(), pattern, expression);
         }
         // Label interval
-        return interval.getName();
+        ColumnSettings columnSettings = displayerSettings.getColumnSettings(column);
+        String expression = columnSettings.getValueExpression();
+        if (StringUtils.isBlank(expression)) return interval.getName();
+        return applyExpression(interval.getName(), expression);
+    }
+
+    Map<String,ValueFormatter> formatterMap = new HashMap<String, ValueFormatter>();
+
+    public void addFormatter(String columnId, ValueFormatter formatter) {
+        formatterMap.put(columnId, formatter);
+    }
+
+    public ValueFormatter getFormatter(String columnId) {
+        return formatterMap.get(columnId);
     }
 
     public String formatValue(Object value, DataColumn column) {
+
+        ValueFormatter formatter = getFormatter(column.getId());
+        if (formatter != null) {
+            return formatter.formatValue(value);
+        }
 
         ColumnSettings columnSettings = displayerSettings.getColumnSettings(column);
         String pattern = columnSettings.getValuePattern();
@@ -702,7 +739,14 @@ public abstract class AbstractDisplayer extends Composite implements Displayer {
             }
             else if (ColumnType.NUMBER.equals(columnType)) {
                 double d = ((Number) value).doubleValue();
-                if (!StringUtils.isBlank(expression)) d = Double.parseDouble(applyExpression(value.toString(), expression));
+                if (!StringUtils.isBlank(expression)) {
+                    String r = applyExpression(value.toString(), expression);
+                    try {
+                        d = Double.parseDouble(r);
+                    } catch (NumberFormatException e) {
+                        return r;
+                    }
+                }
                 return getNumberFormat(pattern).format(d);
             }
             else {
