@@ -141,7 +141,7 @@ public class TableDisplayer extends AbstractDisplayer {
         tableProvider.gotoFirstPage();
         table.setRowCount(numberOfRows, true);
 
-        int height = 42 + 37 * dataSet.getRowCount();
+        int height = 42 + 37 * (dataSet.getRowCount() == 0 ? 1 : dataSet.getRowCount());
         table.setHeight((height > (Window.getClientHeight() - this.getAbsoluteTop()) ? (Window.getClientHeight() - this.getAbsoluteTop()) : height) + "px");
 
         if (table.getPageSize() >= table.getRowCount()) table.pager.setVisible(false);
@@ -342,7 +342,7 @@ public class TableDisplayer extends AbstractDisplayer {
                                 dataSet = ds;
                                 afterDataSetLookup(dataSet);
                                 updateRowData(lastOffset, rows);
-                                int height = 42 + 37 * dataSet.getRowCount();
+                                int height = 42 + 37 * (dataSet.getRowCount() == 0 ? 1 : dataSet.getRowCount());
                                 table.setHeight(height + "px");
                             } catch (Exception e) {
                                 displayMessage(CommonConstants.INSTANCE.error() + e.getMessage());
