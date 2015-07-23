@@ -143,7 +143,7 @@ public class DisplayerScreenPresenter {
         csvExportAllowed = displayerSettings.isCSVExportAllowed();
         excelExportAllowed = displayerSettings.isExcelExportAllowed();
         this.menu = makeMenuBar();
-        adjustMenuActions( this.displayerSettings );
+        adjustMenuActions(this.displayerSettings);
     }
 
     @OnClose
@@ -212,7 +212,7 @@ public class DisplayerScreenPresenter {
                 perspectiveCoordinator.editOn();
 
                 final String currentTitle = displayerSettings.getTitle();
-                displayerEditor.init(displayerSettings, new DisplayerEditor.Listener() {
+                displayerEditor.init(displayerSettings.cloneInstance(), new DisplayerEditor.Listener() {
 
                     public void onClose(DisplayerEditor editor) {
                         perspectiveCoordinator.editOff();
@@ -220,18 +220,24 @@ public class DisplayerScreenPresenter {
 
                     public void onSave(final DisplayerEditor editor) {
                         perspectiveCoordinator.editOff();
-                        adjustMenuActions(editor.getDisplayerSettings());
-                        updateDisplayer(editor.getDisplayerSettings());
 
-                        String newTitle = editor.getDisplayerSettings().getTitle();
-                        if (!currentTitle.equals(newTitle)) {
-                            changeTitleEvent.fire(new ChangeTitleWidgetEvent(placeRequest, editor.getDisplayerSettings().getTitle()));
+                        DisplayerSettings newSettings = editor.getDisplayerSettings();
+
+                        if (!displayerSettings.equals(newSettings)) {
+
+                            String newTitle = newSettings.getTitle();
+                            if (!currentTitle.equals(newTitle)) {
+                                changeTitleEvent.fire(new ChangeTitleWidgetEvent(placeRequest, newSettings.getTitle()));
+                            }
+
+                            PanelDefinition panelDefinition = panelManager.getPanelForPlace(placeRequest);
+                            placeManager.goTo(createPlaceRequest(newSettings), panelDefinition);
+                            placeManager.closePlace(placeRequest);
+                            perspectiveManager.savePerspectiveState(new Command() {
+                                public void execute() {
+                                }
+                            });
                         }
-
-                        PanelDefinition panelDefinition = panelManager.getPanelForPlace(placeRequest);
-                        placeManager.goTo(createPlaceRequest(editor.getDisplayerSettings()), panelDefinition);
-                        placeManager.closePlace(placeRequest);
-                        perspectiveManager.savePerspectiveState(new Command() {public void execute() {}});
                     }
                 });
             }
@@ -328,16 +334,6 @@ public class DisplayerScreenPresenter {
             _dataSetLookup.setNumberOfRows(MAX_EXPORT_LIMIT);
         }
         return _dataSetLookup;
-    }
-
-    private void updateDisplayer(DisplayerSettings settings) {
-        this.removeDisplayer();
-
-        this.displayerSettings = settings;
-        this.displayerView.setDisplayerSettings(settings);
-
-        Displayer newDisplayer = this.displayerView.draw();
-        this.perspectiveCoordinator.addDisplayer(newDisplayer);
     }
 
     protected void removeDisplayer() {

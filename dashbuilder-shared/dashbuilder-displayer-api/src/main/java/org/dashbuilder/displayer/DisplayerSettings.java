@@ -52,9 +52,50 @@ public class DisplayerSettings {
         for (ColumnSettings columnSettings : columnSettingsList) {
             clone.columnSettingsList.add(columnSettings.cloneInstance());
         }
-        if (dataSet != null) clone.dataSet = dataSet.cloneInstance();
-        if (dataSetLookup != null) clone.dataSetLookup = dataSetLookup.cloneInstance();
+        if (dataSet != null) {
+            clone.dataSet = dataSet.cloneInstance();
+        }
+        if (dataSetLookup != null) {
+            clone.dataSetLookup = dataSetLookup.cloneInstance();
+        }
         return clone;
+    }
+
+    public boolean equals(Object obj) {
+        try {
+            DisplayerSettings other = (DisplayerSettings) obj;
+            if (other == null) {
+                return false;
+            }
+            if (UUID != null && !UUID.equals(other.UUID)) {
+                return false;
+            }
+            if (dataSet != null && !dataSet.equals(other.dataSet)) {
+                return false;
+            }
+            if (dataSetLookup != null && !dataSetLookup.equals(other.dataSetLookup)) {
+                return false;
+            }
+            if (columnSettingsList.size() != other.columnSettingsList.size()) {
+                return false;
+            }
+            for (int i=0; i<columnSettingsList.size(); i++) {
+                if (!columnSettingsList.get(i).equals(other.columnSettingsList.get(i))) {
+                    return false;
+                }
+            }
+            if (settings.size() != other.settings.size()) {
+                return false;
+            }
+            for (String setting : settings.keySet()) {
+                if (!settings.get(setting).equals(other.settings.get(setting))) {
+                    return false;
+                }
+            }
+            return true;
+        } catch (ClassCastException e) {
+            return false;
+        }
     }
 
     public List<ColumnSettings> getColumnSettingsList() {

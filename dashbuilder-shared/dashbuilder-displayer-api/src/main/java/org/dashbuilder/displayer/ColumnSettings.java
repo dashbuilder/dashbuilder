@@ -186,4 +186,31 @@ public class ColumnSettings {
         other.emptyTemplate = emptyTemplate;
         return other;
     }
+
+    public boolean equals(Object obj) {
+        try {
+            ColumnSettings other = (ColumnSettings) obj;
+            if (other == null) {
+                return false;
+            }
+            if (columnId != null && !columnId.equals(other.columnId)) {
+                return false;
+            }
+            if (columnName != null && !columnName.equals(other.columnName)) {
+                return false;
+            }
+            if (valuePattern != null && !valuePattern.equals(other.valuePattern)) {
+                return false;
+            }
+            if (valueExpression != null && !valueExpression.equals(other.valueExpression)) {
+                return false;
+            }
+            if (emptyTemplate != null && !emptyTemplate.equals(other.emptyTemplate)) {
+                return false;
+            }
+            return true;
+        } catch (ClassCastException e) {
+            return false;
+        }
+    }
 }

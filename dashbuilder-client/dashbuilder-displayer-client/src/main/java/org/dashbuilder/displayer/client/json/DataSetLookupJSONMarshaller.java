@@ -75,6 +75,11 @@ public class DataSetLookupJSONMarshaller {
     private static final String FUNCTION = "function";
 
     private static final String SELECTEDINTERVALS = "selectedIntervals";
+    private static final String INTERVAL_NAME = "name";
+    private static final String INTERVAL_TYPE = "type";
+    private static final String INTERVAL_IDX = "index";
+    private static final String INTERVAL_MIN = "min";
+    private static final String INTERVAL_MAX = "max";
     private static final String JOIN = "join";
 
     private static final String SORTOPS = "sortOps";
@@ -221,9 +226,28 @@ public class DataSetLookupJSONMarshaller {
         JSONArray selectedIntervalNamesJsonArray = new JSONArray();
         int intervalNamesCounter = 0;
         for ( Interval interval : selectedIntervalList ) {
-            selectedIntervalNamesJsonArray.set( intervalNamesCounter++, new JSONString( interval.getName() ) );
+            selectedIntervalNamesJsonArray.set( intervalNamesCounter++, formatInterval(interval) );
         }
         return selectedIntervalNamesJsonArray;
+    }
+
+    private JSONObject formatInterval(Interval interval) {
+        if (interval == null) {
+            return null;
+        }
+        JSONObject jsonObj = new JSONObject();
+        jsonObj.put(INTERVAL_NAME, new JSONString(interval.getName()));
+        jsonObj.put(INTERVAL_IDX, new JSONString(Integer.toString(interval.getIndex())));
+        if (interval.getType() != null) {
+            jsonObj.put(INTERVAL_TYPE, new JSONString(interval.getName()));
+        }
+        if (interval.getMinValue() != null) {
+            jsonObj.put(INTERVAL_MIN, new JSONString(valueFormatter.formatValue(interval.getMinValue())));
+        }
+        if (interval.getMinValue() != null) {
+            jsonObj.put(INTERVAL_MAX, new JSONString(valueFormatter.formatValue(interval.getMaxValue())));
+        }
+        return jsonObj;
     }
 
     private JSONArray formatSortOperations( List<DataSetSort> sortOps ) {
@@ -425,16 +449,43 @@ public class DataSetLookupJSONMarshaller {
         return groupFunction;
     }
 
-    private List<Interval> parseSelectedIntervals( JSONArray selectedIntervalsJson ) {
-        if ( selectedIntervalsJson == null ) return null;
-        List<Interval> intervalList = new ArrayList<Interval>( selectedIntervalsJson.size() );
+    private List<Interval> parseSelectedIntervals(JSONArray selectedIntervalsJson) {
+        if (selectedIntervalsJson == null) {
+            return null;
+        }
+        List<Interval> intervalList = new ArrayList<Interval>(selectedIntervalsJson.size());
         for ( int i = 0; i < selectedIntervalsJson.size(); i++) {
-            JSONString value = selectedIntervalsJson.get( i ).isString();
-            if ( value != null ) {
-                intervalList.add(new Interval(value.stringValue()));
-            }
+            intervalList.add(parseInterval(selectedIntervalsJson.get(i).isObject()));
         }
         return intervalList;
+    }
+
+    private Interval parseInterval(JSONObject jsonObj) {
+        if (jsonObj == null) {
+            return null;
+        }
+        Interval interval = new Interval();
+
+        JSONValue value = jsonObj.get(INTERVAL_NAME);
+        interval.setName(value != null ? value.isString().stringValue() : null);
+
+        value = jsonObj.get(INTERVAL_TYPE);
+        interval.setType(value != null ? value.isString().stringValue() : null);
+
+        value = jsonObj.get(INTERVAL_IDX);
+        if (value != null) {
+            interval.setIndex(Integer.parseInt(value.isString().stringValue()));
+        }
+        value = jsonObj.get(INTERVAL_MIN);
+        if (value != null) {
+            interval.setMinValue(valueFormatter.parseValue(value.isString().stringValue()));
+        }
+        value = jsonObj.get(INTERVAL_MAX);
+        if (value != null) {
+            interval.setMaxValue(valueFormatter.parseValue(value.isString().stringValue()));
+        }
+
+        return interval;
     }
 
     private List<DataSetSort> parseSortOperations( JSONArray columnSortsJsonArray ) {

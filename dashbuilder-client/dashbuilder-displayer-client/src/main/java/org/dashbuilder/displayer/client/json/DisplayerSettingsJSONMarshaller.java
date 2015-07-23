@@ -74,6 +74,7 @@ public class DisplayerSettingsJSONMarshaller {
                 // UUID
                 JSONValue uuidValue = parseResult.get( SETTINGS_UUID );
                 ds.setUUID( uuidValue != null && uuidValue.isString() != null ? uuidValue.isString().stringValue() : null );
+                parseResult.put(SETTINGS_UUID, null);
 
                 // First look if a dataset 'on-the-fly' has been specified
                 JSONValue data = parseResult.get(DATASET_PREFIX);

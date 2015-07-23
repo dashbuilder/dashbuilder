@@ -143,6 +143,13 @@ public class DisplayerCoordinator {
             }
         }
 
+        protected void error() {
+            count++;
+            if (count == total && callback != null) {
+                callback.onFailure(null);
+            }
+        }
+
         @Override
         public void onDataLookup(Displayer displayer) {
             for (Displayer other : displayerList) {
@@ -217,6 +224,7 @@ public class DisplayerCoordinator {
 
         @Override
         public void onError(final Displayer displayer, ClientRuntimeError error) {
+            error();
             for (Displayer other : displayerList) {
                 if (other != displayer && !isNotificationVetoed(displayer, other)) {
                     other.onError(displayer, error);
