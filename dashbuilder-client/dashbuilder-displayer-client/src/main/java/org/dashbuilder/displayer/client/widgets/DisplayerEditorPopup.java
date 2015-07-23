@@ -18,8 +18,11 @@ package org.dashbuilder.displayer.client.widgets;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
+import com.github.gwtbootstrap.client.ui.event.ShownEvent;
+import com.github.gwtbootstrap.client.ui.event.ShownHandler;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -37,6 +40,10 @@ public class DisplayerEditorPopup extends BaseModal {
     @UiField(provided = true)
     DisplayerEditor editor;
 
+    private DisplayerSettings settings;
+    private DisplayerEditor.Listener editorListener;
+    private HandlerRegistration showHandlerRegistration;
+
     @Inject
     public DisplayerEditorPopup(DisplayerEditor editor) {
         this.editor = editor;
@@ -45,22 +52,50 @@ public class DisplayerEditorPopup extends BaseModal {
         setWidth(950);
     }
 
-    public void init(DisplayerSettings settings, DisplayerEditor.Listener editorListener) {
-        editor.init(settings, editorListener);
-        setTitle(CommonConstants.INSTANCE.displayer_editor_title());
-        if (editor.isBrandNewDisplayer()) setTitle(CommonConstants.INSTANCE.displayer_editor_new());
+    public void init(final DisplayerSettings settings, final DisplayerEditor.Listener editorListener) {
+        this.settings = settings;
+        this.editorListener = editorListener;
         show();
+        this.showHandlerRegistration = this.addShownHandler(shownHandler);
     }
+
+    /**
+     * <p>The popup must be visible in order that the table can display the different row's values. So after popup is shown, initialize the editor.</p>
+     */
+    private final ShownHandler shownHandler = new ShownHandler() {
+        @Override
+        public void onShown(final ShownEvent shownEvent) {
+            editor.init(settings, editorListener);
+            setTitle(CommonConstants.INSTANCE.displayer_editor_title());
+            if (editor.isBrandNewDisplayer()) setTitle(CommonConstants.INSTANCE.displayer_editor_new());
+            removeShownHandler();
+        }
+    };
 
     @UiHandler("cancelButton")
     void cancel(final ClickEvent event) {
         hide();
         editor.close();
+        clearSettings();
     }
 
     @UiHandler("okButton")
     void ok(final ClickEvent event) {
         hide();
         editor.save();
+        clearSettings();
+    }
+
+    private void removeShownHandler() {
+        if (this.showHandlerRegistration != null) {
+            this.showHandlerRegistration.removeHandler();
+            this.showHandlerRegistration = null;
+        }
+    }
+
+    private void clearSettings() {
+        this.settings = null;
+        this.editorListener = null;
+        removeShownHandler();
     }
 }
