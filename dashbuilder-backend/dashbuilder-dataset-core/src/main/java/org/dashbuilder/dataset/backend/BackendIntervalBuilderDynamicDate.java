@@ -22,24 +22,22 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
-
 import javax.enterprise.context.ApplicationScoped;
 
 import org.apache.commons.lang3.StringUtils;
 import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.dataset.DataSet;
-import org.dashbuilder.dataset.date.Month;
+import org.dashbuilder.dataset.date.Quarter;
 import org.dashbuilder.dataset.engine.DataSetHandler;
 import org.dashbuilder.dataset.engine.group.IntervalBuilder;
-import org.dashbuilder.dataset.group.Interval;
 import org.dashbuilder.dataset.engine.group.IntervalList;
-import org.dashbuilder.dataset.group.DateIntervalType;
 import org.dashbuilder.dataset.group.ColumnGroup;
-import org.dashbuilder.dataset.sort.DataSetSort;
+import org.dashbuilder.dataset.group.DateIntervalType;
+import org.dashbuilder.dataset.group.Interval;
 import org.dashbuilder.dataset.sort.ColumnSort;
+import org.dashbuilder.dataset.sort.DataSetSort;
 import org.dashbuilder.dataset.sort.SortOrder;
 import org.dashbuilder.dataset.sort.SortedList;
-import org.dashbuilder.dataset.date.Quarter;
 
 import static org.dashbuilder.dataset.group.DateIntervalType.*;
 
@@ -173,19 +171,23 @@ public class BackendIntervalBuilderDynamicDate implements IntervalBuilder {
 
     public DateIntervalType calculateIntervalSize(Date minDate, Date maxDate, ColumnGroup columnGroup) {
 
-        // Catch limit cases
-        if (minDate == null || maxDate == null) {
-            return YEAR;
+        DateIntervalType intervalType = DateIntervalType.getByName(columnGroup.getIntervalSize());
+        if (intervalType == null) {
+            intervalType = YEAR;
         }
+
+        if (minDate == null || maxDate == null) {
+            return intervalType;
+        }
+
         long millis = (maxDate.getTime() - minDate.getTime());
         if (millis <= 0) {
-            return YEAR;
+            return intervalType;
         }
 
         // Calculate the interval type used according to the constraints set.
         int maxIntervals = columnGroup.getMaxIntervals();
         if (maxIntervals < 1) maxIntervals = 15;
-        DateIntervalType intervalType = YEAR;
         for (DateIntervalType type : values()) {
             long nintervals = millis / getDurationInMillis(type);
             if (nintervals < maxIntervals) {
@@ -220,7 +222,7 @@ public class BackendIntervalBuilderDynamicDate implements IntervalBuilder {
         if (QUARTER.equals(intervalType)) {
             int currentMonth = c.get(Calendar.MONTH);
             int firstMonthYear = columnGroup.getFirstMonthOfYear().getIndex();
-            int rest = Quarter.getPositionInQuarter(firstMonthYear, currentMonth+1);
+            int rest = Quarter.getPositionInQuarter(firstMonthYear, currentMonth + 1);
             c.add(Calendar.MONTH, rest * -1);
             c.set(Calendar.DAY_OF_MONTH, 1);
             c.set(Calendar.HOUR, 0);

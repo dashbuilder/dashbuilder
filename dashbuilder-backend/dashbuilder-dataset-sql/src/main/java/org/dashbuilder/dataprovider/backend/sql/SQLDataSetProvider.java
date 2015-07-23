@@ -16,7 +16,12 @@
 package org.dashbuilder.dataprovider.backend.sql;
 
 import java.sql.Connection;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
@@ -37,6 +42,7 @@ import org.dashbuilder.dataset.DataSetOp;
 import org.dashbuilder.dataset.DataSetOpEngine;
 import org.dashbuilder.dataset.backend.BackendIntervalBuilderDynamicDate;
 import org.dashbuilder.dataset.backend.date.DateUtils;
+import org.dashbuilder.dataset.date.TimeFrame;
 import org.dashbuilder.dataset.def.DataColumnDef;
 import org.dashbuilder.dataset.def.DataSetDef;
 import org.dashbuilder.dataset.def.DataSetDefRegistry;
@@ -60,7 +66,6 @@ import org.dashbuilder.dataset.group.DateIntervalType;
 import org.dashbuilder.dataset.group.GroupFunction;
 import org.dashbuilder.dataset.group.GroupStrategy;
 import org.dashbuilder.dataset.group.Interval;
-import org.dashbuilder.dataset.date.TimeFrame;
 import org.dashbuilder.dataset.impl.DataColumnImpl;
 import org.dashbuilder.dataset.impl.DataSetMetadataImpl;
 import org.dashbuilder.dataset.impl.MemSizeEstimator;
@@ -210,7 +215,7 @@ public class SQLDataSetProvider implements DataSetProvider {
         }
     }
 
-    protected void onDataSetDefRemovedEvent(@Observes DataSetDefRemovedEvent  event) {
+    protected void onDataSetDefRemovedEvent(@Observes DataSetDefRemovedEvent event) {
         DataSetDef def = event.getDataSetDef();
         if (DataSetProviderType.SQL.equals(def.getProvider())) {
             String uuid = def.getUUID();
@@ -657,7 +662,7 @@ public class SQLDataSetProvider implements DataSetProvider {
                     result.add(column);
 
                     // Group column
-                    if (cg != null && cg.getSourceId().equals(sourceId)) {
+                    if (cg != null && cg.getSourceId().equals(sourceId) && gf.getFunction() == null) {
                         column.setColumnType(ColumnType.LABEL);
                         column.setColumnGroup(cg);
                         if (ColumnType.DATE.equals(metadata.getColumnType(sourceId))) {
@@ -971,7 +976,7 @@ public class SQLDataSetProvider implements DataSetProvider {
                 if (columnId == null) columnId = metadata.getColumnId(0);
                 else _assertColumnExists(gf.getSourceId());
 
-                if (cg != null && cg.getSourceId().equals(columnId)) {
+                if (cg != null && cg.getSourceId().equals(columnId) && gf.getFunction() == null) {
                     _jooqFields.add(_createJooqField(cg));
                 } else {
                     _jooqFields.add(_createJooqField(gf));

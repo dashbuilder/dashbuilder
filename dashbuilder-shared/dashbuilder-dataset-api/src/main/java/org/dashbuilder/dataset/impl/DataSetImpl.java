@@ -321,6 +321,29 @@ public class DataSetImpl implements DataSet {
         return other;
     }
 
+    public boolean equals(Object obj) {
+        try {
+            DataSetImpl other = (DataSetImpl) obj;
+            if (other == null) {
+                return false;
+            }
+            if (getEstimatedSize() != other.getEstimatedSize()) {
+                return false;
+            }
+            if (columns.size() != other.columns.size()) {
+                return false;
+            }
+            for (int i=0; i<columns.size(); i++) {
+                if (!columns.get(i).equals(other.columns.get(i))) {
+                    return false;
+                }
+            }
+            return true;
+        } catch (ClassCastException e) {
+            return false;
+        }
+    }
+
     public long getEstimatedSize() {
         int nrows = getRowCount();
         if (nrows == 0) return 0;

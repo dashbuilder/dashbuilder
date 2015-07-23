@@ -17,10 +17,10 @@ package org.dashbuilder.dataset;
 
 import javax.inject.Inject;
 
-import org.dashbuilder.dataset.filter.FilterFactory;
-import org.dashbuilder.dataset.group.DateIntervalType;
 import org.dashbuilder.dataset.date.DayOfWeek;
 import org.dashbuilder.dataset.date.Month;
+import org.dashbuilder.dataset.filter.FilterFactory;
+import org.dashbuilder.dataset.group.DateIntervalType;
 import org.dashbuilder.dataset.sort.SortOrder;
 import org.dashbuilder.test.ShrinkWrapHelper;
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -32,9 +32,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import static org.dashbuilder.dataset.Assertions.*;
+import static org.dashbuilder.dataset.group.AggregateFunctionType.*;
 import static org.dashbuilder.dataset.group.DateIntervalType.*;
 import static org.fest.assertions.api.Assertions.*;
-import static org.dashbuilder.dataset.group.AggregateFunctionType.*;
 
 @RunWith(Arquillian.class)
 public class DataSetGroupTest {
@@ -397,6 +397,44 @@ public class DataSetGroupTest {
         //printDataSet(result);
         assertDataSetValues(result, dataSetFormatter, new String[][]{
             {"2015", "120.35"}
+        }, 0);
+    }
+
+    @Test
+    public void testGroupByDateOneDay() throws Exception {
+        DataSet result = dataSetManager.lookupDataSet(
+                DataSetFactory.newDataSetLookupBuilder()
+                        .dataset(EXPENSE_REPORTS)
+                        .filter("id", FilterFactory.equalsTo(1d))
+                        .group("date").dynamic(16, DAY, true)
+                        .column("date")
+                        .column("amount", SUM, "total")
+                        .buildLookup().cloneInstance());
+
+        //printDataSet(result);
+        assertDataSetValues(result, dataSetFormatter, new String[][]{
+            {"2015-12-11", "120.35"}
+        }, 0);
+    }
+
+    @Test
+    public void testGroupAndCountSameColumn() throws Exception {
+        DataSet result = dataSetManager.lookupDataSet(
+                DataSetFactory.newDataSetLookupBuilder()
+                        .dataset(EXPENSE_REPORTS)
+                        .group("department")
+                        .column("department", "Department")
+                        .column("department", COUNT, "Occurrences")
+                        .sort("department", SortOrder.ASCENDING)
+                        .buildLookup().cloneInstance());
+
+        //printDataSet(result);
+        assertDataSetValues(result, dataSetFormatter, new String[][]{
+                {"Engineering", "19.00"},
+                {"Management", "11.00"},
+                {"Sales", "8.00"},
+                {"Services", "5.00"},
+                {"Support", "7.00"}
         }, 0);
     }
 

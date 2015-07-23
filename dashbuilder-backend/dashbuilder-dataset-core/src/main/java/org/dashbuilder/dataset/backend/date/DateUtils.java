@@ -79,16 +79,16 @@ public class DateUtils {
         if (type.getIndex() <= DateIntervalType.SECOND.getIndex()) {
             return FORMATTER_SECOND.parse(date.toString());
         }
-        if (DateIntervalType.MINUTE.equals(type)) {
+        if (type.getIndex() <= DateIntervalType.MINUTE.getIndex()) {
             return FORMATTER_MINUTE.parse(date.toString());
         }
-        if (DateIntervalType.HOUR.equals(type)) {
+        if (type.getIndex() <= DateIntervalType.HOUR.getIndex()) {
             return FORMATTER_HOUR.parse(date.toString());
         }
-        if (DateIntervalType.DAY.equals(type)) {
+        if (type.getIndex() <= DateIntervalType.DAY.getIndex()) {
             return FORMATTER_DAY.parse(date.toString());
         }
-        if (DateIntervalType.MONTH.equals(type) || DateIntervalType.QUARTER.equals(type)) {
+        if (type.getIndex() <= DateIntervalType.QUARTER.getIndex()) {
             return FORMATTER_MONTH.parse(date.toString());
         }
         return FORMATTER_YEAR.parse(date.toString());

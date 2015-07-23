@@ -103,7 +103,7 @@ public class StaticDataSetProvider implements DataSetProvider {
             dataSet.setUUID(uuid);
             dataSet.setDefinition(def);
         }
-            return dataSet;
+        return dataSet;
     }
 
     public DataSet lookupDataSet(String uuid, DataSetLookup lookup) {
