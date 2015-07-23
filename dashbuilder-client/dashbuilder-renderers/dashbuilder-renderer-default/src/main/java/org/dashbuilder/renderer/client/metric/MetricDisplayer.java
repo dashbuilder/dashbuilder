@@ -31,7 +31,7 @@ public class MetricDisplayer extends AbstractMetricDisplayer {
 
     @Override
     protected Widget createVisualization() {
-        metricView = new MetricView();
+        metricView = createMetricView();
         metricView.applySettings(displayerSettings);
         updateVisualization();
 
@@ -43,7 +43,7 @@ public class MetricDisplayer extends AbstractMetricDisplayer {
                 }
             });
         }
-        return metricView;
+        return metricView.asWidget();
     }
 
     @Override
@@ -55,6 +55,10 @@ public class MetricDisplayer extends AbstractMetricDisplayer {
             String valueStr = super.formatValue(value, dataSet.getColumnByIndex(0));
             metricView.updateMetric(valueStr);
         }
+    }
+
+    protected MetricView createMetricView() {
+        return new MetricViewImpl();
     }
 
     public boolean isFilterOn() {
@@ -70,6 +74,9 @@ public class MetricDisplayer extends AbstractMetricDisplayer {
     }
 
     protected DataSetFilter fetchFilter() {
+        if (displayerSettings.getDataSetLookup() == null) {
+            return null;
+        }
         List<DataSetFilter> filterOps = displayerSettings.getDataSetLookup().getOperationList(DataSetFilter.class);
         if (filterOps == null || filterOps.isEmpty()) {
             return null;
