@@ -126,15 +126,21 @@ public class DataSetAdvancedAttributesEditor extends AbstractDataSetDefEditor im
         // Refresh interval type button values.
         for (final DateIntervalType dateInterval : ALLOWED_TYPES) {
             final String s = getIntervalTypeText(dateInterval);
-            intervalType.addClickHandler(new ClickHandler() {
-                @Override
-                public void onClick(ClickEvent event) {
-                    switchRefresh(true);
-                }
-            });
             intervalType.addItem(s);
         }
-                
+        intervalType.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                switchRefresh(true);
+            }
+        });
+        onStaleCheckbox.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                switchRefresh(true);
+            }
+        });
+
         // Configure and add sliders.
         attributeMaxRowsSliderPanel.add(backendCacheSlider);
         backendCacheSlider.addBarValueChangedHandler(backendCacheSliderHandler);
