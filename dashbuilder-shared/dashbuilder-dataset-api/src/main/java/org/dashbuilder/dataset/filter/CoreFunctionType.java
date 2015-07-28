@@ -39,7 +39,7 @@ public enum CoreFunctionType {
      *     <li><code>_</code> - A substitute for a single character.</li>
      *     <li><code>%</code> - A substitute for zero or more characters.</li>
      * </ul>
-     * <p>The implementation considers case UNSENSITIVE.</p>
+     * <p>The implementation is supported for TEXT or LABEL column types and considers case UNSENSITIVE.</p>
      */
     LIKE_TO(1),
     GREATER_THAN(1),
@@ -68,6 +68,9 @@ public enum CoreFunctionType {
     public boolean supportsType(ColumnType type) {
         if (TIME_FRAME.equals(this)) {
             return ColumnType.DATE.equals(type);
+        }
+        if (LIKE_TO.equals(this)) {
+            return ColumnType.LABEL.equals(type) || ColumnType.TEXT.equals(type);
         }
         return true;
     }

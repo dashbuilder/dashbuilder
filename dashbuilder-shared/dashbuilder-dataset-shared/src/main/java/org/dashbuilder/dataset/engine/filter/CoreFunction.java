@@ -105,7 +105,7 @@ public class CoreFunction extends DataSetFunction {
      *     <li><code>_</code> - A substitute for a single character.</li>
      *     <li><code>%</code> - A substitute for zero or more characters.</li>
      * </ul>
-     * <p>The implementation considers case UNSENSITIVE.</p>
+     * <p>The implementation is supported for TEXT or LABEL column types and considers case UNSENSITIVE.</p>
      *
      * <p>The call <code>getParameter(0)</code> returns the given user's input pattern used for searching.</p>
      * @param value The existing data set column's value at a given row.
