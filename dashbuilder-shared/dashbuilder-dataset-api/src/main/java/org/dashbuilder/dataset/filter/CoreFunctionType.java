@@ -38,6 +38,8 @@ public enum CoreFunctionType {
      * <ul>
      *     <li><code>_</code> - A substitute for a single character.</li>
      *     <li><code>%</code> - A substitute for zero or more characters.</li>
+     *     <li><code>[charlist]</code> - Sets and ranges of characters to match.</li>
+     *     <li><code>[^charlist]</code> - Matches only a character NOT specified within the brackets.</li>
      * </ul>
      * <p>The implementation is supported for TEXT or LABEL column types and considers case UNSENSITIVE.</p>
      */
