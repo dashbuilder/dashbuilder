@@ -31,6 +31,17 @@ public enum CoreFunctionType {
     NOT_NULL(0),
     EQUALS_TO(1),
     NOT_EQUALS_TO(1),
+    
+    /**
+     * <p>The <code>LIKE_TO</code> operator is intended to emulate the SQL like operator.It's used to search for a specified pattern in a data set's column.</p>
+     * <p>Allowed wildcards are:</p>
+     * <ul>
+     *     <li><code>_</code> - A substitute for a single character.</li>
+     *     <li><code>%</code> - A substitute for zero or more characters.</li>
+     * </ul>
+     * <p>The implementation considers case UNSENSITIVE.</p>
+     */
+    LIKE_TO(1),
     GREATER_THAN(1),
     GREATER_OR_EQUALS_TO(1),
     LOWER_THAN(1),

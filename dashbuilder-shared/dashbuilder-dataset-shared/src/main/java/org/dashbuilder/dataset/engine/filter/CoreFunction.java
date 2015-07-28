@@ -55,6 +55,9 @@ public class CoreFunction extends DataSetFunction {
         if (CoreFunctionType.NOT_EQUALS_TO.equals(type)) {
             return isNotEqualsTo(getCurrentValue());
         }
+        if (CoreFunctionType.LIKE_TO.equals(type)) {
+            return isLikeTo(getCurrentValue());
+        }
         if (CoreFunctionType.LOWER_THAN.equals(type)) {
             return isLowerThan(getCurrentValue());
         }
@@ -95,6 +98,41 @@ public class CoreFunction extends DataSetFunction {
         return !isEqualsTo(value);
     }
 
+    /**
+     * <p>The <code>LIKE_TO</code> operator is intended to emulate the SQL like operator.It's used to search for a specified pattern in a data set's column.</p>
+     * <p>Allowed wildcards are:</p>
+     * <ul>
+     *     <li><code>_</code> - A substitute for a single character.</li>
+     *     <li><code>%</code> - A substitute for zero or more characters.</li>
+     * </ul>
+     * <p>The implementation considers case UNSENSITIVE.</p>
+     *
+     * <p>The call <code>getParameter(0)</code> returns the given user's input pattern used for searching.</p>
+     * @param value The existing data set column's value at a given row.
+     * 
+     * @return If the string on current data set's column is like (as the SQL operator) the given user's pattern.
+     */
+    public boolean isLikeTo(Comparable value) {
+        if (isNull(value)) return false;
+        final Comparable _pattern = getParameter(0);
+        if (isNull(_pattern)) return false;
+        String existingColumnValue = value.toString();
+        String pattern = getParameter(0).toString();
+        if (isEmpty(existingColumnValue) && isEmpty(pattern)) return true;
+        
+        // Replace the user's wilcards that come from the UI request for valid regular expression patterns.
+        pattern = pattern.toLowerCase(); // ignoring case
+        pattern = pattern.replace(".", "\\."); // "\\" is escaped to "\"
+        // pattern = pattern.replace("?", ".");
+        // pattern = pattern.replace("*", ".*");
+        pattern = pattern.replace("%", ".*");
+        pattern = pattern.replace("_", ".");
+        pattern = pattern.toLowerCase();
+        
+        // Perform the regexp match operation.
+        return existingColumnValue.toLowerCase().matches(pattern);
+    }
+    
     public boolean isLowerThan(Comparable value) {
         if (isNull(value)) return false;
 
@@ -161,5 +199,9 @@ public class CoreFunction extends DataSetFunction {
             from = timeFrame.getFrom().getTimeInstant();
             to = timeFrame.getTo().getTimeInstant();
         }
+    }
+
+    private boolean isEmpty(String value) {
+        return value == null || value.trim().length() == 0;
     }
 }

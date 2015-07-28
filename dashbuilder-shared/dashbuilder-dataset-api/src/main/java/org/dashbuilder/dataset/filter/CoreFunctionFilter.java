@@ -98,6 +98,10 @@ public class CoreFunctionFilter extends ColumnFilter {
             out.append(columnId).append(" != ");
             appendParameters(out);
         }
+        else if (CoreFunctionType.LIKE_TO.equals(type)) {
+            out.append(columnId).append(" like ");
+            appendParameters(out);
+        }
         else if (CoreFunctionType.IS_NULL.equals(type)) {
             out.append(columnId).append(" is_null ");
             appendParameters(out);

@@ -332,7 +332,8 @@ public class ElasticSearchQueryBuilderImpl implements ElasticSearchQueryBuilder<
             
             result = new Query(columnId, Query.Type.EXISTS);
             
-        } else if (CoreFunctionType.EQUALS_TO.equals(type)) {
+        } else if (CoreFunctionType.EQUALS_TO.equals(type) ||
+                CoreFunctionType.LIKE_TO.equals(type)) {
             
             Object value = ElasticSearchJestClient.formatValue(columnId, metadata, params.get(0));
 

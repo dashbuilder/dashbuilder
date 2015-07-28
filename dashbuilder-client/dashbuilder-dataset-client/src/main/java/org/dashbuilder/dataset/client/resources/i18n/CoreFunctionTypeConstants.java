@@ -26,6 +26,7 @@ public interface CoreFunctionTypeConstants extends ConstantsWithLookup {
     String NOT_NULL();
     String EQUALS_TO();
     String NOT_EQUALS_TO();
+    String LIKE_TO();
     String GREATER_THAN();
     String GREATER_OR_EQUALS_TO();
     String LOWER_THAN();

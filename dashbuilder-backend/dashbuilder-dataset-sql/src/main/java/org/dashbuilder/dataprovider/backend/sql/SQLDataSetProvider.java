@@ -420,6 +420,9 @@ public class SQLDataSetProvider implements DataSetProvider {
             if (CoreFunctionType.NOT_EQUALS_TO.equals(type)) {
                 return _jooqField.notEqual(params.get(0));
             }
+            if (CoreFunctionType.LIKE_TO.equals(type)) {
+                return _jooqField.like((String) params.get(0));
+            }
             if (CoreFunctionType.LOWER_THAN.equals(type)) {
                 return _jooqField.lessThan(params.get(0));
             }
