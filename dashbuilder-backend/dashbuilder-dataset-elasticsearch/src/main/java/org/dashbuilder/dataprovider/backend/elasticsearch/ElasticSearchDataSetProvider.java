@@ -26,6 +26,7 @@ import org.dashbuilder.dataset.def.DataColumnDef;
 import org.dashbuilder.dataset.def.DataSetDef;
 import org.dashbuilder.dataset.def.DataSetDefRegistry;
 import org.dashbuilder.dataset.def.ElasticSearchDataSetDef;
+import org.dashbuilder.dataset.events.DataSetDefModifiedEvent;
 import org.dashbuilder.dataset.events.DataSetDefRemovedEvent;
 import org.dashbuilder.dataset.events.DataSetStaleEvent;
 import org.dashbuilder.dataset.filter.ColumnFilter;
@@ -586,6 +587,13 @@ public class ElasticSearchDataSetProvider implements DataSetProvider {
 
     private void onDataSetDefRemovedEvent(@Observes DataSetDefRemovedEvent event) {
         DataSetDef def = event.getDataSetDef();
+        if (DataSetProviderType.ELASTICSEARCH.equals(def.getProvider())) {
+            remove(def.getUUID());
+        }
+    }
+
+    private void onDataSetDefModifiedEvent(@Observes DataSetDefModifiedEvent event) {
+        DataSetDef def = event.getOldDataSetDef();
         if (DataSetProviderType.ELASTICSEARCH.equals(def.getProvider())) {
             remove(def.getUUID());
         }
