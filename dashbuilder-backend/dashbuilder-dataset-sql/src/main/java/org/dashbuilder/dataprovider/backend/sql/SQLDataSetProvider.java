@@ -50,6 +50,7 @@ import org.dashbuilder.dataset.def.SQLDataSetDef;
 import org.dashbuilder.dataset.engine.group.IntervalBuilder;
 import org.dashbuilder.dataset.engine.group.IntervalBuilderLocator;
 import org.dashbuilder.dataset.engine.group.IntervalList;
+import org.dashbuilder.dataset.events.DataSetDefModifiedEvent;
 import org.dashbuilder.dataset.events.DataSetDefRemovedEvent;
 import org.dashbuilder.dataset.events.DataSetStaleEvent;
 import org.dashbuilder.dataset.filter.ColumnFilter;
@@ -189,7 +190,7 @@ public class SQLDataSetProvider implements DataSetProvider {
         DataSource ds = dataSourceLocator.lookup(sqlDef);
         Connection conn = ds.getConnection();
         try {
-            return _getDataSetMetadata(sqlDef, conn);
+            return _getDataSetMetadata(sqlDef, conn, false);
         } finally {
             conn.close();
         }
@@ -199,7 +200,7 @@ public class SQLDataSetProvider implements DataSetProvider {
         DataSource ds = dataSourceLocator.lookup(def);
         Connection conn = ds.getConnection();
         try {
-            return _getRowCount(def, conn);
+            return _getRowCount(def, conn, false);
         } finally {
             conn.close();
         }
@@ -217,6 +218,16 @@ public class SQLDataSetProvider implements DataSetProvider {
 
     protected void onDataSetDefRemovedEvent(@Observes DataSetDefRemovedEvent event) {
         DataSetDef def = event.getDataSetDef();
+        if (DataSetProviderType.SQL.equals(def.getProvider())) {
+            String uuid = def.getUUID();
+            _metadataMap.remove(uuid);
+            staticDataSetProvider.removeDataSet(uuid);
+        }
+    }
+
+
+    protected void onDataSetDefModifiedEvent(@Observes DataSetDefModifiedEvent event) {
+        DataSetDef def = event.getOldDataSetDef();
         if (DataSetProviderType.SQL.equals(def.getProvider())) {
             String uuid = def.getUUID();
             _metadataMap.remove(uuid);
@@ -243,12 +254,15 @@ public class SQLDataSetProvider implements DataSetProvider {
 
     protected transient Map<String,MetadataHolder> _metadataMap = new HashMap<String,MetadataHolder>();
 
-    protected DataSetMetadata _getDataSetMetadata(SQLDataSetDef def, Connection conn) throws Exception {
-        MetadataHolder result = _metadataMap.get(def.getUUID());
-        if (result != null) return result.metadata;
+    protected DataSetMetadata _getDataSetMetadata(SQLDataSetDef def, Connection conn, boolean isTestMode) throws Exception {
+        MetadataHolder result = null;
+        if (!isTestMode) {
+            result = _metadataMap.get(def.getUUID());
+            if (result != null) return result.metadata;
+        }
 
         int estimatedSize = 0;
-        int rowCount = _getRowCount(def, conn);
+        int rowCount = _getRowCount(def, conn, isTestMode);
 
         List<String> columnIds = new ArrayList<String>();
         List<ColumnType> columnTypes = new ArrayList<ColumnType>();
@@ -310,8 +324,12 @@ public class SQLDataSetProvider implements DataSetProvider {
         result = new MetadataHolder();
         result.jooqFields = _jooqFields;
         result.metadata = new DataSetMetadataImpl(def, def.getUUID(), rowCount, columnIds.size(), columnIds, columnTypes, estimatedSize);
-        final boolean isDefRegistered = def.getUUID() != null && dataSetDefRegistry.getDataSetDef(def.getUUID()) != null;
-        if (isDefRegistered) _metadataMap.put(def.getUUID(), result);
+        if (!isTestMode) {
+            final boolean isDefRegistered = def.getUUID() != null && dataSetDefRegistry.getDataSetDef(def.getUUID()) != null;
+            if (isDefRegistered) {
+                _metadataMap.put(def.getUUID(), result);
+            }
+        }
         return result.metadata;
     }
 
@@ -333,7 +351,7 @@ public class SQLDataSetProvider implements DataSetProvider {
         }
     }
 
-    protected int _getRowCount(SQLDataSetDef def, Connection conn) throws Exception {
+    protected int _getRowCount(SQLDataSetDef def, Connection conn, boolean isTestMode) throws Exception {
 
         // Count rows, either on an SQL or a DB table
         SelectSelectStep _jooqQuery = using(conn).selectCount();
@@ -344,7 +362,7 @@ public class SQLDataSetProvider implements DataSetProvider {
         if (filterOp != null) {
             List<ColumnFilter> filterList = filterOp.getColumnFilterList();
             for (ColumnFilter filter : filterList) {
-                _appendJooqFilterBy(def, filter, _jooqQuery);
+                _appendJooqFilterBy(def, filter, _jooqQuery, isTestMode);
             }
         }
         return ((Number) logSQL(_jooqQuery).fetch().getValue(0 ,0)).intValue();
@@ -360,9 +378,12 @@ public class SQLDataSetProvider implements DataSetProvider {
         else return tableByName(def.getDbSchema(), def.getDbTable());
     }
 
-    protected Field _getJooqField(SQLDataSetDef def, String name) {
-        MetadataHolder metadataHolder = _metadataMap.get(def.getUUID());
-        Field jooqField = metadataHolder != null ? metadataHolder.getField(name) : null;
+    protected Field _getJooqField(SQLDataSetDef def, String name, boolean isTestMode) {
+        Field jooqField = null;
+        if (!isTestMode) {
+            MetadataHolder metadataHolder = _metadataMap.get(def.getUUID());
+            jooqField = metadataHolder != null ? metadataHolder.getField(name) : null;
+        }
         if (jooqField == null) {
             if (def.getDbSchema() == null) return field(name);
             else return fieldByName(def.getDbTable(), name);
@@ -387,20 +408,20 @@ public class SQLDataSetProvider implements DataSetProvider {
         else _jooqQuery.from(_getJooqTable(def));
     }
 
-    protected void _appendJooqFilterBy(SQLDataSetDef def, DataSetFilter filterOp, SelectWhereStep _jooqQuery) {
+    protected void _appendJooqFilterBy(SQLDataSetDef def, DataSetFilter filterOp, SelectWhereStep _jooqQuery, boolean isTestMode) {
         List<ColumnFilter> filterList = filterOp.getColumnFilterList();
         for (ColumnFilter filter : filterList) {
-            _appendJooqFilterBy(def, filter, _jooqQuery);
+            _appendJooqFilterBy(def, filter, _jooqQuery, isTestMode);
         }
     }
 
-    protected void _appendJooqFilterBy(SQLDataSetDef def, ColumnFilter filter, SelectWhereStep _jooqQuery) {
-        _jooqQuery.where(_jooqCondition(def, filter));
+    protected void _appendJooqFilterBy(SQLDataSetDef def, ColumnFilter filter, SelectWhereStep _jooqQuery, boolean isTestMode) {
+        _jooqQuery.where(_jooqCondition(def, filter, isTestMode));
     }
 
-    protected Condition _jooqCondition(SQLDataSetDef def, ColumnFilter filter) {
+    protected Condition _jooqCondition(SQLDataSetDef def, ColumnFilter filter, boolean isTestMode) {
         String filterId = filter.getColumnId();
-        Field _jooqField = _getJooqField(def, filterId);
+        Field _jooqField = _getJooqField(def, filterId, isTestMode);
 
         if (filter instanceof CoreFunctionFilter) {
             CoreFunctionFilter f = (CoreFunctionFilter) filter;
@@ -454,7 +475,7 @@ public class SQLDataSetProvider implements DataSetProvider {
             Condition condition = null;
             List<ColumnFilter> logicalTerms = f.getLogicalTerms();
             for (int i=0; i<logicalTerms.size(); i++) {
-                Condition next = _jooqCondition(def, logicalTerms.get(i));
+                Condition next = _jooqCondition(def, logicalTerms.get(i), isTestMode);
 
                 if (LogicalExprType.AND.equals(type)) {
                     if (condition == null) condition = next;
@@ -510,7 +531,7 @@ public class SQLDataSetProvider implements DataSetProvider {
             DataSource ds = dataSourceLocator.lookup(def);
             conn = ds.getConnection();
             try {
-                metadata = _getDataSetMetadata(def, conn);
+                metadata = _getDataSetMetadata(def, conn, lookup.testMode());
                 int totalRows = metadata.getNumberOfRows();
                 boolean trim = (lookup != null && lookup.getNumberOfRows() > 0);
 
@@ -546,7 +567,7 @@ public class SQLDataSetProvider implements DataSetProvider {
 
                     // Append the filter clauses
                     for (DataSetFilter filterOp : lookup.getOperationList(DataSetFilter.class)) {
-                        _appendJooqFilterBy(def, filterOp, _jooqQuery);
+                        _appendJooqFilterBy(def, filterOp, _jooqQuery, lookup.testMode());
                     }
 
                     // Append the interval selections
@@ -622,7 +643,7 @@ public class SQLDataSetProvider implements DataSetProvider {
 
             // Append the filter clauses
             for (DataSetFilter filterOp : lookup.getOperationList(DataSetFilter.class)) {
-                _appendJooqFilterBy(def, filterOp, _jooqLimits);
+                _appendJooqFilterBy(def, filterOp, _jooqLimits, lookup.testMode());
             }
 
             // Append group interval selection filters
@@ -803,7 +824,7 @@ public class SQLDataSetProvider implements DataSetProvider {
                 else {
                     filter = FilterFactory.equalsTo(cg.getSourceId(), names);
                 }
-                _appendJooqFilterBy(def, filter, _jooqQuery);
+                _appendJooqFilterBy(def, filter, _jooqQuery, lookup.testMode());
             }
         }
 
@@ -937,7 +958,7 @@ public class SQLDataSetProvider implements DataSetProvider {
         }
 
         protected Field _createJooqField(String name) {
-            return _getJooqField(def, name);
+            return _getJooqField(def, name, lookup.testMode());
         }
 
         protected Field _createJooqField(String name, DataType type) {
