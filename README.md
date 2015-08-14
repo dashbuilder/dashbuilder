@@ -33,20 +33,20 @@ Architecture
 * Decoupled client & server layers. Ability to build pure lightweight client dashboards.
 * Ability to push & handle data sets on client for better performance.
 * Based on <a href="http://www.uberfireframework.org" target="_blank">Uberfire</a>, a framework for building rich workbench styled apps on the web.
+* Data provider for the definition of data sets stored into SQL databases.
 
 Change log
 ==========
 
 0.3.0
 
-* New provider for the definition of data sets stored into SQL databases.
 * New provider for the retrieval of data stored into Elastic Search nodes.
 * New displayer for showing single value metrics.
 * Added new displayer subtypes: bar (stacked), pie (3d, donut), line (smooth)
 * Support for real-time dashboards. Displayer refresh settings.
 
 * New data set editor UI module:
-    - Creation of SQL, Bean, CSV & elastic search data set definitions
+    - Creation of Bean, CSV & Elastic Search data set definitions
     - Data set retrieval testing and preview
     - Filter, sort and export the data previews
 
