@@ -58,10 +58,14 @@ public class FilterFactory {
         return new CoreFunctionFilter(columnId, CoreFunctionType.EQUALS_TO, allowedValues);
     }
 
-    public static ColumnFilter likeTo(String columnId, Comparable allowedValue) {
-        return new CoreFunctionFilter(columnId, CoreFunctionType.LIKE_TO, allowedValue);
+    public static ColumnFilter likeTo(String columnId, String searchPattern) {
+        return likeTo(columnId, searchPattern, true);
     }
     
+    public static ColumnFilter likeTo(String columnId, String searchPattern, boolean caseSensitive) {
+        return new CoreFunctionFilter(columnId, CoreFunctionType.LIKE_TO, searchPattern, caseSensitive);
+    }
+
     public static ColumnFilter notEqualsTo(Comparable allowedValue) {
         return notEqualsTo(null, allowedValue);
     }
@@ -193,6 +197,12 @@ public class FilterFactory {
 
     public static List createParameters(ColumnType columnType, CoreFunctionType functionType) {
         List result = new ArrayList();
+        if (CoreFunctionType.LIKE_TO.equals(functionType)) {
+            result.add("%Text%");
+            result.add(true);
+            return result;
+        }
+
         int n = functionType.getParametersCount();
 
         for (int i=0; i<n; i++) {
@@ -210,7 +220,7 @@ public class FilterFactory {
                     result.add(d);
                 }
             } else {
-                result.add("val" + (i + 1));
+                result.add("value" + (i + 1));
             }
         }
         return result;

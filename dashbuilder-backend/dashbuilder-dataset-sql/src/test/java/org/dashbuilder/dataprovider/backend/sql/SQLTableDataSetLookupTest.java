@@ -159,5 +159,6 @@ public class SQLTableDataSetLookupTest extends SQLDataSetTestBase {
         subTest.testNOTExpression();
         subTest.testORExpression();
         subTest.testCombinedExpression();
+        subTest.testLikeOperator();
     }
 }
