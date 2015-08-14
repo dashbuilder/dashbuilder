@@ -41,9 +41,10 @@ public enum CoreFunctionType {
      *     <li><code>[charlist]</code> - Sets and ranges of characters to match.</li>
      *     <li><code>[^charlist]</code> - Matches only a character NOT specified within the brackets.</li>
      * </ul>
-     * <p>The implementation is supported for TEXT or LABEL column types and considers case UNSENSITIVE.</p>
+     * <p>The implementation is supported for TEXT or LABEL column types and it's case sensitive or
+     * unsensitive depending on the boolean value returned by its second parameter.</p>
      */
-    LIKE_TO(1),
+    LIKE_TO(2),
     GREATER_THAN(1),
     GREATER_OR_EQUALS_TO(1),
     LOWER_THAN(1),

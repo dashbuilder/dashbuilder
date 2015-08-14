@@ -19,6 +19,7 @@ import java.sql.Timestamp;
 import java.util.Calendar;
 import javax.inject.Inject;
 
+import org.dashbuilder.dataset.sort.SortOrder;
 import org.dashbuilder.test.ShrinkWrapHelper;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -61,9 +62,9 @@ public class DataSetFilterTest {
     public void testFilterByString() throws Exception {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
-                .dataset(EXPENSE_REPORTS)
-                .filter("city", equalsTo("Barcelona"))
-                .buildLookup());
+                        .dataset(EXPENSE_REPORTS)
+                        .filter("city", equalsTo("Barcelona"))
+                        .buildLookup());
 
         //printDataSet(result);
         assertThat(result.getRowCount()).isEqualTo(6);
@@ -208,6 +209,41 @@ public class DataSetFilterTest {
         assertThat(result.getRowCount()).isEqualTo(7);
         assertDataSetValue(result, 0, 0, "9.00");
         assertDataSetValue(result, 6, 0, "28.00");
+    }
+
+    @Test
+    public void testLikeOperator() throws Exception {
+
+        DataSet result = dataSetManager.lookupDataSet(
+                DataSetFactory.newDataSetLookupBuilder()
+                        .dataset(EXPENSE_REPORTS)
+                        .filter(likeTo("city", "Bar%"))
+                        .column("id")
+                        .sort("id", SortOrder.ASCENDING)
+                        .buildLookup());
+
+        //printDataSet(result);
+        assertThat(result.getRowCount()).isEqualTo(6);
+        assertDataSetValue(result, 0, 0, "1.00");
+        assertDataSetValue(result, 5, 0, "6.00");
+
+        // Case sensitive
+        result = dataSetManager.lookupDataSet(
+                DataSetFactory.newDataSetLookupBuilder()
+                        .dataset(EXPENSE_REPORTS)
+                        .filter(likeTo("city", "%L%", true))
+                        .buildLookup());
+
+        assertThat(result.getRowCount()).isEqualTo(7);
+
+        // Case un-sensitive
+        result = dataSetManager.lookupDataSet(
+                DataSetFactory.newDataSetLookupBuilder()
+                        .dataset(EXPENSE_REPORTS)
+                        .filter(likeTo("city", "%L%", false))
+                        .buildLookup());
+
+        assertThat(result.getRowCount()).isEqualTo(26);
     }
 
 

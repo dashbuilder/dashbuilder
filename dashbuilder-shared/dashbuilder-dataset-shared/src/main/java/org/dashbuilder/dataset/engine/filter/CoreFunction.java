@@ -37,6 +37,9 @@ public class CoreFunction extends DataSetFunction {
     }
 
     public Comparable getParameter(int index) {
+        if (index >= coreFunctionFilter.getParameters().size()) {
+            return null;
+        }
         return (Comparable) coreFunctionFilter.getParameters().get(index);
     }
 
@@ -107,32 +110,35 @@ public class CoreFunction extends DataSetFunction {
      *     <li><code>[charlist]</code> - Sets and ranges of characters to match.</li>
      *     <li><code>[^charlist]</code> - Matches only a character NOT specified within the brackets.</li>
      * </ul>
-     * <p>The implementation is supported for TEXT or LABEL column types and considers case UNSENSITIVE.</p>
      *
      * <p>The call <code>getParameter(0)</code> returns the given user's input pattern used for searching.</p>
+     *
+     * <p>The implementation is supported for TEXT or LABEL column types and it's case sensitive or
+     * unsensitive depending on the boolean value returned by getParameter(1).</p>
+     *
      * @param value The existing data set column's value at a given row.
-     * 
      * @return If the string on current data set's column is like (as the SQL operator) the given user's pattern.
      */
     public boolean isLikeTo(Comparable value) {
-        if (isNull(value)) return false;
-        final Comparable _pattern = getParameter(0);
-        if (isNull(_pattern)) return false;
-        String existingColumnValue = value.toString();
-        String pattern = getParameter(0).toString();
-        if (isEmpty(existingColumnValue) && isEmpty(pattern)) return true;
-        
+        if (value == null) {
+            return false;
+        }
+        final Comparable param0 = getParameter(0);
+        if (param0 == null) {
+            return false;
+        }
+        // Case sensitive parameter
+        final Boolean caseSensitive = getParameter(1) != null ? Boolean.parseBoolean(getParameter(1).toString()) : true;
+        String pattern = caseSensitive ? param0.toString() : param0.toString().toLowerCase();
+        String strValue = caseSensitive ? value.toString() : value.toString().toLowerCase();
+
         // Replace the user's wilcards that come from the UI request for valid regular expression patterns.
-        pattern = pattern.toLowerCase(); // ignoring case
         pattern = pattern.replace(".", "\\."); // "\\" is escaped to "\"
-        // pattern = pattern.replace("?", ".");
-        // pattern = pattern.replace("*", ".*");
         pattern = pattern.replace("%", ".*");
         pattern = pattern.replace("_", ".");
-        pattern = pattern.toLowerCase();
-        
+
         // Perform the regexp match operation.
-        return existingColumnValue.toLowerCase().matches(pattern);
+        return strValue.matches(pattern);
     }
     
     public boolean isLowerThan(Comparable value) {
@@ -201,9 +207,5 @@ public class CoreFunction extends DataSetFunction {
             from = timeFrame.getFrom().getTimeInstant();
             to = timeFrame.getTo().getTimeInstant();
         }
-    }
-
-    private boolean isEmpty(String value) {
-        return value == null || value.trim().length() == 0;
     }
 }

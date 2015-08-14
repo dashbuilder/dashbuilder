@@ -188,9 +188,15 @@ public class ColumnFilterEditor extends Composite {
         filterDetailsPanel.clear();
 
         CoreFunctionFilter coreFilter = getCoreFilter();
-        for (int i=0; i<coreFilter.getType().getParametersCount(); i++) {
-            Widget paramInput = createParamInputWidget(coreFilter, i);
+        if (CoreFunctionType.LIKE_TO.equals(coreFilter.getType())) {
+            Widget paramInput = createLikeToFunctionWidget(coreFilter);
             filterDetailsPanel.add(paramInput);
+        }
+        else {
+            for (int i = 0; i < coreFilter.getType().getParametersCount(); i++) {
+                Widget paramInput = createParamInputWidget(coreFilter, i);
+                filterDetailsPanel.add(paramInput);
+            }
         }
     }
 
@@ -261,6 +267,27 @@ public class ColumnFilterEditor extends Composite {
         input.init(timeFrame, new TimeFrameEditor.Listener() {
             public void valueChanged(TimeFrame tf) {
                 paramList.set(paramIndex, tf.toString());
+                filterUpdated();
+            }
+        });
+        return input;
+    }
+
+    protected Widget createLikeToFunctionWidget(final CoreFunctionFilter coreFilter) {
+        LikeToFunctionEditor input = new LikeToFunctionEditor();
+        final List paramList = coreFilter.getParameters();
+        String pattern = (String) paramList.get(0);
+        boolean caseSensitive = paramList.size() < 2 || Boolean.parseBoolean(paramList.get(1).toString());
+
+        input.init(pattern, caseSensitive, new LikeToFunctionEditor.Listener() {
+
+            public void valueChanged(String pattern, boolean caseSensitive) {
+                paramList.clear();
+                paramList.add(pattern);
+                if (!caseSensitive) {
+                    // Only add if disabled since case sensitive is enabled by default.
+                    paramList.add(caseSensitive);
+                }
                 filterUpdated();
             }
         });

@@ -187,6 +187,10 @@ public interface CommonConstants extends Messages {
 
     String timeframe_first_month_year();
 
+    String case_sensitive();
+
+    String like_to_pattern_instructions();
+
     String group_columnid_label();
 
     String dataset_groupdate_fixed_intervals();

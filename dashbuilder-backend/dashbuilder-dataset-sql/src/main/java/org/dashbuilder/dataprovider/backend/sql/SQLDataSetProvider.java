@@ -442,7 +442,13 @@ public class SQLDataSetProvider implements DataSetProvider {
                 return _jooqField.notEqual(params.get(0));
             }
             if (CoreFunctionType.LIKE_TO.equals(type)) {
-                return _jooqField.like((String) params.get(0));
+                String pattern = (String) params.get(0);
+                boolean caseSensitive = params.size() < 2 || Boolean.parseBoolean(params.get(1).toString());
+                if (caseSensitive) {
+                    return _jooqField.like(pattern);
+                } else {
+                    return _jooqField.lower().like(pattern.toLowerCase());
+                }
             }
             if (CoreFunctionType.LOWER_THAN.equals(type)) {
                 return _jooqField.lessThan(params.get(0));
