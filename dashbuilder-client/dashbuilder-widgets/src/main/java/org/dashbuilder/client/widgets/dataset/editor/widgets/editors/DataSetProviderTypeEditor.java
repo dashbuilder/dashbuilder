@@ -69,6 +69,10 @@ public class DataSetProviderTypeEditor extends AbstractDataSetDefEditor implemen
         final Map<DataSetProviderType, ImageListEditor.Entry> providerEditorValues
                 = new EnumMap<DataSetProviderType, ImageListEditor.Entry>(DataSetProviderType.class);
         for (final DataSetProviderType type : DataSetProviderType.values()) {
+            if (DataSetProviderType.SQL == type) {
+                // Disable SQL data set creation until the jOOQ library is replaced
+                continue;
+            }
             final Image _image = buildTypeSelectorWidget(type);
             final String _heading = buildTypeSelectorHeading(type);
             final String _text = buildTypeSelectorText(type);
