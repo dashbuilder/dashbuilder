@@ -51,7 +51,7 @@ public class DataSetLookupConstraintsTest {
 
     @Before
     public void setUp() throws Exception {
-        dataSet = RawDataSetSamples.EXPENSE_REPORTS.toDataSet();
+        dataSet = ExpenseReportsData.INSTANCE.toDataSet();
         dataSet.setUUID(EXPENSE_REPORTS);
         dataSetManager.registerDataSet(dataSet);
         dataSetFormatter = new DataSetFormatter();

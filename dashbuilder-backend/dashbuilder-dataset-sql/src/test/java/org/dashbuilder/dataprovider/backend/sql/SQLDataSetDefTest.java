@@ -27,10 +27,19 @@ import org.dashbuilder.dataset.group.AggregateFunctionType;
 import org.dashbuilder.dataset.sort.SortOrder;
 import org.junit.Test;
 
+import static org.dashbuilder.dataset.ExpenseReportsData.*;
 import static org.dashbuilder.dataset.Assertions.*;
 import static org.fest.assertions.api.Assertions.*;
 
 public class SQLDataSetDefTest extends SQLDataSetTestBase {
+
+    @Override
+    public void testAll() throws Exception {
+        testAllColumns();
+        testSQLDataSet();
+        testColumnSet();
+        testFilters();
+    }
 
     @Test
     public void testAllColumns() throws Exception {
@@ -48,7 +57,8 @@ public class SQLDataSetDefTest extends SQLDataSetTestBase {
     @Test
     public void testSQLDataSet() throws Exception {
 
-        URL fileURL = Thread.currentThread().getContextClassLoader().getResource("expenseReports_sql.dset");
+        String testDsetFile = testSettings.getExpenseReportsSqlDsetFile();
+        URL fileURL = Thread.currentThread().getContextClassLoader().getResource(testDsetFile);
         String json = IOUtils.toString(fileURL);
         SQLDataSetDef def = (SQLDataSetDef) jsonMarshaller.fromJson(json);
         dataSetDefRegistry.registerDataSetDef(def);
@@ -60,11 +70,11 @@ public class SQLDataSetDefTest extends SQLDataSetTestBase {
         DataSet dataSet = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                         .dataset("expense_reports_sql")
-                        .filter("amount", FilterFactory.lowerThan(1000))
-                        .group("employee")
-                        .column("employee")
-                        .column("amount", AggregateFunctionType.SUM)
-                        .sort("employee", SortOrder.ASCENDING)
+                        .filter(COLUMN_AMOUNT, FilterFactory.lowerThan(1000))
+                        .group(COLUMN_EMPLOYEE)
+                        .column(COLUMN_EMPLOYEE)
+                        .column(COLUMN_AMOUNT, AggregateFunctionType.SUM)
+                        .sort(COLUMN_EMPLOYEE, SortOrder.ASCENDING)
                         .buildLookup());
 
         //printDataSet(dataSet);
@@ -95,7 +105,7 @@ public class SQLDataSetDefTest extends SQLDataSetTestBase {
         assertThat(dataSet.getValueAt(0, 0)).isEqualTo("Engineering");
         assertThat(dataSet.getValueAt(0, 1)).isEqualTo("Roxie Foraker");
         assertThat(dataSet.getValueAt(0, 2)).isEqualTo(120.35d);
-        assertThat(dataSet.getValueAt(0, 3).toString()).isEqualTo("2015-12-11 00:00:00.0");
+        assertThat(dataSet.getValueAt(0, 3).toString()).isEqualTo("2015-12-11 12:00:00.0");
     }
 
     @Test
@@ -113,33 +123,32 @@ public class SQLDataSetDefTest extends SQLDataSetTestBase {
         DataSet dataSet = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                         .dataset("expense_reports_filtered")
-                        .group("department")
-                        .column("department")
-                        .column("employee")
-                        .column("amount", AggregateFunctionType.SUM)
-                        .column("date")
+                        .group(COLUMN_DEPARTMENT)
+                        .column(COLUMN_DEPARTMENT)
+                        .column(COLUMN_EMPLOYEE)
+                        .column(COLUMN_AMOUNT, AggregateFunctionType.SUM)
+                        .sort(COLUMN_DEPARTMENT, SortOrder.DESCENDING)
                         .buildLookup());
 
         //printDataSet(dataSet);
         assertDataSetValues(dataSet, dataSetFormatter, new String[][]{
-                {"Services", "Jamie Gilbeau", "792.59", "09/15/15 00:00"},
-                {"Engineering", "Roxie Foraker", "2,120.55", "12/01/15 00:00"}
+                {"Services", "Jamie Gilbeau", "792.59"},
+                {"Engineering", "Roxie Foraker", "2,120.55"}
         }, 0);
 
         dataSet = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                         .dataset("expense_reports_filtered")
-                        .filter("id", FilterFactory.lowerThan("4"))
-                        .group("department")
-                        .column("department")
-                        .column("employee")
-                        .column("amount", AggregateFunctionType.SUM)
-                        .column("date")
+                        .filter(COLUMN_ID, FilterFactory.lowerThan(4))
+                        .group(COLUMN_DEPARTMENT)
+                        .column(COLUMN_DEPARTMENT)
+                        .column(COLUMN_EMPLOYEE)
+                        .column(COLUMN_AMOUNT, AggregateFunctionType.SUM)
                         .buildLookup());
 
         //printDataSet(dataSet);
         assertDataSetValues(dataSet, dataSetFormatter, new String[][]{
-                {"Engineering", "Roxie Foraker", "2,120.55", "12/01/15 00:00"}
+                {"Engineering", "Roxie Foraker", "2,120.55"}
         }, 0);
     }
 }

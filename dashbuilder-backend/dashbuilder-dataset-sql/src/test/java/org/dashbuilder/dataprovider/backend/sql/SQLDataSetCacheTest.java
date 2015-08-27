@@ -46,6 +46,12 @@ public class SQLDataSetCacheTest extends SQLDataSetTestBase {
         _testDataSetCache("static", false, 50);
     }
 
+    @Override
+    public void testAll() throws Exception {
+        testDataSetNonCached();
+        testDataSetStaticCache();
+    }
+
     protected void _testDataSetCache(String scenario, boolean outdated, int rows) throws Exception {
 
         // Register the data set definition

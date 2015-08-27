@@ -30,6 +30,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import static org.dashbuilder.dataset.ExpenseReportsData.*;
 import static org.fest.assertions.api.Assertions.*;
 import static org.dashbuilder.dataset.filter.FilterFactory.*;
 
@@ -49,7 +50,7 @@ public class DataSetIndexTest {
      */
     DataSetLookup groupByDeptAndCount = DataSetFactory.newDataSetLookupBuilder()
             .dataset(EXPENSE_REPORTS)
-            .group("department", "Department")
+            .group(COLUMN_DEPARTMENT, "Department")
             .column(AggregateFunctionType.COUNT, "occurrences")
             .buildLookup();
 
@@ -58,8 +59,8 @@ public class DataSetIndexTest {
      */
     DataSetLookup groupByDeptAndSum = DataSetFactory.newDataSetLookupBuilder()
             .dataset(EXPENSE_REPORTS)
-            .group("department", "Department")
-            .column("amount", AggregateFunctionType.AVERAGE)
+            .group(COLUMN_DEPARTMENT, "Department")
+            .column(COLUMN_AMOUNT, AggregateFunctionType.AVERAGE)
             .buildLookup();
 
     /**
@@ -67,8 +68,8 @@ public class DataSetIndexTest {
      */
     DataSetLookup filterByCityAndDept = DataSetFactory.newDataSetLookupBuilder()
             .dataset(EXPENSE_REPORTS)
-            .filter("city", equalsTo("Barcelona"))
-            .filter("department", equalsTo("Engineering"))
+            .filter(COLUMN_CITY, equalsTo("Barcelona"))
+            .filter(COLUMN_DEPARTMENT, equalsTo("Engineering"))
             .buildLookup();
 
     /**
@@ -76,7 +77,7 @@ public class DataSetIndexTest {
      */
     DataSetLookup sortByAmountAsc = DataSetFactory.newDataSetLookupBuilder()
             .dataset(EXPENSE_REPORTS)
-            .sort("amount", "asc")
+            .sort(COLUMN_AMOUNT, "asc")
             .buildLookup();
 
     /**
@@ -84,14 +85,14 @@ public class DataSetIndexTest {
      */
     DataSetLookup sortByAmountDesc = DataSetFactory.newDataSetLookupBuilder()
             .dataset(EXPENSE_REPORTS)
-            .sort("amount", "desc")
+            .sort(COLUMN_AMOUNT, "desc")
             .buildLookup();
 
     @Inject SharedDataSetOpEngine dataSetOpEngine;
 
     @Before
     public void setUp() throws Exception {
-        DataSet dataSet = RawDataSetSamples.EXPENSE_REPORTS.toDataSet();
+        DataSet dataSet = ExpenseReportsData.INSTANCE.toDataSet();
         dataSet.setUUID(EXPENSE_REPORTS);
         dataSetOpEngine.getIndexRegistry().put(dataSet);
     }
