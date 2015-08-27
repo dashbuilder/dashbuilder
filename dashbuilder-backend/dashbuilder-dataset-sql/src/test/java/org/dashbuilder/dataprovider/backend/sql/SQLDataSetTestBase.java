@@ -15,16 +15,22 @@
  */
 package org.dashbuilder.dataprovider.backend.sql;
 
+import java.io.InputStream;
 import java.net.URL;
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.util.Properties;
 import javax.inject.Inject;
 import javax.sql.DataSource;
 
 import org.apache.commons.io.IOUtils;
+import org.dashbuilder.dataprovider.backend.sql.model.Column;
+import org.dashbuilder.dataprovider.backend.sql.model.Table;
+import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetFormatter;
 import org.dashbuilder.dataset.DataSetManager;
-import org.dashbuilder.dataset.RawDataSetSamples;
+import org.dashbuilder.dataset.ExpenseReportsData;
 import org.dashbuilder.dataset.backend.DataSetDefJSONMarshaller;
 import org.dashbuilder.dataset.def.DataSetDefRegistry;
 import org.dashbuilder.dataset.def.SQLDataSetDef;
@@ -33,14 +39,12 @@ import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
-import org.jooq.Field;
-import org.jooq.Table;
-import org.jooq.impl.SQLDataType;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 
-import static org.jooq.impl.DSL.*;
+import static org.dashbuilder.dataset.ExpenseReportsData.*;
+import static org.dashbuilder.dataprovider.backend.sql.SQLFactory.*;
 
 @RunWith(Arquillian.class)
 public class SQLDataSetTestBase {
@@ -64,57 +68,44 @@ public class SQLDataSetTestBase {
     DataSetDefJSONMarshaller jsonMarshaller;
 
     @Inject
-    SQLDataSourceLocator dataSourceLocator;
+    DataSourceLocatorMock dataSourceLocator;
 
-    String expenseReportsDsetFile = "expenseReports.dset";
-
-    public static final String CREATE_TABLE = "CREATE TABLE expense_reports (\n" +
-            "  id INTEGER NOT NULL,\n" +
-            "  city VARCHAR(50),\n" +
-            "  department VARCHAR(50),\n" +
-            "  employee VARCHAR(50),\n" +
-            "  date TIMESTAMP,\n" +
-            "  amount NUMERIC(28,2),\n" +
-            "  PRIMARY KEY(id)\n" +
-            ")";
-
-    public static final String DROP_TABLE = "DROP TABLE expense_reports";
+    @Inject
+    DatabaseTestSettings testSettings;
 
     Connection conn;
-    Table EXPENSES = table("expense_reports");
-    Field ID = field("id", SQLDataType.INTEGER);
-    Field CITY = field("city", SQLDataType.VARCHAR.length(50));
-    Field DEPT = field("department", SQLDataType.VARCHAR.length(50));
-    Field EMPLOYEE = field("employee", SQLDataType.VARCHAR.length(50));
-    Field DATE = field("date", SQLDataType.DATE);
-    Field AMOUNT = field("amount", SQLDataType.FLOAT);
+    Column ID = column(COLUMN_ID, ColumnType.NUMBER, 4);
+    Column CITY = column(COLUMN_CITY, ColumnType.LABEL, 50);
+    Column DEPT = column(COLUMN_DEPARTMENT, ColumnType.LABEL, 50);
+    Column EMPLOYEE = column(COLUMN_EMPLOYEE, ColumnType.LABEL, 50);
+    Column DATE = column(COLUMN_DATE, ColumnType.DATE, 4);
+    Column AMOUNT = column(COLUMN_AMOUNT, ColumnType.NUMBER, 4);
+    Table EXPENSES = table("EXPENSE_REPORTS");
+
+    public String getExpenseReportsDsetFile() {
+        return testSettings.getExpenseReportsTableDsetFile();
+    }
+
+    protected static boolean _dbInfoPrinted = false;
+
+    private void printDatabaseInfo() throws Exception {
+        if (!_dbInfoPrinted) {
+            DatabaseMetaData meta = conn.getMetaData();
+            System.out.println("\n********************************************************************************************");
+            System.out.println(String.format("Database: %s %s", meta.getDatabaseProductName(), meta.getDatabaseProductVersion()));
+            System.out.println(String.format("Driver: %s %s", meta.getDriverName(), meta.getDriverVersion()));
+            System.out.println("*********************************************************************************************\n");
+            _dbInfoPrinted = true;
+        }
+    }
 
     @Before
     public void setUp() throws Exception {
-
-        // H2 in-memory
-        DataSourceLocatorMock.TYPE = "h2";
-        DataSourceLocatorMock.URL = "jdbc:h2:mem:test;DATABASE_TO_UPPER=FALSE";
-
-        // H2 local
-        //DataSourceLocatorMock.TYPE = "h2";
-        //DataSourceLocatorMock.URL = "jdbc:h2:~/test;DATABASE_TO_UPPER=FALSE";
-
-        // MySQL
-        //DataSourceLocatorMock.TYPE = "mysql";
-        //DataSourceLocatorMock.URL = "jdbc:mysql://localhost:3306/dashbuilder";
-        //DataSourceLocatorMock.USER = "root";
-
-        // Postgres
-        //DataSourceLocatorMock.TYPE = "postgres";
-        //DataSourceLocatorMock.SERVER = "localhost";
-        //DataSourceLocatorMock.DB = "dashbuilder";
-        //DataSourceLocatorMock.PORT = 5432;
-        //DataSourceLocatorMock.USER = "dashbuilder";
-        //DataSourceLocatorMock.PASSWORD = "dashbuilder";
+        // Prepare the datasource to test
+        dataSourceLocator.setDataSourceLocator(testSettings.getDataSourceLocator());
 
         // Register the SQL data set
-        URL fileURL = Thread.currentThread().getContextClassLoader().getResource(expenseReportsDsetFile);
+        URL fileURL = Thread.currentThread().getContextClassLoader().getResource(getExpenseReportsDsetFile());
         String json = IOUtils.toString(fileURL);
         SQLDataSetDef def = (SQLDataSetDef) jsonMarshaller.fromJson(json);
         dataSetDefRegistry.registerDataSetDef(def);
@@ -122,9 +113,12 @@ public class SQLDataSetTestBase {
         // Get a data source connection
         DataSource dataSource = dataSourceLocator.lookup(def);
         conn = dataSource.getConnection();
+        printDatabaseInfo();
 
         // Create the expense reports table
-        using(conn).execute(CREATE_TABLE);
+        createTable(conn).table(EXPENSES)
+                .columns(ID, CITY, DEPT, EMPLOYEE, DATE, AMOUNT)
+                .primaryKey(ID).execute();
 
         // Populate the table
         populateDbTable();
@@ -133,19 +127,23 @@ public class SQLDataSetTestBase {
     @After
     public void tearDown() throws Exception {
         // Drop the expense reports table
-        using(conn).execute(DROP_TABLE);
+        dropTable(conn).table(EXPENSES).execute();
 
         conn.close();
     }
 
-    protected void populateDbTable() throws Exception {
-        int rowCount = using(conn).fetchCount(EXPENSES);
+    public void testAll() throws Exception {
+        // To be implemented by subclasses
+    }
 
-        DataSet dataSet = RawDataSetSamples.EXPENSE_REPORTS.toDataSet();
+    protected void populateDbTable() throws Exception {
+        int rowCount = select(conn).from(EXPENSES).fetchCount();
+
+        DataSet dataSet = ExpenseReportsData.INSTANCE.toDataSet();
         for (int i = 0; i < dataSet.getRowCount(); i++) {
             int id = ((Number) dataSet.getValueAt(i, 0)).intValue();
-            using(conn).insertInto(EXPENSES)
-                    .set(ID,  rowCount + id)
+            insert(conn).into(EXPENSES)
+                    .set(ID, rowCount + id)
                     .set(CITY, dataSet.getValueAt(i, 1))
                     .set(DEPT, dataSet.getValueAt(i, 2))
                     .set(EMPLOYEE, dataSet.getValueAt(i, 3))

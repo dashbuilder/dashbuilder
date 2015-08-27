@@ -31,9 +31,30 @@ import static org.fest.assertions.api.Assertions.*;
 
 public class SQLTableDataSetLookupTest extends SQLDataSetTestBase {
 
+    @Override
+    public void testAll() throws Exception {
+        testDataSetTrim();
+        testDataSetColumns();
+        testDataSetFilter();
+        testDataSetGroup();
+        testDataSetGroupByHour();
+        testDataSetNestedGroup();
+    }
+
     @Test
     public void testDataSetTrim() throws Exception {
+
         DataSet result = dataSetManager.lookupDataSet(
+                DataSetFactory.newDataSetLookupBuilder()
+                        .dataset(DataSetGroupTest.EXPENSE_REPORTS)
+                        .rowNumber(10)
+                        .buildLookup());
+
+        assertThat(result.getRowCount()).isEqualTo(10);
+        assertThat(result.getValueAt(0, 0)).isEqualTo(1d);
+        assertThat(result.getValueAt(9, 0)).isEqualTo(10d);
+
+        result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                         .dataset(DataSetGroupTest.EXPENSE_REPORTS)
                         .rowNumber(10)
@@ -100,15 +121,15 @@ public class SQLTableDataSetLookupTest extends SQLDataSetTestBase {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                         .dataset(DataSetGroupTest.EXPENSE_REPORTS)
-                        .filter("id", FilterFactory.OR(
-                                FilterFactory.equalsTo("40"),
-                                FilterFactory.equalsTo("41")))
-                        .group("date").dynamic(9999, DateIntervalType.HOUR, true)
-                        .column("date")
+                        .filter(ID.getName(), FilterFactory.OR(
+                                FilterFactory.equalsTo(40),
+                                FilterFactory.equalsTo(41)))
+                        .group(DATE.getName()).dynamic(9999, DateIntervalType.HOUR, true)
+                        .column(DATE.getName())
                         .buildLookup());
 
         assertThat(result.getRowCount()).isEqualTo(25);
-        assertThat(result.getValueAt(0,0)).isEqualTo("2012-06-12 00");
+        assertThat(result.getValueAt(0,0)).isEqualTo("2012-06-12 12");
     }
 
     @Test
@@ -159,6 +180,11 @@ public class SQLTableDataSetLookupTest extends SQLDataSetTestBase {
         subTest.testNOTExpression();
         subTest.testORExpression();
         subTest.testCombinedExpression();
-        subTest.testLikeOperator();
+        subTest.testLikeOperatorNonCaseSensitive();
+
+        // Skip this test since MySQL,SQLServer & Sybase are non case sensitive by default
+        if (!testSettings.isMySQL() && !testSettings.isSqlServer()&& !testSettings.isSybase()) {
+            subTest.testLikeOperatorCaseSensitive();
+        }
     }
 }

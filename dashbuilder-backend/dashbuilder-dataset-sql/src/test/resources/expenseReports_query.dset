@@ -4,16 +4,16 @@
     "pushEnabled": true,
     "pushMaxSize": 1024,
     "isPublic": true,
-    "dataSource": "jdbc:h2:mem:test;DATABASE_TO_UPPER=FALSE",
-    "dbSQL": "select * from expense_reports",
+    "dataSource": "jdbc:h2:mem:test",
+    "dbSQL": "SELECT * FROM \"EXPENSE_REPORTS\"",
     "cacheEnabled": false,
     "cacheMaxRows": 1000,
     "columns": [
-        {"id": "id", "type": "number"},
-        {"id": "city", "type": "label"},
-        {"id": "department", "type": "label"},
-        {"id": "employee", "type": "label"},
-        {"id": "amount", "type": "number"},
-        {"id": "date", "type": "date"}
+        {"id": "EXPENSES_ID", "type": "number"},
+        {"id": "CITY", "type": "label"},
+        {"id": "DEPARTMENT", "type": "label"},
+        {"id": "EMPLOYEE", "type": "label"},
+        {"id": "AMOUNT", "type": "number"},
+        {"id": "CREATION_DATE", "type": "date"}
     ]
 }

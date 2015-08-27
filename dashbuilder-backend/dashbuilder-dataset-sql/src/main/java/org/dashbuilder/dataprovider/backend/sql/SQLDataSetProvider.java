@@ -16,6 +16,8 @@
 package org.dashbuilder.dataprovider.backend.sql;
 
 import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -32,6 +34,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.dashbuilder.dataprovider.DataSetProvider;
 import org.dashbuilder.dataprovider.DataSetProviderType;
 import org.dashbuilder.dataprovider.backend.StaticDataSetProvider;
+import org.dashbuilder.dataprovider.backend.sql.dialect.Dialect;
+import org.dashbuilder.dataprovider.backend.sql.model.Column;
+import org.dashbuilder.dataprovider.backend.sql.model.Condition;
+import org.dashbuilder.dataprovider.backend.sql.model.Select;
+import org.dashbuilder.dataprovider.backend.sql.model.SortColumn;
+import org.dashbuilder.dataprovider.backend.sql.model.Table;
 import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.dataset.DataSet;
@@ -73,29 +81,17 @@ import org.dashbuilder.dataset.impl.MemSizeEstimator;
 import org.dashbuilder.dataset.sort.ColumnSort;
 import org.dashbuilder.dataset.sort.DataSetSort;
 import org.dashbuilder.dataset.sort.SortOrder;
-import org.jooq.Condition;
-import org.jooq.DataType;
-import org.jooq.Field;
-import org.jooq.Result;
-import org.jooq.ResultQuery;
-import org.jooq.SelectSelectStep;
-import org.jooq.SelectWhereStep;
-import org.jooq.SortField;
-import org.jooq.Table;
-import org.jooq.conf.ParamType;
-import org.jooq.impl.SQLDataType;
 import org.slf4j.Logger;
 
-import static org.jooq.impl.DSL.*;
+import static org.dashbuilder.dataprovider.backend.sql.SQLFactory.*;
 
 /**
  *  DataSetProvider implementation for JDBC-compliant data sources.
  *
- *  <p>It totally relies on the jOOQ library in order to abstract the query logic from the database implementation.
- *  jOOQ takes are of providing the right SQL syntax for the target database. The SQL provider resolves
- *  every data set lookup request by transforming such request into the proper jOOQ query. In some cases, an extra
- *  processing of the resulting data is required since some lookup requests do not map directly into the SQL world.
- *  In such cases, specially the grouping of date based data, the core data set operation engine is used.</p>
+ *  <p>The SQL provider resolves every data set lookup request by transforming such request into the proper SQL query.
+ *  In some cases, an extra processing of the resulting data is required since some lookup requests do not map directly
+ *  into the SQL world. In such cases, specially the grouping of date based data, the core data set operation engine is
+ *  used.</p>
  *
  *  <p>
  *      Pending stuff:
@@ -200,7 +196,7 @@ public class SQLDataSetProvider implements DataSetProvider {
         DataSource ds = dataSourceLocator.lookup(def);
         Connection conn = ds.getConnection();
         try {
-            return _getRowCount(def, conn, false);
+            return _getRowCount(def, conn);
         } finally {
             conn.close();
         }
@@ -240,12 +236,12 @@ public class SQLDataSetProvider implements DataSetProvider {
     protected class MetadataHolder {
 
         DataSetMetadata metadata;
-        Field[] jooqFields;
+        Collection<Column> columns;
 
-        public Field getField(String name) {
-            for (Field jooqField : jooqFields) {
-                if (jooqField.getName().equals(name)) {
-                    return jooqField;
+        public Column getColumn(String name) {
+            for (Column column : columns) {
+                if (column.getName().equals(name)) {
+                    return column;
                 }
             }
             return null;
@@ -255,17 +251,18 @@ public class SQLDataSetProvider implements DataSetProvider {
     protected transient Map<String,MetadataHolder> _metadataMap = new HashMap<String,MetadataHolder>();
 
     protected DataSetMetadata _getDataSetMetadata(SQLDataSetDef def, Connection conn, boolean isTestMode) throws Exception {
-        MetadataHolder result = null;
         if (!isTestMode) {
-            result = _metadataMap.get(def.getUUID());
-            if (result != null) return result.metadata;
+            MetadataHolder result = _metadataMap.get(def.getUUID());
+            if (result != null) {
+                return result.metadata;
+            }
         }
 
         int estimatedSize = 0;
-        int rowCount = _getRowCount(def, conn, isTestMode);
-
+        int rowCount = _getRowCount(def, conn);
         List<String> columnIds = new ArrayList<String>();
         List<ColumnType> columnTypes = new ArrayList<ColumnType>();
+
         if (def.getColumns() != null) {
             for (DataColumnDef column : def.getColumns()) {
                 columnIds.add(column.getId());
@@ -273,10 +270,10 @@ public class SQLDataSetProvider implements DataSetProvider {
             }
         }
 
-        Field[] _jooqFields = _getFields(def, conn);
-        for (Field _jooqField : _jooqFields) {
+        Collection<Column> _columns = _getColumns(def, conn);
+        for (Column _column : _columns) {
 
-            String columnId = _jooqField.getName();
+            String columnId = _column.getName();
             int columnIdx = columnIds.indexOf(columnId);
             boolean columnExists  = columnIdx != -1;
 
@@ -287,16 +284,7 @@ public class SQLDataSetProvider implements DataSetProvider {
                 if (def.isAllColumnsEnabled()) {
                     columnIds.add(columnId);
                     columnIdx = columnIds.size()-1;
-
-                    if (Number.class.isAssignableFrom(_jooqField.getType())) {
-                        columnTypes.add(ColumnType.NUMBER);
-                    }
-                    else if (Date.class.isAssignableFrom(_jooqField.getType())) {
-                        columnTypes.add(ColumnType.DATE);
-                    }
-                    else {
-                        columnTypes.add(ColumnType.LABEL);
-                    }
+                    columnTypes.add(_column.getType());
                 }
                 // Skip non existing columns
                 else {
@@ -313,7 +301,7 @@ public class SQLDataSetProvider implements DataSetProvider {
                 estimatedSize += MemSizeEstimator.sizeOf(Double.class) * rowCount;
             }
             else {
-                int length = _jooqField.getDataType().length();
+                int length = _column.getLength();
                 estimatedSize += length/2 * rowCount;
             }
         }
@@ -321,8 +309,8 @@ public class SQLDataSetProvider implements DataSetProvider {
             throw new IllegalArgumentException("No data set columns defined for the table '" + def.getDbTable() +
                     " in database '" + def.getDataSource()+ "'");
         }
-        result = new MetadataHolder();
-        result.jooqFields = _jooqFields;
+        MetadataHolder result = new MetadataHolder();
+        result.columns = _columns;
         result.metadata = new DataSetMetadataImpl(def, def.getUUID(), rowCount, columnIds.size(), columnIds, columnTypes, estimatedSize);
         if (!isTestMode) {
             final boolean isDefRegistered = def.getUUID() != null && dataSetDefRegistry.getDataSetDef(def.getUUID()) != null;
@@ -333,39 +321,33 @@ public class SQLDataSetProvider implements DataSetProvider {
         return result.metadata;
     }
 
-    protected Field[] _getFields(SQLDataSetDef def, Connection conn) throws Exception {
+    protected Collection<Column> _getColumns(SQLDataSetDef def, Connection conn) throws Exception {
+        Dialect dialect = JDBCUtils.dialect(conn);
         if (!StringUtils.isBlank(def.getDbSQL())) {
-            return logSQL(using(conn).select()
-                    .from("(" + def.getDbSQL() + ") as dbSQL")
-                    .limit(1)).fetch().fields();
+            Select query = select(conn).from(def.getDbSQL()).limit(1);
+            return JDBCUtils.getColumns(logSQL(query).fetch(), dialect.getExcludedColumns());
         }
         else {
-            List<Table<?>> _jooqTables = using(conn).meta().getTables();
-            for (Table<?> _jooqTable : _jooqTables) {
-                if (_jooqTable.getName().toLowerCase().equals(def.getDbTable().toLowerCase())) {
-                    return _jooqTable.fields();
-                }
-            }
-            throw new IllegalArgumentException("Table '" + def.getDbTable() + "'not found " +
-                    "in database '" + def.getDataSource()+ "'");
+            Select query = select(conn).from(_createTable(def)).limit(1);
+            return JDBCUtils.getColumns(logSQL(query).fetch(), dialect.getExcludedColumns());
         }
     }
 
-    protected int _getRowCount(SQLDataSetDef def, Connection conn, boolean isTestMode) throws Exception {
+    protected int _getRowCount(SQLDataSetDef def, Connection conn) throws Exception {
 
         // Count rows, either on an SQL or a DB table
-        SelectSelectStep _jooqQuery = using(conn).selectCount();
-        _appendJooqFrom(def, _jooqQuery);
+        Select _query = select(conn);
+        _appendFrom(def, _query);
 
         // Filters set must be taken into account
         DataSetFilter filterOp = def.getDataSetFilter();
         if (filterOp != null) {
             List<ColumnFilter> filterList = filterOp.getColumnFilterList();
             for (ColumnFilter filter : filterList) {
-                _appendJooqFilterBy(def, filter, _jooqQuery, isTestMode);
+                _appendFilterBy(def, filter, _query);
             }
         }
-        return ((Number) logSQL(_jooqQuery).fetch().getValue(0 ,0)).intValue();
+        return _query.fetchCount();
     }
 
     protected DataSet _lookupDataSet(SQLDataSetDef def, DataSetLookup lookup) throws Exception {
@@ -373,55 +355,30 @@ public class SQLDataSetProvider implements DataSetProvider {
         return processor.run();
     }
 
-    protected Table _getJooqTable(SQLDataSetDef def) {
+    protected Table _createTable(SQLDataSetDef def) {
         if (StringUtils.isBlank(def.getDbSchema())) return table(def.getDbTable());
-        else return tableByName(def.getDbSchema(), def.getDbTable());
+        else return table(def.getDbSchema(), def.getDbTable());
     }
 
-    protected Field _getJooqField(SQLDataSetDef def, String name, boolean isTestMode) {
-        Field jooqField = null;
-        if (!isTestMode) {
-            MetadataHolder metadataHolder = _metadataMap.get(def.getUUID());
-            jooqField = metadataHolder != null ? metadataHolder.getField(name) : null;
-        }
-        if (jooqField == null) {
-            if (def.getDbSchema() == null) return field(name);
-            else return fieldByName(def.getDbTable(), name);
-        } else {
-            if (def.getDbSchema() == null) return field(name, jooqField.getDataType());
-            else return fieldByName(jooqField.getDataType(), def.getDbTable(), name);
-        }
+    protected void _appendFrom(SQLDataSetDef def, Select _query) {
+        if (!StringUtils.isBlank(def.getDbSQL())) _query.from(def.getDbSQL());
+        else _query.from(_createTable(def));
     }
 
-    protected Field _getJooqField(SQLDataSetDef def, String name, DataType type) {
-        if (def.getDbSchema() == null) return field(name, type);
-        else return fieldByName(type, def.getDbTable(), name);
-    }
-
-    protected Field _getJooqField(SQLDataSetDef def, String name, Class clazz) {
-        if (def.getDbSchema() == null) return field(name, clazz);
-        else return fieldByName(clazz, def.getDbTable(), name);
-    }
-
-    protected void _appendJooqFrom(SQLDataSetDef def, SelectSelectStep _jooqQuery) {
-        if (!StringUtils.isBlank(def.getDbSQL())) _jooqQuery.from("(" + def.getDbSQL() + ") as dbSQL");
-        else _jooqQuery.from(_getJooqTable(def));
-    }
-
-    protected void _appendJooqFilterBy(SQLDataSetDef def, DataSetFilter filterOp, SelectWhereStep _jooqQuery, boolean isTestMode) {
+    protected void _appendFilterBy(SQLDataSetDef def, DataSetFilter filterOp, Select _query) {
         List<ColumnFilter> filterList = filterOp.getColumnFilterList();
         for (ColumnFilter filter : filterList) {
-            _appendJooqFilterBy(def, filter, _jooqQuery, isTestMode);
+            _appendFilterBy(def, filter, _query);
         }
     }
 
-    protected void _appendJooqFilterBy(SQLDataSetDef def, ColumnFilter filter, SelectWhereStep _jooqQuery, boolean isTestMode) {
-        _jooqQuery.where(_jooqCondition(def, filter, isTestMode));
+    protected void _appendFilterBy(SQLDataSetDef def, ColumnFilter filter, Select _query) {
+        _query.where(_createCondition(def, filter));
     }
 
-    protected Condition _jooqCondition(SQLDataSetDef def, ColumnFilter filter, boolean isTestMode) {
+    protected Condition _createCondition(SQLDataSetDef def, ColumnFilter filter) {
         String filterId = filter.getColumnId();
-        Field _jooqField = _getJooqField(def, filterId, isTestMode);
+        Column _column = column(filterId);
 
         if (filter instanceof CoreFunctionFilter) {
             CoreFunctionFilter f = (CoreFunctionFilter) filter;
@@ -429,48 +386,48 @@ public class SQLDataSetProvider implements DataSetProvider {
             List params = f.getParameters();
 
             if (CoreFunctionType.IS_NULL.equals(type)) {
-                return _jooqField.isNull();
+                return _column.isNull();
             }
             if (CoreFunctionType.NOT_NULL.equals(type)) {
-                return _jooqField.isNotNull();
+                return _column.notNull();
             }
             if (CoreFunctionType.EQUALS_TO.equals(type)) {
-                if (params.size() == 1) return _jooqField.equal(params.get(0));
-                return _jooqField.in(params);
+                if (params.size() == 1) return _column.equalsTo(params.get(0));
+                return _column.in(params);
             }
             if (CoreFunctionType.NOT_EQUALS_TO.equals(type)) {
-                return _jooqField.notEqual(params.get(0));
+                return _column.notEquals(params.get(0));
             }
             if (CoreFunctionType.LIKE_TO.equals(type)) {
                 String pattern = (String) params.get(0);
                 boolean caseSensitive = params.size() < 2 || Boolean.parseBoolean(params.get(1).toString());
                 if (caseSensitive) {
-                    return _jooqField.like(pattern);
+                    return _column.like(pattern);
                 } else {
-                    return _jooqField.lower().like(pattern.toLowerCase());
+                    return _column.lower().like(pattern.toLowerCase());
                 }
             }
             if (CoreFunctionType.LOWER_THAN.equals(type)) {
-                return _jooqField.lessThan(params.get(0));
+                return _column.lowerThan(params.get(0));
             }
             if (CoreFunctionType.LOWER_OR_EQUALS_TO.equals(type)) {
-                return _jooqField.lessOrEqual(params.get(0));
+                return _column.lowerOrEquals(params.get(0));
             }
             if (CoreFunctionType.GREATER_THAN.equals(type)) {
-                return _jooqField.greaterThan(params.get(0));
+                return _column.greaterThan(params.get(0));
             }
             if (CoreFunctionType.GREATER_OR_EQUALS_TO.equals(type)) {
-                return _jooqField.greaterOrEqual(params.get(0));
+                return _column.greaterOrEquals(params.get(0));
             }
             if (CoreFunctionType.BETWEEN.equals(type)) {
-                return _jooqField.between(params.get(0), params.get(1));
+                return _column.between(params.get(0), params.get(1));
             }
             if (CoreFunctionType.TIME_FRAME.equals(type)) {
                 TimeFrame timeFrame = TimeFrame.parse(params.get(0).toString());
                 if (timeFrame != null) {
                     java.sql.Date past = new java.sql.Date(timeFrame.getFrom().getTimeInstant().getTime());
                     java.sql.Date future = new java.sql.Date(timeFrame.getTo().getTimeInstant().getTime());
-                    return _jooqField.between(past, future);
+                    return _column.between(past, future);
                 }
             }
         }
@@ -481,7 +438,7 @@ public class SQLDataSetProvider implements DataSetProvider {
             Condition condition = null;
             List<ColumnFilter> logicalTerms = f.getLogicalTerms();
             for (int i=0; i<logicalTerms.size(); i++) {
-                Condition next = _jooqCondition(def, logicalTerms.get(i), isTestMode);
+                Condition next = _createCondition(def, logicalTerms.get(i));
 
                 if (LogicalExprType.AND.equals(type)) {
                     if (condition == null) condition = next;
@@ -493,7 +450,7 @@ public class SQLDataSetProvider implements DataSetProvider {
                 }
                 if (LogicalExprType.NOT.equals(type)) {
                     if (condition == null) condition = next.not();
-                    else condition = condition.andNot(next);
+                    else condition = condition.and(next.not());
                 }
             }
             return condition;
@@ -501,8 +458,9 @@ public class SQLDataSetProvider implements DataSetProvider {
         throw new IllegalArgumentException("Filter not supported: " + filter);
     }
 
-    public ResultQuery logSQL(ResultQuery q) {
-        log.debug(q.getSQL(ParamType.INLINED));
+    public Select logSQL(Select q) {
+        String sql = q.getSQL();
+        log.debug(sql);
         return q;
     }
 
@@ -514,7 +472,7 @@ public class SQLDataSetProvider implements DataSetProvider {
         SQLDataSetDef def;
         DataSetLookup lookup;
         DataSetMetadata metadata;
-        SelectSelectStep _jooqQuery;
+        Select _query;
         Connection conn;
         Date[] dateLimits;
         DateIntervalType dateIntervalType;
@@ -539,26 +497,28 @@ public class SQLDataSetProvider implements DataSetProvider {
             try {
                 metadata = _getDataSetMetadata(def, conn, lookup.testMode());
                 int totalRows = metadata.getNumberOfRows();
-                boolean trim = (lookup != null && lookup.getNumberOfRows() > 0);
+                boolean trim = (lookup != null && (lookup.getNumberOfRows() > 0 || lookup.getRowOffset() > 0));
 
                 // The whole data set
                 if (lookup == null || lookup.getOperationList().isEmpty()) {
 
-                    // Prepare the jOOQ query
-                    _jooqQuery = using(conn).select(_createAllJooqFields());
-                    _appendJooqFrom(def, _jooqQuery);
+                    // Prepare the select
+                    _query = select(conn).columns(_createAllColumns());
+                    _appendFrom(def, _query);
 
                     // Row limits
                     if (trim) {
-                        totalRows = using(conn).fetchCount(_jooqQuery);
-                        _jooqQuery.limit(lookup.getNumberOfRows()).offset(lookup.getRowOffset());
+                        totalRows = _query.fetchCount();
+                        _query.limit(lookup.getNumberOfRows()).offset(lookup.getRowOffset());
                     }
 
                     // Fetch the results and build the data set
-                    Result _jooqResults = logSQL(_jooqQuery).fetch();
+                    ResultSet _results = logSQL(_query).fetch();
                     List<DataColumn> columns = calculateColumns(null);
-                    DataSet dataSet = _buildDataSet(columns, _jooqResults);
-                    if (trim) dataSet.setRowCountNonTrimmed(totalRows);
+                    DataSet dataSet = _buildDataSet(columns, _results);
+                    if (trim) {
+                        dataSet.setRowCountNonTrimmed(totalRows);
+                    }
                     return dataSet;
                 }
                 // ... or a list of operations.
@@ -567,19 +527,19 @@ public class SQLDataSetProvider implements DataSetProvider {
                     int groupIdx = lookup.getFirstGroupOpIndex(0, null, false);
                     if (groupIdx != -1) groupOp = lookup.getOperation(groupIdx);
 
-                    // Prepare the jOOQ query
-                    _jooqQuery = using(conn).select(_createJooqFields(groupOp));
-                    _appendJooqFrom(def, _jooqQuery);
+                    // Prepare the select
+                    _query = select(conn).columns(_createColumns(groupOp));
+                    _appendFrom(def, _query);
 
                     // Append the filter clauses
                     for (DataSetFilter filterOp : lookup.getOperationList(DataSetFilter.class)) {
-                        _appendJooqFilterBy(def, filterOp, _jooqQuery, lookup.testMode());
+                        _appendFilterBy(def, filterOp, _query);
                     }
 
                     // Append the interval selections
                     List<DataSetGroup> intervalSelects = lookup.getFirstGroupOpSelections();
                     for (DataSetGroup intervalSelect : intervalSelects) {
-                        _appendJooqIntervalSelection(intervalSelect, _jooqQuery);
+                        _appendIntervalSelection(intervalSelect, _query);
                     }
 
                     // ... the group by clauses
@@ -587,30 +547,32 @@ public class SQLDataSetProvider implements DataSetProvider {
                     if (groupOp != null) {
                         cg = groupOp.getColumnGroup();
                         if (cg != null) {
-                            _appendJooqGroupBy(groupOp);
+                            _appendGroupBy(groupOp);
                         }
                     }
 
                     // ... the sort clauses
                     DataSetSort sortOp = lookup.getFirstSortOp();
                     if (sortOp != null) {
-                        if (cg != null) _appendJooqOrderGroupBy(groupOp, sortOp);
-                        else _appendJooqOrderBy(sortOp);
-                    }
-                    else if (cg != null) {
-                        _appendJooqOrderGroupBy(groupOp);
+                        if (cg != null) {
+                            _appendOrderGroupBy(groupOp, sortOp);
+                        } else {
+                            _appendOrderBy(sortOp);
+                        }
+                    } else if (cg != null) {
+                        _appendOrderGroupBy(groupOp);
                     }
 
                     // ... and the row limits
                     if (trim) {
-                        totalRows = using(conn).fetchCount(_jooqQuery);
-                        _jooqQuery.limit(lookup.getNumberOfRows()).offset(lookup.getRowOffset());
+                        totalRows = _query.fetchCount();
+                        _query.limit(lookup.getNumberOfRows()).offset(lookup.getRowOffset());
                     }
 
                     // Fetch the results and build the data set
-                    Result _jooqResults = logSQL(_jooqQuery).fetch();
+                    ResultSet _results = logSQL(_query).fetch();
                     List<DataColumn> columns = calculateColumns(groupOp);
-                    DataSet dataSet = _buildDataSet(columns, _jooqResults);
+                    DataSet dataSet = _buildDataSet(columns, _results);
                     if (trim) dataSet.setRowCountNonTrimmed(totalRows);
                     return dataSet;
                 }
@@ -620,7 +582,9 @@ public class SQLDataSetProvider implements DataSetProvider {
         }
 
         protected DateIntervalType calculateDateInterval(ColumnGroup cg) {
-            if (dateIntervalType != null) return dateIntervalType;
+            if (dateIntervalType != null) {
+                return dateIntervalType;
+            }
 
             if (GroupStrategy.DYNAMIC.equals(cg.getStrategy())) {
                 Date[] limits = calculateDateLimits(cg.getSourceId());
@@ -643,29 +607,37 @@ public class SQLDataSetProvider implements DataSetProvider {
 
         protected Date calculateDateLimit(String dateColumnId, boolean min) {
 
-            Field _jooqDate = _createJooqField(dateColumnId);
-            SelectSelectStep _jooqLimits = using(conn).select(_jooqDate);
-            _appendJooqFrom(def, _jooqLimits);
+            Column _dateColumn = column(dateColumnId);
+            Select _limitsQuery = select(conn).columns(_dateColumn);
+            _appendFrom(def, _limitsQuery);
 
             // Append the filter clauses
             for (DataSetFilter filterOp : lookup.getOperationList(DataSetFilter.class)) {
-                _appendJooqFilterBy(def, filterOp, _jooqLimits, lookup.testMode());
+                _appendFilterBy(def, filterOp, _limitsQuery);
             }
 
             // Append group interval selection filters
             List<DataSetGroup> intervalSelects = lookup.getFirstGroupOpSelections();
             for (DataSetGroup intervalSelect : intervalSelects) {
-                _appendJooqIntervalSelection(intervalSelect, _jooqLimits);
+                _appendIntervalSelection(intervalSelect, _limitsQuery);
             }
 
-            // Fetch the date
-            Result rs = logSQL(_jooqLimits
-                    .where(_jooqDate.isNotNull())
-                    .orderBy(min ? _jooqDate.asc() : _jooqDate.desc())
-                    .limit(1)).fetch();
+            try {
+                // Fetch the date
+                ResultSet rs = logSQL(_limitsQuery
+                        .where(_dateColumn.notNull())
+                        .orderBy(min ? _dateColumn.asc() : _dateColumn.desc())
+                        .limit(1)).fetch();
 
-            if (rs.isEmpty()) return null;
-            return (Date) rs.getValue(0, _jooqDate);
+                if (!rs.next()) {
+                    return null;
+                } else {
+                    return rs.getDate(1);
+                }
+            } catch (SQLException e) {
+                log.error("Error reading date limit from query results", e);
+                return null;
+            }
         }
 
         protected List<DataColumn> calculateColumns(DataSetGroup gOp) {
@@ -714,20 +686,20 @@ public class SQLDataSetProvider implements DataSetProvider {
             return result;
         }
 
-        protected void _appendJooqOrderBy(DataSetSort sortOp) {
-            List<SortField> _jooqFields = new ArrayList<SortField>();
+        protected void _appendOrderBy(DataSetSort sortOp) {
+            List<SortColumn> _columns = new ArrayList<SortColumn>();
             List<ColumnSort> sortList = sortOp.getColumnSortList();
             for (ColumnSort columnSort : sortList) {
                 String columnId = columnSort.getColumnId();
                 _assertColumnExists(columnId);
 
                 if (SortOrder.DESCENDING.equals(columnSort.getOrder())) {
-                    _jooqFields.add(_createJooqField(columnId).desc());
+                    _columns.add(column(columnId).desc());
                 } else {
-                    _jooqFields.add(_createJooqField(columnId).asc());
+                    _columns.add(column(columnId).asc());
                 }
             }
-            _jooqQuery.orderBy(_jooqFields);
+            _query.orderBy(_columns);
         }
 
         protected boolean isDynamicDateGroup(DataSetGroup groupOp) {
@@ -737,10 +709,10 @@ public class SQLDataSetProvider implements DataSetProvider {
             return true;
         }
 
-        protected void _appendJooqOrderGroupBy(DataSetGroup groupOp) {
+        protected void _appendOrderGroupBy(DataSetGroup groupOp) {
             if (isDynamicDateGroup(groupOp)) {
                 ColumnGroup cg = groupOp.getColumnGroup();
-                _jooqQuery.orderBy(_createJooqField(cg).asc());
+                _query.orderBy(_createColumn(cg).asc());
 
                 // If the group column is in the resulting data set then ensure the data set order
                 GroupFunction gf = groupOp.getGroupFunction(cg.getSourceId());
@@ -753,8 +725,8 @@ public class SQLDataSetProvider implements DataSetProvider {
             }
         }
 
-        protected void _appendJooqOrderGroupBy(DataSetGroup groupOp, DataSetSort sortOp) {
-            List<SortField> _jooqFields = new ArrayList<SortField>();
+        protected void _appendOrderGroupBy(DataSetGroup groupOp, DataSetSort sortOp) {
+            List<SortColumn> _columns = new ArrayList<SortColumn>();
             List<ColumnSort> sortList = sortOp.getColumnSortList();
             ColumnGroup cg = groupOp.getColumnGroup();
 
@@ -764,12 +736,12 @@ public class SQLDataSetProvider implements DataSetProvider {
                 // Sort by the group column
                 if (cg.getSourceId().equals(cs.getColumnId()) || cg.getColumnId().equals(cs.getColumnId())) {
                     if (SortOrder.DESCENDING.equals(cs.getOrder())) {
-                        _jooqFields.add(_createJooqField(cg).desc());
+                        _columns.add(_createColumn(cg).desc());
                         if (isDynamicDateGroup(groupOp)) {
                             postProcessingOps.add(sortOp);
                         }
                     } else {
-                        _jooqFields.add(_createJooqField(cg).asc());
+                        _columns.add(_createColumn(cg).asc());
                         if (isDynamicDateGroup(groupOp)) {
                             postProcessingOps.add(sortOp);
                         }
@@ -779,16 +751,16 @@ public class SQLDataSetProvider implements DataSetProvider {
                 else if (gf != null) {
                     // In SQL, sort is only permitted for columns belonging to the result set.
                     if (SortOrder.DESCENDING.equals(cs.getOrder())) {
-                        _jooqFields.add(_createJooqField(gf).desc());
+                        _columns.add(_createColumn(gf).desc());
                     } else {
-                        _jooqFields.add(_createJooqField(gf).asc());
+                        _columns.add(_createColumn(gf).asc());
                     }
                 }
             }
-            _jooqQuery.orderBy(_jooqFields);
+            _query.orderBy(_columns);
         }
 
-        protected void _appendJooqIntervalSelection(DataSetGroup intervalSel, SelectWhereStep _jooqQuery) {
+        protected void _appendIntervalSelection(DataSetGroup intervalSel, Select _query) {
             if (intervalSel != null && intervalSel.isSelect()) {
                 ColumnGroup cg = intervalSel.getColumnGroup();
                 List<Interval> intervalList = intervalSel.getSelectedIntervalList();
@@ -830,11 +802,11 @@ public class SQLDataSetProvider implements DataSetProvider {
                 else {
                     filter = FilterFactory.equalsTo(cg.getSourceId(), names);
                 }
-                _appendJooqFilterBy(def, filter, _jooqQuery, lookup.testMode());
+                _appendFilterBy(def, filter, _query);
             }
         }
 
-        protected void _appendJooqGroupBy(DataSetGroup groupOp) {
+        protected void _appendGroupBy(DataSetGroup groupOp) {
             ColumnGroup cg = groupOp.getColumnGroup();
             String sourceId = cg.getSourceId();
             ColumnType columnType = metadata.getColumnType(_assertColumnExists(sourceId));
@@ -850,13 +822,12 @@ public class SQLDataSetProvider implements DataSetProvider {
             }
             // Group by Date
             else if (ColumnType.DATE.equals(columnType)) {
-                DateIntervalType type = calculateDateInterval(cg);
-                _jooqQuery.groupBy(_createJooqGroupField(cg, type));
+                _query.groupBy(_createColumn(cg));
                 postProcessing = true;
             }
             // Group by Label
             else {
-                _jooqQuery.groupBy(_createJooqField(sourceId));
+                _query.groupBy(column(sourceId));
                 for (GroupFunction gf : groupOp.getGroupFunctions()) {
                     if (!sourceId.equals(gf.getSourceId()) && gf.getFunction() == null) {
                         postProcessing = true;
@@ -867,7 +838,7 @@ public class SQLDataSetProvider implements DataSetProvider {
             // Also add any non-aggregated column (columns pick up) to the group statement
             for (GroupFunction gf : groupOp.getGroupFunctions()) {
                 if (gf.getFunction() == null && !gf.getSourceId().equals(cg.getSourceId())) {
-                    _jooqQuery.groupBy(_createJooqField(gf.getSourceId()));
+                    _query.groupBy(column(gf.getSourceId()));
                 }
             }
             // The group operation might require post processing
@@ -890,21 +861,42 @@ public class SQLDataSetProvider implements DataSetProvider {
             }
         }
 
-        protected DataSet _buildDataSet(List<DataColumn> columns, Result _jooqRs) throws Exception {
+        protected DataSet _buildDataSet(List<DataColumn> columns, ResultSet _rs) throws Exception {
             DataSet dataSet = DataSetFactory.newEmptyDataSet();
-            int dateGroupColumnIdx = -1;
+            DataColumn dateGroupColumn = null;
             boolean dateIncludeEmptyIntervals = false;
-            Field[] rsFields = _jooqRs.fields();
-            for (int i = 0; i < rsFields.length; i++) {
-                Field f = rsFields[i];
+
+            // Create an empty data set
+            for (int i = 0; i < columns.size(); i++) {
                 DataColumn column = columns.get(i).cloneEmpty();
+                dataSet.addColumn(column);
+            }
+
+            // Offset post-processing
+            if (_query.isOffsetPostProcessing() && _query.getOffset() > 0) {
+                // Move the cursor to the specified offset or until the end of the result set is reached
+                for (int i=0; i<_query.getOffset() && _rs.next(); i++);
+            }
+
+            // Populate the data set
+            int rowIdx = 0;
+            int numRows = _query.getLimit();
+            while (_rs.next() && (numRows < 0 || rowIdx++ < numRows)) {
+                for (int i=0; i<columns.size(); i++) {
+                    DataColumn column = dataSet.getColumnByIndex(i);
+                    column.getValues().add(_rs.getObject(i+1));
+                }
+            }
+
+            // Format the data set values according to each column type
+            for (DataColumn column : dataSet.getColumns()) {
                 ColumnType columnType = column.getColumnType();
-                List values = _jooqRs.getValues(f);
+                List values = column.getValues();
 
                 if (ColumnType.LABEL.equals(columnType)) {
                     ColumnGroup cg = column.getColumnGroup();
                     if (cg != null && ColumnType.DATE.equals(metadata.getColumnType(cg.getSourceId()))) {
-                        dateGroupColumnIdx = i;
+                        dateGroupColumn = column;
                         dateIncludeEmptyIntervals = cg.areEmptyIntervalsAllowed();
 
                         // If grouped by date then convert back to absolute dates
@@ -919,13 +911,13 @@ public class SQLDataSetProvider implements DataSetProvider {
                 }
                 if (ColumnType.NUMBER.equals(columnType)) {
                     for (int j=0; j<values.size(); j++) {
+                        // Convert to double any numeric value
                         Number num = (Number) values.remove(j);
                         values.add(j, num != null ? num.doubleValue() : null);
                     }
                 }
 
                 column.setValues(values);
-                dataSet.addColumn(column);
             }
             // Some operations requires some in-memory post-processing
             if (!postProcessingOps.isEmpty()) {
@@ -943,11 +935,10 @@ public class SQLDataSetProvider implements DataSetProvider {
             }
             // Group by date might require to include empty intervals
             if (dateIncludeEmptyIntervals)  {
-                DataColumn dateColumn = dataSet.getColumnByIndex(dateGroupColumnIdx);
-                IntervalBuilder intervalBuilder = intervalBuilderLocator.lookup(ColumnType.DATE, dateColumn.getColumnGroup().getStrategy());
-                IntervalList intervalList = intervalBuilder.build(dateColumn);
+                IntervalBuilder intervalBuilder = intervalBuilderLocator.lookup(ColumnType.DATE, dateGroupColumn.getColumnGroup().getStrategy());
+                IntervalList intervalList = intervalBuilder.build(dateGroupColumn);
                 if (intervalList.size() > dataSet.getRowCount()) {
-                    List values = dateColumn.getValues();
+                    List values = dateGroupColumn.getValues();
                     int valueIdx = 0;
 
                     for (int intervalIdx = 0; intervalIdx < intervalList.size(); intervalIdx++) {
@@ -955,7 +946,7 @@ public class SQLDataSetProvider implements DataSetProvider {
                         String value = values.isEmpty() ? null : (String) values.get(valueIdx++);
                         if (value == null || !value.equals(interval)) {
                             dataSet.addEmptyRowAt(intervalIdx);
-                            dataSet.setValueAt(intervalIdx, dateGroupColumnIdx, interval);
+                            dateGroupColumn.getValues().set(intervalIdx, interval);
                         }
                     }
                 }
@@ -963,80 +954,52 @@ public class SQLDataSetProvider implements DataSetProvider {
             return dataSet;
         }
 
-        protected Field _createJooqField(String name) {
-            return _getJooqField(def, name, lookup.testMode());
-        }
-
-        protected Field _createJooqField(String name, DataType type) {
-            return _getJooqField(def, name, type);
-        }
-
-        protected Field _createJooqField(String name, Class clazz) {
-            return _getJooqField(def, name, clazz);
-        }
-
-        protected Collection<Field<?>> _createAllJooqFields() {
-            Collection<Field<?>> _jooqFields = new ArrayList<Field<?>>();
+        protected Collection<Column> _createAllColumns() {
+            Collection<Column> columns = new ArrayList<Column>();
             for (int i = 0; i < metadata.getNumberOfColumns(); i++) {
-
                 String columnId = metadata.getColumnId(i);
-                ColumnType columnType = metadata.getColumnType(i);
-
-                if (ColumnType.DATE.equals(columnType)) {
-                    _jooqFields.add(_createJooqField(columnId, java.sql.Timestamp.class));
-                }
-                else if (ColumnType.NUMBER.equals(columnType)) {
-                    _jooqFields.add(_createJooqField(columnId, Double.class));
-                }
-                else {
-                    _jooqFields.add(_createJooqField(columnId, String.class));
-                }
+                columns.add(column(columnId));
             }
-            return _jooqFields;
+            return columns;
         }
 
-        protected Collection<Field<?>> _createJooqFields(DataSetGroup gOp) {
-            if (gOp == null) return _createAllJooqFields();
+        protected Collection<Column> _createColumns(DataSetGroup gOp) {
+            if (gOp == null) {
+                return _createAllColumns();
+            }
 
             ColumnGroup cg = gOp.getColumnGroup();
-            Collection<Field<?>> _jooqFields = new ArrayList<Field<?>>();
+            Collection<Column> _columns = new ArrayList<Column>();
             for (GroupFunction gf : gOp.getGroupFunctions()) {
 
-                String columnId = gf.getSourceId();
-                if (columnId == null) columnId = metadata.getColumnId(0);
-                else _assertColumnExists(gf.getSourceId());
-
-                if (cg != null && cg.getSourceId().equals(columnId) && gf.getFunction() == null) {
-                    _jooqFields.add(_createJooqField(cg));
+                String sourceId = gf.getSourceId();
+                String targetId = gf.getColumnId();
+                if (sourceId == null) {
+                    sourceId = metadata.getColumnId(0);
                 } else {
-                    _jooqFields.add(_createJooqField(gf));
+                    _assertColumnExists(sourceId);
+                }
+
+                if (cg != null && cg.getSourceId().equals(sourceId) && gf.getFunction() == null) {
+                    _columns.add(_createColumn(cg).as(targetId));
+                } else {
+                    _columns.add(_createColumn(gf).as(targetId));
                 }
             }
-            return _jooqFields;
+            return _columns;
         }
 
-        protected Field _createJooqField(GroupFunction gf) {
+        protected Column _createColumn(GroupFunction gf) {
             String sourceId = gf.getSourceId();
-            String targetId = gf.getColumnId();
-            if (sourceId == null) sourceId = metadata.getColumnId(0);
-            if (targetId == null) targetId = sourceId;
+            if (sourceId == null) {
+                sourceId = metadata.getColumnId(0);
+            }
 
-            // Raw column
             AggregateFunctionType ft = gf.getFunction();
-            Field _jooqField = _createJooqField(sourceId);
-            if (ft == null) return _jooqField.as(targetId);
-
-            // Aggregation function
-            if (AggregateFunctionType.SUM.equals(ft)) return _jooqField.sum().as(targetId);
-            if (AggregateFunctionType.MAX.equals(ft)) return _jooqField.max().as(targetId);
-            if (AggregateFunctionType.MIN.equals(ft)) return _jooqField.min().as(targetId);
-            if (AggregateFunctionType.AVERAGE.equals(ft)) return _jooqField.avg().as(targetId);
-            if (AggregateFunctionType.DISTINCT.equals(ft)) return _jooqField.countDistinct().as(targetId);
-            if (AggregateFunctionType.COUNT.equals(ft)) return _jooqField.count().as(targetId);
-            return _jooqField.as(targetId);
+            return column(sourceId).function(ft);
         }
 
-        protected Field _createJooqField(ColumnGroup cg) {
+        protected Column _createColumn(ColumnGroup cg) {
             String columnId = cg.getSourceId();
             _assertColumnExists(columnId);
 
@@ -1044,7 +1007,7 @@ public class SQLDataSetProvider implements DataSetProvider {
 
             if (ColumnType.DATE.equals(type)) {
                 DateIntervalType size = calculateDateInterval(cg);
-                return _createJooqGroupField(cg, size);
+                return column(cg.getSourceId(), cg.getStrategy(), size);
             }
             if (ColumnType.NUMBER.equals(type)) {
                 throw new IllegalArgumentException("Group by number '" + columnId + "' not supported");
@@ -1052,96 +1015,9 @@ public class SQLDataSetProvider implements DataSetProvider {
             if (ColumnType.TEXT.equals(type)) {
                 throw new IllegalArgumentException("Group by text '" + columnId + "' not supported");
             }
-            return _createJooqField(columnId);
+            return column(columnId);
         }
 
-        protected Field _createJooqGroupField(ColumnGroup cg, DateIntervalType type) {
-
-            if (GroupStrategy.FIXED.equals(cg.getStrategy())) {
-                return _createJooqGroupFixedField(cg, type);
-            }
-            else {
-                return _createJooqGroupDynamicField(cg, type);
-            }
-        }
-
-        protected Field _createJooqGroupDynamicField(ColumnGroup cg, DateIntervalType type) {
-            String columnId = cg.getSourceId();
-            Field _jooqField = _createJooqField(columnId, SQLDataType.DATE);
-            Field SEPARATOR_DATE = field("'-'");
-            Field SEPARATOR_EMPTY = field("' '");
-            Field SEPARATOR_TIME = field("':'");
-
-            if (DateIntervalType.SECOND.equals(type)) {
-                return concat(year(_jooqField), SEPARATOR_DATE,
-                        month(_jooqField), SEPARATOR_DATE,
-                        day(_jooqField), SEPARATOR_EMPTY,
-                        hour(_jooqField), SEPARATOR_TIME,
-                        minute(_jooqField), SEPARATOR_TIME,
-                        second(_jooqField));
-            }
-            if (DateIntervalType.MINUTE.equals(type)) {
-                return concat(year(_jooqField), SEPARATOR_DATE,
-                        month(_jooqField), SEPARATOR_DATE,
-                        day(_jooqField), SEPARATOR_EMPTY,
-                        hour(_jooqField), SEPARATOR_TIME,
-                        minute(_jooqField));
-            }
-            if (DateIntervalType.HOUR.equals(type)) {
-                return concat(year(_jooqField), SEPARATOR_DATE,
-                        month(_jooqField), SEPARATOR_DATE,
-                        day(_jooqField), SEPARATOR_EMPTY,
-                        hour(_jooqField));
-            }
-            if (DateIntervalType.DAY.equals(type) || DateIntervalType.WEEK.equals(type)) {
-                return concat(year(_jooqField), SEPARATOR_DATE,
-                        month(_jooqField), SEPARATOR_DATE,
-                        day(_jooqField));
-            }
-            if (DateIntervalType.MONTH.equals(type)
-                    || DateIntervalType.QUARTER.equals(type)) {
-
-                return concat(year(_jooqField), SEPARATOR_DATE,
-                        month(_jooqField));
-            }
-            if (DateIntervalType.YEAR.equals(type)
-                    || DateIntervalType.DECADE.equals(type)
-                    || DateIntervalType.CENTURY.equals(type)
-                    || DateIntervalType.MILLENIUM.equals(type)) {
-
-                return year(_jooqField);
-            }
-            throw new IllegalArgumentException("Group '" + columnId +
-                    "' by the given data interval type is not supported: " + type);
-        }
-
-        protected Field _createJooqGroupFixedField(ColumnGroup cg, DateIntervalType type) {
-            String columnId = cg.getSourceId();
-            Field _jooqField = _createJooqField(columnId, SQLDataType.DATE);
-
-            if (DateIntervalType.SECOND.equals(type)) {
-                return second(_jooqField);
-            }
-            if (DateIntervalType.MINUTE.equals(type)) {
-                return minute(_jooqField);
-            }
-            if (DateIntervalType.HOUR.equals(type)) {
-                return hour(_jooqField);
-            }
-            if (DateIntervalType.DAY_OF_WEEK.equals(type)) {
-                return day(_jooqField);
-            }
-            if (DateIntervalType.MONTH.equals(type)) {
-                return month(_jooqField);
-            }
-            if (DateIntervalType.QUARTER.equals(type)) {
-                // Emulated using month and converted to quarter during the data set post-processing
-                return month(_jooqField);
-            }
-            throw new IllegalArgumentException("Interval size '" + type + "' not supported for " +
-                    "fixed date intervals. The only supported sizes are: " +
-                    StringUtils.join(DateIntervalType.FIXED_INTERVALS_SUPPORTED, ","));
-        }
 
         protected int _assertColumnExists(String columnId) {
             for (int i = 0; i < metadata.getNumberOfColumns(); i++) {

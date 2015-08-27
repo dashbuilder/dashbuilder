@@ -17,8 +17,8 @@ package org.dashbuilder.dataprovider.backend.sql;
 
 public class SQLQueryDataSetLookupTest extends SQLTableDataSetLookupTest {
 
-    @Override public void setUp() throws Exception {
-        expenseReportsDsetFile = "expenseReports_query.dset";
-        super.setUp();
+    @Override
+    public String getExpenseReportsDsetFile() {
+        return testSettings.getExpenseReportsQueryDsetFile();
     }
 }

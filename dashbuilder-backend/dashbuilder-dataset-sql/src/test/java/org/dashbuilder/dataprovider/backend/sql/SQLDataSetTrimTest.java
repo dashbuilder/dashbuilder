@@ -20,8 +20,13 @@ import org.junit.Test;
 
 public class SQLDataSetTrimTest extends SQLDataSetTestBase {
 
+    @Override
+    public void testAll() throws Exception {
+        testTrim();
+    }
+
     @Test
-    public void testDataSetNestedGroup() throws Exception {
+    public void testTrim() throws Exception {
         DataSetTrimTest subTest = new DataSetTrimTest();
         subTest.dataSetManager = dataSetManager;
         subTest.dataSetFormatter = dataSetFormatter;

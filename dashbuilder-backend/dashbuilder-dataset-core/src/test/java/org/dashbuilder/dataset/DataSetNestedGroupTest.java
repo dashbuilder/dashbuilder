@@ -28,6 +28,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import static org.dashbuilder.dataset.ExpenseReportsData.*;
 import static org.dashbuilder.dataset.Assertions.*;
 import static org.dashbuilder.dataset.group.DateIntervalType.QUARTER;
 import static org.fest.assertions.api.Assertions.*;
@@ -52,7 +53,7 @@ public class DataSetNestedGroupTest {
 
     @Before
     public void setUp() throws Exception {
-        DataSet dataSet = RawDataSetSamples.EXPENSE_REPORTS.toDataSet();
+        DataSet dataSet = ExpenseReportsData.INSTANCE.toDataSet();
         dataSet.setUUID(EXPENSE_REPORTS);
         dataSetManager.registerDataSet(dataSet);
         dataSetFormatter = new DataSetFormatter();
@@ -64,9 +65,9 @@ public class DataSetNestedGroupTest {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                 .dataset(EXPENSE_REPORTS)
-                .group("date").fixed(DateIntervalType.MONTH)
-                .column("amount", SUM, "total")
-                .column("date", "amount", SUM, "total in {date}", DateIntervalType.YEAR)
+                .group(COLUMN_DATE).fixed(DateIntervalType.MONTH)
+                .column(COLUMN_AMOUNT, SUM, "total")
+                .column(COLUMN_DATE, COLUMN_AMOUNT, SUM, "total in {date}", DateIntervalType.YEAR)
                 .buildLookup());
 
         printDataSet(result);
@@ -78,9 +79,9 @@ public class DataSetNestedGroupTest {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                         .dataset(EXPENSE_REPORTS)
-                        .filter("amount", FilterFactory.greaterThan(500))
-                        .group("department").select("Engineering")
-                        .group("city").select("Westford")
+                        .filter(COLUMN_AMOUNT, FilterFactory.greaterThan(500))
+                        .group(COLUMN_DEPARTMENT).select("Engineering")
+                        .group(COLUMN_CITY).select("Westford")
                         .buildLookup());
 
         //printDataSet(result);
@@ -93,15 +94,15 @@ public class DataSetNestedGroupTest {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                 .dataset(EXPENSE_REPORTS)
-                .group("department", "Department").select("Services", "Engineering")
-                .group("city", "City")
-                .column("city")
+                .group(COLUMN_DEPARTMENT, "Department").select("Services", "Engineering")
+                .group(COLUMN_CITY, "City")
+                .column(COLUMN_CITY)
                 .column(COUNT, "Occurrences")
-                .column("amount", MIN, "min")
-                .column("amount", MAX, "max")
-                .column("amount", AVERAGE, "average")
-                .column("amount", SUM, "total")
-                .sort("city", "asc")
+                .column(COLUMN_AMOUNT, MIN, "min")
+                .column(COLUMN_AMOUNT, MAX, "max")
+                .column(COLUMN_AMOUNT, AVERAGE, "average")
+                .column(COLUMN_AMOUNT, SUM, "total")
+                .sort(COLUMN_CITY, "asc")
                 .buildLookup());
 
         //printDataSet(result);
@@ -120,10 +121,10 @@ public class DataSetNestedGroupTest {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                 .dataset(EXPENSE_REPORTS)
-                .group("department", "Department")
-                .column("department")
-                .group("city", "city")
-                .sort("department", "asc")
+                .group(COLUMN_DEPARTMENT, "Department")
+                .column(COLUMN_DEPARTMENT)
+                .group(COLUMN_CITY, COLUMN_CITY)
+                .sort(COLUMN_DEPARTMENT, "asc")
                 .buildLookup());
 
         //printDataSet(result);
@@ -141,12 +142,12 @@ public class DataSetNestedGroupTest {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                 .dataset(EXPENSE_REPORTS)
-                .group("employee").select("Jerri Preble")
-                .group("department").select("Engineering")
-                .group("city").select("Westford")
-                .group("date").fixed(DateIntervalType.MONTH, true)
-                .column("date")
-                .column("amount", SUM, "total")
+                .group(COLUMN_EMPLOYEE).select("Jerri Preble")
+                .group(COLUMN_DEPARTMENT).select("Engineering")
+                .group(COLUMN_CITY).select("Westford")
+                .group(COLUMN_DATE).fixed(DateIntervalType.MONTH, true)
+                .column(COLUMN_DATE)
+                .column(COLUMN_AMOUNT, SUM, "total")
                 .buildLookup());
 
         //printDataSet(result);
@@ -171,11 +172,11 @@ public class DataSetNestedGroupTest {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                 .dataset(EXPENSE_REPORTS)
-                .group("department").select("Services", "Engineering")
-                .group("city").select("Madrid", "Barcelona")
-                .group("date").fixed(DateIntervalType.MONTH, true)
-                .column("date")
-                .column("amount", SUM, "total")
+                .group(COLUMN_DEPARTMENT).select("Services", "Engineering")
+                .group(COLUMN_CITY).select("Madrid", "Barcelona")
+                .group(COLUMN_DATE).fixed(DateIntervalType.MONTH, true)
+                .column(COLUMN_DATE)
+                .column(COLUMN_AMOUNT, SUM, "total")
                 .buildLookup());
 
         //printDataSet(result);
@@ -200,7 +201,7 @@ public class DataSetNestedGroupTest {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                         .dataset(EXPENSE_REPORTS)
-                        .group("date").fixed(QUARTER, true).select("1")
+                        .group(COLUMN_DATE).fixed(QUARTER, true).select("1")
                         .buildLookup());
 
         //printDataSet(result);
@@ -212,13 +213,13 @@ public class DataSetNestedGroupTest {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                 .dataset(EXPENSE_REPORTS)
-                .group("department")
-                .group("city").select("Barcelona", "Brno").join()
-                .group("date", "month").fixed(DateIntervalType.MONTH, true).join()
-                .column("department")
-                .column("city")
+                .group(COLUMN_DEPARTMENT)
+                .group(COLUMN_CITY).select("Barcelona", "Brno").join()
+                .group(COLUMN_DATE, "month").fixed(DateIntervalType.MONTH, true).join()
+                .column(COLUMN_DEPARTMENT)
+                .column(COLUMN_CITY)
                 .column("month")
-                .column("amount", SUM, "total")
+                .column(COLUMN_AMOUNT, SUM, "total")
                 .buildLookup());
 
         //printDataSet(result);

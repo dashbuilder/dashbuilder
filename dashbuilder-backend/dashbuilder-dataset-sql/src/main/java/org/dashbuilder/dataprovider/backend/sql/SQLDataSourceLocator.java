@@ -28,5 +28,5 @@ public interface SQLDataSourceLocator {
     /**
      * Get the data source referenced in the SQL data set definition
      */
-    DataSource lookup(SQLDataSetDef def) throws NamingException;
+    DataSource lookup(SQLDataSetDef def) throws Exception;
 }

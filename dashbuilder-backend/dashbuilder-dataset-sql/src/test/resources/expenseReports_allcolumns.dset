@@ -1,7 +1,7 @@
 {
     "uuid": "expense_reports_allcolumns",
     "provider": "SQL",
-    "dataSource": "jdbc:h2:mem:test;DATABASE_TO_UPPER=FALSE",
-    "dbTable": "expense_reports",
+    "dataSource": "jdbc:h2:mem:test",
+    "dbTable": "EXPENSE_REPORTS",
     "allColumns": true
 }
