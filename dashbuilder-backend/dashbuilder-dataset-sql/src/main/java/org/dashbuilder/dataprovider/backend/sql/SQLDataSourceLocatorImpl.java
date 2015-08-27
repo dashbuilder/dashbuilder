@@ -25,7 +25,7 @@ import org.dashbuilder.dataset.def.SQLDataSetDef;
 @ApplicationScoped
 public class SQLDataSourceLocatorImpl implements SQLDataSourceLocator {
 
-    public DataSource lookup(SQLDataSetDef def) throws NamingException {
+    public DataSource lookup(SQLDataSetDef def) throws Exception {
         InitialContext ctx = new InitialContext();
         return (DataSource) ctx.lookup(def.getDataSource());
     }

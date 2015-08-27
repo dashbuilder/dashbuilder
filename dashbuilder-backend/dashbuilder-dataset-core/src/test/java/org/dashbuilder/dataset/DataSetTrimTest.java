@@ -19,6 +19,7 @@ import java.sql.Timestamp;
 import java.util.Calendar;
 import javax.inject.Inject;
 
+import org.dashbuilder.dataset.sort.SortOrder;
 import org.dashbuilder.test.ShrinkWrapHelper;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -28,6 +29,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import static org.dashbuilder.dataset.ExpenseReportsData.*;
 import static org.dashbuilder.dataset.Assertions.*;
 import static org.dashbuilder.dataset.filter.FilterFactory.*;
 import static org.fest.assertions.api.Assertions.*;
@@ -51,7 +53,7 @@ public class DataSetTrimTest {
 
     @Before
     public void setUp() throws Exception {
-        DataSet dataSet = RawDataSetSamples.EXPENSE_REPORTS.toDataSet();
+        DataSet dataSet = ExpenseReportsData.INSTANCE.toDataSet();
         dataSet.setUUID(EXPENSE_REPORTS);
         dataSetManager.registerDataSet(dataSet);
         dataSetFormatter = new DataSetFormatter();
@@ -74,9 +76,10 @@ public class DataSetTrimTest {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                 .dataset(EXPENSE_REPORTS)
-                .column("city", "city1")
-                .column("city", "city2")
+                .column(COLUMN_CITY, "city1")
+                .column(COLUMN_CITY, "city2")
                 .rowNumber(10)
+                .sort(COLUMN_CITY, SortOrder.ASCENDING)
                 .buildLookup());
 
         assertThat(result.getColumns().size()).isEqualTo(2);

@@ -119,9 +119,9 @@ public class LogicalExprFilter extends ColumnFilter {
 
     public String toString() {
         StringBuilder out = new StringBuilder();
-        out.append(logicalOperator).append(" (");
+        out.append("(");
         for (int i=0; i<logicalTerms.size(); i++) {
-            if (i > 0) out.append(", ");
+            if (i > 0) out.append(" ").append(logicalOperator).append(" ");
             out.append(logicalTerms.get(i).toString());
         }
         out.append(")");

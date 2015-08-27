@@ -45,28 +45,28 @@ public class DateUtils {
             Calendar c = GregorianCalendar.getInstance();
 
             if (DateIntervalType.SECOND.equals(type)) {
-                c.set(Calendar.SECOND, (Integer) date);
+                c.set(Calendar.SECOND, ((Number) date).intValue());
                 return c.getTime();
             }
             if (DateIntervalType.MINUTE.equals(type)) {
-                c.set(Calendar.MINUTE, (Integer) date);
+                c.set(Calendar.MINUTE, ((Number) date).intValue());
                 return c.getTime();
             }
             if (DateIntervalType.HOUR.equals(type)) {
-                c.set(Calendar.HOUR, (Integer) date);
+                c.set(Calendar.HOUR, ((Number) date).intValue());
                 return c.getTime();
             }
             if (DateIntervalType.DAY.equals(type)) {
-                c.set(Calendar.DAY_OF_MONTH, (Integer) date);
+                c.set(Calendar.DAY_OF_MONTH, ((Number) date).intValue());
                 return c.getTime();
             }
             if (DateIntervalType.MONTH.equals(type)) {
-                c.set(Calendar.MONTH, ((Integer) date)-1);
+                c.set(Calendar.MONTH, ((Number) date).intValue()-1);
                 c.set(Calendar.DAY_OF_MONTH, 1);
                 return c.getTime();
             }
             if (DateIntervalType.QUARTER.equals(type)) {
-                c.set(Calendar.MONTH, ((Integer) date)-1);
+                c.set(Calendar.MONTH, ((Number) date).intValue()-1);
                 c.set(Calendar.DAY_OF_MONTH, 1);
                 return c.getTime();
             }

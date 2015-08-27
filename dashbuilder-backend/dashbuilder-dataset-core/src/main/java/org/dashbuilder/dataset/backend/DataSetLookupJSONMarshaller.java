@@ -54,7 +54,7 @@ public class DataSetLookupJSONMarshaller {
             for (int j=0; j<argsArray.length(); j++) {
                 String str = argsArray.getString(j);
                 if (StringUtils.isBlank(str)) throw new IllegalArgumentException("Empty filter function argument: " + function);
-                Object arg  = valueFormatter.parseValue(str);
+                Comparable arg  = valueFormatter.parseValue(str);
                 columnFilter.getParameters().add(arg);
             }
         }

@@ -176,6 +176,13 @@
 
       <dependency>
         <groupId>org.dashbuilder</groupId>
+        <artifactId>dashbuilder-dataset-sql</artifactId>
+        <version>${project.version}</version>
+        <type>test-jar</type>
+      </dependency>
+
+      <dependency>
+        <groupId>org.dashbuilder</groupId>
         <artifactId>dashbuilder-dataset-csv</artifactId>
         <version>${project.version}</version>
       </dependency>

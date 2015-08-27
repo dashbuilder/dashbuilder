@@ -27,6 +27,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import static org.dashbuilder.dataset.ExpenseReportsData.*;
 import static org.dashbuilder.dataset.Assertions.*;
 import static org.dashbuilder.dataset.sort.SortOrder.*;
 
@@ -49,7 +50,7 @@ public class DataSetSortTest {
 
     @Before
     public void setUp() throws Exception {
-        dataSet = RawDataSetSamples.EXPENSE_REPORTS.toDataSet();
+        dataSet = ExpenseReportsData.INSTANCE.toDataSet();
         dataSet.setUUID(EXPENSE_REPORTS);
         dataSetManager.registerDataSet(dataSet);
         dataSetFormatter = new DataSetFormatter();
@@ -60,7 +61,7 @@ public class DataSetSortTest {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                 .dataset(EXPENSE_REPORTS)
-                .sort("city", ASCENDING)
+                .sort(COLUMN_CITY, ASCENDING)
                 .buildLookup());
 
         //printDataSet(result);
@@ -77,7 +78,7 @@ public class DataSetSortTest {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                 .dataset(EXPENSE_REPORTS)
-                .sort("amount", ASCENDING)
+                .sort(COLUMN_AMOUNT, ASCENDING)
                 .buildLookup());
 
         //printDataSet(result);
@@ -90,7 +91,7 @@ public class DataSetSortTest {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                 .dataset(EXPENSE_REPORTS)
-                .sort("date", ASCENDING)
+                .sort(COLUMN_DATE, ASCENDING)
                 .buildLookup());
 
         //printDataSet(result);
@@ -103,9 +104,9 @@ public class DataSetSortTest {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                 .dataset(EXPENSE_REPORTS)
-                .sort("city", ASCENDING)
-                .sort("department", ASCENDING)
-                .sort("amount", DESCENDING)
+                .sort(COLUMN_CITY, ASCENDING)
+                .sort(COLUMN_DEPARTMENT, ASCENDING)
+                .sort(COLUMN_AMOUNT, DESCENDING)
                 .buildLookup());
 
         //printDataSet(result);
@@ -120,9 +121,9 @@ public class DataSetSortTest {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                 .dataset(EXPENSE_REPORTS)
-                .group("department")
-                .column("department")
-                .column("amount", AggregateFunctionType.SUM, "total")
+                .group(COLUMN_DEPARTMENT)
+                .column(COLUMN_DEPARTMENT)
+                .column(COLUMN_AMOUNT, AggregateFunctionType.SUM, "total")
                 .sort("total", DESCENDING)
                 .buildLookup());
 

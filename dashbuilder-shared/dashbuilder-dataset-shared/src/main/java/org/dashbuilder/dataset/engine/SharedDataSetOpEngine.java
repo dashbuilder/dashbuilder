@@ -334,7 +334,7 @@ public class SharedDataSetOpEngine implements DataSetOpEngine {
         protected void checkFilterOp(DataSet dataSet, DataSetFilter op) {
             for (ColumnFilter columnFilter : op.getColumnFilterList()) {
                 String id = columnFilter.getColumnId();
-                if (dataSet.getColumnById(id) == null) {
+                if (id != null && dataSet.getColumnById(id) == null) {
                     throw new IllegalArgumentException("Filter column specified not found in the data set: " + id);
                 }
             }
