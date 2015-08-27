@@ -31,8 +31,8 @@ import org.dashbuilder.dataprovider.backend.sql.model.Table;
 import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetFormatter;
-import org.dashbuilder.dataset.DataSetManager;
 import org.dashbuilder.dataset.ExpenseReportsData;
+import org.dashbuilder.dataset.backend.BackendDataSetManager;
 import org.dashbuilder.dataset.backend.DataSetDefJSONMarshaller;
 import org.dashbuilder.dataset.def.DataSetDefRegistry;
 import org.dashbuilder.dataset.def.SQLDataSetDef;
@@ -58,7 +58,7 @@ public class SQLDataSetTestBase {
     }
 
     @Inject
-    DataSetManager dataSetManager;
+    BackendDataSetManager dataSetManager;
 
     @Inject
     DataSetFormatter dataSetFormatter;

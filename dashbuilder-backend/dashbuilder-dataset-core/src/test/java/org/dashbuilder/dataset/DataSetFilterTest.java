@@ -16,11 +16,13 @@
 package org.dashbuilder.dataset;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.ArrayList;
 import javax.inject.Inject;
 
+import org.dashbuilder.dataset.backend.BackendDataSetManager;
 import org.dashbuilder.dataset.filter.ColumnFilter;
 import org.dashbuilder.dataset.sort.SortOrder;
 import org.dashbuilder.test.ShrinkWrapHelper;
@@ -34,6 +36,7 @@ import org.junit.runner.RunWith;
 
 import static org.dashbuilder.dataset.ExpenseReportsData.*;
 import static org.dashbuilder.dataset.Assertions.*;
+import org.dashbuilder.dataset.def.DataSetPreprocessor;
 import static org.dashbuilder.dataset.filter.FilterFactory.*;
 import static org.fest.assertions.api.Assertions.assertThat;
 
@@ -41,7 +44,7 @@ import static org.fest.assertions.api.Assertions.assertThat;
 public class DataSetFilterTest {
 
     @Deployment
-    public static Archive<?> createTestArchive()  {
+    public static Archive<?> createTestArchive() {
         return ShrinkWrapHelper.createJavaArchive()
                 .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
     }
@@ -49,7 +52,7 @@ public class DataSetFilterTest {
     public static final String EXPENSE_REPORTS = "expense_reports";
 
     @Inject
-    public DataSetManager dataSetManager;
+    public BackendDataSetManager dataSetManager;
 
     @Inject
     public DataSetFormatter dataSetFormatter;
@@ -59,6 +62,13 @@ public class DataSetFilterTest {
         DataSet dataSet = ExpenseReportsData.INSTANCE.toDataSet();
         dataSet.setUUID(EXPENSE_REPORTS);
         dataSetManager.registerDataSet(dataSet);
+
+        List<DataSetPreprocessor> preProcessors = new ArrayList<DataSetPreprocessor>();
+        preProcessors.add(new CityFilterDataSetPreprocessor("Barcelona"));
+        dataSet = ExpenseReportsData.INSTANCE.toDataSet();
+        dataSet.setUUID(EXPENSE_REPORTS + "2");
+        dataSetManager.registerDataSet(dataSet, preProcessors);
+
         dataSetFormatter = new DataSetFormatter();
     }
 
@@ -321,6 +331,18 @@ public class DataSetFilterTest {
                         .buildLookup());
 
         assertThat(result.getRowCount()).isEqualTo(26);
+    }
+
+    @Test
+    public void testFilterByStringWithPreProcessor() throws Exception {
+        DataSet result = dataSetManager.lookupDataSet(
+                DataSetFactory.newDataSetLookupBuilder()
+                .dataset(EXPENSE_REPORTS + "2")
+                .filter(COLUMN_CITY, equalsTo("Barcelona"))
+                .buildLookup());
+
+        //printDataSet(result);
+        assertThat(result.getRowCount()).isEqualTo(0);
     }
 
     private void printDataSet(DataSet dataSet) {
