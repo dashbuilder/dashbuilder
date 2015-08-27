@@ -15,6 +15,9 @@
  */
 package org.dashbuilder.dataset;
 
+import java.util.List;
+import org.dashbuilder.dataset.def.DataSetPreprocessor;
+
 /**
  * Main interface for handling data sets.
  */
@@ -37,6 +40,11 @@ public interface DataSetManager {
      * Registers the specified data set instance.
      */
     void registerDataSet(DataSet dataSet);
+    
+    /**
+     * Registers the specified data set instance with a list of preprocessors
+     */
+    void registerDataSet(DataSet dataSet, List<DataSetPreprocessor> preprocessors);
 
     /**
      * Removes the specified data set instance.
