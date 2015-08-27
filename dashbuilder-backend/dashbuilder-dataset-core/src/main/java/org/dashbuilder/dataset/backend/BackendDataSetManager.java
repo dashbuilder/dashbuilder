@@ -15,6 +15,7 @@
  */
 package org.dashbuilder.dataset.backend;
 
+import java.util.List;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
@@ -32,6 +33,7 @@ import org.dashbuilder.dataset.DataSetMetadata;
 import org.dashbuilder.dataset.exception.DataSetLookupException;
 import org.dashbuilder.dataset.def.DataSetDef;
 import org.dashbuilder.dataset.def.DataSetDefRegistry;
+import org.dashbuilder.dataset.def.DataSetPreprocessor;
 import org.dashbuilder.dataset.def.StaticDataSetDef;
 import org.slf4j.Logger;
 
@@ -95,6 +97,16 @@ public class BackendDataSetManager implements DataSetManager {
         }
     }
 
+    /**
+     * Registers the specified data set instance with a list of preprocessors
+     */
+    public void registerDataSet(DataSet dataSet, List<DataSetPreprocessor> preprocessors) {
+        registerDataSet(dataSet);
+        for(DataSetPreprocessor p : preprocessors){
+            dataSetDefRegistry.registerPreprocessor(dataSet.getUUID(), p);
+        }
+    }
+    
     public DataSet removeDataSet(String uuid) {
         if (StringUtils.isBlank(uuid)) return null;
 
@@ -105,10 +117,16 @@ public class BackendDataSetManager implements DataSetManager {
     public DataSet lookupDataSet(DataSetLookup lookup) {
         String uuid = lookup.getDataSetUUID();
         if (StringUtils.isBlank(uuid)) return null;
-
+        
+        
         DataSetDef dataSetDef = dataSetDefRegistry.getDataSetDef(uuid);
         if (dataSetDef == null) throw new RuntimeException("Data set not found: " + uuid);
-
+        List<DataSetPreprocessor> dataSetDefPreProcessors = dataSetDefRegistry.getDataSetDefPreProcessors(uuid);
+        if (dataSetDefPreProcessors != null) {
+            for(DataSetPreprocessor p : dataSetDefPreProcessors){
+                p.preprocess(lookup);
+            }
+        }
         try {
             return resolveProvider(dataSetDef)
                     .lookupDataSet(dataSetDef, lookup);

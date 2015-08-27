@@ -26,6 +26,7 @@ import javax.inject.Inject;
 import org.dashbuilder.dataprovider.DataSetProvider;
 import org.dashbuilder.dataprovider.DataSetProviderRegistry;
 import org.dashbuilder.dataprovider.DataSetProviderType;
+import org.dashbuilder.dataset.def.DataSetPreprocessor;
 import org.dashbuilder.dataset.date.TimeAmount;
 import org.dashbuilder.dataset.def.DataSetDef;
 import org.dashbuilder.dataset.def.DataSetDefRegistry;
@@ -71,6 +72,7 @@ public class DataSetDefRegistryImpl implements DataSetDefRegistry {
         DataSetDef def;
         long lastRefreshTime;
         long refreshInMillis;
+        List<DataSetPreprocessor> preprocessors;
 
         DataSetDefEntry(DataSetDef def) {
             this.def = def;
@@ -80,8 +82,19 @@ public class DataSetDefRegistryImpl implements DataSetDefRegistry {
                 TimeAmount tf = TimeAmount.parse(def.getRefreshTime());
                 this.refreshInMillis = tf.toMillis();
             }
+            
         }
-
+        public void registerDataSetPreprocessor(DataSetPreprocessor preprocessor){
+            if(preprocessors == null ){
+                preprocessors = new ArrayList<DataSetPreprocessor>();
+            }
+            preprocessors.add(preprocessor);
+        }
+        
+        public List<DataSetPreprocessor> getDataSetPreprocessors(){
+            return preprocessors;
+        }
+        
         public void schedule() {
             if (refreshInMillis != -1) {
                 scheduler.schedule(this, refreshInMillis / 1000);
@@ -151,6 +164,20 @@ public class DataSetDefRegistryImpl implements DataSetDefRegistry {
         return record.def;
     }
 
+    public synchronized void registerPreprocessor(String uuid, DataSetPreprocessor preprocessor) {
+        DataSetDefEntry record = dataSetDefMap.get(uuid);
+        if(record == null){
+            throw new IllegalStateException("DataSetDef not found: " + uuid);
+        }
+        record.registerDataSetPreprocessor(preprocessor);
+    }
+    
+    public synchronized List<DataSetPreprocessor> getDataSetDefPreProcessors(String uuid) {
+         DataSetDefEntry record = dataSetDefMap.get(uuid);
+         if (record == null) return null;   
+         return record.getDataSetPreprocessors();
+    }
+    
     public synchronized void registerDataSetDef(DataSetDef newDef) {
         registerDataSetDef(newDef, "system", "register(" + newDef.getUUID() + ")");
     }

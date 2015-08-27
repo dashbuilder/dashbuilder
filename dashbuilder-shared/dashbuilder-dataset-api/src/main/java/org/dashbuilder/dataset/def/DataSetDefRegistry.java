@@ -36,6 +36,23 @@ public interface DataSetDefRegistry {
      * @return The data set definition instance or null if the definition does not exist.
      */
     DataSetDef getDataSetDef(String uuid);
+    
+    /**
+     * Get the preprocessors for a given definition for the specified data set.
+     *
+     * @param uuid The unique universal identifier of the data set
+     * @return The data set preprocesosrs list or null if the definition 
+     *         does not exist or there is no preprocessor registered.
+     */
+    List<DataSetPreprocessor> getDataSetDefPreProcessors(String uuid);
+    
+    /**
+     * Register a DataSetPreprocessor instance for the given to data set.
+     *
+     * @param uuid The unique universal identifier of the data set
+     * @param preprocessor A data set preprocessor
+     */
+    void registerPreprocessor(String uuid, DataSetPreprocessor preprocessor);
 
     /**
      * Add a data set definition to the registry.
