@@ -16,7 +16,9 @@
 package org.dashbuilder.dataset;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 import javax.inject.Inject;
 
 import org.dashbuilder.dataset.sort.SortOrder;
@@ -30,6 +32,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import static org.dashbuilder.dataset.Assertions.*;
+import org.dashbuilder.dataset.def.DataSetPreprocessor;
 import static org.dashbuilder.dataset.filter.FilterFactory.*;
 import static org.fest.assertions.api.Assertions.assertThat;
 
@@ -37,7 +40,7 @@ import static org.fest.assertions.api.Assertions.assertThat;
 public class DataSetFilterTest {
 
     @Deployment
-    public static Archive<?> createTestArchive()  {
+    public static Archive<?> createTestArchive() {
         return ShrinkWrapHelper.createJavaArchive()
                 .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
     }
@@ -55,6 +58,13 @@ public class DataSetFilterTest {
         DataSet dataSet = RawDataSetSamples.EXPENSE_REPORTS.toDataSet();
         dataSet.setUUID(EXPENSE_REPORTS);
         dataSetManager.registerDataSet(dataSet);
+
+        List<DataSetPreprocessor> preProcessors = new ArrayList<DataSetPreprocessor>();
+        preProcessors.add(new CityFilterDataSetPreprocessor("Barcelona"));
+        dataSet = RawDataSetSamples.EXPENSE_REPORTS.toDataSet();
+        dataSet.setUUID(EXPENSE_REPORTS + "2");
+        dataSetManager.registerDataSet(dataSet, preProcessors);
+
         dataSetFormatter = new DataSetFormatter();
     }
 
@@ -62,9 +72,9 @@ public class DataSetFilterTest {
     public void testFilterByString() throws Exception {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
-                        .dataset(EXPENSE_REPORTS)
-                        .filter("city", equalsTo("Barcelona"))
-                        .buildLookup());
+                .dataset(EXPENSE_REPORTS)
+                .filter("city", equalsTo("Barcelona"))
+                .buildLookup());
 
         //printDataSet(result);
         assertThat(result.getRowCount()).isEqualTo(6);
@@ -97,9 +107,9 @@ public class DataSetFilterTest {
 
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
-                    .dataset(EXPENSE_REPORTS)
-                    .filter("date", greaterThan(new Timestamp(date.getTime())))
-                    .buildLookup());
+                .dataset(EXPENSE_REPORTS)
+                .filter("date", greaterThan(new Timestamp(date.getTime())))
+                .buildLookup());
 
         //printDataSet(result);
         assertThat(result.getRowCount()).isEqualTo(15);
@@ -109,9 +119,9 @@ public class DataSetFilterTest {
     public void testFilterUntilToday() throws Exception {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
-                    .dataset(EXPENSE_REPORTS)
-                    .filter("date", timeFrame("10second"))
-                    .buildLookup());
+                .dataset(EXPENSE_REPORTS)
+                .filter("date", timeFrame("10second"))
+                .buildLookup());
 
         //assertThat(result.getRowCount()).isEqualTo(0);
     }
@@ -124,11 +134,11 @@ public class DataSetFilterTest {
 
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
-                    .dataset(EXPENSE_REPORTS)
-                    .filter("date", greaterThan(date))
-                    .filter("amount", lowerOrEqualsTo(120.35))
-                    .filter("city", notEqualsTo("Barcelona"))
-                    .buildLookup());
+                .dataset(EXPENSE_REPORTS)
+                .filter("date", greaterThan(date))
+                .filter("amount", lowerOrEqualsTo(120.35))
+                .filter("city", notEqualsTo("Barcelona"))
+                .buildLookup());
 
         //printDataSet(result);
         assertThat(result.getRowCount()).isEqualTo(2);
@@ -138,11 +148,11 @@ public class DataSetFilterTest {
         // The order of the filter criteria does not alter the result.
         result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
-                    .dataset(EXPENSE_REPORTS)
-                    .filter("city", notEqualsTo("Barcelona"))
-                    .filter("amount", lowerOrEqualsTo(120.35))
-                    .filter("date", greaterThan(date))
-                    .buildLookup());
+                .dataset(EXPENSE_REPORTS)
+                .filter("city", notEqualsTo("Barcelona"))
+                .filter("amount", lowerOrEqualsTo(120.35))
+                .filter("date", greaterThan(date))
+                .buildLookup());
 
         //printDataSet(result);
         assertThat(result.getRowCount()).isEqualTo(2);
@@ -155,9 +165,9 @@ public class DataSetFilterTest {
 
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
-                        .dataset(EXPENSE_REPORTS)
-                        .filter("amount", AND(greaterThan(100), lowerThan(150)))
-                        .buildLookup());
+                .dataset(EXPENSE_REPORTS)
+                .filter("amount", AND(greaterThan(100), lowerThan(150)))
+                .buildLookup());
 
         //printDataSet(result);
         assertThat(result.getRowCount()).isEqualTo(1);
@@ -169,9 +179,9 @@ public class DataSetFilterTest {
 
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
-                        .dataset(EXPENSE_REPORTS)
-                        .filter("amount", NOT(greaterThan(100)))
-                        .buildLookup());
+                .dataset(EXPENSE_REPORTS)
+                .filter("amount", NOT(greaterThan(100)))
+                .buildLookup());
 
         //printDataSet(result);
         assertThat(result.getRowCount()).isEqualTo(5);
@@ -184,9 +194,9 @@ public class DataSetFilterTest {
 
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
-                        .dataset(EXPENSE_REPORTS)
-                        .filter("amount", OR(NOT(greaterThan(100)), greaterThan(1000)))
-                        .buildLookup());
+                .dataset(EXPENSE_REPORTS)
+                .filter("amount", OR(NOT(greaterThan(100)), greaterThan(1000)))
+                .buildLookup());
 
         //printDataSet(result);
         assertThat(result.getRowCount()).isEqualTo(7);
@@ -199,11 +209,11 @@ public class DataSetFilterTest {
 
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
-                        .dataset(EXPENSE_REPORTS)
-                        .filter("amount", AND(
-                                equalsTo("department", "Sales"),
-                                OR(NOT(lowerThan(300)), equalsTo("city", "Madrid"))))
-                        .buildLookup());
+                .dataset(EXPENSE_REPORTS)
+                .filter("amount", AND(
+                        equalsTo("department", "Sales"),
+                        OR(NOT(lowerThan(300)), equalsTo("city", "Madrid"))))
+                .buildLookup());
 
         //printDataSet(result);
         assertThat(result.getRowCount()).isEqualTo(7);
@@ -216,11 +226,11 @@ public class DataSetFilterTest {
 
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
-                        .dataset(EXPENSE_REPORTS)
-                        .filter(likeTo("city", "Bar%"))
-                        .column("id")
-                        .sort("id", SortOrder.ASCENDING)
-                        .buildLookup());
+                .dataset(EXPENSE_REPORTS)
+                .filter(likeTo("city", "Bar%"))
+                .column("id")
+                .sort("id", SortOrder.ASCENDING)
+                .buildLookup());
 
         //printDataSet(result);
         assertThat(result.getRowCount()).isEqualTo(6);
@@ -230,22 +240,43 @@ public class DataSetFilterTest {
         // Case sensitive
         result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
-                        .dataset(EXPENSE_REPORTS)
-                        .filter(likeTo("city", "%L%", true))
-                        .buildLookup());
+                .dataset(EXPENSE_REPORTS)
+                .filter(likeTo("city", "%L%", true))
+                .buildLookup());
 
         assertThat(result.getRowCount()).isEqualTo(7);
 
         // Case un-sensitive
         result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
-                        .dataset(EXPENSE_REPORTS)
-                        .filter(likeTo("city", "%L%", false))
-                        .buildLookup());
+                .dataset(EXPENSE_REPORTS)
+                .filter(likeTo("city", "%L%", false))
+                .buildLookup());
 
         assertThat(result.getRowCount()).isEqualTo(26);
     }
 
+    @Test
+    public void testFilterByStringWithPreProcessor() throws Exception {
+        DataSet result = dataSetManager.lookupDataSet(
+                DataSetFactory.newDataSetLookupBuilder()
+                .dataset(EXPENSE_REPORTS)
+                .filter("city", equalsTo("Barcelona"))
+                .buildLookup());
+
+        //printDataSet(result);
+        assertThat(result.getRowCount()).isEqualTo(6);
+
+        result = dataSetManager.lookupDataSet(
+                DataSetFactory.newDataSetLookupBuilder()
+                .dataset(EXPENSE_REPORTS + "2")
+                .filter("city", equalsTo("Barcelona"))
+                .buildLookup());
+
+        //printDataSet(result);
+        assertThat(result.getRowCount()).isEqualTo(0);
+
+    }
 
     private void printDataSet(DataSet dataSet) {
         System.out.print(dataSetFormatter.formatDataSet(dataSet, "{", "}", ",\n", "\"", "\"", ", ") + "\n\n");
