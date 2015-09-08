@@ -19,29 +19,22 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.apache.commons.lang3.StringUtils;
 import org.dashbuilder.dataprovider.backend.sql.JDBCUtils;
 import org.dashbuilder.dataprovider.backend.sql.dialect.Dialect;
 
-public class CreateTable {
+public class CreateTable extends SQLStatement<CreateTable> {
 
-    protected Connection connection;
-    protected Dialect dialect;
-
-    protected Table table = null;
     protected List<Column> columns = new ArrayList<Column>();
     protected List<Column> primaryKeys = new ArrayList<Column>();
 
     public CreateTable(Connection connection, Dialect dialect) {
-        this.connection = connection;
-        this.dialect = dialect;
+        super(connection, dialect);
     }
 
-    public CreateTable table(Table table) {
-        this.table = table;
-        return this;
+    public String getTableName() {
+        return table.getName();
     }
 
     public CreateTable columns(Column... cols) {
@@ -61,7 +54,7 @@ public class CreateTable {
     public String getSQL() {
         StringBuilder sql = new StringBuilder("CREATE TABLE ");
         List<String> pkeys = new ArrayList<String>();
-        String tname = dialect.getTableSQL(table);
+        String tname = dialect.getTableSQL(this);
         sql.append(tname);
 
         // Columns

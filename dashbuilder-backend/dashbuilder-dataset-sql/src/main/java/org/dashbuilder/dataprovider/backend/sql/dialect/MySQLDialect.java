@@ -47,21 +47,6 @@ public class MySQLDialect extends DefaultDialect {
     }
 
     @Override
-    public String getTableNameSQL(String name) {
-        return "`" + name + "`";
-    }
-
-    @Override
-    public String getSchemaNameSQL(String name) {
-        return "`" + name + "`";
-    }
-
-    @Override
-    public String getColumnNameSQL(String name) {
-        return "`" + name + "`";
-    }
-
-    @Override
     public String getColumnAliasSQL(String alias) {
         return "AS `" + alias + "`";
     }

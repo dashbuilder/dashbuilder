@@ -30,14 +30,6 @@ public class MySqlTestSettings extends DatabaseTestSettings {
         return MYSQL;
     }
 
-    public String getExpenseReportsQueryDsetFile() {
-        return "expenseReports_query_mysql.dset";
-    }
-
-    public String getExpenseReportsSqlDsetFile() {
-        return "expenseReports_sql_mysql.dset";
-    }
-
     @Override
     public SQLDataSourceLocator getDataSourceLocator() {
         return new SQLDataSourceLocator() {
