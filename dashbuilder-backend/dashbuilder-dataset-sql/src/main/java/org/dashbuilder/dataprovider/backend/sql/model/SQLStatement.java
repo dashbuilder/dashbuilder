@@ -16,30 +16,40 @@
 package org.dashbuilder.dataprovider.backend.sql.model;
 
 import java.sql.Connection;
-import java.sql.SQLException;
 
 import org.dashbuilder.dataprovider.backend.sql.JDBCUtils;
 import org.dashbuilder.dataprovider.backend.sql.dialect.Dialect;
 
-public class DropTable extends SQLStatement<DropTable> {
+public class SQLStatement<T extends SQLStatement> {
 
-    public DropTable(Connection connection, Dialect dialect) {
-        super(connection, dialect);
+    protected Connection connection;
+    protected Dialect dialect;
+
+    protected Table table = null;
+
+    public SQLStatement(Connection connection, Dialect dialect) {
+        this.connection = connection;
+        this.dialect = dialect;
     }
 
-    public String getSQL() {
-        StringBuilder sql = new StringBuilder("DROP TABLE ");
-        sql.append(dialect.getTableSQL(this));
-        return sql.toString();
+    public T table(Table table) {
+        this.table = table;
+        return (T) this;
     }
 
-    @Override
-    public String toString() {
-        return getSQL();
+    public Connection getConnection() {
+        return connection;
     }
 
-    public void execute() throws SQLException {
-        String sql = getSQL();
-        JDBCUtils.execute(connection, sql);
+    public Dialect getDialect() {
+        return dialect;
+    }
+
+    public Table getTable() {
+        return table;
+    }
+
+    public String getTableName() {
+        return JDBCUtils.getTableName(connection, table.getSchema(), table.getName());
     }
 }

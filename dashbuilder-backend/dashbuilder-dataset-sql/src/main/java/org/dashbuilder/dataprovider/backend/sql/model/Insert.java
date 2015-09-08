@@ -23,23 +23,17 @@ import java.util.List;
 import org.dashbuilder.dataprovider.backend.sql.JDBCUtils;
 import org.dashbuilder.dataprovider.backend.sql.dialect.Dialect;
 
-public class Insert {
+public class Insert extends SQLStatement<Insert> {
 
-    protected Connection connection;
-    protected Dialect dialect;
-
-    protected Table table = null;
     protected List<Column> columns = new ArrayList<Column>();
     protected List values = new ArrayList();
 
     public Insert(Connection connection, Dialect dialect) {
-        this.connection = connection;
-        this.dialect = dialect;
+        super(connection, dialect);
     }
 
     public Insert into(Table table) {
-        this.table = table;
-        return this;
+        return super.table(table);
     }
 
     public Insert set(Column column, Object value) {
@@ -53,7 +47,7 @@ public class Insert {
 
         // Table
         if (table != null) {
-            sql.append(dialect.getTableSQL(table));
+            sql.append(dialect.getTableSQL(this));
         }
 
         // Columns

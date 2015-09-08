@@ -5,7 +5,7 @@
     "pushMaxSize": 1024,
     "isPublic": true,
     "dataSource": "jdbc:h2:mem:test",
-    "dbSQL": "SELECT * FROM \"EXPENSE_REPORTS\"",
+    "dbSQL": "SELECT * FROM EXPENSE_REPORTS",
     "cacheEnabled": false,
     "cacheMaxRows": 1000,
     "columns": [

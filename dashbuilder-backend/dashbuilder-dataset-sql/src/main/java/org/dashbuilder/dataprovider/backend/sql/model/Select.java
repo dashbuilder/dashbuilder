@@ -25,14 +25,10 @@ import java.util.List;
 import org.dashbuilder.dataprovider.backend.sql.JDBCUtils;
 import org.dashbuilder.dataprovider.backend.sql.dialect.Dialect;
 
-public class Select {
-
-    protected Connection connection;
-    protected Dialect dialect;
+public class Select extends SQLStatement<Select> {
 
     protected List<Column> columns = new ArrayList<Column>();
     protected String fromSelect = null;
-    protected Table fromTable = null;
     protected List<Condition> wheres = new ArrayList<Condition>();
     protected List<Column> groupBys = new ArrayList<Column>();
     protected List<SortColumn> orderBys = new ArrayList<SortColumn>();
@@ -41,8 +37,7 @@ public class Select {
     protected boolean offsetPostProcessing = false;
 
     public Select(Connection connection, Dialect dialect) {
-        this.connection = connection;
-        this.dialect = dialect;
+        super(connection, dialect);
     }
 
     public boolean isOffsetPostProcessing() {
@@ -62,7 +57,7 @@ public class Select {
     }
 
     public Table getFromTable() {
-        return fromTable;
+        return super.getTable();
     }
 
     public List<Condition> getWheres() {
@@ -103,8 +98,7 @@ public class Select {
     }
 
     public Select from(Table table) {
-        fromTable = table;
-        return this;
+        return super.table(table);
     }
 
     public Select where(Condition condition) {

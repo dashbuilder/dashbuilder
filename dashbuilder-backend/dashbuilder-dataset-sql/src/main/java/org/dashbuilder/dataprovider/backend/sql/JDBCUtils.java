@@ -152,6 +152,33 @@ public class JDBCUtils {
         return DEFAULT;
     }
 
+    public static String getTableName(Connection conn, String dbSchema, String tableNamePattern) {
+        try {
+            ResultSet rs = conn.getMetaData().getTables(null, dbSchema, tableNamePattern, null);
+            if (rs.next()) {
+                // Table name found as is
+                return tableNamePattern;
+            } else {
+                rs = conn.getMetaData().getTables(null, dbSchema, tableNamePattern.toUpperCase(), null);
+                if (rs.next()) {
+                    // Table name found in upper case
+                    return tableNamePattern.toUpperCase();
+                } else {
+                    rs = conn.getMetaData().getTables(null, dbSchema, tableNamePattern.toLowerCase(), null);
+                    if (rs.next()) {
+                        // Table name found in lower case
+                        return tableNamePattern.toLowerCase();
+                    } else {
+                        return tableNamePattern;
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            log.error("Error retrieving table name from database metadata: " + tableNamePattern, e);
+            return tableNamePattern;
+        }
+    }
+
     public static List<Column> getColumns(ResultSet resultSet, String[] exclude) throws SQLException {
         List<Column> columnList = new ArrayList<Column>();
         List<String> columnExcluded = exclude == null ? new ArrayList<String>() : Arrays.asList(exclude);
@@ -211,7 +238,7 @@ public class JDBCUtils {
                 return ColumnType.DATE;
             }
 
-            case Types.BINARY:
+            /*case Types.BINARY:
             case Types.VARBINARY:
             case Types.LONGVARBINARY:
             case Types.NULL:
@@ -225,11 +252,9 @@ public class JDBCUtils {
             case Types.REF:
             case Types.ROWID:
             case Types.SQLXML:
-            case Types.DATALINK: {
-                throw new IllegalArgumentException("SQL data type not supported: " + sqlDataType);
-            }
+            case Types.DATALINK:*/
 
-            // Unsupported types are treated as a text values.
+            // Unsupported (see above) types are treated as a text values.
             default: {
                 return ColumnType.TEXT;
             }

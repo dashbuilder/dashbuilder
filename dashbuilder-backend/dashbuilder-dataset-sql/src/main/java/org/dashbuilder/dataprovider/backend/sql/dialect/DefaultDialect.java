@@ -27,6 +27,7 @@ import org.dashbuilder.dataprovider.backend.sql.model.DynamicDateColumn;
 import org.dashbuilder.dataprovider.backend.sql.model.FixedDateColumn;
 import org.dashbuilder.dataprovider.backend.sql.model.FunctionColumn;
 import org.dashbuilder.dataprovider.backend.sql.model.LogicalCondition;
+import org.dashbuilder.dataprovider.backend.sql.model.SQLStatement;
 import org.dashbuilder.dataprovider.backend.sql.model.Select;
 import org.dashbuilder.dataprovider.backend.sql.model.SortColumn;
 import org.dashbuilder.dataprovider.backend.sql.model.Table;
@@ -90,8 +91,11 @@ public class DefaultDialect implements Dialect {
     }
 
     @Override
-    public String getTableSQL(Table table) {
-        String name = getTableNameSQL(table.getName());
+    public String getTableSQL(SQLStatement<?> stmt) {
+        String tableName = stmt.getTableName();
+        Table table = stmt.getTable();
+
+        String name = getTableNameSQL(tableName);
         if (StringUtils.isBlank(table.getSchema())) {
             return name;
         } else{
@@ -101,12 +105,12 @@ public class DefaultDialect implements Dialect {
 
     @Override
     public String getTableNameSQL(String name) {
-        return "\"" + name + "\"";
+        return name;
     }
 
     @Override
     public String getSchemaNameSQL(String name) {
-        return "\"" + name + "\"";
+        return name;
     }
 
     @Override
@@ -298,7 +302,7 @@ public class DefaultDialect implements Dialect {
 
     @Override
     public String getColumnNameSQL(String name) {
-        return "\"" + name + "\"";
+        return name;
     }
 
     @Override
@@ -591,7 +595,7 @@ public class DefaultDialect implements Dialect {
             return from  + " (" + fromSelect + ") " + alias;
         }
         else if (fromTable != null ){
-            String table = getTableSQL(fromTable);
+            String table = getTableSQL(select);
             return from + " " + table;
         }
         return "";
