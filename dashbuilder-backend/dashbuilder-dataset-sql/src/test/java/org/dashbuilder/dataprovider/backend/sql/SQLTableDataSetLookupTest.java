@@ -196,7 +196,9 @@ public class SQLTableDataSetLookupTest extends SQLDataSetTestBase {
         subTest.dataSetManager = dataSetManager;
         subTest.dataSetFormatter = dataSetFormatter;
         subTest.testGroupSelectionFilter();
-        subTest.testNestedGroupFromMultipleSelection();
+        if (!testSettings.isMonetDB()) {
+            subTest.testNestedGroupFromMultipleSelection();
+        }
         subTest.testNestedGroupRequiresSelection();
         subTest.testThreeNestedLevels();
         subTest.testNoResultsSelection();

@@ -78,22 +78,6 @@ public class SybaseASEDialect extends DefaultDialect {
         return super.getConcatFunctionSQL(columns, begin, end, separator);
     }
 
-    @Override
-    public String getCountQuerySQL(Select select) {
-        if (!select.getOrderBys().isEmpty()) {
-            List<SortColumn> sortColumns = new ArrayList<SortColumn>();
-            sortColumns.addAll(select.getOrderBys());
-            try {
-                // ORDER BY clauses within nested queries are not supported
-                select.getOrderBys().clear();
-                return "SELECT COUNT(*) FROM (" + select.getSQL() + ") \"dbSQL\"";
-            } finally {
-                select.orderBy(sortColumns);
-            }
-        }
-        return super.getCountQuerySQL(select);
-    }
-
     /**
      * Sybase ASE pagination queries are resolved as follows:
      *
@@ -135,5 +119,4 @@ public class SybaseASEDialect extends DefaultDialect {
     public String getOffsetLimitSQL(Select select) {
         return null;
     }
-
 }

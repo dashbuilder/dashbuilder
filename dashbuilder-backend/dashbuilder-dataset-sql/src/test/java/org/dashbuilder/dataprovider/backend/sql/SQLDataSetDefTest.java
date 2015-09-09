@@ -35,7 +35,9 @@ public class SQLDataSetDefTest extends SQLDataSetTestBase {
 
     @Override
     public void testAll() throws Exception {
-        testAllColumns();
+        if (!testSettings.isMonetDB()) {
+            testAllColumns();
+        }
         testSQLDataSet();
         testColumnSet();
         testFilters();
@@ -94,7 +96,9 @@ public class SQLDataSetDefTest extends SQLDataSetTestBase {
 
         DataSetMetadata metadata = dataSetManager.getDataSetMetadata("expense_reports_columnset");
         assertThat(metadata.getNumberOfColumns()).isEqualTo(4);
-        assertThat(metadata.getEstimatedSize()).isEqualTo(4300);
+        if (!testSettings.isMonetDB()) {
+            assertThat(metadata.getEstimatedSize()).isEqualTo(4300);
+        }
 
         DataSet dataSet = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
@@ -118,7 +122,9 @@ public class SQLDataSetDefTest extends SQLDataSetTestBase {
 
         DataSetMetadata metadata = dataSetManager.getDataSetMetadata("expense_reports_filtered");
         assertThat(metadata.getNumberOfColumns()).isEqualTo(4);
-        assertThat(metadata.getEstimatedSize()).isEqualTo(516);
+        if (!testSettings.isMonetDB()) {
+            assertThat(metadata.getEstimatedSize()).isEqualTo(516);
+        }
 
         DataSet dataSet = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()

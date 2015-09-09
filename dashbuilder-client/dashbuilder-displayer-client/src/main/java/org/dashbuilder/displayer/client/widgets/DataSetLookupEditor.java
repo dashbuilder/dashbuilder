@@ -248,15 +248,12 @@ public class DataSetLookupEditor implements IsWidget,
             else {
                 groupOp.setColumnGroup(new ColumnGroup(columnId, columnId));
                 if (lookupConstraints.isGroupColumn()) {
-                    if (groupOp.getGroupFunctions().size() == 1) {
-                        GroupFunction groupFunction = new GroupFunction(groupOp.getColumnGroup().getSourceId(), null, null);
-                        groupOp.getGroupFunctions().add(0, groupFunction);
-                    } else {
-                        GroupFunction groupFunction = groupOp.getGroupFunctions().get(0);
-                        groupFunction.setSourceId(groupOp.getColumnGroup().getSourceId());
-                        groupFunction.setColumnId(null);
-                        groupFunction.setFunction(null);
+                    if (groupOp.getGroupFunctions().size() > 1) {
+                        groupOp.getGroupFunctions().remove(0);
                     }
+                    GroupFunction groupFunction = new GroupFunction(columnId, columnId, null);
+                    groupOp.getGroupFunctions().add(0, groupFunction);
+
                 }
             }
             // Notify listener

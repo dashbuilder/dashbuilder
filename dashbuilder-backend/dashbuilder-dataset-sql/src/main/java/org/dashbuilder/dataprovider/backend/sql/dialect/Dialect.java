@@ -111,7 +111,9 @@ public interface Dialect {
 
     String getColumnNameSQL(String name);
 
-    String getColumnAliasSQL(String alias);
+    String getAliasForColumnSQL(String alias);
+
+    String getAliasForStatementSQL(String alias);
 
     String getConditionSQL(Condition condition);
 

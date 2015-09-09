@@ -35,6 +35,7 @@ public class DatabaseTestSettings {
     public static final String DB2 = "db2";
     public static final String SQLSERVER = "sqlserver";
     public static final String SYBASE = "sybase";
+    public static final String MONETDB = "monetdb";
 
     protected Properties connectionSettings;
 
@@ -93,6 +94,10 @@ public class DatabaseTestSettings {
 
     public boolean isSybase() {
         return SYBASE.equals(getDatabaseType());
+    }
+
+    public boolean isMonetDB() {
+        return MONETDB.equals(getDatabaseType());
     }
 
     public String getDatabaseType() {

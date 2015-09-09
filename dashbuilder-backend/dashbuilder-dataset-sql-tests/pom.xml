@@ -25,6 +25,7 @@
     <module>dashbuilder-dataset-sql-tests-sqlserver</module>
     <module>dashbuilder-dataset-sql-tests-db2</module>
     <module>dashbuilder-dataset-sql-tests-sybase</module>
+    <module>dashbuilder-dataset-sql-tests-monetdb</module>
   </modules-->
 
   <dependencies>

@@ -20,6 +20,7 @@ import javax.inject.Inject;
 import org.dashbuilder.dataset.date.DayOfWeek;
 import org.dashbuilder.dataset.date.Month;
 import org.dashbuilder.dataset.filter.FilterFactory;
+import org.dashbuilder.dataset.group.DataSetGroup;
 import org.dashbuilder.dataset.group.DateIntervalType;
 import org.dashbuilder.dataset.sort.SortOrder;
 import org.dashbuilder.test.ShrinkWrapHelper;
@@ -114,6 +115,28 @@ public class DataSetGroupTest {
                 .column(COUNT, "Occurrences")
                 .column(COLUMN_AMOUNT, SUM, "totalAmount")
                 .buildLookup());
+
+        //printDataSet(result);
+        assertDataSetValues(result, dataSetFormatter, new String[][]{
+                {"2012", "13.00", "6,126.13"},
+                {"2013", "11.00", "5,252.96"},
+                {"2014", "11.00", "4,015.48"},
+                {"2015", "15.00", "7,336.69"}
+        }, 0);
+
+        DataSetLookup lookup = DataSetFactory.newDataSetLookupBuilder()
+                .dataset(EXPENSE_REPORTS)
+                .group(COLUMN_DATE).dynamic(YEAR, true)
+                .column(COLUMN_DATE)
+                .column(COUNT, "Occurrences")
+                .column(COLUMN_AMOUNT, SUM, "totalAmount")
+                .buildLookup();
+
+        // Test required for those databases that support alias as statements (f.i: MySQL. Postgres or MonetDB)
+        DataSetGroup group = lookup.getOperation(0);
+        group.getColumnGroup().setColumnId(null);
+        group.getGroupFunctions().get(0).setColumnId(null);
+        result = dataSetManager.lookupDataSet(lookup);
 
         //printDataSet(result);
         assertDataSetValues(result, dataSetFormatter, new String[][]{

@@ -18,6 +18,7 @@ package org.dashbuilder.dataprovider.backend.sql.dialect;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -58,25 +59,21 @@ public class DefaultDialect implements Dialect {
         if (column instanceof FunctionColumn) {
             return getFunctionColumnSQL((FunctionColumn) column);
         }
-        if (column instanceof SortColumn) {
+        else if (column instanceof SortColumn) {
             return getSortColumnSQL((SortColumn) column);
         }
-        if (column instanceof DynamicDateColumn) {
+        else if (column instanceof DynamicDateColumn) {
             return getDynamicDateColumnSQL((DynamicDateColumn) column);
         }
-        if (column instanceof FixedDateColumn) {
+        else if (column instanceof FixedDateColumn) {
             return getFixedDateColumnSQL((FixedDateColumn) column);
         }
-        if (column instanceof SimpleColumn) {
+        else if (column instanceof SimpleColumn) {
             return getSimpleColumnSQL((SimpleColumn) column);
         }
-        String result = getColumnNameSQL(column.getName());
-        if (!StringUtils.isBlank(column.getAlias())) {
-            if (!result.equals(getColumnNameSQL(column.getAlias()))) {
-                result += " " + getColumnAliasSQL(column.getAlias());
-            }
+        else {
+            return getColumnNameSQL(column.getName());
         }
-        return result;
     }
 
     @Override
@@ -147,11 +144,6 @@ public class DefaultDialect implements Dialect {
         String result = getColumnNameSQL(column.getName());
         if (column.getFunctionType() != null) {
             result = getColumnFunctionSQL(result, column.getFunctionType());
-        }
-        if (!StringUtils.isBlank(column.getAlias())) {
-            if (!result.equals(getColumnNameSQL(column.getAlias()))) {
-                result += " " + getColumnAliasSQL(column.getAlias());
-            }
         }
         return result;
     }
@@ -233,7 +225,7 @@ public class DefaultDialect implements Dialect {
 
         // Always order by the alias (if any)
         if (!StringUtils.isBlank(column.getAlias())) {
-            columnSQL = getColumnNameSQL(column.getAlias());
+            columnSQL = getAliasForStatementSQL(column.getAlias());
         }
         return columnSQL + " " + getSortOrderSQL(sortColumn.getOrder());
     }
@@ -349,7 +341,12 @@ public class DefaultDialect implements Dialect {
     }
 
     @Override
-    public String getColumnAliasSQL(String alias) {
+    public String getAliasForColumnSQL(String alias) {
+        return "\"" + alias + "\"";
+    }
+
+    @Override
+    public String getAliasForStatementSQL(String alias) {
         return "\"" + alias + "\"";
     }
 
@@ -370,37 +367,37 @@ public class DefaultDialect implements Dialect {
         CoreFunctionType type = condition.getFunction();
         Object[] params = condition.getParameters();
         if (CoreFunctionType.IS_NULL.equals(type)) {
-            return getIsNullConditionSQL(columnSQL.toString());
+            return getIsNullConditionSQL(columnSQL);
         }
         if (CoreFunctionType.NOT_NULL.equals(type)) {
-            return getNotNullConditionSQL(columnSQL.toString());
+            return getNotNullConditionSQL(columnSQL);
         }
         if (CoreFunctionType.EQUALS_TO.equals(type)) {
-            return getIsEqualsToConditionSQL(columnSQL.toString(), params[0]);
+            return getIsEqualsToConditionSQL(columnSQL, params[0]);
         }
         if (CoreFunctionType.NOT_EQUALS_TO.equals(type)) {
-            return getNotEqualsToConditionSQL(columnSQL.toString(), params[0]);
+            return getNotEqualsToConditionSQL(columnSQL, params[0]);
         }
         if (CoreFunctionType.NOT_EQUALS_TO.equals(type)) {
-            return getNotEqualsToConditionSQL(columnSQL.toString(), params[0]);
+            return getNotEqualsToConditionSQL(columnSQL, params[0]);
         }
         if (CoreFunctionType.LIKE_TO.equals(type)) {
-            return getLikeToConditionSQL(columnSQL.toString(), params[0]);
+            return getLikeToConditionSQL(columnSQL, params[0]);
         }
         if (CoreFunctionType.GREATER_THAN.equals(type)) {
-            return getGreaterThanConditionSQL(columnSQL.toString(), params[0]);
+            return getGreaterThanConditionSQL(columnSQL, params[0]);
         }
         if (CoreFunctionType.GREATER_OR_EQUALS_TO.equals(type)) {
-            return getGreaterOrEqualsConditionSQL(columnSQL.toString(), params[0]);
+            return getGreaterOrEqualsConditionSQL(columnSQL, params[0]);
         }
         if (CoreFunctionType.LOWER_THAN.equals(type)) {
-            return getLowerThanConditionSQL(columnSQL.toString(), params[0]);
+            return getLowerThanConditionSQL(columnSQL, params[0]);
         }
         if (CoreFunctionType.LOWER_OR_EQUALS_TO.equals(type)) {
-            return getLowerOrEqualsConditionSQL(columnSQL.toString(), params[0]);
+            return getLowerOrEqualsConditionSQL(columnSQL, params[0]);
         }
         if (CoreFunctionType.BETWEEN.equals(type)) {
-            return getBetweenConditionSQL(columnSQL.toString(), params[0], params[1]);
+            return getBetweenConditionSQL(columnSQL, params[0], params[1]);
         }
         throw new IllegalArgumentException("Core condition type not supported: " + type);
     }
@@ -577,10 +574,18 @@ public class DefaultDialect implements Dialect {
 
     @Override
     public String getCountQuerySQL(Select select) {
-        return "SELECT "
-                + getColumnFunctionSQL("*", AggregateFunctionType.COUNT)
-                + " FROM (" + select.getSQL() + ") "
-                + getColumnAliasSQL("dbSQL");
+        List<SortColumn> sortColumns = new ArrayList<SortColumn>();
+        sortColumns.addAll(select.getOrderBys());
+        try {
+            // Remove ORDER BY for better performance
+            select.getOrderBys().clear();
+            return "SELECT "
+                    + getColumnFunctionSQL("*", AggregateFunctionType.COUNT)
+                    + " FROM (" + select.getSQL() + ") "
+                    + getAliasForColumnSQL("dbSQL");
+        } finally {
+            select.orderBy(sortColumns);
+        }
     }
 
     @Override
@@ -695,6 +700,12 @@ public class DefaultDialect implements Dialect {
                     clause.append(", ");
                 }
                 String str = getColumnSQL(column);
+                boolean aliasNonEmpty = !StringUtils.isBlank(column.getAlias());
+                boolean isSimpleColumn = (column instanceof SimpleColumn) && !str.equals(getColumnNameSQL(column.getAlias()));
+
+                if (aliasNonEmpty && (allowAliasInStatements() || isSimpleColumn)) {
+                    str += " " + getAliasForColumnSQL(column.getAlias());
+                }
                 clause.append(str);
                 first = false;
             }
@@ -709,7 +720,7 @@ public class DefaultDialect implements Dialect {
         String from = getFromStatement(select);
 
         if (fromSelect != null) {
-            String alias = getColumnAliasSQL("dbSQL");
+            String alias = getAliasForColumnSQL("dbSQL");
             return from  + " (" + fromSelect + ") " + alias;
         }
         else if (fromTable != null ){
@@ -766,8 +777,8 @@ public class DefaultDialect implements Dialect {
             } else {
                 sql.append(", ");
             }
-            String str = getColumnSQL(column);
-            sql.append(str);
+            Column aliasColumn = allowAliasInStatements() ? getAliasStatement(select, column) : null;
+            sql.append(aliasColumn != null ? getAliasForStatementSQL(aliasColumn.getAlias()) : getColumnSQL(column));
             first = false;
         }
         return sql.toString();
@@ -783,6 +794,10 @@ public class DefaultDialect implements Dialect {
                 sql.append(getOrderByStatement(select)).append(" ");
             } else {
                 sql.append(", ");
+            }
+            Column aliasColumn = allowAliasInStatements() ? getAliasStatement(select, column.getSource()) : null;
+            if (aliasColumn != null) {
+                column = new SortColumn(aliasColumn, column.getOrder());
             }
             String str = getSortColumnSQL(column);
             sql.append(str);
@@ -857,6 +872,46 @@ public class DefaultDialect implements Dialect {
                 catch (InvocationTargetException ite) {
                     return null;
                 }
+            }
+        }
+        return null;
+    }
+
+    public boolean areEquals(Column column1, Column column2) {
+        if (!column1.getName().equals(column2.getName())) {
+            return false;
+        }
+        if (!column1.getClass().getName().equals(column2.getClass().getName())) {
+            return false;
+        }
+        if (column1 instanceof DynamicDateColumn) {
+            DynamicDateColumn dd1 = (DynamicDateColumn) column1;
+            DynamicDateColumn dd2 = (DynamicDateColumn) column2;
+            if (!dd1.getDateType().equals(dd2.getDateType())) {
+                return false;
+            }
+        }
+        if (column1 instanceof FixedDateColumn) {
+            FixedDateColumn fd1 = (FixedDateColumn) column1;
+            FixedDateColumn fd2 = (FixedDateColumn) column2;
+            if (!fd1.getDateType().equals(fd2.getDateType())) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public boolean allowAliasInStatements() {
+        return false;
+    }
+
+    public Column getAliasStatement(Select select, Column target) {
+        for (Column column : select.getColumns()) {
+            if (!(column instanceof SimpleColumn) &&
+                    !StringUtils.isBlank(column.getAlias()) &&
+                    areEquals(column, target)) {
+
+                return column;
             }
         }
         return null;

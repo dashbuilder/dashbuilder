@@ -81,7 +81,7 @@ public class SQLServerDialect extends DefaultDialect {
                 select.orderBy(sortColumns);
             }
         }
-        return super.getCountQuerySQL(select);
+        return "SELECT COUNT(*) FROM (" + select.getSQL() + ") \"dbSQL\"";
     }
 
     /**

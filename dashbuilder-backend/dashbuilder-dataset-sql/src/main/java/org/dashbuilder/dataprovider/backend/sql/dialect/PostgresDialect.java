@@ -46,8 +46,18 @@ public class PostgresDialect extends DefaultDialect {
     }
 
     @Override
-    public String getColumnAliasSQL(String alias) {
+    public boolean allowAliasInStatements() {
+        return true;
+    }
+
+    @Override
+    public String getAliasForColumnSQL(String alias) {
         return "AS \"" + alias + "\"";
+    }
+
+    @Override
+    public String getAliasForStatementSQL(String alias) {
+        return "\"" + alias + "\"";
     }
 
     @Override

@@ -30,6 +30,7 @@ import org.dashbuilder.dataprovider.backend.sql.dialect.DB2Dialect;
 import org.dashbuilder.dataprovider.backend.sql.dialect.DefaultDialect;
 import org.dashbuilder.dataprovider.backend.sql.dialect.Dialect;
 import org.dashbuilder.dataprovider.backend.sql.dialect.H2Dialect;
+import org.dashbuilder.dataprovider.backend.sql.dialect.MonetDBDialect;
 import org.dashbuilder.dataprovider.backend.sql.dialect.MySQLDialect;
 import org.dashbuilder.dataprovider.backend.sql.dialect.OracleDialect;
 import org.dashbuilder.dataprovider.backend.sql.dialect.OracleLegacyDialect;
@@ -54,6 +55,7 @@ public class JDBCUtils {
     public static final Dialect SQLSERVER = new SQLServerDialect();
     public static final Dialect DB2 = new DB2Dialect();
     public static final Dialect SYBASE_ASE = new SybaseASEDialect();
+    public static final Dialect MONETDB = new MonetDBDialect();
 
     private static final Logger log = LoggerFactory.getLogger(JDBCUtils.class);
 
@@ -124,6 +126,9 @@ public class JDBCUtils {
         if (url.contains(":sybase:")) {
             return SYBASE_ASE;
         }
+        if (url.contains(":monetdb:")) {
+            return MONETDB;
+        }
         return DEFAULT;
     }
 
@@ -149,6 +154,9 @@ public class JDBCUtils {
         if (dbName.contains("ase") || dbName.contains("adaptive")) {
             return SYBASE_ASE;
         }
+        if (dbName.contains("monet")) {
+            return MONETDB;
+        }
         return DEFAULT;
     }
 
@@ -172,7 +180,7 @@ public class JDBCUtils {
         return columnList;
     }
 
-    public static String changeCase(Connection connection, String id) {
+    public static String fixCase(Connection connection, String id) {
         try {
             DatabaseMetaData meta = connection.getMetaData();
             if (meta.storesLowerCaseIdentifiers()) {

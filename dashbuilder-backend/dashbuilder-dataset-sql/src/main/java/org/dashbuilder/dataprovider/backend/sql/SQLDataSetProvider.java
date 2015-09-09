@@ -265,7 +265,7 @@ public class SQLDataSetProvider implements DataSetProvider {
 
         if (def.getColumns() != null) {
             for (DataColumnDef column : def.getColumns()) {
-                String columnId = JDBCUtils.changeCase(conn, column.getId());
+                String columnId = JDBCUtils.fixCase(conn, column.getId());
                 columnIds.add(columnId);
                 columnTypes.add(column.getColumnType());
             }
@@ -1000,11 +1000,15 @@ public class SQLDataSetProvider implements DataSetProvider {
             for (GroupFunction gf : gOp.getGroupFunctions()) {
 
                 String sourceId = gf.getSourceId();
-                String targetId = gf.getColumnId();
-                if (sourceId == null) {
+                if (StringUtils.isBlank(sourceId)) {
                     sourceId = metadata.getColumnId(0);
                 } else {
                     _assertColumnExists(sourceId);
+                }
+
+                String targetId = gf.getColumnId();
+                if (StringUtils.isBlank(targetId)) {
+                    targetId = sourceId;
                 }
 
                 if (cg != null && cg.getSourceId().equals(sourceId) && gf.getFunction() == null) {
@@ -1047,7 +1051,7 @@ public class SQLDataSetProvider implements DataSetProvider {
 
 
         protected int _assertColumnExists(String columnId) {
-            String targetId = JDBCUtils.changeCase(conn, columnId);
+            String targetId = JDBCUtils.fixCase(conn, columnId);
             for (int i = 0; i < metadata.getNumberOfColumns(); i++) {
                 if (metadata.getColumnId(i).equals(targetId)) {
                     return i;
@@ -1064,7 +1068,7 @@ public class SQLDataSetProvider implements DataSetProvider {
         }
 
         protected ColumnType _getColumnType(String columnId) {
-            String _col = JDBCUtils.changeCase(conn, columnId);
+            String _col = JDBCUtils.fixCase(conn, columnId);
             return metadata.getColumnType(_col);
         }
     }

@@ -56,10 +56,6 @@ public class SQLStatement<T extends SQLStatement> {
     }
 
     protected Column fix(Column column) {
-        // Remove alias
-        if (column.getName().equals(column.getAlias())) {
-            column.setAlias(null);
-        }
         // Fix column name to match DB case settings
         String name = fix(column.getName());
         column.setName(name);
@@ -67,6 +63,6 @@ public class SQLStatement<T extends SQLStatement> {
     }
 
     protected String fix(String id) {
-        return JDBCUtils.changeCase(connection, id);
+        return JDBCUtils.fixCase(connection, id);
     }
 }

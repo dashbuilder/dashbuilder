@@ -37,18 +37,49 @@ Architecture
 Change log
 ==========
 
+master
+
+* MonetDB support added to the SQL provider.  
+  (The provider has been tested under the MonetDB 11.21.5 release)
+
+0.3.1
+
+Some fixes:
+
+* https://issues.jboss.org/browse/DASHBUILDE-28
+  Data Set preview table should be wrapped in scroll panel.
+  
+* https://issues.jboss.org/browse/DASHBUILDE-37
+  Data set lookup pre-processors
+  
+* https://issues.jboss.org/browse/DASHBUILDE-38
+  Marshalling errors in DevMode with Strings filtering.
+
 0.3.0
 
-* New provider for the definition of data sets stored into SQL databases.
-* New provider for the retrieval of data stored into Elastic Search nodes.
-* New displayer for showing single value metrics.
-* Added new displayer subtypes: bar (stacked), pie (3d, donut), line (smooth)
-* Support for real-time dashboards. Displayer refresh settings.
+* New provider for the definition of data sets stored into SQL databases. 
+  The following is the list of tested and supported DBs: 
+  
+  - MySQL 5.5
+  - Postgres 9.2
+  - H2 1.3.168+
+  - Oracle 12c and 11gR2
+  - IBM DB2 9.7 and 10.5
+  - Sybase ASE 15.7
 
+* New provider for the retrieval of data stored into Elastic Search nodes.
+  The provider has been tested under Elastic Search 1.7.1 release.
+   
 * New data set editor UI module:
-    - Creation of SQL, Bean, CSV & elastic search data set definitions
+    - Creation of SQL, Bean, CSV and Elastic Search data set definitions
     - Data set retrieval testing and preview
     - Filter, sort and export the data previews
+
+* New displayer for showing single value metrics.
+
+* Added new displayer subtypes: bar (stacked), pie (3d, donut), line (smooth)
+
+* Support for real-time dashboards. Displayer refresh settings.
 
 * Displayer editor data set lookup enhancements:
     - Filter editor for retrieving only a data subset.
