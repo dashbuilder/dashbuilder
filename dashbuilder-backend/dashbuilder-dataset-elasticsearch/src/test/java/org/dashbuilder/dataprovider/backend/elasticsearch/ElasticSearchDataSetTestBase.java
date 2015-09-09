@@ -34,17 +34,16 @@ import org.dashbuilder.dataset.backend.DataSetDefJSONMarshaller;
 import org.dashbuilder.dataset.def.DataSetDefRegistry;
 import org.dashbuilder.dataset.def.ElasticSearchDataSetDef;
 import org.dashbuilder.test.ShrinkWrapHelper;
-import org.elasticsearch.bootstrap.Bootstrap;
+import org.elasticsearch.bootstrap.Elasticsearch;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
-import org.junit.AfterClass;
 import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.ClassRule;
 import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import java.io.File;
@@ -87,6 +86,9 @@ import java.util.List;
 @RunWith(Arquillian.class)
 public class ElasticSearchDataSetTestBase {
 
+    static final Logger logger =
+            LoggerFactory.getLogger(ElasticSearchDataSetTestBase.class);
+    
     // NOTE: If you change the host or port in config/elasticsearch.yml, you should modify this value.
     public static final String EL_SERVER = "http://localhost:9200/";
     
@@ -94,6 +96,8 @@ public class ElasticSearchDataSetTestBase {
     protected static final String EL_PROPERTY_ELASTICSEARCH = "elasticsearch";
     protected static final String EL_PROPERTY_HOME = "es.path.home";
     protected static final String EL_PROPERTY_FOREGROUND = "es.foreground";
+    protected static final String EL_PROPERTY_SCRIPT_INLINE = "es.script.inline";
+    protected static final String EL_PROPERTY_SCRIPT_INDEXED = "es.script.indexed";
 
     // Config files & example data for running EL server.
     protected static final String EL_CONFIG_DIR = "config";
@@ -159,18 +163,22 @@ public class ElasticSearchDataSetTestBase {
     @Inject
     DataSetDefJSONMarshaller jsonMarshaller;
 
-    @ClassRule
-    public static TemporaryFolder elHomeFolder = new TemporaryFolder();
-    
     protected static ElasticSearchUrlBuilder urlBuilder = new ElasticSearchUrlBuilder(EL_SERVER, EL_EXAMPLE_INDEX);
     
     // For local testing against an existing and running EL server.
-    private static boolean runServer = true;
-    private static boolean populateServer = true;
+    private static boolean RUN_SERVER = true;
+    private static boolean POPULATE_SERVER = true;
+    
+    private static Thread ELS_THREAD = new Thread("dashbuilder_test_ELS") {
+        @Override
+        public void run() {
+            startInstance();
+        }
+    };
 
-    @BeforeClass
-    public static void runELServer() throws Exception {
-        if (runServer) {
+    // Not necessary use of @BeforeClass - @see ElasticSearchTestSuite.java.
+    public static void runELServer(TemporaryFolder elHomeFolder) throws Exception {
+        if (RUN_SERVER) {
             // Build a temporary EL home folder. Copy config files to it.
             File elHome = elHomeFolder.newFolder("dashbuilder-elasticsearch");
             File elHomeConfig = new File(elHome, EL_CONFIG_DIR);
@@ -188,17 +196,17 @@ public class ElasticSearchDataSetTestBase {
             System.setProperty(EL_PROPERTY_ELASTICSEARCH, "");
             System.setProperty(EL_PROPERTY_FOREGROUND, "yes");
             System.setProperty(EL_PROPERTY_HOME, elHome.getAbsolutePath());
+            System.setProperty(EL_PROPERTY_SCRIPT_INLINE, "on");
+            System.setProperty(EL_PROPERTY_SCRIPT_INDEXED, "on");
 
             // Run the EL server.
-            new Thread("test_ELserver") {
-                @Override
-                public void run() {
-                    Bootstrap.main(new String[] {});
-                }
-            }.start();
+            // ELS_THREAD.setDaemon(true);
+            // ELS_THREAD.start();
+            
+            startInstance();
         }
         
-        if (populateServer) {
+        if (POPULATE_SERVER) {
             // Create the expensereports example index.
             createIndexELServer();
 
@@ -211,7 +219,11 @@ public class ElasticSearchDataSetTestBase {
             
         }
     }
-
+    
+    private static void startInstance() {
+        Elasticsearch.main(new String[]{});
+    }
+    
     public static void createIndexELServer() throws Exception {
 
         // Create an http client
@@ -227,8 +239,8 @@ public class ElasticSearchDataSetTestBase {
         httpPost.setEntity(inputMappings);
         CloseableHttpResponse mappingsResponse = httpclient.execute(httpPost);
         if (mappingsResponse.getStatusLine().getStatusCode() != EL_REST_RESPONSE_OK) {
-            System.out.println("Error response body:");
-            System.out.println(responseAsString(mappingsResponse));
+            log("Error response body:");
+            log(responseAsString(mappingsResponse));
         }
         Assert.assertEquals(EL_REST_RESPONSE_OK, mappingsResponse.getStatusLine().getStatusCode());
     }
@@ -256,8 +268,8 @@ public class ElasticSearchDataSetTestBase {
         httpPost2.setEntity(inputData);
         CloseableHttpResponse dataResponse = httpClient.execute(httpPost2);
         if (dataResponse.getStatusLine().getStatusCode() != EL_REST_RESPONSE_OK) {
-            System.out.println("Error response body:");
-            System.out.println(responseAsString(dataResponse));
+            log("Error response body:");
+            log(responseAsString(dataResponse));
         }
         httpPost2.completed();
         Assert.assertEquals(dataResponse.getStatusLine().getStatusCode(), EL_REST_RESPONSE_OK);
@@ -275,24 +287,27 @@ public class ElasticSearchDataSetTestBase {
         httpPut.setEntity(inputData);
         CloseableHttpResponse dataResponse = httpclient.execute(httpPut);
         if (dataResponse.getStatusLine().getStatusCode() != EL_REST_RESPONSE_CREATED) {
-            System.out.println("Error response body:");
-            System.out.println(responseAsString(dataResponse));
+            log("Error response body:");
+            log(responseAsString(dataResponse));
         }
         Assert.assertEquals(dataResponse.getStatusLine().getStatusCode(), EL_REST_RESPONSE_CREATED);
     }
 
-    @AfterClass
-    public static void stopELServer() throws Exception {
-        if (!runServer) return;
+    // Not necessary use of @AfterClass - @see ElasticSearchTestSuite.java.
+    public static void stopELServer(TemporaryFolder elHomeFolder) throws Exception {
+        if (!RUN_SERVER) return;
         
         // Clear the system properties that have been set for running the EL server.
         System.clearProperty(EL_PROPERTY_ELASTICSEARCH);
         System.clearProperty(EL_PROPERTY_FOREGROUND);
         System.clearProperty(EL_PROPERTY_HOME);
+        System.clearProperty(EL_PROPERTY_SCRIPT_INLINE);
+        System.clearProperty(EL_PROPERTY_SCRIPT_INDEXED);
 
         // Stop the EL server.
-        Bootstrap.close(new String[]{});
-        
+        Elasticsearch.close(new String[]{});
+        // ELS_THREAD.join();
+
         // Delete the working home folder for elasticsearch.
         elHomeFolder.delete();
     }
@@ -314,15 +329,15 @@ public class ElasticSearchDataSetTestBase {
     public static void testMappingCreated() throws Exception {
         Object[] response = doGet(urlBuilder.getIndexRoot());
         Assert.assertEquals(response[0], EL_REST_RESPONSE_OK);
-        System.out.println("Mappings for index [" + EL_EXAMPLE_INDEX + "]:");
-        System.out.println(response[1]);
+        log("Mappings for index [" + EL_EXAMPLE_INDEX + "]:");
+        log(response[1]);
     }
 
     public static void testDocumentsCount() throws Exception {
         Object[] response = doGet(urlBuilder.getIndexCount());
         Assert.assertEquals(response[0], EL_REST_RESPONSE_OK);
-        System.out.println("Count for index [" + EL_EXAMPLE_INDEX + "]:");
-        System.out.println(response[1]);
+        log("Count for index [" + EL_EXAMPLE_INDEX + "]:");
+        log(response[1]);
     }
     
     protected static String getFileAsString(String file) throws Exception {
@@ -405,29 +420,35 @@ public class ElasticSearchDataSetTestBase {
         return  writer.toString();
     }
 
+    protected static void log(Object message) {
+        if (logger.isDebugEnabled()) {
+            logger.debug(message.toString());
+        }
+    }
+    
     /**
      * Helper method to print to standard output the dataset values.
      */
     protected void printDataSet(DataSet dataSet) {
         final String SPACER = "| \t |";
         
-        if (dataSet == null) System.out.println("DataSet is null");
-        if (dataSet.getRowCount() == 0) System.out.println("DataSet is empty");
+        if (dataSet == null) log("DataSet is null");
+        if (dataSet.getRowCount() == 0) log("DataSet is empty");
         
         List<DataColumn> dataSetColumns = dataSet.getColumns();
         int colColunt = dataSetColumns.size();
         int rowCount = dataSet.getRowCount();
 
-        System.out.println("********************************************************************************************************************************************************");
+        log("********************************************************************************************************************************************************");
         for (int row = 0; row < rowCount; row++) {
-            System.out.print(SPACER);
+            log(SPACER);
             for (int col= 0; col< colColunt; col++) {
                 Object value = dataSet.getValueAt(row, col);
-                System.out.print(value);
-                System.out.print(SPACER);
+                log(value);
+                log(SPACER);
             }
-            System.out.println("");
+            log("");
         }
-        System.out.println("********************************************************************************************************************************************************");
+        log("********************************************************************************************************************************************************");
     }
 }

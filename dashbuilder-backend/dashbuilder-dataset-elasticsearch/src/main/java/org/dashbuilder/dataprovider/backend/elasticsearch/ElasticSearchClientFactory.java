@@ -15,23 +15,49 @@
  */
 package org.dashbuilder.dataprovider.backend.elasticsearch;
 
-import org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.ElasticSearchClient;
-import org.dashbuilder.dataprovider.backend.elasticsearch.rest.client.impl.jest.ElasticSearchJestClient;
+import org.dashbuilder.dataprovider.backend.elasticsearch.rest.ElasticSearchClient;
+import org.dashbuilder.dataprovider.backend.elasticsearch.rest.impl.jest.ElasticSearchJestClient;
+import org.dashbuilder.dataprovider.backend.elasticsearch.rest.util.ElasticSearchDateUtils;
+import org.dashbuilder.dataprovider.backend.elasticsearch.rest.util.ElasticSearchJSONParser;
 import org.dashbuilder.dataset.def.ElasticSearchDataSetDef;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 
+// TODO: CDI injections for client instances.
 @ApplicationScoped
 public class ElasticSearchClientFactory {
 
-    public ElasticSearchClient newClient() {
-        return new ElasticSearchJestClient();
-    }
+    @Inject
+    protected ElasticSearchValueTypeMapper valueTypeMapper;
+    
+    @Inject
+    protected ElasticSearchJSONParser jsonParser;
+
+    @Inject
+    protected ElasticSearchDateUtils dateUtils;
+    
+    /*@Inject
+    @Named("elasticSearchJestClient")
+    protected Instance<ElasticSearchClient> clients;*/
     
     public ElasticSearchClient newClient(ElasticSearchDataSetDef elasticSearchDataSetDef) {
         ElasticSearchClient client = newClient();
         return configure(client, elasticSearchDataSetDef);
     }
+
+    private ElasticSearchClient newClient() {
+        /*return clients.get();*/
+        return newJestClient();
+    }
+    
+    private ElasticSearchClient newJestClient() {
+        return new ElasticSearchJestClient(this, valueTypeMapper, dateUtils);
+    }
+
+    /*private ElasticSearchClient newNativeClient() {
+        return new ElasticSearchNativeClient(this, jsonParser);
+    }*/
     
     public static ElasticSearchClient configure(ElasticSearchClient client, ElasticSearchDataSetDef elasticSearchDataSetDef) {
         String serverURL = elasticSearchDataSetDef.getServerURL();
@@ -41,9 +67,9 @@ public class ElasticSearchClientFactory {
 
         client.serverURL(serverURL).clusterName(clusterName);
 
-        String[] indexes = elasticSearchDataSetDef.getIndex();
+        String[] indexes = ElasticSearchDataSetProvider.fromString(elasticSearchDataSetDef.getIndex());
         if (indexes != null && indexes.length > 0) client.index(indexes);
-        String[] types  = elasticSearchDataSetDef.getType();
+        String[] types  = ElasticSearchDataSetProvider.fromString(elasticSearchDataSetDef.getType());
         if (types != null && types.length > 0) client.type(types);
         
         return client;

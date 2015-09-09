@@ -186,7 +186,7 @@ public class SQLDataSetProvider implements DataSetProvider {
         DataSource ds = dataSourceLocator.lookup(sqlDef);
         Connection conn = ds.getConnection();
         try {
-            return _getDataSetMetadata(sqlDef, conn, false);
+            return _getDataSetMetadata(sqlDef, conn, true);
         } finally {
             conn.close();
         }

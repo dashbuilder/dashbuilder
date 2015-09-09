@@ -16,6 +16,7 @@
 package org.dashbuilder.dataprovider.backend.elasticsearch;
 
 import org.dashbuilder.dataset.ColumnType;
+import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetFactory;
 import org.dashbuilder.dataset.sort.SortOrder;
@@ -93,24 +94,15 @@ public class ElasticSearchDataSetCustomColumnsTest extends ElasticSearchDataSetT
         Assert.assertNotNull(result.getColumns());
         Assert.assertTrue(result.getColumns().size() == 6);
 
-        // Columns id assertion.
-        Assert.assertTrue(result.getColumnByIndex(0).getId().equals(EL_EXAMPLE_COLUMN_AMOUNT));
-        Assert.assertTrue(result.getColumnByIndex(1).getId().equals(EL_EXAMPLE_COLUMN_CITY));
-        Assert.assertTrue(result.getColumnByIndex(2).getId().equals(EL_EXAMPLE_COLUMN_DATE));
-        Assert.assertTrue(result.getColumnByIndex(3).getId().equals(EL_EXAMPLE_COLUMN_DEPT));
-        Assert.assertTrue(result.getColumnByIndex(4).getId().equals(EL_EXAMPLE_COLUMN_EMPLOYEE));
-        Assert.assertTrue(result.getColumnByIndex(5).getId().equals(EL_EXAMPLE_COLUMN_ID));
-
-        // Columns type assertion.
-        Assert.assertTrue(result.getColumnByIndex(0).getColumnType().equals(ColumnType.NUMBER));
-        Assert.assertTrue(result.getColumnByIndex(1).getColumnType().equals(ColumnType.LABEL));
-        Assert.assertTrue(result.getColumnByIndex(2).getColumnType().equals(ColumnType.DATE));
-        Assert.assertTrue(result.getColumnByIndex(3).getColumnType().equals(ColumnType.LABEL));
-        Assert.assertTrue(result.getColumnByIndex(4).getColumnType().equals(ColumnType.TEXT));
-        Assert.assertTrue(result.getColumnByIndex(5).getColumnType().equals(ColumnType.NUMBER));
+        // Columns id & type assertion.
+        assertColumnIdAndType(result, EL_EXAMPLE_COLUMN_AMOUNT, ColumnType.NUMBER);
+        assertColumnIdAndType(result, EL_EXAMPLE_COLUMN_CITY, ColumnType.LABEL);
+        assertColumnIdAndType(result, EL_EXAMPLE_COLUMN_DATE, ColumnType.DATE);
+        assertColumnIdAndType(result, EL_EXAMPLE_COLUMN_DEPT, ColumnType.LABEL);
+        assertColumnIdAndType(result, EL_EXAMPLE_COLUMN_EMPLOYEE, ColumnType.TEXT);
+        assertColumnIdAndType(result, EL_EXAMPLE_COLUMN_ID, ColumnType.NUMBER);
     }
-
-
+    
     /**
      * Test retrieving all columns from index mapping and overriding one (a column is  defined in def and allColumns flag is set to true)
      */
@@ -126,21 +118,13 @@ public class ElasticSearchDataSetCustomColumnsTest extends ElasticSearchDataSetT
         Assert.assertNotNull(result.getColumns());
         Assert.assertTrue(result.getColumns().size() == 6);
 
-        // Columns id assertion.
-        Assert.assertTrue(result.getColumnByIndex(0).getId().equals(EL_EXAMPLE_COLUMN_AMOUNT));
-        Assert.assertTrue(result.getColumnByIndex(1).getId().equals(EL_EXAMPLE_COLUMN_CITY));
-        Assert.assertTrue(result.getColumnByIndex(2).getId().equals(EL_EXAMPLE_COLUMN_DATE));
-        Assert.assertTrue(result.getColumnByIndex(3).getId().equals(EL_EXAMPLE_COLUMN_DEPT));
-        Assert.assertTrue(result.getColumnByIndex(4).getId().equals(EL_EXAMPLE_COLUMN_EMPLOYEE));
-        Assert.assertTrue(result.getColumnByIndex(5).getId().equals(EL_EXAMPLE_COLUMN_ID));
-
-        // Columns type assertion.
-        Assert.assertTrue(result.getColumnByIndex(0).getColumnType().equals(ColumnType.NUMBER));
-        Assert.assertTrue(result.getColumnByIndex(1).getColumnType().equals(ColumnType.TEXT));
-        Assert.assertTrue(result.getColumnByIndex(2).getColumnType().equals(ColumnType.DATE));
-        Assert.assertTrue(result.getColumnByIndex(3).getColumnType().equals(ColumnType.LABEL));
-        Assert.assertTrue(result.getColumnByIndex(4).getColumnType().equals(ColumnType.TEXT));
-        Assert.assertTrue(result.getColumnByIndex(5).getColumnType().equals(ColumnType.NUMBER));
+        // Columns id & type assertion.
+        assertColumnIdAndType(result, EL_EXAMPLE_COLUMN_AMOUNT, ColumnType.NUMBER);
+        assertColumnIdAndType(result, EL_EXAMPLE_COLUMN_CITY, ColumnType.TEXT);
+        assertColumnIdAndType(result, EL_EXAMPLE_COLUMN_DATE, ColumnType.DATE);
+        assertColumnIdAndType(result, EL_EXAMPLE_COLUMN_DEPT, ColumnType.LABEL);
+        assertColumnIdAndType(result, EL_EXAMPLE_COLUMN_EMPLOYEE, ColumnType.TEXT);
+        assertColumnIdAndType(result, EL_EXAMPLE_COLUMN_ID, ColumnType.NUMBER);
     }
 
     /**
@@ -158,17 +142,17 @@ public class ElasticSearchDataSetCustomColumnsTest extends ElasticSearchDataSetT
         Assert.assertNotNull(result.getColumns());
         Assert.assertTrue(result.getColumns().size() == 4);
 
-        // Columns id assertion.
-        Assert.assertTrue(result.getColumnByIndex(0).getId().equals(EL_EXAMPLE_COLUMN_ID));
-        Assert.assertTrue(result.getColumnByIndex(1).getId().equals(EL_EXAMPLE_COLUMN_EMPLOYEE));
-        Assert.assertTrue(result.getColumnByIndex(2).getId().equals(EL_EXAMPLE_COLUMN_CITY));
-        Assert.assertTrue(result.getColumnByIndex(3).getId().equals(EL_EXAMPLE_COLUMN_AMOUNT));
+        // Columns id & type assertion.
+        assertColumnIdAndType(result, EL_EXAMPLE_COLUMN_ID, ColumnType.NUMBER);
+        assertColumnIdAndType(result, EL_EXAMPLE_COLUMN_EMPLOYEE, ColumnType.TEXT);
+        assertColumnIdAndType(result, EL_EXAMPLE_COLUMN_CITY, ColumnType.TEXT);
+        assertColumnIdAndType(result, EL_EXAMPLE_COLUMN_AMOUNT, ColumnType.NUMBER);
+    }
 
-        // Columns type assertion.
-        Assert.assertTrue(result.getColumnByIndex(0).getColumnType().equals(ColumnType.NUMBER));
-        Assert.assertTrue(result.getColumnByIndex(1).getColumnType().equals(ColumnType.TEXT));
-        Assert.assertTrue(result.getColumnByIndex(2).getColumnType().equals(ColumnType.TEXT));
-        Assert.assertTrue(result.getColumnByIndex(3).getColumnType().equals(ColumnType.NUMBER));
+    private void assertColumnIdAndType(DataSet result, String columnId, ColumnType columnType) {
+        DataColumn amountCol = result.getColumnById(columnId);
+        Assert.assertNotNull(amountCol);
+        Assert.assertEquals(amountCol.getColumnType(), columnType);
     }
 
     /**
