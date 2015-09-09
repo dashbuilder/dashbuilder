@@ -34,6 +34,7 @@ import static org.fest.assertions.api.Assertions.assertThat;
  * <p>Data test for date types for ElasticSearchDataSet. It tests grouping and filtering with date related fields.</p>
  * <p>It uses as source dataset: <code>org/dashbuilder/dataprovider/backend/elasticsearch/expensereports.dset</code></p>
  *
+ * <p>NOTE: Ensure groovy scripting in ELS instance is enabled.</p>
  * @since 0.3.0
  */
 public class ElasticSearchDataSetDatesTest extends ElasticSearchDataSetTestBase {
@@ -51,12 +52,52 @@ public class ElasticSearchDataSetDatesTest extends ElasticSearchDataSetTestBase 
     }
 
     @Test
+    public void testGroupByDynamicAutomaticInvertvalsCalculation() throws Exception {
+        DataSet result = dataSetManager.lookupDataSet(
+                DataSetFactory.newDataSetLookupBuilder()
+                        .dataset(EL_DATASET_UUID)
+                        .group(EL_EXAMPLE_COLUMN_DATE).dynamic(5, true)
+                        .column(EL_EXAMPLE_COLUMN_DATE, "Period")
+                        .column(COUNT, "Occurrences")
+                        .column(EL_EXAMPLE_COLUMN_AMOUNT, SUM, "totalAmount")
+                        .sort(EL_EXAMPLE_COLUMN_ID, SortOrder.ASCENDING)
+                        .buildLookup());
+
+        assertDataSetValues(result, dataSetFormatter, new String[][]{
+                {"2009", "13.00", "6,126.13"},
+                {"2010", "11.00", "5,252.96"},
+                {"2011", "11.00", "6,515.38"},
+                {"2012", "15.00", "7,336.69"}
+        }, 0);
+    }
+    
+    @Test
     public void testGroupByYearDynamic() throws Exception {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                         .dataset(EL_DATASET_UUID)
                         .group(EL_EXAMPLE_COLUMN_DATE).dynamic(YEAR, true)
                         .column(EL_EXAMPLE_COLUMN_DATE, "Period")
+                        .column(COUNT, "Occurrences")
+                        .column(EL_EXAMPLE_COLUMN_AMOUNT, SUM, "totalAmount")
+                        .sort(EL_EXAMPLE_COLUMN_ID, SortOrder.ASCENDING)
+                        .buildLookup());
+
+        assertDataSetValues(result, dataSetFormatter, new String[][]{
+                {"2009", "13.00", "6,126.13"},
+                {"2010", "11.00", "5,252.96"},
+                {"2011", "11.00", "6,515.38"},
+                {"2012", "15.00", "7,336.69"}
+        }, 0);
+    }
+
+    @Test
+    public void testGroupByYearDynamicWithNoColumnId() throws Exception {
+        DataSet result = dataSetManager.lookupDataSet(
+                DataSetFactory.newDataSetLookupBuilder()
+                        .dataset(EL_DATASET_UUID)
+                        .group(EL_EXAMPLE_COLUMN_DATE).dynamic(YEAR, true)
+                        .column(EL_EXAMPLE_COLUMN_DATE)
                         .column(COUNT, "Occurrences")
                         .column(EL_EXAMPLE_COLUMN_AMOUNT, SUM, "totalAmount")
                         .sort(EL_EXAMPLE_COLUMN_ID, SortOrder.ASCENDING)
@@ -189,6 +230,8 @@ public class ElasticSearchDataSetDatesTest extends ElasticSearchDataSetTestBase 
                         .column(EL_EXAMPLE_COLUMN_AMOUNT, SUM, "totalAmount")
                         .buildLookup());
 
+        printDataSet(result);
+        
         assertDataSetValues(result, dataSetFormatter, new String[][]{
                 {"11", "3.00", "1,443.75"},
                 {"12", "4.00", "2,520.88"},

@@ -15,13 +15,10 @@
  */
 package org.dashbuilder.dataset.backend;
 
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.dashbuilder.dataprovider.DataSetProviderRegistry;
 import org.dashbuilder.dataprovider.DataSetProviderType;
 import org.dashbuilder.dataset.ColumnType;
-import org.dashbuilder.dataset.DataColumn;
-import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.def.*;
 import org.dashbuilder.dataset.filter.DataSetFilter;
 import org.json.JSONArray;
@@ -30,7 +27,6 @@ import org.json.JSONObject;
 
 import javax.inject.Inject;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -85,9 +81,6 @@ public class DataSetDefJSONMarshaller {
     public static final String GENERATOR_PARAMS = "generatorParams";
     public static final String PARAM = "param";
     public static final String VALUE = "value";
-
-    // Other
-    public static final String COMMA = ",";
     
     @Inject
     DataSetProviderRegistry dataSetProviderRegistry;
@@ -148,22 +141,12 @@ public class DataSetDefJSONMarshaller {
         if (StringUtils.isBlank(index)) {
             throw new IllegalArgumentException("The index property is missing.");
         } else {
-            String[] indexList = index.split(COMMA);
-            if (indexList != null && indexList.length > 0) {
-                for (String _index : indexList) {
-                    dataSetDef.addIndex(_index);
-                }
-            }
+            dataSetDef.setIndex(index);
         }
 
         // Type parameter.
         if (!StringUtils.isBlank(type)) {
-            String[] typeList = type.split(COMMA);
-            if (typeList != null && typeList.length > 0) {
-                for (String _type : typeList) {
-                    dataSetDef.addType(_type);
-                }
-            }
+            dataSetDef.setType(type);
         }
 
         // Query parameter.
@@ -354,7 +337,7 @@ public class DataSetDefJSONMarshaller {
         final Collection<DataColumnDef> columns = dataSetDef.getColumns();
         if (columns != null)
         {
-            final JSONArray columnsArray = toJsonObject(columns);
+            final JSONArray columnsArray = toJsonObject(columns, dataSetDef);
             if (columnsArray != null)
             {
                 json.put(COLUMNS, columnsArray);
@@ -376,7 +359,8 @@ public class DataSetDefJSONMarshaller {
         return json;
     }
     
-    private JSONArray toJsonObject(final Collection<DataColumnDef> columnList) throws JSONException {
+    private JSONArray toJsonObject(final Collection<DataColumnDef> columnList,
+                                   final DataSetDef dataSetDef) throws JSONException {
         JSONArray result = null;
         if (columnList != null && !columnList.isEmpty()) {
             result = new JSONArray();
@@ -386,6 +370,10 @@ public class DataSetDefJSONMarshaller {
                 final JSONObject columnObject = new JSONObject();
                 columnObject.put(COLUMN_ID, id);
                 columnObject.put(COLUMN_TYPE, type.name().toLowerCase());
+                String pattern = dataSetDef.getPattern(id);
+                if (pattern != null && pattern.trim().length() > 0) {
+                    columnObject.put(COLUMN_PATTERN, pattern);
+                }
                 result.put(columnObject);
             }
         }
@@ -464,10 +452,10 @@ public class DataSetDefJSONMarshaller {
         json.put( CLUSTER_NAME, dataSetDef.getClusterName());
 
         // Index.
-        json.put( INDEX, ArrayUtils.toString(dataSetDef.getIndex()));
+        json.put( INDEX, dataSetDef.getIndex());
 
         // Type.
-        json.put( TYPE, ArrayUtils.toString(dataSetDef.getType()));
+        json.put( TYPE, dataSetDef.getType());
 
         // All columns flag.
         json.put( ALL_COLUMNS, dataSetDef.isAllColumnsEnabled());
@@ -485,5 +473,4 @@ public class DataSetDefJSONMarshaller {
         
         return json;
     }
-
 }

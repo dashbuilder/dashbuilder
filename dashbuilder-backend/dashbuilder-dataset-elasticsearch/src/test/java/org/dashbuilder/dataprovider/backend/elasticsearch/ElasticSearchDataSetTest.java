@@ -18,6 +18,7 @@ package org.dashbuilder.dataprovider.backend.elasticsearch;
 import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetFactory;
+import org.dashbuilder.dataset.DataSetLookup;
 import org.dashbuilder.dataset.backend.date.DateUtils;
 import org.dashbuilder.dataset.group.DateIntervalPattern;
 import org.dashbuilder.dataset.sort.SortOrder;
@@ -110,9 +111,23 @@ public class ElasticSearchDataSetTest extends ElasticSearchDataSetTestBase {
      * LOOKUP TESTING.
      * **********************************************************************************************************************************************************************************************
      */
+
+
+    /**
+     * No operations.
+     */
+    @Test
+    public void testBasicLookup() throws Exception {
+        DataSet result = dataSetManager.lookupDataSet(
+                DataSetFactory.newDataSetLookupBuilder()
+                        .dataset(EL_DATASET_UUID)
+                        .buildLookup());
+        
+        assertThat(result.getRowCount()).isEqualTo(50);
+    }
     
     /**
-     * Most basic test.
+     * Just use a sort operation.
      */
     @Test
     public void testDefaultLookup() throws Exception {
@@ -128,7 +143,7 @@ public class ElasticSearchDataSetTest extends ElasticSearchDataSetTestBase {
         assertThat(result.getValueAt(49, 0)).isEqualTo(50d);
 
         // Test row 0 values.
-        assertThat(result.getValueAt(0, 1)).isEqualTo(120.35d);
+        assertThat(result.getValueAt(0, 1)).isEqualTo(120.3499984741211d);
         assertThat(result.getValueAt(0, 2)).isEqualTo(EL_EXAMPLE_DEPT_ENGINEERING);
         assertThat(result.getValueAt(0, 3)).isEqualTo(EL_EXAMPLE_EMP_ROXIE);
         Date date = new SimpleDateFormat(DateIntervalPattern.DAY).parse("2012-12-11");
@@ -137,7 +152,7 @@ public class ElasticSearchDataSetTest extends ElasticSearchDataSetTestBase {
 
         // Test row 1 values.
         assertThat(result.getValueAt(1, 0)).isEqualTo(2d);
-        assertThat(result.getValueAt(1, 1)).isEqualTo(1100.1d);
+        assertThat(result.getValueAt(1, 1)).isEqualTo(1100.0999755859375d);
         assertThat(result.getValueAt(1, 2)).isEqualTo(EL_EXAMPLE_DEPT_ENGINEERING);
         assertThat(result.getValueAt(1, 3)).isEqualTo(EL_EXAMPLE_EMP_ROXIE);
         date = new SimpleDateFormat(DateIntervalPattern.DAY).parse("2012-12-01");
@@ -155,7 +170,7 @@ public class ElasticSearchDataSetTest extends ElasticSearchDataSetTestBase {
 
         // Test row 30 values.
         assertThat(result.getValueAt(30, 0)).isEqualTo(31d);
-        assertThat(result.getValueAt(30, 1)).isEqualTo(234.34d);
+        assertThat(result.getValueAt(30, 1)).isEqualTo(234.33999633789062d);
         assertThat(result.getValueAt(30, 2)).isEqualTo(EL_EXAMPLE_DEPT_MANAGEMENT);
         assertThat(result.getValueAt(30, 3)).isEqualTo(EL_EXAMPLE_EMP_HANNA);
         date = new SimpleDateFormat(DateIntervalPattern.DAY).parse("2010-09-01");
@@ -164,7 +179,7 @@ public class ElasticSearchDataSetTest extends ElasticSearchDataSetTestBase {
 
         // Test row 46 values.
         assertThat(result.getValueAt(46, 0)).isEqualTo(47d);
-        assertThat(result.getValueAt(46, 1)).isEqualTo(565.56d);
+        assertThat(result.getValueAt(46, 1)).isEqualTo(565.5599975585938d);
         assertThat(result.getValueAt(46, 2)).isEqualTo(EL_EXAMPLE_DEPT_MANAGEMENT);
         assertThat(result.getValueAt(46, 3)).isEqualTo(EL_EXAMPLE_EMP_PATRICIA);
         date = new SimpleDateFormat(DateIntervalPattern.DAY).parse("2009-04-14");
@@ -190,7 +205,7 @@ public class ElasticSearchDataSetTest extends ElasticSearchDataSetTestBase {
 
     // Sorting by non existing column.
     @Test(expected = RuntimeException.class)
-    public void testSortingWithNonExstingColumn() throws Exception {
+    public void testSortingWithNonExistingColumn() throws Exception {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                         .dataset(EL_DATASET_UUID)
@@ -217,7 +232,7 @@ public class ElasticSearchDataSetTest extends ElasticSearchDataSetTestBase {
 
         // Test row 6 values.
         assertThat(result.getValueAt(6, 0)).isEqualTo(47d);
-        assertThat(result.getValueAt(6, 1)).isEqualTo(565.56d);
+        assertThat(result.getValueAt(6, 1)).isEqualTo(565.5599975585938d);
         assertThat(result.getValueAt(6, 2)).isEqualTo(EL_EXAMPLE_DEPT_MANAGEMENT);
         assertThat(result.getValueAt(6, 3)).isEqualTo(EL_EXAMPLE_EMP_PATRICIA);
         Date date = new SimpleDateFormat(DateIntervalPattern.DAY).parse("2009-04-14");
@@ -249,17 +264,19 @@ public class ElasticSearchDataSetTest extends ElasticSearchDataSetTestBase {
      */
     @Test
     public void testGroupFunctions() throws Exception {
-        DataSet result = dataSetManager.lookupDataSet(
-                DataSetFactory.newDataSetLookupBuilder()
-                        .dataset(EL_DATASET_UUID)
-                        .column(COUNT, "#items")
-                        .column(EL_EXAMPLE_COLUMN_AMOUNT, MIN, "min")
-                        .column(EL_EXAMPLE_COLUMN_AMOUNT, MAX, "max")
-                        .column(EL_EXAMPLE_COLUMN_AMOUNT, AVERAGE, "avg")
-                        .column(EL_EXAMPLE_COLUMN_AMOUNT, SUM, "sum")
-                        .column(EL_EXAMPLE_COLUMN_CITY, DISTINCT, "distinct")
-                        .sort(EL_EXAMPLE_COLUMN_ID, SortOrder.ASCENDING)
-                        .buildLookup());
+
+        DataSetLookup lookup = DataSetFactory.newDataSetLookupBuilder()
+                .dataset(EL_DATASET_UUID)
+                .column(COUNT, "#items")
+                .column(EL_EXAMPLE_COLUMN_AMOUNT, MIN, "min")
+                .column(EL_EXAMPLE_COLUMN_AMOUNT, MAX, "max")
+                .column(EL_EXAMPLE_COLUMN_AMOUNT, AVERAGE, "avg")
+                .column(EL_EXAMPLE_COLUMN_AMOUNT, SUM, "sum")
+                .column(EL_EXAMPLE_COLUMN_CITY, DISTINCT, "distinct")
+                .sort(EL_EXAMPLE_COLUMN_ID, SortOrder.ASCENDING)
+                .buildLookup();
+
+        DataSet result = dataSetManager.lookupDataSet(lookup);
 
         assertThat(result.getRowCount()).isEqualTo(1);
         assertThat(result.getValueAt(0, 0)).isEqualTo(50d);

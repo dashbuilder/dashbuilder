@@ -66,6 +66,7 @@ public class DataSetDefVfsServicesImpl implements DataSetDefVfsServices {
             cloned.setColumns(null);
 
             // Obtain all original columns and all original column types.
+            // TODO: DASHBUILDE-33
             DataSetMetadata _cd = dataSetManager.resolveProvider(cloned)
                     .getDataSetMetadata(cloned);
 

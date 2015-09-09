@@ -615,13 +615,7 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
                     if (isSQLAttributesEditorViewVisible() && hasViolations(sqlDataSetDefAttributesEditor.getViolations())) tabErrors(configurationTab);
                     break;
                 case ELASTICSEARCH:
-                    if (isELAttributesEditorViewVisible()) {
-                        // Save attributes not handled by editor framework.
-                        elDataSetDefAttributesEditor.save();
-
-                        // Check violations.
-                        if (hasViolations(elDataSetDefAttributesEditor.getViolations())) tabErrors(configurationTab);
-                    }
+                    if (isELAttributesEditorViewVisible() && hasViolations(elDataSetDefAttributesEditor.getViolations())) tabErrors(configurationTab);
                     break;
             }
         }

@@ -78,11 +78,16 @@ public class ElasticSearchDataSetDef extends DataSetDef {
 
     protected String clusterName;
 
+    /**
+     * Index/es to query. Can handle multiple values, comma separated.
+     */
     @NotNull(message = "{dataSetApi_elDataSetDef_index_notNull}")
-    protected List<String> index;
+    protected String index;
 
-    @NotNull(message = "{dataSetApi_elDataSetDef_type_notNull}")
-    protected List<String> type;
+    /**
+     * Type/es to query. Can handle multiple values, comma separated. Not mandatory.
+     */
+    protected String type;
 
     protected String query;
     protected String relevance;
@@ -93,8 +98,6 @@ public class ElasticSearchDataSetDef extends DataSetDef {
 
     public ElasticSearchDataSetDef() {
         super.setProvider(DataSetProviderType.ELASTICSEARCH);
-        index = new ArrayList<String>();
-        type = new ArrayList<String>();
     }
 
     public String getServerURL() {
@@ -113,41 +116,22 @@ public class ElasticSearchDataSetDef extends DataSetDef {
         this.clusterName = clusterName;
     }
 
-    public boolean addIndex(String index) {
-        return this.index.add(index);
+    public String getIndex() {
+        return index;
     }
 
-    public boolean addType(String type) {
-        return this.type.add(type);
-    }
-
-    /**
-     * <p>Returns the index/es specified by dataset user parameters.</p>
-     * <p>If not specified, returns <code>ElasticSearchKeywords.ALL</code></p>
-     *
-     * @return The index/es to use. If not specified, returns <code>ElasticSearchKeywords.ALL</code>
-     */
-    public String[] getIndex() {
-        return index.size() > 0 ? index.toArray(new String[index.size()]) : new String[] { ElasticSearchKeywords.ALL.toString() };
-    }
-
-    public void setIndex(List<String> index) {
+    public void setIndex(String index) {
         this.index = index;
     }
 
-    /**
-     * <p>Returns the type/s specified by dataset user parameters.</p>
-     * <p>If not specified, returns <code>null</code></p>
-     *
-     * @return The type/s to use. If not specified, returns <code>null</code>
-     */
-    public String[] getType() {
-        return type.size() > 0 ? type.toArray(new String[type.size()]) : null;
+    public String getType() {
+        return type;
     }
 
-    public void setType(List<String> type) {
+    public void setType(String type) {
         this.type = type;
     }
+
     public String getQuery() {
         return query;
     }
@@ -202,8 +186,8 @@ public class ElasticSearchDataSetDef extends DataSetDef {
         clone(def);
         def.setServerURL(getServerURL());
         def.setClusterName(getClusterName());
-        def.setIndex(getIndex() != null ? Arrays.asList(getIndex()) : null);
-        def.setType(getType() != null ? Arrays.asList(getType()) : null);
+        def.setIndex(getIndex());
+        def.setType(getType());
         return def;
     }
     public String toString() {
