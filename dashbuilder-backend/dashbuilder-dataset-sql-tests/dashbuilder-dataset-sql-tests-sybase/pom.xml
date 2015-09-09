@@ -26,7 +26,7 @@
   <artifactId>dashbuilder-dataset-sql-tests-sybase</artifactId>
   <packaging>jar</packaging>
 
-  <name>Dashbuilder SQL Tests DB2</name>
+  <name>Dashbuilder SQL Tests Sybase</name>
 
   <properties>
     <sybase.driver.path>${basedir}/src/test/lib/jconn4.jar</sybase.driver.path>

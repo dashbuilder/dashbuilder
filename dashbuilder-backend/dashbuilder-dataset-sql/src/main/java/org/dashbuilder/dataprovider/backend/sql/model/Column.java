@@ -30,22 +30,9 @@ public class Column {
     protected String alias;
     protected ColumnType type;
     protected int length;
-    protected AggregateFunctionType functionType;
 
     public Column(String name) {
         this.name = name;
-    }
-
-    public Column(String name, ColumnType type, int length) {
-        this.name = name;
-        this.type = type;
-        this.length = length;
-    }
-
-    public Column(String name, String alias, AggregateFunctionType functionType) {
-        this.name = name;
-        this.alias = alias;
-        this.functionType = functionType;
     }
 
     public String getName() {
@@ -64,10 +51,6 @@ public class Column {
         return alias;
     }
 
-    public AggregateFunctionType getFunctionType() {
-        return functionType;
-    }
-
     public void setName(String name) {
         this.name = name;
     }
@@ -82,10 +65,6 @@ public class Column {
 
     public void setLength(int length) {
         this.length = length;
-    }
-
-    public void setFunctionType(AggregateFunctionType functionType) {
-        this.functionType = functionType;
     }
 
     // Column modifier methods
@@ -108,8 +87,9 @@ public class Column {
     }
 
     public Column function(AggregateFunctionType functionType) {
-        setFunctionType(functionType);
-        return this;
+        SimpleColumn simpleColumn = new SimpleColumn(name, type, length);
+        simpleColumn.setFunctionType(functionType);
+        return simpleColumn;
     }
 
     // Condition factory methods

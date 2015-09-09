@@ -97,7 +97,7 @@ public class CoreFunction extends DataSetFunction {
 
     public boolean compare(Comparable c1, Comparable c2) {
         if (c1 != null && c2 != null) {
-            if (Number.class.isAssignableFrom(c1.getClass()) && Number.class.isAssignableFrom(c2.getClass())) {
+            if ((c1 instanceof Number) && (c2 instanceof Number)) {
                 return ((Number) c1).doubleValue() == ((Number) c2).doubleValue();
             }
             return c1.toString().equals(c2.toString());
@@ -195,8 +195,12 @@ public class CoreFunction extends DataSetFunction {
 
         Comparable low = getParameter(0);
         Comparable high = getParameter(1);
-        if (value.compareTo(low) == -1) return false;
-        if (value.compareTo(high) == 1) return false;
+        if (value.compareTo(low) == -1) {
+            return false;
+        }
+        if (value.compareTo(high) == 1) {
+            return false;
+        }
         return true;
     }
 

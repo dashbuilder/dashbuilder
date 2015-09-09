@@ -82,18 +82,20 @@ public class Select extends SQLStatement<Select> {
 
     public Select columns(Column... cols) {
         for (Column column : cols) {
-            columns.add(column);
+            columns.add(fix(column));
         }
         return this;
     }
 
     public Select columns(Collection<Column> cols) {
-        columns.addAll(cols);
+        for (Column column : cols) {
+            columns.add(fix(column));
+        }
         return this;
     }
 
     public Select from(String sql) {
-        fromSelect = sql;
+        fromSelect = fix(sql);
         return this;
     }
 
@@ -102,24 +104,31 @@ public class Select extends SQLStatement<Select> {
     }
 
     public Select where(Condition condition) {
+        if (condition instanceof CoreCondition) {
+            fix(((CoreCondition) condition).getColumn());
+        }
         wheres.add(condition);
         return this;
     }
 
     public Select groupBy(Column column) {
-        groupBys.add(column);
+        groupBys.add(fix(column));
         return this;
     }
 
     public Select orderBy(SortColumn... columns) {
         for (SortColumn column : columns) {
+            fix(column.getSource());
             orderBys.add(column);
         }
         return this;
     }
 
     public Select orderBy(List<SortColumn> columns) {
-        orderBys.addAll(columns);
+        for (SortColumn column : columns) {
+            fix(column.getSource());
+            orderBys.add(column);
+        }
         return this;
     }
 

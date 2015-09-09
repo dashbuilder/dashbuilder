@@ -13,6 +13,20 @@
 
   <name>Dashbuilder SQL Tests</name>
 
+  <!--
+      Every test module has deps against a JDBC driver and a server instance.
+      This is the main reason DB integration tests are not part of the build.
+  -->
+  <!--modules>
+    <module>dashbuilder-dataset-sql-tests-h2</module>
+    <module>dashbuilder-dataset-sql-tests-mysql</module>
+    <module>dashbuilder-dataset-sql-tests-postgres</module>
+    <module>dashbuilder-dataset-sql-tests-oracle</module>
+    <module>dashbuilder-dataset-sql-tests-sqlserver</module>
+    <module>dashbuilder-dataset-sql-tests-db2</module>
+    <module>dashbuilder-dataset-sql-tests-sybase</module>
+  </modules-->
+
   <dependencies>
 
     <dependency>

@@ -26,6 +26,7 @@ import org.dashbuilder.dataprovider.backend.sql.model.FixedDateColumn;
 import org.dashbuilder.dataprovider.backend.sql.model.FunctionColumn;
 import org.dashbuilder.dataprovider.backend.sql.model.Insert;
 import org.dashbuilder.dataprovider.backend.sql.model.Select;
+import org.dashbuilder.dataprovider.backend.sql.model.SimpleColumn;
 import org.dashbuilder.dataprovider.backend.sql.model.Table;
 import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.group.DateIntervalType;
@@ -62,11 +63,11 @@ public class SQLFactory {
     }
 
     public static Column column(String name) {
-        return new Column(name);
+        return new SimpleColumn(name);
     }
 
     public static Column column(String name, ColumnType type, int size) {
-        return new Column(name, type, size);
+        return new SimpleColumn(name, type, size);
     }
 
     public static Column column(String name, GroupStrategy strategy, DateIntervalType type) {

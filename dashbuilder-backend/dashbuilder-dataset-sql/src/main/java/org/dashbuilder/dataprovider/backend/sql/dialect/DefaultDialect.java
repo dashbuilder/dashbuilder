@@ -29,6 +29,7 @@ import org.dashbuilder.dataprovider.backend.sql.model.FunctionColumn;
 import org.dashbuilder.dataprovider.backend.sql.model.LogicalCondition;
 import org.dashbuilder.dataprovider.backend.sql.model.SQLStatement;
 import org.dashbuilder.dataprovider.backend.sql.model.Select;
+import org.dashbuilder.dataprovider.backend.sql.model.SimpleColumn;
 import org.dashbuilder.dataprovider.backend.sql.model.SortColumn;
 import org.dashbuilder.dataprovider.backend.sql.model.Table;
 import org.dashbuilder.dataset.ColumnType;
@@ -62,12 +63,11 @@ public class DefaultDialect implements Dialect {
         if (column instanceof FixedDateColumn) {
             return getFixedDateColumnSQL((FixedDateColumn) column);
         }
-
-        String result = getColumnNameSQL(column.getName());
-        if (column.getFunctionType() != null) {
-            result = getColumnFunctionSQL(result, column.getFunctionType());
+        if (column instanceof SimpleColumn) {
+            return getSimpleColumnSQL((SimpleColumn) column);
         }
-        if (!StringUtils.isBlank(column.getAlias())) {;
+        String result = getColumnNameSQL(column.getName());
+        if (!StringUtils.isBlank(column.getAlias())) {
             if (!result.equals(getColumnNameSQL(column.getAlias()))) {
                 result += " " + getColumnAliasSQL(column.getAlias());
             }
@@ -92,10 +92,8 @@ public class DefaultDialect implements Dialect {
 
     @Override
     public String getTableSQL(SQLStatement<?> stmt) {
-        String tableName = stmt.getTableName();
         Table table = stmt.getTable();
-
-        String name = getTableNameSQL(tableName);
+        String name = getTableNameSQL(table.getName());
         if (StringUtils.isBlank(table.getSchema())) {
             return name;
         } else{
@@ -111,6 +109,20 @@ public class DefaultDialect implements Dialect {
     @Override
     public String getSchemaNameSQL(String name) {
         return name;
+    }
+
+    @Override
+    public String getSimpleColumnSQL(SimpleColumn column) {
+        String result = getColumnNameSQL(column.getName());
+        if (column.getFunctionType() != null) {
+            result = getColumnFunctionSQL(result, column.getFunctionType());
+        }
+        if (!StringUtils.isBlank(column.getAlias())) {
+            if (!result.equals(getColumnNameSQL(column.getAlias()))) {
+                result += " " + getColumnAliasSQL(column.getAlias());
+            }
+        }
+        return result;
     }
 
     @Override

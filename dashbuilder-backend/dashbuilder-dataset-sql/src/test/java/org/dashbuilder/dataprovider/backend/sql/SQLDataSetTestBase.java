@@ -19,9 +19,11 @@ import java.io.InputStream;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
+import java.sql.ResultSet;
 import java.util.Properties;
 import javax.inject.Inject;
 import javax.sql.DataSource;
+import javax.xml.transform.Result;
 
 import org.apache.commons.io.IOUtils;
 import org.dashbuilder.dataprovider.backend.sql.model.Column;

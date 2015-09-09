@@ -44,6 +44,7 @@ public class PostgresDialect extends DefaultDialect {
         datePatternMap.put(DateIntervalType.CENTURY, PATTERN_YEAR);
         datePatternMap.put(DateIntervalType.MILLENIUM, PATTERN_YEAR);
     }
+
     @Override
     public String getColumnAliasSQL(String alias) {
         return "AS \"" + alias + "\"";

@@ -33,7 +33,7 @@ public class SQLStatement<T extends SQLStatement> {
     }
 
     public T table(Table table) {
-        this.table = table;
+        this.table = fix(table);
         return (T) this;
     }
 
@@ -49,7 +49,24 @@ public class SQLStatement<T extends SQLStatement> {
         return table;
     }
 
-    public String getTableName() {
-        return JDBCUtils.getTableName(connection, table.getSchema(), table.getName());
+    protected Table fix(Table table) {
+        String name = fix(table.getName());
+        table.setName(name);
+        return table;
+    }
+
+    protected Column fix(Column column) {
+        // Remove alias
+        if (column.getName().equals(column.getAlias())) {
+            column.setAlias(null);
+        }
+        // Fix column name to match DB case settings
+        String name = fix(column.getName());
+        column.setName(name);
+        return column;
+    }
+
+    protected String fix(String id) {
+        return JDBCUtils.changeCase(connection, id);
     }
 }

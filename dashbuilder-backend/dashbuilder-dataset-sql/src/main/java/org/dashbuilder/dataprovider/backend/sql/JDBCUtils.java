@@ -152,33 +152,6 @@ public class JDBCUtils {
         return DEFAULT;
     }
 
-    public static String getTableName(Connection conn, String dbSchema, String tableNamePattern) {
-        try {
-            ResultSet rs = conn.getMetaData().getTables(null, dbSchema, tableNamePattern, null);
-            if (rs.next()) {
-                // Table name found as is
-                return tableNamePattern;
-            } else {
-                rs = conn.getMetaData().getTables(null, dbSchema, tableNamePattern.toUpperCase(), null);
-                if (rs.next()) {
-                    // Table name found in upper case
-                    return tableNamePattern.toUpperCase();
-                } else {
-                    rs = conn.getMetaData().getTables(null, dbSchema, tableNamePattern.toLowerCase(), null);
-                    if (rs.next()) {
-                        // Table name found in lower case
-                        return tableNamePattern.toLowerCase();
-                    } else {
-                        return tableNamePattern;
-                    }
-                }
-            }
-        } catch (SQLException e) {
-            log.error("Error retrieving table name from database metadata: " + tableNamePattern, e);
-            return tableNamePattern;
-        }
-    }
-
     public static List<Column> getColumns(ResultSet resultSet, String[] exclude) throws SQLException {
         List<Column> columnList = new ArrayList<Column>();
         List<String> columnExcluded = exclude == null ? new ArrayList<String>() : Arrays.asList(exclude);
@@ -197,6 +170,42 @@ public class JDBCUtils {
             }
         }
         return columnList;
+    }
+
+    public static String changeCase(Connection connection, String id) {
+        try {
+            DatabaseMetaData meta = connection.getMetaData();
+            if (meta.storesLowerCaseIdentifiers()) {
+                return changeCaseExcludeQuotes(id, false);
+            }
+            if (meta.storesUpperCaseIdentifiers()) {
+                return changeCaseExcludeQuotes(id, true);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return id;
+    }
+
+    public static final String[] QUOTES = new String[]{"\"", "'", "`", "´"};
+
+    public static String changeCaseExcludeQuotes(String s, boolean upper) {
+
+        List<String> keepList = new ArrayList<String>();
+        for (int i = 0; i < QUOTES.length; i++) {
+            String quote = QUOTES[i];
+            String[] words = StringUtils.substringsBetween(s, quote, quote);
+            if (words != null) {
+                keepList.addAll(Arrays.asList(words));
+            }
+        }
+
+        String tmpStr = upper ? s.toUpperCase() : s.toLowerCase();
+        for (String word : keepList) {
+            String tmpWord = upper ? word.toUpperCase() : word.toLowerCase();
+            tmpStr = StringUtils.replace(tmpStr, tmpWord, word);
+        }
+        return tmpStr;
     }
 
     public static ColumnType calculateType(int sqlDataType) {

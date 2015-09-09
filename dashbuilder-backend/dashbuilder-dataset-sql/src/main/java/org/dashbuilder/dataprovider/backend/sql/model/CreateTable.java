@@ -33,20 +33,16 @@ public class CreateTable extends SQLStatement<CreateTable> {
         super(connection, dialect);
     }
 
-    public String getTableName() {
-        return table.getName();
-    }
-
     public CreateTable columns(Column... cols) {
         for (Column column : cols) {
-            columns.add(column);
+            columns.add(fix(column));
         }
         return this;
     }
 
     public CreateTable primaryKey(Column... cols) {
         for (Column column : cols) {
-            primaryKeys.add(column);
+            primaryKeys.add(fix(column));
         }
         return this;
     }

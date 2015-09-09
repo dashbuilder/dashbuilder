@@ -268,16 +268,9 @@ public class DataSetFilterTest {
         DataSet result = dataSetManager.lookupDataSet(builder.buildLookup());
 
         //printDataSet(result);
-        assertDataSetValues(result, dataSetFormatter, new String[][] {
-            {"1.00", "Barcelona", "Engineering", "Roxie Foraker", "120.35", "12/11/15 12:00"},
-            {"2.00", "Barcelona", "Engineering", "Roxie Foraker", "1,100.10", "12/01/15 12:00"},
-            {"3.00", "Barcelona", "Engineering", "Roxie Foraker", "900.10", "11/01/15 12:00"},
-            {"4.00", "Barcelona", "Services", "Jamie Gilbeau", "340.34", "10/12/15 12:00"},
-            {"5.00", "Barcelona", "Services", "Jamie Gilbeau", "300.00", "09/15/15 12:00"},
-            {"6.00", "Barcelona", "Services", "Jamie Gilbeau", "152.25", "08/17/15 12:00"},
-            {"7.00", "Madrid", "Services", "Roxie Foraker", "800.80", "07/01/15 12:00"},
-            {"8.00", "Madrid", "Services", "Roxie Foraker", "911.11", "06/01/15 12:00"}
-        }, 0);
+        assertThat(result.getRowCount()).isEqualTo(8);
+        assertDataSetValue(result, 0, 0, "1.00");
+        assertDataSetValue(result, 7, 0, "8.00");
     }
 
     @Test

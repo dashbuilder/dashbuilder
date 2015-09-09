@@ -36,4 +36,12 @@ public class Table {
     public String getName() {
         return name;
     }
+
+    public void setSchema(String schema) {
+        this.schema = schema;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 }

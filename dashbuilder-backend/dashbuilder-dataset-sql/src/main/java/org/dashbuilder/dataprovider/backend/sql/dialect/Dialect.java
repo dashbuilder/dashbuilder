@@ -26,6 +26,7 @@ import org.dashbuilder.dataprovider.backend.sql.model.FunctionColumn;
 import org.dashbuilder.dataprovider.backend.sql.model.LogicalCondition;
 import org.dashbuilder.dataprovider.backend.sql.model.SQLStatement;
 import org.dashbuilder.dataprovider.backend.sql.model.Select;
+import org.dashbuilder.dataprovider.backend.sql.model.SimpleColumn;
 import org.dashbuilder.dataprovider.backend.sql.model.SortColumn;
 import org.dashbuilder.dataset.group.AggregateFunctionType;
 import org.dashbuilder.dataset.sort.SortOrder;
@@ -69,6 +70,8 @@ public interface Dialect {
     String getTableNameSQL(String name);
 
     String getSchemaNameSQL(String name);
+
+    String getSimpleColumnSQL(SimpleColumn column);
 
     String getFunctionColumnSQL(FunctionColumn column);
 

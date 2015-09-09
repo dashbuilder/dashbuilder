@@ -37,7 +37,7 @@ public class Insert extends SQLStatement<Insert> {
     }
 
     public Insert set(Column column, Object value) {
-        columns.add(column);
+        columns.add(fix(column));
         values.add(value);
         return this;
     }

@@ -265,7 +265,8 @@ public class SQLDataSetProvider implements DataSetProvider {
 
         if (def.getColumns() != null) {
             for (DataColumnDef column : def.getColumns()) {
-                columnIds.add(column.getId());
+                String columnId = JDBCUtils.changeCase(conn, column.getId());
+                columnIds.add(columnId);
                 columnTypes.add(column.getColumnType());
             }
         }
@@ -672,7 +673,7 @@ public class SQLDataSetProvider implements DataSetProvider {
                     if (cg != null && cg.getSourceId().equals(sourceId) && gf.getFunction() == null) {
                         column.setColumnType(ColumnType.LABEL);
                         column.setColumnGroup(cg);
-                        if (ColumnType.DATE.equals(metadata.getColumnType(sourceId))) {
+                        if (ColumnType.DATE.equals(_getColumnType(sourceId))) {
                             column.setIntervalType(dateIntervalType != null ? dateIntervalType.toString() : null);
                             column.setMinValue(dateLimits != null ? dateLimits[0] : null);
                             column.setMaxValue(dateLimits != null ? dateLimits[1] : null);
@@ -684,7 +685,7 @@ public class SQLDataSetProvider implements DataSetProvider {
                     }
                     // Existing Column
                     else {
-                        column.setColumnType(metadata.getColumnType(sourceId));
+                        column.setColumnType(_getColumnType(sourceId));
                     }
                 }
             }
@@ -709,7 +710,7 @@ public class SQLDataSetProvider implements DataSetProvider {
 
         protected boolean isDynamicDateGroup(DataSetGroup groupOp) {
             ColumnGroup cg = groupOp.getColumnGroup();
-            if (!ColumnType.DATE.equals(metadata.getColumnType(cg.getSourceId()))) return false;
+            if (!ColumnType.DATE.equals(_getColumnType(cg.getSourceId()))) return false;
             if (!GroupStrategy.DYNAMIC.equals(cg.getStrategy())) return false;
             return true;
         }
@@ -900,7 +901,7 @@ public class SQLDataSetProvider implements DataSetProvider {
 
                 if (ColumnType.LABEL.equals(columnType)) {
                     ColumnGroup cg = column.getColumnGroup();
-                    if (cg != null && ColumnType.DATE.equals(metadata.getColumnType(cg.getSourceId()))) {
+                    if (cg != null && ColumnType.DATE.equals(_getColumnType(cg.getSourceId()))) {
                         dateGroupColumn = column;
                         dateIncludeEmptyIntervals = cg.areEmptyIntervalsAllowed();
 
@@ -1008,7 +1009,7 @@ public class SQLDataSetProvider implements DataSetProvider {
             String columnId = cg.getSourceId();
             _assertColumnExists(columnId);
 
-            ColumnType type = metadata.getColumnType(columnId);
+            ColumnType type = _getColumnType(columnId);
 
             if (ColumnType.DATE.equals(type)) {
                 DateIntervalType size = calculateDateInterval(cg);
@@ -1025,8 +1026,9 @@ public class SQLDataSetProvider implements DataSetProvider {
 
 
         protected int _assertColumnExists(String columnId) {
+            String targetId = JDBCUtils.changeCase(conn, columnId);
             for (int i = 0; i < metadata.getNumberOfColumns(); i++) {
-                if (metadata.getColumnId(i).equals(columnId)) {
+                if (metadata.getColumnId(i).equals(targetId)) {
                     return i;
                 }
             }
@@ -1038,6 +1040,11 @@ public class SQLDataSetProvider implements DataSetProvider {
             String sourceId = gf.getSourceId();
             if (sourceId != null) _assertColumnExists(sourceId);
             return gf.getColumnId() == null ?  sourceId : gf.getColumnId();
+        }
+
+        protected ColumnType _getColumnType(String columnId) {
+            String _col = JDBCUtils.changeCase(conn, columnId);
+            return metadata.getColumnType(_col);
         }
     }
 }
