@@ -392,11 +392,16 @@ public class SQLDataSetProvider implements DataSetProvider {
                 return _column.notNull();
             }
             if (CoreFunctionType.EQUALS_TO.equals(type)) {
-                if (params.size() == 1) return _column.equalsTo(params.get(0));
+                if (params.size() == 1) {
+                    return _column.equalsTo(params.get(0));
+                }
                 return _column.in(params);
             }
             if (CoreFunctionType.NOT_EQUALS_TO.equals(type)) {
-                return _column.notEquals(params.get(0));
+                if (params.size() == 1) {
+                    return _column.notEquals(params.get(0));
+                }
+                return _column.in(params).not();
             }
             if (CoreFunctionType.LIKE_TO.equals(type)) {
                 String pattern = (String) params.get(0);

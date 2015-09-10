@@ -67,7 +67,7 @@ public class Assertions {
      */
     public static void assertDataSetValues(DataSet dataSet, DataSetFormatter formatter, String[][] expected, int index) {
         // Check size
-        assertThat(dataSet.getRowCount()).isGreaterThan(index);
+        assertThat(dataSet.getRowCount()).isEqualTo(expected.length-index);
 
         for (int i = index; i < expected.length; i++) {
             String[] row = expected[i];

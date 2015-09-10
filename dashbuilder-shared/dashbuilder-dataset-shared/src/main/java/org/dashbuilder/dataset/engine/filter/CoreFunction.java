@@ -17,6 +17,7 @@ package org.dashbuilder.dataset.engine.filter;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.dashbuilder.dataset.filter.CoreFunctionFilter;
@@ -40,7 +41,11 @@ public class CoreFunction extends DataSetFunction {
         if (index >= coreFunctionFilter.getParameters().size()) {
             return null;
         }
-        return (Comparable) coreFunctionFilter.getParameters().get(index);
+        return coreFunctionFilter.getParameters().get(index);
+    }
+
+    public List<Comparable> getParameters() {
+        return coreFunctionFilter.getParameters();
     }
 
     public boolean pass() {
@@ -90,11 +95,27 @@ public class CoreFunction extends DataSetFunction {
         return !isNull(value);
     }
 
+    public boolean compare(Comparable c1, Comparable c2) {
+        if (c1 != null && c2 != null) {
+            if (Number.class.isAssignableFrom(c1.getClass()) && Number.class.isAssignableFrom(c2.getClass())) {
+                return ((Number) c1).doubleValue() == ((Number) c2).doubleValue();
+            }
+            return c1.toString().equals(c2.toString());
+        }
+        else {
+            return false;
+        }
+    }
+
     public boolean isEqualsTo(Comparable value) {
         if (isNull(value)) return false;
 
-        Comparable ref = getParameter(0);
-        return ref.equals(value);
+        for (Comparable param : getParameters()) {
+            if (compare(param, value)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public boolean isNotEqualsTo(Comparable value) {

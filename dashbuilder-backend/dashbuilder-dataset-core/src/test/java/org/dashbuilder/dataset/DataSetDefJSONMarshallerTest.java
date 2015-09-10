@@ -24,7 +24,7 @@ import org.junit.runner.RunWith;
 import javax.inject.Inject;
 import java.io.InputStream;
 import java.io.StringWriter;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -105,8 +105,9 @@ public class DataSetDefJSONMarshallerTest {
         parameterMap.put("multiplier", "1");
         dataSetDef.setParamaterMap(parameterMap);
         final DataSetFilter filter = new DataSetFilter();
-        final String[] params = new String[] {"JANUARY"};
-        final ColumnFilter columnFilter = new CoreFunctionFilter("month", CoreFunctionType.EQUALS_TO, Arrays.asList(params));
+        final List<Comparable> params = new ArrayList<Comparable>();
+        params.add("JANUARY");
+        final ColumnFilter columnFilter = new CoreFunctionFilter("month", CoreFunctionType.EQUALS_TO, params);
         filter.addFilterColumn(columnFilter);
         dataSetDef.setDataSetFilter(filter);
         
