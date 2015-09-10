@@ -459,10 +459,10 @@ public class DefaultDialect implements Dialect {
             return getNotExprConditionSQL(conditions[0]);
         }
         if (LogicalExprType.AND.equals(type)) {
-            return getAndExprConditionSQL(conditions[0], conditions[1]);
+            return getAndExprConditionSQL(conditions);
         }
         if (LogicalExprType.OR.equals(type)) {
-            return getOrExprConditionSQL(conditions[0], conditions[1]);
+            return getOrExprConditionSQL(conditions);
         }
         throw new IllegalArgumentException("Logical condition type not supported: " + type);
     }
@@ -474,17 +474,28 @@ public class DefaultDialect implements Dialect {
     }
 
     @Override
-    public String getAndExprConditionSQL(Condition condition1, Condition condition2) {
-        String condition1SQL = getConditionSQL(condition1);
-        String condition2SQL = getConditionSQL(condition2);
-        return "("  + condition1SQL + " AND " + condition2SQL + ")";
+    public String getAndExprConditionSQL(Condition[] conditions) {
+        return _getLogicalExprConditionSQL(conditions, "AND");
     }
 
     @Override
-    public String getOrExprConditionSQL(Condition condition1, Condition condition2) {
-        String condition1SQL = getConditionSQL(condition1);
-        String condition2SQL = getConditionSQL(condition2);
-        return "("  + condition1SQL + " OR " + condition2SQL + ")";
+    public String getOrExprConditionSQL(Condition[] conditions) {
+        return _getLogicalExprConditionSQL(conditions, "OR");
+    }
+
+    protected String _getLogicalExprConditionSQL(Condition[] conditions, String op) {
+        StringBuilder out = new StringBuilder();
+        out.append("(");
+        for (int i = 0; i < conditions.length; i++) {
+            Condition condition = conditions[i];
+            String conditionSQL = getConditionSQL(condition);
+            if (i > 0) {
+                out.append(" ").append(op).append(" ");
+            }
+            out.append(conditionSQL);
+        }
+        out.append(")");
+        return out.toString();
     }
 
     @Override

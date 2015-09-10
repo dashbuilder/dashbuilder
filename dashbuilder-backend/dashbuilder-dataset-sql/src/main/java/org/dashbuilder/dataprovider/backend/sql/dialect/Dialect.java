@@ -126,9 +126,9 @@ public interface Dialect {
 
     String getNotExprConditionSQL(Condition condition);
 
-    String getAndExprConditionSQL(Condition condition1, Condition condition2);
+    String getAndExprConditionSQL(Condition[] conditions);
 
-    String getOrExprConditionSQL(Condition condition1, Condition condition2);
+    String getOrExprConditionSQL(Condition[] conditions);
 
     String getColumnFunctionSQL(String column, AggregateFunctionType function);
 }

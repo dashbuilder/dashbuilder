@@ -17,8 +17,11 @@ package org.dashbuilder.dataset;
 
 import java.sql.Timestamp;
 import java.util.Calendar;
+import java.util.List;
+import java.util.ArrayList;
 import javax.inject.Inject;
 
+import org.dashbuilder.dataset.filter.ColumnFilter;
 import org.dashbuilder.dataset.sort.SortOrder;
 import org.dashbuilder.test.ShrinkWrapHelper;
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -186,13 +189,32 @@ public class DataSetFilterTest {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                         .dataset(EXPENSE_REPORTS)
-                        .filter(COLUMN_AMOUNT, OR(NOT(greaterThan(100)), greaterThan(1000)))
+                        .filter(COLUMN_AMOUNT, OR(NOT(greaterThan(100)), greaterThan(1000), equalsTo(COLUMN_ID, 1)))
                         .buildLookup());
 
         //printDataSet(result);
-        assertThat(result.getRowCount()).isEqualTo(7);
-        assertDataSetValue(result, 0, 0, "2.00");
-        assertDataSetValue(result, 6, 0, "30.00");
+        assertThat(result.getRowCount()).isEqualTo(8);
+        assertDataSetValue(result, 0, 0, "1.00");
+        assertDataSetValue(result, 1, 0, "2.00");
+        assertDataSetValue(result, 7, 0, "30.00");
+    }
+
+    @Test
+    public void testORExpressionMultilple() throws Exception {
+
+        List<Comparable> cities = new ArrayList<Comparable>();
+        for(String city : new String[] {"Barcelona", "London", "Madrid"}){
+            cities.add(city);
+        }
+
+        DataSet result = dataSetManager.lookupDataSet(
+                DataSetFactory.newDataSetLookupBuilder()
+                        .dataset(EXPENSE_REPORTS)
+                        .filter(equalsTo(COLUMN_CITY, cities))
+                        .buildLookup());
+
+        //printDataSet(result);
+        assertThat(result.getRowCount()).isEqualTo(19);
     }
 
     @Test
@@ -210,6 +232,43 @@ public class DataSetFilterTest {
         assertThat(result.getRowCount()).isEqualTo(7);
         assertDataSetValue(result, 0, 0, "9.00");
         assertDataSetValue(result, 6, 0, "28.00");
+    }
+
+    @Test
+    public void testCombinedExpression2() throws Exception {
+
+        List<Comparable> cities = new ArrayList<Comparable>();
+        for(String city : new String[] {"Barcelona", "London", "Madrid"}){
+            cities.add(city);
+        }
+
+        List<ColumnFilter> condList = new  ArrayList<ColumnFilter>();
+        for(String employee : new String[] {"Roxie Foraker", "Patricia J. Behr"}){
+            condList.add(equalsTo(COLUMN_EMPLOYEE, employee));
+
+        }
+
+        ColumnFilter filter1 = equalsTo(COLUMN_CITY, cities);
+        ColumnFilter filter2 = AND(OR(condList), equalsTo(COLUMN_DEPARTMENT, "Engineering"));
+        ColumnFilter filter3 = equalsTo(COLUMN_DEPARTMENT, "Services");
+
+
+        DataSetLookupBuilder builder = DataSetFactory.newDataSetLookupBuilder();
+        builder.dataset(EXPENSE_REPORTS);
+        builder.filter(AND(filter1, OR(filter2, filter3)));
+
+
+        DataSet result = dataSetManager.lookupDataSet(builder.buildLookup());
+
+        //printDataSet(result);
+        assertDataSetValues(result, dataSetFormatter, new String[][] {
+            {"1.00", "Barcelona", "Engineering", "Roxie Foraker", "120.35", "12/11/15 12:00"},
+            {"2.00", "Barcelona", "Engineering", "Roxie Foraker", "1,100.10", "12/01/15 12:00"},
+            {"3.00", "Barcelona", "Engineering", "Roxie Foraker", "900.10", "11/01/15 12:00"},
+            {"4.00", "Barcelona", "Services", "Jamie Gilbeau", "340.34", "10/12/15 12:00"},
+            {"5.00", "Barcelona", "Services", "Jamie Gilbeau", "300.00", "09/15/15 12:00"},
+            {"6.00", "Barcelona", "Services", "Jamie Gilbeau", "152.25", "08/17/15 12:00"}
+        }, 0);
     }
 
     @Test
