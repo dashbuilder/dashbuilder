@@ -1,0 +1,27 @@
+{
+    "settings": {
+        "analysis" : {
+            "analyzer" : {
+                "case_sensitive" : {
+                    "type" : "custom",
+                    "tokenizer" : "keyword"
+                }
+            }
+        }
+    },
+    "mappings" : {
+        "_default_" : {
+            "properties" : {
+                "id" : {"type": "integer" },
+                "city" : {"type": "string", "index": "not_analyzed" },
+                "department" : { "type" : "string", "index": "not_analyzed" },
+                "employee" : { "type" : "string", "index": "analyzed", "analyzer" : "case_sensitive"  },
+                "date" : { 
+                    "type" : "date",
+                    "format": "MM-dd-YYYY"
+                },
+                "amount" : { "type" : "float" }
+            }
+        }
+    }
+}

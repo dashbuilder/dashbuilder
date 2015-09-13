@@ -7,7 +7,6 @@ import org.dashbuilder.dataprovider.backend.elasticsearch.rest.ElasticSearchClie
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.exception.ElasticSearchClientGenericException;
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.impl.jest.ElasticSearchJestClient;
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.model.SearchRequest;
-import org.dashbuilder.dataprovider.backend.elasticsearch.rest.util.ElasticSearchDateUtils;
 import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.dataset.DataSetMetadata;
@@ -18,7 +17,10 @@ import org.dashbuilder.dataset.group.*;
 
 import java.lang.reflect.Type;
 import java.text.MessageFormat;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Serializes DataSetGroup operations.
@@ -228,7 +230,7 @@ public class AggregationSerializer extends AbstractAdapter<AggregationSerializer
                 // If interval size is not specified by the lookup group operation, calculate the current date limits for index document's date field and the interval size that fits..
                 } else {
                     try {
-                        Date[] limits = client.getDateUtils().calculateDateLimits(anotherClient, metadata, columnGroup.getSourceId(), this.request != null ? this.request.getQuery() : null);
+                        Date[] limits = client.getUtils().calculateDateLimits(anotherClient, metadata, columnGroup.getSourceId(), this.request != null ? this.request.getQuery() : null);
                         if (limits != null) {
                             dateIntervalType = intervalBuilder.calculateIntervalSize(limits[0], limits[1], columnGroup);
                         }

@@ -91,7 +91,8 @@ import java.util.*;
 public class Query {
     
     public static enum Parameter {
-        MUST, MUST_NOT, SHOULD, VALUE, QUERY, FILTER, FILTERS, GT, GTE, LT, LTE;
+        MUST, MUST_NOT, SHOULD, VALUE, QUERY, FILTER, FILTERS, GT, GTE, LT, LTE,
+        DEFAULT_FIELD, DEFAULT_OPERATOR, LOWERCASE_EXPANDED_TERMS;
     }
     
     public static enum Type {
@@ -99,6 +100,8 @@ public class Query {
             BOOL(QUERY),
             MATCH(QUERY),
             MATCH_ALL(QUERY),
+            WILDCARD(QUERY),
+            QUERY_STRING(QUERY),
             FILTERED(QUERY),
         FILTER(null),
             AND(FILTER),

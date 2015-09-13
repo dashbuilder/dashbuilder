@@ -24,7 +24,7 @@ import org.dashbuilder.dataprovider.backend.elasticsearch.rest.impl.jest.gson.*;
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.model.Query;
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.model.SearchHitResponse;
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.model.SearchResponse;
-import org.dashbuilder.dataprovider.backend.elasticsearch.rest.util.ElasticSearchDateUtils;
+import org.dashbuilder.dataprovider.backend.elasticsearch.rest.util.ElasticSearchUtils;
 import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.dataset.DataSetMetadata;
@@ -38,14 +38,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.mockito.Spy;
 
-import javax.inject.Inject;
-import javax.inject.Named;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 
 /**
@@ -64,10 +60,10 @@ public class ElasticSearchJestClientTest {
 
     protected ElasticSearchClientFactory clientFactory = new ElasticSearchClientFactory();
     protected ElasticSearchValueTypeMapper typeMapper = new ElasticSearchValueTypeMapper();
-    protected ElasticSearchDateUtils dateUtils = new ElasticSearchDateUtils(typeMapper);
+    protected ElasticSearchUtils utils = new ElasticSearchUtils(typeMapper);
     
-    protected ElasticSearchJestClient client = new ElasticSearchJestClient(clientFactory, typeMapper, dateUtils);
-    protected ElasticSearchJestClient anotherClient = new ElasticSearchJestClient(clientFactory, typeMapper, dateUtils);
+    protected ElasticSearchJestClient client = new ElasticSearchJestClient(clientFactory, typeMapper, utils);
+    protected ElasticSearchJestClient anotherClient = new ElasticSearchJestClient(clientFactory, typeMapper, utils);
 
     @Before
     public void setUp() throws Exception {
@@ -119,11 +115,26 @@ public class ElasticSearchJestClientTest {
         String serializedQuery = gson.toJson(query, Query.class);
         Assert.assertEquals(serializedQuery, "{\"query\":{\"match_all\":{}}}");
 
-        // Match ALL query..
+        // Match query..
         query = new Query("department", Query.Type.MATCH);
         query.setParam(Query.Parameter.VALUE.name(), "Sales");
         serializedQuery = gson.toJson(query, Query.class);
         Assert.assertEquals(serializedQuery, "{\"query\":{\"match\":{\"department\":\"Sales\"}}}");
+
+        // Wildcard query..
+        query = new Query("department", Query.Type.WILDCARD);
+        query.setParam(Query.Parameter.VALUE.name(), "Sal%");
+        serializedQuery = gson.toJson(query, Query.class);
+        Assert.assertEquals(serializedQuery, "{\"query\":{\"wildcard\":{\"department\":\"Sal%\"}}}");
+
+        // Query String query.
+        query = new Query("employee", Query.Type.QUERY_STRING);
+        query.setParam(Query.Parameter.DEFAULT_FIELD.name(), "employee");
+        query.setParam(Query.Parameter.DEFAULT_OPERATOR.name(), "AND");
+        query.setParam(Query.Parameter.QUERY.name(), "Tony%");
+        query.setParam(Query.Parameter.LOWERCASE_EXPANDED_TERMS.name(),"false");
+        serializedQuery = gson.toJson(query, Query.class);
+        Assert.assertEquals(serializedQuery, "{\"query\":{\"query_string\":{\"default_field\":\"employee\",\"default_operator\":\"AND\",\"query\":\"Tony%\",\"lowercase_expanded_terms\":\"false\"}}}");
 
         // Filtered query.
         query = new Query("department", Query.Type.FILTERED);

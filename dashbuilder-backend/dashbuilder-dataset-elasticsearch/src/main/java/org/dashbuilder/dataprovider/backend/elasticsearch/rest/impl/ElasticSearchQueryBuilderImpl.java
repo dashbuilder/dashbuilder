@@ -17,7 +17,9 @@ package org.dashbuilder.dataprovider.backend.elasticsearch.rest.impl;
 
 import org.dashbuilder.dataprovider.backend.elasticsearch.ElasticSearchValueTypeMapper;
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.ElasticSearchQueryBuilder;
+import org.dashbuilder.dataprovider.backend.elasticsearch.rest.model.FieldMappingResponse;
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.model.Query;
+import org.dashbuilder.dataprovider.backend.elasticsearch.rest.util.ElasticSearchUtils;
 import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.DataSetMetadata;
 import org.dashbuilder.dataset.date.TimeFrame;
@@ -44,6 +46,9 @@ public class ElasticSearchQueryBuilderImpl implements ElasticSearchQueryBuilder<
 
     @Inject
     protected ElasticSearchValueTypeMapper valueTypeMapper;
+
+    @Inject
+    protected ElasticSearchUtils utils;
     
     private DataSetMetadata metadata;
     private List<DataSetGroup> groups= new LinkedList<DataSetGroup>();
@@ -56,8 +61,10 @@ public class ElasticSearchQueryBuilderImpl implements ElasticSearchQueryBuilder<
     public ElasticSearchQueryBuilderImpl() {
     }
 
-    public ElasticSearchQueryBuilderImpl(ElasticSearchValueTypeMapper valueTypeMapper) {
+    public ElasticSearchQueryBuilderImpl(ElasticSearchValueTypeMapper valueTypeMapper,
+                                         ElasticSearchUtils utils) {
         this.valueTypeMapper = valueTypeMapper;
+        this.utils = utils;
     }
 
     @Override
@@ -377,8 +384,7 @@ public class ElasticSearchQueryBuilderImpl implements ElasticSearchQueryBuilder<
             
             result = new Query(columnId, Query.Type.EXISTS);
             
-        } else if (CoreFunctionType.EQUALS_TO.equals(type) ||
-                CoreFunctionType.LIKE_TO.equals(type)) {
+        } else if (CoreFunctionType.EQUALS_TO.equals(type)) {
             
             Object value = formatValue(def, columnId, params.get(0));
 
@@ -388,7 +394,44 @@ public class ElasticSearchQueryBuilderImpl implements ElasticSearchQueryBuilder<
                 result = new Query(columnId, Query.Type.MATCH);
             }
             result.setParam(Query.Parameter.VALUE.name(), value);
+
             
+        } else if (CoreFunctionType.LIKE_TO.equals(type)) {
+
+            Object value = formatValue(def, columnId, params.get(0));
+            
+            if (value != null) {
+
+                if (ColumnType.NUMBER.equals(columnType) || ColumnType.DATE.equals(columnType)) {
+                    throw new RuntimeException("The operator LIKE can be applied only for LABEL or TEXT column types. The column [" + columnId + "] is type [" + columnType.name() + "}.");
+                }
+
+                // TEXT or LABEL columns.
+                String indexType = def.getPattern(columnId);
+                if (indexType == null || indexType.trim().length() == 0) {
+                    // Default ELS index type for String fields is ANALYZED.
+                    indexType = FieldMappingResponse.IndexType.ANALYZED.name();
+                }
+                
+
+                // Replace Dashbuilder wildcard characters by the ones used in ELS wildcard query.
+                boolean caseSensitive = params.size() < 2 || Boolean.parseBoolean(params.get(1).toString());
+                boolean isFieldAnalyzed = FieldMappingResponse.IndexType.ANALYZED.name().equalsIgnoreCase(indexType);
+
+                // Case un-sensitive is not supported for not_analyzed string fields.
+                if (!isFieldAnalyzed && !caseSensitive) {
+                    throw new RuntimeException("Case unsensitive is not supported for not_analyzed string fields. Field: [" + columnId + "].");
+                }
+
+                String pattern = utils.transformPattern(value.toString());
+                boolean isLowerCaseExpandedTerms = isFieldAnalyzed && (!caseSensitive);
+                result = new Query(columnId, Query.Type.QUERY_STRING);
+                result.setParam(Query.Parameter.DEFAULT_FIELD.name(), columnId);
+                result.setParam(Query.Parameter.DEFAULT_OPERATOR.name(), "AND");
+                result.setParam(Query.Parameter.QUERY.name(), pattern);
+                result.setParam(Query.Parameter.LOWERCASE_EXPANDED_TERMS.name(), isLowerCaseExpandedTerms);
+            }
+        
         } else if (CoreFunctionType.NOT_EQUALS_TO.equals(type)) {
             
             Object value = formatValue(def, columnId, params.get(0));

@@ -17,6 +17,7 @@ package org.dashbuilder.dataprovider.backend.elasticsearch;
 
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.ElasticSearchQueryBuilder;
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.impl.ElasticSearchQueryBuilderImpl;
+import org.dashbuilder.dataprovider.backend.elasticsearch.rest.util.ElasticSearchUtils;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -30,9 +31,12 @@ public class ElasticSearchQueryBuilderFactory {
 
     @Inject
     protected ElasticSearchValueTypeMapper typeMapper;
+
+    @Inject
+    protected ElasticSearchUtils utils;
     
     public ElasticSearchQueryBuilder newQueryBuilder() {
-        return new ElasticSearchQueryBuilderImpl(typeMapper);
+        return new ElasticSearchQueryBuilderImpl(typeMapper, utils);
         /*return builders.get();*/
     }
 }

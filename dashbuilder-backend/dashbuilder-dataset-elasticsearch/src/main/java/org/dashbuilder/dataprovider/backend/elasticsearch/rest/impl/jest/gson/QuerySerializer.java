@@ -32,6 +32,12 @@ public class QuerySerializer extends AbstractAdapter<QuerySerializer> implements
     public static final String SEARCH_API_MUST_NOT = "must_not";
     public static final String SEARCH_API_SHOULD = "should";
     public static final String SEARCH_API_BOOL = "bool";
+    public static final String SEARCH_API_WILDCARD = "wildcard";
+    public static final String SEARCH_API_QUERY_STRING = "query_string";
+    public static final String SEARCH_API_DEFAULT_FIELD = "default_field";
+    public static final String SEARCH_API_DEFAULT_OPERATOR = "default_operator";
+    public static final String LOWERCASE_EXPANDED_TERMS = "lowercase_expanded_terms";
+
     private Query query;
     private Gson gson = new GsonBuilder().create();
 
@@ -75,6 +81,10 @@ public class QuerySerializer extends AbstractAdapter<QuerySerializer> implements
                 return translateMatch(query);
             case MATCH_ALL:
                 return translateMatchAll(query);
+            case WILDCARD:
+                return translateWildcard(query);
+            case QUERY_STRING:
+                return translateQueryString(query);
             case FILTERED:
                 return translateFiltered(query);
             case AND:
@@ -218,6 +228,37 @@ public class QuerySerializer extends AbstractAdapter<QuerySerializer> implements
         JsonObject subObject= new JsonObject();
         subObject.addProperty(field, (String) value);
         result.add(SEARCH_API_MATCH, subObject);
+        return result;
+    }
+
+    private JsonObject translateWildcard(Query query) {
+        if (query == null) return null;
+
+        String field = query.getField();
+        Object value = query.getParam(Query.Parameter.VALUE.name());
+
+        JsonObject result = new JsonObject();
+        JsonObject subObject= new JsonObject();
+        subObject.addProperty(field, (String) value);
+        result.add(SEARCH_API_WILDCARD, subObject);
+        return result;
+    }
+
+    private JsonObject translateQueryString(Query query) {
+        if (query == null) return null;
+
+        Object pattern = query.getParam(Query.Parameter.QUERY.name());
+        Object defField = query.getParam(Query.Parameter.DEFAULT_FIELD.name());
+        Object defOp = query.getParam(Query.Parameter.DEFAULT_OPERATOR.name());
+        Object lowerCase = query.getParam(Query.Parameter.LOWERCASE_EXPANDED_TERMS.name());
+
+        JsonObject result = new JsonObject();
+        JsonObject subObject= new JsonObject();
+        subObject.addProperty(SEARCH_API_DEFAULT_FIELD, defField.toString());
+        subObject.addProperty(SEARCH_API_DEFAULT_OPERATOR, defOp.toString());
+        subObject.addProperty(SEARCH_API_QUERY, pattern.toString());
+        subObject.addProperty(LOWERCASE_EXPANDED_TERMS, lowerCase.toString());
+        result.add(SEARCH_API_QUERY_STRING, subObject);
         return result;
     }
 
