@@ -32,7 +32,7 @@ import org.dashbuilder.dataprovider.backend.elasticsearch.rest.ElasticSearchClie
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.exception.ElasticSearchClientGenericException;
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.impl.jest.gson.*;
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.model.*;
-import org.dashbuilder.dataprovider.backend.elasticsearch.rest.util.ElasticSearchDateUtils;
+import org.dashbuilder.dataprovider.backend.elasticsearch.rest.util.ElasticSearchUtils;
 import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.dataset.DataSetMetadata;
@@ -71,7 +71,7 @@ public class ElasticSearchJestClient implements ElasticSearchClient<ElasticSearc
     protected ElasticSearchValueTypeMapper typeMapper;
     
     @Inject
-    protected ElasticSearchDateUtils dateUtils;
+    protected ElasticSearchUtils utils;
     
     // JestClient is designed to be singleton, don't construct it for each request.
     private JestClient client;
@@ -81,10 +81,10 @@ public class ElasticSearchJestClient implements ElasticSearchClient<ElasticSearc
     }
 
     public ElasticSearchJestClient(ElasticSearchClientFactory clientFactory, ElasticSearchValueTypeMapper typeMapper,
-                                   ElasticSearchDateUtils dateUtils) {
+                                   ElasticSearchUtils utils) {
         this.clientFactory = clientFactory;
         this.typeMapper = typeMapper;
-        this.dateUtils = dateUtils;
+        this.utils = utils;
     }
 
     @Override
@@ -494,8 +494,8 @@ public class ElasticSearchJestClient implements ElasticSearchClient<ElasticSearc
         return typeMapper;
     }
 
-    public ElasticSearchDateUtils getDateUtils() {
-        return dateUtils;
+    public ElasticSearchUtils getUtils() {
+        return utils;
     }
 
     private void log(String message) {

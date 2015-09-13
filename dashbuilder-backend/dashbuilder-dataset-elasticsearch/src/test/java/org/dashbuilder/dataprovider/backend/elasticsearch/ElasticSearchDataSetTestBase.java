@@ -81,6 +81,10 @@ import java.util.List;
  * 
  * <p>All indexed documents will have a document type value as <code>expense</code></p>
  * 
+ * <p>Another index named <code>expensereports-sensitive</code> can be created and populated too, with same fileds and data as
+ * the <code>expensereports</code> one but in this index, the field <code>employee</code> is analyzed with a custom tokenizer analyzer to 
+ * provide filtering with case sensitive features.</p>
+ * 
  * @since 0.3.0
  */
 @RunWith(Arquillian.class)
@@ -104,9 +108,11 @@ public class ElasticSearchDataSetTestBase {
     protected static final String EL_CONFIG_ELASTICSEARCH = "org/dashbuilder/dataprovider/backend/elasticsearch/server/config/elasticsearch.yml";
     protected static final String EL_CONFIG_LOGGING = "org/dashbuilder/dataprovider/backend/elasticsearch/server/config/logging.yml";
     protected static final String EL_EXAMPLE_INDEX = "expensereports";
-    protected static final String EL_EXAMPLE_TYPE = "expense";
     protected static final String EL_EXAMPLE_MAPPINGS = "org/dashbuilder/dataprovider/backend/elasticsearch/server/example-data/expensereports-mappings.json";
     protected static final String EL_EXAMPLE_DATA = "org/dashbuilder/dataprovider/backend/elasticsearch/server/example-data/expensereports-data.json";
+    protected static final String EL_EXAMPLE_CSENSITIVE_INDEX = "expensereports-sensitive";
+    protected static final String EL_EXAMPLE_CSENSITIVE_MAPPINGS = "org/dashbuilder/dataprovider/backend/elasticsearch/server/example-data/expensereports-csensitive-mappings.json";
+    protected static final String EL_EXAMPLE_CSENSITIVE_DATA = "org/dashbuilder/dataprovider/backend/elasticsearch/server/example-data/expensereports-csensitive-data.json";
     protected static final String EL_EXAMPLE_MORE_DATA = "org/dashbuilder/dataprovider/backend/elasticsearch/server/example-data/expensereports-more-data.json";
     protected static final String EL_EXAMPLE_COLUMN_ID = "id";
     protected static final String EL_EXAMPLE_COLUMN_AMOUNT = "amount";
@@ -163,74 +169,81 @@ public class ElasticSearchDataSetTestBase {
     @Inject
     DataSetDefJSONMarshaller jsonMarshaller;
 
-    protected static ElasticSearchUrlBuilder urlBuilder = new ElasticSearchUrlBuilder(EL_SERVER, EL_EXAMPLE_INDEX);
-    
-    // For local testing against an existing and running EL server.
-    private static boolean RUN_SERVER = true;
-    private static boolean POPULATE_SERVER = true;
-    
     private static Thread ELS_THREAD = new Thread("dashbuilder_test_ELS") {
         @Override
         public void run() {
             startInstance();
         }
     };
-
+    
     // Not necessary use of @BeforeClass - @see ElasticSearchTestSuite.java.
     public static void runELServer(TemporaryFolder elHomeFolder) throws Exception {
-        if (RUN_SERVER) {
-            // Build a temporary EL home folder. Copy config files to it.
-            File elHome = elHomeFolder.newFolder("dashbuilder-elasticsearch");
-            File elHomeConfig = new File(elHome, EL_CONFIG_DIR);
-            URL configFileUrl = Thread.currentThread().getContextClassLoader().getResource(EL_CONFIG_ELASTICSEARCH);
-            URL loggingFileUrl = Thread.currentThread().getContextClassLoader().getResource(EL_CONFIG_LOGGING);
-            File configFile = new File(configFileUrl.getFile());
-            File loggingFile = new File(loggingFileUrl.getFile());
+        // Build a temporary EL home folder. Copy config files to it.
+        File elHome = elHomeFolder.newFolder("dashbuilder-elasticsearch");
+        File elHomeConfig = new File(elHome, EL_CONFIG_DIR);
+        URL configFileUrl = Thread.currentThread().getContextClassLoader().getResource(EL_CONFIG_ELASTICSEARCH);
+        URL loggingFileUrl = Thread.currentThread().getContextClassLoader().getResource(EL_CONFIG_LOGGING);
+        File configFile = new File(configFileUrl.getFile());
+        File loggingFile = new File(loggingFileUrl.getFile());
 
-            // Create the configuration files and copy config files.
-            if (!elHomeConfig.mkdirs()) throw new RuntimeException("Cannot create config directory at [" + elHomeConfig.getAbsolutePath() + "].");
-            FileUtils.copyFileToDirectory(configFile, elHomeConfig);
-            FileUtils.copyFileToDirectory(loggingFile, elHomeConfig);
+        // Create the configuration files and copy config files.
+        if (!elHomeConfig.mkdirs()) throw new RuntimeException("Cannot create config directory at [" + elHomeConfig.getAbsolutePath() + "].");
+        FileUtils.copyFileToDirectory(configFile, elHomeConfig);
+        FileUtils.copyFileToDirectory(loggingFile, elHomeConfig);
 
-            // Set the system properties for running the EL server.
-            System.setProperty(EL_PROPERTY_ELASTICSEARCH, "");
-            System.setProperty(EL_PROPERTY_FOREGROUND, "yes");
-            System.setProperty(EL_PROPERTY_HOME, elHome.getAbsolutePath());
-            System.setProperty(EL_PROPERTY_SCRIPT_INLINE, "on");
-            System.setProperty(EL_PROPERTY_SCRIPT_INDEXED, "on");
+        // Set the system properties for running the EL server.
+        System.setProperty(EL_PROPERTY_ELASTICSEARCH, "");
+        System.setProperty(EL_PROPERTY_FOREGROUND, "yes");
+        System.setProperty(EL_PROPERTY_HOME, elHome.getAbsolutePath());
+        System.setProperty(EL_PROPERTY_SCRIPT_INLINE, "on");
+        System.setProperty(EL_PROPERTY_SCRIPT_INDEXED, "on");
 
-            // Run the EL server.
-            // ELS_THREAD.setDaemon(true);
-            // ELS_THREAD.start();
-            
-            startInstance();
-        }
+        // Run the EL server.
+        // ELS_THREAD.setDaemon(true);
+        // ELS_THREAD.start();
         
-        if (POPULATE_SERVER) {
-            // Create the expensereports example index.
-            createIndexELServer();
+        startInstance();
+    }
+    
+    public static void createAndPopulateExpenseReportsIndex() throws Exception{
+        ElasticSearchUrlBuilder urlBuilder = new ElasticSearchUrlBuilder(EL_SERVER, EL_EXAMPLE_INDEX);
+        
+        // Create the expensereports example index.
+        createIndexELServer(urlBuilder, EL_EXAMPLE_MAPPINGS);
 
-            // Populate the server with some test content.
-            populateELServer(EL_EXAMPLE_DATA);
+        // Populate the server with some test content.
+        populateELServer(urlBuilder, EL_EXAMPLE_DATA);
 
-            // Test mappings and document count.
-            testMappingCreated();
-            testDocumentsCount();
-            
-        }
+        // Test mappings and document count.
+        testMappingCreated(urlBuilder);
+        testDocumentsCount(urlBuilder);
+    }
+
+    public static void createAndPopulateExpenseReportsCSensitiveIndex() throws Exception{
+        ElasticSearchUrlBuilder urlBuilder = new ElasticSearchUrlBuilder(EL_SERVER, EL_EXAMPLE_CSENSITIVE_INDEX);
+
+        // Create the expensereports example index.
+        createIndexELServer(urlBuilder, EL_EXAMPLE_CSENSITIVE_MAPPINGS);
+
+        // Populate the server with some test content.
+        populateELServer(urlBuilder, EL_EXAMPLE_CSENSITIVE_DATA);
+
+        // Test mappings and document count.
+        testMappingCreated(urlBuilder);
+        testDocumentsCount(urlBuilder);
     }
     
     private static void startInstance() {
         Elasticsearch.main(new String[]{});
     }
     
-    public static void createIndexELServer() throws Exception {
+    public static void createIndexELServer(ElasticSearchUrlBuilder urlBuilder, String jsonMappingsFile) throws Exception {
 
         // Create an http client
         CloseableHttpClient httpclient = HttpClients.createDefault();
 
         // Obtain data to configure & populate the server.
-        String mappingsContent = getFileAsString(EL_EXAMPLE_MAPPINGS);
+        String mappingsContent = getFileAsString(jsonMappingsFile);
 
         // Create an index mappings.
         HttpPost httpPost = new HttpPost(urlBuilder.getIndexRoot());
@@ -245,12 +258,12 @@ public class ElasticSearchDataSetTestBase {
         Assert.assertEquals(EL_REST_RESPONSE_OK, mappingsResponse.getStatusLine().getStatusCode());
     }
     
-    public static void populateELServer(String dataFile) throws Exception {
+    public static void populateELServer(ElasticSearchUrlBuilder urlBuilder, String dataFile) throws Exception {
 
         // Insert documents in bulk mode.
         CloseableHttpClient httpclient = HttpClients.createDefault();
         File dataContentFile = new File(Thread.currentThread().getContextClassLoader().getResource(dataFile).getFile());
-        addDocuments(httpclient, dataContentFile);
+        addDocuments(httpclient, urlBuilder, dataContentFile);
         
         // Let EL server some time to index all documents...
         Thread.sleep(5000);
@@ -259,7 +272,7 @@ public class ElasticSearchDataSetTestBase {
     /**
      * <p>Index documents in bulk mode into EL server.</p>
      */
-    protected static void addDocuments(CloseableHttpClient httpClient, File dataContentFile) throws Exception {
+    protected static void addDocuments(CloseableHttpClient httpClient, ElasticSearchUrlBuilder urlBuilder, File dataContentFile) throws Exception {
         HttpPost httpPost2 = new HttpPost(urlBuilder.getBulk());
         FileEntity inputData = new FileEntity(dataContentFile);
         inputData.setContentType(CONTENTTYPE_JSON);
@@ -278,7 +291,7 @@ public class ElasticSearchDataSetTestBase {
     /**
      * <p>Index a single document into EL server.</p>
      */
-    protected static void addDocument(CloseableHttpClient httpclient, String type, String document) throws Exception {
+    protected static void addDocument(ElasticSearchUrlBuilder urlBuilder, CloseableHttpClient httpclient, String type, String document) throws Exception {
         HttpPost httpPut = new HttpPost(urlBuilder.getIndexRoot() + "/" + type);
         StringEntity inputData = new StringEntity(document);
         inputData.setContentType(CONTENTTYPE_JSON);
@@ -295,8 +308,6 @@ public class ElasticSearchDataSetTestBase {
 
     // Not necessary use of @AfterClass - @see ElasticSearchTestSuite.java.
     public static void stopELServer(TemporaryFolder elHomeFolder) throws Exception {
-        if (!RUN_SERVER) return;
-        
         // Clear the system properties that have been set for running the EL server.
         System.clearProperty(EL_PROPERTY_ELASTICSEARCH);
         System.clearProperty(EL_PROPERTY_FOREGROUND);
@@ -326,14 +337,14 @@ public class ElasticSearchDataSetTestBase {
         return def;
     }
 
-    public static void testMappingCreated() throws Exception {
+    public static void testMappingCreated(ElasticSearchUrlBuilder urlBuilder) throws Exception {
         Object[] response = doGet(urlBuilder.getIndexRoot());
         Assert.assertEquals(response[0], EL_REST_RESPONSE_OK);
         log("Mappings for index [" + EL_EXAMPLE_INDEX + "]:");
         log(response[1]);
     }
 
-    public static void testDocumentsCount() throws Exception {
+    public static void testDocumentsCount(ElasticSearchUrlBuilder urlBuilder) throws Exception {
         Object[] response = doGet(urlBuilder.getIndexCount());
         Assert.assertEquals(response[0], EL_REST_RESPONSE_OK);
         log("Count for index [" + EL_EXAMPLE_INDEX + "]:");

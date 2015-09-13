@@ -42,6 +42,8 @@ public class ElasticSearchTestSuite {
         public static void setUpClass() {
                 try {
                         ElasticSearchDataSetTestBase.runELServer(elHomeFolder);
+                        ElasticSearchDataSetTestBase.createAndPopulateExpenseReportsIndex();
+                        ElasticSearchDataSetTestBase.createAndPopulateExpenseReportsCSensitiveIndex();
                 } catch (Exception e) {
                         logger.error("Error starting up the ELS instance.", e);
                 }

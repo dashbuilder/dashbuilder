@@ -568,46 +568,54 @@ public class ElasticSearchDataSetProvider implements DataSetProvider {
                     if (columnType != null) {
 
                         // Handle date and numric field formats.
+                        final boolean isLabelColumn = ColumnType.LABEL.equals(columnType);
+                        final boolean isTextColumn = ColumnType.TEXT.equals(columnType);
                         final boolean isDateColumn = ColumnType.DATE.equals(columnType);
                         final boolean isNumberColumn = ColumnType.NUMBER.equals(columnType);
-                        if (isDateColumn || isNumberColumn) {
 
-                            String pattern = def.getPattern(columnId);
-                            // Check if the given column has any pattern format specified in the data set definition.
-                            if (!isEmpty(pattern)) {
+                        String pattern = def.getPattern(columnId);
+                        // Check if the given column has any pattern format specified in the data set definition.
+                        if (!isEmpty(pattern)) {
 
-                                // Exists a pattern format specified in the data set definition. Use it.
-                                if ( log.isDebugEnabled() ) {
-                                    log.debug("Using pattern [" + pattern + "] given in the data set definition with uuid [" + def.getUUID() + "] for column [" + columnId + "].");
-                                }
+                            // Exists a pattern format specified in the data set definition. Use it.
+                            if ( log.isDebugEnabled() ) {
+                                log.debug("Using pattern [" + pattern + "] given in the data set definition with uuid [" + def.getUUID() + "] for column [" + columnId + "].");
+                            }
 
-                            // NUMERIC - If no pattern for number, use the givens from index mappings response.
-                            } else if (isNumberColumn) {
-                                // Use the column pattern as the core number type for this field.
-                                FieldMappingResponse.FieldType fieldType = fieldMapping.getDataType();
-                                def.setPattern(columnId, fieldType.name().toLowerCase());
+                        // LABEL or TEXT types.
+                        } else if (isLabelColumn || isTextColumn) {
+                           
+                            FieldMappingResponse.IndexType indexType = fieldMapping.getIndexType();
+                            // If not specified, by defalt index is ANALYZED.
+                            if (indexType == null) indexType = FieldMappingResponse.IndexType.ANALYZED;
+                            def.setPattern(columnId, indexType.name().toLowerCase());
+                            
+                        // NUMERIC - If no pattern for number, use the givens from index mappings response.
+                        } else if (isNumberColumn) {
+                            
+                            // Use the column pattern as the core number type for this field.
+                            FieldMappingResponse.FieldType fieldType = fieldMapping.getDataType();
+                            def.setPattern(columnId, fieldType.name().toLowerCase());
 
-                            // DATE - If no pattern for date use the givens from index mappings response.
-                            } else if (!isEmpty(format)) {
+                        // DATE - If no pattern for date use the givens from index mappings response.
+                        } else if (!isEmpty(format)) {
 
-                                // No pattern format specified in the data set definition for this column. Use the one given by the index mappings response and set the pattern into the column's definition for further use.
-                                def.setPattern(columnId, format);
+                            // No pattern format specified in the data set definition for this column. Use the one given by the index mappings response and set the pattern into the column's definition for further use.
+                            def.setPattern(columnId, format);
 
-                                if (log.isDebugEnabled()) {
-                                    log.debug("Using pattern [" + format + "] given by the index mappings response for column [" + columnId + "].");
-                                }
+                            if (log.isDebugEnabled()) {
+                                log.debug("Using pattern [" + format + "] given by the index mappings response for column [" + columnId + "].");
+                            }
 
-                            // DATE - If no pattern for date use and neithier in index mappings response, use the default.
-                            }  else {
+                        // DATE - If no pattern for date use and neithier in index mappings response, use the default.
+                        }  else {
 
-                                // No pattern format specified neither in the data set definition or in the index mappings response for this column. Using default ones.
-                                String defaultPattern = typeMapper.defaultDateFormat();
-                                def.setPattern(columnId, defaultPattern);
+                            // No pattern format specified neither in the data set definition or in the index mappings response for this column. Using default ones.
+                            String defaultPattern = typeMapper.defaultDateFormat();
+                            def.setPattern(columnId, defaultPattern);
 
-                                if ( log.isDebugEnabled() ) {
-                                    log.debug("Using default pattern [" + defaultPattern + "] for column [" + columnId + "].");
-                                }
-
+                            if ( log.isDebugEnabled() ) {
+                                log.debug("Using default pattern [" + defaultPattern + "] for column [" + columnId + "].");
                             }
 
                         }

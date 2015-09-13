@@ -35,8 +35,7 @@ public class LocalTestSuite {
         
         @BeforeClass
         public static void setUpClass() {
-                // Elastic Search server instance supposed to be running and listening to local port tcp 9200.
-
+                // Elastic Search server instance supposed to be running, populated and listening to local port tcp 9200.
         }
 
         @AfterClass

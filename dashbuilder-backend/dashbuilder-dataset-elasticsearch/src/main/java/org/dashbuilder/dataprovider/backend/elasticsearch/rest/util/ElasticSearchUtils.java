@@ -24,15 +24,15 @@ import java.util.*;
  * @since 0.3.0
  */
 @ApplicationScoped
-public class ElasticSearchDateUtils {
+public class ElasticSearchUtils {
 
     @Inject
     protected ElasticSearchValueTypeMapper valueTypeMapper;
 
-    public ElasticSearchDateUtils() {
+    public ElasticSearchUtils() {
     }
 
-    public ElasticSearchDateUtils(ElasticSearchValueTypeMapper valueTypeMapper) {
+    public ElasticSearchUtils(ElasticSearchValueTypeMapper valueTypeMapper) {
         this.valueTypeMapper = valueTypeMapper;
     }
 
@@ -89,6 +89,29 @@ public class ElasticSearchDateUtils {
         }
 
         return null;
+    }
+
+    /**
+     * ELS wildcard query characters replacement for Dashbuilder the LIKE core function ones:
+     * -------------------------------------------------------
+     * | ELS | Dashbuilder | Description                     |
+     * | ?   |     _       | Matches any character           |
+     * | *   |     %       | Matches zero or more characters |
+     * -------------------------------------------------------
+     *
+     */
+    public String transformPattern(String pattern) {
+        if (pattern == null) {
+            return null;
+        }
+        
+        if (pattern.trim().length() > 0) {
+            // Replace Dashbuilder wildcard characters by the ones used in ELS wildcard query.
+            pattern = pattern.replace("%", "*");
+            pattern = pattern.replace("_", "?");
+        }
+        
+        return pattern;
     }
     
 }

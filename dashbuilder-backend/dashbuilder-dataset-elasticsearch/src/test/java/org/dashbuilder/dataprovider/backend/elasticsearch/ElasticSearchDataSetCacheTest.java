@@ -65,7 +65,8 @@ public class ElasticSearchDataSetCacheTest extends ElasticSearchDataSetTestBase 
                         .buildLookup());
 
         // Insert some extra rows into the database
-        populateELServer(EL_EXAMPLE_MORE_DATA);
+        ElasticSearchUrlBuilder urlBuilder = new ElasticSearchUrlBuilder(EL_SERVER, EL_EXAMPLE_INDEX);
+        populateELServer(urlBuilder, EL_EXAMPLE_MORE_DATA);
 
         // Check if the the data set is outdated
         assertThat(elasticSearchDataSetProvider.isDataSetOutdated(def)).isEqualTo(outdated);

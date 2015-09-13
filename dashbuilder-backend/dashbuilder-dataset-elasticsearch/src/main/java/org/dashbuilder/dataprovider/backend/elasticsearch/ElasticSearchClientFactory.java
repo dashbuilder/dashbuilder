@@ -17,8 +17,8 @@ package org.dashbuilder.dataprovider.backend.elasticsearch;
 
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.ElasticSearchClient;
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.impl.jest.ElasticSearchJestClient;
-import org.dashbuilder.dataprovider.backend.elasticsearch.rest.util.ElasticSearchDateUtils;
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.util.ElasticSearchJSONParser;
+import org.dashbuilder.dataprovider.backend.elasticsearch.rest.util.ElasticSearchUtils;
 import org.dashbuilder.dataset.def.ElasticSearchDataSetDef;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -35,7 +35,7 @@ public class ElasticSearchClientFactory {
     protected ElasticSearchJSONParser jsonParser;
 
     @Inject
-    protected ElasticSearchDateUtils dateUtils;
+    protected ElasticSearchUtils utils;
     
     /*@Inject
     @Named("elasticSearchJestClient")
@@ -52,7 +52,7 @@ public class ElasticSearchClientFactory {
     }
     
     private ElasticSearchClient newJestClient() {
-        return new ElasticSearchJestClient(this, valueTypeMapper, dateUtils);
+        return new ElasticSearchJestClient(this, valueTypeMapper, utils);
     }
 
     /*private ElasticSearchClient newNativeClient() {

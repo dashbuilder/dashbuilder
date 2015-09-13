@@ -19,7 +19,6 @@ import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetFactory;
 import org.dashbuilder.dataset.DataSetLookup;
-import org.dashbuilder.dataset.backend.date.DateUtils;
 import org.dashbuilder.dataset.group.DateIntervalPattern;
 import org.dashbuilder.dataset.sort.SortOrder;
 import org.junit.Assert;
@@ -45,15 +44,21 @@ import static org.fest.assertions.api.Assertions.assertThat;
 public class ElasticSearchDataSetTest extends ElasticSearchDataSetTestBase {
 
     protected static final String EL_EXAMPLE_DATASET_DEF = "org/dashbuilder/dataprovider/backend/elasticsearch/expensereports.dset";
+    protected static final String EL_EXAMPLE_CSENSITIVE_DATASET_DEF = "org/dashbuilder/dataprovider/backend/elasticsearch/expensereports-csensitive.dset";
     protected static final String EL_DATASET_UUID = "expense_reports";
+    protected static final String EL_DATASET_CSENSITIVE_UUID = "expense_reports_csensitive";
     
     /**
      * Register the dataset used for this test case. 
      */
     @Before
     public void registerDataSet() throws Exception {
-        // Register the data set.
+        
+        // Register the data set definition for expense reports index.
         _registerDataSet(EL_EXAMPLE_DATASET_DEF);
+
+        // Register the data set definition for expense reports case sensitive index.
+        _registerDataSet(EL_EXAMPLE_CSENSITIVE_DATASET_DEF);
     }
 
     /**
@@ -450,7 +455,7 @@ public class ElasticSearchDataSetTest extends ElasticSearchDataSetTestBase {
      */
     
     @Test
-    public void testFilterByStringNotAnalyzed() throws Exception {
+    public void testFilterEqualsByStringNotAnalyzed() throws Exception {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                         .dataset(EL_DATASET_UUID)
@@ -464,7 +469,7 @@ public class ElasticSearchDataSetTest extends ElasticSearchDataSetTestBase {
     }
 
     @Test
-    public void testFilterByStringAnalyzed() throws Exception {
+    public void testFilterEqualsByStringAnalyzed() throws Exception {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                         .dataset(EL_DATASET_UUID)
@@ -475,6 +480,125 @@ public class ElasticSearchDataSetTest extends ElasticSearchDataSetTestBase {
         assertThat(result.getRowCount()).isEqualTo(4);
         assertDataSetValue(result, 0, 0, "9.00");
         assertDataSetValue(result, 3, 0, "12.00");
+    }
+
+    @Test
+    public void testFilterLikeToByStringAnalyzedAndCaseSensitive() throws Exception {
+
+        // Default analyzer for field (it applies lower-cased terms, so it's not case sensitive). As the pattern given in this lookup is not lower cased, result will be empty.
+        DataSet result = dataSetManager.lookupDataSet(
+                DataSetFactory.newDataSetLookupBuilder()
+                        .dataset(EL_DATASET_UUID)
+                        .filter(EL_EXAMPLE_COLUMN_EMPLOYEE, likeTo(EL_EXAMPLE_COLUMN_EMPLOYEE, "Jul%", true))
+                        .sort(EL_EXAMPLE_COLUMN_ID, SortOrder.ASCENDING)
+                        .buildLookup());
+
+        assertThat(result.getRowCount()).isEqualTo(0);
+
+        // Default analyzer for field (lowecased analyzer). The lower-cased pattern value works.
+        result = dataSetManager.lookupDataSet(
+                DataSetFactory.newDataSetLookupBuilder()
+                        .dataset(EL_DATASET_UUID)
+                        .filter(EL_EXAMPLE_COLUMN_EMPLOYEE, likeTo(EL_EXAMPLE_COLUMN_EMPLOYEE, "jul%", true))
+                        .sort(EL_EXAMPLE_COLUMN_ID, SortOrder.ASCENDING)
+                        .buildLookup());
+        
+        assertThat(result.getRowCount()).isEqualTo(4);
+
+
+        // Custom analyzer for field (the example field it's case sensitive as it's analyzed using the custom tokenizer analyzer).
+        result = dataSetManager.lookupDataSet(
+                DataSetFactory.newDataSetLookupBuilder()
+                        .dataset(EL_DATASET_CSENSITIVE_UUID)
+                        .filter(EL_EXAMPLE_COLUMN_EMPLOYEE, likeTo(EL_EXAMPLE_COLUMN_EMPLOYEE, "Jul%", true))
+                        .sort(EL_EXAMPLE_COLUMN_ID, SortOrder.ASCENDING)
+                        .buildLookup());
+
+        assertThat(result.getRowCount()).isEqualTo(4);
+
+        // Custom analyzer for field (the example field it's case sensitive as it's analyzed using the custom tokenizer analyzer).
+        result = dataSetManager.lookupDataSet(
+                DataSetFactory.newDataSetLookupBuilder()
+                        .dataset(EL_DATASET_CSENSITIVE_UUID)
+                        .filter(EL_EXAMPLE_COLUMN_EMPLOYEE, likeTo(EL_EXAMPLE_COLUMN_EMPLOYEE, "jul%", true))
+                        .sort(EL_EXAMPLE_COLUMN_ID, SortOrder.ASCENDING)
+                        .buildLookup());
+
+        assertThat(result.getRowCount()).isEqualTo(0);
+    }
+
+    @Test
+    public void testFilterLikeToByStringAnalyzedAndCaseUnSensitive() throws Exception {
+        
+        // Default analyzer for field (it applies lower-cased terms, so it's not case sensitive).
+        DataSet result = dataSetManager.lookupDataSet(
+                DataSetFactory.newDataSetLookupBuilder()
+                        .dataset(EL_DATASET_UUID)
+                        .filter(EL_EXAMPLE_COLUMN_EMPLOYEE, likeTo(EL_EXAMPLE_COLUMN_EMPLOYEE, "Jul%", false))
+                        .sort(EL_EXAMPLE_COLUMN_ID, SortOrder.ASCENDING)
+                        .buildLookup());
+
+        assertThat(result.getRowCount()).isEqualTo(4);
+
+        // Default analyzer for field (lowecased analyzer). It returns same results as previous lookup as the field is analyzed by the default ELS analyzer.
+        result = dataSetManager.lookupDataSet(
+                DataSetFactory.newDataSetLookupBuilder()
+                        .dataset(EL_DATASET_UUID)
+                        .filter(EL_EXAMPLE_COLUMN_EMPLOYEE, likeTo(EL_EXAMPLE_COLUMN_EMPLOYEE, "jul%", false))
+                        .sort(EL_EXAMPLE_COLUMN_ID, SortOrder.ASCENDING)
+                        .buildLookup());
+
+        assertThat(result.getRowCount()).isEqualTo(4);
+
+
+        // Custom analyzer for field is always for case sensitive filters, so this case will return empty results. 
+        result = dataSetManager.lookupDataSet(
+                DataSetFactory.newDataSetLookupBuilder()
+                        .dataset(EL_DATASET_CSENSITIVE_UUID)
+                        .filter(EL_EXAMPLE_COLUMN_EMPLOYEE, likeTo(EL_EXAMPLE_COLUMN_EMPLOYEE, "Jul%", false))
+                        .sort(EL_EXAMPLE_COLUMN_ID, SortOrder.ASCENDING)
+                        .buildLookup());
+
+        assertThat(result.getRowCount()).isEqualTo(0);
+
+        // Custom analyzer for field is always for case sensitive filters, so this case will return empty results.
+        result = dataSetManager.lookupDataSet(
+                DataSetFactory.newDataSetLookupBuilder()
+                        .dataset(EL_DATASET_CSENSITIVE_UUID)
+                        .filter(EL_EXAMPLE_COLUMN_EMPLOYEE, likeTo(EL_EXAMPLE_COLUMN_EMPLOYEE, "jul%", false))
+                        .sort(EL_EXAMPLE_COLUMN_ID, SortOrder.ASCENDING)
+                        .buildLookup());
+
+        assertThat(result.getRowCount()).isEqualTo(0);
+        
+    }
+
+    @Test
+    public void testFilterLikeToByStringNotAnalyzedAndCaseSensitive() throws Exception {
+
+        // Case sensitive
+        DataSet result = dataSetManager.lookupDataSet(
+                DataSetFactory.newDataSetLookupBuilder()
+                        .dataset(EL_DATASET_UUID)
+                        .filter(EL_EXAMPLE_COLUMN_DEPT, likeTo(EL_EXAMPLE_COLUMN_DEPT, "Sal%", true))
+                        .sort(EL_EXAMPLE_COLUMN_ID, SortOrder.ASCENDING)
+                        .buildLookup());
+
+        assertThat(result.getRowCount()).isEqualTo(8);
+    }
+
+    // Cannot apply filtering with not analyzed columns using case un-sensitive.
+    @Test(expected = RuntimeException.class)
+    public void testFilterLikeToByStringNotAnalyzedAndCaseUnSensitive() throws Exception {
+        // Case un-sensitive
+        DataSet result = dataSetManager.lookupDataSet(
+                DataSetFactory.newDataSetLookupBuilder()
+                        .dataset(EL_DATASET_UUID)
+                        .filter(EL_EXAMPLE_COLUMN_DEPT, likeTo(EL_EXAMPLE_COLUMN_DEPT, "Sal%", false))
+                        .sort(EL_EXAMPLE_COLUMN_ID, SortOrder.ASCENDING)
+                        .buildLookup());
+        
+        printDataSet(result);
     }
     
     @Test

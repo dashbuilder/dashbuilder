@@ -1,0 +1,22 @@
+{
+    "uuid": "expense_reports_csensitive",
+    "provider": "ELASTICSEARCH",
+    "pushEnabled": true,
+    "pushMaxSize": 1024,
+    "isPublic": true,
+    "serverURL": "http://localhost:9200",
+    "clusterName": "elasticsearch",
+    "index": "expensereports-sensitive",
+    "type": "expense",
+    "cacheEnabled": false,
+    "cacheMaxRows": 1000,
+    "allColumns": false,
+    "columns": [
+                {"id": "id", "type": "number"},
+                {"id": "amount", "type": "number"},
+                {"id": "department", "type": "label"},
+                {"id": "employee", "type": "text"},
+                {"id": "date", "type": "date"},
+                {"id": "city", "type": "label"}
+            ]
+}
