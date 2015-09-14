@@ -372,7 +372,7 @@ public class ElasticSearchQueryBuilderImpl implements ElasticSearchQueryBuilder<
         Query result = null;
 
         CoreFunctionType type = filter.getType();
-        List<Comparable> params = filter.getParameters();
+        List params = filter.getParameters();
 
         if (CoreFunctionType.IS_NULL.equals(type)) {
             
