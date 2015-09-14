@@ -41,7 +41,7 @@ public class CoreFunction extends DataSetFunction {
         if (index >= coreFunctionFilter.getParameters().size()) {
             return null;
         }
-        return coreFunctionFilter.getParameters().get(index);
+        return (Comparable) coreFunctionFilter.getParameters().get(index);
     }
 
     public List<Comparable> getParameters() {
