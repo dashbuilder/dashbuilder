@@ -1,0 +1,2 @@
+org.dashbuilder.client.editor.DisplayerDragComponent
+org.dashbuilder.client.editor.resources.i18n.Constants

@@ -1,0 +1,13 @@
+org.dashbuilder.dataset.backend.date.DateUtils
+org.dashbuilder.dataset.backend.BackendIntervalBuilderLocator
+org.dashbuilder.dataset.backend.BackendDataSetManager
+org.dashbuilder.dataset.backend.DataSetDefJSONMarshaller
+org.dashbuilder.dataset.backend.BackendChronometer
+org.dashbuilder.dataprovider.backend.BeanDataSetProvider
+org.dashbuilder.dataset.backend.BackendDataSetValueFormatter
+org.dashbuilder.dataprovider.backend.StaticDataSetProvider
+org.dashbuilder.dataset.backend.DataSetLookupJSONMarshaller
+org.dashbuilder.dataset.backend.BackendIntervalBuilderDynamicDate
+org.dashbuilder.dataset.backend.DataSetDefRegistryImpl
+org.dashbuilder.dataprovider.backend.DataSetProviderRegistryImpl
+org.dashbuilder.dataset.backend.BackendUUIDGenerator

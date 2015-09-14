@@ -1,0 +1,3 @@
+org.dashbuilder.validations.factory.DashbuilderValidationFactory
+org.dashbuilder.validations.messages.DashbuilderValidationMessagesResolver
+org.dashbuilder.validations.ValidatorFactory

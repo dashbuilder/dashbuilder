@@ -1,0 +1,3 @@
+org.dashbuilder.dataprovider.backend.sql.SQLDataSetProvider
+org.dashbuilder.dataprovider.backend.sql.SQLDataSourceLocatorImpl
+org.dashbuilder.dataprovider.backend.sql.SQLDataSourceLocator

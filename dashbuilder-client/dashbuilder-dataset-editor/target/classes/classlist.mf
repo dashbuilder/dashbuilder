@@ -1,0 +1,14 @@
+org.dashbuilder.dataset.editor.client.perspectives.DataSetAuthoringPerspectiveActivity
+org.dashbuilder.dataset.editor.client.perspectives.DataSetAuthoringPerspective
+org.dashbuilder.dataset.editor.client.screens.DataSetDefExplorerScreenActivity
+org.dashbuilder.dataset.editor.client.screens.DataSetAuthoringHomeView
+org.dashbuilder.dataset.editor.client.screens.DataSetAuthoringHomePresenter
+org.dashbuilder.dataset.editor.client.screens.DataSetDefExplorerScreen
+org.dashbuilder.dataset.editor.client.resources.i18n.DataSetAuthoringConstants
+org.dashbuilder.dataset.editor.client.screens.DataSetDefType
+org.dashbuilder.dataset.editor.client.screens.DataSetDefEditorView
+org.dashbuilder.dataset.editor.client.screens.DataSetAuthoringHomePresenterActivity
+org.dashbuilder.dataset.editor.client.screens.DataSetDefWizardScreenActivity
+org.dashbuilder.dataset.editor.client.screens.DataSetDefEditorPresenter
+org.dashbuilder.dataset.editor.client.screens.DataSetDefWizardScreen
+org.dashbuilder.dataset.editor.client.screens.DataSetDefEditorPresenterActivity

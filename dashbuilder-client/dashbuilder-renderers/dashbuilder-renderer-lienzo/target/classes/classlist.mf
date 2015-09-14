@@ -1,0 +1,7 @@
+org.dashbuilder.renderer.lienzo.client.LienzoDisplayer
+org.dashbuilder.renderer.lienzo.client.LienzoPieChartDisplayer
+org.dashbuilder.renderer.lienzo.client.LienzoXYChartDisplayer
+org.dashbuilder.renderer.lienzo.client.LienzoLineChartDisplayer
+org.dashbuilder.renderer.lienzo.client.resources.i18n.LienzoDisplayerConstants
+org.dashbuilder.renderer.lienzo.client.LienzoBarChartDisplayer
+org.dashbuilder.renderer.lienzo.client.LienzoRenderer

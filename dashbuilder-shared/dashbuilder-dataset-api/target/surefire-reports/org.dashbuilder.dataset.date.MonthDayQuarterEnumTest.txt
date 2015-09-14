@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: org.dashbuilder.dataset.date.MonthDayQuarterEnumTest
+-------------------------------------------------------------------------------
+Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.072 sec - in org.dashbuilder.dataset.date.MonthDayQuarterEnumTest

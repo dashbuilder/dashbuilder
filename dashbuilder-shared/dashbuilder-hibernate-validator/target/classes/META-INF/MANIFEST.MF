@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Archiver-Version: Plexus Archiver
+Created-By: Apache Maven
+Built-By: kiereleaseuser
+Build-Jdk: 1.7.0_25
+Implementation-Title: dashbuilder-hibernate-validator
+Implementation-Vendor: org.dashbuilder
+Implementation-Vendor-Id: org.dashbuilder
+Implementation-Version: 0.3.0-SNAPSHOT
+Specification-Title: Bean Validation

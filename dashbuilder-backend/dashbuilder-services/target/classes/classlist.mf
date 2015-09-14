@@ -1,0 +1,9 @@
+org.dashbuilder.dataset.backend.DataSetExportServicesImpl
+org.dashbuilder.dataset.backend.DataSetDefServicesImpl
+org.dashbuilder.dataset.backend.exception.GenericPortableException
+org.dashbuilder.dataset.backend.DataSetLookupServicesImpl
+org.dashbuilder.dataset.backend.DataSetDefDeployer
+org.dashbuilder.Bootstrap
+org.dashbuilder.dataset.backend.DataSetDefGitStorage
+org.dashbuilder.dataset.backend.exception.ExceptionManager
+org.dashbuilder.dataset.backend.DataSetDefVfsServicesImpl

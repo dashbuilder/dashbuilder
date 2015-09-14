@@ -1,0 +1,3 @@
+org.dashbuilder.dataprovider.backend.csv.CSVFileStorage
+org.dashbuilder.dataprovider.backend.csv.CSVDataSetProvider
+org.dashbuilder.dataprovider.backend.csv.CSVParser
