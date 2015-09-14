@@ -19,91 +19,29 @@
         <directory>src/main/resources</directory>
       </resource>
     </resources>
+
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration combine.self="override">
+          <!-- NOTE: Java 1.7.0_40 suffers from critical bug that produces the Elastic Search server fail on startup.
+                     Using this JVM argument you can skip the error and force running the ELS instance. -->
+          <argLine>-XX:-UseSuperWord</argLine>
+
+          <!-- Run the integration Test Suite. Skip the local for development.-->
+          <includes>
+            <include>**/*TestSuite.java</include>
+          </includes>
+          <excludes>
+            <exclude>**/LocalTestSuite.java</exclude>
+          </excludes>
+        </configuration>
+      </plugin>
+    </plugins>
     
   </build>
 
-  <profiles>
-
-    <!-- By default, do not run elastic search using Java < 7.X. -->
-    <profile>
-      <id>default-no-tests-unitl-java7</id>
-      <properties>
-        <maven.test.skip>true</maven.test.skip>
-      </properties>
-      <activation>
-        <activeByDefault>true</activeByDefault>
-      </activation>
-    </profile>
-    
-    <!-- Run the tests using a local ELS instance running in same thread.
-        @See org.dashbuilder.dataprovider.backend.elasticsearch.suite.ElasticSearchTestSuite
-    -->
-    <profile>
-      <id>fullProfile</id>
-      <activation>
-        <property>
-          <name>full</name>
-        </property>
-      </activation>
-     <build>
-       <plugins>
-         <plugin>
-           <groupId>org.apache.maven.plugins</groupId>
-           <artifactId>maven-surefire-plugin</artifactId>
-           <configuration combine.self="override">
-             <!-- NOTE: Java 1.7.0_40 suffers from critical bug that produces the Elastic Search server fail on startup.
-                        Using this JVM argument you can skip the error and force running the ELS instance. -->
-             <argLine>-XX:-UseSuperWord</argLine>
-
-             <!-- Run the integration Test Suite. Skip the local for development.-->
-             <includes>
-               <include>**/*TestSuite.java</include>
-             </includes>
-             <excludes>
-               <exclude>**/LocalTestSuite.java</exclude>
-             </excludes>
-           </configuration>
-         </plugin>
-       </plugins>
-     </build>
-    </profile>
-    
-    
-    <!-- Test - Development profile. ELS instance running and populated with default data on localhost at port tcp 9200.
-        @See org.dashbuilder.dataprovider.backend.elasticsearch.suite.LocalTestSuite
-        mvn clean test -Ddev
-    -->
-    <profile>
-      <id>test-development</id>
-      <activation>
-        <activeByDefault>false</activeByDefault>
-        <property>
-          <name>dev</name>
-        </property>
-      </activation>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-surefire-plugin</artifactId>
-            <configuration combine.self="override">
-              <!-- NOTE: Java 1.7.0_40 suffers from critical bug that produces the Elastic Search server fail on startup.
-                         Using this JVM argument you can skip the error and force running the ELS instance. -->
-              <argLine>-XX:-UseSuperWord</argLine>
-
-              <!-- Run the integration Test Suite. Skip the local for development.-->
-              <includes>
-                <include>**/LocalTestSuite.java</include>
-              </includes>
-            </configuration>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-    
-  </profiles>
-
-  
   <dependencies>
 
     <dependency>
@@ -158,15 +96,14 @@
       <artifactId>joda-time</artifactId>
     </dependency>
 
+    <!-- Testing scope -->
+    
     <dependency>
       <groupId>org.elasticsearch</groupId>
       <artifactId>elasticsearch</artifactId>
-      <!-- BY default, the client used for ELS provider is the GSON one, instead of the native one.
-          If you want to use the native client, Inherit it in your project. -->
-      <optional>true</optional>
+      <scope>test</scope>
     </dependency>
-
-    <!-- Testing scope -->
+    
     <dependency>
       <groupId>org.apache.lucene</groupId>
       <artifactId>lucene-core</artifactId>
@@ -213,5 +150,41 @@
     </dependency>
     
   </dependencies>
+
+  <profiles>
+
+    <!-- Test - Development profile. ELS instance running and populated with default data on localhost at port tcp 9200.
+        @See org.dashbuilder.dataprovider.backend.elasticsearch.suite.LocalTestSuite
+        mvn clean test -Ddev
+    -->
+    <profile>
+      <id>test-development</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+        <property>
+          <name>dev</name>
+        </property>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration combine.self="override">
+              <!-- NOTE: Java 1.7.0_40 suffers from critical bug that produces the Elastic Search server fail on startup.
+                         Using this JVM argument you can skip the error and force running the ELS instance. -->
+              <argLine>-XX:-UseSuperWord</argLine>
+
+              <!-- Run the integration Test Suite. Skip the local for development.-->
+              <includes>
+                <include>**/LocalTestSuite.java</include>
+              </includes>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+  </profiles>
   
 </project>
