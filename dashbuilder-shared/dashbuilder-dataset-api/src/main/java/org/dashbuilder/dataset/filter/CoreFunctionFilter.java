@@ -27,12 +27,12 @@ import org.jboss.errai.common.client.api.annotations.Portable;
 public class CoreFunctionFilter extends ColumnFilter {
 
     protected CoreFunctionType type = null;
-    protected List<Comparable> parameters = new ArrayList();
+    protected List parameters = new ArrayList();
 
     public CoreFunctionFilter() {
     }
 
-    public CoreFunctionFilter(String columnId, CoreFunctionType type, List<Comparable> parameters) {
+    public CoreFunctionFilter(String columnId, CoreFunctionType type, List parameters) {
         super(columnId);
         this.type = type;
         this.setParameters(parameters);
@@ -52,7 +52,7 @@ public class CoreFunctionFilter extends ColumnFilter {
         this.type = type;
     }
 
-    public List<Comparable> getParameters() {
+    public List getParameters() {
         return parameters;
     }
 
@@ -63,7 +63,7 @@ public class CoreFunctionFilter extends ColumnFilter {
         }
     }
 
-    public void setParameters(List<Comparable> parameters) {
+    public void setParameters(List parameters) {
         this.parameters = parameters;
     }
 
