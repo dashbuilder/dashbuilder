@@ -100,7 +100,8 @@
       height: 500px;
     }
     .previewTable {
-      overflow: hidden;
+      height: 100%;
+      overflow: auto;
     }
     .tabInnerPanel {
       width: 95%;
