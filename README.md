@@ -37,6 +37,12 @@ Architecture
 Change log
 ==========
 
+0.3.1
+
+* DASHBUILDE-28: Data Set preview table should be wrapped in scroll panel.
+* DASHBUILDE-37: Data set lookup pre-processors
+* DASHBUILDE-38: Marshalling errors in DevMode with Strings filtering.
+
 0.3.0
 
 * New provider for the definition of data sets stored into SQL databases.
