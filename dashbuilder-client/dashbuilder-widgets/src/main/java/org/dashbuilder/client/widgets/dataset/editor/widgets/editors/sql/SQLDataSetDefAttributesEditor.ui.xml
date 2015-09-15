@@ -11,6 +11,10 @@
     .mainPanel {
     }
 
+    .row {
+      margin-top: 10px;
+    }
+
     .radioButton {
       float: left;
       margin-right: 10px;
@@ -26,11 +30,11 @@
 
     <!-- Data source. -->
     <b:Row>
-      <b:Column size="MD_2">
+      <b:Column size="MD_3">
         <g:HTML text="{i18n.sql_datasource}"/>
       </b:Column>
-      <b:Column size="MD_3">
-        <b:Popover showDelayMs="1000" content="{i18n.sql_datasource_description}" title="{i18n.sql_datasource}" placement="BOTTOM">
+      <b:Column size="MD_9">
+        <b:Popover container="body" showDelayMs="1000" content="{i18n.sql_datasource_description}" title="{i18n.sql_datasource}" placement="RIGHT">
           <dash-client:ValueBoxEditorDecorator errorLabelPosition="TOOLTIP_BOTTOM" ui:field="dataSource">
             <dash-client:valuebox>
               <b:TextBox placeholder="{i18n.sql_datasource_placeHolder}"/>
@@ -42,12 +46,12 @@
 
 
     <!-- DB Schema. -->
-    <b:Row>
-      <b:Column size="MD_2">
+    <b:Row addStyleNames="{style.row}">
+      <b:Column size="MD_3">
         <g:HTML text="{i18n.sql_schema}"/>
       </b:Column>
-      <b:Column size="MD_3">
-        <b:Popover showDelayMs="1000" content="{i18n.sql_schema_description}" title="{i18n.sql_schema}">
+      <b:Column size="MD_9">
+        <b:Popover container="body" showDelayMs="1000" content="{i18n.sql_schema_description}" title="{i18n.sql_schema}" placement="RIGHT">
           <dash-client:ValueBoxEditorDecorator errorLabelPosition="TOOLTIP_TOP" ui:field="dbSchema">
             <dash-client:valuebox>
               <b:TextBox placeholder="{i18n.sql_schema_placeHolder}"/>
@@ -59,11 +63,11 @@
 
 
     <!-- Source. -->
-    <b:Row>
-      <b:Column size="MD_2">
+    <b:Row addStyleNames="{style.row}">
+      <b:Column size="MD_3">
         <g:HTML text="{i18n.sql_source}"/>
       </b:Column>
-      <b:Column size="MD_3">
+      <b:Column size="MD_9">
         <g:FlowPanel>
           <b:RadioButton ui:field='tableButton' name="sourceType" text="{i18n.sql_table}" addStyleNames="{style.radioButton} "/>
           <b:RadioButton ui:field='queryButton' name="sourceType" text="{i18n.sql_query}" addStyleNames="{style.radioButton} "/>
@@ -74,13 +78,10 @@
 
     <!-- Table / Query. -->
     <b:Row>
-      <b:Column size="MD_2">
-
-      </b:Column>
-      <b:Column size="MD_3">
+      <b:Column size="MD_9" offset="MD_3">
 
         <g:FlowPanel>
-          <b:Popover showDelayMs="1000" content="{i18n.sql_table_description}" title="{i18n.sql_table}">
+          <b:Popover container="body" showDelayMs="1000" content="{i18n.sql_table_description}" title="{i18n.sql_table}" placement="RIGHT">
             <dash-client:ValueBoxEditorDecorator errorLabelPosition="TOOLTIP_TOP" ui:field="dbTable">
               <dash-client:valuebox>
                 <b:TextBox placeholder="{i18n.sql_table_placeHolder}"/>
@@ -88,7 +89,7 @@
             </dash-client:ValueBoxEditorDecorator>
           </b:Popover>
 
-          <b:Popover showDelayMs="1000" content="{i18n.sql_query_description}" title="{i18n.sql_query}">
+          <b:Popover container="body" showDelayMs="1000" content="{i18n.sql_query_description}" title="{i18n.sql_query}" placement="RIGHT">
             <dash-client:ValueBoxEditorDecorator errorLabelPosition="TOOLTIP_TOP" ui:field="dbQuery">
               <dash-client:valuebox>
                 <b:TextArea placeholder="{i18n.sql_query_placeHolder}" addStyleNames="{style.queryTextArea}"/>

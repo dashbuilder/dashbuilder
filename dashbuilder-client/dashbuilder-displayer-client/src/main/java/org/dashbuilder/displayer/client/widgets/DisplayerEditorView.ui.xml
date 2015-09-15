@@ -24,29 +24,25 @@
   <ui:with field="i18n" type="org.dashbuilder.displayer.client.resources.i18n.CommonConstants"/>
 
   <ui:style>
-    .leftPanel {
-      font-size: 12pt;
-      float: left;
-      margin-right: 25px;
-      width: 250px;
-      max-width: 250px;
-      max-height: 390px;
-      overflow-y: hidden;
+    .mainContainer {
       margin-top: 15px;
-    }
-    .centerPanel {
       font-size: 12pt;
-      float: left;
-      margin-right: 25px;
-      width: 630px;
+    }
+    .leftColumn {
+      overflow-x: hidden;
+      overflow-y: auto;
+      height: 370px;
+    }
+    .centerColumn {
       height: 390px;
-      max-width: 620px;
-      max-height: 390px;
+      padding: 10px;
+      font-size: 12pt;
       overflow: auto;
     }
-    .dataTablePanel {
+    .viewAsTableButtonRow {
       font-size: 12pt;
-      float: left;
+    }
+    .viewAsTableButton {
       margin: 10px;
     }
   </ui:style>
@@ -57,14 +53,24 @@
       <b:TabListItem ui:field="optionData" text="{i18n.displayer_editor_tab_data}" />
       <b:TabListItem ui:field="optionSettings" text="{i18n.displayer_editor_tab_display}" />
     </b:NavTabs>
-    <g:HorizontalPanel>
-      <g:VerticalPanel>
-        <g:HorizontalPanel ui:field="dataTablePanel" styleName="{style.dataTablePanel}" visible="false">
-          <b:CheckBox text="{i18n.displayer_editor_view_as_table}" ui:field="viewAsTable" />
-        </g:HorizontalPanel>
-        <g:SimplePanel ui:field="leftPanel" styleName="{style.leftPanel}" />
-      </g:VerticalPanel>
-      <g:FlowPanel ui:field="centerPanel" styleName="{style.centerPanel}" />
-    </g:HorizontalPanel>
+    
+    <b:Container fluid="true" addStyleNames="{style.mainContainer}">
+      <b:Row>
+        <b:Column size="MD_3" ui:field="westColumn">
+          <b:Row ui:field="viewAsTableButtonRow" visible="false" addStyleNames="{style.viewAsTableButtonRow}">
+            <b:Column size="MD_12">
+              <!-- View as table button -->
+              <b:CheckBox text="{i18n.displayer_editor_view_as_table}" ui:field="viewAsTableButton" addStyleNames="{style.viewAsTableButton}"/>
+            </b:Column>
+          </b:Row>
+          <b:Row>
+            <b:Column size="MD_12" ui:field="leftColumn" addStyleNames="{style.leftColumn}"/>
+          </b:Row>
+        </b:Column>
+        <b:Column size="MD_9" ui:field="centerColumn" addStyleNames="{style.centerColumn}"/>
+      </b:Row>
+    </b:Container>
+   
   </g:HTMLPanel>
+  
 </ui:UiBinder>

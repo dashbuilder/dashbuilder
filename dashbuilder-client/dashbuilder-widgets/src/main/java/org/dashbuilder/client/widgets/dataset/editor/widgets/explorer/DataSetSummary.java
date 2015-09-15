@@ -25,7 +25,9 @@ import org.dashbuilder.dataprovider.DataSetProviderType;
 import org.dashbuilder.dataset.DataSetMetadata;
 import org.dashbuilder.dataset.client.DataSetClientServices;
 import org.dashbuilder.dataset.client.DataSetMetadataCallback;
+import org.dashbuilder.dataset.client.resources.bundles.DataSetClientResources;
 import org.dashbuilder.dataset.def.DataSetDef;
+import org.gwtbootstrap3.client.ui.constants.IconType;
 import org.uberfire.client.mvp.UberView;
 
 import javax.enterprise.context.Dependent;
@@ -46,6 +48,8 @@ import javax.inject.Inject;
 public class DataSetSummary implements IsWidget {
 
     private final static String ESTIMATIONS_FORMAT = "#,###.0";
+    private final static String ICON_COLOR_DEFAULT = "black";
+    private final static String ICON_COLOR_ERROR = "red";
     
     public interface View extends UberView<DataSetSummary> {
 
@@ -60,11 +64,10 @@ public class DataSetSummary implements IsWidget {
                              final Boolean refreshStatus);
 
         /**
-         * <p>Displays a loading icon in the size panel while performing the necessary backend's requests for
-         * calculating the values.</p>
+         * <p>Displays an icon icon in the size panel such as a loading or error icon.</p>
          * @return The view instance.
          */
-        View showSizeLoadingPanel();
+        View showSizePanelIcon(final IconType type, final String title, final String color, final boolean spin);
         
         /**
          * <p>Displays some data set feature's sizes in a panel.</p>
@@ -106,7 +109,9 @@ public class DataSetSummary implements IsWidget {
             
             
             // Show loading icon on size panel while performing the backend request.
-            view.showSizeLoadingPanel();
+            showLoadingIcon();
+
+            DataSetClientResources.INSTANCE.images().loadingIcon().getSafeUri();
             
             getMetadata(def, new DataSetMetadataCallback() {
                 @Override
@@ -119,15 +124,15 @@ public class DataSetSummary implements IsWidget {
 
                 @Override
                 public void notFound() {
-                    view.showSizePanel("", "");
+                    showErrorIcon();
                     showError(def.getUUID(), DataSetExplorerConstants.INSTANCE.notFound());
                     
                 }
 
                 @Override
                 public boolean onError(final ClientRuntimeError error) {
-                    view.showSizePanel("", "");
-                    showError(def.getUUID(), error.getThrowable());
+                    showErrorIcon();
+                    showError(def.getUUID(), error);
                     return false;
                 }
             });
@@ -158,7 +163,19 @@ public class DataSetSummary implements IsWidget {
             showError(def.getUUID(), e);
         }
     }
+    
+    private void showLoadingIcon() {
+        view.showSizePanelIcon(IconType.REFRESH, DataSetExplorerConstants.INSTANCE.loading(), ICON_COLOR_DEFAULT, true);
+    }
 
+    private void showErrorIcon() {
+        view.showSizePanelIcon(IconType.EXCLAMATION_TRIANGLE, DataSetExplorerConstants.INSTANCE.error(), ICON_COLOR_ERROR, false);
+    }
+
+    private void showError(final String uuid, final ClientRuntimeError error) {
+        dataSetExploredErrorEvent.fire(new DataSetExploredErrorEvent(error, uuid));
+    }
+    
     private void showError(final String uuid, final Throwable throwable) {
         final String msg = throwable != null ? throwable.getMessage() : "no message";
         dataSetExploredErrorEvent.fire(new DataSetExploredErrorEvent(uuid, msg, null));

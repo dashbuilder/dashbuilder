@@ -22,10 +22,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTML;
 import org.dashbuilder.client.widgets.resources.i18n.DataSetExplorerConstants;
-import org.dashbuilder.dataset.client.resources.bundles.DataSetClientImages;
-import org.dashbuilder.dataset.client.resources.bundles.DataSetClientResources;
 import org.gwtbootstrap3.client.ui.Icon;
-import org.gwtbootstrap3.client.ui.Image;
 import org.gwtbootstrap3.client.ui.Row;
 import org.gwtbootstrap3.client.ui.constants.IconType;
 import org.gwtbootstrap3.client.ui.html.Span;
@@ -68,10 +65,7 @@ public class DataSetSummaryView extends Composite implements DataSetSummary.View
     Icon refreshEnabledIcon;
     
     @UiField
-    Image loadingSizeImage;
-    
-    @UiField
-    Span sizePanelSpan;
+    Icon statusIcon;
     
     @UiField
     HTML estimatedSizeText;
@@ -120,10 +114,12 @@ public class DataSetSummaryView extends Composite implements DataSetSummary.View
     }
 
     @Override
-    public DataSetSummary.View showSizeLoadingPanel() {
-        loadingSizeImage.setUrl(DataSetClientResources.INSTANCE.images().loadingIcon().getSafeUri());
-        loadingSizeImage.setVisible(true);
-        sizePanelSpan.setVisible(false);
+    public DataSetSummary.View showSizePanelIcon(final IconType type, final String title, final String color, final boolean spin) {
+        statusIcon.setType(type);
+        statusIcon.setTitle(title != null ? title : "");
+        statusIcon.setColor(color != null ? color  : "black");
+        statusIcon.setSpin(spin);
+        statusIcon.setVisible(true);
         return this;
     }
 
@@ -131,8 +127,7 @@ public class DataSetSummaryView extends Composite implements DataSetSummary.View
     public DataSetSummary.View showSizePanel(final String backendSizeRow, final String clientSizeKb) {
         estimatedRowsText.setText(backendSizeRow);
         estimatedSizeText.setText(clientSizeKb);
-        loadingSizeImage.setVisible(false);
-        sizePanelSpan.setVisible(true);
+        statusIcon.setVisible(false);
         return this;
     }
 

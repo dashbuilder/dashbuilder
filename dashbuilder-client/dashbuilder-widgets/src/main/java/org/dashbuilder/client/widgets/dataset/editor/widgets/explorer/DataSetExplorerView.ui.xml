@@ -26,42 +26,6 @@
 
   <g:HTMLPanel addStyleNames="{style.mainPanel} ">
 
-    <!-- Error panel. -->
-    <b:Modal ui:field="errorPanel" title="{i18n.error}" dataBackdrop="STATIC" dataKeyboard="true" fade="true">
-
-      <g:FlowPanel addStyleNames="{style.errorPanel}">
-        <b:Row ui:field="errorTypeRow" addStyleNames="{style.errorRow}">
-          <b:Column size="MD_1">
-            <g:Label text="{i18n.type}" addStyleNames="{style.errorLabel}"/>
-          </b:Column>
-          <b:Column size="MD_3">
-            <g:HTML ui:field="errorType" text=""/>
-          </b:Column>
-        </b:Row>
-        <b:Row ui:field="errorMessageRow" addStyleNames="{style.errorRow}">
-          <b:Column size="MD_1">
-            <g:Label text="{i18n.message}" addStyleNames="{style.errorLabel}"/>
-          </b:Column>
-          <b:Column size="MD_3">
-            <g:HTML ui:field="errorMessage" text=""/>
-          </b:Column>
-        </b:Row>
-        <b:Row ui:field="errorCauseRow" addStyleNames="{style.errorRow}">
-          <b:Column size="MD_1">
-            <g:Label text="{i18n.cause}" addStyleNames="{style.errorLabel}"/>
-          </b:Column>
-          <b:Column size="MD_3">
-            <g:HTML ui:field="errorCause" text=""/>
-          </b:Column>
-        </b:Row>
-      </g:FlowPanel>
-
-      <b:ModalFooter>
-        <b:Button ui:field="errorPanelButton" icon="CHECK" type="PRIMARY" text="{i18n.ok}"/>
-      </b:ModalFooter>
-
-    </b:Modal>
-
     <g:Label visible="false" ui:field="emptyLabel" text="{i18n.noDataSets}"/>
 
     <g:FlowPanel>

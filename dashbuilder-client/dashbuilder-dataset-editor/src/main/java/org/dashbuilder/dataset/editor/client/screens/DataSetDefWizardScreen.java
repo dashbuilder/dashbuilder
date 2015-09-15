@@ -23,7 +23,6 @@ import javax.inject.Inject;
 import com.google.gwt.user.client.ui.IsWidget;
 import org.dashbuilder.client.widgets.dataset.editor.widgets.DataSetEditor;
 import org.dashbuilder.client.widgets.dataset.editor.widgets.events.SaveDataSetEvent;
-import org.dashbuilder.client.widgets.dataset.editor.widgets.events.UpdateDataSetEvent;
 import org.dashbuilder.common.client.error.ClientRuntimeError;
 import org.dashbuilder.dataset.def.DataSetDef;
 import org.dashbuilder.dataset.editor.client.resources.i18n.DataSetAuthoringConstants;
@@ -84,6 +83,7 @@ public class DataSetDefWizardScreen {
                 BusyPopup.showMessage(DataSetAuthoringConstants.INSTANCE.saving());
                 services.call(saveSuccessCallback, errorCallback)
                         .save(dataSetDef, message);
+                placeManager.goTo("DataSetAuthoringHome");
             }
         }).show();
     }
@@ -110,12 +110,4 @@ public class DataSetDefWizardScreen {
         }
     }
 
-    void onDataSetUpdate(@Observes final UpdateDataSetEvent updateDataSetEvent) {
-        if (updateDataSetEvent.getContext().equals(dataSetEditor)) {
-            // Update the def UUID to the original one before saving.
-            final DataSetDef def = updateDataSetEvent.getDef();
-            def.setUUID(updateDataSetEvent.getUuid());
-            save(def);
-        }
-    }
 }

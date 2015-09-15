@@ -25,12 +25,11 @@ import com.google.gwt.i18n.client.ConstantsWithLookup;
  */
 public interface DataSetExplorerConstants extends ConstantsWithLookup {
 
-    public static final DataSetExplorerConstants INSTANCE = GWT.create( DataSetExplorerConstants.class );
+    DataSetExplorerConstants INSTANCE = GWT.create( DataSetExplorerConstants.class );
 
     String title();
     String newDataSet();
     String noDataSets();
-    String availableDataSets();
     String cache();
     String push();
     String refresh();
@@ -44,9 +43,6 @@ public interface DataSetExplorerConstants extends ConstantsWithLookup {
     String disabled();
     String bytes();
     String rows();
-    String areYouSure();
-    String yes();
-    String no();
     String currentStatus();
     String currentSize();
     String notFound();

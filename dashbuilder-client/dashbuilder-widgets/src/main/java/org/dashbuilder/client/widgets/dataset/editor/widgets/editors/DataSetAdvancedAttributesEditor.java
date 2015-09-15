@@ -67,9 +67,6 @@ public class DataSetAdvancedAttributesEditor extends AbstractDataSetDefEditor im
     interface DataSetAdvancedAttributesEditorBinder extends UiBinder<Widget, DataSetAdvancedAttributesEditor> {}
     private static DataSetAdvancedAttributesEditorBinder uiBinder = GWT.create(DataSetAdvancedAttributesEditorBinder.class);
 
-    @UiField
-    FlowPanel advancedAttributesPanel;
-    
     /* **************** BACKEND CACHE *************** */
     
     @UiField

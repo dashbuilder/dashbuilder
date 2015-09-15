@@ -17,7 +17,9 @@ package org.dashbuilder.client.widgets.dataset.editor.widgets.explorer;
 
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
+import org.dashbuilder.client.widgets.common.ClientRuntimeErrorPopupPresenter;
 import org.dashbuilder.client.widgets.dataset.editor.widgets.events.DataSetExploredErrorEvent;
+import org.dashbuilder.common.client.error.ClientRuntimeError;
 import org.dashbuilder.dataset.client.DataSetClientServices;
 import org.dashbuilder.dataset.def.DataSetDef;
 import org.dashbuilder.dataset.events.DataSetDefModifiedEvent;
@@ -31,6 +33,7 @@ import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
+import java.util.LinkedList;
 import java.util.List;
 
 import static org.uberfire.commons.validation.PortablePreconditions.checkNotNull;
@@ -47,10 +50,11 @@ public class DataSetExplorer implements IsWidget {
         
         View addPanel(final DataSetPanel.View panelView);
         
-        View showError(final String message, final String cause);
-        
         View clear();
     }
+    
+    @Inject
+    ClientRuntimeErrorPopupPresenter errorPopupPresenter;
     
     @Inject
     Instance<DataSetPanel> panelInstances;
@@ -60,6 +64,8 @@ public class DataSetExplorer implements IsWidget {
 
     @Inject
     View view;
+    
+    private List<DataSetPanel> panels = new LinkedList<DataSetPanel>();
 
     public DataSetExplorer() {
     }
@@ -75,7 +81,7 @@ public class DataSetExplorer implements IsWidget {
     }
 
     public void show() {
-        view.clear();
+        clear();
         
         clientServices.getPublicDataSetDefs(new RemoteCallback<List<DataSetDef>>() {
             public void callback(final List<DataSetDef> dataSetDefs) {
@@ -88,17 +94,57 @@ public class DataSetExplorer implements IsWidget {
             }
         });
     }
-    
-    private void addDataSetDef(final DataSetDef def) {
-        final DataSetPanel panel = panelInstances.get();
-        panel.show(def, "dataSetsExplorerPanelGroup");
-        view.addPanel(panel.view);
+
+    private void showError(final ClientRuntimeError error) {
+        errorPopupPresenter.showMessage(error);
     }
     
     public void showError(final String message, final String cause) {
-        view.showError(message, cause);
+        final String m = cause != null && cause.trim().length() > 0 ? cause : message;
+        errorPopupPresenter.showMessage(m);
     }
 
+    private void addDataSetDef(final DataSetDef def) {
+        // Check panel for the given data set does not exists yet.
+        if (getDataSetPanel(def.getUUID()) == null) {
+            final DataSetPanel panel = panelInstances.get();
+            panels.add(panel);
+            panel.show(def, "dataSetsExplorerPanelGroup");
+            view.addPanel(panel.view);
+        }
+    }
+
+    private void updateDataSetDef(final DataSetDef def) {
+        DataSetPanel panel = getDataSetPanel(def.getUUID()); 
+        if (panel != null) {
+            panel.show(def, "dataSetsExplorerPanelGroup");
+            panel.close();
+        }
+    }
+
+    private void disableDataSetPanelActions(final String uuid) {
+        DataSetPanel panel = getDataSetPanel(uuid);
+        if (panel != null) {
+            panel.disable();
+        }
+    }
+    
+    private DataSetPanel getDataSetPanel(final String uuid) {
+        if (uuid != null) {
+            for (final DataSetPanel panel : panels) {
+                if (panel.getDataSetDef().getUUID().equals(uuid)) {
+                    return panel;
+                }
+            }
+        }
+        return null;
+    }
+    
+    private void clear() {
+        panels.clear();
+        view.clear();
+    }
+    
     // Be aware of data set lifecycle events
 
     private void onDataSetDefRegisteredEvent(@Observes DataSetDefRegisteredEvent event) {
@@ -106,7 +152,8 @@ public class DataSetExplorer implements IsWidget {
 
         final DataSetDef def = event.getDataSetDef();
         if (def != null && def.isPublic()) {
-            show();
+            // GWT.log("Data Set Explorer - Data Set Def Registered");
+            addDataSetDef(def);
         }
     }
 
@@ -115,7 +162,8 @@ public class DataSetExplorer implements IsWidget {
 
         final DataSetDef def = event.getNewDataSetDef();
         if (def != null && def.isPublic()) {
-            show();
+            // GWT.log("Data Set Explorer - Data Set Def Modified");
+            updateDataSetDef(def);
         }
     }
 
@@ -123,14 +171,17 @@ public class DataSetExplorer implements IsWidget {
         checkNotNull("event", event);
         final DataSetDef def = event.getDataSetDef();
         if (def != null && def.isPublic()) {
+            // GWT.log("Data Set Explorer - Data Set Def Removed");
+            // Reload the whole data set panels list.
             show();
         }
     }
 
     private void onDataSetExploredErrorEvent(@Observes DataSetExploredErrorEvent event) {
         checkNotNull("event", event);
-        showError(event.getMessage(), event.getCause());
+        disableDataSetPanelActions(event.getUuid());
+        if (event.getClientRuntimeError() != null) showError(event.getClientRuntimeError());
+        else showError(event.getMessage(), event.getCause());
     }
-    
     
 }

@@ -60,7 +60,11 @@ public class DataSetPanel implements IsWidget {
         
         View showSummary();
         
-        View showActionButton(final String buttonTitle, final ClickHandler clickHandler);
+        View hideSummary();
+        
+        View enableActionButton(final String buttonTitle, final ClickHandler clickHandler);
+
+        View disableActionButton();
         
     }
 
@@ -99,11 +103,23 @@ public class DataSetPanel implements IsWidget {
         }
     }
     
+    public void close() {
+        view.hideSummary();
+    }
+
+    public void disable() {
+        view.disableActionButton();
+    }
+
+    public DataSetDef getDataSetDef() {
+        return def;
+    }
+
     void open() {
         dataSetSummary.show(def);
         view.showSummary();
 
-        view.showActionButton(DataSetExplorerConstants.INSTANCE.edit(), new ClickHandler() {
+        view.enableActionButton(DataSetExplorerConstants.INSTANCE.edit(), new ClickHandler() {
             @Override
             public void onClick(final ClickEvent clickEvent) {
                 editDataSetEvent.fire(new EditDataSetEvent(def));

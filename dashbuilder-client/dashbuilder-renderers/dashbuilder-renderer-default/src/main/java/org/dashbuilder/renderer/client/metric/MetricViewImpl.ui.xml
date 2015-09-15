@@ -25,16 +25,20 @@
     .metricPanel {
       cursor: pointer;
     }
+    .metricHeading {
+      font-weight: bold;
+    }
   </ui:style>
 
   <b:Jumbotron ui:field="heroPanel">
     <g:FocusPanel ui:field="centerPanel" addStyleNames="{style.metricPanel}">
       <g:FlowPanel>
-        <b.html:Paragraph ui:field="titlePanel" />
+        <b.html:Paragraph ui:field="titlePanel"/>
         <g:FlowPanel ui:field="metricPanel">
-          <b:Heading ui:field="metricHeading" size="H2" />
+          <b:Heading ui:field="metricHeading" size="H2" addStyleNames="{style.metricHeading}"/>
         </g:FlowPanel>
       </g:FlowPanel>
     </g:FocusPanel>
   </b:Jumbotron>
+  
 </ui:UiBinder>

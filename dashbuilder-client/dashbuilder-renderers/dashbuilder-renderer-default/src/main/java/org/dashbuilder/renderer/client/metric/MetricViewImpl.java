@@ -69,8 +69,10 @@ public class MetricViewImpl extends Composite implements MetricView {
         // Hero panel (size)
         Style style = heroPanel.getElement().getStyle();
         style.setPadding(0, Style.Unit.PX);
+        style.setPropertyPx("borderRadius", 6);
         style.setWidth(w, Style.Unit.PX);
         style.setHeight(h, Style.Unit.PX);
+        style.setFontWeight(Style.FontWeight.BOLD);
         style.setTextAlign(Style.TextAlign.CENTER);
         style.setVerticalAlign(Style.VerticalAlign.MIDDLE);
         if (!StringUtils.isBlank(displayerSettings.getChartBackgroundColor())) {
@@ -85,6 +87,7 @@ public class MetricViewImpl extends Composite implements MetricView {
         style.setPaddingRight(mright, Style.Unit.PX);
 
         // Title panel
+        titlePanel.getElement().getStyle().setProperty("fontWeight", "400");
         titlePanel.setVisible(displayerSettings.isTitleVisible());
         titlePanel.setText(displayerSettings.getTitle());
     }
@@ -99,4 +102,5 @@ public class MetricViewImpl extends Composite implements MetricView {
         style.setCursor(Style.Cursor.POINTER);
         return centerPanel.addClickHandler(clickHandler);
     }
+
 }

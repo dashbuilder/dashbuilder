@@ -47,12 +47,12 @@ public class ClientRuntimeError {
             return message;
         }
 
-        Throwable root = _getRootCause();
+        Throwable root = getRootCause();
         return root.toString();
     }
 
     public String getCause() {
-        Throwable root = _getRootCause();
+        Throwable root = getRootCause();
         if (root == null || getMessage().equals(root.toString())) {
             return null;
         } else {
@@ -60,7 +60,7 @@ public class ClientRuntimeError {
         }
     }
 
-    public Throwable _getRootCause() {
+    public Throwable getRootCause() {
         Throwable target = throwable;
         while (true) {
             if (target == null || target.getCause() == null) {

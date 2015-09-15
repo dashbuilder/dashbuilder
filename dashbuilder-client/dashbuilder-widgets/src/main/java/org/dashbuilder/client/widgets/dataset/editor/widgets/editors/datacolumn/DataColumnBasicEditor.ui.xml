@@ -9,36 +9,25 @@
   <ui:with field="i18n" type="org.dashbuilder.client.widgets.resources.i18n.DataSetEditorConstants"/>
 
   <ui:style>
-    .mainPanel {
-
-    }
-    .left {
-      float: left;
-    }
-    .image {
-      margin-left: 15px;
-      margin-top: 5px;
+    .dataColumnTypeEditor {
+      position: absolute;
+      margin-left: 5px;
     }
   </ui:style>
+  
+  <g:HorizontalPanel width="100%">
 
-  <g:FlowPanel ui:field="columnPanel" addStyleNames="{style.mainPanel} ">
-
-    <!--<b:Popover showDelay="1000" text="{i18n.attributeId}" heading="{i18n.attributeId_description}">-->
-    <dash-client:ValueBoxEditorDecorator errorLabelPosition="TOOLTIP_TOP" ui:field="id" addStyleNames="{style.left}">
+    <!-- Id text box editor. -->
+    <dash-client:ValueBoxEditorDecorator errorLabelPosition="TOOLTIP_TOP" ui:field="id">
       <dash-client:valuebox>
         <b:TextBox enabled="false" placeholder="{i18n.attributeId}" />
       </dash-client:valuebox>
     </dash-client:ValueBoxEditorDecorator>
-    <!--</b:Popover>-->
 
-    <b:Popover showDelayMs="1000" content="{i18n.attributeColumnType_description}" title="{i18n.attributeColumnType}">
-      <dash-client-column:DataColumnTypeEditor ui:field="columnType" addStyleNames="{style.left}"/>
+    <b:Popover container="body" placement="RIGHT" showDelayMs="1000" content="{i18n.attributeColumnType_description}" title="{i18n.attributeColumnType}">
+      <dash-client-column:DataColumnTypeEditor ui:field="columnType" addStyleNames="{style.dataColumnTypeEditor}"/>
     </b:Popover>
 
-    <b:Popover showDelayMs="1000" content="{i18n.attributeColumnType_description}" title="{i18n.attributeColumnType}">
-      <b:Image ui:field="columnTypeImage" addStyleNames="{style.left} {style.image}"/>
-    </b:Popover>
-
-  </g:FlowPanel>
-
+  </g:HorizontalPanel>
+  
 </ui:UiBinder>

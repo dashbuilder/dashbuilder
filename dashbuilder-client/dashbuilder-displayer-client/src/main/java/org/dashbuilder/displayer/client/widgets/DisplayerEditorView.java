@@ -15,17 +15,14 @@
  */
 package org.dashbuilder.displayer.client.widgets;
 
-import javax.enterprise.context.Dependent;
-import javax.inject.Inject;
-
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.common.client.error.ClientRuntimeError;
 import org.dashbuilder.dataset.DataSetLookup;
@@ -35,13 +32,16 @@ import org.dashbuilder.displayer.DisplayerSettings;
 import org.dashbuilder.displayer.DisplayerType;
 import org.dashbuilder.displayer.client.AbstractDisplayerListener;
 import org.dashbuilder.displayer.client.Displayer;
-import org.dashbuilder.displayer.client.DisplayerHelper;
 import org.dashbuilder.displayer.client.DisplayerListener;
 import org.dashbuilder.displayer.client.DisplayerLocator;
 import org.dashbuilder.displayer.client.resources.i18n.CommonConstants;
 import org.gwtbootstrap3.client.ui.CheckBox;
-import org.gwtbootstrap3.client.ui.NavTabs;
+import org.gwtbootstrap3.client.ui.Column;
+import org.gwtbootstrap3.client.ui.Row;
 import org.gwtbootstrap3.client.ui.TabListItem;
+
+import javax.enterprise.context.Dependent;
+import javax.inject.Inject;
 
 @Dependent
 public class DisplayerEditorView extends Composite
@@ -60,7 +60,7 @@ public class DisplayerEditorView extends Composite
         this.settingsEditor = settingsEditor;
 
         initWidget(uiBinder.createAndBindUi(this));
-        dataTablePanel.getElement().setAttribute("cellpadding", "5");
+        viewAsTableButtonRow.getElement().setAttribute("cellpadding", "5");
     }
 
     protected DisplayerEditor presenter;
@@ -78,25 +78,28 @@ public class DisplayerEditorView extends Composite
     };
 
     @UiField
-    public Panel leftPanel;
+    Column westColumn;
+    
+    @UiField
+    Column leftColumn;
 
     @UiField
-    public Panel centerPanel;
+    Column centerColumn;
 
     @UiField
-    public TabListItem optionType;
+    TabListItem optionType;
 
     @UiField
-    public TabListItem optionData;
+    TabListItem optionData;
 
     @UiField
-    public TabListItem optionSettings;
+    TabListItem optionSettings;
 
     @UiField
-    public Panel dataTablePanel;
+    Row viewAsTableButtonRow;
 
     @UiField
-    public CheckBox viewAsTable;
+    CheckBox viewAsTableButton;
 
     @Override
     public void init(DisplayerSettings settings, DisplayerEditor presenter) {
@@ -139,10 +142,11 @@ public class DisplayerEditorView extends Composite
 
         typeSelector.init(presenter);
         typeSelector.select(settings.getRenderer(), settings.getType(), settings.getSubtype());
-        leftPanel.clear();
-        leftPanel.add(typeSelector);
+        leftColumn.clear();
+        leftColumn.getElement().getStyle().setOverflowY(Style.Overflow.HIDDEN);
+        leftColumn.add(typeSelector);
 
-        dataTablePanel.setVisible(false);
+        viewAsTableButtonRow.setVisible(false);
         optionData.setActive(false);
         optionSettings.setActive(false);
         optionType.setActive(true);
@@ -162,13 +166,14 @@ public class DisplayerEditorView extends Composite
             lookupEditor.init(presenter);
         }
 
-        leftPanel.clear();
-        leftPanel.add(lookupEditor);
+        leftColumn.clear();
+        leftColumn.getElement().getStyle().setOverflowY(Style.Overflow.AUTO);
+        leftColumn.add(lookupEditor);
 
         if (DisplayerType.TABLE.equals(settings.getType())) {
-            dataTablePanel.setVisible(false);
+            viewAsTableButtonRow.setVisible(false);
         } else {
-            dataTablePanel.setVisible(true);
+            viewAsTableButtonRow.setVisible(true);
         }
         optionSettings.setActive(false);
         optionType.setActive(false);
@@ -200,10 +205,11 @@ public class DisplayerEditorView extends Composite
         optionSettings.setActive(true);
 
         settingsEditor.init(settings, presenter);
-        leftPanel.clear();
-        leftPanel.add(settingsEditor);
+        leftColumn.clear();
+        leftColumn.getElement().getStyle().setOverflowY(Style.Overflow.AUTO);
+        leftColumn.add(settingsEditor);
 
-        dataTablePanel.setVisible(false);
+        viewAsTableButtonRow.setVisible(false);
         optionType.setActive(false);
         optionData.setActive(false);
         optionSettings.setActive(true);
@@ -212,8 +218,8 @@ public class DisplayerEditorView extends Composite
 
     @Override
     public void error(String error) {
-        centerPanel.clear();
-        centerPanel.add(errorWidget);
+        centerColumn.clear();
+        centerColumn.add(errorWidget);
         errorWidget.show(error, null);
 
         GWT.log(error);
@@ -221,8 +227,8 @@ public class DisplayerEditorView extends Composite
 
     @Override
     public void error(ClientRuntimeError e) {
-        centerPanel.clear();
-        centerPanel.add(errorWidget);
+        centerColumn.clear();
+        centerColumn.add(errorWidget);
         errorWidget.show(e.getMessage(), e.getCause());
 
         if (e.getThrowable() != null) GWT.log(e.getMessage(), e.getThrowable());
@@ -241,7 +247,7 @@ public class DisplayerEditorView extends Composite
             displayer.close();
         }
         try {
-            if (dataTablePanel.isVisible() && viewAsTable.getValue()) {
+            if (viewAsTableButtonRow.isVisible() && viewAsTableButton.getValue()) {
                 DisplayerSettings tableSettings = settings.cloneInstance();
                 tableSettings.setTitleVisible(false);
                 tableSettings.setType(DisplayerType.TABLE);
@@ -250,15 +256,15 @@ public class DisplayerEditorView extends Composite
                 displayer = DisplayerLocator.get().lookupDisplayer(tableSettings);
                 displayer.addListener(displayerListener);
                 displayer.setRefreshOn(false);
-                centerPanel.clear();
-                centerPanel.add(displayer);
+                centerColumn.clear();
+                centerColumn.add(displayer);
                 displayer.draw();
             } else {
                 displayer = DisplayerLocator.get().lookupDisplayer(settings);
                 displayer.addListener(displayerListener);
                 displayer.setRefreshOn(false);
-                centerPanel.clear();
-                centerPanel.add(displayer);
+                centerColumn.clear();
+                centerColumn.add(displayer);
                 displayer.draw();
             }
         } catch (Exception e) {
@@ -281,8 +287,9 @@ public class DisplayerEditorView extends Composite
         gotoDisplaySettings();
     }
 
-    @UiHandler(value = "viewAsTable")
+    @UiHandler(value = "viewAsTableButton")
     public void onRawTableChecked(ClickEvent clickEvent) {
         showDisplayer();
     }
+    
 }

@@ -54,7 +54,7 @@ public class DisplayerEditorPopup extends BaseModal {
         footer.enableCancelButton(true);
         footer.enableOkButton(true);
         add(footer);
-        setWidth(950+"px");
+        setWidth(1200+"px");
     }
 
     public void init(final DisplayerSettings settings, final DisplayerEditor.Listener editorListener) {

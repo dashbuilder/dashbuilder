@@ -8,15 +8,12 @@
     .errorPanel {
       border: none;
     }
-    .errorPanelError {
-      border: 1px solid red;
-    }
     .imagePointer {
       cursor: pointer;
     }
   </ui:style>
   <g:HTMLPanel ui:field="errorPanel" addStyleNames="{style.errorPanel} ">
-    <b:Tooltip title="" ui:field="errorTooltip">
+    <b:Tooltip container="body" title="" ui:field="errorTooltip">
       <g:HorizontalPanel spacing="10" ui:field="mainPanel" >
       </g:HorizontalPanel>
     </b:Tooltip>

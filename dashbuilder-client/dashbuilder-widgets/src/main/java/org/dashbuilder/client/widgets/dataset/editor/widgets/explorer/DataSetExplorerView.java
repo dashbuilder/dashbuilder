@@ -47,30 +47,6 @@ public class DataSetExplorerView extends Composite implements DataSetExplorer.Vi
     DataSetExplorerViewStyle style;
 
     @UiField
-    Modal errorPanel;
-
-    @UiField
-    Button errorPanelButton;
-
-    @UiField
-    HTML errorType;
-
-    @UiField
-    HTML errorMessage;
-
-    @UiField
-    HTML errorCause;
-
-    @UiField
-    Row errorTypeRow;
-
-    @UiField
-    Row errorMessageRow;
-
-    @UiField
-    Row errorCauseRow;
-
-    @UiField
     com.google.gwt.user.client.ui.Label emptyLabel;
 
     @UiField
@@ -98,25 +74,9 @@ public class DataSetExplorerView extends Composite implements DataSetExplorer.Vi
 
     @Override
     public DataSetExplorer.View clear() {
-        hideError();
         dataSetsPanelGroup.clear();
         dataSetsPanelGroup.setVisible(false);
         emptyLabel.setVisible(true);
         return this;
-    }
-
-    public DataSetExplorer.View showError(final String message, final String cause) {
-        if (message != null) GWT.log("Error message: " + message);
-        if (cause != null) GWT.log("Error cause: " + cause);
-        errorMessage.setText(message != null ? message : "");
-        errorMessageRow.setVisible(message != null);
-        errorCause.setText(cause != null ? cause : "");
-        errorCauseRow.setVisible(cause != null);
-        errorPanel.show();
-        return this;
-    }
-
-    private void hideError() {
-        errorPanel.hide();
     }
 }

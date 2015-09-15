@@ -21,13 +21,11 @@
              xmlns:g='urn:import:com.google.gwt.user.client.ui'
              xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
 
-  <g:HorizontalPanel>
-    <b:TabPanel tabPosition="LEFT">
-      <b:NavTabs ui:field="navTabs"/>
-      <b:TabContent>
-        <b:TabPane ui:field="displayerSubTypePane"/>
-      </b:TabContent>
-    </b:TabPanel>
-  </g:HorizontalPanel>
-
+  <b:TabPanel tabPosition="LEFT">
+    <b:NavTabs ui:field="navTabs"/>
+    <b:TabContent>
+      <b:TabPane ui:field="displayerSubTypePane"/>
+    </b:TabContent>
+  </b:TabPanel>
+  
 </ui:UiBinder>

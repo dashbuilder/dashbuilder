@@ -15,35 +15,34 @@
  */
 package org.dashbuilder.client.widgets.dataset.editor.widgets.editors;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import javax.enterprise.context.Dependent;
-import javax.validation.ConstraintViolation;
-
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Panel;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.client.widgets.dataset.editor.DataSetDefEditWorkflow;
 import org.dashbuilder.client.widgets.dataset.editor.widgets.editors.datacolumn.DataColumnBasicEditor;
+import org.dashbuilder.client.widgets.resources.i18n.DataSetEditorConstants;
 import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.def.DataColumnDef;
+import org.dashbuilder.dataset.def.DataSetDef;
+import org.dashbuilder.dataset.filter.ColumnFilter;
+import org.dashbuilder.dataset.filter.DataSetFilter;
 import org.gwtbootstrap3.client.ui.CheckBox;
+
+import javax.enterprise.context.Dependent;
+import javax.validation.ConstraintViolation;
+import java.util.*;
 
 /**
  * <p>This is a widget for editing data set's columns.</p>
@@ -59,19 +58,11 @@ public class DataSetColumnsEditor extends AbstractEditor {
     interface DataSetColumnsEditorBinder extends UiBinder<Widget, DataSetColumnsEditor> {}
     private static DataSetColumnsEditorBinder uiBinder = GWT.create(DataSetColumnsEditorBinder.class);
 
-    interface DataSetColumnsEditorStyle extends CssResource {
-        String mainPanel();
-        String left();
-        String clear();
-    }
-
     @UiField
-    DataSetColumnsEditorStyle style;
-
-    @UiField
-    FlowPanel columnsPanel;
+    VerticalPanel columnsContainer;
 
     private List<DataColumnDef> originalColumns;
+    private final List<DataColumnDef> columns = new LinkedList<DataColumnDef>();
     private boolean isEditMode;
 
     public DataSetColumnsEditor() {
@@ -87,8 +78,6 @@ public class DataSetColumnsEditor extends AbstractEditor {
         this.isEditMode = isEditMode;
     }
 
-    private final Map<DataColumnDef, DataColumnBasicEditor> columnEditors = new LinkedHashMap<DataColumnDef, DataColumnBasicEditor>();
-    private final List<DataColumnDef> columns = new LinkedList<DataColumnDef>();
 
     public interface ColumnsChangedEventHandler extends EventHandler
     {
@@ -125,52 +114,81 @@ public class DataSetColumnsEditor extends AbstractEditor {
         return addHandler(handler, ColumnsChangedEvent.TYPE);
     }
 
-    private final ValueChangeHandler<ColumnType> columnTypeChangeHandler = new ValueChangeHandler<ColumnType>() {
-        @Override
-        public void onValueChange(ValueChangeEvent<ColumnType> event) {
-            fireColumnsChanged();
-        }
-    };
-
-    public void build(final List<DataColumnDef> columns, final DataSet dataSet, final DataSetDefEditWorkflow workflow) {
+    public void build(final List<DataColumnDef> columns, final DataSetDef dataSetDef, final DataSet dataSet, final DataSetDefEditWorkflow workflow) {
         clear();
 
         if (columns != null && workflow != null) {
             originalColumns = new LinkedList<DataColumnDef>(columns);
-
+            
             // Remove workflow column status.
             workflow.removeAllColumns();
 
             for (final DataColumnDef _column : columns) {
                 final DataColumnDef column = _column.clone();
                 final DataColumn dataSetColumn = hasColumn(column, dataSet.getColumns());
-                final  boolean enabled = dataSetColumn != null;
-                if (enabled) {
+                final  boolean isActive = dataSetColumn != null;
+                if (isActive) {
                     column.setColumnType(dataSetColumn.getColumnType());
                 }
                 // Create the editor for each column.
                 DataColumnBasicEditor columnEditor = new DataColumnBasicEditor();
-                columnEditor.addValueChangeHandler(columnTypeChangeHandler);
+                columnEditor.addValueChangeHandler(new ValueChangeHandler<ColumnType>() {
+                    @Override
+                    public void onValueChange(ValueChangeEvent<ColumnType> event) {
+                        updateColumnType(column, event.getValue());
+                    }
+                });
 
                 columnEditor.setEditorId(column.getId());
                 columnEditor.setOriginalType(_column.getColumnType());
-                columnEditors.put(column, columnEditor);
+
+                // Restrictions for selecting / unselecting the column.
+                boolean isEnabled = true;
+                String statusTitle = "";
+                
+                if (isActive) {
+                    // If is the only one column selected. cannot remove it, as data set must have at least one column 
+                    final boolean isSingleColumn = dataSet.getColumns().size() <= 1;
+                    if (isSingleColumn) {
+                        isEnabled = false;
+                        statusTitle = DataSetEditorConstants.INSTANCE.dataSetMustHaveAtLeastOneColumn();
+                    } else {
+                        // If the column is used in datasetdef filter, cannot remove it. 
+                        final boolean isUsedInFilter = isColumnUsedInFilter(column.getId(), dataSetDef.getDataSetFilter());
+                        if (isUsedInFilter) {
+                            isEnabled = false;
+                            statusTitle = DataSetEditorConstants.INSTANCE.columnIsUsedInFilter();
+                        }
+                    }
+                }
 
                 // Link the column editor with workflow driver.
                 workflow.edit(columnEditor, column);
-                columnEditor.setEditMode(isEditMode() && enabled);
+                columnEditor.setEditMode(isEditMode() && isEnabled && isActive);
 
                 // Create the UI panel for the column.
-                final boolean canRemove = dataSet != null && dataSet.getColumns().size() > 1;
-                Panel columnPanel = createColumn(column, columnEditor, workflow, enabled, canRemove);
-                if (enabled) this.columns.add(column);
-                columnsPanel.add(columnPanel);
-                final FlowPanel separator = new FlowPanel();
-                separator.addStyleName(style.clear());
-                columnsPanel.add(separator);
+                Panel columnPanel = createColumn(column, columnEditor, isActive, isEnabled, statusTitle);
+                if (isActive) {
+                    this.columns.add(column);
+                }
+                columnsContainer.add(columnPanel);
             }
         }
 
+    }
+
+    private boolean isColumnUsedInFilter(final String columnId, final DataSetFilter filter) {
+        if (filter != null && columnId != null) {
+            final List<ColumnFilter> columnFilters = filter.getColumnFilterList();
+            if (columnFilters != null) {
+                for (final ColumnFilter columnFilter : columnFilters) {
+                    String filterColumnId = columnFilter.getColumnId();
+                    if (columnId.equalsIgnoreCase(filterColumnId)) return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     private DataColumn hasColumn(final DataColumnDef def, final List<DataColumn> columns) {
@@ -181,53 +199,49 @@ public class DataSetColumnsEditor extends AbstractEditor {
         return null;
     }
 
-    private Panel createColumn(final DataColumnDef column, final DataColumnBasicEditor editor, final DataSetDefEditWorkflow workflow, final boolean enabled, final boolean canRemove) {
-        final FlowPanel columnPanel = new FlowPanel();
+    private Panel createColumn(final DataColumnDef column, final DataColumnBasicEditor editor, final boolean isActive, final boolean isEnabled, final String title) {
+        final HorizontalPanel row = new HorizontalPanel();
 
-        // Checkbox.
+        // Data column statuc (Checkbox).
         final CheckBox columnStatus = new CheckBox();
-        columnStatus.setValue(enabled);
-        columnStatus.addStyleName(style.left());
+        columnStatus.setValue(isActive);
+        columnStatus.setEnabled(isEnabled);
+        columnStatus.setTitle(title != null ? title : "");
+        columnStatus.getElement().getStyle().setCursor(Style.Cursor.POINTER);
+        // Vertical middle alignment into columns (work-around).
+        columnStatus.getElement().getStyle().setTop(-7, Style.Unit.PX);
+        
+        // Enable / disable change handlers.
         columnStatus.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
             @Override
             public void onValueChange(ValueChangeEvent<Boolean> event) {
                 boolean isChecked = event.getValue();
-
-                if (isChecked) addColumn(column,workflow);
-                else if (canRemove) removeColumn(editor, column, workflow);
+                
+                if (isChecked) addColumn(column);
+                else removeColumn(editor, column);
             }
         });
-        columnPanel.add(columnStatus);
+        row.add(columnStatus);
+        
+        // Data column editor component (name & column type).
+        row.add(editor.asWidget());
 
-        // Name editor.
-        editor.addStyleName(style.left());
-        columnPanel.add(editor);
-
-        return columnPanel;
+        return row;
     }
 
-    private void removeColumn(final DataColumnBasicEditor editor, final DataColumnDef column, final DataSetDefEditWorkflow workflow) {
-        editor.setEditMode(false);
+    private void removeColumn(final DataColumnBasicEditor editor, final DataColumnDef column) {
         columns.remove(column);
         fireColumnsChanged();
     }
 
-    private void addColumn(final DataColumnDef column, final DataSetDefEditWorkflow workflow) {
-        final DataColumnBasicEditor columnEditor = getEditor(column);
-        assert columnEditor != null;
-        columnEditor.setEditMode(isEditMode());
+    private void addColumn(final DataColumnDef column) {
         columns.add(column);
         fireColumnsChanged();
     }
-
-    private DataColumnBasicEditor getEditor(final DataColumnDef columnDef) {
-        if (!columnEditors.isEmpty()) {
-            for (Map.Entry<DataColumnDef, DataColumnBasicEditor> entry : columnEditors.entrySet()) {
-                final DataColumnDef _c = entry.getKey();
-                if (_c != null && _c.equals(columnDef)) return entry.getValue();
-            }
-        }
-        return null;
+    
+    private void updateColumnType(final DataColumnDef column, final ColumnType type) {
+        column.setColumnType(type);
+        fireColumnsChanged();
     }
 
     private void fireColumnsChanged() {
@@ -244,39 +258,10 @@ public class DataSetColumnsEditor extends AbstractEditor {
             this.fireEvent(new ColumnsChangedEvent(new LinkedList<DataColumnDef>(result)));
         }
     }
-
-    @Override
-    public Iterable<ConstraintViolation<?>> getViolations() {
-        Set<ConstraintViolation<?>> violations = new LinkedHashSet<ConstraintViolation<?>>();
-        if (!columnEditors.isEmpty()) {
-            for (DataColumnBasicEditor editor : columnEditors.values()) {
-                Iterable<ConstraintViolation<?>> editorViolations = editor.getViolations();
-                if (editorViolations != null) {
-                    for (ConstraintViolation<?> violation : editorViolations) {
-                        violations.add(violation);
-                    }
-                }
-            }
-        }
-
-        return violations;
-    }
-
-    @Override
-    public void setViolations(Iterable<ConstraintViolation<?>> violations) {
-        super.setViolations(violations);
-
-        if (!columnEditors.isEmpty()) {
-            for (DataColumnBasicEditor editor : columnEditors.values()) {
-                editor.setViolations(violations);
-            }
-        }
-    }
-
+    
     public void clear() {
         super.clear();
-        columnEditors.clear();
-        columnsPanel.clear();
+        columnsContainer.clear();
         columns.clear();
         originalColumns = null;
     }

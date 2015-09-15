@@ -108,6 +108,7 @@ public class CSVDataSetDefAttributesEditor extends AbstractDataSetDefEditor impl
         useFileURLButton.addClickHandler(useFileURLButtonHandler);
 
         // File editor.
+        filePath.setFileUploadName("csvFileUpload");
         filePath.setLoadingImageUri(DataSetClientResources.INSTANCE.images().loadingIcon().getSafeUri());
         filePath.setCallback(new FileUploadEditor.FileUploadEditorCallback() {
             @Override

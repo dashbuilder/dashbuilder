@@ -9,16 +9,19 @@
       margin-bottom: 5px;
     }
 
+    .errorPanel {
+      border: none;
+    }
+
     .form {
       margin-bottom: -3px;
     }
   </ui:style>
 
   <g:FlowPanel ui:field="mainPanel" addStyleNames="{style.mainPanel}">
-
     <g:FormPanel ui:field="formPanel" addStyleNames="{style.form}">
-      <b:Tooltip title="" ui:field="errorTooltip">
-        <uf:FileUpload ui:field="fileUpload"/>
+      <b:Tooltip container="body" title="" ui:field="errorTooltip">
+        <uf:FileUpload ui:field="fileUpload" name="fileUpload"/>
       </b:Tooltip>
     </g:FormPanel>
 

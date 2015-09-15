@@ -65,6 +65,7 @@ public class DataSetDefEditorPresenter extends BaseEditor {
     public interface View extends BaseEditorView, IsWidget {
         void startEdit(EditDataSetDef editDataSetDef);
         void checkValid(DataSetDefValidationCallback callback);
+        void onSave();
         void showError(String message);
         void showError(ClientRuntimeError error);
     }
@@ -176,13 +177,14 @@ public class DataSetDefEditorPresenter extends BaseEditor {
     }
 
     protected void _save() {
+        view.onSave();
         new SaveOperationService().save(versionRecordManager.getCurrentPath(),
                 new ParameterizedCommand<String>() {
                     @Override public void execute(final String commitMessage) {
-                        model.setPublic(true);
-                        model.setAllColumnsEnabled(false);
                         services.call(getSaveSuccessCallback(getCurrentModelHash()), errorCallback)
                                 .save(model, commitMessage);
+                        placeManager.goTo("DataSetAuthoringHome");
+                        
                     }
                 }
         );

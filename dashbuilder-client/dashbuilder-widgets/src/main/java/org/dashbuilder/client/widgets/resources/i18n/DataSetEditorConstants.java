@@ -26,7 +26,7 @@ import com.google.gwt.i18n.client.Messages;
  */
 public interface DataSetEditorConstants extends Messages {
 
-    public static final DataSetEditorConstants INSTANCE = GWT.create( DataSetEditorConstants.class );
+    DataSetEditorConstants INSTANCE = GWT.create( DataSetEditorConstants.class );
 
     String newDataSet(String providerType);
     String error();
@@ -46,7 +46,6 @@ public interface DataSetEditorConstants extends Messages {
     String elasticSearch_description();
     String next();
     String next_description();
-    String updateTest();
     String updateTest_description();
     String test();
     String test_description();
@@ -54,21 +53,15 @@ public interface DataSetEditorConstants extends Messages {
     String save_description();
     String back();
     String back_description();
-    String providerType();
-    String commonAttributes();
     String performance();
     String backendCache();
-    String backendCacheDisabledForType();
     String clientCache();
-    String refreshPolicy();
     String none();
-    String scheduledInterval();
     String refreshOnStaleData();
     String refreshEvery();
     String bytes();
     String rows();
     String attributeId();
-    String attributeId_description();
     String attributeColumnType();
     String attributeColumnType_description();
     String attributeUUID();
@@ -81,20 +74,8 @@ public interface DataSetEditorConstants extends Messages {
     String attributeMaxRows_description();
     String attributeRefreshInterval();
     String attributeRefreshInterval_description();
-    String attributeRefreshOnStaleData();
-    String attributeRefreshOnStaleData_description();
     String on();
     String off();
-    String provider();
-    String colsAndFilter();
-    String cacheAndRefresh();
-    String configureProvider();
-    String configureColumns();
-    String configureInitialFilter();
-    String configureCacheAndRefreshSettings();
-    String saveAndDeployDataSet();
-    String defaultDataSetName();
-    String sqlAttributes();
     String sql_datasource();
     String sql_datasource_description();
     String sql_datasource_placeHolder();
@@ -108,12 +89,8 @@ public interface DataSetEditorConstants extends Messages {
     String sql_query();
     String sql_query_description();
     String sql_query_placeHolder();
-    String staticAttributes();
-    String beanAttributes();
-    String csvAttributes();
     String csv_filePath();
     String csv_filePath_description();
-    String csv_filePath_placeholder();
     String csv_URL();
     String csv_URL_description();
     String csv_URL_placeholder();
@@ -134,7 +111,6 @@ public interface DataSetEditorConstants extends Messages {
     String csv_numberPattern();
     String csv_numberPattern_description();
     String csv_numberPattern_placeholder();
-    String elAttributes();
     String el_server_url();
     String el_server_url_description();
     String el_server_url_placeholder();
@@ -152,26 +128,21 @@ public interface DataSetEditorConstants extends Messages {
     String bean_generator_class_placeholder();
     String bean_generator_params();
     String bean_generator_params_description();
-    String bean_generator_params_placeholder();
-    String bean_generator_param_key();
-    String bean_generator_param_key_description();
-    String bean_generator_param_key_placeholder();
-    String bean_generator_param_value();
-    String bean_generator_param_value_description();
-    String bean_generator_param_value_placeholder();
     String tab_configguration();
     String tab_preview();
     String tab_advancedConfiguration();
     String filter();
     String dataColumns();
+    String dataSetMustHaveAtLeastOneColumn();
+    String columnIsUsedInFilter();
     String label();
     String text();
     String number();
     String date();
     String showColumnsAndFilter();
     String hideColumnsAndFilter();
-    String export();
-    String exportToExcel();
-    String exportToCSV();
     String defNotFound();
+    String uploadSuccessful();
+    String uploadFailed();
+    String uploadFailedAlreadyExists();
 }

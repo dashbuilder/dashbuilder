@@ -8,15 +8,9 @@
       display: none;
       white-space: pre;
     }
-    .errorLabelLeft {
-      float: left;
-    }
-    .errorLabelRight {
-      float: right;
-    }
   </ui:style>
   <g:HTMLPanel>
-    <b:Tooltip title="" ui:field="errorTooltip">
+    <b:Tooltip container="body" title="" ui:field="errorTooltip">
       <g:SimplePanel ui:field="contents" stylePrimaryName="{style.contents}" />
     </b:Tooltip>
     <div class="{style.errorLabel}" ui:field="errorLabel" />

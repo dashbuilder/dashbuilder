@@ -1,10 +1,5 @@
 package org.dashbuilder.common.client.validation.editors;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.EditorError;
 import com.google.gwt.editor.client.HasEditorErrors;
@@ -18,16 +13,13 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HasConstrainedValue;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Widget;
-import org.gwtbootstrap3.client.ui.Anchor;
-import org.gwtbootstrap3.client.ui.DropDown;
-import org.gwtbootstrap3.client.ui.DropDownMenu;
-import org.gwtbootstrap3.client.ui.Image;
-import org.gwtbootstrap3.client.ui.Tooltip;
+import org.gwtbootstrap3.client.ui.*;
+
+import java.util.*;
 
 /**
  * <p>Editor component that accepts multiple values and display each one using a given button in a dropdown button grup.</p>
@@ -35,7 +27,7 @@ import org.gwtbootstrap3.client.ui.Tooltip;
  * <p>This component is ideal for handling enums.</p>
  * @param <T> The type of the value that contains the editor widget
  */
-public class DropDownImageListEditor<T> extends Composite implements
+public class DropDownImageListEditor<T> extends AbstractEditorDecorator<T> implements
                                                           HasConstrainedValue<T>,
                                                           HasEditorErrors<T>,
                                                           IsEditor<TakesValueEditor<T>> {
@@ -48,8 +40,6 @@ public class DropDownImageListEditor<T> extends Composite implements
     interface DropDownImageListEditorStyle extends CssResource {
 
         String errorPanel();
-
-        String errorPanelError();
 
         String imagePointer();
     }
@@ -64,6 +54,7 @@ public class DropDownImageListEditor<T> extends Composite implements
     protected boolean fireEvents = false;
 
     @UiField
+    @Ignore
     DropDownImageListEditorStyle style;
 
     @UiField
@@ -148,14 +139,17 @@ public class DropDownImageListEditor<T> extends Composite implements
         }
 
         // Configure drop down button trigger.
-        if ( values.size() == 1 ) {
-            dropDownAnchor.setEnabled( false );
-            caret.setVisible( false );
-        } else {
-            dropDownAnchor.setEnabled( true );
-            caret.setVisible( true );
-        }
+        enableAnchor( isHandlingMultipleValues() && isEditMode );
 
+    }
+    
+    private boolean isHandlingMultipleValues() {
+        return values.size() > 1;
+    }
+    
+    private void enableAnchor(final boolean isEnabled) {
+        dropDownAnchor.setEnabled( isEnabled );
+        caret.setVisible( isEnabled );
     }
 
     private void buildUIDropDown() {
@@ -224,38 +218,28 @@ public class DropDownImageListEditor<T> extends Composite implements
 
     @Override
     public void showErrors( List<EditorError> errors ) {
-        boolean hasErrors = errors != null && !errors.isEmpty();
-
-        String toolTipText = null;
-        if ( hasErrors ) {
-            StringBuilder sb = new StringBuilder();
-            for ( EditorError error : errors ) {
-                sb.append( "\n" ).append( error.getMessage() );
-            }
-            if ( sb.length() > 0 ) {
-                toolTipText = sb.substring( 1 );
-            }
-        }
-
-        if ( toolTipText != null ) {
-            enableError( toolTipText );
-        } else {
-            disableError();
-        }
+        _showErrors(errors);
     }
 
-    private void enableError( String text ) {
-        setTooltipText( text );
-        markErrorPanel( true );
+    @Override
+    public void setErrorLabelPosition(ErrorLabelPosition errorLabelPosition) {
+        super.setErrorLabelPosition(errorLabelPosition);
+        doPositionErrorTooltip(errorTooltip);
     }
 
-    private void disableError() {
-        setTooltipText( null );
-        markErrorPanel( false );
+    protected void enableError( final String text ) {
+        setTooltipText(errorTooltip,  text );
+        markErrorPanel( errorPanel, true );
     }
 
-    public void setEditMode( final boolean isEditMode ) {
-        this.isEditMode = isEditMode;
+    protected void disableError() {
+        setTooltipText( errorTooltip, null );
+        markErrorPanel( errorPanel, false );
+    }
+
+    public void setEditMode( final boolean _isEditMode ) {
+        this.isEditMode = isHandlingMultipleValues() && _isEditMode;
+        enableAnchor(this.isEditMode);
     }
 
     public void setSize( final int w,
@@ -266,25 +250,6 @@ public class DropDownImageListEditor<T> extends Composite implements
 
     public void clear() {
         setValue( null );
-    }
-
-    private void markErrorPanel( boolean error ) {
-        if ( error ) {
-            errorPanel.addStyleName( style.errorPanelError() );
-        } else {
-            errorPanel.removeStyleName( style.errorPanelError() );
-        }
-
-    }
-
-    private void setTooltipText( String text ) {
-        if ( text == null || text.trim().length() == 0 ) {
-            errorTooltip.setTitle( "" );
-        } else {
-            errorTooltip.setTitle( text );
-        }
-        // See issue https://github.com/gwtbootstrap/gwt-bootstrap/issues/287
-        errorTooltip.reconfigure();
     }
 
 }

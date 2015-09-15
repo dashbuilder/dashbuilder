@@ -23,7 +23,7 @@
 
   <ui:style>
     .filterDetailsPanel {
-      width: 200px;
+      width: 100%;
       padding: 5px;
       background: #dddddd;
       border-radius: 5px;
