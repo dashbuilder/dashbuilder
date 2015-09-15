@@ -26,11 +26,11 @@
 
     <!-- UUID. -->
     <b:Row>
-      <b:Column size="MD_2">
+      <b:Column size="MD_3">
         <g:HTML text="{i18n.attributeUUID}" addStyleNames="{style.label}"/>
       </b:Column>
-      <b:Column size="MD_3">
-        <b:Popover showDelayMs="1000" placement="BOTTOM" content="{i18n.attributeUUID_description}" title="{i18n.attributeUUID}">
+      <b:Column size="MD_9">
+        <b:Popover container="body" showDelayMs="1000" placement="RIGHT" content="{i18n.attributeUUID_description}" title="{i18n.attributeUUID}">
           <dash-client:ValueBoxEditorDecorator errorLabelPosition="TOOLTIP_BOTTOM" ui:field="attributeUUID" addStyleNames="{style.input}">
             <dash-client:valuebox>
               <b:TextBox enabled="false" placeholder="{i18n.attributeUUID}"/>
@@ -42,11 +42,11 @@
 
     <!-- Name. -->
     <b:Row>
-      <b:Column size="MD_2">
+      <b:Column size="MD_3">
         <g:HTML text="{i18n.attributeName}" addStyleNames="{style.label}"/>
       </b:Column>
-      <b:Column size="MD_3">
-        <b:Popover showDelayMs="1000" placement="BOTTOM" content="{i18n.attributeName_description}" title="{i18n.attributeName}">
+      <b:Column size="MD_9">
+        <b:Popover container="body" showDelayMs="1000" placement="RIGHT" content="{i18n.attributeName_description}" title="{i18n.attributeName}">
           <dash-client:ValueBoxEditorDecorator errorLabelPosition="TOOLTIP_BOTTOM" ui:field="name" addStyleNames="{style.input}">
             <dash-client:valuebox>
               <b:TextBox placeholder="{i18n.attributeName}" />

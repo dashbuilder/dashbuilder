@@ -1,9 +1,5 @@
 package org.dashbuilder.common.client.validation.editors;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
 import com.google.gwt.cell.client.EditTextCell;
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
@@ -19,15 +15,9 @@ import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.HTMLPanel;
-import com.google.gwt.user.client.ui.HasHorizontalAlignment;
-import com.google.gwt.user.client.ui.HasValue;
-import com.google.gwt.user.client.ui.ScrollPanel;
-import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.*;
 import com.google.gwt.view.client.ListDataProvider;
 import org.dashbuilder.common.client.resources.i18n.DashbuilderCommonConstants;
 import org.gwtbootstrap3.client.ui.Button;
@@ -37,12 +27,13 @@ import org.gwtbootstrap3.client.ui.constants.IconType;
 import org.gwtbootstrap3.client.ui.gwt.ButtonCell;
 import org.gwtbootstrap3.client.ui.gwt.DataGrid;
 
-public class MapEditor<T, K> extends Composite implements
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
+public class MapEditor<T, K> extends AbstractEditorDecorator<T> implements
         HasValue<Map<T,K>>, HasEditorErrors<Map<T,K>>, IsEditor<TakesValueEditor<Map<T,K>>> {
 
-    interface MapEditorStyle extends CssResource {
-        String errorPanelError();
-    }
 
     interface Binder extends UiBinder<Widget, MapEditor> {
         Binder BINDER = GWT.create(Binder.class);
@@ -52,12 +43,11 @@ public class MapEditor<T, K> extends Composite implements
     private TakesValueEditor<Map<T, K>> editor;
 
     @UiField
-    MapEditorStyle style;
-    
-    @UiField
+    @Ignore
     HTMLPanel mainPanel;
     
     @UiField
+    @Ignore
     ScrollPanel gridPanel;
     
     @UiField
@@ -110,7 +100,7 @@ public class MapEditor<T, K> extends Composite implements
 
     @Override
     public void showErrors(List<EditorError> errors) {
-        // TODO
+        _showErrors(errors);
     }
 
     @Override
@@ -226,28 +216,28 @@ public class MapEditor<T, K> extends Composite implements
         grid.setRowCount(count);
         grid.setRowData(0, list);
     }
-    
-    private void enableError(String text) {
-        setLabelText(text);
+
+    @Override
+    public void setErrorLabelPosition(ErrorLabelPosition errorLabelPosition) {
+        super.setErrorLabelPosition(errorLabelPosition);
+        doPositionErrorElement(errorLabel.getElement());
+    }
+
+    protected void enableError(String text) {
+        super.enableError(text);
+        setErrorElementText(errorLabel.getElement(), text);
         errorLabel.setVisible(true);
     }
 
-    private void disableError() {
-        setLabelText(null);
+    protected void disableError() {
+        super.disableError();
+        setErrorElementText(errorLabel.getElement(), null);
         errorLabel.setVisible(false);
     }
     
     public void clear() {
         setValue(null);
         disableError();
-    }
-
-    private void setLabelText(final String text) {
-        if (text == null || text.trim().length() == 0) {
-            errorLabel.setText("");
-        } else {
-            errorLabel.setText(text);
-        }
     }
 
     /*

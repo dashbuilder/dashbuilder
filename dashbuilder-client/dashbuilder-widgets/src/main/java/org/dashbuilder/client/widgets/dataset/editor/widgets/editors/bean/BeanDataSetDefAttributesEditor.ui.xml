@@ -28,11 +28,11 @@
 
     <!-- Generator class. -->
     <b:Row>
-      <b:Column size="MD_2">
+      <b:Column size="MD_3">
         <g:HTML text="{i18n.bean_generator_class}"/>
       </b:Column>
-      <b:Column size="MD_3">
-        <b:Popover showDelayMs="1000" content="{i18n.bean_generator_class_description}" title="{i18n.bean_generator_class}" placement="BOTTOM">
+      <b:Column size="MD_9">
+        <b:Popover container="body" showDelayMs="1000" content="{i18n.bean_generator_class_description}" title="{i18n.bean_generator_class}" placement="RIGHT">
           <dash-client:ValueBoxEditorDecorator errorLabelPosition="TOOLTIP_BOTTOM" ui:field="generatorClass">
             <dash-client:valuebox>
               <b:TextBox placeholder="{i18n.bean_generator_class_placeholder}" />
@@ -44,11 +44,11 @@
 
     <!-- Generator parameters. -->
     <b:Row>
-      <b:Column size="MD_2">
+      <b:Column size="MD_3">
         <g:HTML text="{i18n.bean_generator_params}"/>
       </b:Column>
-      <b:Column size="MD_3" addStyleNames="{style.parameterMapColumn} ">
-        <b:Popover showDelayMs="1000" content="{i18n.bean_generator_params_description}" title="{i18n.bean_generator_params}" placement="BOTTOM" >
+      <b:Column size="MD_9" addStyleNames="{style.parameterMapColumn} ">
+        <b:Popover container="body" showDelayMs="1000" content="{i18n.bean_generator_params_description}" title="{i18n.bean_generator_params}" placement="RIGHT" >
           <dash-client:MapEditor ui:field="paramaterMap"/>
         </b:Popover>
       </b:Column>

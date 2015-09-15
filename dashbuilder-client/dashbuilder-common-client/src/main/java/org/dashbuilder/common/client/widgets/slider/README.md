@@ -46,3 +46,9 @@ Check official wiki at [GWT slide bar - Usage](http://code.google.com/p/gwt-slid
     slider.drawMarks("white", 6);
     slider.setMinMarkStep(3);
     slider.setNotSelectedInFocus();
+
+NOTES
+-----
+
+* This sliders can be removed when the ones from GWT Bootstrap 3 extras repository work fine. See [GWT Bootstrap 3 Slider official doc](https://gwtbootstrap3.github.io/gwtbootstrap3-demo/#slider).                 
+* Currently exist an [issue](https://github.com/gwtbootstrap3/gwtbootstrap3-extras/issues/169) that does not allow to use them as well.                                

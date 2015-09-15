@@ -96,7 +96,6 @@ public class DashboardManager {
 
     public DashboardPerspectiveActivity newDashboard(final String name) {
         final DashboardPerspectiveActivity activity = registerPerspective("dashboard-" + name);
-        placeManager.goTo(activity.getIdentifier());
         perspectiveManager.savePerspectiveState(new Command() {
             public void execute() {
                 dashboardCreatedEvent.fire(new DashboardCreatedEvent(activity.getIdentifier(), activity.getDisplayName()));

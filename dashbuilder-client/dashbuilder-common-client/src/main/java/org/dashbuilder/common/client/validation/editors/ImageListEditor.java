@@ -1,11 +1,5 @@
 package org.dashbuilder.common.client.validation.editors;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.EditorError;
 import com.google.gwt.editor.client.HasEditorErrors;
@@ -20,14 +14,12 @@ import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiConstructor;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.HTMLPanel;
-import com.google.gwt.user.client.ui.HasConstrainedValue;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Image;
-import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.*;
 import org.gwtbootstrap3.client.ui.Popover;
 import org.gwtbootstrap3.client.ui.Tooltip;
+import org.gwtbootstrap3.client.ui.constants.Placement;
+
+import java.util.*;
 
 /**
  * <p>Editor component that accepts multiple values and display each one using a given image.</p>
@@ -36,7 +28,7 @@ import org.gwtbootstrap3.client.ui.Tooltip;
  *  
  * @param <T> The type of the value that contains the editor widget
  */
-public class ImageListEditor<T> extends Composite implements
+public class ImageListEditor<T> extends AbstractEditorDecorator<T> implements
         HasConstrainedValue<T>, HasEditorErrors<T>, IsEditor<TakesValueEditor<T>> {
 
     public static final int POPOVER_SHOW_DELAY = 1000;
@@ -47,7 +39,6 @@ public class ImageListEditor<T> extends Composite implements
 
     interface ImageListEditorStyle extends CssResource {
         String errorPanel();
-        String errorPanelError();
         String imagePointer();
     }
     
@@ -62,15 +53,19 @@ public class ImageListEditor<T> extends Composite implements
     private String imageStyle = null;
 
     @UiField
+    @Ignore
     ImageListEditorStyle style;
 
     @UiField
+    @Ignore
     HTMLPanel errorPanel;
     
     @UiField
+    @Ignore
     HorizontalPanel mainPanel;
 
     @UiField
+    @Ignore
     Tooltip errorTooltip;
     
     public static final class Entry {
@@ -140,6 +135,8 @@ public class ImageListEditor<T> extends Composite implements
                     popover.setTitle( heading );
                     popover.setContent( text );
                     popover.setWidget(_image);
+                    popover.setContainer("body");
+                    popover.setPlacement(Placement.BOTTOM);
                     popover.setShowDelayMs( POPOVER_SHOW_DELAY );
                     mainPanel.add(popover);
                 } else {
@@ -200,32 +197,25 @@ public class ImageListEditor<T> extends Composite implements
 
     @Override
     public void showErrors(List<EditorError> errors) {
-        boolean hasErrors = errors != null && !errors.isEmpty();
-
-        String toolTipText = null;
-        if (hasErrors) {
-            StringBuilder sb = new StringBuilder();
-            for (EditorError error : errors) {
-                sb.append("\n").append(error.getMessage());
-            }
-            if (sb.length() > 0) toolTipText = sb.substring(1);
-        }
-        
-        if (toolTipText != null) {
-           enableError(toolTipText);
-        } else {
-            disableError();
-        }
-    }
-    
-    private void enableError(String text) {
-        setTooltipText(text);
-        markErrorPanel(true);
+        _showErrors(errors);
     }
 
-    private void disableError() {
-        setTooltipText(null);
-        markErrorPanel(false);
+    @Override
+    public void setErrorLabelPosition(ErrorLabelPosition errorLabelPosition) {
+        super.setErrorLabelPosition(errorLabelPosition);
+        doPositionErrorTooltip(errorTooltip);
+    }
+
+    protected void enableError(String text) {
+        super.enableError(text);
+        setTooltipText(errorTooltip, text);
+        markErrorPanel(errorPanel, true);
+    }
+
+    protected void disableError() {
+        super.disableError();
+        setTooltipText(errorTooltip, null);
+        markErrorPanel(errorPanel, false);
     }
 
     public void setEditMode(final boolean isEditMode) {
@@ -251,23 +241,4 @@ public class ImageListEditor<T> extends Composite implements
         disableError();
     }
 
-    private void markErrorPanel(boolean error) {
-        if (error) {
-            errorPanel.addStyleName(style.errorPanelError());
-        } else {
-            errorPanel.removeStyleName(style.errorPanelError());
-        }
-        
-    }
-    
-    private void setTooltipText(String text) {
-        if (text == null || text.trim().length() == 0) {
-            errorTooltip.setTitle( "" );
-        } else {
-            errorTooltip.setTitle(text);
-        }
-        // See issue https://github.com/gwtbootstrap/gwt-bootstrap/issues/287
-        errorTooltip.reconfigure();
-    }
-    
 }

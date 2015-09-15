@@ -11,10 +11,18 @@
     .panel {
       font-size: small;
       margin-top: 10px;
+      padding: 10px;
+      text-align: center;
+      white-space: nowrap;
     }
     .statusTextTitle {
       font-size: small;
       font-weight: bold;
+      white-space: nowrap;
+    }
+    .statusText {
+      font-size: smaller;
+      text-align: left;
       white-space: nowrap;
     }
     .statusIcon {
@@ -32,23 +40,23 @@
           <g:HTML text="{i18n.currentStatus}" addStyleNames="{style.statusTextTitle}"/>
           <bh:Span ui:field="backendStatus">
             <b:Icon ui:field="backendStatusIcon" type="CHECK" addStyleNames="{style.statusIcon}"/>
-            <g:HTML text="{i18n.cache}"/>
+            <g:HTML text="{i18n.cache}" addStyleNames="{style.statusText}"/>
           </bh:Span>
           <bh:Span ui:field="pushStatus">
             <b:Icon ui:field="pushEnabledIcon" type="CHECK" addStyleNames="{style.statusIcon}"/>
-            <g:HTML text="{i18n.push}"/>
+            <g:HTML text="{i18n.push}" addStyleNames="{style.statusText}"/>
           </bh:Span>
           <bh:Span ui:field="refreshStatus">
             <b:Icon ui:field="refreshEnabledIcon" type="CHECK" addStyleNames="{style.statusIcon}"/>
-            <g:HTML text="{i18n.refresh}"/>
+            <g:HTML text="{i18n.refresh}" addStyleNames="{style.statusText}"/>
           </bh:Span>
         </b:Well>
       </b:Column>
       <b:Column size="MD_6">
         <b:Well addStyleNames="{style.panel}">
           <g:HTML text="{i18n.currentSize}" addStyleNames="{style.statusTextTitle}"/>
-          <b:Image ui:field="loadingSizeImage"/>
-          <bh:Span ui:field="sizePanelSpan" addStyleNames="{style.panelSpan}">
+          <bh:Span addStyleNames="{style.panelSpan}">
+            <b:Icon size="LARGE" type="REFRESH" ui:field="statusIcon" width="100%"/>
             <g:HTML ui:field="estimatedRowsText"/>
             <g:HTML ui:field="estimatedSizeText"/>
           </bh:Span>

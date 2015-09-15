@@ -30,6 +30,7 @@ import org.dashbuilder.common.client.validation.editors.ValueBoxEditorDecorator;
 import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.dataset.client.validation.editors.DataColumnDefEditor;
+import org.gwtbootstrap3.client.ui.Column;
 import org.gwtbootstrap3.client.ui.Image;
 
 import javax.enterprise.context.Dependent;
@@ -46,13 +47,13 @@ public class DataColumnBasicEditor extends AbstractEditor implements DataColumnD
 
     private static final int ICONS_SIZE = 16;
 
-    interface DataColumnBasicEditorBinder extends UiBinder<Widget, DataColumnBasicEditor> {}
+    interface DataColumnBasicEditorBinder extends UiBinder<Column, DataColumnBasicEditor> {}
     private static DataColumnBasicEditorBinder uiBinder = GWT.create(DataColumnBasicEditorBinder.class);
 
     private String editorId;
 
     @UiField
-    FlowPanel columnPanel;
+    Column mainColumn;
 
     @UiField
     ValueBoxEditorDecorator<String> id;
@@ -149,4 +150,5 @@ public class DataColumnBasicEditor extends AbstractEditor implements DataColumnD
         id.clear();
         columnType.clear();
     }
+    
 }

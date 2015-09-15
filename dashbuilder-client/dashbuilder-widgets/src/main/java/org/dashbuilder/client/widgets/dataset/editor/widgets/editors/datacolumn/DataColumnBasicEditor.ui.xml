@@ -9,36 +9,37 @@
   <ui:with field="i18n" type="org.dashbuilder.client.widgets.resources.i18n.DataSetEditorConstants"/>
 
   <ui:style>
-    .mainPanel {
-
-    }
-    .left {
-      float: left;
-    }
-    .image {
-      margin-left: 15px;
-      margin-top: 5px;
+    .column {
+      margin: 0px;
+      margin-right: 5px;
+      padding: 0px;
     }
   </ui:style>
+  
+  <b:Column size="MD_10" ui:field="mainColumn">
+    <b:Row>
+      
+      <!-- Column id text box editor. -->
+      <b:Column size="MD_9" addStyleNames="{style.column}">
+        <dash-client:ValueBoxEditorDecorator errorLabelPosition="TOOLTIP_TOP" ui:field="id">
+          <dash-client:valuebox>
+            <b:TextBox enabled="false" placeholder="{i18n.attributeId}" />
+          </dash-client:valuebox>
+        </dash-client:ValueBoxEditorDecorator>
+      </b:Column>
 
-  <g:FlowPanel ui:field="columnPanel" addStyleNames="{style.mainPanel} ">
+      <!-- Column type editor. -->
+      <b:Column size="MD_2" addStyleNames="{style.column}">
+        <b:Popover container="body" placement="RIGHT" showDelayMs="1000" content="{i18n.attributeColumnType_description}" title="{i18n.attributeColumnType}">
+          <dash-client-column:DataColumnTypeEditor ui:field="columnType"/>
+        </b:Popover>
 
-    <!--<b:Popover showDelay="1000" text="{i18n.attributeId}" heading="{i18n.attributeId_description}">-->
-    <dash-client:ValueBoxEditorDecorator errorLabelPosition="TOOLTIP_TOP" ui:field="id" addStyleNames="{style.left}">
-      <dash-client:valuebox>
-        <b:TextBox enabled="false" placeholder="{i18n.attributeId}" />
-      </dash-client:valuebox>
-    </dash-client:ValueBoxEditorDecorator>
-    <!--</b:Popover>-->
-
-    <b:Popover showDelayMs="1000" content="{i18n.attributeColumnType_description}" title="{i18n.attributeColumnType}">
-      <dash-client-column:DataColumnTypeEditor ui:field="columnType" addStyleNames="{style.left}"/>
-    </b:Popover>
-
-    <b:Popover showDelayMs="1000" content="{i18n.attributeColumnType_description}" title="{i18n.attributeColumnType}">
-      <b:Image ui:field="columnTypeImage" addStyleNames="{style.left} {style.image}"/>
-    </b:Popover>
-
-  </g:FlowPanel>
-
+        <b:Popover container="body" placement="RIGHT" showDelayMs="1000" content="{i18n.attributeColumnType_description}" title="{i18n.attributeColumnType}">
+          <b:Image ui:field="columnTypeImage"/>
+        </b:Popover>
+      </b:Column>
+      
+    </b:Row>
+  </b:Column>
+  
 </ui:UiBinder>

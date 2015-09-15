@@ -10,17 +10,20 @@
   <ui:style>
     .mainPanel {
     }
+    .row {
+      margin-top: 10px;
+    }
   </ui:style>
 
   <g:FlowPanel ui:field="elAttributesPanel" addStyleNames="{style.mainPanel}">
 
     <!-- Server URL. -->
     <b:Row>
-      <b:Column size="MD_2">
+      <b:Column size="MD_3">
         <g:HTML text="{i18n.el_server_url}"/>
       </b:Column>
-      <b:Column size="MD_3">
-        <b:Popover showDelayMs="1000" content="{i18n.el_server_url_description}" title="{i18n.el_server_url}" placement="BOTTOM">
+      <b:Column size="MD_9">
+        <b:Popover container="body" showDelayMs="1000" content="{i18n.el_server_url_description}" title="{i18n.el_server_url}" placement="RIGHT">
           <dash-client:ValueBoxEditorDecorator errorLabelPosition="TOOLTIP_BOTTOM" ui:field="serverURL">
             <dash-client:valuebox>
               <b:TextBox placeholder="{i18n.el_server_url_placeholder}" />
@@ -31,12 +34,12 @@
     </b:Row>
 
     <!-- Cluster name. -->
-    <b:Row>
-      <b:Column size="MD_2">
+    <b:Row addStyleNames="{style.row}">
+      <b:Column size="MD_3">
         <g:HTML text="{i18n.el_cluster_name}"/>
       </b:Column>
-      <b:Column size="MD_3">
-        <b:Popover showDelayMs="1000" content="{i18n.el_cluster_name_description}" title="{i18n.el_cluster_name}">
+      <b:Column size="MD_9">
+        <b:Popover container="body" showDelayMs="1000" content="{i18n.el_cluster_name_description}" title="{i18n.el_cluster_name}" placement="RIGHT">
           <dash-client:ValueBoxEditorDecorator errorLabelPosition="TOOLTIP_TOP" ui:field="clusterName">
             <dash-client:valuebox>
               <b:TextBox placeholder="{i18n.el_cluster_name_placeholder}" />
@@ -47,12 +50,12 @@
     </b:Row>
 
     <!-- Index. -->
-    <b:Row>
-      <b:Column size="MD_2">
+    <b:Row addStyleNames="{style.row}">
+      <b:Column size="MD_3">
         <g:HTML text="{i18n.el_index}"/>
       </b:Column>
-      <b:Column size="MD_3">
-        <b:Popover showDelayMs="1000" content="{i18n.el_index_description}" title="{i18n.el_index}">
+      <b:Column size="MD_9">
+        <b:Popover container="body" showDelayMs="1000" content="{i18n.el_index_description}" title="{i18n.el_index}" placement="RIGHT">
           <dash-client:ValueBoxEditorDecorator errorLabelPosition="TOOLTIP_TOP" ui:field="index">
             <dash-client:valuebox>
               <b:TextBox placeholder="{i18n.el_index_placeholder}" />
@@ -63,12 +66,12 @@
     </b:Row>
 
     <!-- Type. -->
-    <b:Row>
-      <b:Column size="MD_2">
+    <b:Row addStyleNames="{style.row}">
+      <b:Column size="MD_3">
         <g:HTML text="{i18n.el_type}"/>
       </b:Column>
-      <b:Column size="MD_3">
-        <b:Popover showDelayMs="1000" content="{i18n.el_type_description}" title="{i18n.el_type}">
+      <b:Column size="MD_9">
+        <b:Popover container="body" showDelayMs="1000" content="{i18n.el_type_description}" title="{i18n.el_type}" placement="RIGHT">
           <dash-client:ValueBoxEditorDecorator errorLabelPosition="TOOLTIP_TOP" ui:field="type">
             <dash-client:valuebox>
               <b:TextBox placeholder="{i18n.el_type_placeholder}" />

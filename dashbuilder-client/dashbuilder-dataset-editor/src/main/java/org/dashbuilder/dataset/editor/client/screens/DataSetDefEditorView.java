@@ -48,6 +48,11 @@ public class DataSetDefEditorView extends BaseEditorViewImpl implements DataSetD
     }
 
     @Override
+    public void onSave() {
+        dataSetEditor.onSave(false);
+    }
+
+    @Override
     public void showError(String message) {
         dataSetEditor.showError(message);
     }

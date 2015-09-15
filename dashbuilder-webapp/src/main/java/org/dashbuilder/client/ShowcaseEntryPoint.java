@@ -146,7 +146,9 @@ public class ShowcaseEntryPoint {
     private void onDashboardCreatedEvent(@Observes DashboardCreatedEvent event) {
         menubar.clear();
         menubar.addMenus(createMenuBar());
-        //workbenchNotification.fire(new NotificationEvent(AppConstants.INSTANCE.notification_dashboard_created(event.getDashboardName()), INFO));
+        // Navigate to the activity after rebuilding the menu bar entries, if not, the activiy perspective menus are overriden and do not appear.
+        placeManager.goTo(event.getDashboardId());
+        workbenchNotification.fire(new NotificationEvent(AppConstants.INSTANCE.notification_dashboard_created(event.getDashboardName()), INFO));
     }
 
     private void onDashboardDeletedEvent(@Observes DashboardDeletedEvent event) {

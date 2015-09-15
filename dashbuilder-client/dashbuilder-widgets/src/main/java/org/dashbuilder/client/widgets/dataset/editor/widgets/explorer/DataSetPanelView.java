@@ -121,13 +121,26 @@ public class DataSetPanelView extends Composite implements DataSetPanel.View {
     }
 
     @Override
-    public DataSetPanel.View showActionButton(final String buttonTitle, final ClickHandler clickHandler) {
+    public DataSetPanel.View hideSummary() {
+        collapsePanel.setIn(false);
+        return this;
+    }
+
+    @Override
+    public DataSetPanel.View enableActionButton(final String buttonTitle, final ClickHandler clickHandler) {
         actionButton.setText(buttonTitle);
+        actionButton.setEnabled(true);
         if (actionButtonHandlerRegistration != null) {
             actionButtonHandlerRegistration.removeHandler();
         }
         actionButtonHandlerRegistration = actionButton.addClickHandler(clickHandler);
         return this;
     }
-    
+
+    @Override
+    public DataSetPanel.View disableActionButton() {
+        actionButton.setEnabled(false);
+        return this;
+    }
+
 }

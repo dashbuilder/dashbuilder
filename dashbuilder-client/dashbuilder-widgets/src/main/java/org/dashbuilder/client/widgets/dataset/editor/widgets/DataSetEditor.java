@@ -23,10 +23,10 @@ import com.google.gwt.event.shared.HasHandlers;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
+import org.dashbuilder.client.widgets.common.ClientRuntimeErrorPopupPresenter;
 import org.dashbuilder.client.widgets.dataset.editor.DataSetDefEditWorkflow;
 import org.dashbuilder.client.widgets.dataset.editor.widgets.editors.DataSetColumnsEditor;
 import org.dashbuilder.client.widgets.dataset.editor.widgets.events.SaveDataSetEvent;
-import org.dashbuilder.client.widgets.dataset.editor.widgets.events.UpdateDataSetEvent;
 import org.dashbuilder.client.widgets.resources.i18n.DataSetEditorConstants;
 import org.dashbuilder.common.client.error.ClientRuntimeError;
 import org.dashbuilder.dataset.*;
@@ -47,12 +47,15 @@ import org.dashbuilder.displayer.impl.TableDisplayerSettingsBuilderImpl;
 import org.dashbuilder.renderer.client.DefaultRenderer;
 import org.gwtbootstrap3.client.ui.constants.ButtonType;
 import org.jboss.errai.common.client.api.RemoteCallback;
+import org.uberfire.workbench.events.NotificationEvent;
 
 import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.validation.ConstraintViolation;
 import java.util.*;
+
+import static org.uberfire.workbench.events.NotificationEvent.NotificationType.*;
 
 /**
  * <p>Data Set Definition editor widget.</p>
@@ -118,7 +121,6 @@ public class DataSetEditor implements IsWidget {
         View onSave();
         View showLoadingView();
         View hideLoadingView();
-        View showError(final String message, final String cause);
         View clear();
     }
     
@@ -130,13 +132,15 @@ public class DataSetEditor implements IsWidget {
     private Event<SaveDataSetEvent> saveDataSetEvent;
 
     @Inject
-    private Event<UpdateDataSetEvent> updateDataSetEvent;
+    ClientRuntimeErrorPopupPresenter errorPopupPresenter;
+
+    @Inject
+    private Event<NotificationEvent> workbenchNotification;
     
     protected final View view = new DataSetEditorView();
 
     protected DataSetClientServices clientServices;
     protected DataSetDef dataSetDef;
-    private String originalUUID;
     protected List<DataColumnDef> originalColumns;
     protected boolean updateColumnsView = false;
     protected Displayer tableDisplayer;
@@ -168,7 +172,6 @@ public class DataSetEditor implements IsWidget {
 
         // Clear any old status
         dataSetDef = new DataSetDef();
-        originalUUID = null;
         originalColumns = null;
         updateColumnsView = true;
         view.setEditMode(editMode = false);
@@ -192,7 +195,6 @@ public class DataSetEditor implements IsWidget {
         clear();
 
         dataSetDef = editDataSetDef.getDefinition();
-        originalUUID = editDataSetDef.getUuid();
         originalColumns = editDataSetDef.getColumns();
         updateColumnsView = true;
 
@@ -359,7 +361,7 @@ public class DataSetEditor implements IsWidget {
             checkValid(new DataSetDefValidationCallback() {
                 @Override
                 public void valid(DataSetDef def, DataSet dataSet) {
-                    onSave();
+                    onSave(true);
                 }
                 @Override
                 public void invalid(ClientRuntimeError error) {
@@ -383,18 +385,22 @@ public class DataSetEditor implements IsWidget {
         return violations.isEmpty();
     }
 
-    private void onSave() {
-
+    /**
+     * Ensure a public data set with all given columns into the definition.
+     * @param fireSaveEvent Save event fire flag.
+     */
+    public void onSave(final boolean fireSaveEvent) {
         dataSetDef.setPublic(true);
-        dataSetDef.setAllColumnsEnabled(false);
-
-        
-        if (originalUUID == null) {
-            // Is saving a new data set.
-            saveDataSetEvent.fire(new SaveDataSetEvent(this, dataSetDef));
+        final List<DataColumnDef> columnDefs = dataSetDef.getColumns();
+        final boolean existColumns = columnDefs != null && !columnDefs.isEmpty();
+        if (!existColumns) {
+            updateDataSetDefColumns(this.originalColumns);
         } else {
-            // Is updating an existing data set.
-            updateDataSetEvent.fire(new UpdateDataSetEvent(this, originalUUID, dataSetDef));
+            dataSetDef.setAllColumnsEnabled(false);
+        }
+        
+        if (fireSaveEvent) {
+            saveDataSetEvent.fire(new SaveDataSetEvent(this, dataSetDef));
         }
     }
 
@@ -408,11 +414,13 @@ public class DataSetEditor implements IsWidget {
     }
 
     public void showError(final ClientRuntimeError error) {
-        view.showError(error.getMessage(), error.getCause());
+        view.hideLoadingView();
+        errorPopupPresenter.showMessage(error);
     }
 
     public void showError(final String message) {
-        view.showError(message, null);
+        view.hideLoadingView();
+        errorPopupPresenter.showMessage(message);
     }
 
     private void showProviderSelectionView() {
@@ -445,8 +453,14 @@ public class DataSetEditor implements IsWidget {
     private final FormPanel.SubmitCompleteHandler submitCompleteHandler = new FormPanel.SubmitCompleteHandler() {
         @Override
         public void onSubmitComplete(FormPanel.SubmitCompleteEvent event) {
-            // TODO: Check successful result.
             GWT.log("DataSetEditor#submitCompleteHandler: " + event.getResults());
+            if ( "OK".equalsIgnoreCase( event.getResults() ) ) {
+                workbenchNotification.fire(new NotificationEvent(DataSetEditorConstants.INSTANCE.uploadSuccessful(), SUCCESS));
+            } else if ( "FAIL".equalsIgnoreCase( event.getResults() ) ) {
+                workbenchNotification.fire(new NotificationEvent(DataSetEditorConstants.INSTANCE.uploadFailed(), ERROR));
+            } else if ( "FAIL - ALREADY EXISTS".equalsIgnoreCase( event.getResults() ) ) {
+                workbenchNotification.fire(new NotificationEvent(DataSetEditorConstants.INSTANCE.uploadFailedAlreadyExists(), ERROR));
+            }
         }
     };
     
@@ -621,9 +635,8 @@ public class DataSetEditor implements IsWidget {
         view.hideCancelButton();
     }
 
-    private void clear() {
+    public void clear() {
         this.dataSetDef = null;
-        this.originalUUID = null;
         this.originalColumns = null;
         this.updateColumnsView = false;
         this.tableDisplayer = null;

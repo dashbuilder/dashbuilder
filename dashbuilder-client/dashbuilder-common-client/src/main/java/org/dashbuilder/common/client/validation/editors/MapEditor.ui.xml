@@ -6,7 +6,7 @@
 
   <ui:with field="i18n" type="org.dashbuilder.common.client.resources.i18n.DashbuilderCommonConstants"/>
 
-  <ui:style type="org.dashbuilder.common.client.validation.editors.MapEditor.MapEditorStyle">
+  <ui:style>
     .mainPanel {
       
     }

@@ -14,22 +14,15 @@ import java.util.List;
 public class EditDataSetDef {
 
     private DataSetDef definition;
-    /** The UUID of the data set being edited. The cloned one has a new UUID for avoiding backend cache issues. */
-    private String uuid;
     private List<DataColumnDef> columns;
 
     public EditDataSetDef() {
         
     }
 
-    public EditDataSetDef(final String uuid, final DataSetDef definition, final List<DataColumnDef> columns) {
-        this.uuid = uuid;
+    public EditDataSetDef(final DataSetDef definition, final List<DataColumnDef> columns) {
         this.definition = definition;
         this.columns = columns;
-    }
-
-    public String getUuid() {
-        return uuid;
     }
 
     public DataSetDef getDefinition() {
