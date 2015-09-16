@@ -15,13 +15,13 @@
  */
 package org.dashbuilder.dataprovider.backend.sql.dialect;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.dashbuilder.dataprovider.backend.sql.model.Column;
 import org.dashbuilder.dataprovider.backend.sql.model.DynamicDateColumn;
 import org.dashbuilder.dataprovider.backend.sql.model.Select;
-import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.group.DateIntervalType;
 
 /**
@@ -64,6 +64,13 @@ public class OracleDialect extends DefaultDialect {
                 return "VARCHAR2(" + column.getLength() + ")";
             }
         }
+    }
+
+    @Override
+    public Date convertToDate(Object value) {
+        // ((oracle.sql.TIMESTAMP) value).dateValue()
+        Object date = invokeMethod(value, "dateValue", null);
+        return super.convertToDate(date);
     }
 
     @Override

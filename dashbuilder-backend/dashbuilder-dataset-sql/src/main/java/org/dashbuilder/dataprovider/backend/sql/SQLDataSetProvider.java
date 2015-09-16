@@ -897,7 +897,8 @@ public class SQLDataSetProvider implements DataSetProvider {
                 }
             }
 
-            // Format the data set values according to each column type
+            // Process the data set values according to each column type and the JDBC dialect
+            Dialect dialect = JDBCUtils.dialect(conn);
             for (DataColumn column : dataSet.getColumns()) {
                 ColumnType columnType = column.getColumnType();
                 List values = column.getValues();
@@ -917,12 +918,29 @@ public class SQLDataSetProvider implements DataSetProvider {
                             values.add(j, dateObj);
                         }
                     }
+                    else {
+                        for (int j=0; j<values.size(); j++) {
+                            Object value = dialect.convertToString(values.remove(j));
+                            values.add(j, value);
+                        }
+                    }
                 }
-                if (ColumnType.NUMBER.equals(columnType)) {
+                else if (ColumnType.NUMBER.equals(columnType)) {
                     for (int j=0; j<values.size(); j++) {
-                        // Convert to double any numeric value
-                        Number num = (Number) values.remove(j);
-                        values.add(j, num != null ? num.doubleValue() : null);
+                        Object value = dialect.convertToDouble(values.remove(j));
+                        values.add(j, value);
+                    }
+                }
+                else if (ColumnType.DATE.equals(columnType)) {
+                    for (int j=0; j<values.size(); j++) {
+                        Object value = dialect.convertToDate(values.remove(j));
+                        values.add(j, value);
+                    }
+                }
+                else {
+                    for (int j=0; j<values.size(); j++) {
+                        Object value = dialect.convertToString(values.remove(j));
+                        values.add(j, value);
                     }
                 }
 

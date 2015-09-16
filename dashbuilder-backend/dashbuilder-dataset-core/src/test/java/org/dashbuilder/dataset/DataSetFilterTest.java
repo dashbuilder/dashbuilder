@@ -18,9 +18,7 @@ package org.dashbuilder.dataset;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.List;
-import java.util.ArrayList;
 import javax.inject.Inject;
 
 import org.dashbuilder.dataset.backend.BackendDataSetManager;
@@ -71,6 +69,27 @@ public class DataSetFilterTest {
         dataSetManager.registerDataSet(dataSet, preProcessors);
 
         dataSetFormatter = new DataSetFormatter();
+    }
+
+    @Test
+    public void testColumnTypes() throws Exception {
+
+        DataSet result = dataSetManager.lookupDataSet(
+                DataSetFactory.newDataSetLookupBuilder()
+                        .dataset(EXPENSE_REPORTS)
+                        .column(COLUMN_CITY)
+                        .column(COLUMN_AMOUNT)
+                        .column(COLUMN_DATE)
+                        .buildLookup());
+
+        assertThat(result.getColumnByIndex(0).getColumnType()).isEqualTo(ColumnType.LABEL);
+        assertThat(result.getColumnByIndex(1).getColumnType()).isEqualTo(ColumnType.NUMBER);
+        assertThat(result.getColumnByIndex(2).getColumnType()).isEqualTo(ColumnType.DATE);
+        assertThat(String.class.isAssignableFrom(result.getValueAt(0, 0).getClass())).isTrue();
+        assertThat(Double.class.isAssignableFrom(result.getValueAt(0, 1).getClass())).isTrue();
+        assertThat(java.util.Date.class.equals(result.getValueAt(0,2).getClass()) ||
+                java.sql.Date.class.equals(result.getValueAt(0, 2).getClass()) ||
+                java.sql.Timestamp.class.equals(result.getValueAt(0,2).getClass())).isTrue();
     }
 
     @Test

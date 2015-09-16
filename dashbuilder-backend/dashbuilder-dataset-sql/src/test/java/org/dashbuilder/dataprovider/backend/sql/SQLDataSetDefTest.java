@@ -105,7 +105,7 @@ public class SQLDataSetDefTest extends SQLDataSetTestBase {
         assertThat(dataSet.getValueAt(0, 0)).isEqualTo("Engineering");
         assertThat(dataSet.getValueAt(0, 1)).isEqualTo("Roxie Foraker");
         assertThat(dataSet.getValueAt(0, 2)).isEqualTo(120.35d);
-        assertThat(dataSet.getValueAt(0, 3).toString()).isEqualTo("2015-12-11 12:00:00.0");
+        assertThat(dataSetFormatter.formatValueAt(dataSet, 0, 3)).isEqualTo("12/11/15 12:00");
     }
 
     @Test

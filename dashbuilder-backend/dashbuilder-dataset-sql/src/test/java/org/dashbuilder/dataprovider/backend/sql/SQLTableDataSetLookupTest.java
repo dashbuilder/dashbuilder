@@ -171,6 +171,7 @@ public class SQLTableDataSetLookupTest extends SQLDataSetTestBase {
         DataSetFilterTest subTest = new DataSetFilterTest();
         subTest.dataSetManager = dataSetManager;
         subTest.dataSetFormatter = dataSetFormatter;
+        subTest.testColumnTypes();
         subTest.testFilterByString();
         subTest.testFilterByDate();
         subTest.testFilterByNumber();

@@ -22,7 +22,7 @@ import org.junit.Before;
 
 public class SQLTestSuite extends SQLDataSetTestBase {
 
-    private <T extends SQLDataSetTestBase> T setUp(T test) throws Exception {
+    protected <T extends SQLDataSetTestBase> T setUp(T test) throws Exception {
         test.dataSetManager = dataSetManager;
         test.dataSetFormatter = dataSetFormatter;
         test.dataSetDefRegistry = dataSetDefRegistry;
@@ -33,7 +33,7 @@ public class SQLTestSuite extends SQLDataSetTestBase {
         return test;
     }
 
-    private List<SQLDataSetTestBase> sqlTestList = new ArrayList<SQLDataSetTestBase>();
+    protected List<SQLDataSetTestBase> sqlTestList = new ArrayList<SQLDataSetTestBase>();
 
     @Before
     public void setUp() throws Exception {
