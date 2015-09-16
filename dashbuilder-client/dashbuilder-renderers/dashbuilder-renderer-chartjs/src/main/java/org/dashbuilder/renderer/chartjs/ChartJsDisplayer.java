@@ -167,9 +167,8 @@ public abstract class ChartJsDisplayer extends AbstractDisplayer {
 
         List<DataColumn> columns = dataSet.getColumns();
         String[] labels = new String[dataSet.getRowCount()];
-        DataColumn labelColumn = columns.get(0);
         for (int i=0; i<dataSet.getRowCount(); i++) {
-            String label = super.formatValue(dataSet.getValueAt(i, 0), labelColumn);
+            String label = super.formatValue(i, 0);
             labels[i] = label;
         }
 

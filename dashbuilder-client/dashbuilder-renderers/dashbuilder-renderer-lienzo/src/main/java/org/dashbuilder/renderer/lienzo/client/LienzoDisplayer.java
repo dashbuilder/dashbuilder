@@ -72,7 +72,9 @@ public abstract class LienzoDisplayer extends AbstractDisplayer {
                 lienzoTable.addColumn(columnId, getColumnType(dataColumn));
                 for (int j = 0; j < columnValues.size(); j++) {
                     Object value = columnValues.get(j);
-                    if (ColumnType.LABEL.equals(columnType)) value = super.formatValue(value, dataColumn);
+                    if (ColumnType.LABEL.equals(columnType)) {
+                        value = super.formatValue(i, j);
+                    }
                     addTableValue(lienzoTable, columnType, value, columnId);
                 }
             }

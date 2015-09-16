@@ -101,7 +101,7 @@ public abstract class GoogleDisplayer extends AbstractDisplayer {
                     }
                 }
                 else {
-                    value = super.formatValue(value, dataColumn);
+                    value = super.formatValue(j, i);
                     googleTable.setValue(j, i, value.toString());
                 }
             }

@@ -194,8 +194,7 @@ public class TableDisplayer extends AbstractDisplayer {
             case LABEL: return new Column<Integer, String>(
                             new DataColumnCell( column.getId(), true ) ) {
                                 public String getValue( Integer row ) {
-                                    Object value = dataSet.getValueAt(row, columnNumber);
-                                    return formatValue(value, column);
+                                    return formatValue(row, columnNumber);
                                 }
                             };
 
@@ -204,8 +203,7 @@ public class TableDisplayer extends AbstractDisplayer {
             case TEXT: return new Column<Integer, String>(
                             new DataColumnCell( column.getId(), false ) ) {
                                 public String getValue( Integer row ) {
-                                    Object value = dataSet.getValueAt(row, columnNumber);
-                                    return formatValue(value, column);
+                                    return formatValue(row, columnNumber);
                                 }
             };
         }
