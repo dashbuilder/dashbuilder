@@ -180,8 +180,10 @@ public class SQLTableDataSetLookupTest extends SQLDataSetTestBase {
         subTest.testNOTExpression();
         subTest.testORExpression();
         subTest.testORExpressionMultilple();
+        subTest.testLogicalExprNonEmpty();
         subTest.testCombinedExpression();
         subTest.testCombinedExpression2();
+        subTest.testCombinedExpression3();
         subTest.testLikeOperatorNonCaseSensitive();
 
         // Skip this test since MySQL,SQLServer & Sybase are non case sensitive by default

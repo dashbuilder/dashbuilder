@@ -104,15 +104,19 @@ public class Select extends SQLStatement<Select> {
     }
 
     public Select where(Condition condition) {
-        if (condition instanceof CoreCondition) {
-            fix(((CoreCondition) condition).getColumn());
+        if (condition != null) {
+            if (condition instanceof CoreCondition) {
+                fix(((CoreCondition) condition).getColumn());
+            }
+            wheres.add(condition);
         }
-        wheres.add(condition);
         return this;
     }
 
     public Select groupBy(Column column) {
-        groupBys.add(fix(column));
+        if (column != null) {
+            groupBys.add(fix(column));
+        }
         return this;
     }
 
