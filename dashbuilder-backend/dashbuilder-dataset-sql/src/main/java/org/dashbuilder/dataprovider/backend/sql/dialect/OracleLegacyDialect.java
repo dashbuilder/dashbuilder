@@ -34,20 +34,24 @@ public class OracleLegacyDialect extends OracleDialect {
 
         int offset = select.getOffset();
         int limit = select.getLimit();
-        if (limit <= 0 && offset <= 0) {
-            return sql;
-        }
 
-        String result = "SELECT * FROM (SELECT Q.*, ROWNUM RN FROM (" + sql + ") Q) WHERE ";
         if (offset > 0 && limit > 0) {
-            result += "RN > " + offset + " AND RN <= "  + (offset + limit);
+            return "SELECT * FROM (SELECT Q.*, ROWNUM RN FROM (" + sql + ") Q WHERE ROWNUM <= " + (offset + limit) + ") WHERE RN > " + offset;
         }
         else if (offset > 0) {
-            result += "RN >= " + offset;
+            return "SELECT * FROM (" + sql + ") WHERE ROWNUM > " + offset;
         }
         else if (limit > 0) {
-            result += "RN <= " + limit;
+            return "SELECT * FROM (" + sql + ") WHERE ROWNUM <= " + limit;
         }
-        return result;
+        else {
+            return sql;
+        }
+    }
+
+    @Override
+    public String getOffsetLimitSQL(Select select) {
+        return null;
     }
 }
+
