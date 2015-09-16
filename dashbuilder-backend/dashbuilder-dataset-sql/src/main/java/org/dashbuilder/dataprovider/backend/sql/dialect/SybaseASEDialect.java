@@ -45,6 +45,13 @@ public class SybaseASEDialect extends DefaultDialect {
         }
     }
 
+    @Override
+    public Date convertToDate(Object value) {
+        // new Date( ((com.sybase.jdbc4.tds.SybTimestamp) value).getTime() )
+        Long time = (Long) invokeMethod(value, "getTime", null);
+        return new Date(time);
+    }
+
     SimpleDateFormat sybaseDateFormat = new SimpleDateFormat("yyyyMMdd HH:mm:ss");
 
     @Override
