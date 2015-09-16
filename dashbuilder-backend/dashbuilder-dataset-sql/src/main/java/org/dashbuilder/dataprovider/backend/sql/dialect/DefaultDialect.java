@@ -15,6 +15,8 @@
  */
 package org.dashbuilder.dataprovider.backend.sql.dialect;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -87,6 +89,33 @@ public class DefaultDialect implements Dialect {
             default: {
                 return "VARCHAR(" + column.getLength() + ")";
             }
+        }
+    }
+
+    @Override
+    public String convertToString(Object value) {
+        try {
+            return (String) value;
+        } catch (ClassCastException e) {
+            return value == null ? null : value.toString();
+        }
+    }
+
+    @Override
+    public double convertToDouble(Object value) {
+        try {
+            return value == null ? null : ((Number) value).doubleValue();
+        } catch (ClassCastException e) {
+            return Double.parseDouble(value.toString());
+        }
+    }
+
+    @Override
+    public Date convertToDate(Object value) {
+        try {
+            return (Date) value;
+        } catch (ClassCastException e) {
+            throw new IllegalArgumentException("Not a java.util.Date: " + value + " (" + value.getClass().getName() + ")");
         }
     }
 
@@ -715,5 +744,26 @@ public class DefaultDialect implements Dialect {
     @Override
     public String getOrderByStatement(Select select) {
         return "ORDER BY";
+    }
+
+    // Helper methods
+
+    protected Object invokeMethod(Object o, String methodName, Object[] params) {
+        Method methods[] = o.getClass().getMethods();
+        for (int i = 0; i < methods.length; ++i) {
+            if (methodName.equals(methods[i].getName())) {
+                try {
+                    methods[i].setAccessible(true);
+                    return methods[i].invoke(o, params);
+                }
+                catch (IllegalAccessException ex) {
+                    return null;
+                }
+                catch (InvocationTargetException ite) {
+                    return null;
+                }
+            }
+        }
+        return null;
     }
 }

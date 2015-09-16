@@ -63,6 +63,12 @@ public interface Dialect {
 
     String getColumnTypeSQL(Column column);
 
+    String convertToString(Object value);
+
+    double convertToDouble(Object value);
+
+    Date convertToDate(Object value);
+
     String[] getExcludedColumns();
 
     String getTableSQL(SQLStatement<?> stmt);
