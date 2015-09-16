@@ -18,6 +18,7 @@ package org.dashbuilder.dataset;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.List;
 import java.util.ArrayList;
 import javax.inject.Inject;
@@ -90,9 +91,9 @@ public class DataSetFilterTest {
     public void testFilterByNumber() throws Exception {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
-                .dataset(EXPENSE_REPORTS)
-                .filter(COLUMN_AMOUNT, between(100, 200))
-                .buildLookup());
+                        .dataset(EXPENSE_REPORTS)
+                        .filter(COLUMN_AMOUNT, between(100, 200))
+                        .buildLookup());
 
         //printDataSet(result);
         assertThat(result.getRowCount()).isEqualTo(5);
@@ -123,9 +124,9 @@ public class DataSetFilterTest {
     public void testFilterUntilToday() throws Exception {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
-                    .dataset(EXPENSE_REPORTS)
-                    .filter(COLUMN_DATE, timeFrame("10second"))
-                    .buildLookup());
+                        .dataset(EXPENSE_REPORTS)
+                        .filter(COLUMN_DATE, timeFrame("10second"))
+                        .buildLookup());
 
         //assertThat(result.getRowCount()).isEqualTo(0);
     }
@@ -228,6 +229,37 @@ public class DataSetFilterTest {
     }
 
     @Test
+    public void testLogicalExprNonEmpty() throws Exception {
+
+        DataSet result = dataSetManager.lookupDataSet(
+                DataSetFactory.newDataSetLookupBuilder()
+                        .dataset(EXPENSE_REPORTS)
+                        .filter(AND(COLUMN_EMPLOYEE, new ArrayList<ColumnFilter>()))
+                        .buildLookup());
+
+        //printDataSet(result);
+        assertThat(result.getRowCount()).isEqualTo(50);
+
+        result = dataSetManager.lookupDataSet(
+                DataSetFactory.newDataSetLookupBuilder()
+                        .dataset(EXPENSE_REPORTS)
+                        .filter(OR(COLUMN_EMPLOYEE, new ArrayList<ColumnFilter>()))
+                        .buildLookup());
+
+        //printDataSet(result);
+        assertThat(result.getRowCount()).isEqualTo(50);
+
+        result = dataSetManager.lookupDataSet(
+                DataSetFactory.newDataSetLookupBuilder()
+                        .dataset(EXPENSE_REPORTS)
+                        .filter(NOT(COLUMN_EMPLOYEE, new ArrayList<ColumnFilter>()))
+                        .buildLookup());
+
+        //printDataSet(result);
+        assertThat(result.getRowCount()).isEqualTo(50);
+    }
+
+    @Test
     public void testCombinedExpression() throws Exception {
 
         DataSet result = dataSetManager.lookupDataSet(
@@ -254,12 +286,11 @@ public class DataSetFilterTest {
 
         List<ColumnFilter> condList = new  ArrayList<ColumnFilter>();
         for(String employee : new String[] {"Roxie Foraker", "Patricia J. Behr"}){
-            condList.add(equalsTo(COLUMN_EMPLOYEE, employee));
-
+            condList.add(equalsTo(employee));
         }
 
         ColumnFilter filter1 = equalsTo(COLUMN_CITY, cities);
-        ColumnFilter filter2 = AND(OR(condList), equalsTo(COLUMN_DEPARTMENT, "Engineering"));
+        ColumnFilter filter2 = AND(OR(COLUMN_EMPLOYEE, condList), equalsTo(COLUMN_DEPARTMENT, "Engineering"));
         ColumnFilter filter3 = equalsTo(COLUMN_DEPARTMENT, "Services");
 
         DataSetLookupBuilder builder = DataSetFactory.newDataSetLookupBuilder();
@@ -281,6 +312,28 @@ public class DataSetFilterTest {
         assertThat(result.getRowCount()).isEqualTo(8);
         assertDataSetValue(result, 0, 0, "1.00");
         assertDataSetValue(result, 7, 0, "8.00");
+    }
+
+    @Test
+    public void testCombinedExpression3() throws Exception {
+
+        List<ColumnFilter> condList = new  ArrayList<ColumnFilter>();
+        for(String employee : new String[] {"Roxie Foraker", "Patricia J. Behr", null}){
+            condList.add(equalsTo(employee));
+        }
+
+        DataSet result = dataSetManager.lookupDataSet(
+                DataSetFactory.newDataSetLookupBuilder()
+                        .dataset(EXPENSE_REPORTS)
+                                // Ensure the columnId is propagated to the logical expression terms
+                        .filter(OR(COLUMN_EMPLOYEE, condList))
+                        .column(COLUMN_ID)
+                        .sort(COLUMN_ID, SortOrder.ASCENDING)
+                        .buildLookup());
+
+        //printDataSet(result);
+        assertDataSetValues(result, new String[][]{
+                {"1.00"}, {"2.00"}, {"3.00"}, {"7.00"}, {"8.00"}, {"47.00"}, {"48.00"}, {"49.00"}, {"50.00"}}, 0);
     }
 
     @Test

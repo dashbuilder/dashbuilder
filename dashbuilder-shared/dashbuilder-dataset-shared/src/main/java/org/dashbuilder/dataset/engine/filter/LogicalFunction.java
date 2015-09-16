@@ -37,6 +37,10 @@ public class LogicalFunction extends DataSetFunction {
     }
 
     public boolean pass() {
+        if (functionTerms .isEmpty()) {
+            return true;
+        }
+
         LogicalExprType type = logicalFunctionFilter.getLogicalOperator();
 
         if (LogicalExprType.NOT.equals(type)) {

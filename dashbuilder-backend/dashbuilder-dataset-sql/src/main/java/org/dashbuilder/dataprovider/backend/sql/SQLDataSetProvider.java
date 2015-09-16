@@ -374,7 +374,10 @@ public class SQLDataSetProvider implements DataSetProvider {
     }
 
     protected void _appendFilterBy(SQLDataSetDef def, ColumnFilter filter, Select _query) {
-        _query.where(_createCondition(def, filter));
+        Condition condition = _createCondition(def, filter);
+        if (condition != null) {
+            _query.where(condition);
+        }
     }
 
     protected Condition _createCondition(SQLDataSetDef def, ColumnFilter filter) {
