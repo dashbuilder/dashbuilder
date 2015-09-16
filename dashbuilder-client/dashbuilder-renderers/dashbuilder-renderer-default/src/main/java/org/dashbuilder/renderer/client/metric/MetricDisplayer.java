@@ -51,8 +51,7 @@ public class MetricDisplayer extends AbstractMetricDisplayer {
         if (dataSet.getRowCount() == 0) {
             metricView.updateMetric(MetricConstants.INSTANCE.metricDisplayer_noDataAvailable());
         } else {
-            Number value = (Number) dataSet.getValueAt(0, 0);
-            String valueStr = super.formatValue(value, dataSet.getColumnByIndex(0));
+            String valueStr = super.formatValue(0, 0);
             metricView.updateMetric(valueStr);
         }
     }

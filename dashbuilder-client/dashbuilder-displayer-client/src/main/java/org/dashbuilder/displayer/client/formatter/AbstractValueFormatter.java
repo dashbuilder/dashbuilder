@@ -17,9 +17,10 @@ package org.dashbuilder.displayer.client.formatter;
 
 import org.dashbuilder.dataset.DataSet;
 
-public interface ValueFormatter {
+public abstract class AbstractValueFormatter implements ValueFormatter {
 
-    String formatValue(DataSet dataSet, int row, int column);
-
-    String formatValue(Object value);
+    public String formatValue(DataSet dataSet, int row, int column) {
+        Object value = dataSet.getValueAt(row, column);
+        return formatValue(value);
+    }
 }

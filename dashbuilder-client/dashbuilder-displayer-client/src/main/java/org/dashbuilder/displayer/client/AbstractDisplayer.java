@@ -706,6 +706,17 @@ public abstract class AbstractDisplayer extends Composite implements Displayer {
         return formatterMap.get(columnId);
     }
 
+    public String formatValue(int row, int column) {
+        Object value = dataSet.getValueAt(row, column);
+        DataColumn columnObj = dataSet.getColumnByIndex(column);
+
+        ValueFormatter formatter = getFormatter(columnObj.getId());
+        if (formatter != null) {
+            return formatter.formatValue(dataSet, row, column);
+        }
+        return formatValue(value, columnObj);
+    }
+
     public String formatValue(Object value, DataColumn column) {
 
         ValueFormatter formatter = getFormatter(column.getId());

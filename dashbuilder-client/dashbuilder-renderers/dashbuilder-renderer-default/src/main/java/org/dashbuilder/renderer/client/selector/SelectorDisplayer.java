@@ -107,7 +107,7 @@ public class SelectorDisplayer extends AbstractDisplayer {
             Object obj = dataSet.getValueAt(i, 0);
             if (obj == null) continue;
 
-            String value = super.formatValue(obj, firstColumn);
+            String value = super.formatValue(i, 0);
             listBox.addItem(value);
             if (currentFilter != null && currentFilter.contains(i)) {
                 listBox.setSelectedIndex(i+1);
@@ -125,7 +125,7 @@ public class SelectorDisplayer extends AbstractDisplayer {
 
                     if (extraValue != null) {
                         if (j > 1) out.append("  ");
-                        String formattedValue = super.formatValue(extraValue, extraColumn);
+                        String formattedValue = super.formatValue(i, j);
                         out.append(extraColumnName).append("=").append(formattedValue);
                     }
                 }
