@@ -68,9 +68,11 @@ public class OracleDialect extends DefaultDialect {
 
     @Override
     public Date convertToDate(Object value) {
+        if (value == null) {
+            return null;
+        }
         // ((oracle.sql.TIMESTAMP) value).dateValue()
-        Object date = invokeMethod(value, "dateValue", null);
-        return super.convertToDate(date);
+        return (Date) invokeMethod(value, "dateValue", null);
     }
 
     @Override

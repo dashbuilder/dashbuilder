@@ -25,6 +25,7 @@ import org.dashbuilder.dataset.filter.FilterFactory;
 import org.dashbuilder.dataset.group.DateIntervalType;
 import org.junit.Test;
 
+import static org.dashbuilder.dataprovider.backend.sql.SQLFactory.*;
 import static org.dashbuilder.dataset.filter.FilterFactory.*;
 import static org.dashbuilder.dataset.group.AggregateFunctionType.*;
 import static org.fest.assertions.api.Assertions.*;
@@ -33,12 +34,47 @@ public class SQLTableDataSetLookupTest extends SQLDataSetTestBase {
 
     @Override
     public void testAll() throws Exception {
+        testNullValues();
         testDataSetTrim();
         testDataSetColumns();
         testDataSetFilter();
         testDataSetGroup();
         testDataSetGroupByHour();
         testDataSetNestedGroup();
+    }
+
+    @Test
+    public void testNullValues() throws Exception {
+        try {
+            insert(conn).into(EXPENSES)
+                    .set(ID, 9999)
+                    .set(CITY, null)
+                    .set(DEPT, null)
+                    .set(EMPLOYEE, null)
+                    .set(DATE, null)
+                    .set(AMOUNT, null)
+                    .execute();
+
+            DataSet result = dataSetManager.lookupDataSet(
+                    DataSetFactory.newDataSetLookupBuilder()
+                            .dataset(DataSetGroupTest.EXPENSE_REPORTS)
+                            .filter(equalsTo(ID.getName(), 9999))
+                            .buildLookup());
+
+            assertThat(result.getRowCount()).isEqualTo(1);
+            assertThat(result.getValueAt(0, 1)).isNull();
+            assertThat(result.getValueAt(0, 2)).isNull();
+            assertThat(result.getValueAt(0, 3)).isNull();
+            assertThat(result.getValueAt(0, 4)).isNull();
+            // Skip next since some DBs like Mysql return the current date when the value inserted is null,
+            // assertThat(result.getValueAt(0, 5)).isNull();
+        }
+        finally {
+            delete(conn)
+                    .from(EXPENSES)
+                    .where((ID.equalsTo(9999)))
+                    .execute();
+        }
     }
 
     @Test

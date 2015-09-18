@@ -25,9 +25,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.dashbuilder.dataprovider.backend.sql.model.Column;
 import org.dashbuilder.dataprovider.backend.sql.model.Condition;
 import org.dashbuilder.dataprovider.backend.sql.model.CoreCondition;
+import org.dashbuilder.dataprovider.backend.sql.model.Delete;
 import org.dashbuilder.dataprovider.backend.sql.model.DynamicDateColumn;
 import org.dashbuilder.dataprovider.backend.sql.model.FixedDateColumn;
 import org.dashbuilder.dataprovider.backend.sql.model.FunctionColumn;
+import org.dashbuilder.dataprovider.backend.sql.model.Insert;
 import org.dashbuilder.dataprovider.backend.sql.model.LogicalCondition;
 import org.dashbuilder.dataprovider.backend.sql.model.SQLStatement;
 import org.dashbuilder.dataprovider.backend.sql.model.Select;
@@ -95,14 +97,14 @@ public class DefaultDialect implements Dialect {
     @Override
     public String convertToString(Object value) {
         try {
-            return (String) value;
+            return value == null ? null : (String) value;
         } catch (ClassCastException e) {
-            return value == null ? null : value.toString();
+            return value.toString();
         }
     }
 
     @Override
-    public double convertToDouble(Object value) {
+    public Double convertToDouble(Object value) {
         try {
             return value == null ? null : ((Number) value).doubleValue();
         } catch (ClassCastException e) {
@@ -113,7 +115,7 @@ public class DefaultDialect implements Dialect {
     @Override
     public Date convertToDate(Object value) {
         try {
-            return (Date) value;
+            return value == null ? null : (Date) value;
         } catch (ClassCastException e) {
             throw new IllegalArgumentException("Not a java.util.Date: " + value + " (" + value.getClass().getName() + ")");
         }
@@ -468,6 +470,9 @@ public class DefaultDialect implements Dialect {
 
     @Override
     public String getParameterSQL(Object param) {
+        if (param == null) {
+            return "null";
+        }
         if (param instanceof Number) {
             return getNumberParameterSQL((Number) param);
         }
@@ -619,6 +624,63 @@ public class DefaultDialect implements Dialect {
     }
 
     @Override
+    public String getSQL(Insert insert) {
+        // Insert clause
+        StringBuilder sql = new StringBuilder();
+        String insertClause = getInsertStatement(insert);
+        sql.append(insertClause);
+
+        // Table
+        sql.append(" ").append(getTableSQL(insert));
+
+        // Columns
+        boolean first = true;
+        sql.append(" (");
+        for (Column column : insert.getColumns()) {
+            if (!first) {
+                sql.append(",");
+            }
+            String str = getColumnSQL(column);
+            sql.append(str);
+            first = false;
+        }
+        sql.append(")");
+
+        // Values
+        first = true;
+        sql.append(" VALUES (");
+        for (Object value : insert.getValues()) {
+            if (!first) {
+                sql.append(",");
+            }
+            String str = getParameterSQL(value);
+            sql.append(str);
+            first = false;
+        }
+        sql.append(")");
+        return sql.toString();
+    }
+
+    @Override
+    public String getSQL(Delete delete) {
+        // Delete clause
+        StringBuilder sql = new StringBuilder();
+        String deleteClause = getDeleteStatement(delete);
+        sql.append(deleteClause);
+
+        // From clause
+        sql.append(" ").append(getTableSQL(delete));
+
+        // Where clauses
+        List<Condition> wheres = delete.getWheres();
+        if (!wheres.isEmpty()) {
+            sql.append(" ").append(getWhereSQL(delete));
+        }
+
+        return sql.toString();
+    }
+
+    @Override
     public String getSelectSQL(Select select) {
         StringBuilder clause = new StringBuilder();
         clause.append(getSelectStatement(select));
@@ -665,6 +727,24 @@ public class DefaultDialect implements Dialect {
         for (Condition condition : wheres) {
             if (first) {
                 sql.append(getWhereStatement(select)).append(" ");
+            } else {
+                sql.append(" AND ");
+            }
+            String str = getConditionSQL(condition);
+            sql.append(str);
+            first = false;
+        }
+        return sql.toString();
+    }
+
+    @Override
+    public String getWhereSQL(Delete delete) {
+        StringBuilder sql = new StringBuilder();
+        List<Condition> wheres = delete.getWheres();
+        boolean first = true;
+        for (Condition condition : wheres) {
+            if (first) {
+                sql.append(getWhereStatement(delete)).append(" ");
             } else {
                 sql.append(" AND ");
             }
@@ -727,12 +807,27 @@ public class DefaultDialect implements Dialect {
     }
 
     @Override
+    public String getInsertStatement(Insert insert) {
+        return "INSERT INTO";
+    }
+
+    @Override
+    public String getDeleteStatement(Delete delete) {
+        return "DELETE FROM";
+    }
+
+    @Override
     public String getFromStatement(Select select) {
         return "FROM";
     }
 
     @Override
     public String getWhereStatement(Select select) {
+        return "WHERE";
+    }
+
+    @Override
+    public String getWhereStatement(Delete delete) {
         return "WHERE";
     }
 
