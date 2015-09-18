@@ -20,9 +20,11 @@ import java.util.Date;
 import org.dashbuilder.dataprovider.backend.sql.model.Column;
 import org.dashbuilder.dataprovider.backend.sql.model.Condition;
 import org.dashbuilder.dataprovider.backend.sql.model.CoreCondition;
+import org.dashbuilder.dataprovider.backend.sql.model.Delete;
 import org.dashbuilder.dataprovider.backend.sql.model.DynamicDateColumn;
 import org.dashbuilder.dataprovider.backend.sql.model.FixedDateColumn;
 import org.dashbuilder.dataprovider.backend.sql.model.FunctionColumn;
+import org.dashbuilder.dataprovider.backend.sql.model.Insert;
 import org.dashbuilder.dataprovider.backend.sql.model.LogicalCondition;
 import org.dashbuilder.dataprovider.backend.sql.model.SQLStatement;
 import org.dashbuilder.dataprovider.backend.sql.model.Select;
@@ -37,11 +39,17 @@ public interface Dialect {
 
     String getSQL(Select select);
 
+    String getSQL(Insert insert);
+
+    String getSQL(Delete delete);
+
     String getSelectSQL(Select select);
 
     String getFromSQL(Select select);
 
     String getWhereSQL(Select select);
+
+    String getWhereSQL(Delete delete);
 
     String getGroupBySQL(Select select);
 
@@ -51,9 +59,15 @@ public interface Dialect {
 
     String getSelectStatement(Select select);
 
+    String getInsertStatement(Insert insert);
+
+    String getDeleteStatement(Delete delete);
+
     String getFromStatement(Select select);
 
     String getWhereStatement(Select select);
+
+    String getWhereStatement(Delete delete);
 
     String getGroupByStatement(Select select);
 
@@ -65,7 +79,7 @@ public interface Dialect {
 
     String convertToString(Object value);
 
-    double convertToDouble(Object value);
+    Double convertToDouble(Object value);
 
     Date convertToDate(Object value);
 

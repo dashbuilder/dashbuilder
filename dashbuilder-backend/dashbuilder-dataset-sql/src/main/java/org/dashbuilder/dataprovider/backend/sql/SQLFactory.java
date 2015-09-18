@@ -20,6 +20,7 @@ import java.sql.Connection;
 import org.dashbuilder.dataprovider.backend.sql.dialect.Dialect;
 import org.dashbuilder.dataprovider.backend.sql.model.Column;
 import org.dashbuilder.dataprovider.backend.sql.model.CreateTable;
+import org.dashbuilder.dataprovider.backend.sql.model.Delete;
 import org.dashbuilder.dataprovider.backend.sql.model.DropTable;
 import org.dashbuilder.dataprovider.backend.sql.model.DynamicDateColumn;
 import org.dashbuilder.dataprovider.backend.sql.model.FixedDateColumn;
@@ -42,6 +43,11 @@ public class SQLFactory {
     public static Insert insert(Connection connection) {
         Dialect dialect = JDBCUtils.dialect(connection);
         return new Insert(connection, dialect);
+    }
+
+    public static Delete delete(Connection connection) {
+        Dialect dialect = JDBCUtils.dialect(connection);
+        return new Delete(connection, dialect);
     }
 
     public static CreateTable createTable(Connection connection) {

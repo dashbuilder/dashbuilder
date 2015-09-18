@@ -23,30 +23,33 @@ import java.util.List;
 import org.dashbuilder.dataprovider.backend.sql.JDBCUtils;
 import org.dashbuilder.dataprovider.backend.sql.dialect.Dialect;
 
-public class Insert extends SQLStatement<Insert> {
+public class Delete extends SQLStatement<Delete> {
 
-    protected List<Column> columns = new ArrayList<Column>();
-    protected List values = new ArrayList();
+    protected List<Condition> wheres = new ArrayList<Condition>();
 
-    public Insert(Connection connection, Dialect dialect) {
+    public Delete(Connection connection, Dialect dialect) {
         super(connection, dialect);
     }
 
-    public List<Column> getColumns() {
-        return columns;
+    public Table getFromTable() {
+        return super.getTable();
     }
 
-    public List getValues() {
-        return values;
+    public List<Condition> getWheres() {
+        return wheres;
     }
 
-    public Insert into(Table table) {
+    public Delete from(Table table) {
         return super.table(table);
     }
 
-    public Insert set(Column column, Object value) {
-        columns.add(fix(column));
-        values.add(value);
+    public Delete where(Condition condition) {
+        if (condition != null) {
+            if (condition instanceof CoreCondition) {
+                fix(((CoreCondition) condition).getColumn());
+            }
+            wheres.add(condition);
+        }
         return this;
     }
 
