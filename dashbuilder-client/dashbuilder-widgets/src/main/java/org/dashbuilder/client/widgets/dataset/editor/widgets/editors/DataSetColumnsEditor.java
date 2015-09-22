@@ -120,13 +120,6 @@ public class DataSetColumnsEditor extends AbstractEditor {
         return addHandler(handler, ColumnsChangedEvent.TYPE);
     }
 
-    private final ValueChangeHandler<ColumnType> columnTypeChangeHandler = new ValueChangeHandler<ColumnType>() {
-        @Override
-        public void onValueChange(ValueChangeEvent<ColumnType> event) {
-            fireColumnsChanged();
-        }
-    };
-    
     public void build(final List<DataColumnDef> columns, final DataSet dataSet, final DataSetDefEditWorkflow workflow) {
         clear();
 
@@ -145,7 +138,13 @@ public class DataSetColumnsEditor extends AbstractEditor {
                 }
                 // Create the editor for each column.
                 DataColumnBasicEditor columnEditor = new DataColumnBasicEditor();
-                columnEditor.addValueChangeHandler(columnTypeChangeHandler);
+                columnEditor.addValueChangeHandler(new ValueChangeHandler<ColumnType>() {
+                    @Override
+                    public void onValueChange(ValueChangeEvent<ColumnType> valueChangeEvent) {
+                        updateColumnType(column, valueChangeEvent.getValue());
+                        fireColumnsChanged();
+                    }
+                });
 
                 columnEditor.setEditorId(column.getId());
                 columnEditor.setOriginalType(_column.getColumnType());
@@ -166,6 +165,11 @@ public class DataSetColumnsEditor extends AbstractEditor {
             }
         }
         
+    }
+
+    private void updateColumnType(final DataColumnDef column, final ColumnType type) {
+        column.setColumnType(type);
+        fireColumnsChanged();
     }
     
     private DataColumn hasColumn(final DataColumnDef def, final List<DataColumn> columns) {
