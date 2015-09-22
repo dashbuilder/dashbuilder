@@ -37,6 +37,17 @@ Architecture
 Change log
 ==========
 
+0.3.3
+
+* DASHBUILDE-42: Null pointer in SQL data lookup requests when result set contain null values
+
+0.3.2
+
+* DASHBUILDE-40: Data set filter binary operations fail when the parameter set is empty
+* BZ-1263567: Exception "no marshalling definition available for type:com.sybase.jdbc4.tds.SybTimestamp"
+* BZ-1263085: Exception "no marshalling definition available for type:oracle.sql.TIMESTAMP"
+* BZ-1263564: Oracle11gR2: can't get metadata on specified dataset
+
 0.3.1
 
 * DASHBUILDE-28: Data Set preview table should be wrapped in scroll panel.
