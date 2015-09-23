@@ -61,34 +61,4 @@ public interface GoogleDisplayerConstants extends Messages {
 
     String googleTableDisplayer_rows( String from, String to, String totalRows);
 
-    String googleCategoriesDisplayer_color_blue();
-
-    String googleCategoriesDisplayer_color_red();
-
-    String googleCategoriesDisplayer_color_orange();
-
-    String googleCategoriesDisplayer_color_brown();
-
-    String googleCategoriesDisplayer_color_coral();
-
-    String googleCategoriesDisplayer_color_aqua();
-
-    String googleCategoriesDisplayer_color_fuchsia();
-
-    String googleCategoriesDisplayer_color_gold();
-
-    String googleCategoriesDisplayer_color_green();
-
-    String googleCategoriesDisplayer_color_grey();
-
-    String googleCategoriesDisplayer_color_lime();
-
-    String googleCategoriesDisplayer_color_magenta();
-
-    String googleCategoriesDisplayer_color_pink();
-
-    String googleCategoriesDisplayer_color_silver();
-
-    String googleCategoriesDisplayer_color_yellow();
-
 }
