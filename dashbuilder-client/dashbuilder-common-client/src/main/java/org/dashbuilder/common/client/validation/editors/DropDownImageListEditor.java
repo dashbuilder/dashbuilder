@@ -139,14 +139,17 @@ public class DropDownImageListEditor<T> extends AbstractEditorDecorator<T> imple
         }
 
         // Configure drop down button trigger.
-        if ( values.size() == 1 ) {
-            dropDownAnchor.setEnabled( false );
-            caret.setVisible( false );
-        } else {
-            dropDownAnchor.setEnabled( true );
-            caret.setVisible( true );
-        }
+        enableAnchor( isHandlingMultipleValues() && isEditMode );
 
+    }
+    
+    private boolean isHandlingMultipleValues() {
+        return values.size() > 1;
+    }
+    
+    private void enableAnchor(final boolean isEnabled) {
+        dropDownAnchor.setEnabled( isEnabled );
+        caret.setVisible( isEnabled );
     }
 
     private void buildUIDropDown() {
@@ -234,8 +237,9 @@ public class DropDownImageListEditor<T> extends AbstractEditorDecorator<T> imple
         markErrorPanel( errorPanel, false );
     }
 
-    public void setEditMode( final boolean isEditMode ) {
-        this.isEditMode = isEditMode;
+    public void setEditMode( final boolean _isEditMode ) {
+        this.isEditMode = isHandlingMultipleValues() && _isEditMode;
+        enableAnchor(this.isEditMode);
     }
 
     public void setSize( final int w,

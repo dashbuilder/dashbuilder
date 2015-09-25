@@ -30,6 +30,6 @@
       <g:Label text="{i18n.timeframe_to}" />
       <df:TimeInstantEditor ui:field="toEditor" />
       <g:Label text="{i18n.timeframe_first_month_year}" ui:field="firstMonthLabel" visible="false"/>
-      <b:ListBox ui:field="firstMonthList" width="80px" visible="false" />
+      <b:ListBox ui:field="firstMonthList" visible="false" />
     </g:VerticalPanel>
 </ui:UiBinder>

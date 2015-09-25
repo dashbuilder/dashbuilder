@@ -10,7 +10,7 @@
 
   <g:HTMLPanel ui:field="mainPanel" addStyleNames="{style.mainPanel} ">
     <b:Tooltip container="body" title="" ui:field="errorTooltip">
-      <bts:ToggleSwitch ui:field="toggleSwitch" size="MINI" animate="true" onColor="INFO" offColor="WARNING"/>
+      <bts:ToggleSwitch ui:field="toggleSwitch" size="MINI" animate="true"/>
     </b:Tooltip>
   </g:HTMLPanel>
   

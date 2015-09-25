@@ -9,37 +9,25 @@
   <ui:with field="i18n" type="org.dashbuilder.client.widgets.resources.i18n.DataSetEditorConstants"/>
 
   <ui:style>
-    .column {
-      margin: 0px;
-      margin-right: 5px;
-      padding: 0px;
+    .dataColumnTypeEditor {
+      position: absolute;
+      margin-left: 5px;
     }
   </ui:style>
   
-  <b:Column size="MD_10" ui:field="mainColumn">
-    <b:Row>
-      
-      <!-- Column id text box editor. -->
-      <b:Column size="MD_9" addStyleNames="{style.column}">
-        <dash-client:ValueBoxEditorDecorator errorLabelPosition="TOOLTIP_TOP" ui:field="id">
-          <dash-client:valuebox>
-            <b:TextBox enabled="false" placeholder="{i18n.attributeId}" />
-          </dash-client:valuebox>
-        </dash-client:ValueBoxEditorDecorator>
-      </b:Column>
+  <g:HorizontalPanel width="100%">
 
-      <!-- Column type editor. -->
-      <b:Column size="MD_2" addStyleNames="{style.column}">
-        <b:Popover container="body" placement="RIGHT" showDelayMs="1000" content="{i18n.attributeColumnType_description}" title="{i18n.attributeColumnType}">
-          <dash-client-column:DataColumnTypeEditor ui:field="columnType"/>
-        </b:Popover>
+    <!-- Id text box editor. -->
+    <dash-client:ValueBoxEditorDecorator errorLabelPosition="TOOLTIP_TOP" ui:field="id">
+      <dash-client:valuebox>
+        <b:TextBox enabled="false" placeholder="{i18n.attributeId}" />
+      </dash-client:valuebox>
+    </dash-client:ValueBoxEditorDecorator>
 
-        <b:Popover container="body" placement="RIGHT" showDelayMs="1000" content="{i18n.attributeColumnType_description}" title="{i18n.attributeColumnType}">
-          <b:Image ui:field="columnTypeImage"/>
-        </b:Popover>
-      </b:Column>
-      
-    </b:Row>
-  </b:Column>
+    <b:Popover container="body" placement="RIGHT" showDelayMs="1000" content="{i18n.attributeColumnType_description}" title="{i18n.attributeColumnType}">
+      <dash-client-column:DataColumnTypeEditor ui:field="columnType" addStyleNames="{style.dataColumnTypeEditor}"/>
+    </b:Popover>
+
+  </g:HorizontalPanel>
   
 </ui:UiBinder>

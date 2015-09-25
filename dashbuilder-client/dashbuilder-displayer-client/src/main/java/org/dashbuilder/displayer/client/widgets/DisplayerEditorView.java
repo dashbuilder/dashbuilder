@@ -15,9 +15,6 @@
  */
 package org.dashbuilder.displayer.client.widgets;
 
-import javax.enterprise.context.Dependent;
-import javax.inject.Inject;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -26,7 +23,6 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.common.client.error.ClientRuntimeError;
 import org.dashbuilder.dataset.DataSetLookup;
@@ -36,11 +32,16 @@ import org.dashbuilder.displayer.DisplayerSettings;
 import org.dashbuilder.displayer.DisplayerType;
 import org.dashbuilder.displayer.client.AbstractDisplayerListener;
 import org.dashbuilder.displayer.client.Displayer;
-import org.dashbuilder.displayer.client.DisplayerHelper;
 import org.dashbuilder.displayer.client.DisplayerListener;
 import org.dashbuilder.displayer.client.DisplayerLocator;
 import org.dashbuilder.displayer.client.resources.i18n.CommonConstants;
-import org.gwtbootstrap3.client.ui.*;
+import org.gwtbootstrap3.client.ui.CheckBox;
+import org.gwtbootstrap3.client.ui.Column;
+import org.gwtbootstrap3.client.ui.Row;
+import org.gwtbootstrap3.client.ui.TabListItem;
+
+import javax.enterprise.context.Dependent;
+import javax.inject.Inject;
 
 @Dependent
 public class DisplayerEditorView extends Composite
@@ -77,25 +78,28 @@ public class DisplayerEditorView extends Composite
     };
 
     @UiField
-    public Column leftColumn;
+    Column westColumn;
+    
+    @UiField
+    Column leftColumn;
 
     @UiField
-    public Column centerColumn;
+    Column centerColumn;
 
     @UiField
-    public TabListItem optionType;
+    TabListItem optionType;
 
     @UiField
-    public TabListItem optionData;
+    TabListItem optionData;
 
     @UiField
-    public TabListItem optionSettings;
+    TabListItem optionSettings;
 
     @UiField
-    public Row viewAsTableButtonRow;
+    Row viewAsTableButtonRow;
 
     @UiField
-    public CheckBox viewAsTableButton;
+    CheckBox viewAsTableButton;
 
     @Override
     public void init(DisplayerSettings settings, DisplayerEditor presenter) {
@@ -287,4 +291,5 @@ public class DisplayerEditorView extends Composite
     public void onRawTableChecked(ClickEvent clickEvent) {
         showDisplayer();
     }
+    
 }

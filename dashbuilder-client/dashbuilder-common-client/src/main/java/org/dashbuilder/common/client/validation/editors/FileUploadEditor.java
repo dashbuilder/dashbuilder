@@ -11,7 +11,10 @@ import com.google.gwt.safehtml.shared.SafeUri;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiConstructor;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.*;
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.FormPanel;
+import com.google.gwt.user.client.ui.HasText;
+import com.google.gwt.user.client.ui.Widget;
 import org.gwtbootstrap3.client.ui.Image;
 import org.gwtbootstrap3.client.ui.Label;
 import org.gwtbootstrap3.client.ui.Tooltip;
@@ -115,6 +118,11 @@ public class FileUploadEditor extends AbstractEditorDecorator implements
                 final String fileName = fileUpload.getFilename();
                 if ( isNullOrEmpty( fileName ) ) {
                     event.cancel();
+                } else {
+                    if ( loadingImage != null ) {
+                        fileUpload.setVisible( false );
+                        loadingImage.setVisible( true );
+                    }
                 }
             }
 
@@ -142,10 +150,6 @@ public class FileUploadEditor extends AbstractEditorDecorator implements
                 final String _a = callback.getUploadFileUrl();
                 formPanel.setAction( _a );
                 setText( _f );
-                if ( loadingImage != null ) {   
-                    fileUpload.setVisible( false );
-                    loadingImage.setVisible( true );
-                }
                 fileLabel.setVisible(false);
                 formPanel.submit();
             }

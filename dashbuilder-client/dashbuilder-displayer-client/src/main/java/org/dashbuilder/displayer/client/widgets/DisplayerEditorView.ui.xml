@@ -26,15 +26,15 @@
   <ui:style>
     .mainContainer {
       margin-top: 15px;
+      font-size: 12pt;
     }
     .leftColumn {
-      max-height: 390px;
-      font-size: 12pt;
       overflow-x: hidden;
       overflow-y: auto;
+      height: 370px;
     }
     .centerColumn {
-      max-height: 390px;
+      height: 390px;
       padding: 10px;
       font-size: 12pt;
       overflow: auto;
@@ -56,7 +56,7 @@
     
     <b:Container fluid="true" addStyleNames="{style.mainContainer}">
       <b:Row>
-        <b:Column size="MD_5">
+        <b:Column size="MD_3" ui:field="westColumn">
           <b:Row ui:field="viewAsTableButtonRow" visible="false" addStyleNames="{style.viewAsTableButtonRow}">
             <b:Column size="MD_12">
               <!-- View as table button -->
@@ -67,7 +67,7 @@
             <b:Column size="MD_12" ui:field="leftColumn" addStyleNames="{style.leftColumn}"/>
           </b:Row>
         </b:Column>
-        <b:Column size="MD_7" ui:field="centerColumn" addStyleNames="{style.centerColumn}"/>
+        <b:Column size="MD_9" ui:field="centerColumn" addStyleNames="{style.centerColumn}"/>
       </b:Row>
     </b:Container>
    

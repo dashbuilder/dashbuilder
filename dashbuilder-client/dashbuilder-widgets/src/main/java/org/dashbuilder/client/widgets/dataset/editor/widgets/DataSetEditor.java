@@ -29,19 +29,20 @@ import org.dashbuilder.client.widgets.dataset.editor.widgets.editors.DataSetColu
 import org.dashbuilder.client.widgets.dataset.editor.widgets.events.SaveDataSetEvent;
 import org.dashbuilder.client.widgets.resources.i18n.DataSetEditorConstants;
 import org.dashbuilder.common.client.error.ClientRuntimeError;
-import org.dashbuilder.dataset.*;
+import org.dashbuilder.dataprovider.DataSetProviderType;
+import org.dashbuilder.dataset.DataColumn;
+import org.dashbuilder.dataset.DataSet;
+import org.dashbuilder.dataset.DataSetLookup;
 import org.dashbuilder.dataset.backend.EditDataSetDef;
-import org.dashbuilder.dataset.client.*;
-import org.dashbuilder.dataset.def.*;
+import org.dashbuilder.dataset.client.DataSetClientServices;
+import org.dashbuilder.dataset.client.DataSetReadyCallback;
+import org.dashbuilder.dataset.def.DataColumnDef;
+import org.dashbuilder.dataset.def.DataSetDef;
 import org.dashbuilder.dataset.filter.DataSetFilter;
 import org.dashbuilder.displayer.DisplayerSettings;
 import org.dashbuilder.displayer.DisplayerSettingsFactory;
 import org.dashbuilder.displayer.TableDisplayerSettingsBuilder;
-import org.dashbuilder.displayer.client.AbstractDisplayerListener;
-import org.dashbuilder.displayer.client.DataSetHandlerImpl;
-import org.dashbuilder.displayer.client.Displayer;
-import org.dashbuilder.displayer.client.DisplayerHelper;
-import org.dashbuilder.displayer.client.DisplayerListener;
+import org.dashbuilder.displayer.client.*;
 import org.dashbuilder.displayer.client.widgets.filter.DataSetFilterEditor;
 import org.dashbuilder.displayer.impl.TableDisplayerSettingsBuilderImpl;
 import org.dashbuilder.renderer.client.DefaultRenderer;
@@ -53,9 +54,13 @@ import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.validation.ConstraintViolation;
-import java.util.*;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
 
-import static org.uberfire.workbench.events.NotificationEvent.NotificationType.*;
+import static org.uberfire.workbench.events.NotificationEvent.NotificationType.ERROR;
+import static org.uberfire.workbench.events.NotificationEvent.NotificationType.SUCCESS;
 
 /**
  * <p>Data Set Definition editor widget.</p>
@@ -465,7 +470,8 @@ public class DataSetEditor implements IsWidget {
     };
     
     private void showColumnsEditorView(final DataSet dataSet) {
-        view.showColumnsEditorView(this.originalColumns, dataSet, columnsChangedEventHandler);
+        final boolean isBeanType = DataSetProviderType.BEAN.equals(dataSetDef.getProvider());
+        view.showColumnsEditorView(this.originalColumns, dataSet, isBeanType ? null : columnsChangedEventHandler);
         this.updateColumnsView = false;
     }
 

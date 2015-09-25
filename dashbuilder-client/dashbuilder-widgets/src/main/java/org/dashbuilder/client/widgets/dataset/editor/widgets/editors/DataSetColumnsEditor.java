@@ -15,10 +15,6 @@
  */
 package org.dashbuilder.client.widgets.dataset.editor.widgets.editors;
 
-import java.util.*;
-import javax.enterprise.context.Dependent;
-import javax.validation.ConstraintViolation;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -28,6 +24,9 @@ import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Panel;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.client.widgets.dataset.editor.DataSetDefEditWorkflow;
 import org.dashbuilder.client.widgets.dataset.editor.widgets.editors.datacolumn.DataColumnBasicEditor;
@@ -36,10 +35,10 @@ import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.def.DataColumnDef;
 import org.gwtbootstrap3.client.ui.CheckBox;
-import org.gwtbootstrap3.client.ui.Column;
-import org.gwtbootstrap3.client.ui.Container;
-import org.gwtbootstrap3.client.ui.Row;
-import org.gwtbootstrap3.client.ui.constants.ColumnSize;
+
+import javax.enterprise.context.Dependent;
+import javax.validation.ConstraintViolation;
+import java.util.*;
 
 /**
  * <p>This is a widget for editing data set's columns.</p>
@@ -56,7 +55,7 @@ public class DataSetColumnsEditor extends AbstractEditor {
     private static DataSetColumnsEditorBinder uiBinder = GWT.create(DataSetColumnsEditorBinder.class);
 
     @UiField
-    Container columnsContainer;
+    VerticalPanel columnsContainer;
 
     private List<DataColumnDef> originalColumns;
     private CheckBox[] statusWidgets = null;
@@ -150,7 +149,7 @@ public class DataSetColumnsEditor extends AbstractEditor {
 
                 // Create the UI panel for the column.
                 final boolean canRemove = dataSet != null && dataSet.getColumns().size() > 1;
-                Row columnPanel = createColumn(column, columnEditor, pos, enabled, canRemove);
+                Panel columnPanel = createColumn(column, columnEditor, pos, enabled, canRemove);
                 if (enabled) this.columns.add(column);
                 columnsContainer.add(columnPanel);
                 pos++;
@@ -167,8 +166,8 @@ public class DataSetColumnsEditor extends AbstractEditor {
         return null;
     }
 
-    private Row createColumn(final DataColumnDef column, final DataColumnBasicEditor editor, final int pos, final boolean enabled, final boolean canRemove) {
-        final Row row = new Row();
+    private Panel createColumn(final DataColumnDef column, final DataColumnBasicEditor editor, final int pos, final boolean enabled, final boolean canRemove) {
+        final HorizontalPanel row = new HorizontalPanel();
 
         // Data column statuc (Checkbox).
         final CheckBox columnStatus = new CheckBox();
@@ -187,9 +186,7 @@ public class DataSetColumnsEditor extends AbstractEditor {
                 else if (canRemove) removeColumn(editor, column);
             }
         });
-        final Column statusCol = new Column(ColumnSize.MD_1);
-        statusCol.add(columnStatus);
-        row.add(statusCol);
+        row.add(columnStatus);
         statusWidgets[pos] = columnStatus;
         
         // Data column editor component (name & column type).

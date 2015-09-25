@@ -13,95 +13,46 @@
 
   <ui:style>
     .mainPanel {
-      font-size: 12pt;
+      font-size: 11pt;
       margin: 10px;
-      padding-top: 5px;
     }
 
     .editorPanel {
-      margin: 15px;
       overflow-y: auto;
       overflow-x: hidden;
     }
 
-    .providerTypeEditor {
-      width: 100%;
-    }
-
-    .tabPanel {
-      margin: 0px;
+    .topMargin {
       margin-top: 10px;
-      overflow-y: hidden;
     }
-
-    .columnsEditor {
-      overflow: auto;
-    }
-
-    .well {
-      background-color: white;
-      margin-bottom: 20px;
-      min-height: 20px;
-      padding: 10px;
-    }
-
-    .columnsFilterDisclosurePanelHeader {
-      left: 0px;
-      top: -30px;
-      height: 30px;
-      width: 15px;
-      /*background-color: ghostwhite;*/
-      position: absolute;
-      border-radius: 0px 4px 4px 0px;
-      border: 0px solid lavender;
-      cursor: pointer;
-      margin-top: 44px;
-    }
-
+    
     .columnsFilterDisclosurePanelButton {
-      margin-left: 4px;
-      margin-top: 5px;
+      position: absolute;
+      left: -5px;
+      color: black;
       filter: alpha(opacity=5);
       opacity: 0.5;
     }
-
-    @external .gwt-DisclosurePanel .content;
-    .gwt-DisclosurePanel .content {
-      border: 0px;
-    }
-
-    .specificProviderAttributesPanel {
-      height: 100%;
-      margin-top: 0px;
+    
+    .columnsEditor {
+      overflow: auto;
     }
 
     .previewTable {
       height: 100%;
       overflow: auto;
     }
-
-    .errorPanel {
-      margin: 25px;
-    }
-
-    .errorRow {
-      margin-bottom: 10px;
-    }
-
-    .errorLabel {
-      font-weight: bold;
-
-    }
+    
   </ui:style>
   
-  <g:FlowPanel addStyleNames="{style.mainPanel} {style.well} " ui:field="mainPanel">
+  <g:FlowPanel addStyleNames="{style.mainPanel}" ui:field="mainPanel">
     
     <b:Container fluid="true">
       
       <!-- Provider selection. -->
       <b:Row ui:field="providerSelectionRow">
         <b:Column size="MD_12">
-          <dash-dset-editors:DataSetProviderTypeEditor editMode="true" ui:field="dataSetProviderTypeEditor" addStyleNames="{style.providerTypeEditor}"/>
+          <dash-dset-editors:DataSetProviderTypeEditor editMode="true" ui:field="dataSetProviderTypeEditor"/>
         </b:Column>
       </b:Row>
 
@@ -109,123 +60,104 @@
       <b:Row ui:field="tabViewRow">
         <b:Column size="MD_12">
           
-          <b:TabPanel tabPosition="TOP" ui:field="tabPanel" addStyleNames="{style.tabPanel} {style.editorPanel}">
-
-            <b:NavTabs>
-              <b:TabListItem active="true" ui:field="configurationTabItem" text="{i18n.tab_configguration}"/>
-              <b:TabListItem ui:field="previewTabItem" text="{i18n.tab_preview}"/>
-              <b:TabListItem ui:field="advancedConfigurationTabItem" text="{i18n.tab_advancedConfiguration}"/>
-            </b:NavTabs>
+          <b:NavTabs>
+            <b:TabListItem active="true" ui:field="configurationTabItem" text="{i18n.tab_configguration}"/>
+            <b:TabListItem ui:field="previewTabItem" text="{i18n.tab_preview}"/>
+            <b:TabListItem ui:field="advancedConfigurationTabItem" text="{i18n.tab_advancedConfiguration}"/>
+          </b:NavTabs>
+          
+          <b:TabContent>
             
-            <b:TabContent>
+            <!-- Data configuration tab. -->
+            <b:TabPane ui:field="configurationTabPane" active="true" addStyleNames="{style.topMargin}" >
+              <b:Container fluid="true">
+                <b:Row>
+                  <b:Column size="MD_6">
+
+                    <g:FlowPanel ui:field="basicAttributesEditionViewPanel" addStyleNames="{style.editorPanel}">
+                      <dash-dset-editors:DataSetBasicAttributesEditor editMode="true" ui:field="dataSetBasicAttributesEditor"/>
+                    </g:FlowPanel>
+
+                    <g:FlowPanel ui:field="specificProviderAttributesPanel" addStyleNames="{style.editorPanel} ">
+
+                      <g:FlowPanel ui:field="sqlAttributesEditionViewPanel">
+                        <dash-dset-editors-sql:SQLDataSetDefAttributesEditor editMode="true" ui:field="sqlDataSetDefAttributesEditor"/>
+                      </g:FlowPanel>
+
+                      <g:FlowPanel ui:field="csvAttributesEditionViewPanel">
+                        <dash-dset-editors-csv:CSVDataSetDefAttributesEditor editMode="true" ui:field="csvDataSetDefAttributesEditor"/>
+                      </g:FlowPanel>
+
+                      <g:FlowPanel ui:field="beanAttributesEditionViewPanel">
+                        <dash-dset-editors-static:BeanDataSetDefAttributesEditor editMode="true" ui:field="beanDataSetDefAttributesEditor"/>
+                      </g:FlowPanel>
+
+                      <g:FlowPanel ui:field="elAttributesEditionViewPanel">
+                        <dash-dset-editors-el:ELDataSetDefAttributesEditor editMode="true" ui:field="elDataSetDefAttributesEditor"/>
+                      </g:FlowPanel>
+
+                    </g:FlowPanel>
+
+                  </b:Column>
+                </b:Row>
+              </b:Container>
+            </b:TabPane>
+
+            <!-- Preview & columns & filter tab. -->
+            <b:TabPane ui:field="previewTabPane" addStyleNames="{style.topMargin}" >
+
+              <b:Container fluid="true">
+                <b:Row>
+                  
+                  <!-- Columns & filter section. -->
+                  <b:Column size="MD_2" ui:field="filterAndColumnsEditionColumn">
+
+                    <g:DisclosurePanel ui:field="filterAndColumnsEditionDisclosurePanel" open="true">
+
+                      <g:customHeader>
+                        <b:Button icon="STEP_BACKWARD" type="LINK" size="LARGE" ui:field="columnsFilterDisclosurePanelButton" title="{i18n.hideColumnsAndFilter}" addStyleNames="{style.columnsFilterDisclosurePanelButton} "/>
+                      </g:customHeader>
+
+                      <b:TabPanel tabPosition="TOP">
+                        <b:NavTabs>
+                          <b:TabListItem title="{i18n.dataColumns}" text="{i18n.dataColumns}" active="true" ui:field="columnsTabItem"/>
+                          <b:TabListItem title="{i18n.filter}" text="{i18n.filter}" ui:field="filterTabItem"/>
+                        </b:NavTabs>
+                        <b:TabContent>
+
+                          <!-- Columns. -->
+                          <b:TabPane ui:field="columnsTabPane" active="true" addStyleNames="{style.topMargin}">
+                            <dash-dset-editors:DataSetColumnsEditor editMode="true" ui:field="columnsEditor" addStyleNames="{style.columnsEditor}"/>
+                          </b:TabPane>
+
+                          <!-- Filter. -->
+                          <b:TabPane ui:field="filterTabPane" addStyleNames="{style.topMargin}"/>
+
+                        </b:TabContent>
+                      </b:TabPanel>
+                      
+                    </g:DisclosurePanel>
+                    
+                  </b:Column>
+
+                  <!-- Data preview section. -->
+                  <b:Column size="MD_10" ui:field="PreviewTableColumn">
+                    <!-- Preview table . -->
+                    <dash-dset-editors:DataSetPreviewEditor editMode="true" ui:field="previewTableEditor" addStyleNames="{style.previewTable}"/>
+                  </b:Column>
+
+                </b:Row>
+              </b:Container>
               
-              <!-- Data configuration tab. -->
-              <b:TabPane ui:field="configurationTabPane" active="true">
-                <b:Container fluid="true">
-                  <b:Row>
-                    <b:Column ui:field="dataConfigurationColumn" size="MD_6">
+            </b:TabPane>
 
-                      <g:FlowPanel ui:field="basicAttributesEditionViewPanel" addStyleNames="{style.editorPanel}">
-                        <dash-dset-editors:DataSetBasicAttributesEditor editMode="true" ui:field="dataSetBasicAttributesEditor"/>
-                      </g:FlowPanel>
+            <!-- Advanced configuration tab. -->
+            <b:TabPane ui:field="advancedConfigurationTabPane" addStyleNames="{style.topMargin}">
+              <dash-dset-editors:DataSetAdvancedAttributesEditor editMode="true" ui:field="dataSetAdvancedAttributesEditor"/>
+            </b:TabPane>
 
-                      <g:FlowPanel ui:field="specificProviderAttributesPanel" addStyleNames="{style.editorPanel} {style.specificProviderAttributesPanel} ">
+          </b:TabContent>
 
-                        <g:FlowPanel ui:field="sqlAttributesEditionViewPanel">
-                          <dash-dset-editors-sql:SQLDataSetDefAttributesEditor editMode="true" ui:field="sqlDataSetDefAttributesEditor"/>
-                        </g:FlowPanel>
-
-                        <g:FlowPanel ui:field="csvAttributesEditionViewPanel">
-                          <dash-dset-editors-csv:CSVDataSetDefAttributesEditor editMode="true" ui:field="csvDataSetDefAttributesEditor"/>
-                        </g:FlowPanel>
-
-                        <g:FlowPanel ui:field="beanAttributesEditionViewPanel">
-                          <dash-dset-editors-static:BeanDataSetDefAttributesEditor editMode="true" ui:field="beanDataSetDefAttributesEditor"/>
-                        </g:FlowPanel>
-
-                        <g:FlowPanel ui:field="elAttributesEditionViewPanel">
-                          <dash-dset-editors-el:ELDataSetDefAttributesEditor editMode="true" ui:field="elDataSetDefAttributesEditor"/>
-                        </g:FlowPanel>
-
-                      </g:FlowPanel>
-
-                    </b:Column>
-                  </b:Row>
-                </b:Container>
-              </b:TabPane>
-
-              <!-- Preview & columns & filter tab. -->
-              <b:TabPane ui:field="previewTabPane">
-
-                <b:Container fluid="true">
-                  <b:Row>
-                    <b:Column size="MD_12" ui:field="filterColumnsPreviewTableColumn">
-                      <b:Row>
-                        <!-- Columns & filter section. -->
-                        <b:Column size="MD_2" ui:field="filterAndColumnsEditionColumn">
-                          
-                          <g:DisclosurePanel ui:field="filterAndColumnsEditionDisclosurePanel" open="true">
-                            <g:customHeader>
-                              <g:FlowPanel ui:field="columnsFilterDisclosurePanelHeader" addStyleNames="{style.columnsFilterDisclosurePanelHeader}">
-                                <b:Icon type="STEP_BACKWARD" ui:field="columnsFilterDisclosurePanelButton" title="{i18n.hideColumnsAndFilter}" addStyleNames="{style.columnsFilterDisclosurePanelButton} "/>
-                              </g:FlowPanel>
-                            </g:customHeader>
-
-                            <!-- Preview & columns & filter. -->
-                            <b:TabPanel tabPosition="TOP" ui:field="filterAndColumnsTabPanel" addStyleNames="{style.tabPanel} ">
-
-                              <b:NavTabs>
-                                <b:TabListItem title="{i18n.dataColumns}" text="{i18n.dataColumns}" active="true" ui:field="columnsTabItem"/>
-                                <b:TabListItem title="{i18n.filter}" text="{i18n.filter}" ui:field="filterTabItem"/>
-                              </b:NavTabs>
-
-                              <b:TabContent marginTop="10">
-
-                                <!-- Filter. -->
-                                <b:TabPane ui:field="columnsTabPane" active="true">
-                                  <dash-dset-editors:DataSetColumnsEditor editMode="true" ui:field="columnsEditor" addStyleNames="{style.columnsEditor}"/>
-                                </b:TabPane>
-
-                                <!-- Filter. -->
-                                <b:TabPane ui:field="filterTabPane"/>
-
-                              </b:TabContent>
-                            </b:TabPanel>
-
-                          </g:DisclosurePanel>
-                          
-                        </b:Column>
-
-                        <!-- Data preview section. -->
-                        <b:Column size="MD_10" ui:field="previewTableEditionViewColumn">
-                          <!-- Preview table . -->
-                          <dash-dset-editors:DataSetPreviewEditor editMode="true" ui:field="previewTableEditor" addStyleNames="{style.previewTable}"/>
-                        </b:Column>
-
-                      </b:Row>
-
-                    </b:Column>
-                
-                  </b:Row>
-                </b:Container>
-                
-              </b:TabPane>
-
-              <!-- Advanced configuration tab. -->
-              <b:TabPane ui:field="advancedConfigurationTabPane">
-
-                <b:Container fluid="true">
-                  <b:Row>
-                    <b:Column size="MD_12" ui:field="advancedAttributesEditionViewColumn">
-                      <dash-dset-editors:DataSetAdvancedAttributesEditor editMode="true" ui:field="dataSetAdvancedAttributesEditor"/>
-                    </b:Column>
-                  </b:Row>
-                </b:Container>
-              </b:TabPane>
-
-            </b:TabContent>
-
-          </b:TabPanel>
         </b:Column>
       </b:Row>
 
