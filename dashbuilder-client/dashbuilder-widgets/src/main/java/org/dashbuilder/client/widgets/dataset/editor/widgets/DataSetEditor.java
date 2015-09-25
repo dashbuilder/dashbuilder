@@ -147,7 +147,7 @@ public class DataSetEditor implements IsWidget {
     protected DataSetClientServices clientServices;
     protected DataSetDef dataSetDef;
     protected List<DataColumnDef> originalColumns;
-    protected boolean updateColumnsView = false;
+    protected boolean updateFilterView = false;
     protected Displayer tableDisplayer;
     protected WorkflowView currentWfView;
     protected boolean editMode = false;
@@ -178,7 +178,7 @@ public class DataSetEditor implements IsWidget {
         // Clear any old status
         dataSetDef = new DataSetDef();
         originalColumns = null;
-        updateColumnsView = true;
+        updateFilterView = true;
         view.setEditMode(editMode = false);
 
         // Restart workflow.
@@ -201,7 +201,7 @@ public class DataSetEditor implements IsWidget {
 
         dataSetDef = editDataSetDef.getDefinition();
         originalColumns = editDataSetDef.getColumns();
-        updateColumnsView = true;
+        updateFilterView = true;
 
         if (dataSetDef == null) {
             showError(DataSetEditorConstants.INSTANCE.defNotFound());
@@ -329,7 +329,7 @@ public class DataSetEditor implements IsWidget {
                 dataSetDef.setColumns(null);
                 dataSetDef.setDataSetFilter(null);
                 originalColumns = null;
-                updateColumnsView = true;
+                updateFilterView = true;
 
                 // Update the preview table.
                 updateTableDisplayer();
@@ -472,11 +472,13 @@ public class DataSetEditor implements IsWidget {
     private void showColumnsEditorView(final DataSet dataSet) {
         final boolean isBeanType = DataSetProviderType.BEAN.equals(dataSetDef.getProvider());
         view.showColumnsEditorView(this.originalColumns, dataSet, isBeanType ? null : columnsChangedEventHandler);
-        this.updateColumnsView = false;
     }
 
     private void showFilterEditorView(final DataSet dataSet) {
-        view.showFilterEditionView(dataSet, filterListener);
+        if (updateFilterView) {
+            view.showFilterEditionView(dataSet, filterListener);
+            updateFilterView = false;
+        }
     }
 
     private void showPreviewTableEditionView() {
@@ -526,6 +528,8 @@ public class DataSetEditor implements IsWidget {
     private void updateDataSetDefColumns(final List<DataColumnDef> columns) {
         dataSetDef.setAllColumnsEnabled(false);
         dataSetDef.setColumns(columns);
+        // Update the filter editor, as columns available has changed.
+        updateFilterView = true;
     }
     
     /**
@@ -572,13 +576,9 @@ public class DataSetEditor implements IsWidget {
 
                     // Reload table preview.
                     showPreviewTableEditionView();
+                    showColumnsEditorView(dataSet);
+                    showFilterEditorView(dataSet);
 
-                    // Show initial filter and columns edition views only if the current lookup has been updated. 
-                    // If not, do not refresh columns and filter views.
-                    if (updateColumnsView) {
-                        showColumnsEditorView(dataSet);
-                        showFilterEditorView(dataSet);
-                    }
                     // Enable the right buttons
                     hideTestButton();
                     showSaveButton();
@@ -644,7 +644,7 @@ public class DataSetEditor implements IsWidget {
     public void clear() {
         this.dataSetDef = null;
         this.originalColumns = null;
-        this.updateColumnsView = false;
+        this.updateFilterView = false;
         this.tableDisplayer = null;
         view.clear();
     }

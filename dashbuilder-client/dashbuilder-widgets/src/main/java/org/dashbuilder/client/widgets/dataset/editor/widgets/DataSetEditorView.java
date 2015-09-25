@@ -417,7 +417,7 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
         // Special condition - BEAN data provider type does not support column type changes.
         final boolean hasHandler = _columnsChangedEventHandler != null;
         columnsEditor.setEditMode(hasHandler);
-        columnsEditor.build(columns, dataSet, workflow);
+        columnsEditor.build(columns, dataSetDef, dataSet, workflow);
         if (columnsChangeHandlerRegistration != null) {
             columnsChangeHandlerRegistration.removeHandler();
         }

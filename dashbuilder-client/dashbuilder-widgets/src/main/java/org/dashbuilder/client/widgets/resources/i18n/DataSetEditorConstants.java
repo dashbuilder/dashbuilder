@@ -133,6 +133,8 @@ public interface DataSetEditorConstants extends Messages {
     String tab_advancedConfiguration();
     String filter();
     String dataColumns();
+    String dataSetMustHaveAtLeastOneColumn();
+    String columnIsUsedInFilter();
     String label();
     String text();
     String number();
