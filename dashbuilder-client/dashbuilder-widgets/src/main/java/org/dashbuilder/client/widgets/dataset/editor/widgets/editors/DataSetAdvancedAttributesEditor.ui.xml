@@ -30,12 +30,12 @@
 
     <!-- Client cache. -->
     <b:Row addStyleNames="{style.row}">
-      <b:Column size="MD_2">
+      <b:Column size="MD_3">
         <dash-client:BooleanSwitchEditor ui:field="attributeClientCacheStatus" addStyleNames="{style.inputWithTitle}"/>
         <g:HTML text="{i18n.clientCache}"/>
       </b:Column>
 
-      <b:Column size="MD_10">
+      <b:Column size="MD_9">
         <g:HorizontalPanel verticalAlignment="ALIGN_MIDDLE">
           <b:Popover container="body" placement="RIGHT" showDelayMs="1000" content="{i18n.attributeMaxBytes_description}" title="{i18n.attributeMaxBytes}">
             <dash-client:ValueBoxEditorDecorator errorLabelPosition="TOOLTIP_TOP" ui:field="attributeMaxBytes">
@@ -55,12 +55,12 @@
     <!-- Backend cache. -->
     <b:Row ui:field="backendCacheRow" addStyleNames="{style.row}">
 
-      <b:Column size="MD_2">
+      <b:Column size="MD_3">
         <dash-client:BooleanSwitchEditor ui:field="attributeBackendCacheStatus" addStyleNames="{style.inputWithTitle}"/>
         <g:HTML text="{i18n.backendCache}"/>
       </b:Column>
       
-      <b:Column size="MD_10">
+      <b:Column size="MD_9">
         <g:HorizontalPanel verticalAlignment="ALIGN_MIDDLE">
           <b:Popover container="body" placement="RIGHT" showDelayMs="1000" content="{i18n.attributeMaxRows_description}" title="{i18n.attributeMaxRows}">
             <dash-client:ValueBoxEditorDecorator errorLabelPosition="TOOLTIP_TOP" ui:field="attributeMaxRows" >
@@ -79,12 +79,12 @@
     <!-- Refresh policy. -->
     <b:Row addStyleNames="{style.row}">
 
-      <b:Column size="MD_2">
+      <b:Column size="MD_3">
         <dash-client:BooleanSwitchEditor ui:field="attributeRefreshStatus" addStyleNames="{style.inputWithTitle}"/>
         <g:HTML text="{i18n.refreshEvery}"/>
       </b:Column>
       
-      <b:Column size="MD_10">
+      <b:Column size="MD_9">
         <g:HorizontalPanel verticalAlignment="ALIGN_MIDDLE">
           <b:Popover container="body" placement="RIGHT" showDelayMs="1000" content="{i18n.attributeRefreshInterval_description}" title="{i18n.attributeRefreshInterval}">
             <dash-client:ValueBoxEditorDecorator errorLabelPosition="TOOLTIP_TOP" ui:field="attributeRefreshInterval">
@@ -102,7 +102,7 @@
     <!-- Refresh on stale data. -->
     <b:Row>
 
-      <b:Column offset="MD_2" size="MD_10">
+      <b:Column offset="MD_3" size="MD_9">
         <b:CheckBox ui:field="onStaleCheckbox" text="{i18n.refreshOnStaleData}"/>
       </b:Column>
 

@@ -119,12 +119,6 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
     Popover testPopover;
 
     @UiField
-    Column filterAndColumnsEditionColumn;
-
-    @UiField
-    Column PreviewTableColumn;
-
-    @UiField
     DataSetPreviewEditor previewTableEditor;
 
     @UiField
@@ -232,9 +226,6 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
             columnsFilterDisclosurePanelButton.setIcon(IconType.STEP_BACKWARD);
             columnsFilterDisclosurePanelButton.setTitle(DataSetEditorConstants.INSTANCE.hideColumnsAndFilter());
             columnsFilterDisclosurePanelButton.getElement().getStyle().setBorderStyle(Style.BorderStyle.SOLID);
-            filterAndColumnsEditionColumn.getElement().getStyle().clearWidth();
-            PreviewTableColumn.setSize(ColumnSize.MD_10);
-            columnsFilterDisclosurePanelButton.getElement().getStyle().clearZIndex();
         }
     };
 
@@ -245,9 +236,6 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
             columnsFilterDisclosurePanelButton.setIcon(IconType.STEP_FORWARD);
             columnsFilterDisclosurePanelButton.setTitle(DataSetEditorConstants.INSTANCE.showColumnsAndFilter());
             columnsFilterDisclosurePanelButton.getElement().getStyle().setBorderStyle(Style.BorderStyle.NONE);
-            filterAndColumnsEditionColumn.getElement().getStyle().setWidth(1, Style.Unit.PX);
-            PreviewTableColumn.setSize(ColumnSize.MD_12);
-            columnsFilterDisclosurePanelButton.getElement().getStyle().setZIndex(1000);
         }
     };
     
@@ -678,4 +666,5 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
         tabNoErrors(previewTabItem);
         tabNoErrors(advancedConfigurationTabItem);
     }
+    
 }

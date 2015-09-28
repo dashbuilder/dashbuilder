@@ -16,16 +16,17 @@
       font-size: 11pt;
       margin: 10px;
     }
-
     .editorPanel {
       overflow-y: auto;
       overflow-x: hidden;
     }
-
     .topMargin {
       margin-top: 10px;
     }
-    
+    .filterAndColumnsEditionDisclosurePanel {
+      float: left;
+      margin-right: 20px;
+    }
     .columnsFilterDisclosurePanelButton {
       position: absolute;
       left: -5px;
@@ -33,16 +34,16 @@
       filter: alpha(opacity=5);
       opacity: 0.5;
     }
-    
     .columnsEditor {
       overflow: auto;
     }
-
     .previewTable {
       height: 100%;
       overflow: auto;
     }
-    
+    .buttonsRow {
+      margin-top: 20px;
+    }
   </ui:style>
   
   <g:FlowPanel addStyleNames="{style.mainPanel}" ui:field="mainPanel">
@@ -108,11 +109,9 @@
 
               <b:Container fluid="true">
                 <b:Row>
-                  
-                  <!-- Columns & filter section. -->
-                  <b:Column size="MD_2" ui:field="filterAndColumnsEditionColumn">
-
-                    <g:DisclosurePanel ui:field="filterAndColumnsEditionDisclosurePanel" open="true">
+                  <b:Column size="MD_12">
+                    
+                    <g:DisclosurePanel ui:field="filterAndColumnsEditionDisclosurePanel" open="true" addStyleNames="{style.filterAndColumnsEditionDisclosurePanel}">
 
                       <g:customHeader>
                         <b:Button icon="STEP_BACKWARD" type="LINK" size="LARGE" ui:field="columnsFilterDisclosurePanelButton" title="{i18n.hideColumnsAndFilter}" addStyleNames="{style.columnsFilterDisclosurePanelButton} "/>
@@ -135,20 +134,16 @@
 
                         </b:TabContent>
                       </b:TabPanel>
-                      
-                    </g:DisclosurePanel>
-                    
-                  </b:Column>
 
-                  <!-- Data preview section. -->
-                  <b:Column size="MD_10" ui:field="PreviewTableColumn">
+                    </g:DisclosurePanel>
+
                     <!-- Preview table . -->
                     <dash-dset-editors:DataSetPreviewEditor editMode="true" ui:field="previewTableEditor" addStyleNames="{style.previewTable}"/>
+                    
                   </b:Column>
-
                 </b:Row>
               </b:Container>
-              
+
             </b:TabPane>
 
             <!-- Advanced configuration tab. -->
@@ -162,7 +157,7 @@
       </b:Row>
 
       <!-- Buttons row. -->
-      <b:Row ui:field="buttonsRow">
+      <b:Row ui:field="buttonsRow" addStyleNames="{style.buttonsRow}">
         <b:Column size="MD_12">
 
           <b:Popover container="body" placement="RIGHT" showDelayMs="500" content="{i18n.back_description}" title="{i18n.back}">
