@@ -19,11 +19,26 @@
       <unpack>true</unpack>
       <unpackOptions>
         <excludes>
+          
+          <!-- JBoss specific files from development environment war artifact. -->
+          <exclude>WEB-INF/classes/application-roles.properties</exclude>
+          <exclude>WEB-INF/classes/application-users.properties</exclude>
+          <exclude>WEB-INF/jboss-web.xml</exclude>
+          <exclude>WEB-INF/beans.xml</exclude>          
+          
           <!-- GWT DevMode related. -->
           <exclude>**/*devmode.js</exclude>
+          
         </excludes>
       </unpackOptions>
     </dependencySet>
   </dependencySets>
 
+  <fileSets>
+    <fileSet>
+      <directory>${project.basedir}/src/main/wildfly8/</directory>
+      <outputDirectory>.</outputDirectory>
+    </fileSet>
+  </fileSets>
+  
 </assembly>

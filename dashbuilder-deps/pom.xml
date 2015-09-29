@@ -25,7 +25,6 @@
     <version.org.uberfire>0.8.0-SNAPSHOT</version.org.uberfire>
     <version.org.jboss.errai>3.2.1-SNAPSHOT</version.org.jboss.errai>
     <version.org.jboss.errai.cdi10-compatible>3.0.6.Final</version.org.jboss.errai.cdi10-compatible>
-    <version.org.picketlink>2.6.0.Final</version.org.picketlink>
     <version.org.owasp.encoder>1.1</version.org.owasp.encoder>
     <version.com.google.gwt>2.7.0</version.com.google.gwt>
     <version.org.jboss.xnio>3.2.0.Final</version.org.jboss.xnio>
@@ -157,18 +156,6 @@
         <groupId>de.benediktmeurer.gwt-slf4j</groupId>
         <artifactId>gwt-slf4j</artifactId>
         <version>${version.de.benediktmeurer.gwt-slf4j}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.picketlink</groupId>
-        <artifactId>picketlink-api</artifactId>
-        <version>${version.org.picketlink}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.picketlink</groupId>
-        <artifactId>picketlink-idm-api</artifactId>
-        <version>${version.org.picketlink}</version>
       </dependency>
 
       <!-- ElasticSearch (test scope - for running unit test) -->

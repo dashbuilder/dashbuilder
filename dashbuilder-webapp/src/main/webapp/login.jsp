@@ -13,7 +13,7 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   --%>
-
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -146,16 +146,19 @@
   </div>
 
   <div id="login-content">
-    <form action="uf_security_check" method="post">
+    <c:if test="${param.message != null}">
+      <h3><i18n:message key="loginFailed">Login failed: Not Authorized</i18n:message></h3>
+    </c:if>
+    <form action="j_security_check" method="post">
       <p>
         <label>Username</label>
-        <input value="" name="uf_username" class="text-input" type="text"/>
+        <input value="" name="j_username" class="text-input" type="text"/>
       </p>
       <br style="clear: both;"/>
 
       <p>
         <label>Password</label>
-        <input name="uf_password" class="text-input" type="password"/>
+        <input name="j_password" class="text-input" type="password"/>
       </p>
       <br style="clear: both;"/>
 
