@@ -16,7 +16,6 @@
   <inherits name="org.dashbuilder.renderer.DefaultRenderer"/>
 
   <inherits name="org.gwtbootstrap3.GwtBootstrap3NoTheme"/>
-  <inherits name="org.gwtbootstrap3.extras.toggleswitch.ToggleSwitch"/>
 
   <source path='client'/>
 
