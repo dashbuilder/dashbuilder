@@ -6,6 +6,7 @@
   <inherits name="org.uberfire.client.views.PatternFly"/>
 
   <inherits name="org.uberfire.ext.plugin.RuntimePluginClient"/>
+  <inherits name="org.uberfire.ext.apps.UberfireAppsClient"/>
 
   <inherits name="org.dashbuilder.DashbuilderClientAll"/>
   <inherits name="org.dashbuilder.DisplayerEditor"/>
