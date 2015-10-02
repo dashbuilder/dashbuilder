@@ -1,5 +1,5 @@
 <%--
-  ~ Copyright 2012 JBoss Inc
+  ~ Copyright 2015 JBoss Inc
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -15,163 +15,61 @@
   --%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html xmlns="http://www.w3.org/1999/xhtml" class="login-pf">
 <head>
-  <title>Dashbuilder Showcase</title>
-
-  <style type="text/css">
-    * {
-      font-family: Helvetica, Arial, sans-serif;
-    }
-
-    body {
-      margin: 0;
-      padding: 0;
-      color: #fff;
-      background: url('images/bg-login.png') repeat #1b1b1b;
-      font-size: 14px;
-      text-shadow: #050505 0 -1px 0;
-      font-weight: bold;
-    }
-
-    li {
-      list-style: none;
-    }
-
-    #dummy {
-      position: absolute;
-      top: 0;
-      left: 0;
-      border-bottom: solid 3px #777973;
-      height: 250px;
-      width: 100%;
-      background: url('images/bg-login-top.png') repeat #fff;
-      z-index: 1;
-    }
-
-    #dummy2 {
-      position: absolute;
-      top: 0;
-      left: 0;
-      border-bottom: solid 2px #545551;
-      height: 252px;
-      width: 100%;
-      background: transparent;
-      z-index: 2;
-    }
-
-    #login-wrapper {
-      margin: 0 0 0 -160px;
-      width: 320px;
-      text-align: center;
-      z-index: 99;
-      position: absolute;
-      top: 0;
-      left: 50%;
-    }
-
-    #login-top {
-      height: 120px;
-      width: 401px;
-      padding-top: 20px;
-      text-align: center;
-    }
-
-    #login-content {
-      margin-top: 120px;
-    }
-
-    label {
-      width: 70px;
-      float: left;
-      padding: 8px;
-      line-height: 14px;
-      margin-top: -4px;
-    }
-
-    input.text-input {
-      width: 200px;
-      float: right;
-      -moz-border-radius: 4px;
-      -webkit-border-radius: 4px;
-      border-radius: 4px;
-      background: #fff;
-      border: solid 1px transparent;
-      color: #555;
-      padding: 8px;
-      font-size: 13px;
-    }
-
-    input.button {
-      float: right;
-      padding: 6px 10px;
-      color: #fff;
-      font-size: 14px;
-      background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#a4d04a), to(#459300));
-      text-shadow: #050505 0 -1px 0;
-      background-color: #459300;
-      -moz-border-radius: 4px;
-      -webkit-border-radius: 4px;
-      border-radius: 4px;
-      border: solid 1px transparent;
-      font-weight: bold;
-      cursor: pointer;
-      letter-spacing: 1px;
-    }
-
-    input.button:hover {
-      background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#a4d04a), to(#a4d04a), color-stop(80%, #76b226));
-      text-shadow: #050505 0 -1px 2px;
-      background-color: #a4d04a;
-      color: #fff;
-    }
-
-    div.error {
-      padding: 8px;
-      background: rgba(52, 4, 0, 0.4);
-      -moz-border-radius: 8px;
-      -webkit-border-radius: 8px;
-      border-radius: 8px;
-      border: solid 1px transparent;
-      margin: 6px 0;
-    }
-  </style>
+    <title>Login - Dashbuilder Showcase</title>
+    <link rel="stylesheet" href="org.dashbuilder.DashbuilderShowcase/patternfly/dist/css/patternfly.min.css">
+    <link rel="stylesheet" href="org.dashbuilder.DashbuilderShowcase/patternfly/dist/css/patternfly-additions.min.css">
 </head>
 
-<body id="login">
-
-<div id="login-wrapper" class="png_bg">
-  <div id="login-top">
-    <img src="images/dashbuilder-logo.png" alt="Logo" title="Powered By Dashbuilder"/>
-  </div>
-
-  <div id="login-content">
-    <c:if test="${param.message != null}">
-      <h3><i18n:message key="loginFailed">Login failed: Not Authorized</i18n:message></h3>
-    </c:if>
-    <form action="j_security_check" method="post">
-      <p>
-        <label>Username</label>
-        <input value="" name="j_username" class="text-input" type="text"/>
-      </p>
-      <br style="clear: both;"/>
-
-      <p>
-        <label>Password</label>
-        <input name="j_password" class="text-input" type="password"/>
-      </p>
-      <br style="clear: both;"/>
-
-      <p>
-        <% if (request.getParameter("gwt.codesvr") != null) { %>
-        <input type="hidden" name="gwt.codesvr" value="<%= org.owasp.encoder.Encode.forHtmlAttribute(request.getParameter("gwt.codesvr")) %>"/>
-        <% } %>
-        <input class="button" type="submit" value="Sign In"/>
-      </p>
-    </form>
-  </div>
+<body>
+<span id="badge">
+  <img src="images/dashbuilder-logo.png" alt="Dashbuilder Logo" title="Powered By Dashbuilder"/>
+</span>
+<div class="container">
+    <div class="row">
+        <div class="col-sm-6 col-md-5 col-lg-4 login">
+            <p><strong>Welcome to Dashbuilder !</strong></p>
+            <c:if test="${param.message != null}">
+                <div class="alert alert-danger">
+                    <span class="pficon-layered">
+                      <span class="pficon pficon-error-octagon"></span>
+                      <span class="pficon pficon-error-exclamation"></span>
+                    </span>
+                    <%=request.getParameter("message")%>
+                </div>
+            </c:if>
+            <form class="form-horizontal" role="form" action="j_security_check" method="post">
+                <div class="form-group">
+                    <label for="j_username" class="col-sm-2 col-md-2 control-label">Username</label>
+                    <div class="col-sm-10 col-md-10">
+                        <input type="text" class="form-control" id="j_username" name="j_username" placeholder="admin" tabindex="1" autofocus>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="j_password" class="col-sm-2 col-md-2 control-label">Password</label>
+                    <div class="col-sm-10 col-md-10">
+                        <input type="password" class="form-control" id="j_password" name="j_password" placeholder="admin" tabindex="2">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-xs-8 col-sm-offset-2 col-sm-6 col-md-offset-2 col-md-6">
+                        <%--
+                                                <div class="checkbox">
+                                                    <label>
+                                                        <input id="nosplash" name="nosplash" type="checkbox" tabindex="3"> Deactivate Splash Screen
+                                                    </label>
+                                                </div>
+                        --%>
+                    </div>
+                    <div class="col-xs-4 col-sm-4 col-md-4 submit">
+                        <button type="submit" class="btn btn-primary btn-lg" tabindex="4">Log In</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
-<div id="dummy"></div>
-<div id="dummy2"></div>
+
 </body>
 </html>
