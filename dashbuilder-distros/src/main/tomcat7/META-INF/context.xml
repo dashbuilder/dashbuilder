@@ -14,8 +14,17 @@
      http://docs.jboss.org/weld/reference/1.0.0/en-US/html/environments.html
 -->
 <Context>
+  
+  <Resource name="jdbc/dashbuilder" auth="Container"
+            type="javax.sql.DataSource" username="dashbuilder" password="dashbuilder"
+            driverClassName="org.h2.Driver"
+            url="jdbc:h2:~/dashbuilder"
+            maxActive="8"
+      />
+  
    <Resource name="BeanManager"
       auth="Container"
       type="javax.enterprise.inject.spi.BeanManager"
       factory="org.jboss.weld.resources.ManagerObjectFactory"/>
+  
 </Context>
