@@ -31,4 +31,6 @@ public interface SelectorConstants extends Messages {
 
     String selectorDisplayer_select();
 
+    String selectorDisplayer_reset();
+
 }
