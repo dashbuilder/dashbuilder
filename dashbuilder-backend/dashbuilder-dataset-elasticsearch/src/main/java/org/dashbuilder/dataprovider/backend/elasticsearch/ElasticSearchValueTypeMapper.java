@@ -27,7 +27,8 @@ public class ElasticSearchValueTypeMapper {
     
     // float, double, byte, short, integer, and long + custom
     private static final String DATE_DEFAULT_FORMAT_KEY = "dateOptionalTime";
-    private static final DateTimeFormatter DATE_DEFAULT_FORMAT = ISODateTimeFormat.dateOptionalTimeParser();
+    private static final DateTimeFormatter DATE_DEFAULT_FORMAT_PARSER = ISODateTimeFormat.dateOptionalTimeParser();
+    private static final DateTimeFormatter DATE_DEFAULT_FORMAT_PRINTER = ISODateTimeFormat.dateTime();
     private static final String NUMERIC_FLOAT = FieldMappingResponse.FieldType.FLOAT.name().toLowerCase();
     private static final String NUMERIC_DOUBLE = FieldMappingResponse.FieldType.DOUBLE.name().toLowerCase();
     private static final String NUMERIC_SHORT = FieldMappingResponse.FieldType.SHORT.name().toLowerCase();
@@ -64,28 +65,7 @@ public class ElasticSearchValueTypeMapper {
 
     public Double parseNumeric(ElasticSearchDataSetDef definition, String columnId, String number) throws ParseException {
         if (isEmpty(number)) return 0d;
-        
-        String coreType = definition.getPattern(columnId);
-        if (isEmpty(coreType)) coreType = defaulNumberFormat();
-        
-        Double result = null;
-        if (coreType.equalsIgnoreCase(NUMERIC_FLOAT)) {
-            result = new Float(Float.parseFloat(number)).doubleValue();
-        } else if (coreType.equalsIgnoreCase(NUMERIC_DOUBLE)) {
-            result = Double.parseDouble(number);
-        } else if (coreType.equalsIgnoreCase(NUMERIC_SHORT)) {
-            result = new Float(Short.parseShort(number)).doubleValue();
-        } else if (coreType.equalsIgnoreCase(NUMERIC_INTEGER)) {
-            result = new Float(Integer.parseInt(number)).doubleValue();
-        } else if (coreType.equalsIgnoreCase(NUMERIC_LONG)) {
-            result = new Float(Long.parseLong(number)).doubleValue();
-        } else {
-            // Custom format.
-            DecimalFormat format = new DecimalFormat(coreType);
-            Number n = format.parse(number);
-            result = n.doubleValue();
-        }
-        return result; 
+        return new Double(number);
     }
 
     public Date parseDate(ElasticSearchDataSetDef definition, String columnId, String date) throws ParseException {
@@ -93,7 +73,7 @@ public class ElasticSearchValueTypeMapper {
         
         String datePattern = definition.getPattern(columnId);
         boolean isDefaultDateFormat = isEmpty(datePattern) || datePattern.equalsIgnoreCase(DATE_DEFAULT_FORMAT_KEY);
-        DateTimeFormatter formatter = isDefaultDateFormat ? DATE_DEFAULT_FORMAT : DateTimeFormat.forPattern(datePattern);
+        DateTimeFormatter formatter = isDefaultDateFormat ? DATE_DEFAULT_FORMAT_PARSER : DateTimeFormat.forPattern(datePattern);
         DateTime dateTime = formatter.parseDateTime(date);
         return dateTime.toDate();
     }
@@ -114,7 +94,7 @@ public class ElasticSearchValueTypeMapper {
         return string;
     }
     
-    public String formatNumeric(ElasticSearchDataSetDef definition, String columnId, Double number) {
+    public String formatNumeric(ElasticSearchDataSetDef definition, String columnId, Number number) {
         if (number == null) {
             number = 0d;
         }
@@ -126,7 +106,7 @@ public class ElasticSearchValueTypeMapper {
         if (coreType.equalsIgnoreCase(NUMERIC_FLOAT)) {
             result = Float.toString(number.floatValue());
         } else if (coreType.equalsIgnoreCase(NUMERIC_DOUBLE)) {
-            result = Double.toString(number);
+            result = Double.toString(number.doubleValue());
         } else if (coreType.equalsIgnoreCase(NUMERIC_SHORT)) {
             result = Short.toString(number.shortValue());
         } else if (coreType.equalsIgnoreCase(NUMERIC_INTEGER)) {
@@ -146,7 +126,7 @@ public class ElasticSearchValueTypeMapper {
         
         String datePattern = definition.getPattern(columnId);
         boolean isDefaultDateFormat = isEmpty(datePattern) || datePattern.equalsIgnoreCase(DATE_DEFAULT_FORMAT_KEY);
-        DateTimeFormatter formatter = isDefaultDateFormat ? DATE_DEFAULT_FORMAT : DateTimeFormat.forPattern(datePattern);
+        DateTimeFormatter formatter = isDefaultDateFormat ? DATE_DEFAULT_FORMAT_PRINTER : DateTimeFormat.forPattern(datePattern);
         return formatter.print(date.getTime());
     }
 

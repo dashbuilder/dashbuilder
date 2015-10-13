@@ -47,6 +47,7 @@ import org.dashbuilder.dataset.sort.DataSetSort;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
+import java.io.IOException;
 import java.text.ParseException;
 import java.util.*;
 
@@ -75,9 +76,11 @@ public class ElasticSearchJestClient implements ElasticSearchClient<ElasticSearc
     
     // JestClient is designed to be singleton, don't construct it for each request.
     private JestClient client;
+    private ElasticSearchJestClient anotherClient;
     protected int timeout = DEFAULT_TIMEOUT;
 
     public ElasticSearchJestClient() {
+        System.out.println("New Jest client - " + this);
     }
 
     public ElasticSearchJestClient(ElasticSearchClientFactory clientFactory, ElasticSearchValueTypeMapper typeMapper,
@@ -159,15 +162,45 @@ public class ElasticSearchJestClient implements ElasticSearchClient<ElasticSearc
             int y = 0;
             for (Map.Entry<String, JsonElement> propertyMapping : propertyMappings) {
                 String field = propertyMapping.getKey();
-                FieldMapping fieldMappings = new Gson().fromJson(propertyMapping.getValue(), FieldMapping.class);
+                JsonElement element = propertyMapping.getValue();
+                FieldMapping fieldMappings = new Gson().fromJson(element, FieldMapping.class);
+                
+                // Field data type.
                 FieldMappingResponse.FieldType fieldType = null;
                 if (fieldMappings.getType() != null)
                     fieldType = FieldMappingResponse.FieldType.valueOf(fieldMappings.getType().toUpperCase());
+                
+                // Field index type.
                 FieldMappingResponse.IndexType indexType = null;
                 if (fieldMappings.getIndex() != null)
                     indexType = FieldMappingResponse.IndexType.valueOf(fieldMappings.getIndex().toUpperCase());
                 String format = fieldMappings.getFormat();
-                FieldMappingResponse fieldMappingResponse = new FieldMappingResponse(field, fieldType, indexType, format);
+
+                // Multi-fields.
+                List<MultiFieldMappingResponse> multiFieldsResult = null;
+                JsonElement multiFieldsElemement = element.getAsJsonObject().get("fields");
+                if (multiFieldsElemement != null) {
+                    Set<Map.Entry<String, JsonElement>> multiFields = multiFieldsElemement.getAsJsonObject().entrySet();
+                    if (multiFields != null && !multiFields.isEmpty()) {
+                        multiFieldsResult = new ArrayList<MultiFieldMappingResponse>(multiFields.size());
+                        for (Map.Entry<String, JsonElement> multiFieldEntry : multiFields) {
+                            String multiFieldId = multiFieldEntry.getKey();
+                            JsonElement multiFieldElement = multiFieldEntry.getValue();
+                            if (multiFieldElement != null) {
+                                JsonElement _dtElement = multiFieldElement.getAsJsonObject().get("type");
+                                String _dt = _dtElement != null ? _dtElement.getAsString() : null;
+                                JsonElement _itElement = multiFieldElement.getAsJsonObject().get("index");
+                                String _it = _itElement != null ? _itElement.getAsString() : null;
+                                FieldMappingResponse.FieldType multiFieldDataType = _dt != null ? FieldMappingResponse.FieldType.valueOf(_dt.toUpperCase()) : fieldType; 
+                                FieldMappingResponse.IndexType multiFieldIndexType = _it != null ? FieldMappingResponse.IndexType.valueOf(_it.toUpperCase()) : indexType;
+                                MultiFieldMappingResponse multiFieldMappingResponse = new MultiFieldMappingResponse(multiFieldId, multiFieldDataType, multiFieldIndexType);
+                                multiFieldsResult.add(multiFieldMappingResponse);
+                            }
+                        }
+                    }
+                }
+                MultiFieldMappingResponse[] multiFieldsArray = multiFieldsResult == null ? null : multiFieldsResult.toArray(new MultiFieldMappingResponse[multiFieldsResult.size()]);
+                FieldMappingResponse fieldMappingResponse = new FieldMappingResponse(field, fieldType, indexType, format, multiFieldsArray);
                 fields[y++] = fieldMappingResponse;
             }
             TypeMappingResponse typeMappingResponse = new TypeMappingResponse(typeName, fields);
@@ -218,8 +251,7 @@ public class ElasticSearchJestClient implements ElasticSearchClient<ElasticSearc
         GsonBuilder builder = new GsonBuilder();
     
         // Create another client for aggregations serializer (dashbuilder does a second query for finding max and min values when using intervals)
-        ElasticSearchJestClient aggregationsClient = (ElasticSearchJestClient) clientFactory.newClient(elasticSearchDataSetDef);
-        JsonSerializer aggregationSerializer = new AggregationSerializer(this, metadata, columns, request, aggregationsClient);
+        JsonSerializer aggregationSerializer = new AggregationSerializer(this, metadata, columns, request);
         JsonSerializer querySerializer = new QuerySerializer(this, metadata, columns);
         JsonSerializer searchQuerySerializer = new SearchQuerySerializer(this, metadata, columns);
         JsonDeserializer searchResponseDeserializer = new SearchResponseDeserializer(this, metadata, columns);
@@ -288,8 +320,15 @@ public class ElasticSearchJestClient implements ElasticSearchClient<ElasticSearc
         log("RESPONSE");
         log("********");
         log(resultObject.toString());
-        SearchResponse searchResult = gson.fromJson(resultObject, SearchResponse.class);
-        return searchResult;
+        return gson.fromJson(resultObject, SearchResponse.class);
+        
+    }
+
+    public ElasticSearchJestClient getAnotherClient(ElasticSearchDataSetDef def) {
+        if (anotherClient == null) {
+            anotherClient = (ElasticSearchJestClient) clientFactory.newClient(def);
+        }
+        return anotherClient;
     }
 
     protected String[] getColumnIds(List<DataColumn> columns) {
@@ -300,6 +339,16 @@ public class ElasticSearchJestClient implements ElasticSearchClient<ElasticSearc
             result[x] = column.getId();
         }
         return result;
+    }
+
+    @Override
+    public void close() throws IOException {
+        if (anotherClient != null) {
+            anotherClient.close();
+        }
+        if (client != null) {
+            client.shutdownClient();
+        }
     }
 
     public static class SearchQuery {
@@ -399,13 +448,13 @@ public class ElasticSearchJestClient implements ElasticSearchClient<ElasticSearc
         ColumnType columnType = metadata.getColumnType(columnId);
 
         if (ColumnType.TEXT.equals(columnType)) {
-            return typeMapper.formatText(def, columnId, (String) value);
+            return typeMapper.formatText(def, columnId, value != null ? value.toString() : null);
         } else if (ColumnType.LABEL.equals(columnType)) {
-            return typeMapper.formatLabel(def, columnId, (String) value);
+            return typeMapper.formatLabel(def, columnId, value != null ? value.toString() : null);
         } else if (ColumnType.DATE.equals(columnType)) {
             return typeMapper.formatDate(def, columnId, (Date) value);
         } else if (ColumnType.NUMBER.equals(columnType)) {
-            return typeMapper.formatNumeric(def, columnId, (Double) value);
+            return typeMapper.formatNumeric(def, columnId, (Number) value);
         }
 
         throw new UnsupportedOperationException("Cannot format value for column with id [" + columnId + "] (Data Set UUID [" + def.getUUID() + "]). Value core type not supported. Expecting string or number or date core field types.");

@@ -7,6 +7,7 @@ import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.dataset.DataSetMetadata;
 
 import java.lang.reflect.Type;
+import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -15,6 +16,7 @@ public class QuerySerializer extends AbstractAdapter<QuerySerializer> implements
     public static final String SEARCH_API_FIELD = "field";
     public static final String SEARCH_API_EXISTS = "exists";
     public static final String SEARCH_API_TERM = "term";
+    public static final String SEARCH_API_TERMS = "terms";
     public static final String SEARCH_API_LT = "lt";
     public static final String SEARCH_API_LTE = "lte";
     public static final String SEARCH_API_GT = "gt";
@@ -27,10 +29,12 @@ public class QuerySerializer extends AbstractAdapter<QuerySerializer> implements
     public static final String SEARCH_API_FILTERED = "filtered";
     public static final String SEARCH_API_QUERY = "query";
     public static final String SEARCH_API_MATCH = "match";
+    public static final String SEARCH_API_MATCH_OPERATOR = "operator";
     public static final String SEARCH_API_MATCH_ALL = "match_all";
     public static final String SEARCH_API_MUST = "must";
     public static final String SEARCH_API_MUST_NOT = "must_not";
     public static final String SEARCH_API_SHOULD = "should";
+    public static final String SEARCH_API_SHOULD_MINIMUM_MATCH = "minimum_should_match";
     public static final String SEARCH_API_BOOL = "bool";
     public static final String SEARCH_API_WILDCARD = "wildcard";
     public static final String SEARCH_API_QUERY_STRING = "query_string";
@@ -97,6 +101,8 @@ public class QuerySerializer extends AbstractAdapter<QuerySerializer> implements
                 return translateExists(query);
             case TERM:
                 return translateTerm(query);
+            case TERMS:
+                return translateTerms(query);
             case RANGE:
                 return translateRange(query);
         }
@@ -125,6 +131,22 @@ public class QuerySerializer extends AbstractAdapter<QuerySerializer> implements
         JsonObject subResult = new JsonObject();
         subResult.addProperty(field, (String) value);
         result.add(SEARCH_API_TERM, subResult);
+        return result;
+    }
+
+    private JsonObject translateTerms(Query query) {
+        if (query == null) return null;
+
+        String field = query.getField();
+        Collection<String> terms = (Collection<String>) query.getParam(Query.Parameter.VALUE.name());
+        JsonArray termsArray = new JsonArray();
+        for (String term : terms) {
+            termsArray.add(new JsonPrimitive(term));
+        }
+        JsonObject subResult = new JsonObject();
+        subResult.add(field, termsArray);
+        JsonObject result = new JsonObject();
+        result.add(SEARCH_API_TERMS, subResult);
         return result;
     }
 
@@ -223,10 +245,15 @@ public class QuerySerializer extends AbstractAdapter<QuerySerializer> implements
 
         String field = query.getField();
         Object value = query.getParam(Query.Parameter.VALUE.name());
-
+        Object operator = query.getParam(Query.Parameter.OPERATOR.name());
+        
         JsonObject result = new JsonObject();
         JsonObject subObject= new JsonObject();
         subObject.addProperty(field, (String) value);
+        if (operator != null) {
+            subObject.addProperty(SEARCH_API_MATCH_OPERATOR, operator.toString());
+            subObject.addProperty(SEARCH_API_SHOULD_MINIMUM_MATCH, 1);
+        }
         result.add(SEARCH_API_MATCH, subObject);
         return result;
     }
@@ -297,7 +324,10 @@ public class QuerySerializer extends AbstractAdapter<QuerySerializer> implements
         JsonObject bool = new JsonObject();
         if (mustObject != null) bool.add(SEARCH_API_MUST, mustObject);
         if (mustNotObject != null) bool.add(SEARCH_API_MUST_NOT, mustNotObject);
-        if (shouldObject!= null) bool.add(SEARCH_API_SHOULD, shouldObject);
+        if (shouldObject!= null) {
+            bool.add(SEARCH_API_SHOULD, shouldObject);
+            bool.addProperty(SEARCH_API_SHOULD_MINIMUM_MATCH, 1);
+        }
         result.add(SEARCH_API_BOOL, bool);
         return result;
     }

@@ -127,8 +127,11 @@ By default, when you create an Elastic Search data set and perform any data look
 * String fields are considered LABEL or TEXT column types in Dashbuilder, depending if the field is analyzed or not analyzed.              
 * String fields that are analyzed are considered TEXT column types in Dashbuilder.               
 * String fields that are not analyzed are considered LABEL column types in Dashbuilder.               
-* NOTE: An analyzed index field in the ELS instance cannot be never used as <code>LABEL</code> column type for Dashbuilder.       
-* NOTE: Case sensitiveness in String fields is determined by the field analyzer used in your mappings. For more information read the section *Elastic Search Query builder*.                     
+* NOTE: An analyzed index field in the ELS instance cannot be never used as <code>LABEL</code> column type for Dashbuilder. 
+Why? Dashbuilder is not a text indexing engine neither a client. The LABEL column type is used internally for data set indexing and 
+grouping operations, and the values for this column type are considered to be not analyzed in order to be consisent with other data providers and the Data Set API. 
+If your index field have to be analyzed due to any external constraints, and you need it as a LABEL column type, you can do some workarounds such as using multi fields and generating different columns, for example, to achieve the use of different analyzers for same document type's field.            
+* NOTE: Case sensitiveness in String fields is determined by the field analyzer used in your mappings. For more information read the section *Elastic Search Query builder* and consider the use of multi fields for applying different analyzers on same field.                     
 
 **Numeric fields**                         
 
@@ -142,7 +145,60 @@ By default, when you create an Elastic Search data set and perform any data look
 * Dashbuilder determines the format for the date field by querying the mappings for your index, so you don't have to specify any pattern for the marshalling process.                 
 * If the index mapping response do not contain any format information for the date field, it uses the default format as Elastic Search, the the [ISO 8601](http://en.wikipedia.org/wiki/ISO_8601).                     
 * NOTE: You can use multiple formats for a given date field in Elastic Search (eg: <code>yyyy/MM/dd HH:mm:ss||yyyy/MM/dd</code>), but this feature is NOT supported in Dashbuilder.                   
-* NOTE: In order to perform data set look-ups using FIXED date interval types, *groovy dynamic scripting* must be enabled in your ElasticSearch server. For more information go [here](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/modules-scripting.html#_enabling_dynamic_scripting).              
+* **IMPORTANT NOTE**: In order to perform data set look-ups using FIXED date interval types, *groovy dynamic scripting* must be enabled in your ElasticSearch server. For more information go [here](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/modules-scripting.html#_enabling_dynamic_scripting).              
+
+**Multi fields support**
+
+The use of multi fields in Elastic Search allows several goals, such as using different analyzers for a single field, or different index types for it, etc. Fore more information read the documentation [here](https://www.elastic.co/guide/en/elasticsearch/reference/current/mapping-core-types.html#_multi_fields_3).                  
+
+Dashbuilder supports the use of multi fields in any index. Each multi field is considered a data set column using the same naming convention as Elastic Search does:     
+
+    # Use the dot symbol as the multi field separator.
+    <main_field>.<multi_field>
+
+If the multi field does not specify the data type or the index type, those values are inherited from the main field.                
+ 
+*Example*                          
+
+* Consider the following index mappings:              
+
+    "field1" : {
+        "type": "string", 
+        "index": "analyzed" 
+    },
+    "field2" : {
+        "type": "string", 
+        "index": "analyzed" ,
+        "fields": {
+            "raw": {
+                "type": "string",
+                "index": "not_analyzed",
+                "ignore_above": 256
+            }
+        }
+    }
+
+* The resulting data set columns are:               
+
+<table>
+    <tr>
+        <th>Column Id</th>
+        <th>Column type</th>
+    </tr>
+    <tr>
+        <td>field1</td>
+        <td>TEXT</td>
+    </tr>
+    <tr>
+        <td>field2</td>
+        <td>TEXT</td>
+    </tr>
+    <tr>
+        <td>field2.raw</td>
+        <td>LABEL</td>
+    </tr>
+</table>
+
 
 How Elastic Search Data Set Provider works
 ------------------------------------------
@@ -193,7 +249,7 @@ Elastic Search Query builder
 
 Data Set look-up filtering operations are translated by the Elastic Search Query builder into ELS *queries* and *filters* by the <code>org.dashbuilder.dataprovider.backend.elasticsearch.rest.ElasticSearchQueryBuilder</code> bean.                         
 
-By default, the implementation given for this bean is <code>org.dashbuilder.dataprovider.backend.elasticsearch.rest.impl.ElasticSearchQueryBuilderImpl</code>. It tranforms filters into ELS queries as:                    
+By default, the implementation given for this bean is <code>org.dashbuilder.dataprovider.backend.elasticsearch.rest.impl.ElasticSearchQueryBuilderImpl</code>. It transforms filters into ELS queries as:                    
  
 
 <table>
@@ -214,12 +270,12 @@ By default, the implementation given for this bean is <code>org.dashbuilder.data
     </tr>
     <tr>
         <td>EQUALS_TO</td>
-        <td>TERM filter or MATCH query</td>
+        <td>TERM/S filter or MATCH query</td>
         <td>If the column type is LABEL, the filter is transformed into a TERM filter query, otherwise into a MATCH query</td>
     </tr>
     <tr>
         <td>NOT_EQUALS_TO</td>
-        <td>TERM filter or MATCH query (negated)</td>
+        <td>TERM/S filter or MATCH query (negated)</td>
         <td>If the column type is LABEL, the filter is transformed into a TERM filter query, otherwise into a MATCH query</td>
     </tr>
     <tr>
@@ -254,7 +310,7 @@ By default, the implementation given for this bean is <code>org.dashbuilder.data
     </tr>    
 </table>
 
-If you don't feel comfortable with those default queries and filter generated by the default bean implementation, due to index/es mapping incompatibilities or the performance issues, you can provide you own Query Builder implementation by implementing the interface <code>org.dashbuilder.dataprovider.backend.elasticsearch.rest.ElasticSearchQueryBuilder</code> and use CDI to override it as the default one.                   
+If you don't feel comfortable with those default queries and filters generated by the default bean implementation, due to index/es mapping incompatibilities or some performance issues in your concrete scenario, you can provide you own Query Builder implementation by implementing the interface <code>org.dashbuilder.dataprovider.backend.elasticsearch.rest.ElasticSearchQueryBuilder</code> and use CDI to override it as the default one. Just build your custom query structure and use it into the search request!                    
 
 **LIKE TO operation - Usage and notes**            
 
@@ -287,20 +343,22 @@ Summary:
             "mappings" : {
                 "_default_" : {
                     "properties" : {
-                        "id" : {"type": "integer" },
-                        "city" : {"type": "string", "index": "not_analyzed" },
-                        "department" : { "type" : "string", "index": "not_analyzed" },
-                        "employee" : { "type" : "string", "index": "analyzed", "analyzer" : "case_sensitive"  },
-                        "date" : { 
+                        "EXPENSES_ID" : {"type": "integer" },
+                        "CITY" : {"type": "string", "index": "not_analyzed" },
+                        "DEPARTMENT" : { "type" : "string", "index": "not_analyzed" },
+                        "EMPLOYEE" : { "type" : "string", "index": "analyzed", "analyzer" : "case_sensitive"  },
+                        "CREATION_DATE" : { 
                             "type" : "date",
                             "format": "MM-dd-YYYY"
                         },
-                        "amount" : { "type" : "float" }
+                        "AMOUNT" : { "type" : "float" }
                     }
                 }
             }
         }
- 
+        
+* Consider the use of multi-fields for this index's filed if you need to apply different mappings or analyzers for it, as this provider supports the use of ElasticSearch multi fields.                    
+
 Running an EL server with examples
 ----------------------------------
 
@@ -343,12 +401,12 @@ Here is an example of a DataSet definition for this example:
         "cacheEnabled": false,
         "cacheMaxRows": 1000,
         "columns": [
-                    {"id": "id", "type": "number"},
-                    {"id": "amount", "type": "number"},
-                    {"id": "department", "type": "label"},
-                    {"id": "employee", "type": "text"},
-                    {"id": "date", "type": "date"},
-                    {"id": "city", "type": "label"},
+                    {"id": "EXPENSES_ID", "type": "number"},
+                    {"id": "AMOUNT", "type": "number"},
+                    {"id": "DEPARTMENT", "type": "label"},
+                    {"id": "EMPLOYEE", "type": "text"},
+                    {"id": "CREATION_DATE", "type": "date"},
+                    {"id": "CITY", "type": "label"},
                 ]
     }
 
