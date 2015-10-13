@@ -20,7 +20,6 @@ import com.google.gwt.dom.client.OptionElement;
 import com.google.gwt.dom.client.SelectElement;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
-import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.DataColumn;
@@ -34,6 +33,7 @@ import org.dashbuilder.displayer.DisplayerConstraints;
 import org.dashbuilder.displayer.client.AbstractDisplayer;
 import org.dashbuilder.displayer.client.Displayer;
 import org.dashbuilder.renderer.client.resources.i18n.SelectorConstants;
+import org.gwtbootstrap3.client.ui.ListBox;
 
 import java.util.List;
 
@@ -72,7 +72,8 @@ public class SelectorDisplayer extends AbstractDisplayer {
         listBox.addChangeHandler(new ChangeHandler() {
             public void onChange(ChangeEvent event) {
                 // Reset the current filter (if any)
-                String firstColumnId = dataSet.getColumnByIndex(0).getId();
+                DataColumn firstColumn = dataSet.getColumnByIndex(0);
+                String firstColumnId = firstColumn.getId();
                 List<Integer> currentFilter = filterIndexes(firstColumnId);
                 if (currentFilter != null && !currentFilter.isEmpty()) {
                     filterReset();
@@ -80,9 +81,18 @@ public class SelectorDisplayer extends AbstractDisplayer {
 
                 // Filter by the selected value (if any)
                 int index = listBox.getSelectedIndex();
+                String hint = SelectorConstants.INSTANCE.selectorDisplayer_select();
                 if (index > 0) {
                     filterUpdate(firstColumnId, index-1);
+                    hint = SelectorConstants.INSTANCE.selectorDisplayer_reset();
                 }
+
+                // Update the selector hint according in order to reflect the filter status
+                ColumnSettings columnSettings = displayerSettings.getColumnSettings(firstColumn);
+                String firstColumnName = columnSettings.getColumnName();
+                SelectElement selectElement = SelectElement.as(listBox.getElement());
+                NodeList<OptionElement> options = selectElement.getOptions();
+                options.getItem(0).setText("- " + hint + " " + firstColumnName + " -");
             }
         });
         return listBox;
@@ -91,21 +101,28 @@ public class SelectorDisplayer extends AbstractDisplayer {
     @Override
     protected void updateVisualization() {
         listBox.clear();
-        final DataColumn firstColumn = dataSet.getColumnByIndex(0);
-        final String firstColumnId = firstColumn.getId();
+        DataColumn firstColumn = dataSet.getColumnByIndex(0);
+        String firstColumnId = firstColumn.getId();
         ColumnSettings columnSettings = displayerSettings.getColumnSettings(firstColumn);
-        final String firstColumnName = columnSettings.getColumnName();
+        String firstColumnName = columnSettings.getColumnName();
+        List<Integer> currentFilter = super.filterIndexes(firstColumnId);
 
-        listBox.addItem("- " + SelectorConstants.INSTANCE.selectorDisplayer_select()  + " " + firstColumnName + " -");
-        SelectElement selectElement = SelectElement.as(listBox.getElement());
-        NodeList<OptionElement> options = selectElement.getOptions();
+        // Add a selector hint according to the filter status
+        if (currentFilter.isEmpty()) {
+            listBox.addItem("- " + SelectorConstants.INSTANCE.selectorDisplayer_select()  + " " + firstColumnName + " -");
+        } else {
+            listBox.addItem("- " + SelectorConstants.INSTANCE.selectorDisplayer_reset()  + " " + firstColumnName + " -");
+        }
 
         // Generate the list entries from the current data set
-        List<Integer> currentFilter = super.filterIndexes(firstColumnId);
+        SelectElement selectElement = SelectElement.as(listBox.getElement());
+        NodeList<OptionElement> options = selectElement.getOptions();
         for (int i = 0; i < dataSet.getRowCount(); i++) {
 
             Object obj = dataSet.getValueAt(i, 0);
-            if (obj == null) continue;
+            if (obj == null) {
+                continue;
+            }
 
             String value = super.formatValue(i, 0);
             listBox.addItem(value);
@@ -129,8 +146,10 @@ public class SelectorDisplayer extends AbstractDisplayer {
                         out.append(extraColumnName).append("=").append(formattedValue);
                     }
                 }
-                OptionElement optionElement = options.getItem(i+1);
-                if (optionElement != null) optionElement.setTitle(out.toString());
+                OptionElement optionElement = options.getItem(i + 1);
+                if (optionElement != null) {
+                    optionElement.setTitle(out.toString());
+                }
             }
         }
     }
@@ -144,20 +163,30 @@ public class SelectorDisplayer extends AbstractDisplayer {
     @Override
     public void onFilterEnabled(Displayer displayer, DataSetGroup groupOp) {
         String firstColumnId = dataSet.getColumnByIndex(0).getId();
-        if (firstColumnId.equals(groupOp.getColumnGroup().getColumnId())) {
-            columnSelectionMap.put(groupOp.getColumnGroup().getColumnId(), groupOp.getSelectedIntervalList());
+        List<Integer> currentFilter = super.filterIndexes(firstColumnId);
+
+        // If selector is active then ignore external filters.
+        if (currentFilter.isEmpty()) {
+            if (firstColumnId.equals(groupOp.getColumnGroup().getColumnId())) {
+                columnSelectionMap.put(groupOp.getColumnGroup().getColumnId(), groupOp.getSelectedIntervalList());
+            }
+            super.onFilterEnabled(displayer, groupOp);
         }
-        super.onFilterEnabled(displayer, groupOp);
     }
 
     @Override
     public void onFilterReset(Displayer displayer, List<DataSetGroup> groupOps) {
         String firstColumnId = dataSet.getColumnByIndex(0).getId();
-        for (DataSetGroup groupOp : groupOps) {
-            if (firstColumnId.equals(groupOp.getColumnGroup().getColumnId())) {
-                columnSelectionMap.remove(groupOp.getColumnGroup().getColumnId());
+        List<Integer> currentFilter = super.filterIndexes(firstColumnId);
+
+        // If selector is active then ignore external filters.
+        if (currentFilter.isEmpty()) {
+            for (DataSetGroup groupOp : groupOps) {
+                if (firstColumnId.equals(groupOp.getColumnGroup().getColumnId())) {
+                    columnSelectionMap.remove(groupOp.getColumnGroup().getColumnId());
+                }
             }
+            super.onFilterReset(displayer, groupOps);
         }
-        super.onFilterReset(displayer, groupOps);
     }
 }
