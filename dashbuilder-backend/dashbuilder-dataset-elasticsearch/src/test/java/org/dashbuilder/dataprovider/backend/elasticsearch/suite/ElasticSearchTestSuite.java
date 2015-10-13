@@ -1,11 +1,7 @@
 package org.dashbuilder.dataprovider.backend.elasticsearch.suite;
 
-import org.dashbuilder.dataprovider.backend.elasticsearch.ElasticSearchDataSetCustomColumnsTest;
-import org.dashbuilder.dataprovider.backend.elasticsearch.ElasticSearchDataSetDatesTest;
-import org.dashbuilder.dataprovider.backend.elasticsearch.ElasticSearchDataSetTest;
-import org.dashbuilder.dataprovider.backend.elasticsearch.ElasticSearchDataSetTestBase;
+import org.dashbuilder.dataprovider.backend.elasticsearch.*;
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.impl.jest.ElasticSearchJestClientTest;
-import org.dashbuilder.dataprovider.backend.elasticsearch.rest.util.ElasticSearchJSONParserTest;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
@@ -27,7 +23,7 @@ import org.slf4j.LoggerFactory;
         ElasticSearchDataSetCustomColumnsTest.class,
         ElasticSearchDataSetTest.class,
         ElasticSearchDataSetDatesTest.class,
-        ElasticSearchJSONParserTest.class
+        ElasticSearchMultiFieldsTest.class
         // ElasticSearchDataSetCacheTest.class
 })
 public class ElasticSearchTestSuite {
@@ -44,6 +40,8 @@ public class ElasticSearchTestSuite {
                         ElasticSearchDataSetTestBase.runELServer(elHomeFolder);
                         ElasticSearchDataSetTestBase.createAndPopulateExpenseReportsIndex();
                         ElasticSearchDataSetTestBase.createAndPopulateExpenseReportsCSensitiveIndex();
+                        ElasticSearchDataSetTestBase.createAndPopulateEmptyIntervalsIndex();
+                        ElasticSearchDataSetTestBase.createAndPopulateMultiFieldsIndex();
                 } catch (Exception e) {
                         logger.error("Error starting up the ELS instance.", e);
                 }

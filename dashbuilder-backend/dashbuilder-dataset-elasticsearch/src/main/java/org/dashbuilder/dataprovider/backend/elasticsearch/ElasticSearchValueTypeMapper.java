@@ -5,6 +5,7 @@ import org.dashbuilder.dataset.def.ElasticSearchDataSetDef;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.DateTimeFormatterBuilder;
 import org.joda.time.format.ISODateTimeFormat;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -27,7 +28,8 @@ public class ElasticSearchValueTypeMapper {
     
     // float, double, byte, short, integer, and long + custom
     private static final String DATE_DEFAULT_FORMAT_KEY = "dateOptionalTime";
-    private static final DateTimeFormatter DATE_DEFAULT_FORMAT = ISODateTimeFormat.dateOptionalTimeParser();
+    private static final DateTimeFormatter DATE_DEFAULT_FORMAT_PARSER = ISODateTimeFormat.dateOptionalTimeParser();
+    private static final DateTimeFormatter DATE_DEFAULT_FORMAT_PRINTER = ISODateTimeFormat.dateTime();
     private static final String NUMERIC_FLOAT = FieldMappingResponse.FieldType.FLOAT.name().toLowerCase();
     private static final String NUMERIC_DOUBLE = FieldMappingResponse.FieldType.DOUBLE.name().toLowerCase();
     private static final String NUMERIC_SHORT = FieldMappingResponse.FieldType.SHORT.name().toLowerCase();
@@ -93,7 +95,7 @@ public class ElasticSearchValueTypeMapper {
         
         String datePattern = definition.getPattern(columnId);
         boolean isDefaultDateFormat = isEmpty(datePattern) || datePattern.equalsIgnoreCase(DATE_DEFAULT_FORMAT_KEY);
-        DateTimeFormatter formatter = isDefaultDateFormat ? DATE_DEFAULT_FORMAT : DateTimeFormat.forPattern(datePattern);
+        DateTimeFormatter formatter = isDefaultDateFormat ? DATE_DEFAULT_FORMAT_PARSER : DateTimeFormat.forPattern(datePattern);
         DateTime dateTime = formatter.parseDateTime(date);
         return dateTime.toDate();
     }
@@ -146,7 +148,7 @@ public class ElasticSearchValueTypeMapper {
         
         String datePattern = definition.getPattern(columnId);
         boolean isDefaultDateFormat = isEmpty(datePattern) || datePattern.equalsIgnoreCase(DATE_DEFAULT_FORMAT_KEY);
-        DateTimeFormatter formatter = isDefaultDateFormat ? DATE_DEFAULT_FORMAT : DateTimeFormat.forPattern(datePattern);
+        DateTimeFormatter formatter = isDefaultDateFormat ? DATE_DEFAULT_FORMAT_PRINTER : DateTimeFormat.forPattern(datePattern);
         return formatter.print(date.getTime());
     }
 

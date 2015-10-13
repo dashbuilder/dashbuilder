@@ -29,6 +29,7 @@ public class FieldMappingResponse {
     protected FieldType dataType;
     protected String format;
     protected IndexType indexType;
+    protected MultiFieldMappingResponse[] multiFields;
 
     public FieldMappingResponse(String name, FieldType dataType, IndexType indexType) {
         this.name = name;
@@ -41,6 +42,14 @@ public class FieldMappingResponse {
         this.dataType = dataType;
         this.indexType = indexType;
         this.format = format;
+    }
+
+    public FieldMappingResponse(String name, FieldType dataType, IndexType indexType, String format, MultiFieldMappingResponse[] multiFields) {
+        this.name = name;
+        this.dataType = dataType;
+        this.indexType = indexType;
+        this.format = format;
+        this.multiFields = multiFields;
     }
 
     public String getName() {
@@ -57,5 +66,9 @@ public class FieldMappingResponse {
 
     public String getFormat() {
         return format;
+    }
+
+    public MultiFieldMappingResponse[] getMultiFields() {
+        return multiFields;
     }
 }

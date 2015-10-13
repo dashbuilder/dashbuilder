@@ -113,6 +113,12 @@ public class ElasticSearchDataSetTestBase {
     protected static final String EL_EXAMPLE_CSENSITIVE_INDEX = "expensereports-sensitive";
     protected static final String EL_EXAMPLE_CSENSITIVE_MAPPINGS = "org/dashbuilder/dataprovider/backend/elasticsearch/server/example-data/expensereports-csensitive-mappings.json";
     protected static final String EL_EXAMPLE_CSENSITIVE_DATA = "org/dashbuilder/dataprovider/backend/elasticsearch/server/example-data/expensereports-csensitive-data.json";
+    protected static final String EL_EXAMPLE_EMPTYINTERVALS_INDEX = "emptyintervals";
+    protected static final String EL_EXAMPLE_EMPTYINTERVALS_MAPPINGS = "org/dashbuilder/dataprovider/backend/elasticsearch/server/example-data/emptyIntervals-mappings.json";
+    protected static final String EL_EXAMPLE_EMPTYINTERVALS_DATA = "org/dashbuilder/dataprovider/backend/elasticsearch/server/example-data/emptyIntervals-data.json";
+    protected static final String EL_EXAMPLE_MULTIFIELDS_INDEX = "multifields";
+    protected static final String EL_EXAMPLE_MULTIFIELDS_MAPPINGS = "org/dashbuilder/dataprovider/backend/elasticsearch/server/example-data/multifields-mappings.json";
+    protected static final String EL_EXAMPLE_MULTIFIELDS_DATA = "org/dashbuilder/dataprovider/backend/elasticsearch/server/example-data/multifields-data.json";
     protected static final String EL_EXAMPLE_MORE_DATA = "org/dashbuilder/dataprovider/backend/elasticsearch/server/example-data/expensereports-more-data.json";
     protected static final String EL_EXAMPLE_COLUMN_ID = "id";
     protected static final String EL_EXAMPLE_COLUMN_AMOUNT = "amount";
@@ -228,9 +234,28 @@ public class ElasticSearchDataSetTestBase {
         // Populate the server with some test content.
         populateELServer(urlBuilder, EL_EXAMPLE_CSENSITIVE_DATA);
 
-        // Test mappings and document count.
-        testMappingCreated(urlBuilder);
-        testDocumentsCount(urlBuilder);
+    }
+
+    public static void createAndPopulateEmptyIntervalsIndex() throws Exception{
+        ElasticSearchUrlBuilder urlBuilder = new ElasticSearchUrlBuilder(EL_SERVER, EL_EXAMPLE_EMPTYINTERVALS_INDEX);
+
+        // Create the expensereports example index.
+        createIndexELServer(urlBuilder, EL_EXAMPLE_EMPTYINTERVALS_MAPPINGS);
+
+        // Populate the server with some test content.
+        populateELServer(urlBuilder, EL_EXAMPLE_EMPTYINTERVALS_DATA);
+
+    }
+
+    public static void createAndPopulateMultiFieldsIndex() throws Exception{
+        ElasticSearchUrlBuilder urlBuilder = new ElasticSearchUrlBuilder(EL_SERVER, EL_EXAMPLE_MULTIFIELDS_INDEX);
+
+        // Create the expensereports example index.
+        createIndexELServer(urlBuilder, EL_EXAMPLE_MULTIFIELDS_MAPPINGS);
+
+        // Populate the server with some test content.
+        populateELServer(urlBuilder, EL_EXAMPLE_MULTIFIELDS_DATA);
+
     }
     
     private static void startInstance() {
@@ -450,7 +475,7 @@ public class ElasticSearchDataSetTestBase {
         int colColunt = dataSetColumns.size();
         int rowCount = dataSet.getRowCount();
 
-        log("********************************************************************************************************************************************************");
+        log("********************************************************************************************************************************************************\n");
         for (int row = 0; row < rowCount; row++) {
             log(SPACER);
             for (int col= 0; col< colColunt; col++) {
@@ -458,8 +483,8 @@ public class ElasticSearchDataSetTestBase {
                 log(value);
                 log(SPACER);
             }
-            log("");
+            log("\n");
         }
-        log("********************************************************************************************************************************************************");
+        log("********************************************************************************************************************************************************\n");
     }
 }

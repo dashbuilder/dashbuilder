@@ -1,0 +1,22 @@
+{"index":{"_index":"emptyintervals","_type":"emptyinterval","_id":1}}
+{"id":1, "value": "v1", "number":1, "date": "01-2014"}
+{"index":{"_index":"emptyintervals","_type":"emptyinterval","_id":2}}
+{"id":2, "value": "v2", "number":1, "date": "02-2014"}
+{"index":{"_index":"emptyintervals","_type":"emptyinterval","_id":3}}
+{"id":3, "value": "v3", "number":1, "date": "03-2014"}
+{"index":{"_index":"emptyintervals","_type":"emptyinterval","_id":4}}
+{"id":4, "value": "v4", "number":1, "date": "04-2014"}
+{"index":{"_index":"emptyintervals","_type":"emptyinterval","_id":5}}
+{"id":5, "value": "v5", "number":1, "date": "06-2014"}
+{"index":{"_index":"emptyintervals","_type":"emptyinterval","_id":6}}
+{"id":6, "value": "v6", "number":1, "date": "07-2014"}
+{"index":{"_index":"emptyintervals","_type":"emptyinterval","_id":7}}
+{"id":7, "value": "v7", "number":1, "date": "03-2015"}
+{"index":{"_index":"emptyintervals","_type":"emptyinterval","_id":8}}
+{"id":8, "value": "v8", "number":1, "date": "05-2015"}
+{"index":{"_index":"emptyintervals","_type":"emptyinterval","_id":9}}
+{"id":9, "value": "v9", "number":1, "date": "08-2015"}
+{"index":{"_index":"emptyintervals","_type":"emptyinterval","_id":10}}
+{"id":10, "value": "v10", "number":1, "date": "10-2015"}
+{"index":{"_index":"emptyintervals","_type":"emptyinterval","_id":11}}
+{"id":11, "value": "v11", "number":1, "date": "11-2015"}

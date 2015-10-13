@@ -1,0 +1,12 @@
+{"index":{"_index":"multifields","_type":"multifield","_id":1}}
+{"field1":"1", "field2": "elnumerouno", "number":1, "date": "01"}
+{"index":{"_index":"multifields","_type":"multifield","_id":2}}
+{"field1":"2", "field2": "elnumerodos", "number":2, "date": "02"}
+{"index":{"_index":"multifields","_type":"multifield","_id":3}}
+{"field1":"3", "field2": "elnumerotres", "number":3, "date": "03"}
+{"index":{"_index":"multifields","_type":"multifield","_id":4}}
+{"field1":"4", "field2": "elnumerocuatro", "number":4, "date": "04"}
+{"index":{"_index":"multifields","_type":"multifield","_id":5}}
+{"field1":"5", "field2": "elnumerocinco", "number":5, "date": "06"}
+{"index":{"_index":"multifields","_type":"multifield","_id":6}}
+{"field1":"6", "field2": "elnumeroseis", "number":6, "date": "07"}

@@ -45,8 +45,8 @@ public class SearchQuerySerializer extends AbstractAdapter<SearchQuerySerializer
             result.add(QUERY, queryObject);
         }
 
-        // TODO: Use all aggregations, not just first one.
         if (existAggregations) {
+            // TODO: Use all aggregations, not just first one.
             JsonObject aggregationObject = aggregations.get(0);
             JsonObject aggregationsSubObject = aggregationObject.getAsJsonObject(AGGREGATIONS);
             result.add(AGGREGATIONS, aggregationsSubObject);

@@ -16,11 +16,8 @@
 package org.dashbuilder.client.gallery;
 
 import com.google.gwt.user.client.ui.IsWidget;
-import org.dashbuilder.client.expenses.ExpenseConstants;
 import org.dashbuilder.client.expenses.ExpensesDashboard;
-import org.dashbuilder.client.metrics.AnalyticMetricsDashboard;
 import org.dashbuilder.client.metrics.ClusterMetricsDashboard;
-import org.dashbuilder.client.metrics.RealTimeMetricsDashboard;
 import org.dashbuilder.client.resources.i18n.AppConstants;
 import org.dashbuilder.client.sales.widgets.SalesDistributionByCountry;
 import org.dashbuilder.client.sales.widgets.SalesExpectedByDate;
@@ -31,7 +28,6 @@ import org.dashbuilder.dataset.date.TimeAmount;
 import org.dashbuilder.dataset.def.DataSetDef;
 import org.dashbuilder.dataset.events.DataSetModifiedEvent;
 import org.dashbuilder.dataset.events.DataSetPushOkEvent;
-import org.dashbuilder.shared.sales.SalesConstants;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
 import org.uberfire.client.annotations.WorkbenchPartView;
 import org.uberfire.client.annotations.WorkbenchScreen;
@@ -85,9 +81,7 @@ public class GalleryWidgetPresenter {
         if ("salesReports".equals(widgetId)) return new SalesTableReports();
         if ("expenseReports".equals(widgetId)) return new ExpensesDashboard();
         if ("clusterMetrics".equals(widgetId)) return new ClusterMetricsDashboard();
-        if ("metrics_realtime".equals(widgetId)) return new RealTimeMetricsDashboard(RealTimeMetricsDashboard.METRICS_DATASET_DEFAULT_SERVERS);
-        if ("metrics_analytic".equals(widgetId)) return new AnalyticMetricsDashboard();
-
+        
         throw new IllegalArgumentException(AppConstants.INSTANCE.gallerywidget_unknown() + widgetId);
     }
 

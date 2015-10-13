@@ -25,6 +25,7 @@
     }
     .filterAndColumnsEditionDisclosurePanel {
       float: left;
+      min-width: 220px;
       margin-right: 20px;
     }
     .columnsFilterDisclosurePanelButton {
@@ -34,14 +35,20 @@
       filter: alpha(opacity=5);
       opacity: 0.5;
     }
+    .columnsFilter {
+      max-height: 400px;
+      overflow-y: auto;
+    }
     .columnsEditor {
       overflow: auto;
     }
     .previewTable {
       height: 100%;
+      max-height: 450px;
       overflow: auto;
     }
     .buttonsRow {
+      min-height: 50px;
       margin-top: 20px;
     }
   </ui:style>
@@ -107,42 +114,34 @@
             <!-- Preview & columns & filter tab. -->
             <b:TabPane ui:field="previewTabPane" addStyleNames="{style.topMargin}" >
 
-              <b:Container fluid="true">
-                <b:Row>
-                  <b:Column size="MD_12">
-                    
-                    <g:DisclosurePanel ui:field="filterAndColumnsEditionDisclosurePanel" open="true" addStyleNames="{style.filterAndColumnsEditionDisclosurePanel}">
+              <g:DisclosurePanel ui:field="filterAndColumnsEditionDisclosurePanel" open="true" addStyleNames="{style.filterAndColumnsEditionDisclosurePanel}">
 
-                      <g:customHeader>
-                        <b:Button icon="STEP_BACKWARD" type="LINK" size="LARGE" ui:field="columnsFilterDisclosurePanelButton" title="{i18n.hideColumnsAndFilter}" addStyleNames="{style.columnsFilterDisclosurePanelButton} "/>
-                      </g:customHeader>
+                <g:customHeader>
+                  <b:Button icon="STEP_BACKWARD" type="LINK" size="LARGE" ui:field="columnsFilterDisclosurePanelButton" title="{i18n.hideColumnsAndFilter}" addStyleNames="{style.columnsFilterDisclosurePanelButton} "/>
+                </g:customHeader>
 
-                      <b:TabPanel tabPosition="TOP">
-                        <b:NavTabs>
-                          <b:TabListItem title="{i18n.dataColumns}" text="{i18n.dataColumns}" active="true" ui:field="columnsTabItem"/>
-                          <b:TabListItem title="{i18n.filter}" text="{i18n.filter}" ui:field="filterTabItem"/>
-                        </b:NavTabs>
-                        <b:TabContent>
+                <b:TabPanel tabPosition="TOP">
+                  <b:NavTabs>
+                    <b:TabListItem title="{i18n.dataColumns}" text="{i18n.dataColumns}" active="true" ui:field="columnsTabItem"/>
+                    <b:TabListItem title="{i18n.filter}" text="{i18n.filter}" ui:field="filterTabItem"/>
+                  </b:NavTabs>
+                  <b:TabContent addStyleNames="{style.columnsFilter}">
 
-                          <!-- Columns. -->
-                          <b:TabPane ui:field="columnsTabPane" active="true" addStyleNames="{style.topMargin}">
-                            <dash-dset-editors:DataSetColumnsEditor editMode="true" ui:field="columnsEditor" addStyleNames="{style.columnsEditor}"/>
-                          </b:TabPane>
+                    <!-- Columns. -->
+                    <b:TabPane ui:field="columnsTabPane" active="true" addStyleNames="{style.topMargin}">
+                      <dash-dset-editors:DataSetColumnsEditor editMode="true" ui:field="columnsEditor" addStyleNames="{style.columnsEditor}"/>
+                    </b:TabPane>
 
-                          <!-- Filter. -->
-                          <b:TabPane ui:field="filterTabPane" addStyleNames="{style.topMargin}"/>
+                    <!-- Filter. -->
+                    <b:TabPane ui:field="filterTabPane" addStyleNames="{style.topMargin}"/>
 
-                        </b:TabContent>
-                      </b:TabPanel>
+                  </b:TabContent>
+                </b:TabPanel>
 
-                    </g:DisclosurePanel>
+              </g:DisclosurePanel>
 
-                    <!-- Preview table . -->
-                    <dash-dset-editors:DataSetPreviewEditor editMode="true" ui:field="previewTableEditor" addStyleNames="{style.previewTable}"/>
-                    
-                  </b:Column>
-                </b:Row>
-              </b:Container>
+              <!-- Preview table . -->
+              <dash-dset-editors:DataSetPreviewEditor editMode="true" ui:field="previewTableEditor" addStyleNames="{style.previewTable}"/>
 
             </b:TabPane>
 

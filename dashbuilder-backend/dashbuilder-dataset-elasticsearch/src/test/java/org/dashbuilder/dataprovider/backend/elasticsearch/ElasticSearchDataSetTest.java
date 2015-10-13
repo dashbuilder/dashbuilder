@@ -49,7 +49,7 @@ public class ElasticSearchDataSetTest extends ElasticSearchDataSetTestBase {
     protected static final String EL_DATASET_CSENSITIVE_UUID = "expense_reports_csensitive";
     
     /**
-     * Register the dataset used for this test case. 
+     * Register the data set used for this test case. 
      */
     @Before
     public void registerDataSet() throws Exception {

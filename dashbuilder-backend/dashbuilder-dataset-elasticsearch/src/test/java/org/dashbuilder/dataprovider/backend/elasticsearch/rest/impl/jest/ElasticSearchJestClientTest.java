@@ -279,8 +279,6 @@ public class ElasticSearchJestClientTest {
     @Test
     public void testAggregationSerializer() {
 
-        ElasticSearchJestClient c = (ElasticSearchJestClient) ElasticSearchClientFactory.configure(anotherClient, definition);
-
         // **************
         // Core functions
         // **************
@@ -300,7 +298,7 @@ public class ElasticSearchJestClientTest {
         columns.add(col3);
         columns.add(col4);
         columns.add(col5);
-        AggregationSerializer aggregationSerializer = new AggregationSerializer(client, metadata, columns, c);
+        AggregationSerializer aggregationSerializer = new AggregationSerializer(client, metadata, columns);
         builder.registerTypeAdapter(DataSetGroup.class, aggregationSerializer);
         Gson gson = builder.create();
         
@@ -332,7 +330,7 @@ public class ElasticSearchJestClientTest {
         columns.add(col0);
         columns.add(col1);
         columns.add(col2);
-        aggregationSerializer = new AggregationSerializer(client, metadata, columns, c);
+        aggregationSerializer = new AggregationSerializer(client, metadata, columns);
         builder.registerTypeAdapter(DataSetGroup.class, aggregationSerializer);
         gson = builder.create();
         
@@ -355,7 +353,7 @@ public class ElasticSearchJestClientTest {
         columns.add(col0);
         columns.add(col1);
         columns.add(col2);
-        aggregationSerializer = new AggregationSerializer(client, metadata, columns, c);
+        aggregationSerializer = new AggregationSerializer(client, metadata, columns);
         builder.registerTypeAdapter(DataSetGroup.class, aggregationSerializer);
         gson = builder.create();
 
@@ -379,7 +377,7 @@ public class ElasticSearchJestClientTest {
         columns.add(col0);
         columns.add(col1);
         columns.add(col2);
-        aggregationSerializer = new AggregationSerializer(client, metadata, columns, c);
+        aggregationSerializer = new AggregationSerializer(client, metadata, columns);
         builder.registerTypeAdapter(DataSetGroup.class, aggregationSerializer);
         gson = builder.create();
         

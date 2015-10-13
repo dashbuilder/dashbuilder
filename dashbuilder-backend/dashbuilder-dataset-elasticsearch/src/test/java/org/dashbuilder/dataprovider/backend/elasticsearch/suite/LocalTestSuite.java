@@ -3,8 +3,8 @@ package org.dashbuilder.dataprovider.backend.elasticsearch.suite;
 import org.dashbuilder.dataprovider.backend.elasticsearch.ElasticSearchDataSetCustomColumnsTest;
 import org.dashbuilder.dataprovider.backend.elasticsearch.ElasticSearchDataSetDatesTest;
 import org.dashbuilder.dataprovider.backend.elasticsearch.ElasticSearchDataSetTest;
+import org.dashbuilder.dataprovider.backend.elasticsearch.ElasticSearchMultiFieldsTest;
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.impl.jest.ElasticSearchJestClientTest;
-import org.dashbuilder.dataprovider.backend.elasticsearch.rest.util.ElasticSearchJSONParserTest;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
         ElasticSearchDataSetCustomColumnsTest.class,
         ElasticSearchDataSetTest.class,
         ElasticSearchDataSetDatesTest.class,
-        ElasticSearchJSONParserTest.class
+        ElasticSearchMultiFieldsTest.class
         // ElasticSearchDataSetCacheTest.class
 })
 public class LocalTestSuite {

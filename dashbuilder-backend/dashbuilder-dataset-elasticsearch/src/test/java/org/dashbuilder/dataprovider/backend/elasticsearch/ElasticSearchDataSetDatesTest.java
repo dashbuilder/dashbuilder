@@ -41,14 +41,17 @@ public class ElasticSearchDataSetDatesTest extends ElasticSearchDataSetTestBase 
 
     protected static final String EL_EXAMPLE_DATASET_DEF = "org/dashbuilder/dataprovider/backend/elasticsearch/expensereports.dset";
     protected static final String EL_DATASET_UUID = "expense_reports";
+    protected static final String EL_EXAMPLE_EMPTYINTERVALS_DEF = "org/dashbuilder/dataprovider/backend/elasticsearch/emptyIntervals.dset";
+    protected static final String EL_DATASET_EMPTYINTERVALS_UUID = "emptyIntervals";
 
     /**
      * Register the dataset used for this test case. 
      */
     @Before
     public void registerDataSet() throws Exception {
-        // Register the data set.
+        // Register the data sets.
         _registerDataSet(EL_EXAMPLE_DATASET_DEF);
+        _registerDataSet(EL_EXAMPLE_EMPTYINTERVALS_DEF);
     }
 
     @Test
@@ -360,4 +363,90 @@ public class ElasticSearchDataSetDatesTest extends ElasticSearchDataSetTestBase 
                 {"4", "10.00", "5,331.03"}
         }, 0);
     }
+
+    @Test
+    public void testNonEmptyIntervals() throws Exception {
+        DataSet result = dataSetManager.lookupDataSet(
+                DataSetFactory.newDataSetLookupBuilder()
+                        .dataset(EL_DATASET_EMPTYINTERVALS_UUID)
+                        .group("date").fixed(MONTH, false).firstMonth(Month.JANUARY)
+                        .column("date", "Period")
+                        .column(COUNT, "Occurrences")
+                        .column("number", SUM, "total")
+                        .buildLookup());
+
+        printDataSet(result);
+
+        assertDataSetValues(result, dataSetFormatter, new String[][]{
+                {"1", "1.00", "1.00"},
+                {"2", "1.00", "1.00"},
+                {"3", "2.00", "2.00"},
+                {"4", "1.00", "1.00"},
+                {"5", "1.00", "1.00"},
+                {"6", "1.00", "1.00"},
+                {"7", "1.00", "1.00"},
+                {"8", "1.00", "1.00"},
+                {"10", "1.00", "1.00"},
+                {"11", "1.00", "1.00"}
+        }, 0);
+    }
+
+    @Test
+    public void testEmptyIntervals() throws Exception {
+        DataSet result = dataSetManager.lookupDataSet(
+                DataSetFactory.newDataSetLookupBuilder()
+                        .dataset(EL_DATASET_EMPTYINTERVALS_UUID)
+                        .group("date").fixed(MONTH, true).firstMonth(Month.JANUARY)
+                        .column("date", "Period")
+                        .column(COUNT, "Occurrences")
+                        .column("number", SUM, "total")
+                        .buildLookup());
+
+        printDataSet(result);
+
+        assertDataSetValues(result, dataSetFormatter, new String[][]{
+                {"1", "1.00", "1.00"},
+                {"2", "1.00", "1.00"},
+                {"3", "2.00", "2.00"},
+                {"4", "1.00", "1.00"},
+                {"5", "1.00", "1.00"},
+                {"6", "1.00", "1.00"},
+                {"7", "1.00", "1.00"},
+                {"8", "1.00", "1.00"},
+                {"9", "0.00", "0.00"},
+                {"10", "1.00", "1.00"},
+                {"11", "1.00", "1.00"},
+                {"12", "0.00", "0.00"}
+        }, 0);
+    }
+
+    @Test
+    public void testEmptyIntervalsUsingFirstMonth() throws Exception {
+        DataSet result = dataSetManager.lookupDataSet(
+                DataSetFactory.newDataSetLookupBuilder()
+                        .dataset(EL_DATASET_EMPTYINTERVALS_UUID)
+                        .group("date").fixed(MONTH, true).firstMonth(Month.MARCH)
+                        .column("date", "Period")
+                        .column(COUNT, "Occurrences")
+                        .column("number", SUM, "total")
+                        .buildLookup());
+
+        printDataSet(result);
+
+        assertDataSetValues(result, dataSetFormatter, new String[][]{
+                {"3", "2.00", "2.00"},
+                {"4", "1.00", "1.00"},
+                {"5", "1.00", "1.00"},
+                {"6", "1.00", "1.00"},
+                {"7", "1.00", "1.00"},
+                {"8", "1.00", "1.00"},
+                {"9", "0.00", "0.00"},
+                {"10", "1.00", "1.00"},
+                {"11", "1.00", "1.00"},
+                {"12", "0.00", "0.00"},
+                {"1", "1.00", "1.00"},
+                {"2", "1.00", "1.00"}
+        }, 0);
+    }
+    
 }
