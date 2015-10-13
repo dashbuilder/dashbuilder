@@ -44,6 +44,8 @@ import org.dashbuilder.common.client.StringUtils;
 import org.dashbuilder.common.client.error.ClientRuntimeError;
 import org.dashbuilder.dataset.DataSetLookupConstraints;
 import org.dashbuilder.dataset.client.DataSetReadyCallback;
+import org.dashbuilder.dataset.filter.DataSetFilter;
+import org.dashbuilder.dataset.group.DataSetGroup;
 import org.dashbuilder.dataset.group.Interval;
 import org.dashbuilder.displayer.ColumnSettings;
 import org.dashbuilder.displayer.DisplayerAttributeDef;
@@ -54,6 +56,7 @@ import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.dataset.DataSet;
 
 import org.dashbuilder.dataset.sort.SortOrder;
+import org.dashbuilder.displayer.client.Displayer;
 import org.dashbuilder.displayer.client.resources.i18n.DisplayerConstants;
 import org.dashbuilder.renderer.client.resources.i18n.CommonConstants;
 import org.dashbuilder.renderer.client.resources.i18n.TableConstants;
@@ -112,6 +115,34 @@ public class TableDisplayer extends AbstractDisplayer {
         // Lookup only the target rows
         dataSetHandler.limitDataSetRows(tableProvider.lastOffset, displayerSettings.getTablePageSize());
 
+    }
+
+    @Override
+    public void onFilterEnabled(Displayer displayer, DataSetGroup groupOp) {
+        // Reset the current navigation status on filter requests from external displayers.
+        tableProvider.gotoFirstPage();
+        super.onFilterEnabled(displayer, groupOp);
+    }
+
+    @Override
+    public void onFilterEnabled(Displayer displayer, DataSetFilter filter) {
+        // Reset the current navigation status on filter requests from external displayers.
+        tableProvider.gotoFirstPage();
+        super.onFilterEnabled(displayer, filter);
+    }
+
+    @Override
+    public void onFilterReset(Displayer displayer, List<DataSetGroup> groupOps) {
+        // Reset the current navigation status on filter requests from external displayers.
+        tableProvider.gotoFirstPage();
+        super.onFilterReset(displayer, groupOps);
+    }
+
+    @Override
+    public void onFilterReset(Displayer displayer, DataSetFilter filter) {
+        // Reset the current navigation status on filter requests from external displayers.
+        tableProvider.gotoFirstPage();
+        super.onFilterReset(displayer, filter);
     }
 
     @Override
