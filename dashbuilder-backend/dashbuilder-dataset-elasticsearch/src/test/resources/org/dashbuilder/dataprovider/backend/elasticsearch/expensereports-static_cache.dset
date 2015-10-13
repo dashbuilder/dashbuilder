@@ -11,11 +11,11 @@
     "cacheEnabled": true,
     "cacheMaxRows": 1000,
     "columns": [
-                {"id": "id", "type": "number"},
-                {"id": "amount", "type": "number"},
-                {"id": "department", "type": "label"},
-                {"id": "employee", type": "text"},
-                {"id": "date", "type": "date"},
-                {"id": "city", "type": "label"}
+                {"id": "EXPENSES_ID", "type": "number"},
+                {"id": "AMOUNT", "type": "number"},
+                {"id": "DEPARTMENT", "type": "label"},
+                {"id": "EMPLOYEE", type": "text"},
+                {"id": "CREATION_DATE", "type": "date"},
+                {"id": "CITY", "type": "label"}
             ]
 }

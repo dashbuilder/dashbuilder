@@ -23,13 +23,15 @@ import org.dashbuilder.dataprovider.backend.elasticsearch.rest.model.SearchRespo
 import org.dashbuilder.dataset.DataSetMetadata;
 import org.dashbuilder.dataset.def.DataSetDef;
 
+import java.io.Closeable;
+
 /**
  * <p>This is the contract for a JBoss Dashbuilder REST client for ElasticSearch servers.</p>
  * <p>Default ElasticSearch native client implementation is provided by classes in package <code>org.dashbuilder.dataprovider.backend.elasticsearch.rest.impl</code></p>
  * <p>You can implement your own client too.</p>
  * 
  */
-public interface ElasticSearchClient<T extends ElasticSearchClient> {
+public interface ElasticSearchClient<T extends ElasticSearchClient> extends Closeable {
 
     /**
      * Request Time Out defaults to 30sec.

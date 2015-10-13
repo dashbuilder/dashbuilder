@@ -1,0 +1,13 @@
+{
+    "uuid": "emptyIntervals",
+    "name": "EL Empty Intervals",
+    "provider": "ELASTICSEARCH",
+    "pushEnabled": false,
+    "pushMaxSize": 1024,
+    "isPublic": true,
+    "serverURL": "http://localhost:9200",
+    "clusterName": "elasticsearch",
+    "index": "emptyintervals",
+    "cacheEnabled": false,
+    "cacheMaxRows": 1000
+}

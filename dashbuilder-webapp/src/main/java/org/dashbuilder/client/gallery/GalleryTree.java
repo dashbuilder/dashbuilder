@@ -581,7 +581,5 @@ public class GalleryTree {
         nodeList.add(new GalleryPlaceRequest(AppConstants.INSTANCE.gallerytree_db_salesreps(), createPlaceRequest("salesReports")));
         nodeList.add(new GalleryPlaceRequest(AppConstants.INSTANCE.gallerytree_db_expreps(), createPlaceRequest("expenseReports")));
         nodeList.add(new GalleryPlaceRequest(AppConstants.INSTANCE.gallerytree_db_clustermetrics(), createPlaceRequest("clusterMetrics")));
-        /*nodeList.add(new GalleryPlaceRequest("System metrics (real-time)", createPlaceRequest("metrics_realtime")));
-        nodeList.add(new GalleryPlaceRequest("System metrics (historic)", createPlaceRequest("metrics_analytic")));*/
     }
 }

@@ -98,6 +98,7 @@ public class DataSetFilterTest {
                 DataSetFactory.newDataSetLookupBuilder()
                         .dataset(EXPENSE_REPORTS)
                         .filter(COLUMN_CITY, equalsTo("Barcelona"))
+                        .sort(COLUMN_ID, SortOrder.ASCENDING)
                         .buildLookup());
 
         //printDataSet(result);
@@ -112,6 +113,7 @@ public class DataSetFilterTest {
                 DataSetFactory.newDataSetLookupBuilder()
                         .dataset(EXPENSE_REPORTS)
                         .filter(COLUMN_AMOUNT, between(100, 200))
+                        .sort(COLUMN_ID, SortOrder.ASCENDING)
                         .buildLookup());
 
         //printDataSet(result);
@@ -133,6 +135,7 @@ public class DataSetFilterTest {
                 DataSetFactory.newDataSetLookupBuilder()
                     .dataset(EXPENSE_REPORTS)
                     .filter(COLUMN_DATE, greaterThan(new Timestamp(date.getTime())))
+                        .sort(COLUMN_ID, SortOrder.ASCENDING)
                     .buildLookup());
 
         //printDataSet(result);
@@ -145,6 +148,7 @@ public class DataSetFilterTest {
                 DataSetFactory.newDataSetLookupBuilder()
                         .dataset(EXPENSE_REPORTS)
                         .filter(COLUMN_DATE, timeFrame("10second"))
+                        .sort(COLUMN_ID, SortOrder.ASCENDING)
                         .buildLookup());
 
         //assertThat(result.getRowCount()).isEqualTo(0);
@@ -162,6 +166,7 @@ public class DataSetFilterTest {
                     .filter(COLUMN_DATE, greaterThan(date))
                     .filter(COLUMN_AMOUNT, lowerOrEqualsTo(120.35))
                     .filter(COLUMN_CITY, notEqualsTo("Barcelona"))
+                    .sort(COLUMN_ID, SortOrder.ASCENDING)
                     .buildLookup());
 
         //printDataSet(result);
@@ -176,6 +181,7 @@ public class DataSetFilterTest {
                     .filter(COLUMN_CITY, notEqualsTo("Barcelona"))
                     .filter(COLUMN_AMOUNT, lowerOrEqualsTo(120.35))
                     .filter(COLUMN_DATE, greaterThan(date))
+                    .sort(COLUMN_ID, SortOrder.ASCENDING)
                     .buildLookup());
 
         //printDataSet(result);
@@ -191,6 +197,7 @@ public class DataSetFilterTest {
                 DataSetFactory.newDataSetLookupBuilder()
                         .dataset(EXPENSE_REPORTS)
                         .filter(COLUMN_AMOUNT, AND(greaterThan(100), lowerThan(150)))
+                        .sort(COLUMN_ID, SortOrder.ASCENDING)
                         .buildLookup());
 
         //printDataSet(result);
@@ -205,6 +212,7 @@ public class DataSetFilterTest {
                 DataSetFactory.newDataSetLookupBuilder()
                         .dataset(EXPENSE_REPORTS)
                         .filter(COLUMN_AMOUNT, NOT(greaterThan(100)))
+                        .sort(COLUMN_ID, SortOrder.ASCENDING)
                         .buildLookup());
 
         //printDataSet(result);
@@ -220,6 +228,7 @@ public class DataSetFilterTest {
                 DataSetFactory.newDataSetLookupBuilder()
                         .dataset(EXPENSE_REPORTS)
                         .filter(COLUMN_AMOUNT, OR(NOT(greaterThan(100)), greaterThan(1000), equalsTo(COLUMN_ID, 1)))
+                        .sort(COLUMN_ID, SortOrder.ASCENDING)
                         .buildLookup());
 
         //printDataSet(result);
@@ -287,6 +296,7 @@ public class DataSetFilterTest {
                         .filter(COLUMN_AMOUNT, AND(
                                 equalsTo(COLUMN_DEPARTMENT, "Sales"),
                                 OR(NOT(lowerThan(300)), equalsTo(COLUMN_CITY, "Madrid"))))
+                        .sort(COLUMN_ID, SortOrder.ASCENDING)
                         .buildLookup());
 
         //printDataSet(result);
@@ -321,6 +331,7 @@ public class DataSetFilterTest {
         builder.column(COLUMN_EMPLOYEE);
         builder.column(COLUMN_AMOUNT);
         builder.column(COLUMN_DATE);
+        builder.sort(COLUMN_ID, SortOrder.ASCENDING);
 
         //  (CITY = Barcelona, London, Madrid
         //     AND (((EMPLOYEE = Roxie Foraker OR EMPLOYEE = Patricia J. Behr) AND DEPARTMENT = Engineering)

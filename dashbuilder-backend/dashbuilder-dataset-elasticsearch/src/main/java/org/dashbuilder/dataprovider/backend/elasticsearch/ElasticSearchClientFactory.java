@@ -17,7 +17,6 @@ package org.dashbuilder.dataprovider.backend.elasticsearch;
 
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.ElasticSearchClient;
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.impl.jest.ElasticSearchJestClient;
-import org.dashbuilder.dataprovider.backend.elasticsearch.rest.util.ElasticSearchJSONParser;
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.util.ElasticSearchUtils;
 import org.dashbuilder.dataset.def.ElasticSearchDataSetDef;
 
@@ -31,9 +30,6 @@ public class ElasticSearchClientFactory {
     @Inject
     protected ElasticSearchValueTypeMapper valueTypeMapper;
     
-    @Inject
-    protected ElasticSearchJSONParser jsonParser;
-
     @Inject
     protected ElasticSearchUtils utils;
     

@@ -493,56 +493,6 @@ public interface AppConstants extends Messages {
 
     String metrics_server_vert_serverdown(String server);
 
-    String metrics_analytic_title();
-
-    String metrics_analytic_cpu_usage_title();
-
-    String metrics_analytic_cpu_usage_y();
-
-    String metrics_analytic_mem_usage_title();
-
-    String metrics_analytic_mem_usage_y();
-
-    String metrics_analytic_net_usage_title();
-
-    String metrics_analytic_net_usage_y();
-
-    String metrics_analytic_proc_usage_title();
-
-    String metrics_analytic_proc_usage_y();
-
-    String metrics_analytic_disk_usage_title();
-
-    String metrics_analytic_disk_usage_y();
-
-    String metrics_analytic_max_cpu_usage_title();
-
-    String metrics_analytic_max_cpu_usage_y();
-
-    String metrics_analytic_max_mem_usage_title();
-
-    String metrics_analytic_max_mem_usage_y();
-
-    String metrics_analytic_max_proc_usage_title();
-
-    String metrics_analytic_max_proc_usage_y();
-
-    String metrics_analytic_max_net_speed_title();
-
-    String metrics_analytic_max_net_speed_y();
-
-    String metrics_analytic_max_tab_overall();
-
-    String metrics_analytic_max_tab_cpu();
-
-    String metrics_analytic_max_tab_mem();
-
-    String metrics_analytic_max_tab_netw();
-
-    String metrics_analytic_max_tab_procs();
-
-    String metrics_analytic_max_tab_disk();
-
     String metrics_cluster_title();
 
     String metrics_cluster_messages_heading();
@@ -558,6 +508,8 @@ public interface AppConstants extends Messages {
     String metrics_cluster_metricselector_disk();
 
     String metrics_cluster_metricselector_netw();
+
+    String metrics_cluster_metricselector_proc();
 
     String metrics_cluster_chartselector_bar();
 

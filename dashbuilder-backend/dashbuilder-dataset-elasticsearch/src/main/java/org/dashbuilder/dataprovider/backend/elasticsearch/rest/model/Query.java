@@ -92,7 +92,7 @@ public class Query {
     
     public static enum Parameter {
         MUST, MUST_NOT, SHOULD, VALUE, QUERY, FILTER, FILTERS, GT, GTE, LT, LTE,
-        DEFAULT_FIELD, DEFAULT_OPERATOR, LOWERCASE_EXPANDED_TERMS;
+        DEFAULT_FIELD, DEFAULT_OPERATOR, LOWERCASE_EXPANDED_TERMS, OPERATOR;
     }
     
     public static enum Type {
@@ -109,6 +109,7 @@ public class Query {
             NOT(FILTER),
             EXISTS(FILTER),
             TERM(FILTER),
+            TERMS(FILTER),
             RANGE(FILTER);
         
         private Type type;

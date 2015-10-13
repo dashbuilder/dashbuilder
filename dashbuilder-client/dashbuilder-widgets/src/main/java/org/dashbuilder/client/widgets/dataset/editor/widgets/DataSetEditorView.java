@@ -43,7 +43,6 @@ import org.dashbuilder.displayer.client.widgets.filter.DataSetFilterEditor;
 import org.gwtbootstrap3.client.ui.Button;
 import org.gwtbootstrap3.client.ui.*;
 import org.gwtbootstrap3.client.ui.constants.ButtonType;
-import org.gwtbootstrap3.client.ui.constants.ColumnSize;
 import org.gwtbootstrap3.client.ui.constants.IconType;
 import org.uberfire.ext.widgets.common.client.common.BusyPopup;
 
@@ -666,5 +665,4 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
         tabNoErrors(previewTabItem);
         tabNoErrors(advancedConfigurationTabItem);
     }
-    
 }

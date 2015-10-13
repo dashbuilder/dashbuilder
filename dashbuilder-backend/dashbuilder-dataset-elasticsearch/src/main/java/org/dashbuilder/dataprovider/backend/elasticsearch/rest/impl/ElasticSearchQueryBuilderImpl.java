@@ -30,10 +30,7 @@ import org.dashbuilder.dataset.group.Interval;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
-import java.util.Collections;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 /**
  * <p>Default query builder implementation.</p>
@@ -102,12 +99,14 @@ public class ElasticSearchQueryBuilderImpl implements ElasticSearchQueryBuilder<
         }
 
         // Build query definition for interval group selections.
-        for (DataSetGroup group: groups) {
-            if (group.isSelect()) {
-                List<Query> subQueries = buildGroupIntervalQuery(group);
-                if (subQueries != null && !subQueries.isEmpty()) {
-                    for (Query subQuery : subQueries) {
-                        queries.add(subQuery);
+        if (groups != null) {
+            for (DataSetGroup group: groups) {
+                if (group.isSelect()) {
+                    List<Query> subQueries = buildGroupIntervalQuery(group);
+                    if (subQueries != null && !subQueries.isEmpty()) {
+                        for (Query subQuery : subQueries) {
+                            queries.add(subQuery);
+                        }
                     }
                 }
             }
@@ -154,10 +153,10 @@ public class ElasticSearchQueryBuilderImpl implements ElasticSearchQueryBuilder<
                 Object maxValue = interval.getMaxValue();
                 Object minValue = interval.getMinValue();
                 Object value0 = isNumericCol ? 
-                        valueTypeMapper.formatNumeric(def, sourceId, (Double) minValue) :
+                        valueTypeMapper.formatNumeric(def, sourceId, (Number) minValue) :
                         valueTypeMapper.formatDate(def, sourceId, (Date) minValue);
                 Object value1 = isNumericCol ?
-                        valueTypeMapper.formatNumeric(def, sourceId, (Double) maxValue) :
+                        valueTypeMapper.formatNumeric(def, sourceId, (Number) maxValue) :
                         valueTypeMapper.formatDate(def, sourceId, (Date) maxValue);
                 _result = new Query(sourceId, Query.Type.RANGE);
                 _result.setParam(Query.Parameter.GT.name(), value0);
@@ -177,13 +176,13 @@ public class ElasticSearchQueryBuilderImpl implements ElasticSearchQueryBuilder<
         boolean isDateCol = ColumnType.DATE.equals(columnType);
         boolean isTextCol = ColumnType.TEXT.equals(columnType);
         if (isTextCol) {
-            return valueTypeMapper.formatText(definition, columnId, (String) value);
+            return valueTypeMapper.formatText(definition, columnId, value != null ? value.toString() : null);
         } else if (isLabelCol) {
-            return valueTypeMapper.formatLabel(definition, columnId, (String) value);
+            return valueTypeMapper.formatLabel(definition, columnId, value != null ? value.toString() : null);
         } else if (isDateCol) {
             return valueTypeMapper.formatDate(definition, columnId, (Date) value);
         } else if (isNumericCol) {
-            return valueTypeMapper.formatNumeric(definition, columnId, (Double) value);
+            return valueTypeMapper.formatNumeric(definition, columnId, (Number) value);
         }
 
         throw new IllegalArgumentException("Not supported type [" + columnType.name() + "] for column id [" + columnId + "].");
@@ -202,6 +201,8 @@ public class ElasticSearchQueryBuilderImpl implements ElasticSearchQueryBuilder<
         
         String boolType = getBooleanQueryType(operator);
         Query.Type filterOperator = getType(operator);
+        
+        // Only exist queries (not filters) in the query.
         if (!existFilters) {
             if (onlyOneQuery && !operator.equals(Operator.NOT)) {
                 // Single query.
@@ -211,8 +212,9 @@ public class ElasticSearchQueryBuilderImpl implements ElasticSearchQueryBuilder<
                 result = new Query(Query.Type.BOOL);
                 result.setParam(boolType, queries);
             }
-        }
-        else if (!existQueries) {
+        
+        // Only exist filters in the query.
+        } else if (!existQueries) {
 
             if (onlyOneQuery && !operator.equals(Operator.NOT)) {
                 // Single filter.
@@ -227,17 +229,11 @@ public class ElasticSearchQueryBuilderImpl implements ElasticSearchQueryBuilder<
                 result = new Query(filterOperator);
                 result.setParam(Query.Parameter.FILTERS.name(), queries);
             }
-        }
-        else {
 
-            Query booleanQuery = null;
-            if (subQueries.size() == 1) {
-                booleanQuery = subQueries.get(0);
-            } else {
-                booleanQuery = new Query(Query.Type.BOOL);
-                booleanQuery.setParam(boolType, subQueries);
-            }
+        // Exists both queries and filters in the query. Let's mix them depending on the logical operator.
+        } else {
 
+            // Join all the filters.
             Query filter = null;
             if (subFilters.size() == 1) {
                 filter = subFilters.get(0);
@@ -246,10 +242,28 @@ public class ElasticSearchQueryBuilderImpl implements ElasticSearchQueryBuilder<
                 filter.setParam(Query.Parameter.FILTERS.name(), subFilters);
             }
 
-            // Join queries and filters using a FILTERED query.
-            result = new Query(Query.Type.FILTERED);
-            result.setParam(Query.Parameter.QUERY.name(), booleanQuery);
-            result.setParam(Query.Parameter.FILTER.name(), filter);
+            // Join all the queries.
+            Query booleanQuery = null;
+            if (subQueries.size() == 1) {
+                booleanQuery = subQueries.get(0);
+            } else {
+                booleanQuery = new Query(Query.Type.BOOL);
+                booleanQuery.setParam(boolType, subQueries);
+            }
+            
+            final boolean isAndOp = operator.equals(Operator.AND);
+            if (isAndOp) {
+                // For AND operator, join queries and filters using a FILTERED query.
+                result = new Query(Query.Type.FILTERED);
+                result.setParam(Query.Parameter.QUERY.name(), booleanQuery);
+                result.setParam(Query.Parameter.FILTER.name(), filter);
+            } else {
+                result = new Query(Query.Type.BOOL);
+                Query filtered = new Query(Query.Type.FILTERED);
+                filtered.setParam(Query.Parameter.FILTER.name(), filter);
+                result.setParam(boolType, Arrays.asList(booleanQuery, filtered));
+            }
+
         }
 
         return result;
@@ -386,20 +400,28 @@ public class ElasticSearchQueryBuilderImpl implements ElasticSearchQueryBuilder<
             
         } else if (CoreFunctionType.EQUALS_TO.equals(type)) {
             
-            Object value = formatValue(def, columnId, params.get(0));
-
             if (ColumnType.LABEL.equals(columnType)) {
-                result = new Query(columnId, Query.Type.TERM);
+                result = buildTermOrTermsFilter(def, columnId, params);
             } else {
-                result = new Query(columnId, Query.Type.MATCH);
+                result = buildBooleanMatchQuery(def, columnId, params);
             }
-            result.setParam(Query.Parameter.VALUE.name(), value);
-
+            
+        } else if (CoreFunctionType.NOT_EQUALS_TO.equals(type)) {
+            
+            if (ColumnType.LABEL.equals(columnType)) {
+                Query resultMatch = buildTermOrTermsFilter(def, columnId, params);
+                result = new Query(columnId, Query.Type.NOT);
+                result.setParam(Query.Parameter.FILTER.name(), resultMatch);
+            } else {
+                Query resultMatch = buildBooleanMatchQuery(def, columnId, params);
+                result = new Query(columnId, Query.Type.BOOL);
+                result.setParam(Query.Parameter.MUST_NOT.name(), asList(resultMatch));
+            }
             
         } else if (CoreFunctionType.LIKE_TO.equals(type)) {
 
             Object value = formatValue(def, columnId, params.get(0));
-            
+
             if (value != null) {
 
                 if (ColumnType.NUMBER.equals(columnType) || ColumnType.DATE.equals(columnType)) {
@@ -412,7 +434,7 @@ public class ElasticSearchQueryBuilderImpl implements ElasticSearchQueryBuilder<
                     // Default ELS index type for String fields is ANALYZED.
                     indexType = FieldMappingResponse.IndexType.ANALYZED.name();
                 }
-                
+
 
                 // Replace Dashbuilder wildcard characters by the ones used in ELS wildcard query.
                 boolean caseSensitive = params.size() < 2 || Boolean.parseBoolean(params.get(1).toString());
@@ -431,23 +453,7 @@ public class ElasticSearchQueryBuilderImpl implements ElasticSearchQueryBuilder<
                 result.setParam(Query.Parameter.QUERY.name(), pattern);
                 result.setParam(Query.Parameter.LOWERCASE_EXPANDED_TERMS.name(), isLowerCaseExpandedTerms);
             }
-        
-        } else if (CoreFunctionType.NOT_EQUALS_TO.equals(type)) {
-            
-            Object value = formatValue(def, columnId, params.get(0));
 
-            if (ColumnType.LABEL.equals(columnType)) {
-                Query resultMatch = new Query(columnId, Query.Type.TERM);
-                resultMatch.setParam(Query.Parameter.VALUE.name(), value);
-                result = new Query(columnId, Query.Type.NOT);
-                result.setParam(Query.Parameter.FILTER.name(), resultMatch);
-            } else {
-                Query resultMatch = new Query(columnId, Query.Type.MATCH);
-                resultMatch.setParam(Query.Parameter.VALUE.name(), value);
-                result = new Query(columnId, Query.Type.BOOL);
-                result.setParam(Query.Parameter.MUST_NOT.name(), asList(resultMatch));
-            }
-            
         } else if (CoreFunctionType.LOWER_THAN.equals(type)) {
 
             Object value = formatValue(def, columnId, params.get(0));
@@ -477,8 +483,8 @@ public class ElasticSearchQueryBuilderImpl implements ElasticSearchQueryBuilder<
             Object value0 = formatValue(def, columnId, params.get(0));
             Object value1 = formatValue(def, columnId, params.get(1));
             result = new Query(columnId, Query.Type.RANGE);
-            result.setParam(Query.Parameter.GT.name(), value0);
-            result.setParam(Query.Parameter.LT.name(), value1);
+            result.setParam(Query.Parameter.GTE.name(), value0);
+            result.setParam(Query.Parameter.LTE.name(), value1);
             
         } else if (CoreFunctionType.TIME_FRAME.equals(type)) {
 
@@ -495,6 +501,40 @@ public class ElasticSearchQueryBuilderImpl implements ElasticSearchQueryBuilder<
             throw new IllegalArgumentException("Core function type not supported: " + type);
         }
 
+        return result;
+    }
+    
+    protected Query buildBooleanMatchQuery(ElasticSearchDataSetDef def, String columnId, List params) {
+        Query result = new Query(columnId, Query.Type.MATCH);
+        StringBuilder terms = new StringBuilder();
+        String _pre = params.size() == 1 ? "" : " ";
+        for (Object param : params) {
+            String paramStr = formatValue(def, columnId, param);
+            terms.append(_pre).append(paramStr);
+        }
+        if(params.size() > 1) {
+            result.setParam(Query.Parameter.OPERATOR.name(), "or");
+        }
+        result.setParam(Query.Parameter.VALUE.name(), terms.toString());
+        return result;
+    }
+
+    protected Query buildTermOrTermsFilter(ElasticSearchDataSetDef def, String columnId, List params) {
+        Query result;
+        Object value;
+        if (params.size() == 1) {
+            value = formatValue(def, columnId, params.get(0));
+            result = new Query(columnId, Query.Type.TERM);
+        } else {
+            result = new Query(columnId, Query.Type.TERMS);
+            Collection<String> terms = new ArrayList<String>(params.size());
+            for (Object param : params) {
+                String paramStr = formatValue(def, columnId, param);
+                terms.add(paramStr);
+            }
+            value = terms;
+        }
+        result.setParam(Query.Parameter.VALUE.name(), value);
         return result;
     }
     

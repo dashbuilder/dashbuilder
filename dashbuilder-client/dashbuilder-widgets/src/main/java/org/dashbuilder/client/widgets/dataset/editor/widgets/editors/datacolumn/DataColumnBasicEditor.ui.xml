@@ -10,8 +10,8 @@
 
   <ui:style>
     .dataColumnTypeEditor {
-      position: absolute;
       margin-left: 5px;
+      min-width: 30px;
     }
   </ui:style>
   
