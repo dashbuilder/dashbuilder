@@ -83,7 +83,8 @@ public class SelectorDisplayer extends AbstractDisplayer {
                 int index = listBox.getSelectedIndex();
                 String hint = SelectorConstants.INSTANCE.selectorDisplayer_select();
                 if (index > 0) {
-                    filterUpdate(firstColumnId, index-1);
+                    int selDatasetIdx = Integer.parseInt(listBox.getSelectedValue());
+                    filterUpdate(firstColumnId, selDatasetIdx);
                     hint = SelectorConstants.INSTANCE.selectorDisplayer_reset();
                 }
 
@@ -125,9 +126,9 @@ public class SelectorDisplayer extends AbstractDisplayer {
             }
 
             String value = super.formatValue(i, 0);
-            listBox.addItem(value);
+            listBox.addItem(value, Integer.toString(i));
             if (currentFilter != null && currentFilter.contains(i)) {
-                listBox.setSelectedIndex(i+1);
+                listBox.setSelectedIndex(listBox.getItemCount()-1);
             }
 
             // Generate an option tooltip (only if extra data set columns are defined)
