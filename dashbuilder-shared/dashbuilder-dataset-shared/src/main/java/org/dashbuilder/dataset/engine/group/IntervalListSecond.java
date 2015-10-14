@@ -39,6 +39,7 @@ public class IntervalListSecond extends IntervalList {
 
         for (int i = 0; i < size; i++) {
             Interval interval = new Interval(Integer.toString(i), i);
+            interval.setType(columnGroup.getIntervalSize());
             this.add(interval);
 
             intervalMap.put(i, interval);

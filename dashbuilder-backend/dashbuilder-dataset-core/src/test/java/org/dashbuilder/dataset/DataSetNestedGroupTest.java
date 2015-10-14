@@ -150,8 +150,12 @@ public class DataSetNestedGroupTest {
                 .column(COLUMN_AMOUNT, SUM, "total")
                 .buildLookup());
 
+        String intervalType = result.getColumnByIndex(0).getIntervalType();
+        assertThat(intervalType).isNotEmpty();
+        assertThat(DateIntervalType.getByName(intervalType)).isEqualTo(DateIntervalType.MONTH);
+
         //printDataSet(result);
-        assertDataSetValues(result, dataSetFormatter, new String[][] {
+        assertDataSetValues(result, dataSetFormatter, new String[][]{
                 {"1", "0.00"},
                 {"2", "0.00"},
                 {"3", "0.00"},

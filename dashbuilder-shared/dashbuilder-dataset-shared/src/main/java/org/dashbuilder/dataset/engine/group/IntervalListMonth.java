@@ -41,6 +41,7 @@ public class IntervalListMonth extends IntervalList {
         for (int i = 0; i < months.length; i++) {
             Month month = months[monthIndex-1];
             Interval interval = new Interval(Integer.toString(month.getIndex()), i);
+            interval.setType(columnGroup.getIntervalSize());
             this.add(interval);
 
             intervalMap.put(monthIndex-1, interval);
