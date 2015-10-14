@@ -41,6 +41,7 @@ public class IntervalListDayOfWeek extends IntervalList {
         for (int i = 0; i < array.length; i++) {
             DayOfWeek dayOfWeek = array[index-1];
             Interval interval = new Interval(Integer.toString(dayOfWeek.getIndex()), i);
+            interval.setType(columnGroup.getIntervalSize());
             this.add(interval);
 
             intervalMap.put(index-1, interval);

@@ -46,6 +46,7 @@ public class DataSetGroupIndex extends DataSetIndexNode implements DataSetInterv
         super();
         this.columnGroup = columnGroup;
         this.intervalIndexList = new ArrayList<DataSetIntervalIndex>();
+        this.intervalType = columnGroup != null ? columnGroup.getIntervalSize() : null;
     }
 
     public DataSetGroupIndex(ColumnGroup columnGroup, IntervalList intervalList) {

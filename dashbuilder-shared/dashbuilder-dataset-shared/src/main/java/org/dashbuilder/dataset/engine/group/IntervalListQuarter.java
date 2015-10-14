@@ -41,6 +41,7 @@ public class IntervalListQuarter extends IntervalList {
         for (int i = 0; i < 4; i++) {
             Quarter quarter = Quarter.getByIndex(i+1);
             Interval interval = new Interval((Integer.toString(quarter.getIndex())), i);
+            interval.setType(columnGroup.getIntervalSize());
             this.add(interval);
 
             for (int j = 0; j < 3; j++) {
