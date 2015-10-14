@@ -20,6 +20,7 @@ import com.google.gwt.dom.client.OptionElement;
 import com.google.gwt.dom.client.SelectElement;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
+import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.DataColumn;
@@ -33,7 +34,6 @@ import org.dashbuilder.displayer.DisplayerConstraints;
 import org.dashbuilder.displayer.client.AbstractDisplayer;
 import org.dashbuilder.displayer.client.Displayer;
 import org.dashbuilder.renderer.client.resources.i18n.SelectorConstants;
-import org.gwtbootstrap3.client.ui.ListBox;
 
 import java.util.List;
 
@@ -83,7 +83,8 @@ public class SelectorDisplayer extends AbstractDisplayer {
                 int index = listBox.getSelectedIndex();
                 String hint = SelectorConstants.INSTANCE.selectorDisplayer_select();
                 if (index > 0) {
-                    filterUpdate(firstColumnId, index-1);
+                    int selDatasetIdx = Integer.parseInt(listBox.getSelectedValue());
+                    filterUpdate(firstColumnId, selDatasetIdx);
                     hint = SelectorConstants.INSTANCE.selectorDisplayer_reset();
                 }
 
@@ -125,9 +126,9 @@ public class SelectorDisplayer extends AbstractDisplayer {
             }
 
             String value = super.formatValue(obj, firstColumn);
-            listBox.addItem(value);
+            listBox.addItem(value, Integer.toString(i));
             if (currentFilter != null && currentFilter.contains(i)) {
-                listBox.setSelectedIndex(i+1);
+                listBox.setSelectedIndex(listBox.getItemCount()-1);
             }
 
             // Generate an option tooltip (only if extra data set columns are defined)
