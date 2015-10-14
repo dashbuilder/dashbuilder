@@ -21,6 +21,7 @@
     <as.version>8.1.0.Final</as.version>
     <!-- Add the absolute path for $JBOSS_HOME below to manage another instance -->
     <errai.jboss.home>${project.build.directory}/wildfly-${as.version}</errai.jboss.home>
+    <gwt.compiler.localWorkers>4</gwt.compiler.localWorkers>
   </properties>
 
   <!-- NOTE: GWT client deps are needed for GWT compilation purposes (scope=provided) -->
@@ -492,7 +493,7 @@
         <artifactId>gwt-maven-plugin</artifactId>
         <configuration>
           <deploy>${project.build.directory}/gwt-symbols-deploy</deploy>
-          <localWorkers>4</localWorkers>
+          <localWorkers>${gwt.compiler.localWorkers}</localWorkers>
           <module>org.dashbuilder.FastCompiledDashbuilderShowcase</module>
           <draftCompile>true</draftCompile>
           <logLevel>INFO</logLevel>
