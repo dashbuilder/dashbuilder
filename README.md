@@ -37,29 +37,19 @@ Architecture
 Change log
 ==========
 
-master
+Next release...
 
-* MonetDB support added to the SQL provider.  
+* User interface upgraded to Bootstrap3/PatternFly
+
+* MonetDB support added to the SQL provider.
   (The provider has been tested under the MonetDB 11.21.5 release)
 
-0.3.1
 
-Some fixes:
+0.3.0.Final
 
-* https://issues.jboss.org/browse/DASHBUILDE-28
-  Data Set preview table should be wrapped in scroll panel.
-  
-* https://issues.jboss.org/browse/DASHBUILDE-37
-  Data set lookup pre-processors
-  
-* https://issues.jboss.org/browse/DASHBUILDE-38
-  Marshalling errors in DevMode with Strings filtering.
+* New provider for the definition of data sets stored into SQL databases.
+  The following is the list of tested and supported DBs:
 
-0.3.0
-
-* New provider for the definition of data sets stored into SQL databases. 
-  The following is the list of tested and supported DBs: 
-  
   - MySQL 5.5
   - Postgres 9.2
   - H2 1.3.168+
@@ -69,7 +59,7 @@ Some fixes:
 
 * New provider for the retrieval of data stored into Elastic Search nodes.
   The provider has been tested under Elastic Search 1.7.1 release.
-   
+
 * New data set editor UI module:
     - Creation of SQL, Bean, CSV and Elastic Search data set definitions
     - Data set retrieval testing and preview
@@ -87,18 +77,18 @@ Some fixes:
     - Different strategies for grouping time series data.
     - Ability to add/remove the columns/series to display.
 
-0.2.0
+0.2.0.Final
 
 * Data set definition files: Support for CSV & Bean generated data sets
 * Displayer Editor widget for the creation of displayer definitions
 * Perspective editor integration which allows the creation of dashboards by drag&drop
 
-0.1.1
+0.1.1.Final
 
 * Notify clients about data set registration/removal events
 * Assign an HTML identifier to every Displayer instance (useful for testing purposes)
 
-0.1.0
+0.1.0.Final
 
 Main goal of this very first release is to make it possible the creation of
 composite dashboards using an straightforward API. Feature set:
@@ -118,7 +108,7 @@ Build & run
 Prerequisites
 -------------
 * Git client
-* Maven 3.x 
+* Maven 3.x
 * Java 1.6+
 
 First steps
@@ -127,20 +117,20 @@ First steps
 Clone the project
 
     git clone git@github.com:dashbuilder/dashbuilder.git
-    
-Now you can build & run the project in development or production mode.     
+
+Now you can build & run the project in development or production mode.
 
 Development mode
 ----------------
 
-Development mode allows a user to develop with the framework by compiling classes and client assets on runtime, which decreases the development time. There are more implications such as browser compatibilities, language support, etc. It's useful for developing and testing the application.                     
+Development mode allows a user to develop with the framework by compiling classes and client assets on runtime, which decreases the development time. There are more implications such as browser compatibilities, language support, etc. It's useful for developing and testing the application.
 
 Dashbuilder is currently built using GWT 2.7, so you are forced to use [SuperDevMode](http://www.gwtproject.org/articles/superdevmode.html) to run the application.
 
 Super development mode is the new way to work in GWT since version <code>2.5</code> (Native support & the default mode in GWT <code>2.7</code>).
-It works in most new browsers and it's based on [Source Map](https://docs.google.com/document/d/1U1RGAehQwRypUTovF1KRlpiOFze0b-_2gc6fAH0KY0k/edit?hl=en_US&pli=1&pli=1) spec. It's faster and more efficient than the old hosted mode. There are lots of benefits and other important reasons to use it, you can find more information [here](http://www.gwtproject.org/articles/superdevmode.html).             
+It works in most new browsers and it's based on [Source Map](https://docs.google.com/document/d/1U1RGAehQwRypUTovF1KRlpiOFze0b-_2gc6fAH0KY0k/edit?hl=en_US&pli=1&pli=1) spec. It's faster and more efficient than the old hosted mode. There are lots of benefits and other important reasons to use it, you can find more information [here](http://www.gwtproject.org/articles/superdevmode.html).
 
-Dashbuilder supports and it's configured by default to use SuperDevMode.                 
+Dashbuilder supports and it's configured by default to use SuperDevMode.
 
 Using it means running two servers, one for the web application and one for the Code Server that compiles classes for SDM when the compile button is pushed on the web page or in the bookmark.
 
@@ -164,7 +154,7 @@ Login:
 Production mode
 ---------------
 
-Production mode is used to build & package the application for a production environment. The application is compiled and the javascript assets are build using all permutations (browser support), all languages, etc.               
+Production mode is used to build & package the application for a production environment. The application is compiled and the javascript assets are build using all permutations (browser support), all languages, etc.
 
 In order to build the production mode:
 
@@ -172,5 +162,5 @@ In order to build the production mode:
     mvn clean install -DskipTests -Dfull
 
 Once build is finished, you'll find the WAR distributions for Wildfly and Tomcat into <code>dashbuilder/dashbuilder-distros/target/</code>.
-   
-Just deploy the WAR file into your application server!                          
+
+Just deploy the WAR file into your application server!
