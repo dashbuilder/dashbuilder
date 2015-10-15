@@ -18,6 +18,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" class="login-pf">
 <head>
     <title>Login - Dashbuilder Showcase</title>
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="org.dashbuilder.DashbuilderShowcase/patternfly/dist/css/patternfly.min.css">
     <link rel="stylesheet" href="org.dashbuilder.DashbuilderShowcase/patternfly/dist/css/patternfly-additions.min.css">
 </head>
