@@ -18,7 +18,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
   <title>Dashbuilder Showcase</title>
-
+  <link REL="icon" HREF="favicon.ico" TYPE="image/x-icon">
   <style type="text/css">
     * {
       font-family: Helvetica, Arial, sans-serif;
