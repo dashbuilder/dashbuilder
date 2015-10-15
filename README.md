@@ -37,6 +37,20 @@ Architecture
 Change log
 ==========
 
+0.3.x
+
+* DASHBUILDE-53: Selector Displayer fails when there are null entries in the list
+* DASHBUILDE-50: Selector displayer loses current selection on external filters
+* DASHBUILDE-52: Bad formatting of date intervals on external filters
+* DASHBUILDE-49: Table displayer does not reset current page after filter
+
+0.3.4
+
+* DASHBUILDE-46: Add installation READMEs to the WAR distros and fix deps
+* DASHBUILDE-45: Data Set Editor - Fixed column type updates refresh
+* BZ-1265837: Data Set Editor column type updates are not applied
+* BZ-1200333: Color codes for google displayers are not i18n
+
 0.3.3
 
 * DASHBUILDE-42: Null pointer in SQL data lookup requests when result set contain null values
