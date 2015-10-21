@@ -36,10 +36,8 @@ import org.dashbuilder.dataset.events.DataSetDefRemovedEvent;
 import org.dashbuilder.dataset.events.DataSetStaleEvent;
 import org.dashbuilder.dataset.filter.ColumnFilter;
 import org.dashbuilder.dataset.filter.DataSetFilter;
-import org.dashbuilder.dataset.group.ColumnGroup;
-import org.dashbuilder.dataset.group.DataSetGroup;
-import org.dashbuilder.dataset.group.DateIntervalType;
-import org.dashbuilder.dataset.group.GroupFunction;
+import org.dashbuilder.dataset.filter.FilterFactory;
+import org.dashbuilder.dataset.group.*;
 import org.dashbuilder.dataset.impl.DataColumnImpl;
 import org.dashbuilder.dataset.impl.DataSetLookupBuilderImpl;
 import org.dashbuilder.dataset.impl.DataSetMetadataImpl;
@@ -48,7 +46,6 @@ import org.dashbuilder.dataset.sort.ColumnSort;
 import org.dashbuilder.dataset.sort.DataSetSort;
 import org.slf4j.Logger;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
@@ -232,8 +229,19 @@ public class ElasticSearchDataSetProvider implements DataSetProvider {
 
         // Check group operations. Check that operation source fields exist as data set columns.
         // Calculate the resulting data set columns too and set the collection into the ELS query to perform.
-        List<DataSetGroup> groupOps = lookup.getOperationList(DataSetGroup.class);
-        if (groupOps != null && !groupOps.isEmpty()) {
+        DataSetGroup _groupOp = null;
+        int groupIdx = lookup.getFirstGroupOpIndex(0, null, false);
+        if (groupIdx == -1) groupIdx = lookup.getFirstGroupOpIndex(0, null, true);
+        if (groupIdx != -1) _groupOp = lookup.getOperation(groupIdx);
+        
+        // Currently only one aggregation is supported by the core.
+        List<DataSetGroup> groupOps = new ArrayList<DataSetGroup>(1);
+        if (_groupOp != null) {
+            groupOps.add(_groupOp);
+        }
+        
+        // Group operations to process.
+        if (!groupOps.isEmpty()) {
             List<DataSetGroup> aggregationOps = new LinkedList<DataSetGroup>();
             List<DataColumn> columns = new ArrayList<DataColumn>();
             for (DataSetGroup groupOp : groupOps) {
@@ -293,7 +301,6 @@ public class ElasticSearchDataSetProvider implements DataSetProvider {
         // Filter operations.
         List<DataSetFilter> filters = lookup.getOperationList(DataSetFilter.class);
         if (filters != null && !filters.isEmpty()) {
-
             // Check columns for the filter operations.
             for (DataSetFilter filerOp  : filters) {
                 List<ColumnFilter> columnFilters = filerOp.getColumnFilterList();
@@ -304,11 +311,26 @@ public class ElasticSearchDataSetProvider implements DataSetProvider {
                     }
                 }
             }
-
-            // The query is build from a given filters and/or from interval selections. Built it.
-            Query query = queryBuilderFactory.newQueryBuilder().metadata(metadata).groupInterval(groupOps).filter(filters).build();
-            request.setQuery(query);
         }
+
+        // Append the interval selections (drill-down) as data set filter operations.
+        List<DataSetGroup> intervalSelects = lookup.getFirstGroupOpSelections();
+        if (intervalSelects != null && !intervalSelects.isEmpty()) {
+            if (filters == null) {
+                filters = new ArrayList<DataSetFilter>(intervalSelects.size());
+            }
+            DataSetFilter filterOp = new DataSetFilter();
+            filterOp.setDataSetUUID(metadata.getUUID());
+            for (DataSetGroup intervalSelect : intervalSelects) {
+                ColumnFilter drillDownFilter = _getIntervalSelectionFilter(intervalSelect);
+                filterOp.addFilterColumn(drillDownFilter);
+            }
+            filters.add(filterOp);
+        }
+
+        // The query is build from a given filters and/or from interval selections. Built it.
+        Query query = queryBuilderFactory.newQueryBuilder().metadata(metadata).groupInterval(groupOps).filter(filters).build();
+        request.setQuery(query);
         
         // Sort operations.
         List<DataSetSort> sortOps = lookup.getOperationList(DataSetSort.class);
@@ -361,6 +383,52 @@ public class ElasticSearchDataSetProvider implements DataSetProvider {
             dataSet.setRowCountNonTrimmed((int)searchResponse.getTotalHits());
         }
         return dataSet;
+    }
+
+    protected ColumnFilter _getIntervalSelectionFilter(DataSetGroup intervalSel) {
+        ColumnFilter filter = null;
+        if (intervalSel != null && intervalSel.isSelect()) {
+            ColumnGroup cg = intervalSel.getColumnGroup();
+            List<Interval> intervalList = intervalSel.getSelectedIntervalList();
+
+            // Get the filter values
+            List<Comparable> names = new ArrayList<Comparable>();
+            Comparable min = null;
+            Comparable max = null;
+            for (Interval interval : intervalList) {
+                names.add(interval.getName());
+                Comparable intervalMin = (Comparable) interval.getMinValue();
+                Comparable intervalMax = (Comparable) interval.getMaxValue();
+
+                if (intervalMin != null) {
+                    if (min == null) min = intervalMin;
+                    else if (min.compareTo(intervalMin) > 0) min = intervalMin;
+                }
+                if (intervalMax != null) {
+                    if (max == null) max = intervalMax;
+                    else if (max.compareTo(intervalMax) > 0) max = intervalMax;
+                }
+            }
+            // Min can't be greater than max.
+            if (min != null && max != null && min.compareTo(max) > 0) {
+                min = max;
+            }
+
+            // Apply the filter
+            if (min != null && max != null) {
+                filter = FilterFactory.between(cg.getSourceId(), min, max);
+            }
+            else if (min != null) {
+                filter = FilterFactory.greaterOrEqualsTo(cg.getSourceId(), min);
+            }
+            else if (max != null) {
+                filter = FilterFactory.lowerOrEqualsTo(cg.getSourceId(), max);
+            }
+            else {
+                filter = FilterFactory.equalsTo(cg.getSourceId(), names);
+            }
+        }
+        return filter;
     }
 
     private void postProcess(DataSetMetadata metadata, DataSet dataSet) {

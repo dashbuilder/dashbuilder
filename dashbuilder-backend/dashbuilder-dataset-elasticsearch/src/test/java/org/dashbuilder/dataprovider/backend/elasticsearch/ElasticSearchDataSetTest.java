@@ -384,6 +384,33 @@ public class ElasticSearchDataSetTest extends ElasticSearchDataSetTestBase {
 
     }
 
+    @Test
+    public void testIntervalSelections() throws Exception {
+        DataSet result = dataSetManager.lookupDataSet(
+                DataSetFactory.newDataSetLookupBuilder()
+                        .dataset(EL_DATASET_UUID)
+                        .group(EL_EXAMPLE_COLUMN_DEPT)
+                        .column(EL_EXAMPLE_COLUMN_DEPT, "Department")
+                        .column(COUNT, "Occurrences")
+                        .column(EL_EXAMPLE_COLUMN_AMOUNT, MIN, "min")
+                        .column(EL_EXAMPLE_COLUMN_AMOUNT, MAX, "max")
+                        .column(EL_EXAMPLE_COLUMN_AMOUNT, AVERAGE, "average")
+                        .column(EL_EXAMPLE_COLUMN_AMOUNT, SUM, "total")
+                        .select(EL_EXAMPLE_DEPT_ENGINEERING)
+                        .sort(EL_EXAMPLE_COLUMN_AMOUNT, SortOrder.ASCENDING)
+                        .buildLookup());
+
+        printDataSet(result);
+        assertThat(result.getRowCount()).isEqualTo(1);
+
+        assertThat(result.getValueAt(0, 0)).isEqualTo(EL_EXAMPLE_DEPT_ENGINEERING);
+        assertThat(result.getValueAt(0, 1)).isEqualTo(19.0d);
+        assertThat(result.getValueAt(0, 2)).isEqualTo(120.3499984741211d);
+        assertThat(result.getValueAt(0, 3)).isEqualTo(1402.300048828125d);
+        assertThat(result.getValueAt(0, 4)).isEqualTo(534.2136836804842d);
+        assertThat(result.getValueAt(0, 5)).isEqualTo(10150.0599899292d);
+    }
+
     /**
      * Aggregating by a non grouped column with no aggregation function is not allowed.
      * An RuntimeException must be thrown.

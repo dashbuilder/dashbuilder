@@ -66,7 +66,8 @@ public class ElasticSearchValueTypeMapper {
 
     public Double parseNumeric(ElasticSearchDataSetDef definition, String columnId, String number) throws ParseException {
         if (isEmpty(number)) return 0d;
-        
+
+        // TODO: return new Double(number) -> do not parse different numeric types, produces infinitesimal errors.
         String coreType = definition.getPattern(columnId);
         if (isEmpty(coreType)) coreType = defaulNumberFormat();
         

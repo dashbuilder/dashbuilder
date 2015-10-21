@@ -457,6 +457,7 @@ public class ElasticSearchDataSetTestBase {
     }
 
     protected static void log(Object message) {
+        // System.out.print(message);
         if (logger.isDebugEnabled()) {
             logger.debug(message.toString());
         }
