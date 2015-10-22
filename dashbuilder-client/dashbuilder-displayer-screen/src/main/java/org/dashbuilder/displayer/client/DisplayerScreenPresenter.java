@@ -35,7 +35,7 @@ import org.dashbuilder.dataset.client.DataSetClientServices;
 import org.dashbuilder.dataset.client.DataSetExportReadyCallback;
 import org.dashbuilder.dataset.uuid.UUIDGenerator;
 import org.dashbuilder.displayer.DisplayerSettings;
-import org.dashbuilder.displayer.client.json.DisplayerSettingsJSONMarshaller;
+import org.dashbuilder.displayer.json.DisplayerSettingsJSONMarshaller;
 import org.dashbuilder.displayer.client.resources.i18n.Constants;
 import org.dashbuilder.displayer.client.widgets.DisplayerEditor;
 import org.dashbuilder.displayer.client.widgets.DisplayerEditorPopup;

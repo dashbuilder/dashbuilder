@@ -1,27 +1,33 @@
-package org.dashbuilder.dataset;
+/*
+ * Copyright 2015 JBoss Inc
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+*/
+package org.dashbuilder.dataset.json;
 
 import org.apache.commons.io.IOUtils;
-import org.dashbuilder.dataprovider.DataSetProviderRegistry;
 import org.dashbuilder.dataprovider.DataSetProviderType;
-import org.dashbuilder.dataset.backend.DataSetDefJSONMarshaller;
+import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.def.BeanDataSetDef;
+import org.dashbuilder.dataset.def.DataColumnDef;
 import org.dashbuilder.dataset.def.DataSetDef;
-import org.dashbuilder.dataset.def.DataSetDefRegistry;
 import org.dashbuilder.dataset.filter.ColumnFilter;
 import org.dashbuilder.dataset.filter.CoreFunctionFilter;
 import org.dashbuilder.dataset.filter.CoreFunctionType;
 import org.dashbuilder.dataset.filter.DataSetFilter;
-import org.dashbuilder.test.ShrinkWrapHelper;
-import org.jboss.arquillian.container.test.api.Deployment;
-import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.shrinkwrap.api.Archive;
-import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
-import javax.inject.Inject;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.util.ArrayList;
@@ -29,37 +35,20 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-@RunWith(Arquillian.class)
-public class DataSetDefJSONMarshallerTest {
+import static org.junit.Assert.*;
+
+public class DataSetDefJsonTest {
 
     private static final String UTF_8 = "UTF-8";
     private static final String BEAN_DEF_PATH = "beanDataSetDef.dset";
     private static final String FILTER_DEF_PATH = "dataSetDefFilter.dset";
+    private static final String EXPENSES_DEF_PATH = "expenseReports.dset";
 
-    @Deployment
-    public static Archive<?> createTestArchive()  {
-        return ShrinkWrapHelper.createJavaArchive()
-                .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
-    }
+    DataSetDefJSONMarshaller jsonMarshaller;
 
-    @Inject
-    DataSetManager dataSetManager;
-
-    @Inject
-    DataSetFormatter dataSetFormatter;
-
-    @Inject
-    DataSetDefRegistry dataSetDefRegistry;
-
-    @Inject
-    DataSetProviderRegistry dataSetProviderRegistry;
-    
-    @Inject
-    DataSetDefJSONMarshaller dataSetDefJSONMarshaller;
-    
     @Before
     public void setUp() throws Exception {
-        
+        jsonMarshaller = new DataSetDefJSONMarshaller(new DataSetLookupJSONMarshaller());
     }
 
     @Test
@@ -81,12 +70,38 @@ public class DataSetDefJSONMarshallerTest {
         parameterMap.put("p2", "v2");
         dataSetDef.setParamaterMap(parameterMap);
         
-        String json = dataSetDefJSONMarshaller.toJsonString(dataSetDef);
+        String json = jsonMarshaller.toJsonString(dataSetDef);
         String beanJSONContent = getFileAsString(BEAN_DEF_PATH);
 
         assertDataSetDef(json, beanJSONContent);
     }
     
+    @Test
+    public void testColumns() throws Exception {
+        String json = getFileAsString(EXPENSES_DEF_PATH);
+        DataSetDef def = jsonMarshaller.fromJson(json);
+        assertEquals(def.getColumns().size(), 6);
+
+        DataColumnDef column1 = def.getColumnById("EXPENSES_ID");
+        DataColumnDef column2 = def.getColumnById("DEPARTMENT");
+        DataColumnDef column3 = def.getColumnById("AMOUNT");
+        DataColumnDef column4 = def.getColumnById("CREATION_DATE");
+        DataColumnDef column5 = def.getColumnById("EMPLOYEE");
+        DataColumnDef column6 = def.getColumnById("CITY");
+        assertNotNull(column1);
+        assertNotNull(column2);
+        assertNotNull(column3);
+        assertNotNull(column4);
+        assertNotNull(column5);
+        assertNotNull(column6);
+        assertEquals(column1.getColumnType(), ColumnType.NUMBER);
+        assertEquals(column2.getColumnType(), ColumnType.LABEL);
+        assertEquals(column3.getColumnType(), ColumnType.NUMBER);
+        assertEquals(column4.getColumnType(), ColumnType.DATE);
+        assertEquals(column5.getColumnType(), ColumnType.LABEL);
+        assertEquals(column6.getColumnType(), ColumnType.LABEL);
+    }
+
     @Test
     public void testFilters() throws Exception {
         final BeanDataSetDef dataSetDef = new BeanDataSetDef();
@@ -116,21 +131,19 @@ public class DataSetDefJSONMarshallerTest {
         filter.addFilterColumn(columnFilter);
         dataSetDef.setDataSetFilter(filter);
         
-        String json = dataSetDefJSONMarshaller.toJsonString(dataSetDef);
+        String json = jsonMarshaller.toJsonString(dataSetDef);
         String filteredDataSetDefJSONContent = getFileAsString(FILTER_DEF_PATH);
 
         assertDataSetDef(json, filteredDataSetDefJSONContent);
     }
-
-    // TODO: Test columns
 
     private void assertDataSetDef(final String def1, final String def2) throws Exception {
         if (def1 == null && def2 != null) Assert.assertTrue("JSON string for Def1 is null and for Def2 is not null", false);
         if (def1 != null && def2 == null) Assert.assertTrue("JSON string for Def1 is not null and for Def2 is null", false);
         if (def1 == null) Assert.assertTrue("JSON string for both definitions is null", false);
 
-        DataSetDef def1Object = dataSetDefJSONMarshaller.fromJson(def1);
-        DataSetDef def2Object = dataSetDefJSONMarshaller.fromJson(def2);
+        DataSetDef def1Object = jsonMarshaller.fromJson(def1);
+        DataSetDef def2Object = jsonMarshaller.fromJson(def2);
 
         Assert.assertEquals(def1Object, def2Object);
     }

@@ -22,7 +22,7 @@ import org.apache.commons.io.IOUtils;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetFormatter;
 import org.dashbuilder.dataset.DataSetManager;
-import org.dashbuilder.dataset.backend.DataSetDefJSONMarshaller;
+import org.dashbuilder.dataset.json.DataSetDefJSONMarshaller;
 import org.dashbuilder.dataset.def.DataSetDef;
 import org.dashbuilder.dataset.def.DataSetDefRegistry;
 import org.dashbuilder.test.ShrinkWrapHelper;
@@ -30,7 +30,6 @@ import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 

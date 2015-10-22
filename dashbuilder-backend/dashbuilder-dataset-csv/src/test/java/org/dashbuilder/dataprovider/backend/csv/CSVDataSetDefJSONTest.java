@@ -22,7 +22,7 @@ import org.apache.commons.io.IOUtils;
 import org.dashbuilder.dataprovider.DataSetProviderType;
 import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.DataSetManager;
-import org.dashbuilder.dataset.backend.DataSetDefJSONMarshaller;
+import org.dashbuilder.dataset.json.DataSetDefJSONMarshaller;
 import org.dashbuilder.dataset.def.CSVDataSetDef;
 import org.dashbuilder.dataset.def.DataSetDef;
 import org.dashbuilder.test.ShrinkWrapHelper;

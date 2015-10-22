@@ -28,6 +28,7 @@ import org.dashbuilder.dataprovider.DataSetProviderRegistry;
 import org.dashbuilder.dataset.def.CSVDataSetDef;
 import org.dashbuilder.dataset.def.DataSetDef;
 import org.dashbuilder.dataset.def.DataSetDefRegistry;
+import org.dashbuilder.dataset.json.DataSetDefJSONMarshaller;
 import org.slf4j.Logger;
 
 /**

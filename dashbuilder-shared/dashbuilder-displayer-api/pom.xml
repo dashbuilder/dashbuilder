@@ -36,5 +36,10 @@
       <artifactId>dashbuilder-dataset-api</artifactId>
     </dependency>
 
+    <dependency>
+      <groupId>org.dashbuilder</groupId>
+      <artifactId>dashbuilder-json</artifactId>
+    </dependency>
+
   </dependencies>
 </project>

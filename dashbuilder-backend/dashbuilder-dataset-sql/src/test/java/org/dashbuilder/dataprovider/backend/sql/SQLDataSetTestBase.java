@@ -15,15 +15,11 @@
  */
 package org.dashbuilder.dataprovider.backend.sql;
 
-import java.io.InputStream;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
-import java.sql.ResultSet;
-import java.util.Properties;
 import javax.inject.Inject;
 import javax.sql.DataSource;
-import javax.xml.transform.Result;
 
 import org.apache.commons.io.IOUtils;
 import org.dashbuilder.dataprovider.backend.sql.model.Column;
@@ -33,7 +29,7 @@ import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetFormatter;
 import org.dashbuilder.dataset.ExpenseReportsData;
 import org.dashbuilder.dataset.backend.BackendDataSetManager;
-import org.dashbuilder.dataset.backend.DataSetDefJSONMarshaller;
+import org.dashbuilder.dataset.json.DataSetDefJSONMarshaller;
 import org.dashbuilder.dataset.def.DataSetDefRegistry;
 import org.dashbuilder.dataset.def.SQLDataSetDef;
 import org.dashbuilder.test.ShrinkWrapHelper;

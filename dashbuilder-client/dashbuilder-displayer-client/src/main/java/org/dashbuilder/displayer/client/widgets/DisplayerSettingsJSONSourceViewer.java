@@ -15,6 +15,8 @@
  */
 package org.dashbuilder.displayer.client.widgets;
 
+import javax.inject.Inject;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -22,7 +24,7 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.common.client.JsonSourceViewer;
 import org.dashbuilder.displayer.DisplayerSettings;
-import org.dashbuilder.displayer.client.json.DisplayerSettingsJSONMarshaller;
+import org.dashbuilder.displayer.json.DisplayerSettingsJSONMarshaller;
 
 public class DisplayerSettingsJSONSourceViewer extends Composite {
 
@@ -36,11 +38,10 @@ public class DisplayerSettingsJSONSourceViewer extends Composite {
     @UiField
     public JsonSourceViewer jsonSourceViewer;
 
-    public DisplayerSettingsJSONSourceViewer() {
-        // Init the editor from the UI Binder template
+    @Inject
+    public DisplayerSettingsJSONSourceViewer(DisplayerSettingsJSONMarshaller jsonMarshaller) {
+        this.jsonMarshaller = jsonMarshaller;
         initWidget( uiBinder.createAndBindUi( this ) );
-
-        jsonMarshaller = new DisplayerSettingsJSONMarshaller();
     }
 
     public DisplayerSettings getDisplayerSettings() {

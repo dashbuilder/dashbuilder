@@ -31,28 +31,6 @@ public interface CommonConstants extends Messages {
 
     String cause();
 
-    // JSON marshalling literals
-
-    String json_dataset_column_id_type_not_specified();
-
-    String json_datasetlookup_validation_error();
-
-    String json_datasetlookup_unsupported_column_filter();
-
-    String json_datasetlookup_columnfilter_null_columnid();
-
-    String json_datasetlookup_columnfilter_null_functiontype();
-
-    String json_datasetlookup_corefunction_null_params();
-
-    String json_datasetlookup_logexpr_null_params();
-
-    String json_datasetlookup_columnfilter_wrong_type();
-
-    String json_displayersettings_dataset_lookup_notspecified();
-
-    String json_columnsettings_null_columnid();
-
     // Common settings editor literals
 
     String dataset_editor_notfound();

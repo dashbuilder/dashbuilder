@@ -63,6 +63,19 @@
       <!-- Dashbuilder Shared -->
       <dependency>
         <groupId>org.dashbuilder</groupId>
+        <artifactId>dashbuilder-json</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.dashbuilder</groupId>
+        <artifactId>dashbuilder-json</artifactId>
+        <version>${project.version}</version>
+        <classifier>sources</classifier>
+      </dependency>
+
+      <dependency>
+        <groupId>org.dashbuilder</groupId>
         <artifactId>dashbuilder-dataset-shared</artifactId>
         <version>${project.version}</version>
       </dependency>
