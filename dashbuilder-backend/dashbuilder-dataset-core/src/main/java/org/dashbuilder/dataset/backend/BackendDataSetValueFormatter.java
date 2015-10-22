@@ -18,6 +18,7 @@ package org.dashbuilder.dataset.backend;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import javax.enterprise.context.Dependent;
 
 import org.dashbuilder.dataset.DataSetValueFormatter;
@@ -34,14 +35,15 @@ public final class BackendDataSetValueFormatter implements DataSetValueFormatter
         numberSymbols.setDecimalSeparator('.');
         _numberFormat = new DecimalFormat("#,###.##", numberSymbols);
     }
-
-
+    
     public String formatValue(Object value) {
         try {
-            return _dateFormat.format(value);
+            Number n = (Number) value;
+            return _numberFormat.format(n);
         } catch (Exception e) {
             try {
-                return _numberFormat.format(value);
+                Date d = (Date) value;
+                return _dateFormat.format(d);
             } catch (Exception e1) {
                 return value.toString();
             }

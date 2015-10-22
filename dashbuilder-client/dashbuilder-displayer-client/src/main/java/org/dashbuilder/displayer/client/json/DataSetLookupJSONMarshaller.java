@@ -376,7 +376,7 @@ public class DataSetLookupJSONMarshaller {
         if ( paramsJsonArray == null ) return null;
         List<Comparable> params = new ArrayList<Comparable>( paramsJsonArray.size() );
         for (  int i = 0; i < paramsJsonArray.size(); i++) {
-            params.add( paramsJsonArray.get( i ).isString().stringValue() );
+            params.add(valueFormatter.parseValue(paramsJsonArray.get(i).isString().stringValue()));
         }
         return params;
     }
