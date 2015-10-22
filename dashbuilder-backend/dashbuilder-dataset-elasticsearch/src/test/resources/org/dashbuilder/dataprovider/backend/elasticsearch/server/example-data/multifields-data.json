@@ -1,12 +1,12 @@
 {"index":{"_index":"multifields","_type":"multifield","_id":1}}
-{"field1":"1", "field2": "elnumerouno", "number":1, "date": "01"}
+{"FIELD1":"1", "FIELD2": "elnumerouno", "NUMBER":1, "DATE": "01"}
 {"index":{"_index":"multifields","_type":"multifield","_id":2}}
-{"field1":"2", "field2": "elnumerodos", "number":2, "date": "02"}
+{"FIELD1":"2", "FIELD2": "elnumerodos", "NUMBER":2, "DATE": "02"}
 {"index":{"_index":"multifields","_type":"multifield","_id":3}}
-{"field1":"3", "field2": "elnumerotres", "number":3, "date": "03"}
+{"FIELD1":"3", "FIELD2": "elnumerotres", "NUMBER":3, "DATE": "03"}
 {"index":{"_index":"multifields","_type":"multifield","_id":4}}
-{"field1":"4", "field2": "elnumerocuatro", "number":4, "date": "04"}
+{"FIELD1":"4", "FIELD2": "elnumerocuatro", "NUMBER":4, "DATE": "04"}
 {"index":{"_index":"multifields","_type":"multifield","_id":5}}
-{"field1":"5", "field2": "elnumerocinco", "number":5, "date": "06"}
+{"FIELD1":"5", "FIELD2": "elnumerocinco", "NUMBER":5, "DATE": "06"}
 {"index":{"_index":"multifields","_type":"multifield","_id":6}}
-{"field1":"6", "field2": "elnumeroseis", "number":6, "date": "07"}
+{"FIELD1":"6", "FIELD2": "elnumeroseis", "NUMBER":6, "DATE": "07"}

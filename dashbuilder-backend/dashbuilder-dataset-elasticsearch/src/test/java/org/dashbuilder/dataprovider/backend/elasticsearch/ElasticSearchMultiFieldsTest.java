@@ -67,7 +67,7 @@ public class ElasticSearchMultiFieldsTest extends ElasticSearchDataSetTestBase {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                         .dataset(EL__MULTIFIELDS_UUID)
-                        .sort("field2.raw", SortOrder.DESCENDING)
+                        .sort("FIELD2.RAW", SortOrder.DESCENDING)
                         .buildLookup());
 
         // Columns size assertion.
@@ -75,30 +75,30 @@ public class ElasticSearchMultiFieldsTest extends ElasticSearchDataSetTestBase {
         Assert.assertTrue(result.getColumns().size() == 5);
 
         Set<DataColumn> expected = new HashSet<DataColumn>(5);
-        DataColumn colField1 = new DataColumnImpl("field1", ColumnType.TEXT);
+        DataColumn colField1 = new DataColumnImpl("FIELD1", ColumnType.TEXT);
         expected.add(colField1);
-        DataColumn colField2 = new DataColumnImpl("field2", ColumnType.TEXT);
+        DataColumn colField2 = new DataColumnImpl("FIELD2", ColumnType.TEXT);
         expected.add(colField2);
-        DataColumn colField2Raw = new DataColumnImpl("field2.raw", ColumnType.LABEL);
+        DataColumn colField2Raw = new DataColumnImpl("FIELD2.RAW", ColumnType.LABEL);
         expected.add(colField2Raw);
-        DataColumn colNumber = new DataColumnImpl("number", ColumnType.NUMBER);
+        DataColumn colNumber = new DataColumnImpl("NUMBER", ColumnType.NUMBER);
         expected.add(colNumber);
-        DataColumn colDate = new DataColumnImpl("date", ColumnType.DATE);
+        DataColumn colDate = new DataColumnImpl("DATE", ColumnType.DATE);
         expected.add(colDate);
 
         // Columns id assertion.
-        Assert.assertTrue(result.getColumnByIndex(0).getId().equals("field2"));
-        Assert.assertTrue(result.getColumnByIndex(1).getId().equals("number"));
-        Assert.assertTrue(result.getColumnByIndex(2).getId().equals("field1"));
-        Assert.assertTrue(result.getColumnByIndex(3).getId().equals("date"));
-        Assert.assertTrue(result.getColumnByIndex(4).getId().equals("field2.raw"));
+        Assert.assertTrue(result.getColumnByIndex(0).getId().equals("FIELD2.RAW"));
+        Assert.assertTrue(result.getColumnByIndex(1).getId().equals("FIELD2"));
+        Assert.assertTrue(result.getColumnByIndex(2).getId().equals("DATE"));
+        Assert.assertTrue(result.getColumnByIndex(3).getId().equals("FIELD1"));
+        Assert.assertTrue(result.getColumnByIndex(4).getId().equals("NUMBER"));
 
         // Columns type assertion.
-        Assert.assertTrue(result.getColumnByIndex(0).getColumnType().equals(ColumnType.TEXT));
-        Assert.assertTrue(result.getColumnByIndex(1).getColumnType().equals(ColumnType.NUMBER));
-        Assert.assertTrue(result.getColumnByIndex(2).getColumnType().equals(ColumnType.TEXT));
-        Assert.assertTrue(result.getColumnByIndex(3).getColumnType().equals(ColumnType.DATE));
-        Assert.assertTrue(result.getColumnByIndex(4).getColumnType().equals(ColumnType.LABEL));
+        Assert.assertTrue(result.getColumnByIndex(0).getColumnType().equals(ColumnType.LABEL));
+        Assert.assertTrue(result.getColumnByIndex(1).getColumnType().equals(ColumnType.TEXT));
+        Assert.assertTrue(result.getColumnByIndex(2).getColumnType().equals(ColumnType.DATE));
+        Assert.assertTrue(result.getColumnByIndex(3).getColumnType().equals(ColumnType.TEXT));
+        Assert.assertTrue(result.getColumnByIndex(4).getColumnType().equals(ColumnType.NUMBER));
     }
 
 }

@@ -2,23 +2,23 @@
     "mappings" : {
         "_default_" : {
             "properties" : {
-                "field1" : {
+                "FIELD1" : {
                     "type": "string", 
                     "index": "analyzed" 
                 },
-                "field2" : {
+                "FIELD2" : {
                     "type": "string", 
                     "index": "analyzed" ,
                     "fields": {
-                        "raw": {
+                        "RAW": {
                             "type": "string",
                             "index": "not_analyzed",
                             "ignore_above": 256
                         }
                     }
                 },
-                "number" : {"type": "integer" },
-                "date" : {
+                "NUMBER" : {"type": "integer" },
+                "DATE" : {
                     "type" : "date",
                     "format": "MM"
                 }

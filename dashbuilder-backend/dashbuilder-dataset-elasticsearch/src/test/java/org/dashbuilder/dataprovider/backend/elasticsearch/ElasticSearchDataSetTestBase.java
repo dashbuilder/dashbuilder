@@ -49,12 +49,6 @@ public class ElasticSearchDataSetTestBase {
     
     // Config files & example data for running EL server.
     public static final String EL_EXAMPLE_INDEX = "expensereports";
-    public static final String EL_EXAMPLE_COLUMN_ID = "id";
-    public static final String EL_EXAMPLE_COLUMN_AMOUNT = "amount";
-    public static final String EL_EXAMPLE_COLUMN_DEPT = "department";
-    public static final String EL_EXAMPLE_COLUMN_EMPLOYEE = "employee";
-    public static final String EL_EXAMPLE_COLUMN_DATE = "date";
-    public static final String EL_EXAMPLE_COLUMN_CITY = "city";
     public static final String EL_EXAMPLE_DEPT_ENGINEERING = "Engineering";
     public static final String EL_EXAMPLE_DEPT_SERVICES = "Services";
     public static final String EL_EXAMPLE_DEPT_MANAGEMENT = "Management";

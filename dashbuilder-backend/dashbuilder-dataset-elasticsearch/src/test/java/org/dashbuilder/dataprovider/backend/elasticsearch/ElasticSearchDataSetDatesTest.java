@@ -17,6 +17,7 @@ package org.dashbuilder.dataprovider.backend.elasticsearch;
 
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetFactory;
+import org.dashbuilder.dataset.ExpenseReportsData;
 import org.dashbuilder.dataset.date.DayOfWeek;
 import org.dashbuilder.dataset.date.Month;
 import org.dashbuilder.dataset.sort.SortOrder;
@@ -59,11 +60,11 @@ public class ElasticSearchDataSetDatesTest extends ElasticSearchDataSetTestBase 
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                         .dataset(EL_DATASET_UUID)
-                        .group(EL_EXAMPLE_COLUMN_DATE).dynamic(5, true)
-                        .column(EL_EXAMPLE_COLUMN_DATE, "Period")
+                        .group(ExpenseReportsData.COLUMN_DATE).dynamic(5, true)
+                        .column(ExpenseReportsData.COLUMN_DATE, "Period")
                         .column(COUNT, "Occurrences")
-                        .column(EL_EXAMPLE_COLUMN_AMOUNT, SUM, "totalAmount")
-                        .sort(EL_EXAMPLE_COLUMN_ID, SortOrder.ASCENDING)
+                        .column(ExpenseReportsData.COLUMN_AMOUNT, SUM, "totalAmount")
+                        .sort(ExpenseReportsData.COLUMN_ID, SortOrder.ASCENDING)
                         .buildLookup());
 
         assertDataSetValues(result, dataSetFormatter, new String[][]{
@@ -79,11 +80,11 @@ public class ElasticSearchDataSetDatesTest extends ElasticSearchDataSetTestBase 
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                         .dataset(EL_DATASET_UUID)
-                        .group(EL_EXAMPLE_COLUMN_DATE).dynamic(YEAR, true)
-                        .column(EL_EXAMPLE_COLUMN_DATE, "Period")
+                        .group(ExpenseReportsData.COLUMN_DATE).dynamic(YEAR, true)
+                        .column(ExpenseReportsData.COLUMN_DATE, "Period")
                         .column(COUNT, "Occurrences")
-                        .column(EL_EXAMPLE_COLUMN_AMOUNT, SUM, "totalAmount")
-                        .sort(EL_EXAMPLE_COLUMN_ID, SortOrder.ASCENDING)
+                        .column(ExpenseReportsData.COLUMN_AMOUNT, SUM, "totalAmount")
+                        .sort(ExpenseReportsData.COLUMN_ID, SortOrder.ASCENDING)
                         .buildLookup());
 
         assertDataSetValues(result, dataSetFormatter, new String[][]{
@@ -99,11 +100,11 @@ public class ElasticSearchDataSetDatesTest extends ElasticSearchDataSetTestBase 
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                         .dataset(EL_DATASET_UUID)
-                        .group(EL_EXAMPLE_COLUMN_DATE).dynamic(YEAR, true)
-                        .column(EL_EXAMPLE_COLUMN_DATE)
+                        .group(ExpenseReportsData.COLUMN_DATE).dynamic(YEAR, true)
+                        .column(ExpenseReportsData.COLUMN_DATE)
                         .column(COUNT, "Occurrences")
-                        .column(EL_EXAMPLE_COLUMN_AMOUNT, SUM, "totalAmount")
-                        .sort(EL_EXAMPLE_COLUMN_ID, SortOrder.ASCENDING)
+                        .column(ExpenseReportsData.COLUMN_AMOUNT, SUM, "totalAmount")
+                        .sort(ExpenseReportsData.COLUMN_ID, SortOrder.ASCENDING)
                         .buildLookup());
 
         assertDataSetValues(result, dataSetFormatter, new String[][]{
@@ -120,11 +121,11 @@ public class ElasticSearchDataSetDatesTest extends ElasticSearchDataSetTestBase 
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                         .dataset(EL_DATASET_UUID)
-                        .group(EL_EXAMPLE_COLUMN_DATE).dynamic(99, MONTH, true)
-                        .column(EL_EXAMPLE_COLUMN_DATE, "Period")
+                        .group(ExpenseReportsData.COLUMN_DATE).dynamic(99, MONTH, true)
+                        .column(ExpenseReportsData.COLUMN_DATE, "Period")
                         .column(COUNT, "Occurrences")
-                        .column(EL_EXAMPLE_COLUMN_AMOUNT, SUM, "totalAmount")
-                        .sort(EL_EXAMPLE_COLUMN_ID, SortOrder.ASCENDING)
+                        .column(ExpenseReportsData.COLUMN_AMOUNT, SUM, "totalAmount")
+                        .sort(ExpenseReportsData.COLUMN_ID, SortOrder.ASCENDING)
                         .buildLookup());
 
         assertThat(result.getRowCount()).isEqualTo(48);
@@ -144,11 +145,11 @@ public class ElasticSearchDataSetDatesTest extends ElasticSearchDataSetTestBase 
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                         .dataset(EL_DATASET_UUID)
-                        .group(EL_EXAMPLE_COLUMN_DATE).dynamic(9999, DAY, true)
-                        .column(EL_EXAMPLE_COLUMN_DATE, "Period")
+                        .group(ExpenseReportsData.COLUMN_DATE).dynamic(9999, DAY, true)
+                        .column(ExpenseReportsData.COLUMN_DATE, "Period")
                         .column(COUNT, "Occurrences")
-                        .column(EL_EXAMPLE_COLUMN_AMOUNT, SUM, "totalAmount")
-                        .sort(EL_EXAMPLE_COLUMN_ID, SortOrder.ASCENDING)
+                        .column(ExpenseReportsData.COLUMN_AMOUNT, SUM, "totalAmount")
+                        .sort(ExpenseReportsData.COLUMN_ID, SortOrder.ASCENDING)
                         .buildLookup());
 
         assertThat(result.getRowCount()).isEqualTo(1438);
@@ -161,7 +162,7 @@ public class ElasticSearchDataSetDatesTest extends ElasticSearchDataSetTestBase 
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                         .dataset(EL_DATASET_UUID)
-                        .filter(EL_EXAMPLE_COLUMN_DATE, timeFrame("10second"))
+                        .filter(ExpenseReportsData.COLUMN_DATE, timeFrame("10second"))
                         .buildLookup());
 
         assertThat(result.getRowCount()).isEqualTo(0);
@@ -173,10 +174,10 @@ public class ElasticSearchDataSetDatesTest extends ElasticSearchDataSetTestBase 
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                         .dataset(EL_DATASET_UUID)
-                        .group(EL_EXAMPLE_COLUMN_DATE).fixed(MONTH, true)
-                        .column(EL_EXAMPLE_COLUMN_DATE, EL_EXAMPLE_COLUMN_DATE)
+                        .group(ExpenseReportsData.COLUMN_DATE).fixed(MONTH, true)
+                        .column(ExpenseReportsData.COLUMN_DATE, ExpenseReportsData.COLUMN_DATE)
                         .column(COUNT, "Occurrences")
-                        .column(EL_EXAMPLE_COLUMN_AMOUNT, SUM, "totalAmount")
+                        .column(ExpenseReportsData.COLUMN_AMOUNT, SUM, "totalAmount")
                         .buildLookup());
 
         assertDataSetValues(result, dataSetFormatter, new String[][]{
@@ -200,10 +201,10 @@ public class ElasticSearchDataSetDatesTest extends ElasticSearchDataSetTestBase 
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                         .dataset(EL_DATASET_UUID)
-                        .group(EL_EXAMPLE_COLUMN_DATE).fixed(MONTH, true).desc()
-                        .column(EL_EXAMPLE_COLUMN_DATE, "Period")
+                        .group(ExpenseReportsData.COLUMN_DATE).fixed(MONTH, true).desc()
+                        .column(ExpenseReportsData.COLUMN_DATE, "Period")
                         .column(COUNT, "Occurrences")
-                        .column(EL_EXAMPLE_COLUMN_AMOUNT, SUM, "totalAmount")
+                        .column(ExpenseReportsData.COLUMN_AMOUNT, SUM, "totalAmount")
                         .buildLookup());
 
         assertDataSetValues(result, dataSetFormatter, new String[][]{
@@ -227,10 +228,10 @@ public class ElasticSearchDataSetDatesTest extends ElasticSearchDataSetTestBase 
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                         .dataset(EL_DATASET_UUID)
-                        .group(EL_EXAMPLE_COLUMN_DATE).fixed(MONTH, true).firstMonth(Month.NOVEMBER)
-                        .column(EL_EXAMPLE_COLUMN_DATE, "Period")
+                        .group(ExpenseReportsData.COLUMN_DATE).fixed(MONTH, true).firstMonth(Month.NOVEMBER)
+                        .column(ExpenseReportsData.COLUMN_DATE, "Period")
                         .column(COUNT, "Occurrences")
-                        .column(EL_EXAMPLE_COLUMN_AMOUNT, SUM, "totalAmount")
+                        .column(ExpenseReportsData.COLUMN_AMOUNT, SUM, "totalAmount")
                         .buildLookup());
 
         printDataSet(result);
@@ -256,10 +257,10 @@ public class ElasticSearchDataSetDatesTest extends ElasticSearchDataSetTestBase 
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                         .dataset(EL_DATASET_UUID)
-                        .group(EL_EXAMPLE_COLUMN_DATE).fixed(MONTH, true).desc().firstMonth(Month.MARCH)
-                        .column(EL_EXAMPLE_COLUMN_DATE, "Period")
+                        .group(ExpenseReportsData.COLUMN_DATE).fixed(MONTH, true).desc().firstMonth(Month.MARCH)
+                        .column(ExpenseReportsData.COLUMN_DATE, "Period")
                         .column(COUNT, "Occurrences")
-                        .column(EL_EXAMPLE_COLUMN_AMOUNT, SUM, "totalAmount")
+                        .column(ExpenseReportsData.COLUMN_AMOUNT, SUM, "totalAmount")
                         .buildLookup());
 
         assertDataSetValues(result, dataSetFormatter, new String[][]{
@@ -283,10 +284,10 @@ public class ElasticSearchDataSetDatesTest extends ElasticSearchDataSetTestBase 
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                         .dataset(EL_DATASET_UUID)
-                        .group(EL_EXAMPLE_COLUMN_DATE).fixed(DAY_OF_WEEK, true).firstDay(DayOfWeek.MONDAY)
-                        .column(EL_EXAMPLE_COLUMN_DATE, "Period")
+                        .group(ExpenseReportsData.COLUMN_DATE).fixed(DAY_OF_WEEK, true).firstDay(DayOfWeek.MONDAY)
+                        .column(ExpenseReportsData.COLUMN_DATE, "Period")
                         .column(COUNT, "Occurrences")
-                        .column(EL_EXAMPLE_COLUMN_AMOUNT, SUM, "totalAmount")
+                        .column(ExpenseReportsData.COLUMN_AMOUNT, SUM, "totalAmount")
                         .buildLookup().cloneInstance());
 
         assertDataSetValues(result, dataSetFormatter, new String[][]{
@@ -305,10 +306,10 @@ public class ElasticSearchDataSetDatesTest extends ElasticSearchDataSetTestBase 
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                         .dataset(EL_DATASET_UUID)
-                        .group(EL_EXAMPLE_COLUMN_DATE).fixed(DAY_OF_WEEK, true).firstDay(DayOfWeek.MONDAY).desc()
-                        .column(EL_EXAMPLE_COLUMN_DATE, "Period")
+                        .group(ExpenseReportsData.COLUMN_DATE).fixed(DAY_OF_WEEK, true).firstDay(DayOfWeek.MONDAY).desc()
+                        .column(ExpenseReportsData.COLUMN_DATE, "Period")
                         .column(COUNT, "Occurrences")
-                        .column(EL_EXAMPLE_COLUMN_AMOUNT, SUM, "totalAmount")
+                        .column(ExpenseReportsData.COLUMN_AMOUNT, SUM, "totalAmount")
                         .buildLookup().cloneInstance());
 
         assertDataSetValues(result, dataSetFormatter, new String[][]{
@@ -327,10 +328,10 @@ public class ElasticSearchDataSetDatesTest extends ElasticSearchDataSetTestBase 
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                         .dataset(EL_DATASET_UUID)
-                        .group(EL_EXAMPLE_COLUMN_DATE).fixed(DAY_OF_WEEK, true).firstDay(DayOfWeek.SUNDAY)
-                        .column(EL_EXAMPLE_COLUMN_DATE, "Period")
+                        .group(ExpenseReportsData.COLUMN_DATE).fixed(DAY_OF_WEEK, true).firstDay(DayOfWeek.SUNDAY)
+                        .column(ExpenseReportsData.COLUMN_DATE, "Period")
                         .column(COUNT, "Occurrences")
-                        .column(EL_EXAMPLE_COLUMN_AMOUNT, SUM, "totalAmount")
+                        .column(ExpenseReportsData.COLUMN_AMOUNT, SUM, "totalAmount")
                         .buildLookup().cloneInstance());
 
         //printDataSet(result);
@@ -350,10 +351,10 @@ public class ElasticSearchDataSetDatesTest extends ElasticSearchDataSetTestBase 
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                         .dataset(EL_DATASET_UUID)
-                        .group(EL_EXAMPLE_COLUMN_DATE).fixed(QUARTER, true)
-                        .column(EL_EXAMPLE_COLUMN_DATE, "Period")
+                        .group(ExpenseReportsData.COLUMN_DATE).fixed(QUARTER, true)
+                        .column(ExpenseReportsData.COLUMN_DATE, "Period")
                         .column(COUNT, "Occurrences")
-                        .column(EL_EXAMPLE_COLUMN_AMOUNT, SUM, "totalAmount")
+                        .column(ExpenseReportsData.COLUMN_AMOUNT, SUM, "totalAmount")
                         .buildLookup().cloneInstance());
 
         assertDataSetValues(result, dataSetFormatter, new String[][]{
@@ -369,10 +370,10 @@ public class ElasticSearchDataSetDatesTest extends ElasticSearchDataSetTestBase 
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                         .dataset(EL_DATASET_EMPTYINTERVALS_UUID)
-                        .group("date").fixed(MONTH, false).firstMonth(Month.JANUARY)
-                        .column("date", "Period")
+                        .group("DATE").fixed(MONTH, false).firstMonth(Month.JANUARY)
+                        .column("DATE", "Period")
                         .column(COUNT, "Occurrences")
-                        .column("number", SUM, "total")
+                        .column("NUMBER", SUM, "total")
                         .buildLookup());
 
         printDataSet(result);
@@ -396,10 +397,10 @@ public class ElasticSearchDataSetDatesTest extends ElasticSearchDataSetTestBase 
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                         .dataset(EL_DATASET_EMPTYINTERVALS_UUID)
-                        .group("date").fixed(MONTH, true).firstMonth(Month.JANUARY)
-                        .column("date", "Period")
+                        .group("DATE").fixed(MONTH, true).firstMonth(Month.JANUARY)
+                        .column("DATE", "Period")
                         .column(COUNT, "Occurrences")
-                        .column("number", SUM, "total")
+                        .column("NUMBER", SUM, "total")
                         .buildLookup());
 
         printDataSet(result);
@@ -425,10 +426,10 @@ public class ElasticSearchDataSetDatesTest extends ElasticSearchDataSetTestBase 
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                         .dataset(EL_DATASET_EMPTYINTERVALS_UUID)
-                        .group("date").fixed(MONTH, true).firstMonth(Month.MARCH)
-                        .column("date", "Period")
+                        .group("DATE").fixed(MONTH, true).firstMonth(Month.MARCH)
+                        .column("DATE", "Period")
                         .column(COUNT, "Occurrences")
-                        .column("number", SUM, "total")
+                        .column("NUMBER", SUM, "total")
                         .buildLookup());
 
         printDataSet(result);

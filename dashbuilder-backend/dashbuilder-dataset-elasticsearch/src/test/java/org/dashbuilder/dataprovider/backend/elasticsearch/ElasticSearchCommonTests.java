@@ -6,6 +6,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+/**
+ * This test case delegates to the common tests from data set core module.
+ */
 @RunWith(Arquillian.class)
 public class ElasticSearchCommonTests extends ElasticSearchDataSetTestBase {
 

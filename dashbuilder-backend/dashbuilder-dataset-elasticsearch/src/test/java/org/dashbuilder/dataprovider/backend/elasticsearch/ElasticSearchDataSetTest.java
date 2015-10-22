@@ -15,10 +15,7 @@
  */
 package org.dashbuilder.dataprovider.backend.elasticsearch;
 
-import org.dashbuilder.dataset.ColumnType;
-import org.dashbuilder.dataset.DataSet;
-import org.dashbuilder.dataset.DataSetFactory;
-import org.dashbuilder.dataset.DataSetLookup;
+import org.dashbuilder.dataset.*;
 import org.dashbuilder.dataset.group.DateIntervalPattern;
 import org.dashbuilder.dataset.sort.SortOrder;
 import org.junit.Assert;
@@ -86,7 +83,7 @@ public class ElasticSearchDataSetTest extends ElasticSearchDataSetTestBase {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                         .dataset(EL_DATASET_UUID)
-                        .sort(EL_EXAMPLE_COLUMN_ID, SortOrder.ASCENDING)
+                        .sort(ExpenseReportsData.COLUMN_ID, SortOrder.ASCENDING)
                         .buildLookup());
 
         // Columns size assertion.
@@ -94,12 +91,12 @@ public class ElasticSearchDataSetTest extends ElasticSearchDataSetTestBase {
         Assert.assertTrue(result.getColumns().size() == 6);
 
         // Columns id assertion.
-        Assert.assertTrue(result.getColumnByIndex(0).getId().equals(EL_EXAMPLE_COLUMN_ID));
-        Assert.assertTrue(result.getColumnByIndex(1).getId().equals(EL_EXAMPLE_COLUMN_AMOUNT));
-        Assert.assertTrue(result.getColumnByIndex(2).getId().equals(EL_EXAMPLE_COLUMN_DEPT));
-        Assert.assertTrue(result.getColumnByIndex(3).getId().equals(EL_EXAMPLE_COLUMN_EMPLOYEE));
-        Assert.assertTrue(result.getColumnByIndex(4).getId().equals(EL_EXAMPLE_COLUMN_DATE));
-        Assert.assertTrue(result.getColumnByIndex(5).getId().equals(EL_EXAMPLE_COLUMN_CITY));
+        Assert.assertTrue(result.getColumnByIndex(0).getId().equals(ExpenseReportsData.COLUMN_ID));
+        Assert.assertTrue(result.getColumnByIndex(1).getId().equals(ExpenseReportsData.COLUMN_AMOUNT));
+        Assert.assertTrue(result.getColumnByIndex(2).getId().equals(ExpenseReportsData.COLUMN_DEPARTMENT));
+        Assert.assertTrue(result.getColumnByIndex(3).getId().equals(ExpenseReportsData.COLUMN_EMPLOYEE));
+        Assert.assertTrue(result.getColumnByIndex(4).getId().equals(ExpenseReportsData.COLUMN_DATE));
+        Assert.assertTrue(result.getColumnByIndex(5).getId().equals(ExpenseReportsData.COLUMN_CITY));
 
         // Columns type assertion.
         Assert.assertTrue(result.getColumnByIndex(0).getColumnType().equals(ColumnType.NUMBER));
@@ -139,7 +136,7 @@ public class ElasticSearchDataSetTest extends ElasticSearchDataSetTestBase {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                         .dataset(EL_DATASET_UUID)
-                        .sort(EL_EXAMPLE_COLUMN_ID, SortOrder.ASCENDING)
+                        .sort(ExpenseReportsData.COLUMN_ID, SortOrder.ASCENDING)
                         .buildLookup());
 
         assertThat(result.getRowCount()).isEqualTo(50);
@@ -200,7 +197,7 @@ public class ElasticSearchDataSetTest extends ElasticSearchDataSetTestBase {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                         .dataset(EL_DATASET_UUID)
-                         .sort(EL_EXAMPLE_COLUMN_ID, SortOrder.DESCENDING)
+                         .sort(ExpenseReportsData.COLUMN_ID, SortOrder.DESCENDING)
                         .buildLookup());
 
         assertThat(result.getRowCount()).isEqualTo(50);
@@ -226,7 +223,7 @@ public class ElasticSearchDataSetTest extends ElasticSearchDataSetTestBase {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                         .dataset(EL_DATASET_UUID)
-                        .sort(EL_EXAMPLE_COLUMN_ID, SortOrder.ASCENDING)
+                        .sort(ExpenseReportsData.COLUMN_ID, SortOrder.ASCENDING)
                         .rowNumber(10)
                         .rowOffset(40)
                         .buildLookup());
@@ -273,12 +270,12 @@ public class ElasticSearchDataSetTest extends ElasticSearchDataSetTestBase {
         DataSetLookup lookup = DataSetFactory.newDataSetLookupBuilder()
                 .dataset(EL_DATASET_UUID)
                 .column(COUNT, "#items")
-                .column(EL_EXAMPLE_COLUMN_AMOUNT, MIN, "min")
-                .column(EL_EXAMPLE_COLUMN_AMOUNT, MAX, "max")
-                .column(EL_EXAMPLE_COLUMN_AMOUNT, AVERAGE, "avg")
-                .column(EL_EXAMPLE_COLUMN_AMOUNT, SUM, "sum")
-                .column(EL_EXAMPLE_COLUMN_CITY, DISTINCT, "distinct")
-                .sort(EL_EXAMPLE_COLUMN_ID, SortOrder.ASCENDING)
+                .column(ExpenseReportsData.COLUMN_AMOUNT, MIN, "min")
+                .column(ExpenseReportsData.COLUMN_AMOUNT, MAX, "max")
+                .column(ExpenseReportsData.COLUMN_AMOUNT, AVERAGE, "avg")
+                .column(ExpenseReportsData.COLUMN_AMOUNT, SUM, "sum")
+                .column(ExpenseReportsData.COLUMN_CITY, DISTINCT, "distinct")
+                .sort(ExpenseReportsData.COLUMN_ID, SortOrder.ASCENDING)
                 .buildLookup();
 
         DataSet result = dataSetManager.lookupDataSet(lookup);
@@ -313,12 +310,12 @@ public class ElasticSearchDataSetTest extends ElasticSearchDataSetTestBase {
                 DataSetFactory.newDataSetLookupBuilder()
                         .dataset(EL_DATASET_UUID)
                         .column(COUNT, "#items")
-                        .column(EL_EXAMPLE_COLUMN_AMOUNT, MIN)
-                        .column(EL_EXAMPLE_COLUMN_AMOUNT, MAX)
-                        .column(EL_EXAMPLE_COLUMN_AMOUNT, AVERAGE)
-                        .column(EL_EXAMPLE_COLUMN_AMOUNT, SUM)
-                        .column(EL_EXAMPLE_COLUMN_CITY, DISTINCT)
-                        .sort(EL_EXAMPLE_COLUMN_ID, SortOrder.ASCENDING)
+                        .column(ExpenseReportsData.COLUMN_AMOUNT, MIN)
+                        .column(ExpenseReportsData.COLUMN_AMOUNT, MAX)
+                        .column(ExpenseReportsData.COLUMN_AMOUNT, AVERAGE)
+                        .column(ExpenseReportsData.COLUMN_AMOUNT, SUM)
+                        .column(ExpenseReportsData.COLUMN_CITY, DISTINCT)
+                        .sort(ExpenseReportsData.COLUMN_ID, SortOrder.ASCENDING)
                         .buildLookup());
 
         assertThat(result.getRowCount()).isEqualTo(1);
@@ -335,14 +332,14 @@ public class ElasticSearchDataSetTest extends ElasticSearchDataSetTestBase {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                         .dataset(EL_DATASET_UUID)
-                        .group(EL_EXAMPLE_COLUMN_DEPT)
-                        .column(EL_EXAMPLE_COLUMN_DEPT, "Department")
+                        .group(ExpenseReportsData.COLUMN_DEPARTMENT)
+                        .column(ExpenseReportsData.COLUMN_DEPARTMENT, "Department")
                         .column(COUNT, "Occurrences")
-                        .column(EL_EXAMPLE_COLUMN_AMOUNT, MIN, "min")
-                        .column(EL_EXAMPLE_COLUMN_AMOUNT, MAX, "max")
-                        .column(EL_EXAMPLE_COLUMN_AMOUNT, AVERAGE, "average")
-                        .column(EL_EXAMPLE_COLUMN_AMOUNT, SUM, "total")
-                        .sort(EL_EXAMPLE_COLUMN_AMOUNT, SortOrder.ASCENDING)
+                        .column(ExpenseReportsData.COLUMN_AMOUNT, MIN, "min")
+                        .column(ExpenseReportsData.COLUMN_AMOUNT, MAX, "max")
+                        .column(ExpenseReportsData.COLUMN_AMOUNT, AVERAGE, "average")
+                        .column(ExpenseReportsData.COLUMN_AMOUNT, SUM, "total")
+                        .sort(ExpenseReportsData.COLUMN_AMOUNT, SortOrder.ASCENDING)
                         .buildLookup());
 
         assertThat(result.getRowCount()).isEqualTo(5);
@@ -389,15 +386,15 @@ public class ElasticSearchDataSetTest extends ElasticSearchDataSetTestBase {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                         .dataset(EL_DATASET_UUID)
-                        .group(EL_EXAMPLE_COLUMN_DEPT)
-                        .column(EL_EXAMPLE_COLUMN_DEPT, "Department")
+                        .group(ExpenseReportsData.COLUMN_DEPARTMENT)
+                        .column(ExpenseReportsData.COLUMN_DEPARTMENT, "Department")
                         .column(COUNT, "Occurrences")
-                        .column(EL_EXAMPLE_COLUMN_AMOUNT, MIN, "min")
-                        .column(EL_EXAMPLE_COLUMN_AMOUNT, MAX, "max")
-                        .column(EL_EXAMPLE_COLUMN_AMOUNT, AVERAGE, "average")
-                        .column(EL_EXAMPLE_COLUMN_AMOUNT, SUM, "total")
+                        .column(ExpenseReportsData.COLUMN_AMOUNT, MIN, "min")
+                        .column(ExpenseReportsData.COLUMN_AMOUNT, MAX, "max")
+                        .column(ExpenseReportsData.COLUMN_AMOUNT, AVERAGE, "average")
+                        .column(ExpenseReportsData.COLUMN_AMOUNT, SUM, "total")
                         .select(EL_EXAMPLE_DEPT_ENGINEERING)
-                        .sort(EL_EXAMPLE_COLUMN_AMOUNT, SortOrder.ASCENDING)
+                        .sort(ExpenseReportsData.COLUMN_AMOUNT, SortOrder.ASCENDING)
                         .buildLookup());
 
         printDataSet(result);
@@ -422,9 +419,9 @@ public class ElasticSearchDataSetTest extends ElasticSearchDataSetTestBase {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                         .dataset(EL_DATASET_UUID)
-                        .column(EL_EXAMPLE_COLUMN_DEPT, "Department")
+                        .column(ExpenseReportsData.COLUMN_DEPARTMENT, "Department")
                         .column(COUNT, "#items")
-                        .sort(EL_EXAMPLE_COLUMN_ID, SortOrder.ASCENDING)
+                        .sort(ExpenseReportsData.COLUMN_ID, SortOrder.ASCENDING)
                         .buildLookup());
     }
 
@@ -433,10 +430,10 @@ public class ElasticSearchDataSetTest extends ElasticSearchDataSetTestBase {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                         .dataset(EL_DATASET_UUID)
-                        .group(EL_EXAMPLE_COLUMN_DEPT)
-                        .column(EL_EXAMPLE_COLUMN_DEPT, "Department")
+                        .group(ExpenseReportsData.COLUMN_DEPARTMENT)
+                        .column(ExpenseReportsData.COLUMN_DEPARTMENT, "Department")
                         .column(COUNT, "#items")
-                        .sort(EL_EXAMPLE_COLUMN_ID, SortOrder.ASCENDING)
+                        .sort(ExpenseReportsData.COLUMN_ID, SortOrder.ASCENDING)
                         .buildLookup());
 
         assertThat(result.getRowCount()).isEqualTo(5);
@@ -468,8 +465,8 @@ public class ElasticSearchDataSetTest extends ElasticSearchDataSetTestBase {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                         .dataset(EL_DATASET_UUID)
-                        .group(EL_EXAMPLE_COLUMN_DEPT)
-                        .column(EL_EXAMPLE_COLUMN_DEPT, "Department")
+                        .group(ExpenseReportsData.COLUMN_DEPARTMENT)
+                        .column(ExpenseReportsData.COLUMN_DEPARTMENT, "Department")
                         .column(COUNT, "Occurrences")
                         .column("mycolumn", MIN, "min")
                         .buildLookup());
@@ -486,8 +483,8 @@ public class ElasticSearchDataSetTest extends ElasticSearchDataSetTestBase {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                         .dataset(EL_DATASET_UUID)
-                        .filter(EL_EXAMPLE_COLUMN_CITY, equalsTo(EL_EXAMPLE_CITY_BARCELONA))
-                        .sort(EL_EXAMPLE_COLUMN_ID, SortOrder.ASCENDING)
+                        .filter(ExpenseReportsData.COLUMN_CITY, equalsTo(EL_EXAMPLE_CITY_BARCELONA))
+                        .sort(ExpenseReportsData.COLUMN_ID, SortOrder.ASCENDING)
                         .buildLookup());
 
         assertThat(result.getRowCount()).isEqualTo(6);
@@ -500,8 +497,8 @@ public class ElasticSearchDataSetTest extends ElasticSearchDataSetTestBase {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                         .dataset(EL_DATASET_UUID)
-                        .filter(EL_EXAMPLE_COLUMN_EMPLOYEE, equalsTo(EL_EXAMPLE_EMP_NITA))
-                        .sort(EL_EXAMPLE_COLUMN_ID, SortOrder.ASCENDING)
+                        .filter(ExpenseReportsData.COLUMN_EMPLOYEE, equalsTo(EL_EXAMPLE_EMP_NITA))
+                        .sort(ExpenseReportsData.COLUMN_ID, SortOrder.ASCENDING)
                         .buildLookup());
 
         assertThat(result.getRowCount()).isEqualTo(4);
@@ -516,8 +513,8 @@ public class ElasticSearchDataSetTest extends ElasticSearchDataSetTestBase {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                         .dataset(EL_DATASET_UUID)
-                        .filter(EL_EXAMPLE_COLUMN_EMPLOYEE, likeTo(EL_EXAMPLE_COLUMN_EMPLOYEE, "Jul%", true))
-                        .sort(EL_EXAMPLE_COLUMN_ID, SortOrder.ASCENDING)
+                        .filter(ExpenseReportsData.COLUMN_EMPLOYEE, likeTo(ExpenseReportsData.COLUMN_EMPLOYEE, "Jul%", true))
+                        .sort(ExpenseReportsData.COLUMN_ID, SortOrder.ASCENDING)
                         .buildLookup());
 
         assertThat(result.getRowCount()).isEqualTo(0);
@@ -526,8 +523,8 @@ public class ElasticSearchDataSetTest extends ElasticSearchDataSetTestBase {
         result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                         .dataset(EL_DATASET_UUID)
-                        .filter(EL_EXAMPLE_COLUMN_EMPLOYEE, likeTo(EL_EXAMPLE_COLUMN_EMPLOYEE, "jul%", true))
-                        .sort(EL_EXAMPLE_COLUMN_ID, SortOrder.ASCENDING)
+                        .filter(ExpenseReportsData.COLUMN_EMPLOYEE, likeTo(ExpenseReportsData.COLUMN_EMPLOYEE, "jul%", true))
+                        .sort(ExpenseReportsData.COLUMN_ID, SortOrder.ASCENDING)
                         .buildLookup());
         
         assertThat(result.getRowCount()).isEqualTo(4);
@@ -537,8 +534,8 @@ public class ElasticSearchDataSetTest extends ElasticSearchDataSetTestBase {
         result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                         .dataset(EL_DATASET_CSENSITIVE_UUID)
-                        .filter(EL_EXAMPLE_COLUMN_EMPLOYEE, likeTo(EL_EXAMPLE_COLUMN_EMPLOYEE, "Jul%", true))
-                        .sort(EL_EXAMPLE_COLUMN_ID, SortOrder.ASCENDING)
+                        .filter(ExpenseReportsData.COLUMN_EMPLOYEE, likeTo(ExpenseReportsData.COLUMN_EMPLOYEE, "Jul%", true))
+                        .sort(ExpenseReportsData.COLUMN_ID, SortOrder.ASCENDING)
                         .buildLookup());
 
         assertThat(result.getRowCount()).isEqualTo(4);
@@ -547,8 +544,8 @@ public class ElasticSearchDataSetTest extends ElasticSearchDataSetTestBase {
         result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                         .dataset(EL_DATASET_CSENSITIVE_UUID)
-                        .filter(EL_EXAMPLE_COLUMN_EMPLOYEE, likeTo(EL_EXAMPLE_COLUMN_EMPLOYEE, "jul%", true))
-                        .sort(EL_EXAMPLE_COLUMN_ID, SortOrder.ASCENDING)
+                        .filter(ExpenseReportsData.COLUMN_EMPLOYEE, likeTo(ExpenseReportsData.COLUMN_EMPLOYEE, "jul%", true))
+                        .sort(ExpenseReportsData.COLUMN_ID, SortOrder.ASCENDING)
                         .buildLookup());
 
         assertThat(result.getRowCount()).isEqualTo(0);
@@ -561,8 +558,8 @@ public class ElasticSearchDataSetTest extends ElasticSearchDataSetTestBase {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                         .dataset(EL_DATASET_UUID)
-                        .filter(EL_EXAMPLE_COLUMN_EMPLOYEE, likeTo(EL_EXAMPLE_COLUMN_EMPLOYEE, "Jul%", false))
-                        .sort(EL_EXAMPLE_COLUMN_ID, SortOrder.ASCENDING)
+                        .filter(ExpenseReportsData.COLUMN_EMPLOYEE, likeTo(ExpenseReportsData.COLUMN_EMPLOYEE, "Jul%", false))
+                        .sort(ExpenseReportsData.COLUMN_ID, SortOrder.ASCENDING)
                         .buildLookup());
 
         assertThat(result.getRowCount()).isEqualTo(4);
@@ -571,8 +568,8 @@ public class ElasticSearchDataSetTest extends ElasticSearchDataSetTestBase {
         result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                         .dataset(EL_DATASET_UUID)
-                        .filter(EL_EXAMPLE_COLUMN_EMPLOYEE, likeTo(EL_EXAMPLE_COLUMN_EMPLOYEE, "jul%", false))
-                        .sort(EL_EXAMPLE_COLUMN_ID, SortOrder.ASCENDING)
+                        .filter(ExpenseReportsData.COLUMN_EMPLOYEE, likeTo(ExpenseReportsData.COLUMN_EMPLOYEE, "jul%", false))
+                        .sort(ExpenseReportsData.COLUMN_ID, SortOrder.ASCENDING)
                         .buildLookup());
 
         assertThat(result.getRowCount()).isEqualTo(4);
@@ -582,8 +579,8 @@ public class ElasticSearchDataSetTest extends ElasticSearchDataSetTestBase {
         result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                         .dataset(EL_DATASET_CSENSITIVE_UUID)
-                        .filter(EL_EXAMPLE_COLUMN_EMPLOYEE, likeTo(EL_EXAMPLE_COLUMN_EMPLOYEE, "Jul%", false))
-                        .sort(EL_EXAMPLE_COLUMN_ID, SortOrder.ASCENDING)
+                        .filter(ExpenseReportsData.COLUMN_EMPLOYEE, likeTo(ExpenseReportsData.COLUMN_EMPLOYEE, "Jul%", false))
+                        .sort(ExpenseReportsData.COLUMN_ID, SortOrder.ASCENDING)
                         .buildLookup());
 
         assertThat(result.getRowCount()).isEqualTo(0);
@@ -592,8 +589,8 @@ public class ElasticSearchDataSetTest extends ElasticSearchDataSetTestBase {
         result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                         .dataset(EL_DATASET_CSENSITIVE_UUID)
-                        .filter(EL_EXAMPLE_COLUMN_EMPLOYEE, likeTo(EL_EXAMPLE_COLUMN_EMPLOYEE, "jul%", false))
-                        .sort(EL_EXAMPLE_COLUMN_ID, SortOrder.ASCENDING)
+                        .filter(ExpenseReportsData.COLUMN_EMPLOYEE, likeTo(ExpenseReportsData.COLUMN_EMPLOYEE, "jul%", false))
+                        .sort(ExpenseReportsData.COLUMN_ID, SortOrder.ASCENDING)
                         .buildLookup());
 
         assertThat(result.getRowCount()).isEqualTo(0);
@@ -607,8 +604,8 @@ public class ElasticSearchDataSetTest extends ElasticSearchDataSetTestBase {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                         .dataset(EL_DATASET_UUID)
-                        .filter(EL_EXAMPLE_COLUMN_DEPT, likeTo(EL_EXAMPLE_COLUMN_DEPT, "Sal%", true))
-                        .sort(EL_EXAMPLE_COLUMN_ID, SortOrder.ASCENDING)
+                        .filter(ExpenseReportsData.COLUMN_DEPARTMENT, likeTo(ExpenseReportsData.COLUMN_DEPARTMENT, "Sal%", true))
+                        .sort(ExpenseReportsData.COLUMN_ID, SortOrder.ASCENDING)
                         .buildLookup());
 
         assertThat(result.getRowCount()).isEqualTo(8);
@@ -621,8 +618,8 @@ public class ElasticSearchDataSetTest extends ElasticSearchDataSetTestBase {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                         .dataset(EL_DATASET_UUID)
-                        .filter(EL_EXAMPLE_COLUMN_DEPT, likeTo(EL_EXAMPLE_COLUMN_DEPT, "Sal%", false))
-                        .sort(EL_EXAMPLE_COLUMN_ID, SortOrder.ASCENDING)
+                        .filter(ExpenseReportsData.COLUMN_DEPARTMENT, likeTo(ExpenseReportsData.COLUMN_DEPARTMENT, "Sal%", false))
+                        .sort(ExpenseReportsData.COLUMN_ID, SortOrder.ASCENDING)
                         .buildLookup());
         
         printDataSet(result);
@@ -633,8 +630,8 @@ public class ElasticSearchDataSetTest extends ElasticSearchDataSetTestBase {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                         .dataset(EL_DATASET_UUID)
-                        .filter(EL_EXAMPLE_COLUMN_AMOUNT, between(100, 200))
-                        .sort(EL_EXAMPLE_COLUMN_ID, SortOrder.ASCENDING)
+                        .filter(ExpenseReportsData.COLUMN_AMOUNT, between(100, 200))
+                        .sort(ExpenseReportsData.COLUMN_ID, SortOrder.ASCENDING)
                         .buildLookup());
 
         assertThat(result.getRowCount()).isEqualTo(4);
@@ -653,8 +650,8 @@ public class ElasticSearchDataSetTest extends ElasticSearchDataSetTestBase {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                         .dataset(EL_DATASET_UUID)
-                        .filter(EL_EXAMPLE_COLUMN_DATE, greaterThan(new Timestamp(date.getTime())))
-                        .sort(EL_EXAMPLE_COLUMN_ID, SortOrder.ASCENDING)
+                        .filter(ExpenseReportsData.COLUMN_DATE, greaterThan(new Timestamp(date.getTime())))
+                        .sort(ExpenseReportsData.COLUMN_ID, SortOrder.ASCENDING)
                         .buildLookup());
 
         assertThat(result.getRowCount()).isEqualTo(15);
@@ -685,9 +682,9 @@ public class ElasticSearchDataSetTest extends ElasticSearchDataSetTestBase {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                         .dataset(EL_DATASET_UUID)
-                        .filter(EL_EXAMPLE_COLUMN_DATE, lowerThan(new Timestamp(date.getTime())))
-                        .filter(EL_EXAMPLE_COLUMN_AMOUNT, greaterThan(500))
-                        .sort(EL_EXAMPLE_COLUMN_ID, SortOrder.ASCENDING)
+                        .filter(ExpenseReportsData.COLUMN_DATE, lowerThan(new Timestamp(date.getTime())))
+                        .filter(ExpenseReportsData.COLUMN_AMOUNT, greaterThan(500))
+                        .sort(ExpenseReportsData.COLUMN_ID, SortOrder.ASCENDING)
                         .buildLookup());
 
         assertThat(result.getRowCount()).isEqualTo(4);
@@ -702,9 +699,9 @@ public class ElasticSearchDataSetTest extends ElasticSearchDataSetTestBase {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                         .dataset(EL_DATASET_UUID)
-                        .filter(EL_EXAMPLE_COLUMN_AMOUNT, lowerOrEqualsTo(120.35))
-                        .filter(EL_EXAMPLE_COLUMN_CITY, equalsTo(EL_EXAMPLE_CITY_BARCELONA))
-                        .sort(EL_EXAMPLE_COLUMN_ID, SortOrder.ASCENDING)
+                        .filter(ExpenseReportsData.COLUMN_AMOUNT, lowerOrEqualsTo(120.35))
+                        .filter(ExpenseReportsData.COLUMN_CITY, equalsTo(EL_EXAMPLE_CITY_BARCELONA))
+                        .sort(ExpenseReportsData.COLUMN_ID, SortOrder.ASCENDING)
                         .buildLookup());
 
         assertThat(result.getRowCount()).isEqualTo(1);
@@ -714,9 +711,9 @@ public class ElasticSearchDataSetTest extends ElasticSearchDataSetTestBase {
         result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                         .dataset(EL_DATASET_UUID)
-                        .filter(EL_EXAMPLE_COLUMN_CITY, equalsTo(EL_EXAMPLE_CITY_BARCELONA))
-                        .filter(EL_EXAMPLE_COLUMN_AMOUNT, lowerOrEqualsTo(120.35))
-                        .sort(EL_EXAMPLE_COLUMN_ID, SortOrder.ASCENDING)
+                        .filter(ExpenseReportsData.COLUMN_CITY, equalsTo(EL_EXAMPLE_CITY_BARCELONA))
+                        .filter(ExpenseReportsData.COLUMN_AMOUNT, lowerOrEqualsTo(120.35))
+                        .sort(ExpenseReportsData.COLUMN_ID, SortOrder.ASCENDING)
                         .buildLookup());
 
         assertThat(result.getRowCount()).isEqualTo(1);
@@ -730,9 +727,9 @@ public class ElasticSearchDataSetTest extends ElasticSearchDataSetTestBase {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                         .dataset(EL_DATASET_UUID)
-                        .filter(EL_EXAMPLE_COLUMN_CITY, notEqualsTo(EL_EXAMPLE_CITY_BARCELONA))
-                        .filter(EL_EXAMPLE_COLUMN_AMOUNT, greaterOrEqualsTo(1000))
-                        .sort(EL_EXAMPLE_COLUMN_ID, SortOrder.ASCENDING)
+                        .filter(ExpenseReportsData.COLUMN_CITY, notEqualsTo(EL_EXAMPLE_CITY_BARCELONA))
+                        .filter(ExpenseReportsData.COLUMN_AMOUNT, greaterOrEqualsTo(1000))
+                        .sort(ExpenseReportsData.COLUMN_ID, SortOrder.ASCENDING)
                         .buildLookup());
 
         assertThat(result.getRowCount()).isEqualTo(3);
@@ -757,8 +754,8 @@ public class ElasticSearchDataSetTest extends ElasticSearchDataSetTestBase {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                         .dataset(EL_DATASET_UUID)
-                        .filter(EL_EXAMPLE_COLUMN_AMOUNT, AND(greaterThan(100), lowerThan(150)))
-                        .sort(EL_EXAMPLE_COLUMN_ID, SortOrder.ASCENDING)
+                        .filter(ExpenseReportsData.COLUMN_AMOUNT, AND(greaterThan(100), lowerThan(150)))
+                        .sort(ExpenseReportsData.COLUMN_ID, SortOrder.ASCENDING)
                         .buildLookup());
 
         assertThat(result.getRowCount()).isEqualTo(1);
@@ -771,8 +768,8 @@ public class ElasticSearchDataSetTest extends ElasticSearchDataSetTestBase {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                         .dataset(EL_DATASET_UUID)
-                        .filter(EL_EXAMPLE_COLUMN_AMOUNT, OR(lowerThan(200), greaterThan(1000)))
-                        .sort(EL_EXAMPLE_COLUMN_ID, SortOrder.ASCENDING)
+                        .filter(ExpenseReportsData.COLUMN_AMOUNT, OR(lowerThan(200), greaterThan(1000)))
+                        .sort(ExpenseReportsData.COLUMN_ID, SortOrder.ASCENDING)
                         .buildLookup());
 
         assertThat(result.getRowCount()).isEqualTo(11);
@@ -795,8 +792,8 @@ public class ElasticSearchDataSetTest extends ElasticSearchDataSetTestBase {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                         .dataset(EL_DATASET_UUID)
-                        .filter(EL_EXAMPLE_COLUMN_AMOUNT, NOT(greaterThan(200)))
-                        .sort(EL_EXAMPLE_COLUMN_ID, SortOrder.ASCENDING)
+                        .filter(ExpenseReportsData.COLUMN_AMOUNT, NOT(greaterThan(200)))
+                        .sort(ExpenseReportsData.COLUMN_ID, SortOrder.ASCENDING)
                         .buildLookup());
 
         assertThat(result.getRowCount()).isEqualTo(7);
@@ -815,10 +812,10 @@ public class ElasticSearchDataSetTest extends ElasticSearchDataSetTestBase {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                         .dataset(EL_DATASET_UUID)
-                        .filter(EL_EXAMPLE_COLUMN_AMOUNT, AND(
-                                equalsTo(EL_EXAMPLE_COLUMN_DEPT, EL_EXAMPLE_DEPT_SALES),
-                                OR(NOT(lowerThan(300)), equalsTo(EL_EXAMPLE_COLUMN_CITY, EL_EXAMPLE_CITY_MADRID))))
-                        .sort(EL_EXAMPLE_COLUMN_ID, SortOrder.ASCENDING)
+                        .filter(ExpenseReportsData.COLUMN_AMOUNT, AND(
+                                equalsTo(ExpenseReportsData.COLUMN_DEPARTMENT, EL_EXAMPLE_DEPT_SALES),
+                                OR(NOT(lowerThan(300)), equalsTo(ExpenseReportsData.COLUMN_CITY, EL_EXAMPLE_CITY_MADRID))))
+                        .sort(ExpenseReportsData.COLUMN_ID, SortOrder.ASCENDING)
                         .buildLookup());
 
         assertThat(result.getRowCount()).isEqualTo(7);
@@ -847,9 +844,9 @@ public class ElasticSearchDataSetTest extends ElasticSearchDataSetTestBase {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                         .dataset(EL_DATASET_UUID)
-                        .filter(EL_EXAMPLE_COLUMN_CITY, equalsTo(EL_EXAMPLE_CITY_BARCELONA))
-                        .filter(EL_EXAMPLE_COLUMN_EMPLOYEE, equalsTo(EL_EXAMPLE_EMP_JAMIE))
-                        .sort(EL_EXAMPLE_COLUMN_ID, SortOrder.ASCENDING)
+                        .filter(ExpenseReportsData.COLUMN_CITY, equalsTo(EL_EXAMPLE_CITY_BARCELONA))
+                        .filter(ExpenseReportsData.COLUMN_EMPLOYEE, equalsTo(EL_EXAMPLE_EMP_JAMIE))
+                        .sort(ExpenseReportsData.COLUMN_ID, SortOrder.ASCENDING)
                         .buildLookup());
 
         assertThat(result.getRowCount()).isEqualTo(3);
@@ -868,9 +865,9 @@ public class ElasticSearchDataSetTest extends ElasticSearchDataSetTestBase {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                         .dataset(EL_DATASET_UUID)
-                        .filter(EL_EXAMPLE_COLUMN_CITY, equalsTo(EL_EXAMPLE_CITY_BARCELONA))
-                        .filter(EL_EXAMPLE_COLUMN_DEPT, equalsTo(EL_EXAMPLE_DEPT_ENGINEERING))
-                        .sort(EL_EXAMPLE_COLUMN_ID, SortOrder.ASCENDING)
+                        .filter(ExpenseReportsData.COLUMN_CITY, equalsTo(EL_EXAMPLE_CITY_BARCELONA))
+                        .filter(ExpenseReportsData.COLUMN_DEPARTMENT, equalsTo(EL_EXAMPLE_DEPT_ENGINEERING))
+                        .sort(ExpenseReportsData.COLUMN_ID, SortOrder.ASCENDING)
                         .buildLookup());
 
         assertThat(result.getRowCount()).isEqualTo(3);
@@ -893,8 +890,8 @@ public class ElasticSearchDataSetTest extends ElasticSearchDataSetTestBase {
                 DataSetFactory.newDataSetLookupBuilder()
                         .dataset(EL_DATASET_UUID)
                         .column(COUNT, "#items")
-                        .filter(EL_EXAMPLE_COLUMN_EMPLOYEE, equalsTo(EL_EXAMPLE_EMP_ROXIE))
-                        .sort(EL_EXAMPLE_COLUMN_ID, SortOrder.ASCENDING)
+                        .filter(ExpenseReportsData.COLUMN_EMPLOYEE, equalsTo(EL_EXAMPLE_EMP_ROXIE))
+                        .sort(ExpenseReportsData.COLUMN_ID, SortOrder.ASCENDING)
                         .buildLookup());
 
         assertThat(result.getRowCount()).isEqualTo(1);
@@ -907,8 +904,8 @@ public class ElasticSearchDataSetTest extends ElasticSearchDataSetTestBase {
                 DataSetFactory.newDataSetLookupBuilder()
                         .dataset(EL_DATASET_UUID)
                         .column(COUNT, "#items")
-                        .filter(EL_EXAMPLE_COLUMN_DEPT, equalsTo(EL_EXAMPLE_DEPT_ENGINEERING))
-                        .sort(EL_EXAMPLE_COLUMN_ID, SortOrder.ASCENDING)
+                        .filter(ExpenseReportsData.COLUMN_DEPARTMENT, equalsTo(EL_EXAMPLE_DEPT_ENGINEERING))
+                        .sort(ExpenseReportsData.COLUMN_ID, SortOrder.ASCENDING)
                         .buildLookup());
         
         assertThat(result.getRowCount()).isEqualTo(1);
