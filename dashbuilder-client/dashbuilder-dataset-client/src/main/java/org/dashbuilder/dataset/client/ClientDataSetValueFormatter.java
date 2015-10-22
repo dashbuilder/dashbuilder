@@ -30,10 +30,10 @@ public final class ClientDataSetValueFormatter implements DataSetValueFormatter 
 
     public String formatValue(Object value) {
         try {
-            return _dateFormat.format((Date) value);
+            return _numberFormat.format((Number) value);
         } catch (Exception e) {
             try {
-                return _numberFormat.format((Number) value);
+                return _dateFormat.format((Date) value);
             } catch (Exception e1) {
                 return value.toString();
             }
@@ -42,10 +42,10 @@ public final class ClientDataSetValueFormatter implements DataSetValueFormatter 
 
     public Comparable parseValue(String str) {
         try {
-            return _dateFormat.parse(str);
+            return _numberFormat.parse(str);
         } catch (Exception e) {
             try {
-                return _numberFormat.parse(str);
+                return _dateFormat.parse(str);
             } catch (Exception e1) {
                 return str;
             }
