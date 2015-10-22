@@ -1,9 +1,6 @@
 package org.dashbuilder.dataprovider.backend.elasticsearch.suite;
 
-import org.dashbuilder.dataprovider.backend.elasticsearch.ElasticSearchDataSetCustomColumnsTest;
-import org.dashbuilder.dataprovider.backend.elasticsearch.ElasticSearchDataSetDatesTest;
-import org.dashbuilder.dataprovider.backend.elasticsearch.ElasticSearchDataSetTest;
-import org.dashbuilder.dataprovider.backend.elasticsearch.ElasticSearchMultiFieldsTest;
+import org.dashbuilder.dataprovider.backend.elasticsearch.*;
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.impl.jest.ElasticSearchJestClientTest;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -25,8 +22,8 @@ import org.slf4j.LoggerFactory;
         ElasticSearchDataSetCustomColumnsTest.class,
         ElasticSearchDataSetTest.class,
         ElasticSearchDataSetDatesTest.class,
-        ElasticSearchMultiFieldsTest.class
-        // ElasticSearchDataSetCacheTest.class
+        ElasticSearchMultiFieldsTest.class,
+        ElasticSearchCommonTests.class
 })
 public class LocalTestSuite {
 

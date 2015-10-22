@@ -15,6 +15,7 @@
  */
 package org.dashbuilder.dataprovider.backend.elasticsearch;
 
+import org.dashbuilder.dataprovider.backend.elasticsearch.suite.ElasticSearchTestSuite;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetFactory;
 import org.dashbuilder.dataset.def.ElasticSearchDataSetDef;
@@ -35,6 +36,7 @@ public class ElasticSearchDataSetCacheTest extends ElasticSearchDataSetTestBase 
 
     protected static final String EL_EXAMPLE_DATASETS_ROOT = "org/dashbuilder/dataprovider/backend/elasticsearch/";
     protected static final String EL_DATASET_UUID = "expense_reports";
+    protected static final String EL_EXAMPLE_MORE_DATA = "org/dashbuilder/dataprovider/backend/elasticsearch/server/example-data/expensereports-more-data.json";
     
     @Inject
     ElasticSearchDataSetProvider elasticSearchDataSetProvider;
@@ -65,8 +67,8 @@ public class ElasticSearchDataSetCacheTest extends ElasticSearchDataSetTestBase 
                         .buildLookup());
 
         // Insert some extra rows into the database
-        ElasticSearchUrlBuilder urlBuilder = new ElasticSearchUrlBuilder(EL_SERVER, EL_EXAMPLE_INDEX);
-        populateELServer(urlBuilder, EL_EXAMPLE_MORE_DATA);
+        ElasticSearchTestSuite.ElasticSearchUrlBuilder urlBuilder = new ElasticSearchTestSuite.ElasticSearchUrlBuilder(ElasticSearchTestSuite.EL_SERVER, EL_EXAMPLE_INDEX);
+        ElasticSearchTestSuite.populateELServer(urlBuilder, EL_EXAMPLE_MORE_DATA);
 
         // Check if the the data set is outdated
         assertThat(elasticSearchDataSetProvider.isDataSetOutdated(def)).isEqualTo(outdated);

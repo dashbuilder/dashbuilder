@@ -25,6 +25,7 @@ import org.dashbuilder.dataprovider.backend.elasticsearch.rest.model.Query;
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.model.SearchHitResponse;
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.model.SearchResponse;
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.util.ElasticSearchUtils;
+import org.dashbuilder.dataprovider.backend.elasticsearch.suite.ElasticSearchTestSuite;
 import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.dataset.DataSetMetadata;
@@ -93,7 +94,7 @@ public class ElasticSearchJestClientTest {
         when(metadata.getDefinition()).thenReturn(definition);
         
         // Init the dataset defintion mocked instance.
-        when(definition.getServerURL()).thenReturn(ElasticSearchDataSetTestBase.EL_SERVER);
+        when(definition.getServerURL()).thenReturn(ElasticSearchTestSuite.EL_SERVER);
         when(definition.getClusterName()).thenReturn("elasticsearch");
         when(definition.getIndex()).thenReturn("expensereports");
         when(definition.getType()).thenReturn("expense");

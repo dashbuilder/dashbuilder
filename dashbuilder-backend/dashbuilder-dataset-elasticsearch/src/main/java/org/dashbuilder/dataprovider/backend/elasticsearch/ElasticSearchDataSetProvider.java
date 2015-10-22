@@ -196,19 +196,6 @@ public class ElasticSearchDataSetProvider implements DataSetProvider {
         final boolean isTestMode = lookup != null && lookup.testMode();
         DataSetMetadata metadata = (DataSetMetadata) getDataSetMetadata(elDef, isTestMode);
 
-        // Handle default look-ups.
-        final List<DataColumn> ALL_COLUMNS = getAllColumns(metadata);
-        if (lookup == null || lookup.getOperationList().isEmpty()) {
-            DataSetLookupBuilder builder = new DataSetLookupBuilderImpl().dataset(elDef.getUUID());
-            if (ALL_COLUMNS != null) {
-                for (DataColumn column : ALL_COLUMNS) {
-                    builder.column(column.getId());
-                }
-            }
-            lookup = builder.buildLookup();
-            lookup.setTestMode(isTestMode);
-        }
-
         // Add the data set filter specified in the definition, if any.
         DataSetFilter dataSetFilter = elDef.getDataSetFilter();
         if (dataSetFilter != null) {
@@ -294,6 +281,7 @@ public class ElasticSearchDataSetProvider implements DataSetProvider {
             }
             
         } else {
+            final List<DataColumn> ALL_COLUMNS = getAllColumns(metadata);
             request.setColumns(ALL_COLUMNS);
         }
         
