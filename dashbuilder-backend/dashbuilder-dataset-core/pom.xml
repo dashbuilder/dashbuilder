@@ -75,8 +75,8 @@
     <!-- JSON -->
 
     <dependency>
-      <groupId>org.json</groupId>
-      <artifactId>json</artifactId>
+      <groupId>org.dashbuilder</groupId>
+      <artifactId>dashbuilder-json</artifactId>
     </dependency>
 
     <!-- Unit testing -->

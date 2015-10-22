@@ -16,12 +16,8 @@
 package org.dashbuilder.dataset.backend;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.net.URI;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -32,13 +28,13 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.dashbuilder.config.Config;
 import org.dashbuilder.dataprovider.backend.csv.CSVFileStorage;
 import org.dashbuilder.dataset.backend.exception.ExceptionManager;
 import org.dashbuilder.dataset.def.CSVDataSetDef;
 import org.dashbuilder.dataset.def.DataSetDef;
+import org.dashbuilder.dataset.json.DataSetDefJSONMarshaller;
 import org.dashbuilder.dataset.uuid.UUIDGenerator;
 import org.uberfire.io.IOService;
 import org.uberfire.java.nio.IOException;

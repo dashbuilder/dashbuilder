@@ -15,11 +15,12 @@
  */
 package org.dashbuilder.common.client;
 
-import com.google.gwt.json.client.JSONArray;
-import com.google.gwt.json.client.JSONObject;
-import com.google.gwt.json.client.JSONValue;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlexTable;
+import org.dashbuilder.json.JsonArray;
+import org.dashbuilder.json.JsonObject;
+import org.dashbuilder.json.JsonString;
+import org.dashbuilder.json.JsonValue;
 
 public class JsonSourceViewer extends Composite {
 
@@ -32,10 +33,10 @@ public class JsonSourceViewer extends Composite {
         initWidget( table );
     }
 
-    public void setContent(JSONObject jsonSource) {
+    public void setContent(JsonObject jsonSource) {
         clearContent();
 
-        String jsonSourceString = formatJsonObjectAsString( jsonSource, "" );
+        String jsonSourceString = formatJsonObjectAsString(jsonSource, "");
         final String[] rows = jsonSourceString.split( "\n" );
         for ( int i = 0; i < rows.length; i++ ) {
             String escaped = replaceLeadingWhitespaces( rows [ i ] );
@@ -52,7 +53,7 @@ public class JsonSourceViewer extends Composite {
             sb.append( "&nbsp;" );
             i++;
         }
-        sb.append( text.substring( i ) );
+        sb.append(text.substring(i));
         return sb.toString();
     }
 
@@ -60,46 +61,55 @@ public class JsonSourceViewer extends Composite {
         table.removeAllRows();
     }
 
-    private String formatJsonValueAsString( JSONValue jsonValue, String indent ) {
-        if ( jsonValue == null ) return "";
-        if ( jsonValue.isObject() != null ) return formatJsonObjectAsString( jsonValue.isObject(), indent );
-        else if ( jsonValue.isArray() != null ) return formatJsonArrayAsString( jsonValue.isArray(), indent );
-        else if ( jsonValue.isString() != null ) return "\"" + jsonValue.isString().stringValue() + "\"";
-        else return jsonValue.toString();
+    private String formatJsonValueAsString(JsonValue jsonValue, String indent) {
+        if (jsonValue == null) {
+            return "";
+        }
+        if (jsonValue instanceof JsonObject) {
+            return formatJsonObjectAsString((JsonObject) jsonValue, indent);
+        }
+        else if (jsonValue instanceof JsonArray) {
+            return formatJsonArrayAsString((JsonArray) jsonValue, indent);
+        }
+        else if (jsonValue instanceof JsonString) {
+            return "\"" + ((JsonString) jsonValue).getString() + "\"";
+        }
+        else {
+            return jsonValue.asString();
+        }
     }
 
-    private String formatJsonObjectAsString( JSONObject jsonObject, String indent ) {
+    private String formatJsonObjectAsString(JsonObject jsonObject, String indent) {
         if ( jsonObject == null ) return "";
 
         String newIndent = indent + INDENT;
         StringBuilder sb = new StringBuilder( "{" );
 
-        String[] keys = jsonObject.keySet().toArray( new String[]{} );
+        String[] keys = jsonObject.keys();
         for ( int i = 0; i < keys.length; i++ ) {
-            sb.append( "\n" );
-            sb.append( newIndent ).append( "\"" ).append( keys[ i ] ).append( "\"" ).append( ": " );
-            sb.append( newIndent ).append( formatJsonValueAsString( jsonObject.get( keys[i] ), newIndent ) );
-
-            sb.append( i == keys.length - 1 ? "" : "," ).append( "\n" );
+            sb.append("\n");
+            sb.append(newIndent).append("\"").append(keys[i]).append("\"").append(": ");
+            sb.append(newIndent).append(formatJsonValueAsString(jsonObject.get(keys[i]), newIndent));
+            sb.append(i == keys.length - 1 ? "" : ",").append("\n");
         }
-        sb.append( indent ).append( "}" );
+        sb.append(indent).append("}");
         return sb.toString();
     }
 
-    private String formatJsonArrayAsString( JSONArray jsonArray, String indent ) {
-        if ( jsonArray == null ) return "";
+    private String formatJsonArrayAsString(JsonArray jsonArray, String indent) {
+        if (jsonArray == null) {
+            return "";
+        }
 
         String newIndent = indent + INDENT;
-        StringBuilder sb = new StringBuilder( "[" );
+        StringBuilder sb = new StringBuilder("[");
 
-        for ( int i = 0; i < jsonArray.size(); i++ ) {
-            sb.append( "\n" );
-            sb.append( newIndent ).append( formatJsonValueAsString( jsonArray.get( i ), newIndent ) );
-
-            sb.append( i == jsonArray.size() - 1 ? "\n" : ", " );
+        for (int i = 0; i < jsonArray.length(); i++) {
+            sb.append("\n");
+            sb.append(newIndent ).append(formatJsonValueAsString(jsonArray.get(i), newIndent ));
+            sb.append(i == jsonArray.length() - 1 ? "\n" : ", ");
         }
-        sb.append( indent ).append( "]" );
+        sb.append(indent).append("]");
         return sb.toString();
     }
-
 }

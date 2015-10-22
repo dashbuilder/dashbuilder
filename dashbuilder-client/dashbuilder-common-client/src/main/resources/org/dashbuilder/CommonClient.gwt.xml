@@ -24,5 +24,7 @@
   <inherits name="org.gwtbootstrap3.GwtBootstrap3NoTheme"/>
   <inherits name="org.gwtbootstrap3.extras.toggleswitch.ToggleSwitch"/>
 
+  <inherits name="org.dashbuilder.JSON"/>
+
   <source path='common'/>
 </module>

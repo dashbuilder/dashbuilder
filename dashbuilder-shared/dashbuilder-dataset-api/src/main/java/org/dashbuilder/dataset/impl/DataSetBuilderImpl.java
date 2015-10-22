@@ -16,7 +16,6 @@
 package org.dashbuilder.dataset.impl;
 
 import org.dashbuilder.dataset.ColumnType;
-import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetBuilder;
 import org.dashbuilder.dataset.DataSetFactory;
@@ -58,11 +57,7 @@ public class DataSetBuilderImpl implements DataSetBuilder {
     }
 
     public DataSetBuilderImpl row(Object... values) {
-        for (int i = 0; i < values.length; i++) {
-            Object value = values[i];
-            DataColumn column = dataSet.getColumnByIndex(i);
-            column.getValues().add(value);
-        }
+        dataSet.addValues(values);
         return this;
     }
 

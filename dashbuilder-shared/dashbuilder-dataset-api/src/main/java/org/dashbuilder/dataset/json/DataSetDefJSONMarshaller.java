@@ -13,17 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbuilder.dataset.backend;
+package org.dashbuilder.dataset.json;
 
-import org.apache.commons.lang3.StringUtils;
-import org.dashbuilder.dataprovider.DataSetProviderRegistry;
 import org.dashbuilder.dataprovider.DataSetProviderType;
 import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.def.*;
 import org.dashbuilder.dataset.filter.DataSetFilter;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import org.dashbuilder.json.Json;
+import org.dashbuilder.json.JsonArray;
+import org.dashbuilder.json.JsonException;
+import org.dashbuilder.json.JsonObject;
 
 import javax.inject.Inject;
 import java.util.Collection;
@@ -81,15 +80,16 @@ public class DataSetDefJSONMarshaller {
     public static final String GENERATOR_PARAMS = "generatorParams";
     public static final String PARAM = "param";
     public static final String VALUE = "value";
+
+    protected DataSetLookupJSONMarshaller dataSetLookupJSONMarshaller;
     
     @Inject
-    DataSetProviderRegistry dataSetProviderRegistry;
-
-    @Inject
-    DataSetLookupJSONMarshaller dataSetLookupJSONMarshaller;
+    public DataSetDefJSONMarshaller(DataSetLookupJSONMarshaller dataSetLookupJSONMarshaller) {
+        this.dataSetLookupJSONMarshaller = dataSetLookupJSONMarshaller;
+    }
 
     public DataSetDef fromJson(String jsonString) throws Exception {
-        JSONObject json = new JSONObject(jsonString);
+        JsonObject json = Json.parse(jsonString);
         DataSetProviderType providerType = readProviderType(json);
         DataSetDef dataSetDef = DataSetProviderType.createDataSetDef(providerType);
 
@@ -112,108 +112,108 @@ public class DataSetDefJSONMarshaller {
         return dataSetDef;
     }
 
-    public ElasticSearchDataSetDef readElasticSearchSettings(ElasticSearchDataSetDef dataSetDef, JSONObject json) throws Exception {
-        String serverURL = json.has(SERVER_URL) ? json.getString(SERVER_URL) : null;
-        String clusterName = json.has(CLUSTER_NAME) ? json.getString(CLUSTER_NAME) : null;
-        String index = json.has(INDEX) ? json.getString(INDEX) : null;
-        String type = json.has(TYPE) ? json.getString(TYPE) : null;
-        String query = json.has(QUERY) ? json.getString(QUERY) : null;
-        String relevance = json.has(RELEVANCE) ? json.getString(RELEVANCE) : null;
-        String cacheEnabled = json.has(CACHE_ENABLED) ? json.getString(CACHE_ENABLED) : null;
-        String cacheMaxRows = json.has(CACHE_MAXROWS) ? json.getString(CACHE_MAXROWS) : null;
-        String cacheSynced = json.has(CACHE_SYNCED) ? json.getString(CACHE_SYNCED) : null;
+    public ElasticSearchDataSetDef readElasticSearchSettings(ElasticSearchDataSetDef dataSetDef, JsonObject json) throws Exception {
+        String serverURL = json.getString(SERVER_URL);
+        String clusterName = json.getString(CLUSTER_NAME);
+        String index = json.getString(INDEX);
+        String type = json.getString(TYPE);
+        String query = json.getString(QUERY);
+        String relevance = json.getString(RELEVANCE);
+        String cacheEnabled = json.getString(CACHE_ENABLED);
+        String cacheMaxRows = json.getString(CACHE_MAXROWS);
+        String cacheSynced = json.getString(CACHE_SYNCED);
 
         // ServerURL parameter.
-        if (StringUtils.isBlank(serverURL)) {
+        if (isBlank(serverURL)) {
             throw new IllegalArgumentException("The serverURL property is missing.");
         } else {
             dataSetDef.setServerURL(serverURL);
         }
 
         // Cluster name parameter.
-        if (StringUtils.isBlank(clusterName)) {
+        if (isBlank(clusterName)) {
             throw new IllegalArgumentException("The clusterName property is missing.");
         } else {
             dataSetDef.setClusterName(clusterName);
         }
 
         // Index parameter
-        if (StringUtils.isBlank(index)) {
+        if (isBlank(index)) {
             throw new IllegalArgumentException("The index property is missing.");
         } else {
             dataSetDef.setIndex(index);
         }
 
         // Type parameter.
-        if (!StringUtils.isBlank(type)) {
+        if (!isBlank(type)) {
             dataSetDef.setType(type);
         }
 
         // Query parameter.
-        if (!StringUtils.isBlank(query)) dataSetDef.setQuery(query);
+        if (!isBlank(query)) dataSetDef.setQuery(query);
 
         // Relevance parameter.
-        if (!StringUtils.isBlank(relevance)) dataSetDef.setRelevance(relevance);
+        if (!isBlank(relevance)) dataSetDef.setRelevance(relevance);
 
         // Cache enabled parameter.
-        if (!StringUtils.isBlank(cacheEnabled)) dataSetDef.setCacheEnabled(Boolean.parseBoolean(cacheEnabled));
+        if (!isBlank(cacheEnabled)) dataSetDef.setCacheEnabled(Boolean.parseBoolean(cacheEnabled));
 
         // Cache max rows parameter.
-        if (!StringUtils.isBlank(cacheMaxRows)) dataSetDef.setCacheMaxRows(Integer.parseInt(cacheMaxRows));
+        if (!isBlank(cacheMaxRows)) dataSetDef.setCacheMaxRows(Integer.parseInt(cacheMaxRows));
 
         // Cache synced parameter.
-        if (!StringUtils.isBlank(cacheSynced)) dataSetDef.setCacheSynced(Boolean.parseBoolean(cacheSynced));
+        if (!isBlank(cacheSynced)) dataSetDef.setCacheSynced(Boolean.parseBoolean(cacheSynced));
 
         return dataSetDef;
     }
 
-    public DataSetProviderType readProviderType(JSONObject json) throws Exception {
+    public DataSetProviderType readProviderType(JsonObject json) throws Exception {
         String provider = json.getString(PROVIDER);
-        if (StringUtils.isBlank(provider)) {
+        if (isBlank(provider)) {
             throw new IllegalArgumentException("Missing 'provider' property");
         }
         DataSetProviderType type = DataSetProviderType.getByName(provider);
-        if (type == null || dataSetProviderRegistry.getDataSetProvider(type) == null) {
+        if (type == null) {
             throw new IllegalArgumentException("Provider not supported: " + provider);
         }
         return type;
     }
 
-    public DataSetDef readGeneralSettings(DataSetDef def, JSONObject json) throws Exception {
-        String uuid = json.has(UUID) ? json.getString(UUID) : null;
-        String name = json.has(NAME) ? json.getString(NAME) : null;
-        String isPublic = json.has(ISPUBLIC) ? json.getString(ISPUBLIC) : null;
-        String pushEnabled = json.has(PUSH_ENABLED) ? json.getString(PUSH_ENABLED) : null;
-        String pushMaxSize = json.has(PUSH_MAXSIZE) ? json.getString(PUSH_MAXSIZE) : null;
-        String cacheEnabled = json.has(CACHE_ENABLED) ? json.getString(CACHE_ENABLED) : null;
-        String cacheMaxRows = json.has(CACHE_MAXROWS) ? json.getString(CACHE_MAXROWS) : null;
-        String refreshTime  = json.has(REFRESH_TIME) ? json.getString(REFRESH_TIME) : null;
-        String refreshAlways = json.has(REFRESH_ALWAYS) ? json.getString(REFRESH_ALWAYS) : null;
-        String allColumns = json.has(ALL_COLUMNS) ? json.getString(ALL_COLUMNS) : null;
+    public DataSetDef readGeneralSettings(DataSetDef def, JsonObject json) throws Exception {
+        String uuid = json.getString(UUID);
+        String name = json.getString(NAME);
+        String isPublic = json.getString(ISPUBLIC);
+        String pushEnabled = json.getString(PUSH_ENABLED);
+        String pushMaxSize = json.getString(PUSH_MAXSIZE);
+        String cacheEnabled = json.getString(CACHE_ENABLED);
+        String cacheMaxRows = json.getString(CACHE_MAXROWS);
+        String refreshTime  = json.getString(REFRESH_TIME);
+        String refreshAlways = json.getString(REFRESH_ALWAYS);
+        String allColumns = json.getString(ALL_COLUMNS);
 
-        if (!StringUtils.isBlank(uuid)) def.setUUID(uuid);
-        if (!StringUtils.isBlank(name)) def.setName(name);
-        if (!StringUtils.isBlank(isPublic)) def.setPublic(Boolean.parseBoolean(isPublic));
-        if (!StringUtils.isBlank(pushEnabled)) def.setPushEnabled(Boolean.parseBoolean(pushEnabled));
-        if (!StringUtils.isBlank(pushMaxSize)) def.setPushMaxSize(Integer.parseInt(pushMaxSize));
-        if (!StringUtils.isBlank(cacheEnabled)) def.setCacheEnabled(Boolean.parseBoolean(cacheEnabled));
-        if (!StringUtils.isBlank(cacheMaxRows)) def.setCacheMaxRows(Integer.parseInt(cacheMaxRows));
-        if (!StringUtils.isBlank(refreshTime)) def.setRefreshTime(refreshTime);
-        if (!StringUtils.isBlank(refreshAlways)) def.setRefreshAlways(Boolean.parseBoolean(refreshAlways));
-        if (!StringUtils.isBlank(allColumns)) def.setAllColumnsEnabled(Boolean.parseBoolean(allColumns));
+        if (!isBlank(uuid)) def.setUUID(uuid);
+        if (!isBlank(name)) def.setName(name);
+        if (!isBlank(isPublic)) def.setPublic(Boolean.parseBoolean(isPublic));
+        if (!isBlank(pushEnabled)) def.setPushEnabled(Boolean.parseBoolean(pushEnabled));
+        if (!isBlank(pushMaxSize)) def.setPushMaxSize(Integer.parseInt(pushMaxSize));
+        if (!isBlank(cacheEnabled)) def.setCacheEnabled(Boolean.parseBoolean(cacheEnabled));
+        if (!isBlank(cacheMaxRows)) def.setCacheMaxRows(Integer.parseInt(cacheMaxRows));
+        if (!isBlank(refreshTime)) def.setRefreshTime(refreshTime);
+        if (!isBlank(refreshAlways)) def.setRefreshAlways(Boolean.parseBoolean(refreshAlways));
+        if (!isBlank(allColumns)) def.setAllColumnsEnabled(Boolean.parseBoolean(allColumns));
 
         if (json.has(COLUMNS)) {
-            JSONArray array = json.getJSONArray(COLUMNS);
+            JsonArray array = json.getArray(COLUMNS);
             for (int i=0; i<array.length(); i++) {
-                JSONObject column = array.getJSONObject(i);
-                String columnId = column.has(COLUMN_ID) ? column.getString(COLUMN_ID) : null;
-                String columnType = column.has(COLUMN_TYPE) ? column.getString(COLUMN_TYPE) : null;
-                String columnPattern = column.has(COLUMN_PATTERN) ? column.getString(COLUMN_PATTERN) : null;
+                JsonObject column = array.getObject(i);
+                String columnId = column.getString(COLUMN_ID);
+                String columnType = column.getString(COLUMN_TYPE);
+                String columnPattern = column.getString(COLUMN_PATTERN);
 
-                if (StringUtils.isBlank(columnId)) {
+                if (isBlank(columnId)) {
                     throw new IllegalArgumentException("Column id. attribute is mandatory.");
                 }
-                if (StringUtils.isBlank(columnType)) {
+                if (isBlank(columnType)) {
                     throw new IllegalArgumentException("Missing column 'type' attribute: " + columnId);
                 }
 
@@ -224,32 +224,32 @@ public class DataSetDefJSONMarshaller {
 
                 def.addColumn(columnId, type);
 
-                if (!StringUtils.isBlank(columnPattern)) {
+                if (!isBlank(columnPattern)) {
                     def.setPattern(columnId, columnPattern);
                 }
             }
         }
         if (json.has(FILTERS)) {
-            JSONArray array = json.getJSONArray(FILTERS);
-            DataSetFilter dataSetFilter = dataSetLookupJSONMarshaller.fromJsonFilterOps(array);
+            JsonArray array = json.getArray(FILTERS);
+            DataSetFilter dataSetFilter = dataSetLookupJSONMarshaller.parseFilterOperation(array);
             def.setDataSetFilter(dataSetFilter);
         }
         return def;
     }
 
-    public DataSetDef readBeanSettings(BeanDataSetDef def, JSONObject json) throws Exception {
-        String generator = json.has(GENERATOR_CLASS) ? json.getString(GENERATOR_CLASS) : null;
+    public DataSetDef readBeanSettings(BeanDataSetDef def, JsonObject json) throws Exception {
+        String generator = json.getString(GENERATOR_CLASS);
 
-        if (!StringUtils.isBlank(generator)) def.setGeneratorClass(generator);
+        if (!isBlank(generator)) def.setGeneratorClass(generator);
 
         if (json.has(GENERATOR_PARAMS)) {
-            JSONArray array = json.getJSONArray(GENERATOR_PARAMS);
+            JsonArray array = json.getArray(GENERATOR_PARAMS);
             for (int i=0; i<array.length(); i++) {
-                JSONObject param = array.getJSONObject(i);
-                String paramId = param.has(PARAM) ? param.getString(PARAM) : null;
-                String value = param.has(VALUE) ? param.getString(VALUE) : null;
+                JsonObject param = array.getObject(i);
+                String paramId = param.getString(PARAM);
+                String value = param.getString(VALUE);
 
-                if (!StringUtils.isBlank(paramId)) {
+                if (!isBlank(paramId)) {
                     def.getParamaterMap().put(paramId, value);
                 }
             }
@@ -257,46 +257,46 @@ public class DataSetDefJSONMarshaller {
         return def;
     }
 
-    public CSVDataSetDef readCSVSettings(CSVDataSetDef def, JSONObject json) throws Exception {
-        String fileURL = json.has(FILEURL) ? json.getString(FILEURL) : null;
-        String filePath = json.has(FILEPATH) ? json.getString(FILEPATH) : null;
-        String separatorChar = json.has(SEPARATORCHAR) ? json.getString(SEPARATORCHAR) : null;
-        String quoteChar = json.has(QUOTECHAR) ? json.getString(QUOTECHAR) : null;
-        String escapeChar = json.has(ESCAPECHAR) ? json.getString(ESCAPECHAR) : null;
-        String datePattern = json.has(DATEPATTERN) ? json.getString(DATEPATTERN) : null;
-        String numberPattern = json.has(NUMBERPATTERN) ? json.getString(NUMBERPATTERN) : null;
+    public CSVDataSetDef readCSVSettings(CSVDataSetDef def, JsonObject json) throws Exception {
+        String fileURL = json.getString(FILEURL);
+        String filePath = json.getString(FILEPATH);
+        String separatorChar = json.getString(SEPARATORCHAR);
+        String quoteChar = json.getString(QUOTECHAR);
+        String escapeChar = json.getString(ESCAPECHAR);
+        String datePattern = json.getString(DATEPATTERN);
+        String numberPattern = json.getString(NUMBERPATTERN);
 
-        if (!StringUtils.isBlank(fileURL)) def.setFileURL(fileURL);
-        if (!StringUtils.isBlank(filePath)) def.setFilePath(filePath);
-        if (!StringUtils.isBlank(separatorChar)) def.setSeparatorChar(separatorChar.charAt(0));
-        if (!StringUtils.isBlank(quoteChar)) def.setQuoteChar(quoteChar.charAt(0));
-        if (!StringUtils.isBlank(escapeChar)) def.setEscapeChar(escapeChar.charAt(0));
-        if (!StringUtils.isBlank(numberPattern)) def.setNumberPattern(numberPattern);
-        if (!StringUtils.isBlank(datePattern)) def.setDatePattern(datePattern);
-
-        return def;
-    }
-
-    public SQLDataSetDef readSQLSettings(SQLDataSetDef def, JSONObject json) throws Exception {
-        String dataSource = json.has(DATA_SOURCE) ? json.getString(DATA_SOURCE) : null;
-        String dbTable = json.has(DB_TABLE) ? json.getString(DB_TABLE) : null;
-        String dbSchema = json.has(DB_SCHEMA) ? json.getString(DB_SCHEMA) : null;
-        String dbSQL = json.has(DB_SQL) ? json.getString(DB_SQL) : null;
-
-        if (!StringUtils.isBlank(dataSource)) def.setDataSource(dataSource);
-        if (!StringUtils.isBlank(dbSchema)) def.setDbSchema(dbSchema);
-        if (!StringUtils.isBlank(dbTable)) def.setDbTable(dbTable);
-        if (!StringUtils.isBlank(dbSQL)) def.setDbSQL(dbSQL);
+        if (!isBlank(fileURL)) def.setFileURL(fileURL);
+        if (!isBlank(filePath)) def.setFilePath(filePath);
+        if (!isBlank(separatorChar)) def.setSeparatorChar(separatorChar.charAt(0));
+        if (!isBlank(quoteChar)) def.setQuoteChar(quoteChar.charAt(0));
+        if (!isBlank(escapeChar)) def.setEscapeChar(escapeChar.charAt(0));
+        if (!isBlank(numberPattern)) def.setNumberPattern(numberPattern);
+        if (!isBlank(datePattern)) def.setDatePattern(datePattern);
 
         return def;
     }
 
-    public String toJsonString(final DataSetDef dataSetDef) throws JSONException {
-        return toJsonObject( dataSetDef ).toString(1);
+    public SQLDataSetDef readSQLSettings(SQLDataSetDef def, JsonObject json) throws Exception {
+        String dataSource = json.getString(DATA_SOURCE);
+        String dbTable = json.getString(DB_TABLE);
+        String dbSchema = json.getString(DB_SCHEMA);
+        String dbSQL = json.getString(DB_SQL);
+
+        if (!isBlank(dataSource)) def.setDataSource(dataSource);
+        if (!isBlank(dbSchema)) def.setDbSchema(dbSchema);
+        if (!isBlank(dbTable)) def.setDbTable(dbTable);
+        if (!isBlank(dbSQL)) def.setDbSQL(dbSQL);
+
+        return def;
     }
 
-    public JSONObject toJsonObject(final DataSetDef dataSetDef ) throws JSONException {
-        JSONObject json = new JSONObject(  );
+    public String toJsonString(final DataSetDef dataSetDef) throws JsonException {
+        return toJsonObject( dataSetDef ).toString();
+    }
+
+    public JsonObject toJsonObject(final DataSetDef dataSetDef ) throws JsonException {
+        JsonObject json = Json.createObject();
 
         // UUID.
         json.put( UUID, dataSetDef.getUUID());
@@ -337,7 +337,7 @@ public class DataSetDefJSONMarshaller {
         final Collection<DataColumnDef> columns = dataSetDef.getColumns();
         if (columns != null)
         {
-            final JSONArray columnsArray = toJsonObject(columns, dataSetDef);
+            final JsonArray columnsArray = toJsonObject(columns, dataSetDef);
             if (columnsArray != null)
             {
                 json.put(COLUMNS, columnsArray);
@@ -347,41 +347,42 @@ public class DataSetDefJSONMarshaller {
         final DataSetFilter filter = dataSetDef.getDataSetFilter();
         if (filter != null) {
             try {
-                final JSONArray filters = dataSetLookupJSONMarshaller.toJson(filter);
+                final JsonArray filters = dataSetLookupJSONMarshaller.formatColumnFilters(filter.getColumnFilterList());
                 if (filters != null) {
                     json.put(FILTERS, filters);
                 }
             } catch (Exception e) {
-                throw new JSONException(e);
+                throw new JsonException(e);
             }
         }
         
         return json;
     }
-    
-    private JSONArray toJsonObject(final Collection<DataColumnDef> columnList,
-                                   final DataSetDef dataSetDef) throws JSONException {
-        JSONArray result = null;
+
+    protected JsonArray toJsonObject(final Collection<DataColumnDef> columnList,
+                                   final DataSetDef dataSetDef) throws JsonException {
+        JsonArray result = null;
         if (columnList != null && !columnList.isEmpty()) {
-            result = new JSONArray();
+            result = Json.createArray();
+            int idx = 0;
             for (final DataColumnDef column : columnList) {
                 final String id = column.getId();
                 final ColumnType type = column.getColumnType();
-                final JSONObject columnObject = new JSONObject();
+                final JsonObject columnObject = Json.createObject();
                 columnObject.put(COLUMN_ID, id);
                 columnObject.put(COLUMN_TYPE, type.name().toLowerCase());
                 String pattern = dataSetDef.getPattern(id);
                 if (pattern != null && pattern.trim().length() > 0) {
                     columnObject.put(COLUMN_PATTERN, pattern);
                 }
-                result.put(columnObject);
+                result.set(idx++, columnObject);
             }
         }
         
         return result;
     }
 
-    private void toJsonObject(final BeanDataSetDef dataSetDef, final JSONObject json ) throws JSONException {
+    protected void toJsonObject(final BeanDataSetDef dataSetDef, final JsonObject json ) throws JsonException {
 
         // Generator class.
         json.put( GENERATOR_CLASS, dataSetDef.getGeneratorClass());
@@ -389,16 +390,17 @@ public class DataSetDefJSONMarshaller {
         // Generator parameters.
         Map<String, String> parameters = dataSetDef.getParamaterMap();
         if (parameters != null && !parameters.isEmpty()) {
-            final JSONArray array = new JSONArray();
+            final JsonArray array = Json.createArray();
+            int idx = 0;
             for (Map.Entry<String, String> param : parameters.entrySet()) {
-                final JSONObject paramObject = toJSONParameter(param.getKey(), param.getValue());
-                array.put(paramObject);
+                final JsonObject paramObject = toJsonParameter(param.getKey(), param.getValue());
+                array.set(idx++, paramObject);
             }
             json.put( GENERATOR_PARAMS, array);
         }
     }
 
-    private void toJsonObject(final CSVDataSetDef dataSetDef, final JSONObject json ) throws JSONException {
+    protected void toJsonObject(final CSVDataSetDef dataSetDef, final JsonObject json ) throws JsonException {
 
         // File.
         if (dataSetDef.getFilePath() != null) json.put( FILEPATH, dataSetDef.getFilePath());
@@ -424,7 +426,7 @@ public class DataSetDefJSONMarshaller {
 
     }
 
-    private void toJsonObject(final SQLDataSetDef dataSetDef, final JSONObject json ) throws JSONException {
+    protected void toJsonObject(final SQLDataSetDef dataSetDef, final JsonObject json ) throws JsonException {
 
         // Data source.
         json.put( DATA_SOURCE, dataSetDef.getDataSource());
@@ -443,7 +445,7 @@ public class DataSetDefJSONMarshaller {
 
     }
 
-    private void toJsonObject(final ElasticSearchDataSetDef dataSetDef, final JSONObject json ) throws JSONException {
+    protected void toJsonObject(final ElasticSearchDataSetDef dataSetDef, final JsonObject json ) throws JsonException {
 
         // Server URL.
         json.put( SERVER_URL, dataSetDef.getServerURL());
@@ -461,9 +463,9 @@ public class DataSetDefJSONMarshaller {
         json.put( ALL_COLUMNS, dataSetDef.isAllColumnsEnabled());
 
     }
-    
-    private JSONObject toJSONParameter(final String key, final String value) throws JSONException {
-        JSONObject json = new JSONObject(  );
+
+    protected JsonObject toJsonParameter(final String key, final String value) throws JsonException {
+        JsonObject json = Json.createObject();
 
         // Param.
         json.put( PARAM, key);
@@ -472,5 +474,18 @@ public class DataSetDefJSONMarshaller {
         json.put( VALUE, value);
         
         return json;
+    }
+
+    protected boolean isBlank(String str) {
+        int strLen;
+        if (str == null || (strLen = str.length()) == 0) {
+            return true;
+        }
+        for (int i = 0; i < strLen; i++) {
+            if (!Character.isSpace(str.charAt(i))) {
+                return false;
+            }
+        }
+        return true;
     }
 }

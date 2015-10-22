@@ -205,9 +205,10 @@ public class DataSetImpl implements DataSet {
             throw new IllegalArgumentException("The row index " + row + " is out of bounds: " + (l.size()-1));
         }
 
-        if (row < 0 || row == l.size()) l.add(value);
-        else if (insert) l.add(row, value);
-        else l.set(row, value);
+        Object _val = convert(columnObj, value);
+        if (row < 0 || row == l.size()) l.add(_val);
+        else if (insert) l.add(row, _val);
+        else l.set(row, _val);
     }
 
     public DataSet setValuesAt(int row, Object... values) {
@@ -249,6 +250,40 @@ public class DataSetImpl implements DataSet {
             else {
                 _setValueAt(row, i, "", insert);
             }
+        }
+    }
+
+    public Object convert(DataColumn column, Object value) {
+        if (ColumnType.NUMBER.equals(column.getColumnType())) {
+            return convertToDouble(value);
+        }
+        if (ColumnType.DATE.equals(column.getColumnType())) {
+            return convertToDate(value);
+        }
+        return convertToString(value);
+    }
+
+    public String convertToString(Object value) {
+        try {
+            return value == null ? null : (String) value;
+        } catch (ClassCastException e) {
+            return value.toString();
+        }
+    }
+
+    public Double convertToDouble(Object value) {
+        try {
+            return value == null ? null : ((Number) value).doubleValue();
+        } catch (ClassCastException e) {
+            return Double.parseDouble(value.toString());
+        }
+    }
+
+    public Date convertToDate(Object value) {
+        try {
+            return value == null ? null : (Date) value;
+        } catch (ClassCastException e) {
+            throw new IllegalArgumentException("Not a java.util.Date: " + value + " (" + value.getClass().getName() + ")");
         }
     }
 
