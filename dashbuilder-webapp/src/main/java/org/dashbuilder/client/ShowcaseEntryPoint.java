@@ -178,7 +178,7 @@ public class ShowcaseEntryPoint {
 
     // Fade out the "Loading application" pop-up
     private void hideLoadingPopup() {
-        final Element e = RootPanel.get(AppConstants.INSTANCE.loading()).getElement();
+        final Element e = RootPanel.get("loading").getElement();
 
         new Animation() {
 
