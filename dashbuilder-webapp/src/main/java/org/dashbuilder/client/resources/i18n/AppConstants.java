@@ -48,8 +48,6 @@ public interface AppConstants extends Messages {
 
     String notification_dashboard_deleted(String id);
 
-    String loading();
-
     String dashboard_new_displayer();
     String dashboard_delete_dashboard();
     String dashboard_delete_popup_title();
