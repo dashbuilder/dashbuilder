@@ -19,31 +19,38 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.dashbuilder.dataprovider.DataSetProvider;
 import org.dashbuilder.dataprovider.DataSetProviderType;
 import org.dashbuilder.dataprovider.backend.StaticDataSetProvider;
+import org.dashbuilder.dataprovider.backend.elasticsearch.rest.ElasticSearchClient;
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.model.*;
 import org.dashbuilder.dataset.*;
+import org.dashbuilder.dataset.date.DayOfWeek;
+import org.dashbuilder.dataset.date.Month;
 import org.dashbuilder.dataset.def.DataColumnDef;
 import org.dashbuilder.dataset.def.DataSetDef;
 import org.dashbuilder.dataset.def.DataSetDefRegistry;
 import org.dashbuilder.dataset.def.ElasticSearchDataSetDef;
+import org.dashbuilder.dataset.engine.group.IntervalBuilder;
+import org.dashbuilder.dataset.engine.group.IntervalBuilderLocator;
+import org.dashbuilder.dataset.engine.group.IntervalList;
 import org.dashbuilder.dataset.events.DataSetDefModifiedEvent;
 import org.dashbuilder.dataset.events.DataSetDefRemovedEvent;
 import org.dashbuilder.dataset.events.DataSetStaleEvent;
 import org.dashbuilder.dataset.filter.ColumnFilter;
 import org.dashbuilder.dataset.filter.DataSetFilter;
-import org.dashbuilder.dataset.group.DataSetGroup;
-import org.dashbuilder.dataset.group.GroupFunction;
+import org.dashbuilder.dataset.filter.FilterFactory;
+import org.dashbuilder.dataset.group.*;
 import org.dashbuilder.dataset.impl.DataColumnImpl;
-import org.dashbuilder.dataset.impl.DataSetLookupBuilderImpl;
 import org.dashbuilder.dataset.impl.DataSetMetadataImpl;
 import org.dashbuilder.dataset.impl.MemSizeEstimator;
 import org.dashbuilder.dataset.sort.ColumnSort;
 import org.dashbuilder.dataset.sort.DataSetSort;
 import org.slf4j.Logger;
 
+import javax.annotation.PreDestroy;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Named;
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -122,6 +129,9 @@ public class ElasticSearchDataSetProvider implements DataSetProvider {
     protected DataSetDefRegistry dataSetDefRegistry;
 
     @Inject
+    protected IntervalBuilderLocator intervalBuilderLocator;
+
+    @Inject
     protected ElasticSearchClientFactory clientFactory;
 
     @Inject
@@ -130,9 +140,21 @@ public class ElasticSearchDataSetProvider implements DataSetProvider {
     @Inject
     protected ElasticSearchQueryBuilderFactory queryBuilderFactory;
     
+    /** Backend cache map. **/
     protected final Map<String,DataSetMetadata> _metadataMap = new HashMap<String,DataSetMetadata>();
+    
+    /** Singleton clients for each data set definition.. **/
+    protected final Map<String,ElasticSearchClient> _clientsMap = new HashMap<String,ElasticSearchClient>();
 
     public ElasticSearchDataSetProvider() {
+    }
+    
+    @PreDestroy
+    private void destroy() {
+        // Destroy all clients.
+        for (ElasticSearchClient client : _clientsMap.values()) {
+            destroyClient(client);
+        }
     }
 
     public DataSetProviderType getType() {
@@ -173,19 +195,6 @@ public class ElasticSearchDataSetProvider implements DataSetProvider {
         final boolean isTestMode = lookup != null && lookup.testMode();
         DataSetMetadata metadata = (DataSetMetadata) getDataSetMetadata(elDef, isTestMode);
 
-        // Handle default look-ups.
-        final List<DataColumn> ALL_COLUMNS = getAllColumns(metadata);
-        if (lookup == null || lookup.getOperationList().isEmpty()) {
-            DataSetLookupBuilder builder = new DataSetLookupBuilderImpl().dataset(elDef.getUUID());
-            if (ALL_COLUMNS != null) {
-                for (DataColumn column : ALL_COLUMNS) {
-                    builder.column(column.getId());
-                }
-            }
-            lookup = builder.buildLookup();
-            lookup.setTestMode(isTestMode);
-        }
-
         // Add the data set filter specified in the definition, if any.
         DataSetFilter dataSetFilter = elDef.getDataSetFilter();
         if (dataSetFilter != null) {
@@ -206,82 +215,87 @@ public class ElasticSearchDataSetProvider implements DataSetProvider {
 
         // Check group operations. Check that operation source fields exist as data set columns.
         // Calculate the resulting data set columns too and set the collection into the ELS query to perform.
-        List<DataSetGroup> groupOps = lookup.getOperationList(DataSetGroup.class);
-        if (groupOps != null && !groupOps.isEmpty()) {
-            List<DataSetGroup> aggregationOps = new LinkedList<DataSetGroup>();
-            List<DataColumn> columns = new ArrayList<DataColumn>();
-            for (DataSetGroup groupOp : groupOps) {
-                
-                boolean isAggregationOp = false;
-                List<GroupFunction> groupFunctions = groupOp.getGroupFunctions();
-                if (groupFunctions != null && !groupFunctions.isEmpty()) {
-                    boolean existAnyFunction = false;
-                    for (GroupFunction groupFunction : groupFunctions) {
-                        
-                        // If no source column specified, use first available one by default.
-                        String columnId = groupFunction.getSourceId() != null  ? groupFunction.getSourceId() : metadata.getColumnId(0);
-                        DataColumn column = getColumnById(metadata, columnId);
-                        if (column != null) {
-                            DataColumn c = column.cloneInstance();
-                            String cId = groupFunction.getColumnId() != null ? groupFunction.getColumnId() : groupFunction.getSourceId();
-                            c.setId(cId);
-                            c.setGroupFunction(groupFunction);
-                            // If a function is applied, the resulting column type is numeric.
-                            if (groupFunction.getFunction() != null) {
-                                existAnyFunction = true;
-                                c.setColumnType(ColumnType.NUMBER);
-                            }
-                            columns.add(c);
-                            
-                            if (existAnyFunction) {
-                                isAggregationOp = true;
-                            }
-                            
-                        } else {
-                            throw new IllegalArgumentException("Grouping function by a non existing column [" + columnId + "] in dataset ");                                    
-                        }
-                        
+        DataSetGroup _groupOp = null;
+        boolean allColumns = true;
+        int groupIdx = lookup.getFirstGroupOpIndex(0, null, false);
+        if (groupIdx == -1) groupIdx = lookup.getFirstGroupOpIndex(0, null, true);
+        if (groupIdx != -1) _groupOp = lookup.getOperation(groupIdx);
+        
+        // Single group operations to process. The others have to be group with intervals selection, and are not considerent grouped column, just filters.
+        List<DataColumn> columns = new ArrayList<DataColumn>();
+        if (_groupOp != null && !_groupOp.isSelect()) {
+            List<GroupFunction> groupFunctions = _groupOp.getGroupFunctions();
+            boolean exitsFunction = false;
+            if (groupFunctions != null && !groupFunctions.isEmpty()) {
+                for (GroupFunction groupFunction : groupFunctions) {
+                    if (groupFunction.getFunction() != null) {
+                        exitsFunction = true;
                     }
-
-                    // Set the resulting columns into the request instance.
-                    request.setColumns(columns);
+                    // If no source column specified, use first available one by default.
+                    String columnId = groupFunction.getSourceId() != null  ? groupFunction.getSourceId() : metadata.getColumnId(0);
+                    DataColumn column = getColumnById(metadata, columnId);
+                    if (column != null) {
+                        DataColumn c = column.cloneEmpty();
+                        String cId = groupFunction.getColumnId() != null ? groupFunction.getColumnId() : groupFunction.getSourceId();
+                        c.setId(cId);
+                        c.setGroupFunction(groupFunction);
+                        // If a function is applied, the resulting column type is numeric.
+                        if (groupFunction.getFunction() != null) {
+                            c.setColumnType(ColumnType.NUMBER);
+                        }
+                        columns.add(c);
+                    } else {
+                        throw new IllegalArgumentException("Grouping function by a non existing column [" + columnId + "] in dataset ");
+                    }
                 }
-
-                // Group operations with a column group or with any aggregation function as resulting columns, are not considered ELS aggregations to query.
-                if (isAggregationOp) {
-                    aggregationOps.add(groupOp);
-                }
-
             }
 
-            // Query aggregations.
-            if (!aggregationOps.isEmpty()) {
-                request.setAggregations(aggregationOps);
+            if (exitsFunction) {
+                // Use the main group operation as a request aggregation.
+                request.setAggregations(Collections.singletonList(_groupOp));
             }
             
-        } else {
-            request.setColumns(ALL_COLUMNS);
         }
-        
-        
+
+        // Set the resulting columns on the request object.
+        request.setColumns(!columns.isEmpty() ? columns : getAllColumns(metadata));
+
         // Filter operations.
         List<DataSetFilter> filters = lookup.getOperationList(DataSetFilter.class);
         if (filters != null && !filters.isEmpty()) {
-
             // Check columns for the filter operations.
             for (DataSetFilter filerOp  : filters) {
                 List<ColumnFilter> columnFilters = filerOp.getColumnFilterList();
                 if (columnFilters != null && !columnFilters.isEmpty()) {
                     for (ColumnFilter filter: columnFilters) {
-                        if (!existColumn(metadata, filter.getColumnId())) throw new IllegalArgumentException("Filtering by a non existing column [" + filter.getColumnId() + "] in dataset ");
+                        String fcId = filter.getColumnId();
+                        if (fcId != null && !existColumn(metadata, fcId)) throw new IllegalArgumentException("Filtering by a non existing column [" + fcId + "] in dataset ");
                     }
                 }
             }
-
-            // The query is build from a given filters and/or from interval selections. Built it.
-            Query query = queryBuilderFactory.newQueryBuilder().metadata(metadata).groupInterval(groupOps).filter(filters).build();
-            request.setQuery(query);
         }
+
+        // Append the interval selections (drill-down) as data set filter operations.
+        List<DataSetGroup> intervalSelects = lookup.getFirstGroupOpSelections();
+        if (intervalSelects != null && !intervalSelects.isEmpty()) {
+            if (filters == null) {
+                filters = new ArrayList<DataSetFilter>(intervalSelects.size());
+            }
+            DataSetFilter filterOp = new DataSetFilter();
+            filterOp.setDataSetUUID(metadata.getUUID());
+            for (DataSetGroup intervalSelect : intervalSelects) {
+                ColumnFilter drillDownFilter = _getIntervalSelectionFilter(intervalSelect);
+                filterOp.addFilterColumn(drillDownFilter);
+            }
+            filters.add(filterOp);
+        }
+
+        // The query is build from a given filters and/or from interval selections. Built it.
+        Query query = queryBuilderFactory.newQueryBuilder().metadata(metadata)
+                .groupInterval(_groupOp != null ? Arrays.asList(_groupOp) : null)
+                .filter(filters).build();
+        
+        request.setQuery(query);
         
         // Sort operations.
         List<DataSetSort> sortOps = lookup.getOperationList(DataSetSort.class);
@@ -318,7 +332,8 @@ public class ElasticSearchDataSetProvider implements DataSetProvider {
         DataSet dataSet = DataSetFactory.newEmptyDataSet();
         dataSet.setColumns(request.getColumns());
 
-        SearchResponse searchResponse = clientFactory.newClient(elDef).search(elDef, metadata, request);
+        ElasticSearchClient client = getClient(elDef);
+        SearchResponse searchResponse = client.search(elDef, metadata, request);
 
         // If there are no results, return an empty data set.
         if (searchResponse instanceof EmptySearchResponse) return dataSet;
@@ -326,10 +341,112 @@ public class ElasticSearchDataSetProvider implements DataSetProvider {
         // There exist values. Populate the data set.
         fillDataSetValues(elDef, dataSet, searchResponse.getHits());
 
+        // Post process the data set for supporting extended features.
+        postProcess(metadata, dataSet);
+        
         if (trim) {
-            dataSet.setRowCountNonTrimmed((int)searchResponse.getTotalHits());            
+            dataSet.setRowCountNonTrimmed((int)searchResponse.getTotalHits());
         }
         return dataSet;
+    }
+
+    protected ColumnFilter _getIntervalSelectionFilter(DataSetGroup intervalSel) {
+        ColumnFilter filter = null;
+        if (intervalSel != null && intervalSel.isSelect()) {
+            ColumnGroup cg = intervalSel.getColumnGroup();
+            List<Interval> intervalList = intervalSel.getSelectedIntervalList();
+
+            // Get the filter values
+            List<Comparable> names = new ArrayList<Comparable>();
+            Comparable min = null;
+            Comparable max = null;
+            for (Interval interval : intervalList) {
+                names.add(interval.getName());
+                Comparable intervalMin = (Comparable) interval.getMinValue();
+                Comparable intervalMax = (Comparable) interval.getMaxValue();
+
+                if (intervalMin != null) {
+                    if (min == null) min = intervalMin;
+                    else if (min.compareTo(intervalMin) > 0) min = intervalMin;
+                }
+                if (intervalMax != null) {
+                    if (max == null) max = intervalMax;
+                    else if (max.compareTo(intervalMax) > 0) max = intervalMax;
+                }
+            }
+            // Min can't be greater than max.
+            if (min != null && max != null && min.compareTo(max) > 0) {
+                min = max;
+            }
+
+            // Apply the filter
+            if (min != null && max != null) {
+                filter = FilterFactory.between(cg.getSourceId(), min, max);
+            }
+            else if (min != null) {
+                filter = FilterFactory.greaterOrEqualsTo(cg.getSourceId(), min);
+            }
+            else if (max != null) {
+                filter = FilterFactory.lowerOrEqualsTo(cg.getSourceId(), max);
+            }
+            else {
+                filter = FilterFactory.equalsTo(cg.getSourceId(), names);
+            }
+        }
+        return filter;
+    }
+
+    private void postProcess(DataSetMetadata metadata, DataSet dataSet) {
+        for (DataColumn column : dataSet.getColumns()) {
+            ColumnType columnType = column.getColumnType();
+
+            // Group by date column using empty intervals special post process.
+            // Aggregations for achieving empty intervals are hard to perform in ELS queries, 
+            // as expected data set resulting from the query to the server is not large, do it in memory.
+            if (ColumnType.LABEL.equals(columnType)) {
+                ColumnGroup cg = column.getColumnGroup();
+                if (cg != null && cg.areEmptyIntervalsAllowed()) {
+                    ColumnType type = metadata.getColumnType(cg.getSourceId());
+                    if (type != null && ColumnType.DATE.equals(type)){
+                        DateIntervalType intervalType = DateIntervalType.getByName(cg.getIntervalSize());
+                        Month firstMonth = cg.getFirstMonthOfYear();
+                        DayOfWeek firstDayOfWeek = cg.getFirstDayOfWeek();
+                        int startIndex = 0;
+                        int intervalSize = -1;
+                        if (intervalType != null) {
+                            if (firstMonth != null && intervalType.equals(DateIntervalType.MONTH)) {
+                                startIndex = firstMonth.getIndex() - 1;
+                                intervalSize = Month.values().length;
+                            }
+                            if (firstDayOfWeek!= null && intervalType.equals(DateIntervalType.DAY_OF_WEEK)) {
+                                startIndex = firstDayOfWeek.getIndex() - 1;
+                                intervalSize = DayOfWeek.values().length;
+                            }
+                        }
+                        fillEmptyRows(dataSet, column, startIndex, intervalSize);
+                    }
+                }
+            }
+        }
+    }
+    
+    private void fillEmptyRows(DataSet dataSet, DataColumn dateGroupColumn, int startIndex, int intervalSize) {
+        IntervalBuilder intervalBuilder = intervalBuilderLocator.lookup(ColumnType.DATE, dateGroupColumn.getColumnGroup().getStrategy());
+        IntervalList intervalList = intervalBuilder.build(dateGroupColumn);
+        if (intervalList.size() > dataSet.getRowCount()) {
+            List values = dateGroupColumn.getValues();
+            for (int counter = 0, intervalIdx = startIndex; counter < intervalList.size(); counter++, intervalIdx++) {
+                if (intervalSize != -1 && intervalIdx >= intervalSize) {
+                    intervalIdx = 0;
+                }
+                String interval = intervalList.get(intervalIdx).getName();
+                String value = values.isEmpty() || values.size() < ( intervalIdx + 1 ) ? null : (String) values.get(intervalIdx);
+                if (value == null || !value.equals(interval)) {
+                    dataSet.addEmptyRowAt(intervalIdx);
+                    dateGroupColumn.getValues().set(intervalIdx, interval);
+                }
+            }
+        }
     }
 
     protected List<DataColumn> getAllColumns(DataSetMetadata metadata) {
@@ -429,9 +546,9 @@ public class ElasticSearchDataSetProvider implements DataSetProvider {
         long rowCount = getRowCount(elasticSearchDataSetDef);
 
         // Obtain the indexMappings
-        MappingsResponse mappingsResponse = clientFactory.newClient(elasticSearchDataSetDef).getMappings(index);
+        ElasticSearchClient client = getClient(elasticSearchDataSetDef);
+        MappingsResponse mappingsResponse = client.getMappings(index);
         if (mappingsResponse == null || mappingsResponse.getStatus() != RESPONSE_CODE_OK) throw new IllegalArgumentException("Cannot retrieve index mappings for index: [" + index[0] + "]. See previous errors.");
-
 
         // Obtain the columns (ids and types).
         List<String> columnIds = new LinkedList<String>();
@@ -441,14 +558,13 @@ public class ElasticSearchDataSetProvider implements DataSetProvider {
         Map<String, DataColumn> indexMappingsColumnsMap = parseColumnsFromIndexMappings(mappingsResponse.getIndexMappings(), elasticSearchDataSetDef);
         if (indexMappingsColumnsMap == null || indexMappingsColumnsMap.isEmpty()) throw new RuntimeException("There are no column for index [" + index[0] + "] and type [" + ArrayUtils.toString(type) + "].");
         Collection<DataColumn> indexMappingsColumns = indexMappingsColumnsMap.values();
-        
+
         // Get the column definitions from the data set definition, if any.
-        boolean isAllColumns = elasticSearchDataSetDef.isAllColumnsEnabled();
         Collection<DataColumnDef> dataSetColumns = elasticSearchDataSetDef.getColumns();
         if (dataSetColumns != null && !dataSetColumns.isEmpty()) {
             for (final DataColumnDef column : dataSetColumns) {
                 String columnId = column.getId();
-                
+
                 DataColumn indexCol = indexMappingsColumnsMap.get(columnId);
                 if (indexCol == null) {
                     // ERROR - Column definition specified in the data set definition, is no longer present in the current index mappings. Skip it!
@@ -486,9 +602,9 @@ public class ElasticSearchDataSetProvider implements DataSetProvider {
         }
 
         // Check that columns collection is not empty.
-       if (columnIds.isEmpty()) {
-           throw new RuntimeException("Cannot obtain data set metadata columns for data set with UUID [" + def.getUUID() + "]. All columns flag is not set and there are no column definitions in the data set definition.");
-       }
+        if (columnIds.isEmpty()) {
+            throw new RuntimeException("Cannot obtain data set metadata columns for data set with UUID [" + def.getUUID() + "]. All columns flag is not set and there are no column definitions in the data set definition.");
+        }
 
         // Estimated data set size.
         int _rowCount = (int) rowCount;
@@ -496,8 +612,8 @@ public class ElasticSearchDataSetProvider implements DataSetProvider {
 
         // Build the metadata instance.
         DataSetMetadata result = new DataSetMetadataImpl(def, def.getUUID(), _rowCount,
-                        columnIds.size(), columnIds, columnTypes, estimatedSize);
-        
+                columnIds.size(), columnIds, columnTypes, estimatedSize);
+
         // Put into cache.
         if (!isTestMode) {
             final boolean isDefRegistered = def.getUUID() != null && dataSetDefRegistry.getDataSetDef(def.getUUID()) != null;
@@ -507,7 +623,7 @@ public class ElasticSearchDataSetProvider implements DataSetProvider {
         } else if (log.isDebugEnabled()) {
             log.debug("Using look-up in test mode. Skipping adding data set metadata for uuid [" + def.getUUID() + "] into cache.");
         }
-        
+
         return result;
     }
     
@@ -559,81 +675,107 @@ public class ElasticSearchDataSetProvider implements DataSetProvider {
                 for (FieldMappingResponse fieldMapping : properties) {
                     String fieldName = fieldMapping.getName();
                     String format = fieldMapping.getFormat();
-
-                    // Data Column model generation from index mappigns and  data set defintion column patterns definition 
-                    String columnId = getColumnId(indexName, typeName, fieldName);
-                    ColumnType columnType = getDataType(fieldMapping);
                     
-                    // Use columns with supported column types, discard others.
-                    if (columnType != null) {
-
-                        // Handle date and numric field formats.
-                        final boolean isLabelColumn = ColumnType.LABEL.equals(columnType);
-                        final boolean isTextColumn = ColumnType.TEXT.equals(columnType);
-                        final boolean isDateColumn = ColumnType.DATE.equals(columnType);
-                        final boolean isNumberColumn = ColumnType.NUMBER.equals(columnType);
-
-                        String pattern = def.getPattern(columnId);
-                        // Check if the given column has any pattern format specified in the data set definition.
-                        if (!isEmpty(pattern)) {
-
-                            // Exists a pattern format specified in the data set definition. Use it.
-                            if ( log.isDebugEnabled() ) {
-                                log.debug("Using pattern [" + pattern + "] given in the data set definition with uuid [" + def.getUUID() + "] for column [" + columnId + "].");
+                    // Field.
+                    DataColumn _column = parseColumnFromIndexMappings(def, indexName, typeName, fieldName, format, fieldMapping.getDataType(), fieldMapping.getIndexType());
+                    if (_column != null) {
+                        result.put(_column.getId(), _column);
+                    }
+                    
+                    // Multi-fields.
+                    MultiFieldMappingResponse[] multiFieldMappingResponse = fieldMapping.getMultiFields();
+                    if (multiFieldMappingResponse != null && multiFieldMappingResponse.length > 0) {
+                        for (MultiFieldMappingResponse multiField : multiFieldMappingResponse) {
+                            DataColumn _multiFieldColumn = parseColumnFromIndexMappings(def, indexName, typeName, fieldName + "." + multiField.getName(), null, multiField.getDataType(), multiField.getIndexType());
+                            if (_multiFieldColumn != null) {
+                                result.put(_multiFieldColumn.getId(), _multiFieldColumn);
                             }
-
-                        // LABEL or TEXT types.
-                        } else if (isLabelColumn || isTextColumn) {
-                           
-                            FieldMappingResponse.IndexType indexType = fieldMapping.getIndexType();
-                            // If not specified, by defalt index is ANALYZED.
-                            if (indexType == null) indexType = FieldMappingResponse.IndexType.ANALYZED;
-                            def.setPattern(columnId, indexType.name().toLowerCase());
-                            
-                        // NUMERIC - If no pattern for number, use the givens from index mappings response.
-                        } else if (isNumberColumn) {
-                            
-                            // Use the column pattern as the core number type for this field.
-                            FieldMappingResponse.FieldType fieldType = fieldMapping.getDataType();
-                            def.setPattern(columnId, fieldType.name().toLowerCase());
-
-                        // DATE - If no pattern for date use the givens from index mappings response.
-                        } else if (!isEmpty(format)) {
-
-                            // No pattern format specified in the data set definition for this column. Use the one given by the index mappings response and set the pattern into the column's definition for further use.
-                            def.setPattern(columnId, format);
-
-                            if (log.isDebugEnabled()) {
-                                log.debug("Using pattern [" + format + "] given by the index mappings response for column [" + columnId + "].");
-                            }
-
-                        // DATE - If no pattern for date use and neithier in index mappings response, use the default.
-                        }  else {
-
-                            // No pattern format specified neither in the data set definition or in the index mappings response for this column. Using default ones.
-                            String defaultPattern = typeMapper.defaultDateFormat();
-                            def.setPattern(columnId, defaultPattern);
-
-                            if ( log.isDebugEnabled() ) {
-                                log.debug("Using default pattern [" + defaultPattern + "] for column [" + columnId + "].");
-                            }
-
                         }
-
-                        // Add the resulting column given by the index mappings response into the resulting collection.
-                        final DataColumn column = new DataColumnImpl(columnId, columnType);
-                        result.put(columnId, column);
-                        
-                    } else if (log.isDebugEnabled()) {
-                        
-                        log.debug("[" + indexName + "]/[" + typeName + "] - Skipping column retrieved from index mappings response with id [" + columnId + "], as data type for this column is not supported.");
-                        
                     }
                 }
             }
         }
         
         return result;
+    }
+    
+    protected DataColumn parseColumnFromIndexMappings(ElasticSearchDataSetDef def, 
+                                                      String indexName, 
+                                                      String typeName, 
+                                                      String fieldName, 
+                                                      String format, 
+                                                      FieldMappingResponse.FieldType fieldType, 
+                                                      FieldMappingResponse.IndexType indexType) {
+
+        
+        // Data Column model generation from index mappigns and  data set definition column patterns definition 
+        String columnId = getColumnId(indexName, typeName, fieldName);
+        ColumnType columnType = getDataType(fieldType, indexType);
+
+        // Use columns with supported column types, discard others.
+        DataColumn column = null;
+        if (columnType != null) {
+
+            // Handle date and numric field formats.
+            final boolean isLabelColumn = ColumnType.LABEL.equals(columnType);
+            final boolean isTextColumn = ColumnType.TEXT.equals(columnType);
+            final boolean isNumberColumn = ColumnType.NUMBER.equals(columnType);
+
+            String pattern = def.getPattern(columnId);
+            // Check if the given column has any pattern format specified in the data set definition.
+            if (!isEmpty(pattern)) {
+
+                // Exists a pattern format specified in the data set definition. Use it.
+                if ( log.isDebugEnabled() ) {
+                    log.debug("Using pattern [" + pattern + "] given in the data set definition with uuid [" + def.getUUID() + "] for column [" + columnId + "].");
+                }
+
+                // LABEL or TEXT types.
+            } else if (isLabelColumn || isTextColumn) {
+
+                // If not specified, by defalt index is ANALYZED.
+                if (indexType == null) indexType = FieldMappingResponse.IndexType.ANALYZED;
+                def.setPattern(columnId, indexType.name().toLowerCase());
+
+                // NUMERIC - If no pattern for number, use the givens from index mappings response.
+            } else if (isNumberColumn) {
+
+                // Use the column pattern as the core number type for this field.
+                def.setPattern(columnId, fieldType.name().toLowerCase());
+
+                // DATE - If no pattern for date use the givens from index mappings response.
+            } else if (!isEmpty(format)) {
+
+                // No pattern format specified in the data set definition for this column. Use the one given by the index mappings response and set the pattern into the column's definition for further use.
+                def.setPattern(columnId, format);
+
+                if (log.isDebugEnabled()) {
+                    log.debug("Using pattern [" + format + "] given by the index mappings response for column [" + columnId + "].");
+                }
+
+                // DATE - If no pattern for date use and neithier in index mappings response, use the default.
+            }  else {
+
+                // No pattern format specified neither in the data set definition or in the index mappings response for this column. Using default ones.
+                String defaultPattern = typeMapper.defaultDateFormat();
+                def.setPattern(columnId, defaultPattern);
+
+                if ( log.isDebugEnabled() ) {
+                    log.debug("Using default pattern [" + defaultPattern + "] for column [" + columnId + "].");
+                }
+
+            }
+
+            // Add the resulting column given by the index mappings response into the resulting collection.
+            column = new DataColumnImpl(columnId, columnType);
+
+        } else if (log.isDebugEnabled()) {
+
+            log.debug("[" + indexName + "]/[" + typeName + "] - Skipping column retrieved from index mappings response with id [" + columnId + "], as data type for this column is not supported.");
+
+        }
+        
+        return column;
     }
     
     protected String getColumnId(String index, String type, String field) throws IllegalArgumentException {
@@ -646,16 +788,16 @@ public class ElasticSearchDataSetProvider implements DataSetProvider {
     /**
      * <p>Return the dashbuilder data type for a given ElasticSearch field type.</p>
      *
-     * @param fieldMapping The ElasticSearch field type..
+     * @param fieldType The ElasticSearch field type..
+     * @param indexType The index type for the field.
      * @return The dashbuilder data type.
      * @throws IllegalArgumentException If ElasticSearch core data type is not supported.
      */
-    protected ColumnType getDataType(FieldMappingResponse fieldMapping) throws IllegalArgumentException {
-        FieldMappingResponse.FieldType fieldType = fieldMapping.getDataType();
+    protected ColumnType getDataType(FieldMappingResponse.FieldType fieldType, FieldMappingResponse.IndexType indexType) throws IllegalArgumentException {
         if (fieldType == null) return null;
         switch (fieldType) {
             case STRING:
-                if (fieldMapping.getIndexType() != null  && fieldMapping.getIndexType().equals(FieldMappingResponse.IndexType.NOT_ANALYZED)) return ColumnType.LABEL;
+                if (indexType != null  && indexType.equals(FieldMappingResponse.IndexType.NOT_ANALYZED)) return ColumnType.LABEL;
                 // Analyzed index are considered TEXT.
                 return ColumnType.TEXT;
             case FLOAT:
@@ -689,14 +831,41 @@ public class ElasticSearchDataSetProvider implements DataSetProvider {
     protected long getRowCount(ElasticSearchDataSetDef elasticSearchDataSetDef) throws Exception {
         String[] index = fromString(elasticSearchDataSetDef.getIndex());
         String[] type = fromString(elasticSearchDataSetDef.getType());
-        
-        CountResponse response = clientFactory.newClient(elasticSearchDataSetDef).count(index, type);
-        
+
+        ElasticSearchClient client = getClient(elasticSearchDataSetDef);
+        CountResponse response = client.count(index, type);
         if (response != null) return response.getCount();
         return 0;
     }
+    
+    private ElasticSearchClient getClient(ElasticSearchDataSetDef def) {
+        ElasticSearchClient client = _clientsMap.get(def.getUUID());
+        if (client == null) {
+            client = clientFactory.newClient(def);
+            _clientsMap.put(def.getUUID(), client);
+        }
+        return client;
+    }
 
-    // Listen to changes on the data set definition registry
+    private ElasticSearchClient destroyClient(String uuid) {
+        ElasticSearchClient client = _clientsMap.get(uuid);
+        if (client != null) {
+            _clientsMap.remove(uuid);
+            destroyClient(client);
+        }
+        return client;
+    }
+
+    private ElasticSearchClient destroyClient(ElasticSearchClient client) {
+        try {
+            client.close();
+        } catch (IOException e) {
+            log.error("Error closing elastic search data provider client.", e);
+        }
+        return client;
+    }
+
+        // Listen to changes on the data set definition registry
 
     private void onDataSetStaleEvent(@Observes DataSetStaleEvent event) {
         DataSetDef def = event.getDataSetDef();
@@ -721,6 +890,7 @@ public class ElasticSearchDataSetProvider implements DataSetProvider {
     
     private void remove(final String uuid) {
         _metadataMap.remove(uuid);
+        destroyClient(uuid);
         staticDataSetProvider.removeDataSet(uuid);
     }
 

@@ -34,7 +34,8 @@ public class DateIntervalPattern {
         if (DateIntervalType.HOUR.equals(type)) {
             return HOUR;
         }
-        if (DateIntervalType.DAY.equals(type) || DateIntervalType.WEEK.equals(type)) {
+        if (DateIntervalType.DAY.equals(type) || DateIntervalType.DAY_OF_WEEK.equals(type) 
+                || DateIntervalType.WEEK.equals(type)) {
             return DAY;
         }
         if (DateIntervalType.MONTH.equals(type) || DateIntervalType.QUARTER.equals(type)) {

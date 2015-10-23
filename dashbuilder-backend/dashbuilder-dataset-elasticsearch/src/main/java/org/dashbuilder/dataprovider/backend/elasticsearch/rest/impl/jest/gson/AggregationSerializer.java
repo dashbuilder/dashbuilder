@@ -13,6 +13,7 @@ import org.dashbuilder.dataset.DataSetMetadata;
 import org.dashbuilder.dataset.backend.BackendIntervalBuilderDynamicDate;
 import org.dashbuilder.dataset.date.DayOfWeek;
 import org.dashbuilder.dataset.date.Month;
+import org.dashbuilder.dataset.def.ElasticSearchDataSetDef;
 import org.dashbuilder.dataset.group.*;
 
 import java.lang.reflect.Type;
@@ -44,17 +45,14 @@ public class AggregationSerializer extends AbstractAdapter<AggregationSerializer
     protected static final String AGG_DATE_HISTORGRAM = "date_histogram";
 
     protected BackendIntervalBuilderDynamicDate intervalBuilder;
-    protected ElasticSearchClient anotherClient;
 
-    public AggregationSerializer(ElasticSearchJestClient client, DataSetMetadata metadata, List<DataColumn> columns, ElasticSearchJestClient anotherClient) {
+    public AggregationSerializer(ElasticSearchJestClient client, DataSetMetadata metadata, List<DataColumn> columns) {
         super(client, metadata, columns);
-        this.anotherClient = anotherClient;
         intervalBuilder = new BackendIntervalBuilderDynamicDate();
     }
 
-    public AggregationSerializer(ElasticSearchJestClient client, DataSetMetadata metadata, List<DataColumn> columns, SearchRequest request, ElasticSearchJestClient anotherClient) {
+    public AggregationSerializer(ElasticSearchJestClient client, DataSetMetadata metadata, List<DataColumn> columns, SearchRequest request) {
         super(client, metadata, columns, request);
-        this.anotherClient = anotherClient;
         intervalBuilder = new BackendIntervalBuilderDynamicDate();
     }
 
@@ -88,9 +86,8 @@ public class AggregationSerializer extends AbstractAdapter<AggregationSerializer
             // Check that all column pickups are also column groups.
             if (!columnPickUps.isEmpty()) {
                 for (GroupFunction groupFunction : columnPickUps) {
-                    if (groupFunction.getFunction() == null) {
+                    if (groupFunction.getFunction() == null && sourceId.equals(groupFunction.getSourceId())) {
                         columnId = groupFunction.getColumnId();
-                        if (!sourceId.equals(groupFunction.getSourceId())) throw new RuntimeException("Grouping by this source property [" + sourceId + "] not possible.");
                         if (!existColumnInMetadataDef(sourceId)) throw new RuntimeException("Aggregation by column [" + sourceId + "] failed. No column with the given id.");
                     }
                 }
@@ -182,11 +179,11 @@ public class AggregationSerializer extends AbstractAdapter<AggregationSerializer
                 column.setColumnGroup(new ColumnGroup(sourceId, resultingColumnId, columnGroup.getStrategy(), columnGroup.getMaxIntervals(), columnGroup.getIntervalSize()));
             }
         } else if (ColumnType.DATE.equals(columnType)) {
-            // Translate into a DATE HISTOGRAM aggregation.
             DateIntervalType dateIntervalType = null;
-
+            
             // Fixed grouping -> use term field aggregation with a date format script.
             if (GroupStrategy.FIXED.equals(columnGroup.getStrategy())) {
+                String dateColumnPattern = getDefinition().getPattern(sourceId);
 
                 if (intervalSize != null) {
                     dateIntervalType = DateIntervalType.valueOf(intervalSize);
@@ -205,6 +202,7 @@ public class AggregationSerializer extends AbstractAdapter<AggregationSerializer
                 else orderObject.addProperty("_sortOrder", AGG_ORDER_ASC);
                 subObject.add(AGG_ORDER, orderObject);
                 subObject.addProperty(AGG_SIZE, 0);
+                subObject.addProperty(AGG_FORMAT, dateColumnPattern);
                 subObject.addProperty(AGG_MIN_DOC_COUNT, minDocCount);
                 JsonObject result = new JsonObject();
                 result.add(AGG_TERMS, subObject);
@@ -230,6 +228,7 @@ public class AggregationSerializer extends AbstractAdapter<AggregationSerializer
                 // If interval size is not specified by the lookup group operation, calculate the current date limits for index document's date field and the interval size that fits..
                 } else {
                     try {
+                        ElasticSearchClient anotherClient = client.getAnotherClient((ElasticSearchDataSetDef) metadata.getDefinition());
                         Date[] limits = client.getUtils().calculateDateLimits(anotherClient, metadata, columnGroup.getSourceId(), this.request != null ? this.request.getQuery() : null);
                         if (limits != null) {
                             dateIntervalType = intervalBuilder.calculateIntervalSize(limits[0], limits[1], columnGroup);
@@ -240,57 +239,16 @@ public class AggregationSerializer extends AbstractAdapter<AggregationSerializer
                 }
                 
                 if (dateIntervalType == null) {
-                    throw new RuntimeException("Column [" + columnGroup.getColumnId() + "] is type Date and grouped using a dynamic strategy, but the date interval types cannot be calculated from index documents' data and it is not specified. Please specify it.");
+                    // Not limits found. No matches. No matter the interval type used.
+                    dateIntervalType = DateIntervalType.MILLISECOND;
                 }
 
                 String interval = ElasticSearchJestClient.getInterval(dateIntervalType);
-                String returnFormat = DateIntervalPattern.DAY;
-                switch (dateIntervalType) {
-                    case MILLISECOND:
-                        break;
-                    case HUNDRETH:
-                        break;
-                    case TENTH:
-                        break;
-                    case SECOND:
-                        returnFormat = DateIntervalPattern.SECOND;
-                        break;
-                    case MINUTE:
-                        returnFormat = DateIntervalPattern.MINUTE;
-                        break;
-                    case HOUR:
-                        returnFormat = DateIntervalPattern.HOUR;
-                        break;
-                    case DAY:
-                        returnFormat = DateIntervalPattern.DAY;
-                        break;
-                    case DAY_OF_WEEK:
-                        returnFormat = DateIntervalPattern.DAY;
-                        break;
-                    case WEEK:
-                        break;
-                    case MONTH:
-                        returnFormat = DateIntervalPattern.MONTH;
-                        break;
-                    case QUARTER:
-                        break;
-                    case YEAR:
-                        returnFormat = DateIntervalPattern.YEAR;
-                        break;
-                    case DECADE:
-                        break;
-                    case CENTURY:
-                        break;
-                    case MILLENIUM:
-                        break;
-                    default:
-                        throw new RuntimeException("No interval mapping for date interval type [" + dateIntervalType.name() + "].");
-                }
-
+                String intervalPattern = DateIntervalPattern.getPattern(dateIntervalType);
                 JsonObject subObject = new JsonObject();
                 subObject.addProperty(AGG_FIELD, sourceId);
                 subObject.addProperty(AGG_INTERVAL, interval);
-                subObject.addProperty(AGG_FORMAT, returnFormat);
+                subObject.addProperty(AGG_FORMAT, intervalPattern);
                 JsonObject orderObject = new JsonObject();
                 orderObject.addProperty(AGG_KEY, order);
                 subObject.add(AGG_ORDER, orderObject);
@@ -306,7 +264,11 @@ public class AggregationSerializer extends AbstractAdapter<AggregationSerializer
                 DataColumn column = getColumn(resultingColumnId);
                 column.setColumnType(ColumnType.LABEL);
                 column.setIntervalType(dateIntervalType.name());
-                column.setColumnGroup(new ColumnGroup(sourceId, resultingColumnId, columnGroup.getStrategy(), columnGroup.getMaxIntervals(), columnGroup.getIntervalSize()));
+                ColumnGroup cg = new ColumnGroup(sourceId, resultingColumnId, columnGroup.getStrategy(), columnGroup.getMaxIntervals(), columnGroup.getIntervalSize());
+                cg.setEmptyIntervalsAllowed(areEmptyIntervalsAllowed);
+                cg.setFirstMonthOfYear(columnGroup.getFirstMonthOfYear());
+                cg.setFirstDayOfWeek(columnGroup.getFirstDayOfWeek());
+                column.setColumnGroup(cg);
             }
         } else {
             throw new RuntimeException("No translation supported for column group with sourceId [" + sourceId + "] and group strategy [" + groupStrategy.name() + "].");

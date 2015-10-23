@@ -15,10 +15,7 @@
  */
 package org.dashbuilder.dataprovider.backend.elasticsearch;
 
-import org.dashbuilder.dataset.ColumnType;
-import org.dashbuilder.dataset.DataColumn;
-import org.dashbuilder.dataset.DataSet;
-import org.dashbuilder.dataset.DataSetFactory;
+import org.dashbuilder.dataset.*;
 import org.dashbuilder.dataset.sort.SortOrder;
 import org.junit.Assert;
 import org.junit.Before;
@@ -95,12 +92,12 @@ public class ElasticSearchDataSetCustomColumnsTest extends ElasticSearchDataSetT
         Assert.assertTrue(result.getColumns().size() == 6);
 
         // Columns id & type assertion.
-        assertColumnIdAndType(result, EL_EXAMPLE_COLUMN_AMOUNT, ColumnType.NUMBER);
-        assertColumnIdAndType(result, EL_EXAMPLE_COLUMN_CITY, ColumnType.LABEL);
-        assertColumnIdAndType(result, EL_EXAMPLE_COLUMN_DATE, ColumnType.DATE);
-        assertColumnIdAndType(result, EL_EXAMPLE_COLUMN_DEPT, ColumnType.LABEL);
-        assertColumnIdAndType(result, EL_EXAMPLE_COLUMN_EMPLOYEE, ColumnType.TEXT);
-        assertColumnIdAndType(result, EL_EXAMPLE_COLUMN_ID, ColumnType.NUMBER);
+        assertColumnIdAndType(result, ExpenseReportsData.COLUMN_AMOUNT, ColumnType.NUMBER);
+        assertColumnIdAndType(result, ExpenseReportsData.COLUMN_CITY, ColumnType.LABEL);
+        assertColumnIdAndType(result, ExpenseReportsData.COLUMN_DATE, ColumnType.DATE);
+        assertColumnIdAndType(result, ExpenseReportsData.COLUMN_DEPARTMENT, ColumnType.LABEL);
+        assertColumnIdAndType(result, ExpenseReportsData.COLUMN_EMPLOYEE, ColumnType.TEXT);
+        assertColumnIdAndType(result, ExpenseReportsData.COLUMN_ID, ColumnType.NUMBER);
     }
     
     /**
@@ -111,7 +108,7 @@ public class ElasticSearchDataSetCustomColumnsTest extends ElasticSearchDataSetT
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                         .dataset(EL_DATASET_CUSTOM_COLUMNS_UUID)
-                        .sort(EL_EXAMPLE_COLUMN_ID, SortOrder.ASCENDING)
+                        .sort(ExpenseReportsData.COLUMN_ID, SortOrder.ASCENDING)
                         .buildLookup());
 
         // Columns size assertion.
@@ -119,12 +116,12 @@ public class ElasticSearchDataSetCustomColumnsTest extends ElasticSearchDataSetT
         Assert.assertTrue(result.getColumns().size() == 6);
 
         // Columns id & type assertion.
-        assertColumnIdAndType(result, EL_EXAMPLE_COLUMN_AMOUNT, ColumnType.NUMBER);
-        assertColumnIdAndType(result, EL_EXAMPLE_COLUMN_CITY, ColumnType.TEXT);
-        assertColumnIdAndType(result, EL_EXAMPLE_COLUMN_DATE, ColumnType.DATE);
-        assertColumnIdAndType(result, EL_EXAMPLE_COLUMN_DEPT, ColumnType.LABEL);
-        assertColumnIdAndType(result, EL_EXAMPLE_COLUMN_EMPLOYEE, ColumnType.TEXT);
-        assertColumnIdAndType(result, EL_EXAMPLE_COLUMN_ID, ColumnType.NUMBER);
+        assertColumnIdAndType(result, ExpenseReportsData.COLUMN_AMOUNT, ColumnType.NUMBER);
+        assertColumnIdAndType(result, ExpenseReportsData.COLUMN_CITY, ColumnType.TEXT);
+        assertColumnIdAndType(result, ExpenseReportsData.COLUMN_DATE, ColumnType.DATE);
+        assertColumnIdAndType(result, ExpenseReportsData.COLUMN_DEPARTMENT, ColumnType.LABEL);
+        assertColumnIdAndType(result, ExpenseReportsData.COLUMN_EMPLOYEE, ColumnType.TEXT);
+        assertColumnIdAndType(result, ExpenseReportsData.COLUMN_ID, ColumnType.NUMBER);
     }
 
     /**
@@ -135,7 +132,7 @@ public class ElasticSearchDataSetCustomColumnsTest extends ElasticSearchDataSetT
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                         .dataset(EL_DATASET_CUSTOM_COLUMNS2_UUID)
-                        .sort(EL_EXAMPLE_COLUMN_ID, SortOrder.ASCENDING)
+                        .sort(ExpenseReportsData.COLUMN_ID, SortOrder.ASCENDING)
                         .buildLookup());
 
         // Columns size assertion.
@@ -143,10 +140,10 @@ public class ElasticSearchDataSetCustomColumnsTest extends ElasticSearchDataSetT
         Assert.assertTrue(result.getColumns().size() == 4);
 
         // Columns id & type assertion.
-        assertColumnIdAndType(result, EL_EXAMPLE_COLUMN_ID, ColumnType.NUMBER);
-        assertColumnIdAndType(result, EL_EXAMPLE_COLUMN_EMPLOYEE, ColumnType.TEXT);
-        assertColumnIdAndType(result, EL_EXAMPLE_COLUMN_CITY, ColumnType.TEXT);
-        assertColumnIdAndType(result, EL_EXAMPLE_COLUMN_AMOUNT, ColumnType.NUMBER);
+        assertColumnIdAndType(result, ExpenseReportsData.COLUMN_ID, ColumnType.NUMBER);
+        assertColumnIdAndType(result, ExpenseReportsData.COLUMN_EMPLOYEE, ColumnType.TEXT);
+        assertColumnIdAndType(result, ExpenseReportsData.COLUMN_CITY, ColumnType.TEXT);
+        assertColumnIdAndType(result, ExpenseReportsData.COLUMN_AMOUNT, ColumnType.NUMBER);
     }
 
     private void assertColumnIdAndType(DataSet result, String columnId, ColumnType columnType) {
@@ -175,7 +172,7 @@ public class ElasticSearchDataSetCustomColumnsTest extends ElasticSearchDataSetT
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                         .dataset(EL_DATASET_CUSTOM_COLUMNS2_UUID)
-                        .sort(EL_EXAMPLE_COLUMN_DEPT, SortOrder.DESCENDING)
+                        .sort(ExpenseReportsData.COLUMN_DEPARTMENT, SortOrder.DESCENDING)
                         .buildLookup());
     }
 
@@ -190,7 +187,7 @@ public class ElasticSearchDataSetCustomColumnsTest extends ElasticSearchDataSetT
         dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                         .dataset(EL_DATASET_BAD_COLUMNS_UUID)
-                        .sort(EL_EXAMPLE_COLUMN_ID, SortOrder.ASCENDING)
+                        .sort(ExpenseReportsData.COLUMN_ID, SortOrder.ASCENDING)
                         .buildLookup());
     }
 }

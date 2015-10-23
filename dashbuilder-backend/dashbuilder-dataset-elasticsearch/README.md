@@ -127,8 +127,11 @@ By default, when you create an Elastic Search data set and perform any data look
 * String fields are considered LABEL or TEXT column types in Dashbuilder, depending if the field is analyzed or not analyzed.              
 * String fields that are analyzed are considered TEXT column types in Dashbuilder.               
 * String fields that are not analyzed are considered LABEL column types in Dashbuilder.               
-* NOTE: An analyzed index field in the ELS instance cannot be never used as <code>LABEL</code> column type for Dashbuilder.       
-* NOTE: Case sensitiveness in String fields is determined by the field analyzer used in your mappings. For more information read the section *Elastic Search Query builder*.                     
+* NOTE: An analyzed index field in the ELS instance cannot be never used as <code>LABEL</code> column type for Dashbuilder. 
+Why? Dashbuilder is not a text indexing engine neither a client. The LABEL column type is used internally for data set indexing and 
+grouping operations, and the values for this column type are considered to be not analyzed in order to be consisent with other data providers and the Data Set API. 
+If your index field have to be analyzed due to any external constraints, and you need it as a LABEL column type, you can do some workarounds such as using multi fields and generating different columns, for example, to achieve the use of different analyzers for same document type's field.            
+* NOTE: Case sensitiveness in String fields is determined by the field analyzer used in your mappings. For more information read the section *Elastic Search Query builder* and consider the use of multi fields for applying different analyzers on same field.                     
 
 **Numeric fields**                         
 
@@ -142,7 +145,60 @@ By default, when you create an Elastic Search data set and perform any data look
 * Dashbuilder determines the format for the date field by querying the mappings for your index, so you don't have to specify any pattern for the marshalling process.                 
 * If the index mapping response do not contain any format information for the date field, it uses the default format as Elastic Search, the the [ISO 8601](http://en.wikipedia.org/wiki/ISO_8601).                     
 * NOTE: You can use multiple formats for a given date field in Elastic Search (eg: <code>yyyy/MM/dd HH:mm:ss||yyyy/MM/dd</code>), but this feature is NOT supported in Dashbuilder.                   
-* NOTE: In order to perform data set look-ups using FIXED date interval types, *groovy dynamic scripting* must be enabled in your ElasticSearch server. For more information go [here](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/modules-scripting.html#_enabling_dynamic_scripting).              
+* **IMPORTANT NOTE**: In order to perform data set look-ups using FIXED date interval types, *groovy dynamic scripting* must be enabled in your ElasticSearch server. For more information go [here](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/modules-scripting.html#_enabling_dynamic_scripting).              
+
+**Multi fields support**
+
+The use of multi fields in Elastic Search allows several goals, such as using different analyzers for a single field, or different index types for it, etc. Fore more information read the documentation [here](https://www.elastic.co/guide/en/elasticsearch/reference/current/mapping-core-types.html#_multi_fields_3).                  
+
+Dashbuilder supports the use of multi fields in any index. Each multi field is considered a data set column using the same naming convention as Elastic Search does:     
+
+    # Use the dot symbol as the multi field separator.
+    <main_field>.<multi_field>
+
+If the multi field does not specify the data type or the index type, those values are inherited from the main field.                
+ 
+*Example*                          
+
+* Consider the following index mappings:              
+
+    "field1" : {
+        "type": "string", 
+        "index": "analyzed" 
+    },
+    "field2" : {
+        "type": "string", 
+        "index": "analyzed" ,
+        "fields": {
+            "raw": {
+                "type": "string",
+                "index": "not_analyzed",
+                "ignore_above": 256
+            }
+        }
+    }
+
+* The resulting data set columns are:               
+
+<table>
+    <tr>
+        <th>Column Id</th>
+        <th>Column type</th>
+    </tr>
+    <tr>
+        <td>field1</td>
+        <td>TEXT</td>
+    </tr>
+    <tr>
+        <td>field2</td>
+        <td>TEXT</td>
+    </tr>
+    <tr>
+        <td>field2.raw</td>
+        <td>LABEL</td>
+    </tr>
+</table>
+
 
 How Elastic Search Data Set Provider works
 ------------------------------------------

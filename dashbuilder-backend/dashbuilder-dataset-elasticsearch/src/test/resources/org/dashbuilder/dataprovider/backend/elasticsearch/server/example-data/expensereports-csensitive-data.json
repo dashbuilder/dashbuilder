@@ -1,100 +1,100 @@
 {"index":{"_index":"expensereports-sensitive","_type":"expense","_id":1}}
-{"id":1, "city": "Barcelona", "department": "Engineering", "employee": "Roxie Foraker" ,"date": "12-11-2012" , "amount":120.35}
+{"EXPENSES_ID":1, "CITY": "Barcelona", "DEPARTMENT": "Engineering", "EMPLOYEE": "Roxie Foraker" ,"CREATION_DATE": "12-11-2012" , "AMOUNT":120.35}
 {"index":{"_index":"expensereports-sensitive","_type":"expense","_id":2}}
-{"id":2, "city": "Barcelona", "department": "Engineering", "employee": "Roxie Foraker" ,"date": "12-01-2012" , "amount":1100.1}
+{"EXPENSES_ID":2, "CITY": "Barcelona", "DEPARTMENT": "Engineering", "EMPLOYEE": "Roxie Foraker" ,"CREATION_DATE": "12-01-2012" , "AMOUNT":1100.1}
 {"index":{"_index":"expensereports-sensitive","_type":"expense","_id":3}}
-{"id":3, "city": "Barcelona", "department": "Engineering", "employee": "Roxie Foraker" ,"date": "11-01-2012" , "amount":900.1}
+{"EXPENSES_ID":3, "CITY": "Barcelona", "DEPARTMENT": "Engineering", "EMPLOYEE": "Roxie Foraker" ,"CREATION_DATE": "11-01-2012" , "AMOUNT":900.1}
 {"index":{"_index":"expensereports-sensitive","_type":"expense","_id":4}}
-{"id":4, "city": "Barcelona", "department": "Services", "employee": "Jamie Gilbeau" ,"date": "10-12-2012" , "amount":340.34}
+{"EXPENSES_ID":4, "CITY": "Barcelona", "DEPARTMENT": "Services", "EMPLOYEE": "Jamie Gilbeau" ,"CREATION_DATE": "10-12-2012" , "AMOUNT":340.34}
 {"index":{"_index":"expensereports-sensitive","_type":"expense","_id":5}}
-{"id":5, "city": "Barcelona", "department": "Services", "employee": "Jamie Gilbeau" ,"date": "09-15-2012" , "amount":300}
+{"EXPENSES_ID":5, "CITY": "Barcelona", "DEPARTMENT": "Services", "EMPLOYEE": "Jamie Gilbeau" ,"CREATION_DATE": "09-15-2012" , "AMOUNT":300}
 {"index":{"_index":"expensereports-sensitive","_type":"expense","_id":6}}
-{"id":6, "city": "Barcelona", "department": "Services", "employee": "Jamie Gilbeau" ,"date": "08-17-2012" , "amount":152.25}
+{"EXPENSES_ID":6, "CITY": "Barcelona", "DEPARTMENT": "Services", "EMPLOYEE": "Jamie Gilbeau" ,"CREATION_DATE": "08-17-2012" , "AMOUNT":152.25}
 {"index":{"_index":"expensereports-sensitive","_type":"expense","_id":7}}
-{"id":7, "city": "Madrid", "department": "Services", "employee": "Roxie Foraker" ,"date": "07-01-2012" , "amount":800.8}
+{"EXPENSES_ID":7, "CITY": "Madrid", "DEPARTMENT": "Services", "EMPLOYEE": "Roxie Foraker" ,"CREATION_DATE": "07-01-2012" , "AMOUNT":800.8}
 {"index":{"_index":"expensereports-sensitive","_type":"expense","_id":8}}
-{"id":8, "city": "Madrid", "department": "Services", "employee": "Roxie Foraker" ,"date": "06-01-2012" , "amount":911.11}
+{"EXPENSES_ID":8, "CITY": "Madrid", "DEPARTMENT": "Services", "EMPLOYEE": "Roxie Foraker" ,"CREATION_DATE": "06-01-2012" , "AMOUNT":911.11}
 {"index":{"_index":"expensereports-sensitive","_type":"expense","_id":9}}
-{"id":9, "city": "Madrid", "department": "Sales", "employee": "Nita Marling" ,"date": "05-11-2012" , "amount":75.75}
+{"EXPENSES_ID":9, "CITY": "Madrid", "DEPARTMENT": "Sales", "EMPLOYEE": "Nita Marling" ,"CREATION_DATE": "05-11-2012" , "AMOUNT":75.75}
 {"index":{"_index":"expensereports-sensitive","_type":"expense","_id":10}}
-{"id":10, "city": "Madrid", "department": "Sales", "employee": "Nita Marling" ,"date": "03-11-2012" , "amount":100}
+{"EXPENSES_ID":10, "CITY": "Madrid", "DEPARTMENT": "Sales", "EMPLOYEE": "Nita Marling" ,"CREATION_DATE": "03-11-2012" , "AMOUNT":100}
 {"index":{"_index":"expensereports-sensitive","_type":"expense","_id":11}}
-{"id":11, "city": "Madrid", "department": "Sales", "employee": "Nita Marling" ,"date": "03-16-2012" , "amount":220.8}
+{"EXPENSES_ID":11, "CITY": "Madrid", "DEPARTMENT": "Sales", "EMPLOYEE": "Nita Marling" ,"CREATION_DATE": "03-16-2012" , "AMOUNT":220.8}
 {"index":{"_index":"expensereports-sensitive","_type":"expense","_id":12}}
-{"id":12, "city": "Madrid", "department": "Sales", "employee": "Nita Marling" ,"date": "03-02-2012" , "amount":344.9}
+{"EXPENSES_ID":12, "CITY": "Madrid", "DEPARTMENT": "Sales", "EMPLOYEE": "Nita Marling" ,"CREATION_DATE": "03-02-2012" , "AMOUNT":344.9}
 {"index":{"_index":"expensereports-sensitive","_type":"expense","_id":13}}
-{"id":13, "city": "Brno", "department": "Support", "employee": "Darryl Innes" ,"date": "02-09-2012" , "amount":567.89}
+{"EXPENSES_ID":13, "CITY": "Brno", "DEPARTMENT": "Support", "EMPLOYEE": "Darryl Innes" ,"CREATION_DATE": "02-09-2012" , "AMOUNT":567.89}
 {"index":{"_index":"expensereports-sensitive","_type":"expense","_id":14}}
-{"id":14, "city": "Brno", "department": "Support", "employee": "Darryl Innes" ,"date": "01-13-2012" , "amount":400.4}
+{"EXPENSES_ID":14, "CITY": "Brno", "DEPARTMENT": "Support", "EMPLOYEE": "Darryl Innes" ,"CREATION_DATE": "01-13-2012" , "AMOUNT":400.4}
 {"index":{"_index":"expensereports-sensitive","_type":"expense","_id":15}}
-{"id":15, "city": "Brno", "department": "Support", "employee": "Darryl Innes" ,"date": "01-11-2012" , "amount":1001.9}
+{"EXPENSES_ID":15, "CITY": "Brno", "DEPARTMENT": "Support", "EMPLOYEE": "Darryl Innes" ,"CREATION_DATE": "01-11-2012" , "AMOUNT":1001.9}
 {"index":{"_index":"expensereports-sensitive","_type":"expense","_id":16}}
-{"id":16, "city": "Brno", "department": "Engineering", "employee": "Julio Burdge" ,"date": "11-02-2011" , "amount":200.2}
+{"EXPENSES_ID":16, "CITY": "Brno", "DEPARTMENT": "Engineering", "EMPLOYEE": "Julio Burdge" ,"CREATION_DATE": "11-02-2011" , "AMOUNT":200.2}
 {"index":{"_index":"expensereports-sensitive","_type":"expense","_id":17}}
-{"id":17, "city": "Brno", "department": "Engineering", "employee": "Julio Burdge" ,"date": "09-01-2011" , "amount":159.01}
+{"EXPENSES_ID":17, "CITY": "Brno", "DEPARTMENT": "Engineering", "EMPLOYEE": "Julio Burdge" ,"CREATION_DATE": "09-01-2011" , "AMOUNT":159.01}
 {"index":{"_index":"expensereports-sensitive","_type":"expense","_id":18}}
-{"id":18, "city": "Brno", "department": "Engineering", "employee": "Julio Burdge" ,"date": "08-22-2011" , "amount":300}
+{"EXPENSES_ID":18, "CITY": "Brno", "DEPARTMENT": "Engineering", "EMPLOYEE": "Julio Burdge" ,"CREATION_DATE": "08-22-2011" , "AMOUNT":300}
 {"index":{"_index":"expensereports-sensitive","_type":"expense","_id":19}}
-{"id":19, "city": "Brno", "department": "Engineering", "employee": "Julio Burdge" ,"date": "07-23-2011" , "amount":800.24}
+{"EXPENSES_ID":19, "CITY": "Brno", "DEPARTMENT": "Engineering", "EMPLOYEE": "Julio Burdge" ,"CREATION_DATE": "07-23-2011" , "AMOUNT":800.24}
 {"index":{"_index":"expensereports-sensitive","_type":"expense","_id":20}}
-{"id":20, "city": "Brno", "department": "Sales", "employee": "Neva Hunger" ,"date": "06-11-2011" , "amount":995.3}
+{"EXPENSES_ID":20, "CITY": "Brno", "DEPARTMENT": "Sales", "EMPLOYEE": "Neva Hunger" ,"CREATION_DATE": "06-11-2011" , "AMOUNT":995.3}
 {"index":{"_index":"expensereports-sensitive","_type":"expense","_id":21}}
-{"id":21, "city": "Brno", "department": "Sales", "employee": "Neva Hunger" ,"date": "06-11-2011" , "amount":234.3}
+{"EXPENSES_ID":21, "CITY": "Brno", "DEPARTMENT": "Sales", "EMPLOYEE": "Neva Hunger" ,"CREATION_DATE": "06-11-2011" , "AMOUNT":234.3}
 {"index":{"_index":"expensereports-sensitive","_type":"expense","_id":22}}
-{"id":22, "city": "Westford", "department": "Engineering", "employee": "Kathrine Janas" ,"date": "05-17-2011" , "amount":233.49}
+{"EXPENSES_ID":22, "CITY": "Westford", "DEPARTMENT": "Engineering", "EMPLOYEE": "Kathrine Janas" ,"CREATION_DATE": "05-17-2011" , "AMOUNT":233.49}
 {"index":{"_index":"expensereports-sensitive","_type":"expense","_id":23}}
-{"id":23, "city": "Westford", "department": "Engineering", "employee": "Kathrine Janas" ,"date": "04-12-2011" , "amount":1100.1}
+{"EXPENSES_ID":23, "CITY": "Westford", "DEPARTMENT": "Engineering", "EMPLOYEE": "Kathrine Janas" ,"CREATION_DATE": "04-12-2011" , "AMOUNT":1100.1}
 {"index":{"_index":"expensereports-sensitive","_type":"expense","_id":24}}
-{"id":24, "city": "Westford", "department": "Engineering", "employee": "Kathrine Janas" ,"date": "03-13-2011" , "amount":1402.3}
+{"EXPENSES_ID":24, "CITY": "Westford", "DEPARTMENT": "Engineering", "EMPLOYEE": "Kathrine Janas" ,"CREATION_DATE": "03-13-2011" , "AMOUNT":1402.3}
 {"index":{"_index":"expensereports-sensitive","_type":"expense","_id":25}}
-{"id":25, "city": "Westford", "department": "Engineering", "employee": "Kathrine Janas" ,"date": "02-13-2011" , "amount":490.1}
+{"EXPENSES_ID":25, "CITY": "Westford", "DEPARTMENT": "Engineering", "EMPLOYEE": "Kathrine Janas" ,"CREATION_DATE": "02-13-2011" , "AMOUNT":490.1}
 {"index":{"_index":"expensereports-sensitive","_type":"expense","_id":26}}
-{"id":26, "city": "Westford", "department": "Engineering", "employee": "Kathrine Janas" ,"date": "02-09-2011" , "amount":600.34}
+{"EXPENSES_ID":26, "CITY": "Westford", "DEPARTMENT": "Engineering", "EMPLOYEE": "Kathrine Janas" ,"CREATION_DATE": "02-09-2011" , "AMOUNT":600.34}
 {"index":{"_index":"expensereports-sensitive","_type":"expense","_id":27}}
-{"id":27, "city": "Westford", "department": "Sales", "employee": "Jerri Preble" ,"date": "12-23-2010" , "amount":899.03}
+{"EXPENSES_ID":27, "CITY": "Westford", "DEPARTMENT": "Sales", "EMPLOYEE": "Jerri Preble" ,"CREATION_DATE": "12-23-2010" , "AMOUNT":899.03}
 {"index":{"_index":"expensereports-sensitive","_type":"expense","_id":28}}
-{"id":28, "city": "Westford", "department": "Sales", "employee": "Jerri Preble" ,"date": "11-30-2010" , "amount":343.45}
+{"EXPENSES_ID":28, "CITY": "Westford", "DEPARTMENT": "Sales", "EMPLOYEE": "Jerri Preble" ,"CREATION_DATE": "11-30-2010" , "AMOUNT":343.45}
 {"index":{"_index":"expensereports-sensitive","_type":"expense","_id":29}}
-{"id":29, "city": "Westford", "department": "Management", "employee": "Donald M. Stanton" ,"date": "10-29-2010" , "amount":983.03}
+{"EXPENSES_ID":29, "CITY": "Westford", "DEPARTMENT": "Management", "EMPLOYEE": "Donald M. Stanton" ,"CREATION_DATE": "10-29-2010" , "AMOUNT":983.03}
 {"index":{"_index":"expensereports-sensitive","_type":"expense","_id":30}}
-{"id":30, "city": "Westford", "department": "Management", "employee": "Donald M. Stanton" ,"date": "10-11-2010" , "amount":43.03}
+{"EXPENSES_ID":30, "CITY": "Westford", "DEPARTMENT": "Management", "EMPLOYEE": "Donald M. Stanton" ,"CREATION_DATE": "10-11-2010" , "AMOUNT":43.03}
 {"index":{"_index":"expensereports-sensitive","_type":"expense","_id":31}}
-{"id":31, "city": "Raleigh", "department": "Management", "employee": "Hannah B. Mackey" ,"date": "09-01-2010" , "amount":234.34}
+{"EXPENSES_ID":31, "CITY": "Raleigh", "DEPARTMENT": "Management", "EMPLOYEE": "Hannah B. Mackey" ,"CREATION_DATE": "09-01-2010" , "AMOUNT":234.34}
 {"index":{"_index":"expensereports-sensitive","_type":"expense","_id":32}}
-{"id":32, "city": "Raleigh", "department": "Management", "employee": "Hannah B. Mackey" ,"date": "07-02-2010" , "amount":543.45}
+{"EXPENSES_ID":32, "CITY": "Raleigh", "DEPARTMENT": "Management", "EMPLOYEE": "Hannah B. Mackey" ,"CREATION_DATE": "07-02-2010" , "AMOUNT":543.45}
 {"index":{"_index":"expensereports-sensitive","_type":"expense","_id":33}}
-{"id":33, "city": "Raleigh", "department": "Management", "employee": "Hannah B. Mackey" ,"date": "06-02-2010" , "amount":193.45}
+{"EXPENSES_ID":33, "CITY": "Raleigh", "DEPARTMENT": "Management", "EMPLOYEE": "Hannah B. Mackey" ,"CREATION_DATE": "06-02-2010" , "AMOUNT":193.45}
 {"index":{"_index":"expensereports-sensitive","_type":"expense","_id":34}}
-{"id":34, "city": "Raleigh", "department": "Management", "employee": "Loretta R. Havens" ,"date": "05-03-2010" , "amount":992.2}
+{"EXPENSES_ID":34, "CITY": "Raleigh", "DEPARTMENT": "Management", "EMPLOYEE": "Loretta R. Havens" ,"CREATION_DATE": "05-03-2010" , "AMOUNT":992.2}
 {"index":{"_index":"expensereports-sensitive","_type":"expense","_id":35}}
-{"id":35, "city": "Raleigh", "department": "Management", "employee": "Loretta R. Havens" ,"date": "04-23-2010" , "amount":494.4}
+{"EXPENSES_ID":35, "CITY": "Raleigh", "DEPARTMENT": "Management", "EMPLOYEE": "Loretta R. Havens" ,"CREATION_DATE": "04-23-2010" , "AMOUNT":494.4}
 {"index":{"_index":"expensereports-sensitive","_type":"expense","_id":36}}
-{"id":36, "city": "Raleigh", "department": "Engineering", "employee": "Tony L. Crawford" ,"date": "02-18-2010" , "amount":233.09}
+{"EXPENSES_ID":36, "CITY": "Raleigh", "DEPARTMENT": "Engineering", "EMPLOYEE": "Tony L. Crawford" ,"CREATION_DATE": "02-18-2010" , "AMOUNT":233.09}
 {"index":{"_index":"expensereports-sensitive","_type":"expense","_id":37}}
-{"id":37, "city": "Raleigh", "department": "Engineering", "employee": "Tony L. Crawford" ,"date": "02-22-2010" , "amount":293.49}
+{"EXPENSES_ID":37, "CITY": "Raleigh", "DEPARTMENT": "Engineering", "EMPLOYEE": "Tony L. Crawford" ,"CREATION_DATE": "02-22-2010" , "AMOUNT":293.49}
 {"index":{"_index":"expensereports-sensitive","_type":"expense","_id":38}}
-{"id":38, "city": "Raleigh", "department": "Engineering", "employee": "Tony L. Crawford" ,"date": "12-23-2009" , "amount":401.4}
+{"EXPENSES_ID":38, "CITY": "Raleigh", "DEPARTMENT": "Engineering", "EMPLOYEE": "Tony L. Crawford" ,"CREATION_DATE": "12-23-2009" , "AMOUNT":401.4}
 {"index":{"_index":"expensereports-sensitive","_type":"expense","_id":39}}
-{"id":39, "city": "Raleigh", "department": "Engineering", "employee": "Tony L. Crawford" ,"date": "07-19-2009" , "amount":209.55}
+{"EXPENSES_ID":39, "CITY": "Raleigh", "DEPARTMENT": "Engineering", "EMPLOYEE": "Tony L. Crawford" ,"CREATION_DATE": "07-19-2009" , "AMOUNT":209.55}
 {"index":{"_index":"expensereports-sensitive","_type":"expense","_id":40}}
-{"id":40, "city": "Raleigh", "department": "Support", "employee": "Eileen L. Pereira" ,"date": "06-12-2009" , "amount":300.01}
+{"EXPENSES_ID":40, "CITY": "Raleigh", "DEPARTMENT": "Support", "EMPLOYEE": "Eileen L. Pereira" ,"CREATION_DATE": "06-12-2009" , "AMOUNT":300.01}
 {"index":{"_index":"expensereports-sensitive","_type":"expense","_id":41}}
-{"id":41, "city": "Raleigh", "department": "Support", "employee": "Eileen L. Pereira" ,"date": "06-13-2009" , "amount":450.6}
+{"EXPENSES_ID":41, "CITY": "Raleigh", "DEPARTMENT": "Support", "EMPLOYEE": "Eileen L. Pereira" ,"CREATION_DATE": "06-13-2009" , "AMOUNT":450.6}
 {"index":{"_index":"expensereports-sensitive","_type":"expense","_id":42}}
-{"id":42, "city": "Raleigh", "department": "Support", "employee": "Eileen L. Pereira" ,"date": "06-14-2009" , "amount":320.9}
+{"EXPENSES_ID":42, "CITY": "Raleigh", "DEPARTMENT": "Support", "EMPLOYEE": "Eileen L. Pereira" ,"CREATION_DATE": "06-14-2009" , "AMOUNT":320.9}
 {"index":{"_index":"expensereports-sensitive","_type":"expense","_id":43}}
-{"id":43, "city": "Raleigh", "department": "Support", "employee": "Eileen L. Pereira" ,"date": "06-15-2009" , "amount":303.9}
+{"EXPENSES_ID":43, "CITY": "Raleigh", "DEPARTMENT": "Support", "EMPLOYEE": "Eileen L. Pereira" ,"CREATION_DATE": "06-15-2009" , "AMOUNT":303.9}
 {"index":{"_index":"expensereports-sensitive","_type":"expense","_id":44}}
-{"id":44, "city": "London", "department": "Engineering", "employee": "Alan P. Adamson" ,"date": "06-12-2009" , "amount":404.3}
+{"EXPENSES_ID":44, "CITY": "London", "DEPARTMENT": "Engineering", "EMPLOYEE": "Alan P. Adamson" ,"CREATION_DATE": "06-12-2009" , "AMOUNT":404.3}
 {"index":{"_index":"expensereports-sensitive","_type":"expense","_id":45}}
-{"id":45, "city": "London", "department": "Engineering", "employee": "Alan P. Adamson" ,"date": "05-12-2009" , "amount":868.45}
+{"EXPENSES_ID":45, "CITY": "London", "DEPARTMENT": "Engineering", "EMPLOYEE": "Alan P. Adamson" ,"CREATION_DATE": "05-12-2009" , "AMOUNT":868.45}
 {"index":{"_index":"expensereports-sensitive","_type":"expense","_id":46}}
-{"id":46, "city": "London", "department": "Engineering", "employee": "Alan P. Adamson" ,"date": "05-13-2009" , "amount":333.45}
+{"EXPENSES_ID":46, "CITY": "London", "DEPARTMENT": "Engineering", "EMPLOYEE": "Alan P. Adamson" ,"CREATION_DATE": "05-13-2009" , "AMOUNT":333.45}
 {"index":{"_index":"expensereports-sensitive","_type":"expense","_id":47}}
-{"id":47, "city": "London", "department": "Management", "employee": "Patricia J. Behr" ,"date": "04-14-2009" , "amount":565.56}
+{"EXPENSES_ID":47, "CITY": "London", "DEPARTMENT": "Management", "EMPLOYEE": "Patricia J. Behr" ,"CREATION_DATE": "04-14-2009" , "AMOUNT":565.56}
 {"index":{"_index":"expensereports-sensitive","_type":"expense","_id":48}}
-{"id":48, "city": "London", "department": "Management", "employee": "Patricia J. Behr" ,"date": "03-02-2009" , "amount":345.45}
+{"EXPENSES_ID":48, "CITY": "London", "DEPARTMENT": "Management", "EMPLOYEE": "Patricia J. Behr" ,"CREATION_DATE": "03-02-2009" , "AMOUNT":345.45}
 {"index":{"_index":"expensereports-sensitive","_type":"expense","_id":49}}
-{"id":49, "city": "London", "department": "Management", "employee": "Patricia J. Behr" ,"date": "02-03-2009" , "amount":700.66}
+{"EXPENSES_ID":49, "CITY": "London", "DEPARTMENT": "Management", "EMPLOYEE": "Patricia J. Behr" ,"CREATION_DATE": "02-03-2009" , "AMOUNT":700.66}
 {"index":{"_index":"expensereports-sensitive","_type":"expense","_id":50}}
-{"id":50, "city": "London", "department": "Management", "employee": "Patricia J. Behr" ,"date": "01-04-2009" , "amount":921.9}
+{"EXPENSES_ID":50, "CITY": "London", "DEPARTMENT": "Management", "EMPLOYEE": "Patricia J. Behr" ,"CREATION_DATE": "01-04-2009" , "AMOUNT":921.9}
