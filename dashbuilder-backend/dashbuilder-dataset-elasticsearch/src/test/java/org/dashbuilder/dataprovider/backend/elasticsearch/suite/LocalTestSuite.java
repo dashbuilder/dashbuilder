@@ -18,12 +18,12 @@ import org.slf4j.LoggerFactory;
  */
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
+        ElasticSearchCommonTests.class,
         ElasticSearchJestClientTest.class,
         ElasticSearchDataSetCustomColumnsTest.class,
         ElasticSearchDataSetTest.class,
-        ElasticSearchDataSetDatesTest.class,
-        ElasticSearchMultiFieldsTest.class,
-        ElasticSearchCommonTests.class
+        ElasticSearchEmptyIntervalsTest.class,
+        ElasticSearchMultiFieldsTest.class
 })
 public class LocalTestSuite {
 

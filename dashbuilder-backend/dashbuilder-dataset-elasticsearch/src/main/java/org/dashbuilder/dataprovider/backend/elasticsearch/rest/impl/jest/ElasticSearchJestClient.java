@@ -454,7 +454,7 @@ public class ElasticSearchJestClient implements ElasticSearchClient<ElasticSearc
         } else if (ColumnType.DATE.equals(columnType)) {
             return typeMapper.formatDate(def, columnId, (Date) value);
         } else if (ColumnType.NUMBER.equals(columnType)) {
-            return typeMapper.formatNumeric(def, columnId, (Double) value);
+            return typeMapper.formatNumeric(def, columnId, (Number) value);
         }
 
         throw new UnsupportedOperationException("Cannot format value for column with id [" + columnId + "] (Data Set UUID [" + def.getUUID() + "]). Value core type not supported. Expecting string or number or date core field types.");

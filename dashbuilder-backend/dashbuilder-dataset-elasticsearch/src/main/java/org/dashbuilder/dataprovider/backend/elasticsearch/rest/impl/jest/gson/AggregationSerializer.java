@@ -86,7 +86,7 @@ public class AggregationSerializer extends AbstractAdapter<AggregationSerializer
             // Check that all column pickups are also column groups.
             if (!columnPickUps.isEmpty()) {
                 for (GroupFunction groupFunction : columnPickUps) {
-                    if (groupFunction.getFunction() == null) {
+                    if (groupFunction.getFunction() == null && sourceId.equals(groupFunction.getSourceId())) {
                         columnId = groupFunction.getColumnId();
                         if (!existColumnInMetadataDef(sourceId)) throw new RuntimeException("Aggregation by column [" + sourceId + "] failed. No column with the given id.");
                     }

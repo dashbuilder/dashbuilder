@@ -73,9 +73,8 @@ import java.net.URL;
         ElasticSearchJestClientTest.class,
         ElasticSearchDataSetCustomColumnsTest.class,
         ElasticSearchDataSetTest.class,
-        ElasticSearchDataSetDatesTest.class,
+        ElasticSearchEmptyIntervalsTest.class,
         ElasticSearchMultiFieldsTest.class
-        // TODO: ElasticSearchDataSetCacheTest.class
 })
 public class ElasticSearchTestSuite {
 

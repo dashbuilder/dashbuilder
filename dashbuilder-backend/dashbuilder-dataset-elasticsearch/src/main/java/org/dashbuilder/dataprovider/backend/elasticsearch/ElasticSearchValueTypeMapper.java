@@ -5,7 +5,6 @@ import org.dashbuilder.dataset.def.ElasticSearchDataSetDef;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
-import org.joda.time.format.DateTimeFormatterBuilder;
 import org.joda.time.format.ISODateTimeFormat;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -66,29 +65,7 @@ public class ElasticSearchValueTypeMapper {
 
     public Double parseNumeric(ElasticSearchDataSetDef definition, String columnId, String number) throws ParseException {
         if (isEmpty(number)) return 0d;
-
-        // TODO: return new Double(number) -> do not parse different numeric types, produces infinitesimal errors.
-        String coreType = definition.getPattern(columnId);
-        if (isEmpty(coreType)) coreType = defaulNumberFormat();
-        
-        Double result = null;
-        if (coreType.equalsIgnoreCase(NUMERIC_FLOAT)) {
-            result = new Float(Float.parseFloat(number)).doubleValue();
-        } else if (coreType.equalsIgnoreCase(NUMERIC_DOUBLE)) {
-            result = Double.parseDouble(number);
-        } else if (coreType.equalsIgnoreCase(NUMERIC_SHORT)) {
-            result = new Float(Short.parseShort(number)).doubleValue();
-        } else if (coreType.equalsIgnoreCase(NUMERIC_INTEGER)) {
-            result = new Float(Integer.parseInt(number)).doubleValue();
-        } else if (coreType.equalsIgnoreCase(NUMERIC_LONG)) {
-            result = new Float(Long.parseLong(number)).doubleValue();
-        } else {
-            // Custom format.
-            DecimalFormat format = new DecimalFormat(coreType);
-            Number n = format.parse(number);
-            result = n.doubleValue();
-        }
-        return result; 
+        return new Double(number);
     }
 
     public Date parseDate(ElasticSearchDataSetDef definition, String columnId, String date) throws ParseException {
@@ -117,7 +94,7 @@ public class ElasticSearchValueTypeMapper {
         return string;
     }
     
-    public String formatNumeric(ElasticSearchDataSetDef definition, String columnId, Double number) {
+    public String formatNumeric(ElasticSearchDataSetDef definition, String columnId, Number number) {
         if (number == null) {
             number = 0d;
         }
@@ -129,7 +106,7 @@ public class ElasticSearchValueTypeMapper {
         if (coreType.equalsIgnoreCase(NUMERIC_FLOAT)) {
             result = Float.toString(number.floatValue());
         } else if (coreType.equalsIgnoreCase(NUMERIC_DOUBLE)) {
-            result = Double.toString(number);
+            result = Double.toString(number.doubleValue());
         } else if (coreType.equalsIgnoreCase(NUMERIC_SHORT)) {
             result = Short.toString(number.shortValue());
         } else if (coreType.equalsIgnoreCase(NUMERIC_INTEGER)) {

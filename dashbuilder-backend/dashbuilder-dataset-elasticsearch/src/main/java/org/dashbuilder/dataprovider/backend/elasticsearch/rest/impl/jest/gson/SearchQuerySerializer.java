@@ -60,7 +60,7 @@ public class SearchQuerySerializer extends AbstractAdapter<SearchQuerySerializer
         }
 
         // Add the fields to retrieve, if apply.
-        if (!existAggregations) {
+        if (!existAggregations && fields != null && fields.length > 0) {
             JsonArray fieldsArray = new JsonArray();
             for (String field : fields) {
                 fieldsArray.add(new JsonPrimitive(field));

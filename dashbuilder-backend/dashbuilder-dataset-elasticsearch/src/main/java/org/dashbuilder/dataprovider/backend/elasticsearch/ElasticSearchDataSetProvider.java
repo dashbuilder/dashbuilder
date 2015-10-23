@@ -39,7 +39,6 @@ import org.dashbuilder.dataset.filter.DataSetFilter;
 import org.dashbuilder.dataset.filter.FilterFactory;
 import org.dashbuilder.dataset.group.*;
 import org.dashbuilder.dataset.impl.DataColumnImpl;
-import org.dashbuilder.dataset.impl.DataSetLookupBuilderImpl;
 import org.dashbuilder.dataset.impl.DataSetMetadataImpl;
 import org.dashbuilder.dataset.impl.MemSizeEstimator;
 import org.dashbuilder.dataset.sort.ColumnSort;
@@ -217,75 +216,50 @@ public class ElasticSearchDataSetProvider implements DataSetProvider {
         // Check group operations. Check that operation source fields exist as data set columns.
         // Calculate the resulting data set columns too and set the collection into the ELS query to perform.
         DataSetGroup _groupOp = null;
+        boolean allColumns = true;
         int groupIdx = lookup.getFirstGroupOpIndex(0, null, false);
         if (groupIdx == -1) groupIdx = lookup.getFirstGroupOpIndex(0, null, true);
         if (groupIdx != -1) _groupOp = lookup.getOperation(groupIdx);
         
-        // Currently only one aggregation is supported by the core.
-        List<DataSetGroup> groupOps = new ArrayList<DataSetGroup>(1);
-        if (_groupOp != null) {
-            groupOps.add(_groupOp);
-        }
-        
-        // Group operations to process.
-        if (!groupOps.isEmpty()) {
-            List<DataSetGroup> aggregationOps = new LinkedList<DataSetGroup>();
-            List<DataColumn> columns = new ArrayList<DataColumn>();
-            for (DataSetGroup groupOp : groupOps) {
-                
-                boolean isAggregationOp = false;
-                List<GroupFunction> groupFunctions = groupOp.getGroupFunctions();
-                if (groupFunctions != null && !groupFunctions.isEmpty()) {
-                    boolean existAnyFunction = false;
-                    for (GroupFunction groupFunction : groupFunctions) {
-                        
-                        // If no source column specified, use first available one by default.
-                        String columnId = groupFunction.getSourceId() != null  ? groupFunction.getSourceId() : metadata.getColumnId(0);
-                        DataColumn column = getColumnById(metadata, columnId);
-                        if (column != null) {
-                            DataColumn c = column.cloneEmpty();
-                            String cId = groupFunction.getColumnId() != null ? groupFunction.getColumnId() : groupFunction.getSourceId();
-                            c.setId(cId);
-                            c.setGroupFunction(groupFunction);
-                            // If a function is applied, the resulting column type is numeric.
-                            if (groupFunction.getFunction() != null) {
-                                existAnyFunction = true;
-                                c.setColumnType(ColumnType.NUMBER);
-                            }
-                            columns.add(c);
-                            
-                            if (existAnyFunction) {
-                                isAggregationOp = true;
-                            }
-                            
-                        } else {
-                            throw new IllegalArgumentException("Grouping function by a non existing column [" + columnId + "] in dataset ");                                    
-                        }
-                        
+        // Single group operations to process. The others have to be group with intervals selection, and are not considerent grouped column, just filters.
+        List<DataColumn> columns = new ArrayList<DataColumn>();
+        if (_groupOp != null && !_groupOp.isSelect()) {
+            List<GroupFunction> groupFunctions = _groupOp.getGroupFunctions();
+            boolean exitsFunction = false;
+            if (groupFunctions != null && !groupFunctions.isEmpty()) {
+                for (GroupFunction groupFunction : groupFunctions) {
+                    if (groupFunction.getFunction() != null) {
+                        exitsFunction = true;
                     }
-
-                    // Set the resulting columns into the request instance.
-                    request.setColumns(columns);
+                    // If no source column specified, use first available one by default.
+                    String columnId = groupFunction.getSourceId() != null  ? groupFunction.getSourceId() : metadata.getColumnId(0);
+                    DataColumn column = getColumnById(metadata, columnId);
+                    if (column != null) {
+                        DataColumn c = column.cloneEmpty();
+                        String cId = groupFunction.getColumnId() != null ? groupFunction.getColumnId() : groupFunction.getSourceId();
+                        c.setId(cId);
+                        c.setGroupFunction(groupFunction);
+                        // If a function is applied, the resulting column type is numeric.
+                        if (groupFunction.getFunction() != null) {
+                            c.setColumnType(ColumnType.NUMBER);
+                        }
+                        columns.add(c);
+                    } else {
+                        throw new IllegalArgumentException("Grouping function by a non existing column [" + columnId + "] in dataset ");
+                    }
                 }
-
-                // Group operations with a column group or with any aggregation function as resulting columns, are not considered ELS aggregations to query.
-                if (isAggregationOp) {
-                    aggregationOps.add(groupOp);
-                }
-
             }
 
-            // Query aggregations.
-            if (!aggregationOps.isEmpty()) {
-                request.setAggregations(aggregationOps);
+            if (exitsFunction) {
+                // Use the main group operation as a request aggregation.
+                request.setAggregations(Collections.singletonList(_groupOp));
             }
             
-        } else {
-            final List<DataColumn> ALL_COLUMNS = getAllColumns(metadata);
-            request.setColumns(ALL_COLUMNS);
         }
-        
-        
+
+        // Set the resulting columns on the request object.
+        request.setColumns(!columns.isEmpty() ? columns : getAllColumns(metadata));
+
         // Filter operations.
         List<DataSetFilter> filters = lookup.getOperationList(DataSetFilter.class);
         if (filters != null && !filters.isEmpty()) {
@@ -317,7 +291,10 @@ public class ElasticSearchDataSetProvider implements DataSetProvider {
         }
 
         // The query is build from a given filters and/or from interval selections. Built it.
-        Query query = queryBuilderFactory.newQueryBuilder().metadata(metadata).groupInterval(groupOps).filter(filters).build();
+        Query query = queryBuilderFactory.newQueryBuilder().metadata(metadata)
+                .groupInterval(_groupOp != null ? Arrays.asList(_groupOp) : null)
+                .filter(filters).build();
+        
         request.setQuery(query);
         
         // Sort operations.

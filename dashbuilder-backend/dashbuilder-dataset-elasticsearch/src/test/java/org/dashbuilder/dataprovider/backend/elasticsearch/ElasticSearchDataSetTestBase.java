@@ -16,7 +16,6 @@
 package org.dashbuilder.dataprovider.backend.elasticsearch;
 
 import org.apache.commons.io.IOUtils;
-import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetFormatter;
 import org.dashbuilder.dataset.DataSetManager;
@@ -34,7 +33,6 @@ import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import java.net.URL;
-import java.util.List;
 
 /**
  * <p>Base test for ElasticSearch providers and data sets.</p>
@@ -108,25 +106,6 @@ public class ElasticSearchDataSetTestBase {
      * Helper method to print to standard output the data set values.
      */
     protected void printDataSet(DataSet dataSet) {
-        final String SPACER = "| \t |";
-        
-        if (dataSet == null) log("DataSet is null");
-        if (dataSet.getRowCount() == 0) log("DataSet is empty");
-        
-        List<DataColumn> dataSetColumns = dataSet.getColumns();
-        int colColunt = dataSetColumns.size();
-        int rowCount = dataSet.getRowCount();
-
-        log("********************************************************************************************************************************************************\n");
-        for (int row = 0; row < rowCount; row++) {
-            log(SPACER);
-            for (int col= 0; col< colColunt; col++) {
-                Object value = dataSet.getValueAt(row, col);
-                log(value);
-                log(SPACER);
-            }
-            log("\n");
-        }
-        log("********************************************************************************************************************************************************\n");
+        log(dataSetFormatter.formatDataSet(dataSet, "{", "}", ",\n", "\"", "\"", ", ") + "\n\n");
     }
 }

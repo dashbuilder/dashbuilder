@@ -102,12 +102,14 @@ public class ElasticSearchQueryBuilderImpl implements ElasticSearchQueryBuilder<
         }
 
         // Build query definition for interval group selections.
-        for (DataSetGroup group: groups) {
-            if (group.isSelect()) {
-                List<Query> subQueries = buildGroupIntervalQuery(group);
-                if (subQueries != null && !subQueries.isEmpty()) {
-                    for (Query subQuery : subQueries) {
-                        queries.add(subQuery);
+        if (groups != null) {
+            for (DataSetGroup group: groups) {
+                if (group.isSelect()) {
+                    List<Query> subQueries = buildGroupIntervalQuery(group);
+                    if (subQueries != null && !subQueries.isEmpty()) {
+                        for (Query subQuery : subQueries) {
+                            queries.add(subQuery);
+                        }
                     }
                 }
             }
@@ -154,10 +156,10 @@ public class ElasticSearchQueryBuilderImpl implements ElasticSearchQueryBuilder<
                 Object maxValue = interval.getMaxValue();
                 Object minValue = interval.getMinValue();
                 Object value0 = isNumericCol ? 
-                        valueTypeMapper.formatNumeric(def, sourceId, (Double) minValue) :
+                        valueTypeMapper.formatNumeric(def, sourceId, (Number) minValue) :
                         valueTypeMapper.formatDate(def, sourceId, (Date) minValue);
                 Object value1 = isNumericCol ?
-                        valueTypeMapper.formatNumeric(def, sourceId, (Double) maxValue) :
+                        valueTypeMapper.formatNumeric(def, sourceId, (Number) maxValue) :
                         valueTypeMapper.formatDate(def, sourceId, (Date) maxValue);
                 _result = new Query(sourceId, Query.Type.RANGE);
                 _result.setParam(Query.Parameter.GT.name(), value0);
@@ -183,7 +185,7 @@ public class ElasticSearchQueryBuilderImpl implements ElasticSearchQueryBuilder<
         } else if (isDateCol) {
             return valueTypeMapper.formatDate(definition, columnId, (Date) value);
         } else if (isNumericCol) {
-            return valueTypeMapper.formatNumeric(definition, columnId, (Double) value);
+            return valueTypeMapper.formatNumeric(definition, columnId, (Number) value);
         }
 
         throw new IllegalArgumentException("Not supported type [" + columnType.name() + "] for column id [" + columnId + "].");
@@ -477,8 +479,8 @@ public class ElasticSearchQueryBuilderImpl implements ElasticSearchQueryBuilder<
             Object value0 = formatValue(def, columnId, params.get(0));
             Object value1 = formatValue(def, columnId, params.get(1));
             result = new Query(columnId, Query.Type.RANGE);
-            result.setParam(Query.Parameter.GT.name(), value0);
-            result.setParam(Query.Parameter.LT.name(), value1);
+            result.setParam(Query.Parameter.GTE.name(), value0);
+            result.setParam(Query.Parameter.LTE.name(), value1);
             
         } else if (CoreFunctionType.TIME_FRAME.equals(type)) {
 
