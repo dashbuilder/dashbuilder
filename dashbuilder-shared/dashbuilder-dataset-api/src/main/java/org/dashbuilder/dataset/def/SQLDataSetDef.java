@@ -90,6 +90,31 @@ public class SQLDataSetDef extends DataSetDef {
     }
 
     @Override
+    public boolean equals(Object obj) {
+        try {
+            SQLDataSetDef other = (SQLDataSetDef) obj;
+            if (!super.equals(other)) {
+                return false;
+            }
+            if (dataSource != null && !dataSource.equals(other.dataSource)) {
+                return false;
+            }
+            if (dbSchema != null && !dbSchema.equals(other.dbSchema)) {
+                return false;
+            }
+            if (dbTable != null && !dbTable.equals(other.dbTable)) {
+                return false;
+            }
+            if (dbSQL != null && !dbSQL.equals(other.dbSQL)) {
+                return false;
+            }
+            return true;
+        } catch (ClassCastException e) {
+            return false;
+        }
+    }
+
+    @Override
     public DataSetDef clone() {
         SQLDataSetDef def = new SQLDataSetDef();
         clone(def);

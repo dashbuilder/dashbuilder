@@ -43,7 +43,7 @@ public class DataSetDef {
     protected Path vfsPath;
     @NotNull(message = "{dataSetApi_dataSetDef_provider_notNull}")
     protected DataSetProviderType provider;
-    protected List<DataColumnDef> columns;
+    protected List<DataColumnDef> columns = new ArrayList<DataColumnDef>();
     protected DataSetFilter dataSetFilter = null;
     protected boolean isPublic = true;
     protected boolean pushEnabled = false;
@@ -244,12 +244,61 @@ public class DataSetDef {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj == null) return false;
-        if (getUUID() == null) return false;
-        
+        if (obj == null) {
+            return false;
+        }
+        if (getUUID() == null) {
+            return false;
+        }
         try {
-            DataSetDef d = (DataSetDef) obj;
-            return getUUID().equals(d.getUUID());
+            DataSetDef other = (DataSetDef) obj;
+            if (UUID != null && !UUID.equals(other.UUID)) {
+                return false;
+            }
+            if (provider != null && !provider.equals(other.provider)) {
+                return false;
+            }
+            if (name != null && !name.equals(other.name)) {
+                return false;
+            }
+            if (isPublic != other.isPublic) {
+                return false;
+            }
+            if (allColumnsEnabled != other.allColumnsEnabled) {
+                return false;
+            }
+            if (pushEnabled != other.pushEnabled) {
+                return false;
+            }
+            if (pushMaxSize != other.pushMaxSize) {
+                return false;
+            }
+            if (cacheEnabled != other.cacheEnabled) {
+                return false;
+            }
+            if (cacheMaxRows != other.cacheMaxRows) {
+                return false;
+            }
+            if (columns.size() != other.columns.size()) {
+                return false;
+            }
+            if (refreshTime != null && !refreshTime.equals(other.refreshTime)) {
+                return false;
+            }
+            if (refreshAlways != other.refreshAlways) {
+                return false;
+            }
+            if (dataSetFilter != null && !dataSetFilter.equals(other.dataSetFilter)) {
+                return false;
+            }
+            for (int i = 0; i < columns.size(); i++) {
+                DataColumnDef el = columns.get(i);
+                DataColumnDef otherEl = other.columns.get(i);
+                if (!el.equals(otherEl)) {
+                    return false;
+                }
+            }
+            return true;
         } catch (ClassCastException e) {
             return false;
         }
