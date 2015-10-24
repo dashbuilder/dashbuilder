@@ -51,6 +51,35 @@ public class BeanDataSetDef extends DataSetDef {
     }
 
     @Override
+    public boolean equals(Object obj) {
+        try {
+            BeanDataSetDef other = (BeanDataSetDef) obj;
+            if (!super.equals(other)) {
+                return false;
+            }
+
+            if (generatorClass != null && !generatorClass.equals(other.generatorClass)) {
+                return false;
+            }
+            if (paramaterMap.size() != other.paramaterMap.size()) {
+                return false;
+            }
+            for (String key : paramaterMap.keySet()) {
+                String value = paramaterMap.get(key);
+                if (!other.paramaterMap.containsKey(key)) {
+                    return false;
+                }
+                if (!other.paramaterMap.get(key).equals(value)) {
+                    return false;
+                }
+            }
+            return true;
+        } catch (ClassCastException e) {
+            return false;
+        }
+    }
+
+    @Override
     public DataSetDef clone() {
         BeanDataSetDef def = new BeanDataSetDef();
         clone(def);

@@ -142,6 +142,37 @@ public class CSVDataSetDef extends DataSetDef {
     }
 
     @Override
+    public boolean equals(Object obj) {
+        try {
+            CSVDataSetDef other = (CSVDataSetDef) obj;
+            if (!super.equals(other)) {
+                return false;
+            }
+            if (fileURL != null && !fileURL.equals(other.fileURL)) {
+                return false;
+            }
+            if (filePath != null && !filePath.equals(other.filePath)) {
+                return false;
+            }
+            if (separatorChar != null && !separatorChar.equals(other.separatorChar)) {
+                return false;
+            }
+            if (quoteChar!= null && !quoteChar.equals(other.quoteChar)) {
+                return false;
+            }
+            if (datePattern != null && !datePattern.equals(other.datePattern)) {
+                return false;
+            }
+            if (numberPattern!= null && !numberPattern.equals(other.numberPattern)) {
+                return false;
+            }
+            return true;
+        } catch (ClassCastException e) {
+            return false;
+        }
+    }
+
+    @Override
     public DataSetDef clone() {
         CSVDataSetDef def = new CSVDataSetDef();
         clone(def);

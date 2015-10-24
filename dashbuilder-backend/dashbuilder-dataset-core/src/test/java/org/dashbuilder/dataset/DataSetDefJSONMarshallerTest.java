@@ -105,9 +105,14 @@ public class DataSetDefJSONMarshallerTest {
         parameterMap.put("multiplier", "1");
         dataSetDef.setParamaterMap(parameterMap);
         final DataSetFilter filter = new DataSetFilter();
-        final List<Comparable> params = new ArrayList<Comparable>();
-        params.add("JANUARY");
-        final ColumnFilter columnFilter = new CoreFunctionFilter("month", CoreFunctionType.EQUALS_TO, params);
+        final List<Comparable> params1 = new ArrayList<Comparable>();
+        params1.add("JANUARY");
+        ColumnFilter columnFilter = new CoreFunctionFilter("month", CoreFunctionType.EQUALS_TO, params1);
+        filter.addFilterColumn(columnFilter);
+        final List<Comparable> params2 = new ArrayList<Comparable>();
+        params2.add(0d);
+        params2.add(100.35d);
+        columnFilter = new CoreFunctionFilter("amount", CoreFunctionType.BETWEEN, params2);
         filter.addFilterColumn(columnFilter);
         dataSetDef.setDataSetFilter(filter);
         
@@ -126,7 +131,7 @@ public class DataSetDefJSONMarshallerTest {
 
         DataSetDef def1Object = dataSetDefJSONMarshaller.fromJson(def1);
         DataSetDef def2Object = dataSetDefJSONMarshaller.fromJson(def2);
-        
+
         Assert.assertEquals(def1Object, def2Object);
     }
 

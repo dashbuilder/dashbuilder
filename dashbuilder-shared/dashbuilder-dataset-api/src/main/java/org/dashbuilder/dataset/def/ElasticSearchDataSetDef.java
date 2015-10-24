@@ -181,6 +181,28 @@ public class ElasticSearchDataSetDef extends DataSetDef {
     }
 
     @Override
+    public boolean equals(Object obj) {
+        try {
+            ElasticSearchDataSetDef other = (ElasticSearchDataSetDef) obj;
+            if (!super.equals(other)) {
+                return false;
+            }
+            if (serverURL != null && !serverURL.equals(other.serverURL)) {
+                return false;
+            }
+            if (clusterName != null && !clusterName.equals(other.clusterName)) {
+                return false;
+            }
+            if (index != null && !index.equals(other.index)) {
+                return false;
+            }
+            return true;
+        } catch (ClassCastException e) {
+            return false;
+        }
+    }
+
+    @Override
     public DataSetDef clone() {
         ElasticSearchDataSetDef def = new ElasticSearchDataSetDef();
         clone(def);
