@@ -33,16 +33,6 @@
     </dependency>
 
     <!--
-    Runtime dependencies
-    -->
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-log4j12</artifactId>
-      <scope>runtime</scope>
-      <optional>true</optional>
-    </dependency>
-
-    <!--
     Optional dependencies
     -->
     <dependency>
