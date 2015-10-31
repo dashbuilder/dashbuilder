@@ -20,26 +20,32 @@ import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.dataset.validation.groups.CSVDataSetDefFilePathValidation;
 import org.dashbuilder.dataset.validation.groups.CSVDataSetDefFileURLValidation;
+import org.dashbuilder.dataset.validation.groups.CSVDataSetDefValidation;
 import org.jboss.errai.common.client.api.annotations.Portable;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 @Portable
 public class CSVDataSetDef extends DataSetDef {
 
     @NotNull(message = "{dataSetApi_csvDataSetDef_fileURL_notNull}", groups = {CSVDataSetDefFileURLValidation.class})
+    @Size(min = 1, message = "{dataSetApi_csvDataSetDef_fileURL_notNull}", groups = {CSVDataSetDefFileURLValidation.class})
     protected String fileURL;
     @NotNull(message = "{dataSetApi_csvDataSetDef_filePath_notNull}", groups = {CSVDataSetDefFilePathValidation.class})
+    @Size(min = 1, message = "{dataSetApi_csvDataSetDef_filePath_notNull}", groups = {CSVDataSetDefFilePathValidation.class})
     protected String filePath;
-    @NotNull(message = "{dataSetApi_csvDataSetDef_sepChar_notNull}")
+    @NotNull(message = "{dataSetApi_csvDataSetDef_sepChar_notNull}", groups = {CSVDataSetDefValidation.class})
     protected Character separatorChar;
-    @NotNull(message = "{dataSetApi_csvDataSetDef_quoteChar_notNull}")
+    @NotNull(message = "{dataSetApi_csvDataSetDef_quoteChar_notNull}", groups = {CSVDataSetDefValidation.class})
     protected Character quoteChar;
-    @NotNull(message = "{dataSetApi_csvDataSetDef_escapeChar_notNull}")
+    @NotNull(message = "{dataSetApi_csvDataSetDef_escapeChar_notNull}", groups = {CSVDataSetDefValidation.class})
     protected Character escapeChar;
-    @NotNull(message = "{dataSetApi_csvDataSetDef_datePattern_notNull}")
+    @NotNull(message = "{dataSetApi_csvDataSetDef_datePattern_notNull}", groups = {CSVDataSetDefValidation.class})
+    @Size(min = 1, message = "{dataSetApi_csvDataSetDef_datePattern_notNull}", groups = {CSVDataSetDefValidation.class})
     protected String datePattern = "MM-dd-yyyy HH:mm:ss";
-    @NotNull(message = "{dataSetApi_csvDataSetDef_numberPattern_notNull}")
+    @NotNull(message = "{dataSetApi_csvDataSetDef_numberPattern_notNull}", groups = {CSVDataSetDefValidation.class})
+    @Size(min = 1, message = "{dataSetApi_csvDataSetDef_numberPattern_notNull}", groups = {CSVDataSetDefValidation.class})
     protected String numberPattern = "#,###.##";
 
     public CSVDataSetDef() {

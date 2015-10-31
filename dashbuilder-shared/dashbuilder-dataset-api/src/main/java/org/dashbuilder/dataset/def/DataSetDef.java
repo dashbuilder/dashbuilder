@@ -20,14 +20,15 @@ import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.date.TimeAmount;
 import org.dashbuilder.dataset.filter.DataSetFilter;
 import org.dashbuilder.dataset.validation.IsTimeInterval;
-import org.dashbuilder.dataset.validation.groups.DataSetDefCacheRowsValidation;
-import org.dashbuilder.dataset.validation.groups.DataSetDefPushSizeValidation;
-import org.dashbuilder.dataset.validation.groups.DataSetDefRefreshIntervalValidation;
+import org.dashbuilder.dataset.validation.groups.*;
 import org.jboss.errai.common.client.api.annotations.Portable;
 import org.uberfire.backend.vfs.Path;
 
+import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import javax.validation.groups.Default;
 import java.util.*;
 
 /**
@@ -36,26 +37,46 @@ import java.util.*;
 @Portable
 public class DataSetDef {
 
-    @NotNull(message = "{dataSetApi_dataSetDef_uuid_notNull}")
+    @NotNull(message = "{dataSetApi_dataSetDef_uuid_notNull}",
+            groups = {DataSetDefBasicAttributesGroup.class})
+    @Size(min = 1, message = "{dataSetApi_dataSetDef_uuid_notNull}",
+            groups = {DataSetDefBasicAttributesGroup.class})
     protected String UUID;
-    @NotNull(message = "{dataSetApi_dataSetDef_name_notNull}")
+    
+    @NotNull(message = "{dataSetApi_dataSetDef_name_notNull}",
+            groups = {DataSetDefBasicAttributesGroup.class})
+    @Size(min = 1, message = "{dataSetApi_dataSetDef_name_notNull}",
+            groups = {DataSetDefBasicAttributesGroup.class})
     protected String name;
+    
     protected Path vfsPath;
-    @NotNull(message = "{dataSetApi_dataSetDef_provider_notNull}")
+    
+    @NotNull(message = "{dataSetApi_dataSetDef_provider_notNull}",
+            groups = { DataSetDefProviderTypeGroup.class})
     protected DataSetProviderType provider;
+    
+    // Cannot @Valid due to this GWT issue https://github.com/gwtproject/gwt/issues/8816.
+    // Columns validation must be performed explicitly when validating a datasetdef or any of its sub-classes.
     protected List<DataColumnDef> columns = new ArrayList<DataColumnDef>();
+    
     protected DataSetFilter dataSetFilter = null;
     protected boolean isPublic = true;
     protected boolean pushEnabled = false;
-    @NotNull(message = "{dataSetApi_dataSetDef_pushMaxSize_notNull}", groups = {DataSetDefPushSizeValidation.class})
+    @NotNull(message = "{dataSetApi_dataSetDef_pushMaxSize_notNull}", 
+            groups = {DataSetDefPushSizeValidation.class})
     @Max(value = 4096)
     protected Integer pushMaxSize = 1024;
     protected boolean cacheEnabled = false;
-    @NotNull(message = "{dataSetApi_dataSetDef_cacheMaxRows_notNull}", groups = {DataSetDefCacheRowsValidation.class})
+    @NotNull(message = "{dataSetApi_dataSetDef_cacheMaxRows_notNull}", 
+            groups = {DataSetDefCacheRowsValidation.class})
     @Max(value = 10000)
     protected Integer cacheMaxRows = 1000;
-    @NotNull(message = "{dataSetApi_dataSetDef_refreshTime_notNull}", groups = {DataSetDefRefreshIntervalValidation.class})
-    @IsTimeInterval(message = "{dataSetApi_dataSetDef_refreshTime_intervalInvalid}", groups = {DataSetDefRefreshIntervalValidation.class})
+    @NotNull(message = "{dataSetApi_dataSetDef_refreshTime_notNull}", 
+            groups = {DataSetDefRefreshIntervalValidation.class})
+    @Size(min = 1, message = "{dataSetApi_dataSetDef_refreshTime_notNull}",
+            groups = {DataSetDefRefreshIntervalValidation.class})
+    @IsTimeInterval(message = "{dataSetApi_dataSetDef_refreshTime_intervalInvalid}", 
+            groups = {DataSetDefRefreshIntervalValidation.class})
     protected String refreshTime = null;
     protected boolean refreshAlways = false;
     protected boolean allColumnsEnabled = true;

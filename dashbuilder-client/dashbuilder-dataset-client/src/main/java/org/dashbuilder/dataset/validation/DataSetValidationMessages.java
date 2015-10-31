@@ -101,9 +101,6 @@ public interface DataSetValidationMessages extends
     @Key("dataSetApi_elDataSetDef_index_notNull")
     String dataSetApi_elDataSetDef_index_notNull();
 
-    @Key("dataSetApi_dataSetImpl_creationDate_notNull")
-    String dataSetApi_dataSetImpl_creationDate_notNull();
-
     @Key("dataSetApi_dataColumnDef_id_notNull")
     String dataSetApi_dataColumnDef_id_notNull();
 

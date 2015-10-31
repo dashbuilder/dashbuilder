@@ -23,7 +23,6 @@ import javax.inject.Inject;
 import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.DataSetMetadata;
 import org.dashbuilder.dataset.backend.exception.ExceptionManager;
-import org.dashbuilder.dataset.def.CSVDataSetDef;
 import org.dashbuilder.dataset.def.DataColumnDef;
 import org.dashbuilder.dataset.def.DataSetDef;
 import org.dashbuilder.dataset.service.DataSetDefVfsServices;
@@ -46,7 +45,12 @@ public class DataSetDefVfsServicesImpl implements DataSetDefVfsServices {
 
     @Inject
     protected ExceptionManager exceptionManager;
-    
+
+    @Override
+    public DataSetDef get(Path path) {
+        return gitStorage.loadDataSetDef(path);
+    }
+
     @Override
     public EditDataSetDef load(Path path) {
         try {
@@ -66,7 +70,6 @@ public class DataSetDefVfsServicesImpl implements DataSetDefVfsServices {
             cloned.setColumns(null);
 
             // Obtain all original columns and all original column types.
-            // TODO: DASHBUILDE-33
             DataSetMetadata _cd = dataSetManager.resolveProvider(cloned)
                     .getDataSetMetadata(cloned);
 

@@ -35,6 +35,11 @@
 
     <dependency>
       <groupId>org.dashbuilder</groupId>
+      <artifactId>dashbuilder-dataset-api</artifactId>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.dashbuilder</groupId>
       <artifactId>dashbuilder-json</artifactId>
     </dependency>
 
@@ -68,12 +73,36 @@
       <groupId>org.uberfire</groupId>
       <artifactId>uberfire-api</artifactId>
     </dependency>
+
+    <dependency>
+      <groupId>org.uberfire</groupId>
+      <artifactId>uberfire-client-api</artifactId>
+    </dependency>
     
     <dependency>
       <groupId>org.uberfire</groupId>
       <artifactId>uberfire-widgets-commons</artifactId>
     </dependency>
 
+    <!-- Test dependencies -->
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-all</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>com.google.gwt.gwtmockito</groupId>
+      <artifactId>gwtmockito</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.uberfire</groupId>
+      <artifactId>uberfire-testing-utils</artifactId>
+      <scope>test</scope>
+    </dependency>
+    
   </dependencies>
 
 </project>

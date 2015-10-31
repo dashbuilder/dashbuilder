@@ -17,12 +17,11 @@ package org.dashbuilder.dataset.def;
 
 import org.dashbuilder.dataprovider.DataSetProviderType;
 import org.dashbuilder.dataset.sort.ColumnSort;
+import org.dashbuilder.dataset.validation.groups.ElasticSearchDataSetDefValidation;
 import org.jboss.errai.common.client.api.annotations.Portable;
 
 import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import javax.validation.constraints.Size;
 
 /**
  * <p>DataSet definition class for ElasticSearch provider.</p>
@@ -73,7 +72,8 @@ public class ElasticSearchDataSetDef extends DataSetDef {
     }
 
     // Data Set user parameters.
-    @NotNull(message = "{dataSetApi_elDataSetDef_serverURL_notNull}")
+    @NotNull(message = "{dataSetApi_elDataSetDef_serverURL_notNull}", groups = {ElasticSearchDataSetDefValidation.class})
+    @Size(min = 1, message = "{dataSetApi_elDataSetDef_serverURL_notNull}", groups = {ElasticSearchDataSetDefValidation.class})
     protected String serverURL;
 
     protected String clusterName;
@@ -81,7 +81,8 @@ public class ElasticSearchDataSetDef extends DataSetDef {
     /**
      * Index/es to query. Can handle multiple values, comma separated.
      */
-    @NotNull(message = "{dataSetApi_elDataSetDef_index_notNull}")
+    @NotNull(message = "{dataSetApi_elDataSetDef_index_notNull}", groups = {ElasticSearchDataSetDefValidation.class})
+    @Size(min = 1, message = "{dataSetApi_elDataSetDef_index_notNull}", groups = {ElasticSearchDataSetDefValidation.class})
     protected String index;
 
     /**
@@ -92,9 +93,6 @@ public class ElasticSearchDataSetDef extends DataSetDef {
     protected String query;
     protected String relevance;
     protected ColumnSort columnSort;
-    protected boolean cacheEnabled = false;
-    protected Integer cacheMaxRows = 1000;
-    protected boolean cacheSynced = false;
 
     public ElasticSearchDataSetDef() {
         super.setProvider(DataSetProviderType.ELASTICSEARCH);
@@ -164,14 +162,6 @@ public class ElasticSearchDataSetDef extends DataSetDef {
         this.cacheMaxRows = cacheMaxRows;
     }
 
-    public boolean isCacheSynced() {
-        return cacheSynced;
-    }
-
-    public void setCacheSynced(boolean cacheSynced) {
-        this.cacheSynced = cacheSynced;
-    }
-
     public ColumnSort getColumnSort() {
         return columnSort;
     }
@@ -226,7 +216,6 @@ public class ElasticSearchDataSetDef extends DataSetDef {
         out.append("Get all columns=").append(allColumnsEnabled).append("\n");
         out.append("Cache enabled=").append(cacheEnabled).append("\n");
         out.append("Cache max rows=").append(cacheMaxRows).append(" Kb\n");
-        out.append("Cache synced=").append(cacheSynced).append("\n");
         return out.toString();
     }
 }

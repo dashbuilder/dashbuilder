@@ -32,12 +32,21 @@ import java.util.*;
 
 public class DataSetHandlerImpl implements DataSetHandler {
 
-    protected DataSetClientServices dataSetLookupClient = DataSetClientServices.get();
+    protected DataSetClientServices clientServices;
     protected DataSetLookup lookupBase;
     protected DataSetLookup lookupCurrent;
     protected DataSet lastLookedUpDataSet;
 
     public DataSetHandlerImpl(DataSetLookup lookup) {
+        // TODO: David - refactor get() usages
+        this.clientServices = DataSetClientServices.get();
+        this.lookupBase = lookup;
+        this.lookupCurrent = lookup.cloneInstance();
+    }
+
+    // TODO: David - remove after refactor.
+    public DataSetHandlerImpl(DataSetClientServices dataSetLookupClient, DataSetLookup lookup) {
+        this.clientServices = dataSetLookupClient;
         this.lookupBase = lookup;
         this.lookupCurrent = lookup.cloneInstance();
     }
@@ -184,7 +193,7 @@ public class DataSetHandlerImpl implements DataSetHandler {
     }
 
     public void lookupDataSet(final DataSetReadyCallback callback) throws Exception {
-        dataSetLookupClient.lookupDataSet(lookupCurrent, new DataSetReadyCallback() {
+        clientServices.lookupDataSet(lookupCurrent, new DataSetReadyCallback() {
             public void callback(DataSet dataSet) {
                 lastLookedUpDataSet = dataSet;
                 callback.callback(dataSet);

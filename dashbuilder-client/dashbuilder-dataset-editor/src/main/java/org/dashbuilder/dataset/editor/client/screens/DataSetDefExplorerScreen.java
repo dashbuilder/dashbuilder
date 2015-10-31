@@ -16,9 +16,11 @@
 package org.dashbuilder.dataset.editor.client.screens;
 
 import com.google.gwt.user.client.ui.IsWidget;
-import org.dashbuilder.client.widgets.dataset.editor.widgets.events.EditDataSetEvent;
-import org.dashbuilder.client.widgets.dataset.editor.widgets.explorer.DataSetExplorer;
+import org.dashbuilder.client.widgets.dataset.event.EditDataSetEvent;
+import org.dashbuilder.client.widgets.dataset.event.ErrorEvent;
+import org.dashbuilder.client.widgets.dataset.explorer.DataSetExplorer;
 import org.dashbuilder.client.widgets.resources.i18n.DataSetExplorerConstants;
+import org.dashbuilder.common.client.error.ClientRuntimeError;
 import org.dashbuilder.dataset.service.DataSetDefVfsServices;
 import org.jboss.errai.common.client.api.Caller;
 import org.uberfire.client.annotations.WorkbenchMenu;
@@ -26,6 +28,7 @@ import org.uberfire.client.annotations.WorkbenchPartTitle;
 import org.uberfire.client.annotations.WorkbenchPartView;
 import org.uberfire.client.annotations.WorkbenchScreen;
 import org.uberfire.client.mvp.PlaceManager;
+import org.uberfire.client.workbench.widgets.common.ErrorPopupPresenter;
 import org.uberfire.lifecycle.OnClose;
 import org.uberfire.lifecycle.OnStartup;
 import org.uberfire.mvp.Command;
@@ -63,6 +66,9 @@ public class DataSetDefExplorerScreen {
 
     @Inject
     DataSetExplorer explorerWidget;
+
+    @Inject
+    ErrorPopupPresenter errorPopupPresenter;
 
     @OnStartup
     public void onStartup(PlaceRequest placeRequest) {
@@ -109,9 +115,27 @@ public class DataSetDefExplorerScreen {
     void newDataSet() {
         placeManager.goTo("DataSetDefWizard");
     }
+
+    private void showError(final ClientRuntimeError error) {
+        final String message = error.getCause() != null ? error.getCause() : error.getMessage();
+        showError(message);
+    }
+
+    private void showError(final String message) {
+        errorPopupPresenter.showMessage(message);
+    }
     
-    private void onEditDataSetEvent(@Observes EditDataSetEvent event) {
+    void onEditDataSetEvent(@Observes EditDataSetEvent event) {
         checkNotNull("event", event);
         placeManager.goTo(new PathPlaceRequest(event.getDef().getVfsPath()));
+    }
+
+    void onErrorEvent(@Observes ErrorEvent errorEvent) {
+        checkNotNull("errorEvent", errorEvent);
+        if (errorEvent.getClientRuntimeError() != null) {
+            showError(errorEvent.getClientRuntimeError());
+        } else if (errorEvent.getMessage() != null) {
+            showError(errorEvent.getMessage());
+        }
     }
 }
