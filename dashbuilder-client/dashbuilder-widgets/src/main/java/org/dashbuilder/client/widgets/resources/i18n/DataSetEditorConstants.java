@@ -16,7 +16,6 @@
 package org.dashbuilder.client.widgets.resources.i18n;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.i18n.client.ConstantsWithLookup;
 import com.google.gwt.i18n.client.Messages;
 
 /**
@@ -142,7 +141,5 @@ public interface DataSetEditorConstants extends Messages {
     String showColumnsAndFilter();
     String hideColumnsAndFilter();
     String defNotFound();
-    String uploadSuccessful();
-    String uploadFailed();
-    String uploadFailedAlreadyExists();
 }
+

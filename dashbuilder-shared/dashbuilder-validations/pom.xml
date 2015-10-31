@@ -58,6 +58,11 @@
 
     <dependency>
       <groupId>org.jboss.errai</groupId>
+      <artifactId>errai-ioc</artifactId>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.jboss.errai</groupId>
       <artifactId>errai-validation</artifactId>
     </dependency>
 
@@ -67,6 +72,19 @@
       <scope>provided</scope>
     </dependency>
 
+    <!-- Test dependencies -->
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-all</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>com.google.gwt.gwtmockito</groupId>
+      <artifactId>gwtmockito</artifactId>
+      <scope>test</scope>
+    </dependency>
+    
   </dependencies>
   
   <build>

@@ -28,6 +28,7 @@ import org.uberfire.ext.editor.commons.service.support.SupportsDelete;
 @Remote
 public interface DataSetDefVfsServices extends SupportsDelete, SupportsCopy {
 
+    DataSetDef get(Path path);
     EditDataSetDef load(Path path) throws Exception;
     Path save(DataSetDef dataSetDef, String commitMessage);
 }

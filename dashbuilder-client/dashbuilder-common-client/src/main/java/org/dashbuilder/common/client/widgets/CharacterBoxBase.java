@@ -3,9 +3,6 @@ package org.dashbuilder.common.client.widgets;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.text.shared.AbstractRenderer;
 import com.google.gwt.text.shared.Parser;
-import com.google.gwt.text.shared.Renderer;
-import com.google.gwt.text.shared.testing.PassthroughParser;
-import com.google.gwt.text.shared.testing.PassthroughRenderer;
 import org.gwtbootstrap3.client.ui.base.ValueBoxBase;
 
 /**

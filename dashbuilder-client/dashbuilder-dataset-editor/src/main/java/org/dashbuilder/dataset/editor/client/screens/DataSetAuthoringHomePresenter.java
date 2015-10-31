@@ -38,14 +38,18 @@ public class DataSetAuthoringHomePresenter {
         void setDataSetCount(int n);
     }
 
-    @Inject
     View view;
-
-    @Inject
     PlaceManager placeManager;
+    DataSetClientServices clientServices;
 
     @Inject
-    DataSetClientServices clientServices;
+    public DataSetAuthoringHomePresenter(final View view, 
+                                         final PlaceManager placeManager, 
+                                         final DataSetClientServices clientServices) {
+        this.view = view;
+        this.placeManager = placeManager;
+        this.clientServices = clientServices;
+    }
 
     @OnStartup
     public void init() {

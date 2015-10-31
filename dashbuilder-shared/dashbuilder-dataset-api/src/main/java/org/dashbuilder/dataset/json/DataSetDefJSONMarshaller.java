@@ -161,9 +161,6 @@ public class DataSetDefJSONMarshaller {
         // Cache max rows parameter.
         if (!isBlank(cacheMaxRows)) dataSetDef.setCacheMaxRows(Integer.parseInt(cacheMaxRows));
 
-        // Cache synced parameter.
-        if (!isBlank(cacheSynced)) dataSetDef.setCacheSynced(Boolean.parseBoolean(cacheSynced));
-
         return dataSetDef;
     }
 

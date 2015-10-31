@@ -20,7 +20,7 @@ public class CharacterBox extends CharacterBoxBase {
      *
      * This element must already be attached to the document. If the element is
      * removed from the document, you must call
-     * {@link com.google.gwt.user.client.ui.RootPanel#detachNow(com.google.gwt.user.client.ui.Widget)}.
+     * {@link RootPanel#detachNow(com.google.gwt.user.client.ui.Widget)}.
      *
      * @param element
      *            the element to be wrapped
