@@ -50,9 +50,9 @@ public class DefaultRenderer extends AbstractRendererLibrary {
 
     @Override
     public boolean isDefault(DisplayerType type) {
-        if (SELECTOR.equals(type)) return true;
-        if (METRIC.equals(type)) return true;
-        return false;
+        return TABLE.equals(type) ||
+                SELECTOR.equals(type) ||
+                METRIC.equals(type);
     }
 
     @Override
@@ -72,9 +72,15 @@ public class DefaultRenderer extends AbstractRendererLibrary {
     @Override
     public Displayer lookupDisplayer(DisplayerSettings displayerSettings) {
         DisplayerType type = displayerSettings.getType();
-        if (TABLE.equals(type)) return new TableDisplayer();
-        if (SELECTOR.equals(type)) return new SelectorDisplayer();
-        if (METRIC.equals(type)) return new MetricDisplayer();
+        if (TABLE.equals(type)) {
+            return new TableDisplayer();
+        }
+        if (SELECTOR.equals(type)) {
+            return new SelectorDisplayer();
+        }
+        if (METRIC.equals(type)) {
+            return new MetricDisplayer();
+        }
 
         return null;
     }

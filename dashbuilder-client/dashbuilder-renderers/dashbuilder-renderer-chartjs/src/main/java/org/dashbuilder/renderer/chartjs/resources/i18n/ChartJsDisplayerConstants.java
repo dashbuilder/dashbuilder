@@ -40,35 +40,4 @@ public interface ChartJsDisplayerConstants extends Messages {
     String common_noData();
 
     String chartjsDisplayer_resetAnchor();
-
-    String chartjsCategoriesDisplayer_color_blue();
-
-    String chartjsCategoriesDisplayer_color_red();
-
-    String chartjsCategoriesDisplayer_color_orange();
-
-    String chartjsCategoriesDisplayer_color_brown();
-
-    String chartjsCategoriesDisplayer_color_coral();
-
-    String chartjsCategoriesDisplayer_color_aqua();
-
-    String chartjsCategoriesDisplayer_color_fuchsia();
-
-    String chartjsCategoriesDisplayer_color_gold();
-
-    String chartjsCategoriesDisplayer_color_green();
-
-    String chartjsCategoriesDisplayer_color_grey();
-
-    String chartjsCategoriesDisplayer_color_lime();
-
-    String chartjsCategoriesDisplayer_color_magenta();
-
-    String chartjsCategoriesDisplayer_color_pink();
-
-    String chartjsCategoriesDisplayer_color_silver();
-
-    String chartjsCategoriesDisplayer_color_yellow();
-
 }

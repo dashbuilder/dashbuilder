@@ -61,12 +61,31 @@ import org.dashbuilder.dataset.engine.sort.DataSetSortAlgorithm;
 @ApplicationScoped
 public class SharedDataSetOpEngine implements DataSetOpEngine {
 
-    @Inject protected AggregateFunctionManager aggregateFunctionManager;
-    @Inject protected IntervalBuilderLocator intervalBuilderLocator;
-    @Inject protected DataSetIndexRegistry indexRegistry;
-    @Inject protected DataSetSortAlgorithm sortAlgorithm;
-    @Inject protected DataSetFilterAlgorithm filterAlgorithm;
-    @Inject protected Chronometer chronometer;
+    protected AggregateFunctionManager aggregateFunctionManager;
+    protected IntervalBuilderLocator intervalBuilderLocator;
+    protected DataSetIndexRegistry indexRegistry;
+    protected DataSetSortAlgorithm sortAlgorithm;
+    protected DataSetFilterAlgorithm filterAlgorithm;
+    protected Chronometer chronometer;
+
+    public SharedDataSetOpEngine() {
+    }
+
+    @Inject
+    public SharedDataSetOpEngine(AggregateFunctionManager aggregateFunctionManager,
+                                 IntervalBuilderLocator intervalBuilderLocator,
+                                 DataSetIndexRegistry indexRegistry,
+                                 DataSetSortAlgorithm sortAlgorithm,
+                                 DataSetFilterAlgorithm filterAlgorithm,
+                                 Chronometer chronometer) {
+
+        this.aggregateFunctionManager = aggregateFunctionManager;
+        this.intervalBuilderLocator = intervalBuilderLocator;
+        this.indexRegistry = indexRegistry;
+        this.sortAlgorithm = sortAlgorithm;
+        this.filterAlgorithm = filterAlgorithm;
+        this.chronometer = chronometer;
+    }
 
     public AggregateFunctionManager getAggregateFunctionManager() {
         return aggregateFunctionManager;

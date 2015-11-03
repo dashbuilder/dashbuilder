@@ -27,10 +27,16 @@ import org.dashbuilder.dataset.uuid.UUIDGenerator;
 @ApplicationScoped
 public class TransientDataSetIndexRegistry implements DataSetIndexRegistry {
 
-    @Inject
     protected UUIDGenerator uuidGenerator;
-
     protected Map<String,DataSetIndex> indexMap = new HashMap<String, DataSetIndex>();
+
+    public TransientDataSetIndexRegistry() {
+    }
+
+    @Inject
+    public TransientDataSetIndexRegistry(UUIDGenerator uuidGenerator) {
+        this.uuidGenerator = uuidGenerator;
+    }
 
     public DataSetIndex put(DataSet dataSet) {
         if (dataSet == null) return null;

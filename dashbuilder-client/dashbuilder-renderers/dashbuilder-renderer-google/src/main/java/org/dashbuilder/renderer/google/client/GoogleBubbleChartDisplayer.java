@@ -15,69 +15,61 @@
  */
 package org.dashbuilder.renderer.google.client;
 
-import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.Panel;
-import com.google.gwt.user.client.ui.SimplePanel;
-import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
-import com.googlecode.gwt.charts.client.ChartPackage;
-import com.googlecode.gwt.charts.client.corechart.BubbleChart;
-import com.googlecode.gwt.charts.client.corechart.BubbleChartOptions;
-import com.googlecode.gwt.charts.client.options.Animation;
-import com.googlecode.gwt.charts.client.options.AnimationEasing;
-import com.googlecode.gwt.charts.client.options.HAxis;
-import com.googlecode.gwt.charts.client.options.VAxis;
+import javax.enterprise.context.Dependent;
+import javax.inject.Inject;
+
 import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.DataSetLookupConstraints;
 import org.dashbuilder.displayer.DisplayerAttributeDef;
 import org.dashbuilder.displayer.DisplayerAttributeGroupDef;
 import org.dashbuilder.displayer.DisplayerConstraints;
-import org.dashbuilder.renderer.google.client.resources.i18n.GoogleDisplayerConstants;
 
-public class GoogleBubbleChartDisplayer extends GoogleCategoriesDisplayer {
+@Dependent
+public class GoogleBubbleChartDisplayer extends GoogleCategoriesDisplayer<GoogleBubbleChartDisplayer.View> {
 
-    private BubbleChart chart;
-    protected Panel filterPanel = new SimplePanel();
+    public interface View extends GoogleCategoriesDisplayer.View<GoogleBubbleChartDisplayer> {
 
-    @Override
-    public ChartPackage getPackage() {
-        return ChartPackage.CORECHART;
+        String getXAxisColumnTitle();
+
+        String getYAxisColumnTitle();
+
+        String getBubbleColorColumnTitle();
+
+        String getBubbleSizeColumnTitle();
+    }
+
+    private View view;
+
+    public GoogleBubbleChartDisplayer() {
+        this(new GoogleBubbleChartDisplayerView());
+    }
+
+    @Inject
+    public GoogleBubbleChartDisplayer(View view) {
+        this.view = view;
+        this.view.init(this);
     }
 
     @Override
-    public Widget createVisualization() {
-        chart = new BubbleChart();
-        chart.addSelectHandler(createSelectHandler(chart));
-        chart.draw(createTable(), createOptions());
-
-        HTML titleHtml = new HTML();
-        if (displayerSettings.isTitleVisible()) {
-            titleHtml.setText(displayerSettings.getTitle());
-        }
-
-        FlowPanel container = new FlowPanel();
-        container.add(titleHtml);
-        container.add(filterPanel);
-        container.add(chart);
-        return container;
+    public View getView() {
+        return view;
     }
 
     @Override
     public DisplayerConstraints createDisplayerConstraints() {
 
         DataSetLookupConstraints lookupConstraints = new DataSetLookupConstraints()
-                .setGroupRequired( true )
-                .setGroupColumn( true )
-                .setMaxColumns( 5 )
-                .setMinColumns( 5 )
-                .setExtraColumnsAllowed( false )
-                .setGroupsTitle( GoogleDisplayerConstants.INSTANCE.common_Categories())
-                .setColumnsTitle(GoogleDisplayerConstants.INSTANCE.common_Values())
-                .setColumnTitle(1, GoogleDisplayerConstants.INSTANCE.googleBubbleDisplayer_XAxis())
-                .setColumnTitle(2, GoogleDisplayerConstants.INSTANCE.googleBubbleDisplayer_YAxis())
-                .setColumnTitle(3, GoogleDisplayerConstants.INSTANCE.googleBubbleDisplayer_BubbleColor())
-                .setColumnTitle(4, GoogleDisplayerConstants.INSTANCE.googleBubbleDisplayer_BubbleSize())
+                .setGroupRequired(true)
+                .setGroupColumn(true)
+                .setMaxColumns(5)
+                .setMinColumns(5)
+                .setExtraColumnsAllowed(false)
+                .setGroupsTitle(view.getGroupsTitle())
+                .setColumnsTitle(view.getColumnsTitle())
+                .setColumnTitle(1, view.getXAxisColumnTitle())
+                .setColumnTitle(2, view.getYAxisColumnTitle())
+                .setColumnTitle(3, view.getBubbleColorColumnTitle())
+                .setColumnTitle(4, view.getBubbleSizeColumnTitle())
                 .setColumnTypes(new ColumnType[] {
                         ColumnType.LABEL,
                         ColumnType.NUMBER,
@@ -89,41 +81,14 @@ public class GoogleBubbleChartDisplayer extends GoogleCategoriesDisplayer {
                    .supportsAttribute(DisplayerAttributeDef.TYPE)
                    .supportsAttribute(DisplayerAttributeDef.RENDERER)
                    .supportsAttribute(DisplayerAttributeGroupDef.COLUMNS_GROUP)
-                   .supportsAttribute( DisplayerAttributeGroupDef.FILTER_GROUP )
-                   .supportsAttribute( DisplayerAttributeGroupDef.REFRESH_GROUP )
-                   .supportsAttribute( DisplayerAttributeGroupDef.GENERAL_GROUP)
-                   .supportsAttribute( DisplayerAttributeDef.CHART_WIDTH )
-                   .supportsAttribute( DisplayerAttributeDef.CHART_HEIGHT )
+                   .supportsAttribute(DisplayerAttributeGroupDef.FILTER_GROUP)
+                   .supportsAttribute(DisplayerAttributeGroupDef.REFRESH_GROUP)
+                   .supportsAttribute(DisplayerAttributeGroupDef.GENERAL_GROUP)
+                   .supportsAttribute(DisplayerAttributeDef.CHART_WIDTH)
+                   .supportsAttribute(DisplayerAttributeDef.CHART_HEIGHT)
                    .supportsAttribute(DisplayerAttributeDef.CHART_BGCOLOR)
                    .supportsAttribute(DisplayerAttributeGroupDef.CHART_MARGIN_GROUP)
-                   .supportsAttribute( DisplayerAttributeGroupDef.CHART_LEGEND_GROUP )
-                   .supportsAttribute( DisplayerAttributeGroupDef.AXIS_GROUP );
-    }
-
-    protected void updateVisualization() {
-        filterPanel.clear();
-        Widget filterReset = createCurrentSelectionWidget();
-        if (filterReset != null) filterPanel.add(filterReset);
-
-        chart.draw(createTable(), createOptions());
-    }
-
-    private BubbleChartOptions createOptions() {
-        Animation anim = Animation.create();
-        anim.setDuration(700);
-        anim.setEasing(AnimationEasing.IN_AND_OUT);
-
-        BubbleChartOptions options = BubbleChartOptions.create();
-        options.setWidth(displayerSettings.getChartWidth());
-        options.setHeight(displayerSettings.getChartHeight());
-        options.setBackgroundColor(displayerSettings.getChartBackgroundColor());
-        if ( displayerSettings.isXAxisShowLabels() ) options.setHAxis( createHAxis() );
-        if ( displayerSettings.isYAxisShowLabels() ) options.setVAxis( createVAxis() );
-        options.setChartArea(createChartArea());
-        options.setLegend( createChartLegend() );
-        options.setAnimation(anim);
-        String[] colors = createColorArray(googleTable);
-        if (colors.length > 0) options.setColors(colors);
-        return options;
+                   .supportsAttribute(DisplayerAttributeGroupDef.CHART_LEGEND_GROUP)
+                   .supportsAttribute(DisplayerAttributeGroupDef.AXIS_GROUP);
     }
 }

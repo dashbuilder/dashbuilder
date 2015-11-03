@@ -25,10 +25,10 @@ import org.dashbuilder.client.resources.i18n.AppConstants;
 import org.dashbuilder.displayer.DisplayerSettings;
 import org.dashbuilder.displayer.client.PerspectiveCoordinator;
 import org.dashbuilder.displayer.json.DisplayerSettingsJSONMarshaller;
-import org.dashbuilder.displayer.client.widgets.DisplayerEditor;
 import org.dashbuilder.displayer.client.widgets.DisplayerEditorPopup;
 import org.jboss.errai.ioc.client.container.IOC;
 import org.jboss.errai.ioc.client.container.IOCBeanDef;
+import org.jboss.errai.ioc.client.container.SyncBeanManager;
 import org.jboss.errai.ioc.client.container.SyncBeanManagerImpl;
 import org.uberfire.client.mvp.PerspectiveActivity;
 import org.uberfire.client.mvp.PerspectiveManager;
@@ -47,8 +47,9 @@ import org.uberfire.workbench.model.toolbar.ToolBar;
 /**
  * The dashboard composer perspective.
  */
-public class DashboardPerspectiveActivity  implements PerspectiveActivity {
+public class DashboardPerspectiveActivity implements PerspectiveActivity {
 
+    private SyncBeanManager beanManager;
     private DashboardManager dashboardManager;
     private PerspectiveManager perspectiveManager;
     private PlaceManager placeManager;
@@ -63,13 +64,15 @@ public class DashboardPerspectiveActivity  implements PerspectiveActivity {
     }
 
     public DashboardPerspectiveActivity(String id,
-            DashboardManager dashboardManager,
-            PerspectiveManager perspectiveManager,
-            PlaceManager placeManager,
-            PerspectiveCoordinator perspectiveCoordinator,
-            DisplayerSettingsJSONMarshaller jsonMarshaller) {
+                                        DashboardManager dashboardManager,
+                                        SyncBeanManager beanManager,
+                                        PerspectiveManager perspectiveManager,
+                                        PlaceManager placeManager,
+                                        PerspectiveCoordinator perspectiveCoordinator,
+                                        DisplayerSettingsJSONMarshaller jsonMarshaller) {
 
         this.id = id;
+        this.beanManager = beanManager;
         this.persistent = true;
         this.dashboardManager = dashboardManager;
         this.perspectiveManager = perspectiveManager;
@@ -209,27 +212,36 @@ public class DashboardPerspectiveActivity  implements PerspectiveActivity {
             public void execute() {
                 /* Displayer settings == null => Create a brand new displayer */
                 perspectiveCoordinator.editOn();
-                DisplayerEditorPopup displayerEditor = getDisplayerEditorPopup();
-                displayerEditor.init(null, new DisplayerEditor.Listener() {
+                DisplayerEditorPopup displayerEditor = beanManager.lookupBean(DisplayerEditorPopup.class).newInstance();
+                displayerEditor.init(null);
+                displayerEditor.setOnSaveCommand(getSaveDisplayerCommand(displayerEditor));
+                displayerEditor.setOnCloseCommand(getCloseDisplayerCommand(displayerEditor));
+            }
+        };
+    }
 
-                    public void onClose(final DisplayerEditor editor) {
-                        perspectiveCoordinator.editOff();
-                    }
+    protected Command getSaveDisplayerCommand(final DisplayerEditorPopup editor) {
+        return new Command() {
+            public void execute() {
+                perspectiveCoordinator.editOff();
+                beanManager.destroyBean(editor);
 
-                    public void onSave(final DisplayerEditor editor) {
-                        perspectiveCoordinator.editOff();
-                        placeManager.goTo(createPlaceRequest(editor.getDisplayerSettings()));
-                        perspectiveManager.savePerspectiveState(new Command() {public void execute() {}});
+                placeManager.goTo(createPlaceRequest(editor.getDisplayerSettings()));
+                perspectiveManager.savePerspectiveState(new Command() {
+                    public void execute() {
                     }
                 });
             }
         };
     }
 
-    protected DisplayerEditorPopup getDisplayerEditorPopup() {
-        Collection<IOCBeanDef<DisplayerEditorPopup>> beans = IOC.getBeanManager().lookupBeans(DisplayerEditorPopup.class);
-        IOCBeanDef<DisplayerEditorPopup> beanDef = beans.iterator().next();
-        return beanDef.getInstance();
+    protected Command getCloseDisplayerCommand(final DisplayerEditorPopup editor) {
+        return new Command() {
+            public void execute() {
+                perspectiveCoordinator.editOff();
+                beanManager.destroyBean(editor);
+            }
+        };
     }
 
     private PlaceRequest createPlaceRequest(DisplayerSettings displayerSettings) {

@@ -72,7 +72,7 @@
 
     <dependency>
       <groupId>org.dashbuilder</groupId>
-      <artifactId>dashbuilder-dataset-core</artifactId>
+      <artifactId>dashbuilder-dataset-api</artifactId>
       <type>test-jar</type>
       <scope>test</scope>
     </dependency>

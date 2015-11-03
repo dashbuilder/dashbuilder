@@ -64,6 +64,9 @@ public class DisplayerSettings {
     public boolean equals(Object obj) {
         try {
             DisplayerSettings other = (DisplayerSettings) obj;
+            if (other == this) {
+                return true;
+            }
             if (other == null) {
                 return false;
             }

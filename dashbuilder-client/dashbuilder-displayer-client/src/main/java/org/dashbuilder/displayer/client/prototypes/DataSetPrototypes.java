@@ -15,7 +15,6 @@
  */
 package org.dashbuilder.displayer.client.prototypes;
 
-import java.util.Collection;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -24,8 +23,6 @@ import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetFactory;
 import org.dashbuilder.dataset.client.ClientDataSetManager;
 import org.dashbuilder.dataset.group.AggregateFunctionType;
-import org.jboss.errai.ioc.client.container.IOC;
-import org.jboss.errai.ioc.client.container.IOCBeanDef;
 
 @ApplicationScoped
 public class DataSetPrototypes {
@@ -40,13 +37,6 @@ public class DataSetPrototypes {
     public static final String REGION = "Region";
     public static final String POPULATION = "Population";
 
-    public static DataSetPrototypes get() {
-        Collection<IOCBeanDef<DataSetPrototypes>> beans = IOC.getBeanManager().lookupBeans(DataSetPrototypes.class);
-        IOCBeanDef<DataSetPrototypes> beanDef = beans.iterator().next();
-        return beanDef.getInstance();
-    }
-
-    @Inject
     ClientDataSetManager dataSetManager;
 
     public DataSet getWorldPopulation() {
@@ -73,8 +63,13 @@ public class DataSetPrototypes {
         return dataSetManager.getDataSet("continentPopulationExt");
     }
 
-    @PostConstruct
-    private void init() {
+    @Inject
+    public DataSetPrototypes(ClientDataSetManager dataSetManager) {
+        this.dataSetManager = dataSetManager;
+        init();
+    }
+
+    public void init() {
 
         dataSetManager.registerDataSet(DataSetFactory
                 .newDataSetBuilder()

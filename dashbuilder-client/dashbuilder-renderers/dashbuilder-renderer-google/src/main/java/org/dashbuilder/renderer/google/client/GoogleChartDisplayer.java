@@ -15,83 +15,44 @@
  */
 package org.dashbuilder.renderer.google.client;
 
-import java.util.List;
-import java.util.Set;
-
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.ui.Anchor;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Widget;
-import com.googlecode.gwt.charts.client.options.Legend;
-import com.googlecode.gwt.charts.client.options.LegendAlignment;
-import com.googlecode.gwt.charts.client.options.LegendPosition;
-import org.dashbuilder.dataset.DataColumn;
-import org.dashbuilder.dataset.group.Interval;
-import org.dashbuilder.renderer.google.client.resources.i18n.GoogleDisplayerConstants;
-import org.gwtbootstrap3.client.ui.Label;
+import org.dashbuilder.displayer.DisplayerSubType;
+import org.dashbuilder.displayer.Position;
 
 /**
- * Base class for all the Google chart like displayers
+ * Base class for all the Google chart displayers
  */
-public abstract class GoogleChartDisplayer extends GoogleDisplayer {
+public abstract class GoogleChartDisplayer<V extends GoogleChartDisplayer.View> extends GoogleDisplayer<V> {
 
-    protected Legend createChartLegend() {
-        GoogleLegendWrapper legend = GoogleLegendWrapper.create();
-        legend.setLegendPosition( getLegendPosition() );
-        legend.setAligment( LegendAlignment.CENTER );
-        return legend;
+    public interface View<P extends GoogleChartDisplayer> extends GoogleDisplayer.View<P> {
+
+        void setWidth(int width);
+
+        void setHeight(int height);
+
+        void setMarginTop(int marginTop);
+
+        void setMarginBottom(int marginBottom);
+
+        void setMarginRight(int marginRight);
+
+        void setMarginLeft(int marginLeft);
+
+        void setLegendPosition(Position position);
+
+        void setSubType(DisplayerSubType subType);
     }
 
-    protected String getLegendPosition() {
-        if ( !displayerSettings.isChartShowLegend() ) return LegendPosition.NONE.toString().toLowerCase();
-        switch ( displayerSettings.getChartLegendPosition() ) {
-            case TOP: return LegendPosition.TOP.toString().toLowerCase();
-            case BOTTOM: return LegendPosition.BOTTOM.toString().toLowerCase();
-            case RIGHT: return LegendPosition.RIGHT.toString().toLowerCase();
-            case IN: return LegendPosition.IN.toString().toLowerCase();
-            case LEFT: return "left";
-            default: return LegendPosition.RIGHT.toString().toLowerCase();
-        }
+    @Override
+    protected void createVisualization() {
+        super.createVisualization();
+
+        getView().setWidth(displayerSettings.getChartWidth());
+        getView().setHeight(displayerSettings.getChartHeight());
+        getView().setMarginTop(displayerSettings.getChartMarginTop());
+        getView().setMarginBottom(displayerSettings.getChartMarginBottom());
+        getView().setMarginRight(displayerSettings.getChartMarginRight());
+        getView().setMarginLeft(displayerSettings.getChartMarginLeft());
+        getView().setLegendPosition(displayerSettings.isChartShowLegend() ? displayerSettings.getChartLegendPosition() : null);
+        getView().setSubType(displayerSettings.getSubtype());
     }
-
-    protected Widget createNoDataMsgPanel() {
-        return new Label(GoogleDisplayerConstants.INSTANCE.common_noData());
-    }
-
-    protected Widget createCurrentSelectionWidget() {
-        if (!displayerSettings.isFilterEnabled()) return null;
-
-        Set<String> columnFilters = filterColumns();
-        if (columnFilters.isEmpty()) return null;
-
-        HorizontalPanel panel = new HorizontalPanel();
-        panel.getElement().setAttribute("cellpadding", "2");
-
-        for (String columnId : columnFilters) {
-            List<Interval> selectedValues = filterIntervals(columnId);
-            DataColumn column = dataSet.getColumnById(columnId);
-            for (Interval interval : selectedValues) {
-                String formattedValue = formatInterval(interval, column);
-                panel.add(new Label(formattedValue));
-            }
-        }
-
-        Anchor anchor = new Anchor( GoogleDisplayerConstants.INSTANCE.googleDisplayer_resetAnchor() );
-        panel.add(anchor);
-        anchor.addClickHandler(new ClickHandler() {
-            public void onClick(ClickEvent event) {
-                filterReset();
-
-                // Update the chart view in order to reflect the current selection
-                // (only if not has already been redrawn in the previous filterUpdate() call)
-                if (!displayerSettings.isFilterSelfApplyEnabled()) {
-                    updateVisualization();
-                }
-            }
-        });
-        return panel;
-    }
-
-
 }

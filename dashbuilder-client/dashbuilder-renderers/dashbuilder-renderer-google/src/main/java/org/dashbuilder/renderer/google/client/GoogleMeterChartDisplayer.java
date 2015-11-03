@@ -15,45 +15,44 @@
  */
 package org.dashbuilder.renderer.google.client;
 
-import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
-import com.googlecode.gwt.charts.client.ChartPackage;
-import com.googlecode.gwt.charts.client.gauge.Gauge;
-import com.googlecode.gwt.charts.client.gauge.GaugeOptions;
-import com.googlecode.gwt.charts.client.options.Animation;
-import com.googlecode.gwt.charts.client.options.AnimationEasing;
+import javax.enterprise.context.Dependent;
+import javax.inject.Inject;
+
 import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.DataSetLookupConstraints;
 import org.dashbuilder.displayer.DisplayerAttributeDef;
 import org.dashbuilder.displayer.DisplayerAttributeGroupDef;
 import org.dashbuilder.displayer.DisplayerConstraints;
-import org.dashbuilder.renderer.google.client.resources.i18n.GoogleDisplayerConstants;
 
-public class GoogleMeterChartDisplayer extends GoogleChartDisplayer {
+@Dependent
+public class GoogleMeterChartDisplayer extends GoogleCategoriesDisplayer<GoogleMeterChartDisplayer.View> {
 
-    private Gauge chart;
+    public interface View extends GoogleCategoriesDisplayer.View<GoogleMeterChartDisplayer> {
 
-    @Override
-    public ChartPackage getPackage() {
-        return ChartPackage.GAUGE;
+        void setMeterStart(long meterStart);
+
+        void setMeterWarning(long meterWarning);
+
+        void setMeterCritical(long meterCritical);
+
+        void setMeterEnd(long meterEnd);
+    }
+
+    private View view;
+
+    public GoogleMeterChartDisplayer() {
+        this(new GoogleMeterChartDisplayerView());
+    }
+
+    @Inject
+    public GoogleMeterChartDisplayer(View view) {
+        this.view = view;
+        this.view.init(this);
     }
 
     @Override
-    public Widget createVisualization() {
-        chart = new Gauge();
-        chart.draw(createTable(), createOptions());
-
-        HTML titleHtml = new HTML();
-        if (displayerSettings.isTitleVisible()) {
-            titleHtml.setText(displayerSettings.getTitle());
-        }
-
-        FlowPanel container = new FlowPanel();
-        container.add(titleHtml);
-        container.add(chart);
-        return container;
+    public View getView() {
+        return view;
     }
 
     @Override
@@ -66,8 +65,8 @@ public class GoogleMeterChartDisplayer extends GoogleChartDisplayer {
                 .setMaxColumns(2)
                 .setMinColumns(1)
                 .setExtraColumnsAllowed(false)
-                .setGroupsTitle(GoogleDisplayerConstants.INSTANCE.common_Categories())
-                .setColumnsTitle(GoogleDisplayerConstants.INSTANCE.common_Value())
+                .setGroupsTitle(view.getGroupsTitle())
+                .setColumnsTitle(view.getColumnsTitle())
                 .setFunctionRequired(true)
                 .setColumnTypes(new ColumnType[] {ColumnType.NUMBER},
                         new ColumnType[] {ColumnType.LABEL, ColumnType.NUMBER});
@@ -77,35 +76,21 @@ public class GoogleMeterChartDisplayer extends GoogleChartDisplayer {
                    .supportsAttribute(DisplayerAttributeDef.RENDERER)
                    .supportsAttribute(DisplayerAttributeGroupDef.COLUMNS_GROUP)
                    .supportsAttribute(DisplayerAttributeGroupDef.FILTER_GROUP)
-                   .supportsAttribute( DisplayerAttributeGroupDef.REFRESH_GROUP )
-                   .supportsAttribute( DisplayerAttributeGroupDef.GENERAL_GROUP)
-                   .supportsAttribute( DisplayerAttributeDef.CHART_WIDTH )
-                   .supportsAttribute( DisplayerAttributeDef.CHART_HEIGHT )
-                   .supportsAttribute( DisplayerAttributeGroupDef.CHART_MARGIN_GROUP )
-                   .supportsAttribute( DisplayerAttributeGroupDef.METER_GROUP );
+                   .supportsAttribute(DisplayerAttributeGroupDef.REFRESH_GROUP)
+                   .supportsAttribute(DisplayerAttributeGroupDef.GENERAL_GROUP)
+                   .supportsAttribute(DisplayerAttributeDef.CHART_WIDTH)
+                   .supportsAttribute(DisplayerAttributeDef.CHART_HEIGHT)
+                   .supportsAttribute(DisplayerAttributeGroupDef.CHART_MARGIN_GROUP)
+                   .supportsAttribute(DisplayerAttributeGroupDef.METER_GROUP);
     }
 
-    protected void updateVisualization() {
-        chart.draw(createTable(), createOptions());
-    }
+    @Override
+    protected void createVisualization() {
+        view.setMeterStart(displayerSettings.getMeterStart());
+        view.setMeterWarning(displayerSettings.getMeterWarning());
+        view.setMeterCritical(displayerSettings.getMeterCritical());
+        view.setMeterEnd(displayerSettings.getMeterEnd());
 
-    private GaugeOptions createOptions() {
-        Animation anim = Animation.create();
-        anim.setDuration(700);
-        anim.setEasing(AnimationEasing.IN_AND_OUT);
-
-        GaugeOptions options = GaugeOptions.create();
-        options.setWidth(displayerSettings.getChartWidth());
-        options.setHeight(displayerSettings.getChartHeight());
-        options.setMin(displayerSettings.getMeterStart());
-        options.setMax(displayerSettings.getMeterEnd());
-        options.setGreenFrom(displayerSettings.getMeterStart());
-        options.setGreenTo(displayerSettings.getMeterWarning());
-        options.setYellowFrom(displayerSettings.getMeterWarning());
-        options.setYellowTo(displayerSettings.getMeterCritical());
-        options.setRedFrom(displayerSettings.getMeterCritical());
-        options.setRedTo(displayerSettings.getMeterEnd());
-        options.setAnimation(anim);
-        return options;
+        super.createVisualization();
     }
 }

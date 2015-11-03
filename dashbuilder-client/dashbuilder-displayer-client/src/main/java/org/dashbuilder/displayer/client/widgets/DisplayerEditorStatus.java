@@ -15,33 +15,23 @@
  */
 package org.dashbuilder.displayer.client.widgets;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import javax.enterprise.context.ApplicationScoped;
 
-import org.jboss.errai.ioc.client.container.IOC;
-import org.jboss.errai.ioc.client.container.IOCBeanDef;
-
 @ApplicationScoped
 public class DisplayerEditorStatus {
 
-    public static DisplayerEditorStatus get() {
-        Collection<IOCBeanDef<DisplayerEditorStatus>> beans = IOC.getBeanManager().lookupBeans(DisplayerEditorStatus.class);
-        IOCBeanDef<DisplayerEditorStatus> beanDef = beans.iterator().next();
-        return beanDef.getInstance();
-    }
-
     Map<String,DisplayerStatus> displayerStatusMap = new HashMap<String,DisplayerStatus>();
 
-    public int getSelectedTab(String displayerUuid) {
+    public int getSelectedOption(String displayerUuid) {
         DisplayerStatus status = displayerStatusMap.get(displayerUuid);
-        return (status == null ? -1 : status.selectedTab);
+        return (status == null ? -1 : status.selectedOption);
     }
 
-    public void saveSelectedTab(String displayerUuid, int tab) {
+    public void saveSelectedOption(String displayerUuid, int option) {
         DisplayerStatus status = fetch(displayerUuid);
-        status.selectedTab = tab;
+        status.selectedOption = option;
     }
 
     private DisplayerStatus fetch(String displayerUuid) {
@@ -53,6 +43,6 @@ public class DisplayerEditorStatus {
 
     private class DisplayerStatus {
 
-        int selectedTab = -1;
+        int selectedOption = -1;
     }
 }

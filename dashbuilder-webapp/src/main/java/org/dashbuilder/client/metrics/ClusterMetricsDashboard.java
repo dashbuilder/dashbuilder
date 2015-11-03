@@ -21,6 +21,10 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
 
+import javax.annotation.PostConstruct;
+import javax.enterprise.context.Dependent;
+import javax.inject.Inject;
+
 import com.google.gwt.core.client.Callback;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -42,9 +46,10 @@ import org.dashbuilder.displayer.DisplayerSettingsFactory;
 import org.dashbuilder.displayer.DisplayerType;
 import org.dashbuilder.displayer.client.Displayer;
 import org.dashbuilder.displayer.client.DisplayerCoordinator;
-import org.dashbuilder.displayer.client.DisplayerHelper;
+import org.dashbuilder.displayer.client.DisplayerLocator;
 import org.dashbuilder.displayer.impl.BarChartSettingsBuilderImpl;
 import org.dashbuilder.renderer.client.DefaultRenderer;
+import org.uberfire.mvp.Command;
 
 import static org.dashbuilder.backend.ClusterMetricsGenerator.*;
 import static org.dashbuilder.dataset.group.DateIntervalType.*;
@@ -56,6 +61,7 @@ import static org.dashbuilder.dataset.filter.FilterFactory.*;
  * A composite widget that represents an entire dashboard sample composed using an UI binder template.
  * <p>The dashboard itself is composed by a set of Displayer instances.</p>
  */
+@Dependent
 public class ClusterMetricsDashboard extends Composite implements GalleryWidget {
 
     interface Binder extends UiBinder<Widget, ClusterMetricsDashboard> {}
@@ -87,18 +93,26 @@ public class ClusterMetricsDashboard extends Composite implements GalleryWidget 
 
     List<ClusterMetric> metricDefList = new ArrayList<ClusterMetric>();
     Map<String,List<Integer>> metricChartDef = new HashMap<String, List<Integer>>();
-    DisplayerCoordinator displayerCoordinator = new DisplayerCoordinator();
+    DisplayerCoordinator displayerCoordinator;
+    DisplayerLocator displayerLocator;
     Displayer currentMetricChart = null;
 
     Timer refreshTimer = new Timer() {
         public void run() {
-            displayerCoordinator.redrawAll(new Callback() {
-                public void onFailure(Object reason) {
-                }
-                public void onSuccess(Object result) {
-                    refreshTimer.schedule(1000);
-                }
-            });
+            displayerCoordinator.redrawAll(
+                    // On success
+                    new Command() {
+                        public void execute() {
+                            refreshTimer.schedule(1000);
+                        }
+                    },
+                    // On Failure
+                    new Command() {
+                        public void execute() {
+
+                        }
+                    }
+            );
         }
     };
 
@@ -148,7 +162,14 @@ public class ClusterMetricsDashboard extends Composite implements GalleryWidget 
     public static final String DISK = AppConstants.INSTANCE.metrics_cluster_metricselector_disk();
     public static final String NETWORK = AppConstants.INSTANCE.metrics_cluster_metricselector_netw();
 
-    public ClusterMetricsDashboard() {
+    @Inject
+    public ClusterMetricsDashboard(DisplayerCoordinator displayerCoordinator, DisplayerLocator displayerLocator) {
+        this.displayerCoordinator = displayerCoordinator;
+        this.displayerLocator = displayerLocator;
+    }
+
+    @PostConstruct
+    public void init() {
 
         // Create the metric definitions
         metricDefList.add(new ClusterMetric(COLUMN_CPU0, AppConstants.INSTANCE.metrics_cluster_column_cpu(), "#,##0", null, "84ADF4", true, AppConstants.INSTANCE.metrics_cluster_column_cpu_y()));
@@ -186,7 +207,7 @@ public class ClusterMetricsDashboard extends Composite implements GalleryWidget 
             }
         }
 
-        metricsTable = DisplayerHelper.lookupDisplayer(tableBuilder.buildSettings());
+        metricsTable = displayerLocator.lookupDisplayer(tableBuilder.buildSettings());
         displayerCoordinator.addDisplayer(metricsTable);
 
         // Init the dashboard from the UI Binder template
@@ -197,7 +218,7 @@ public class ClusterMetricsDashboard extends Composite implements GalleryWidget 
         leftPanel.clear();
         for (Integer metricIdx : Arrays.asList(0, 1, 3, 5, 7)) {
             ClusterMetric metric = metricDefList.get(metricIdx);
-            Displayer metricDisplayer = DisplayerHelper.lookupDisplayer(
+            Displayer metricDisplayer = displayerLocator.lookupDisplayer(
                     DisplayerSettingsFactory.newMetricSettings()
                             .dataset("clusterMetrics")
                             .filter(COLUMN_TIMESTAMP, timeFrame("now -2second till now"))
@@ -236,16 +257,22 @@ public class ClusterMetricsDashboard extends Composite implements GalleryWidget 
         displayerCoordinator.addDisplayer(currentMetricChart);
 
         // Draw the charts
-        displayerCoordinator.drawAll(new Callback() {
-            public void onFailure(Object reason) {
-            }
+        displayerCoordinator.drawAll(
+                // On success
+                new Command() {
+                    public void execute() {
+                        messagePanel.setVisible(false);
+                        mainPanel.setVisible(true);
+                        refreshTimer.schedule(1000);
+                    }
+                },
+                // On Failure
+                new Command() {
+                    public void execute() {
 
-            public void onSuccess(Object result) {
-                messagePanel.setVisible(false);
-                mainPanel.setVisible(true);
-                refreshTimer.schedule(1000);
-            }
-        });
+                    }
+                }
+        );
     }
 
     protected Displayer createChartMetric(String group) {
@@ -261,7 +288,7 @@ public class ClusterMetricsDashboard extends Composite implements GalleryWidget 
                 .titleVisible(false)
                 .width(700).height(200)
                 .margins(30, 5, 60, 10)
-                .legendOn("top")
+                .legendOff()
                 .filterOff(true)
                 .dataset("clusterMetrics");
 
@@ -287,7 +314,7 @@ public class ClusterMetricsDashboard extends Composite implements GalleryWidget 
 
         DisplayerSettings settings = builder.buildSettings();
         settings.setType(type);
-        return DisplayerHelper.lookupDisplayer(settings);
+        return displayerLocator.lookupDisplayer(settings);
     }
 
     @UiHandler("chartTypeSelector")

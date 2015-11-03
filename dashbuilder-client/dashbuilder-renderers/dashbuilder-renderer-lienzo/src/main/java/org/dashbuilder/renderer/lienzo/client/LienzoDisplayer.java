@@ -30,37 +30,133 @@ import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.client.DataSetReadyCallback;
 import org.dashbuilder.dataset.group.Interval;
+import org.dashbuilder.displayer.ColumnSettings;
+import org.dashbuilder.displayer.DisplayerSubType;
 import org.dashbuilder.displayer.client.AbstractDisplayer;
 
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-public abstract class LienzoDisplayer extends AbstractDisplayer {
+public abstract class LienzoDisplayer<V extends LienzoDisplayer.View> extends AbstractDisplayer<V> {
 
-    public static final int PANEL_MARGIN = 50;
-    public static final String PIXEL = "px";
-    public static final int ANIMATION_DURATION = 500;
+    public interface View<P extends LienzoDisplayer> extends AbstractDisplayer.View<P> {
 
-    protected DataTable lienzoTable = null;
-    protected DataColumn categoriesColumn = null;
+        void showTitle(String  title);
 
-    /**
-     * Call back method invoked just after the data set lookup is executed.
-     */
-    @Override
-    protected void afterDataSetLookup(DataSet dataSet) {
-        
-        // Ensure data model instance is created.
-        lienzoTable = createTable();
+        void setWidth(int width);
 
-        // Update the categories column.
-        categoriesColumn = getCategoriesColumn();
+        void setHeight(int height);
+
+        void setMarginTop(int marginTop);
+
+        void setMarginBottom(int marginBottom);
+
+        void setMarginRight(int marginRight);
+
+        void setMarginLeft(int marginLeft);
+
+        void setSubType(DisplayerSubType subType);
+
+        void setFilterEnabled(boolean enabled);
+
+        void setResizeEnabled(boolean enabled);
+
+        void setFontFamily(String font);
+
+        void setFontStyle(String style);
+
+        void setFontSize(int size);
+
+        String getGroupsTitle();
+
+        String getColumnsTitle();
+
+        void dataClear();
+
+        void dataAddColumn(String columnId, String columnName, ColumnType columnType);
+
+        void dataAddValue(String columnId, Date value);
+
+        void dataAddValue(String columnId, Number value);
+
+        void dataAddValue(String columnId, String value);
+
+        void clearFilterStatus();
+
+        void addFilterValue(String value);
+
+        void addFilterReset();
+
+        void nodata();
+
+        void drawChart();
+
+        void reloadChart();
     }
 
-    protected DataTable createTable() {
+    @Override
+    protected void createVisualization() {
+        if (displayerSettings.isTitleVisible()) {
+            getView().showTitle(displayerSettings.getTitle());
+        }
+        getView().setSubType(displayerSettings.getSubtype());
+        getView().setWidth(getChartWidth());
+        getView().setHeight(getChartHeight());
+        getView().setMarginLeft(displayerSettings.getChartMarginLeft());
+        getView().setMarginRight(displayerSettings.getChartMarginRight());
+        getView().setMarginTop(displayerSettings.getChartMarginTop());
+        getView().setMarginBottom(displayerSettings.getChartMarginBottom());
+        getView().setFontFamily("Verdana");
+        getView().setFontStyle("bold");
+        getView().setFontSize(8);
+        //getView().setLegendPosition(LegendPosition.RIGHT); // TODO: Custom displayer parameter.
+        //getView().setCategoriesAxisLabelsPosition(LabelsPosition.LEFT); // TODO: Custom displayer parameter.
+        //getView().setValuesAxisLabelsPosition(LabelsPosition.BOTTOM); // TODO: Custom displayer parameter.
+        getView().setResizeEnabled(displayerSettings.isResizable());
+        getView().setFilterEnabled(displayerSettings.isFilterEnabled());
+        // TODO: Category and Number types?
 
-        DataTable lienzoTable = new DataTable();
+        if (dataSet.getRowCount() == 0) {
+            getView().nodata();
+        } else {
+            pushDataToView();
+            getView().drawChart();
+        }
+    }
+
+    @Override
+    protected void updateVisualization() {
+        updateFilterStatus();
+        if (dataSet.getRowCount() == 0) {
+            getView().nodata();
+        } else {
+            pushDataToView();
+            getView().reloadChart();
+        }
+    }
+
+    protected void updateFilterStatus() {
+        getView().clearFilterStatus();
+        Set<String> columnFilters = filterColumns();
+        if (displayerSettings.isFilterEnabled() && !columnFilters.isEmpty()) {
+
+            for (String columnId : columnFilters) {
+                List<Interval> selectedValues = filterIntervals(columnId);
+                DataColumn column = dataSet.getColumnById(columnId);
+                for (Interval interval : selectedValues) {
+                    String formattedValue = formatInterval(interval, column);
+                    getView().addFilterValue(formattedValue);
+                }
+            }
+            getView().addFilterReset();
+        }
+    }
+
+    protected void pushDataToView() {
+
+        getView().dataClear();
+
         List<DataColumn> columns = dataSet.getColumns();
         if (columns != null && !columns.isEmpty()) {
             for (int i = 0; i < columns.size(); i++) {
@@ -68,122 +164,73 @@ public abstract class LienzoDisplayer extends AbstractDisplayer {
                 List columnValues = dataColumn.getValues();
                 ColumnType columnType = dataColumn.getColumnType();
                 String columnId = dataColumn.getId();
+                ColumnSettings columnSettings = displayerSettings.getColumnSettings(dataColumn);
+                String columnName = columnSettings.getColumnName();
 
-                lienzoTable.addColumn(columnId, getColumnType(dataColumn));
+                getView().dataAddColumn(columnId, columnName, dataColumn.getColumnType());
+
                 for (int j = 0; j < columnValues.size(); j++) {
                     Object value = columnValues.get(j);
                     if (ColumnType.LABEL.equals(columnType)) {
-                        value = super.formatValue(i, j);
+                        value = super.formatValue(j, i);
                     }
-                    addTableValue(lienzoTable, columnType, value, columnId);
+
+                    if (ColumnType.DATE.equals(columnType)) {
+                        getView().dataAddValue(columnId, value == null ? new Date() : (Date) value);
+                    }
+                    else if (ColumnType.NUMBER.equals(columnType)) {
+                        getView().dataAddValue(columnId, value == null ? 0d : Double.parseDouble(value.toString()));
+                    }
+                    else {
+                        getView().dataAddValue(columnId, value.toString());
+                    }
                 }
             }
         }
-
-        return lienzoTable;
     }
 
-    public void addTableValue(DataTable lTable, ColumnType type, Object value, String columnId) {
-        if (ColumnType.DATE.equals(type)) {
-            if (value == null) lTable.addValue(columnId, new Date());
-            else lTable.addValue(columnId, (Date) value);
-        }
-        else if (ColumnType.NUMBER.equals(type)) {
-            if (value == null) {
-                lTable.addValue(columnId, 0d);
-            } else {
-                lTable.addValue(columnId, Double.parseDouble(value.toString()));
-            }
-        }
-        else {
-            lTable.addValue(columnId, value.toString());
-        }
-    }
-
-    public DataTableColumn.DataTableColumnType getColumnType(DataColumn dataColumn) {
-        ColumnType type = dataColumn.getColumnType();
-        if (ColumnType.LABEL.equals(type)) return DataTableColumn.DataTableColumnType.STRING;
-        if (ColumnType.TEXT.equals(type)) return DataTableColumn.DataTableColumnType.STRING;
-        if (ColumnType.NUMBER.equals(type)) return DataTableColumn.DataTableColumnType.NUMBER;
-        if (ColumnType.DATE.equals(type)) return DataTableColumn.DataTableColumnType.DATE;
-        return DataTableColumn.DataTableColumnType.STRING;
-    }
-    
-    protected DataColumn getCategoriesColumn() {
-        List<DataColumn> columns = dataSet.getColumns();
-        if (columns != null && !columns.isEmpty()) return columns.get(0);
-        return null;
-    }
-
-    protected DataColumn[] getValuesColumns() {
-        List<DataColumn> columns = dataSet.getColumns();
-        if (columns != null && !columns.isEmpty()) {
-            DataColumn[] result = new DataColumn[columns.size() - 1];
-            if (columns != null && !columns.isEmpty()) {
-                for (int i = 1; i < columns.size(); i++) {
-                    DataColumn dataColumn = columns.get(i);
-                    result[i - 1] = dataColumn;
-                }
-            }
-            return result;
-        }
-        return null;
-    }
-    
-    protected int getChartWidth() {
+    public int getChartWidth() {
         return displayerSettings.getChartWidth();
     }
-    
-    protected int getChartHeight() {
+
+    public int getChartHeight() {
         return  displayerSettings.getChartHeight();
     }
 
-    protected int getWidth() {
+    public int getWidth() {
         int width = displayerSettings.isResizable() ? displayerSettings.getChartMaxWidth() : displayerSettings.getChartWidth();
         int left = displayerSettings.getChartMarginLeft();
         int right = displayerSettings.getChartMarginRight();
         return displayerSettings.getChartWidth()+right+left;
-
     }
 
-    protected int getHeight() {
+    public int getHeight() {
         int height = displayerSettings.isResizable() ? displayerSettings.getChartMaxHeight() : displayerSettings.getChartHeight();
         int top = displayerSettings.getChartMarginTop();
         int bottom = displayerSettings.getChartMarginBottom();
         return displayerSettings.getChartHeight()+top+bottom;
     }
 
-    protected Widget createNoDataMsgPanel() {
-        return new org.gwtbootstrap3.client.ui.Label("NO DATA");
-    }
+    // View notifications
 
-    protected Widget createCurrentSelectionWidget() {
-        if (!displayerSettings.isFilterEnabled()) return null;
+    void onCategorySelected(String columnId, int row) {
+        Integer maxSelections = displayerSettings.isFilterSelfApplyEnabled() ? null : dataSet.getRowCount();
+        filterUpdate(columnId, row, maxSelections);
 
-        Set<String> columnFilters = filterColumns();
-        if (columnFilters.isEmpty()) return null;
-
-        HorizontalPanel panel = new HorizontalPanel();
-        panel.getElement().setAttribute("cellpadding", "2");
-
-        for (String columnId : columnFilters) {
-            List<Interval> selectedValues = filterIntervals(columnId);
-            DataColumn column = dataSet.getColumnById(columnId);
-            for (Interval interval : selectedValues) {
-                String formattedValue = formatInterval(interval, column);
-                panel.add(new org.gwtbootstrap3.client.ui.Label(formattedValue));
-            }
+        // Update the displayer in order to reflect the current selection
+        // (only if not has already been redrawn in the previous filterUpdate() call)
+        if (!displayerSettings.isFilterSelfApplyEnabled()) {
+            updateVisualization();
         }
-
-        Anchor anchor = new Anchor( "Reset" );
-        panel.add(anchor);
-        anchor.addClickHandler(new ClickHandler() {
-            public void onClick(ClickEvent event) {
-                filterReset();
-                updateVisualization();
-            }
-        });
-        return panel;
     }
-    
+
+    void onFilterResetClicked() {
+        filterReset();
+
+        // Update the displayer view in order to reflect the current selection
+        // (only if not has already been redrawn in the previous filterUpdate() call)
+        if (!displayerSettings.isFilterSelfApplyEnabled()) {
+            updateVisualization();
+        }
+    }
 }

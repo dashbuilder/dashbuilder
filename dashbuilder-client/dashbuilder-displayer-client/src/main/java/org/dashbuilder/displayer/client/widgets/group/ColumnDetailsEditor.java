@@ -16,65 +16,62 @@
 package org.dashbuilder.displayer.client.widgets.group;
 
 import javax.enterprise.context.Dependent;
+import javax.enterprise.event.Event;
+import javax.inject.Inject;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.common.client.StringUtils;
 import org.dashbuilder.dataset.DataSetMetadata;
 import org.dashbuilder.dataset.group.GroupFunction;
-import org.gwtbootstrap3.client.ui.TextBox;
+import org.dashbuilder.displayer.client.events.ColumnDetailsChangedEvent;
+import org.uberfire.client.mvp.UberView;
 
 @Dependent
-public class ColumnDetailsEditor extends Composite {
+public class ColumnDetailsEditor implements IsWidget {
 
-    public interface Listener {
-        void columnChanged(ColumnDetailsEditor editor);
+    public interface View extends UberView<ColumnDetailsEditor> {
+        void setColumnId(String columnId);
+        String getColumnId();
     }
 
-    interface Binder extends UiBinder<Widget, ColumnDetailsEditor> {}
-    private static Binder uiBinder = GWT.create(Binder.class);
-
-    Listener listener = null;
+    View view = null;
     GroupFunction column = null;
     DataSetMetadata metadata = null;
+    Event<ColumnDetailsChangedEvent> changedEvent = null;
 
-    @UiField
-    Label columnIdLabel;
-
-    @UiField
-    TextBox columnIdTextBox;
-
-    public ColumnDetailsEditor() {
-        initWidget(uiBinder.createAndBindUi(this));
+    @Inject
+    public ColumnDetailsEditor(View view) {
+        this.view = view;
+        this.view.init(this);
     }
 
-    public void init(DataSetMetadata metadata, GroupFunction groupFunction, Listener listener) {
+    @Override
+    public Widget asWidget() {
+        return view.asWidget();
+    }
 
+    public GroupFunction getColumn() {
+        return column;
+    }
+
+    public void init(DataSetMetadata metadata, GroupFunction groupFunction) {
         this.column = groupFunction;
-        this.listener = listener;
         this.metadata = metadata;
 
-        if (StringUtils.isBlank(column.getColumnId())) columnIdTextBox.setText(column.getSourceId());
-        else columnIdTextBox.setText(column.getColumnId());
+        if (StringUtils.isBlank(column.getColumnId())) {
+            view.setColumnId(column.getSourceId());
+        }
+        else {
+            view.setColumnId(column.getColumnId());
+        }
     }
 
-    public String getNewColumnId() {
-        return columnIdTextBox.getValue();
-    }
-
-    // UI events
-
-    @UiHandler(value = "columnIdTextBox")
-    public void onColumnNameChanged(ChangeEvent changeEvent) {
-        String text = columnIdTextBox.getValue();
+    void onColumnNameChanged() {
+        String text = view.getColumnId();
         if (!StringUtils.isBlank(text)) {
-            listener.columnChanged(this);
+            column.setColumnId(text);
+            changedEvent.fire(new ColumnDetailsChangedEvent(column));
         }
     }
 }

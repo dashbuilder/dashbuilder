@@ -9,6 +9,7 @@ import org.dashbuilder.dataset.def.DataSetDef;
 import org.dashbuilder.displayer.DisplayerSettings;
 import org.dashbuilder.displayer.client.Displayer;
 import org.dashbuilder.displayer.client.DisplayerListener;
+import org.dashbuilder.displayer.client.DisplayerLocator;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,6 +25,7 @@ import static org.mockito.Mockito.*;
 @RunWith(GwtMockitoTestRunner.class)
 public class DataSetDefPreviewTableTest {
     
+    @Mock DisplayerLocator displayerLocator;
     @Mock DataSetClientServices dataSetClientServices;
     @Mock DataSetDefPreviewTable.View view;
     @Mock DataSetDef dataSetDef;
@@ -42,7 +44,7 @@ public class DataSetDefPreviewTableTest {
         
         when(columnDefList.isEmpty()).thenReturn(true);
         when(dataSetDef.clone()).thenReturn(dataSetDef);
-        tested = new DataSetDefPreviewTable(dataSetClientServices, view);
+        tested = new DataSetDefPreviewTable(displayerLocator, dataSetClientServices, view);
     }
 
     @Test

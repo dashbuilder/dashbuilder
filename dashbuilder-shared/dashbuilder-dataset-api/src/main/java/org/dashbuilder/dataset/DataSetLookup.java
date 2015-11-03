@@ -161,15 +161,27 @@ public class DataSetLookup {
         return this;
     }
 
+    public DataSetGroup getLastGroupOp() {
+        List<DataSetGroup> ops = getOperationList(DataSetGroup.class);
+        if (ops.isEmpty()) {
+            return null;
+        }
+        return ops.get(ops.size()-1);
+    }
+
     public DataSetFilter getFirstFilterOp() {
         List<DataSetFilter> ops = getOperationList(DataSetFilter.class);
-        if (ops.isEmpty()) return null;
+        if (ops.isEmpty()) {
+            return null;
+        }
         return ops.get(0);
     }
 
     public DataSetSort getFirstSortOp() {
         List<DataSetSort> ops = getOperationList(DataSetSort.class);
-        if (ops.isEmpty()) return null;
+        if (ops.isEmpty()) {
+            return null;
+        }
         return ops.get(0);
     }
 
@@ -255,6 +267,9 @@ public class DataSetLookup {
     public boolean equals(Object obj) {
         try {
             DataSetLookup other = (DataSetLookup) obj;
+            if (other == this) {
+                return true;
+            }
             if (other == null) {
                 return false;
             }

@@ -16,7 +16,9 @@
 package org.dashbuilder.renderer.google.client;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import javax.enterprise.context.ApplicationScoped;
 
@@ -41,6 +43,18 @@ public class GoogleRenderer extends AbstractRendererLibrary {
 
     public static final String UUID = "gwtcharts";
 
+    private static Map<DisplayerType,ChartPackage> _packageTypes = new HashMap<DisplayerType,ChartPackage>();
+    static {
+        _packageTypes.put(BARCHART, ChartPackage.CORECHART);
+        _packageTypes.put(PIECHART, ChartPackage.CORECHART);
+        _packageTypes.put(AREACHART, ChartPackage.CORECHART);
+        _packageTypes.put(LINECHART, ChartPackage.CORECHART);
+        _packageTypes.put(BUBBLECHART, ChartPackage.CORECHART);
+        _packageTypes.put(METERCHART, ChartPackage.GAUGE);
+        _packageTypes.put(TABLE, ChartPackage.TABLE);
+        _packageTypes.put(MAP, ChartPackage.GEOCHART);
+    }
+
     private List<DisplayerType> _supportedTypes = Arrays.asList(
             BARCHART,
             PIECHART,
@@ -62,7 +76,13 @@ public class GoogleRenderer extends AbstractRendererLibrary {
 
     @Override
     public boolean isDefault(DisplayerType type) {
-        return _supportedTypes.contains(type);
+        return BARCHART.equals(type) ||
+                PIECHART.equals(type) ||
+                AREACHART.equals(type) ||
+                LINECHART.equals(type) ||
+                BUBBLECHART.equals(type) ||
+                METERCHART.equals(type) ||
+                MAP.equals(type);
     }
 
     @Override
@@ -90,14 +110,46 @@ public class GoogleRenderer extends AbstractRendererLibrary {
 
     public Displayer lookupDisplayer(DisplayerSettings displayerSettings) {
         DisplayerType displayerType = displayerSettings.getType();
-        if (BARCHART.equals(displayerType)) return new GoogleBarChartDisplayer().setRenderer(this);
-        if (PIECHART.equals(displayerType)) return new GooglePieChartDisplayer().setRenderer(this);
-        if (AREACHART.equals(displayerType)) return new GoogleAreaChartDisplayer().setRenderer(this);
-        if (LINECHART.equals(displayerType)) return new GoogleLineChartDisplayer().setRenderer(this);
-        if (BUBBLECHART.equals(displayerType)) return new GoogleBubbleChartDisplayer().setRenderer(this);
-        if (METERCHART.equals(displayerType)) return new GoogleMeterChartDisplayer().setRenderer(this);
-        if (TABLE.equals(displayerType)) return new GoogleTableDisplayer().setRenderer(this);
-        if (MAP.equals(displayerType)) return new GoogleMapDisplayer().setRenderer(this);
+        if (BARCHART.equals(displayerType)) {
+            GoogleBarChartDisplayer displayer = new GoogleBarChartDisplayer();
+            ((GoogleBarChartDisplayerView) displayer.getView()).setRenderer(this);
+            return displayer;
+        }
+        if (PIECHART.equals(displayerType)) {
+            GooglePieChartDisplayer displayer = new GooglePieChartDisplayer();
+            ((GooglePieChartDisplayerView) displayer.getView()).setRenderer(this);
+            return displayer;
+        }
+        if (AREACHART.equals(displayerType)) {
+            GoogleAreaChartDisplayer displayer = new GoogleAreaChartDisplayer();
+            ((GoogleAreaChartDisplayerView) displayer.getView()).setRenderer(this);
+            return displayer;
+        }
+        if (LINECHART.equals(displayerType)) {
+            GoogleLineChartDisplayer displayer = new GoogleLineChartDisplayer();
+            ((GoogleLineChartDisplayerView) displayer.getView()).setRenderer(this);
+            return displayer;
+        }
+        if (BUBBLECHART.equals(displayerType)) {
+            GoogleBubbleChartDisplayer displayer = new GoogleBubbleChartDisplayer();
+            ((GoogleBubbleChartDisplayerView) displayer.getView()).setRenderer(this);
+            return displayer;
+        }
+        if (METERCHART.equals(displayerType)) {
+            GoogleMeterChartDisplayer displayer = new GoogleMeterChartDisplayer();
+            ((GoogleMeterChartDisplayerView) displayer.getView()).setRenderer(this);
+            return displayer;
+        }
+        if (TABLE.equals(displayerType)) {
+            GoogleTableDisplayer displayer = new GoogleTableDisplayer();
+            ((GoogleTableDisplayerView) displayer.getView()).setRenderer(this);
+            return displayer;
+        }
+        if (MAP.equals(displayerType)) {
+            GoogleMapDisplayer displayer = new GoogleMapDisplayer();
+            ((GoogleMapDisplayerView) displayer.getView()).setRenderer(this);
+            return displayer;
+        }
 
         return null;
     }
@@ -111,7 +163,7 @@ public class GoogleRenderer extends AbstractRendererLibrary {
         for (Displayer displayer : displayerList) {
             try {
                 GoogleDisplayer googleDisplayer = (GoogleDisplayer) displayer;
-                packageList.add( googleDisplayer.getPackage());
+                packageList.add(_packageTypes.get(googleDisplayer.getDisplayerSettings().getType()));
             } catch (ClassCastException e) {
                 // Just ignore non Google displayers.
             }

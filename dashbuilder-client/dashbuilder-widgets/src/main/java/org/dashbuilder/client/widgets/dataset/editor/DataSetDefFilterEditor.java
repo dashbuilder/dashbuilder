@@ -21,12 +21,14 @@ import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.client.widgets.dataset.event.FilterChangedEvent;
 import org.dashbuilder.dataset.DataSetMetadata;
 import org.dashbuilder.dataset.filter.DataSetFilter;
+import org.dashbuilder.displayer.client.events.DataSetFilterChangedEvent;
 import org.dashbuilder.displayer.client.widgets.filter.DataSetFilterEditor;
 import org.uberfire.client.mvp.UberView;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
+import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
 /**
@@ -43,30 +45,21 @@ public class DataSetDefFilterEditor implements IsWidget, org.dashbuilder.dataset
     
     Event<FilterChangedEvent> filterChangedEvent;
     public View view;
-
     DataSetFilterEditor filterEditor;
     DataSetFilter value;
-    
-    @Inject
-    public DataSetDefFilterEditor(final Event<FilterChangedEvent> filterChangedEvent, final View view) {
-        this.filterChangedEvent = filterChangedEvent;
-        this.view = view;
-    }
 
-    @PostConstruct
-    public void init() {
+    @Inject
+    public DataSetDefFilterEditor(View view, DataSetFilterEditor filterEditor, final Event<FilterChangedEvent> filterChangedEvent) {
+        this.view = view;
+        this.filterEditor = filterEditor;
+        this.filterChangedEvent = filterChangedEvent;
         view.init(this);
     }
 
     @Override
-    public void init(final DataSetMetadata metadata) {
-        filterEditor  = new DataSetFilterEditor();
-        initFilterEditor(metadata);
-    }
-    
-    void initFilterEditor(final DataSetMetadata metadata) {
+    public void init(DataSetMetadata metadata) {
         view.setWidget(filterEditor);
-        filterEditor.init(metadata, value != null ? value.cloneInstance() : null, filterListener);
+        filterEditor.init(value != null ? value.cloneInstance() : null, metadata);
     }
     
     @Override
@@ -98,22 +91,14 @@ public class DataSetDefFilterEditor implements IsWidget, org.dashbuilder.dataset
         // No delegation required.
     }
 
-    void onValueChanged(final DataSetFilter value) {
+    void onValueChanged(@Observes DataSetFilterChangedEvent event) {
 
         // Set the new value.
         DataSetFilter before = this.value;
-        setValue(value);
+        setValue(event.getFilter());
 
         // Fire the value change event.
         filterChangedEvent.fire(new FilterChangedEvent(DataSetDefFilterEditor.this, before, value));
 
     }
-    
-    private final DataSetFilterEditor.Listener filterListener = new DataSetFilterEditor.Listener() {
-        @Override
-        public void filterChanged(final DataSetFilter filter) {
-            onValueChanged(filter);
-        }
-    };
-
 }

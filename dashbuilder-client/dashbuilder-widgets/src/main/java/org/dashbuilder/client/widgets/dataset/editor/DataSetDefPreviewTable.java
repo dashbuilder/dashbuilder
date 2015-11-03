@@ -17,31 +17,24 @@ package org.dashbuilder.client.widgets.dataset.editor;
 
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
-import org.dashbuilder.client.widgets.common.LoadingBox;
-import org.dashbuilder.client.widgets.dataset.event.ErrorEvent;
-import org.dashbuilder.common.client.error.ClientRuntimeError;
 import org.dashbuilder.dataset.client.DataSetClientServices;
 import org.dashbuilder.dataset.def.DataColumnDef;
 import org.dashbuilder.dataset.def.DataSetDef;
-import org.dashbuilder.dataset.filter.DataSetFilter;
-import org.dashbuilder.dataset.group.DataSetGroup;
 import org.dashbuilder.displayer.DisplayerSettings;
 import org.dashbuilder.displayer.DisplayerSettingsFactory;
 import org.dashbuilder.displayer.TableDisplayerSettingsBuilder;
 import org.dashbuilder.displayer.client.DataSetEditHandler;
 import org.dashbuilder.displayer.client.Displayer;
-import org.dashbuilder.displayer.client.DisplayerHelper;
 import org.dashbuilder.displayer.client.DisplayerListener;
+import org.dashbuilder.displayer.client.DisplayerLocator;
 import org.dashbuilder.displayer.impl.TableDisplayerSettingsBuilderImpl;
 import org.dashbuilder.renderer.client.DefaultRenderer;
 import org.uberfire.client.mvp.UberView;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
-import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import java.util.Collection;
-import java.util.List;
 
 /**
  * <p>Data Set table preview presenter.</p>
@@ -59,13 +52,16 @@ public class DataSetDefPreviewTable implements IsWidget {
     }
 
     DataSetClientServices clientServices;
+    DisplayerLocator displayerLocator;
     public View view;
 
     Displayer tableDisplayer;
-            
+
     @Inject
-    public DataSetDefPreviewTable(final DataSetClientServices clientServices,
+    public DataSetDefPreviewTable(final DisplayerLocator displayerLocator,
+                                  final DataSetClientServices clientServices,
                                   final View view) {
+        this.displayerLocator = displayerLocator;
         this.clientServices = clientServices;
         this.view = view;
     }
@@ -107,7 +103,7 @@ public class DataSetDefPreviewTable implements IsWidget {
             editCloneWithoutCacheSettings.setCacheEnabled(false);
 
             // Configure the table displayer and the data set handler for edition.
-            tableDisplayer = DisplayerHelper.lookupDisplayer(settings);
+            tableDisplayer = displayerLocator.lookupDisplayer(settings);
             tableDisplayer.setDataSetHandler(new DataSetEditHandler(clientServices, settings.getDataSetLookup(), editCloneWithoutCacheSettings));
             draw(displayerListener);
         }

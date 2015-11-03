@@ -29,9 +29,19 @@ import org.dashbuilder.dataset.group.GroupStrategy;
 @ApplicationScoped
 public class ClientIntervalBuilderLocator implements IntervalBuilderLocator {
 
-    @Inject IntervalBuilderDynamicLabel intervalBuilderDynamicLabel;
-    @Inject ClientIntervalBuilderDynamicDate intervalBuilderDynamicDate;
-    @Inject IntervalBuilderFixedDate intervalBuilderFixedDate;
+    IntervalBuilderDynamicLabel intervalBuilderDynamicLabel;
+    ClientIntervalBuilderDynamicDate intervalBuilderDynamicDate;
+    IntervalBuilderFixedDate intervalBuilderFixedDate;
+
+    @Inject
+    public ClientIntervalBuilderLocator(IntervalBuilderDynamicLabel intervalBuilderDynamicLabel,
+                                        ClientIntervalBuilderDynamicDate intervalBuilderDynamicDate,
+                                        IntervalBuilderFixedDate intervalBuilderFixedDate) {
+
+        this.intervalBuilderDynamicLabel = intervalBuilderDynamicLabel;
+        this.intervalBuilderDynamicDate = intervalBuilderDynamicDate;
+        this.intervalBuilderFixedDate = intervalBuilderFixedDate;
+    }
 
     public IntervalBuilder lookup(ColumnType columnType, GroupStrategy strategy) {
         if (ColumnType.LABEL.equals(columnType)) {

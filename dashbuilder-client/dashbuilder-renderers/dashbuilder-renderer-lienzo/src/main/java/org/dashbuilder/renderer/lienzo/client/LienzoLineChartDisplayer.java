@@ -15,27 +15,30 @@
  */
 package org.dashbuilder.renderer.lienzo.client;
 
-import com.ait.lienzo.charts.client.core.xy.XYChartData;
-import com.ait.lienzo.charts.client.core.xy.line.LineChart;
-import com.ait.lienzo.client.core.animation.AnimationTweener;
-import com.ait.lienzo.shared.core.types.ColorName;
-import org.dashbuilder.renderer.lienzo.client.LienzoXYChartDisplayer;
+import javax.enterprise.context.Dependent;
+import javax.inject.Inject;
 
-public class LienzoLineChartDisplayer extends LienzoXYChartDisplayer<LineChart> {
+@Dependent
+public class LienzoLineChartDisplayer extends LienzoXYChartDisplayer<LienzoLineChartDisplayer.View> {
 
-    private static final ColorName[] DEFAULT_SERIE_COLORS = new ColorName[] {
-            ColorName.DEEPSKYBLUE, ColorName.RED, ColorName.YELLOWGREEN            
-    };
-    
-    @Override
-    public LineChart createChart() {
-        // Create the LineChart instance.
-        return new LineChart();
+    public interface View extends LienzoXYChartDisplayer.View<LienzoLineChartDisplayer> {
+
+    }
+
+    private View view;
+
+    public LienzoLineChartDisplayer() {
+        this(new LienzoLineChartDisplayerView());
+    }
+
+    @Inject
+    public LienzoLineChartDisplayer(View view) {
+        this.view = view;
+        this.view.init(this);
     }
 
     @Override
-    public void reloadChart(XYChartData newData) {
-        chart.reload(newData, AnimationTweener.LINEAR, ANIMATION_DURATION);
+    public View getView() {
+        return view;
     }
-
-    }
+}

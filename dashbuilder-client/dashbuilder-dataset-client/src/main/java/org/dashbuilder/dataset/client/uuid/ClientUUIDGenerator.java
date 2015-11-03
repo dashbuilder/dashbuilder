@@ -19,20 +19,10 @@ import javax.enterprise.context.ApplicationScoped;
 
 import com.google.gwt.dom.client.Document;
 import org.dashbuilder.dataset.uuid.UUIDGenerator;
-import org.jboss.errai.ioc.client.container.IOC;
-import org.jboss.errai.ioc.client.container.IOCBeanDef;
-
-import java.util.Collection;
 
 @ApplicationScoped
 public class ClientUUIDGenerator implements UUIDGenerator {
 
-    public static ClientUUIDGenerator get() {
-        Collection<IOCBeanDef<ClientUUIDGenerator>> beans = IOC.getBeanManager().lookupBeans(ClientUUIDGenerator.class);
-        IOCBeanDef<ClientUUIDGenerator> beanDef = beans.iterator().next();
-        return beanDef.getInstance();
-    }
-    
     public String newUuid() {
         return Document.get().createUniqueId();
     }

@@ -19,6 +19,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import javax.enterprise.context.Dependent;
+import javax.enterprise.event.Event;
+import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
 import com.google.gwt.user.client.ui.IsWidget;
@@ -31,8 +33,6 @@ import org.dashbuilder.dataset.DataSetLookupConstraints;
 import org.dashbuilder.dataset.DataSetMetadata;
 import org.dashbuilder.dataset.ValidationError;
 import org.dashbuilder.dataset.client.DataSetClientServices;
-import org.dashbuilder.dataset.client.DataSetMetadataCallback;
-import org.dashbuilder.dataset.filter.DataSetFilter;
 import org.dashbuilder.dataset.group.DataSetGroup;
 import org.dashbuilder.dataset.group.GroupFunction;
 import org.dashbuilder.displayer.ColumnSettings;
@@ -42,263 +42,393 @@ import org.dashbuilder.displayer.DisplayerConstraints;
 import org.dashbuilder.displayer.DisplayerSettings;
 import org.dashbuilder.displayer.DisplayerSubType;
 import org.dashbuilder.displayer.DisplayerType;
+import org.dashbuilder.displayer.client.AbstractDisplayerListener;
 import org.dashbuilder.displayer.client.Displayer;
-import org.dashbuilder.displayer.client.DisplayerHelper;
+import org.dashbuilder.displayer.client.DisplayerListener;
 import org.dashbuilder.displayer.client.DisplayerLocator;
+import org.dashbuilder.displayer.client.events.DataSetLookupChangedEvent;
+import org.dashbuilder.displayer.client.events.DisplayerEditorClosedEvent;
+import org.dashbuilder.displayer.client.events.DisplayerEditorSavedEvent;
+import org.dashbuilder.displayer.client.events.DisplayerSettingsChangedEvent;
+import org.dashbuilder.displayer.client.events.DisplayerSubtypeSelectedEvent;
+import org.dashbuilder.displayer.client.events.DisplayerTypeSelectedEvent;
 import org.dashbuilder.displayer.client.prototypes.DisplayerPrototypes;
-import org.dashbuilder.displayer.client.resources.i18n.CommonConstants;
+import org.uberfire.client.mvp.UberView;
+import org.uberfire.mvp.Command;
 
 @Dependent
-public class DisplayerEditor implements IsWidget,
-        DisplayerTypeSelector.Listener,
-        DataSetLookupEditor.Listener,
-        DisplayerSettingsEditor.Listener {
+public class DisplayerEditor implements IsWidget {
 
-    public interface Listener {
-        void onClose(DisplayerEditor editor);
-        void onSave(DisplayerEditor editor);
-    }
+    public interface View extends UberView<DisplayerEditor> {
 
-    public interface View extends IsWidget {
-        void init(DisplayerSettings settings, DisplayerEditor presenter);
-        void disableTypeSelection();
-        void gotoTypeSelection();
-        void gotoDataSetConf();
-        void gotoDisplaySettings();
-        void updateDataSetLookup(DataSetLookupConstraints constraints, DataSetMetadata metadata);
-        void showTypeChangedWarning(DisplayerSettings oldSettings, DisplayerSettings newSettings);
+        String getBrandNewDisplayerTitle();
+
+        boolean isTableDisplayModeOn();
+
+        void setTableDisplayModeEnabled(boolean enabled);
+
+        void showDisplayer(Displayer displayer);
+
+        void setTypeSelectionEnabled(boolean enabled);
+
+        void setDisplaySettingsEnabled(boolean enabled);
+
+        void setDataSetLookupConfEnabled(boolean enabled);
+
+        void gotoTypeSelection(DisplayerTypeSelector typeSelector);
+
+        void gotoDataSetLookupConf(DataSetLookupEditor lookupEditor);
+
+        void gotoDisplaySettings(DisplayerSettingsEditor settingsEditor);
+
+        void showTypeChangedWarning(Command yes, Command no);
+
         void error(String error);
+
         void error(ClientRuntimeError error);
-        void close();
     }
 
     protected View view = null;
-    protected Listener listener = null;
+    protected DataSetClientServices clientServices = null;
+    protected DisplayerLocator displayerLocator = null;
+    protected DisplayerPrototypes displayerPrototypes = null;
     protected DisplayerSettings displayerSettings = null;
+    protected DisplayerSettings selectedTypeSettings = null;
     protected boolean brandNewDisplayer = true;
+    protected DisplayerTypeSelector typeSelector;
+    protected DataSetLookupEditor lookupEditor;
+    protected DisplayerSettingsEditor settingsEditor;
+    protected DisplayerEditorStatus editorStatus;
+    protected Displayer displayer = null;
+    protected int activeSection = -1;
+    protected boolean typeSelectionEnabled = true;
+    protected boolean dataLookupConfEnabled = true;
+    protected boolean displaySettingsEnabled = true;
+    protected Event<DisplayerEditorSavedEvent> saveEvent;
+    protected Event<DisplayerEditorClosedEvent> closeEvent;
+    protected Command onCloseCommand = new Command() { public void execute() {}};
+    protected Command onSaveCommand = new Command() { public void execute() {}};
+
+    DisplayerListener displayerListener = new AbstractDisplayerListener() {
+        public void onError(Displayer displayer, ClientRuntimeError error) {
+            view.error(error);
+        }
+    };
 
     @Inject
-    public DisplayerEditor(View view) {
+    public DisplayerEditor(View view,
+                           DataSetClientServices clientServices,
+                           DisplayerLocator displayerLocator,
+                           DisplayerPrototypes displayerPrototypes,
+                           DisplayerTypeSelector typeSelector,
+                           DataSetLookupEditor lookupEditor,
+                           DisplayerSettingsEditor settingsEditor,
+                           DisplayerEditorStatus editorStatus,
+                           Event<DisplayerEditorSavedEvent> savedEvent,
+                           Event<DisplayerEditorClosedEvent> closedEvent) {
         this.view = view;
+        this.displayerLocator = displayerLocator;
+        this.clientServices = clientServices;
+        this.displayerPrototypes = displayerPrototypes;
+        this.typeSelector = typeSelector;
+        this.lookupEditor = lookupEditor;
+        this.settingsEditor = settingsEditor;
+        this.editorStatus = editorStatus;
+        this.saveEvent = savedEvent;
+        this.closeEvent = closedEvent;
+
+        view.init(this);
     }
 
-    public Widget asWidget() {
-        return view.asWidget();
-    }
-
-    public void init(DisplayerSettings settings, Listener editorListener) {
-        this.listener = editorListener;
-
+    public void init(DisplayerSettings settings) {
         if (settings != null) {
             brandNewDisplayer = false;
             displayerSettings = settings;
-            view.init(displayerSettings, this);
         } else {
             brandNewDisplayer = true;
-            displayerSettings = DisplayerPrototypes.get().getProto(DisplayerType.BARCHART);
-            displayerSettings.setTitle("- " + CommonConstants.INSTANCE.displayer_editor_new() + " -");
-            view.init(displayerSettings, this);
-            view.gotoTypeSelection();
+            displayerSettings = displayerPrototypes.getProto(DisplayerType.BARCHART);
+            displayerSettings.setTitle(view.getBrandNewDisplayerTitle());
         }
+        selectedTypeSettings = displayerSettings;
+
+        initDisplayer();
+        initTypeSelector();
+        initLookupEditor();
+        initSettingsEditor();
+        gotoLastSection();
+        showDisplayer();
     }
 
-    public boolean isBrandNewDisplayer() {
-        return brandNewDisplayer;
+    protected void initDisplayer() {
+        if (displayer != null) {
+            displayer.close();
+        }
+        displayer = displayerLocator.lookupDisplayer(displayerSettings);
+        displayer.addListener(displayerListener);
+        displayer.setRefreshOn(false);
+        displayer.draw();
+    }
+
+    protected void initLookupEditor() {
+        DataSetLookupConstraints lookupConstraints = displayer.getDisplayerConstraints().getDataSetLookupConstraints();
+        lookupEditor.init(lookupConstraints, displayerSettings.getDataSetLookup());
+    }
+
+    protected void initTypeSelector() {
+        typeSelector.init(displayerSettings.getType(), displayerSettings.getSubtype());
+    }
+
+    protected void initSettingsEditor() {
+        settingsEditor.init(displayerSettings);
+    }
+
+    @Override
+    public Widget asWidget() {
+        return view.asWidget();
     }
 
     public View getView() {
         return view;
     }
 
+    public boolean isBrandNewDisplayer() {
+        return brandNewDisplayer;
+    }
+
     public DisplayerSettings getDisplayerSettings() {
         return displayerSettings;
     }
 
-    public void save() {
-        view.close();
+    public Displayer getDisplayer() {
+        return displayer;
+    }
 
+    public DisplayerTypeSelector getTypeSelector() {
+        return typeSelector;
+    }
+
+    public DataSetLookupEditor getLookupEditor() {
+        return lookupEditor;
+    }
+
+    public DisplayerSettingsEditor getSettingsEditor() {
+        return settingsEditor;
+    }
+
+    public void setTypeSelectorEnabled(boolean enabled) {
+        typeSelectionEnabled = enabled;
+        view.setTypeSelectionEnabled(enabled);
+    }
+
+    public void setDataSetLookupConfEnabled(boolean enabled) {
+        dataLookupConfEnabled = enabled;
+        view.setDataSetLookupConfEnabled(enabled);
+    }
+
+    public void setDisplaySettingsEnabled(boolean enabled) {
+        displaySettingsEnabled = enabled;
+        view.setDisplaySettingsEnabled(enabled);
+    }
+
+    public void setOnSaveCommand(Command saveCommand) {
+        this.onSaveCommand = saveCommand != null ? saveCommand : onCloseCommand;
+    }
+
+    public void setOnCloseCommand(Command closeCommand) {
+        this.onCloseCommand = closeCommand != null ? closeCommand : onCloseCommand;
+    }
+
+    public void showDisplayer() {
+        if (view.isTableDisplayModeOn()) {
+            try {
+                DisplayerSettings tableSettings = displayerSettings.cloneInstance();
+                tableSettings.setTitleVisible(false);
+                tableSettings.setType(DisplayerType.TABLE);
+                tableSettings.setTablePageSize(8);
+                tableSettings.setTableWidth(-1);
+                Displayer tableDisplayer = displayerLocator.lookupDisplayer(tableSettings);
+                tableDisplayer.addListener(displayerListener);
+                tableDisplayer.setRefreshOn(false);
+                tableDisplayer.draw();
+                view.showDisplayer(tableDisplayer);
+            } catch (Exception e) {
+                view.error(new ClientRuntimeError(e));
+            }
+        } else {
+            view.showDisplayer(displayer);
+        }
+    }
+
+    public void gotoFirstSectionEnabled() {
+        if (typeSelectionEnabled) {
+            gotoTypeSelection();
+        }
+        else if (dataLookupConfEnabled) {
+            gotoDataSetLookupConf();
+        }
+        else if (displaySettingsEnabled) {
+            gotoDisplaySettings();
+        } else {
+            view.error("Nothing to show!");
+        }
+    }
+
+    public void gotoLastSection() {
+        int lastOption = editorStatus.getSelectedOption(displayerSettings.getUUID());
+        if (activeSection < 0 || activeSection != lastOption) {
+            switch (lastOption) {
+                case 2:
+                    gotoDisplaySettings();
+                    break;
+                case 1:
+                    gotoDataSetLookupConf();
+                    break;
+                default:
+                    gotoFirstSectionEnabled();
+                    break;
+            }
+        }
+    }
+
+    public void gotoTypeSelection() {
+        activeSection = 0;
+        editorStatus.saveSelectedOption(displayerSettings.getUUID(), activeSection);
+        view.gotoTypeSelection(typeSelector);
+    }
+
+    public void gotoDataSetLookupConf() {
+        activeSection = 1;
+        editorStatus.saveSelectedOption(displayerSettings.getUUID(), activeSection);
+        view.gotoDataSetLookupConf(lookupEditor);
+        view.setTableDisplayModeEnabled(!DisplayerType.TABLE.equals(displayerSettings.getType()));
+    }
+
+    public void gotoDisplaySettings() {
+        activeSection = 2;
+        editorStatus.saveSelectedOption(displayerSettings.getUUID(), activeSection);
+        view.gotoDisplaySettings(settingsEditor);
+    }
+
+    public void save() {
         // Clear settings before return
-        Displayer displayer = DisplayerHelper.lookupDisplayer(displayerSettings);
         DisplayerConstraints displayerConstraints = displayer.getDisplayerConstraints();
         displayerConstraints.removeUnsupportedAttributes(displayerSettings);
 
-        if (listener != null) {
-            listener.onSave(this);
+        // Dispose the displayer
+        if (displayer != null) {
+            displayer.close();
         }
+        // Notify event
+        onSaveCommand.execute();
+        saveEvent.fire(new DisplayerEditorSavedEvent(displayerSettings));
     }
 
     public void close() {
-        view.close();
-        if (listener != null) {
-            listener.onClose(this);
+        if (displayer != null) {
+            displayer.close();
         }
-    }
-
-    public void fetchDataSetLookup() {
-        try {
-            String uuid = displayerSettings.getDataSetLookup().getDataSetUUID();
-            DataSetClientServices.get().fetchMetadata(uuid, new DataSetMetadataCallback() {
-
-                public void callback(DataSetMetadata metadata) {
-                    Displayer displayer = DisplayerLocator.get().lookupDisplayer(displayerSettings);
-                    DataSetLookupConstraints constraints = displayer.getDisplayerConstraints().getDataSetLookupConstraints();
-                    view.updateDataSetLookup(constraints, metadata);
-                }
-                public void notFound() {
-                    // Very unlikely since this data set has been selected from a list provided by the backend.
-                    view.error(CommonConstants.INSTANCE.displayer_editor_dataset_notfound());
-                }
-
-                @Override
-                public boolean onError(ClientRuntimeError error) {
-                    view.error(error);
-                    return false;
-                }
-            });
-        } catch (Exception e) {
-            view.error(new ClientRuntimeError(CommonConstants.INSTANCE.displayer_editor_datasetmetadata_fetcherror(), e));
-        }
+        onCloseCommand.execute();
+        closeEvent.fire(new DisplayerEditorClosedEvent(displayerSettings));
     }
 
     // Widget listeners callback notifications
 
-    @Override
-    public void displayerSettingsChanged(DisplayerSettings settings) {
-        displayerSettings = settings;
-        view.init(displayerSettings, this);
+    void onDataSetLookupChanged(@Observes DataSetLookupChangedEvent event) {
+        DataSetLookup dataSetLookup = event.getDataSetLookup();
+        displayerSettings.setDataSet(null);
+        displayerSettings.setDataSetLookup(dataSetLookup);
+        removeStaleSettings();
+        initDisplayer();
+        showDisplayer();
     }
 
-    @Override
-    public void displayerTypeChanged(DisplayerType type, DisplayerSubType displayerSubType) {
+    void onDisplayerSettingsChanged(@Observes DisplayerSettingsChangedEvent event) {
+        displayerSettings = event.getDisplayerSettings();
+        initDisplayer();
+        showDisplayer();
+    }
+
+    void onDisplayerTypeChanged(@Observes DisplayerTypeSelectedEvent event) {
+        displayerTypeChanged(event.getSelectedType(), null);
+    }
+
+    void onDisplayerSubtypeChanged(@Observes DisplayerSubtypeSelectedEvent event) {
+        displayerTypeChanged(selectedTypeSettings.getType(), event.getSelectedSubType());
+    }
+
+    void displayerTypeChanged(DisplayerType type, DisplayerSubType displayerSubType) {
 
         // Create new settings for the selected type
-        DisplayerSettings oldSettings = displayerSettings;
-        DisplayerSettings newSettings = DisplayerPrototypes.get().getProto(type);
-        newSettings.setSubtype(displayerSubType);
-        DataSet oldDataSet = oldSettings.getDataSet();
-        DataSetLookup oldDataLookup = oldSettings.getDataSetLookup();
+        selectedTypeSettings = displayerPrototypes.getProto(type);
+        selectedTypeSettings.setSubtype(displayerSubType);
+        DataSet oldDataSet = displayerSettings.getDataSet();
+        DataSetLookup oldDataLookup = displayerSettings.getDataSetLookup();
 
         // Check if the current data lookup is compatible with the new displayer type
         if (oldDataSet == null && oldDataLookup != null) {
-            Displayer displayer = DisplayerHelper.lookupDisplayer(newSettings);
+            Displayer displayer = displayerLocator.lookupDisplayer(selectedTypeSettings);
             DisplayerConstraints displayerConstraints = displayer.getDisplayerConstraints();
             DataSetLookupConstraints dataConstraints = displayerConstraints.getDataSetLookupConstraints();
-            DataSetMetadata metadata = DataSetClientServices.get().getMetadata(oldDataLookup.getDataSetUUID());
+            DataSetMetadata metadata = clientServices.getMetadata(oldDataLookup.getDataSetUUID());
 
             // Keep the current data settings provided it satisfies the data constraints
             ValidationError validationError = dataConstraints.check(oldDataLookup, metadata);
             if (validationError == null) {
-                newSettings.setDataSet(null);
-                newSettings.setDataSetLookup(oldDataLookup);
-                changeSettings(oldSettings, newSettings);
+                selectedTypeSettings.setDataSet(null);
+                selectedTypeSettings.setDataSetLookup(oldDataLookup);
+                applySelectedType();
             }
-            // If the data lookup is not compatible then warn about it
+            // If the data lookup is not compatible then ask the user what to do
             else {
-                view.showTypeChangedWarning(oldSettings, newSettings);
+                view.showTypeChangedWarning(
+                        new Command() {
+                            public void execute() {
+                                applySelectedType();
+                            }
+                        },
+                        new Command() {
+                            public void execute() {
+                                abortSelectedType();
+                            }
+                        });
             }
         }
         // If the displayer is static (no data lookup) then just display the selected displayer prototype
         else {
-            changeSettings(oldSettings, newSettings);
+            applySelectedType();
         }
     }
 
-    public void changeSettings(DisplayerSettings oldSettings, DisplayerSettings newSettings) {
+    void applySelectedType() {
         // Remove the non supported attributes
-        oldSettings.removeDisplayerSetting(DisplayerAttributeGroupDef.TYPE);
-        oldSettings.removeDisplayerSetting(DisplayerAttributeGroupDef.SUBTYPE);
-        oldSettings.removeDisplayerSetting(DisplayerAttributeGroupDef.CHART_GROUP);
-        oldSettings.removeDisplayerSetting(DisplayerAttributeGroupDef.CHART_MARGIN_GROUP);
-        oldSettings.removeDisplayerSetting(DisplayerAttributeGroupDef.CHART_LEGEND_GROUP);
-        oldSettings.removeDisplayerSetting(DisplayerAttributeGroupDef.AXIS_GROUP);
-        newSettings.getSettingsFlatMap().putAll(oldSettings.getSettingsFlatMap());
+        displayerSettings.removeDisplayerSetting(DisplayerAttributeGroupDef.TYPE);
+        displayerSettings.removeDisplayerSetting(DisplayerAttributeGroupDef.SUBTYPE);
+        displayerSettings.removeDisplayerSetting(DisplayerAttributeGroupDef.CHART_GROUP);
+        displayerSettings.removeDisplayerSetting(DisplayerAttributeGroupDef.CHART_MARGIN_GROUP);
+        displayerSettings.removeDisplayerSetting(DisplayerAttributeGroupDef.CHART_LEGEND_GROUP);
+        displayerSettings.removeDisplayerSetting(DisplayerAttributeGroupDef.AXIS_GROUP);
+        selectedTypeSettings.getSettingsFlatMap().putAll(displayerSettings.getSettingsFlatMap());
 
-        // Ensure the renderer supports the new type
         try {
-            // Try to get the displayer for the new type
-            DisplayerHelper.lookupDisplayer(newSettings);
+            // Ensure the renderer supports the new type
+            displayerLocator.lookupDisplayer(selectedTypeSettings);
         } catch(Exception e) {
             // The new type might not support the selected renderer.
-            newSettings.removeDisplayerSetting(DisplayerAttributeDef.RENDERER);
+            selectedTypeSettings.removeDisplayerSetting(DisplayerAttributeDef.RENDERER);
         }
 
-        // Update the view
-        displayerSettings = newSettings;
+        // Re-initialize the editor with the new settings
+        init(selectedTypeSettings);
         removeStaleSettings();
-        view.init(displayerSettings, this);
-    }
-    @Override
-    public void dataSetChanged(final String uuid) {
-        try {
-            DataSetClientServices.get().fetchMetadata(uuid, new DataSetMetadataCallback() {
-                public void callback(DataSetMetadata metadata) {
-
-                    // Create a dataSetLookup instance for the target data set that fits the displayer constraints
-                    Displayer displayer = DisplayerLocator.get().lookupDisplayer(displayerSettings);
-                    DataSetLookupConstraints constraints = displayer.getDisplayerConstraints().getDataSetLookupConstraints();
-                    DataSetLookup lookup = constraints.newDataSetLookup(metadata);
-                    if (lookup == null) {
-                        view.error(CommonConstants.INSTANCE.displayer_editor_dataset_nolookuprequest());
-                    }
-
-                    // Make the view to show the new lookup instance
-                    displayerSettings.setDataSet(null);
-                    displayerSettings.setDataSetLookup(lookup);
-
-                    removeStaleSettings();
-                    view.updateDataSetLookup(constraints, metadata);
-                }
-                public void notFound() {
-                    // Very unlikely since this data set has been selected from a list provided by the backend.
-                    view.error(CommonConstants.INSTANCE.displayer_editor_dataset_notfound());
-                }
-
-                @Override
-                public boolean onError(ClientRuntimeError error) {
-                    view.error(error);
-                    return false;
-                }
-            });
-        } catch (Exception e) {
-            view.error(new ClientRuntimeError(CommonConstants.INSTANCE.displayer_editor_datasetmetadata_fetcherror(), e));
-        }
     }
 
-    @Override
-    public void groupChanged(DataSetGroup groupOp) {
-        removeStaleSettings();
-        view.init(displayerSettings, this);
+    void abortSelectedType() {
+        selectedTypeSettings = displayerSettings;
+        typeSelector.init(displayerSettings.getType(), displayerSettings.getSubtype());
+        view.showDisplayer(displayer);
     }
 
-    @Override
-    public void columnChanged(GroupFunction groupFunction) {
-        removeStaleSettings();
-        view.init(displayerSettings, this);
-    }
-
-    @Override
-    public void filterChanged(DataSetFilter filterOp) {
-        view.init(displayerSettings, this);
-    }
-
-    public void removeStaleSettings() {
-        List<String> columnIds = getExistingDataColumnIds();
-
-        // Remove the settings for non existing columns
-        Iterator<ColumnSettings> it = displayerSettings.getColumnSettingsList().iterator();
-        while (it.hasNext()) {
-            ColumnSettings columnSettings = it.next();
-            if (!columnIds.contains(columnSettings.getColumnId())) {
-                it.remove();
-            }
-        }
-        // Reset table sort column
-        if (!columnIds.contains(displayerSettings.getTableDefaultSortColumnId())) {
-            displayerSettings.setTableDefaultSortColumnId(null);
-        }
-    }
-
-    public List<String> getExistingDataColumnIds() {
+    List<String> getExistingDataColumnIds() {
         DataSet dataSet = displayerSettings.getDataSet();
         DataSetLookup dataSetLookup = displayerSettings.getDataSetLookup();
 
@@ -318,5 +448,22 @@ public class DisplayerEditor implements IsWidget,
             }
         }
         return columnIds;
+    }
+
+    void removeStaleSettings() {
+        List<String> columnIds = getExistingDataColumnIds();
+
+        // Remove the settings for non existing columns
+        Iterator<ColumnSettings> it = displayerSettings.getColumnSettingsList().iterator();
+        while (it.hasNext()) {
+            ColumnSettings columnSettings = it.next();
+            if (!columnIds.contains(columnSettings.getColumnId())) {
+                it.remove();
+            }
+        }
+        // Reset table sort column
+        if (!columnIds.contains(displayerSettings.getTableDefaultSortColumnId())) {
+            displayerSettings.setTableDefaultSortColumnId(null);
+        }
     }
 }

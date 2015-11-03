@@ -15,52 +15,37 @@
  */
 package org.dashbuilder.renderer.google.client;
 
-import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.Panel;
-import com.google.gwt.user.client.ui.SimplePanel;
-import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
-import com.googlecode.gwt.charts.client.ChartPackage;
-import com.googlecode.gwt.charts.client.corechart.PieChart;
-import com.googlecode.gwt.charts.client.corechart.PieChartOptions;
+import javax.enterprise.context.Dependent;
+import javax.inject.Inject;
+
 import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.DataSetLookupConstraints;
 import org.dashbuilder.displayer.DisplayerAttributeDef;
 import org.dashbuilder.displayer.DisplayerAttributeGroupDef;
 import org.dashbuilder.displayer.DisplayerConstraints;
-import org.dashbuilder.displayer.DisplayerSubType;
-import org.dashbuilder.displayer.DisplayerType;
-import org.dashbuilder.renderer.google.client.resources.i18n.GoogleDisplayerConstants;
 
-public class GooglePieChartDisplayer extends GoogleCategoriesDisplayer {
+@Dependent
+public class GooglePieChartDisplayer extends GoogleCategoriesDisplayer<GooglePieChartDisplayer.View> {
 
-    protected Panel chartPanel = new FlowPanel();
-    private PieChart chart;
-    protected Panel filterPanel = new SimplePanel();
+    public interface View extends GoogleCategoriesDisplayer.View<GooglePieChartDisplayer> {
 
-    @Override
-    public ChartPackage getPackage() {
-        return ChartPackage.CORECHART;
+    }
+
+    private View view;
+
+    public GooglePieChartDisplayer() {
+        this(new GooglePieChartDisplayerView());
+    }
+
+    @Inject
+    public GooglePieChartDisplayer(View view) {
+        this.view = view;
+        this.view.init(this);
     }
 
     @Override
-    public Widget createVisualization() {
-        HTML titleHtml = new HTML();
-        if (displayerSettings.isTitleVisible()) {
-            titleHtml.setText(displayerSettings.getTitle());
-        }
-
-        FlowPanel container = new FlowPanel();
-        container.add(titleHtml);
-        container.add(filterPanel);
-        container.add(chartPanel);
-
-        chart = new PieChart();
-        chart.addSelectHandler(createSelectHandler(chart));
-
-        updateChartPanel();
-        return container;
+    public View getView() {
+        return view;
     }
 
     @Override
@@ -71,60 +56,27 @@ public class GooglePieChartDisplayer extends GoogleCategoriesDisplayer {
                 .setMaxColumns(2)
                 .setMinColumns(2)
                 .setExtraColumnsAllowed(false)
-                .setGroupsTitle(GoogleDisplayerConstants.INSTANCE.common_Categories())
-                .setColumnsTitle(GoogleDisplayerConstants.INSTANCE.common_Values())
-                .setColumnTypes(new ColumnType[] {
+                .setGroupsTitle(view.getGroupsTitle())
+                .setColumnsTitle(view.getColumnsTitle())
+                .setColumnTypes(new ColumnType[]{
                         ColumnType.LABEL,
                         ColumnType.NUMBER});
 
         return new DisplayerConstraints(lookupConstraints)
-                   .supportsAttribute(DisplayerAttributeDef.TYPE)
-                   .supportsAttribute(DisplayerAttributeDef.SUBTYPE)
-                   .supportsAttribute(DisplayerAttributeDef.RENDERER)
-                   .supportsAttribute(DisplayerAttributeGroupDef.COLUMNS_GROUP)
-                   .supportsAttribute( DisplayerAttributeGroupDef.FILTER_GROUP )
-                   .supportsAttribute( DisplayerAttributeGroupDef.REFRESH_GROUP )
-                   .supportsAttribute( DisplayerAttributeGroupDef.GENERAL_GROUP)
-                   .supportsAttribute(DisplayerAttributeGroupDef.CHART_WIDTH)
-                   .supportsAttribute(DisplayerAttributeGroupDef.CHART_HEIGHT)
-                   .supportsAttribute(DisplayerAttributeGroupDef.CHART_RESIZABLE)
-                   .supportsAttribute(DisplayerAttributeGroupDef.CHART_MAX_WIDTH)
-                   .supportsAttribute(DisplayerAttributeGroupDef.CHART_MAX_HEIGHT)
-                   .supportsAttribute(DisplayerAttributeGroupDef.CHART_BGCOLOR)
-                   .supportsAttribute(DisplayerAttributeGroupDef.CHART_MARGIN_GROUP)
-                   .supportsAttribute( DisplayerAttributeGroupDef.CHART_LEGEND_GROUP );
-    }
-
-
-    protected void updateChartPanel() {
-        chartPanel.clear();
-        if (dataSet.getRowCount() == 0) {
-            chartPanel.add(super.createNoDataMsgPanel());
-        } else {
-            chart.draw(createTable(), createOptions().get());
-            chartPanel.add(chart);
-        }
-    }
-
-    protected void updateVisualization() {
-        filterPanel.clear();
-        Widget filterReset = createCurrentSelectionWidget();
-        if (filterReset != null) filterPanel.add(filterReset);
-
-        updateChartPanel();
-    }
-
-    private PieChartOptionsWrapper createOptions() {
-        DisplayerSubType displayerSubType = displayerSettings.getSubtype();
-        PieChartOptionsWrapper options = PieChartOptionsWrapper.newInstance();
-        options.setWidth(displayerSettings.getChartWidth());
-        options.setHeight(displayerSettings.getChartHeight());
-        options.setBackgroundColor(displayerSettings.getChartBackgroundColor());
-        options.setLegend(createChartLegend());
-        options.setColors(createColorArray(googleTable));
-        options.setChartArea(createChartArea());
-        options.setIs3D(DisplayerSubType.PIE_3D.equals(displayerSubType));
-        options.setHole(DisplayerSubType.DONUT.equals(displayerSubType) ? 0.4d : 0);
-        return options;
+                .supportsAttribute(DisplayerAttributeDef.TYPE)
+                .supportsAttribute(DisplayerAttributeDef.SUBTYPE)
+                .supportsAttribute(DisplayerAttributeDef.RENDERER)
+                .supportsAttribute(DisplayerAttributeGroupDef.COLUMNS_GROUP)
+                .supportsAttribute(DisplayerAttributeGroupDef.FILTER_GROUP)
+                .supportsAttribute(DisplayerAttributeGroupDef.REFRESH_GROUP)
+                .supportsAttribute(DisplayerAttributeGroupDef.GENERAL_GROUP)
+                .supportsAttribute(DisplayerAttributeGroupDef.CHART_WIDTH)
+                .supportsAttribute(DisplayerAttributeGroupDef.CHART_HEIGHT)
+                .supportsAttribute(DisplayerAttributeGroupDef.CHART_RESIZABLE)
+                .supportsAttribute(DisplayerAttributeGroupDef.CHART_MAX_WIDTH)
+                .supportsAttribute(DisplayerAttributeGroupDef.CHART_MAX_HEIGHT)
+                .supportsAttribute(DisplayerAttributeGroupDef.CHART_BGCOLOR)
+                .supportsAttribute(DisplayerAttributeGroupDef.CHART_MARGIN_GROUP)
+                .supportsAttribute(DisplayerAttributeGroupDef.CHART_LEGEND_GROUP);
     }
 }

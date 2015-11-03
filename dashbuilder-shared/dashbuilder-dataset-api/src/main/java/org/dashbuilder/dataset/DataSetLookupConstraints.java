@@ -35,7 +35,9 @@ public class DataSetLookupConstraints extends DataSetConstraints<DataSetLookupCo
     public static final int ERROR_GROUP_NUMBER = 200;
     public static final int ERROR_GROUP_NOT_ALLOWED = 201;
     public static final int ERROR_GROUP_REQUIRED = 203;
+    public static final int ERROR_DUPLICATED_COLUMN_ID = 204;
 
+    protected boolean uniqueColumnIds = false;
     protected boolean groupAllowed = true;
     protected boolean groupRequired = false;
     protected int maxGroups = -1;
@@ -44,6 +46,15 @@ public class DataSetLookupConstraints extends DataSetConstraints<DataSetLookupCo
     protected boolean groupColumn = false;
     protected boolean functionRequired = false;
     protected Map<Integer,String> columnTitleMap = new HashMap<Integer,String>();
+
+    public boolean isUniqueColumnIds() {
+        return uniqueColumnIds;
+    }
+
+    public DataSetLookupConstraints setUniqueColumnIds(boolean uniqueColumnIds) {
+        this.uniqueColumnIds = uniqueColumnIds;
+        return this;
+    }
 
     public boolean isGroupAllowed() {
         return groupAllowed;
@@ -145,21 +156,40 @@ public class DataSetLookupConstraints extends DataSetConstraints<DataSetLookupCo
             }
             List<GroupFunction> groupFunctions = groupOp.getGroupFunctions();
             if (minColumns != -1 && groupFunctions.size() < minColumns) {
-                return super.createValidationError(ERROR_COLUMN_NUMBER);
+                return createValidationError(ERROR_COLUMN_NUMBER);
             }
             if (maxColumns != -1 && groupFunctions.size() > maxColumns) {
-                return super.createValidationError(ERROR_COLUMN_NUMBER);
+                return createValidationError(ERROR_COLUMN_NUMBER);
+            }
+            if (uniqueColumnIds) {
+                Set<String> columnIds = new HashSet<String>();
+                for (GroupFunction groupFunction : groupFunctions) {
+                    String columnId = groupFunction.getColumnId();
+                    if (columnId != null) {
+                        if (columnIds.contains(columnId)) {
+                            return createValidationError(ERROR_DUPLICATED_COLUMN_ID, columnId);
+                        } else {
+                            columnIds.add(columnId);
+                        }
+                    }
+                }
             }
             if (metadata != null) {
                 int currentColumns  = -1;
                 boolean ok = false;
                 ValidationError error = null;
                 for (ColumnType[] types : columnTypeList) {
-                    if (currentColumns < 0 || currentColumns < types.length) currentColumns = types.length;
+                    if (currentColumns < 0 || currentColumns < types.length) {
+                        currentColumns = types.length;
+                    }
                     error = checkTypes(metadata, groupOp, types);
-                    if (!ok && error == null) ok = true;
+                    if (!ok && error == null) {
+                        ok = true;
+                    }
                 }
-                if (!ok) return error;
+                if (!ok) {
+                    return error;
+                }
 
                 // Check extra columns type
                 if (currentColumns > 0 && extraColumnsAllowed && extraColumnsType != null && groupFunctions.size() > currentColumns) {
@@ -181,19 +211,24 @@ public class DataSetLookupConstraints extends DataSetConstraints<DataSetLookupCo
         ColumnGroup columnGroup = groupOp.getColumnGroup();
         List<GroupFunction> groupFunctions = groupOp.getGroupFunctions();
         for (int i = 0; i < groupFunctions.size(); i++) {
+
             GroupFunction gf = groupFunctions.get(i);
             ColumnType columnType = metadata.getColumnType(gf.getSourceId());
             if (i < types.length && !columnType.equals(types[i])) {
-                if (columnGroup == null || (columnGroup.getSourceId().equals(gf.getSourceId()) && columnType.equals(ColumnType.LABEL))) {
-                    return super.createValidationError(ERROR_COLUMN_TYPE, i, types[i], columnType);
+
+                boolean isGroupColumn = (columnGroup != null && columnGroup.getSourceId().equals(gf.getSourceId()));
+                boolean isGroupLabel = (isGroupColumn && types[i].equals(ColumnType.LABEL));
+                boolean isFunctionColumn = (gf.getFunction() != null && !columnType.equals(ColumnType.NUMBER));
+
+                if (!isGroupLabel && !isFunctionColumn) {
+                    return createValidationError(ERROR_COLUMN_TYPE, i, types[i], columnType);
                 }
             }
         }
         return null;
     }
 
-
-    protected ValidationError createValidationError(int error) {
+    protected ValidationError createValidationError(int error, Object... params) {
         switch (error) {
             case ERROR_GROUP_NOT_ALLOWED:
                 return new ValidationError(error, "Group not allowed");
@@ -202,8 +237,11 @@ public class DataSetLookupConstraints extends DataSetConstraints<DataSetLookupCo
                 return new ValidationError(error, groupColumn + " column required");
             case ERROR_GROUP_NUMBER:
                 return new ValidationError(error, "Max. groups allowed exceeded " + maxGroups);
+            case ERROR_DUPLICATED_COLUMN_ID:
+                String columnId = (String) params[0];
+                return new ValidationError(error, "Column id '" + columnId + "' is duplicated");
         }
-        return new ValidationError(error);
+        return super.createValidationError(error, params);
     }
 
     public DataSetLookup newDataSetLookup(DataSetMetadata metatada) {
@@ -229,8 +267,12 @@ public class DataSetLookupConstraints extends DataSetConstraints<DataSetLookupCo
         ColumnType[] types = getColumnTypes();
         if (types == null || types.length == 0) {
 
-            if (maxColumns > 0 && maxColumns < metatada.getNumberOfColumns()) types = new ColumnType[maxColumns];
-            else types = new ColumnType[metatada.getNumberOfColumns()];
+            if (maxColumns > 0 && maxColumns < metatada.getNumberOfColumns()) {
+                types = new ColumnType[maxColumns];
+            }
+            else {
+                types = new ColumnType[metatada.getNumberOfColumns()];
+            }
 
             for (int i = 0; i < types.length; i++) {
                 types[i] = metatada.getColumnType(i);
@@ -244,39 +286,66 @@ public class DataSetLookupConstraints extends DataSetConstraints<DataSetLookupCo
             int idx = getTargetColumn(metatada, targetType, exclude);
 
             // Otherwise, get the first column available.
-            if (idx == -1) idx = getTargetColumn(metatada, exclude);
+            if (idx == -1) {
+                idx = getTargetColumn(metatada, exclude);
+            }
 
             String columnId = metatada.getColumnId(idx);
             ColumnType columnType = metatada.getColumnType(idx);
             exclude.add(idx);
+            DataSetLookup currentLookup = builder.buildLookup();
+            String uniqueColumnId = buildUniqueColumnId(currentLookup, columnId);
+            String uniqueCountId = buildUniqueColumnId(currentLookup, "#items");
 
-            if (ColumnType.LABEL.equals(targetType)) {
-                if (functionRequired) builder.column(AggregateFunctionType.COUNT, "#items");
-                else builder.column(columnId);
-            }
-            else if (ColumnType.TEXT.equals(targetType)) {
-                if (functionRequired) builder.column(AggregateFunctionType.COUNT, "#items");
-                else builder.column(columnId);
-            }
-            else if (ColumnType.DATE.equals(targetType)) {
-                if (functionRequired) builder.column(AggregateFunctionType.COUNT, "#items");
-                else builder.column(columnId);
-            }
-            else if (ColumnType.NUMBER.equals(targetType)) {
+            if (ColumnType.NUMBER.equals(targetType)) {
                 if (groupRequired || functionRequired) {
-                    if (ColumnType.LABEL.equals(columnType)) {
-                        builder.column(AggregateFunctionType.COUNT, "#items");
-                    } else if (ColumnType.LABEL.equals(columnType)) {
-                        builder.column(AggregateFunctionType.COUNT, "#items");
-                    } else if (ColumnType.NUMBER.equals(columnType)) {
-                        builder.column(columnId, AggregateFunctionType.SUM);
+                    if (ColumnType.NUMBER.equals(columnType)) {
+                        builder.column(columnId, AggregateFunctionType.SUM, uniqueColumnId);
+                    } else {
+                        builder.column(AggregateFunctionType.COUNT, uniqueCountId);
                     }
                 } else {
-                    builder.column(columnId);
+                    builder.column(columnId, uniqueColumnId);
+                }
+            } else {
+                if (functionRequired) {
+                    builder.column(AggregateFunctionType.COUNT, uniqueCountId);
+                } else {
+                    builder.column(columnId, uniqueColumnId);
                 }
             }
         }
         return builder.buildLookup();
+    }
+
+    public String buildUniqueColumnId(DataSetLookup lookup, String targetId) {
+        return buildUniqueColumnId(lookup, new GroupFunction(targetId, targetId, null));
+    }
+
+    public String buildUniqueColumnId(DataSetLookup lookup, GroupFunction column) {
+        String targetId = column.getSourceId();
+        int lastGop = lookup.getLastGroupOpIndex(0);
+        if (lastGop != -1) {
+            DataSetGroup groupOp = lookup.getOperation(lastGop);
+            List<GroupFunction> columnList = groupOp.getGroupFunctions();
+
+            String newColumnId = targetId;
+            int counter = 1;
+            while (true) {
+                boolean unique = true;
+                for (int i=0; i<columnList.size() && unique; i++) {
+                    GroupFunction gf = columnList.get(i);
+                    if (gf != column && newColumnId.equals(gf.getColumnId())) {
+                        newColumnId = targetId + "_" + (++counter);
+                        unique = false;
+                    }
+                }
+                if (unique) {
+                    return newColumnId;
+                }
+            }
+        }
+        return targetId;
     }
 
     private int getGroupColumn(DataSetMetadata metatada) {

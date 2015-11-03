@@ -34,10 +34,7 @@ public class AggregateFunctionManagerImpl implements AggregateFunctionManager {
     protected Map<AggregateFunctionType, AggregateFunction> functionMap
             = new EnumMap<AggregateFunctionType, AggregateFunction>(AggregateFunctionType.class);
 
-    @PostConstruct
-    protected void init() {
-        // For some reason javax.enterprise.inject.Instance<AggregateFunction> is not working on client side.
-        // As a work-around all the available functions are registered statically.
+    public AggregateFunctionManagerImpl() {
         registerFunction(new CountFunction());
         registerFunction(new DistinctFunction());
         registerFunction(new SumFunction());

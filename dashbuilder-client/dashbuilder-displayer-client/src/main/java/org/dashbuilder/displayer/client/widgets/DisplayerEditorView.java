@@ -21,24 +21,19 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.common.client.error.ClientRuntimeError;
-import org.dashbuilder.dataset.DataSetLookup;
-import org.dashbuilder.dataset.DataSetLookupConstraints;
-import org.dashbuilder.dataset.DataSetMetadata;
-import org.dashbuilder.displayer.DisplayerSettings;
-import org.dashbuilder.displayer.DisplayerType;
-import org.dashbuilder.displayer.client.AbstractDisplayerListener;
+import org.dashbuilder.common.client.widgets.AlertPanel;
 import org.dashbuilder.displayer.client.Displayer;
-import org.dashbuilder.displayer.client.DisplayerListener;
-import org.dashbuilder.displayer.client.DisplayerLocator;
 import org.dashbuilder.displayer.client.resources.i18n.CommonConstants;
 import org.gwtbootstrap3.client.ui.CheckBox;
 import org.gwtbootstrap3.client.ui.Column;
 import org.gwtbootstrap3.client.ui.Row;
 import org.gwtbootstrap3.client.ui.TabListItem;
+import org.uberfire.mvp.Command;
+import org.gwtbootstrap3.client.ui.constants.AlertType;
+
 
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
@@ -50,36 +45,9 @@ public class DisplayerEditorView extends Composite
     interface Binder extends UiBinder<Widget, DisplayerEditorView> {}
     private static Binder uiBinder = GWT.create(Binder.class);
 
-    @Inject
-    public DisplayerEditorView(DisplayerTypeSelector typeSelector,
-            DataSetLookupEditor lookupEditor,
-            DisplayerSettingsEditor settingsEditor) {
-
-        this.typeSelector = typeSelector;
-        this.lookupEditor = lookupEditor;
-        this.settingsEditor = settingsEditor;
-
-        initWidget(uiBinder.createAndBindUi(this));
-        viewAsTableButtonRow.getElement().setAttribute("cellpadding", "5");
-    }
-
-    protected DisplayerEditor presenter;
-    protected DisplayerSettings settings;
-    protected DisplayerTypeSelector typeSelector;
-    protected DataSetLookupEditor lookupEditor;
-    protected DisplayerSettingsEditor settingsEditor;
-    protected Displayer displayer;
-    protected DisplayerError errorWidget = new DisplayerError();
-
-    DisplayerListener displayerListener = new AbstractDisplayerListener() {
-        public void onError(Displayer displayer, ClientRuntimeError error) {
-            error(error);
-        }
-    };
-
     @UiField
     Column westColumn;
-    
+
     @UiField
     Column leftColumn;
 
@@ -101,47 +69,53 @@ public class DisplayerEditorView extends Composite
     @UiField
     CheckBox viewAsTableButton;
 
-    @Override
-    public void init(DisplayerSettings settings, DisplayerEditor presenter) {
-        this.settings = settings;
+    protected DisplayerEditor presenter;
+    protected DisplayerError errorWidget = new DisplayerError();
+
+    public void init(DisplayerEditor presenter) {
         this.presenter = presenter;
-        showDisplayer();
-        gotoLastTab();
+        initWidget(uiBinder.createAndBindUi(this));
+        viewAsTableButtonRow.getElement().setAttribute("cellpadding", "5");
     }
 
     @Override
-    public void disableTypeSelection() {
-        optionType.setVisible( false );
-    }
-
-    public void gotoLastTab() {
-        int lastTab = DisplayerEditorStatus.get().getSelectedTab(settings.getUUID());
-        int selectedTab = optionType.isActive() ? 0 : optionData.isActive() ? 1 : optionSettings.isActive() ? 2 : -1;
-        if (selectedTab < 0 || selectedTab != lastTab) {
-            switch (lastTab) {
-                case 2:
-                    gotoDisplaySettings();
-                    break;
-                case 1:
-                    gotoDataSetConf();
-                    break;
-                default:
-                    gotoTypeSelection();
-                    break;
-            }
-        }
-    }
-
-    private void saveLastTab(int tab) {
-        DisplayerEditorStatus.get().saveSelectedTab(settings.getUUID(), tab);
+    public String getBrandNewDisplayerTitle() {
+        return "- " + CommonConstants.INSTANCE.displayer_editor_new() + " -";
     }
 
     @Override
-    public void gotoTypeSelection() {
-        saveLastTab(0);
+    public void showDisplayer(Displayer displayer) {
+        centerColumn.clear();
+        centerColumn.add(displayer);
+    }
 
-        typeSelector.init(presenter);
-        typeSelector.select(settings.getRenderer(), settings.getType(), settings.getSubtype());
+    @Override
+    public void setTypeSelectionEnabled(boolean enabled) {
+        optionType.setVisible(enabled);
+    }
+
+    @Override
+    public void setDisplaySettingsEnabled(boolean enabled) {
+        optionSettings.setVisible(enabled);
+    }
+
+    @Override
+    public void setDataSetLookupConfEnabled(boolean enabled) {
+        optionData.setVisible(enabled);
+    }
+
+    @Override
+    public boolean isTableDisplayModeOn() {
+        return viewAsTableButtonRow.isVisible() && viewAsTableButton.getValue();
+    }
+
+    @Override
+    public void setTableDisplayModeEnabled(boolean enabled) {
+        viewAsTableButtonRow.setVisible(enabled);
+    }
+
+    @Override
+    public void gotoTypeSelection(DisplayerTypeSelector typeSelector) {
         leftColumn.clear();
         leftColumn.getElement().getStyle().setOverflowY(Style.Overflow.HIDDEN);
         leftColumn.add(typeSelector);
@@ -150,61 +124,20 @@ public class DisplayerEditorView extends Composite
         optionData.setActive(false);
         optionSettings.setActive(false);
         optionType.setActive(true);
-        showDisplayer();
     }
 
     @Override
-    public void gotoDataSetConf() {
-        saveLastTab(1);
-
-        if (settings.getDataSet() == null && settings.getDataSetLookup() != null) {
-            // Fetch before initializing the editor
-            presenter.fetchDataSetLookup();
-        }
-        else {
-            // Just init the lookup editor
-            lookupEditor.init(presenter);
-        }
-
+    public void gotoDataSetLookupConf(DataSetLookupEditor lookupEditor) {
         leftColumn.clear();
         leftColumn.getElement().getStyle().setOverflowY(Style.Overflow.AUTO);
         leftColumn.add(lookupEditor);
-
-        if (DisplayerType.TABLE.equals(settings.getType())) {
-            viewAsTableButtonRow.setVisible(false);
-        } else {
-            viewAsTableButtonRow.setVisible(true);
-        }
         optionSettings.setActive(false);
         optionType.setActive(false);
         optionData.setActive(true);
-        showDisplayer();
     }
 
     @Override
-    public void showTypeChangedWarning(DisplayerSettings oldSettings, DisplayerSettings newSettings) {
-
-        if (Window.confirm(CommonConstants.INSTANCE.displayer_editor_incompatible_settings())) {
-            presenter.changeSettings(oldSettings, newSettings);
-        } else {
-            typeSelector.select(oldSettings.getRenderer(), oldSettings.getType(), oldSettings.getSubtype());
-        }
-    }
-
-    @Override
-    public void updateDataSetLookup(DataSetLookupConstraints constraints, DataSetMetadata metadata) {
-        DataSetLookup dataSetLookup = settings.getDataSetLookup();
-        lookupEditor.init(presenter, dataSetLookup, constraints, metadata);
-
-        showDisplayer();
-    }
-
-    @Override
-    public void gotoDisplaySettings() {
-        saveLastTab(2);
-        optionSettings.setActive(true);
-
-        settingsEditor.init(settings, presenter);
+    public void gotoDisplaySettings(DisplayerSettingsEditor settingsEditor) {
         leftColumn.clear();
         leftColumn.getElement().getStyle().setOverflowY(Style.Overflow.AUTO);
         leftColumn.add(settingsEditor);
@@ -213,7 +146,15 @@ public class DisplayerEditorView extends Composite
         optionType.setActive(false);
         optionData.setActive(false);
         optionSettings.setActive(true);
-        showDisplayer();
+    }
+
+    @Override
+    public void showTypeChangedWarning(Command yes, Command no) {
+        AlertPanel alertPanel = new AlertPanel();
+        String alertMsg = CommonConstants.INSTANCE.displayer_editor_incompatible_settings();
+        alertPanel.show(AlertType.WARNING, alertMsg, 400, yes, no);
+        centerColumn.clear();
+        centerColumn.add(alertPanel);
     }
 
     @Override
@@ -231,65 +172,30 @@ public class DisplayerEditorView extends Composite
         centerColumn.add(errorWidget);
         errorWidget.show(e.getMessage(), e.getCause());
 
-        if (e.getThrowable() != null) GWT.log(e.getMessage(), e.getThrowable());
-        else GWT.log(e.getMessage());
-    }
-
-    @Override
-    public void close() {
-        if (displayer != null) {
-            displayer.close();
-        }
-    }
-
-    public void showDisplayer() {
-        if (displayer != null) {
-            displayer.close();
-        }
-        try {
-            if (viewAsTableButtonRow.isVisible() && viewAsTableButton.getValue()) {
-                DisplayerSettings tableSettings = settings.cloneInstance();
-                tableSettings.setTitleVisible(false);
-                tableSettings.setType(DisplayerType.TABLE);
-                tableSettings.setTablePageSize(8);
-                tableSettings.setTableWidth(-1);
-                displayer = DisplayerLocator.get().lookupDisplayer(tableSettings);
-                displayer.addListener(displayerListener);
-                displayer.setRefreshOn(false);
-                centerColumn.clear();
-                centerColumn.add(displayer);
-                displayer.draw();
-            } else {
-                displayer = DisplayerLocator.get().lookupDisplayer(settings);
-                displayer.addListener(displayerListener);
-                displayer.setRefreshOn(false);
-                centerColumn.clear();
-                centerColumn.add(displayer);
-                displayer.draw();
-            }
-        } catch (Exception e) {
-            error(new ClientRuntimeError(e));
+        if (e.getThrowable() != null) {
+            GWT.log(e.getMessage(), e.getThrowable());
+        } else {
+            GWT.log(e.getMessage());
         }
     }
 
     @UiHandler(value = "optionType")
     public void onTypeSelected(ClickEvent clickEvent) {
-        gotoTypeSelection();
+        presenter.gotoTypeSelection();
     }
 
     @UiHandler(value = "optionData")
     public void onDataSelected(ClickEvent clickEvent) {
-        gotoDataSetConf();
+        presenter.gotoDataSetLookupConf();
     }
 
     @UiHandler(value = "optionSettings")
     public void onSettingsSelected(ClickEvent clickEvent) {
-        gotoDisplaySettings();
+        presenter.gotoDisplaySettings();
     }
 
     @UiHandler(value = "viewAsTableButton")
     public void onRawTableChecked(ClickEvent clickEvent) {
-        showDisplayer();
+        presenter.showDisplayer();
     }
-    
 }

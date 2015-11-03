@@ -235,10 +235,6 @@ public interface CommonConstants extends Messages {
 
     String renderer_selector_title();
 
-    String datasethandler_groupops_no_pivotcolumn();
-
-    String datasethandler_groupops_no_groupintervals();
-
     String displayerlocator_default_renderer_undeclared(String targetType);
 
     String displayerlocator_unsupported_displayer_renderer(String targetType, String rendererUuid);

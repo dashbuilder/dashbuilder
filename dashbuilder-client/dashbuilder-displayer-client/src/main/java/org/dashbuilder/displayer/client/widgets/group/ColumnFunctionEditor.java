@@ -18,166 +18,142 @@ package org.dashbuilder.displayer.client.widgets.group;
 import java.util.List;
 import java.util.ArrayList;
 import javax.enterprise.context.Dependent;
+import javax.enterprise.event.Event;
+import javax.inject.Inject;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.Panel;
+import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.DataSetMetadata;
-import org.dashbuilder.dataset.client.resources.i18n.AggregateFunctionTypeConstants;
 import org.dashbuilder.dataset.group.AggregateFunctionType;
 import org.dashbuilder.dataset.group.GroupFunction;
-import org.gwtbootstrap3.client.ui.Icon;
-import org.gwtbootstrap3.client.ui.ListBox;
-import org.gwtbootstrap3.client.ui.constants.IconType;
+import org.dashbuilder.displayer.client.events.GroupFunctionChangedEvent;
+import org.dashbuilder.displayer.client.events.GroupFunctionDeletedEvent;
+import org.uberfire.client.mvp.UberView;
 
 @Dependent
-public class ColumnFunctionEditor extends Composite implements ColumnDetailsEditor.Listener {
+public class ColumnFunctionEditor implements IsWidget {
 
-    public interface Listener {
-        void columnChanged(ColumnFunctionEditor editor);
-        void columnDeleted(ColumnFunctionEditor editor);
-    }
+    public interface View extends UberView<ColumnFunctionEditor> {
 
-    interface Binder extends UiBinder<Widget, ColumnFunctionEditor> {}
-    private static Binder uiBinder = GWT.create(Binder.class);
+        void setDeleteOptionEnabled(boolean enabled);
 
-    Listener listener = null;
-    GroupFunction column = null;
+        void setColumnSelectorTitle(String title);
+
+        void clearColumnSelector();
+
+        void addColumnItem(String columnId);
+
+        void setSelectedColumnIndex(int i);
+
+        String getSelectedColumnId();
+
+        void setFunctionSelectorEnabled(boolean enabled);
+
+        void clearFunctionSelector();
+
+        void setVoidFunctionEnabled(boolean enabled);
+
+        void addFunctionItem(AggregateFunctionType functionType);
+
+        void setSelectedFunctionIndex(int i);
+
+        int getSelectedFunctionIndex();
+     }
+
+    View view = null;
+    GroupFunction groupFunction = null;
     ColumnType targetType = null;
     DataSetMetadata metadata = null;
+    ColumnDetailsEditor columnDetailsEditor = null;
+    Event<GroupFunctionChangedEvent> changeEvent = null;
+    Event<GroupFunctionDeletedEvent> deleteEvent = null;
 
-    @UiField
-    ListBox columnListBox;
-
-    @UiField
-    ListBox functionListBox;
-
-    @UiField
-    Icon columnDeleteIcon;
-
-    @UiField
-    Icon columnExpandIcon;
-
-    @UiField
-    Panel columnDetailsPanel;
-
-    @UiField
-    ColumnDetailsEditor columnDetailsEditor;
-
-    public ColumnFunctionEditor() {
-        initWidget(uiBinder.createAndBindUi(this));
-        columnExpandIcon.addDomHandler(new ClickHandler() {
-            public void onClick(ClickEvent event) {
-                expandOrCollapse();
-            }
-        }, ClickEvent.getType());
-        columnDeleteIcon.addDomHandler(new ClickHandler() {
-            public void onClick(ClickEvent event) {
-                delete();
-            }
-        }, ClickEvent.getType());
+    @Inject
+    public ColumnFunctionEditor(View view,
+                                ColumnDetailsEditor columnDetailsEditor,
+                                Event<GroupFunctionChangedEvent> changeEvent,
+                                Event<GroupFunctionDeletedEvent> deleteEvent) {
+        this.view = view;
+        this.columnDetailsEditor = columnDetailsEditor;
+        this.changeEvent = changeEvent;
+        this.deleteEvent = deleteEvent;
+        this.view.init(this);
     }
 
-    public void init(DataSetMetadata metadata, final GroupFunction groupFunction,
-            ColumnType targetType,
-            String columnTitle,
-            boolean functionsEnabled,
-            boolean canDelete,
-            final Listener listener) {
+    @Override
+    public Widget asWidget() {
+        return view.asWidget();
+    }
 
-        this.column = groupFunction;
+    public GroupFunction getGroupFunction() {
+        return groupFunction;
+    }
+
+    public ColumnType getTargetType() {
+        return targetType;
+    }
+
+    public ColumnDetailsEditor getColumnDetailsEditor() {
+        return columnDetailsEditor;
+    }
+
+    public void init(DataSetMetadata metadata,
+                     GroupFunction groupFunction,
+                     ColumnType targetType,
+                     String columnTitle,
+                     boolean functionsEnabled,
+                     boolean canDelete) {
+
+        this.groupFunction = groupFunction;
         this.targetType = targetType;
-        this.listener = listener;
         this.metadata = metadata;
 
-        columnExpandIcon.setType(IconType.ARROW_DOWN);
-        columnDeleteIcon.setVisible(canDelete);
-        columnListBox.setTitle(columnTitle);
+        columnDetailsEditor.init(metadata, this.groupFunction);
+        view.setColumnSelectorTitle(columnTitle);
+        view.setDeleteOptionEnabled(canDelete);
         initColumnListBox();
 
         if (functionsEnabled && (targetType == null || isColumnNumeric())) {
-            columnListBox.setWidth("120px");
-            functionListBox.setVisible(true);
+            view.setFunctionSelectorEnabled(true);
             initFunctionListBox();
         } else {
-            columnListBox.setWidth("200px");
-            functionListBox.setVisible(false);
-        }
-    }
-
-    public void expand() {
-        columnExpandIcon.setType(IconType.ARROW_UP);
-        columnDetailsPanel.setVisible(true);
-        columnDetailsEditor.init(metadata, column, this);
-    }
-
-    public void collapse() {
-        columnDetailsPanel.setVisible(false);
-        columnExpandIcon.setType(IconType.ARROW_DOWN);
-    }
-
-    public void expandOrCollapse() {
-        if (columnDetailsPanel.isVisible()) {
-            collapse();
-        } else {
-            expand();
+            view.setFunctionSelectorEnabled(false);
         }
     }
 
     public void delete() {
-        listener.columnDeleted(this);
+        deleteEvent.fire(new GroupFunctionDeletedEvent(groupFunction));
     }
 
-    public String getSourceId() {
-        return columnListBox.getValue(columnListBox.getSelectedIndex());
+    void onColumnSelected() {
+        groupFunction.setSourceId(view.getSelectedColumnId());
+        if (!isColumnNumeric()) {
+            groupFunction.setFunction(null);
+        } else {
+            groupFunction.setFunction(getSupportedFunctionTypes().get(0));
+        }
+        initFunctionListBox();
+        changeEvent.fire(new GroupFunctionChangedEvent(groupFunction));
     }
 
-    public String getColumnId() {
-        return columnDetailsEditor.getNewColumnId();
+    void onFunctionSelected() {
+        AggregateFunctionType selected = null;
+        int i = view.getSelectedFunctionIndex();
+        if (i >= 0) {
+            List<AggregateFunctionType> supportedFunctions = getSupportedFunctionTypes();
+            selected = supportedFunctions.get(i);
+        }
+        groupFunction.setFunction(selected);
+        changeEvent.fire(new GroupFunctionChangedEvent(groupFunction));
     }
-
-    public AggregateFunctionType getFunction() {
-        int idx = functionListBox.getSelectedIndex();
-        if (!isColumnNumeric()) idx--;
-
-        if (idx < 0) return null;
-        return getSupportedFunctions().get(idx);
-    }
-
-    // UI events
-
-    @UiHandler(value = "columnListBox")
-    public void onColumnSelected(ChangeEvent changeEvent) {
-        listener.columnChanged(this);
-    }
-
-    @UiHandler(value = "functionListBox")
-    public void onFunctionSelected(ChangeEvent changeEvent) {
-        listener.columnChanged(this);
-    }
-
-    // ColumnDetailsEditor callback
-
-    public void columnChanged(ColumnDetailsEditor editor) {
-        listener.columnChanged(this);
-    }
-
-    // Internals
 
     protected boolean isColumnNumeric() {
         return targetType != null && targetType.equals(ColumnType.NUMBER);
     }
 
     protected void initColumnListBox() {
-        columnListBox.clear();
+        view.clearColumnSelector();
 
         for (int i=0; i<metadata.getNumberOfColumns(); i++) {
             String columnId = metadata.getColumnId(i);
@@ -186,43 +162,38 @@ public class ColumnFunctionEditor extends Composite implements ColumnDetailsEdit
             // Only add columns that match the target type.
             // When the target is not specified or is numeric then all the columns are eligible
             if (targetType == null || columnType == null || isColumnNumeric() || targetType.equals(columnType)) {
-                columnListBox.addItem(columnId, columnId);
-                if (columnId != null && columnId.equals(column.getSourceId())) {
-                    columnListBox.setSelectedIndex(i);
+                view.addColumnItem(columnId);
+                if (columnId != null && columnId.equals(groupFunction.getSourceId())) {
+                    view.setSelectedColumnIndex(i);
                 }
             }
         }
     }
 
     protected void initFunctionListBox() {
-        functionListBox.clear();
-        if (!isColumnNumeric()) functionListBox.addItem("---");
+        view.clearFunctionSelector();
+        view.setVoidFunctionEnabled(!isColumnNumeric());
 
-        AggregateFunctionType selected = column.getFunction();
-        for (AggregateFunctionType functionType : getSupportedFunctions()) {
-            String functionName = AggregateFunctionTypeConstants.INSTANCE.getString(functionType.name());
-            functionListBox.addItem(functionName);
+        AggregateFunctionType selected = groupFunction.getFunction();
+        List<AggregateFunctionType> supportedFunctions = getSupportedFunctionTypes();
+        for (int i=0; i<supportedFunctions.size(); i++) {
+            AggregateFunctionType functionType = supportedFunctions.get(i);
+            view.addFunctionItem(functionType);
             if (selected != null && functionType.equals(selected)) {
-                setSelectedValue(functionListBox, functionName);
+                view.setSelectedFunctionIndex(i);
             }
         }
     }
 
-    private void setSelectedValue( final ListBox functionListBox,
-                                   final String functionName ) {
-        for ( int i = 0; i < functionListBox.getItemCount(); i++ ) {
-            if (functionListBox.getValue( i ).equals( functionName )){
-                functionListBox.setSelectedIndex( i );
-                break;
-            }
-        }
+    public List<AggregateFunctionType> getSupportedFunctionTypes() {
+        ColumnType columnType = metadata.getColumnType(groupFunction.getSourceId());
+        return getSupportedFunctionTypes(columnType);
     }
 
-    protected List<AggregateFunctionType> getSupportedFunctions() {
-        ColumnType targetType = metadata.getColumnType(column.getSourceId());
+    public List<AggregateFunctionType> getSupportedFunctionTypes(ColumnType columnType) {
         List<AggregateFunctionType> result = new ArrayList<AggregateFunctionType>();
         for (AggregateFunctionType function : AggregateFunctionType.values()) {
-            if (function.supportType(targetType)) {
+            if (function.supportType(columnType)) {
                 result.add(function);
             }
         }

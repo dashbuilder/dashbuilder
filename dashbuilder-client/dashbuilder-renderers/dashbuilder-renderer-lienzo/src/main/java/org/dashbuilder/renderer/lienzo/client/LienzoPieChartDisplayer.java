@@ -15,154 +15,37 @@
  */
 package org.dashbuilder.renderer.lienzo.client;
 
-import com.ait.lienzo.charts.client.core.AbstractChart;
-import com.ait.lienzo.charts.client.core.model.PieChartData;
-import com.ait.lienzo.charts.client.core.pie.PieChart;
-import com.ait.lienzo.charts.client.core.pie.event.ValueSelectedEvent;
-import com.ait.lienzo.charts.client.core.pie.event.ValueSelectedHandler;
-import com.ait.lienzo.charts.client.core.resizer.ChartResizeEvent;
-import com.ait.lienzo.charts.client.core.resizer.ChartResizeEventHandler;
-import com.ait.lienzo.client.core.animation.AnimationTweener;
-import com.ait.lienzo.client.core.shape.Layer;
-import com.ait.lienzo.client.widget.LienzoPanel;
-import com.ait.lienzo.shared.core.types.ColorName;
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.Widget;
+import javax.enterprise.context.Dependent;
+import javax.inject.Inject;
+
 import org.dashbuilder.dataset.ColumnType;
-import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.dataset.DataSetLookupConstraints;
 import org.dashbuilder.displayer.DisplayerAttributeDef;
 import org.dashbuilder.displayer.DisplayerAttributeGroupDef;
 import org.dashbuilder.displayer.DisplayerConstraints;
 
-public class LienzoPieChartDisplayer extends LienzoDisplayer {
+@Dependent
+public class LienzoPieChartDisplayer extends LienzoDisplayer<LienzoPieChartDisplayer.View> {
 
-    private static final ColorName[] DEFAULT_SERIE_COLORS = new ColorName[] {
-            ColorName.DEEPSKYBLUE, ColorName.RED, ColorName.YELLOWGREEN            
-    };
-    
-    protected PieChart chart = null;
-    protected FlowPanel filterPanel = new FlowPanel();
-    final protected LienzoPanel chartPanel = new LienzoPanel();
-    final protected Layer layer = new Layer();
+    public interface View extends LienzoDisplayer.View<LienzoPieChartDisplayer> {
 
-
-    @Override
-    protected Widget createVisualization() {
-        HTML titleHtml = new HTML();
-        if (displayerSettings.isTitleVisible()) {
-            titleHtml.setText(displayerSettings.getTitle());
-        }
-
-        FlowPanel container = new FlowPanel();
-        container.add(titleHtml);
-        container.add(filterPanel);
-        container.add(chartPanel);
-
-        if (dataSet.getRowCount() == 0) {
-            container.add(createNoDataMsgPanel());
-        } else {
-            resizePanel(getWidth(), getHeight());
-            layer.setTransformable(true);
-            chartPanel.add(layer);
-            AbstractChart chart = createPieChart();
-            layer.clear();
-            layer.add(chart);
-            layer.draw();
-        }
-        return container;
     }
 
-    public AbstractChart createPieChart() {
+    private View view;
 
-        // Create the data for the chart instance.
-        PieChartData chartData = createChartData();
-
-        // Create the BarChart instance.
-        chart = new PieChart();
-        
-        // Data.
-        chart.setData(chartData);
-        
-        // Configure other chart setttings.
-        configurePieChart();
-        
-        return chart;
+    public LienzoPieChartDisplayer() {
+        this(new LienzoPieChartDisplayerView());
     }
-    
-    private void configurePieChart() {
 
-        chart.setX(0).setY(0);
-        chart.setName(displayerSettings.getTitle());
-        chart.setWidth(getChartWidth());
-        chart.setHeight(getChartHeight());
-        chart.setMarginLeft(displayerSettings.getChartMarginLeft());
-        chart.setMarginRight(displayerSettings.getChartMarginRight());
-        chart.setMarginTop(displayerSettings.getChartMarginTop());
-        chart.setMarginBottom(displayerSettings.getChartMarginBottom());
-        chart.setFontFamily("Verdana");
-        chart.setFontStyle("bold");
-        chart.setFontSize(8);
-        // TODO: Bug in Lienzo charting -> If title not visible -> javascript error (nullpointer)
-        chart.setShowTitle(true);
-        // chart.setShowTitle(displayerSettings.isTitleVisible());
-        chart.setResizable(displayerSettings.isResizable());
-
-        // Filtering event.
-        if (displayerSettings.isFilterEnabled()) {
-            chart.addValueSelectedHandler(new PieValueSelectedHandler());
-        }
-
-        // Resize event.
-        if (displayerSettings.isResizable()) {
-            chart.addChartResizeEventHandler(new ChartResizeEventHandler() {
-                @Override
-                public void onChartResize(ChartResizeEvent event) {
-                    resizePanel((int) event.getWidth(), (int) event.getHeight());
-                }
-            });
-        }
-
-        // Draw the elements.
-        chart.draw();
-
-        // Create the Pie Chart using animations.
-        chart.init(AnimationTweener.LINEAR, ANIMATION_DURATION);
+    @Inject
+    public LienzoPieChartDisplayer(View view) {
+        this.view = view;
+        this.view.init(this);
     }
 
     @Override
-    protected void updateVisualization() {
-        filterPanel.clear();
-        Widget filterReset = super.createCurrentSelectionWidget();
-        if (filterReset != null) filterPanel.add(filterReset);
-
-        chartPanel.clear();
-        if (dataSet.getRowCount() == 0) {
-            chartPanel.add(super.createNoDataMsgPanel());
-            chart = null;
-        } else {
-            chartPanel.add(layer);
-            PieChartData newData = createChartData();
-            chart.reload(newData, AnimationTweener.LINEAR, ANIMATION_DURATION);
-        }
-    }
-
-    protected PieChartData createChartData() {
-
-        // Create data instance and the series to display.
-        DataColumn categoriesColumn = getCategoriesColumn();
-        DataColumn[] valuesColumns = getValuesColumns();
-        PieChartData chartData = new PieChartData(lienzoTable, categoriesColumn.getId(), valuesColumns[0].getId());
-        
-        return chartData;
-    }
-
-    protected void resizePanel(int w, int h) {
-        String _w = w + PANEL_MARGIN + PIXEL;
-        String _h = h + PANEL_MARGIN + PIXEL;
-        chartPanel.setSize(_w, _h);
+    public View getView() {
+        return view;
     }
 
     @Override
@@ -173,8 +56,8 @@ public class LienzoPieChartDisplayer extends LienzoDisplayer {
                 .setMaxColumns(2)
                 .setMinColumns(2)
                 .setExtraColumnsAllowed(false)
-                .setGroupsTitle("Categories")
-                .setColumnsTitle("Values")
+                .setGroupsTitle(getView().getGroupsTitle())
+                .setColumnsTitle(getView().getColumnsTitle())
                 .setColumnTypes(new ColumnType[] {
                         ColumnType.LABEL,
                         ColumnType.NUMBER});
@@ -184,17 +67,8 @@ public class LienzoPieChartDisplayer extends LienzoDisplayer {
                 .supportsAttribute(DisplayerAttributeDef.RENDERER)
                 .supportsAttribute(DisplayerAttributeGroupDef.COLUMNS_GROUP)
                 .supportsAttribute(DisplayerAttributeGroupDef.FILTER_GROUP)
-                .supportsAttribute( DisplayerAttributeGroupDef.REFRESH_GROUP )
-                .supportsAttribute( DisplayerAttributeGroupDef.GENERAL_GROUP)
-                .supportsAttribute( DisplayerAttributeGroupDef.CHART_GROUP );
-    }
-
-    public class PieValueSelectedHandler implements ValueSelectedHandler {
-
-        @Override
-        public void onValueSelected(ValueSelectedEvent event) {
-            GWT.log("filtering by column [" + event.getColumn() + "], row [" + event.getRow() + "]");
-            filterUpdate(event.getColumn(), event.getRow());
-        }
+                .supportsAttribute(DisplayerAttributeGroupDef.REFRESH_GROUP)
+                .supportsAttribute(DisplayerAttributeGroupDef.GENERAL_GROUP)
+                .supportsAttribute(DisplayerAttributeGroupDef.CHART_GROUP );
     }
 }

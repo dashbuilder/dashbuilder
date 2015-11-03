@@ -3,12 +3,24 @@
              xmlns:g="urn:import:com.google.gwt.user.client.ui"
              xmlns:my="urn:import:org.dashbuilder.displayer.client">
 
+  <ui:style>
+    .margin {
+      margin: 5px;
+    }
+  </ui:style>
+
   <g:VerticalPanel>
     <g:HorizontalPanel>
       <g:VerticalPanel>
-        <my:Displayer ui:field="countrySelector"/>
-        <my:Displayer ui:field="salesmanSelector"/>
-        <my:Displayer ui:field="customerSelector"/>
+        <g:FlowPanel addStyleNames="{style.margin}">
+          <my:Displayer ui:field="countrySelector"/>
+        </g:FlowPanel>
+        <g:FlowPanel addStyleNames="{style.margin}">
+          <my:Displayer ui:field="salesmanSelector"/>
+        </g:FlowPanel>
+        <g:FlowPanel addStyleNames="{style.margin}">
+          <my:Displayer ui:field="customerSelector"/>
+        </g:FlowPanel>
       </g:VerticalPanel>
       <my:Displayer ui:field="areaChartByDate"/>
     </g:HorizontalPanel>

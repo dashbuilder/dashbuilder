@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <!--
   ~ Copyright 2015 JBoss Inc
   ~
@@ -22,13 +21,24 @@
              xmlns:b="urn:import:org.gwtbootstrap3.client.ui"
              xmlns:b.html="urn:import:org.gwtbootstrap3.client.ui.html">
 
-  <b:Jumbotron ui:field="heroPanel">
-    <g:FlowPanel ui:field="centerPanel">
-      <b.html:Paragraph ui:field="titlePanel" />
-      <g:FlowPanel ui:field="metricPanel">
-        <b:Heading ui:field="metricHeading" size="H2" />
-      </g:FlowPanel>
-    </g:FlowPanel>
-  </b:Jumbotron>
+  <ui:style>
+    .metricPanel {
+      cursor: pointer;
+    }
+    .metricHeading {
+      font-weight: bold;
+    }
+  </ui:style>
 
+  <b:Jumbotron ui:field="heroPanel">
+    <g:FocusPanel ui:field="centerPanel" addStyleNames="{style.metricPanel}">
+      <g:FlowPanel>
+        <b.html:Paragraph ui:field="titlePanel" visible="false"/>
+        <g:FlowPanel ui:field="metricPanel">
+          <b:Heading ui:field="metricHeading" size="H2" addStyleNames="{style.metricHeading}"/>
+        </g:FlowPanel>
+      </g:FlowPanel>
+    </g:FocusPanel>
+  </b:Jumbotron>
+  
 </ui:UiBinder>

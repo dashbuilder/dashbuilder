@@ -6,6 +6,7 @@ import org.dashbuilder.client.widgets.dataset.editor.sql.SQLDataSetDefAttributes
 import org.dashbuilder.common.client.editor.ValueBoxEditor;
 import org.dashbuilder.common.client.editor.file.FileUploadEditor;
 import org.dashbuilder.dataprovider.DataSetProviderType;
+import org.dashbuilder.dataset.client.DataSetClientServices;
 import org.dashbuilder.dataset.def.CSVDataSetDef;
 import org.dashbuilder.dataset.def.SQLDataSetDef;
 import org.gwtbootstrap3.client.ui.constants.Placement;
@@ -22,6 +23,8 @@ import static org.mockito.Mockito.*;
 @RunWith(GwtMockitoTestRunner.class)
 public class CSVDataSetDefAttributesEditorTest {
 
+    @Mock
+    DataSetClientServices dataSetClientServices;
     @Mock ValueBoxEditor<String> fileURL;
     @Mock FileUploadEditor filePath;
     @Mock ValueBoxEditor<Character> separatorChar;
@@ -36,7 +39,8 @@ public class CSVDataSetDefAttributesEditorTest {
     
     @Before
     public void setup() {
-        presenter = new CSVDataSetDefAttributesEditor(fileURL, filePath, separatorChar, quoteChar, 
+        presenter = new CSVDataSetDefAttributesEditor(dataSetClientServices,
+                fileURL, filePath, separatorChar, quoteChar,
                 escapeChar, datePattern, numberPattern, view);
     }
 
