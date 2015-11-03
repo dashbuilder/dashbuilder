@@ -15,6 +15,10 @@
  */
 package org.dashbuilder.client.sales.widgets;
 
+import javax.annotation.PostConstruct;
+import javax.enterprise.context.Dependent;
+import javax.inject.Inject;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -24,8 +28,8 @@ import org.dashbuilder.client.gallery.GalleryWidget;
 import org.dashbuilder.client.resources.i18n.AppConstants;
 import org.dashbuilder.displayer.client.Displayer;
 import org.dashbuilder.displayer.client.DisplayerCoordinator;
-import org.dashbuilder.displayer.client.DisplayerHelper;
 import org.dashbuilder.displayer.DisplayerSettingsFactory;
+import org.dashbuilder.displayer.client.DisplayerLocator;
 import org.dashbuilder.renderer.client.DefaultRenderer;
 
 import static org.dashbuilder.shared.sales.SalesConstants.*;
@@ -36,6 +40,7 @@ import static org.dashbuilder.dataset.group.AggregateFunctionType.*;
  * A composite widget that represents an entire dashboard sample composed using an UI binder template.
  * <p>The dashboard itself is composed by a set of Displayer instances.</p>
  */
+@Dependent
 public class SalesDistributionByCountry extends Composite implements GalleryWidget {
 
     interface SalesDashboardBinder extends UiBinder<Widget, SalesDistributionByCountry>{}
@@ -50,7 +55,8 @@ public class SalesDistributionByCountry extends Composite implements GalleryWidg
     @UiField(provided = true)
     Displayer tableAll;
 
-    DisplayerCoordinator displayerCoordinator = new DisplayerCoordinator();
+    DisplayerCoordinator displayerCoordinator;
+    DisplayerLocator displayerLocator;
 
     @Override
     public String getTitle() {
@@ -72,11 +78,18 @@ public class SalesDistributionByCountry extends Composite implements GalleryWidg
         displayerCoordinator.redrawAll();
     }
 
-    public SalesDistributionByCountry() {
+    @Inject
+    public SalesDistributionByCountry(DisplayerCoordinator displayerCoordinator, DisplayerLocator displayerLocator) {
+        this.displayerCoordinator = displayerCoordinator;
+        this.displayerLocator = displayerLocator;
+    }
+
+    @PostConstruct
+    public void init() {
 
         // Create the chart definitions
 
-        bubbleByCountry = DisplayerHelper.lookupDisplayer(
+        bubbleByCountry = displayerLocator.lookupDisplayer(
                 DisplayerSettingsFactory.newBubbleChartSettings()
                 .dataset(SALES_OPPS)
                 .group(COUNTRY)
@@ -91,7 +104,7 @@ public class SalesDistributionByCountry extends Composite implements GalleryWidg
                 .filterOn(false, true, true)
                 .buildSettings());
 
-        mapByCountry = DisplayerHelper.lookupDisplayer(
+        mapByCountry = displayerLocator.lookupDisplayer(
                 DisplayerSettingsFactory.newMapChartSettings()
                 .dataset(SALES_OPPS)
                 .group(COUNTRY)
@@ -104,7 +117,7 @@ public class SalesDistributionByCountry extends Composite implements GalleryWidg
                 .filterOn(false, true, true)
                 .buildSettings());
 
-        tableAll = DisplayerHelper.lookupDisplayer(
+        tableAll = displayerLocator.lookupDisplayer(
                 DisplayerSettingsFactory.newTableSettings()
                 .dataset(SALES_OPPS)
                 .title(AppConstants.INSTANCE.sales_bycountry_table_title())

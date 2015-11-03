@@ -15,10 +15,8 @@
  */
 package org.dashbuilder.displayer.client.prototypes;
 
-import java.util.Collection;
 import java.util.EnumMap;
 import java.util.Map;
-import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
@@ -27,30 +25,26 @@ import org.dashbuilder.dataset.uuid.UUIDGenerator;
 import org.dashbuilder.displayer.DisplayerSettings;
 import org.dashbuilder.displayer.DisplayerSettingsFactory;
 import org.dashbuilder.displayer.DisplayerType;
-import org.jboss.errai.ioc.client.container.IOC;
-import org.jboss.errai.ioc.client.container.IOCBeanDef;
 
 import static org.dashbuilder.displayer.client.prototypes.DataSetPrototypes.*;
 
 @ApplicationScoped
 public class DisplayerPrototypes {
 
-    public static DisplayerPrototypes get() {
-        Collection<IOCBeanDef<DisplayerPrototypes>> beans = IOC.getBeanManager().lookupBeans(DisplayerPrototypes.class);
-        IOCBeanDef<DisplayerPrototypes> beanDef = beans.iterator().next();
-        return beanDef.getInstance();
+    protected DataSetPrototypes dataSetPrototypes;
+
+    protected UUIDGenerator uuidGenerator;
+
+    protected Map<DisplayerType,DisplayerSettings> prototypeMap = new EnumMap<DisplayerType,DisplayerSettings>(DisplayerType.class);
+
+    @Inject
+    public DisplayerPrototypes(DataSetPrototypes dataSetPrototypes, UUIDGenerator uuidGenerator) {
+        this.dataSetPrototypes = dataSetPrototypes;
+        this.uuidGenerator = uuidGenerator;
+        init();
     }
 
-    @Inject
-    DataSetPrototypes dataSetPrototypes;
-
-    @Inject
-    UUIDGenerator uuidGenerator;
-
-    private Map<DisplayerType,DisplayerSettings> prototypeMap = new EnumMap<DisplayerType,DisplayerSettings>(DisplayerType.class);
-
-    @PostConstruct
-    private void init() {
+    public void init() {
         prototypeMap.put(DisplayerType.PIECHART, DisplayerSettingsFactory
                 .newPieChartSettings()
                 .uuid("pieChartPrototype")

@@ -23,7 +23,8 @@ import org.dashbuilder.dataset.DataSetLookupConstraints;
 import org.dashbuilder.dataset.ValidationError;
 
 /**
- * Every Displayer implementation can used this class to specify what are the supported DisplayerSettings attributes.
+ * Every Displayer implementation use this class to specify what are the supported DisplayerSettings attributes
+ * as well as the supported data sets in order to fit the displayer needs.
  */
 public class DisplayerConstraints {
 

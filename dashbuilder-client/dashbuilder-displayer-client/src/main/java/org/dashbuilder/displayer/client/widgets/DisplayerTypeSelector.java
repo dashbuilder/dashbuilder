@@ -15,122 +15,81 @@
  */
 package org.dashbuilder.displayer.client.widgets;
 
-import java.util.List;
-import java.util.ArrayList;
 import javax.enterprise.context.Dependent;
+import javax.enterprise.event.Event;
+import javax.inject.Inject;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.displayer.DisplayerSubType;
 import org.dashbuilder.displayer.DisplayerType;
-import org.dashbuilder.displayer.client.resources.i18n.DisplayerTypeLiterals;
-import org.gwtbootstrap3.client.ui.*;
+import org.dashbuilder.displayer.client.events.DisplayerTypeSelectedEvent;
+import org.uberfire.client.mvp.UberView;
 
 @Dependent
-public class DisplayerTypeSelector extends Composite implements DisplayerSubtypeSelector.SubTypeChangeListener {
+public class DisplayerTypeSelector implements IsWidget {
 
-    public interface Listener {
-        void displayerTypeChanged(DisplayerType type, DisplayerSubType subtype);
+    public interface View extends UberView<DisplayerTypeSelector> {
+
+        void clear();
+
+        void show(DisplayerType type);
+
+        void select(DisplayerType type);
     }
 
-    interface ViewBinder extends UiBinder<Widget, DisplayerTypeSelector> {}
-    private static ViewBinder uiBinder = GWT.create(ViewBinder.class);
-
-    Listener listener = null;
+    View view = null;
     DisplayerType selectedType = DisplayerType.BARCHART;
-    DisplayerSubType selectedSubType = null;
-    List<DisplayerTab> tabList = new ArrayList<DisplayerTab>();
+    DisplayerSubtypeSelector subtypeSelector;
+    Event<DisplayerTypeSelectedEvent> typeSelectedEvent;
 
-    @UiField
-    NavTabs navTabs;
-
-    @UiField
-    TabPane displayerSubTypePane;
-
-    private DisplayerSubtypeSelector subtypeSelector;
-
-    public DisplayerTypeSelector() {
-        tabList.add(new DisplayerTab(DisplayerTypeLiterals.INSTANCE.displayer_type_selector_tab_bar(), DisplayerType.BARCHART));
-        tabList.add(new DisplayerTab(DisplayerTypeLiterals.INSTANCE.displayer_type_selector_tab_pie(), DisplayerType.PIECHART));
-        tabList.add(new DisplayerTab(DisplayerTypeLiterals.INSTANCE.displayer_type_selector_tab_line(), DisplayerType.LINECHART));
-        tabList.add(new DisplayerTab(DisplayerTypeLiterals.INSTANCE.displayer_type_selector_tab_area(), DisplayerType.AREACHART));
-        tabList.add(new DisplayerTab(DisplayerTypeLiterals.INSTANCE.displayer_type_selector_tab_bubble(), DisplayerType.BUBBLECHART));
-        tabList.add(new DisplayerTab(DisplayerTypeLiterals.INSTANCE.displayer_type_selector_tab_meter(), DisplayerType.METERCHART));
-        tabList.add(new DisplayerTab(DisplayerTypeLiterals.INSTANCE.displayer_type_selector_tab_metric(), DisplayerType.METRIC));
-        tabList.add(new DisplayerTab(DisplayerTypeLiterals.INSTANCE.displayer_type_selector_tab_map(), DisplayerType.MAP));
-        tabList.add(new DisplayerTab(DisplayerTypeLiterals.INSTANCE.displayer_type_selector_tab_table(), DisplayerType.TABLE));
-
-        initWidget(uiBinder.createAndBindUi(this));
-
-        subtypeSelector = new DisplayerSubtypeSelector(this);
-        displayerSubTypePane.add(subtypeSelector);
-
-        for (DisplayerTab tab : tabList) {
-            addTab(tab);
-        }
-
-    }
-
-    public void init(Listener listener) {
-        this.listener = listener;
-        draw();
-    }
-
-    protected void draw() {
-        navTabs.clear();
-
-        for ( final DisplayerTab tab : tabList ) {
-            addTab(tab);
-            tab.setActive( tab.type.equals( selectedType ) );
-        }
-        displayerSubTypePane.setActive(true);
-    }
-
-    private void addTab(final DisplayerTab tab) {
-        tab.setDataTargetWidget(displayerSubTypePane);
-        navTabs.add(tab);
-    }
-
-    public void select(String renderer, final DisplayerType type, final DisplayerSubType subtype) {
-        selectedType = type;
-        selectedSubType = subtype;
-        subtypeSelector.select(renderer, type, subtype);
-        draw();
+    @Inject
+    public DisplayerTypeSelector(View view,
+                                 DisplayerSubtypeSelector subtypeSelector,
+                                 Event<DisplayerTypeSelectedEvent> typeSelectedEvent) {
+        this.view = view;
+        this.subtypeSelector = subtypeSelector;
+        this.typeSelectedEvent = typeSelectedEvent;
+        view.init(this);
+        view.clear();
+        view.show(DisplayerType.BARCHART);
+        view.show(DisplayerType.PIECHART);
+        view.show(DisplayerType.LINECHART);
+        view.show(DisplayerType.AREACHART);
+        view.show(DisplayerType.BUBBLECHART);
+        view.show(DisplayerType.METERCHART);
+        view.show(DisplayerType.METRIC);
+        view.show(DisplayerType.MAP);
+        view.show(DisplayerType.TABLE);
+        view.select(selectedType);
     }
 
     @Override
-    public void displayerSubtypeChanged(DisplayerSubType displayerSubType) {
-        if (displayerSubType != selectedSubType) {
-            selectedSubType = displayerSubType;
-            listener.displayerTypeChanged(selectedType, displayerSubType);
-        }
+    public Widget asWidget() {
+        return view.asWidget();
     }
 
-    private class DisplayerTab extends TabListItem {
-        String name;
-        DisplayerType type;
+    public DisplayerType getSelectedType() {
+        return selectedType;
+    }
 
-        public DisplayerTab(final String name, final DisplayerType type) {
-            super(name);
+    public DisplayerSubType getSelectedSubType() {
+        return subtypeSelector.getSelectedSubtype();
+    }
 
-            this.name = name;
-            this.type = type;
+    public DisplayerSubtypeSelector getSubtypeSelector() {
+        return subtypeSelector;
+    }
 
-            super.addClickHandler(new ClickHandler() {
-                public void onClick(ClickEvent event) {
-                    event.stopPropagation();
-                    boolean change = !selectedType.equals(type);
-                    selectedType = type;
-                    if (change && listener != null) {
-                        listener.displayerTypeChanged(type, null);
-                    }
-                }
-            });
-        }
+    public void init(DisplayerType selectedType, DisplayerSubType selectedSubtype) {
+        this.selectedType = selectedType;
+        view.select(selectedType);
+        subtypeSelector.init(selectedType, selectedSubtype);
+    }
+
+    void onSelect(DisplayerType type) {
+        selectedType = type;
+        subtypeSelector.init(type, null);
+        typeSelectedEvent.fire(new DisplayerTypeSelectedEvent(selectedType));
     }
 }

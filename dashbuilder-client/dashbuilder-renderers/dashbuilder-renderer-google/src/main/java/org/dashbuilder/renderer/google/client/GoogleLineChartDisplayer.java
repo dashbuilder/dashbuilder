@@ -15,55 +15,37 @@
  */
 package org.dashbuilder.renderer.google.client;
 
-import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.Panel;
-import com.google.gwt.user.client.ui.SimplePanel;
-import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
-import com.googlecode.gwt.charts.client.ChartPackage;
-import com.googlecode.gwt.charts.client.corechart.LineChart;
-import com.googlecode.gwt.charts.client.corechart.LineChartOptions;
-import com.googlecode.gwt.charts.client.options.Animation;
-import com.googlecode.gwt.charts.client.options.AnimationEasing;
-import com.googlecode.gwt.charts.client.options.CurveType;
+import javax.enterprise.context.Dependent;
+import javax.inject.Inject;
+
 import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.DataSetLookupConstraints;
 import org.dashbuilder.displayer.DisplayerAttributeDef;
 import org.dashbuilder.displayer.DisplayerAttributeGroupDef;
 import org.dashbuilder.displayer.DisplayerConstraints;
-import org.dashbuilder.displayer.DisplayerSubType;
-import org.dashbuilder.displayer.DisplayerType;
-import org.dashbuilder.renderer.google.client.resources.i18n.GoogleDisplayerConstants;
 
-public class GoogleLineChartDisplayer extends GoogleCategoriesDisplayer {
+@Dependent
+public class GoogleLineChartDisplayer extends GoogleCategoriesDisplayer<GoogleLineChartDisplayer.View> {
 
-    protected Panel chartPanel = new FlowPanel();
-    protected LineChart chart;
-    protected Panel filterPanel = new SimplePanel();
+    public interface View extends GoogleCategoriesDisplayer.View<GoogleLineChartDisplayer> {
 
-    @Override
-    public ChartPackage getPackage() {
-        return ChartPackage.CORECHART;
+    }
+
+    private View view;
+
+    public GoogleLineChartDisplayer() {
+        this(new GoogleLineChartDisplayerView());
+    }
+
+    @Inject
+    public GoogleLineChartDisplayer(View view) {
+        this.view = view;
+        this.view.init(this);
     }
 
     @Override
-    public Widget createVisualization() {
-        HTML titleHtml = new HTML();
-        if (displayerSettings.isTitleVisible()) {
-            titleHtml.setText(displayerSettings.getTitle());
-        }
-
-        FlowPanel container = new FlowPanel();
-        container.add(titleHtml);
-        container.add(filterPanel);
-        container.add(chartPanel);
-
-        chart = new LineChart();
-        chart.addSelectHandler(createSelectHandler(chart));
-
-        updateChartPanel();
-        return container;
+    public View getView() {
+        return view;
     }
 
     @Override
@@ -76,8 +58,8 @@ public class GoogleLineChartDisplayer extends GoogleCategoriesDisplayer {
                 .setMaxColumns(10)
                 .setExtraColumnsAllowed(true)
                 .setExtraColumnsType(ColumnType.NUMBER)
-                .setGroupsTitle(GoogleDisplayerConstants.INSTANCE.common_Categories())
-                .setColumnsTitle(GoogleDisplayerConstants.INSTANCE.common_Series())
+                .setGroupsTitle(view.getGroupsTitle())
+                .setColumnsTitle(view.getColumnsTitle())
                 .setColumnTypes(new ColumnType[] {
                         ColumnType.LABEL,
                         ColumnType.NUMBER});
@@ -87,54 +69,14 @@ public class GoogleLineChartDisplayer extends GoogleCategoriesDisplayer {
                    .supportsAttribute(DisplayerAttributeDef.SUBTYPE)
                    .supportsAttribute(DisplayerAttributeDef.RENDERER)
                    .supportsAttribute(DisplayerAttributeGroupDef.COLUMNS_GROUP)
-                   .supportsAttribute( DisplayerAttributeGroupDef.FILTER_GROUP )
-                   .supportsAttribute( DisplayerAttributeGroupDef.REFRESH_GROUP )
-                   .supportsAttribute( DisplayerAttributeGroupDef.GENERAL_GROUP)
-                   .supportsAttribute( DisplayerAttributeDef.CHART_WIDTH )
-                   .supportsAttribute( DisplayerAttributeDef.CHART_HEIGHT )
+                   .supportsAttribute(DisplayerAttributeGroupDef.FILTER_GROUP)
+                   .supportsAttribute(DisplayerAttributeGroupDef.REFRESH_GROUP)
+                   .supportsAttribute(DisplayerAttributeGroupDef.GENERAL_GROUP)
+                   .supportsAttribute(DisplayerAttributeDef.CHART_WIDTH)
+                   .supportsAttribute(DisplayerAttributeDef.CHART_HEIGHT)
                    .supportsAttribute(DisplayerAttributeDef.CHART_BGCOLOR)
                    .supportsAttribute(DisplayerAttributeGroupDef.CHART_MARGIN_GROUP)
-                   .supportsAttribute( DisplayerAttributeGroupDef.CHART_LEGEND_GROUP )
-                   .supportsAttribute( DisplayerAttributeGroupDef.AXIS_GROUP );
-    }
-
-
-    protected void updateChartPanel() {
-        chartPanel.clear();
-        if (dataSet.getRowCount() == 0) {
-            chartPanel.add(super.createNoDataMsgPanel());
-        } else {
-            chart.draw(createTable(), createOptions());
-            chartPanel.add(chart);
-        }
-    }
-
-    protected void updateVisualization() {
-        filterPanel.clear();
-        Widget filterReset = createCurrentSelectionWidget();
-        if (filterReset != null) filterPanel.add(filterReset);
-
-        updateChartPanel();
-    }
-
-    private LineChartOptions createOptions() {
-        Animation anim = Animation.create();
-        anim.setDuration(700);
-        anim.setEasing(AnimationEasing.IN_AND_OUT);
-
-        boolean isLine = DisplayerSubType.LINE.equals(displayerSettings.getSubtype());
-
-        LineChartOptions options = LineChartOptions.create();
-        options.setCurveType(isLine ? CurveType.NONE : CurveType.FUNCTION);
-        options.setWidth(displayerSettings.getChartWidth());
-        options.setHeight(displayerSettings.getChartHeight());
-        options.setBackgroundColor(displayerSettings.getChartBackgroundColor());
-        if ( displayerSettings.isXAxisShowLabels() ) options.setHAxis( createHAxis() );
-        if ( displayerSettings.isYAxisShowLabels() ) options.setVAxis( createVAxis() );
-        options.setLegend( createChartLegend() );
-        options.setAnimation(anim);
-        options.setChartArea(createChartArea());
-        options.setColors(createColorArray(googleTable));
-        return options;
+                   .supportsAttribute(DisplayerAttributeGroupDef.CHART_LEGEND_GROUP)
+                   .supportsAttribute(DisplayerAttributeGroupDef.AXIS_GROUP);
     }
 }

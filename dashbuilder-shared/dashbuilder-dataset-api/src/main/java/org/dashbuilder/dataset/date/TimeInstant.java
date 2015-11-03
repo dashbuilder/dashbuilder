@@ -37,7 +37,7 @@ import org.jboss.errai.common.client.api.annotations.Portable;
 @Portable
 public class TimeInstant {
 
-    public static enum TimeMode {
+    public enum TimeMode {
         NOW,
         BEGIN,
         END;

@@ -26,7 +26,6 @@ import org.dashbuilder.dataset.group.*;
 import org.dashbuilder.dataset.sort.ColumnSort;
 import org.dashbuilder.dataset.sort.DataSetSort;
 import org.dashbuilder.dataset.sort.SortOrder;
-import org.dashbuilder.displayer.client.resources.i18n.CommonConstants;
 
 import java.util.*;
 
@@ -37,20 +36,13 @@ public class DataSetHandlerImpl implements DataSetHandler {
     protected DataSetLookup lookupCurrent;
     protected DataSet lastLookedUpDataSet;
 
-    public DataSetHandlerImpl(DataSetLookup lookup) {
-        // TODO: David - refactor get() usages
-        this.clientServices = DataSetClientServices.get();
+    public DataSetHandlerImpl(DataSetClientServices clientServices, DataSetLookup lookup) {
+        this.clientServices = clientServices;
         this.lookupBase = lookup;
         this.lookupCurrent = lookup.cloneInstance();
     }
 
-    // TODO: David - remove after refactor.
-    public DataSetHandlerImpl(DataSetClientServices dataSetLookupClient, DataSetLookup lookup) {
-        this.clientServices = dataSetLookupClient;
-        this.lookupBase = lookup;
-        this.lookupCurrent = lookup.cloneInstance();
-    }
-
+    @Override
     public DataSet getLastDataSet() {
         return lastLookedUpDataSet;
     }
@@ -60,10 +52,12 @@ public class DataSetHandlerImpl implements DataSetHandler {
         return lookupCurrent;
     }
 
+    @Override
     public void resetAllOperations() {
         this.lookupCurrent = lookupBase.cloneInstance();
     }
 
+    @Override
     public void limitDataSetRows(int offset, int rows) {
         int offsetBase = lookupBase.getRowOffset();
         int rowsBase = lookupBase.getNumberOfRows();
@@ -80,6 +74,7 @@ public class DataSetHandlerImpl implements DataSetHandler {
         }
     }
 
+    @Override
     public DataSetGroup getGroupOperation(String columnId) {
         String sourceId = _getSourceColumnId(columnId);
         int index = lookupCurrent.getLastGroupOpIndex(0, sourceId, false);
@@ -92,10 +87,15 @@ public class DataSetHandlerImpl implements DataSetHandler {
         return result;
     }
 
+    @Override
     public boolean filter(DataSetGroup op) {
         ColumnGroup cg = op.getColumnGroup();
-        if (cg == null) throw new RuntimeException(CommonConstants.INSTANCE.datasethandler_groupops_no_pivotcolumn());
-        if (!op.isSelect()) throw new RuntimeException(CommonConstants.INSTANCE.datasethandler_groupops_no_groupintervals());
+        if (cg == null) {
+            throw new RuntimeException("Group ops require a pivot column to be specified.");
+        }
+        if (!op.isSelect()) {
+            throw new RuntimeException("Group intervals not specified.");
+        }
 
         // Avoid duplicates
         for (DataSetGroup next : lookupCurrent.getOperationList(DataSetGroup.class)) {
@@ -107,10 +107,11 @@ public class DataSetHandlerImpl implements DataSetHandler {
         DataSetGroup clone = op.cloneInstance();
         //clone.getGroupFunctions().clear();
         int idx = lookupCurrent.getFirstGroupOpIndex(0, null, null);
-        _filter(idx, clone, false);
+        _filter(idx < 0 ? 0 : idx, clone, false);
         return true;
     }
 
+    @Override
     public boolean filter(DataSetFilter op) {
         if (op == null) {
             return false;
@@ -125,11 +126,15 @@ public class DataSetHandlerImpl implements DataSetHandler {
         return true;
     }
 
+    @Override
     public boolean drillDown(DataSetGroup op) {
         ColumnGroup cg = op.getColumnGroup();
-        if (cg == null) throw new RuntimeException(CommonConstants.INSTANCE.datasethandler_groupops_no_pivotcolumn());
-        if (!op.isSelect()) throw new RuntimeException(CommonConstants.INSTANCE.datasethandler_groupops_no_groupintervals());
-
+        if (cg == null) {
+            throw new RuntimeException("Group ops require a pivot column to be specified.");
+        }
+        if (!op.isSelect()) {
+            throw new RuntimeException("Group intervals not specified.");
+        }
         // Avoid duplicates
         for (DataSetGroup next : lookupCurrent.getOperationList(DataSetGroup.class)) {
             if (op.equals(next)) {
@@ -159,10 +164,12 @@ public class DataSetHandlerImpl implements DataSetHandler {
         return true;
     }
 
+    @Override
     public boolean unfilter(DataSetGroup op) {
         return _unfilter(op, false);
     }
 
+    @Override
     public boolean unfilter(DataSetFilter op) {
         if (op == null) {
             return false;
@@ -175,10 +182,12 @@ public class DataSetHandlerImpl implements DataSetHandler {
         return false;
     }
 
+    @Override
     public boolean drillUp(DataSetGroup op) {
         return _unfilter(op, true);
     }
 
+    @Override
     public void sort(String columnId, SortOrder sortOrder) {
         unsort();
         String sourceId = _getSourceColumnId(columnId);
@@ -192,6 +201,7 @@ public class DataSetHandlerImpl implements DataSetHandler {
         return n > 0;
     }
 
+    @Override
     public void lookupDataSet(final DataSetReadyCallback callback) throws Exception {
         clientServices.lookupDataSet(lookupCurrent, new DataSetReadyCallback() {
             public void callback(DataSet dataSet) {
@@ -209,18 +219,22 @@ public class DataSetHandlerImpl implements DataSetHandler {
         });
     }
 
+    @Override
     public Interval getInterval(String columnId, int row) {
-        if (lastLookedUpDataSet == null) return null;
+        if (lastLookedUpDataSet == null) {
+            return null;
+        }
 
         DataColumn column = lastLookedUpDataSet.getColumnById(columnId);
-        if (column == null) return null;
+        if (column == null) {
+            return null;
+        }
 
         // For grouped by date data sets, locate the interval corresponding to the row specified
         ColumnGroup cg = column.getColumnGroup();
-        DataSetClientServices dataServices = DataSetClientServices.get();
-        DataSetMetadata metadata = dataServices.getMetadata(lookupBase.getDataSetUUID());
+        DataSetMetadata metadata = clientServices.getMetadata(lookupBase.getDataSetUUID());
         if (cg != null && metadata != null) {
-            IntervalBuilderLocator intervalBuilderLocator = dataServices.getIntervalBuilderLocator();
+            IntervalBuilderLocator intervalBuilderLocator = clientServices.getIntervalBuilderLocator();
             ColumnType columnType = metadata.getColumnType(cg.getSourceId());
             IntervalBuilder intervalBuilder = intervalBuilderLocator.lookup(columnType, cg.getStrategy());
             Interval target = intervalBuilder.locate(column, row);
@@ -235,10 +249,13 @@ public class DataSetHandlerImpl implements DataSetHandler {
 
         // Return the interval by name.
         List values = column.getValues();
-        if (row >= values.size()) return null;
-
+        if (row >= values.size()) {
+            return null;
+        }
         Object value = values.get(row);
-        if (value == null) return null;
+        if (value == null) {
+            return null;
+        }
 
         return new Interval(value.toString());
     }
@@ -338,7 +355,9 @@ public class DataSetHandlerImpl implements DataSetHandler {
         for (List<GroupOpFilter> currentSelections : _groupOpsSelected.values()) {
             for (GroupOpFilter groupOpFilter : currentSelections) {
                 GroupFunction gf = groupOpFilter.groupOp.getGroupFunction(columnId);
-                if (gf != null) return gf.getSourceId();
+                if (gf != null) {
+                    return gf.getSourceId();
+                }
             }
         }
         return columnId;

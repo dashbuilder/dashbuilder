@@ -71,9 +71,15 @@ public class LienzoRenderer extends AbstractRendererLibrary {
     @Override
     public Displayer lookupDisplayer(DisplayerSettings displayerSettings) {
         DisplayerType type = displayerSettings.getType();
-        if (BARCHART.equals(type)) return new LienzoBarChartDisplayer();
-        if (PIECHART.equals(type)) return new LienzoPieChartDisplayer();
-        if (LINECHART.equals(type)) return new LienzoLineChartDisplayer();
+        if (BARCHART.equals(type)) {
+            return new LienzoBarChartDisplayer();
+        }
+        if (PIECHART.equals(type)) {
+            return new LienzoPieChartDisplayer();
+        }
+        if (LINECHART.equals(type)) {
+            return new LienzoLineChartDisplayer();
+        }
         return null;
     }
 }

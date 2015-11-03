@@ -16,42 +16,50 @@
 package org.dashbuilder.displayer.client.widgets.filter;
 
 import javax.enterprise.context.Dependent;
+import javax.inject.Inject;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
-import org.gwtbootstrap3.client.ui.TextBox;
+import org.uberfire.client.mvp.UberView;
+import org.uberfire.mvp.Command;
 
 @Dependent
-public class TextParameterEditor extends Composite {
+public class TextParameterEditor implements IsWidget {
 
-    interface Listener {
-        void valueChanged(String s);
+    public interface View extends UberView<TextParameterEditor> {
+
+        String getCurrentValue();
+
+        void setCurrentValue(String value);
     }
 
-    interface Binder extends UiBinder<Widget, TextParameterEditor> {}
-    private static Binder uiBinder = GWT.create(Binder.class);
+    Command onChangeCommand = new Command() { public void execute() {} };
+    View view;
 
-    Listener listener = null;
-
-    @UiField
-    TextBox input;
-
-    public TextParameterEditor() {
-        initWidget(uiBinder.createAndBindUi(this));
+    @Inject
+    public TextParameterEditor(View view) {
+        this.view = view;
+        this.view.init(this);
     }
 
-    public void init(String value, final Listener listener) {
-        this.listener = listener;
-        if (value != null) input.setValue(value);
-        input.addValueChangeHandler(new ValueChangeHandler<String>() {
-            public void onValueChange(ValueChangeEvent<String> event) {
-                listener.valueChanged(event.getValue());
-            }
-        });
+    @Override
+    public Widget asWidget() {
+        return view.asWidget();
+    }
+
+    public void setOnChangeCommand(Command onChangeCommand) {
+        this.onChangeCommand = onChangeCommand;
+    }
+
+    public String getCurrentValue() {
+        return view.getCurrentValue();
+    }
+
+    public void setCurrentValue(String value) {
+        view.setCurrentValue(value);
+    }
+
+    void valueChanged(String value) {
+        onChangeCommand.execute();
     }
 }

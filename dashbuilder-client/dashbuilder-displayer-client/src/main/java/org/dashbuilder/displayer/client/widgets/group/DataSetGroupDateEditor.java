@@ -18,75 +18,89 @@ package org.dashbuilder.displayer.client.widgets.group;
 import java.util.Arrays;
 import java.util.List;
 import javax.enterprise.context.Dependent;
+import javax.enterprise.event.Event;
+import javax.inject.Inject;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
-import org.dashbuilder.dataset.client.resources.i18n.DateIntervalTypeConstants;
-import org.dashbuilder.dataset.client.resources.i18n.DayOfWeekConstants;
-import org.dashbuilder.dataset.client.resources.i18n.MonthConstants;
 import org.dashbuilder.dataset.date.DayOfWeek;
 import org.dashbuilder.dataset.date.Month;
 import org.dashbuilder.dataset.group.ColumnGroup;
 import org.dashbuilder.dataset.group.DateIntervalType;
 import org.dashbuilder.dataset.group.GroupStrategy;
-import org.gwtbootstrap3.client.ui.CheckBox;
-import org.gwtbootstrap3.client.ui.ListBox;
-import org.gwtbootstrap3.client.ui.TextBox;
+import org.dashbuilder.displayer.client.events.DataSetGroupDateChanged;
+import org.uberfire.client.mvp.UberView;
 
 @Dependent
-public class DataSetGroupDateEditor extends Composite {
+public class DataSetGroupDateEditor implements IsWidget {
 
-    public interface Listener {
-        void columnGroupChanged(ColumnGroup columnGroup);
+    public interface View extends UberView<DataSetGroupDateEditor> {
+
+        void setFixedModeValue(boolean enabled);
+
+        boolean getFixedModeValue();
+
+        void clearIntervalTypeSelector();
+
+        void addIntervalTypeItem(DateIntervalType entry);
+
+        void setSelectedIntervalTypeIndex(int index);
+
+        int getSelectedIntervalTypeIndex();
+
+        void setFirstDayVisibility(boolean visible);
+
+        void clearFirstDaySelector();
+
+        void addFirstDaySelectorItem(DayOfWeek entry);
+
+        void setSelectedFirstDayIndex(int index);
+
+        int getSelectedFirstDayIndex();
+
+        void setFirstMonthVisibility(boolean visible);
+
+        void clearFirstMonthSelector();
+
+        void addFirstMonthSelectorItem(Month entry);
+
+        void setSelectedFirstMonthIndex(int index);
+
+        int getSelectedFirstMonthIndex();
+
+        void setEmptyIntervalsValue(boolean enabled);
+
+        boolean getEmptyIntervalsValue();
+
+        void setMaxIntervalsVisibility(boolean visible);
+
+        void setMaxIntervalsValue(String max);
+
+        String getMaxIntervalsValue();
     }
 
-    interface Binder extends UiBinder<Widget, DataSetGroupDateEditor> {}
-    private static Binder uiBinder = GWT.create(Binder.class);
-
-    Listener listener = null;
+    View view = null;
     ColumnGroup columnGroup = null;
+    Event<DataSetGroupDateChanged> changeEvent = null;
 
-    @UiField
-    CheckBox fixedStrategyCheckBox;
-
-    @UiField
-    ListBox intervalTypeListBox;
-
-    @UiField
-    VerticalPanel maxIntervalsGroup;
-
-    @UiField
-    VerticalPanel firstDayPanel;
-
-    @UiField
-    VerticalPanel firstMonthPanel;
-
-    @UiField
-    TextBox maxIntervalsTextBox;
-
-    @UiField
-    CheckBox emptyIntervalsCheckBox;
-
-    @UiField
-    ListBox firstDayListBox;
-
-    @UiField
-    ListBox firstMonthListBox;
-
-    public DataSetGroupDateEditor() {
-        initWidget(uiBinder.createAndBindUi(this));
+    @Inject
+    public DataSetGroupDateEditor(View view, Event<DataSetGroupDateChanged> changeEvent) {
+        this.view = view;
+        this.changeEvent = changeEvent;
+        view.init(this);
     }
 
-    public void init(ColumnGroup columnGroup, Listener listener) {
+    @Override
+    public Widget asWidget() {
+        return view.asWidget();
+    }
+
+    public ColumnGroup getColumnGroup() {
+        return columnGroup;
+    }
+
+    public void init(ColumnGroup columnGroup) {
         this.columnGroup = columnGroup;
-        this.listener = listener;
         if (columnGroup != null) {
             if (isFixedStrategy()) {
                 gotoFixedMode();
@@ -96,73 +110,75 @@ public class DataSetGroupDateEditor extends Composite {
         }
     }
 
-    protected boolean isFixedStrategy() {
+    public boolean isFixedStrategy() {
         return GroupStrategy.FIXED.equals(columnGroup.getStrategy());
     }
 
-    protected void initIntervalTypeListBox() {
-        intervalTypeListBox.clear();
+    protected void initIntervalTypeSelector() {
+        view.clearIntervalTypeSelector();
         DateIntervalType current = DateIntervalType.getByName(columnGroup.getIntervalSize());
         List<DateIntervalType> entries = getListOfIntervalTypes();
         for (int i = 0; i < entries.size(); i++) {
             DateIntervalType entry = entries.get(i);
-            intervalTypeListBox.addItem(DateIntervalTypeConstants.INSTANCE.getString(entry.name()));
+            view.addIntervalTypeItem(entry);
             if (current != null && current.equals(entry)) {
-                intervalTypeListBox.setSelectedIndex(i);
+                view.setSelectedIntervalTypeIndex(i);
             }
         }
     }
 
-    protected List<DateIntervalType> getListOfIntervalTypes() {
-        if (isFixedStrategy()) return DateIntervalType.FIXED_INTERVALS_SUPPORTED;
+    public List<DateIntervalType> getListOfIntervalTypes() {
+        if (isFixedStrategy()) {
+            return DateIntervalType.FIXED_INTERVALS_SUPPORTED;
+        }
         return Arrays.asList(DateIntervalType.values());
     }
 
     protected void initFirstDayListBox() {
-        firstDayPanel.setVisible(true);
-        firstDayListBox.clear();
+        view.setFirstDayVisibility(true);
+        view.clearFirstDaySelector();
         DayOfWeek current = columnGroup.getFirstDayOfWeek();
         DayOfWeek[] entries = DayOfWeek.values();
         for (int i = 0; i < entries.length; i++) {
             DayOfWeek entry = entries[i];
-            firstDayListBox.addItem(DayOfWeekConstants.INSTANCE.getString(entry.name()));
+            view.addFirstDaySelectorItem(entry);
             if (current != null && current.equals(entry)) {
-                firstDayListBox.setSelectedIndex(i);
+                view.setSelectedFirstDayIndex(i);
             }
         }
     }
 
     protected void initFirstMonthListBox() {
-        firstMonthPanel.setVisible(true);
-        firstMonthListBox.clear();
+        view.setFirstMonthVisibility(true);
+        view.clearFirstMonthSelector();
         Month current = columnGroup.getFirstMonthOfYear();
         Month[] entries = Month.values();
         for (int i = 0; i < entries.length; i++) {
             Month entry = entries[i];
-            firstMonthListBox.addItem(MonthConstants.INSTANCE.getString(entry.name()));
+            view.addFirstMonthSelectorItem(entry);
             if (current != null && current.equals(entry)) {
-                firstMonthListBox.setSelectedIndex(i);
+                view.setSelectedFirstMonthIndex(i);
             }
         }
     }
 
     protected void initMaxIntervalsTextBox() {
-        maxIntervalsGroup.setVisible(true);
-        maxIntervalsTextBox.setText(Integer.toString(columnGroup.getMaxIntervals()));
+        view.setMaxIntervalsVisibility(true);
+        view.setMaxIntervalsValue(Integer.toString(columnGroup.getMaxIntervals()));
     }
 
-    protected void initEmptyIntervalsCheckBox() {
-        emptyIntervalsCheckBox.setValue(columnGroup.areEmptyIntervalsAllowed());
+    protected void initEmptyIntervalsFlag() {
+        view.setEmptyIntervalsValue(columnGroup.areEmptyIntervalsAllowed());
     }
 
     protected void resetCommon() {
-        fixedStrategyCheckBox.setValue(isFixedStrategy());
-        maxIntervalsGroup.setVisible(false);
-        firstDayPanel.setVisible(false);
-        firstMonthPanel.setVisible(false);
+        view.setFixedModeValue(isFixedStrategy());
+        view.setMaxIntervalsVisibility(false);
+        view.setFirstDayVisibility(false);
+        view.setFirstMonthVisibility(false);
 
-        initIntervalTypeListBox();
-        initEmptyIntervalsCheckBox();
+        initIntervalTypeSelector();
+        initEmptyIntervalsFlag();
     }
 
     public void gotoDynamicMode() {
@@ -182,17 +198,16 @@ public class DataSetGroupDateEditor extends Composite {
         }
     }
 
-    @UiHandler(value = "fixedStrategyCheckBox")
-    public void onFixedModeSelected(ClickEvent clickEvent) {
+    public void onFixedStrategyChanged() {
         columnGroup.setFirstMonthOfYear(null);
         columnGroup.setFirstDayOfWeek(null);
 
-        if (fixedStrategyCheckBox.getValue()) {
+        if (view.getFixedModeValue()) {
 
             // Reset current interval type selected if not allowed.
-            DateIntervalType intervalType = DateIntervalType.getByIndex(intervalTypeListBox.getSelectedIndex());
+            DateIntervalType intervalType = DateIntervalType.getByIndex(view.getSelectedIntervalTypeIndex());
             if (!DateIntervalType.FIXED_INTERVALS_SUPPORTED.contains(intervalType)) {
-                intervalTypeListBox.setSelectedIndex(DateIntervalType.MONTH.getIndex());
+                view.setSelectedIntervalTypeIndex(DateIntervalType.MONTH.getIndex());
                 columnGroup.setIntervalSize(DateIntervalType.MONTH.name());
             }
             columnGroup.setStrategy(GroupStrategy.FIXED);
@@ -201,73 +216,58 @@ public class DataSetGroupDateEditor extends Composite {
             columnGroup.setStrategy(GroupStrategy.DYNAMIC);
             gotoDynamicMode();
         }
-        if (listener != null) {
-            listener.columnGroupChanged(columnGroup);
-        }
+        changeEvent.fire(new DataSetGroupDateChanged(columnGroup));
     }
 
-    @UiHandler(value = "intervalTypeListBox")
-    public void onIntervalTypeSelected(ChangeEvent changeEvent) {
-        DateIntervalType intervalType = DateIntervalType.getByIndex(intervalTypeListBox.getSelectedIndex());
-        if (isFixedStrategy()) intervalType = DateIntervalType.FIXED_INTERVALS_SUPPORTED.get(intervalTypeListBox.getSelectedIndex());
+    void onIntervalTypeSelected() {
+        DateIntervalType intervalType = DateIntervalType.getByIndex(view.getSelectedIntervalTypeIndex());
+        if (isFixedStrategy()) {
+            intervalType = DateIntervalType.FIXED_INTERVALS_SUPPORTED.get(view.getSelectedIntervalTypeIndex());
+        }
 
         columnGroup.setIntervalSize(intervalType.name());
         columnGroup.setFirstMonthOfYear(null);
         columnGroup.setFirstDayOfWeek(null);
 
-        firstMonthPanel.setVisible(false);
-        firstDayPanel.setVisible(false);
+        view.setFirstMonthVisibility(false);
+        view.setFirstDayVisibility(false);
 
         if (GroupStrategy.FIXED.equals(columnGroup.getStrategy())) {
             if (DateIntervalType.MONTH.equals(DateIntervalType.getByName(columnGroup.getIntervalSize()))) {
-                firstMonthPanel.setVisible(true);
+                view.setFirstMonthVisibility(true);
                 initFirstMonthListBox();
             }
             else if (DateIntervalType.DAY_OF_WEEK.equals(DateIntervalType.getByName(columnGroup.getIntervalSize()))) {
-                firstDayPanel.setVisible(true);
+                view.setFirstDayVisibility(true);
                 initFirstDayListBox();
             }
         }
-        if (listener != null) {
-            listener.columnGroupChanged(columnGroup);
-        }
+        changeEvent.fire(new DataSetGroupDateChanged(columnGroup));
     }
 
-    @UiHandler(value = "emptyIntervalsCheckBox")
-    public void onEmptyIntervalsChanged(ClickEvent clickEvent) {
-        columnGroup.setEmptyIntervalsAllowed(emptyIntervalsCheckBox.getValue());
-        if (listener != null) {
-            listener.columnGroupChanged(columnGroup);
-        }
+    void onEmptyIntervalsChanged() {
+        columnGroup.setEmptyIntervalsAllowed(view.getEmptyIntervalsValue());
+        changeEvent.fire(new DataSetGroupDateChanged(columnGroup));
     }
 
-    @UiHandler(value = "maxIntervalsTextBox")
-    public void onMaxIntervalsChanged(ChangeEvent changeEvent) {
+    void onMaxIntervalsChanged() {
         try {
-            columnGroup.setMaxIntervals(Integer.parseInt(maxIntervalsTextBox.getValue()));
-            if (listener != null) {
-                listener.columnGroupChanged(columnGroup);
-            }
+            columnGroup.setMaxIntervals(Integer.parseInt(view.getMaxIntervalsValue()));
+            changeEvent.fire(new DataSetGroupDateChanged(columnGroup));
         } catch (Exception e) {
             // Just ignore
         }
     }
 
-    @UiHandler(value = "firstDayListBox")
-    public void onFirstDaySelected(ChangeEvent changeEvent) {
-        DayOfWeek dayOfWeek = DayOfWeek.getByIndex(firstDayListBox.getSelectedIndex()+1);
+    void onFirstDaySelected() {
+        DayOfWeek dayOfWeek = DayOfWeek.getByIndex(view.getSelectedFirstDayIndex()+1);
         columnGroup.setFirstDayOfWeek(dayOfWeek);
-        if (listener != null) {
-            listener.columnGroupChanged(columnGroup);
-        }
+        changeEvent.fire(new DataSetGroupDateChanged(columnGroup));
     }
 
-    @UiHandler(value = "firstMonthListBox")
-    public void onFirstMonthSelected(ChangeEvent changeEvent) {
-        Month month = Month.getByIndex(firstMonthListBox.getSelectedIndex()+1);
+    void onFirstMonthSelected() {
+        Month month = Month.getByIndex(view.getSelectedFirstMonthIndex()+1);
         columnGroup.setFirstMonthOfYear(month);
-        if (listener != null) {
-            listener.columnGroupChanged(columnGroup);
-        }
+        changeEvent.fire(new DataSetGroupDateChanged(columnGroup));
     }
 }

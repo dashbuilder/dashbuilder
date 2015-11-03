@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.dashbuilder.renderer.lienzo.client.resources.i18n;
 
 import com.google.gwt.core.client.GWT;
@@ -23,4 +22,9 @@ public interface LienzoDisplayerConstants extends Messages {
 
     public static final LienzoDisplayerConstants INSTANCE = GWT.create( LienzoDisplayerConstants.class );
 
+    String categories();
+    String series();
+    String values();
+    String noData();
+    String resetAnchor();
 }

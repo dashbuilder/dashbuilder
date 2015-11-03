@@ -15,165 +15,89 @@
  */
 package org.dashbuilder.displayer.client.widgets;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.resources.client.ImageResource;
-import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.web.bindery.event.shared.HandlerRegistration;
-import org.dashbuilder.common.client.StringUtils;
+import javax.annotation.PostConstruct;
+import javax.enterprise.context.Dependent;
+import javax.enterprise.event.Event;
+import javax.inject.Inject;
+
+import com.google.gwt.user.client.ui.IsWidget;
+import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.displayer.DisplayerSubType;
 import org.dashbuilder.displayer.DisplayerType;
 import org.dashbuilder.displayer.client.RendererLibrary;
 import org.dashbuilder.displayer.client.RendererManager;
-import org.dashbuilder.displayer.client.resources.i18n.DisplayerTypeLiterals;
-import org.dashbuilder.displayer.client.resources.images.DisplayerImagesResources;
-import org.gwtbootstrap3.client.ui.Image;
-import org.gwtbootstrap3.client.ui.constants.ImageType;
+import org.dashbuilder.displayer.client.events.DisplayerSubtypeSelectedEvent;
+import org.uberfire.client.mvp.UberView;
 
-public class DisplayerSubtypeSelector extends Composite {
+@Dependent
+public class DisplayerSubtypeSelector implements IsWidget {
 
-    public interface SubTypeChangeListener {
-        void displayerSubtypeChanged(DisplayerSubType displayerSubType);
+    public interface View extends UberView<DisplayerSubtypeSelector> {
+
+        void clear();
+
+        void show(DisplayerType type, DisplayerSubType subtype);
+
+        void select(DisplayerSubType subtype);
+
+        void showDefault(DisplayerType type);
     }
 
-    private SubTypeChangeListener listener;
-    private List<DisplayerSubTypeImageWidget> imageWidgetList;
+    View view = null;
     RendererManager rendererManager;
+    DisplayerSubType selectedSubtype;
+    Event<DisplayerSubtypeSelectedEvent> selectEvent;
 
-    private FlexTable subtypes;
-    private VerticalPanel subtypePanel;
-
-    public DisplayerSubtypeSelector(SubTypeChangeListener subTypeChangeListener) {
-        listener = subTypeChangeListener;
-        rendererManager = RendererManager.get();
-        imageWidgetList = new ArrayList<DisplayerSubTypeImageWidget>(5);
-
-        subtypes = new FlexTable();
-        subtypePanel = new VerticalPanel();
-        subtypePanel.add(subtypes);
-        initWidget(subtypePanel);
+    @Inject
+    public DisplayerSubtypeSelector(View view,
+                                    RendererManager rendererManager,
+                                    Event<DisplayerSubtypeSelectedEvent> selectEvent) {
+        this.view = view;
+        this.rendererManager = rendererManager;
+        this.selectEvent = selectEvent;
+        view.init(this);
     }
 
-    public void select(String renderer, DisplayerType type, DisplayerSubType selectedSubType) {
-        subtypes.removeAllRows();
-        imageWidgetList.clear();
+    @Override
+    public Widget asWidget() {
+        return view.asWidget();
+    }
 
-        RendererLibrary rendererLibrary = null;
-        if (!StringUtils.isBlank(renderer)) rendererLibrary = rendererManager.getRendererByUUID(renderer);
-        else rendererLibrary = rendererManager.getRendererForType(type);
+    public DisplayerSubType getSelectedSubtype() {
+        return selectedSubtype;
+    }
 
+    public void init(DisplayerType type, DisplayerSubType selectedSubType) {
+        view.clear();
+
+        RendererLibrary rendererLibrary = rendererManager.getRendererForType(type);
         if (rendererLibrary != null) {
             List<DisplayerSubType> supportedSubTypes = rendererLibrary.getSupportedSubtypes(type);
             if (supportedSubTypes != null && supportedSubTypes.size() > 0) {
                 for (int i = 0; i < supportedSubTypes.size(); i++) {
-                    final DisplayerSubType subtype = supportedSubTypes.get(i);
+                    DisplayerSubType subtype = supportedSubTypes.get(i);
 
                     // Double check the renderer library for invalid subtypes for this type
                     if (!type.getSubTypes().contains(subtype)) {
                         throw new RuntimeException("Wrong subtype (" + subtype + ") indicated for type " + type + " by renderer library " + rendererLibrary.getUUID());
                     }
 
-                    String resourcePrefix = type.toString() + "_" + subtype.toString();
-                    ImageResource selectedIR = (ImageResource) DisplayerImagesResources.INSTANCE.getResource(resourcePrefix + DisplayerImagesResources.SELECTED_SUFFIX);
-                    ImageResource unselectedIR = (ImageResource) DisplayerImagesResources.INSTANCE.getResource(resourcePrefix + DisplayerImagesResources.UNSELECTED_SUFFIX);
-                    String tooltip = DisplayerTypeLiterals.INSTANCE.getString(resourcePrefix + "_tt");
-
-                    boolean initiallySelected = selectedSubType != null? subtype == selectedSubType : i == 0;
-                    final DisplayerSubTypeImageWidget dstiw = new DisplayerSubTypeImageWidget(  selectedIR,
-                                                                                                unselectedIR,
-                                                                                                tooltip,
-                                                                                                initiallySelected);
-                    imageWidgetList.add(dstiw);
-
-                    if (initiallySelected) listener.displayerSubtypeChanged(subtype);
-
-                    dstiw.setSelectClickHandler(
-                            new ClickHandler() {
-                                @Override
-                                public void onClick(ClickEvent event) {
-                                    if (!dstiw.isSelected) select(dstiw);
-                                    if (listener != null) listener.displayerSubtypeChanged(subtype);
-                                }
-                            });
-
-                    subtypes.setWidget(i, 0, dstiw);
+                    boolean initiallySelected = selectedSubType != null ? subtype == selectedSubType : i == 0;
+                    view.show(type, subtype);
+                    if (initiallySelected) {
+                        view.select(subtype);
+                    }
                 }
             } else {
-                // Show a default image for those chart types that don't have any subtypes
-                ImageResource selectedIR = (ImageResource)DisplayerImagesResources.INSTANCE.getResource(type.toString() + DisplayerImagesResources.DEFAULT_SUFFIX );
-                String tooltip = DisplayerTypeLiterals.INSTANCE.getString(type.toString() + DisplayerImagesResources.DEFAULT_SUFFIX + "_tt");
-
-                DisplayerSubTypeImageWidget dstiw = new DisplayerSubTypeImageWidget(  selectedIR,
-                        null,
-                        tooltip,
-                        true);
-
-                subtypes.setWidget(0, 0, dstiw);
+                view.showDefault(type);
             }
         }
     }
 
-    private void select(DisplayerSubTypeImageWidget dstiw) {
-        for (DisplayerSubTypeImageWidget imageWidget : imageWidgetList) {
-            if (imageWidget == dstiw) imageWidget.select();
-            else imageWidget.unselect();
-        }
-    }
-
-    public class DisplayerSubTypeImageWidget extends Composite {
-
-        private FlexTable container = new FlexTable();
-
-        private boolean isSelected = false;
-        private Image selected;
-        private Image unselected;
-
-        public DisplayerSubTypeImageWidget( ImageResource selectedImage,
-                                            ImageResource unselectedImage,
-                                            String tooltip,
-                                            boolean initiallySelected) {
-
-            initWidget(container);
-
-            isSelected = initiallySelected;
-
-            if (selectedImage != null) {
-                selected = new Image(selectedImage);
-                selected.setType(ImageType.THUMBNAIL);
-                selected.setTitle(tooltip);
-                selected.setVisible(isSelected);
-                selected.addStyleName("selDispSubtype"); //for selenium
-                container.setWidget(0, 0, selected);
-            }
-
-            if (unselectedImage != null) {
-                unselected = new Image(unselectedImage);
-                unselected.setType(ImageType.THUMBNAIL);
-                unselected.setTitle(tooltip);
-                unselected.setVisible(!isSelected);
-                container.setWidget(0, 1, unselected);
-            }
-        }
-
-        public HandlerRegistration setSelectClickHandler(ClickHandler selectedClickHandler) {
-            return unselected != null ? unselected.addClickHandler(selectedClickHandler) : null;
-        }
-
-        public void select() {
-            isSelected = true;
-            selected.setVisible(true);
-            unselected.setVisible(false);
-        }
-
-        public void unselect() {
-            isSelected = false;
-            selected.setVisible(false);
-            unselected.setVisible(true);
-        }
+    void onSelect(DisplayerSubType subtype) {
+        selectedSubtype = subtype;
+        selectEvent.fire(new DisplayerSubtypeSelectedEvent(selectedSubtype));
     }
 }

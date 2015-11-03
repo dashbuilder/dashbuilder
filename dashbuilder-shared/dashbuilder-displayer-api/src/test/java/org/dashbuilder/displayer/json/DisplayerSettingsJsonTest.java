@@ -150,7 +150,7 @@ public class DisplayerSettingsJsonTest {
             .buildSettings();
 
     @Parameterized.Parameters
-    public static Collection displayerIds() {
+    public static Collection displayers() {
         return Arrays.asList(new Object[][]{
                 {OPPS_ALLOPPS_LISTING},
                 {OPPS_BY_COUNTRY},

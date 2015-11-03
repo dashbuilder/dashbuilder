@@ -19,8 +19,8 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 
-import com.google.gwt.i18n.client.DateTimeFormat;
 import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.date.Quarter;
@@ -42,6 +42,13 @@ import static org.dashbuilder.dataset.group.DateIntervalType.*;
  */
 @ApplicationScoped
 public class ClientIntervalBuilderDynamicDate implements IntervalBuilder {
+
+    private ClientDateFormatter dateFormatter;
+
+    @Inject
+    public ClientIntervalBuilderDynamicDate(ClientDateFormatter dateFormatter) {
+        this.dateFormatter = dateFormatter;
+    }
 
     public IntervalList build(DataSetHandler handler, ColumnGroup columnGroup) {
         IntervalDateRangeList results = new IntervalDateRangeList(columnGroup);
@@ -351,31 +358,25 @@ public class ClientIntervalBuilderDynamicDate implements IntervalBuilder {
         }
     }
 
-    public static String calculateName(DateIntervalType intervalType, Date d) {
+    public String calculateName(DateIntervalType intervalType, Date d) {
         if (MILLENIUM.equals(intervalType) || CENTURY.equals(intervalType)
                 || DECADE.equals(intervalType) || YEAR.equals(intervalType)) {
-            DateTimeFormat format  = DateTimeFormat.getFormat("yyyy");
-            return format.format(d);
+            return dateFormatter.format(d, "yyyy");
         }
         if (QUARTER.equals(intervalType) || MONTH.equals(intervalType)) {
-            DateTimeFormat format  = DateTimeFormat.getFormat("yyyy-MM");
-            return format.format(d);
+            return dateFormatter.format(d, "yyyy-MM");
         }
         if (WEEK.equals(intervalType) || DAY.equals(intervalType) || DAY_OF_WEEK.equals(intervalType)) {
-            DateTimeFormat format  = DateTimeFormat.getFormat("yyyy-MM-dd");
-            return format.format(d);
+            return dateFormatter.format(d, "yyyy-MM-dd");
         }
         if (HOUR.equals(intervalType)) {
-            DateTimeFormat format  = DateTimeFormat.getFormat("yyyy-MM-dd HH");
-            return format.format(d);
+            return dateFormatter.format(d, "yyyy-MM-dd HH");
         }
         if (MINUTE.equals(intervalType)) {
-            DateTimeFormat format  = DateTimeFormat.getFormat("yyyy-MM-dd HH:mm");
-            return format.format(d);
+            return dateFormatter.format(d, "yyyy-MM-dd HH:mm");
         }
         if (SECOND.equals(intervalType)) {
-            DateTimeFormat format  = DateTimeFormat.getFormat("yyyy-MM-dd HH:mm:ss");
-            return format.format(d);
+            return dateFormatter.format(d, "yyyy-MM-dd HH:mm:ss");
         }
         return null;
     }

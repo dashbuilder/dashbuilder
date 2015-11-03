@@ -17,57 +17,37 @@ package org.dashbuilder.displayer.client.widgets.filter;
 
 import java.util.Arrays;
 import java.util.List;
-import javax.enterprise.context.Dependent;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.ui.Composite;
+import javax.enterprise.context.Dependent;
+import javax.inject.Inject;
+
+import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.common.client.StringUtils;
-import org.dashbuilder.dataset.client.resources.i18n.DateIntervalTypeConstants;
 import org.dashbuilder.dataset.date.TimeAmount;
-import org.dashbuilder.dataset.date.TimeFrame;
 import org.dashbuilder.dataset.group.DateIntervalType;
-import org.gwtbootstrap3.client.ui.Icon;
-import org.gwtbootstrap3.client.ui.InputGroup;
-import org.gwtbootstrap3.client.ui.InputGroupAddon;
-import org.gwtbootstrap3.client.ui.ListBox;
-import org.gwtbootstrap3.client.ui.constants.IconType;
-import org.uberfire.ext.widgets.common.client.common.NumericLongTextBox;
+import org.uberfire.client.mvp.UberView;
+import org.uberfire.mvp.Command;
 
 @Dependent
-public class TimeAmountEditor extends Composite {
+public class TimeAmountEditor implements IsWidget {
 
-    interface Listener {
-        void valueChanged(TimeAmount timeAmount);
+    public interface View extends UberView<TimeAmountEditor> {
+
+        void setQuantity(long quantity);
+
+        long getQuantity();
+
+        void clearIntervalTypeSelector();
+
+        void addIntervalTypeItem(DateIntervalType type);
+
+        void setSelectedTypeIndex(int typeIdx);
+
+        int getSelectedTypeIndex();
     }
 
-    interface Binder extends UiBinder<Widget, TimeAmountEditor> {}
-    private static Binder uiBinder = GWT.create(Binder.class);
-
-    Listener listener = null;
-    TimeAmount timeAmount = null;
-
-    @UiField
-    NumericLongTextBox input;
-
-    @UiField
-    InputGroupAddon minusIcon;
-
-    @UiField
-    InputGroupAddon plusIcon;
-
-    @UiField
-    ListBox typeList;
-
-    static List<DateIntervalType> ALLOWED_SIZES = Arrays.asList(
+    public static List<DateIntervalType> INTERVAL_TYPES = Arrays.asList(
             DateIntervalType.SECOND,
             DateIntervalType.MINUTE,
             DateIntervalType.HOUR,
@@ -78,84 +58,77 @@ public class TimeAmountEditor extends Composite {
             DateIntervalType.YEAR,
             DateIntervalType.CENTURY);
 
-    public TimeAmountEditor() {
-        initWidget(uiBinder.createAndBindUi(this));
+    View view;
+    TimeAmount timeAmount = null;
+    Command onChangeCommand = new Command() { public void execute() {} };
 
-        plusIcon.addDomHandler(new ClickHandler() {
-            public void onClick(ClickEvent event) {
-                increaseQuantity();
-            }
-        }, ClickEvent.getType());
-
-        minusIcon.addDomHandler(new ClickHandler() {
-            public void onClick(ClickEvent event) {
-                decreaseQuantity();
-            }
-        }, ClickEvent.getType());
+    @Inject
+    public TimeAmountEditor(View view) {
+        this.view = view;
+        this.view.init(this);
     }
 
-    public void init(final TimeAmount amount, final Listener listener) {
-        this.listener = listener;
-        this.timeAmount = amount;
-        initListBox();
-
-        if (timeAmount == null) input.setValue("0");
-        else input.setValue(Long.toString(timeAmount.getQuantity()));
-
-        input.addValueChangeHandler(new ValueChangeHandler<String>() {
-            public void onValueChange(ValueChangeEvent<String> event) {
-                if (StringUtils.isBlank(event.getValue())) changeQuantity(0);
-                else changeQuantity(Long.parseLong(event.getValue()));
-            }
-        });
+    @Override
+    public Widget asWidget() {
+        return view.asWidget();
     }
 
-    protected void initListBox() {
-        typeList.clear();
-        for (int i=0; i< ALLOWED_SIZES.size(); i++) {
-            DateIntervalType type = ALLOWED_SIZES.get(i);
-            typeList.addItem(DateIntervalTypeConstants.INSTANCE.getString(type.name()));
+    public TimeAmount getTimeAmount() {
+        return timeAmount;
+    }
+
+    public void init(final TimeAmount ta, Command onChangeCommand) {
+        this.onChangeCommand = onChangeCommand;
+        this.timeAmount = ta != null ? ta : new TimeAmount();
+
+        view.setQuantity(timeAmount.getQuantity());
+        view.clearIntervalTypeSelector();
+        for (int i=0; i< INTERVAL_TYPES.size(); i++) {
+            DateIntervalType type = INTERVAL_TYPES.get(i);
+            view.addIntervalTypeItem(type);
             if (timeAmount != null && timeAmount.getType().equals(type)) {
-                typeList.setSelectedIndex(i);
+                view.setSelectedTypeIndex(i);
             }
         }
     }
 
-    protected void increaseQuantity() {
-        changeQuantity(getQuantity()+1);
-        input.setValue(Long.toString(getQuantity()));
-    }
-
-    protected void decreaseQuantity() {
-        changeQuantity(getQuantity()-1);
-        input.setValue(Long.toString(getQuantity()));
-    }
-
-    protected long getQuantity() {
-        if (timeAmount == null) return 0;
+    public long getQuantity() {
         return timeAmount.getQuantity();
+    }
+
+    public void decreaseQuantity() {
+        long q = getQuantity()-1;
+        changeQuantity(q);
+        view.setQuantity(q);
+    }
+
+    public void increaseQuantity() {
+        long q = getQuantity()+1;
+        changeQuantity(q);
+        view.setQuantity(q);
+    }
+
+    public void changeQuantity(String value) {
+        if (StringUtils.isBlank(value)) {
+            changeQuantity(0);
+        } else {
+            changeQuantity(Long.parseLong(value));
+        }
+    }
+
+    public void changeIntervalType() {
+        DateIntervalType type = INTERVAL_TYPES.get(view.getSelectedTypeIndex());
+        timeAmount.setType(type);
+        onChangeCommand.execute();
     }
 
     protected void changeQuantity(long q) {
         if (timeAmount == null) {
             timeAmount = new TimeAmount();
-            int selectedIdx = typeList.getSelectedIndex();
-            DateIntervalType type = ALLOWED_SIZES.get(selectedIdx);
+            DateIntervalType type = INTERVAL_TYPES.get(0);
             timeAmount.setType(type);
         }
         timeAmount.setQuantity(q);
-        listener.valueChanged(timeAmount);
-    }
-
-    // UI events
-
-    @UiHandler(value = "typeList")
-    public void onFilterSelected(ChangeEvent changeEvent) {
-        int selectedIdx = typeList.getSelectedIndex();
-        DateIntervalType type = ALLOWED_SIZES.get(selectedIdx);
-        if (timeAmount != null) {
-            timeAmount.setType(type);
-            listener.valueChanged(timeAmount);
-        }
+        onChangeCommand.execute();
     }
 }

@@ -15,7 +15,6 @@
  */
 package org.dashbuilder.displayer.client;
 
-import java.util.Collection;
 import java.util.Map;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -24,12 +23,11 @@ import org.dashbuilder.common.client.StringUtils;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetLookup;
 import org.dashbuilder.dataset.client.ClientDataSetManager;
+import org.dashbuilder.dataset.client.DataSetClientServices;
 import org.dashbuilder.displayer.DisplayerSettings;
 import org.dashbuilder.displayer.client.formatter.ValueFormatter;
 import org.dashbuilder.displayer.client.formatter.ValueFormatterRegistry;
 import org.dashbuilder.displayer.client.resources.i18n.CommonConstants;
-import org.jboss.errai.ioc.client.container.IOC;
-import org.jboss.errai.ioc.client.container.IOCBeanDef;
 
 /**
  * The locator service for Displayer implementations.
@@ -37,27 +35,35 @@ import org.jboss.errai.ioc.client.container.IOCBeanDef;
 @ApplicationScoped
 public class DisplayerLocator {
 
-    public static DisplayerLocator get() {
-        Collection<IOCBeanDef<DisplayerLocator>> beans = IOC.getBeanManager().lookupBeans(DisplayerLocator.class);
-        IOCBeanDef<DisplayerLocator> beanDef = beans.iterator().next();
-        return beanDef.getInstance();
-    }
+    private DataSetClientServices clientServices;
+    private ClientDataSetManager clientDataSetManager;
+    private ValueFormatterRegistry formatterRegistry;
+    private RendererManager rendererManager;
 
-    @Inject ClientDataSetManager clientDataSetManager;
-    @Inject ValueFormatterRegistry formatterRegistry;
+    @Inject
+    public DisplayerLocator(DataSetClientServices clientServices,
+                            ClientDataSetManager clientDataSetManager,
+                            RendererManager rendererManager,
+                            ValueFormatterRegistry formatterRegistry) {
+
+        this.clientServices = clientServices;
+        this.clientDataSetManager = clientDataSetManager;
+        this.rendererManager = rendererManager;
+        this.formatterRegistry = formatterRegistry;
+    }
 
     /**
      * Get the displayer component for the specified data displayer (with no data set attached).
      */
     public Displayer lookupDisplayer(DisplayerSettings target) {
-        RendererLibrary renderer = RendererManager.get().getRendererForDisplayer(target);
+        RendererLibrary renderer = rendererManager.getRendererForDisplayer(target);
         Displayer displayer = renderer.lookupDisplayer(target);
         if (displayer == null) {
             String rendererUuid = target.getRenderer();
             if (StringUtils.isBlank(rendererUuid)) throw new RuntimeException(CommonConstants.INSTANCE.displayerlocator_default_renderer_undeclared(target.getType().toString()));
             throw new RuntimeException(CommonConstants.INSTANCE.displayerlocator_unsupported_displayer_renderer(target.getType().toString(), rendererUuid));
         }
-        displayer.setDisplayerSettings( target );
+        displayer.setDisplayerSettings(target);
 
         // Check if a DataSet has been set instead of a DataSetLookup.
         DataSetLookup dataSetLookup = target.getDataSetLookup();
@@ -67,7 +73,7 @@ public class DisplayerLocator {
             dataSetLookup = new DataSetLookup(dataSet.getUUID());
         }
 
-        DataSetHandler handler = new DataSetHandlerImpl(dataSetLookup);
+        DataSetHandler handler = new DataSetHandlerImpl(clientServices, dataSetLookup);
         displayer.setDataSetHandler(handler);
         setValueFormatters(displayer);
         return displayer;

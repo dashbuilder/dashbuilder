@@ -45,13 +45,33 @@ import static org.uberfire.commons.validation.PortablePreconditions.checkNotNull
 import static org.uberfire.workbench.events.NotificationEvent.NotificationType.INFO;
 
 @WorkbenchScreen(identifier = "GalleryWidgetScreen")
-@ApplicationScoped
 public class GalleryWidgetPresenter {
 
     private GalleryWidget widget;
+    private SalesGoals salesGoals;
+    private SalesExpectedByDate salesExpectedByDate;
+    private SalesDistributionByCountry salesDistributionByCountry;
+    private SalesTableReports salesTableReports;
+    private ExpensesDashboard expensesDashboard;
+    private ClusterMetricsDashboard clusterMetricsDashboard;
+    private Event<NotificationEvent> workbenchNotification;
 
     @Inject
-    private Event<NotificationEvent> workbenchNotification;
+    public GalleryWidgetPresenter(SalesGoals salesGoals,
+                                  SalesExpectedByDate salesExpectedByDate,
+                                  SalesDistributionByCountry salesDistributionByCountry,
+                                  SalesTableReports salesTableReports,
+                                  ExpensesDashboard expensesDashboard,
+                                  ClusterMetricsDashboard clusterMetricsDashboard,
+                                  Event<NotificationEvent> workbenchNotification) {
+        this.salesGoals = salesGoals;
+        this.salesExpectedByDate = salesExpectedByDate;
+        this.salesDistributionByCountry = salesDistributionByCountry;
+        this.salesTableReports = salesTableReports;
+        this.expensesDashboard = expensesDashboard;
+        this.clusterMetricsDashboard = clusterMetricsDashboard;
+        this.workbenchNotification = workbenchNotification;
+    }
 
     @WorkbenchPartTitle
     public String getTitle() {
@@ -75,12 +95,24 @@ public class GalleryWidgetPresenter {
     }
 
     private GalleryWidget getWidget(String widgetId) {
-        if ("salesGoal".equals(widgetId)) return new SalesGoals();
-        if ("salesPipeline".equals(widgetId)) return new SalesExpectedByDate();
-        if ("salesPerCountry".equals(widgetId)) return new SalesDistributionByCountry();
-        if ("salesReports".equals(widgetId)) return new SalesTableReports();
-        if ("expenseReports".equals(widgetId)) return new ExpensesDashboard();
-        if ("clusterMetrics".equals(widgetId)) return new ClusterMetricsDashboard();
+        if ("salesGoal".equals(widgetId)) {
+            return salesGoals;
+        }
+        if ("salesPipeline".equals(widgetId)) {
+            return salesExpectedByDate;
+        }
+        if ("salesPerCountry".equals(widgetId)) {
+            return salesDistributionByCountry;
+        }
+        if ("salesReports".equals(widgetId)) {
+            return salesTableReports;
+        }
+        if ("expenseReports".equals(widgetId)) {
+            return expensesDashboard;
+        }
+        if ("clusterMetrics".equals(widgetId)) {
+            return clusterMetricsDashboard;
+        }
         
         throw new IllegalArgumentException(AppConstants.INSTANCE.gallerywidget_unknown() + widgetId);
     }

@@ -15,6 +15,10 @@
  */
 package org.dashbuilder.client.expenses;
 
+import javax.annotation.PostConstruct;
+import javax.enterprise.context.Dependent;
+import javax.inject.Inject;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -25,7 +29,7 @@ import org.dashbuilder.client.resources.i18n.AppConstants;
 import org.dashbuilder.displayer.DisplayerSettingsFactory;
 import org.dashbuilder.displayer.client.Displayer;
 import org.dashbuilder.displayer.client.DisplayerCoordinator;
-import org.dashbuilder.displayer.client.DisplayerHelper;
+import org.dashbuilder.displayer.client.DisplayerLocator;
 
 import static org.dashbuilder.dataset.group.DateIntervalType.*;
 import static org.dashbuilder.dataset.sort.SortOrder.*;
@@ -38,6 +42,7 @@ import static org.dashbuilder.dataset.group.AggregateFunctionType.*;
  * <p>The data set that feeds this dashboard is a CSV file stored into an specific server folder so
  * that is auto-deployed during server start up: <code>dashbuilder-webapp/src/main/webapp/datasets/expenseReports.csv</code></p>
  */
+@Dependent
 public class ExpensesDashboard extends Composite implements GalleryWidget {
 
     interface ExpensesDashboardBinder extends UiBinder<Widget, ExpensesDashboard>{}
@@ -58,7 +63,8 @@ public class ExpensesDashboard extends Composite implements GalleryWidget {
     @UiField(provided = true)
     Displayer tableAll;
 
-    DisplayerCoordinator displayerCoordinator = new DisplayerCoordinator();
+    DisplayerCoordinator displayerCoordinator;
+    DisplayerLocator displayerLocator;
 
     @Override
     public String getTitle() {
@@ -75,11 +81,18 @@ public class ExpensesDashboard extends Composite implements GalleryWidget {
         return EXPENSES.equals(dataSetId);
     }
 
-    public ExpensesDashboard() {
+    @Inject
+    public ExpensesDashboard(DisplayerCoordinator displayerCoordinator, DisplayerLocator displayerLocator) {
+        this.displayerCoordinator = displayerCoordinator;
+        this.displayerLocator = displayerLocator;
+    }
+
+    @PostConstruct
+    public void init() {
 
         // Create the chart definitions
 
-        pieByOffice = DisplayerHelper.lookupDisplayer(
+        pieByOffice = displayerLocator.lookupDisplayer(
                 DisplayerSettingsFactory.newPieChartSettings()
                         .dataset(EXPENSES)
                         .group(OFFICE)
@@ -100,7 +113,7 @@ public class ExpensesDashboard extends Composite implements GalleryWidget {
                         .filterOn(true, true, true)
                         .buildSettings());
 
-        barByDepartment = DisplayerHelper.lookupDisplayer(
+        barByDepartment = displayerLocator.lookupDisplayer(
                 DisplayerSettingsFactory.newBarChartSettings()
                         .dataset(EXPENSES)
                         .group(DEPARTMENT)
@@ -112,7 +125,7 @@ public class ExpensesDashboard extends Composite implements GalleryWidget {
                         .filterOn(false, true, true)
                         .buildSettings());
 
-        bubbleByEmployee = DisplayerHelper.lookupDisplayer(
+        bubbleByEmployee = displayerLocator.lookupDisplayer(
                 DisplayerSettingsFactory.newBubbleChartSettings()
                         .dataset(EXPENSES)
                         .group(EMPLOYEE)
@@ -128,7 +141,7 @@ public class ExpensesDashboard extends Composite implements GalleryWidget {
                         .filterOn(false, true, true)
                         .buildSettings());
 
-        lineByDate = DisplayerHelper.lookupDisplayer(
+        lineByDate = displayerLocator.lookupDisplayer(
                 DisplayerSettingsFactory.newAreaChartSettings()
                         .dataset(EXPENSES)
                         .group(DATE).dynamic(8, DAY_OF_WEEK, true)
@@ -142,7 +155,7 @@ public class ExpensesDashboard extends Composite implements GalleryWidget {
                         .filterOn(true, true, true)
                         .buildSettings());
 
-        tableAll = DisplayerHelper.lookupDisplayer(
+        tableAll = displayerLocator.lookupDisplayer(
                 DisplayerSettingsFactory.newTableSettings()
                         .dataset(EXPENSES)
                         .title(AppConstants.INSTANCE.expensesdb_table_title())

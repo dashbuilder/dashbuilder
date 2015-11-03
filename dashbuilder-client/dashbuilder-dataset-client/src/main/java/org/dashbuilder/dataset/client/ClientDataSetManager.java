@@ -16,8 +16,6 @@
  */
 package org.dashbuilder.dataset.client;
 
-import java.util.Collection;
-
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
@@ -29,8 +27,6 @@ import org.dashbuilder.dataset.DataSetMetadata;
 import org.dashbuilder.common.client.StringUtils;
 import org.dashbuilder.dataset.engine.SharedDataSetOpEngine;
 import org.dashbuilder.dataset.engine.index.DataSetIndex;
-import org.jboss.errai.ioc.client.container.IOC;
-import org.jboss.errai.ioc.client.container.IOCBeanDef;
 
 /**
  * Client implementation of a DataSetManager. It hold as map of data sets in memory.
@@ -39,13 +35,12 @@ import org.jboss.errai.ioc.client.container.IOCBeanDef;
 @ApplicationScoped
 public class ClientDataSetManager implements DataSetManager {
 
-    public static ClientDataSetManager get() {
-        Collection<IOCBeanDef<ClientDataSetManager>> beans = IOC.getBeanManager().lookupBeans(ClientDataSetManager.class);
-        IOCBeanDef<ClientDataSetManager> beanDef = beans.iterator().next();
-        return beanDef.getInstance();
-    }
+    SharedDataSetOpEngine dataSetOpEngine;
 
-    @Inject SharedDataSetOpEngine dataSetOpEngine;
+    @Inject
+    public ClientDataSetManager(SharedDataSetOpEngine dataSetOpEngine) {
+        this.dataSetOpEngine = dataSetOpEngine;
+    }
 
     public DataSet createDataSet(String uuid) {
         DataSet dataSet = DataSetFactory.newEmptyDataSet();

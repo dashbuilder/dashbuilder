@@ -26,6 +26,9 @@
   <ui:with field="i18n" type="org.dashbuilder.displayer.client.resources.i18n.CommonConstants"/>
 
   <ui:style>
+    .statusLabel{
+      color: red;
+    }
     .sectionLabel {
       font-weight: bold;
     }
@@ -42,12 +45,12 @@
 
   <g:FlowPanel>
     <g:FlowPanel styleName="{style.cellPaddingPanel}">
-      <b:Label ui:field="statusLabel" visible="false" />
+      <b:Label ui:field="statusLabel" visible="false" styleName="{style.statusLabel}" />
       <g:Label styleName="{style.sectionLabel}" text="{i18n.dataset_dataset}"/>
       <b:ListBox ui:field="dataSetListBox" width="200px" />
     </g:FlowPanel>
     <g:FlowPanel ui:field="filtersControlPanel" visible="false" styleName="{style.cellPaddingPanel}">
-      <b:Label styleName="{style.sectionLabel}" text="{i18n.dataset_filters}"/>
+      <g:Label styleName="{style.sectionLabel}" text="{i18n.dataset_filters}"/>
       <df:DataSetFilterEditor ui:field="filterEditor" />
     </g:FlowPanel>
     <g:FlowPanel ui:field="groupControlPanel" visible="false" styleName="{style.cellPaddingPanel}">

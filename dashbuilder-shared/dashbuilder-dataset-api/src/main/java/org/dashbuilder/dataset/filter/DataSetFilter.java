@@ -47,7 +47,9 @@ public class DataSetFilter extends AbstractDataSetOp {
     public Integer getColumnFilterIdx(ColumnFilter columnFilter) {
         for (int i=0; i<columnFilterList.size(); i++) {
             ColumnFilter cf = columnFilterList.get(i);
-            if (columnFilter.equals(cf)) return i;
+            if (columnFilter.equals(cf)) {
+                return i;
+            }
         }
         return null;
     }

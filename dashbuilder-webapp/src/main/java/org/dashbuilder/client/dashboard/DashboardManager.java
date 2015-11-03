@@ -28,6 +28,7 @@ import org.dashbuilder.displayer.json.DisplayerSettingsJSONMarshaller;
 import org.jboss.errai.ioc.client.api.AfterInitialization;
 import org.jboss.errai.ioc.client.container.IOC;
 import org.jboss.errai.ioc.client.container.IOCBeanDef;
+import org.jboss.errai.ioc.client.container.SyncBeanManager;
 import org.jboss.errai.ioc.client.container.SyncBeanManagerImpl;
 import org.uberfire.client.mvp.Activity;
 import org.uberfire.client.mvp.ActivityBeansCache;
@@ -46,26 +47,34 @@ import static org.jboss.errai.ioc.client.QualifierUtil.*;
 @ApplicationScoped
 public class DashboardManager {
 
-    @Inject
+    private SyncBeanManager beanManager;
     private PlaceManager placeManager;
-
-    @Inject
     private PerspectiveManager perspectiveManager;
-
-    @Inject
     private PerspectiveCoordinator perspectiveCoordinator;
-
-    @Inject
     private DisplayerSettingsJSONMarshaller jsonMarshaller;
-
-    @Inject
     private ActivityBeansCache activityBeansCache;
-
-    @Inject
     private Event<DashboardCreatedEvent> dashboardCreatedEvent;
+    private Event<DashboardDeletedEvent> dashboardDeletedEvent;
 
     @Inject
-    private Event<DashboardDeletedEvent> dashboardDeletedEvent;
+    public DashboardManager(SyncBeanManager beanManager,
+                            PlaceManager placeManager,
+                            PerspectiveManager perspectiveManager,
+                            PerspectiveCoordinator perspectiveCoordinator,
+                            DisplayerSettingsJSONMarshaller jsonMarshaller,
+                            ActivityBeansCache activityBeansCache,
+                            Event<DashboardCreatedEvent> dashboardCreatedEvent,
+                            Event<DashboardDeletedEvent> dashboardDeletedEvent) {
+
+        this.beanManager = beanManager;
+        this.placeManager = placeManager;
+        this.perspectiveManager = perspectiveManager;
+        this.perspectiveCoordinator = perspectiveCoordinator;
+        this.jsonMarshaller = jsonMarshaller;
+        this.activityBeansCache = activityBeansCache;
+        this.dashboardCreatedEvent = dashboardCreatedEvent;
+        this.dashboardDeletedEvent = dashboardDeletedEvent;
+    }
 
     @AfterInitialization
     protected void init() {
@@ -83,6 +92,7 @@ public class DashboardManager {
 
     protected DashboardPerspectiveActivity registerPerspective(String id) {
         DashboardPerspectiveActivity activity = new DashboardPerspectiveActivity(id, this,
+                beanManager,
                 perspectiveManager,
                 placeManager,
                 perspectiveCoordinator,

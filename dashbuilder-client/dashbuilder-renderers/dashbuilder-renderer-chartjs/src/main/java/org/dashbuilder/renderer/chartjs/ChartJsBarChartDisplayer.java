@@ -15,28 +15,38 @@
  */
 package org.dashbuilder.renderer.chartjs;
 
-import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.Panel;
-import com.google.gwt.user.client.ui.SimplePanel;
-import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
-import org.dashbuilder.renderer.chartjs.lib.BarChart;
-import org.dashbuilder.renderer.chartjs.lib.Chart;
+import javax.enterprise.context.Dependent;
+import javax.inject.Inject;
+
 import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.DataSetLookupConstraints;
 import org.dashbuilder.displayer.DisplayerAttributeDef;
 import org.dashbuilder.displayer.DisplayerAttributeGroupDef;
 import org.dashbuilder.displayer.DisplayerConstraints;
-import org.dashbuilder.renderer.chartjs.lib.event.DataSelectionEvent;
-import org.dashbuilder.renderer.chartjs.lib.event.DataSelectionHandler;
-import org.dashbuilder.renderer.chartjs.resources.i18n.ChartJsDisplayerConstants;
 
-public class ChartJsBarChartDisplayer extends ChartJsDisplayer {
+@Dependent
+public class ChartJsBarChartDisplayer extends ChartJsDisplayer<ChartJsBarChartDisplayer.View> {
 
-    protected Panel chartPanel = new FlowPanel();
-    protected Chart chart;
-    protected Panel filterPanel = new SimplePanel();
+    public interface View extends ChartJsDisplayer.View<ChartJsBarChartDisplayer> {
+
+    }
+
+    private View view;
+
+    public ChartJsBarChartDisplayer() {
+        this(new ChartJsBarChartDisplayerView());
+    }
+
+    @Inject
+    public ChartJsBarChartDisplayer(View view) {
+        this.view = view;
+        this.view.init(this);
+    }
+
+    @Override
+    public View getView() {
+        return view;
+    }
 
     @Override
     public DisplayerConstraints createDisplayerConstraints() {
@@ -44,12 +54,12 @@ public class ChartJsBarChartDisplayer extends ChartJsDisplayer {
         DataSetLookupConstraints lookupConstraints = new DataSetLookupConstraints()
                 .setGroupRequired(true)
                 .setGroupColumn(true)
-                .setMaxColumns( 10 )
-                .setMinColumns( 2 )
-                .setExtraColumnsAllowed( true )
-                .setExtraColumnsType( ColumnType.NUMBER )
-                .setGroupsTitle(ChartJsDisplayerConstants.INSTANCE.common_Categories())
-                .setColumnsTitle(ChartJsDisplayerConstants.INSTANCE.common_Series())
+                .setMaxColumns(10)
+                .setMinColumns(2)
+                .setExtraColumnsAllowed(true)
+                .setExtraColumnsType(ColumnType.NUMBER)
+                .setGroupsTitle(view.getGroupsTitle())
+                .setColumnsTitle(view.getColumnsTitle())
                 .setColumnTypes(new ColumnType[]{
                         ColumnType.LABEL,
                         ColumnType.NUMBER});
@@ -57,63 +67,15 @@ public class ChartJsBarChartDisplayer extends ChartJsDisplayer {
         return new DisplayerConstraints(lookupConstraints)
                 .supportsAttribute(DisplayerAttributeDef.TYPE)
                 .supportsAttribute(DisplayerAttributeDef.RENDERER)
-                .supportsAttribute( DisplayerAttributeGroupDef.COLUMNS_GROUP )
-                .supportsAttribute( DisplayerAttributeGroupDef.FILTER_GROUP )
-                .supportsAttribute( DisplayerAttributeGroupDef.REFRESH_GROUP)
-                .supportsAttribute( DisplayerAttributeGroupDef.GENERAL_GROUP)
-                .supportsAttribute( DisplayerAttributeDef.CHART_WIDTH )
-                .supportsAttribute( DisplayerAttributeDef.CHART_HEIGHT )
+                .supportsAttribute(DisplayerAttributeGroupDef.COLUMNS_GROUP)
+                .supportsAttribute(DisplayerAttributeGroupDef.FILTER_GROUP)
+                .supportsAttribute(DisplayerAttributeGroupDef.REFRESH_GROUP)
+                .supportsAttribute(DisplayerAttributeGroupDef.GENERAL_GROUP)
+                .supportsAttribute(DisplayerAttributeDef.CHART_WIDTH)
+                .supportsAttribute(DisplayerAttributeDef.CHART_HEIGHT)
                 .supportsAttribute(DisplayerAttributeDef.CHART_BGCOLOR)
                 .supportsAttribute(DisplayerAttributeGroupDef.CHART_MARGIN_GROUP)
-                .supportsAttribute( DisplayerAttributeGroupDef.CHART_LEGEND_GROUP )
-                .supportsAttribute( DisplayerAttributeGroupDef.AXIS_GROUP );
-    }
-
-    @Override
-    public Widget createVisualization() {
-        HTML titleHtml = new HTML();
-        if (displayerSettings.isTitleVisible()) {
-            titleHtml.setText(displayerSettings.getTitle());
-        }
-
-        FlowPanel container = new FlowPanel();
-        container.add(titleHtml);
-        container.add(filterPanel);
-        container.add(chartPanel);
-
-        BarChart barChart = new BarChart();
-        barChart.setTitle(displayerSettings.getTitle());
-        barChart.setTooltipTemplate("<%= label %>: <%= window.chartJsFormatValue('" + displayerSettings.getUUID() + "', value, 1) %>");
-        barChart.setMultiTooltipTemplate("<%= datasetLabel %>: <%= window.chartJsFormatValue('" + displayerSettings.getUUID() + "', value, 1) %>");
-        barChart.setScaleStepWidth(10);
-        barChart.setLegendTemplate("<ul class=\"<%=name.toLowerCase()%>-legend\"><% for (var i=0; i<datasets.length; i++){%><li><span style=\"background-color:<%=datasets[i].fillColor%>\"></span><%if(datasets[i].label){%><%=datasets[i].label%><%}%></li><%}%></ul>");
-        barChart.setDataProvider(super.createAreaDataProvider());
-        barChart.addDataSelectionHandler(new DataSelectionHandler() {
-            public void onDataSelected(DataSelectionEvent event) {
-                Object o = event.getSource();
-            }
-        });
-        chart = barChart;
-        updateChartPanel();
-        return container;
-    }
-
-    protected void updateVisualization() {
-        filterPanel.clear();
-        Widget filterReset = createCurrentSelectionWidget();
-        if (filterReset != null) filterPanel.add(filterReset);
-
-        updateChartPanel();
-    }
-
-    protected void updateChartPanel() {
-        chartPanel.clear();
-        if (dataSet.getRowCount() == 0) {
-            chartPanel.add(super.createNoDataMsgPanel());
-        } else {
-            super.adjustChartSize(chart);
-            chartPanel.add(chart);
-            chart.update();
-        }
+                .supportsAttribute(DisplayerAttributeGroupDef.CHART_LEGEND_GROUP)
+                .supportsAttribute(DisplayerAttributeGroupDef.AXIS_GROUP);
     }
 }

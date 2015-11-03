@@ -53,6 +53,7 @@ public class CSVDataSetDefAttributesEditor implements IsWidget, org.dashbuilder.
         
     }
 
+    DataSetClientServices dataSetClientServices;
     ValueBoxEditor<String> fileURL;
     FileUploadEditor filePath;
     ValueBoxEditor<Character> separatorChar;
@@ -65,7 +66,8 @@ public class CSVDataSetDefAttributesEditor implements IsWidget, org.dashbuilder.
     boolean isUsingFilePath = true;
 
     @Inject
-    public CSVDataSetDefAttributesEditor(final ValueBoxEditor<String> fileURL,
+    public CSVDataSetDefAttributesEditor(final DataSetClientServices dataSetClientServices,
+                                         final ValueBoxEditor<String> fileURL,
                                          final FileUploadEditor filePath,
                                          final ValueBoxEditor<Character> separatorChar,
                                          final ValueBoxEditor<Character> quoteChar,
@@ -73,6 +75,7 @@ public class CSVDataSetDefAttributesEditor implements IsWidget, org.dashbuilder.
                                          final ValueBoxEditor<String> datePattern,
                                          final ValueBoxEditor<String> numberPattern,
                                          final View view) {
+        this.dataSetClientServices = dataSetClientServices;
         this.fileURL = fileURL;
         this.filePath = filePath;
         this.separatorChar = separatorChar;
@@ -121,7 +124,7 @@ public class CSVDataSetDefAttributesEditor implements IsWidget, org.dashbuilder.
             @Override
             public String getUploadFileUrl() {
                 String csvPath = "default://master@datasets/tmp/" + value.getUUID() + ".csv";
-                return DataSetClientServices.get().getUploadFileUrl(csvPath);
+                return dataSetClientServices.getUploadFileUrl(csvPath);
             }
         });
         

@@ -16,11 +16,8 @@
 package org.dashbuilder.displayer.client.widgets;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.Command;
 import com.google.web.bindery.event.shared.HandlerRegistration;
 import org.dashbuilder.displayer.DisplayerSettings;
 import org.dashbuilder.displayer.client.resources.i18n.CommonConstants;
@@ -29,6 +26,7 @@ import org.gwtbootstrap3.client.shared.event.ModalShownHandler;
 import org.gwtbootstrap3.client.ui.ModalBody;
 import org.uberfire.ext.widgets.common.client.common.popups.BaseModal;
 import org.uberfire.ext.widgets.common.client.common.popups.footers.ModalFooterOKCancelButtons;
+import org.uberfire.mvp.Command;
 
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
@@ -42,62 +40,85 @@ public class DisplayerEditorPopup extends BaseModal {
     @UiField(provided = true)
     DisplayerEditor editor;
 
-    private DisplayerSettings settings;
-    private DisplayerEditor.Listener editorListener;
     private HandlerRegistration showHandlerRegistration;
+    private String editDisplayerTitle = CommonConstants.INSTANCE.displayer_editor_title();
+    private String newDisplayerTitle = CommonConstants.INSTANCE.displayer_editor_new();
 
     @Inject
     public DisplayerEditorPopup(DisplayerEditor editor) {
         this.editor = editor;
         add(uiBinder.createAndBindUi(this));
-        ModalFooterOKCancelButtons footer = new ModalFooterOKCancelButtons(okCommand, cancelCommand);
+        ModalFooterOKCancelButtons footer = createModalFooterOKCancelButtons();
         footer.enableCancelButton(true);
         footer.enableOkButton(true);
         add(footer);
         setWidth(1200+"px");
     }
 
-    public void init(final DisplayerSettings settings, final DisplayerEditor.Listener editorListener) {
-        this.settings = settings;
-        this.editorListener = editorListener;
+    public DisplayerEditorPopup init(DisplayerSettings settings) {
+        ModalShownHandler shownHandler = createShownHandler(settings);
         this.showHandlerRegistration = this.addShownHandler(shownHandler);
         show();
+        return this;
+    }
+
+    public DisplayerSettings getDisplayerSettings() {
+        return editor.getDisplayerSettings();
+    }
+
+    public void setNewDisplayerTitle(String newDisplayerTitle) {
+        this.newDisplayerTitle = newDisplayerTitle;
+    }
+
+    public void setEditDisplayerTitle(String editDisplayerTitle) {
+        this.editDisplayerTitle = editDisplayerTitle;
+    }
+
+    public void setOnSaveCommand(Command saveCommand) {
+        this.editor.setOnSaveCommand(saveCommand);
+    }
+
+    public void setOnCloseCommand(Command closeCommand) {
+        this.editor.setOnCloseCommand(closeCommand);
     }
 
     /**
      * <p>The popup must be visible in order that the table can display the different row's values. So after popup is shown, initialize the editor.</p>
      */
-    private final ModalShownHandler shownHandler = new ModalShownHandler() {
-        @Override
-        public void onShown(ModalShownEvent modalShownEvent) {
-            editor.init(settings, editorListener);
-            setTitle(CommonConstants.INSTANCE.displayer_editor_title());
-            if (editor.isBrandNewDisplayer()) setTitle(CommonConstants.INSTANCE.displayer_editor_new());
-            removeShownHandler();
-        }
-    };
+    protected ModalShownHandler createShownHandler(final DisplayerSettings settings) {
 
-    private void removeShownHandler() {
+        return new ModalShownHandler() {
+            @Override
+            public void onShown(ModalShownEvent modalShownEvent) {
+                editor.init(settings);
+                setTitle(editor.isBrandNewDisplayer() ? newDisplayerTitle : editDisplayerTitle);
+                removeShownHandler();
+            }
+        };
+    }
+
+    protected void removeShownHandler() {
         if (this.showHandlerRegistration != null) {
             this.showHandlerRegistration.removeHandler();
             this.showHandlerRegistration = null;
         }
     }
 
-    private final Command cancelCommand = new Command() {
-        @Override
-        public void execute() {
-            hide();
-            editor.close();
-        }
-    };
-
-    private final Command okCommand = new Command() {
-        @Override
-        public void execute() {
-            hide();
-            editor.save();
-        }
-    };
-
+    protected ModalFooterOKCancelButtons createModalFooterOKCancelButtons() {
+        return new ModalFooterOKCancelButtons(
+                new com.google.gwt.user.client.Command() {
+                    @Override
+                    public void execute() {
+                        hide();
+                        editor.save();
+                    }
+                },
+                new com.google.gwt.user.client.Command() {
+                    @Override
+                    public void execute() {
+                        hide();
+                        editor.close();
+                    }
+                });
+    }
 }

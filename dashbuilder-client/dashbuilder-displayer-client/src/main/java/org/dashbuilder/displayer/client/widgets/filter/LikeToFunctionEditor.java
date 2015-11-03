@@ -16,55 +16,62 @@
 package org.dashbuilder.displayer.client.widgets.filter;
 
 import javax.enterprise.context.Dependent;
+import javax.inject.Inject;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
-import org.gwtbootstrap3.client.ui.CheckBox;
-import org.gwtbootstrap3.client.ui.TextBox;
+import org.uberfire.client.mvp.UberView;
+import org.uberfire.mvp.Command;
 
 @Dependent
-public class LikeToFunctionEditor extends Composite {
+public class LikeToFunctionEditor implements IsWidget {
 
-    interface Listener {
-        void valueChanged(String pattern, boolean caseSensitive);
+    public interface View extends UberView<LikeToFunctionEditor> {
+
+        void setPattern(String pattern);
+
+        void setCaseSensitive(boolean caseSensitive);
+
+        String getPattern();
+
+        boolean isCaseSensitive();
     }
 
-    interface Binder extends UiBinder<Widget, LikeToFunctionEditor> {}
-    private static Binder uiBinder = GWT.create(Binder.class);
+    Command onChangeCommand = new Command() { public void execute() {} };
+    View view;
 
-    Listener listener = null;
-
-    @UiField
-    TextBox searchPattern;
-
-    @UiField
-    CheckBox caseSensitive;
-
-    public LikeToFunctionEditor() {
-        initWidget(uiBinder.createAndBindUi(this));
+    @Inject
+    public LikeToFunctionEditor(View view) {
+        this.view = view;
+        this.view.init(this);
     }
 
-    public void init(String value, boolean enabled, final Listener listener) {
-        this.listener = listener;
-        if (value != null) {
-            searchPattern.setValue(value);
-        }
-        caseSensitive.setValue(enabled);
+    @Override
+    public Widget asWidget() {
+        return view.asWidget();
     }
 
-    @UiHandler("searchPattern")
-    public void onPatternChanged(ChangeEvent event) {
-        listener.valueChanged(searchPattern.getValue(), caseSensitive.getValue());
+    public void setOnChangeCommand(Command onChangeCommand) {
+        this.onChangeCommand = onChangeCommand;
     }
 
-    @UiHandler("caseSensitive")
-    public void onCaseChanged(ClickEvent event) {
-        listener.valueChanged(searchPattern.getValue(), caseSensitive.getValue());
+    public void setPattern(String pattern) {
+        view.setPattern(pattern);
+    }
+
+    public void setCaseSensitive(boolean caseSensitive) {
+        view.setCaseSensitive(caseSensitive);
+    }
+
+    public String getPattern() {
+        return view.getPattern();
+    }
+
+    public boolean isCaseSensitive() {
+        return view.isCaseSensitive();
+    }
+
+    void viewUpdated() {
+        onChangeCommand.execute();
     }
 }

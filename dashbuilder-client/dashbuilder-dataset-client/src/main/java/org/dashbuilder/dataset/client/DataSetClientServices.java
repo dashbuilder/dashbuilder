@@ -23,7 +23,6 @@ import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.service.DataSetLookupServices;
 import org.dashbuilder.dataset.DataSetLookup;
 import org.dashbuilder.dataset.DataSetMetadata;
-import org.dashbuilder.dataset.backend.EditDataSetDef;
 import org.dashbuilder.dataset.client.resources.i18n.CommonConstants;
 import org.dashbuilder.dataset.def.DataSetDef;
 import org.dashbuilder.dataset.engine.group.IntervalBuilderLocator;
@@ -35,8 +34,6 @@ import org.jboss.errai.bus.client.api.messaging.Message;
 import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.common.client.api.ErrorCallback;
 import org.jboss.errai.common.client.api.RemoteCallback;
-import org.jboss.errai.ioc.client.container.IOC;
-import org.jboss.errai.ioc.client.container.IOCBeanDef;
 import org.uberfire.backend.vfs.Path;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -57,46 +54,14 @@ public class DataSetClientServices {
     private static final String UPLOAD_SERVLET_URL = "defaulteditor/upload";
     private static final String EXPORT_SERVLER_URL = "defaulteditor/download";
 
-    public static DataSetClientServices get() {
-        Collection<IOCBeanDef<DataSetClientServices>> beans = IOC.getBeanManager().lookupBeans(DataSetClientServices.class);
-        IOCBeanDef<DataSetClientServices> beanDef = beans.iterator().next();
-        return beanDef.getInstance();
-    }
-
-    @Inject
     private ClientDataSetManager clientDataSetManager;
-
-    @Inject
     private AggregateFunctionManager aggregateFunctionManager;
-
-    @Inject
     private IntervalBuilderLocator intervalBuilderLocator;
-
-    @Inject
     private Event<DataSetPushingEvent> dataSetPushingEvent;
-
-    @Inject
     private Event<DataSetPushOkEvent> dataSetPushOkEvent;
-
-    @Inject
     private Event<DataSetModifiedEvent> dataSetModifiedEvent;
-
-    /**
-     * The service caller used to lookup data sets from the backend.
-     */
-    @Inject
     private Caller<DataSetLookupServices> dataSetLookupServices;
-
-    /**
-     * The service caller used to lookup data sets from the backend.
-     */
-    @Inject
     private Caller<DataSetDefServices> dataSetDefServices;
-
-    /**
-     * The service caller used to lookup data sets from the backend.
-     */
-    @Inject
     private Caller<DataSetExportServices> dataSetExportServices;
 
     /**
@@ -113,6 +78,28 @@ public class DataSetClientServices {
      * It holds a set of data set push requests in progress.
      */
     private Map<String,DataSetPushHandler> pushRequestMap = new HashMap<String,DataSetPushHandler>();
+
+    @Inject
+    public DataSetClientServices(ClientDataSetManager clientDataSetManager,
+                                 AggregateFunctionManager aggregateFunctionManager,
+                                 IntervalBuilderLocator intervalBuilderLocator,
+                                 Event<DataSetPushingEvent> dataSetPushingEvent,
+                                 Event<DataSetPushOkEvent> dataSetPushOkEvent,
+                                 Event<DataSetModifiedEvent> dataSetModifiedEvent,
+                                 Caller<DataSetLookupServices> dataSetLookupServices,
+                                 Caller<DataSetDefServices> dataSetDefServices,
+                                 Caller<DataSetExportServices> dataSetExportServices) {
+
+        this.clientDataSetManager = clientDataSetManager;
+        this.aggregateFunctionManager = aggregateFunctionManager;
+        this.intervalBuilderLocator = intervalBuilderLocator;
+        this.dataSetPushingEvent = dataSetPushingEvent;
+        this.dataSetPushOkEvent = dataSetPushOkEvent;
+        this.dataSetModifiedEvent = dataSetModifiedEvent;
+        this.dataSetLookupServices = dataSetLookupServices;
+        this.dataSetDefServices = dataSetDefServices;
+        this.dataSetExportServices = dataSetExportServices;
+    }
 
     public boolean isPushRemoteDataSetEnabled() {
         return pushRemoteDataSetEnabled;
@@ -143,7 +130,9 @@ public class DataSetClientServices {
                 dataSetLookupServices.call(
                         new RemoteCallback<DataSetMetadata>() {
                             public void callback(DataSetMetadata result) {
-                                if (result == null) listener.notFound();
+                                if (result == null) {
+                                    listener.notFound();
+                                }
                                 else {
                                     remoteMetadataMap.put(uuid, result);
                                     listener.callback(result);

@@ -90,7 +90,9 @@ public class ChartJsRenderer extends AbstractRendererLibrary {
     protected ChartJsDisplayer _lookupDisplayer(DisplayerSettings displayerSettings) {
         ChartJs.ensureInjected();
         DisplayerType type = displayerSettings.getType();
-        if ( DisplayerType.BARCHART.equals(type)) return new ChartJsBarChartDisplayer();
+        if ( DisplayerType.BARCHART.equals(type)) {
+            return new ChartJsBarChartDisplayer();
+        }
         return null;
     }
 

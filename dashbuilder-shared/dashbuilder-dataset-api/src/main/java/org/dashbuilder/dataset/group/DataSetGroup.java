@@ -69,6 +69,16 @@ public class DataSetGroup extends AbstractDataSetOp {
         return null;
     }
 
+    public Integer getGroupFunctionIdx(GroupFunction groupFunction) {
+        for (int i=0; i<groupFunctionList.size(); i++) {
+            GroupFunction gf = groupFunctionList.get(i);
+            if (gf.equals(groupFunction)) {
+                return i;
+            }
+        }
+        return null;
+    }
+
     public void addSelectedIntervalNames(String... names) {
         for (String name : names) {
             Interval interval = new Interval(name);

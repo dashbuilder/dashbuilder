@@ -15,9 +15,9 @@
  */
 package org.dashbuilder.displayer.client;
 
-import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
+import javax.inject.Inject;
 
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetLookup;
@@ -36,30 +36,30 @@ public class PerspectiveCoordinator {
     /**
      * The real coordinator.
      */
-    private DisplayerCoordinator coordinator;
+    private DisplayerCoordinator displayerCoordinator;
 
     /**
      * Flag indicating if the perspective is on edit mode.
      */
     boolean editOn = false;
 
-    @PostConstruct
-    public void init() {
-        coordinator = new DisplayerCoordinator();
+    @Inject
+    public PerspectiveCoordinator(DisplayerCoordinator coordinator) {
+        this.displayerCoordinator = coordinator;
     }
 
     /**
      * Adds a Displayer instance to the current perspective context.
      */
     public void addDisplayer(Displayer displayer) {
-        coordinator.addDisplayer(displayer);
+        displayerCoordinator.addDisplayer(displayer);
     }
 
     /**
      * Removes a Displayer instance from the current perspective context.
      */
     public boolean removeDisplayer(Displayer displayer) {
-        return coordinator.removeDisplayer(displayer);
+        return displayerCoordinator.removeDisplayer(displayer);
     }
 
     /**
@@ -69,7 +69,7 @@ public class PerspectiveCoordinator {
         editOn = true;
 
         // Turns off the automatic refresh of all the displayers.
-        for (Displayer displayer : coordinator.getDisplayerList()) {
+        for (Displayer displayer : displayerCoordinator.getDisplayerList()) {
             displayer.setRefreshOn(false);
         }
     }
@@ -81,7 +81,7 @@ public class PerspectiveCoordinator {
         editOn = false;
 
         // Resumes the automatic refresh on all the displayers.
-        for (Displayer displayer : coordinator.getDisplayerList()) {
+        for (Displayer displayer : displayerCoordinator.getDisplayerList()) {
             displayer.setRefreshOn(true);
         }
     }
@@ -90,38 +90,39 @@ public class PerspectiveCoordinator {
      * Reset the coordinator every time the perspective is changed.
      */
     private void onPerspectiveChanged(@Observes final PerspectiveChange event) {
-        init();
+        displayerCoordinator.clear();
     }
 
     /**
      * Listen to modifications on any of the data set being used in this perspective.
      */
     private void onDataSetModifiedEvent(@Observes DataSetModifiedEvent event) {
-        if (editOn) return;
+        if (!editOn) {
 
-        String targetUUID = event.getDataSetDef().getUUID();
-        for (Displayer displayer : coordinator.getDisplayerList()) {
-            DisplayerSettings settings = displayer.getDisplayerSettings();
+            String targetUUID = event.getDataSetDef().getUUID();
+            for (Displayer displayer : displayerCoordinator.getDisplayerList()) {
+                DisplayerSettings settings = displayer.getDisplayerSettings();
 
-            // Do nothing if the displayer:
-            // - Is not drawn
-            // - Is handling the refresh by itself
-            // - Is not configured to be updated on stale data
-            if (!displayer.isDrawn() || displayer.isRefreshOn() || !settings.isRefreshStaleData()) {
-                continue;
-            }
+                // Do nothing if the displayer:
+                // - Is not drawn
+                // - Is handling the refresh by itself
+                // - Is not configured to be updated on stale data
+                if (!displayer.isDrawn() || displayer.isRefreshOn() || !settings.isRefreshStaleData()) {
+                    continue;
+                }
 
-            String uuid = null;
-            DataSet dataSet = settings.getDataSet();
-            if (dataSet != null) {
-                uuid = dataSet.getUUID();
-            }
-            DataSetLookup dataSetLookup = settings.getDataSetLookup();
-            if (uuid == null && dataSetLookup != null) {
-                uuid = dataSetLookup.getDataSetUUID();
-            }
-            if (uuid != null && targetUUID.equals(uuid)) {
-                displayer.redraw();
+                String uuid = null;
+                DataSet dataSet = settings.getDataSet();
+                if (dataSet != null) {
+                    uuid = dataSet.getUUID();
+                }
+                DataSetLookup dataSetLookup = settings.getDataSetLookup();
+                if (uuid == null && dataSetLookup != null) {
+                    uuid = dataSetLookup.getDataSetUUID();
+                }
+                if (uuid != null && targetUUID.equals(uuid)) {
+                    displayer.redraw();
+                }
             }
         }
     }

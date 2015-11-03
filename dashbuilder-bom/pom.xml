@@ -49,6 +49,13 @@
 
       <dependency>
         <groupId>org.dashbuilder</groupId>
+        <artifactId>dashbuilder-dataset-api</artifactId>
+        <version>${project.version}</version>
+        <type>test-jar</type>
+      </dependency>
+
+      <dependency>
+        <groupId>org.dashbuilder</groupId>
         <artifactId>dashbuilder-displayer-api</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -234,6 +241,7 @@
       </dependency>
 
       <!-- Dashbuilder Client -->
+
       <dependency>
         <groupId>org.dashbuilder</groupId>
         <artifactId>dashbuilder-common-client</artifactId>
@@ -271,6 +279,13 @@
         <artifactId>dashbuilder-displayer-client</artifactId>
         <version>${project.version}</version>
         <classifier>sources</classifier>
+      </dependency>
+
+      <dependency>
+        <groupId>org.dashbuilder</groupId>
+        <artifactId>dashbuilder-displayer-client</artifactId>
+        <version>${project.version}</version>
+        <type>test-jar</type>
       </dependency>
 
       <dependency>

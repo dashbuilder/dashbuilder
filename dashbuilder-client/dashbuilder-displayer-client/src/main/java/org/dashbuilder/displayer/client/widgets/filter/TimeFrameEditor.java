@@ -16,94 +16,116 @@
 package org.dashbuilder.displayer.client.widgets.filter;
 
 import javax.enterprise.context.Dependent;
+import javax.inject.Inject;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
-import org.dashbuilder.dataset.client.resources.i18n.MonthConstants;
 import org.dashbuilder.dataset.date.Month;
 import org.dashbuilder.dataset.date.TimeFrame;
 import org.dashbuilder.dataset.date.TimeInstant;
 import org.dashbuilder.dataset.group.DateIntervalType;
-import org.gwtbootstrap3.client.ui.ListBox;
+import org.jboss.errai.ioc.client.container.SyncBeanManager;
+import org.uberfire.client.mvp.UberView;
+import org.uberfire.mvp.Command;
 
 @Dependent
-public class TimeFrameEditor extends Composite {
+public class TimeFrameEditor implements IsWidget {
 
-    interface Listener {
-        void valueChanged(TimeFrame tf);
+    public interface View extends UberView<TimeFrameEditor> {
+
+        void hideFirstMonthSelector();
+
+        void showFirstMonthSelector();
+
+        void clearFirstMonthSelector();
+
+        void addFirstMonthItem(Month month);
+
+        void setSelectedFirstMonthIndex(int index);
+
+        int getSelectedFirstMonthIndex();
     }
 
-    interface Binder extends UiBinder<Widget, TimeFrameEditor> {}
-    private static Binder uiBinder = GWT.create(Binder.class);
-
-    Listener listener = null;
+    View view;
+    SyncBeanManager beanManager;
     TimeFrame timeFrame = null;
-
-    @UiField
     TimeInstantEditor fromEditor;
-
-    @UiField
     TimeInstantEditor toEditor;
+    Command onChangeCommand = new Command() { public void execute() {} };
 
-    @UiField
-    Label firstMonthLabel;
-
-    @UiField
-    ListBox firstMonthList;
-
-    public TimeFrameEditor() {
-        initWidget(uiBinder.createAndBindUi(this));
+    @Inject
+    public TimeFrameEditor(View view, SyncBeanManager beanManager) {
+        this.view = view;
+        this.beanManager = beanManager;
     }
 
-    public void init(final TimeFrame frame, final Listener listener) {
-        this.listener = listener;
-        this.timeFrame = frame;
-        if (timeFrame == null) {
-            this.timeFrame = TimeFrame.parse("begin[year] till end[year]");
-        }
+    @Override
+    public Widget asWidget() {
+        return view.asWidget();
+    }
 
-        initFirstMonthListBox();
-        changeFirstMonthVisibility();
+    public TimeFrame getTimeFrame() {
+        return timeFrame;
+    }
 
-        TimeInstant instantFrom = timeFrame.getFrom();
-        fromEditor.init(instantFrom.cloneInstance(), true, new TimeInstantEditor.Listener() {
-            public void valueChanged(TimeInstant timeInstant) {
-                TimeFrameEditor.this.timeFrame.setFrom(timeInstant);
-                TimeFrameEditor.this.timeFrame.setFrom(timeInstant);
-                timeInstant.setFirstMonthOfYear(getFirstMonthOfYear());
-                changeFirstMonthVisibility();
-                listener.valueChanged(timeFrame);
+    public TimeInstantEditor getFromEditor() {
+        return fromEditor;
+    }
+
+    public TimeInstantEditor getToEditor() {
+        return toEditor;
+    }
+
+    public void init(TimeFrame tf, Command onChangeCommand) {
+        this.onChangeCommand = onChangeCommand;
+        this.timeFrame = tf != null ? tf : TimeFrame.parse("begin[year] till end[year]");
+
+        this.fromEditor = beanManager.lookupBean(TimeInstantEditor.class).newInstance();
+        this.fromEditor.init(timeFrame.getFrom(), new Command() {
+            public void execute() {
+                fromEditor.getTimeInstant().setFirstMonthOfYear(getFirstMonthOfYear());
+                timeFrame.setFrom(fromEditor.getTimeInstant());
+                changeFirstMonthAvailability();
+                fireChanges();
+            }
+        });
+        this.toEditor = beanManager.lookupBean(TimeInstantEditor.class).newInstance();
+        this.toEditor.init(timeFrame.getTo(), new Command() {
+            public void execute() {
+                toEditor.getTimeInstant().setFirstMonthOfYear(getFirstMonthOfYear());
+                timeFrame.setTo(toEditor.getTimeInstant());
+                changeFirstMonthAvailability();
+                fireChanges();
             }
         });
 
-        TimeInstant instantTo = timeFrame.getTo();
-        toEditor.init(instantTo.cloneInstance(), true, new TimeInstantEditor.Listener() {
-            public void valueChanged(TimeInstant timeInstant) {
-                TimeFrameEditor.this.timeFrame.setTo(timeInstant);
-                timeInstant.setFirstMonthOfYear(getFirstMonthOfYear());
-                changeFirstMonthVisibility();
-                listener.valueChanged(timeFrame);
-            }
-        });
+        view.init(this);
+        initFirstMonthSelector();
+        changeFirstMonthAvailability();
     }
 
-    protected void changeFirstMonthVisibility() {
-        firstMonthLabel.setVisible(false);
-        firstMonthList.setVisible(false);
-
-        if (isFirstMonthVisible()) {
-            firstMonthLabel.setVisible(true);
-            firstMonthList.setVisible(true);
+    protected void initFirstMonthSelector() {
+        view.clearFirstMonthSelector();
+        Month current = getFirstMonthOfYear();
+        Month[] entries = Month.values();
+        for (int i = 0; i < entries.length; i++) {
+            Month entry = entries[i];
+            view.addFirstMonthItem(entry);
+            if (current != null && current.equals(entry)) {
+                view.setSelectedFirstMonthIndex(i);
+            }
         }
     }
 
-    protected boolean isFirstMonthVisible() {
+    protected void changeFirstMonthAvailability() {
+        view.hideFirstMonthSelector();
+
+        if (isFirstMonthAvailable()) {
+            view.showFirstMonthSelector();
+        }
+    }
+
+    public boolean isFirstMonthAvailable() {
 
         TimeInstant instantFrom = timeFrame.getFrom();
         TimeInstant.TimeMode modeFrom = instantFrom.getTimeMode();
@@ -124,7 +146,7 @@ public class TimeFrameEditor extends Composite {
         return false;
     }
 
-    protected Month getFirstMonthOfYear() {
+    public Month getFirstMonthOfYear() {
 
         TimeInstant instantFrom = timeFrame.getFrom();
         TimeInstant.TimeMode modeFrom = instantFrom.getTimeMode();
@@ -145,7 +167,7 @@ public class TimeFrameEditor extends Composite {
         return null;
     }
 
-    protected void setFirstMonthOfYear(Month month) {
+    public void setFirstMonthOfYear(Month month) {
 
         TimeInstant instantFrom = timeFrame.getFrom();
         TimeInstant.TimeMode modeFrom = instantFrom.getTimeMode();
@@ -165,24 +187,14 @@ public class TimeFrameEditor extends Composite {
         }
     }
 
-    protected void initFirstMonthListBox() {
-        firstMonthList.clear();
-        Month current = getFirstMonthOfYear();
-        Month[] entries = Month.values();
-        for (int i = 0; i < entries.length; i++) {
-            Month entry = entries[i];
-            firstMonthList.addItem(MonthConstants.INSTANCE.getString(entry.name()));
-            if (current != null && current.equals(entry)) {
-                firstMonthList.setSelectedIndex(i);
-            }
-        }
+    public void changeFirstMonth() {
+        int selectedIdx = view.getSelectedFirstMonthIndex();
+        Month month = Month.getByIndex(selectedIdx + 1);
+        setFirstMonthOfYear(month);
+        fireChanges();
     }
 
-    @UiHandler(value = "firstMonthList")
-    public void onFirstMonthSelected(ChangeEvent changeEvent) {
-        int selectedIdx = firstMonthList.getSelectedIndex();
-        Month month = Month.getByIndex(selectedIdx+1);
-        setFirstMonthOfYear(month);
-        listener.valueChanged(timeFrame);
+    protected void fireChanges() {
+        onChangeCommand.execute();
     }
 }
