@@ -40,6 +40,7 @@ public class DataSetLookupJsonTest {
                 .filter("department", notEqualsTo("IT"))
                 .filter("amount", between(100d, 200d))
                 .filter("date", greaterThan(jsonMarshaller.parseDate("2018-01-01 00:00:00")))
+                .filter("country", isNull())
                 .group("department").select("Services")
                 .group("date", "year").dynamic(DateIntervalType.YEAR, true)
                 .column("date")

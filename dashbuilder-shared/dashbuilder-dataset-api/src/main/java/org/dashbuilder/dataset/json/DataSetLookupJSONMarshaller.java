@@ -393,7 +393,6 @@ public class DataSetLookupJSONMarshaller {
         String columnId = columnFilterJson.getString(keySet(COLUMN));
         String functionType = columnFilterJson.getString(keySet(FUNCTION_TYPE));
         JsonArray terms = columnFilterJson.getArray(keySet(FUNCTION_ARGS));
-        checkNotNull(terms, false, "Dataset lookup function null params");
         if (functionType == null) {
             throw new RuntimeException("Dataset lookup column filter null function type");
         }
@@ -571,20 +570,6 @@ public class DataSetLookupJSONMarshaller {
 
     public boolean isCoreFilter(String functionType) {
         return coreFunctionTypes.contains(functionType);
-    }
-
-    protected boolean checkNotNull(JsonValue value, boolean nullable, String errorMessage) {
-        if (nullable) {
-            return value != null;
-        }
-        else {
-            if (value != null) {
-                return true;
-            }
-            else {
-                throw new RuntimeException("Dataset lookup validation error: " + (errorMessage != null ? errorMessage : ""));
-            }
-        }
     }
 
     public String twoDigits(int n) {

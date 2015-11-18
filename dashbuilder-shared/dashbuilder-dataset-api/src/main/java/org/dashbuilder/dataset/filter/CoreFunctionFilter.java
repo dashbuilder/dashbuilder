@@ -32,6 +32,11 @@ public class CoreFunctionFilter extends ColumnFilter {
     public CoreFunctionFilter() {
     }
 
+    public CoreFunctionFilter(String columnId, CoreFunctionType type) {
+        super(columnId);
+        this.type = type;
+    }
+
     public CoreFunctionFilter(String columnId, CoreFunctionType type, List parameters) {
         super(columnId);
         this.type = type;
@@ -56,15 +61,20 @@ public class CoreFunctionFilter extends ColumnFilter {
         return parameters;
     }
 
-    public void setParameters(Comparable... parameters) {
+    public void setParameters(Comparable... newParameters) {
         this.parameters.clear();
-        for (Comparable param : parameters) {
-            this.parameters.add(param);
+        if (newParameters != null) {
+            for (Comparable param : newParameters) {
+                this.parameters.add(param);
+            }
         }
     }
 
-    public void setParameters(List parameters) {
-        this.parameters = parameters;
+    public void setParameters(List newParameters) {
+        this.parameters .clear();
+        if (newParameters != null) {
+            this.parameters.addAll(newParameters);
+        }
     }
 
     public String toString() {
@@ -136,10 +146,15 @@ public class CoreFunctionFilter extends ColumnFilter {
     public boolean equals(Object obj) {
         try {
             CoreFunctionFilter other = (CoreFunctionFilter) obj;
-            if (!super.equals(other)) return false;
-
-            if (type != null && !type.equals(other.type)) return false;
-            if (parameters.size() != other.parameters.size()) return false;
+            if (!super.equals(other)) {
+                return false;
+            }
+            if (type != null && !type.equals(other.type)) {
+                return false;
+            }
+            if (parameters.size() != other.parameters.size()) {
+                return false;
+            }
             for (Object param : parameters) {
                 if (!other.parameters.contains(param)) {
                     return false;
