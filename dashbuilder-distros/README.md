@@ -24,18 +24,12 @@ Currently, the following artifacts are generated:
 
 * **dashbuilder-wildfly8.war:**  Product distribution for the JBoss Widlfly 8.x application server.             
 
-  By the default the distribution is configured to use the default H2 in-memory database provided by the app server.              
-
   Detailed installation instructions [here](./src/main/wildfly8/README.md).          
 
 * **dashbuilder-eap6_4.war:**  Product distribution for the JBoss EAP 6.4 application server.           
 
-  By the default the distribution is configured to use the default H2 in-memory database provided by the app server.           
-
   Detailed installation instructions [here](./src/main/eap6_4/README.md).           
 
 * **dashbuilder-tomcat7.war:**  Product distribution for Apache Tomcat 7 server.           
-
-  By the default the distribution is configured to use a local H2 database file.            
 
   Detailed installation instructions [here](./src/main/tomcat7/README.md).             
