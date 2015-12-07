@@ -130,6 +130,12 @@ public class DataSetEditorView extends Composite implements DataSetEditor.View {
     }
 
     @Override
+    public void setConfigurationTabTitle(String title) {
+        basicAttributesTabItem.setText(title);
+        basicAttributesTabItem.setTitle(title);
+    }
+
+    @Override
     public void showConfigurationTab() {
         basicAttributesTabItem.showTab();
     }

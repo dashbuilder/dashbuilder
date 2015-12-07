@@ -46,9 +46,9 @@
   <g:FlowPanel addStyleNames="{style.mainPanel}">
 
     <b:NavTabs>
-      <b:TabListItem ui:field="basicAttributesTabItem" text="{i18n.tab_configguration}" active="true" />
-      <b:TabListItem ui:field="previewTabItem" text="{i18n.tab_preview}"/>
-      <b:TabListItem ui:field="advancedAttributesTabItem" text="{i18n.tab_advancedConfiguration}"/>
+      <b:TabListItem ui:field="basicAttributesTabItem" text="{i18n.tab_configguration}" title="{i18n.tab_configguration}" active="true" />
+      <b:TabListItem ui:field="previewTabItem" text="{i18n.tab_preview}" title="{i18n.tab_preview}"/>
+      <b:TabListItem ui:field="advancedAttributesTabItem" text="{i18n.tab_advancedConfiguration}" title="{i18n.tab_advancedConfiguration}"/>
     </b:NavTabs>
 
     <b:TabContent>

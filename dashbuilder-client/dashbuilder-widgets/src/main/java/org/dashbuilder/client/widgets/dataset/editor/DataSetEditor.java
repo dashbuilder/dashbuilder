@@ -34,7 +34,6 @@ import org.dashbuilder.dataset.client.DataSetClientServices;
 import org.dashbuilder.dataset.client.editor.DataSetDefEditor;
 import org.dashbuilder.dataset.def.DataColumnDef;
 import org.dashbuilder.dataset.def.DataSetDef;
-import org.dashbuilder.dataset.filter.ColumnFilter;
 import org.dashbuilder.dataset.filter.DataSetFilter;
 import org.dashbuilder.dataset.group.DataSetGroup;
 import org.dashbuilder.displayer.client.Displayer;
@@ -45,8 +44,6 @@ import org.uberfire.mvp.Command;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
-import java.util.Collection;
-import java.util.LinkedList;
 import java.util.List;
 
 import static org.uberfire.commons.validation.PortablePreconditions.checkNotNull;
@@ -75,6 +72,8 @@ public abstract class DataSetEditor<T extends DataSetDef> implements IsWidget, D
                          DataSetDefCacheAttributesEditorView clientCacheAttributesEditorView,
                          DataSetDefRefreshAttributesEditor.View refreshEditorView);
 
+        void setConfigurationTabTitle(String title);
+        
         void showConfigurationTab();
 
         void addConfigurationTabItemClickHandler(final Command command);
@@ -217,6 +216,10 @@ public abstract class DataSetEditor<T extends DataSetDef> implements IsWidget, D
 
         // Check specific provider type constraints.
         final DataSetProviderType type = value.getProvider() != null ? value.getProvider() : null;
+        final String typeTitle = getTypeTitle(type);
+        view.setConfigurationTabTitle(new StringBuffer(typeTitle).append(" ")
+                .append(DataSetEditorConstants.INSTANCE.tab_configguration()).toString());
+        
         final boolean isBean = type != null && DataSetProviderType.BEAN.equals(type);
         if (isBean) {
             // Bean data sets do not support backend cache, its used by its own nature...
@@ -356,6 +359,25 @@ public abstract class DataSetEditor<T extends DataSetDef> implements IsWidget, D
         if (afterPreviewCommand != null) {
             this.afterPreviewCommand.execute();
         }
+    }
+
+    private String getTypeTitle(final DataSetProviderType type) {
+        String description = "";
+        switch (type) {
+            case BEAN:
+                description = DataSetEditorConstants.INSTANCE.bean();
+                break;
+            case CSV:
+                description = DataSetEditorConstants.INSTANCE.csv();
+                break;
+            case SQL:
+                description = DataSetEditorConstants.INSTANCE.sql();
+                break;
+            case ELASTICSEARCH:
+                description = DataSetEditorConstants.INSTANCE.elasticSearch();
+                break;
+        }
+        return description;
     }
     
     protected final Command configurationTabItemClickHandler = new Command() {
