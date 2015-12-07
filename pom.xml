@@ -8,7 +8,7 @@
     <groupId>org.jboss.integration-platform</groupId>
     <artifactId>jboss-integration-platform-parent</artifactId>
     <!-- Keep in sync with property <version.org.jboss.integration-platform> -->
-    <version>6.0.0.CR30</version>
+    <version>6.0.0.CR31</version>
   </parent>
 
   <groupId>org.dashbuilder</groupId>
@@ -31,9 +31,8 @@
   </licenses>
 
   <properties>
-    <!-- Make build platform independent -->
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <maven.compiler.source>1.6</maven.compiler.source>
+    <maven.compiler.target>1.6</maven.compiler.target>
     <!-- Make OSGi happy -->
     <osgi.snapshot.qualifier>${maven.build.timestamp}</osgi.snapshot.qualifier>
   </properties>
@@ -104,29 +103,13 @@
   <dependencyManagement/>
   <dependencies/>
 
-  <!-- DistributionManagement -->
-  <distributionManagement>
-    <repository>
-      <id>jboss-releases-repository</id>
-      <name>JBoss Releases Repository</name>
-      <url>https://repository.jboss.org/nexus/service/local/staging/deploy/maven2/</url>
-    </repository>
-
-    <snapshotRepository>
-      <id>jboss-snapshots-repository</id>
-      <name>JBoss Snapshots Repository</name>
-      <url>https://repository.jboss.org/nexus/content/repositories/snapshots/</url>
-    </snapshotRepository>
-  </distributionManagement>
-
+  <!-- DistributionManagement is already defined in jboss-parent-->
   <build>
     <pluginManagement>
       <plugins>
-
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-resources-plugin</artifactId>
-          <version>2.6</version>
           <configuration>
             <encoding>UTF-8</encoding>
           </configuration>
@@ -135,22 +118,18 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-compiler-plugin</artifactId>
-          <version>2.5.1</version>
           <configuration>
-            <source>1.6</source>
-            <target>1.6</target>
             <fork>true</fork>
             <meminitial>128m</meminitial>
             <maxmem>512m</maxmem>
-            <showDeprecation>false</showDeprecation>
-            <showWarnings>false</showWarnings>
+            <showDeprecation>true</showDeprecation>
+            <showWarnings>true</showWarnings>
           </configuration>
         </plugin>
 
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-surefire-plugin</artifactId>
-          <version>2.18.1</version>
           <configuration>
             <includes>
               <include>**/*Test.java</include>
@@ -171,11 +150,11 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-failsafe-plugin</artifactId>
-          <version>2.18.1</version>
           <executions>
             <execution>
               <goals>
                 <goal>integration-test</goal>
+                <goal>verify</goal>
               </goals>
             </execution>
           </executions>
@@ -191,11 +170,10 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-jar-plugin</artifactId>
-          <version>2.3.1</version>
           <executions>
             <!-- No OSGi manifestEntries for <goal>jar</goal>: if it supported, then felix has already added them -->
             <execution>
-              <id>test-jar</id>
+              <id>attach-test-jar</id>
               <goals>
                 <goal>test-jar</goal>
               </goals>
@@ -228,12 +206,11 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-source-plugin</artifactId>
-          <version>2.1.2</version>
           <executions>
             <execution>
-              <id>jar</id>
+              <id>attach-sources</id>
               <goals>
-                <goal>jar</goal>
+                <goal>jar-no-fork</goal>
               </goals>
               <configuration>
                 <archive>
@@ -249,9 +226,9 @@
               </configuration>
             </execution>
             <execution>
-              <id>test-jar</id>
+              <id>attach-test-sources</id>
               <goals>
-                <goal>test-jar</goal>
+                <goal>test-jar-no-fork</goal>
               </goals>
               <configuration>
                 <archive>
@@ -317,7 +294,6 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-javadoc-plugin</artifactId>
-          <version>2.8</version>
           <configuration>
             <links>
               <link>http://docs.oracle.com/javase/6/docs/api</link>
