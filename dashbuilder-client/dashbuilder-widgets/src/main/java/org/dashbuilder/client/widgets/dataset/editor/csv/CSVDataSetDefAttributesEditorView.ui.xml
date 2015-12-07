@@ -8,8 +8,7 @@
   <ui:with field="i18n" type="org.dashbuilder.client.widgets.resources.i18n.DataSetEditorConstants"/>
   
   <ui:style>
-    .inlineText {
-      float: left;
+    .inline {
       margin-right: 5px;
     }
     .row {
@@ -22,30 +21,42 @@
     <!-- File path. -->
     <b:Row ui:field="filePathRow" addStyleNames="{style.row}">
       <b:Column size="MD_3">
-        <g:HTML text="{i18n.csv_filePath}" addStyleNames="{style.inlineText}"/>
-        <b:Popover container="body" showDelayMs="1000" content="{i18n.csv_URL_description}" title="{i18n.csv_useFileURL}" placement="BOTTOM">
-          <b:Button icon="CLOUD_UPLOAD" type="LINK" ui:field="useFileURLButton" size="EXTRA_SMALL"/>
-        </b:Popover>
+        <g:HTML text="{i18n.csv_filePath}" />
       </b:Column>
       <b:Column size="MD_9">
-        <g:IsWidget ui:field="filePathView"/>
+        <g:HorizontalPanel width="100%">
+          <g:cell width="1%" verticalAlignment="MIDDLE">
+            <b:Popover container="body" showDelayMs="1000" content="{i18n.csv_URL_description}" title="{i18n.csv_useFileURL}" placement="BOTTOM">
+              <b:Button icon="CLOUD_UPLOAD" type="DEFAULT" ui:field="useFileURLButton" size="EXTRA_SMALL" addStyleNames="{style.inline}"/>
+            </b:Popover>    
+          </g:cell>
+          <g:cell width="99%" verticalAlignment="MIDDLE">
+            <g:IsWidget ui:field="filePathView"/>
+          </g:cell>
+        </g:HorizontalPanel>
       </b:Column>
     </b:Row>
 
     <!-- File URL. -->
     <b:Row ui:field="fileURLRow" addStyleNames="{style.row}">
       <b:Column size="MD_3">
-        <g:HTML text="{i18n.csv_URL}" addStyleNames="{style.inlineText}"/>
-        <b:Popover container="body" showDelayMs="1000" content="{i18n.csv_filePath_description}" title="{i18n.csv_useFilePath}" placement="BOTTOM">
-          <b:Button icon="FILE" type="LINK" ui:field="useFilePathButton" size="EXTRA_SMALL"/>
-        </b:Popover>
+        <g:HTML text="{i18n.csv_URL}" />
       </b:Column>
       <b:Column size="MD_9">
-        <editor:ValueBoxEditor.View ui:field="fileURLView">
-          <editor:valuebox>
-            <b:TextBox placeholder="{i18n.csv_URL_placeholder}" />
-          </editor:valuebox>
-        </editor:ValueBoxEditor.View>
+        <g:HorizontalPanel width="100%">
+          <g:cell width="1%" verticalAlignment="MIDDLE">
+            <b:Popover container="body" showDelayMs="1000" content="{i18n.csv_filePath_description}" title="{i18n.csv_useFilePath}" placement="BOTTOM">
+              <b:Button icon="FILE" type="DEFAULT" ui:field="useFilePathButton" size="EXTRA_SMALL" addStyleNames="{style.inline}"/>
+            </b:Popover>  
+          </g:cell>
+          <g:cell width="99%" verticalAlignment="MIDDLE">
+            <editor:ValueBoxEditor.View ui:field="fileURLView">
+              <editor:valuebox>
+                <b:TextBox placeholder="{i18n.csv_URL_placeholder}" />
+              </editor:valuebox>
+            </editor:ValueBoxEditor.View>  
+          </g:cell>
+        </g:HorizontalPanel>
       </b:Column>
     </b:Row>
     
