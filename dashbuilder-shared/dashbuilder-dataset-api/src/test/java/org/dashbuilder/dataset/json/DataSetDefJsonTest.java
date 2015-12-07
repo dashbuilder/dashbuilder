@@ -18,6 +18,7 @@ import org.apache.commons.io.IOUtils;
 import org.dashbuilder.dataprovider.DataSetProviderType;
 import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.def.BeanDataSetDef;
+import org.dashbuilder.dataset.def.CSVDataSetDef;
 import org.dashbuilder.dataset.def.DataColumnDef;
 import org.dashbuilder.dataset.def.DataSetDef;
 import org.dashbuilder.dataset.filter.ColumnFilter;
@@ -43,6 +44,7 @@ public class DataSetDefJsonTest {
     private static final String BEAN_DEF_PATH = "beanDataSetDef.dset";
     private static final String FILTER_DEF_PATH = "dataSetDefFilter.dset";
     private static final String EXPENSES_DEF_PATH = "expenseReports.dset";
+    private static final String CSV_DEF_PATH = "csvDataSetDef.dset";
 
     DataSetDefJSONMarshaller jsonMarshaller;
 
@@ -76,6 +78,43 @@ public class DataSetDefJsonTest {
         assertDataSetDef(json, beanJSONContent);
     }
     
+    @Test
+    public void testCSV() throws Exception {
+        try {
+            String json = getFileAsString(CSV_DEF_PATH);
+            CSVDataSetDef def = (CSVDataSetDef) jsonMarshaller.fromJson(json);
+            assertEquals(def.getColumns().size(), 5);
+
+            DataColumnDef column1 = def.getColumnById("office");
+            DataColumnDef column2 = def.getColumnById("department");
+            DataColumnDef column3 = def.getColumnById("employee");
+            DataColumnDef column4 = def.getColumnById("amount");
+            DataColumnDef column5 = def.getColumnById("date");
+            assertNotNull(column1);
+            assertNotNull(column2);
+            assertNotNull(column3);
+            assertNotNull(column4);
+            assertNotNull(column5);
+            assertEquals(column1.getColumnType(), ColumnType.LABEL);
+            assertEquals(column2.getColumnType(), ColumnType.LABEL);
+            assertEquals(column3.getColumnType(), ColumnType.LABEL);
+            assertEquals(column4.getColumnType(), ColumnType.NUMBER);
+            assertEquals(column5.getColumnType(), ColumnType.DATE);
+
+            assertEquals(def.getFilePath(), "expenseReports.csv");
+            assertNull(def.getFileURL());
+            assertEquals(def.getDatePattern(), "MM-dd-yyyy");
+            assertEquals(def.getNumberPattern(), "#,###.##");
+            assertEquals(def.getDatePattern("date"), "MM-dd-yyyy");
+            assertEquals(def.getNumberPattern("amount"), "#,###.##");
+            assertEquals(def.getSeparatorChar(), Character.valueOf(';'));
+            assertEquals(def.getQuoteChar(), Character.valueOf('\"'));
+        }
+        catch (ClassCastException e) {
+            fail("Not a CSV dataset def");
+        }
+    }
+
     @Test
     public void testColumns() throws Exception {
         String json = getFileAsString(EXPENSES_DEF_PATH);
