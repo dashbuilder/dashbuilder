@@ -87,7 +87,6 @@ public abstract class DataSetBasicAttributesWorkflow<T extends DataSetDef, E ext
     public DataSetEditorWorkflow basicAttributesEdition() {
         checkDataSetDefNotNull();
 
-        // SQL specific attrs driver.
         dataSetDefBasicAttributesDriver = beanManager.lookupBean(DataSetDefBasicAttributesDriver.class).newInstance();
         dataSetDefBasicAttributesDriver.initialize(basicAttributesEditor);
         dataSetDefBasicAttributesDriver.edit(getDataSetDef());

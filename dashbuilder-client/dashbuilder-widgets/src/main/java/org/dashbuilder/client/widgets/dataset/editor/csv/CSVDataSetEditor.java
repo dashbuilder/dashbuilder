@@ -111,4 +111,11 @@ public class CSVDataSetEditor extends DataSetEditor<CSVDataSetDef> implements or
     public boolean isUsingFilePath() {
         return attributesEditor.isUsingFilePath();
     }
+
+    @Override
+    public void setValue(final CSVDataSetDef value) {
+        super.setValue(value);
+        // As gwt editor inheritance does not work fine, try to reuse CSV attributes editor logic here. 
+        attributesEditor.setValue(value);
+    }
 }
