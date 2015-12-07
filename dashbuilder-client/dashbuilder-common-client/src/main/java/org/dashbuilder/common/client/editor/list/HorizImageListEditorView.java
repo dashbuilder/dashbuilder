@@ -11,9 +11,8 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiConstructor;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.*;
+import org.gwtbootstrap3.client.ui.*;
 import org.gwtbootstrap3.client.ui.Image;
-import org.gwtbootstrap3.client.ui.Popover;
-import org.gwtbootstrap3.client.ui.Tooltip;
 import org.gwtbootstrap3.client.ui.constants.Placement;
 import org.uberfire.mvp.Command;
 
@@ -73,6 +72,10 @@ public class HorizImageListEditorView<T> extends Composite implements ImageListE
     public ImageListEditorView<T> add(final SafeUri uri, final String width, final String height,
                                        final SafeHtml heading, final SafeHtml text, 
                                        final boolean selected, final Command clickCommand) {
+        final VerticalPanel panel = new VerticalPanel();
+        panel.setVerticalAlignment(HasAlignment.ALIGN_MIDDLE);
+        panel.setHeight("100%");
+        
         final Image image = new Image(uri);
         image.setWidth(width);
         image.setHeight(height);
@@ -94,7 +97,15 @@ public class HorizImageListEditorView<T> extends Composite implements ImageListE
         popover.setPlacement(Placement.BOTTOM);
         popover.setShowDelayMs(1000);
         
-        mainPanel.add(popover);
+        final HTML label = new HTML(heading.asString());
+        final HorizontalPanel labelPanel = new HorizontalPanel();
+        labelPanel.setWidth("100%");
+        labelPanel.setHorizontalAlignment(HasAlignment.ALIGN_CENTER);
+        labelPanel.add(label);
+
+        panel.add(popover);
+        panel.add(labelPanel);        
+        mainPanel.add(panel);
         
         return this;
     }
