@@ -171,6 +171,14 @@
     <role-name>admin</role-name>
   </security-role>
 
+  <!-- Open resources for login page. -->
+  <security-constraint>
+    <web-resource-collection>
+      <web-resource-name>openResources</web-resource-name>
+      <url-pattern>/org.dashbuilder.DashbuilderShowcase/patternfly/*</url-pattern>
+    </web-resource-collection>
+  </security-constraint>
+
   <!-- Default security constraints.-->
   <security-constraint>
     <web-resource-collection>
@@ -178,36 +186,7 @@
       <url-pattern>/dashbuilder.html</url-pattern>
       <url-pattern>/org.dashbuilder.DashbuilderShowcase/*</url-pattern>
       <url-pattern>*.erraiBus</url-pattern>
-
-      <url-pattern>/resourceList</url-pattern>
-      <url-pattern>/editor</url-pattern>
-      <url-pattern>/editor/*</url-pattern>
-      <url-pattern>/menuconnector/*</url-pattern>
-      <url-pattern>/menu/*</url-pattern>
-      <url-pattern>/uuidRepository</url-pattern>
-      <url-pattern>/transformer</url-pattern>
-      <url-pattern>/assetservice</url-pattern>
-      <url-pattern>/filestore</url-pattern>
-      <url-pattern>/dictionary</url-pattern>
-      <url-pattern>/themes</url-pattern>
-      <url-pattern>/customeditors</url-pattern>
-      <url-pattern>/simulation</url-pattern>
-      <url-pattern>/formwidget</url-pattern>
-      <url-pattern>/calledelement</url-pattern>
-      <url-pattern>/stencilpatterns</url-pattern>
-      <url-pattern>/jbpmservicerepo</url-pattern>
-      <url-pattern>/processdiff</url-pattern>
-      <url-pattern>/taskforms</url-pattern>
-      <url-pattern>/taskformseditor</url-pattern>
-      <url-pattern>/processinfo</url-pattern>
-      <url-pattern>/syntaxcheck</url-pattern>
-      <url-pattern>/plugins</url-pattern>
-      <url-pattern>/plugin</url-pattern>
-      <url-pattern>/plugin/*</url-pattern>
-      <url-pattern>/stencilset/*</url-pattern>
       <url-pattern>/plugins/*</url-pattern>
-      <url-pattern>/maven2wb/*</url-pattern>
-
     </web-resource-collection>
     <auth-constraint>
       <role-name>admin</role-name>
