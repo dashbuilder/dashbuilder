@@ -239,7 +239,7 @@ public class ColumnListEditor implements IsWidget, org.dashbuilder.dataset.clien
                 setEditorEnabled(0 ,false, DataSetEditorConstants.INSTANCE.dataSetMustHaveAtLeastOneColumn());
             
             // Enable column selection if more than one column remains on the data set.
-            } else if (size == 2) {
+            } else if (size == 2 && !listEditor.getEditors().isEmpty()) {
                 final String cId = listEditor.getEditors().get(0).id().getValue();
                 if (!restrictedColumns.contains(cId)) {
                     setEditorEnabled(0, true, null);
