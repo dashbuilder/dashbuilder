@@ -18,8 +18,6 @@ import java.util.Arrays;
 import java.util.Collection;
 
 import org.dashbuilder.dataset.group.DateIntervalType;
-import org.dashbuilder.dataset.json.DataSetJSONMarshaller;
-import org.dashbuilder.dataset.json.DataSetLookupJSONMarshaller;
 import org.dashbuilder.displayer.DisplayerSettings;
 import org.dashbuilder.displayer.DisplayerSettingsFactory;
 import org.dashbuilder.json.JsonObject;
@@ -33,10 +31,6 @@ import static org.dashbuilder.dataset.sort.SortOrder.DESCENDING;
 
 @RunWith(Parameterized.class)
 public class DisplayerSettingsJsonTest {
-
-    DataSetJSONMarshaller datasetJsonMarshaller = new DataSetJSONMarshaller();
-    DataSetLookupJSONMarshaller lookupJsonMarshaller = new DataSetLookupJSONMarshaller();
-    DisplayerSettingsJSONMarshaller displayerJsonMarshaller = new DisplayerSettingsJSONMarshaller(datasetJsonMarshaller, lookupJsonMarshaller);
 
     public static final DisplayerSettings OPPS_BY_PIPELINE = DisplayerSettingsFactory.newPieChartSettings()
             .uuid("opps-by-pipeline")
@@ -172,6 +166,7 @@ public class DisplayerSettingsJsonTest {
     @Test
     public void testSettingsMarshalling() {
 
+        DisplayerSettingsJSONMarshaller displayerJsonMarshaller = DisplayerSettingsJSONMarshaller.get();
         JsonObject _jsonObj = displayerJsonMarshaller.toJsonObject(displayerSettings);
         assertNotNull(_jsonObj.toString());
 

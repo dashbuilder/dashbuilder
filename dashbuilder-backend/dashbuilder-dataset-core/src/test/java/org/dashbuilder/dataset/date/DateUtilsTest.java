@@ -18,7 +18,6 @@ package org.dashbuilder.dataset.date;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import org.dashbuilder.dataset.backend.date.DateUtils;
 import org.dashbuilder.dataset.group.DateIntervalType;
 import org.dashbuilder.dataset.group.GroupStrategy;
 import org.junit.Test;

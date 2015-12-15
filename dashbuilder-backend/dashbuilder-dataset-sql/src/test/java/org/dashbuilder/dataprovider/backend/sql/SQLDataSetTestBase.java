@@ -18,58 +18,36 @@ package org.dashbuilder.dataprovider.backend.sql;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
-import javax.inject.Inject;
 import javax.sql.DataSource;
 
 import org.apache.commons.io.IOUtils;
-import org.dashbuilder.dataprovider.backend.sql.model.Column;
-import org.dashbuilder.dataprovider.backend.sql.model.Table;
+import org.dashbuilder.DataSetCore;
+import org.dashbuilder.dataprovider.DataSetProviderRegistry;
+import org.dashbuilder.dataprovider.sql.SQLDataSetProvider;
+import org.dashbuilder.dataprovider.sql.model.Column;
+import org.dashbuilder.dataprovider.sql.model.Table;
 import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetFormatter;
+import org.dashbuilder.dataset.DataSetManager;
 import org.dashbuilder.dataset.ExpenseReportsData;
-import org.dashbuilder.dataset.backend.BackendDataSetManager;
 import org.dashbuilder.dataset.json.DataSetDefJSONMarshaller;
 import org.dashbuilder.dataset.def.DataSetDefRegistry;
 import org.dashbuilder.dataset.def.SQLDataSetDef;
-import org.dashbuilder.test.ShrinkWrapHelper;
-import org.jboss.arquillian.container.test.api.Deployment;
-import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.shrinkwrap.api.Archive;
-import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.runner.RunWith;
 
 import static org.dashbuilder.dataset.ExpenseReportsData.*;
-import static org.dashbuilder.dataprovider.backend.sql.SQLFactory.*;
+import static org.dashbuilder.dataprovider.sql.SQLFactory.*;
 
-@RunWith(Arquillian.class)
 public class SQLDataSetTestBase {
 
-    @Deployment
-    public static Archive<?> createTestArchive()  {
-        return ShrinkWrapHelper.createJavaArchive()
-                .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
-    }
-
-    @Inject
-    BackendDataSetManager dataSetManager;
-
-    @Inject
-    DataSetFormatter dataSetFormatter;
-
-    @Inject
-    DataSetDefRegistry dataSetDefRegistry;
-
-    @Inject
-    DataSetDefJSONMarshaller jsonMarshaller;
-
-    @Inject
-    DataSourceLocatorMock dataSourceLocator;
-
-    @Inject
-    DatabaseTestSettings testSettings;
+    DataSetManager dataSetManager = DataSetCore.get().getDataSetManager();
+    DataSetDefRegistry dataSetDefRegistry = DataSetCore.get().getDataSetDefRegistry();
+    DataSetFormatter dataSetFormatter = new DataSetFormatter();
+    SQLDataSetProvider sqlDataSetProvider = SQLDataSetProvider.get();
+    DataSetDefJSONMarshaller jsonMarshaller = DataSetDefJSONMarshaller.get();
+    DatabaseTestSettings testSettings = createTestSettings();
 
     Connection conn;
     Column ID = column(COLUMN_ID, ColumnType.NUMBER, 4);
@@ -79,6 +57,14 @@ public class SQLDataSetTestBase {
     Column DATE = column(COLUMN_DATE, ColumnType.DATE, 4);
     Column AMOUNT = column(COLUMN_AMOUNT, ColumnType.NUMBER, 4);
     Table EXPENSES = table("EXPENSE_REPORTS");
+
+    protected DatabaseTestSettings getTestSettings() {
+        return testSettings;
+    }
+
+    protected DatabaseTestSettings createTestSettings() {
+        return new DatabaseTestSettings();
+    }
 
     public String getExpenseReportsDsetFile() {
         return testSettings.getExpenseReportsTableDsetFile();
@@ -100,7 +86,13 @@ public class SQLDataSetTestBase {
     @Before
     public void setUp() throws Exception {
         // Prepare the datasource to test
+        DataSourceLocatorMock dataSourceLocator = new DataSourceLocatorMock();
         dataSourceLocator.setDataSourceLocator(testSettings.getDataSourceLocator());
+        sqlDataSetProvider.setDataSourceLocator(dataSourceLocator);
+
+        // Add SQL data sets support
+        DataSetProviderRegistry dataSetProviderRegistry = DataSetCore.get().getDataSetProviderRegistry();
+        dataSetProviderRegistry.registerDataProvider(sqlDataSetProvider);
 
         // Register the SQL data set
         URL fileURL = Thread.currentThread().getContextClassLoader().getResource(getExpenseReportsDsetFile());

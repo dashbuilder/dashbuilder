@@ -17,35 +17,26 @@ package org.dashbuilder.dataset;
 
 import java.util.Arrays;
 import java.util.List;
-import javax.inject.Inject;
 
+import org.dashbuilder.DataSetCore;
 import org.dashbuilder.dataset.group.AggregateFunction;
 import org.dashbuilder.dataset.group.AggregateFunctionManager;
 import org.dashbuilder.dataset.group.AggregateFunctionType;
-import org.dashbuilder.test.ShrinkWrapHelper;
-import org.jboss.arquillian.container.test.api.Deployment;
-import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.shrinkwrap.api.Archive;
-import org.jboss.shrinkwrap.api.asset.EmptyAsset;
+import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
-@RunWith(Arquillian.class)
 public class AggregateFunctionTest {
 
-    @Deployment
-    public static Archive<?> createTestArchive()  {
-        return ShrinkWrapHelper.createJavaArchive()
-                .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
-    }
-
-    @Inject
     AggregateFunctionManager aggregateFunctionManager;
-
     List listOfNumbers = Arrays.asList(1, 2, 3, 4, 5);
     List listOfStrings = Arrays.asList("A", "B", "C", "A", "B");
+
+    @Before
+    public void setUp() throws Exception {
+        aggregateFunctionManager = DataSetCore.get().getAggregateFunctionManager();
+    }
 
     @Test
     public void testSumFunction() throws Exception {

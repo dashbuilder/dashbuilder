@@ -15,33 +15,19 @@
  */
 package org.dashbuilder.dataset;
 
-import javax.inject.Inject;
-
+import org.dashbuilder.DataSetCore;
 import org.dashbuilder.dataset.engine.SharedDataSetOpEngine;
 import org.dashbuilder.dataset.engine.index.DataSetIndex;
 import org.dashbuilder.dataset.engine.index.stats.DataSetIndexStats;
 import org.dashbuilder.dataset.group.AggregateFunctionType;
-import org.dashbuilder.test.ShrinkWrapHelper;
-import org.jboss.arquillian.container.test.api.Deployment;
-import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.shrinkwrap.api.Archive;
-import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
 import static org.dashbuilder.dataset.ExpenseReportsData.*;
 import static org.fest.assertions.api.Assertions.*;
 import static org.dashbuilder.dataset.filter.FilterFactory.*;
 
-@RunWith(Arquillian.class)
 public class DataSetIndexTest {
-
-    @Deployment
-    public static Archive<?> createTestArchive()  {
-        return ShrinkWrapHelper.createJavaArchive()
-                .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
-    }
 
     public static final String EXPENSE_REPORTS = "expense_reports_dataset";
 
@@ -88,7 +74,7 @@ public class DataSetIndexTest {
             .sort(COLUMN_AMOUNT, "desc")
             .buildLookup();
 
-    @Inject SharedDataSetOpEngine dataSetOpEngine;
+    SharedDataSetOpEngine dataSetOpEngine = DataSetCore.get().getSharedDataSetOpEngine();
 
     @Before
     public void setUp() throws Exception {

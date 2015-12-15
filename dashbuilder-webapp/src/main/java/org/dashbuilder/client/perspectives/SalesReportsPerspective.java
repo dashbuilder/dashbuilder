@@ -18,7 +18,6 @@ package org.dashbuilder.client.perspectives;
 import java.util.HashMap;
 import java.util.Map;
 import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
 
 import org.dashbuilder.client.resources.i18n.AppConstants;
 import org.dashbuilder.displayer.DisplayerSettings;
@@ -41,8 +40,7 @@ import static org.dashbuilder.client.sales.SalesOppsDisplayers.*;
 @WorkbenchPerspective(identifier = "SalesReportsPerspective")
 public class SalesReportsPerspective {
 
-    @Inject
-    DisplayerSettingsJSONMarshaller jsonHelper;
+    DisplayerSettingsJSONMarshaller jsonMarshaller = DisplayerSettingsJSONMarshaller.get();
 
     @Perspective
     public PerspectiveDefinition buildPerspective() {
@@ -56,7 +54,7 @@ public class SalesReportsPerspective {
     }
 
     private PlaceRequest createPlaceRequest(DisplayerSettings displayerSettings) {
-        String json = jsonHelper.toJsonString(displayerSettings);
+        String json = jsonMarshaller.toJsonString(displayerSettings);
         Map<String,String> params = new HashMap<String,String>();
         params.put("json", json);
         params.put("edit", "false");

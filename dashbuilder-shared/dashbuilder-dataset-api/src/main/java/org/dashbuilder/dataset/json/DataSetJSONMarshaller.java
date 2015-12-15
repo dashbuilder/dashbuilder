@@ -34,6 +34,12 @@ public class DataSetJSONMarshaller {
     private static final String DATASET_COLUMN_TYPE = "type";
     private static final String DATASET_COLUMN_VALUES = "values";
 
+    private static DataSetJSONMarshaller SINGLETON = new DataSetJSONMarshaller();
+
+    public static DataSetJSONMarshaller get() {
+        return SINGLETON;
+    }
+
     public JsonObject toJson(DataSet dataSet) throws JsonException {
         JsonObject json = Json.createObject();
         if (dataSet != null) {

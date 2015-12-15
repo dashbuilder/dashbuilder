@@ -19,6 +19,11 @@ import org.junit.Test;
 
 public class MonetDBTest extends SQLTestSuite {
 
+    @Override
+    protected DatabaseTestSettings createTestSettings() {
+        return new MonetDBTestSettings();
+    }
+
     @Test
     public void testAll() throws Exception {
         super.testAll();

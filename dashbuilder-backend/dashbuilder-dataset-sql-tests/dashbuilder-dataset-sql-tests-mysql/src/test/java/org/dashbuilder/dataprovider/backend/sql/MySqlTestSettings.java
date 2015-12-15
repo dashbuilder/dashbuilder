@@ -15,14 +15,13 @@
  */
 package org.dashbuilder.dataprovider.backend.sql;
 
-import javax.enterprise.inject.Specializes;
 import javax.sql.DataSource;
 
 import com.mysql.jdbc.jdbc2.optional.MysqlDataSource;
 import org.apache.commons.lang3.StringUtils;
+import org.dashbuilder.dataprovider.sql.SQLDataSourceLocator;
 import org.dashbuilder.dataset.def.SQLDataSetDef;
 
-@Specializes
 public class MySqlTestSettings extends DatabaseTestSettings {
 
     @Override

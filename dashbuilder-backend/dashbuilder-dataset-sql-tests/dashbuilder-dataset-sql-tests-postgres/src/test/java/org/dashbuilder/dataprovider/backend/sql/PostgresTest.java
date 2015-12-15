@@ -19,6 +19,11 @@ import org.junit.Test;
 
 public class PostgresTest extends SQLTestSuite {
 
+    @Override
+    protected DatabaseTestSettings createTestSettings() {
+        return new PostgresTestSettings();
+    }
+
     @Test
     public void testAll() throws Exception {
         super.testAll();

@@ -31,11 +31,9 @@ import org.dashbuilder.dataset.DataSetMetadata;
 import org.dashbuilder.dataset.def.ElasticSearchDataSetDef;
 import org.dashbuilder.dataset.group.*;
 import org.dashbuilder.dataset.impl.DataColumnImpl;
-import org.jboss.arquillian.junit.Arquillian;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
@@ -49,7 +47,6 @@ import static org.mockito.Mockito.when;
  *
  * @since 0.3.0
  */
-@RunWith(Arquillian.class)
 public class ElasticSearchJestClientTest {
 
     @Mock
@@ -58,15 +55,15 @@ public class ElasticSearchJestClientTest {
     @Mock
     protected ElasticSearchDataSetDef definition;
 
-    protected ElasticSearchClientFactory clientFactory = new ElasticSearchClientFactory();
-    protected ElasticSearchValueTypeMapper typeMapper = new ElasticSearchValueTypeMapper();
-    protected ElasticSearchUtils utils = new ElasticSearchUtils(typeMapper);
-    
-    protected ElasticSearchJestClient client = new ElasticSearchJestClient(clientFactory, typeMapper, utils);
-    protected ElasticSearchJestClient anotherClient = new ElasticSearchJestClient(clientFactory, typeMapper, utils);
+    protected ElasticSearchJestClient client;
 
     @Before
     public void setUp() throws Exception {
+        ElasticSearchValueTypeMapper typeMapper = new ElasticSearchValueTypeMapper();
+        ElasticSearchUtils utils = new ElasticSearchUtils(typeMapper);
+        ElasticSearchClientFactory clientFactory = new ElasticSearchClientFactory(typeMapper, utils);
+        client = new ElasticSearchJestClient(clientFactory, typeMapper, utils);
+
         // Init the annotated mocks.
         MockitoAnnotations.initMocks(this);
         

@@ -46,12 +46,7 @@ public class DataSetDefJsonTest {
     private static final String EXPENSES_DEF_PATH = "expenseReports.dset";
     private static final String CSV_DEF_PATH = "csvDataSetDef.dset";
 
-    DataSetDefJSONMarshaller jsonMarshaller;
-
-    @Before
-    public void setUp() throws Exception {
-        jsonMarshaller = new DataSetDefJSONMarshaller(new DataSetLookupJSONMarshaller());
-    }
+    DataSetDefJSONMarshaller jsonMarshaller = DataSetDefJSONMarshaller.get();
 
     @Test
     public void testBean() throws Exception {

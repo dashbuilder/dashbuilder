@@ -44,7 +44,8 @@ public class ElasticSearchMultiFieldsTest extends ElasticSearchDataSetTestBase {
      */
     @Before
     public void registerDataSet() throws Exception {
-        
+        super.setUp();
+
         // Register the data set definition for multifields index.
         _registerDataSet(EL_MULTIFIELDS_DEF);
 

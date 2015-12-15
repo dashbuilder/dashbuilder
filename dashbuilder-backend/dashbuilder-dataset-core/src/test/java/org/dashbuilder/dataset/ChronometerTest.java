@@ -15,7 +15,6 @@
  */
 package org.dashbuilder.dataset;
 
-import org.dashbuilder.dataset.backend.BackendChronometer;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -23,11 +22,11 @@ import static org.fest.assertions.api.Assertions.*;
 
 public class ChronometerTest {
 
-    BackendChronometer chronometer;
+    ChronometerImpl chronometer;
 
     @Before
     public void setUp() {
-        chronometer = new BackendChronometer();
+        chronometer = new ChronometerImpl();
     }
 
     @Test

@@ -22,7 +22,6 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
-import javax.inject.Inject;
 
 import org.dashbuilder.client.resources.i18n.AppConstants;
 import org.dashbuilder.displayer.DisplayerSettings;
@@ -47,8 +46,7 @@ import static org.dashbuilder.dataset.group.AggregateFunctionType.*;
 public class GalleryTree {
 
     private List<GalleryTreeNode> mainNodes = new ArrayList<GalleryTreeNode>();
-
-    @Inject DisplayerSettingsJSONMarshaller jsonHelper;
+    private DisplayerSettingsJSONMarshaller jsonMarshaller = DisplayerSettingsJSONMarshaller.get();
 
     public List<GalleryTreeNode> getMainNodes() {
         return mainNodes;
@@ -69,7 +67,7 @@ public class GalleryTree {
     }
 
     private PlaceRequest createPlaceRequest(DisplayerSettings displayerSettings) {
-        String json = jsonHelper.toJsonString(displayerSettings);
+        String json = jsonMarshaller.toJsonString(displayerSettings);
         Map<String,String> params = new HashMap<String,String>();
         params.put("json", json);
         params.put("edit", "false");
