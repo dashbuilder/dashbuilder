@@ -15,32 +15,23 @@
  */
 package org.dashbuilder.dataset.uuid;
 
-import javax.inject.Inject;
-
-import org.dashbuilder.test.ShrinkWrapHelper;
-import org.jboss.arquillian.container.test.api.Deployment;
-import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.shrinkwrap.api.Archive;
-import org.jboss.shrinkwrap.api.asset.EmptyAsset;
+import org.dashbuilder.DataSetCore;
+import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
 import static org.fest.assertions.api.Assertions.*;
 
 /**
  * UUIDs generator tool test
  */
-@RunWith(Arquillian.class)
 public class UUIDGeneratorTest {
 
-    @Deployment
-    public static Archive<?> createTestArchive()  {
-        return ShrinkWrapHelper.createJavaArchive()
-                .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
-    }
-
-    @Inject
     private UUIDGenerator uuidGenerator;
+
+    @Before
+    public void setUp() throws Exception {
+        uuidGenerator = DataSetCore.get().getUuidGenerator();
+    }
 
     @Test
     public void testUUIDLength() {
@@ -64,6 +55,5 @@ public class UUIDGeneratorTest {
         String back = uuidGenerator.uuidFromBase64(base64);
         assertThat(back).isEqualTo(uuid);
     }
-
 }
 

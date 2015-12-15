@@ -35,7 +35,7 @@ import static org.dashbuilder.dataset.filter.FilterFactory.*;
 
 public class DataSetLookupJsonTest {
 
-    DataSetLookupJSONMarshaller jsonMarshaller = new DataSetLookupJSONMarshaller();
+    DataSetLookupJSONMarshaller jsonMarshaller = DataSetLookupJSONMarshaller.get();
 
     @Test
     public void testDataSetLookupMarshalling() {

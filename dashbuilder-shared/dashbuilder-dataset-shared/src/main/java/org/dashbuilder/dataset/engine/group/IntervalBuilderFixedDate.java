@@ -16,9 +16,7 @@
 package org.dashbuilder.dataset.engine.group;
 
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
-import javax.enterprise.context.ApplicationScoped;
 
 import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.dataset.engine.DataSetHandler;
@@ -32,7 +30,6 @@ import static org.dashbuilder.dataset.group.DateIntervalType.*;
  * Interval builder for date columns which generates a fixed number of intervals for a given interval size.
  * <p>The only intervals sizes supported are: QUARTER, MONTH, DAY_OF_WEEK, HOUR, MINUTE & SECOND.</p>
  */
-@ApplicationScoped
 public class IntervalBuilderFixedDate implements IntervalBuilder {
 
     public IntervalList build(DataSetHandler ctx, ColumnGroup columnGroup) {

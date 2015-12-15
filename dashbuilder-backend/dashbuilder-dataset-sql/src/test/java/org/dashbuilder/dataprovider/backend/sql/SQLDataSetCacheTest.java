@@ -16,7 +16,6 @@
 package org.dashbuilder.dataprovider.backend.sql;
 
 import java.net.URL;
-import javax.inject.Inject;
 
 import org.apache.commons.io.IOUtils;
 import org.dashbuilder.dataset.DataSet;
@@ -30,9 +29,6 @@ import static org.fest.assertions.api.Assertions.*;
 // TODO: Review
 @Ignore
 public class SQLDataSetCacheTest extends SQLDataSetTestBase {
-
-    @Inject
-    SQLDataSetProvider sqlDataSetProvider;
 
     @Test
     public void testDataSetNonCached() throws Exception {

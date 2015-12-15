@@ -4,6 +4,8 @@
 <module>
 
   <inherits name="org.dashbuilder.CommonWidgets"/>
+  <inherits name="org.dashbuilder.ServicesAPI"/>
+
   <inherits name="org.uberfire.UberfireAPI"/>
   <inherits name="org.uberfire.commons.UberfireCommons"/>
 

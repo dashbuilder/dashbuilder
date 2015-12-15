@@ -17,30 +17,24 @@ package org.dashbuilder.dataset.engine.index;
 
 import java.util.HashMap;
 import java.util.Map;
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
 
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.engine.index.spi.DataSetIndexRegistry;
 import org.dashbuilder.dataset.uuid.UUIDGenerator;
 
-@ApplicationScoped
 public class TransientDataSetIndexRegistry implements DataSetIndexRegistry {
 
     protected UUIDGenerator uuidGenerator;
     protected Map<String,DataSetIndex> indexMap = new HashMap<String, DataSetIndex>();
 
-    public TransientDataSetIndexRegistry() {
-    }
-
-    @Inject
     public TransientDataSetIndexRegistry(UUIDGenerator uuidGenerator) {
         this.uuidGenerator = uuidGenerator;
     }
 
     public DataSetIndex put(DataSet dataSet) {
-        if (dataSet == null) return null;
-
+        if (dataSet == null) {
+            return null;
+        }
         String uuid = dataSet.getUUID();
         if (uuid == null || uuid.length() == 0) {
             uuid = uuidGenerator.newUuidBase64();
@@ -54,7 +48,9 @@ public class TransientDataSetIndexRegistry implements DataSetIndexRegistry {
 
     public DataSetIndex get(String uuid) {
         DataSetIndex index = indexMap.get(uuid);
-        if (index != null) index.reuseHit();
+        if (index != null) {
+            index.reuseHit();
+        }
         return index;
     }
 

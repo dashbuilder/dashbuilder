@@ -15,22 +15,15 @@
  */
 package org.dashbuilder.dataset;
 
-import javax.inject.Inject;
-
+import org.dashbuilder.DataSetCore;
 import org.dashbuilder.dataset.date.DayOfWeek;
 import org.dashbuilder.dataset.date.Month;
 import org.dashbuilder.dataset.filter.FilterFactory;
 import org.dashbuilder.dataset.group.DataSetGroup;
 import org.dashbuilder.dataset.group.DateIntervalType;
 import org.dashbuilder.dataset.sort.SortOrder;
-import org.dashbuilder.test.ShrinkWrapHelper;
-import org.jboss.arquillian.container.test.api.Deployment;
-import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.shrinkwrap.api.Archive;
-import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
 import static org.dashbuilder.dataset.ExpenseReportsData.*;
 import static org.dashbuilder.dataset.Assertions.*;
@@ -38,22 +31,12 @@ import static org.dashbuilder.dataset.group.AggregateFunctionType.*;
 import static org.dashbuilder.dataset.group.DateIntervalType.*;
 import static org.fest.assertions.api.Assertions.*;
 
-@RunWith(Arquillian.class)
 public class DataSetGroupTest {
-
-    @Deployment
-    public static Archive<?> createTestArchive()  {
-        return ShrinkWrapHelper.createJavaArchive()
-                .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
-    }
 
     public static final String EXPENSE_REPORTS = "expense_reports";
 
-    @Inject
-    public DataSetManager dataSetManager;
-
-    @Inject
-    public DataSetFormatter dataSetFormatter;
+    DataSetManager dataSetManager = DataSetCore.get().getDataSetManager();
+    DataSetFormatter dataSetFormatter = new DataSetFormatter();
 
     @Before
     public void setUp() throws Exception {

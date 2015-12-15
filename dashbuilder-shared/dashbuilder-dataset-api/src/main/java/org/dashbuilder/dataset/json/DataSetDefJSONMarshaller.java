@@ -15,6 +15,7 @@
  */
 package org.dashbuilder.dataset.json;
 
+import com.sun.org.apache.xalan.internal.xsltc.dom.SimpleResultTreeImpl;
 import org.dashbuilder.dataprovider.DataSetProviderType;
 import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.def.*;
@@ -24,7 +25,6 @@ import org.dashbuilder.json.JsonArray;
 import org.dashbuilder.json.JsonException;
 import org.dashbuilder.json.JsonObject;
 
-import javax.inject.Inject;
 import java.util.Collection;
 import java.util.Map;
 
@@ -81,9 +81,18 @@ public class DataSetDefJSONMarshaller {
     public static final String PARAM = "param";
     public static final String VALUE = "value";
 
+    private static DataSetDefJSONMarshaller SINGLETON = new DataSetDefJSONMarshaller();
+
+    public static DataSetDefJSONMarshaller get() {
+        return SINGLETON;
+    }
+
     protected DataSetLookupJSONMarshaller dataSetLookupJSONMarshaller;
     
-    @Inject
+    public DataSetDefJSONMarshaller() {
+        this(DataSetLookupJSONMarshaller.get());
+    }
+
     public DataSetDefJSONMarshaller(DataSetLookupJSONMarshaller dataSetLookupJSONMarshaller) {
         this.dataSetLookupJSONMarshaller = dataSetLookupJSONMarshaller;
     }

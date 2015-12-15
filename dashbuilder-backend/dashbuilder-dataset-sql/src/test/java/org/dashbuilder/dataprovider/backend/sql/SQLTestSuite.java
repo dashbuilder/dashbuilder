@@ -23,11 +23,6 @@ import org.junit.Before;
 public class SQLTestSuite extends SQLDataSetTestBase {
 
     protected <T extends SQLDataSetTestBase> T setUp(T test) throws Exception {
-        test.dataSetManager = dataSetManager;
-        test.dataSetFormatter = dataSetFormatter;
-        test.dataSetDefRegistry = dataSetDefRegistry;
-        test.jsonMarshaller = jsonMarshaller;
-        test.dataSourceLocator = dataSourceLocator;
         test.testSettings = testSettings;
         test.conn = conn;
         return test;

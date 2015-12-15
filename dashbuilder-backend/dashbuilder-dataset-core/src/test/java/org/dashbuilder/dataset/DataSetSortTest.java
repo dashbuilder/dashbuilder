@@ -15,45 +15,28 @@
  */
 package org.dashbuilder.dataset;
 
-import javax.inject.Inject;
-
+import org.dashbuilder.DataSetCore;
 import org.dashbuilder.dataset.group.AggregateFunctionType;
-import org.dashbuilder.test.ShrinkWrapHelper;
-import org.jboss.arquillian.container.test.api.Deployment;
-import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.shrinkwrap.api.Archive;
-import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
 import static org.dashbuilder.dataset.ExpenseReportsData.*;
 import static org.dashbuilder.dataset.Assertions.*;
 import static org.dashbuilder.dataset.sort.SortOrder.*;
 
-@RunWith(Arquillian.class)
 public class DataSetSortTest {
-
-    @Deployment
-    public static Archive<?> createTestArchive()  {
-        return ShrinkWrapHelper.createJavaArchive()
-                .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
-    }
 
     public static final String EXPENSE_REPORTS = "expense_reports_dataset";
 
-    @Inject
-    DataSetManager dataSetManager;
-
-    protected DataSet dataSet;
-    protected DataSetFormatter dataSetFormatter;
+    DataSetManager dataSetManager = DataSetCore.get().getDataSetManager();
+    DataSetFormatter dataSetFormatter = new DataSetFormatter();
+    DataSet dataSet;
 
     @Before
     public void setUp() throws Exception {
         dataSet = ExpenseReportsData.INSTANCE.toDataSet();
         dataSet.setUUID(EXPENSE_REPORTS);
         dataSetManager.registerDataSet(dataSet);
-        dataSetFormatter = new DataSetFormatter();
     }
 
     @Test
@@ -117,7 +100,7 @@ public class DataSetSortTest {
     }
 
     @Test
-    public void testGroupandSort() throws Exception {
+    public void testGroupAndSort() throws Exception {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                 .dataset(EXPENSE_REPORTS)

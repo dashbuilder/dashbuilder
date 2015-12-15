@@ -19,24 +19,17 @@ import org.dashbuilder.dataprovider.backend.elasticsearch.rest.ElasticSearchQuer
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.impl.ElasticSearchQueryBuilderImpl;
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.util.ElasticSearchUtils;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-
-// TODO: CDI injections
-@ApplicationScoped
 public class ElasticSearchQueryBuilderFactory {
 
-    /*@Inject
-    protected Instance<ElasticSearchQueryBuilder> builders;*/
-
-    @Inject
     protected ElasticSearchValueTypeMapper typeMapper;
-
-    @Inject
     protected ElasticSearchUtils utils;
-    
+
+    public ElasticSearchQueryBuilderFactory(ElasticSearchValueTypeMapper typeMapper, ElasticSearchUtils utils) {
+        this.typeMapper = typeMapper;
+        this.utils = utils;
+    }
+
     public ElasticSearchQueryBuilder newQueryBuilder() {
         return new ElasticSearchQueryBuilderImpl(typeMapper, utils);
-        /*return builders.get();*/
     }
 }

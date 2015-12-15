@@ -15,9 +15,6 @@
  */
 package org.dashbuilder.dataprovider.backend.sql;
 
-import javax.enterprise.inject.Specializes;
-
-@Specializes
 public class H2TestSettings extends DatabaseTestSettings {
 
     @Override

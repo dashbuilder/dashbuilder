@@ -26,6 +26,7 @@ import org.dashbuilder.dataset.DataSetMetadata;
 import org.dashbuilder.dataset.client.DataSetClientServices;
 import org.dashbuilder.dataset.client.DataSetMetadataCallback;
 import org.dashbuilder.dataset.def.DataSetDef;
+import org.dashbuilder.dataset.def.DataSetDefFactory;
 import org.dashbuilder.dataset.group.AggregateFunctionType;
 import org.dashbuilder.dataset.group.ColumnGroup;
 import org.dashbuilder.dataset.group.DataSetGroup;
@@ -60,7 +61,7 @@ public class DataSetLookupEditorTest {
 
     public static final String REVENUE_UUID = "revenue";
 
-    public static final DataSetDef POPULATION_DSET = DataSetFactory.newStaticDataSetDef()
+    public static final DataSetDef POPULATION_DSET = DataSetDefFactory.newStaticDataSetDef()
             .uuid(POPULATION_UUID)
             .name("Population")
             .label("continent")
@@ -69,7 +70,7 @@ public class DataSetLookupEditorTest {
             .date("year")
             .buildDef();
 
-    public static final DataSetDef REVENUE_DSET = DataSetFactory.newStaticDataSetDef()
+    public static final DataSetDef REVENUE_DSET = DataSetDefFactory.newStaticDataSetDef()
             .uuid(REVENUE_UUID)
             .name("Revenue")
             .label("company")

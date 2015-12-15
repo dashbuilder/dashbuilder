@@ -39,6 +39,8 @@ public class ElasticSearchEmptyIntervalsTest extends ElasticSearchDataSetTestBas
      */
     @Before
     public void registerDataSet() throws Exception {
+        super.setUp();
+
         // Register the data set.
         _registerDataSet(EL_EXAMPLE_EMPTYINTERVALS_DEF);
     }

@@ -23,6 +23,8 @@ import org.dashbuilder.client.widgets.resources.i18n.DataSetExplorerConstants;
 import org.dashbuilder.common.client.error.ClientRuntimeError;
 import org.dashbuilder.dataset.service.DataSetDefVfsServices;
 import org.jboss.errai.common.client.api.Caller;
+import org.jboss.errai.common.client.api.RemoteCallback;
+import org.uberfire.backend.vfs.Path;
 import org.uberfire.client.annotations.WorkbenchMenu;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
 import org.uberfire.client.annotations.WorkbenchPartView;
@@ -127,14 +129,19 @@ public class DataSetDefExplorerScreen {
     
     void onEditDataSetEvent(@Observes EditDataSetEvent event) {
         checkNotNull("event", event);
-        placeManager.goTo(new PathPlaceRequest(event.getDef().getVfsPath()));
+        services.call(new RemoteCallback<Path>() {
+            public void callback(Path path) {
+                placeManager.goTo(new PathPlaceRequest(path));
+            }
+        }).resolve(event.getDef());
     }
 
     void onErrorEvent(@Observes ErrorEvent errorEvent) {
         checkNotNull("errorEvent", errorEvent);
         if (errorEvent.getClientRuntimeError() != null) {
             showError(errorEvent.getClientRuntimeError());
-        } else if (errorEvent.getMessage() != null) {
+        }
+        else if (errorEvent.getMessage() != null) {
             showError(errorEvent.getMessage());
         }
     }

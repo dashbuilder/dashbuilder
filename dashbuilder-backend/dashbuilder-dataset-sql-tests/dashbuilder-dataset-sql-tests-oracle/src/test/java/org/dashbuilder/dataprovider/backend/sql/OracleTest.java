@@ -19,6 +19,11 @@ import org.junit.Test;
 
 public class OracleTest extends SQLTestSuite {
 
+    @Override
+    protected DatabaseTestSettings createTestSettings() {
+        return new OracleTestSettings();
+    }
+
     @Test
     public void testAll() throws Exception {
         super.testAll();

@@ -25,7 +25,7 @@ import org.dashbuilder.dataset.filter.FilterFactory;
 import org.dashbuilder.dataset.group.DateIntervalType;
 import org.junit.Test;
 
-import static org.dashbuilder.dataprovider.backend.sql.SQLFactory.*;
+import static org.dashbuilder.dataprovider.sql.SQLFactory.*;
 import static org.dashbuilder.dataset.filter.FilterFactory.*;
 import static org.dashbuilder.dataset.group.AggregateFunctionType.*;
 import static org.fest.assertions.api.Assertions.*;
@@ -171,8 +171,6 @@ public class SQLTableDataSetLookupTest extends SQLDataSetTestBase {
     @Test
     public void testDataSetGroup() throws Exception {
         DataSetGroupTest subTest = new DataSetGroupTest();
-        subTest.dataSetManager = dataSetManager;
-        subTest.dataSetFormatter = dataSetFormatter;
         subTest.testDataSetFunctions();
         subTest.testGroupByLabelDynamic();
         subTest.testGroupByYearDynamic();
@@ -193,8 +191,6 @@ public class SQLTableDataSetLookupTest extends SQLDataSetTestBase {
     @Test
     public void testDataSetNestedGroup() throws Exception {
         DataSetNestedGroupTest subTest = new DataSetNestedGroupTest();
-        subTest.dataSetManager = dataSetManager;
-        subTest.dataSetFormatter = dataSetFormatter;
         subTest.testGroupSelectionFilter();
         if (!testSettings.isMonetDB()) {
             subTest.testNestedGroupFromMultipleSelection();
@@ -207,8 +203,6 @@ public class SQLTableDataSetLookupTest extends SQLDataSetTestBase {
     @Test
     public void testDataSetFilter() throws Exception {
         DataSetFilterTest subTest = new DataSetFilterTest();
-        subTest.dataSetManager = dataSetManager;
-        subTest.dataSetFormatter = dataSetFormatter;
         subTest.testColumnTypes();
         subTest.testFilterByString();
         subTest.testFilterByDate();

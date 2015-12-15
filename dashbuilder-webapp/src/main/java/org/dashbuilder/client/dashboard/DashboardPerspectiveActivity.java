@@ -53,7 +53,7 @@ public class DashboardPerspectiveActivity implements PerspectiveActivity {
     private DashboardManager dashboardManager;
     private PerspectiveManager perspectiveManager;
     private PlaceManager placeManager;
-    private DisplayerSettingsJSONMarshaller jsonMarshaller;
+    private DisplayerSettingsJSONMarshaller jsonMarshaller = DisplayerSettingsJSONMarshaller.get();
     private PerspectiveCoordinator perspectiveCoordinator;
 
     private PlaceRequest place;
@@ -68,8 +68,7 @@ public class DashboardPerspectiveActivity implements PerspectiveActivity {
                                         SyncBeanManager beanManager,
                                         PerspectiveManager perspectiveManager,
                                         PlaceManager placeManager,
-                                        PerspectiveCoordinator perspectiveCoordinator,
-                                        DisplayerSettingsJSONMarshaller jsonMarshaller) {
+                                        PerspectiveCoordinator perspectiveCoordinator) {
 
         this.id = id;
         this.beanManager = beanManager;
@@ -78,7 +77,6 @@ public class DashboardPerspectiveActivity implements PerspectiveActivity {
         this.perspectiveManager = perspectiveManager;
         this.placeManager = placeManager;
         this.perspectiveCoordinator = perspectiveCoordinator;
-        this.jsonMarshaller = jsonMarshaller;
     }
 
     public String getDisplayName() {

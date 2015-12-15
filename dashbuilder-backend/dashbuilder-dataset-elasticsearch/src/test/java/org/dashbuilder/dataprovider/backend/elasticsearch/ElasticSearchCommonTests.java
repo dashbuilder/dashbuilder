@@ -4,22 +4,20 @@ import org.dashbuilder.dataset.DataSetFilterTest;
 import org.dashbuilder.dataset.DataSetGroupTest;
 import org.dashbuilder.dataset.DataSetNestedGroupTest;
 import org.dashbuilder.dataset.DataSetTrimTest;
-import org.dashbuilder.dataset.backend.BackendDataSetManager;
-import org.jboss.arquillian.junit.Arquillian;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
 /**
  * This test case delegates to the common tests from data set core module.
  */
-@RunWith(Arquillian.class)
 public class ElasticSearchCommonTests extends ElasticSearchDataSetTestBase {
 
     protected static final String EL_EXAMPLE_DATASET_DEF = "org/dashbuilder/dataprovider/backend/elasticsearch/expensereports.dset";
     
     @Before
     public void setUp() throws Exception {
+        super.setUp();
+
         // Register the data set definition for expense reports index.
         _registerDataSet(EL_EXAMPLE_DATASET_DEF);
     }
@@ -27,8 +25,6 @@ public class ElasticSearchCommonTests extends ElasticSearchDataSetTestBase {
     @Test
     public void testTrim() throws Exception {
         DataSetTrimTest subTest = new DataSetTrimTest();
-        subTest.dataSetManager = dataSetManager;
-        subTest.dataSetFormatter = dataSetFormatter;
         subTest.testTrim();
         subTest.testDuplicatedColumns();
     }
@@ -36,8 +32,6 @@ public class ElasticSearchCommonTests extends ElasticSearchDataSetTestBase {
     @Test
     public void testDataSetGroup() throws Exception {
         DataSetGroupTest subTest = new DataSetGroupTest();
-        subTest.dataSetManager = dataSetManager;
-        subTest.dataSetFormatter = dataSetFormatter;
         subTest.testDataSetFunctions();
         subTest.testGroupByLabelDynamic();
         subTest.testGroupByYearDynamic();
@@ -58,8 +52,6 @@ public class ElasticSearchCommonTests extends ElasticSearchDataSetTestBase {
     @Test
     public void testDataSetNestedGroup() throws Exception {
         DataSetNestedGroupTest subTest = new DataSetNestedGroupTest();
-        subTest.dataSetManager = dataSetManager;
-        subTest.dataSetFormatter = dataSetFormatter;
         subTest.testGroupSelectionFilter();
         // TODO Not supported - subTest.testNestedGroupFromMultipleSelection();
         // TODO Not supported - subTest.testNestedGroupRequiresSelection();
@@ -70,8 +62,6 @@ public class ElasticSearchCommonTests extends ElasticSearchDataSetTestBase {
     @Test
     public void testDataSetFilter() throws Exception {
         DataSetFilterTest subTest = new DataSetFilterTest();
-        subTest.dataSetManager = (BackendDataSetManager) dataSetManager;
-        subTest.dataSetFormatter = dataSetFormatter;
         subTest.testColumnTypes();
         subTest.testFilterByString();
         subTest.testFilterByDate();
@@ -88,5 +78,4 @@ public class ElasticSearchCommonTests extends ElasticSearchDataSetTestBase {
         subTest.testCombinedExpression3();
         // Like TO operations are tested in ElasticSearchDataSetTest, as the results depend on the core type and string analyzer used for that column. 
     }
-
 }

@@ -52,7 +52,8 @@ public class ElasticSearchDataSetTest extends ElasticSearchDataSetTestBase {
      */
     @Before
     public void registerDataSet() throws Exception {
-        
+        super.setUp();
+
         // Register the data set definition for expense reports index.
         _registerDataSet(EL_EXAMPLE_DATASET_DEF);
 

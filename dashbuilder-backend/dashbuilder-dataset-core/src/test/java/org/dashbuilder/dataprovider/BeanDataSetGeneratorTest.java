@@ -16,45 +16,34 @@
 package org.dashbuilder.dataprovider;
 
 import java.net.URL;
-import javax.inject.Inject;
 
 import org.apache.commons.io.IOUtils;
+import org.dashbuilder.DataSetCore;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetFormatter;
 import org.dashbuilder.dataset.DataSetManager;
 import org.dashbuilder.dataset.json.DataSetDefJSONMarshaller;
 import org.dashbuilder.dataset.def.DataSetDef;
 import org.dashbuilder.dataset.def.DataSetDefRegistry;
-import org.dashbuilder.test.ShrinkWrapHelper;
-import org.jboss.arquillian.container.test.api.Deployment;
-import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.shrinkwrap.api.Archive;
-import org.jboss.shrinkwrap.api.asset.EmptyAsset;
+import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
 import static org.dashbuilder.dataset.Assertions.*;
 
-@RunWith(Arquillian.class)
 public class BeanDataSetGeneratorTest {
 
-    @Deployment
-    public static Archive<?> createTestArchive()  {
-        return ShrinkWrapHelper.createJavaArchive()
-                .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
-    }
-
-    @Inject
+    DataSetManager dataSetManager;
+    DataSetDefRegistry dataSetDefRegistry;
+    DataSetFormatter dataSetFormatter;
     DataSetDefJSONMarshaller jsonMarshaller;
 
-    @Inject
-    DataSetManager dataSetManager;
-
-    @Inject
-    DataSetDefRegistry dataSetDefRegistry;
-
-    @Inject
-    DataSetFormatter dataSetFormatter;
+    @Before
+    public void setUp() throws Exception {
+        dataSetManager = DataSetCore.get().getDataSetManager();
+        dataSetDefRegistry = DataSetCore.get().getDataSetDefRegistry();
+        dataSetFormatter = new DataSetFormatter();
+        jsonMarshaller = DataSetDefJSONMarshaller.get();
+    }
 
     @Test
     public void testGenerateDataSet() throws Exception {

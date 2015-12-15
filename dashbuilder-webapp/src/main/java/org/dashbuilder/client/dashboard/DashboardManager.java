@@ -51,7 +51,6 @@ public class DashboardManager {
     private PlaceManager placeManager;
     private PerspectiveManager perspectiveManager;
     private PerspectiveCoordinator perspectiveCoordinator;
-    private DisplayerSettingsJSONMarshaller jsonMarshaller;
     private ActivityBeansCache activityBeansCache;
     private Event<DashboardCreatedEvent> dashboardCreatedEvent;
     private Event<DashboardDeletedEvent> dashboardDeletedEvent;
@@ -61,7 +60,6 @@ public class DashboardManager {
                             PlaceManager placeManager,
                             PerspectiveManager perspectiveManager,
                             PerspectiveCoordinator perspectiveCoordinator,
-                            DisplayerSettingsJSONMarshaller jsonMarshaller,
                             ActivityBeansCache activityBeansCache,
                             Event<DashboardCreatedEvent> dashboardCreatedEvent,
                             Event<DashboardDeletedEvent> dashboardDeletedEvent) {
@@ -70,7 +68,6 @@ public class DashboardManager {
         this.placeManager = placeManager;
         this.perspectiveManager = perspectiveManager;
         this.perspectiveCoordinator = perspectiveCoordinator;
-        this.jsonMarshaller = jsonMarshaller;
         this.activityBeansCache = activityBeansCache;
         this.dashboardCreatedEvent = dashboardCreatedEvent;
         this.dashboardDeletedEvent = dashboardDeletedEvent;
@@ -95,8 +92,7 @@ public class DashboardManager {
                 beanManager,
                 perspectiveManager,
                 placeManager,
-                perspectiveCoordinator,
-                jsonMarshaller);
+                perspectiveCoordinator);
 
         SyncBeanManagerImpl beanManager = (SyncBeanManagerImpl) IOC.getBeanManager();
         beanManager.addBean((Class) PerspectiveActivity.class, DashboardPerspectiveActivity.class, null, activity, DEFAULT_QUALIFIERS, id, true, null);
