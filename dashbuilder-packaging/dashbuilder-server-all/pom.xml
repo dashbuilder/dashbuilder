@@ -31,15 +31,6 @@
   <name>Dashbuilder All Server Libraries</name>
 
   <dependencies>
-    <dependency>
-      <groupId>org.dashbuilder</groupId>
-      <artifactId>dashbuilder-common</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.dashbuilder</groupId>
-      <artifactId>dashbuilder-scheduler</artifactId>
-    </dependency>
 
     <dependency>
       <groupId>org.dashbuilder</groupId>
@@ -59,6 +50,11 @@
     <dependency>
       <groupId>org.dashbuilder</groupId>
       <artifactId>dashbuilder-dataset-elasticsearch</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.dashbuilder</groupId>
+      <artifactId>dashbuilder-dataset-cdi</artifactId>
     </dependency>
 
     <dependency>

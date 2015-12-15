@@ -41,20 +41,24 @@ import org.uberfire.mvp.Command;
 @Dependent
 public class DisplayerDragComponent implements PerspectiveEditorDragComponent, HasModalConfiguration {
 
-    @Inject
     SyncBeanManager beanManager;
-
-    @Inject
     DisplayerViewer viewer;
-
-    @Inject
+    PlaceManager placeManager;
+    PerspectiveCoordinator perspectiveCoordinator;
     DisplayerSettingsJSONMarshaller marshaller;
 
     @Inject
-    PlaceManager placeManager;
+    public DisplayerDragComponent(SyncBeanManager beanManager,
+                                  DisplayerViewer viewer,
+                                  PlaceManager placeManager,
+                                  PerspectiveCoordinator perspectiveCoordinator) {
 
-    @Inject
-    PerspectiveCoordinator perspectiveCoordinator;
+        this.beanManager = beanManager;
+        this.viewer = viewer;
+        this.placeManager = placeManager;
+        this.perspectiveCoordinator = perspectiveCoordinator;
+        this.marshaller = DisplayerSettingsJSONMarshaller.get();
+    }
 
     @Override
     public IsWidget getDragWidget() {

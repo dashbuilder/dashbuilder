@@ -24,7 +24,7 @@ import static org.dashbuilder.dataset.date.Month.*;
 
 public class DataSetJsonTest {
 
-    DataSetJSONMarshaller datasetJsonMarshaller = new DataSetJSONMarshaller();
+    DataSetJSONMarshaller datasetJsonMarshaller = DataSetJSONMarshaller.get();
 
     @Test
     public void testDataSetMarshalling() {

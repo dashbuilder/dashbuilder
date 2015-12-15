@@ -19,6 +19,11 @@ import org.junit.Test;
 
 public class DB2Test extends SQLTestSuite {
 
+    @Override
+    protected DatabaseTestSettings createTestSettings() {
+        return new DB2TestSettings();
+    }
+
     @Test
     public void testAll() throws Exception {
         super.testAll();

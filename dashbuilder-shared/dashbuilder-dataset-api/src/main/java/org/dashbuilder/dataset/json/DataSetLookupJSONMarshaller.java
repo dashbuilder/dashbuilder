@@ -23,9 +23,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.enterprise.context.Dependent;
-import javax.inject.Inject;
-
 import org.dashbuilder.dataset.DataSetLookup;
 import org.dashbuilder.dataset.DataSetOp;
 import org.dashbuilder.dataset.date.DayOfWeek;
@@ -53,7 +50,6 @@ import org.dashbuilder.json.JsonObject;
 import org.dashbuilder.json.JsonType;
 import org.dashbuilder.json.JsonValue;
 
-@Dependent
 public class DataSetLookupJSONMarshaller {
 
     private static final String UUID = "dataSetUuid";
@@ -100,6 +96,12 @@ public class DataSetLookupJSONMarshaller {
         _keysAliasMap.put(SELECTEDINTERVALS, Arrays.asList(SELECTEDINTERVALS, "selectedIntervals"));
     }
 
+    private static DataSetLookupJSONMarshaller SINGLETON = new DataSetLookupJSONMarshaller();
+
+    public static DataSetLookupJSONMarshaller get() {
+        return SINGLETON;
+    }
+
     private Collection<String> keySet(String key) {
         return _keysAliasMap.get(key);
     }
@@ -107,12 +109,11 @@ public class DataSetLookupJSONMarshaller {
     private List<String> coreFunctionTypes = new ArrayList<String>();
     private List<String> logicalFunctionTypes = new ArrayList<String>();
 
-    @Inject
     public DataSetLookupJSONMarshaller() {
-        for ( LogicalExprType type : LogicalExprType.values() ) {
-            logicalFunctionTypes.add( type.toString() );
+        for (LogicalExprType type : LogicalExprType.values()) {
+            logicalFunctionTypes.add(type.toString());
         }
-        for ( CoreFunctionType type : CoreFunctionType.values() ) {
+        for (CoreFunctionType type : CoreFunctionType.values()) {
             coreFunctionTypes.add(type.toString());
         }
     }

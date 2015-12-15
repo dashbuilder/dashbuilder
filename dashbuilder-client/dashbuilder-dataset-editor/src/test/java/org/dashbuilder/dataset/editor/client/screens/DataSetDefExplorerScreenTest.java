@@ -7,11 +7,14 @@ import org.dashbuilder.client.widgets.dataset.explorer.DataSetExplorer;
 import org.dashbuilder.dataset.def.DataSetDef;
 import org.dashbuilder.dataset.service.DataSetDefVfsServices;
 import org.jboss.errai.common.client.api.Caller;
+import org.jboss.errai.common.client.api.RemoteCallback;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 import org.uberfire.backend.vfs.Path;
 import org.uberfire.client.mvp.PlaceManager;
 import org.uberfire.client.workbench.widgets.common.ErrorPopupPresenter;
@@ -33,17 +36,24 @@ public class DataSetDefExplorerScreenTest {
     @Mock ErrorPopupPresenter errorPopupPresenter;
     @Mock DataSetExplorer explorerWidget;
     @Mock DataSetDefVfsServices dataSetDefVfsServices;
-    Caller<DataSetDefVfsServices> services;
+    @Mock Caller<DataSetDefVfsServices> services;
     
     @InjectMocks
     DataSetDefExplorerScreen presenter;
     
     @Before
     public void setup() throws Exception {
-        services = new CallerMock<DataSetDefVfsServices>( dataSetDefVfsServices );
         presenter.services = services;
-        doNothing().when(placeManager).goTo(any(PathPlaceRequest.class));
         assertEquals(explorerWidget, presenter.getView());
+
+        doAnswer(new Answer() {
+            @Override
+            public Object answer(InvocationOnMock invocationOnMock) throws Throwable {
+                RemoteCallback callback = (RemoteCallback) invocationOnMock.getArguments()[0];
+                callback.callback(mock(Path.class));
+                return null;
+            }
+        }).when(services).call(any(RemoteCallback.class));
     }
     
     @Test
@@ -52,13 +62,11 @@ public class DataSetDefExplorerScreenTest {
         verify(placeManager, times(1)).goTo("DataSetDefWizard");
     }
     
-    // Cannot mock constructor for PathPlaceRequest, but having the classcast exception when modking it implies that placeManager#goTo is called....
+    // Cannot mock constructor for PathPlaceRequest, but having the classcast exception when mocking it implies that placeManager#goTo is called....
     @Test(expected = ClassCastException.class)
     public void testOnEditDataSetEvent() {
         final DataSetDef def = mock(DataSetDef.class);
-        final Path path = mock(Path.class);
         final EditDataSetEvent editDataSetEvent = mock(EditDataSetEvent.class);
-        when(def.getVfsPath()).thenReturn(path);
         when(editDataSetEvent.getDef()).thenReturn(def);
         presenter.onEditDataSetEvent(editDataSetEvent);
         verify(placeManager, times(1)).goTo(any(PathPlaceRequest.class));
@@ -71,5 +79,4 @@ public class DataSetDefExplorerScreenTest {
         presenter.onErrorEvent(errorDataSetEvent);
         verify(errorPopupPresenter, times(1)).showMessage("errorMessage");
     }
-    
 }

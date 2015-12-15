@@ -31,17 +31,16 @@ public class DisplayerSettingsJSONSourceViewer extends Composite {
     interface SettingsEditorUIBinder extends UiBinder<Widget, DisplayerSettingsJSONSourceViewer> {}
     private static final SettingsEditorUIBinder uiBinder = GWT.create( SettingsEditorUIBinder.class );
 
-    protected DisplayerSettings displayerSettings;
-
+    DisplayerSettings displayerSettings;
     DisplayerSettingsJSONMarshaller jsonMarshaller;
 
     @UiField
     public JsonSourceViewer jsonSourceViewer;
 
     @Inject
-    public DisplayerSettingsJSONSourceViewer(DisplayerSettingsJSONMarshaller jsonMarshaller) {
-        this.jsonMarshaller = jsonMarshaller;
+    public DisplayerSettingsJSONSourceViewer() {
         initWidget( uiBinder.createAndBindUi( this ) );
+        jsonMarshaller = DisplayerSettingsJSONMarshaller.get();
     }
 
     public DisplayerSettings getDisplayerSettings() {
@@ -49,6 +48,6 @@ public class DisplayerSettingsJSONSourceViewer extends Composite {
     }
 
     public void setDisplayerSettings(DisplayerSettings displayerSettings) {
-        jsonSourceViewer.setContent( jsonMarshaller.toJsonObject( displayerSettings ) );
+        jsonSourceViewer.setContent(jsonMarshaller.toJsonObject(displayerSettings));
     }
 }

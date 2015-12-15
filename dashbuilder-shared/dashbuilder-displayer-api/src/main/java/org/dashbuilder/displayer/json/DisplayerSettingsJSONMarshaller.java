@@ -19,8 +19,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.enterprise.context.Dependent;
-import javax.inject.Inject;
 
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetLookup;
@@ -34,7 +32,6 @@ import org.dashbuilder.json.JsonObject;
 import org.dashbuilder.json.JsonString;
 import org.dashbuilder.json.JsonValue;
 
-@Dependent
 public class DisplayerSettingsJSONMarshaller {
 
     private static final String DATASET_PREFIX = "dataSet";
@@ -45,13 +42,21 @@ public class DisplayerSettingsJSONMarshaller {
     private static final String COLUMN_EXPRESSION = "expression";
     private static final String COLUMN_PATTERN = "pattern";
     private static final String COLUMN_EMPTY = "empty";
-
     private static final String SETTINGS_UUID = "uuid";
+
+    private static DisplayerSettingsJSONMarshaller SINGLETON = new DisplayerSettingsJSONMarshaller();
+
+    public static DisplayerSettingsJSONMarshaller get() {
+        return SINGLETON;
+    }
 
     private DataSetJSONMarshaller dataSetJsonMarshaller;
     private DataSetLookupJSONMarshaller dataSetLookupJsonMarshaller;
 
-    @Inject
+    public DisplayerSettingsJSONMarshaller() {
+        this(DataSetJSONMarshaller.get(), DataSetLookupJSONMarshaller.get());
+    }
+
     public DisplayerSettingsJSONMarshaller(DataSetJSONMarshaller dataSetJsonMarshaller, DataSetLookupJSONMarshaller dataSetLookupJsonMarshaller) {
         this.dataSetJsonMarshaller = dataSetJsonMarshaller;
         this.dataSetLookupJsonMarshaller = dataSetLookupJsonMarshaller;

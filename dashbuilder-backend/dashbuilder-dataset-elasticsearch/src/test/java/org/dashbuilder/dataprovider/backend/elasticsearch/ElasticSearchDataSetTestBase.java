@@ -16,22 +16,18 @@
 package org.dashbuilder.dataprovider.backend.elasticsearch;
 
 import org.apache.commons.io.IOUtils;
+import org.dashbuilder.DataSetCore;
+import org.dashbuilder.dataprovider.DataSetProviderRegistry;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetFormatter;
 import org.dashbuilder.dataset.DataSetManager;
 import org.dashbuilder.dataset.json.DataSetDefJSONMarshaller;
 import org.dashbuilder.dataset.def.DataSetDefRegistry;
 import org.dashbuilder.dataset.def.ElasticSearchDataSetDef;
-import org.dashbuilder.test.ShrinkWrapHelper;
-import org.jboss.arquillian.container.test.api.Deployment;
-import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.shrinkwrap.api.Archive;
-import org.jboss.shrinkwrap.api.asset.EmptyAsset;
-import org.junit.runner.RunWith;
+import org.junit.Before;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.inject.Inject;
 import java.net.URL;
 
 /**
@@ -39,7 +35,6 @@ import java.net.URL;
  * 
  * @since 0.3.0
  */
-@RunWith(Arquillian.class)
 public class ElasticSearchDataSetTestBase {
 
     static final Logger logger =
@@ -61,25 +56,22 @@ public class ElasticSearchDataSetTestBase {
     public static final String EL_EXAMPLE_EMP_NITA = "Nita Marling";
     public static final String EL_EXAMPLE_EMP_HANNA = "Hannah B. Mackey";
     public static final String EL_EXAMPLE_EMP_PATRICIA = "Patricia J. Behr";
-    
 
-    @Deployment
-    public static Archive<?> createTestArchive()  {
-        return ShrinkWrapHelper.createJavaArchive()
-                .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
+    protected DataSetManager dataSetManager;
+    protected DataSetDefRegistry dataSetDefRegistry;
+    protected DataSetDefJSONMarshaller jsonMarshaller;
+    protected DataSetFormatter dataSetFormatter;
+
+    @Before
+    public void setUp() throws Exception {
+        dataSetManager = DataSetCore.get().getDataSetManager();
+        dataSetDefRegistry = DataSetCore.get().getDataSetDefRegistry();
+        jsonMarshaller = DataSetDefJSONMarshaller.get();
+        dataSetFormatter = new DataSetFormatter();
+
+        DataSetProviderRegistry dataSetProviderRegistry = DataSetCore.get().getDataSetProviderRegistry();
+        dataSetProviderRegistry.registerDataProvider(ElasticSearchDataSetProvider.get());
     }
-
-    @Inject
-    DataSetManager dataSetManager;
-
-    @Inject
-    DataSetFormatter dataSetFormatter;
-
-    @Inject
-    DataSetDefRegistry dataSetDefRegistry;
-
-    @Inject
-    DataSetDefJSONMarshaller jsonMarshaller;
 
     /**
      * Registers a dataset given into the <code>resource</code> definition.

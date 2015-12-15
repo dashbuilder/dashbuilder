@@ -87,4 +87,9 @@ public interface DataSetDefRegistry {
      * @return The removed data set definition or null if the definition does not exist.
      */
     DataSetDef removeDataSetDef(String uuid, String subjectId, String message);
+
+    /**
+     * Register a listener interesetd in observe the DataSetDef lifecycle events.
+     */
+    void addListener(DataSetDefRegistryListener listener);
 }

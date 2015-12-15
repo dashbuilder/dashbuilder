@@ -21,6 +21,7 @@
     <module>dashbuilder-displayer-api</module>
     <module>dashbuilder-hibernate-validator</module>
     <module>dashbuilder-validations</module>
+    <module>dashbuilder-services-api</module>
   </modules>
 
   <dependencies>

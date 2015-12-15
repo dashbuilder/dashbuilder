@@ -3,6 +3,7 @@ package org.dashbuilder.dataprovider.backend.elasticsearch.rest.impl.jest.gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
+import org.dashbuilder.DataSetCore;
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.ElasticSearchClient;
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.exception.ElasticSearchClientGenericException;
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.impl.jest.ElasticSearchJestClient;
@@ -10,7 +11,7 @@ import org.dashbuilder.dataprovider.backend.elasticsearch.rest.model.SearchReque
 import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.dataset.DataSetMetadata;
-import org.dashbuilder.dataset.backend.BackendIntervalBuilderDynamicDate;
+import org.dashbuilder.dataset.IntervalBuilderDynamicDate;
 import org.dashbuilder.dataset.date.DayOfWeek;
 import org.dashbuilder.dataset.date.Month;
 import org.dashbuilder.dataset.def.ElasticSearchDataSetDef;
@@ -44,16 +45,15 @@ public class AggregationSerializer extends AbstractAdapter<AggregationSerializer
     protected static final String AGG_FORMAT = "format";
     protected static final String AGG_DATE_HISTORGRAM = "date_histogram";
 
-    protected BackendIntervalBuilderDynamicDate intervalBuilder;
+    protected IntervalBuilderDynamicDate intervalBuilder;
 
     public AggregationSerializer(ElasticSearchJestClient client, DataSetMetadata metadata, List<DataColumn> columns) {
-        super(client, metadata, columns);
-        intervalBuilder = new BackendIntervalBuilderDynamicDate();
+        this(client, metadata, columns, null);
     }
 
     public AggregationSerializer(ElasticSearchJestClient client, DataSetMetadata metadata, List<DataColumn> columns, SearchRequest request) {
         super(client, metadata, columns, request);
-        intervalBuilder = new BackendIntervalBuilderDynamicDate();
+        intervalBuilder = DataSetCore.get().getIntervalBuilderDynamicDate();
     }
 
     public JsonObject serialize(DataSetGroup groupOp, Type typeOfSrc, JsonSerializationContext context) {

@@ -16,40 +16,30 @@
 package org.dashbuilder.dataprovider.backend.csv;
 
 import java.net.URL;
-import javax.inject.Inject;
-
 import org.apache.commons.io.IOUtils;
+import org.dashbuilder.DataSetCore;
 import org.dashbuilder.dataprovider.DataSetProviderType;
 import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.DataSetManager;
 import org.dashbuilder.dataset.json.DataSetDefJSONMarshaller;
 import org.dashbuilder.dataset.def.CSVDataSetDef;
 import org.dashbuilder.dataset.def.DataSetDef;
-import org.dashbuilder.test.ShrinkWrapHelper;
-import org.jboss.arquillian.container.test.api.Deployment;
-import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.shrinkwrap.api.Archive;
-import org.jboss.shrinkwrap.api.asset.EmptyAsset;
+import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
 import static org.fest.assertions.api.Assertions.*;
 
-@RunWith(Arquillian.class)
 public class CSVDataSetDefJSONTest {
-
-    @Deployment
-    public static Archive<?> createTestArchive()  {
-        return ShrinkWrapHelper.createJavaArchive()
-                .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
-    }
-
-    @Inject
+    
     DataSetDefJSONMarshaller jsonMarshaller;
-
-    @Inject
     DataSetManager dataSetManager;
 
+    @Before
+    public void setUp() {
+        jsonMarshaller = DataSetDefJSONMarshaller.get();
+        dataSetManager = DataSetCore.get().getDataSetManager();
+    }
+    
     @Test
     public void testParseCSVJson() throws Exception {
         URL fileURL = Thread.currentThread().getContextClassLoader().getResource("expenseReports.dset");

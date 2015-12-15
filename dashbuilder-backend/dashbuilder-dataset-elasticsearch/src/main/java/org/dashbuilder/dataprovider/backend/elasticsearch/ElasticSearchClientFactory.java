@@ -20,23 +20,16 @@ import org.dashbuilder.dataprovider.backend.elasticsearch.rest.impl.jest.Elastic
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.util.ElasticSearchUtils;
 import org.dashbuilder.dataset.def.ElasticSearchDataSetDef;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-
-// TODO: CDI injections for client instances.
-@ApplicationScoped
 public class ElasticSearchClientFactory {
 
-    @Inject
     protected ElasticSearchValueTypeMapper valueTypeMapper;
-    
-    @Inject
     protected ElasticSearchUtils utils;
-    
-    /*@Inject
-    @Named("elasticSearchJestClient")
-    protected Instance<ElasticSearchClient> clients;*/
-    
+
+    public ElasticSearchClientFactory(ElasticSearchValueTypeMapper valueTypeMapper, ElasticSearchUtils utils) {
+        this.valueTypeMapper = valueTypeMapper;
+        this.utils = utils;
+    }
+
     public ElasticSearchClient newClient(ElasticSearchDataSetDef elasticSearchDataSetDef) {
         ElasticSearchClient client = newClient();
         return configure(client, elasticSearchDataSetDef);

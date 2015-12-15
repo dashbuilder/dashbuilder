@@ -17,8 +17,6 @@ package org.dashbuilder.dataset.engine;
 
 import java.util.List;
 import java.util.ArrayList;
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
 
 import org.dashbuilder.dataset.DataSetOpEngine;
 import org.dashbuilder.dataset.engine.index.DataSetStaticIndex;
@@ -54,11 +52,11 @@ import org.dashbuilder.dataset.impl.DataColumnImpl;
 import org.dashbuilder.dataset.sort.ColumnSort;
 import org.dashbuilder.dataset.sort.DataSetSort;
 import org.dashbuilder.dataset.engine.sort.DataSetSortAlgorithm;
+import org.dashbuilder.dataset.sort.SortedList;
 
 /**
  * Engine implementation that can runs both on client and server.
  */
-@ApplicationScoped
 public class SharedDataSetOpEngine implements DataSetOpEngine {
 
     protected AggregateFunctionManager aggregateFunctionManager;
@@ -68,10 +66,6 @@ public class SharedDataSetOpEngine implements DataSetOpEngine {
     protected DataSetFilterAlgorithm filterAlgorithm;
     protected Chronometer chronometer;
 
-    public SharedDataSetOpEngine() {
-    }
-
-    @Inject
     public SharedDataSetOpEngine(AggregateFunctionManager aggregateFunctionManager,
                                  IntervalBuilderLocator intervalBuilderLocator,
                                  DataSetIndexRegistry indexRegistry,
@@ -87,24 +81,8 @@ public class SharedDataSetOpEngine implements DataSetOpEngine {
         this.chronometer = chronometer;
     }
 
-    public AggregateFunctionManager getAggregateFunctionManager() {
-        return aggregateFunctionManager;
-    }
-
-    public IntervalBuilderLocator getIntervalBuilderLocator() {
-        return intervalBuilderLocator;
-    }
-
     public DataSetIndexRegistry getIndexRegistry() {
         return indexRegistry;
-    }
-
-    public DataSetSortAlgorithm getSortAlgorithm() {
-        return sortAlgorithm;
-    }
-
-    public DataSetFilterAlgorithm getFilterAlgorithm() {
-        return filterAlgorithm;
     }
 
     public DataSet execute(DataSet dataSet, List<DataSetOp> opList) {
@@ -469,9 +447,20 @@ public class SharedDataSetOpEngine implements DataSetOpEngine {
                 return dataSet.trim(index.getRows());
             }
             if (lastOp instanceof DataSetSort) {
-                return DataSetFactory.filterDataSet(dataSet, index.getRows());
+                return _filterDataSet(dataSet, index.getRows());
             }
             return dataSet;
+        }
+
+        private DataSet _filterDataSet(DataSet dataSet, List<Integer> rows) {
+            DataSet result = DataSetFactory.newEmptyDataSet();
+            for (DataColumn column : dataSet.getColumns()) {
+                DataColumn sortedColumn = column.cloneEmpty();
+                SortedList sortedValues = new SortedList(column.getValues(), rows);
+                sortedColumn.setValues(sortedValues);
+                result.addColumn(sortedColumn);
+            }
+            return result;
         }
 
         private DataSet _buildDataSet(InternalContext context, DataSetGroup op) {

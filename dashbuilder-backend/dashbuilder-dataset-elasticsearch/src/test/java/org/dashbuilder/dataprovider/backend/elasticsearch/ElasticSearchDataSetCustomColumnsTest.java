@@ -21,8 +21,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.fest.assertions.api.Assertions.assertThat;
-
 /**
  * <p>Data test for ElasticSearchDataSet column definitions.</p>
  *  
@@ -64,6 +62,8 @@ public class ElasticSearchDataSetCustomColumnsTest extends ElasticSearchDataSetT
      */
     @Before
     public void registerDataSet() throws Exception {
+        super.setUp();
+
         // Register the data sets.
         _registerDataSet(EL_EXAMPLE_ALL_COLUMNS_DATASET_DEF);
         _registerDataSet(EL_EXAMPLE_CUSTOM_COLUMNS_DATASET_DEF);

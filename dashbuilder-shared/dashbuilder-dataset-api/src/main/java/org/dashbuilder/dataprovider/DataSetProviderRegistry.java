@@ -32,4 +32,9 @@ public interface DataSetProviderRegistry {
      * @return A list of
      */
     List<DataSetProviderType> getAvailableTypes();
+
+    /**
+     * Register a data provider
+     */
+    void registerDataProvider(DataSetProvider dataProvider);
 }

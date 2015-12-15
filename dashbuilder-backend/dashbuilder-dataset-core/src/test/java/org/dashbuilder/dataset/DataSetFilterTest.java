@@ -19,42 +19,25 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-import javax.inject.Inject;
 
-import org.dashbuilder.dataset.backend.BackendDataSetManager;
+import org.dashbuilder.DataSetCore;
 import org.dashbuilder.dataset.filter.ColumnFilter;
 import org.dashbuilder.dataset.sort.SortOrder;
-import org.dashbuilder.test.ShrinkWrapHelper;
-import org.jboss.arquillian.container.test.api.Deployment;
-import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.shrinkwrap.api.Archive;
-import org.jboss.shrinkwrap.api.asset.EmptyAsset;
+import org.dashbuilder.dataset.def.DataSetPreprocessor;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
 import static org.dashbuilder.dataset.ExpenseReportsData.*;
 import static org.dashbuilder.dataset.Assertions.*;
-import org.dashbuilder.dataset.def.DataSetPreprocessor;
 import static org.dashbuilder.dataset.filter.FilterFactory.*;
 import static org.fest.assertions.api.Assertions.assertThat;
 
-@RunWith(Arquillian.class)
 public class DataSetFilterTest {
-
-    @Deployment
-    public static Archive<?> createTestArchive() {
-        return ShrinkWrapHelper.createJavaArchive()
-                .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
-    }
 
     public static final String EXPENSE_REPORTS = "expense_reports";
 
-    @Inject
-    public BackendDataSetManager dataSetManager;
-
-    @Inject
-    public DataSetFormatter dataSetFormatter;
+    DataSetManager dataSetManager = DataSetCore.get().getDataSetManager();
+    DataSetFormatter dataSetFormatter = new DataSetFormatter();
 
     @Before
     public void setUp() throws Exception {
@@ -67,8 +50,6 @@ public class DataSetFilterTest {
         dataSet = ExpenseReportsData.INSTANCE.toDataSet();
         dataSet.setUUID(EXPENSE_REPORTS + "2");
         dataSetManager.registerDataSet(dataSet, preProcessors);
-
-        dataSetFormatter = new DataSetFormatter();
     }
 
     @Test

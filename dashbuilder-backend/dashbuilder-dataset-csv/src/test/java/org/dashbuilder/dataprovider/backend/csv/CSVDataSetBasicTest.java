@@ -16,52 +16,44 @@
 package org.dashbuilder.dataprovider.backend.csv;
 
 import java.net.URL;
-import javax.inject.Inject;
 
+import org.dashbuilder.DataSetCore;
+import org.dashbuilder.dataprovider.DataSetProviderRegistry;
+import org.dashbuilder.dataprovider.csv.CSVDataSetProvider;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetFactory;
 import org.dashbuilder.dataset.DataSetFormatter;
 import org.dashbuilder.dataset.DataSetManager;
+import org.dashbuilder.dataset.def.DataSetDefFactory;
 import org.dashbuilder.dataset.def.DataSetDefRegistry;
 import org.dashbuilder.dataset.group.AggregateFunctionType;
-import org.dashbuilder.test.ShrinkWrapHelper;
-import org.jboss.arquillian.container.test.api.Deployment;
-import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.shrinkwrap.api.Archive;
-import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
 import static org.dashbuilder.dataset.Assertions.*;
 import static org.fest.assertions.api.Assertions.*;
 import static org.dashbuilder.dataset.filter.FilterFactory.*;
 
-@RunWith(Arquillian.class)
 public class CSVDataSetBasicTest {
-
-    @Deployment
-    public static Archive<?> createTestArchive()  {
-        return ShrinkWrapHelper.createJavaArchive()
-                .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
-    }
 
     public static final String EXPENSE_REPORTS = "dataset_expense_reports";
 
-    @Inject
     DataSetManager dataSetManager;
-
-    @Inject
-    protected DataSetDefRegistry dataSetDefRegistry;
-
-    @Inject
+    DataSetDefRegistry dataSetDefRegistry;
     DataSetFormatter dataSetFormatter;
+    DataSetProviderRegistry dataSetProviderRegistry;
 
     @Before
     public void setUp() throws Exception {
+        dataSetDefRegistry = DataSetCore.get().getDataSetDefRegistry();
+        dataSetManager = DataSetCore.get().getDataSetManager();
+        dataSetProviderRegistry = DataSetCore.get().getDataSetProviderRegistry();
+        dataSetProviderRegistry.registerDataProvider(CSVDataSetProvider.get());
+        dataSetFormatter = new DataSetFormatter();
+
         URL fileURL = Thread.currentThread().getContextClassLoader().getResource("expenseReports.csv");
         dataSetDefRegistry.registerDataSetDef(
-                DataSetFactory.newCSVDataSetDef()
+                DataSetDefFactory.newCSVDataSetDef()
                         .uuid(EXPENSE_REPORTS)
                         .fileURL(fileURL.toString())
                         .label("id")

@@ -19,6 +19,11 @@ import org.junit.Test;
 
 public class MysqlTest extends SQLTestSuite {
 
+    @Override
+    protected DatabaseTestSettings createTestSettings() {
+        return new MySqlTestSettings();
+    }
+
     @Test
     public void testAll() throws Exception {
         super.testAll();

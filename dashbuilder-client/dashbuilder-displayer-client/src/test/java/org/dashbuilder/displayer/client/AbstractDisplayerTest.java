@@ -22,7 +22,7 @@ import org.dashbuilder.dataset.DataSetFormatter;
 import org.dashbuilder.dataset.ExpenseReportsData;
 import org.dashbuilder.dataset.client.ClientDataSetManager;
 import org.dashbuilder.dataset.client.DataSetClientServices;
-import org.dashbuilder.dataset.client.ClientFactory;
+import org.dashbuilder.dataset.client.ClientDataSetCore;
 import org.dashbuilder.dataset.events.DataSetModifiedEvent;
 import org.dashbuilder.dataset.events.DataSetPushOkEvent;
 import org.dashbuilder.dataset.events.DataSetPushingEvent;
@@ -72,31 +72,30 @@ public abstract class AbstractDisplayerTest {
     @Mock
     protected ValueFormatterRegistry formatterRegistry;
 
-    protected ClientFactory clientFactory;
+    protected ClientDataSetCore clientDataSetCore;
     protected DataSetClientServices clientServices;
     protected ClientDataSetManager clientDataSetManager;
     protected DisplayerLocator displayerLocator;
     protected DataSet expensesDataSet;
     protected DataSetFormatter dataSetFormatter = new DataSetFormatter();
 
-
     public static final String EXPENSES = "expenses";
 
     public void initClientFactory() {
-        clientFactory = ClientFactory.get();
-        clientFactory.setClientDateFormatter(new ClientDateFormatterMock());
-        clientFactory.setChronometer(new ChronometerMock());
+        clientDataSetCore = ClientDataSetCore.get();
+        clientDataSetCore.setClientDateFormatter(new ClientDateFormatterMock());
+        clientDataSetCore.setChronometer(new ChronometerMock());
     }
 
     public void initClientDataSetManager() {
-        clientDataSetManager = clientFactory.getClientDataSetManager();
+        clientDataSetManager = clientDataSetCore.getClientDataSetManager();
     }
 
     public void initDataSetClientServices() {
         clientServices = new DataSetClientServices(
                 clientDataSetManager,
-                clientFactory.getAggregateFunctionManager(),
-                clientFactory.getIntervalBuilderLocator(),
+                clientDataSetCore.getAggregateFunctionManager(),
+                clientDataSetCore.getIntervalBuilderLocator(),
                 dataSetPushingEvent,
                 dataSetPushOkEvent,
                 dataSetModifiedEvent,

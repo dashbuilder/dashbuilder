@@ -16,8 +16,11 @@
  */
 package org.dashbuilder.dataset.client;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
 
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetFactory;
@@ -25,6 +28,7 @@ import org.dashbuilder.dataset.DataSetLookup;
 import org.dashbuilder.dataset.DataSetManager;
 import org.dashbuilder.dataset.DataSetMetadata;
 import org.dashbuilder.common.client.StringUtils;
+import org.dashbuilder.dataset.def.DataSetPreprocessor;
 import org.dashbuilder.dataset.engine.SharedDataSetOpEngine;
 import org.dashbuilder.dataset.engine.index.DataSetIndex;
 
@@ -36,44 +40,73 @@ import org.dashbuilder.dataset.engine.index.DataSetIndex;
 public class ClientDataSetManager implements DataSetManager {
 
     SharedDataSetOpEngine dataSetOpEngine;
+    Map<String,List<DataSetPreprocessor>> preprocessorMap = new HashMap<String, List<DataSetPreprocessor>>();
 
-    @Inject
-    public ClientDataSetManager(SharedDataSetOpEngine dataSetOpEngine) {
-        this.dataSetOpEngine = dataSetOpEngine;
+    public ClientDataSetManager() {
+        this.dataSetOpEngine = ClientDataSetCore.get().getSharedDataSetOpEngine();
     }
 
+    @Override
     public DataSet createDataSet(String uuid) {
         DataSet dataSet = DataSetFactory.newEmptyDataSet();
         dataSet.setUUID(uuid);
         return dataSet;
     }
 
+    @Override
     public DataSet getDataSet(String uuid) {
         DataSetIndex index = dataSetOpEngine.getIndexRegistry().get(uuid);
-        if (index == null) return null;
-
+        if (index == null) {
+            return null;
+        }
         return index.getDataSet();
     }
 
+    @Override
     public void registerDataSet(DataSet dataSet) {
         if (dataSet != null) {
             dataSetOpEngine.getIndexRegistry().put(dataSet);
         }
     }
 
+    @Override
+    public void registerDataSet(DataSet dataSet, List<DataSetPreprocessor> preprocessors) {
+        if (dataSet != null) {
+            dataSetOpEngine.getIndexRegistry().put(dataSet);
+
+            for (DataSetPreprocessor preprocessor : preprocessors) {
+                registerDataSetPreprocessor(dataSet.getUUID(), preprocessor);
+            }
+        }
+    }
+
+    @Override
     public DataSet removeDataSet(String uuid) {
         DataSetIndex index = dataSetOpEngine.getIndexRegistry().remove(uuid);
-        if (index == null) return null;
+        if (index == null) {
+            return null;
+        }
         return index.getDataSet();
     }
 
+    @Override
     public DataSet lookupDataSet(DataSetLookup lookup) {
         String uuid = lookup.getDataSetUUID();
-        if (StringUtils.isEmpty(uuid)) return null;
+        if (StringUtils.isEmpty(uuid)) {
+            return null;
+        }
 
         // Get the target data set
         DataSetIndex dataSetIndex = dataSetOpEngine.getIndexRegistry().get(uuid);
-        if (dataSetIndex == null) return null;
+        if (dataSetIndex == null) {
+            return null;
+        }
+        List<DataSetPreprocessor> dataSetDefPreProcessors = getDataSetPreprocessors(uuid);
+        if (dataSetDefPreProcessors != null) {
+            for(DataSetPreprocessor p : dataSetDefPreProcessors){
+                p.preprocess(lookup);
+            }
+        }
         DataSet dataSet = dataSetIndex.getDataSet();
 
         // Apply the list of operations specified (if any).
@@ -86,6 +119,7 @@ public class ClientDataSetManager implements DataSetManager {
         return dataSet;
     }
 
+    @Override
     public DataSet[] lookupDataSets(DataSetLookup[] lookup) {
         DataSet[] result = new DataSet[lookup.length];
         for (int i = 0; i < lookup.length; i++) {
@@ -94,11 +128,25 @@ public class ClientDataSetManager implements DataSetManager {
         return result;
     }
 
+    @Override
     public DataSetMetadata getDataSetMetadata(String uuid) {
         DataSetLookup lookup = new DataSetLookup(uuid);
         DataSet dataSet = lookupDataSet(lookup);
-        if (dataSet == null) return null;
-
+        if (dataSet == null) {
+            return null;
+        }
         return dataSet.getMetadata();
+    }
+
+    public void registerDataSetPreprocessor(String uuid, DataSetPreprocessor preprocessor) {
+        List<DataSetPreprocessor> preprocessors = preprocessorMap.get(uuid);
+        if (preprocessors == null) {
+            preprocessorMap.put(uuid, preprocessors = new ArrayList<DataSetPreprocessor>());
+        }
+        preprocessors.add(preprocessor);
+    }
+
+    public List<DataSetPreprocessor> getDataSetPreprocessors(String uuid) {
+        return preprocessorMap.get(uuid);
     }
 }

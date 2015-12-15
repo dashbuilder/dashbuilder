@@ -28,8 +28,6 @@ import org.dashbuilder.dataset.filter.*;
 import org.dashbuilder.dataset.group.DataSetGroup;
 import org.dashbuilder.dataset.group.Interval;
 
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
 import java.util.*;
 
 /**
@@ -38,13 +36,9 @@ import java.util.*;
  * 
  * <p>If the resulting query only contains filters, wrap them into a MATCH_ALL filtered query, as aggregations do not work with post-filters (just filters, no queries). </p>
  */
-@RequestScoped
 public class ElasticSearchQueryBuilderImpl implements ElasticSearchQueryBuilder<ElasticSearchQueryBuilderImpl> {
 
-    @Inject
     protected ElasticSearchValueTypeMapper valueTypeMapper;
-
-    @Inject
     protected ElasticSearchUtils utils;
     
     private DataSetMetadata metadata;
@@ -55,11 +49,7 @@ public class ElasticSearchQueryBuilderImpl implements ElasticSearchQueryBuilder<
         AND, OR, NOT;
     }
 
-    public ElasticSearchQueryBuilderImpl() {
-    }
-
-    public ElasticSearchQueryBuilderImpl(ElasticSearchValueTypeMapper valueTypeMapper,
-                                         ElasticSearchUtils utils) {
+    public ElasticSearchQueryBuilderImpl(ElasticSearchValueTypeMapper valueTypeMapper, ElasticSearchUtils utils) {
         this.valueTypeMapper = valueTypeMapper;
         this.utils = utils;
     }

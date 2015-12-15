@@ -16,24 +16,24 @@
 package org.dashbuilder.dataprovider.backend.elasticsearch;
 
 import org.apache.commons.lang3.ArrayUtils;
+import org.dashbuilder.DataSetCore;
 import org.dashbuilder.dataprovider.DataSetProvider;
 import org.dashbuilder.dataprovider.DataSetProviderType;
-import org.dashbuilder.dataprovider.backend.StaticDataSetProvider;
+import org.dashbuilder.dataprovider.StaticDataSetProvider;
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.ElasticSearchClient;
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.model.*;
+import org.dashbuilder.dataprovider.backend.elasticsearch.rest.util.ElasticSearchUtils;
 import org.dashbuilder.dataset.*;
 import org.dashbuilder.dataset.date.DayOfWeek;
 import org.dashbuilder.dataset.date.Month;
 import org.dashbuilder.dataset.def.DataColumnDef;
 import org.dashbuilder.dataset.def.DataSetDef;
 import org.dashbuilder.dataset.def.DataSetDefRegistry;
+import org.dashbuilder.dataset.def.DataSetDefRegistryListener;
 import org.dashbuilder.dataset.def.ElasticSearchDataSetDef;
 import org.dashbuilder.dataset.engine.group.IntervalBuilder;
 import org.dashbuilder.dataset.engine.group.IntervalBuilderLocator;
 import org.dashbuilder.dataset.engine.group.IntervalList;
-import org.dashbuilder.dataset.events.DataSetDefModifiedEvent;
-import org.dashbuilder.dataset.events.DataSetDefRemovedEvent;
-import org.dashbuilder.dataset.events.DataSetStaleEvent;
 import org.dashbuilder.dataset.filter.ColumnFilter;
 import org.dashbuilder.dataset.filter.DataSetFilter;
 import org.dashbuilder.dataset.filter.FilterFactory;
@@ -44,12 +44,8 @@ import org.dashbuilder.dataset.impl.MemSizeEstimator;
 import org.dashbuilder.dataset.sort.ColumnSort;
 import org.dashbuilder.dataset.sort.DataSetSort;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import javax.annotation.PreDestroy;
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.event.Observes;
-import javax.inject.Inject;
-import javax.inject.Named;
 import java.io.IOException;
 import java.util.*;
 
@@ -112,45 +108,56 @@ import java.util.*;
  * @since 0.3.0
  * 
  */
-@ApplicationScoped
-@Named("elasticsearch")
-public class ElasticSearchDataSetProvider implements DataSetProvider {
+public class ElasticSearchDataSetProvider implements DataSetProvider, DataSetDefRegistryListener {
 
     public static final int RESPONSE_CODE_OK = 200;
     private static final String COMMA = ",";
 
-    @Inject
-    protected Logger log;
-    
-    @Inject
+    private static ElasticSearchDataSetProvider SINGLETON = null;
+
+    public static ElasticSearchDataSetProvider get() {
+        if (SINGLETON == null) {
+            StaticDataSetProvider staticDataSetProvider = DataSetCore.get().getStaticDataSetProvider();
+            DataSetDefRegistry dataSetDefRegistry = DataSetCore.get().getDataSetDefRegistry();
+            IntervalBuilderLocator intervalBuilderLocator = DataSetCore.get().getIntervalBuilderLocator();
+            SINGLETON = new ElasticSearchDataSetProvider(staticDataSetProvider, dataSetDefRegistry, intervalBuilderLocator);
+        }
+        return SINGLETON;
+    }
+
+
+    protected Logger log = LoggerFactory.getLogger(ElasticSearchDataSetProvider.class);
     protected StaticDataSetProvider staticDataSetProvider;
-
-    @Inject
     protected DataSetDefRegistry dataSetDefRegistry;
-
-    @Inject
     protected IntervalBuilderLocator intervalBuilderLocator;
-
-    @Inject
     protected ElasticSearchClientFactory clientFactory;
-
-    @Inject
     protected ElasticSearchValueTypeMapper typeMapper;
-    
-    @Inject
     protected ElasticSearchQueryBuilderFactory queryBuilderFactory;
-    
+
     /** Backend cache map. **/
     protected final Map<String,DataSetMetadata> _metadataMap = new HashMap<String,DataSetMetadata>();
-    
+
     /** Singleton clients for each data set definition.. **/
     protected final Map<String,ElasticSearchClient> _clientsMap = new HashMap<String,ElasticSearchClient>();
 
     public ElasticSearchDataSetProvider() {
     }
-    
-    @PreDestroy
-    private void destroy() {
+
+    public ElasticSearchDataSetProvider(StaticDataSetProvider staticDataSetProvider,
+                                        DataSetDefRegistry dataSetDefRegistry,
+                                        IntervalBuilderLocator intervalBuilderLocator) {
+
+        this.staticDataSetProvider = staticDataSetProvider;
+        this.dataSetDefRegistry = dataSetDefRegistry;
+        this.intervalBuilderLocator = intervalBuilderLocator;
+
+        this.typeMapper = new ElasticSearchValueTypeMapper();
+        ElasticSearchUtils searchUtils = new ElasticSearchUtils(typeMapper);
+        this.clientFactory = new ElasticSearchClientFactory(typeMapper, searchUtils);
+        this.queryBuilderFactory = new ElasticSearchQueryBuilderFactory(typeMapper, searchUtils);
+    }
+
+    public void destroy() {
         // Destroy all clients.
         for (ElasticSearchClient client : _clientsMap.values()) {
             destroyClient(client);
@@ -200,10 +207,10 @@ public class ElasticSearchDataSetProvider implements DataSetProvider {
         if (dataSetFilter != null) {
             lookup.addOperation(dataSetFilter);
         }
-        
+
         // Create the search request.
         SearchRequest request = new SearchRequest(metadata);
-        
+
         // Pagination constraints.
         int numRows = lookup.getNumberOfRows();
         boolean trim = (numRows > 0);
@@ -220,7 +227,7 @@ public class ElasticSearchDataSetProvider implements DataSetProvider {
         int groupIdx = lookup.getFirstGroupOpIndex(0, null, false);
         if (groupIdx == -1) groupIdx = lookup.getFirstGroupOpIndex(0, null, true);
         if (groupIdx != -1) _groupOp = lookup.getOperation(groupIdx);
-        
+
         // Single group operations to process. The others have to be group with intervals selection, and are not considerent grouped column, just filters.
         List<DataColumn> columns = new ArrayList<DataColumn>();
         if (_groupOp != null && !_groupOp.isSelect()) {
@@ -254,7 +261,7 @@ public class ElasticSearchDataSetProvider implements DataSetProvider {
                 // Use the main group operation as a request aggregation.
                 request.setAggregations(Collections.singletonList(_groupOp));
             }
-            
+
         }
 
         // Set the resulting columns on the request object.
@@ -294,9 +301,9 @@ public class ElasticSearchDataSetProvider implements DataSetProvider {
         Query query = queryBuilderFactory.newQueryBuilder().metadata(metadata)
                 .groupInterval(_groupOp != null ? Arrays.asList(_groupOp) : null)
                 .filter(filters).build();
-        
+
         request.setQuery(query);
-        
+
         // Sort operations.
         List<DataSetSort> sortOps = lookup.getOperationList(DataSetSort.class);
         if ( (sortOps == null || sortOps.isEmpty()) && elDef.getColumnSort() != null) {
@@ -326,7 +333,7 @@ public class ElasticSearchDataSetProvider implements DataSetProvider {
 
         // Set the sorting operations, if any, into the ELS request.
         request.setSorting(sortOps);
-        
+
 
         // Perform the query & generate the resulting dataset.
         DataSet dataSet = DataSetFactory.newEmptyDataSet();
@@ -343,7 +350,7 @@ public class ElasticSearchDataSetProvider implements DataSetProvider {
 
         // Post process the data set for supporting extended features.
         postProcess(metadata, dataSet);
-        
+
         if (trim) {
             dataSet.setRowCountNonTrimmed((int)searchResponse.getTotalHits());
         }
@@ -401,7 +408,7 @@ public class ElasticSearchDataSetProvider implements DataSetProvider {
             ColumnType columnType = column.getColumnType();
 
             // Group by date column using empty intervals special post process.
-            // Aggregations for achieving empty intervals are hard to perform in ELS queries, 
+            // Aggregations for achieving empty intervals are hard to perform in ELS queries,
             // as expected data set resulting from the query to the server is not large, do it in memory.
             if (ColumnType.LABEL.equals(columnType)) {
                 ColumnGroup cg = column.getColumnGroup();
@@ -429,7 +436,7 @@ public class ElasticSearchDataSetProvider implements DataSetProvider {
             }
         }
     }
-    
+
     private void fillEmptyRows(DataSet dataSet, DataColumn dateGroupColumn, int startIndex, int intervalSize) {
         IntervalBuilder intervalBuilder = intervalBuilderLocator.lookup(ColumnType.DATE, dateGroupColumn.getColumnGroup().getStrategy());
         IntervalList intervalList = intervalBuilder.build(dateGroupColumn);
@@ -461,7 +468,7 @@ public class ElasticSearchDataSetProvider implements DataSetProvider {
 
     protected DataColumn getColumnById(DataSetMetadata metadata, String columnId) {
         if (metadata == null || columnId == null || columnId.trim().length() == 0) return null;
-        
+
         int numCols = metadata.getNumberOfColumns();
         for (int x = 0; x < numCols; x++) {
             String metaColumnId = metadata.getColumnId(x);
@@ -470,7 +477,7 @@ public class ElasticSearchDataSetProvider implements DataSetProvider {
                 return column;
             }
         }
-        
+
         return null;
     }
 
@@ -480,11 +487,11 @@ public class ElasticSearchDataSetProvider implements DataSetProvider {
 
     /**
      * Fills the dataset values.
-     * 
+     *
      * @param dataSet The dataset instance to fill. Note that dataset columns must be added before calling this method.
      * @param hits The search result hits.
-     *             
-     * @throws Exception 
+     *
+     * @throws Exception
      */
     protected void fillDataSetValues(ElasticSearchDataSetDef elDef, DataSet dataSet, SearchHitResponse[] hits) throws Exception {
         List<DataColumn> dataSetColumns = dataSet.getColumns();
@@ -513,7 +520,7 @@ public class ElasticSearchDataSetProvider implements DataSetProvider {
 
             // Compare the cached vs elasticsearch server rows.
             long rows = getRowCount(elDef);
-            
+
             return rows != dataSet.getRowCount();
         }
         catch (Exception e) {
@@ -525,23 +532,23 @@ public class ElasticSearchDataSetProvider implements DataSetProvider {
     public DataSetMetadata getDataSetMetadata(DataSetDef def) throws Exception {
         return getDataSetMetadata(def, true);
     }
-    
+
     private DataSetMetadata getDataSetMetadata(DataSetDef def, boolean isTestMode) throws Exception {
         // Type casting.
         ElasticSearchDataSetDef elasticSearchDataSetDef = (ElasticSearchDataSetDef) def;
-        
+
         // Check if metadata already exists in cache, if no test mode is enabled.
         if (!isTestMode) {
-            DataSetMetadata result = (DataSetMetadata) _metadataMap.get(elasticSearchDataSetDef.getUUID());
+            DataSetMetadata result = _metadataMap.get(elasticSearchDataSetDef.getUUID());
             if (result != null) return result;
         } else if (log.isDebugEnabled()) {
             log.debug("Using look-up in test mode. Skipping read data set metadata for uuid [" + def.getUUID() + "] from cache.");
         }
-        
+
         // Data Set parameters.
         String[] index = fromString(elasticSearchDataSetDef.getIndex());
         String[] type = fromString(elasticSearchDataSetDef.getType());
-        
+
         // Get the row count.
         long rowCount = getRowCount(elasticSearchDataSetDef);
 
@@ -626,10 +633,10 @@ public class ElasticSearchDataSetProvider implements DataSetProvider {
 
         return result;
     }
-    
+
     private int estimateSize(List<ColumnType> columnTypes, int rowCount) {
         int estimatedSize = 0;
-        
+
         if (columnTypes != null && !columnTypes.isEmpty()) {
             for (ColumnType type : columnTypes) {
                 if (ColumnType.DATE.equals(type)) {
@@ -644,44 +651,44 @@ public class ElasticSearchDataSetProvider implements DataSetProvider {
                 }
             }
         }
-        
+
         return estimatedSize;
     }
-    
+
     /**
      * Parse a given index' field definitions from EL index mappings response.
-     * 
+     *
      * @param indexMappings The mappings response from EL server.
      * @param def The data set definition.
      * @return The Data columns from index mappings.
      */
     protected Map<String, DataColumn> parseColumnsFromIndexMappings(IndexMappingResponse[] indexMappings, ElasticSearchDataSetDef def) {
         Map<String, DataColumn> result = null;
-        
+
         // Iterate over index/es.
         for (IndexMappingResponse indexMapping : indexMappings) {
             result = new HashMap<String, DataColumn>();
             String indexName = indexMapping.getIndexName();
-            
+
             // Document Type/s.
             TypeMappingResponse[] typeMappings = indexMapping.getTypeMappings();
             if (typeMappings == null || typeMappings.length == 0) throw new IllegalArgumentException("There are no types for index: [" + indexName + "[");
             for (TypeMappingResponse typeMapping : typeMappings) {
                 String typeName = typeMapping.getTypeName();
-                
+
                 // Document type field/s
                 FieldMappingResponse[] properties = typeMapping.getFields();
                 if (properties == null || properties.length == 0) throw new IllegalArgumentException("There are no fields for index: [" + indexName + "] and type [" + typeName + "[");
                 for (FieldMappingResponse fieldMapping : properties) {
                     String fieldName = fieldMapping.getName();
                     String format = fieldMapping.getFormat();
-                    
+
                     // Field.
                     DataColumn _column = parseColumnFromIndexMappings(def, indexName, typeName, fieldName, format, fieldMapping.getDataType(), fieldMapping.getIndexType());
                     if (_column != null) {
                         result.put(_column.getId(), _column);
                     }
-                    
+
                     // Multi-fields.
                     MultiFieldMappingResponse[] multiFieldMappingResponse = fieldMapping.getMultiFields();
                     if (multiFieldMappingResponse != null && multiFieldMappingResponse.length > 0) {
@@ -695,20 +702,20 @@ public class ElasticSearchDataSetProvider implements DataSetProvider {
                 }
             }
         }
-        
+
         return result;
     }
-    
-    protected DataColumn parseColumnFromIndexMappings(ElasticSearchDataSetDef def, 
-                                                      String indexName, 
-                                                      String typeName, 
-                                                      String fieldName, 
-                                                      String format, 
-                                                      FieldMappingResponse.FieldType fieldType, 
+
+    protected DataColumn parseColumnFromIndexMappings(ElasticSearchDataSetDef def,
+                                                      String indexName,
+                                                      String typeName,
+                                                      String fieldName,
+                                                      String format,
+                                                      FieldMappingResponse.FieldType fieldType,
                                                       FieldMappingResponse.IndexType indexType) {
 
-        
-        // Data Column model generation from index mappigns and  data set definition column patterns definition 
+
+        // Data Column model generation from index mappigns and  data set definition column patterns definition
         String columnId = getColumnId(indexName, typeName, fieldName);
         ColumnType columnType = getDataType(fieldType, indexType);
 
@@ -774,17 +781,17 @@ public class ElasticSearchDataSetProvider implements DataSetProvider {
             log.debug("[" + indexName + "]/[" + typeName + "] - Skipping column retrieved from index mappings response with id [" + columnId + "], as data type for this column is not supported.");
 
         }
-        
+
         return column;
     }
-    
+
     protected String getColumnId(String index, String type, String field) throws IllegalArgumentException {
         if (index == null || index.trim().length() == 0) throw new IllegalArgumentException("Cannot create the column identifier. Index name is not set.");
         if (type == null || type.trim().length() == 0) throw new IllegalArgumentException("Cannot create the column identifier. Document type name is not set.");
         if (field == null || field.trim().length() == 0) throw new IllegalArgumentException("Cannot create the column identifier. Field name is not set.");
         return field;
     }
-    
+
     /**
      * <p>Return the dashbuilder data type for a given ElasticSearch field type.</p>
      *
@@ -821,7 +828,7 @@ public class ElasticSearchDataSetProvider implements DataSetProvider {
             case BINARY:
                 return ColumnType.LABEL;
         }
-        
+
         if (log.isDebugEnabled()) {
             log.debug("The ElasticSearch core data type [" + fieldType.toString() + "] is not suppored.");
         }
@@ -837,7 +844,7 @@ public class ElasticSearchDataSetProvider implements DataSetProvider {
         if (response != null) return response.getCount();
         return 0;
     }
-    
+
     private ElasticSearchClient getClient(ElasticSearchDataSetDef def) {
         ElasticSearchClient client = _clientsMap.get(def.getUUID());
         if (client == null) {
@@ -865,41 +872,45 @@ public class ElasticSearchDataSetProvider implements DataSetProvider {
         return client;
     }
 
-        // Listen to changes on the data set definition registry
+    // Listen to changes on the data set definition registry
 
-    private void onDataSetStaleEvent(@Observes DataSetStaleEvent event) {
-        DataSetDef def = event.getDataSetDef();
+    @Override
+    public void onDataSetDefStale(DataSetDef def) {
         if (DataSetProviderType.ELASTICSEARCH.equals(def.getProvider())) {
             remove(def.getUUID());
         }
     }
 
-    private void onDataSetDefRemovedEvent(@Observes DataSetDefRemovedEvent event) {
-        DataSetDef def = event.getDataSetDef();
-        if (DataSetProviderType.ELASTICSEARCH.equals(def.getProvider())) {
-            remove(def.getUUID());
+    @Override
+    public void onDataSetDefModified(DataSetDef oldDef, DataSetDef newDef) {
+        if (DataSetProviderType.ELASTICSEARCH.equals(oldDef.getProvider())) {
+            remove(oldDef.getUUID());
         }
     }
 
-    private void onDataSetDefModifiedEvent(@Observes DataSetDefModifiedEvent event) {
-        DataSetDef def = event.getOldDataSetDef();
-        if (DataSetProviderType.ELASTICSEARCH.equals(def.getProvider())) {
-            remove(def.getUUID());
+    @Override
+    public void onDataSetDefRemoved(DataSetDef oldDef) {
+        if (DataSetProviderType.ELASTICSEARCH.equals(oldDef.getProvider())) {
+            remove(oldDef.getUUID());
         }
     }
-    
-    private void remove(final String uuid) {
+
+    @Override
+    public void onDataSetDefRegistered(DataSetDef newDef) {
+
+    }
+
+    protected void remove(final String uuid) {
         _metadataMap.remove(uuid);
         destroyClient(uuid);
         staticDataSetProvider.removeDataSet(uuid);
     }
 
-
     public static String[] fromString(String str) {
         if (str == null) return null;
         if (str.trim().length() == 0) return new String[] {""};
-        
-        
+
+
         return str.split(COMMA);
     }
 
@@ -915,9 +926,9 @@ public class ElasticSearchDataSetProvider implements DataSetProvider {
         }
         return builder.toString();
     }
-    
+
     private boolean isEmpty(String str) {
         return str == null || str.trim().length() == 0;
     }
-    
+
 }
