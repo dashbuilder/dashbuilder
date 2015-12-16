@@ -22,7 +22,12 @@ import org.dashbuilder.dataset.DataSetLookup;
 import org.dashbuilder.dataset.group.AggregateFunctionType;
 import org.dashbuilder.dataset.group.DateIntervalType;
 import org.dashbuilder.dataset.sort.SortOrder;
+import org.dashbuilder.json.JsonBoolean;
+import org.dashbuilder.json.JsonNull;
+import org.dashbuilder.json.JsonNumber;
 import org.dashbuilder.json.JsonObject;
+import org.dashbuilder.json.JsonString;
+import org.dashbuilder.json.JsonValue;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -66,5 +71,21 @@ public class DataSetLookupJsonTest {
         d2 = jsonMarshaller.parseDate(d1);
         d3 = jsonMarshaller.formatDate(d2);
         assertEquals(d1, d3);
+    }
+
+    @Test
+    public void test_DASHBUILDE_83() {
+
+        JsonValue jsonNull = jsonMarshaller.formatValue(null);
+        JsonValue jsonBoolean = jsonMarshaller.formatValue(true);
+        JsonValue jsonNumber = jsonMarshaller.formatValue(100d);
+        JsonValue jsonDate = jsonMarshaller.formatValue(new Date());
+        JsonValue jsonString = jsonMarshaller.formatValue("string");
+
+        assertTrue(jsonNull instanceof JsonNull);
+        assertTrue(jsonBoolean instanceof JsonBoolean);
+        assertTrue(jsonNumber instanceof JsonNumber);
+        assertTrue(jsonDate instanceof JsonString);
+        assertTrue(jsonString instanceof JsonString);
     }
 }
