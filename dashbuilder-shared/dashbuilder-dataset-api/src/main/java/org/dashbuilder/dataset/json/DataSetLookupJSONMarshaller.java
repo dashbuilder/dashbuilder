@@ -621,27 +621,25 @@ public class DataSetLookupJSONMarshaller {
     }
 
     public JsonValue formatValue(Object value) {
+        // Null
         if (value == null) {
-            // Null
             return JsonNull.NULL_INSTANCE;
         }
-        try {
-            // Boolean
-            return Json.create((Boolean) value);
+        // Number
+        else if (value instanceof Number) {
+            return Json.create(((Number) value).doubleValue());
         }
-        catch (ClassCastException e1) {
-            try {
-                // Number
-                return Json.create(((Number) value).doubleValue());
-            } catch (ClassCastException e2) {
-                try {
-                    // Date
-                    return Json.create(formatDate((Date) value));
-                } catch (ClassCastException e3) {
-                    // String
-                    return Json.create(value.toString());
-                }
-            }
+        // Boolean
+        else if (value instanceof Boolean) {
+            return Json.create(((Boolean) value).booleanValue());
+        }
+        // Date
+        else if (value instanceof Date) {
+            return Json.create(formatDate((Date) value));
+        }
+        // String (default)
+        else {
+            return Json.create(value.toString());
         }
     }
 
