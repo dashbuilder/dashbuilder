@@ -34,6 +34,7 @@ import org.uberfire.client.views.pfly.menu.MainBrand;
 import org.uberfire.client.workbench.events.ApplicationReadyEvent;
 import org.uberfire.client.workbench.widgets.menu.WorkbenchMenuBar;
 import org.uberfire.mvp.Command;
+import org.uberfire.mvp.impl.DefaultPlaceRequest;
 import org.uberfire.workbench.events.NotificationEvent;
 import org.uberfire.workbench.model.menu.MenuFactory;
 import org.uberfire.workbench.model.menu.MenuItem;
@@ -82,14 +83,11 @@ public class ShowcaseEntryPoint {
     }
 
     private Menus createMenuBar() {
-        return newTopLevelMenu(AppConstants.INSTANCE.menu_home()).respondsWith(new Command() {
-                public void execute() {
-                    placeManager.goTo("HomePerspective");
-                }}).endMenu().
-                newTopLevelMenu(AppConstants.INSTANCE.menu_gallery()).respondsWith(new Command() {
-                public void execute() {
-                    placeManager.goTo("DisplayerGalleryPerspective");
-                }}).endMenu().
+        return newTopLevelMenu(AppConstants.INSTANCE.menu_home())
+                .place(new DefaultPlaceRequest("HomePerspective"))
+                .endMenu().
+                newTopLevelMenu(AppConstants.INSTANCE.menu_gallery())
+                .place(new DefaultPlaceRequest("DisplayerGalleryPerspective")).endMenu().
                 newTopLevelMenu(AppConstants.INSTANCE.menu_authoring())
                 .withItems(getAuthoringMenuItems())
                 .endMenu().
@@ -146,8 +144,8 @@ public class ShowcaseEntryPoint {
     private void onDashboardCreatedEvent(@Observes DashboardCreatedEvent event) {
         menubar.clear();
         menubar.addMenus(createMenuBar());
-        // Navigate to the activity after rebuilding the menu bar entries, if not, the activiy perspective menus are overriden and do not appear.
-        placeManager.goTo(event.getDashboardId());
+        // Navigate to the activity after rebuilding the menu bar entries, if not, the activity perspective menus are override by uf and they do not appear.
+        placeManager.goTo(new DefaultPlaceRequest(event.getDashboardId()));
         workbenchNotification.fire(new NotificationEvent(AppConstants.INSTANCE.notification_dashboard_created(event.getDashboardName()), INFO));
     }
 
@@ -169,11 +167,9 @@ public class ShowcaseEntryPoint {
     }
 
     private MenuItem newMenuItem(String caption, final String activityId, final boolean showSubMenu, final boolean showLogo) {
-        return MenuFactory.newSimpleItem(caption).respondsWith(new Command() {
-            public void execute() {
-                placeManager.goTo(activityId);
-            }
-        }).endMenu().build().getItems().get(0);
+        return MenuFactory.newSimpleItem(caption)
+                .place(new DefaultPlaceRequest(activityId))
+                .endMenu().build().getItems().get(0);
     }
 
     // Fade out the "Loading application" pop-up
