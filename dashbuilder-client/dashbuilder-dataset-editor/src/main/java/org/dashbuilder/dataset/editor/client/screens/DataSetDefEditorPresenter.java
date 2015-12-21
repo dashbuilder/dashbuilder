@@ -41,6 +41,7 @@ import org.jboss.errai.common.client.api.ErrorCallback;
 import org.jboss.errai.common.client.api.RemoteCallback;
 import org.jboss.errai.ioc.client.container.SyncBeanManager;
 import org.uberfire.backend.vfs.ObservablePath;
+import org.uberfire.backend.vfs.Path;
 import org.uberfire.client.annotations.*;
 import org.uberfire.client.mvp.PlaceManager;
 import org.uberfire.client.workbench.events.ChangeTitleWidgetEvent;
@@ -223,9 +224,14 @@ public class DataSetDefEditorPresenter extends BaseEditor {
                     new ParameterizedCommand<String>() {
                         @Override public void execute(final String commitMessage) {
                             final DataSetDef def = getDataSetDef();
-                            services.call(getSaveSuccessCallback(getCurrentModelHash()), errorCallback)
+                            services.call(new RemoteCallback<Path>() {
+                                @Override
+                                public void callback(final Path path) {
+                                    DataSetDefEditorPresenter.this.getSaveSuccessCallback(getCurrentModelHash()).callback(path);
+                                    placeManager.closePlace(DataSetDefEditorPresenter.this.place);
+                                }
+                            }, errorCallback)
                                     .save(def, commitMessage);
-                            placeManager.goTo("DataSetAuthoringHome");
 
                         }
                     }
