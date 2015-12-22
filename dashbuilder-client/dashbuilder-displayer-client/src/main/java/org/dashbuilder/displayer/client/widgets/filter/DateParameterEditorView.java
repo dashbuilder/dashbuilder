@@ -24,11 +24,8 @@ import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
-import org.gwtbootstrap3.extras.datetimepicker.client.ui.DateTimePicker;
-import org.uberfire.client.mvp.UberView;
-import org.uberfire.mvp.Command;
+import org.uberfire.ext.widgets.common.client.common.DatePicker;
 
 @Dependent
 public class DateParameterEditorView extends Composite implements DateParameterEditor.View {
@@ -39,7 +36,7 @@ public class DateParameterEditorView extends Composite implements DateParameterE
     DateParameterEditor presenter;
 
     @UiField
-    DateTimePicker input;
+    DatePicker input;
 
     public DateParameterEditorView() {
         initWidget(uiBinder.createAndBindUi(this));
@@ -50,7 +47,7 @@ public class DateParameterEditorView extends Composite implements DateParameterE
         this.presenter = presenter;
         input.addValueChangeHandler(new ValueChangeHandler<Date>() {
             public void onValueChange(ValueChangeEvent<Date> event) {
-                presenter.valueChanged(event.getValue());
+                presenter.valueChanged();
             }
         });
     }
@@ -63,9 +60,5 @@ public class DateParameterEditorView extends Composite implements DateParameterE
     @Override
     public void setCurrentValue(Date value) {
         input.setValue(value);
-    }
-
-    public DateTimePicker getInput() {
-        return input;
     }
 }

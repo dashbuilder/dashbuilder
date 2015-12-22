@@ -150,7 +150,7 @@ public class ColumnFilterEditorView extends Composite implements ColumnFilterEdi
 
     // Internals
 
-    DateTimeFormat _dateTimeFormat = DateTimeFormat.getFormat(DateTimeFormat.PredefinedFormat.DATE_TIME_SHORT);
+    DateTimeFormat _dateTimeFormat = DateTimeFormat.getFormat(DateTimeFormat.PredefinedFormat.DATE_MEDIUM);
     NumberFormat _numberFormat = NumberFormat.getDecimalFormat();
 
     @Override
