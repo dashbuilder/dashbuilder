@@ -536,11 +536,10 @@ public class GalleryTree {
                         .column(AMOUNT, MAX).format(AppConstants.INSTANCE.gallerytree_table_grouped_column4(), "$ #,###")
                         .column(AMOUNT, AVERAGE).format(AppConstants.INSTANCE.gallerytree_table_grouped_column5(), "$ #,###")
                         .column(AMOUNT, SUM).format(AppConstants.INSTANCE.gallerytree_table_grouped_column6(), "$ #,###")
-                        .sort("Total", DESCENDING)
                         .title(AppConstants.INSTANCE.gallerytree_table_grouped_title())
                         .tablePageSize(10)
                         .tableOrderEnabled(true)
-                        .tableOrderDefault("Country", DESCENDING)
+                        .tableOrderDefault(COUNTRY, DESCENDING)
                         .filterOn(false, true, true)
                         .buildSettings()
         )));

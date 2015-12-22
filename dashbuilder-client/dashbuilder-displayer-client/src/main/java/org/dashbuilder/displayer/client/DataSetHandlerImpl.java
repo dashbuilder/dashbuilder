@@ -349,7 +349,10 @@ public class DataSetHandlerImpl implements DataSetHandler {
         if (lastLookedUpDataSet != null) {
             DataColumn column = lastLookedUpDataSet.getColumnById(columnId);
             if (column != null && column.getGroupFunction() != null) {
-                return column.getGroupFunction().getSourceId();
+                String sourceId = column.getGroupFunction().getSourceId();
+                if (sourceId != null) {
+                    return sourceId;
+                }
             }
         }
         for (List<GroupOpFilter> currentSelections : _groupOpsSelected.values()) {
