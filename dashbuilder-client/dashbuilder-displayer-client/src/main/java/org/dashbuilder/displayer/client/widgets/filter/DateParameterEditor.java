@@ -20,8 +20,6 @@ import java.util.Date;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
 import org.uberfire.client.mvp.UberView;
@@ -63,7 +61,7 @@ public class DateParameterEditor implements IsWidget {
         view.setCurrentValue(value);
     }
 
-    void valueChanged(Date value) {
+    void valueChanged() {
         onChangeCommand.execute();
     }
 }
