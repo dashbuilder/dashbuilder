@@ -169,10 +169,11 @@ public class JDBCUtils {
 
             if (!columnExcluded.contains(name) && !columnExcluded.contains(alias)) {
                 ColumnType type = JDBCUtils.calculateType(meta.getColumnType(i));
-                int size = meta.getColumnDisplaySize(i);
-
-                Column column = SQLFactory.column(name, type, size).as(alias);
-                columnList.add(column);
+                if (type != null) {
+                    int size = meta.getColumnDisplaySize(i);
+                    Column column = SQLFactory.column(name, type, size).as(alias);
+                    columnList.add(column);
+                }
             }
         }
         return columnList;
@@ -253,25 +254,9 @@ public class JDBCUtils {
                 return ColumnType.DATE;
             }
 
-            /*case Types.BINARY:
-            case Types.VARBINARY:
-            case Types.LONGVARBINARY:
-            case Types.NULL:
-            case Types.OTHER:
-            case Types.JAVA_OBJECT:
-            case Types.DISTINCT:
-            case Types.STRUCT:
-            case Types.ARRAY:
-            case Types.BLOB:
-            case Types.CLOB:
-            case Types.REF:
-            case Types.ROWID:
-            case Types.SQLXML:
-            case Types.DATALINK:*/
-
             // Unsupported (see above) types are treated as a text values.
             default: {
-                return ColumnType.TEXT;
+                return null;
             }
         }
     }
