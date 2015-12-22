@@ -40,7 +40,12 @@ public interface DataSetManager {
      * Registers the specified data set instance.
      */
     void registerDataSet(DataSet dataSet);
-    
+
+    /**
+     * Registers the specified data set instance with a list of preprocessors
+     */
+    void registerDataSet(DataSet dataSet, List<DataSetPreprocessor> preprocessors);
+
     /**
      * Removes the specified data set instance.
      * @param uuid The UUID of the data set.

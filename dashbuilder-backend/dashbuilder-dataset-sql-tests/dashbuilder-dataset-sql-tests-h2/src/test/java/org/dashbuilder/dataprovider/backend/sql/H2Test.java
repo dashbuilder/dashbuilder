@@ -19,6 +19,11 @@ import org.junit.Test;
 
 public class H2Test extends SQLTestSuite {
 
+    @Override
+    protected DatabaseTestSettings createTestSettings() {
+        return new H2TestSettings();
+    }
+
     @Test
     public void testAll() throws Exception {
         super.testAll();

@@ -18,10 +18,10 @@ package org.dashbuilder.dataprovider.backend.sql;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
-import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
 
 import org.apache.commons.lang3.StringUtils;
+import org.dashbuilder.dataprovider.sql.SQLDataSourceLocator;
 import org.dashbuilder.dataset.def.SQLDataSetDef;
 import org.h2.jdbcx.JdbcDataSource;
 
@@ -39,14 +39,17 @@ public class DatabaseTestSettings {
 
     protected Properties connectionSettings;
 
-    @PostConstruct
-    protected void init() throws IOException {
+    public DatabaseTestSettings() {
         String type = getDatabaseType();
         connectionSettings = new Properties();
         String propsFile = "testdb-" + type + ".properties";
         InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream(propsFile);
         if (is != null) {
-            connectionSettings.load(is);
+            try {
+                connectionSettings.load(is);
+            } catch (IOException e) {
+                throw new RuntimeException("Database settings file load error: " + propsFile, e);
+            }
         } else {
             throw new IllegalArgumentException("Database settings file not found in classpath: " + propsFile);
         }

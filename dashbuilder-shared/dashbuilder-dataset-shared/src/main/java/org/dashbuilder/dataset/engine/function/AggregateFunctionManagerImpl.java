@@ -18,14 +18,11 @@ package org.dashbuilder.dataset.engine.function;
 import java.util.Collection;
 import java.util.EnumMap;
 import java.util.Map;
-import javax.annotation.PostConstruct;
-import javax.enterprise.context.ApplicationScoped;
 
 import org.dashbuilder.dataset.group.AggregateFunction;
 import org.dashbuilder.dataset.group.AggregateFunctionManager;
 import org.dashbuilder.dataset.group.AggregateFunctionType;
 
-@ApplicationScoped
 public class AggregateFunctionManagerImpl implements AggregateFunctionManager {
 
     /**

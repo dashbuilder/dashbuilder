@@ -77,10 +77,10 @@ public class DisplayerScreenPresenter {
     private PerspectiveCoordinator perspectiveCoordinator;
     private PerspectiveManager perspectiveManager;
     private PanelManager panelManager;
-    private DisplayerSettingsJSONMarshaller jsonMarshaller;
     private PlaceManager placeManager;
     private UUIDGenerator uuidGenerator;
     private Event<ChangeTitleWidgetEvent> changeTitleEvent;
+    private DisplayerSettingsJSONMarshaller jsonMarshaller;
 
     private DisplayerSettings displayerSettings;
     private PlaceRequest placeRequest;
@@ -103,7 +103,6 @@ public class DisplayerScreenPresenter {
                                     DisplayerViewer displayerViewer,
                                     PanelManager panelManager,
                                     PerspectiveCoordinator perspectiveCoordinator,
-                                    DisplayerSettingsJSONMarshaller jsonMarshaller,
                                     Event<ChangeTitleWidgetEvent> changeTitleEvent) {
 
         this.beanManager = beanManager;
@@ -114,9 +113,9 @@ public class DisplayerScreenPresenter {
         this.displayerViewer = displayerViewer;
         this.panelManager = panelManager;
         this.perspectiveCoordinator = perspectiveCoordinator;
-        this.jsonMarshaller = jsonMarshaller;
         this.menuActionsButton = getMenuActionsButton();
         this.changeTitleEvent = changeTitleEvent;
+        this.jsonMarshaller = DisplayerSettingsJSONMarshaller.get();
     }
 
     @OnStartup

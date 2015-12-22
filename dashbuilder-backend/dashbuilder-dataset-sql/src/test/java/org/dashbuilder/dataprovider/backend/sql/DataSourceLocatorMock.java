@@ -15,18 +15,14 @@
  */
 package org.dashbuilder.dataprovider.backend.sql;
 
-import javax.enterprise.inject.Specializes;
 import javax.sql.DataSource;
+
+import org.dashbuilder.dataprovider.sql.SQLDataSourceLocator;
 import org.dashbuilder.dataset.def.SQLDataSetDef;
 
-@Specializes
-public class DataSourceLocatorMock extends SQLDataSourceLocatorImpl {
+public class DataSourceLocatorMock implements SQLDataSourceLocator {
 
     protected SQLDataSourceLocator dataSourceLocator;
-
-    public SQLDataSourceLocator getDataSourceLocator() {
-        return dataSourceLocator;
-    }
 
     public void setDataSourceLocator(SQLDataSourceLocator dataSourceLocator) {
         this.dataSourceLocator = dataSourceLocator;

@@ -44,9 +44,6 @@ import org.dashbuilder.dataset.group.GroupStrategy;
 import org.dashbuilder.dataset.sort.ColumnSort;
 import org.dashbuilder.dataset.sort.DataSetSort;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-import javax.inject.Named;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.*;
@@ -56,8 +53,6 @@ import java.util.*;
  *
  * @see <a href="https://github.com/searchbox-io/Jest">https://github.com/searchbox-io/Jest</a>
  */
-@ApplicationScoped
-@Named("elasticSearchJestClient")
 public class ElasticSearchJestClient implements ElasticSearchClient<ElasticSearchJestClient> {
 
     protected String serverURL;
@@ -65,13 +60,8 @@ public class ElasticSearchJestClient implements ElasticSearchClient<ElasticSearc
     protected String[] index;
     protected String[] type;
 
-    @Inject
     protected ElasticSearchClientFactory clientFactory;
-    
-    @Inject
     protected ElasticSearchValueTypeMapper typeMapper;
-    
-    @Inject
     protected ElasticSearchUtils utils;
     
     // JestClient is designed to be singleton, don't construct it for each request.
@@ -79,12 +69,10 @@ public class ElasticSearchJestClient implements ElasticSearchClient<ElasticSearc
     private ElasticSearchJestClient anotherClient;
     protected int timeout = DEFAULT_TIMEOUT;
 
-    public ElasticSearchJestClient() {
-        System.out.println("New Jest client - " + this);
-    }
-
-    public ElasticSearchJestClient(ElasticSearchClientFactory clientFactory, ElasticSearchValueTypeMapper typeMapper,
+    public ElasticSearchJestClient(ElasticSearchClientFactory clientFactory,
+                                   ElasticSearchValueTypeMapper typeMapper,
                                    ElasticSearchUtils utils) {
+
         this.clientFactory = clientFactory;
         this.typeMapper = typeMapper;
         this.utils = utils;

@@ -16,7 +16,6 @@
 package org.dashbuilder.dataset.engine.group;
 
 import java.util.List;
-import javax.enterprise.context.ApplicationScoped;
 
 import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.dataset.engine.DataSetHandler;
@@ -26,7 +25,6 @@ import org.dashbuilder.dataset.group.Interval;
 /**
  * Interval builder for label columns which generates one interval per label.
  */
-@ApplicationScoped
 public class IntervalBuilderDynamicLabel implements IntervalBuilder {
 
     public IntervalList build(DataSetHandler ctx, ColumnGroup columnGroup) {

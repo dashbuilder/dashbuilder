@@ -17,7 +17,6 @@ package org.dashbuilder.dataset.engine.filter;
 
 import java.util.ArrayList;
 import java.util.List;
-import javax.enterprise.context.ApplicationScoped;
 
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.engine.DataSetHandler;
@@ -29,7 +28,6 @@ import org.dashbuilder.dataset.filter.LogicalExprFilter;
 /**
  * Default data set filter algorithm.
  */
-@ApplicationScoped
 public class DefaultFilterAlgorithm implements DataSetFilterAlgorithm {
 
     /*

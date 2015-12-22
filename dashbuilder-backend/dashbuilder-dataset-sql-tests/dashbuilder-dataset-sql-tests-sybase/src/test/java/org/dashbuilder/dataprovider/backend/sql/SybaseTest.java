@@ -19,6 +19,11 @@ import org.junit.Test;
 
 public class SybaseTest extends SQLTestSuite {
 
+    @Override
+    protected DatabaseTestSettings createTestSettings() {
+        return new SybaseTestSettings();
+    }
+
     @Test
     public void testAll() throws Exception {
         super.testAll();

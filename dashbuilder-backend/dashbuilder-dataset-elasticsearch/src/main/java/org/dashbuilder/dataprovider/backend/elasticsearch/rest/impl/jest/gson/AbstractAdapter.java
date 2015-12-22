@@ -22,9 +22,7 @@ public abstract class AbstractAdapter<T extends AbstractAdapter> {
     protected SearchRequest request;
 
     public AbstractAdapter(ElasticSearchJestClient client, DataSetMetadata metadata, List<DataColumn> columns) {
-        this.metadata = metadata;
-        this.columns = columns;
-        this.client = client;
+        this(client, metadata, columns, null);
     }
 
     public AbstractAdapter(ElasticSearchJestClient client, DataSetMetadata metadata, List<DataColumn> columns, SearchRequest request) {
