@@ -14,6 +14,7 @@
  */
 package org.dashbuilder.renderer.client.table;
 
+import org.dashbuilder.common.client.error.ClientRuntimeError;
 import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.filter.FilterFactory;
 import org.dashbuilder.dataset.sort.SortOrder;
@@ -28,6 +29,8 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.uberfire.mvp.Command;
 
 import static org.dashbuilder.dataset.ExpenseReportsData.*;
+import static org.dashbuilder.dataset.group.AggregateFunctionType.*;
+import static org.dashbuilder.dataset.sort.SortOrder.*;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
@@ -246,5 +249,30 @@ public class TableDisplayerTest extends AbstractDisplayerTest {
         verify(displayerListener, never()).onRedraw(table);
         assertNull(table.getSelectedCellColumn());
         assertNull(table.getSelectedCellRow());
+    }
+
+    @Test
+    public void test_DASHBUILDE_20_Fix() {
+
+        DisplayerSettings groupedTable = DisplayerSettingsFactory.newTableSettings()
+                .dataset(EXPENSES)
+                .group(COLUMN_CITY)
+                .column(COLUMN_CITY, "City")
+                .column(COUNT, "#Expenses").format("Number of expenses", "#,##0")
+                .column(COLUMN_AMOUNT, MIN).format("Min", "$ #,###")
+                .column(COLUMN_AMOUNT, MIN).format("Min", "$ #,###")
+                .column(COLUMN_AMOUNT, MIN).format("Min", "$ #,###")
+                .column(COLUMN_AMOUNT, MIN).format("Min", "$ #,###")
+                .tablePageSize(10)
+                .tableOrderEnabled(true)
+                .tableOrderDefault(COLUMN_CITY, DESCENDING)
+                .filterOn(false, true, true)
+                .buildSettings();
+
+        TableDisplayer table = createTableDisplayer(groupedTable);
+        table.addListener(displayerListener);
+        table.draw();
+        table.sortBy("#Expenses", ASCENDING);
+        verify(displayerListener, never()).onError(eq(table), any(ClientRuntimeError.class));
     }
 }
