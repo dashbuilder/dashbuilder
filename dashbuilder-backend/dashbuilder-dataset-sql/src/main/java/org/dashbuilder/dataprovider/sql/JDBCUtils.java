@@ -254,7 +254,7 @@ public class JDBCUtils {
                 return ColumnType.DATE;
             }
 
-            // Unsupported (see above) types are treated as a text values.
+            // Unsupported
             default: {
                 return null;
             }
