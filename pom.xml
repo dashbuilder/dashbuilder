@@ -7,7 +7,7 @@
     <!-- That parent extends the org.jboss:jboss-parent -->
     <groupId>org.jboss.integration-platform</groupId>
     <artifactId>jboss-integration-platform-parent</artifactId>
-    <!-- Keep in sync with property <version.org.jboss.integration-platform> -->
+    <!-- Keep in sync with property <version.org.jboss.integration-platform> in dashbuilder-deps -->
     <version>6.0.0.CR31</version>
   </parent>
 
@@ -107,6 +107,30 @@
   <build>
     <pluginManagement>
       <plugins>
+        <plugin>
+          <artifactId>maven-enforcer-plugin</artifactId>
+          <executions>
+            <execution>
+              <id>ban-unwanted-logging-deps</id>
+              <goals>
+                <goal>enforce</goal>
+              </goals>
+              <phase>validate</phase>
+              <configuration>
+                <rules>
+                  <bannedDependencies>
+                    <excludes>
+                      <!-- In case of transitive dependency, exclude it and use jcl-over-slf4j instead -->
+                      <exclude>commons-logging:commons-log*</exclude>
+                      <!-- In case of transitive dependency, exclude it and use log4j-over-slf4j instead -->
+                      <exclude>log4j:log4j</exclude>
+                    </excludes>
+                  </bannedDependencies>
+                </rules>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-resources-plugin</artifactId>

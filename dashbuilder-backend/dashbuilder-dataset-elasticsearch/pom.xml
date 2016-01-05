@@ -84,6 +84,17 @@
     <dependency>
       <groupId>io.searchbox</groupId>
       <artifactId>jest</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>commons-logging</groupId>
+          <artifactId>commons-logging</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <!-- Replacement for the commons-logging removed from io.searchbox:jest -->
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>jcl-over-slf4j</artifactId>
     </dependency>
 
     <dependency>
