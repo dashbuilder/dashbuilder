@@ -26,25 +26,22 @@ public class CoreFunctionTypeTest {
     @Test
     public void getSupportedTypeTest() {
         
-        CoreFunctionType[] dateFunctionTypesSupported = {IS_NULL, NOT_NULL, EQUALS_TO, NOT_EQUALS_TO, TIME_FRAME,
-            GREATER_THAN, GREATER_OR_EQUALS_TO, LOWER_THAN, LOWER_OR_EQUALS_TO, BETWEEN};
+        CoreFunctionType[] dateFunctionTypesUnsupported = {LIKE_TO, IN, NOT_IN};
 
-        CoreFunctionType[] textLabelFunctionTypesSupported = {IS_NULL, NOT_NULL, EQUALS_TO, NOT_EQUALS_TO, LIKE_TO,
-                GREATER_THAN, GREATER_OR_EQUALS_TO, LOWER_THAN, LOWER_OR_EQUALS_TO, BETWEEN};
+        CoreFunctionType[] textLabelFunctionTypesUnsupported = {TIME_FRAME};
 
-        CoreFunctionType[] numericFunctionTypesSupported = {IS_NULL, NOT_NULL, EQUALS_TO, NOT_EQUALS_TO,
-                GREATER_THAN, GREATER_OR_EQUALS_TO, LOWER_THAN, LOWER_OR_EQUALS_TO, BETWEEN};
+        CoreFunctionType[] numericFunctionTypesUnsupported = {LIKE_TO, TIME_FRAME};
 
         assertThat(CoreFunctionType.getSupportedTypes(ColumnType.DATE))
-                .contains(dateFunctionTypesSupported);
+                .doesNotContain(dateFunctionTypesUnsupported);
         
         assertThat(CoreFunctionType.getSupportedTypes(ColumnType.LABEL))
-                .containsExactly(textLabelFunctionTypesSupported);
+                .doesNotContain(textLabelFunctionTypesUnsupported);
 
         assertThat(CoreFunctionType.getSupportedTypes(ColumnType.NUMBER))
-                .containsExactly(numericFunctionTypesSupported);
+                .doesNotContain(numericFunctionTypesUnsupported);
 
         assertThat(CoreFunctionType.getSupportedTypes(ColumnType.TEXT))
-                .containsExactly(textLabelFunctionTypesSupported);
+                .doesNotContain(textLabelFunctionTypesUnsupported);
     }
 }

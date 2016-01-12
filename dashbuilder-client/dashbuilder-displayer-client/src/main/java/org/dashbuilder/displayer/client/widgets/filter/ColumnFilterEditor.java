@@ -208,6 +208,7 @@ public class ColumnFilterEditor implements IsWidget {
     protected IsWidget createParamInputWidget(final CoreFunctionFilter coreFilter, final int paramIndex) {
         final List paramList = coreFilter.getParameters();
         ColumnType columnType = metadata.getColumnType(coreFilter.getColumnId());
+        CoreFunctionType funcitonType = coreFilter.getType();
 
         if (ColumnType.DATE.equals(columnType)) {
             if (CoreFunctionType.TIME_FRAME.equals(coreFilter.getType())) {
@@ -215,10 +216,11 @@ public class ColumnFilterEditor implements IsWidget {
             }
             return createDateInputWidget(paramList, paramIndex);
         }
-        if (ColumnType.NUMBER.equals(columnType)) {
-            return createNumberInputWidget(paramList, paramIndex);
+        boolean isMultiple = CoreFunctionType.IN.equals(funcitonType) || CoreFunctionType.NOT_IN.equals(funcitonType);
+        if (ColumnType.NUMBER.equals(coreFilter.getType())) {
+            return createNumberInputWidget(paramList, isMultiple);
         }
-        return createTextInputWidget(paramList, paramIndex);
+        return createTextInputWidget(paramList, isMultiple);
     }
 
     protected IsWidget createDateInputWidget(final List paramList, final int paramIndex) {
@@ -235,29 +237,25 @@ public class ColumnFilterEditor implements IsWidget {
         return input;
     }
 
-    protected IsWidget createNumberInputWidget(final List paramList, final int paramIndex) {
-        Double param = Double.parseDouble(paramList.get(paramIndex).toString());
-
+    protected IsWidget createNumberInputWidget(final List paramList, boolean isMultiple) {
         final NumberParameterEditor input = beanManager.lookupBean(NumberParameterEditor.class).newInstance();
-        input.setCurrentValue(param);
+        input.setMultiple(isMultiple);
+        input.setValues(paramList);
         input.setOnChangeCommand(new Command() {
             public void execute() {
-                paramList.set(paramIndex, input.getCurrentValue());
                 updateSelectedFilter();
             }
         });
         return input;
     }
 
-    protected IsWidget createTextInputWidget(final List paramList, final int paramIndex) {
-        String param = (String) paramList.get(paramIndex);
-
+    protected IsWidget createTextInputWidget(final List paramList, boolean isMultiple) {
         final TextParameterEditor input = beanManager.lookupBean(TextParameterEditor.class).newInstance();
-        input.setCurrentValue(param);
+        input.setMultiple(isMultiple);
+        input.setValues(paramList);
         input.setOnChangeCommand(new Command() {
             @Override
             public void execute() {
-                paramList.set(paramIndex, input.getCurrentValue());
                 updateSelectedFilter();
             }
         });
@@ -351,12 +349,22 @@ public class ColumnFilterEditor implements IsWidget {
             out.append(columnId).append(" = ");
             formatParameters(out, parameters);
         }
+        else if (CoreFunctionType.IN.equals(type)) {
+            out.append(columnId).append(" in (");
+            formatParameters(out, parameters);
+            out.append(")");
+        }
+        else if (CoreFunctionType.NOT_IN.equals(type)) {
+            out.append(columnId).append(" not in (");
+            formatParameters(out, parameters);
+            out.append(")");
+        }
         return out.toString();
     }
 
     protected StringBuilder formatParameters(StringBuilder out, List parameters) {
         for (int i=0; i< parameters.size();  i++) {
-            if (i > 0) out.append("  ");
+            if (i > 0) out.append(",");
             out.append(formatParameter(parameters.get(i)));
         }
         return out;

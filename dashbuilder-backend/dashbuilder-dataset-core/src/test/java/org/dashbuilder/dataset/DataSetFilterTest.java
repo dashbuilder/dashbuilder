@@ -17,6 +17,7 @@ package org.dashbuilder.dataset;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 
@@ -407,6 +408,42 @@ public class DataSetFilterTest {
 
         //printDataSet(result);
         assertThat(result.getRowCount()).isEqualTo(0);
+    }
+
+    @Test
+    public void testInOperator() throws Exception {
+
+        DataSet result = dataSetManager.lookupDataSet(
+                DataSetFactory.newDataSetLookupBuilder()
+                        .dataset(EXPENSE_REPORTS)
+                        .filter(in(COLUMN_CITY, Arrays.asList("Barcelona", "Madrid")))
+                        .column(COLUMN_ID)
+                        .sort(COLUMN_ID, SortOrder.ASCENDING)
+                        .buildLookup());
+
+        //printDataSet(result);
+        assertThat(result.getRowCount()).isEqualTo(12);
+        assertDataSetValue(result, 0, 0, "1.00");
+        assertDataSetValue(result, 5, 0, "6.00");
+
+    }
+
+    @Test
+    public void testNotInOperator() throws Exception {
+
+        DataSet result = dataSetManager.lookupDataSet(
+                DataSetFactory.newDataSetLookupBuilder()
+                        .dataset(EXPENSE_REPORTS)
+                        .filter(notIn(COLUMN_CITY, Arrays.asList("Barcelona", "Madrid")))
+                        .column(COLUMN_ID)
+                        .sort(COLUMN_ID, SortOrder.ASCENDING)
+                        .buildLookup());
+
+        //printDataSet(result);
+        assertThat(result.getRowCount()).isEqualTo(38);
+        assertDataSetValue(result, 0, 0, "13.00");
+        assertDataSetValue(result, 5, 0, "18.00");
+
     }
 
     private void printDataSet(DataSet dataSet) {

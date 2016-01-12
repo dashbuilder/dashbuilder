@@ -169,6 +169,8 @@ public interface CommonConstants extends Messages {
 
     String like_to_pattern_instructions();
 
+    String multiple_input_descriptions();
+
     String group_columnid_label();
 
     String dataset_groupdate_fixed_intervals();

@@ -15,8 +15,11 @@
  */
 package org.dashbuilder.common.client;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 
 public class StringUtils {
 
@@ -125,5 +128,54 @@ public class StringUtils {
             builder.append(delimiter);
         }
         return builder.toString();
+    }
+
+    /**
+     * <p>Splits the provided text into an array, separator specified.
+     * This is an alternative to using StringTokenizer.</p>
+     *
+     * <p>The separator is not included in the returned String array.
+     * Adjacent separators are treated as one separator.
+     * For more control over the split use the StrTokenizer class.</p>
+     *
+     * <p>A {@code null} input String returns {@code null}.</p>
+     *
+     * <pre>
+     * StringUtils.split(null, *)         = null
+     * StringUtils.split("", *)           = []
+     * StringUtils.split("a.b.c", '.')    = ["a", "b", "c"]
+     * StringUtils.split("a..b.c", '.')   = ["a", "b", "c"]
+     * StringUtils.split("a:b:c", '.')    = ["a:b:c"]
+     * StringUtils.split("a b c", ' ')    = ["a", "b", "c"]
+     * </pre>
+     *
+     * @param str  the String to parse, may be null
+     * @param separatorChar  the character used as the delimiter
+     * @return an list of parsed Strings, {@code null} if null String input
+     */
+    public static List<String> split(String str, char separatorChar) {
+        List<String> list = new ArrayList<String>();
+        if (str == null || str.length() == 0) {
+            return list;
+        }
+        if (str.indexOf(separatorChar) == -1) {
+            list.add(str);
+            return list;
+        }
+        int start = 0;
+        for (int i = 0; i < str.length(); i++) {
+            if (str.charAt(i) == separatorChar) {
+                String token = str.substring(start, i).trim();
+                if (token.length() > 0) {
+                    list.add(token);
+                }
+                start = i+1;
+            }
+        }
+        String token = str.substring(start, str.length()).trim();
+        if (token.length() > 0) {
+            list.add(token);
+        }
+        return list;
     }
 }

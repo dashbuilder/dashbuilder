@@ -512,6 +512,12 @@ public class SQLDataSetProvider implements DataSetProvider, DataSetDefRegistryLi
                     return _column.between(past, future);
                 }
             }
+            if (CoreFunctionType.IN.equals(type) && params instanceof List) {
+                return _column.inSql((List<?>)params);
+            }
+            if (CoreFunctionType.NOT_IN.equals(type) && params instanceof List) {
+                return _column.notInSql((List<?>)params);
+            }
         }
         if (filter instanceof LogicalExprFilter) {
             LogicalExprFilter f = (LogicalExprFilter) filter;

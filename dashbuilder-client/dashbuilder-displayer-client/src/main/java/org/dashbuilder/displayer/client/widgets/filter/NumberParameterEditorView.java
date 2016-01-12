@@ -24,7 +24,11 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
-import org.uberfire.ext.widgets.common.client.common.NumericDoubleTextBox;
+import org.gwtbootstrap3.client.ui.FormGroup;
+import org.gwtbootstrap3.client.ui.Icon;
+import org.gwtbootstrap3.client.ui.TextBox;
+import org.gwtbootstrap3.client.ui.Tooltip;
+import org.gwtbootstrap3.client.ui.constants.ValidationState;
 
 @Dependent
 public class NumberParameterEditorView extends Composite implements NumberParameterEditor.View {
@@ -35,7 +39,13 @@ public class NumberParameterEditorView extends Composite implements NumberParame
     NumberParameterEditor presenter;
 
     @UiField
-    NumericDoubleTextBox input;
+    FormGroup form;
+
+    @UiField
+    TextBox input;
+
+    @UiField
+    Icon hintIcon;
 
     public NumberParameterEditorView() {
         initWidget(uiBinder.createAndBindUi(this));
@@ -46,19 +56,35 @@ public class NumberParameterEditorView extends Composite implements NumberParame
         this.presenter = presenter;
         input.addValueChangeHandler(new ValueChangeHandler<String>() {
             public void onValueChange(ValueChangeEvent<String> event) {
-                presenter.valueChanged(new Double(event.getValue()));
+                presenter.valueChanged();
             }
         });
     }
 
     @Override
-    public Double getCurrentValue() {
-        return new Double(input.getValue());
+    public void setMultipleHintEnabled(boolean enabled) {
+        hintIcon.setVisible(enabled);
     }
 
     @Override
-    public void setCurrentValue(Double value) {
-        input.setValue(value.toString());
+    public void clear() {
+        input.clear();
+        form.setValidationState(ValidationState.NONE);
+    }
+
+    @Override
+    public String getValue() {
+        return input.getValue();
+    }
+
+    @Override
+    public void setValue(String value) {
+        input.setValue(value);
+    }
+
+    @Override
+    public void error() {
+        form.setValidationState(ValidationState.ERROR);
     }
 }
 

@@ -15,11 +15,14 @@
  */
 package org.dashbuilder.displayer.client.widgets.filter;
 
+import java.util.ArrayList;
+import java.util.List;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
+import org.dashbuilder.common.client.StringUtils;
 import org.uberfire.client.mvp.UberView;
 import org.uberfire.mvp.Command;
 
@@ -27,11 +30,20 @@ import org.uberfire.mvp.Command;
 public class NumberParameterEditor implements IsWidget {
 
     public interface View extends UberView<NumberParameterEditor> {
-        Double getCurrentValue();
-        void setCurrentValue(Double value);
+
+        void setMultipleHintEnabled(boolean enabled);
+
+        void clear();
+
+        String getValue();
+
+        void setValue(String value);
+
+        void error();
     }
 
     Command onChangeCommand = new Command() { public void execute() {} };
+    List values = new ArrayList();
     View view;
 
     @Inject
@@ -45,19 +57,51 @@ public class NumberParameterEditor implements IsWidget {
         return view.asWidget();
     }
 
+    public void setMultiple(boolean multiple) {
+        view.setMultipleHintEnabled(multiple);
+    }
+
     public void setOnChangeCommand(Command onChangeCommand) {
         this.onChangeCommand = onChangeCommand;
     }
 
-    public Double getCurrentValue() {
-        return view.getCurrentValue();
+    public List getValues() {
+        return values;
     }
 
-    public void setCurrentValue(Double value) {
-        view.setCurrentValue(value);
+    public void setValues(List input) {
+        values = input;
+        view.clear();
+        view.setValue(format(input));
     }
 
-    void valueChanged(Double value) {
-        onChangeCommand.execute();
+    void valueChanged() {
+        try {
+            values.clear();
+            values.addAll(parse(view.getValue()));
+            onChangeCommand.execute();
+        } catch (Exception e) {
+            view.error();
+        }
+    }
+
+    public List parse(String s) throws Exception {
+        List result = new ArrayList();
+        List<String> tokens = s.contains("|") ? StringUtils.split(s, '|') : StringUtils.split(s, ',');
+        for (String token : tokens) {
+            result.add(Double.parseDouble(token.trim()));
+        }
+        return result;
+    }
+
+    public String format(List l) {
+        StringBuilder out = new StringBuilder();
+        for (Object val : l) {
+            if (out.length() > 0) {
+                out.append(" | ");
+            }
+            out.append(val);
+        }
+        return out.toString();
     }
 }

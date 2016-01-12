@@ -24,7 +24,10 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
+import org.gwtbootstrap3.client.ui.FormGroup;
+import org.gwtbootstrap3.client.ui.Icon;
 import org.gwtbootstrap3.client.ui.TextBox;
+import org.gwtbootstrap3.client.ui.constants.ValidationState;
 
 @Dependent
 public class TextParameterEditorView extends Composite implements TextParameterEditor.View {
@@ -35,7 +38,13 @@ public class TextParameterEditorView extends Composite implements TextParameterE
     TextParameterEditor presenter;
 
     @UiField
+    FormGroup form;
+
+    @UiField
     TextBox input;
+
+    @UiField
+    Icon hintIcon;
 
     public TextParameterEditorView() {
         initWidget(uiBinder.createAndBindUi(this));
@@ -46,18 +55,34 @@ public class TextParameterEditorView extends Composite implements TextParameterE
         this.presenter = presenter;
         input.addValueChangeHandler(new ValueChangeHandler<String>() {
             public void onValueChange(ValueChangeEvent<String> event) {
-                presenter.valueChanged(event.getValue());
+                presenter.valueChanged();
             }
         });
     }
 
     @Override
-    public String getCurrentValue() {
+    public void setMultipleHintEnabled(boolean enabled) {
+        hintIcon.setVisible(enabled);
+    }
+
+    @Override
+    public void clear() {
+        input.clear();
+        form.setValidationState(ValidationState.NONE);
+    }
+
+    @Override
+    public String getValue() {
         return input.getValue();
     }
 
     @Override
-    public void setCurrentValue(String value) {
+    public void setValue(String value) {
         input.setValue(value);
+    }
+
+    @Override
+    public void error() {
+        form.setValidationState(ValidationState.ERROR);
     }
 }

@@ -76,6 +76,8 @@ public class ElasticSearchCommonTests extends ElasticSearchDataSetTestBase {
         subTest.testCombinedExpression();
         subTest.testCombinedExpression2();
         subTest.testCombinedExpression3();
+        subTest.testInOperator();
+        subTest.testNotInOperator();
         // Like TO operations are tested in ElasticSearchDataSetTest, as the results depend on the core type and string analyzer used for that column. 
     }
 }
