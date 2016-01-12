@@ -84,6 +84,12 @@ public class CoreFunction extends DataSetFunction {
         if (CoreFunctionType.TIME_FRAME.equals(type)) {
             return timeFrame(getCurrentValue());
         }
+        if (CoreFunctionType.IN.equals(type)) {
+            return isEqualsTo(getCurrentValue());
+        }
+        if (CoreFunctionType.NOT_IN.equals(type)) {
+            return  isNotEqualsTo(getCurrentValue());
+        }
         throw new IllegalArgumentException("Core function type not supported: " + type);
     }
 

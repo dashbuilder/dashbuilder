@@ -30,10 +30,10 @@ public class CoreFunctionTypeTest {
             GREATER_THAN, GREATER_OR_EQUALS_TO, LOWER_THAN, LOWER_OR_EQUALS_TO, BETWEEN};
 
         CoreFunctionType[] textLabelFunctionTypesSupported = {IS_NULL, NOT_NULL, EQUALS_TO, NOT_EQUALS_TO, LIKE_TO,
-                GREATER_THAN, GREATER_OR_EQUALS_TO, LOWER_THAN, LOWER_OR_EQUALS_TO, BETWEEN};
+                GREATER_THAN, GREATER_OR_EQUALS_TO, LOWER_THAN, LOWER_OR_EQUALS_TO, BETWEEN, IN, NOT_IN};
 
         CoreFunctionType[] numericFunctionTypesSupported = {IS_NULL, NOT_NULL, EQUALS_TO, NOT_EQUALS_TO,
-                GREATER_THAN, GREATER_OR_EQUALS_TO, LOWER_THAN, LOWER_OR_EQUALS_TO, BETWEEN};
+                GREATER_THAN, GREATER_OR_EQUALS_TO, LOWER_THAN, LOWER_OR_EQUALS_TO, BETWEEN, IN, NOT_IN};
 
         assertThat(CoreFunctionType.getSupportedTypes(ColumnType.DATE))
                 .contains(dateFunctionTypesSupported);

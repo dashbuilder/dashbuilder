@@ -139,6 +139,10 @@ public interface Dialect {
 
     String getBetweenConditionSQL(String column, Object from, Object to);
 
+    String getInConditionSQL(String column, Object param);
+
+    String getNotInConditionSQL(String column, Object param);
+
     String getParameterSQL(Object param);
 
     String getNumberParameterSQL(Number param);

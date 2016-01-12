@@ -50,7 +50,9 @@ public enum CoreFunctionType {
     LOWER_THAN(1),
     LOWER_OR_EQUALS_TO(1),
     BETWEEN(2),
-    TIME_FRAME(1);
+    TIME_FRAME(1),
+    IN(1),
+    NOT_IN(1);
 
     private final int parametersCount;
 

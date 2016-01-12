@@ -33,4 +33,6 @@ public interface CoreFunctionTypeConstants extends ConstantsWithLookup {
     String LOWER_OR_EQUALS_TO();
     String BETWEEN();
     String TIME_FRAME();
+    String IN();
+    String NOT_IN();
 }

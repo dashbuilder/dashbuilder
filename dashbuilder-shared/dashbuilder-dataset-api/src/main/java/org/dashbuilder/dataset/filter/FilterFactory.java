@@ -136,6 +136,14 @@ public class FilterFactory {
         return new CoreFunctionFilter(columnId, CoreFunctionType.TIME_FRAME, timeFrame);
     }
 
+    public static ColumnFilter in(String columnId, List<?> allowedValues) {
+        return new CoreFunctionFilter(columnId, CoreFunctionType.IN, allowedValues);
+    }
+
+    public static ColumnFilter notIn(String columnId, List<?> allowedValues) {
+        return new CoreFunctionFilter(columnId, CoreFunctionType.NOT_IN, allowedValues);
+    }
+
     // Boolean operators
 
     public static ColumnFilter AND(List<ColumnFilter> filters) {

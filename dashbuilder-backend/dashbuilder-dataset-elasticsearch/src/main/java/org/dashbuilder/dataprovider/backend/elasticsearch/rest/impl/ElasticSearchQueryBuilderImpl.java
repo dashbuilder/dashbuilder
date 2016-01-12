@@ -388,7 +388,7 @@ public class ElasticSearchQueryBuilderImpl implements ElasticSearchQueryBuilder<
             
             result = new Query(columnId, Query.Type.EXISTS);
             
-        } else if (CoreFunctionType.EQUALS_TO.equals(type)) {
+        } else if (CoreFunctionType.EQUALS_TO.equals(type) || CoreFunctionType.IN.equals(type)) {
             
             if (ColumnType.LABEL.equals(columnType)) {
                 result = buildTermOrTermsFilter(def, columnId, params);
@@ -396,7 +396,7 @@ public class ElasticSearchQueryBuilderImpl implements ElasticSearchQueryBuilder<
                 result = buildBooleanMatchQuery(def, columnId, params);
             }
             
-        } else if (CoreFunctionType.NOT_EQUALS_TO.equals(type)) {
+        } else if (CoreFunctionType.NOT_EQUALS_TO.equals(type) || CoreFunctionType.NOT_IN.equals(type)) {
             
             if (ColumnType.LABEL.equals(columnType)) {
                 Query resultMatch = buildTermOrTermsFilter(def, columnId, params);
