@@ -20,12 +20,10 @@ import java.util.ArrayList;
 
 import org.dashbuilder.dataset.DataSetOpType;
 import org.dashbuilder.dataset.impl.AbstractDataSetOp;
-import org.jboss.errai.common.client.api.annotations.Portable;
 
 /**
  * A data set group operation.
  */
-@Portable
 public class DataSetGroup extends AbstractDataSetOp {
 
     protected boolean join = false;

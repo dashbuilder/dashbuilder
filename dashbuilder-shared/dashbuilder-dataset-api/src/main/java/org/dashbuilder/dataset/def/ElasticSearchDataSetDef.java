@@ -18,7 +18,6 @@ package org.dashbuilder.dataset.def;
 import org.dashbuilder.dataprovider.DataSetProviderType;
 import org.dashbuilder.dataset.sort.ColumnSort;
 import org.dashbuilder.dataset.validation.groups.ElasticSearchDataSetDefValidation;
-import org.jboss.errai.common.client.api.annotations.Portable;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -53,7 +52,6 @@ import javax.validation.constraints.Size;
  *
  * @since 0.3.0
  */
-@Portable
 public class ElasticSearchDataSetDef extends DataSetDef {
 
     // Constants.

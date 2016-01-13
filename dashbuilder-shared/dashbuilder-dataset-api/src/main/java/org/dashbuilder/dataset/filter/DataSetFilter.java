@@ -20,12 +20,10 @@ import java.util.ArrayList;
 
 import org.dashbuilder.dataset.DataSetOpType;
 import org.dashbuilder.dataset.impl.AbstractDataSetOp;
-import org.jboss.errai.common.client.api.annotations.Portable;
 
 /**
  * A data set filter definition.
  */
-@Portable
 public class DataSetFilter extends AbstractDataSetOp {
 
     protected List<ColumnFilter> columnFilterList = new ArrayList<ColumnFilter>();

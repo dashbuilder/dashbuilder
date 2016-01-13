@@ -1,12 +1,10 @@
 package org.dashbuilder.dataprovider;
 
 import org.dashbuilder.dataset.def.*;
-import org.jboss.errai.common.client.api.annotations.Portable;
 
 /**
  * An enumeration of the available data set provider types.
  */
-@Portable
 public enum DataSetProviderType {
 
     /**

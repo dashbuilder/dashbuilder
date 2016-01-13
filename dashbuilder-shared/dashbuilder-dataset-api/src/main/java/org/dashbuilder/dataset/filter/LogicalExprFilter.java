@@ -18,12 +18,9 @@ package org.dashbuilder.dataset.filter;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jboss.errai.common.client.api.annotations.Portable;
-
 /**
  * A logical expression based filter definition.
  */
-@Portable
 public class LogicalExprFilter extends ColumnFilter {
 
     protected LogicalExprType logicalOperator = LogicalExprType.AND;

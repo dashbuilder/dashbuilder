@@ -17,16 +17,13 @@ package org.dashbuilder.dataset.def;
 
 import org.dashbuilder.dataprovider.DataSetProviderType;
 import org.dashbuilder.dataset.ColumnType;
-import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.dataset.validation.groups.CSVDataSetDefFilePathValidation;
 import org.dashbuilder.dataset.validation.groups.CSVDataSetDefFileURLValidation;
 import org.dashbuilder.dataset.validation.groups.CSVDataSetDefValidation;
-import org.jboss.errai.common.client.api.annotations.Portable;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-@Portable
 public class CSVDataSetDef extends DataSetDef {
 
     @NotNull(message = "{dataSetApi_csvDataSetDef_fileURL_notNull}", groups = {CSVDataSetDefFileURLValidation.class})

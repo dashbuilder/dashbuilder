@@ -18,12 +18,9 @@ package org.dashbuilder.dataset.filter;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jboss.errai.common.client.api.annotations.Portable;
-
 /**
  * A core filter function definition
  */
-@Portable
 public class CoreFunctionFilter extends ColumnFilter {
 
     protected CoreFunctionType type = null;

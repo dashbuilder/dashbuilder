@@ -20,12 +20,9 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
-import org.jboss.errai.common.client.api.annotations.Portable;
-
 /**
  * Type of data intervals
  */
-@Portable
 public enum DateIntervalType {
     MILLISECOND,
     HUNDRETH,

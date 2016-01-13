@@ -21,7 +21,6 @@ import org.dashbuilder.dataset.date.TimeAmount;
 import org.dashbuilder.dataset.filter.DataSetFilter;
 import org.dashbuilder.dataset.validation.IsTimeInterval;
 import org.dashbuilder.dataset.validation.groups.*;
-import org.jboss.errai.common.client.api.annotations.Portable;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.NotNull;
@@ -31,7 +30,6 @@ import java.util.*;
 /**
  * This class is used to define the origin, structure and runtime behaviour of a data set instance.
  */
-@Portable
 public class DataSetDef {
 
     @NotNull(message = "{dataSetApi_dataSetDef_uuid_notNull}",

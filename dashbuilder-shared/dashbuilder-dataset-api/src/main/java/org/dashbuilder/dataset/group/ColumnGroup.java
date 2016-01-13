@@ -17,12 +17,10 @@ package org.dashbuilder.dataset.group;
 
 import org.dashbuilder.dataset.date.DayOfWeek;
 import org.dashbuilder.dataset.date.Month;
-import org.jboss.errai.common.client.api.annotations.Portable;
 
 /**
  * A column group definition.
  */
-@Portable
 public class ColumnGroup {
 
     protected String sourceId = null;

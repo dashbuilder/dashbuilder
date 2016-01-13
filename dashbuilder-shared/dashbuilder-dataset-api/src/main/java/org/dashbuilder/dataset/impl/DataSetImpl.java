@@ -26,9 +26,7 @@ import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetMetadata;
 import org.dashbuilder.dataset.def.DataSetDef;
 import org.dashbuilder.dataset.group.GroupFunction;
-import org.jboss.errai.common.client.api.annotations.Portable;
 
-@Portable
 public class DataSetImpl implements DataSet {
 
     protected DataSetDef definition;

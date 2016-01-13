@@ -15,11 +15,9 @@
  */
 package org.dashbuilder.dataset.date;
 
-import java.sql.Time;
 import java.util.Date;
 
 import org.dashbuilder.dataset.group.DateIntervalType;
-import org.jboss.errai.common.client.api.annotations.Portable;
 
 /**
  * This class is used to represent a given time instant relative to the current time.
@@ -34,7 +32,6 @@ import org.jboss.errai.common.client.api.annotations.Portable;
  * </ul>
  * </p>
  */
-@Portable
 public class TimeInstant {
 
     public enum TimeMode {

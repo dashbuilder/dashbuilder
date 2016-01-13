@@ -19,12 +19,10 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.dashbuilder.dataset.ColumnType;
-import org.jboss.errai.common.client.api.annotations.Portable;
 
 /**
  * List of available aggregate functions used in data set group operations.
  */
-@Portable
 public enum AggregateFunctionType {
     COUNT,
     DISTINCT,

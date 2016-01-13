@@ -1,13 +1,11 @@
 package org.dashbuilder.dataset.def;
 
 import org.dashbuilder.dataset.ColumnType;
-import org.jboss.errai.common.client.api.annotations.Portable;
 import javax.validation.constraints.NotNull;
 
 /**
  * <p>This class is used to define the structure and runtime behaviour of a data set definition's column instance.</p>
  */
-@Portable
 public class DataColumnDef {
     
     @NotNull(message = "{dataSetApi_dataColumnImpl_id_notNull}")
