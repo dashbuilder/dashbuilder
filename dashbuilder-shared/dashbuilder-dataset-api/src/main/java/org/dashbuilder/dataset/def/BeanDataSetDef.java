@@ -17,14 +17,12 @@ package org.dashbuilder.dataset.def;
 
 import org.dashbuilder.dataprovider.DataSetProviderType;
 import org.dashbuilder.dataset.validation.groups.BeanDataSetDefValidation;
-import org.jboss.errai.common.client.api.annotations.Portable;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.HashMap;
 import java.util.Map;
 
-@Portable
 public class BeanDataSetDef extends DataSetDef {
 
     @NotNull(message = "{dataSetApi_beanDataSetDef_generatorClass_notNull}", groups = {BeanDataSetDefValidation.class})

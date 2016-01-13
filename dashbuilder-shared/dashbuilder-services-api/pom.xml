@@ -46,6 +46,11 @@
       <artifactId>dashbuilder-dataset-api</artifactId>
     </dependency>
 
+    <dependency>
+      <groupId>org.jboss.errai</groupId>
+      <artifactId>errai-bus</artifactId>
+    </dependency>
+
   </dependencies>
   
 </project>

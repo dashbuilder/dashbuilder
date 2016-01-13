@@ -15,8 +15,6 @@
  */
 package org.dashbuilder.dataset.date;
 
-import org.jboss.errai.common.client.api.annotations.Portable;
-
 /**
  * A time frame defines a time period between two time instants where these two instants depends on the current time.
  * <p>Some examples of time frame expressions are:
@@ -34,7 +32,6 @@ import org.jboss.errai.common.client.api.annotations.Portable;
  * </ul>
  * </p>
  */
-@Portable
 public class TimeFrame {
 
     private TimeInstant from = null;

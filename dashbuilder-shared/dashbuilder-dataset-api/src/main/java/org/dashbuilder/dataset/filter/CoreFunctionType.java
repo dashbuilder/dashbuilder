@@ -19,12 +19,10 @@ import java.util.List;
 import java.util.ArrayList;
 
 import org.dashbuilder.dataset.ColumnType;
-import org.jboss.errai.common.client.api.annotations.Portable;
 
 /**
  * Type of core filter functions available
  */
-@Portable
 public enum CoreFunctionType {
 
     IS_NULL(0),

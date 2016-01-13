@@ -15,12 +15,9 @@
  */
 package org.dashbuilder.dataset.sort;
 
-import org.jboss.errai.common.client.api.annotations.Portable;
-
 /**
  * A column sort criteria
  */
-@Portable
 public class ColumnSort {
 
     protected String columnId = null;

@@ -15,9 +15,6 @@
  */
 package org.dashbuilder.dataset.date;
 
-import org.jboss.errai.common.client.api.annotations.Portable;
-
-@Portable
 public enum DayOfWeek {
 
     SUNDAY,

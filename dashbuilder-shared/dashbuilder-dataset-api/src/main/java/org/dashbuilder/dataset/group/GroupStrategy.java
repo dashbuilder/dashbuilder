@@ -16,12 +16,10 @@
 package org.dashbuilder.dataset.group;
 
 import org.dashbuilder.dataset.ColumnType;
-import org.jboss.errai.common.client.api.annotations.Portable;
 
 /**
  * The strategy defines how to split a collection of values in a set of intervals.
  */
-@Portable
 public enum GroupStrategy {
 
     /**

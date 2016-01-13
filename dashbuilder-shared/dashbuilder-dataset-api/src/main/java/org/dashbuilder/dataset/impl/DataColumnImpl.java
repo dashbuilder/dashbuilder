@@ -22,9 +22,7 @@ import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.dataset.group.ColumnGroup;
 import org.dashbuilder.dataset.group.GroupFunction;
-import org.jboss.errai.common.client.api.annotations.Portable;
 
-@Portable
 public class DataColumnImpl implements DataColumn {
 
     protected DataSetImpl dataSet = null;

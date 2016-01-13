@@ -15,12 +15,9 @@
  */
 package org.dashbuilder.dataset.group;
 
-import org.jboss.errai.common.client.api.annotations.Portable;
-
 /**
  * A function definition.
  */
-@Portable
 public class GroupFunction {
 
     protected String sourceId;

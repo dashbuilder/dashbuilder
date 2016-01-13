@@ -19,13 +19,10 @@ import org.dashbuilder.dataprovider.DataSetProviderType;
 import org.dashbuilder.dataset.validation.groups.SQLDataSetDefDbSQLValidation;
 import org.dashbuilder.dataset.validation.groups.SQLDataSetDefDbTableValidation;
 import org.dashbuilder.dataset.validation.groups.SQLDataSetDefValidation;
-import org.jboss.errai.common.client.api.annotations.Portable;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import javax.validation.groups.Default;
 
-@Portable
 public class SQLDataSetDef extends DataSetDef {
 
     @NotNull(message = "{dataSetApi_sqlDataSetDef_dataSource_notNull}", groups = {SQLDataSetDefValidation.class})

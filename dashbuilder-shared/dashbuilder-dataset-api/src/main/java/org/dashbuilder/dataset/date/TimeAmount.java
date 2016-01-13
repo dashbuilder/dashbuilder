@@ -18,7 +18,6 @@ package org.dashbuilder.dataset.date;
 import java.util.Date;
 
 import org.dashbuilder.dataset.group.DateIntervalType;
-import org.jboss.errai.common.client.api.annotations.Portable;
 
 /**
  * Class for the definition of time quantitys, both positive and negative. For example:
@@ -29,7 +28,6 @@ import org.jboss.errai.common.client.api.annotations.Portable;
  * </ul>
  * </p>
  */
-@Portable
 public class TimeAmount {
 
     private long quantity = 0;

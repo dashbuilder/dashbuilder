@@ -18,13 +18,10 @@ package org.dashbuilder.dataset.sort;
 import java.util.AbstractList;
 import java.util.List;
 
-import org.jboss.errai.common.client.api.annotations.Portable;
-
 /**
  * An unmodifiable list which provides a lightweight read-only access to an existing list but applying a pre-established order.
  * <p>The order is specified by a list of integers containing the order of the elements.</p>
  */
-@Portable
 public class SortedList extends AbstractList {
 
     protected List<Integer> rows = null;

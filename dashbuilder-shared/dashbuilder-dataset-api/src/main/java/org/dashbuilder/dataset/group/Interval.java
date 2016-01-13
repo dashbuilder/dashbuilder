@@ -18,12 +18,9 @@ package org.dashbuilder.dataset.group;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jboss.errai.common.client.api.annotations.Portable;
-
 /**
  * An interval represent a grouped subset of a data values.
  */
-@Portable
 public class Interval {
 
     /**

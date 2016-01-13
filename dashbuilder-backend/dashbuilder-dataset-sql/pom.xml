@@ -55,6 +55,14 @@
       <artifactId>dashbuilder-dataset-core</artifactId>
     </dependency>
 
+    <!-- Unit testing -->
+
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+
     <dependency>
       <groupId>org.dashbuilder</groupId>
       <artifactId>dashbuilder-dataset-api</artifactId>

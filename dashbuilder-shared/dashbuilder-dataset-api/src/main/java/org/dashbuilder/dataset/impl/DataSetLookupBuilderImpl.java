@@ -15,9 +15,6 @@
  */
 package org.dashbuilder.dataset.impl;
 
-import org.jboss.errai.common.client.api.annotations.Portable;
-
-@Portable
 public class DataSetLookupBuilderImpl extends AbstractDataSetLookupBuilder<DataSetLookupBuilderImpl> {
 
 }

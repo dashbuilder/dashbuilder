@@ -24,12 +24,10 @@ import org.dashbuilder.dataset.group.ColumnGroup;
 import org.dashbuilder.dataset.group.DataSetGroup;
 import org.dashbuilder.dataset.impl.AbstractDataSetOp;
 import org.dashbuilder.dataset.sort.DataSetSort;
-import org.jboss.errai.common.client.api.annotations.Portable;
 
 /**
  * A data set look up request.
  */
-@Portable
 public class DataSetLookup {
 
     /**

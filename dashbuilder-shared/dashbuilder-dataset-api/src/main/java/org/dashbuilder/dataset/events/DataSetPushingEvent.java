@@ -16,9 +16,7 @@
 package org.dashbuilder.dataset.events;
 
 import org.dashbuilder.dataset.DataSetMetadata;
-import org.jboss.errai.common.client.api.annotations.Portable;
 
-@Portable
 public class DataSetPushingEvent {
 
     DataSetMetadata dataSetMetadata;

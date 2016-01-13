@@ -15,12 +15,9 @@
  */
 package org.dashbuilder.dataset;
 
-import org.jboss.errai.common.client.api.annotations.Portable;
-
 /**
  * An enumeration for the different types of DataColumn.
  */
-@Portable
 public enum ColumnType {
 
     /**

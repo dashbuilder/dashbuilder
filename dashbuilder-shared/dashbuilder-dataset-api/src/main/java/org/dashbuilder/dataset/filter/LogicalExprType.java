@@ -15,12 +15,9 @@
  */
 package org.dashbuilder.dataset.filter;
 
-import org.jboss.errai.common.client.api.annotations.Portable;
-
 /**
  * Type of logical operators
  */
-@Portable
 public enum LogicalExprType {
     AND,
     OR,

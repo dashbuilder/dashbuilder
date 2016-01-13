@@ -22,9 +22,7 @@ import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.dataset.DataSetMetadata;
 import org.dashbuilder.dataset.def.DataSetDef;
-import org.jboss.errai.common.client.api.annotations.Portable;
 
-@Portable
 public class DataSetMetadataImpl implements DataSetMetadata {
 
     protected DataSetDef definition;

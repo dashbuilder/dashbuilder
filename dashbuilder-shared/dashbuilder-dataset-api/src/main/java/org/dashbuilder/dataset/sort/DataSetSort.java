@@ -20,12 +20,10 @@ import java.util.ArrayList;
 
 import org.dashbuilder.dataset.DataSetOpType;
 import org.dashbuilder.dataset.impl.AbstractDataSetOp;
-import org.jboss.errai.common.client.api.annotations.Portable;
 
 /**
  * A data set sort operation definition
  */
-@Portable
 public class DataSetSort extends AbstractDataSetOp {
 
     protected List<ColumnSort> columnSortList = new ArrayList<ColumnSort>();
