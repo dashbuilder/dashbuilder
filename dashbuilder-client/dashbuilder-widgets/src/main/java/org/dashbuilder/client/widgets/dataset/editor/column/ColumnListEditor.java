@@ -234,25 +234,23 @@ public class ColumnListEditor implements IsWidget, org.dashbuilder.dataset.clien
             final int localIndex = acceptableColumns.indexOf(column);
 
             // Check single column used in data set -> it cannot be unselected.
-            final int size = listEditor.getList().size();
-            if (size == 1) {
-                setEditorEnabled(0 ,false, DataSetEditorConstants.INSTANCE.dataSetMustHaveAtLeastOneColumn());
-            
-            // Enable column selection if more than one column remains on the data set.
-            } else if (size == 2 && !listEditor.getEditors().isEmpty()) {
-                final String cId = listEditor.getEditors().get(0).id().getValue();
-                if (!restrictedColumns.contains(cId)) {
-                    setEditorEnabled(0, true, null);
-                }
+            if (!checkSingleColumnEditorDisabled()) {
+                // Enable column selection if more than one column remains on the data set.
+                checkMultipleColumnsEditorEnabled();
             }
             
             // Create the new editor.
             final org.dashbuilder.client.widgets.dataset.editor.column.DataColumnDefEditor editor = createColumnEditor();
+            final boolean hasSingleColumn = listEditor.getList().size() == 1;
             final boolean isRestricted = restrictedColumns.contains(column.getId());
+            final String tooltipText = hasSingleColumn ? DataSetEditorConstants.INSTANCE.dataSetMustHaveAtLeastOneColumn() 
+                    : ( isRestricted ? DataSetEditorConstants.INSTANCE.columnIsUsedInFilter() : null );
             doSetOriginalColumnType(column.getId(), editor);
-            replace(localIndex, editor, true, !isRestricted, isRestricted ? DataSetEditorConstants.INSTANCE.columnIsUsedInFilter() : null);
+            replace(localIndex, editor, true, !isRestricted && !hasSingleColumn, tooltipText);
             return editor;
         }
+        
+        
 
         @Override
         public void dispose(DataColumnDefEditor subEditor) {
@@ -273,13 +271,38 @@ public class ColumnListEditor implements IsWidget, org.dashbuilder.dataset.clien
                 replace(localIndex, editor, false, true, null);
 
                 // Disable column selection if only one column remains on the data set.
-                final int size = listEditor.getList().size();
-                if (size == 1) {
-                    setEditorEnabled(0, false, DataSetEditorConstants.INSTANCE.dataSetMustHaveAtLeastOneColumn());
-                }
+                checkSingleColumnEditorDisabled();
             }
         }
     };
+
+    /**
+     * Checks that if only single column used in data set -> it cannot be unselected. 
+     */
+    private boolean checkSingleColumnEditorDisabled() {
+        final int size = listEditor.getList().size();
+        final boolean hasEditors = !listEditor.getEditors().isEmpty();
+        if (size == 1 && hasEditors) {
+            setEditorEnabled(0 ,false, DataSetEditorConstants.INSTANCE.dataSetMustHaveAtLeastOneColumn());
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Checks that if multiple columns are used in data set -> the column editors must be enabed, if the columns are not are restricted. 
+     */
+    private boolean checkMultipleColumnsEditorEnabled() {
+        final int size = listEditor.getList().size();
+        if (size == 2 && !listEditor.getEditors().isEmpty()) {
+            final String cId = listEditor.getEditors().get(0).id().getValue();
+            if (!restrictedColumns.contains(cId)) {
+                setEditorEnabled(0, true, null);
+            }
+            return true;
+        }
+        return false;
+    }
 
     private void setEditorEnabled(final String columnId, final boolean enabled, final String altText) {
         final org.dashbuilder.client.widgets.dataset.editor.column.DataColumnDefEditor e = getEditor(columnId);

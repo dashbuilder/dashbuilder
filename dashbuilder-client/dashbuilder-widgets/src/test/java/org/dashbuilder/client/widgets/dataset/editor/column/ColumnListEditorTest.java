@@ -280,7 +280,7 @@ public class ColumnListEditorTest {
     public void testDataColumnDefEditorSource_Create() {
         ColumnListEditor.DataColumnDefEditorSource source = presenter.createDataColumnDefEditorSource();
         org.dashbuilder.dataset.client.editor.DataColumnDefEditor e = source.create(0);
-        verify(dataColumnDefEditor, times(1)).isEditMode(false);
+        verify(dataColumnDefEditor, times(2)).isEditMode(false);
         verify(dataColumnDefEditor, times(1)).setProviderType(any(DataSetProviderType.class));
         verify(dataColumnDefEditor, times(1)).setOriginalColumnType(any(ColumnType.class));
         verify(view, times(2)).insert(anyInt(), any(DataColumnDefEditor.View.class), anyBoolean(), anyBoolean(), anyString());
@@ -315,7 +315,7 @@ public class ColumnListEditorTest {
      * See https://issues.jboss.org/browse/DASHBUILDE-79
      */
     @Test
-    public void testDataColumnDefEditorSource_Create_DASHBUILDE79() {
+    public void testDataColumnDefEditorSource_Create_DASHBUILDE79_A() {
         final DataColumnDef col2 = mock(DataColumnDef.class);
         when(col2.getId()).thenReturn("col2");
         when(col2.getColumnType()).thenReturn(ColumnType.LABEL);
@@ -334,6 +334,29 @@ public class ColumnListEditorTest {
         verify(view, times(0)).clear();
     }
 
+    /**
+     * See https://issues.jboss.org/browse/DASHBUILDE-79 (re-opened)
+     */
+    @Test
+    public void testDataColumnDefEditorSource_Create_DASHBUILDE79_B() {
+        final DataColumnDef col2 = mock(DataColumnDef.class);
+        when(col2.getId()).thenReturn("col2");
+        when(col2.getColumnType()).thenReturn(ColumnType.LABEL);
+        presenter.acceptableColumns.add(col2);
+        presenter.listEditor.getList().clear();
+        presenter.listEditor.getList().add(col2);
+        presenter.listEditor.getEditors().clear();
+        presenter.restrictedColumns.clear();
+        ColumnListEditor.DataColumnDefEditorSource source = presenter.createDataColumnDefEditorSource();
+        org.dashbuilder.dataset.client.editor.DataColumnDefEditor e = source.create(0);
+        verify(dataColumnDefEditor, times(1)).isEditMode(false);
+        verify(dataColumnDefEditor, times(1)).setOriginalColumnType(any(ColumnType.class));
+        verify(dataColumnDefEditor, times(1)).setProviderType(any(DataSetProviderType.class));
+        verify(view, times(1)).insert(anyInt(), any(DataColumnDefEditor.View.class), anyBoolean(), anyBoolean(), anyString());
+        verify(view, times(1)).remove(anyInt());
+        verify(view, times(0)).init(presenter);
+        verify(view, times(0)).clear();
+    }
 
     /**
      * Ensure create a dummy not editable column when disposing the only one present from the definition.
