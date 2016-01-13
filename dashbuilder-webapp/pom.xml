@@ -46,12 +46,6 @@
     </dependency>
     
     <dependency>
-      <groupId>org.jboss.spec.javax.ws.rs</groupId>
-      <artifactId>jboss-jaxrs-api_1.1_spec</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    
-    <dependency>
       <groupId>org.jboss.spec.javax.xml.bind</groupId>
       <artifactId>jboss-jaxb-api_2.2_spec</artifactId>
       <scope>provided</scope>
@@ -381,9 +375,19 @@
       <artifactId>errai-security-client</artifactId>
       <scope>provided</scope>
       <exclusions>
+        <!-- Collides with org.resteasy:jaxrs-api -->
+        <exclusion>
+          <groupId>org.jboss.spec.javax.ws.rs</groupId>
+          <artifactId>jboss-jaxrs-api_1.1_spec</artifactId>
+        </exclusion>
         <exclusion>
           <groupId>org.jboss.spec.javax.interceptor</groupId>
           <artifactId>jboss-interceptors-api_1.2_spec</artifactId>
+        </exclusion>
+        <!-- Collides with org.jboss.spec.javax.el:jboss-el-api_2.2_spec -->
+        <exclusion>
+          <groupId>javax.el</groupId>
+          <artifactId>el-api</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -421,6 +425,13 @@
       <groupId>javax.enterprise</groupId>
       <artifactId>cdi-api</artifactId>
       <scope>provided</scope>
+      <exclusions>
+        <!-- Collides with org.jboss.spec.javax.annotation:jboss-annotations-api_1.1_spec -->
+        <exclusion>
+          <groupId>javax.annotation</groupId>
+          <artifactId>jsr250-api</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>
@@ -457,12 +468,30 @@
       <groupId>org.jboss.resteasy</groupId>
       <artifactId>resteasy-cdi</artifactId>
       <scope>provided</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>javax.annotation</groupId>
+          <artifactId>jsr250-api</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>
       <groupId>org.jboss.resteasy</groupId>
       <artifactId>resteasy-jaxrs</artifactId>
       <scope>provided</scope>
+      <exclusions>
+        <!-- Collides with org.javassist:javassist -->
+        <exclusion>
+          <groupId>javassist</groupId>
+          <artifactId>javassist</artifactId>
+        </exclusion>
+        <!-- Collides with org.jboss.spec.javax.annotation:jboss-annotations-api_1.1_spec -->
+        <exclusion>
+          <groupId>javax.annotation</groupId>
+          <artifactId>jsr250-api</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <!-- GWT and GWT Extensions -->

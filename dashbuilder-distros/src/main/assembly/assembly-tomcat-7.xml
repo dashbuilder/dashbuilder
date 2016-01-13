@@ -33,7 +33,6 @@
         <include>com.sun.xml.bind:jaxb-xjc:jar</include>
         <include>javax.inject:javax.inject:jar</include>
         <include>org.jboss.spec.javax.ejb:jboss-ejb-api_3.1_spec:jar</include>
-        <include>org.jboss.spec.javax.ws.rs:jboss-jaxrs-api_1.1_spec:jar</include>
         <include>org.jboss.resteasy:resteasy-cdi:jar</include>
         <include>org.jboss.resteasy:resteasy-jaxrs:jar</include>
         <include>org.jboss.resteasy:jaxrs-api:jar</include>
@@ -51,7 +50,6 @@
         <include>org.jboss.weld:weld-core:jar</include>
         <include>org.jboss.weld.servlet:weld-servlet-core:jar</include>
         <include>org.jboss.weld:weld-spi:jar</include>
-        <include>org.jboss.weld.se:weld-se-core:jar</include>
       </includes>
       <unpack>false</unpack>
       <outputDirectory>WEB-INF/lib</outputDirectory>
