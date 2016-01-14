@@ -121,6 +121,14 @@ public class CoreFunctionFilter extends ColumnFilter {
             out.append(columnId).append(" time_frame ");
             appendParameters(out);
         }
+        else if (CoreFunctionType.IN.equals(type)) {
+            out.append(columnId).append(" in ");
+            appendParameters(out);
+        }
+        else if (CoreFunctionType.NOT_IN.equals(type)) {
+            out.append(columnId).append(" not_in ");
+            appendParameters(out);
+        }
         return out.toString();
     }
 

@@ -19,6 +19,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -399,6 +400,13 @@ public class DefaultDialect implements Dialect {
         if (CoreFunctionType.BETWEEN.equals(type)) {
             return getBetweenConditionSQL(columnSQL, params[0], params[1]);
         }
+        if (CoreFunctionType.IN.equals(type)) {
+            return getInConditionSQL(columnSQL, params[0]);
+        }
+        if (CoreFunctionType.NOT_IN.equals(type)) {
+            return getNotInConditionSQL(columnSQL, params[0]);
+        }
+
         throw new IllegalArgumentException("Core condition type not supported: " + type);
     }
 
@@ -463,6 +471,36 @@ public class DefaultDialect implements Dialect {
         String fromStr = getParameterSQL(from);
         String toStr = getParameterSQL(to);
         return column + " BETWEEN " + fromStr + " AND " + toStr;
+    }
+
+    @Override
+    public String getInConditionSQL(String column, Object param) {
+        StringBuilder inStatement = new StringBuilder();
+        inStatement.append(column);
+        inStatement.append(" IN (");
+
+        for (Object p : (Collection<?>) param) {
+
+            inStatement.append(getParameterSQL(p) + ",");
+        }
+        inStatement.deleteCharAt(inStatement.length()-1);
+        inStatement.append(")");
+        return inStatement.toString();
+    }
+
+    @Override
+    public String getNotInConditionSQL(String column, Object param) {
+        StringBuilder inStatement = new StringBuilder();
+        inStatement.append(column);
+        inStatement.append(" NOT IN (");
+
+        for (Object p : (Collection<?>) param) {
+
+            inStatement.append(getParameterSQL(p) + ",");
+        }
+        inStatement.deleteCharAt(inStatement.length()-1);
+        inStatement.append(")");
+        return inStatement.toString();
     }
 
     @Override

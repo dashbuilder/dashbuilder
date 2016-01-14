@@ -114,6 +114,14 @@ public class Column {
         return new LogicalCondition(LogicalExprType.OR, conditions);
     }
 
+    public Condition inSql(Collection params) {
+        return new CoreCondition(this, CoreFunctionType.IN, params);
+    }
+
+    public Condition notInSql(Collection params) {
+        return new CoreCondition(this, CoreFunctionType.NOT_IN, params);
+    }
+
     public Condition notEquals(Object param) {
         return new CoreCondition(this, CoreFunctionType.NOT_EQUALS_TO, param);
     }

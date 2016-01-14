@@ -351,6 +351,16 @@ public class ColumnFilterEditor implements IsWidget {
             out.append(columnId).append(" = ");
             formatParameters(out, parameters);
         }
+        else if (CoreFunctionType.IN.equals(type)) {
+            out.append(columnId).append(" in (");
+            formatParameters(out, parameters);
+            out.append(")");
+        }
+        else if (CoreFunctionType.NOT_IN.equals(type)) {
+            out.append(columnId).append(" not in (");
+            formatParameters(out, parameters);
+            out.append(")");
+        }
         return out.toString();
     }
 

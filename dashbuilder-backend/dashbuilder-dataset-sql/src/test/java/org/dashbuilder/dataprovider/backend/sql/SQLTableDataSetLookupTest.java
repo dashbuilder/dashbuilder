@@ -218,6 +218,8 @@ public class SQLTableDataSetLookupTest extends SQLDataSetTestBase {
         subTest.testCombinedExpression2();
         subTest.testCombinedExpression3();
         subTest.testLikeOperatorNonCaseSensitive();
+        subTest.testInOperator();
+        subTest.testNotInOperator();
 
         // Skip this test since MySQL,SQLServer & Sybase are non case sensitive by default
         if (!testSettings.isMySQL() && !testSettings.isSqlServer()&& !testSettings.isSybase()) {
