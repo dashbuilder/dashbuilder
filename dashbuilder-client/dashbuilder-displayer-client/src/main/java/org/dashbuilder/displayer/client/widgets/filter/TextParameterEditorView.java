@@ -55,6 +55,7 @@ public class TextParameterEditorView extends Composite implements TextParameterE
         this.presenter = presenter;
         input.addValueChangeHandler(new ValueChangeHandler<String>() {
             public void onValueChange(ValueChangeEvent<String> event) {
+                form.setValidationState(ValidationState.NONE);
                 presenter.valueChanged();
             }
         });

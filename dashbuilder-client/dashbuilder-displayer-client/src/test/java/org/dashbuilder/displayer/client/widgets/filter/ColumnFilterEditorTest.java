@@ -171,7 +171,7 @@ public class ColumnFilterEditorTest {
     @Test
     public void testBetween() {
         setupEditor(ColumnType.LABEL, CoreFunctionType.BETWEEN, "A", "B");
-        verify(view).setFunctionSelected("col [A  B]");
+        verify(view).setFunctionSelected("col [A B]");
     }
 
     @Test

@@ -208,7 +208,7 @@ public class ColumnFilterEditor implements IsWidget {
     protected IsWidget createParamInputWidget(final CoreFunctionFilter coreFilter, final int paramIndex) {
         final List paramList = coreFilter.getParameters();
         ColumnType columnType = metadata.getColumnType(coreFilter.getColumnId());
-        CoreFunctionType funcitonType = coreFilter.getType();
+        CoreFunctionType functionType = coreFilter.getType();
 
         if (ColumnType.DATE.equals(columnType)) {
             if (CoreFunctionType.TIME_FRAME.equals(coreFilter.getType())) {
@@ -216,8 +216,8 @@ public class ColumnFilterEditor implements IsWidget {
             }
             return createDateInputWidget(paramList, paramIndex);
         }
-        boolean isMultiple = CoreFunctionType.IN.equals(funcitonType) || CoreFunctionType.NOT_IN.equals(funcitonType);
-        if (ColumnType.NUMBER.equals(coreFilter.getType())) {
+        boolean isMultiple = CoreFunctionType.IN.equals(functionType) || CoreFunctionType.NOT_IN.equals(functionType);
+        if (ColumnType.NUMBER.equals(columnType)) {
             return createNumberInputWidget(paramList, isMultiple);
         }
         return createTextInputWidget(paramList, isMultiple);
@@ -364,7 +364,7 @@ public class ColumnFilterEditor implements IsWidget {
 
     protected StringBuilder formatParameters(StringBuilder out, List parameters) {
         for (int i=0; i< parameters.size();  i++) {
-            if (i > 0) out.append(",");
+            if (i > 0) out.append(" ");
             out.append(formatParameter(parameters.get(i)));
         }
         return out;

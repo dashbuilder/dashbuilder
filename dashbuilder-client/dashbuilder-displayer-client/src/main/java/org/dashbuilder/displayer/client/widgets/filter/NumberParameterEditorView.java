@@ -56,6 +56,7 @@ public class NumberParameterEditorView extends Composite implements NumberParame
         this.presenter = presenter;
         input.addValueChangeHandler(new ValueChangeHandler<String>() {
             public void onValueChange(ValueChangeEvent<String> event) {
+                form.setValidationState(ValidationState.NONE);
                 presenter.valueChanged();
             }
         });
