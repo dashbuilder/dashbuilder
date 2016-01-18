@@ -29,7 +29,7 @@ Architecture
 
 * Not tied to any chart rendering technology. Pluggable renderers.
 * No tied to any data storage.
-* Ability to read data from: CSV files, Databases, Elastic Search or  Java generators.
+* Ability to read data from: CSV files, Databases, Elastic Search orJava generators.
 * Decoupled client & server layers. Ability to build pure lightweight client dashboards.
 * Ability to push & handle data sets on client for better performance.
 * Based on <a href="http://www.uberfireframework.org" target="_blank">Uberfire</a>, a framework for building rich workbench styled apps on the web.
@@ -37,13 +37,17 @@ Architecture
 Change log
 ==========
 
-Next release...
+0.4.0.Final
 
 * User interface upgraded to Bootstrap3/PatternFly
 
 * MonetDB support added to the SQL provider.
-  (The provider has been tested under the MonetDB 11.21.5 release)
+  (the provider has been tested under the MonetDB 11.21.5 release)
 
+* New data set filtering functions "IN" and "NOT IN" 
+
+* Data Set Core API available as an embeddable java library
+  (further details [here](https://github.com/dgutierr/datasets-sample-project)) 
 
 0.3.0.Final
 
@@ -108,7 +112,7 @@ Build & run
 Prerequisites
 -------------
 * Git client
-* Maven 3.x
+* Maven 3.2.5+
 * Java 1.6+
 
 First steps
