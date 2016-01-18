@@ -31,6 +31,7 @@ import org.junit.Test;
 import static org.dashbuilder.dataset.ExpenseReportsData.*;
 import static org.dashbuilder.dataset.Assertions.*;
 import static org.dashbuilder.dataset.filter.FilterFactory.*;
+import static org.dashbuilder.dataset.group.AggregateFunctionType.SUM;
 import static org.fest.assertions.api.Assertions.assertThat;
 
 public class DataSetFilterTest {
@@ -57,7 +58,7 @@ public class DataSetFilterTest {
     public void testColumnTypes() throws Exception {
 
         DataSet result = dataSetManager.lookupDataSet(
-                DataSetFactory.newDataSetLookupBuilder()
+                DataSetLookupFactory.newDataSetLookupBuilder()
                         .dataset(EXPENSE_REPORTS)
                         .column(COLUMN_CITY)
                         .column(COLUMN_AMOUNT)
@@ -75,9 +76,39 @@ public class DataSetFilterTest {
     }
 
     @Test
+    public void testFilterWithNullEntries() throws Exception {
+        // Insert a null entry into the dataset
+        DataSet expensesDataSet = dataSetManager.getDataSet(EXPENSE_REPORTS);
+        int column = expensesDataSet.getColumnIndex(expensesDataSet.getColumnById(COLUMN_DEPARTMENT));
+        expensesDataSet.setValueAt(0, column, null);
+
+        // Group by department in order to force the indexing of the result
+        DataSet result = dataSetManager.lookupDataSet(
+                DataSetLookupFactory.newDataSetLookupBuilder()
+                        .dataset(EXPENSE_REPORTS)
+                        .group(COLUMN_DEPARTMENT)
+                        .column(COLUMN_DEPARTMENT)
+                        .column(COLUMN_AMOUNT, SUM)
+                        .sort(COLUMN_DEPARTMENT, SortOrder.ASCENDING)
+                        .buildLookup());
+
+        assertThat(result.getRowCount()).isEqualTo(6);
+
+        result = dataSetManager.lookupDataSet(
+                DataSetLookupFactory.newDataSetLookupBuilder()
+                        .dataset(EXPENSE_REPORTS)
+                        .group(COLUMN_DEPARTMENT).select("Engineering")
+                        .sort(COLUMN_DEPARTMENT, SortOrder.ASCENDING)
+                        .buildLookup());
+
+        assertThat(result.getRowCount()).isEqualTo(18);
+    }
+
+
+    @Test
     public void testFilterByString() throws Exception {
         DataSet result = dataSetManager.lookupDataSet(
-                DataSetFactory.newDataSetLookupBuilder()
+                DataSetLookupFactory.newDataSetLookupBuilder()
                         .dataset(EXPENSE_REPORTS)
                         .filter(COLUMN_CITY, equalsTo("Barcelona"))
                         .sort(COLUMN_ID, SortOrder.ASCENDING)
@@ -92,7 +123,7 @@ public class DataSetFilterTest {
     @Test
     public void testFilterByNumber() throws Exception {
         DataSet result = dataSetManager.lookupDataSet(
-                DataSetFactory.newDataSetLookupBuilder()
+                DataSetLookupFactory.newDataSetLookupBuilder()
                         .dataset(EXPENSE_REPORTS)
                         .filter(COLUMN_AMOUNT, between(100, 200))
                         .sort(COLUMN_ID, SortOrder.ASCENDING)
@@ -114,7 +145,7 @@ public class DataSetFilterTest {
         Timestamp date = new Timestamp(c.getTime().getTime());
 
         DataSet result = dataSetManager.lookupDataSet(
-                DataSetFactory.newDataSetLookupBuilder()
+                DataSetLookupFactory.newDataSetLookupBuilder()
                     .dataset(EXPENSE_REPORTS)
                     .filter(COLUMN_DATE, greaterThan(new Timestamp(date.getTime())))
                         .sort(COLUMN_ID, SortOrder.ASCENDING)
@@ -127,7 +158,7 @@ public class DataSetFilterTest {
     @Test
     public void testFilterUntilToday() throws Exception {
         DataSet result = dataSetManager.lookupDataSet(
-                DataSetFactory.newDataSetLookupBuilder()
+                DataSetLookupFactory.newDataSetLookupBuilder()
                         .dataset(EXPENSE_REPORTS)
                         .filter(COLUMN_DATE, timeFrame("10second"))
                         .sort(COLUMN_ID, SortOrder.ASCENDING)
@@ -143,7 +174,7 @@ public class DataSetFilterTest {
         Timestamp date = new Timestamp(c.getTime().getTime());
 
         DataSet result = dataSetManager.lookupDataSet(
-                DataSetFactory.newDataSetLookupBuilder()
+                DataSetLookupFactory.newDataSetLookupBuilder()
                     .dataset(EXPENSE_REPORTS)
                     .filter(COLUMN_DATE, greaterThan(date))
                     .filter(COLUMN_AMOUNT, lowerOrEqualsTo(120.35))
@@ -158,7 +189,7 @@ public class DataSetFilterTest {
 
         // The order of the filter criteria does not alter the result.
         result = dataSetManager.lookupDataSet(
-                DataSetFactory.newDataSetLookupBuilder()
+                DataSetLookupFactory.newDataSetLookupBuilder()
                     .dataset(EXPENSE_REPORTS)
                     .filter(COLUMN_CITY, notEqualsTo("Barcelona"))
                     .filter(COLUMN_AMOUNT, lowerOrEqualsTo(120.35))
@@ -176,7 +207,7 @@ public class DataSetFilterTest {
     public void testANDExpression() throws Exception {
 
         DataSet result = dataSetManager.lookupDataSet(
-                DataSetFactory.newDataSetLookupBuilder()
+                DataSetLookupFactory.newDataSetLookupBuilder()
                         .dataset(EXPENSE_REPORTS)
                         .filter(COLUMN_AMOUNT, AND(greaterThan(100), lowerThan(150)))
                         .sort(COLUMN_ID, SortOrder.ASCENDING)
@@ -191,7 +222,7 @@ public class DataSetFilterTest {
     public void testNOTExpression() throws Exception {
 
         DataSet result = dataSetManager.lookupDataSet(
-                DataSetFactory.newDataSetLookupBuilder()
+                DataSetLookupFactory.newDataSetLookupBuilder()
                         .dataset(EXPENSE_REPORTS)
                         .filter(COLUMN_AMOUNT, NOT(greaterThan(100)))
                         .sort(COLUMN_ID, SortOrder.ASCENDING)
@@ -207,7 +238,7 @@ public class DataSetFilterTest {
     public void testORExpression() throws Exception {
 
         DataSet result = dataSetManager.lookupDataSet(
-                DataSetFactory.newDataSetLookupBuilder()
+                DataSetLookupFactory.newDataSetLookupBuilder()
                         .dataset(EXPENSE_REPORTS)
                         .filter(COLUMN_AMOUNT, OR(NOT(greaterThan(100)), greaterThan(1000), equalsTo(COLUMN_ID, 1)))
                         .sort(COLUMN_ID, SortOrder.ASCENDING)
@@ -229,7 +260,7 @@ public class DataSetFilterTest {
         }
 
         DataSet result = dataSetManager.lookupDataSet(
-                DataSetFactory.newDataSetLookupBuilder()
+                DataSetLookupFactory.newDataSetLookupBuilder()
                         .dataset(EXPENSE_REPORTS)
                         .filter(equalsTo(COLUMN_CITY, cities))
                         .buildLookup());
@@ -242,7 +273,7 @@ public class DataSetFilterTest {
     public void testLogicalExprNonEmpty() throws Exception {
 
         DataSet result = dataSetManager.lookupDataSet(
-                DataSetFactory.newDataSetLookupBuilder()
+                DataSetLookupFactory.newDataSetLookupBuilder()
                         .dataset(EXPENSE_REPORTS)
                         .filter(AND(COLUMN_EMPLOYEE, new ArrayList<ColumnFilter>()))
                         .buildLookup());
@@ -251,7 +282,7 @@ public class DataSetFilterTest {
         assertThat(result.getRowCount()).isEqualTo(50);
 
         result = dataSetManager.lookupDataSet(
-                DataSetFactory.newDataSetLookupBuilder()
+                DataSetLookupFactory.newDataSetLookupBuilder()
                         .dataset(EXPENSE_REPORTS)
                         .filter(OR(COLUMN_EMPLOYEE, new ArrayList<ColumnFilter>()))
                         .buildLookup());
@@ -260,7 +291,7 @@ public class DataSetFilterTest {
         assertThat(result.getRowCount()).isEqualTo(50);
 
         result = dataSetManager.lookupDataSet(
-                DataSetFactory.newDataSetLookupBuilder()
+                DataSetLookupFactory.newDataSetLookupBuilder()
                         .dataset(EXPENSE_REPORTS)
                         .filter(NOT(COLUMN_EMPLOYEE, new ArrayList<ColumnFilter>()))
                         .buildLookup());
@@ -273,7 +304,7 @@ public class DataSetFilterTest {
     public void testCombinedExpression() throws Exception {
 
         DataSet result = dataSetManager.lookupDataSet(
-                DataSetFactory.newDataSetLookupBuilder()
+                DataSetLookupFactory.newDataSetLookupBuilder()
                         .dataset(EXPENSE_REPORTS)
                         .filter(COLUMN_AMOUNT, AND(
                                 equalsTo(COLUMN_DEPARTMENT, "Sales"),
@@ -304,7 +335,7 @@ public class DataSetFilterTest {
         ColumnFilter filter2 = AND(OR(COLUMN_EMPLOYEE, condList), equalsTo(COLUMN_DEPARTMENT, "Engineering"));
         ColumnFilter filter3 = equalsTo(COLUMN_DEPARTMENT, "Services");
 
-        DataSetLookupBuilder builder = DataSetFactory.newDataSetLookupBuilder();
+        DataSetLookupBuilder builder = DataSetLookupFactory.newDataSetLookupBuilder();
         builder.dataset(EXPENSE_REPORTS);
         builder.filter(AND(filter1, OR(filter2, filter3)));
         builder.column(COLUMN_ID);
@@ -335,7 +366,7 @@ public class DataSetFilterTest {
         }
 
         DataSet result = dataSetManager.lookupDataSet(
-                DataSetFactory.newDataSetLookupBuilder()
+                DataSetLookupFactory.newDataSetLookupBuilder()
                         .dataset(EXPENSE_REPORTS)
                                 // Ensure the columnId is propagated to the logical expression terms
                         .filter(OR(COLUMN_EMPLOYEE, condList))
@@ -352,7 +383,7 @@ public class DataSetFilterTest {
     public void testLikeOperatorCaseSensitive() throws Exception {
 
         DataSet result = dataSetManager.lookupDataSet(
-                DataSetFactory.newDataSetLookupBuilder()
+                DataSetLookupFactory.newDataSetLookupBuilder()
                         .dataset(EXPENSE_REPORTS)
                         .filter(likeTo(COLUMN_CITY, "Bar%"))
                         .column(COLUMN_ID)
@@ -365,7 +396,7 @@ public class DataSetFilterTest {
         assertDataSetValue(result, 5, 0, "6.00");
 
         result = dataSetManager.lookupDataSet(
-                DataSetFactory.newDataSetLookupBuilder()
+                DataSetLookupFactory.newDataSetLookupBuilder()
                         .dataset(EXPENSE_REPORTS)
                         .filter(likeTo(COLUMN_CITY, "%L%", true /* Case sensitive */))
                         .buildLookup());
@@ -377,7 +408,7 @@ public class DataSetFilterTest {
     public void testLikeOperatorNonCaseSensitive() throws Exception {
 
         DataSet result = dataSetManager.lookupDataSet(
-                DataSetFactory.newDataSetLookupBuilder()
+                DataSetLookupFactory.newDataSetLookupBuilder()
                         .dataset(EXPENSE_REPORTS)
                         .filter(likeTo(COLUMN_CITY, "Bar%"))
                         .column(COLUMN_ID)
@@ -390,7 +421,7 @@ public class DataSetFilterTest {
         assertDataSetValue(result, 5, 0, "6.00");
 
         result = dataSetManager.lookupDataSet(
-                DataSetFactory.newDataSetLookupBuilder()
+                DataSetLookupFactory.newDataSetLookupBuilder()
                         .dataset(EXPENSE_REPORTS)
                         .filter(likeTo(COLUMN_CITY, "%L%", false /* Case un-sensitive */))
                         .buildLookup());
@@ -401,7 +432,7 @@ public class DataSetFilterTest {
     @Test
     public void testFilterByStringWithPreProcessor() throws Exception {
         DataSet result = dataSetManager.lookupDataSet(
-                DataSetFactory.newDataSetLookupBuilder()
+                DataSetLookupFactory.newDataSetLookupBuilder()
                 .dataset(EXPENSE_REPORTS + "2")
                 .filter(COLUMN_CITY, equalsTo("Barcelona"))
                 .buildLookup());
@@ -414,7 +445,7 @@ public class DataSetFilterTest {
     public void testInOperator() throws Exception {
 
         DataSet result = dataSetManager.lookupDataSet(
-                DataSetFactory.newDataSetLookupBuilder()
+                DataSetLookupFactory.newDataSetLookupBuilder()
                         .dataset(EXPENSE_REPORTS)
                         .filter(in(COLUMN_CITY, Arrays.asList("Barcelona", "Madrid")))
                         .column(COLUMN_ID)
@@ -432,7 +463,7 @@ public class DataSetFilterTest {
     public void testNotInOperator() throws Exception {
 
         DataSet result = dataSetManager.lookupDataSet(
-                DataSetFactory.newDataSetLookupBuilder()
+                DataSetLookupFactory.newDataSetLookupBuilder()
                         .dataset(EXPENSE_REPORTS)
                         .filter(notIn(COLUMN_CITY, Arrays.asList("Barcelona", "Madrid")))
                         .column(COLUMN_ID)

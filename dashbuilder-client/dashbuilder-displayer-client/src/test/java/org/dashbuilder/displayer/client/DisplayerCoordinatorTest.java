@@ -14,6 +14,7 @@
  */
 package org.dashbuilder.displayer.client;
 
+import org.dashbuilder.common.client.error.ClientRuntimeError;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.sort.SortOrder;
 import org.dashbuilder.displayer.DisplayerSettings;
@@ -102,7 +103,29 @@ public class DisplayerCoordinatorTest extends AbstractDisplayerTest {
         assertEquals(dataSet.getRowCount(), 19);
         verify(listener).onDataLookup(allRowsTable);
         verify(listener).onRedraw(allRowsTable);
-   }
+    }
+
+    @Test
+    public void testFilterWithNull() {
+        // Insert a null entry into the dataset
+        DataSet expensesDataSet = clientDataSetManager.getDataSet(EXPENSES);
+        int column = expensesDataSet.getColumnIndex(expensesDataSet.getColumnById(COLUMN_DEPARTMENT));
+        expensesDataSet.setValueAt(0, column, null);
+
+        // Draw the charts
+        displayerCoordinator.drawAll();
+
+        // Click on the "Engineering" slice
+        reset(listener);
+        deptPieChart.filterUpdate(COLUMN_DEPARTMENT, 1);
+
+        // Check the allRowsTable receives the filter request
+        DataSet dataSet = allRowsTable.getDataSetHandler().getLastDataSet();
+        verify(listener, never()).onError(any(Displayer.class), any(ClientRuntimeError.class));
+        verify(listener).onDataLookup(allRowsTable);
+        verify(listener).onRedraw(allRowsTable);
+        assertEquals(dataSet.getRowCount(), 18);
+    }
 
     /**
      * Avoid IndexOutOfBoundsException caused when a filter is notified to
