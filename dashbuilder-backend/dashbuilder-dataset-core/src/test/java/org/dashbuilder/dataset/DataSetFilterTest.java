@@ -37,6 +37,7 @@ import static org.dashbuilder.dataset.ExpenseReportsData.*;
 import static org.dashbuilder.dataset.Assertions.*;
 import org.dashbuilder.dataset.def.DataSetPreprocessor;
 import static org.dashbuilder.dataset.filter.FilterFactory.*;
+import static org.dashbuilder.dataset.group.AggregateFunctionType.SUM;
 import static org.fest.assertions.api.Assertions.assertThat;
 
 @RunWith(Arquillian.class)
@@ -90,6 +91,35 @@ public class DataSetFilterTest {
         assertThat(java.util.Date.class.equals(result.getValueAt(0,2).getClass()) ||
                 java.sql.Date.class.equals(result.getValueAt(0, 2).getClass()) ||
                 java.sql.Timestamp.class.equals(result.getValueAt(0,2).getClass())).isTrue();
+    }
+
+    @Test
+    public void testFilterWithNullEntries() throws Exception {
+        // Insert a null entry into the dataset
+        DataSet expensesDataSet = dataSetManager.getDataSet(EXPENSE_REPORTS);
+        int column = expensesDataSet.getColumnIndex(expensesDataSet.getColumnById(COLUMN_DEPARTMENT));
+        expensesDataSet.setValueAt(0, column, null);
+
+        // Group by department in order to force the indexing of the result
+        DataSet result = dataSetManager.lookupDataSet(
+                DataSetFactory.newDataSetLookupBuilder()
+                        .dataset(EXPENSE_REPORTS)
+                        .group(COLUMN_DEPARTMENT)
+                        .column(COLUMN_DEPARTMENT)
+                        .column(COLUMN_AMOUNT, SUM)
+                        .sort(COLUMN_DEPARTMENT, SortOrder.ASCENDING)
+                        .buildLookup());
+
+        assertThat(result.getRowCount()).isEqualTo(6);
+
+        result = dataSetManager.lookupDataSet(
+                DataSetFactory.newDataSetLookupBuilder()
+                        .dataset(EXPENSE_REPORTS)
+                        .group(COLUMN_DEPARTMENT).select("Engineering")
+                        .sort(COLUMN_DEPARTMENT, SortOrder.ASCENDING)
+                        .buildLookup());
+
+        assertThat(result.getRowCount()).isEqualTo(18);
     }
 
     @Test
