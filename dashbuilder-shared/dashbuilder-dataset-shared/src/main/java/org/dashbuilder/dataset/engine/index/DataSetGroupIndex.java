@@ -108,14 +108,20 @@ public class DataSetGroupIndex extends DataSetIndexNode implements DataSetInterv
         List<DataSetIntervalIndex> result = new ArrayList<DataSetIntervalIndex>();
         for (Interval interval : intervalList) {
             DataSetIntervalIndex idx = getIntervalIndex(interval.getName());
-            if (idx != null) result.add(idx);
+            if (idx != null) {
+                result.add(idx);
+            }
         }
         return result;
     }
 
     public DataSetIntervalIndex getIntervalIndex(String name) {
         for (DataSetIntervalIndex idx : intervalIndexList) {
-            if (idx.getName().equals(name)) {
+            String idxName = idx.getName();
+            if (idxName != null && idxName.equals(name)) {
+                return idx;
+            }
+            if (idxName == null && name == null) {
                 return idx;
             }
         }
@@ -125,7 +131,12 @@ public class DataSetGroupIndex extends DataSetIndexNode implements DataSetInterv
     public int indexOfIntervalIndex(DataSetIntervalIndex target) {
         for (int i = 0; i < intervalIndexList.size(); i++) {
             DataSetIntervalIndex idx = intervalIndexList.get(i);
-            if (idx.getName().equals(target.getName())) {
+            String idxName = idx.getName();
+            String targetName = target.getName();
+            if (idxName != null && idxName.equals(targetName)) {
+                return i;
+            }
+            if (idxName == null && targetName == null) {
                 return i;
             }
         }
@@ -133,8 +144,9 @@ public class DataSetGroupIndex extends DataSetIndexNode implements DataSetInterv
     }
 
     public DataSetGroupIndex getSelectionIndex(List<Interval> intervalList) {
-        if (selectIndexList == null) return null;
-
+        if (selectIndexList == null) {
+            return null;
+        }
         String targetKey = buildSelectKey(intervalList);
         for (DataSetGroupIndex idx : selectIndexList) {
             if (idx.selectKey.equals(targetKey)) {
@@ -146,8 +158,9 @@ public class DataSetGroupIndex extends DataSetIndexNode implements DataSetInterv
     }
 
     public DataSetGroupIndex indexSelection(List<Interval> intervalList, List<DataSetIntervalIndex> intervalIndexes) {
-        if (selectIndexList == null) selectIndexList = new ArrayList<DataSetGroupIndex>();
-
+        if (selectIndexList == null) {
+            selectIndexList = new ArrayList<DataSetGroupIndex>();
+        }
         String key = buildSelectKey(intervalList);
         DataSetGroupIndex index = new DataSetGroupIndex(key, intervalIndexes);
         index.setParent(this);

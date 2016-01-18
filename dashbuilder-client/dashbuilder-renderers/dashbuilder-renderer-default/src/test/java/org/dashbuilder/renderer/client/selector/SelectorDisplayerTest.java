@@ -14,6 +14,7 @@
  */
 package org.dashbuilder.renderer.client.selector;
 
+import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.filter.FilterFactory;
 import org.dashbuilder.dataset.group.AggregateFunctionType;
 import org.dashbuilder.dataset.group.DataSetGroup;
@@ -76,6 +77,29 @@ public class SelectorDisplayerTest extends AbstractDisplayerTest {
         verify(view).showSelectHint(COLUMN_DEPARTMENT);
         verify(view, never()).addItem(anyString(), anyString());
         verify(view, never()).setSelectedIndex(anyInt());
+    }
+
+    @Test
+    public void testNullNotShown() {
+        DisplayerSettings departmentList = DisplayerSettingsFactory.newSelectorSettings()
+                .dataset(EXPENSES)
+                .group(COLUMN_DEPARTMENT)
+                .column(COLUMN_DEPARTMENT)
+                .column(COLUMN_ID, AggregateFunctionType.COUNT)
+                .buildSettings();
+
+        // Insert a null entry into the dataset
+        DataSet expensesDataSet = clientDataSetManager.getDataSet(EXPENSES);
+        int column = expensesDataSet.getColumnIndex(expensesDataSet.getColumnById(COLUMN_DEPARTMENT));
+        expensesDataSet.setValueAt(0, column, null);
+
+        // ... and make sure it's not shown
+        SelectorDisplayer presenter = createSelectorDisplayer(departmentList);
+        SelectorDisplayer.View view = presenter.getView();
+        presenter.draw();
+
+        verify(view, never()).addItem(anyString(), eq((String) null));
+        verify(view, times(5)).addItem(anyString(), anyString());
     }
 
     @Test
