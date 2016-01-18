@@ -85,6 +85,17 @@ public class DataSetImpl implements DataSet {
         return null;
     }
 
+    public DataColumn getColumnByIdIgnoreCase(String id) {
+        for (DataColumn column : columns) {
+            if (column.getId().equalsIgnoreCase(id)) return column;
+            GroupFunction gf = column.getGroupFunction();
+            if (gf != null && gf.getSourceId() != null && gf.getSourceId().equalsIgnoreCase(id)) {
+                return column;
+            }
+        }
+        return null;
+    }
+
     public DataColumn getColumnByIndex(int index) {
         if (columns == null || columns.isEmpty()) {
             throw new IllegalArgumentException("The data set is empty.");

@@ -226,4 +226,38 @@ public class SQLTableDataSetLookupTest extends SQLDataSetTestBase {
             subTest.testLikeOperatorCaseSensitive();
         }
     }
+
+    @Test
+    public void testDataSetColumnsByIdIgnoreCase() throws Exception {
+        DataSet result = dataSetManager.lookupDataSet(
+                DataSetFactory.newDataSetLookupBuilder()
+                        .dataset(DataSetGroupTest.EXPENSE_REPORTS)
+                        .column(CITY.getName(), "City")
+                        .column(DEPT.getName(), "Department")
+                        .column(EMPLOYEE.getName(), "Employee")
+                        .column(AMOUNT.getName(), "Amount")
+                        .buildLookup());
+
+        assertThat(result.getRowCount()).isEqualTo(50);
+        assertThat(result.getColumnByIndex(0).getId()).isEqualTo("City");
+        assertThat(result.getColumnByIndex(1).getId()).isEqualTo("Department");
+        assertThat(result.getColumnByIndex(2).getId()).isEqualTo("Employee");
+        assertThat(result.getColumnByIndex(3).getId()).isEqualTo("Amount");
+
+        assertThat(result.getColumnById("City")).isNotNull();
+        assertThat(result.getColumnById("Department")).isNotNull();
+        assertThat(result.getColumnById("Employee")).isNotNull();
+        assertThat(result.getColumnById("Amount")).isNotNull();
+
+        assertThat(result.getColumnById("city")).isNull();
+        assertThat(result.getColumnById("department")).isNull();
+        assertThat(result.getColumnById("employee")).isNull();
+        assertThat(result.getColumnById("amount")).isNull();
+
+        assertThat(result.getColumnByIdIgnoreCase("city")).isNotNull();
+        assertThat(result.getColumnByIdIgnoreCase("department")).isNotNull();
+        assertThat(result.getColumnByIdIgnoreCase("employee")).isNotNull();
+        assertThat(result.getColumnByIdIgnoreCase("amount")).isNotNull();
+
+    }
 }
