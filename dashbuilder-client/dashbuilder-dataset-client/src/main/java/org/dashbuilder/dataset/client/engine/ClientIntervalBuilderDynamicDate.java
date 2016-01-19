@@ -112,7 +112,9 @@ public class ClientIntervalBuilderDynamicDate implements IntervalBuilder {
                 } else {
                     Date dateValue = (Date) sortedValues.get(index);
                     Integer row = sortedRows.get(index);
-                    if (dateValue.before(intervalMaxDate)){
+                    if (dateValue == null) {
+                        index++;
+                    } else if (dateValue.before(intervalMaxDate)) {
                         interval.getRows().add(row);
                         index++;
                     } else {

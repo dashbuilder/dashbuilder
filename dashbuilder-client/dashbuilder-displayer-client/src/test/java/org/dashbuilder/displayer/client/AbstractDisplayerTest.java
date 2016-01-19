@@ -15,24 +15,10 @@
 package org.dashbuilder.displayer.client;
 
 import java.util.List;
-import javax.enterprise.event.Event;
 
-import org.dashbuilder.dataset.DataSet;
-import org.dashbuilder.dataset.DataSetFormatter;
-import org.dashbuilder.dataset.ExpenseReportsData;
-import org.dashbuilder.dataset.client.ClientDataSetManager;
-import org.dashbuilder.dataset.client.DataSetClientServices;
-import org.dashbuilder.dataset.client.ClientDataSetCore;
-import org.dashbuilder.dataset.events.DataSetModifiedEvent;
-import org.dashbuilder.dataset.events.DataSetPushOkEvent;
-import org.dashbuilder.dataset.events.DataSetPushingEvent;
-import org.dashbuilder.dataset.service.DataSetDefServices;
-import org.dashbuilder.dataset.service.DataSetExportServices;
-import org.dashbuilder.dataset.service.DataSetLookupServices;
+import org.dashbuilder.dataset.client.AbstractDataSetTest;
 import org.dashbuilder.displayer.DisplayerSettings;
 import org.dashbuilder.displayer.client.formatter.ValueFormatterRegistry;
-import org.jboss.errai.common.client.api.Caller;
-import org.jboss.errai.common.client.api.RemoteCallback;
 import org.junit.Before;
 import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
@@ -40,28 +26,7 @@ import org.mockito.stubbing.Answer;
 
 import static org.mockito.Mockito.*;
 
-public abstract class AbstractDisplayerTest {
-
-    @Mock
-    protected Event<DataSetPushingEvent> dataSetPushingEvent;
-
-    @Mock
-    protected Event<DataSetPushOkEvent> dataSetPushOkEvent;
-
-    @Mock
-    protected Event<DataSetModifiedEvent> dataSetModifiedEvent;
-
-    @Mock
-    protected Caller<DataSetLookupServices> dataSetLookupServicesCaller;
-
-    @Mock
-    protected DataSetLookupServices dataSetLookupServices;
-
-    @Mock
-    protected Caller<DataSetDefServices> dataSetDefServicesCaller;
-
-    @Mock
-    protected Caller<DataSetExportServices> dataSetExportServicesCaller;
+public abstract class AbstractDisplayerTest extends AbstractDataSetTest {
 
     @Mock
     protected RendererManager rendererManager;
@@ -72,61 +37,18 @@ public abstract class AbstractDisplayerTest {
     @Mock
     protected ValueFormatterRegistry formatterRegistry;
 
-    protected ClientDataSetCore clientDataSetCore;
-    protected DataSetClientServices clientServices;
-    protected ClientDataSetManager clientDataSetManager;
     protected DisplayerLocator displayerLocator;
-    protected DataSet expensesDataSet;
-    protected DataSetFormatter dataSetFormatter = new DataSetFormatter();
 
-    public static final String EXPENSES = "expenses";
+    @Before
+    public void init() throws Exception {
+        super.init();
 
-    public void initClientFactory() {
-        clientDataSetCore = ClientDataSetCore.get();
-        clientDataSetCore.setClientDateFormatter(new ClientDateFormatterMock());
-        clientDataSetCore.setChronometer(new ChronometerMock());
-    }
-
-    public void initClientDataSetManager() {
-        clientDataSetManager = clientDataSetCore.getClientDataSetManager();
-    }
-
-    public void initDataSetClientServices() {
-        clientServices = new DataSetClientServices(
-                clientDataSetManager,
-                clientDataSetCore.getAggregateFunctionManager(),
-                clientDataSetCore.getIntervalBuilderLocator(),
-                dataSetPushingEvent,
-                dataSetPushOkEvent,
-                dataSetModifiedEvent,
-                dataSetLookupServicesCaller,
-                dataSetDefServicesCaller,
-                dataSetExportServicesCaller);
-    }
-
-    public void initDisplayerLocator() {
         displayerLocator = new DisplayerLocator(clientServices,
                 clientDataSetManager,
                 rendererManager,
                 formatterRegistry);
-    }
-
-    public void registerExpensesDataSet() throws Exception {
-        expensesDataSet = ExpenseReportsData.INSTANCE.toDataSet();
-        expensesDataSet.setUUID(EXPENSES);
-        clientDataSetManager.registerDataSet(expensesDataSet);
-    }
-
-    @Before
-    public void init() throws Exception {
-        initClientFactory();
-        initClientDataSetManager();
-        initDataSetClientServices();
-        initDisplayerLocator();
-        registerExpensesDataSet();
 
         when(rendererManager.getRendererForDisplayer(any(DisplayerSettings.class))).thenReturn(rendererLibrary);
-        when(dataSetLookupServicesCaller.call(any(RemoteCallback.class))).thenReturn(dataSetLookupServices);
 
         doAnswer(new Answer() {
             public Object answer(InvocationOnMock invocationOnMock) throws Throwable {
@@ -143,11 +65,6 @@ public abstract class AbstractDisplayerTest {
                 return null;
             }
         }).when(rendererLibrary).draw(anyListOf(Displayer.class));
-    }
-
-
-    public void printDataSet(DataSet dataSet) {
-        System.out.print(dataSetFormatter.formatDataSet(dataSet, "{", "}", ",\n", "\"", "\"", ", ") + "\n\n");
     }
 
     public AbstractDisplayer createNewDisplayer(DisplayerSettings settings) {
