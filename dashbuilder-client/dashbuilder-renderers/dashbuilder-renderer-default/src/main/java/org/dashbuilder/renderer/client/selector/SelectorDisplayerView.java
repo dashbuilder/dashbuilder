@@ -63,18 +63,19 @@ public class SelectorDisplayerView extends AbstractDisplayerView<SelectorDisplay
     }
 
     @Override
-    public void addItem(String id, String value) {
+    public void addItem(String id, String value, boolean selected) {
         listBox.addItem(value, id);
+        if (selected) {
+            listBox.setSelectedIndex(listBox.getItemCount()-1);
+        }
     }
 
     @Override
-    public void setSelectedIndex(int index) {
-        listBox.setSelectedIndex(index + (hintEnabled ? 1 : 0));
-    }
-
-    @Override
-    public int getSelectedIndex() {
-        return listBox.getSelectedIndex() - (hintEnabled ? 1 : 0);
+    public String getSelectedId() {
+        if (hintEnabled && listBox.getSelectedIndex() == 0) {
+            return null;
+        }
+        return listBox.getSelectedValue();
     }
 
     @Override

@@ -41,11 +41,9 @@ public class SelectorDisplayer extends AbstractDisplayer<SelectorDisplayer.View>
 
         void clearItems();
 
-        void addItem(String id, String value);
+        void addItem(String id, String value, boolean selected);
 
-        void setSelectedIndex(int index);
-
-        int getSelectedIndex();
+        String getSelectedId();
 
         int getItemCount();
 
@@ -129,10 +127,8 @@ public class SelectorDisplayer extends AbstractDisplayer<SelectorDisplayer.View>
             }
 
             String value = super.formatValue(i, 0);
-            view.addItem(Integer.toString(i), value);
-            if (currentFilter != null && currentFilter.contains(i)) {
-                view.setSelectedIndex(view.getItemCount()-1);
-            }
+            boolean selected = currentFilter != null && currentFilter.contains(i);
+            view.addItem(Integer.toString(i), value, selected);
 
             // Generate an option tooltip (only if extra data set columns are defined)
             int ncolumns = dataSet.getColumns().size();
@@ -170,10 +166,10 @@ public class SelectorDisplayer extends AbstractDisplayer<SelectorDisplayer.View>
 
         ColumnSettings columnSettings = displayerSettings.getColumnSettings(firstColumn);
         String firstColumnName = columnSettings.getColumnName();
-        int selected = view.getSelectedIndex();
-        if (selected >= 0) {
+        String selected = view.getSelectedId();
+        if (selected != null) {
             // Filter by the selected value (if any)
-            filterUpdate(firstColumnId, selected);
+            filterUpdate(firstColumnId, Integer.parseInt(selected));
             view.showResetHint(firstColumnName);
         } else {
             view.showSelectHint(firstColumnName);

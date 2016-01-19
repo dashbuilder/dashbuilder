@@ -18,17 +18,19 @@ import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.filter.FilterFactory;
 import org.dashbuilder.dataset.group.AggregateFunctionType;
 import org.dashbuilder.dataset.group.DataSetGroup;
+import org.dashbuilder.dataset.group.Interval;
 import org.dashbuilder.displayer.DisplayerSettings;
 import org.dashbuilder.displayer.DisplayerSettingsFactory;
 import org.dashbuilder.displayer.client.AbstractDisplayerTest;
-import org.dashbuilder.displayer.client.DataSetHandlerImpl;
 import org.dashbuilder.displayer.client.DisplayerListener;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import static org.dashbuilder.dataset.ExpenseReportsData.*;
 import static org.mockito.Mockito.*;
+import static org.junit.Assert.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SelectorDisplayerTest extends AbstractDisplayerTest {
@@ -54,8 +56,7 @@ public class SelectorDisplayerTest extends AbstractDisplayerTest {
         verify(view).setFilterEnabled(true);
         verify(view).clearItems();
         verify(view).showSelectHint(COLUMN_DEPARTMENT);
-        verify(view, times(5)).addItem(anyString(), anyString());
-        verify(view, never()).setSelectedIndex(anyInt());
+        verify(view, times(5)).addItem(anyString(), anyString(), eq(false));
         verify(view, never()).showResetHint(anyString());
     }
 
@@ -75,8 +76,7 @@ public class SelectorDisplayerTest extends AbstractDisplayerTest {
 
         verify(view).clearItems();
         verify(view).showSelectHint(COLUMN_DEPARTMENT);
-        verify(view, never()).addItem(anyString(), anyString());
-        verify(view, never()).setSelectedIndex(anyInt());
+        verify(view, never()).addItem(anyString(), anyString(), anyBoolean());
     }
 
     @Test
@@ -98,8 +98,8 @@ public class SelectorDisplayerTest extends AbstractDisplayerTest {
         SelectorDisplayer.View view = presenter.getView();
         presenter.draw();
 
-        verify(view, never()).addItem(anyString(), eq((String) null));
-        verify(view, times(5)).addItem(anyString(), anyString());
+        verify(view, never()).addItem(anyString(), eq((String) null), anyBoolean());
+        verify(view, times(5)).addItem(anyString(), anyString(), eq(false));
     }
 
     @Test
@@ -118,7 +118,7 @@ public class SelectorDisplayerTest extends AbstractDisplayerTest {
         presenter.draw();
 
         reset(view);
-        when(view.getSelectedIndex()).thenReturn(1);
+        when(view.getSelectedId()).thenReturn("1");
         presenter.addListener(listener);
         presenter.onItemSelected();
 
@@ -130,8 +130,7 @@ public class SelectorDisplayerTest extends AbstractDisplayerTest {
         verify(view).showResetHint(COLUMN_DEPARTMENT);
         verify(view, never()).clearItems();
         verify(view, never()).showSelectHint(COLUMN_DEPARTMENT);
-        verify(view, never()).addItem(anyString(), anyString());
-        verify(view, never()).setSelectedIndex(anyInt());
+        verify(view, never()).addItem(anyString(), anyString(), anyBoolean());
     }
 
     @Test
@@ -149,22 +148,25 @@ public class SelectorDisplayerTest extends AbstractDisplayerTest {
         DisplayerListener listener = mock(DisplayerListener.class);
         presenter.draw();
 
+        // Select an item
         reset(view);
-        when(view.getSelectedIndex()).thenReturn(1);
+        when(view.getSelectedId()).thenReturn("1");
         presenter.addListener(listener);
         presenter.onItemSelected();
 
-        verify(view).showResetHint(COLUMN_DEPARTMENT);
-        verify(view, never()).showSelectHint(COLUMN_DEPARTMENT);
-
-        // Check filter notifications
-        verify(listener).onFilterEnabled(eq(presenter), any(DataSetGroup.class));
-        verify(listener, never()).onRedraw(presenter);
-
         // Ensure data does not change
         verify(view, never()).clearItems();
-        verify(view, never()).addItem(anyString(), anyString());
-        verify(view, never()).setSelectedIndex(anyInt());
+        verify(view, never()).addItem(anyString(), anyString(), anyBoolean());
+
+        // Verify the item selected is correct
+        ArgumentCaptor<DataSetGroup> argument = ArgumentCaptor.forClass(DataSetGroup.class);
+        verify(view).showResetHint(COLUMN_DEPARTMENT);
+        verify(view, never()).showSelectHint(COLUMN_DEPARTMENT);
+        verify(listener).onFilterEnabled(eq(presenter), argument.capture());
+        verify(listener, never()).onRedraw(presenter);
+        DataSetGroup dataSetGroup = argument.getValue();
+        Interval selectedInterval = dataSetGroup.getSelectedIntervalList().get(0);
+        assertEquals(selectedInterval.getName(), "Services");
     }
 
     @Test
@@ -183,7 +185,7 @@ public class SelectorDisplayerTest extends AbstractDisplayerTest {
         presenter.draw();
 
         reset(view);
-        when(view.getSelectedIndex()).thenReturn(1);
+        when(view.getSelectedId()).thenReturn("1");
         presenter.addListener(listener);
         presenter.onItemSelected();
 
@@ -195,6 +197,46 @@ public class SelectorDisplayerTest extends AbstractDisplayerTest {
         verify(view).clearItems();
         verify(view, atLeastOnce()).showResetHint(COLUMN_DEPARTMENT);
         verify(view, never()).showSelectHint(COLUMN_DEPARTMENT);
-        verify(view, times(1)).addItem(anyString(), anyString());
+        verify(view, times(1)).addItem(anyString(), anyString(), eq(false));
+    }
+
+
+    @Test
+    public void testNullEntries() {
+        // Insert a null entry into the dataset
+        DataSet expensesDataSet = clientDataSetManager.getDataSet(EXPENSES);
+        int column = expensesDataSet.getColumnIndex(expensesDataSet.getColumnById(COLUMN_DEPARTMENT));
+        expensesDataSet.setValueAt(0, column, null);
+
+        // Create a selector displayer
+        DisplayerSettings departmentList = DisplayerSettingsFactory.newSelectorSettings()
+                .dataset(EXPENSES)
+                .group(COLUMN_DEPARTMENT)
+                .column(COLUMN_DEPARTMENT)
+                .column(COLUMN_ID, AggregateFunctionType.COUNT)
+                .filterOn(false, true, true)
+                .buildSettings();
+
+        SelectorDisplayer presenter = createSelectorDisplayer(departmentList);
+        SelectorDisplayer.View view = presenter.getView();
+        DisplayerListener listener = mock(DisplayerListener.class);
+        presenter.addListener(listener);
+        presenter.draw();
+
+        // Verify that null entries are not shown
+        verify(view, times(5)).addItem(anyString(), anyString(), eq(false));
+        verify(view, never()).addItem(anyString(), eq((String) null), anyBoolean());
+
+        // Select an item
+        reset(listener);
+        when(view.getSelectedId()).thenReturn("1");
+        presenter.onItemSelected();
+
+        // Verify the item selected is correct
+        ArgumentCaptor<DataSetGroup> argument = ArgumentCaptor.forClass(DataSetGroup.class);
+        verify(listener).onFilterEnabled(eq(presenter), argument.capture());
+        DataSetGroup dataSetGroup = argument.getValue();
+        Interval selectedInterval = dataSetGroup.getSelectedIntervalList().get(0);
+        assertEquals(selectedInterval.getName(), "Engineering");
     }
 }

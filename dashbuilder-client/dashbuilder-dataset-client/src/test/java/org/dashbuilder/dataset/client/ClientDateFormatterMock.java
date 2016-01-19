@@ -12,29 +12,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbuilder.displayer.client;
+package org.dashbuilder.dataset.client;
 
-import org.dashbuilder.dataset.engine.Chronometer;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
-public class ChronometerMock implements Chronometer {
+import org.dashbuilder.dataset.client.engine.ClientDateFormatter;
 
-    @Override
-    public long start() {
-        return 0;
-    }
+public class ClientDateFormatterMock implements ClientDateFormatter {
 
     @Override
-    public long stop() {
-        return 0;
-    }
-
-    @Override
-    public long elapsedTime() {
-        return 0;
-    }
-
-    @Override
-    public String formatElapsedTime(long millis) {
-        return String.valueOf(millis);
+    public String format(Date d, String pattern) {
+        SimpleDateFormat sdf = new SimpleDateFormat(pattern);
+        return sdf.format(d);
     }
 }
