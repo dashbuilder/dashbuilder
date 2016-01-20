@@ -10,7 +10,7 @@ import org.dashbuilder.common.client.editor.ValueBoxEditor;
 import org.dashbuilder.dataprovider.DataSetProviderType;
 import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.def.DataColumnDef;
-import org.jboss.errai.ioc.client.container.IOCBeanDef;
+import org.jboss.errai.ioc.client.container.SyncBeanDef;
 import org.jboss.errai.ioc.client.container.SyncBeanManager;
 import org.junit.Before;
 import org.junit.Test;
@@ -37,7 +37,7 @@ public class ColumnListEditorTest {
     @Mock DataColumnDefDriver dataColumnDefDriver;
     @Mock EventSourceMock<ColumnsChangedEvent> columnsChangedEvent;
     @Mock ColumnListEditor.View view;
-    @Mock IOCBeanDef<DataColumnDefEditor> columnDefEditorIOCBeanDef;
+    @Mock SyncBeanDef<DataColumnDefEditor> columnDefEditorSyncBeanDef;
     @Mock DataColumnDefEditor dataColumnDefEditor;
     private ColumnListEditor presenter;
     final ListEditor<DataColumnDef, org.dashbuilder.dataset.client.editor.DataColumnDefEditor> listEditor = mock(ListEditor.class);
@@ -48,8 +48,8 @@ public class ColumnListEditorTest {
         presenter = new ColumnListEditor(beanManager, dataColumnDefDriver, columnsChangedEvent, view);
         
         // Bean instantiation mocks.
-        when(beanManager.lookupBean(DataColumnDefEditor.class)).thenReturn(columnDefEditorIOCBeanDef);
-        when( columnDefEditorIOCBeanDef.newInstance() ).thenAnswer( new Answer<DataColumnDefEditor>() {
+        when(beanManager.lookupBean(DataColumnDefEditor.class)).thenReturn(columnDefEditorSyncBeanDef);
+        when( columnDefEditorSyncBeanDef.newInstance() ).thenAnswer( new Answer<DataColumnDefEditor>() {
             @Override
             public DataColumnDefEditor answer( InvocationOnMock invocationOnMock ) throws Throwable {
                 return dataColumnDefEditor;
@@ -392,7 +392,7 @@ public class ColumnListEditorTest {
         presenter.listEditor.getList().add(col2);
         presenter.listEditor.getEditors().add(col2Editor);
 
-        when( columnDefEditorIOCBeanDef.newInstance() ).thenAnswer( new Answer<DataColumnDefEditor>() {
+        when( columnDefEditorSyncBeanDef.newInstance() ).thenAnswer( new Answer<DataColumnDefEditor>() {
             @Override
             public DataColumnDefEditor answer( InvocationOnMock invocationOnMock ) throws Throwable {
                 return col2Editor;

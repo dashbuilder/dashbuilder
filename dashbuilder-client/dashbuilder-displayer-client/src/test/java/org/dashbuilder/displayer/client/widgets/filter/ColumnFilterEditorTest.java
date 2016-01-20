@@ -24,7 +24,7 @@ import org.dashbuilder.dataset.filter.CoreFunctionFilter;
 import org.dashbuilder.dataset.filter.CoreFunctionType;
 import org.dashbuilder.displayer.client.events.ColumnFilterChangedEvent;
 import org.dashbuilder.displayer.client.events.ColumnFilterDeletedEvent;
-import org.jboss.errai.ioc.client.container.IOCBeanDef;
+import org.jboss.errai.ioc.client.container.SyncBeanDef;
 import org.jboss.errai.ioc.client.container.SyncBeanManager;
 import org.junit.Before;
 import org.junit.Test;
@@ -47,19 +47,19 @@ public class ColumnFilterEditorTest {
     SyncBeanManager beanManager;
 
     @Mock
-    IOCBeanDef<TextParameterEditor> textParameterBeanDef;
+    SyncBeanDef<TextParameterEditor> textParameterBeanDef;
 
     @Mock
-    IOCBeanDef<NumberParameterEditor> numberParameterBeanDef;
+    SyncBeanDef<NumberParameterEditor> numberParameterBeanDef;
 
     @Mock
-    IOCBeanDef<DateParameterEditor> dateParameterBeanDef;
+    SyncBeanDef<DateParameterEditor> dateParameterBeanDef;
 
     @Mock
-    IOCBeanDef<TimeFrameEditor> timeFrameBeanDef;
+    SyncBeanDef<TimeFrameEditor> timeFrameBeanDef;
 
     @Mock
-    IOCBeanDef<LikeToFunctionEditor> likeToFunctionBeanDef;
+    SyncBeanDef<LikeToFunctionEditor> likeToFunctionBeanDef;
 
     @Mock
     TextParameterEditor textParameterEditor;

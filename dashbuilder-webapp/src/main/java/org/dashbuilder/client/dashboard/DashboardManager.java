@@ -15,21 +15,26 @@
  */
 package org.dashbuilder.client.dashboard;
 
+import static org.jboss.errai.ioc.client.QualifierUtil.DEFAULT_QUALIFIERS;
+
+import java.lang.annotation.Annotation;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
-import javax.enterprise.context.ApplicationScoped;
+
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
+import org.dashbuilder.displayer.client.PerspectiveCoordinator;
 import org.dashbuilder.shared.dashboard.events.DashboardCreatedEvent;
 import org.dashbuilder.shared.dashboard.events.DashboardDeletedEvent;
-import org.dashbuilder.displayer.client.PerspectiveCoordinator;
-import org.dashbuilder.displayer.json.DisplayerSettingsJSONMarshaller;
 import org.jboss.errai.ioc.client.api.AfterInitialization;
+import org.jboss.errai.ioc.client.api.EntryPoint;
 import org.jboss.errai.ioc.client.container.IOC;
-import org.jboss.errai.ioc.client.container.IOCBeanDef;
+import org.jboss.errai.ioc.client.container.SyncBeanDef;
 import org.jboss.errai.ioc.client.container.SyncBeanManager;
 import org.jboss.errai.ioc.client.container.SyncBeanManagerImpl;
+import org.uberfire.client.exporter.SingletonBeanDef;
 import org.uberfire.client.mvp.Activity;
 import org.uberfire.client.mvp.ActivityBeansCache;
 import org.uberfire.client.mvp.PerspectiveActivity;
@@ -39,12 +44,10 @@ import org.uberfire.mvp.Command;
 import org.uberfire.mvp.ParameterizedCommand;
 import org.uberfire.workbench.model.PerspectiveDefinition;
 
-import static org.jboss.errai.ioc.client.QualifierUtil.*;
-
 /**
  * Dashboard manager
  */
-@ApplicationScoped
+@EntryPoint
 public class DashboardManager {
 
     private SyncBeanManager beanManager;
@@ -87,6 +90,7 @@ public class DashboardManager {
         });
     }
 
+    @SuppressWarnings( "unchecked" )
     protected DashboardPerspectiveActivity registerPerspective(String id) {
         DashboardPerspectiveActivity activity = new DashboardPerspectiveActivity(id, this,
                 beanManager,
@@ -95,7 +99,14 @@ public class DashboardManager {
                 perspectiveCoordinator);
 
         SyncBeanManagerImpl beanManager = (SyncBeanManagerImpl) IOC.getBeanManager();
-        beanManager.addBean((Class) PerspectiveActivity.class, DashboardPerspectiveActivity.class, null, activity, DEFAULT_QUALIFIERS, id, true, null);
+        final SyncBeanDef<PerspectiveActivity> beanDef =
+                new SingletonBeanDef<PerspectiveActivity, DashboardPerspectiveActivity>(activity,
+                                                                                        PerspectiveActivity.class,
+                                                                                        new HashSet<Annotation>( Arrays.asList( DEFAULT_QUALIFIERS ) ),
+                                                                                        id,
+                                                                                        true,
+                                                                                        true );
+        beanManager.registerBean( beanDef );
         activityBeansCache.addNewPerspectiveActivity(beanManager.lookupBeans(id).iterator().next());
         return activity;
     }
@@ -137,7 +148,7 @@ public class DashboardManager {
         Set<DashboardPerspectiveActivity> activities = new HashSet<DashboardPerspectiveActivity>();
         for (String activityId : activityBeansCache.getActivitiesById()) {
 
-            IOCBeanDef<Activity> activityDef = activityBeansCache.getActivity(activityId);
+            SyncBeanDef<Activity> activityDef = activityBeansCache.getActivity(activityId);
             if (activityDef.getBeanClass().equals(DashboardPerspectiveActivity.class)) {
                 activities.add((DashboardPerspectiveActivity) activityDef.getInstance());
             }

@@ -14,7 +14,7 @@ import org.dashbuilder.dataprovider.DataSetProviderType;
 import org.dashbuilder.dataset.client.DataSetClientServices;
 import org.dashbuilder.dataset.def.DataSetDef;
 import org.dashbuilder.validations.dataset.DataSetDefValidator;
-import org.jboss.errai.ioc.client.container.IOCBeanDef;
+import org.jboss.errai.ioc.client.container.SyncBeanDef;
 import org.jboss.errai.ioc.client.container.SyncBeanManager;
 import org.junit.Before;
 import org.junit.Test;
@@ -42,7 +42,7 @@ public class DataSetProviderTypeWorkflowTest {
     @Mock DataSetClientServices clientServices;
     @Mock DataSetDefProviderTypeEditor providerTypeEditor;
     @Mock DataSetDefProviderTypeDriver dataSetDefProviderTypeDriver;
-    @Mock IOCBeanDef<DataSetDefProviderTypeDriver> simpleBeanEditorDriverIOCBeanDef;
+    @Mock SyncBeanDef<DataSetDefProviderTypeDriver> simpleBeanEditorDriverSyncBeanDef;
     @Mock HorizImageListEditor<DataSetProviderType> provider;
     @Mock DataSetEditorWorkflow.View view;
 
@@ -52,8 +52,8 @@ public class DataSetProviderTypeWorkflowTest {
     public void setup() throws Exception {
 
         // Bean instantiation mocks.
-        when(beanManager.lookupBean(DataSetDefProviderTypeDriver.class)).thenReturn(simpleBeanEditorDriverIOCBeanDef);
-        when( simpleBeanEditorDriverIOCBeanDef.newInstance() ).thenAnswer( new Answer<SimpleBeanEditorDriver>() {
+        when(beanManager.lookupBean(DataSetDefProviderTypeDriver.class)).thenReturn(simpleBeanEditorDriverSyncBeanDef);
+        when( simpleBeanEditorDriverSyncBeanDef.newInstance() ).thenAnswer( new Answer<SimpleBeanEditorDriver>() {
             @Override
             public SimpleBeanEditorDriver answer( InvocationOnMock invocationOnMock ) throws Throwable {
                 return dataSetDefProviderTypeDriver;

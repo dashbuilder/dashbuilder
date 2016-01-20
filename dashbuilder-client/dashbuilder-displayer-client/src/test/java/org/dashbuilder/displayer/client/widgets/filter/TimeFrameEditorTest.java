@@ -17,7 +17,7 @@ package org.dashbuilder.displayer.client.widgets.filter;
 import org.dashbuilder.dataset.date.Month;
 import org.dashbuilder.dataset.date.TimeFrame;
 import org.dashbuilder.dataset.group.DateIntervalType;
-import org.jboss.errai.ioc.client.container.IOCBeanDef;
+import org.jboss.errai.ioc.client.container.SyncBeanDef;
 import org.jboss.errai.ioc.client.container.SyncBeanManager;
 import org.junit.Before;
 import org.junit.Test;
@@ -66,7 +66,7 @@ public class TimeFrameEditorTest {
         toInstantEditor = new TimeInstantEditor(timeInstantView, toAmountEditor);
         timeFrameEditor = new TimeFrameEditor(timeFrameView, beanManager);
 
-        IOCBeanDef tieBeanDef = mock(IOCBeanDef.class);
+        SyncBeanDef tieBeanDef = mock(SyncBeanDef.class);
         when(beanManager.lookupBean(TimeInstantEditor.class)).thenReturn(tieBeanDef);
         when(tieBeanDef.newInstance()).thenReturn(fromInstantEditor, toInstantEditor);
     }

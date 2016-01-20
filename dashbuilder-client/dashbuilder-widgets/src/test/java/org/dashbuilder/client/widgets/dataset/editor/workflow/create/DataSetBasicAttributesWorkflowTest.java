@@ -12,7 +12,7 @@ import org.dashbuilder.client.widgets.dataset.event.TestDataSetRequestEvent;
 import org.dashbuilder.dataset.client.DataSetClientServices;
 import org.dashbuilder.dataset.def.DataSetDef;
 import org.dashbuilder.validations.dataset.DataSetDefValidator;
-import org.jboss.errai.ioc.client.container.IOCBeanDef;
+import org.jboss.errai.ioc.client.container.SyncBeanDef;
 import org.jboss.errai.ioc.client.container.SyncBeanManager;
 import org.junit.Before;
 import org.junit.Test;
@@ -38,8 +38,8 @@ public class DataSetBasicAttributesWorkflowTest {
     @Mock DataSetClientServices clientServices;
     @Mock DataSetDefBasicAttributesEditor basicAttributesEditor;
     @Mock DataSetDefBasicAttributesDriver dataSetDefBasicAttributesDriver;
-    @Mock IOCBeanDef<DataSetDefBasicAttributesDriver> simpleBeanEditorDriverIOCBeanDef;
-    @Mock IOCBeanDef<DataSetDefBasicAttributesEditor> simpleEditorIOCBeanDef;
+    @Mock SyncBeanDef<DataSetDefBasicAttributesDriver> simpleBeanEditorDriverSyncBeanDef;
+    @Mock SyncBeanDef<DataSetDefBasicAttributesEditor> simpleEditorSyncBeanDef;
     @Mock DataSetEditorWorkflow.View view;
     private DataSetBasicAttributesWorkflow presenter;
 
@@ -47,15 +47,15 @@ public class DataSetBasicAttributesWorkflowTest {
     public void setup() throws Exception {
 
         // Bean instantiation mocks.
-        when(beanManager.lookupBean(DataSetDefBasicAttributesDriver.class)).thenReturn(simpleBeanEditorDriverIOCBeanDef);
-        when( simpleBeanEditorDriverIOCBeanDef.newInstance() ).thenAnswer( new Answer<DataSetDefBasicAttributesDriver>() {
+        when(beanManager.lookupBean(DataSetDefBasicAttributesDriver.class)).thenReturn(simpleBeanEditorDriverSyncBeanDef);
+        when( simpleBeanEditorDriverSyncBeanDef.newInstance() ).thenAnswer( new Answer<DataSetDefBasicAttributesDriver>() {
             @Override
             public DataSetDefBasicAttributesDriver answer( InvocationOnMock invocationOnMock ) throws Throwable {
                 return dataSetDefBasicAttributesDriver;
             }
         } );
-        when(beanManager.lookupBean(DataSetDefBasicAttributesEditor.class)).thenReturn(simpleEditorIOCBeanDef);
-        when( simpleEditorIOCBeanDef.newInstance() ).thenAnswer( new Answer<DataSetDefBasicAttributesEditor>() {
+        when(beanManager.lookupBean(DataSetDefBasicAttributesEditor.class)).thenReturn(simpleEditorSyncBeanDef);
+        when( simpleEditorSyncBeanDef.newInstance() ).thenAnswer( new Answer<DataSetDefBasicAttributesEditor>() {
             @Override
             public DataSetDefBasicAttributesEditor answer( InvocationOnMock invocationOnMock ) throws Throwable {
                 return basicAttributesEditor;

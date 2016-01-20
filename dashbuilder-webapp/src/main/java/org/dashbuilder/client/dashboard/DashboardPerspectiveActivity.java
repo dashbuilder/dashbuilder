@@ -27,7 +27,7 @@ import org.dashbuilder.displayer.client.PerspectiveCoordinator;
 import org.dashbuilder.displayer.json.DisplayerSettingsJSONMarshaller;
 import org.dashbuilder.displayer.client.widgets.DisplayerEditorPopup;
 import org.jboss.errai.ioc.client.container.IOC;
-import org.jboss.errai.ioc.client.container.IOCBeanDef;
+import org.jboss.errai.ioc.client.container.SyncBeanDef;
 import org.jboss.errai.ioc.client.container.SyncBeanManager;
 import org.jboss.errai.ioc.client.container.SyncBeanManagerImpl;
 import org.uberfire.client.mvp.PerspectiveActivity;
@@ -254,11 +254,11 @@ public class DashboardPerspectiveActivity implements PerspectiveActivity {
     private PerspectiveActivity getDefaultPerspectiveActivity() {
         PerspectiveActivity first = null;
         SyncBeanManagerImpl beanManager = (SyncBeanManagerImpl) IOC.getBeanManager();
-        Collection<IOCBeanDef<PerspectiveActivity>> perspectives = beanManager.lookupBeans(PerspectiveActivity.class);
-        Iterator<IOCBeanDef<PerspectiveActivity>> perspectivesIterator = perspectives.iterator();
+        Collection<SyncBeanDef<PerspectiveActivity>> perspectives = beanManager.lookupBeans(PerspectiveActivity.class);
+        Iterator<SyncBeanDef<PerspectiveActivity>> perspectivesIterator = perspectives.iterator();
         while (perspectivesIterator.hasNext() ) {
 
-            IOCBeanDef<PerspectiveActivity> perspective = perspectivesIterator.next();
+            SyncBeanDef<PerspectiveActivity> perspective = perspectivesIterator.next();
             PerspectiveActivity instance = perspective.getInstance();
 
             if (instance.isDefault()) {
